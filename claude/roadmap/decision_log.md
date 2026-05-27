@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-25 (cycle 2026-05-25__scheduled — DL-034 appended)
+**Last Updated:** 2026-05-27 (cycle 2026-05-27__scheduled — DL-035 appended)
 
 ---
 
@@ -830,5 +830,28 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Meta-review:** NOT due — rebalance_cycles_since_meta_review increments to 3 this cycle. **Meta-review IS due this cycle.** (See lessons_learnt.md for meta-review execution record.)
 
 **STEP 8.6 guardrail:** IDEA-director-of-hr-20260525-02 parked post-debate (Challenger Type A). PASS.
+
+**Decision owner:** Product Owner
+
+---
+
+### DL-035 — 2026-05-27
+
+**Decision type:** No-change (roadmap-level) + Add (to backlog × 31) + Displace (BLG-GOV-48 to §9)
+**Cycle:** 2026-05-27__scheduled
+**Displacement:** BLG-GOV-48 (Gemini model version change policy) → §9 Deferred; superseded by BLG-GOV-64 (Anthropic model version pinning policy). Gemini retired v4.1.
+**Workforce impact:** 31 new backlog items; 10 BLG items are direct (no gate); 21 gate-conditional or pre-sprint preparation. No immediate FTE commitment beyond existing sprint planning capacity.
+
+**Rationale:** Scheduled Extended-tier rebalance. Now horizon empty (v4.1 shipped 2026-05-27). PO elected to proceed with scheduled rebalance; release planning (`plan release v4.2`) is the recommended next step. All 13 active roadmap initiatives (SI-02, SI-04, SI-05, PO-02–05, PS-01–05, PT-04) reaffirmed as 🔥 Must continue. CPS = 1.15 (prior: 2.69; Δ = 1.54 > 0.5 absolute decline → Strategy Drift Alert issued). Strategy Rules & System Intent Owner acknowledged alert as arc completion pattern (Arc 3 + SI-01 + SI-03 all shipped v4.1), not genuine drift. Ideas intake window IW-20260527-01 opened (44 new submissions, 22 agents; Facilitator excluded per charter); 11 parked ideas surfaced (10 at Parked-cycle-2 per 3-cycle cap rule: 6 advanced to gate-conditional backlog, 3 rejected, 1 re-parked at cycle-2; 1 at Parked-cycle-1 re-parked to Parked-cycle-2). Of 44 new ideas: 20 advanced to STEP 5 debate (all 20 promoted to backlog with 2 Challenger Type A gate modifications accepted); 9 parked Parked-cycle-1; 15 rejected (duplicates or procedurally redundant with existing items). BLG-OPS-33 gate cleared inline (v4.1 sprint planning complete). Net-zero constraint passes: 0 roadmap additions, 0 roadmap kills (BLG-GOV-48 displacement is backlog-level, not roadmap-level). Total: 31 new backlog items.
+
+**Run tier:** Extended (CPS = 2.69 from prior cycle 2026-05-25__scheduled ≥ 2.5 absolute threshold; Extended obligations met: full workforce economics STEP 7, explicit horizon check STEP 2.3, full idea debate for all advancing candidates).
+
+**Key backlog items added:** BLG-GOV-60 (P1 SI-02 sprint planning prerequisites checklist), BLG-GOV-65 (P1 Anthropic API key security review), BLG-GOV-62 (P1 SI-04 §13 pre-assessment, gate-cond), BLG-GOV-58 (P2 STEP 5.2 clarification, v4.1 OA-2 carry-forward), BLG-QA-37 (P1 Claude API Playwright mock strategy), BLG-SPEC-41 (P1 SI-02 drift score metric definition, gate-cond), BLG-SPEC-42 (P1 AI thesis endpoint contract update for Claude), BLG-OPS-36 (P1 Claude API first monthly review), BLG-FE-53 (P1 SI-02 drift detection interaction spec, gate-cond). Full list in cycle_record.md §8.2.
+
+**Skill-Silo check:** 12 of 31 new items are GOV/SPEC (39%) — within 20–60% bounds. No Skill-Silo Alert issued.
+
+**Meta-review:** NOT due — rebalance_cycles_since_meta_review resets to 1 this cycle (meta-review was conducted at 2026-05-25__scheduled, which was cycle 3 of the prior 3-cycle window).
+
+**STEP 8.6 guardrail:** 2 Challenger Type A gate modifications issued and accepted by PO: (1) BLG-OPS-37 gated on BLG-OPS-36 first monthly review complete; (2) BLG-GOV-67 gated on SI-01+SI-03 live ≥ 30 days (gate clears 2026-06-21). PASS.
 
 **Decision owner:** Product Owner

@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-27 (post-ship closure 2026-05-26__release-v4.1 — 20 items marked COMPLETE; stale parked item check: 0 items parked 3+ consecutive cycles)
-**Last rebalance:** 2026-05-25 (cycle 2026-05-25__scheduled — DL-034; IW-20260525-01; 39 new items: BLG-GOV-40–56, BLG-BE-20–21, BLG-OPS-30–34, BLG-QA-31–34, BLG-FEAT-40–42, BLG-FE-45–49, BLG-SPEC-38–40)
+**Last Updated:** 2026-05-27 (rebalance 2026-05-27__scheduled — DL-035; IW-20260527-01; 31 new items: BLG-GOV-57–68, BLG-OPS-36–41, BLG-QA-36–38, BLG-SPEC-41–42, BLG-FE-51–55, BLG-BE-22–24; BLG-GOV-48 displaced to §9)
+**Last rebalance:** 2026-05-27 (cycle 2026-05-27__scheduled — DL-035; IW-20260527-01; 31 new items: BLG-GOV-57–68, BLG-OPS-36–41, BLG-QA-36–38, BLG-SPEC-41–42, BLG-FE-51–55, BLG-BE-22–24)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -35,19 +35,7 @@
 
 ---
 
-*BLG-TECH-10 (Fix Yahoo Finance crumb/401 rate-limiting in screener batch) — ✅ COMPLETE v3.9 — ST-01, cycle: 2026-05-21__release-v3.9*
-
----
-
 ## 2. Product Feature Backlog (User-Facing)
-
----
-
-*BLG-FEAT-18 (Consecutive losing streak metric) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
-
----
-
-*BLG-FEAT-19 (Monthly P&L summary report) — ✅ COMPLETE v3.1 — archived to backlog_archive.md 2026-05-05*
 
 ---
 
@@ -73,22 +61,6 @@ Performance metrics (R-multiple, win rate, expectancy) use gross P&L figures. Wh
 - Net-of-costs R-multiple calculated and displayed where cost data exists
 - Performance report breakdowns show gross vs net comparison where material
 - No impact to existing R-multiple calculations where cost data is absent
-
----
-
-*BLG-FEAT-21 (Trade plan abandonment status field) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
-
----
-
-*BLG-FEAT-23 (Setup type classification field on trade plans) — ✅ COMPLETE v3.8 — ST-06, cycle: 2026-05-19__release-v3.8 — archived to backlog_archive.md 2026-05-21*
-
----
-
-*BLG-FEAT-24 (AI-assisted setup thesis generation) — ✅ COMPLETE v3.8 — ST-08, cycle: 2026-05-19__release-v3.8 — archived to backlog_archive.md 2026-05-21*
-
----
-
-*BLG-FEAT-22 (Ticker Universe Management page) — ✅ COMPLETE v3.8 — ST-09, cycle: 2026-05-19__release-v3.8 — archived to backlog_archive.md 2026-05-21*
 
 ---
 
@@ -369,55 +341,6 @@ No metric tracks whether entries were executed within the planned entry zone. `e
 
 ---
 
-### BLG-FEAT-36 — SI-01 validation pass/fail rate by rule
-**Priority:** P2 (Medium)
-**Type:** Product Feature / Analytics
-**Owner:** Metrics Definitions & Analytics Canonical Owner
-**Source:** IDEA-metrics-analytics-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
-**Effort:** M (~2–3 days)
-**Provisional-Target:** v4.0
-**Status: ✅ COMPLETE — v4.0 — ST-01 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
-
-**Problem**
-GET /portfolio/pre-entry-validation (SI-01, shipped v3.8) returns per-attempt pass/fail results but no aggregate metric tracks pass/fail rate broken down by individual rule type over time. Understanding which rules most frequently block entries reveals behavioural patterns (e.g., "regime gate fails 40% of the time") without requiring SI-02 (drift detection).
-
-**Scope**
-- Define named metric: validation_pass_rate_by_rule — pass count / (pass + fail count) per rule per rolling period
-- Backend: query pre-entry validation log for rule-level pass/fail aggregation
-- Frontend: surface metric in SI-05 Weekly Digest or standalone compliance dashboard
-- Requires confirmation that the pre-entry validation log captures per-rule outcomes (may require minor schema addition)
-
-**Acceptance Criteria**
-- Pass/fail rate per rule computable and displayable
-- Rolling period configurable (7d / 30d)
-- Backend analysis of current log schema completed before sprint planning
-
----
-
-### BLG-FEAT-37 — Red flag event frequency metric
-**Priority:** P2 (Medium)
-**Type:** Product Feature / Analytics
-**Owner:** Metrics Definitions & Analytics Canonical Owner
-**Source:** IDEA-metrics-analytics-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
-**Effort:** S (~1 day)
-**Provisional-Target:** v4.0
-**Status: ✅ COMPLETE — v4.0 — ST-02 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
-
-**Problem**
-No canonical metric tracks red flag event frequency over time. Override rate and rule-breach-by-type distribution are queryable from red_flag_events (shipped v3.9) but not defined as named product metrics with specified aggregation periods and display locations. Defining these metrics makes them inputs to SI-05 Weekly Digest and the monthly P&L compliance section.
-
-**Scope**
-- Named metrics: events_per_week, override_rate (overrides / validation attempts), event_type_distribution
-- Backend: aggregate query on red_flag_events table
-- Metric definitions registered in metrics_definitions.md
-
-**Acceptance Criteria**
-- Three named metrics defined and queryable
-- Metrics definitions registered per canonical standards
-- Data available for SI-05 and BLG-FEAT-38 (monthly P&L compliance section) consumption
-
----
-
 ### BLG-FEAT-38 — Arc 5 compliance score in monthly P&L report
 **Priority:** P2 (Medium)
 **Type:** Product Feature / Reporting
@@ -440,57 +363,6 @@ Monthly P&L report (shipped v3.1) covers financial performance. As Arc 5 ships c
 - Compliance section present in monthly P&L report output
 - Data sourced from canonical metrics (BLG-FEAT-36, BLG-FEAT-37)
 - Gate conditions verified before sprint planning
-
----
-
-### BLG-FEAT-39 — Trade plan adherence rate metric
-**Priority:** P2 (Medium)
-**Type:** Product Feature / Analytics
-**Owner:** Financial Reporting & Records Owner
-**Source:** IDEA-financial-reporting-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
-**Effort:** S (~1 day)
-**Provisional-Target:** v4.0
-**Status: ✅ COMPLETE — v4.0 — ST-04 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
-
-**Gate criteria:** plan_id linkage actively captured on closed trades (requires active use of trade plan creation workflow).
-
-**Problem**
-No metric tracks what percentage of closed trades have an associated trade plan (plan_id linkage). This metric measures systematic discipline adoption — whether the operator is consistently using trade plans before entry. It is a direct input to Arc 4 PO-04 (reflection/outcome correlation) and a candidate for the compliance section of the monthly P&L report.
-
-**Scope**
-- Named metric: trade_plan_adherence_rate — trades_with_plan_id / total_closed_trades
-- Backend: aggregate query on closed trades
-- Metric definition registered in metrics_definitions.md
-- Surface in performance reports and SI-05 Weekly Digest
-
-**Acceptance Criteria**
-- Metric defined and queryable
-- Registered in metrics definitions
-- Gate condition verified by Product Owner before sprint planning
-
----
-
-### BLG-FEAT-40 — SI-05 composite compliance score formula
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P2 (Medium)
-**Type:** Product Feature / Analytics
-**Owner:** Metrics Definitions & Analytics Owner
-**Source:** IDEA-metrics-analytics-20260525-01 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~1 day)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-SI-05 (Weekly Strategy Integrity Digest) will surface a compliance score trend. No formal definition exists for the composite compliance score formula — what it includes, how it is weighted, and what denominator it uses. Without a pre-defined formula, the SI-05 sprint will produce an ad-hoc metric that cannot be referenced in the monthly P&L report (BLG-FEAT-38) or tracked for trend.
-
-**Scope**
-- Define composite compliance score: formula, components (validation pass rate, override rate, red flag event rate), weighting rationale
-- Document in metrics_definitions.md
-- Input to SI-05 sprint planning and BLG-FEAT-38 P&L integration
-
-**Acceptance Criteria**
-- Formula defined and documented in metrics_definitions.md
-- Components and weightings explained with rationale
-- Reviewed by Strategy Rules & System Intent Owner before SI-05 sprint planning
 
 ---
 
@@ -517,71 +389,7 @@ The Gemini thesis generation feature (shipped v4.0) writes to the setup_thesis f
 
 ---
 
-### BLG-FEAT-42 — Arc 5 compliance metrics monthly P&L report integration
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P2 (Medium)
-**Type:** Product Feature / Reporting
-**Owner:** Financial Reporting & Records Owner
-**Source:** IDEA-financial-reporting-20260525-02 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** M (~2 days)
-**Provisional-Target:** v4.1
-
-**Problem**
-BLG-FEAT-38 (Arc 5 compliance score in P&L report) has its gate cleared as of rebalance 2026-05-25. BLG-FEAT-42 is the implementation spec and integration work to add the compliance metrics section to the monthly P&L report using the Arc5ComplianceSection data already available from the v4.0 analytics endpoint. A separate implementation item is warranted because BLG-FEAT-38 defines what should appear; BLG-FEAT-42 defines how to integrate it into the existing report infrastructure.
-
-**Scope**
-- Add Arc 5 compliance summary section to monthly P&L report output
-- Source data from GET /analytics/arc5-compliance endpoint (shipped v4.0)
-- Fields: validation_pass_rate_by_rule (top 3 rules), override_rate, events_per_week, top_rule_breach
-- Requires BLG-FEAT-38 (gate cleared) and BLG-FEAT-40 (composite score formula) as preconditions before sprint
-
-**Acceptance Criteria**
-- Monthly P&L report includes Arc 5 compliance summary section
-- Data sourced from GET /analytics/arc5-compliance
-- Composite score formula (BLG-FEAT-40) applied if defined; else individual components only
-- Reviewed by Financial Reporting & Records Owner and Product Owner before sprint planning
-
----
-
 ## 3. Frontend & UX Backlog
-
----
-
-*BLG-FE-16 (React component inventory) — ✅ COMPLETE v3.2 — archived to backlog_archive.md 2026-05-09*
-
-
----
-
-*BLG-FE-19 (Keyboard shortcuts) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
-*BLG-FE-18 (Screener news panel attachment) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
-
----
-
-*BLG-FE-21 (Design system document) — ✅ COMPLETE v3.2 — archived to backlog_archive.md 2026-05-09*
-
----
-
-*BLG-FE-31 (Research view component library) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
-
----
-
-*BLG-FE-22 (Screener morning routine UX spec) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
-
----
-
-*BLG-FE-23 (Research page UK ticker suffix not stripped) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
-
----
-
-*BLG-FE-24 (Negative earnings days display for past earnings dates) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
-
----
-
-*BLG-FE-25 (Signals page: default to most recent day's signals) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
-
----
-
-*BLG-FE-26 (Research page UX review: regime lozenge and font consistency) — ✅ COMPLETE v3.6 — archived to backlog_archive.md 2026-05-17*
 
 ---
 
@@ -605,46 +413,6 @@ The current nav bar occupies a fixed portion of the visible screen area. As the 
 - Design recommendation document produced (one of: maintain current, redesign to pattern X)
 - Rationale covers: screen real-estate impact, mobile responsiveness, Arc 2 page count
 - If redesign: UX spec produced and implementation backlog item filed
-
----
-
-*BLG-FE-28 (Pre-Trade Research View UX spec) — ✅ COMPLETE v3.3 — archived to backlog_archive.md 2026-05-13*
-
----
-
-*BLG-FE-29 (Watchlist research status indicator) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
-
----
-
-*BLG-FE-30 (Trade plan status badges) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
-
----
-
-*BLG-FE-34 (Trade plan form signal context panel — SignalContextPanel.js with entry_rationale/confirmation pre-population) — ✅ COMPLETE v3.7 — ST-03, cycle: 2026-05-18__release-v3.7*
-
----
-
-*BLG-FE-33 (Signals page Add to Watchlist CTA — watchlisted status backend + SignalCard CTA replacement) — ✅ COMPLETE v3.7 — ST-01 + ST-02, cycle: 2026-05-18__release-v3.7*
-
----
-
-*BLG-FE-32 (Research view SC-RV-18/SC-RV-19 Playwright coverage) — ✅ COMPLETE v3.6 — archived to backlog_archive.md 2026-05-17*
-
----
-
-*BLG-FE-35 (ST-08 AC-02: Research page font conformance staging) — ✅ COMPLETE v3.7 — staging run performed 2026-05-18 (Head of UX & Design); conformant; Playwright SC-RV-TYP-01 added for CI regression; archived to backlog_archive.md 2026-05-18*
-
----
-
-*BLG-FE-36 (Add news context panel to trade plan form) — ✅ COMPLETE v3.8 — ST-07, cycle: 2026-05-19__release-v3.8 — archived to backlog_archive.md 2026-05-21*
-
----
-
-*BLG-FE-37 (Strip .L suffix from Ticker Universe page display labels) — ✅ COMPLETE v3.9 — ST-05, cycle: 2026-05-21__release-v3.9*
-
----
-
-*BLG-FE-38 (Add degraded-run warning to screener when OHLCV failure rate exceeds 20%) — ✅ COMPLETE v3.9 — ST-04, cycle: 2026-05-21__release-v3.9*
 
 ---
 
@@ -751,30 +519,6 @@ As Arc 5 ships SI-02, SI-04, and SI-05 alongside existing SI-01 and SI-03, the "
 
 ---
 
-### BLG-FE-44 — Research view: surface signal_type as Setup Type column
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P3 (Low)
-**Type:** Frontend / Backend
-**Owner:** Head of Engineering; Head of UX & Design
-**Source:** v4.0 sprint execution — out-of-scope change stashed and deferred
-**Effort:** XS (~0.5 day)
-**Provisional-Target:** v4.1
-
-**Problem**
-The Research page signal card shows Current Price, Signal, Status, ATR, and Entry Price but does not surface `signal_type` (e.g. "strong_momentum", "momentum"). This field is already in the signals table and available in `GET /research/{ticker}` response. Adding it gives traders immediate context on setup quality without navigating away.
-
-**Scope**
-- `backend/routers/research.py`: include `signal_type` in `_get_signal()` response dict (1-line change)
-- `src/pages/Research.js`: add `SetupTypeBadge` component; add 5th column to Price & Signal grid showing setup type with colour-coded badge (violet for strong_momentum, cyan for momentum)
-- No new endpoint, no schema change, no migration required
-
-**Acceptance Criteria**
-- AC-01: `GET /research/{ticker}` response includes `signal_type` field
-- AC-02: Research page Price & Signal section shows Setup Type badge alongside ATR and Entry Price
-- AC-03: strong_momentum → violet badge; momentum → cyan badge; null → dash
-
----
-
 ### BLG-FE-43 — SI-05 Weekly Digest frontend component spec
 **Priority:** P2 (Medium)
 **Type:** Frontend / Spec
@@ -871,30 +615,6 @@ RedFlagJournal.js (shipped v3.9) implemented the primary display. BLG-FE-41 (Red
 
 ---
 
-### BLG-FE-48 — Arc5ComplianceSection frontend spec
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P1 (High)
-**Type:** Frontend / Spec
-**Owner:** Frontend Specs & UX Documentation Owner
-**Source:** IDEA-frontend-ux-20260525-02 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~1 day)
-**Provisional-Target:** v4.1
-
-**Problem**
-Arc5ComplianceSection.js shipped v4.0 without a formal frontend spec. The component was implemented from acceptance criteria. A retrospective spec document is needed for: (a) future maintenance reference, (b) input to BLG-FE-45 expandability review, (c) Arc 6 extension planning.
-
-**Scope**
-- Produce frontend component spec for Arc5ComplianceSection.js
-- Cover: data contract (from GET /analytics/arc5-compliance), component props, display states (loading, empty, populated), responsive layout, test coverage (SC-AC5-xx)
-- Reviewed by Head of UX & Design and Product Owner
-
-**Acceptance Criteria**
-- Frontend spec filed in docs/specs/frontend/ (or equivalent)
-- Data contract documented against current openapi.yaml endpoint
-- Reviewed and accepted by Head of UX & Design
-
----
-
 ### BLG-FE-49 — Pre-entry validation panel UX assessment
 **Priority:** P2 (Medium)
 **Type:** Frontend / UX
@@ -940,28 +660,131 @@ The Sizing Validity check in the pre-entry validation panel requires `entry_pric
 
 ---
 
+### BLG-FE-51 — Claude thesis generation UI copy audit
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX Polish
+**Owner:** Base44 Frontend; Head of UX & Design
+**Source:** IDEA-base44-frontend-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v4.2
+
+**Problem**
+v4.1 replaced Gemini with Claude API for thesis generation. All UI copy, loading messages, error states, and tooltips that reference Gemini or are Gemini-specific must be updated or made provider-agnostic. Stale provider-specific text confuses users and creates documentation inconsistency.
+
+**Scope**
+- Audit all UI copy related to AI thesis generation (loading state, success message, error text, tooltips)
+- Replace "Gemini" references with provider-agnostic copy (e.g. "AI-generated thesis")
+- Confirm error messages do not surface provider-specific details
+
+**Acceptance Criteria**
+- No "Gemini" references in production UI copy
+- Loading, success, and error states are provider-agnostic
+- Reviewed by Head of UX & Design
+
+---
+
+### BLG-FE-52 — SI-02 drift detection result component pre-design
+**Priority:** P2 (Medium)
+**Type:** Frontend / Pre-Sprint Design
+**Owner:** Base44 Frontend; Frontend Specs & UX Documentation Owner
+**Source:** IDEA-base44-frontend-20260527-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-02 sprint planning imminent.
+
+**Problem**
+Before SI-02 Playwright scenarios can be pre-designed (BLG-QA-31) and before BLG-FE-43 (SI-05 weekly digest component) is authored, the SI-02 drift detection result component interface must be defined: score badge vs percentage deviation display vs rule list format. Undefined component contracts delay sprint planning design reviews.
+
+**Scope**
+- Define drift detection result component display options (badge, %, rule list)
+- Define component contract: data shape, empty state, loading state, threshold-breach state
+- Output: component pre-design document; input to BLG-FE-53 interaction spec
+
+**Acceptance Criteria**
+- Component interface options documented and one selected/proposed
+- Component data contract defined
+- Gate condition verified before commencing
+
+---
+
+### BLG-FE-53 — SI-02 drift detection interaction spec
+**Priority:** P1 (High)
+**Type:** Frontend / Spec Pre-work
+**Owner:** Frontend Specs & UX Documentation Owner
+**Source:** IDEA-frontend-ux-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-02 sprint planning imminent.
+
+**Problem**
+SI-02 drift detection results will display in the frontend. Without a defined interaction spec, the following questions are unresolved at sprint planning: Are breach notifications dismissable? Do they link to underlying trades? What are the empty state and loading state? These unknowns create mid-sprint scope discovery risk.
+
+**Scope**
+- Define drift detection result interaction model: dismissable/persistent, drill-down to trades, severity state transitions
+- Define empty state (no drift data), loading state, threshold-breach state
+- Required input for BLG-FE-43 UX component authoring
+
+**Acceptance Criteria**
+- Interaction spec document produced covering all observable states
+- Dismissal, drill-down, and state transition behaviours defined
+- Gate condition verified before commencing
+
+---
+
+### BLG-FE-54 — Arc 5 unified pre-entry gateway
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Exploration
+**Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design
+**Source:** IDEA-frontend-ux-20260522-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035, 3-cycle cap)
+**Effort:** M (~2–3 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Arc 5 fully complete (SI-02, SI-04, SI-05 all shipped).
+
+**Problem**
+SI-01 (pre-entry validation panel) and PT-05 (entry checklist) are separate views requiring multi-view navigation before trade finalisation. A unified pre-entry gateway combining all required checks into a single screen could reduce friction and navigation complexity. Gate ensures design is informed by the complete Arc 5 feature set.
+
+**Scope**
+- Explore combining SI-01 and PT-05 into a single pre-entry gateway screen
+- Map decision points and information needs for the combined flow
+- Propose structural changes; not a committed sprint item until gate clears
+
+**Acceptance Criteria**
+- UX exploration document produced
+- Combined flow mapped with clear decision points
+- Gate condition (Arc 5 fully complete) verified before commencing
+
+---
+
+### BLG-FE-55 — Mobile responsiveness baseline assessment
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Quality
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20260522-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035, 3-cycle cap)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Arc 5 fully complete (feature set stabilised — SI-02, SI-04, SI-05 all shipped).
+
+**Problem**
+No formal mobile responsiveness testing has been performed. The most frequently used views (positions, screener, trade plan form, Red Flag Journal) have been built for desktop-first usage. Assessing mobile responsiveness after Arc 5 closes the feature set provides a stable baseline before any mobile polish work.
+
+**Scope**
+- Identify most-used views from user behaviour observation
+- Assess mobile responsiveness for each identified view
+- Produce assessment report with severity-ranked findings
+
+**Acceptance Criteria**
+- Mobile responsiveness assessment report produced
+- Views assessed: at minimum positions, screener, trade plan form, Red Flag Journal
+- Gate condition verified before commencing
+
+---
+
 ## 4. Backend & Data Backlog
 
-
----
-
-*BLG-AI-02 (Model version contract for AI Journal) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
-
----
-
-*BLG-AI-03 (AI Journal Summarisation quarterly review cadence) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
-
----
-
-*BLG-BE-10 (Fix sector/industry data dropped in screener batch) — ✅ COMPLETE v3.9 — ST-02, cycle: 2026-05-21__release-v3.9*
-
----
-
-*BLG-BE-11 (Remove DAY from ticker universe — invalid Yahoo Finance symbol) — ✅ COMPLETE v3.9 — ST-03, cycle: 2026-05-21__release-v3.9*
-
----
-
-*BLG-BE-12 (Add company_name column to ticker universe) — ✅ COMPLETE v3.9 — ST-06, cycle: 2026-05-21__release-v3.9*
 
 ---
 
@@ -1012,32 +835,6 @@ Trade plan schema has grown incrementally. If the schema continues to change at 
 - `schema_version` field present on all trade plan records
 - Read path applies correct field defaults for legacy records
 - Gate condition (≥3 new fields post v3.4) verified by Product Owner before sprint planning
-
----
-
-### BLG-BE-15 — Validate ticker symbol on add (sector/industry lookup)
-**Priority:** P1 (High)
-**Type:** Backend Engineering
-**Owner:** Head of Backend Engineering
-**Source:** User request — 2026-05-22
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v4.0
-**Status: ✅ COMPLETE — v4.0 — ST-05 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
-
-**Problem**
-When a user adds a ticker symbol and market to the universe, no validation is performed to confirm the ticker actually exists. Any arbitrary string can be saved, leading to junk entries that silently produce empty screener results or data fetch errors. Validating sector and industry at add-time gives immediate feedback and prevents invalid tickers from polluting the universe.
-
-**Scope**
-- On ticker add (POST `/tickers` or equivalent), call the market data provider (Yahoo Finance) to fetch sector and industry for the submitted symbol+market
-- If the lookup returns no data or raises an error, reject the request with a clear 400/422 response and message (e.g. "Ticker XXXX not found — please check the symbol and market")
-- If the lookup succeeds, optionally auto-populate sector/industry fields from the returned data
-- Frontend to surface the rejection error inline on the add-ticker form
-
-**Acceptance Criteria**
-- Submitting a non-existent ticker symbol returns an error response and the ticker is not saved
-- Submitting a valid ticker returns success; sector and industry are confirmed present
-- Error message displayed to user is specific and actionable (not a generic 500)
-- Existing tickers already in the universe are unaffected
 
 ---
 
@@ -1123,35 +920,6 @@ SI-02 (drift detection) and SI-04 (strategy version comparison) will add analyti
 - If background layer recommended: ADR filed and input to SI-02 sprint planning
 - Gate condition verified before sprint planning
 
-### BLG-BE-19 — Base Gemini Flash API wiring — thesis generation service + endpoint
-**Priority:** P1 (High)
-**Type:** Backend Engineering / Frontend
-**Owner:** Head of Backend Engineering
-**Source:** Session observation 2026-05-22 — BLG-FEAT-24 marked complete v3.8 but Gemini not wired into codebase; prerequisite for BLG-GOV-35 and BLG-OPS-26
-**Effort:** S (~1 day)
-**Provisional-Target:** v4.0
-**Status: ✅ COMPLETE — v4.0 — ST-12 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
-
-**Problem**
-BLG-FEAT-24 (AI thesis generation) was marked complete in v3.8 but no Gemini code exists in the codebase — no `google-generativeai` dependency, no env var, no service, no endpoint. BLG-GOV-35 (Gemini audit trail) and BLG-OPS-26 (cost tracking) both instrument Gemini API calls; they have nothing to build on until the base wiring exists. This is a blocking prerequisite for both v4.0 EPIC-03 Sprint 2 stories.
-
-**Scope**
-- Add `google-generativeai` to `backend/requirements.txt`
-- Wire `GEMINI_API_KEY` env var (Render + local `.env`)
-- Create `backend/services/gemini_service.py` with `generate_setup_thesis(ticker, signal_data, plan_data) -> dict` using `gemini-1.5-flash`; returns `{thesis, model_version, prompt_version}` or graceful error
-- Add `POST /trade-plans/{plan_id}/generate-thesis` endpoint in `backend/routers/trade_plans.py`
-- Frontend: "Generate Thesis" button on TradePlan page that calls the endpoint and populates `setup_thesis` field
-
-**Acceptance Criteria**
-- `google-generativeai` present in `requirements.txt`
-- `GEMINI_API_KEY` env var documented in `.env.example`
-- `POST /trade-plans/{plan_id}/generate-thesis` returns `{thesis, model_version, prompt_version}` when key is set
-- Returns graceful error (not 500) when `GEMINI_API_KEY` is absent
-- Frontend button triggers generation and populates `setup_thesis` textarea
-- New endpoint registered in `backend/routers/test.py` and `docs/reference/openapi.yaml`
-
----
-
 ### BLG-BE-20 — SI-02 background job architecture design
 **Priority:** P2 (Medium)
 **Type:** Backend / Architecture
@@ -1203,43 +971,82 @@ GET /analytics/arc5-compliance (shipped v4.0) and future Arc 6 analytics endpoin
 
 ---
 
+### BLG-BE-22 — Claude API prompt caching implementation assessment
+**Priority:** P2 (Medium)
+**Type:** Backend / Performance Optimisation
+**Owner:** Head of Backend Engineering
+**Source:** IDEA-backend-engineering-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~1 day)
+**Provisional-Target:** v4.2
+
+**Problem**
+Anthropic SDK supports prompt caching for large, static prompt components. The thesis generation system prompt is a fixed structure repeated on every API call. If the system prompt qualifies for caching, cache hits would reduce input token costs and latency. No assessment has been done to determine cache eligibility or expected cost reduction.
+
+**Scope**
+- Assess thesis generation prompt structure for caching eligibility (>1024 tokens, static component)
+- Estimate expected cache hit rate based on call patterns
+- Estimate cost reduction from caching
+- Produce assessment document; input to BLG-OPS-30 cost review
+
+**Acceptance Criteria**
+- Caching eligibility assessed (yes/no with evidence)
+- If eligible: expected cache hit rate and cost reduction estimated
+- Assessment document produced and reviewed by Head of Engineering
+
+---
+
+### BLG-BE-23 — SI-02 query index pre-assessment
+**Priority:** P1 (High)
+**Type:** Backend / Pre-Sprint Schema Work
+**Owner:** Head of Engineering; Head of Backend Engineering
+**Source:** IDEA-head-of-engineering-20260527-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** BLG-GOV-51 (SI-02 database query performance pre-assessment) result available.
+
+**Problem**
+BLG-GOV-51 assesses SI-02 drift detection query performance. Once results are available, required database indexes must be identified and a migration plan produced. Missing indexes at sprint execution would create blocking mid-sprint schema work. Having the index list and migration plan before sprint planning seals prevents this.
+
+**Scope**
+- Using BLG-GOV-51 EXPLAIN ANALYZE results, identify required indexes for drift detection queries
+- Produce migration plan: index definitions, estimated creation cost, migration timing
+- Input to SI-02 sprint planning capacity estimate
+
+**Acceptance Criteria**
+- Required indexes identified (or confirmed none needed)
+- Migration plan produced for any required indexes
+- Gate condition (BLG-GOV-51 complete) verified before commencing
+
+---
+
+### BLG-BE-24 — Red flag events retention policy
+**Priority:** P2 (Medium)
+**Type:** Backend / Data Lifecycle
+**Owner:** Head of Backend Engineering; Infrastructure & Operations Owner
+**Source:** IDEA-backend-engineering-20260522-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035, 3-cycle cap)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** red_flag_events table 6+ months old (post 2026-11-22).
+
+**Problem**
+The red_flag_events table has no defined data retention policy. As override events accumulate over months, query performance may degrade without indexes and archiving strategy. Defining a retention policy before the table requires unplanned maintenance is standard operational hygiene.
+
+**Scope**
+- Define minimum required event fields for retention
+- Define archiving cadence (e.g. events older than 12 months archived to cold storage)
+- Define query performance thresholds that trigger archiving review
+- Document policy in ops notes
+
+**Acceptance Criteria**
+- Retention policy document produced
+- Archiving cadence defined
+- Gate condition (table 6+ months old) verified before commencing
+
+---
+
 ## 5. QA & Test Automation Backlog
-
----
-
-*BLG-QA-18 (Screener accuracy test protocol) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
-
----
-
-*BLG-QA-14 (Author Playwright E2E test suite for entry checklist) — ✅ COMPLETE v3.3 — archived to backlog_archive.md 2026-05-13*
-
----
-
-*TEST-GAP-ST14 (AI audit service unit tests) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
-
----
-
-*BLG-QA-15 (PT-02 research view acceptance test protocol) — ✅ COMPLETE v3.3 — archived to backlog_archive.md 2026-05-13*
-
----
-
-*BLG-QA-16 (Research endpoint integration test coverage) — ✅ COMPLETE v3.3 — archived to backlog_archive.md 2026-05-13*
-
----
-
-*BLG-QA-17 (Research view test scenario library) — ✅ COMPLETE v3.3 — archived to backlog_archive.md 2026-05-13*
-
----
-
-*TEST-GAP-EPIC-03-v33 (SC-RV-18 and SC-RV-19 Playwright coverage) — ✅ COMPLETE v3.6 — archived to backlog_archive.md 2026-05-17*
-
----
-
-*BLG-QA-19 (Research view regression test protocol) — ✅ COMPLETE v3.5 — archived to backlog_archive.md 2026-05-15*
-
----
-
-*BLG-QA-20 (Consolidate database stub files into shared pytest conftest fixture — session-scoped stub) — ✅ COMPLETE v3.7 — ST-09, cycle: 2026-05-18__release-v3.7*
 
 ---
 
@@ -1335,30 +1142,6 @@ ST-01 AC-04 ("screener run completes without >5% OHLCV failures under normal YF 
 - Integration test runs without a live Yahoo Finance connection
 - Test verifies: 401 first call → crumb refresh → sleep called once → 200 second call → valid OHLCV result returned
 - Passes in CI
-
----
-
-### BLG-QA-25 — Red Flag Journal E2E Playwright test (SI-01→SI-03 integration path)
-**Priority:** P2 (Medium)
-**Type:** QA / Test Coverage
-**Owner:** QA & Testing Owner; QA Lead
-**Source:** IDEA-qa-testing-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
-**Effort:** S (~1 day)
-**Provisional-Target:** v4.0
-**Status: ✅ COMPLETE — v4.0 — ST-03 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
-
-**Problem**
-SC-RFJ-01/02/03 (v3.9) cover RFJ component-level display. The SI-01 → SI-03 integration path — where a SI-01 override event is written and subsequently appears in the Red Flag Journal — is not tested end-to-end. This integration path is the primary produce of the Arc 5 data pipeline and is critical to validate before SI-02/SI-04/SI-05 extend the event model.
-
-**Scope**
-- Playwright E2E test: navigate to a position → trigger pre-entry validation → acknowledge override → navigate to Red Flag Journal → verify override event is present with correct metadata (type, timestamp, rule breached)
-- Cover: filter by event type → verify filtered results contain the override event
-- Integrate into existing Playwright test suite
-
-**Acceptance Criteria**
-- Full SI-01→SI-03 integration path covered by Playwright test
-- Test passes in CI
-- Override event metadata (type, timestamp, rule) verified in RFJ display
 
 ---
 
@@ -1604,6 +1387,77 @@ ST-09 AC-05 (POST /ai/check-daily-cost staging verification) was designated stag
 
 ---
 
+### BLG-QA-36 — Arc 5 end-to-end integration test specification
+**Priority:** P2 (Medium)
+**Type:** QA / Integration Testing
+**Owner:** Director of Quality; QA Lead
+**Source:** IDEA-director-of-quality-20260527-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** M (~2 days)
+**Provisional-Target:** v4.2
+
+**Problem**
+Existing Playwright tests cover per-feature ACs (SI-01, SI-03, Arc5ComplianceSection) but no formal integration test spec covers the complete Arc 5 compliance pipeline: SI-01 pre-entry validation → override acknowledgement → SI-03 red flag event written → Arc5ComplianceSection metrics update. Cross-feature integration failures would not be caught by current per-feature tests.
+
+**Scope**
+- Define formal cross-feature integration test spec for Arc 5 compliance pipeline
+- Cover: SI-01 → SI-03 data flow, Arc5ComplianceSection metric source, override chain
+- Produce test spec document with observable assertions for each integration point
+- Identify Playwright automation candidates vs manual verification steps
+
+**Acceptance Criteria**
+- Integration test spec document produced
+- Observable assertions defined for each integration point
+- Reviewed by Director of Quality and QA Lead
+
+---
+
+### BLG-QA-37 — Claude API Playwright mock strategy definition
+**Priority:** P1 (High)
+**Type:** QA / Test Infrastructure
+**Owner:** QA & Testing Owner; Head of Backend Engineering
+**Source:** IDEA-qa-testing-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~1 day)
+**Provisional-Target:** v4.2
+
+**Problem**
+POST /trade-plans/{plan_id}/generate-thesis now calls Claude API in production. No mock strategy has been defined for CI/Playwright tests. Without a mock, CI tests may make real API calls (incurring cost and introducing flakiness) or tests may be skipped entirely. A defined mock strategy ensures reproducible, cost-free CI test execution.
+
+**Scope**
+- Evaluate mock strategies: router-level fixture mock vs ANTHROPIC_API_KEY=mock env var vs test-mode response stub
+- Select and document the preferred strategy
+- Produce implementation guide for applying the strategy to existing Playwright tests for thesis generation
+
+**Acceptance Criteria**
+- Mock strategy selected and documented
+- Implementation guide produced
+- Reviewed by QA & Testing Owner and Head of Backend Engineering
+
+---
+
+### BLG-QA-38 — CI pipeline execution time baseline measurement
+**Priority:** P2 (Medium)
+**Type:** QA / Test Infrastructure
+**Owner:** QA Lead
+**Source:** IDEA-qa-lead-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** v4.2
+
+**Problem**
+BLG-QA-27 gates on CI pipeline execution time > 5 minutes sustained across 3+ cycles. No baseline measurement exists. This item performs the gate-check measurement: measure total CI execution time for the current test suite and determine whether BLG-QA-27 gate clears.
+
+**Scope**
+- Measure total CI pipeline execution time for current test suite (3 sample runs)
+- Record measurement in QA notes
+- If > 5 minutes sustained: flag BLG-QA-27 gate as cleared for next sprint planning
+- If under threshold: record measurement and defer BLG-QA-27
+
+**Acceptance Criteria**
+- Baseline measurement recorded (3 sample runs, p50 noted)
+- Gate status determination for BLG-QA-27 documented
+- Reviewed by QA Lead
+
+---
+
 ## 6. Operations & Infrastructure Backlog
 
 ---
@@ -1631,8 +1485,6 @@ Twenty-two endpoints shipped in v2.8/v2.9/v3.0/v3.1/v3.4/v3.5 are absent from `d
 **Acceptance Criteria**
 - All 23 endpoints have p50 and p95 latency entries in the baseline document
 - Entries consistent with existing baseline measurement methodology
-
----
 
 ---
 
@@ -1863,58 +1715,6 @@ Every delivery verification run begins with manual staging health checks. An aut
 
 ---
 
-### BLG-OPS-26 — Gemini API cost tracking
-**Priority:** P2 (Medium)
-**Type:** Operations / Cost Monitoring
-**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
-**Source:** IDEA-finops-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
-**Effort:** S (~1 day)
-**Provisional-Target:** v4.0
-**Status: ✅ COMPLETE — v4.0 — ST-08 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
-
-**Problem**
-BLG-FEAT-24 (AI thesis generation, shipped v3.8) uses the Gemini API in production with no cost monitoring. The Gemini free tier is not unlimited; tracking monthly call volume and projected costs provides early warning of approaching tier boundaries before unexpected billing occurs.
-
-**Scope**
-- Instrument Gemini API call count per day/week (count of `generate_content` requests)
-- Log call count to structured log or ops metrics table
-- Monthly aggregate report: call count, projected monthly total, tier proximity
-- Alert threshold: > 80% of free-tier monthly limit
-
-**Acceptance Criteria**
-- Gemini API call count logged per request
-- Monthly aggregate computable
-- Alert threshold defined and documented
-- No change to BLG-FEAT-24 user-facing behaviour
-
----
-
-### BLG-OPS-27 — Automated staging re-deployment on main merge
-**Priority:** P2 (Medium)
-**Type:** Operations / CI/CD
-**Owner:** Infrastructure & Operations Owner
-**Source:** IDEA-infra-ops-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v4.0
-**Status: ✅ COMPLETE — v4.0 — ST-09 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
-
-**Problem**
-Staging environment is currently manually re-synced after each main branch merge. This introduces risk of forgotten staging updates and adds lag to delivery verification runs. Automating the staging re-deployment trigger on main merges removes the manual step and ensures staging is always current.
-
-**Scope**
-- Configure Render staging auto-deploy trigger on main branch push
-- Scope: trigger only when backend or frontend source files change (not on docs/governance-only commits) to conserve free-tier build minutes
-- Confirm free-tier build minute impact is acceptable
-- Coordinate with BLG-OPS-25 (smoke test) which depends on this deploy hook
-
-**Acceptance Criteria**
-- Staging auto-deploys on main merge for code changes
-- Documentation-only commits do not trigger a deploy
-- Free-tier build minute impact assessed and documented
-- BLG-OPS-25 dependency satisfied (deploy hook available for smoke test integration)
-
----
-
 ### BLG-OPS-28 — Staging deploy live verification (ST-09 staging-only AC)
 **Priority:** P2 (Medium)
 **Type:** Operations / CI/CD
@@ -1937,79 +1737,6 @@ ST-09 (BLG-OPS-27) implements the staging deploy workflow and deploy hook mechan
 - Code-change merge triggers Render staging deploy (confirmed in Render dashboard)
 - Docs-only commit does not trigger deploy (path filter verified)
 - Results recorded as staging sign-off evidence
-
----
-
-### BLG-OPS-29 — Add v4.0 new endpoints to api_performance_baseline.md re-run
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P3 (Low)
-**Type:** Operations / Performance Baseline
-**Owner:** Infrastructure & Operations Owner
-**Source:** Post-ship closure 2026-05-22__release-v4.0 — endpoint coverage drift check
-**Effort:** S (~1 day)
-**Provisional-Target:** v4.1
-
-**Problem**
-`docs/ops/api_performance_baseline.md` was last updated at v2.7 (Supavisor re-run). v4.0 introduced two new endpoints not present in the baseline: GET /analytics/arc5-compliance (ST-01) and POST /trade-plans/{plan_id}/generate-thesis (ST-12). These endpoints have no p50/p95 measurement, no HTTP status expectation, and no ⚠️ flag threshold. Additional endpoints added since v2.7 may also be absent.
-
-**Scope**
-- Run api_performance_baseline measurement against staging environment
-- Include all endpoints in openapi.yaml not yet in the baseline table
-- Specifically confirm GET /analytics/arc5-compliance and POST /trade-plans/{plan_id}/generate-thesis are measured
-- Flag any p95 > 500ms per existing methodology
-- Update docs/ops/api_performance_baseline.md version header and Last Updated date
-
-**Acceptance Criteria**
-- All openapi.yaml endpoints present in api_performance_baseline.md measurement table
-- p50/p95 measurements recorded for GET /analytics/arc5-compliance and POST /trade-plans/{plan_id}/generate-thesis
-- Document version bumped and Last Updated set to run date
-
----
-
-*BLG-OPS-14 (AI Journal monitoring metrics) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
-*BLG-OPS-12 (External API health check extension) — ✅ COMPLETE v3.0 — archived to backlog_archive.md 2026-04-28*
-
----
-
-*BLG-OPS-15 (Research endpoint latency monitoring) — ✅ COMPLETE v3.3 — archived to backlog_archive.md 2026-05-13*
-
----
-
-*BLG-OPS-16 (Remove tracked backend/__pycache__ files from git + .gitignore) — ✅ COMPLETE v3.7 — ST-10, cycle: 2026-05-18__release-v3.7*
-
----
-
-*BLG-SEC-06 (Trade plan data sensitivity classification) — ✅ COMPLETE v3.3 — archived to backlog_archive.md 2026-05-13*
-
----
-
-*BLG-SEC-05 (Alpaca API key rotation policy and credential audit) — ✅ COMPLETE v3.2 — archived to backlog_archive.md 2026-05-09*
-
----
-
-### BLG-OPS-30 — Gemini API usage first monthly review
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P1 (High)
-**Type:** Operations / Cost Management
-**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
-**Source:** IDEA-finops-20260525-01 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v4.1
-
-**Problem**
-Gemini Flash API (shipped v4.0, ST-12) is now live for thesis generation. BLG-OPS-26 (Gemini API cost tracking) was added in IW-20260522-01. The first monthly review should be conducted ~30 days after v4.0 ship to: verify gemini_audit_log is populating correctly, review actual token consumption and cost, and set a monthly review cadence going forward.
-
-**Scope**
-- Run first monthly review of gemini_audit_log: request count, total tokens, estimated cost
-- Verify cost tracking accuracy against Gemini API billing dashboard
-- Establish review cadence (monthly scheduled review added to governance calendar)
-- Document findings in a brief ops note
-
-**Acceptance Criteria**
-- gemini_audit_log reviewed: data integrity confirmed
-- Cost estimate produced for first 30 days
-- Monthly review cadence established and documented
-- Findings reviewed by FinOps & Resource Architect
 
 ---
 
@@ -2037,30 +1764,6 @@ Render (production hosting platform) provides application logs with a default re
 
 ---
 
-### BLG-OPS-32 — Trade plan P&L attribution gate check
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P2 (Medium)
-**Type:** Operations / Data Quality
-**Owner:** Financial Reporting & Records Owner; Infrastructure & Operations Owner
-**Source:** IDEA-financial-reporting-20260525-01 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v4.1
-
-**Problem**
-Monthly P&L reports attribute P&L to closed trades. Trade plans (Arc 2, shipped v3.1) link to positions at entry. Verifying that P&L attribution correctly reflects which positions had trade plans (vs. pre-Arc-2 positions without plans) is a data quality gate check before BLG-FEAT-38 (Arc 5 compliance metrics in P&L) and BLG-FEAT-42 can produce accurate compliance-linked P&L analysis.
-
-**Scope**
-- Query: trades with plan_id vs. trades without plan_id in closed trade history
-- Confirm P&L report handles both cases correctly (plan-linked vs. legacy trades)
-- Flag any attribution anomalies for remediation before compliance integration
-
-**Acceptance Criteria**
-- Plan-linked vs. non-plan trade count confirmed
-- P&L attribution verified accurate for both trade types
-- Any anomalies documented and flagged to Product Owner
-
----
-
 ### BLG-OPS-33 — Staging environment parity audit
 **Priority:** P2 (Medium)
 **Type:** Operations / Quality
@@ -2070,6 +1773,7 @@ Monthly P&L reports attribute P&L to closed trades. Trade plans (Arc 2, shipped 
 **Provisional-Target:** Unscheduled
 
 **Gate criteria:** v4.1 sprint planning complete — staging parity audit scope depends on which new endpoints are included in v4.1.
+*⚡ Gate cleared 2026-05-27 — v4.1 sprint planning complete (2026-05-27__scheduled cycle inline clearance). Item ready for sprint planning.*
 
 **Problem**
 Staging environment parity with production is a delivery verification prerequisite (staging-only ACs require staging to mirror production configuration). BLG-OPS-28 (ST-09 staging-only AC) verified specific endpoints for v4.0. A systematic parity audit confirms: all v4.0 new env vars are present in staging, all new database tables exist in staging schema, and all new services (Gemini integration) are reachable in staging.
@@ -2084,32 +1788,6 @@ Staging environment parity with production is a delivery verification prerequisi
 - Parity report produced
 - All v4.0 env vars and schema confirmed in staging
 - Gate condition (v4.1 sprint planning complete) verified before commencing
-
----
-
-### BLG-OPS-34 — Gemini API daily cost threshold alert via Telegram
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P2 (Medium)
-**Type:** Operations / Cost Monitoring
-**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
-**Source:** IDEA-finops-20260525-02 — Promoted-Backlog (STEP 5 debate, modified scope) cycle 2026-05-25__scheduled (DL-034)
-**Effort:** M (~2–3 days)
-**Provisional-Target:** v4.1
-
-**Problem**
-Gemini thesis generation (shipped v4.0) incurs per-request API costs. Currently there is no automated alert if Gemini API spend exceeds a daily threshold. BLG-OPS-26 provides manual monthly cost review; BLG-OPS-34 provides automated daily threshold monitoring using the existing Telegram notification infrastructure (shipped v2.4).
-
-**Scope**
-- Configurable daily Gemini spend threshold (default: $1.00/day)
-- Daily check of gemini_audit_log: sum estimated_cost_usd for current day
-- If threshold exceeded: send Telegram alert with daily total and request count
-- No new UI — Telegram notification only (existing infrastructure)
-
-**Acceptance Criteria**
-- Daily threshold check implemented (scheduled task or startup check)
-- Telegram alert fires when daily spend exceeds configurable threshold
-- Threshold configurable via env var
-- Test coverage: unit test for threshold logic; staging verification
 
 ---
 
@@ -2134,41 +1812,155 @@ POST /ai/check-daily-cost was added in v4.1 (ST-09) and is present in openapi.ya
 
 ---
 
+### BLG-OPS-36 — Claude API usage first monthly review
+**Priority:** P1 (High)
+**Type:** Operations / Cost Monitoring
+**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
+**Source:** IDEA-finops-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~1 day)
+**Provisional-Target:** v4.2
+
+**Problem**
+v4.1 switched thesis generation from Gemini to Claude API. No cost monitoring is in place for Claude API usage. BLG-OPS-30 (originally Gemini cost tracking) should be updated to track Claude API costs. The first monthly review of actual Claude API call volume and cost establishes the monitoring baseline and alert threshold.
+
+**Scope**
+- Review actual Claude API call volume and cost from claude_audit_log (or equivalent) data
+- Establish monitoring cadence (monthly) and cost alert threshold
+- Update BLG-OPS-30 scope to reflect Claude API instead of Gemini
+- Produce first monthly review report
+
+**Acceptance Criteria**
+- First monthly review report produced
+- Monthly cadence and alert threshold defined
+- BLG-OPS-30 scope update confirmed
+
+---
+
+### BLG-OPS-37 — Anthropic API tier cost assessment
+**Priority:** P2 (Medium)
+**Type:** Operations / Cost Planning
+**Owner:** FinOps & Resource Architect
+**Source:** IDEA-finops-20260527-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** BLG-OPS-36 (Claude API first monthly review) complete.
+
+**Problem**
+Anthropic API pricing tiers differ from Gemini. Without a tier cost assessment, there is no defined threshold at which a paid-tier upgrade becomes cost-effective. BLG-OPS-36 provides the usage data; this item performs the tier comparison and defines the decision threshold.
+
+**Scope**
+- Review Anthropic API pricing tiers vs actual usage from BLG-OPS-36 review
+- Define usage threshold at which paid-tier upgrade is cost-effective
+- Document decision framework and feed to FinOps monitoring
+
+**Acceptance Criteria**
+- Tier comparison document produced
+- Usage threshold for upgrade decision defined
+- Gate condition (BLG-OPS-36 complete) verified before commencing
+
+---
+
+### BLG-OPS-38 — Claude API log hygiene policy
+**Priority:** P2 (Medium)
+**Type:** Operations / Security Hygiene
+**Owner:** Infrastructure & Operations Owner; Cybersecurity & Trust Lead
+**Source:** IDEA-infra-ops-20260527-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v4.2
+
+**Problem**
+Render application logs for Claude API calls may inadvertently capture API keys, full prompt text, or sensitive data. No log level guidance exists for Claude API trace events. With SI-02 adding more AI-adjacent queries in future, establishing log hygiene policy pre-SI-02 is operationally prudent.
+
+**Scope**
+- Confirm Render logs do not capture ANTHROPIC_API_KEY or full prompt text
+- Define log level for Claude API trace events (INFO for request metadata; DEBUG for full prompt — never in production)
+- Define log retention policy pre-SI-02
+- Document in ops notes
+
+**Acceptance Criteria**
+- Log hygiene policy document produced
+- API key and full prompt exclusion from production logs confirmed
+- Log retention policy defined
+
+---
+
+### BLG-OPS-39 — Claude API thesis generation latency baseline
+**Priority:** P2 (Medium)
+**Type:** Operations / Performance Baseline
+**Owner:** Head of Engineering; Infrastructure & Operations Owner
+**Source:** IDEA-head-of-engineering-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~1 day)
+**Provisional-Target:** v4.2
+
+**Problem**
+POST /trade-plans/{plan_id}/generate-thesis switched from Gemini to Claude API in v4.1. No p50/p95 latency baseline exists for the Claude-backed endpoint. Without a baseline, future AI feature additions (PO-02, Arc 4) cannot be regression-tested for latency impact.
+
+**Scope**
+- Establish p50/p95 latency baseline for POST /trade-plans/{plan_id}/generate-thesis (Claude API)
+- Record in api_performance_baseline.md
+- Define regression threshold (e.g. p95 > 2× baseline triggers review)
+
+**Acceptance Criteria**
+- p50/p95 latency measured (minimum 10 sample calls)
+- Baseline recorded in api_performance_baseline.md
+- Regression threshold defined
+
+---
+
+### BLG-OPS-40 — Arc 5 hosting cost projection
+**Priority:** P2 (Medium)
+**Type:** Operations / Cost Planning
+**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
+**Source:** IDEA-finops-20260522-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035, 3-cycle cap)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-02 sprint planning initiated.
+
+**Problem**
+SI-02 drift detection will add recurring background analysis queries. The current Render compute tier was sized for Arc 1–4 workloads. Before SI-02 sprint planning, an assessment of whether the additional Arc 5 load is within the current tier is needed to prevent mid-sprint resource surprises.
+
+**Scope**
+- Estimate additional compute load from SI-02 background queries (query frequency, data volume)
+- Compare against current Render compute tier headroom
+- Recommendation: current tier adequate or upgrade required before SI-02 ships
+
+**Acceptance Criteria**
+- Load estimate produced with data and assumptions
+- Tier adequacy determination made
+- Gate condition (SI-02 sprint planning initiated) verified before commencing
+
+---
+
+### BLG-OPS-41 — Red flag events table archiving strategy
+**Priority:** P2 (Medium)
+**Type:** Operations / Data Lifecycle
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260522-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035, 3-cycle cap)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** red_flag_events table 6+ months old (post 2026-11-22).
+
+**Problem**
+The red_flag_events table has no defined retention or archiving strategy. As override events accumulate, the table will grow. Without an archiving policy, the table may require unplanned manual intervention. Defining the strategy before the table reaches significant size is operationally prudent.
+
+**Scope**
+- Define: retention window (e.g., keep 12 months active; archive older rows to cold storage)
+- Define: archiving trigger (size-based vs age-based) and procedure
+- Document strategy in ops notes; complement BLG-BE-24 retention policy
+
+**Acceptance Criteria**
+- Archiving strategy document produced
+- Retention window and trigger defined
+- Gate condition (table 6+ months old) verified before commencing
+
+---
+
 ## 7. Spec Debt Backlog
 
 *BLG-SPEC-20 deferred to §9 (DL-023, 2026-04-24).*
-
----
-
-*BLG-SPEC-24 (PT-02 research view canonical spec) — ✅ COMPLETE v3.3 — archived to backlog_archive.md 2026-05-13*
-
----
-
-*BLG-SPEC-25 (PT-02 research endpoint API contract) — ✅ COMPLETE v3.3 — archived to backlog_archive.md 2026-05-13*
-
----
-
-*BLG-SPEC-26 (Research view data source provenance spec) — ✅ COMPLETE v3.3 — archived to backlog_archive.md 2026-05-13*
-
----
-
-*BLG-SPEC-27 (Research endpoint HTTP error code differentiation) — ✅ COMPLETE v3.6 — archived to backlog_archive.md 2026-05-17*
-
----
-
-*BLG-SPEC-28 (Update trade_plan.md §6.2 entry checklist field references) — ✅ COMPLETE v3.4 — archived to backlog_archive.md 2026-05-14*
-
----
-
-*BLG-SPEC-29 (Correct grace-period-alert ux_spec.md §5 dismiss storage to sessionStorage) — ✅ COMPLETE v3.5 — archived to backlog_archive.md 2026-05-15*
-
----
-
-*BLG-SPEC-30 (Correct stop-management-workflow ux_spec.md §4.4 stop-update HTTP verb to PATCH) — ✅ COMPLETE v3.5 — archived to backlog_archive.md 2026-05-15*
-
----
-
-*BLG-SPEC-31 (Review React Query v5 onSuccess migration impact across codebase) — ✅ COMPLETE v3.5 — archived to backlog_archive.md 2026-05-15*
 
 ---
 
@@ -2194,59 +1986,6 @@ Alpaca and Yahoo Finance are currently the only external API integrations, each 
 - Template document produced and filed
 - At minimum, the triggering (second) external API contract conforms to the template
 - Gate condition verified by Head of Specs Team before sprint planning
-
----
-
-### BLG-SPEC-33 — SI-03 Red Flag Journal API contract document
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P1 (High)
-**Type:** Spec Debt
-**Owner:** API Contracts Documentation Owner
-**Source:** IDEA-api-contracts-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
-**Effort:** S (~1 day)
-**Provisional-Target:** v4.0
-
-**Problem**
-`GET /portfolio/red-flag-journal` shipped v3.9 (SI-03) without a formal API contract document in `docs/specs/api_contracts/`. SI-04 and SI-05 will extend or reference the Red Flag Journal endpoint; without a contract, downstream implementations lack an authoritative spec for filter parameters, pagination schema, response structure, and error codes.
-
-**Scope**
-- Author `docs/specs/api_contracts/red_flag_journal.md`
-- Document: endpoint URL, HTTP method, authentication requirement, query parameters (date range, event type, severity when BLG-BE-16 ships), pagination schema, response fields, error codes
-- Register in `docs/reference/openapi.yaml` per CLAUDE.md §2
-- Use `## METHOD /path` heading format per CLAUDE.md §2
-
-**Acceptance Criteria**
-- API contract document produced and filed
-- Contract registered in openapi.yaml with correct heading format
-- All filter parameters and response fields documented
-- Reviewed by Head of Specs Team and API Contracts Documentation Owner
-
----
-
-### BLG-SPEC-34 — SI-01 Pre-Entry Validation API contract document
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P1 (High)
-**Type:** Spec Debt
-**Owner:** API Contracts Documentation Owner
-**Source:** IDEA-api-contracts-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
-**Effort:** S (~1 day)
-**Provisional-Target:** v4.0
-
-**Problem**
-`GET /portfolio/pre-entry-validation` shipped v3.8 (SI-01) without a formal API contract document. SI-02 and SI-05 will reference the validation rule taxonomy and response schema; without a contract, there is no authoritative source for rule enumeration, response structure, or override acknowledgement path.
-
-**Scope**
-- Author `docs/specs/api_contracts/pre_entry_validation.md`
-- Document: endpoint URL, HTTP method, query parameters, response fields (per-rule pass/fail, override_required), override acknowledgement path, error codes
-- Enumerate all 5 validation rules per strategy_rules.md v1.4 §4.2
-- Register in `docs/reference/openapi.yaml`
-
-**Acceptance Criteria**
-- API contract document produced and filed
-- All 5 validation rules documented with pass/fail conditions
-- Override acknowledgement path specified
-- Contract registered in openapi.yaml
-- Reviewed by Head of Specs Team
 
 ---
 
@@ -2331,121 +2070,57 @@ SI-02 (Behavioural Drift Detection) requires per-trade data fields (regime_at_en
 
 ---
 
-### BLG-SPEC-38 — Gemini thesis endpoint API contract
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
+### BLG-SPEC-41 — SI-02 drift score metric definition
 **Priority:** P1 (High)
-**Type:** Spec Debt / API Contract
-**Owner:** API Contracts Documentation Owner; Head of Specs Team
-**Source:** IDEA-api-contracts-20260525-02 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
+**Type:** Spec / Metrics Pre-work
+**Owner:** Metrics Definitions & Analytics Canonical Owner; Head of Specs Team
+**Source:** IDEA-metrics-analytics-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
 **Effort:** S (~1 day)
-**Provisional-Target:** v4.1
+**Provisional-Target:** Unscheduled
 
-**Gate criteria:** BLG-SPEC-33 (SI-03 Red Flag Journal API contract) closed — Gemini thesis endpoint contract follows SI-03 contract closure to ensure consistent contract format.
+**Gate criteria:** SI-02 sprint planning imminent.
 
 **Problem**
-POST /trade-plans/{plan_id}/generate-thesis (shipped v4.0, ST-12) has no formal API contract document in docs/specs/api_contracts/. BLG-GOV-55 (API contract same-sprint delivery rule) will prevent future recurrence; BLG-SPEC-38 addresses the existing debt from v4.0. Additionally: CLAUDE.md §2 requires every new API endpoint to be added to openapi.yaml in the same commit as the contract — this item will verify the v4.0 openapi.yaml entry is complete.
+SI-02 will surface a drift detection score to the user. The metric definition (format, rolling window, threshold bands, warning states, SI-05 digest integration) must be canonically defined before sprint planning to prevent mid-sprint metric design decisions that delay frontend implementation. This definition feeds BLG-SPEC-37 (schema) and BLG-FE-52 (component pre-design).
 
 **Scope**
-- Write formal API contract document for POST /trade-plans/{plan_id}/generate-thesis
-- Cover: request schema (plan_id path param), response schema ({thesis, model_version, prompt_version}), error cases (missing key, invalid plan_id, Gemini error)
-- Verify corresponding openapi.yaml entry is complete and at ## level
-- Filed in docs/specs/api_contracts/
+- Define user-facing drift detection score format: % deviation vs raw count vs index
+- Define rolling window and threshold bands (green/amber/red states)
+- Define warning state triggers and SI-05 weekly digest integration points
+- Produce canonical metric definition document
 
 **Acceptance Criteria**
-- API contract document produced at docs/specs/api_contracts/
-- Endpoint heading at ## level (OpenAPI drift gate compliant)
-- openapi.yaml entry verified complete
-- Reviewed by API Contracts Documentation Owner and Head of Specs Team
-- Gate condition (BLG-SPEC-33 closed) verified before commencing
+- Metric definition document produced covering format, window, thresholds, and SI-05 integration
+- Reviewed by Metrics Definitions & Analytics Canonical Owner and Head of Specs Team
+- Gate condition (SI-02 sprint planning imminent) verified before commencing
 
 ---
 
-### BLG-SPEC-39 — SI-02 data model gap analysis
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P1 (High)
-**Type:** Spec / Data Model
-**Owner:** Data Model & Domain Schema Owner; Head of Specs Team
-**Source:** IDEA-data-model-20260525-02 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v4.1
-
-**Problem**
-SI-02 (Behavioural Drift Detection) requires comparing actual trade entries against stated setup criteria — specifically: regime_at_entry, signal_type, setup_type, and entry_proximity fields. BLG-SPEC-37 defined the schema pre-definition approach (gate-conditional on sprint planning). BLG-SPEC-39 is a standalone gap analysis that can be done now to identify which fields are missing from the current trade/position data model, enabling proactive planning before SI-02 sprint planning is triggered.
-
-**Scope**
-- Review current trade, position, and trade_plan schemas for fields required by SI-02
-- Identify missing fields with: data type, source (captured at entry? derivable? new collection?), migration complexity
-- Output: gap analysis document for input to SI-02 sprint planning
-- Complements BLG-SPEC-37 (gate-conditional version); this item proceeds without gate constraint
-
-**Acceptance Criteria**
-- Gap analysis document produced
-- Missing fields enumerated with type and migration estimate
-- Reviewed by Data Model & Domain Schema Owner, Head of Specs Team, and Head of Backend Engineering before SI-02 sprint planning
-
----
-
-### BLG-SPEC-40 — Arc 5 analytics endpoint API contract
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
+### BLG-SPEC-42 — AI thesis endpoint contract update for Claude
 **Priority:** P1 (High)
 **Type:** Spec Debt / API Contract
 **Owner:** API Contracts Documentation Owner; Head of Specs Team
-**Source:** IDEA-api-contracts-20260525-01 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~1 day)
-**Provisional-Target:** v4.1
+**Source:** IDEA-api-contracts-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v4.2
 
 **Problem**
-GET /analytics/arc5-compliance (shipped v4.0, ST-01) has no formal API contract document in docs/specs/api_contracts/. The endpoint was implemented from acceptance criteria. A formal contract document enables: frontend spec alignment (BLG-FE-48), future Arc 6 extension planning (BLG-BE-21), and compliance with CLAUDE.md §2 API contract requirements.
+docs/specs/api_contracts/ai_thesis_generation.md was authored for the Gemini-backed thesis generation endpoint. v4.1 replaced Gemini with Claude API. The response schema now returns different fields (model_id, usage.input_tokens, usage.output_tokens, cache_hit). The contract must be updated to reflect the current Claude-backed implementation and openapi.yaml updated accordingly per BLG-GOV-55 rule.
 
 **Scope**
-- Write formal API contract document for GET /analytics/arc5-compliance
-- Cover: response schema (validation_pass_rate_by_rule, events_per_week, override_rate, top_rule_breach, trade_plan_adherence_rate), query params (if any), error cases
-- Verify openapi.yaml entry is complete and at ## level
-- Filed in docs/specs/api_contracts/
+- Update docs/specs/api_contracts/ai_thesis_generation.md to reflect Claude API response fields
+- Update openapi.yaml to match updated contract schema
+- Verify all field names and types match the v4.1 implementation
 
 **Acceptance Criteria**
-- API contract document produced at docs/specs/api_contracts/
-- Endpoint heading at ## level
-- openapi.yaml entry verified complete
-- Reviewed by API Contracts Documentation Owner and Head of Specs Team
+- Contract document updated with Claude API response fields
+- openapi.yaml updated and consistent with contract
+- No drift between contract and implementation for thesis generation endpoint
 
 ---
 
 ## 8. Governance Backlog
 
-*BLG-GOV-23 (scored_initiatives.md Arc 3–6 comprehensive refresh — OA-RP-05 resolved) — ✅ COMPLETE v3.7 — ST-11, cycle: 2026-05-18__release-v3.7*
-
----
-
-*BLG-GOV-24 (Add gh_issue_template.md to §14 governance table) — ✅ COMPLETE v3.8 — ST-10, cycle: 2026-05-19__release-v3.8 — archived to backlog_archive.md 2026-05-21*
-
----
-
-*BLG-GOV-19 (PT-05 entry checklist §13 compliance review) — ✅ COMPLETE v3.3 — archived to backlog_archive.md 2026-05-13*
-
----
-
-*BLG-GOV-20 (Trade plan field extension governance) — ✅ COMPLETE v3.3 — archived to backlog_archive.md 2026-05-13*
-
----
-
-*BLG-GOV-21 (Arc 4 data requirements capture) — ✅ COMPLETE v3.5 — archived to backlog_archive.md 2026-05-15*
-
----
-
-*BLG-GOV-22 (sprint_planning_prompt.md patch: shared execution_state.json ownership + multi-EPIC Positions.js conflict guidance) — ✅ COMPLETE v3.5 — archived to backlog_archive.md 2026-05-15*
-
----
-
-*BLG-GOV-18 (External API dependency risk register) — ✅ COMPLETE v3.2 — archived to backlog_archive.md 2026-05-09*
-
----
-
-*BLG-GOV-11 (Cycle artefact inventory and maintenance review) — ✅ COMPLETE v3.2 — archived to backlog_archive.md 2026-05-09*
-
----
-
-*BLG-GOV-25 (Add --dry-run support to plan release and run delivery verification engines) — ✅ COMPLETE v3.9 — ST-11, cycle: 2026-05-21__release-v3.9*
 
 ---
 
@@ -2665,32 +2340,6 @@ PO-02 (Journal Pattern Recognition) requires 6+ months of AI journal entries. PO
 
 ---
 
-### BLG-GOV-35 — Gemini thesis generation audit trail
-**Priority:** P2 (Medium)
-**Type:** Governance / AI Compliance
-**Owner:** AI Compliance & Governance Officer; Head of Backend Engineering
-**Source:** IDEA-ai-compliance-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v4.0
-**Status: ✅ COMPLETE — v4.0 — ST-07 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
-
-**Problem**
-BLG-FEAT-24 (AI thesis generation, shipped v3.8) generates AI setup thesis text using Gemini API in production. No audit trail records the model version, prompt version, or output hash per generation. As Gemini usage scales, retroactive compliance tracking becomes impossible. An audit trail should be implemented before usage volume increases.
-
-**Scope**
-- Audit trail record per generation: plan_id, model_version, prompt_version, input_hash (thesis generation request), output_hash, generated_at, user_acknowledged (bool)
-- Storage: append-only table (gemini_audit_log) or structured log file
-- Retention policy: minimum 90 days
-- No change to user-facing BLG-FEAT-24 behaviour
-
-**Acceptance Criteria**
-- Audit log created for each Gemini thesis generation call
-- Record fields present: model_version, prompt_version, input_hash, output_hash, generated_at
-- Retention policy enforced (90-day minimum)
-- No performance impact on thesis generation response time
-
----
-
 ### BLG-GOV-36 — API key rotation cadence policy
 **Priority:** P2 (Medium)
 **Type:** Governance / Security Policy
@@ -2712,31 +2361,6 @@ Alpaca API keys (financial account access) and Gemini API keys have no defined r
 - Policy document produced covering Alpaca and Gemini key rotation
 - Rotation cadence, procedure, and responsibility defined
 - Next rotation date recorded (based on last known rotation date or "unknown — rotate on policy adoption")
-
----
-
-### BLG-GOV-37 — Red flag endpoint authentication and PII review
-**Priority:** P2 (Medium)
-**Type:** Governance / Security Review
-**Owner:** Cybersecurity & Trust Lead
-**Source:** IDEA-cybersecurity-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
-**Effort:** XS (~0.5 day)
-**Provisional-Target:** v4.0
-**Status: ✅ COMPLETE — v4.0 — ST-06 — cycle: 2026-05-22__release-v4.0 — 2026-05-25**
-
-**Problem**
-SI-03 Red Flag Journal endpoint (GET /portfolio/red-flag-journal, shipped v3.9) exposes trading strategy override events. A targeted review confirms: (1) the endpoint is protected by API key authentication (shipped v2.2), (2) response payloads do not expose PII or sensitive strategy parameters beyond event type and timestamp, (3) pagination does not leak adjacent users' data (single-user system, but confirm).
-
-**Scope**
-- Verify API key auth covers /portfolio/red-flag-journal
-- Review response payload: confirm no PII, no sensitive position data, no information beyond event_type, rule_type, timestamp, severity
-- Document findings in security review note filed in `docs/security/`
-
-**Acceptance Criteria**
-- Authentication confirmed (API key auth active on endpoint)
-- Response payload reviewed: PII-free, no sensitive strategy data confirmed
-- Review findings documented
-- If gap found: remediation backlog item filed
 
 ---
 
@@ -2891,30 +2515,6 @@ Arc 4 features (PO-02 through PO-05) all have data density gates: 6+ months AI j
 
 ---
 
-### BLG-GOV-44 — SI-02 §13 review evidence criteria pre-definition
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P1 (High)
-**Type:** Governance / §13 Compliance
-**Owner:** Strategy Rules & System Intent Owner; Head of Specs Team
-**Source:** IDEA-strategy-owner-20260525-01 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v4.1
-
-**Problem**
-BLG-GOV-39 (SI-02 §13 formal boundary review, gate-conditional on sprint planning imminent) was added in IW-20260522-01. BLG-GOV-44 pre-defines the evidence criteria that the §13 review for SI-02 must satisfy — what "PASS" looks like, what binding conditions are expected, and what test scenarios confirm determinism. Pre-definition before sprint planning prevents the §13 review from being conducted without a clear pass/fail framework.
-
-**Scope**
-- Define §13 review evidence criteria for SI-02: what assertions must be verifiable (determinism, display-only output, no adaptive learning, no automated action)
-- Document expected binding conditions (e.g., "drift alerts informational only; no automated position management")
-- Input to BLG-GOV-39 when gate clears
-
-**Acceptance Criteria**
-- Evidence criteria document produced
-- Reviewed by Strategy Rules & System Intent Owner
-- Document filed for reference when BLG-GOV-39 gate triggers
-
----
-
 ### BLG-GOV-45 — Arc 6 Monte Carlo §13 pre-assessment
 **Priority:** P2 (Medium)
 **Type:** Governance / §13 Compliance Pre-work
@@ -2935,31 +2535,6 @@ PS-03 (Monte Carlo Simulation, Arc 6) is documented as "§13 compliant — deter
 - §13 assessment produced for PS-03
 - Binding conditions documented
 - Reviewed by Strategy Rules & System Intent Owner
-
----
-
-### BLG-GOV-46 — SI-02 data prerequisite audit
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P1 (High)
-**Type:** Governance / Release Gate
-**Owner:** Challenger; Product Owner
-**Source:** IDEA-challenger-20260525-01 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v4.1
-
-**Problem**
-SI-02 (Behavioural Drift Detection) requires trade history with regime_at_entry, setup_type, and signal_conditions captured. These fields may not be present on all historical trades. Before sprint planning, the Challenger's mandatory data prerequisite audit confirms: how many trades have complete data, whether the sample is sufficient for meaningful drift analysis, and whether any data backfill is required as a pre-sprint story.
-
-**Scope**
-- Query trade history: count trades with regime_at_entry, setup_type, and plan_id present
-- Assess: is the sample sufficient for drift analysis? (target: 10+ trades with complete data)
-- If insufficient: identify backfill options or document that drift analysis will have limited early utility
-- Findings reviewed by Product Owner before SI-02 sprint planning
-
-**Acceptance Criteria**
-- Audit query run and results documented
-- Sufficiency assessment produced
-- Product Owner informed; sprint planning decision documented
 
 ---
 
@@ -2986,50 +2561,7 @@ v4.0 shipped the first external AI API integration (Gemini Flash for thesis gene
 
 ---
 
-### BLG-GOV-48 — Gemini model version change policy
-**Priority:** P2 (Medium)
-**Type:** Governance / AI Compliance
-**Owner:** AI Compliance & Governance Officer; Head of Specs Team
-**Source:** IDEA-ai-compliance-20260525-02 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-POST /trade-plans/{plan_id}/generate-thesis uses gemini-1.5-flash. Model versions change. No policy governs: when can the model be updated, what re-testing is required, whether output format contracts may break on model update, and who approves a model version change. Without a policy, a silent model upgrade could change thesis output format or quality without governance review.
-
-**Scope**
-- Define Gemini model version change policy: approval authority, re-test requirements (output format check, sample comparison), backlog item required for each change
-- Document policy in AI governance docs or OPERATIONAL_GUIDE.md equivalent
-
-**Acceptance Criteria**
-- Policy document produced
-- Approval authority and re-test requirements defined
-- Reviewed by AI Compliance & Governance Officer and Head of Specs Team
-
----
-
-### BLG-GOV-49 — Gemini API key scope minimization review
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P1 (High)
-**Type:** Governance / Security
-**Owner:** Cybersecurity & Trust Lead
-**Source:** IDEA-cybersecurity-20260525-01 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v4.1
-
-**Problem**
-GEMINI_API_KEY (shipped v4.0) is used for thesis generation via the generative AI API. The key scope (what the key can access on the Google AI platform) should be reviewed to confirm it is minimally scoped: text generation only, no other Google API access, rate-limited where possible. Key scope minimization is a security hygiene requirement for any external AI API credential.
-
-**Scope**
-- Review GEMINI_API_KEY scope on Google AI platform
-- Confirm: restricted to generative AI text generation only
-- Confirm: key is not shared with other Google services
-- Document findings in security review note
-
-**Acceptance Criteria**
-- Key scope confirmed (or remediation action filed if overly permissive)
-- Findings documented in docs/security/
-- Reviewed by Cybersecurity & Trust Lead
+*BLG-GOV-48 (Gemini model version change policy) — displaced to §9 Deferred (DL-035, 2026-05-27__scheduled). Superseded by BLG-GOV-64 (Anthropic model version pinning policy); Gemini retired in v4.1.*
 
 ---
 
@@ -3053,31 +2585,6 @@ The system now has four external API credentials: Alpaca API key+secret, Yahoo F
 - Register produced and filed in docs/security/
 - All external API keys listed with security metadata
 - Reviewed by Cybersecurity & Trust Lead
-
----
-
-### BLG-GOV-51 — SI-02 database query performance pre-assessment
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P2 (Medium)
-**Type:** Governance / Performance Pre-work
-**Owner:** Head of Engineering; Head of Backend Engineering
-**Source:** IDEA-head-of-engineering-20260525-01 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~1 day)
-**Provisional-Target:** v4.1
-
-**Problem**
-SI-02 (Behavioural Drift Detection) involves rolling analysis across trade history. Depending on the query design, this could be computationally expensive on a Supabase PostgreSQL instance with 50+ trades. A pre-assessment of expected query patterns against the current data model confirms whether any performance concerns exist before sprint planning, preventing mid-sprint performance surprises.
-
-**Scope**
-- Profile expected SI-02 query patterns against current trade/position schema
-- Estimate query complexity for typical dataset size (20–100 trades)
-- Identify: any full-table scans, missing indexes, or aggregate patterns requiring optimisation
-- Input to BLG-BE-20 (background job architecture) and SI-02 sprint planning
-
-**Acceptance Criteria**
-- Query patterns profiled (may be desk analysis, not live benchmark)
-- Performance concerns (if any) documented with severity estimate
-- Findings reviewed by Head of Engineering and Head of Backend Engineering before SI-02 sprint planning
 
 ---
 
@@ -3127,32 +2634,6 @@ Idea intake windows record per-agent submission counts (ideas_window.json). Dire
 
 ---
 
-### BLG-GOV-54 — SI-05 Phase 1 scope annotation — Red Flag + compliance trend delivery
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
-**Priority:** P2 (Medium)
-**Type:** Governance / Roadmap Annotation
-**Owner:** Product Owner; Head of Specs Team
-**Source:** IDEA-product-owner-20260525-01 — Promoted-Backlog (STEP 5 debate) cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v4.1
-
-**Problem**
-SI-05 (Weekly Strategy Integrity Digest) depends on SI-02 for its drift signal component. SI-02 may not ship until v4.2+. To avoid blocking all of SI-05, this item formalises a phased delivery approach: Phase 1 (Red Flag Journal summary + compliance score trend via Telegram, no SI-02 component) can ship as soon as SI-03 and Arc5ComplianceSection are live (both shipped v4.0). Phase 2 (drift signal integration) ships when SI-02 is complete.
-
-**Scope**
-- Annotate SI-05 on current_roadmap.md with phased delivery note
-- Create SI-05 Phase 2 follow-on backlog item (separate BLG, filed at sprint planning time)
-- Update relevant specs/acceptance criteria to reflect Phase 1 scope
-- Phase 1 scope: weekly Telegram digest of Red Flag Journal events (count + top event type) + compliance score trend (7-day rolling validation pass rate)
-
-**Acceptance Criteria**
-- SI-05 roadmap entry annotated with phased delivery approach
-- Phase 1 scope defined and documented
-- Phase 2 follow-on scope identified (to be filed as a backlog item at v4.1 sprint planning)
-- Product Owner sign-off on Phase 1 scope definition
-
----
-
 ### BLG-GOV-55 — API contract same-sprint delivery rule
 **Priority:** P1 (High)
 **Type:** Governance / Process Rule
@@ -3176,29 +2657,285 @@ v4.0 shipped POST /trade-plans/{plan_id}/generate-thesis (ST-12) without a forma
 
 ---
 
-### BLG-GOV-56 — STEP 12.1 artefact presence check
-**Shipped:** ✅ COMPLETE — v4.1 — 2026-05-27 — cycle: 2026-05-26__release-v4.1
+### BLG-GOV-57 — SI-04 Strategy Version Comparison pre-planning
 **Priority:** P2 (Medium)
-**Type:** Governance / Prompt Engineering
-**Owner:** Head of Specs Team; PMO Lead
-**Source:** IDEA-pmo-lead-20260525-02 — Promoted-Backlog (STEP 5 debate, modified scope) cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v4.1
+**Type:** Governance / Pre-Sprint Planning
+**Owner:** Product Owner; Head of Specs Team
+**Source:** IDEA-product-owner-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~1 day)
+**Provisional-Target:** v4.2
 
 **Problem**
-STEP 12.1 of governance engines updates .claude_current_state.json regardless of whether required cycle artefacts exist on disk. A cycle can be marked complete in state even if run_manifest.md, cycle_summary.md, or lessons_learnt.md were never written. Adding an artefact presence check produces a visible warning in STEP 12.1 output for missing artefacts, with a soft halt only for required Class-3 Operational Records.
+SI-04 (Strategy Version Comparison) scope is not formally defined. Without pre-planning (strategy versions to compare, performance delta computation method, UI view), mid-sprint scope discovery risks will materialise. Pre-planning prevents last-minute sprint gate discovery.
 
 **Scope**
-- Add artefact presence check to STEP 12.1 of roadmap_prompt.md, sprint_planning_prompt.md, delivery_verification_prompt.md, and post_ship_closure.md
-- Advisory warning output for missing non-required artefacts
-- Soft halt (STEP 12.1 completes but records a governance warning in state) if required Class-3 Operational Record (run_manifest.md, sprint_goal.md) is absent
-- Per CLAUDE.md §6 governance file edit checklist: bump version, update OPERATIONAL_GUIDE.md §14, append prompt_change_log.md for each affected prompt
+- Define SI-04 feature scope: which strategy versions to compare, how performance delta is computed
+- Define UI view: layout, data source, interaction model
+- Output: SI-04 scope definition document; input to SI-04 sprint planning and BLG-GOV-62 §13 review
 
 **Acceptance Criteria**
-- Artefact presence check added to STEP 12.1 of all four prompt files
-- Prompt versions bumped; OPERATIONAL_GUIDE.md §14 updated; prompt_change_log.md appended
-- Soft halt condition: absent required Class-3 record produces governance warning in state file
-- False-halt risk addressed: check uses canonical artefact paths only (not temp/worktree paths)
+- SI-04 scope definition document produced
+- Reviewed by Product Owner and Head of Specs Team
+
+---
+
+### BLG-GOV-58 — STEP 5.2 returned_to_backlog in-flight clarification
+**Priority:** P2 (Medium)
+**Type:** Governance / Prompt Patch
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** v4.2 sprint seal (carry-forward OA-2 from v4.1)
+
+**Problem**
+execution_prompt.md STEP 5.2 does not explicitly confirm that `returned_to_backlog` is a valid status for PO-authorized in-flight story deferrals during sprint execution (not only at sprint close). ST-11 deferral in v4.1 required this path but STEP 5.2 language was ambiguous.
+
+**Scope**
+- Amend execution_prompt.md STEP 5.2 to clarify returned_to_backlog is valid for in-flight PO-authorized deferrals
+- Head of Specs Team sign-off; bump execution_prompt.md version
+
+**Acceptance Criteria**
+- execution_prompt.md STEP 5.2 amended with in-flight deferral clarification
+- Version bumped and prompt_change_log.md updated
+- OPERATIONAL_GUIDE.md §14 updated
+
+---
+
+### BLG-GOV-59 — Backlog ID namespace integrity audit
+**Priority:** P3 (Low)
+**Type:** Governance / Hygiene
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** IDEA-head-of-specs-20260527-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** v4.2
+
+**Problem**
+With 80+ BLG items across 10 namespaces, no verification pass has been run to confirm no sequence gaps or ID collisions exist. A namespace count summary provides governance health visibility and catches any numbering errors introduced by concurrent backlog additions.
+
+**Scope**
+- Audit all BLG IDs in backlog.md and backlog_archive.md
+- Verify: no sequence gaps, no ID collisions, namespace counts consistent with history
+- Produce namespace count summary in run_manifest.md or cycle_record.md
+
+**Acceptance Criteria**
+- Audit complete with no gaps or collisions found (or gaps documented with explanation)
+- Namespace count summary produced
+
+---
+
+### BLG-GOV-60 — SI-02 sprint planning prerequisites checklist
+**Priority:** P1 (High)
+**Type:** Governance / Sprint Planning Gate
+**Owner:** PMO Lead; Head of Specs Team
+**Source:** IDEA-pmo-lead-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Before SI-02 sprint planning seals
+
+**Problem**
+SI-02 has 8+ pre-planning backlog items across 5 domains (BLG-GOV-39/44/46/51, BLG-SPEC-37/39/41, BLG-BE-17/20/23). No consolidated readiness gate ensures all prerequisites are verified before sprint planning seals. Without a checklist, individual prerequisite misses are only discovered mid-sprint.
+
+**Scope**
+- Produce SI-02 sprint planning prerequisites checklist consolidating all pre-sprint items
+- Integrate into release_planning_prompt.md or sprint_planning_prompt.md as a gated advisory step
+- Sprint planning may not seal until all checklist items verified
+
+**Acceptance Criteria**
+- Prerequisites checklist produced and filed
+- Integration point in sprint planning engine defined
+- PMO Lead and Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-61 — v4.1 staging sign-off process effectiveness review
+**Priority:** P2 (Medium)
+**Type:** Governance / Process Review
+**Owner:** Director of Quality; PMO Lead
+**Source:** IDEA-director-of-quality-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~1 day)
+**Provisional-Target:** v4.2
+
+**Problem**
+BLG-GOV-30 (staging-only AC designation, shipped v4.1) was intended to reduce last-minute P3 staging deviations. This review assesses whether the intervention worked: comparing staging deviation count in v4.1 against the v3.9/v4.0 baseline. Evidence-based governance quality check.
+
+**Scope**
+- Count P3 staging deviations in v4.1 vs v3.9/v4.0 baseline
+- Assess whether BLG-GOV-30 staging-only AC designation reduced surprise deviations
+- Produce findings note; input to future governance process decisions
+
+**Acceptance Criteria**
+- Deviation count comparison produced
+- Effectiveness finding documented (improved / no change / insufficient data)
+- Reviewed by Director of Quality
+
+---
+
+### BLG-GOV-62 — SI-04 §13 formal pre-assessment
+**Priority:** P1 (High)
+**Type:** Governance / §13 Compliance
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-04 sprint planning imminent.
+
+**Problem**
+SI-04 (Strategy Version Comparison) compares performance metrics across strategy versions. Before sprint planning seals, a formal §13 review must confirm this is display-only historical analysis (not adaptive or predictive). Last-minute §13 discoveries blocked v3.5 (IT-06); pre-assessment eliminates this risk.
+
+**Scope**
+- §13 review of SI-04 feature scope: performance comparison across strategy versions
+- Confirm: deterministic historical analysis, display-only, no adaptive or predictive component
+- Produce §13 compliance assessment document
+
+**Acceptance Criteria**
+- §13 assessment document produced (PASS or CONDITIONAL)
+- Reviewed by Strategy Rules & System Intent Owner
+- Gate condition (SI-04 sprint planning imminent) verified before commencing
+
+---
+
+### BLG-GOV-63 — Claude API audit trail implementation
+**Priority:** P2 (Medium)
+**Type:** Governance / AI Compliance
+**Owner:** AI Compliance & Governance Officer; Head of Backend Engineering
+**Source:** IDEA-ai-compliance-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** M (~2 days)
+**Provisional-Target:** v4.2
+
+**Problem**
+v4.1 replaced Gemini with Claude API. BLG-GOV-35 (Gemini audit trail) is COMPLETE but covered Gemini-specific logging. A Claude API equivalent audit trail must log per-request: request_id, endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, generated_at. Without this, AI usage volume growth proceeds without compliance logging.
+
+**Scope**
+- Implement per-request Claude API audit log (claude_audit_log table or equivalent)
+- Log fields: request_id, endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd, generated_at
+- Analogous to BLG-GOV-35 implementation pattern
+
+**Acceptance Criteria**
+- Claude API audit log implemented and populated on each thesis generation call
+- Log queryable for BLG-OPS-36 cost review
+- Reviewed by AI Compliance & Governance Officer
+
+---
+
+### BLG-GOV-64 — Anthropic model version pinning policy
+**Priority:** P2 (Medium)
+**Type:** Governance / AI Compliance
+**Owner:** AI Compliance & Governance Officer; Head of Specs Team
+**Source:** IDEA-ai-compliance-20260527-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v4.2
+
+**Problem**
+All Claude-backed features must pin to a specific Anthropic model ID (never use "latest" alias or unversioned model references). Unversioned model references create silent behaviour change risk when Anthropic updates model versions. This policy supersedes BLG-GOV-48 scope (displaced; Gemini retired v4.1).
+
+**Scope**
+- Define policy: all Claude-backed features must pin to a specific model ID (e.g., claude-3-5-sonnet-20241022)
+- Define change management: model version update requires AI Compliance sign-off and QA re-test
+- Apply immediately to thesis generation endpoint
+- Document in AI governance notes or CLAUDE.md
+
+**Acceptance Criteria**
+- Policy document produced
+- Thesis generation endpoint confirmed to use pinned model ID (not "latest")
+- Reviewed by AI Compliance & Governance Officer and Head of Specs Team
+
+---
+
+### BLG-GOV-65 — Anthropic API key scope and security review
+**Priority:** P1 (High)
+**Type:** Governance / Security
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** v4.2
+
+**Problem**
+BLG-GOV-49 (Gemini key scope minimisation review) is COMPLETE. The Anthropic API key introduced in v4.1 requires the equivalent review: confirm minimum required permissions, stored as env var only, not exposed in application logs or error traces. Without this review, the Claude key's security posture is unconfirmed.
+
+**Scope**
+- Confirm Anthropic API key has minimum required permissions
+- Confirm key is stored as env var only (not in code or logs)
+- Confirm key not exposed in application logs or error traces
+- Document confirmation in api_key_register.md (BLG-GOV-50 scope)
+
+**Acceptance Criteria**
+- Security confirmation produced and documented
+- No key exposure in logs confirmed
+- Reviewed by Cybersecurity & Trust Lead
+
+---
+
+### BLG-GOV-66 — Anthropic API accountability assignment
+**Priority:** P2 (Medium)
+**Type:** Governance / Role Clarity
+**Owner:** Director of HR; AI Compliance & Governance Officer
+**Source:** IDEA-director-of-hr-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** XS (~0.25 day)
+**Provisional-Target:** v4.2
+
+**Problem**
+v4.1 introduced Claude API integration. It must be confirmed which agent role owns the Anthropic integration for compliance and governance. If the AI Compliance & Governance Officer's charter does not explicitly cover Anthropic (vs. Gemini), the charter must be updated. Accountability clarity is required before BLG-GOV-63/64/65 are sprint-planned.
+
+**Scope**
+- Review AI Compliance & Governance Officer charter for explicit Anthropic coverage
+- If charter gap found: update charter to include Anthropic API accountability
+- Document ownership confirmation in governance notes
+
+**Acceptance Criteria**
+- Charter review complete
+- Ownership confirmed (or charter updated to add Anthropic coverage)
+- Reviewed by Director of HR and AI Compliance & Governance Officer
+
+---
+
+### BLG-GOV-67 — SI-05 early delivery (Phase 1 without SI-02)
+**Priority:** P2 (Medium)
+**Type:** Governance / Feature Scope Definition
+**Owner:** Product Owner; Head of Specs Team
+**Source:** IDEA-product-owner-20260522-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035, 3-cycle cap; gate cleared; Challenger gate modification applied)
+**Effort:** M (~2–3 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-01 + SI-03 live ≥ 30 days (gate clears 2026-06-21).
+
+**Problem**
+SI-05 (Weekly Strategy Integrity Digest) requires SI-02 (drift detection) for the drift score component. Phase 1 of SI-05 can ship using SI-01 and SI-03 data only: validation pass rate, override count, and red flag trends. BLG-GOV-54 (shipped v4.1) defined Phase 1 scope; this item is the implementation backlog entry.
+
+**Scope**
+- Implement SI-05 Phase 1: weekly digest using SI-01 + SI-03 data only
+- Metrics: validation_pass_rate, override_count, red_flag_frequency_trend
+- No drift score in Phase 1 (requires SI-02)
+- Gate: SI-01 + SI-03 live ≥ 30 days (2026-06-21)
+
+**Acceptance Criteria**
+- Weekly digest renders with SI-01 + SI-03 metrics
+- No SI-02 dependency in Phase 1 implementation
+- Gate condition (SI-01 + SI-03 live ≥ 30 days) verified before sprint planning
+
+---
+
+### BLG-GOV-68 — Backlog item inter-dependency tracking
+**Priority:** P2 (Medium)
+**Type:** Governance / Process Enhancement
+**Owner:** PMO Lead; Head of Specs Team
+**Source:** IDEA-pmo-lead-20260522-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035, 3-cycle cap)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** 20+ concurrent implementation items in a single sprint causing dependency-blocking.
+
+**Problem**
+Backlog items have no explicit Blocks/Blocked-by fields. Cross-item dependencies are currently documented via prose in backlog entries (e.g. "Gate: BLG-OPS-36 complete"). As the backlog grows, undiscovered dependencies become sprint-time blockers. A formal inter-dependency field would surface critical path items at sprint planning.
+
+**Scope**
+- Add Blocks/Blocked-by field to backlog item format (optional; populated when dependency is known)
+- Update sprint planning engine to surface Blocks/Blocked-by chains
+- Back-fill critical known dependencies (BLG-OPS-36 → BLG-OPS-37, etc.)
+
+**Acceptance Criteria**
+- Field format defined and documented in backlog header conventions
+- Sprint planning engine updated to surface dependency chains
+- Gate condition (20+ concurrent items with dependency-blocking evidence) verified before commencing
 
 ---
 
@@ -3207,6 +2944,7 @@ STEP 12.1 of governance engines updates .claude_current_state.json regardless of
 - Daily email portfolio summary
 - FX rate history tracking
 - **BLG-TECH-05 — Prometheus metrics endpoint** (P3, M effort — permanently deferred at single-user scale; DL-023 2026-04-24)
+- **BLG-GOV-48 — Gemini model version change policy** (displaced DL-035 2026-05-27 — superseded by BLG-GOV-64 Anthropic model version pinning policy; Gemini retired in v4.1)
 - Position correlation analysis
 - Backtesting module
 - Multi-portfolio support
