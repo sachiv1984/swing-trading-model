@@ -160,6 +160,9 @@ async def test_all_endpoints(request: Request):
 
         # Validation
         {"name": "POST /validate/calculations", "method": "POST", "url": f"{base_url}/validate/calculations", "critical": True},
+
+        # AI Cost Monitoring (v4.1 / ST-09)
+        {"name": "POST /ai/check-daily-cost", "method": "POST", "url": f"{base_url}/ai/check-daily-cost", "critical": False},
     ]
     
     results = []

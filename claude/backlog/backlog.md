@@ -1582,6 +1582,24 @@ QA evidence files (qa_evidence_EPIC-*.md) from v3.7–v4.0 were produced under e
 
 ---
 
+### BLG-QA-35 — Staging verification: ST-09 Claude API daily cost threshold alert (AC-05 deferral)
+**Priority:** P2 (Medium)
+**Type:** QA / Staging Verification
+**Owner:** QA Lead; Infrastructure & Operations Owner
+**Source:** ST-09 (EPIC-03, v4.1) — staging-only AC deferred per sprint_backlog.md designation
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** v4.2
+
+**Problem**
+ST-09 AC-05 (POST /ai/check-daily-cost staging verification) was designated staging-only at sprint planning. The endpoint and Telegram alert logic cannot be verified by automated unit tests alone — a live staging environment with a real TELEGRAM_BOT_TOKEN and database rows in gemini_audit_log is required to confirm end-to-end operation.
+
+**Acceptance Criteria**
+- On staging: POST /ai/check-daily-cost returns 200 with threshold/cost fields
+- With AI_DAILY_COST_THRESHOLD set below current daily spend: Telegram alert fires and is received
+- Date of staging verification recorded in QA evidence file
+
+---
+
 ## 6. Operations & Infrastructure Backlog
 
 ---

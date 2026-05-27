@@ -230,3 +230,47 @@ def generate_setup_thesis(
         "output_hash": output_hash,
         "available": True,
     }
+
+
+def check_and_alert_daily_cost(threshold_usd: float = 1.00) -> dict:
+    """Check daily Claude API spend and send Telegram alert if threshold exceeded."""
+    from database import get_daily_ai_cost
+    from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+    import urllib.request
+    import urllib.parse
+    from datetime import date
+
+    result = get_daily_ai_cost()
+    total = result["total_cost_usd"]
+    count = result["request_count"]
+    threshold_exceeded = total >= threshold_usd
+
+    alert_sent = False
+    if threshold_exceeded and TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+        today = date.today().isoformat()
+        msg = (
+            f"⚠️ Claude API daily cost threshold exceeded\n"
+            f"Date: {today}\n"
+            f"Daily spend: ${total:.4f} USD\n"
+            f"Requests: {count}\n"
+            f"Threshold: ${threshold_usd:.2f} USD"
+        )
+        params = urllib.parse.urlencode({
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": msg,
+            "parse_mode": "HTML",
+        })
+        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage?{params}"
+        try:
+            urllib.request.urlopen(url, timeout=10)
+            alert_sent = True
+        except Exception:
+            pass
+
+    return {
+        "total_cost_usd": total,
+        "request_count": count,
+        "threshold_usd": threshold_usd,
+        "threshold_exceeded": threshold_exceeded,
+        "alert_sent": alert_sent,
+    }

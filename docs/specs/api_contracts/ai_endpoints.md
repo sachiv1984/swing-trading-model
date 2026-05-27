@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-04-18
+**Version:** 1.1
+**Last Updated:** 2026-05-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -18,6 +18,7 @@ All AI output is **display-only** and must NOT be used as input to any signal, s
 ## Table of Contents
 
 - [POST /ai/journal-summary](#post-aijournal-summary)
+- [POST /ai/check-daily-cost](#post-aicheck-daily-cost)
 
 ---
 
@@ -105,9 +106,62 @@ When the external LLM API is unreachable or returns an error, the endpoint retur
 
 ---
 
+## POST /ai/check-daily-cost
+
+Checks today's Claude API spend against the configured daily cost threshold. If the threshold is exceeded, sends a Telegram alert. Intended to be called by a daily scheduler (Render cron or external scheduler).
+
+**§13 Status:** N/A — operational monitoring endpoint. No AI output generated; no display surface.
+
+### Request
+
+```
+POST /ai/check-daily-cost
+Content-Type: application/json
+```
+
+No request body required. Threshold is read from the `AI_DAILY_COST_THRESHOLD` environment variable (default: `1.00` USD/day).
+
+### Response — 200 OK
+
+```json
+{
+  "total_cost_usd": 0.42,
+  "request_count": 7,
+  "threshold_usd": 1.00,
+  "threshold_exceeded": false,
+  "alert_sent": false
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `total_cost_usd` | float | Sum of `estimated_cost_usd` in `gemini_audit_log` for today (`generated_at >= CURRENT_DATE`). |
+| `request_count` | integer | Number of Claude API requests logged today. |
+| `threshold_usd` | float | Configured daily cost threshold (from `AI_DAILY_COST_THRESHOLD` env var). |
+| `threshold_exceeded` | boolean | `true` when `total_cost_usd >= threshold_usd`. |
+| `alert_sent` | boolean | `true` when threshold exceeded AND Telegram credentials (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`) are configured and alert delivery succeeded. |
+
+When `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` is absent, no alert is sent even if the threshold is exceeded (`alert_sent: false`).
+
+### Error responses
+
+| Status | Condition |
+|--------|-----------|
+| 401 | Missing or invalid API key. |
+
+### Implementation constraints
+
+- Daily spend is sourced from `gemini_audit_log` table (tracks Claude API calls).
+- Threshold configurable via `AI_DAILY_COST_THRESHOLD` env var; default `1.00` USD.
+- Telegram alert format includes: date, daily spend, request count, threshold.
+- If Telegram delivery fails (network error), `alert_sent: false`; endpoint still returns 200.
+- No write operations: audit log is read-only for this endpoint.
+
+---
+
 ## Known Deviations
 
-None at v1.0.
+None at v1.1.
 
 ---
 
@@ -115,4 +169,5 @@ None at v1.0.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-05-27 | ST-09 (EPIC-03, v4.1): Added `POST /ai/check-daily-cost` — Claude API daily cost threshold alert endpoint (BLG-OPS-34). |
 | 1.0 | 2026-04-18 | ST-07 (EPIC-04, v2.8): Initial specification for `POST /ai/journal-summary`. Conditionally compliant per SRB-v1.7. API Contracts & Documentation Owner. |

@@ -1438,3 +1438,25 @@ def purge_gemini_audit_log_older_than_90_days() -> int:
         return deleted
     except Exception:
         return 0
+
+
+def get_daily_ai_cost() -> dict:
+    """Return today's Claude API spend total from gemini_audit_log."""
+    try:
+        ensure_gemini_audit_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT
+                        COALESCE(SUM(estimated_cost_usd), 0.0) AS total_cost,
+                        COUNT(*) AS request_count
+                    FROM gemini_audit_log
+                    WHERE generated_at >= CURRENT_DATE
+                """)
+                row = cur.fetchone()
+                return {
+                    "total_cost_usd": float(row["total_cost"]),
+                    "request_count": int(row["request_count"])
+                }
+    except Exception:
+        return {"total_cost_usd": 0.0, "request_count": 0}

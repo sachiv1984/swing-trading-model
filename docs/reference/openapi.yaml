@@ -2011,6 +2011,45 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /ai/check-daily-cost:
+    post:
+      tags: [AI]
+      summary: Check daily Claude API spend against threshold and alert via Telegram
+      description: |
+        Checks today's Claude API spend (from gemini_audit_log) against the configured
+        AI_DAILY_COST_THRESHOLD (default $1.00/day). Sends Telegram alert if exceeded.
+        Intended for daily scheduler invocation (Render cron / external scheduler).
+        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.1 §POST /ai/check-daily-cost
+      responses:
+        "200":
+          description: Daily cost check result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_cost_usd:
+                    type: number
+                    format: float
+                    description: Sum of estimated_cost_usd in gemini_audit_log for today.
+                  request_count:
+                    type: integer
+                    description: Number of Claude API requests logged today.
+                  threshold_usd:
+                    type: number
+                    format: float
+                    description: Configured daily cost threshold.
+                  threshold_exceeded:
+                    type: boolean
+                    description: true when total_cost_usd >= threshold_usd.
+                  alert_sent:
+                    type: boolean
+                    description: true when threshold exceeded and Telegram alert was delivered.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /digest/weekly:
     get:
       tags: [Digest]

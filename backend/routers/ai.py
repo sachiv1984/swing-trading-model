@@ -16,6 +16,7 @@ from datetime import date
 from database import get_db
 from services.ai_service import summarise_journal_notes
 from services.ai_audit_service import log_ai_summary_run, query_audit_log
+from config import AI_DAILY_COST_THRESHOLD
 
 router = APIRouter(prefix="/ai", tags=["AI"])
 
@@ -128,3 +129,14 @@ def journal_summary_history(
         limit=limit,
     )
     return {"ok": True, "data": {"records": records, "count": len(records)}}
+
+
+@router.post("/check-daily-cost")
+def check_daily_cost():
+    """
+    Check today's Claude API spend against the configured threshold.
+    Sends Telegram alert if threshold exceeded.
+    Intended to be called by a daily scheduler (Render cron / external scheduler).
+    """
+    from services.gemini_service import check_and_alert_daily_cost
+    return check_and_alert_daily_cost(threshold_usd=AI_DAILY_COST_THRESHOLD)

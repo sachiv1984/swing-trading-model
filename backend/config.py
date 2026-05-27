@@ -57,6 +57,10 @@ import os
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 
+# Claude API daily cost threshold alert (ST-09, BLG-OPS-34)
+# Set AI_DAILY_COST_THRESHOLD on Render to override the default.
+AI_DAILY_COST_THRESHOLD = float(os.getenv("AI_DAILY_COST_THRESHOLD", "1.00"))
+
 # API Delays (rate limiting)
 PRICE_FETCH_DELAY_SECONDS = 0.3
 FX_RATE_FETCH_DELAY_SECONDS = 0.2
