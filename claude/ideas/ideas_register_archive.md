@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-19
+**Last Updated:** 2026-05-27
 
 # Ideas Register Archive — Momentum Trading Assistant
 
@@ -174,3 +174,16 @@ Permanent record of terminal ideas rows retired from `claude/ideas/ideas_registe
 | IDEA-pmo-lead-20260508-01 | Arc 2 milestone tracking view — internal view showing Arc 2 story completion by Epic across cycles, enabling PMO to track Arc 2 velocity and surface slippage before it becomes a delivery risk | PMO Lead | IW-20260508-01 | 2026-05-08 | Rejected | 5 | 3-cycle hard cap applied cycle 2026-05-21__scheduled. Gate cleared: Arc 3 ✅ Complete v3.5. PO re-evaluation: milestone tracking covered by execution_state.json, velocity_metrics.md, and cycle records — separate view adds overhead without new information at sole-developer scale. ❌ Rejected (not strong). | 🅿 Parked | — |
 | IDEA-director-of-hr-20260508-01 | Arc 2 knowledge transfer checklist — per-role checklist ensuring each agent involved in Arc 2 has documented key decisions and rationale before cycle close; reduces knowledge loss across cycles | Director of HR | IW-20260508-01 | 2026-05-08 | Rejected | 5 | 3-cycle hard cap applied cycle 2026-05-21__scheduled. "Park indefinitely pending team scale change" — no specific gate condition; overhead-benefit mismatch at sole-developer scale. Governance artefacts (cycle_record, sprint_backlog, QA evidence, decision_log) already capture Arc 2 decisions. ❌ Rejected (not strong). | 🅿 Parked | — |
 | IDEA-director-of-hr-20260508-02 | Arc 2 retrospective facilitation plan — structured retrospective process for the Arc 2 delivery period capturing cross-arc process learnings beyond per-cycle lessons_learnt.md | Director of HR | IW-20260508-01 | 2026-05-08 | Rejected | 5 | 3-cycle hard cap applied cycle 2026-05-21__scheduled. Gate condition (≥3 arc cycles complete) loosely met but value marginal — per-cycle lessons_learnt.md adequately captures arc-level process learnings; structured arc retrospective adds overhead without new information at sole-developer scale. ❌ Rejected (not strong). | 🅿 Parked | — |
+
+---
+
+## Archived 2026-05-27 (ideas_housekeeping — post-ship closure 2026-05-26__release-v4.1)
+
+*Terminal classification: Rejected-not-strong (per §6.1) — subsumed by or redundant with existing backlog items.*
+
+| Idea ID | Title | Submitter | Window | Submitted At | Status | Park Count | Park Rationale | Step 4 | Step 5 |
+|---------|-------|-----------|--------|--------------|--------|------------|----------------|--------|--------|
+| IDEA-challenger-20260525-02 | PT-04 20-trade gate empirical review — after 5 consecutive deferrals, request PO to report current closed-trade-with-plan count; if ≥15 plan proactively, if <10 reassess whether 20-trade threshold is calibrated correctly for single-user trading frequency | Challenger | IW-20260525-01 | 2026-05-25 | Rejected | — | Redundant with BLG-GOV-33 (PT-04 closed trade count audit, IW-20260522-01). Rejected not strong. | ❌ Rejected (not strong) | — |
+| IDEA-head-of-engineering-20260525-02 | v4.0 API performance baseline update — action BLG-OPS-29: run performance baseline measurement for GET /analytics/arc5-compliance and POST /trade-plans/{id}/generate-thesis; add p50/p95 results to api_performance_baseline.md | Head of Engineering | IW-20260525-01 | 2026-05-25 | Rejected | — | Redundant with BLG-OPS-29 (v4.0 API performance baseline re-run, added v4.0 post-ship closure). Rejected not strong. | ❌ Rejected (not strong) | — |
+| IDEA-qa-lead-20260525-01 | CI pipeline execution time measurement — measure current CI pipeline execution time from the 3 most recent GitHub Actions runs; if >5 minutes sustained: declare BLG-QA-27 gate met; if <5 minutes: document baseline and start 3-cycle observation window | QA Lead | IW-20260525-01 | 2026-05-25 | Rejected | — | Subsumed by BLG-QA-27 (CI test suite execution time baseline, IW-20260522-01). Rejected not strong. | ❌ Rejected (not strong) | — |
+| IDEA-head-of-ux-20260525-01 | Arc 5 navigation IA review scope — prepare scope for BLG-FE-42 (gate: SI-02 in sprint planning): list all Arc 5 entry points, identify which screens SI-02/SI-04 will affect, define questions the review must answer | Head of UX & Design | IW-20260525-01 | 2026-05-25 | Rejected | — | Subsumed by BLG-FE-42 (Arc 5 navigation and IA cohesion review, IW-20260522-01). Rejected not strong. | ❌ Rejected (not strong) | — |

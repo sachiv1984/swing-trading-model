@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-05-25
+**Last Updated:** 2026-05-27
 
 ---
 
@@ -614,10 +614,10 @@ Identified during delivery verification (verification_report.md §6 — TSG-v40-
 ### 23.1 TSG-v40-01 — EPIC-01: Arc5ComplianceSection rendering not covered by Playwright
 
 **Identified:** 2026-05-25 (delivery verification 2026-05-22__release-v4.0)
-**Status:** Open — BLG-QA-28 filed
+**Status:** Partially resolved — 2026-05-27 (v4.1 ST-11 AC-01). Playwright tests created (arc5-compliance-section.spec.js, 4 scenarios: SC-ARC5-01 heading visible, SC-ARC5-02 4 stat cards, SC-ARC5-03 loading skeleton, SC-ARC5-04 error state; commit 3f5665b8). Staging verification (live environment: BLG-QA-28 ACs 02–04) remains open → carried to v4.2.
 **Owner:** QA & Testing Owner
 **Gap:** ST-02/ST-04 introduced Arc5ComplianceSection.js with observable ACs (stat cards rendering, loading skeleton, error state) on PerformanceAnalytics page (§19). No Playwright E2E scenarios cover these observable ACs. Code review only was performed per CLAUDE.md §2; BLG-QA-28 filed before PR opened.
-**Backlog item:** BLG-QA-28 — Playwright E2E coverage for Arc5ComplianceSection (v4.1 provisional target)
+**Backlog item:** BLG-QA-28 — Staging verification for Arc5ComplianceSection (v4.2 provisional target; Playwright automation delivered v4.1)
 
 ### 23.2 TSG-v40-03 — EPIC-03: Gemini "Improve with AI" button staging-only ACs not covered
 
@@ -626,6 +626,21 @@ Identified during delivery verification (verification_report.md §6 — TSG-v40-
 **Owner:** QA & Testing Owner
 **Gap:** ST-12 introduced "Improve with AI" button on TradePlan edit page and POST /trade-plans/{plan_id}/generate-thesis. Observable ACs (button visibility in edit mode, endpoint call, setup_thesis population) require live GEMINI_API_KEY and are not testable in CI. Code review only per CLAUDE.md §2; BLG-QA-29 filed before PR opened.
 **Backlog item:** BLG-QA-29 — Staging verification for Gemini thesis generation (covers live key and frontend button staging verification)
+
+---
+
+## 24. Test Coverage Gaps — v4.1 (2026-05-26__release-v4.1)
+
+Identified during delivery verification (verification_report.md §6). No test scenario gaps — all EPICs dispositioned as not_applicable or fully covered.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| — | EPIC-01 | Governance prompt files only — no observable UI behaviour | not_applicable |
+| — | EPIC-02 | Spec documentation verification only — pre-met path; no code changes | not_applicable |
+| — | EPIC-03 | All scenarios run: research-view-signal-type.spec.js (4 tests), arc5-compliance-section.spec.js (4 tests), test_daily_cost_alert.py (5 unit tests) — no coverage gap | fully_covered |
+| — | EPIC-04 | Governance/ops documents only — no observable UI behaviour | not_applicable |
+
+No TSG backlog items required.
 
 ---
 

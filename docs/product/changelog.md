@@ -3,9 +3,46 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-25
+**Last Updated:** 2026-05-27
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v4.1 — Governance Hardening, Spec Debt, Arc 5 Compliance + SI-02 Pre-Planning — 2026-05-27
+Cycle: 2026-05-26__release-v4.1
+Verified: Verified
+Verification report: claude/cycles/2026-05-26__release-v4.1/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Governance prompt hardening — execution_prompt.md v3.27→v3.28 (merge-gate re-invocation HARD GATE after every EPIC merge; OA-01 resolved); sprint_planning_prompt.md v3.6→v3.7 (mandatory staging-only AC check at STEP 6.2 sign-off gate; OA-02 resolved); shared_standards.md v3.3→v3.4 (sprint_backlog.md template [REQUIRED] enforcement); delivery_verification_prompt.md v2.5→v2.6 (STEP -1.3A PR Number Recovery; OA-04 resolved) (ST-01/02/03) | claude/system/execution_prompt.md; claude/system/sprint_planning_prompt.md; claude/system/shared_standards.md; claude/system/delivery_verification_prompt.md |
+| EPIC-02 | API contract spec debt clearance — four undocumented v3.8/v3.9/v4.0 endpoints verified and formally contracted: red_flag_journal.md v1.0.0 (SI-03), pre_entry_validation.md v1.0.0 (SI-01), arc5_compliance_analytics.md v1.0.0 (Arc 5), gemini_thesis_generation.md v2.0.0 (AI thesis); all openapi.yaml entries confirmed (ST-04/05/06/07) | docs/specs/api_contracts/red_flag_journal.md; docs/specs/api_contracts/pre_entry_validation.md; docs/specs/api_contracts/arc5_compliance_analytics.md; docs/specs/api_contracts/gemini_thesis_generation.md; docs/reference/openapi.yaml |
+| EPIC-03 | Arc 5 P&L integration + Claude API cost alerting + frontend spec — metrics_definitions.md v1.10→v1.11 (Arc 5 composite score formula); reports.md v0.2→v0.3 (Arc 5 Compliance Summary section); POST /ai/check-daily-cost endpoint with Telegram alert ($1.00 default threshold) + 5 unit tests; research_view.md v1.1→v1.2 (signal_type Setup Type field + 4 Playwright tests); arc5_compliance_section.md v1.0 created (ST-08/09/10) | docs/specs/metrics_definitions.md; docs/specs/frontend/pages/reports.md; docs/specs/api_contracts/ai_endpoints.md v1.1; docs/specs/frontend/pages/research_view.md; docs/specs/frontend/components/arc5_compliance_section.md; docs/reference/openapi.yaml |
+| EPIC-04 | SI-02 pre-planning + security review + operational reviews — si02_gap_analysis.md (5 gaps enumerated); section13_criteria.md, data_prerequisite_audit.md (gate NOT met: <20 closed trades), query_performance_assessment.md; ANTHROPIC_API_KEY scope review + credential inventory v1.1; delivery_verification_prompt.md v2.6→v2.7 (STEP 9.0 artefact presence check); OPERATIONAL_GUIDE.md v4.05→v4.06; api_performance_baseline.md v1.4→v1.5; gemini_cost_tracking.md v1.1→v1.2; pnl_attribution_gate_check.md v1.0 (ST-12/13/14/15) | docs/specs/si02_gap_analysis.md; docs/specs/si02/section13_criteria.md; docs/specs/si02/data_prerequisite_audit.md; docs/specs/si02/query_performance_assessment.md; docs/security/anthropic_api_key_scope_review.md; docs/ops/external_api_credential_inventory.md v1.1; claude/system/delivery_verification_prompt.md; docs/ops/api_performance_baseline.md; docs/ops/gemini_cost_tracking.md; docs/ops/pnl_attribution_gate_check.md |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01] OA-01 (2nd-recurrence): execution_prompt.md merge-gate re-invocation as hard gate
+- [ST-02] OA-02 (2nd-recurrence): sprint_planning_prompt.md staging-only AC designation at planning
+- [ST-03] OA-04: delivery_verification_prompt.md PR number null guard (STEP -1.3A)
+- [ST-04] BLG-SPEC-33: SI-03 Red Flag Journal API contract document
+- [ST-05] BLG-SPEC-34: SI-01 Pre-Entry Validation API contract document
+- [ST-06] BLG-SPEC-40: Arc 5 analytics endpoint API contract
+- [ST-07] BLG-SPEC-38: AI thesis endpoint API contract (Claude API)
+- [ST-08] BLG-FEAT-40 + BLG-FEAT-42: Arc 5 compliance metrics P&L integration (composite score formula + Reports page section)
+- [ST-09] BLG-OPS-34: Claude API daily cost threshold alert via Telegram
+- [ST-10] BLG-FE-44 + BLG-FE-48: Research view signal_type field + Arc5ComplianceSection component spec
+- [ST-12] BLG-SPEC-39: SI-02 data model gap analysis
+- [ST-13] BLG-GOV-44 + BLG-GOV-46 + BLG-GOV-51: SI-02 pre-planning (§13 criteria + data audit + query performance)
+- [ST-14] BLG-GOV-49 + BLG-GOV-54 + BLG-GOV-56: Security review (ANTHROPIC_API_KEY) + SI-05 annotation + delivery_verification_prompt.md STEP 9.0
+- [ST-15] BLG-OPS-29 + BLG-OPS-30 + BLG-OPS-32: API performance baseline v1.5 + first Claude usage review + P&L attribution gate check
+
+Sign-off: Product Owner — 2026-05-27
+QA sign-off: Director of Quality — 2026-05-27
 
 ---
 
