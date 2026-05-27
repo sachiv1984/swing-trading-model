@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-27 (post-ship closure 2026-05-26__release-v4.1 — v4.1 ✅ Shipped)
-**Last rebalance:** 2026-05-25 (cycle 2026-05-25__scheduled — Standard-tier, no-change; 44 ideas from IW-20260525-01; 39 Promoted-Backlog, 11 Parked, 4 Rejected; DL-034)
+**Last Updated:** 2026-05-27 (rebalance 2026-05-27__scheduled — Extended-tier, no-change roadmap; 44 new ideas + 11 parked resolved from IW-20260527-01; 31 Promoted-Backlog, 9 Parked, 15 Rejected; DL-035; BLG-GOV-48 displaced to §9)
+**Last rebalance:** 2026-05-27 (cycle 2026-05-27__scheduled — Extended-tier, CPS=1.15; Strategy Drift Alert acknowledged; 31 new backlog items; DL-035)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
