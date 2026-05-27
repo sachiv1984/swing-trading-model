@@ -98,3 +98,24 @@ The following High-priority decisions must be resolved before sprint planning se
 | decisions record | Present |
 | Publish gate | PASS |
 | Status | Published |
+
+---
+
+## Execution Notes
+
+### OA-03: sprint_close_reminder.yml Investigation (AC-04 of ST-01)
+
+**PMO Lead Task — Outcome recorded 2026-05-27**
+
+Investigation of `.github/workflows/sprint_close_reminder.yml` (referenced in execution_prompt.md STEP 4):
+
+**Findings:**
+- Workflow file exists at `.github/workflows/sprint_close_reminder.yml` and is correctly configured.
+- Trigger: `pull_request.types: [closed]` on `main` branch — fires when any PR is closed (merged or rejected); `merged == true` guard filters to actual merges only.
+- Branch filter: `startsWith(github.event.pull_request.head.ref, 'exec/')` correctly targets EPIC branches.
+- Cycle ID extraction: regex `exec/([^/]+)/.*` correctly extracts the cycle ID from the branch name.
+- Comment payload: clearly instructs the user to run `run sprint --cycle "<cycle_id>"` and explains the STEP 5 consequence of not doing so.
+
+**Conclusion:** The workflow is functioning as designed. The OA-03 concern was about engine-side behaviour (the prompt did not hard-gate after merge) rather than a workflow deficiency. The ST-01 fix (execution_prompt.md v3.27→v3.28 hard gate) addresses the engine-side gap. The workflow now serves as a redundant automation backup to the engine-level hard gate — two-layer protection against the 2nd-recurrence pattern.
+
+**Action required by PMO Lead:** None. Workflow is operational; no configuration change needed. Mark OA-03 closed.
