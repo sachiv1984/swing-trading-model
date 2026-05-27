@@ -3,9 +3,25 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-14 (roadmap rebalance — cycle 2026-05-13__scheduled — 2 backlog adds: BLG-QA-18 S-effort, BLG-FE-31 S-effort)
+**Last Updated:** 2026-05-27 (throughput revision — sprint capacity baseline raised; rebalance cadence changed to every 2nd cycle)
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
+
+---
+
+## Sprint Capacity Baseline (Effective 2026-05-27)
+
+**Decision:** Sprint capacity baseline raised from ~8–10 days/sprint to ~12–14 days/sprint (solo developer, evenings/weekends). This is a deliberate upward revision to increase release throughput in response to backlog growth outpacing delivery rate (CPS 1.15 at 2026-05-27 rebalance).
+
+| Field | Previous | Revised |
+|-------|----------|---------|
+| Per-sprint capacity | ~8–10 working days | ~12–14 working days |
+| Warn threshold | Effort > 10 days | Effort > 14 days |
+| Rationale | Conservative baseline | Reflects actual sustained pace across v3.x–v4.x cycles |
+
+Release planning and sprint planning engines should use ~12–14 days per sprint as the capacity baseline. A `warn` outcome is appropriate when estimated effort exceeds 14 days per sprint; `pass` when within 12–14 days. PO may acknowledge a `warn` to proceed as before.
+
+**Rebalance cadence:** Rebalances now run every 2nd cycle (post-ship closure emits advisory). PO may override and run on any cycle.
 
 ---
 
