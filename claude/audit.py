@@ -24,30 +24,25 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-05-21"
+PRIOR_AUDIT_ID = "AUD-2026-05-27"
 PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-05-21-001",  # Structural duplicate issue check (execution_prompt STEP 1)
-    "AUD-2026-05-21-002",  # Planning-deferred traceability in execution_state.json
-    "AUD-2026-05-21-003",  # test_scenarios scoping to EPIC-specific files
-    "AUD-2026-05-21-004",  # plan release + delivery verification dry-run support
-    "AUD-2026-05-21-005",  # createPageUrl delegation template requirement
-    "AUD-2026-05-21-006",  # §13 shared module artefacts register entry
-    "AUD-2026-05-21-007",  # ideas_housekeeping dry-run table entry
+    "AUD-2026-05-27-002",  # STEP 5.0A automatic PR number recovery (Tier 2 — v4.2 sprint)
 ]
-# All AUD-2026-05-13 items confirmed RESOLVED (see Phase 0 table in audit_report_AUD-2026-05-21.md).
+# All AUD-2026-05-21 items confirmed RESOLVED (see Phase 0 table in audit_report_AUD-2026-05-27.md).
+# AUD-2026-05-27-001 (§14 Version fix) and AUD-2026-05-27-003 (STEP 5.2 clarification) applied as Tier 1 this session.
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
-    "token_efficiency":      95,   # HIGH CONFIDENCE — preamble refactor confirmed; governance_preamble.md v1.0 eliminates 6-engine inline block duplication
-    "governance_integrity":  86,   # MEDIUM CONFIDENCE — §14 fully aligned; §13 shared module gap (AUD-006) latent
-    "execution_reliability": 84,   # MEDIUM CONFIDENCE — 2 deferred patches confirmed (v3.8); 1 ASSERTION-only guard
-    "friction_load":         45,   # LOW CONFIDENCE — v3.6–v3.8 confirmed; earlier cycles ESTIMATED
-    "document_hygiene":      87,   # MEDIUM CONFIDENCE — prior wrong-class resolved; agent files not fully sampled
+    "token_efficiency":      95,   # HIGH CONFIDENCE — no inline blocks; all engines in §13 dry-run table
+    "governance_integrity":  86,   # MEDIUM CONFIDENCE — §14 engine entries all aligned; §14 Version field deviation patched by AUD-001
+    "execution_reliability": 84,   # MEDIUM CONFIDENCE — 2 new ACTIVE deferred patches (v4.2 targets); none STALE
+    "friction_load":         40,   # LOW CONFIDENCE — v3.8–v4.1 confirmed; earlier cycles ESTIMATED; trend DECREASING
+    "document_hygiene":      87,   # MEDIUM CONFIDENCE — AUD-001 patch applied; no other confirmed violations
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 24  # v1.7 through v3.8 (24 completed post-ship closures; confirmed from .claude_current_state.json)
+COMPLETED_CYCLES = 27  # v1.7 through v4.1 (27 completed post-ship closures; confirmed from .claude_current_state.json)
 
 # -------------------------
 # MISSING FILE RULE

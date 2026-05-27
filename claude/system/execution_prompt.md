@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.28
+**Version:** 3.29
 **Last Updated:** 2026-05-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -805,6 +805,8 @@ Any ST item that is `blocked_backend`, `blocked_frontend`, or `blocked_decision`
 - Set status to `returned_to_backlog`.
 - Note must be added to `claude/backlog/backlog.md` (one line, referencing this cycle_id and the reason).
 - This is the only permitted write to `backlog.md` in this routine.
+
+Note (AUD-2026-05-27-003): `returned_to_backlog` is also a valid **in-flight** status transition for PO-authorized deferrals — it does not require waiting until sprint close. When the Product Owner authorizes a mid-sprint deferral, apply `returned_to_backlog` immediately, update the delegation log entry to `Cancelled` if applicable, and record the deferral rationale in execution_state.json notes. The sprint close record should reference the earlier in-flight deferral.
 
 ### 5.3 Sprint Close Record
 
