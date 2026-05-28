@@ -94,6 +94,7 @@ pytest (excluding pre-existing failures): **360 passed, 0 new failures**
 ## DoQ Sign-Off
 
 **Director of Quality:** Confirmed — agent-mediated, 2026-05-28
+**Date:** 2026-05-28
 
 **Scope confirmed:**
 - ST-07: All 5 ACs passed. CLAUDE.md §2 compliance fully met. pytest clean.
