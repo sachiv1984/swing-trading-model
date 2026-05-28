@@ -2050,6 +2050,77 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /ai/claude-audit-log:
+    get:
+      tags: [AI]
+      summary: Query the Claude API audit trail
+      description: |
+        Returns the most recent entries from the claude_audit_log table — the immutable
+        audit trail of all Claude API calls made by the application. Intended for
+        compliance monitoring and cost review.
+        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.2 §GET /ai/claude-audit-log
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+          description: Maximum number of records to return (newest first).
+      responses:
+        "200":
+          description: Claude API audit log records
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      records:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              format: uuid
+                            endpoint:
+                              type: string
+                              description: API endpoint that triggered the Claude call.
+                            model_id:
+                              type: string
+                              description: Claude model ID used.
+                            prompt_version:
+                              type: string
+                              description: Internal prompt version tag.
+                            input_tokens:
+                              type: integer
+                              nullable: true
+                            output_tokens:
+                              type: integer
+                              nullable: true
+                            cost_usd:
+                              type: number
+                              format: float
+                              nullable: true
+                            generated_at:
+                              type: string
+                              format: date-time
+                      count:
+                        type: integer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          description: limit parameter out of range.
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /digest/weekly:
     get:
       tags: [Digest]
@@ -3796,7 +3867,7 @@ components:
         from a ticker and optional signal data. No existing plan record required.
         Returns available=true with fields on success; available=false with error on
         graceful degradation (no API key or API failure).
-        Canonical contract: docs/specs/api_contracts/gemini_thesis_generation.md
+        Canonical contract: docs/specs/api_contracts/ai_thesis_generation.md v2.1.0
       tags: [Trade Plans]
       requestBody:
         required: true
@@ -3858,7 +3929,7 @@ components:
         Calls Claude Haiku 4.5 to generate a concise setup thesis for an existing trade plan.
         Returns available=true with thesis text on success; available=false with error
         on graceful degradation (no API key or API failure).
-        Canonical contract: docs/specs/api_contracts/gemini_thesis_generation.md
+        Canonical contract: docs/specs/api_contracts/ai_thesis_generation.md v2.1.0
       tags: [Trade Plans]
       parameters:
         - name: plan_id

@@ -68,6 +68,8 @@ This role:
 -   Ensure AI usage aligns with documented intent
 -   Prevent silent expansion of AI authority
 
+**API Provider Coverage:** This role's governance scope includes all AI API providers used by the project, including Anthropic (Claude API). Provider-specific constraints, key security posture, and usage policies for each provider are owned by this role regardless of whether the provider is named explicitly.
+
 ### 4.2 Compliance & Risk Oversight
 
 -   Identify regulatory and ethical risks

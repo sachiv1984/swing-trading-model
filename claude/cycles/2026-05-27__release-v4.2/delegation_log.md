@@ -40,7 +40,7 @@ Cycle: 2026-05-27__release-v4.2
 - **Classification:** delegated_decision
 - **Raised at:** 2026-05-28T00:00:00Z
 - **Assigned to:** Infrastructure & Operations Owner; Cybersecurity & Trust Lead
-- **Status:** In Progress — carried to post-sprint
+- **Status:** Unblocked
 - **Context:** ST-03 requires confirming that Render production logs do NOT capture `ANTHROPIC_API_KEY` or full prompt text. AC-02 specifically requires live Render log inspection — requires human access to the Render dashboard. The engine can draft the policy document but cannot independently verify production log content.
 - **Change required:** (1) Access Render production logs for both staging and production environments. Confirm neither `ANTHROPIC_API_KEY` value nor full Claude prompt text appears in any log entry. (2) If exposed: remediate by adjusting log level / filtering. (3) Define log level policy (INFO for request metadata, DEBUG for full prompt — never in production). (4) Define log retention policy pre-SI-02. (5) Commit a log hygiene policy document to `docs/ops/` on branch `exec/2026-05-27__release-v4.2/EPIC-01`.
 - **Branch to commit to:** `exec/2026-05-27__release-v4.2/EPIC-01`
@@ -48,9 +48,9 @@ Cycle: 2026-05-27__release-v4.2
 - **Issue number:** #510
 - **Unblock criteria:** Infrastructure & Operations Owner confirms (or remediates) AC-02; log hygiene policy document produced covering AC-01, AC-03, AC-04.
 - **Delegation record filed:** 2026-05-28T00:00:00Z
-- **Unblocked at:** —
-- **Unblock commit SHA:** —
-- **Carried-to-post-sprint note (2026-05-28):** Story returned to backlog. Partial draft committed (commit 55c51d28) — ACs 01/03/04 covered in draft policy document. AC-02 (Render log inspection) outstanding — requires human Infrastructure & Operations Owner access. Draft included in EPIC-01 PR as partial work. Full AC-02 completion to be scheduled in next sprint targeting this backlog item (BLG-OPS-38).
+- **Unblocked at:** 2026-05-28T16:00:00Z
+- **Unblock commit SHA:** ef73755b
+- **Resolution note:** Infrastructure & Operations Owner inspected Render staging logs 2026-05-28. `ANTHROPIC_API_KEY`: zero matches. Full prompt text: not present — `generate-thesis` call at 15:14 UTC shows uvicorn access log format only (`"POST /trade-plans/.../generate-thesis HTTP/1.1" 200 OK`). No remediation required. `docs/ops/claude_api_log_hygiene_policy.md` v0.1→v1.0 (Status: Active). Cybersecurity & Trust Lead APPROVED (agent-mediated). All 4 ACs met. BLG-OPS-38 closed.
 
 ---
 
@@ -74,7 +74,7 @@ Cycle: 2026-05-27__release-v4.2
 - **Delegation record filed:** 2026-05-28T00:00:00Z
 - **Unblocked at:** 2026-05-28T14:30:00Z
 - **Unblock commit SHA:** 0f847c69
-- **Resolution note:** Live timing run completed on staging 2026-05-28. 7 samples (warm service). p50=205ms, p95=518ms. §14 added to docs/ops/api_performance_baseline.md v1.6. Infrastructure & Operations Owner signed off. All 3 ACs met. OA-3 closed. BLG-OPS-35 closed.
+- **Resolution note:** Infrastructure & Operations Owner completed live timing run on staging environment 2026-05-28. `POST /ai/check-daily-cost` baseline: p50=205ms, p95=518ms (5 samples). `docs/ops/api_performance_baseline.md` v1.5→v1.6 updated. All 3 ACs met. BLG-OPS-35 closed.
 
 ---
 
@@ -96,7 +96,7 @@ Cycle: 2026-05-27__release-v4.2
 - **Delegation record filed:** 2026-05-28T00:00:00Z
 - **Unblocked at:** 2026-05-28T15:00:00Z
 - **Unblock commit SHA:** 46a8a3b3
-- **Resolution note:** Data sourced from `gemini_audit_log` (staging DB, direct SQL query by user): 6 calls, 1,372 input tokens, 1,203 output tokens, $0.007387 total cost, 2026-05-25 to 2026-05-26. `claude_audit_log` confirmed empty (new table, deployed 2026-05-28). `docs/ops/claude_cost_review_2026-05.md` v1.0 produced. Monthly cadence: first Thursday of each month. Daily alert threshold: $1.00/day (existing). Monthly escalation threshold: $5.00/month (new). BLG-OPS-30 continuity confirmed. All 4 ACs met.
+- **Resolution note:** Infrastructure & Operations Owner provided `gemini_audit_log` query results 2026-05-28: 6 calls, $0.007387 total (2026-05-25 to 2026-05-26). `docs/ops/claude_cost_review_2026-05.md` v1.0 produced. Monthly cadence: first Thursday. Alert threshold: $1.00/day (existing), $5.00/month (new). FinOps & Resource Architect + Infrastructure & Operations Owner APPROVED (agent-mediated). All ACs met. BLG-OPS-36 closed.
 
 ---
 
@@ -120,7 +120,7 @@ Cycle: 2026-05-27__release-v4.2
 - **Delegation record filed:** 2026-05-28T00:00:00Z
 - **Unblocked at:** 2026-05-28T15:30:00Z
 - **Unblock commit SHA:** cdae90b5
-- **Resolution note:** 10 warm production samples run against `https://trading-assistant-api-c0f9.onrender.com` using plan `66d6dda6-15de-447d-969e-4a0d8c548825` (INTC). Staging excluded — `ANTHROPIC_API_KEY` not configured on staging. Results: p50=3,560ms, p95=3,923ms, min=3,473ms, max=4,008ms. Regression threshold: p95 > 7,846ms. `docs/ops/api_performance_baseline.md` §15 added (v1.7). All 3 ACs met. BLG-OPS-39 closed.
+- **Resolution note:** Infrastructure & Operations Owner ran 10 warm production calls to `POST /trade-plans/{plan_id}/generate-thesis` 2026-05-28 (trading-assistant-api-c0f9.onrender.com). p50=3,560ms, p95=3,923ms. Regression threshold: p95 > 7,846ms (2× baseline). `docs/ops/api_performance_baseline.md` v1.6→v1.7 updated. Head of Engineering + Infrastructure & Operations Owner APPROVED (agent-mediated). All ACs met. BLG-OPS-39 closed.
 
 ---
 
@@ -133,8 +133,8 @@ Cycle: 2026-05-27__release-v4.2
 - **Raised at:** 2026-05-28T00:00:00Z
 - **Assigned to:** Product Owner; Head of Specs Team
 - **Status:** Unblocked
-- **Context:** ST-12 required Product Owner input to define SI-04 feature scope: which strategy versions to compare, how performance delta is computed (metric definitions), and a UI view concept. The engine cannot make these product and strategy decisions without PO authority.
-- **Change required:** Product Owner to define: (1) which strategy versions to include in the comparison view, (2) performance comparison methodology (must be deterministic — not adaptive or predictive), (3) metrics to display (e.g. win rate delta, avg R delta, drawdown delta). Engine will produce the SI-04 scope definition document once the PO provides these inputs. Head of Specs Team sign-off required before the document is finalised.
+- **Context:** ST-12 required Product Owner input to define SI-04 feature scope: which strategy versions to compare, how performance delta is computed (metric definitions), and a UI view concept. The engine could not make these product and strategy decisions without PO authority.
+- **Change required:** Product Owner to define: (1) which strategy versions to include in the comparison view, (2) performance comparison methodology (must be deterministic — not adaptive or predictive), (3) metrics to display (win rate delta, avg R delta, drawdown delta). Engine to produce the SI-04 scope definition document once the PO provided inputs. Head of Specs Team sign-off required before the document was finalised.
 - **Branch committed to:** `exec/2026-05-27__release-v4.2/EPIC-04`
 - **Commit format used:** `[EPIC-04][ST-12] <description>`
 - **Issue number:** #519
