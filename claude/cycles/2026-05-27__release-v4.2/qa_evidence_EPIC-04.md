@@ -68,7 +68,7 @@ PMO Lead + Head of Specs Team: APPROVED (agent-mediated) 2026-05-28
 ## DoQ Sign-Off
 
 **Director of Quality:** Confirmed — agent-mediated, 2026-05-28
-**Date:** 2026-05-28
+- Date: 2026-05-28
 
 **Scope confirmed:**
 - ST-11: All 3 ACs passed. Checklist comprehensive and integration point defined.
