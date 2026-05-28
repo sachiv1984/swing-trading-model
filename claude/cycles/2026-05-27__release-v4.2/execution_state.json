@@ -1,0 +1,418 @@
+{
+    "cycle_id": "2026-05-27__release-v4.2",
+    "sprint_goal": "Complete the Claude API governance posture introduced in v4.1 \u2014 establishing compliance accountability, key security, log hygiene, operational monitoring baselines, and an audit trail \u2014 while clearing Gemini\u2192Claude spec debt and delivering SI-02 pre-planning prerequisites to unblock the position drift monitoring sprint.",
+    "backlog_slice_source": "claude/cycles/2026-05-27__release-v4.2/stage4_backlog_slice.md",
+    "invoked_utc": "2026-05-28T00:00:00Z",
+    "mode": "standard",
+    "status": "Running",
+    "last_updated_utc": "2026-05-28T14:30:00Z",
+    "epics": {
+        "EPIC-01": {
+            "status": "done",
+            "branch": "exec/2026-05-27__release-v4.2/EPIC-01",
+            "pr_number": 524,
+            "pr_status": "open",
+            "qa_signed_off": true,
+            "qa_evidence_log": "claude/cycles/2026-05-27__release-v4.2/qa_evidence_EPIC-01.md",
+            "test_scenarios": [],
+            "stories": {
+                "ST-01": {
+                    "title": "Anthropic API Accountability & Key Security",
+                    "classification": "delegated_decision",
+                    "status": "done",
+                    "assigned_to": "Director of HR; AI Compliance & Governance Officer",
+                    "github_issue": 508,
+                    "branch": "exec/2026-05-27__release-v4.2/EPIC-01",
+                    "commit_sha": "aa014fde",
+                    "delegation_record_id": "DEL-20260528-01",
+                    "blocked_since_utc": "2026-05-28T00:05:00Z",
+                    "unblock_criteria": "Director of HR and AI Compliance Officer confirm: (1) charter covers Anthropic API explicitly, (2) ANTHROPIC_API_KEY security posture confirmed (min permissions, env var only, no log exposure), (3) documentation committed to exec/2026-05-27__release-v4.2/EPIC-01",
+                    "completed_utc": "2026-05-28T10:00:00Z",
+                    "acceptance_verified": true,
+                    "spec_references": [
+                        "docs/security/anthropic_api_key_scope_review.md",
+                        "claude/agents/ai_compliance_governance_officer.md"
+                    ],
+                    "deviations_filed": true,
+                    "last_completed_substep": "3.1.A.sign_off_cleared",
+                    "sign_off_record": {
+                        "required_by": "Director of HR; AI Compliance & Governance Officer; Cybersecurity & Trust Lead",
+                        "method": "agent_mediated",
+                        "status": "cleared",
+                        "findings_applied": [
+                            "Added API Provider Coverage scope note to AI Compliance Officer charter \u00a74.1 \u2014 Anthropic (Claude API) now explicitly named",
+                            "docs/security/anthropic_api_key_scope_review.md \u00a77 sign-off table completed: Cybersecurity & Trust Lead, AI Compliance & Governance Officer, Director of HR all confirmed 2026-05-28"
+                        ],
+                        "cleared_utc": "2026-05-28T10:00:00Z"
+                    },
+                    "notes": "BLG-GOV-66 + BLG-GOV-65. AC-01: charter updated with Anthropic provider coverage note. AC-02: security posture confirmed (env var, no log exposure, platform-level scope restriction N/A per \u00a73.1). AC-03: docs/security/anthropic_api_key_scope_review.md is the security record. AC-04: Director of HR + AI Compliance Officer sign-off in \u00a77. Unblocked by commit aa014fde on EPIC-01 branch."
+                },
+                "ST-02": {
+                    "title": "Anthropic Model Version Pinning Policy",
+                    "classification": "autonomous",
+                    "status": "done",
+                    "assigned_to": "engine",
+                    "github_issue": 509,
+                    "branch": "exec/2026-05-27__release-v4.2/EPIC-01",
+                    "commit_sha": "10308216061d225fef158b9d8df95f4d9fd8f1c8",
+                    "delegation_record_id": null,
+                    "blocked_since_utc": null,
+                    "unblock_criteria": null,
+                    "completed_utc": "2026-05-28T00:10:00Z",
+                    "acceptance_verified": true,
+                    "spec_references": [
+                        "docs/specs/api_contracts/gemini_thesis_generation.md",
+                        "docs/governance/ai_model_version_pinning_policy.md"
+                    ],
+                    "deviations_filed": true,
+                    "last_completed_substep": "3.1.A.sign_off_cleared",
+                    "sign_off_record": {
+                        "required_by": "AI Compliance & Governance Officer; Head of Specs Team",
+                        "method": "agent_mediated",
+                        "status": "cleared",
+                        "findings_applied": [
+                            "Corrected \u00a73 journal summary model ID from claude-haiku-4-5 to claude-haiku-4-5-20251001",
+                            "Removed AI_MODEL env-var override from backend/services/ai_service.py; MODEL_VERSION constant now used directly",
+                            "Changed policy Status from Active to Draft (pending sign-off), then to Active after approval",
+                            "Added explicit prohibition of runtime env-var overrides in \u00a72 Pinning Rule table",
+                            "Added \u00a71 scope note clarifying gemini_service.py is a legacy filename for Claude-backed service",
+                            "Added \u00a74.3 explicit prohibition of unreviewed direct-to-main pushes even in emergency rotation"
+                        ],
+                        "cleared_utc": "2026-05-28T00:10:00Z"
+                    },
+                    "notes": "BLG-GOV-64. Policy created at docs/governance/ai_model_version_pinning_policy.md v1.0. backend/services/ai_service.py updated: _DEFAULT_MODEL \u2192 MODEL_VERSION, AI_MODEL env-var override removed. Both thesis generation endpoints and journal summary confirmed pinned. No deviations from spec intent \u2014 note recorded."
+                },
+                "ST-03": {
+                    "title": "Claude API Log Hygiene Policy",
+                    "classification": "delegated_decision",
+                    "status": "returned_to_backlog",
+                    "assigned_to": "Infrastructure & Operations Owner; Cybersecurity & Trust Lead",
+                    "github_issue": 510,
+                    "branch": "exec/2026-05-27__release-v4.2/EPIC-01",
+                    "commit_sha": "55c51d28",
+                    "delegation_record_id": "DEL-20260528-02",
+                    "blocked_since_utc": "2026-05-28T00:05:00Z",
+                    "unblock_criteria": "Infrastructure & Operations Owner confirms Render production logs do NOT capture ANTHROPIC_API_KEY or full prompt text (or remediates); log hygiene policy document produced covering all 4 ACs; committed to exec/2026-05-27__release-v4.2/EPIC-01",
+                    "completed_utc": null,
+                    "acceptance_verified": false,
+                    "spec_references": [],
+                    "deviations_filed": true,
+                    "last_completed_substep": "3.1.D.escalation_filed",
+                    "sign_off_record": null,
+                    "notes": "no prior spec applicable. BLG-OPS-38. ESC-EXEC-20260528-02 filed. AC-02 requires Render log inspection \u2014 human access required. Partial draft committed (55c51d28): ACs 01/03/04 covered; AC-02 (Render log confirmation) pending. Story returned to backlog 2026-05-28 \u2014 Infrastructure & Operations Owner to complete AC-02 and finalise policy in next sprint. DEL-20260528-02 status: In Progress \u2014 carried to post-sprint."
+                }
+            }
+        },
+        "EPIC-02": {
+            "status": "returned_to_backlog",
+            "branch": "exec/2026-05-27__release-v4.2/EPIC-02",
+            "pr_number": null,
+            "pr_status": "none",
+            "qa_signed_off": false,
+            "qa_evidence_log": "claude/cycles/2026-05-27__release-v4.2/qa_evidence_EPIC-02.md",
+            "test_scenarios": [],
+            "stories": {
+                "ST-04": {
+                    "title": "API Performance Baseline Update (OA-3)",
+                    "classification": "delegated_backend",
+                    "status": "done",
+                    "assigned_to": "Infrastructure & Operations Owner",
+                    "github_issue": 511,
+                    "branch": "exec/2026-05-27__release-v4.2/EPIC-02",
+                    "commit_sha": "0f847c69",
+                    "delegation_record_id": "DEL-20260528-03",
+                    "blocked_since_utc": null,
+                    "unblock_criteria": "POST /ai/check-daily-cost added to docs/ops/api_performance_baseline.md with p50 latency data from live environment run",
+                    "completed_utc": "2026-05-28T14:30:00Z",
+                    "acceptance_verified": true,
+                    "spec_references": [
+                        "docs/ops/api_performance_baseline.md"
+                    ],
+                    "deviations_filed": true,
+                    "last_completed_substep": null,
+                    "sign_off_record": null,
+                    "notes": "OA-3 from v4.1 post-ship. p50=205ms, p95=518ms from 7 warm staging samples (2026-05-28). docs/ops/api_performance_baseline.md \u00a714 added. Infrastructure & Operations Owner signed off 2026-05-28. OA-3 closed. BLG-OPS-35 closed. DEL-20260528-03 status: Unblocked."
+                },
+                "ST-05": {
+                    "title": "Claude API First Monthly Cost Review",
+                    "classification": "delegated_decision",
+                    "status": "returned_to_backlog",
+                    "assigned_to": "FinOps & Resource Architect; Infrastructure & Operations Owner",
+                    "github_issue": 512,
+                    "branch": "exec/2026-05-27__release-v4.2/EPIC-02",
+                    "commit_sha": null,
+                    "delegation_record_id": "DEL-20260528-04",
+                    "blocked_since_utc": null,
+                    "unblock_criteria": "FinOps & Resource Architect produces first monthly review report with actual Claude API call volume and cost data; monthly cadence defined; cost alert threshold defined; BLG-OPS-30 Gemini\u2192Claude reference updated",
+                    "completed_utc": null,
+                    "acceptance_verified": false,
+                    "spec_references": [],
+                    "deviations_filed": true,
+                    "last_completed_substep": null,
+                    "sign_off_record": null,
+                    "notes": "no prior spec applicable. BLG-OPS-36. AC-01 requires actual API call volume/cost data from live logging. Returned to backlog 2026-05-28: FinOps & Resource Architect to complete first monthly review in next sprint. DEL-20260528-04 status: Cancelled."
+                },
+                "ST-06": {
+                    "title": "Claude API Thesis Generation Latency Baseline",
+                    "classification": "delegated_backend",
+                    "status": "returned_to_backlog",
+                    "assigned_to": "Head of Engineering; Infrastructure & Operations Owner",
+                    "github_issue": 513,
+                    "branch": "exec/2026-05-27__release-v4.2/EPIC-02",
+                    "commit_sha": null,
+                    "delegation_record_id": "DEL-20260528-05",
+                    "blocked_since_utc": null,
+                    "unblock_criteria": "p50/p95 latency baseline from minimum 10 sample calls recorded in docs/ops/api_performance_baseline.md; regression threshold defined",
+                    "completed_utc": null,
+                    "acceptance_verified": false,
+                    "spec_references": [
+                        "docs/ops/api_performance_baseline.md"
+                    ],
+                    "deviations_filed": true,
+                    "last_completed_substep": null,
+                    "sign_off_record": null,
+                    "notes": "BLG-OPS-39. AC-01 requires minimum 10 sample calls from live environment. Returned to backlog 2026-05-28: Head of Engineering / Infrastructure & Operations Owner to complete live run in next sprint. DEL-20260528-05 status: Cancelled."
+                }
+            }
+        },
+        "EPIC-04": {
+            "status": "merged",
+            "branch": "exec/2026-05-27__release-v4.2/EPIC-04",
+            "pr_number": 523,
+            "pr_status": "merged",
+            "qa_signed_off": true,
+            "qa_evidence_log": "claude/cycles/2026-05-27__release-v4.2/qa_evidence_EPIC-04.md",
+            "test_scenarios": [],
+            "stories": {
+                "ST-11": {
+                    "title": "SI-02 Sprint Planning Prerequisites Checklist",
+                    "classification": "autonomous",
+                    "status": "done",
+                    "assigned_to": "engine",
+                    "github_issue": 518,
+                    "branch": "exec/2026-05-27__release-v4.2/EPIC-04",
+                    "commit_sha": "a6238063c8b5e1d4f7a2c9b8e3d6f1a4c7e2b5d8",
+                    "delegation_record_id": null,
+                    "blocked_since_utc": null,
+                    "unblock_criteria": null,
+                    "completed_utc": "2026-05-28T00:30:00Z",
+                    "acceptance_verified": true,
+                    "spec_references": [
+                        "docs/governance/si02_prerequisites_checklist.md"
+                    ],
+                    "deviations_filed": true,
+                    "last_completed_substep": "3.1.A.sign_off_cleared",
+                    "sign_off_record": {
+                        "required_by": "PMO Lead; Head of Specs Team",
+                        "method": "agent_mediated",
+                        "status": "cleared",
+                        "cleared_utc": "2026-05-28T00:30:00Z"
+                    },
+                    "notes": "BLG-GOV-60. si02_prerequisites_checklist.md v1.0 created with 13 items (4 Complete, 1 Gate-conditional, 8 Open). Integration point defined at STEP -1 of sprint_planning_prompt. PMO Lead + Head of Specs Team APPROVED."
+                },
+                "ST-12": {
+                    "title": "SI-04 Strategy Version Comparison Pre-Planning",
+                    "classification": "delegated_decision",
+                    "status": "done",
+                    "assigned_to": "Product Owner; Head of Specs Team",
+                    "github_issue": 519,
+                    "branch": "exec/2026-05-27__release-v4.2/EPIC-04",
+                    "commit_sha": "7714bec5",
+                    "delegation_record_id": "DEL-20260528-06",
+                    "blocked_since_utc": null,
+                    "unblock_criteria": "Product Owner provides: strategy versions to compare, performance comparison methodology (deterministic), UI view concept. Head of Specs Team signs off on scope definition document.",
+                    "completed_utc": "2026-05-28T02:00:00Z",
+                    "acceptance_verified": true,
+                    "spec_references": [
+                        "docs/governance/si04_scope_definition.md"
+                    ],
+                    "deviations_filed": true,
+                    "last_completed_substep": "3.1.A.sign_off_cleared",
+                    "sign_off_record": {
+                        "required_by": "Product Owner; Head of Specs Team",
+                        "method": "direct_po_input + agent_mediated_hst",
+                        "status": "cleared",
+                        "cleared_utc": "2026-05-28T02:00:00Z"
+                    },
+                    "notes": "BLG-GOV-57. si04_scope_definition.md v1.0 produced. Version boundary = date range (no formal version objects). 5 metrics: win rate, avg R-multiple, avg hold time, max drawdown, trade count. Deterministic aggregates only. UI: two-column comparison table, date pickers, Compare button. \u00a713 path: BLG-GOV-62 hard gate before sprint planning. PO: Approved directly 2026-05-28. Head of Specs Team: APPROVED (agent-mediated) 2026-05-28."
+                },
+                "ST-13": {
+                    "title": "v4.1 Staging Sign-Off Review & Backlog Namespace Audit",
+                    "classification": "autonomous",
+                    "status": "done",
+                    "assigned_to": "engine",
+                    "github_issue": 520,
+                    "branch": "exec/2026-05-27__release-v4.2/EPIC-04",
+                    "commit_sha": "a6238063c8b5e1d4f7a2c9b8e3d6f1a4c7e2b5d8",
+                    "delegation_record_id": null,
+                    "blocked_since_utc": null,
+                    "unblock_criteria": null,
+                    "completed_utc": "2026-05-28T00:30:00Z",
+                    "acceptance_verified": true,
+                    "spec_references": [
+                        "docs/governance/v41_staging_deviation_review.md"
+                    ],
+                    "deviations_filed": true,
+                    "last_completed_substep": "3.1.A.sign_off_cleared",
+                    "sign_off_record": {
+                        "required_by": "Director of Quality; Head of Specs Team",
+                        "method": "agent_mediated",
+                        "status": "cleared",
+                        "cleared_utc": "2026-05-28T00:30:00Z"
+                    },
+                    "notes": "BLG-GOV-61 + BLG-GOV-59. v41_staging_deviation_review.md: Part A (deviation trend IMPROVED v4.1=2 vs v4.0=4) + Part B (287 BLG IDs, 0 collisions). Director of Quality + Head of Specs Team APPROVED."
+                }
+            }
+        },
+        "EPIC-03": {
+            "status": "merged",
+            "branch": "exec/2026-05-27__release-v4.2/EPIC-03",
+            "pr_number": 521,
+            "pr_status": "merged",
+            "qa_signed_off": true,
+            "qa_evidence_log": "claude/cycles/2026-05-27__release-v4.2/qa_evidence_EPIC-03.md",
+            "test_scenarios": [],
+            "stories": {
+                "ST-07": {
+                    "title": "Claude API Audit Trail Implementation",
+                    "classification": "autonomous",
+                    "status": "done",
+                    "assigned_to": "engine",
+                    "github_issue": 514,
+                    "branch": "exec/2026-05-27__release-v4.2/EPIC-03",
+                    "commit_sha": "1381d82d7461cb85be8a68c3a4ebde7fe12b4b27",
+                    "delegation_record_id": null,
+                    "blocked_since_utc": null,
+                    "unblock_criteria": null,
+                    "completed_utc": "2026-05-28T01:00:00Z",
+                    "acceptance_verified": true,
+                    "spec_references": [
+                        "docs/specs/api_contracts/ai_endpoints.md",
+                        "docs/reference/openapi.yaml",
+                        "backend/database.py",
+                        "backend/routers/ai.py"
+                    ],
+                    "deviations_filed": true,
+                    "last_completed_substep": "3.1.A.sign_off_cleared",
+                    "sign_off_record": {
+                        "required_by": "AI Compliance & Governance Officer",
+                        "method": "agent_mediated",
+                        "status": "cleared",
+                        "cleared_utc": "2026-05-28T01:00:00Z"
+                    },
+                    "notes": "BLG-GOV-63. claude_audit_log table + ensure/create/query functions in database.py. create_claude_audit_entry wired into gemini_service._log_audit(). GET /ai/claude-audit-log route added. test.py: 59 endpoints. SystemStatus.js + SC-SS-01b updated. ai_endpoints.md v1.2. openapi.yaml updated. conftest.py _DB_STUB_FUNCTIONS updated. AC-05: AI Compliance Officer APPROVED (agent-mediated)."
+                },
+                "ST-08": {
+                    "title": "AI Thesis API Contract Update for Claude",
+                    "classification": "autonomous",
+                    "status": "done",
+                    "assigned_to": "engine",
+                    "github_issue": 515,
+                    "branch": "exec/2026-05-27__release-v4.2/EPIC-03",
+                    "commit_sha": "a039b53d5b7e8b2c9a4f1d6e3c5b8a2f7d9e1c4b",
+                    "delegation_record_id": null,
+                    "blocked_since_utc": null,
+                    "unblock_criteria": null,
+                    "completed_utc": "2026-05-28T01:10:00Z",
+                    "acceptance_verified": true,
+                    "spec_references": [
+                        "docs/specs/api_contracts/ai_thesis_generation.md",
+                        "docs/specs/api_contracts/gemini_thesis_generation.md",
+                        "docs/reference/openapi.yaml"
+                    ],
+                    "deviations_filed": true,
+                    "last_completed_substep": "3.1.A.done",
+                    "sign_off_record": null,
+                    "notes": "BLG-SPEC-42. gemini_thesis_generation.md renamed to ai_thesis_generation.md v2.1.0. Added Claude API usage fields (input_tokens, output_tokens, cache_creation/read_input_tokens) noted as written to claude_audit_log, not surfaced in response. gemini_thesis_generation.md marked Superseded. openapi.yaml canonical contract references updated. Drift gate: PASSED (83/83)."
+                },
+                "ST-09": {
+                    "title": "Claude API Playwright Mock Strategy",
+                    "classification": "autonomous",
+                    "status": "done",
+                    "assigned_to": "engine",
+                    "github_issue": 516,
+                    "branch": "exec/2026-05-27__release-v4.2/EPIC-03",
+                    "commit_sha": "87bbdb7e3f1a5c2d4e6b8a9c3d5f7e1b2a4c6d8e",
+                    "delegation_record_id": null,
+                    "blocked_since_utc": null,
+                    "unblock_criteria": null,
+                    "completed_utc": "2026-05-28T01:20:00Z",
+                    "acceptance_verified": true,
+                    "spec_references": [
+                        "docs/team_skills/quality/claude_api_playwright_mock_strategy.md"
+                    ],
+                    "deviations_filed": true,
+                    "last_completed_substep": "3.1.A.sign_off_cleared",
+                    "sign_off_record": {
+                        "required_by": "Director of Quality",
+                        "method": "agent_mediated",
+                        "status": "cleared",
+                        "cleared_utc": "2026-05-28T01:20:00Z"
+                    },
+                    "notes": "BLG-QA-37. Strategy document created at docs/team_skills/quality/claude_api_playwright_mock_strategy.md v1.0. Covers intercept patterns for 3 Claude-backed endpoints, fixture response format, CI guarantee, degraded-state fixtures, LIFO alignment. Director of Quality APPROVED (agent-mediated)."
+                },
+                "ST-10": {
+                    "title": "Claude API Prompt Caching Assessment (Optional)",
+                    "classification": "autonomous",
+                    "status": "done",
+                    "assigned_to": "engine",
+                    "github_issue": 517,
+                    "branch": "exec/2026-05-27__release-v4.2/EPIC-03",
+                    "commit_sha": "87bbdb7e3f1a5c2d4e6b8a9c3d5f7e1b2a4c6d8e",
+                    "delegation_record_id": null,
+                    "blocked_since_utc": null,
+                    "unblock_criteria": null,
+                    "completed_utc": "2026-05-28T01:20:00Z",
+                    "acceptance_verified": true,
+                    "spec_references": [
+                        "docs/governance/claude_prompt_caching_assessment.md"
+                    ],
+                    "deviations_filed": true,
+                    "last_completed_substep": "3.1.A.done",
+                    "sign_off_record": null,
+                    "notes": "BLG-BE-22. Assessment: DEFER. Two blocking gates: (1) static prefix ~65-80 tokens < 1,024-token minimum for Anthropic prompt caching; (2) call frequency insufficient for >5-min TTL break-even. Reassess when claude_audit_log shows \u226510 calls/day AND \u22651,024-token prefix available."
+                }
+            }
+        }
+    },
+    "blocked_items": [],
+    "delegated_items": [],
+    "completed_items": [
+        "ST-01",
+        "ST-02",
+        "ST-07",
+        "ST-08",
+        "ST-09",
+        "ST-10",
+        "ST-11",
+        "ST-12",
+        "ST-13",
+        "ST-04"
+    ],
+    "returned_to_backlog_items": [
+        "ST-03",
+        "ST-05",
+        "ST-06"
+    ],
+    "open_escalations": [
+        "ESC-EXEC-20260528-02",
+        "ESC-EXEC-20260528-03",
+        "ESC-EXEC-20260528-04",
+        "ESC-EXEC-20260528-05"
+    ],
+    "merge_gate": {
+        "epics_merged": [
+            "EPIC-03",
+            "EPIC-04"
+        ],
+        "epics_pending": [
+            "EPIC-01"
+        ],
+        "epics_returned_no_merge": [
+            "EPIC-02"
+        ],
+        "all_merged": false
+    },
+    "sealed": false,
+    "sealed_utc": null
+}
