@@ -1460,3 +1460,86 @@ def get_daily_ai_cost() -> dict:
                 }
     except Exception:
         return {"total_cost_usd": 0.0, "request_count": 0}
+
+
+# ---------------------------------------------------------------------------
+# claude_audit_log — immutable audit trail for Claude API calls
+# ---------------------------------------------------------------------------
+
+def ensure_claude_audit_log_table() -> None:
+    """Create claude_audit_log table if it does not exist."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS claude_audit_log (
+                    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    endpoint        TEXT NOT NULL,
+                    model_id        TEXT NOT NULL,
+                    prompt_version  TEXT NOT NULL,
+                    input_tokens    INTEGER,
+                    output_tokens   INTEGER,
+                    cost_usd        NUMERIC(12, 8),
+                    generated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+        conn.commit()
+
+
+def create_claude_audit_entry(
+    endpoint: str,
+    model_id: str,
+    prompt_version: str,
+    input_tokens: int | None = None,
+    output_tokens: int | None = None,
+    cost_usd: float | None = None,
+) -> None:
+    """Insert one row into claude_audit_log. Non-blocking on failure."""
+    try:
+        ensure_claude_audit_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO claude_audit_log
+                        (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    """,
+                    (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd),
+                )
+            conn.commit()
+    except Exception:
+        pass
+
+
+def query_claude_audit_log(limit: int = 50) -> list[dict]:
+    """Return the most recent rows from claude_audit_log, newest first."""
+    try:
+        ensure_claude_audit_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT id, endpoint, model_id, prompt_version,
+                           input_tokens, output_tokens, cost_usd, generated_at
+                    FROM claude_audit_log
+                    ORDER BY generated_at DESC
+                    LIMIT %s
+                    """,
+                    (limit,),
+                )
+                rows = cur.fetchall()
+                return [
+                    {
+                        "id": str(r["id"]),
+                        "endpoint": r["endpoint"],
+                        "model_id": r["model_id"],
+                        "prompt_version": r["prompt_version"],
+                        "input_tokens": r["input_tokens"],
+                        "output_tokens": r["output_tokens"],
+                        "cost_usd": float(r["cost_usd"]) if r["cost_usd"] is not None else None,
+                        "generated_at": r["generated_at"].isoformat() if r["generated_at"] else None,
+                    }
+                    for r in rows
+                ]
+    except Exception:
+        return []
