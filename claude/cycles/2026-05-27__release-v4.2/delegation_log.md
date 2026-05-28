@@ -95,7 +95,7 @@ Cycle: 2026-05-27__release-v4.2
 - **Unblock criteria:** First monthly review report produced with actual API call volume and cost data; monthly cadence defined; cost alert threshold defined; BLG-OPS-30 Gemini→Claude reference updated.
 - **Delegation record filed:** 2026-05-28T00:00:00Z
 - **Unblocked at:** 2026-05-28T15:00:00Z
-- **Unblock commit SHA:** pending
+- **Unblock commit SHA:** 46a8a3b3
 - **Resolution note:** Data sourced from `gemini_audit_log` (staging DB, direct SQL query by user): 6 calls, 1,372 input tokens, 1,203 output tokens, $0.007387 total cost, 2026-05-25 to 2026-05-26. `claude_audit_log` confirmed empty (new table, deployed 2026-05-28). `docs/ops/claude_cost_review_2026-05.md` v1.0 produced. Monthly cadence: first Thursday of each month. Daily alert threshold: $1.00/day (existing). Monthly escalation threshold: $5.00/month (new). BLG-OPS-30 continuity confirmed. All 4 ACs met.
 
 ---
