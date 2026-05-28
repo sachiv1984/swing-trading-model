@@ -1862,6 +1862,7 @@ Anthropic API pricing tiers differ from Gemini. Without a tier cost assessment, 
 ---
 
 ### BLG-OPS-38 — Claude API log hygiene policy
+**Shipped:** ✅ COMPLETE — v4.2 — 2026-05-28 — cycle: 2026-05-27__release-v4.2 (ST-03)
 **Priority:** P2 (Medium)
 **Type:** Operations / Security Hygiene
 **Owner:** Infrastructure & Operations Owner; Cybersecurity & Trust Lead

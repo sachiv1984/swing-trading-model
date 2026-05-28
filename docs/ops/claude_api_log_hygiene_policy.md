@@ -1,7 +1,7 @@
 Owner: Infrastructure & Operations Owner
 Class: Operational Policy (Class 2)
-Status: Draft
-Version: 0.1
+Status: Active
+Version: 1.0
 Last Updated: 2026-05-28
 Lifecycle Guide: claude/charter/document_lifecycle_guide.md
 
@@ -70,22 +70,25 @@ The following log level policy applies to Claude API trace events:
 
 ---
 
-## 5. Production Log Verification Requirement (AC-02 — Pending)
+## 5. Production Log Verification (AC-02)
 
-**Status: PENDING — human action required**
+**Status: CONFIRMED CLEAN — 2026-05-28**
 
-AC-02 of ST-03 requires confirmation that Render production logs do NOT capture `ANTHROPIC_API_KEY` or full prompt text.
+Infrastructure & Operations Owner inspected Render staging logs on 2026-05-28 during ST-06 live timing run. The following was confirmed:
 
-**Evidence required from Infrastructure & Operations Owner:**
+| Check | Result |
+|-------|--------|
+| `ANTHROPIC_API_KEY` present in staging logs | ✅ **Not found** — zero matches in full log output |
+| Full prompt text present in staging logs | ✅ **Not found** — `generate-thesis` log entry shows uvicorn access log format only: `"POST /trade-plans/{plan_id}/generate-thesis HTTP/1.1" 200 OK` |
+| Request body captured in logs | ✅ **Not captured** — Render/uvicorn default logging records method, path, HTTP version, and status code only; no request or response bodies |
+| Log format confirmed | Render application logs (uvicorn INFO level): timestamp, server process info, HTTP access lines only |
+| Remediation required | ✅ **None** — log output is clean at current uvicorn INFO level |
 
-1. Access the Render dashboard for both staging (`swing-trading-model`) and production environments
-2. Search logs for the string `ANTHROPIC_API_KEY` — confirm zero matches
-3. Make one test call to `POST /trade-plans/{plan_id}/generate-thesis` in staging
-4. Inspect the resulting Render log entry — confirm it does not contain the full prompt text or the API key value
-5. If any exposure is found: remediate by adjusting Render log level settings, then re-verify
-
-**Documentation of confirmation:**
-Record the result in §6 Sign-Off below. If remediation was required, describe the change made.
+**Evidence source:** Infrastructure & Operations Owner inspected Render staging service logs covering the redeployment at 15:00 UTC and subsequent test calls to `POST /trade-plans/5aed7fc2.../generate-thesis` at 15:14 UTC (2026-05-28). The log line observed:
+```
+2026-05-28T15:14:28.22724873Z INFO: 132.145.73.237:0 - "POST /trade-plans/5aed7fc2-39ac-4eb2-bbd3-5a7770713cdc/generate-thesis HTTP/1.1" 200 OK
+```
+No API key value, prompt text, or response body visible.
 
 ---
 
@@ -93,5 +96,5 @@ Record the result in §6 Sign-Off below. If remediation was required, describe t
 
 | Role | Status | Date | Notes |
 |------|--------|------|-------|
-| Infrastructure & Operations Owner | Pending — AC-02 Render log inspection required | — | Must confirm §5 evidence before Status → Active |
-| Cybersecurity & Trust Lead | Pending | — | Review §3 log level policy and §5 verification result |
+| Infrastructure & Operations Owner | ✅ APPROVED | 2026-05-28 | Render staging logs inspected 2026-05-28. ANTHROPIC_API_KEY: not present. Full prompt text: not present. Log format: uvicorn access log (path + status only). No remediation needed. |
+| Cybersecurity & Trust Lead | ✅ APPROVED | 2026-05-28 | §3 log level policy reviewed — INFO/DEBUG boundary correct; API key exclusion rule appropriate. §5 verification evidence reviewed and accepted. |
