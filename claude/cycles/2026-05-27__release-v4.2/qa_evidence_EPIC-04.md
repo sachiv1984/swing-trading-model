@@ -1,6 +1,6 @@
 **Owner:** PMO Lead; Head of Specs Team; Director of Quality
 **Class:** QA Evidence Log (Class 3)
-**Status:** Partial — ST-12 blocked pending Product Owner input
+**Status:** Complete
 **Last Updated:** 2026-05-28
 **Cycle:** 2026-05-27__release-v4.2
 **EPIC:** EPIC-04 — Governance Preparation & Pre-Planning
@@ -33,20 +33,20 @@ PMO Lead + Head of Specs Team: APPROVED (agent-mediated) 2026-05-28
 
 ## ST-12 — SI-04 Strategy Version Comparison Pre-Planning
 
-**Classification:** delegated_decision
-**Status:** BLOCKED — awaiting Product Owner input (DEL-20260528-06)
+**Classification:** delegated_decision (unblocked by PO input 2026-05-28)
+**Commit SHA:** pending commit
 
-### Acceptance Criteria Status
+### Acceptance Criteria Evidence
 
-| AC | Criterion | Status |
-|----|-----------|--------|
-| AC-01 | SI-04 feature scope definition document produced | Blocked — PO input required |
-| AC-02 | Strategy version comparison methodology defined | Blocked — PO input required |
-| AC-03 | Product Owner review and approval of scope definition | Hard gate — PO sign-off required |
+| AC | Criterion | Evidence | Status |
+|----|-----------|----------|--------|
+| AC-01 | SI-04 scope definition document produced | `docs/governance/si04_scope_definition.md` v1.0 — feature intent, version definition (date range), 5 metrics, UI concept, dependencies, §13 path | Pass |
+| AC-02 | Performance comparison methodology defined (deterministic) | §3: explicit rule — "Deterministic aggregates only — sum, mean, count, min/max. No regression, no weighted scoring, no adaptive normalisation." Delta = Version B minus Version A. | Pass |
+| AC-03 | UI view concept sketch included | §4: ASCII wireframe — two-column card, date pickers, metric table (Version A / Version B / Delta), Compare button, empty and low-trade states | Pass |
+| AC-04 | Reviewed by Product Owner and Head of Specs Team | Product Owner: Approved directly 2026-05-28. Head of Specs Team: APPROVED (agent-mediated) 2026-05-28. | Pass |
 
-**Delegation record:** DEL-20260528-06
-**Escalation:** ESC-EXEC-20260528-06
-**Unblock criteria:** Product Owner defines SI-04 strategy version comparison scope and approves scope definition document
+**Delegation record:** DEL-20260528-06 (resolved)
+**Escalation:** ESC-EXEC-20260528-06 (resolved)
 
 ---
 
@@ -65,26 +65,24 @@ PMO Lead + Head of Specs Team: APPROVED (agent-mediated) 2026-05-28
 
 ---
 
-## DoQ Sign-Off (Partial)
+## DoQ Sign-Off
 
-**Director of Quality:** Confirmed for completed stories — agent-mediated, 2026-05-28
+**Director of Quality:** Confirmed — agent-mediated, 2026-05-28
 
 **Scope confirmed:**
 - ST-11: All 3 ACs passed. Checklist comprehensive and integration point defined.
-- ST-12: Blocked — awaiting Product Owner input. PR note filed (DEL-20260528-06).
+- ST-12: All 4 ACs passed. PO scope input received directly 2026-05-28; Head of Specs Team APPROVED (agent-mediated). Scope definition deterministic, §13 path identified, UI concept sufficient for sprint planning.
 - ST-13: All 3 ACs passed. Both BLG-GOV-59 and BLG-GOV-61 addressed.
 
-**Deviations:** None (ST-12 is blocked, not a deviation — delegation was anticipated in sprint planning).
+**Deviations:** None.
 
 ---
 
 ## Consolidation
 
-| Story | AC count | Pass | Fail | Blocked | Status |
-|-------|----------|------|------|---------|--------|
+| Story | AC count | Pass | Fail | Deviations | Status |
+|-------|----------|------|------|------------|--------|
 | ST-11 | 3 | 3 | 0 | 0 | Done |
-| ST-12 | 3 | 0 | 0 | 3 | Blocked (delegated) |
+| ST-12 | 4 | 4 | 0 | 0 | Done |
 | ST-13 | 3 | 3 | 0 | 0 | Done |
-| **Completable** | **6** | **6** | **0** | **3** | **Partial** |
-
-ST-12 will require a follow-on commit to this branch or a patch after PO input is received.
+| **Total** | **10** | **10** | **0** | **0** | **Pass** |

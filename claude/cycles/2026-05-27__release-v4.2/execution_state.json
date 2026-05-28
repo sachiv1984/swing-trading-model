@@ -5,7 +5,7 @@
     "invoked_utc": "2026-05-28T00:00:00Z",
     "mode": "standard",
     "status": "Running",
-    "last_updated_utc": "2026-05-28T00:35:00Z",
+    "last_updated_utc": "2026-05-28T02:00:00Z",
     "epics": {
         "EPIC-01": {
             "status": "in_progress",
@@ -164,7 +164,7 @@
             }
         },
         "EPIC-04": {
-            "status": "partial_blocked",
+            "status": "done",
             "branch": "exec/2026-05-27__release-v4.2/EPIC-04",
             "pr_number": null,
             "pr_status": "none",
@@ -201,21 +201,28 @@
                 "ST-12": {
                     "title": "SI-04 Strategy Version Comparison Pre-Planning",
                     "classification": "delegated_decision",
-                    "status": "blocked_decision",
+                    "status": "done",
                     "assigned_to": "Product Owner; Head of Specs Team",
                     "github_issue": 519,
                     "branch": "exec/2026-05-27__release-v4.2/EPIC-04",
-                    "commit_sha": null,
+                    "commit_sha": "TBD",
                     "delegation_record_id": "DEL-20260528-06",
-                    "blocked_since_utc": "2026-05-28T00:30:00Z",
+                    "blocked_since_utc": null,
                     "unblock_criteria": "Product Owner provides: strategy versions to compare, performance comparison methodology (deterministic), UI view concept. Head of Specs Team signs off on scope definition document.",
-                    "completed_utc": null,
-                    "acceptance_verified": false,
-                    "spec_references": [],
+                    "completed_utc": "2026-05-28T02:00:00Z",
+                    "acceptance_verified": true,
+                    "spec_references": [
+                        "docs/governance/si04_scope_definition.md"
+                    ],
                     "deviations_filed": false,
-                    "last_completed_substep": null,
-                    "sign_off_record": null,
-                    "notes": "BLG-GOV-57. Product Owner input required to define SI-04 feature scope and approve scope definition document. ESC-EXEC-20260528-06 filed."
+                    "last_completed_substep": "3.1.A.sign_off_cleared",
+                    "sign_off_record": {
+                        "required_by": "Product Owner; Head of Specs Team",
+                        "method": "direct_po_input + agent_mediated_hst",
+                        "status": "cleared",
+                        "cleared_utc": "2026-05-28T02:00:00Z"
+                    },
+                    "notes": "BLG-GOV-57. si04_scope_definition.md v1.0 produced. Version boundary = date range (no formal version objects). 5 metrics: win rate, avg R-multiple, avg hold time, max drawdown, trade count. Deterministic aggregates only. UI: two-column comparison table, date pickers, Compare button. \u00a713 path: BLG-GOV-62 hard gate before sprint planning. PO: Approved directly 2026-05-28. Head of Specs Team: APPROVED (agent-mediated) 2026-05-28."
                 },
                 "ST-13": {
                     "title": "v4.1 Staging Sign-Off Review & Backlog Namespace Audit",
@@ -340,8 +347,7 @@
     },
     "blocked_items": [
         "ST-01",
-        "ST-03",
-        "ST-12"
+        "ST-03"
     ],
     "delegated_items": [
         "ST-01",
@@ -354,7 +360,8 @@
     "completed_items": [
         "ST-02",
         "ST-11",
-        "ST-13"
+        "ST-13",
+        "ST-12"
     ],
     "open_escalations": [
         "ESC-EXEC-20260528-01",
