@@ -82,7 +82,7 @@ def _call_claude(prompt: str, max_tokens: int = 256) -> tuple:
     return response.content[0].text.strip(), response.usage
 
 
-def _log_audit(plan_id, input_hash, output_hash, usage):
+def _log_audit(plan_id, input_hash, output_hash, usage, endpoint: str = ""):
     try:
         prompt_tokens = getattr(usage, "input_tokens", None)
         completion_tokens = getattr(usage, "output_tokens", None)
@@ -95,7 +95,7 @@ def _log_audit(plan_id, input_hash, output_hash, usage):
                 + completion_tokens * CLAUDE_COST_PER_OUTPUT_TOKEN,
                 8,
             )
-        from database import create_gemini_audit_entry
+        from database import create_gemini_audit_entry, create_claude_audit_entry
         create_gemini_audit_entry(
             plan_id=plan_id,
             model_version=MODEL_VERSION,
@@ -106,6 +106,14 @@ def _log_audit(plan_id, input_hash, output_hash, usage):
             completion_tokens=completion_tokens,
             total_tokens=total_tokens,
             estimated_cost_usd=estimated_cost_usd,
+        )
+        create_claude_audit_entry(
+            endpoint=endpoint,
+            model_id=MODEL_VERSION,
+            prompt_version=PROMPT_VERSION,
+            input_tokens=prompt_tokens,
+            output_tokens=completion_tokens,
+            cost_usd=estimated_cost_usd,
         )
     except Exception:
         pass
@@ -161,7 +169,7 @@ def generate_full_plan(
     except Exception:
         return {"available": False, "error": "Claude returned non-JSON response"}
 
-    _log_audit(plan_id, input_hash, output_hash, usage)
+    _log_audit(plan_id, input_hash, output_hash, usage, endpoint="POST /trade-plans/generate-plan")
 
     return {
         "available": True,
@@ -220,7 +228,7 @@ def generate_setup_thesis(
         return {"available": False, "error": f"Claude API error: {str(exc)[:120]}"}
 
     output_hash = hashlib.sha256(thesis.encode()).hexdigest()[:16]
-    _log_audit(plan_id, input_hash, output_hash, usage)
+    _log_audit(plan_id, input_hash, output_hash, usage, endpoint="POST /trade-plans/{plan_id}/generate-thesis")
 
     return {
         "thesis": thesis,
