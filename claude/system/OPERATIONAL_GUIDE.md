@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.08
-**Last Updated:** 2026-05-27
+**Version:** 4.10
+**Last Updated:** 2026-05-28
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -936,7 +936,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v2.7)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v2.8)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1022,7 +1022,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.11)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.12)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1410,7 +1410,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.09 |
+| Version | 4.10 |
 | Last Updated | 2026-05-27 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
@@ -1424,9 +1424,9 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.7 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.30 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.7 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.8 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.11 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.12 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.4 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1449,6 +1449,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.10 | 2026-05-28 | **Branch safety hard gate added to delivery_verification_prompt.md v2.7→v2.8 and post_ship_closure.md v2.11→v2.12.** §9 source prompt header updated v2.7→v2.8. §10 source prompt header updated v2.11→v2.12. §14 Verification Engine Source v2.7→v2.8. §14 Post-Ship Closure Engine v2.11→v2.12. §14 Version 4.09→4.10/2026-05-28. Change: STEP -1 of both prompts now opens with a Branch Safety Check (Hard Gate) — `git branch --show-current` must return `main`; if not, halt with instructions to checkout main and re-invoke. Prevents governance artefacts from being committed to exec branches (root cause of v4.1 post-ship artefacts landing on exec/v4.1/EPIC-03 after PR merge). Authority: Head of Specs Team (2026-05-28). |
 | 4.09 | 2026-05-27 | **Throughput improvement — post_ship_closure.md v2.10→v2.11 — rebalance cadence advisory.** §10 source prompt header updated v2.10→v2.11. §14 Post-Ship Closure Engine v2.10→v2.11. §14 Version 4.08→4.09/2026-05-27. Change: STEP 0 — Rebalance Cadence Check added (advisory, non-blocking): if `completed_cycle_count % 2 == 0` emit "REBALANCE DUE" advisory; if odd emit "REBALANCE SKIP — proceed directly to plan release". Rationale: rebalances run every 2nd cycle to reduce governance overhead and increase release throughput; PO may override on any cycle. Advisory Summary Block description updated to include rebalance cadence as a source. Authority: Product Owner (2026-05-27). |
 | 4.08 | 2026-05-27 | **AUD-2026-05-27-002: execution_prompt.md v3.29→v3.30 — STEP 5.0A null pr_number recovery.** §8 source prompt header updated v3.29→v3.30. §14 Execution Engine Source v3.29→v3.30. §14 Version 4.07→4.08/2026-05-27. Change: STEP 5.0A extended with Step 1 (pr_number recovery): before pr_status sync, if EPIC.pr_number is null or 0, run `gh pr list --search "[EPIC-xx]" --state merged` to recover the PR number; if found, record it in execution_state.json; if not found, record "not_found" and log process gap in sprint_close.md (non-blocking). Resolves v4.1 P3-01 carry-forward (2nd recurrence: v4.0 EPIC-02 + v4.1 EPIC-03 required manual git log scan for null pr_number). Authority: Head of Specs Team (AUD-2026-05-27-002, 2026-05-27). |
 | 4.07 | 2026-05-27 | **AUD-2026-05-27 Tier 1 improvements — §14 Version field fix + execution_prompt.md v3.28→v3.29 STEP 5.2 clarification.** §8 source prompt header updated v3.28→v3.29. §14 Execution Engine Source v3.28→v3.29. §14 Version field corrected 4.02→4.07 (4.02 was stale — entries 4.03–4.06 had updated the header but not the §14 metadata table rows; AUD-2026-05-27-001 fix). §14 Version 4.06→4.07/2026-05-27. Changes: (AUD-2026-05-27-001) §14 Version/Last Updated metadata table rows corrected from 4.02/2026-05-25 to 4.07/2026-05-27. (AUD-2026-05-27-003) execution_prompt.md STEP 5.2 — `returned_to_backlog` in-flight transition note added: clarifies that PO-authorized deferrals apply in-flight and do not require waiting until sprint close; records v4.1 P3-05 carry-forward resolved. Authority: Head of Specs Team (AUD-2026-05-27 Tier 1 closure, 2026-05-27). |

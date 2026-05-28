@@ -1,6 +1,6 @@
 **Owner:** Director of Quality
 **Status:** Active
-**Version:** 2.7
+**Version:** 2.8
 **Last Updated:** 2026-05-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -125,6 +125,16 @@ ESCALATION: Create/append `verification_escalations.md`. Use ESC-VER-YYYYMMDD-nn
 ---
 
 ## STEP -1 — Preflight Gate (Hard Gate)
+
+**Branch Safety Check (Hard Gate):**
+
+Run: `git branch --show-current`
+
+If the result is NOT `main`: halt immediately. Output:
+
+> HALT — delivery verification artefacts must be committed to `main`. Current branch is `<branch_name>`. Checkout `main` (`git checkout main && git pull`) and re-invoke `run delivery verification`.
+
+If the result is `main`: proceed.
 
 **Dry-run detection (BLG-GOV-25 / ST-11):** If `--dry-run` is specified in the invocation, read the required files (execution_state.json, sprint_close.md, qa_evidence files), then output the dry-run report below and exit without writing any verification report, updating `.claude_current_state.json`, or making any git commits.
 
