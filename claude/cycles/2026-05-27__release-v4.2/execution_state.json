@@ -89,7 +89,7 @@
                     "assigned_to": "Infrastructure & Operations Owner; Cybersecurity & Trust Lead",
                     "github_issue": 510,
                     "branch": "exec/2026-05-27__release-v4.2/EPIC-01",
-                    "commit_sha": null,
+                    "commit_sha": "ef73755b",
                     "delegation_record_id": "DEL-20260528-02",
                     "blocked_since_utc": "2026-05-28T00:05:00Z",
                     "unblock_criteria": "Infrastructure & Operations Owner confirms Render production logs do NOT capture ANTHROPIC_API_KEY or full prompt text (or remediates); log hygiene policy document produced covering all 4 ACs; committed to exec/2026-05-27__release-v4.2/EPIC-01",

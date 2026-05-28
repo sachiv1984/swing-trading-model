@@ -49,7 +49,7 @@ Cycle: 2026-05-27__release-v4.2
 - **Unblock criteria:** Infrastructure & Operations Owner confirms (or remediates) AC-02; log hygiene policy document produced covering AC-01, AC-03, AC-04.
 - **Delegation record filed:** 2026-05-28T00:00:00Z
 - **Unblocked at:** 2026-05-28T16:00:00Z
-- **Unblock commit SHA:** pending
+- **Unblock commit SHA:** ef73755b
 - **Resolution note:** Infrastructure & Operations Owner inspected Render staging logs 2026-05-28. `ANTHROPIC_API_KEY`: zero matches. Full prompt text: not present — `generate-thesis` call at 15:14 UTC shows uvicorn access log format only (`"POST /trade-plans/.../generate-thesis HTTP/1.1" 200 OK`). No remediation required. `docs/ops/claude_api_log_hygiene_policy.md` v0.1→v1.0 (Status: Active). Cybersecurity & Trust Lead APPROVED (agent-mediated). All 4 ACs met. BLG-OPS-38 closed.
 
 ---
