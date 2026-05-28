@@ -13,7 +13,7 @@ import anthropic
 from typing import Optional
 
 
-_DEFAULT_MODEL = "claude-haiku-4-5-20251001"
+MODEL_VERSION = "claude-haiku-4-5-20251001"
 
 
 def summarise_journal_notes(
@@ -27,7 +27,7 @@ def summarise_journal_notes(
     On LLM unavailability, returns summary=None with an informational message — never raises.
     """
     api_key = os.getenv("ANTHROPIC_API_KEY")
-    model = model or os.getenv("AI_MODEL", _DEFAULT_MODEL)
+    model = model or MODEL_VERSION
 
     if not api_key:
         return {
