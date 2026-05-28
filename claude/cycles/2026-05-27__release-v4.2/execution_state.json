@@ -205,7 +205,7 @@
                     "assigned_to": "Product Owner; Head of Specs Team",
                     "github_issue": 519,
                     "branch": "exec/2026-05-27__release-v4.2/EPIC-04",
-                    "commit_sha": "TBD",
+                    "commit_sha": "7714bec5",
                     "delegation_record_id": "DEL-20260528-06",
                     "blocked_since_utc": null,
                     "unblock_criteria": "Product Owner provides: strategy versions to compare, performance comparison methodology (deterministic), UI view concept. Head of Specs Team signs off on scope definition document.",
