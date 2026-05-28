@@ -3,7 +3,7 @@
   "cycle_name": "Release Planning — v4.2 Claude API Governance, SI-02 Pre-Work Readiness & Spec Debt",
   "status": "Executing",
   "engine": "sprint_execution",
-  "execution_state_path": "",
+  "execution_state_path": "claude/cycles/2026-05-27__release-v4.2/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-05-27__release-v4.2/stage4_backlog_slice.md",
   "sprint_sealed": true,
   "sprint_goal_path": "claude/cycles/2026-05-27__release-v4.2/sprint_goal.md",

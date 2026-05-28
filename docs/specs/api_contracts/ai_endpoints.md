@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-05-27
+**Version:** 1.2
+**Last Updated:** 2026-05-28
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -19,6 +19,7 @@ All AI output is **display-only** and must NOT be used as input to any signal, s
 
 - [POST /ai/journal-summary](#post-aijournal-summary)
 - [POST /ai/check-daily-cost](#post-aicheck-daily-cost)
+- [GET /ai/claude-audit-log](#get-aiclaude-audit-log)
 
 ---
 
@@ -159,9 +160,79 @@ When `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` is absent, no alert is sent even
 
 ---
 
+## GET /ai/claude-audit-log
+
+Returns the most recent entries from the `claude_audit_log` table — the immutable audit trail of all Claude API calls made by the application. Intended for compliance monitoring and cost review (ST-05, ST-07).
+
+**§13 Status:** N/A — operational audit query endpoint. Read-only; no AI output generated.
+
+### Request
+
+```
+GET /ai/claude-audit-log?limit=50
+```
+
+#### Query parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `limit` | integer | Optional | 50 | Maximum number of records to return. Range: 1–200. |
+
+### Response — 200 OK
+
+```json
+{
+  "ok": true,
+  "data": {
+    "records": [
+      {
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "endpoint": "POST /trade-plans/generate-plan",
+        "model_id": "claude-haiku-4-5",
+        "prompt_version": "v3.0",
+        "input_tokens": 312,
+        "output_tokens": 94,
+        "cost_usd": 0.00078200,
+        "generated_at": "2026-05-28T12:00:00+00:00"
+      }
+    ],
+    "count": 1
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string (UUID) | Unique row identifier. |
+| `endpoint` | string | The API endpoint that triggered the Claude call (e.g. `POST /trade-plans/generate-plan`). |
+| `model_id` | string | The Claude model ID used (e.g. `claude-haiku-4-5`). |
+| `prompt_version` | string | Internal prompt version tag (e.g. `v3.0`). |
+| `input_tokens` | integer or null | Prompt token count from Claude usage response. |
+| `output_tokens` | integer or null | Completion token count from Claude usage response. |
+| `cost_usd` | float or null | Estimated cost in USD at time of call. |
+| `generated_at` | string (ISO 8601) | UTC timestamp of the Claude API call. |
+
+Results are ordered `generated_at DESC` (newest first).
+
+### Error responses
+
+| Status | Condition |
+|--------|-----------|
+| 401 | Missing or invalid API key. |
+| 422 | `limit` out of range (< 1 or > 200). |
+
+### Implementation constraints
+
+- Read-only endpoint: no writes to any table.
+- Returns empty `records` array (not an error) when `claude_audit_log` table is empty.
+- `cost_usd` may be `null` if token counts were unavailable at log time.
+- No AI-generated content is returned — audit metadata only.
+
+---
+
 ## Known Deviations
 
-None at v1.1.
+None at v1.2.
 
 ---
 
@@ -169,5 +240,6 @@ None at v1.1.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-05-28 | ST-07 (EPIC-03, v4.2): Added `GET /ai/claude-audit-log` — immutable Claude API audit trail query endpoint (BLG-GOV-63). |
 | 1.1 | 2026-05-27 | ST-09 (EPIC-03, v4.1): Added `POST /ai/check-daily-cost` — Claude API daily cost threshold alert endpoint (BLG-OPS-34). |
 | 1.0 | 2026-04-18 | ST-07 (EPIC-04, v2.8): Initial specification for `POST /ai/journal-summary`. Conditionally compliant per SRB-v1.7. API Contracts & Documentation Owner. |

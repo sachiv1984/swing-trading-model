@@ -17,60 +17,116 @@ Lifecycle Guide: claude/charter/document_lifecycle_guide.md
 
 This policy covers log hygiene for all Claude API calls made by this project:
 
-| Endpoint | Backend path | Purpose |
-|----------|-------------|---------|
-| `POST /trade-plans/{plan_id}/generate-thesis` | `backend/services/gemini_service.py` (Claude-backed) | Pre-trade thesis generation |
-| `POST /ai/check-daily-cost` | `backend/routers/ai.py` | Daily cost check |
-| `GET /ai/claude-audit-log` | `backend/routers/ai.py` | Audit log query |
+| Endpoint / Function | File | Purpose |
+|--------------------|------|---------|
+| `POST /trade-plans/{plan_id}/generate-thesis` | `backend/services/gemini_service.py` — `generate_setup_thesis()` | Generate a pre-trade thesis (legacy single-field) |
+| `POST /trade-plans/generate-plan` | `backend/services/gemini_service.py` — `generate_full_plan()` | Generate all trade plan fields in one call |
+| `POST /ai/journal-summary` | `backend/services/ai_service.py` — `summarise_journal_notes()` | Summarise trade journal notes |
+| `POST /ai/check-daily-cost` | `backend/services/gemini_service.py` — `check_and_alert_daily_cost()` | Check daily Claude API spend and send Telegram alert if threshold exceeded |
+| `GET /ai/claude-audit-log` | `backend/routers/ai.py` | Query the immutable Claude API call audit trail (read-only, no API call made) |
 
-The `ANTHROPIC_API_KEY` environment variable and full Claude prompt/response text are the primary sensitive assets this policy governs.
-
----
-
-## 2. Application-Level Logging Assessment
-
-A code review of `backend/services/gemini_service.py` and `backend/routers/ai.py` confirms:
-
-| Assessment item | Finding |
-|----------------|---------|
-| Python `logging` module used | ✅ Not used — neither file imports or calls `logging.*` |
-| `ANTHROPIC_API_KEY` value in log statements | ✅ No — key is loaded via `os.getenv()` and passed only to the Anthropic SDK client |
-| Full prompt text in log statements | ✅ No — prompt text is passed to the Anthropic SDK; no `print()` or `logging.*` calls exist in the call path |
-| Full response text in log statements | ✅ No — response text is returned to the caller; not logged at application level |
-
-**Application-level finding:** The Python application does not log the API key, full prompt text, or full response text via Python's logging framework. The only persistent record of API calls is the `claude_audit_log` table in the database, which captures metadata only (model version, token counts, estimated cost, hashed input/output).
+The `ANTHROPIC_API_KEY` environment variable and full Claude prompt/response text are the primary sensitive assets this policy governs. The permanent structured audit record of every Claude API call is stored in the `gemini_audit_log` and `claude_audit_log` database tables.
 
 ---
 
-## 3. Log Level Policy (AC-03)
+## 2. Log Level Policy
 
-The following log level policy applies to Claude API trace events:
+### 2.1 Permitted at INFO Level (Production Default)
 
-| Log level | What is logged | Permitted in production? |
-|-----------|---------------|-------------------------|
-| **INFO** | Request metadata: endpoint called, model version, token counts (input/output), estimated cost, request latency | ✅ Yes |
-| **DEBUG** | Full prompt text, full response text, raw API request/response bodies | ❌ No — DEBUG level must never be enabled in production |
-| **ERROR** | Exception messages, error codes from the Anthropic API | ✅ Yes — must NOT include the API key value in the error message |
+The following data items are permitted to appear in platform logs at INFO level:
 
-**Rule:** Production Render services must run at log level `INFO` or higher. `DEBUG` is permitted only in local development environments.
+| Item | Permitted | Example |
+|------|-----------|---------|
+| Endpoint called | Yes | `POST /trade-plans/{plan_id}/generate-thesis` |
+| Model version | Yes | `claude-haiku-4-5` |
+| Prompt version | Yes | `v3.0` |
+| Input token count | Yes | `prompt_tokens=142` |
+| Output token count | Yes | `completion_tokens=87` |
+| Estimated cost (USD) | Yes | `estimated_cost_usd=0.00000142` |
+| Input hash (SHA-256 truncated) | Yes | `input_hash=a3f1b2c4` (first 16 hex chars — not reversible) |
+| Output hash (SHA-256 truncated) | Yes | `output_hash=d9e7f123` |
+| Response summary | Yes — first 100 characters maximum | Truncated thesis preview for operational diagnostics |
+| Error messages from API failures | Yes — truncated to 120 characters | `Claude API error: Connection timeout` |
 
-**ANTHROPIC_API_KEY exclusion rule:** The API key value must never appear in any log entry at any level. If an exception message would include the key value, it must be masked (e.g., `ANTHROPIC_API_KEY=***`) before logging.
+### 2.2 Restricted to DEBUG Level Only
+
+The following data items must NEVER appear at INFO level in production logs. They may be emitted at DEBUG level in local development environments only:
+
+| Item | Restriction | Rationale |
+|------|-------------|-----------|
+| Full prompt text | DEBUG only — never INFO in production | Prompts may contain sensitive trade context (ticker, signal scores, plan fields) |
+| Full response text | DEBUG only — never INFO in production | Responses contain AI-generated trade thesis content |
+| ANTHROPIC_API_KEY value | Never logged at any level | Secret credential — must not appear in any log stream |
+| Raw `signal_data` dict | DEBUG only — never INFO in production | Contains proprietary signal parameters |
+| Raw `plan_data` dict | DEBUG only — never INFO in production | Contains proprietary plan fields |
+
+### 2.3 Production Log Level Requirement
+
+Production deployments (Render staging and production environments) must be configured with log level `INFO` or higher. The `DEBUG` log level must never be the active log level in a production or staging environment.
 
 ---
 
-## 4. Log Retention Policy (AC-04)
+## 3. Sensitive Data Exclusions
 
-| Log store | Retention period | Notes |
-|-----------|-----------------|-------|
-| Render application logs (stdout/stderr) | 7 days (Render default) | Operational logs; no sensitive content if this policy is followed |
-| `claude_audit_log` database table | Indefinite (pre-SI-02) | Metadata only; does not contain prompt text or API key |
-| Render access logs (HTTP request/response) | 7 days (Render default) | Request path and status only; body not captured by default |
+The following rules are mandatory and non-negotiable:
 
-**Pre-SI-02 advisory:** Before the SI-02 position drift monitoring sprint, define a formal log retention policy (duration, archival, deletion). The current 7-day Render default is acceptable for the interim period. File as: complete `docs/ops/log_retention_policy.md` during SI-02 sprint planning.
+### 3.1 ANTHROPIC_API_KEY
+
+- The `ANTHROPIC_API_KEY` value must never appear in any log line, error message, exception traceback, or audit record at any log level.
+- Current implementation: `gemini_service.py` reads the key via `os.getenv("ANTHROPIC_API_KEY", "")` and passes it to `anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)`. The key value is not present in any log statement in that file (confirmed by code inspection 2026-05-28).
+- Current implementation: `ai_service.py` reads the key via `os.getenv("ANTHROPIC_API_KEY")` and passes it to `anthropic.Anthropic(api_key=api_key)`. The key value is not present in any log statement in that file (confirmed by code inspection 2026-05-28).
+- Error paths: `generate_setup_thesis()` and `generate_full_plan()` return `{"available": False, "error": "ANTHROPIC_API_KEY not configured"}` when the key is absent. This string does not contain the key value. Confirmed safe.
+- Exception truncation: `str(exc)[:120]` is applied to Anthropic API exceptions before they appear in error responses. Engineers must verify that Anthropic SDK exceptions do not embed the API key in the exception message string.
+
+### 3.2 Full Prompt Text
+
+- Full prompt text (the formatted `_FULL_PLAN_PROMPT` or `_THESIS_PROMPT_TEMPLATE` output) must not appear at INFO level in any log stream.
+- Rationale: Prompts include ticker identifiers, signal scores, and momentum metrics that are proprietary operational data.
+- Permitted: `input_hash` (SHA-256 truncated to 16 hex chars) may appear at INFO level as a non-reversible reference.
+
+### 3.3 Full Response Text
+
+- Full AI response text must not appear at INFO level in any log stream.
+- Permitted: The first 100 characters of the response text may be logged at INFO for operational diagnostics.
+- Permitted: `output_hash` (SHA-256 truncated to 16 hex chars) may appear at INFO level.
+- Permanent record: The full response text is not stored in `gemini_audit_log` or `claude_audit_log` — only hashes and token counts are persisted. This is the correct design.
+
+### 3.4 Journal Note Content
+
+- `POST /ai/journal-summary` concatenates user-authored trade journal notes into the prompt. This content must not appear at INFO level in production logs.
+- The `log_ai_summary_run()` audit function stores `summary_text` in the `ai_summary_audit_log` table. This is a database record, not a log stream entry, and is governed by §4.
 
 ---
 
-## 5. Production Log Verification (AC-02)
+## 4. Log Retention Policy
+
+### 4.1 Platform Log Stream (Render Logs)
+
+| Environment | Retention Period | Authority |
+|-------------|-----------------|-----------|
+| Production | 30 days | Render platform default; reviewed at SI-02 |
+| Staging | 7 days | Render platform default; reviewed at SI-02 |
+
+The platform log stream is ephemeral and operational. It is not the primary compliance record for Claude API usage.
+
+### 4.2 Database Audit Records (Primary Compliance Record)
+
+| Table | Retention | Notes |
+|-------|-----------|-------|
+| `gemini_audit_log` | Permanent (no TTL) | Contains model version, prompt version, token counts, cost per call, input/output hashes. No prompt or response text stored. |
+| `claude_audit_log` | Permanent (no TTL) | Contains endpoint, model, prompt version, token counts, cost per call. No prompt or response text stored. |
+| `ai_summary_audit_log` | Permanent (no TTL) | Contains journal summary metadata: trade IDs, date range, trade count, model version, and the summary text itself. |
+
+### 4.3 Pre-SI-02 Review Trigger
+
+When SI-02 (observability and monitoring infrastructure) is scoped and planned, the Infrastructure & Operations Owner must review and update this section with:
+- The target log aggregation platform and its retention configuration
+- Any cost/compliance requirements that necessitate longer retention
+- Structured log format for Claude API events
+
+---
+
+## 5. Production Log Verification
 
 **Status: CONFIRMED CLEAN — 2026-05-28**
 
@@ -98,3 +154,16 @@ No API key value, prompt text, or response body visible.
 |------|--------|------|-------|
 | Infrastructure & Operations Owner | ✅ APPROVED | 2026-05-28 | Render staging logs inspected 2026-05-28. ANTHROPIC_API_KEY: not present. Full prompt text: not present. Log format: uvicorn access log (path + status only). No remediation needed. |
 | Cybersecurity & Trust Lead | ✅ APPROVED | 2026-05-28 | §3 log level policy reviewed — INFO/DEBUG boundary correct; API key exclusion rule appropriate. §5 verification evidence reviewed and accepted. |
+
+---
+
+## Appendix A — Related Documents
+
+| Document | Relationship |
+|----------|-------------|
+| `docs/security/anthropic_api_key_scope_review.md` | Canonical security posture for `ANTHROPIC_API_KEY` — key scope, application controls, audit logging status |
+| `docs/ops/external_api_credential_inventory.md` | Full inventory of external API credentials including `ANTHROPIC_API_KEY` |
+| `docs/ops/gemini_cost_tracking.md` | Claude API cost tracking policy (advisory threshold, monitoring) |
+| `backend/services/gemini_service.py` | Primary implementation — thesis generation, full plan generation, cost check |
+| `backend/services/ai_service.py` | Secondary implementation — journal summarisation |
+| `backend/routers/ai.py` | AI router — journal summary, audit log query, daily cost check endpoints |

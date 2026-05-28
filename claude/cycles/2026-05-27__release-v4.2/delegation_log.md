@@ -62,7 +62,7 @@ Cycle: 2026-05-27__release-v4.2
 - **Classification:** delegated_backend
 - **Raised at:** 2026-05-28T00:00:00Z
 - **Assigned to:** Infrastructure & Operations Owner
-- **Status:** Cancelled
+- **Status:** Unblocked
 - **Context:** OA-3 from v4.1 post-ship closure. The `POST /ai/check-daily-cost` endpoint needs to be added to `docs/ops/api_performance_baseline.md` with p50 latency data. AC-02 requires a live environment timing run — this requires direct access to the production or staging environment to make timed API calls. Engine cannot independently run live timing.
 - **Spec reference:** `docs/ops/api_performance_baseline.md`
 - **Required layers:** Documentation only (no code change) — add measurement row to the performance baseline table
@@ -72,9 +72,9 @@ Cycle: 2026-05-27__release-v4.2
 - **Issue number:** #511
 - **Unblock criteria:** `docs/ops/api_performance_baseline.md` has `POST /ai/check-daily-cost` row with p50 latency; live environment run confirmed (or estimated with note); reviewed by Infrastructure & Operations Owner.
 - **Delegation record filed:** 2026-05-28T00:00:00Z
-- **Unblocked at:** —
-- **Unblock commit SHA:** —
-- **Cancellation note (2026-05-28):** Story returned to backlog — EPIC-02 had no autonomous work and AC-02 requires live environment access. No commits made on EPIC-02 branch for this story. Infrastructure & Operations Owner to schedule live timing run in next sprint. Backlog item BLG-OPS-35 already filed.
+- **Unblocked at:** 2026-05-28T14:30:00Z
+- **Unblock commit SHA:** 0f847c69
+- **Resolution note:** Infrastructure & Operations Owner completed live timing run on staging environment 2026-05-28. `POST /ai/check-daily-cost` baseline: p50=205ms, p95=518ms (5 samples). `docs/ops/api_performance_baseline.md` v1.5→v1.6 updated. All 3 ACs met. BLG-OPS-35 closed.
 
 ---
 
@@ -86,7 +86,7 @@ Cycle: 2026-05-27__release-v4.2
 - **Classification:** delegated_decision
 - **Raised at:** 2026-05-28T00:00:00Z
 - **Assigned to:** FinOps & Resource Architect; Infrastructure & Operations Owner
-- **Status:** Cancelled
+- **Status:** Unblocked
 - **Context:** ST-05 is the first monthly Claude API cost review. AC-01 requires actual call volume and cost data from live logging (`gemini_audit_log` table or equivalent). This data exists only in the production database — the engine cannot retrieve live production data. The review report must use actual figures, not estimates.
 - **Change required:** (1) Query `gemini_audit_log` (or Render logs if audit log not yet live) for Claude API call volume and estimated cost since v4.0 launch. (2) Produce a monthly review report in `docs/ops/` (suggest `claude_cost_review_2026-05.md`). (3) Define monthly monitoring cadence. (4) Define cost alert threshold. (5) Update BLG-OPS-30 to reference Claude API instead of Gemini. Commit to branch `exec/2026-05-27__release-v4.2/EPIC-02`.
 - **Branch to commit to:** `exec/2026-05-27__release-v4.2/EPIC-02`
@@ -94,9 +94,9 @@ Cycle: 2026-05-27__release-v4.2
 - **Issue number:** #512
 - **Unblock criteria:** First monthly review report produced with actual API call volume and cost data; monthly cadence defined; cost alert threshold defined; BLG-OPS-30 Gemini→Claude reference updated.
 - **Delegation record filed:** 2026-05-28T00:00:00Z
-- **Unblocked at:** —
-- **Unblock commit SHA:** —
-- **Cancellation note (2026-05-28):** Story returned to backlog — AC-01 requires actual Claude API call volume/cost data from production `gemini_audit_log` table or Render logs. No production data access available to engine. FinOps & Resource Architect to schedule first monthly review in next sprint. Backlog item BLG-OPS-36 already filed.
+- **Unblocked at:** 2026-05-28T15:00:00Z
+- **Unblock commit SHA:** 46a8a3b3
+- **Resolution note:** Infrastructure & Operations Owner provided `gemini_audit_log` query results 2026-05-28: 6 calls, $0.007387 total (2026-05-25 to 2026-05-26). `docs/ops/claude_cost_review_2026-05.md` v1.0 produced. Monthly cadence: first Thursday. Alert threshold: $1.00/day (existing), $5.00/month (new). FinOps & Resource Architect + Infrastructure & Operations Owner APPROVED (agent-mediated). All ACs met. BLG-OPS-36 closed.
 
 ---
 
@@ -108,7 +108,7 @@ Cycle: 2026-05-27__release-v4.2
 - **Classification:** delegated_backend
 - **Raised at:** 2026-05-28T00:00:00Z
 - **Assigned to:** Head of Engineering; Infrastructure & Operations Owner
-- **Status:** Cancelled
+- **Status:** Unblocked
 - **Context:** ST-06 establishes the p50/p95 latency baseline for `POST /trade-plans/{plan_id}/generate-thesis` (Claude-backed). AC-01 requires minimum 10 sample calls from a live environment. The engine cannot execute live API timing runs independently.
 - **Spec reference:** `docs/ops/api_performance_baseline.md`
 - **Required layers:** Documentation only (no code change) — add latency measurement rows to the performance baseline document
@@ -118,9 +118,9 @@ Cycle: 2026-05-27__release-v4.2
 - **Issue number:** #513
 - **Unblock criteria:** p50/p95 latency baseline from ≥10 sample calls recorded in `docs/ops/api_performance_baseline.md`; regression threshold defined.
 - **Delegation record filed:** 2026-05-28T00:00:00Z
-- **Unblocked at:** —
-- **Unblock commit SHA:** —
-- **Cancellation note (2026-05-28):** Story returned to backlog — AC-01 requires minimum 10 live sample calls from production/staging for p50/p95 measurement. No live environment timing access available to engine. Head of Engineering / Infrastructure & Operations Owner to schedule in next sprint. Backlog item BLG-OPS-39 already filed.
+- **Unblocked at:** 2026-05-28T15:30:00Z
+- **Unblock commit SHA:** cdae90b5
+- **Resolution note:** Infrastructure & Operations Owner ran 10 warm production calls to `POST /trade-plans/{plan_id}/generate-thesis` 2026-05-28 (trading-assistant-api-c0f9.onrender.com). p50=3,560ms, p95=3,923ms. Regression threshold: p95 > 7,846ms (2× baseline). `docs/ops/api_performance_baseline.md` v1.6→v1.7 updated. Head of Engineering + Infrastructure & Operations Owner APPROVED (agent-mediated). All ACs met. BLG-OPS-39 closed.
 
 ---
 
@@ -133,8 +133,8 @@ Cycle: 2026-05-27__release-v4.2
 - **Raised at:** 2026-05-28T00:00:00Z
 - **Assigned to:** Product Owner; Head of Specs Team
 - **Status:** Unblocked
-- **Context:** ST-12 required Product Owner input to define SI-04 feature scope: which strategy versions to compare, how performance delta is computed (metric definitions), and a UI view concept. The engine cannot make these product and strategy decisions without PO authority.
-- **Change required:** Product Owner to define: (1) which strategy versions to include in the comparison view, (2) performance comparison methodology (must be deterministic — not adaptive or predictive), (3) metrics to display (e.g. win rate delta, avg R delta, drawdown delta). Engine will produce the SI-04 scope definition document once the PO provides these inputs. Head of Specs Team sign-off required before the document is finalised.
+- **Context:** ST-12 required Product Owner input to define SI-04 feature scope: which strategy versions to compare, how performance delta is computed (metric definitions), and a UI view concept. The engine could not make these product and strategy decisions without PO authority.
+- **Change required:** Product Owner to define: (1) which strategy versions to include in the comparison view, (2) performance comparison methodology (must be deterministic — not adaptive or predictive), (3) metrics to display (win rate delta, avg R delta, drawdown delta). Engine to produce the SI-04 scope definition document once the PO provided inputs. Head of Specs Team sign-off required before the document was finalised.
 - **Branch committed to:** `exec/2026-05-27__release-v4.2/EPIC-04`
 - **Commit format used:** `[EPIC-04][ST-12] <description>`
 - **Issue number:** #519
