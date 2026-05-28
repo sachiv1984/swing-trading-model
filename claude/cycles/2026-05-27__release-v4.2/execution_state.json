@@ -43,7 +43,7 @@
           "assigned_to": "engine",
           "github_issue": 509,
           "branch": "exec/2026-05-27__release-v4.2/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "10308216061d225fef158b9d8df95f4d9fd8f1c8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
