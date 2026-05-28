@@ -372,8 +372,7 @@
         "ST-03",
         "ST-04",
         "ST-05",
-        "ST-06",
-        "ST-12"
+        "ST-06"
     ],
     "completed_items": [
         "ST-02",
@@ -390,8 +389,7 @@
         "ESC-EXEC-20260528-02",
         "ESC-EXEC-20260528-03",
         "ESC-EXEC-20260528-04",
-        "ESC-EXEC-20260528-05",
-        "ESC-EXEC-20260528-06"
+        "ESC-EXEC-20260528-05"
     ],
     "merge_gate": {
         "epics_merged": [
