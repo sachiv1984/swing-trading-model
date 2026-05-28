@@ -22,8 +22,8 @@ Last Updated: 2026-05-28
 - **Unblock criteria:** Director of HR confirms charter coverage; AI Compliance Officer confirms key security posture; documentation committed to `exec/2026-05-27__release-v4.2/EPIC-01`; AC-01 through AC-04 met.
 - **SLA due-by:** 2026-05-31T00:00:00Z (72-hour default)
 - **Blocks execution:** No (EPIC-01 can complete ST-02; escalation tracks outstanding human items)
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** ST-01 completed. AI Compliance Officer charter updated with Anthropic API provider coverage note (§4.1). `docs/security/anthropic_api_key_scope_review.md` §7 sign-off completed by Cybersecurity & Trust Lead, AI Compliance Officer, and Director of HR. All 4 ACs confirmed met. Unblock commit: aa014fde. EPIC-01 merged via PR #524 on 2026-05-28.
 
 ---
 
@@ -40,8 +40,8 @@ Last Updated: 2026-05-28
 - **Unblock criteria:** Infrastructure & Operations Owner inspects Render production logs and confirms (or remediates) non-exposure of API key and full prompt text; log hygiene policy document produced with all four ACs met; committed to `exec/2026-05-27__release-v4.2/EPIC-01`.
 - **SLA due-by:** 2026-05-31T00:00:00Z (72-hour default)
 - **Blocks execution:** No (EPIC-01 can complete with ST-02 only; ST-01 and ST-03 are parallel delegated items)
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** ST-03 completed. Infrastructure & Operations Owner inspected Render staging logs 2026-05-28 — ANTHROPIC_API_KEY absent, full prompt text not present. `docs/ops/claude_api_log_hygiene_policy.md` v1.0 (Active). All 4 ACs met. Unblock commit: ef73755b. EPIC-01 merged via PR #524 on 2026-05-28.
 
 ---
 
@@ -58,8 +58,8 @@ Last Updated: 2026-05-28
 - **Unblock criteria:** Live (or estimated) timing run completed for `POST /ai/check-daily-cost`; result added to `docs/ops/api_performance_baseline.md`; reviewed by Infrastructure & Operations Owner; committed to `exec/2026-05-27__release-v4.2/EPIC-02`.
 - **SLA due-by:** 2026-05-31T00:00:00Z (72-hour default)
 - **Blocks execution:** No (EPIC-02 can operate independently)
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** ST-04 completed. Infrastructure & Operations Owner completed live staging timing run for `POST /ai/check-daily-cost` — p50=205ms, p95=518ms (5 samples). `docs/ops/api_performance_baseline.md` v1.6 updated. All 3 ACs met. Unblock commit: 0f847c69. EPIC-02 merged via PR #525 on 2026-05-28.
 
 ---
 
@@ -76,8 +76,8 @@ Last Updated: 2026-05-28
 - **Unblock criteria:** First monthly review report produced with actual API call volume and cost data; monthly monitoring cadence defined; cost alert threshold defined; BLG-OPS-30 scope reference updated to Claude API; committed to `exec/2026-05-27__release-v4.2/EPIC-02`.
 - **SLA due-by:** 2026-05-31T00:00:00Z (72-hour default)
 - **Blocks execution:** No (EPIC-02 can operate independently)
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** ST-05 completed. FinOps & Resource Architect and Infrastructure & Operations Owner produced first monthly Claude API cost review (`docs/ops/claude_cost_review_2026-05.md` v1.0). 6 calls, $0.007387 total. Monthly cadence (first Thursday) and $5.00/month threshold defined. All 4 ACs met. Unblock commit: 46a8a3b3. EPIC-02 merged via PR #525 on 2026-05-28.
 
 ---
 
@@ -94,8 +94,8 @@ Last Updated: 2026-05-28
 - **Unblock criteria:** p50/p95 latency baseline from ≥10 live sample calls recorded in `docs/ops/api_performance_baseline.md`; regression threshold defined; committed to `exec/2026-05-27__release-v4.2/EPIC-02`.
 - **SLA due-by:** 2026-05-31T00:00:00Z (72-hour default)
 - **Blocks execution:** No (EPIC-02 can operate independently)
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** ST-06 completed. Infrastructure & Operations Owner ran 10 warm production calls to `POST /trade-plans/{plan_id}/generate-thesis` 2026-05-28. p50=3,560ms, p95=3,923ms. Regression threshold: p95 > 7,846ms. `docs/ops/api_performance_baseline.md` v1.7 updated. All 3 ACs met. Unblock commit: cdae90b5. EPIC-02 merged via PR #525 on 2026-05-28.
 
 ---
 
@@ -112,5 +112,5 @@ Last Updated: 2026-05-28
 - **Unblock criteria:** Product Owner provides: (1) list of strategy versions to compare, (2) performance comparison methodology definition, (3) UI view concept description; Head of Specs Team sign-off obtained; engine produces and commits SI-04 scope definition document to `exec/2026-05-27__release-v4.2/EPIC-04`.
 - **SLA due-by:** 2026-05-31T00:00:00Z (72-hour default)
 - **Blocks execution:** No (EPIC-04 can complete ST-11 and ST-13 independently)
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** ST-12 completed. Product Owner provided SI-04 scope inputs directly 2026-05-28 (version boundary = date range, 5 deterministic metrics, two-column comparison UI). Head of Specs Team APPROVED (agent-mediated). `docs/governance/si04_scope_definition.md` v1.0 committed. All 4 ACs met. Unblock commit: 7714bec5. EPIC-04 merged via PR #523 on 2026-05-28.

@@ -2,8 +2,42 @@
 **Class:** Living Document (Class 3)
 **Status:** Active
 **Version:** 3.0
-**Last Updated:** 2026-05-27
+**Last Updated:** 2026-05-28
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-05-27__release-v4.2
+**Date:** 2026-05-28
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Anthropic API accountability: AI Compliance Officer charter updated with Anthropic API coverage (§4.1); ANTHROPIC_API_KEY security review document v1.0 with tri-authority sign-off | docs/security/anthropic_api_key_scope_review.md; claude/agents/ai_compliance_governance_officer.md | None |
+| EPIC-01 | Model version pinning policy v1.0: ai_service.py pinned to MODEL_VERSION=claude-sonnet-4-6; env-var override removed | docs/governance/ai_model_version_pinning_policy.md | None |
+| EPIC-01 | Claude API log hygiene policy v1.0: Render logs confirmed clean (ANTHROPIC_API_KEY absent, prompt text absent); log level + retention policy defined | docs/ops/claude_api_log_hygiene_policy.md | None |
+| EPIC-02 | API performance baseline update: POST /ai/check-daily-cost baseline added — p50=205ms, p95=518ms | docs/ops/api_performance_baseline.md §14 | None |
+| EPIC-02 | First monthly Claude API cost review: 6 calls, $0.007387; monthly cadence (first Thursday) + $5.00/month threshold | docs/ops/claude_cost_review_2026-05.md | None |
+| EPIC-02 | Thesis generation latency baseline: p50=3,560ms, p95=3,923ms (10 prod samples); regression threshold p95 > 7,846ms | docs/ops/api_performance_baseline.md §15 | None |
+| EPIC-03 | Claude API audit trail: claude_audit_log table + ensure/create/query functions in database.py; GET /ai/claude-audit-log route; 59 total endpoints | docs/specs/api_contracts/ai_endpoints.md v1.2; docs/reference/openapi.yaml | None |
+| EPIC-03 | Gemini→Claude spec debt cleared: gemini_thesis_generation.md superseded; ai_thesis_generation.md v2.1.0 canonical; openapi.yaml drift gate PASSED (83/83) | docs/specs/api_contracts/ai_thesis_generation.md v2.1.0 | None |
+| EPIC-03 | Claude API Playwright mock strategy v1.0: intercept patterns for 3 Claude-backed endpoints; LIFO alignment; CI guarantee | docs/team_skills/quality/claude_api_playwright_mock_strategy.md | None |
+| EPIC-03 | Prompt caching assessment: DEFERRED — gate criteria: ≥1,024-token prefix AND ≥10 calls/day required | docs/governance/claude_prompt_caching_assessment.md | None |
+| EPIC-04 | SI-02 sprint planning prerequisites checklist v1.0: 13 items (4 Complete, 1 gate-conditional, 8 Open); integrated at sprint planning STEP -1 | docs/governance/si02_prerequisites_checklist.md | None |
+| EPIC-04 | SI-04 scope definition v1.0: date-range versioning, 5 deterministic metrics, two-column comparison UI concept; §13 gate BLG-GOV-62 before sprint planning | docs/governance/si04_scope_definition.md | None |
+| EPIC-04 | v4.1 staging sign-off review: deviation trend IMPROVED (v4.1=2 vs v4.0=4); backlog namespace audit 287 BLG IDs, 0 collisions | docs/governance/v41_staging_deviation_review.md | None |
+
+### Capabilities deferred or returned
+
+None. All 13 stories completed and merged.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (DoQ 2026-05-28), qa_evidence_EPIC-02.md (DoQ 2026-05-28), qa_evidence_EPIC-03.md (DoQ 2026-05-28), qa_evidence_EPIC-04.md (DoQ 2026-05-28)
+- Deviations filed: None
+- Test scenarios referenced: None (governance/documentation/ops scope — no new test files)
 
 ---
 
