@@ -162,7 +162,7 @@
                 "ST-06": {
                     "title": "Claude API Thesis Generation Latency Baseline",
                     "classification": "delegated_backend",
-                    "status": "returned_to_backlog",
+                    "status": "done",
                     "assigned_to": "Head of Engineering; Infrastructure & Operations Owner",
                     "github_issue": 513,
                     "branch": "exec/2026-05-27__release-v4.2/EPIC-02",
@@ -170,15 +170,20 @@
                     "delegation_record_id": "DEL-20260528-05",
                     "blocked_since_utc": null,
                     "unblock_criteria": "p50/p95 latency baseline from minimum 10 sample calls recorded in docs/ops/api_performance_baseline.md; regression threshold defined",
-                    "completed_utc": null,
-                    "acceptance_verified": false,
+                    "completed_utc": "2026-05-28T15:30:00Z",
+                    "acceptance_verified": true,
                     "spec_references": [
                         "docs/ops/api_performance_baseline.md"
                     ],
                     "deviations_filed": true,
-                    "last_completed_substep": null,
-                    "sign_off_record": null,
-                    "notes": "BLG-OPS-39. AC-01 requires minimum 10 sample calls from live environment. Returned to backlog 2026-05-28: Head of Engineering / Infrastructure & Operations Owner to complete live run in next sprint. DEL-20260528-05 status: Cancelled."
+                    "last_completed_substep": "3.1.A.sign_off_cleared",
+                    "sign_off_record": {
+                        "required_by": "Infrastructure & Operations Owner",
+                        "method": "agent_mediated",
+                        "status": "cleared",
+                        "cleared_utc": "2026-05-28T15:30:00Z"
+                    },
+                    "notes": "BLG-OPS-39. 10 warm production samples (trading-assistant-api-c0f9.onrender.com). Staging excluded: ANTHROPIC_API_KEY not configured on staging. p50=3,560ms, p95=3,923ms. Regression threshold: p95 > 7,846ms (2\u00d7 baseline). docs/ops/api_performance_baseline.md \u00a715 added v1.7. All 3 ACs met. DEL-20260528-05 status: Unblocked."
                 }
             }
         },
@@ -395,11 +400,11 @@
         "ST-12",
         "ST-13",
         "ST-04",
-        "ST-05"
+        "ST-05",
+        "ST-06"
     ],
     "returned_to_backlog_items": [
-        "ST-03",
-        "ST-06"
+        "ST-03"
     ],
     "open_escalations": [
         "ESC-EXEC-20260528-02",

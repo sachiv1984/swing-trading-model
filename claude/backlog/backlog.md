@@ -1887,6 +1887,7 @@ Render application logs for Claude API calls may inadvertently capture API keys,
 ---
 
 ### BLG-OPS-39 — Claude API thesis generation latency baseline
+**Shipped:** ✅ COMPLETE — v4.2 — 2026-05-28 — cycle: 2026-05-27__release-v4.2 (ST-06)
 **Priority:** P2 (Medium)
 **Type:** Operations / Performance Baseline
 **Owner:** Head of Engineering; Infrastructure & Operations Owner

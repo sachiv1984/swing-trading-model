@@ -108,7 +108,7 @@ Cycle: 2026-05-27__release-v4.2
 - **Classification:** delegated_backend
 - **Raised at:** 2026-05-28T00:00:00Z
 - **Assigned to:** Head of Engineering; Infrastructure & Operations Owner
-- **Status:** Cancelled
+- **Status:** Unblocked
 - **Context:** ST-06 establishes the p50/p95 latency baseline for `POST /trade-plans/{plan_id}/generate-thesis` (Claude-backed). AC-01 requires minimum 10 sample calls from a live environment. The engine cannot execute live API timing runs independently.
 - **Spec reference:** `docs/ops/api_performance_baseline.md`
 - **Required layers:** Documentation only (no code change) — add latency measurement rows to the performance baseline document
@@ -118,9 +118,9 @@ Cycle: 2026-05-27__release-v4.2
 - **Issue number:** #513
 - **Unblock criteria:** p50/p95 latency baseline from ≥10 sample calls recorded in `docs/ops/api_performance_baseline.md`; regression threshold defined.
 - **Delegation record filed:** 2026-05-28T00:00:00Z
-- **Unblocked at:** —
-- **Unblock commit SHA:** —
-- **Cancellation note (2026-05-28):** Story returned to backlog — AC-01 requires minimum 10 live sample calls from production/staging for p50/p95 measurement. No live environment timing access available to engine. Head of Engineering / Infrastructure & Operations Owner to schedule in next sprint. Backlog item BLG-OPS-39 already filed.
+- **Unblocked at:** 2026-05-28T15:30:00Z
+- **Unblock commit SHA:** pending
+- **Resolution note:** 10 warm production samples run against `https://trading-assistant-api-c0f9.onrender.com` using plan `66d6dda6-15de-447d-969e-4a0d8c548825` (INTC). Staging excluded — `ANTHROPIC_API_KEY` not configured on staging. Results: p50=3,560ms, p95=3,923ms, min=3,473ms, max=4,008ms. Regression threshold: p95 > 7,846ms. `docs/ops/api_performance_baseline.md` §15 added (v1.7). All 3 ACs met. BLG-OPS-39 closed.
 
 ---
 
