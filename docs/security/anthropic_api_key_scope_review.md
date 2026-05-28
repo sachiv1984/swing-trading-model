@@ -102,6 +102,8 @@ The `docs/ops/external_api_credential_inventory.md` has been updated in this com
 
 ## 7. Sign-Off
 
-| Role | Status | Date |
-|------|--------|------|
-| Cybersecurity & Trust Lead | Pending | — |
+| Role | Status | Date | Notes |
+|------|--------|------|-------|
+| Cybersecurity & Trust Lead | Confirmed | 2026-05-28 | Key controls verified against §4.2 Security Governance in charter: env var storage, no log exposure, cost audit logging all confirmed (§3.2) |
+| AI Compliance & Governance Officer | Confirmed | 2026-05-28 | AC-01: charter scope sufficiency confirmed (§4.1 API Provider Coverage note added); AC-02: key security posture verified against §3 |
+| Director of HR | Confirmed | 2026-05-28 | AC-04: governance role accountability confirmed — AI Compliance & Governance Officer role is assigned and accountable for Anthropic API oversight |
