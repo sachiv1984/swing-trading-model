@@ -3867,7 +3867,7 @@ components:
         from a ticker and optional signal data. No existing plan record required.
         Returns available=true with fields on success; available=false with error on
         graceful degradation (no API key or API failure).
-        Canonical contract: docs/specs/api_contracts/gemini_thesis_generation.md
+        Canonical contract: docs/specs/api_contracts/ai_thesis_generation.md v2.1.0
       tags: [Trade Plans]
       requestBody:
         required: true
@@ -3929,7 +3929,7 @@ components:
         Calls Claude Haiku 4.5 to generate a concise setup thesis for an existing trade plan.
         Returns available=true with thesis text on success; available=false with error
         on graceful degradation (no API key or API failure).
-        Canonical contract: docs/specs/api_contracts/gemini_thesis_generation.md
+        Canonical contract: docs/specs/api_contracts/ai_thesis_generation.md v2.1.0
       tags: [Trade Plans]
       parameters:
         - name: plan_id
