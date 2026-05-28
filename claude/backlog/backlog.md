@@ -1813,6 +1813,7 @@ POST /ai/check-daily-cost was added in v4.1 (ST-09) and is present in openapi.ya
 ---
 
 ### BLG-OPS-36 — Claude API usage first monthly review
+**Shipped:** ✅ COMPLETE — v4.2 — 2026-05-28 — cycle: 2026-05-27__release-v4.2 (ST-05)
 **Priority:** P1 (High)
 **Type:** Operations / Cost Monitoring
 **Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
@@ -1887,6 +1888,7 @@ Render application logs for Claude API calls may inadvertently capture API keys,
 ---
 
 ### BLG-OPS-39 — Claude API thesis generation latency baseline
+**Shipped:** ✅ COMPLETE — v4.2 — 2026-05-28 — cycle: 2026-05-27__release-v4.2 (ST-06)
 **Priority:** P2 (Medium)
 **Type:** Operations / Performance Baseline
 **Owner:** Head of Engineering; Infrastructure & Operations Owner

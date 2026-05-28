@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.5
-**Date:** 2026-05-22
+**Version:** 1.7
+**Date:** 2026-05-28
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -429,10 +429,115 @@ The following endpoints were added in v4.0 and have not yet been included in the
 
 ---
 
+## 14. v4.2 Claude API Cost Endpoint Baseline — ST-04 (OA-3)
+
+**Date:** 2026-05-28
+**Story:** ST-04 (EPIC-02, v4.2) — BLG-OPS-35 / OA-3 from v4.1 post-ship
+**Environment:** Staging — `https://trading-assistant-api-staging.onrender.com`
+**Method:** 7 samples, warm service (service already active from prior calls), sequential `curl` timing via `time_total`. No warm-up call required — service confirmed responsive before run.
+
+### POST /ai/check-daily-cost Latency Profile
+
+| Sample | ms |
+|--------|----|
+| 1 | 230 |
+| 2 | 207 |
+| 3 | 189 |
+| 4 | 187 |
+| 5 | 187 |
+| 6 | 518 |
+| 7 | 205 |
+
+| Metric | Value |
+|--------|-------|
+| p50 | **205ms** |
+| p95 | **518ms** |
+| min | 187ms |
+| max | 518ms |
+| Samples | 7 |
+
+**Assessment:** p50 = 205ms is consistent with other single-query Supavisor-enabled DB endpoints (§10 shows 226–244ms range post-Supavisor). The p95 = 518ms spike is typical tail jitter from occasional connection scheduling overhead — same pattern seen across all DB endpoints at p95. This endpoint performs a date-filtered SUM/COUNT aggregation on `claude_audit_log`, returning the day's total token usage and estimated cost.
+
+**Flag threshold:** p95 > 1,000ms would warrant investigation. Current p95 = 518ms — no flag.
+
+**Regression threshold:** p50 > 400ms triggers review (2× baseline).
+
+### Sign-Off
+
+```
+Infrastructure & Operations Owner
+Date: 2026-05-28
+
+POST /ai/check-daily-cost baseline established. 7 samples on warm staging service.
+p50 = 205ms — within expected range for single-query DB endpoint on Supavisor.
+p95 = 518ms — tail jitter consistent with established pattern; no flag.
+OA-3 (v4.1 post-ship) closed. BLG-OPS-35 closed.
+
+Signed: [x] Infrastructure & Operations Owner — 2026-05-28
+```
+
+---
+
+## 15. v4.2 Claude API Thesis Generation Latency Baseline — ST-06
+
+**Date:** 2026-05-28
+**Story:** ST-06 (EPIC-02, v4.2) — BLG-OPS-39
+**Environment:** Production — `https://trading-assistant-api-c0f9.onrender.com`
+**Method:** 1 warm-up call + 10 timed samples, warm service, sequential `curl` timing via `time_total`. Staging excluded — `ANTHROPIC_API_KEY` not configured on staging environment.
+**Plan used:** `66d6dda6-15de-447d-969e-4a0d8c548825` (INTC, active plan)
+
+### POST /trade-plans/{plan_id}/generate-thesis Latency Profile
+
+| Sample | ms |
+|--------|----|
+| 1 | 4,008 |
+| 2 | 3,556 |
+| 3 | 3,563 |
+| 4 | 3,565 |
+| 5 | 3,819 |
+| 6 | 3,543 |
+| 7 | 3,473 |
+| 8 | 3,776 |
+| 9 | 3,481 |
+| 10 | 3,487 |
+
+| Metric | Value |
+|--------|-------|
+| p50 | **3,560ms** |
+| p95 | **3,923ms** |
+| min | 3,473ms |
+| max | 4,008ms |
+| mean | 3,627ms |
+| Samples | 10 |
+
+**Assessment:** p50 = 3,560ms reflects end-to-end Claude Haiku 4.5 API call latency (network round-trip to Anthropic + inference + DB write). This is an AI inference endpoint — latency is dominated by the external API call, not DB or application processing. All 10 samples fall within a tight 535ms window (3,473–4,008ms), indicating stable, consistent Claude API response times. No outliers observed.
+
+**Regression threshold:** p95 > 7,846ms (2× baseline p95 of 3,923ms) triggers a review of the Anthropic API SLA and model version.
+
+**Note:** This endpoint is intentionally excluded from the standard DB-endpoint latency budget (≤400ms p50). AI inference latency is a function of the external Anthropic API and cannot be reduced without model changes or caching. The 3.5–4s range is expected and acceptable for this use case.
+
+### Sign-Off
+
+```
+Infrastructure & Operations Owner
+Date: 2026-05-28
+
+POST /trade-plans/{plan_id}/generate-thesis baseline established. 10 samples on warm production service.
+p50 = 3,560ms — consistent with Claude Haiku 4.5 inference latency (external API, not DB-bound).
+p95 = 3,923ms — tight distribution, no outliers. Regression threshold: p95 > 7,846ms.
+BLG-OPS-39 closed.
+
+Signed: [x] Infrastructure & Operations Owner — 2026-05-28
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 1.7 | 2026-05-28 | Infrastructure & Operations Owner | ST-06 (v4.2 EPIC-02, BLG-OPS-39): §15 added — POST /trade-plans/{plan_id}/generate-thesis baseline. p50=3,560ms, p95=3,923ms. 10 warm production samples. Regression threshold: p95 > 7,846ms. BLG-OPS-39 closed. |
+| 1.6 | 2026-05-28 | Infrastructure & Operations Owner | ST-04 (v4.2 EPIC-02, BLG-OPS-35 / OA-3): §14 added — POST /ai/check-daily-cost baseline. p50=205ms, p95=518ms. 7 warm staging samples. OA-3 closed. |
 | 1.5 | 2026-05-27 | Infrastructure & Operations Owner | ST-15 (v4.1 EPIC-04, BLG-OPS-29): §13 added — GET /analytics/arc5-compliance and POST /trade-plans/{plan_id}/generate-thesis registered as v4.0 endpoints pending baseline measurement. arc5-compliance eligible for standard timing run; generate-thesis excluded (AI inference latency). Updated pending endpoint count to 25. |
 | 1.4 | 2026-05-22 | PMO Lead | OA-02 (v3.9 post-ship closure): §12 added — GET /portfolio/red-flag-journal (v3.9 ST-07) registered as pending baseline measurement for next BLG-OPS-13 re-run. |
 | 1.3 | 2026-05-10 | Infrastructure & Operations Owner | ST-12 (v3.3 EPIC-03): §11 added — research endpoint latency profile and target. p95 ≤ 3s target documented with rationale. Estimated values pending actual staging measurement. |
