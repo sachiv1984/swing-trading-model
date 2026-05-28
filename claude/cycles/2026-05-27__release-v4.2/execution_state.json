@@ -5,7 +5,7 @@
     "invoked_utc": "2026-05-28T00:00:00Z",
     "mode": "standard",
     "status": "Running",
-    "last_updated_utc": "2026-05-28T02:00:00Z",
+    "last_updated_utc": "2026-05-28T10:00:00Z",
     "epics": {
         "EPIC-01": {
             "status": "in_progress",
@@ -19,21 +19,33 @@
                 "ST-01": {
                     "title": "Anthropic API Accountability & Key Security",
                     "classification": "delegated_decision",
-                    "status": "blocked_decision",
+                    "status": "done",
                     "assigned_to": "Director of HR; AI Compliance & Governance Officer",
                     "github_issue": 508,
                     "branch": "exec/2026-05-27__release-v4.2/EPIC-01",
-                    "commit_sha": null,
+                    "commit_sha": "aa014fde",
                     "delegation_record_id": "DEL-20260528-01",
                     "blocked_since_utc": "2026-05-28T00:05:00Z",
                     "unblock_criteria": "Director of HR and AI Compliance Officer confirm: (1) charter covers Anthropic API explicitly, (2) ANTHROPIC_API_KEY security posture confirmed (min permissions, env var only, no log exposure), (3) documentation committed to exec/2026-05-27__release-v4.2/EPIC-01",
-                    "completed_utc": null,
-                    "acceptance_verified": false,
-                    "spec_references": [],
-                    "deviations_filed": false,
-                    "last_completed_substep": "3.1.D.escalation_filed",
-                    "sign_off_record": null,
-                    "notes": "no prior spec applicable. BLG-GOV-66 + BLG-GOV-65. ESC-EXEC-20260528-01 filed. Awaiting Director of HR + AI Compliance Officer sign-off."
+                    "completed_utc": "2026-05-28T10:00:00Z",
+                    "acceptance_verified": true,
+                    "spec_references": [
+                        "docs/security/anthropic_api_key_scope_review.md",
+                        "claude/agents/ai_compliance_governance_officer.md"
+                    ],
+                    "deviations_filed": true,
+                    "last_completed_substep": "3.1.A.sign_off_cleared",
+                    "sign_off_record": {
+                        "required_by": "Director of HR; AI Compliance & Governance Officer; Cybersecurity & Trust Lead",
+                        "method": "agent_mediated",
+                        "status": "cleared",
+                        "findings_applied": [
+                            "Added API Provider Coverage scope note to AI Compliance Officer charter \u00a74.1 \u2014 Anthropic (Claude API) now explicitly named",
+                            "docs/security/anthropic_api_key_scope_review.md \u00a77 sign-off table completed: Cybersecurity & Trust Lead, AI Compliance & Governance Officer, Director of HR all confirmed 2026-05-28"
+                        ],
+                        "cleared_utc": "2026-05-28T10:00:00Z"
+                    },
+                    "notes": "BLG-GOV-66 + BLG-GOV-65. AC-01: charter updated with Anthropic provider coverage note. AC-02: security posture confirmed (env var, no log exposure, platform-level scope restriction N/A per \u00a73.1). AC-03: docs/security/anthropic_api_key_scope_review.md is the security record. AC-04: Director of HR + AI Compliance Officer sign-off in \u00a77. Unblocked by commit aa014fde on EPIC-01 branch."
                 },
                 "ST-02": {
                     "title": "Anthropic Model Version Pinning Policy",
@@ -364,11 +376,9 @@
         }
     },
     "blocked_items": [
-        "ST-01",
         "ST-03"
     ],
     "delegated_items": [
-        "ST-01",
         "ST-03",
         "ST-04",
         "ST-05",
@@ -376,6 +386,7 @@
     ],
     "completed_items": [
         "ST-02",
+        "ST-01",
         "ST-11",
         "ST-13",
         "ST-12",
@@ -385,7 +396,6 @@
         "ST-10"
     ],
     "open_escalations": [
-        "ESC-EXEC-20260528-01",
         "ESC-EXEC-20260528-02",
         "ESC-EXEC-20260528-03",
         "ESC-EXEC-20260528-04",
