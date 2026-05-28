@@ -2,11 +2,12 @@
 AI Router
 
 POST /ai/journal-summary — Summarise trade journal notes via external LLM API.
+GET  /ai/claude-audit-log — Query the immutable Claude API call audit trail.
 
 AI output is display-only and must NOT feed into any signal, scoring,
 or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 
-Contract: docs/specs/api_contracts/ai_endpoints.md v1.0
+Contract: docs/specs/api_contracts/ai_endpoints.md v1.2
 """
 
 from fastapi import APIRouter, HTTPException, Query
@@ -140,3 +141,16 @@ def check_daily_cost():
     """
     from services.gemini_service import check_and_alert_daily_cost
     return check_and_alert_daily_cost(threshold_usd=AI_DAILY_COST_THRESHOLD)
+
+
+@router.get("/claude-audit-log")
+def get_claude_audit_log(limit: int = Query(default=50, ge=1, le=200)):
+    """
+    Query the Claude API audit trail (claude_audit_log table).
+    Returns the most recent Claude API call records, newest first.
+    Intended for cost review and compliance monitoring.
+    AI-generated content is NOT included — audit metadata only.
+    """
+    from database import query_claude_audit_log
+    records = query_claude_audit_log(limit=limit)
+    return {"ok": True, "data": {"records": records, "count": len(records)}}

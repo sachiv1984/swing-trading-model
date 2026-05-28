@@ -1,13 +1,11 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
-**Status:** Superseded
-**Version:** 2.0.0
-**Last Updated:** 2026-05-26
+**Status:** Canonical
+**Version:** 2.1.0
+**Last Updated:** 2026-05-28
 **Shipped:** v4.0 — ST-12, EPIC-03, cycle 2026-05-22__release-v4.0
-**Superseded by:** docs/specs/api_contracts/ai_thesis_generation.md v2.1.0 (v4.2 ST-08)
+**Supersedes:** docs/specs/api_contracts/gemini_thesis_generation.md v2.0.0 (renamed in v4.2 ST-08)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-
-> **SUPERSEDED** — This file was renamed to `ai_thesis_generation.md` in v4.2 (ST-08 / BLG-SPEC-42). Refer to `ai_thesis_generation.md` for the current canonical contract.
 
 ---
 
@@ -26,7 +24,9 @@ Generated content is returned to the caller for display and optional inclusion i
 
 **§13 compliance:** These endpoints generate advisory text only. They do not gate trade entry, trigger alerts, or influence position sizing. The operator may use, edit, or discard the generated content. This is a display-only, operator-reviewed output.
 
-**Audit trail:** Each call writes a row to `gemini_audit_log` (plan_id, model_version, prompt_version, input_hash, output_hash, token usage, estimated cost). See `backend/services/gemini_service.py`.
+**Audit trail:** Each call writes a row to both `gemini_audit_log` (plan_id, model_version, prompt_version, input_hash, output_hash, token usage, estimated cost) and `claude_audit_log` (endpoint, model_id, prompt_version, input_tokens, output_tokens, cost_usd). The `claude_audit_log` is queryable via `GET /ai/claude-audit-log`. See `backend/services/gemini_service.py`.
+
+**Claude API response fields:** The Anthropic SDK returns a `usage` object with `input_tokens` and `output_tokens` (and optionally `cache_creation_input_tokens` / `cache_read_input_tokens` if prompt caching is enabled). These fields are logged to `claude_audit_log` but are **not** surfaced in the endpoint response — the response returns only `model_version` and `prompt_version` for traceability. To query usage metadata, use `GET /ai/claude-audit-log`.
 
 **Cost tracking:** Token usage is logged with estimated cost at $1.00/1M input tokens and $5.00/1M output tokens (Claude Haiku 4.5 rates). The Anthropic API has no free tier; see `docs/ops/gemini_cost_tracking.md` for monitoring guidance.
 
@@ -97,10 +97,12 @@ When the Anthropic API key is configured and the API call succeeds:
 |-------|------|-------------|
 | available | boolean | Always `true` when thesis is generated |
 | thesis | string | Generated thesis text (2–3 sentences, ≤100 words) |
-| model_version | string | Claude model used (e.g. `claude-haiku-4-5`) |
+| model_version | string | Claude model ID used (e.g. `claude-haiku-4-5`). Matches `MODEL_VERSION` in `gemini_service.py`. |
 | prompt_version | string | Internal prompt template version (e.g. `v3.0`) |
 | input_hash | string | SHA-256 hex prefix (16 chars) of the serialised input payload. Used for audit deduplication. |
 | output_hash | string | SHA-256 hex prefix (16 chars) of the generated thesis text |
+
+**Note on usage fields:** The Anthropic API returns `usage.input_tokens`, `usage.output_tokens`, and optionally `usage.cache_creation_input_tokens` / `usage.cache_read_input_tokens` (when prompt caching is active). These are written to `claude_audit_log` but are not included in this response. Query `GET /ai/claude-audit-log` for token-level cost data.
 
 ---
 
@@ -270,8 +272,10 @@ When the Anthropic API key is configured and the API call succeeds:
 |-------|------|-------------|
 | available | boolean | Always `true` when generation succeeded |
 | fields | object | Generated plan fields (see sub-schema below) |
-| model_version | string | Claude model used (e.g. `claude-haiku-4-5`) |
+| model_version | string | Claude model ID used (e.g. `claude-haiku-4-5`). Matches `MODEL_VERSION` in `gemini_service.py`. |
 | prompt_version | string | Internal prompt template version (e.g. `v3.0`) |
+
+**Note on usage fields:** Token counts (`input_tokens`, `output_tokens`) and cost are written to `claude_audit_log`, not returned in this response. Query `GET /ai/claude-audit-log` for per-call usage data.
 
 #### `fields` sub-schema
 
@@ -334,5 +338,6 @@ When the Anthropic API key is absent or the API call fails:
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 2.1.0 | 2026-05-28 | ST-08 (EPIC-03, v4.2): Rename gemini_thesis_generation.md → ai_thesis_generation.md. Document Claude API usage fields (input_tokens, output_tokens, cache_creation_input_tokens, cache_read_input_tokens) — written to claude_audit_log, not surfaced in response. Clarify model_version description. |
 | 2.0.0 | 2026-05-26 | Switch from Gemini Flash to Claude Haiku 4.5 (claude-haiku-4-5) via Anthropic SDK; update env var to ANTHROPIC_API_KEY; update cost rates ($1.00/1M input, $5.00/1M output); update prompt_version to v3.0; add POST /trade-plans/generate-plan endpoint; retitle document to AI Thesis Generation API Contract |
 | 1.0.0 | 2026-05-25 | Initial contract — ST-12, EPIC-03, v4.0. POST /trade-plans/{plan_id}/generate-thesis with Gemini Flash |
