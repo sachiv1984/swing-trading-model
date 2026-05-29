@@ -57,7 +57,7 @@ Cycle: 2026-05-29__release-v4.4
 - **Spec reference:** Not applicable — design output. Gate: ST-06 + ST-07 outputs reviewed before commencing.
 - **Unblock criteria (gate):** ST-06 (DEL-20260529-01) and ST-07 (DEL-20260529-02) outputs filed and reviewed. Then: `docs/specs/si02/si02_background_job_adr.md` committed to EPIC-02 branch with all 4 AC met.
 - **Commit format required:** `[EPIC-02][ST-09] <description>` pushed to `exec/2026-05-29__release-v4.4/EPIC-02`
-- **Status:** Unblocked — gate met (ST-06 + ST-07 done e97745c3); ST-09 agent invoked 2026-05-30T00:20:00Z
+- **Status:** Unblocked — commit 3fddb77b pushed 2026-05-30T00:30:00Z; all 4 AC verified; ADR-SI02-001 produced; event-triggered option rejected (§13 constraint)
 
 ---
 

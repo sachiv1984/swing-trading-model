@@ -183,21 +183,21 @@
         "ST-09": {
           "title": "SI-02 background job architecture design (BLG-BE-20) [conditional]",
           "classification": "delegated_decision",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "Head of Backend Engineering; Head of Engineering",
           "github_issue": 556,
           "branch": "exec/2026-05-29__release-v4.4/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "3fddb77b",
           "delegation_record_id": "DEL-20260529-03",
           "blocked_since_utc": null,
-          "unblock_criteria": "docs/specs/si02/si02_background_job_adr.md committed with [EPIC-02][ST-09]; all 4 AC verified.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-30T00:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/specs/si02/si02_background_job_adr.md"],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable — conditional story; gate condition NOW MET (ST-06 e97745c3 + ST-07 e97745c3 outputs available). Agent invoked 2026-05-30. Escalation: ESC-EXEC-20260529-03."
+          "sign_off_record": {"required_by": "Head of Backend Engineering; Head of Engineering", "method": "agent_mediated", "status": "cleared", "findings_applied": [], "cleared_utc": "2026-05-30T00:30:00Z"},
+          "notes": "no prior spec applicable. AC-01: Options A/B/C evaluated (on-demand, periodic cron, event-triggered). AC-02: Render constraints assessed — no worker/Redis/Celery; B1 (Render Cron) and B2 (APScheduler) both rejected; Option C (event-triggered) categorically rejected (violates §13 no-side-effects). AC-03: ADR-SI02-001 produced — cached synchronous selected; upgrade path at 150 trades documented; C rejected for §13 reasons. AC-04: Gate verified (ST-06 + ST-07 reviewed). No deviations. Gate for ST-12 partially cleared (ST-09 done; ST-11 pending)."
         }
       }
     },
@@ -303,7 +303,7 @@
 
   "blocked_items": ["ST-12"],
   "delegated_items": ["ST-06", "ST-07", "ST-09", "ST-10", "ST-11"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-13", "ST-08", "ST-06", "ST-07", "ST-10"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-13", "ST-08", "ST-06", "ST-07", "ST-10", "ST-09"],
   "open_escalations": ["ESC-EXEC-20260529-01", "ESC-EXEC-20260529-02", "ESC-EXEC-20260529-03", "ESC-EXEC-20260529-04", "ESC-EXEC-20260529-05"],
 
   "merge_gate": {
