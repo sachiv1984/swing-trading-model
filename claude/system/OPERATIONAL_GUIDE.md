@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.18
+**Version:** 4.19
 **Last Updated:** 2026-05-29
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -857,6 +857,29 @@ Use this table when designating `**Staging-only ACs:**` in sprint_backlog.md sto
 
 **Designation rule:** At sprint planning, sprint planners must inspect each story's acceptance criteria against this table. Any AC matching a category above must be tagged in the `**Staging-only ACs:**` field of the sprint_backlog.md story entry. `None` is only valid when no AC requires staging. A missing staging-only designation is a seal blocker (sprint_planning_prompt.md STEP 6.2 sign-off gate).
 
+### 7.9 Staging URL Disambiguation (BLG-OPS-43)
+
+The project uses **two separate Render services**: a frontend SPA and a backend API. These run as distinct deployments with different base URLs. Health checks, API calls, and QA test targets must always use the **backend API URL** — not the frontend SPA URL.
+
+| Service | URL Pattern | Purpose |
+|---------|-------------|---------|
+| Frontend SPA | `https://trading-assistant-frontend.onrender.com` | Serves the React single-page application. Does NOT expose `/api/*` routes directly. |
+| Backend API | `https://trading-assistant-api.onrender.com` | FastAPI service. Exposes all `/api/*` endpoints, `/healthz`, and `/metrics`. |
+
+**Health check baseline:** Always target the backend API URL. For example:
+
+```
+# Correct — backend API health check
+curl https://trading-assistant-api.onrender.com/api/healthz
+
+# Incorrect — frontend SPA (will return HTML, not JSON)
+curl https://trading-assistant-frontend.onrender.com/api/healthz
+```
+
+**QA test and staging verification:** Director of Quality should confirm which URL is being tested. Playwright tests and manual QA runs that exercise API-backed behaviour must target the backend API URL. Rendering-only checks that navigate the React app target the frontend SPA URL.
+
+**Root cause (BLG-OPS-43):** v4.3 Phase 3 staging friction occurred when health check commands were run against the frontend SPA URL, returning HTML instead of the expected JSON health response. This subsection disambiguates the two service types to prevent recurrence.
+
 ---
 
 ## 8. Phase 3 — Sprint Execution & Close
@@ -1424,7 +1447,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.18 |
+| Version | 4.19 |
 | Last Updated | 2026-05-29 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
@@ -1464,6 +1487,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.19 | 2026-05-29 | **v4.4 ST-13 (BLG-OPS-43) — Staging URL Disambiguation subsection added to §7.** New §7.9 "Staging URL Disambiguation" added after §7.8: distinguishes frontend SPA URL (`trading-assistant-frontend.onrender.com`) from backend API URL (`trading-assistant-api.onrender.com`); health check baseline guidance updated to always target backend API URL; example curl commands shown; root cause (v4.3 Phase 3 staging friction) documented. §14 Version 4.18→4.19/2026-05-29. Authority: Infrastructure & Operations Owner (BLG-OPS-43, v4.4 ST-13). |
 | 4.18 | 2026-05-29 | **v4.4 ST-05 — release_planning_prompt.md v2.31→v2.32 RESUME PRECHECK patch.** §6B source prompt header updated v2.31→v2.32. §14 Release Engine Source v2.31→v2.32. Change: STEP 7 Intermediate global state sync — RESUME PRECHECK note added: if session resumed via context compaction and STEP 7 completed without intermediate sync, execute sync immediately before proceeding to STEP 8. Prevents stale `.claude_current_state.json` on session resume. Authority: Head of Specs Team (BLG-GOV-74 deferred, v4.3 LL-2, v4.4 ST-05). |
 | 4.17 | 2026-05-29 | **v4.4 ST-04 — qa_evidence_template.md v1.3→v1.4 delegated_qa sign-off format.** §14 QA Evidence Template row added (new row). Change: Standard Sign-Off Block updated with delegated_qa pattern note (BLG-GOV-69/74): two valid sign-off formats documented — (i) individual DoQ sign-off with aggregate comment; (ii) DoQ aggregate acknowledgement format. Both valid; Date field non-blank requirement unchanged. Template clarifies both variants. Authority: Head of Specs Team (BLG-GOV-69 + BLG-GOV-74, v4.4 ST-04). |
 | 4.16 | 2026-05-29 | **v4.4 ST-03 — execution_prompt.md v3.32→v3.33 deviations_filed auto-set on delegation clearance.** §8 source prompt header updated v3.32→v3.33. §14 Execution Engine Source v3.32→v3.33. Change: §5.3 Protocol step 5 — when setting `sign_off_record.status = "cleared"` for a delegated story with no DEV-* record filed, also set `deviations_filed = true` in the same operation (BLG-GOV-73). Eliminates batch-correction pattern at sprint close for cleared delegated stories. Authority: Head of Specs Team (BLG-GOV-73, v4.4 ST-03). |

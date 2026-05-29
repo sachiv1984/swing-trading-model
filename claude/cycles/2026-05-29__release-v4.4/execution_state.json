@@ -5,14 +5,14 @@
   "invoked_utc": "2026-05-29T23:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-29T23:30:00Z",
+  "last_updated_utc": "2026-05-29T23:55:00Z",
 
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-29__release-v4.4/EPIC-01",
       "pr_number": 561,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-29__release-v4.4/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -270,32 +270,32 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-05-29__release-v4.4/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 562,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-29__release-v4.4/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
         "ST-13": {
           "title": "Staging URL disambiguation in OPERATIONAL_GUIDE §7 (BLG-OPS-43)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 560,
           "branch": "exec/2026-05-29__release-v4.4/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "bb182fec",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-29T23:45:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/system/OPERATIONAL_GUIDE.md"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC-01: §7.9 Staging URL Disambiguation subsection added with SPA vs API distinction. AC-02: Health check guidance updated to backend API URL. AC-03: URL patterns trading-assistant-frontend.onrender.com and trading-assistant-api.onrender.com included. AC-04: OPERATIONAL_GUIDE.md v4.18→v4.19 (post-rebase; pre-rebase was v4.13→v4.14); §14 Version + Last Updated updated; changelog row v4.19 prepended. AC-05: prompt_change_log.md entry appended v4.18→v4.19. No deviations. Rebased onto main (EPIC-01 merged) — final SHA bb182fec (post-rebase). QA evidence commit 10662c22."
         }
       }
     }
@@ -303,12 +303,12 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-13"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-04", "EPIC-02", "EPIC-03"],
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-04", "EPIC-02", "EPIC-03"],
     "all_merged": false
   },
 
