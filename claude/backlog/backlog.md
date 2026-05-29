@@ -2384,3 +2384,29 @@ These are deliberate product decisions, not deferrals:
 - This backlog is not canonical and must never override: strategy rules, metrics definitions, API contracts
 
 *Release Slice — v4.1 (2026-05-26__release-v4.1) removed — post-ship closure 2026-05-27. All 14 stories complete; ST-11 returned to backlog (AC-01 delivered; ACs 02–04 carried forward as BLG-QA-28/29/30, BLG-OPS-28). Canonical source: claude/cycles/2026-05-26__release-v4.1/stage4_backlog_slice.md*
+
+---
+
+## Release Slice — v4.4 (Ephemeral)
+
+<!-- release-plan-marker: RP:v4.4:2026-05-29__release-v4.4 -->
+
+*This section is ephemeral — removed by `groom backlog` after v4.4 post-ship closure. Canonical source: `claude/cycles/2026-05-29__release-v4.4/stage4_backlog_slice.md`*
+
+**Cycle:** 2026-05-29__release-v4.4 | **Published:** 2026-05-29 | **Stories:** 13 | **EPICs:** 4 | **Sprints:** 2
+
+| ST | EPIC | Sprint | Title | Effort |
+|----|------|--------|-------|--------|
+| ST-01 | EPIC-01 | 1 | Apply BLG-GOV-71: roadmap_prompt.md STEP 8.1 advisory for empty Now horizon | XS |
+| ST-02 | EPIC-01 | 1 | Apply BLG-GOV-72: sprint_planning_prompt.md frontend classification fast-path | XS |
+| ST-03 | EPIC-01 | 1 | Apply BLG-GOV-73: execution_prompt.md auto-set deviations_filed on delegation clearance | XS |
+| ST-04 | EPIC-01 | 1 | Apply BLG-GOV-69 + BLG-GOV-74: qa_evidence_template.md delegated_qa sign-off format | XS |
+| ST-05 | EPIC-01 | 1 | Apply release_planning_prompt.md STEP 7 RESUME PRECHECK patch (v4.3 LL-2) | XS |
+| ST-06 | EPIC-02 | 2 | SI-02 drift detection query pre-design (BLG-BE-17) | M |
+| ST-07 | EPIC-02 | 2 | Arc 5 backend architecture review for SI query patterns (BLG-BE-18) | M |
+| ST-08 | EPIC-02 | 2 | SI-02 query index pre-assessment (BLG-BE-23) | S |
+| ST-09 | EPIC-02 | 2 | SI-02 background job architecture design (BLG-BE-20) [conditional] | S |
+| ST-10 | EPIC-03 | 2 | SI-02 drift detection result component pre-design (BLG-FE-52) | S |
+| ST-11 | EPIC-03 | 2 | SI-02 drift detection interaction spec (BLG-FE-53) | S |
+| ST-12 | EPIC-03 | 2 | SI-02 Playwright scenario pre-design (BLG-QA-31) [conditional] | S |
+| ST-13 | EPIC-04 | 1 | Staging URL disambiguation in OPERATIONAL_GUIDE §7 (BLG-OPS-43) | XS |

@@ -1,0 +1,114 @@
+{
+  "cycle_id": "2026-05-29__release-v4.4",
+  "release": "v4.4",
+  "generated_utc": "2026-05-29T22:10:00Z",
+  "stories": [
+    {
+      "id": "ST-01",
+      "epic": "EPIC-01",
+      "title": "Apply BLG-GOV-71: roadmap_prompt.md STEP 8.1 advisory for empty Now horizon",
+      "labels": ["sprint", "EPIC-01", "cycle:2026-05-29__release-v4.4"],
+      "effort": "XS",
+      "sprint": 1
+    },
+    {
+      "id": "ST-02",
+      "epic": "EPIC-01",
+      "title": "Apply BLG-GOV-72: sprint_planning_prompt.md frontend classification fast-path",
+      "labels": ["sprint", "EPIC-01", "cycle:2026-05-29__release-v4.4"],
+      "effort": "XS",
+      "sprint": 1
+    },
+    {
+      "id": "ST-03",
+      "epic": "EPIC-01",
+      "title": "Apply BLG-GOV-73: execution_prompt.md auto-set deviations_filed on delegation clearance",
+      "labels": ["sprint", "EPIC-01", "cycle:2026-05-29__release-v4.4"],
+      "effort": "XS",
+      "sprint": 1
+    },
+    {
+      "id": "ST-04",
+      "epic": "EPIC-01",
+      "title": "Apply BLG-GOV-69 + BLG-GOV-74: qa_evidence_template.md delegated_qa sign-off format",
+      "labels": ["sprint", "EPIC-01", "cycle:2026-05-29__release-v4.4"],
+      "effort": "XS",
+      "sprint": 1
+    },
+    {
+      "id": "ST-05",
+      "epic": "EPIC-01",
+      "title": "Apply release_planning_prompt.md STEP 7 RESUME PRECHECK patch (v4.3 LL-2)",
+      "labels": ["sprint", "EPIC-01", "cycle:2026-05-29__release-v4.4"],
+      "effort": "XS",
+      "sprint": 1
+    },
+    {
+      "id": "ST-06",
+      "epic": "EPIC-02",
+      "title": "SI-02 drift detection query pre-design (BLG-BE-17)",
+      "labels": ["sprint", "EPIC-02", "cycle:2026-05-29__release-v4.4"],
+      "effort": "M",
+      "sprint": 2
+    },
+    {
+      "id": "ST-07",
+      "epic": "EPIC-02",
+      "title": "Arc 5 backend architecture review for SI query patterns (BLG-BE-18)",
+      "labels": ["sprint", "EPIC-02", "cycle:2026-05-29__release-v4.4"],
+      "effort": "M",
+      "sprint": 2
+    },
+    {
+      "id": "ST-08",
+      "epic": "EPIC-02",
+      "title": "SI-02 query index pre-assessment (BLG-BE-23)",
+      "labels": ["sprint", "EPIC-02", "cycle:2026-05-29__release-v4.4"],
+      "effort": "S",
+      "sprint": 2
+    },
+    {
+      "id": "ST-09",
+      "epic": "EPIC-02",
+      "title": "SI-02 background job architecture design (BLG-BE-20) [conditional]",
+      "labels": ["sprint", "EPIC-02", "cycle:2026-05-29__release-v4.4"],
+      "effort": "S",
+      "sprint": 2,
+      "gate_condition": "ST-06 + ST-07 outputs available; SI-02 sprint scope crystallising"
+    },
+    {
+      "id": "ST-10",
+      "epic": "EPIC-03",
+      "title": "SI-02 drift detection result component pre-design (BLG-FE-52)",
+      "labels": ["sprint", "EPIC-03", "cycle:2026-05-29__release-v4.4"],
+      "effort": "S",
+      "sprint": 2
+    },
+    {
+      "id": "ST-11",
+      "epic": "EPIC-03",
+      "title": "SI-02 drift detection interaction spec (BLG-FE-53)",
+      "labels": ["sprint", "EPIC-03", "cycle:2026-05-29__release-v4.4"],
+      "effort": "S",
+      "sprint": 2,
+      "gate_condition": "ST-10 (BLG-FE-52) output available"
+    },
+    {
+      "id": "ST-12",
+      "epic": "EPIC-03",
+      "title": "SI-02 Playwright scenario pre-design (BLG-QA-31) [conditional]",
+      "labels": ["sprint", "EPIC-03", "cycle:2026-05-29__release-v4.4"],
+      "effort": "S",
+      "sprint": 2,
+      "gate_condition": "ST-09 (BLG-BE-20) architecture output available"
+    },
+    {
+      "id": "ST-13",
+      "epic": "EPIC-04",
+      "title": "Staging URL disambiguation in OPERATIONAL_GUIDE §7 (BLG-OPS-43)",
+      "labels": ["sprint", "EPIC-04", "cycle:2026-05-29__release-v4.4"],
+      "effort": "XS",
+      "sprint": 1
+    }
+  ]
+}
