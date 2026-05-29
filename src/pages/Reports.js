@@ -419,11 +419,10 @@ const MONTH_NAMES = [
 ];
 
 function MonthlyPnlTable() {
-  const { data, isLoading } = useQuery({
+  const { data: response, isLoading } = useQuery({
     queryKey: ["monthlyPnl"],
     queryFn: () =>
       apiFetch(`${base44.baseUrl}/reports/monthly-pnl`).then((r) => r.json()),
-    select: (res) => res?.data ?? [],
   });
 
   if (isLoading) {
@@ -434,44 +433,85 @@ function MonthlyPnlTable() {
     );
   }
 
-  const rows = data ?? [];
+  const rows = response?.data ?? [];
+  const compliance = response?.strategy_compliance ?? null;
 
   return (
-    <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
-      <div className="px-6 py-4 border-b border-slate-700/50">
-        <h3 className="text-sm font-semibold text-white">Monthly Realised P&L</h3>
-        <p className="text-xs text-slate-400 mt-0.5">Current and prior calendar year. Only months with closed trades shown.</p>
+    <div className="space-y-4">
+      <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-700/50">
+          <h3 className="text-sm font-semibold text-white">Monthly Realised P&L</h3>
+          <p className="text-xs text-slate-400 mt-0.5">Current and prior calendar year. Only months with closed trades shown.</p>
+        </div>
+        {rows.length === 0 ? (
+          <div className="px-6 py-10 text-center text-slate-500 text-sm">No closed trades in scope.</div>
+        ) : (
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-700/50">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Month</th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Realised P&L</th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Trades</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-700/30">
+              {rows.map((row) => {
+                const pnl = row.realised_pnl_gbp ?? 0;
+                const pnlColor = pnl > 0 ? "text-emerald-400" : pnl < 0 ? "text-rose-400" : "text-slate-400";
+                return (
+                  <tr key={`${row.year}-${row.month}`} className="hover:bg-slate-700/20 transition-colors">
+                    <td className="px-6 py-3 text-slate-200">
+                      {MONTH_NAMES[row.month]} {row.year}
+                    </td>
+                    <td className={`px-6 py-3 text-right font-medium ${pnlColor}`}>
+                      {formatGBP(pnl)}
+                    </td>
+                    <td className="px-6 py-3 text-right text-slate-400">{row.trade_count}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
-      {rows.length === 0 ? (
-        <div className="px-6 py-10 text-center text-slate-500 text-sm">No closed trades in scope.</div>
-      ) : (
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-slate-700/50">
-              <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Month</th>
-              <th className="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Realised P&L</th>
-              <th className="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Trades</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-700/30">
-            {rows.map((row) => {
-              const pnl = row.realised_pnl_gbp ?? 0;
-              const pnlColor = pnl > 0 ? "text-emerald-400" : pnl < 0 ? "text-rose-400" : "text-slate-400";
-              return (
-                <tr key={`${row.year}-${row.month}`} className="hover:bg-slate-700/20 transition-colors">
-                  <td className="px-6 py-3 text-slate-200">
-                    {MONTH_NAMES[row.month]} {row.year}
-                  </td>
-                  <td className={`px-6 py-3 text-right font-medium ${pnlColor}`}>
-                    {formatGBP(pnl)}
-                  </td>
-                  <td className="px-6 py-3 text-right text-slate-400">{row.trade_count}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      )}
+
+      {/* Strategy Compliance — ST-18 (Arc 5, v4.3) */}
+      <div data-testid="strategy-compliance-section" className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-700/50">
+          <h3 className="text-sm font-semibold text-white">Strategy Compliance</h3>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Arc 5 pre-entry discipline metrics — last {compliance?.period_days ?? 30} days.
+          </p>
+        </div>
+        {compliance === null ? (
+          <div className="px-6 py-6 text-center text-slate-500 text-sm">Compliance data unavailable.</div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-slate-700/30">
+            <div data-testid="compliance-pass-rate" className="bg-slate-800/50 px-5 py-4">
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Validation Pass Rate</p>
+              <p className="text-lg font-semibold text-white">
+                {compliance.validation_pass_rate != null
+                  ? `${(compliance.validation_pass_rate * 100).toFixed(1)}%`
+                  : "—"}
+              </p>
+            </div>
+            <div data-testid="compliance-override-count" className="bg-slate-800/50 px-5 py-4">
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Override Count</p>
+              <p className="text-lg font-semibold text-white">{compliance.override_count ?? "—"}</p>
+            </div>
+            <div data-testid="compliance-red-flag-count" className="bg-slate-800/50 px-5 py-4">
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Red Flag Events</p>
+              <p className="text-lg font-semibold text-white">{compliance.red_flag_events_count ?? "—"}</p>
+            </div>
+            <div data-testid="compliance-rule-breach" className="bg-slate-800/50 px-5 py-4">
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Most Frequent Breach</p>
+              <p className="text-lg font-semibold text-white">
+                {compliance.most_frequent_rule_breach ?? "None"}
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

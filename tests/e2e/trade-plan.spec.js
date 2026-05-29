@@ -552,3 +552,53 @@ test('SC-TP-20: Plan saves with pre_entry_override_acknowledged in payload when 
   expect(capturedBody).not.toBeNull();
   expect(capturedBody.pre_entry_override_acknowledged).toBe(true);
 });
+
+// ST-16 — entry_price / stop_price parameters in pre-entry validation API call
+
+test('SC-TP-21: Pre-entry validation request includes entry_price and stop_price when both are provided', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.route(new RegExp(`${API}/news/AAPL`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
+  );
+
+  let capturedUrl = null;
+  await page.route(`${API}/portfolio/pre-entry-validation*`, (route) => {
+    capturedUrl = route.request().url();
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(PRE_ENTRY_VALIDATION_PASS) });
+  });
+
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 10000 });
+
+  // Fill quantity to trigger the validation panel
+  await page.getByPlaceholder(/e\.g\. 50/i).fill('10');
+  // Fill entry and stop prices
+  await page.getByTestId('planned-entry-price-input').fill('150');
+  await page.getByTestId('planned-stop-price-input').fill('142');
+
+  // Wait for the panel to load
+  await expect(page.getByTestId('pre-entry-checks-panel')).toBeVisible({ timeout: 5000 });
+
+  // Verify the API request URL includes both price params
+  expect(capturedUrl).not.toBeNull();
+  expect(capturedUrl).toContain('entry_price=150');
+  expect(capturedUrl).toContain('stop_price=142');
+});
+
+// ST-17 — No "Gemini" text in AI thesis generation UI
+
+test('SC-TP-22: AI thesis generation UI contains no Gemini references', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.route(new RegExp(`${API}/news/AAPL`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
+  );
+
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 10000 });
+
+  // Check entire page text for Gemini references
+  const pageContent = await page.locator('body').innerText();
+  expect(pageContent.toLowerCase()).not.toContain('gemini');
+});

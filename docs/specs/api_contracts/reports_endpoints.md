@@ -433,6 +433,30 @@ Array of monthly summary objects, sorted descending by year then month. Only mon
 
 **Scope:** Returns data for the current calendar year and the prior calendar year only (24 months maximum). Empty array if no closed trades exist in scope.
 
+#### `strategy_compliance` schema (ST-18, v4.3)
+
+Object containing Arc 5 pre-entry discipline metrics for the last 30 days. `null` if database is unavailable.
+
+```json
+{
+  "period_days": 30,
+  "validation_pass_rate": 0.82,
+  "override_count": 2,
+  "red_flag_events_count": 5,
+  "most_frequent_rule_breach": "sector_concentration"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `period_days` | integer | Period in days used for the compliance metrics (30) |
+| `validation_pass_rate` | float \| null | Overall pass rate across all pre-entry validation rules in the period (0.0–1.0); `null` if no validation log data |
+| `override_count` | integer | Count of `pre_entry_override` events in the last 7 days |
+| `red_flag_events_count` | integer | Count of all red flag events in the period |
+| `most_frequent_rule_breach` | string \| null | Rule type most frequently failing in the period; `null` if none |
+
+Source: `pre_entry_validation_log` and `red_flag_events` tables. See `arc5_compliance_analytics.md` for rule type definitions.
+
 ---
 
 ### Error Responses
@@ -455,6 +479,7 @@ GET /reports/monthly-pnl
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.5 | 2026-05-29 | Add strategy_compliance field to GET /reports/monthly-pnl response: 30d Arc 5 compliance metrics. ST-18 — v4.3 cycle 2026-05-29__release-v4.3. |
 | 0.4 | 2026-04-30 | Add GET /reports/monthly-pnl endpoint: month-by-month realised P&L for current and prior year. ST-11 — v3.1 release planning cycle 2026-04-29__release-v3.1. |
 | 0.3 | 2026-03-20 | Add `format=csv` to GET /reports/tax-year. CSV response schema documented: metadata block (5 rows) + trades table (17 human-readable columns). `format` validation rule tightened — unknown values now return 400. ST-13 — v2.1 release planning cycle 2026-03-18__release-v2.1. |
 | 0.2 | 2026-03-19 | Add `format=pdf` query parameter to GET /reports/tax-year. PDF response schema documented. ST-12 — v2.1 release planning cycle 2026-03-18__release-v2.1. |

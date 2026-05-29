@@ -295,3 +295,51 @@ test.describe('SC-REP-04 — Empty state (no trades for period)', () => {
     await expect(profitFactorLabel.locator('xpath=following-sibling::p[1]')).toHaveText('0.00', { timeout: 8000 });
   });
 });
+
+// ---------------------------------------------------------------------------
+// ST-18 — Strategy Compliance section in Monthly P&L tab (Arc 5, v4.3)
+// SC-REP-05: Strategy Compliance section visible with metric fields
+// ---------------------------------------------------------------------------
+
+const MONTHLY_PNL_WITH_COMPLIANCE = {
+  status: 'ok',
+  data: [
+    { year: 2026, month: 5, realised_pnl_gbp: 320.50, trade_count: 3 },
+  ],
+  strategy_compliance: {
+    period_days: 30,
+    validation_pass_rate: 0.82,
+    override_count: 2,
+    red_flag_events_count: 5,
+    most_frequent_rule_breach: 'sector_concentration',
+  },
+};
+
+test.describe('SC-REP-05: Monthly P&L — Strategy Compliance section', () => {
+  test.beforeEach(async ({ page }) => {
+    // Fallback registered FIRST (lowest priority — Playwright uses LIFO route evaluation).
+    await page.route(new RegExp(`${API}/`), (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
+    );
+    // Specific mocks registered LAST (highest priority — override the fallback).
+    await page.route(`${API}/analytics/metrics*`, (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: {} }) })
+    );
+    await page.route(`${API}/reports/monthly-pnl`, (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MONTHLY_PNL_WITH_COMPLIANCE) })
+    );
+    await page.goto('/#/Reports');
+    // Navigate to Monthly P&L tab
+    await page.getByRole('button', { name: /Monthly P&L/i }).click();
+  });
+
+  test('SC-REP-05a: Strategy Compliance heading visible in Monthly P&L tab', async ({ page }) => {
+    await expect(page.getByTestId('strategy-compliance-section')).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText('Strategy Compliance')).toBeVisible({ timeout: 5000 });
+  });
+
+  test('SC-REP-05b: Validation Pass Rate and Override Count metric fields visible', async ({ page }) => {
+    await expect(page.getByTestId('compliance-pass-rate')).toBeVisible({ timeout: 8000 });
+    await expect(page.getByTestId('compliance-override-count')).toBeVisible({ timeout: 5000 });
+  });
+});
