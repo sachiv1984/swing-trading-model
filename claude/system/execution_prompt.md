@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.30
-**Last Updated:** 2026-05-27
+**Version:** 3.31
+**Last Updated:** 2026-05-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -651,6 +651,8 @@ Last Updated: <date>
 ```
 
 The consolidation block must include: EPIC, Cycle, Sprint goal, Test scenarios used, a row per ST item (Spec Reference / What was built / AC / Result / Deviations), QA test coverage (scenarios run, regression areas, deviations), and the sign-off block. **Template: `claude/system/templates/qa_evidence_template.md`** — read this file to get the exact header, consolidation block format, and sign-off block template. Key rule: the sign-off block `Date:` field must be non-blank before the PR can be opened (§3.2.B pre-condition) and before the merge gate runs.
+
+**Advisory (OA-1/ST-01):** After completing DoQ sign-off and committing `qa_evidence_EPIC-xx.md`, update `execution_state.json` `qa_signed_off: true` in the same commit.
 
 This file is the evidence backing `qa_signed_off = true` in `execution_state.json`. A PR comment alone is not sufficient — this file must exist and the sign-off block must be complete before the merge gate runs.
 
