@@ -2587,6 +2587,47 @@ Backlog items have no explicit Blocks/Blocked-by fields. Cross-item dependencies
 
 ---
 
+### BLG-GOV-69 — qa_evidence_template.md: DoQ sign-off format for delegated_qa EPICs
+**Priority:** P3 (Low)
+**Type:** Governance / Template Improvement
+**Owner:** Head of Specs Team
+**Source:** v4.3 delivery verification Phase 4 lessons learnt — 2026-05-29__release-v4.3
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** v4.4
+
+**Problem**
+EPIC-03 (delegated_qa stories signed by Infrastructure & Operations Owner individually) used a non-standard DoQ acknowledgement format: "Director of Quality: Confirmed — Infrastructure & Operations Owner (all 3 stories), 2026-05-29" rather than the canonical "Signed off by: Director of Quality / Date: 2026-05-29" form. Content equivalent and compliant in standard mode, but strict mode literal check would flag it.
+
+**Scope**
+Update qa_evidence_template.md to include a second sign-off format example for EPICs where delegated_qa stories are individually signed by delegatees and DoQ acknowledges in aggregate. Both formats valid; template should clarify.
+
+**Acceptance Criteria**
+- Template adds example or note for aggregate DoQ acknowledgement format in delegated_qa EPIC context
+- Both formats (individual DoQ sign-off, aggregate DoQ acknowledgement) documented as valid
+
+---
+
+### BLG-GOV-70 — spec_references policy for documentation-creation stories
+**Priority:** P3 (Low)
+**Type:** Governance / Process Clarification
+**Owner:** Head of Specs Team
+**Source:** v4.3 delivery verification Phase 4 lessons learnt — 2026-05-29__release-v4.3
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** v4.5
+
+**Problem**
+Stories whose deliverable IS a new spec/document (no prior spec exists) have `spec_references = []` by design — referencing the created artefact as its own spec would be circular. The delivery verification STEP 1 check flags these as "traceability gaps" even though the created artefact path is documented in the story notes and QA evidence.
+
+**Scope**
+Add a spec_references policy note to execution_prompt.md or delivery_verification_prompt.md: for documentation-creation stories, `spec_references = []` is acceptable if the created artefact path is documented in story notes or a `delivery_artefact` field. Prevents false traceability flags at verification for document-creation stories.
+
+**Acceptance Criteria**
+- Policy note added to execution_prompt.md (preferred) or delivery_verification_prompt.md
+- "Empty spec_references acceptable for documentation-creation stories" condition defined with required note format
+- Version bumps and governance file edit checklist applied if Class 6
+
+---
+
 ## 9. Deferred / Future Candidates
 
 - Daily email portfolio summary

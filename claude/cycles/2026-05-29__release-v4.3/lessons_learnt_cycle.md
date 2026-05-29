@@ -37,3 +37,28 @@ Cycle: 2026-05-29__release-v4.3
 - **delegated_frontend reclassification:** Third consecutive cycle (v4.1, v4.2, v4.3 EPIC-04). Escalating from observation to classification guidance change in sprint_planning_prompt.md.
 - **deviations_filed flag:** New in this form; minor process friction. Defer to execution_prompt.md update.
 - **v4.2 deferred items resolved:** All 3 resolved within one cycle — no recurrence escalation.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-05-29__release-v4.3
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-05-29
+**Reviewed by:** Director of Quality
+
+**Prior cycle Phase 4 checked:** claude/cycles/2026-05-27__release-v4.2/lessons_learnt_cycle.md — Phase 4 present. No open deferred items from v4.2 Phase 4 carried forward to this cycle.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| EPIC-03 DoQ sign-off block uses non-standard format: "Director of Quality: Confirmed — Infrastructure & Operations Owner (all 3 stories), 2026-05-29" rather than the canonical "Signed off by: Director of Quality / Date: 2026-05-29" form from qa_evidence_template.md. Content is equivalent and intent is clear; compliant in standard mode. However, STEP -1.3 literal check for "Signed off by: Director of Quality" text would flag this in strict mode. | Phase 4 | A | defer | Update qa_evidence_template.md DoQ sign-off block to include an example for the EPIC-03 pattern (delegated_qa stories where delegatees sign individual stories and DoQ acknowledges in aggregate). Both formats are valid but template should clarify. BLG-GOV-new. | Head of Specs Team | v4.4 |
+| ST-09 qa_evidence consolidates 5 backlog slice ACs into 3 evidence rows. The ST-03 advisory (1:1 AC mapping) was added in this same sprint — evidence was written before the advisory was in effect. All 5 ACs are traceable via scenario IDs. First cycle where ST-03 advisory is formally active; minor friction as existing evidence was already written before the patch. | Phase 4 | A | defer | In the first sprint cycle after ST-03 advisory is published, add a verification note to sprint planning guidance reminding QA authors to apply the new advisory format. This is a one-time calibration period issue. | Head of Specs Team | v4.4 |
+| Delivery verification ran with zero deviations, zero traceability gaps (excluding documentation-creation stories with expected empty spec_references), and zero outstanding items. Sign-off coordination was frictionless — all QA evidence had DoQ sign-offs with dates at the time of verification. | Phase 4 | E | action-now | Positive: clean cycle. No process changes needed. Gate sequencing (QA evidence ready before verification invocation) worked correctly. | Sprint Execution Engine | — |
+| Four stories (ST-05, ST-10, ST-11, ST-12) had spec_references = [] — all documentation-creation stories. The traceability matrix flag for empty spec_references is technically correct per STEP 1 rules but creates noise in documentation-creation cycles. These stories are themselves the spec artefact; referencing them as their own spec_references would be circular. | Phase 4 | A | defer | Add a spec_references policy note to execution_prompt.md or the verification engine: for stories whose deliverable IS a new spec/document (no prior spec exists), empty spec_references is acceptable if a delivery_note field documents the created artefact path. This prevents false traceability flags at verification for document-creation stories. | Head of Specs Team | v4.5 |
+
+**Recurrence Notes:**
+- **DoQ sign-off format:** New item this cycle. Related to EPIC-03 delegated_qa pattern. File a backlog item for template update.
+- **AC consolidation in evidence:** First occurrence post-ST-03 advisory. One-time calibration friction.
+- **Clean cycle with zero deviations:** Positive pattern. No escalation.
+- **empty spec_references for doc-creation stories:** New class of friction. Defer for execution_prompt.md guidance.
