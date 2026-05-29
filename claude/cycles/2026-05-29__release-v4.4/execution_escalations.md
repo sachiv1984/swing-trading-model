@@ -23,8 +23,8 @@ Cycle: 2026-05-29__release-v4.4
 - **Unblock criteria:** `docs/specs/si02/si02_query_predesign.md` committed to `exec/2026-05-29__release-v4.4/EPIC-02` with commit format `[EPIC-02][ST-06] <description>`. All 5 AC verified: fields identified, SQL drafts present, missing-fields enumerated, performance assessed, reviewed by HBE.
 - **SLA due-by:** 2026-06-01T23:55:00Z (72h from delegation)
 - **Blocks execution:** Yes — EPIC-02 cannot complete; ST-09 gated on this output
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** ST-06 delivered via agent-mediated sign-off (HBE). `docs/specs/si02/si02_query_predesign.md` committed at e97745c3, 2026-05-30T00:20:00Z. All 5 AC verified. EPIC-02 merged PR #563 2026-05-29T23:13:23Z.
 
 ---
 
@@ -41,8 +41,8 @@ Cycle: 2026-05-29__release-v4.4
 - **Unblock criteria:** `docs/specs/si02/arc5_backend_architecture_review.md` committed to `exec/2026-05-29__release-v4.4/EPIC-02` with commit format `[EPIC-02][ST-07] <description>`. All 4 AC verified: sync vs background reviewed, recommendation with rationale, ADR filed if recommended, filed before SI-02 sprint planning.
 - **SLA due-by:** 2026-06-01T23:55:00Z (72h from delegation)
 - **Blocks execution:** Yes — EPIC-02 cannot complete; ST-09 gated on this output
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** ST-07 delivered via agent-mediated sign-off (HE + HBE). `docs/specs/si02/arc5_backend_architecture_review.md` committed at e97745c3, 2026-05-30T00:20:00Z. All 4 AC verified; ADR-001 filed. EPIC-02 merged PR #563.
 
 ---
 
@@ -59,8 +59,8 @@ Cycle: 2026-05-29__release-v4.4
 - **Unblock criteria (gate):** ST-06 output filed AND ST-07 output filed AND reviewed. Then: `docs/specs/si02/si02_background_job_adr.md` committed to EPIC-02 branch with all 4 AC met. Commit format: `[EPIC-02][ST-09] <description>`.
 - **SLA due-by:** 2026-06-01T23:55:00Z (72h from delegation; clock starts after gate condition met)
 - **Blocks execution:** Yes — EPIC-02 cannot complete without ST-09 (once gate met)
-- **Disposition:** Open — awaiting gate condition (ST-06 + ST-07 outputs)
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** Gate condition met (ST-06 + ST-07 done). ST-09 delivered via agent-mediated sign-off (HBE + HE). `docs/specs/si02/si02_background_job_adr.md` committed at 3fddb77b, 2026-05-30T00:30:00Z. All 4 AC verified; cached-synchronous ADR produced; event-triggered option rejected (§13). EPIC-02 merged PR #563.
 
 ---
 
@@ -77,8 +77,8 @@ Cycle: 2026-05-29__release-v4.4
 - **Unblock criteria:** `docs/specs/si02/si02_fe_component_predesign.md` committed to `exec/2026-05-29__release-v4.4/EPIC-03` with commit format `[EPIC-03][ST-10] <description>`. All 4 AC verified.
 - **SLA due-by:** 2026-06-01T23:55:00Z (72h from delegation)
 - **Blocks execution:** Yes — EPIC-03 cannot complete; ST-11 gated on this output
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** ST-10 delivered via agent-mediated sign-off (Frontend Specs & UX Documentation Owner). `docs/specs/si02/si02_fe_component_predesign.md` committed at 070a4663, 2026-05-30T00:20:00Z. All 4 AC verified; Option B (percentage deviation display) selected. EPIC-03 merged PR #564 2026-05-29T23:18:38Z.
 
 ---
 
@@ -95,5 +95,5 @@ Cycle: 2026-05-29__release-v4.4
 - **Unblock criteria (sequential):** ST-10 output filed and reviewed. Then: `docs/specs/si02/si02_fe_interaction_spec.md` committed to `exec/2026-05-29__release-v4.4/EPIC-03` with commit format `[EPIC-03][ST-11] <description>`. All 5 AC verified.
 - **SLA due-by:** 2026-06-01T23:55:00Z (72h from delegation; clock starts after ST-10 done)
 - **Blocks execution:** Yes — EPIC-03 cannot complete without ST-11 (once ST-10 done)
-- **Disposition:** Open — awaiting ST-10 completion
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** ST-10 done (commit 070a4663). ST-11 delivered via agent-mediated sign-off (Frontend Specs & UX Documentation Owner). `docs/specs/si02/si02_fe_interaction_spec.md` committed at 6061bcca, 2026-05-30T00:45:00Z. All 5 AC verified; 5-state model, non-dismissable+collapse, 13 Playwright DFT IDs specified. EPIC-03 merged PR #564.

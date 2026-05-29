@@ -1,9 +1,43 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 3.1
-**Last Updated:** 2026-05-29
+**Version:** 3.2
+**Last Updated:** 2026-05-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-05-29__release-v4.4
+**Date:** 2026-05-30
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | roadmap_prompt.md v6.6: STEP 8.1 advisory for empty Now horizon no-change path (BLG-GOV-71) | claude/system/roadmap_prompt.md v6.6 | None |
+| EPIC-01 | sprint_planning_prompt.md v3.8: frontend classification fast-path (3 conditions for autonomous default) (BLG-GOV-72) | claude/system/sprint_planning_prompt.md v3.8 | None |
+| EPIC-01 | execution_prompt.md v3.33: auto-set deviations_filed=true on delegation clearance with no DEV-* record (BLG-GOV-73) | claude/system/execution_prompt.md v3.33 | None |
+| EPIC-01 | qa_evidence_template.md v1.4: delegated_qa sign-off format — individual + aggregate variants documented (BLG-GOV-69 + BLG-GOV-74) | claude/system/templates/qa_evidence_template.md v1.4 | None |
+| EPIC-01 | release_planning_prompt.md v2.32: STEP 7 RESUME PRECHECK note added (v4.3 LL-2 carry-forward) | claude/system/release_planning_prompt.md v2.32 | None |
+| EPIC-04 | OPERATIONAL_GUIDE.md v4.19: §7.9 Staging URL Disambiguation subsection — frontend SPA vs backend API hostname distinction, health check guidance (BLG-OPS-43) | claude/system/OPERATIONAL_GUIDE.md v4.19 §7.9 | None |
+| EPIC-02 | SI-02 query pre-design: 11 available fields, 6 required gaps, 5 SQL patterns (win_rate_by_setup_type, win_rate_by_regime_at_entry, entry_timing_drift, sizing_adherence, consecutive_loss_context), 3 missing fields for DS-07 (BLG-BE-17) | docs/specs/si02/si02_query_predesign.md | None |
+| EPIC-02 | Arc 5 backend architecture review: cached-synchronous pattern recommended (Option B, 8h TTL); ADR-001 filed; async/background approach rejected for Render constraints (BLG-BE-18) | docs/specs/si02/arc5_backend_architecture_review.md | None |
+| EPIC-02 | SI-02 query index pre-assessment: 3 indexes identified (idx_trade_plans_signal P1, idx_trade_history_exit/entry_date P2); CREATE INDEX CONCURRENTLY migration plan (BLG-BE-23) | docs/specs/si02/si02_index_preassessment.md | None |
+| EPIC-02 | SI-02 background job ADR (ADR-SI02-001): cached-synchronous selected; Render Cron (B1) and APScheduler (B2) rejected; event-triggered (C) rejected under §13 no-side-effects constraint; upgrade path at 150 trades documented (BLG-BE-20) | docs/specs/si02/si02_background_job_adr.md | None |
+| EPIC-03 | SI-02 FE component pre-design: Option B (percentage deviation display) selected; data contract — API response shape + 4 component states (loading/insufficient_data/no_drift/drift_detected); props interface for DriftAnalysisPanel + DriftMetricCard (BLG-FE-52) | docs/specs/si02/si02_fe_component_predesign.md | None |
+| EPIC-03 | SI-02 FE interaction spec: 5 observable states, non-dismissable + session-collapse model, no drill-down MVP, severity thresholds (ok/approaching/breached hard-coded), ARIA spec, 13 Playwright DFT IDs (DFT-01–DFT-13) (BLG-FE-53) | docs/specs/si02/si02_fe_interaction_spec.md | None |
+| EPIC-03 | SI-02 Playwright scenario pre-design: DFT-01–DFT-13 with mock setup + assertion detail; 4 staging-only scenarios (S-STG-01–S-STG-04); mock shape consistent with component pre-design §6.1 API contract; waitFor standard confirmed (BLG-QA-31) | docs/qa/si02_playwright_predesign.md | None |
+
+### Capabilities deferred or returned
+
+None. All 13 stories completed. 0 returned to backlog.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (autonomous class 2026-05-29), qa_evidence_EPIC-02.md (autonomous class 2026-05-30), qa_evidence_EPIC-03.md (autonomous class with note 2026-05-29), qa_evidence_EPIC-04.md (autonomous class 2026-05-29)
+- Deviations filed: None
+- Test scenarios referenced: None (pre-planning sprint — no code/automated tests; Playwright pre-design DFT-01–DFT-13 authored for SI-02 implementation sprint use)
 
 ---
 
