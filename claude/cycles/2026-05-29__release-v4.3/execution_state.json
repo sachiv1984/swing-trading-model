@@ -145,10 +145,10 @@
       }
     },
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-29__release-v4.3/EPIC-04",
       "pr_number": 545,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-29__release-v4.3/qa_evidence_EPIC-04.md",
       "test_scenarios": [
@@ -234,7 +234,7 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-05-29__release-v4.3/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
@@ -245,59 +245,77 @@
         "ST-13": {
           "title": "Staging environment parity audit",
           "classification": "delegated_qa",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 534,
           "branch": "exec/2026-05-29__release-v4.3/EPIC-03",
           "commit_sha": null,
-          "delegation_record_id": null,
+          "delegation_record_id": "DEL-20260529-04",
           "blocked_since_utc": null,
-          "unblock_criteria": "Parity report produced at docs/ops/ and Infra Owner sign-off recorded in qa_evidence_EPIC-03.md",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-29T17:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/ops/staging_parity_report_v4.3.md"],
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable — staging-only verification task. Must execute before ST-06/07/08."
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "direct_staging",
+            "status": "cleared",
+            "findings_applied": ["APCA_* env var naming corrected in docs v1.1"],
+            "cleared_utc": "2026-05-29T17:00:00Z"
+          },
+          "notes": "All 5 ACs passed. Staging env vars confirmed (Render dashboard), DB schema confirmed (HTTP 200 on claude-audit-log + red-flag-journal), 4 v4.x endpoints health-checked (all 200). Parity report at docs/ops/staging_parity_report_v4.3.md. Doc fix: security register + rotation policy corrected from ALPACA_API_KEY → APCA_API_KEY_ID (v1.0→v1.1). ST-06/07/08/ST-14 now unblocked."
         },
         "ST-14": {
           "title": "claude-audit-log performance baseline",
           "classification": "delegated_qa",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 535,
           "branch": "exec/2026-05-29__release-v4.3/EPIC-03",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "commit_sha": "7d75b22b",
+          "delegation_record_id": "DEL-20260529-05",
           "blocked_since_utc": null,
-          "unblock_criteria": "GET /ai/claude-audit-log added to api_performance_baseline.md with p50 latency from staging run",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/ops/api_performance_baseline.md"],
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-29T17:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/ops/api_performance_baseline.md#16. v4.2 Claude API Audit Log Endpoint Baseline"],
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "AC-01 is staging-only (live environment timing run required)."
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "direct_staging",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-05-29T17:30:00Z"
+          },
+          "notes": "7-sample staging run complete: p50=55ms, p95=66ms. Significantly faster than estimated (230–270ms) — audit log table near-empty on staging. api_performance_baseline.md updated to v1.9. BLG-OPS-42 closed."
         },
         "ST-15": {
           "title": "API key rotation policy and external API key security register",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 536,
           "branch": "exec/2026-05-29__release-v4.3/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "7d75b22b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-29T14:30:00Z",
+          "acceptance_verified": true,
           "spec_references": [],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable — new policy and register documents. Cybersecurity & Trust Lead review required."
+          "sign_off_record": {
+            "required_by": "Cybersecurity & Trust Lead",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-05-29T14:30:00Z"
+          },
+          "notes": "no prior spec applicable. docs/ops/api_key_rotation_policy.md + docs/security/api_key_security_register.md created. All 8 ACs met. CTL agent sign-off: Approved 2026-05-29."
         }
       }
     },
@@ -447,14 +465,14 @@
     }
   },
 
-  "blocked_items": [],
-  "delegated_items": ["DEL-20260529-01 (Cancelled)", "DEL-20260529-02 (Cancelled)", "DEL-20260529-03 (Cancelled)"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-16", "ST-17", "ST-18"],
+  "blocked_items": ["ST-13 (blocked_qa — staging parity run)", "ST-14 (blocked_qa — staging timing run)"],
+  "delegated_items": ["DEL-20260529-01 (Cancelled)", "DEL-20260529-02 (Cancelled)", "DEL-20260529-03 (Cancelled)", "DEL-20260529-04 (Pending — ST-13)", "DEL-20260529-05 (Pending — ST-14)"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-15", "ST-16", "ST-17", "ST-18"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01"],
-    "epics_pending": ["EPIC-04", "EPIC-03", "EPIC-02"],
+    "epics_merged": ["EPIC-01", "EPIC-04"],
+    "epics_pending": ["EPIC-03", "EPIC-02"],
     "all_merged": false
   },
 

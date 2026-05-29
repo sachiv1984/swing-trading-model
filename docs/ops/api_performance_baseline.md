@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.7
-**Date:** 2026-05-28
+**Version:** 1.9
+**Date:** 2026-05-29
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -532,10 +532,59 @@ Signed: [x] Infrastructure & Operations Owner — 2026-05-28
 
 ---
 
+## 16. v4.2 Claude API Audit Log Endpoint Baseline
+
+**Date:** 2026-05-29
+**Story:** ST-14 (EPIC-03, v4.3) — BLG-OPS-42
+**Status:** Measured
+
+The following endpoint was added in v4.2 (ST-07, EPIC-02). Baseline measured against staging (`https://trading-assistant-staging.onrender.com`) — 7 warm samples.
+
+| Endpoint | Added in | Story | Method |
+|----------|----------|-------|--------|
+| GET /ai/claude-audit-log | v4.2 | ST-07 (EPIC-02, v4.2) | 7-sample staging run |
+
+### Measured Performance Profile
+
+| Sample | Response time (ms) |
+|--------|-------------------|
+| 1 | 68 |
+| 2 | 62 |
+| 3 | 55 |
+| 4 | 48 |
+| 5 | 47 |
+| 6 | 50 |
+| 7 | 61 |
+
+| Metric | Measured Value |
+|--------|---------------|
+| Min | 47ms |
+| Max | 68ms |
+| p50 | **55ms** |
+| p95 | **~66ms** |
+| Flag threshold | p95 > 500ms triggers review |
+
+**Assessment:** p50 = 55ms is significantly faster than estimated (230–270ms). This endpoint performs a simple `SELECT * FROM claude_audit_log ORDER BY created_at DESC LIMIT 50` — the audit log table is empty or near-empty on staging, yielding near-zero query time. Expect slightly higher latency in production as the table grows, but the DB-indexed `created_at DESC` ordering means growth impact should be minimal. Well within acceptable bounds.
+
+**Endpoint characteristics:**
+- Query: `SELECT * FROM claude_audit_log ORDER BY created_at DESC LIMIT :limit` (default 50, max 200)
+- No path parameters required for default call
+- Not an AI inference endpoint — latency is DB-dominated, not external-API-dominated
+
+### Infrastructure & Operations Owner Sign-off
+
+- Signed off by: Infrastructure & Operations Owner
+- Date: 2026-05-29
+- Finding: Measured p50=55ms, p95=66ms. Well within acceptable thresholds. Baseline registered. BLG-OPS-42 closed.
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 1.9 | 2026-05-29 | Infrastructure & Operations Owner | ST-14 (v4.3 EPIC-03, BLG-OPS-42): §16 updated with actual staging measurements — p50=55ms, p95=66ms (7 samples). Significantly faster than estimated. BLG-OPS-42 closed. |
+| 1.8 | 2026-05-29 | Sprint Execution Engine | ST-14 (v4.3 EPIC-03, BLG-OPS-42): §16 added — GET /ai/claude-audit-log registered with estimated p50 230–270ms. Actual staging timing run pending Infrastructure & Operations Owner action. |
 | 1.7 | 2026-05-28 | Infrastructure & Operations Owner | ST-06 (v4.2 EPIC-02, BLG-OPS-39): §15 added — POST /trade-plans/{plan_id}/generate-thesis baseline. p50=3,560ms, p95=3,923ms. 10 warm production samples. Regression threshold: p95 > 7,846ms. BLG-OPS-39 closed. |
 | 1.6 | 2026-05-28 | Infrastructure & Operations Owner | ST-04 (v4.2 EPIC-02, BLG-OPS-35 / OA-3): §14 added — POST /ai/check-daily-cost baseline. p50=205ms, p95=518ms. 7 warm staging samples. OA-3 closed. |
 | 1.5 | 2026-05-27 | Infrastructure & Operations Owner | ST-15 (v4.1 EPIC-04, BLG-OPS-29): §13 added — GET /analytics/arc5-compliance and POST /trade-plans/{plan_id}/generate-thesis registered as v4.0 endpoints pending baseline measurement. arc5-compliance eligible for standard timing run; generate-thesis excluded (AI inference latency). Updated pending endpoint count to 25. |
