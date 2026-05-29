@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.3
-**Last Updated:** 2026-05-27
+**Version:** 0.4
+**Last Updated:** 2026-05-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.1 PDF export):** docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md
 
@@ -187,10 +187,71 @@ All values displayed on this page are sourced from the API response. The fronten
 
 ---
 
+---
+
+## Monthly P&L Report
+
+Covers the Monthly P&L view (`GET /reports/monthly-pnl`). This view renders a month-by-month breakdown table of realised P&L for the current and prior calendar years.
+
+> **Note:** The monthly financial table (year, month, realised_pnl_gbp, trade_count columns) is the core existing view. This section specifies the **Strategy Compliance** section added by ST-18 (v4.3).
+
+---
+
+### Monthly Financial Table
+
+One row per calendar month (descending order). Sourced from `GET /reports/monthly-pnl`.
+
+| Column | Field | Notes |
+|--------|-------|-------|
+| Year | `year` | Calendar year |
+| Month | `month` | 1=January … 12=December; display as full month name |
+| Realised P&L | `realised_pnl_gbp` | GBP. Colour-coded: green if positive, red if negative or zero |
+| Trades | `trade_count` | Integer count of closed trades |
+
+Empty state (no closed trades in scope): "No monthly P&L data available yet."
+
+---
+
+### Strategy Compliance Section
+
+Displayed below the monthly financial table. Data sourced from a separate call to `GET /analytics/arc5-compliance`.
+
+**Section header:** **"Strategy Compliance"**
+
+#### Fields Displayed
+
+| Field | API Source | Label | Notes |
+|-------|-----------|-------|-------|
+| Overall validation pass rate | Mean of `data.validation_pass_rate_by_rule[*].pass_rate` | Validation Pass Rate | Percentage; null → "N/A" |
+| `override_rate` | `data.override_rate` | Override Rate | Percentage; null → "N/A" |
+| `events_per_week` | `data.events_per_week` | Red Flag Events/Week | Float; rounded to 1 dp |
+| `top_rule_breach` | `data.top_rule_breach` | Most Frequent Rule Breach | Rule type label; null → "None" |
+
+> **AC field mapping:** ST-18 AC-02 uses names `validation_pass_rate`, `override_count`, `red_flag_events_count`, `most_frequent_rule_breach`. These map to the above API fields; no endpoint extension required. Resolved at design gate 2026-05-29.
+
+#### Rendering Conditions
+
+- Always visible below the monthly financial table (not collapsible)
+- Loading state: skeleton placeholder while `GET /analytics/arc5-compliance` is pending
+- Error state: "Unable to load compliance data" if API returns error
+- Empty state (no data): "No compliance data recorded yet"
+
+#### Design Basis
+
+Follows the Arc 5 Compliance Summary design language from the tax-year report (§Arc 5 Compliance Summary, added v4.1). Stat-card or list layout with metric labels and values. Same `GET /analytics/arc5-compliance` data source.
+
+#### Sign-off
+
+- **Head of UX & Design:** Design artefact confirmed (existing Arc 5 Compliance Summary pattern, reports.md v0.3). Design gate: 2026-05-29__release-v4.3.
+- **Product Owner:** Confirmed no new design decisions required; rate-based field mapping accepted. Design gate: 2026-05-29__release-v4.3.
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.4 | 2026-05-29 | v4.3 Monthly P&L Strategy Compliance section (ST-18, BLG-FE-38): Monthly P&L Report section added — financial table spec and Strategy Compliance section (validation pass rate, override rate, red flag events/week, most frequent rule breach from GET /analytics/arc5-compliance). AC field mapping resolved (override_count→override_rate, red_flag_events_count→events_per_week). Design artefact: Arc 5 Compliance Summary v4.1 pattern. Design gate: 2026-05-29__release-v4.3. Head of UX & Design + Product Owner sign-off. |
 | 0.3 | 2026-05-27 | v4.1 Arc 5 P&L integration (ST-08, BLG-FEAT-42): Arc 5 Compliance Summary section added — collapsible, collapsed by default, data from GET /analytics/arc5-compliance, composite score or individual metrics per FEAT-40 formula availability. Financial Reporting & Records Owner + Product Owner agent-mediated sign-off cleared. |
 | 0.2 | 2026-03-18 | v2.1 PDF export (ST-12, BLG-FR-01): Page Header Controls section added with Download PDF button spec (idle, generating, success, error states). API Reference updated to include PDF and CSV export endpoints. Design source: docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md. Design gate: 2026-03-18__release-v2.1. |
 | 0.1 | 2026-03-17 | Initial spec. ST-05 — EPIC-02 (4.1b Tax-Year P&L Statement). Design gate: 2026-03-17__release-v2.0. Approved by Head of UX & Design + Product Owner. |
