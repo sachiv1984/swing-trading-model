@@ -295,7 +295,7 @@ function TextArea({ value, onChange, placeholder, rows = 3 }) {
   );
 }
 
-function TextInput({ value, onChange, placeholder, type = "text" }) {
+function TextInput({ value, onChange, placeholder, type = "text", ...rest }) {
   return (
     <input
       type={type}
@@ -303,6 +303,7 @@ function TextInput({ value, onChange, placeholder, type = "text" }) {
       value={value}
       onChange={onChange}
       placeholder={placeholder}
+      {...rest}
     />
   );
 }
