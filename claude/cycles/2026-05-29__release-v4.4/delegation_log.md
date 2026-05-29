@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-05-29
+Last Updated: 2026-05-30
 Cycle: 2026-05-29__release-v4.4
 
 ---
@@ -23,7 +23,7 @@ Cycle: 2026-05-29__release-v4.4
 - **Spec reference:** Not applicable — design output; no prior canonical spec. Output becomes input to SI-02 sprint planning.
 - **Unblock criteria:** `docs/specs/si02/si02_query_predesign.md` (or equivalent path) committed to exec/2026-05-29__release-v4.4/EPIC-02 with commit `[EPIC-02][ST-06] <description>`. All 5 AC met: fields identified, SQL drafts present, missing-fields enumerated, performance assessed, reviewed by HBE.
 - **Commit format required:** `[EPIC-02][ST-06] <description>` pushed to `exec/2026-05-29__release-v4.4/EPIC-02`
-- **Status:** Pending
+- **Status:** Unblocked — commit e97745c3 pushed 2026-05-30T00:20:00Z; all 5 AC verified
 
 ---
 
@@ -40,7 +40,7 @@ Cycle: 2026-05-29__release-v4.4
 - **Spec reference:** Not applicable — architecture review output. If ADR is produced, file at `docs/specs/si02/si02_background_job_adr.md` or equivalent.
 - **Unblock criteria:** `docs/specs/si02/arc5_backend_architecture_review.md` committed to exec/2026-05-29__release-v4.4/EPIC-02 with commit `[EPIC-02][ST-07] <description>`. All 4 AC met: sync vs background reviewed, recommendation made with rationale, ADR filed if recommended, filed before SI-02 sprint planning.
 - **Commit format required:** `[EPIC-02][ST-07] <description>` pushed to `exec/2026-05-29__release-v4.4/EPIC-02`
-- **Status:** Pending
+- **Status:** Unblocked — commit e97745c3 pushed 2026-05-30T00:20:00Z; all 4 AC verified; ADR-001 filed
 
 ---
 
@@ -57,7 +57,7 @@ Cycle: 2026-05-29__release-v4.4
 - **Spec reference:** Not applicable — design output. Gate: ST-06 + ST-07 outputs reviewed before commencing.
 - **Unblock criteria (gate):** ST-06 (DEL-20260529-01) and ST-07 (DEL-20260529-02) outputs filed and reviewed. Then: `docs/specs/si02/si02_background_job_adr.md` committed to EPIC-02 branch with all 4 AC met.
 - **Commit format required:** `[EPIC-02][ST-09] <description>` pushed to `exec/2026-05-29__release-v4.4/EPIC-02`
-- **Status:** Pending — awaiting gate condition (ST-06 + ST-07 outputs)
+- **Status:** Unblocked — gate met (ST-06 + ST-07 done e97745c3); ST-09 agent invoked 2026-05-30T00:20:00Z
 
 ---
 
@@ -74,7 +74,7 @@ Cycle: 2026-05-29__release-v4.4
 - **Spec reference:** Output becomes the spec for ST-11. No prior canonical spec — this document IS the spec.
 - **Unblock criteria:** `docs/specs/si02/si02_fe_component_predesign.md` committed to exec/2026-05-29__release-v4.4/EPIC-03 with commit `[EPIC-03][ST-10] <description>`. All 4 AC met: interface options documented with selection, data contract defined, labelled as input to ST-11, gate verified.
 - **Commit format required:** `[EPIC-03][ST-10] <description>` pushed to `exec/2026-05-29__release-v4.4/EPIC-03`
-- **Status:** Pending
+- **Status:** Unblocked — commit 070a4663 pushed 2026-05-30T00:20:00Z; all 4 AC verified; Option B (percentage deviation) selected
 
 ---
 
@@ -91,4 +91,4 @@ Cycle: 2026-05-29__release-v4.4
 - **Spec reference:** Output governed by ST-10 (si02_fe_component_predesign.md) — uses ST-10's component data contract as input.
 - **Unblock criteria (sequential):** ST-10 (DEL-20260529-04) output filed and reviewed. Then: `docs/specs/si02/si02_fe_interaction_spec.md` committed to EPIC-03 branch with all 5 AC met.
 - **Commit format required:** `[EPIC-03][ST-11] <description>` pushed to `exec/2026-05-29__release-v4.4/EPIC-03`
-- **Status:** Pending — awaiting ST-10 output (DEL-20260529-04)
+- **Status:** Unblocked — ST-10 done (commit 070a4663); ST-11 agent invoked 2026-05-30T00:20:00Z
