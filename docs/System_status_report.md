@@ -1,9 +1,43 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 3.0
-**Last Updated:** 2026-05-28
+**Version:** 3.1
+**Last Updated:** 2026-05-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-05-29__release-v4.3
+**Date:** 2026-05-29
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Governance patches (v4.2 OA resolution): execution_prompt.md v3.31→v3.32 (STEP 3.2.A qa_signed_off advisory + STEP 5.3/8 branch safety gate); qa_evidence_template.md v1.2→v1.3 (1:1 AC mapping advisory); OPERATIONAL_GUIDE.md v4.12→v4.13 (§7.8 staging-only AC pre-designation reference table) | claude/system/execution_prompt.md v3.32; claude/system/templates/qa_evidence_template.md v1.3; claude/system/OPERATIONAL_GUIDE.md v4.13 | None |
+| EPIC-01 | AI feature inventory document v1.0: 3 AI features documented (Claude thesis generation, daily cost check, future Arc 6 AI signal scoring); §13 compliance status per feature | docs/ai/ai_feature_inventory.md | None |
+| EPIC-04 | Pre-entry check entry price bug fix: PreEntryValidationPanel now correctly receives and propagates entryPrice/stopPrice as props and URL params; SC-TP-21 Playwright test added | docs/specs/api_contracts/pre_entry_validation.md; docs/specs/frontend/pages/trade_plan.md | None |
+| EPIC-04 | Claude thesis generation UI copy audit: HAS_GEMINI→HAS_AI, isGeminiLoading→isAiLoading renames; provider-agnostic copy confirmed; SC-TP-22 Playwright test added | docs/specs/frontend/pages/trade_plan.md | None |
+| EPIC-04 | Arc 5 compliance score in monthly P&L report: backend get_arc5_compliance_summary() + monthly-pnl strategy_compliance field; frontend Strategy Compliance section with 4 metric cards; SC-REP-05a/05b Playwright tests | docs/specs/frontend/pages/reports.md; docs/specs/api_contracts/reports_endpoints.md v0.5 | None |
+| EPIC-03 | API key rotation policy v1.1 + external API key security register v1.2: 5 credentials documented (Alpaca key/secret, ANTHROPIC_API_KEY, News API, Supabase DB); staging-first 8-step rotation procedure; next rotation due 2026-08-25 for ANTHROPIC_API_KEY | docs/ops/api_key_rotation_policy.md v1.1; docs/security/api_key_security_register.md v1.2 | None |
+| EPIC-03 | Staging parity report v4.3: all 3 ACs pass — env vars, DB schema, endpoint health checks; env var naming corrected (APCA_* convention); ANTHROPIC_API_KEY added to staging permanently | docs/ops/staging_parity_report_v4.3.md | None |
+| EPIC-03 | claude-audit-log performance baseline §16: p50=2,541ms, p95=2,858ms (7 samples, backend API URL); flagged above 500ms threshold — Render starter-tier staging; BLG-OPS-42 closed | docs/ops/api_performance_baseline.md v2.0 §16 | None |
+| EPIC-02 | Playwright E2E coverage for Arc5ComplianceSection: 4 tests (SC-ARC5-01/02/03/04) covering heading, stat cards, loading skeleton, error state | tests/e2e/arc5-compliance-section.spec.js | None |
+| EPIC-02 | Arc 5 E2E integration test specification v1.0: 20 scenarios (16 Playwright, 4 manual); SI-01→SI-03 data flow; override chain scenarios | docs/qa/arc5_e2e_integration_test_spec.md | None |
+| EPIC-02 | CI pipeline baseline documentation v1.0: p50=444s (7.4 min); BLG-QA-27 gate cleared (5 min floor confirmed) | docs/ops/ci_pipeline_baseline.md | None |
+| EPIC-02 | Playwright coverage matrix v1.0 + Arc 5 coverage audit v1.0: 39 spec files mapped; 3 zero-coverage features identified; 18 Arc 5 scenarios, 100% Playwright coverage | docs/qa/playwright_coverage_matrix.md; docs/qa/arc5_coverage_audit.md | None |
+| EPIC-02 | Staging verifications — Claude thesis generation (AC-01/02/03 pass); ticker validation rejection path (HTTP 422 confirmed); Claude API daily cost alert end-to-end (Telegram received) | claude/cycles/2026-05-29__release-v4.3/qa_evidence_EPIC-02.md | None |
+
+### Capabilities deferred or returned
+
+None. All 18 stories completed and merged.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (DoQ 2026-05-29), qa_evidence_EPIC-02.md (DoQ 2026-05-29), qa_evidence_EPIC-03.md (DoQ 2026-05-29), qa_evidence_EPIC-04.md (DoQ 2026-05-29)
+- Deviations filed: None
+- Test scenarios referenced: tests/e2e/arc5-compliance-section.spec.js; tests/e2e/trade-plan.spec.js; tests/e2e/reports-performance-tab.spec.js
 
 ---
 

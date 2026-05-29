@@ -1,12 +1,11 @@
 {
   "cycle_id": "2026-05-29__release-v4.3",
-  "sprint_goal": "Deliver v4.3 by resolving all 3 outstanding v4.2 governance patches, clearing the QA backlog, completing operations and security hardening documentation, and shipping the Arc 5 P&L compliance section and frontend fixes — establishing a clean, well-tested baseline before the next feature arc.",
+  "sprint_goal": "Deliver v4.3 by resolving all 3 outstanding v4.2 governance patches, clearing the QA backlog, completing operations and security hardening documentation, and shipping the Arc 5 P&L compliance section and frontend fixes \u2014 establishing a clean, well-tested baseline before the next feature arc.",
   "backlog_slice_source": "claude/cycles/2026-05-29__release-v4.3/stage4_backlog_slice.md",
   "invoked_utc": "2026-05-29T09:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-05-29T09:00:00Z",
-
+  "status": "Sealed",
+  "last_updated_utc": "2026-05-29T19:00:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -30,7 +29,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T09:10:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/execution_prompt.md#STEP 3.2.A"],
+          "spec_references": [
+            "claude/system/execution_prompt.md#STEP 3.2.A"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
@@ -40,7 +41,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-05-29T09:10:00Z"
           },
-          "notes": "Advisory added to STEP 3.2.A. execution_prompt.md v3.30→v3.31. OPERATIONAL_GUIDE.md v4.10→v4.11."
+          "notes": "Advisory added to STEP 3.2.A. execution_prompt.md v3.30\u2192v3.31. OPERATIONAL_GUIDE.md v4.10\u2192v4.11."
         },
         "ST-02": {
           "title": "execution_prompt.md STEP 5.3/STEP 8: sprint close branch safety advisory",
@@ -55,7 +56,10 @@
           "unblock_criteria": "HoST decision on gate (halt if not on main) vs advisory (warn if not on main) recorded in AC-01",
           "completed_utc": "2026-05-29T09:20:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/execution_prompt.md#STEP 5.3", "claude/system/execution_prompt.md#STEP 8"],
+          "spec_references": [
+            "claude/system/execution_prompt.md#STEP 5.3",
+            "claude/system/execution_prompt.md#STEP 8"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
@@ -65,7 +69,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-05-29T09:20:00Z"
           },
-          "notes": "HoST decision: gate (halt if not on main). Branch safety check hard gate added to STEP 8; advisory added to STEP 5.3. execution_prompt.md v3.31→v3.32. OPERATIONAL_GUIDE.md v4.11→v4.12."
+          "notes": "HoST decision: gate (halt if not on main). Branch safety check hard gate added to STEP 8; advisory added to STEP 5.3. execution_prompt.md v3.31\u2192v3.32. OPERATIONAL_GUIDE.md v4.11\u2192v4.12."
         },
         "ST-03": {
           "title": "qa_evidence_template.md: AC mapping 1:1 advisory",
@@ -80,7 +84,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T09:30:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/templates/qa_evidence_template.md"],
+          "spec_references": [
+            "claude/system/templates/qa_evidence_template.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
@@ -90,7 +96,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-05-29T09:30:00Z"
           },
-          "notes": "Advisory added to qa_evidence_template.md consolidation table section. Version 1.2→1.3. Template is not Class 6 — no OPERATIONAL_GUIDE.md update required."
+          "notes": "Advisory added to qa_evidence_template.md consolidation table section. Version 1.2\u21921.3. Template is not Class 6 \u2014 no OPERATIONAL_GUIDE.md update required."
         },
         "ST-04": {
           "title": "Staging-only AC pre-designation reference table",
@@ -105,7 +111,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T09:40:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/OPERATIONAL_GUIDE.md#7.8"],
+          "spec_references": [
+            "claude/system/OPERATIONAL_GUIDE.md#7.8"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
@@ -115,7 +123,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-05-29T09:40:00Z"
           },
-          "notes": "Reference table integrated into OPERATIONAL_GUIDE.md §7.8. 5 categories, examples from BLG-QA-24/28/29/30/35. HoST decision: OPERATIONAL_GUIDE.md §7.8. OPERATIONAL_GUIDE.md v4.12→v4.13."
+          "notes": "Reference table integrated into OPERATIONAL_GUIDE.md \u00a77.8. 5 categories, examples from BLG-QA-24/28/29/30/35. HoST decision: OPERATIONAL_GUIDE.md \u00a77.8. OPERATIONAL_GUIDE.md v4.12\u2192v4.13."
         },
         "ST-05": {
           "title": "AI feature inventory document",
@@ -140,7 +148,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-05-29T09:45:00Z"
           },
-          "notes": "no prior spec applicable — new governance document. Filed at docs/ai/ai_feature_inventory.md. All 3 AI features documented with §13 compliance status. AICGO + SRO approved."
+          "notes": "no prior spec applicable \u2014 new governance document. Filed at docs/ai/ai_feature_inventory.md. All 3 AI features documented with \u00a713 compliance status. AICGO + SRO approved."
         }
       }
     },
@@ -169,7 +177,10 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T13:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/pre_entry_validation.md", "docs/specs/frontend/pages/trade_plan.md"],
+          "spec_references": [
+            "docs/specs/api_contracts/pre_entry_validation.md",
+            "docs/specs/frontend/pages/trade_plan.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
@@ -179,7 +190,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-05-29T13:10:00Z"
           },
-          "notes": "Reclassified from delegated_frontend to autonomous (LL-v2.3-CL-01 — engine capable). Root cause: PreEntryValidationPanel missing entryPrice/stopPrice props and URLSearchParams inclusion. Fixed: added state, UI inputs, prop propagation, and API param inclusion. SC-TP-21 covers fixed path."
+          "notes": "Reclassified from delegated_frontend to autonomous (LL-v2.3-CL-01 \u2014 engine capable). Root cause: PreEntryValidationPanel missing entryPrice/stopPrice props and URLSearchParams inclusion. Fixed: added state, UI inputs, prop propagation, and API param inclusion. SC-TP-21 covers fixed path."
         },
         "ST-17": {
           "title": "Claude thesis generation UI copy audit",
@@ -194,7 +205,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T13:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/frontend/pages/trade_plan.md"],
+          "spec_references": [
+            "docs/specs/frontend/pages/trade_plan.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
@@ -204,7 +217,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-05-29T13:10:00Z"
           },
-          "notes": "Reclassified from delegated_frontend to autonomous (LL-v2.3-CL-01). Renamed HAS_GEMINI→HAS_AI, isGeminiLoading→isAiLoading/setIsAiLoading. Button label 'Improve with AI' already provider-agnostic. SC-TP-22 confirms no Gemini text in page body."
+          "notes": "Reclassified from delegated_frontend to autonomous (LL-v2.3-CL-01). Renamed HAS_GEMINI\u2192HAS_AI, isGeminiLoading\u2192isAiLoading/setIsAiLoading. Button label 'Improve with AI' already provider-agnostic. SC-TP-22 confirms no Gemini text in page body."
         },
         "ST-18": {
           "title": "Arc 5 compliance score in monthly P&L report",
@@ -219,7 +232,11 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T13:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/frontend/pages/reports.md", "docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl", "docs/specs/api_contracts/arc5_compliance_analytics.md"],
+          "spec_references": [
+            "docs/specs/frontend/pages/reports.md",
+            "docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl",
+            "docs/specs/api_contracts/arc5_compliance_analytics.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
@@ -234,11 +251,11 @@
       }
     },
     "EPIC-03": {
-      "status": "in_progress",
+      "status": "merged",
       "branch": "exec/2026-05-29__release-v4.3/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 546,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-29__release-v4.3/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
       "stories": {
@@ -255,17 +272,21 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T17:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/ops/staging_parity_report_v4.3.md"],
-          "deviations_filed": false,
+          "spec_references": [
+            "docs/ops/staging_parity_report_v4.3.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
             "required_by": "Infrastructure & Operations Owner",
             "method": "direct_staging",
             "status": "cleared",
-            "findings_applied": ["APCA_* env var naming corrected in docs v1.1"],
+            "findings_applied": [
+              "APCA_* env var naming corrected in docs v1.1"
+            ],
             "cleared_utc": "2026-05-29T17:00:00Z"
           },
-          "notes": "All 5 ACs passed. Staging env vars confirmed (Render dashboard), DB schema confirmed (HTTP 200 on claude-audit-log + red-flag-journal), 4 v4.x endpoints health-checked (all 200). Parity report at docs/ops/staging_parity_report_v4.3.md. Doc fix: security register + rotation policy corrected from ALPACA_API_KEY → APCA_API_KEY_ID (v1.0→v1.1). ST-06/07/08/ST-14 now unblocked."
+          "notes": "All 5 ACs passed. Staging env vars confirmed (Render dashboard), DB schema confirmed (HTTP 200 on claude-audit-log + red-flag-journal), 4 v4.x endpoints health-checked (all 200). Parity report at docs/ops/staging_parity_report_v4.3.md. Doc fix: security register + rotation policy corrected from ALPACA_API_KEY \u2192 APCA_API_KEY_ID (v1.0\u2192v1.1). ST-06/07/08/ST-14 now unblocked."
         },
         "ST-14": {
           "title": "claude-audit-log performance baseline",
@@ -280,8 +301,10 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T17:30:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/ops/api_performance_baseline.md#16. v4.2 Claude API Audit Log Endpoint Baseline"],
-          "deviations_filed": false,
+          "spec_references": [
+            "docs/ops/api_performance_baseline.md#16. v4.2 Claude API Audit Log Endpoint Baseline"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
             "required_by": "Infrastructure & Operations Owner",
@@ -290,7 +313,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-05-29T17:30:00Z"
           },
-          "notes": "7-sample staging run complete against correct backend API URL: p50=2,541ms, p95=2,858ms. Flagged above 500ms threshold — Render starter-tier staging latency. Prior v1.9 measurements (55ms) were against the frontend SPA URL (invalid). api_performance_baseline.md updated to v2.0. BLG-OPS-42 closed with staging caveat."
+          "notes": "7-sample staging run complete against correct backend API URL: p50=2,541ms, p95=2,858ms. Flagged above 500ms threshold \u2014 Render starter-tier staging latency. Prior v1.9 measurements (55ms) were against the frontend SPA URL (invalid). api_performance_baseline.md updated to v2.0. BLG-OPS-42 closed with staging caveat."
         },
         "ST-15": {
           "title": "API key rotation policy and external API key security register",
@@ -315,16 +338,16 @@
             "findings_applied": [],
             "cleared_utc": "2026-05-29T14:30:00Z"
           },
-          "notes": "no prior spec applicable — new policy and register documents. docs/ops/api_key_rotation_policy.md created (all 8 ACs met: policy, Alpaca + ANTHROPIC_API_KEY annual cadence, 8-step staging-first procedure, responsibility table). docs/security/api_key_security_register.md created (5 entries: Alpaca key, Alpaca secret, ANTHROPIC_API_KEY, News API, Supabase DB). CTL agent sign-off: Approved 2026-05-29."
+          "notes": "no prior spec applicable \u2014 new policy and register documents. docs/ops/api_key_rotation_policy.md created (all 8 ACs met: policy, Alpaca + ANTHROPIC_API_KEY annual cadence, 8-step staging-first procedure, responsibility table). docs/security/api_key_security_register.md created (5 entries: Alpaca key, Alpaca secret, ANTHROPIC_API_KEY, News API, Supabase DB). CTL agent sign-off: Approved 2026-05-29."
         }
       }
     },
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "merged",
       "branch": "exec/2026-05-29__release-v4.3/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 547,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-29__release-v4.3/qa_evidence_EPIC-02.md",
       "test_scenarios": [
         "tests/e2e/arc5-compliance-section.spec.js",
@@ -347,14 +370,19 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T18:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/cycles/2026-05-29__release-v4.3/qa_evidence_EPIC-02.md"],
-          "deviations_filed": false,
+          "spec_references": [
+            "claude/cycles/2026-05-29__release-v4.3/qa_evidence_EPIC-02.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
             "required_by": "QA Lead",
             "method": "direct_staging",
             "status": "cleared",
-            "findings_applied": ["ANTHROPIC_API_KEY added to staging backend permanently", "REACT_APP_ANTHROPIC_API_KEY=true added to staging frontend permanently"],
+            "findings_applied": [
+              "ANTHROPIC_API_KEY added to staging backend permanently",
+              "REACT_APP_ANTHROPIC_API_KEY=true added to staging frontend permanently"
+            ],
             "cleared_utc": "2026-05-29T18:00:00Z"
           },
           "notes": "All 4 ACs passed. AC-01: curl confirmed HTTP 200, thesis returned, model claude-haiku-4-5. AC-02: REACT_APP_ANTHROPIC_API_KEY=true added to Render frontend, button visible after redeploy. AC-03: QA Lead confirmed button click populates textarea. Both API key env vars added to staging permanently."
@@ -372,8 +400,10 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T18:30:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/cycles/2026-05-29__release-v4.3/qa_evidence_EPIC-02.md"],
-          "deviations_filed": false,
+          "spec_references": [
+            "claude/cycles/2026-05-29__release-v4.3/qa_evidence_EPIC-02.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
             "required_by": "Director of Quality",
@@ -382,7 +412,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-05-29T18:30:00Z"
           },
-          "notes": "AC-01: FAKEXYZ999 → HTTP 422 confirmed. AC-02: Yahoo Finance blocking all lookups from Render staging IP; 10 valid tickers (AAPL, MSFT, NVDA etc.) confirmed in GET /ticker-universe — proves acceptance path worked in prior runs. Staging IP rate-limit finding, not a code defect. DoQ signed off."
+          "notes": "AC-01: FAKEXYZ999 \u2192 HTTP 422 confirmed. AC-02: Yahoo Finance blocking all lookups from Render staging IP; 10 valid tickers (AAPL, MSFT, NVDA etc.) confirmed in GET /ticker-universe \u2014 proves acceptance path worked in prior runs. Staging IP rate-limit finding, not a code defect. DoQ signed off."
         },
         "ST-08": {
           "title": "Staging verification: Claude API daily cost threshold alert",
@@ -397,8 +427,10 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T18:30:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/cycles/2026-05-29__release-v4.3/qa_evidence_EPIC-02.md"],
-          "deviations_filed": false,
+          "spec_references": [
+            "claude/cycles/2026-05-29__release-v4.3/qa_evidence_EPIC-02.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
             "required_by": "QA Lead",
@@ -407,7 +439,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-05-29T18:30:00Z"
           },
-          "notes": "AC-01: POST /ai/check-daily-cost → HTTP 200, all fields present (total_cost_usd, request_count, threshold_usd, threshold_exceeded, alert_sent). AC-02: AI_DAILY_COST_THRESHOLD=0.001 set on staging; threshold_exceeded=true, alert_sent=true; Telegram message received by QA Lead. AC-02 post-test: remove AI_DAILY_COST_THRESHOLD=0.001 from staging."
+          "notes": "AC-01: POST /ai/check-daily-cost \u2192 HTTP 200, all fields present (total_cost_usd, request_count, threshold_usd, threshold_exceeded, alert_sent). AC-02: AI_DAILY_COST_THRESHOLD=0.001 set on staging; threshold_exceeded=true, alert_sent=true; Telegram message received by QA Lead. AC-02 post-test: remove AI_DAILY_COST_THRESHOLD=0.001 from staging."
         },
         "ST-09": {
           "title": "Playwright E2E coverage for Arc5ComplianceSection",
@@ -422,7 +454,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T15:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/frontend/components/arc5_compliance_section.md"],
+          "spec_references": [
+            "docs/specs/frontend/components/arc5_compliance_section.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -451,7 +485,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-05-29T15:00:00Z"
           },
-          "notes": "no prior spec applicable — new specification document. docs/qa/arc5_e2e_integration_test_spec.md created: 20 scenarios (16 Playwright, 4 manual), override chain documented, 3 coverage gaps identified. DoQ agent sign-off: Approved 2026-05-29."
+          "notes": "no prior spec applicable \u2014 new specification document. docs/qa/arc5_e2e_integration_test_spec.md created: 20 scenarios (16 Playwright, 4 manual), override chain documented, 3 coverage gaps identified. DoQ agent sign-off: Approved 2026-05-29."
         },
         "ST-11": {
           "title": "CI pipeline execution time baseline measurement",
@@ -470,7 +504,7 @@
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "no prior spec applicable — measurement documentation. docs/ops/ci_pipeline_baseline.md created: 3-sample Playwright E2E run: 444s/481s/436s, p50=444s (7.4 min). BLG-QA-27 gate CLEARED (≥5 min). QA Lead autonomous sign-off applied."
+          "notes": "no prior spec applicable \u2014 measurement documentation. docs/ops/ci_pipeline_baseline.md created: 3-sample Playwright E2E run: 444s/481s/436s, p50=444s (7.4 min). BLG-QA-27 gate CLEARED (\u22655 min). QA Lead autonomous sign-off applied."
         },
         "ST-12": {
           "title": "Playwright scenario coverage matrix and Arc 5 coverage audit",
@@ -495,23 +529,53 @@
             "findings_applied": [],
             "cleared_utc": "2026-05-29T15:00:00Z"
           },
-          "notes": "docs/qa/playwright_coverage_matrix.md created (39 spec files, v3.7–v4.2 features, 3 zero-coverage features identified). docs/qa/arc5_coverage_audit.md created (18 Arc 5 scenarios, 100% Playwright coverage, 5 gaps identified). DoQ agent sign-off: Approved 2026-05-29."
+          "notes": "docs/qa/playwright_coverage_matrix.md created (39 spec files, v3.7\u2013v4.2 features, 3 zero-coverage features identified). docs/qa/arc5_coverage_audit.md created (18 Arc 5 scenarios, 100% Playwright coverage, 5 gaps identified). DoQ agent sign-off: Approved 2026-05-29."
         }
       }
     }
   },
-
   "blocked_items": [],
-  "delegated_items": ["DEL-20260529-01 (Cancelled)", "DEL-20260529-02 (Cancelled)", "DEL-20260529-03 (Cancelled)", "DEL-20260529-04 (Done — ST-13)", "DEL-20260529-05 (Done — ST-14)", "DEL-20260529-06 (Done — ST-06)", "DEL-20260529-07 (Done — ST-07)", "DEL-20260529-08 (Done — ST-08)"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14", "ST-15", "ST-16", "ST-17", "ST-18"],
+  "delegated_items": [
+    "DEL-20260529-01 (Cancelled)",
+    "DEL-20260529-02 (Cancelled)",
+    "DEL-20260529-03 (Cancelled)",
+    "DEL-20260529-04 (Done \u2014 ST-13)",
+    "DEL-20260529-05 (Done \u2014 ST-14)",
+    "DEL-20260529-06 (Done \u2014 ST-06)",
+    "DEL-20260529-07 (Done \u2014 ST-07)",
+    "DEL-20260529-08 (Done \u2014 ST-08)"
+  ],
+  "completed_items": [
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04",
+    "ST-05",
+    "ST-06",
+    "ST-07",
+    "ST-08",
+    "ST-09",
+    "ST-10",
+    "ST-11",
+    "ST-12",
+    "ST-13",
+    "ST-14",
+    "ST-15",
+    "ST-16",
+    "ST-17",
+    "ST-18"
+  ],
   "open_escalations": [],
-
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-04", "EPIC-03"],
-    "epics_pending": ["EPIC-02"],
-    "all_merged": false
+    "epics_merged": [
+      "EPIC-01",
+      "EPIC-04",
+      "EPIC-03",
+      "EPIC-02"
+    ],
+    "epics_pending": [],
+    "all_merged": true
   },
-
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-05-29T19:00:00Z"
 }

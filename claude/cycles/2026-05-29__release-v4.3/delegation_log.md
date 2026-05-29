@@ -58,15 +58,7 @@ Last Updated: 2026-05-29
 - **GitHub Issue:** #534
 - **Branch:** exec/2026-05-29__release-v4.3/EPIC-03
 - **Delegated at:** 2026-05-29T14:30:00Z
-- **Status:** Pending — awaiting staging parity run
-- **What is required:**
-  - AC-01: Verify staging env vars against production (ANTHROPIC_API_KEY, Alpaca keys, DB connection, Telegram keys)
-  - AC-02: Confirm database schema parity: `claude_audit_log`, `gemini_audit_log`, `red_flag_events` tables present in staging
-  - AC-03: Sampled health check — v4.0/v4.1/v4.2 new endpoints respond on staging
-  - AC-04: Parity report produced and filed in `docs/ops/`
-  - AC-05: Infrastructure & Operations Owner sign-off recorded in `claude/cycles/2026-05-29__release-v4.3/qa_evidence_EPIC-03.md`
-- **Unblock criteria:** Parity report committed and sign-off block in qa_evidence_EPIC-03.md completed
-- **Priority note:** EPIC-02 stories ST-06/07/08 have a hard prerequisite on ST-13 completion. ST-13 must be done before EPIC-02 staging verifications can proceed.
+- **Status:** Unblocked — completed 2026-05-29T17:00:00Z. All 5 ACs passed. Staging parity report filed at `docs/ops/staging_parity_report_v4.3.md`. Infrastructure & Operations Owner sign-off recorded in `qa_evidence_EPIC-03.md`. Env var naming corrected (APCA_* convention) in docs v1.1 as a finding. ST-06/07/08/ST-14 unblocked.
 
 ---
 
@@ -79,15 +71,7 @@ Last Updated: 2026-05-29
 - **GitHub Issue:** #535
 - **Branch:** exec/2026-05-29__release-v4.3/EPIC-03
 - **Delegated at:** 2026-05-29T14:30:00Z
-- **Status:** Pending — autonomous work complete; awaiting actual staging timing run
-- **What was done autonomously:** `docs/ops/api_performance_baseline.md` §16 added with estimated p50 230–270ms and full staging timing script (commit 7d75b22b)
-- **What is required from Infra Owner:**
-  - Run 7-sample timing test against staging: `GET /ai/claude-audit-log?limit=50` using warm-service methodology documented in §16
-  - Update §16 with actual p50, p95, min, max values
-  - Add Infrastructure & Operations Owner sign-off block to §16
-  - Commit update and record sign-off in `claude/cycles/2026-05-29__release-v4.3/qa_evidence_EPIC-03.md`
-- **Timing script:** Documented in `docs/ops/api_performance_baseline.md §16 Outstanding Action`
-- **Unblock criteria:** §16 updated with real timing data and Infra Owner sign-off committed
+- **Status:** Unblocked — completed 2026-05-29T17:30:00Z. 7-sample timing run completed against correct backend API URL (`trading-assistant-api-staging.onrender.com`): p50=2,541ms, p95=2,858ms. Flagged above 500ms threshold — Render starter-tier staging. `docs/ops/api_performance_baseline.md` updated to v2.0. Infra Owner sign-off recorded in `qa_evidence_EPIC-03.md`. Note: prior v1.9 measurements (55ms) were against frontend SPA URL — invalid; corrected in v2.0.
 
 ---
 
@@ -100,14 +84,7 @@ Last Updated: 2026-05-29
 - **GitHub Issue:** #537
 - **Branch:** exec/2026-05-29__release-v4.3/EPIC-02
 - **Delegated at:** 2026-05-29T15:30:00Z
-- **Status:** Pending — awaiting ST-13 staging parity confirmation + staging run
-- **Hard prerequisite:** ST-13 (DEL-20260529-04) must be completed first — staging environment parity must be confirmed before these verifications begin
-- **What is required:**
-  - AC-01: `POST /trade-plans/{plan_id}/generate-thesis` returns thesis text on staging (ANTHROPIC_API_KEY must be set)
-  - AC-02: "Improve with AI" button visible on TradePlan edit page when AI key configured
-  - AC-03: Button click generates thesis and populates setup_thesis textarea
-  - AC-04: Sign-off date recorded in qa_evidence_EPIC-02.md
-- **Unblock criteria:** ST-13 done; all 4 ACs evidenced via staging run; sign-off recorded
+- **Status:** Unblocked — completed 2026-05-29T18:00:00Z. All 4 ACs passed. ANTHROPIC_API_KEY added to staging backend permanently; REACT_APP_ANTHROPIC_API_KEY=true added to staging frontend permanently. curl confirmed HTTP 200 + thesis returned (model: claude-haiku-4-5). Button visible after Render redeploy. QA Lead confirmed button click populates textarea. Sign-off in `qa_evidence_EPIC-02.md`.
 
 ---
 
@@ -120,13 +97,7 @@ Last Updated: 2026-05-29
 - **GitHub Issue:** #538
 - **Branch:** exec/2026-05-29__release-v4.3/EPIC-02
 - **Delegated at:** 2026-05-29T15:30:00Z
-- **Status:** Pending — awaiting ST-13 staging parity confirmation + staging run
-- **Hard prerequisite:** ST-13 must be done first. Requires SKIP_TICKER_VALIDATION unset on staging.
-- **What is required:**
-  - AC-01: POST invalid ticker to staging → HTTP 422, detail message present, ticker not saved
-  - AC-02: POST valid ticker (e.g. AAPL) → HTTP 201, ticker present in subsequent GET
-  - AC-03: Sign-off date recorded in qa_evidence_EPIC-02.md
-- **Unblock criteria:** ST-13 done; 422 and 201 response evidence recorded; sign-off recorded
+- **Status:** Unblocked — completed 2026-05-29T18:30:00Z. AC-01: FAKEXYZ999 → HTTP 422 confirmed (rejection path working). AC-02: Yahoo Finance rate-limiting all lookups from Render staging IP at test time; acceptance path evidenced by 10 valid tickers present in GET /ticker-universe from prior successful runs. DoQ signed off — staging IP limitation noted, not a code defect. Sign-off in `qa_evidence_EPIC-02.md`.
 
 ---
 
@@ -139,11 +110,5 @@ Last Updated: 2026-05-29
 - **GitHub Issue:** #539
 - **Branch:** exec/2026-05-29__release-v4.3/EPIC-02
 - **Delegated at:** 2026-05-29T15:30:00Z
-- **Status:** Pending — awaiting ST-13 staging parity confirmation + staging run
-- **Hard prerequisite:** ST-13 must be done first. Requires TELEGRAM_BOT_TOKEN set and AI_DAILY_COST_THRESHOLD set below current daily spend on staging.
-- **What is required:**
-  - AC-01: `POST /ai/check-daily-cost` returns 200 with threshold/cost fields on staging
-  - AC-02: With threshold below current spend: Telegram alert fires and is received
-  - AC-03: Sign-off date recorded in qa_evidence_EPIC-02.md
-- **Unblock criteria:** ST-13 done; 200 response and Telegram alert evidence recorded; sign-off recorded
+- **Status:** Unblocked — completed 2026-05-29T18:30:00Z. AC-01: POST /ai/check-daily-cost → HTTP 200, all fields present. AC-02: AI_DAILY_COST_THRESHOLD=0.001 set on staging; threshold_exceeded=true, alert_sent=true; Telegram alert received and confirmed by QA Lead. Post-test action: AI_DAILY_COST_THRESHOLD=0.001 to be removed from staging (reverts to default $1.00). Sign-off in `qa_evidence_EPIC-02.md`.
 
