@@ -1,9 +1,9 @@
 **Owner:** Head of Specs Team
 **Class:** Planning Document (Class 4)
-**Status:** Active
+**Status:** Superseded
 **Release:** v4.3
 **Cycle:** 2026-05-29__release-v4.3
-**Last Updated:** 2026-05-29
+**Last Updated:** 2026-05-29 (post-ship closure — Superseded)
 **Supersession note:** *(completed at Post-Ship Closure)*
 
 ---
@@ -44,4 +44,7 @@ None — no escalations raised during release planning. All risks classified as 
 
 ## Supersession Note
 
-*(Completed at Post-Ship Closure)*
+Superseded by: v4.3 ship — 2026-05-29
+Changelog: docs/product/changelog.md#v4.3
+Verification report: claude/cycles/2026-05-29__release-v4.3/verification_report.md
+Cycle: 2026-05-29__release-v4.3

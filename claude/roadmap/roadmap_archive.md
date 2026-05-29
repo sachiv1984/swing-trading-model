@@ -953,6 +953,40 @@ v3.2 Arc 2 Pre-Trade Research & Planning: PT-02 (Pre-Trade Research View fronten
 
 ---
 
+## RA:v4.3 — Governance Consolidation, QA Debt Clearance & Ops Hardening
+
+**Original roadmap location:** §1 Current Version / Release Summary §8
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-05-29
+**Shipped version:** v4.3
+**Cycle reference:** 2026-05-29__release-v4.3
+**Verification report:** claude/cycles/2026-05-29__release-v4.3/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-29
+
+### Original Roadmap Entry
+
+v4.3 Governance Consolidation, QA Debt Clearance & Ops Hardening. EPIC-01: v4.2 OA resolution (execution_prompt.md v3.32, qa_evidence_template.md v1.3, OPERATIONAL_GUIDE.md v4.13 §7.8 staging-only AC ref table; AI feature inventory v1.0). EPIC-02: QA debt clearance (Playwright for Arc5ComplianceSection; Arc 5 E2E test spec; CI pipeline baseline — BLG-QA-27 cleared; Playwright coverage matrix + Arc 5 coverage audit; 3 staging verifications: Claude thesis, ticker validation, cost alert). EPIC-03: Ops & security hardening (API key rotation policy + security register; staging parity audit v4.3; claude-audit-log performance baseline §16 — BLG-OPS-42 closed; ANTHROPIC_API_KEY added to staging permanently). EPIC-04: Frontend fixes + Arc 5 P&L (pre-entry price bug fix; Gemini→HAS_AI copy audit; Arc 5 compliance in monthly P&L). 18/18 stories delivered. Verified 2026-05-29.
+
+---
+
+## RA:v4.1 — Governance Hardening, Spec Debt, Arc 5 Compliance + SI-02 Pre-Planning
+
+**Original roadmap location:** §1 Current Version / Release Summary §8
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-05-27 (backfilled — gap from prior manage_roadmap run)
+**Shipped version:** v4.1
+**Cycle reference:** 2026-05-26__release-v4.1
+**Verification report:** claude/cycles/2026-05-26__release-v4.1/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-29 (backfill)
+
+### Original Roadmap Entry
+
+v4.1 Governance Hardening, Spec Debt, Arc 5 Compliance + SI-02 Pre-Planning. EPIC-01: execution_prompt.md v3.28 (merge-gate HARD GATE; OA-01), sprint_planning_prompt.md v3.7 (staging-only AC gate; OA-02), shared_standards.md v3.4, delivery_verification_prompt.md v2.6 (PR null guard; OA-04). EPIC-02: four API contracts documented (SI-03 red flag, SI-01 pre-entry, Arc 5 analytics, AI thesis). EPIC-03: Arc 5 composite score + Reports P&L section; POST /ai/check-daily-cost Telegram alert; Research view signal_type; arc5_compliance_section.md spec. EPIC-04: SI-02 pre-planning (gap analysis + 3 prereq docs); ANTHROPIC_API_KEY scope review; delivery_verification_prompt.md STEP 9.0; ops baselines. 14/15 stories delivered (ST-11 ACs 02-04 deferred to v4.3 as BLG-QA-28/29/30). Verified 2026-05-27.
+
+---
+
 ## RA:v4.2 — Claude API Governance, SI-02 Pre-Work Readiness & Spec Debt
 
 **Original roadmap location:** §1 Current Version / Release Summary §8

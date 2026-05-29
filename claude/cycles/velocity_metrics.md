@@ -50,8 +50,9 @@
 | v4.0  | 11      | 11        | 1.00     | AMD-20260523-01 added ST-12 (Gemini base wiring prereq) + ST-13 (Starlette CVE fix) mid-sprint; EPIC-04 PT-04 deferred_at_planning (gate not met, 4th deferral); all 11 firm stories delivered; zero spec deviations |
 | v4.1  | 15      | 14        | 0.93     | ST-11 staging ACs 02–04 returned to backlog per PO discretionary deferral authority; 14/14 remaining stories done; zero spec deviations; Gemini→Claude API switch applied mid-sprint without amendment; both 2nd-recurrence escalations (OA-01, OA-02) resolved |
 | v4.2  | 13      | 13        | 1.00     | All 13 stories done; zero spec deviations; cleanest sprint on record by QA metrics; governance/ops/documentation scope with no frontend changes; 6 delegation records all resolved before sprint close |
+| v4.3  | 18      | 18        | 1.00     | All 18 stories done; zero spec deviations; 5 delegations (3 cancelled, 2 delegated_qa) all resolved; ANTHROPIC_API_KEY added to staging permanently; BLG-QA-27 gate cleared (CI baseline ≥5 min) |
 
-**Rolling 6-cycle average (v3.7–v4.2):** 0.99
+**Rolling 6-cycle average (v3.8–v4.3):** 0.99
 
 ---
 

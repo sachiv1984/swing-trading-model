@@ -9,6 +9,47 @@
 
 ---
 
+## v4.3 — Governance Consolidation, QA Debt Clearance & Ops Hardening — 2026-05-29
+Cycle: 2026-05-29__release-v4.3
+Verified: Verified
+Verification report: claude/cycles/2026-05-29__release-v4.3/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | v4.2 Governance Patch Resolution — execution_prompt.md v3.31→v3.32 (STEP 3.2.A qa_signed_off advisory; STEP 5.3/8 branch safety hard gate); qa_evidence_template.md v1.2→v1.3 (1:1 AC mapping advisory); OPERATIONAL_GUIDE.md v4.12→v4.13 (§7.8 staging-only AC pre-designation reference table); AI feature inventory document v1.0 (3 features with §13 compliance status) (ST-01–05) | claude/system/execution_prompt.md v3.32; claude/system/templates/qa_evidence_template.md v1.3; claude/system/OPERATIONAL_GUIDE.md v4.13; docs/ai/ai_feature_inventory.md |
+| EPIC-04 | Frontend Fixes & Arc 5 P&L Section — pre-entry check entry price bug fix (PreEntryValidationPanel entryPrice/stopPrice props + URL params; SC-TP-21); Claude thesis generation UI copy audit (HAS_GEMINI→HAS_AI, isGeminiLoading→isAiLoading; SC-TP-22); Arc 5 compliance score in monthly P&L report (backend get_arc5_compliance_summary() + monthly-pnl strategy_compliance field; frontend Strategy Compliance section with 4 metric cards; SC-REP-05a/05b) (ST-16–18) | docs/specs/api_contracts/pre_entry_validation.md; docs/specs/frontend/pages/trade_plan.md; docs/specs/frontend/pages/reports.md; docs/specs/api_contracts/reports_endpoints.md v0.5; docs/specs/api_contracts/arc5_compliance_analytics.md |
+| EPIC-03 | Ops & Security Documentation Hardening — API key rotation policy v1.0 + external API key security register v1.0 (5 credentials, 8-step staging-first procedure); staging environment parity audit v4.3 (env vars, DB schema, 4 endpoint health checks); claude-audit-log performance baseline §16 (p50=2,541ms, p95=2,858ms; BLG-OPS-42 closed); ANTHROPIC_API_KEY added to staging permanently (ST-13–15) | docs/ops/api_key_rotation_policy.md; docs/security/api_key_security_register.md; docs/ops/staging_parity_report_v4.3.md; docs/ops/api_performance_baseline.md v2.0 §16 |
+| EPIC-02 | QA Debt Clearance — Playwright E2E for Arc5ComplianceSection (4 tests: SC-ARC5-01/02/03/04); Arc 5 E2E integration test spec v1.0 (20 scenarios); CI pipeline baseline v1.0 (p50=444s; BLG-QA-27 gate cleared); Playwright coverage matrix v1.0 (39 spec files) + Arc 5 coverage audit v1.0 (18 scenarios, 100% coverage); staging verifications: Claude thesis (AC-01/02/03 pass), ticker validation (HTTP 422 confirmed), Claude API cost alert (Telegram received) (ST-06–12) | docs/qa/arc5_e2e_integration_test_spec.md; docs/ops/ci_pipeline_baseline.md; docs/qa/playwright_coverage_matrix.md; docs/qa/arc5_coverage_audit.md |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01] OA-1 (v4.2): execution_prompt.md STEP 3.2.A qa_signed_off advisory patch
+- [ST-02] OA-2 (v4.2): execution_prompt.md STEP 5.3/STEP 8 sprint close branch safety hard gate
+- [ST-03] OA-3 (v4.2): qa_evidence_template.md AC mapping 1:1 advisory
+- [ST-04] BLG-GOV-42: staging-only AC pre-designation reference table
+- [ST-05] BLG-GOV-47: AI feature inventory document
+- [ST-06] BLG-QA-29: staging verification — Claude thesis generation
+- [ST-07] BLG-QA-30: staging verification — ticker validation Yahoo Finance rejection path
+- [ST-08] BLG-QA-35: staging verification — Claude API daily cost threshold alert
+- [ST-09] BLG-QA-28: Playwright E2E coverage for Arc5ComplianceSection
+- [ST-10] BLG-QA-36: Arc 5 end-to-end integration test specification
+- [ST-11] BLG-QA-38: CI pipeline execution time baseline measurement
+- [ST-12] BLG-QA-32 + BLG-QA-33: Playwright scenario coverage matrix + Arc 5 coverage audit
+- [ST-13] BLG-OPS-33: staging environment parity audit
+- [ST-14] BLG-OPS-42: claude-audit-log performance baseline (GET /ai/claude-audit-log)
+- [ST-15] BLG-GOV-36 + BLG-GOV-50: API key rotation policy + external API key security register
+- [ST-16] BLG-FE-50: pre-entry check entry price bug fix
+- [ST-17] BLG-FE-51: Claude thesis generation UI copy audit (Gemini→AI variable rename)
+- [ST-18] BLG-FE-38: Arc 5 compliance score in monthly P&L report
+
+Sign-off: Product Owner — 2026-05-29
+QA sign-off: Director of Quality — 2026-05-29
+
+---
+
 ## v4.2 — Claude API Governance, SI-02 Pre-Work Readiness & Spec Debt — 2026-05-29
 Cycle: 2026-05-27__release-v4.2
 Verified: Verified

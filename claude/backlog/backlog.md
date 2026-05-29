@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-29 (post-ship closure v4.2 — 13 items COMPLETE: BLG-BE-22, BLG-QA-37, BLG-OPS-35/36/38/39, BLG-SPEC-42, BLG-GOV-57/59/60/61/63/64/65/66)
+**Last Updated:** 2026-05-29 (post-ship closure STEP 12 — 2026-05-29__release-v4.3: 16 items archived (BLG-GOV-36/42/47/50, BLG-QA-28/29/30/32/33/35/36/38, BLG-OPS-33/42, BLG-FE-50/51); 5 new items added (BLG-GOV-71/72/73/74, BLG-OPS-43); Release Slice v4.3 ephemeral section removed)
 **Last rebalance:** 2026-05-27 (cycle 2026-05-27__scheduled — DL-035; IW-20260527-01; 31 new items: BLG-GOV-57–68, BLG-OPS-36–41, BLG-QA-36–38, BLG-SPEC-41–42, BLG-FE-51–55, BLG-BE-22–24)
 
 > ⚠️ Standing Notice
@@ -638,51 +638,6 @@ PreEntryValidationPanel (shipped v3.8) displays validation results and override 
 
 ---
 
-### BLG-FE-50 — Pre-entry check sizing validity: entry price not written correctly
-**Priority:** P2 (Medium)
-**Type:** Bug / Frontend
-**Owner:** Frontend Engineer
-**Source:** User observation 2026-05-26 — sizing validity check in pre-entry panel
-**Effort:** XS (~0.25 day)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-The Sizing Validity check in the pre-entry validation panel requires `entry_price` and `stop_price` query params to compute validity. The entry price value being passed appears to be written/formatted incorrectly, causing the sizing validity check to fail or return unexpected results.
-
-**Scope**
-- Investigate how `entry_price` is constructed and passed to the sizing validity endpoint from the pre-entry panel
-- Identify the formatting or serialisation error (e.g. wrong field source, stringified incorrectly, missing value)
-- Fix so that the sizing validity check receives a valid numeric entry price and returns a correct result
-
-**Acceptance Criteria**
-- Sizing validity check in pre-entry panel passes when a valid entry price and stop price are available
-- No regression to other pre-entry checks
-
----
-
-### BLG-FE-51 — Claude thesis generation UI copy audit
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX Polish
-**Owner:** Base44 Frontend; Head of UX & Design
-**Source:** IDEA-base44-frontend-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v4.2
-
-**Problem**
-v4.1 replaced Gemini with Claude API for thesis generation. All UI copy, loading messages, error states, and tooltips that reference Gemini or are Gemini-specific must be updated or made provider-agnostic. Stale provider-specific text confuses users and creates documentation inconsistency.
-
-**Scope**
-- Audit all UI copy related to AI thesis generation (loading state, success message, error text, tooltips)
-- Replace "Gemini" references with provider-agnostic copy (e.g. "AI-generated thesis")
-- Confirm error messages do not surface provider-specific details
-
-**Acceptance Criteria**
-- No "Gemini" references in production UI copy
-- Loading, success, and error states are provider-agnostic
-- Reviewed by Head of UX & Design
-
----
-
 ### BLG-FE-52 — SI-02 drift detection result component pre-design
 **Priority:** P2 (Medium)
 **Type:** Frontend / Pre-Sprint Design
@@ -1171,83 +1126,6 @@ As the test suite grows with Arc 5 additions (BLG-QA-25 + per-sprint Playwright 
 - Regression threshold defined
 - Gate condition verified by QA Lead before sprint planning
 
-### BLG-QA-28 — Playwright E2E coverage for Arc5ComplianceSection (PerformanceAnalytics §19)
-**Priority:** P3 (Low)
-**Type:** QA / Test Coverage
-**Owner:** QA Lead
-**Source:** v4.0 ST-02/ST-04 EPIC-01 — deferred observable AC per CLAUDE.md §2
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v4.1
-
-**Problem**
-ST-02 and ST-04 introduced Arc5ComplianceSection (four stat cards: Red Flag Events/Week, Override Rate, Top Rule Breach, Trade Plan Adherence) into PerformanceAnalytics.js §19. These are frontend-visible changes but no Playwright test covers the rendering. Per CLAUDE.md §2, a backlog item must be filed before the PR opens when observable AC is deferred to staging.
-
-**Scope**
-- Add Playwright test in `tests/e2e/` for PerformanceAnalytics page
-- Cover: Arc5ComplianceSection heading present, all 4 card titles visible, loading skeleton renders, error state renders "Unable to load"
-- Use `page.route()` to mock `GET /analytics/arc5-compliance`
-
-**Acceptance Criteria**
-- AC-01: "Arc 5 Signal Compliance" heading visible on PerformanceAnalytics page
-- AC-02: All 4 stat card titles visible (Red Flag Events/Week, Override Rate, Top Rule Breach, Trade Plan Adherence)
-- AC-03: Loading skeleton shown when API pending
-- AC-04: Error state shown when API returns 500
-
----
-
-### BLG-QA-29 — Staging verification for Gemini thesis generation (ST-12 staging-only AC)
-**Priority:** P2 (Medium)
-**Type:** QA / Staging Verification
-**Owner:** QA Lead
-**Source:** v4.0 ST-12 EPIC-03 — staging-only AC per CLAUDE.md §2
-**Effort:** XS (~0.5 day)
-**Provisional-Target:** v4.1
-
-**Problem**
-ST-12 (Gemini Flash base wiring) introduced `POST /trade-plans/{plan_id}/generate-thesis` and the "Improve with AI" button in TradePlan. The acceptance criteria for thesis generation requires a live `GEMINI_API_KEY`. This cannot be verified in CI. Per CLAUDE.md §2, a backlog item must be filed before the PR opens.
-
-**Scope**
-- Configure `GEMINI_API_KEY` in staging environment (Render backend env vars)
-- Configure `REACT_APP_GEMINI_API_KEY` in staging frontend (Render Static Site env vars)
-- Test: create or open a trade plan in edit mode on staging
-- Verify "Improve with AI" button appears and calls the endpoint
-- Verify thesis text is generated and populates the textarea
-- Record sign-off date in `qa_evidence_EPIC-03.md` DoQ block
-
-**Acceptance Criteria**
-- AC-01: `POST /trade-plans/{plan_id}/generate-thesis` returns thesis text when GEMINI_API_KEY is set on staging
-- AC-02: "Improve with AI" button visible on TradePlan edit page when REACT_APP_GEMINI_API_KEY set
-- AC-03: Button click generates thesis and populates setup_thesis textarea
-- AC-04: Sign-off date recorded in qa_evidence_EPIC-03.md
-
----
-
-### BLG-QA-30 — Staging verification: ST-05 ticker validation live Yahoo Finance rejection path
-**Priority:** P2 (Medium)
-**Type:** QA / Staging Verification
-**Owner:** Director of Quality; Head of Engineering
-**Source:** v4.0 ST-05 EPIC-02 — staging-only AC per CLAUDE.md §2
-**Effort:** XS (~0.5 day)
-**Provisional-Target:** v4.1
-
-**Problem**
-ST-05 (BLG-BE-15) adds Yahoo Finance symbol validation to `POST /ticker-universe`. The AC "invalid ticker returns HTTP 422 with error message (not saved)" requires a live internet-connected staging environment with `SKIP_TICKER_VALIDATION` unset. This cannot be verified in CI (no live network calls permitted).
-
-**Scope**
-- Remove (or unset) `SKIP_TICKER_VALIDATION` on staging environment
-- POST an invalid ticker symbol (e.g. `ZZZINVALID`) to `POST /ticker-universe` on staging
-- Confirm: HTTP 422 returned with `detail` containing "not found or not tradeable"
-- Confirm: ticker does NOT appear in subsequent `GET /ticker-universe` response
-- POST a valid ticker (e.g. `AAPL`) and confirm: HTTP 201, ticker added successfully
-- Record staging sign-off date in this item and notify Director of Quality
-
-**Acceptance Criteria**
-- AC-01: Invalid ticker → HTTP 422, detail message present, ticker not saved (staging)
-- AC-02: Valid ticker → HTTP 201, ticker present in GET /ticker-universe (staging)
-- AC-03: Timeout scenario documented (if testable — can mock by blocking yfinance)
-
----
-
 ### BLG-QA-31 — SI-02 Playwright scenario pre-design
 **Priority:** P2 (Medium)
 **Type:** QA / Test Planning
@@ -1273,54 +1151,6 @@ SI-02 (Behavioural Drift Detection) will produce new frontend surfaces that requ
 
 ---
 
-### BLG-QA-32 — Playwright scenario coverage matrix
-**Priority:** P2 (Medium)
-**Type:** QA / Process
-**Owner:** Director of Quality; QA Lead
-**Source:** IDEA-director-of-quality-20260525-02 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** M (~2 days)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-No consolidated view exists mapping delivered features to their Playwright scenario coverage. As the test suite grows (currently 40+ scenarios across multiple spec files), understanding which features have complete coverage and which have staging-only ACs or gaps becomes a governance concern. A coverage matrix enables proactive gap identification before sprint planning.
-
-**Scope**
-- Produce matrix: feature/story → Playwright spec file(s) → scenario count → staging-only ACs flagged
-- Source: all spec files in tests/e2e/ mapped against sprint_backlog.md story lists from v3.7–v4.0
-- Output: coverage matrix document (markdown) filed in docs/qa/ or equivalent
-- Identify: features with zero automated coverage (human staging only)
-
-**Acceptance Criteria**
-- Coverage matrix produced covering v3.7–v4.0 delivered features
-- Staging-only ACs identified and flagged
-- Coverage gaps documented for Product Owner review
-- Matrix reviewed by Director of Quality before next sprint planning
-
----
-
-### BLG-QA-33 — Arc 5 Playwright coverage audit
-**Priority:** P2 (Medium)
-**Type:** QA / Audit
-**Owner:** QA & Testing Owner; Director of Quality
-**Source:** IDEA-qa-testing-20260525-01 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~1 day)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-Arc 5 shipped across v3.8 (SI-01), v3.9 (SI-03), and v4.0 (Arc5ComplianceSection + SI-01→SI-03 integration). A targeted Arc 5 coverage audit confirms: which SI features have full Playwright coverage, which have staging-only ACs, and whether the v4.0 integration suite (SC-AC5-xx) covers all user-observable behaviours. Distinct from BLG-QA-32 (which covers all features); this is an in-depth audit of Arc 5 specifically.
-
-**Scope**
-- Review all Playwright spec files covering Arc 5 features (system-status.spec.js, SC-RFJ-*, SC-PEV-*, SC-AC5-*)
-- Map each observable AC per SI feature against scenario coverage
-- Flag gaps; produce coverage assessment document
-
-**Acceptance Criteria**
-- Coverage assessment document produced for Arc 5 features
-- Gaps identified with specific scenario recommendations
-- Reviewed by Director of Quality
-
----
-
 ### BLG-QA-34 — QA evidence file format audit
 **Priority:** P3 (Low)
 **Type:** QA / Governance
@@ -1342,72 +1172,6 @@ QA evidence files (qa_evidence_EPIC-*.md) from v3.7–v4.0 were produced under e
 - All QA evidence files from v3.7–v4.0 reviewed
 - Format inconsistencies documented
 - Findings submitted to Director of Quality as advisory note
-
----
-
-### BLG-QA-35 — Staging verification: ST-09 Claude API daily cost threshold alert (AC-05 deferral)
-**Priority:** P2 (Medium)
-**Type:** QA / Staging Verification
-**Owner:** QA Lead; Infrastructure & Operations Owner
-**Source:** ST-09 (EPIC-03, v4.1) — staging-only AC deferred per sprint_backlog.md designation
-**Effort:** XS (~0.5 day)
-**Provisional-Target:** v4.2
-
-**Problem**
-ST-09 AC-05 (POST /ai/check-daily-cost staging verification) was designated staging-only at sprint planning. The endpoint and Telegram alert logic cannot be verified by automated unit tests alone — a live staging environment with a real TELEGRAM_BOT_TOKEN and database rows in gemini_audit_log is required to confirm end-to-end operation.
-
-**Acceptance Criteria**
-- On staging: POST /ai/check-daily-cost returns 200 with threshold/cost fields
-- With AI_DAILY_COST_THRESHOLD set below current daily spend: Telegram alert fires and is received
-- Date of staging verification recorded in QA evidence file
-
----
-
-### BLG-QA-36 — Arc 5 end-to-end integration test specification
-**Priority:** P2 (Medium)
-**Type:** QA / Integration Testing
-**Owner:** Director of Quality; QA Lead
-**Source:** IDEA-director-of-quality-20260527-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
-**Effort:** M (~2 days)
-**Provisional-Target:** v4.2
-
-**Problem**
-Existing Playwright tests cover per-feature ACs (SI-01, SI-03, Arc5ComplianceSection) but no formal integration test spec covers the complete Arc 5 compliance pipeline: SI-01 pre-entry validation → override acknowledgement → SI-03 red flag event written → Arc5ComplianceSection metrics update. Cross-feature integration failures would not be caught by current per-feature tests.
-
-**Scope**
-- Define formal cross-feature integration test spec for Arc 5 compliance pipeline
-- Cover: SI-01 → SI-03 data flow, Arc5ComplianceSection metric source, override chain
-- Produce test spec document with observable assertions for each integration point
-- Identify Playwright automation candidates vs manual verification steps
-
-**Acceptance Criteria**
-- Integration test spec document produced
-- Observable assertions defined for each integration point
-- Reviewed by Director of Quality and QA Lead
-
----
-
-### BLG-QA-38 — CI pipeline execution time baseline measurement
-**Priority:** P2 (Medium)
-**Type:** QA / Test Infrastructure
-**Owner:** QA Lead
-**Source:** IDEA-qa-lead-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
-**Effort:** XS (~0.25 day)
-**Provisional-Target:** v4.2
-
-**Problem**
-BLG-QA-27 gates on CI pipeline execution time > 5 minutes sustained across 3+ cycles. No baseline measurement exists. This item performs the gate-check measurement: measure total CI execution time for the current test suite and determine whether BLG-QA-27 gate clears.
-
-**Scope**
-- Measure total CI pipeline execution time for current test suite (3 sample runs)
-- Record measurement in QA notes
-- If > 5 minutes sustained: flag BLG-QA-27 gate as cleared for next sprint planning
-- If under threshold: record measurement and defer BLG-QA-27
-
-**Acceptance Criteria**
-- Baseline measurement recorded (3 sample runs, p50 noted)
-- Gate status determination for BLG-QA-27 documented
-- Reviewed by QA Lead
 
 ---
 
@@ -1717,33 +1481,6 @@ Render (production hosting platform) provides application logs with a default re
 
 ---
 
-### BLG-OPS-33 — Staging environment parity audit
-**Priority:** P2 (Medium)
-**Type:** Operations / Quality
-**Owner:** Infrastructure & Operations Owner
-**Source:** IDEA-infra-ops-20260525-01 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** M (~2 days)
-**Provisional-Target:** Unscheduled
-
-**Gate criteria:** v4.1 sprint planning complete — staging parity audit scope depends on which new endpoints are included in v4.1.
-*⚡ Gate cleared 2026-05-27 — v4.1 sprint planning complete (2026-05-27__scheduled cycle inline clearance). Item ready for sprint planning.*
-
-**Problem**
-Staging environment parity with production is a delivery verification prerequisite (staging-only ACs require staging to mirror production configuration). BLG-OPS-28 (ST-09 staging-only AC) verified specific endpoints for v4.0. A systematic parity audit confirms: all v4.0 new env vars are present in staging, all new database tables exist in staging schema, and all new services (Gemini integration) are reachable in staging.
-
-**Scope**
-- Verify: staging env vars match production (GEMINI_API_KEY, all Alpaca keys, DB connection)
-- Verify: database schema parity (gemini_audit_log, red_flag_events tables present in staging)
-- Verify: all v4.0 endpoints respond on staging (sampled health check, not full load test)
-- Document: parity report filed in ops notes
-
-**Acceptance Criteria**
-- Parity report produced
-- All v4.0 env vars and schema confirmed in staging
-- Gate condition (v4.1 sprint planning complete) verified before commencing
-
----
-
 ### BLG-OPS-37 — Anthropic API tier cost assessment
 **Priority:** P2 (Medium)
 **Type:** Operations / Cost Planning
@@ -1819,24 +1556,27 @@ The red_flag_events table has no defined retention or archiving strategy. As ove
 
 ---
 
-### BLG-OPS-42 — Add GET /ai/claude-audit-log to api_performance_baseline.md
+### BLG-OPS-43 — Staging URL disambiguation in OPERATIONAL_GUIDE §7
 **Priority:** P3 (Low)
-**Type:** Operations / Performance Baseline
+**Type:** Operations / Documentation
 **Owner:** Infrastructure & Operations Owner
-**Source:** Post-ship closure v4.2 — endpoint coverage drift advisory (STEP 6)
-**Effort:** XS (~0.25 day)
-**Provisional-Target:** v4.3
+**Source:** v4.3 lessons_learnt_cycle.md Phase 3 — 2026-05-29__release-v4.3
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** v4.4
 
 **Problem**
-GET /ai/claude-audit-log was added in v4.2 (ST-07, BLG-GOV-63) and is present in openapi.yaml but absent from docs/ops/api_performance_baseline.md. Performance re-runs require a live environment and human coordination.
+OPERATIONAL_GUIDE.md §7 staging guidance does not explicitly note that Render deploys two separate services (frontend SPA vs backend API) with different hostnames. During v4.3 execution, health checks and baselines were incorrectly targeted at the frontend SPA URL rather than the backend API URL, causing staging friction.
 
 **Scope**
-- Add GET /ai/claude-audit-log to api_performance_baseline.md measurement table with baseline timing data
-- Coordinate with Infrastructure & Operations Owner for live environment timing run
+Add a "Staging URL disambiguation" subsection to OPERATIONAL_GUIDE.md §7 (or the staging_parity_report template) that explicitly documents:
+- Frontend SPA URL vs backend API URL are separate Render services with distinct hostnames
+- Health checks and baselines must target the backend API URL
+- Include example URL patterns to distinguish the two
 
 **Acceptance Criteria**
-- GET /ai/claude-audit-log appears in api_performance_baseline.md with at least estimated p50 latency
-- Reviewed by Infrastructure & Operations Owner
+- AC-01: "Staging URL disambiguation" section added with clear frontend vs backend URL distinction
+- AC-02: Health check and baseline guidance updated to reference backend API URL explicitly
+- AC-03: Version bumps and governance file edit checklist applied (Class 6 file)
 
 ---
 
@@ -2194,30 +1934,6 @@ PO-02 (Journal Pattern Recognition) requires 6+ months of AI journal entries. PO
 
 ---
 
-### BLG-GOV-36 — API key rotation cadence policy
-**Priority:** P2 (Medium)
-**Type:** Governance / Security Policy
-**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
-**Source:** IDEA-cybersecurity-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v4.0
-
-**Problem**
-Alpaca API keys (financial account access) and Gemini API keys have no defined rotation cadence. Without a formal policy specifying minimum rotation interval and documented responsibility, the exposure window for a compromised credential is unbounded.
-
-**Scope**
-- Define rotation cadence: Alpaca keys — minimum annual rotation; Gemini keys — minimum annual rotation
-- Document rotation procedure: how to rotate without service disruption (environment variable update, staging + prod)
-- Assign responsibility: Infrastructure & Operations Owner as rotation executor; Cybersecurity & Trust Lead as policy owner
-- File policy document in `docs/ops/api_key_rotation_policy.md`
-
-**Acceptance Criteria**
-- Policy document produced covering Alpaca and Gemini key rotation
-- Rotation cadence, procedure, and responsibility defined
-- Next rotation date recorded (based on last known rotation date or "unknown — rotate on policy adoption")
-
----
-
 ### BLG-GOV-38 — DoQ sign-off date compliance audit (v3.7–v3.9)
 **Priority:** P3 (Low)
 **Type:** Governance / Quality Audit
@@ -2319,33 +2035,6 @@ OA-03 (from v4.0 post-ship closure) flagged that sprint_close_reminder.yml faile
 
 ---
 
-### BLG-GOV-42 — Staging-only AC pre-designation reference table
-**Priority:** P1 (High)
-**Type:** Governance / Sprint Planning Process
-**Owner:** Head of Specs Team; Director of Quality
-**Source:** IDEA-director-of-quality-20260525-01 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** Unscheduled
-
-**Gate criteria:** OA-01/OA-02 escalation resolved by Head of Specs Team at v4.1 sprint planning — staging-only AC reference table requires escalation closure first.
-
-**Problem**
-OA-01 (2nd recurrence — staging-only AC designation) has been escalated to Head of Specs Team. Before v4.1 sprint planning, a reference table of known staging-only AC patterns (e.g., "all Playwright E2E tests covering live Render endpoints", "any AC requiring non-mocked external API") should be produced to prevent ad-hoc designation at sprint close time.
-
-**Scope**
-- Produce reference table of staging-only AC categories and examples
-- Based on patterns observed in v3.7–v4.0 deliveries (BLG-QA-24, BLG-QA-28, BLG-QA-29, BLG-QA-30)
-- Integrated into sprint planning guidance (sprint_planning_prompt.md or OPERATIONAL_GUIDE.md)
-- Gate: OA-01/02 escalation resolved before this item can be actioned
-
-**Acceptance Criteria**
-- Reference table produced
-- Integrated into sprint planning reference materials
-- Head of Specs Team sign-off
-- Gate condition (OA-01/02 resolution) verified
-
----
-
 ### BLG-GOV-43 — Arc 4 data density formal checkpoint
 **Priority:** P2 (Medium)
 **Type:** Governance / Release Gate
@@ -2389,56 +2078,6 @@ PS-03 (Monte Carlo Simulation, Arc 6) is documented as "§13 compliant — deter
 - §13 assessment produced for PS-03
 - Binding conditions documented
 - Reviewed by Strategy Rules & System Intent Owner
-
----
-
-### BLG-GOV-47 — AI feature inventory
-**Priority:** P2 (Medium)
-**Type:** Governance / AI Compliance
-**Owner:** AI Compliance & Governance Officer
-**Source:** IDEA-ai-compliance-20260525-01 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-v4.0 shipped the first external AI API integration (Gemini Flash for thesis generation). As AI features accumulate, a formal AI feature inventory is needed for compliance, audit, and §13 review traceability. The inventory should be maintained as a living document and referenced at each release planning cycle where an AI-adjacent feature is in scope.
-
-**Scope**
-- Produce AI feature inventory document: current AI-touching features (Gemini thesis generation, AI Journal Summarisation), model used, purpose, §13 compliance status, data inputs/outputs
-- Filed in docs/ai/ or equivalent governance location
-- Reviewed and maintained by AI Compliance & Governance Officer
-
-**Acceptance Criteria**
-- Inventory document produced and filed
-- All current AI features listed with compliance status
-- Reviewed by AI Compliance & Governance Officer and Strategy Rules & System Intent Owner
-
----
-
-*BLG-GOV-48 (Gemini model version change policy) — displaced to §9 Deferred (DL-035, 2026-05-27__scheduled). Superseded by BLG-GOV-64 (Anthropic model version pinning policy); Gemini retired in v4.1.*
-
----
-
-### BLG-GOV-50 — External API key security register
-**Priority:** P2 (Medium)
-**Type:** Governance / Security
-**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
-**Source:** IDEA-cybersecurity-20260525-02 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~1 day)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-The system now has four external API credentials: Alpaca API key+secret, Yahoo Finance (no key required), Supabase/DB connection string, and GEMINI_API_KEY. No consolidated external API key security register exists — documenting each key's purpose, scope, rotation cadence, and storage location. BLG-GOV-36 (API key rotation cadence policy, IW-20260522-01) addressed Alpaca keys; this item extends to all external API keys.
-
-**Scope**
-- Produce external API key security register: key name, purpose, scope, rotation cadence, storage location (Render env var, .env.example), last rotation date
-- Cover: Alpaca API key+secret, GEMINI_API_KEY, Supabase/DB connection string
-- Register reviewed annually or on new API integration
-
-**Acceptance Criteria**
-- Register produced and filed in docs/security/
-- All external API keys listed with security metadata
-- Reviewed by Cybersecurity & Trust Lead
 
 ---
 
@@ -2628,6 +2267,90 @@ Add a spec_references policy note to execution_prompt.md or delivery_verificatio
 
 ---
 
+### BLG-GOV-71 — roadmap_prompt.md STEP 8.1: advisory for empty Now horizon after Extended-tier rebalance
+**Priority:** P2 (Medium)
+**Type:** Governance / Process Improvement
+**Owner:** Head of Specs Team
+**Source:** v4.3 lessons_learnt_closure.md deferred item 1 — 3rd recurrence (v4.1, v4.2, v4.3)
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** v4.4
+
+**Problem**
+When the Now horizon is empty after an Extended-tier no-change rebalance and no next-release section exists in current_roadmap.md, STEP -1.2 fires a gate error during the following release planning cycle. This has occurred for 3 consecutive cycles (v4.2, v4.3, v4.4). The PO is not prompted to add a next-release section immediately after rebalance completes, leading to recurring friction.
+
+**Scope**
+Add an advisory note to roadmap_prompt.md STEP 8.1: if the Now horizon is empty after Extended-tier no-change rebalance and no next-release section exists in current_roadmap.md, advise the PO to add one now to prevent STEP -1.2 gate fire at the next release planning cycle.
+
+**Acceptance Criteria**
+- AC-01: Advisory note added to STEP 8.1 of roadmap_prompt.md
+- AC-02: Condition correctly scoped to Extended-tier no-change + empty Now horizon + no next-release section
+- AC-03: Version bumps and governance file edit checklist applied
+
+---
+
+### BLG-GOV-72 — sprint_planning_prompt.md: frontend classification fast-path for React-only stories
+**Priority:** P2 (Medium)
+**Type:** Governance / Process Improvement
+**Owner:** Head of Specs Team
+**Source:** v4.3 lessons_learnt_closure.md deferred item 4 — 3rd consecutive sprint (v4.1/v4.2/v4.3 EPIC-04)
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** v4.4
+
+**Problem**
+Stories involving (a) prop/state threading bug fix, (b) variable rename in React, or (c) new section/component against locked spec with Playwright feasibility confirmed have been misclassified as `delegated_frontend` for 3 consecutive sprints (v4.1, v4.2, v4.3 EPIC-04). These should default to autonomous unless new design decisions are required.
+
+**Scope**
+Add a "frontend classification fast-path" to sprint_planning_prompt.md: if a story involves (a) prop/state threading bug fix, (b) variable rename in React, or (c) new section/component against locked spec with Playwright feasibility confirmed, default classification is autonomous unless the story requires new design decisions.
+
+**Acceptance Criteria**
+- AC-01: Frontend classification fast-path added to sprint_planning_prompt.md
+- AC-02: Three fast-path conditions explicitly listed with the default-autonomous rule
+- AC-03: Version bumps and governance file edit checklist applied
+
+---
+
+### BLG-GOV-73 — execution_prompt.md: auto-set deviations_filed on delegation sign-off clearance
+**Priority:** P3 (Low)
+**Type:** Governance / Process Improvement
+**Owner:** Head of Specs Team
+**Source:** v4.3 lessons_learnt_closure.md deferred item 5 — 2026-05-29__release-v4.3
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** v4.4
+
+**Problem**
+When setting `sign_off_record.status = "cleared"` for a delegated story, the `deviations_filed` field is not automatically set to `true` if no deviation record was filed. This leads to batch corrections at sprint close when the engine discovers deviations_filed is unset for cleared delegated stories.
+
+**Scope**
+Add a substep to execution_prompt.md delegation sign-off: when setting `sign_off_record.status = "cleared"` for a delegated story where no deviation was filed, also set `deviations_filed = true` to prevent batch correction at sprint close.
+
+**Acceptance Criteria**
+- AC-01: Sign-off substep updated in execution_prompt.md
+- AC-02: Condition covers: delegated story + cleared + no deviation record filed → deviations_filed = true
+- AC-03: Version bumps and governance file edit checklist applied
+
+---
+
+### BLG-GOV-74 — qa_evidence_template.md: DoQ sign-off block example for delegated_qa pattern
+**Priority:** P3 (Low)
+**Type:** Governance / Template Improvement
+**Owner:** Head of Specs Team
+**Source:** v4.3 lessons_learnt_closure.md deferred item 6 — 2026-05-29__release-v4.3
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** v4.4
+
+**Problem**
+The qa_evidence_template.md DoQ sign-off block does not include an example for the delegated_qa pattern, where delegatees sign individual stories and the Director of Quality acknowledges in aggregate. Both "Signed off by: Director of Quality" and "Director of Quality: Confirmed — [owner]" formats are valid but the template doesn't clarify this, causing ambiguity at sprint close QA review.
+
+**Scope**
+Update qa_evidence_template.md DoQ sign-off block to include an example for the delegated_qa pattern with both valid format variants shown.
+
+**Acceptance Criteria**
+- AC-01: DoQ sign-off block updated with delegated_qa example
+- AC-02: Both "Signed off by: Director of Quality" and "Director of Quality: Confirmed — [owner]" shown as valid formats
+- AC-03: Version bumps and governance file edit checklist applied
+
+---
+
 ## 9. Deferred / Future Candidates
 
 - Daily email portfolio summary
@@ -2661,34 +2384,3 @@ These are deliberate product decisions, not deferrals:
 - This backlog is not canonical and must never override: strategy rules, metrics definitions, API contracts
 
 *Release Slice — v4.1 (2026-05-26__release-v4.1) removed — post-ship closure 2026-05-27. All 14 stories complete; ST-11 returned to backlog (AC-01 delivered; ACs 02–04 carried forward as BLG-QA-28/29/30, BLG-OPS-28). Canonical source: claude/cycles/2026-05-26__release-v4.1/stage4_backlog_slice.md*
-
----
-
-## Release Slice — v4.3 (2026-05-29__release-v4.3)
-
-<!-- release-plan-marker: RP:v4.3:2026-05-29__release-v4.3 -->
-
-**Theme:** Governance Consolidation, QA Debt Clearance & Ops Hardening
-**Canonical source:** claude/cycles/2026-05-29__release-v4.3/stage4_backlog_slice.md
-
-| ST-ID | EPIC | Title | Backlog source |
-|-------|------|-------|---------------|
-| ST-01 | EPIC-01 | execution_prompt.md STEP 3.2.A: qa_signed_off advisory patch | OA-1 (v4.2) |
-| ST-02 | EPIC-01 | execution_prompt.md STEP 5.3/STEP 8: sprint close branch safety advisory | OA-2 (v4.2) |
-| ST-03 | EPIC-01 | qa_evidence_template.md: AC mapping 1:1 advisory | OA-3 (v4.2) |
-| ST-04 | EPIC-01 | Staging-only AC pre-designation reference table | BLG-GOV-42 |
-| ST-05 | EPIC-01 | AI feature inventory document | BLG-GOV-47 |
-| ST-06 | EPIC-02 | Staging verification: Claude thesis generation | BLG-QA-29 |
-| ST-07 | EPIC-02 | Staging verification: ticker validation live rejection path | BLG-QA-30 |
-| ST-08 | EPIC-02 | Staging verification: Claude API daily cost threshold alert | BLG-QA-35 |
-| ST-09 | EPIC-02 | Playwright E2E coverage for Arc5ComplianceSection | BLG-QA-28 |
-| ST-10 | EPIC-02 | Arc 5 end-to-end integration test specification | BLG-QA-36 |
-| ST-11 | EPIC-02 | CI pipeline execution time baseline measurement | BLG-QA-38 |
-| ST-12 | EPIC-02 | Playwright scenario coverage matrix and Arc 5 coverage audit | BLG-QA-32, BLG-QA-33 |
-| ST-13 | EPIC-03 | Staging environment parity audit | BLG-OPS-33 |
-| ST-14 | EPIC-03 | claude-audit-log performance baseline | BLG-OPS-42 |
-| ST-15 | EPIC-03 | API key rotation policy and external API key security register | BLG-GOV-36, BLG-GOV-50 |
-| ST-16 | EPIC-04 | Pre-entry check entry price bug fix | BLG-FE-50 |
-| ST-17 | EPIC-04 | Claude thesis generation UI copy audit | BLG-FE-51 |
-| ST-18 | EPIC-04 | Arc 5 compliance score in monthly P&L report | BLG-FE-38 |
-
