@@ -5,8 +5,7 @@
   "invoked_utc": "2026-05-29T23:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-30T00:10:00Z",
-
+  "last_updated_utc": "2026-05-30T01:00:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -30,11 +29,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T23:30:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/roadmap_prompt.md"],
+          "spec_references": [
+            "claude/system/roadmap_prompt.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "AC-01/02: STEP 8.1 added with Extended-tier no-change condition. AC-03: v6.5→v6.6. AC-04: OPERATIONAL_GUIDE.md §6 + §14 updated. AC-05: prompt_change_log.md entry appended. No deviations."
+          "notes": "AC-01/02: STEP 8.1 added with Extended-tier no-change condition. AC-03: v6.5\u2192v6.6. AC-04: OPERATIONAL_GUIDE.md \u00a76 + \u00a714 updated. AC-05: prompt_change_log.md entry appended. No deviations."
         },
         "ST-02": {
           "title": "Apply BLG-GOV-72: sprint_planning_prompt.md frontend classification fast-path",
@@ -49,11 +50,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T23:30:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/sprint_planning_prompt.md"],
+          "spec_references": [
+            "claude/system/sprint_planning_prompt.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "AC-01/02: fast-path section added to §3.1 with 3 explicit conditions + default-autonomous rule. AC-03: v3.7→v3.8. AC-04: OPERATIONAL_GUIDE.md §7 + §14 updated. AC-05: prompt_change_log.md entry appended. No deviations."
+          "notes": "AC-01/02: fast-path section added to \u00a73.1 with 3 explicit conditions + default-autonomous rule. AC-03: v3.7\u2192v3.8. AC-04: OPERATIONAL_GUIDE.md \u00a77 + \u00a714 updated. AC-05: prompt_change_log.md entry appended. No deviations."
         },
         "ST-03": {
           "title": "Apply BLG-GOV-73: execution_prompt.md auto-set deviations_filed on delegation clearance",
@@ -68,11 +71,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T23:30:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/execution_prompt.md"],
+          "spec_references": [
+            "claude/system/execution_prompt.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "AC-01/02: §5.3 Protocol step 5 updated — delegated story + cleared + no DEV-* → deviations_filed=true. AC-03: v3.32→v3.33. AC-04: OPERATIONAL_GUIDE.md §8 + §14 updated. AC-05: prompt_change_log.md entry appended. No deviations."
+          "notes": "AC-01/02: \u00a75.3 Protocol step 5 updated \u2014 delegated story + cleared + no DEV-* \u2192 deviations_filed=true. AC-03: v3.32\u2192v3.33. AC-04: OPERATIONAL_GUIDE.md \u00a78 + \u00a714 updated. AC-05: prompt_change_log.md entry appended. No deviations."
         },
         "ST-04": {
           "title": "Apply BLG-GOV-69 + BLG-GOV-74: qa_evidence_template.md delegated_qa sign-off format",
@@ -87,11 +92,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T23:30:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/templates/qa_evidence_template.md"],
+          "spec_references": [
+            "claude/system/templates/qa_evidence_template.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "AC-01/02/03: both sign-off format variants documented in template (individual + aggregate). AC-04: v1.3→v1.4. AC-05: OPERATIONAL_GUIDE.md §14 QA Evidence Template row added; prompt_change_log.md entry added. No deviations."
+          "notes": "AC-01/02/03: both sign-off format variants documented in template (individual + aggregate). AC-04: v1.3\u2192v1.4. AC-05: OPERATIONAL_GUIDE.md \u00a714 QA Evidence Template row added; prompt_change_log.md entry added. No deviations."
         },
         "ST-05": {
           "title": "Apply release_planning_prompt.md STEP 7 RESUME PRECHECK patch (v4.3 LL-2)",
@@ -106,19 +113,21 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T23:30:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/release_planning_prompt.md"],
+          "spec_references": [
+            "claude/system/release_planning_prompt.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "AC-01/02: RESUME PRECHECK note added to STEP 7 Intermediate global state sync section with verbatim text from AC. AC-03: v2.31→v2.32. AC-04: OPERATIONAL_GUIDE.md §6B + §14 updated. AC-05: prompt_change_log.md entry appended. No deviations."
+          "notes": "AC-01/02: RESUME PRECHECK note added to STEP 7 Intermediate global state sync section with verbatim text from AC. AC-03: v2.31\u2192v2.32. AC-04: OPERATIONAL_GUIDE.md \u00a76B + \u00a714 updated. AC-05: prompt_change_log.md entry appended. No deviations."
         }
       }
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-29__release-v4.4/EPIC-02",
       "pr_number": 563,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-29__release-v4.4/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
@@ -136,11 +145,19 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-30T00:20:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/si02/si02_query_predesign.md"],
+          "spec_references": [
+            "docs/specs/si02/si02_query_predesign.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": {"required_by": "Head of Backend Engineering", "method": "agent_mediated", "status": "cleared", "findings_applied": [], "cleared_utc": "2026-05-30T00:20:00Z"},
-          "notes": "no prior spec applicable. AC-01: 11 available fields + 6 required gaps identified. AC-02: 5 SQL patterns (win_rate_by_setup_type, win_rate_by_regime_at_entry, entry_timing_drift, sizing_adherence, consecutive_loss_context). AC-03: 3 missing fields enumerated (setup_type, entry_condition_score, signal_id) — DS-07 migration scope S. AC-04: Performance assessment at <20 trades negligible; scale thresholds documented. AC-05: HBE sign-off included. No deviations. Gate for ST-09 cleared."
+          "sign_off_record": {
+            "required_by": "Head of Backend Engineering",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-05-30T00:20:00Z"
+          },
+          "notes": "no prior spec applicable. AC-01: 11 available fields + 6 required gaps identified. AC-02: 5 SQL patterns (win_rate_by_setup_type, win_rate_by_regime_at_entry, entry_timing_drift, sizing_adherence, consecutive_loss_context). AC-03: 3 missing fields enumerated (setup_type, entry_condition_score, signal_id) \u2014 DS-07 migration scope S. AC-04: Performance assessment at <20 trades negligible; scale thresholds documented. AC-05: HBE sign-off included. No deviations. Gate for ST-09 cleared."
         },
         "ST-07": {
           "title": "Arc 5 backend architecture review for SI query patterns (BLG-BE-18)",
@@ -155,11 +172,19 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-30T00:20:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/si02/arc5_backend_architecture_review.md"],
+          "spec_references": [
+            "docs/specs/si02/arc5_backend_architecture_review.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": {"required_by": "Head of Engineering; Head of Backend Engineering", "method": "agent_mediated", "status": "cleared", "findings_applied": [], "cleared_utc": "2026-05-30T00:20:00Z"},
-          "notes": "no prior spec applicable. AC-01: Sync FastAPI pattern reviewed (p50 ~230ms baseline, psycopg2 sync). AC-02: Option B (cached synchronous 8h TTL) recommended — mirrors existing _CORRELATION_CACHE pattern; no worker/Redis/Celery on Render; queries <400ms at current volume. AC-03: ADR-001 filed in document. AC-04: Filed before SI-02 sprint planning. No deviations. Gate for ST-09 cleared."
+          "sign_off_record": {
+            "required_by": "Head of Engineering; Head of Backend Engineering",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-05-30T00:20:00Z"
+          },
+          "notes": "no prior spec applicable. AC-01: Sync FastAPI pattern reviewed (p50 ~230ms baseline, psycopg2 sync). AC-02: Option B (cached synchronous 8h TTL) recommended \u2014 mirrors existing _CORRELATION_CACHE pattern; no worker/Redis/Celery on Render; queries <400ms at current volume. AC-03: ADR-001 filed in document. AC-04: Filed before SI-02 sprint planning. No deviations. Gate for ST-09 cleared."
         },
         "ST-08": {
           "title": "SI-02 query index pre-assessment (BLG-BE-23)",
@@ -174,11 +199,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-30T00:10:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/si02/query_performance_assessment.md"],
+          "spec_references": [
+            "docs/specs/si02/query_performance_assessment.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "no prior spec applicable. AC-01: Required indexes identified from BLG-GOV-51 results (3 indexes: idx_trade_plans_signal P1, idx_trade_history_exit_date P2, idx_trade_history_entry_date P2). AC-02: Migration plan produced with CREATE INDEX CONCURRENTLY statements, creation cost estimates (negligible at <20 trades), migration timing strategy (P1 with DS-07, P2 at SI-02 sprint). AC-03: Gate condition verified — BLG-GOV-51 shipped v4.1 (docs/specs/si02/query_performance_assessment.md). AC-04: Document filed as input to SI-02 sprint planning (docs/specs/si02/si02_index_preassessment.md). No deviations."
+          "notes": "no prior spec applicable. AC-01: Required indexes identified from BLG-GOV-51 results (3 indexes: idx_trade_plans_signal P1, idx_trade_history_exit_date P2, idx_trade_history_entry_date P2). AC-02: Migration plan produced with CREATE INDEX CONCURRENTLY statements, creation cost estimates (negligible at <20 trades), migration timing strategy (P1 with DS-07, P2 at SI-02 sprint). AC-03: Gate condition verified \u2014 BLG-GOV-51 shipped v4.1 (docs/specs/si02/query_performance_assessment.md). AC-04: Document filed as input to SI-02 sprint planning (docs/specs/si02/si02_index_preassessment.md). No deviations."
         },
         "ST-09": {
           "title": "SI-02 background job architecture design (BLG-BE-20) [conditional]",
@@ -193,20 +220,28 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-30T00:30:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/si02/si02_background_job_adr.md"],
+          "spec_references": [
+            "docs/specs/si02/si02_background_job_adr.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": {"required_by": "Head of Backend Engineering; Head of Engineering", "method": "agent_mediated", "status": "cleared", "findings_applied": [], "cleared_utc": "2026-05-30T00:30:00Z"},
-          "notes": "no prior spec applicable. AC-01: Options A/B/C evaluated (on-demand, periodic cron, event-triggered). AC-02: Render constraints assessed — no worker/Redis/Celery; B1 (Render Cron) and B2 (APScheduler) both rejected; Option C (event-triggered) categorically rejected (violates §13 no-side-effects). AC-03: ADR-SI02-001 produced — cached synchronous selected; upgrade path at 150 trades documented; C rejected for §13 reasons. AC-04: Gate verified (ST-06 + ST-07 reviewed). No deviations. Gate for ST-12 partially cleared (ST-09 done; ST-11 pending)."
+          "sign_off_record": {
+            "required_by": "Head of Backend Engineering; Head of Engineering",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-05-30T00:30:00Z"
+          },
+          "notes": "no prior spec applicable. AC-01: Options A/B/C evaluated (on-demand, periodic cron, event-triggered). AC-02: Render constraints assessed \u2014 no worker/Redis/Celery; B1 (Render Cron) and B2 (APScheduler) both rejected; Option C (event-triggered) categorically rejected (violates \u00a713 no-side-effects). AC-03: ADR-SI02-001 produced \u2014 cached synchronous selected; upgrade path at 150 trades documented; C rejected for \u00a713 reasons. AC-04: Gate verified (ST-06 + ST-07 reviewed). No deviations. Gate for ST-12 partially cleared (ST-09 done; ST-11 pending)."
         }
       }
     },
     "EPIC-03": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-05-29__release-v4.4/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-29__release-v4.4/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
       "stories": {
@@ -223,39 +258,55 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-30T00:20:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/si02/si02_fe_component_predesign.md"],
+          "spec_references": [
+            "docs/specs/si02/si02_fe_component_predesign.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": {"required_by": "Frontend Specs & UX Documentation Owner", "method": "agent_mediated", "status": "cleared", "findings_applied": [], "cleared_utc": "2026-05-30T00:20:00Z"},
+          "sign_off_record": {
+            "required_by": "Frontend Specs & UX Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-05-30T00:20:00Z"
+          },
           "notes": "no prior spec applicable. AC-01: Option B (percentage deviation display) selected with rationale. AC-02: Full data contract defined (API shape, 4 component states). AC-03: Labelled as input to ST-11. AC-04: Gate verified. No deviations. Gate for ST-11 cleared."
         },
         "ST-11": {
           "title": "SI-02 drift detection interaction spec (BLG-FE-53)",
           "classification": "delegated_frontend",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "Frontend Specs & UX Documentation Owner",
           "github_issue": 558,
           "branch": "exec/2026-05-29__release-v4.4/EPIC-03",
-          "commit_sha": null,
-          "delegation_record_id": "DEL-20260529-05",
+          "commit_sha": "7eecefeb",
+          "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "docs/specs/si02/si02_fe_interaction_spec.md committed to EPIC-03 branch with [EPIC-03][ST-11]; all 5 AC verified",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-30T00:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/si02/si02_fe_interaction_spec.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable — gate NOW MET (ST-10 done, commit 070a4663). Agent invoked 2026-05-30."
+          "sign_off_record": {
+            "required_by": "Frontend Specs & UX Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-05-30T00:45:00Z"
+          },
+          "notes": "no prior spec applicable. AC-01\u201305 all met. 5 states defined, non-dismissable+collapse model, no drill-down MVP, severity thresholds hard-coded, 13 Playwright DFT IDs specified. No deviations."
         },
         "ST-12": {
           "title": "SI-02 Playwright scenario pre-design (BLG-QA-31) [conditional]",
           "classification": "autonomous",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 559,
           "branch": "exec/2026-05-29__release-v4.4/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "80bfc075",
           "delegation_record_id": null,
           "blocked_since_utc": "2026-05-29T23:55:00Z",
           "unblock_criteria": "Gate condition: ST-09 architecture output available AND ST-11 interaction spec done. Once gate met, engine executes autonomously.",
@@ -265,7 +316,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "no prior spec applicable — conditional autonomous story; ST-10 done but ST-09 + ST-11 still in progress. Engine will execute once both done."
+          "notes": "no prior spec applicable \u2014 conditional autonomous story; ST-10 done but ST-09 + ST-11 still in progress. Engine will execute once both done."
         }
       }
     },
@@ -279,7 +330,7 @@
       "test_scenarios": [],
       "stories": {
         "ST-13": {
-          "title": "Staging URL disambiguation in OPERATIONAL_GUIDE §7 (BLG-OPS-43)",
+          "title": "Staging URL disambiguation in OPERATIONAL_GUIDE \u00a77 (BLG-OPS-43)",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -291,27 +342,58 @@
           "unblock_criteria": null,
           "completed_utc": "2026-05-29T23:45:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/OPERATIONAL_GUIDE.md"],
+          "spec_references": [
+            "claude/system/OPERATIONAL_GUIDE.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "AC-01: §7.9 Staging URL Disambiguation subsection added with SPA vs API distinction. AC-02: Health check guidance updated to backend API URL. AC-03: URL patterns trading-assistant-frontend.onrender.com and trading-assistant-api.onrender.com included. AC-04: OPERATIONAL_GUIDE.md v4.18→v4.19 (post-rebase); §14 Version + Last Updated updated; changelog row v4.19 prepended. AC-05: prompt_change_log.md entry appended v4.18→v4.19. No deviations. Rebased onto main post-EPIC-01 merge. PR #562 merged 2026-05-29T20:19:50Z."
+          "notes": "AC-01: \u00a77.9 Staging URL Disambiguation subsection added with SPA vs API distinction. AC-02: Health check guidance updated to backend API URL. AC-03: URL patterns trading-assistant-frontend.onrender.com and trading-assistant-api.onrender.com included. AC-04: OPERATIONAL_GUIDE.md v4.18\u2192v4.19 (post-rebase); \u00a714 Version + Last Updated updated; changelog row v4.19 prepended. AC-05: prompt_change_log.md entry appended v4.18\u2192v4.19. No deviations. Rebased onto main post-EPIC-01 merge. PR #562 merged 2026-05-29T20:19:50Z."
         }
       }
     }
   },
-
   "blocked_items": [],
-  "delegated_items": ["ST-06", "ST-07", "ST-09", "ST-10", "ST-11"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-13", "ST-08", "ST-06", "ST-07", "ST-10", "ST-09"],
-  "open_escalations": ["ESC-EXEC-20260529-01", "ESC-EXEC-20260529-02", "ESC-EXEC-20260529-03", "ESC-EXEC-20260529-04", "ESC-EXEC-20260529-05"],
-
+  "delegated_items": [
+    "ST-06",
+    "ST-07",
+    "ST-09",
+    "ST-10",
+    "ST-11"
+  ],
+  "completed_items": [
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04",
+    "ST-05",
+    "ST-13",
+    "ST-08",
+    "ST-06",
+    "ST-07",
+    "ST-10",
+    "ST-09",
+    "ST-11",
+    "ST-12"
+  ],
+  "open_escalations": [
+    "ESC-EXEC-20260529-01",
+    "ESC-EXEC-20260529-02",
+    "ESC-EXEC-20260529-03",
+    "ESC-EXEC-20260529-04",
+    "ESC-EXEC-20260529-05"
+  ],
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-04"],
-    "epics_pending": ["EPIC-02", "EPIC-03"],
+    "epics_merged": [
+      "EPIC-01",
+      "EPIC-04",
+      "EPIC-02"
+    ],
+    "epics_pending": [
+      "EPIC-03"
+    ],
     "all_merged": false
   },
-
   "sealed": false,
   "sealed_utc": null
 }
