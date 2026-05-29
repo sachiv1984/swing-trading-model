@@ -2621,3 +2621,33 @@ These are deliberate product decisions, not deferrals:
 
 *Release Slice — v4.1 (2026-05-26__release-v4.1) removed — post-ship closure 2026-05-27. All 14 stories complete; ST-11 returned to backlog (AC-01 delivered; ACs 02–04 carried forward as BLG-QA-28/29/30, BLG-OPS-28). Canonical source: claude/cycles/2026-05-26__release-v4.1/stage4_backlog_slice.md*
 
+---
+
+## Release Slice — v4.3 (2026-05-29__release-v4.3)
+
+<!-- release-plan-marker: RP:v4.3:2026-05-29__release-v4.3 -->
+
+**Theme:** Governance Consolidation, QA Debt Clearance & Ops Hardening
+**Canonical source:** claude/cycles/2026-05-29__release-v4.3/stage4_backlog_slice.md
+
+| ST-ID | EPIC | Title | Backlog source |
+|-------|------|-------|---------------|
+| ST-01 | EPIC-01 | execution_prompt.md STEP 3.2.A: qa_signed_off advisory patch | OA-1 (v4.2) |
+| ST-02 | EPIC-01 | execution_prompt.md STEP 5.3/STEP 8: sprint close branch safety advisory | OA-2 (v4.2) |
+| ST-03 | EPIC-01 | qa_evidence_template.md: AC mapping 1:1 advisory | OA-3 (v4.2) |
+| ST-04 | EPIC-01 | Staging-only AC pre-designation reference table | BLG-GOV-42 |
+| ST-05 | EPIC-01 | AI feature inventory document | BLG-GOV-47 |
+| ST-06 | EPIC-02 | Staging verification: Claude thesis generation | BLG-QA-29 |
+| ST-07 | EPIC-02 | Staging verification: ticker validation live rejection path | BLG-QA-30 |
+| ST-08 | EPIC-02 | Staging verification: Claude API daily cost threshold alert | BLG-QA-35 |
+| ST-09 | EPIC-02 | Playwright E2E coverage for Arc5ComplianceSection | BLG-QA-28 |
+| ST-10 | EPIC-02 | Arc 5 end-to-end integration test specification | BLG-QA-36 |
+| ST-11 | EPIC-02 | CI pipeline execution time baseline measurement | BLG-QA-38 |
+| ST-12 | EPIC-02 | Playwright scenario coverage matrix and Arc 5 coverage audit | BLG-QA-32, BLG-QA-33 |
+| ST-13 | EPIC-03 | Staging environment parity audit | BLG-OPS-33 |
+| ST-14 | EPIC-03 | claude-audit-log performance baseline | BLG-OPS-42 |
+| ST-15 | EPIC-03 | API key rotation policy and external API key security register | BLG-GOV-36, BLG-GOV-50 |
+| ST-16 | EPIC-04 | Pre-entry check entry price bug fix | BLG-FE-50 |
+| ST-17 | EPIC-04 | Claude thesis generation UI copy audit | BLG-FE-51 |
+| ST-18 | EPIC-04 | Arc 5 compliance score in monthly P&L report | BLG-FE-38 |
+

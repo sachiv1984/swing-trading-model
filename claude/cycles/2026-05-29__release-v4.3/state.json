@@ -1,0 +1,95 @@
+{
+  "cycle_id": "2026-05-29__release-v4.3",
+  "release": "v4.3",
+  "date": "2026-05-29",
+  "mode": "standard",
+  "issues_mode": "none",
+  "auto_escalate": true,
+  "prompt_schema_version": "v2",
+  "status": "Published",
+  "publish_eligible": true,
+  "last_transition_utc": "2026-05-29T07:05:00Z",
+
+  "sealed": {
+    "sealed_utc": "2026-05-29T07:05:00Z",
+    "sealed_assumptions": {
+      "timebox": "2 sprints",
+      "capacity": "solo-dev evenings"
+    },
+    "state_snapshot_hash": ""
+  },
+
+  "mutation_seq": 0,
+  "mutations": [],
+  "invalidated_steps": [],
+
+  "assumptions": {
+    "timebox": "2 sprints",
+    "capacity": "solo-dev evenings"
+  },
+
+  "locks": {
+    "backlog_lock": {
+      "required": true,
+      "lock_file": "claude/backlog/.lock",
+      "owned": false,
+      "owner_cycle_id": "",
+      "owner_release": "",
+      "acquired_utc": "",
+      "txn_file": "claude/cycles/2026-05-29__release-v4.3/backlog_txn.json",
+      "txn_id": "BLTX-20260529-01",
+      "txn_state": "committed",
+      "marker": "RP:v4.3:2026-05-29__release-v4.3",
+      "status": "released"
+    },
+    "roadmap_lock": {
+      "required": false,
+      "lock_file": "claude/roadmap/.lock",
+      "owned": false,
+      "owner_cycle_id": "",
+      "owner_release": "",
+      "acquired_utc": "",
+      "txn_file": "claude/cycles/2026-05-29__release-v4.3/roadmap_txn.json",
+      "txn_id": "RATX-20260529-01",
+      "txn_state": "committed",
+      "marker": "RA:v4.3:2026-05-29__release-v4.3",
+      "status": "released"
+    }
+  },
+
+  "artifacts": {
+    "run_manifest": "present",
+    "stage1_readiness": "pass",
+    "stage2_scope_extraction": "pass",
+    "stage2_scope_document": "present",
+    "stage3_execution_plan": "pass",
+    "stage3_decisions_record": "present",
+    "stage3_5_model_integrity": "pass",
+    "backlog_lock": "released",
+    "backlog_txn": "committed",
+    "stage4_backlog_slice": "present",
+    "stage4_issue_manifest": "present",
+    "stage4_5_capacity_check": "warn",
+    "roadmap_txn": "committed",
+    "stage5_5_cross_stage_integrity": "pass",
+    "stage5_7_decision_record_integrity": "pass",
+    "issue_import": "not_applicable",
+    "escalations": "not_present",
+    "cycle_summary": "present",
+    "lessons_learnt": "present"
+  },
+
+  "attributes": {
+    "plan_structured": true,
+    "plan_executable": true,
+    "backlog_committed": true,
+    "cross_stage_integrity": "pass",
+    "decisions_validated": "pass",
+    "capacity_feasible": "warn"
+  },
+
+  "open_escalations": [],
+  "deferred_escalations": [],
+  "accepted_risk_escalations": [],
+  "deferred_execution_blockers": []
+}

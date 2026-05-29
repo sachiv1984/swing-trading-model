@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v4.2** — Claude API Governance, SI-02 Pre-Work Readiness & Spec Debt — ✅ Shipped 2026-05-29
-**Next planned release:** **[TBD]**
+**Next planned release:** **v4.3** — Governance Consolidation, QA Debt Clearance & Ops Hardening
+
+<!-- roadmap-annotation-marker: RA:v4.3:2026-05-29__release-v4.3 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-29__release-v4.3
+- Plan published: 2026-05-29
+- Cycle folder: claude/cycles/2026-05-29__release-v4.3/
+- Backlog slice: claude/cycles/2026-05-29__release-v4.3/stage4_backlog_slice.md
+- Status at annotation: Validated
 
 *RA:v4.2 retired — see roadmap_archive.md 2026-05-29 (post-ship closure 2026-05-27__release-v4.2).*
 
