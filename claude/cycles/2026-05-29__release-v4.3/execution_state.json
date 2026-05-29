@@ -70,7 +70,7 @@
         "ST-03": {
           "title": "qa_evidence_template.md: AC mapping 1:1 advisory",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 528,
           "branch": "exec/2026-05-29__release-v4.3/EPIC-01",
@@ -78,13 +78,19 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-29T09:30:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/system/templates/qa_evidence_template.md"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-05-29T09:30:00Z"
+          },
+          "notes": "Advisory added to qa_evidence_template.md consolidation table section. Version 1.2→1.3. Template is not Class 6 — no OPERATIONAL_GUIDE.md update required."
         },
         "ST-04": {
           "title": "Staging-only AC pre-designation reference table",
