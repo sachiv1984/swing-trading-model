@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.10
-**Last Updated:** 2026-05-28
+**Version:** 4.13
+**Last Updated:** 2026-05-29
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -843,11 +843,25 @@ Items without confirmed acceptance criteria may not enter the sprint. In `standa
 
 Planning blockers that cannot be resolved by the PMO Lead are recorded in `sprint_escalations.md` (format: `ESC-PLAN-YYYYMMDD-nn`). The engine sets status to `Sprint_Planning_Blocked` and halts. Re-invoke `plan sprint` once resolved — the engine resumes from the first incomplete step.
 
+### 7.8 Staging-Only AC Categories Reference (BLG-GOV-42 / ST-04 v4.3)
+
+Use this table when designating `**Staging-only ACs:**` in sprint_backlog.md story entries. An AC is staging-only when it requires evidence that CI cannot reproduce.
+
+| Category | Pattern | Example from history |
+|----------|---------|----------------------|
+| Live external API call | AC requires a real API response from Alpaca, Claude/Anthropic, Yahoo Finance, or any external service not mocked in CI | BLG-QA-29 (v4.0): Claude thesis generation — ANTHROPIC_API_KEY required on staging; CI has no live key |
+| Staging-specific environment variables | AC requires env vars present on staging/prod but absent from CI (e.g. ANTHROPIC_API_KEY, Alpaca keys, TELEGRAM_BOT_TOKEN) | BLG-QA-35 (v4.1): Daily cost threshold alert — live TELEGRAM_BOT_TOKEN required for alert to fire |
+| Non-mocked database state or live DB query | AC requires specific rows in staging DB (audit log entries, live trade data) that CI fixtures do not provide | BLG-QA-35 (v4.1): claude_audit_log rows required in staging for threshold check |
+| Live network validation | AC requires internet access to validate external data (e.g. Yahoo Finance symbol validation) | BLG-QA-30 (v4.0): Ticker validation — SKIP_TICKER_VALIDATION must be unset and live Yahoo Finance must reject invalid ticker |
+| Observable UI rendering without feasible Playwright mock | AC verifies UI rendering or interaction where `page.route()` mocking is not feasible for the required assertion | BLG-QA-24 (v3.7): Specific observable UI elements requiring staging browser run — note: if Playwright mocking IS feasible, this is NOT staging-only (confirmed at v4.3 sprint planning for BLG-QA-28 Arc5ComplianceSection) |
+
+**Designation rule:** At sprint planning, sprint planners must inspect each story's acceptance criteria against this table. Any AC matching a category above must be tagged in the `**Staging-only ACs:**` field of the sprint_backlog.md story entry. `None` is only valid when no AC requires staging. A missing staging-only designation is a seal blocker (sprint_planning_prompt.md STEP 6.2 sign-off gate).
+
 ---
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.30)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.32)
 
 ### 8.1 Invocation
 
@@ -1410,8 +1424,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.10 |
-| Last Updated | 2026-05-27 |
+| Version | 4.13 |
+| Last Updated | 2026-05-29 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1423,7 +1437,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.31 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.7 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.30 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.32 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.8 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.12 |

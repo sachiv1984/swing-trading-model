@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.30
-**Last Updated:** 2026-05-27
+**Version:** 3.32
+**Last Updated:** 2026-05-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -652,6 +652,8 @@ Last Updated: <date>
 
 The consolidation block must include: EPIC, Cycle, Sprint goal, Test scenarios used, a row per ST item (Spec Reference / What was built / AC / Result / Deviations), QA test coverage (scenarios run, regression areas, deviations), and the sign-off block. **Template: `claude/system/templates/qa_evidence_template.md`** — read this file to get the exact header, consolidation block format, and sign-off block template. Key rule: the sign-off block `Date:` field must be non-blank before the PR can be opened (§3.2.B pre-condition) and before the merge gate runs.
 
+**Advisory (OA-1/ST-01):** After completing DoQ sign-off and committing `qa_evidence_EPIC-xx.md`, update `execution_state.json` `qa_signed_off: true` in the same commit.
+
 This file is the evidence backing `qa_signed_off = true` in `execution_state.json`. A PR comment alone is not sufficient — this file must exist and the sign-off block must be complete before the merge gate runs.
 
 **Frontend testing gate (LL-v3.1-EX-01 — hard gate):**
@@ -826,6 +828,8 @@ Note (AUD-2026-05-27-003): `returned_to_backlog` is also a valid **in-flight** s
 
 ### 5.3 Sprint Close Record
 
+> **Branch advisory (OA-2/ST-02):** Sprint close artefacts (`sprint_close.md`, `lessons_learnt_cycle.md`, `execution_state.json` seal write, `docs/System_status_report.md`) must be committed to `main`. Verify you are on `main` before writing these files. STEP 8 enforces this with a hard gate — flagging here prevents artefact rework if you discover the wrong branch after writing.
+
 Create: `claude/cycles/<cycle_id>/sprint_close.md`
 
 Must include:
@@ -947,6 +951,16 @@ After seal: `execution_state.json`, `delegation_log.md`, and `execution_escalati
 ---
 
 ## STEP 8 — Commit & Push Cycle Artefacts
+
+**Branch Safety Check (Hard Gate — OA-2/ST-02):**
+
+Run: `git branch --show-current`
+
+If the result is NOT `main`: halt immediately. Output:
+
+> HALT — sprint close artefacts must be committed to `main`. Current branch is `<branch_name>`. Run `git checkout main && git pull` and re-invoke `run sprint --cycle <cycle_id>` to complete STEP 8.
+
+If the result is `main`: proceed.
 
 **Governance file edit check (ST-12 / CF-2):** Before committing, check whether any §6-governed file (listed in `claude/system/OPERATIONAL_GUIDE.md` §14) was modified during this sprint execution run — including changes applied as part of ST items (e.g. deferred prompt patches). If any were modified: append one entry per file to `claude/system/prompt_change_log.md` in the same session as the edit, using the format `| date | filename | vOLD→vNEW | summary | authority |`. This step must complete before the STEP 8 commit is pushed.
 

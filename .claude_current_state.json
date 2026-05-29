@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-05-29__release-v4.3",
   "cycle_name": "Release Planning — v4.3 Governance Consolidation, QA Debt Clearance & Ops Hardening",
-  "status": "Sprint_Planning_Complete",
+  "status": "Executing",
   "engine": "release_planning",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-05-29__release-v4.3/stage4_backlog_slice.md",

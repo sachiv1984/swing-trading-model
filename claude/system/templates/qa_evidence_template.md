@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-05-19
+**Version:** 1.3
+**Last Updated:** 2026-05-29
 
 # QA Evidence Template
 
@@ -34,6 +34,8 @@ Last Updated: <date>
 *(Result column: use "Pass", "Pass with notes", or "Fail". "Pending DoQ" and "Awaiting QA" are pre-signing placeholders only — must be updated to "Pass"/"Fail" before sign-off block is completed.)*
 
 *(Reconcile any partial per-item entries from STEP 3.1.C into this table. Do not duplicate — one row per ST item.)*
+
+> **Advisory (OA-3/ST-03):** Evidence table rows should map 1:1 to backlog slice ACs. When consolidating multiple ACs into one row, note which AC IDs are covered in the Evidence column (e.g. "Covers AC-01, AC-02"). This makes traceability explicit and reduces friction at delivery verification.
 
 **QA test coverage:**
 - Scenarios run: <list scenario file names, or "manual acceptance review">
