@@ -34,3 +34,27 @@ Cycle: 2026-05-27__release-v4.2
 - **EPIC PR merged between sessions:** Third occurrence (v4.0 EPIC-02, v4.1 EPIC-03, v4.2 EPIC-01+EPIC-02). However, all three v4.2 EPICs-pending were recovered correctly by the STEP 5.0A guard and merge gate sync — the pattern is now handled. No carry-forward needed.
 - **qa_signed_off stale state:** New item this cycle; classified defer to v4.3.
 - **Branch safety at sprint close:** New item this cycle; classified defer to v4.3.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-05-27__release-v4.2
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-05-29
+**Reviewed by:** PMO Lead
+**Prior cycle Phase 4 checked:** claude/cycles/2026-05-26__release-v4.1/lessons_learnt_cycle.md — found.
+
+**Prior cycle Phase 4 deferred items check:**
+- v4.1 Phase 4: All items were `action-now` positive patterns — no deferred patches outstanding. Zero carry-forward items from v4.1 Phase 4.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| Zero spec deviations, zero QA Fail results, 13/13 stories done. All ACs verified by document review, code inspection, and live environment measurement. Governance/ops/documentation sprint with no frontend changes — delivery verification completed in a single pass with no escalations. | Phase 4 | E | action-now | Positive: cleanest sprint to date by deviation and QA metrics. Governance/ops scope with well-defined ACs and pre-cleared delegation records is the most reliable delivery pattern. No process change needed. | Sprint Execution Engine | — |
+| QA evidence AC numbering consolidation: ST-11 (4 backlog ACs → 3 evidence rows, sign-off in separate section) and ST-13 (5 backlog ACs → 3 evidence rows, sub-items merged). All substantive criteria were met — notation difference only, no scope reduction. However, this created a minor verification cross-reference friction. | Phase 4 | B | defer | Add advisory to qa_evidence_template.md: evidence table rows should map 1:1 to backlog slice ACs. Where consolidation occurs, note which backlog ACs are covered in the evidence row. This prevents traceability cross-reference friction at verification. | Head of Specs Team | v4.3 |
+| Phase 3 deferred items (qa_signed_off stale state + branch safety at sprint close) both filed for v4.3. Delivery verification completed same session as sprint close resolution — no coordination friction between DoQ and PO roles. | Phase 4 | E | action-now | Positive: deferred Phase 3 items correctly filed; no recurrence escalations triggered. Verification sign-off coordination friction: none (all agent-mediated for governance-class sprint). No process change needed. | Sprint Execution Engine | — |
+
+**Recurrence Notes:**
+- No recurrence items identified. All Phase 4 patterns are either positive (action-now) or new items (defer to v4.3).
+- v4.1 deferred items: none — all were action-now positive patterns in v4.1.
