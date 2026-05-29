@@ -41,3 +41,33 @@ Cycle: 2026-05-29__release-v4.4
 - **EPIC pr_status stale at resume:** New this cycle. Minor. Defer; no escalation.
 - **Agent-mediated sign-off effectiveness:** New pattern validated this cycle (first all-agent-mediated sprint). Positive.
 - **Empty spec_references:** Second occurrence for doc-creation cycles. Still within deferred trajectory (target v4.5). Not yet a recurrence escalation.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-05-29__release-v4.4
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-05-30
+**Reviewed by:** Director of Quality
+**Prior cycle Phase 4 checked:** claude/cycles/2026-05-29__release-v4.3/lessons_learnt_cycle.md — Phase 4 present. See deferred item resolution notes below.
+
+**Prior cycle Phase 4 deferred items check:**
+- v4.3 Phase 4 — DoQ sign-off format for delegated_qa stories: **RESOLVED** in v4.4 ST-04. qa_evidence_template.md v1.4 now documents both sign-off variants (individual + aggregate). No recurrence.
+- v4.3 Phase 4 — AC consolidation in evidence (one-time calibration post-ST-03): **RESOLVED** — calibration period passed; no occurrence in v4.4.
+- v4.3 Phase 4 — empty spec_references for doc-creation stories: **Still deferred** (target v4.5). Third total occurrence (v4.3 Phase 4, v4.4 Phase 3, v4.4 Phase 4). Approaching 3-consecutive threshold — tracking continues.
+- v4.3 Phase 4 — clean cycle positive: **Recurrence (positive)** — fourth consecutive clean verification with zero deviations.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| BLG-GOV-19 criterion 1 gap for pre-planning cycles: EPIC-02 (3 delegated_decision stories) and EPIC-03 (2 delegated_frontend stories) triggered Tier 2 compliance advisory because criterion 1 requires "all stories autonomous" — but in a pre-planning sprint, stories are delegated for EXECUTION expertise while VERIFICATION is by document inspection only. The autonomous class rule was designed to protect against unverified UI/behavioral changes; neither EPIC applies. Two Tier 2 advisories filed; both non-halting in standard mode. | Phase 4 | A | defer | Add a verification-class sub-criterion to BLG-GOV-19 (or execution_prompt.md §3.2.A): "If all stories' VERIFICATION is by document inspection only (no behavioral/UI/staging check required), criterion 1 may be satisfied if criteria 2, 3, and 4 are met — regardless of EXECUTION classification." This prevents Tier 2 advisories from being generated for pure pre-planning sprints where delegated execution is necessary but verification remains autonomous in nature. | Head of Specs Team | v4.5 |
+| v4.3 Phase 4 deferred item — DoQ sign-off format — RESOLVED: ST-04 (qa_evidence_template.md v1.4) delivered both sign-off format variants. The sign-off format Tier 2 advisory that would have occurred in v4.3 did not occur in v4.4. Resolution within one cycle as targeted. | Phase 4 | E | action-now | Positive close. Resolution pipeline from Phase 4 friction item → backlog item → governed sprint story → template patch worked correctly in one cycle. No further action. | Sprint Execution Engine | — |
+| Empty spec_references for doc-creation stories: Third occurrence across Phase 4 runs (v4.3 Phase 4, v4.4 Phase 3, v4.4 Phase 4). All 7 SI-02 pre-planning stories (ST-06–12) have empty spec_references in backlog_slice — the stories ARE the spec artefacts. The target for remediation remains v4.5. This is not yet a recurrence escalation (still within original deferred trajectory) but is approaching the 3-consecutive threshold. | Phase 4 | A | defer | Carry forward: execution_prompt.md or verification_prompt.md to include a spec_references policy note for document-creation stories. If v4.5 also involves doc-creation stories with empty spec_references and no remediation, escalate to recurrence at that point. | Head of Specs Team | v4.5 |
+| Fourth consecutive clean verification with zero deviations and zero test scenario gaps: v4.4, v4.3, v4.2, v4.1 all verified with zero P0/P1/P2/P3 deviations. Gate sequencing (QA evidence fully signed before verification invocation), traceability (all spec_references populated), and sign-off coordination (DoQ + PO both available same day) all functioning well. | Phase 4 | E | action-now | Positive stable pattern. No process change needed. Carry-forward resolution (5 v4.3 items resolved, target met) and agent-mediated delegation (all delegated stories cleared within sprint without human escalation) are the contributing factors. | Sprint Execution Engine | — |
+
+**Recurrence Notes:**
+- **BLG-GOV-19 criterion 1 — pre-planning cycles:** New friction type this cycle (first all-delegation pre-planning sprint). Not a recurrence. Defer to v4.5.
+- **DoQ sign-off format:** RESOLVED. v4.3 Phase 4 item closed. Positive resolution.
+- **Empty spec_references for doc-creation stories:** Third occurrence. Still deferred (v4.5). Not yet escalated. Will escalate if v4.5 also shows this pattern with no remediation.
+- **Clean verification:** Fourth consecutive. Strong positive trend.
