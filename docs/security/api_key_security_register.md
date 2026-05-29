@@ -1,7 +1,7 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.0
+**Version:** 1.1
 **Last Updated:** 2026-05-29
 **Cycle:** 2026-05-29__release-v4.3 (ST-15 — BLG-GOV-50)
 
@@ -26,7 +26,7 @@ For rotation procedures, see: `docs/ops/api_key_rotation_policy.md`
 | Field | Value |
 |-------|-------|
 | Key name | Alpaca API Key ID |
-| Env var | `ALPACA_API_KEY` |
+| Env var | `APCA_API_KEY_ID` |
 | Purpose | Live and paper trading operations; real-time market data (prices, bars) |
 | Scope | Paper Trading or Live Trading (whichever is active) — read positions, place/cancel orders, stream prices |
 | Storage location | Render environment variables (staging and production services) |
@@ -34,7 +34,7 @@ For rotation procedures, see: `docs/ops/api_key_rotation_policy.md`
 | Rotation procedure | `docs/ops/alpaca_key_rotation_policy.md` |
 | Last rotation date | Unknown (pre-register baseline) |
 | Next rotation due | 12 months from last rotation |
-| Notes | Key ID is non-sensitive (public identifier). Secret (`ALPACA_API_SECRET`) is separate entry below. |
+| Notes | Key ID is non-sensitive (public identifier). Secret (`APCA_API_SECRET_KEY`) is separate entry below. Uses Alpaca Paper Trading SDK naming convention. |
 
 ---
 
@@ -43,11 +43,11 @@ For rotation procedures, see: `docs/ops/api_key_rotation_policy.md`
 | Field | Value |
 |-------|-------|
 | Key name | Alpaca API Secret |
-| Env var | `ALPACA_API_SECRET` |
+| Env var | `APCA_API_SECRET_KEY` |
 | Purpose | Required alongside Alpaca API Key ID for all authenticated API calls |
 | Scope | Same as Alpaca API Key — full Paper/Live Trading access |
 | Storage location | Render environment variables (staging and production services) |
-| Rotation cadence | Annual minimum (12 months) — rotate together with `ALPACA_API_KEY` |
+| Rotation cadence | Annual minimum (12 months) — rotate together with `APCA_API_KEY_ID` |
 | Rotation procedure | `docs/ops/alpaca_key_rotation_policy.md` |
 | Last rotation date | Unknown (pre-register baseline) |
 | Next rotation due | 12 months from last rotation |

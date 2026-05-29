@@ -245,21 +245,27 @@
         "ST-13": {
           "title": "Staging environment parity audit",
           "classification": "delegated_qa",
-          "status": "blocked_qa",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 534,
           "branch": "exec/2026-05-29__release-v4.3/EPIC-03",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260529-04",
-          "blocked_since_utc": "2026-05-29T14:30:00Z",
-          "unblock_criteria": "Staging parity report produced at docs/ops/ (AC-04) and Infrastructure & Operations Owner sign-off recorded in qa_evidence_EPIC-03.md (AC-05)",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-29T17:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/ops/staging_parity_report_v4.3.md"],
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable — staging-only verification task. All ACs (AC-01/02/03/04/05) require staging access. Blocked pending Infra Owner staging run. Must complete before ST-06/07/08 (EPIC-02)."
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "direct_staging",
+            "status": "cleared",
+            "findings_applied": ["APCA_* env var naming corrected in docs v1.1"],
+            "cleared_utc": "2026-05-29T17:00:00Z"
+          },
+          "notes": "All 5 ACs passed. Staging env vars confirmed (Render dashboard), DB schema confirmed (HTTP 200 on claude-audit-log + red-flag-journal), 4 v4.x endpoints health-checked (all 200). Parity report at docs/ops/staging_parity_report_v4.3.md. Doc fix: security register + rotation policy corrected from ALPACA_API_KEY → APCA_API_KEY_ID (v1.0→v1.1). ST-06/07/08/ST-14 now unblocked."
         },
         "ST-14": {
           "title": "claude-audit-log performance baseline",

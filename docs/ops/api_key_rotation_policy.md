@@ -1,7 +1,7 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.0
+**Version:** 1.1
 **Last Updated:** 2026-05-29
 **Cycle:** 2026-05-29__release-v4.3 (ST-15 — BLG-GOV-36)
 
@@ -25,8 +25,8 @@ This policy covers all external API credentials listed in `docs/security/api_key
 
 | Credential | Env Var | Rotation Cadence |
 |-----------|---------|------------------|
-| Alpaca API Key ID | `ALPACA_API_KEY` | Annual minimum (12 months) |
-| Alpaca API Secret | `ALPACA_API_SECRET` | Annual minimum (12 months) |
+| Alpaca API Key ID | `APCA_API_KEY_ID` | Annual minimum (12 months) |
+| Alpaca API Secret | `APCA_API_SECRET_KEY` | Annual minimum (12 months) |
 | Anthropic API Key | `ANTHROPIC_API_KEY` | Annual minimum (12 months) |
 | News API Key | `NEWS_API_KEY` | Annual minimum (12 months) |
 | Supabase DB Connection | `DATABASE_URL` | On suspected compromise only |
