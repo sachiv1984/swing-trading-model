@@ -1,7 +1,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Report (Class 3)
 **Status:** Final
-**Version:** 1.0
+**Version:** 1.1
 **Last Updated:** 2026-05-29
 **Cycle:** 2026-05-29__release-v4.3 (ST-13 — BLG-OPS-33)
 
@@ -11,7 +11,13 @@
 
 ## Purpose
 
-Documents the results of the v4.3 pre-sprint staging environment parity audit (ST-13). Confirms that the staging environment at `https://trading-assistant-staging.onrender.com` is aligned with the production environment and ready for v4.3 staging verifications (ST-06, ST-07, ST-08, ST-14).
+Documents the results of the v4.3 pre-sprint staging environment parity audit (ST-13). Confirms that the staging environment is aligned with the production environment and ready for v4.3 staging verifications (ST-06, ST-07, ST-08, ST-14).
+
+**Staging services:**
+- Frontend: `https://trading-assistant-staging.onrender.com` (React SPA)
+- Backend API: `https://trading-assistant-api-staging.onrender.com` (FastAPI)
+
+> **Note (v1.1):** Initial AC-02/AC-03 checks were run against the frontend URL (returned HTTP 200 from React SPA catch-all). Re-verified against the backend API URL — all results confirmed correct.
 
 ---
 
@@ -19,7 +25,8 @@ Documents the results of the v4.3 pre-sprint staging environment parity audit (S
 
 | Property | Value |
 |----------|-------|
-| Staging URL | `https://trading-assistant-staging.onrender.com` |
+| Frontend URL | `https://trading-assistant-staging.onrender.com` |
+| Backend API URL | `https://trading-assistant-api-staging.onrender.com` |
 | Host | Render (staging service) |
 | Audit date | 2026-05-29 |
 | Auditor | Infrastructure & Operations Owner |

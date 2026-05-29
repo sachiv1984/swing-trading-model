@@ -1,7 +1,7 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.1
+**Version:** 1.2
 **Last Updated:** 2026-05-29
 **Cycle:** 2026-05-29__release-v4.3 (ST-15 — BLG-GOV-50)
 
@@ -63,12 +63,12 @@ For rotation procedures, see: `docs/ops/api_key_rotation_policy.md`
 | Env var | `ANTHROPIC_API_KEY` |
 | Purpose | AI thesis generation for trade plans (`POST /trade-plans/{plan_id}/generate-thesis`); calls `claude-haiku-4-5` via Anthropic SDK |
 | Scope | Full Anthropic API access (platform does not support key-level scope restriction — see `docs/security/anthropic_api_key_scope_review.md`) |
-| Storage location | Render environment variables (production service only — staging excluded; see notes) |
+| Storage location | Render environment variables (production and staging services) |
 | Rotation cadence | Annual minimum (12 months) |
 | Rotation procedure | `docs/ops/api_key_rotation_policy.md §Anthropic API Key` |
 | Last rotation date | Unknown (first register entry — v4.3, 2026-05-29) |
 | Next rotation due | 2026-08-25 (90 days from first inventory entry in external_api_credential_inventory.md) |
-| Notes | Not configured on staging (Anthropic API key absent from staging Render env — `ANTHROPIC_API_KEY` is production-only). Legacy service file `backend/services/gemini_service.py` uses this key (filename retained for backward compatibility). Cost audit logging active via `claude_audit_log` table. Monthly threshold alert: $5.00 (`docs/ops/gemini_cost_tracking.md`). |
+| Notes | Configured on both production and staging (added to staging 2026-05-29 for QA verification — ST-06). Frontend feature flag uses `REACT_APP_ANTHROPIC_API_KEY=true` (build-time env var, set in Render frontend service). Legacy service file `backend/services/gemini_service.py` uses this key (filename retained for backward compatibility). Cost audit logging active via `claude_audit_log` table. Monthly threshold alert: $5.00 (`docs/ops/gemini_cost_tracking.md`). |
 
 ---
 

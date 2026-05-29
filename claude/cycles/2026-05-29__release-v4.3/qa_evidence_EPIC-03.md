@@ -76,8 +76,8 @@
 
 | AC | Criterion | Evidence | Status |
 |----|-----------|----------|--------|
-| AC-01 | `GET /ai/claude-audit-log` added to `api_performance_baseline.md` with at least estimated p50 latency | `docs/ops/api_performance_baseline.md` v1.9 §16 updated with actual staging measurements: 7 samples, p50=55ms, p95=66ms. Well within thresholds. | Pass |
-| AC-02 | Reviewed by Infrastructure & Operations Owner | Infra Owner signed off in §16 of api_performance_baseline.md v1.9 — 2026-05-29. | Pass |
+| AC-01 | `GET /ai/claude-audit-log` added to `api_performance_baseline.md` with at least estimated p50 latency | `docs/ops/api_performance_baseline.md` v2.0 §16 — corrected 7-sample run against backend API (`trading-assistant-api-staging.onrender.com`): p50=2,541ms, p95=2,858ms. Flagged above 500ms threshold; attributed to Render starter-tier staging latency. | Pass |
+| AC-02 | Reviewed by Infrastructure & Operations Owner | Infra Owner signed off in §16 of api_performance_baseline.md v2.0 — 2026-05-29. | Pass |
 
 ---
 
@@ -87,7 +87,7 @@
 
 - ST-15: All 8 ACs passed. CTL approved. Env var names corrected to match backend code.
 - ST-13: All 5 ACs passed. Staging verification complete. ST-06/07/08 and ST-14 unblocked.
-- ST-14: All 2 ACs passed. p50=55ms, p95=66ms — significantly faster than estimated. BLG-OPS-42 closed.
+- ST-14: All 2 ACs passed. Corrected measurement: p50=2,541ms, p95=2,858ms against backend API URL (prior v1.9 measurements were against frontend SPA — invalid). Flagged above 500ms threshold; staging-tier caveat noted. BLG-OPS-42 closed.
 
 **Deviations:** None.
 
