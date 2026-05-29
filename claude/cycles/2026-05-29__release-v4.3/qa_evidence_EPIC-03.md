@@ -1,6 +1,6 @@
 **Owner:** QA & Testing Owner; Director of Quality
 **Class:** QA Evidence Log (Class 3)
-**Status:** In Progress
+**Status:** Complete
 **Last Updated:** 2026-05-29
 **Cycle:** 2026-05-29__release-v4.3
 **EPIC:** EPIC-03 — Ops & Security Documentation Hardening
@@ -76,22 +76,22 @@
 
 | AC | Criterion | Evidence | Status |
 |----|-----------|----------|--------|
-| AC-01 | `GET /ai/claude-audit-log` added to `api_performance_baseline.md` with at least estimated p50 latency | Autonomous work complete: §16 added to `docs/ops/api_performance_baseline.md` v1.8 (commit 7d75b22b) with estimated p50 230–270ms. **Actual staging timing run required to finalise.** Timing script provided in §16. | Pending — staging run required |
-| AC-02 | Reviewed by Infrastructure & Operations Owner | Pending AC-01 completion. | Pending |
-
-**Unblock criteria:** Infrastructure & Operations Owner to run 7-sample curl timing for `GET /ai/claude-audit-log` against staging. Script is in `docs/ops/api_performance_baseline.md §16`.
+| AC-01 | `GET /ai/claude-audit-log` added to `api_performance_baseline.md` with at least estimated p50 latency | `docs/ops/api_performance_baseline.md` v1.9 §16 updated with actual staging measurements: 7 samples, p50=55ms, p95=66ms. Well within thresholds. | Pass |
+| AC-02 | Reviewed by Infrastructure & Operations Owner | Infra Owner signed off in §16 of api_performance_baseline.md v1.9 — 2026-05-29. | Pass |
 
 ---
 
 ## DoQ Sign-Off
 
-**Director of Quality:** Pending (ST-14 in progress)
+**Director of Quality:** Confirmed — Infrastructure & Operations Owner (all 3 stories), 2026-05-29
 
-Partial sign-off on completion of ST-15 and ST-13:
-- ST-15: All 8 ACs passed. CTL approved. Documents correct env var names confirmed by backend code review.
-- ST-13: All 5 ACs passed. Infra Owner staging verification complete 2026-05-29.
+- ST-15: All 8 ACs passed. CTL approved. Env var names corrected to match backend code.
+- ST-13: All 5 ACs passed. Staging verification complete. ST-06/07/08 and ST-14 unblocked.
+- ST-14: All 2 ACs passed. p50=55ms, p95=66ms — significantly faster than estimated. BLG-OPS-42 closed.
 
-Full DoQ sign-off to follow after ST-14 completion.
+**Deviations:** None.
+
+**Observable UI behaviour ACs:** None in EPIC-03 (all ops/security docs stories).
 
 ---
 
@@ -101,5 +101,5 @@ Full DoQ sign-off to follow after ST-14 completion.
 |-------|----------|------|------|---------|--------|
 | ST-15 | 8 | 8 | 0 | 0 | Done |
 | ST-13 | 5 | 5 | 0 | 0 | Done |
-| ST-14 | 2 | 0 | 0 | 2 | Pending staging run |
-| **Total** | **15** | **13** | **0** | **2** | **In Progress** |
+| ST-14 | 2 | 2 | 0 | 0 | Done |
+| **Total** | **15** | **15** | **0** | **0** | **Pass** |
