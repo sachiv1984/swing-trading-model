@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.3
+**Version:** 1.4
 **Last Updated:** 2026-05-29
 
 # QA Evidence Template
@@ -56,6 +56,19 @@ Last Updated: <date>
 - Signed off by: Director of Quality
 - Date: <fill in — must be non-blank>
 - Comments:
+
+> **Delegated-QA sign-off pattern (BLG-GOV-69/74):** When individual stories within an EPIC used the `delegated_qa` delegation class (each story signed off by its domain owner, not the Director of Quality directly), two valid sign-off formats are accepted for the EPIC-level DoQ sign-off block:
+>
+> **Format (i) — Individual sign-off:**
+> - Signed off by: Director of Quality
+> - Date: YYYY-MM-DD
+> - Comments: Story-level sign-offs provided by [owner names] for [N] stories; reviewed and acknowledged in aggregate.
+>
+> **Format (ii) — Aggregate acknowledgement:**
+> - Signed off by: Director of Quality: Confirmed — [owner] ([N] stories), YYYY-MM-DD
+> - Date: YYYY-MM-DD
+>
+> Both variants are valid. The `Date:` field must be non-blank in both formats before the PR can be opened and before the merge gate runs. The EPIC-level DoQ block is always required even when per-story sign-offs have been collected — it represents the Director of Quality's acknowledgement of the aggregate evidence.
 
 ---
 

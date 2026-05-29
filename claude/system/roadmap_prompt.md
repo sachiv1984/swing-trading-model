@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 6.5
-**Last Updated:** 2026-05-21 (v6.5)
+**Version:** 6.6
+**Last Updated:** 2026-05-29 (v6.6)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -493,6 +493,20 @@ Hard rules: Adds require stops; stops ≥ adds; scarce skills protected. Quality
 **Displacement candidate flag:** If any initiative is the natural next-stop candidate, record in `claude/roadmap/initiative_register.md`: `Displacement candidate: Yes — <rationale> — <date>`. Not in `cycle_record.md` or `current_roadmap.md`.
 
 Valid outcome: no changes made. Still requires roadmap Last Updated refresh and a "no change" decision log entry.
+
+---
+
+### STEP 8.1 — Empty Now Horizon Advisory (Extended-Tier No-Change)
+
+**Condition — ALL must be true:**
+1. This run is an Extended-tier scheduled rebalance
+2. Rebalance outcome is "no change" (no additions, no kills, no promotions in STEP 8)
+3. `## 3. Delivery Plan — Horizon: Now` in `current_roadmap.md` contains no committed (non-shipped) items
+4. No next-release section exists in `current_roadmap.md` for the next anticipated release
+
+**Advisory (non-blocking):** If Now horizon is empty after this rebalance and no next-release section exists in `current_roadmap.md` for the next anticipated release, the Product Owner should add one now — omitting it will trigger STEP -1.2 of the Release Planning Engine at every subsequent invocation until resolved. Record this advisory in `run_manifest.md`.
+
+If this advisory fires on consecutive scheduled rebalances without resolution, record as a recurring advisory in `run_manifest.md` and surface to Product Owner.
 
 ---
 

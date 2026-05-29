@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.32
+**Version:** 3.33
 **Last Updated:** 2026-05-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -139,7 +139,7 @@ When an ST item's seal condition or acceptance criteria require sign-off from a 
 2. Locate the agent file: `claude/agents/<role_slug>.md` (e.g. "Head of Specs Team" → `head_of_specs_team.md`).
 3. If the agent file exists: invoke a general-purpose subagent with the role's charter and the artefact(s) to review. The subagent evaluates against the role's §5 (quality bar) and any domain-specific standards in the charter.
 4. The subagent returns: `Approved` or `Blocked` + findings list.
-5. If `Approved`: record sign-off in `execution_state.json` `sign_off_record` for the item; proceed.
+5. If `Approved`: record sign-off in `execution_state.json` `sign_off_record` for the item; proceed. **BLG-GOV-73 — Deviations_filed auto-set on clearance:** When setting `sign_off_record.status = "cleared"` for a delegated story (any delegation class), if no DEV-* deviation record was filed for that story, also set `deviations_filed = true` in the same operation. Condition: delegated story + sign-off cleared + no DEV-* record filed → `deviations_filed = true`. This prevents the batch-correction pattern at sprint close for cleared delegated stories.
 6. If `Blocked`: apply the findings in-session, re-invoke the sign-off agent. Maximum 2 retries.
 7. If still `Blocked` after 2 retries, or if no agent file exists: surface to the user as a `delegated_decision` block with the outstanding findings listed explicitly.
 
