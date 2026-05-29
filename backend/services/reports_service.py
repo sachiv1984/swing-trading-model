@@ -14,9 +14,14 @@ so net_proceeds is the correct value.
 
 import csv
 import io
-from datetime import date, datetime, timezone
+import os
+from datetime import date, datetime, timezone, timedelta
 from io import BytesIO
-from typing import Dict
+from typing import Dict, Optional
+
+import psycopg2
+from psycopg2.extras import RealDictCursor
+from urllib.parse import urlparse, urlencode, urlunparse, parse_qs
 
 from database import (
     get_portfolio,
@@ -25,6 +30,109 @@ from database import (
     get_monthly_pnl,
 )
 from utils.formatting import decimal_to_float
+
+
+def _clean_db_url_reports(url: str) -> str:
+    parsed = urlparse(url)
+    params = parse_qs(parsed.query, keep_blank_values=True)
+    params.pop("pgbouncer", None)
+    new_query = urlencode({k: v[0] for k, v in params.items()})
+    return urlunparse(parsed._replace(query=new_query))
+
+
+def get_arc5_compliance_summary(period_days: int = 30) -> Optional[dict]:
+    """
+    Return Arc 5 compliance metrics for the given period (default 30d).
+
+    Returns a dict with: validation_pass_rate, override_count,
+    red_flag_events_count, most_frequent_rule_breach.
+    Returns None if DATABASE_URL is not configured.
+
+    Spec: docs/specs/api_contracts/arc5_compliance_analytics.md
+    """
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        return None
+
+    since_iso = (datetime.now(timezone.utc) - timedelta(days=period_days)).isoformat()
+    week_ago_iso = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+
+    try:
+        conn = psycopg2.connect(_clean_db_url_reports(database_url))
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+
+        try:
+            # Overall validation pass rate across all rules for period
+            validation_pass_rate = None
+            try:
+                cursor.execute("""
+                    SELECT
+                        COUNT(*) FILTER (WHERE status = 'pass') AS pass_count,
+                        COUNT(*) AS total
+                    FROM pre_entry_validation_log
+                    WHERE validated_at >= %s::timestamptz
+                """, (since_iso,))
+                row = cursor.fetchone()
+                if row and int(row['total']) > 0:
+                    validation_pass_rate = round(int(row['pass_count']) / int(row['total']), 4)
+            except psycopg2.errors.UndefinedTable:
+                cursor.connection.rollback()
+
+            # Override count (last 7d for consistency with arc5-compliance endpoint)
+            override_count = 0
+            try:
+                cursor.execute("""
+                    SELECT COUNT(*) AS cnt FROM red_flag_events
+                    WHERE created_at >= %s::timestamptz
+                      AND event_type = 'pre_entry_override'
+                """, (week_ago_iso,))
+                row = cursor.fetchone()
+                override_count = int(row['cnt']) if row else 0
+            except psycopg2.errors.UndefinedTable:
+                cursor.connection.rollback()
+
+            # Red flag events count (period)
+            red_flag_events_count = 0
+            try:
+                cursor.execute("""
+                    SELECT COUNT(*) AS cnt FROM red_flag_events
+                    WHERE created_at >= %s::timestamptz
+                """, (since_iso,))
+                row = cursor.fetchone()
+                red_flag_events_count = int(row['cnt']) if row else 0
+            except psycopg2.errors.UndefinedTable:
+                cursor.connection.rollback()
+
+            # Most frequent rule breach (period)
+            most_frequent_rule_breach = None
+            try:
+                cursor.execute("""
+                    SELECT rule_type, COUNT(*) AS fail_count
+                    FROM pre_entry_validation_log
+                    WHERE validated_at >= %s::timestamptz
+                      AND status = 'fail'
+                    GROUP BY rule_type
+                    ORDER BY fail_count DESC
+                    LIMIT 1
+                """, (since_iso,))
+                row = cursor.fetchone()
+                if row:
+                    most_frequent_rule_breach = row['rule_type']
+            except psycopg2.errors.UndefinedTable:
+                cursor.connection.rollback()
+
+            return {
+                "period_days": period_days,
+                "validation_pass_rate": validation_pass_rate,
+                "override_count": override_count,
+                "red_flag_events_count": red_flag_events_count,
+                "most_frequent_rule_breach": most_frequent_rule_breach,
+            }
+        finally:
+            cursor.close()
+            conn.close()
+    except Exception:
+        return None
 
 
 UNREALISED_NOTE = (

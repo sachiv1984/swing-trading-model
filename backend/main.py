@@ -136,6 +136,7 @@ from services import (
     build_tax_year_pdf,
     build_tax_year_csv,
     get_monthly_pnl_report,
+    get_arc5_compliance_summary,
 )
 app = FastAPI(title=API_TITLE)
 
@@ -604,13 +605,14 @@ def get_monthly_pnl_endpoint():
     """
     GET /reports/monthly-pnl
 
-    Returns month-by-month realised P&L for the current and prior calendar year.
-    Response is an array sorted descending by year then month.
-    Spec: reports_endpoints.md §GET /reports/monthly-pnl (v3.1)
+    Returns month-by-month realised P&L for the current and prior calendar year,
+    plus a strategy_compliance summary (30d Arc 5 compliance metrics).
+    Spec: reports_endpoints.md §GET /reports/monthly-pnl (v3.1, ST-18 v4.3)
     """
     try:
         data = get_monthly_pnl_report()
-        return {"status": "ok", "data": data}
+        strategy_compliance = get_arc5_compliance_summary(period_days=30)
+        return {"status": "ok", "data": data, "strategy_compliance": strategy_compliance}
     except Exception as e:
         return JSONResponse(status_code=500,
             content={"status": "error", "message": str(e)})

@@ -110,7 +110,7 @@ function NewsContextPanel({ ticker, market }) {
   );
 }
 
-const HAS_GEMINI = !!process.env.REACT_APP_ANTHROPIC_API_KEY;
+const HAS_AI = !!process.env.REACT_APP_ANTHROPIC_API_KEY;
 
 const RULE_LABELS = {
   regime_gate: "Regime Gate",
@@ -120,13 +120,18 @@ const RULE_LABELS = {
   sizing_validity: "Sizing Validity",
 };
 
-function PreEntryValidationPanel({ ticker, market, quantity, overrideAcknowledged, onOverrideChange }) {
+function PreEntryValidationPanel({ ticker, market, quantity, entryPrice, stopPrice, overrideAcknowledged, onOverrideChange }) {
   const [collapsed, setCollapsed] = useState(false);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["pre-entry-validation", ticker, market, quantity],
+    queryKey: ["pre-entry-validation", ticker, market, quantity, entryPrice, stopPrice],
     queryFn: async () => {
-      const params = new URLSearchParams({ ticker, quantity, market });
+      const paramObj = { ticker, quantity, market };
+      const ep = parseFloat(entryPrice);
+      const sp = parseFloat(stopPrice);
+      if (!isNaN(ep) && ep > 0) paramObj.entry_price = ep;
+      if (!isNaN(sp) && sp > 0) paramObj.stop_price = sp;
+      const params = new URLSearchParams(paramObj);
       const r = await apiFetch(`${API_BASE}/portfolio/pre-entry-validation?${params}`);
       const j = await r.json();
       return j.data;
@@ -321,11 +326,13 @@ export default function TradePlan() {
   const [saved, setSaved] = useState(false);
   const [isAiDraft, setIsAiDraft] = useState(false);
   const hasUnsavedAiChanges = useRef(false);
-  const [isGeminiLoading, setIsGeminiLoading] = useState(false);
+  const [isAiLoading, setIsAiLoading] = useState(false);
   const [showAbandonModal, setShowAbandonModal] = useState(false);
   const [abandonReason, setAbandonReason] = useState("");
   const [abandonReasonTouched, setAbandonReasonTouched] = useState(false);
   const [plannedQuantity, setPlannedQuantity] = useState("");
+  const [plannedEntryPrice, setPlannedEntryPrice] = useState("");
+  const [plannedStopPrice, setPlannedStopPrice] = useState("");
 
   const { data: healthData } = useQuery({
     queryKey: ["market-status"],
@@ -623,7 +630,7 @@ export default function TradePlan() {
 
         <NewsContextPanel ticker={form.ticker} market={form.market} />
 
-        {/* Pre-Entry Validation — ST-03 */}
+        {/* Pre-Entry Validation — ST-03 / ST-16 */}
         <Field label="Planned Shares (for pre-entry checks)">
           <TextInput
             type="number"
@@ -632,10 +639,32 @@ export default function TradePlan() {
             placeholder="e.g. 50"
           />
         </Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Planned Entry Price (optional)">
+            <TextInput
+              type="number"
+              data-testid="planned-entry-price-input"
+              value={plannedEntryPrice}
+              onChange={(e) => setPlannedEntryPrice(e.target.value)}
+              placeholder="e.g. 150.00"
+            />
+          </Field>
+          <Field label="Planned Stop Price (optional)">
+            <TextInput
+              type="number"
+              data-testid="planned-stop-price-input"
+              value={plannedStopPrice}
+              onChange={(e) => setPlannedStopPrice(e.target.value)}
+              placeholder="e.g. 142.00"
+            />
+          </Field>
+        </div>
         <PreEntryValidationPanel
           ticker={form.ticker}
           market={form.market}
           quantity={plannedQuantity}
+          entryPrice={plannedEntryPrice}
+          stopPrice={plannedStopPrice}
           overrideAcknowledged={form.pre_entry_override_acknowledged}
           onOverrideChange={(val) => setForm((prev) => ({ ...prev, pre_entry_override_acknowledged: val }))}
         />
@@ -670,14 +699,14 @@ export default function TradePlan() {
                 <Sparkles size={12} />
                 Generate thesis
               </button>
-              {HAS_GEMINI && form.ticker && (
+              {HAS_AI && form.ticker && (
                 <button
                   type="button"
                   data-testid="improve-with-ai-btn"
-                  disabled={isGeminiLoading}
+                  disabled={isAiLoading}
                   className="flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={async () => {
-                    setIsGeminiLoading(true);
+                    setIsAiLoading(true);
                     try {
                       const res = await apiFetch(`${API_BASE}/trade-plans/generate-plan`, {
                         method: "POST",
@@ -714,11 +743,11 @@ export default function TradePlan() {
                         hasUnsavedAiChanges.current = true;
                       }
                     } catch (_) {}
-                    setIsGeminiLoading(false);
+                    setIsAiLoading(false);
                   }}
                 >
                   <Sparkles size={12} />
-                  {isGeminiLoading ? "Generating…" : "Improve with AI"}
+                  {isAiLoading ? "Generating…" : "Improve with AI"}
                 </button>
               )}
             </div>
