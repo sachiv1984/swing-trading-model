@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.31
-**Last Updated:** 2026-05-21
+**Version:** 2.32
+**Last Updated:** 2026-05-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -937,6 +937,8 @@ If no High-priority risks have a "must resolve before sprint planning seal" disp
 This checklist is designed to be consumed by the Sprint Planning Engine at its preflight step — making explicit what must be decided before the sprint plan can be sealed.
 
 **Intermediate global state sync (required before writing cycle_summary.md):**
+
+> **RESUME PRECHECK:** If the session was resumed via context compaction and STEP 7 has completed without the intermediate sync being performed, execute the intermediate sync immediately before proceeding to STEP 8. Do not proceed to STEP 8 with stale `.claude_current_state.json` state from the prior cycle.
 
 Before writing `cycle_summary.md`, update `.claude_current_state.json` to reflect the current in-progress state. This is a pre-publish sync — it does not mark the cycle Published. Its purpose is to ensure the global state pointer reflects the active cycle if the session is interrupted before STEP 9.
 

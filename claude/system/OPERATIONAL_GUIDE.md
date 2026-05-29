@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.13
+**Version:** 4.18
 **Last Updated:** 2026-05-29
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v6.5)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v6.6)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -620,7 +620,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.31)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.32)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -763,7 +763,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.7)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.8)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -861,7 +861,7 @@ Use this table when designating `**Staging-only ACs:**` in sprint_backlog.md sto
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.32)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.33)
 
 ### 8.1 Invocation
 
@@ -1424,7 +1424,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.13 |
+| Version | 4.18 |
 | Last Updated | 2026-05-29 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
@@ -1433,11 +1433,12 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.7 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.5 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.31 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.7 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.6 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.32 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.8 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.32 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.33 |
+| QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.4 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.8 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.12 |
@@ -1463,6 +1464,11 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.18 | 2026-05-29 | **v4.4 ST-05 — release_planning_prompt.md v2.31→v2.32 RESUME PRECHECK patch.** §6B source prompt header updated v2.31→v2.32. §14 Release Engine Source v2.31→v2.32. Change: STEP 7 Intermediate global state sync — RESUME PRECHECK note added: if session resumed via context compaction and STEP 7 completed without intermediate sync, execute sync immediately before proceeding to STEP 8. Prevents stale `.claude_current_state.json` on session resume. Authority: Head of Specs Team (BLG-GOV-74 deferred, v4.3 LL-2, v4.4 ST-05). |
+| 4.17 | 2026-05-29 | **v4.4 ST-04 — qa_evidence_template.md v1.3→v1.4 delegated_qa sign-off format.** §14 QA Evidence Template row added (new row). Change: Standard Sign-Off Block updated with delegated_qa pattern note (BLG-GOV-69/74): two valid sign-off formats documented — (i) individual DoQ sign-off with aggregate comment; (ii) DoQ aggregate acknowledgement format. Both valid; Date field non-blank requirement unchanged. Template clarifies both variants. Authority: Head of Specs Team (BLG-GOV-69 + BLG-GOV-74, v4.4 ST-04). |
+| 4.16 | 2026-05-29 | **v4.4 ST-03 — execution_prompt.md v3.32→v3.33 deviations_filed auto-set on delegation clearance.** §8 source prompt header updated v3.32→v3.33. §14 Execution Engine Source v3.32→v3.33. Change: §5.3 Protocol step 5 — when setting `sign_off_record.status = "cleared"` for a delegated story with no DEV-* record filed, also set `deviations_filed = true` in the same operation (BLG-GOV-73). Eliminates batch-correction pattern at sprint close for cleared delegated stories. Authority: Head of Specs Team (BLG-GOV-73, v4.4 ST-03). |
+| 4.15 | 2026-05-29 | **v4.4 ST-02 — sprint_planning_prompt.md v3.7→v3.8 frontend classification fast-path.** §7 source prompt header updated v3.7→v3.8. §14 Sprint Planning Engine v3.7→v3.8. Change: BLG-GOV-72 frontend classification fast-path added to §3.1 delegation class assignment — three story types default to `autonomous`: (a) prop/state bug fix; (b) variable rename; (c) new section/component against locked spec with Playwright feasibility confirmed. `delegated_frontend` only when engine genuinely cannot complete; justification required in sprint_planning_notes.md. Authority: Head of Specs Team (BLG-GOV-72, 3rd recurrence, v4.4 ST-02). |
+| 4.14 | 2026-05-29 | **v4.4 ST-01 — roadmap_prompt.md v6.5→v6.6 STEP 8.1 empty Now horizon advisory.** §6 source prompt header updated v6.5→v6.6. §14 Roadmap Engine Source v6.5→v6.6. Change: STEP 8.1 added (between STEP 8 and STEP 8.5) — advisory for Extended-tier no-change rebalances where Now horizon is empty and no next-release section exists: PO advised to add next-release section to prevent repeated STEP -1.2 gate fires in Release Planning Engine. Non-blocking. Authority: Head of Specs Team (BLG-GOV-71, 3rd recurrence, v4.4 ST-01). |
 | 4.10 | 2026-05-28 | **Branch safety hard gate added to delivery_verification_prompt.md v2.7→v2.8 and post_ship_closure.md v2.11→v2.12.** §9 source prompt header updated v2.7→v2.8. §10 source prompt header updated v2.11→v2.12. §14 Verification Engine Source v2.7→v2.8. §14 Post-Ship Closure Engine v2.11→v2.12. §14 Version 4.09→4.10/2026-05-28. Change: STEP -1 of both prompts now opens with a Branch Safety Check (Hard Gate) — `git branch --show-current` must return `main`; if not, halt with instructions to checkout main and re-invoke. Prevents governance artefacts from being committed to exec branches (root cause of v4.1 post-ship artefacts landing on exec/v4.1/EPIC-03 after PR merge). Authority: Head of Specs Team (2026-05-28). |
 | 4.09 | 2026-05-27 | **Throughput improvement — post_ship_closure.md v2.10→v2.11 — rebalance cadence advisory.** §10 source prompt header updated v2.10→v2.11. §14 Post-Ship Closure Engine v2.10→v2.11. §14 Version 4.08→4.09/2026-05-27. Change: STEP 0 — Rebalance Cadence Check added (advisory, non-blocking): if `completed_cycle_count % 2 == 0` emit "REBALANCE DUE" advisory; if odd emit "REBALANCE SKIP — proceed directly to plan release". Rationale: rebalances run every 2nd cycle to reduce governance overhead and increase release throughput; PO may override on any cycle. Advisory Summary Block description updated to include rebalance cadence as a source. Authority: Product Owner (2026-05-27). |
 | 4.08 | 2026-05-27 | **AUD-2026-05-27-002: execution_prompt.md v3.29→v3.30 — STEP 5.0A null pr_number recovery.** §8 source prompt header updated v3.29→v3.30. §14 Execution Engine Source v3.29→v3.30. §14 Version 4.07→4.08/2026-05-27. Change: STEP 5.0A extended with Step 1 (pr_number recovery): before pr_status sync, if EPIC.pr_number is null or 0, run `gh pr list --search "[EPIC-xx]" --state merged` to recover the PR number; if found, record it in execution_state.json; if not found, record "not_found" and log process gap in sprint_close.md (non-blocking). Resolves v4.1 P3-01 carry-forward (2nd recurrence: v4.0 EPIC-02 + v4.1 EPIC-03 required manual git log scan for null pr_number). Authority: Head of Specs Team (AUD-2026-05-27-002, 2026-05-27). |

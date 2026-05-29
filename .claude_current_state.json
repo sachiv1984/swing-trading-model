@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-05-29__release-v4.4",
   "cycle_name": "Release Planning — v4.4 Governance Patches, SI-02 Pre-Planning Sprint & Ops Hardening",
-  "status": "Sprint_Planning_Complete",
-  "engine": "sprint_planning",
+  "status": "Executing",
+  "engine": "sprint_execution",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-05-29__release-v4.4/stage4_backlog_slice.md",
   "sprint_sealed": true,

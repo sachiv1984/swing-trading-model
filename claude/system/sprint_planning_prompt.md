@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.7
-**Last Updated:** 2026-05-27
+**Version:** 3.8
+**Last Updated:** 2026-05-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -345,6 +345,13 @@ Classify each item:
 - `delegated_backend` / `delegated_frontend` / `delegated_qa` / `delegated_decision` — requires human review, decision, or execution at a specific step
 
 **LL-v1.10-P3-3 — Autonomous heuristic:** "Refactor to call existing client-side API with no UX change" = `autonomous`. Conservative `delegated_frontend` is valid but must be explicitly justified — over-classification adds unnecessary handoff.
+
+**BLG-GOV-72 — Frontend classification fast-path (default autonomous):** The following story types default to `autonomous` unless new design decisions are required:
+- (a) Prop/state threading bug fix with no UX change
+- (b) Variable rename within a React component (no behaviour change)
+- (c) New section or component implemented against a locked frontend spec where Playwright feasibility has been confirmed
+
+Apply `delegated_frontend` only when the story genuinely cannot be completed by the engine (e.g., new UX design required, external stakeholder input needed, or no locked spec exists). Record the specific justification in `sprint_planning_notes.md` when overriding the default-autonomous classification.
 
 **LL-v2.0-P4-2 — Test scenario gap:** Every `delegated_frontend` item introducing a new page or new user-facing controls (not a refactor of existing UI): set EPIC `test_scenarios = "pending — QA & Testing Owner to author before next sprint on this domain"` in `execution_state.json`; record in `sprint_planning_notes.md`.
 
