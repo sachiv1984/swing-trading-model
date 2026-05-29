@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.7
-**Date:** 2026-05-28
+**Version:** 1.8
+**Date:** 2026-05-29
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -532,10 +532,60 @@ Signed: [x] Infrastructure & Operations Owner — 2026-05-28
 
 ---
 
+## 16. v4.2 Claude API Audit Log Endpoint — Pending Staging Measurement
+
+**Date:** 2026-05-29
+**Story:** ST-14 (EPIC-03, v4.3) — BLG-OPS-42
+**Status:** Estimated p50 registered; actual staging timing run pending (Infrastructure & Operations Owner action)
+
+The following endpoint was added in v4.2 (ST-07, EPIC-02) and is absent from the performance baseline. ST-14 (v4.3 EPIC-03) requires it to be added.
+
+| Endpoint | Added in | Story | Eligible for timing run |
+|----------|----------|-------|------------------------|
+| GET /ai/claude-audit-log | v4.2 | ST-07 (EPIC-02, v4.2) | Yes — parameterless GET, returns paginated audit records |
+
+### Estimated Performance Profile
+
+Based on comparable single-table `SELECT … LIMIT` endpoints measured with Supavisor enabled (§10 re-run):
+
+| Metric | Estimated Value | Basis |
+|--------|----------------|-------|
+| p50 | 230–270ms | DB-backed, single `claude_audit_log` table, LIMIT 50; consistent with `POST /ai/check-daily-cost` p50=205ms (§14) and Supavisor cluster p50 range 226–244ms (§10) |
+| p95 | 400–600ms | Tail jitter consistent with established Supavisor pattern |
+| Flag threshold | p95 > 1,000ms triggers review | Standard DB-endpoint threshold |
+
+**Endpoint characteristics:**
+- Query: `SELECT * FROM claude_audit_log ORDER BY created_at DESC LIMIT :limit` (parameterised by `limit` query param, default 50, max 200)
+- No path parameters required for default call
+- Returns JSON array of audit records (timestamp, model, tokens_used, cost_usd, duration_ms, operation_type)
+- Not an AI inference endpoint — latency is DB-dominated, not external-API-dominated
+
+### Outstanding Action
+
+Infrastructure & Operations Owner to run 7-sample timing test against staging (`GET /ai/claude-audit-log?limit=50`) using the same warm-service methodology as §10:
+
+```
+# Warm-up call:
+curl -s -o /dev/null https://trading-assistant-api-staging.onrender.com/ai/claude-audit-log \
+  -H "X-API-Key: $STAGING_API_KEY"
+
+# 7 timed samples:
+for i in {1..7}; do
+  curl -s -o /dev/null -w "%{time_total}\n" \
+    https://trading-assistant-api-staging.onrender.com/ai/claude-audit-log?limit=50 \
+    -H "X-API-Key: $STAGING_API_KEY"
+done
+```
+
+Record p50, p95, min, max in a table replacing the estimates above. Update this section with actual values and Infrastructure & Operations Owner sign-off.
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 1.8 | 2026-05-29 | Sprint Execution Engine | ST-14 (v4.3 EPIC-03, BLG-OPS-42): §16 added — GET /ai/claude-audit-log registered with estimated p50 230–270ms. Actual staging timing run pending Infrastructure & Operations Owner action. |
 | 1.7 | 2026-05-28 | Infrastructure & Operations Owner | ST-06 (v4.2 EPIC-02, BLG-OPS-39): §15 added — POST /trade-plans/{plan_id}/generate-thesis baseline. p50=3,560ms, p95=3,923ms. 10 warm production samples. Regression threshold: p95 > 7,846ms. BLG-OPS-39 closed. |
 | 1.6 | 2026-05-28 | Infrastructure & Operations Owner | ST-04 (v4.2 EPIC-02, BLG-OPS-35 / OA-3): §14 added — POST /ai/check-daily-cost baseline. p50=205ms, p95=518ms. 7 warm staging samples. OA-3 closed. |
 | 1.5 | 2026-05-27 | Infrastructure & Operations Owner | ST-15 (v4.1 EPIC-04, BLG-OPS-29): §13 added — GET /analytics/arc5-compliance and POST /trade-plans/{plan_id}/generate-thesis registered as v4.0 endpoints pending baseline measurement. arc5-compliance eligible for standard timing run; generate-thesis excluded (AI inference latency). Updated pending endpoint count to 25. |
