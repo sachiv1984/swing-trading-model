@@ -337,21 +337,27 @@
         "ST-06": {
           "title": "Staging verification: Claude thesis generation",
           "classification": "delegated_qa",
-          "status": "blocked_qa",
+          "status": "done",
           "assigned_to": "QA Lead",
           "github_issue": 537,
           "branch": "exec/2026-05-29__release-v4.3/EPIC-02",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260529-06",
-          "blocked_since_utc": "2026-05-29T15:30:00Z",
-          "unblock_criteria": "ST-13 done; staging sign-off recorded in qa_evidence_EPIC-02.md with all 4 ACs evidenced",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-29T18:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/cycles/2026-05-29__release-v4.3/qa_evidence_EPIC-02.md"],
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable — staging-only verification. Hard prerequisite: ST-13 must be done first. All ACs require ANTHROPIC_API_KEY configured on staging."
+          "sign_off_record": {
+            "required_by": "QA Lead",
+            "method": "direct_staging",
+            "status": "cleared",
+            "findings_applied": ["ANTHROPIC_API_KEY added to staging backend permanently", "REACT_APP_ANTHROPIC_API_KEY=true added to staging frontend permanently"],
+            "cleared_utc": "2026-05-29T18:00:00Z"
+          },
+          "notes": "All 4 ACs passed. AC-01: curl confirmed HTTP 200, thesis returned, model claude-haiku-4-5. AC-02: REACT_APP_ANTHROPIC_API_KEY=true added to Render frontend, button visible after redeploy. AC-03: QA Lead confirmed button click populates textarea. Both API key env vars added to staging permanently."
         },
         "ST-07": {
           "title": "Staging verification: ticker validation live Yahoo Finance rejection path",
@@ -483,8 +489,8 @@
     }
   },
 
-  "blocked_items": ["ST-06 (blocked_qa — QA Lead staging run)", "ST-07 (blocked_qa — QA Lead staging run)", "ST-08 (blocked_qa — QA Lead staging run)"],
-  "delegated_items": ["DEL-20260529-01 (Cancelled)", "DEL-20260529-02 (Cancelled)", "DEL-20260529-03 (Cancelled)", "DEL-20260529-04 (Done — ST-13)", "DEL-20260529-05 (Done — ST-14)", "DEL-20260529-06 (Pending — ST-06)", "DEL-20260529-07 (Pending — ST-07)", "DEL-20260529-08 (Pending — ST-08)"],
+  "blocked_items": ["ST-07 (blocked_qa — QA Lead staging run)", "ST-08 (blocked_qa — QA Lead staging run)"],
+  "delegated_items": ["DEL-20260529-01 (Cancelled)", "DEL-20260529-02 (Cancelled)", "DEL-20260529-03 (Cancelled)", "DEL-20260529-04 (Done — ST-13)", "DEL-20260529-05 (Done — ST-14)", "DEL-20260529-06 (Done — ST-06)", "DEL-20260529-07 (Pending — ST-07)", "DEL-20260529-08 (Pending — ST-08)"],
   "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14", "ST-15", "ST-16", "ST-17", "ST-18"],
   "open_escalations": [],
 
