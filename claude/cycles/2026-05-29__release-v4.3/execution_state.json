@@ -24,7 +24,7 @@
           "assigned_to": "engine",
           "github_issue": 526,
           "branch": "exec/2026-05-29__release-v4.3/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "11f6fe56",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -45,7 +45,7 @@
         "ST-02": {
           "title": "execution_prompt.md STEP 5.3/STEP 8: sprint close branch safety advisory",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Head of Specs Team",
           "github_issue": 527,
           "branch": "exec/2026-05-29__release-v4.3/EPIC-01",
@@ -53,13 +53,19 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": "HoST decision on gate (halt if not on main) vs advisory (warn if not on main) recorded in AC-01",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
+          "completed_utc": "2026-05-29T09:20:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/system/execution_prompt.md#STEP 5.3", "claude/system/execution_prompt.md#STEP 8"],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Requires HoST decision on implementation form before ST-02 can proceed. spec_references populated on resolution."
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-05-29T09:20:00Z"
+          },
+          "notes": "HoST decision: gate (halt if not on main). Branch safety check hard gate added to STEP 8; advisory added to STEP 5.3. execution_prompt.md v3.31→v3.32. OPERATIONAL_GUIDE.md v4.11→v4.12."
         },
         "ST-03": {
           "title": "qa_evidence_template.md: AC mapping 1:1 advisory",
