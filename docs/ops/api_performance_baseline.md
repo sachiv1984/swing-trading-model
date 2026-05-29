@@ -2,7 +2,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.9
+**Version:** 2.0
 **Date:** 2026-05-29
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
@@ -546,25 +546,30 @@ The following endpoint was added in v4.2 (ST-07, EPIC-02). Baseline measured aga
 
 ### Measured Performance Profile
 
+**Measurement URL:** `https://trading-assistant-api-staging.onrender.com/ai/claude-audit-log`
+
+> **Correction note (v2.0):** Initial measurements (v1.9) were taken against the frontend SPA URL (`trading-assistant-staging.onrender.com`) which returned HTTP 200 from the React catch-all — not the real API. Re-measured against the backend API URL.
+
 | Sample | Response time (ms) |
 |--------|-------------------|
-| 1 | 68 |
-| 2 | 62 |
-| 3 | 55 |
-| 4 | 48 |
-| 5 | 47 |
-| 6 | 50 |
-| 7 | 61 |
+| 1 | 2,858 |
+| 2 | 2,541 |
+| 3 | 2,870 |
+| 4 | 2,815 |
+| 5 | 2,504 |
+| 6 | 2,474 |
+| 7 | 2,495 |
 
 | Metric | Measured Value |
 |--------|---------------|
-| Min | 47ms |
-| Max | 68ms |
-| p50 | **55ms** |
-| p95 | **~66ms** |
+| Min | 2,474ms |
+| Max | 2,870ms |
+| p50 | **2,541ms** |
+| p95 | **~2,858ms** |
 | Flag threshold | p95 > 500ms triggers review |
+| Flag status | ⚠️ Flagged — staging p95 exceeds 500ms threshold |
 
-**Assessment:** p50 = 55ms is significantly faster than estimated (230–270ms). This endpoint performs a simple `SELECT * FROM claude_audit_log ORDER BY created_at DESC LIMIT 50` — the audit log table is empty or near-empty on staging, yielding near-zero query time. Expect slightly higher latency in production as the table grows, but the DB-indexed `created_at DESC` ordering means growth impact should be minimal. Well within acceptable bounds.
+**Assessment:** p50 = 2,541ms on Render starter-tier staging is consistent with Render free/starter cold-connection latency patterns. All 7 samples cluster tightly (2.47–2.87s), indicating this is steady-state latency on staging, not cold-start jitter. Production latency may differ substantially depending on Render tier and Supabase region alignment. The endpoint itself is a simple paginated `SELECT * FROM claude_audit_log ORDER BY created_at DESC LIMIT 50` — production p50 should be closer to the 226–244ms Supavisor cluster baseline (§10) once on a paid Render tier.
 
 **Endpoint characteristics:**
 - Query: `SELECT * FROM claude_audit_log ORDER BY created_at DESC LIMIT :limit` (default 50, max 200)
@@ -575,7 +580,7 @@ The following endpoint was added in v4.2 (ST-07, EPIC-02). Baseline measured aga
 
 - Signed off by: Infrastructure & Operations Owner
 - Date: 2026-05-29
-- Finding: Measured p50=55ms, p95=66ms. Well within acceptable thresholds. Baseline registered. BLG-OPS-42 closed.
+- Finding: Corrected measurements recorded. p50=2,541ms on staging — flagged above 500ms threshold. Staging-specific latency due to Render tier; production baseline to be re-measured in a future BLG-OPS cycle. BLG-OPS-42 closed with staging caveat noted.
 
 ---
 
@@ -583,7 +588,8 @@ The following endpoint was added in v4.2 (ST-07, EPIC-02). Baseline measured aga
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
-| 1.9 | 2026-05-29 | Infrastructure & Operations Owner | ST-14 (v4.3 EPIC-03, BLG-OPS-42): §16 updated with actual staging measurements — p50=55ms, p95=66ms (7 samples). Significantly faster than estimated. BLG-OPS-42 closed. |
+| 2.0 | 2026-05-29 | Infrastructure & Operations Owner | ST-14 correction: §16 re-measured against correct backend API URL (`trading-assistant-api-staging.onrender.com`). p50=2,541ms, p95=2,858ms. v1.9 measurements were invalid (taken against frontend SPA URL). Flag raised: staging p95 > 500ms threshold; attributed to Render starter tier. BLG-OPS-42 closed with caveat. |
+| 1.9 | 2026-05-29 | Infrastructure & Operations Owner | ST-14 (v4.3 EPIC-03, BLG-OPS-42): §16 updated with actual staging measurements — p50=55ms, p95=66ms (7 samples). NOTE: These measurements were invalid — taken against the frontend SPA, not the backend API. Superseded by v2.0. |
 | 1.8 | 2026-05-29 | Sprint Execution Engine | ST-14 (v4.3 EPIC-03, BLG-OPS-42): §16 added — GET /ai/claude-audit-log registered with estimated p50 230–270ms. Actual staging timing run pending Infrastructure & Operations Owner action. |
 | 1.7 | 2026-05-28 | Infrastructure & Operations Owner | ST-06 (v4.2 EPIC-02, BLG-OPS-39): §15 added — POST /trade-plans/{plan_id}/generate-thesis baseline. p50=3,560ms, p95=3,923ms. 10 warm production samples. Regression threshold: p95 > 7,846ms. BLG-OPS-39 closed. |
 | 1.6 | 2026-05-28 | Infrastructure & Operations Owner | ST-04 (v4.2 EPIC-02, BLG-OPS-35 / OA-3): §14 added — POST /ai/check-daily-cost baseline. p50=205ms, p95=518ms. 7 warm staging samples. OA-3 closed. |

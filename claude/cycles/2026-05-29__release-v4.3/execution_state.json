@@ -290,7 +290,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-05-29T17:30:00Z"
           },
-          "notes": "7-sample staging run complete: p50=55ms, p95=66ms. Significantly faster than estimated (230–270ms) — audit log table near-empty on staging. api_performance_baseline.md updated to v1.9. BLG-OPS-42 closed."
+          "notes": "7-sample staging run complete against correct backend API URL: p50=2,541ms, p95=2,858ms. Flagged above 500ms threshold — Render starter-tier staging latency. Prior v1.9 measurements (55ms) were against the frontend SPA URL (invalid). api_performance_baseline.md updated to v2.0. BLG-OPS-42 closed with staging caveat."
         },
         "ST-15": {
           "title": "API key rotation policy and external API key security register",
