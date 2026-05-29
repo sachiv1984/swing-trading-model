@@ -1,9 +1,9 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v4.2
 Cycle: 2026-05-27__release-v4.2
-Last Updated: 2026-05-27
+Last Updated: 2026-05-29
 
 ## Planning Decisions — v4.2 Claude API Governance, SI-02 Pre-Work Readiness & Spec Debt
 
@@ -30,8 +30,7 @@ Last Updated: 2026-05-27
 None. No escalations raised during this release planning cycle.
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
+Superseded by: v4.2 ship — 2026-05-29
+Changelog: docs/product/changelog.md#v42
 Cycle: 2026-05-27__release-v4.2

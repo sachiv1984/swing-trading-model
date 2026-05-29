@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-05-27
+**Last Updated:** 2026-05-29
 
 ---
 
@@ -639,6 +639,21 @@ Identified during delivery verification (verification_report.md §6). No test sc
 | — | EPIC-02 | Spec documentation verification only — pre-met path; no code changes | not_applicable |
 | — | EPIC-03 | All scenarios run: research-view-signal-type.spec.js (4 tests), arc5-compliance-section.spec.js (4 tests), test_daily_cost_alert.py (5 unit tests) — no coverage gap | fully_covered |
 | — | EPIC-04 | Governance/ops documents only — no observable UI behaviour | not_applicable |
+
+No TSG backlog items required.
+
+---
+
+## 25. Test Coverage Gaps — v4.2 (2026-05-27__release-v4.2)
+
+Identified during delivery verification (verification_report.md §6). No test scenario gaps — all EPICs dispositioned as not_applicable.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| — | EPIC-01 | No observable UI behaviour; governance/security/policy scope; all ACs verifiable by document review and code inspection | not_applicable |
+| — | EPIC-02 | No observable UI behaviour; operational baseline/documentation scope; ACs verifiable by live environment measurements and document review | not_applicable |
+| — | EPIC-03 | No observable UI behaviour; backend/spec/docs scope; CLAUDE.md §2 compliance verified by code review; pytest passed | not_applicable |
+| — | EPIC-04 | No observable UI behaviour; governance/pre-planning scope; all ACs verifiable by document review | not_applicable |
 
 No TSG backlog items required.
 

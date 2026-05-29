@@ -3,9 +3,45 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-27
+**Last Updated:** 2026-05-29
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v4.2 — Claude API Governance, SI-02 Pre-Work Readiness & Spec Debt — 2026-05-29
+Cycle: 2026-05-27__release-v4.2
+Verified: Verified
+Verification report: claude/cycles/2026-05-27__release-v4.2/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Claude API Compliance & Security — Anthropic API accountability formally assigned (AI Compliance Officer charter §4.1 updated); ANTHROPIC_API_KEY security posture confirmed (docs/security/anthropic_api_key_scope_review.md, 3 sign-offs); model version pinning policy created (docs/governance/ai_model_version_pinning_policy.md v1.0; env-var override removed from ai_service.py); Claude API log hygiene policy produced and activated (docs/ops/claude_api_log_hygiene_policy.md v1.0; Render log inspection confirmed clean) (ST-01/02/03) | docs/security/anthropic_api_key_scope_review.md; claude/agents/ai_compliance_governance_officer.md; docs/governance/ai_model_version_pinning_policy.md; backend/services/ai_service.py; docs/ops/claude_api_log_hygiene_policy.md |
+| EPIC-02 | Operational Monitoring & Baselines — POST /ai/check-daily-cost baseline added (p50=205ms, p95=518ms; 5 staging samples); Claude API first monthly cost review produced ($0.007387/6 calls; monthly cadence + $5/month alert threshold defined); Claude API thesis generation latency baseline established (p50=3,560ms, p95=3,923ms; 10 warm production samples; regression threshold 2× baseline) (ST-04/05/06) | docs/ops/api_performance_baseline.md v1.6→v1.7; docs/ops/claude_cost_review_2026-05.md |
+| EPIC-03 | Gemini→Claude Spec Debt Clearance — claude_audit_log table + ensure/create/query functions in database.py; GET /ai/claude-audit-log endpoint; ai_endpoints.md v1.2; gemini_thesis_generation.md renamed to ai_thesis_generation.md v2.1.0 (Claude API token fields added); gemini_thesis_generation.md superseded; openapi.yaml updated; Claude API Playwright mock strategy document produced; prompt caching assessment: DEFER (prefix <1,024 tokens; <10 calls/day) (ST-07/08/09/10) | docs/specs/api_contracts/ai_endpoints.md v1.2; docs/specs/api_contracts/ai_thesis_generation.md v2.1.0; docs/specs/api_contracts/gemini_thesis_generation.md (Superseded); docs/reference/openapi.yaml; backend/database.py; backend/routers/ai.py; docs/team_skills/quality/claude_api_playwright_mock_strategy.md; docs/governance/claude_prompt_caching_assessment.md |
+| EPIC-04 | SI-02/SI-04 Pre-Planning — si02_prerequisites_checklist.md v1.0 (13 items: 4 Complete, 1 gate-conditional, 8 Open); si04_scope_definition.md v1.0 (5 metrics, date-range versioning, comparison UI concept); v4.1 staging deviation trend review (IMPROVED: v4.1=2 vs v4.0=4); backlog namespace audit (287 BLG IDs, 0 collisions) (ST-11/12/13) | docs/governance/si02_prerequisites_checklist.md; docs/governance/si04_scope_definition.md; docs/governance/v41_staging_deviation_review.md |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01] BLG-GOV-66 + BLG-GOV-65: Anthropic API accountability assignment + API key security review
+- [ST-02] BLG-GOV-64: Anthropic model version pinning policy
+- [ST-03] BLG-OPS-38: Claude API log hygiene policy
+- [ST-04] BLG-OPS-35: API performance baseline — POST /ai/check-daily-cost (OA-3 resolution)
+- [ST-05] BLG-OPS-36: Claude API first monthly cost review
+- [ST-06] BLG-OPS-39: Claude API thesis generation latency baseline
+- [ST-07] BLG-GOV-63: Claude API audit trail implementation
+- [ST-08] BLG-SPEC-42: AI thesis API contract update for Claude
+- [ST-09] BLG-QA-37: Claude API Playwright mock strategy
+- [ST-10] BLG-BE-22: Claude API prompt caching assessment (deferred)
+- [ST-11] BLG-GOV-60: SI-02 sprint planning prerequisites checklist
+- [ST-12] BLG-GOV-57: SI-04 strategy version comparison pre-planning
+- [ST-13] BLG-GOV-61 + BLG-GOV-59: v4.1 staging sign-off review + backlog namespace audit
+
+Sign-off: Product Owner — 2026-05-29
+QA sign-off: Director of Quality — 2026-05-29
 
 ---
 

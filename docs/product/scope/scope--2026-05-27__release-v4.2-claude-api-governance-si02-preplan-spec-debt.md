@@ -1,9 +1,9 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v4.2
 Cycle: 2026-05-27__release-v4.2
-Last Updated: 2026-05-27
+Last Updated: 2026-05-29
 
 ## Release Scope — v4.2 Claude API Governance, SI-02 Pre-Work Readiness & Spec Debt
 
@@ -30,9 +30,8 @@ Last Updated: 2026-05-27
 | BLG-GOV-58 | COMPLETE — resolved by AUD-2026-05-27-003 (execution_prompt.md v3.29) before this planning run | — |
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
-Verification report: [TBD]
+Superseded by: v4.2 ship — 2026-05-29
+Changelog: docs/product/changelog.md#v42
+Verification report: claude/cycles/2026-05-27__release-v4.2/verification_report.md
 Cycle: 2026-05-27__release-v4.2

@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-25
+**Last Updated:** 2026-05-29
 
 # Roadmap Archive — Momentum Trading Assistant
 
@@ -950,3 +950,20 @@ Hover tooltips, zoom, drill-down on analytics page charts (underwater equity cur
 
 v3.2 Arc 2 Pre-Trade Research & Planning: PT-02 (Pre-Trade Research View frontend), PT-03 (Prospective Heat at Entry integration), PT-05 (Pre-Trade Entry Checklist). EPIC-03 governance hardening (OA-02–05). EPIC-04 documentation and security (BLG-FE-16, BLG-FE-21, BLG-SEC-05, BLG-GOV-18, BLG-GOV-11). 17/17 stories delivered. Verified 2026-05-07.
 
+
+---
+
+## RA:v4.2 — Claude API Governance, SI-02 Pre-Work Readiness & Spec Debt
+
+**Original roadmap location:** §1 Current Version / Release Summary §8
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-05-29
+**Shipped version:** v4.2
+**Cycle reference:** 2026-05-27__release-v4.2
+**Verification report:** claude/cycles/2026-05-27__release-v4.2/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-29
+
+### Original Roadmap Entry
+
+v4.2 Claude API Governance, SI-02 Pre-Work Readiness & Spec Debt. EPIC-01: Claude API compliance & security (model version pinning, API key security review, accountability assignment, log hygiene). EPIC-02: Operational monitoring & baselines (api_performance_baseline update, first monthly cost review, thesis generation latency baseline). EPIC-03: Gemini→Claude spec debt clearance (audit trail backend, AI thesis contract, Playwright mock strategy, prompt caching assessment). EPIC-04: SI-02/SI-04 pre-planning (prerequisites checklist, scope definition, v4.1 review, namespace audit). 13/13 stories delivered. Verified 2026-05-29.
