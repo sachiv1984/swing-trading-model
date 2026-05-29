@@ -115,11 +115,11 @@
       }
     },
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-05-29__release-v4.4/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-29__release-v4.4/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
       "stories": {
