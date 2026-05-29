@@ -317,14 +317,16 @@ const MONTHLY_PNL_WITH_COMPLIANCE = {
 
 test.describe('SC-REP-05: Monthly P&L — Strategy Compliance section', () => {
   test.beforeEach(async ({ page }) => {
+    // Fallback registered FIRST (lowest priority — Playwright uses LIFO route evaluation).
+    await page.route(new RegExp(`${API}/`), (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
+    );
+    // Specific mocks registered LAST (highest priority — override the fallback).
     await page.route(`${API}/analytics/metrics*`, (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: {} }) })
     );
     await page.route(`${API}/reports/monthly-pnl`, (route) =>
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MONTHLY_PNL_WITH_COMPLIANCE) })
-    );
-    await page.route(new RegExp(`${API}/`), (route) =>
-      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
     );
     await page.goto('/#/Reports');
     // Navigate to Monthly P&L tab
