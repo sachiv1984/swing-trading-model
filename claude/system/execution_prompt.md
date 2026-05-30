@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.33
-**Last Updated:** 2026-05-29
+**Version:** 3.34
+**Last Updated:** 2026-05-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -533,6 +533,8 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 
 2a. **Spec_references path verify (LL-v3.7-EX-03):** When populating `spec_references` in `execution_state.json`, verify each path exists (file read or ls check) before recording it. A non-existent path in `spec_references` causes false traceability and masks missing specs — record only paths that resolve on disk.
 
+2b. **Spec_references policy — documentation-creation stories (LL-v4.5-EX-02):** For stories whose primary deliverable IS a new or updated spec/documentation artefact (e.g. a new API contract, a metrics definition document, a data schema spec), set `spec_references` to the path of the created/updated artefact — the artefact IS the governing spec for this story. Additionally record the artefact path in a `delivery_note` field in `execution_state.json` for explicit traceability. `spec_references = []` is non-compliant for documentation-creation stories; the artefact path must be set once it exists on disk.
+
 3. Commit to the EPIC branch (format: see STEP 3 header schema).
 4. Push to `exec/<cycle_id>/EPIC-xx`.
 5. `governance_sync.yml` closes the GitHub issue automatically on push.
@@ -590,7 +592,7 @@ epics.<EPIC-xx>.stories.<ST-xx>:
 - If yes: transition item to `done`, verify acceptance criteria, update state.
   - Confirm `spec_references` is populated (fill now if missing — ask the assignee which spec section was implemented).
   - Check for deviations: if implementation diverges from the spec, file the deviation in the canonical spec before setting `deviations_filed = true`.
-  - **HARD GATE: Update the delegation log entry** (per `shared_standards.md §16.3`) — set status to `Unblocked` and note the commit SHA **in the same step as setting item status to `done` in `execution_state.json`.** These two writes are atomic. Do not advance to the next ST item until both are recorded.
+  - **HARD GATE: Update the delegation log entry** (per `shared_standards.md §16.3`) — two-phase write: **(a) sign-off step:** set DEL record `status = "sign_off_cleared"` when sign-off is confirmed; **(b) push step:** set DEL record `commit_sha` when the commit SHA is recorded. Both sub-steps must complete before setting the DEL entry to terminal state `Unblocked`. Set item `status = done` in `execution_state.json` atomically with the `Unblocked` write. Do not advance to the next ST item until the delegation log entry is at terminal state `Unblocked` and execution_state item is `done`.
 - If no: keep blocked and report status to user.
 
 #### 3.1.C If `delegated_qa`:
@@ -629,7 +631,7 @@ epics.<EPIC-xx>.stories.<ST-xx>:
 
 **SLA breach tracking:** Per `claude/system/shared_standards.md §16.4`.
 
-**Unblock detection:** Check escalation record for Resolved or Accepted Risk disposition. If resolved: re-classify item and resume. **HARD GATE: Update the delegation log entry** (per `shared_standards.md §16.3`) — set status to `Unblocked` and note the commit SHA in the same step as setting item status to `done` in `execution_state.json`. These two writes are atomic. Do not advance to the next ST item until both are recorded.
+**Unblock detection:** Check escalation record for Resolved or Accepted Risk disposition. If resolved: re-classify item and resume. **HARD GATE: Update the delegation log entry** (per `shared_standards.md §16.3`) — two-phase write: **(a) sign-off step:** set DEL record `status = "sign_off_cleared"` when the escalation disposition is resolved; **(b) push step:** set DEL record `commit_sha` when the commit SHA is recorded. Set item `status = done` in `execution_state.json` atomically with the terminal `Unblocked` write. Do not advance to the next ST item until both are recorded.
 
 ### 3.2 EPIC Completion
 
@@ -671,7 +673,7 @@ The autonomous class sign-off (BLG-GOV-19) is unavailable for any EPIC with fron
 When all four of the following qualifying criteria are met, the engine may apply an autonomous DoQ sign-off without Director of Quality review. This class is defined to avoid unnecessary delegation blocks on pure governance or spec documentation EPICs where no behavioural verification is possible.
 
 **Qualifying criteria:**
-1. All stories in the EPIC have `delegation_class: autonomous`
+1. All stories in the EPIC have `delegation_class: autonomous`. **Verification-class sub-criterion (LL-v4.5-EX-01 — pre-planning sprint pattern):** Criterion 1 may be satisfied when all stories' VERIFICATION is by document inspection only (regardless of EXECUTION class), provided criteria 2–4 are also met. Applies when: the EPIC's primary deliverable is a governance or spec document; no observable UI behaviour, staging run, or live system interaction is required. Does not apply to EPICs with `delegated_backend` execution where the deliverable is a running system component.
 2. All AC is verifiable by code review alone — no observable UI behaviour, no staging run required, and no live system interaction
 3. No frontend-visible change is introduced by this EPIC
 4. Engine signer field is populated as "Sprint Execution Engine (autonomous class)"
@@ -692,7 +694,8 @@ If any criterion is not met, the autonomous class does not apply — the sign-of
 2. PR title: `[EPIC-xx] <epic description>`
 3. PR body: per Section 8.4 — include link to `qa_evidence_EPIC-xx.md`
 4. Update `execution_state.json`: EPIC `pr_status` = `open`, `pr_number` = PR number.
-5. Do not merge. The merge gate (STEP 4) governs this.
+5. Run `gh pr view <pr_number> --json state` immediately and sync `pr_status` in `execution_state.json` to the actual current state. **EPIC.status sync rule:** If `state = "MERGED"` (PR was already merged before the engine recorded it), update `EPIC.status` from `"done"` to `"merged"` in `execution_state.json` in the same write.
+6. Do not merge autonomously. The merge gate (STEP 4) governs this.
 
 ---
 
