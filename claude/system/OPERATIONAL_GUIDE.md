@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.21
+**Version:** 4.22
 **Last Updated:** 2026-05-30
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -620,7 +620,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.32)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.33)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1464,7 +1464,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.6 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.32 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.33 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.8 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.34 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.22 | 2026-05-30 | **v4.6 ST-15 (BLG-GOV-32+43) — release_planning_prompt.md v2.32→v2.33 STEP 1.4 gate scan + data density checkpoint.** §6B source prompt header updated v2.32→v2.33. §14 Release Engine Source v2.32→v2.33. Change: STEP 1.4 Gate-Condition Proximity Scan added (advisory) — scans gate-conditional backlog items for proximity within 30–60 days; gate proximity table format documented; Arc 4 data density sub-check mandatory (PO-02/PO-04/SI-02 projected gate dates surfaced). §14 Version 4.21→4.22/2026-05-30. Authority: Head of Specs Team (BLG-GOV-32 + BLG-GOV-43, v4.6 ST-15). |
 | 4.21 | 2026-05-30 | **v4.5 EPIC-01 (ST-01–04) — execution_prompt.md v3.33→v3.34 four governance patches.** §8 source prompt header updated v3.33→v3.34. §14 Execution Engine Source v3.33→v3.34. Changes: (ST-01/OA-01) §3.1.B + §3.1.D HARD GATE — DEL record write split into two-phase: (a) `status = "sign_off_cleared"` at sign-off time; (b) `commit_sha` at push step; terminal `Unblocked` requires both. (ST-02/OA-02) STEP 3.2.B — step 5 added: `gh pr view <pr_number> --json state` immediately after PR open to sync `pr_status`; EPIC.status sync rule: update `"done"` → `"merged"` if state is MERGED. (ST-03/OA-03) §3.2.A autonomous class criterion 1 — verification-class sub-criterion added (LL-v4.5-EX-01): satisfiable for pre-planning sprints where all VERIFICATION is document inspection only, criteria 2–4 met. (ST-04/BLG-GOV-70) §3.1.A step 2b added (LL-v4.5-EX-02): documentation-creation stories set `spec_references` to artefact path + `delivery_note` field; `spec_references = []` non-compliant for this story type. Authority: Head of Specs Team (v4.5 EPIC-01, 2026-05-30). |
 | 4.20 | 2026-05-30 | **AUD-2026-05-30 Tier 1 patches — §13 register completed + §13 Class 7 fix + delivery_verification_prompt.md v2.8→v2.9 owner fix.** §13 artefact register: 7 missing Class 6 prompts added (sprint_planning_prompt.md, execution_prompt.md, post_ship_closure.md, design_gate_prompt.md, roadmap_management_prompt.md, backlog_management_prompt.md, ideas_housekeeping_prompt.md); roadmap_prompt.md Class 7 corrected to Class 6 (Class 7 does not exist in document_lifecycle_guide.md). §9 Phase 4 source prompt header updated v2.8→v2.9. §14 Verification Engine Source v2.8→v2.9. §14 Version 4.19→4.20/2026-05-30. Authority: Head of Specs Team (AUD-2026-05-30 Tier 1 closure, 2026-05-30). |
 | 4.19 | 2026-05-29 | **v4.4 ST-13 (BLG-OPS-43) — Staging URL Disambiguation subsection added to §7.** New §7.9 "Staging URL Disambiguation" added after §7.8: distinguishes frontend SPA URL (`trading-assistant-frontend.onrender.com`) from backend API URL (`trading-assistant-api.onrender.com`); health check baseline guidance updated to always target backend API URL; example curl commands shown; root cause (v4.3 Phase 3 staging friction) documented. §14 Version 4.18→4.19/2026-05-29. Authority: Infrastructure & Operations Owner (BLG-OPS-43, v4.4 ST-13). |
