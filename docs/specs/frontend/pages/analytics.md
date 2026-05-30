@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.8
-**Last Updated:** 2026-05-23
+**Version:** 1.9
+**Last Updated:** 2026-05-30
+**Design Source (v4.6 additions):** docs/specs/si02/si02_fe_component_predesign.md v1.0; docs/specs/si02/si02_fe_interaction_spec.md v1.0
 **Design Source (v2.8 additions):** docs/design/2026-04-17__release-v2.8/market-correlation/ux_spec.md
 **Design Source (v2.3 additions):** docs/design/2026-03-24__release-v2.3/staleness-indicator/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -26,6 +27,7 @@ Users can:
 - Export a PDF summary report
 - See data freshness indicator (v2.3)
 - View market correlation analysis per position (v2.8)
+- Monitor behavioural drift across 4 key trading behaviour metrics — advisory, display-only (v4.6)
 
 ---
 
@@ -45,6 +47,9 @@ All core analytics data is sourced from this call. The frontend transforms the s
 
 **Additional endpoints (v4.0 additions):**
 - `GET /analytics/arc5-compliance` — Arc 5 Signal Compliance panel (§19)
+
+**Additional endpoints (v4.6 additions):**
+- `GET /analytics/behavioural-drift` — Behavioural Drift panel (§20)
 
 The page must never recalculate, derive, or override values returned by the backend.
 
@@ -153,6 +158,7 @@ When data is available and sufficient, components render in this order:
 17. **Discipline & Compliance** — journal completion rate, stop-based exit rate, avg position size ← NEW (v1.9, ST-01)
 18. **Market Correlation** — per-position Pearson correlation with severity colour-coding + portfolio-level weighted average ← NEW (v2.8, ST-01)
 19. **Arc 5 Signal Compliance** — red flag event frequency, override rate, top rule breach, trade plan adherence ← NEW (v4.0, ST-02/ST-04)
+20. **Behavioural Drift** — 4 drift metrics (entry timing, sizing adherence, post-loss sizing, regime adherence) displayed as percentage deviation cards ← NEW (v4.6, ST-06/ST-07)
 
 ---
 
@@ -641,6 +647,63 @@ Metric definitions are canonical per `metrics_definitions.md`.
 
 ---
 
+### 20. Behavioural Drift
+
+Source: `GET /analytics/behavioural-drift`
+
+**Design source:** `docs/specs/si02/si02_fe_component_predesign.md` v1.0; `docs/specs/si02/si02_fe_interaction_spec.md` v1.0
+
+Section title: "Behavioural Drift". Appended after §19 in the rendering order. Rendered as a collapsible section with a visible "Advisory" badge at all times (per §13 advisory-only binding).
+
+**Section heading:** "Behavioural Drift   [Advisory]"
+
+The "Advisory" badge is an amber pill, always visible without hover. This satisfies the §13 display-only binding condition.
+
+**Collapse/expand:** Section includes a chevron toggle. Collapse state persisted to `localStorage` key `si02.driftPanel.collapsed`. When collapsed, a compact status indicator is shown: "! N metrics drifting" (when `status === "drift_detected"`); no indicator when `status === "no_drift"`.
+
+**Four metric cards in a 2-column grid (sm+), 1 column (mobile) — matching Arc5ComplianceSection layout:**
+
+Each card shows:
+- Metric label (top-left, uppercase small caps)
+- Measured value + unit (primary, bold)
+- Threshold reference line (e.g. "Threshold: ≤ 1.0 days")
+- Deviation percentage, coloured by status (e.g. "+140% above threshold")
+- Advisory note (when `status === "breached"` only; amber text, `text-xs`)
+- Coloured card border driven by metric status
+
+| Metric ID | Label | Unit | Threshold direction |
+|-----------|-------|------|---------------------|
+| `entry_timing_drift` | Entry Timing | days | lte |
+| `sizing_adherence` | Sizing Adherence | pct_of_portfolio | lte |
+| `consecutive_loss_sizing` | Post-Loss Sizing | pct_of_portfolio | lte |
+| `regime_context` | Regime Adherence | pct | gte |
+
+**Status colour scheme:**
+- `ok` → `border-emerald-500/60` (green)
+- `approaching` → `border-amber-500/60` (amber); no advisory note
+- `breached` → `border-rose-500/60` (red); advisory note shown
+
+**Section-level states:**
+- `loading`: four skeleton cards; heading + advisory badge visible and static
+- `insufficient_data`: single muted panel — "Behavioural drift analysis requires at least 20 closed trades. Currently {trade_count} trade(s) recorded. This panel will activate automatically once the threshold is reached." No metric cards.
+- `no_drift`: four metric cards, all green; subdued "All metrics within threshold" indicator in section heading
+- `drift_detected`: metric cards with colour-coded borders; amber/red accent on section heading consistent with highest-severity metric
+- `error`: single panel — "Unable to load drift analysis." + Retry button
+
+**Period binding:** The component receives a `period` prop from `PerformanceAnalytics` and passes it as `?period=<value>` to `GET /analytics/behavioural-drift`. Default: `last_90_days`. Re-fetches on period change and on window focus (staleTime: 5 min).
+
+**Hard rules:**
+- All values backend-computed. No client-side drift metric derivation.
+- "Advisory" badge must be visible at all times including loading and insufficient-data states.
+- No UI affordance may imply automated remediation — §13 binding constraint.
+- Section does NOT gate, block, or modify any trade plan, position entry, or exit workflow.
+
+**States:** Loading (skeleton cards), Loaded, Insufficient data (muted message), Error (section-level card with Retry).
+
+**Playwright coverage required:** per `si02_fe_interaction_spec.md §10` — 13 test cases (DFT-01 through DFT-13) covering all 5 states, collapse/expand, period change re-fetch, tooltips, and accessibility.
+
+---
+
 ## Responsive Behavior
 - Period selector and export button stack or compress at smaller widths
 - Summary cards: 1 column (mobile) → 2 columns (sm) → 3 columns (lg)
@@ -675,6 +738,7 @@ All component props are null-safe with safe defaults. If the API returns partial
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.9 | 2026-05-30 | v4.6 design gate (ST-06/ST-07, EPIC-02): §20 Behavioural Drift section added — 4 drift metric cards (entry timing, sizing adherence, post-loss sizing, regime adherence); Option B Percentage Deviation Display; 5 states (loading, insufficient_data, no_drift, drift_detected, error); collapse/expand with localStorage persistence; §13 advisory-only constraints enforced. API Dependency updated with `GET /analytics/behavioural-drift`. Component Rendering Order updated to 20 items. Purpose & User Goals updated. Design source: `docs/specs/si02/si02_fe_component_predesign.md` v1.0 + `docs/specs/si02/si02_fe_interaction_spec.md` v1.0. Approved: Head of UX & Design + Product Owner 2026-05-30. Head of Specs Team confirmed compliant. Nav decision: drift panel integrates as §20 section within PerformanceAnalytics (no new sidebar nav item; consistent with §19 Arc 5 Signal Compliance pattern; ST-11 Arc 5 nav cohesion review to validate in Sprint 2). |
 | 1.8 | 2026-05-23 | v4.0 design gate (ST-02/ST-04, EPIC-01): §19 Arc 5 Signal Compliance section added — 4 stat cards (events_per_week, override_rate, top_rule_breach, trade_plan_adherence_rate). API Dependency updated with `GET /analytics/arc5-compliance`. Component Rendering Order updated to 19 items. Design source: docs/design/2026-05-22__release-v4.0/arc5-analytics-metrics/ux_spec.md. Approved: Head of UX & Design + Product Owner 2026-05-23. Head of Specs Team confirmed compliant. |
 | 1.7 | 2026-04-17 | v2.8 design gate (ST-01, EPIC-01): §18 Market Correlation section added — portfolio-level weighted average card + per-position Pearson correlation table. Severity scheme: high=Rose-500, moderate=Amber-500, low=Emerald-500, null=Slate-500. Sort: severity descending. API Dependency updated with `GET /analytics/market-correlation`. Component Rendering Order updated to 18 items. Design source: docs/design/2026-04-17__release-v2.8/market-correlation/ux_spec.md. Head of Specs Team confirmed compliant. |
 | 1.6 | 2026-03-24 | ST-02 (BLG-FEAT-09, v2.3): §Metrics Staleness Indicator — "data as of" timestamp below page title; amber badge when stale (≥4h default); hover shows absolute ISO timestamp. Design source: docs/design/2026-03-24__release-v2.3/staleness-indicator/ux_spec.md. Approved: Product Owner 2026-03-24. Design gate: 2026-03-24__release-v2.3. |
