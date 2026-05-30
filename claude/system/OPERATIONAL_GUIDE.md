@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.19
-**Last Updated:** 2026-05-29
+**Version:** 4.20
+**Last Updated:** 2026-05-30
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -973,7 +973,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v2.8)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v2.9)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1272,7 +1272,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 7 | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1283,6 +1283,13 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Shared Governance Modules | `claude/system/shared/*.md` | 6 (sub-type) | Head of Specs Team | Governance |
 | Governance Changelogs | `claude/system/changelogs/*.md` | 6 (sub-type) | Head of Specs Team | Governance |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` | 6 | Head of Specs Team | Governance |
+| Sprint Planning Prompt | `claude/system/sprint_planning_prompt.md` | 6 | Head of Specs Team | Governance |
+| Sprint Execution Prompt | `claude/system/execution_prompt.md` | 6 | Head of Specs Team | Governance |
+| Post-Ship Closure Prompt | `claude/system/post_ship_closure.md` | 6 | Head of Specs Team | Governance |
+| Design Gate Prompt | `claude/system/design_gate_prompt.md` | 6 | Head of Specs Team | Governance |
+| Roadmap Management Prompt | `claude/system/roadmap_management_prompt.md` | 6 | Head of Specs Team | Governance |
+| Backlog Management Prompt | `claude/system/backlog_management_prompt.md` | 6 | Head of Specs Team | Governance |
+| Ideas Housekeeping Prompt | `claude/system/ideas_housekeeping_prompt.md` | 6 | PMO Lead | Governance |
 | Prompt Change Log | `claude/system/prompt_change_log.md` | 6 | Head of Specs Team | Governance |
 | Current Roadmap | `claude/roadmap/current_roadmap.md` | 4 | Product Owner | 1 |
 | Backlog | `claude/backlog/backlog.md` | 4 | Product Owner | 1, 1B, 4, Post-Ship |
@@ -1447,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.19 |
-| Last Updated | 2026-05-29 |
+| Version | 4.20 |
+| Last Updated | 2026-05-30 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1462,7 +1469,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.33 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.4 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.8 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.9 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.12 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1487,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.20 | 2026-05-30 | **AUD-2026-05-30 Tier 1 patches — §13 register completed + §13 Class 7 fix + delivery_verification_prompt.md v2.8→v2.9 owner fix.** §13 artefact register: 7 missing Class 6 prompts added (sprint_planning_prompt.md, execution_prompt.md, post_ship_closure.md, design_gate_prompt.md, roadmap_management_prompt.md, backlog_management_prompt.md, ideas_housekeeping_prompt.md); roadmap_prompt.md Class 7 corrected to Class 6 (Class 7 does not exist in document_lifecycle_guide.md). §9 Phase 4 source prompt header updated v2.8→v2.9. §14 Verification Engine Source v2.8→v2.9. §14 Version 4.19→4.20/2026-05-30. Authority: Head of Specs Team (AUD-2026-05-30 Tier 1 closure, 2026-05-30). |
 | 4.19 | 2026-05-29 | **v4.4 ST-13 (BLG-OPS-43) — Staging URL Disambiguation subsection added to §7.** New §7.9 "Staging URL Disambiguation" added after §7.8: distinguishes frontend SPA URL (`trading-assistant-frontend.onrender.com`) from backend API URL (`trading-assistant-api.onrender.com`); health check baseline guidance updated to always target backend API URL; example curl commands shown; root cause (v4.3 Phase 3 staging friction) documented. §14 Version 4.18→4.19/2026-05-29. Authority: Infrastructure & Operations Owner (BLG-OPS-43, v4.4 ST-13). |
 | 4.18 | 2026-05-29 | **v4.4 ST-05 — release_planning_prompt.md v2.31→v2.32 RESUME PRECHECK patch.** §6B source prompt header updated v2.31→v2.32. §14 Release Engine Source v2.31→v2.32. Change: STEP 7 Intermediate global state sync — RESUME PRECHECK note added: if session resumed via context compaction and STEP 7 completed without intermediate sync, execute sync immediately before proceeding to STEP 8. Prevents stale `.claude_current_state.json` on session resume. Authority: Head of Specs Team (BLG-GOV-74 deferred, v4.3 LL-2, v4.4 ST-05). |
 | 4.17 | 2026-05-29 | **v4.4 ST-04 — qa_evidence_template.md v1.3→v1.4 delegated_qa sign-off format.** §14 QA Evidence Template row added (new row). Change: Standard Sign-Off Block updated with delegated_qa pattern note (BLG-GOV-69/74): two valid sign-off formats documented — (i) individual DoQ sign-off with aggregate comment; (ii) DoQ aggregate acknowledgement format. Both valid; Date field non-blank requirement unchanged. Template clarifies both variants. Authority: Head of Specs Team (BLG-GOV-69 + BLG-GOV-74, v4.4 ST-04). |

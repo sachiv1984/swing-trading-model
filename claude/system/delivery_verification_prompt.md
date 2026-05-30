@@ -1,7 +1,7 @@
-**Owner:** Director of Quality
+**Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.8
-**Last Updated:** 2026-05-27
+**Version:** 2.9
+**Last Updated:** 2026-05-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 

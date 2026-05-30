@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-30 (post-ship closure STEP 3 — 2026-05-29__release-v4.4: 13 items marked ✅ COMPLETE (BLG-GOV-69/71/72/73/74, BLG-OPS-43, BLG-BE-17/18/20/23, BLG-FE-52/53, BLG-QA-31))
+**Last Updated:** 2026-05-30 (AUD-2026-05-30 session — 3 new items added: BLG-GOV-75, BLG-GOV-76, BLG-GOV-77)
 **Last rebalance:** 2026-05-27 (cycle 2026-05-27__scheduled — DL-035; IW-20260527-01; 31 new items: BLG-GOV-57–68, BLG-OPS-36–41, BLG-QA-36–38, BLG-SPEC-41–42, BLG-FE-51–55, BLG-BE-22–24)
 
 > ⚠️ Standing Notice
@@ -2034,6 +2034,72 @@ Add a spec_references policy note to execution_prompt.md or delivery_verificatio
 - Policy note added to execution_prompt.md (preferred) or delivery_verification_prompt.md
 - "Empty spec_references acceptable for documentation-creation stories" condition defined with required note format
 - Version bumps and governance file edit checklist applied if Class 6
+
+---
+
+### BLG-GOV-75 — execution_prompt.md: split DEL terminal-status write into sign-off and push steps
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** v4.4 lessons_learnt_closure.md deferred item #1 (AUD-2026-05-30-004) — 2026-05-30
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** v4.5
+
+**Problem**
+The delegation log terminal-status write currently happens as a single operation, which can produce a stale delegation log state when a session is resumed mid-merge. The DEL record gets its `status` set but the `commit_sha` field remains empty until the push step runs in a later session, requiring a merge gate sync correction on each resume.
+
+**Scope**
+- Split DEL terminal-status write into two sub-steps: (a) write `status = "sign_off_cleared"` at delegation sign-off time; (b) write `commit_sha` at push step
+- Add inline note to execution_prompt.md STEP 3 delegation close sequence
+
+**Acceptance Criteria**
+- DEL record write is split into two documented sub-steps
+- No merge gate sync required for fresh session resumes after delegation clearance
+- Version bump + governance file edit checklist applied
+
+---
+
+### BLG-GOV-76 — execution_prompt.md STEP 3.2.B: explicit pr_status sync after PR open
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** v4.4 lessons_learnt_closure.md deferred item #2 (AUD-2026-05-30-004) — 2026-05-30
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** v4.5
+
+**Problem**
+After opening a PR, the execution engine records `pr_number` but does not immediately sync `pr_status`. If the PR is merged before the next engine invocation (e.g. by a human reviewer), the engine begins a fresh session with `pr_status = "open"` when it is already `"merged"`, causing incorrect state at STEP 5.0A pr_status sync.
+
+**Scope**
+- Add explicit pr_status sync step to STEP 3.2.B: after recording `pr_number`, run `gh pr view <pr_number> --json state` and update `pr_status` immediately
+- Also update `EPIC.status` from `"done"` to `"merged"` at QA evidence commit time if PR was merged between steps
+
+**Acceptance Criteria**
+- STEP 3.2.B contains explicit pr_status sync after PR open
+- EPIC.status updated to "merged" if PR already merged at QA evidence commit time
+- Version bump + governance file edit checklist applied
+
+---
+
+### BLG-GOV-77 — execution_prompt.md: verification-class sub-criterion for pre-planning sprints
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** v4.4 lessons_learnt_closure.md deferred item #4 (AUD-2026-05-30-004) — 2026-05-30
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** v4.5
+
+**Problem**
+The BLG-GOV-19 autonomous class sign-off requires criterion 1: "all stories autonomous". For pre-planning sprints where stories are delivered as document inspection (delegated_decision or delegated_backend with document-only deliverable), the EXECUTION classification is delegated but VERIFICATION is document inspection only. This triggers a spurious Tier 2 advisory at STEP 3.2.A, complicating sign-off for architecturally valid pre-planning epics.
+
+**Scope**
+- Add a verification-class sub-criterion to execution_prompt.md §3.2.A (or delivery_verification_prompt.md): if all stories' VERIFICATION is by document inspection only, criterion 1 of BLG-GOV-19 autonomous class may be satisfied if criteria 2/3/4 are met
+- Scope to pre-planning sprint patterns only; document the condition clearly
+
+**Acceptance Criteria**
+- Sub-criterion added to autonomous class sign-off block
+- Tier 2 advisory not triggered for pre-planning sprints where all verification is document inspection
+- Version bump + governance file edit checklist applied
 
 ---
 

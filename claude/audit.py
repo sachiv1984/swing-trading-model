@@ -24,25 +24,31 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-05-27"
-PRIOR_AUDIT_OPEN_ITEMS = []
-# All AUD-2026-05-21 items confirmed RESOLVED.
-# AUD-2026-05-27-001: §14 Version fix — applied Tier 1 (2026-05-27)
-# AUD-2026-05-27-002: STEP 5.0A null pr_number recovery — applied (2026-05-27, execution_prompt.md v3.30)
-# AUD-2026-05-27-003: STEP 5.2 in-flight deferral — applied Tier 1 (2026-05-27)
+PRIOR_AUDIT_ID = "AUD-2026-05-30"
+PRIOR_AUDIT_OPEN_ITEMS = [
+    "AUD-2026-05-30-001",  # 7 missing §13 prompt entries — RESOLVED (applied in same audit session)
+    "AUD-2026-05-30-002",  # §13 Class 7 fix — RESOLVED (applied in same audit session)
+    "AUD-2026-05-30-003",  # BLG-GOV-70 spec_references patch — OPEN (target v4.5)
+    "AUD-2026-05-30-004",  # 3 untracked v4.4 deferred patches — OPEN (to file via /backlog-add)
+    "AUD-2026-05-30-005",  # 5 agent file header standardization — OPEN (Tier 2)
+    "AUD-2026-05-30-006",  # DV prompt owner fix — RESOLVED (applied in same audit session)
+]
+# AUD-2026-05-30-001: §13 7 missing prompts — applied Tier 1 (2026-05-30)
+# AUD-2026-05-30-002: §13 Class 7 fix — applied Tier 1 (2026-05-30)
+# AUD-2026-05-30-006: DV prompt owner fix — applied Tier 1 (2026-05-30)
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
     "token_efficiency":      95,   # HIGH CONFIDENCE — no inline blocks; all engines in §13 dry-run table
-    "governance_integrity":  86,   # MEDIUM CONFIDENCE — §14 engine entries all aligned; §14 Version field deviation patched by AUD-001
-    "execution_reliability": 84,   # MEDIUM CONFIDENCE — 2 new ACTIVE deferred patches (v4.2 targets); none STALE
-    "friction_load":         40,   # LOW CONFIDENCE — v3.8–v4.1 confirmed; earlier cycles ESTIMATED; trend DECREASING
-    "document_hygiene":      87,   # MEDIUM CONFIDENCE — AUD-001 patch applied; no other confirmed violations
+    "governance_integrity":  79,   # MEDIUM CONFIDENCE — 7 §13 missing prompts counted; §14 fully aligned; AUD-001/002 applied
+    "execution_reliability": 84,   # MEDIUM CONFIDENCE — 1 ASSERTION write; BLG-GOV-70 STALE (2 cycles)
+    "friction_load":         32,   # LOW CONFIDENCE — v4.4 clean execution; 4 new deferred patches; trend DECREASING
+    "document_hygiene":      81,   # MEDIUM CONFIDENCE — 5 non-standard agent headers; AUD-002/006 applied
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 27  # v1.7 through v4.1 (27 completed post-ship closures; confirmed from .claude_current_state.json)
+COMPLETED_CYCLES = 30  # v1.7 through v4.4 (30 completed post-ship closures; confirmed from .claude_current_state.json)
 
 # -------------------------
 # MISSING FILE RULE
