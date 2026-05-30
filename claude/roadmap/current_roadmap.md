@@ -11,7 +11,20 @@
 ## 1. Current Version
 
 **v4.4** — Governance Patches, SI-02 Pre-Planning Sprint & Ops Hardening — ✅ Shipped 2026-05-30
-**Next planned release:** [TBD]
+**Next planned release:** v4.5
+
+<!-- roadmap-annotation-marker: RA:v4.5:2026-05-30__release-v4.5 -->
+
+**v4.5 — Governance Prompt Hardening, Audit Debt & SI-02 Spec Pre-Planning** — 📋 Planned
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-30__release-v4.5
+- Plan published: 2026-05-30
+- Cycle folder: claude/cycles/2026-05-30__release-v4.5/
+- Backlog slice: claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md
+- Status at annotation: Validated
+- Stories: 5 firm (Sprint 1) + 3 conditional (Sprint 2, SI-02 gate)
+- Design gate: not required
 
 <!-- roadmap-annotation-marker: RA:v4.3:2026-05-29__release-v4.3 -->
 
@@ -428,6 +441,7 @@ When evaluating new features:
 |**v4.4** ✅  |Governance Patches, SI-02 Pre-Planning Sprint & Ops Hardening         |v4.3 OA resolution: BLG-GOV-71/72/73/74 governance prompt patches; BLG-OPS-43 ops hardening; release_planning_prompt.md STEP 7 RESUME PRECHECK patch. SI-02 pre-planning: BLG-BE-17/23 query pre-design; BLG-BE-18/20 architecture; BLG-FE-52/53 component pre-design; BLG-QA-31 Playwright pre-design. 13 stories / 4 EPICs / 2 sprints. Zero spec deviations — ✅ Shipped 2026-05-30 — cycle: 2026-05-29__release-v4.4|
 
 *RA:v4.4 retired — see roadmap_archive.md 2026-05-30 (post-ship closure 2026-05-29__release-v4.4).*
+|**v4.5**     |Governance Prompt Hardening, Audit Debt & SI-02 Spec Pre-Planning       |execution_prompt.md OA patches (BLG-GOV-70/75/76/77); AUD-2026-05-30 Tier 2 (agent headers); SI-02 spec pre-sprint (BLG-GOV-39, BLG-SPEC-41, BLG-SPEC-37 — conditional) — 📋 Planned|
 |**v4.0+**    |Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
 |**v4.0+**    |Arc 5: Strategy Integrity (remainder)                                 |SI-02 behavioural drift detection, SI-04 strategy version comparison, SI-05 weekly digest — 📋 Planned                                    |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

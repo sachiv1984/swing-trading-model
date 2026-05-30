@@ -1,0 +1,85 @@
+{
+  "cycle_id": "2026-05-30__release-v4.5",
+  "release": "v4.5",
+  "generated_utc": "2026-05-30T09:30:00Z",
+  "stories": [
+    {
+      "st_id": "ST-01",
+      "epic_id": "EPIC-01",
+      "title": "execution_prompt.md DEL terminal-status write split",
+      "backlog_ref": "BLG-GOV-75",
+      "priority": "P3",
+      "sprint": 1,
+      "labels": ["governance", "EPIC-01", "cycle:2026-05-30__release-v4.5", "v4.5"]
+    },
+    {
+      "st_id": "ST-02",
+      "epic_id": "EPIC-01",
+      "title": "execution_prompt.md pr_status sync after PR open",
+      "backlog_ref": "BLG-GOV-76",
+      "priority": "P3",
+      "sprint": 1,
+      "labels": ["governance", "EPIC-01", "cycle:2026-05-30__release-v4.5", "v4.5"]
+    },
+    {
+      "st_id": "ST-03",
+      "epic_id": "EPIC-01",
+      "title": "execution_prompt.md verification-class sub-criterion for pre-planning sprints",
+      "backlog_ref": "BLG-GOV-77",
+      "priority": "P3",
+      "sprint": 1,
+      "labels": ["governance", "EPIC-01", "cycle:2026-05-30__release-v4.5", "v4.5"]
+    },
+    {
+      "st_id": "ST-04",
+      "epic_id": "EPIC-01",
+      "title": "execution_prompt.md spec_references policy for documentation-creation stories",
+      "backlog_ref": "BLG-GOV-70",
+      "priority": "P3",
+      "sprint": 1,
+      "labels": ["governance", "EPIC-01", "cycle:2026-05-30__release-v4.5", "v4.5"]
+    },
+    {
+      "st_id": "ST-05",
+      "epic_id": "EPIC-02",
+      "title": "Standardize 5 agent file role headers to **Role:** format",
+      "backlog_ref": "AUD-2026-05-30-005",
+      "priority": "P2",
+      "sprint": 1,
+      "labels": ["governance", "EPIC-02", "cycle:2026-05-30__release-v4.5", "v4.5"]
+    },
+    {
+      "st_id": "ST-06",
+      "epic_id": "EPIC-03",
+      "title": "SI-02 §13 formal boundary review",
+      "backlog_ref": "BLG-GOV-39",
+      "priority": "P1",
+      "sprint": 2,
+      "conditional": true,
+      "gate_condition": "PO confirms SI-02 sprint planning is imminent",
+      "labels": ["governance", "EPIC-03", "cycle:2026-05-30__release-v4.5", "v4.5", "conditional"]
+    },
+    {
+      "st_id": "ST-07",
+      "epic_id": "EPIC-03",
+      "title": "SI-02 drift detection score metric definition",
+      "backlog_ref": "BLG-SPEC-41",
+      "priority": "P1",
+      "sprint": 2,
+      "conditional": true,
+      "gate_condition": "PO confirms SI-02 sprint planning is imminent; depends on ST-06 PASS",
+      "labels": ["governance", "EPIC-03", "cycle:2026-05-30__release-v4.5", "v4.5", "conditional"]
+    },
+    {
+      "st_id": "ST-08",
+      "epic_id": "EPIC-03",
+      "title": "SI-02 data schema pre-definition",
+      "backlog_ref": "BLG-SPEC-37",
+      "priority": "P1",
+      "sprint": 2,
+      "conditional": true,
+      "gate_condition": "PO confirms SI-02 sprint planning is imminent; informed by ST-07",
+      "labels": ["governance", "EPIC-03", "cycle:2026-05-30__release-v4.5", "v4.5", "conditional"]
+    }
+  ]
+}

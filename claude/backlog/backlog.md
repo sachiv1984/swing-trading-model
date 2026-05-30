@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-30 (AUD-2026-05-30 session — 3 new items added: BLG-GOV-75, BLG-GOV-76, BLG-GOV-77)
+**Last Updated:** 2026-05-30 (Release Planning v4.5 — release slice added; RP:v4.5:2026-05-30__release-v4.5)
 **Last rebalance:** 2026-05-27 (cycle 2026-05-27__scheduled — DL-035; IW-20260527-01; 31 new items: BLG-GOV-57–68, BLG-OPS-36–41, BLG-QA-36–38, BLG-SPEC-41–42, BLG-FE-51–55, BLG-BE-22–24)
 
 > ⚠️ Standing Notice
@@ -2103,3 +2103,22 @@ The BLG-GOV-19 autonomous class sign-off requires criterion 1: "all stories auto
 
 ---
 
+
+---
+
+## Release Slice — v4.5
+
+<!-- release-plan-marker: RP:v4.5:2026-05-30__release-v4.5 -->
+
+*Ephemeral section — remove at next `groom backlog` after v4.5 closes.*
+
+| ST-ID | EPIC | Title | Priority | Owner | Sprint |
+|-------|------|-------|----------|-------|--------|
+| ST-01 | EPIC-01 | execution_prompt.md DEL terminal-status write split (BLG-GOV-75) | P3 | Head of Specs Team | Sprint 1 |
+| ST-02 | EPIC-01 | execution_prompt.md pr_status sync after PR open (BLG-GOV-76) | P3 | Head of Specs Team | Sprint 1 |
+| ST-03 | EPIC-01 | execution_prompt.md verification-class sub-criterion (BLG-GOV-77) | P3 | Head of Specs Team | Sprint 1 |
+| ST-04 | EPIC-01 | execution_prompt.md spec_references policy (BLG-GOV-70) | P3 | Head of Specs Team | Sprint 1 |
+| ST-05 | EPIC-02 | Agent file header standardization — 5 files (AUD-2026-05-30-005) | P2 | Head of Specs Team | Sprint 1 |
+| ST-06 | EPIC-03 | SI-02 §13 formal boundary review (BLG-GOV-39) | P1 | Strategy Rules Owner | Sprint 2 (conditional) |
+| ST-07 | EPIC-03 | SI-02 drift score metric definition (BLG-SPEC-41) | P1 | Metrics Definitions Owner | Sprint 2 (conditional) |
+| ST-08 | EPIC-03 | SI-02 data schema pre-definition (BLG-SPEC-37) | P1 | Data Model Owner | Sprint 2 (conditional) |
