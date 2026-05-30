@@ -22,8 +22,8 @@ Last Updated: 2026-05-30
 - **Unblock criteria:** §13 review document produced with explicit PASS/FAIL determination; binding conditions documented (e.g., "drift alerts are informational only; no automated position management"); sign-off recorded and committed to `exec/2026-05-30__release-v4.5/EPIC-03` with commit format `[EPIC-03][ST-06] SI-02 §13 boundary review — PASS/FAIL`
 - **SLA due-by:** 2026-06-02T14:30:00Z (72 hours — strategy boundary SLA)
 - **Blocks execution:** Yes (ST-07 and ST-08 gated on PASS result; EPIC-03 cannot close without ST-06)
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** §13 review completed 2026-05-30 by Strategy Rules & System Intent Owner. Determination: PASS. 9 binding conditions documented. Artefact: `docs/product/decisions/decisions--2026-05-30__release-v4.5--SI-02-section13-review.md`. Commit: bb294278.
 
 ---
 
@@ -40,8 +40,8 @@ Last Updated: 2026-05-30
 - **Unblock criteria:** (1) ESC-EXEC-20260530-01 resolved with PASS; (2) metric definition document produced and committed to `exec/2026-05-30__release-v4.5/EPIC-03` at `docs/specs/metrics/si02_drift_score.md`, covering all AC-01–04 from `stage4_backlog_slice.md#ST-07`; (3) signed off by Metrics Definitions & Analytics Canonical Owner and Head of Specs Team
 - **SLA due-by:** 72 hours after ESC-EXEC-20260530-01 resolved with PASS
 - **Blocks execution:** Yes (part of EPIC-03 critical path)
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** Metric definition completed 2026-05-30 by Metrics Definitions & Analytics Canonical Owner (co-signed Head of Specs Team). Artefact: `docs/specs/metrics/si02_drift_score.md`. Four metrics defined with formulas, rolling window (90 days), threshold bands (green/amber/red), SI-05 integration. Commit: 22557442.
 
 ---
 
@@ -58,5 +58,5 @@ Last Updated: 2026-05-30
 - **Unblock criteria:** (1) ESC-EXEC-20260530-01 resolved with PASS; (2) data schema pre-definition document produced and committed to `exec/2026-05-30__release-v4.5/EPIC-03` at `docs/specs/data_model/si02_data_schema.md`, covering all AC-01–05 from `stage4_backlog_slice.md#ST-08`; (3) signed off by Data Model & Domain Schema Owner and Head of Specs Team. Note: can be started in parallel with ST-07 after ST-06 PASS — not hard-blocked on ST-07, but metric definition context is valuable.
 - **SLA due-by:** 72 hours after ESC-EXEC-20260530-01 resolved with PASS
 - **Blocks execution:** Yes (part of EPIC-03 critical path)
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** Data schema pre-definition completed 2026-05-30 by Data Model & Domain Schema Owner (co-signed Head of Specs Team). Artefact: `docs/specs/data_model/si02_data_schema.md`. 5 columns + 3 indexes + complete DS-07 migration script. Commit: 7c673369.

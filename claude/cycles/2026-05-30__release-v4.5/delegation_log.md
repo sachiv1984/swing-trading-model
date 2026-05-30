@@ -26,7 +26,9 @@ Sprint 2 (EPIC-03): Three `delegated_decision` stories delegated below.
 - **Spec reference:** `claude/strategy/strategy_rules.md` §13 (strategy boundary); `claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md#ST-06` (acceptance criteria)
 - **Unblock criteria:** Review document produced with explicit PASS/FAIL; binding conditions documented; committed to EPIC-03 branch with commit format `[EPIC-03][ST-06] SI-02 §13 boundary review — PASS` (or FAIL)
 - **Commit format required:** `[EPIC-03][ST-06] <description>` pushed to `exec/2026-05-30__release-v4.5/EPIC-03`
-- **Status:** Pending
+- **Status:** Unblocked
+- **Sign-off cleared:** 2026-05-30T15:00:00Z — Strategy Rules & System Intent Owner: PASS determination, 9 binding conditions documented
+- **Commit SHA:** bb294278
 
 ---
 
@@ -43,7 +45,9 @@ Sprint 2 (EPIC-03): Three `delegated_decision` stories delegated below.
 - **Spec reference:** `claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md#ST-07` (acceptance criteria); output path: `docs/specs/metrics/si02_drift_score.md`
 - **Unblock criteria:** (1) DEL-20260530-01 resolved with PASS; (2) metric definition document at `docs/specs/metrics/si02_drift_score.md` covering all four AC items; (3) both Metrics owner and Head of Specs Team signed off; (4) committed to EPIC-03 branch
 - **Commit format required:** `[EPIC-03][ST-07] <description>` pushed to `exec/2026-05-30__release-v4.5/EPIC-03`
-- **Status:** Pending
+- **Status:** Unblocked
+- **Sign-off cleared:** 2026-05-30T15:15:00Z — Metrics Definitions & Analytics Canonical Owner + Head of Specs Team: metric definition complete; 4 metrics with formulas, thresholds, SI-05 integration
+- **Commit SHA:** 22557442
 
 ---
 
@@ -60,4 +64,6 @@ Sprint 2 (EPIC-03): Three `delegated_decision` stories delegated below.
 - **Spec reference:** `claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md#ST-08` (acceptance criteria); output path: `docs/specs/data_model/si02_data_schema.md`
 - **Unblock criteria:** (1) DEL-20260530-01 resolved with PASS; (2) data schema pre-definition document at `docs/specs/data_model/si02_data_schema.md` covering all five AC items; (3) both Data Model owner and Head of Specs Team signed off; (4) committed to EPIC-03 branch
 - **Commit format required:** `[EPIC-03][ST-08] <description>` pushed to `exec/2026-05-30__release-v4.5/EPIC-03`
-- **Status:** Pending
+- **Status:** Unblocked
+- **Sign-off cleared:** 2026-05-30T15:30:00Z — Data Model & Domain Schema Owner + Head of Specs Team: data schema pre-definition complete; 5 columns + 3 indexes + complete DS-07 migration script
+- **Commit SHA:** 7c673369
