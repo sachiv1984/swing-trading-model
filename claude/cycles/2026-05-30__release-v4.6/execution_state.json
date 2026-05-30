@@ -198,7 +198,7 @@
       "branch": "exec/2026-05-30__release-v4.6/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-30__release-v4.6/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/test_behavioural_drift_service.py"],
       "stories": {
