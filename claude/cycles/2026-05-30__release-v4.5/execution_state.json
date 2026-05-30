@@ -45,89 +45,113 @@
       }
     },
     "EPIC-01": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-05-30__release-v4.5/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 574,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-30__release-v4.5/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
       "stories": {
         "ST-01": {
           "title": "execution_prompt.md: split DEL terminal-status write into sign-off and push steps",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 565,
           "branch": "exec/2026-05-30__release-v4.5/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "1c8cdd7e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-30T12:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["All AC-01–04 verified. No findings to apply — all AC items passed. §3.1.B and §3.1.D HARD GATE updated with two-phase write."],
+            "cleared_utc": "2026-05-30T12:00:00Z"
+          },
+          "notes": "No spec deviation. Patches applied to execution_prompt.md §3.1.B (delegated_backend/frontend unblock detection) and §3.1.D (delegated_decision unblock detection) HARD GATE blocks. Two-phase write: (a) sign_off_cleared at sign-off time; (b) commit_sha at push step. v4.4 OA-01 resolved."
         },
         "ST-02": {
           "title": "execution_prompt.md STEP 3.2.B: explicit pr_status sync after PR open",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 566,
           "branch": "exec/2026-05-30__release-v4.5/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "1c8cdd7e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-30T12:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["All AC-01–04 verified. No findings to apply. STEP 3.2.B step 5 added with immediate pr_status sync and EPIC.status done→merged rule."],
+            "cleared_utc": "2026-05-30T12:00:00Z"
+          },
+          "notes": "No spec deviation. STEP 3.2.B now has explicit step 5: gh pr view sync immediately after PR open; EPIC.status sync rule for done→merged. v4.4 OA-02 resolved."
         },
         "ST-03": {
           "title": "execution_prompt.md: verification-class sub-criterion for pre-planning sprints",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 567,
           "branch": "exec/2026-05-30__release-v4.5/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "1c8cdd7e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-30T12:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["All AC-01–04 verified. No findings to apply. LL-v4.5-EX-01 sub-criterion added with scope note."],
+            "cleared_utc": "2026-05-30T12:00:00Z"
+          },
+          "notes": "No spec deviation. §3.2.A autonomous class criterion 1 extended with LL-v4.5-EX-01 verification-class sub-criterion. v4.4 OA-03 resolved."
         },
         "ST-04": {
           "title": "execution_prompt.md: spec_references policy for documentation-creation stories",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 568,
           "branch": "exec/2026-05-30__release-v4.5/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "1c8cdd7e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-30T12:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["All AC-01–05 verified. No findings to apply. Step 2b added; BLG-GOV-70 archived from backlog."],
+            "cleared_utc": "2026-05-30T12:00:00Z"
+          },
+          "notes": "No spec deviation. §3.1.A step 2b (LL-v4.5-EX-02) added. BLG-GOV-70 archived from backlog (marked shipped in v4.5 ST-04). BLG-GOV-70 third+ recurrence resolved."
         }
       }
     }
@@ -135,7 +159,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-05"],
+  "completed_items": ["ST-05", "ST-01", "ST-02", "ST-03", "ST-04"],
   "open_escalations": [],
 
   "merge_gate": {
