@@ -9,6 +9,36 @@
 
 ---
 
+## v4.5 — Governance Prompt Hardening, Audit Debt & SI-02 Spec Pre-Planning — 2026-05-30
+Cycle: 2026-05-30__release-v4.5
+Verified: Verified
+Verification report: claude/cycles/2026-05-30__release-v4.5/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Governance Prompt Patches — execution_prompt.md v3.34: two-phase DEL terminal-status write (sign_off_cleared at sign-off, commit_sha at push; ST-01); explicit pr_status sync in STEP 3.2.B after PR open + EPIC.status done→merged rule (ST-02); LL-v4.5-EX-01 verification-class sub-criterion for pre-planning sprints (ST-03); LL-v4.5-EX-02 spec_references policy for doc-creation stories (ST-04). All four v4.4 outstanding actions resolved. | claude/system/execution_prompt.md v3.34 |
+| EPIC-02 | Agent Role Header Standardization — 5 agent files updated from `**Owner:**` to `**Role:**` format: api_contracts_documentation_owner.md, backend_engineering_patterns_owner.md, data_model_domain_schema_owner.md, frontend_specs_ux_documentation_owner.md, metrics_definitions_analytics_owner.md (AUD-2026-05-30-005 Tier 2 audit debt cleared; ST-05) | claude/agents/ — 5 agent files |
+| EPIC-03 | SI-02 Spec Pre-Sprint — §13 formal boundary review (PASS; 9 binding conditions documented; ST-06); drift detection score metric definition (4 metrics; 90-day window; green/amber/red bands; SI-05 integration; ST-07); data schema pre-definition (5 new trade_plans columns; DS-07 migration script; ST-08). SI-02 sprint planning now unblocked. | docs/product/decisions/decisions--2026-05-30__release-v4.5--SI-02-section13-review.md; docs/specs/metrics/si02_drift_score.md; docs/specs/data_model/si02_data_schema.md; docs/specs/si02_gap_analysis.md |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01] BLG-GOV-75: execution_prompt.md two-phase DEL terminal-status write
+- [ST-02] BLG-GOV-76: execution_prompt.md STEP 3.2.B pr_status sync after PR open
+- [ST-03] BLG-GOV-77: execution_prompt.md verification-class sub-criterion for pre-planning sprints
+- [ST-04] BLG-GOV-70: execution_prompt.md spec_references policy for documentation-creation stories
+- [ST-05] AUD-2026-05-30-005: Agent file role header standardization (5 files)
+- [ST-06] BLG-GOV-39: SI-02 §13 formal boundary review
+- [ST-07] BLG-SPEC-41: SI-02 drift score metric definition
+- [ST-08] BLG-SPEC-37: SI-02 data schema pre-definition
+
+Sign-off: Product Owner — 2026-05-30
+QA sign-off: Director of Quality — 2026-05-30
+
+---
+
 ## v4.4 — Governance Patches, SI-02 Pre-Planning Sprint & Ops Hardening — 2026-05-30
 Cycle: 2026-05-29__release-v4.4
 Verified: Verified

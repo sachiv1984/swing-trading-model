@@ -1018,3 +1018,20 @@ v4.2 Claude API Governance, SI-02 Pre-Work Readiness & Spec Debt. EPIC-01: Claud
 ### Original Roadmap Entry
 
 v4.4 Governance Patches, SI-02 Pre-Planning Sprint & Ops Hardening. EPIC-01: v4.3 OA resolution — roadmap_prompt.md v6.6 (STEP 8.1 empty-Now-horizon advisory), sprint_planning_prompt.md v3.8 (frontend classification fast-path), execution_prompt.md v3.33 (auto-set deviations_filed on delegation clearance), qa_evidence_template.md v1.4 (delegated_qa DoQ sign-off both format variants), release_planning_prompt.md v2.32 (STEP 7 RESUME PRECHECK). EPIC-04: OPERATIONAL_GUIDE.md v4.19 §7.9 Staging URL Disambiguation. EPIC-02: SI-02 backend pre-planning — drift detection query pre-design, Arc 5 architecture review + ADR-001 (cached-synchronous), query index pre-assessment (3 indexes), background job ADR-SI02-001. EPIC-03: SI-02 FE+QA pre-planning — component pre-design (Option B), interaction spec (5 states, 13 DFT IDs), Playwright scenario pre-design (DFT-01–DFT-13). All 7 SI-02 pre-planning gate conditions met — SI-02 implementation sprint now unblocked. 13/13 stories delivered. Zero spec deviations. Verified 2026-05-30.
+
+## RA:v4.5 — Governance Prompt Hardening, Audit Debt & SI-02 Spec Pre-Planning
+
+**Original roadmap location:** §1 Current Version / Release Summary §8
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-05-30
+**Shipped version:** v4.5
+**Cycle reference:** 2026-05-30__release-v4.5
+**Verification report:** claude/cycles/2026-05-30__release-v4.5/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-30
+
+### Original Roadmap Entry
+
+v4.5 Governance Prompt Hardening, Audit Debt & SI-02 Spec Pre-Planning. EPIC-01: execution_prompt.md v3.34 — four v4.4 OA patches: two-phase DEL terminal-status write (ST-01), pr_status sync after PR open (ST-02), LL-v4.5-EX-01 verification-class sub-criterion (ST-03), LL-v4.5-EX-02 spec_references policy for doc-creation stories (ST-04). EPIC-02: Agent role header standardization — 5 agent files updated to **Role:** format (AUD-2026-05-30-005). EPIC-03: SI-02 spec pre-sprint — §13 boundary review PASS (9 binding conditions; ST-06), drift score metric definition (4 metrics, 90-day window, green/amber/red bands; ST-07), data schema pre-definition (5 trade_plans columns + DS-07 migration; ST-08). All 4 v4.4 outstanding actions resolved. SI-02 sprint planning unblocked. 8/8 stories delivered. Zero spec deviations. Verified 2026-05-30.
+
+---

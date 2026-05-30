@@ -2,7 +2,7 @@
 **Class:** Planning Document (Class 4)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-05-29 (ideas_housekeeping post-ship v4.3 — 19 rows archived)
+**Last Updated:** 2026-05-30 (ideas_housekeeping post-ship v4.5 — 0 rows archived; all rows Parked or Rejected-strong)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # Ideas Register

@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-05-29
+**Last Updated:** 2026-05-30
 
 ---
 
@@ -656,6 +656,25 @@ Identified during delivery verification (verification_report.md §6). No test sc
 | — | EPIC-04 | No observable UI behaviour; governance/pre-planning scope; all ACs verifiable by document review | not_applicable |
 
 No TSG backlog items required.
+
+---
+
+## 26. Test Coverage Gaps — v4.5 (2026-05-30__release-v4.5)
+
+Identified during delivery verification (verification_report.md §6). **Zero test coverage gaps** — all EPICs governance/spec-only class.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| — | EPIC-01 | Governance prompt patches only; no behavioral/frontend change; all AC document-inspection-verifiable | not_applicable — governance sprint; no core user journey affected; no Playwright coverage needed |
+| — | EPIC-02 | Agent role header format update only; no behavioral change; no observable UI effect | not_applicable — file content change invisible to end users; no Playwright coverage needed |
+| — | EPIC-03 | Spec documents produced (decision record, metric definition, data schema); no code shipped; no behavioral/UI change | not_applicable — pre-planning spec deliverables; SI-02 implementation sprint will commission scenarios |
+
+No TSG backlog items required.
+
+**New SI-02 pre-planning spec documents filed this cycle:**
+- `docs/specs/metrics/si02_drift_score.md` — SI-02 drift detection score metric definition (ST-07): 4 drift metrics, 90-day rolling window, green/amber/red threshold bands, SI-05 integration points. Owner: Metrics Definitions & Analytics Canonical Owner + Head of Specs Team. Pre-planning specification for SI-02 implementation sprint.
+- `docs/specs/data_model/si02_data_schema.md` — SI-02 data schema pre-definition (ST-08): 5 new trade_plans columns (signal_id, risk_percent_used, portfolio_value_at_entry, pre_entry_validation_snapshot, effective_settings_snapshot), 3 indexes, DS-07 migration script. Owner: Data Model & Domain Schema Owner + Head of Specs Team. Pre-planning specification for SI-02 implementation sprint.
+- `docs/product/decisions/decisions--2026-05-30__release-v4.5--SI-02-section13-review.md` — SI-02 §13 formal boundary review decision record (ST-06): PASS determination; 9 binding conditions documented. Class 3 Operational Record (permanent). Owner: Strategy Rules & System Intent Owner.
 
 ---
 

@@ -1,9 +1,14 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v4.5
 Cycle: 2026-05-30__release-v4.5
 Last Updated: 2026-05-30
+
+Superseded by: v4.5 ship — 2026-05-30
+Changelog: docs/product/changelog.md#v45
+Verification report: claude/cycles/2026-05-30__release-v4.5/verification_report.md
+Cycle: 2026-05-30__release-v4.5
 
 ## Planning Decisions — v4.5 Governance Prompt Hardening, Audit Debt & SI-02 Spec Pre-Planning
 
@@ -29,4 +34,4 @@ Last Updated: 2026-05-30
 
 None.
 
-*(Supersession note: to be completed at post-ship closure.)*
+*(Superseded at post-ship closure — 2026-05-30)*

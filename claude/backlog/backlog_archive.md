@@ -4610,3 +4610,156 @@ Update qa_evidence_template.md DoQ sign-off block to include an example for the 
 - AC-01: DoQ sign-off block updated with delegated_qa example
 - AC-02: Both "Signed off by: Director of Quality" and "Director of Quality: Confirmed — [owner]" shown as valid formats
 - AC-03: Version bumps and governance file edit checklist applied
+
+---
+
+### BLG-GOV-70 — spec_references policy for documentation-creation stories
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-05-30
+**Shipped in:** v4.5 (ST-04)
+**Evidence:** claude/cycles/2026-05-30__release-v4.5/verification_report.md; docs/product/changelog.md#v45
+
+execution_prompt.md §3.1.A step 2b (LL-v4.5-EX-02): doc-creation stories set spec_references to artefact path + delivery_note. BLG-GOV-70 is self-referential — ST-04 created the policy governing its own spec_references update.
+
+---
+
+### BLG-GOV-75 — execution_prompt.md: split DEL terminal-status write into sign-off and push steps
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-05-30
+**Shipped in:** v4.5 (ST-01)
+**Evidence:** claude/cycles/2026-05-30__release-v4.5/verification_report.md; docs/product/changelog.md#v45
+
+**Problem**
+The delegation log terminal-status write currently happens as a single operation, which can produce a stale delegation log state when a session is resumed mid-merge. The DEL record gets its `status` set but the `commit_sha` field remains empty until the push step runs in a later session, requiring a merge gate sync correction on each resume.
+
+**Scope**
+- Split DEL terminal-status write into two sub-steps: (a) write `status = "sign_off_cleared"` at delegation sign-off time; (b) write `commit_sha` at push step
+- Add inline note to execution_prompt.md STEP 3 delegation close sequence
+
+**Acceptance Criteria**
+- DEL record write is split into two documented sub-steps
+- No merge gate sync required for fresh session resumes after delegation clearance
+- Version bump + governance file edit checklist applied
+
+---
+
+### BLG-GOV-76 — execution_prompt.md STEP 3.2.B: explicit pr_status sync after PR open
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-05-30
+**Shipped in:** v4.5 (ST-02)
+**Evidence:** claude/cycles/2026-05-30__release-v4.5/verification_report.md; docs/product/changelog.md#v45
+
+**Problem**
+After opening a PR, the execution engine records `pr_number` but does not immediately sync `pr_status`. If the PR is merged before the next engine invocation (e.g. by a human reviewer), the engine begins a fresh session with `pr_status = "open"` when it is already `"merged"`, causing incorrect state at STEP 5.0A pr_status sync.
+
+**Scope**
+- Add explicit pr_status sync step to STEP 3.2.B: after recording `pr_number`, run `gh pr view <pr_number> --json state` and update `pr_status` immediately
+- Also update `EPIC.status` from `"done"` to `"merged"` at QA evidence commit time if PR was merged between steps
+
+**Acceptance Criteria**
+- STEP 3.2.B contains explicit pr_status sync after PR open
+- EPIC.status updated to "merged" if PR already merged at QA evidence commit time
+- Version bump + governance file edit checklist applied
+
+---
+
+### BLG-GOV-77 — execution_prompt.md: verification-class sub-criterion for pre-planning sprints
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-05-30
+**Shipped in:** v4.5 (ST-03)
+**Evidence:** claude/cycles/2026-05-30__release-v4.5/verification_report.md; docs/product/changelog.md#v45
+
+**Problem**
+The BLG-GOV-19 autonomous class sign-off requires criterion 1: "all stories autonomous". For pre-planning sprints where stories are delivered as document inspection (delegated_decision or delegated_backend with document-only deliverable), the EXECUTION classification is delegated but VERIFICATION is document inspection only. This triggers a spurious Tier 2 advisory at STEP 3.2.A, complicating sign-off for architecturally valid pre-planning epics.
+
+**Scope**
+- Add a verification-class sub-criterion to execution_prompt.md §3.2.A (or delivery_verification_prompt.md): if all stories' VERIFICATION is by document inspection only, criterion 1 of BLG-GOV-19 autonomous class may be satisfied if criteria 2/3/4 are met
+- Scope to pre-planning sprint patterns only; document the condition clearly
+
+**Acceptance Criteria**
+- Sub-criterion added to autonomous class sign-off block
+- Tier 2 advisory not triggered for pre-planning sprints where all verification is document inspection
+- Version bump + governance file edit checklist applied
+
+---
+
+### BLG-GOV-39 — SI-02 §13 formal boundary review
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-05-30
+**Shipped in:** v4.5 (ST-06)
+**Evidence:** claude/cycles/2026-05-30__release-v4.5/verification_report.md; docs/product/changelog.md#v45; docs/product/decisions/decisions--2026-05-30__release-v4.5--SI-02-section13-review.md
+
+**Problem**
+SI-02 (Behavioural Drift Detection) involves rolling analysis comparing actual trade entries against stated setup criteria. Before sprint planning seals, formal §13 review must confirm: this is deterministic analysis of historical data, not a predictive signal; drift detection is display-only (shows patterns, does not recommend actions); the rolling window analysis is not an adaptive strategy parameter. Prevents last-minute sprint gate discovery.
+
+**Scope**
+- Run §13 checklist against SI-02 story set before sprint planning seals
+- Confirm drift detection output is: deterministic, display-only, no automated recommendations
+- Document binding conditions (e.g., "drift alerts are informational only; no automated position management")
+- Sign-off recorded in sprint planning artefact
+
+**Acceptance Criteria**
+- §13 review completed; PASS or FAIL determination documented
+- Binding conditions (if any) enumerated and recorded
+- Gate condition (SI-02 sprint planning imminent) verified before initiating review
+
+---
+
+### BLG-SPEC-37 — SI-02 data schema pre-definition
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-05-30
+**Shipped in:** v4.5 (ST-08)
+**Evidence:** claude/cycles/2026-05-30__release-v4.5/verification_report.md; docs/product/changelog.md#v45; docs/specs/data_model/si02_data_schema.md; docs/specs/si02_gap_analysis.md
+
+**Problem**
+SI-02 (Behavioural Drift Detection) requires per-trade data fields (regime_at_entry, setup_type, signal_conditions) that may not be fully captured in the current trade/position data model. Discovering these gaps mid-sprint would require emergency schema migrations. Pre-defining the required data structures before sprint planning allows the sprint to include any necessary migration stories proactively.
+
+**Scope**
+- Identify all data fields required for SI-02 drift analysis
+- Compare against current trade, position, and trade plan schemas
+- Gap analysis: enumerate missing fields with migration complexity estimate
+- Produce data schema pre-definition document: required fields, data types, tables affected, migration approach
+- Input to SI-02 sprint planning and BLG-BE-17 (drift query pre-design)
+
+**Acceptance Criteria**
+- Schema pre-definition document produced
+- Gap analysis complete: missing fields identified or confirmed absent
+- Migration approach defined for any missing fields
+- Document reviewed by Data Model Owner and Head of Specs Team before sprint planning
+
+---
+
+### BLG-SPEC-41 — SI-02 drift score metric definition
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-05-30
+**Shipped in:** v4.5 (ST-07)
+**Evidence:** claude/cycles/2026-05-30__release-v4.5/verification_report.md; docs/product/changelog.md#v45; docs/specs/metrics/si02_drift_score.md
+
+**Problem**
+SI-02 will surface a drift detection score to the user. The metric definition (format, rolling window, threshold bands, warning states, SI-05 digest integration) must be canonically defined before sprint planning to prevent mid-sprint metric design decisions that delay frontend implementation. This definition feeds BLG-SPEC-37 (schema) and BLG-FE-52 (component pre-design).
+
+**Scope**
+- Define user-facing drift detection score format: % deviation vs raw count vs index
+- Define rolling window and threshold bands (green/amber/red states)
+- Define warning state triggers and SI-05 weekly digest integration points
+- Produce canonical metric definition document
+
+**Acceptance Criteria**
+- Metric definition document produced covering format, window, thresholds, and SI-05 integration
+- Reviewed by Metrics Definitions & Analytics Canonical Owner and Head of Specs Team
+- Gate condition (SI-02 sprint planning imminent) verified before commencing
+
