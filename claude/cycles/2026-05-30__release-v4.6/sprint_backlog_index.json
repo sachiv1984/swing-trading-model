@@ -1,0 +1,63 @@
+{
+  "cycle_id": "2026-05-30__release-v4.6",
+  "generated_utc": "2026-05-30T20:00:00Z",
+  "backlog_slice": "claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md",
+  "epics": {
+    "EPIC-01": {
+      "sprint": 1,
+      "status": "included",
+      "st_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-01",
+        "stage4_backlog_slice.md#ST-02",
+        "stage4_backlog_slice.md#ST-03",
+        "stage4_backlog_slice.md#ST-04",
+        "stage4_backlog_slice.md#ST-05"
+      ]
+    },
+    "EPIC-02": {
+      "sprint": 2,
+      "status": "deferred_at_planning",
+      "gate_condition": "ST-16 audit confirms ≥20 closed trades with linked trade_plans; Product Owner confirms gate met before Sprint 2 planning seals. If gate not met, EPIC-02 is deferred and release closes with Sprint 1 + EPIC-03 only.",
+      "st_items": ["ST-06", "ST-07", "ST-08"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-06",
+        "stage4_backlog_slice.md#ST-07",
+        "stage4_backlog_slice.md#ST-08"
+      ]
+    },
+    "EPIC-03": {
+      "sprint": 2,
+      "status": "included",
+      "st_items": ["ST-09", "ST-10", "ST-11", "ST-12"],
+      "st_items_conditional": ["ST-13"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-09",
+        "stage4_backlog_slice.md#ST-10",
+        "stage4_backlog_slice.md#ST-11",
+        "stage4_backlog_slice.md#ST-12"
+      ],
+      "conditional_refs": [
+        "stage4_backlog_slice.md#ST-13"
+      ],
+      "conditional_gate": "ST-13: SI-01 + SI-03 live ≥30 days; gate clears 2026-06-21. Invoke amendment cycle if gate met before Sprint 2 seal."
+    },
+    "EPIC-04": {
+      "sprint": 1,
+      "status": "included",
+      "execution_state_owner": true,
+      "st_items": ["ST-14", "ST-15", "ST-16", "ST-17", "ST-18", "ST-19", "ST-20", "ST-21", "ST-22"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-14",
+        "stage4_backlog_slice.md#ST-15",
+        "stage4_backlog_slice.md#ST-16",
+        "stage4_backlog_slice.md#ST-17",
+        "stage4_backlog_slice.md#ST-18",
+        "stage4_backlog_slice.md#ST-19",
+        "stage4_backlog_slice.md#ST-20",
+        "stage4_backlog_slice.md#ST-21",
+        "stage4_backlog_slice.md#ST-22"
+      ]
+    }
+  }
+}
