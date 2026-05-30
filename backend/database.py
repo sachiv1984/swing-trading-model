@@ -1264,6 +1264,29 @@ def ensure_red_flag_events_table() -> None:
         conn.commit()
 
 
+def ensure_red_flag_events_severity_column() -> None:
+    """Add severity column to red_flag_events and backfill defaults (idempotent).
+
+    ST-09 (EPIC-03, v4.6) — BLG-BE-16. Adds severity VARCHAR(20) with values:
+    info / warning / critical. Backfills: pre_entry_override events → 'warning';
+    all other existing events → 'info'. Future SI-02 drift events → 'critical'
+    (set at creation time, not backfilled here).
+    Spec: docs/specs/api_contracts/portfolio_endpoints.md §GET /portfolio/red-flag-journal
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE red_flag_events ADD COLUMN IF NOT EXISTS severity VARCHAR(20) DEFAULT 'info'"
+            )
+            cur.execute(
+                "UPDATE red_flag_events SET severity = 'warning' WHERE event_type = 'pre_entry_override' AND severity IS NULL"
+            )
+            cur.execute(
+                "UPDATE red_flag_events SET severity = 'info' WHERE severity IS NULL"
+            )
+        conn.commit()
+
+
 def ensure_pre_entry_validation_log_table() -> None:
     """Create pre_entry_validation_log table for ST-01 arc5-compliance metrics."""
     with get_db() as conn:
@@ -1315,19 +1338,24 @@ def create_red_flag_event(
     ticker: str,
     position_id: Optional[str] = None,
     context: Optional[dict] = None,
+    severity: Optional[str] = None,
 ) -> dict:
+    """Create a red flag event. severity defaults: pre_entry_override → 'warning'; others → 'info'."""
     import json as _json
+    if severity is None:
+        severity = "warning" if event_type == "pre_entry_override" else "info"
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute(
-                """INSERT INTO red_flag_events (event_type, ticker, position_id, context)
-                   VALUES (%s, %s, %s, %s::jsonb)
+                """INSERT INTO red_flag_events (event_type, ticker, position_id, context, severity)
+                   VALUES (%s, %s, %s, %s::jsonb, %s)
                    RETURNING *""",
                 (
                     event_type,
                     ticker.upper(),
                     position_id,
                     _json.dumps(context) if context is not None else None,
+                    severity,
                 ),
             )
             row = cur.fetchone()
@@ -1341,7 +1369,9 @@ def get_red_flag_events(
     event_type: Optional[str] = None,
     ticker: Optional[str] = None,
     since: Optional[str] = None,
+    severity: Optional[str] = None,
 ) -> dict:
+    """Fetch paginated red flag events. severity filter: info / warning / critical."""
     clauses = []
     params: list = []
     if event_type:
@@ -1353,6 +1383,9 @@ def get_red_flag_events(
     if since:
         clauses.append("created_at >= %s::timestamptz")
         params.append(since)
+    if severity:
+        clauses.append("severity = %s")
+        params.append(severity)
     where = ("WHERE " + " AND ".join(clauses)) if clauses else ""
     offset = (page - 1) * page_size
     with get_db() as conn:

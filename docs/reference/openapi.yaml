@@ -469,6 +469,12 @@ paths:
           schema:
             type: string
             format: date-time
+        - in: query
+          name: severity
+          schema:
+            type: string
+            enum: [info, warning, critical]
+          description: Filter by severity level (v4.6 ST-09)
       responses:
         "200":
           description: Paginated deviation event log
@@ -512,6 +518,10 @@ paths:
                             created_at:
                               type: string
                               format: date-time
+                            severity:
+                              type: string
+                              enum: [info, warning, critical]
+                              description: Event severity level (v4.6 ST-09)
         "500":
           description: Internal server error
 

@@ -819,6 +819,7 @@ Returns a paginated log of strategy deviation events. Populated when the operato
 | event_type | string | No | Filter by event type: `pre_entry_override`, `checklist_skipped`, `stop_prompt_dismissed`, `drawdown_prompt_dismissed` |
 | ticker | string | No | Filter by ticker symbol (case-insensitive) |
 | since | string | No | ISO date filter — return events on or after this timestamp |
+| severity | string | No | Filter by severity level: `info` \| `warning` \| `critical` (v4.6 ST-09) |
 
 ### Response (200 OK)
 
@@ -836,7 +837,8 @@ Returns a paginated log of strategy deviation events. Populated when the operato
         "ticker": "AAPL",
         "position_id": null,
         "context": { "source": "trade_plan", "override_acknowledged": true },
-        "created_at": "2026-05-22T10:30:00+00:00"
+        "created_at": "2026-05-22T10:30:00+00:00",
+        "severity": "warning"
       }
     ]
   }
@@ -862,6 +864,7 @@ Returns a paginated log of strategy deviation events. Populated when the operato
 | position_id | UUID string \| null | Linked position ID if available |
 | context | object \| null | JSON context snapshot at event time |
 | created_at | ISO 8601 string | Event timestamp |
+| severity | string | Event severity: `info` \| `warning` \| `critical` (v4.6 ST-09; defaults: `pre_entry_override` → `warning`, SI-02 drift events → `critical`, others → `info`) |
 
 ### Errors
 

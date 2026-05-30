@@ -37,6 +37,7 @@ class TestEmptyJournal:
     def test_empty_journal_returns_empty_items(self, client):
         with (
             patch("routers.red_flag_journal.ensure_red_flag_events_table"),
+            patch("routers.red_flag_journal.ensure_red_flag_events_severity_column"),
             patch("routers.red_flag_journal.get_red_flag_events", return_value=_empty_result()) as mock_get,
         ):
             resp = client.get("/portfolio/red-flag-journal")
@@ -45,7 +46,7 @@ class TestEmptyJournal:
         assert data["status"] == "ok"
         assert data["data"]["total"] == 0
         assert data["data"]["items"] == []
-        mock_get.assert_called_once_with(page=1, page_size=20, event_type=None, ticker=None, since=None)
+        mock_get.assert_called_once_with(page=1, page_size=20, event_type=None, ticker=None, since=None, severity=None)
 
 
 class TestPagination:
@@ -53,6 +54,7 @@ class TestPagination:
         result = {"total": 50, "page": 3, "page_size": 10, "items": [_make_event()]}
         with (
             patch("routers.red_flag_journal.ensure_red_flag_events_table"),
+            patch("routers.red_flag_journal.ensure_red_flag_events_severity_column"),
             patch("routers.red_flag_journal.get_red_flag_events", return_value=result) as mock_get,
         ):
             resp = client.get("/portfolio/red-flag-journal?page=3&page_size=10")
@@ -61,7 +63,7 @@ class TestPagination:
         assert data["data"]["page"] == 3
         assert data["data"]["page_size"] == 10
         assert data["data"]["total"] == 50
-        mock_get.assert_called_once_with(page=3, page_size=10, event_type=None, ticker=None, since=None)
+        mock_get.assert_called_once_with(page=3, page_size=10, event_type=None, ticker=None, since=None, severity=None)
 
 
 class TestFilterByEventType:
@@ -69,12 +71,13 @@ class TestFilterByEventType:
         result = {"total": 2, "page": 1, "page_size": 20, "items": [_make_event("pre_entry_override")]}
         with (
             patch("routers.red_flag_journal.ensure_red_flag_events_table"),
+            patch("routers.red_flag_journal.ensure_red_flag_events_severity_column"),
             patch("routers.red_flag_journal.get_red_flag_events", return_value=result) as mock_get,
         ):
             resp = client.get("/portfolio/red-flag-journal?event_type=pre_entry_override")
         assert resp.status_code == 200
         mock_get.assert_called_once_with(
-            page=1, page_size=20, event_type="pre_entry_override", ticker=None, since=None
+            page=1, page_size=20, event_type="pre_entry_override", ticker=None, since=None, severity=None
         )
         items = resp.json()["data"]["items"]
         assert len(items) == 1
@@ -86,15 +89,50 @@ class TestFilterByTicker:
         result = {"total": 1, "page": 1, "page_size": 20, "items": [_make_event(ticker="NVDA")]}
         with (
             patch("routers.red_flag_journal.ensure_red_flag_events_table"),
+            patch("routers.red_flag_journal.ensure_red_flag_events_severity_column"),
             patch("routers.red_flag_journal.get_red_flag_events", return_value=result) as mock_get,
         ):
             resp = client.get("/portfolio/red-flag-journal?ticker=NVDA")
         assert resp.status_code == 200
         mock_get.assert_called_once_with(
-            page=1, page_size=20, event_type=None, ticker="NVDA", since=None
+            page=1, page_size=20, event_type=None, ticker="NVDA", since=None, severity=None
         )
         items = resp.json()["data"]["items"]
         assert items[0]["ticker"] == "NVDA"
+
+
+class TestFilterBySeverity:
+    """ST-09 (v4.6) — severity filter AC-07: GET /portfolio/red-flag-journal?severity=warning returns only warning events."""
+
+    def test_severity_filter_forwarded_to_database(self, client):
+        warning_event = {**_make_event("pre_entry_override"), "severity": "warning"}
+        result = {"total": 1, "page": 1, "page_size": 20, "items": [warning_event]}
+        with (
+            patch("routers.red_flag_journal.ensure_red_flag_events_table"),
+            patch("routers.red_flag_journal.ensure_red_flag_events_severity_column"),
+            patch("routers.red_flag_journal.get_red_flag_events", return_value=result) as mock_get,
+        ):
+            resp = client.get("/portfolio/red-flag-journal?severity=warning")
+        assert resp.status_code == 200
+        mock_get.assert_called_once_with(
+            page=1, page_size=20, event_type=None, ticker=None, since=None, severity="warning"
+        )
+        items = resp.json()["data"]["items"]
+        assert len(items) == 1
+        assert items[0]["severity"] == "warning"
+
+    def test_critical_severity_filter_forwarded(self, client):
+        result = {"total": 0, "page": 1, "page_size": 20, "items": []}
+        with (
+            patch("routers.red_flag_journal.ensure_red_flag_events_table"),
+            patch("routers.red_flag_journal.ensure_red_flag_events_severity_column"),
+            patch("routers.red_flag_journal.get_red_flag_events", return_value=result) as mock_get,
+        ):
+            resp = client.get("/portfolio/red-flag-journal?severity=critical")
+        assert resp.status_code == 200
+        mock_get.assert_called_once_with(
+            page=1, page_size=20, event_type=None, ticker=None, since=None, severity="critical"
+        )
 
 
 class TestSI01OverrideEventWrite:
