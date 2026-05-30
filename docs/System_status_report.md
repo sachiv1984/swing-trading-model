@@ -32,7 +32,7 @@ None. All 8 stories completed. 0 returned to backlog.
 
 ## Sprint: 2026-05-29__release-v4.4
 **Date:** 2026-05-30
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified — 2026-05-29
 
 ### Capabilities now live (merged this sprint)
 
