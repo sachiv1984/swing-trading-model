@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-30 (v4.5 post-ship closure — ✅ Complete; next_release=[TBD])
+**Last Updated:** 2026-05-30 (v4.6 release planning — plan published; cycle: 2026-05-30__release-v4.6)
 **Last rebalance:** 2026-05-27 (cycle 2026-05-27__scheduled — Extended-tier, CPS=1.15; Strategy Drift Alert acknowledged; 31 new backlog items; DL-035)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -11,9 +11,19 @@
 ## 1. Current Version
 
 **v4.5** — Governance Prompt Hardening, Audit Debt & SI-02 Spec Pre-Planning — ✅ Shipped 2026-05-30
-**Next planned release:** [TBD]
+**Next planned release:** v4.6
 
 *RA:v4.5 retired — see roadmap_archive.md 2026-05-30 (post-ship closure 2026-05-30__release-v4.5).*
+
+<!-- roadmap-annotation-marker: RA:v4.6:2026-05-30__release-v4.6 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-30__release-v4.6
+- Plan published: 2026-05-30
+- Cycle folder: claude/cycles/2026-05-30__release-v4.6/
+- Backlog slice: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md
+- Status at annotation: Committed
+- Theme: SI-02 Behavioural Drift Detection & Arc 5 Completion — 22 stories / 4 EPICs / 2 sprints; double capacity
 
 <!-- roadmap-annotation-marker: RA:v4.3:2026-05-29__release-v4.3 -->
 
@@ -431,6 +441,7 @@ When evaluating new features:
 
 *RA:v4.4 retired — see roadmap_archive.md 2026-05-30 (post-ship closure 2026-05-29__release-v4.4).*
 |**v4.5** ✅  |Governance Prompt Hardening, Audit Debt & SI-02 Spec Pre-Planning       |execution_prompt.md v3.34: four OA patches (BLG-GOV-70/75/76/77); agent role header standardization 5 files (AUD-2026-05-30-005); SI-02 spec pre-sprint: §13 PASS (9 binding conditions), drift score metric definition (4 metrics), data schema pre-definition (5 trade_plans columns + DS-07 migration). 8/8 stories. Zero spec deviations — ✅ Shipped 2026-05-30 — cycle: 2026-05-30__release-v4.5|
+|**v4.6**     |Arc 5 SI-02 Behavioural Drift Detection & Arc 5 Completion              |SI-02 backend (DS-07 migration, drift service 4 metrics, GET /analytics/behavioural-drift, unit tests); SI-02 frontend (BehaviouralDriftPanel, PerformanceAnalytics integration, Playwright); Arc 5 enablers (severity field, hosting cost, nav cohesion, RFJ design scope); governance debt (OA-01/02, BLG-GOV-32/33/34/41/43/45/52, BLG-SPEC-32). 22 stories / 4 EPICs / 2 sprints. Double capacity. — 📋 Planned 2026-05-30 — cycle: 2026-05-30__release-v4.6|
 |**v4.0+**    |Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
 |**v4.0+**    |Arc 5: Strategy Integrity (remainder)                                 |SI-02 behavioural drift detection, SI-04 strategy version comparison, SI-05 weekly digest — 📋 Planned                                    |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

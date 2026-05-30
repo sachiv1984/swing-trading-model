@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-30 (Post-ship closure v4.5 — 6 items marked shipped: BLG-GOV-75/76/77/39, BLG-SPEC-37/41; closure: 2026-05-30__release-v4.5)
+**Last Updated:** 2026-05-30 (Release Planning v4.6 — release slice added: 22 stories/4 EPICs; RP:v4.6:2026-05-30__release-v4.6)
 **Last rebalance:** 2026-05-27 (cycle 2026-05-27__scheduled — DL-035; IW-20260527-01; 31 new items: BLG-GOV-57–68, BLG-OPS-36–41, BLG-QA-36–38, BLG-SPEC-41–42, BLG-FE-51–55, BLG-BE-22–24)
 
 > ⚠️ Standing Notice
@@ -1937,4 +1937,35 @@ Backlog items have no explicit Blocks/Blocked-by fields. Cross-item dependencies
 - Gate condition (20+ concurrent items with dependency-blocking evidence) verified before commencing
 
 ---
+
+## Release Slice — v4.6 (2026-05-30__release-v4.6)
+
+<!-- release-plan-marker: RP:v4.6:2026-05-30__release-v4.6 -->
+
+*Ephemeral section — remove during next `groom backlog` run after cycle closes.*
+
+| EPIC | Story | Backlog ref | Priority | Sprint |
+|------|-------|-------------|----------|--------|
+| EPIC-01 | ST-01 | si02_data_schema.md (DS-07 migration) | P1 | Sprint 1 |
+| EPIC-01 | ST-02 | si02_data_schema.md §7 (POST /trade-plans capture) | P1 | Sprint 1 |
+| EPIC-01 | ST-03 | Arc 5 SI-02 drift service (si02_drift_score.md) | P1 | Sprint 1 |
+| EPIC-01 | ST-04 | Arc 5 SI-02 endpoint (GET /analytics/behavioural-drift) | P1 | Sprint 1 |
+| EPIC-01 | ST-05 | Arc 5 SI-02 unit tests | P1 | Sprint 1 |
+| EPIC-02 | ST-06 | BLG-FE-52/53 (BehaviouralDriftPanel) | P1 | Sprint 2 |
+| EPIC-02 | ST-07 | SI-02 PerformanceAnalytics integration | P1 | Sprint 2 |
+| EPIC-02 | ST-08 | BLG-QA-31 (SI-02 Playwright tests) | P1 | Sprint 2 |
+| EPIC-03 | ST-09 | BLG-BE-16 (severity field) | P2 | Sprint 2 |
+| EPIC-03 | ST-10 | BLG-OPS-40 (Arc 5 hosting cost projection) | P2 | Sprint 2 |
+| EPIC-03 | ST-11 | BLG-FE-42 (Arc 5 nav cohesion review) | P2 | Sprint 2 |
+| EPIC-03 | ST-12 | BLG-FE-47 (RFJ design review scope) | P2 | Sprint 2 |
+| EPIC-03 | ST-13 | BLG-GOV-67 (SI-05 Phase 1) — conditional | P2 | Sprint 2 (conditional) |
+| EPIC-04 | ST-14 | OA-01 (System_status_report fix) | P2 | Sprint 1 |
+| EPIC-04 | ST-15 | BLG-GOV-32+43 (release_planning_prompt.md gate scan) | P2 | Sprint 1 |
+| EPIC-04 | ST-16 | BLG-GOV-33 (closed trade count audit) | P2 | Sprint 1 |
+| EPIC-04 | ST-17 | BLG-GOV-34 (Arc 4 data density trajectory) | P2 | Sprint 1 |
+| EPIC-04 | ST-18 | BLG-GOV-45 (Arc 6 Monte Carlo §13) | P2 | Sprint 1 |
+| EPIC-04 | ST-19 | BLG-GOV-52 (trade plan schema audit) | P2 | Sprint 1 |
+| EPIC-04 | ST-20 | BLG-GOV-41 (sprint close automation investigation) | P2 | Sprint 1 |
+| EPIC-04 | ST-21 | BLG-SPEC-32 (external API spec template) | P3 | Sprint 1 |
+| EPIC-04 | ST-22 | OA-02 (roadmap_prompt.md advisory patch) | P3 | Sprint 1 |
 

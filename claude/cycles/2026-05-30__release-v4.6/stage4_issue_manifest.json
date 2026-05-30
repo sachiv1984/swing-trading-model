@@ -1,0 +1,30 @@
+{
+  "cycle_id": "2026-05-30__release-v4.6",
+  "release": "v4.6",
+  "generated_utc": "2026-05-30T18:10:00Z",
+  "total_stories": 22,
+  "stories": [
+    {"id": "ST-01", "epic": "EPIC-01", "title": "DS-07 data migration: add SI-02 columns to trade_plans", "sprint": 1, "priority": "P1", "labels": ["EPIC-01", "sprint-1", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-02", "epic": "EPIC-01", "title": "POST /trade-plans: capture 5 new SI-02 fields at plan creation", "sprint": 1, "priority": "P1", "labels": ["EPIC-01", "sprint-1", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-03", "epic": "EPIC-01", "title": "SI-02 behavioural drift detection service (4 metrics)", "sprint": 1, "priority": "P1", "labels": ["EPIC-01", "sprint-1", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-04", "epic": "EPIC-01", "title": "GET /analytics/behavioural-drift endpoint, openapi.yaml, API contract", "sprint": 1, "priority": "P1", "labels": ["EPIC-01", "sprint-1", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-05", "epic": "EPIC-01", "title": "SI-02 unit test suite", "sprint": 1, "priority": "P1", "labels": ["EPIC-01", "sprint-1", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-06", "epic": "EPIC-02", "title": "BehaviouralDriftPanel component", "sprint": 2, "priority": "P1", "labels": ["EPIC-02", "sprint-2", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-07", "epic": "EPIC-02", "title": "BehaviouralDriftPanel integration into PerformanceAnalytics", "sprint": 2, "priority": "P1", "labels": ["EPIC-02", "sprint-2", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-08", "epic": "EPIC-02", "title": "SI-02 Playwright test coverage", "sprint": 2, "priority": "P1", "labels": ["EPIC-02", "sprint-2", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-09", "epic": "EPIC-03", "title": "BLG-BE-16: red_flag_events severity field", "sprint": 2, "priority": "P2", "labels": ["EPIC-03", "sprint-2", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-10", "epic": "EPIC-03", "title": "BLG-OPS-40: Arc 5 hosting cost projection assessment", "sprint": 2, "priority": "P2", "labels": ["EPIC-03", "sprint-2", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-11", "epic": "EPIC-03", "title": "BLG-FE-42: Arc 5 nav cohesion review", "sprint": 2, "priority": "P2", "labels": ["EPIC-03", "sprint-2", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-12", "epic": "EPIC-03", "title": "BLG-FE-47: Red Flag Journal design review scope document", "sprint": 2, "priority": "P2", "labels": ["EPIC-03", "sprint-2", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-13", "epic": "EPIC-03", "title": "BLG-GOV-67: SI-05 Phase 1 implementation (CONDITIONAL — gate 2026-06-21)", "sprint": 2, "priority": "P2", "conditional": true, "gate": "SI-01 + SI-03 live >= 30 days (clears 2026-06-21)", "labels": ["EPIC-03", "sprint-2", "v4.6", "conditional", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-14", "epic": "EPIC-04", "title": "OA-01: System_status_report.md v4.4 stale status correction", "sprint": 1, "priority": "P2", "labels": ["EPIC-04", "sprint-1", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-15", "epic": "EPIC-04", "title": "BLG-GOV-32+43: release_planning_prompt.md gate scan + data density checkpoint", "sprint": 1, "priority": "P2", "labels": ["EPIC-04", "sprint-1", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-16", "epic": "EPIC-04", "title": "BLG-GOV-33: closed trade count audit (PT-04 + SI-02 data density gate)", "sprint": 1, "priority": "P2", "labels": ["EPIC-04", "sprint-1", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-17", "epic": "EPIC-04", "title": "BLG-GOV-34: Arc 4 data density risk trajectory assessment", "sprint": 1, "priority": "P2", "labels": ["EPIC-04", "sprint-1", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-18", "epic": "EPIC-04", "title": "BLG-GOV-45: Arc 6 Monte Carlo §13 pre-assessment", "sprint": 1, "priority": "P2", "labels": ["EPIC-04", "sprint-1", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-19", "epic": "EPIC-04", "title": "BLG-GOV-52: trade plan schema field count gate check", "sprint": 1, "priority": "P2", "labels": ["EPIC-04", "sprint-1", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-20", "epic": "EPIC-04", "title": "BLG-GOV-41: sprint close automation failure investigation", "sprint": 1, "priority": "P2", "labels": ["EPIC-04", "sprint-1", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-21", "epic": "EPIC-04", "title": "BLG-SPEC-32: external API integration spec template", "sprint": 1, "priority": "P3", "labels": ["EPIC-04", "sprint-1", "v4.6", "cycle:2026-05-30__release-v4.6"]},
+    {"id": "ST-22", "epic": "EPIC-04", "title": "OA-02: roadmap_prompt.md next_release advisory patch", "sprint": 1, "priority": "P3", "labels": ["EPIC-04", "sprint-1", "v4.6", "cycle:2026-05-30__release-v4.6"]}
+  ]
+}
