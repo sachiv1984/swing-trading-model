@@ -194,10 +194,10 @@
       }
     },
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-30__release-v4.6/EPIC-01",
       "pr_number": 597,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-30__release-v4.6/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/test_behavioural_drift_service.py"],
@@ -464,8 +464,8 @@
   "open_escalations": ["ESC-EXEC-20260530-01", "ESC-EXEC-20260530-02", "ESC-EXEC-20260530-03", "ESC-EXEC-20260530-04"],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-04", "EPIC-01", "EPIC-03"],
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-04", "EPIC-03"],
     "all_merged": false
   },
 
