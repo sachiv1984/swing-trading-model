@@ -7,6 +7,32 @@
 
 ---
 
+## Sprint: 2026-05-30__release-v4.5
+**Date:** 2026-05-30
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-02 | Agent header standardization: **Role:** format applied to 5 agent files (api_contracts_documentation_owner.md, backend_engineering_patterns_owner.md, data_model_domain_schema_owner.md, frontend_specs_ux_documentation_owner.md, metrics_definitions_analytics_owner.md) | claude/agents/ — 5 files | None |
+| EPIC-01 | execution_prompt.md v3.34: four v4.4 OA patches — (1) DEL terminal-status two-phase write LL-v3.9 (ST-01); (2) pr_status sync after PR open LL-v4.5-ST02 (ST-02); (3) verification-class sub-criterion LL-v4.5-EX-01 for pre-planning sprints (ST-03); (4) spec_references policy LL-v4.5-EX-02 for doc-creation stories (ST-04) | claude/system/execution_prompt.md v3.34 | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-06 (EPIC-03) — SI-02 §13 formal boundary review | Gate condition not confirmed: PO must confirm SI-02 sprint planning imminent | BLG-GOV-39 |
+| ST-07 (EPIC-03) — SI-02 drift detection score metric definition | Gate condition not confirmed; depends on ST-06 §13 PASS | backlog.md |
+| ST-08 (EPIC-03) — SI-02 data schema pre-definition | Gate condition not confirmed; informed by ST-07 | backlog.md |
+
+### Verification inputs ready
+- QA evidence logs: qa_evidence_EPIC-01.md (autonomous class 2026-05-30), qa_evidence_EPIC-02.md (autonomous class 2026-05-30)
+- Deviations filed: None
+- Test scenarios referenced: None (governance-only sprint — document inspection verification; no code/automated tests)
+
+---
+
 ## Sprint: 2026-05-29__release-v4.4
 **Date:** 2026-05-30
 **Status:** Sprint_Complete — pending verification
