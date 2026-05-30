@@ -1,0 +1,32 @@
+{
+  "cycle_id": "2026-05-30__release-v4.5",
+  "generated_utc": "2026-05-30T11:00:00Z",
+  "epics": {
+    "EPIC-01": {
+      "st_items": ["ST-01", "ST-02", "ST-03", "ST-04"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-01",
+        "stage4_backlog_slice.md#ST-02",
+        "stage4_backlog_slice.md#ST-03",
+        "stage4_backlog_slice.md#ST-04"
+      ]
+    },
+    "EPIC-02": {
+      "st_items": ["ST-05"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-05"
+      ]
+    }
+  },
+  "deferred_at_planning": {
+    "EPIC-03": {
+      "st_items": ["ST-06", "ST-07", "ST-08"],
+      "gate_condition": "PO confirmation that SI-02 sprint planning is imminent",
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-06",
+        "stage4_backlog_slice.md#ST-07",
+        "stage4_backlog_slice.md#ST-08"
+      ]
+    }
+  }
+}
