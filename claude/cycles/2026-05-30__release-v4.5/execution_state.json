@@ -1,0 +1,143 @@
+{
+  "cycle_id": "2026-05-30__release-v4.5",
+  "sprint_goal": "Deliver all four v4.4 deferred execution_prompt.md governance patches and standardize agent role headers, resolving outstanding audit debt and hardening the governance infrastructure before SI-02 sprint planning begins.",
+  "backlog_slice_source": "claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md",
+  "invoked_utc": "2026-05-30T11:30:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-05-30T11:30:00Z",
+
+  "epics": {
+    "EPIC-02": {
+      "status": "in_progress",
+      "branch": "exec/2026-05-30__release-v4.5/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-05-30__release-v4.5/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-05": {
+          "title": "Standardize 5 agent file role headers",
+          "classification": "autonomous",
+          "status": "in_progress",
+          "assigned_to": "engine",
+          "github_issue": 569,
+          "branch": "exec/2026-05-30__release-v4.5/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-01": {
+      "status": "not_started",
+      "branch": "exec/2026-05-30__release-v4.5/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-05-30__release-v4.5/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "execution_prompt.md: split DEL terminal-status write into sign-off and push steps",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 565,
+          "branch": "exec/2026-05-30__release-v4.5/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-02": {
+          "title": "execution_prompt.md STEP 3.2.B: explicit pr_status sync after PR open",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 566,
+          "branch": "exec/2026-05-30__release-v4.5/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-03": {
+          "title": "execution_prompt.md: verification-class sub-criterion for pre-planning sprints",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 567,
+          "branch": "exec/2026-05-30__release-v4.5/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-04": {
+          "title": "execution_prompt.md: spec_references policy for documentation-creation stories",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 568,
+          "branch": "exec/2026-05-30__release-v4.5/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-02", "EPIC-01"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}

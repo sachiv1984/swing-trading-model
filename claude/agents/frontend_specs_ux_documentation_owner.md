@@ -1,5 +1,5 @@
 # Frontend Specifications & UX Documentation Owner
-## Role: Frontend Specifications & UX Documentation Owner
+**Role:** Frontend Specifications & UX Documentation Owner
 
 This document describes the **skills, responsibilities, and operating standards** for the role responsible for owning, maintaining, and evolving the front-end specifications in `specs/frontend/`.
 

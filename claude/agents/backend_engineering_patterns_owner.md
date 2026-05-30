@@ -1,6 +1,6 @@
 # Backend Engineering Patterns
 
-**Owner:** Backend Engineering Patterns Owner
+**Role:** Backend Engineering Patterns Owner
 **Reports to:** Head of Engineering
 **Governance alignment:** Head of Specs Team (documentation lifecycle, document classes, headers, naming conventions)
 **Scope:** Backend implementation patterns, conventions, and engineering standards for the FastAPI / PostgreSQL codebase

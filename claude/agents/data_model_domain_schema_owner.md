@@ -1,5 +1,5 @@
 # Data Model & Domain Schema Owner
-## Role: Data Model & Domain Schema Owner
+**Role:** Data Model & Domain Schema Owner
 
 This document defines the **skills, responsibilities, and operating standards** for the role responsible for owning, maintaining, and evolving the **Data Model** for the Momentum Trading Assistant.
 
