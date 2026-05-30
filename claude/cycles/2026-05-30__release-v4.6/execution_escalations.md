@@ -113,5 +113,5 @@ Cycle: 2026-05-30__release-v4.6
 - **Unblock criteria:** Arc 5 nav cohesion review document committed to EPIC-03 branch with: full nav inventory review (AC-01), navigability/grouping/naming assessment (AC-02), recommendation stated (AC-03), UX spec + backlog item if changes recommended (AC-04), Head of UX & Design sign-off (AC-05). Commit format: [EPIC-03][ST-11] <description>.
 - **SLA due-by:** 2026-05-31T23:00:00Z (24 hours — lifecycle)
 - **Blocks execution:** No (ST-09 and ST-12 can proceed independently)
-- **Disposition:** Open
-- **Resolution summary:** (pending)
+- **Disposition:** Resolved
+- **Resolution summary:** docs/specs/frontend/arc5_nav_cohesion_review_v4.6.md committed (commit e0269c12). Review: full Arc 5 nav inventory, navigability (1-click depth), grouping logic (Trading/Analytics split correct), naming, page depth. Recommendation: maintain current structure. No structural changes or backlog items required. Head of UX & Design sign-off in document. Resolved 2026-05-30.
