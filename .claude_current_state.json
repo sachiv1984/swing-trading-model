@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-05-30__release-v4.5",
   "cycle_name": "Release Planning — v4.5 Governance Prompt Hardening, Audit Debt & SI-02 Spec Pre-Planning",
-  "status": "Sprint_Complete",
+  "status": "Sprint_Planning_Complete",
   "engine": "release_planning",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md",
@@ -30,7 +30,8 @@
   "amended_backlog_slice_path": "",
   "amendment_sealed_utc": "",
   "sprint_close_utc": "2026-05-30T13:15:00Z",
-  "last_sync_utc": "2026-05-30T13:15:00Z",
+  "sprint2_gate_confirmed_utc": "2026-05-30T14:30:00Z",
+  "last_sync_utc": "2026-05-30T14:30:00Z",
   "sprint_close_utc": "",
   "verification_utc": "",
   "last_audit_id": "AUD-2026-05-30",

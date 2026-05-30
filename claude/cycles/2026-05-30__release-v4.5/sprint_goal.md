@@ -27,5 +27,18 @@ Deliver all four v4.4 deferred execution_prompt.md governance patches and standa
 
 ## Confirmed by
 
-**Product Owner:** Confirmed (2026-05-30) — sprint planning invocation constitutes PO authorization of goal, scope, and capacity WARN acknowledgement
+**Product Owner (Sprint 1):** Confirmed (2026-05-30) — sprint planning invocation constitutes PO authorization of goal, scope, and capacity WARN acknowledgement
+**Date:** 2026-05-30
+
+---
+
+## Sprint 2 Goal (Gate Confirmed)
+
+Complete SI-02 spec pre-sprint work — §13 boundary review, drift score metric definition, and data schema pre-definition — to enable SI-02 sprint planning to proceed.
+
+- **Release:** v4.5
+- **Feature:** SI-02 Spec Pre-Sprint Completion
+- **Roadmap item:** S2-03
+
+**Product Owner (Sprint 2):** Confirmed (2026-05-30) — SI-02 gate confirmed; EPIC-03 activated
 **Date:** 2026-05-30

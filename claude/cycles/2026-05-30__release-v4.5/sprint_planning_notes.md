@@ -149,13 +149,22 @@ All deferred items remain in `claude/backlog/backlog.md` at their current status
 
 ---
 
+## Sprint 2 Gate Confirmation (2026-05-30)
+
+**Gate:** PO confirmation that SI-02 sprint planning is imminent
+**Status:** CONFIRMED — Product Owner issued `plan sprint v4.5. please continue with Epic 3` (2026-05-30)
+**Activation path:** Direct `plan sprint` invocation with explicit PO authority. Amendment cycle path not used — EPIC-03 is a pre-planned conditional sprint, not an emergency post-seal scope change. Sprint 2 was never sealed at Sprint 1 planning; PO gate confirmation activates it.
+**EPIC-03 execution_state.json note:** Phase 3 (Sprint 2) must append EPIC-03 section to the existing `execution_state.json` (owned by EPIC-02 from Sprint 1). Do not create a new file — read existing and append.
+
+---
+
 ## Outstanding Actions
 
 | Action | Owner | Required Before Seal? |
 |--------|-------|----------------------|
-| Confirm SI-02 20-closed-trades gate status; provide explicit PO go/no-go for EPIC-03 before Sprint 2 planning seals | Product Owner | No (before Sprint 2 seal, not Sprint 1 seal) |
+| Confirm SI-02 20-closed-trades gate status; provide explicit PO go/no-go for EPIC-03 before Sprint 2 planning seals | Product Owner | **RESOLVED** — gate confirmed 2026-05-30; EPIC-03 activated as Sprint 2 |
 
-No outstanding actions block Sprint 1 seal.
+No outstanding actions block Sprint 2 seal.
 
 ---
 

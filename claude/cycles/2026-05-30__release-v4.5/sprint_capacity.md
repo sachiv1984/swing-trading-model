@@ -66,14 +66,12 @@
 
 ---
 
-## Conditional (Deferred)
+## Sprint 2 (EPIC-03 — Gate Confirmed 2026-05-30)
 
-Items deferred at planning pending gate confirmation:
+Gate confirmed by Product Owner 2026-05-30. EPIC-03 promoted from conditional to in-scope Sprint 2.
 
-| EPIC | Story | Effort | Gate Condition |
-|------|-------|--------|----------------|
-| EPIC-03 | ST-06 | S (~4 hrs) | PO explicit confirmation that SI-02 sprint planning is imminent |
-| EPIC-03 | ST-07 | S (~8 hrs) | PO explicit confirmation that SI-02 sprint planning is imminent; ST-06 §13 PASS required |
-| EPIC-03 | ST-08 | M (~8–16 hrs) | PO explicit confirmation that SI-02 sprint planning is imminent; informed by ST-07 metric definition |
-
-> **Gate re-invocation:** If a gate condition above is met during the sprint, do not add deferred items informally. Invoke the amendment cycle (`amend cycle --cycle 2026-05-30__release-v4.5 --reason "<gate met>"`) to add the item to the sprint backlog. The amendment cycle is the only authorised path for post-seal scope addition.
+| EPIC | Story | Effort | Status |
+|------|-------|--------|--------|
+| EPIC-03 | ST-06 | S (~4 hrs) | **In-scope Sprint 2** — gate confirmed |
+| EPIC-03 | ST-07 | S (~8 hrs) | **In-scope Sprint 2** — gate confirmed; depends ST-06 PASS |
+| EPIC-03 | ST-08 | M (~8–16 hrs) | **In-scope Sprint 2** — gate confirmed; informed by ST-07 |

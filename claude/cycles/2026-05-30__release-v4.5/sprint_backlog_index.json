@@ -1,8 +1,10 @@
 {
   "cycle_id": "2026-05-30__release-v4.5",
   "generated_utc": "2026-05-30T11:00:00Z",
+  "sprint2_gate_confirmed_utc": "2026-05-30T14:00:00Z",
   "epics": {
     "EPIC-01": {
+      "sprint": 1,
       "st_items": ["ST-01", "ST-02", "ST-03", "ST-04"],
       "backlog_slice_refs": [
         "stage4_backlog_slice.md#ST-01",
@@ -12,21 +14,24 @@
       ]
     },
     "EPIC-02": {
+      "sprint": 1,
       "st_items": ["ST-05"],
       "backlog_slice_refs": [
         "stage4_backlog_slice.md#ST-05"
       ]
-    }
-  },
-  "deferred_at_planning": {
+    },
     "EPIC-03": {
-      "st_items": ["ST-06", "ST-07", "ST-08"],
+      "sprint": 2,
       "gate_condition": "PO confirmation that SI-02 sprint planning is imminent",
+      "gate_confirmed_utc": "2026-05-30T14:00:00Z",
+      "st_items": ["ST-06", "ST-07", "ST-08"],
       "backlog_slice_refs": [
         "stage4_backlog_slice.md#ST-06",
         "stage4_backlog_slice.md#ST-07",
         "stage4_backlog_slice.md#ST-08"
-      ]
+      ],
+      "execution_state_note": "Appends to existing execution_state.json created by EPIC-02 in Sprint 1. Phase 3 must read and append — do not overwrite."
     }
-  }
+  },
+  "deferred_at_planning": {}
 }
