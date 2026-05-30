@@ -293,7 +293,8 @@
   },
 
   "sprint1_sealed_utc": "2026-05-30T13:15:00Z",
-  "sealed": false,
-  "sealed_utc": null,
-  "status": "Running"
+  "sprint2_close_utc": "2026-05-30T15:45:00Z",
+  "sealed": true,
+  "sealed_utc": "2026-05-30T15:45:00Z",
+  "status": "Sealed"
 }

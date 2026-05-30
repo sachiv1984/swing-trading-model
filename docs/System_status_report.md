@@ -17,19 +17,16 @@
 |------|-----------|--------------------------|------------|
 | EPIC-02 | Agent header standardization: **Role:** format applied to 5 agent files (api_contracts_documentation_owner.md, backend_engineering_patterns_owner.md, data_model_domain_schema_owner.md, frontend_specs_ux_documentation_owner.md, metrics_definitions_analytics_owner.md) | claude/agents/ — 5 files | None |
 | EPIC-01 | execution_prompt.md v3.34: four v4.4 OA patches — (1) DEL terminal-status two-phase write LL-v3.9 (ST-01); (2) pr_status sync after PR open LL-v4.5-ST02 (ST-02); (3) verification-class sub-criterion LL-v4.5-EX-01 for pre-planning sprints (ST-03); (4) spec_references policy LL-v4.5-EX-02 for doc-creation stories (ST-04) | claude/system/execution_prompt.md v3.34 | None |
+| EPIC-03 | SI-02 spec pre-sprint completion: (ST-06) §13 boundary review — PASS, 9 binding conditions; (ST-07) drift score metric definition — 4 metrics, 90-day window, green/amber/red thresholds, SI-05 integration; (ST-08) data schema pre-definition — 5 fields identified, DS-07 migration script, gap analysis with dispositions | docs/product/decisions/decisions--2026-05-30__release-v4.5--SI-02-section13-review.md; docs/specs/metrics/si02_drift_score.md; docs/specs/data_model/si02_data_schema.md | None |
 
 ### Capabilities deferred or returned
 
-| ST Item | Reason | Backlog reference |
-|---------|--------|-------------------|
-| ST-06 (EPIC-03) — SI-02 §13 formal boundary review | Gate condition not confirmed: PO must confirm SI-02 sprint planning imminent | BLG-GOV-39 |
-| ST-07 (EPIC-03) — SI-02 drift detection score metric definition | Gate condition not confirmed; depends on ST-06 §13 PASS | backlog.md |
-| ST-08 (EPIC-03) — SI-02 data schema pre-definition | Gate condition not confirmed; informed by ST-07 | backlog.md |
+None. All 8 stories completed. 0 returned to backlog.
 
 ### Verification inputs ready
-- QA evidence logs: qa_evidence_EPIC-01.md (autonomous class 2026-05-30), qa_evidence_EPIC-02.md (autonomous class 2026-05-30)
+- QA evidence logs: qa_evidence_EPIC-01.md (autonomous class 2026-05-30), qa_evidence_EPIC-02.md (autonomous class 2026-05-30), qa_evidence_EPIC-03.md (autonomous class + DoQ counter-sign 2026-05-30)
 - Deviations filed: None
-- Test scenarios referenced: None (governance-only sprint — document inspection verification; no code/automated tests)
+- Test scenarios referenced: None (governance + spec-only sprint — document inspection verification; no code/automated tests)
 
 ---
 
