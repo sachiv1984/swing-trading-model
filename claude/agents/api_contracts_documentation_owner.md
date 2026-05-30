@@ -1,5 +1,5 @@
 # API Contracts & Documentation Owner
-## Role: API Contracts & Documentation Owner
+**Role:** API Contracts & Documentation Owner
 
 This document describes the **skills, responsibilities, and operating standards** for the role responsible for owning, maintaining, and evolving the API contracts in `docs/specs/api_contracts/`.
 
