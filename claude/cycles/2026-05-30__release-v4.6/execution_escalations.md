@@ -95,8 +95,8 @@ Cycle: 2026-05-30__release-v4.6
 - **Unblock criteria:** docs/ops/arc5_hosting_cost_projection.md created and committed to EPIC-03 branch with: compute load estimate (AC-02), Render tier comparison (AC-03), recommendation stated (AC-04), FinOps & Resource Architect sign-off (AC-05). Commit format: [EPIC-03][ST-10] <description>.
 - **SLA due-by:** 2026-05-31T23:00:00Z (24 hours — lifecycle)
 - **Blocks execution:** No (ST-09 and ST-12 can proceed independently)
-- **Disposition:** Open
-- **Resolution summary:** (pending)
+- **Disposition:** Resolved
+- **Resolution summary:** docs/ops/arc5_hosting_cost_projection.md committed to EPIC-03 branch (commit c635acb3). Assessment covers SI-02 inline query load (3 Supavisor queries, estimated p50 250–350ms), Render Starter tier headroom (adequate), and recommendation: current tier is adequate; no upgrade required at < 50 trades. FinOps & Resource Architect sign-off recorded in document. Resolved 2026-05-30.
 
 ---
 
