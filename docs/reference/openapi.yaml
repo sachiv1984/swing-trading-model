@@ -1946,6 +1946,74 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /analytics/behavioural-drift:
+    get:
+      tags: [Analytics]
+      summary: Get SI-02 behavioural drift detection metrics
+      description: |
+        Returns 4 deterministic drift metrics over a 90-day rolling window:
+        entry_timing_drift, sizing_adherence, consecutive_loss_sizing, regime_context.
+        Requires ≥10 closed trades; returns status: "insufficient_data" otherwise.
+        §13 PASS: display-only output, no automated recommendations, no ML inference.
+        Canonical contract: docs/specs/api_contracts/behavioural_drift_contract.md
+      responses:
+        "200":
+          description: SI-02 behavioural drift metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: [insufficient_data, no_drift, drift_detected, error]
+                      analysis_window_days:
+                        type: integer
+                        example: 90
+                      trade_count_in_window:
+                        type: integer
+                      metrics:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            metric_id:
+                              type: string
+                              enum: [entry_timing_drift, sizing_adherence, consecutive_loss_sizing, regime_context]
+                            label:
+                              type: string
+                            measured_value:
+                              type: number
+                              format: float
+                              nullable: true
+                            unit:
+                              type: string
+                              enum: [days, pct_of_portfolio, pct]
+                            status:
+                              type: string
+                              enum: [ok, approaching, breached, insufficient_data]
+                            threshold_value:
+                              type: number
+                              format: float
+                            deviation_pct:
+                              type: number
+                              format: float
+                              nullable: true
+                            advisory_note:
+                              type: string
+                              nullable: true
+                      computed_at:
+                        type: string
+                        format: date-time
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
   /ai/journal-summary:
     post:
       tags: [AI]

@@ -7,7 +7,8 @@ Spec: docs/specs/api_contracts/trade_plan_endpoints.md v0.1
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Any
+from datetime import timezone, datetime
 from database import (
     get_portfolio,
     create_trade_plan,
@@ -17,8 +18,11 @@ from database import (
     delete_trade_plan,
     get_trade_plans_by_position,
     ensure_trade_plans_table,
+    ensure_si02_trade_plans_columns,
     create_red_flag_event,
     ensure_red_flag_events_table,
+    get_latest_snapshot,
+    get_settings,
 )
 
 router = APIRouter(prefix="/trade-plans", tags=["Trade Plans"])
@@ -49,6 +53,10 @@ class TradePlanCreate(BaseModel):
     checklist_items: list = []
     status: str = "draft"
     pre_entry_override_acknowledged: Optional[bool] = None
+    # SI-02 DS-07 fields (frontend-passed)
+    signal_id: Optional[str] = None
+    risk_percent_used: Optional[float] = None
+    pre_entry_validation_snapshot: Optional[Any] = None
 
 
 class TradePlanUpdate(BaseModel):
@@ -105,11 +113,45 @@ def _maybe_write_override_event(ticker: str, position_id=None) -> None:
 
 @router.post("", status_code=201)
 def create_plan(body: TradePlanCreate):
-    """POST /trade-plans — create a new trade plan."""
+    """POST /trade-plans — create a new trade plan.
+
+    SI-02 DS-07: backend captures portfolio_value_at_entry and effective_settings_snapshot
+    at creation time. signal_id, risk_percent_used, and pre_entry_validation_snapshot are
+    frontend-passed and persisted without validation (nullable — may be absent from body).
+    Spec: docs/specs/data_model/si02_data_schema.md §7
+    """
     try:
         ensure_trade_plans_table()
+        ensure_si02_trade_plans_columns()
         portfolio_id = _get_portfolio_id()
-        plan = create_trade_plan(portfolio_id, body.dict())
+
+        plan_data = body.dict()
+
+        # Capture portfolio_value_at_entry from latest snapshot
+        try:
+            snapshot = get_latest_snapshot(portfolio_id)
+            plan_data["portfolio_value_at_entry"] = float(snapshot["total_value"]) if snapshot and snapshot.get("total_value") is not None else None
+        except Exception:
+            plan_data["portfolio_value_at_entry"] = None
+
+        # Capture effective_settings_snapshot from current settings
+        try:
+            settings_list = get_settings()
+            if settings_list:
+                s = settings_list[0]
+                plan_data["effective_settings_snapshot"] = {
+                    "default_risk_percent": float(s["default_risk_percent"]) if s.get("default_risk_percent") is not None else None,
+                    "atr_multiplier_initial": float(s["atr_multiplier_initial"]) if s.get("atr_multiplier_initial") is not None else None,
+                    "atr_multiplier_trailing": float(s["atr_multiplier_trailing"]) if s.get("atr_multiplier_trailing") is not None else None,
+                    "min_hold_days": int(s["min_hold_days"]) if s.get("min_hold_days") is not None else None,
+                    "captured_at": datetime.now(timezone.utc).isoformat(),
+                }
+            else:
+                plan_data["effective_settings_snapshot"] = None
+        except Exception:
+            plan_data["effective_settings_snapshot"] = None
+
+        plan = create_trade_plan(portfolio_id, plan_data)
         if body.pre_entry_override_acknowledged:
             _maybe_write_override_event(body.ticker, body.position_id)
         return {"status": "ok", "data": _serialize(plan)}

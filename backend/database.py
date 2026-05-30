@@ -962,12 +962,15 @@ def ensure_trade_plans_table():
 def create_trade_plan(portfolio_id: str, data: dict) -> dict:
     with get_db() as conn:
         with conn.cursor() as cur:
+            _json = __import__("json").dumps
             cur.execute(
                 """INSERT INTO trade_plans
                    (portfolio_id, position_id, ticker, market, setup_type, setup_thesis, entry_rationale,
                     regime_context_at_entry, r_target, early_exit_conditions, confirmation_criteria,
-                    checklist_completed, checklist_items, status, pre_entry_override_acknowledged)
-                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s)
+                    checklist_completed, checklist_items, status, pre_entry_override_acknowledged,
+                    signal_id, risk_percent_used, portfolio_value_at_entry,
+                    pre_entry_validation_snapshot, effective_settings_snapshot)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb)
                    RETURNING *""",
                 (
                     portfolio_id,
@@ -982,9 +985,14 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                     data.get("early_exit_conditions"),
                     data.get("confirmation_criteria"),
                     data.get("checklist_completed", False),
-                    __import__("json").dumps(data.get("checklist_items", [])),
+                    _json(data.get("checklist_items", [])),
                     data.get("status", "draft"),
                     data.get("pre_entry_override_acknowledged"),
+                    data.get("signal_id"),
+                    data.get("risk_percent_used"),
+                    data.get("portfolio_value_at_entry"),
+                    _json(data["pre_entry_validation_snapshot"]) if data.get("pre_entry_validation_snapshot") is not None else None,
+                    _json(data["effective_settings_snapshot"]) if data.get("effective_settings_snapshot") is not None else None,
                 ),
             )
             row = cur.fetchone()
@@ -1543,3 +1551,127 @@ def query_claude_audit_log(limit: int = 50) -> list[dict]:
                 ]
     except Exception:
         return []
+
+
+# ============================================================================
+# DS-07 — SI-02 SCHEMA ADDITIONS (v4.6 ST-01)
+# ============================================================================
+
+def ensure_si02_trade_plans_columns():
+    """Add 5 SI-02 nullable columns + P1 index to trade_plans (idempotent).
+
+    DS-07 migration — v4.6 ST-01. All columns nullable; no backfill required.
+    Reversible: DROP COLUMN signal_id, risk_percent_used, portfolio_value_at_entry,
+    pre_entry_validation_snapshot, effective_settings_snapshot; DROP INDEX idx_trade_plans_signal.
+    Note: idx_trade_plans_signal uses CREATE INDEX IF NOT EXISTS (not CONCURRENTLY) to allow
+    execution inside a transaction at current data volumes. Use CONCURRENTLY outside a transaction
+    in production for zero-downtime creation on large datasets.
+    Spec: docs/specs/data_model/si02_data_schema.md §4–§5
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS signal_id UUID REFERENCES signals(id) ON DELETE SET NULL"
+            )
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS risk_percent_used NUMERIC(4,2)"
+            )
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS portfolio_value_at_entry NUMERIC(12,2)"
+            )
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS pre_entry_validation_snapshot JSONB"
+            )
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS effective_settings_snapshot JSONB"
+            )
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_trade_plans_signal "
+                "ON trade_plans(signal_id) WHERE signal_id IS NOT NULL"
+            )
+        conn.commit()
+
+
+def ensure_si02_trade_history_indexes():
+    """Add P2 indexes to trade_history for SI-02 drift analysis queries (idempotent).
+
+    DS-07 / SI-02 sprint migration — v4.6 ST-01. Separate from column additions per
+    si02_data_schema.md §5.2 (P2 indexes). Uses CREATE INDEX IF NOT EXISTS inside a
+    transaction at current data volumes. Use CONCURRENTLY outside a transaction in
+    production for zero-downtime creation on large datasets.
+    Spec: docs/specs/data_model/si02_data_schema.md §5.2
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_trade_history_exit_date "
+                "ON trade_history(portfolio_id, exit_date DESC)"
+            )
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_trade_history_entry_date "
+                "ON trade_history(portfolio_id, entry_date DESC)"
+            )
+        conn.commit()
+
+
+def get_behavioural_drift_data(portfolio_id: str, window_days: int = 90) -> dict:
+    """Fetch all data needed for SI-02 drift metric computation.
+
+    Returns a dict with:
+    - trade_count: closed trades in window
+    - trades: list of trade records (pnl, entry_date, risk_percent_used, regime_context_at_entry, signal_id)
+    - settings: current settings dict (for default_risk_percent)
+    Spec: docs/specs/metrics/si02_drift_score.md §2–§4
+    """
+    result = {"trade_count": 0, "trades": [], "settings": None, "signal_timing": []}
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            # Closed trades in window with plan data
+            cur.execute(
+                """
+                SELECT
+                    th.id,
+                    th.pnl,
+                    p.entry_date,
+                    p.exit_date,
+                    tp.risk_percent_used,
+                    tp.regime_context_at_entry,
+                    tp.signal_id,
+                    tp.effective_settings_snapshot
+                FROM trade_history th
+                JOIN positions p ON p.id = th.position_id
+                LEFT JOIN trade_plans tp ON tp.position_id = p.id
+                WHERE p.portfolio_id = %s
+                  AND th.pnl IS NOT NULL
+                  AND p.entry_date >= NOW() - INTERVAL '%s days'
+                ORDER BY p.entry_date ASC
+                """,
+                (portfolio_id, window_days),
+            )
+            result["trades"] = [dict(r) for r in cur.fetchall()]
+            result["trade_count"] = len(result["trades"])
+
+            # Signal timing data (for entry_timing_drift) — only trades with signal_id
+            cur.execute(
+                """
+                SELECT
+                    p.entry_date,
+                    s.signal_date
+                FROM trade_history th
+                JOIN positions p ON p.id = th.position_id
+                JOIN trade_plans tp ON tp.position_id = p.id
+                JOIN signals s ON s.id = tp.signal_id
+                WHERE p.portfolio_id = %s
+                  AND th.pnl IS NOT NULL
+                  AND tp.signal_id IS NOT NULL
+                  AND p.entry_date >= NOW() - INTERVAL '%s days'
+                """,
+                (portfolio_id, window_days),
+            )
+            result["signal_timing"] = [dict(r) for r in cur.fetchall()]
+
+            # Current settings
+            cur.execute("SELECT * FROM settings ORDER BY created_at DESC LIMIT 1")
+            row = cur.fetchone()
+            result["settings"] = dict(row) if row else None
+    return result
