@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-05-29
+**Last Updated:** 2026-05-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -51,8 +51,9 @@
 | v4.1  | 15      | 14        | 0.93     | ST-11 staging ACs 02–04 returned to backlog per PO discretionary deferral authority; 14/14 remaining stories done; zero spec deviations; Gemini→Claude API switch applied mid-sprint without amendment; both 2nd-recurrence escalations (OA-01, OA-02) resolved |
 | v4.2  | 13      | 13        | 1.00     | All 13 stories done; zero spec deviations; cleanest sprint on record by QA metrics; governance/ops/documentation scope with no frontend changes; 6 delegation records all resolved before sprint close |
 | v4.3  | 18      | 18        | 1.00     | All 18 stories done; zero spec deviations; 5 delegations (3 cancelled, 2 delegated_qa) all resolved; ANTHROPIC_API_KEY added to staging permanently; BLG-QA-27 gate cleared (CI baseline ≥5 min) |
+| v4.4  | 13      | 13        | 1.00     | Zero spec deviations; 5 governance patches (ST-01–05) + OPERATIONAL_GUIDE §7.9 (ST-13); all 7 SI-02 pre-planning artefacts delivered (ST-06–12); 5 delegations all agent-mediated and resolved within sprint |
 
-**Rolling 6-cycle average (v3.8–v4.3):** 0.99
+**Rolling 6-cycle average (v3.9–v4.4):** 0.99
 
 ---
 

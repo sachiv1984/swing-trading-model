@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-29
+**Last Updated:** 2026-05-30
 
 # Roadmap Archive — Momentum Trading Assistant
 
@@ -1001,3 +1001,20 @@ v4.1 Governance Hardening, Spec Debt, Arc 5 Compliance + SI-02 Pre-Planning. EPI
 ### Original Roadmap Entry
 
 v4.2 Claude API Governance, SI-02 Pre-Work Readiness & Spec Debt. EPIC-01: Claude API compliance & security (model version pinning, API key security review, accountability assignment, log hygiene). EPIC-02: Operational monitoring & baselines (api_performance_baseline update, first monthly cost review, thesis generation latency baseline). EPIC-03: Gemini→Claude spec debt clearance (audit trail backend, AI thesis contract, Playwright mock strategy, prompt caching assessment). EPIC-04: SI-02/SI-04 pre-planning (prerequisites checklist, scope definition, v4.1 review, namespace audit). 13/13 stories delivered. Verified 2026-05-29.
+
+---
+
+## RA:v4.4 — Governance Patches, SI-02 Pre-Planning Sprint & Ops Hardening
+
+**Original roadmap location:** §1 Current Version / Release Summary §8
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-05-30
+**Shipped version:** v4.4
+**Cycle reference:** 2026-05-29__release-v4.4
+**Verification report:** claude/cycles/2026-05-29__release-v4.4/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-30
+
+### Original Roadmap Entry
+
+v4.4 Governance Patches, SI-02 Pre-Planning Sprint & Ops Hardening. EPIC-01: v4.3 OA resolution — roadmap_prompt.md v6.6 (STEP 8.1 empty-Now-horizon advisory), sprint_planning_prompt.md v3.8 (frontend classification fast-path), execution_prompt.md v3.33 (auto-set deviations_filed on delegation clearance), qa_evidence_template.md v1.4 (delegated_qa DoQ sign-off both format variants), release_planning_prompt.md v2.32 (STEP 7 RESUME PRECHECK). EPIC-04: OPERATIONAL_GUIDE.md v4.19 §7.9 Staging URL Disambiguation. EPIC-02: SI-02 backend pre-planning — drift detection query pre-design, Arc 5 architecture review + ADR-001 (cached-synchronous), query index pre-assessment (3 indexes), background job ADR-SI02-001. EPIC-03: SI-02 FE+QA pre-planning — component pre-design (Option B), interaction spec (5 states, 13 DFT IDs), Playwright scenario pre-design (DFT-01–DFT-13). All 7 SI-02 pre-planning gate conditions met — SI-02 implementation sprint now unblocked. 13/13 stories delivered. Zero spec deviations. Verified 2026-05-30.

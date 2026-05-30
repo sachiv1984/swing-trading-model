@@ -3,9 +3,45 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-29
+**Last Updated:** 2026-05-30
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v4.4 — Governance Patches, SI-02 Pre-Planning Sprint & Ops Hardening — 2026-05-30
+Cycle: 2026-05-29__release-v4.4
+Verified: Verified
+Verification report: claude/cycles/2026-05-29__release-v4.4/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Governance Prompt Patches — roadmap_prompt.md v6.6 (STEP 8.1 empty-Now-horizon advisory; ST-01); sprint_planning_prompt.md v3.8 (frontend classification fast-path for React-only stories; ST-02); execution_prompt.md v3.33 (auto-set deviations_filed on delegation clearance; ST-03); qa_evidence_template.md v1.4 (delegated_qa DoQ sign-off both format variants; ST-04); release_planning_prompt.md v2.32 (STEP 7 RESUME PRECHECK note; ST-05) | claude/system/roadmap_prompt.md v6.6; claude/system/sprint_planning_prompt.md v3.8; claude/system/execution_prompt.md v3.33; claude/system/templates/qa_evidence_template.md v1.4; claude/system/release_planning_prompt.md v2.32 |
+| EPIC-04 | Ops Documentation Hardening — OPERATIONAL_GUIDE.md v4.19 §7.9 "Staging URL Disambiguation" subsection added (frontend SPA URL vs backend API URL distinction; health check guidance updated; ST-13) | claude/system/OPERATIONAL_GUIDE.md v4.19 §7.9 |
+| EPIC-02 | SI-02 Backend Pre-Planning — drift detection query pre-design + HBE sign-off (ST-06); Arc 5 backend architecture review + ADR-001 cached-synchronous Option B recommendation (ST-07); query index pre-assessment with 3 migration-candidate indexes (ST-08); background job ADR-SI02-001 cached-synchronous selected, no worker/Redis/Celery on Render (ST-09) | docs/specs/si02/si02_query_predesign.md; docs/specs/si02/arc5_backend_architecture_review.md; docs/specs/si02/si02_index_preassessment.md; docs/specs/si02/si02_background_job_adr.md |
+| EPIC-03 | SI-02 Frontend & QA Pre-Planning — drift detection result component pre-design (Option B percentage-deviation display, 4 component states; ST-10); interaction spec (5 states, non-dismissable, 13 Playwright DFT IDs; ST-11); Playwright scenario pre-design DFT-01–DFT-13 + 4 staging-only scenarios S-STG-01–S-STG-04 (ST-12) | docs/specs/si02/si02_fe_component_predesign.md; docs/specs/si02/si02_fe_interaction_spec.md; docs/qa/si02_playwright_predesign.md |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01] BLG-GOV-71: roadmap_prompt.md STEP 8.1 advisory for empty Now horizon after Extended-tier rebalance
+- [ST-02] BLG-GOV-72: sprint_planning_prompt.md frontend classification fast-path for React-only stories
+- [ST-03] BLG-GOV-73: execution_prompt.md auto-set deviations_filed on delegation sign-off clearance
+- [ST-04] BLG-GOV-69 + BLG-GOV-74: qa_evidence_template.md DoQ sign-off format for delegated_qa EPICs (both format variants)
+- [ST-05] Release planning STEP 7 RESUME PRECHECK patch (v4.3 LL-2 carry-forward)
+- [ST-06] BLG-BE-17: SI-02 drift detection query pre-design
+- [ST-07] BLG-BE-18: Arc 5 backend architecture review for SI query patterns
+- [ST-08] BLG-BE-23: SI-02 query index pre-assessment
+- [ST-09] BLG-BE-20: SI-02 background job architecture design
+- [ST-10] BLG-FE-52: SI-02 drift detection result component pre-design
+- [ST-11] BLG-FE-53: SI-02 drift detection interaction spec
+- [ST-12] BLG-QA-31: SI-02 Playwright scenario pre-design (DFT-01–DFT-13)
+- [ST-13] BLG-OPS-43: Staging URL disambiguation in OPERATIONAL_GUIDE §7
+
+Sign-off: Product Owner — 2026-05-30
+QA sign-off: Director of Quality — 2026-05-30
 
 ---
 

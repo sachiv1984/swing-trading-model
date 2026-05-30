@@ -4272,3 +4272,341 @@ execution_prompt.md STEP 5.2 does not explicitly confirm that `returned_to_backl
 
 ---
 
+
+---
+
+## Closed Items — v4.4 Post-Ship (2026-05-30)
+
+*Archived by groom backlog STEP 12 — post-ship closure 2026-05-29__release-v4.4 — 2026-05-30*
+
+---
+
+### BLG-FE-52 — SI-02 drift detection result component pre-design
+**Priority:** P2 (Medium)
+**Type:** Frontend / Pre-Sprint Design
+**Owner:** Base44 Frontend; Frontend Specs & UX Documentation Owner
+**Source:** IDEA-base44-frontend-20260527-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-05-30 (cycle: 2026-05-29__release-v4.4)
+**Shipped in:** v4.4
+**Evidence:** docs/product/changelog.md#v44; claude/cycles/2026-05-29__release-v4.4/verification_report.md
+
+**Gate criteria:** SI-02 sprint planning imminent.
+
+**Problem**
+Before SI-02 Playwright scenarios can be pre-designed (BLG-QA-31) and before BLG-FE-43 (SI-05 weekly digest component) is authored, the SI-02 drift detection result component interface must be defined: score badge vs percentage deviation display vs rule list format. Undefined component contracts delay sprint planning design reviews.
+
+**Scope**
+- Define drift detection result component display options (badge, %, rule list)
+- Define component contract: data shape, empty state, loading state, threshold-breach state
+- Output: component pre-design document; input to BLG-FE-53 interaction spec
+
+**Acceptance Criteria**
+- Component interface options documented and one selected/proposed
+- Component data contract defined
+- Gate condition verified before commencing
+
+---
+
+### BLG-FE-53 — SI-02 drift detection interaction spec
+**Priority:** P1 (High)
+**Type:** Frontend / Spec Pre-work
+**Owner:** Frontend Specs & UX Documentation Owner
+**Source:** IDEA-frontend-ux-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-05-30 (cycle: 2026-05-29__release-v4.4)
+**Shipped in:** v4.4
+**Evidence:** docs/product/changelog.md#v44; claude/cycles/2026-05-29__release-v4.4/verification_report.md
+
+**Gate criteria:** SI-02 sprint planning imminent.
+
+**Problem**
+SI-02 drift detection results will display in the frontend. Without a defined interaction spec, the following questions are unresolved at sprint planning: Are breach notifications dismissable? Do they link to underlying trades? What are the empty state and loading state? These unknowns create mid-sprint scope discovery risk.
+
+**Scope**
+- Define drift detection result interaction model: dismissable/persistent, drill-down to trades, severity state transitions
+- Define empty state (no drift data), loading state, threshold-breach state
+- Required input for BLG-FE-43 UX component authoring
+
+**Acceptance Criteria**
+- Interaction spec document produced covering all observable states
+- Dismissal, drill-down, and state transition behaviours defined
+- Gate condition verified before commencing
+
+---
+
+### BLG-BE-17 — SI-02 drift detection query pre-design
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Spec Pre-work
+**Owner:** Head of Backend Engineering
+**Source:** IDEA-backend-engineering-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-05-30 (cycle: 2026-05-29__release-v4.4)
+**Shipped in:** v4.4
+**Evidence:** docs/product/changelog.md#v44; claude/cycles/2026-05-29__release-v4.4/verification_report.md
+
+**Gate criteria:** SI-02 sprint planning imminent.
+
+**Problem**
+SI-02 (Behavioural Drift Detection) requires rolling analysis queries over trade history comparing actual entry conditions against stated setup criteria. Mid-sprint discovery of missing data fields would require emergency schema migration. Pre-designing the queries before sprint planning surfaces data gaps that can be addressed in the sprint plan.
+
+**Scope**
+- Define data access patterns: which fields are required per trade record for drift analysis
+- Draft SQL queries: rolling win-rate vs stated setup criteria per entry type, per regime
+- Identify any missing fields requiring schema migration
+- Output: technical pre-design document; input to SI-02 sprint planning
+- Include assessment of query performance on current trade history volume
+
+**Acceptance Criteria**
+- Query pre-design document produced and reviewed by Head of Backend Engineering
+- Missing data fields (if any) enumerated with migration scope estimate
+- Document filed before SI-02 sprint planning seals
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-BE-18 — Arc 5 backend architecture review for SI query patterns
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Architecture
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-engineering-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-05-30 (cycle: 2026-05-29__release-v4.4)
+**Shipped in:** v4.4
+**Evidence:** docs/product/changelog.md#v44; claude/cycles/2026-05-29__release-v4.4/verification_report.md
+
+**Gate criteria:** SI-02 sprint planning imminent.
+
+**Problem**
+SI-02 and SI-04 will add analytical queries that may be expensive synchronously. Before SI-02 sprint planning, assessing whether a background job or queue pattern is needed prevents an architectural dead-end mid-sprint.
+
+**Scope**
+- Review current endpoint pattern (synchronous FastAPI) against SI-02/SI-04 query complexity
+- Assess: synchronous viability, background job option (Celery/cron), response caching
+- Recommendation: maintain synchronous or add background processing layer
+- If background layer recommended: produce architecture decision record (ADR)
+
+**Acceptance Criteria**
+- Architecture review document produced
+- Synchronous vs background recommendation made with rationale
+- If background layer recommended: ADR filed and input to SI-02 sprint planning
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-BE-20 — SI-02 background job architecture design
+**Priority:** P2 (Medium)
+**Type:** Backend / Architecture
+**Owner:** Head of Backend Engineering; Head of Engineering
+**Source:** IDEA-backend-engineering-20260525-01 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
+**Effort:** S (~1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-05-30 (cycle: 2026-05-29__release-v4.4)
+**Shipped in:** v4.4
+**Evidence:** docs/product/changelog.md#v44; claude/cycles/2026-05-29__release-v4.4/verification_report.md
+
+**Gate criteria:** SI-02 sprint planning initiated.
+
+**Problem**
+SI-02 will require periodic re-computation of drift metrics across trade history. The background job architecture (task queue, scheduler, or on-demand computation approach) must be decided before sprint planning seals.
+
+**Scope**
+- Evaluate: on-demand, periodic background task (cron), or event-triggered (on trade close)
+- Assess trade-offs for single-user Render deployment (no task queue infrastructure)
+- Produce architecture decision record (ADR) scoped to SI-02 drift computation
+- Input to SI-02 sprint planning acceptance criteria
+
+**Acceptance Criteria**
+- ADR produced and reviewed by Head of Engineering and Head of Backend Engineering
+- Architecture approach selected with rationale
+- Gate condition (SI-02 sprint planning initiated) verified before commencing
+
+---
+
+### BLG-BE-23 — SI-02 query index pre-assessment
+**Priority:** P1 (High)
+**Type:** Backend / Pre-Sprint Schema Work
+**Owner:** Head of Engineering; Head of Backend Engineering
+**Source:** IDEA-head-of-engineering-20260527-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-05-30 (cycle: 2026-05-29__release-v4.4)
+**Shipped in:** v4.4
+**Evidence:** docs/product/changelog.md#v44; claude/cycles/2026-05-29__release-v4.4/verification_report.md
+
+**Gate criteria:** BLG-GOV-51 (SI-02 database query performance pre-assessment) result available.
+
+**Problem**
+BLG-GOV-51 assesses SI-02 drift detection query performance. Once results are available, required database indexes must be identified and a migration plan produced. Missing indexes at sprint execution would create blocking mid-sprint schema work.
+
+**Scope**
+- Using BLG-GOV-51 EXPLAIN ANALYZE results, identify required indexes for drift detection queries
+- Produce migration plan: index definitions, estimated creation cost, migration timing
+- Input to SI-02 sprint planning capacity estimate
+
+**Acceptance Criteria**
+- Required indexes identified (or confirmed none needed)
+- Migration plan produced for any required indexes
+- Gate condition (BLG-GOV-51 complete) verified before commencing
+
+---
+
+### BLG-QA-31 — SI-02 Playwright scenario pre-design
+**Priority:** P2 (Medium)
+**Type:** QA / Test Planning
+**Owner:** QA & Testing Owner; Director of Quality
+**Source:** IDEA-qa-testing-20260525-02 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
+**Effort:** S (~1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-05-30 (cycle: 2026-05-29__release-v4.4)
+**Shipped in:** v4.4
+**Evidence:** docs/product/changelog.md#v44; claude/cycles/2026-05-29__release-v4.4/verification_report.md
+
+**Gate criteria:** SI-02 sprint planning initiated.
+
+**Problem**
+SI-02 will produce new frontend surfaces requiring Playwright E2E coverage. Pre-designing scenarios before the sprint reduces in-sprint QA risk.
+
+**Scope**
+- Draft Playwright scenario set for SI-02: drift alert display, "no drift detected" state, drift metric details, period filter
+- Aligned with DoQ standards: staging-only ACs must be designated at sprint planning
+- Input to SI-02 sprint planning QA section
+
+**Acceptance Criteria**
+- Draft scenario set produced (DFT-01–DFT-13 defined)
+- Gate condition (SI-02 sprint planning initiated) verified before commencing
+- Director of Quality reviewed draft before sprint planning seals
+
+---
+
+### BLG-OPS-43 — Staging URL disambiguation in OPERATIONAL_GUIDE §7
+**Priority:** P3 (Low)
+**Type:** Operations / Documentation
+**Owner:** Infrastructure & Operations Owner
+**Source:** v4.3 lessons_learnt_cycle.md Phase 3 — 2026-05-29__release-v4.3
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** ✅ COMPLETE — 2026-05-30 (cycle: 2026-05-29__release-v4.4)
+**Shipped in:** v4.4
+**Evidence:** docs/product/changelog.md#v44; claude/cycles/2026-05-29__release-v4.4/verification_report.md
+
+**Problem**
+OPERATIONAL_GUIDE.md §7 staging guidance does not explicitly note that Render deploys two separate services (frontend SPA vs backend API) with different hostnames. During v4.3 execution, health checks and baselines were incorrectly targeted at the frontend SPA URL.
+
+**Scope**
+Add a "Staging URL disambiguation" subsection to OPERATIONAL_GUIDE.md §7 explicitly documenting frontend SPA URL vs backend API URL distinction and health check guidance.
+
+**Acceptance Criteria**
+- AC-01: "Staging URL disambiguation" section added with clear frontend vs backend URL distinction
+- AC-02: Health check and baseline guidance updated to reference backend API URL explicitly
+- AC-03: Version bumps and governance file edit checklist applied (Class 6 file)
+
+---
+
+### BLG-GOV-69 — qa_evidence_template.md: DoQ sign-off format for delegated_qa EPICs
+**Priority:** P3 (Low)
+**Type:** Governance / Template Improvement
+**Owner:** Head of Specs Team
+**Source:** v4.3 delivery verification Phase 4 lessons learnt — 2026-05-29__release-v4.3
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** ✅ COMPLETE — 2026-05-30 (cycle: 2026-05-29__release-v4.4)
+**Shipped in:** v4.4
+**Evidence:** docs/product/changelog.md#v44; claude/cycles/2026-05-29__release-v4.4/verification_report.md
+
+**Problem**
+EPIC-03 in v4.3 used a non-standard DoQ acknowledgement format for delegated_qa EPICs. Both formats valid but template should clarify.
+
+**Scope**
+Update qa_evidence_template.md to include both sign-off format examples for delegated_qa EPICs.
+
+**Acceptance Criteria**
+- Template adds example or note for aggregate DoQ acknowledgement format in delegated_qa EPIC context
+- Both formats (individual DoQ sign-off, aggregate DoQ acknowledgement) documented as valid
+
+---
+
+### BLG-GOV-71 — roadmap_prompt.md STEP 8.1: advisory for empty Now horizon after Extended-tier rebalance
+**Priority:** P2 (Medium)
+**Type:** Governance / Process Improvement
+**Owner:** Head of Specs Team
+**Source:** v4.3 lessons_learnt_closure.md deferred item 1 — 3rd recurrence (v4.1, v4.2, v4.3)
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** ✅ COMPLETE — 2026-05-30 (cycle: 2026-05-29__release-v4.4)
+**Shipped in:** v4.4
+**Evidence:** docs/product/changelog.md#v44; claude/cycles/2026-05-29__release-v4.4/verification_report.md
+
+**Problem**
+When the Now horizon is empty after an Extended-tier no-change rebalance and no next-release section exists in current_roadmap.md, STEP -1.2 fires a gate error at the next release planning cycle. Recurred 3 consecutive cycles.
+
+**Scope**
+Add an advisory note to roadmap_prompt.md STEP 8.1: if Now horizon is empty after Extended-tier no-change rebalance and no next-release section exists, advise PO to add one now.
+
+**Acceptance Criteria**
+- AC-01: Advisory note added to STEP 8.1 of roadmap_prompt.md
+- AC-02: Condition correctly scoped to Extended-tier no-change + empty Now horizon + no next-release section
+- AC-03: Version bumps and governance file edit checklist applied
+
+---
+
+### BLG-GOV-72 — sprint_planning_prompt.md: frontend classification fast-path for React-only stories
+**Priority:** P2 (Medium)
+**Type:** Governance / Process Improvement
+**Owner:** Head of Specs Team
+**Source:** v4.3 lessons_learnt_closure.md deferred item 4 — 3rd consecutive sprint (v4.1/v4.2/v4.3 EPIC-04)
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** ✅ COMPLETE — 2026-05-30 (cycle: 2026-05-29__release-v4.4)
+**Shipped in:** v4.4
+**Evidence:** docs/product/changelog.md#v44; claude/cycles/2026-05-29__release-v4.4/verification_report.md
+
+**Problem**
+Stories involving prop/state threading bug fix, variable rename, or new section against locked spec have been misclassified as delegated_frontend for 3 consecutive sprints. Should default to autonomous.
+
+**Scope**
+Add a "frontend classification fast-path" to sprint_planning_prompt.md for these three story types.
+
+**Acceptance Criteria**
+- AC-01: Frontend classification fast-path added to sprint_planning_prompt.md
+- AC-02: Three fast-path conditions explicitly listed with the default-autonomous rule
+- AC-03: Version bumps and governance file edit checklist applied
+
+---
+
+### BLG-GOV-73 — execution_prompt.md: auto-set deviations_filed on delegation sign-off clearance
+**Priority:** P3 (Low)
+**Type:** Governance / Process Improvement
+**Owner:** Head of Specs Team
+**Source:** v4.3 lessons_learnt_closure.md deferred item 5 — 2026-05-29__release-v4.3
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** ✅ COMPLETE — 2026-05-30 (cycle: 2026-05-29__release-v4.4)
+**Shipped in:** v4.4
+**Evidence:** docs/product/changelog.md#v44; claude/cycles/2026-05-29__release-v4.4/verification_report.md
+
+**Problem**
+When setting sign_off_record.status = "cleared" for a delegated story, deviations_filed is not automatically set to true if no deviation record was filed, leading to batch corrections at sprint close.
+
+**Scope**
+Add a substep to execution_prompt.md delegation sign-off: when cleared + no deviation filed → deviations_filed = true.
+
+**Acceptance Criteria**
+- AC-01: Sign-off substep updated in execution_prompt.md
+- AC-02: Condition covers: delegated story + cleared + no deviation record filed → deviations_filed = true
+- AC-03: Version bumps and governance file edit checklist applied
+
+---
+
+### BLG-GOV-74 — qa_evidence_template.md: DoQ sign-off block example for delegated_qa pattern
+**Priority:** P3 (Low)
+**Type:** Governance / Template Improvement
+**Owner:** Head of Specs Team
+**Source:** v4.3 lessons_learnt_closure.md deferred item 6 — 2026-05-29__release-v4.3
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** ✅ COMPLETE — 2026-05-30 (cycle: 2026-05-29__release-v4.4)
+**Shipped in:** v4.4
+**Evidence:** docs/product/changelog.md#v44; claude/cycles/2026-05-29__release-v4.4/verification_report.md
+
+**Problem**
+The qa_evidence_template.md DoQ sign-off block does not include an example for the delegated_qa pattern. Both formats are valid but the template doesn't clarify, causing ambiguity at sprint close QA review.
+
+**Scope**
+Update qa_evidence_template.md DoQ sign-off block to include an example for the delegated_qa pattern with both valid format variants shown.
+
+**Acceptance Criteria**
+- AC-01: DoQ sign-off block updated with delegated_qa example
+- AC-02: Both "Signed off by: Director of Quality" and "Director of Quality: Confirmed — [owner]" shown as valid formats
+- AC-03: Version bumps and governance file edit checklist applied
