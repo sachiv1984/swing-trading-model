@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-05-30__release-v4.5",
   "cycle_name": "Release Planning — v4.5 Governance Prompt Hardening, Audit Debt & SI-02 Spec Pre-Planning",
-  "status": "Sprint_Planning_Complete",
+  "status": "Executing",
   "engine": "release_planning",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md",

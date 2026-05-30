@@ -1,11 +1,12 @@
 {
   "cycle_id": "2026-05-30__release-v4.5",
-  "sprint_goal": "Deliver all four v4.4 deferred execution_prompt.md governance patches and standardize agent role headers, resolving outstanding audit debt and hardening the governance infrastructure before SI-02 sprint planning begins.",
+  "sprint_goal": "Deliver all four v4.4 deferred execution_prompt.md governance patches and standardize agent role headers, resolving outstanding audit debt and hardening the governance infrastructure before SI-02 sprint planning begins. Sprint 2: Complete SI-02 spec pre-sprint work (§13 boundary review, drift score metric definition, data schema pre-definition) to enable SI-02 sprint planning to proceed.",
   "backlog_slice_source": "claude/cycles/2026-05-30__release-v4.5/stage4_backlog_slice.md",
   "invoked_utc": "2026-05-30T11:30:00Z",
+  "sprint2_invoked_utc": "2026-05-30T14:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-30T13:00:00Z",
+  "last_updated_utc": "2026-05-30T14:30:00Z",
 
   "epics": {
     "EPIC-02": {
@@ -178,21 +179,93 @@
           "notes": "No spec deviation. §3.1.A step 2b (LL-v4.5-EX-02) added. BLG-GOV-70 archived from backlog (marked shipped in v4.5 ST-04). BLG-GOV-70 third+ recurrence resolved. spec_references updated at sprint close per LL-v4.5-EX-02 (self-referential: this story created the policy it is now complying with)."
         }
       }
+    },
+    "EPIC-03": {
+      "status": "in_progress",
+      "branch": "exec/2026-05-30__release-v4.5/EPIC-03",
+      "pr_number": null,
+      "pr_status": null,
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-05-30__release-v4.5/qa_evidence_EPIC-03.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-06": {
+          "title": "SI-02 §13 formal boundary review",
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
+          "assigned_to": "Strategy Rules & System Intent Owner",
+          "github_issue": 570,
+          "branch": "exec/2026-05-30__release-v4.5/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260530-01",
+          "blocked_since_utc": "2026-05-30T14:30:00Z",
+          "unblock_criteria": "Strategy Rules & System Intent Owner completes §13 review document with explicit PASS/FAIL determination; binding conditions documented; sign-off recorded",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "delivery_note": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "First in sequence. ST-07 depends on this story PASS result. Gate confirmed by PO 2026-05-30."
+        },
+        "ST-07": {
+          "title": "SI-02 drift detection score metric definition",
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
+          "assigned_to": "Metrics Definitions & Analytics Canonical Owner",
+          "github_issue": 571,
+          "branch": "exec/2026-05-30__release-v4.5/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260530-02",
+          "blocked_since_utc": "2026-05-30T14:30:00Z",
+          "unblock_criteria": "ST-06 §13 review completes with PASS; then Metrics Definitions & Analytics Canonical Owner produces metric definition document covering user-facing format, rolling window, threshold bands, warning triggers, SI-05 integration points; filed at docs/specs/metrics/si02_drift_score.md; signed off by owner and HoST",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "delivery_note": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Depends on ST-06 PASS. ST-08 informed by this story's output."
+        },
+        "ST-08": {
+          "title": "SI-02 data schema pre-definition",
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
+          "assigned_to": "Data Model & Domain Schema Owner",
+          "github_issue": 572,
+          "branch": "exec/2026-05-30__release-v4.5/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260530-03",
+          "blocked_since_utc": "2026-05-30T14:30:00Z",
+          "unblock_criteria": "ST-06 §13 review completes with PASS; then Data Model & Domain Schema Owner produces gap analysis and schema pre-definition document covering current schema comparison, missing fields with data types/tables/migration complexity; filed at docs/specs/data_model/si02_data_schema.md; signed off by owner and HoST. (Can proceed in parallel after ST-06 PASS but benefits from ST-07 metric context.)",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "delivery_note": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Informed by ST-07 metric definition. Can proceed in parallel after ST-06 PASS; hard dependency is ST-06 PASS only."
+        }
+      }
     }
   },
 
-  "blocked_items": [],
-  "delegated_items": [],
+  "blocked_items": ["ST-06", "ST-07", "ST-08"],
+  "delegated_items": ["ST-06", "ST-07", "ST-08"],
   "completed_items": ["ST-05", "ST-01", "ST-02", "ST-03", "ST-04"],
-  "open_escalations": [],
+  "open_escalations": ["ESC-EXEC-20260530-01", "ESC-EXEC-20260530-02", "ESC-EXEC-20260530-03"],
 
   "merge_gate": {
     "epics_merged": ["EPIC-02", "EPIC-01"],
-    "epics_pending": [],
-    "all_merged": true
+    "epics_pending": ["EPIC-03"],
+    "all_merged": false
   },
 
-  "sealed": true,
-  "sealed_utc": "2026-05-30T13:15:00Z",
-  "status": "Sealed"
+  "sprint1_sealed_utc": "2026-05-30T13:15:00Z",
+  "sealed": false,
+  "sealed_utc": null,
+  "status": "Running"
 }
