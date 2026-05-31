@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-29
+**Last Updated:** 2026-05-31
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -4763,3 +4763,30 @@ SI-02 will surface a drift detection score to the user. The metric definition (f
 - Reviewed by Metrics Definitions & Analytics Canonical Owner and Head of Specs Team
 - Gate condition (SI-02 sprint planning imminent) verified before commencing
 
+
+---
+
+## v4.6 Post-Ship Closure — Batch Archive (2026-05-31)
+
+Archived by: Backlog Management Engine STEP 12, post-ship closure 2026-05-30__release-v4.6
+
+| Item | Title | Resolution | Cycle |
+|------|-------|------------|-------|
+| BLG-FE-42 | Arc 5 navigation and information architecture cohesion review | Delivered — maintain current structure (ST-11); Head of UX & Design sign-off | 2026-05-30__release-v4.6 |
+| BLG-FE-47 | Red Flag Journal design review scope document | Delivered — rfj_design_review_scope.md created; gate 2026-06-21 (ST-12); PO + Head of UX reviewed | 2026-05-30__release-v4.6 |
+| BLG-BE-16 | Red flag events severity field | Delivered — severity column + backfill + filter (ST-09); staging verification pending BLG-OPS-45 | 2026-05-30__release-v4.6 |
+| BLG-OPS-40 | Arc 5 hosting cost projection | Delivered — current Render Starter tier adequate; no upgrade (ST-10); FinOps sign-off | 2026-05-30__release-v4.6 |
+| BLG-SPEC-32 | External API integration spec template | Delivered — _external_api_template.md; 6 required sections; Anthropic + Alpaca advisory (ST-21) | 2026-05-30__release-v4.6 |
+| BLG-GOV-32 | Gate-condition clearing tracker at release planning | Delivered — release_planning_prompt.md v2.33 STEP 1.4 Gate-Condition Proximity Scan (ST-15, combined with BLG-GOV-43) | 2026-05-30__release-v4.6 |
+| BLG-GOV-33 | PT-04 closed trade count audit | Delivered — Q1=6, Q2=0; gate NOT MET; 6th deferral documented (ST-16) | 2026-05-30__release-v4.6 |
+| BLG-GOV-34 | Arc 4 data density risk trajectory assessment | Delivered — Option A; arc4_data_density_trajectory_v4.6.md; SI-02 ~Nov 2026, PT-04 ~Sep 2026 (ST-17) | 2026-05-30__release-v4.6 |
+| BLG-GOV-41 | Sprint close automation failure investigation | Delivered — workflow functioning as designed; no fix required; investigation doc (ST-20) | 2026-05-30__release-v4.6 |
+| BLG-GOV-43 | Arc 4 data density formal checkpoint | Delivered — release_planning_prompt.md v2.33 STEP 1.4 Gate-Condition Proximity Scan (ST-15, combined with BLG-GOV-32) | 2026-05-30__release-v4.6 |
+| BLG-GOV-45 | Arc 6 Monte Carlo §13 pre-assessment | Delivered — PASS; 10 binding conditions; arc6_ps03_section13_preassessment.md (ST-18) | 2026-05-30__release-v4.6 |
+| BLG-GOV-52 | Trade plan schema field count gate check | Delivered — 25 fields; 0 orphaned; 3 P3 process gaps; trade_plan_schema_audit_v4.6.md (ST-19) | 2026-05-30__release-v4.6 |
+| BLG-GOV-30 | Sprint planning staging-only AC designation flag | Resolved v4.1 — sprint_planning_prompt.md v3.7 staging-only AC gate (OA-02) | Prior cycle (v4.1) |
+| BLG-GOV-31 | Merge gate re-invocation advisory in sprint capacity template | Resolved v4.x — LL-v3.9-P3-1 in-session merge gate sync in execution_prompt.md | Prior cycle |
+| BLG-GOV-40 | Delivery verification STEP 5.0A pr_number null guard | Resolved v4.1 — delivery_verification_prompt.md v2.6 (OA-04) | Prior cycle (v4.1) |
+| BLG-GOV-55 | API contract same-sprint delivery rule | Resolved v4.1+ — CLAUDE.md §2 API contract + endpoint test suite rules added | Prior cycle |
+
+---

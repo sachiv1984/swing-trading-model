@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-30 (Release Planning v4.6 — release slice added: 22 stories/4 EPICs; RP:v4.6:2026-05-30__release-v4.6)
+**Last Updated:** 2026-05-31 (Post-ship closure v4.6 — 11 shipped items marked COMPLETE; BLG-OPS-44/45 Phase 4 additions confirmed present)
 **Last rebalance:** 2026-05-27 (cycle 2026-05-27__scheduled — DL-035; IW-20260527-01; 31 new items: BLG-GOV-57–68, BLG-OPS-36–41, BLG-QA-36–38, BLG-SPEC-41–42, BLG-FE-51–55, BLG-BE-22–24)
 
 > ⚠️ Standing Notice
@@ -504,6 +504,8 @@ Red Flag Journal (v3.9) is functional but minimally styled. As RFJ becomes a pri
 
 **Gate criteria:** SI-02 (Behavioural Drift Detection) in sprint planning — Arc 5 near-complete.
 
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-30__release-v4.6 (ST-11; maintain current structure; no changes recommended; Head of UX & Design sign-off)
+
 **Problem**
 As Arc 5 ships SI-02, SI-04, and SI-05 alongside existing SI-01 and SI-03, the "Trading" navigation section may become congested. A cohesion review before Arc 5 is complete ensures any structural navigation changes are planned proactively rather than reactively patched after all features ship.
 
@@ -603,6 +605,8 @@ The Gemini thesis generation button (shipped v4.0) produces a thesis and populat
 
 **Problem**
 RedFlagJournal.js (shipped v3.9) implemented the primary display. BLG-FE-41 (Red Flag Journal visual design review, gate: SI-03 live 30+ days) is now gate-eligible. A formal design review scope document should be produced before BLG-FE-41 sprint planning to define what aspects of the journal are in scope for the review: filters, pagination UI, empty state, colour/severity coding, and mobile layout.
+
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-30__release-v4.6 (ST-12; rfj_design_review_scope.md created; gate date 2026-06-21; PO + Head of UX & Design reviewed)
 
 **Scope**
 - Produce design review scope document for RedFlagJournal.js
@@ -752,6 +756,8 @@ Trade plan schema has grown incrementally. If the schema continues to change at 
 **Provisional-Target:** Unscheduled
 
 **Gate criteria:** SI-02 (Behavioural Drift Detection) sprint planning imminent — severity taxonomy should be informed by SI-02 design to avoid schema rework.
+
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-30__release-v4.6 (ST-09; severity column + backfill + filter support; staging verification pending BLG-OPS-45)
 
 **Problem**
 red_flag_events table (shipped v3.9) has no severity classification. Adding a severity field (info/warning/critical) enables better filtering in SI-03 Red Flag Journal, more actionable grouping in SI-05 Weekly Digest, and meaningful colour coding in BLG-FE-41 visual design review. The field is additive and backward-compatible but should be deferred until SI-02 sprint planning is imminent to ensure the severity taxonomy is informed by drift detection severity requirements.
@@ -1000,28 +1006,29 @@ QA evidence files (qa_evidence_EPIC-*.md) from v3.7–v4.0 were produced under e
 
 ---
 
-### BLG-OPS-13 — Add new v2.8/v2.9/v3.0/v3.4/v3.9 endpoints to api_performance_baseline.md re-run
+### BLG-OPS-13 — Add new v2.8/v2.9/v3.0/v3.4/v3.9/v4.6 endpoints to api_performance_baseline.md re-run
 **Priority:** P3 (Low)
 **Type:** Operations / Performance Baseline
 **Owner:** Infrastructure & Operations Owner
-**Source:** v2.9 post-ship closure 2026-04-24 (3 endpoints); v3.0 post-ship closure 2026-04-28 OA-v30-01 (5 additional endpoints); v3.1 post-ship closure 2026-05-05 (10 additional endpoints); v3.4 post-ship closure 2026-05-14 (2 additional endpoints); v3.5 post-ship closure 2026-05-15 (2 additional endpoints); v3.9 post-ship closure 2026-05-22 (1 additional endpoint: GET /portfolio/red-flag-journal)
-**Effort:** M (~2 days — 23 endpoints total)
+**Source:** v2.9 post-ship closure 2026-04-24 (3 endpoints); v3.0 post-ship closure 2026-04-28 OA-v30-01 (5 additional endpoints); v3.1 post-ship closure 2026-05-05 (10 additional endpoints); v3.4 post-ship closure 2026-05-14 (2 additional endpoints); v3.5 post-ship closure 2026-05-15 (2 additional endpoints); v3.9 post-ship closure 2026-05-22 (1 additional endpoint: GET /portfolio/red-flag-journal); v4.6 post-ship closure 2026-05-31 (1 additional endpoint: GET /analytics/behavioural-drift)
+**Effort:** M (~2 days — 24 endpoints total)
 **Provisional-Target:** Before next performance baseline review
 
 **Problem**
 Twenty-two endpoints shipped in v2.8/v2.9/v3.0/v3.1/v3.4/v3.5 are absent from `docs/ops/api_performance_baseline.md`. Performance re-runs require a live environment and human coordination — baseline updates cannot be automated.
 
-**Scope (updated 2026-05-15):**
+**Scope (updated 2026-05-31):**
 - v2.8/v2.9 endpoints (3): `POST /ai/journal-summary`, `GET /ai/journal-summary/history`, `GET /v1beta1/news`
 - v3.0 endpoints (5): `GET /ticker-universe`, `POST /ticker-universe`, `DELETE /ticker-universe/{ticker}`, `GET /screener/results`, `POST /screener/run`
 - v3.1 endpoints (10): `POST /trade-plans`, `GET /trade-plans/{id}`, `PUT /trade-plans/{id}`, `DELETE /trade-plans/{id}`, `GET /trade-plans/by-position/{position_id}`, `GET /trade-plans/by-ticker/{ticker}`, `GET /research/{ticker}`, `GET /earnings/{ticker}`, `GET /reports/monthly-pnl`, plus any additional v3.1 routes
 - v3.4 endpoints (2): `GET /portfolio/drawdown-status`, `GET /portfolio/concentration-status`
 - v3.5 endpoints (2): `GET /portfolio/paper-positions`, `GET /trades/{trade_id}/plan-vs-reality`
 - v3.9 endpoints (1): `GET /portfolio/red-flag-journal`
+- v4.6 endpoints (1): `GET /analytics/behavioural-drift`
 - Run each against staging to obtain p50/p95 latencies and add to `docs/ops/api_performance_baseline.md`
 
 **Acceptance Criteria**
-- All 23 endpoints have p50 and p95 latency entries in the baseline document
+- All 24 endpoints have p50 and p95 latency entries in the baseline document
 - Entries consistent with existing baseline measurement methodology
 
 ---
@@ -1337,6 +1344,8 @@ Anthropic API pricing tiers differ from Gemini. Without a tier cost assessment, 
 
 **Gate criteria:** SI-02 sprint planning initiated.
 
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-30__release-v4.6 (ST-10; arc5_hosting_cost_projection.md; current Render Starter tier adequate; no upgrade required; FinOps sign-off)
+
 **Problem**
 SI-02 drift detection will add recurring background analysis queries. The current Render compute tier was sized for Arc 1–4 workloads. Before SI-02 sprint planning, an assessment of whether the additional Arc 5 load is within the current tier is needed to prevent mid-sprint resource surprises.
 
@@ -1436,6 +1445,8 @@ ST-09 (BLG-BE-16: red_flag_events severity field) was verified by code review an
 **Provisional-Target:** Unscheduled
 
 **Gate criteria:** ≥ 2 external API integration contracts exist (second contract after Alpaca and Yahoo Finance).
+
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-30__release-v4.6 (ST-21; _external_api_template.md created; 6 required sections; Anthropic + Alpaca conformance advisory noted)
 
 **Problem**
 Alpaca and Yahoo Finance are currently the only external API integrations, each with ad hoc contract documentation. If a second external API integration is scoped (e.g., a data vendor, broker alternative), a standardised spec template would reduce documentation inconsistency and ensure all new integrations capture: authentication model, rate limits, error taxonomy, cost attribution, and data model mapping. Gate ensures the overhead of a template is justified by reuse demand.
@@ -1617,6 +1628,8 @@ If an AI-assisted trade plan analysis feature is scoped (generating text summari
 **Problem**
 v3.9 post-ship closure carry-forward advisory item #2: environment-dependent ACs (those referencing Yahoo Finance, Alpaca, or other live service behaviour) were not designated "staging-only" at sprint planning. This resulted in BLG-QA-24 being filed as a surprise P3 notation at QA sign-off. A per-story staging_only_evidence flag at sprint planning time prevents this pattern.
 
+✅ COMPLETE — v4.1 — sprint_planning_prompt.md v3.7 added staging-only AC gate (OA-02; confirmed resolved per v4.5 scope reference and lessons_learnt.md v4.6)
+
 **Scope**
 - Add `staging_only_evidence` notation to sprint_backlog.md story schema documentation
 - Update sprint_planning_prompt.md to prompt for staging-only designation when an AC references external live service behaviour
@@ -1649,6 +1662,8 @@ v3.9 post-ship closure carry-forward advisory item #1: merge_gate.epics_merged w
 - Sprint capacity template updated with re-invocation advisory
 - Head of Specs Team sign-off recorded
 
+✅ COMPLETE — v4.x — LL-v3.9-P3-1 in-session merge gate sync implemented in execution_prompt.md; advisory pattern resolved (confirmed resolved per v4.5 scope reference and lessons_learnt.md v4.6)
+
 ---
 
 ### BLG-GOV-32 — Gate-condition clearing tracker at release planning
@@ -1661,6 +1676,8 @@ v3.9 post-ship closure carry-forward advisory item #1: merge_gate.epics_merged w
 
 **Problem**
 Gate-conditional backlog items (e.g., BLG-GOV-39, BLG-SPEC-35) have gates that may clear at unpredictable times. Currently gates are checked reactively (if PO remembers at release planning). A structured gate-scan checklist at each release planning kickoff — listing items likely to clear in the next 30–60 days — provides proactive pipeline visibility for sprint sequencing.
+
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-30__release-v4.6 (ST-15; release_planning_prompt.md v2.33 STEP 1.4 Gate-Condition Proximity Scan added; combined with BLG-GOV-43)
 
 **Scope**
 - Add a gate-scan checklist step to the release planning prompt or release planning artefact
@@ -1684,6 +1701,8 @@ Gate-conditional backlog items (e.g., BLG-GOV-39, BLG-SPEC-35) have gates that m
 
 **Problem**
 PT-04 (Setup Quality Score) gate (20+ closed trades) has been unmet for 4 consecutive cycles (v3.6–v3.9). No verification of the actual production closed trade count has been documented in any cycle artefact. If the count is 15–19, PT-04 is near-clearing and should be planned proactively. If under 10, the gate condition calibration may warrant review.
+
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-30__release-v4.6 (ST-16; Q1=6 closed trades, Q2=0 with linked trade_plans; gate NOT MET; EPIC-02 deferred 6th time; BLG-FEAT-25 updated)
 
 **Scope**
 - Query production database for current closed trade count
@@ -1709,6 +1728,8 @@ PT-04 (Setup Quality Score) gate (20+ closed trades) has been unmet for 4 consec
 
 **Problem**
 PO-02 (Journal Pattern Recognition) requires 6+ months of AI journal entries. PO-04 (Reflection/Outcome Correlation) requires 50+ trades with plans. PO-05 (Lightweight Replay Mode) requires IT-06 foundation + significant trade history. At current trade frequency, these gates may not clear within v4.0–v4.2. Without a formal trajectory assessment, these features are perpetually "planned" without realistic delivery dates.
+
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-30__release-v4.6 (ST-17; arc4_data_density_trajectory_v4.6.md; Option A selected — proceed on current trajectory; SI-02 gate ~Nov 2026, PT-04 sub-gate ~Sep 2026; PO + Challenger sign-off)
 
 **Scope**
 - Assessment: current trade frequency (trades/month), AI journal entry rate, trade plan creation rate
@@ -1767,6 +1788,8 @@ OA-04 (from v4.0 post-ship closure) identified that delivery_verification_prompt
 
 **Acceptance Criteria**
 - STEP 5.0A includes null guard for pr_number (warning output, not halt)
+
+✅ COMPLETE — v4.1 — delivery_verification_prompt.md v2.6 pr_number null guard implemented (OA-04 resolution; confirmed resolved per lessons_learnt.md v4.6)
 - Prompt version bumped; OPERATIONAL_GUIDE.md §14 updated; prompt_change_log.md appended
 - Gate condition (OA-04 resolution at v4.1 sprint planning) verified
 
@@ -1781,6 +1804,8 @@ OA-04 (from v4.0 post-ship closure) identified that delivery_verification_prompt
 **Provisional-Target:** Unscheduled
 
 **Gate criteria:** sprint_close_reminder.yml failure mechanism identified — per OA-03 from v4.0 post-ship closure.
+
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-30__release-v4.6 (ST-20; workflow functioning as designed — observer effect/early filing; no fix required; investigation doc committed)
 
 **Problem**
 OA-03 (from v4.0 post-ship closure) flagged that sprint_close_reminder.yml failed silently. Investigation is needed to determine: what the failure mode is, whether it is a GitHub Actions timing issue, environment issue, or logic error, and whether automated sprint close reminders should be retained or replaced with a documented manual trigger.
@@ -1809,6 +1834,8 @@ OA-03 (from v4.0 post-ship closure) flagged that sprint_close_reminder.yml faile
 **Problem**
 Arc 4 features (PO-02 through PO-05) all have data density gates: 6+ months AI journal entries (PO-02), 50+ trades with plans (PO-04), 50+ trades with regime-at-entry (PO-05). A formal checkpoint at each release planning cycle confirms whether gates are approaching satisfaction. Currently this check is informal and reactive. A structured checkpoint prevents sprint planning a story against a gate that won't clear for months.
 
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-30__release-v4.6 (ST-15; release_planning_prompt.md v2.33 STEP 1.4 Gate-Condition Proximity Scan added; combined with BLG-GOV-32)
+
 **Scope**
 - Define Arc 4 data density checkpoint procedure: trade count, plan count, AI journal entry count
 - Add checkpoint step to release planning prompt or OPERATIONAL_GUIDE.md §6B
@@ -1832,6 +1859,8 @@ Arc 4 features (PO-02 through PO-05) all have data density gates: 6+ months AI j
 **Problem**
 PS-03 (Monte Carlo Simulation, Arc 6) is documented as "§13 compliant — deterministic simulation" on the roadmap. Before Arc 6 sprint planning, a formal §13 pre-assessment of Monte Carlo confirms: the simulation uses actual trade distribution data only (no external benchmarks), produces context not recommendations, and does not engage the ML/prediction boundary. Early pre-assessment prevents a last-minute gate discovery at Arc 6 planning.
 
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-30__release-v4.6 (ST-18; PASS — 10 binding conditions; arc6_ps03_section13_preassessment.md; Arc 6 planning path clear; Strategy Rules & System Intent Owner sign-off)
+
 **Scope**
 - Run §13 checklist against PS-03 Monte Carlo feature definition
 - Confirm: simulation is deterministic, uses own trade data only, output is statistical context not a recommendation
@@ -1854,6 +1883,8 @@ PS-03 (Monte Carlo Simulation, Arc 6) is documented as "§13 compliant — deter
 
 **Problem**
 The trade plan data model (shipped v3.1, expanded through v3.5) contains a growing number of fields. Before Arc 4 deep analytics (PO-02, PO-03) and Arc 5 SI-02 add further fields, a gate check confirms: current field count is within manageable scope, there are no orphaned fields (captured but never surfaced), and the schema remains internally consistent with the roadmap's stated field list.
+
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-30__release-v4.6 (ST-19; trade_plan_schema_audit_v4.6.md; 25 fields post-DS-07; 0 orphaned fields; 3 P3 process gaps filed; Data Model & Domain Schema Owner sign-off)
 
 **Scope**
 - Review trade plan schema: enumerate all fields, cross-reference with roadmap feature descriptions
@@ -1910,6 +1941,8 @@ v4.0 shipped POST /trade-plans/{plan_id}/generate-thesis (ST-12) without a forma
 - Rule added to CLAUDE.md §2 or sprint planning reference
 - Head of Specs Team sign-off
 - Rule applies from v4.1 sprint planning onward
+
+✅ COMPLETE — v4.1+ — CLAUDE.md §2 rule added: "Every new API endpoint must be added to `docs/reference/openapi.yaml` in the same commit as the contract." and "Every new backend route must be registered in the endpoint test suite in the same commit." (confirmed resolved per v4.5 scope reference and lessons_learnt.md v4.6)
 
 ---
 
@@ -1989,34 +2022,5 @@ Backlog items have no explicit Blocks/Blocked-by fields. Cross-item dependencies
 
 ---
 
-## Release Slice — v4.6 (2026-05-30__release-v4.6)
-
-<!-- release-plan-marker: RP:v4.6:2026-05-30__release-v4.6 -->
-
-*Ephemeral section — remove during next `groom backlog` run after cycle closes.*
-
-| EPIC | Story | Backlog ref | Priority | Sprint |
-|------|-------|-------------|----------|--------|
-| EPIC-01 | ST-01 | si02_data_schema.md (DS-07 migration) | P1 | Sprint 1 |
-| EPIC-01 | ST-02 | si02_data_schema.md §7 (POST /trade-plans capture) | P1 | Sprint 1 |
-| EPIC-01 | ST-03 | Arc 5 SI-02 drift service (si02_drift_score.md) | P1 | Sprint 1 |
-| EPIC-01 | ST-04 | Arc 5 SI-02 endpoint (GET /analytics/behavioural-drift) | P1 | Sprint 1 |
-| EPIC-01 | ST-05 | Arc 5 SI-02 unit tests | P1 | Sprint 1 |
-| EPIC-02 | ST-06 | BLG-FE-52/53 (BehaviouralDriftPanel) | P1 | Sprint 2 |
-| EPIC-02 | ST-07 | SI-02 PerformanceAnalytics integration | P1 | Sprint 2 |
-| EPIC-02 | ST-08 | BLG-QA-31 (SI-02 Playwright tests) | P1 | Sprint 2 |
-| EPIC-03 | ST-09 | BLG-BE-16 (severity field) | P2 | Sprint 2 |
-| EPIC-03 | ST-10 | BLG-OPS-40 (Arc 5 hosting cost projection) | P2 | Sprint 2 |
-| EPIC-03 | ST-11 | BLG-FE-42 (Arc 5 nav cohesion review) | P2 | Sprint 2 |
-| EPIC-03 | ST-12 | BLG-FE-47 (RFJ design review scope) | P2 | Sprint 2 |
-| EPIC-03 | ST-13 | BLG-GOV-67 (SI-05 Phase 1) — conditional | P2 | Sprint 2 (conditional) |
-| EPIC-04 | ST-14 | OA-01 (System_status_report fix) | P2 | Sprint 1 |
-| EPIC-04 | ST-15 | BLG-GOV-32+43 (release_planning_prompt.md gate scan) | P2 | Sprint 1 |
-| EPIC-04 | ST-16 | BLG-GOV-33 (closed trade count audit) | P2 | Sprint 1 |
-| EPIC-04 | ST-17 | BLG-GOV-34 (Arc 4 data density trajectory) | P2 | Sprint 1 |
-| EPIC-04 | ST-18 | BLG-GOV-45 (Arc 6 Monte Carlo §13) | P2 | Sprint 1 |
-| EPIC-04 | ST-19 | BLG-GOV-52 (trade plan schema audit) | P2 | Sprint 1 |
-| EPIC-04 | ST-20 | BLG-GOV-41 (sprint close automation investigation) | P2 | Sprint 1 |
-| EPIC-04 | ST-21 | BLG-SPEC-32 (external API spec template) | P3 | Sprint 1 |
-| EPIC-04 | ST-22 | OA-02 (roadmap_prompt.md advisory patch) | P3 | Sprint 1 |
+*Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*
 

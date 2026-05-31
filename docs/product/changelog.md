@@ -3,9 +3,47 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-30
+**Last Updated:** 2026-05-31
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v4.6 — SI-02 Behavioural Drift Detection & Arc 5 Completion — 2026-05-31
+Cycle: 2026-05-30__release-v4.6
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-05-30__release-v4.6/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | SI-02 Behavioural Drift Detection (Backend) — DS-07 data migration adding 5 SI-02 columns to trade_plans (ST-01); POST /trade-plans updated to capture 5 new SI-02 fields at plan creation (ST-02); 4-metric behavioural drift service (entry_timing_drift, sizing_adherence, consecutive_loss_sizing, regime_context; 90-day window; green/amber/red bands; §13 binding conditions enforced; ST-03); GET /analytics/behavioural-drift endpoint, openapi.yaml, and API contract (60 total endpoints; ST-04); 35-case SI-02 unit test suite (ST-05). | docs/specs/data_model/si02_data_schema.md; docs/specs/metrics/si02_drift_score.md; docs/specs/api_contracts/behavioural_drift_contract.md; docs/reference/openapi.yaml |
+| EPIC-03 | Arc 5 Enablers & Gate-Cleared Items — red_flag_events severity field added (backfill + filter support; AC-08 Data Model sign-off accepted at EPIC level; ST-09); Arc 5 hosting cost projection assessment (current Render Starter tier adequate; no upgrade required at <50 trades; ST-10); Arc 5 nav cohesion review (maintain current structure; no changes recommended; ST-11); Red Flag Journal design review scope document (gate: 2026-06-21; ST-12). | docs/specs/api_contracts/portfolio_endpoints.md; docs/reference/openapi.yaml; docs/ops/arc5_hosting_cost_projection.md; docs/specs/frontend/arc5_nav_cohesion_review_v4.6.md; docs/specs/fe/rfj_design_review_scope.md |
+| EPIC-04 | Governance, Spec Debt & OA Resolution — System_status_report.md v4.4 stale status correction (OA-01; ST-14); release_planning_prompt.md v2.33 gate scan + data density checkpoint (BLG-GOV-32/43; ST-15); closed trade count audit confirming data density gate NOT MET — 6 closed trades, 0 linked trade_plans (gate ≥20; EPIC-02 deferred 6th time; BLG-GOV-33; ST-16); Arc 4 data density risk trajectory assessment — Option A selected, gate dates ~Nov 2026 (SI-02), ~Sep 2026 (PT-04), ~Jun 2027 (PT-04 full; BLG-GOV-34; ST-17); Arc 6 Monte Carlo §13 pre-assessment — PASS with 10 binding conditions (BLG-GOV-45; ST-18); trade plan schema audit — 25 fields, 0 orphaned, 3 P3 process gaps (BLG-GOV-52; ST-19); sprint close automation investigation — workflow functioning as designed, no fix required (BLG-GOV-41; ST-20); external API integration spec template created (BLG-SPEC-32; ST-21); roadmap_prompt.md v6.7 next_release advisory added (OA-02; ST-22). | claude/system/release_planning_prompt.md v2.33; claude/system/roadmap_prompt.md v6.7; docs/product/decisions/arc4_data_density_trajectory_v4.6.md; docs/product/decisions/arc6_ps03_section13_preassessment.md; docs/specs/data_model/trade_plan_schema_audit_v4.6.md; docs/ops/sprint_close_reminder_investigation_v4.6.md; docs/specs/api_contracts/_external_api_template.md |
+
+### Deviations accepted
+2 minor deviations — see verification_report.md
+
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| DEV-DV4.6-01 | P3 | DS-07 migration staging verification pending — 5 SI-02 columns and 3 indexes not yet verified in staging environment; code-review verified; idempotent migration | DoQ + PO |
+| DEV-DV4.6-02 | P3 | red_flag_events severity field staging ACs (AC-01/02/03) and AC-08 Data Model sign-off pending; code-review verified; idempotent migration pattern | DoQ + PO |
+
+### Tech backlog items shipped
+- [ST-15] BLG-GOV-32 + BLG-GOV-43: release_planning_prompt.md gate scan + data density checkpoint
+- [ST-16] BLG-GOV-33: closed trade count audit (PT-04 + SI-02 data density gate)
+- [ST-17] BLG-GOV-34: Arc 4 data density risk trajectory assessment
+- [ST-18] BLG-GOV-45: Arc 6 Monte Carlo §13 pre-assessment
+- [ST-19] BLG-GOV-52: trade plan schema field count gate check
+- [ST-20] BLG-GOV-41: sprint close automation failure investigation
+- [ST-21] BLG-SPEC-32: external API integration spec template
+- [ST-09] BLG-BE-16: red_flag_events severity field
+- [ST-10] BLG-OPS-40: Arc 5 hosting cost projection assessment
+- [ST-11] BLG-FE-42: Arc 5 nav cohesion review
+- [ST-12] BLG-FE-47: Red Flag Journal design review scope document
+
+Sign-off: Product Owner — 2026-05-31
+QA sign-off: Director of Quality — 2026-05-31
 
 ---
 

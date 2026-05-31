@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-30
+**Last Updated:** 2026-05-31
 
 # Roadmap Archive — Momentum Trading Assistant
 
@@ -1033,5 +1033,39 @@ v4.4 Governance Patches, SI-02 Pre-Planning Sprint & Ops Hardening. EPIC-01: v4.
 ### Original Roadmap Entry
 
 v4.5 Governance Prompt Hardening, Audit Debt & SI-02 Spec Pre-Planning. EPIC-01: execution_prompt.md v3.34 — four v4.4 OA patches: two-phase DEL terminal-status write (ST-01), pr_status sync after PR open (ST-02), LL-v4.5-EX-01 verification-class sub-criterion (ST-03), LL-v4.5-EX-02 spec_references policy for doc-creation stories (ST-04). EPIC-02: Agent role header standardization — 5 agent files updated to **Role:** format (AUD-2026-05-30-005). EPIC-03: SI-02 spec pre-sprint — §13 boundary review PASS (9 binding conditions; ST-06), drift score metric definition (4 metrics, 90-day window, green/amber/red bands; ST-07), data schema pre-definition (5 trade_plans columns + DS-07 migration; ST-08). All 4 v4.4 outstanding actions resolved. SI-02 sprint planning unblocked. 8/8 stories delivered. Zero spec deviations. Verified 2026-05-30.
+
+---
+
+## RA:v4.3 — Governance Consolidation, QA Debt Clearance & Ops Hardening
+
+**Original roadmap location:** §1 Current Version / Release Summary §8
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-05-31 (backfill — execution notes block present in §1 after prior manage roadmap runs)
+**Shipped version:** v4.3
+**Cycle reference:** 2026-05-29__release-v4.3
+**Verification report:** claude/cycles/2026-05-29__release-v4.3/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-31
+
+### Original Roadmap Entry
+
+v4.3 Governance Consolidation, QA Debt Clearance & Ops Hardening. v4.2 OA resolution: execution_prompt.md v3.32 (STEP 3.2.A + STEP 5.3/8 hard gate), qa_evidence_template.md v1.3, OPERATIONAL_GUIDE.md v4.13 (§7.8 staging-only AC ref table); AI feature inventory v1.0. QA debt: Playwright for Arc5ComplianceSection, Arc 5 E2E test spec, CI pipeline baseline (BLG-QA-27 cleared), coverage matrix + coverage audit. Ops/Security: API key rotation policy, security register, staging parity audit v4.3, claude-audit-log performance baseline §16. Frontend: pre-entry price bug fix, HAS_GEMINI→HAS_AI rename, Arc 5 compliance in monthly P&L. 18/18 stories delivered. Verified 2026-05-29.
+
+---
+
+## RA:v4.6 — SI-02 Behavioural Drift Detection & Arc 5 Completion
+
+**Original roadmap location:** §1 Current Version / Release Summary §8
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-05-31
+**Shipped version:** v4.6
+**Cycle reference:** 2026-05-30__release-v4.6
+**Verification report:** claude/cycles/2026-05-30__release-v4.6/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-05-31
+
+### Original Roadmap Entry
+
+v4.6 SI-02 Behavioural Drift Detection & Arc 5 Completion. EPIC-01 SI-02 Backend: DS-07 data migration (5 new trade_plans columns: signal_id, risk_percent_used, portfolio_value_at_entry, pre_entry_validation_snapshot, effective_settings_snapshot); POST /trade-plans updated to capture all 5 SI-02 fields; 4-metric behavioural drift service (entry_timing_drift, sizing_adherence, consecutive_loss_sizing, regime_context; 90-day window; §13 binding conditions); GET /analytics/behavioural-drift endpoint + API contract (behavioural_drift_contract.md) + openapi.yaml (60 total endpoints); 35-case SI-02 unit test suite. EPIC-03 Arc 5 Enablers: red_flag_events severity field (backfill + filter support; BLG-BE-16); Arc 5 hosting cost projection (current tier adequate; BLG-OPS-40); Arc 5 nav cohesion review (maintain current structure; BLG-FE-42); Red Flag Journal design review scope doc (gate 2026-06-21; BLG-FE-47). EPIC-04 Governance & Spec Debt: OA-01 System_status_report.md v4.4 correction; release_planning_prompt.md v2.33 STEP 1.4 gate scan (BLG-GOV-32/43); closed trade count audit (Q1=6, Q2=0, gate NOT MET — 6th deferral; BLG-GOV-33); Arc 4 data density trajectory Option A (BLG-GOV-34); Arc 6 Monte Carlo §13 PASS 10 binding conditions (BLG-GOV-45); trade plan schema audit 25 fields 0 orphaned (BLG-GOV-52); sprint close automation investigation — workflow functioning (BLG-GOV-41); external API spec template (BLG-SPEC-32); OA-02 roadmap_prompt.md v6.7 next_release advisory. EPIC-02 DEFERRED (data density gate NOT MET — 6th deferral; ST-06/07/08 returned to backlog; BLG-FEAT-25). 18/21 firm stories delivered (EPIC-02 gate-deferred); Verified_with_deviations (2 P3 staging deviations: BLG-OPS-44/45); 2026-05-31.
 
 ---

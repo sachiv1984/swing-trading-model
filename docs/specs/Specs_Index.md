@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-05-30
+**Last Updated:** 2026-05-31
 
 ---
 
@@ -114,7 +114,9 @@ It points to the **single canonical source**.
 - `ticker_universe_api_contract.md` — Class 2 Canonical (created 2026-04-25, ST-01, cycle 2026-04-25__release-v3.0; updated 2026-05-22 ST-06 v3.9 — company_name field added to GET /ticker-universe response): GET /ticker-universe, POST /ticker-universe, DELETE /ticker-universe/{ticker}; seed data contract; company_name field. Sign-off: Sprint Execution Engine (autonomous class).
 - `screener_api_contract.md` — Class 2 Canonical (created 2026-04-23 v2.9; implementation delivered 2026-04-25 v3.0 ST-04; updated v1.1 2026-05-22 ST-04 v3.9 — degraded_run and failure_rate fields added to GET /screener/results response): GET /screener/results, POST /screener/run; request/response schemas, pagination, error codes, degraded_run flag.
 - `alpaca_integration_contract.md` — Class 2 Canonical (created 2026-04-23 v2.9 ST-02): Alpaca Markets API contract for OHLCV bars and News endpoints; rate limits, error codes, fallback strategy, API version pin.
-- `portfolio_endpoints.md` — Class 1 Canonical (created v2.0; updated v2.3 2026-05-22 ST-07 v3.9 — GET /portfolio/red-flag-journal added; red_flag_events table; SI-01 override event write path): GET /portfolio, GET /portfolio/pre-entry-validation, GET /portfolio/prospective-heat, GET /portfolio/red-flag-journal + other portfolio endpoints. Sign-off: Sprint Execution Engine (autonomous class).
+- `portfolio_endpoints.md` — Class 1 Canonical (created v2.0; updated v2.3 2026-05-22 ST-07 v3.9 — GET /portfolio/red-flag-journal added; red_flag_events table; SI-01 override event write path; updated v2.4 2026-05-31 ST-09 v4.6 — severity field + filter query parameter added to red_flag_events endpoints): GET /portfolio, GET /portfolio/pre-entry-validation, GET /portfolio/prospective-heat, GET /portfolio/red-flag-journal + other portfolio endpoints. Sign-off: Sprint Execution Engine (autonomous class).
+- `behavioural_drift_contract.md` — Class 1 Canonical, v1.0, Active (created 2026-05-31, ST-04, cycle 2026-05-30__release-v4.6): GET /analytics/behavioural-drift — SI-02 4-metric behavioural drift response schema; §13 binding conditions; green/amber/red band thresholds; insufficient_data path. Sign-off: Sprint Execution Engine (autonomous class).
+- `_external_api_template.md` — Template (created 2026-05-31, ST-21, cycle 2026-05-30__release-v4.6; BLG-SPEC-32): Standard template for external API integration contracts; 6 required sections (Overview, Authentication, Endpoints, Error Handling, Rate Limits, Change Log). Conformance advisory for existing contracts (Anthropic, Alpaca) noted in document. Sign-off: Head of Specs Team.
 - `api_changelog.md` — *Running changelog; must be updated with every contract version increment*
 
 **Supporting Reference**

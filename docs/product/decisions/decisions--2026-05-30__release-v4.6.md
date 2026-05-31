@@ -1,9 +1,9 @@
 **Owner:** Head of Specs Team
 **Class:** Planning Document (Class 4)
-**Status:** Active
+**Status:** Superseded
 **Release:** v4.6
 **Cycle:** 2026-05-30__release-v4.6
-**Last Updated:** 2026-05-30
+**Last Updated:** 2026-05-31
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -51,4 +51,9 @@ None. All risks are mitigated inline (RISK-01–05 documented in release_plan.md
 
 ## Supersession Note
 
-*(To be completed at Post-Ship Closure.)*
+Superseded by: v4.6 ship — 2026-05-31
+Changelog: docs/product/changelog.md#v46
+Verification report: claude/cycles/2026-05-30__release-v4.6/verification_report.md
+Cycle: 2026-05-30__release-v4.6
+
+Note: arc4_data_density_trajectory_v4.6.md and arc6_ps03_section13_preassessment.md are Operational Records (Class 3) — they are permanent and are NOT superseded by this closure.

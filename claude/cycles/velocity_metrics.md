@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-05-30
+**Last Updated:** 2026-05-31
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -53,8 +53,9 @@
 | v4.3  | 18      | 18        | 1.00     | All 18 stories done; zero spec deviations; 5 delegations (3 cancelled, 2 delegated_qa) all resolved; ANTHROPIC_API_KEY added to staging permanently; BLG-QA-27 gate cleared (CI baseline ≥5 min) |
 | v4.4  | 13      | 13        | 1.00     | Zero spec deviations; 5 governance patches (ST-01–05) + OPERATIONAL_GUIDE §7.9 (ST-13); all 7 SI-02 pre-planning artefacts delivered (ST-06–12); 5 delegations all agent-mediated and resolved within sprint |
 | v4.5  | 8       | 8         | 1.00     | Zero spec deviations; 4 execution_prompt.md OA patches (ST-01–04) + agent header standardization 5 files (ST-05) + SI-02 spec pre-sprint (ST-06–08: §13 PASS + metric definition + data schema); 3 delegated_decision all agent-mediated; LL-v4.5-EX-01 validated in-sprint; sixth consecutive clean verification |
+| v4.6  | 18      | 18        | 1.00     | EPIC-02 (ST-06/07/08) deferred at planning — data density gate NOT MET (6th deferral; confirmed at sprint close); 2 P3 staging deviations (BLG-OPS-44/45) accepted; Arc 6 §13 PASS; 6 delegated_decision all resolved within sprint; EPIC-04 autonomous class sign-off |
 
-**Rolling 6-cycle average (v4.0–v4.5):** 0.99
+**Rolling 6-cycle average (v4.1–v4.6):** 0.99
 
 ---
 
