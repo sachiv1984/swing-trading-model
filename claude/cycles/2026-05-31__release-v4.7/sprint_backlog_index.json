@@ -1,0 +1,36 @@
+{
+  "cycle_id": "2026-05-31__release-v4.7",
+  "generated_utc": "2026-05-31T13:00:00Z",
+  "epics": {
+    "EPIC-01": {
+      "st_items": ["ST-01"],
+      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-01"],
+      "deferred_items": {
+        "ST-02": {
+          "status": "deferred_at_planning",
+          "gate_condition": "SI-01 + SI-03 live ≥30 days — gate clears 2026-06-21"
+        }
+      }
+    },
+    "EPIC-02": {
+      "st_items": ["ST-03"],
+      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-03"]
+    },
+    "EPIC-03": {
+      "st_items": ["ST-04", "ST-05", "ST-06", "ST-07"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-04",
+        "stage4_backlog_slice.md#ST-05",
+        "stage4_backlog_slice.md#ST-06",
+        "stage4_backlog_slice.md#ST-07"
+      ]
+    },
+    "EPIC-04": {
+      "st_items": ["ST-08", "ST-09"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-08",
+        "stage4_backlog_slice.md#ST-09"
+      ]
+    }
+  }
+}
