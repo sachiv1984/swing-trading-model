@@ -1,0 +1,553 @@
+{
+  "cycle_id": "2026-05-30__release-v4.6",
+  "sprint_goal": "Implement SI-02 Behavioural Drift Detection end-to-end \u2014 DS-07 data migration, 4-metric drift service, and GET /analytics/behavioural-drift endpoint in Sprint 1; BehaviouralDriftPanel frontend integration and Arc 5 enablers in Sprint 2 \u2014 alongside governance debt clearance and v4.5 OA resolution, completing SI-02 as the fourth of five planned Arc 5 signals.",
+  "backlog_slice_source": "claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md",
+  "invoked_utc": "2026-05-30T21:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-05-31T00:00:00Z",
+  "epics": {
+    "EPIC-04": {
+      "status": "in_progress",
+      "branch": "exec/2026-05-30__release-v4.6/EPIC-04",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-05-30__release-v4.6/qa_evidence_EPIC-04.md",
+      "test_scenarios": [],
+      "execution_state_owner": true,
+      "stories": {
+        "ST-14": {
+          "title": "OA-01: System_status_report.md v4.4 stale status correction",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 581,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-04",
+          "commit_sha": "bab27445",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-30T21:05:00Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "no prior spec applicable; AC-01 met: v4.4 status updated to Verified \u2014 2026-05-29; AC-02 met: no other content changed; AC-03: PMO Lead autonomous class sign-off applies (see qa_evidence_EPIC-04.md)"
+        },
+        "ST-15": {
+          "title": "BLG-GOV-32 + BLG-GOV-43: release_planning_prompt.md gate scan + data density checkpoint",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 579,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-04",
+          "commit_sha": "ca29ea72",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-30T21:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/release_planning_prompt.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "prompt-patch story; v2.32\u2192v2.33; STEP 1.4 Gate-Condition Proximity Scan added; OPERATIONAL_GUIDE.md \u00a714+\u00a76B updated; prompt_change_log.md entry appended; all \u00a76 checklist items completed"
+        },
+        "ST-16": {
+          "title": "BLG-GOV-33: closed trade count audit (PT-04 + SI-02 data density gate)",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Product Owner",
+          "github_issue": 580,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": "ESC-EXEC-20260530-01",
+          "blocked_since_utc": "2026-05-30T21:20:00Z",
+          "unblock_criteria": "Product Owner runs production DB queries (AC-01 and AC-02) and documents results; both counts in QA evidence; PT-04 backlog item updated; EPIC-02 gate decision stated",
+          "completed_utc": "2026-05-31T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "PO ran production DB queries 2026-05-31: Query 1 (SELECT COUNT(*) FROM trade_history WHERE pnl IS NOT NULL) = 6; Query 2 (SELECT COUNT(*) FROM trade_history th JOIN trade_plans tp ON tp.position_id = th.position_id WHERE th.pnl IS NOT NULL) = 0. Gate: NOT MET (threshold \u226520). EPIC-02 gate decision: DEFERRED \u2014 gate not met; release closes with Sprint 1 (EPIC-04 autonomous stories + EPIC-01) + Sprint 2 (EPIC-03) only. ESC-EXEC-20260530-01 resolved. BLG-FEAT-25 updated (6th deferral noted)."
+        },
+        "ST-17": {
+          "title": "BLG-GOV-34: Arc 4 data density risk trajectory assessment",
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
+          "assigned_to": "Product Owner",
+          "github_issue": 582,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": "ESC-EXEC-20260530-02",
+          "blocked_since_utc": "2026-05-30T21:20:00Z",
+          "unblock_criteria": "docs/product/decisions/arc4_data_density_trajectory_v4.6.md committed to EPIC-04 branch with current metrics, projected gate dates, recommendation, and Product Owner + Challenger sign-off",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "document-creation story (LL-v4.5-EX-02); spec_references to be set to docs/product/decisions/arc4_data_density_trajectory_v4.6.md once created"
+        },
+        "ST-18": {
+          "title": "BLG-GOV-45: Arc 6 Monte Carlo \u00a713 pre-assessment",
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
+          "assigned_to": "Strategy Rules & System Intent Owner",
+          "github_issue": 583,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": "ESC-EXEC-20260530-03",
+          "blocked_since_utc": "2026-05-30T21:20:00Z",
+          "unblock_criteria": "docs/product/decisions/arc6_ps03_section13_preassessment.md committed to EPIC-04 branch with binding conditions, PASS/CONDITIONAL determination, and Strategy Rules & System Intent Owner sign-off",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "document-creation story (LL-v4.5-EX-02); spec_references to be set to docs/product/decisions/arc6_ps03_section13_preassessment.md once created"
+        },
+        "ST-19": {
+          "title": "BLG-GOV-52: trade plan schema field count gate check",
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
+          "assigned_to": "Data Model & Domain Schema Owner",
+          "github_issue": 584,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": "ESC-EXEC-20260530-04",
+          "blocked_since_utc": "2026-05-30T21:20:00Z",
+          "unblock_criteria": "docs/specs/data_model/trade_plan_schema_audit_v4.6.md committed to EPIC-04 branch with all fields enumerated, cross-references, orphaned/missing fields identified; Data Model & Domain Schema Owner sign-off",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "document-creation story (LL-v4.5-EX-02); spec_references to be set to docs/specs/data_model/trade_plan_schema_audit_v4.6.md once created; depends on ST-01 (or note pre-migration state)"
+        },
+        "ST-20": {
+          "title": "BLG-GOV-41: sprint close automation failure investigation",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 585,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-04",
+          "commit_sha": "c07b82a3",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-30T21:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/sprint_close_reminder_investigation_v4.6.md"
+          ],
+          "delivery_note": "docs/ops/sprint_close_reminder_investigation_v4.6.md",
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "AC-01: workflow run logs reviewed for v4.0 cycle \u2014 all success, no failure found; AC-02: root cause documented (observer effect / early filing); AC-03: no fix required \u2014 workflow functioning as designed; AC-04: investigation doc created; AC-05: PMO Lead sign-off recorded in document"
+        },
+        "ST-21": {
+          "title": "BLG-SPEC-32: external API integration spec template",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 586,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-04",
+          "commit_sha": "1db1c7d8",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-30T21:40:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/_external_api_template.md"
+          ],
+          "delivery_note": "docs/specs/api_contracts/_external_api_template.md",
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "AC-01: template created; AC-02: all 6 required sections present; AC-03: Anthropic + Alpaca contracts reviewed against template \u2014 conformance gaps noted as advisory in document \u00a7Conformance Advisory; AC-04: template reviewed by API Contracts Documentation Owner and Head of Specs Team (autonomous class sign-off applies); AC-05: Head of Specs Team sign-off in qa_evidence_EPIC-04.md"
+        },
+        "ST-22": {
+          "title": "OA-02: roadmap_prompt.md advisory \u2014 set next_release after DL decision",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 587,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-04",
+          "commit_sha": "a59980f9",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-30T21:50:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/roadmap_prompt.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "v6.6\u2192v6.7; advisory added to STEP 12.1 (post-DL state update); OPERATIONAL_GUIDE \u00a76+\u00a714 updated; prompt_change_log.md entries appended; all \u00a76 checklist items completed"
+        }
+      }
+    },
+    "EPIC-01": {
+      "status": "merged",
+      "branch": "exec/2026-05-30__release-v4.6/EPIC-01",
+      "pr_number": 597,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-05-30__release-v4.6/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "tests/test_behavioural_drift_service.py"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "DS-07 data migration: add SI-02 columns to trade_plans",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 588,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-01",
+          "commit_sha": "e76b07ed",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-30T22:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model/si02_data_schema.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "ensure_si02_trade_plans_columns() + ensure_si02_trade_history_indexes() added to database.py; P1 index without CONCURRENTLY (transaction-safe, documented comment); AC-05 staging-only \u2014 deferred to staging verification"
+        },
+        "ST-02": {
+          "title": "POST /trade-plans: capture 5 new SI-02 fields at plan creation",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 589,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-01",
+          "commit_sha": "e76b07ed",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-30T22:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model/si02_data_schema.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "TradePlanCreate model + create_plan handler updated; portfolio_value_at_entry and effective_settings_snapshot captured from backend; signal_id/risk_percent_used/pre_entry_validation_snapshot passed from frontend; unit tests in ST-05 cover AC-06/07"
+        },
+        "ST-03": {
+          "title": "SI-02 behavioural drift detection service (4 metrics)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 590,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-01",
+          "commit_sha": "e76b07ed",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-30T22:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics/si02_drift_score.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "behavioural_drift_service.py created; regime_context uses custom thresholds (ok\u226595%, approaching 90-95%, breached<90%) per \u00a73.4 explicit table overriding generic \u00a72.2 formula; \u00a713 binding conditions enforced"
+        },
+        "ST-04": {
+          "title": "GET /analytics/behavioural-drift endpoint, openapi.yaml, API contract",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 591,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-01",
+          "commit_sha": "e76b07ed",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-30T22:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/behavioural_drift_contract.md",
+            "docs/reference/openapi.yaml"
+          ],
+          "delivery_note": "docs/specs/api_contracts/behavioural_drift_contract.md",
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "endpoint in analytics.py; openapi.yaml updated; behavioural_drift_contract.md created; test.py updated (60 total); SystemStatus.js fallback '60'; SC-SS-01b updated to '60 endpoints'"
+        },
+        "ST-05": {
+          "title": "SI-02 unit test suite",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 592,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-01",
+          "commit_sha": "e76b07ed",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-30T22:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics/si02_drift_score.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "35 test cases in tests/test_behavioural_drift_service.py; all pass; conftest.py _DB_STUB_FUNCTIONS updated with 3 new functions"
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "done",
+      "branch": "exec/2026-05-30__release-v4.6/EPIC-03",
+      "pr_number": 598,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-05-30__release-v4.6/qa_evidence_EPIC-03.md",
+      "test_scenarios": [
+        "tests/test_red_flag_journal.py"
+      ],
+      "stories": {
+        "ST-09": {
+          "title": "BLG-BE-16: red_flag_events severity field",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 593,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-03",
+          "commit_sha": "5c34504a",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-30T23:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/portfolio_endpoints.md",
+            "docs/reference/openapi.yaml"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "severity column added; backfill logic in ensure_red_flag_events_severity_column(); create_red_flag_event updated with severity param; get_red_flag_events updated with severity filter; portfolio_endpoints.md + openapi.yaml updated; unit tests updated and 2 new severity tests added; AC-01/02/03/04/05/06/07 all met; AC-08 Data Model & Domain Schema Owner sign-off pending in QA evidence; NOTE: openapi.yaml rebased after EPIC-01 merge"
+        },
+        "ST-10": {
+          "title": "BLG-OPS-40: Arc 5 hosting cost projection assessment",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "FinOps & Resource Architect",
+          "github_issue": 594,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-03",
+          "commit_sha": "c635acb3",
+          "delegation_record_id": "ESC-EXEC-20260530-05",
+          "blocked_since_utc": "2026-05-30T23:00:00Z",
+          "unblock_criteria": "docs/ops/arc5_hosting_cost_projection.md committed to EPIC-03 branch with compute load estimate, Render tier comparison, recommendation, and FinOps sign-off",
+          "completed_utc": "2026-05-30T23:50:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/arc5_hosting_cost_projection.md"
+          ],
+          "delivery_note": "docs/ops/arc5_hosting_cost_projection.md",
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "FinOps & Resource Architect",
+            "method": "human",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-05-30T23:50:00Z"
+          },
+          "notes": "AC-01: doc produced; AC-02: SI-02 compute load estimated (~300ms/call inline, 3 Supavisor queries); AC-03: Render Starter tier vs Supavisor baseline compared; AC-04: recommendation stated \u2014 current tier adequate; no upgrade required at < 50 trades; AC-05: FinOps & Resource Architect sign-off in document"
+        },
+        "ST-11": {
+          "title": "BLG-FE-42: Arc 5 nav cohesion review",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Head of UX & Design",
+          "github_issue": 595,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-03",
+          "commit_sha": "e0269c12",
+          "delegation_record_id": "ESC-EXEC-20260530-06",
+          "blocked_since_utc": "2026-05-30T23:00:00Z",
+          "unblock_criteria": "Arc 5 nav cohesion review document committed to EPIC-03 branch with full nav inventory review, recommendation stated, UX spec + backlog if changes recommended, Head of UX & Design sign-off",
+          "completed_utc": "2026-05-30T23:55:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/arc5_nav_cohesion_review_v4.6.md"
+          ],
+          "delivery_note": "docs/specs/frontend/arc5_nav_cohesion_review_v4.6.md",
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Head of UX & Design",
+            "method": "human",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-05-30T23:55:00Z"
+          },
+          "notes": "AC-01: nav inventory review covering SI-01\u201305; AC-02: navigability/grouping/naming/depth all assessed; AC-03: recommendation = maintain current structure; AC-04: no structural changes recommended \u2014 no UX spec or backlog item required; AC-05: Head of UX & Design sign-off in document"
+        },
+        "ST-12": {
+          "title": "BLG-FE-47: Red Flag Journal design review scope document",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 596,
+          "branch": "exec/2026-05-30__release-v4.6/EPIC-03",
+          "commit_sha": "f62773a6",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-05-30T23:20:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/fe/rfj_design_review_scope.md"
+          ],
+          "delivery_note": "docs/specs/fe/rfj_design_review_scope.md",
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "document created; in-scope: layout, filter UI, severity colour coding (ST-09 shipped), event type display; out-of-scope: data structure, API contract, event taxonomy; gate date 2026-06-21 (BLG-FE-41) documented; reviewed by PO and Head of UX & Design; AC-05 Frontend Specs & UX Documentation Owner sign-off in doc"
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "deferred_at_planning",
+      "branch": null,
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": null,
+      "test_scenarios": [],
+      "notes": "Deferred at sprint planning. Gate condition: ST-16 confirms \u226520 closed trades with linked trade_plans. If gate met, invoke amend cycle before Sprint 2 planning seals.",
+      "stories": {
+        "ST-06": {
+          "title": "BehaviouralDriftPanel component",
+          "classification": "autonomous",
+          "status": "deferred_at_planning",
+          "assigned_to": null,
+          "github_issue": null,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-16 gate met (\u226520 closed trades); amendment cycle completes; Sprint 2 planning seals with EPIC-02",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "deferred at planning; gate condition ST-16"
+        },
+        "ST-07": {
+          "title": "BehaviouralDriftPanel integration into PerformanceAnalytics",
+          "classification": "autonomous",
+          "status": "deferred_at_planning",
+          "assigned_to": null,
+          "github_issue": null,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-16 gate met; amendment cycle; ST-06 completed",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "deferred at planning; gate condition ST-16"
+        },
+        "ST-08": {
+          "title": "SI-02 Playwright test coverage",
+          "classification": "autonomous",
+          "status": "deferred_at_planning",
+          "assigned_to": null,
+          "github_issue": null,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-16 gate met; amendment cycle; ST-06 and ST-07 completed",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "deferred at planning; gate condition ST-16"
+        }
+      }
+    }
+  },
+  "blocked_items": [
+    "ST-17",
+    "ST-18",
+    "ST-19"
+  ],
+  "delegated_items": [
+    "ST-16",
+    "ST-17",
+    "ST-18",
+    "ST-19",
+    "ST-10",
+    "ST-11"
+  ],
+  "completed_items": [
+    "ST-14",
+    "ST-15",
+    "ST-20",
+    "ST-21",
+    "ST-22",
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04",
+    "ST-05",
+    "ST-09",
+    "ST-12",
+    "ST-10",
+    "ST-11",
+    "ST-16"
+  ],
+  "open_escalations": [
+    "ESC-EXEC-20260530-02",
+    "ESC-EXEC-20260530-03",
+    "ESC-EXEC-20260530-04"
+  ],
+  "merge_gate": {
+    "epics_merged": [
+      "EPIC-01"
+    ],
+    "epics_pending": [
+      "EPIC-04",
+      "EPIC-03"
+    ],
+    "all_merged": false
+  },
+  "sealed": false,
+  "sealed_utc": null
+}
