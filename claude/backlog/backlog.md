@@ -1377,6 +1377,56 @@ The red_flag_events table has no defined retention or archiving strategy. As ove
 
 ---
 
+### BLG-OPS-44 — DS-07 migration staging verification (v4.6 delivery)
+**Priority:** P3 (Low)
+**Type:** Operations / Staging Verification
+**Owner:** Infrastructure & Operations Owner; Data Model & Domain Schema Owner
+**Source:** v4.6 delivery verification — ST-01 AC-05 deferred to Phase 4 (staging-only AC)
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** v4.7
+
+**Problem**
+ST-01 (DS-07 data migration) was verified by code review only in v4.6. AC-05 (staging verification) was pre-designated as staging-only and explicitly deferred to Phase 4 delivery verification. The migration adds 5 nullable columns (signal_id, risk_percent_used, portfolio_value_at_entry, pre_entry_validation_snapshot, effective_settings_snapshot) and 3 indexes to trade_plans. Confirmation that these applied correctly in the staging environment is outstanding.
+
+**Scope**
+- Apply DS-07 migration to staging environment
+- Run `\d trade_plans` and confirm all 5 SI-02 columns are present
+- Confirm 3 indexes created: idx_trade_plans_signal (P1) + idx_trade_history_exit_date + idx_trade_history_entry_date (P2)
+- Record staging sign-off evidence in a verification note
+
+**Acceptance Criteria**
+- Migration applied cleanly on staging with no errors
+- All 5 columns confirmed present in trade_plans via `\d trade_plans`
+- All 3 indexes confirmed created
+- Staging verification date recorded
+
+---
+
+### BLG-OPS-45 — red_flag_events severity field staging verification (v4.6 delivery)
+**Priority:** P3 (Low)
+**Type:** Operations / Staging Verification
+**Owner:** Infrastructure & Operations Owner; Data Model & Domain Schema Owner
+**Source:** v4.6 delivery verification — ST-09 AC-01/02/03 deferred to Phase 4 (staging-only ACs); AC-08 pending
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** v4.7
+
+**Problem**
+ST-09 (BLG-BE-16: red_flag_events severity field) was verified by code review and unit tests in v4.6. Three ACs were pre-designated as staging-only and explicitly deferred to Phase 4 delivery verification: AC-01 (severity column confirmed in staging DB), AC-02 (default severity assignment confirmed), AC-03 (backfill of existing records confirmed). Additionally, AC-08 (Data Model & Domain Schema Owner sign-off) was pending at merge; DoQ accepted at EPIC level.
+
+**Scope**
+- Run migration on staging and confirm severity column in red_flag_events
+- Confirm default severity assignment (pre_entry_override events → warning, others → info)
+- Confirm backfill applied to existing records (all existing events have non-null severity)
+- Obtain Data Model & Domain Schema Owner sign-off on staging evidence
+
+**Acceptance Criteria**
+- severity column confirmed in red_flag_events on staging (`\d red_flag_events`)
+- Default severity assignment confirmed (override events = warning, others = info)
+- Backfill confirmed: no null severity values in existing events
+- Data Model & Domain Schema Owner sign-off recorded
+
+---
+
 ### BLG-SPEC-32 — External API integration spec template
 **Priority:** P3 (Low)
 **Type:** Spec Debt / Governance

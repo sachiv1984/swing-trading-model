@@ -42,3 +42,33 @@ Cycle: 2026-05-30__release-v4.6
 - **add/add conflict on shared cycle artefacts:** Recurring when multiple EPIC branches modify execution_state.json. CLAUDE.md §8 resolution is the established path; no escalation. Occurs every multi-EPIC sprint.
 - **SI-02 data density gate NOT MET:** 6th consecutive deferral. Trajectory assessment (ST-17) provides clear projected timeline (~Nov 2026). No escalation — gate is functioning; user trajectory is low but consistent.
 - **All v4.5 deferred items:** Already resolved in v4.5 itself. No carry-forward into v4.6.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-05-30__release-v4.6
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-05-31
+**Reviewed by:** Director of Quality
+**Prior cycle Phase 4 checked:** claude/cycles/2026-05-30__release-v4.5/lessons_learnt_cycle.md — found; all Phase 4 items positive (clean verification, fifth consecutive, both v4.4 OA deferred items resolved).
+
+**Prior cycle Phase 4 deferred items check:**
+- v4.5 Phase 4 had no deferred items or outstanding actions. All items were positive stable patterns. No carry-forward.
+
+**prompt_change_log.md deferred patch check:**
+- No deferred patches from prior Phase 4 cycles carried ≥2 cycles without a prompt_change_log entry.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| SSR data quality: EPIC-01 capability row had incorrect metric names for SI-02 drift service (position_size_drift, stop_loss_drift, win_rate_drift, post_loss_behaviour_drift instead of canonical entry_timing_drift, sizing_adherence, consecutive_loss_sizing, regime_context from si02_drift_score.md). Caught in Phase 4 STEP 6. Root cause: SSR written during sprint close with metric names not cross-referenced against spec. | Phase 4 | A | defer | Corrected in SSR in this verification run. For future sprints implementing new metrics: sprint close engine STEP 5.3A (SSR update) should pull metric names from spec references rather than from notes/memory. No prompt patch this cycle — first occurrence; monitor for recurrence. | PMO Lead | v4.8 if recurs |
+| Missing SSR row for ST-16 (BLG-GOV-33 closed trade count audit): sprint close STEP 5.3A added all other EPIC-04 stories but missed ST-16 (delegated_decision audit story with empty spec_references). Caught in Phase 4 STEP 6. Root cause: execution engine STEP 5.3A may skip stories with empty spec_references or delegated_decision class when building the SSR capabilities table. | Phase 4 | A | defer | Added ST-16 row to SSR in this verification run. For future sprints: sprint close STEP 5.3A should include all done stories regardless of spec_references or delegation class. Monitor for recurrence in next governance sprint. | PMO Lead | v4.8 if recurs |
+| Staging-only ACs generating P3 items in Phase 4: ST-01 AC-05 (DS-07 migration) and ST-09 AC-01/02/03 (severity field) were pre-designated as staging-only ACs at planning and explicitly deferred to Phase 4 delivery verification. Both were DoQ-accepted as low-risk (idempotent migrations, code-review verified). BLG-OPS-44/45 filed. This pattern is recurring and by design — staging-only ACs for database migration verification cannot be covered by CI and require a staging environment deployment. | Phase 4 | E | action-now | Positive stable pattern: staging-only ACs are correctly pre-designated, deferred to Phase 4, and dispositioned as P3 with BLG-OPS items. No process change needed. The staging verification items (BLG-OPS-44/45) are the correct output. | Director of Quality | — |
+| ST-09 AC-08 (Data Model & Domain Schema Owner sign-off) pending at merge gate; DoQ accepted at EPIC level rather than requiring a hold. First occurrence of this specific pattern (sign-off obtained via code review advisory rather than formal agent-mediated sign-off). Covered under BLG-OPS-45. | Phase 4 | B | defer | Acceptable DoQ discretion for low-risk migrations. For future sprints: the EPIC-03 execution sequence should target AC-08 sign-off before PR opens (not just before merge). No prompt patch this cycle — first occurrence; acceptable resolution path in place. | Director of Quality | v4.8 if recurs |
+| First mixed-backend sprint (real code + delegated_decision governance) since v4.3: EPIC-01 (SI-02 backend code) + EPIC-03 (severity field code + doc deliverables) + EPIC-04 (governance docs only). Verification engine correctly applied different evidence standards: unit tests for code stories, document inspection for governance stories, autonomous class for pure-doc EPIC. No gate sequencing friction. QA evidence was ready before invocation. Sign-off coordination completed same day. | Phase 4 | E | action-now | Positive stable pattern. Mixed-sprint verification (code + governance) with differentiated evidence standards works reliably. No process change needed. | Director of Quality | — |
+
+**Recurrence Notes:**
+- **SSR data quality (metric names, missing rows):** First occurrence of both issues. No escalation. Corrected in-run. Monitor for recurrence — if SSR inaccuracies recur in v4.8, file a prompt patch for sprint close STEP 5.3A canonical spec cross-reference.
+- **Staging-only ACs → Phase 4 P3 items:** Recurring and by design. Pattern is stable and correctly handled. BLG-OPS items are the expected output. No process friction.
+- **Clean gate sequencing:** QA evidence ready before verification invocation (same-day completion from sprint close). No friction. Sixth consecutive cycle with no gate sequencing delays.
