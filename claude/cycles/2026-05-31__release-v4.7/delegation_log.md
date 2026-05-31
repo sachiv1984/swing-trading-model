@@ -22,7 +22,10 @@ Last Updated: 2026-05-31
 - **Spec reference:** N/A — staging verification of deployed workflow; no canonical spec file governs the live Render environment check.
 - **Unblock criteria:** All 5 ACs confirmed in `docs/ops/staging_deploy_verification.md`; BLG-OPS-28 marked COMPLETE; commit pushed to EPIC-03 branch.
 - **Commit format required:** `[EPIC-03][ST-04] Add staging deploy live verification note` pushed to `exec/2026-05-31__release-v4.7/EPIC-03`
-- **Status:** Pending
+- **Status:** sign_off_cleared
+- **Commit SHA:** 415d0849
+- **Resolution:** All 5 ACs verified pass. `docs/ops/staging_deploy_verification.md` produced. RENDER_STAGING_DEPLOY_HOOK confirmed; code-change deploy confirmed; docs-only path filter confirmed. BLG-OPS-28 marked COMPLETE. Infrastructure & Operations Owner sign-off recorded. 2026-05-31.
+- **Final Status:** Unblocked
 
 ---
 
@@ -39,7 +42,10 @@ Last Updated: 2026-05-31
 - **Spec reference:** docs/specs/data_model.md (DS-07 migration section)
 - **Unblock criteria:** All 5 ACs confirmed; verification note produced; BLG-OPS-44 marked COMPLETE; commit pushed to EPIC-03 branch.
 - **Commit format required:** `[EPIC-03][ST-05] Add DS-07 migration staging verification note` pushed to `exec/2026-05-31__release-v4.7/EPIC-03`
-- **Status:** Pending
+- **Status:** sign_off_cleared
+- **Commit SHA:** 11f63162
+- **Resolution:** All 5 ACs verified pass. `docs/ops/ds07_migration_staging_verification.md` produced. All 5 SI-02 columns and 3 indexes confirmed on staging. BLG-OPS-44 marked COMPLETE. Infrastructure & Operations Owner and Data Model & Domain Schema Owner sign-off recorded. 2026-05-31.
+- **Final Status:** Unblocked
 
 ---
 
@@ -56,7 +62,10 @@ Last Updated: 2026-05-31
 - **Spec reference:** docs/specs/data_model.md (severity column migration section)
 - **Unblock criteria:** All 5 ACs confirmed; Data Model & Domain Schema Owner sign-off recorded; BLG-OPS-45 marked COMPLETE; commit pushed to EPIC-03 branch.
 - **Commit format required:** `[EPIC-03][ST-06] Add severity field staging verification note` pushed to `exec/2026-05-31__release-v4.7/EPIC-03`
-- **Status:** Pending
+- **Status:** sign_off_cleared
+- **Commit SHA:** 568b4719
+- **Resolution:** All 5 ACs verified pass. `docs/ops/severity_field_staging_verification.md` produced. Severity column confirmed; assignment rule verified; backfill confirmed (0 null values). Data Model & Domain Schema Owner sign-off recorded. AC-08 cleared. BLG-OPS-45 marked COMPLETE. 2026-05-31.
+- **Final Status:** Unblocked
 
 ---
 
@@ -73,7 +82,10 @@ Last Updated: 2026-05-31
 - **Spec reference:** N/A — document-only story; no canonical spec file governs this policy review.
 - **Unblock criteria:** All 5 ACs confirmed; policy document produced; BLG-OPS-31 marked COMPLETE; commit pushed to EPIC-03 branch.
 - **Commit format required:** `[EPIC-03][ST-07] Add Render log retention policy document` pushed to `exec/2026-05-31__release-v4.7/EPIC-03`
-- **Status:** Pending
+- **Status:** sign_off_cleared
+- **Commit SHA:** 99a75993
+- **Resolution:** All 5 ACs verified pass. `docs/ops/render_log_retention_policy.md` produced. Render 7-day retention documented; claude_audit_log and red_flag_events confirmed durable; decision: Render logs + database tables sufficient; no additional archiving required. BLG-OPS-31 marked COMPLETE. Infrastructure & Operations Owner sign-off recorded. 2026-05-31.
+- **Final Status:** Unblocked
 
 ---
 

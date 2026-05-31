@@ -22,8 +22,8 @@ Last Updated: 2026-05-31
 - **Unblock criteria:** RENDER_STAGING_DEPLOY_HOOK confirmed; live deploy observed in Render dashboard; docs-only commit confirmed NOT triggering deploy; `docs/ops/staging_deploy_verification.md` produced; BLG-OPS-28 marked COMPLETE; `[EPIC-03][ST-04]` commit pushed to `exec/2026-05-31__release-v4.7/EPIC-03`.
 - **SLA due-by:** 2026-06-03T14:00:00Z
 - **Blocks execution:** Yes (blocks EPIC-03 completion)
-- **Disposition:** Open
-- **Resolution summary:**
+- **Disposition:** Resolved
+- **Resolution summary:** Infrastructure & Operations Owner completed ST-04. All 5 ACs verified. `docs/ops/staging_deploy_verification.md` produced. RENDER_STAGING_DEPLOY_HOOK confirmed configured; code-change deploy confirmed in Render dashboard; docs-only path filter confirmed. BLG-OPS-28 marked COMPLETE. DEL-20260531-01 status: Unblocked. Resolved 2026-05-31.
 
 ---
 
@@ -40,8 +40,8 @@ Last Updated: 2026-05-31
 - **Unblock criteria:** DS-07 migration confirmed on staging (`\d trade_plans` shows all 5 columns, 3 indexes); verification note produced; BLG-OPS-44 marked COMPLETE; `[EPIC-03][ST-05]` commit pushed to `exec/2026-05-31__release-v4.7/EPIC-03`.
 - **SLA due-by:** 2026-06-03T14:00:00Z
 - **Blocks execution:** Yes (blocks EPIC-03 completion)
-- **Disposition:** Open
-- **Resolution summary:**
+- **Disposition:** Resolved
+- **Resolution summary:** Infrastructure & Operations Owner and Data Model & Domain Schema Owner completed ST-05. All 5 ACs verified. `docs/ops/ds07_migration_staging_verification.md` produced. 5 SI-02 columns and 3 indexes confirmed on staging. BLG-OPS-44 marked COMPLETE. DEL-20260531-02 status: Unblocked. Resolved 2026-05-31.
 
 ---
 
@@ -58,8 +58,8 @@ Last Updated: 2026-05-31
 - **Unblock criteria:** Severity column confirmed on staging (`\d red_flag_events`); default assignment and backfill verified; Data Model & Domain Schema Owner sign-off recorded; BLG-OPS-45 marked COMPLETE; `[EPIC-03][ST-06]` commit pushed to `exec/2026-05-31__release-v4.7/EPIC-03`.
 - **SLA due-by:** 2026-06-03T14:00:00Z
 - **Blocks execution:** Yes (blocks EPIC-03 completion)
-- **Disposition:** Open
-- **Resolution summary:**
+- **Disposition:** Resolved
+- **Resolution summary:** Infrastructure & Operations Owner and Data Model & Domain Schema Owner completed ST-06. All 5 ACs verified. `docs/ops/severity_field_staging_verification.md` produced. Severity column confirmed; assignment rule correct; backfill complete (0 null values). Data Model & Domain Schema Owner co-sign recorded; AC-08 cleared. BLG-OPS-45 marked COMPLETE. DEL-20260531-03 status: Unblocked. Resolved 2026-05-31.
 
 ---
 
@@ -76,8 +76,8 @@ Last Updated: 2026-05-31
 - **Unblock criteria:** Render log retention policy reviewed; policy decision documented at `docs/ops/render_log_retention_policy.md`; BLG-OPS-31 marked COMPLETE; `[EPIC-03][ST-07]` commit pushed to `exec/2026-05-31__release-v4.7/EPIC-03`.
 - **SLA due-by:** 2026-06-03T14:00:00Z
 - **Blocks execution:** Yes (blocks EPIC-03 completion)
-- **Disposition:** Open
-- **Resolution summary:**
+- **Disposition:** Resolved
+- **Resolution summary:** Infrastructure & Operations Owner completed ST-07. All 5 ACs verified. `docs/ops/render_log_retention_policy.md` produced. Render 7-day retention documented; claude_audit_log and red_flag_events confirmed durable independent audit trail; decision: Render logs + database tables sufficient; no additional archiving required. BLG-OPS-31 marked COMPLETE. DEL-20260531-04 status: Unblocked. Resolved 2026-05-31.
 
 ---
 
