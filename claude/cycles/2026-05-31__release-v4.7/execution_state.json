@@ -5,7 +5,7 @@
   "invoked_utc": "2026-05-31T14:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-31T14:45:00Z",
+  "last_updated_utc": "2026-05-31T15:00:00Z",
 
   "epics": {
     "EPIC-03": {
@@ -238,7 +238,15 @@
   "delegated_items": ["ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-01"],
   "completed_items": ["ST-03"],
 
-  "open_escalations": [],
+  "open_escalations": [
+    "ESC-EXEC-20260531-01",
+    "ESC-EXEC-20260531-02",
+    "ESC-EXEC-20260531-03",
+    "ESC-EXEC-20260531-04",
+    "ESC-EXEC-20260531-05",
+    "ESC-EXEC-20260531-06",
+    "ESC-EXEC-20260531-07"
+  ],
 
   "merge_gate": {
     "epics_merged": [],
