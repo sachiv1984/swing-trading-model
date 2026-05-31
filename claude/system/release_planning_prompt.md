@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.32
-**Last Updated:** 2026-05-29
+**Version:** 2.33
+**Last Updated:** 2026-05-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -568,6 +568,32 @@ After the Provisional-Target advisory, scan scope candidate backlog items for de
 For each item found: note in the run manifest as "Design dependency detected — surface at Pre-sprint Required Decisions checklist." Non-blocking — does not halt STEP 1. Record count in the run manifest STEP 1 results row as "Design dependency scan: N item(s) flagged."
 
 If no items are found: record "Design dependency scan: 0 items flagged" in run manifest and proceed.
+
+### 1.4 Gate-Condition Proximity Scan (Advisory — not a hard gate)
+
+After the design-gate scan, scan all gate-conditional backlog items in `claude/backlog/backlog.md` for items where the gate condition is likely to clear within 30–60 days given current trajectory. Output a gate proximity table in the run manifest.
+
+**Gate proximity table format:**
+
+`| Item | Gate condition | Current trajectory | Projected clear date |`
+
+For items without a calculable trajectory: record "trajectory unknown" in the Current trajectory column.
+
+**Arc 4 data density sub-check (mandatory within STEP 1.4):**
+
+Check the following current data density metrics (query from production or estimate from trade frequency signals in the run manifest):
+- Current closed trade count and monthly rate (relevant to PO-04 gate: 50+ trades with plans)
+- AI journal entry count and monthly generation rate (relevant to PO-02 gate: 6+ months AI journals)
+- Trade plan creation rate (plans/month; relevant to SI-02 gate: 20+ trades with plans)
+
+Surface projection: estimated gate-clearing dates for:
+- PO-02 (6+ months AI journal entries): `[current_count] entries at [rate]/month → projected [date]`
+- PO-04 (50+ trades with plans): `[current_count] at [rate]/month → projected [date]`
+- SI-02 (20+ trades with plans): `[current_count] at [rate]/month → projected [date]` — Product Owner to confirm or update
+
+Record projected dates in the gate proximity table. If data is unavailable: record "data not available — Product Owner to surface at readiness review."
+
+**Do not halt.** This is advisory only — the release may proceed regardless of proximity table results.
 
 ```yaml
 # state.json update (STEP 1):

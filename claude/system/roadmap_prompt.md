@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 6.6
-**Last Updated:** 2026-05-29 (v6.6)
+**Version:** 6.7
+**Last Updated:** 2026-05-30 (v6.7)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -715,6 +715,8 @@ Update `.claude_current_state.json` (rebalance keys only — do not overwrite `a
   "last_sync_utc": "<ISO-8601 UTC>"
 }
 ```
+
+**Advisory — next_release after DL decision (OA-02/ST-22, v4.6):** After the DL decision at STEP 8 sets the next planned release label, update `next_release` in `.claude_current_state.json` to the projected version label (e.g., `v4.7`) if determinable. This reduces the "version not on roadmap" annotation requirement at the next release planning invocation. This is advisory only — no hard gate. If the next release label is not determinable from the DL decision (e.g., no-change rebalance with no new release horizon), leave `next_release` unchanged.
 
 If `.claude_current_state.json` does not exist: create it with rebalance keys only.
 
