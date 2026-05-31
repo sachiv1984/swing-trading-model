@@ -297,7 +297,7 @@ test.describe('SC-REP-04 — Empty state (no trades for period)', () => {
 });
 
 // ---------------------------------------------------------------------------
-// ST-18 — Strategy Compliance section in Monthly P&L tab (Arc 5, v4.3)
+// ST-03 (v4.7) — compliance_summary field (renamed from strategy_compliance; ST-18 v4.3)
 // SC-REP-05: Strategy Compliance section visible with metric fields
 // ---------------------------------------------------------------------------
 
@@ -306,7 +306,7 @@ const MONTHLY_PNL_WITH_COMPLIANCE = {
   data: [
     { year: 2026, month: 5, realised_pnl_gbp: 320.50, trade_count: 3 },
   ],
-  strategy_compliance: {
+  compliance_summary: {
     period_days: 30,
     validation_pass_rate: 0.82,
     override_count: 2,

@@ -26,6 +26,7 @@ Last Updated: 2026-05-31
 - **Resolution:** All 5 ACs verified pass. `docs/ops/staging_deploy_verification.md` produced. RENDER_STAGING_DEPLOY_HOOK confirmed; code-change deploy confirmed; docs-only path filter confirmed. BLG-OPS-28 COMPLETE. 2026-05-31.
 - **Final Status:** Unblocked
 
+
 ---
 
 ## DEL-20260531-02
@@ -44,6 +45,7 @@ Last Updated: 2026-05-31
 - **Commit SHA:** 11f63162
 - **Resolution:** All 5 ACs verified pass. `docs/ops/ds07_migration_staging_verification.md` produced. All 5 SI-02 columns and 3 indexes confirmed on staging. Data Model & Domain Schema Owner co-sign recorded. BLG-OPS-44 COMPLETE. 2026-05-31.
 - **Final Status:** Unblocked
+
 
 ---
 
@@ -64,6 +66,7 @@ Last Updated: 2026-05-31
 - **Resolution:** All 5 ACs verified pass. `docs/ops/severity_field_staging_verification.md` produced. Severity column confirmed; assignment correct; backfill complete (0 nulls). AC-08 cleared. BLG-OPS-45 COMPLETE. 2026-05-31.
 - **Final Status:** Unblocked
 
+
 ---
 
 ## DEL-20260531-04
@@ -82,6 +85,7 @@ Last Updated: 2026-05-31
 - **Commit SHA:** 99a75993
 - **Resolution:** All 5 ACs verified pass. `docs/ops/render_log_retention_policy.md` produced. Render 7-day retention documented; database tables confirmed durable; decision: Render logs + database tables sufficient. BLG-OPS-31 COMPLETE. 2026-05-31.
 - **Final Status:** Unblocked
+
 
 ---
 
@@ -102,6 +106,7 @@ Last Updated: 2026-05-31
 - **Resolution:** All 5 ACs verified pass. `docs/ops/anthropic_api_tier_assessment.md` produced. No upgrade required; $5/month trigger for model review defined. FinOps & Resource Architect sign-off recorded. BLG-OPS-37 COMPLETE. 2026-05-31.
 - **Final Status:** Unblocked
 
+
 ---
 
 ## DEL-20260531-06
@@ -121,6 +126,7 @@ Last Updated: 2026-05-31
 - **Resolution:** All 6 ACs verified pass. `docs/product/ux/pre_entry_panel_ux_assessment.md` produced. 3 improvement candidates identified and ranked (BLG-FE-56/57/58 filed). No implementation committed. Head of UX & Design sign-off recorded. BLG-FE-49 COMPLETE. 2026-05-31.
 - **Final Status:** Unblocked
 
+
 ---
 
 ## DEL-20260531-07
@@ -135,4 +141,5 @@ Last Updated: 2026-05-31
 - **What is needed:** Apply §13 review checklist against SI-04. Determine PASS/CONDITIONAL/FAIL. Produce assessment at `docs/product/decisions/si04_section13_preassessment.md`. Strategy Rules & System Intent Owner sign-off. Mark BLG-GOV-62 COMPLETE.
 - **Spec reference:** N/A
 - **Unblock criteria:** All 6 ACs confirmed; assessment produced; sign-off; BLG-GOV-62 COMPLETE; commit pushed.
+
 - **Status:** Pending
