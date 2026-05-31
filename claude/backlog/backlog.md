@@ -626,6 +626,8 @@ RedFlagJournal.js (shipped v3.9) implemented the primary display. BLG-FE-41 (Red
 **Effort:** S (~0.5 day)
 **Provisional-Target:** Unscheduled
 
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-31__release-v4.7 (ST-09, EPIC-04; pre_entry_panel_ux_assessment.md produced; 3 improvement candidates filed BLG-FE-56/57/58; Head of UX & Design sign-off; no implementation committed)
+
 **Problem**
 PreEntryValidationPanel (shipped v3.8) displays validation results and override acknowledgement. As Arc 5 evolves (SI-02, SI-05), the pre-entry panel will need to surface additional compliance context. A UX assessment of the current panel — layout, density, override acknowledgement flow — identifies improvement opportunities before Arc 5 sprint planning forces ad-hoc changes.
 
@@ -688,6 +690,76 @@ No formal mobile responsiveness testing has been performed. The most frequently 
 - Mobile responsiveness assessment report produced
 - Views assessed: at minimum positions, screener, trade plan form, Red Flag Journal
 - Gate condition verified before commencing
+
+---
+
+### BLG-FE-56 — Pre-entry panel: separate warn/fail override acknowledgement flow
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX Improvement
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** docs/product/ux/pre_entry_panel_ux_assessment.md — candidate P1 — cycle 2026-05-31__release-v4.7 (ST-09)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+PreEntryValidationPanel treats `warn` and `fail` checks with the same override acknowledgement checkbox. `fail` represents a strategy hard stop; `warn` is advisory. Identical acknowledgement paths may encourage reflexive override of hard stops. As Arc 5 compliance rigour increases, distinct override flows are warranted.
+
+**Scope**
+- Separate override path for `fail` checks (confirmation modal or explicit "I understand this violates my strategy") vs `warn` checks (current checkbox)
+- `fail` acknowledgement should be more deliberate — extra friction is intentional
+- Assessment only — scope to be confirmed at implementation sprint
+
+**Acceptance Criteria**
+- Override UX differentiates warn (advisory) from fail (strategy violation)
+- Fail override requires additional explicit acknowledgement step
+- Existing warn-only acknowledgement flow preserved for warn-only states
+
+---
+
+### BLG-FE-57 — Pre-entry panel: show warning/fail count when collapsed
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Improvement
+**Owner:** Head of UX & Design
+**Source:** docs/product/ux/pre_entry_panel_ux_assessment.md — candidate P2 — cycle 2026-05-31__release-v4.7 (ST-09)
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+PreEntryValidationPanel collapses to header only with no visible indicator of warning/fail count. Traders scanning the Trade Plan form cannot determine if there are warnings without expanding the panel.
+
+**Scope**
+- When panel is collapsed and advisory status is `warn` or `fail`: show a count badge in the header ("2 warnings", "1 fail")
+- Additive change — does not affect expanded panel behaviour
+
+**Acceptance Criteria**
+- Collapsed header shows count of warn/fail items when advisory status is warn or fail
+- Count badge is not shown when all checks pass (no unnecessary visual clutter)
+- Existing collapse/expand behaviour preserved
+
+---
+
+### BLG-FE-58 — Pre-entry panel: check grouping for Arc 5 expansion
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Improvement
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** docs/product/ux/pre_entry_panel_ux_assessment.md — candidate P4 — cycle 2026-05-31__release-v4.7 (ST-09)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-02 or SI-04 sprint planning initiated (Arc 5 expansion imminent).
+
+**Problem**
+PreEntryValidationPanel currently displays 5 checks in a flat list. As SI-02 drift detection and SI-04 strategy version comparison add compliance context to the pre-entry flow, check count may grow to 8–10+ items. A flat list at that scale is dense and unscannable.
+
+**Scope**
+- Group checks into labelled sections: "Compliance" (Arc 5 checks), "Risk" (cash, sizing), "Technical" (regime, earnings)
+- Section headers use small separator labels; no collapsible sub-groups required
+- Prepare component structure for Arc 5 check additions before SI-02/SI-04 ship
+
+**Acceptance Criteria**
+- Checks grouped into at minimum 2 sections (Compliance and Risk/Technical)
+- Grouping does not break existing override acknowledgement behaviour
+- Gate condition (SI-02 or SI-04 sprint planning) verified before commencing
 
 ---
 
@@ -1316,6 +1388,8 @@ Render (production hosting platform) provides application logs with a default re
 **Provisional-Target:** Unscheduled
 
 **Gate criteria:** BLG-OPS-36 (Claude API first monthly review) complete.
+
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-31__release-v4.7 (ST-08, EPIC-04; anthropic_api_tier_assessment.md produced; no upgrade required; upgrade threshold defined at $5/month; FinOps & Resource Architect sign-off)
 
 **Problem**
 Anthropic API pricing tiers differ from Gemini. Without a tier cost assessment, there is no defined threshold at which a paid-tier upgrade becomes cost-effective. BLG-OPS-36 provides the usage data; this item performs the tier comparison and defines the decision threshold.
