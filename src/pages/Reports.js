@@ -434,7 +434,7 @@ function MonthlyPnlTable() {
   }
 
   const rows = response?.data ?? [];
-  const compliance = response?.strategy_compliance ?? null;
+  const compliance = response?.compliance_summary ?? null;
 
   return (
     <div className="space-y-4">

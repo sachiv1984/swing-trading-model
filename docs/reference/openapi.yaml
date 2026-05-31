@@ -613,10 +613,11 @@ paths:
       description: >
         Returns month-by-month realised P&L for the current and prior calendar year.
         Only months with closed trades are included. Sorted descending by year then month.
-        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.4. ST-11 (v3.1).
+        Includes optional compliance_summary (30d Arc 5 metrics) when data is available.
+        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.6. ST-03 (v4.7).
       responses:
         "200":
-          description: Monthly P&L summary array
+          description: Monthly P&L summary array with optional compliance summary
           content:
             application/json:
               schema:
@@ -642,6 +643,28 @@ paths:
                         trade_count:
                           type: integer
                           example: 3
+                  compliance_summary:
+                    type: object
+                    nullable: true
+                    description: Arc 5 pre-entry discipline metrics for the last 30 days. null if data unavailable.
+                    properties:
+                      period_days:
+                        type: integer
+                        example: 30
+                      validation_pass_rate:
+                        type: number
+                        nullable: true
+                        example: 0.82
+                      override_count:
+                        type: integer
+                        example: 2
+                      red_flag_events_count:
+                        type: integer
+                        example: 5
+                      most_frequent_rule_breach:
+                        type: string
+                        nullable: true
+                        example: sector_concentration
         "500":
           $ref: "#/components/responses/InternalError"
 

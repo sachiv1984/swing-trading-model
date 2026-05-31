@@ -26,10 +26,12 @@
           "branch": "exec/2026-05-31__release-v4.7/EPIC-03",
           "commit_sha": "415d0849",
           "delegation_record_id": "DEL-20260531-01",
+          "blocked_since_utc": "2026-05-31T14:00:00Z",
           "completed_utc": "2026-05-31T16:00:00Z",
           "acceptance_verified": true,
           "spec_references": [],
           "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
           "sign_off_record": { "required_by": "Infrastructure & Operations Owner", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-05-31T16:00:00Z" },
           "notes": "no prior spec applicable. docs/ops/staging_deploy_verification.md produced."
         },
@@ -42,10 +44,12 @@
           "branch": "exec/2026-05-31__release-v4.7/EPIC-03",
           "commit_sha": "11f63162",
           "delegation_record_id": "DEL-20260531-02",
+          "blocked_since_utc": "2026-05-31T14:00:00Z",
           "completed_utc": "2026-05-31T16:00:00Z",
           "acceptance_verified": true,
           "spec_references": ["docs/specs/data_model.md"],
           "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
           "sign_off_record": { "required_by": "Infrastructure & Operations Owner; Data Model & Domain Schema Owner", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-05-31T16:00:00Z" },
           "notes": "docs/ops/ds07_migration_staging_verification.md produced."
         },
@@ -58,10 +62,12 @@
           "branch": "exec/2026-05-31__release-v4.7/EPIC-03",
           "commit_sha": "568b4719",
           "delegation_record_id": "DEL-20260531-03",
+          "blocked_since_utc": "2026-05-31T14:00:00Z",
           "completed_utc": "2026-05-31T16:00:00Z",
           "acceptance_verified": true,
           "spec_references": ["docs/specs/data_model.md"],
           "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
           "sign_off_record": { "required_by": "Infrastructure & Operations Owner; Data Model & Domain Schema Owner", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-05-31T16:00:00Z" },
           "notes": "docs/ops/severity_field_staging_verification.md produced. AC-08 cleared."
         },
@@ -74,10 +80,12 @@
           "branch": "exec/2026-05-31__release-v4.7/EPIC-03",
           "commit_sha": "99a75993",
           "delegation_record_id": "DEL-20260531-04",
+          "blocked_since_utc": "2026-05-31T14:00:00Z",
           "completed_utc": "2026-05-31T16:00:00Z",
           "acceptance_verified": true,
           "spec_references": [],
           "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
           "sign_off_record": { "required_by": "Infrastructure & Operations Owner", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-05-31T16:00:00Z" },
           "notes": "no prior spec applicable. docs/ops/render_log_retention_policy.md produced."
         }
@@ -102,10 +110,12 @@
           "branch": "exec/2026-05-31__release-v4.7/EPIC-04",
           "commit_sha": "5c46b3ad",
           "delegation_record_id": "DEL-20260531-05",
+          "blocked_since_utc": "2026-05-31T14:00:00Z",
           "completed_utc": "2026-05-31T16:30:00Z",
           "acceptance_verified": true,
           "spec_references": [],
           "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
           "sign_off_record": { "required_by": "FinOps & Resource Architect", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-05-31T16:30:00Z" },
           "notes": "no prior spec applicable. docs/ops/anthropic_api_tier_assessment.md produced. No upgrade required."
         },
@@ -118,10 +128,12 @@
           "branch": "exec/2026-05-31__release-v4.7/EPIC-04",
           "commit_sha": "b0b970b2",
           "delegation_record_id": "DEL-20260531-06",
+          "blocked_since_utc": "2026-05-31T14:00:00Z",
           "completed_utc": "2026-05-31T16:30:00Z",
           "acceptance_verified": true,
           "spec_references": [],
           "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
           "sign_off_record": { "required_by": "Head of UX & Design", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-05-31T16:30:00Z" },
           "notes": "no prior spec applicable. docs/product/ux/pre_entry_panel_ux_assessment.md produced. BLG-FE-56/57/58 filed."
         }
@@ -145,12 +157,22 @@
           "github_issue": 602,
           "branch": "exec/2026-05-31__release-v4.7/EPIC-02",
           "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
           "completed_utc": "2026-05-31T14:30:00Z",
           "acceptance_verified": true,
           "spec_references": ["docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl"],
           "deviations_filed": true,
-          "sign_off_record": { "required_by": "Director of Quality", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-05-31T14:45:00Z" },
-          "notes": "Field renamed strategy_compliance → compliance_summary. Spec v0.5→v0.6. BLG-FEAT-38 COMPLETE."
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "required_by": "Director of Quality",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["All 9 ACs verified pass", "No residual strategy_compliance references in source files", "Pre-existing test failure confirmed pre-dates this story"],
+            "cleared_utc": "2026-05-31T14:45:00Z"
+          },
+          "notes": "Field renamed strategy_compliance → compliance_summary. Spec updated v0.5→v0.6. BLG-FEAT-38 marked COMPLETE."
         }
       }
     },
@@ -196,10 +218,15 @@
           "github_issue": 601,
           "branch": "exec/2026-05-31__release-v4.7/EPIC-01",
           "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
           "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
           "notes": "gate_condition: SI-01 + SI-03 live ≥30 days — gate clears 2026-06-21. Activation requires amend cycle before Sprint 2 seals."
         }
       }
