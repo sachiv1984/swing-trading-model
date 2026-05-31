@@ -340,13 +340,14 @@ No metric tracks whether entries were executed within the planned entry zone. `e
 
 ---
 
-### BLG-FEAT-38 — Arc 5 compliance score in monthly P&L report
+### BLG-FEAT-38 — Arc 5 compliance score in monthly P&L report ✅ COMPLETE v4.7 (2026-05-31)
 **Priority:** P2 (Medium)
 **Type:** Product Feature / Reporting
 **Owner:** Financial Reporting & Records Owner
 **Source:** IDEA-financial-reporting-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
 **Effort:** M (~2 days)
 **Provisional-Target:** v4.1
+**Completed:** ST-03, EPIC-02, cycle 2026-05-31__release-v4.7
 
 **Gate cleared:** BLG-FEAT-36 ✅ COMPLETE v4.0 (validation_pass_rate_by_rule in Arc5ComplianceSection analytics endpoint) and BLG-FEAT-37 ✅ COMPLETE v4.0 (events_per_week metric in same delivery). Gate cleared inline at STEP 4.0, roadmap rebalance 2026-05-25__scheduled.
 
