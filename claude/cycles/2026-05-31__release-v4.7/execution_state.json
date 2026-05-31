@@ -129,10 +129,10 @@
     },
 
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-31__release-v4.7/EPIC-02",
       "pr_number": 609,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-31__release-v4.7/qa_evidence_EPIC-02.md",
       "test_scenarios": ["tests/test_api_contracts.py", "tests/e2e/reports-performance-tab.spec.js"],
@@ -213,8 +213,8 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-03", "EPIC-04", "EPIC-02", "EPIC-01"],
+    "epics_merged": ["EPIC-02"],
+    "epics_pending": ["EPIC-03", "EPIC-04", "EPIC-01"],
     "all_merged": false
   },
 
