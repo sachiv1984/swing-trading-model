@@ -5,13 +5,13 @@
   "invoked_utc": "2026-05-30T21:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-31T09:00:00Z",
+  "last_updated_utc": "2026-05-31T09:15:00Z",
   "epics": {
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-30__release-v4.6/EPIC-04",
       "pr_number": 599,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-30__release-v4.6/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
@@ -467,71 +467,71 @@
       }
     },
     "EPIC-02": {
-      "status": "deferred_at_planning",
+      "status": "returned_to_backlog",
       "branch": null,
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": null,
       "test_scenarios": [],
-      "notes": "Deferred at sprint planning. Gate condition: ST-16 confirms \u226520 closed trades with linked trade_plans. If gate met, invoke amend cycle before Sprint 2 planning seals.",
+      "notes": "Deferred at sprint planning; gate NOT MET at sprint close. ST-16 confirmed: 0 linked trade_plans (threshold \u226520). EPIC-02 returned to backlog. Gate tracked under BLG-FEAT-25 (PT-04 data density gate \u2014 6th deferral, 2026-05-31).",
       "stories": {
         "ST-06": {
           "title": "BehaviouralDriftPanel component",
           "classification": "autonomous",
-          "status": "deferred_at_planning",
+          "status": "returned_to_backlog",
           "assigned_to": null,
           "github_issue": null,
           "branch": null,
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-16 gate met (\u226520 closed trades); amendment cycle completes; Sprint 2 planning seals with EPIC-02",
+          "unblock_criteria": "SI-02 data density gate: \u226520 closed trades with linked trade_plans confirmed by Product Owner",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "deferred at planning; gate condition ST-16"
+          "notes": "returned to backlog 2026-05-31; gate NOT MET in v4.6 (ST-16: Q2=0); re-gate per BLG-FEAT-25; cycle: 2026-05-30__release-v4.6"
         },
         "ST-07": {
           "title": "BehaviouralDriftPanel integration into PerformanceAnalytics",
           "classification": "autonomous",
-          "status": "deferred_at_planning",
+          "status": "returned_to_backlog",
           "assigned_to": null,
           "github_issue": null,
           "branch": null,
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-16 gate met; amendment cycle; ST-06 completed",
+          "unblock_criteria": "ST-06 completed; SI-02 data density gate met",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "deferred at planning; gate condition ST-16"
+          "notes": "returned to backlog 2026-05-31; depends on ST-06; cycle: 2026-05-30__release-v4.6"
         },
         "ST-08": {
           "title": "SI-02 Playwright test coverage",
           "classification": "autonomous",
-          "status": "deferred_at_planning",
+          "status": "returned_to_backlog",
           "assigned_to": null,
           "github_issue": null,
           "branch": null,
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "ST-16 gate met; amendment cycle; ST-06 and ST-07 completed",
+          "unblock_criteria": "ST-06 and ST-07 completed; SI-02 data density gate met",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "deferred at planning; gate condition ST-16"
+          "notes": "returned to backlog 2026-05-31; depends on ST-06, ST-07; cycle: 2026-05-30__release-v4.6"
         }
       }
     }
@@ -569,13 +569,13 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
-      "EPIC-03"
-    ],
-    "epics_pending": [
+      "EPIC-03",
       "EPIC-04"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-05-31T09:20:00Z",
+  "status": "Sealed"
 }

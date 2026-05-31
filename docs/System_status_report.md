@@ -1294,3 +1294,43 @@ The system is ready for:
 - QA evidence logs: qa_evidence_EPIC-01.md (DoQ autonomous class), qa_evidence_EPIC-02.md (DoQ autonomous class), qa_evidence_EPIC-03.md (DoQ 2026-05-27), qa_evidence_EPIC-04.md (DoQ autonomous class)
 - Deviations filed: None (spec deviations)
 - Test scenarios referenced: tests/e2e/research-view-signal-type.spec.js (4 scenarios), tests/e2e/arc5-compliance-section.spec.js (4 scenarios), tests/test_daily_cost_alert.py (5 unit tests)
+
+---
+
+## Sprint: 2026-05-30__release-v4.6
+**Date:** 2026-05-31
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | DS-07 data migration: 5 new SI-02 columns added to trade_plans (signal_id, risk_percent_used, portfolio_value_at_entry, effective_settings_snapshot, pre_entry_validation_snapshot) | docs/specs/data_model/si02_data_schema.md | None |
+| EPIC-01 | POST /trade-plans: captures 5 new SI-02 fields at plan creation (2 from backend, 3 from frontend) | docs/specs/data_model/si02_data_schema.md | None |
+| EPIC-01 | SI-02 behavioural drift detection service: 4 metrics (position_size_drift, stop_loss_drift, win_rate_drift, post_loss_behaviour_drift) with regime_context, §13 binding conditions enforced | docs/specs/metrics/si02_drift_score.md | None |
+| EPIC-01 | GET /analytics/behavioural-drift endpoint: full 4-metric response, openapi.yaml updated, API contract created; endpoint total 60; SC-SS-01b updated | docs/specs/api_contracts/behavioural_drift_contract.md; docs/reference/openapi.yaml | None |
+| EPIC-01 | SI-02 unit test suite: 35 test cases covering all 4 metrics, threshold bands, §13 compliance, deviation_pct formula; conftest.py _DB_STUB_FUNCTIONS updated | docs/specs/metrics/si02_drift_score.md | None |
+| EPIC-03 | red_flag_events.severity column: added to DB, backfill logic, create/filter endpoint updated; portfolio_endpoints.md + openapi.yaml updated | docs/specs/api_contracts/portfolio_endpoints.md; docs/reference/openapi.yaml | None |
+| EPIC-03 | Arc 5 hosting cost projection: current Render Starter tier adequate; no upgrade required at < 50 trades | docs/ops/arc5_hosting_cost_projection.md | None |
+| EPIC-03 | Arc 5 nav cohesion review: current structure maintained (1-click depth, Trading/Analytics split correct); no structural changes | docs/specs/frontend/arc5_nav_cohesion_review_v4.6.md | None |
+| EPIC-03 | Red Flag Journal design review scope: in-scope items documented; gate date 2026-06-21 | docs/specs/fe/rfj_design_review_scope.md | None |
+| EPIC-04 | System_status_report.md v4.4 status corrected (OA-01) | docs/System_status_report.md | None |
+| EPIC-04 | release_planning_prompt.md v2.33: STEP 1.4 Gate-Condition Proximity Scan + data density checkpoint (BLG-GOV-32/43) | claude/system/release_planning_prompt.md | None |
+| EPIC-04 | Arc 4 data density trajectory assessed: Option A (proceed); SI-02 gate ~Nov 2026; PT-04 full ~Jun 2027 | docs/product/decisions/arc4_data_density_trajectory_v4.6.md | None |
+| EPIC-04 | Arc 6 Monte Carlo §13 pre-assessment: PASS; 10 binding conditions; Arc 6 planning unlocked | docs/product/decisions/arc6_ps03_section13_preassessment.md | None |
+| EPIC-04 | Trade plan schema audit: 25 fields enumerated post-DS-07; 0 orphaned fields; 3 P3 process gaps noted | docs/specs/data_model/trade_plan_schema_audit_v4.6.md | None |
+| EPIC-04 | Sprint close automation investigation: no failure; observer effect root cause (BLG-GOV-41 resolved) | docs/ops/sprint_close_reminder_investigation_v4.6.md | None |
+| EPIC-04 | External API integration spec template: 7-section structure (BLG-SPEC-32) | docs/specs/api_contracts/_external_api_template.md | None |
+| EPIC-04 | roadmap_prompt.md v6.7: STEP 12.1 next_release advisory after DL decision (OA-02) | claude/system/roadmap_prompt.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| EPIC-02: ST-06/07/08 — BehaviouralDriftPanel + integration + Playwright | Data density gate NOT MET (0 linked trade_plans vs ≥20); deferred at planning, confirmed at close | BLG-FEAT-25 (6th deferral) |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (DoQ autonomous class, 35 unit tests), qa_evidence_EPIC-03.md (Director of Quality 2026-05-30), qa_evidence_EPIC-04.md (DoQ autonomous class)
+- Deviations filed: None
+- Test scenarios referenced: tests/test_behavioural_drift_service.py (35 cases), tests/test_red_flag_journal.py
