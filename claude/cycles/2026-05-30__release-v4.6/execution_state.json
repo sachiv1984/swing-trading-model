@@ -5,7 +5,7 @@
   "invoked_utc": "2026-05-30T21:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-31T00:00:00Z",
+  "last_updated_utc": "2026-05-31T08:25:00Z",
   "epics": {
     "EPIC-04": {
       "status": "in_progress",
@@ -64,7 +64,7 @@
           "assigned_to": "Product Owner",
           "github_issue": 580,
           "branch": "exec/2026-05-30__release-v4.6/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "997edd99",
           "delegation_record_id": "ESC-EXEC-20260530-01",
           "blocked_since_utc": "2026-05-30T21:20:00Z",
           "unblock_criteria": "Product Owner runs production DB queries (AC-01 and AC-02) and documents results; both counts in QA evidence; PT-04 backlog item updated; EPIC-02 gate decision stated",
@@ -74,7 +74,7 @@
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "PO ran production DB queries 2026-05-31: Query 1 (SELECT COUNT(*) FROM trade_history WHERE pnl IS NOT NULL) = 6; Query 2 (SELECT COUNT(*) FROM trade_history th JOIN trade_plans tp ON tp.position_id = th.position_id WHERE th.pnl IS NOT NULL) = 0. Gate: NOT MET (threshold \u226520). EPIC-02 gate decision: DEFERRED \u2014 gate not met; release closes with Sprint 1 (EPIC-04 autonomous stories + EPIC-01) + Sprint 2 (EPIC-03) only. ESC-EXEC-20260530-01 resolved. BLG-FEAT-25 updated (6th deferral noted)."
+          "notes": "PO ran production DB queries 2026-05-31: Query 1 = 6; Query 2 = 0. Gate NOT MET. EPIC-02 DEFERRED. ESC-EXEC-20260530-01 resolved. BLG-FEAT-25 updated (6th deferral)."
         },
         "ST-17": {
           "title": "BLG-GOV-34: Arc 4 data density risk trajectory assessment",
@@ -93,12 +93,12 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "document-creation story (LL-v4.5-EX-02); spec_references to be set to docs/product/decisions/arc4_data_density_trajectory_v4.6.md once created"
+          "notes": "Draft document created at docs/product/decisions/arc4_data_density_trajectory_v4.6.md. PO must confirm: AI journal count, trade_plans row count, open positions, monthly trade/plan/close rates. Document has [PO TO CONFIRM: ...] placeholders. PO + Challenger sign-off required before AC-05 met. Still blocked_decision pending PO review."
         },
         "ST-18": {
           "title": "BLG-GOV-45: Arc 6 Monte Carlo \u00a713 pre-assessment",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 583,
           "branch": "exec/2026-05-30__release-v4.6/EPIC-04",
@@ -106,18 +106,29 @@
           "delegation_record_id": "ESC-EXEC-20260530-03",
           "blocked_since_utc": "2026-05-30T21:20:00Z",
           "unblock_criteria": "docs/product/decisions/arc6_ps03_section13_preassessment.md committed to EPIC-04 branch with binding conditions, PASS/CONDITIONAL determination, and Strategy Rules & System Intent Owner sign-off",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
+          "completed_utc": "2026-05-31T08:25:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/arc6_ps03_section13_preassessment.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "document-creation story (LL-v4.5-EX-02); spec_references to be set to docs/product/decisions/arc6_ps03_section13_preassessment.md once created"
+          "sign_off_record": {
+            "required_by": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "10 binding conditions documented; PASS determination with rationale on pseudo-randomness and non-prediction framing"
+            ],
+            "cleared_utc": "2026-05-31T08:25:00Z"
+          },
+          "notes": "PASS determination. 10 binding conditions including: simulation uses actual trade distribution only; output displays percentile ranges not point predictions; fixed seed for reproducibility; no action affordances in UI. ESC-EXEC-20260530-03 resolved.",
+          "delivery_note": "docs/product/decisions/arc6_ps03_section13_preassessment.md"
         },
         "ST-19": {
           "title": "BLG-GOV-52: trade plan schema field count gate check",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Data Model & Domain Schema Owner",
           "github_issue": 584,
           "branch": "exec/2026-05-30__release-v4.6/EPIC-04",
@@ -125,13 +136,24 @@
           "delegation_record_id": "ESC-EXEC-20260530-04",
           "blocked_since_utc": "2026-05-30T21:20:00Z",
           "unblock_criteria": "docs/specs/data_model/trade_plan_schema_audit_v4.6.md committed to EPIC-04 branch with all fields enumerated, cross-references, orphaned/missing fields identified; Data Model & Domain Schema Owner sign-off",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
+          "completed_utc": "2026-05-31T08:25:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/data_model/trade_plan_schema_audit_v4.6.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "document-creation story (LL-v4.5-EX-02); spec_references to be set to docs/specs/data_model/trade_plan_schema_audit_v4.6.md once created; depends on ST-01 (or note pre-migration state)"
+          "sign_off_record": {
+            "required_by": "Data Model & Domain Schema Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "25 fields enumerated; 0 orphaned fields requiring removal; 3 process gaps filed; no missing fields blocking current features"
+            ],
+            "cleared_utc": "2026-05-31T08:25:00Z"
+          },
+          "notes": "25 trade_plans fields enumerated post-DS-07. 0 orphaned fields. 3 P3 process gaps: (1) status CHECK constraint missing abandoned; (2) SI-02 columns not yet in data_model.md DS-08 entry; (3) PT-04/BLG-BE-18 deferred. ESC-EXEC-20260530-04 resolved.",
+          "delivery_note": "docs/specs/data_model/trade_plan_schema_audit_v4.6.md"
         },
         "ST-20": {
           "title": "BLG-GOV-41: sprint close automation failure investigation",
@@ -321,10 +343,10 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-30__release-v4.6/EPIC-03",
       "pr_number": 598,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-30__release-v4.6/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -504,9 +526,7 @@
     }
   },
   "blocked_items": [
-    "ST-17",
-    "ST-18",
-    "ST-19"
+    "ST-17"
   ],
   "delegated_items": [
     "ST-16",
@@ -531,20 +551,20 @@
     "ST-12",
     "ST-10",
     "ST-11",
-    "ST-16"
+    "ST-16",
+    "ST-18",
+    "ST-19"
   ],
   "open_escalations": [
-    "ESC-EXEC-20260530-02",
-    "ESC-EXEC-20260530-03",
-    "ESC-EXEC-20260530-04"
+    "ESC-EXEC-20260530-02"
   ],
   "merge_gate": {
     "epics_merged": [
-      "EPIC-01"
+      "EPIC-01",
+      "EPIC-03"
     ],
     "epics_pending": [
-      "EPIC-04",
-      "EPIC-03"
+      "EPIC-04"
     ],
     "all_merged": false
   },
