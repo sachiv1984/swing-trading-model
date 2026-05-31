@@ -7,6 +7,7 @@ GET /analytics/r-multiple-distribution — Canonical server-side R-multiple dist
 GET /analytics/compliance-metrics — Discipline & compliance scalars (ST-01, v1.9).
 GET /analytics/market-correlation — Per-position Pearson correlation vs benchmark (ST-08, v2.7).
 GET /analytics/arc5-compliance — Arc 5 signal compliance metrics (ST-01, v4.0).
+GET /analytics/behavioural-drift — SI-02 behavioural drift detection (4 metrics, v4.6 ST-04).
 
 BLG-TECH-07 fix: trades_for_charts attempts to source stop_price from
 positions.initial_stop via LEFT JOIN on trade_history.position_id.
@@ -925,3 +926,47 @@ async def get_arc5_compliance(
             status_code=500,
             detail=f"Arc 5 compliance metrics failed: {str(e)}"
         )
+
+
+@router.get("/behavioural-drift")
+async def get_behavioural_drift():
+    """GET /analytics/behavioural-drift — SI-02 Behavioural Drift Detection.
+
+    Returns 4 drift metrics (entry timing, sizing adherence, post-loss sizing,
+    regime adherence) over a 90-day rolling window. Requires ≥10 closed trades.
+    §13 PASS: display-only; no automated recommendations; no ML inference.
+    Contract: docs/specs/api_contracts/behavioural_drift_contract.md
+    Spec: docs/specs/metrics/si02_drift_score.md §2–§4
+    """
+    from database import get_portfolio, get_behavioural_drift_data, ensure_si02_trade_plans_columns, ensure_si02_trade_history_indexes
+    from services.behavioural_drift_service import compute_drift
+
+    try:
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+
+        portfolio_id = str(portfolio["id"])
+        ensure_si02_trade_plans_columns()
+        ensure_si02_trade_history_indexes()
+
+        drift_data = get_behavioural_drift_data(portfolio_id)
+        result = compute_drift(drift_data)
+        return {"status": "ok", "data": result}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {
+            "status": "ok",
+            "data": {
+                "status": "error",
+                "analysis_window_days": 90,
+                "trade_count_in_window": 0,
+                "metrics": [],
+                "computed_at": datetime.now(timezone.utc).isoformat(),
+                "error_detail": str(e),
+            },
+        }
