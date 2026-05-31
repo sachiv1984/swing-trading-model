@@ -21,7 +21,7 @@ import {
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 const POLL_INTERVAL_MS = 5000;
-const POLL_MAX_MS = 60000;
+const POLL_MAX_MS = 300000; // 5 minutes — screener runs async in background
 const STALE_HOURS = 24;
 
 // ---------------------------------------------------------------------------

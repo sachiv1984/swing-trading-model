@@ -36,6 +36,8 @@ _YAHOO_HEADERS = {
 _crumb_lock = threading.Lock()
 _yahoo_session: Optional[requests.Session] = None
 _yahoo_crumb: Optional[str] = None
+_yahoo_cooldown_until: float = 0.0  # monotonic; 0 = no cooldown active
+_YAHOO_COOLDOWN_SECS = 120  # back off 2 minutes after a 429 on the crumb endpoint
 
 OHLCVRecord = Dict[str, object]
 
@@ -46,8 +48,11 @@ OHLCVRecord = Dict[str, object]
 
 def _refresh_yahoo_crumb() -> Optional[str]:
     """Establish a new Yahoo Finance session and fetch a fresh crumb token."""
-    global _yahoo_session, _yahoo_crumb
+    global _yahoo_session, _yahoo_crumb, _yahoo_cooldown_until
     with _crumb_lock:
+        # Skip the network call entirely while in cooldown
+        if _time.monotonic() < _yahoo_cooldown_until:
+            return None
         sess = requests.Session()
         try:
             sess.get(_YAHOO_CONSENT_URL, headers=_YAHOO_HEADERS, timeout=10)
@@ -55,9 +60,17 @@ def _refresh_yahoo_crumb() -> Optional[str]:
             if resp.status_code == 200 and resp.text.strip():
                 _yahoo_session = sess
                 _yahoo_crumb = resp.text.strip()
+                _yahoo_cooldown_until = 0.0
                 logger.info("Yahoo Finance crumb refreshed successfully")
                 return _yahoo_crumb
-            logger.warning("Yahoo Finance crumb fetch returned HTTP %d", resp.status_code)
+            if resp.status_code == 429:
+                _yahoo_cooldown_until = _time.monotonic() + _YAHOO_COOLDOWN_SECS
+                logger.warning(
+                    "Yahoo Finance crumb fetch returned HTTP 429 — entering %ds cooldown",
+                    _YAHOO_COOLDOWN_SECS,
+                )
+            else:
+                logger.warning("Yahoo Finance crumb fetch returned HTTP %d", resp.status_code)
         except requests.RequestException as exc:
             logger.warning("Yahoo Finance crumb refresh failed: %s", exc)
         return None
@@ -83,6 +96,10 @@ def _alpaca_bars_to_ohlcv(bars: List[Dict]) -> List[OHLCVRecord]:
 
 def _yahoo_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
     global _yahoo_session, _yahoo_crumb
+
+    # Fast-fail during cooldown — avoids hammering the crumb endpoint on sustained 429s
+    if _time.monotonic() < _yahoo_cooldown_until:
+        return None
 
     range_param = f"{max(days, 30)}d"
     url = _YAHOO_CHART_URL.format(ticker=ticker)

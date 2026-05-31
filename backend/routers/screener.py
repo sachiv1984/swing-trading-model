@@ -2,11 +2,14 @@
 Screener Router (DS-01 / ST-04)
 Contract: docs/specs/api_contracts/screener_api_contract.md
 """
+import logging
+import uuid
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from typing import Optional, List
-from services.screener_batch_service import run_screener, get_screener_results
+from services.screener_batch_service import run_screener, get_screener_results, is_run_in_progress
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/screener", tags=["Screener"])
 
 
@@ -39,11 +42,15 @@ def screener_results(
 
 
 @router.post("/run", status_code=202)
-def trigger_screener_run(request: RunScreenerRequest = RunScreenerRequest()):
+def trigger_screener_run(
+    background_tasks: BackgroundTasks,
+    request: RunScreenerRequest = RunScreenerRequest(),
+):
     """
     POST /screener/run
 
-    Triggers a screener run. Runs synchronously; returns when complete.
+    Triggers a screener run asynchronously. Returns 202 immediately with a run_id.
+    The frontend polls GET /screener/results?run_id=<id> until results appear.
     Returns 409 if a run is already in progress.
     Contract: screener_api_contract.md
     """
@@ -51,17 +58,23 @@ def trigger_screener_run(request: RunScreenerRequest = RunScreenerRequest()):
         for t in request.ticker_universe:
             if not t or not t.strip():
                 raise HTTPException(status_code=400, detail="INVALID_TICKER")
-    try:
-        result = run_screener(request.ticker_universe)
-        return {"ok": True, "data": {
-            "run_id": result["run_id"],
-            "status": "accepted",
-            "tickers_evaluated": result.get("tickers_evaluated", 0),
-            "tickers_passed": result.get("tickers_passed", 0),
-            "regime_us": result.get("regime_us"),
-            "regime_uk": result.get("regime_uk"),
-        }}
-    except RuntimeError as e:
-        if "RUN_IN_PROGRESS" in str(e):
-            raise HTTPException(status_code=409, detail="RUN_IN_PROGRESS")
-        raise HTTPException(status_code=500, detail=str(e))
+
+    if is_run_in_progress():
+        raise HTTPException(status_code=409, detail="RUN_IN_PROGRESS")
+
+    pending_run_id = str(uuid.uuid4())
+
+    def _run_in_background():
+        try:
+            run_screener(request.ticker_universe, run_id=pending_run_id)
+        except RuntimeError as exc:
+            logger.warning("Background screener run failed: %s", exc)
+        except Exception as exc:
+            logger.error("Background screener run error: %s", exc, exc_info=True)
+
+    background_tasks.add_task(_run_in_background)
+
+    return {"ok": True, "data": {
+        "run_id": pending_run_id,
+        "status": "accepted",
+    }}

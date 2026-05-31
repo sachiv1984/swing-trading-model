@@ -201,11 +201,13 @@ def _persist_results(results: List[Dict]) -> None:
 # Public interface
 # ---------------------------------------------------------------------------
 
-def run_screener(ticker_universe: Optional[List[str]] = None) -> Dict:
+def run_screener(ticker_universe: Optional[List[str]] = None,
+                 run_id: Optional[str] = None) -> Dict:
     """
     Execute a screener run.
 
     If ticker_universe is None, uses all active tickers from the DB.
+    If run_id is provided, uses it (allows callers to pre-generate and return the ID before execution).
     Returns {run_id, status, count, tickers_evaluated, tickers_passed, degraded_run, failure_rate}.
     Raises RuntimeError if a run is already in progress.
     """
@@ -216,7 +218,8 @@ def run_screener(ticker_universe: Optional[List[str]] = None) -> Dict:
         _run_in_progress = True
 
     try:
-        run_id = str(uuid.uuid4())
+        if run_id is None:
+            run_id = str(uuid.uuid4())
         run_timestamp = datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
         # Resolve ticker list — keep full row dicts to preserve sector/industry
@@ -305,6 +308,11 @@ def run_screener(ticker_universe: Optional[List[str]] = None) -> Dict:
     finally:
         with _run_lock:
             _run_in_progress = False
+
+
+def is_run_in_progress() -> bool:
+    with _run_lock:
+        return _run_in_progress
 
 
 def get_screener_results(
