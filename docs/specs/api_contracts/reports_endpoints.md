@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.4
-**Last Updated:** 2026-04-30
+**Version:** 0.6
+**Last Updated:** 2026-05-31
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -433,7 +433,7 @@ Array of monthly summary objects, sorted descending by year then month. Only mon
 
 **Scope:** Returns data for the current calendar year and the prior calendar year only (24 months maximum). Empty array if no closed trades exist in scope.
 
-#### `strategy_compliance` schema (ST-18, v4.3)
+#### `compliance_summary` schema (ST-03, v4.7)
 
 Object containing Arc 5 pre-entry discipline metrics for the last 30 days. `null` if database is unavailable.
 
@@ -479,6 +479,7 @@ GET /reports/monthly-pnl
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6 | 2026-05-31 | Rename strategy_compliance → compliance_summary in GET /reports/monthly-pnl response (field rename; same schema, canonical name alignment). ST-03 — v4.7 cycle 2026-05-31__release-v4.7. |
 | 0.5 | 2026-05-29 | Add strategy_compliance field to GET /reports/monthly-pnl response: 30d Arc 5 compliance metrics. ST-18 — v4.3 cycle 2026-05-29__release-v4.3. |
 | 0.4 | 2026-04-30 | Add GET /reports/monthly-pnl endpoint: month-by-month realised P&L for current and prior year. ST-11 — v3.1 release planning cycle 2026-04-29__release-v3.1. |
 | 0.3 | 2026-03-20 | Add `format=csv` to GET /reports/tax-year. CSV response schema documented: metadata block (5 rows) + trades table (17 human-readable columns). `format` validation rule tightened — unknown values now return 400. ST-13 — v2.1 release planning cycle 2026-03-18__release-v2.1. |
