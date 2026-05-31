@@ -1266,6 +1266,8 @@ Every delivery verification run begins with manual staging health checks. An aut
 **Effort:** XS (~0.5 day)
 **Provisional-Target:** v4.1
 
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-31__release-v4.7 (ST-04, EPIC-03; staging_deploy_verification.md produced; RENDER_STAGING_DEPLOY_HOOK confirmed; code-change deploy verified; docs-only filter verified; Infrastructure & Operations Owner sign-off)
+
 **Problem**
 ST-09 (BLG-OPS-27) implements the staging deploy workflow and deploy hook mechanism, but the AC "staging auto-deploys on main merge" requires a live Render environment with `RENDER_STAGING_DEPLOY_HOOK` secret configured. This cannot be verified in CI.
 
@@ -1290,6 +1292,8 @@ ST-09 (BLG-OPS-27) implements the staging deploy workflow and deploy hook mechan
 **Source:** IDEA-infra-ops-20260525-02 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
 **Effort:** S (~0.5 day)
 **Provisional-Target:** Unscheduled
+
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-31__release-v4.7 (ST-07, EPIC-03; render_log_retention_policy.md produced; Render 7-day retention documented; database audit tables confirmed durable; decision: Render logs + database tables sufficient; Infrastructure & Operations Owner sign-off)
 
 **Problem**
 Render (production hosting platform) provides application logs with a default retention period. As Arc 5 compliance data and Gemini audit logs accumulate, understanding Render's log retention limits and whether application-level log archiving is required becomes an operational concern.
@@ -1392,6 +1396,8 @@ The red_flag_events table has no defined retention or archiving strategy. As ove
 **Effort:** XS (~0.5 hr)
 **Provisional-Target:** v4.7
 
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-31__release-v4.7 (ST-05, EPIC-03; ds07_migration_staging_verification.md produced; all 5 SI-02 columns confirmed; 3 indexes confirmed; Infrastructure & Operations Owner + Data Model & Domain Schema Owner sign-off)
+
 **Problem**
 ST-01 (DS-07 data migration) was verified by code review only in v4.6. AC-05 (staging verification) was pre-designated as staging-only and explicitly deferred to Phase 4 delivery verification. The migration adds 5 nullable columns (signal_id, risk_percent_used, portfolio_value_at_entry, pre_entry_validation_snapshot, effective_settings_snapshot) and 3 indexes to trade_plans. Confirmation that these applied correctly in the staging environment is outstanding.
 
@@ -1416,6 +1422,8 @@ ST-01 (DS-07 data migration) was verified by code review only in v4.6. AC-05 (st
 **Source:** v4.6 delivery verification — ST-09 AC-01/02/03 deferred to Phase 4 (staging-only ACs); AC-08 pending
 **Effort:** XS (~0.5 hr)
 **Provisional-Target:** v4.7
+
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-31__release-v4.7 (ST-06, EPIC-03; severity_field_staging_verification.md produced; severity column confirmed; assignment rule verified; backfill confirmed zero nulls; Infrastructure & Operations Owner + Data Model & Domain Schema Owner sign-off; AC-08 cleared)
 
 **Problem**
 ST-09 (BLG-BE-16: red_flag_events severity field) was verified by code review and unit tests in v4.6. Three ACs were pre-designated as staging-only and explicitly deferred to Phase 4 delivery verification: AC-01 (severity column confirmed in staging DB), AC-02 (default severity assignment confirmed), AC-03 (backfill of existing records confirmed). Additionally, AC-08 (Data Model & Domain Schema Owner sign-off) was pending at merge; DoQ accepted at EPIC level.
