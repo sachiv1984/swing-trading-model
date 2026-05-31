@@ -5,7 +5,7 @@ Red Flag Journal router (SI-03 / ST-07, EPIC-03, v3.9)
 """
 from fastapi import APIRouter, Query, HTTPException
 from typing import Optional
-from database import ensure_red_flag_events_table, get_red_flag_events
+from database import ensure_red_flag_events_table, ensure_red_flag_events_severity_column, get_red_flag_events
 
 router = APIRouter(tags=["Portfolio"])
 
@@ -29,19 +29,23 @@ def get_red_flag_journal(
     event_type: Optional[str] = Query(default=None),
     ticker: Optional[str] = Query(default=None),
     since: Optional[str] = Query(default=None),
+    severity: Optional[str] = Query(default=None, description="Filter by severity: info | warning | critical"),
 ):
     """GET /portfolio/red-flag-journal — paginated deviation event log.
 
     §13: display-only audit log; no automated decisions.
+    ST-09 (v4.6): severity filter added (info / warning / critical).
     """
     try:
         ensure_red_flag_events_table()
+        ensure_red_flag_events_severity_column()
         result = get_red_flag_events(
             page=page,
             page_size=page_size,
             event_type=event_type,
             ticker=ticker,
             since=since,
+            severity=severity,
         )
         result["items"] = [_serialize_event(e) for e in result["items"]]
         return {"status": "ok", "data": result}
