@@ -459,6 +459,31 @@ class TestReportsEndpoints(unittest.TestCase):
         assert r.status_code == 200
         assert r.json().get("status") == "ok"
 
+    @patch("main.get_monthly_pnl_report", return_value=[{"year": 2026, "month": 5, "realised_pnl_gbp": 100.0, "trade_count": 2}])
+    @patch("main.get_arc5_compliance_summary", return_value={
+        "period_days": 30,
+        "validation_pass_rate": 0.85,
+        "override_count": 1,
+        "red_flag_events_count": 3,
+        "most_frequent_rule_breach": "sector_concentration",
+    })
+    def test_monthly_pnl_compliance_summary_present_when_data_available(self, *_):
+        # AC-01/AC-02: compliance_summary section present with correct fields (ST-03, v4.7)
+        body = _ok(CLIENT.get("/reports/monthly-pnl"))
+        assert "compliance_summary" in body
+        cs = body["compliance_summary"]
+        assert cs["validation_pass_rate"] == 0.85
+        assert cs["override_count"] == 1
+        assert cs["red_flag_events_count"] == 3
+        assert cs["most_frequent_rule_breach"] == "sector_concentration"
+
+    @patch("main.get_monthly_pnl_report", return_value=[])
+    @patch("main.get_arc5_compliance_summary", return_value=None)
+    def test_monthly_pnl_compliance_summary_absent_when_data_unavailable(self, *_):
+        # AC-04: compliance_summary null when Arc 5 data unavailable (ST-03, v4.7)
+        body = _ok(CLIENT.get("/reports/monthly-pnl"))
+        assert body.get("compliance_summary") is None
+
 
 # ---------------------------------------------------------------------------
 # 14. Trade Plans  (EPIC-01 — available after EPIC-01 merges into main)
