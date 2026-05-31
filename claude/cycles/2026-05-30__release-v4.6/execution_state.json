@@ -5,7 +5,7 @@
   "invoked_utc": "2026-05-30T21:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-31T08:25:00Z",
+  "last_updated_utc": "2026-05-31T08:35:00Z",
   "epics": {
     "EPIC-04": {
       "status": "in_progress",
@@ -79,7 +79,7 @@
         "ST-17": {
           "title": "BLG-GOV-34: Arc 4 data density risk trajectory assessment",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Product Owner",
           "github_issue": 582,
           "branch": "exec/2026-05-30__release-v4.6/EPIC-04",
@@ -87,13 +87,24 @@
           "delegation_record_id": "ESC-EXEC-20260530-02",
           "blocked_since_utc": "2026-05-30T21:20:00Z",
           "unblock_criteria": "docs/product/decisions/arc4_data_density_trajectory_v4.6.md committed to EPIC-04 branch with current metrics, projected gate dates, recommendation, and Product Owner + Challenger sign-off",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
+          "completed_utc": "2026-05-31T08:35:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/arc4_data_density_trajectory_v4.6.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Draft document created at docs/product/decisions/arc4_data_density_trajectory_v4.6.md. PO must confirm: AI journal count, trade_plans row count, open positions, monthly trade/plan/close rates. Document has [PO TO CONFIRM: ...] placeholders. PO + Challenger sign-off required before AC-05 met. Still blocked_decision pending PO review."
+          "sign_off_record": {
+            "required_by": "Product Owner",
+            "method": "human",
+            "status": "cleared",
+            "findings_applied": [
+              "4-5 opens/month; 100% linkage going forward; 0 AI journal entries; keep gate at 20; Option A selected"
+            ],
+            "cleared_utc": "2026-05-31T08:35:00Z"
+          },
+          "notes": "SI-02 gate ~Nov 2026; PT-04 sub-gate ~Sep 2026; PO-02 ~Dec 2026; PT-04 full ~Jun 2027. Option A: proceed on current trajectory, no gate changes. PO + Challenger sign-off 2026-05-31. ESC-EXEC-20260530-02 resolved.",
+          "delivery_note": "docs/product/decisions/arc4_data_density_trajectory_v4.6.md"
         },
         "ST-18": {
           "title": "BLG-GOV-45: Arc 6 Monte Carlo \u00a713 pre-assessment",
@@ -525,9 +536,7 @@
       }
     }
   },
-  "blocked_items": [
-    "ST-17"
-  ],
+  "blocked_items": [],
   "delegated_items": [
     "ST-16",
     "ST-17",
@@ -553,11 +562,10 @@
     "ST-11",
     "ST-16",
     "ST-18",
-    "ST-19"
+    "ST-19",
+    "ST-17"
   ],
-  "open_escalations": [
-    "ESC-EXEC-20260530-02"
-  ],
+  "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
