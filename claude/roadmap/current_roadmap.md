@@ -13,6 +13,15 @@
 **v4.6** — SI-02 Behavioural Drift Detection & Arc 5 Completion — ✅ Shipped 2026-05-31
 **Next planned release:** v4.7
 
+<!-- roadmap-annotation-marker: RA:v4.7:2026-05-31__release-v4.7 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-05-31__release-v4.7
+- Plan published: 2026-05-31
+- Cycle folder: claude/cycles/2026-05-31__release-v4.7/
+- Backlog slice: claude/cycles/2026-05-31__release-v4.7/stage4_backlog_slice.md
+- Status at annotation: Planning
+
 *RA:v4.6 retired — see roadmap_archive.md 2026-05-31 (post-ship closure 2026-05-30__release-v4.6).*
 
 *RA:v4.5 retired — see roadmap_archive.md 2026-05-30 (post-ship closure 2026-05-30__release-v4.5).*

@@ -1,0 +1,109 @@
+{
+  "cycle_id": "2026-05-31__release-v4.7",
+  "release": "v4.7",
+  "generated_utc": "2026-05-31T12:10:00Z",
+  "idempotency_label": "cycle:2026-05-31__release-v4.7",
+  "items": [
+    {
+      "st_id": "ST-01",
+      "epic_id": "EPIC-01",
+      "title": "SI-04 §13 formal pre-assessment (BLG-GOV-62)",
+      "priority": "P1",
+      "effort": "S",
+      "sprint": 1,
+      "delegation": "delegated_decision",
+      "source": "BLG-GOV-62",
+      "labels": ["v4.7", "EPIC-01", "sprint-1", "cycle:2026-05-31__release-v4.7"]
+    },
+    {
+      "st_id": "ST-02",
+      "epic_id": "EPIC-01",
+      "title": "SI-05 Phase 1 implementation (BLG-GOV-67) [CONDITIONAL]",
+      "priority": "P2",
+      "effort": "M",
+      "sprint": 2,
+      "delegation": "autonomous",
+      "conditional": true,
+      "gate": "SI-01 + SI-03 live >= 30 days; gate clears 2026-06-21",
+      "source": "BLG-GOV-67",
+      "labels": ["v4.7", "EPIC-01", "sprint-2", "conditional", "cycle:2026-05-31__release-v4.7"]
+    },
+    {
+      "st_id": "ST-03",
+      "epic_id": "EPIC-02",
+      "title": "Arc 5 compliance score in monthly P&L report (BLG-FEAT-38)",
+      "priority": "P2",
+      "effort": "M",
+      "sprint": 1,
+      "delegation": "autonomous",
+      "source": "BLG-FEAT-38",
+      "labels": ["v4.7", "EPIC-02", "sprint-1", "cycle:2026-05-31__release-v4.7"]
+    },
+    {
+      "st_id": "ST-04",
+      "epic_id": "EPIC-03",
+      "title": "Staging deploy live verification (BLG-OPS-28)",
+      "priority": "P2",
+      "effort": "XS",
+      "sprint": 1,
+      "delegation": "delegated_decision",
+      "source": "BLG-OPS-28",
+      "labels": ["v4.7", "EPIC-03", "sprint-1", "cycle:2026-05-31__release-v4.7"]
+    },
+    {
+      "st_id": "ST-05",
+      "epic_id": "EPIC-03",
+      "title": "DS-07 migration staging verification (BLG-OPS-44)",
+      "priority": "P3",
+      "effort": "XS",
+      "sprint": 1,
+      "delegation": "delegated_decision",
+      "source": "BLG-OPS-44",
+      "labels": ["v4.7", "EPIC-03", "sprint-1", "cycle:2026-05-31__release-v4.7"]
+    },
+    {
+      "st_id": "ST-06",
+      "epic_id": "EPIC-03",
+      "title": "Severity field staging verification (BLG-OPS-45)",
+      "priority": "P3",
+      "effort": "XS",
+      "sprint": 1,
+      "delegation": "delegated_decision",
+      "source": "BLG-OPS-45",
+      "labels": ["v4.7", "EPIC-03", "sprint-1", "cycle:2026-05-31__release-v4.7"]
+    },
+    {
+      "st_id": "ST-07",
+      "epic_id": "EPIC-03",
+      "title": "Render log retention policy (BLG-OPS-31)",
+      "priority": "P2",
+      "effort": "S",
+      "sprint": 1,
+      "delegation": "delegated_decision",
+      "source": "BLG-OPS-31",
+      "labels": ["v4.7", "EPIC-03", "sprint-1", "cycle:2026-05-31__release-v4.7"]
+    },
+    {
+      "st_id": "ST-08",
+      "epic_id": "EPIC-04",
+      "title": "Anthropic API tier cost assessment (BLG-OPS-37)",
+      "priority": "P2",
+      "effort": "S",
+      "sprint": 1,
+      "delegation": "delegated_decision",
+      "source": "BLG-OPS-37",
+      "labels": ["v4.7", "EPIC-04", "sprint-1", "cycle:2026-05-31__release-v4.7"]
+    },
+    {
+      "st_id": "ST-09",
+      "epic_id": "EPIC-04",
+      "title": "Pre-entry validation panel UX assessment (BLG-FE-49)",
+      "priority": "P2",
+      "effort": "S",
+      "sprint": 1,
+      "delegation": "delegated_decision",
+      "source": "BLG-FE-49",
+      "labels": ["v4.7", "EPIC-04", "sprint-1", "cycle:2026-05-31__release-v4.7"]
+    }
+  ]
+}

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-05-31 (Post-ship closure v4.6 — 11 shipped items marked COMPLETE; BLG-OPS-44/45 Phase 4 additions confirmed present)
+**Last Updated:** 2026-05-31 (Release planning v4.7 — release slice added)
 **Last rebalance:** 2026-05-27 (cycle 2026-05-27__scheduled — DL-035; IW-20260527-01; 31 new items: BLG-GOV-57–68, BLG-OPS-36–41, BLG-QA-36–38, BLG-SPEC-41–42, BLG-FE-51–55, BLG-BE-22–24)
 
 > ⚠️ Standing Notice
@@ -30,8 +30,6 @@
 ---
 
 ## 1. Platform & Validation Governance Backlog
-
-*BLG-TECH-05 deferred to §9 (DL-023, 2026-04-24).*
 
 ---
 
@@ -2023,4 +2021,22 @@ Backlog items have no explicit Blocks/Blocked-by fields. Cross-item dependencies
 ---
 
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*
+
+---
+
+## Release Slice — v4.7
+
+<!-- release-plan-marker: RP:v4.7:2026-05-31__release-v4.7 -->
+
+| ST | EPIC | Item | Priority | Effort | Sprint |
+|----|------|------|----------|--------|--------|
+| ST-01 | EPIC-01 | SI-04 §13 formal pre-assessment (BLG-GOV-62) | P1 | S | Sprint 1 (firm) |
+| ST-02 | EPIC-01 | SI-05 Phase 1 implementation (BLG-GOV-67) | P2 | M | Sprint 2 (conditional — gate 2026-06-21) |
+| ST-03 | EPIC-02 | Arc 5 compliance score in monthly P&L (BLG-FEAT-38) | P2 | M | Sprint 1 (firm) |
+| ST-04 | EPIC-03 | Staging deploy live verification (BLG-OPS-28) | P2 | XS | Sprint 1 (firm) |
+| ST-05 | EPIC-03 | DS-07 migration staging verification (BLG-OPS-44) | P3 | XS | Sprint 1 (firm) |
+| ST-06 | EPIC-03 | Severity field staging verification (BLG-OPS-45) | P3 | XS | Sprint 1 (firm) |
+| ST-07 | EPIC-03 | Render log retention policy (BLG-OPS-31) | P2 | S | Sprint 1 (firm) |
+| ST-08 | EPIC-04 | Anthropic API tier cost assessment (BLG-OPS-37) | P2 | S | Sprint 1 (firm) |
+| ST-09 | EPIC-04 | Pre-entry validation panel UX assessment (BLG-FE-49) | P2 | S | Sprint 1 (firm) |
 
