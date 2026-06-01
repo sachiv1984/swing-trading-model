@@ -35,3 +35,36 @@ Cycle: 2026-05-31__release-v4.7
 - **Autonomous class sign-off (BLG-GOV-19 + LL-v4.5-EX-01):** Second consecutive governance sprint applying this correctly. Stable.
 - **SSR row coverage for delegated_decision stories:** v4.6 Phase 4 noted ST-16 miss; v4.7 has no miss. Not a recurrence.
 - **ST-03 null commit_sha:** First occurrence. Monitor in v4.8.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-05-31__release-v4.7
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-06-01
+**Reviewed by:** Director of Quality
+**Prior cycle Phase 4 checked:** claude/cycles/2026-05-30__release-v4.6/lessons_learnt_cycle.md — found. Prior Phase 4 had 2 deferred items targeting "v4.8 if recurs" (SSR metric accuracy; AC sign-off timing) and 1 monitor item (missing SSR row for delegated_decision); plus 2 positive validations (staging-only ACs pattern; mixed-sprint verification pattern).
+
+**Prior cycle Phase 4 deferred items check:**
+- v4.6 Phase 4 item 1 (SSR metric name accuracy — target: v4.8 if recurs): NOT APPLICABLE to v4.7. v4.7 is an all-documentation sprint; no new metric implementations. No recurrence possible. Will monitor in v4.8.
+- v4.6 Phase 4 item 2 (missing SSR row for delegated_decision with empty spec_references — target: v4.7 to monitor): NOT RECURRENT. All 8 done stories (including all 7 delegated_decision stories) are correctly represented in the v4.7 SSR "Capabilities now live" table. Pattern resolved.
+- v4.6 Phase 4 item 3 (ST-09 AC-08 sign-off timing — target: v4.8 if recurs): NOT APPLICABLE to v4.7. v4.7 co-sign pattern was planned from the start (ST-05, ST-06 both specified dual sign-off in delegation record). No timing friction.
+- v4.6 Phase 4 staging-only ACs pattern (positive): FULLY RESOLVED in v4.7. BLG-OPS-44 (ST-05) and BLG-OPS-45 (ST-06) — the exact deferred ACs from v4.6 — are now closed. The multi-cycle accumulation pattern (staging-only ACs from v4.6 verified in v4.7) confirms the design: dedicated verification sprint effectively closes all accumulated staging debt in one pass.
+
+**prompt_change_log.md deferred patch check:**
+- No deferred patches from prior Phase 4 cycles carried ≥2 cycles without a prompt_change_log entry. All v4.6 Phase 4 deferred items were first-occurrence monitors with target "v4.8 if recurs" — one cycle early; no escalation needed.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| Zero-deviation, all-pass verification for an all-documentation sprint (8 stories, 4 EPICs, 7 delegated_decision + 1 autonomous). Autonomous class sign-off correctly applied to EPIC-01/03/04; DoQ agent-mediated correctly applied to EPIC-02 (source code changed). Gate sequencing: QA evidence ready before invocation (same-session delivery). Clean pattern: sixth consecutive cycle with no gate sequencing delays at Phase 4 invocation. | Phase 4 | E | action-now | Positive stable pattern. No process change needed. | Director of Quality | — |
+| Staged verifications design validated: v4.6 accumulated staging-only ACs (BLG-OPS-28, BLG-OPS-44, BLG-OPS-45) from 4–6+ prior cycles closed cleanly in one dedicated verification sprint. This confirms the design intent: staging-only ACs pre-designated at sprint planning accumulate until a verification sprint is scoped, then close in batch without deviation. Total closure: 3 aged items (v4.1 Provisional-Target through v4.7) resolved in a single sprint. | Phase 4 | E | action-now | Positive stable pattern. Pre-designation of staging-only ACs at planning is working correctly. No process change needed. | Director of Quality | — |
+| spec_references = [] for 5 document-only stories (ST-01, ST-04, ST-07, ST-08, ST-09) triggered traceability gap flags in verification STEP 1. Handled correctly per LL-v4.5-EX-02 in standard mode — acknowledged in QA evidence as "N/A — no prior spec applicable" and flagged as informational only. No prompt change required — the delivery_verification_prompt already handles this correctly in standard mode. | Phase 4 | A | action-now | Positive handling. LL-v4.5-EX-02 exception correctly invoked. delivery_verification_prompt standard mode behaviour is appropriate for this class. No process change needed. | Director of Quality | — |
+| Missing SSR row pattern (v4.6 Phase 4 deferred monitor): checked v4.7 SSR — all 8 done stories correctly listed including all 7 delegated_decision stories. v4.7 Phase 3 execution engine correctly included all done stories in SSR update regardless of delegation class or spec_references state. No recurrence. Deferred monitor from v4.6 Phase 4 is resolved — no recurrence in v4.7 governance sprint. | Phase 4 | A | action-now | Positive outcome. Pattern not recurring. v4.6 Phase 4 deferred monitor may be closed. Continue to monitor in v4.8 as originally planned. | Director of Quality | — |
+
+**Recurrence Notes:**
+- **Missing SSR row for delegated_decision (v4.6 Phase 4 monitor):** Not recurrent in v4.7. All rows correctly populated.
+- **Staging-only ACs accumulation pattern:** Resolved in v4.7. 3 aged items closed (BLG-OPS-28/44/45). Pattern design confirmed correct.
+- **Autonomous class sign-off (BLG-GOV-19):** Third consecutive governance sprint applying this correctly. Stable.
+- **Gate sequencing (QA evidence ready at invocation):** Sixth consecutive cycle. Stable.
