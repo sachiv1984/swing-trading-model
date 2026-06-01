@@ -3,7 +3,7 @@ Screener Data Service (DS-01 / ST-02)
 
 Fetches OHLCV data for screener engine consumption.
   - US tickers: Alpaca Data API v2 (primary), Yahoo Finance (fallback)
-  - UK tickers: Twelve Data (primary), Stooq (secondary), Yahoo Finance (fallback)
+   - UK tickers: Twelve Data (primary), Stooq (secondary), Yahoo Finance (fallback)
 
 Returns normalised daily OHLCV records:
   [{"date": "YYYY-MM-DD", "open": float, "high": float, "low": float,
@@ -35,6 +35,9 @@ _STOOQ_HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 _TWELVE_DATA_URL = "https://api.twelvedata.com/time_series"
 _TWELVE_DATA_API_KEY = os.environ.get("TWELVE_DATA_API_KEY", "")
+_TWELVE_DATA_RATE_LIMIT = 8        # max requests per 60s (free tier)
+_twelve_data_req_lock = threading.Lock()
+_twelve_data_req_times: List[float] = []  # monotonic timestamps of recent requests
 _YAHOO_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
     "Accept": "*/*",
@@ -226,6 +229,28 @@ def _yahoo_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
 # Twelve Data (UK primary data source)
 # ---------------------------------------------------------------------------
 
+def _twelve_data_rate_wait() -> None:
+    """Block until the Twelve Data sliding-window rate limit allows another request.
+
+    Free tier: 8 requests per 60 seconds. All worker threads share this limiter.
+    """
+    with _twelve_data_req_lock:
+        now = _time.monotonic()
+        # Drop timestamps older than the 60s window
+        while _twelve_data_req_times and _twelve_data_req_times[0] < now - 60.0:
+            _twelve_data_req_times.pop(0)
+        if len(_twelve_data_req_times) >= _TWELVE_DATA_RATE_LIMIT:
+            wait = _twelve_data_req_times[0] + 60.0 - _time.monotonic()
+            if wait > 0:
+                logger.debug("Twelve Data rate limiter sleeping %.1fs", wait)
+                _time.sleep(wait)
+            # Re-clean after sleep
+            cutoff = _time.monotonic() - 60.0
+            while _twelve_data_req_times and _twelve_data_req_times[0] < cutoff:
+                _twelve_data_req_times.pop(0)
+        _twelve_data_req_times.append(_time.monotonic())
+
+
 def _twelve_data_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
     """Fetch OHLCV from Twelve Data for UK (LSE) tickers.
 
@@ -237,14 +262,10 @@ def _twelve_data_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecor
         logger.warning("TWELVE_DATA_API_KEY not configured — skipping Twelve Data for %s", ticker)
         return None
 
-    # Convert AZN.L → symbol=AZN, exchange=LSE
-    if ticker.upper().endswith(".L"):
-        symbol = ticker[:-2].upper()
-        exchange = "LSE"
-    else:
-        symbol = ticker.upper()
-        exchange = None
+    # Pass ticker as-is — Twelve Data accepts Yahoo Finance .L suffix natively
+    symbol = ticker.upper()
 
+    _twelve_data_rate_wait()
     t0 = _time.monotonic()
     try:
         params: Dict = {
@@ -255,8 +276,6 @@ def _twelve_data_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecor
             "format": "JSON",
             "order": "ASC",
         }
-        if exchange:
-            params["exchange"] = exchange
 
         resp = requests.get(_TWELVE_DATA_URL, params=params, timeout=15)
         latency = (_time.monotonic() - t0) * 1000
