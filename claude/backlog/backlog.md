@@ -2380,4 +2380,25 @@ BLG-GOV-63 (shipped v4.2) requires a quarterly review of the claude_audit_log. F
 
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*
 
+---
+
+## Release Slice v4.8
+
+<!-- release-plan-marker: RP:v4.8:2026-06-01__release-v4.8 -->
+
+**Cycle:** 2026-06-01__release-v4.8
+**Published:** 2026-06-01
+**Canonical source:** claude/cycles/2026-06-01__release-v4.8/stage4_backlog_slice.md
+
+| Story | EPIC | Backlog Ref | Effort | Firm/Conditional |
+|-------|------|-------------|--------|-----------------|
+| ST-01 — §13 register completion | EPIC-01 | BLG-GOV-69 | S | Firm |
+| ST-02 — Agent charter header compliance | EPIC-01 | BLG-GOV-70 | S | Firm |
+| ST-03 — AUD gap resolution verification | EPIC-01 | BLG-GOV-72 | S | Firm |
+| ST-04 — Build minutes monitoring policy | EPIC-02 | BLG-OPS-46 | S | Firm |
+| ST-05 — Dependency audit | EPIC-02 | BLG-OPS-47 | S | Firm |
+| ST-06 — Coverage matrix + v4.7 contract | EPIC-02 | BLG-QA-39 | S | Firm |
+| ST-07 — SI-04 endpoint contract | EPIC-02 | BLG-SPEC-43 | S–M | Conditional |
+| ST-08 — SI-05 Phase 1 implementation | EPIC-03 | BLG-GOV-67 | M | Conditional (gate 2026-06-21) |
+
 

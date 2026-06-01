@@ -1,0 +1,74 @@
+[
+  {
+    "id": "ST-01",
+    "title": "§13 register completion (BLG-GOV-69)",
+    "epic": "EPIC-01",
+    "description": "Close AUD-2026-05-30-001 gap — add §13 ARTEFACT_STATUS entries for 7 missing prompts in OPERATIONAL_GUIDE.md §14",
+    "ac_summary": "7 missing prompts added to §14 §13 register; OPERATIONAL_GUIDE.md version bumped; prompt_change_log.md appended; Head of Specs Team sign-off",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-06-01__release-v4.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Agent charter header compliance remediation (BLG-GOV-70)",
+    "epic": "EPIC-01",
+    "description": "Fix non-compliant headers in api_contracts_documentation_owner.md and backend_engineering_patterns_owner.md",
+    "ac_summary": "Both files updated to compliant **Role:** format; all other agent files verified; no role-validation failures after fix",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-06-01__release-v4.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "AUD-2026-05-30-006 gap resolution verification (BLG-GOV-72)",
+    "epic": "EPIC-01",
+    "description": "Verify whether 3 untracked v4.4 lessons patches were resolved in v4.5–v4.7",
+    "ac_summary": "3 patches identified; resolution status confirmed; unresolved patches filed as new BLG-GOV items; PMO Lead sign-off",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-06-01__release-v4.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Build minutes monitoring policy (BLG-OPS-46)",
+    "epic": "EPIC-02",
+    "description": "Establish Render CI build minutes monitoring policy after 2026-05-31 exhaustion event",
+    "ac_summary": "Monthly allocation documented; v4.6/v4.7 consumption documented; 80% early-warning threshold defined; billing cycle reset dated; FinOps sign-off",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-06-01__release-v4.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Dependency audit post-v4.7 (BLG-OPS-47)",
+    "epic": "EPIC-02",
+    "description": "Run pip-audit and npm audit — last CVE remediation was starlette v4.0 (2026-05-25)",
+    "ac_summary": "pip-audit and npm audit run; HIGH/CRITICAL findings addressed or filed; Anthropic SDK version checked; Cybersecurity sign-off",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-06-01__release-v4.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Coverage matrix update and v4.7 contract completeness verification (BLG-QA-39)",
+    "epic": "EPIC-02",
+    "description": "Add compliance_summary field to coverage matrix; verify GET /reports/monthly-pnl v0.6 contract",
+    "ac_summary": "Coverage matrix includes compliance_summary with regression test reference; v0.6 contract confirmed; QA Lead sign-off",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-06-01__release-v4.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "SI-04 strategy version comparison endpoint contract (BLG-SPEC-43) [CONDITIONAL]",
+    "epic": "EPIC-02",
+    "description": "Pre-author GET /analytics/strategy-version-comparison contract before SI-04 sprint",
+    "ac_summary": "Contract document created; response schema, query params, error cases defined; openapi.yaml entry added; Strategy Rules & System Intent Owner + Head of Specs Team sign-off",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-06-01__release-v4.8", "conditional"],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "SI-05 Phase 1 — Weekly Strategy Integrity Digest (BLG-GOV-67) [CONDITIONAL]",
+    "epic": "EPIC-03",
+    "description": "Implement SI-05 Phase 1 via Telegram using SI-01 + SI-03 data (gate: 2026-06-21)",
+    "ac_summary": "Weekly digest backend service; Telegram delivery via existing infrastructure; endpoint in test.py + openapi.yaml + API contract; no SI-02 dependency; staging Telegram delivery verified; Head of Backend Engineering + Head of Specs Team sign-off",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-06-01__release-v4.8", "conditional"],
+    "assignee": null
+  }
+]

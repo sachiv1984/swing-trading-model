@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v4.7** — Arc 5 Completion Pre-work, Staged Verifications & Aged Backlog Clearance — ✅ Shipped 2026-06-01
-**Next planned release:** [TBD]
+**Next planned release:** v4.8 — Governance Hardening, Ops/Security Debt & SI-05 Phase 1
+
+<!-- roadmap-annotation-marker: RA:v4.8:2026-06-01__release-v4.8 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-01__release-v4.8
+- Plan published: 2026-06-01
+- Cycle folder: claude/cycles/2026-06-01__release-v4.8/
+- Backlog slice: claude/cycles/2026-06-01__release-v4.8/stage4_backlog_slice.md
+- Status at annotation: Committed
 
 *RA:v4.7 retired — see roadmap_archive.md 2026-06-01 (post-ship closure 2026-05-31__release-v4.7).*
 
