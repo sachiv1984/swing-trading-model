@@ -3,7 +3,7 @@ Screener Data Service (DS-01 / ST-02)
 
 Fetches OHLCV data for screener engine consumption.
   - US tickers: Alpaca Data API v2 (primary), Yahoo Finance (fallback)
-  - UK tickers: Stooq (primary), Yahoo Finance (fallback)
+  - UK tickers: Twelve Data (primary), Stooq (secondary), Yahoo Finance (fallback)
 
 Returns normalised daily OHLCV records:
   [{"date": "YYYY-MM-DD", "open": float, "high": float, "low": float,
@@ -13,6 +13,7 @@ Pence-denominated UK tickers (currency=GBp) are divided by 100 → GBP.
 Returns None when data is unavailable from all sources.
 """
 import logging
+import os
 import random
 import threading
 import requests
@@ -31,6 +32,9 @@ _YAHOO_CONSENT_URL = "https://finance.yahoo.com/"
 
 _STOOQ_URL = "https://stooq.com/q/d/l/"
 _STOOQ_HEADERS = {"User-Agent": "Mozilla/5.0"}
+
+_TWELVE_DATA_URL = "https://api.twelvedata.com/time_series"
+_TWELVE_DATA_API_KEY = os.environ.get("TWELVE_DATA_API_KEY", "")
 _YAHOO_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
     "Accept": "*/*",
@@ -219,7 +223,97 @@ def _yahoo_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
 
 
 # ---------------------------------------------------------------------------
-# Stooq (UK primary data source)
+# Twelve Data (UK primary data source)
+# ---------------------------------------------------------------------------
+
+def _twelve_data_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
+    """Fetch OHLCV from Twelve Data for UK (LSE) tickers.
+
+    Converts LSE ticker format: AZN.L → symbol=AZN, exchange=LSE
+    Handles pence-denominated tickers (currency GBp/GBX → divide by 100).
+    Returns None when API key is absent or on any failure.
+    """
+    if not _TWELVE_DATA_API_KEY:
+        logger.warning("TWELVE_DATA_API_KEY not configured — skipping Twelve Data for %s", ticker)
+        return None
+
+    # Convert AZN.L → symbol=AZN, exchange=LSE
+    if ticker.upper().endswith(".L"):
+        symbol = ticker[:-2].upper()
+        exchange = "LSE"
+    else:
+        symbol = ticker.upper()
+        exchange = None
+
+    t0 = _time.monotonic()
+    try:
+        params: Dict = {
+            "symbol": symbol,
+            "interval": "1day",
+            "outputsize": max(days, 30),
+            "apikey": _TWELVE_DATA_API_KEY,
+            "format": "JSON",
+            "order": "ASC",
+        }
+        if exchange:
+            params["exchange"] = exchange
+
+        resp = requests.get(_TWELVE_DATA_URL, params=params, timeout=15)
+        latency = (_time.monotonic() - t0) * 1000
+
+        if resp.status_code == 429:
+            record_external_api_call("twelve_data", False, latency)
+            logger.warning("Twelve Data rate limit hit for %s", ticker)
+            return None
+
+        if resp.status_code != 200:
+            record_external_api_call("twelve_data", False, latency)
+            logger.warning("Twelve Data HTTP %d for %s", resp.status_code, ticker)
+            return None
+
+        data = resp.json()
+
+        if data.get("status") == "error" or "values" not in data:
+            record_external_api_call("twelve_data", False, latency)
+            logger.warning("Twelve Data error for %s: %s", ticker, data.get("message", "no values"))
+            return None
+
+        # Pence conversion: LSE prices come back in pence (GBp/GBX)
+        currency = data.get("meta", {}).get("currency", "")
+        scale = 100.0 if currency in ("GBp", "GBX") else 1.0
+
+        records = []
+        for v in data["values"]:
+            try:
+                records.append({
+                    "date": v["datetime"][:10],
+                    "open": float(v["open"]) / scale,
+                    "high": float(v["high"]) / scale,
+                    "low": float(v["low"]) / scale,
+                    "close": float(v["close"]) / scale,
+                    "volume": int(float(v.get("volume", 0) or 0)),
+                })
+            except (KeyError, ValueError, TypeError):
+                continue
+
+        if not records:
+            record_external_api_call("twelve_data", False, latency)
+            return None
+
+        records = records[-days:] if len(records) > days else records
+        record_external_api_call("twelve_data", True, latency)
+        logger.info("OHLCV OK via Twelve Data for %s (%d bars)", ticker, len(records))
+        return records
+
+    except requests.RequestException as exc:
+        latency = (_time.monotonic() - t0) * 1000
+        record_external_api_call("twelve_data", False, latency)
+        logger.warning("Twelve Data request error for %s: %s", ticker, exc)
+        return None
+
+
+# ---------------------------------------------------------------------------
+# Stooq (UK secondary data source — fallback when Twelve Data unavailable)
 # ---------------------------------------------------------------------------
 
 def _stooq_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
@@ -241,7 +335,7 @@ def _stooq_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
             _STOOQ_URL,
             params={"s": stooq_symbol, "i": "d"},
             headers=_STOOQ_HEADERS,
-            timeout=15,
+            timeout=5,
         )
         latency = (_time.monotonic() - t0) * 1000
 
@@ -333,7 +427,11 @@ def fetch_ohlcv(ticker: str, market: str, days: int = 30) -> Optional[List[OHLCV
         logger.warning("OHLCV FAILED for %s (market=%s) — no data from any source", ticker, market)
         return None
 
-    # UK tickers: Stooq primary, Yahoo Finance fallback
+    # UK tickers: Twelve Data primary → Stooq → Yahoo Finance
+    result = _twelve_data_fetch_ohlcv(ticker, days)
+    if result:
+        return result
+    logger.info("Twelve Data unavailable for %s — falling back to Stooq", ticker)
     result = _stooq_fetch_ohlcv(ticker, days)
     if result:
         return result
