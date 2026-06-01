@@ -55,7 +55,7 @@ Fetches historical OHLCV (Open, High, Low, Close, Volume) price bars for a US ti
 | `timeframe` | query | string | YES | Bar timeframe. Use `"1Day"` for daily bars |
 | `limit` | query | integer | NO | Number of bars to return. Use 30 for ATR calculation safety margin (14 periods + buffer) |
 | `adjustment` | query | string | NO | Price adjustment. Use `"raw"` (default) |
-| `feed` | query | string | NO | Data feed. Use `"iex"` or omit for default SIP data |
+| `feed` | query | string | NO | Data feed. Controlled by `ALPACA_DATA_FEED` env var (default: `"iex"`). Set to `"sip"` on paid Alpaca plans for full consolidated tape coverage. Stocks not traded on IEX (e.g. BK, CTRA, HOLX) return 0 bars on the free `iex` feed. |
 
 **Response (HTTP 200):**
 
