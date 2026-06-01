@@ -1,9 +1,40 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 3.2
-**Last Updated:** 2026-05-30
+**Version:** 3.3
+**Last Updated:** 2026-06-01
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-05-31__release-v4.7
+**Date:** 2026-06-01
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-03 | Staging deploy live verification: RENDER_STAGING_DEPLOY_HOOK confirmed, code-change deploy trigger verified, docs-only path filter confirmed (BLG-OPS-28 closed) | docs/ops/staging_deploy_verification.md | None |
+| EPIC-03 | DS-07 migration staging verification: all 5 SI-02 columns (signal_id, risk_percent_used, portfolio_value_at_entry, pre_entry_validation_snapshot, effective_settings_snapshot) and 3 indexes confirmed on staging (BLG-OPS-44 closed) | docs/ops/ds07_migration_staging_verification.md | None |
+| EPIC-03 | Severity field staging verification: severity column, default assignment rule, and backfill (0 nulls) confirmed on staging (BLG-OPS-45 closed) | docs/ops/severity_field_staging_verification.md | None |
+| EPIC-03 | Render log retention policy: 7-day platform retention documented; claude_audit_log and red_flag_events confirmed durable; decision: no additional archiving required (BLG-OPS-31 closed) | docs/ops/render_log_retention_policy.md | None |
+| EPIC-04 | Anthropic API tier cost assessment: current usage below upgrade threshold; $5/month trigger defined for model review (BLG-OPS-37 closed) | docs/ops/anthropic_api_tier_assessment.md | None |
+| EPIC-04 | Pre-entry validation panel UX assessment: 3 improvement candidates ranked by effort/value; no implementation committed; BLG-FE-56/57/58 filed (BLG-FE-49 closed) | docs/product/ux/pre_entry_panel_ux_assessment.md | None |
+| EPIC-02 | Arc 5 compliance_summary field in GET /reports/monthly-pnl: adds validation_pass_rate, override_count, red_flag_events_count, most_frequent_rule_breach; null when data unavailable; 2 unit tests + SC-REP-05 Playwright coverage; openapi.yaml updated (BLG-FEAT-38 closed) | docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl v0.6; docs/reference/openapi.yaml | None |
+| EPIC-01 | SI-04 §13 formal pre-assessment: determination PASS; 6 binding conditions documented; Arc 5 completion planning path clear (BLG-GOV-62 closed) | docs/product/decisions/si04_section13_preassessment.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-02 — SI-05 Phase 1 Implementation | Gate: SI-01 + SI-03 live ≥30 days (clears 2026-06-21); deferred at planning | BLG-GOV-67 |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (DoQ autonomous class 2026-05-31), qa_evidence_EPIC-02.md (Director of Quality agent-mediated 2026-05-31), qa_evidence_EPIC-03.md (DoQ autonomous class 2026-05-31), qa_evidence_EPIC-04.md (DoQ autonomous class 2026-05-31)
+- Deviations filed: None
+- Test scenarios referenced: tests/test_api_contracts.py (TestReportsEndpoints), tests/e2e/reports-performance-tab.spec.js (SC-REP-05a, SC-REP-05b)
 
 ---
 

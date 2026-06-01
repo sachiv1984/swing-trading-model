@@ -4,8 +4,8 @@
   "backlog_slice_source": "claude/cycles/2026-05-31__release-v4.7/stage4_backlog_slice.md",
   "invoked_utc": "2026-05-31T14:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-06-01T08:05:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-06-01T09:00:00Z",
 
   "epics": {
     "EPIC-03": {
@@ -196,7 +196,7 @@
           "assigned_to": "engine",
           "github_issue": 602,
           "branch": "exec/2026-05-31__release-v4.7/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "3eb55aa6",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -286,6 +286,7 @@
     "all_merged": true
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-06-01T09:00:00Z",
+  "status": "Sealed"
 }

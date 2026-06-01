@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-05-31__release-v4.7",
   "cycle_name": "Release Planning — v4.7 Arc 5 Completion Pre-work, Staged Verifications & Aged Backlog Clearance",
-  "status": "Executing",
+  "status": "Sprint_Complete",
   "engine": "release_planning",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-05-31__release-v4.7/stage4_backlog_slice.md",
@@ -33,7 +33,7 @@
   "sprint2_gate_confirmed_utc": "",
   "sprint2_close_utc": "",
   "verification_utc": "2026-05-31T10:00:00Z",
-  "last_sync_utc": "2026-05-31T13:00:00Z",
+  "last_sync_utc": "2026-06-01T09:00:00Z",
   "last_audit_id": "AUD-2026-05-30",
   "last_audit_utc": "2026-05-30T08:00:00Z",
   "last_audit_overall_score": 74,
