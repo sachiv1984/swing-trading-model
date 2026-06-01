@@ -1213,6 +1213,21 @@ def ensure_signals_watchlisted_status():
         conn.commit()
 
 
+def ensure_trade_history_fill_price_column():
+    """Add fill_price to trade_history (idempotent).
+
+    v1.9→v2.0 migration — slippage tracking. Copied from positions.user_fill_price at exit.
+    Nullable; existing records default null.
+    Spec: docs/specs/data_model.md §Migration v2.0
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_history ADD COLUMN IF NOT EXISTS fill_price NUMERIC(10, 4)"
+            )
+        conn.commit()
+
+
 def ensure_planned_entry_price_column():
     """Add planned_entry_price to trade_history (idempotent).
 
