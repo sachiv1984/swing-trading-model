@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-01 (v4.7 post-ship closure)
+**Last Updated:** 2026-06-01 (rebalance 2026-06-01__scheduled — DL-036; no roadmap change; SI-05 Phase 1 gate advisory; SI-04 pre-authoring BLG-SPEC-43)
 **Last rebalance:** 2026-05-27 (cycle 2026-05-27__scheduled — Extended-tier, CPS=1.15; Strategy Drift Alert acknowledged; 31 new backlog items; DL-035)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -332,7 +332,7 @@ Items in this section are sequenced and ready for planning when the current vers
 |Behavioural Drift Detection     |SI-02|H     |Requires PO-01 + PO-03 data foundation                                              |
 |Red Flag Journal                |SI-03|M     |✅ Shipped v3.9 (2026-05-22)                                                        |
 |Strategy Version Comparison     |SI-04|H     |Requires version-tagged trade history from Arc 2 onwards                            |
-|Weekly Strategy Integrity Digest|SI-05|M     |Extends existing Telegram digest (shipped v2.4); depends on SI-02 + SI-03           |
+|Weekly Strategy Integrity Digest|SI-05|M     |Extends existing Telegram digest (shipped v2.4); depends on SI-02 + SI-03. **Phase 1 gate approaching 2026-06-21** (30 days post-SI-03 ship 2026-05-22). Phase 1 plannable after gate clears. |
 
 ### Arc 6 — Performance Science (v4.0+)
 

@@ -1,7 +1,7 @@
 **Owner:** Facilitator
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-18
+**Last Updated:** 2026-06-01 (rebalance 2026-06-01__scheduled — IDEA-api-contracts-20260527-02 → BLG-SPEC-43 scored)
 
 ---
 
@@ -123,5 +123,17 @@
 
 **Horizon items requiring data density:**
 - PO-02, PO-03, PO-04, PO-05, SI-02, SI-04, SI-05, all Arc 6 items: SPS 1. Do not advance to planning until respective gates cleared.
+
+---
+
+## Rebalance 2026-06-01__scheduled — STEP 6 Update
+
+**Single advancing item scored this cycle:**
+
+| Initiative | Strat | Fin | Risk | WF | TTV | Rev | SPS | Effort | Outcome |
+|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|--------|
+| BLG-SPEC-43 SI-04 API contract pre-authoring | 4 | 2 | 4 | 5 | 3 | 5 | 1 | S | Promoted to backlog (BLG-SPEC-43) |
+
+*Facilitator note: High risk-reduction score (prevents same-sprint spec debt per BLG-GOV-55), high reversibility (document can be revised), S effort. Gate: execute when SI-04 confirmed for next release planning cycle.*
 
 **Previous highest-value new items (from 2026-03-31 session):** Golden Output CI Baseline, Backtest Stop Reconciliation, Unavailability Failure Mode — unchanged assessment.

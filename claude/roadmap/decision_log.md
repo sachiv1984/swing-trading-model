@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-27 (cycle 2026-05-27__scheduled — DL-035 appended)
+**Last Updated:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036 appended)
 
 ---
 
@@ -853,5 +853,28 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Meta-review:** NOT due — rebalance_cycles_since_meta_review resets to 1 this cycle (meta-review was conducted at 2026-05-25__scheduled, which was cycle 3 of the prior 3-cycle window).
 
 **STEP 8.6 guardrail:** 2 Challenger Type A gate modifications issued and accepted by PO: (1) BLG-OPS-37 gated on BLG-OPS-36 first monthly review complete; (2) BLG-GOV-67 gated on SI-01+SI-03 live ≥ 30 days (gate clears 2026-06-21). PASS.
+
+**Decision owner:** Product Owner
+
+---
+
+### DL-036 — 2026-06-01
+
+**Decision type:** No-change (roadmap-level) + Add (to backlog × 11)
+**Cycle:** 2026-06-01__scheduled
+**Displacement:** None at roadmap level. BLG-SPEC-43 noted that BLG-GOV-70 may defer one cycle to accommodate if needed (advisory; no formal kill).
+**Workforce impact:** 11 new backlog items: 6 governance/spec (BLG-GOV-69–74), 3 operations (BLG-OPS-46–48), 1 QA (BLG-QA-39), 1 spec (BLG-SPEC-43). All S-effort items. No immediate FTE commitment beyond existing sprint planning capacity.
+
+**Rationale:** Scheduled Standard-tier rebalance. Now horizon empty (v4.7 shipped 2026-06-01). All 13 active roadmap initiatives (PT-04, SI-02, SI-04, SI-05, PO-02–05, PS-01–05) reaffirmed as 🔥 Must continue. CPS = 1.15 (prior 1.15; Δ = 0.00 — no Strategy Drift Alert). Idea intake window IW-20260601-01 opened (44 new submissions, 22 agents; Facilitator excluded per charter); 7 prior parked ideas surfaced (1 withdrawn — BLG-FEAT-39 shipped; 4 re-parked at Parked-cycle-2; 1 terminal Parked-cycle-2 → Backlog gate-conditional BLG-GOV-71; 1 advancing IDEA-api-contracts-20260527-02 → BLG-SPEC-43). Of 44 new ideas: 10 promoted to backlog (8 directly, 2 merged); 1 rejected as duplicate; 26 parked Parked-cycle-1; 7 promoted via merging into other backlog items. IDEA-head-of-specs-20260601-02 rejected (duplicate of IDEA-api-contracts-20260527-02 which advanced). STEP 5 debate: IDEA-api-contracts-20260527-02 advanced with Challenger Clearance Statement. Net-zero: 0 roadmap additions, 0 roadmap kills. Total: 11 new backlog items. Horizon advisory: SI-05 Phase 1 gate clears 2026-06-21 (20 days); SI-04 pre-authoring contract next step.
+
+**Run tier:** Standard (CPS 1.15; delta 0.00; last scheduled rebalance 5 days ago)
+
+**Key backlog items added:** BLG-GOV-69 (P2 §13 register completion — AUD-2026-05-30-001), BLG-GOV-70 (P2 agent charter remediation — AUD-2026-05-30 Stage 3), BLG-GOV-74 (P2 AI quarterly review — BLG-GOV-63 mandate), BLG-OPS-46 (P2 build minutes monitoring), BLG-OPS-47 (P2 dependency audit), BLG-SPEC-43 (P2 SI-04 API contract — advancing IDEA-api-contracts-20260527-02). Full list in cycle_record.md §8.
+
+**Skill-Silo check:** 7/11 new items are GOV/SPEC (64%) — marginally above 60% ceiling. BLG-QA-39 and BLG-OPS-47 (execution-heavy) included to rebalance. Skill-Silo Alert resolved.
+
+**Meta-review:** NOT due — 2 cycles since last meta-review (2026-05-25__scheduled). Next due at cycle 3.
+
+**STEP 8.6 guardrail:** PASS — Condition 1 (Parked/Rejected candidates: IDEA-head-of-specs-20260601-02 rejected as duplicate + many ideas parked) and Condition 3 (single debate-pool candidate) both met.
 
 **Decision owner:** Product Owner

@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-01 (v4.7 post-ship closure — 8 items marked COMPLETE)
-**Last rebalance:** 2026-05-27 (cycle 2026-05-27__scheduled — DL-035; IW-20260527-01; 31 new items: BLG-GOV-57–68, BLG-OPS-36–41, BLG-QA-36–38, BLG-SPEC-41–42, BLG-FE-51–55, BLG-BE-22–24)
+**Last Updated:** 2026-06-01 (rebalance 2026-06-01__scheduled — DL-036; 11 new items: BLG-GOV-69–74, BLG-OPS-46–48, BLG-QA-39, BLG-SPEC-43)
+**Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -1073,6 +1073,29 @@ QA evidence files (qa_evidence_EPIC-*.md) from v3.7–v4.0 were produced under e
 
 ---
 
+### BLG-QA-39 — Coverage matrix update and v4.7 contract completeness verification
+**Priority:** P2 (Medium)
+**Type:** QA / Test Coverage + Spec Verification
+**Owner:** QA Lead; API Contracts & Documentation Owner
+**Source:** IDEA-qa-lead-20260601-01 + IDEA-api-contracts-20260601-02 — Promoted-Backlog cycle 2026-06-01__scheduled (DL-036)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v4.8
+
+**Problem**
+v4.7 shipped compliance_summary field in GET /reports/monthly-pnl (ST-03, EPIC-04). This observable field is not yet in the test coverage matrix. Additionally, v4.7 bumped the monthly P&L response schema to v0.6 — the API contract documentation should reflect this version increment.
+
+**Scope**
+- Add compliance_summary field to QA coverage matrix as an observable regression point
+- Verify that docs/specs/api_contracts/ reflects the v0.6 monthly P&L response schema
+- Document any contract gaps found
+
+**Acceptance Criteria**
+- Coverage matrix includes compliance_summary field with regression test reference
+- GET /reports/monthly-pnl v0.6 confirmed in API contract documentation
+- Any contract gaps filed as BLG-SPEC items
+
+---
+
 ## 6. Operations & Infrastructure Backlog
 
 ---
@@ -1517,6 +1540,80 @@ ST-09 (BLG-BE-16: red_flag_events severity field) was verified by code review an
 
 ---
 
+### BLG-OPS-46 — Build minutes monitoring policy
+**Priority:** P2 (Medium)
+**Type:** Operations / Platform Continuity
+**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
+**Source:** IDEA-finops-20260601-02 — Promoted-Backlog cycle 2026-06-01__scheduled (DL-036)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v4.8
+
+**Problem**
+Render CI build minutes were exhausted 2026-05-31, blocking deploys until the billing cycle reset. There is no monitoring of build minute consumption rate against the monthly allocation, and no early-warning threshold defined. Recurrence is likely in double-capacity sprints.
+
+**Scope**
+- Document monthly Render build minute allocation and consumption rate (v4.6–v4.7 actual usage)
+- Establish early-warning threshold at 80% utilisation
+- Confirm billing cycle reset date and document in ops runbook
+- Assess whether double-capacity sprint cadence requires a plan upgrade
+
+**Acceptance Criteria**
+- Monthly build minute consumption documented
+- Early-warning threshold defined and operator-visible (manual check or alert)
+- Billing cycle reset date documented
+- Ops runbook updated with monitoring procedure
+
+---
+
+### BLG-OPS-47 — Dependency audit post-v4.7
+**Priority:** P2 (Medium)
+**Type:** Operations / Security
+**Owner:** Head of Engineering; Cybersecurity & Trust Lead
+**Source:** IDEA-head-of-engineering-20260601-02 — Promoted-Backlog cycle 2026-06-01__scheduled (DL-036)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v4.8
+
+**Problem**
+Last CVE remediation was starlette upgrade (v4.0, 2026-05-25). Dependencies were not audited during v4.1–v4.7 sprints. New CVEs may have been disclosed for packages used in the application (FastAPI, psycopg2, alpaca-trade-api, anthropic SDK).
+
+**Scope**
+- Run `pip-audit` or equivalent dependency vulnerability scan against requirements.txt
+- Run `npm audit` on frontend package.json
+- Document findings; file BLG-OPS items for any HIGH/CRITICAL vulnerabilities
+- Update ANTHROPIC SDK version if patch available
+
+**Acceptance Criteria**
+- Dependency audit complete for backend (Python) and frontend (npm)
+- HIGH/CRITICAL vulnerabilities addressed or filed as P0/P1 backlog items
+- Audit findings documented in security register (if exists) or ops runbook
+
+---
+
+### BLG-OPS-48 — ANTHROPIC_API_KEY 6-month scope audit
+**Priority:** P2 (Medium)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** IDEA-cybersecurity-20260601-02 — Promoted-Backlog cycle 2026-06-01__scheduled (DL-036)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** ~v4.9 (date-gated: no earlier than 2026-11-01)
+**Provisional-Target:** Gate date: 2026-11-01 (~6 months after BLG-OPS-36 scope review in v4.2, 2026-05-28)
+
+**Problem**
+BLG-OPS-36 (ANTHROPIC_API_KEY scope review) was completed in v4.2 (2026-05-28). Security policy (BLG-OPS-38) requires periodic key scope reviews. 6-month follow-up due ~November 2026 to verify key scope remains minimal and no scope creep has occurred in the API key permissions.
+
+**Scope**
+- Review ANTHROPIC_API_KEY permissions against current usage patterns
+- Confirm key is not used outside the documented endpoints (generate-thesis, check-daily-cost)
+- Verify key rotation has occurred per BLG-OPS-38 policy
+- Document review findings
+
+**Acceptance Criteria**
+- ANTHROPIC_API_KEY scope confirmed minimal (only documented endpoints)
+- Key rotation confirmed per BLG-OPS-38 schedule
+- Review findings documented
+
+---
+
 ### BLG-SPEC-32 — External API integration spec template
 **Priority:** P3 (Low)
 **Type:** Spec Debt / Governance
@@ -1594,6 +1691,36 @@ PO-02 will generate AI output (pattern summaries, theme classifications) using a
 - Storage mechanism defined
 - Retention policy specified
 - Gate condition verified before sprint planning
+
+---
+
+### BLG-SPEC-43 — SI-04 strategy version comparison endpoint contract
+**Priority:** P2 (Medium)
+**Type:** Spec / API Contract
+**Owner:** API Contracts & Documentation Owner; Head of Specs Team
+**Source:** IDEA-api-contracts-20260527-02 — Promoted-Backlog cycle 2026-06-01__scheduled (DL-036; advanced STEP 5; Challenger clearance issued)
+**Effort:** S-M (~1–2 days)
+**Provisional-Target:** v4.8 (execute when SI-04 confirmed for next release planning cycle)
+
+**Gate criteria:** SI-04 (Strategy Version Comparison) is confirmed for the next release planning cycle. §13 PASS already recorded v4.7 (6 binding conditions).
+
+**Problem**
+SI-04 strategy version comparison will introduce GET /analytics/strategy-version-comparison. Without a pre-authored API contract, the sprint implementing SI-04 must author the contract simultaneously, creating same-sprint spec debt per BLG-GOV-55 rule. Pattern of same-sprint spec debt occurred in SI-03 (spec debt filed v4.0, cleared v4.1) and SI-01 (similar pattern). Pre-authoring before sprint planning eliminates the risk.
+
+**Scope**
+- Author GET /analytics/strategy-version-comparison contract document under docs/specs/api_contracts/
+- Define response schema: version_comparison (current strategy version vs historical, trade count per version, win_rate per version, avg_R per version, performance_delta)
+- Define query parameters: version_from, version_to, date_range
+- Define error cases: version_not_found (404), insufficient_data (422)
+- Add endpoint entry to docs/reference/openapi.yaml (placeholder — implementation not required until SI-04 sprint)
+- Review by SI-04 §13 binding conditions owner (Strategy Rules & System Intent Owner)
+
+**Acceptance Criteria**
+- API contract document created in docs/specs/api_contracts/
+- Response schema defined (pending final SI-04 implementation confirmation)
+- openapi.yaml entry added
+- §13 binding conditions owner sign-off recorded on draft contract
+- Gate condition (SI-04 in next release planning) verified before authoring begins
 
 ---
 
@@ -2102,6 +2229,152 @@ Backlog items have no explicit Blocks/Blocked-by fields. Cross-item dependencies
 - Field format defined and documented in backlog header conventions
 - Sprint planning engine updated to surface dependency chains
 - Gate condition (20+ concurrent items with dependency-blocking evidence) verified before commencing
+
+---
+
+### BLG-GOV-69 — §13 register completion (AUD-2026-05-30-001 gap)
+**Priority:** P2 (Medium)
+**Type:** Governance / Compliance
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260601-01 — Promoted-Backlog cycle 2026-06-01__scheduled (DL-036)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v4.8
+
+**Problem**
+AUD-2026-05-30-001 identified 7 governance prompts missing from §13 ARTEFACT_STATUS entries in OPERATIONAL_GUIDE.md §14: sprint_planning_prompt.md, execution_prompt.md, post_ship_closure.md, design_gate_prompt.md, roadmap_management_prompt.md, backlog_management_prompt.md, ideas_housekeeping_prompt.md. This governance integrity gap depresses the audit Governance Integrity dimension score.
+
+**Scope**
+- Add §13 ARTEFACT_STATUS entries for each of the 7 missing prompts in OPERATIONAL_GUIDE.md §14
+- Ensure entries follow existing §13 format (version, last_updated, authority)
+- Bump OPERATIONAL_GUIDE.md version per §6 governance edit checklist
+
+**Acceptance Criteria**
+- All 7 missing prompts added to §14 §13 register
+- OPERATIONAL_GUIDE.md version bumped; prompt_change_log.md appended
+- AUD-2026-05-30-001 gap confirmed closed
+
+---
+
+### BLG-GOV-70 — Agent charter header compliance remediation
+**Priority:** P2 (Medium)
+**Type:** Governance / Compliance
+**Owner:** Director of HR; Head of Specs Team
+**Source:** IDEA-director-of-hr-20260601-02 — Promoted-Backlog cycle 2026-06-01__scheduled (DL-036)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v4.8
+
+**Problem**
+AUD-2026-05-30 Stage 3 identified 2 non-compliant agent charter files:
+- api_contracts_documentation_owner.md: uses `## Role:` instead of `**Role:**`
+- backend_engineering_patterns_owner.md: uses `**Owner:**` not `**Role:**`
+
+Non-compliant headers may cause governance engines to fail role validation.
+
+**Scope**
+- Fix header in api_contracts_documentation_owner.md (`## Role:` → `**Role:**`)
+- Fix header in backend_engineering_patterns_owner.md (`**Owner:**` → `**Role:**`)
+- Verify no other agent files have non-compliant format
+
+**Acceptance Criteria**
+- Both files have compliant `**Role:**` header format
+- All other agent files verified as compliant
+- No governance engine role-validation failures after fix
+
+---
+
+### BLG-GOV-71 — Governance engine complexity assessment (gate-conditional)
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Director of HR; PMO Lead
+**Source:** IDEA-director-of-hr-20260525-02 — Promoted-Backlog cycle 2026-06-01__scheduled (DL-036; terminal 3-cycle disposition)
+**Effort:** M (~2–3 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Audit overall score drops below 70 OR a step-skip event is formally documented in an audit report.
+
+**Problem**
+Governance engine prompts have grown complex over 33 cycles. Without periodic complexity assessment, latent process friction accumulates invisibly. This assessment would identify steps that rarely trigger, candidates for simplification, and produce a governance simplification roadmap for meta-review.
+
+**Scope**
+- For each governance engine prompt: count steps, hard gates, and write operations
+- Identify steps with documented "never triggered" patterns from lessons_learnt.md history
+- Propose candidates for simplification, consolidation, or removal
+
+**Acceptance Criteria**
+- Per-engine complexity metrics documented
+- Simplification candidates enumerated with rationale
+- Gate condition verified before commencing
+
+---
+
+### BLG-GOV-72 — AUD-2026-05-30-006 gap resolution verification
+**Priority:** P2 (Medium)
+**Type:** Governance / Audit Follow-up
+**Owner:** PMO Lead
+**Source:** IDEA-pmo-lead-20260601-01 — Promoted-Backlog cycle 2026-06-01__scheduled (DL-036)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v4.8
+
+**Problem**
+AUD-2026-05-30-006 identified 3 deferred patches in v4.4 lessons_learnt_closure.md without BLG IDs — untracked in the backlog. Whether these were resolved in v4.5–v4.7 is unclear.
+
+**Scope**
+- Load v4.4 lessons_learnt_closure.md and identify the 3 patches
+- Check v4.5–v4.7 sprint records for resolution
+- If resolved: document and close; if not: file new BLG-GOV items
+
+**Acceptance Criteria**
+- v4.4 patches identified; resolution status confirmed
+- Unresolved patches filed as new BLG items; AUD-2026-05-30-006 gap closed or escalated
+
+---
+
+### BLG-GOV-73 — Scheduled rebalance cadence review
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** PMO Lead; Head of Specs Team
+**Source:** IDEA-pmo-lead-20260601-02 + IDEA-challenger-20260601-02 (merged) — Promoted-Backlog cycle 2026-06-01__scheduled (DL-036)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Advance at next meta-review cycle (rebalance_cycles_since_meta_review ≥ 3).
+
+**Problem**
+10+ scheduled rebalances since 2026-03-24. CPS stable at 1.15. Multiple consecutive scheduled rebalances have had empty Now horizons with no items advancing. The Challenger raised the concern that running full governance process when no strategic decision is pending may produce overhead without proportional value.
+
+**Scope**
+- Review scheduled rebalances since last meta-review for value produced (items advanced, horizon movements, CPS changes)
+- Assess whether a lightweight mode for no-change-expected cycles could reduce overhead
+- Produce recommendation: maintain cadence or propose modification; present at next meta-review
+
+**Acceptance Criteria**
+- Value analysis of recent scheduled rebalances documented
+- Recommendation produced and presented at next meta-review
+- Gate condition (cycles_since_meta_review ≥ 3) verified before commencing
+
+---
+
+### BLG-GOV-74 — AI feature usage quarterly review (BLG-GOV-63 mandate)
+**Priority:** P2 (Medium)
+**Type:** Governance / Compliance
+**Owner:** AI Compliance & Governance Officer; PMO Lead
+**Source:** IDEA-ai-compliance-20260601-02 — Promoted-Backlog cycle 2026-06-01__scheduled (DL-036; fulfills BLG-GOV-63 mandate)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v4.9
+**Gate date:** First review due 2026-08-29 (3 months after v4.0 AI feature ship 2026-05-29)
+
+**Problem**
+BLG-GOV-63 (shipped v4.2) requires a quarterly review of the claude_audit_log. First quarterly review due 2026-08-29. Without a backlog item it will be missed.
+
+**Scope**
+- Review claude_audit_log for the preceding quarter (v4.0–v4.8 window)
+- Assess: total thesis generation requests, model version used, override_rate, cost per use
+- Flag anomalies; document findings; file BLG items for any anomalies
+
+**Acceptance Criteria**
+- Quarterly audit log review completed; findings documented
+- Anomalies (if any) filed as BLG items
+- Next review date recorded (2026-11-29)
 
 ---
 
