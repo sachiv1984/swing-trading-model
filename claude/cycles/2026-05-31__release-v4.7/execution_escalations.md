@@ -11,7 +11,10 @@ Last Updated: 2026-05-31
 
 ## ESC-EXEC-20260531-01
 
-- **ST/EPIC item:** ST-04 (EPIC-03)
+- **Raised at:** 2026-05-31T14:00:00Z
+- **ST/EPIC item:** ST-04 — Staging Deploy Live Verification (BLG-OPS-28); EPIC-03
+- **Trigger type:** Human-Delegation
+- **Owning authority:** Infrastructure & Operations Owner
 - **SLA due-by:** 2026-06-03T14:00:00Z
 - **Blocks execution:** Yes (blocks EPIC-03 completion)
 - **Disposition:** Resolved
@@ -21,7 +24,10 @@ Last Updated: 2026-05-31
 
 ## ESC-EXEC-20260531-02
 
-- **ST/EPIC item:** ST-05 (EPIC-03)
+- **Raised at:** 2026-05-31T14:00:00Z
+- **ST/EPIC item:** ST-05 — DS-07 Migration Staging Verification (BLG-OPS-44); EPIC-03
+- **Trigger type:** Human-Delegation
+- **Owning authority:** Infrastructure & Operations Owner; Data Model & Domain Schema Owner
 - **SLA due-by:** 2026-06-03T14:00:00Z
 - **Blocks execution:** Yes (blocks EPIC-03 completion)
 - **Disposition:** Resolved
@@ -31,7 +37,10 @@ Last Updated: 2026-05-31
 
 ## ESC-EXEC-20260531-03
 
-- **ST/EPIC item:** ST-06 (EPIC-03)
+- **Raised at:** 2026-05-31T14:00:00Z
+- **ST/EPIC item:** ST-06 — Severity Field Staging Verification (BLG-OPS-45); EPIC-03
+- **Trigger type:** Human-Delegation
+- **Owning authority:** Infrastructure & Operations Owner; Data Model & Domain Schema Owner
 - **SLA due-by:** 2026-06-03T14:00:00Z
 - **Blocks execution:** Yes (blocks EPIC-03 completion)
 - **Disposition:** Resolved
@@ -41,7 +50,10 @@ Last Updated: 2026-05-31
 
 ## ESC-EXEC-20260531-04
 
-- **ST/EPIC item:** ST-07 (EPIC-03)
+- **Raised at:** 2026-05-31T14:00:00Z
+- **ST/EPIC item:** ST-07 — Render Log Retention Policy (BLG-OPS-31); EPIC-03
+- **Trigger type:** Human-Delegation
+- **Owning authority:** Infrastructure & Operations Owner
 - **SLA due-by:** 2026-06-03T14:00:00Z
 - **Blocks execution:** Yes (blocks EPIC-03 completion)
 - **Disposition:** Resolved
@@ -51,27 +63,38 @@ Last Updated: 2026-05-31
 
 ## ESC-EXEC-20260531-05
 
-- **ST/EPIC item:** ST-08 (EPIC-04)
+- **Raised at:** 2026-05-31T14:00:00Z
+- **ST/EPIC item:** ST-08 — Anthropic API Tier Cost Assessment (BLG-OPS-37); EPIC-04
+- **Trigger type:** Human-Delegation
+- **Owning authority:** FinOps & Resource Architect
 - **SLA due-by:** 2026-06-03T14:00:00Z
+- **Blocks execution:** Yes (blocks EPIC-04 completion)
 - **Disposition:** Resolved
-- **Resolution summary:** All 5 ACs pass. anthropic_api_tier_assessment.md produced. No upgrade required. Commit 5c46b3ad. 2026-05-31.
+- **Resolution summary:** FinOps & Resource Architect completed ST-08. All 5 ACs pass. `docs/ops/anthropic_api_tier_assessment.md` produced. No upgrade required; $5/month threshold defined. BLG-OPS-37 COMPLETE. Commit 5c46b3ad. Resolved 2026-05-31.
 
 
 ---
 
 ## ESC-EXEC-20260531-06
 
-- **ST/EPIC item:** ST-09 (EPIC-04)
+- **Raised at:** 2026-05-31T14:00:00Z
+- **ST/EPIC item:** ST-09 — Pre-Entry Validation Panel UX Assessment (BLG-FE-49); EPIC-04
+- **Trigger type:** Human-Delegation
+- **Owning authority:** Head of UX & Design
 - **SLA due-by:** 2026-06-03T14:00:00Z
+- **Blocks execution:** Yes (blocks EPIC-04 completion)
 - **Disposition:** Resolved
-- **Resolution summary:** All 6 ACs pass. pre_entry_panel_ux_assessment.md produced. BLG-FE-56/57/58 filed. Commit b0b970b2. 2026-05-31.
+- **Resolution summary:** Head of UX & Design completed ST-09. All 6 ACs pass. `docs/product/ux/pre_entry_panel_ux_assessment.md` produced. 3 improvement candidates filed (BLG-FE-56/57/58). No implementation committed. BLG-FE-49 COMPLETE. Commit b0b970b2. Resolved 2026-05-31.
 
 
 ---
 
 ## ESC-EXEC-20260531-07
 
-- **ST/EPIC item:** ST-01 (EPIC-01)
+- **Raised at:** 2026-05-31T14:00:00Z
+- **ST/EPIC item:** ST-01 — SI-04 §13 Formal Pre-Assessment (BLG-GOV-62); EPIC-01
+- **Trigger type:** Human-Delegation
+- **Owning authority:** Strategy Rules & System Intent Owner
 - **SLA due-by:** 2026-06-03T14:00:00Z
 - **Disposition:** Resolved
 - **Resolution summary:** All 6 ACs pass. si04_section13_preassessment.md produced. Determination: PASS. 6 binding conditions. BLG-GOV-62 COMPLETE. Commit e8695948. 2026-05-31.

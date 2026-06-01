@@ -30,7 +30,7 @@ Last Updated: 2026-05-31
 - **ST Item:** ST-05 — DS-07 Migration Staging Verification (BLG-OPS-44) — EPIC-03
 - **Assigned to:** Infrastructure & Operations Owner; Data Model & Domain Schema Owner
 - **Delegated at:** 2026-05-31T14:00:00Z
-- **What is needed:** On staging database, run `\d trade_plans` and confirm all 5 DS-07 SI-02 columns are present: `signal_id`, `risk_percent_used`, `portfolio_value_at_entry`, `pre_entry_validation_snapshot`, `effective_settings_snapshot`. Confirm 3 indexes created: `idx_trade_plans_signal`, `idx_trade_history_exit_date`, `idx_trade_history_entry_date`. Record verification date and results in a verification note. Mark BLG-OPS-44 COMPLETE in backlog. Commit to `exec/2026-05-31__release-v4.7/EPIC-03` with prefix `[EPIC-03][ST-05]`.
+- **What is needed:** Confirm all 5 DS-07 SI-02 columns and 3 indexes on staging. Record verification note. Mark BLG-OPS-44 COMPLETE.
 - **Spec reference:** docs/specs/data_model.md (DS-07 migration section)
 - **Unblock criteria:** All 5 ACs confirmed; verification note produced; BLG-OPS-44 marked COMPLETE; commit pushed to EPIC-03 branch.
 - **Commit format required:** `[EPIC-03][ST-05] Add DS-07 migration staging verification note` pushed to `exec/2026-05-31__release-v4.7/EPIC-03`
@@ -46,7 +46,7 @@ Last Updated: 2026-05-31
 - **ST Item:** ST-06 — Severity Field Staging Verification (BLG-OPS-45) — EPIC-03
 - **Assigned to:** Infrastructure & Operations Owner; Data Model & Domain Schema Owner
 - **Delegated at:** 2026-05-31T14:00:00Z
-- **What is needed:** On staging database, run `\d red_flag_events` and confirm `severity` column is present. Verify default severity assignment: `pre_entry_override` events map to `warning`, others map to `info`. Confirm no null severity values in existing events (backfill complete). Data Model & Domain Schema Owner must record sign-off in verification note. Mark BLG-OPS-45 COMPLETE in backlog. Commit to `exec/2026-05-31__release-v4.7/EPIC-03` with prefix `[EPIC-03][ST-06]`.
+- **What is needed:** Confirm severity column, default assignment, backfill on staging. Data Model & Domain Schema Owner sign-off. Mark BLG-OPS-45 COMPLETE.
 - **Spec reference:** docs/specs/data_model.md (severity column migration section)
 - **Unblock criteria:** All 5 ACs confirmed; Data Model & Domain Schema Owner sign-off recorded; BLG-OPS-45 marked COMPLETE; commit pushed to EPIC-03 branch.
 - **Commit format required:** `[EPIC-03][ST-06] Add severity field staging verification note` pushed to `exec/2026-05-31__release-v4.7/EPIC-03`
@@ -78,9 +78,13 @@ Last Updated: 2026-05-31
 - **ST Item:** ST-08 — Anthropic API Tier Cost Assessment (BLG-OPS-37) — EPIC-04
 - **Assigned to:** FinOps & Resource Architect
 - **Delegated at:** 2026-05-31T14:00:00Z
+- **What is needed:** Review Anthropic API pricing tiers against BLG-OPS-36 usage. Define upgrade threshold. Document at `docs/ops/anthropic_api_tier_assessment.md`. FinOps sign-off. Mark BLG-OPS-37 COMPLETE.
+- **Spec reference:** N/A
+- **Unblock criteria:** All 5 ACs confirmed; assessment produced; FinOps sign-off; BLG-OPS-37 COMPLETE; commit pushed.
 - **Status:** Unblocked
 - **Commit SHA:** 5c46b3ad
-- **Resolution:** All 5 ACs pass. anthropic_api_tier_assessment.md produced. No upgrade required; $5/month threshold defined. BLG-OPS-37 COMPLETE. 2026-05-31.
+- **Resolution:** All 5 ACs verified pass. `docs/ops/anthropic_api_tier_assessment.md` produced. No upgrade required; $5/month trigger for model review defined. FinOps & Resource Architect sign-off recorded. BLG-OPS-37 COMPLETE. 2026-05-31.
+- **Final Status:** Unblocked
 
 
 ---
@@ -90,9 +94,13 @@ Last Updated: 2026-05-31
 - **ST Item:** ST-09 — Pre-Entry Validation Panel UX Assessment (BLG-FE-49) — EPIC-04
 - **Assigned to:** Head of UX & Design
 - **Delegated at:** 2026-05-31T14:00:00Z
+- **What is needed:** Review PreEntryValidationPanel UX. Identify and rank improvement candidates. Produce assessment at `docs/product/ux/pre_entry_panel_ux_assessment.md`. No implementation. Head of UX & Design sign-off. Mark BLG-FE-49 COMPLETE.
+- **Spec reference:** N/A
+- **Unblock criteria:** All 6 ACs confirmed; assessment note produced; sign-off; BLG-FE-49 COMPLETE; commit pushed.
 - **Status:** Unblocked
 - **Commit SHA:** b0b970b2
-- **Resolution:** All 6 ACs pass. pre_entry_panel_ux_assessment.md produced. BLG-FE-56/57/58 filed. No implementation committed. BLG-FE-49 COMPLETE. 2026-05-31.
+- **Resolution:** All 6 ACs verified pass. `docs/product/ux/pre_entry_panel_ux_assessment.md` produced. 3 improvement candidates identified and ranked (BLG-FE-56/57/58 filed). No implementation committed. Head of UX & Design sign-off recorded. BLG-FE-49 COMPLETE. 2026-05-31.
+- **Final Status:** Unblocked
 
 
 ---
