@@ -1,0 +1,191 @@
+{
+  "cycle_id": "2026-06-01__release-v4.8",
+  "sprint_goal": "Resolve all firm v4.8 governance and operations debt items — closing the §13 OPERATIONAL_GUIDE register gap, remediating agent charter header non-compliance, establishing build minutes monitoring policy, completing the post-v4.7 dependency audit, and updating the QA coverage matrix — clearing the decks ahead of the SI-05 Phase 1 gate window (2026-06-21).",
+  "backlog_slice_source": "claude/cycles/2026-06-01__release-v4.8/stage4_backlog_slice.md",
+  "invoked_utc": "2026-06-01T17:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-06-01T17:30:00Z",
+
+  "epics": {
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-06-01__release-v4.8/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-06-01__release-v4.8/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "§13 register completion (BLG-GOV-69)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 626,
+          "branch": "exec/2026-06-01__release-v4.8/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-01T17:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/system/OPERATIONAL_GUIDE.md#§14", "claude/system/prompt_change_log.md"],
+          "delivery_note": "OPERATIONAL_GUIDE.md v4.23→v4.24: §14 self-metadata Version corrected 4.20→4.24; §13 and §14 entries for all 7 Class 6 prompts verified present. prompt_change_log.md: sprint_planning_prompt.md v3.6→v3.7 and v3.7→v3.8 entries appended.",
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "AC-01: §13 Artefact Register (lines 1286-1292) and §14 governance table rows already contain all 7 Class 6 prompts — added by v4.20 (AUD-2026-05-30 Tier 1 patches). AC-02: Each §13 entry follows format (Class 6, Owner, Phase present). AC-03: OPERATIONAL_GUIDE.md v4.24, prompt_change_log.md entries appended per CLAUDE.md §6. Additional fix: §14 self-metadata Version field was stale at 4.20 (same pattern as AUD-2026-05-27-001) — corrected to 4.24. Sprint planning OA cleared: sprint_planning_prompt.md v3.6→v3.7 (2026-05-27) and v3.7→v3.8 (2026-05-29) entries added to prompt_change_log.md."
+        },
+        "ST-02": {
+          "title": "Agent charter header compliance remediation (BLG-GOV-70)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 627,
+          "branch": "exec/2026-06-01__release-v4.8/EPIC-01",
+          "commit_sha": "1b272cfe",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-01T17:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/agents/api_contracts_documentation_owner.md", "claude/agents/backend_engineering_patterns_owner.md"],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "AC pre-met on main. All 5 non-compliant agent files (api_contracts_documentation_owner.md, backend_engineering_patterns_owner.md, data_model_domain_schema_owner.md, frontend_specs_ux_documentation_owner.md, metrics_definitions_analytics_owner.md) were fixed in v4.5 EPIC-02 ST-05 commit 1b272cfe (2026-05-30). AC-01: api_contracts_documentation_owner.md line 2 = **Role:** ✓. AC-02: backend_engineering_patterns_owner.md line 3 = **Role:** ✓. AC-03: all 23 agent files verified compliant with **Role:** format. No deviation — all ACs met. Scope note: audit BLG-GOV-70 identified 5 non-compliant files but backlog item only referenced 2; v4.5 fixed all 5 as a scope improvement. Pre-met path (LL-v2.4-P4-02) applied."
+        },
+        "ST-03": {
+          "title": "AUD-2026-05-30-006 gap resolution verification (BLG-GOV-72)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 628,
+          "branch": "exec/2026-06-01__release-v4.8/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-01T17:20:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/cycles/2026-05-29__release-v4.4/lessons_learnt_closure.md"],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "AC-01: v4.4 lessons_learnt_closure.md loaded (claude/cycles/2026-05-29__release-v4.4/lessons_learnt_closure.md). Three deferred patches WITHOUT BLG IDs identified: (1) DEL terminal-status two-phase write; (2) EPIC pr_status sync after PR open; (4) verification-class sub-criterion for BLG-GOV-19. AC-02: All 3 resolved in v4.5 execution_prompt.md v3.33→v3.34 (commit 2026-05-30, OPERATIONAL_GUIDE.md v4.21): (1) RESOLVED — §3.1.B+§3.1.D HARD GATE DEL two-phase write (OA-01); (2) RESOLVED — STEP 3.2.B step 5 pr_status sync (OA-02); (4) RESOLVED — §3.2.A BLG-GOV-19 verification-class sub-criterion LL-v4.5-EX-01 (OA-03). Item 3 (spec_references doc-creation policy, BLG-GOV-70) also resolved by same commit (LL-v4.5-EX-02). AC-03: All patches documented with v4.5 cycle reference (OPERATIONAL_GUIDE.md v4.21 changelog entry 2026-05-30). No unresolved patches remain — gap formally closed. AC-04: AUD-2026-05-30-006 gap closed."
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "not_started",
+      "branch": "exec/2026-06-01__release-v4.8/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-06-01__release-v4.8/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-04": {
+          "title": "Build minutes monitoring policy (BLG-OPS-46)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 629,
+          "branch": "exec/2026-06-01__release-v4.8/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "no prior spec applicable — document-only story creating new policy artefact"
+        },
+        "ST-05": {
+          "title": "Dependency audit post-v4.7 (BLG-OPS-47)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 630,
+          "branch": "exec/2026-06-01__release-v4.8/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "no prior spec applicable — audit findings documented in new security register entry"
+        },
+        "ST-06": {
+          "title": "Coverage matrix update and v4.7 contract verification (BLG-QA-39)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 631,
+          "branch": "exec/2026-06-01__release-v4.8/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "spec_references to be populated at execution: QA coverage matrix and api_contracts files"
+        },
+        "ST-07": {
+          "title": "SI-04 strategy version comparison endpoint contract (BLG-SPEC-43)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 632,
+          "branch": "exec/2026-06-01__release-v4.8/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Documentation-creation story (LL-v4.5-EX-02): spec_references and delivery_note to be set to created artefact path once written."
+        }
+      }
+    }
+  },
+
+  "deferred_at_planning": {
+    "ST-08": {
+      "epic": "EPIC-03",
+      "title": "SI-05 Phase 1 implementation (BLG-GOV-67)",
+      "gate_condition": "SI-01 + SI-03 live >= 30 days — clears 2026-06-21",
+      "reason": "Gate NOT MET at sprint planning seal (today 2026-06-01 < 2026-06-21)"
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": ["ST-01", "ST-02", "ST-03"],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-01", "EPIC-02"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}
