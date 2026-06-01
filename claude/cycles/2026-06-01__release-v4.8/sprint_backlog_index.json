@@ -1,0 +1,23 @@
+{
+  "cycle_id": "2026-06-01__release-v4.8",
+  "generated_utc": "2026-06-01T16:00:00Z",
+  "epics": {
+    "EPIC-01": {
+      "st_items": ["ST-01", "ST-02", "ST-03"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-01",
+        "stage4_backlog_slice.md#ST-02",
+        "stage4_backlog_slice.md#ST-03"
+      ]
+    },
+    "EPIC-02": {
+      "st_items": ["ST-04", "ST-05", "ST-06", "ST-07"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-04",
+        "stage4_backlog_slice.md#ST-05",
+        "stage4_backlog_slice.md#ST-06",
+        "stage4_backlog_slice.md#ST-07"
+      ]
+    }
+  }
+}
