@@ -1119,6 +1119,27 @@ def update_position_lifecycle_state(
         return dict(row) if row else None
 
 
+def ensure_lifecycle_columns():
+    """Add position_state, state_entered_at, state_history columns to positions (idempotent).
+
+    v2.6 migration — DS-05. All nullable except state_history which defaults to '[]'.
+    Reversible: DROP COLUMN IF EXISTS position_state, state_entered_at, state_history.
+    Spec: docs/specs/data_model.md §Migration v2.6
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE positions ADD COLUMN IF NOT EXISTS position_state VARCHAR(20)"
+            )
+            cur.execute(
+                "ALTER TABLE positions ADD COLUMN IF NOT EXISTS state_entered_at TIMESTAMP WITHOUT TIME ZONE"
+            )
+            cur.execute(
+                "ALTER TABLE positions ADD COLUMN IF NOT EXISTS state_history JSONB NOT NULL DEFAULT '[]'::JSONB"
+            )
+        conn.commit()
+
+
 def ensure_plan_vs_reality_columns():
     """Add plan_vs_reality JSONB to trade_history and planned_stop_price to trade_plans (idempotent).
 

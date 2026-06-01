@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-01 (rebalance 2026-06-01__scheduled — DL-036; 11 new items: BLG-GOV-69–74, BLG-OPS-46–48, BLG-QA-39, BLG-SPEC-43)
+**Last Updated:** 2026-06-01 (session — 2 new items added: BLG-QA-40, BLG-QA-41)
 **Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
@@ -1093,6 +1093,53 @@ v4.7 shipped compliance_summary field in GET /reports/monthly-pnl (ST-03, EPIC-0
 - Coverage matrix includes compliance_summary field with regression test reference
 - GET /reports/monthly-pnl v0.6 confirmed in API contract documentation
 - Any contract gaps filed as BLG-SPEC items
+
+---
+
+### BLG-QA-40 — Wire Phase B CI with real Postgres service to catch missing-column errors
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA Lead; Head of Engineering
+**Source:** Bug: position_state column missing from positions table, not caught by CI — 2026-06-01
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v4.9
+
+**Problem**
+The Phase A CI suite (ci-tests.yml) runs against a stub DATABASE_URL with all DB calls mocked, making missing schema columns completely invisible to CI. When `position_state`, `state_entered_at`, and `state_history` were never added to the `positions` table via a startup migration, every endpoint that queried those columns returned a 500 in production — yet all CI jobs were green. The ci-tests.yml workflow comment explicitly notes Phase B ("requires DATABASE_URL secret") was deferred; until it is wired, no automated job will catch a column referenced in SQL that doesn't exist in the DB.
+
+**Scope**
+- Spin up a Postgres service container in ci-tests.yml (GitHub Actions `services:` block)
+- Wire the `DATABASE_URL` secret for the Phase B job step
+- Enable the Phase B test run (currently commented out in the workflow)
+- Verify all existing integration tests pass against the real service container
+
+**Acceptance Criteria**
+- A PR that introduces a SQL query referencing a non-existent column causes the CI Phase B job to fail
+- Phase A (stub/mock tests) continues to run without a real DB
+- No test collection errors in Phase B
+
+---
+
+### BLG-QA-41 — Schema smoke test: assert lifecycle columns exist on positions table
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** QA Lead
+**Source:** Bug: position_state column missing from positions table, not caught by CI — 2026-06-01
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v4.9
+**Depends on:** BLG-QA-40 (Phase B CI with real Postgres required)
+
+**Problem**
+There is no test that verifies the `positions` table contains the lifecycle columns (`position_state`, `state_entered_at`, `state_history`) that `ensure_lifecycle_columns()` is supposed to create. Without this, a missing `ensure_*` call at startup — or a call that silently errors — leaves a schema gap that is only discovered when a user hits the broken endpoint. A schema introspection test would close this class of bug permanently.
+
+**Scope**
+- Add a test (in `tests/test_position_lifecycle.py` or a new `tests/test_schema.py`) that calls `ensure_lifecycle_columns()` and then queries `information_schema.columns` to assert all three columns are present on the `positions` table
+- Test must run under Phase B CI (real Postgres) and be excluded from Phase A
+
+**Acceptance Criteria**
+- Test fails if any of `position_state`, `state_entered_at`, `state_history` is absent from the `positions` table
+- Test is skipped/excluded when `DATABASE_URL` points to the stub (Phase A)
+- Test passes in the Phase B CI environment
 
 ---
 
