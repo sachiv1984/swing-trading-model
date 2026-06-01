@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.23
-**Last Updated:** 2026-05-30
+**Version:** 4.24
+**Last Updated:** 2026-06-01
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.20 |
-| Last Updated | 2026-05-30 |
+| Version | 4.24 |
+| Last Updated | 2026-06-01 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.24 | 2026-06-01 | **v4.8 ST-01 (BLG-GOV-69) — AUD-2026-05-30-001 gap verified closed; §14 self-metadata Version corrected; sprint_planning_prompt.md v3.6→v3.8 prompt_change_log entries appended.** Verification: §13 Artefact Register and §14 governance table confirmed to contain entries for all 7 Class 6 governance prompts (sprint_planning_prompt.md v3.8, execution_prompt.md v3.34, post_ship_closure.md v2.12, design_gate_prompt.md v1.4, roadmap_management_prompt.md v1.4, backlog_management_prompt.md v1.7, ideas_housekeeping_prompt.md v1.0); all were added to §13 by v4.20 and are tracked in the §14 metadata table. §14 self-metadata Version corrected from 4.20→4.24 (entries v4.21–v4.23 updated the document header and §14 engine rows but did not update the §14 self-metadata Version/Last Updated fields — same pattern as AUD-2026-05-27-001). sprint_planning_prompt.md v3.6→v3.7 and v3.7→v3.8 entries appended to prompt_change_log.md (sprint planning OA clearance). §14 Version 4.23→4.24/2026-06-01. Authority: Head of Specs Team (BLG-GOV-69, v4.8 ST-01, 2026-06-01). |
 | 4.23 | 2026-05-30 | **v4.6 ST-22 (OA-02) — roadmap_prompt.md v6.6→v6.7 next_release advisory after DL decision.** §6 source prompt header updated v6.6→v6.7. §14 Roadmap Engine Source v6.6→v6.7. Change: STEP 12.1 Global State Update — advisory added: after DL decision sets next planned release label, update `next_release` in `.claude_current_state.json` to projected version label if determinable; reduces "version not on roadmap" annotation at next release planning invocation; advisory only, no hard gate. §14 Version 4.22→4.23/2026-05-30. Authority: Head of Specs Team (OA-02, v4.5 carry-forward item 1, v4.6 ST-22). |
 | 4.22 | 2026-05-30 | **v4.6 ST-15 (BLG-GOV-32+43) — release_planning_prompt.md v2.32→v2.33 STEP 1.4 gate scan + data density checkpoint.** §6B source prompt header updated v2.32→v2.33. §14 Release Engine Source v2.32→v2.33. Change: STEP 1.4 Gate-Condition Proximity Scan added (advisory) — scans gate-conditional backlog items for proximity within 30–60 days; gate proximity table format documented; Arc 4 data density sub-check mandatory (PO-02/PO-04/SI-02 projected gate dates surfaced). §14 Version 4.21→4.22/2026-05-30. Authority: Head of Specs Team (BLG-GOV-32 + BLG-GOV-43, v4.6 ST-15). |
 | 4.21 | 2026-05-30 | **v4.5 EPIC-01 (ST-01–04) — execution_prompt.md v3.33→v3.34 four governance patches.** §8 source prompt header updated v3.33→v3.34. §14 Execution Engine Source v3.33→v3.34. Changes: (ST-01/OA-01) §3.1.B + §3.1.D HARD GATE — DEL record write split into two-phase: (a) `status = "sign_off_cleared"` at sign-off time; (b) `commit_sha` at push step; terminal `Unblocked` requires both. (ST-02/OA-02) STEP 3.2.B — step 5 added: `gh pr view <pr_number> --json state` immediately after PR open to sync `pr_status`; EPIC.status sync rule: update `"done"` → `"merged"` if state is MERGED. (ST-03/OA-03) §3.2.A autonomous class criterion 1 — verification-class sub-criterion added (LL-v4.5-EX-01): satisfiable for pre-planning sprints where all VERIFICATION is document inspection only, criteria 2–4 met. (ST-04/BLG-GOV-70) §3.1.A step 2b added (LL-v4.5-EX-02): documentation-creation stories set `spec_references` to artefact path + `delivery_note` field; `spec_references = []` non-compliant for this story type. Authority: Head of Specs Team (v4.5 EPIC-01, 2026-05-30). |
