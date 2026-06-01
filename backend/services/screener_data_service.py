@@ -460,15 +460,9 @@ def fetch_ohlcv(ticker: str, market: str, days: int = 30) -> Optional[List[OHLCV
         logger.warning("OHLCV FAILED for %s (market=%s) — no data from any source", ticker, market)
         return None
 
-    # UK tickers: Twelve Data primary → Stooq → Yahoo Finance
-    result = _twelve_data_fetch_ohlcv(ticker, days)
-    if result:
-        return result
-    logger.info("Twelve Data unavailable for %s — falling back to Stooq", ticker)
-    result = _stooq_fetch_ohlcv(ticker, days)
-    if result:
-        return result
-    logger.info("Stooq unavailable for %s — falling back to Yahoo Finance", ticker)
+    # UK tickers: Yahoo Finance only.
+    # Twelve Data requires a paid plan for LSE symbols.
+    # Stooq consistently times out from Render's IP range.
     result = _yahoo_fetch_ohlcv(ticker, days)
     if result:
         return result
