@@ -2,8 +2,8 @@
 Screener Data Service (DS-01 / ST-02)
 
 Fetches OHLCV data for screener engine consumption.
-  - US tickers: Alpaca Data API v2 (primary), Yahoo Finance (fallback)
-   - UK tickers: Twelve Data (primary), Stooq (secondary), Yahoo Finance (fallback)
+  - US tickers: Alpaca Data API v2 (primary), Yahoo Finance crumb-based (fallback)
+  - UK tickers: Yahoo Finance simple/no-crumb (sequential, 0.3s spacing in batch service)
 
 Returns normalised daily OHLCV records:
   [{"date": "YYYY-MM-DD", "open": float, "high": float, "low": float,
@@ -425,6 +425,88 @@ def _stooq_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
 
 
 # ---------------------------------------------------------------------------
+# Yahoo Finance — simple no-crumb fetch (UK screener path)
+# ---------------------------------------------------------------------------
+
+_YAHOO_SIMPLE_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "Accept": "application/json",
+}
+
+def _yahoo_fetch_ohlcv_simple(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
+    """Cookie-free Yahoo Finance fetch — mirrors the signal service approach.
+
+    No crumb, no session, no shared cooldown state. Safe to call sequentially
+    from the screener without interfering with the crumb-based path used by
+    the US fallback and earnings service.
+    """
+    url = _YAHOO_CHART_URL.format(ticker=ticker)
+    # Use timestamp range (same as signal service) rather than range=Nd
+    # so we get a predictable window even near market open.
+    from datetime import timedelta
+    end_dt = datetime.now(tz=timezone.utc)
+    start_dt = end_dt - timedelta(days=max(days, 30) + 10)  # small buffer for weekends
+    params = {
+        "interval": "1d",
+        "period1": int(start_dt.timestamp()),
+        "period2": int(end_dt.timestamp()),
+    }
+    t0 = _time.monotonic()
+    try:
+        resp = requests.get(url, params=params, headers=_YAHOO_SIMPLE_HEADERS, timeout=15)
+        latency = (_time.monotonic() - t0) * 1000
+
+        if resp.status_code != 200:
+            record_external_api_call("yahoo_finance", False, latency)
+            logger.warning("Yahoo Finance (simple) HTTP %d for %s", resp.status_code, ticker)
+            return None
+
+        data = resp.json()
+        result_block = data.get("chart", {}).get("result")
+        if not result_block:
+            record_external_api_call("yahoo_finance", False, latency)
+            return None
+
+        r = result_block[0]
+        timestamps = r.get("timestamp", [])
+        quote = r["indicators"]["quote"][0]
+        currency = r.get("meta", {}).get("currency", "")
+        scale = 100.0 if currency == "GBp" else 1.0
+
+        records = []
+        for i, ts in enumerate(timestamps):
+            try:
+                c = quote["close"][i]
+                if c is None:
+                    continue
+                records.append({
+                    "date": datetime.utcfromtimestamp(ts).strftime("%Y-%m-%d"),
+                    "open": (quote["open"][i] or c) / scale,
+                    "high": (quote["high"][i] or c) / scale,
+                    "low": (quote["low"][i] or c) / scale,
+                    "close": c / scale,
+                    "volume": int(quote.get("volume", [0] * (i + 1))[i] or 0),
+                })
+            except (KeyError, IndexError, TypeError):
+                continue
+
+        if not records:
+            record_external_api_call("yahoo_finance", False, latency)
+            return None
+
+        records = records[-days:] if len(records) > days else records
+        record_external_api_call("yahoo_finance", True, latency)
+        logger.info("OHLCV OK via Yahoo Finance for %s (%d bars)", ticker, len(records))
+        return records
+
+    except requests.RequestException as exc:
+        latency = (_time.monotonic() - t0) * 1000
+        record_external_api_call("yahoo_finance", False, latency)
+        logger.warning("Yahoo Finance (simple) request error for %s: %s", ticker, exc)
+        return None
+
+
+# ---------------------------------------------------------------------------
 # Public interface
 # ---------------------------------------------------------------------------
 
@@ -460,10 +542,13 @@ def fetch_ohlcv(ticker: str, market: str, days: int = 30) -> Optional[List[OHLCV
         logger.warning("OHLCV FAILED for %s (market=%s) — no data from any source", ticker, market)
         return None
 
-    # UK tickers: Yahoo Finance only.
+    # UK tickers: simple no-crumb Yahoo Finance fetch.
     # Twelve Data requires a paid plan for LSE symbols.
     # Stooq consistently times out from Render's IP range.
-    result = _yahoo_fetch_ohlcv(ticker, days)
+    # The crumb-based _yahoo_fetch_ohlcv shares cooldown state with the earnings
+    # service and gets 429'd before the screener even starts; the simple path
+    # uses no session/crumb and doesn't interfere with that state.
+    result = _yahoo_fetch_ohlcv_simple(ticker, days)
     if result:
         return result
     logger.warning("OHLCV FAILED for %s (market=%s) — no data from any source", ticker, market)
