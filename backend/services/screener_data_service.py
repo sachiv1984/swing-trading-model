@@ -292,7 +292,15 @@ def _twelve_data_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecor
 
         if resp.status_code != 200:
             record_external_api_call("twelve_data", False, latency)
-            logger.warning("Twelve Data HTTP %d for %s", resp.status_code, ticker)
+            try:
+                body = resp.json()
+                logger.warning(
+                    "Twelve Data HTTP %d for %s — code=%s msg=%s",
+                    resp.status_code, ticker,
+                    body.get("code", "?"), body.get("message", resp.text[:200]),
+                )
+            except Exception:
+                logger.warning("Twelve Data HTTP %d for %s — %s", resp.status_code, ticker, resp.text[:200])
             return None
 
         data = resp.json()
