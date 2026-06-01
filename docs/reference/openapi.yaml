@@ -4140,5 +4140,89 @@ components:
                   status: { type: string, example: error }
                   message: { type: string, example: "Market data service is currently unavailable. Please try again later." }
 
+  /analytics/strategy-version-comparison:
+    get:
+      tags: [Analytics]
+      summary: "[PLACEHOLDER — SI-04] Get strategy version performance comparison"
+      description: |
+        PRE-SPRINT PLACEHOLDER — implementation pending SI-04 sprint.
+        Compares trade performance metrics across two strategy version labels.
+        Requires: version_from, version_to query params; optional date_range filter.
+        Returns: trade_count, win_rate, avg_R, performance_delta per version plus comparison_summary.
+        §13 binding conditions: 6 conditions cleared v4.7 (read-only, closed trades, no execution feedback).
+        Canonical contract: docs/specs/api_contracts/strategy_version_comparison_contract.md v0.1.0
+      parameters:
+        - name: version_from
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Baseline strategy version label
+        - name: version_to
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Comparison strategy version label (must be later than version_from)
+        - name: date_range
+          in: query
+          required: false
+          schema:
+            type: string
+          description: "ISO 8601 date range filter: YYYY-MM-DD/YYYY-MM-DD"
+      responses:
+        "200":
+          description: Strategy version comparison metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version_from: { type: string }
+                  version_to: { type: string }
+                  date_range: { type: string, nullable: true }
+                  version_from_metrics:
+                    type: object
+                    properties:
+                      trade_count: { type: integer }
+                      win_rate: { type: number }
+                      avg_R: { type: number }
+                      performance_delta: { type: number, nullable: true }
+                  version_to_metrics:
+                    type: object
+                    properties:
+                      trade_count: { type: integer }
+                      win_rate: { type: number }
+                      avg_R: { type: number }
+                      performance_delta: { type: number }
+                  comparison_summary:
+                    type: object
+                    properties:
+                      win_rate_delta: { type: number }
+                      avg_R_delta: { type: number }
+                      trade_count_delta: { type: integer }
+                      assessment: { type: string, enum: [Improved, Degraded, "Insufficient data"] }
+        "404":
+          description: Strategy version not found in version registry
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: error }
+                  code: { type: string, example: version_not_found }
+                  message: { type: string }
+                  missing_version: { type: string }
+        "422":
+          description: Insufficient data or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: error }
+                  code: { type: string, enum: [insufficient_data, invalid_date_range, version_order_error] }
+                  message: { type: string }
+
 security:
   - ApiKey: []
