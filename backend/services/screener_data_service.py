@@ -55,6 +55,10 @@ def _refresh_yahoo_crumb() -> Optional[str]:
         # Skip the network call entirely while in cooldown
         if _time.monotonic() < _yahoo_cooldown_until:
             return None
+        # If another thread already refreshed the crumb while we waited for the
+        # lock, reuse it rather than firing another HTTP request (thundering herd).
+        if _yahoo_crumb is not None:
+            return _yahoo_crumb
         sess = requests.Session()
         try:
             sess.get(_YAHOO_CONSENT_URL, headers=_YAHOO_HEADERS, timeout=10)
