@@ -23,6 +23,9 @@ logger = logging.getLogger(__name__)
 ALPACA_BASE_URL = "https://data.alpaca.markets"
 ALPACA_API_KEY = os.environ.get("APCA_API_KEY_ID", "")
 ALPACA_API_SECRET = os.environ.get("APCA_API_SECRET_KEY", "")
+# iex = IEX exchange feed (free, limited coverage). Override with ALPACA_DATA_FEED=sip
+# for paid plans which have full SIP consolidated tape coverage.
+ALPACA_DATA_FEED = os.environ.get("ALPACA_DATA_FEED", "iex")
 
 # API version is pinned per BLG-SPEC-22
 _BARS_PATH = "/v2/stocks/{symbol}/bars"
@@ -56,7 +59,7 @@ def get_ohlcv_bars(symbol: str, limit: int = 30, timeframe: str = "1Day") -> Opt
         return None
 
     url = ALPACA_BASE_URL + _BARS_PATH.format(symbol=symbol)
-    params = {"timeframe": timeframe, "limit": limit, "feed": "iex"}
+    params = {"timeframe": timeframe, "limit": limit, "feed": ALPACA_DATA_FEED}
     headers = _alpaca_headers()
 
     max_attempts = 5
@@ -68,7 +71,10 @@ def get_ohlcv_bars(symbol: str, limit: int = 30, timeframe: str = "1Day") -> Opt
             if resp.status_code == 200:
                 data = resp.json()
                 bars = data.get("bars") or []
-                logger.info("Alpaca bars fetched for %s: %d bars", symbol, len(bars))
+                if bars:
+                    logger.info("Alpaca bars fetched for %s: %d bars (feed=%s)", symbol, len(bars), ALPACA_DATA_FEED)
+                else:
+                    logger.warning("Alpaca returned 0 bars for %s (feed=%s) — symbol may not trade on this feed", symbol, ALPACA_DATA_FEED)
                 return bars or None
             elif resp.status_code == 429:
                 if attempt < max_attempts:
