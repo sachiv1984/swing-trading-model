@@ -1030,7 +1030,7 @@ def get_grace_period_alerts_endpoint():
                     SELECT p.id, p.ticker, p.market, p.position_state, p.state_entered_at,
                            p.entry_date, p.entry_price, p.atr, p.initial_stop,
                            tp.id AS trade_plan_id,
-                           tp.setup_thesis, tp.entry_rationale, tp.stop_level, tp.r_target
+                           tp.setup_thesis, tp.entry_rationale, tp.planned_stop_price AS stop_level, tp.r_target
                     FROM positions p
                     LEFT JOIN trade_plans tp ON tp.position_id = p.id
                     WHERE p.portfolio_id = %s AND p.status = 'open'
