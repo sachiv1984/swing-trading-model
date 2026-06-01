@@ -4,8 +4,8 @@
   "backlog_slice_source": "claude/cycles/2026-06-01__release-v4.8/stage4_backlog_slice.md",
   "invoked_utc": "2026-06-01T17:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-06-01T21:00:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-06-01T21:30:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -78,10 +78,10 @@
       }
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-01__release-v4.8/EPIC-02",
       "pr_number": 634,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-01__release-v4.8/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
@@ -184,11 +184,11 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01"],
-    "epics_pending": ["EPIC-02"],
-    "all_merged": false
+    "epics_merged": ["EPIC-01", "EPIC-02"],
+    "epics_pending": [],
+    "all_merged": true
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-06-01T21:30:00Z"
 }

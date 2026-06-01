@@ -1,9 +1,40 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 3.3
+**Version:** 3.4
 **Last Updated:** 2026-06-01
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-06-01__release-v4.8
+**Date:** 2026-06-01
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | §13 OPERATIONAL_GUIDE Artefact Register — all 7 Class 6 governance prompts verified present in §13 and §14; §14 self-metadata Version corrected 4.20→4.24; sprint_planning_prompt.md v3.6→v3.8 prompt_change_log entries appended (OA clearance) | `claude/system/OPERATIONAL_GUIDE.md` v4.24 | None |
+| EPIC-01 | Agent charter header compliance — all 23 agent files verified compliant with `**Role:**` header format; 5 non-compliant files fixed in v4.5 (BLG-GOV-70 pre-met) | `claude/agents/` (23 files, compliance verified) | None |
+| EPIC-01 | AUD-2026-05-30-006 gap closed — 3 deferred v4.4 patches (DEL two-phase write, PR status sync, BLG-GOV-19 verification-class sub-criterion) confirmed resolved in v4.5 execution_prompt.md v3.33→v3.34 | `claude/cycles/2026-05-29__release-v4.4/lessons_learnt_closure.md` | None |
+| EPIC-02 | Build minutes monitoring policy v1.0 — monthly allocation 400 min, 80% threshold 320 min, billing reset 1st of month, double-capacity assessment (upgrade recommended for v4.9) | `docs/operations/build_minutes_monitoring_policy.md` | None |
+| EPIC-02 | Security register v1.0 — pip-audit clean, npm audit 45 vulns (0 critical, 21 HIGH all devDep react-scripts chain), Anthropic SDK 0.40.0→0.105.2 available; BLG-OPS-49 (P1) and BLG-OPS-50 (P2) filed | `docs/security/security_register.md` | None |
+| EPIC-02 | Coverage matrix v1.1 — v4.3–v4.7 sections added, compliance_summary regression point (SC-REP-05 reference); GET /reports/monthly-pnl v0.6 contract verified in reports_endpoints.md | `docs/qa/playwright_coverage_matrix.md` | None |
+| EPIC-02 | SI-04 strategy version comparison endpoint contract v0.1.0 — GET /analytics/strategy-version-comparison pre-sprint spec; query params, response schema, error cases, 6 §13 binding conditions documented; openapi.yaml placeholder added | `docs/specs/api_contracts/strategy_version_comparison_contract.md` | None |
+| Sprint Close | execution_prompt.md v3.35 — STEP 3.1.A step 4a added (LL-v4.8-EX-01): commit SHA record immediately after push; resolves first recurrence of null commit_sha pattern | `claude/system/execution_prompt.md` v3.35 | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-08 (EPIC-03) — SI-05 Phase 1 implementation (BLG-GOV-67) | Gate NOT MET at sprint planning seal: SI-01 + SI-03 live ≥ 30 days clears 2026-06-21; to be scoped in v4.9 | backlog.md |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (DoQ autonomous class, 2026-06-01), qa_evidence_EPIC-02.md (DoQ autonomous class, 2026-06-01)
+- Deviations filed: None (spec deviations); BLG-OPS-49 (P1 npm HIGH devDep) and BLG-OPS-50 (P2 Anthropic SDK upgrade) filed as security audit findings
+- Test scenarios referenced: None — all stories documentation/policy/contract creation only
 
 ---
 

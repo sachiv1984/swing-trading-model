@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.24
+**Version:** 4.25
 **Last Updated:** 2026-06-01
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.34)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.35)
 
 ### 8.1 Invocation
 
@@ -1454,7 +1454,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.24 |
+| Version | 4.25 |
 | Last Updated | 2026-06-01 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
@@ -1467,7 +1467,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.33 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.8 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.34 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.35 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.4 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.9 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.25 | 2026-06-01 | **v4.8 Sprint Close — execution_prompt.md v3.34→v3.35 commit SHA record substep (LL-v4.8-EX-01).** §8 source prompt header updated v3.34→v3.35. §14 Execution Engine Source v3.34→v3.35. Change: STEP 3.1.A step 4a added — immediately after push, run `git rev-parse HEAD` and write the SHA to `execution_state.json` for all covered stories; do not defer to sprint close. Resolves first recurrence of null commit_sha pattern (first occurrence v4.7 Phase 3, monitor carried to v4.8, recurred in EPIC-02 autonomous batch commit). §14 Version 4.24→4.25/2026-06-01. Authority: Head of Specs Team (LL-v4.8-EX-01, v4.8 sprint close lessons learnt). |
 | 4.24 | 2026-06-01 | **v4.8 ST-01 (BLG-GOV-69) — AUD-2026-05-30-001 gap verified closed; §14 self-metadata Version corrected; sprint_planning_prompt.md v3.6→v3.8 prompt_change_log entries appended.** Verification: §13 Artefact Register and §14 governance table confirmed to contain entries for all 7 Class 6 governance prompts (sprint_planning_prompt.md v3.8, execution_prompt.md v3.34, post_ship_closure.md v2.12, design_gate_prompt.md v1.4, roadmap_management_prompt.md v1.4, backlog_management_prompt.md v1.7, ideas_housekeeping_prompt.md v1.0); all were added to §13 by v4.20 and are tracked in the §14 metadata table. §14 self-metadata Version corrected from 4.20→4.24 (entries v4.21–v4.23 updated the document header and §14 engine rows but did not update the §14 self-metadata Version/Last Updated fields — same pattern as AUD-2026-05-27-001). sprint_planning_prompt.md v3.6→v3.7 and v3.7→v3.8 entries appended to prompt_change_log.md (sprint planning OA clearance). §14 Version 4.23→4.24/2026-06-01. Authority: Head of Specs Team (BLG-GOV-69, v4.8 ST-01, 2026-06-01). |
 | 4.23 | 2026-05-30 | **v4.6 ST-22 (OA-02) — roadmap_prompt.md v6.6→v6.7 next_release advisory after DL decision.** §6 source prompt header updated v6.6→v6.7. §14 Roadmap Engine Source v6.6→v6.7. Change: STEP 12.1 Global State Update — advisory added: after DL decision sets next planned release label, update `next_release` in `.claude_current_state.json` to projected version label if determinable; reduces "version not on roadmap" annotation at next release planning invocation; advisory only, no hard gate. §14 Version 4.22→4.23/2026-05-30. Authority: Head of Specs Team (OA-02, v4.5 carry-forward item 1, v4.6 ST-22). |
 | 4.22 | 2026-05-30 | **v4.6 ST-15 (BLG-GOV-32+43) — release_planning_prompt.md v2.32→v2.33 STEP 1.4 gate scan + data density checkpoint.** §6B source prompt header updated v2.32→v2.33. §14 Release Engine Source v2.32→v2.33. Change: STEP 1.4 Gate-Condition Proximity Scan added (advisory) — scans gate-conditional backlog items for proximity within 30–60 days; gate proximity table format documented; Arc 4 data density sub-check mandatory (PO-02/PO-04/SI-02 projected gate dates surfaced). §14 Version 4.21→4.22/2026-05-30. Authority: Head of Specs Team (BLG-GOV-32 + BLG-GOV-43, v4.6 ST-15). |

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.34
-**Last Updated:** 2026-05-30
+**Version:** 3.35
+**Last Updated:** 2026-06-01
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -537,6 +537,7 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 
 3. Commit to the EPIC branch (format: see STEP 3 header schema).
 4. Push to `exec/<cycle_id>/EPIC-xx`.
+4a. **Commit SHA record (LL-v4.8-EX-01):** Immediately after push, run `git rev-parse HEAD` to obtain the pushed commit SHA. Write it to `execution_state.json` for this ST item: `epics.<EPIC-xx>.stories.<ST-xx>.commit_sha`. For batch commits covering multiple stories, write the same SHA to all covered story entries. Do not defer this write to sprint close — an unrecorded SHA cannot be recovered if the branch advances before seal.
 5. `governance_sync.yml` closes the GitHub issue automatically on push.
 6. Verify issue is closed (re-check after push).
 
