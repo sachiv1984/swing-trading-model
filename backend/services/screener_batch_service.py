@@ -11,6 +11,7 @@ import json
 import logging
 import os
 import threading
+import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
@@ -269,8 +270,33 @@ def run_screener(ticker_universe: Optional[List[str]] = None,
             )
             return record, True
 
+        # Split UK and US so we can use different fetch strategies.
+        # UK: sequential with inter-request delay — Yahoo Finance rate-limits hard
+        #     under concurrent load; 0.3s spacing keeps it under the threshold.
+        # US: concurrent thread pool — Alpaca handles concurrency fine.
+        def _is_uk(row: Dict) -> bool:
+            m = row.get("market") or ("UK" if row["ticker"].upper().endswith(".L") else "US")
+            return m == "UK"
+
+        uk_rows = [r for r in ticker_rows if _is_uk(r)]
+        us_rows = [r for r in ticker_rows if not _is_uk(r)]
+
+        for row in uk_rows:
+            time.sleep(0.3)
+            try:
+                record, had_ohlcv = _process_row_tracked(row)
+                if not had_ohlcv:
+                    ohlcv_failures += 1
+                else:
+                    tickers_evaluated += 1
+                    if record is not None:
+                        results.append(record)
+            except Exception as exc:
+                logger.warning("Screener batch error for %s: %s", row.get("ticker"), exc)
+                ohlcv_failures += 1
+
         with ThreadPoolExecutor(max_workers=YF_MAX_CONCURRENT) as executor:
-            futures = {executor.submit(_process_row_tracked, row): row for row in ticker_rows}
+            futures = {executor.submit(_process_row_tracked, row): row for row in us_rows}
             for future in as_completed(futures):
                 row = futures[future]
                 try:
