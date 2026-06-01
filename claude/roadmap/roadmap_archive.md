@@ -1,13 +1,30 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-31
+**Last Updated:** 2026-06-01
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v4.7 — Arc 5 Completion Pre-work, Staged Verifications & Aged Backlog Clearance
+
+**Original roadmap location:** §1 Current Version / Release Summary §8
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-01
+**Shipped version:** v4.7
+**Cycle reference:** 2026-05-31__release-v4.7
+**Verification report:** claude/cycles/2026-05-31__release-v4.7/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-01
+
+### Original Roadmap Entry
+
+v4.7 Arc 5 Completion Pre-work, Staged Verifications & Aged Backlog Clearance. EPIC-01 SI-04 §13 Formal Pre-Assessment: §13 review applied; determination PASS; 6 binding conditions documented; Arc 5 completion path cleared; si04_section13_preassessment.md produced (BLG-GOV-62). EPIC-02 Arc 5 Compliance Score in Monthly P&L: compliance_summary field (validation_pass_rate, override_count, red_flag_events_count, most_frequent_rule_breach) added to GET /reports/monthly-pnl; field renamed strategy_compliance → compliance_summary; 2 unit tests + SC-REP-05a/05b Playwright scenarios (BLG-FEAT-38). EPIC-03 Staging Verifications & Ops Housekeeping: RENDER_STAGING_DEPLOY_HOOK confirmed; code-change deploy and docs-only filter verified (BLG-OPS-28); all 5 DS-07 SI-02 columns and 3 indexes confirmed on staging (BLG-OPS-44); severity column, default assignment, backfill confirmed (BLG-OPS-45); Render 7-day log retention documented; database audit tables confirmed durable; policy: no additional archiving required (BLG-OPS-31). EPIC-04 Cost & UX Assessments: Anthropic API no upgrade required; $5/month trigger threshold defined (BLG-OPS-37); PreEntryValidationPanel UX reviewed; 3 improvement candidates ranked; BLG-FE-56/57/58 filed (BLG-FE-49). 8/8 firm stories delivered. Zero spec deviations. Verified 2026-06-01. completed_cycle_count = 33.
 
 ---
 

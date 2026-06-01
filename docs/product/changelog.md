@@ -3,9 +3,40 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-31
+**Last Updated:** 2026-06-01
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v4.7 — Arc 5 Completion Pre-work, Staged Verifications & Aged Backlog Clearance — 2026-06-01
+Cycle: 2026-05-31__release-v4.7
+Verified: Verified
+Verification report: claude/cycles/2026-05-31__release-v4.7/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | SI-04 §13 Formal Pre-Assessment — §13 review applied; determination PASS; 6 binding conditions documented; Arc 5 completion path cleared (ST-01) | docs/product/decisions/si04_section13_preassessment.md (new) |
+| EPIC-02 | Arc 5 Compliance Score in Monthly P&L Report — compliance_summary field (validation_pass_rate, override_count, red_flag_events_count, most_frequent_rule_breach) added to GET /reports/monthly-pnl; field renamed strategy_compliance → compliance_summary; 2 unit tests + SC-REP-05a/05b Playwright scenarios (ST-03) | docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl (v0.6); docs/reference/openapi.yaml |
+| EPIC-03 | Staging Verifications & Ops Housekeeping — RENDER_STAGING_DEPLOY_HOOK confirmed; code-change deploy and docs-only filter verified (ST-04); all 5 DS-07 SI-02 columns and 3 indexes confirmed on staging (ST-05); severity column, default assignment, backfill confirmed (ST-06); Render 7-day log retention documented; database audit tables confirmed durable (ST-07) | docs/ops/staging_deploy_verification.md; docs/ops/ds07_migration_staging_verification.md; docs/ops/severity_field_staging_verification.md; docs/specs/data_model.md; docs/ops/render_log_retention_policy.md |
+| EPIC-04 | Cost & UX Assessments — no Anthropic API tier upgrade required; $5/month trigger threshold defined (ST-08); PreEntryValidationPanel UX reviewed; 3 improvement candidates ranked; BLG-FE-56/57/58 filed (ST-09) | docs/ops/anthropic_api_tier_assessment.md; docs/product/ux/pre_entry_panel_ux_assessment.md |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01] SI-04 §13 Formal Pre-Assessment (BLG-GOV-62) — §13 gate PASS; Arc 5 SI-04 sprint planning now unblocked
+- [ST-03] Arc 5 Compliance Score in Monthly P&L (BLG-FEAT-38) — additive compliance_summary section in monthly P&L report; aged 3+ cycles
+- [ST-04] Staging Deploy Live Verification (BLG-OPS-28) — Render staging deploy workflow confirmed end-to-end; aged 4+ cycles
+- [ST-05] DS-07 Migration Staging Verification (BLG-OPS-44) — v4.6 staging debt closed; all SI-02 schema changes confirmed on staging
+- [ST-06] Severity Field Staging Verification (BLG-OPS-45) — v4.6 staging debt closed; severity column confirmed with correct backfill
+- [ST-07] Render Log Retention Policy (BLG-OPS-31) — policy documented; database tables sufficient; no additional archiving required
+- [ST-08] Anthropic API Tier Cost Assessment (BLG-OPS-37) — cost threshold defined; free tier adequate at current usage
+- [ST-09] Pre-Entry Validation Panel UX Assessment (BLG-FE-49) — 3 UX improvement candidates filed as BLG-FE-56/57/58
+
+Sign-off: Product Owner — 2026-06-01
+QA sign-off: Director of Quality — 2026-06-01
 
 ---
 

@@ -1,11 +1,163 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-31
+**Last Updated:** 2026-06-01
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-GOV-62 — SI-04 §13 formal pre-assessment
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-06-01
+**Shipped in:** v4.7
+**Evidence:** docs/product/changelog.md#v47; claude/cycles/2026-05-31__release-v4.7/verification_report.md
+
+### BLG-GOV-62 — SI-04 §13 formal pre-assessment
+**Priority:** P1 (High)
+**Type:** Governance / §13 Compliance
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Completed:** ST-01, EPIC-01, cycle 2026-05-31__release-v4.7 — si04_section13_preassessment.md produced; determination: PASS; 6 binding conditions; Strategy Rules & System Intent Owner sign-off
+
+---
+
+### BLG-OPS-45 — red_flag_events severity field staging verification (v4.6 delivery)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-06-01
+**Shipped in:** v4.7
+**Evidence:** docs/product/changelog.md#v47; claude/cycles/2026-05-31__release-v4.7/verification_report.md
+
+### BLG-OPS-45 — red_flag_events severity field staging verification (v4.6 delivery)
+**Priority:** P3 (Low)
+**Type:** Operations / Staging Verification
+**Owner:** Infrastructure & Operations Owner; Data Model & Domain Schema Owner
+**Source:** v4.6 delivery verification — ST-09 AC-01/02/03 deferred to Phase 4 (staging-only ACs); AC-08 pending
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** v4.7
+**Completed:** ST-06, EPIC-03, cycle 2026-05-31__release-v4.7 — severity_field_staging_verification.md produced; severity column confirmed; assignment rule verified; backfill confirmed zero nulls; Infrastructure & Operations Owner + Data Model & Domain Schema Owner sign-off; AC-08 cleared
+
+---
+
+### BLG-OPS-44 — DS-07 migration staging verification (v4.6 delivery)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-06-01
+**Shipped in:** v4.7
+**Evidence:** docs/product/changelog.md#v47; claude/cycles/2026-05-31__release-v4.7/verification_report.md
+
+### BLG-OPS-44 — DS-07 migration staging verification (v4.6 delivery)
+**Priority:** P3 (Low)
+**Type:** Operations / Staging Verification
+**Owner:** Infrastructure & Operations Owner; Data Model & Domain Schema Owner
+**Source:** v4.6 delivery verification — ST-01 AC-05 deferred to Phase 4 (staging-only AC)
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** v4.7
+**Completed:** ST-05, EPIC-03, cycle 2026-05-31__release-v4.7 — ds07_migration_staging_verification.md produced; all 5 SI-02 columns confirmed; 3 indexes confirmed; Infrastructure & Operations Owner + Data Model & Domain Schema Owner sign-off
+
+---
+
+### BLG-OPS-37 — Anthropic API tier cost assessment
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-01
+**Shipped in:** v4.7
+**Evidence:** docs/product/changelog.md#v47; claude/cycles/2026-05-31__release-v4.7/verification_report.md
+
+### BLG-OPS-37 — Anthropic API tier cost assessment
+**Priority:** P2 (Medium)
+**Type:** Operations / Cost Planning
+**Owner:** FinOps & Resource Architect
+**Source:** IDEA-finops-20260527-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Completed:** ST-08, EPIC-04, cycle 2026-05-31__release-v4.7 — anthropic_api_tier_assessment.md produced; no upgrade required; upgrade threshold defined at $5/month; FinOps & Resource Architect sign-off
+
+---
+
+### BLG-OPS-31 — Render application log retention policy
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-01
+**Shipped in:** v4.7
+**Evidence:** docs/product/changelog.md#v47; claude/cycles/2026-05-31__release-v4.7/verification_report.md
+
+### BLG-OPS-31 — Render application log retention policy
+**Priority:** P2 (Medium)
+**Type:** Operations / Data Management
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260525-02 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Completed:** ST-07, EPIC-03, cycle 2026-05-31__release-v4.7 — render_log_retention_policy.md produced; Render 7-day retention documented; database audit tables confirmed durable; decision: Render logs + database tables sufficient; Infrastructure & Operations Owner sign-off
+
+---
+
+### BLG-OPS-28 — Staging deploy live verification (ST-09 staging-only AC)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-01
+**Shipped in:** v4.7
+**Evidence:** docs/product/changelog.md#v47; claude/cycles/2026-05-31__release-v4.7/verification_report.md
+
+### BLG-OPS-28 — Staging deploy live verification (ST-09 staging-only AC)
+**Priority:** P2 (Medium)
+**Type:** Operations / CI/CD
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-09 staging-only AC — v4.0 sprint execution 2026-05-24
+**Effort:** XS (~0.5 day)
+**Provisional-Target:** v4.1
+**Completed:** ST-04, EPIC-03, cycle 2026-05-31__release-v4.7 — staging_deploy_verification.md produced; RENDER_STAGING_DEPLOY_HOOK confirmed; code-change deploy verified; docs-only filter verified; Infrastructure & Operations Owner sign-off
+
+---
+
+### BLG-FE-49 — Pre-entry validation panel UX assessment
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-01
+**Shipped in:** v4.7
+**Evidence:** docs/product/changelog.md#v47; claude/cycles/2026-05-31__release-v4.7/verification_report.md
+
+### BLG-FE-49 — Pre-entry validation panel UX assessment
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** IDEA-head-of-ux-20260525-02 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Completed:** ST-09, EPIC-04, cycle 2026-05-31__release-v4.7 — pre_entry_panel_ux_assessment.md produced; 3 improvement candidates filed BLG-FE-56/57/58; Head of UX & Design sign-off; no implementation committed
+
+---
+
+### BLG-FEAT-38 — Arc 5 compliance score in monthly P&L report
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-01
+**Shipped in:** v4.7
+**Evidence:** docs/product/changelog.md#v47; claude/cycles/2026-05-31__release-v4.7/verification_report.md
+
+### BLG-FEAT-38 — Arc 5 compliance score in monthly P&L report
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Reporting
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** M (~2 days)
+**Provisional-Target:** v4.1
+**Completed:** ST-03, EPIC-02, cycle 2026-05-31__release-v4.7 — compliance_summary field added to GET /reports/monthly-pnl; reports_endpoints.md v0.5→v0.6; openapi.yaml updated; 2 unit tests + SC-REP-05a/05b Playwright scenarios pass
 
 ---
 ---
