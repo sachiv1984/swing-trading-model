@@ -13,6 +13,29 @@ from tests.mock_harness.api_mock_harness import ScreenerMockHarness, AlpacaMockH
 
 
 # ---------------------------------------------------------------------------
+# Reset Yahoo Finance module state before every test so cooldown and
+# consecutive-401 counters from one test cannot affect subsequent tests.
+# ---------------------------------------------------------------------------
+
+@pytest.fixture(autouse=True)
+def reset_yahoo_state():
+    import services.screener_data_service as svc
+    svc._yahoo_crumb = None
+    svc._yahoo_session = None
+    svc._yahoo_cooldown_until = 0.0
+    svc._crumb_consecutive_401s = 0
+    if hasattr(svc._yahoo_fetch_ohlcv, "_consecutive_401"):
+        del svc._yahoo_fetch_ohlcv._consecutive_401
+    yield
+    svc._yahoo_crumb = None
+    svc._yahoo_session = None
+    svc._yahoo_cooldown_until = 0.0
+    svc._crumb_consecutive_401s = 0
+    if hasattr(svc._yahoo_fetch_ohlcv, "_consecutive_401"):
+        del svc._yahoo_fetch_ohlcv._consecutive_401
+
+
+# ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
