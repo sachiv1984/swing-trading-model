@@ -13,9 +13,9 @@ Last Updated: 2026-05-31
 
 - **ST/EPIC item:** ST-04 (EPIC-03)
 - **SLA due-by:** 2026-06-03T14:00:00Z
+- **Blocks execution:** Yes (blocks EPIC-03 completion)
 - **Disposition:** Resolved
-- **Resolution summary:** All 5 ACs pass. staging_deploy_verification.md produced. Commit 415d0849. 2026-05-31.
-
+- **Resolution summary:** Infrastructure & Operations Owner completed ST-04. All 5 ACs verified. `docs/ops/staging_deploy_verification.md` produced. RENDER_STAGING_DEPLOY_HOOK confirmed configured; code-change deploy confirmed in Render dashboard; docs-only path filter confirmed. BLG-OPS-28 marked COMPLETE. DEL-20260531-01 status: Unblocked. Resolved 2026-05-31.
 
 ---
 
@@ -23,9 +23,9 @@ Last Updated: 2026-05-31
 
 - **ST/EPIC item:** ST-05 (EPIC-03)
 - **SLA due-by:** 2026-06-03T14:00:00Z
+- **Blocks execution:** Yes (blocks EPIC-03 completion)
 - **Disposition:** Resolved
-- **Resolution summary:** All 5 ACs pass. ds07_migration_staging_verification.md produced. Commit 11f63162. 2026-05-31.
-
+- **Resolution summary:** Infrastructure & Operations Owner and Data Model & Domain Schema Owner completed ST-05. All 5 ACs verified. `docs/ops/ds07_migration_staging_verification.md` produced. 5 SI-02 columns and 3 indexes confirmed on staging. BLG-OPS-44 marked COMPLETE. DEL-20260531-02 status: Unblocked. Resolved 2026-05-31.
 
 ---
 
@@ -33,9 +33,9 @@ Last Updated: 2026-05-31
 
 - **ST/EPIC item:** ST-06 (EPIC-03)
 - **SLA due-by:** 2026-06-03T14:00:00Z
+- **Blocks execution:** Yes (blocks EPIC-03 completion)
 - **Disposition:** Resolved
-- **Resolution summary:** All 5 ACs pass. severity_field_staging_verification.md produced. AC-08 cleared. Commit 568b4719. 2026-05-31.
-
+- **Resolution summary:** Infrastructure & Operations Owner and Data Model & Domain Schema Owner completed ST-06. All 5 ACs verified. `docs/ops/severity_field_staging_verification.md` produced. Severity column confirmed; assignment rule correct; backfill complete (0 null values). Data Model & Domain Schema Owner co-sign recorded; AC-08 cleared. BLG-OPS-45 marked COMPLETE. DEL-20260531-03 status: Unblocked. Resolved 2026-05-31.
 
 ---
 
@@ -43,9 +43,9 @@ Last Updated: 2026-05-31
 
 - **ST/EPIC item:** ST-07 (EPIC-03)
 - **SLA due-by:** 2026-06-03T14:00:00Z
+- **Blocks execution:** Yes (blocks EPIC-03 completion)
 - **Disposition:** Resolved
-- **Resolution summary:** All 5 ACs pass. render_log_retention_policy.md produced. Decision: Render logs + DB tables sufficient. Commit 99a75993. 2026-05-31.
-
+- **Resolution summary:** Infrastructure & Operations Owner completed ST-07. All 5 ACs verified. `docs/ops/render_log_retention_policy.md` produced. Render 7-day retention documented; claude_audit_log and red_flag_events confirmed durable independent audit trail; decision: Render logs + database tables sufficient; no additional archiving required. BLG-OPS-31 marked COMPLETE. DEL-20260531-04 status: Unblocked. Resolved 2026-05-31.
 
 ---
 
@@ -75,4 +75,3 @@ Last Updated: 2026-05-31
 - **SLA due-by:** 2026-06-03T14:00:00Z
 - **Disposition:** Resolved
 - **Resolution summary:** All 6 ACs pass. si04_section13_preassessment.md produced. Determination: PASS. 6 binding conditions. BLG-GOV-62 COMPLETE. Commit e8695948. 2026-05-31.
-

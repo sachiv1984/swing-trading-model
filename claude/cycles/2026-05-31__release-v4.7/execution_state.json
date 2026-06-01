@@ -27,13 +27,20 @@
           "commit_sha": "415d0849",
           "delegation_record_id": "DEL-20260531-01",
           "blocked_since_utc": "2026-05-31T14:00:00Z",
+          "unblock_criteria": "Infrastructure & Operations Owner confirms RENDER_STAGING_DEPLOY_HOOK secret configured, live merge triggers staging deploy, docs-only commit does not trigger deploy, and verification note produced at docs/ops/staging_deploy_verification.md",
           "completed_utc": "2026-05-31T16:00:00Z",
           "acceptance_verified": true,
           "spec_references": [],
           "deviations_filed": true,
           "last_completed_substep": "3.1.D.unblocked",
-          "sign_off_record": { "required_by": "Infrastructure & Operations Owner", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-05-31T16:00:00Z" },
-          "notes": "no prior spec applicable. docs/ops/staging_deploy_verification.md produced."
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["All 5 ACs verified pass", "staging_deploy_verification.md produced", "BLG-OPS-28 marked COMPLETE"],
+            "cleared_utc": "2026-05-31T16:00:00Z"
+          },
+          "notes": "no prior spec applicable. Staging verification: RENDER_STAGING_DEPLOY_HOOK confirmed; code-change deploy confirmed; docs-only path filter confirmed. docs/ops/staging_deploy_verification.md produced."
         },
         "ST-05": {
           "title": "DS-07 Migration Staging Verification (BLG-OPS-44)",
@@ -45,13 +52,20 @@
           "commit_sha": "11f63162",
           "delegation_record_id": "DEL-20260531-02",
           "blocked_since_utc": "2026-05-31T14:00:00Z",
+          "unblock_criteria": "DS-07 migration confirmed applied to staging with no errors; all 5 columns and 3 indexes present; verification note produced",
           "completed_utc": "2026-05-31T16:00:00Z",
           "acceptance_verified": true,
           "spec_references": ["docs/specs/data_model.md"],
           "deviations_filed": true,
           "last_completed_substep": "3.1.D.unblocked",
-          "sign_off_record": { "required_by": "Infrastructure & Operations Owner; Data Model & Domain Schema Owner", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-05-31T16:00:00Z" },
-          "notes": "docs/ops/ds07_migration_staging_verification.md produced."
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner; Data Model & Domain Schema Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["All 5 ACs verified pass", "ds07_migration_staging_verification.md produced", "BLG-OPS-44 marked COMPLETE", "Data Model & Domain Schema Owner co-sign recorded"],
+            "cleared_utc": "2026-05-31T16:00:00Z"
+          },
+          "notes": "DS-07 staging verification complete. 5 columns (signal_id, risk_percent_used, portfolio_value_at_entry, pre_entry_validation_snapshot, effective_settings_snapshot) and 3 indexes (idx_trade_plans_signal, idx_trade_history_exit_date, idx_trade_history_entry_date) confirmed on staging. docs/ops/ds07_migration_staging_verification.md produced."
         },
         "ST-06": {
           "title": "Severity Field Staging Verification (BLG-OPS-45)",
@@ -63,13 +77,20 @@
           "commit_sha": "568b4719",
           "delegation_record_id": "DEL-20260531-03",
           "blocked_since_utc": "2026-05-31T14:00:00Z",
+          "unblock_criteria": "Severity column confirmed on staging; default assignment verified; no null values; Data Model & Domain Schema Owner sign-off recorded in verification note",
           "completed_utc": "2026-05-31T16:00:00Z",
           "acceptance_verified": true,
           "spec_references": ["docs/specs/data_model.md"],
           "deviations_filed": true,
           "last_completed_substep": "3.1.D.unblocked",
-          "sign_off_record": { "required_by": "Infrastructure & Operations Owner; Data Model & Domain Schema Owner", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-05-31T16:00:00Z" },
-          "notes": "docs/ops/severity_field_staging_verification.md produced. AC-08 cleared."
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner; Data Model & Domain Schema Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["All 5 ACs verified pass", "severity_field_staging_verification.md produced", "BLG-OPS-45 marked COMPLETE", "Data Model & Domain Schema Owner co-sign recorded", "AC-08 (previously pending) cleared"],
+            "cleared_utc": "2026-05-31T16:00:00Z"
+          },
+          "notes": "Severity field staging verification complete. Column present, default assignment correct (pre_entry_override → warning, others → info), backfill confirmed (0 null values). docs/ops/severity_field_staging_verification.md produced. AC-08 cleared by Data Model & Domain Schema Owner."
         },
         "ST-07": {
           "title": "Render Log Retention Policy (BLG-OPS-31)",
@@ -81,13 +102,20 @@
           "commit_sha": "99a75993",
           "delegation_record_id": "DEL-20260531-04",
           "blocked_since_utc": "2026-05-31T14:00:00Z",
+          "unblock_criteria": "Render log retention policy reviewed and decision documented at docs/ops/render_log_retention_policy.md; BLG-OPS-31 marked COMPLETE",
           "completed_utc": "2026-05-31T16:00:00Z",
           "acceptance_verified": true,
           "spec_references": [],
           "deviations_filed": true,
           "last_completed_substep": "3.1.D.unblocked",
-          "sign_off_record": { "required_by": "Infrastructure & Operations Owner", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-05-31T16:00:00Z" },
-          "notes": "no prior spec applicable. docs/ops/render_log_retention_policy.md produced."
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["All 5 ACs verified pass", "render_log_retention_policy.md produced", "BLG-OPS-31 marked COMPLETE"],
+            "cleared_utc": "2026-05-31T16:00:00Z"
+          },
+          "notes": "no prior spec applicable. Render 7-day retention documented. claude_audit_log and red_flag_events confirmed durable. Decision: Render logs + database tables sufficient; no additional archiving required. docs/ops/render_log_retention_policy.md produced."
         }
       }
     },
@@ -116,7 +144,13 @@
           "spec_references": [],
           "deviations_filed": true,
           "last_completed_substep": "3.1.D.unblocked",
-          "sign_off_record": { "required_by": "FinOps & Resource Architect", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-05-31T16:30:00Z" },
+          "sign_off_record": {
+            "required_by": "FinOps & Resource Architect",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["All 5 ACs verified pass", "anthropic_api_tier_assessment.md produced", "BLG-OPS-37 marked COMPLETE"],
+            "cleared_utc": "2026-05-31T16:30:00Z"
+          },
           "notes": "no prior spec applicable. docs/ops/anthropic_api_tier_assessment.md produced. No upgrade required."
         },
         "ST-09": {
@@ -134,7 +168,13 @@
           "spec_references": [],
           "deviations_filed": true,
           "last_completed_substep": "3.1.D.unblocked",
-          "sign_off_record": { "required_by": "Head of UX & Design", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-05-31T16:30:00Z" },
+          "sign_off_record": {
+            "required_by": "Head of UX & Design",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["All 6 ACs verified pass", "pre_entry_panel_ux_assessment.md produced", "BLG-FE-49 marked COMPLETE", "BLG-FE-56/57/58 filed"],
+            "cleared_utc": "2026-05-31T16:30:00Z"
+          },
           "notes": "no prior spec applicable. docs/product/ux/pre_entry_panel_ux_assessment.md produced. BLG-FE-56/57/58 filed."
         }
       }
@@ -196,6 +236,7 @@
           "commit_sha": "e8695948",
           "delegation_record_id": "DEL-20260531-07",
           "blocked_since_utc": "2026-05-31T14:00:00Z",
+          "unblock_criteria": "§13 review checklist applied against SI-04; determination documented (PASS/CONDITIONAL/FAIL) with binding conditions if any; assessment document produced at docs/product/decisions/si04_section13_preassessment.md; Strategy Rules & System Intent Owner sign-off recorded; BLG-GOV-62 marked COMPLETE",
           "completed_utc": "2026-05-31T17:00:00Z",
           "acceptance_verified": true,
           "spec_references": [],
