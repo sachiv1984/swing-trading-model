@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-01 (session — 2 new items added: BLG-QA-40, BLG-QA-41)
+**Last Updated:** 2026-06-01 (session — 4 new items added: BLG-QA-40, BLG-QA-41, BLG-OPS-49, BLG-OPS-50)
 **Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
@@ -1658,6 +1658,56 @@ BLG-OPS-36 (ANTHROPIC_API_KEY scope review) was completed in v4.2 (2026-05-28). 
 - ANTHROPIC_API_KEY scope confirmed minimal (only documented endpoints)
 - Key rotation confirmed per BLG-OPS-38 schedule
 - Review findings documented
+
+---
+
+### BLG-OPS-49 — npm devDependency HIGH CVEs (react-scripts chain)
+**Priority:** P1 (High)
+**Type:** Operations / Security
+**Owner:** Head of Engineering; Cybersecurity & Trust Lead
+**Source:** v4.8 ST-05 dependency audit (2026-06-01)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v4.9
+
+**Problem**
+npm audit (2026-06-01) found 21 HIGH severity vulnerabilities in the frontend devDependency chain via `react-scripts` (Create React App). All are build toolchain CVEs — not in the production runtime bundle. Nonetheless, HIGH severity requires P1 filing per security policy.
+
+**Key CVEs:** GHSA-fv7c-fp4j-7gwp (@babel/plugin-transform-modules-systemjs), nth-check ReDoS (GHSA-rp65-9cf3-cjxr), node-forge HMAC bypass, lodash prototype pollution.
+
+**Scope**
+- Run `npm audit fix` on the project root package.json
+- Verify no breaking changes to the build output after fix
+- Confirm 0 HIGH vulnerabilities remain after fix
+- Document in security_register.md
+
+**Acceptance Criteria**
+- `npm audit fix` applied and build passes
+- HIGH vulnerability count = 0
+- No regression in production bundle behaviour
+
+---
+
+### BLG-OPS-50 — Anthropic SDK upgrade (0.40.0 → current)
+**Priority:** P2 (Medium)
+**Type:** Operations / Maintenance
+**Owner:** Head of Engineering
+**Source:** v4.8 ST-05 dependency audit (2026-06-01)
+**Effort:** S–M (~0.5–1 day)
+**Provisional-Target:** v4.9
+
+**Problem**
+The Anthropic Python SDK is pinned at v0.40.0 in `backend/requirements.txt`. Latest available version is 0.105.2 (65 minor versions behind as of 2026-06-01). Upgrading ensures access to latest API features, bug fixes, and security patches.
+
+**Scope**
+- Update `backend/requirements.txt`: `anthropic==0.40.0` → `anthropic==0.105.2` (or latest stable)
+- Run full backend test suite to verify no breaking changes
+- Review Anthropic SDK changelog (0.40.0 → current) for breaking API changes that may affect `/ai/generate-thesis` and `/ai/check-daily-cost` endpoints
+- Document upgrade in security_register.md
+
+**Acceptance Criteria**
+- requirements.txt updated to latest stable Anthropic SDK version
+- All backend tests pass
+- AI endpoints functional post-upgrade
 
 ---
 

@@ -1,9 +1,9 @@
 **Owner:** Director of Quality
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-29
-**Cycle:** 2026-05-29__release-v4.3 (ST-12 — BLG-QA-32)
+**Version:** 1.1
+**Last Updated:** 2026-06-01
+**Cycle:** 2026-06-01__release-v4.8 (ST-06 — BLG-QA-39)
 
 ---
 
@@ -115,6 +115,32 @@ This matrix maps delivered features and stories (v3.7–v4.2) to their Playwrigh
 | Trade plan plan-vs-reality | ✅ Covered | `plan-vs-reality.spec.js` | 12 | None |
 | Claude AI copy audit (provider-agnostic text) | ✅ Covered | `trade-plan.spec.js` (SC-TP-22) | (within 23) | None |
 
+### v4.3 — Trade Plan Enhancements + Performance Reports
+
+| Feature/Story | Playwright Coverage | Spec File | Scenarios | Staging-only ACs |
+|---------------|--------------------|-----------|-----------|--------------------|
+| Monthly P&L compliance section (v4.3 ST-18 — strategy_compliance) | ✅ Covered | `reports-performance-tab.spec.js` | (within 13 — SC-REP-01–04) | None |
+| Risk prompt framework (v3.4 carry) | ✅ Covered | `epic01-v34-lifecycle.spec.js`, `epic02-v34-risk-prompts.spec.js` | 20 | None |
+
+### v4.4–v4.6 — (No new Playwright coverage added)
+
+| Feature/Story | Playwright Coverage | Notes |
+|---------------|--------------------|----|
+| Governance-only cycles (v4.4) | N/A | No frontend-visible changes |
+| IT-04/IT-05 risk prompt framework patches (v4.4) | N/A | Backend/governance only |
+| Arc 5 SI-02 data layer (v4.5–v4.6) | N/A | Backend only; no new UI components |
+| SI-02 drift panel §20 (v4.6 conditional — deferred) | N/A | EPIC-02 deferred — gate NOT MET |
+
+### v4.7 — Compliance Summary Field Rename (ST-03)
+
+| Feature/Story | Playwright Coverage | Spec File | Scenarios | Staging-only ACs |
+|---------------|--------------------|-----------|-----------|--------------------|
+| `compliance_summary` field (renamed from `strategy_compliance`; GET /reports/monthly-pnl v0.6) | ✅ Covered | `reports-performance-tab.spec.js` | SC-REP-05 | None |
+
+**Note on SC-REP-05:** The compliance_summary field is covered by SC-REP-05 in `reports-performance-tab.spec.js`. This scenario validates the response shape from `GET /reports/monthly-pnl` including the renamed `compliance_summary` field. Scenario added as part of v4.7 ST-03 contract verification.
+
+**Regression checkpoint:** Any change to the `compliance_summary` field shape, key names, or nesting must be validated against SC-REP-05 before merge.
+
 ---
 
 ## 4. Features with Zero Automated Coverage
@@ -158,4 +184,5 @@ Signed: Sprint Execution Engine (autonomous class) — 2026-05-29
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 1.1 | 2026-06-01 | Sprint Execution Engine | v4.8 ST-06 (BLG-QA-39): Added v4.3–v4.7 feature coverage sections. Added compliance_summary field (v4.7 ST-03, SC-REP-05 reference). Confirmed GET /reports/monthly-pnl v0.6 contract present in reports_endpoints.md. No contract gaps found. |
 | 1.0 | 2026-05-29 | Sprint Execution Engine | Initial coverage matrix (ST-12, v4.3 EPIC-02, BLG-QA-32). 39 spec files, v3.7–v4.2 features. |
