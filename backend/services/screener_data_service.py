@@ -262,13 +262,8 @@ def _twelve_data_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecor
         logger.warning("TWELVE_DATA_API_KEY not configured — skipping Twelve Data for %s", ticker)
         return None
 
-    # Convert AZN.L → symbol=AZN, exchange=LSE
-    if ticker.upper().endswith(".L"):
-        symbol = ticker[:-2].upper()
-        exchange = "LSE"
-    else:
-        symbol = ticker.upper()
-        exchange = None
+    # Pass ticker as-is — Twelve Data accepts Yahoo Finance .L suffix natively
+    symbol = ticker.upper()
 
     _twelve_data_rate_wait()
     t0 = _time.monotonic()
@@ -281,8 +276,6 @@ def _twelve_data_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecor
             "format": "JSON",
             "order": "ASC",
         }
-        if exchange:
-            params["exchange"] = exchange
 
         resp = requests.get(_TWELVE_DATA_URL, params=params, timeout=15)
         latency = (_time.monotonic() - t0) * 1000
