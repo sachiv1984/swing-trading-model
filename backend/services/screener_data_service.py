@@ -3,7 +3,7 @@ Screener Data Service (DS-01 / ST-02)
 
 Fetches OHLCV data for screener engine consumption.
   - US tickers: Alpaca Data API v2 (primary), Yahoo Finance (fallback)
-  - UK tickers: Yahoo Finance (always)
+  - UK tickers: Stooq (primary), Yahoo Finance (fallback)
 
 Returns normalised daily OHLCV records:
   [{"date": "YYYY-MM-DD", "open": float, "high": float, "low": float,
@@ -28,6 +28,9 @@ logger = logging.getLogger(__name__)
 _YAHOO_CHART_URL = "https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
 _YAHOO_CRUMB_URL = "https://query1.finance.yahoo.com/v1/test/getcrumb"
 _YAHOO_CONSENT_URL = "https://finance.yahoo.com/"
+
+_STOOQ_URL = "https://stooq.com/q/d/l/"
+_STOOQ_HEADERS = {"User-Agent": "Mozilla/5.0"}
 _YAHOO_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
     "Accept": "*/*",
@@ -216,6 +219,85 @@ def _yahoo_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
 
 
 # ---------------------------------------------------------------------------
+# Stooq (UK primary data source)
+# ---------------------------------------------------------------------------
+
+def _stooq_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
+    """Fetch OHLCV from Stooq CSV endpoint for UK tickers.
+
+    Converts LSE ticker format: AZN.L → AZN.UK
+    Stooq prices are in GBP (not pence) — no scaling required.
+    Returns None on any failure.
+    """
+    # Convert Yahoo .L suffix to Stooq .UK suffix
+    if ticker.upper().endswith(".L"):
+        stooq_symbol = ticker[:-2].upper() + ".UK"
+    else:
+        stooq_symbol = ticker.upper()
+
+    t0 = _time.monotonic()
+    try:
+        resp = requests.get(
+            _STOOQ_URL,
+            params={"s": stooq_symbol, "i": "d"},
+            headers=_STOOQ_HEADERS,
+            timeout=15,
+        )
+        latency = (_time.monotonic() - t0) * 1000
+
+        if resp.status_code != 200:
+            record_external_api_call("stooq", False, latency)
+            logger.warning("Stooq HTTP %d for %s", resp.status_code, ticker)
+            return None
+
+        lines = resp.text.strip().splitlines()
+        if len(lines) < 2:
+            record_external_api_call("stooq", False, latency)
+            logger.warning("Stooq empty response for %s", ticker)
+            return None
+
+        # Stooq sometimes returns "No data" as the body
+        if "no data" in resp.text.lower():
+            record_external_api_call("stooq", False, latency)
+            logger.warning("Stooq no data for %s", ticker)
+            return None
+
+        records = []
+        for line in lines[1:]:  # skip header: Date,Open,High,Low,Close,Volume
+            parts = line.split(",")
+            if len(parts) < 5:
+                continue
+            try:
+                records.append({
+                    "date": parts[0].strip(),
+                    "open": float(parts[1]),
+                    "high": float(parts[2]),
+                    "low": float(parts[3]),
+                    "close": float(parts[4]),
+                    "volume": int(float(parts[5])) if len(parts) > 5 and parts[5].strip() else 0,
+                })
+            except (ValueError, IndexError):
+                continue
+
+        if not records:
+            record_external_api_call("stooq", False, latency)
+            return None
+
+        records = sorted(records, key=lambda r: r["date"])
+        # Return only the most recent `days` records
+        records = records[-days:] if len(records) > days else records
+        record_external_api_call("stooq", True, latency)
+        logger.info("OHLCV OK via Stooq for %s (%d bars)", ticker, len(records))
+        return records
+
+    except requests.RequestException as exc:
+        latency = (_time.monotonic() - t0) * 1000
+        record_external_api_call("stooq", False, latency)
+        logger.warning("Stooq request error for %s: %s", ticker, exc)
+        return None
+
+
+# ---------------------------------------------------------------------------
 # Public interface
 # ---------------------------------------------------------------------------
 
@@ -245,11 +327,19 @@ def fetch_ohlcv(ticker: str, market: str, days: int = 30) -> Optional[List[OHLCV
         else:
             record_external_api_call("alpaca", False, latency)
         logger.info("Alpaca unavailable for %s — falling back to Yahoo Finance", ticker)
+        result = _yahoo_fetch_ohlcv(ticker, days)
+        if result:
+            return result
+        logger.warning("OHLCV FAILED for %s (market=%s) — no data from any source", ticker, market)
+        return None
 
-    # UK tickers always use Yahoo Finance; US falls through here on Alpaca failure
+    # UK tickers: Stooq primary, Yahoo Finance fallback
+    result = _stooq_fetch_ohlcv(ticker, days)
+    if result:
+        return result
+    logger.info("Stooq unavailable for %s — falling back to Yahoo Finance", ticker)
     result = _yahoo_fetch_ohlcv(ticker, days)
     if result:
-        logger.info("OHLCV OK via Yahoo Finance for %s (%d bars)", ticker, len(result))
-    else:
-        logger.warning("OHLCV FAILED for %s (market=%s) — no data from any source", ticker, market)
-    return result
+        return result
+    logger.warning("OHLCV FAILED for %s (market=%s) — no data from any source", ticker, market)
+    return None
