@@ -5,6 +5,7 @@ Contract: docs/specs/api_contracts/screener_api_contract.md
 import logging
 import uuid
 from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional, List
 from services.screener_batch_service import run_screener, get_screener_results, is_run_in_progress
@@ -38,6 +39,14 @@ def screener_results(
         data = get_screener_results(market=market, run_id=run_id, limit=limit, offset=offset)
         return {"ok": True, "data": data}
     except ValueError:
+        # If a run is currently in progress and the caller supplied a run_id,
+        # return 202 so the frontend keeps polling instead of treating it as a
+        # hard failure.
+        if run_id and is_run_in_progress():
+            return JSONResponse(
+                status_code=202,
+                content={"ok": True, "data": {"status": "running", "run_id": run_id}},
+            )
         raise HTTPException(status_code=404, detail="NO_RESULTS")
 
 
