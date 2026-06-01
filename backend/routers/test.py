@@ -139,7 +139,7 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /positions/00000000-0000-0000-0000-000000000000", "method": "GET", "url": f"{base_url}/positions/00000000-0000-0000-0000-000000000000", "critical": False},
         {"name": "POST /positions/00000000-0000-0000-0000-000000000000/refresh-state", "method": "POST", "url": f"{base_url}/positions/00000000-0000-0000-0000-000000000000/refresh-state", "critical": False},
         # Position Lifecycle Decision Support (v3.3 / EPIC-02)
-        {"name": "GET /positions/grace-period-alerts", "method": "GET", "url": f"{base_url}/positions/grace-period-alerts", "critical": False},
+        {"name": "GET /positions/grace-period-alerts", "method": "GET", "url": f"{base_url}/positions/grace-period-alerts", "critical": True},
         {"name": "GET /positions/{id}/stop-trail", "method": "GET", "url": f"{base_url}/positions/00000000-0000-0000-0000-000000000000/stop-trail", "critical": False},
 
         # Portfolio Risk (v3.4 / EPIC-02)

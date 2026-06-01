@@ -227,6 +227,12 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_screener_results_table FAILED at startup: %s", _e)
     try:
+        from database import ensure_lifecycle_columns
+        ensure_lifecycle_columns()
+        _log.info("ensure_lifecycle_columns: OK")
+    except Exception as _e:
+        _log.error("ensure_lifecycle_columns FAILED at startup: %s", _e)
+    try:
         from database import ensure_plan_vs_reality_columns
         ensure_plan_vs_reality_columns()
         _log.info("ensure_plan_vs_reality_columns: OK")
