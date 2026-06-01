@@ -2037,6 +2037,8 @@ v4.0 shipped POST /trade-plans/{plan_id}/generate-thesis (ST-12) without a forma
 
 **Gate criteria:** SI-04 sprint planning imminent.
 
+✅ COMPLETE — 2026-05-31 — cycle 2026-05-31__release-v4.7 (ST-01, EPIC-01; si04_section13_preassessment.md produced; determination: PASS; 6 binding conditions; Strategy Rules & System Intent Owner sign-off)
+
 **Problem**
 SI-04 (Strategy Version Comparison) compares performance metrics across strategy versions. Before sprint planning seals, a formal §13 review must confirm this is display-only historical analysis (not adaptive or predictive). Last-minute §13 discoveries blocked v3.5 (IT-06); pre-assessment eliminates this risk.
 

@@ -5,7 +5,7 @@
   "invoked_utc": "2026-05-31T14:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-05-31T17:00:00Z",
+  "last_updated_utc": "2026-06-01T08:30:00Z",
 
   "epics": {
     "EPIC-03": {
@@ -121,10 +121,10 @@
     },
 
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-05-31__release-v4.7/EPIC-04",
       "pr_number": 611,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-31__release-v4.7/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
@@ -218,32 +218,38 @@
     },
 
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-05-31__release-v4.7/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 612,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-05-31__release-v4.7/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
       "stories": {
         "ST-01": {
           "title": "SI-04 §13 Formal Pre-Assessment (BLG-GOV-62)",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Strategy Rules & System Intent Owner",
           "github_issue": 600,
           "branch": "exec/2026-05-31__release-v4.7/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "e8695948",
           "delegation_record_id": "DEL-20260531-07",
           "blocked_since_utc": "2026-05-31T14:00:00Z",
           "unblock_criteria": "§13 review checklist applied against SI-04; determination documented (PASS/CONDITIONAL/FAIL) with binding conditions if any; assessment document produced at docs/product/decisions/si04_section13_preassessment.md; Strategy Rules & System Intent Owner sign-off recorded; BLG-GOV-62 marked COMPLETE",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-05-31T17:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable"
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.D.unblocked",
+          "sign_off_record": {
+            "required_by": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["All 6 ACs verified pass", "si04_section13_preassessment.md produced", "Determination: PASS", "6 binding conditions documented", "BLG-GOV-62 marked COMPLETE"],
+            "cleared_utc": "2026-05-31T17:00:00Z"
+          },
+          "notes": "no prior spec applicable. §13 pre-assessment complete. Determination: PASS. 6 binding conditions. docs/product/decisions/si04_section13_preassessment.md produced."
         },
         "ST-02": {
           "title": "SI-05 Phase 1 Implementation (BLG-GOV-67) [CONDITIONAL]",
@@ -268,15 +274,15 @@
     }
   },
 
-  "blocked_items": ["ST-01"],
+  "blocked_items": [],
   "delegated_items": ["ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-01"],
-  "completed_items": ["ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09"],
+  "completed_items": ["ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-01"],
 
-  "open_escalations": ["ESC-EXEC-20260531-07"],
+  "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-02", "EPIC-03"],
-    "epics_pending": ["EPIC-04", "EPIC-01"],
+    "epics_merged": ["EPIC-02", "EPIC-03", "EPIC-04"],
+    "epics_pending": ["EPIC-01"],
     "all_merged": false
   },
 
