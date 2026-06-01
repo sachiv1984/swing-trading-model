@@ -241,7 +241,7 @@ def _stooq_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
             _STOOQ_URL,
             params={"s": stooq_symbol, "i": "d"},
             headers=_STOOQ_HEADERS,
-            timeout=15,
+            timeout=5,
         )
         latency = (_time.monotonic() - t0) * 1000
 
