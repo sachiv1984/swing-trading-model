@@ -18,14 +18,14 @@ Last Updated: 2026-05-31
 - **GitHub Issue:** #603
 - **Branch:** exec/2026-05-31__release-v4.7/EPIC-03
 - **Delegated at:** 2026-05-31T14:00:00Z
-- **What is needed:** Confirm RENDER_STAGING_DEPLOY_HOOK secret is configured. Verify code-change commit triggers Render staging deploy. Verify docs-only commit does NOT trigger deploy. Record evidence in `docs/ops/staging_deploy_verification.md`. Mark BLG-OPS-28 COMPLETE.
-- **Spec reference:** N/A
-- **Unblock criteria:** All 5 ACs confirmed; BLG-OPS-28 marked COMPLETE; commit pushed to EPIC-03 branch.
-- **Status:** Unblocked
+- **What is needed:** Confirm RENDER_STAGING_DEPLOY_HOOK secret is configured in GitHub repo settings. Merge a code-change commit to main and verify a Render staging deploy is triggered (confirmed in Render dashboard). Verify a docs-only commit does NOT trigger a deploy (path filter check). Record evidence in `docs/ops/staging_deploy_verification.md` (Class 3 Operational Record) with date, result, and confirming role. Mark BLG-OPS-28 COMPLETE in backlog with date and cycle reference. Commit with prefix `[EPIC-03][ST-04]` to branch `exec/2026-05-31__release-v4.7/EPIC-03`.
+- **Spec reference:** N/A — staging verification of deployed workflow; no canonical spec file governs the live Render environment check.
+- **Unblock criteria:** All 5 ACs confirmed in `docs/ops/staging_deploy_verification.md`; BLG-OPS-28 marked COMPLETE; commit pushed to EPIC-03 branch.
+- **Commit format required:** `[EPIC-03][ST-04] Add staging deploy live verification note` pushed to `exec/2026-05-31__release-v4.7/EPIC-03`
+- **Status:** sign_off_cleared
 - **Commit SHA:** 415d0849
-- **Resolution:** All 5 ACs verified pass. `docs/ops/staging_deploy_verification.md` produced. RENDER_STAGING_DEPLOY_HOOK confirmed; code-change deploy confirmed; docs-only path filter confirmed. BLG-OPS-28 COMPLETE. 2026-05-31.
+- **Resolution:** All 5 ACs verified pass. `docs/ops/staging_deploy_verification.md` produced. RENDER_STAGING_DEPLOY_HOOK confirmed; code-change deploy confirmed; docs-only path filter confirmed. BLG-OPS-28 marked COMPLETE. Infrastructure & Operations Owner sign-off recorded. 2026-05-31.
 - **Final Status:** Unblocked
-
 
 ---
 
@@ -40,12 +40,12 @@ Last Updated: 2026-05-31
 - **Delegated at:** 2026-05-31T14:00:00Z
 - **What is needed:** Confirm all 5 DS-07 SI-02 columns and 3 indexes on staging. Record verification note. Mark BLG-OPS-44 COMPLETE.
 - **Spec reference:** docs/specs/data_model.md (DS-07 migration section)
-- **Unblock criteria:** All 5 ACs confirmed; verification note produced; BLG-OPS-44 marked COMPLETE; commit pushed.
-- **Status:** Unblocked
+- **Unblock criteria:** All 5 ACs confirmed; verification note produced; BLG-OPS-44 marked COMPLETE; commit pushed to EPIC-03 branch.
+- **Commit format required:** `[EPIC-03][ST-05] Add DS-07 migration staging verification note` pushed to `exec/2026-05-31__release-v4.7/EPIC-03`
+- **Status:** sign_off_cleared
 - **Commit SHA:** 11f63162
-- **Resolution:** All 5 ACs verified pass. `docs/ops/ds07_migration_staging_verification.md` produced. All 5 SI-02 columns and 3 indexes confirmed on staging. Data Model & Domain Schema Owner co-sign recorded. BLG-OPS-44 COMPLETE. 2026-05-31.
+- **Resolution:** All 5 ACs verified pass. `docs/ops/ds07_migration_staging_verification.md` produced. All 5 SI-02 columns and 3 indexes confirmed on staging. BLG-OPS-44 marked COMPLETE. Infrastructure & Operations Owner and Data Model & Domain Schema Owner sign-off recorded. 2026-05-31.
 - **Final Status:** Unblocked
-
 
 ---
 
@@ -60,12 +60,12 @@ Last Updated: 2026-05-31
 - **Delegated at:** 2026-05-31T14:00:00Z
 - **What is needed:** Confirm severity column, default assignment, backfill on staging. Data Model & Domain Schema Owner sign-off. Mark BLG-OPS-45 COMPLETE.
 - **Spec reference:** docs/specs/data_model.md (severity column migration section)
-- **Unblock criteria:** All 5 ACs confirmed; Domain Schema Owner sign-off; BLG-OPS-45 marked COMPLETE; commit pushed.
-- **Status:** Unblocked
+- **Unblock criteria:** All 5 ACs confirmed; Data Model & Domain Schema Owner sign-off recorded; BLG-OPS-45 marked COMPLETE; commit pushed to EPIC-03 branch.
+- **Commit format required:** `[EPIC-03][ST-06] Add severity field staging verification note` pushed to `exec/2026-05-31__release-v4.7/EPIC-03`
+- **Status:** sign_off_cleared
 - **Commit SHA:** 568b4719
-- **Resolution:** All 5 ACs verified pass. `docs/ops/severity_field_staging_verification.md` produced. Severity column confirmed; assignment correct; backfill complete (0 nulls). AC-08 cleared. BLG-OPS-45 COMPLETE. 2026-05-31.
+- **Resolution:** All 5 ACs verified pass. `docs/ops/severity_field_staging_verification.md` produced. Severity column confirmed; assignment rule verified; backfill confirmed (0 null values). Data Model & Domain Schema Owner sign-off recorded. AC-08 cleared. BLG-OPS-45 marked COMPLETE. 2026-05-31.
 - **Final Status:** Unblocked
-
 
 ---
 
@@ -78,14 +78,14 @@ Last Updated: 2026-05-31
 - **GitHub Issue:** #606
 - **Branch:** exec/2026-05-31__release-v4.7/EPIC-03
 - **Delegated at:** 2026-05-31T14:00:00Z
-- **What is needed:** Review Render log retention policy. Assess database audit tables. Document policy decision. Mark BLG-OPS-31 COMPLETE.
-- **Spec reference:** N/A
-- **Unblock criteria:** All 5 ACs confirmed; policy document produced; BLG-OPS-31 marked COMPLETE; commit pushed.
-- **Status:** Unblocked
+- **What is needed:** Review Render's current log retention policy (current plan limits). Assess whether `claude_audit_log` and `red_flag_events` database tables provide a sufficient durable audit trail independent of Render's platform logs. Document the policy decision — either "Render logs + database tables sufficient" or "additional archiving required". Produce findings at `docs/ops/render_log_retention_policy.md` (Class 3 Operational Record). Mark BLG-OPS-31 COMPLETE in backlog. Commit to `exec/2026-05-31__release-v4.7/EPIC-03` with prefix `[EPIC-03][ST-07]`.
+- **Spec reference:** N/A — document-only story; no canonical spec file governs this policy review.
+- **Unblock criteria:** All 5 ACs confirmed; policy document produced; BLG-OPS-31 marked COMPLETE; commit pushed to EPIC-03 branch.
+- **Commit format required:** `[EPIC-03][ST-07] Add Render log retention policy document` pushed to `exec/2026-05-31__release-v4.7/EPIC-03`
+- **Status:** sign_off_cleared
 - **Commit SHA:** 99a75993
-- **Resolution:** All 5 ACs verified pass. `docs/ops/render_log_retention_policy.md` produced. Render 7-day retention documented; database tables confirmed durable; decision: Render logs + database tables sufficient. BLG-OPS-31 COMPLETE. 2026-05-31.
+- **Resolution:** All 5 ACs verified pass. `docs/ops/render_log_retention_policy.md` produced. Render 7-day retention documented; claude_audit_log and red_flag_events confirmed durable; decision: Render logs + database tables sufficient; no additional archiving required. BLG-OPS-31 marked COMPLETE. Infrastructure & Operations Owner sign-off recorded. 2026-05-31.
 - **Final Status:** Unblocked
-
 
 ---
 
