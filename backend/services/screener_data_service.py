@@ -38,6 +38,8 @@ _yahoo_session: Optional[requests.Session] = None
 _yahoo_crumb: Optional[str] = None
 _yahoo_cooldown_until: float = 0.0  # monotonic; 0 = no cooldown active
 _YAHOO_COOLDOWN_SECS = 120  # back off 2 minutes after a 429 on the crumb endpoint
+_YAHOO_401_COOLDOWN_SECS = 60   # back off 1 minute after 3 consecutive 401s
+_crumb_consecutive_401s: int = 0
 
 OHLCVRecord = Dict[str, object]
 
@@ -48,7 +50,7 @@ OHLCVRecord = Dict[str, object]
 
 def _refresh_yahoo_crumb() -> Optional[str]:
     """Establish a new Yahoo Finance session and fetch a fresh crumb token."""
-    global _yahoo_session, _yahoo_crumb, _yahoo_cooldown_until
+    global _yahoo_session, _yahoo_crumb, _yahoo_cooldown_until, _crumb_consecutive_401s
     with _crumb_lock:
         # Skip the network call entirely while in cooldown
         if _time.monotonic() < _yahoo_cooldown_until:
@@ -61,14 +63,28 @@ def _refresh_yahoo_crumb() -> Optional[str]:
                 _yahoo_session = sess
                 _yahoo_crumb = resp.text.strip()
                 _yahoo_cooldown_until = 0.0
+                _crumb_consecutive_401s = 0
                 logger.info("Yahoo Finance crumb refreshed successfully")
                 return _yahoo_crumb
             if resp.status_code == 429:
+                _crumb_consecutive_401s = 0
                 _yahoo_cooldown_until = _time.monotonic() + _YAHOO_COOLDOWN_SECS
                 logger.warning(
                     "Yahoo Finance crumb fetch returned HTTP 429 — entering %ds cooldown",
                     _YAHOO_COOLDOWN_SECS,
                 )
+            elif resp.status_code == 401:
+                _crumb_consecutive_401s += 1
+                logger.warning(
+                    "Yahoo Finance crumb fetch returned HTTP 401 (consecutive: %d)",
+                    _crumb_consecutive_401s,
+                )
+                if _crumb_consecutive_401s >= 3:
+                    _yahoo_cooldown_until = _time.monotonic() + _YAHOO_401_COOLDOWN_SECS
+                    logger.warning(
+                        "Yahoo Finance crumb returned 401 %d times — entering %ds cooldown",
+                        _crumb_consecutive_401s, _YAHOO_401_COOLDOWN_SECS,
+                    )
             else:
                 logger.warning("Yahoo Finance crumb fetch returned HTTP %d", resp.status_code)
         except requests.RequestException as exc:
