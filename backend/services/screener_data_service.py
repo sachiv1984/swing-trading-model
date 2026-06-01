@@ -254,7 +254,7 @@ def _twelve_data_rate_wait() -> None:
 def _twelve_data_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecord]]:
     """Fetch OHLCV from Twelve Data for UK (LSE) tickers.
 
-    Converts LSE ticker format: AZN.L → symbol=AZN, exchange=LSE
+    Converts LSE ticker format: AZN.L → symbol=AZN, mic_code=XLON
     Handles pence-denominated tickers (currency GBp/GBX → divide by 100).
     Returns None when API key is absent or on any failure.
     """
@@ -262,13 +262,14 @@ def _twelve_data_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecor
         logger.warning("TWELVE_DATA_API_KEY not configured — skipping Twelve Data for %s", ticker)
         return None
 
-    # Twelve Data uses symbol + exchange=LSE, not the .L suffix
+    # Twelve Data uses ISO 10383 MIC code for exchange disambiguation.
+    # LSE tickers use mic_code=XLON (not exchange=LSE which causes 404).
     if ticker.upper().endswith(".L"):
         symbol = ticker[:-2].upper()
-        exchange = "LSE"
+        mic_code = "XLON"
     else:
         symbol = ticker.upper()
-        exchange = None
+        mic_code = None
 
     _twelve_data_rate_wait()
     t0 = _time.monotonic()
@@ -279,8 +280,8 @@ def _twelve_data_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecor
             "outputsize": max(days, 30),
             "apikey": _TWELVE_DATA_API_KEY,
         }
-        if exchange:
-            params["exchange"] = exchange
+        if mic_code:
+            params["mic_code"] = mic_code
 
         resp = requests.get(_TWELVE_DATA_URL, params=params, timeout=15)
         latency = (_time.monotonic() - t0) * 1000
@@ -292,7 +293,15 @@ def _twelve_data_fetch_ohlcv(ticker: str, days: int) -> Optional[List[OHLCVRecor
 
         if resp.status_code != 200:
             record_external_api_call("twelve_data", False, latency)
-            logger.warning("Twelve Data HTTP %d for %s", resp.status_code, ticker)
+            try:
+                body = resp.json()
+                logger.warning(
+                    "Twelve Data HTTP %d for %s — code=%s msg=%s",
+                    resp.status_code, ticker,
+                    body.get("code", "?"), body.get("message", resp.text[:200]),
+                )
+            except Exception:
+                logger.warning("Twelve Data HTTP %d for %s — %s", resp.status_code, ticker, resp.text[:200])
             return None
 
         data = resp.json()
