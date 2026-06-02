@@ -1,9 +1,38 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 3.4
-**Last Updated:** 2026-06-01
+**Version:** 3.5
+**Last Updated:** 2026-06-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-06-02__release-v4.9
+**Date:** 2026-06-02
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | npm devDependency HIGH CVE remediation — 21 HIGH severity CVEs cleared via npm audit fix + overrides; 6 moderate remain (all CRA chain, non-production); security_register.md updated | docs/security/security_register.md | None |
+| EPIC-01 | Anthropic SDK upgrade 0.40.0 → 0.105.2 — requirements.txt updated; 447 tests passing; Messages API changelog reviewed (no breaking changes); staging validation (AC-04) deferred post-merge per BLG-OPS-52 | docs/security/security_register.md Upgrade 001 | None |
+| EPIC-02 | Real Postgres CI service wired in Phase B — postgres:15 service container; DATABASE_URL injected; 13 pre-existing Phase B test isolation failures surfaced and fixed; Phase A unaffected | .github/workflows/ci-tests.yml | None |
+| EPIC-02 | Schema lifecycle column smoke tests — tests/test_schema.py: test_ensure_lifecycle_columns_creates_all_three() proves absent column is detectable; skips in Phase A (stub), passes in Phase B | tests/test_schema.py | None |
+| EPIC-03 | roadmap_prompt.md STEP 8.1 gate strengthened — Now horizon empty gate fires on any rebalance (not just Extended tier); both decision options documented with example record formats; OPERATIONAL_GUIDE.md v4.25→v4.26 | claude/system/roadmap_prompt.md v6.8 | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-06 — SI-05 Phase 1 backend + Telegram delivery (EPIC-04) | Gate not met: SI-01 + SI-03 live ≥ 30 days — clears 2026-06-21 | backlog.md |
+| ST-07 — SI-05 Phase 1 Playwright coverage (EPIC-04) | Same gate condition; depends on ST-06 | backlog.md |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (DoQ autonomous class, 2026-06-02), qa_evidence_EPIC-02.md (DoQ autonomous class, 2026-06-02), qa_evidence_EPIC-03.md (DoQ autonomous class, 2026-06-02)
+- Deviations filed: None (spec deviations); BLG-OPS-52 filed for ST-02 AC-04 staging deferral
+- Test scenarios referenced: tests/test_schema.py (Phase B schema smoke tests)
 
 ---
 

@@ -5,7 +5,7 @@
   "invoked_utc": "2026-06-02T12:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-02T16:10:00Z",
+  "last_updated_utc": "2026-06-02T17:40:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -108,10 +108,10 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-02__release-v4.9/EPIC-03",
       "pr_number": 645,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-02__release-v4.9/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
@@ -151,11 +151,12 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-02"],
-    "epics_pending": ["EPIC-03"],
-    "all_merged": false
+    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03"],
+    "epics_pending": [],
+    "all_merged": true
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-06-02T17:45:00Z",
+  "status": "Sealed"
 }
