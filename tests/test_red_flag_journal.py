@@ -158,6 +158,7 @@ class TestSI01OverrideEventWrite:
         }
         with (
             patch.object(tp_mod, "ensure_trade_plans_table"),
+            patch.object(tp_mod, "ensure_si02_trade_plans_columns"),
             patch.object(tp_mod, "get_portfolio", return_value={"id": "port-1"}),
             patch.object(tp_mod, "create_trade_plan", return_value=mock_plan),
             patch.object(tp_mod, "ensure_red_flag_events_table"),
