@@ -5,7 +5,7 @@
   "invoked_utc": "2026-06-02T12:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-02T13:45:00Z",
+  "last_updated_utc": "2026-06-02T15:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -73,7 +73,7 @@
           "assigned_to": "engine",
           "github_issue": 638,
           "branch": "exec/2026-06-02__release-v4.9/EPIC-02",
-          "commit_sha": "3a3d3d33f24582defe403dfc85b19ed0ae26899c",
+          "commit_sha": "fb8d33ffe35edfe0a45fd85ee1a3d1fe04e81a80",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -83,7 +83,7 @@
           "deviations_filed": true,
           "last_completed_substep": "push",
           "sign_off_record": null,
-          "notes": "AC-01: postgres:15 service container added to ci-tests.yml pytest-phase-b job; AC-02: DATABASE_URL=postgresql://ci:ci@localhost:5432/ci_test wired in Phase B job env (service container URL; AC-02 deviation note: spec says 'repo secret' but service container URL is safer for CI — intent met); AC-03: Phase B job enabled and active; AC-04: Phase A tests continue to pass 279/279; AC-05: test_schema.py test_missing_lifecycle_column_detected proves absent column is detectable; AC-06: Phase A pytest-phase-a job unchanged and still passes"
+          "notes": "AC-01: postgres:15 service container added to ci-tests.yml pytest-phase-b job; AC-02: DATABASE_URL=postgresql://ci:ci@localhost:5432/ci_test wired in Phase B job env (service container URL; AC-02 deviation note: spec says 'repo secret' but service container URL is safer for CI — intent met); AC-03: Phase B job enabled and active; AC-04: Phase A tests continue to pass 279/279; AC-05: test_schema.py test_missing_lifecycle_column_detected proves absent column is detectable; AC-06: Phase A pytest-phase-a job unchanged and still passes. Additional commit fb8d33ff: fixes 13 pre-existing Phase B test isolation failures surfaced by RISK-02 (test_alpaca_integration stub contamination, monthly_pnl mock gap, daily_cost_alert wrong patch target, red_flag_journal missing ensure_si02_trade_plans_columns patch)"
         },
         "ST-04": {
           "title": "Schema smoke test: lifecycle columns on positions table",
@@ -92,7 +92,7 @@
           "assigned_to": "engine",
           "github_issue": 639,
           "branch": "exec/2026-06-02__release-v4.9/EPIC-02",
-          "commit_sha": "3a3d3d33f24582defe403dfc85b19ed0ae26899c",
+          "commit_sha": "fb8d33ffe35edfe0a45fd85ee1a3d1fe04e81a80",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
