@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-02 (session — 1 new item added: BLG-OPS-52)
+**Last Updated:** 2026-06-02 (post-ship closure 2026-06-02__release-v4.9 — 5 items marked COMPLETE: BLG-OPS-49/50, BLG-QA-40/41, BLG-GOV-78)
 **Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
@@ -1152,6 +1152,8 @@ v4.7 shipped compliance_summary field in GET /reports/monthly-pnl (ST-03, EPIC-0
 **Effort:** M (~1–2 days)
 **Provisional-Target:** v4.9
 
+✅ COMPLETE — 2026-06-02 — cycle 2026-06-02__release-v4.9 (ST-03, EPIC-02; postgres:15 service container wired; DATABASE_URL injected; Phase A unaffected; 13 pre-existing Phase B failures surfaced and fixed)
+
 **Problem**
 The Phase A CI suite (ci-tests.yml) runs against a stub DATABASE_URL with all DB calls mocked, making missing schema columns completely invisible to CI. When `position_state`, `state_entered_at`, and `state_history` were never added to the `positions` table via a startup migration, every endpoint that queried those columns returned a 500 in production — yet all CI jobs were green. The ci-tests.yml workflow comment explicitly notes Phase B ("requires DATABASE_URL secret") was deferred; until it is wired, no automated job will catch a column referenced in SQL that doesn't exist in the DB.
 
@@ -1176,6 +1178,8 @@ The Phase A CI suite (ci-tests.yml) runs against a stub DATABASE_URL with all DB
 **Effort:** S (~0.5 day)
 **Provisional-Target:** v4.9
 **Depends on:** BLG-QA-40 (Phase B CI with real Postgres required)
+
+✅ COMPLETE — 2026-06-02 — cycle 2026-06-02__release-v4.9 (ST-04, EPIC-02; tests/test_schema.py created; skips in Phase A; passes in Phase B with real Postgres)
 
 **Problem**
 There is no test that verifies the `positions` table contains the lifecycle columns (`position_state`, `state_entered_at`, `state_history`) that `ensure_lifecycle_columns()` is supposed to create. Without this, a missing `ensure_*` call at startup — or a call that silently errors — leaves a schema gap that is only discovered when a user hits the broken endpoint. A schema introspection test would close this class of bug permanently.
@@ -1717,6 +1721,8 @@ BLG-OPS-36 (ANTHROPIC_API_KEY scope review) was completed in v4.2 (2026-05-28). 
 **Effort:** S (~0.5 day)
 **Provisional-Target:** v4.9
 
+✅ COMPLETE — 2026-06-02 — cycle 2026-06-02__release-v4.9 (ST-01, EPIC-01; npm audit fix applied; HIGH=0; 6 moderate remain CRA chain non-production; security_register.md Audit 001 updated)
+
 **Problem**
 npm audit (2026-06-01) found 21 HIGH severity vulnerabilities in the frontend devDependency chain via `react-scripts` (Create React App). All are build toolchain CVEs — not in the production runtime bundle. Nonetheless, HIGH severity requires P1 filing per security policy.
 
@@ -1742,6 +1748,8 @@ npm audit (2026-06-01) found 21 HIGH severity vulnerabilities in the frontend de
 **Source:** v4.8 ST-05 dependency audit (2026-06-01)
 **Effort:** S–M (~0.5–1 day)
 **Provisional-Target:** v4.9
+
+✅ COMPLETE — 2026-06-02 — cycle 2026-06-02__release-v4.9 (ST-02, EPIC-01; anthropic==0.40.0→0.105.2; 447 tests passing; security_register.md Upgrade 001 updated; AC-04 staging deferred: BLG-OPS-52)
 
 **Problem**
 The Anthropic Python SDK is pinned at v0.40.0 in `backend/requirements.txt`. Latest available version is 0.105.2 (65 minor versions behind as of 2026-06-01). Upgrading ensures access to latest API features, bug fixes, and security patches.
@@ -2575,6 +2583,8 @@ ST-02 (Anthropic SDK upgrade 0.40.0 → 0.105.2) includes a staging-only AC requ
 **Effort:** S (~0.5 day)
 **Provisional-Target:** Unscheduled
 
+✅ COMPLETE — 2026-06-02 — cycle 2026-06-02__release-v4.9 (ST-05, EPIC-03; roadmap_prompt.md v6.7→v6.8; STEP 8.1 converted to soft gate; OPERATIONAL_GUIDE.md v4.25→v4.26; prompt_change_log.md appended; HoST + PMO Lead sign-off)
+
 **Problem**
 When a roadmap rebalance runs as "No-change" and the Now horizon is empty, roadmap_prompt.md v6.6 STEP 8.1 fires an advisory — but does not require an explicit PO decision. In v4.8 release planning, this caused STEP -1.2 to fail because no formal v4.8 roadmap section existed after the no-change rebalance. The advisory was silently ignored.
 
@@ -2598,20 +2608,6 @@ When a roadmap rebalance runs as "No-change" and the Now horizon is empty, roadm
 
 ---
 
-## Release Slice — v4.9
-
-<!-- release-plan-marker: RP:v4.9:2026-06-02__release-v4.9 -->
-
-| Story | EPIC | Description | Priority | Notes |
-|-------|------|-------------|----------|-------|
-| ST-01 | EPIC-01 | npm devDependency HIGH CVE remediation | P1 | BLG-OPS-49 |
-| ST-02 | EPIC-01 | Anthropic SDK upgrade 0.40.0 → latest stable | P2 | BLG-OPS-50 |
-| ST-03 | EPIC-02 | Wire Phase B CI with real Postgres service | P2 | BLG-QA-40 |
-| ST-04 | EPIC-02 | Schema smoke test: lifecycle columns on positions table | P3 | BLG-QA-41; depends ST-03 |
-| ST-05 | EPIC-03 | roadmap_prompt.md STEP 8.1 gate strengthening | P3 | BLG-GOV-78 |
-| ST-06 | EPIC-04 | SI-05 Phase 1 backend + Telegram delivery | P2 | BLG-GOV-67; **conditional gate 2026-06-21** |
-| ST-07 | EPIC-04 | SI-05 Phase 1 Playwright coverage | P2 | BLG-GOV-67; **conditional**; depends ST-06 |
-
-*Full acceptance criteria: claude/cycles/2026-06-02__release-v4.9/stage4_backlog_slice.md*
+*Release Slice v4.9 removed — cycle 2026-06-02__release-v4.9 closed 2026-06-02. Archived canonical home: claude/cycles/2026-06-02__release-v4.9/stage4_backlog_slice.md*
 
 

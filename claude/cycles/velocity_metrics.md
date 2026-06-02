@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-06-02
+**Last Updated:** 2026-06-02 (post-ship closure 2026-06-02__release-v4.9)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -56,8 +56,9 @@
 | v4.6  | 18      | 18        | 1.00     | EPIC-02 (ST-06/07/08) deferred at planning — data density gate NOT MET (6th deferral; confirmed at sprint close); 2 P3 staging deviations (BLG-OPS-44/45) accepted; Arc 6 §13 PASS; 6 delegated_decision all resolved within sprint; EPIC-04 autonomous class sign-off |
 | v4.7  | 8       | 8         | 1.00     | Zero deviations; all 7 delegated_decision stories agent-mediated and resolved within sprint; ST-02 conditional deferred at planning (gate clears 2026-06-21); staged verifications sprint design validated — 3 v4.6 staging ACs closed in batch (BLG-OPS-28/44/45) |
 | v4.8  | 7       | 7         | 1.00     | Zero deviations; all 7 stories autonomous; ST-08 (SI-05 Phase 1) deferred_at_planning — gate clears 2026-06-21 (never entered sprint scope); execution_prompt.md v3.34→v3.35 governance patch at sprint close (LL-v4.8-EX-01 null commit_sha action-now); both EPICs autonomous class sign-off (BLG-GOV-19) |
+| v4.9  | 5       | 5         | 1.00     | Zero spec deviations; all 5 stories autonomous; EPIC-04 (ST-06/ST-07) gate-deferred 2026-06-21 (never in sprint scope); 3 EPICs autonomous class sign-off (BLG-GOV-19); EPIC-03 vs main execution_state.json conflict resolved per CLAUDE.md §8 (second application); 13 pre-existing Phase B failures surfaced and fixed as RISK-02 bonus |
 
-**Rolling 6-cycle average (v4.3–v4.8):** 1.00
+**Rolling 6-cycle average (v4.4–v4.9):** 1.00
 
 ---
 

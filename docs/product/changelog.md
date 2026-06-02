@@ -9,6 +9,33 @@
 
 ---
 
+## v4.9 — Security/CI Hardening & SI-05 Phase 1 — 2026-06-02
+Cycle: 2026-06-02__release-v4.9
+Verified: Verified
+Verification report: claude/cycles/2026-06-02__release-v4.9/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Security & Dependency Hardening — 21 npm HIGH CVEs cleared via npm audit fix + overrides; 6 moderate remain (CRA chain, non-production) (ST-01); Anthropic Python SDK upgraded 0.40.0 → 0.105.2; Messages API changelog reviewed, no breaking changes; AC-04 staging validation deferred post-merge per BLG-OPS-52 (ST-02) | docs/security/security_register.md (Audit 001; Upgrade 001) |
+| EPIC-02 | CI/QA Infrastructure Strengthening — Real Postgres service container (postgres:15) wired to Phase B CI; DATABASE_URL injected; 13 pre-existing Phase B test isolation failures surfaced and fixed; Phase A unaffected (ST-03); Schema lifecycle column smoke tests created in tests/test_schema.py: assert positions table has position_state, state_entered_at, state_history; skips in Phase A (stub), passes in Phase B (ST-04) | .github/workflows/ci-tests.yml; tests/test_schema.py |
+| EPIC-03 | Governance Debt Clearance — roadmap_prompt.md STEP 8.1 converted from advisory-only to soft gate requiring explicit PO decision when Now horizon empty; both options documented with example formats (add section now / defer with rationale); OPERATIONAL_GUIDE.md v4.25→v4.26 (ST-05) | claude/system/roadmap_prompt.md v6.8; claude/system/OPERATIONAL_GUIDE.md v4.26; claude/system/prompt_change_log.md |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01] BLG-OPS-49 — npm devDependency HIGH CVE remediation (21 HIGH CVEs cleared; docs/security/security_register.md Audit 001)
+- [ST-02] BLG-OPS-50 — Anthropic SDK upgrade 0.40.0 → 0.105.2 (docs/security/security_register.md Upgrade 001; AC-04 staging deferred: BLG-OPS-52)
+- [ST-03] BLG-QA-40 — Wire Phase B CI with real Postgres service (.github/workflows/ci-tests.yml; 13 pre-existing failures fixed)
+- [ST-04] BLG-QA-41 — Schema smoke test: lifecycle columns on positions table (tests/test_schema.py)
+- [ST-05] BLG-GOV-78 — roadmap_prompt.md STEP 8.1 gate strengthening (v6.7→v6.8; OPERATIONAL_GUIDE.md v4.25→v4.26)
+
+Sign-off: Product Owner — 2026-06-02
+QA sign-off: Director of Quality — 2026-06-02
+
+---
+
 ## v4.8 — Governance Hardening, Ops/Security Debt & SI-05 Phase 1 — 2026-06-02
 Cycle: 2026-06-01__release-v4.8
 Verified: Verified

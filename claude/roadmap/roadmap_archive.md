@@ -1,13 +1,30 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-02
+**Last Updated:** 2026-06-02 (post-ship closure 2026-06-02__release-v4.9)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v4.9 — Security/CI Hardening & SI-05 Phase 1
+
+**Original roadmap location:** §1 Current Version / Release Summary §8
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-02
+**Shipped version:** v4.9
+**Cycle reference:** 2026-06-02__release-v4.9
+**Verification report:** claude/cycles/2026-06-02__release-v4.9/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-02
+
+### Original Roadmap Entry
+
+v4.9 Security/CI Hardening & SI-05 Phase 1. EPIC-01: npm devDependency HIGH CVE remediation (BLG-OPS-49) — 21 HIGH CVEs cleared via npm audit fix + overrides; 6 moderate remain (CRA chain, non-production); security_register.md Audit 001 updated; Anthropic SDK upgrade 0.40.0 → 0.105.2 (BLG-OPS-50) — requirements.txt updated; 447 tests passing; Messages API changelog reviewed (no breaking changes); staging validation deferred BLG-OPS-52. EPIC-02: Real Postgres CI service wired Phase B (BLG-QA-40) — postgres:15 service container; DATABASE_URL injected; 13 pre-existing Phase B test isolation failures surfaced and fixed; Phase A unaffected; schema lifecycle column smoke tests (BLG-QA-41) — tests/test_schema.py; skips Phase A, passes Phase B. EPIC-03: roadmap_prompt.md STEP 8.1 Empty Now Horizon gate strengthening (BLG-GOV-78) — STEP 8.1 converted to soft gate; both decision options documented; v6.7→v6.8; OPERATIONAL_GUIDE.md v4.25→v4.26. EPIC-04 (ST-06/ST-07 SI-05 Phase 1, BLG-GOV-67) gate-deferred at planning — gate clears 2026-06-21. 5/5 in-scope stories delivered. Zero spec deviations. Verified 2026-06-02. completed_cycle_count = 35.
 
 ---
 

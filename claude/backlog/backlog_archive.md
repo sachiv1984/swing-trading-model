@@ -4958,3 +4958,17 @@ Archived by: Backlog Management Engine STEP 12, post-ship closure 2026-05-30__re
 | BLG-SPEC-43 ✅ | SI-04 strategy version comparison endpoint contract | Shipped v4.8 ST-07 — strategy_version_comparison_contract.md v0.1.0; placeholder in openapi.yaml |
 
 ---
+
+## Closed Items — v4.9 Post-Ship (2026-06-02)
+
+*Archived: 5 items shipped in v4.9 (cycle 2026-06-02__release-v4.9). Groom date: 2026-06-02.*
+
+| Item | Title | Resolution |
+|------|-------|------------|
+| BLG-OPS-49 ✅ | npm devDependency HIGH CVEs (react-scripts chain) | Shipped v4.9 ST-01, EPIC-01 — npm audit fix applied; HIGH=0; 6 moderate remain (CRA chain, non-production); security_register.md Audit 001 updated |
+| BLG-OPS-50 ✅ | Anthropic SDK upgrade (0.40.0 → current) | Shipped v4.9 ST-02, EPIC-01 — anthropic 0.40.0→0.105.2; 447 tests passing; security_register.md Upgrade 001 updated; AC-04 staging deferred: BLG-OPS-52 |
+| BLG-QA-40 ✅ | Wire Phase B CI with real Postgres service to catch missing-column errors | Shipped v4.9 ST-03, EPIC-02 — postgres:15 service container; DATABASE_URL injected; Phase A unaffected; 13 pre-existing failures fixed |
+| BLG-QA-41 ✅ | Schema smoke test: assert lifecycle columns exist on positions table | Shipped v4.9 ST-04, EPIC-02 — tests/test_schema.py; skips Phase A (stub); passes Phase B with real Postgres |
+| BLG-GOV-78 ✅ | roadmap_prompt.md STEP 8.1 Empty Now Horizon gate strengthening | Shipped v4.9 ST-05, EPIC-03 — roadmap_prompt.md v6.7→v6.8; STEP 8.1 soft gate; OPERATIONAL_GUIDE.md v4.25→v4.26; HoST + PMO Lead sign-off |
+
+---
