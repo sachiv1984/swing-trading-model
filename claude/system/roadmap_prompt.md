@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 6.7
-**Last Updated:** 2026-05-30 (v6.7)
+**Version:** 6.8
+**Last Updated:** 2026-06-02 (v6.8)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -496,17 +496,23 @@ Valid outcome: no changes made. Still requires roadmap Last Updated refresh and 
 
 ---
 
-### STEP 8.1 — Empty Now Horizon Advisory (Extended-Tier No-Change)
+### STEP 8.1 — Empty Now Horizon Gate (Soft Gate — Any Rebalance)
 
 **Condition — ALL must be true:**
-1. This run is an Extended-tier scheduled rebalance
-2. Rebalance outcome is "no change" (no additions, no kills, no promotions in STEP 8)
-3. `## 3. Delivery Plan — Horizon: Now` in `current_roadmap.md` contains no committed (non-shipped) items
-4. No next-release section exists in `current_roadmap.md` for the next anticipated release
+1. `## 3. Delivery Plan — Horizon: Now` in `current_roadmap.md` contains no committed (non-shipped) items
+2. No next-release section exists in `current_roadmap.md` for the next anticipated release
 
-**Advisory (non-blocking):** If Now horizon is empty after this rebalance and no next-release section exists in `current_roadmap.md` for the next anticipated release, the Product Owner should add one now — omitting it will trigger STEP -1.2 of the Release Planning Engine at every subsequent invocation until resolved. Record this advisory in `run_manifest.md`.
+**Soft gate — requires documented PO choice:** When both conditions are true, the rebalance may not conclude without one of the following decisions explicitly recorded in `run_manifest.md` and the cycle summary:
 
-If this advisory fires on consecutive scheduled rebalances without resolution, record as a recurring advisory in `run_manifest.md` and surface to Product Owner.
+**Option (a) — Add next-release section now:**
+Record: `PO decision (STEP 8.1): Option (a) — next-release section added to current_roadmap.md. Section: [release name]. Rationale: [brief rationale].`
+
+**Option (b) — Defer intentionally with written rationale:**
+Record: `PO decision (STEP 8.1): Option (b) — defer. Now horizon intentionally empty for this cycle. Rationale: [why no release section is needed yet — e.g. insufficient backlog, dependency on external gate, rebalance immediately precedes release planning].`
+
+This is **non-blocking** — either choice clears the gate. The gate prevents silent omission; it does not mandate adding a release section. If no PO decision is recorded, the gate re-fires at the next invocation of the Release Planning Engine (STEP -1.2) until resolved.
+
+If this gate fires on consecutive scheduled rebalances without a recorded decision, escalate to Product Owner as a recurring advisory in `run_manifest.md`.
 
 ---
 
