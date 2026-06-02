@@ -71,3 +71,64 @@ Items: 1
 | # | Observation | Implication | Engine |
 |---|-------------|-------------|--------|
 | 1 | ST-08 (SI-05 Phase 1, BLG-GOV-67) deferred at planning — gate clears 2026-06-21 (SI-01 + SI-03 live ≥ 30 days). | Sprint Planning engine should schedule ST-08 as the primary story for v4.9 Sprint 1, conditional on gate confirmation at planning seal. Release Planning engine should include SI-05 Phase 1 gate check in v4.9 STEP 1.4 Gate-Condition Proximity Scan. | Sprint Planning \| Release Planning |
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-06-01__release-v4.8
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-06-02
+**Reviewed by:** Director of Quality
+**Prior cycle Phase 4 checked:** claude/cycles/2026-05-31__release-v4.7/lessons_learnt_cycle.md — found. v4.7 Phase 4 had 2 deferred monitors (SSR metric accuracy — v4.8 if recurs; SSR row for all done stories — v4.8 monitor), 1 resolved monitor (staging-only ACs accumulation pattern — closed v4.7), plus 3 positive validations (zero-deviation all-pass, staged verifications, spec_references LL-v4.5-EX-02 handling).
+
+**Prior cycle Phase 4 deferred items check:**
+- v4.7 Phase 4 monitor 1 (SSR metric name accuracy — target: v4.8 if recurs): NOT APPLICABLE to v4.8. v4.8 is an all-documentation sprint with no new metric implementations. No recurrence possible. Close monitor.
+- v4.7 Phase 4 monitor 2 (SSR row for done stories correctly listed — target: v4.8 to confirm): NOT RECURRENT in v4.8. All 7 done stories correctly listed in SSR "Capabilities now live" table. Monitor confirmed closed.
+- v4.7 Phase 4 spec_references = [] for document-only stories (INFORMATIONAL): IMPROVED in v4.8. All 7 document-creation stories now have spec_references populated (created artefact paths). LL-v4.5-EX-02 correctly applied at execution time — no empty spec_references at verification.
+
+**prompt_change_log.md deferred patch check:**
+- No deferred patches from prior Phase 4 cycles carried ≥2 cycles without a prompt_change_log entry. Both v4.7 Phase 4 deferred items were first-occurrence monitors targeting v4.8 — both now closed above. No escalation needed.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| Zero-deviation all-pass verification for third consecutive all-autonomous documentation sprint (v4.8 follows v4.7). Gate sequencing: QA evidence complete at invocation — seventh consecutive cycle with no gate sequencing delay at Phase 4. 0 deviations, 0 QA fails, 0 traceability gaps in 7 in-scope stories. Shortest verification cycle this year (all-doc, no staging ACs, no frontier-class items). | Phase 4 | E | action-now | Positive stable pattern. Autonomous class QA evidence prepared correctly (BLG-GOV-19) for consecutive sprints. No process change needed. | Director of Quality | — |
+| spec_references populated for all 7 document-creation stories — improvement over v4.7 where spec_references = [] for 5 document-only stories triggered informational flags. LL-v4.5-EX-02 correctly applied at execution: created artefact path used as spec reference for document-creation stories. v4.7 Phase 4 informational flag is not recurrent. | Phase 4 | A | action-now | Improvement confirmed. LL-v4.5-EX-02 execution-side application is working correctly. No additional process change needed. v4.7 Phase 4 informational note may be considered closed. | Director of Quality | — |
+| SSR row monitor from v4.7 Phase 4 (all done stories correctly in SSR "Capabilities now live"): NOT RECURRENT in v4.8. All 7 done stories correctly listed including both EPIC-01 (3) and EPIC-02 (4) rows, plus Sprint Close governance patch row. Structural pattern confirmed stable across two consecutive documentation sprints. | Phase 4 | A | action-now | Monitor closed. Pattern confirmed stable. No process change needed. | Director of Quality | — |
+| BLG-OPS-49 (P1 npm HIGH devDep) and BLG-OPS-50 (P2 Anthropic SDK upgrade) filed during sprint (ST-05 dependency audit). Both are security findings, not spec deviations — correctly handled as backlog items, not deviation register entries. Backlog filing during sprint prevents post-verification gap. | Phase 4 | E | action-now | Positive pattern. Security audit findings filed as backlog items during execution, not post-verification. P1/P2 classification within sprint means no deviation register overhead at verification. | Director of Quality | — |
+
+**Recurrence Notes:**
+- **SSR metric name accuracy (v4.7 Phase 4 monitor):** NOT APPLICABLE — v4.8 all-documentation sprint; monitor closed.
+- **SSR row completeness for done stories (v4.7 Phase 4 monitor):** NOT RECURRENT — all 7 rows correct. Monitor closed.
+- **Autonomous class sign-off (BLG-GOV-19):** Fourth consecutive sprint applying correctly. Stable.
+- **Gate sequencing (QA evidence ready at Phase 4 invocation):** Seventh consecutive cycle. Stable.
+- **spec_references = [] for document-only stories (v4.7 Phase 4 informational):** NOT RECURRENT in v4.8 — LL-v4.5-EX-02 applied correctly at execution. Closed.
+
+---
+
+## Process improvements actioned this run (Phase 4)
+
+None. All friction items resolved at execution time or confirmed as non-recurrent.
+
+---
+
+## Outstanding deferred patches (Phase 4)
+
+None.
+
+---
+
+## Escalations (Phase 4)
+
+None.
+
+---
+
+## Carry-Forward (updated)
+
+Items: 1 (unchanged from Phase 3)
+
+| # | Observation | Implication | Engine |
+|---|-------------|-------------|--------|
+| 1 | ST-08 (SI-05 Phase 1, BLG-GOV-67) deferred at planning — gate clears 2026-06-21 (SI-01 + SI-03 live ≥ 30 days). | Sprint Planning engine should schedule ST-08 as the primary story for v4.9 Sprint 1, conditional on gate confirmation at planning seal. Release Planning engine should include SI-05 Phase 1 gate check in v4.9 STEP 1.4 Gate-Condition Proximity Scan. | Sprint Planning \| Release Planning |
