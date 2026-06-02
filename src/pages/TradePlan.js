@@ -272,6 +272,9 @@ const EMPTY_FORM = {
   checklist_items: DEFAULT_CHECKLIST_ITEMS.map((i) => ({ ...i })),
   status: "draft",
   pre_entry_override_acknowledged: false,
+  planned_quantity: "",
+  planned_entry_price: "",
+  planned_stop_price: "",
 };
 
 function Field({ label, children }) {
@@ -331,9 +334,6 @@ export default function TradePlan() {
   const [showAbandonModal, setShowAbandonModal] = useState(false);
   const [abandonReason, setAbandonReason] = useState("");
   const [abandonReasonTouched, setAbandonReasonTouched] = useState(false);
-  const [plannedQuantity, setPlannedQuantity] = useState("");
-  const [plannedEntryPrice, setPlannedEntryPrice] = useState("");
-  const [plannedStopPrice, setPlannedStopPrice] = useState("");
 
   const { data: healthData } = useQuery({
     queryKey: ["market-status"],
@@ -342,8 +342,13 @@ export default function TradePlan() {
     staleTime: 60000,
   });
 
-  const regimeFromHealth =
-    healthData?.data?.regime_status || healthData?.regime_status || "";
+  const regimeFromHealth = (() => {
+    if (healthData?.data?.regime_status) return healthData.data.regime_status;
+    if (healthData?.regime_status) return healthData.regime_status;
+    const spy = healthData?.data?.spy;
+    if (spy != null) return spy.is_risk_on ? "risk_on" : "risk_off";
+    return "";
+  })();
 
   const { data: existingPlan, isLoading: loadingExisting } = useQuery({
     queryKey: ["tradePlan", editId],
@@ -368,6 +373,9 @@ export default function TradePlan() {
         entry_rationale: existingPlan.entry_rationale || "",
         regime_context_at_entry: existingPlan.regime_context_at_entry || "",
         r_target: existingPlan.r_target != null ? String(existingPlan.r_target) : "",
+        planned_quantity: existingPlan.planned_quantity != null ? String(existingPlan.planned_quantity) : "",
+        planned_entry_price: existingPlan.planned_entry_price != null ? String(existingPlan.planned_entry_price) : "",
+        planned_stop_price: existingPlan.planned_stop_price != null ? String(existingPlan.planned_stop_price) : "",
         early_exit_conditions: existingPlan.early_exit_conditions || "",
         confirmation_criteria: existingPlan.confirmation_criteria || "",
         checklist_items: checklistItems,
@@ -635,8 +643,8 @@ export default function TradePlan() {
         <Field label="Planned Shares (for pre-entry checks)">
           <TextInput
             type="number"
-            value={plannedQuantity}
-            onChange={(e) => setPlannedQuantity(e.target.value)}
+            value={form.planned_quantity}
+            onChange={set("planned_quantity")}
             placeholder="e.g. 50"
           />
         </Field>
@@ -645,8 +653,8 @@ export default function TradePlan() {
             <TextInput
               type="number"
               data-testid="planned-entry-price-input"
-              value={plannedEntryPrice}
-              onChange={(e) => setPlannedEntryPrice(e.target.value)}
+              value={form.planned_entry_price}
+              onChange={set("planned_entry_price")}
               placeholder="e.g. 150.00"
             />
           </Field>
@@ -654,8 +662,8 @@ export default function TradePlan() {
             <TextInput
               type="number"
               data-testid="planned-stop-price-input"
-              value={plannedStopPrice}
-              onChange={(e) => setPlannedStopPrice(e.target.value)}
+              value={form.planned_stop_price}
+              onChange={set("planned_stop_price")}
               placeholder="e.g. 142.00"
             />
           </Field>
@@ -663,9 +671,9 @@ export default function TradePlan() {
         <PreEntryValidationPanel
           ticker={form.ticker}
           market={form.market}
-          quantity={plannedQuantity}
-          entryPrice={plannedEntryPrice}
-          stopPrice={plannedStopPrice}
+          quantity={form.planned_quantity}
+          entryPrice={form.planned_entry_price}
+          stopPrice={form.planned_stop_price}
           overrideAcknowledged={form.pre_entry_override_acknowledged}
           onOverrideChange={(val) => setForm((prev) => ({ ...prev, pre_entry_override_acknowledged: val }))}
         />
@@ -717,6 +725,10 @@ export default function TradePlan() {
                           market: form.market,
                           setup_type: form.setup_type,
                           signal_data: linkedSignal || null,
+                          planned_entry_price: form.planned_entry_price !== "" ? parseFloat(form.planned_entry_price) : null,
+                          planned_stop_price: form.planned_stop_price !== "" ? parseFloat(form.planned_stop_price) : null,
+                          planned_quantity: form.planned_quantity !== "" ? parseInt(form.planned_quantity, 10) : null,
+                          r_target: form.r_target !== "" ? parseFloat(form.r_target) : null,
                         }),
                       });
                       const json = await res.json();
