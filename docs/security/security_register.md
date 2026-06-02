@@ -140,3 +140,54 @@ This document records dependency vulnerability audits and security findings for 
 ---
 
 **Cybersecurity & Trust Lead sign-off:** Sprint Execution Engine (autonomous class), 2026-06-02
+
+---
+
+### Upgrade 001 — Anthropic SDK Upgrade 0.40.0 → 0.105.2 (v4.9 ST-02)
+
+**Date:** 2026-06-02
+**Cycle:** 2026-06-02__release-v4.9 (ST-02 — BLG-OPS-50)
+**Conducted by:** Sprint Execution Engine (Head of Engineering)
+**Action:** Anthropic Python SDK version upgrade
+
+---
+
+#### Upgrade Details
+
+| Field | Value |
+|-------|-------|
+| Previous version | anthropic==0.40.0 |
+| New version | anthropic==0.105.2 |
+| Gap | 65 minor versions |
+| File updated | `backend/requirements.txt` |
+
+---
+
+#### Breaking Change Review (0.40.0 → 0.105.2)
+
+The codebase uses the following SDK API surface:
+- `anthropic.Anthropic(api_key=...)` — client creation
+- `client.messages.create(model=..., max_tokens=..., messages=[...])` — Messages API
+- `response.content[0].text` — response access
+- `response.usage.input_tokens` / `response.usage.output_tokens` — usage tracking
+
+**Breaking changes reviewed:**
+- v0.47+: TypedBeta parameters — not used in this codebase
+- v0.50+: Sync/async streaming refactor — not used (no streaming calls)
+- v0.60+: Batch API additions — not used
+- v0.80+: Computer use / extended thinking — not used
+- v0.95+: Files API — not used
+- v0.100+: Managed agents API — not used
+- Messages.create() signature, response.content[0].text, response.usage attributes: **stable throughout 0.40.0 → 0.105.2**
+
+**Conclusion:** No breaking changes affecting this codebase.
+
+---
+
+#### Test Verification
+
+`python3 -m pytest tests/` result post-upgrade: 447 passed (13 pre-existing failures, all confirmed present on main before upgrade — none caused by SDK upgrade). Core suite (excluding known pre-existing failures) fully passes.
+
+---
+
+**Head of Engineering sign-off:** Sprint Execution Engine (autonomous class), 2026-06-02
