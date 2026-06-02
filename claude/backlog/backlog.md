@@ -2573,4 +2573,22 @@ When a roadmap rebalance runs as "No-change" and the Now horizon is empty, roadm
 
 *Release Slice v4.8 removed — cycle 2026-06-01__release-v4.8 closed 2026-06-02. Archived canonical home: claude/cycles/2026-06-01__release-v4.8/stage4_backlog_slice.md*
 
+---
+
+## Release Slice — v4.9
+
+<!-- release-plan-marker: RP:v4.9:2026-06-02__release-v4.9 -->
+
+| Story | EPIC | Description | Priority | Notes |
+|-------|------|-------------|----------|-------|
+| ST-01 | EPIC-01 | npm devDependency HIGH CVE remediation | P1 | BLG-OPS-49 |
+| ST-02 | EPIC-01 | Anthropic SDK upgrade 0.40.0 → latest stable | P2 | BLG-OPS-50 |
+| ST-03 | EPIC-02 | Wire Phase B CI with real Postgres service | P2 | BLG-QA-40 |
+| ST-04 | EPIC-02 | Schema smoke test: lifecycle columns on positions table | P3 | BLG-QA-41; depends ST-03 |
+| ST-05 | EPIC-03 | roadmap_prompt.md STEP 8.1 gate strengthening | P3 | BLG-GOV-78 |
+| ST-06 | EPIC-04 | SI-05 Phase 1 backend + Telegram delivery | P2 | BLG-GOV-67; **conditional gate 2026-06-21** |
+| ST-07 | EPIC-04 | SI-05 Phase 1 Playwright coverage | P2 | BLG-GOV-67; **conditional**; depends ST-06 |
+
+*Full acceptance criteria: claude/cycles/2026-06-02__release-v4.9/stage4_backlog_slice.md*
+
 

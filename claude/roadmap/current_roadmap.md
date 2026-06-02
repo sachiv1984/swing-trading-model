@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v4.8** — Governance Hardening, Ops/Security Debt & SI-05 Phase 1 — ✅ Shipped 2026-06-02
-**Next planned release:** v4.9 — [TBD]
+**Next planned release:** v4.9 — Security/CI Hardening & SI-05 Phase 1
+
+<!-- roadmap-annotation-marker: RA:v4.9:2026-06-02__release-v4.9 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-02__release-v4.9
+- Plan published: 2026-06-02
+- Cycle folder: claude/cycles/2026-06-02__release-v4.9/
+- Backlog slice: claude/cycles/2026-06-02__release-v4.9/stage4_backlog_slice.md
+- Status at annotation: Validated
 
 *RA:v4.8 retired — see roadmap_archive.md 2026-06-02 (post-ship closure 2026-06-01__release-v4.8).*
 

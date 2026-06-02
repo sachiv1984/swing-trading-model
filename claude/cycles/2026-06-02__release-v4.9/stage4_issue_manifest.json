@@ -1,0 +1,88 @@
+{
+  "cycle_id": "2026-06-02__release-v4.9",
+  "release": "v4.9",
+  "generated_utc": "2026-06-02T11:10:00Z",
+  "stories": [
+    {
+      "st_id": "ST-01",
+      "epic_id": "EPIC-01",
+      "title": "npm devDependency HIGH CVE remediation",
+      "source": "BLG-OPS-49",
+      "priority": "P1",
+      "effort": "S",
+      "labels": ["EPIC-01", "cycle:2026-06-02__release-v4.9", "v4.9"],
+      "conditional": false,
+      "idempotency_key": "ST-01:cycle:2026-06-02__release-v4.9"
+    },
+    {
+      "st_id": "ST-02",
+      "epic_id": "EPIC-01",
+      "title": "Anthropic SDK upgrade 0.40.0 to latest stable",
+      "source": "BLG-OPS-50",
+      "priority": "P2",
+      "effort": "S-M",
+      "labels": ["EPIC-01", "cycle:2026-06-02__release-v4.9", "v4.9"],
+      "conditional": false,
+      "idempotency_key": "ST-02:cycle:2026-06-02__release-v4.9"
+    },
+    {
+      "st_id": "ST-03",
+      "epic_id": "EPIC-02",
+      "title": "Wire Phase B CI with real Postgres service",
+      "source": "BLG-QA-40",
+      "priority": "P2",
+      "effort": "M",
+      "labels": ["EPIC-02", "cycle:2026-06-02__release-v4.9", "v4.9"],
+      "conditional": false,
+      "idempotency_key": "ST-03:cycle:2026-06-02__release-v4.9"
+    },
+    {
+      "st_id": "ST-04",
+      "epic_id": "EPIC-02",
+      "title": "Schema smoke test: lifecycle columns on positions table",
+      "source": "BLG-QA-41",
+      "priority": "P3",
+      "effort": "S",
+      "labels": ["EPIC-02", "cycle:2026-06-02__release-v4.9", "v4.9"],
+      "conditional": false,
+      "depends_on": ["ST-03"],
+      "idempotency_key": "ST-04:cycle:2026-06-02__release-v4.9"
+    },
+    {
+      "st_id": "ST-05",
+      "epic_id": "EPIC-03",
+      "title": "roadmap_prompt.md STEP 8.1 Empty Now Horizon gate strengthening",
+      "source": "BLG-GOV-78",
+      "priority": "P3",
+      "effort": "S",
+      "labels": ["EPIC-03", "cycle:2026-06-02__release-v4.9", "v4.9"],
+      "conditional": false,
+      "idempotency_key": "ST-05:cycle:2026-06-02__release-v4.9"
+    },
+    {
+      "st_id": "ST-06",
+      "epic_id": "EPIC-04",
+      "title": "SI-05 Phase 1 backend service + Telegram delivery",
+      "source": "BLG-GOV-67",
+      "priority": "P2",
+      "effort": "M",
+      "labels": ["EPIC-04", "cycle:2026-06-02__release-v4.9", "v4.9", "conditional"],
+      "conditional": true,
+      "gate_condition": "SI-01 + SI-03 live >= 30 days; gate clears 2026-06-21",
+      "idempotency_key": "ST-06:cycle:2026-06-02__release-v4.9"
+    },
+    {
+      "st_id": "ST-07",
+      "epic_id": "EPIC-04",
+      "title": "SI-05 Phase 1 Playwright coverage",
+      "source": "BLG-GOV-67",
+      "priority": "P2",
+      "effort": "S-M",
+      "labels": ["EPIC-04", "cycle:2026-06-02__release-v4.9", "v4.9", "conditional"],
+      "conditional": true,
+      "gate_condition": "SI-01 + SI-03 live >= 30 days; gate clears 2026-06-21",
+      "depends_on": ["ST-06"],
+      "idempotency_key": "ST-07:cycle:2026-06-02__release-v4.9"
+    }
+  ]
+}
