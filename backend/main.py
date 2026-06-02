@@ -275,6 +275,12 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_gemini_audit_log_table FAILED at startup: %s", _e)
     try:
+        from database import ensure_positions_user_fill_price_column
+        ensure_positions_user_fill_price_column()
+        _log.info("ensure_positions_user_fill_price_column: OK")
+    except Exception as _e:
+        _log.error("ensure_positions_user_fill_price_column FAILED at startup: %s", _e)
+    try:
         from database import ensure_trade_history_fill_price_column
         ensure_trade_history_fill_price_column()
         _log.info("ensure_trade_history_fill_price_column: OK")
