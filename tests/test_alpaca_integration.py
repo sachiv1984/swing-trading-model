@@ -75,6 +75,16 @@ class TestAlpacaService(unittest.TestCase):
 
 class TestPricingRouting(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        # test_alerts_service.py registers a utils.pricing stub in sys.modules at
+        # import time. When the full test suite runs, this stub is present before
+        # these tests and lacks private helpers like _yahoo_get_current_price,
+        # causing @patch to raise AttributeError. Evict the stubs here so the
+        # real backend/utils/pricing.py is loaded for these tests.
+        for _key in ('utils', 'utils.pricing', 'utils.calculations', 'utils.formatting'):
+            sys.modules.pop(_key, None)
+
     @patch('utils.pricing._yahoo_get_current_price')
     @patch('services.alpaca_service.get_latest_close')
     def test_us_ticker_uses_alpaca_first(self, mock_alpaca, mock_yahoo):
@@ -115,6 +125,13 @@ class TestPricingRouting(unittest.TestCase):
 
 
 class TestATRRouting(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        # Same stub-eviction as TestPricingRouting — ensure real utils.pricing
+        # is in sys.modules before these tests patch its private attributes.
+        for _key in ('utils', 'utils.pricing', 'utils.calculations', 'utils.formatting'):
+            sys.modules.pop(_key, None)
 
     @patch('utils.pricing._alpaca_calculate_atr')
     def test_us_ticker_atr_uses_alpaca(self, mock_alpaca_atr):

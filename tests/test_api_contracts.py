@@ -451,13 +451,11 @@ class TestReportsEndpoints(unittest.TestCase):
     def test_get_tax_year_missing_param_returns_400(self, *_):
         assert CLIENT.get("/reports/tax-year").status_code == 400
 
-    def test_get_monthly_pnl_returns_ok(self):
-        # Route only exists after EPIC-04 merges into main
-        r = CLIENT.get("/reports/monthly-pnl")
-        if r.status_code == 404:
-            self.skipTest("monthly-pnl route not yet on this branch (EPIC-04)")
-        assert r.status_code == 200
-        assert r.json().get("status") == "ok"
+    @patch("main.get_monthly_pnl_report", return_value=[])
+    @patch("main.get_arc5_compliance_summary", return_value=None)
+    def test_get_monthly_pnl_returns_ok(self, *_):
+        body = _ok(CLIENT.get("/reports/monthly-pnl"))
+        assert "data" in body
 
     @patch("main.get_monthly_pnl_report", return_value=[{"year": 2026, "month": 5, "realised_pnl_gbp": 100.0, "trade_count": 2}])
     @patch("main.get_arc5_compliance_summary", return_value={
