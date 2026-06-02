@@ -5,14 +5,14 @@
   "invoked_utc": "2026-06-02T12:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-02T14:15:00Z",
+  "last_updated_utc": "2026-06-02T15:00:00Z",
 
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-02__release-v4.9/EPIC-01",
       "pr_number": 643,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-02__release-v4.9/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -34,10 +34,10 @@
           "deviations_filed": true,
           "last_completed_substep": "push",
           "sign_off_record": null,
-          "notes": "no prior spec applicable; AC-01–04 verified: npm audit fix + overrides applied, HIGH=0, build passes, security_register.md updated; 6 moderate remain (all CRA chain, non-production)"
+          "notes": "no prior spec applicable; AC-01-04 verified: npm audit fix + overrides applied, HIGH=0, build passes, security_register.md updated; 6 moderate remain (all CRA chain, non-production)"
         },
         "ST-02": {
-          "title": "Anthropic SDK upgrade 0.40.0 → latest",
+          "title": "Anthropic SDK upgrade 0.40.0 to latest",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -53,7 +53,7 @@
           "deviations_filed": true,
           "last_completed_substep": "push",
           "sign_off_record": null,
-          "notes": "no prior spec applicable; AC-01 requirements.txt updated anthropic==0.40.0→0.105.2; AC-02 13 pre-existing failures confirmed not SDK-caused (gemini_service migration debt), 447 passing; AC-03 changelog reviewed: Messages API stable throughout range, no breaking changes affecting codebase; AC-04 deferred post-merge — BLG-OPS-52 filed per CLAUDE.md §2; AC-05 documented in docs/security/security_register.md Upgrade 001"
+          "notes": "no prior spec applicable; AC-01 requirements.txt updated anthropic 0.40.0 to 0.105.2; AC-02 13 pre-existing failures confirmed not SDK-caused, 447 passing; AC-03 changelog reviewed no breaking changes; AC-04 deferred post-merge BLG-OPS-52 filed; AC-05 documented in security_register.md"
         }
       }
     },
@@ -73,7 +73,7 @@
           "assigned_to": "engine",
           "github_issue": 638,
           "branch": "exec/2026-06-02__release-v4.9/EPIC-02",
-          "commit_sha": "3a3d3d33f24582defe403dfc85b19ed0ae26899c",
+          "commit_sha": "fb8d33ffe35edfe0a45fd85ee1a3d1fe04e81a80",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -83,7 +83,7 @@
           "deviations_filed": true,
           "last_completed_substep": "push",
           "sign_off_record": null,
-          "notes": "AC-01: postgres:15 service container added to ci-tests.yml pytest-phase-b job; AC-02: DATABASE_URL=postgresql://ci:ci@localhost:5432/ci_test wired in Phase B job env (service container URL; AC-02 deviation note: spec says 'repo secret' but service container URL is safer for CI — intent met); AC-03: Phase B job enabled and active; AC-04: Phase A tests continue to pass 279/279; AC-05: test_schema.py test_missing_lifecycle_column_detected proves absent column is detectable; AC-06: Phase A pytest-phase-a job unchanged and still passes"
+          "notes": "Phase B CI wired with postgres:15 service container. RISK-02: 13 pre-existing Phase B test isolation failures surfaced and fixed in fb8d33ff (4 test files). Phase B 460 passing + 2 schema tests pass in CI."
         },
         "ST-04": {
           "title": "Schema smoke test: lifecycle columns on positions table",
@@ -92,7 +92,7 @@
           "assigned_to": "engine",
           "github_issue": 639,
           "branch": "exec/2026-06-02__release-v4.9/EPIC-02",
-          "commit_sha": "3a3d3d33f24582defe403dfc85b19ed0ae26899c",
+          "commit_sha": "fb8d33ffe35edfe0a45fd85ee1a3d1fe04e81a80",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -102,8 +102,8 @@
           "deviations_filed": true,
           "last_completed_substep": "push",
           "sign_off_record": null,
-          "delivery_note": "tests/test_schema.py created — primary deliverable per LL-v4.5-EX-02",
-          "notes": "AC-01: test_ensure_lifecycle_columns_creates_all_three() in tests/test_schema.py calls ensure_lifecycle_columns() then queries information_schema.columns; AC-02: assertion fails if any of 3 columns absent; AC-03: pytestmark skipif when DATABASE_URL contains 'stub' — verified skips in Phase A; AC-04: passes in Phase B CI with postgres:15 service container"
+          "delivery_note": "tests/test_schema.py created",
+          "notes": "Schema introspection tests created; skips in Phase A; passes in Phase B CI with real Postgres."
         }
       }
     },
@@ -139,7 +139,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-06-02T14:00:00Z"
           },
-          "notes": "AC-01 STEP 8.1 converted from Extended-Tier advisory to any-rebalance soft gate requiring documented PO choice; AC-02 both decision options documented with example formats; AC-03 v6.7→v6.8 version bumped; AC-04 OPERATIONAL_GUIDE.md §6 updated v6.7→v6.8; AC-05 §14 Roadmap Engine Source v6.7→v6.8, OPERATIONAL_GUIDE.md v4.25→v4.26; AC-06 prompt_change_log.md entries appended; AC-07 agent-mediated sign-off: Head of Specs Team APPROVED, PMO Lead APPROVED"
+          "notes": "STEP 8.1 converted to any-rebalance soft gate; roadmap_prompt.md v6.7 to v6.8; OPERATIONAL_GUIDE.md updated; prompt_change_log.md entries appended; agent-mediated sign-off cleared."
         }
       }
     }
@@ -151,8 +151,8 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03"],
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-02", "EPIC-03"],
     "all_merged": false
   },
 
