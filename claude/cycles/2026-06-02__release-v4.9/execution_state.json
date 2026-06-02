@@ -1,0 +1,154 @@
+{
+  "cycle_id": "2026-06-02__release-v4.9",
+  "sprint_goal": "Ship v4.9 security and CI hardening: remediate 21 npm HIGH CVEs, upgrade the Anthropic SDK to latest, wire real Postgres CI service to close the schema-invisible-column class of bug, add schema lifecycle smoke tests, and strengthen the roadmap empty-horizon gate.",
+  "backlog_slice_source": "claude/cycles/2026-06-02__release-v4.9/stage4_backlog_slice.md",
+  "invoked_utc": "2026-06-02T12:30:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-06-02T13:15:00Z",
+
+  "epics": {
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-06-02__release-v4.9/EPIC-01",
+      "pr_number": 643,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-06-02__release-v4.9/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "npm devDependency HIGH CVE remediation",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 636,
+          "branch": "exec/2026-06-02__release-v4.9/EPIC-01",
+          "commit_sha": "c7ea6bbdec1b237bf8749b007a3b1a0b615be7be",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-02T12:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "deviations_filed": true,
+          "last_completed_substep": "push",
+          "sign_off_record": null,
+          "notes": "no prior spec applicable; AC-01–04 verified: npm audit fix + overrides applied, HIGH=0, build passes, security_register.md updated; 6 moderate remain (all CRA chain, non-production)"
+        },
+        "ST-02": {
+          "title": "Anthropic SDK upgrade 0.40.0 → latest",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 637,
+          "branch": "exec/2026-06-02__release-v4.9/EPIC-01",
+          "commit_sha": "56c7773d65989c315daa09de994a45a157ab36d3",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-02T13:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [],
+          "deviations_filed": true,
+          "last_completed_substep": "push",
+          "sign_off_record": null,
+          "notes": "no prior spec applicable; AC-01 requirements.txt updated anthropic==0.40.0→0.105.2; AC-02 13 pre-existing failures confirmed not SDK-caused (gemini_service migration debt), 447 passing; AC-03 changelog reviewed: Messages API stable throughout range, no breaking changes affecting codebase; AC-04 deferred post-merge — BLG-OPS-52 filed per CLAUDE.md §2; AC-05 documented in docs/security/security_register.md Upgrade 001"
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "in_progress",
+      "branch": "exec/2026-06-02__release-v4.9/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-06-02__release-v4.9/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-03": {
+          "title": "Wire Phase B CI with real Postgres service",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 638,
+          "branch": "exec/2026-06-02__release-v4.9/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "no prior spec applicable"
+        },
+        "ST-04": {
+          "title": "Schema smoke test: lifecycle columns on positions table",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 639,
+          "branch": "exec/2026-06-02__release-v4.9/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "depends on ST-03; spec_references will be set to created test file path per LL-v4.5-EX-02"
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "in_progress",
+      "branch": "exec/2026-06-02__release-v4.9/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-06-02__release-v4.9/qa_evidence_EPIC-03.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-05": {
+          "title": "roadmap_prompt.md STEP 8.1 Empty Now Horizon gate strengthening",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 640,
+          "branch": "exec/2026-06-02__release-v4.9/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["claude/system/roadmap_prompt.md"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "governance file edit; CLAUDE.md §6 checklist required in same commit; sign-off: Head of Specs Team + PMO Lead"
+        }
+      }
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": ["EPIC-01/ST-01", "EPIC-01/ST-02"],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}

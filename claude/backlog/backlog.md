@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-02 (session — 2 new items added: BLG-FEAT-43, BLG-BE-25)
+**Last Updated:** 2026-06-02 (session — 1 new item added: BLG-OPS-52)
 **Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
@@ -2541,6 +2541,29 @@ v4.8 ST-07 added a placeholder entry for GET /analytics/strategy-version-compari
 **Acceptance Criteria**
 - GET /analytics/strategy-version-comparison present in api_performance_baseline.md with p50/p95 values
 - Measurement conducted with ≥5 staging samples
+
+---
+
+### BLG-OPS-52 — ST-02 staging verification: Anthropic SDK 0.40.0 → 0.105.2 endpoint validation
+**Priority:** P2 (Medium)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** v4.9 EPIC-01 ST-02 AC-04 staging gate deferred post-merge (CLAUDE.md §2) — 2026-06-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v4.10
+
+**Problem**
+ST-02 (Anthropic SDK upgrade 0.40.0 → 0.105.2) includes a staging-only AC requiring verification that POST /trade-plans/{plan_id}/generate-thesis and POST /ai/check-daily-cost remain functional post-upgrade. This cannot be confirmed autonomously and was deferred post-merge per CLAUDE.md §2 staging gate. Sign-off must be obtained before the next cycle that touches AI endpoints.
+
+**Scope**
+- On staging environment post v4.9 deploy: verify POST /trade-plans/{plan_id}/generate-thesis returns a valid AI-generated thesis
+- Verify POST /ai/check-daily-cost returns the expected cost response
+- Record Infrastructure & Operations Owner sign-off in the relevant QA evidence log
+
+**Acceptance Criteria**
+- POST /trade-plans/{plan_id}/generate-thesis returns HTTP 200 with non-null thesis field post SDK upgrade
+- POST /ai/check-daily-cost returns HTTP 200 with expected cost structure post SDK upgrade
+- Infrastructure & Operations Owner sign-off recorded with staging verification date
 
 ---
 

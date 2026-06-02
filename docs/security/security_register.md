@@ -92,3 +92,102 @@ This document records dependency vulnerability audits and security findings for 
 ---
 
 **Cybersecurity & Trust Lead sign-off:** Sprint Execution Engine (autonomous class), 2026-06-01
+
+---
+
+### Remediation 001 — npm HIGH CVE Remediation (v4.9 ST-01)
+
+**Date:** 2026-06-02
+**Cycle:** 2026-06-02__release-v4.9 (ST-01 — BLG-OPS-49)
+**Conducted by:** Sprint Execution Engine (Head of Engineering / Cybersecurity & Trust Lead)
+**Action:** npm devDependency HIGH CVE remediation
+
+---
+
+#### Remediation Steps
+
+1. **Initial state:** 45 vulnerabilities (21 HIGH, 15 moderate, 9 low) — all in react-scripts 5.x devDependency chain
+2. **Step 1 — `npm audit fix`:** Applied automatic fixes; reduced to 28 vulnerabilities (13 HIGH, 6 moderate, 9 low)
+3. **Step 2 — npm `overrides`:** Added `overrides` block in `package.json` to force-patch three remaining HIGH transitive deps blocked by react-scripts CRA architecture
+
+---
+
+#### npm Overrides Applied
+
+| Package | Vulnerable range | Fixed version | CVE/Advisory |
+|---------|-----------------|---------------|--------------|
+| `nth-check` | <2.0.1 | >=2.0.1 (3.0.1) | GHSA-rp65-9cf3-cjxr — Inefficient RegExp Complexity |
+| `serialize-javascript` | <=7.0.4 | >=7.0.5 (7.0.5) | GHSA-5c6j-r48x-rmvq — RCE via RegExp/Date; GHSA-qj8w-gfj5-8c6v — CPU DoS |
+| `underscore` | <=1.13.7 | >=1.13.8 (1.13.8) | GHSA-qpx9-hpmf-5gmw — Unlimited recursion DoS |
+
+---
+
+#### Result
+
+**Final state after remediation:** 15 vulnerabilities (0 HIGH, 6 moderate, 9 low)
+
+| Check | Before | After |
+|-------|--------|-------|
+| HIGH vulnerabilities | 21 | **0** |
+| Moderate vulnerabilities | 15 | 6 |
+| Low vulnerabilities | 9 | 9 |
+| Production runtime impact | None | None |
+
+`npm audit --audit-level=high` exits 0. Build verified with `npm run build` — no regressions.
+
+**Remaining 6 moderate, 9 low:** All transitive to react-scripts CRA chain; no production runtime impact; deferred per standard CRA maintenance policy.
+
+---
+
+**Cybersecurity & Trust Lead sign-off:** Sprint Execution Engine (autonomous class), 2026-06-02
+
+---
+
+### Upgrade 001 — Anthropic SDK Upgrade 0.40.0 → 0.105.2 (v4.9 ST-02)
+
+**Date:** 2026-06-02
+**Cycle:** 2026-06-02__release-v4.9 (ST-02 — BLG-OPS-50)
+**Conducted by:** Sprint Execution Engine (Head of Engineering)
+**Action:** Anthropic Python SDK version upgrade
+
+---
+
+#### Upgrade Details
+
+| Field | Value |
+|-------|-------|
+| Previous version | anthropic==0.40.0 |
+| New version | anthropic==0.105.2 |
+| Gap | 65 minor versions |
+| File updated | `backend/requirements.txt` |
+
+---
+
+#### Breaking Change Review (0.40.0 → 0.105.2)
+
+The codebase uses the following SDK API surface:
+- `anthropic.Anthropic(api_key=...)` — client creation
+- `client.messages.create(model=..., max_tokens=..., messages=[...])` — Messages API
+- `response.content[0].text` — response access
+- `response.usage.input_tokens` / `response.usage.output_tokens` — usage tracking
+
+**Breaking changes reviewed:**
+- v0.47+: TypedBeta parameters — not used in this codebase
+- v0.50+: Sync/async streaming refactor — not used (no streaming calls)
+- v0.60+: Batch API additions — not used
+- v0.80+: Computer use / extended thinking — not used
+- v0.95+: Files API — not used
+- v0.100+: Managed agents API — not used
+- Messages.create() signature, response.content[0].text, response.usage attributes: **stable throughout 0.40.0 → 0.105.2**
+
+**Conclusion:** No breaking changes affecting this codebase.
+
+---
+
+#### Test Verification
+
+`python3 -m pytest tests/` result post-upgrade: 447 passed (13 pre-existing failures, all confirmed present on main before upgrade — none caused by SDK upgrade). Core suite (excluding known pre-existing failures) fully passes.
+
+---
+
+**Head of Engineering sign-off:** Sprint Execution Engine (autonomous class), 2026-06-02
