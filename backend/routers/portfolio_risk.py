@@ -61,19 +61,21 @@ def _get_portfolio_heat_and_positions():
         sector = pos.get("sector")
 
         if market == "US":
-            entry_price_gbp = entry_price / fx_rate
-            current_price_native = float(pos.get("current_price") or entry_price)
+            # fill_price is USD native; entry_price is GBP-converted
+            entry_price_native = float(pos.get("fill_price") or (entry_price * fx_rate))
+            current_price_native = float(pos.get("current_price") or entry_price_native)
             current_price_gbp = current_price_native / live_fx_rate
         else:
-            entry_price_gbp = entry_price
-            current_price_gbp = float(pos.get("current_price") or entry_price)
+            entry_price_native = entry_price
+            current_price_gbp = float(pos.get("current_price") or entry_price_native)
 
         current_value_gbp = current_price_gbp * shares
         total_positions_value += current_value_gbp
 
         if initial_stop is not None and float(initial_stop) > 0:
             initial_stop = float(initial_stop)
-            risk_native = max(0.0, entry_price - initial_stop)
+            # Both entry_price_native and initial_stop are stored in native currency
+            risk_native = max(0.0, entry_price_native - initial_stop)
             fx_adj = 1.0 / fx_rate if market == "US" else 1.0
             position_risk_gbp = round(risk_native * shares * fx_adj, 2)
         else:
@@ -173,6 +175,10 @@ def get_drawdown_status():
             "current_drawdown_pct": current_drawdown_pct,
             "threshold_pct": threshold,
             "threshold_breached": threshold_breached,
+            "_debug": {
+                "peak_value_gbp": round(peak, 2),
+                "current_value_gbp": round(total_value, 2),
+            },
         }
 
         if threshold_breached:
