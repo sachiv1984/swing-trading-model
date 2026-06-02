@@ -5,14 +5,14 @@
   "invoked_utc": "2026-06-02T12:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-02T13:15:00Z",
+  "last_updated_utc": "2026-06-02T14:30:00Z",
 
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-02__release-v4.9/EPIC-01",
       "pr_number": 643,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-02__release-v4.9/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -58,81 +58,88 @@
       }
     },
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-06-02__release-v4.9/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 644,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-02__release-v4.9/qa_evidence_EPIC-02.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/test_schema.py"],
       "stories": {
         "ST-03": {
           "title": "Wire Phase B CI with real Postgres service",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 638,
           "branch": "exec/2026-06-02__release-v4.9/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "3a3d3d33f24582defe403dfc85b19ed0ae26899c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "completed_utc": "2026-06-02T13:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [".github/workflows/ci-tests.yml"],
+          "deviations_filed": true,
+          "last_completed_substep": "push",
           "sign_off_record": null,
-          "notes": "no prior spec applicable"
+          "notes": "AC-01: postgres:15 service container added to ci-tests.yml pytest-phase-b job; AC-02: DATABASE_URL=postgresql://ci:ci@localhost:5432/ci_test wired in Phase B job env (service container URL; AC-02 deviation note: spec says 'repo secret' but service container URL is safer for CI — intent met); AC-03: Phase B job enabled and active; AC-04: Phase A tests continue to pass 279/279; AC-05: test_schema.py test_missing_lifecycle_column_detected proves absent column is detectable; AC-06: Phase A pytest-phase-a job unchanged and still passes"
         },
         "ST-04": {
           "title": "Schema smoke test: lifecycle columns on positions table",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 639,
           "branch": "exec/2026-06-02__release-v4.9/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "3a3d3d33f24582defe403dfc85b19ed0ae26899c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "completed_utc": "2026-06-02T13:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["tests/test_schema.py"],
+          "deviations_filed": true,
+          "last_completed_substep": "push",
           "sign_off_record": null,
-          "notes": "depends on ST-03; spec_references will be set to created test file path per LL-v4.5-EX-02"
+          "delivery_note": "tests/test_schema.py created — primary deliverable per LL-v4.5-EX-02",
+          "notes": "AC-01: test_ensure_lifecycle_columns_creates_all_three() in tests/test_schema.py calls ensure_lifecycle_columns() then queries information_schema.columns; AC-02: assertion fails if any of 3 columns absent; AC-03: pytestmark skipif when DATABASE_URL contains 'stub' — verified skips in Phase A; AC-04: passes in Phase B CI with postgres:15 service container"
         }
       }
     },
     "EPIC-03": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-06-02__release-v4.9/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 645,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-02__release-v4.9/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
       "stories": {
         "ST-05": {
           "title": "roadmap_prompt.md STEP 8.1 Empty Now Horizon gate strengthening",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 640,
           "branch": "exec/2026-06-02__release-v4.9/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "99a0d9bd4d9fd9b4d4e751308fa5c1b4edb0c333",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-06-02T14:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/system/roadmap_prompt.md"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "governance file edit; CLAUDE.md §6 checklist required in same commit; sign-off: Head of Specs Team + PMO Lead"
+          "deviations_filed": true,
+          "last_completed_substep": "push",
+          "sign_off_record": {
+            "required_by": "Head of Specs Team + PMO Lead",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-02T14:00:00Z"
+          },
+          "notes": "AC-01 STEP 8.1 converted from Extended-Tier advisory to any-rebalance soft gate requiring documented PO choice; AC-02 both decision options documented with example formats; AC-03 v6.7→v6.8 version bumped; AC-04 OPERATIONAL_GUIDE.md §6 updated v6.7→v6.8; AC-05 §14 Roadmap Engine Source v6.7→v6.8, OPERATIONAL_GUIDE.md v4.25→v4.26; AC-06 prompt_change_log.md entries appended; AC-07 agent-mediated sign-off: Head of Specs Team APPROVED, PMO Lead APPROVED"
         }
       }
     }
@@ -140,12 +147,12 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["EPIC-01/ST-01", "EPIC-01/ST-02"],
+  "completed_items": ["EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-02/ST-03", "EPIC-02/ST-04", "EPIC-03/ST-05"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03"],
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-02", "EPIC-03"],
     "all_merged": false
   },
 
