@@ -95,7 +95,7 @@ def _get_portfolio_heat_and_positions():
     total_risk_gbp = sum(position_risks)
     portfolio_heat_pct = round(total_risk_gbp / total_value * 100, 2) if total_value > 0 else 0.0
 
-    return total_value, portfolio_heat_pct, positions_with_risk, portfolio_id, live_fx_rate
+    return total_value, portfolio_heat_pct, positions_with_risk, portfolio_id, live_fx_rate, cash, total_positions_value
 
 
 def _get_30d_peak(portfolio_id: str) -> float:
@@ -159,7 +159,7 @@ def get_drawdown_status():
     When breached, also returns lifecycle state counts, portfolio heat %, regime.
     """
     try:
-        total_value, portfolio_heat_pct, _, portfolio_id, _ = _get_portfolio_heat_and_positions()
+        total_value, portfolio_heat_pct, _, portfolio_id, _, cash, positions_value = _get_portfolio_heat_and_positions()
         peak = _get_30d_peak(portfolio_id)
         threshold = _get_settings_value("drawdown_threshold_pct", _DEFAULT_DRAWDOWN_THRESHOLD)
 
@@ -178,6 +178,8 @@ def get_drawdown_status():
             "_debug": {
                 "peak_value_gbp": round(peak, 2),
                 "current_value_gbp": round(total_value, 2),
+                "cash_gbp": round(cash, 2),
+                "positions_value_gbp": round(positions_value, 2),
             },
         }
 
@@ -206,7 +208,7 @@ def get_concentration_status():
     Graceful degradation: positions without sector data excluded from sector calculation.
     """
     try:
-        _, _, positions_with_risk, _, _ = _get_portfolio_heat_and_positions()
+        _, _, positions_with_risk, _, _, _, _ = _get_portfolio_heat_and_positions()
 
         pos_threshold = _get_settings_value(
             "concentration_position_threshold_pct", _DEFAULT_POSITION_CONCENTRATION_THRESHOLD
