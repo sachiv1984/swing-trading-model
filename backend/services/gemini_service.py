@@ -21,21 +21,35 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 MODEL_VERSION = "claude-haiku-4-5"
 PROMPT_VERSION = "v3.0"
 
-_FULL_PLAN_PROMPT = """You are a systematic swing trader. Given the trade context below, fill in all sections of a trade plan.
+_FULL_PLAN_PROMPT = """You are a systematic swing trader documenting a trade plan. Write all sections to accurately reflect the exact trade being made — do not use generic language that doesn't match the actual parameters.
 
 Ticker: {ticker}
 Market: {market}
 Setup type: {setup_type}
 Signal data: {signal_summary}
+Entry price: {entry_price}
+Stop price: {stop_price}
+Stop method: {stop_method}
+Planned shares: {quantity}
+R-target: {r_target}
+Risk per share: {risk_per_share}
+
+Rules:
+- entry_rationale must describe entering at the stated entry price, not a hypothetical breakout or pullback unless that is literally what is happening
+- early_exit_conditions must reference the actual stop price, not a moving average unless they coincide
+- confirmation_criteria should only include criteria that can actually be verified at entry
+- regime_context_at_entry must reflect risk-on/off status consistent with the signal being generated
+- r_target in the JSON must match the stated R-target above exactly
+- Be specific and concise. No generic filler.
 
 Return ONLY a JSON object with exactly these keys (no markdown, no preamble):
 {{
   "regime_context_at_entry": "1 sentence on current market regime — risk-on/off, trend, sector strength.",
-  "setup_thesis": "2-3 sentence thesis explaining why this setup is valid now. Under 100 words.",
-  "entry_rationale": "1-2 sentences on the specific reason to enter — what technical or fundamental condition makes this a candidate.",
-  "confirmation_criteria": "1-2 sentences on what must be true at entry — price action, volume, regime.",
-  "early_exit_conditions": "1-2 sentences on conditions that would invalidate the thesis before the stop is hit.",
-  "r_target": <number between 1.5 and 4.0 based on setup quality, or null if unknown>
+  "setup_thesis": "2-3 sentence thesis explaining why this setup is valid now, referencing the momentum signal. Under 100 words.",
+  "entry_rationale": "1-2 sentences on why entering at {entry_price} now — what condition makes this the entry point.",
+  "confirmation_criteria": "1-2 sentences on verifiable conditions at entry — price action, volume, regime.",
+  "early_exit_conditions": "1-2 sentences referencing the stop at {stop_price} and what invalidates the thesis.",
+  "r_target": {r_target_num}
 }}"""
 
 _THESIS_PROMPT_TEMPLATE = """You are a systematic swing trader. Generate a concise setup thesis (2-3 sentences) for the following trade context.
@@ -125,6 +139,10 @@ def generate_full_plan(
     setup_type: Optional[str] = None,
     signal_data: Optional[dict] = None,
     plan_id: Optional[str] = None,
+    planned_entry_price: Optional[float] = None,
+    planned_stop_price: Optional[float] = None,
+    planned_quantity: Optional[int] = None,
+    r_target: Optional[float] = None,
 ) -> dict:
     """
     Generate all plan fields in one call: setup_thesis, entry_rationale,
@@ -142,15 +160,44 @@ def generate_full_plan(
 
     signal_summary = _build_signal_summary(signal_data)
 
+    # Derive stop method description
+    atr = signal_data.get("atr_value") if signal_data else None
+    if planned_entry_price and planned_stop_price and atr:
+        risk = planned_entry_price - planned_stop_price
+        atr_mult = round(risk / atr, 1) if atr > 0 else None
+        stop_method = f"{atr_mult}×ATR below entry" if atr_mult else "ATR-based"
+    elif planned_entry_price and planned_stop_price:
+        stop_method = "fixed price stop"
+    else:
+        stop_method = "ATR-based per signal"
+
+    risk_per_share = (
+        round(planned_entry_price - planned_stop_price, 2)
+        if planned_entry_price and planned_stop_price
+        else "unknown"
+    )
+
     prompt = _FULL_PLAN_PROMPT.format(
         ticker=ticker.upper(),
         market=market,
         setup_type=setup_type or "Not specified",
         signal_summary=signal_summary,
+        entry_price=f"${planned_entry_price}" if planned_entry_price else "market price",
+        stop_price=f"${planned_stop_price}" if planned_stop_price else "per signal",
+        stop_method=stop_method,
+        quantity=planned_quantity if planned_quantity else "per model sizing",
+        r_target=r_target if r_target else "to be determined",
+        risk_per_share=f"${risk_per_share}" if risk_per_share != "unknown" else "unknown",
+        r_target_num=r_target if r_target else "null",
     )
 
     input_payload = json.dumps(
-        {"ticker": ticker, "market": market, "setup_type": setup_type, "signal_data": signal_data},
+        {
+            "ticker": ticker, "market": market, "setup_type": setup_type,
+            "signal_data": signal_data, "planned_entry_price": planned_entry_price,
+            "planned_stop_price": planned_stop_price, "planned_quantity": planned_quantity,
+            "r_target": r_target,
+        },
         sort_keys=True, default=str,
     )
     input_hash = hashlib.sha256(input_payload.encode()).hexdigest()[:16]

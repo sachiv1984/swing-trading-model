@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-02 (post-ship closure 2026-06-01__release-v4.8 — 7 items COMPLETE; BLG-GOV-78 added)
+**Last Updated:** 2026-06-02 (session — 2 new items added: BLG-FEAT-43, BLG-BE-25)
 **Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
@@ -386,6 +386,33 @@ The Gemini thesis generation feature (shipped v4.0) writes to the setup_thesis f
 - Metric defined in metrics_definitions.md
 - Query approach documented (gemini_audit_log join trade_plans)
 - Reviewed by Financial Reporting & Records Owner and Product Owner
+
+---
+
+### BLG-FEAT-43 — Insufficient-allocation signal: distinct status and inline explanation
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Signal UX
+**Owner:** Head of Backend Engineering; Head of UX & Design
+**Source:** PO direction — 2026-06-02
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v4.9
+
+**Problem**
+When a signal's per-share GBP price exceeds the per-position allocation budget, the backend returns suggested_shares=0 but leaves status as "new" — indistinguishable from an actionable buy signal. SNDK has been rank-1 for weeks at ~£1,259/share against a ~£1,147 allocation, silently returning 0 shares with no explanation. For high-priced stocks this is a structural recurring gap, not an edge case.
+
+**Scope**
+- Backend: set status to "allocation_insufficient" (not "new") when suggested_shares=0 and price_gbp > allocation_gbp
+- Backend: include a human-readable reason field (e.g. "1 share (£1,259) exceeds position allocation (£1,147) — cannot size")
+- Frontend: display the reason inline on the signal card/row when status is "allocation_insufficient"
+- Frontend: visually differentiate allocation_insufficient signals from actionable new signals
+- (Deferred) Override path allowing user to manually record a share count — scope to be defined if and when taken up
+
+**Acceptance Criteria**
+- Signal with price_gbp > allocation_gbp has status "allocation_insufficient", not "new"
+- A reason string is returned from the backend and displayed inline in the signal view
+- Allocation_insufficient signals are visually distinct from new/watchlisted signals
+- Existing signals with status "new" and suggested_shares > 0 are unaffected
+- No change to already_held or watchlisted status logic
 
 ---
 
@@ -897,6 +924,27 @@ The red_flag_events table has no defined data retention policy. As override even
 - Retention policy document produced
 - Archiving cadence defined
 - Gate condition (table 6+ months old) verified before commencing
+
+### BLG-BE-25 — Fix pre-entry regime gate to use shared market status instead of independent yf.download
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering
+**Owner:** Head of Backend Engineering
+**Source:** User-reported — pre-entry regime gate shows risk_off while dashboard shows risk_on — 2026-06-02
+**Effort:** S (~0.5d)
+**Provisional-Target:** v4.9
+
+**Problem**
+`_check_regime()` in `pre_entry_validation.py` calls `check_market_regime()` directly, which triggers a fresh `yf.download("SPY")` / `yf.download("^FTSE")` call independent of the `/market/status` endpoint. On rapid sequential requests, Yahoo Finance can return slightly different data (different row counts, trailing NaN values), causing the rolling 200MA calculation to resolve differently. This produces spurious regime_gate failures that contradict the authoritative dashboard reading, eroding user trust in the pre-entry check.
+
+**Scope**
+- Refactor `_check_regime()` to call `GET /market/status` (or a shared in-process cache) rather than invoking `check_market_regime()` directly
+- Ensure the regime result used in pre-entry validation is always consistent with what `/market/status` returns
+- Add a server-side cache (e.g. 5-minute TTL) to `check_market_regime()` so all callers share one result per window
+
+**Acceptance Criteria**
+- Dashboard regime and pre-entry regime gate always agree when called within the same session
+- No spurious risk_off failures when SPY is clearly above its 200MA per the dashboard
+- `/portfolio/pre-entry-validation` does not make an independent `yf.download` call
 
 ---
 

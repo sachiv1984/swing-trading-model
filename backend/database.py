@@ -968,9 +968,10 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                    (portfolio_id, position_id, ticker, market, setup_type, setup_thesis, entry_rationale,
                     regime_context_at_entry, r_target, early_exit_conditions, confirmation_criteria,
                     checklist_completed, checklist_items, status, pre_entry_override_acknowledged,
+                    planned_quantity, planned_entry_price, planned_stop_price,
                     signal_id, risk_percent_used, portfolio_value_at_entry,
                     pre_entry_validation_snapshot, effective_settings_snapshot)
-                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb)
                    RETURNING *""",
                 (
                     portfolio_id,
@@ -988,6 +989,9 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                     _json(data.get("checklist_items", [])),
                     data.get("status", "draft"),
                     data.get("pre_entry_override_acknowledged"),
+                    data.get("planned_quantity"),
+                    data.get("planned_entry_price"),
+                    data.get("planned_stop_price"),
                     data.get("signal_id"),
                     data.get("risk_percent_used"),
                     data.get("portfolio_value_at_entry"),
@@ -1036,6 +1040,7 @@ def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict
         "r_target", "early_exit_conditions", "confirmation_criteria",
         "checklist_completed", "checklist_items", "status", "abandonment_reason",
         "pre_entry_override_acknowledged",
+        "planned_quantity", "planned_entry_price", "planned_stop_price",
     }
     fields = {k: v for k, v in data.items() if k in allowed}
     if not fields:
@@ -1237,6 +1242,23 @@ def ensure_planned_entry_price_column():
         with conn.cursor() as cur:
             cur.execute(
                 "ALTER TABLE trade_history ADD COLUMN IF NOT EXISTS planned_entry_price NUMERIC(20, 6)"
+            )
+        conn.commit()
+
+
+def ensure_trade_plan_pre_entry_columns():
+    """Add planned_quantity and planned_entry_price to trade_plans (idempotent).
+
+    Persists pre-entry check inputs so they survive save/reload cycles.
+    planned_stop_price already exists (ensure_plan_vs_reality_columns).
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS planned_quantity INTEGER"
+            )
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS planned_entry_price NUMERIC(20, 6)"
             )
         conn.commit()
 

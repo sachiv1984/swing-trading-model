@@ -53,6 +53,10 @@ class TradePlanCreate(BaseModel):
     checklist_items: list = []
     status: str = "draft"
     pre_entry_override_acknowledged: Optional[bool] = None
+    # Pre-entry check inputs — persisted so they survive save/reload
+    planned_quantity: Optional[int] = None
+    planned_entry_price: Optional[float] = None
+    planned_stop_price: Optional[float] = None
     # SI-02 DS-07 fields (frontend-passed)
     signal_id: Optional[str] = None
     risk_percent_used: Optional[float] = None
@@ -73,6 +77,9 @@ class TradePlanUpdate(BaseModel):
     status: Optional[str] = None
     abandonment_reason: Optional[str] = None
     pre_entry_override_acknowledged: Optional[bool] = None
+    planned_quantity: Optional[int] = None
+    planned_entry_price: Optional[float] = None
+    planned_stop_price: Optional[float] = None
 
 
 def _get_portfolio_id():
@@ -267,6 +274,10 @@ class GeneratePlanRequest(BaseModel):
     market: str = "US"
     setup_type: Optional[str] = None
     signal_data: Optional[dict] = None
+    planned_entry_price: Optional[float] = None
+    planned_stop_price: Optional[float] = None
+    planned_quantity: Optional[int] = None
+    r_target: Optional[float] = None
 
 
 @router.post("/generate-plan")
@@ -284,6 +295,10 @@ def generate_plan(body: GeneratePlanRequest):
             market=body.market,
             setup_type=body.setup_type,
             signal_data=body.signal_data,
+            planned_entry_price=body.planned_entry_price,
+            planned_stop_price=body.planned_stop_price,
+            planned_quantity=body.planned_quantity,
+            r_target=body.r_target,
         )
         return {"status": "ok", "data": result}
     except Exception as e:
