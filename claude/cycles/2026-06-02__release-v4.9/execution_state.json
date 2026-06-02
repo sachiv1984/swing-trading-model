@@ -5,7 +5,7 @@
   "invoked_utc": "2026-06-02T12:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-02T13:30:00Z",
+  "last_updated_utc": "2026-06-02T13:45:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -60,8 +60,8 @@
     "EPIC-02": {
       "status": "done",
       "branch": "exec/2026-06-02__release-v4.9/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 644,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-02__release-v4.9/qa_evidence_EPIC-02.md",
       "test_scenarios": ["tests/test_schema.py"],
@@ -73,7 +73,7 @@
           "assigned_to": "engine",
           "github_issue": 638,
           "branch": "exec/2026-06-02__release-v4.9/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "3a3d3d33f24582defe403dfc85b19ed0ae26899c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -92,7 +92,7 @@
           "assigned_to": "engine",
           "github_issue": 639,
           "branch": "exec/2026-06-02__release-v4.9/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "3a3d3d33f24582defe403dfc85b19ed0ae26899c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
