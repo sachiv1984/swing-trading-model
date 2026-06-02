@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-05-31
+**Last Updated:** 2026-06-02
 
 ---
 
@@ -117,6 +117,7 @@ It points to the **single canonical source**.
 - `portfolio_endpoints.md` — Class 1 Canonical (created v2.0; updated v2.3 2026-05-22 ST-07 v3.9 — GET /portfolio/red-flag-journal added; red_flag_events table; SI-01 override event write path; updated v2.4 2026-05-31 ST-09 v4.6 — severity field + filter query parameter added to red_flag_events endpoints): GET /portfolio, GET /portfolio/pre-entry-validation, GET /portfolio/prospective-heat, GET /portfolio/red-flag-journal + other portfolio endpoints. Sign-off: Sprint Execution Engine (autonomous class).
 - `behavioural_drift_contract.md` — Class 1 Canonical, v1.0, Active (created 2026-05-31, ST-04, cycle 2026-05-30__release-v4.6): GET /analytics/behavioural-drift — SI-02 4-metric behavioural drift response schema; §13 binding conditions; green/amber/red band thresholds; insufficient_data path. Sign-off: Sprint Execution Engine (autonomous class).
 - `_external_api_template.md` — Template (created 2026-05-31, ST-21, cycle 2026-05-30__release-v4.6; BLG-SPEC-32): Standard template for external API integration contracts; 6 required sections (Overview, Authentication, Endpoints, Error Handling, Rate Limits, Change Log). Conformance advisory for existing contracts (Anthropic, Alpaca) noted in document. Sign-off: Head of Specs Team.
+- `strategy_version_comparison_contract.md` — Pre-authored contract v0.1.0 (created 2026-06-02, ST-07, cycle 2026-06-01__release-v4.8; BLG-SPEC-43): GET /analytics/strategy-version-comparison — SI-04 strategy version comparison endpoint contract pre-authored before SI-04 sprint; response schema, query parameters, error cases, §13 binding conditions. Placeholder entry in openapi.yaml. Implementation gated on SI-04 sprint planning. Sign-off: Strategy Rules & System Intent Owner + Head of Specs Team (autonomous class).
 - `api_changelog.md` — *Running changelog; must be updated with every contract version increment*
 
 **Supporting Reference**

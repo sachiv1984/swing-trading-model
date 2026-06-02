@@ -3,9 +3,37 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-01
+**Last Updated:** 2026-06-02
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v4.8 — Governance Hardening, Ops/Security Debt & SI-05 Phase 1 — 2026-06-02
+Cycle: 2026-06-01__release-v4.8
+Verified: Verified
+Verification report: claude/cycles/2026-06-01__release-v4.8/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Governance & Compliance Hardening — §14 self-metadata Version corrected 4.20→4.24; §13 and §14 entries for all 7 Class 6 prompts verified present (ST-01); agent charter **Role:** header format verified compliant across all 23 agent files — pre-met in v4.5 EPIC-02 ST-05 (ST-02); all 3 v4.4 deferred patches confirmed resolved in v4.5 — AUD-2026-05-30-006 gap formally closed (ST-03). Sprint close governance patch: execution_prompt.md v3.34→v3.35 (LL-v4.8-EX-01 — commit SHA record immediately after push). | claude/system/OPERATIONAL_GUIDE.md v4.25; claude/system/prompt_change_log.md; claude/system/execution_prompt.md v3.35 |
+| EPIC-02 | Operations, Security & QA Debt — Build minutes monitoring policy created (docs/operations/build_minutes_monitoring_policy.md v1.0): monthly allocation 400 min, 80% threshold, billing reset, double-capacity assessment (ST-04); dependency audit complete (docs/security/security_register.md v1.0): pip clean, 45 npm vulns (21 HIGH devDep); BLG-OPS-49/50 filed (ST-05); coverage matrix updated with compliance_summary regression point; GET /reports/monthly-pnl v0.6 contract verified (ST-06); SI-04 strategy version comparison endpoint contract pre-authored (docs/specs/api_contracts/strategy_version_comparison_contract.md v0.1.0; placeholder in openapi.yaml — ST-07). | docs/operations/build_minutes_monitoring_policy.md v1.0; docs/security/security_register.md v1.0; docs/qa/playwright_coverage_matrix.md v1.1; docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl (v0.6 confirmed); docs/specs/api_contracts/strategy_version_comparison_contract.md v0.1.0; docs/reference/openapi.yaml |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01] BLG-GOV-69: §13 register completion — OPERATIONAL_GUIDE.md §14 updated; all 7 Class 6 prompts verified in §13 and §14
+- [ST-02] BLG-GOV-70: Agent charter header compliance remediation — pre-met in v4.5; verified resolved across all 23 agent files
+- [ST-03] BLG-GOV-72: AUD-2026-05-30-006 gap resolution verification — all 3 v4.4 deferred patches confirmed resolved in v4.5; gap formally closed
+- [ST-04] BLG-OPS-46: Build minutes monitoring policy — docs/operations/build_minutes_monitoring_policy.md v1.0 created
+- [ST-05] BLG-OPS-47: Dependency audit post-v4.7 — docs/security/security_register.md v1.0; BLG-OPS-49/50 filed
+- [ST-06] BLG-QA-39: Coverage matrix update and v4.7 contract verification — docs/qa/playwright_coverage_matrix.md v1.1; GET /reports/monthly-pnl v0.6 verified
+- [ST-07] BLG-SPEC-43: SI-04 strategy version comparison endpoint contract — strategy_version_comparison_contract.md v0.1.0 created; placeholder in openapi.yaml
+
+Sign-off: Product Owner (agent-mediated) — 2026-06-02
+QA sign-off: Director of Quality (agent-mediated) — 2026-06-02
 
 ---
 

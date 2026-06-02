@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-01 (rebalance 2026-06-01__scheduled — DL-036; no roadmap change; SI-05 Phase 1 gate advisory; SI-04 pre-authoring BLG-SPEC-43)
+**Last Updated:** 2026-06-02 (post-ship closure 2026-06-01__release-v4.8)
 **Last rebalance:** 2026-05-27 (cycle 2026-05-27__scheduled — Extended-tier, CPS=1.15; Strategy Drift Alert acknowledged; 31 new backlog items; DL-035)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,17 +10,10 @@
 
 ## 1. Current Version
 
-**v4.7** — Arc 5 Completion Pre-work, Staged Verifications & Aged Backlog Clearance — ✅ Shipped 2026-06-01
-**Next planned release:** v4.8 — Governance Hardening, Ops/Security Debt & SI-05 Phase 1
+**v4.8** — Governance Hardening, Ops/Security Debt & SI-05 Phase 1 — ✅ Shipped 2026-06-02
+**Next planned release:** v4.9 — [TBD]
 
-<!-- roadmap-annotation-marker: RA:v4.8:2026-06-01__release-v4.8 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-06-01__release-v4.8
-- Plan published: 2026-06-01
-- Cycle folder: claude/cycles/2026-06-01__release-v4.8/
-- Backlog slice: claude/cycles/2026-06-01__release-v4.8/stage4_backlog_slice.md
-- Status at annotation: Committed
+*RA:v4.8 retired — see roadmap_archive.md 2026-06-02 (post-ship closure 2026-06-01__release-v4.8).*
 
 *RA:v4.7 retired — see roadmap_archive.md 2026-06-01 (post-ship closure 2026-05-31__release-v4.7).*
 
@@ -437,6 +430,7 @@ When evaluating new features:
 |**v4.5** ✅  |Governance Prompt Hardening, Audit Debt & SI-02 Spec Pre-Planning       |execution_prompt.md v3.34: four OA patches (BLG-GOV-70/75/76/77); agent role header standardization 5 files (AUD-2026-05-30-005); SI-02 spec pre-sprint: §13 PASS (9 binding conditions), drift score metric definition (4 metrics), data schema pre-definition (5 trade_plans columns + DS-07 migration). 8/8 stories. Zero spec deviations — ✅ Shipped 2026-05-30 — cycle: 2026-05-30__release-v4.5|
 |**v4.6** ✅  |Arc 5 SI-02 Behavioural Drift Detection & Arc 5 Completion              |SI-02 backend (DS-07 migration, drift service 4 metrics, GET /analytics/behavioural-drift, 35 unit tests); Arc 5 enablers (severity field, hosting cost, nav cohesion, RFJ design scope); governance debt (OA-01/02, BLG-GOV-32/33/34/41/43/45/52, BLG-SPEC-32); EPIC-02 SI-02 frontend gate-deferred (6th deferral; ~Nov 2026). 18/21 firm stories delivered. Verified_with_deviations (2 P3 staging). — ✅ Shipped 2026-05-31 — cycle: 2026-05-30__release-v4.6|
 |**v4.7** ✅  |Arc 5 Completion Pre-work, Staged Verifications & Aged Backlog Clearance|SI-04 §13 pre-assessment PASS (6 binding conditions; Arc 5 SI-04 path cleared); compliance_summary field in monthly P&L report (GET /reports/monthly-pnl v0.6); 3 v4.6 staging verifications closed (BLG-OPS-28/44/45); Render log retention policy (BLG-OPS-31); Anthropic API tier assessment (BLG-OPS-37; no upgrade); pre-entry panel UX assessment (BLG-FE-49; BLG-FE-56/57/58 filed). 8/8 firm stories. Zero deviations. — ✅ Shipped 2026-06-01 — cycle: 2026-05-31__release-v4.7|
+|**v4.8** ✅  |Governance Hardening, Ops/Security Debt & SI-05 Phase 1|§14 register gap closed (all 7 Class 6 prompts verified in §13 and §14); agent charter header compliance verified; AUD-2026-05-30-006 gap closed; build minutes monitoring policy (docs/operations/build_minutes_monitoring_policy.md v1.0); dependency audit (security_register.md v1.0; BLG-OPS-49/50 filed); coverage matrix + v4.7 contract verified; SI-04 endpoint contract pre-authored (strategy_version_comparison_contract.md v0.1.0). 7/7 stories. Zero deviations. — ✅ Shipped 2026-06-02 — cycle: 2026-06-01__release-v4.8|
 |**v4.0+**    |Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
 |**v4.0+**    |Arc 5: Strategy Integrity (remainder)                                 |SI-02 behavioural drift detection, SI-04 strategy version comparison, SI-05 weekly digest — 📋 Planned                                    |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

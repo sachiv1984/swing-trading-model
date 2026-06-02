@@ -1,13 +1,30 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-01
+**Last Updated:** 2026-06-02
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v4.8 — Governance Hardening, Ops/Security Debt & SI-05 Phase 1
+
+**Original roadmap location:** §1 Current Version / Release Summary §8
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-02
+**Shipped version:** v4.8
+**Cycle reference:** 2026-06-01__release-v4.8
+**Verification report:** claude/cycles/2026-06-01__release-v4.8/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-02
+
+### Original Roadmap Entry
+
+v4.8 Governance Hardening, Ops/Security Debt & SI-05 Phase 1. EPIC-01: §13 register completion (BLG-GOV-69) — OPERATIONAL_GUIDE §14 updated, all 7 Class 6 prompts verified in §13 and §14; agent charter header compliance remediation (BLG-GOV-70) — pre-met in v4.5, verified across all 23 agent files; AUD-2026-05-30-006 gap resolution verification (BLG-GOV-72) — all 3 v4.4 deferred patches confirmed resolved in v4.5. Sprint close governance patch: execution_prompt.md v3.34→v3.35 (LL-v4.8-EX-01 — commit SHA record immediately after push). EPIC-02: Build minutes monitoring policy (BLG-OPS-46) — build_minutes_monitoring_policy.md v1.0 created; dependency audit (BLG-OPS-47) — security_register.md v1.0; pip clean, 45 npm vulns (21 HIGH devDep); BLG-OPS-49/50 filed; coverage matrix + v4.7 contract verification (BLG-QA-39) — playwright_coverage_matrix.md v1.1; GET /reports/monthly-pnl v0.6 verified; SI-04 endpoint contract pre-authored (BLG-SPEC-43) — strategy_version_comparison_contract.md v0.1.0 + openapi.yaml placeholder. EPIC-03 (SI-05 Phase 1, BLG-GOV-67) deferred_at_planning — gate NOT MET (clears 2026-06-21). 7/7 in-scope stories delivered. Zero spec deviations. Verified 2026-06-02. completed_cycle_count = 34.
 
 ---
 

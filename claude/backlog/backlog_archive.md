@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-01
+**Last Updated:** 2026-06-02
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -4940,5 +4940,21 @@ Archived by: Backlog Management Engine STEP 12, post-ship closure 2026-05-30__re
 | BLG-GOV-31 | Merge gate re-invocation advisory in sprint capacity template | Resolved v4.x — LL-v3.9-P3-1 in-session merge gate sync in execution_prompt.md | Prior cycle |
 | BLG-GOV-40 | Delivery verification STEP 5.0A pr_number null guard | Resolved v4.1 — delivery_verification_prompt.md v2.6 (OA-04) | Prior cycle (v4.1) |
 | BLG-GOV-55 | API contract same-sprint delivery rule | Resolved v4.1+ — CLAUDE.md §2 API contract + endpoint test suite rules added | Prior cycle |
+
+---
+
+## Closed Items — v4.8 Post-Ship (2026-06-02)
+
+*Archived: 7 items shipped in v4.8 (cycle 2026-06-01__release-v4.8). Groom date: 2026-06-02.*
+
+| Item | Title | Resolution |
+|------|-------|------------|
+| BLG-GOV-69 ✅ | §13 register completion (AUD-2026-05-30-001 gap) | Shipped v4.8 ST-01 — OPERATIONAL_GUIDE.md §14 updated; all 7 Class 6 prompts verified in §13 and §14; AUD gap closed |
+| BLG-GOV-70 ✅ | Agent charter header compliance remediation | Shipped v4.8 ST-02 — pre-met in v4.5 EPIC-02 ST-05; verified across all 23 agent files |
+| BLG-GOV-72 ✅ | AUD-2026-05-30-006 gap resolution verification | Shipped v4.8 ST-03 — all 3 v4.4 deferred patches confirmed resolved in v4.5; gap formally closed |
+| BLG-OPS-46 ✅ | Build minutes monitoring policy | Shipped v4.8 ST-04 — build_minutes_monitoring_policy.md v1.0 created; 80% threshold; billing reset documented |
+| BLG-OPS-47 ✅ | Dependency audit post-v4.7 | Shipped v4.8 ST-05 — security_register.md v1.0; pip clean; 45 npm vulns (21 HIGH devDep); BLG-OPS-49/50 filed |
+| BLG-QA-39 ✅ | Coverage matrix update and v4.7 contract completeness verification | Shipped v4.8 ST-06 — playwright_coverage_matrix.md v1.1; GET /reports/monthly-pnl v0.6 verified |
+| BLG-SPEC-43 ✅ | SI-04 strategy version comparison endpoint contract | Shipped v4.8 ST-07 — strategy_version_comparison_contract.md v0.1.0; placeholder in openapi.yaml |
 
 ---

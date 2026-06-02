@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-05-31
+**Last Updated:** 2026-06-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -55,8 +55,9 @@
 | v4.5  | 8       | 8         | 1.00     | Zero spec deviations; 4 execution_prompt.md OA patches (ST-01–04) + agent header standardization 5 files (ST-05) + SI-02 spec pre-sprint (ST-06–08: §13 PASS + metric definition + data schema); 3 delegated_decision all agent-mediated; LL-v4.5-EX-01 validated in-sprint; sixth consecutive clean verification |
 | v4.6  | 18      | 18        | 1.00     | EPIC-02 (ST-06/07/08) deferred at planning — data density gate NOT MET (6th deferral; confirmed at sprint close); 2 P3 staging deviations (BLG-OPS-44/45) accepted; Arc 6 §13 PASS; 6 delegated_decision all resolved within sprint; EPIC-04 autonomous class sign-off |
 | v4.7  | 8       | 8         | 1.00     | Zero deviations; all 7 delegated_decision stories agent-mediated and resolved within sprint; ST-02 conditional deferred at planning (gate clears 2026-06-21); staged verifications sprint design validated — 3 v4.6 staging ACs closed in batch (BLG-OPS-28/44/45) |
+| v4.8  | 7       | 7         | 1.00     | Zero deviations; all 7 stories autonomous; ST-08 (SI-05 Phase 1) deferred_at_planning — gate clears 2026-06-21 (never entered sprint scope); execution_prompt.md v3.34→v3.35 governance patch at sprint close (LL-v4.8-EX-01 null commit_sha action-now); both EPICs autonomous class sign-off (BLG-GOV-19) |
 
-**Rolling 6-cycle average (v4.2–v4.7):** 1.00
+**Rolling 6-cycle average (v4.3–v4.8):** 1.00
 
 ---
 

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-01 (session — 4 new items added: BLG-QA-40, BLG-QA-41, BLG-OPS-49, BLG-OPS-50)
+**Last Updated:** 2026-06-02 (post-ship closure 2026-06-01__release-v4.8 — 7 items COMPLETE; BLG-GOV-78 added)
 **Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
@@ -1073,7 +1073,7 @@ QA evidence files (qa_evidence_EPIC-*.md) from v3.7–v4.0 were produced under e
 
 ---
 
-### BLG-QA-39 — Coverage matrix update and v4.7 contract completeness verification
+### BLG-QA-39 — Coverage matrix update and v4.7 contract completeness verification ✅ COMPLETE v4.8 (2026-06-02)
 **Priority:** P2 (Medium)
 **Type:** QA / Test Coverage + Spec Verification
 **Owner:** QA Lead; API Contracts & Documentation Owner
@@ -1587,7 +1587,7 @@ ST-09 (BLG-BE-16: red_flag_events severity field) was verified by code review an
 
 ---
 
-### BLG-OPS-46 — Build minutes monitoring policy
+### BLG-OPS-46 — Build minutes monitoring policy ✅ COMPLETE v4.8 (2026-06-02)
 **Priority:** P2 (Medium)
 **Type:** Operations / Platform Continuity
 **Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
@@ -1612,7 +1612,7 @@ Render CI build minutes were exhausted 2026-05-31, blocking deploys until the bi
 
 ---
 
-### BLG-OPS-47 — Dependency audit post-v4.7
+### BLG-OPS-47 — Dependency audit post-v4.7 ✅ COMPLETE v4.8 (2026-06-02)
 **Priority:** P2 (Medium)
 **Type:** Operations / Security
 **Owner:** Head of Engineering; Cybersecurity & Trust Lead
@@ -1791,7 +1791,7 @@ PO-02 will generate AI output (pattern summaries, theme classifications) using a
 
 ---
 
-### BLG-SPEC-43 — SI-04 strategy version comparison endpoint contract
+### BLG-SPEC-43 — SI-04 strategy version comparison endpoint contract ✅ COMPLETE v4.8 (2026-06-02)
 **Priority:** P2 (Medium)
 **Type:** Spec / API Contract
 **Owner:** API Contracts & Documentation Owner; Head of Specs Team
@@ -2329,7 +2329,7 @@ Backlog items have no explicit Blocks/Blocked-by fields. Cross-item dependencies
 
 ---
 
-### BLG-GOV-69 — §13 register completion (AUD-2026-05-30-001 gap)
+### BLG-GOV-69 — §13 register completion (AUD-2026-05-30-001 gap) ✅ COMPLETE v4.8 (2026-06-02)
 **Priority:** P2 (Medium)
 **Type:** Governance / Compliance
 **Owner:** Head of Specs Team
@@ -2352,7 +2352,7 @@ AUD-2026-05-30-001 identified 7 governance prompts missing from §13 ARTEFACT_ST
 
 ---
 
-### BLG-GOV-70 — Agent charter header compliance remediation
+### BLG-GOV-70 — Agent charter header compliance remediation ✅ COMPLETE v4.8 (2026-06-02)
 **Priority:** P2 (Medium)
 **Type:** Governance / Compliance
 **Owner:** Director of HR; Head of Specs Team
@@ -2404,7 +2404,7 @@ Governance engine prompts have grown complex over 33 cycles. Without periodic co
 
 ---
 
-### BLG-GOV-72 — AUD-2026-05-30-006 gap resolution verification
+### BLG-GOV-72 — AUD-2026-05-30-006 gap resolution verification ✅ COMPLETE v4.8 (2026-06-02)
 **Priority:** P2 (Medium)
 **Type:** Governance / Audit Follow-up
 **Owner:** PMO Lead
@@ -2475,27 +2475,54 @@ BLG-GOV-63 (shipped v4.2) requires a quarterly review of the claude_audit_log. F
 
 ---
 
+### BLG-OPS-51 — Add GET /analytics/strategy-version-comparison to api_performance_baseline.md (when implemented)
+**Priority:** P3 (Low)
+**Type:** Operations / Performance Baseline
+**Owner:** Infrastructure & Operations Owner; API Contracts & Documentation Owner
+**Source:** Post-ship closure 2026-06-01__release-v4.8 — endpoint coverage drift advisory (STEP 6)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** SI-04 sprint (whenever GET /analytics/strategy-version-comparison is implemented)
+
+**Problem**
+v4.8 ST-07 added a placeholder entry for GET /analytics/strategy-version-comparison to openapi.yaml (pre-authored contract; not yet implemented). Once implemented, this endpoint will need p50/p95 latency measurement and an entry in docs/ops/api_performance_baseline.md.
+
+**Scope**
+- After SI-04 sprint implements the endpoint: run performance baseline measurement (p50/p95)
+- Add measurement to docs/ops/api_performance_baseline.md
+
+**Acceptance Criteria**
+- GET /analytics/strategy-version-comparison present in api_performance_baseline.md with p50/p95 values
+- Measurement conducted with ≥5 staging samples
+
+---
+
+### BLG-GOV-78 — roadmap_prompt.md STEP 8.1 Empty Now Horizon gate strengthening
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** LL-RP-v4.8-01 (post-ship closure 2026-06-01__release-v4.8)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+When a roadmap rebalance runs as "No-change" and the Now horizon is empty, roadmap_prompt.md v6.6 STEP 8.1 fires an advisory — but does not require an explicit PO decision. In v4.8 release planning, this caused STEP -1.2 to fail because no formal v4.8 roadmap section existed after the no-change rebalance. The advisory was silently ignored.
+
+**Scope**
+- Strengthen STEP 8.1 of roadmap_prompt.md: when the Now horizon is empty and no next-release section exists in current_roadmap.md, require an explicit PO decision — either (a) add the next-release section now, or (b) defer intentionally with written rationale recorded in the cycle summary
+- This converts a silent advisory into a soft gate requiring a documented PO choice
+
+**Acceptance Criteria**
+- roadmap_prompt.md STEP 8.1 updated: empty-Now-horizon with no next-release section requires explicit PO decision before completing the rebalance
+- PO decision options documented (add section now OR defer with rationale)
+- OPERATIONAL_GUIDE.md version bumped per CLAUDE.md §6 governance edit checklist
+- Head of Specs Team + PMO Lead sign-off
+
+---
+
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*
 
 ---
 
-## Release Slice v4.8
-
-<!-- release-plan-marker: RP:v4.8:2026-06-01__release-v4.8 -->
-
-**Cycle:** 2026-06-01__release-v4.8
-**Published:** 2026-06-01
-**Canonical source:** claude/cycles/2026-06-01__release-v4.8/stage4_backlog_slice.md
-
-| Story | EPIC | Backlog Ref | Effort | Firm/Conditional |
-|-------|------|-------------|--------|-----------------|
-| ST-01 — §13 register completion | EPIC-01 | BLG-GOV-69 | S | Firm |
-| ST-02 — Agent charter header compliance | EPIC-01 | BLG-GOV-70 | S | Firm |
-| ST-03 — AUD gap resolution verification | EPIC-01 | BLG-GOV-72 | S | Firm |
-| ST-04 — Build minutes monitoring policy | EPIC-02 | BLG-OPS-46 | S | Firm |
-| ST-05 — Dependency audit | EPIC-02 | BLG-OPS-47 | S | Firm |
-| ST-06 — Coverage matrix + v4.7 contract | EPIC-02 | BLG-QA-39 | S | Firm |
-| ST-07 — SI-04 endpoint contract | EPIC-02 | BLG-SPEC-43 | S–M | Conditional |
-| ST-08 — SI-05 Phase 1 implementation | EPIC-03 | BLG-GOV-67 | M | Conditional (gate 2026-06-21) |
+*Release Slice v4.8 removed — cycle 2026-06-01__release-v4.8 closed 2026-06-02. Archived canonical home: claude/cycles/2026-06-01__release-v4.8/stage4_backlog_slice.md*
 
 
