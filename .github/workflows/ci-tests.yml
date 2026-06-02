@@ -71,3 +71,42 @@ jobs:
       - name: Run mock harness smoke tests (BLG-QA-08)
         run: |
           python -m pytest tests/test_api_mock_harness.py -v --tb=short
+
+  pytest-phase-b:
+    name: Pytest Phase B (integration — real Postgres service)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: ci_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci_test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Run Phase B tests (full suite against real Postgres)
+        run: |
+          python -m pytest tests/ -v --tb=short
