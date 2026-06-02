@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-02 (post-ship closure 2026-06-02__release-v4.9 — 5 items marked COMPLETE: BLG-OPS-49/50, BLG-QA-40/41, BLG-GOV-78)
+**Last Updated:** 2026-06-02 (AUD-2026-06-02 — 5 new items added: BLG-GOV-79, BLG-GOV-80, BLG-GOV-81, BLG-GOV-82, BLG-GOV-83)
 **Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
@@ -2597,6 +2597,130 @@ When a roadmap rebalance runs as "No-change" and the Now horizon is empty, roadm
 - PO decision options documented (add section now OR defer with rationale)
 - OPERATIONAL_GUIDE.md version bumped per CLAUDE.md §6 governance edit checklist
 - Head of Specs Team + PMO Lead sign-off
+
+---
+
+### BLG-GOV-79 — Append 7 missing prompt_change_log.md entries for cycles 31–35
+**Priority:** P2 (Medium)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** AUD-2026-06-02 (AUD-2026-06-02-001, STALE 2nd occurrence) — 2026-06-02
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.0
+
+**Problem**
+prompt_change_log.md is missing 7 entries for prompt version changes that occurred in cycles 31–35 (v4.5–v4.8). The OPERATIONAL_GUIDE §14 changelog confirms all 7 changes occurred and all engine versions in §14 are correct, but the corresponding prompt_change_log rows were never written — violating the CLAUDE.md §2 hard rule "any prompt version increment must have a matching entry in prompt_change_log.md." This was flagged as a recurring advisory (2nd occurrence) in v4.9 LL-RP-v4.9-02 and is now STALE. The 7 missing entries are fully specified in AUD-2026-06-02 §5 AUD-001 PATCH 1.
+
+**Scope**
+- Append 7 rows to prompt_change_log.md for: delivery_verification_prompt.md v2.7→v2.8, post_ship_closure.md v2.11→v2.12, execution_prompt.md v3.33→v3.34, release_planning_prompt.md v2.32→v2.33, roadmap_prompt.md v6.6→v6.7, roadmap_prompt.md v6.7→v6.8, execution_prompt.md v3.34→v3.35
+- All change descriptions available verbatim in audit_report_AUD-2026-06-02.md §5 AUD-001 PATCH 1
+
+**Acceptance Criteria**
+- All 7 entries present in prompt_change_log.md in reverse-chronological order (newest first)
+- Each entry has correct Date, Prompt path, Version transition, Change summary, Authority
+- No other prompt_change_log gaps exist for any engine version changes in cycles 31–35
+
+---
+
+### BLG-GOV-80 — Add governance file edit check to execution_prompt.md STEP 8 commit
+**Priority:** P2 (Medium)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** AUD-2026-06-02 (AUD-2026-06-02-003, root cause of BLG-GOV-79) — 2026-06-02
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v5.0
+**Depends on:** BLG-GOV-79 (prompt_change_log completion — apply before or together)
+
+**Problem**
+The roadmap engine (STEP 12) and amendment engine (STEP 9) have structural governance file edit checks that enforce prompt_change_log.md entries when governance files are modified. The execution engine lacks an equivalent check at its STEP 8 commit, creating a structural gap. Since execution stories frequently apply OA-clearance patches to governance prompts, this silent bypass was the confirmed root cause of all 7 missing prompt_change_log.md entries (BLG-GOV-79).
+
+**Scope**
+- Add governance file edit check to execution_prompt.md STEP 8 before commit: scan git diff for modified files in `claude/system/`, `claude/charter/`, `claude/agents/`; for each modified governance file, verify prompt_change_log.md entry exists; append if missing before proceeding
+- Bump execution_prompt.md version (v3.35→v3.36)
+- Update OPERATIONAL_GUIDE.md §8 source prompt header + §14 Execution Engine Source + §14 changelog (v4.26→v4.27)
+- Append entry to prompt_change_log.md for this change
+- Full PATCH block in audit_report_AUD-2026-06-02.md §5 AUD-003
+
+**Acceptance Criteria**
+- execution_prompt.md v3.36 contains governance file edit check at STEP 8 (before commit step)
+- Check is STRUCTURAL: scans git diff --name-only for claude/system/, claude/charter/, claude/agents/ paths; appends missing prompt_change_log rows inline
+- OPERATIONAL_GUIDE §8 source header, §14 Execution Engine Source, and §14 changelog updated in same commit
+- prompt_change_log.md entry for execution_prompt.md v3.35→v3.36 present
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-81 — Fix 5 non-standard agent file headers
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** AUD-2026-06-02 (AUD-2026-06-02-004; 2nd carry from AUD-2026-05-30-005) — 2026-06-02
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.0
+
+**Problem**
+5 agent files use setext-style headings (`====` underline) with a trailing backslash on the Role field, deviating from the `# Name` / `**Role:** Name` (no backslash) standard used by all other 18 agent files. This has been open since AUD-2026-05-30-005 (first audit carry) and is now in its second consecutive carry. Affected files: ai_compliance_governance_officer.md, cybersecurity_trust_lead.md, director_of_hr.md, financial_reporting_records_owner.md, finops_resource_architect.md.
+
+**Scope**
+- For each of the 5 files: replace setext heading (`Name\n====`) with standard `# Name` ATX heading
+- Remove trailing backslash from `**Role:** Name\` line → `**Role:** Name`
+- Full PATCH blocks in audit_report_AUD-2026-06-02.md §5 AUD-004 (5 PATCH blocks, one per file)
+
+**Acceptance Criteria**
+- All 5 files use `# Name` ATX heading format (no setext `====`)
+- All 5 files have `**Role:** Name` with no trailing backslash
+- Format is consistent with the other 18 agent files in claude/agents/
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-82 — Strengthen post-ship audit advisory to prevent multi-cycle skips
+**Priority:** P2 (Medium)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** AUD-2026-06-02 (AUD-2026-06-02-005 — audit skipped 2 cycles, due at cycle 33, run at cycle 35) — 2026-06-02
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v5.0
+
+**Problem**
+The post-ship STEP 0 audit advisory fires when `completed_cycle_count % 3 == 0`, but there is no re-fire mechanism if the advisory is not acted upon. In cycle 33 (v4.7), the audit due advisory was not recorded in the post-ship closure, allowing the audit to be skipped until cycle 35 — 2 cycles late. Additionally, the OPERATIONAL_GUIDE STEP 0 post-ship advisory does not track how many cycles ago the last audit ran, so the system cannot distinguish "due" from "overdue."
+
+**Scope**
+- Update post_ship_closure.md STEP 0 audit cadence check: in addition to `completed_cycle_count % 3 == 0`, add cumulative overdue check — if the delta between current completed_cycle_count and the count at last audit >= 4, fire AUDIT DUE regardless of modulo
+- Add `last_audit_cycle_count` field to `.claude_current_state.json` schema: post-ship records the cycle count at which the last audit ran (for delta tracking)
+- Update lifecycle_schema.json if needed for the new state field
+- Bump post_ship_closure.md version + OPERATIONAL_GUIDE §10 header + §14 Post-Ship Closure Engine + §14 changelog
+- Append entry to prompt_change_log.md
+- Full PATCH in audit_report_AUD-2026-06-02.md §5 AUD-005
+
+**Acceptance Criteria**
+- post_ship_closure.md STEP 0 fires AUDIT DUE if `completed_cycle_count % 3 == 0` OR `(completed_cycle_count - last_audit_cycle_count) >= 4`
+- `.claude_current_state.json` has `last_audit_cycle_count` field set at each post-ship closure when audit runs
+- Post-ship closure Outstanding Actions records AUDIT DUE with Owner and target timeline when advisory fires
+- OPERATIONAL_GUIDE §10 source header + §14 Post-Ship Closure Engine + changelog updated in same commit
+- prompt_change_log.md entry present
+
+---
+
+### BLG-GOV-83 — Document PO acceptance requires GitHub review approval (not PR comment)
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** PMO Lead
+**Source:** AUD-2026-06-02 (AUD-2026-06-02-006; v4.9 D-3 first occurrence — PO commented but PR remained BLOCKED) — 2026-06-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v5.0
+
+**Problem**
+In v4.9, the Product Owner accepted PR #645 via a PR comment but the branch remained BLOCKED requiring human intervention because GitHub branch protection requires a formal "Approve" review action (not just a comment). This distinction is not documented anywhere — not in the PR template, team guide, or OPERATIONAL_GUIDE.
+
+**Scope**
+- Add a callout note to `.github/pull_request_template.md` in the QA Evidence or PO acceptance section clarifying: PO acceptance must be submitted as a GitHub Approve review action, not a PR comment
+- PATCH block in audit_report_AUD-2026-06-02.md §5 AUD-006
+
+**Acceptance Criteria**
+- `.github/pull_request_template.md` contains explicit note that PO acceptance = GitHub "Approve review" action
+- Note is visible in the PR template before any reviewer opens the PR
+- Director of Quality sign-off (PR process governance)
 
 ---
 

@@ -1218,6 +1218,20 @@ def ensure_signals_watchlisted_status():
         conn.commit()
 
 
+def ensure_positions_user_fill_price_column():
+    """Add user_fill_price to positions (idempotent).
+
+    Slippage tracking migration — stores the user-provided actual fill price.
+    Nullable; existing records default null.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE positions ADD COLUMN IF NOT EXISTS user_fill_price NUMERIC(10, 4)"
+            )
+        conn.commit()
+
+
 def ensure_trade_history_fill_price_column():
     """Add fill_price to trade_history (idempotent).
 

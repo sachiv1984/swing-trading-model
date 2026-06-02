@@ -61,6 +61,7 @@ _DB_STUB_FUNCTIONS = [
     "ensure_claude_audit_log_table", "create_claude_audit_entry", "query_claude_audit_log",
     "ensure_si02_trade_plans_columns", "ensure_si02_trade_history_indexes", "get_behavioural_drift_data",
     "ensure_red_flag_events_severity_column",
+    "ensure_positions_user_fill_price_column", "ensure_trade_history_fill_price_column",
 ]
 
 _database_stub = types.ModuleType("database")

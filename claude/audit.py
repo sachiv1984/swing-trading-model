@@ -24,31 +24,29 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-05-30"
+PRIOR_AUDIT_ID = "AUD-2026-06-02"
 PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-05-30-001",  # 7 missing §13 prompt entries — RESOLVED (applied in same audit session)
-    "AUD-2026-05-30-002",  # §13 Class 7 fix — RESOLVED (applied in same audit session)
-    "AUD-2026-05-30-003",  # BLG-GOV-70 spec_references patch — OPEN (target v4.5)
-    "AUD-2026-05-30-004",  # 3 untracked v4.4 deferred patches — OPEN (to file via /backlog-add)
-    "AUD-2026-05-30-005",  # 5 agent file header standardization — OPEN (Tier 2)
-    "AUD-2026-05-30-006",  # DV prompt owner fix — RESOLVED (applied in same audit session)
+    "AUD-2026-06-02-001",  # 7 missing prompt_change_log entries — OPEN (BLG-GOV-79; v5.0)
+    "AUD-2026-06-02-003",  # Execution engine governance file edit check — OPEN (BLG-GOV-80; v5.0)
+    "AUD-2026-06-02-004",  # 5 agent file non-standard headers — OPEN (BLG-GOV-81; v5.0) — 2nd carry
+    "AUD-2026-06-02-005",  # Post-ship audit advisory strengthening — OPEN (BLG-GOV-82; v5.0)
+    "AUD-2026-06-02-006",  # PO GitHub approval documentation — OPEN (BLG-GOV-83; v5.0)
 ]
-# AUD-2026-05-30-001: §13 7 missing prompts — applied Tier 1 (2026-05-30)
-# AUD-2026-05-30-002: §13 Class 7 fix — applied Tier 1 (2026-05-30)
-# AUD-2026-05-30-006: DV prompt owner fix — applied Tier 1 (2026-05-30)
+# AUD-2026-06-02-001 PATCH 1: 7 prompt_change_log entries — applied Tier 1 (2026-06-02)
+# AUD-2026-06-02-002: OPERATIONAL_GUIDE v4.26 changelog entry — applied Tier 1 (2026-06-02, covered by AUD-001 PATCH 2)
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
     "token_efficiency":      95,   # HIGH CONFIDENCE — no inline blocks; all engines in §13 dry-run table
-    "governance_integrity":  79,   # MEDIUM CONFIDENCE — 7 §13 missing prompts counted; §14 fully aligned; AUD-001/002 applied
-    "execution_reliability": 84,   # MEDIUM CONFIDENCE — 1 ASSERTION write; BLG-GOV-70 STALE (2 cycles)
-    "friction_load":         32,   # LOW CONFIDENCE — v4.4 clean execution; 4 new deferred patches; trend DECREASING
-    "document_hygiene":      81,   # MEDIUM CONFIDENCE — 5 non-standard agent headers; AUD-002/006 applied
+    "governance_integrity":  83,   # MEDIUM CONFIDENCE — §13/§14 fully aligned; prompt_change_log enforcement advisory-only in execution engine
+    "execution_reliability": 79,   # MEDIUM CONFIDENCE — prompt_change_log ASSERTION-only write in exec engine; 1 STALE deferred patch
+    "friction_load":         30,   # LOW CONFIDENCE — 5 clean cycles since AUD-2026-05-30; 1 recurring Type C (prompt_change_log)
+    "document_hygiene":      77,   # MEDIUM CONFIDENCE — 5 non-standard agent headers (2nd carry); OPERATIONAL_GUIDE v4.26 entry now fixed
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 30  # v1.7 through v4.4 (30 completed post-ship closures; confirmed from .claude_current_state.json)
+COMPLETED_CYCLES = 35  # v1.7 through v4.9 (35 completed post-ship closures; confirmed from .claude_current_state.json)
 
 # -------------------------
 # MISSING FILE RULE
