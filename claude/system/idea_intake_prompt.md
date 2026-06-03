@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.3
-**Last Updated:** 2026-05-09
+**Version:** 2.4
+**Last Updated:** 2026-06-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -238,6 +238,22 @@ Record the count of parked ideas surfaced in `ideas_window.json`.
 ## STEP 2 — Solicit Submissions
 
 For each eligible agent role (in the order they appear in `eligible_agents`), invoke the agent perspective and produce idea submissions using `claude/system/idea_template.md`.
+
+### 2.0 Parked Queue Pre-Check (Required — before any new submission)
+
+Before generating new idea submissions, each agent must:
+
+1. Read `claude/ideas/ideas_register.md` for any rows where:
+   - `Status` is `Parked-cycle-<n>` (any park count), **and**
+   - the `Submitter` column contains the agent's name or slug
+2. For each such parked idea: assess whether any planned new submission covers substantially similar scope (same initiative, same problem statement, same endpoint or feature area).
+3. **If overlap detected:**
+   - Resubmit the parked idea with updated content (register row Status reset to `Submitted`, Park Rationale updated with new context) rather than creating a new entry.
+   - Note the overlap explicitly in the submission or Park Rationale field.
+   - A resubmitted parked idea counts as 1 net-new submission (if materially updated).
+4. **If no overlap:** proceed to generate new submissions per §2.1.
+
+This check prevents duplicate submissions that burden STEP 4 with unnecessary classification work (friction type D, recurring — meta-review patch 2026-06-02, idea_intake_prompt.md v2.4).
 
 ### 2.1 Per-Agent Process
 
