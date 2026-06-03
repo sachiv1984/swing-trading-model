@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.27
+**Version:** 4.29
 **Last Updated:** 2026-06-02
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.35)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.36)
 
 ### 8.1 Invocation
 
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.12)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.13)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.27 |
-| Last Updated | 2026-06-02 |
+| Version | 4.29 |
+| Last Updated | 2026-06-03 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.4 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1467,11 +1467,11 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.33 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.8 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.35 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.36 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.4 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.9 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.12 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.13 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.4 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1494,6 +1494,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.29 | 2026-06-03 | **v5.0 ST-05 (BLG-GOV-82) — post_ship_closure.md v2.12→v2.13 AUDIT DUE dual-condition + last_audit_cycle_count state field.** §10 source prompt header updated v2.12→v2.13. §14 Post-Ship Closure Engine v2.12→v2.13. Changes (post_ship v2.13): STEP 0 Audit Cadence Check expanded to dual condition — fires if `completed_cycle_count % 3 == 0` OR `(completed_cycle_count - last_audit_cycle_count) >= 4` (null-safe: gap check skipped if last_audit_cycle_count is null); STEP 10 global state update — `last_audit_cycle_count` write rule added (set to new_completed_cycle_count when audit ran this cycle, else unchanged). `last_audit_cycle_count` field added to `.claude_current_state.json` (init value: 35, matching AUD-2026-06-02) and `lifecycle_schema.json` state_field_extensions. §14 Version 4.28→4.29/2026-06-03. Authority: Head of Specs Team + PMO Lead (BLG-GOV-82, v5.0 ST-05, 2026-06-03). |
+| 4.28 | 2026-06-03 | **v5.0 ST-04 (BLG-GOV-80) — execution_prompt.md v3.35→v3.36 STEP 8 governance file edit check made STRUCTURAL.** §8 source prompt header updated v3.35→v3.36. §14 Execution Engine Source v3.35→v3.36. Change (execution_prompt v3.36): STEP 8 governance file edit check replaced with structural scan: runs `git diff --name-only HEAD` and `--cached` filtered by `claude/system/`, `claude/charter/`, `claude/agents/` paths; for each returned file, verifies prompt_change_log.md entry exists at the correct version; appends if missing; check runs against actual git diff rather than relying on operator memory. Root cause of BLG-GOV-79 (7 missing change log entries found at AUD-2026-06-02). §14 Version 4.27→4.28/2026-06-03. Authority: Head of Specs Team (BLG-GOV-80, v5.0 ST-04, 2026-06-03). |
 | 4.27 | 2026-06-02 | **Rebalance 2026-06-02__scheduled meta-review action-now — idea_intake_prompt.md v2.3→v2.4.** §5 source prompt header updated v2.3→v2.4. §14 Idea Intake Engine v2.3→v2.4. Change (idea_intake v2.4): STEP 2 §2.0 Parked Queue Pre-Check added — before generating new submissions, each agent must check the ideas_register.md for their own parked ideas on similar topics and resubmit rather than create duplicates. Resolves recurring Type D friction (idea duplication rate: 34% cycle 2026-05-27; 2% cycle 2026-06-01; both cycles had 1+ duplicate). Deferred patch from 2026-06-01__scheduled — first carry cycle; escalated to action-now at meta-review (3rd rebalance since 2026-05-25__scheduled). §14 Version 4.26→4.27/2026-06-02. Authority: Head of Specs Team (meta-review action-now, rebalance 2026-06-02__scheduled). |
 | 4.26 | 2026-06-02 | **BLG-GOV-78 resolved — roadmap_prompt.md v6.7→v6.8 STEP 8.1 Empty Now Horizon Soft Gate. AUD-2026-06-02-001: prompt_change_log.md 7 missing entries appended.** §6 source prompt header updated v6.7→v6.8. §14 Roadmap Engine Source v6.7→v6.8. Change (roadmap v6.8): STEP 8.1 strengthened from advisory-only to Soft Gate — Any Rebalance: PO must explicitly choose (a) add next-release section now or (b) defer intentionally and record rationale; "silent pass" path removed; condition broadened from Extended-tier no-change to all rebalances. Resolves BLG-GOV-78 (filed v4.8 post-ship, LL-RP-v4.8-01). Companion action (AUD-2026-06-02-001): 7 missing prompt_change_log.md entries appended covering delivery_verification_prompt.md v2.7→v2.8, post_ship_closure.md v2.11→v2.12, execution_prompt.md v3.33→v3.34, release_planning_prompt.md v2.32→v2.33, roadmap_prompt.md v6.6→v6.7, v6.7→v6.8, execution_prompt.md v3.34→v3.35. §14 Version 4.25→4.26/2026-06-02. Authority: Head of Specs Team (BLG-GOV-78, AUD-2026-06-02, 2026-06-02). |
 | 4.25 | 2026-06-01 | **v4.8 Sprint Close — execution_prompt.md v3.34→v3.35 commit SHA record substep (LL-v4.8-EX-01).** §8 source prompt header updated v3.34→v3.35. §14 Execution Engine Source v3.34→v3.35. Change: STEP 3.1.A step 4a added — immediately after push, run `git rev-parse HEAD` and write the SHA to `execution_state.json` for all covered stories; do not defer to sprint close. Resolves first recurrence of null commit_sha pattern (first occurrence v4.7 Phase 3, monitor carried to v4.8, recurred in EPIC-02 autonomous batch commit). §14 Version 4.24→4.25/2026-06-01. Authority: Head of Specs Team (LL-v4.8-EX-01, v4.8 sprint close lessons learnt). |

@@ -170,5 +170,14 @@
     "reference": "claude/system/shared_standards.md §8"
   },
 
-  "migration_note": "States Sprint_Planning_Complete, Executing, Sprint_Complete, Verified, Verified_with_deviations, Closed, and Blocked are pre-existing. States Release_Planning_Complete, Design_Gate_Passed, and Amendment_In_Progress are newly formalised in this schema. Existing cycles in any pre-existing state are valid under this schema without migration."
+  "migration_note": "States Sprint_Planning_Complete, Executing, Sprint_Complete, Verified, Verified_with_deviations, Closed, and Blocked are pre-existing. States Release_Planning_Complete, Design_Gate_Passed, and Amendment_In_Progress are newly formalised in this schema. Existing cycles in any pre-existing state are valid under this schema without migration.",
+
+  "state_field_extensions": {
+    "last_audit_cycle_count": {
+      "type": "integer | null",
+      "description": "Value of completed_cycle_count at the time of the last completed audit run. Set by post_ship_closure.md STEP 10 when run audit was completed during the closing cycle. Null if no baseline has been recorded. Used by STEP 0 Audit Cadence Check in post_ship_closure.md to compute gap-based AUDIT DUE advisory: fires if (completed_cycle_count - last_audit_cycle_count) >= 4.",
+      "added_version": "BLG-GOV-82 / v5.0 ST-05",
+      "default": null
+    }
+  }
 }

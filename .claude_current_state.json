@@ -38,6 +38,7 @@
   "last_audit_utc": "2026-06-02T20:00:00Z",
   "last_audit_overall_score": 73,
   "last_audit_open_items": 5,
+  "last_audit_cycle_count": 35,
   "next_release": "v5.0",
   "prior_cycle": "2026-06-02__release-v4.9",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
