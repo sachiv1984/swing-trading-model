@@ -45,5 +45,5 @@ Last Updated: 2026-06-03
 - **Unblock criteria:** Decision Record section has "Channel selected" and "Date of decision" fields populated; PO sign-off recorded. Escalation ESC-EXEC-20260603-01 resolved.
 - **Commit format required:** No commit from PO needed — decision recorded in-document; engine commits on resolution.
 - **Sign-off step:** status = sign_off_cleared (2026-06-03T13:00:00Z — PO channel decision recorded in trade-off doc; ESC-EXEC-20260603-01 resolved)
-- **Push step:** commit_sha = to be set in same commit as ST-09/ST-10 delivery
+- **Push step:** commit_sha = 241b6fa0e303ea8266b07a80d1788b28f7b289c2 (pushed 2026-06-03T13:00:00Z)
 - **Status:** Unblocked
