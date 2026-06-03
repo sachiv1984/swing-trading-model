@@ -5,14 +5,14 @@
   "invoked_utc": "2026-06-03T10:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-03T10:00:00Z",
+  "last_updated_utc": "2026-06-03T07:38:00Z",
 
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-03__release-v5.0/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 663,
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-03__release-v5.0/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -20,11 +20,11 @@
         "ST-01": {
           "title": "Verify and append any missing prompt_change_log.md entries (BLG-GOV-79)",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 649,
           "branch": "exec/2026-06-03__release-v5.0/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "ed5956cf1ea60d1ea8e32369ba518a2f4152562d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -39,11 +39,11 @@
         "ST-02": {
           "title": "Fix 5 non-standard agent file headers (BLG-GOV-81)",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 650,
           "branch": "exec/2026-06-03__release-v5.0/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "ed5956cf1ea60d1ea8e32369ba518a2f4152562d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -70,11 +70,11 @@
         "ST-03": {
           "title": "Add PO acceptance = GitHub Approve note to PR template (BLG-GOV-83)",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 651,
           "branch": "exec/2026-06-03__release-v5.0/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "ed5956cf1ea60d1ea8e32369ba518a2f4152562d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -325,14 +325,14 @@
     }
   },
 
-  "blocked_items": [],
-  "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02", "ST-03"],
+  "blocked_items": ["ST-08", "ST-09", "ST-10"],
+  "delegated_items": ["ST-08", "ST-09"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-11", "ST-12", "ST-13"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04"],
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-04"],
     "all_merged": false
   },
 
