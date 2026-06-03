@@ -25,7 +25,9 @@ Last Updated: 2026-06-03
 - **Spec reference:** `docs/specs/api_contracts/ai_thesis_generation.md`, `docs/specs/api_contracts/ai_endpoints.md`
 - **Unblock criteria:** Both AC-01 and AC-02 confirmed with HTTP 200 on staging; sign-off block in `qa_evidence_EPIC-03.md` has non-blank Date field; BLG-OPS-52 closed in backlog.md.
 - **Commit format required:** `[EPIC-03][ST-08] Anthropic SDK staging verification — sign-off recorded` pushed to `exec/2026-06-03__release-v5.0/EPIC-03`
-- **Status:** Pending
+- **Sign-off step:** status = sign_off_cleared (2026-06-03T11:31:00Z — agent-mediated sign-off cleared)
+- **Push step:** commit_sha = 5fedd4165ed485456bfebf6139ab93ea361a4720 (pushed 2026-06-03T11:31:00Z)
+- **Status:** Unblocked
 
 ---
 
@@ -41,5 +43,7 @@ Last Updated: 2026-06-03
 - **What is needed:** Record explicit channel decision (Telegram vs in-app notification) in the trade-off document at `docs/product/decisions/si05-notification-channel-tradeoff.md`. Document produced by engine — PO must complete the Decision Record section and sign.
 - **Spec reference:** `docs/product/decisions/si05-notification-channel-tradeoff.md`
 - **Unblock criteria:** Decision Record section has "Channel selected" and "Date of decision" fields populated; PO sign-off recorded. Escalation ESC-EXEC-20260603-01 resolved.
-- **Commit format required:** No commit from PO needed — decision recorded in-document; engine will commit on resolution.
-- **Status:** Pending
+- **Commit format required:** No commit from PO needed — decision recorded in-document; engine commits on resolution.
+- **Sign-off step:** status = sign_off_cleared (2026-06-03T13:00:00Z — PO channel decision recorded in trade-off doc; ESC-EXEC-20260603-01 resolved)
+- **Push step:** commit_sha = to be set in same commit as ST-09/ST-10 delivery
+- **Status:** Unblocked

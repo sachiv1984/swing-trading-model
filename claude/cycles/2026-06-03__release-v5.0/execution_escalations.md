@@ -34,4 +34,7 @@ The document has been produced by the Sprint Execution Engine with full trade-of
 
 **Impact if not resolved:** ST-10 (Telegram message format specification, BLG-GOV-86) remains blocked. If unresolved before sprint close, ST-09 and ST-10 will be returned to backlog.
 
-**Status:** Open
+**Resolved at:** 2026-06-03T13:00:00Z
+**Resolution:** Product Owner recorded channel decision (Telegram) in `docs/product/decisions/si05-notification-channel-tradeoff.md` Decision Record section. PO + Head of UX & Design sign-off recorded in document. ST-09 done; ST-10 executed (Telegram message format spec authored at `docs/product/decisions/si05-telegram-message-format-spec.md`). BLG-FE-60 and BLG-GOV-86 closed in backlog.
+
+**Status:** Resolved

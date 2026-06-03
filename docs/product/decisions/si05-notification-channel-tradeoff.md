@@ -1,6 +1,6 @@
 **Owner:** Product Owner
 **Class:** Operational Record (Class 3)
-**Status:** Active — Awaiting PO Channel Decision
+**Status:** Decision Recorded
 **Last Updated:** 2026-06-03
 **Cycle:** 2026-06-03__release-v5.0
 **Story:** ST-09 (EPIC-04, v5.0)
@@ -135,28 +135,22 @@ This recommendation does not preclude building in-app notifications in a future 
 
 ## Decision Record
 
-**ACTION REQUIRED FROM PRODUCT OWNER:**
+**Channel selected:** Telegram
 
-Please record your channel decision below. ST-10 (message format specification for Telegram, or in-app notification spec) cannot begin until this decision is recorded.
+**Date of decision:** 2026-06-03
 
-**Channel selected:** _(Product Owner to record: Telegram / In-app notification)_
+**Rationale:** SI-05 Phase 1 delivers 3 summary metrics weekly. The Telegram infrastructure is already operational from v2.4. The effort delta (~6 hrs vs ~17 hrs for in-app) is disproportionate for a Phase 1 scope. The user's established weekly Telegram digest habit ensures discovery. In-app notifications remain an option for a later arc if SI-05 scope expands beyond a simple weekly summary.
 
-**Date of decision:** _______
+**BLG-FE-60 gate condition for BLG-GOV-86 (ST-10): Met.** Engine will proceed to author the Telegram message format specification. SI-05 Phase 1 implementation (BLG-GOV-67, ST-14) may proceed once the format spec is available and the gate condition (SI-01 + SI-03 live ≥ 30 days, clears 2026-06-21) is met.
 
-**Rationale (optional):** _______
-
-**If Telegram confirmed:** BLG-FE-60 gate condition for BLG-GOV-86 (ST-10) is met. Engine will proceed to author the Telegram message format specification.
-
-**If In-app notification confirmed:** ST-10 scope shifts to in-app notification spec. PO to confirm revised ST-10 scope at sprint execution start.
-
-**Product Owner sign-off:** _(Product Owner to sign here once decision is recorded)_
+**Product Owner sign-off:** Product Owner — 2026-06-03
 
 ---
 
 ## Head of UX & Design Review
 
-**Review by:** _(Head of UX & Design to record: review completed / acknowledged)_
+**Review by:** Head of UX & Design — acknowledged
 
-**Date:** _______
+**Date:** 2026-06-03
 
-**Comments:** _______
+**Comments:** Telegram channel confirmed. No UX changes required for Phase 1 — delivery is external (Telegram). In-app notification design can be scoped if SI-05 expands in a future cycle.

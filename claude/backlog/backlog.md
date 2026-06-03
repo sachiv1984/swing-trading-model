@@ -816,7 +816,7 @@ Arc5ComplianceSection.js (shipped v4.0) displays 5 compliance metrics. SI-02 dri
 
 ---
 
-### BLG-FE-60 — SI-05 notification channel trade-off document
+### BLG-FE-60 — SI-05 notification channel trade-off document ✅ COMPLETE v5.0 (2026-06-03)
 **Priority:** P2 (Medium)
 **Type:** Frontend / UX / Spec Pre-work
 **Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design; Product Owner
@@ -2853,7 +2853,7 @@ Arc 6 features (PS-01 through PS-05) are roadmapped with informal §13 complianc
 
 ---
 
-### BLG-GOV-86 — SI-05 Phase 1 Telegram message format specification
+### BLG-GOV-86 — SI-05 Phase 1 Telegram message format specification ✅ COMPLETE v5.0 (2026-06-03)
 **Priority:** P2 (Medium)
 **Type:** Governance / Spec Pre-work
 **Owner:** Head of Specs Team; Base44 Frontend; Product Owner
