@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-03 (rebalance 2026-06-03__scheduled — DL-038; no roadmap changes; STEP 8.1 Option (b): defer — plan release v5.1 is next step; SI-05 Phase 1 gate clears 2026-06-21)
+**Last Updated:** 2026-06-21 (release planning 2026-06-21__release-v5.1 — v5.1 Now horizon established; 6 stories/3 EPICs; SI-05 Phase 1 gate clears 2026-06-21)
 **Last rebalance:** 2026-06-02 (cycle 2026-06-02__scheduled — Standard-tier, CPS=1.15; Δ=0.00; 8 new backlog items; DL-037; meta-review completed)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -11,7 +11,7 @@
 ## 1. Current Version
 
 **v5.0** — Governance Hardening, Product Correctness & SI-05 Phase 1 Pre-work — ✅ Shipped 2026-06-03
-**Next planned release:** [TBD]
+**Next planned release:** v5.1 — SI-05 Phase 1 & Governance Debt (planning 2026-06-21)
 
 *RA:v5.0 retired — see roadmap_archive.md 2026-06-03 (post-ship closure 2026-06-03__release-v5.0).*
 
@@ -252,7 +252,23 @@ Today you find stocks through external research and add them to the watchlist ma
 
 ## 3. Delivery Plan — Horizon: Now
 
-*RA:v5.0 section content retired to roadmap_archive.md 2026-06-03 (post-ship closure 2026-06-03__release-v5.0). No Horizon: Now items remaining — next release planning will establish the next Now entry.*
+### v5.1 — SI-05 Phase 1 & Governance Debt
+
+<!-- roadmap-annotation-marker: RA:v5.1:2026-06-21__release-v5.1 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-21__release-v5.1
+- Plan published: 2026-06-21
+- Cycle folder: claude/cycles/2026-06-21__release-v5.1/
+- Backlog slice: claude/cycles/2026-06-21__release-v5.1/stage4_backlog_slice.md
+- Status at annotation: Planning
+
+**Scope:** 6 stories / 3 EPICs / 1 sprint
+- EPIC-01: SI-05 Phase 1 — Weekly Strategy Integrity Digest via Telegram (BLG-GOV-67; gate: SI-01+SI-03 live 30d, clears 2026-06-21)
+- EPIC-02: Governance patch — delivery_verification_prompt.md §-1.3 Tier 2 fix (LL-RP-v5.0-D-2)
+- EPIC-03: QA/documentation debt — BLG-FE-61, BLG-QA-43, BLG-GOV-89
+
+*RA:v5.0 section content retired to roadmap_archive.md 2026-06-03 (post-ship closure 2026-06-03__release-v5.0).*
 
 -----
 

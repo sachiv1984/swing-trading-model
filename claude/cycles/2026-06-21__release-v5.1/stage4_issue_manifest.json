@@ -1,0 +1,56 @@
+[
+  {
+    "id": "ST-01",
+    "title": "SI-05 Phase 1: Backend service + Telegram weekly digest implementation",
+    "epic": "EPIC-01",
+    "description": "Implement the weekly Strategy Integrity Digest via Telegram using SI-01 + SI-03 data per BLG-GOV-86 format spec",
+    "ac_summary": "Digest generated from SI-01 pass_rate + SI-03 red_flag trends; formatted per BLG-GOV-86; delivered via Telegram (v2.4 infra); API contract + openapi.yaml + test.py in same commit; unit tests; staging verification AC",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-06-21__release-v5.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "BLG-SPEC-45: SI-05 financial reporting scope verification",
+    "epic": "EPIC-01",
+    "description": "Review BLG-GOV-86 format spec to determine if financial reporting scope was addressed; document decision; close or produce supplementary spec",
+    "ac_summary": "BLG-GOV-86 reviewed; financial reporting scope decision documented; Financial Reporting & Records Owner sign-off; BLG-SPEC-45 closed or escalated",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-06-21__release-v5.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "delivery_verification_prompt.md §-1.3 Tier 2: agent-mediated signer format acceptance",
+    "epic": "EPIC-02",
+    "description": "Add clause to §-1.3 Tier 2 accepting agent-mediated DoQ signer format for mixed-class EPICs; apply CLAUDE.md §6 checklist",
+    "ac_summary": "§-1.3 Tier 2 updated with agent-mediated clause; version bumped; OPERATIONAL_GUIDE.md updated; prompt_change_log.md entry appended; HoST sign-off",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-06-21__release-v5.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "BLG-FE-61: SignalCard allocation_insufficient badge Playwright E2E coverage",
+    "epic": "EPIC-03",
+    "description": "Add Playwright E2E test for SignalCard orange badge + reason inline when status=allocation_insufficient (deferred from v5.0)",
+    "ac_summary": "Playwright test with mocked allocation_insufficient payload; asserts badge visible, reason rendered, visually distinct from active signals; passes in CI",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-06-21__release-v5.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "BLG-QA-43: compliance_summary field population validation",
+    "epic": "EPIC-03",
+    "description": "Spot-check that compliance_summary in monthly P&L report matches Arc5ComplianceSection display values",
+    "ac_summary": "Verification on staging/prod; all 5 Arc 5 metrics confirmed; values match Arc5ComplianceSection; result documented; P2 bug if mismatch",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-06-21__release-v5.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "BLG-GOV-89: Staged verification sprint protocol document",
+    "epic": "EPIC-03",
+    "description": "Document the staged verifications sprint pattern (validated v4.7 + v5.0) in docs/operations/",
+    "ac_summary": "Protocol doc produced covering trigger conditions, batching approach, evidence format, sprint sizing note; Director of Quality + PMO Lead sign-off",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-06-21__release-v5.1"],
+    "assignee": null
+  }
+]
