@@ -3027,9 +3027,12 @@ components:
       type: object
       description: |
         Settings object. Canonical field meanings and constraints live in:
-        docs/specs/api_contracts/settings_endpoints.md
+        docs/specs/api_contracts/settings_endpoints.md v1.3.0
         Includes default_risk_percent (float, > 0, <= 100) added in v1.8.0
         for Position Sizing Calculator pre-population support.
+        Includes concentration_position_threshold_pct (float, default 15.0) and
+        concentration_sector_threshold_pct (float, default 30.0) added in v5.0
+        for configurable concentration-limit alert thresholds.
       additionalProperties: true
 
     UpdateSettingsRequest:
@@ -3037,8 +3040,10 @@ components:
       description: |
         All fields optional. Only provided fields are updated.
         Canonical field meanings and constraints live in:
-        docs/specs/api_contracts/settings_endpoints.md
+        docs/specs/api_contracts/settings_endpoints.md v1.3.0
         Includes default_risk_percent (float, > 0, <= 100) added in v1.8.0.
+        Includes concentration_position_threshold_pct and
+        concentration_sector_threshold_pct (both float, optional) added in v5.0.
       additionalProperties: true
 
     MarketStatus:

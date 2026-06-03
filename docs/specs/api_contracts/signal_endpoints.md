@@ -3,7 +3,7 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.3
+**Version:** 1.4
 **Last Updated:** 2026-06-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -115,7 +115,7 @@ Response uses the standard success envelope from **conventions.md**.
 | `week52_high_proximity_pct` | **Supplementary (ST-09, display-only).** `(current_native_price − 52w_high) / 52w_high × 100`. Negative value means price is below the 52-week high. `null` if insufficient history. |
 | `avg_daily_volume_20d` | **Supplementary (ST-09, display-only).** Average daily trading volume over the last 20 trading days (integer, native exchange units). `null` if data unavailable. |
 | `price_vs_50d_ma` | **Supplementary (ST-09, display-only).** `(current_native_price − 50d_MA) / 50d_MA × 100`. Positive = above MA, negative = below MA. Does **not** affect `rank`. `null` if insufficient history. |
-| `reason` | **ST-06 (BLG-FEAT-43).** Human-readable explanation for `allocation_insufficient` signals. Format: "1 share (£{price_gbp}) exceeds position allocation (£{allocation_gbp}) — cannot size". `null` for all other statuses. |
+| `reason` | Human-readable sizing note. Set when a signal's per-signal allocation (capped at `max_position_pct`) cannot buy 1 share but total cash can — the signal is kept as `new` with `suggested_shares = 1` and `reason` explains the overshoot. Also set on `allocation_insufficient` signals (total cash < price of 1 share). `null` when sizing is normal. |
 
 ### Validation rules & constraints
 
@@ -159,7 +159,7 @@ List existing signals, optionally filtered by status.
 | `dismissed` | User dismissed the signal |
 | `expired` | Signal expired (> 7 days old without action) |
 | `already_held` | A matching open position already existed when the signal was generated |
-| `allocation_insufficient` | Signal was generated but 1 share exceeds the position allocation — cannot size; `reason` field contains the human-readable explanation |
+| `allocation_insufficient` | Total available cash is less than the price of 1 share — truly cannot size. `reason` field contains the explanation. If cash is sufficient but the 20% per-signal cap is too low, the signal stays `new` with `suggested_shares = 1` and a `reason` note instead. |
 
 ### Response (200)
 
@@ -302,6 +302,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4 | 2026-06-03 | Hotfix: Revise `allocation_insufficient` semantics — now only fires when total cash < price of 1 share. When 20% cap prevents 1 share but total cash is sufficient, signal stays `new` with `suggested_shares = 1` and `reason` note. Update `reason` field description accordingly. |
 | 1.3 | 2026-06-03 | ST-06 (BLG-FEAT-43, v5.0): Add `allocation_insufficient` status for signals where 1 share exceeds position allocation; add `reason` field with human-readable explanation; `reason` is `null` for all other statuses. DB: `signals` table extended with nullable `reason` column; `signals_status_check` constraint extended. Frontend: `SignalCard` displays reason inline with orange styling. API Contracts & Documentation Owner. |
 | 1.2 | 2026-05-18 | ST-01 (BLG-FE-33, v3.7): Add `watchlisted` as an allowed PATCH status value — user added ticker to watchlist from signal card. Updated Allowed status values section and Errors 400 description. Corresponds to `signals_status_check` DB constraint extension in `data_model.md` v2.8. API Contracts & Documentation Owner. |
 | 1.1 | 2026-04-15 | ST-09 (BLG-BE-10, v2.7): Add 4 supplementary indicator fields to `POST /signals/generate` response per signal: `relative_strength_pct`, `week52_high_proximity_pct`, `avg_daily_volume_20d`, `price_vs_50d_ma`. All display-only — §13 COMPLIANT (SRB-v1.7 Feature 3). Fields do not affect `rank` or signal ordering. API Contracts & Documentation Owner. |
