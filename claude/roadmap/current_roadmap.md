@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-03 (post-ship closure 2026-06-03__release-v5.0)
+**Last Updated:** 2026-06-03 (rebalance 2026-06-03__scheduled — DL-038; no roadmap changes; STEP 8.1 Option (b): defer — plan release v5.1 is next step; SI-05 Phase 1 gate clears 2026-06-21)
 **Last rebalance:** 2026-06-02 (cycle 2026-06-02__scheduled — Standard-tier, CPS=1.15; Δ=0.00; 8 new backlog items; DL-037; meta-review completed)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.

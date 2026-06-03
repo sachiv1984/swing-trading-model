@@ -1,7 +1,7 @@
 **Owner:** Facilitator
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-02 (rebalance 2026-06-02__scheduled — 5 advancing ideas scored: BLG-GOV-86/87/88, BLG-FE-60, BLG-BE-26)
+**Last Updated:** 2026-06-03 (rebalance 2026-06-03__scheduled — no new advancing candidates; prior initiative scores carried forward unchanged; CPS = 1.15, delta = 0.00)
 
 ---
 
