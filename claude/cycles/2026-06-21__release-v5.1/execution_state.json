@@ -4,15 +4,15 @@
   "backlog_slice_source": "claude/cycles/2026-06-21__release-v5.1/stage4_backlog_slice.md",
   "invoked_utc": "2026-06-21T01:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-06-21T04:00:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-06-21T05:00:00Z",
 
   "epics": {
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-21__release-v5.1/EPIC-02",
       "pr_number": 675,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-21__release-v5.1/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
@@ -45,10 +45,10 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-21__release-v5.1/EPIC-03",
       "pr_number": 676,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-21__release-v5.1/qa_evidence_EPIC-03.md",
       "test_scenarios": ["tests/e2e/signals-allocation-insufficient.spec.js"],
@@ -120,10 +120,10 @@
       }
     },
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-21__release-v5.1/EPIC-01",
       "pr_number": 677,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-21__release-v5.1/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/test_si05_digest_service.py"],
@@ -174,7 +174,7 @@
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "P3 deviation DEV-v51-EPIC01-01 filed: pass_rate uses volume-weighted overall rate vs mean-of-per-rule-rates per BLG-GOV-86 §5.2. Backlog item BLG-SPEC-47 filed. AC-09 staging-only deferred. All CLAUDE.md §2 same-commit requirements met in 3887b6ca."
+          "notes": "P3 deviation DEV-v51-EPIC01-01 filed: pass_rate uses volume-weighted overall rate vs mean-of-per-rule-rates per BLG-GOV-86 §5.2. Backlog item BLG-SPEC-47 filed. AC-09 staging-only deferred. All CLAUDE.md §2 same-commit requirements met in 3887b6ca. Known Deviations section added to si05-telegram-message-format-spec.md in sprint close commit."
         }
       }
     }
@@ -186,11 +186,11 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-01"],
-    "all_merged": false
+    "epics_merged": ["EPIC-02", "EPIC-03", "EPIC-01"],
+    "epics_pending": [],
+    "all_merged": true
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-06-21T05:00:00Z"
 }

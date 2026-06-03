@@ -1,9 +1,39 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 3.7
-**Last Updated:** 2026-06-03
+**Version:** 3.8
+**Last Updated:** 2026-06-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-06-21__release-v5.1
+**Date:** 2026-06-21
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-02 | delivery_verification_prompt.md §-1.3 Tier 2 patched — agent-mediated signer format now explicitly accepted; v2.9→v3.0; OPERATIONAL_GUIDE.md v4.30→v4.31; BLG-GOV-89 (delivery verification carry-forward) closed | claude/system/delivery_verification_prompt.md v3.0 | None |
+| EPIC-03 | SignalCard allocation_insufficient badge Playwright E2E coverage — 5 scenarios (SC-SIG-AI-01/02/03) covering orange badge, reason text, visual distinction from active signals; BLG-FE-61 closed after 3 consecutive carry-forwards | tests/e2e/signals-allocation-insufficient.spec.js | None |
+| EPIC-03 | compliance_summary field population validated by code review — all 5 spec fields confirmed present in `get_arc5_compliance_summary()` (`period_days`, `validation_pass_rate`, `override_count`, `red_flag_events_count`, `most_frequent_rule_breach`); staging AC-01 deferred | docs/specs/api_contracts/reports_endpoints.md#compliance_summary | None (staging AC-01 deferred) |
+| EPIC-03 | Staged verification sprint protocol document v1.0 — trigger criteria, batching approach, evidence format, sprint sizing; DoQ + PMO Lead sign-off recorded | docs/operations/staged_verification_sprint_protocol.md v1.0 | None |
+| EPIC-01 | BLG-SPEC-45 resolved — SI-05 financial reporting confirmed OUT OF SCOPE for Phase 1; decision document filed; FR&R Owner sign-off; BLG-SPEC-45 closed | docs/product/decisions/si05-financial-reporting-scope-decision.md v1.0 | None |
+| EPIC-01 | SI-05 Phase 1 weekly Telegram digest — `POST /digest/si05/send`; `backend/services/si05_digest_service.py`; SI-01 + SI-03 data sourcing; MarkdownV2 format per BLG-GOV-86 §4; 5-rule summary line; Telegram delivery via v2.4 infrastructure; 21 unit tests; endpoint total 62; openapi.yaml + test.py + SystemStatus.js + SC-SS-01b all updated in same commit per CLAUDE.md §2 | docs/product/decisions/si05-telegram-message-format-spec.md v1.1; docs/specs/api_contracts/digest_endpoints.md v0.2; docs/reference/openapi.yaml | DEV-v51-EPIC01-01 (P3) — pass_rate computation; BLG-SPEC-47 |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-01 AC-09 — Telegram staging delivery | Staging-only AC; I&O Owner sign-off required in staged verification sprint | Staged verification sprint |
+| ST-05 AC-01 — compliance_summary live data verification | Staging-only AC; I&O Owner sign-off required | Staged verification sprint |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (DoQ 2026-06-21), qa_evidence_EPIC-02.md (autonomous class 2026-06-21), qa_evidence_EPIC-03.md (DoQ 2026-06-21)
+- Deviations filed: DEV-v51-EPIC01-01 (P3 — pass_rate computation method vs BLG-GOV-86 §5.2; BLG-SPEC-47)
+- Test scenarios referenced: tests/e2e/signals-allocation-insufficient.spec.js (5 scenarios); tests/test_si05_digest_service.py (21 unit tests)
 
 ---
 

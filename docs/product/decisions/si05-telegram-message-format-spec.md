@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-06-03
+**Version:** 1.1
+**Last Updated:** 2026-06-21
 **Cycle:** 2026-06-03__release-v5.0
 **Story:** ST-10 (EPIC-04, v5.0)
 **Backlog ref:** BLG-GOV-86
@@ -168,3 +168,19 @@ Rationale: Format is proportionate for Phase 1 (3 metrics, rule-based summary). 
 **Head of Specs Team:** Head of Specs Team — 2026-06-03
 
 Spec review: section structure, field bindings, escape requirements, failure modes all conformant with Telegram MarkdownV2 constraints and the `docs/specs/api_contracts/arc5_compliance_analytics.md` response schema. No deviations.
+
+---
+
+## Known Deviations
+
+### DEV-v51-EPIC01-01 — P3: `pass_rate` computation method diverges from §5.2
+
+**Severity:** P3 (accuracy gap — not a system failure or data loss)
+**Sprint:** 2026-06-21__release-v5.1 (ST-01)
+**Canonical requirement (§5.2):** `pass_rate` ← Mean of all `pass_rate` values from `data.validation_pass_rate_by_rule`; null values excluded from mean. If map is empty → null. Requires calling or replicating `GET /analytics/arc5-compliance?period=7d` and iterating `validation_pass_rate_by_rule` entries for equal-weighted arithmetic mean.
+**What was implemented:** `fetch_arc5_data_for_digest()` queries `pre_entry_validation_log` directly and computes `pass_count / total` across all rules combined — a volume-weighted overall pass rate, not a mean of per-rule rates.
+**Secondary inconsistency:** `docs/specs/api_contracts/digest_endpoints.md` v0.2 documents the data source as "Overall pass/total ratio (7d)", which is inconsistent with this spec's §5.2. The contract document should reference the per-rule mean method.
+**Impact:** When validation rules have different volumes, the two methods produce different values. Volume-weighted aggregate is dominated by high-volume rules; mean-of-per-rule-rates treats each rule equally.
+**Target resolution:** v5.1+ (before next SI-05 feature increment) — Head of Specs Team to determine whether (a) §5.2 is updated to accept volume-weighted overall rate, or (b) the service is corrected to compute mean-of-per-rule-rates and `digest_endpoints.md` updated accordingly.
+**Owner:** Head of Specs Team
+**Backlog reference:** BLG-SPEC-47
