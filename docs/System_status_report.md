@@ -1,9 +1,45 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 3.5
-**Last Updated:** 2026-06-02
+**Version:** 3.6
+**Last Updated:** 2026-06-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-06-03__release-v5.0
+**Date:** 2026-06-03
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | prompt_change_log.md verified complete — all 7 BLG-GOV-79 entries confirmed present; AUD-001 gap closed | claude/system/prompt_change_log.md | None |
+| EPIC-01 | Agent file headers normalised — 5 non-compliant agent files (ATX heading + Role line) corrected: ai_compliance_governance_officer.md, cybersecurity_trust_lead.md, director_of_hr.md, financial_reporting_records_owner.md, finops_resource_architect.md | claude/agents/ (5 files) | None |
+| EPIC-01 | PR template PO acceptance gate — explicit "Product Owner Acceptance (Hard Gate)" section added with GitHub Approve instruction; v1.2→v1.3; BLG-GOV-83 closed | .github/pull_request_template.md | None |
+| EPIC-02 | execution_prompt.md STEP 8 structural governance check — git-diff scan replaces operator memory for governance file change log entries; v3.35→v3.36; BLG-GOV-80 closed | claude/system/execution_prompt.md v3.36 | None |
+| EPIC-02 | Post-ship audit advisory strengthened — dual-condition trigger (% 3 == 0 OR gap ≥ 4, null-safe); last_audit_cycle_count field added to .claude_current_state.json and lifecycle_schema.json; post_ship_closure.md v2.12→v2.13; BLG-GOV-82 closed | claude/system/post_ship_closure.md v2.13 | None |
+| EPIC-03 | allocation_insufficient signal status — new backend status value + reason field; frontend SignalCard orange "Cannot Size" badge + reason inline; openapi.yaml + test.py + SC-SS-01b updated; BLG-FEAT-43 closed | docs/specs/api_contracts/signal_endpoints.md | None |
+| EPIC-03 | Pre-entry regime gate fix — shared 5-min cache in check_market_regime(); eliminates independent yf.download from /portfolio/pre-entry-validation; dashboard + pre-entry + signal gen share one result per window; BLG-BE-25 closed | docs/specs/api_contracts/pre_entry_validation.md | None |
+| EPIC-03 | Anthropic SDK staging verification — POST /trade-plans/{plan_id}/generate-thesis HTTP 200 + non-null thesis confirmed; POST /ai/check-daily-cost HTTP 200 + cost structure confirmed; BLG-OPS-52 closed | docs/specs/api_contracts/ai_endpoints.md | None |
+| EPIC-04 | SI-05 notification channel trade-off + PO decision — Telegram confirmed as delivery channel; BLG-FE-60 closed | docs/product/decisions/si05-notification-channel-tradeoff.md | None |
+| EPIC-04 | SI-05 Telegram message format spec v1.0 — section structure, data bindings (GET /analytics/arc5-compliance), character budget (~265/4096), failure modes, weekly schedule; BLG-GOV-86 closed | docs/product/decisions/si05-telegram-message-format-spec.md | None |
+| EPIC-04 | SI-02 re-entry trigger criteria — hard gate (≥20 closed trades), soft advisory (≥3 months), formal PMO Lead check from v5.1/2026-09; BLG-GOV-87 closed | docs/product/decisions/si02-reentry-trigger-criteria.md | None |
+| EPIC-04 | SI-04 binding conditions formal decisions — all 6 §13 binding conditions formalised; Strategy Rules & System Intent Owner sign-off; BLG-SPEC-43 cross-referenced; BLG-GOV-88 closed | docs/product/decisions/decisions--2026-06-03__release-v5.0--SI-04-binding-conditions.md | None |
+| EPIC-04 | SI-02 drift summary feasibility assessment — feasible with conditions; 3 UX risks + mitigations; minimal display scope (Reports page, 3 metrics, advisory framing); PO sign-off; BLG-BE-26 closed | docs/product/decisions/si02-drift-summary-feasibility-assessment.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-14 — SI-05 Phase 1 backend + Telegram delivery (EPIC-04 conditional) | Gate: SI-01 + SI-03 live ≥ 30 days — clears 2026-06-21; conditional Sprint 2 amendment required | backlog.md |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (DoQ autonomous class, 2026-06-03), qa_evidence_EPIC-02.md (DoQ autonomous class, 2026-06-03), qa_evidence_EPIC-03.md (I&O + DoQ agent-mediated, 2026-06-03), qa_evidence_EPIC-04.md (DoQ autonomous class via LL-v4.5-EX-01, 2026-06-03)
+- Deviations filed: None (spec deviations); BLG-FE-61 filed for ST-06 frontend Playwright gap (backlog only)
+- Test scenarios referenced: tests/test_pre_entry_validation.py, backend/routers/test.py (EPIC-03)
 
 ---
 
