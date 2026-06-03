@@ -152,6 +152,9 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
               <p className="text-xs text-slate-400 mt-1">
                 Stop distance: <span className="text-rose-400 font-mono">{currencySymbol}{(signal.current_price - signal.initial_stop).toFixed(2)}</span>
               </p>
+              {signal.reason && (
+                <p className="text-xs text-amber-400/80 mt-2">⚠ {signal.reason}</p>
+              )}
             </div>
           </div>
         </motion.div>
