@@ -13,7 +13,16 @@
 **v4.9** — Security/CI Hardening & SI-05 Phase 1 — ✅ Shipped 2026-06-02
 **Next planned release:** v5.0 — Governance Hardening, Product Correctness & SI-05 Phase 1 Pre-work
 
-*v5.0 planning horizon established 2026-06-02 (rebalance 2026-06-02__scheduled — DL-037; STEP 8.1 Option (a)). Release plan not yet started.*
+*v5.0 planning horizon established 2026-06-02 (rebalance 2026-06-02__scheduled — DL-037; STEP 8.1 Option (a)).*
+
+<!-- roadmap-annotation-marker: RA:v5.0:2026-06-03__release-v5.0 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-03__release-v5.0
+- Plan published: 2026-06-03
+- Cycle folder: claude/cycles/2026-06-03__release-v5.0/
+- Backlog slice: claude/cycles/2026-06-03__release-v5.0/stage4_backlog_slice.md
+- Status at annotation: Published
 
 *RA:v4.9 retired — see roadmap_archive.md 2026-06-02 (post-ship closure 2026-06-02__release-v4.9).*
 

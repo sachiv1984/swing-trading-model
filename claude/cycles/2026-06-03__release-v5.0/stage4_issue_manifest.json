@@ -1,0 +1,139 @@
+{
+  "cycle_id": "2026-06-03__release-v5.0",
+  "release": "v5.0",
+  "generated_utc": "2026-06-03T00:18:00Z",
+  "issues_mode": "none",
+  "idempotency_label": "cycle:2026-06-03__release-v5.0",
+  "stories": [
+    {
+      "st_id": "ST-01",
+      "blg_id": "BLG-GOV-79",
+      "epic": "EPIC-01",
+      "title": "Verify and append missing prompt_change_log.md entries",
+      "effort": "S",
+      "sprint": 1,
+      "labels": ["EPIC-01", "sprint-1", "v5.0", "cycle:2026-06-03__release-v5.0"]
+    },
+    {
+      "st_id": "ST-02",
+      "blg_id": "BLG-GOV-81",
+      "epic": "EPIC-01",
+      "title": "Fix 5 non-standard agent file headers",
+      "effort": "S",
+      "sprint": 1,
+      "labels": ["EPIC-01", "sprint-1", "v5.0", "cycle:2026-06-03__release-v5.0"]
+    },
+    {
+      "st_id": "ST-03",
+      "blg_id": "BLG-GOV-83",
+      "epic": "EPIC-01",
+      "title": "Add PO acceptance = GitHub Approve note to PR template",
+      "effort": "XS",
+      "sprint": 1,
+      "labels": ["EPIC-01", "sprint-1", "v5.0", "cycle:2026-06-03__release-v5.0"]
+    },
+    {
+      "st_id": "ST-04",
+      "blg_id": "BLG-GOV-80",
+      "epic": "EPIC-02",
+      "title": "Add governance file edit check to execution_prompt.md STEP 8",
+      "effort": "M",
+      "sprint": 1,
+      "labels": ["EPIC-02", "sprint-1", "v5.0", "cycle:2026-06-03__release-v5.0"]
+    },
+    {
+      "st_id": "ST-05",
+      "blg_id": "BLG-GOV-82",
+      "epic": "EPIC-02",
+      "title": "Strengthen post-ship audit advisory and add last_audit_cycle_count to state schema",
+      "effort": "M",
+      "sprint": 1,
+      "labels": ["EPIC-02", "sprint-1", "v5.0", "cycle:2026-06-03__release-v5.0"]
+    },
+    {
+      "st_id": "ST-06",
+      "blg_id": "BLG-FEAT-43",
+      "epic": "EPIC-03",
+      "title": "allocation_insufficient signal status and inline explanation",
+      "effort": "S",
+      "sprint": 1,
+      "labels": ["EPIC-03", "sprint-1", "v5.0", "cycle:2026-06-03__release-v5.0"]
+    },
+    {
+      "st_id": "ST-07",
+      "blg_id": "BLG-BE-25",
+      "epic": "EPIC-03",
+      "title": "Pre-entry regime gate fix: use shared market status",
+      "effort": "S",
+      "sprint": 1,
+      "labels": ["EPIC-03", "sprint-1", "v5.0", "cycle:2026-06-03__release-v5.0"]
+    },
+    {
+      "st_id": "ST-08",
+      "blg_id": "BLG-OPS-52",
+      "epic": "EPIC-03",
+      "title": "Anthropic SDK staging verification",
+      "effort": "XS",
+      "sprint": 1,
+      "staging_only": true,
+      "labels": ["EPIC-03", "sprint-1", "v5.0", "cycle:2026-06-03__release-v5.0"]
+    },
+    {
+      "st_id": "ST-09",
+      "blg_id": "BLG-FE-60",
+      "epic": "EPIC-04",
+      "title": "SI-05 notification channel trade-off document",
+      "effort": "S",
+      "sprint": 1,
+      "labels": ["EPIC-04", "sprint-1", "v5.0", "cycle:2026-06-03__release-v5.0"]
+    },
+    {
+      "st_id": "ST-10",
+      "blg_id": "BLG-GOV-86",
+      "epic": "EPIC-04",
+      "title": "SI-05 Telegram message format specification",
+      "effort": "S",
+      "sprint": 1,
+      "depends_on": "ST-09",
+      "labels": ["EPIC-04", "sprint-1", "v5.0", "cycle:2026-06-03__release-v5.0"]
+    },
+    {
+      "st_id": "ST-11",
+      "blg_id": "BLG-GOV-87",
+      "epic": "EPIC-04",
+      "title": "SI-02 frontend re-entry trigger criteria definition",
+      "effort": "S",
+      "sprint": 1,
+      "labels": ["EPIC-04", "sprint-1", "v5.0", "cycle:2026-06-03__release-v5.0"]
+    },
+    {
+      "st_id": "ST-12",
+      "blg_id": "BLG-GOV-88",
+      "epic": "EPIC-04",
+      "title": "SI-04 formal binding conditions decisions document",
+      "effort": "S",
+      "sprint": 1,
+      "labels": ["EPIC-04", "sprint-1", "v5.0", "cycle:2026-06-03__release-v5.0"]
+    },
+    {
+      "st_id": "ST-13",
+      "blg_id": "BLG-BE-26",
+      "epic": "EPIC-04",
+      "title": "SI-02 drift summary feasibility assessment",
+      "effort": "S",
+      "sprint": 1,
+      "labels": ["EPIC-04", "sprint-1", "v5.0", "cycle:2026-06-03__release-v5.0"]
+    },
+    {
+      "st_id": "ST-14",
+      "blg_id": "BLG-GOV-67",
+      "epic": "EPIC-04",
+      "title": "SI-05 Phase 1 implementation",
+      "effort": "M",
+      "sprint": 2,
+      "conditional": true,
+      "gate": "SI-01 + SI-03 live >= 30 days; clears 2026-06-21",
+      "labels": ["EPIC-04", "sprint-2", "v5.0", "cycle:2026-06-03__release-v5.0", "conditional"]
+    }
+  ]
+}
