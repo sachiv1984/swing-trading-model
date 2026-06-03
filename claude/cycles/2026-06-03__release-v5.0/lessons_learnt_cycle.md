@@ -59,3 +59,52 @@ Cycle: 2026-06-03__release-v5.0
 | Item | Owner | Target |
 |------|-------|--------|
 | Frontend observable AC Playwright coverage velocity — consider dedicated sprint story for BLG-FE-61 rather than deferred backlog item | PMO Lead | v5.1 |
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-06-03__release-v5.0
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-06-03
+**Reviewed by:** PMO Lead
+**Prior cycle Phase 4 checked:** claude/cycles/2026-06-02__release-v4.9/lessons_learnt_cycle.md — found. v4.9 Phase 4 items reviewed.
+
+**Prior cycle Phase 4 deferred items check:**
+- v4.9 deferred: "spec_references=[] for security audit/hardening story types — monitor for recurrence in v5.0; add advisory to execution_prompt.md if recurrent." All v5.0 stories have spec_references populated. **RESOLVED — no recurrence; monitor closed.**
+- v4.9 second deferred (from Phase 3): "GitHub formal approval requirement" — resolved via ST-03 in sprint execution; already closed in Phase 3 record above.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| Zero-deviation all-pass. 13/13 firm stories done; 4 EPICs merged (PRs #663–#666); QA evidence complete and compliant at verification invocation — no gate sequencing delay. Ninth consecutive zero-deviation cycle. Shortest Phase 4 invocation-to-Verified for a mixed-type sprint (governance + backend + ops + documentation). | Phase 4 | E | action-now | Positive stable pattern. Gate sequencing and evidence preparation remain reliable. No process change needed. | Director of Quality | — |
+| EPIC-03 DoQ sign-off uses signer value "Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)" — a form not explicitly enumerated in delivery_verification_prompt.md §-1.3 Tier 2 (accepts only "Director of Quality" or "Sprint Execution Engine (autonomous class)"). Tier 2 advisory triggered (standard mode: flag, not halt). EPIC-03 has ST-08 (delegated_qa) so strict autonomous-class criterion 1 ("all stories autonomous") is not met. Substance of QA evidence complete and unchallenged. | Phase 4 | B | defer | Update delivery_verification_prompt.md §-1.3 Tier 2 to add explicit acceptance for agent-mediated engine sign-offs that reference an execution_prompt.md §section — e.g. "Sprint Execution Engine (agent-mediated, <role> — §X.Y)" treated as compliant for the named role. Prevents recurring Tier 2 advisory for mixed-class EPICs whose DoQ consolidation uses the §5.3 agent-mediated pattern. | Head of Specs Team | v5.1 |
+| spec_references=[] security audit monitor from v4.9 Phase 4 closed: all v5.0 stories have spec_references populated. v4.9 first-occurrence advisory (add execution_prompt.md guidance for security story type) no longer required — pattern did not recur. | Phase 4 | E | action-now | Monitor closed. No process change applied. v4.9 was an isolated occurrence — engine correctly populates spec_references when a spec artefact (e.g. security_register.md) is the delivery target. | PMO Lead | — |
+| TSG-v50-01 (ST-06 SignalCard orange badge — no Playwright coverage): third consecutive sprint with observable frontend AC shipping code-review-only. BLG-FE-61 correctly filed before PR opened per LL-v3.1-EX-01. Phase 3 carries this as a deferred item (v5.1). Phase 4 TSG table captures it with BLG-FE-61 referenced — no additional action beyond Phase 3 record. | Phase 4 | C | defer | Cross-reference Phase 3 deferred item. PMO Lead to include BLG-FE-61 as an explicit sprint story at v5.1 sprint planning. TSG-v50-01 dispositioned in verification_report.md §6. | PMO Lead | v5.1 |
+
+**Recurrence Notes:**
+- **Gate sequencing (QA evidence ready at Phase 4 invocation):** Ninth consecutive cycle stable. No friction.
+- **spec_references=[] for security story types (v4.9 deferred monitor):** No recurrence in v5.0. Monitor closed.
+- **Agent-mediated DoQ sign-off signer format (EPIC-03 Tier 2 advisory):** First occurrence for this signer form in a mixed-class EPIC. Related to autonomous class sign-off pattern introduced v4.3. New friction identified — deferred patch filed for delivery_verification_prompt.md §-1.3.
+- **Frontend observable AC without Playwright coverage:** Third consecutive sprint (Phase 3 carries this pattern; Phase 4 records TSG-v50-01). Not escalated — correct process working, velocity is the constraint.
+
+---
+
+## Process improvements actioned this run (Phase 4)
+
+None — no action-now prompt patches applied this verification run.
+
+---
+
+## Outstanding deferred patches (Phase 4)
+
+| Item | Owner | Target |
+|------|-------|--------|
+| delivery_verification_prompt.md §-1.3 Tier 2 — add explicit acceptance of "Sprint Execution Engine (agent-mediated, <role> — §X.Y)" signer format for mixed-class EPICs | Head of Specs Team | v5.1 |
+| BLG-FE-61 Playwright E2E coverage for ST-06 SignalCard — consider dedicated sprint story at v5.1 planning rather than continued deferral | PMO Lead | v5.1 |
+
+---
+
+## Escalations (Phase 4)
+
+None.
