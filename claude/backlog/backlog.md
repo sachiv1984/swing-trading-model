@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-03 (post-ship closure 2026-06-03__release-v5.0 — 7 items marked COMPLETE)
+**Last Updated:** 2026-06-03 (rebalance 2026-06-03__scheduled — 18 new gate-conditional items added: BLG-FEAT-44, BLG-FE-62/63, BLG-BE-27–31, BLG-QA-42–44, BLG-OPS-53, BLG-SPEC-44–46, BLG-GOV-89–91)
 **Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
@@ -413,6 +413,31 @@ When a signal's per-share GBP price exceeds the per-position allocation budget, 
 - Allocation_insufficient signals are visually distinct from new/watchlisted signals
 - Existing signals with status "new" and suggested_shares > 0 are unaffected
 - No change to already_held or watchlisted status logic
+
+---
+
+### BLG-FEAT-44 — Arc 5 compliance score utility advisory at low trade volume
+**Priority:** P3 (Low)
+**Type:** Product Feature / UX Advisory
+**Owner:** Metrics Definitions & Analytics Owner; Head of UX & Design
+**Source:** IDEA-metrics-analytics-20260601-02 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Arc5ComplianceSection live 3+ months post-v4.1 ship (~Aug 2026). Minimum usage period needed to assess whether low-volume score values are misinterpreted in practice.
+
+**Problem**
+The Arc 5 composite compliance score (shipped v4.1) is computed from fewer than 20 closed trades. At low sample volumes, the score may represent statistical noise rather than actionable signal. Without a "minimum data" advisory in the UI, users may over-interpret early values.
+
+**Scope**
+- Assess whether compliance scores at <20 trades are statistically meaningful
+- If noise at low volume: add a "Minimum trade history required (< 20 trades)" advisory near the score display
+- Gate condition verification by Metrics Definitions & Analytics Owner before sprint planning
+
+**Acceptance Criteria**
+- Assessment document produced (advisory or advisory-not-needed conclusion)
+- If advisory warranted: UI advisory added to Arc5ComplianceSection for sub-20-trade states
+- Gate condition verified before sprint planning
 
 ---
 
@@ -863,6 +888,56 @@ ST-06 introduced a visible frontend change (SignalCard orange "Cannot Size" badg
 
 ---
 
+### BLG-FE-62 — Pre-entry panel combined component specification (BLG-FE-56/57/58)
+**Priority:** P3 (Low)
+**Type:** Frontend / Spec
+**Owner:** Frontend Specs & UX Documentation Owner; Base44 Frontend Prompt Owner
+**Source:** IDEA-base44-frontend-20260601-02 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038; gate cleared: BLG-GOV-87 shipped v5.0)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** BLG-FE-56/57/58 sprint planning imminent; SI-02 frontend activation triggered (20+ closed trades confirmed). BLG-GOV-87 re-entry criteria shipped v5.0 — functional activation gate still pending.
+
+**Problem**
+BLG-FE-56 (warn/fail override separation), BLG-FE-57 (count badge when collapsed), and BLG-FE-58 (check grouping for Arc 5) are three interdependent PreEntryValidationPanel improvements. Specifying them individually risks fragmented UX implementation. A combined specification aligns all three changes before sprint planning seals.
+
+**Scope**
+- Combined component spec covering all three BLG-FE-56/57/58 improvements as a coherent design
+- Map interaction dependencies (e.g., grouping in BLG-FE-58 affects badge count in BLG-FE-57)
+- Input to sprint planning when gate triggers; replaces need for three separate spec documents
+
+**Acceptance Criteria**
+- Combined component spec produced and reviewed by Head of UX & Design
+- All three BLG-FE-56/57/58 scopes covered in a single document
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-FE-63 — Arc 5 completion visual consistency pre-review
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Design
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** IDEA-head-of-ux-20260601-01 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038; gate cleared: BLG-GOV-88 shipped v5.0)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-04 sprint planning imminent. BLG-GOV-88 binding conditions shipped v5.0; SI-04 is in Later horizon — gate triggers when SI-04 enters sprint planning.
+
+**Problem**
+SI-04 (strategy version comparison) and SI-05 (weekly digest display) will introduce new panels to the Arc 5 UI surface. No review of the existing Arc 5 design vocabulary (Pre-Entry panel, Red Flag Journal, Arc5ComplianceSection) has been done to ensure consistency before these additions begin. A pre-review before SI-04 implementation prevents retroactive consistency fixes.
+
+**Scope**
+- Review existing Arc 5 panel design patterns (colour, typography, layout, empty states)
+- Identify consistency vocabulary: what patterns to carry forward to SI-04/SI-05 panels
+- Produce short design vocabulary note; no implementation required
+
+**Acceptance Criteria**
+- Design vocabulary note produced covering existing Arc 5 panels
+- Consistency patterns identified; input to SI-04/SI-05 sprint planning
+- Gate condition verified before sprint planning
+
+---
+
 ## 4. Backend & Data Backlog
 
 ---
@@ -1042,6 +1117,131 @@ Behavioural drift scores are computed by the SI-02 backend (4 metrics, 35 unit t
 - If UX risk manageable: minimal display scope defined (ready for sprint planning)
 - If UX risk too high: outcome documented and item closed with rationale
 - Product Owner reviews and signs off on assessment outcome
+
+---
+
+### BLG-BE-27 — SI-02 drift service query performance baseline
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Performance
+**Owner:** Backend Engineering Patterns Owner; Head of Engineering
+**Source:** IDEA-backend-engineering-20260601-01 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-02 frontend sprint planning triggered; 20+ closed trades confirmed (BLG-GOV-87 re-entry criteria shipped v5.0 — functional activation still pending trade count gate).
+
+**Problem**
+The SI-02 drift service (shipped v4.6) uses window functions over trade_history and trade_plans. With only 6 closed trades, current query volume is too low to surface meaningful index gaps. A performance baseline at activation volume (20+ trades) establishes the query cost before concurrent frontend load is introduced.
+
+**Scope**
+- Run drift score queries against staging at 20+ trade volume
+- Record p50/p95 query latency per metric (early_entry_rate, momentum_override_rate, losing_streak_sizing, regime_deviation_rate)
+- Identify indexes required to maintain sub-200ms response at projected load
+
+**Acceptance Criteria**
+- Performance baseline document produced for all 4 drift metric queries
+- Indexes identified and filed as implementation items if needed
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-BE-28 — Arc 4 PO-03 behavioral pattern storage pre-design
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Data Model
+**Owner:** Backend Engineering Patterns Owner; Data Model, Domain & Schema Owner
+**Source:** IDEA-backend-engineering-20260601-02 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** PO-02 gate met (6+ months AI journal entries ~Oct 2026) + Arc 4 sprint planning triggered.
+
+**Problem**
+PO-03 (Behavioural Error Taxonomy) requires a new classification table and error_type enum. Pre-designing the schema before Arc 4 sprint planning prevents same-sprint data model debt (pattern observed in v3.3 IT-01/02/03 backend split).
+
+**Scope**
+- Define error_type enum values (entry_too_early, sized_incorrectly, ignored_regime, held_too_long, etc.)
+- Define behavioral_errors table schema (id, trade_id, journal_entry_id, error_type, notes, detected_at)
+- Pre-design migration strategy; no implementation until Arc 4 sprint
+
+**Acceptance Criteria**
+- Schema pre-design document produced
+- error_type enum values defined and reviewed by Metrics Definitions & Analytics Owner
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-BE-29 — Database index review for SI-02 drift queries
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Performance
+**Owner:** Head of Engineering; Backend Engineering Patterns Owner
+**Source:** IDEA-head-of-engineering-20260601-01 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-02 frontend sprint planning triggered; 20+ closed trades confirmed. To be completed alongside or immediately after BLG-BE-27.
+
+**Problem**
+SI-02 drift service queries trade_plans and trade_history with window functions and date-range filters. Appropriate indexes must be confirmed before frontend activation adds concurrent load. BLG-BE-27 establishes the baseline; this item implements any gaps found.
+
+**Scope**
+- Review current indexes on trade_plans (signal_id, entry_date, exit_date) and trade_history (trade_id, close_date)
+- Add indexes identified as missing from BLG-BE-27 performance baseline
+- Verify drift score queries benefit from new indexes via EXPLAIN ANALYZE
+
+**Acceptance Criteria**
+- Index gaps identified and addressed
+- EXPLAIN ANALYZE output confirms index usage for all drift metric queries
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-BE-30 — SI-04 schema requirements pre-design
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Data Model
+**Owner:** Data Model, Domain & Schema Owner; Backend Engineering Patterns Owner
+**Source:** IDEA-data-model-20260601-01 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038; gate cleared: BLG-GOV-88 shipped v5.0)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-04 sprint planning imminent. BLG-GOV-88 binding conditions shipped v5.0 — next gate is active sprint planning for SI-04 (Later horizon).
+
+**Problem**
+SI-04 strategy version comparison requires linking trade_plans to historical strategy_rules.md versions. Whether this is a new strategy_versions table, a foreign key, or a snapshot field must be decided before SI-04 sprint to avoid same-sprint data model debt. BLG-SPEC-43 (API contract) exists; data model pre-design is the remaining gap.
+
+**Scope**
+- Evaluate three schema options: new table (strategy_versions), FK on trade_plans (strategy_version), snapshot field (strategy_snapshot JSON)
+- Recommend approach with rationale (versioning overhead vs query simplicity)
+- Define migration path for existing trade_plans (backfill strategy)
+
+**Acceptance Criteria**
+- Schema pre-design document produced with recommended approach
+- Reviewed by Data Model, Domain & Schema Owner and Strategy Rules & System Intent Owner
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-BE-31 — Arc 4 PO-04 reflection-outcome correlation data prerequisites
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Data Model
+**Owner:** Data Model, Domain & Schema Owner; Backend Engineering Patterns Owner
+**Source:** IDEA-data-model-20260601-02 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** PO-02 gate met + Arc 4 sprint planning triggered (~Oct-Dec 2026).
+
+**Problem**
+PO-04 (Reflection ↔ Outcome Correlation) requires journal entries with quantified reflection depth scores linked to trade outcomes. Neither reflection depth scoring nor the linkage from journal_entries to trade outcomes is currently captured. A data prerequisites assessment determines whether new fields are needed before Arc 4 sprint planning.
+
+**Scope**
+- Assess current journal_entries and trade_history data models for PO-04 readiness
+- Identify new fields required: reflection_depth_score, journal_entry_id on trade_history, etc.
+- Document prerequisites; no implementation until Arc 4 sprint
+
+**Acceptance Criteria**
+- Data prerequisites assessment document produced
+- New fields required for PO-04 identified and estimated
+- Gate condition verified before sprint planning
 
 ---
 
@@ -1289,6 +1489,83 @@ There is no test that verifies the `positions` table contains the lifecycle colu
 - Test fails if any of `position_state`, `state_entered_at`, `state_history` is absent from the `positions` table
 - Test is skipped/excluded when `DATABASE_URL` points to the stub (Phase A)
 - Test passes in the Phase B CI environment
+
+---
+
+### BLG-QA-42 — SI-02 E2E Playwright test strategy and scaffold
+**Priority:** P2 (Medium)
+**Type:** QA / Test Coverage
+**Owner:** Director of Quality; QA Lead
+**Source:** IDEA-director-of-quality-20260601-01 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-02 frontend sprint planning triggered; 20+ closed trades confirmed. BLG-QA-37 (Playwright mock strategy for drift features, shipped v4.2) defines the approach — this item implements it.
+
+**Problem**
+SI-02 drift service (35 unit tests, shipped v4.6) has no E2E Playwright coverage. When the frontend ships (~2027-Q1), test coverage must be ready immediately. Pre-building the scaffold 1–2 cycles before activation avoids rushed test creation under sprint pressure.
+
+**Scope**
+- Define E2E test strategy for GET /analytics/behavioural-drift (per BLG-QA-37 Playwright mock strategy)
+- Scaffold Playwright test file with scenarios: drift scores render, gate-not-met state, all 4 metric cards display
+- Confirm mock data approach (per BLG-QA-37 mock strategy)
+
+**Acceptance Criteria**
+- E2E test strategy document produced
+- Playwright test scaffold created and passing against mock data
+- All 4 drift metric display scenarios covered
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-QA-43 — compliance_summary field population validation
+**Priority:** P3 (Low)
+**Type:** QA / Data Quality
+**Owner:** QA Lead; Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260601-01 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038)
+**Effort:** XS (~1–2 hours)
+**Provisional-Target:** v5.1 or spot-check session
+
+**Gate criteria:** None. Can be done in any session that includes a monthly P&L report review.
+
+**Problem**
+v4.7 shipped compliance_summary in GET /reports/monthly-pnl (ST-03, EPIC-04). No verification confirms the field is populated from Arc5ComplianceSection data and matches what is displayed there. A mismatch would be a silent data quality issue.
+
+**Scope**
+- Verify compliance_summary in monthly P&L matches Arc5ComplianceSection display values
+- Check that all 5 Arc 5 compliance metrics are correctly included in the summary
+- Document verification result; file P2 bug if mismatch found
+
+**Acceptance Criteria**
+- Verification performed against staging or production monthly P&L output
+- Result documented; any mismatch filed as a P2 bug item immediately
+- No gate condition required
+
+---
+
+### BLG-QA-44 — SI-04 test planning requirements definition
+**Priority:** P2 (Medium)
+**Type:** QA / Test Planning
+**Owner:** QA Lead; Director of Quality
+**Source:** IDEA-qa-lead-20260601-02 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038; gate cleared: BLG-GOV-88 shipped v5.0)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-04 sprint planning imminent. BLG-GOV-88 binding conditions shipped v5.0 — functional activation gate is SI-04 entering sprint planning (Later horizon).
+
+**Problem**
+SI-04 (strategy version comparison) requires test coverage across: unit tests (version comparison logic), integration tests (trade_plans version linkage), and Playwright (version diff display). Defining test requirements before sprint planning ensures test scope is clear and prevents test debt analogous to BLG-QA-24 (Yahoo Finance backoff).
+
+**Scope**
+- Define unit test requirements: version comparison logic, version not found case
+- Define integration test requirements: trade_plans version linkage correctness
+- Define Playwright scenario requirements: version diff display, empty state, gate-not-met
+- Estimate test effort; input to sprint sizing
+
+**Acceptance Criteria**
+- Test requirements document produced covering all three test tiers
+- Playwright scenario outlines defined
+- Gate condition verified before sprint planning
 
 ---
 
@@ -1971,6 +2248,83 @@ SI-04 strategy version comparison will introduce GET /analytics/strategy-version
 - openapi.yaml entry added
 - §13 binding conditions owner sign-off recorded on draft contract
 - Gate condition (SI-04 in next release planning) verified before authoring begins
+
+---
+
+### BLG-SPEC-44 — SI-02 drift threshold calibration specification
+**Priority:** P2 (Medium)
+**Type:** Specification / Metrics Definition
+**Owner:** Metrics Definitions & Analytics Owner; Head of Specs Team
+**Source:** IDEA-metrics-analytics-20260601-01 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038; gate cleared: BLG-GOV-87 shipped v5.0)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-02 frontend sprint planning triggered; 20+ closed trades confirmed. BLG-GOV-87 re-entry criteria document shipped v5.0 — functional activation gate still pending.
+
+**Problem**
+SI-02 backend (shipped v4.6) defines 4 drift metrics (early_entry_rate, momentum_override_rate, losing_streak_sizing, regime_deviation_rate) but does not specify meaningful alert thresholds. Without calibrated thresholds, the frontend display may surface false positives (alert fatigue) or miss genuine drift. Thresholds should be defined before frontend activation.
+
+**Scope**
+- Define alert thresholds for each of the 4 drift metrics (e.g., early_entry_rate > 40% = amber, > 60% = red)
+- Provide rationale for each threshold (e.g., based on your own historical compliance data, statistical percentiles)
+- Define score interpretation guidance for the user-facing display
+- Add threshold definitions to metrics_definitions.md (per §12 of that document)
+
+**Acceptance Criteria**
+- Threshold calibration specification document produced
+- All 4 drift metrics have defined alert levels with rationale
+- metrics_definitions.md updated with drift threshold definitions
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-SPEC-45 — SI-05 financial reporting scope verification (BLG-GOV-86 review)
+**Priority:** P3 (Low)
+**Type:** Specification / Documentation
+**Owner:** Financial Reporting & Records Owner; Frontend Specs & UX Documentation Owner
+**Source:** IDEA-financial-reporting-20260601-02 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038; gate cleared: BLG-GOV-86 shipped v5.0)
+**Effort:** XS (~1 hour)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** BLG-GOV-86 (SI-05 Telegram message format spec, shipped v5.0) reviewed to determine if financial reporting scope was explicitly addressed. If addressed → close this item; if not → define supplementary spec before SI-05 Phase 1 sprint planning.
+
+**Problem**
+SI-05 weekly digest will include compliance metrics. Whether it should also include financial performance summary (distinct from Arc5ComplianceSection data) was an open question to be resolved by BLG-GOV-86 format spec. Now that BLG-GOV-86 shipped, this question needs a closure decision.
+
+**Scope**
+- Review BLG-GOV-86 (Telegram message format spec) for explicit financial reporting scope decision
+- If covered: document the decision and close this item
+- If not covered: define supplementary spec addressing financial reporting in SI-05 digest
+
+**Acceptance Criteria**
+- BLG-GOV-86 reviewed; financial reporting scope question explicitly answered
+- If supplementary spec needed: spec document produced and reviewed by Financial Reporting & Records Owner
+- Gate condition verified before SI-05 sprint planning
+
+---
+
+### BLG-SPEC-46 — Arc 4 API contract pre-planning surface area
+**Priority:** P3 (Low)
+**Type:** Specification / API Contracts
+**Owner:** API Contracts & Documentation Owner; Head of Specs Team
+**Source:** IDEA-api-contracts-20260601-01 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** BLG-SPEC-35 (PO-02 §13 boundary review) complete. Arc 4 API contract surface area is premature before §13 determines whether PO-02/PO-03 constitute "adaptive logic" or "structured pattern extraction."
+
+**Problem**
+PO-02 (journal pattern recognition) and PO-03 (behavioural error taxonomy) will each require new API endpoints. Pre-defining the endpoint surface area (GET /analytics/journal-patterns, classification endpoints) before Arc 4 sprint prevents same-sprint API spec debt analogous to the Arc 5 retroactive contracts filed in v4.1/v4.2.
+
+**Scope**
+- Define candidate endpoint names and response shapes for PO-02 and PO-03
+- Produce lightweight endpoint surface area document (not full contracts — just paths, methods, response envelopes)
+- Input to Arc 4 release planning; pre-authorise contract authoring for named endpoints
+
+**Acceptance Criteria**
+- Endpoint surface area document produced for PO-02 and PO-03 APIs
+- Reviewed by API Contracts & Documentation Owner and Head of Specs Team
+- Gate condition (BLG-SPEC-35 complete) verified before commencing
 
 ---
 
@@ -2673,6 +3027,32 @@ ST-02 (Anthropic SDK upgrade 0.40.0 → 0.105.2) includes a staging-only AC requ
 
 ---
 
+### BLG-OPS-53 — Application log retention policy expansion (Supabase + claude_audit_log)
+**Priority:** P3 (Low)
+**Type:** Operations / Data Lifecycle
+**Owner:** Infrastructure & Operations Owner; Head of Engineering
+**Source:** IDEA-infra-ops-20260601-02 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** claude_audit_log table 6+ months old (~Nov 2026, since v4.0 ship 2026-05-22). BLG-OPS-31 (Render log retention policy) shipped v4.7; this extends scope to Supabase query logs and claude_audit_log.
+
+**Problem**
+BLG-OPS-31 defined Render log retention. claude_audit_log (shipped v4.0) and Supabase query logs have no defined retention policy. As audit log volume grows, query performance and storage cost may degrade without archiving strategy.
+
+**Scope**
+- Define retention period for claude_audit_log (e.g., 12 months rolling)
+- Define Supabase query log retention consistent with data privacy obligations
+- Define archiving trigger (log volume threshold or time-based)
+- Document policy in docs/operations/
+
+**Acceptance Criteria**
+- Retention policy document produced covering claude_audit_log and Supabase query logs
+- Archiving cadence defined
+- Gate condition (6+ months of audit log data) verified before sprint planning
+
+---
+
 ### BLG-GOV-78 — roadmap_prompt.md STEP 8.1 Empty Now Horizon gate strengthening
 **Priority:** P3 (Low)
 **Type:** Governance / Process
@@ -2955,6 +3335,83 @@ SI-04 §13 pre-assessment was completed in v4.7 ST-01 (si04_section13_preassessm
 - All 6 binding conditions from si04_section13_preassessment.md reproduced
 - Strategy Rules & System Intent Owner formal sign-off recorded
 - BLG-SPEC-43 (API contract) cross-referenced
+
+---
+
+### BLG-GOV-89 — Staged verification sprint protocol document
+**Priority:** P3 (Low)
+**Type:** Governance / Process Documentation
+**Owner:** Director of Quality; PMO Lead
+**Source:** IDEA-director-of-quality-20260601-02 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.1 or v5.2
+
+**Gate criteria:** None. Pattern validated across v4.7 (first use) and v5.0 (second use). Actionable now.
+
+**Problem**
+The staged verifications sprint pattern (batch-closing staging-only ACs from prior releases in a dedicated sprint) was validated at v4.7 and confirmed at v5.0. No formal protocol document exists. Without documentation, future verification-heavy releases cannot reference a standard approach, increasing coordination overhead.
+
+**Scope**
+- Document the staged verifications sprint pattern: trigger conditions, how to batch staging ACs, evidence requirements, sprint planning notes
+- File in docs/operations/ or docs/governance/
+- Review by Director of Quality and PMO Lead
+
+**Acceptance Criteria**
+- Protocol document produced and filed
+- Covers: trigger conditions, batching approach, evidence format, sprint sizing note
+- Reviewed by Director of Quality and PMO Lead
+
+---
+
+### BLG-GOV-90 — Claude model deprecation monitoring procedure
+**Priority:** P3 (Low)
+**Type:** Governance / AI Compliance
+**Owner:** AI Compliance & Governance Officer; Infrastructure & Operations Owner
+**Source:** IDEA-ai-compliance-20260601-01 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** BLG-GOV-74 first quarterly AI feature review completes (due 2026-08-29). Consolidate this procedure definition with the BLG-GOV-74 review action.
+
+**Problem**
+BLG-GOV-64 pins the model to claude-3-5-sonnet. Anthropic publishes model deprecation notices. No formal procedure exists for checking deprecation notices on a schedule and triggering a governed sprint story to update the pinned model. BLG-GOV-74 (quarterly AI review, first due 2026-08-29) is the natural integration point for a standard procedure.
+
+**Scope**
+- Define quarterly deprecation check procedure: check Anthropic model lifecycle page, compare against pinned model in BLG-GOV-64 policy
+- Define trigger: if deprecation notice issued → file P1 sprint story to update pinned model
+- Document procedure in docs/governance/ai_model_policy.md or equivalent
+
+**Acceptance Criteria**
+- Deprecation monitoring procedure defined and documented
+- Procedure integrated with BLG-GOV-74 quarterly review cadence
+- Gate condition (BLG-GOV-74 first review complete) verified before sprint planning
+
+---
+
+### BLG-GOV-91 — SI-04 strategy history access security review
+**Priority:** P2 (Medium)
+**Type:** Governance / Security Review
+**Owner:** Cybersecurity & Trust Lead; Strategy Rules & System Intent Owner
+**Source:** IDEA-cybersecurity-20260601-01 — Promoted-Backlog rebalance 2026-06-03__scheduled (DL-038; gate cleared: BLG-GOV-88 shipped v5.0)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-04 sprint planning imminent. BLG-GOV-88 (binding conditions doc) shipped v5.0 — SI-04 remains in Later horizon; gate triggers when SI-04 enters sprint planning.
+
+**Problem**
+SI-04 (strategy version comparison) will access historical strategy_rules.md content and link it to trade data. This creates a data access pattern not present in SI-01 through SI-03: querying historical document versions alongside personal trade records. A security pre-assessment confirms whether this pattern introduces any data pattern or access control concerns before sprint planning.
+
+**Scope**
+- Assess data access pattern: historical strategy content + trade data linkage
+- Determine if any additional access controls or audit logging are required
+- Document as security review record per BLG-GOV-31 (security review pattern)
+- Cybersecurity & Trust Lead sign-off
+
+**Acceptance Criteria**
+- Security review record produced covering SI-04 data access pattern
+- PASS or REQUIRES_MITIGATIONS determination with evidence
+- Cybersecurity & Trust Lead sign-off recorded
+- Gate condition verified before sprint planning
 
 ---
 

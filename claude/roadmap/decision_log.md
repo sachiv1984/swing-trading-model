@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-02 (cycle 2026-06-02__scheduled — DL-037 appended)
+**Last Updated:** 2026-06-03 (cycle 2026-06-03__scheduled — DL-038 appended)
 
 ---
 
@@ -899,5 +899,27 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Meta-review:** DUE — 3 cycles since last meta-review (2026-05-25__scheduled). Completed this cycle. Action-now patch applied: idea_intake_prompt.md v2.3 → v2.4 (§2.0 parked queue pre-check). See meta_review.md.
 
 **STEP 8.6 guardrail:** PASS — Condition 2 met (Challenger issued type-A counter-argument for Debate 3).
+
+**Decision owner:** Product Owner
+
+---
+
+## DL-038
+
+**Date:** 2026-06-03
+**Decision type:** No-change (roadmap) + Add (to backlog × 18; terminal idea dispositions)
+**Cycle:** 2026-06-03__scheduled
+**Displacement:** None at roadmap level. 18 new backlog items are gate-conditional pre-work (S–M effort). 8 ideas Rejected as stale or subsumed. No roadmap initiative additions or kills.
+**Workforce impact:** 18 new backlog items across QA, Backend, Frontend, OPS, SPEC, GOV categories — all gate-conditional, no immediate FTE commitment. All gates are ≥2 months out (closest: v5.1 sprint planning).
+
+**Rationale:** Scheduled Standard-tier rebalance. Now horizon empty (v5.0 shipped 2026-06-03). All 13 active roadmap initiatives reaffirmed 🔥 Must continue. CPS = 1.15 (prior 1.15; Δ = 0.00 — no Strategy Drift Alert). Idea queue: 26 open ideas (all Parked-cycle-2, all at terminal park per §4.5 three-cycle cap). Terminal dispositions: 18 → Promoted-Backlog (new BLG items with gate criteria); 8 → Rejected (not strong — stale scope or subsumed by existing backlog). Zero ideas advanced to STEP 5 debate. STEP 8.6 guardrail PASS: 8 ideas rejected → Condition 1 met. STEP 8.1 soft gate fired (empty Now + no next-release section): PO chose Option (b) — defer, with rationale: SI-05 Phase 1 gate clears 2026-06-21 (18 days); `plan release v5.1` is the appropriate next step. STEP 9.0 net-zero: 0 roadmap initiative additions, 0 kills. Meta-review: NOT DUE (1 cycle since last meta-review 2026-06-02__scheduled; due after 2 more cycles).
+
+**Key backlog items added:** BLG-FEAT-44 (compliance score advisory), BLG-FE-62 (pre-entry panel combined spec), BLG-FE-63 (Arc 5 visual consistency), BLG-BE-27 (SI-02 query perf baseline), BLG-BE-28 (PO-03 storage pre-design), BLG-BE-29 (SI-02 index review), BLG-BE-30 (SI-04 schema pre-design; gate cleared), BLG-BE-31 (PO-04 data prerequisites), BLG-QA-42 (SI-02 Playwright scaffold), BLG-QA-43 (compliance_summary validation), BLG-QA-44 (SI-04 test planning; gate cleared), BLG-OPS-53 (log retention expansion), BLG-SPEC-44 (SI-02 threshold calibration; gate cleared), BLG-SPEC-45 (SI-05 financial scope verification; gate cleared), BLG-SPEC-46 (Arc 4 API surface area), BLG-GOV-89 (staged verification protocol), BLG-GOV-90 (model deprecation procedure), BLG-GOV-91 (SI-04 security review; gate cleared).
+
+**Horizon movements:** None. SI-05 Phase 1 remains Next (gate clears 2026-06-21). SI-04 remains Next candidate. All Later items confirmed no promotion.
+
+**Run tier:** Standard (CPS 1.15; delta 0.00; scheduled run; 1 day since last scheduled rebalance)
+
+**STEP 8.1 decision:** Option (b) — defer. Rationale: SI-05 Phase 1 gate clears in 18 days; `plan release --version v5.1 --date 2026-06-21` is the appropriate next command.
 
 **Decision owner:** Product Owner

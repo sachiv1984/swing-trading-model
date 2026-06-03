@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-27 (throughput revision — sprint capacity baseline raised; rebalance cadence changed to every 2nd cycle)
+**Last Updated:** 2026-06-03 (rebalance 2026-06-03__scheduled — no FTE changes; no new initiatives; 18 gate-conditional backlog items added at S–M effort; no immediate capacity impact)
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
