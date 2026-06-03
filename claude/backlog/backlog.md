@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-03 (release planning 2026-06-03__release-v5.0 — Release Slice v5.0 added)
+**Last Updated:** 2026-06-03 (post-ship closure 2026-06-03__release-v5.0 — 7 items marked COMPLETE)
 **Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
@@ -389,7 +389,7 @@ The Gemini thesis generation feature (shipped v4.0) writes to the setup_thesis f
 
 ---
 
-### BLG-FEAT-43 — Insufficient-allocation signal: distinct status and inline explanation
+### BLG-FEAT-43 — Insufficient-allocation signal: distinct status and inline explanation ✅ COMPLETE v5.0 (2026-06-03)
 **Priority:** P2 (Medium)
 **Type:** Product Feature / Signal UX
 **Owner:** Head of Backend Engineering; Head of UX & Design
@@ -997,7 +997,7 @@ The red_flag_events table has no defined data retention policy. As override even
 - Archiving cadence defined
 - Gate condition (table 6+ months old) verified before commencing
 
-### BLG-BE-25 — Fix pre-entry regime gate to use shared market status instead of independent yf.download
+### BLG-BE-25 — Fix pre-entry regime gate to use shared market status instead of independent yf.download ✅ COMPLETE v5.0 (2026-06-03)
 **Priority:** P2 (Medium)
 **Type:** Backend Engineering
 **Owner:** Head of Backend Engineering
@@ -2698,7 +2698,7 @@ When a roadmap rebalance runs as "No-change" and the Now horizon is empty, roadm
 
 ---
 
-### BLG-GOV-79 — Append 7 missing prompt_change_log.md entries for cycles 31–35
+### BLG-GOV-79 — Append 7 missing prompt_change_log.md entries for cycles 31–35 ✅ COMPLETE v5.0 (2026-06-03)
 **Priority:** P2 (Medium)
 **Type:** Governance / Process
 **Owner:** Head of Specs Team
@@ -2720,7 +2720,7 @@ prompt_change_log.md is missing 7 entries for prompt version changes that occurr
 
 ---
 
-### BLG-GOV-80 — Add governance file edit check to execution_prompt.md STEP 8 commit
+### BLG-GOV-80 — Add governance file edit check to execution_prompt.md STEP 8 commit ✅ COMPLETE v5.0 (2026-06-03)
 **Priority:** P2 (Medium)
 **Type:** Governance / Process
 **Owner:** Head of Specs Team
@@ -2748,7 +2748,7 @@ The roadmap engine (STEP 12) and amendment engine (STEP 9) have structural gover
 
 ---
 
-### BLG-GOV-81 — Fix 5 non-standard agent file headers
+### BLG-GOV-81 — Fix 5 non-standard agent file headers ✅ COMPLETE v5.0 (2026-06-03)
 **Priority:** P3 (Low)
 **Type:** Governance / Process
 **Owner:** Head of Specs Team
@@ -2772,7 +2772,7 @@ The roadmap engine (STEP 12) and amendment engine (STEP 9) have structural gover
 
 ---
 
-### BLG-GOV-82 — Strengthen post-ship audit advisory to prevent multi-cycle skips
+### BLG-GOV-82 — Strengthen post-ship audit advisory to prevent multi-cycle skips ✅ COMPLETE v5.0 (2026-06-03)
 **Priority:** P2 (Medium)
 **Type:** Governance / Process
 **Owner:** Head of Specs Team; PMO Lead
@@ -2800,7 +2800,7 @@ The post-ship STEP 0 audit advisory fires when `completed_cycle_count % 3 == 0`,
 
 ---
 
-### BLG-GOV-83 — Document PO acceptance requires GitHub review approval (not PR comment)
+### BLG-GOV-83 — Document PO acceptance requires GitHub review approval (not PR comment) ✅ COMPLETE v5.0 (2026-06-03)
 **Priority:** P3 (Low)
 **Type:** Governance / Process
 **Owner:** PMO Lead
@@ -2970,29 +2970,6 @@ SI-04 §13 pre-assessment was completed in v4.7 ST-01 (si04_section13_preassessm
 
 ---
 
-## Release Slice v5.0
-
-<!-- release-plan-marker: RP:v5.0:2026-06-03__release-v5.0 -->
-
-**Cycle:** 2026-06-03__release-v5.0 | **Published:** 2026-06-03 | **Canonical:** claude/cycles/2026-06-03__release-v5.0/stage4_backlog_slice.md
-
-| ST-ID | BLG Item | EPIC | Effort | Theme |
-|-------|----------|------|--------|-------|
-| ST-01 | BLG-GOV-79 | EPIC-01 | S | Verify/append 7 missing prompt_change_log.md entries |
-| ST-02 | BLG-GOV-81 | EPIC-01 | S | Fix 5 non-standard agent file headers |
-| ST-03 | BLG-GOV-83 | EPIC-01 | XS | Add PO acceptance = GitHub Approve note to PR template |
-| ST-04 | BLG-GOV-80 | EPIC-02 | M | Add governance file edit check to execution_prompt.md STEP 8 |
-| ST-05 | BLG-GOV-82 | EPIC-02 | M | Strengthen post-ship audit advisory + last_audit_cycle_count schema |
-| ST-06 | BLG-FEAT-43 | EPIC-03 | S | allocation_insufficient signal status + frontend display |
-| ST-07 | BLG-BE-25 | EPIC-03 | S | Pre-entry regime gate fix: shared market status cache |
-| ST-08 | BLG-OPS-52 | EPIC-03 | XS | Anthropic SDK staging verification [staging-only] |
-| ST-09 | BLG-FE-60 | EPIC-04 | S | SI-05 notification channel trade-off document |
-| ST-10 | BLG-GOV-86 | EPIC-04 | S | SI-05 Telegram message format specification |
-| ST-11 | BLG-GOV-87 | EPIC-04 | S | SI-02 frontend re-entry trigger criteria definition |
-| ST-12 | BLG-GOV-88 | EPIC-04 | S | SI-04 formal binding conditions decisions document |
-| ST-13 | BLG-BE-26 | EPIC-04 | S | SI-02 drift summary feasibility assessment |
-| ST-14 | BLG-GOV-67 | EPIC-04 | M | SI-05 Phase 1 implementation [CONDITIONAL: gate 2026-06-21] |
-
-*Remove this section during `groom backlog` after 2026-06-03__release-v5.0 closes.*
+*Release Slice v5.0 removed — cycle 2026-06-03__release-v5.0 closed 2026-06-03. Archived canonical home: claude/cycles/2026-06-03__release-v5.0/stage4_backlog_slice.md*
 
 

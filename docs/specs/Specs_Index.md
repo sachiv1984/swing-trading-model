@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-06-02
+**Last Updated:** 2026-06-03
 
 ---
 
@@ -678,6 +678,24 @@ No TSG backlog items required.
 - `docs/specs/metrics/si02_drift_score.md` — SI-02 drift detection score metric definition (ST-07): 4 drift metrics, 90-day rolling window, green/amber/red threshold bands, SI-05 integration points. Owner: Metrics Definitions & Analytics Canonical Owner + Head of Specs Team. Pre-planning specification for SI-02 implementation sprint.
 - `docs/specs/data_model/si02_data_schema.md` — SI-02 data schema pre-definition (ST-08): 5 new trade_plans columns (signal_id, risk_percent_used, portfolio_value_at_entry, pre_entry_validation_snapshot, effective_settings_snapshot), 3 indexes, DS-07 migration script. Owner: Data Model & Domain Schema Owner + Head of Specs Team. Pre-planning specification for SI-02 implementation sprint.
 - `docs/product/decisions/decisions--2026-05-30__release-v4.5--SI-02-section13-review.md` — SI-02 §13 formal boundary review decision record (ST-06): PASS determination; 9 binding conditions documented. Class 3 Operational Record (permanent). Owner: Strategy Rules & System Intent Owner.
+
+---
+
+## 27. Test Coverage Gaps — v5.0 (2026-06-03__release-v5.0)
+
+Identified during delivery verification (verification_report.md §6 — TSG-v50-01).
+
+### 27.1 TSG-v50-01 — EPIC-03: no Playwright coverage for allocation_insufficient SignalCard badge
+
+**Identified:** 2026-06-03 (delivery verification 2026-06-03__release-v5.0)
+**Status:** Open — backlog item BLG-FE-61
+**Owner:** QA & Testing Owner
+**Gap:** ST-06 (allocation_insufficient signal status) introduced a visible frontend change: SignalCard renders an orange "Cannot Size" badge and displays the reason string inline when `signal.status === 'allocation_insufficient'`. No Playwright E2E test covers this observable AC. Code review was accepted for the v5.0 PR under the CLAUDE.md §2 hard gate, with BLG-FE-61 filed before the PR opened.
+**Required action:** QA & Testing Owner to author `tests/e2e/signals-allocation.spec.js` covering:
+- SC-SIG-ALLOC-01: SignalCard renders orange "Cannot Size" badge when signal status is `allocation_insufficient` (against spec: signal_endpoints.md §allocation_insufficient status value)
+- SC-SIG-ALLOC-02: reason string is displayed inline on signal card when status = `allocation_insufficient` (against spec: signal_endpoints.md §reason field)
+**Resolution target:** v5.1
+**Backlog item:** BLG-FE-61 (filed 2026-06-03 per CLAUDE.md §2 hard gate before PR opened)
 
 ---
 

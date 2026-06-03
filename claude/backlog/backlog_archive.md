@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-02
+**Last Updated:** 2026-06-03
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -4972,3 +4972,24 @@ Archived by: Backlog Management Engine STEP 12, post-ship closure 2026-05-30__re
 | BLG-GOV-78 ✅ | roadmap_prompt.md STEP 8.1 Empty Now Horizon gate strengthening | Shipped v4.9 ST-05, EPIC-03 — roadmap_prompt.md v6.7→v6.8; STEP 8.1 soft gate; OPERATIONAL_GUIDE.md v4.25→v4.26; HoST + PMO Lead sign-off |
 
 ---
+
+## Closed Items — v5.0 Post-Ship (2026-06-03)
+
+*Archived: 13 items shipped in v5.0 (cycle 2026-06-03__release-v5.0). Groom date: 2026-06-03.*
+
+| ID | Title | Ship note |
+|----|-------|-----------|
+| BLG-GOV-79 ✅ | Append 7 missing prompt_change_log.md entries for cycles 31–35 | Shipped v5.0 ST-01, EPIC-01 — all 7 entries verified present; AUD-2026-06-02 AUD-001 closed |
+| BLG-GOV-80 ✅ | Add governance file edit check to execution_prompt.md STEP 8 commit | Shipped v5.0 ST-04, EPIC-02 — execution_prompt.md v3.35→v3.36; STEP 8 git-diff scan; OPERATIONAL_GUIDE §8+§14 updated; HoST sign-off |
+| BLG-GOV-81 ✅ | Fix 5 non-standard agent file headers (setext → ATX; trailing backslash) | Shipped v5.0 ST-02, EPIC-01 — all 5 files corrected: ai_compliance_governance_officer.md, cybersecurity_trust_lead.md, director_of_hr.md, financial_reporting_records_owner.md, finops_resource_architect.md |
+| BLG-GOV-82 ✅ | Strengthen post-ship audit advisory to prevent multi-cycle skips | Shipped v5.0 ST-05, EPIC-02 — post_ship_closure.md v2.12→v2.13; dual-condition check (% 3 == 0 OR gap ≥ 4); last_audit_cycle_count field added |
+| BLG-GOV-83 ✅ | Document PO acceptance requires GitHub review approval (not PR comment) | Shipped v5.0 ST-03, EPIC-01 — pull_request_template.md v1.2→v1.3; "Product Owner Acceptance (Hard Gate)" section + GitHub Approve instruction; DoQ sign-off |
+| BLG-FEAT-43 ✅ | Insufficient-allocation signal: distinct status and inline explanation | Shipped v5.0 ST-06, EPIC-03 — allocation_insufficient status + reason field; SignalCard orange "Cannot Size" badge + reason inline; openapi.yaml + test.py + SC-SS-01b updated |
+| BLG-BE-25 ✅ | Fix pre-entry regime gate to use shared market status instead of independent yf.download | Shipped v5.0 ST-07, EPIC-03 — 5-min module-level cache in check_market_regime(); all callers share one result per window; unit tests covering cache hit/miss added |
+| BLG-OPS-52 ✅ | Anthropic SDK 0.40.0 → 0.105.2 staging verification | Shipped v5.0 ST-08, EPIC-03 — staging verification: POST /generate-thesis HTTP 200 + non-null thesis; POST /ai/check-daily-cost HTTP 200 + cost structure; I&O Owner sign-off 2026-06-03 |
+| BLG-FE-60 ✅ | SI-05 notification channel trade-off document | Shipped v5.0 ST-09, EPIC-04 — si05-notification-channel-tradeoff.md created; Telegram confirmed as delivery channel; PO decision recorded 2026-06-03 |
+| BLG-GOV-86 ✅ | SI-05 Phase 1 Telegram message format specification | Shipped v5.0 ST-10, EPIC-04 — si05-telegram-message-format-spec.md v1.0; section structure, data bindings GET /analytics/arc5-compliance, char budget ~265/4096, failure modes; HoST sign-off |
+| BLG-GOV-87 ✅ | SI-02 frontend re-entry trigger criteria definition | Shipped v5.0 ST-11, EPIC-04 — si02-reentry-trigger-criteria.md; hard gate ≥20 closed trades; soft advisory ≥3 months; PMO check from v5.1; PMO Lead + PO sign-off |
+| BLG-GOV-88 ✅ | SI-04 formal binding conditions decisions document | Shipped v5.0 ST-12, EPIC-04 — decisions--2026-06-03__release-v5.0--SI-04-binding-conditions.md; all 6 §13 binding conditions; Strategy Rules & System Intent Owner sign-off |
+| BLG-BE-26 ✅ | SI-02 lightweight drift summary assessment (backend-only state mitigation) | Shipped v5.0 ST-13, EPIC-04 — si02-drift-summary-feasibility-assessment.md; feasible with conditions; 3 UX risks + mitigations; minimal scope (Reports page, 3 metrics, advisory framing); PO sign-off |
+

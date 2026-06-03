@@ -57,8 +57,9 @@
 | v4.7  | 8       | 8         | 1.00     | Zero deviations; all 7 delegated_decision stories agent-mediated and resolved within sprint; ST-02 conditional deferred at planning (gate clears 2026-06-21); staged verifications sprint design validated — 3 v4.6 staging ACs closed in batch (BLG-OPS-28/44/45) |
 | v4.8  | 7       | 7         | 1.00     | Zero deviations; all 7 stories autonomous; ST-08 (SI-05 Phase 1) deferred_at_planning — gate clears 2026-06-21 (never entered sprint scope); execution_prompt.md v3.34→v3.35 governance patch at sprint close (LL-v4.8-EX-01 null commit_sha action-now); both EPICs autonomous class sign-off (BLG-GOV-19) |
 | v4.9  | 5       | 5         | 1.00     | Zero spec deviations; all 5 stories autonomous; EPIC-04 (ST-06/ST-07) gate-deferred 2026-06-21 (never in sprint scope); 3 EPICs autonomous class sign-off (BLG-GOV-19); EPIC-03 vs main execution_state.json conflict resolved per CLAUDE.md §8 (second application); 13 pre-existing Phase B failures surfaced and fixed as RISK-02 bonus |
+| v5.0  | 13      | 13        | 1.00     | Zero spec deviations; 13 stories across 4 EPICs (governance patches + product correctness + SI-05 pre-work + staging verification); 2 delegations (ST-08 delegated_qa, ST-09 delegated_decision) both resolved same-session day; all 4 EPICs autonomous class sign-off (BLG-GOV-19); cleanest mixed-type sprint on record |
 
-**Rolling 6-cycle average (v4.4–v4.9):** 1.00
+**Rolling 6-cycle average (v4.5–v5.0):** 1.00
 
 ---
 

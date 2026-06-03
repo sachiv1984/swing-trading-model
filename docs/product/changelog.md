@@ -3,9 +3,45 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-02
+**Last Updated:** 2026-06-03
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v5.0 — Governance Hardening, Product Correctness & SI-05 Pre-work — 2026-06-03
+Cycle: 2026-06-03__release-v5.0
+Verified: Verified
+Verification report: claude/cycles/2026-06-03__release-v5.0/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Governance Document Patches — prompt_change_log.md verified complete (all 7 BLG-GOV-79 entries confirmed present; AUD-001 gap closed); 5 non-standard agent file headers corrected (ATX heading; trailing backslash removed): ai_compliance_governance_officer.md, cybersecurity_trust_lead.md, director_of_hr.md, financial_reporting_records_owner.md, finops_resource_architect.md; PR template updated with explicit "Product Owner Acceptance (Hard Gate)" section + GitHub Approve instruction (v1.2→v1.3) | claude/system/prompt_change_log.md; claude/agents/ (5 files); .github/pull_request_template.md |
+| EPIC-02 | Governance Engine Structural Fixes — execution_prompt.md STEP 8 structural governance file edit check added (git-diff scan replaces operator memory; v3.35→v3.36; root-cause fix for BLG-GOV-79/80 pattern); post-ship audit advisory strengthened (dual-condition: % 3 == 0 OR gap ≥ 4, null-safe); last_audit_cycle_count field added to .claude_current_state.json and lifecycle_schema.json; post_ship_closure.md v2.12→v2.13 | claude/system/execution_prompt.md v3.36; docs/reference/OPERATIONAL_GUIDE.md; claude/system/post_ship_closure.md v2.13; claude/system/schemas/lifecycle_schema.json |
+| EPIC-03 | Product Correctness Fixes & Ops Verification — allocation_insufficient signal status: new backend status value + reason field when price_gbp > allocation_gbp; frontend SignalCard orange "Cannot Size" badge + reason inline; openapi.yaml, test.py, SC-SS-01b updated; pre-entry regime gate fix: shared 5-min cache in check_market_regime() eliminates independent yf.download (all callers share one result per window); unit tests covering cache hit/miss added; Anthropic SDK (0.40.0 → 0.105.2) staging verification complete | docs/specs/api_contracts/signal_endpoints.md; docs/specs/api_contracts/pre_entry_validation.md; docs/specs/api_contracts/ai_thesis_generation.md; docs/specs/api_contracts/ai_endpoints.md |
+| EPIC-04 | SI-05 Phase 1 Pre-work Documentation Suite — SI-05 notification channel trade-off doc + PO decision (Telegram confirmed); SI-05 Telegram message format spec v1.0 (section structure, data bindings GET /analytics/arc5-compliance, character budget ~265/4096, failure modes); SI-02 re-entry trigger criteria (hard gate ≥20 closed trades, soft advisory ≥3 months, PMO check from v5.1); SI-04 §13 binding conditions formal decisions document (all 6 conditions; Strategy Rules & System Intent Owner sign-off); SI-02 drift summary feasibility assessment (feasible with conditions; 3 UX risks + mitigations) | docs/product/decisions/si05-notification-channel-tradeoff.md; docs/product/decisions/si05-telegram-message-format-spec.md; docs/product/decisions/si02-reentry-trigger-criteria.md; docs/product/decisions/decisions--2026-06-03__release-v5.0--SI-04-binding-conditions.md; docs/product/decisions/si02-drift-summary-feasibility-assessment.md |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01] BLG-GOV-79 — prompt_change_log.md: all 7 missing entries verified present (AUD-001 closed)
+- [ST-02] BLG-GOV-81 — 5 agent file header corrections (ATX heading; no trailing backslash)
+- [ST-03] BLG-GOV-83 — PR template: PO acceptance = GitHub Approve instruction added
+- [ST-04] BLG-GOV-80 — execution_prompt.md STEP 8 structural governance check (v3.35→v3.36)
+- [ST-05] BLG-GOV-82 — post-ship audit advisory dual-condition + last_audit_cycle_count schema (v2.12→v2.13)
+- [ST-06] BLG-FEAT-43 — allocation_insufficient signal status + reason field + frontend badge (openapi.yaml + test.py updated)
+- [ST-07] BLG-BE-25 — pre-entry regime gate fix: shared market status cache (5-min TTL; unit tests added)
+- [ST-08] BLG-OPS-52 — Anthropic SDK 0.40.0 → 0.105.2 staging verification (POST /generate-thesis + POST /ai/check-daily-cost confirmed)
+- [ST-09] BLG-FE-60 — SI-05 notification channel trade-off + PO decision (Telegram confirmed)
+- [ST-10] BLG-GOV-86 — SI-05 Telegram message format specification v1.0
+- [ST-11] BLG-GOV-87 — SI-02 re-entry trigger criteria definition
+- [ST-12] BLG-GOV-88 — SI-04 §13 binding conditions formal decisions document
+- [ST-13] BLG-BE-26 — SI-02 drift summary feasibility assessment
+
+Sign-off: Product Owner — 2026-06-03
+QA sign-off: Sprint Execution Engine (autonomous class) — 2026-06-03
 
 ---
 

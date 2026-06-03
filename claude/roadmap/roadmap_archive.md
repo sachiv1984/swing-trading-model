@@ -1120,3 +1120,20 @@ v4.3 Governance Consolidation, QA Debt Clearance & Ops Hardening. v4.2 OA resolu
 v4.6 SI-02 Behavioural Drift Detection & Arc 5 Completion. EPIC-01 SI-02 Backend: DS-07 data migration (5 new trade_plans columns: signal_id, risk_percent_used, portfolio_value_at_entry, pre_entry_validation_snapshot, effective_settings_snapshot); POST /trade-plans updated to capture all 5 SI-02 fields; 4-metric behavioural drift service (entry_timing_drift, sizing_adherence, consecutive_loss_sizing, regime_context; 90-day window; §13 binding conditions); GET /analytics/behavioural-drift endpoint + API contract (behavioural_drift_contract.md) + openapi.yaml (60 total endpoints); 35-case SI-02 unit test suite. EPIC-03 Arc 5 Enablers: red_flag_events severity field (backfill + filter support; BLG-BE-16); Arc 5 hosting cost projection (current tier adequate; BLG-OPS-40); Arc 5 nav cohesion review (maintain current structure; BLG-FE-42); Red Flag Journal design review scope doc (gate 2026-06-21; BLG-FE-47). EPIC-04 Governance & Spec Debt: OA-01 System_status_report.md v4.4 correction; release_planning_prompt.md v2.33 STEP 1.4 gate scan (BLG-GOV-32/43); closed trade count audit (Q1=6, Q2=0, gate NOT MET — 6th deferral; BLG-GOV-33); Arc 4 data density trajectory Option A (BLG-GOV-34); Arc 6 Monte Carlo §13 PASS 10 binding conditions (BLG-GOV-45); trade plan schema audit 25 fields 0 orphaned (BLG-GOV-52); sprint close automation investigation — workflow functioning (BLG-GOV-41); external API spec template (BLG-SPEC-32); OA-02 roadmap_prompt.md v6.7 next_release advisory. EPIC-02 DEFERRED (data density gate NOT MET — 6th deferral; ST-06/07/08 returned to backlog; BLG-FEAT-25). 18/21 firm stories delivered (EPIC-02 gate-deferred); Verified_with_deviations (2 P3 staging deviations: BLG-OPS-44/45); 2026-05-31.
 
 ---
+
+---
+
+## RA:v5.0 — Governance Hardening, Product Correctness & SI-05 Pre-work
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-03
+**Shipped version:** v5.0
+**Cycle reference:** 2026-06-03__release-v5.0
+**Verification report:** claude/cycles/2026-06-03__release-v5.0/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-03
+
+### Original Roadmap Entry
+
+v5.0 Governance Hardening, Product Correctness & SI-05 Phase 1 Pre-work. Theme: Close governance debt from AUD-2026-06-02, fix two product correctness issues that slipped v4.9, and complete SI-05 Phase 1 pre-work ahead of the 2026-06-21 gate clearance. 13 stories/4 EPICs. Governance patches: BLG-GOV-79/80/81/82/83. Product correctness: BLG-FEAT-43 (allocation_insufficient status + frontend badge), BLG-BE-25 (shared market cache), BLG-OPS-52 (Anthropic SDK staging verification). SI-05 Phase 1 pre-work: BLG-FE-60 (channel trade-off + PO decision — Telegram confirmed), BLG-GOV-86 (Telegram message format spec v1.0), BLG-GOV-87 (SI-02 re-entry criteria), BLG-GOV-88 (SI-04 §13 binding conditions decisions doc), BLG-BE-26 (SI-02 drift summary feasibility assessment). BLG-GOV-67 (SI-05 Phase 1 implementation) conditional — gate 2026-06-21. All 13 firm stories delivered. Verified 2026-06-03. Zero spec deviations. PRs #663–#666.
