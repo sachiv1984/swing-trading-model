@@ -120,9 +120,9 @@ All 5 fields per canonical spec `docs/specs/api_contracts/reports_endpoints.md` 
 
 ## DoQ Sign-Off Block
 
-- **Signed off by:** Director of Quality
-- **Date:** 2026-06-21
-- **Decision:** APPROVED
+- Signed off by: Director of Quality
+- Date: 2026-06-21
+- Decision: APPROVED
 
 **Summary:**
 - ST-04: 5 Playwright scenarios covering all 3 observable ACs. No `networkidle` usage. Pattern-compliant. Approved.
