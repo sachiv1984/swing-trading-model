@@ -364,17 +364,29 @@ def generate_momentum_signals(
     # Add position sizing to signals
     for signal in signals_sorted:
         if signal['status'] == 'new':
-            signal['allocation_gbp'] = round(allocation_per_stock, 2)
             signal['suggested_shares'] = int(allocation_per_stock / signal['price_gbp'])
 
-            # ST-06 (BLG-FEAT-43): flag signals where price exceeds allocation
+            # ST-06 (BLG-FEAT-43): flag signals where price exceeds allocation.
+            # If the capped allocation can't buy 1 share but total cash can, suggest 1
+            # share (oversized but actionable). Only mark insufficient when total cash
+            # is genuinely less than the price of 1 share.
             if signal['suggested_shares'] == 0:
-                signal['status'] = 'allocation_insufficient'
-                signal['reason'] = (
-                    f"1 share (£{signal['price_gbp']:,.0f}) exceeds position allocation "
-                    f"(£{allocation_per_stock:,.0f}) — cannot size"
-                )
+                if available_for_new >= signal['price_gbp']:
+                    signal['suggested_shares'] = 1
+                    signal['allocation_gbp'] = round(signal['price_gbp'], 2)
+                    signal['reason'] = (
+                        f"1 share sized above normal limit "
+                        f"(£{signal['price_gbp']:,.0f} vs £{allocation_per_stock:,.0f} allocation)"
+                    )
+                else:
+                    signal['allocation_gbp'] = round(allocation_per_stock, 2)
+                    signal['status'] = 'allocation_insufficient'
+                    signal['reason'] = (
+                        f"1 share (£{signal['price_gbp']:,.0f}) exceeds available cash "
+                        f"(£{available_for_new:,.0f}) — cannot size"
+                    )
             else:
+                signal['allocation_gbp'] = round(allocation_per_stock, 2)
                 signal['reason'] = None
 
             # Calculate fees

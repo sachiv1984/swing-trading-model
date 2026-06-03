@@ -410,13 +410,13 @@ function ConcentrationLimitsWarning() {
           </ul>
         </div>
       )}
-      <a
-        href="/#/Settings"
+      <Link
+        to={createPageUrl("Settings")}
         className="mt-3 inline-block text-xs text-amber-700 underline hover:text-amber-900"
         aria-label="Review portfolio concentration limit settings"
       >
         Review Settings
-      </a>
+      </Link>
     </div>
   );
 }
