@@ -1,0 +1,182 @@
+{
+  "cycle_id": "2026-06-21__release-v5.1",
+  "sprint_goal": "Deliver the SI-05 Phase 1 weekly Telegram digest (combining SI-01 compliance data and SI-03 red flag trends) and clear outstanding governance and QA debt — delivery verification prompt patch, SignalCard Playwright coverage, compliance_summary validation, and staged verification sprint protocol.",
+  "backlog_slice_source": "claude/cycles/2026-06-21__release-v5.1/stage4_backlog_slice.md",
+  "invoked_utc": "2026-06-21T01:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-06-21T01:30:00Z",
+
+  "epics": {
+    "EPIC-02": {
+      "status": "in_progress",
+      "branch": "exec/2026-06-21__release-v5.1/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-06-21__release-v5.1/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-03": {
+          "title": "delivery_verification_prompt.md §-1.3 Tier 2: agent-mediated signer format acceptance",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 671,
+          "branch": "exec/2026-06-21__release-v5.1/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-21T01:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/system/delivery_verification_prompt.md"],
+          "deviations_filed": true,
+          "last_completed_substep": "sign_off_cleared",
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-21T01:30:00Z"
+          },
+          "notes": "Governance file patch applied. delivery_verification_prompt.md v2.9→v3.0, OPERATIONAL_GUIDE.md v4.30→v4.31, prompt_change_log.md entries appended. No deviations — implementation matches spec AC exactly. Head of Specs Team agent-mediated sign-off cleared."
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "not_started",
+      "branch": "exec/2026-06-21__release-v5.1/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-06-21__release-v5.1/qa_evidence_EPIC-03.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-04": {
+          "title": "BLG-FE-61: SignalCard allocation_insufficient badge Playwright E2E coverage",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 672,
+          "branch": "exec/2026-06-21__release-v5.1/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "no prior spec applicable — test scenario authoring; observable AC for allocation_insufficient status documented in SignalCard.js implementation (src/components/signals/SignalCard.js). Schema exemption applies: test scenario file creation."
+        },
+        "ST-05": {
+          "title": "BLG-QA-43: compliance_summary field population validation",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 673,
+          "branch": "exec/2026-06-21__release-v5.1/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Staging-only verification story. AC-01 is staging-only — Infrastructure & Operations Owner sign-off required on staging/prod. Engine performs code-review verification of compliance_summary field population and documents verification plan."
+        },
+        "ST-06": {
+          "title": "BLG-GOV-89: Staged verification sprint protocol document",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 674,
+          "branch": "exec/2026-06-21__release-v5.1/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["docs/operations/staged_verification_sprint_protocol.md"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Documentation-creation story — spec_references set to the output artefact path per LL-v4.5-EX-02. DoQ + PMO Lead sign-off required."
+        }
+      }
+    },
+    "EPIC-01": {
+      "status": "not_started",
+      "branch": "exec/2026-06-21__release-v5.1/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-06-21__release-v5.1/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-02": {
+          "title": "BLG-SPEC-45: SI-05 financial reporting scope verification",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 670,
+          "branch": "exec/2026-06-21__release-v5.1/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["docs/product/decisions/si05-telegram-message-format-spec.md"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Review BLG-GOV-86 (si05-telegram-message-format-spec.md) for financial reporting scope. FR&R Owner sign-off required. Must complete before ST-01 seals."
+        },
+        "ST-01": {
+          "title": "SI-05 Phase 1: Backend service + Telegram weekly digest implementation",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 669,
+          "branch": "exec/2026-06-21__release-v5.1/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/product/decisions/si05-telegram-message-format-spec.md",
+            "docs/specs/api_contracts/arc5_compliance_analytics.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "AC-09 (staging Telegram delivery) is staging-only — Infrastructure & Operations Owner sign-off required. Depends on ST-02 completion and EPIC-02 merge. New endpoint + openapi.yaml + test.py + SystemStatus.js + SC-SS-01b all in same commit per CLAUDE.md §2."
+        }
+      }
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-01"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}
