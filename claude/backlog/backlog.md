@@ -998,7 +998,7 @@ The red_flag_events table has no defined data retention policy. As override even
 
 ---
 
-### BLG-BE-26 — SI-02 lightweight drift summary assessment (backend-only state mitigation)
+### BLG-BE-26 — SI-02 lightweight drift summary assessment (backend-only state mitigation) ✅ ASSESSMENT COMPLETE v5.0 (2026-06-03) — implementation ready for sprint planning with conditions
 **Priority:** P2 (Medium)
 **Type:** Backend Engineering / UX Assessment
 **Owner:** Head of Backend Engineering; Head of UX & Design; Product Owner
@@ -2883,7 +2883,7 @@ SI-05 Phase 1 will deliver the weekly strategy integrity digest via Telegram (as
 
 ---
 
-### BLG-GOV-87 — SI-02 frontend re-entry trigger criteria definition
+### BLG-GOV-87 — SI-02 frontend re-entry trigger criteria definition ✅ COMPLETE v5.0 (2026-06-03)
 **Priority:** P2 (Medium)
 **Type:** Governance / Process Definition
 **Owner:** PMO Lead; Product Owner
@@ -2910,7 +2910,7 @@ SI-02 frontend has been deferred 8 consecutive sprint planning cycles (v3.9–v4
 
 ---
 
-### BLG-GOV-88 — SI-04 formal binding conditions decisions document
+### BLG-GOV-88 — SI-04 formal binding conditions decisions document ✅ COMPLETE v5.0 (2026-06-03)
 **Priority:** P2 (Medium)
 **Type:** Governance / §13 Compliance Record
 **Owner:** Strategy Rules & System Intent Owner; Head of Specs Team
