@@ -1,7 +1,5 @@
-Financial Reporting & Records Owner
-===================================
-
-**Role:** Financial Reporting & Records Owner\
+# Financial Reporting & Records Owner
+**Role:** Financial Reporting & Records Owner
 **Reports to:** Executive Leadership\
 **Governance alignment:** Head of Specs Team (documentation lifecycle, canonical boundaries)\
 **Scope:** Financial records, tax‑relevant reporting, formal statements, and record integrity\

@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-06-03__release-v5.0",
   "cycle_name": "Release Planning \u2014 v5.0 Governance Hardening, Product Correctness & SI-05 Pre-work",
-  "status": "Sprint_Planning_Complete",
-  "engine": "sprint_planning",
+  "status": "Executing",
+  "engine": "sprint_execution",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-06-03__release-v5.0/stage4_backlog_slice.md",
   "sprint_sealed": true,

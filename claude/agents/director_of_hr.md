@@ -1,6 +1,4 @@
-Director of HR
-==============
-
+# Director of HR
 **Role:** Director of HR
 **Reports to:** Executive Leadership
 **Scope:** People strategy, organizational health, capability development, and compliance

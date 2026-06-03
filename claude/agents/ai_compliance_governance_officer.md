@@ -1,7 +1,5 @@
-AI Compliance & Governance Officer
-==================================
-
-**Role:** AI Compliance & Governance Officer\
+# AI Compliance & Governance Officer
+**Role:** AI Compliance & Governance Officer
 **Reports to:** Executive Leadership\
 **Governance alignment:** Head of Specs Team (canonical truth and documentation lifecycle)\
 **Scope:** AI usage governance, compliance, ethical constraints, and risk management\

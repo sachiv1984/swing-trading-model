@@ -1,7 +1,5 @@
-Cybersecurity & Trust Lead
-==========================
-
-**Role:** Cybersecurity & Trust Lead\
+# Cybersecurity & Trust Lead
+**Role:** Cybersecurity & Trust Lead
 **Reports to:** Executive Leadership\
 **Governance alignment:** Head of Specs Team (documentation lifecycle, canonical boundaries)\
 **Scope:** Security posture, trust controls, threat governance, and security-by-design enforcement\
