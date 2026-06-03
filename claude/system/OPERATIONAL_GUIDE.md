@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.29
-**Last Updated:** 2026-06-02
+**Version:** 4.30
+**Last Updated:** 2026-06-03
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -475,7 +475,7 @@ Any other input is treated as conversational — the Engine will not run.
 
 ## 6M. Phase 1M — Document Management (Optional)
 
-**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.4), `claude/system/backlog_management_prompt.md` (v1.7), `claude/system/ideas_housekeeping_prompt.md` (v1.0)  
+**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.4), `claude/system/backlog_management_prompt.md` (v1.8), `claude/system/ideas_housekeeping_prompt.md` (v1.0)  
 **Owner:** PMO Lead / Product Owner  
 **Trigger:** Optional — strongly recommended at either of the following windows:
 
@@ -1460,7 +1460,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.4 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
-| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.7 |
+| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.8 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.8 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.30 | 2026-06-03 | **Roadmap rebalance 2026-06-03__scheduled STEP -1.5 overdue patch — backlog_management_prompt.md v1.7→v1.8 post-write archive verification.** §6M source prompt header updated v1.7→v1.8. §14 Backlog Management Engine v1.7→v1.8. Change (backlog_management v1.8): STEP 6.2 post-write verification added — after completing STEP 6.2 writes, grep active §1–§8 sections of backlog.md for heading lines retaining `✅ COMPLETE` or `❌ Killed` status markers; if any found, archive move is incomplete — must be resolved before proceeding to STEP 6.3. Patch originally filed 2026-06-01__scheduled, carried 2026-06-02__scheduled, classified OVERDUE at 2026-06-03__scheduled STEP -1.5 (second consecutive cycle without application). §14 Version 4.29→4.30/2026-06-03. Authority: Head of Specs Team (deferred patch overdue resolution, 2026-06-03). |
 | 4.29 | 2026-06-03 | **v5.0 ST-05 (BLG-GOV-82) — post_ship_closure.md v2.12→v2.13 AUDIT DUE dual-condition + last_audit_cycle_count state field.** §10 source prompt header updated v2.12→v2.13. §14 Post-Ship Closure Engine v2.12→v2.13. Changes (post_ship v2.13): STEP 0 Audit Cadence Check expanded to dual condition — fires if `completed_cycle_count % 3 == 0` OR `(completed_cycle_count - last_audit_cycle_count) >= 4` (null-safe: gap check skipped if last_audit_cycle_count is null); STEP 10 global state update — `last_audit_cycle_count` write rule added (set to new_completed_cycle_count when audit ran this cycle, else unchanged). `last_audit_cycle_count` field added to `.claude_current_state.json` (init value: 35, matching AUD-2026-06-02) and `lifecycle_schema.json` state_field_extensions. §14 Version 4.28→4.29/2026-06-03. Authority: Head of Specs Team + PMO Lead (BLG-GOV-82, v5.0 ST-05, 2026-06-03). |
 | 4.28 | 2026-06-03 | **v5.0 ST-04 (BLG-GOV-80) — execution_prompt.md v3.35→v3.36 STEP 8 governance file edit check made STRUCTURAL.** §8 source prompt header updated v3.35→v3.36. §14 Execution Engine Source v3.35→v3.36. Change (execution_prompt v3.36): STEP 8 governance file edit check replaced with structural scan: runs `git diff --name-only HEAD` and `--cached` filtered by `claude/system/`, `claude/charter/`, `claude/agents/` paths; for each returned file, verifies prompt_change_log.md entry exists at the correct version; appends if missing; check runs against actual git diff rather than relying on operator memory. Root cause of BLG-GOV-79 (7 missing change log entries found at AUD-2026-06-02). §14 Version 4.27→4.28/2026-06-03. Authority: Head of Specs Team (BLG-GOV-80, v5.0 ST-04, 2026-06-03). |
 | 4.27 | 2026-06-02 | **Rebalance 2026-06-02__scheduled meta-review action-now — idea_intake_prompt.md v2.3→v2.4.** §5 source prompt header updated v2.3→v2.4. §14 Idea Intake Engine v2.3→v2.4. Change (idea_intake v2.4): STEP 2 §2.0 Parked Queue Pre-Check added — before generating new submissions, each agent must check the ideas_register.md for their own parked ideas on similar topics and resubmit rather than create duplicates. Resolves recurring Type D friction (idea duplication rate: 34% cycle 2026-05-27; 2% cycle 2026-06-01; both cycles had 1+ duplicate). Deferred patch from 2026-06-01__scheduled — first carry cycle; escalated to action-now at meta-review (3rd rebalance since 2026-05-25__scheduled). §14 Version 4.26→4.27/2026-06-02. Authority: Head of Specs Team (meta-review action-now, rebalance 2026-06-02__scheduled). |

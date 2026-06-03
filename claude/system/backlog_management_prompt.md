@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.7
-**Last Updated:** 2026-05-15
+**Version:** 1.8
+**Last Updated:** 2026-06-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -349,6 +349,8 @@ For each Complete — Archive and Killed — Archive item, append:
 - Add stale blocker notes: `> ⚠️ **Stale Blocker:** Blocker status not updated in 2+ cycles. Owner review required.`
 - Update `**Last Updated:**` header field
 - Do not change item definitions, priorities, or descriptions — status and flags only
+
+**Post-write verification:** After completing all STEP 6.2 writes, grep the active sections of `backlog.md` (§1–§8 type sections, above any `## Closed Items` section) for heading lines that retain a `✅ COMPLETE` or `❌ Killed` status marker. If any are found, the archive move is incomplete — return to STEP 6.2 and remove the item from the active body before proceeding. Do not proceed to STEP 6.3 with any terminal-status items remaining in the active backlog sections.
 
 ### 6.3 Write health report
 
