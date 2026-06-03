@@ -56,3 +56,30 @@ All v5.0 deferred patches resolved in v5.1 without skip. No patches carried ≥2
 ## Outstanding deferred patches
 
 None.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-06-21__release-v5.1
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-06-21
+**Reviewed by:** PMO Lead
+**Prior cycle Phase 4 checked:** claude/cycles/2026-06-03__release-v5.0/verification_report.md — v5.0 Verified (0 deviations, Tier 2 advisory: EPIC-03 agent-mediated sign-off not enumerated in §-1.3). That Tier 2 advisory was resolved in v5.1 via ST-03.
+
+**Prior cycle deferred items check (Phase 4):**
+- v5.0 Tier 2 advisory (EPIC-03 agent-mediated signer format): **RESOLVED** — ST-03 in v5.1 patched `delivery_verification_prompt.md` §-1.3 to explicitly accept the agent-mediated signer format. No further recurrence risk.
+- No other open v5.0 Phase 4 deferred items.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| v5.0 Tier 2 advisory (agent-mediated signer format not enumerated in §-1.3) was resolved by ST-03 in this cycle. The fix pattern — explicit clause addition to §-1.3 for agent-mediated format — proved sufficient and required no further follow-up. Positive resolution. | Phase 4 | E | action-now | Positive resolution. Deferred advisory converted to a firm story and delivered. No process change needed. | Sprint Execution Engine | — |
+| ST-04 has `spec_references = []` — test-authoring stories that create new test files against already-shipped features have no prior spec document to reference. The current traceability matrix flags this as a gap (standard mode: flag and continue). For test-authoring stories, `spec_references` should reference the tests/e2e spec file itself or the feature AC being tested. No current governance rule mandates this. | Phase 4 | A | defer | Consider adding a guidance note to execution_prompt.md §3.1.A: for test-authoring stories, spec_references should reference the created test file path. Low urgency — the documented exception pattern is clear. Defer to next governance patch cycle. | Head of Specs Team | v5.2+ |
+| All 3 EPICs had QA evidence files signed before delivery verification was invoked (EPIC-01/03: DoQ direct; EPIC-02: autonomous class). Zero gate friction at STEP -1.3. The staged verification sprint protocol (ST-06) is now formally documented for future use. | Phase 4 | E | action-now | Positive pattern. QA evidence readiness gate working as designed. Staged verification protocol document (docs/operations/staged_verification_sprint_protocol.md v1.0) formally captures the batching approach for future staging-only AC cycles. | Sprint Execution Engine | — |
+| Deviation severity call (DEV-v51-EPIC01-01 P3) was uncontested. The classification (P3 — accuracy gap, not system failure, staging path unaffected) is clearly correct per §7 policy. No P0/P1/P2 misclassification risk. | Phase 4 | E | action-now | Positive. P3 classification calibration is working well for this type of computation-method deviation. No process change needed. | Director of Quality | — |
+
+**Recurrence Notes:**
+- **Agent-mediated signer format advisory (v5.0 Phase 4 → v5.1 ST-03):** Fully resolved. Pattern closed.
+- **Test-authoring spec_references gap:** First identification. Deferred to v5.2+ governance patch. Monitor for recurrence.
+- **Staging-only AC deferral pattern (ST-01 AC-09, ST-05 AC-01):** Second occurrence of staging-only ACs deferred to a future staged verification sprint. Protocol document now filed (ST-06). Pattern is correctly managed.
