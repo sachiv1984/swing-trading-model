@@ -41,6 +41,8 @@ class SettingsRequest(BaseModel):
     fx_fee_rate: Optional[float] = None
     min_trades_for_analytics: Optional[int] = None
     default_risk_percent: Optional[float] = None
+    concentration_position_threshold_pct: Optional[float] = None
+    concentration_sector_threshold_pct: Optional[float] = None
 
     @validator('default_risk_percent')
     def validate_default_risk_percent(cls, v):
