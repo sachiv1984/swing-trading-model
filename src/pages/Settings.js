@@ -7,7 +7,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
-import { Save, Loader2, CheckCircle2, Sliders, CreditCard, Palette, TrendingUp } from "lucide-react";
+import { Save, Loader2, CheckCircle2, Sliders, CreditCard, Palette, TrendingUp, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
 
@@ -35,6 +35,8 @@ export default function Settings() {
     stamp_duty_rate: 0.005,
     fx_fee_rate: 0.0015,
     min_trades_for_analytics: 10,
+    concentration_position_threshold_pct: 15,
+    concentration_sector_threshold_pct: 30,
   };
 
   // Dependency array is [settings] only — adding formData causes an infinite loop
@@ -337,6 +339,44 @@ export default function Settings() {
                 <SelectItem value="light">Light</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+        </div>
+      </SectionCard>
+
+      {/* Risk Limits */}
+      <SectionCard
+        icon={ShieldAlert}
+        title="Risk Limits"
+        iconColor="bg-amber-500/20 text-amber-400"
+      >
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-slate-400">Position Concentration Limit (%)</Label>
+              <Input
+                type="number"
+                step="1"
+                min="1"
+                max="100"
+                value={formData.concentration_position_threshold_pct ?? 15}
+                onChange={(e) => handleChange("concentration_position_threshold_pct", parseFloat(e.target.value))}
+                className="bg-slate-800/50 border-slate-700 text-white"
+              />
+              <p className="text-xs text-slate-500">Alert when 1 position exceeds this % of total portfolio heat (default: 15%)</p>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-slate-400">Sector Concentration Limit (%)</Label>
+              <Input
+                type="number"
+                step="1"
+                min="1"
+                max="100"
+                value={formData.concentration_sector_threshold_pct ?? 30}
+                onChange={(e) => handleChange("concentration_sector_threshold_pct", parseFloat(e.target.value))}
+                className="bg-slate-800/50 border-slate-700 text-white"
+              />
+              <p className="text-xs text-slate-500">Alert when 1 sector exceeds this % of total portfolio heat (default: 30%)</p>
+            </div>
           </div>
         </div>
       </SectionCard>
