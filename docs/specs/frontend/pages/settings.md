@@ -3,12 +3,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.2
-**Last Updated:** 2026-03-18
+**Version:** 1.3
+**Last Updated:** 2026-06-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose & User Goals
-The Settings page allows users to configure **strategy parameters**, **trading fees**, **UI preferences**, and **analytics thresholds** that control how the Position Manager Web App behaves and calculates results.
+The Settings page allows users to configure **strategy parameters**, **trading fees**, **UI preferences**, **analytics thresholds**, and **risk limits** that control how the Position Manager Web App behaves and calculates results.
 
 Users should be able to:
 - Adjust core strategy settings (minimum hold days, ATR parameters, stop multipliers).
@@ -16,6 +16,7 @@ Users should be able to:
 - Configure commissions, stamp duty, and FX fee rates used in cost and P&L calculations.
 - Set the theme preference.
 - Define the minimum number of trades required before analytics are displayed.
+- Configure concentration alert thresholds for position and sector risk limits.
 - Save settings with clear, immediate feedback that changes have been applied.
 
 ---
@@ -151,7 +152,29 @@ Preferences control how the interface is presented.
 
 ---
 
-### 4. Analytics
+### 4. Risk Limits
+
+Configures the concentration alert thresholds shown on the Positions page. When a breach is detected, a warning banner appears with a link back to this section.
+
+**Fields:**
+
+- **Position Concentration Limit (%)**
+  - Type: number, integer, `min=1`, `max=100`
+  - Default: `15`
+  - Helper text: "Alert when 1 position exceeds this % of total portfolio heat (default: 15%)"
+  - Maps to `concentration_position_threshold_pct` in settings. Read by `GET /portfolio/concentration-status`.
+
+- **Sector Concentration Limit (%)**
+  - Type: number, integer, `min=1`, `max=100`
+  - Default: `30`
+  - Helper text: "Alert when 1 sector exceeds this % of total portfolio heat (default: 30%)"
+  - Maps to `concentration_sector_threshold_pct` in settings. Read by `GET /portfolio/concentration-status`.
+
+> Threshold changes take effect on the next poll of `GET /portfolio/concentration-status` (every 2 minutes on the Positions page).
+
+---
+
+### 5. Analytics
 
 Configures when analytics become meaningful enough to display.
 
@@ -176,6 +199,8 @@ Analytics views show only once this threshold is met, avoiding misleading statis
 - The form is initialized with a merge of defaults and the stored record.
 - If no settings exist, the form is initialized with defaults only.
 - `default_risk_percent` defaults to `1.00` if not present in the stored record.
+- `concentration_position_threshold_pct` defaults to `15` if not present in the stored record.
+- `concentration_sector_threshold_pct` defaults to `30` if not present in the stored record.
 
 ### Saving Settings
 - On save:
@@ -219,5 +244,5 @@ Analytics views show only once this threshold is met, avoiding misleading statis
 - Defaults match the canonical strategy parameters. Users can adopt them without changes.
 - Helper text clarifies how each parameter is used (ATR multipliers, stamp duty, FX fee, analytics threshold, risk percent default).
 - The `default_risk_percent` field helper text makes clear it is a convenience default, not a hard limit — users retain full control per trade.
-- Grouping into Strategy Parameters, Commission & Fees, Preferences, and Analytics mirrors the domain model.
+- Grouping into Strategy Parameters, Commission & Fees, Preferences, Risk Limits, and Analytics mirrors the domain model.
 - Save feedback (button state + toast) confirms changes are persisted and applied.

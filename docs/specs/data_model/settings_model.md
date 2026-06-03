@@ -1,8 +1,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1
-**Last Updated:** 2026-03-08
+**Version:** 0.2
+**Last Updated:** 2026-06-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -53,6 +53,8 @@ Settings are stored as a single global row in the database. There is exactly one
 | `fx_fee_rate` | float | `0.0015` | ≥ 0 and ≤ 1 | FX conversion fee rate applied to USD transactions as a fraction (0.15% = 0.0015). Applied at entry and exit for US positions. |
 | `min_trades_for_analytics` | integer | `10` | ≥ 1 | Minimum number of closed trades required before analytics metrics are computed and returned. Prevents statistically meaningless results on small datasets. |
 | `default_risk_percent` | float | `1.00` | > 0 and ≤ 100 | Default risk percentage pre-populated in the Position Sizing Calculator widget on the Trade Entry page. Represents the percentage of portfolio value to risk per new position (e.g., `1.00` = 1%). This is a user preference, not an enforced position limit — users may override per trade. |
+| `concentration_position_threshold_pct` | float | `15.0` | Optional | Alert threshold for single-position heat concentration. `GET /portfolio/concentration-status` fires a breach when a position's heat exceeds this percentage of total portfolio heat. Configurable via Settings page > Risk Limits. |
+| `concentration_sector_threshold_pct` | float | `30.0` | Optional | Alert threshold for sector-level heat concentration. Breach fires when a sector's combined heat exceeds this percentage of total portfolio heat. Configurable via Settings page > Risk Limits. |
 
 ### 3.3 Immutable Fields
 
@@ -98,6 +100,8 @@ The following validation rules are enforced by the backend and are canonical reg
 | `fx_fee_rate` | Must be ≥ 0 and ≤ 1 | HTTP 400 |
 | `min_trades_for_analytics` | Must be ≥ 1 | HTTP 400 |
 | `default_risk_percent` | Must be > 0 and ≤ 100 | HTTP 400 |
+| `concentration_position_threshold_pct` | No enforced range (optional field) | — |
+| `concentration_sector_threshold_pct` | No enforced range (optional field) | — |
 
 ---
 
@@ -115,4 +119,5 @@ The following validation rules are enforced by the backend and are canonical reg
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.2 | 2026-06-03 | Add `concentration_position_threshold_pct` (default 15%) and `concentration_sector_threshold_pct` (default 30%). DB columns added via `ensure_settings_concentration_columns` migration. Consumed by `GET /portfolio/concentration-status`. |
 | 0.1 | 2026-03-08 | Initial canonical specification. Created per ST-17 (v1.9 Sprint 1, EPIC-06). Field definitions derived from `settings_endpoints.md v1.1.0` — the confirmed canonical interface shape following ESC-20260304-01 resolution. |

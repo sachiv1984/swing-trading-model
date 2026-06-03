@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.2.0
-**Last Updated:** 2026-03-18
+**Version:** 1.3.0
+**Last Updated:** 2026-06-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # settings_endpoints.md
@@ -74,7 +74,9 @@ Response uses the standard success envelope from **conventions.md**.
     "stamp_duty_rate": 0.005,
     "fx_fee_rate": 0.0015,
     "min_trades_for_analytics": 10,
-    "default_risk_percent": 1.00
+    "default_risk_percent": 1.00,
+    "concentration_position_threshold_pct": 15.0,
+    "concentration_sector_threshold_pct": 30.0
   }
 ]
 ```
@@ -97,6 +99,8 @@ Response uses the standard success envelope from **conventions.md**.
 | `fx_fee_rate` | float | `0.0015` | FX conversion fee rate for USD trades (0.15%) |
 | `min_trades_for_analytics` | integer | `10` | Minimum closed trades required before analytics metrics are computed |
 | `default_risk_percent` | float | `1.00` | Default risk percentage pre-populated in the Position Sizing Calculator widget on the Trade Entry page. Represents percentage of portfolio value to risk per position, e.g. `1.00` = 1%. This is a user preference default, not an enforced position limit — users may override it per trade |
+| `concentration_position_threshold_pct` | float | `15.0` | Alert threshold: fires when a single position's heat exceeds this percentage of total portfolio heat. Read by `GET /portfolio/concentration-status` |
+| `concentration_sector_threshold_pct` | float | `30.0` | Alert threshold: fires when a single sector's combined heat exceeds this percentage of total portfolio heat. Read by `GET /portfolio/concentration-status` |
 
 **Strategy parameter context:**
 
@@ -141,7 +145,9 @@ All fields are optional. Fields not provided use system defaults.
   "stamp_duty_rate": 0.005,
   "fx_fee_rate": 0.0015,
   "min_trades_for_analytics": 10,
-  "default_risk_percent": 1.00
+  "default_risk_percent": 1.00,
+  "concentration_position_threshold_pct": 15.0,
+  "concentration_sector_threshold_pct": 30.0
 }
 ```
 
@@ -161,6 +167,8 @@ All fields are optional. Fields not provided use system defaults.
 | `fx_fee_rate` | float | Must be ≥ 0 and ≤ 1 |
 | `min_trades_for_analytics` | integer | Must be ≥ 1 |
 | `default_risk_percent` | float | Must be > 0 and ≤ 100 |
+| `concentration_position_threshold_pct` | float | Optional; no enforced range |
+| `concentration_sector_threshold_pct` | float | Optional; no enforced range |
 
 ### Response (200)
 
@@ -184,7 +192,9 @@ Returns the created settings object.
   "stamp_duty_rate": 0.005,
   "fx_fee_rate": 0.0015,
   "min_trades_for_analytics": 10,
-  "default_risk_percent": 1.00
+  "default_risk_percent": 1.00,
+  "concentration_position_threshold_pct": 15.0,
+  "concentration_sector_threshold_pct": 30.0
 }
 ```
 
@@ -237,7 +247,9 @@ All fields are optional. Include only the fields to be changed.
   "stamp_duty_rate": 0.005,
   "fx_fee_rate": 0.0015,
   "min_trades_for_analytics": 10,
-  "default_risk_percent": 1.00
+  "default_risk_percent": 1.00,
+  "concentration_position_threshold_pct": 15.0,
+  "concentration_sector_threshold_pct": 30.0
 }
 ```
 
@@ -257,6 +269,8 @@ All fields are optional. Include only the fields to be changed.
 | `fx_fee_rate` | float | Must be ≥ 0 and ≤ 1 |
 | `min_trades_for_analytics` | integer | Must be ≥ 1 |
 | `default_risk_percent` | float | Must be > 0 and ≤ 100 |
+| `concentration_position_threshold_pct` | float | Optional; no enforced range |
+| `concentration_sector_threshold_pct` | float | Optional; no enforced range |
 
 ### Response (200)
 
@@ -281,6 +295,8 @@ Returns the full updated settings object.
   "fx_fee_rate": 0.0015,
   "min_trades_for_analytics": 10,
   "default_risk_percent": 1.00,
+  "concentration_position_threshold_pct": 15.0,
+  "concentration_sector_threshold_pct": 30.0,
   "updated_at": "2026-02-19T10:30:00Z"
 }
 ```
@@ -290,6 +306,7 @@ Returns the full updated settings object.
 - Strategy parameter changes (`min_hold_days`, ATR multipliers) take effect on the **next** call to `GET /positions/analyze`. Open positions are not retroactively affected.
 - Fee parameter changes (`uk_commission`, `stamp_duty_rate`, etc.) apply to new transactions only. Existing trade history is not recalculated.
 - `default_risk_percent` changes take effect immediately on the next load of the Trade Entry page. No existing trades or open positions are affected.
+- `concentration_position_threshold_pct` and `concentration_sector_threshold_pct` changes take effect on the next call to `GET /portfolio/concentration-status`.
 
 ### Errors
 
@@ -304,5 +321,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3.0 | 2026-06-03 | Add `concentration_position_threshold_pct` (default 15%) and `concentration_sector_threshold_pct` (default 30%) to all endpoints. DB columns added via `ensure_settings_concentration_columns` migration. Read by `GET /portfolio/concentration-status`. Settings page gains Risk Limits section. |
+| 1.2.0 | 2026-03-18 | (prior update) |
 | 1.1.0 | 2026-03-05 | Replaced `PUT /settings` with `PATCH /settings/{settings_id}` and `POST /settings` to match live implementation. ESC-20260304-01 option (a). Added lifecycle header. |
 | 1.0.0 | (pre-v1.8) | Initial version — `GET /settings` and `PUT /settings` (superseded). |
