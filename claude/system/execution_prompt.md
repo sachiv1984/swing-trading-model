@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.35
-**Last Updated:** 2026-06-01
+**Version:** 3.36
+**Last Updated:** 2026-06-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -966,7 +966,19 @@ If the result is NOT `main`: halt immediately. Output:
 
 If the result is `main`: proceed.
 
-**Governance file edit check (ST-12 / CF-2):** Before committing, check whether any §6-governed file (listed in `claude/system/OPERATIONAL_GUIDE.md` §14) was modified during this sprint execution run — including changes applied as part of ST items (e.g. deferred prompt patches). If any were modified: append one entry per file to `claude/system/prompt_change_log.md` in the same session as the edit, using the format `| date | filename | vOLD→vNEW | summary | authority |`. This step must complete before the STEP 8 commit is pushed.
+**Governance file edit check (ST-12 / CF-2 → BLG-GOV-80 STRUCTURAL):** Before committing, run the following scan:
+
+```bash
+git diff --name-only HEAD | grep -E '^(claude/system/|claude/charter/|claude/agents/)' || true
+git diff --name-only --cached | grep -E '^(claude/system/|claude/charter/|claude/agents/)' || true
+```
+
+For each file path returned by the above commands:
+1. Check whether `claude/system/prompt_change_log.md` already contains an entry for this file at the correct version transition (the version that was just modified in this run).
+2. If the entry is **missing**: append it now using the format `| date | filename | vOLD→vNEW | summary | authority |` — do not proceed to the STEP 8 commit until all missing entries are appended.
+3. If the entry is **already present**: no action needed for that file.
+
+This check is STRUCTURAL — it runs against the actual git diff, not relying on operator memory. It applies to any governance file modified during this sprint execution run, including changes made as part of ST item execution (e.g. deferred prompt patches applied mid-sprint). If `git diff` returns no governance-path files, this check passes immediately with no entries to append.
 
 Stage and commit all cycle artefacts created or modified by this routine:
 

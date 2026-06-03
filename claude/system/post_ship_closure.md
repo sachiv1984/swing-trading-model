@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.12
-**Last Updated:** 2026-05-27
+**Version:** 2.13
+**Last Updated:** 2026-06-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -220,8 +220,13 @@ Extract from the verified inputs (load only the specified sections, not full doc
 Confirm: release version, feature name, `cycle_id`, ship date (use today if not recorded elsewhere), and Product Owner sign-off date are all resolvable. If any cannot be determined: halt in `strict` mode; flag and proceed with `[UNKNOWN]` placeholder in `standard` mode.
 
 **Audit Cadence Check (advisory — non-blocking):**
-Read `completed_cycle_count` from `.claude_current_state.json`.
-If `completed_cycle_count % 3 == 0` (i.e., a multiple of 3): record for the Advisory Summary block — "⚠ AUDIT DUE — completed_cycle_count = N. Run `run audit` before next Phase 1B opens."
+Read `completed_cycle_count` and `last_audit_cycle_count` (nullable) from `.claude_current_state.json`.
+AUDIT DUE fires if **either** condition is true:
+- `completed_cycle_count % 3 == 0` (modulo cadence check), **OR**
+- `last_audit_cycle_count` is non-null AND `(completed_cycle_count - last_audit_cycle_count) >= 4` (gap-based fallback; catches missed audits when the modulo condition was suppressed or skipped)
+
+If either condition fires: record for the Advisory Summary block — "⚠ AUDIT DUE — completed_cycle_count = N (last_audit_cycle_count = M). Run `run audit` before next Phase 1B opens."
+If `last_audit_cycle_count` is null: evaluate only the modulo condition; the gap check is skipped (null = no baseline recorded yet; field is set by `run audit` after each successful audit).
 This check is non-blocking — post-ship closure proceeds regardless.
 
 **Rebalance Cadence Check (advisory — non-blocking):**
@@ -597,11 +602,14 @@ Update `.claude_current_state.json`:
   "closure_status": "Closed | Closed_with_actions",
   "post_ship_complete": true,
   "completed_cycle_count": "<prior value + 1>",
+  "last_audit_cycle_count": "<see rule below — set if audit ran this cycle, else omit>",
   "last_sync_utc": "<now>"
 }
 ```
 
 **`completed_cycle_count` rule:** Read the current value from `.claude_current_state.json`. If absent, treat as `0`. Write the value incremented by 1. This counter tracks the total number of fully closed cycles for meta-review cadence tracking (Phase 1 STEP 11 triggers meta-review every third completed cycle).
+
+**`last_audit_cycle_count` rule (BLG-GOV-82):** After writing `completed_cycle_count`, check whether `run audit` was completed during this cycle (indicator: `last_audit_utc` is later than the cycle's sprint_start date, or `last_audit_id` references an audit from this cycle). If an audit ran this cycle: write `last_audit_cycle_count = new_completed_cycle_count` (the incremented value just written). If no audit ran this cycle: leave the existing `last_audit_cycle_count` value unchanged. This field is used by STEP 0 Audit Cadence Check to detect cycles where the modulo advisory was suppressed or skipped.
 
 Surface §7 Closure Confirmation to the user for communication to the Product Owner and Head of Specs Team.
 
