@@ -366,13 +366,23 @@ def generate_momentum_signals(
         if signal['status'] == 'new':
             signal['allocation_gbp'] = round(allocation_per_stock, 2)
             signal['suggested_shares'] = int(allocation_per_stock / signal['price_gbp'])
-            
+
+            # ST-06 (BLG-FEAT-43): flag signals where price exceeds allocation
+            if signal['suggested_shares'] == 0:
+                signal['status'] = 'allocation_insufficient'
+                signal['reason'] = (
+                    f"1 share (£{signal['price_gbp']:,.0f}) exceeds position allocation "
+                    f"(£{allocation_per_stock:,.0f}) — cannot size"
+                )
+            else:
+                signal['reason'] = None
+
             # Calculate fees
             if signal['market'] == 'UK':
                 fee_rate = 0.005  # 0.5% stamp duty
             else:
                 fee_rate = 0.0015  # 0.15% FX fee
-            
+
             gross_cost = signal['suggested_shares'] * signal['price_gbp']
             fees = gross_cost * fee_rate
             signal['total_cost'] = round(gross_cost + fees, 2)
@@ -381,6 +391,7 @@ def generate_momentum_signals(
             signal['allocation_gbp'] = 0
             signal['suggested_shares'] = 0
             signal['total_cost'] = 0
+            signal['reason'] = None
     
     # Save to database
     print(f"Saving {len(signals_sorted)} signals to database...")

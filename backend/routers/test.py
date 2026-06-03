@@ -169,6 +169,9 @@ async def test_all_endpoints(request: Request):
 
         # SI-02 Behavioural Drift Detection (v4.6 / ST-04)
         {"name": "GET /analytics/behavioural-drift", "method": "GET", "url": f"{base_url}/analytics/behavioural-drift", "critical": False},
+
+        # Signal allocation_insufficient status (v5.0 / ST-06)
+        {"name": "GET /signals?status=allocation_insufficient", "method": "GET", "url": f"{base_url}/signals?status=allocation_insufficient", "critical": False},
     ]
     
     results = []

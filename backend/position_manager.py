@@ -90,8 +90,23 @@ def get_current_prices_and_atr(tickers):
     
     return latest_prices, latest_atr, latest_date
 
+_market_regime_cache: dict = {}
+_MARKET_REGIME_TTL_SECONDS = 300  # 5-minute shared cache (BLG-BE-25, v5.0 ST-07)
+
+
 def check_market_regime():
-    """Check if market is risk-on or risk-off"""
+    """Check if market is risk-on or risk-off.
+
+    Results are cached for 5 minutes so all callers (dashboard, pre-entry
+    validation, signal generation) share one yf.download call per window.
+    """
+    now = datetime.now()
+    cached = _market_regime_cache.get("result")
+    cached_at = _market_regime_cache.get("cached_at")
+    if cached is not None and cached_at is not None:
+        age = (now - cached_at).total_seconds()
+        if age < _MARKET_REGIME_TTL_SECONDS:
+            return cached
 
     def _close_series(download_df):
         """Extract Close prices as a clean Series"""
@@ -135,7 +150,7 @@ def check_market_regime():
 
     asof_date = spy.index[-1] if len(spy) else datetime.now()
 
-    return {
+    result = {
         'spy_risk_on': spy_risk_on,
         'ftse_risk_on': ftse_risk_on,
         'spy_price': spy_current,
@@ -144,6 +159,9 @@ def check_market_regime():
         'ftse_ma200': ftse_ma200,
         'date': asof_date
     }
+    _market_regime_cache["result"] = result
+    _market_regime_cache["cached_at"] = datetime.now()
+    return result
 
 def is_risk_on(ticker, market_status):
     """Check if specific ticker's market is risk-on"""
