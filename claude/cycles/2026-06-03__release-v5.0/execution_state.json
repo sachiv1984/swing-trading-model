@@ -1,0 +1,389 @@
+{
+  "cycle_id": "2026-06-03__release-v5.0",
+  "sprint_goal": "Close all five AUD-2026-06-02 governance open items, ship the two v4.9 slipped product correctness fixes (FEAT-43, BE-25), and deliver the full SI-05 Phase 1 pre-work documentation suite.",
+  "backlog_slice_source": "claude/cycles/2026-06-03__release-v5.0/stage4_backlog_slice.md",
+  "invoked_utc": "2026-06-03T10:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-06-03T11:35:00Z",
+
+  "epics": {
+    "EPIC-01": {
+      "status": "merged",
+      "branch": "exec/2026-06-03__release-v5.0/EPIC-01",
+      "pr_number": 663,
+      "pr_status": "merged",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-06-03__release-v5.0/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "Verify and append any missing prompt_change_log.md entries (BLG-GOV-79)",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 649,
+          "branch": "exec/2026-06-03__release-v5.0/EPIC-01",
+          "commit_sha": "ed5956cf1ea60d1ea8e32369ba518a2f4152562d",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-03T10:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/system/prompt_change_log.md"],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Verification-only outcome — all 7 specified entries confirmed present (added as AUD-2026-06-02 Tier 1). All active governance prompts have current versions documented in log. No additional unlogged changes found for cycles 31–35. AUD-2026-06-02 AUD-001 gap confirmed closed."
+        },
+        "ST-02": {
+          "title": "Fix 5 non-standard agent file headers (BLG-GOV-81)",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 650,
+          "branch": "exec/2026-06-03__release-v5.0/EPIC-01",
+          "commit_sha": "ed5956cf1ea60d1ea8e32369ba518a2f4152562d",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-03T10:20:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/agents/ai_compliance_governance_officer.md",
+            "claude/agents/cybersecurity_trust_lead.md",
+            "claude/agents/director_of_hr.md",
+            "claude/agents/financial_reporting_records_owner.md",
+            "claude/agents/finops_resource_architect.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-03T10:20:00Z"
+          },
+          "notes": "All 5 files corrected: ATX heading (# Name) replaces setext heading; trailing backslash removed from Role lines where present."
+        },
+        "ST-03": {
+          "title": "Add PO acceptance = GitHub Approve note to PR template (BLG-GOV-83)",
+          "classification": "autonomous",
+          "status": "merged",
+          "assigned_to": "engine",
+          "github_issue": 651,
+          "branch": "exec/2026-06-03__release-v5.0/EPIC-01",
+          "commit_sha": "ed5956cf1ea60d1ea8e32369ba518a2f4152562d",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-03T10:25:00Z",
+          "acceptance_verified": true,
+          "spec_references": [".github/pull_request_template.md"],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Director of Quality",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-03T10:25:00Z"
+          },
+          "notes": "Added dedicated 'Product Owner Acceptance (Hard Gate)' section with explicit GitHub Approve instruction. Updated Merge Gate line to match. Version bumped 1.2→1.3."
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "done",
+      "branch": "exec/2026-06-03__release-v5.0/EPIC-02",
+      "pr_number": 664,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-06-03__release-v5.0/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-04": {
+          "title": "Add governance file edit check to execution_prompt.md STEP 8 commit (BLG-GOV-80)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 652,
+          "branch": "exec/2026-06-03__release-v5.0/EPIC-02",
+          "commit_sha": "9e32cb9483111b0dfa0b119851dc5c577ef5130b",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-03T10:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/execution_prompt.md",
+            "docs/reference/OPERATIONAL_GUIDE.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-03T10:30:00Z"
+          },
+          "notes": "STEP 8 structural git-diff scan added; execution_prompt.md v3.35→v3.36; OPERATIONAL_GUIDE §8+§14 updated; prompt_change_log.md entry appended. Issue #652 closed by governance_sync.yml on push."
+        },
+        "ST-05": {
+          "title": "Strengthen post-ship audit advisory + add last_audit_cycle_count to state schema (BLG-GOV-82)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 653,
+          "branch": "exec/2026-06-03__release-v5.0/EPIC-02",
+          "commit_sha": "9e32cb9483111b0dfa0b119851dc5c577ef5130b",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-03T10:35:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/post_ship_closure.md",
+            "claude/system/schemas/lifecycle_schema.json"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-03T10:35:00Z"
+          },
+          "notes": "STEP 0 dual-condition audit check (% 3 == 0 OR gap >= 4, null-safe); STEP 10 last_audit_cycle_count write rule; field added to .claude_current_state.json and lifecycle_schema.json; post_ship_closure.md v2.12→v2.13; OPERATIONAL_GUIDE §10+§14 updated. Issue #653 closed by governance_sync.yml on push."
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "done",
+      "branch": "exec/2026-06-03__release-v5.0/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-06-03__release-v5.0/qa_evidence_EPIC-03.md",
+      "test_scenarios": [
+        "tests/test_pre_entry_validation.py",
+        "backend/routers/test.py"
+      ],
+      "stories": {
+        "ST-06": {
+          "title": "allocation_insufficient signal status and inline explanation (BLG-FEAT-43)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 654,
+          "branch": "exec/2026-06-03__release-v5.0/EPIC-03",
+          "commit_sha": "7317b669e74b7ae6611336aba8de49234e0252ee",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-03T10:40:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/specs/api_contracts/signal_endpoints.md"],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "allocation_insufficient status + reason field when price_gbp > allocation_gbp; DB reason column + extended status constraint; SignalCard orange badge + reason inline; openapi.yaml + test.py + SC-SS-01b updated. Issue #654 closed by governance_sync.yml on push."
+        },
+        "ST-07": {
+          "title": "Pre-entry regime gate fix: use shared market status (BLG-BE-25)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 655,
+          "branch": "exec/2026-06-03__release-v5.0/EPIC-03",
+          "commit_sha": "7317b669e74b7ae6611336aba8de49234e0252ee",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-03T10:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/specs/api_contracts/pre_entry_validation.md"],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "5-minute module-level cache in check_market_regime(); all callers share one result per window; unit tests covering cache hit/miss added. Issue #655 closed by governance_sync.yml on push."
+        },
+        "ST-08": {
+          "title": "Anthropic SDK staging verification (BLG-OPS-52)",
+          "classification": "delegated_qa",
+          "status": "done",
+          "assigned_to": "infrastructure_operations_owner",
+          "github_issue": 656,
+          "branch": "exec/2026-06-03__release-v5.0/EPIC-03",
+          "commit_sha": "5fedd4165ed485456bfebf6139ab93ea361a4720",
+          "delegation_record_id": "DEL-20260603-01",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-03T11:31:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_thesis_generation.md",
+            "docs/specs/api_contracts/ai_endpoints.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-03T11:31:00Z"
+          },
+          "notes": "Staging verification complete 2026-06-03. AC-01: HTTP 200, thesis non-null (claude-haiku-4-5). AC-02: HTTP 200, cost structure confirmed. BLG-OPS-52 closed. BLG-FE-61 filed for ST-06 frontend Playwright gap. DEL-20260603-01 Unblocked. Issue #656 closed."
+        }
+      }
+    },
+    "EPIC-04": {
+      "status": "in_progress",
+      "branch": "exec/2026-06-03__release-v5.0/EPIC-04",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-06-03__release-v5.0/qa_evidence_EPIC-04.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-09": {
+          "title": "SI-05 notification channel trade-off document (BLG-FE-60)",
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
+          "assigned_to": "product_owner",
+          "github_issue": 657,
+          "branch": "exec/2026-06-03__release-v5.0/EPIC-04",
+          "commit_sha": "d5a38bae7d9b104a4a310aff8b252d26f46a3e5b",
+          "delegation_record_id": "DEL-20260603-02",
+          "blocked_since_utc": "2026-06-03T10:00:00Z",
+          "unblock_criteria": "PO records explicit channel decision (Telegram vs in-app) in docs/product/decisions/si05-notification-channel-tradeoff.md Decision Record section; ESC-EXEC-20260603-01 resolved",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["docs/product/decisions/si05-notification-channel-tradeoff.md"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Trade-off document produced by engine (Telegram vs in-app analysis). Awaiting PO channel decision. Escalation ESC-EXEC-20260603-01 open."
+        },
+        "ST-10": {
+          "title": "SI-05 Phase 1 Telegram message format specification (BLG-GOV-86)",
+          "classification": "autonomous",
+          "status": "blocked_decision",
+          "assigned_to": "engine",
+          "github_issue": 658,
+          "branch": "exec/2026-06-03__release-v5.0/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": "2026-06-03T10:00:00Z",
+          "unblock_criteria": "ST-09 resolved: PO channel decision recorded in si05-notification-channel-tradeoff.md",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Depends on ST-09 PO channel decision. If Telegram: author Telegram message format spec. If in-app: scope changes — surface to PO for re-spec. Title says Telegram but scope adjusts per ST-09 decision."
+        },
+        "ST-11": {
+          "title": "SI-02 frontend re-entry trigger criteria definition (BLG-GOV-87)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 659,
+          "branch": "exec/2026-06-03__release-v5.0/EPIC-04",
+          "commit_sha": "d5a38bae7d9b104a4a310aff8b252d26f46a3e5b",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-03T10:50:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/product/decisions/si02-reentry-trigger-criteria.md"],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "PMO Lead",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-03T10:50:00Z"
+          },
+          "delivery_note": "docs/product/decisions/si02-reentry-trigger-criteria.md",
+          "notes": "SI-02 re-entry criteria: hard gate (>=20 closed trades), soft advisory (>=3 months data), formal trigger schedule from v5.1. Issue #659 closed by governance_sync.yml on push."
+        },
+        "ST-12": {
+          "title": "SI-04 formal binding conditions decisions document (BLG-GOV-88)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 660,
+          "branch": "exec/2026-06-03__release-v5.0/EPIC-04",
+          "commit_sha": "d5a38bae7d9b104a4a310aff8b252d26f46a3e5b",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-03T10:55:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/product/decisions/decisions--2026-06-03__release-v5.0--SI-04-binding-conditions.md",
+            "docs/product/ux/si04_section13_preassessment.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Strategy Rules & System Intent Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-03T10:55:00Z"
+          },
+          "delivery_note": "docs/product/decisions/decisions--2026-06-03__release-v5.0--SI-04-binding-conditions.md",
+          "notes": "SI-04 §13 binding conditions formalisation. All 6 binding conditions reproduced; Strategy Rules & System Intent Owner sign-off obtained; BLG-SPEC-43 cross-referenced. Issue #660 closed by governance_sync.yml on push."
+        },
+        "ST-13": {
+          "title": "SI-02 drift summary feasibility assessment (BLG-BE-26)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 661,
+          "branch": "exec/2026-06-03__release-v5.0/EPIC-04",
+          "commit_sha": "d5a38bae7d9b104a4a310aff8b252d26f46a3e5b",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-03T11:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/product/decisions/si02-drift-summary-feasibility-assessment.md"],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Product Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-03T11:00:00Z"
+          },
+          "delivery_note": "docs/product/decisions/si02-drift-summary-feasibility-assessment.md",
+          "notes": "SI-02 drift summary: feasible with conditions, 3 UX risks + mitigations, minimal display scope (Reports page, 3 metrics, advisory framing). Issue #661 closed by governance_sync.yml on push."
+        }
+      }
+    }
+  },
+
+  "blocked_items": ["ST-09", "ST-10"],
+  "delegated_items": ["ST-09"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-11", "ST-12", "ST-13"],
+  "open_escalations": ["ESC-EXEC-20260603-01"],
+
+  "merge_gate": {
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-04"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}
