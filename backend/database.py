@@ -580,9 +580,9 @@ def create_signal(portfolio_id: str, signal_data: Dict) -> Dict:
                     portfolio_id, ticker, market, signal_date, rank,
                     momentum_percent, current_price, price_gbp, atr_value,
                     volatility, initial_stop, suggested_shares, allocation_gbp,
-                    total_cost, status
+                    total_cost, status, reason
                 ) VALUES (
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                 )
                 ON CONFLICT (portfolio_id, ticker, signal_date)
                 DO UPDATE SET
@@ -596,6 +596,7 @@ def create_signal(portfolio_id: str, signal_data: Dict) -> Dict:
                     suggested_shares = EXCLUDED.suggested_shares,
                     allocation_gbp = EXCLUDED.allocation_gbp,
                     total_cost = EXCLUDED.total_cost,
+                    reason = EXCLUDED.reason,
                     updated_at = NOW()
                 RETURNING *
             """, (
@@ -613,7 +614,8 @@ def create_signal(portfolio_id: str, signal_data: Dict) -> Dict:
                 signal_data['suggested_shares'],
                 signal_data['allocation_gbp'],
                 signal_data['total_cost'],
-                signal_data.get('status', 'new')
+                signal_data.get('status', 'new'),
+                signal_data.get('reason')
             ))
             return cur.fetchone()
 
@@ -1214,6 +1216,39 @@ def ensure_signals_watchlisted_status():
             cur.execute(
                 "ALTER TABLE signals ADD CONSTRAINT signals_status_check "
                 "CHECK (status IN ('new', 'entered', 'dismissed', 'expired', 'already_held', 'watchlisted'))"
+            )
+        conn.commit()
+
+
+def ensure_signals_allocation_insufficient_status():
+    """Extend signals_status_check to include 'allocation_insufficient' (idempotent).
+
+    ST-06 (EPIC-03, v5.0) — BLG-FEAT-43. Drops the existing CHECK constraint and
+    recreates it with 'allocation_insufficient' added. Safe to run multiple times.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE signals DROP CONSTRAINT IF EXISTS signals_status_check"
+            )
+            cur.execute(
+                "ALTER TABLE signals ADD CONSTRAINT signals_status_check "
+                "CHECK (status IN ('new', 'entered', 'dismissed', 'expired', "
+                "'already_held', 'watchlisted', 'allocation_insufficient'))"
+            )
+        conn.commit()
+
+
+def ensure_signals_reason_column():
+    """Add nullable reason column to signals table (idempotent).
+
+    ST-06 (EPIC-03, v5.0) — BLG-FEAT-43. Stores human-readable explanation
+    for allocation_insufficient signals. Nullable; existing rows default NULL.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE signals ADD COLUMN IF NOT EXISTS reason TEXT"
             )
         conn.commit()
 

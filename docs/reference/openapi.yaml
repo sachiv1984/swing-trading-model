@@ -1627,7 +1627,7 @@ paths:
           name: status
           schema:
             type: string
-            enum: [new, entered, dismissed, expired, already_held]
+            enum: [new, entered, dismissed, expired, already_held, allocation_insufficient]
       responses:
         "200":
           $ref: "#/components/responses/OkSignalsList"
@@ -2972,7 +2972,7 @@ components:
         ticker: { type: string }
         market: { type: string, enum: [US, UK] }
         signal_date: { type: string, format: date }
-        status: { type: string, enum: [new, entered, dismissed, expired, already_held] }
+        status: { type: string, enum: [new, entered, dismissed, expired, already_held, allocation_insufficient] }
         momentum_score: { type: number }
         current_price: { type: number }
         reason: { type: string, nullable: true }
