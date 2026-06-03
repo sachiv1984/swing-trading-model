@@ -25,8 +25,26 @@ Last Updated: 2026-06-03
 - **Spec reference:** `docs/specs/api_contracts/ai_thesis_generation.md`, `docs/specs/api_contracts/ai_endpoints.md`
 - **Unblock criteria:** Both AC-01 and AC-02 confirmed with HTTP 200 on staging; sign-off block in `qa_evidence_EPIC-03.md` has non-blank Date field; BLG-OPS-52 closed in backlog.md.
 - **Commit format required:** `[EPIC-03][ST-08] Anthropic SDK staging verification — sign-off recorded` pushed to `exec/2026-06-03__release-v5.0/EPIC-03`
+- **Sign-off step:** status = sign_off_cleared (2026-06-03T11:31:00Z — agent-mediated sign-off cleared)
+- **Push step:** commit_sha = 5fedd4165ed485456bfebf6139ab93ea361a4720 (pushed 2026-06-03T11:31:00Z)
 - **Status:** Unblocked
-- **Sign-off cleared at:** 2026-06-03T11:30:00Z
-- **Commit SHA:** 5fedd4165ed485456bfebf6139ab93ea361a4720
-- **Unblocked at:** 2026-06-03T11:31:00Z
+
+---
+
+## DEL-20260603-02
+
+- **ST Item:** ST-09 — SI-05 notification channel trade-off document (BLG-FE-60)
+- **EPIC:** EPIC-04
+- **Classification:** delegated_decision
+- **Assigned to:** Product Owner
+- **GitHub Issue:** #657
+- **Branch:** exec/2026-06-03__release-v5.0/EPIC-04
+- **Delegated at:** 2026-06-03T10:00:00Z
+- **What is needed:** Record explicit channel decision (Telegram vs in-app notification) in the trade-off document at `docs/product/decisions/si05-notification-channel-tradeoff.md`. Document produced by engine — PO must complete the Decision Record section and sign.
+- **Spec reference:** `docs/product/decisions/si05-notification-channel-tradeoff.md`
+- **Unblock criteria:** Decision Record section has "Channel selected" and "Date of decision" fields populated; PO sign-off recorded. Escalation ESC-EXEC-20260603-01 resolved.
+- **Commit format required:** No commit from PO needed — decision recorded in-document; engine commits on resolution.
+- **Sign-off step:** status = sign_off_cleared (2026-06-03T13:00:00Z — PO channel decision recorded in trade-off doc; ESC-EXEC-20260603-01 resolved)
+- **Push step:** commit_sha = 241b6fa0e303ea8266b07a80d1788b28f7b289c2 (pushed 2026-06-03T13:00:00Z)
+- **Status:** Unblocked
 - **Resolution notes:** I&O Owner staging verification complete (AC-01: HTTP 200 + non-null thesis confirmed on staging; AC-02: HTTP 200 + cost structure confirmed). DoQ agent-mediated sign-off applied. BLG-OPS-52 closed in backlog.md. BLG-FE-61 filed for ST-06 frontend Playwright gap (LL-v3.1-EX-01).

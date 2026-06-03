@@ -816,7 +816,7 @@ Arc5ComplianceSection.js (shipped v4.0) displays 5 compliance metrics. SI-02 dri
 
 ---
 
-### BLG-FE-60 — SI-05 notification channel trade-off document
+### BLG-FE-60 — SI-05 notification channel trade-off document ✅ COMPLETE v5.0 (2026-06-03)
 **Priority:** P2 (Medium)
 **Type:** Frontend / UX / Spec Pre-work
 **Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design; Product Owner
@@ -1020,7 +1020,7 @@ The red_flag_events table has no defined data retention policy. As override even
 
 ---
 
-### BLG-BE-26 — SI-02 lightweight drift summary assessment (backend-only state mitigation)
+### BLG-BE-26 — SI-02 lightweight drift summary assessment (backend-only state mitigation) ✅ ASSESSMENT COMPLETE v5.0 (2026-06-03) — implementation ready for sprint planning with conditions
 **Priority:** P2 (Medium)
 **Type:** Backend Engineering / UX Assessment
 **Owner:** Head of Backend Engineering; Head of UX & Design; Product Owner
@@ -2876,7 +2876,7 @@ Arc 6 features (PS-01 through PS-05) are roadmapped with informal §13 complianc
 
 ---
 
-### BLG-GOV-86 — SI-05 Phase 1 Telegram message format specification
+### BLG-GOV-86 — SI-05 Phase 1 Telegram message format specification ✅ COMPLETE v5.0 (2026-06-03)
 **Priority:** P2 (Medium)
 **Type:** Governance / Spec Pre-work
 **Owner:** Head of Specs Team; Base44 Frontend; Product Owner
@@ -2906,7 +2906,7 @@ SI-05 Phase 1 will deliver the weekly strategy integrity digest via Telegram (as
 
 ---
 
-### BLG-GOV-87 — SI-02 frontend re-entry trigger criteria definition
+### BLG-GOV-87 — SI-02 frontend re-entry trigger criteria definition ✅ COMPLETE v5.0 (2026-06-03)
 **Priority:** P2 (Medium)
 **Type:** Governance / Process Definition
 **Owner:** PMO Lead; Product Owner
@@ -2933,7 +2933,7 @@ SI-02 frontend has been deferred 8 consecutive sprint planning cycles (v3.9–v4
 
 ---
 
-### BLG-GOV-88 — SI-04 formal binding conditions decisions document
+### BLG-GOV-88 — SI-04 formal binding conditions decisions document ✅ COMPLETE v5.0 (2026-06-03)
 **Priority:** P2 (Medium)
 **Type:** Governance / §13 Compliance Record
 **Owner:** Strategy Rules & System Intent Owner; Head of Specs Team
