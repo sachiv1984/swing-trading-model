@@ -1312,6 +1312,25 @@ def ensure_trade_plan_pre_entry_columns():
         conn.commit()
 
 
+def ensure_settings_concentration_columns():
+    """Add concentration threshold columns to settings (idempotent).
+
+    Allows users to configure position and sector concentration limits
+    via the Settings page rather than relying on hardcoded defaults.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE settings ADD COLUMN IF NOT EXISTS "
+                "concentration_position_threshold_pct NUMERIC(5, 2)"
+            )
+            cur.execute(
+                "ALTER TABLE settings ADD COLUMN IF NOT EXISTS "
+                "concentration_sector_threshold_pct NUMERIC(5, 2)"
+            )
+        conn.commit()
+
+
 def get_trade_by_id(trade_id: str) -> Optional[Dict]:
     """Fetch a single trade_history record by its UUID."""
     with get_db() as conn:
