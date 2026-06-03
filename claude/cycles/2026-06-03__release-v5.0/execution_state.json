@@ -6,7 +6,6 @@
   "mode": "standard",
   "status": "Running",
   "last_updated_utc": "2026-06-03T13:00:00Z",
-
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -30,11 +29,13 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-03T10:15:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/system/prompt_change_log.md"],
+          "spec_references": [
+            "claude/system/prompt_change_log.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Verification-only outcome — all 7 specified entries confirmed present (added as AUD-2026-06-02 Tier 1). All active governance prompts have current versions documented in log. No additional unlogged changes found for cycles 31–35. AUD-2026-06-02 AUD-001 gap confirmed closed."
+          "notes": "Verification-only outcome \u2014 all 7 specified entries confirmed present (added as AUD-2026-06-02 Tier 1). All active governance prompts have current versions documented in log. No additional unlogged changes found for cycles 31\u201335. AUD-2026-06-02 AUD-001 gap confirmed closed."
         },
         "ST-02": {
           "title": "Fix 5 non-standard agent file headers (BLG-GOV-81)",
@@ -80,7 +81,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-03T10:25:00Z",
           "acceptance_verified": true,
-          "spec_references": [".github/pull_request_template.md"],
+          "spec_references": [
+            ".github/pull_request_template.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
@@ -90,7 +93,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-06-03T10:25:00Z"
           },
-          "notes": "Added dedicated 'Product Owner Acceptance (Hard Gate)' section with explicit GitHub Approve instruction. Updated Merge Gate line to match. Version bumped 1.2→1.3."
+          "notes": "Added dedicated 'Product Owner Acceptance (Hard Gate)' section with explicit GitHub Approve instruction. Updated Merge Gate line to match. Version bumped 1.2\u21921.3."
         }
       }
     },
@@ -129,7 +132,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-06-03T10:30:00Z"
           },
-          "notes": "STEP 8 structural git-diff scan added; execution_prompt.md v3.35→v3.36; OPERATIONAL_GUIDE §8+§14 updated; prompt_change_log.md entry appended. Issue #652 closed by governance_sync.yml on push."
+          "notes": "STEP 8 structural git-diff scan added; execution_prompt.md v3.35\u2192v3.36; OPERATIONAL_GUIDE \u00a78+\u00a714 updated; prompt_change_log.md entry appended. Issue #652 closed by governance_sync.yml on push."
         },
         "ST-05": {
           "title": "Strengthen post-ship audit advisory + add last_audit_cycle_count to state schema (BLG-GOV-82)",
@@ -157,7 +160,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-06-03T10:35:00Z"
           },
-          "notes": "STEP 0 dual-condition audit check (% 3 == 0 OR gap >= 4, null-safe); STEP 10 last_audit_cycle_count write rule; field added to .claude_current_state.json and lifecycle_schema.json; post_ship_closure.md v2.12→v2.13; OPERATIONAL_GUIDE §10+§14 updated. Issue #653 closed by governance_sync.yml on push."
+          "notes": "STEP 0 dual-condition audit check (% 3 == 0 OR gap >= 4, null-safe); STEP 10 last_audit_cycle_count write rule; field added to .claude_current_state.json and lifecycle_schema.json; post_ship_closure.md v2.12\u2192v2.13; OPERATIONAL_GUIDE \u00a710+\u00a714 updated. Issue #653 closed by governance_sync.yml on push."
         }
       }
     },
@@ -186,7 +189,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-03T10:40:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/signal_endpoints.md"],
+          "spec_references": [
+            "docs/specs/api_contracts/signal_endpoints.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -205,7 +210,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-03T10:45:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/pre_entry_validation.md"],
+          "spec_references": [
+            "docs/specs/api_contracts/pre_entry_validation.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -244,8 +251,8 @@
     "EPIC-04": {
       "status": "done",
       "branch": "exec/2026-06-03__release-v5.0/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 666,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-03__release-v5.0/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
@@ -263,7 +270,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-03T13:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/product/decisions/si05-notification-channel-tradeoff.md"],
+          "spec_references": [
+            "docs/product/decisions/si05-notification-channel-tradeoff.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
@@ -289,7 +298,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-03T13:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/product/decisions/si05-telegram-message-format-spec.md"],
+          "spec_references": [
+            "docs/product/decisions/si05-telegram-message-format-spec.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
@@ -315,7 +326,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-03T10:50:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/product/decisions/si02-reentry-trigger-criteria.md"],
+          "spec_references": [
+            "docs/product/decisions/si02-reentry-trigger-criteria.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
@@ -355,7 +368,7 @@
             "cleared_utc": "2026-06-03T10:55:00Z"
           },
           "delivery_note": "docs/product/decisions/decisions--2026-06-03__release-v5.0--SI-04-binding-conditions.md",
-          "notes": "SI-04 §13 binding conditions formalisation. All 6 binding conditions reproduced; Strategy Rules & System Intent Owner sign-off obtained; BLG-SPEC-43 cross-referenced. Issue #660 closed by governance_sync.yml on push."
+          "notes": "SI-04 \u00a713 binding conditions formalisation. All 6 binding conditions reproduced; Strategy Rules & System Intent Owner sign-off obtained; BLG-SPEC-43 cross-referenced. Issue #660 closed by governance_sync.yml on push."
         },
         "ST-13": {
           "title": "SI-02 drift summary feasibility assessment (BLG-BE-26)",
@@ -370,7 +383,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-03T11:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/product/decisions/si02-drift-summary-feasibility-assessment.md"],
+          "spec_references": [
+            "docs/product/decisions/si02-drift-summary-feasibility-assessment.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
@@ -386,19 +401,41 @@
       }
     }
   },
-
   "blocked_items": [],
-  "delegated_items": ["ST-08", "ST-09"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13"],
+  "delegated_items": [
+    "ST-08",
+    "ST-09"
+  ],
+  "completed_items": [
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04",
+    "ST-05",
+    "ST-06",
+    "ST-07",
+    "ST-08",
+    "ST-09",
+    "ST-10",
+    "ST-11",
+    "ST-12",
+    "ST-13"
+  ],
   "open_escalations": [],
-  "resolved_escalations": ["ESC-EXEC-20260603-01"],
-
+  "resolved_escalations": [
+    "ESC-EXEC-20260603-01"
+  ],
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03"],
-    "epics_pending": ["EPIC-04"],
+    "epics_merged": [
+      "EPIC-01",
+      "EPIC-02",
+      "EPIC-03"
+    ],
+    "epics_pending": [
+      "EPIC-04"
+    ],
     "all_merged": false
   },
-
   "sealed": false,
   "sealed_utc": null
 }
