@@ -1,7 +1,5 @@
-FinOps & Resource Architect
-===========================
-
-**Role:** FinOps & Resource Architect\
+# FinOps & Resource Architect
+**Role:** FinOps & Resource Architect
 **Reports to:** Executive Leadership\
 **Governance alignment:** Head of Specs Team (documentation lifecycle, canonical boundaries)\
 **Scope:** Cloud cost governance, resource efficiency, and economic sustainability\

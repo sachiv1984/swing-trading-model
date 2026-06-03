@@ -13,6 +13,7 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
   const isAlreadyHeld = signal.status === "already_held";
   const isDismissed = signal.status === "dismissed";
   const isWatchlisted = signal.status === "watchlisted";
+  const isAllocationInsufficient = signal.status === "allocation_insufficient";
 
   const rankColors = {
     1: "from-yellow-500/20 to-amber-500/20 border-yellow-500/50 shadow-yellow-500/10",
@@ -46,6 +47,10 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
       label: "Added to Watchlist",
       color: "bg-violet-500/20 text-violet-400 border-violet-500/40",
       icon: BookmarkCheck
+    },
+    allocation_insufficient: {
+      label: "Cannot Size",
+      color: "bg-orange-500/20 text-orange-400 border-orange-500/40"
     }
   };
 
@@ -68,7 +73,8 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className={cn(
         "p-5 rounded-2xl border-2 backdrop-blur-sm transition-all",
-        !isNew && !isWatchlisted && "opacity-60",
+        !isNew && !isWatchlisted && !isAllocationInsufficient && "opacity-60",
+        isAllocationInsufficient && "opacity-80 border-orange-500/40",
         (isNew || isWatchlisted) && "hover:shadow-2xl",
         `bg-gradient-to-br ${rankColors[signal.rank] || rankColors[5]}`
       )}
@@ -203,6 +209,15 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
       {isDismissed && (
         <div className="text-center py-2 px-4 rounded-lg bg-red-500/10 border border-red-500/30">
           <p className="text-sm text-red-400">✗ Signal dismissed</p>
+        </div>
+      )}
+
+      {isAllocationInsufficient && (
+        <div className="py-2 px-4 rounded-lg bg-orange-500/10 border border-orange-500/30">
+          <p className="text-sm text-orange-400 font-medium">⚠ Allocation insufficient</p>
+          {signal.reason && (
+            <p className="text-xs text-orange-300/80 mt-1">{signal.reason}</p>
+          )}
         </div>
       )}
     </motion.div>

@@ -340,3 +340,61 @@ class TestAggregateStatus:
         assert data["advisory_status"] == "fail"
         # All 5 checks returned — no exception thrown
         assert len(data["checks"]) == 5
+
+
+# ---------------------------------------------------------------------------
+# Shared market regime cache (BLG-BE-25, v5.0 ST-07)
+# ---------------------------------------------------------------------------
+
+class TestMarketRegimeCache:
+    def test_second_call_uses_cache_not_yf_download(self):
+        """check_market_regime must not call yf.download on cache hit."""
+        import position_manager
+        import datetime as dt
+
+        # Pre-seed the cache with a fresh result
+        cached_result = {"spy_risk_on": True, "ftse_risk_on": True}
+        position_manager._market_regime_cache["result"] = cached_result
+        position_manager._market_regime_cache["cached_at"] = dt.datetime.now()
+
+        with patch("yfinance.download") as mock_yf:
+            result = position_manager.check_market_regime()
+            mock_yf.assert_not_called()
+
+        assert result["spy_risk_on"] is True
+
+    def test_cache_miss_calls_yf_download(self):
+        """check_market_regime must call yf.download when cache is stale."""
+        import position_manager
+        import datetime as dt
+
+        # Expire the cache
+        position_manager._market_regime_cache["result"] = None
+        position_manager._market_regime_cache["cached_at"] = (
+            dt.datetime.now() - dt.timedelta(seconds=400)
+        )
+
+        with patch("yfinance.download") as mock_yf:
+            try:
+                position_manager.check_market_regime()
+            except Exception:
+                pass  # mock return triggers exception; cache miss is what we test
+            mock_yf.assert_called()
+
+    def test_pre_entry_validation_uses_shared_cache(self):
+        """_check_regime in pre_entry_validation reads check_market_regime (cache path)."""
+        # Patch check_market_regime to confirm it is the single call point
+        with (
+            patch("position_manager.check_market_regime", return_value=MOCK_REGIME_ON) as mock_regime,
+            patch("database.get_portfolio", return_value=MOCK_PORTFOLIO),
+            patch("database.get_positions", return_value=MOCK_POSITIONS_EMPTY),
+            patch("utils.pricing.get_current_price", return_value=100.0),
+            patch("utils.pricing.get_live_fx_rate", return_value=1.27),
+            patch("routers.pre_entry_validation._get_ticker_sector", return_value=None),
+            patch("services.earnings_service.get_earnings", return_value={"next_earnings_date": None, "days_until_earnings": None}),
+        ):
+            resp = CLIENT.get(f"{BASE_URL}?ticker=AAPL&quantity=5&market=US")
+        assert resp.status_code == 200
+        mock_regime.assert_called_once()
+        regime_check = next(c for c in resp.json()["data"]["checks"] if c["rule"] == "regime_gate")
+        assert regime_check["status"] == "pass"

@@ -257,6 +257,18 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_signals_watchlisted_status FAILED at startup: %s", _e)
     try:
+        from database import ensure_signals_allocation_insufficient_status
+        ensure_signals_allocation_insufficient_status()
+        _log.info("ensure_signals_allocation_insufficient_status: OK")
+    except Exception as _e:
+        _log.error("ensure_signals_allocation_insufficient_status FAILED at startup: %s", _e)
+    try:
+        from database import ensure_signals_reason_column
+        ensure_signals_reason_column()
+        _log.info("ensure_signals_reason_column: OK")
+    except Exception as _e:
+        _log.error("ensure_signals_reason_column FAILED at startup: %s", _e)
+    try:
         from database import ensure_red_flag_events_table
         ensure_red_flag_events_table()
         _log.info("ensure_red_flag_events_table: OK")
