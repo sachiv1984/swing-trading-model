@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.26
+**Version:** 4.27
 **Last Updated:** 2026-06-02
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -329,7 +329,7 @@ The lifecycle is a deterministic state machine. `.claude_current_state.json` (`s
 
 ## 5. Idea Intake (Integrated — Phase 1 STEP -1.6)
 
-**Source prompt:** `claude/system/idea_intake_prompt.md` (v2.3)
+**Source prompt:** `claude/system/idea_intake_prompt.md` (v2.4)
 **Template:** `claude/system/idea_template.md`
 **Owner:** PMO Lead
 **Trigger:** Automatic — runs as STEP -1.6 of `run roadmap` when fewer than 20 open ideas (status `Submitted` or `Parked-cycle-<n>`) exist in `claude/ideas/ideas_register.md`. Also invocable standalone via `run ideas` for explicit window control.
@@ -1454,10 +1454,10 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.25 |
-| Last Updated | 2026-06-01 |
+| Version | 4.27 |
+| Last Updated | 2026-06-02 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
-| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.3 |
+| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.4 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.7 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.27 | 2026-06-02 | **Rebalance 2026-06-02__scheduled meta-review action-now — idea_intake_prompt.md v2.3→v2.4.** §5 source prompt header updated v2.3→v2.4. §14 Idea Intake Engine v2.3→v2.4. Change (idea_intake v2.4): STEP 2 §2.0 Parked Queue Pre-Check added — before generating new submissions, each agent must check the ideas_register.md for their own parked ideas on similar topics and resubmit rather than create duplicates. Resolves recurring Type D friction (idea duplication rate: 34% cycle 2026-05-27; 2% cycle 2026-06-01; both cycles had 1+ duplicate). Deferred patch from 2026-06-01__scheduled — first carry cycle; escalated to action-now at meta-review (3rd rebalance since 2026-05-25__scheduled). §14 Version 4.26→4.27/2026-06-02. Authority: Head of Specs Team (meta-review action-now, rebalance 2026-06-02__scheduled). |
 | 4.26 | 2026-06-02 | **BLG-GOV-78 resolved — roadmap_prompt.md v6.7→v6.8 STEP 8.1 Empty Now Horizon Soft Gate. AUD-2026-06-02-001: prompt_change_log.md 7 missing entries appended.** §6 source prompt header updated v6.7→v6.8. §14 Roadmap Engine Source v6.7→v6.8. Change (roadmap v6.8): STEP 8.1 strengthened from advisory-only to Soft Gate — Any Rebalance: PO must explicitly choose (a) add next-release section now or (b) defer intentionally and record rationale; "silent pass" path removed; condition broadened from Extended-tier no-change to all rebalances. Resolves BLG-GOV-78 (filed v4.8 post-ship, LL-RP-v4.8-01). Companion action (AUD-2026-06-02-001): 7 missing prompt_change_log.md entries appended covering delivery_verification_prompt.md v2.7→v2.8, post_ship_closure.md v2.11→v2.12, execution_prompt.md v3.33→v3.34, release_planning_prompt.md v2.32→v2.33, roadmap_prompt.md v6.6→v6.7, v6.7→v6.8, execution_prompt.md v3.34→v3.35. §14 Version 4.25→4.26/2026-06-02. Authority: Head of Specs Team (BLG-GOV-78, AUD-2026-06-02, 2026-06-02). |
 | 4.25 | 2026-06-01 | **v4.8 Sprint Close — execution_prompt.md v3.34→v3.35 commit SHA record substep (LL-v4.8-EX-01).** §8 source prompt header updated v3.34→v3.35. §14 Execution Engine Source v3.34→v3.35. Change: STEP 3.1.A step 4a added — immediately after push, run `git rev-parse HEAD` and write the SHA to `execution_state.json` for all covered stories; do not defer to sprint close. Resolves first recurrence of null commit_sha pattern (first occurrence v4.7 Phase 3, monitor carried to v4.8, recurred in EPIC-02 autonomous batch commit). §14 Version 4.24→4.25/2026-06-01. Authority: Head of Specs Team (LL-v4.8-EX-01, v4.8 sprint close lessons learnt). |
 | 4.24 | 2026-06-01 | **v4.8 ST-01 (BLG-GOV-69) — AUD-2026-05-30-001 gap verified closed; §14 self-metadata Version corrected; sprint_planning_prompt.md v3.6→v3.8 prompt_change_log entries appended.** Verification: §13 Artefact Register and §14 governance table confirmed to contain entries for all 7 Class 6 governance prompts (sprint_planning_prompt.md v3.8, execution_prompt.md v3.34, post_ship_closure.md v2.12, design_gate_prompt.md v1.4, roadmap_management_prompt.md v1.4, backlog_management_prompt.md v1.7, ideas_housekeeping_prompt.md v1.0); all were added to §13 by v4.20 and are tracked in the §14 metadata table. §14 self-metadata Version corrected from 4.20→4.24 (entries v4.21–v4.23 updated the document header and §14 engine rows but did not update the §14 self-metadata Version/Last Updated fields — same pattern as AUD-2026-05-27-001). sprint_planning_prompt.md v3.6→v3.7 and v3.7→v3.8 entries appended to prompt_change_log.md (sprint planning OA clearance). §14 Version 4.23→4.24/2026-06-01. Authority: Head of Specs Team (BLG-GOV-69, v4.8 ST-01, 2026-06-01). |

@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-02 (post-ship closure 2026-06-02__release-v4.9)
-**Last rebalance:** 2026-05-27 (cycle 2026-05-27__scheduled — Extended-tier, CPS=1.15; Strategy Drift Alert acknowledged; 31 new backlog items; DL-035)
+**Last Updated:** 2026-06-02 (rebalance 2026-06-02__scheduled — DL-037; v5.0 horizon established; SI-05 Phase 1 promoted to Next)
+**Last rebalance:** 2026-06-02 (cycle 2026-06-02__scheduled — Standard-tier, CPS=1.15; Δ=0.00; 8 new backlog items; DL-037; meta-review completed)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -11,7 +11,9 @@
 ## 1. Current Version
 
 **v4.9** — Security/CI Hardening & SI-05 Phase 1 — ✅ Shipped 2026-06-02
-**Next planned release:** [TBD]
+**Next planned release:** v5.0 — Governance Hardening, Product Correctness & SI-05 Phase 1 Pre-work
+
+*v5.0 planning horizon established 2026-06-02 (rebalance 2026-06-02__scheduled — DL-037; STEP 8.1 Option (a)). Release plan not yet started.*
 
 *RA:v4.9 retired — see roadmap_archive.md 2026-06-02 (post-ship closure 2026-06-02__release-v4.9).*
 
@@ -250,6 +252,31 @@ Today you find stocks through external research and add them to the watchlist ma
 
 ## 3. Delivery Plan — Horizon: Now
 
+### v5.0 — Governance Hardening, Product Correctness & SI-05 Phase 1 Pre-work (Planned)
+
+**Theme:** Close governance debt from AUD-2026-06-02, fix two product correctness issues that slipped v4.9, and complete SI-05 Phase 1 pre-work ahead of the 2026-06-21 gate clearance.
+
+**Scope candidates (at release planning, PO to confirm firm vs conditional):**
+
+| Item | Type | Priority | Effort | Notes |
+|------|------|----------|--------|-------|
+| BLG-GOV-79 | Governance | P2 | S | prompt_change_log.md — 7 missing entries (cycles 31–35) |
+| BLG-GOV-80 | Governance | P2 | M | execution_prompt.md governance file edit check (structural fix) |
+| BLG-GOV-81 | Governance | P3 | S | 5 agent file header fixes (setext → ATX; trailing backslash) |
+| BLG-GOV-82 | Governance | P2 | M | post-ship audit advisory — multi-cycle skip prevention |
+| BLG-GOV-83 | Governance | P3 | XS | PO acceptance = GitHub review approval (PR template note) |
+| BLG-FEAT-43 | Product | P2 | S | allocation_insufficient signal status (slipped v4.9) |
+| BLG-BE-25 | Product | P2 | S | pre-entry regime gate fix (slipped v4.9) |
+| BLG-GOV-86 | Spec pre-work | P2 | S | SI-05 Phase 1 Telegram message format spec |
+| BLG-FE-60 | UX pre-work | P2 | S | SI-05 notification channel trade-off document |
+| BLG-GOV-87 | Process | P2 | S | SI-02 frontend re-entry trigger criteria definition |
+| BLG-GOV-88 | Governance | P2 | S | SI-04 formal binding conditions decisions document |
+| BLG-BE-26 | Assessment | P2 | S | SI-02 drift summary feasibility assessment (conditional) |
+| BLG-GOV-67 | Feature | P2 | M | SI-05 Phase 1 implementation — **conditional: gate 2026-06-21** |
+| BLG-OPS-52 | Ops | P2 | XS | Anthropic SDK staging verification (ST-02 AC-04 deferred) |
+
+**Key gate:** BLG-GOV-67 (SI-05 Phase 1 implementation) conditional on gate clearing 2026-06-21 (SI-01 + SI-03 live ≥ 30 days).
+
 *v4.0 shipped 2026-05-25 (Verified). RA:v4.0 annotation retired (post-ship closure 2026-05-22__release-v4.0).*
 *v2.5 shipped 2026-04-10 (Verified_with_deviations). RA:v2.5 annotation retired to roadmap_archive.md 2026-04-10.*
 *v2.6 shipped 2026-04-11 (Verified). RA:v2.6 annotation retired 2026-04-16 (post-ship closure v2.7 — v2.6 closure was not run standalone).*
@@ -336,7 +363,7 @@ Items in this section are sequenced and ready for planning when the current vers
 |Behavioural Drift Detection     |SI-02|H     |Requires PO-01 + PO-03 data foundation                                              |
 |Red Flag Journal                |SI-03|M     |✅ Shipped v3.9 (2026-05-22)                                                        |
 |Strategy Version Comparison     |SI-04|H     |Requires version-tagged trade history from Arc 2 onwards                            |
-|Weekly Strategy Integrity Digest|SI-05|M     |Extends existing Telegram digest (shipped v2.4); depends on SI-02 + SI-03. **Phase 1 gate approaching 2026-06-21** (30 days post-SI-03 ship 2026-05-22). Phase 1 plannable after gate clears. |
+|Weekly Strategy Integrity Digest|SI-05|M     |Extends existing Telegram digest (shipped v2.4); depends on SI-02 + SI-03. **Phase 1 gate clears 2026-06-21** (30 days post-SI-03 ship 2026-05-22). Phase 1 promoted to Next horizon 2026-06-02 (rebalance DL-037). Phase 1 conditional scope in v5.0. |
 
 ### Arc 6 — Performance Science (v4.0+)
 

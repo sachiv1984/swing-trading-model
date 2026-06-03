@@ -1,7 +1,7 @@
 **Owner:** Facilitator
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-01 (rebalance 2026-06-01__scheduled — IDEA-api-contracts-20260527-02 → BLG-SPEC-43 scored)
+**Last Updated:** 2026-06-02 (rebalance 2026-06-02__scheduled — 5 advancing ideas scored: BLG-GOV-86/87/88, BLG-FE-60, BLG-BE-26)
 
 ---
 
@@ -137,3 +137,15 @@
 *Facilitator note: High risk-reduction score (prevents same-sprint spec debt per BLG-GOV-55), high reversibility (document can be revised), S effort. Gate: execute when SI-04 confirmed for next release planning cycle.*
 
 **Previous highest-value new items (from 2026-03-31 session):** Golden Output CI Baseline, Backtest Stop Reconciliation, Unavailability Failure Mode — unchanged assessment.
+
+## Rebalance 2026-06-02__scheduled — Advancing Ideas Scored
+
+*Scored at STEP 6. All are pre-work/spec/assessment items; effort band S (≤ 1 day each). SPS = 1 (infrastructure/process — no strategy boundary contact).*
+
+| Item (BLG ID) | Strat | Fin | Risk | WF | TTV | Rev | SPS | Effort Band |
+|--------------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|------------|
+| BLG-GOV-86 (SI-05 Telegram format spec) | 4 | 2 | 3 | 5 | 5 | 4 | 1 | S |
+| BLG-GOV-87 (SI-02 re-entry trigger criteria) | 3 | 2 | 3 | 5 | 4 | 5 | 1 | S |
+| BLG-BE-26 (SI-02 drift summary assessment) | 4 | 3 | 4 | 4 | 4 | 4 | 1 | S |
+| BLG-GOV-88 (SI-04 binding conditions doc) | 3 | 2 | 3 | 5 | 5 | 5 | 1 | S |
+| BLG-FE-60 (SI-05 notification channel trade-off) | 4 | 2 | 3 | 5 | 5 | 4 | 1 | S |

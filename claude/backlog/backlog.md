@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-02 (AUD-2026-06-02 — 5 new items added: BLG-GOV-79, BLG-GOV-80, BLG-GOV-81, BLG-GOV-82, BLG-GOV-83)
+**Last Updated:** 2026-06-02 (rebalance 2026-06-02__scheduled — DL-037; 8 new items: BLG-GOV-84/85/86/87/88, BLG-FE-59/60, BLG-BE-26; 3 provisional targets updated: BLG-FEAT-43, BLG-BE-25 → v5.0; BLG-GOV-74 → v4.10/first cycle after 2026-08-29)
 **Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
@@ -395,7 +395,7 @@ The Gemini thesis generation feature (shipped v4.0) writes to the setup_thesis f
 **Owner:** Head of Backend Engineering; Head of UX & Design
 **Source:** PO direction — 2026-06-02
 **Effort:** S (~0.5 day)
-**Provisional-Target:** v4.9
+**Provisional-Target:** v5.0
 
 **Problem**
 When a signal's per-share GBP price exceeds the per-position allocation budget, the backend returns suggested_shares=0 but leaves status as "new" — indistinguishable from an actionable buy signal. SNDK has been rank-1 for weeks at ~£1,259/share against a ~£1,147 allocation, silently returning 0 shares with no explanation. For high-priced stocks this is a structural recurring gap, not an edge case.
@@ -791,6 +791,56 @@ PreEntryValidationPanel currently displays 5 checks in a flat list. As SI-02 dri
 
 ---
 
+### BLG-FE-59 — Arc5ComplianceSection extension spec for SI-02/SI-04
+**Priority:** P3 (Low)
+**Type:** Frontend / Spec
+**Owner:** Frontend Specs & UX Documentation Owner; Base44 Frontend
+**Source:** IDEA-frontend-ux-20260527-02 — Promoted-Backlog cycle 2026-06-02__scheduled (DL-037; terminal Parked-cycle-2 disposition)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** SI-02 frontend + SI-04 sprint planning imminent (both Arc 5 features approaching their sprint entry).
+
+**Problem**
+Arc5ComplianceSection.js (shipped v4.0) displays 5 compliance metrics. SI-02 drift detection frontend and SI-04 strategy version comparison will each add new display cards to this section. Without extension point specifications defined in advance, each addition will require layout redesign rather than slotting into a prepared contract. Pre-specifying card layout contracts prevents rework.
+
+**Scope**
+- Update BLG-FE-48 spec (if exists) or author new: extension point specifications for SI-02 drift score card and SI-04 version comparison card
+- Define card layout contract: minimum data fields, display states (loading, populated, gate-not-met), responsive breakpoints
+- Ensure additions require no Arc5ComplianceSection.js layout redesign
+
+**Acceptance Criteria**
+- Extension spec document produced covering SI-02 and SI-04 card requirements
+- Card layout contract defines all required display states
+- Gate conditions (both SI-02 frontend + SI-04 sprint planning imminent) verified before commencing
+
+---
+
+### BLG-FE-60 — SI-05 notification channel trade-off document
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX / Spec Pre-work
+**Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design; Product Owner
+**Source:** IDEA-frontend-ux-20260601-02 — Promoted-Backlog cycle 2026-06-02__scheduled (DL-037; STEP 5 debate advance; Challenger Clearance)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.0
+**Sequencing constraint:** Must complete before BLG-GOV-67 (SI-05 Phase 1) sprint planning seals.
+
+**Problem**
+SI-05 Phase 1 is specified as Telegram push notification (existing infrastructure v2.4). No formal trade-off document compares Telegram push (immediate, out-of-app, format-constrained) vs in-app notification (integrated, discoverable, format-flexible). If the PO decides post-implementation that in-app was preferable, reversing a Telegram delivery mechanism requires a new sprint. A pre-implementation trade-off document locks in the channel decision with documented evidence before sprint planning seals.
+
+**Scope**
+- Trade-off document comparing: Telegram push (existing infra, character limit constraints, no in-app UX) vs in-app notification (new build, integrated, discoverable)
+- Evaluation criteria: implementation effort, user discovery, format flexibility, alignment with existing v2.4 weekly digest pattern
+- PO channel decision recorded; if Telegram confirmed: format constraints fed to BLG-GOV-86
+
+**Acceptance Criteria**
+- Trade-off document produced with evaluation across defined criteria
+- PO channel decision explicitly recorded in document
+- If Telegram confirmed: channel decision fed as input to BLG-GOV-86 (message format spec)
+- Sequencing constraint: completed before BLG-GOV-67 sprint planning seals
+
+---
+
 ## 4. Backend & Data Backlog
 
 ---
@@ -931,7 +981,7 @@ The red_flag_events table has no defined data retention policy. As override even
 **Owner:** Head of Backend Engineering
 **Source:** User-reported — pre-entry regime gate shows risk_off while dashboard shows risk_on — 2026-06-02
 **Effort:** S (~0.5d)
-**Provisional-Target:** v4.9
+**Provisional-Target:** v5.0
 
 **Problem**
 `_check_regime()` in `pre_entry_validation.py` calls `check_market_regime()` directly, which triggers a fresh `yf.download("SPY")` / `yf.download("^FTSE")` call independent of the `/market/status` endpoint. On rapid sequential requests, Yahoo Finance can return slightly different data (different row counts, trailing NaN values), causing the rolling 200MA calculation to resolve differently. This produces spurious regime_gate failures that contradict the authoritative dashboard reading, eroding user trust in the pre-entry check.
@@ -945,6 +995,31 @@ The red_flag_events table has no defined data retention policy. As override even
 - Dashboard regime and pre-entry regime gate always agree when called within the same session
 - No spurious risk_off failures when SPY is clearly above its 200MA per the dashboard
 - `/portfolio/pre-entry-validation` does not make an independent `yf.download` call
+
+---
+
+### BLG-BE-26 — SI-02 lightweight drift summary assessment (backend-only state mitigation)
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / UX Assessment
+**Owner:** Head of Backend Engineering; Head of UX & Design; Product Owner
+**Source:** IDEA-challenger-20260601-01 — Promoted-Backlog cycle 2026-06-02__scheduled (DL-037; STEP 5 debate advance; PO Rebut — assessment scope with UX risk evaluation)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v5.0 (conditional on assessment outcome)
+
+**Problem**
+Behavioural drift scores are computed by the SI-02 backend (4 metrics, 35 unit tests, shipped v4.6) but are not surfaced to the user because the SI-02 frontend has been deferred ~8 cycles (~2027-Q1). The system "knows" about drift but cannot communicate it, creating an information asymmetry that grows with each deferral cycle. A read-only drift summary (e.g., in System Status or Reports page) may mitigate without a full frontend sprint.
+
+**Scope (assessment — not committed implementation):**
+- Assess feasibility of adding a read-only drift summary to System Status or Reports page
+- Evaluate UX risk: can drift scores be displayed with sufficient context (framing, threshold calibration advisory, §13 disclosure) to prevent misinterpretation by user?
+- If feasible and UX risk manageable: define minimal scope (which metrics, where displayed, what framing text)
+- If UX risk is too high: document assessment outcome as "assess only — not implemented" and close item
+
+**Acceptance Criteria**
+- Assessment document produced: feasibility determination + UX risk evaluation
+- If UX risk manageable: minimal display scope defined (ready for sprint planning)
+- If UX risk too high: outcome documented and item closed with rationale
+- Product Owner reviews and signs off on assessment outcome
 
 ---
 
@@ -2513,7 +2588,7 @@ AUD-2026-05-30-006 identified 3 deferred patches in v4.4 lessons_learnt_closure.
 **Owner:** AI Compliance & Governance Officer; PMO Lead
 **Source:** IDEA-ai-compliance-20260601-02 — Promoted-Backlog cycle 2026-06-01__scheduled (DL-036; fulfills BLG-GOV-63 mandate)
 **Effort:** S (~0.5 day)
-**Provisional-Target:** v4.9
+**Provisional-Target:** v4.10 or first cycle after 2026-08-29
 **Gate date:** First review due 2026-08-29 (3 months after v4.0 AI feature ship 2026-05-29)
 
 **Problem**
@@ -2721,6 +2796,142 @@ In v4.9, the Product Owner accepted PR #645 via a PR comment but the branch rema
 - `.github/pull_request_template.md` contains explicit note that PO acceptance = GitHub "Approve review" action
 - Note is visible in the PR template before any reviewer opens the PR
 - Director of Quality sign-off (PR process governance)
+
+---
+
+### BLG-GOV-84 — Arc 6 gate revision and threshold assessment
+**Priority:** P3 (Low)
+**Type:** Governance / Product Planning
+**Owner:** Product Owner; Challenger; Strategy Rules & System Intent Owner
+**Source:** IDEA-product-owner-20260527-02 + IDEA-challenger-20260527-01 — Promoted-Backlog cycle 2026-06-02__scheduled (DL-037; terminal Parked-cycle-2 combined disposition)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** ≥ 50 closed trades (trajectory approaching) — at current ~1–2 trades/month, this is approximately 2026-Q4/2027.
+
+**Problem**
+PS-01 (Edge Analysis Dashboard) gate requires 100+ trades with plans and lifecycle data. At current trade frequency (1–2 trades/month), this gate takes 5–8 years to clear. The Challenger has raised (twice) that a meaningful edge analysis may be achievable with 20–30 closed trades with explicit statistical caveats. The Product Owner's Arc 6 minimum viable entry assessment (also raised twice) asks whether the gate calibration is appropriate. Both ideas address the same question: is the 100-trade threshold right? A formal assessment when trade count approaches 50 is the appropriate trigger.
+
+**Scope**
+- Formal assessment: at ≥50 closed trades, evaluate whether PS-01 can yield meaningful signal with available history (20–30 qualifying trades as a subset)
+- Assess: what statistical confidence is achievable at 30 vs 50 vs 100 trades? Are explicit caveats sufficient to communicate limited confidence?
+- Challenge the threshold: if PO decides 30–50 trades is sufficient with caveats, recommend gate revision; document decision in decision_log.md
+- §13 check: any gate revision must remain within the "deterministic historical analysis" framework; no predictive claims
+
+**Acceptance Criteria**
+- Assessment document produced when ≥50 closed trades confirmed
+- Threshold recommendation made (maintain 100-trade gate OR revise with documented caveats)
+- PO + Challenger + Strategy Rules Owner sign-off on recommendation
+- If gate revised: decision_log.md updated; PS-01 roadmap section updated
+- Gate condition (≥50 closed trades approaching) verified before commencing
+
+---
+
+### BLG-GOV-85 — Arc 6 §13 pre-assessment boundary document
+**Priority:** P3 (Low)
+**Type:** Governance / §13 Compliance Pre-work
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260527-02 — Promoted-Backlog cycle 2026-06-02__scheduled (DL-037; terminal Parked-cycle-2 disposition)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Arc 6 release planning trigger (first sprint planning cycle that includes a PS-01 through PS-05 story).
+
+**Problem**
+Arc 6 features (PS-01 through PS-05) are roadmapped with informal §13 compliance notes ("deterministic simulation, §13 COMPLIANT"; "statistical observation, not prediction"). Before Arc 6 sprint planning seals, a formal §13 pre-assessment must consolidate binding conditions for each feature — as was done for SI-01 (8 conditions), IT-06 (4 conditions), SI-04 (6 conditions). PS-03 already has a formal §13 PASS assessment (10 conditions, v4.6). PS-01, PS-02, PS-04, PS-05 need similar pre-assessment documents.
+
+**Scope**
+- Formal §13 pre-assessment for PS-01, PS-02, PS-04, PS-05 (PS-03 already complete)
+- Each assessment confirms: deterministic calculation only, display-only output, no automated recommendations, no ML/prediction components
+- Binding conditions documented per the SI-01/IT-06 pattern
+- Strategy Rules & System Intent Owner sign-off required on each assessment
+
+**Acceptance Criteria**
+- §13 assessment documents produced for PS-01, PS-02, PS-04, PS-05
+- Binding conditions documented for each PASS determination
+- Gate condition (Arc 6 release planning trigger) verified before commencing
+
+---
+
+### BLG-GOV-86 — SI-05 Phase 1 Telegram message format specification
+**Priority:** P2 (Medium)
+**Type:** Governance / Spec Pre-work
+**Owner:** Head of Specs Team; Base44 Frontend; Product Owner
+**Source:** IDEA-base44-frontend-20260601-01 — Promoted-Backlog cycle 2026-06-02__scheduled (DL-037; STEP 5 advance; Challenger Clearance)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.0
+**Depends on:** BLG-FE-60 (notification channel decision — must confirm Telegram before specifying format)
+
+**Problem**
+SI-05 Phase 1 will deliver the weekly strategy integrity digest via Telegram (assuming BLG-FE-60 channel assessment confirms Telegram). Telegram imposes character limits, formatting constraints (Markdown subset), and no interactive elements. Without a pre-specified message format, implementation must decide format details concurrently with coding — increasing rework risk on an immutable notification channel.
+
+**Scope**
+- Message format specification document covering:
+  - Character limit compliance strategy
+  - Section structure: opening summary, Red Flag count (SI-03 data), compliance score trend (SI-01 data), key rule breach (if any), weekly recommendation to review
+  - Data field definitions: which fields from SI-01 and SI-03 endpoints populate each section
+  - Frequency: weekly (consistent with v2.4 weekly digest cadence)
+  - Failure modes: what the message says when data is unavailable
+- Review by Product Owner and Base44 Frontend before sprint planning seals
+
+**Acceptance Criteria**
+- Message format specification document produced and filed
+- All data fields mapped to SI-01/SI-03 endpoint responses
+- Telegram character limits verified not exceeded
+- Product Owner and Head of Specs Team sign-off
+- Gate condition (BLG-FE-60 channel confirmed as Telegram) verified before authoring
+
+---
+
+### BLG-GOV-87 — SI-02 frontend re-entry trigger criteria definition
+**Priority:** P2 (Medium)
+**Type:** Governance / Process Definition
+**Owner:** PMO Lead; Product Owner
+**Source:** IDEA-product-owner-20260601-02 — Promoted-Backlog cycle 2026-06-02__scheduled (DL-037; STEP 5 advance; Challenger Clearance)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.0
+
+**Problem**
+SI-02 frontend has been deferred 8 consecutive sprint planning cycles (v3.9–v4.9). The stated gate is "≥20 closed trades with linked trade_plans" but this is not formally documented anywhere as a hard gate with an explicit PMO Lead verification step. Without a formal, written, PMO-Lead-checked trigger, SI-02 frontend risks being informally deferred again when the trade count approaches 20. A documented re-entry trigger prevents this.
+
+**Scope**
+- Formal re-entry criteria document: defines the exact conditions for re-entering SI-02 frontend into sprint planning:
+  - Hard gate: ≥20 closed trades with linked trade_plans confirmed by PMO Lead via production database query
+  - Soft advisory: drift score data accumulation period ≥ 3 months (qualitative signal assessment)
+  - Formal trigger: PMO Lead runs re-entry check at each release planning kickoff starting 2026-09-01
+- Document filed in `claude/roadmap/` or `docs/product/decisions/`
+- Re-entry check step added to release planning checklist (as advisory item for PMO Lead)
+
+**Acceptance Criteria**
+- Re-entry criteria document produced with hard gate and soft advisory defined
+- PMO Lead acknowledges ownership of the periodic check
+- Product Owner confirms criteria are the intended re-entry conditions
+- Check cadence starts at v5.1 release planning (2026-09 earliest)
+
+---
+
+### BLG-GOV-88 — SI-04 formal binding conditions decisions document
+**Priority:** P2 (Medium)
+**Type:** Governance / §13 Compliance Record
+**Owner:** Strategy Rules & System Intent Owner; Head of Specs Team
+**Source:** IDEA-strategy-owner-20260601-01 — Promoted-Backlog cycle 2026-06-02__scheduled (DL-037; STEP 5 advance; Challenger Clearance)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.0
+
+**Problem**
+SI-04 §13 pre-assessment was completed in v4.7 ST-01 (si04_section13_preassessment.md — PASS; 6 binding conditions). The API contract was pre-authored in v4.8 (BLG-SPEC-43). However, a formal decisions document equivalent to the SI-01 record (decisions--2026-05-19__release-v3.8--SI-01-section13-review.md) does not yet exist for SI-04. This leaves the 6 binding conditions in an ad-hoc pre-assessment file rather than a proper Class 5 decisions record that sprint planning can reference.
+
+**Scope**
+- Author a formal SI-04 §13 compliance decisions document in `docs/product/decisions/`
+- Content: reproduce the 6 binding conditions from si04_section13_preassessment.md; add formal sign-off block; reference BLG-SPEC-43 contract
+- Document class: Planning Document or Decisions Record per document_lifecycle_guide.md
+- Reviewed and signed off by Strategy Rules & System Intent Owner
+
+**Acceptance Criteria**
+- SI-04 §13 decisions document created in `docs/product/decisions/`
+- All 6 binding conditions from si04_section13_preassessment.md reproduced
+- Strategy Rules & System Intent Owner formal sign-off recorded
+- BLG-SPEC-43 (API contract) cross-referenced
 
 ---
 

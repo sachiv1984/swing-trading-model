@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036 appended)
+**Last Updated:** 2026-06-02 (cycle 2026-06-02__scheduled — DL-037 appended)
 
 ---
 
@@ -876,5 +876,28 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Meta-review:** NOT due — 2 cycles since last meta-review (2026-05-25__scheduled). Next due at cycle 3.
 
 **STEP 8.6 guardrail:** PASS — Condition 1 (Parked/Rejected candidates: IDEA-head-of-specs-20260601-02 rejected as duplicate + many ideas parked) and Condition 3 (single debate-pool candidate) both met.
+
+**Decision owner:** Product Owner
+
+### DL-037 — 2026-06-02
+
+**Decision type:** No-change (roadmap-level) + Add (to backlog × 8) + Horizon movement (SI-05 Phase 1 → Next)
+**Cycle:** 2026-06-02__scheduled
+**Displacement:** None at roadmap level. New backlog items are all S–M effort pre-work and correctness items. Low-priority BLG-OPS-13 endpoint baseline entries (24 endpoints, P3) deferred to create capacity for advancing items — not a formal kill.
+**Workforce impact:** 8 new backlog items (BLG-GOV-84/85/86/87/88 governance/spec; BLG-FE-59/60 frontend spec; BLG-BE-26 assessment). All S–M effort. 3 target updates (BLG-FEAT-43, BLG-BE-25 → v5.0; BLG-GOV-74 target corrected to v4.10/2026-08-29). No immediate FTE commitment beyond v5.0 sprint planning capacity.
+
+**Rationale:** Scheduled Standard-tier rebalance. Now horizon empty (v4.9 shipped 2026-06-02). All 13 active roadmap initiatives (PT-04, SI-02, SI-04, SI-05, PO-02–05, PS-01–05) reaffirmed 🔥 Must continue. CPS = 1.15 (prior 1.15; Δ = 0.00 — no Strategy Drift Alert). Idea queue: 41 open ideas (≥ 20 → intake skipped). 4 terminal Parked-cycle-2 ideas processed: 3 → Promoted-Backlog (BLG-GOV-84/85, BLG-FE-59); 1 → Rejected (merged into BLG-GOV-84). 5 Parked-cycle-1 ideas advanced to STEP 5 debate: all 5 cleared → Promoted-Backlog (BLG-GOV-86/87/88, BLG-FE-60, BLG-BE-26). 1 idea rejected as stale (IDEA-product-owner-20260601-01 — v4.8 framing, intent fulfilled in STEP 8.1). 30 ideas re-parked at Parked-cycle-2. STEP 8.1 soft gate fired (empty Now horizon + no next-release section): PO chose Option (a) → v5.0 section added to current_roadmap.md. STEP 8.6 guardrail PASS: Challenger issued 1 type-A counter-argument (Debate 3 — SI-02 information asymmetry, PO Rebut). Meta-review triggered (3rd rebalance since last review 2026-05-25__scheduled): idea_intake_prompt.md §2.0 parked queue pre-check patch applied action-now (v2.3 → v2.4); backlog_management_prompt.md archive verification deferred (target: next groom backlog). STEP 9.0 net-zero: 0 roadmap initiative additions, 0 roadmap initiative kills.
+
+**v5.0 scope established:** Governance hardening (BLG-GOV-79/80/81/82/83/86/87/88), product correctness (BLG-FEAT-43, BLG-BE-25), SI-05 Phase 1 (BLG-GOV-67 conditional — gate 2026-06-21), assessment (BLG-BE-26), UX pre-work (BLG-FE-60). SI-05 Phase 1 promoted to Next horizon. SI-04 noted as Next candidate.
+
+**Run tier:** Standard (CPS 1.15; delta 0.00; scheduled run 1 day since last)
+
+**Key backlog items added:** BLG-GOV-84 (Arc 6 gate revision assessment, gate: ≥50 trades), BLG-GOV-85 (Arc 6 §13 boundary document, gate: Arc 6 release planning trigger), BLG-FE-59 (Arc5ComplianceSection extension spec, gate: SI-02+SI-04 imminent), BLG-GOV-86 (SI-05 Telegram format spec, v5.0), BLG-GOV-87 (SI-02 re-entry trigger definition, v5.0), BLG-BE-26 (SI-02 drift summary assessment, v5.0 conditional), BLG-GOV-88 (SI-04 binding conditions decisions doc, v5.0), BLG-FE-60 (SI-05 notification channel trade-off, v5.0).
+
+**Skill-Silo check:** 8/13 new scope items are GOV/SPEC (62%) — marginally above 60% ceiling. BLG-FEAT-43, BLG-BE-25, BLG-BE-26 (execution-heavy) provide balance. Amber status — acceptable.
+
+**Meta-review:** DUE — 3 cycles since last meta-review (2026-05-25__scheduled). Completed this cycle. Action-now patch applied: idea_intake_prompt.md v2.3 → v2.4 (§2.0 parked queue pre-check). See meta_review.md.
+
+**STEP 8.6 guardrail:** PASS — Condition 2 met (Challenger issued type-A counter-argument for Debate 3).
 
 **Decision owner:** Product Owner
