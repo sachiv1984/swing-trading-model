@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-03 (rebalance 2026-06-03__scheduled — 18 new gate-conditional items added: BLG-FEAT-44, BLG-FE-62/63, BLG-BE-27–31, BLG-QA-42–44, BLG-OPS-53, BLG-SPEC-44–46, BLG-GOV-89–91)
+**Last Updated:** 2026-06-21 (release planning 2026-06-21__release-v5.1 — Release Slice v5.1 added: ST-01–ST-06)
 **Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
@@ -3428,5 +3428,22 @@ SI-04 (strategy version comparison) will access historical strategy_rules.md con
 ---
 
 *Release Slice v5.0 removed — cycle 2026-06-03__release-v5.0 closed 2026-06-03. Archived canonical home: claude/cycles/2026-06-03__release-v5.0/stage4_backlog_slice.md*
+
+---
+
+## Release Slice v5.1 — 2026-06-21__release-v5.1
+
+<!-- release-plan-marker: RP:v5.1:2026-06-21__release-v5.1 -->
+
+**Canonical artefact:** `claude/cycles/2026-06-21__release-v5.1/stage4_backlog_slice.md`
+
+| ST-ID | Title | EPIC | Source | Effort |
+|-------|-------|------|--------|--------|
+| ST-01 | SI-05 Phase 1: Backend service + Telegram weekly digest | EPIC-01 | BLG-GOV-67 | M |
+| ST-02 | BLG-SPEC-45 SI-05 financial reporting scope verification | EPIC-01 | BLG-SPEC-45 | XS |
+| ST-03 | delivery_verification_prompt.md §-1.3 Tier 2 fix | EPIC-02 | LL-RP-v5.0-D-2 | S |
+| ST-04 | BLG-FE-61 SignalCard Playwright E2E | EPIC-03 | BLG-FE-61 | XS |
+| ST-05 | BLG-QA-43 compliance_summary validation | EPIC-03 | BLG-QA-43 | XS |
+| ST-06 | BLG-GOV-89 Staged verification sprint protocol | EPIC-03 | BLG-GOV-89 | S |
 
 
