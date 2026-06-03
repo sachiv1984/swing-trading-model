@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.30
-**Last Updated:** 2026-06-03
+**Version:** 4.31
+**Last Updated:** 2026-06-21
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -973,7 +973,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v2.9)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.0)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.29 |
-| Last Updated | 2026-06-03 |
+| Version | 4.31 |
+| Last Updated | 2026-06-21 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.4 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1469,7 +1469,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.36 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.4 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v2.9 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.0 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.13 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.31 | 2026-06-21 | **v5.1 ST-03 (EPIC-02) — delivery_verification_prompt.md v2.9→v3.0: agent-mediated signer format accepted in §-1.3 Tier 2.** §9 source prompt header updated v2.9→v3.0. §14 Verification Engine Source v2.9→v3.0. §14 Version 4.29→4.31/2026-06-21 (also corrects v4.30 header/§14 desync). Change (delivery_verification v3.0): §-1.3 Tier 2 — new agent-mediated class exception: `"Sprint Execution Engine (agent-mediated, <Role Name> role — §X.Y)"` accepted for mixed-class EPICs as equivalent to agent-mediated sign-off with named role. Prevents recurring Tier 2 advisory for EPICs that used agent-mediated DoQ sign-off (LL-RP-v5.0-D-2, EPIC-03 v5.0). Authority: Head of Specs Team (v5.1 ST-03, 2026-06-21). |
 | 4.30 | 2026-06-03 | **Roadmap rebalance 2026-06-03__scheduled STEP -1.5 overdue patch — backlog_management_prompt.md v1.7→v1.8 post-write archive verification.** §6M source prompt header updated v1.7→v1.8. §14 Backlog Management Engine v1.7→v1.8. Change (backlog_management v1.8): STEP 6.2 post-write verification added — after completing STEP 6.2 writes, grep active §1–§8 sections of backlog.md for heading lines retaining `✅ COMPLETE` or `❌ Killed` status markers; if any found, archive move is incomplete — must be resolved before proceeding to STEP 6.3. Patch originally filed 2026-06-01__scheduled, carried 2026-06-02__scheduled, classified OVERDUE at 2026-06-03__scheduled STEP -1.5 (second consecutive cycle without application). §14 Version 4.29→4.30/2026-06-03. Authority: Head of Specs Team (deferred patch overdue resolution, 2026-06-03). |
 | 4.29 | 2026-06-03 | **v5.0 ST-05 (BLG-GOV-82) — post_ship_closure.md v2.12→v2.13 AUDIT DUE dual-condition + last_audit_cycle_count state field.** §10 source prompt header updated v2.12→v2.13. §14 Post-Ship Closure Engine v2.12→v2.13. Changes (post_ship v2.13): STEP 0 Audit Cadence Check expanded to dual condition — fires if `completed_cycle_count % 3 == 0` OR `(completed_cycle_count - last_audit_cycle_count) >= 4` (null-safe: gap check skipped if last_audit_cycle_count is null); STEP 10 global state update — `last_audit_cycle_count` write rule added (set to new_completed_cycle_count when audit ran this cycle, else unchanged). `last_audit_cycle_count` field added to `.claude_current_state.json` (init value: 35, matching AUD-2026-06-02) and `lifecycle_schema.json` state_field_extensions. §14 Version 4.28→4.29/2026-06-03. Authority: Head of Specs Team + PMO Lead (BLG-GOV-82, v5.0 ST-05, 2026-06-03). |
 | 4.28 | 2026-06-03 | **v5.0 ST-04 (BLG-GOV-80) — execution_prompt.md v3.35→v3.36 STEP 8 governance file edit check made STRUCTURAL.** §8 source prompt header updated v3.35→v3.36. §14 Execution Engine Source v3.35→v3.36. Change (execution_prompt v3.36): STEP 8 governance file edit check replaced with structural scan: runs `git diff --name-only HEAD` and `--cached` filtered by `claude/system/`, `claude/charter/`, `claude/agents/` paths; for each returned file, verifies prompt_change_log.md entry exists at the correct version; appends if missing; check runs against actual git diff rather than relying on operator memory. Root cause of BLG-GOV-79 (7 missing change log entries found at AUD-2026-06-02). §14 Version 4.27→4.28/2026-06-03. Authority: Head of Specs Team (BLG-GOV-80, v5.0 ST-04, 2026-06-03). |
