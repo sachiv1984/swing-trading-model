@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-02 (rebalance 2026-06-02__scheduled — DL-037; 8 new items: BLG-GOV-84/85/86/87/88, BLG-FE-59/60, BLG-BE-26; 3 provisional targets updated: BLG-FEAT-43, BLG-BE-25 → v5.0; BLG-GOV-74 → v4.10/first cycle after 2026-08-29)
+**Last Updated:** 2026-06-03 (release planning 2026-06-03__release-v5.0 — Release Slice v5.0 added)
 **Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
@@ -2944,5 +2944,32 @@ SI-04 §13 pre-assessment was completed in v4.7 ST-01 (si04_section13_preassessm
 ---
 
 *Release Slice v4.9 removed — cycle 2026-06-02__release-v4.9 closed 2026-06-02. Archived canonical home: claude/cycles/2026-06-02__release-v4.9/stage4_backlog_slice.md*
+
+---
+
+## Release Slice v5.0
+
+<!-- release-plan-marker: RP:v5.0:2026-06-03__release-v5.0 -->
+
+**Cycle:** 2026-06-03__release-v5.0 | **Published:** 2026-06-03 | **Canonical:** claude/cycles/2026-06-03__release-v5.0/stage4_backlog_slice.md
+
+| ST-ID | BLG Item | EPIC | Effort | Theme |
+|-------|----------|------|--------|-------|
+| ST-01 | BLG-GOV-79 | EPIC-01 | S | Verify/append 7 missing prompt_change_log.md entries |
+| ST-02 | BLG-GOV-81 | EPIC-01 | S | Fix 5 non-standard agent file headers |
+| ST-03 | BLG-GOV-83 | EPIC-01 | XS | Add PO acceptance = GitHub Approve note to PR template |
+| ST-04 | BLG-GOV-80 | EPIC-02 | M | Add governance file edit check to execution_prompt.md STEP 8 |
+| ST-05 | BLG-GOV-82 | EPIC-02 | M | Strengthen post-ship audit advisory + last_audit_cycle_count schema |
+| ST-06 | BLG-FEAT-43 | EPIC-03 | S | allocation_insufficient signal status + frontend display |
+| ST-07 | BLG-BE-25 | EPIC-03 | S | Pre-entry regime gate fix: shared market status cache |
+| ST-08 | BLG-OPS-52 | EPIC-03 | XS | Anthropic SDK staging verification [staging-only] |
+| ST-09 | BLG-FE-60 | EPIC-04 | S | SI-05 notification channel trade-off document |
+| ST-10 | BLG-GOV-86 | EPIC-04 | S | SI-05 Telegram message format specification |
+| ST-11 | BLG-GOV-87 | EPIC-04 | S | SI-02 frontend re-entry trigger criteria definition |
+| ST-12 | BLG-GOV-88 | EPIC-04 | S | SI-04 formal binding conditions decisions document |
+| ST-13 | BLG-BE-26 | EPIC-04 | S | SI-02 drift summary feasibility assessment |
+| ST-14 | BLG-GOV-67 | EPIC-04 | M | SI-05 Phase 1 implementation [CONDITIONAL: gate 2026-06-21] |
+
+*Remove this section during `groom backlog` after 2026-06-03__release-v5.0 closes.*
 
 
