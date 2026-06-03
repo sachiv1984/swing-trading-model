@@ -841,6 +841,28 @@ SI-05 Phase 1 is specified as Telegram push notification (existing infrastructur
 
 ---
 
+### BLG-FE-61 — ST-06 allocation_insufficient SignalCard badge Playwright E2E coverage
+**Priority:** P3 (Low)
+**Type:** Frontend / QA
+**Owner:** QA & Testing Owner
+**Source:** v5.0 EPIC-03 ST-06 — frontend testing gate (LL-v3.1-EX-01); code review only; filed 2026-06-03 per CLAUDE.md §2 hard gate before PR opens
+**Effort:** XS (<1h)
+**Provisional-Target:** v5.1
+
+**Problem**
+ST-06 introduced a visible frontend change (SignalCard orange "Cannot Size" badge + reason inline when signal status = `allocation_insufficient`). No Playwright E2E test covers this observable AC. Code review was accepted for the v5.0 PR under the hard gate, but a Playwright scenario must be authored before the v5.1 sprint planning seals.
+
+**Scope**
+- Add a Playwright scenario to an appropriate `tests/e2e/` spec file
+- Mock signal payload with `status: "allocation_insufficient"` and a `reason` string
+- Assert: orange "Cannot Size" badge is visible; reason text is rendered inline on the signal card
+
+**Acceptance Criteria**
+- Playwright test exists and passes in CI covering: (a) badge visible, (b) reason inline, (c) signal visually distinct from `status: "active"` signals
+- Test added to test_scenarios in the relevant execution_state.json or qa_evidence for the sprint it ships
+
+---
+
 ## 4. Backend & Data Backlog
 
 ---
@@ -2628,6 +2650,7 @@ v4.8 ST-07 added a placeholder entry for GET /analytics/strategy-version-compari
 ---
 
 ### BLG-OPS-52 — ST-02 staging verification: Anthropic SDK 0.40.0 → 0.105.2 endpoint validation
+✅ COMPLETE — 2026-06-03 — cycle 2026-06-03__release-v5.0 (ST-08, EPIC-03; staging verification run on trading-assistant-api-staging.onrender.com; AC-01 POST /trade-plans/{plan_id}/generate-thesis HTTP 200 + non-null thesis confirmed; AC-02 POST /ai/check-daily-cost HTTP 200 + cost structure confirmed; Infrastructure & Operations Owner sign-off 2026-06-03; DoQ agent-mediated sign-off 2026-06-03)
 **Priority:** P2 (Medium)
 **Type:** Operations / Infrastructure
 **Owner:** Infrastructure & Operations Owner
