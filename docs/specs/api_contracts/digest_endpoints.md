@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.1
-**Last Updated:** 2026-04-01
+**Version:** 0.2
+**Last Updated:** 2026-06-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint:** 2026-03-31__release-v2.4 — ST-08 (BLG-FEAT-14 BE component)
 **Signed off by:** Head of Specs Team
@@ -100,8 +100,79 @@ Errors use the standard error envelope from **conventions.md §13**.
 
 ---
 
+---
+
+## POST /digest/si05/send
+
+**Purpose**
+
+Trigger the SI-05 Phase 1 weekly strategy integrity digest via Telegram. Fetches arc5-compliance metrics from SI-01 (pre-entry validation) and SI-03 (red flag journal) and sends a formatted MarkdownV2 message per the SI-05 Telegram message format specification (BLG-GOV-86).
+
+Intended for weekly cron/scheduled invocation. Safe to retry — message content reflects current DB state at call time.
+
+**Method & Path**
+
+- `POST /digest/si05/send`
+
+**Request**
+
+No body required. No query parameters.
+
+**Response (200 — sent)**
+
+```json
+{
+  "status": "ok",
+  "sent": true,
+  "message_length": 265,
+  "error": null
+}
+```
+
+**Response (200 — not sent)**
+
+```json
+{
+  "status": "error",
+  "sent": false,
+  "message_length": 0,
+  "error": "arc5-compliance data unavailable"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | string | `"ok"` if sent successfully; `"error"` if not sent |
+| `sent` | boolean | Whether the Telegram message was delivered |
+| `message_length` | integer | Length of the formatted message in characters |
+| `error` | string \| null | Error description if not sent; `null` on success |
+
+**Failure modes** (per BLG-GOV-86 §7)
+
+| Condition | Behaviour |
+|-----------|-----------|
+| `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` not set | Returns `sent: false`, `error: "Telegram credentials not configured"` |
+| arc5-compliance DB query fails | Returns `sent: false`, `error: "arc5-compliance data unavailable"` |
+| Message > 4,096 chars | Truncated to summary line only before send |
+| Telegram API error | Returns `sent: false`, error logged |
+
+**Data sources**
+
+| SI-05 field | Source table | Logic |
+|-------------|-------------|-------|
+| `pass_rate` | `pre_entry_validation_log` | Overall pass/total ratio (7d) |
+| `red_flag_count` | `red_flag_events` | COUNT(*) last 7 days |
+| `override_rate` | `pre_entry_validation_log` + `red_flag_events` | Override events / total validations (7d) |
+| `top_rule_breach` | `pre_entry_validation_log` | Most frequent failing rule_type (7d) |
+
+**Format spec:** `docs/product/decisions/si05-telegram-message-format-spec.md` (BLG-GOV-86)
+**Backend:** `backend/services/si05_digest_service.py`
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.2 | 2026-06-21 | Add POST /digest/si05/send endpoint: SI-05 Phase 1 weekly strategy integrity Telegram digest. Data from SI-01 (pre_entry_validation_log) + SI-03 (red_flag_events). Format per BLG-GOV-86. ST-01 (EPIC-01, v5.1). |
 | 0.1 | 2026-04-01 | Initial version. ST-08 (BLG-FEAT-14 BE component, v2.4). GET /digest/weekly endpoint. Scope constraint: raw numeric/boolean fields only. |

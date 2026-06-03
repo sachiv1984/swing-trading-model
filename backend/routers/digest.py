@@ -4,11 +4,11 @@ Weekly Trading Digest Router
 GET /digest/weekly — 7-day summary of realised P&L, unrealised P&L delta,
 alert activity, compliance score, and staleness.
 
-Scope constraint: raw numeric/boolean fields only. No generated text,
-narrative, or interpretation in any response field.
+POST /digest/si05/send — Trigger the SI-05 Phase 1 strategy integrity digest
+via Telegram. Intended for weekly cron/scheduled invocation.
 
-Contract: docs/specs/api_contracts/digest_endpoints.md v0.1
-ST-08 (BLG-FEAT-14 BE component, v2.4)
+Contracts: docs/specs/api_contracts/digest_endpoints.md v0.2
+ST-08 (BLG-FEAT-14 BE component, v2.4) / ST-01 (SI-05 Phase 1, v5.1)
 """
 
 import os
@@ -30,6 +30,8 @@ def _clean_db_url(url: str) -> str:
     return urlunparse(parsed._replace(query=new_query))
 
 logger = logging.getLogger(__name__)
+
+from services.si05_digest_service import send_si05_digest
 
 router = APIRouter(prefix="/digest", tags=["Digest"])
 
@@ -220,3 +222,24 @@ def get_weekly_digest():
     except Exception as e:
         logger.error("Weekly digest endpoint error: %s", e)
         return {"status": "error", "message": "Failed to compute weekly digest"}
+
+
+@router.post("/si05/send")
+def send_si05_digest_endpoint():
+    """
+    POST /digest/si05/send
+
+    Trigger the SI-05 Phase 1 weekly strategy integrity digest via Telegram.
+    Fetches arc5-compliance data (SI-01 + SI-03) and sends a formatted MarkdownV2
+    message per docs/product/decisions/si05-telegram-message-format-spec.md (BLG-GOV-86).
+
+    Intended to be called by a weekly scheduler (Render cron or external scheduler).
+    Safe to retry — idempotent per call (message reflects current DB state).
+
+    Spec: docs/specs/api_contracts/digest_endpoints.md v0.2
+    ST-01 (SI-05 Phase 1, EPIC-01, v5.1)
+    """
+    result = send_si05_digest()
+    if result["sent"]:
+        return {"status": "ok", **result}
+    return {"status": "error", **result}

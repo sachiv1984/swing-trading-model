@@ -172,6 +172,9 @@ async def test_all_endpoints(request: Request):
 
         # Signal allocation_insufficient status (v5.0 / ST-06)
         {"name": "GET /signals?status=allocation_insufficient", "method": "GET", "url": f"{base_url}/signals?status=allocation_insufficient", "critical": False},
+
+        # SI-05 Phase 1 strategy integrity digest (v5.1 / ST-01)
+        {"name": "POST /digest/si05/send", "method": "POST", "url": f"{base_url}/digest/si05/send", "body": {}, "critical": False},
     ]
     
     results = []

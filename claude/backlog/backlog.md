@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-21 (release planning 2026-06-21__release-v5.1 — Release Slice v5.1 added: ST-01–ST-06)
+**Last Updated:** 2026-06-21 (session — 1 new item added: BLG-SPEC-47)
 **Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
@@ -2325,6 +2325,31 @@ PO-02 (journal pattern recognition) and PO-03 (behavioural error taxonomy) will 
 - Endpoint surface area document produced for PO-02 and PO-03 APIs
 - Reviewed by API Contracts & Documentation Owner and Head of Specs Team
 - Gate condition (BLG-SPEC-35 complete) verified before commencing
+
+---
+
+### BLG-SPEC-47 — Align SI-05 `pass_rate` computation with BLG-GOV-86 §5.2 (mean-of-per-rule vs overall aggregate)
+**Priority:** P3 (Low)
+**Type:** Spec Debt / API Contracts
+**Owner:** Head of Specs Team; Head of Backend Engineering
+**Source:** DEV-v51-EPIC01-01 — v5.1 EPIC-01 QA sign-off — 2026-06-21
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.2
+
+**Problem**
+`si05_digest_service.py` computes `validation_pass_rate` as a volume-weighted overall ratio (`total_pass / total_validations` across all rules combined), while BLG-GOV-86 §5.2 specifies the mean of per-rule pass rates from `validation_pass_rate_by_rule`. These differ when validation rules have unequal sample volumes — high-volume rules dominate the aggregate but receive equal weighting in the mean. Additionally, `digest_endpoints.md` v0.2 documents the data source as "Overall pass/total ratio (7d)", creating a spec-to-spec inconsistency with the canonical format spec. P3 deviation DEV-v51-EPIC01-01 filed at v5.1 EPIC-01 QA sign-off. Must resolve before the next SI-05 feature increment.
+
+**Scope**
+- Head of Specs Team to determine canonical intent: (a) amend BLG-GOV-86 §5.2 to accept volume-weighted overall rate as the accepted computation, or (b) require the mean-of-per-rule-rates approach as originally specified
+- If option (b): correct `backend/services/si05_digest_service.py` to iterate `validation_pass_rate_by_rule` entries and compute arithmetic mean; update `docs/specs/api_contracts/digest_endpoints.md` data source description accordingly
+- If option (a): update `digest_endpoints.md` v0.2 to document the accepted overall-ratio computation and confirm alignment with BLG-GOV-86
+- Apply CLAUDE.md §6 governance edit checklist if any governance file is modified
+
+**Acceptance Criteria**
+- BLG-GOV-86 §5.2 and `digest_endpoints.md` v0.2 are internally consistent and match the implementation
+- `si05_digest_service.py` `validation_pass_rate` computation method matches the canonical spec decision
+- Any spec amendments include version bump and `prompt_change_log.md` entry per CLAUDE.md §6 if governance files are modified
+- DEV-v51-EPIC01-01 resolved and closed
 
 ---
 

@@ -2280,6 +2280,41 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /digest/si05/send:
+    post:
+      tags: [Digest]
+      summary: Trigger SI-05 Phase 1 strategy integrity Telegram digest
+      description: |
+        Sends the weekly SI-05 strategy integrity digest via Telegram.
+        Fetches arc5-compliance data (SI-01 pre-entry validation + SI-03 red flag journal)
+        and delivers a MarkdownV2-formatted message per BLG-GOV-86.
+        Intended for weekly cron/scheduled invocation. Safe to retry.
+        Canonical contract: docs/specs/api_contracts/digest_endpoints.md v0.2
+        ST-01 (SI-05 Phase 1, EPIC-01, v5.1)
+      requestBody:
+        required: false
+      responses:
+        "200":
+          description: Digest send result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  sent:
+                    type: boolean
+                    description: Whether the Telegram message was delivered
+                  message_length:
+                    type: integer
+                    description: Length of the formatted message in characters
+                  error:
+                    type: string
+                    nullable: true
+                    description: Error description if not sent; null on success
+
   /validate/calculations:
     post:
       tags: [Analytics]
