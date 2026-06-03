@@ -25,6 +25,8 @@ Last Updated: 2026-06-03
 - **Spec reference:** `docs/specs/api_contracts/ai_thesis_generation.md`, `docs/specs/api_contracts/ai_endpoints.md`
 - **Unblock criteria:** Both AC-01 and AC-02 confirmed with HTTP 200 on staging; sign-off block in `qa_evidence_EPIC-03.md` has non-blank Date field; BLG-OPS-52 closed in backlog.md.
 - **Commit format required:** `[EPIC-03][ST-08] Anthropic SDK staging verification — sign-off recorded` pushed to `exec/2026-06-03__release-v5.0/EPIC-03`
-- **Status:** sign_off_cleared
+- **Status:** Unblocked
 - **Sign-off cleared at:** 2026-06-03T11:30:00Z
-- **Sign-off notes:** I&O Owner staging verification complete (AC-01: HTTP 200 + non-null thesis confirmed on staging; AC-02: HTTP 200 + cost structure confirmed). DoQ agent-mediated sign-off applied. BLG-OPS-52 closed in backlog.md. BLG-FE-61 filed for ST-06 frontend Playwright gap (LL-v3.1-EX-01). Commit SHA: pending — will be updated to Unblocked after push.
+- **Commit SHA:** 5fedd4165ed485456bfebf6139ab93ea361a4720
+- **Unblocked at:** 2026-06-03T11:31:00Z
+- **Resolution notes:** I&O Owner staging verification complete (AC-01: HTTP 200 + non-null thesis confirmed on staging; AC-02: HTTP 200 + cost structure confirmed). DoQ agent-mediated sign-off applied. BLG-OPS-52 closed in backlog.md. BLG-FE-61 filed for ST-06 frontend Playwright gap (LL-v3.1-EX-01).
