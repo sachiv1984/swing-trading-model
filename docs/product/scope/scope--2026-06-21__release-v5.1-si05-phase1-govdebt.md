@@ -1,10 +1,15 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
-**Status:** Active
+**Status:** Superseded
 **Release:** v5.1
 **Cycle:** 2026-06-21__release-v5.1
-**Last Updated:** 2026-06-21
+**Last Updated:** 2026-06-04
 **Published:** 2026-06-21
+
+> Superseded by: v5.1 ship — 2026-06-04
+> Changelog: docs/product/changelog.md#v51
+> Verification report: claude/cycles/2026-06-21__release-v5.1/verification_report.md
+> Cycle: 2026-06-21__release-v5.1
 
 ---
 

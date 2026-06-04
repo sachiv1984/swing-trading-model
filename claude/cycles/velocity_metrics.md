@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-06-02 (post-ship closure 2026-06-02__release-v4.9)
+**Last Updated:** 2026-06-04 (post-ship closure 2026-06-21__release-v5.1)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -58,8 +58,9 @@
 | v4.8  | 7       | 7         | 1.00     | Zero deviations; all 7 stories autonomous; ST-08 (SI-05 Phase 1) deferred_at_planning — gate clears 2026-06-21 (never entered sprint scope); execution_prompt.md v3.34→v3.35 governance patch at sprint close (LL-v4.8-EX-01 null commit_sha action-now); both EPICs autonomous class sign-off (BLG-GOV-19) |
 | v4.9  | 5       | 5         | 1.00     | Zero spec deviations; all 5 stories autonomous; EPIC-04 (ST-06/ST-07) gate-deferred 2026-06-21 (never in sprint scope); 3 EPICs autonomous class sign-off (BLG-GOV-19); EPIC-03 vs main execution_state.json conflict resolved per CLAUDE.md §8 (second application); 13 pre-existing Phase B failures surfaced and fixed as RISK-02 bonus |
 | v5.0  | 13      | 13        | 1.00     | Zero spec deviations; 13 stories across 4 EPICs (governance patches + product correctness + SI-05 pre-work + staging verification); 2 delegations (ST-08 delegated_qa, ST-09 delegated_decision) both resolved same-session day; all 4 EPICs autonomous class sign-off (BLG-GOV-19); cleanest mixed-type sprint on record |
+| v5.1  | 6       | 6         | 1.00     | 1 P3 deviation (DEV-v51-EPIC01-01 — pass_rate computation method; BLG-SPEC-47 filed); all 6 stories autonomous; zero delegations; SI-05 Phase 1 Telegram digest delivered; BLG-FE-61 3-cycle recurrence closed; staged verification protocol filed (BLG-GOV-89) |
 
-**Rolling 6-cycle average (v4.5–v5.0):** 1.00
+**Rolling 6-cycle average (v4.6–v5.1):** 1.00
 
 ---
 

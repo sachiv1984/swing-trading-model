@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-03
+**Last Updated:** 2026-06-04
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -4992,4 +4992,18 @@ Archived by: Backlog Management Engine STEP 12, post-ship closure 2026-05-30__re
 | BLG-GOV-87 ✅ | SI-02 frontend re-entry trigger criteria definition | Shipped v5.0 ST-11, EPIC-04 — si02-reentry-trigger-criteria.md; hard gate ≥20 closed trades; soft advisory ≥3 months; PMO check from v5.1; PMO Lead + PO sign-off |
 | BLG-GOV-88 ✅ | SI-04 formal binding conditions decisions document | Shipped v5.0 ST-12, EPIC-04 — decisions--2026-06-03__release-v5.0--SI-04-binding-conditions.md; all 6 §13 binding conditions; Strategy Rules & System Intent Owner sign-off |
 | BLG-BE-26 ✅ | SI-02 lightweight drift summary assessment (backend-only state mitigation) | Shipped v5.0 ST-13, EPIC-04 — si02-drift-summary-feasibility-assessment.md; feasible with conditions; 3 UX risks + mitigations; minimal scope (Reports page, 3 metrics, advisory framing); PO sign-off |
+
+---
+
+## Closed Items — v5.1 Post-Ship (2026-06-04)
+
+*Archived: 5 items shipped in v5.1 (cycle 2026-06-21__release-v5.1). Groom date: 2026-06-04.*
+
+| ID | Title | Ship note |
+|----|-------|-----------|
+| BLG-GOV-67 ✅ | SI-05 early delivery (Phase 1 without SI-02) | Shipped v5.1 ST-01, EPIC-01 — backend/services/si05_digest_service.py; POST /digest/si05/send; 21 unit tests; SI-01+SI-03 gate confirmed 2026-06-21; 1 P3 deviation DEV-v51-EPIC01-01 filed (BLG-SPEC-47) |
+| BLG-SPEC-45 ✅ | SI-05 financial reporting scope verification (BLG-GOV-86 review) | Shipped v5.1 ST-02, EPIC-01 — BLG-GOV-86 reviewed; financial reporting confirmed OUT OF SCOPE for Phase 1; scope decision: docs/product/decisions/si05-financial-reporting-scope-decision.md; FR&R Owner sign-off |
+| BLG-FE-61 ✅ | SignalCard allocation_insufficient badge Playwright E2E coverage | Shipped v5.1 ST-04, EPIC-03 — tests/e2e/signals-allocation-insufficient.spec.js; 5 scenarios covering SC-SIG-AI-01/02/03; all pass in CI; BLG-FE-61 3-cycle recurrence closed |
+| BLG-QA-43 ✅ | compliance_summary field population validation | Shipped v5.1 ST-05, EPIC-03 — code review confirmed all 5 Arc 5 compliance fields present; staging AC-01 deferred to staged verification sprint (I&O Owner sign-off outstanding) |
+| BLG-GOV-89 ✅ | Staged verification sprint protocol document | Shipped v5.1 ST-06, EPIC-03 — docs/operations/staged_verification_sprint_protocol.md v1.0; trigger conditions, batching approach, evidence format, sprint sizing; DoQ + PMO Lead sign-off |
 

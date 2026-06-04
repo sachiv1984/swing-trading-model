@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-21 (session — 1 new item added: BLG-SPEC-47)
+**Last Updated:** 2026-06-04 (post-ship closure 2026-06-21__release-v5.1 — 5 items marked COMPLETE: BLG-FE-61, BLG-QA-43, BLG-SPEC-45, BLG-GOV-67, BLG-GOV-89; BLG-SPEC-47 confirmed present for v5.2)
 **Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
@@ -886,6 +886,8 @@ ST-06 introduced a visible frontend change (SignalCard orange "Cannot Size" badg
 - Playwright test exists and passes in CI covering: (a) badge visible, (b) reason inline, (c) signal visually distinct from `status: "active"` signals
 - Test added to test_scenarios in the relevant execution_state.json or qa_evidence for the sprint it ships
 
+✅ COMPLETE — 2026-06-04 — cycle 2026-06-21__release-v5.1 (ST-04, EPIC-03; Playwright E2E tests/e2e/signals-allocation-insufficient.spec.js — 5 scenarios covering SC-SIG-AI-01/02/03; all pass in CI)
+
 ---
 
 ### BLG-FE-62 — Pre-entry panel combined component specification (BLG-FE-56/57/58)
@@ -1540,6 +1542,8 @@ v4.7 shipped compliance_summary in GET /reports/monthly-pnl (ST-03, EPIC-04). No
 - Verification performed against staging or production monthly P&L output
 - Result documented; any mismatch filed as a P2 bug item immediately
 - No gate condition required
+
+✅ COMPLETE — 2026-06-04 — cycle 2026-06-21__release-v5.1 (ST-05, EPIC-03; code review confirmed all 5 Arc 5 compliance fields present in reports_endpoints.md spec; staging AC-01 deferred to staged verification sprint — I&O Owner sign-off outstanding)
 
 ---
 
@@ -2301,6 +2305,8 @@ SI-05 weekly digest will include compliance metrics. Whether it should also incl
 - If supplementary spec needed: spec document produced and reviewed by Financial Reporting & Records Owner
 - Gate condition verified before SI-05 sprint planning
 
+✅ COMPLETE — 2026-06-04 — cycle 2026-06-21__release-v5.1 (ST-02, EPIC-01; BLG-GOV-86 reviewed — financial reporting confirmed OUT OF SCOPE for Phase 1; scope decision documented at docs/product/decisions/si05-financial-reporting-scope-decision.md)
+
 ---
 
 ### BLG-SPEC-46 — Arc 4 API contract pre-planning surface area
@@ -2834,6 +2840,8 @@ SI-05 (Weekly Strategy Integrity Digest) requires SI-02 (drift detection) for th
 - No SI-02 dependency in Phase 1 implementation
 - Gate condition (SI-01 + SI-03 live ≥ 30 days) verified before sprint planning
 
+✅ COMPLETE — 2026-06-04 — cycle 2026-06-21__release-v5.1 (ST-01, EPIC-01; backend/services/si05_digest_service.py delivered; POST /digest/si05/send; 21 unit tests; gate confirmed 2026-06-21; 1 P3 deviation DEV-v51-EPIC01-01 filed)
+
 ---
 
 ### BLG-GOV-68 — Backlog item inter-dependency tracking
@@ -3075,6 +3083,26 @@ BLG-OPS-31 defined Render log retention. claude_audit_log (shipped v4.0) and Sup
 - Retention policy document produced covering claude_audit_log and Supabase query logs
 - Archiving cadence defined
 - Gate condition (6+ months of audit log data) verified before sprint planning
+
+---
+
+### BLG-OPS-54 — Add POST /digest/si05/send to api_performance_baseline.md
+**Priority:** P3 (Low)
+**Type:** Operations / Performance Baseline
+**Owner:** Infrastructure & Operations Owner; PMO Lead
+**Source:** Post-ship closure 2026-06-21__release-v5.1 — endpoint drift check (STEP 6)
+**Effort:** XS (~1–2 hours)
+**Provisional-Target:** Unscheduled (pending live environment access)
+
+**Problem**
+`POST /digest/si05/send` was added to `docs/reference/openapi.yaml` in v5.1 (ST-01, EPIC-01). This endpoint is not present in `docs/ops/api_performance_baseline.md`. Performance baseline re-runs require a live environment and human coordination — cannot be filled autonomously.
+
+**Scope**
+- Add `POST /digest/si05/send` to `docs/ops/api_performance_baseline.md` performance measurement table
+- Capture baseline latency, payload size, and response time in live/staging environment
+
+**Acceptance Criteria**
+- POST /digest/si05/send present in api_performance_baseline.md with baseline measurements recorded
 
 ---
 
@@ -3386,6 +3414,8 @@ The staged verifications sprint pattern (batch-closing staging-only ACs from pri
 - Covers: trigger conditions, batching approach, evidence format, sprint sizing note
 - Reviewed by Director of Quality and PMO Lead
 
+✅ COMPLETE — 2026-06-04 — cycle 2026-06-21__release-v5.1 (ST-06, EPIC-03; docs/operations/staged_verification_sprint_protocol.md v1.0 produced; Director of Quality + PMO Lead sign-off)
+
 ---
 
 ### BLG-GOV-90 — Claude model deprecation monitoring procedure
@@ -3455,20 +3485,4 @@ SI-04 (strategy version comparison) will access historical strategy_rules.md con
 *Release Slice v5.0 removed — cycle 2026-06-03__release-v5.0 closed 2026-06-03. Archived canonical home: claude/cycles/2026-06-03__release-v5.0/stage4_backlog_slice.md*
 
 ---
-
-## Release Slice v5.1 — 2026-06-21__release-v5.1
-
-<!-- release-plan-marker: RP:v5.1:2026-06-21__release-v5.1 -->
-
-**Canonical artefact:** `claude/cycles/2026-06-21__release-v5.1/stage4_backlog_slice.md`
-
-| ST-ID | Title | EPIC | Source | Effort |
-|-------|-------|------|--------|--------|
-| ST-01 | SI-05 Phase 1: Backend service + Telegram weekly digest | EPIC-01 | BLG-GOV-67 | M |
-| ST-02 | BLG-SPEC-45 SI-05 financial reporting scope verification | EPIC-01 | BLG-SPEC-45 | XS |
-| ST-03 | delivery_verification_prompt.md §-1.3 Tier 2 fix | EPIC-02 | LL-RP-v5.0-D-2 | S |
-| ST-04 | BLG-FE-61 SignalCard Playwright E2E | EPIC-03 | BLG-FE-61 | XS |
-| ST-05 | BLG-QA-43 compliance_summary validation | EPIC-03 | BLG-QA-43 | XS |
-| ST-06 | BLG-GOV-89 Staged verification sprint protocol | EPIC-03 | BLG-GOV-89 | S |
-
 

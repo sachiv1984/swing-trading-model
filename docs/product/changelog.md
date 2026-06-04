@@ -3,9 +3,41 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-03
+**Last Updated:** 2026-06-04
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v5.1 — SI-05 Phase 1 & Governance Debt — 2026-06-04
+Cycle: 2026-06-21__release-v5.1
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-06-21__release-v5.1/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | SI-05 Phase 1 — Weekly Strategy Integrity Digest via Telegram. BLG-GOV-67 delivered: `backend/services/si05_digest_service.py`; `POST /digest/si05/send` endpoint (openapi.yaml updated); 21 unit tests; SI-05 financial reporting scope verified as OUT OF SCOPE for Phase 1 (BLG-SPEC-45 resolved). | docs/product/decisions/si05-telegram-message-format-spec.md (Known Deviations section added); docs/specs/api_contracts/arc5_compliance_analytics.md; docs/specs/api_contracts/digest_endpoints.md |
+| EPIC-02 | Governance patch — `delivery_verification_prompt.md` §-1.3 Tier 2: explicit acceptance of agent-mediated signer format added (v2.9→v3.0). Resolves v5.0 Phase 4 Tier 2 advisory (LL-RP-v5.0-D-2). | claude/system/delivery_verification_prompt.md v3.0 |
+| EPIC-03 | QA & documentation debt: BLG-FE-61 — SignalCard `allocation_insufficient` badge Playwright E2E coverage (5 scenarios, SC-SIG-AI-01/02/03); BLG-QA-43 — `compliance_summary` field population validation by code review; BLG-GOV-89 — staged verification sprint protocol document v1.0. | docs/operations/staged_verification_sprint_protocol.md v1.0; docs/specs/api_contracts/reports_endpoints.md#GET /reports/monthly-pnl |
+
+### Deviations accepted
+1 minor deviation — see verification_report.md
+
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| DEV-v51-EPIC01-01 | P3 | `pass_rate` computation uses volume-weighted overall rate instead of mean-of-per-rule-rates per BLG-GOV-86 §5.2; `digest_endpoints.md` v0.2 documents "Overall pass/total ratio" creating spec-to-spec inconsistency with BLG-GOV-86 §5.2. BLG-SPEC-47 filed for resolution before next SI-05 feature increment. | PO |
+
+### Tech backlog items shipped
+- [ST-01] BLG-GOV-67 — SI-05 Phase 1 backend service + Telegram weekly digest implementation
+- [ST-02] BLG-SPEC-45 — SI-05 financial reporting scope verification (confirmed OUT OF SCOPE for Phase 1)
+- [ST-03] LL-RP-v5.0-D-2 — delivery_verification_prompt.md §-1.3 Tier 2 agent-mediated signer format acceptance (v2.9→v3.0)
+- [ST-04] BLG-FE-61 — SignalCard allocation_insufficient badge Playwright E2E coverage (5 scenarios)
+- [ST-05] BLG-QA-43 — compliance_summary field population validation
+- [ST-06] BLG-GOV-89 — Staged verification sprint protocol document v1.0
+
+Sign-off: Product Owner — 2026-06-21
+QA sign-off: Director of Quality — 2026-06-21
 
 ---
 

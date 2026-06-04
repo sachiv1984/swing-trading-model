@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-02 (post-ship closure 2026-06-02__release-v4.9)
+**Last Updated:** 2026-06-04 (post-ship closure 2026-06-21__release-v5.1)
 
 # Roadmap Archive — Momentum Trading Assistant
 
@@ -1137,3 +1137,20 @@ v4.6 SI-02 Behavioural Drift Detection & Arc 5 Completion. EPIC-01 SI-02 Backend
 ### Original Roadmap Entry
 
 v5.0 Governance Hardening, Product Correctness & SI-05 Phase 1 Pre-work. Theme: Close governance debt from AUD-2026-06-02, fix two product correctness issues that slipped v4.9, and complete SI-05 Phase 1 pre-work ahead of the 2026-06-21 gate clearance. 13 stories/4 EPICs. Governance patches: BLG-GOV-79/80/81/82/83. Product correctness: BLG-FEAT-43 (allocation_insufficient status + frontend badge), BLG-BE-25 (shared market cache), BLG-OPS-52 (Anthropic SDK staging verification). SI-05 Phase 1 pre-work: BLG-FE-60 (channel trade-off + PO decision — Telegram confirmed), BLG-GOV-86 (Telegram message format spec v1.0), BLG-GOV-87 (SI-02 re-entry criteria), BLG-GOV-88 (SI-04 §13 binding conditions decisions doc), BLG-BE-26 (SI-02 drift summary feasibility assessment). BLG-GOV-67 (SI-05 Phase 1 implementation) conditional — gate 2026-06-21. All 13 firm stories delivered. Verified 2026-06-03. Zero spec deviations. PRs #663–#666.
+
+---
+
+## RA:v5.1 — SI-05 Phase 1 & Governance Debt
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-04
+**Shipped version:** v5.1
+**Cycle reference:** 2026-06-21__release-v5.1
+**Verification report:** claude/cycles/2026-06-21__release-v5.1/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-04
+
+### Original Roadmap Entry
+
+v5.1 SI-05 Phase 1 & Governance Debt. SI-05 Phase 1 weekly Telegram digest delivered (si05_digest_service.py; POST /digest/si05/send; 21 unit tests; BLG-GOV-67); BLG-SPEC-45 financial reporting scope confirmed OUT OF SCOPE; delivery_verification_prompt.md §-1.3 Tier 2 agent-mediated signer fix (v2.9→v3.0; LL-RP-v5.0-D-2); SignalCard allocation_insufficient badge Playwright E2E coverage (5 scenarios; BLG-FE-61 — 3-cycle recurrence closed); compliance_summary validation by code review (BLG-QA-43); staged verification sprint protocol document v1.0 (BLG-GOV-89). 6/6 stories. 1 P3 deviation (DEV-v51-EPIC01-01; BLG-SPEC-47 filed). PRs #675–#677. Verified_with_deviations 2026-06-21.
