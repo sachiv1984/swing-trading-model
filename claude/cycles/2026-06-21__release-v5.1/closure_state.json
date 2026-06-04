@@ -23,7 +23,7 @@
     "step_11_manage_roadmap": "complete",
     "step_12_groom_backlog": "complete",
     "step_12_5_ideas_housekeeping": "complete",
-    "step_13_commit": "not_started"
+    "step_13_commit": "pass"
   },
   "closure_status": "Closed_with_actions",
   "step_12_5_ideas_housekeeping": "31 rows archived (IW-20260304-01, IW-20260321-01, IW-20260601-01); rejected_but_strong: all 5 revival conditions unmet; pipeline: empty (0 open ideas — ADVISORY: run ideas before next roadmap rebalance)"
