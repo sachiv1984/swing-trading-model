@@ -1376,6 +1376,32 @@ Multiple roadmap features are gated on trade count thresholds: PT-04 (20+ closed
 
 ---
 
+### BLG-BE-35 — Add API key authentication to POST /digest/si05/send
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Security
+**Owner:** Head of Engineering; Cybersecurity & Trust Lead
+**Source:** ST-11 (BLG-GOV-99) — security review finding, 2026-06-08__release-v5.2
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.3
+
+**Problem**
+POST /digest/si05/send is an unauthenticated endpoint (`backend/routers/digest.py:227`). It triggers Telegram API calls and digest sends without requiring authentication. An unauthenticated caller could trigger repeated sends (Telegram quota abuse, spam to digest chat). The existing authentication pattern (BLG-SEC-01/v2.2) applies API key auth — this pattern is not applied to the digest endpoint. Finding documented in `docs/security/security_register.md` Review 003 (ST-11, v5.2).
+
+**Scope**
+- Apply API key authentication to POST /digest/si05/send using the existing auth pattern (Depends injection, consistent with other protected endpoints)
+- Add unit test verifying 401 response on unauthenticated POST /digest/si05/send
+- Update `docs/specs/api_contracts/digest_endpoints.md` authentication requirements section
+- Cybersecurity & Trust Lead sign-off on fix
+
+**Acceptance Criteria**
+- POST /digest/si05/send requires API key authentication per the existing pattern
+- 401 returned on unauthenticated request
+- Unit test added verifying 401 behaviour
+- digest_endpoints.md updated with authentication requirements
+- Cybersecurity & Trust Lead and Head of Engineering sign-off
+
+---
+
 ## 5. QA & Test Automation Backlog
 
 ---
@@ -2640,6 +2666,78 @@ CLAUDE.md §2 requires "Every new API endpoint added to `backend/routers/` must 
 - API Contracts & Documentation Owner and Head of Specs Team sign-off
 
 ---
+
+### BLG-SPEC-49 — Author GET /ai/journal-summary/history API contract and openapi.yaml entry
+**Priority:** P2 (Medium)
+**Type:** Spec / API Contract
+**Owner:** API Contracts & Documentation Owner; Head of Specs Team
+**Source:** ST-12 (BLG-GOV-100) — endpoint coverage audit post-v5.1, 2026-06-08__release-v5.2
+**Effort:** XS (~1–2 hours)
+**Provisional-Target:** v5.3
+
+**Problem**
+`GET /ai/journal-summary/history` exists in `backend/routers/ai.py` and is tested in `backend/routers/test.py` but has no entry in `docs/specs/api_contracts/ai_endpoints.md` and is absent from `docs/reference/openapi.yaml`. This is a CLAUDE.md §2 spec debt gap identified in the post-v5.1 coverage audit.
+
+**Acceptance Criteria**
+- `## GET /ai/journal-summary/history` heading added to ai_endpoints.md (##-level, not ###)
+- openapi.yaml updated with the path entry
+- API Contracts & Documentation Owner sign-off
+
+---
+
+### BLG-SPEC-50 — Author GET /analytics/compliance-metrics API contract and openapi.yaml entry
+**Priority:** P2 (Medium)
+**Type:** Spec / API Contract
+**Owner:** API Contracts & Documentation Owner; Head of Specs Team
+**Source:** ST-12 (BLG-GOV-100) — endpoint coverage audit post-v5.1, 2026-06-08__release-v5.2
+**Effort:** XS (~1–2 hours)
+**Provisional-Target:** v5.3
+
+**Problem**
+`GET /analytics/compliance-metrics` exists in `backend/routers/analytics.py` and is tested in `backend/routers/test.py` but has no entry in `docs/specs/api_contracts/analytics_endpoints.md` (which documents other analytics endpoints) and is absent from `docs/reference/openapi.yaml`. This is spec debt identified in the post-v5.1 coverage audit.
+
+**Acceptance Criteria**
+- `## GET /analytics/compliance-metrics` heading added to analytics_endpoints.md (##-level)
+- openapi.yaml updated with the path entry
+- API Contracts & Documentation Owner sign-off
+
+---
+
+### BLG-SPEC-51 — Author GET /news/{ticker} API contract and openapi.yaml entry
+**Priority:** P2 (Medium)
+**Type:** Spec / API Contract
+**Owner:** API Contracts & Documentation Owner; Head of Specs Team
+**Source:** ST-12 (BLG-GOV-100) — endpoint coverage audit post-v5.1, 2026-06-08__release-v5.2
+**Effort:** XS (~1–2 hours)
+**Provisional-Target:** v5.3
+
+**Problem**
+`GET /news/{ticker}` exists in `backend/routers/news.py` and is tested in `backend/routers/test.py` but has no dedicated API contract document in `docs/specs/api_contracts/` (the Alpaca integration contract covers the external news API, not this internal endpoint) and is absent from `docs/reference/openapi.yaml`. This is spec debt identified in the post-v5.1 coverage audit.
+
+**Acceptance Criteria**
+- A file in `docs/specs/api_contracts/` contains `## GET /news/{ticker}` as a ##-level heading
+- openapi.yaml updated with the path entry
+- API Contracts & Documentation Owner sign-off
+
+---
+
+### BLG-SPEC-52 — Author watchlist endpoint contracts and add openapi.yaml + test.py entries
+**Priority:** P2 (Medium)
+**Type:** Spec / API Contract
+**Owner:** API Contracts & Documentation Owner; Head of Specs Team; Head of Engineering
+**Source:** ST-12 (BLG-GOV-100) — endpoint coverage audit post-v5.1, 2026-06-08__release-v5.2
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.3
+
+**Problem**
+Watchlist endpoints (`GET /watchlist`, `POST /watchlist`, `DELETE /watchlist/{entry_id}`) exist in `backend/routers/watchlist.py` but have no API contract document in `docs/specs/api_contracts/`, no entries in `docs/reference/openapi.yaml`, and are absent from `backend/routers/test.py`. This is a triple-gap (contract + openapi.yaml + test) identified in the post-v5.1 coverage audit. CLAUDE.md §2 same-sprint rule applies retroactively as spec debt.
+
+**Acceptance Criteria**
+- A file in `docs/specs/api_contracts/` contains `## GET /watchlist`, `## POST /watchlist`, `## DELETE /watchlist/{entry_id}` as ##-level headings
+- openapi.yaml updated with all three path entries
+- backend/routers/test.py entries added for all three watchlist endpoints
+- SystemStatus.js fallback count and SC-SS-01b in tests/e2e/system-status.spec.js updated if test.py count changes (per CLAUDE.md §2)
+- API Contracts & Documentation Owner and Head of Specs Team sign-off
 
 ---
 

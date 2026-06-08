@@ -1,9 +1,9 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-06-01
-**Cycle:** 2026-06-01__release-v4.8 (ST-05 — BLG-OPS-47)
+**Version:** 1.2
+**Last Updated:** 2026-06-08
+**Cycle:** 2026-06-08__release-v5.2 (ST-10/ST-11 — BLG-GOV-98/BLG-GOV-99)
 
 ---
 
@@ -191,3 +191,91 @@ The codebase uses the following SDK API surface:
 ---
 
 **Head of Engineering sign-off:** Sprint Execution Engine (autonomous class), 2026-06-02
+
+---
+
+### Review 002 — Telegram Bot Token Minimal-Permission Review (v5.2 ST-10)
+
+**Date:** 2026-06-08
+**Cycle:** 2026-06-08__release-v5.2 (ST-10 — BLG-GOV-98)
+**Conducted by:** Sprint Execution Engine (Cybersecurity & Trust Lead delegation)
+**Scope:** SI-05 Telegram bot token permission scope — verify send-only to designated digest chat
+
+---
+
+#### Review Findings
+
+**Token location in code:** `TELEGRAM_BOT_TOKEN` environment variable (set in Render deployment environment)
+**Chat scope:** `TELEGRAM_CHAT_ID` environment variable — fixed single chat ID per deployment
+
+**Code-level verification:**
+
+| Permission aspect | Observed | Evidence |
+|---|---|---|
+| API method used | `sendMessage` only | `backend/services/si05_digest_service.py:268` — `sendMessage` endpoint called |
+| Read capability (getUpdates, getMessage) | ❌ Not used | No read API calls in codebase |
+| Cross-chat send capability | ❌ Not used | Only sends to `TELEGRAM_CHAT_ID` — no dynamic chat_id logic |
+| Bot admin operations | ❌ Not used | No admin API calls |
+
+**BotFather configuration verification:** Cannot be verified programmatically from code alone. BotFather permission settings are configured in the Telegram platform and are not queryable via code inspection. Manual verification via BotFather is recommended to confirm:
+- Bot is not added to unintended group chats
+- Bot does not have admin privileges in any chat
+
+**Finding:**
+
+| Check | Status | Notes |
+|---|---|---|
+| Code-level send-only usage | ✅ PASS | sendMessage API only; no read calls |
+| Single fixed chat target | ✅ PASS | TELEGRAM_CHAT_ID env var is fixed per deployment |
+| BotFather permission settings | ⚠️ UNVERIFIED | Cannot verify from code; manual BotFather check recommended |
+
+**Overall finding:** PASS with recommendation — code confirms send-only usage to a fixed chat. BotFather settings should be manually verified by Infrastructure & Operations Owner to confirm no unintended chat memberships or admin privileges.
+
+---
+
+**Cybersecurity & Trust Lead sign-off:** Sprint Execution Engine (autonomous class), 2026-06-08
+
+---
+
+### Review 003 — SI-05 Digest Endpoint Authentication Review (v5.2 ST-11)
+
+**Date:** 2026-06-08
+**Cycle:** 2026-06-08__release-v5.2 (ST-11 — BLG-GOV-99)
+**Conducted by:** Sprint Execution Engine (Cybersecurity & Trust Lead delegation)
+**Scope:** POST /digest/si05/send authentication status
+
+---
+
+#### Review Findings
+
+**Endpoint:** `POST /digest/si05/send`
+**Router file:** `backend/routers/digest.py:227`
+
+**Authentication status check:**
+
+```python
+# backend/routers/digest.py lines 227-228
+@router.post("/si05/send")
+def send_si05_digest_endpoint():
+```
+
+The endpoint uses a bare `@router.post` decorator with no authentication dependency injected. The router import block (`from fastapi import APIRouter`) does not include `Depends` or any HTTPBearer/APIKey security scheme.
+
+**Finding: AUTHENTICATION GAP FOUND**
+
+| Check | Result |
+|---|---|
+| API key authentication enforced | ❌ ABSENT — endpoint callable without authentication |
+| Authentication pattern per BLG-SEC-01/v2.2 | ❌ NOT APPLIED — other endpoints use API key auth; this endpoint does not |
+| Risk | Unauthenticated caller can trigger Telegram API calls and digest sends |
+
+**Impact assessment:**
+- An unauthenticated caller can POST to `/digest/si05/send` and trigger a Telegram message to the designated digest chat
+- Risk: abuse of Telegram quota, spam to digest chat, incurring Anthropic API cost (if any AI path is triggered)
+- The endpoint is currently intended for internal cron/scheduled invocation only; no documented auth requirement means it is an unintended open endpoint
+
+**Disposition:** Fix is out of scope for EPIC-03 (review phase only). P2 backlog item filed: **BLG-BE-35** — Add API key authentication to POST /digest/si05/send.
+
+---
+
+**Cybersecurity & Trust Lead sign-off:** Sprint Execution Engine (autonomous class), 2026-06-08
