@@ -330,3 +330,51 @@ class TestSendSi05Digest:
         assert result["sent"] is True
         assert result["message_length"] > 0
         assert result["error"] is None
+
+    def test_telegram_api_connection_failure(self):
+        """Edge case (b): Telegram API connection failure → sent=False, error logged at ERROR."""
+        import logging
+        (
+            format_si05_section, _1, _2, _3, _4, _5,
+            send_si05_digest, _7
+        ) = get_service()
+        mock_data = {
+            "validation_pass_rate": 0.85,
+            "events_per_week": 0.5,
+            "override_rate": 0.10,
+            "top_rule_breach": None,
+        }
+        with patch.dict("os.environ", {"TELEGRAM_BOT_TOKEN": "tok", "TELEGRAM_CHAT_ID": "123"}):
+            with patch("services.si05_digest_service.fetch_arc5_data_for_digest", return_value=mock_data):
+                with patch("urllib.request.urlopen", side_effect=OSError("connection refused")):
+                    with patch("services.si05_digest_service.logger") as mock_logger:
+                        result = send_si05_digest()
+        assert result["sent"] is False
+        assert result["error"] is not None
+        mock_logger.error.assert_called()
+
+    def test_message_truncation_at_character_limit(self):
+        """Edge case (c): Message exceeding MAX_MESSAGE_LENGTH is truncated before send."""
+        (
+            format_si05_section, _1, _2, _3, _4, _5,
+            send_si05_digest, MAX_MESSAGE_LENGTH
+        ) = get_service()
+        # Build a data set that would produce a very long message via the section formatter
+        long_top_rule = "a" * 200
+        mock_data = {
+            "validation_pass_rate": 0.85,
+            "events_per_week": 0.5,
+            "override_rate": 0.10,
+            "top_rule_breach": long_top_rule,
+        }
+        # Patch format_si05_section to return a very long string, forcing truncation
+        huge_section = "x" * (MAX_MESSAGE_LENGTH + 500)
+        with patch.dict("os.environ", {"TELEGRAM_BOT_TOKEN": "tok", "TELEGRAM_CHAT_ID": "123"}):
+            with patch("services.si05_digest_service.fetch_arc5_data_for_digest", return_value=mock_data):
+                with patch("services.si05_digest_service.format_si05_section", return_value=huge_section):
+                    with patch("urllib.request.urlopen") as mock_urlopen:
+                        mock_urlopen.return_value = MagicMock()
+                        result = send_si05_digest()
+        # Message should be sent (truncated) and length should be within or at the limit
+        assert result["sent"] is True
+        assert result["message_length"] <= MAX_MESSAGE_LENGTH

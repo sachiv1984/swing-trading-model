@@ -1828,6 +1828,32 @@ With SI-01, SI-03, and SI-05 Phase 1 shipped (3 of 5 Arc 5 features), an interme
 
 ---
 
+### BLG-QA-50 — Create formal regression test suite baseline document
+**Priority:** P3 (Low)
+**Type:** QA / Documentation
+**Owner:** QA Lead; Director of Quality
+**Source:** ST-15 (BLG-QA-48) — v5.2 regression baseline refresh identified absence of formal document
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+No formal regression test suite baseline document exists. The current test coverage is tracked ad hoc through `backend/routers/test.py` (endpoint smoke tests) and Playwright specs in `tests/e2e/`. Without a baseline document, there is no authoritative reference for which tests are in scope for regression, which features they cover, or when new test entries were added. This makes it difficult to verify regression coverage at delivery verification and during QA sign-off.
+
+**Scope**
+- Create a formal regression baseline document covering:
+  - All `backend/routers/test.py` entries (endpoint smoke tests) with feature mapping
+  - All Playwright spec files in `tests/e2e/` with scenario count and feature mapping
+  - Version history: which tests were added at which release
+- Document will serve as the authoritative regression scope reference for future sprints
+
+**Acceptance Criteria**
+- Regression baseline document created in docs/qa/ or docs/testing/
+- All test.py entries mapped to features
+- All Playwright specs listed with scenario count
+- Director of Quality sign-off
+
+---
+
 ## 6. Operations & Infrastructure Backlog
 
 ---
