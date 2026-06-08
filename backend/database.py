@@ -1773,6 +1773,28 @@ def ensure_si02_trade_history_indexes():
         conn.commit()
 
 
+def ensure_si05_digest_log_table() -> None:
+    """Create si05_digest_log table if it does not exist (idempotent).
+
+    Records each SI-05 weekly digest delivery attempt (success and failure).
+    Spec: delegation DEL-20260608-02 (BLG-BE-33, v5.2 ST-06)
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS si05_digest_log (
+                    id SERIAL PRIMARY KEY,
+                    sent_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+                    status VARCHAR(10) NOT NULL CHECK (status IN ('sent', 'failed')),
+                    event_count INTEGER,
+                    telegram_message_id VARCHAR(100),
+                    error_message TEXT,
+                    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+                )
+            """)
+        conn.commit()
+
+
 def get_behavioural_drift_data(portfolio_id: str, window_days: int = 90) -> dict:
     """Fetch all data needed for SI-02 drift metric computation.
 

@@ -5,7 +5,7 @@
   "invoked_utc": "2026-06-08T10:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-08T12:00:00Z",
+  "last_updated_utc": "2026-06-08T14:00:00Z",
 
   "epics": {
     "EPIC-03": {
@@ -94,11 +94,11 @@
     },
 
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-08__release-v5.2/EPIC-02",
       "pr_number": 697,
-      "pr_status": "open",
-      "qa_signed_off": false,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.2/qa_evidence_EPIC-02.md",
       "test_scenarios": ["tests/test_si05_digest_service.py"],
       "stories": {
@@ -118,7 +118,13 @@
           "spec_references": ["backend/services/si05_digest_service.py"],
           "deviations_filed": true,
           "last_completed_substep": "3.1.B.unblocked",
-          "sign_off_record": {"required_by": "Head of Engineering", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-06-08T13:30:00Z"},
+          "sign_off_record": {
+            "required_by": "Head of Engineering",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["_send_telegram_request() with 30s/60s backoff added; ERROR logging confirmed; 3 new tests all passing; _sleep_fn injectable for CI"],
+            "cleared_utc": "2026-06-08T13:30:00Z"
+          },
           "notes": "Retry implemented: max 2 retries, 30s/60s backoff. ERROR logging present. 24 tests passing. Staging AC-04: PASS (Render logs confirmed)."
         },
         "ST-06": {
@@ -131,13 +137,19 @@
           "commit_sha": "4df36369",
           "delegation_record_id": "DEL-20260608-02",
           "blocked_since_utc": "2026-06-08T11:30:00Z",
-          "unblock_criteria": "Commit [EPIC-02][ST-06] pushed; CREATE TABLE IF NOT EXISTS guard; log rows on success/failure; Data Model Owner sign-off; staging confirmation",
+          "unblock_criteria": "Commit [EPIC-02][ST-06] pushed; CREATE TABLE IF NOT EXISTS guard present; log rows written on success and failure paths; Data Model Owner sign-off; I&O Owner staging confirmation",
           "completed_utc": "2026-06-08T13:30:00Z",
           "acceptance_verified": true,
           "spec_references": ["docs/specs/api_contracts/digest_endpoints.md"],
           "deviations_filed": true,
           "last_completed_substep": "3.1.B.unblocked",
-          "sign_off_record": {"required_by": "Data Model & Domain Schema Owner", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-06-08T13:30:00Z"},
+          "sign_off_record": {
+            "required_by": "Data Model & Domain Schema Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["Schema: id, sent_at, status (sent/failed), event_count, telegram_message_id, error_message, created_at; CREATE TABLE IF NOT EXISTS guard; registered in main.py on_startup()"],
+            "cleared_utc": "2026-06-08T13:30:00Z"
+          },
           "notes": "ensure_si05_digest_log_table() in database.py; log rows on both paths. Staging AC-04: PASS. Data Model Owner: signed off."
         },
         "ST-07": {
@@ -156,8 +168,14 @@
           "spec_references": ["docs/ops/production_deployment_runbook.md"],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
-          "sign_off_record": {"required_by": "Infrastructure & Operations Owner", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-06-08T11:30:00Z"},
-          "notes": "Runbook v0.1→v0.2. §6 SI-05 operational requirements section added."
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["SI-05 env vars section added (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID); cron schedule verification; failure detection reference; health check reference"],
+            "cleared_utc": "2026-06-08T11:30:00Z"
+          },
+          "notes": "Runbook updated at docs/ops/production_deployment_runbook.md v0.1→v0.2. New section §6 covers SI-05 env vars, cron schedule, service verification, failure detection."
         },
         "ST-08": {
           "title": "BLG-OPS-56: SI-05 service scheduled run health check procedure",
@@ -176,8 +194,14 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "delivery_note": "docs/ops/si05_health_check_procedure.md",
-          "sign_off_record": {"required_by": "Infrastructure & Operations Owner", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-06-08T11:30:00Z"},
-          "notes": "Health check procedure v1.0. Options: log table, Render logs, Telegram."
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["3 check options documented (si05_digest_log, Render logs, Telegram history); BLG-BE-33 interim noted; escalation path defined; weekly cadence and responsible role specified"],
+            "cleared_utc": "2026-06-08T11:30:00Z"
+          },
+          "notes": "Health check procedure created at docs/ops/si05_health_check_procedure.md. References BLG-BE-33 as prerequisite for Option A (log table). Option B (Render logs) documented as interim."
         }
       }
     },
@@ -185,8 +209,8 @@
     "EPIC-04": {
       "status": "done",
       "branch": "exec/2026-06-08__release-v5.2/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 695,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.2/qa_evidence_EPIC-04.md",
       "test_scenarios": ["tests/test_si05_digest_service.py"],
@@ -208,7 +232,7 @@
           "deviations_filed": true,
           "delivery_note": "docs/qa/si05_edge_case_gap_analysis.md",
           "sign_off_record": {"required_by": "QA Lead", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-06-08T12:00:00Z"},
-          "notes": "2 gaps found and fixed: test_telegram_api_connection_failure + test_message_truncation_at_character_limit. 23 tests total, all passing."
+          "notes": "2 gaps found and fixed: test_telegram_api_connection_failure_logs_error + test_message_truncation_at_character_limit. 26 tests total (incl. ST-05 retry tests), all passing."
         },
         "ST-14": {
           "title": "BLG-QA-47 + BLG-GOV-94: SI-05 Phase 1 acceptance test protocol and delivery verification protocol",
@@ -364,8 +388,8 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-03"],
-    "epics_pending": ["EPIC-02", "EPIC-04", "EPIC-01"],
+    "epics_merged": ["EPIC-03", "EPIC-02"],
+    "epics_pending": ["EPIC-04", "EPIC-01"],
     "all_merged": false
   },
 
