@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.33
-**Last Updated:** 2026-05-30
+**Version:** 2.34
+**Last Updated:** 2026-06-08
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -280,7 +280,10 @@ Apply `claude/system/shared/preflight_common.md` (sub-check 1 only) with:
 
 ### -1.2 Verify Release Exists on the Roadmap
 Open `claude/roadmap/current_roadmap.md` and confirm the requested `--version` exists as a planned release section.
-- If not found: halt (this routine cannot invent new releases).
+- If found: proceed.
+- If not found: check whether a documented STEP 8.1 Option(b) decision exists for the most recent rebalance. Read the most recent rebalance cycle's `run_manifest.md` (or `cycle_summary.md`) for a `PO decision (STEP 8.1): Option (b) — defer` record.
+  - If Option(b) record found: proceed. A documented Option(b) decision from the prior rebalance is equivalent to a formal planned release section for this gate. Record in the run manifest: "§-1.2 cleared via STEP 8.1 Option(b) decision from [rebalance cycle]."
+  - If neither a planned release section nor an Option(b) record exists: halt — this routine cannot invent new releases. Either add the release to the roadmap via `run roadmap` (Option(a)) or record an Option(b) decision before invoking release planning.
 
 ### -1.3/-1.4 Common Preflight — Roles and Write Test
 Apply `claude/system/shared/preflight_common.md` (sub-checks 2 and 3) with:
