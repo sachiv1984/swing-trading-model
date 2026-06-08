@@ -1,9 +1,9 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v5.2
 Cycle: 2026-06-08__release-v5.2
-Last Updated: 2026-06-08
+Last Updated: 2026-06-08 (post-ship closure)
 
 ## Release Scope — v5.2 Governance Debt, SI-05 Ops & Spec Compliance
 
@@ -42,9 +42,8 @@ Last Updated: 2026-06-08
 | BLG-GOV-93 (OA-01/02 resolution check) | Absorbed into EPIC-01 OA-01 + OA-02 stories | n/a |
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
-Verification report: [TBD]
+Superseded by: v5.2 ship — 2026-06-08
+Changelog: docs/product/changelog.md#v52
+Verification report: claude/cycles/2026-06-08__release-v5.2/verification_report.md
 Cycle: 2026-06-08__release-v5.2

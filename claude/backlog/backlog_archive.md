@@ -5007,3 +5007,27 @@ Archived by: Backlog Management Engine STEP 12, post-ship closure 2026-05-30__re
 | BLG-QA-43 ✅ | compliance_summary field population validation | Shipped v5.1 ST-05, EPIC-03 — code review confirmed all 5 Arc 5 compliance fields present; staging AC-01 deferred to staged verification sprint (I&O Owner sign-off outstanding) |
 | BLG-GOV-89 ✅ | Staged verification sprint protocol document | Shipped v5.1 ST-06, EPIC-03 — docs/operations/staged_verification_sprint_protocol.md v1.0; trigger conditions, batching approach, evidence format, sprint sizing; DoQ + PMO Lead sign-off |
 
+
+---
+
+## Closed Items — v5.2 Post-Ship (2026-06-08)
+
+*Archived: 15 items shipped in v5.2 (cycle 2026-06-08__release-v5.2). Groom date: 2026-06-08.*
+
+| ID | Title | Ship note |
+|----|-------|-----------|
+| BLG-BE-32 ✅ | SI-05 Telegram delivery retry and failure handling | Shipped v5.2 ST-05, EPIC-02 — _send_telegram_request() with 30s/60s backoff; ERROR logging; 3 unit tests; injectable _sleep_fn for CI; 24 tests passing; staging AC-04 PASS |
+| BLG-BE-33 ✅ | SI-05 digest delivery log table | Shipped v5.2 ST-06, EPIC-02 — si05_digest_log table (id/sent_at/status/event_count/telegram_message_id/error_message/created_at); CREATE TABLE IF NOT EXISTS guard; log rows on both paths; registered in main.py on_startup(); Data Model Owner sign-off; staging AC-04 PASS |
+| BLG-QA-46 ✅ | SI-05 digest service edge case test gap analysis | Shipped v5.2 ST-13, EPIC-04 — 2 gaps found and fixed: test_telegram_api_connection_failure_logs_error + test_message_truncation_at_character_limit; 26 tests total passing; QA Lead sign-off |
+| BLG-QA-47 ✅ | SI-05 Phase 1 acceptance test protocol | Shipped v5.2 ST-14, EPIC-04 — docs/qa/si05_acceptance_test_protocol.md produced; covers v5.1 deferred ACs (AC-09 Telegram delivery; AC-01 compliance_summary); Director of Quality sign-off |
+| BLG-QA-48 ✅ | Regression test suite baseline refresh post-v5.1 | Shipped v5.2 ST-15, EPIC-04 — POST /digest/si05/send confirmed in test.py; 5 Playwright scenarios confirmed in CI; BLG-QA-50 formal baseline doc filed; QA Lead sign-off |
+| BLG-SPEC-47 ✅ | Align SI-05 pass_rate computation with BLG-GOV-86 §5.2 | Shipped v5.2 ST-03, EPIC-01 — Option(a) chosen: BLG-GOV-86 §5.2 amended to accept volume-weighted overall rate; si05-telegram-message-format-spec.md v1.1→v1.2; DEV-v51-EPIC01-01 resolved and closed; Head of Specs Team sign-off |
+| BLG-SPEC-48 ✅ | POST /digest/si05/send API contract gap check and authoring | Shipped v5.2 ST-04, EPIC-01 — digest_endpoints.md v0.2→v0.3 with authentication requirements section; API Contracts & Documentation Owner + Head of Specs Team sign-off |
+| BLG-OPS-55 ✅ | Deployment runbook update for SI-05 operational environment | Shipped v5.2 ST-07, EPIC-02 — docs/ops/production_deployment_runbook.md v0.1→v0.2; §6 added for SI-05 env vars, cron schedule, failure detection, health check; Infrastructure & Operations Owner sign-off |
+| BLG-OPS-56 ✅ | SI-05 service scheduled run health check | Shipped v5.2 ST-08, EPIC-02 — docs/ops/si05_health_check_procedure.md created; 3 check options; escalation path; weekly cadence; Infrastructure & Operations Owner sign-off |
+| BLG-GOV-94 ✅ | SI-05 Phase 1 delivery verification protocol | Shipped v5.2 ST-14, EPIC-04 — docs/qa/si05_delivery_verification_protocol.md created; covers AC-09 Telegram + AC-01 compliance_summary; cross-referenced with acceptance test protocol; Director of Quality sign-off |
+| BLG-GOV-96 ✅ | SI-05 Phase 1 effectiveness measurement criteria | Shipped v5.2 ST-16, EPIC-04 — 3 effectiveness criteria defined; 30-day review scheduled 2026-07-04; criteria at claude/cycles/2026-06-08__release-v5.2/si05_effectiveness_criteria.md; Product Owner sign-off |
+| BLG-GOV-97 ✅ | Claude API model deprecation compliance check | Shipped v5.2 ST-09, EPIC-03 — PASS: claude-haiku-4-5-20251001 not deprecated; check at docs/governance/ai_model_deprecation_check_v52.md; next review 2026-09-08; AI Compliance & Governance Officer sign-off |
+| BLG-GOV-98 ✅ | Telegram bot token minimal-permission security review | Shipped v5.2 ST-10, EPIC-03 — PASS with recommendation: send-only confirmed; BotFather manual check recommended; security_register.md updated (Review 002); Cybersecurity & Trust Lead sign-off |
+| BLG-GOV-99 ✅ | SI-05 digest endpoint authentication review | Shipped v5.2 ST-11, EPIC-03 — GAP_FOUND: POST /digest/si05/send unauthenticated; BLG-BE-35 P2 filed; security_register.md updated (Review 003); Cybersecurity & Trust Lead sign-off |
+| BLG-GOV-100 ✅ | Backend endpoint documentation coverage audit post-v5.1 | Shipped v5.2 ST-12, EPIC-03 — 50 routes enumerated; 6 contract gaps (BLG-SPEC-49/50/51/52); audit at docs/ops/endpoint_coverage_audit_v52.md; Head of Engineering sign-off |

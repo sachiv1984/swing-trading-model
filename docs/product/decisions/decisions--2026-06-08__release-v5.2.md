@@ -1,6 +1,6 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v5.2
 Cycle: 2026-06-08__release-v5.2
 Last Updated: 2026-06-08
@@ -36,8 +36,8 @@ Last Updated: 2026-06-08
 None — no escalations raised in this cycle; RISK-03 (auth gap discovery) is managed as a conditional follow-on item if gap is found, not an accepted risk.
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
+Superseded by: v5.2 ship — 2026-06-08
+Changelog: docs/product/changelog.md#v52
+Verification report: claude/cycles/2026-06-08__release-v5.2/verification_report.md
 Cycle: 2026-06-08__release-v5.2

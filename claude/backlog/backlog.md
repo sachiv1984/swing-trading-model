@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-07 (rebalance 2026-06-07__scheduled — DL-039; 25 items added: BLG-GOV-92–103, BLG-QA-45–49, BLG-BE-32–34, BLG-OPS-55–56, BLG-SPEC-48, BLG-FE-64–65)
+**Last Updated:** 2026-06-08 (post-ship closure 2026-06-08__release-v5.2; 15 items marked ✅ COMPLETE: BLG-BE-32/33, BLG-QA-46/47/48, BLG-SPEC-47/48, BLG-OPS-55/56, BLG-GOV-94/96/97/98/99/100)
 **Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
 
 > ⚠️ Standing Notice
@@ -1299,6 +1299,7 @@ PO-04 (Reflection ↔ Outcome Correlation) requires journal entries with quantif
 ---
 
 ### BLG-BE-32 — SI-05 Telegram delivery retry and failure handling
+✅ COMPLETE — 2026-06-08 — cycle 2026-06-08__release-v5.2 (ST-05, EPIC-02; retry max 2 retries 30s/60s backoff; ERROR logging confirmed; 3 unit tests added; injectable sleep for CI; 24 tests passing; staging AC-04 PASS)
 **Priority:** P2 (Medium)
 **Type:** Backend Engineering / Reliability
 **Owner:** Backend Engineering Patterns Owner; Infrastructure & Operations Owner
@@ -1326,6 +1327,7 @@ si05_digest_service.py sends weekly digests via Telegram. The current failure mo
 ---
 
 ### BLG-BE-33 — SI-05 digest delivery log table
+✅ COMPLETE — 2026-06-08 — cycle 2026-06-08__release-v5.2 (ST-06, EPIC-02; si05_digest_log table; schema: id/sent_at/status/event_count/telegram_message_id/error_message/created_at; CREATE TABLE IF NOT EXISTS guard; log rows on both paths; registered in main.py on_startup(); Data Model Owner sign-off; staging AC-04 PASS)
 **Priority:** P2 (Medium)
 **Type:** Backend Engineering / Data Model
 **Owner:** Data Model & Domain Schema Owner; Backend Engineering Patterns Owner
@@ -1754,6 +1756,7 @@ BLG-QA-26 (Arc 5 E2E QA protocol) gates on "all five Arc 5 features shipped" but
 ---
 
 ### BLG-QA-46 — SI-05 digest service edge case test gap analysis
+✅ COMPLETE — 2026-06-08 — cycle 2026-06-08__release-v5.2 (ST-13, EPIC-04; 2 gaps found and fixed: test_telegram_api_connection_failure_logs_error + test_message_truncation_at_character_limit; 26 tests total passing; QA Lead sign-off)
 **Priority:** P2 (Medium)
 **Type:** QA / Test Coverage
 **Owner:** QA Lead; Backend Engineering Patterns Owner
@@ -1779,6 +1782,7 @@ si05_digest_service.py was delivered with 21 unit tests. A gap analysis confirms
 ---
 
 ### BLG-QA-47 — SI-05 Phase 1 acceptance test protocol
+✅ COMPLETE — 2026-06-08 — cycle 2026-06-08__release-v5.2 (ST-14, EPIC-04; docs/qa/si05_acceptance_test_protocol.md produced; covers v5.1 deferred ACs: AC-09 Telegram delivery, AC-01 compliance_summary; Director of Quality sign-off)
 **Priority:** P2 (Medium)
 **Type:** QA / Test Planning
 **Owner:** QA & Testing Owner; Director of Quality
@@ -1804,6 +1808,7 @@ v5.1 post-ship closure deferred 2 staging-only ACs to a staged verification spri
 ---
 
 ### BLG-QA-48 — Regression test suite baseline refresh post-v5.1
+✅ COMPLETE — 2026-06-08 — cycle 2026-06-08__release-v5.2 (ST-15, EPIC-04; POST /digest/si05/send confirmed in test.py; 5 Playwright scenarios confirmed; no formal baseline doc — BLG-QA-50 filed; QA Lead sign-off)
 **Priority:** P2 (Medium)
 **Type:** QA / Test Infrastructure
 **Owner:** QA Lead
@@ -2642,6 +2647,7 @@ PO-02 (journal pattern recognition) and PO-03 (behavioural error taxonomy) will 
 ---
 
 ### BLG-SPEC-47 — Align SI-05 `pass_rate` computation with BLG-GOV-86 §5.2 (mean-of-per-rule vs overall aggregate)
+✅ COMPLETE — 2026-06-08 — cycle 2026-06-08__release-v5.2 (ST-03, EPIC-01; Option(a) chosen — BLG-GOV-86 §5.2 amended to accept volume-weighted overall rate; si05-telegram-message-format-spec.md v1.1→v1.2; DEV-v51-EPIC01-01 resolved and closed; Head of Specs Team sign-off)
 **Priority:** P3 (Low)
 **Type:** Spec Debt / API Contracts
 **Owner:** Head of Specs Team; Head of Backend Engineering
@@ -2667,6 +2673,7 @@ PO-02 (journal pattern recognition) and PO-03 (behavioural error taxonomy) will 
 ---
 
 ### BLG-SPEC-48 — POST /digest/si05/send API contract gap check and authoring
+✅ COMPLETE — 2026-06-08 — cycle 2026-06-08__release-v5.2 (ST-04, EPIC-01; digest_endpoints.md v0.2→v0.3 with authentication requirements section; API Contracts & Documentation Owner sign-off; Head of Specs Team sign-off)
 **Priority:** P1 (High)
 **Type:** Spec / API Contract
 **Owner:** API Contracts & Documentation Owner; Head of Specs Team
@@ -3513,6 +3520,7 @@ BLG-OPS-31 defined Render log retention. claude_audit_log (shipped v4.0) and Sup
 ---
 
 ### BLG-OPS-55 — Deployment runbook update for SI-05 operational environment
+✅ COMPLETE — 2026-06-08 — cycle 2026-06-08__release-v5.2 (ST-07, EPIC-02; docs/ops/production_deployment_runbook.md v0.1→v0.2; §6 added covering SI-05 env vars, cron schedule, service verification, failure detection; Infrastructure & Operations Owner sign-off)
 **Priority:** P2 (Medium)
 **Type:** Operations / Documentation
 **Owner:** Infrastructure & Operations Owner
@@ -3541,6 +3549,7 @@ SI-05 Phase 1 (shipped v5.1) introduced new operational requirements not yet doc
 ---
 
 ### BLG-OPS-56 — SI-05 service scheduled run health check
+✅ COMPLETE — 2026-06-08 — cycle 2026-06-08__release-v5.2 (ST-08, EPIC-02; docs/ops/si05_health_check_procedure.md created; 3 check options: si05_digest_log (Option A), Render logs (Option B interim), Telegram history (Option C); escalation path; weekly cadence; Infrastructure & Operations Owner sign-off)
 **Priority:** P2 (Medium)
 **Type:** Operations / Service Reliability
 **Owner:** Infrastructure & Operations Owner; Head of Engineering
@@ -3986,6 +3995,7 @@ OA-01 (release_planning_prompt.md §-1.2 patch) and OA-02 (execution_prompt.md �
 ---
 
 ### BLG-GOV-94 — SI-05 Phase 1 delivery verification protocol
+✅ COMPLETE — 2026-06-08 — cycle 2026-06-08__release-v5.2 (ST-14, EPIC-04; docs/qa/si05_delivery_verification_protocol.md created; covers AC-09 Telegram + AC-01 compliance_summary; cross-referenced with SI-05 acceptance test protocol; Director of Quality sign-off)
 **Priority:** P2 (Medium)
 **Type:** Governance / QA Planning
 **Owner:** Director of Quality; QA & Testing Owner
@@ -4042,6 +4052,7 @@ strategy_rules.md §11 defines production parameters (5× initial ATR, 2× profi
 ---
 
 ### BLG-GOV-96 — SI-05 Phase 1 effectiveness measurement criteria
+✅ COMPLETE — 2026-06-08 — cycle 2026-06-08__release-v5.2 (ST-16, EPIC-04; 3 effectiveness criteria defined; 30-day review scheduled 2026-07-04; criteria documented at claude/cycles/2026-06-08__release-v5.2/si05_effectiveness_criteria.md; Product Owner sign-off)
 **Priority:** P2 (Medium)
 **Type:** Governance / Product Accountability
 **Owner:** Product Owner; PMO Lead
@@ -4070,6 +4081,7 @@ SI-05 Phase 1 (weekly Telegram digest, shipped v5.1) has no defined effectivenes
 ---
 
 ### BLG-GOV-97 — Claude API model deprecation compliance check
+✅ COMPLETE — 2026-06-08 — cycle 2026-06-08__release-v5.2 (ST-09, EPIC-03; PASS — claude-haiku-4-5-20251001 not deprecated; check documented at docs/governance/ai_model_deprecation_check_v52.md; next review 2026-09-08; AI Compliance & Governance Officer sign-off)
 **Priority:** P1 (High)
 **Type:** Governance / AI Compliance
 **Owner:** AI Compliance & Governance Officer; Head of Engineering
@@ -4095,6 +4107,7 @@ BLG-GOV-64 pins the Claude API model to a specific version (claude-3-5-sonnet-20
 ---
 
 ### BLG-GOV-98 — Telegram bot token minimal-permission security review
+✅ COMPLETE — 2026-06-08 — cycle 2026-06-08__release-v5.2 (ST-10, EPIC-03; PASS with recommendation — send-only confirmed; BotFather manual check recommended as advisory; security_register.md updated; Cybersecurity & Trust Lead sign-off)
 **Priority:** P2 (Medium)
 **Type:** Governance / Security
 **Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
@@ -4121,6 +4134,7 @@ SI-05 Phase 1 introduced a Telegram bot token used to send weekly digest message
 ---
 
 ### BLG-GOV-99 — SI-05 digest endpoint authentication review
+✅ COMPLETE — 2026-06-08 — cycle 2026-06-08__release-v5.2 (ST-11, EPIC-03; GAP_FOUND — POST /digest/si05/send unauthenticated; BLG-BE-35 P2 filed for future sprint; security_register.md updated (Review 003); does not block EPIC-03; Cybersecurity & Trust Lead sign-off)
 **Priority:** P2 (Medium)
 **Type:** Governance / Security
 **Owner:** Cybersecurity & Trust Lead; Head of Engineering
@@ -4146,6 +4160,7 @@ POST /digest/si05/send is a new endpoint that triggers external Telegram API cal
 ---
 
 ### BLG-GOV-100 — Backend endpoint documentation coverage audit post-v5.1
+✅ COMPLETE — 2026-06-08 — cycle 2026-06-08__release-v5.2 (ST-12, EPIC-03; 50 routes enumerated; 6 contract gaps found: BLG-SPEC-49/50/51/52 filed; audit documented at docs/ops/endpoint_coverage_audit_v52.md; Head of Engineering sign-off)
 **Priority:** P2 (Medium)
 **Type:** Governance / Process Compliance
 **Owner:** Head of Engineering; API Contracts & Documentation Owner

@@ -3,9 +3,48 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-04
+**Last Updated:** 2026-06-08
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v5.2 — Governance Debt, SI-05 Ops & Spec Compliance — 2026-06-08
+Cycle: 2026-06-08__release-v5.2
+Verified: Verified
+Verification report: claude/cycles/2026-06-08__release-v5.2/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Governance patches: OA-01 — release_planning_prompt.md v2.33→v2.34 §-1.2 STEP 8.1 Option(b) path added; OA-02 — execution_prompt.md v3.36→v3.37 §3.1.A step 2c test-authoring spec_references guidance; BLG-SPEC-47 resolved — DEV-v51-EPIC01-01 closed, Option(a) pass_rate computation documented, si05-telegram-message-format-spec.md updated; BLG-SPEC-48 — digest_endpoints.md v0.2→v0.3 authentication requirements section added. | claude/system/release_planning_prompt.md v2.34; claude/system/execution_prompt.md v3.37; docs/specs/api_contracts/digest_endpoints.md v0.3; docs/product/decisions/si05-telegram-message-format-spec.md |
+| EPIC-02 | SI-05 operational hardening: BLG-BE-32 — Telegram retry (max 2 retries, 30s/60s backoff; ERROR logging; 3 new unit tests; injectable sleep for CI); BLG-BE-33 — si05_digest_log table (schema: id, sent_at, status, event_count, telegram_message_id, error_message, created_at; CREATE TABLE IF NOT EXISTS guard; log rows on both paths; registered in main.py on_startup()); BLG-OPS-55 — production deployment runbook §6 (SI-05 env vars, cron schedule, failure detection, health check; v0.1→v0.2); BLG-OPS-56 — SI-05 health check procedure (3 check options; escalation path; weekly cadence). | backend/services/si05_digest_service.py; docs/specs/api_contracts/digest_endpoints.md; docs/ops/production_deployment_runbook.md v0.2; docs/ops/si05_health_check_procedure.md |
+| EPIC-03 | Security reviews: BLG-GOV-97 — Claude API model deprecation check (PASS; claude-haiku-4-5-20251001 current; next review 2026-09-08); BLG-GOV-98 — Telegram bot token minimal-permission review (PASS with recommendation: send-only confirmed; BotFather manual check recommended); BLG-GOV-99 — digest endpoint authentication review (GAP_FOUND: POST /digest/si05/send unauthenticated; BLG-BE-35 P2 filed); BLG-GOV-100 — backend endpoint coverage audit (50 routes enumerated; 6 contract gaps; BLG-SPEC-49/50/51/52 filed). | docs/governance/ai_model_deprecation_check_v52.md; docs/security/security_register.md; docs/ops/endpoint_coverage_audit_v52.md |
+| EPIC-04 | QA governance: BLG-QA-46 — SI-05 edge case gap analysis + 2 new tests (connection failure, message truncation; 26 tests total passing); BLG-QA-47 + BLG-GOV-94 — SI-05 Phase 1 acceptance test protocol + delivery verification protocol docs; BLG-QA-48 — regression baseline refresh (POST /digest/si05/send in test.py confirmed; 5 Playwright scenarios confirmed; BLG-QA-50 formal baseline doc filed); BLG-GOV-96 — SI-05 effectiveness measurement criteria (3 criteria; 30-day review 2026-07-04). | tests/test_si05_digest_service.py; backend/routers/test.py; docs/qa/si05_edge_case_gap_analysis.md; docs/qa/si05_acceptance_test_protocol.md; docs/qa/si05_delivery_verification_protocol.md; docs/qa/regression_baseline_refresh_v51.md; claude/cycles/2026-06-08__release-v5.2/si05_effectiveness_criteria.md |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01] OA-01 — release_planning_prompt.md §-1.2 STEP 8.1 Option(b) accommodation patch (v2.33→v2.34)
+- [ST-02] OA-02 — execution_prompt.md §3.1.A test-authoring spec_references guidance (v3.36→v3.37)
+- [ST-03] BLG-SPEC-47 — SI-05 pass_rate computation aligned with BLG-GOV-86 §5.2; DEV-v51-EPIC01-01 resolved
+- [ST-04] BLG-SPEC-48 — POST /digest/si05/send API contract gap check and authoring (digest_endpoints.md v0.3)
+- [ST-05] BLG-BE-32 — SI-05 Telegram delivery retry and failure handling (30s/60s backoff; ERROR logging; unit tests)
+- [ST-06] BLG-BE-33 — SI-05 digest delivery log table (si05_digest_log) — Data Model Owner sign-off
+- [ST-07] BLG-OPS-55 — Deployment runbook update for SI-05 operational environment (v0.1→v0.2)
+- [ST-08] BLG-OPS-56 — SI-05 service scheduled run health check procedure
+- [ST-09] BLG-GOV-97 — Claude API model deprecation compliance check (PASS; next review 2026-09-08)
+- [ST-10] BLG-GOV-98 — Telegram bot token minimal-permission security review (PASS with recommendation)
+- [ST-11] BLG-GOV-99 — SI-05 digest endpoint authentication review (GAP_FOUND: BLG-BE-35 P2 filed)
+- [ST-12] BLG-GOV-100 — Backend endpoint documentation coverage audit post-v5.1 (50 routes; 6 gaps filed)
+- [ST-13] BLG-QA-46 — SI-05 digest service edge case test gap analysis (2 new tests; 26 total passing)
+- [ST-14] BLG-QA-47 + BLG-GOV-94 — SI-05 Phase 1 acceptance test protocol and delivery verification protocol
+- [ST-15] BLG-QA-48 — Regression test suite baseline refresh post-v5.1
+- [ST-16] BLG-GOV-96 — SI-05 Phase 1 effectiveness measurement criteria (30-day review 2026-07-04)
+
+Sign-off: Product Owner — 2026-06-08
+QA sign-off: Director of Quality — 2026-06-08
 
 ---
 

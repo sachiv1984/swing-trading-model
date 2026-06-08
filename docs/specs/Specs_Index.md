@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-06-03
+**Last Updated:** 2026-06-08 (post-ship closure 2026-06-08__release-v5.2; digest_endpoints.md updated to v0.3; §6.4 contract gaps added)
 
 ---
 
@@ -106,7 +106,7 @@ It points to the **single canonical source**.
 - `pre_trade_research_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-04-30, ST-04, cycle 2026-04-29__release-v3.1): GET /research/{ticker} — aggregates signal, regime, sector, screener, earnings (all sub-sources null-safe). Sign-off: Sprint Execution Engine (autonomous class).
 - `earnings_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-04-30, ST-07, cycle 2026-04-29__release-v3.1): GET /earnings/{ticker} — upcoming earnings date via yfinance; proximity flag. Sign-off: Sprint Execution Engine (autonomous class).
 - `alerts_endpoints.md` — Class 1 Canonical, v0.3, Active (created 2026-03-20, ST-02; updated v0.3 2026-03-24, ST-05): Alert rules CRUD, alert evaluation, notification feed, notification preferences, alert history (GET /alerts/history). Architecture: FastAPI BackgroundTasks per ADR-003. Sign-off: Head of Specs Team (2026-03-20).
-- `digest_endpoints.md` — Class 1 Canonical, v0.1, Active (created 2026-04-03, ST-08, cycle 2026-03-31__release-v2.4): GET /digest/weekly — 7-day trading digest (realised P&L, alert activity, compliance trend, staleness summary). Deterministic data fields only. Sign-off: QA Lead + DoQ (2026-04-01/03).
+- `digest_endpoints.md` — Class 1 Canonical, v0.3, Active (created 2026-04-03, ST-08, cycle 2026-03-31__release-v2.4; updated v0.2 ST-03 cycle 2026-06-21__release-v5.1 — POST /digest/si05/send + DEV-v51-EPIC01-01 known deviation; updated v0.3 ST-03/ST-04 cycle 2026-06-08__release-v5.2 — pass_rate computation documented per BLG-SPEC-47 resolution; authentication requirements section added per BLG-SPEC-48): GET /digest/weekly; POST /digest/si05/send. Sign-off: QA Lead + DoQ (v0.1); API Contracts & Documentation Owner + Head of Specs Team (v0.3, 2026-06-08).
 - `health_endpoints.md` — Class 1 Canonical, v1.3, Active (created 2026-03-18; updated v1.1 by ST-07 cycle 2026-03-24__release-v2.3; updated v1.2 by ST-08 adding GET /health/database; updated v1.3 by ST-08/ST-09 cycle 2026-04-25__release-v3.0 adding external_apis + ai_journal sections to GET /health): GET /health + GET /health/database operational health check endpoints. Sign-off: Head of Specs Team (v1.3, 2026-04-26).
 - `analytics_endpoints.md` — Class 1 Canonical, v2.1.0, Active (updated 2026-04-15, ST-08, cycle 2026-04-13__release-v2.7): GET /analytics/market-correlation (Pearson correlation vs benchmark, TTL-cached). Sign-off: Head of Specs Team.
 - `signal_endpoints.md` — Class 1 Canonical, v1.2, Active (updated 2026-05-18, ST-01, cycle 2026-05-18__release-v3.7): PATCH /signals/{id} updated to accept `watchlisted` as valid status value; `watchlisted` added to signals table CHECK constraint (signal-to-watchlist workflow). Sign-off: Sprint Execution Engine (autonomous class). Previous: v1.1 (2026-04-15, ST-09, v2.7): POST /signals/generate supplementary display-only indicator fields; Strategy Rules Owner sign-off.
@@ -275,6 +275,25 @@ This section tracks canonical spec gaps that have been identified but not yet fi
 **Resolution:** ST-13 (v2.0 EPIC-04) spec authored in `portfolio_endpoints.md v2.0.0 §GET /portfolio/prospective-heat`; endpoint implemented in backend; `@unittest.skip` removed from `TestProspectiveHeat`; all integration tests pass. Commit 279e832.
 
 ~~`GET /portfolio/prospective-heat` endpoint is not defined in `docs/specs/api_contracts/portfolio_endpoints.md` and has no backend implementation. Referenced by the ProspectiveHeatPanel frontend component. Integration tests written in `tests/test_portfolio_integration.py` are currently skipped (`@unittest.skip`) pending spec authoring.~~
+
+---
+
+### 6.4 API contract gaps from v5.2 endpoint coverage audit (BLG-SPEC-49–52)
+
+**Status:** Open — identified 2026-06-08 (ST-12 BLG-GOV-100 coverage audit, cycle 2026-06-08__release-v5.2)
+**Owner:** API Contracts & Documentation Owner; Head of Specs Team
+**Backlog items:** BLG-SPEC-49, BLG-SPEC-50, BLG-SPEC-51, BLG-SPEC-52
+
+Four backend endpoints exist in `backend/routers/` and `docs/reference/openapi.yaml` but have no corresponding `## METHOD /path` entry in `docs/specs/api_contracts/`. These are spec debt items from prior releases:
+
+| Backlog item | Endpoint | Contract file needed |
+|---|---|---|
+| BLG-SPEC-49 | GET /ai/journal-summary/history | ai_endpoints.md (or new file) |
+| BLG-SPEC-50 | GET /analytics/compliance-metrics | analytics_endpoints.md or arc5_compliance_analytics.md |
+| BLG-SPEC-51 | GET /news/{ticker} | pre_trade_research_endpoints.md or new news_endpoints.md |
+| BLG-SPEC-52 | Watchlist endpoints | new watchlist_endpoints.md |
+
+Each contract must include `## METHOD /path` heading, request/response schema, error codes, and openapi.yaml confirmation. Per CLAUDE.md §2.
 
 ---
 

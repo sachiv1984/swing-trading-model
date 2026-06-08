@@ -59,8 +59,9 @@
 | v4.9  | 5       | 5         | 1.00     | Zero spec deviations; all 5 stories autonomous; EPIC-04 (ST-06/ST-07) gate-deferred 2026-06-21 (never in sprint scope); 3 EPICs autonomous class sign-off (BLG-GOV-19); EPIC-03 vs main execution_state.json conflict resolved per CLAUDE.md §8 (second application); 13 pre-existing Phase B failures surfaced and fixed as RISK-02 bonus |
 | v5.0  | 13      | 13        | 1.00     | Zero spec deviations; 13 stories across 4 EPICs (governance patches + product correctness + SI-05 pre-work + staging verification); 2 delegations (ST-08 delegated_qa, ST-09 delegated_decision) both resolved same-session day; all 4 EPICs autonomous class sign-off (BLG-GOV-19); cleanest mixed-type sprint on record |
 | v5.1  | 6       | 6         | 1.00     | 1 P3 deviation (DEV-v51-EPIC01-01 — pass_rate computation method; BLG-SPEC-47 filed); all 6 stories autonomous; zero delegations; SI-05 Phase 1 Telegram digest delivered; BLG-FE-61 3-cycle recurrence closed; staged verification protocol filed (BLG-GOV-89) |
+| v5.2  | 16      | 16        | 1.00     | Zero spec deviations — cleanest large-sprint on record; both delegated items (ST-05 BLG-BE-32, ST-06 BLG-BE-33) unblocked and completed with staging evidence; 4 EPICs: security reviews + QA governance docs + SI-05 ops hardening + governance patches; OA-01/OA-02 resolved; DEV-v51-EPIC01-01 closed |
 
-**Rolling 6-cycle average (v4.6–v5.1):** 1.00
+**Rolling 6-cycle average (v4.7–v5.2):** 1.00
 
 ---
 

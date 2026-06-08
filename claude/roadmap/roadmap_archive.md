@@ -1154,3 +1154,20 @@ v5.0 Governance Hardening, Product Correctness & SI-05 Phase 1 Pre-work. Theme: 
 ### Original Roadmap Entry
 
 v5.1 SI-05 Phase 1 & Governance Debt. SI-05 Phase 1 weekly Telegram digest delivered (si05_digest_service.py; POST /digest/si05/send; 21 unit tests; BLG-GOV-67); BLG-SPEC-45 financial reporting scope confirmed OUT OF SCOPE; delivery_verification_prompt.md §-1.3 Tier 2 agent-mediated signer fix (v2.9→v3.0; LL-RP-v5.0-D-2); SignalCard allocation_insufficient badge Playwright E2E coverage (5 scenarios; BLG-FE-61 — 3-cycle recurrence closed); compliance_summary validation by code review (BLG-QA-43); staged verification sprint protocol document v1.0 (BLG-GOV-89). 6/6 stories. 1 P3 deviation (DEV-v51-EPIC01-01; BLG-SPEC-47 filed). PRs #675–#677. Verified_with_deviations 2026-06-21.
+
+---
+
+## RA:v5.2 — Governance Debt, SI-05 Ops & Spec Compliance
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-08
+**Shipped version:** v5.2
+**Cycle reference:** 2026-06-08__release-v5.2
+**Verification report:** claude/cycles/2026-06-08__release-v5.2/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-08
+
+### Original Roadmap Entry
+
+v5.2 Governance Debt, SI-05 Ops & Spec Compliance. OA-01 + OA-02 governance patches (release_planning_prompt.md v2.34; execution_prompt.md v3.37); BLG-SPEC-47 resolved (DEV-v51-EPIC01-01 closed; Option(a) chosen); BLG-SPEC-48 contract authored (digest_endpoints.md v0.3); SI-05 operational hardening (BLG-BE-32 retry; BLG-BE-33 log table); deployment runbook v0.2 + health check procedure; 3 security reviews (model deprecation PASS; bot token PASS with recommendation; endpoint auth GAP_FOUND — BLG-BE-35 filed); endpoint coverage audit (50 routes; 6 gaps: BLG-SPEC-49–52); SI-05 QA acceptance protocol + edge case tests (26 total); effectiveness criteria (review 2026-07-04). 16/16 stories. Zero spec deviations. PRs #694–#697. Verified 2026-06-08.
