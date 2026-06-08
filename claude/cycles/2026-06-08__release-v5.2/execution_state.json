@@ -5,14 +5,14 @@
   "invoked_utc": "2026-06-08T10:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-08T11:00:00Z",
+  "last_updated_utc": "2026-06-08T11:30:00Z",
 
   "epics": {
     "EPIC-03": {
       "status": "done",
       "branch": "exec/2026-06-08__release-v5.2/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 694,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.2/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
@@ -122,7 +122,7 @@
     },
 
     "EPIC-02": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-06-08__release-v5.2/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
@@ -133,45 +133,45 @@
         "ST-05": {
           "title": "BLG-BE-32: SI-05 Telegram delivery retry and failure handling",
           "classification": "delegated_backend",
-          "status": "not_started",
-          "assigned_to": "human",
+          "status": "blocked_backend",
+          "assigned_to": "Head of Engineering",
           "github_issue": 682,
           "branch": "exec/2026-06-08__release-v5.2/EPIC-02",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": "Commit [EPIC-02][ST-05] pushed to exec/2026-06-08__release-v5.2/EPIC-02 branch",
+          "delegation_record_id": "DEL-20260608-01",
+          "blocked_since_utc": "2026-06-08T11:30:00Z",
+          "unblock_criteria": "Commit [EPIC-02][ST-05] pushed; unit test for ERROR logging present and passing; retry policy documented",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": ["backend/services/si05_digest_service.py"],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.delegation_record",
           "sign_off_record": null,
-          "notes": "Current failure handling: ERROR logged at line 274, no retry logic. Staging-only AC-04 (Render logs evidence)."
+          "notes": "Current baseline: ERROR logging at line 274 confirmed; no retry logic. Staging-only AC-04 (Render logs evidence required from I&O Owner)."
         },
         "ST-06": {
           "title": "BLG-BE-33: SI-05 digest delivery log table (si05_digest_log)",
           "classification": "delegated_backend",
-          "status": "not_started",
-          "assigned_to": "human",
+          "status": "blocked_backend",
+          "assigned_to": "Head of Engineering",
           "github_issue": 683,
           "branch": "exec/2026-06-08__release-v5.2/EPIC-02",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": "Commit [EPIC-02][ST-06] pushed to exec/2026-06-08__release-v5.2/EPIC-02 branch",
+          "delegation_record_id": "DEL-20260608-02",
+          "blocked_since_utc": "2026-06-08T11:30:00Z",
+          "unblock_criteria": "Commit [EPIC-02][ST-06] pushed; CREATE TABLE IF NOT EXISTS guard present; log rows written on success and failure paths; Data Model Owner sign-off; I&O Owner staging confirmation",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": ["docs/specs/api_contracts/digest_endpoints.md"],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.B.delegation_record",
           "sign_off_record": null,
-          "notes": "Staging-only AC-04 (DB migration presence). Optional GET endpoint if scoped — if implemented, requires CLAUDE.md §2 compliance."
+          "notes": "Optional GET /digest/si05/log endpoint — if implemented, CLAUDE.md §2 compliance required (test.py, openapi.yaml, contract, SystemStatus.js count). Staging-only AC-04 (DB migration presence)."
         },
         "ST-07": {
           "title": "BLG-OPS-55: Deployment runbook update for SI-05 operational environment",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 684,
           "branch": "exec/2026-06-08__release-v5.2/EPIC-02",
@@ -179,18 +179,24 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable — creates/updates runbook in docs/operations/"
+          "completed_utc": "2026-06-08T11:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/ops/production_deployment_runbook.md"],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["SI-05 env vars section added (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID); cron schedule verification; failure detection reference; health check reference"],
+            "cleared_utc": "2026-06-08T11:30:00Z"
+          },
+          "notes": "Runbook updated at docs/ops/production_deployment_runbook.md v0.1→v0.2. New section §6 covers SI-05 env vars, cron schedule, service verification, failure detection."
         },
         "ST-08": {
           "title": "BLG-OPS-56: SI-05 service scheduled run health check procedure",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 685,
           "branch": "exec/2026-06-08__release-v5.2/EPIC-02",
@@ -198,13 +204,20 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "no prior spec applicable — creates health check procedure doc. Can proceed with Render logs as interim if ST-06 not yet merged."
+          "completed_utc": "2026-06-08T11:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/ops/si05_health_check_procedure.md"],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["3 check options documented (si05_digest_log, Render logs, Telegram history); BLG-BE-33 interim noted; escalation path defined; weekly cadence and responsible role specified"],
+            "cleared_utc": "2026-06-08T11:30:00Z"
+          },
+          "delivery_note": "docs/ops/si05_health_check_procedure.md",
+          "notes": "Health check procedure created at docs/ops/si05_health_check_procedure.md. References BLG-BE-33 as prerequisite for Option A (log table). Option B (Render logs) documented as interim."
         }
       }
     },
@@ -386,9 +399,9 @@
     }
   },
 
-  "blocked_items": [],
-  "delegated_items": [],
-  "completed_items": [],
+  "blocked_items": ["ST-05", "ST-06"],
+  "delegated_items": ["ST-05", "ST-06"],
+  "completed_items": ["ST-09", "ST-10", "ST-11", "ST-12", "ST-07", "ST-08"],
   "open_escalations": [],
 
   "merge_gate": {

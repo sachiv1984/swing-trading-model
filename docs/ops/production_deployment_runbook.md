@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.1
-**Last Updated:** 2026-03-17
+**Version:** 0.2
+**Last Updated:** 2026-06-08
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -172,11 +172,75 @@ Redeploy the previous frontend build via the hosting platform.
 
 ---
 
-## 6. Cross-References
+---
+
+## 6. SI-05 Phase 1 Operational Requirements
+
+*Added v0.2 — 2026-06-08, ST-07 (BLG-OPS-55), v5.2 sprint. I&O Owner sign-off.*
+
+This section covers the operational requirements for the SI-05 weekly strategy integrity digest service (Phase 1). Apply these requirements when deploying any release that includes SI-05 components.
+
+### 6.1 Environment Variables
+
+| Variable | Purpose | Where to obtain |
+|---|---|---|
+| `TELEGRAM_BOT_TOKEN` | Authentication token for the Telegram bot | Obtain from BotFather (`@BotFather` in Telegram); rotate via BotFather if compromised |
+| `TELEGRAM_CHAT_ID` | Target chat ID for digest delivery | Obtain from the Telegram chat where the bot should send digests (use `getUpdates` API or Telegram client) |
+
+Both variables are required. If either is absent, the digest service logs a WARNING and returns `sent: false` without error — the weekly digest will not be sent.
+
+**Security note:** Treat `TELEGRAM_BOT_TOKEN` as a secret. Do not commit to source control. Store in Render environment variables (encrypted at rest). Rotate immediately if exposed.
+
+### 6.2 Cron Schedule Configuration
+
+The SI-05 weekly digest is triggered by the cron scheduler configured in the backend (APScheduler or Render cron job). Verify the schedule is active:
+
+- **Render cron job:** Check the Render dashboard → Cron Jobs section; the SI-05 digest job should be scheduled weekly (Sunday or Monday, depending on configuration)
+- **APScheduler (if used):** Verify the scheduler starts on service boot and the SI-05 job is registered with the correct interval
+
+**Expected trigger:** Once per week. The exact day/time is set in the scheduler configuration — confirm with the sprint that introduced SI-05 (v5.1 ST-01).
+
+### 6.3 How to Verify the Digest Service is Running
+
+After deployment, verify the SI-05 digest service is operational:
+
+**Option A (preferred after BLG-BE-33 ships):** Check the `si05_digest_log` table in the production database:
+```sql
+SELECT * FROM si05_digest_log ORDER BY sent_at DESC LIMIT 5;
+```
+A recent row with `status = 'sent'` confirms the service is running.
+
+**Option B — Render service logs:**
+1. Open Render dashboard → Backend service → Logs
+2. Filter for `SI-05`: look for `INFO: SI-05 digest sent (NNN chars)` in the weekly window
+3. If `WARNING: TELEGRAM credentials not set` appears: environment variables are missing
+
+**Option C — Telegram chat history:**
+1. Open the designated digest Telegram chat
+2. Verify a strategy integrity digest message was received in the expected weekly window
+3. Message should contain arc5-compliance metrics formatted per BLG-GOV-86
+
+### 6.4 Failure Detection Reference
+
+| Failure mode | Detection method | Response |
+|---|---|---|
+| Telegram credentials missing | `WARNING: TELEGRAM credentials not set` in Render logs | Add/verify `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` env vars |
+| arc5-compliance data unavailable | `WARNING: arc5-compliance data unavailable` in logs | Check database connection and arc5-compliance query |
+| Telegram API error | `ERROR: SI-05 Telegram send failed: …` in logs | Check Telegram API status; verify bot token valid; check network |
+| Cron job not firing | No `SI-05` log lines for >7 days | Verify cron schedule in Render dashboard or APScheduler config |
+
+For interim health checks before BLG-BE-33 ships, use Render logs (Option B) or Telegram chat history (Option C) above. Once BLG-BE-33 (`si05_digest_log` table) is deployed, use Option A for authoritative delivery confirmation.
+
+**Full health check procedure:** `docs/ops/si05_health_check_procedure.md`
+
+---
+
+## 7. Cross-References
 
 - Database migration governance: `docs/ops/database_migration_governance.md`
 - Delivery verification: `claude/cycles/<cycle_id>/verification_report.md`
 - Health endpoint spec: `docs/specs/api_contracts/health_endpoints.md`
+- SI-05 health check procedure: `docs/ops/si05_health_check_procedure.md`
 - System status report: `docs/System_status_report.md`
 
 ---
