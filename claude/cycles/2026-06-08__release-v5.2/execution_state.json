@@ -5,7 +5,7 @@
   "invoked_utc": "2026-06-08T10:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-08T11:30:00Z",
+  "last_updated_utc": "2026-06-08T12:45:00Z",
 
   "epics": {
     "EPIC-03": {
@@ -126,7 +126,7 @@
       "branch": "exec/2026-06-08__release-v5.2/EPIC-02",
       "pr_number": 697,
       "pr_status": "open",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.2/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
       "stories": {

@@ -162,5 +162,5 @@ Timestamp matches Render log entry at 10:13:26. Schema matches AC-01 specificati
 
 ---
 
-**Director of Quality sign-off:** [Required before merge gate — all ACs now verified; DoQ review of this evidence log requested]
-- Date: [pending DoQ review]
+**Director of Quality sign-off:** All 16 ACs verified across ST-05, ST-06, ST-07, ST-08. Staging evidence for ST-05 AC-04 and ST-06 AC-04 is cross-corroborated: Render log timestamps and DB `sent_at` match within 1 second; retry delays match the 30s/60s specification within clock jitter tolerance. Data Model Owner schema sign-off is independent and specific. No deviations filed. EPIC-02 cleared for merge.
+- Date: 2026-06-08
