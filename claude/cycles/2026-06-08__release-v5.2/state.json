@@ -1,0 +1,75 @@
+{
+  "cycle_id": "2026-06-08__release-v5.2",
+  "release": "v5.2",
+  "date": "2026-06-08",
+  "mode": "standard",
+  "issues_mode": "none",
+  "auto_escalate": true,
+  "status": "Published",
+  "publish_eligible": true,
+  "last_transition_utc": "2026-06-08T00:10:00Z",
+  "assumptions": {
+    "timebox": "",
+    "capacity": ""
+  },
+  "sealed_assumptions": {
+    "timebox": "",
+    "capacity": ""
+  },
+  "locks": {
+    "backlog_lock": {
+      "owned": false,
+      "owner_cycle_id": "2026-06-08__release-v5.2",
+      "owner_release": "v5.2",
+      "acquired_utc": "2026-06-08T00:01:00Z",
+      "status": "released",
+      "marker": "RP:v5.2:2026-06-08__release-v5.2",
+      "txn_state": "committed"
+    },
+    "roadmap_lock": {
+      "owned": false,
+      "owner_cycle_id": "2026-06-08__release-v5.2",
+      "owner_release": "v5.2",
+      "acquired_utc": "2026-06-08T00:04:00Z",
+      "status": "released",
+      "marker": "RA:v5.2:2026-06-08__release-v5.2",
+      "txn_state": "committed"
+    }
+  },
+  "artifacts": {
+    "run_manifest": "present",
+    "backlog_lock": "released",
+    "roadmap_lock": "released",
+    "backlog_txn": "committed",
+    "roadmap_txn": "committed",
+    "stage1_readiness": "pass",
+    "stage2_scope_extraction": "pass",
+    "stage2_scope_document": "present",
+    "stage3_execution_plan": "pass",
+    "stage3_decisions_record": "present",
+    "stage3_5_model_integrity": "pass",
+    "stage4_backlog_slice": "pass",
+    "stage4_issue_manifest": "pass",
+    "stage4_5_capacity_check": "warn",
+    "stage5_5_cross_stage_integrity": "pass",
+    "stage5_7_decision_record_integrity": "pass",
+    "issue_import": "not_applicable"
+  },
+  "attributes": {
+    "plan_structured": true,
+    "plan_executable": true,
+    "backlog_committed": true,
+    "cross_stage_integrity": "pass",
+    "decisions_validated": "pass",
+    "capacity_feasible": "warn"
+  },
+  "open_escalations": [],
+  "deferred_escalations": [],
+  "accepted_risk_escalations": [],
+  "deferred_execution_blockers": [],
+  "mutations": [],
+  "mutation_seq": 0,
+  "invalidated_steps": [],
+  "design_gate_status": "not_required",
+  "amended_backlog_slice_path": ""
+}

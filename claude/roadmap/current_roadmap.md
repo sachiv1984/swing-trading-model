@@ -256,7 +256,16 @@ Today you find stocks through external research and add them to the watchlist ma
 
 ### RA:v5.2 — Governance Debt, SI-05 Ops & Spec Compliance (Planned)
 
-> **Status:** Planning horizon. Scope TBD at `plan release v5.2`. Release planning not yet opened.
+<!-- roadmap-annotation-marker: RA:v5.2:2026-06-08__release-v5.2 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-08__release-v5.2
+- Plan published: 2026-06-08
+- Cycle folder: claude/cycles/2026-06-08__release-v5.2/
+- Backlog slice: claude/cycles/2026-06-08__release-v5.2/stage4_backlog_slice.md
+- Status at annotation: Validated
+
+> **Status:** Release planning complete. 17 firm + 1 conditional stories / 4 EPICs / 1 sprint. See backlog slice for full scope.
 >
 > **Known pre-conditions for v5.2 sprint planning:**
 > - OA-01: release_planning_prompt.md §-1.2 STEP 8.1 Option(b) accommodation patch (due before sprint planning seals) — Head of Specs Team

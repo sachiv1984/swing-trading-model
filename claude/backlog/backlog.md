@@ -4143,3 +4143,33 @@ BLG-GOV-89 (staged verification sprint protocol) defines the pattern. After 2+ u
 
 ---
 
+## Release Slice v5.2 — cycle 2026-06-08__release-v5.2
+
+<!-- release-plan-marker: RP:v5.2:2026-06-08__release-v5.2 -->
+
+**Canonical home:** claude/cycles/2026-06-08__release-v5.2/stage4_backlog_slice.md
+
+| ST-ID | EPIC | Description | Priority | Delegation |
+|-------|------|-------------|----------|-----------|
+| ST-01 | EPIC-01 | OA-01: release_planning_prompt.md §-1.2 STEP 8.1 Option(b) patch | P1/OA | autonomous |
+| ST-02 | EPIC-01 | OA-02: execution_prompt.md §3.1.A test-authoring spec_references guidance | P1/OA | autonomous |
+| ST-03 | EPIC-01 | BLG-SPEC-47: Align SI-05 pass_rate computation with BLG-GOV-86 §5.2 | P3* | autonomous |
+| ST-04 | EPIC-01 | BLG-SPEC-48: POST /digest/si05/send API contract gap check and authoring | P1 | autonomous |
+| ST-05 | EPIC-02 | BLG-BE-32: SI-05 Telegram delivery retry and failure handling | P2 | delegated_backend |
+| ST-06 | EPIC-02 | BLG-BE-33: SI-05 digest delivery log table | P2 | delegated_backend |
+| ST-07 | EPIC-02 | BLG-OPS-55: Deployment runbook update for SI-05 | P2 | autonomous |
+| ST-08 | EPIC-02 | BLG-OPS-56: SI-05 service scheduled run health check | P2 | autonomous |
+| ST-09 | EPIC-03 | BLG-GOV-97: Claude API model deprecation compliance check | P1 | autonomous |
+| ST-10 | EPIC-03 | BLG-GOV-98: Telegram bot token security review | P2 | autonomous |
+| ST-11 | EPIC-03 | BLG-GOV-99: SI-05 digest endpoint authentication review | P2 | autonomous |
+| ST-12 | EPIC-03 | BLG-GOV-100: Backend endpoint coverage audit post-v5.1 | P2 | autonomous |
+| ST-13 | EPIC-04 | BLG-QA-46: SI-05 digest edge case test gap analysis | P2 | autonomous |
+| ST-14 | EPIC-04 | BLG-QA-47 + BLG-GOV-94: SI-05 acceptance test + delivery verification protocol | P2 | autonomous |
+| ST-15 | EPIC-04 | BLG-QA-48: Regression test suite baseline refresh post-v5.1 | P2 | autonomous |
+| ST-16 | EPIC-04 | BLG-GOV-96: SI-05 Phase 1 effectiveness measurement criteria | P2 | autonomous |
+| ST-17 | EPIC-04 | BLG-FE-64: RFJ design review pre-brief (CONDITIONAL — gate 2026-06-21) | P2 | autonomous |
+
+*BLG-SPEC-47 is P3 severity but mandatory before next SI-05 feature increment (DEV-v51-EPIC01-01)
+
+---
+
