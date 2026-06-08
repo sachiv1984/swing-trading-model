@@ -1492,3 +1492,42 @@ The system is ready for:
 - QA evidence logs: qa_evidence_EPIC-01.md (DoQ autonomous class, 35 unit tests), qa_evidence_EPIC-03.md (Director of Quality 2026-05-30), qa_evidence_EPIC-04.md (DoQ autonomous class)
 - Deviations filed: None
 - Test scenarios referenced: tests/test_behavioural_drift_service.py (35 cases), tests/test_red_flag_journal.py
+
+---
+
+## Sprint: 2026-06-08__release-v5.2
+**Date:** 2026-06-08
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-03 | BLG-GOV-97: Claude API model deprecation compliance check — claude-haiku-4-5-20251001 confirmed current; next review 2026-09-08 | docs/governance/ai_model_deprecation_check_v52.md | None |
+| EPIC-03 | BLG-GOV-98: Telegram bot token minimal-permission security review — send-only confirmed; BotFather manual check recommended | docs/security/security_register.md (Review 002) | None |
+| EPIC-03 | BLG-GOV-99: SI-05 digest endpoint authentication review — auth gap found; BLG-BE-35 P2 filed for fix | docs/security/security_register.md (Review 003); docs/specs/api_contracts/digest_endpoints.md | None (gap filed as BLG-BE-35) |
+| EPIC-03 | BLG-GOV-100: Backend endpoint coverage audit — 50 routes; 6 contract gaps; BLG-SPEC-49/50/51/52 filed | docs/ops/endpoint_coverage_audit_v52.md | None (gaps filed as BLG-SPEC backlog items) |
+| EPIC-02 | BLG-BE-32: SI-05 Telegram delivery retry — max 2 retries, 30s/60s backoff; ERROR logging confirmed; 3 unit tests added (24 total) | backend/services/si05_digest_service.py | None |
+| EPIC-02 | BLG-BE-33: SI-05 digest delivery log table (si05_digest_log) — CREATE TABLE IF NOT EXISTS; log writes on success and failure paths; staging DB confirmed | backend/database.py; backend/main.py; docs/specs/api_contracts/digest_endpoints.md | None |
+| EPIC-02 | BLG-OPS-55: Deployment runbook updated v0.1→v0.2 — §6 covers SI-05 env vars, cron schedule, failure detection | docs/ops/production_deployment_runbook.md | None |
+| EPIC-02 | BLG-OPS-56: SI-05 health check procedure v1.0 — 3 check options (log table, Render logs, Telegram); escalation path defined | docs/ops/si05_health_check_procedure.md | None |
+| EPIC-04 | BLG-QA-46: SI-05 edge case gap analysis — 2 missing tests authored (Telegram API failure, message truncation); 26 tests total | tests/test_si05_digest_service.py; docs/qa/si05_edge_case_gap_analysis.md | None |
+| EPIC-04 | BLG-QA-47 + BLG-GOV-94: SI-05 acceptance test protocol + delivery verification protocol — covers v5.1 deferred ACs | docs/qa/si05_acceptance_test_protocol.md; docs/qa/si05_delivery_verification_protocol.md | None |
+| EPIC-04 | BLG-QA-48: Regression test suite baseline refresh — test.py and Playwright confirmed current; BLG-QA-50 filed for formal baseline doc | backend/routers/test.py; docs/qa/regression_baseline_refresh_v51.md | None |
+| EPIC-04 | BLG-GOV-96: SI-05 effectiveness criteria — 3 criteria defined; 30-day review 2026-07-04 | claude/cycles/2026-06-08__release-v5.2/si05_effectiveness_criteria.md | None |
+| EPIC-01 | OA-01 resolved: release_planning_prompt.md v2.33→v2.34 — §-1.2 Option(b) path added | claude/system/release_planning_prompt.md | None |
+| EPIC-01 | OA-02 resolved: execution_prompt.md v3.36→v3.37 — §3.1.A step 2c test-authoring spec_references guidance added | claude/system/execution_prompt.md | None |
+| EPIC-01 | BLG-SPEC-47 resolved: si05-telegram-message-format-spec.md v1.1→v1.2 — Option(a) pass_rate computation accepted; DEV-v51-EPIC01-01 closed | docs/product/decisions/si05-telegram-message-format-spec.md | None |
+| EPIC-01 | BLG-SPEC-48 resolved: digest_endpoints.md v0.2→v0.3 — POST /digest/si05/send auth requirements section added | docs/specs/api_contracts/digest_endpoints.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-17 (BLG-FE-64) | Gate: SI-03 Red Flag Journal live ≥ 30 days — not clear at sprint planning seal (2026-06-08); gate clears 2026-06-21 | backlog.md (deferred at planning, never entered sprint) |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-03.md (autonomous class, 2026-06-08), qa_evidence_EPIC-02.md (Director of Quality, 2026-06-08), qa_evidence_EPIC-04.md (autonomous class, 2026-06-08), qa_evidence_EPIC-01.md (autonomous class, 2026-06-08)
+- Deviations filed: None
+- Test scenarios referenced: tests/test_si05_digest_service.py (26 unit tests)

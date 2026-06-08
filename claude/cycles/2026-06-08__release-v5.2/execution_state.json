@@ -389,6 +389,7 @@
     "all_merged": true
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-06-08T15:00:00Z",
+  "status": "Sealed"
 }
