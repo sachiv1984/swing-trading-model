@@ -1,9 +1,46 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 3.8
-**Last Updated:** 2026-06-21
+**Version:** 3.9
+**Last Updated:** 2026-06-08
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-06-08__release-v5.2
+**Date:** 2026-06-08
+**Status:** Verified — 2026-06-08
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-03 | Claude API model deprecation compliance check — claude-haiku-4-5-20251001 confirmed current; next review 2026-09-08; AI Compliance & Governance Officer sign-off | docs/governance/ai_model_deprecation_check_v52.md | None |
+| EPIC-03 | Telegram bot token minimal-permission security review — send-only confirmed from code; BotFather manual verification recommended; Cybersecurity & Trust Lead sign-off | docs/security/security_register.md (Review 002) | None |
+| EPIC-03 | SI-05 digest endpoint authentication review — GAP_FOUND: POST /digest/si05/send unauthenticated; BLG-BE-35 P2 filed for fix; Cybersecurity & Trust Lead sign-off | docs/security/security_register.md (Review 003); docs/specs/api_contracts/digest_endpoints.md | None (auth gap filed as BLG-BE-35 P2; fix scoped to future sprint) |
+| EPIC-03 | Backend endpoint documentation coverage audit post-v5.1 — 50 routes enumerated; 6 contract gaps found; BLG-SPEC-49/50/51/52 filed; HoE + API Contracts Owner sign-off | docs/ops/endpoint_coverage_audit_v52.md | None (contract gaps filed as BLG-SPEC-49–52) |
+| EPIC-02 | SI-05 Telegram delivery retry and failure handling — 30s/60s exponential backoff; max 2 retries; ERROR logging preserved; 3 new unit tests; 24 total passing; staging retry confirmed in Render logs | backend/services/si05_digest_service.py | None |
+| EPIC-02 | SI-05 digest delivery log table (si05_digest_log) — CREATE TABLE IF NOT EXISTS guard; log rows on success/failure paths; registered in main.py on_startup(); staging migration and live row confirmed | docs/specs/api_contracts/digest_endpoints.md; backend/database.py | None |
+| EPIC-02 | Deployment runbook updated for SI-05 operational environment — §6 added (env vars, cron schedule, service verification, failure detection reference) | docs/ops/production_deployment_runbook.md v0.2 | None |
+| EPIC-02 | SI-05 service scheduled run health check procedure v1.0 — 3 check options; escalation path; weekly cadence; responsible role | docs/ops/si05_health_check_procedure.md | None |
+| EPIC-04 | SI-05 digest service edge case test gap analysis — 2 missing tests authored; 26 total tests passing; gap analysis document filed | tests/test_si05_digest_service.py; docs/qa/si05_edge_case_gap_analysis.md | None |
+| EPIC-04 | SI-05 Phase 1 acceptance test protocol + delivery verification protocol (companion docs) covering v5.1 deferred ACs | docs/qa/si05_acceptance_test_protocol.md; docs/qa/si05_delivery_verification_protocol.md | None |
+| EPIC-04 | Regression test suite baseline refresh post-v5.1 — POST /digest/si05/send confirmed in test.py; 5 Playwright scenarios confirmed; BLG-QA-50 filed for formal baseline doc | backend/routers/test.py; tests/e2e/signals-allocation-insufficient.spec.js | None |
+| EPIC-04 | SI-05 Phase 1 effectiveness criteria — 3 criteria defined; 30-day review 2026-07-04; PO acknowledged | claude/cycles/2026-06-08__release-v5.2/si05_effectiveness_criteria.md | None |
+| EPIC-01 | release_planning_prompt.md v2.34 — §-1.2 accepts STEP 8.1 Option(b) as valid gate substitute; OA-01 resolved | claude/system/release_planning_prompt.md v2.34 | None |
+| EPIC-01 | execution_prompt.md v3.37 — §3.1.A step 2c: test-authoring stories set spec_references to created test file path; OA-02 resolved | claude/system/execution_prompt.md v3.37 | None |
+| EPIC-01 | SI-05 pass_rate computation aligned with BLG-GOV-86 §5.2 — Option(a) volume-weighted ratio confirmed canonical; spec v1.2; DEV-v51-EPIC01-01 resolved; BLG-SPEC-47 closed | docs/product/decisions/si05-telegram-message-format-spec.md v1.2; docs/specs/api_contracts/digest_endpoints.md | None (P3 deviation resolved) |
+| EPIC-01 | POST /digest/si05/send API contract gap closed — digest_endpoints.md v0.3 with auth requirements section; BLG-SPEC-48 closed | docs/specs/api_contracts/digest_endpoints.md v0.3 | None |
+
+### Capabilities deferred or returned
+
+None. All 16 in-scope stories completed. ST-17 (BLG-FE-64) deferred at sprint planning (gate not clear at seal) — not returned from sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (autonomous class 2026-06-08), qa_evidence_EPIC-02.md (DoQ 2026-06-08), qa_evidence_EPIC-03.md (autonomous class 2026-06-08), qa_evidence_EPIC-04.md (autonomous class 2026-06-08)
+- Deviations filed: None (spec deviations); BLG-BE-35, BLG-SPEC-49–52, BLG-QA-50 filed as backlog items
+- Test scenarios referenced: tests/test_si05_digest_service.py (26 unit tests)
 
 ---
 

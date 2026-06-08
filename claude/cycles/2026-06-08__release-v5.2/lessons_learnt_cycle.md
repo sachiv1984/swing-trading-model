@@ -39,3 +39,33 @@ No v5.1 deferred patches to check. All v5.1 process improvements were applied ac
 ## Process improvements actioned this run
 
 None — all friction items were positive-outcome observations. No prompt patches applied.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-06-08__release-v5.2
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-06-08
+**Reviewed by:** PMO Lead
+**Prior cycle Phase 4 checked:** claude/cycles/2026-06-21__release-v5.1/lessons_learnt_cycle.md — found; v5.1 Phase 4 items reviewed.
+
+**Prior cycle deferred items check (Phase 4):**
+- v5.1 Phase 4: "test-authoring spec_references gap" (deferred to v5.2+): **RESOLVED** — ST-02 (OA-02) in this cycle patched execution_prompt.md §3.1.A step 2c to add guidance that test-authoring stories set spec_references to the created test file path. Prompt_change_log.md entry appended. Pattern closed.
+- v5.1 Phase 4: "Staging-only AC deferral pattern (second occurrence)" — In v5.2, staging-only ACs (ST-05 AC-04, ST-06 AC-04) were confirmed inline during sprint execution (I&O Owner + Data Model Owner staging sign-offs obtained before PR merge). Pattern changed — inline staging confirmation preferred when staging is available during the sprint window.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| v5.1 Phase 4 deferred item "test-authoring spec_references gap" resolved in v5.2 via ST-02 (OA-02 — execution_prompt.md v3.37 §3.1.A step 2c). Positive closure of a first-identified pattern. | Phase 4 | E | action-now | Positive resolution. Pattern closed — no further monitoring required. | Sprint Execution Engine | — |
+| EPIC-02 signer format mismatch: "Sprint Execution Engine (Head of Engineering role — code and staging verification)" in the primary Signed off by field is not the canonical agent-mediated format (missing "agent-mediated," missing §5.3 section reference). Tier 2 advisory was self-resolved by Director of Quality inline counter-sign. | Phase 4 | A | defer | Consider adding a format validation note to qa_evidence_template.md for mixed-class EPICs with delegated_backend stories — the signer field should follow "Sprint Execution Engine (agent-mediated, \<Role Name\> role — §X.Y)" exactly. Low urgency — DoQ counter-sign is always available as the resolution path. | Head of Specs Team | v5.3+ |
+| System_status_report.md v5.2 section was not created by the sprint execution engine at sprint close. Delivery verification had to create it (STEP 6 permitted write). The sprint_close.md noted "No corrections required" which is accurate for existing content, but the new sprint section was also not added. | Phase 4 | A | defer | Consider adding an explicit sub-step to execution_prompt.md STEP 5.3A: "if System_status_report.md does not yet have a section for the current cycle_id, create it using the template from delivery_verification_prompt.md §6." Low urgency — delivery verification STEP 6 is a reliable fallback. | Head of Specs Team | v5.3+ |
+| Gate sequencing was clean — all QA evidence files signed off before delivery verification invoked, sprint_close.md readiness statement all Yes, execution_state.json sealed. No gate sequencing friction. | Phase 4 | E | action-now | Positive. Gate sequencing working correctly. No process change needed. | Sprint Execution Engine | — |
+| No deviation severity calls were contested — zero sprint deviations were filed. Process notations (BLG-BE-35 auth gap P2, BLG-SPEC-49–52 contract gaps, BLG-QA-50 baseline doc gap) were correctly classified as backlog items, not sprint deviations. | Phase 4 | E | action-now | Positive. Deviation/backlog-item classification boundary is well understood by the sprint execution engine. No process change needed. | Sprint Execution Engine | — |
+| Staging-only ACs (ST-05 AC-04, ST-06 AC-04) confirmed inline during sprint execution — Render log timestamps and DB sent_at matched within 1 second, providing corroborated evidence. No staged verification sprint required for v5.2. Pattern improvement vs v5.1 where staging ACs were deferred. | Phase 4 | E | action-now | Positive. Inline staging confirmation is the preferred path when staging infrastructure is available during the sprint window. Staged verification sprint (BLG-GOV-89 protocol) remains available for cases where staging access is unavailable during sprint execution. | Sprint Execution Engine | — |
+
+**Recurrence Notes:**
+- **test-authoring spec_references gap (v5.1 Phase 4 → v5.2 ST-02):** Fully resolved. Pattern closed.
+- **EPIC-02 agent-mediated signer format mismatch:** First occurrence in v5.2. Deferred to v5.3+ guidance note. Monitor for recurrence.
+- **SSR new-sprint section not added at sprint close:** First occurrence noted. Deferred to v5.3+ execution_prompt sub-step. Monitor for recurrence.
+- **Staging-only AC deferral pattern:** Second occurrence in v5.1 (two deferred to staged verification sprint). In v5.2 both staging ACs confirmed inline — pattern resolved by operational improvement, not a prompt patch.
