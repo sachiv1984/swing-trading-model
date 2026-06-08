@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-06-08__release-v5.2",
   "cycle_name": "Release Planning — v5.2 Governance Debt, SI-05 Ops & Spec Compliance",
-  "status": "Sprint_Planning_Complete",
-  "engine": "sprint_planning",
+  "status": "Executing",
+  "engine": "sprint_execution",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-06-08__release-v5.2/stage4_backlog_slice.md",
   "sprint_sealed": true,
