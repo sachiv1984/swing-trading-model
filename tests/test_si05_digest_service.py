@@ -330,3 +330,75 @@ class TestSendSi05Digest:
         assert result["sent"] is True
         assert result["message_length"] > 0
         assert result["error"] is None
+
+    def test_telegram_api_connection_failure_logs_error(self):
+        """ST-05 AC-05: Telegram API failure logged at ERROR level; returns sent=False."""
+        (
+            format_si05_section, _1, _2, _3, _4, _5,
+            send_si05_digest, _7
+        ) = get_service()
+        mock_data = {
+            "validation_pass_rate": 0.85,
+            "events_per_week": 0.5,
+            "override_rate": 0.10,
+            "top_rule_breach": None,
+        }
+        no_sleep = lambda _: None  # suppress 30s/60s retry delays in CI
+        with patch.dict("os.environ", {"TELEGRAM_BOT_TOKEN": "tok", "TELEGRAM_CHAT_ID": "123"}):
+            with patch("services.si05_digest_service.fetch_arc5_data_for_digest", return_value=mock_data):
+                with patch("urllib.request.urlopen", side_effect=OSError("connection refused")):
+                    with patch("services.si05_digest_service.logger") as mock_logger:
+                        result = send_si05_digest(_sleep_fn=no_sleep)
+        assert result["sent"] is False
+        assert result["error"] is not None
+        mock_logger.error.assert_called()
+
+    def test_retry_succeeds_on_second_attempt(self):
+        """ST-05 AC-03: retry fires on transient failure; succeeds on second attempt."""
+        (
+            format_si05_section, _1, _2, _3, _4, _5,
+            send_si05_digest, _7
+        ) = get_service()
+        mock_data = {
+            "validation_pass_rate": 0.85,
+            "events_per_week": 0.5,
+            "override_rate": 0.10,
+            "top_rule_breach": None,
+        }
+        call_count = {"n": 0}
+
+        def _flaky_urlopen(_url, timeout=10):
+            call_count["n"] += 1
+            if call_count["n"] == 1:
+                raise OSError("transient error")
+            return MagicMock()
+
+        no_sleep = lambda _: None
+        with patch.dict("os.environ", {"TELEGRAM_BOT_TOKEN": "tok", "TELEGRAM_CHAT_ID": "123"}):
+            with patch("services.si05_digest_service.fetch_arc5_data_for_digest", return_value=mock_data):
+                with patch("urllib.request.urlopen", side_effect=_flaky_urlopen):
+                    result = send_si05_digest(_sleep_fn=no_sleep)
+        assert result["sent"] is True
+        assert call_count["n"] == 2  # failed once, succeeded on retry
+
+    def test_message_truncation_at_character_limit(self):
+        """Edge case (c): Message exceeding MAX_MESSAGE_LENGTH is truncated before send."""
+        (
+            format_si05_section, _1, _2, _3, _4, _5,
+            send_si05_digest, MAX_MESSAGE_LENGTH
+        ) = get_service()
+        mock_data = {
+            "validation_pass_rate": 0.85,
+            "events_per_week": 0.5,
+            "override_rate": 0.10,
+            "top_rule_breach": None,
+        }
+        huge_section = "x" * (MAX_MESSAGE_LENGTH + 500)
+        with patch.dict("os.environ", {"TELEGRAM_BOT_TOKEN": "tok", "TELEGRAM_CHAT_ID": "123"}):
+            with patch("services.si05_digest_service.fetch_arc5_data_for_digest", return_value=mock_data):
+                with patch("services.si05_digest_service.format_si05_section", return_value=huge_section):
+                    with patch("urllib.request.urlopen") as mock_urlopen:
+                        mock_urlopen.return_value = MagicMock()
+                        result = send_si05_digest()
+        assert result["sent"] is True
+        assert result["message_length"] <= MAX_MESSAGE_LENGTH

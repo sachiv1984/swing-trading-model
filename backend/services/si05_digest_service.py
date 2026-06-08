@@ -11,6 +11,7 @@ ST-01 (EPIC-01, v5.1 cycle 2026-06-21__release-v5.1)
 
 import logging
 import os
+import time
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from urllib.parse import urlencode, urlparse, urlunparse, parse_qs
@@ -21,6 +22,38 @@ from psycopg2.extras import RealDictCursor
 logger = logging.getLogger(__name__)
 
 MAX_MESSAGE_LENGTH = 4096
+
+
+_RETRY_DELAYS = (30, 60)  # seconds: wait after attempt 1, then attempt 2
+
+
+def _send_telegram_request(url: str, sleep_fn=None) -> None:
+    """
+    Send a Telegram API request with exponential backoff retry.
+
+    Retry policy: up to 2 retries after the initial attempt, with delays of
+    30 s and 60 s respectively. Total maximum wait before final failure: 90 s.
+    If all three attempts fail, the last exception is re-raised.
+
+    sleep_fn is injectable for testing to avoid real sleep delays.
+    """
+    import urllib.request
+    _sleep = sleep_fn or time.sleep
+    last_exc: Exception = RuntimeError("unreachable")
+    for attempt, delay in enumerate(((None,) + _RETRY_DELAYS), start=1):
+        try:
+            urllib.request.urlopen(url, timeout=10)  # noqa: S310
+            return
+        except Exception as exc:
+            last_exc = exc
+            if delay is not None:
+                logger.warning(
+                    "SI-05 Telegram send attempt %d failed: %s — retrying in %ds",
+                    attempt, exc, delay,
+                )
+                _sleep(delay)
+    logger.error("SI-05 Telegram send failed after all retries: %s", last_exc)
+    raise last_exc
 
 
 def _clean_db_url(url: str) -> str:
@@ -227,9 +260,48 @@ def format_si05_section(data: dict) -> str:
     )
 
 
-def send_si05_digest() -> dict:
+def _write_delivery_log(
+    status: str,
+    event_count: Optional[int],
+    telegram_message_id: Optional[str],
+    error_message: Optional[str],
+) -> None:
+    """
+    Write a row to si05_digest_log after each send attempt (success or failure).
+    Table is created at startup via ensure_si05_digest_log_table() in database.py.
+    Errors here are logged and swallowed — delivery log failures must not abort the digest job.
+    """
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        return
+    try:
+        conn = psycopg2.connect(_clean_db_url(database_url))
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO si05_digest_log
+                        (status, event_count, telegram_message_id, error_message)
+                    VALUES (%s, %s, %s, %s)
+                    """,
+                    (status, event_count, telegram_message_id, error_message),
+                )
+            conn.commit()
+        finally:
+            conn.close()
+    except Exception as log_err:
+        logger.warning("SI-05 delivery log write failed (non-fatal): %s", log_err)
+
+
+def send_si05_digest(*, _sleep_fn=None) -> dict:
     """
     Fetch arc5-compliance data, format the SI-05 section, and send via Telegram.
+
+    Retry policy: up to 2 retries with 30 s / 60 s backoff on Telegram API failure.
+    Each send attempt (success or failure) is logged to si05_digest_log (BLG-BE-33).
+
+    Args:
+        _sleep_fn: injectable sleep callable for testing (default: time.sleep)
 
     Returns:
         dict with keys: sent (bool), message_length (int), error (str | None)
@@ -259,17 +331,21 @@ def send_si05_digest() -> dict:
         message_length = len(message)
         logger.warning("SI-05 message truncated to summary line (%d chars)", message_length)
 
+    event_count = round((data.get("events_per_week") or 0.0) * 7)
+
+    params = urlencode({
+        "chat_id": telegram_chat_id,
+        "text": message,
+        "parse_mode": "MarkdownV2",
+    })
+    url = f"https://api.telegram.org/bot{telegram_token}/sendMessage?{params}"
+
     try:
-        params = urlencode({
-            "chat_id": telegram_chat_id,
-            "text": message,
-            "parse_mode": "MarkdownV2",
-        })
-        url = f"https://api.telegram.org/bot{telegram_token}/sendMessage?{params}"
-        import urllib.request
-        urllib.request.urlopen(url, timeout=10)  # noqa: S310
+        _send_telegram_request(url, sleep_fn=_sleep_fn)
         logger.info("SI-05 digest sent (%d chars)", message_length)
+        _write_delivery_log("sent", event_count, None, None)
         return {"sent": True, "message_length": message_length, "error": None}
     except Exception as e:
         logger.error("SI-05 Telegram send failed: %s", e)
+        _write_delivery_log("failed", event_count, None, str(e))
         return {"sent": False, "message_length": message_length, "error": str(e)}
