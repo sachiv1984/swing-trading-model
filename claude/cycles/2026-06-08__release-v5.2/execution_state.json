@@ -5,8 +5,7 @@
   "invoked_utc": "2026-06-08T10:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-08T12:45:00Z",
-
+  "last_updated_utc": "2026-06-08T13:52:00Z",
   "epics": {
     "EPIC-03": {
       "status": "done",
@@ -30,17 +29,21 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-08T11:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/governance/ai_model_deprecation_check_v52.md"],
+          "spec_references": [
+            "docs/governance/ai_model_deprecation_check_v52.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": {
             "required_by": "AI Compliance & Governance Officer",
             "method": "agent_mediated",
             "status": "cleared",
-            "findings_applied": ["Model claude-haiku-4-5-20251001 confirmed not deprecated — PASS finding recorded with next review date 2026-09-08"],
+            "findings_applied": [
+              "Model claude-haiku-4-5-20251001 confirmed not deprecated \u2014 PASS finding recorded with next review date 2026-09-08"
+            ],
             "cleared_utc": "2026-06-08T11:00:00Z"
           },
-          "notes": "PASS — claude-haiku-4-5-20251001 is current Haiku 4.5 (Claude 4.X family). Not deprecated. Next review: 2026-09-08. Compliance check doc: docs/governance/ai_model_deprecation_check_v52.md"
+          "notes": "PASS \u2014 claude-haiku-4-5-20251001 is current Haiku 4.5 (Claude 4.X family). Not deprecated. Next review: 2026-09-08. Compliance check doc: docs/governance/ai_model_deprecation_check_v52.md"
         },
         "ST-10": {
           "title": "BLG-GOV-98: Telegram bot token minimal-permission security review",
@@ -55,17 +58,21 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-08T11:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/security/security_register.md"],
+          "spec_references": [
+            "docs/security/security_register.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": {
             "required_by": "Cybersecurity & Trust Lead",
             "method": "agent_mediated",
             "status": "cleared",
-            "findings_applied": ["Code-level send-only usage confirmed; BotFather manual verification recommended; PASS with recommendation documented in security_register.md Review 002"],
+            "findings_applied": [
+              "Code-level send-only usage confirmed; BotFather manual verification recommended; PASS with recommendation documented in security_register.md Review 002"
+            ],
             "cleared_utc": "2026-06-08T11:00:00Z"
           },
-          "notes": "PASS with recommendation — code confirms sendMessage-only usage to fixed TELEGRAM_CHAT_ID. BotFather settings recommend manual verification. security_register.md Review 002 appended."
+          "notes": "PASS with recommendation \u2014 code confirms sendMessage-only usage to fixed TELEGRAM_CHAT_ID. BotFather settings recommend manual verification. security_register.md Review 002 appended."
         },
         "ST-11": {
           "title": "BLG-GOV-99: SI-05 digest endpoint authentication review",
@@ -80,17 +87,22 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-08T11:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/digest_endpoints.md", "docs/security/security_register.md"],
+          "spec_references": [
+            "docs/specs/api_contracts/digest_endpoints.md",
+            "docs/security/security_register.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": {
             "required_by": "Cybersecurity & Trust Lead",
             "method": "agent_mediated",
             "status": "cleared",
-            "findings_applied": ["GAP_FOUND documented in security_register.md Review 003; P2 backlog item BLG-BE-35 filed; does not block EPIC-03 merge per sprint_backlog.md notes"],
+            "findings_applied": [
+              "GAP_FOUND documented in security_register.md Review 003; P2 backlog item BLG-BE-35 filed; does not block EPIC-03 merge per sprint_backlog.md notes"
+            ],
             "cleared_utc": "2026-06-08T11:00:00Z"
           },
-          "notes": "GAP_FOUND — POST /digest/si05/send has no auth (backend/routers/digest.py:227). Fix out-of-scope for EPIC-03. security_register.md Review 003 documenting gap. BLG-BE-35 filed as P2."
+          "notes": "GAP_FOUND \u2014 POST /digest/si05/send has no auth (backend/routers/digest.py:227). Fix out-of-scope for EPIC-03. security_register.md Review 003 documenting gap. BLG-BE-35 filed as P2."
         },
         "ST-12": {
           "title": "BLG-GOV-100: Backend endpoint documentation coverage audit post-v5.1",
@@ -105,14 +117,18 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-08T11:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/ops/endpoint_coverage_audit_v52.md"],
+          "spec_references": [
+            "docs/ops/endpoint_coverage_audit_v52.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": {
             "required_by": "Head of Engineering",
             "method": "agent_mediated",
             "status": "cleared",
-            "findings_applied": ["50 routes enumerated; 6 contract gaps identified; 4 BLG-SPEC items filed (BLG-SPEC-49/50/51/52); audit doc committed to docs/ops/"],
+            "findings_applied": [
+              "50 routes enumerated; 6 contract gaps identified; 4 BLG-SPEC items filed (BLG-SPEC-49/50/51/52); audit doc committed to docs/ops/"
+            ],
             "cleared_utc": "2026-06-08T11:00:00Z"
           },
           "delivery_note": "docs/ops/endpoint_coverage_audit_v52.md",
@@ -120,12 +136,11 @@
         }
       }
     },
-
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-08__release-v5.2/EPIC-02",
       "pr_number": 697,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.2/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
@@ -143,14 +158,18 @@
           "unblock_criteria": "Commit [EPIC-02][ST-05] pushed; unit test for ERROR logging present and passing; retry policy documented",
           "completed_utc": "2026-06-08T13:30:00Z",
           "acceptance_verified": true,
-          "spec_references": ["backend/services/si05_digest_service.py"],
+          "spec_references": [
+            "backend/services/si05_digest_service.py"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.B.unblocked",
           "sign_off_record": {
             "required_by": "Head of Engineering",
             "method": "agent_mediated",
             "status": "cleared",
-            "findings_applied": ["_send_telegram_request() with 30s/60s backoff added; ERROR logging confirmed; 3 new tests all passing; _sleep_fn injectable for CI"],
+            "findings_applied": [
+              "_send_telegram_request() with 30s/60s backoff added; ERROR logging confirmed; 3 new tests all passing; _sleep_fn injectable for CI"
+            ],
             "cleared_utc": "2026-06-08T13:30:00Z"
           },
           "notes": "Retry implemented: max 2 retries, 30s/60s backoff. ERROR logging present. 24 tests passing. Staging-only AC-04 requires I&O Owner Render log confirmation."
@@ -168,14 +187,18 @@
           "unblock_criteria": "Commit [EPIC-02][ST-06] pushed; CREATE TABLE IF NOT EXISTS guard present; log rows written on success and failure paths; Data Model Owner sign-off; I&O Owner staging confirmation",
           "completed_utc": "2026-06-08T13:30:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/digest_endpoints.md"],
+          "spec_references": [
+            "docs/specs/api_contracts/digest_endpoints.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.B.unblocked",
           "sign_off_record": {
             "required_by": "Data Model & Domain Schema Owner",
             "method": "agent_mediated",
             "status": "cleared",
-            "findings_applied": ["Schema: id, sent_at, status (sent/failed), event_count, telegram_message_id, error_message, created_at; CREATE TABLE IF NOT EXISTS guard; registered in main.py on_startup()"],
+            "findings_applied": [
+              "Schema: id, sent_at, status (sent/failed), event_count, telegram_message_id, error_message, created_at; CREATE TABLE IF NOT EXISTS guard; registered in main.py on_startup()"
+            ],
             "cleared_utc": "2026-06-08T13:30:00Z"
           },
           "notes": "ensure_si05_digest_log_table() in database.py; _write_delivery_log() on success and failure paths. GET /digest/si05/log deferred (not scoped). Staging AC-04 and Data Model Owner schema sign-off outstanding."
@@ -193,17 +216,21 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-08T11:30:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/ops/production_deployment_runbook.md"],
+          "spec_references": [
+            "docs/ops/production_deployment_runbook.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": {
             "required_by": "Infrastructure & Operations Owner",
             "method": "agent_mediated",
             "status": "cleared",
-            "findings_applied": ["SI-05 env vars section added (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID); cron schedule verification; failure detection reference; health check reference"],
+            "findings_applied": [
+              "SI-05 env vars section added (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID); cron schedule verification; failure detection reference; health check reference"
+            ],
             "cleared_utc": "2026-06-08T11:30:00Z"
           },
-          "notes": "Runbook updated at docs/ops/production_deployment_runbook.md v0.1→v0.2. New section §6 covers SI-05 env vars, cron schedule, service verification, failure detection."
+          "notes": "Runbook updated at docs/ops/production_deployment_runbook.md v0.1\u2192v0.2. New section \u00a76 covers SI-05 env vars, cron schedule, service verification, failure detection."
         },
         "ST-08": {
           "title": "BLG-OPS-56: SI-05 service scheduled run health check procedure",
@@ -218,14 +245,18 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-08T11:30:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/ops/si05_health_check_procedure.md"],
+          "spec_references": [
+            "docs/ops/si05_health_check_procedure.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": {
             "required_by": "Infrastructure & Operations Owner",
             "method": "agent_mediated",
             "status": "cleared",
-            "findings_applied": ["3 check options documented (si05_digest_log, Render logs, Telegram history); BLG-BE-33 interim noted; escalation path defined; weekly cadence and responsible role specified"],
+            "findings_applied": [
+              "3 check options documented (si05_digest_log, Render logs, Telegram history); BLG-BE-33 interim noted; escalation path defined; weekly cadence and responsible role specified"
+            ],
             "cleared_utc": "2026-06-08T11:30:00Z"
           },
           "delivery_note": "docs/ops/si05_health_check_procedure.md",
@@ -233,7 +264,6 @@
         }
       }
     },
-
     "EPIC-04": {
       "status": "not_started",
       "branch": "exec/2026-06-08__release-v5.2/EPIC-04",
@@ -241,7 +271,9 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.2/qa_evidence_EPIC-04.md",
-      "test_scenarios": ["tests/test_si05_digest_service.py"],
+      "test_scenarios": [
+        "tests/test_si05_digest_service.py"
+      ],
       "stories": {
         "ST-13": {
           "title": "BLG-QA-46: SI-05 digest service edge case test gap analysis",
@@ -256,7 +288,9 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["tests/test_si05_digest_service.py"],
+          "spec_references": [
+            "tests/test_si05_digest_service.py"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -279,7 +313,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "no prior spec applicable — creates new protocol documents"
+          "notes": "no prior spec applicable \u2014 creates new protocol documents"
         },
         "ST-15": {
           "title": "BLG-QA-48: Regression test suite baseline refresh post-v5.1",
@@ -294,7 +328,10 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["backend/routers/test.py", "tests/e2e/signals-allocation-insufficient.spec.js"],
+          "spec_references": [
+            "backend/routers/test.py",
+            "tests/e2e/signals-allocation-insufficient.spec.js"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -317,11 +354,10 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "no prior spec applicable — creates effectiveness criteria governance note. 30-day review date: 2026-07-04."
+          "notes": "no prior spec applicable \u2014 creates effectiveness criteria governance note. 30-day review date: 2026-07-04."
         }
       }
     },
-
     "EPIC-01": {
       "status": "not_started",
       "branch": "exec/2026-06-08__release-v5.2/EPIC-01",
@@ -332,7 +368,7 @@
       "test_scenarios": [],
       "stories": {
         "ST-01": {
-          "title": "OA-01: release_planning_prompt.md §-1.2 STEP 8.1 Option(b) patch",
+          "title": "OA-01: release_planning_prompt.md \u00a7-1.2 STEP 8.1 Option(b) patch",
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
@@ -344,14 +380,16 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["claude/system/release_planning_prompt.md"],
+          "spec_references": [
+            "claude/system/release_planning_prompt.md"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "CLAUDE.md §6 checklist mandatory — version v2.33→v2.34, OPERATIONAL_GUIDE §6B + §14, prompt_change_log.md entry. HoST sign-off required."
+          "notes": "CLAUDE.md \u00a76 checklist mandatory \u2014 version v2.33\u2192v2.34, OPERATIONAL_GUIDE \u00a76B + \u00a714, prompt_change_log.md entry. HoST sign-off required."
         },
         "ST-02": {
-          "title": "OA-02: execution_prompt.md §3.1.A test-authoring spec_references guidance",
+          "title": "OA-02: execution_prompt.md \u00a73.1.A test-authoring spec_references guidance",
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
@@ -363,14 +401,16 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["claude/system/execution_prompt.md"],
+          "spec_references": [
+            "claude/system/execution_prompt.md"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "CLAUDE.md §6 checklist mandatory — version v3.36→v3.37, OPERATIONAL_GUIDE §8 + §14, prompt_change_log.md entry. HoST sign-off required."
+          "notes": "CLAUDE.md \u00a76 checklist mandatory \u2014 version v3.36\u2192v3.37, OPERATIONAL_GUIDE \u00a78 + \u00a714, prompt_change_log.md entry. HoST sign-off required."
         },
         "ST-03": {
-          "title": "BLG-SPEC-47: Align SI-05 pass_rate computation with BLG-GOV-86 §5.2",
+          "title": "BLG-SPEC-47: Align SI-05 pass_rate computation with BLG-GOV-86 \u00a75.2",
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
@@ -382,7 +422,10 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/product/decisions/si05-telegram-message-format-spec.md", "docs/specs/api_contracts/digest_endpoints.md"],
+          "spec_references": [
+            "docs/product/decisions/si05-telegram-message-format-spec.md",
+            "docs/specs/api_contracts/digest_endpoints.md"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -401,7 +444,9 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/api_contracts/digest_endpoints.md"],
+          "spec_references": [
+            "docs/specs/api_contracts/digest_endpoints.md"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -410,18 +455,33 @@
       }
     }
   },
-
   "blocked_items": [],
-  "delegated_items": ["ST-05", "ST-06"],
-  "completed_items": ["ST-09", "ST-10", "ST-11", "ST-12", "ST-07", "ST-08", "ST-05", "ST-06"],
+  "delegated_items": [
+    "ST-05",
+    "ST-06"
+  ],
+  "completed_items": [
+    "ST-09",
+    "ST-10",
+    "ST-11",
+    "ST-12",
+    "ST-07",
+    "ST-08",
+    "ST-05",
+    "ST-06"
+  ],
   "open_escalations": [],
-
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-03", "EPIC-02", "EPIC-04", "EPIC-01"],
+    "epics_merged": [
+      "EPIC-03",
+      "EPIC-02"
+    ],
+    "epics_pending": [
+      "EPIC-04",
+      "EPIC-01"
+    ],
     "all_merged": false
   },
-
   "sealed": false,
   "sealed_utc": null
 }
