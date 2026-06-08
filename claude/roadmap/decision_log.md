@@ -923,3 +923,55 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **STEP 8.1 decision:** Option (b) — defer. Rationale: SI-05 Phase 1 gate clears in 18 days; `plan release --version v5.1 --date 2026-06-21` is the appropriate next command.
 
 **Decision owner:** Product Owner
+
+---
+
+## DL-039
+
+**Date:** 2026-06-07
+**Decision type:** No-change (roadmap) + Add (to backlog × 25; idea intake IW-20260607-01 classifications)
+**Cycle:** 2026-06-07__scheduled
+**Displacement:** No roadmap-level additions → no roadmap-level kills required. Each backlog addition has a named deprioritisation (see item list below).
+**Workforce impact:** 25 new backlog items, predominantly XS–S effort; no immediate FTE commitment. All gate-conditional or unscheduled. Skill-Silo check PASS (52% governance load, within 20–60% bounds).
+
+**Rationale:** Scheduled Standard-tier rebalance. v5.1 shipped 2026-06-04. All 13 active roadmap initiatives reaffirmed 🔥 Must continue. CPS = 1.15 (prior 1.15; Δ = 0.00 — no Strategy Drift Alert). Ideas register was empty (post-ship archival 2026-06-04) → intake window IW-20260607-01 opened inline (44 submissions, 22 agents; Facilitator excluded per charter). STEP 4: 24 ideas advanced, 2 gate-conditional promoted to backlog, 5 rejected, 13 parked at Parked-cycle-1. STEP 5: 23 ideas Promoted-Added; 1 Promoted-Rejected (IDEA-head-of-specs-20260607-01 — duplicate of BLG-SPEC-47); 3 Challenger Type A counter-arguments; 3 PO rebuts accepted. STEP 8.1 soft gate fired (empty Now + no v5.2 section): PO chose Option (a) — v5.2 section added to current_roadmap.md with OA-01/02 pre-conditions and backlog anchors. STEP 8.6 guardrail PASS (Condition 1: 5 Rejected + 13 Parked in STEP 4; 1 Promoted-Rejected in STEP 5). STEP 9.0 net-zero: 0 roadmap additions, 0 roadmap kills.
+
+**23 ideas Promoted-Added (new BLG items):**
+
+| BLG ID | Title | Priority | Effort | Displacement |
+|--------|-------|----------|--------|-------------|
+| BLG-GOV-92 | SI-05 Phase 2 activation criteria definition | P2 | S | BLG-GOV-27 deprioritised |
+| BLG-GOV-93 | OA-01/02 enforcement procedure | P1 | XS | BLG-GOV-26 deprioritised |
+| BLG-GOV-94 | SI-05 Phase 1 delivery verification protocol | P2 | S | BLG-QA-21 deprioritised |
+| BLG-QA-45 | Arc 5 QA completion criteria definition | P2 | S | BLG-QA-22 deprioritised |
+| BLG-GOV-95 | strategy_rules.md annual parameter review schedule | P3 | S | BLG-GOV-29 deprioritised |
+| BLG-OPS-55 | Deployment runbook update for SI-05 | P2 | XS | BLG-OPS-20 deprioritised |
+| BLG-GOV-96 | SI-05 Phase 1 effectiveness measurement criteria | P2 | S | BLG-FEAT-44 deprioritised |
+| BLG-QA-46 | SI-05 digest service edge case test gap analysis | P2 | XS | BLG-QA-23 deprioritised |
+| BLG-BE-32 | SI-05 Telegram delivery retry and failure handling | P2 | S | BLG-BE-21 deprioritised |
+| BLG-GOV-97 | Claude API model deprecation compliance check | P1 | XS | BLG-GOV-84 deprioritised |
+| BLG-GOV-98 | Telegram bot token minimal-permission security review | P2 | S | BLG-OPS-41 deprioritised |
+| BLG-GOV-99 | SI-05 digest endpoint authentication review | P2 | S | BLG-OPS-18 deprioritised |
+| BLG-GOV-100 | Backend endpoint documentation coverage audit | P2 | S | BLG-OPS-19 deprioritised |
+| BLG-OPS-56 | SI-05 service scheduled run health check | P2 | XS | BLG-OPS-23 deprioritised |
+| BLG-BE-33 | SI-05 digest delivery log table | P2 | S | BLG-BE-14 deprioritised |
+| BLG-BE-34 | Trade count gate-monitoring view | P2 | S | BLG-BE-13 deprioritised |
+| BLG-GOV-101 | Governance model complexity assessment | P2 | M | BLG-QA-34 deprioritised |
+| BLG-SPEC-48 | POST /digest/si05/send API contract gap check | P1 | XS | BLG-SPEC-46 deprioritised |
+| BLG-QA-47 | SI-05 Phase 1 acceptance test protocol | P2 | S | BLG-QA-24 deprioritised |
+| BLG-QA-48 | Regression test suite baseline refresh | P2 | XS | BLG-QA-27 deprioritised |
+| BLG-QA-49 | Arc 5 test scenario completeness assessment | P2 | S | BLG-FE-39 deprioritised |
+| BLG-FE-64 | BLG-FE-41 visual design review pre-brief | P2 | S | BLG-FE-27 deprioritised |
+| BLG-FE-65 | User journey: SI-05 digest to app action | P3 | S | BLG-FE-55 deprioritised |
+
+**2 ideas gate-conditional Promoted-Backlog:** BLG-GOV-102 (gate: Arc 5 fully complete; disp: BLG-GOV-85), BLG-GOV-103 (gate: BLG-GOV-89 used 2+ times; disp: BLG-GOV-90).
+
+**Horizon movements:** v5.2 Now section added per STEP 8.1 Option (a).
+
+**Run tier:** Standard (CPS 1.15; delta 0.00; scheduled run; 4 days since last scheduled rebalance 2026-06-03__scheduled)
+
+**STEP 8.1 decision:** Option (a) — v5.2 section added to current_roadmap.md. Rationale: OA-01/02 due before v5.2 sprint planning seals; BLG-SPEC-47 target v5.2; BLG-GOV-97 (P1) and BLG-SPEC-48 (P1) require immediate attention anchoring v5.2 scope.
+
+**Meta-review:** NOT DUE — 1 cycle since last meta-review (2026-06-02__scheduled). Next meta-review due after 2 more cycles.
+
+**Decision owner:** Product Owner

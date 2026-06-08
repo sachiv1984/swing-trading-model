@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-04 (post-ship closure 2026-06-21__release-v5.1 — v5.1 ✅ Shipped 2026-06-04; Current Version updated to v5.1)
-**Last rebalance:** 2026-06-02 (cycle 2026-06-02__scheduled — Standard-tier, CPS=1.15; Δ=0.00; 8 new backlog items; DL-037; meta-review completed)
+**Last Updated:** 2026-06-07 (rebalance 2026-06-07__scheduled — DL-039; v5.2 section added to Now horizon per STEP 8.1 Option(a); 25 new backlog items; CPS=1.15, Δ=0.00)
+**Last rebalance:** 2026-06-07 (cycle 2026-06-07__scheduled — Standard-tier, CPS=1.15; Δ=0.00; 25 new backlog items; DL-039; IW-20260607-01; 23 Promoted-Added)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -254,10 +254,25 @@ Today you find stocks through external research and add them to the watchlist ma
 
 ## 3. Delivery Plan — Horizon: Now
 
-*Now horizon empty as of 2026-06-04. RA:v5.1 retired to roadmap_archive.md 2026-06-04 (post-ship closure 2026-06-21__release-v5.1). Next release scope TBD at next release planning.*
+### RA:v5.2 — Governance Debt, SI-05 Ops & Spec Compliance (Planned)
 
-*RA:v5.0 retired — see roadmap_archive.md 2026-06-03 (post-ship closure 2026-06-03__release-v5.0).*
+> **Status:** Planning horizon. Scope TBD at `plan release v5.2`. Release planning not yet opened.
+>
+> **Known pre-conditions for v5.2 sprint planning:**
+> - OA-01: release_planning_prompt.md §-1.2 STEP 8.1 Option(b) accommodation patch (due before sprint planning seals) — Head of Specs Team
+> - OA-02: execution_prompt.md §3.1.A test-authoring story guidance patch (due before sprint planning seals) — Head of Specs Team
+>
+> **Backlog anchors (indicative, not exhaustive — confirmed at release planning):**
+> - BLG-SPEC-47 (P3 deviation — pass_rate computation method; target v5.2)
+> - BLG-GOV-97 (P1 — Claude API model deprecation compliance check; security governance)
+> - BLG-SPEC-48 (P1 — POST /digest/si05/send API contract gap check; spec compliance)
+> - BLG-GOV-93 (P1 — OA-01/02 enforcement procedure; governance debt)
+> - BLG-GOV-94 (P2 — SI-05 Phase 1 delivery verification protocol; staged verification sprint)
+>
+> **Next action:** `plan release --version v5.2`
+
 *RA:v5.1 retired — see roadmap_archive.md 2026-06-04 (post-ship closure 2026-06-21__release-v5.1).*
+*RA:v5.0 retired — see roadmap_archive.md 2026-06-03 (post-ship closure 2026-06-03__release-v5.0).*
 
 -----
 

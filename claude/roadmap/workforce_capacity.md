@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-03 (rebalance 2026-06-03__scheduled — no FTE changes; no new initiatives; 18 gate-conditional backlog items added at S–M effort; no immediate capacity impact)
+**Last Updated:** 2026-06-07 (rebalance 2026-06-07__scheduled — no FTE changes; no new initiatives; 25 backlog items added, predominantly XS–S effort; no immediate capacity impact; Skill-Silo check PASS: 52% governance load within 20–60% bound)
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 

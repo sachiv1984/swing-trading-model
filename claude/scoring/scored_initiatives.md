@@ -1,7 +1,7 @@
 **Owner:** Facilitator
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-03 (rebalance 2026-06-03__scheduled — no new advancing candidates; prior initiative scores carried forward unchanged; CPS = 1.15, delta = 0.00)
+**Last Updated:** 2026-06-07 (rebalance 2026-06-07__scheduled — 25 new backlog items scored; prior initiative scores carried forward unchanged; CPS = 1.15, delta = 0.00)
 
 ---
 
