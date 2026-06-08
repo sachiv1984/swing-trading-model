@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.36
-**Last Updated:** 2026-06-03
+**Version:** 3.37
+**Last Updated:** 2026-06-08
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -534,6 +534,8 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 2a. **Spec_references path verify (LL-v3.7-EX-03):** When populating `spec_references` in `execution_state.json`, verify each path exists (file read or ls check) before recording it. A non-existent path in `spec_references` causes false traceability and masks missing specs — record only paths that resolve on disk.
 
 2b. **Spec_references policy — documentation-creation stories (LL-v4.5-EX-02):** For stories whose primary deliverable IS a new or updated spec/documentation artefact (e.g. a new API contract, a metrics definition document, a data schema spec), set `spec_references` to the path of the created/updated artefact — the artefact IS the governing spec for this story. Additionally record the artefact path in a `delivery_note` field in `execution_state.json` for explicit traceability. `spec_references = []` is non-compliant for documentation-creation stories; the artefact path must be set once it exists on disk.
+
+2c. **Spec_references policy — test-authoring stories (OA-02):** For stories whose sole deliverable is a new test file (no prior canonical spec governs the work — the test file IS the deliverable), set `spec_references` to the path of the created test file (e.g. `tests/e2e/signals-allocation-insufficient.spec.js` or `tests/test_my_service.py`). Do not leave `spec_references = []` and use `notes: "no prior spec applicable"` for test-authoring stories — the created file IS a traceable artefact and its path must be recorded. This guidance applies when `notes` field would otherwise contain `"no prior spec applicable"` solely because no prior spec existed before this story authored the test.
 
 3. Commit to the EPIC branch (format: see STEP 3 header schema).
 4. Push to `exec/<cycle_id>/EPIC-xx`.

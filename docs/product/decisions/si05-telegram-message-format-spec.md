@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-06-21
+**Version:** 1.2
+**Last Updated:** 2026-06-08
 **Cycle:** 2026-06-03__release-v5.0
 **Story:** ST-10 (EPIC-04, v5.0)
 **Backlog ref:** BLG-GOV-86
@@ -101,7 +101,7 @@ See: `docs/specs/api_contracts/arc5_compliance_analytics.md`
 
 | Telegram field | API field | Transformation |
 |---------------|----------|---------------|
-| `pass_rate` | `data.validation_pass_rate_by_rule` | Mean of all `pass_rate` values; `null` values excluded from mean. If map is empty → `null` |
+| `pass_rate` | `pre_entry_validation_log` (direct query) | Volume-weighted overall ratio: `pass_count / total` across all validation events in the 7-day window, computed by `fetch_arc5_data_for_digest()`. Equivalent to `validation_pass_rate` from `GET /analytics/arc5-compliance`. `null` if no validation events. **Canonical method per ST-03 (BLG-SPEC-47) determination 2026-06-08: Option (a) — volume-weighted overall ratio accepted.** |
 | `red_flag_count` | `data.events_per_week` | `round(events_per_week * 7)`. `0.0` → `0` |
 | `override_rate` | `data.override_rate` | `override_rate * 100`, formatted as `{:.1f}%`. `null` → `N/A` |
 | `top_rule_breach` | `data.top_rule_breach` | Title-case the snake_case value (e.g. `regime_gate` → `Regime Gate`). `null` → `None` |
@@ -177,10 +177,10 @@ Spec review: section structure, field bindings, escape requirements, failure mod
 
 **Severity:** P3 (accuracy gap — not a system failure or data loss)
 **Sprint:** 2026-06-21__release-v5.1 (ST-01)
-**Canonical requirement (§5.2):** `pass_rate` ← Mean of all `pass_rate` values from `data.validation_pass_rate_by_rule`; null values excluded from mean. If map is empty → null. Requires calling or replicating `GET /analytics/arc5-compliance?period=7d` and iterating `validation_pass_rate_by_rule` entries for equal-weighted arithmetic mean.
-**What was implemented:** `fetch_arc5_data_for_digest()` queries `pre_entry_validation_log` directly and computes `pass_count / total` across all rules combined — a volume-weighted overall pass rate, not a mean of per-rule rates.
-**Secondary inconsistency:** `docs/specs/api_contracts/digest_endpoints.md` v0.2 documents the data source as "Overall pass/total ratio (7d)", which is inconsistent with this spec's §5.2. The contract document should reference the per-rule mean method.
-**Impact:** When validation rules have different volumes, the two methods produce different values. Volume-weighted aggregate is dominated by high-volume rules; mean-of-per-rule-rates treats each rule equally.
-**Target resolution:** v5.1+ (before next SI-05 feature increment) — Head of Specs Team to determine whether (a) §5.2 is updated to accept volume-weighted overall rate, or (b) the service is corrected to compute mean-of-per-rule-rates and `digest_endpoints.md` updated accordingly.
-**Owner:** Head of Specs Team
-**Backlog reference:** BLG-SPEC-47
+**Status: ✅ RESOLVED — 2026-06-08 (v5.2 ST-03, BLG-SPEC-47)**
+
+**Canonical requirement (original §5.2, v1.1):** `pass_rate` ← Mean of all `pass_rate` values from `data.validation_pass_rate_by_rule`; null values excluded from mean.
+**What was implemented:** volume-weighted overall ratio (`pass_count / total` across all rules).
+**Resolution — Option (a) chosen:** §5.2 updated (v1.2) to accept volume-weighted overall ratio as the canonical computation method. Rationale: volume-weighted rate reflects actual validation distribution and user-observable behaviour better than equal-weighting per rule; the implementation is already in production and accurate for v5.1; `digest_endpoints.md` v0.2 already documented "Overall pass/total ratio (7d)" which is now the canonical definition. Secondary inconsistency (digest_endpoints.md) resolved by this determination — the contract is now consistent with the canonical spec.
+**Owner:** Head of Specs Team (canonical determination 2026-06-08)
+**Backlog reference:** BLG-SPEC-47 (resolved)
