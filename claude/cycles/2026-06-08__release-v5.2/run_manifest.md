@@ -31,7 +31,7 @@
 | -1.4 Write permission test | PASS | .write_test created and confirmed |
 | -1.5 Prior cycle lessons check | ADVISORY | 2 action-now carry-forwards from v5.1 (see below) |
 | -1.6 Post-ship precondition | PASS | post_ship_complete=true, next_cycle_unblocked=true, status=Closed |
-| -1.7 Prompt change log integrity | ADVISORY | delivery_verification_prompt.md v3.0 entry not visible in top portion of log (v5.1 ST-03 patch) — advisory only; see note |
+| -1.7 Prompt change log integrity | PASS | delivery_verification_prompt.md v2.9→v3.0 entry confirmed at line 408 (appended by v5.1 ST-03 commit 48f821af); OPERATIONAL_GUIDE.md v4.31 confirmed; advisory CLEARED by PMO Lead verification 2026-06-08 |
 | -1.8 Amendment in progress | PASS | status ≠ Amendment_In_Progress |
 | -1.9 Stale backlog lock | PASS | No existing backlog lock |
 
@@ -42,8 +42,8 @@
 | 1 | LL-RP-v5.1-01: STEP 8.1 Option(b) PO decision creates §-1.2 ambiguity — §-1.2 STEP 8.1 Option(b) metadata acceptable as roadmap entry equivalent | Addressed as OA-01 in v5.2 EPIC-01 scope; HoST to patch §-1.2 this sprint | Release Planning |
 | 2 | Phase 4: test-authoring stories have spec_references = [] triggering traceability flag — guidance to populate with created test file path | Addressed as OA-02 in v5.2 EPIC-01 scope; HoST to add note to execution_prompt.md §3.1.A | Sprint Planning |
 
-**STEP -1.7 Advisory — Prompt change log gap:**
-delivery_verification_prompt.md v3.0 (v5.1 ST-03 patch: Tier 2 agent-mediated signer format) — no entry visible in prompt_change_log.md visible top section. If entry was added by execution_prompt.md v3.36 structural check (BLG-GOV-80) during v5.1, it may be present and unconfirmed. Outstanding action: PMO Lead to verify entry exists before sprint planning seals.
+**STEP -1.7 Advisory — CLEARED by PMO Lead sub-agent verification (2026-06-08):**
+delivery_verification_prompt.md v2.9→v3.0 entry EXISTS at line 408 of prompt_change_log.md (appended by v5.1 ST-03 commit 48f821af, 2026-06-21). OPERATIONAL_GUIDE.md is at v4.31 with Verification Engine Source = delivery_verification_prompt.md v3.0. The earlier advisory was a false alarm caused by `grep | head -20` truncation — the file has 390 entries, the v5.1 entries were appended to the bottom (past the visible portion). **No action required before sprint planning.**
 
 ---
 
