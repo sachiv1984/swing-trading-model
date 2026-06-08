@@ -124,8 +124,8 @@
     "EPIC-02": {
       "status": "done",
       "branch": "exec/2026-06-08__release-v5.2/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 697,
+      "pr_status": "open",
       "qa_signed_off": false,
       "_qa_note": "Staging-only ACs (ST-05 AC-04, ST-06 AC-04) require I&O Owner Render+DB confirmation before DoQ sign-off.",
       "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.2/qa_evidence_EPIC-02.md",
