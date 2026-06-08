@@ -9,10 +9,10 @@
 
   "epics": {
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-08__release-v5.2/EPIC-03",
       "pr_number": 694,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.2/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
@@ -94,47 +94,51 @@
     },
 
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-06-08__release-v5.2/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 697,
+      "pr_status": "open",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.2/qa_evidence_EPIC-02.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/test_si05_digest_service.py"],
       "stories": {
         "ST-05": {
           "title": "BLG-BE-32: SI-05 Telegram delivery retry and failure handling",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Head of Engineering",
           "github_issue": 682,
           "branch": "exec/2026-06-08__release-v5.2/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "4df36369",
           "delegation_record_id": "DEL-20260608-01",
           "blocked_since_utc": "2026-06-08T11:30:00Z",
           "unblock_criteria": "Commit [EPIC-02][ST-05] pushed; unit test for ERROR logging present and passing; retry policy documented",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-06-08T13:30:00Z",
+          "acceptance_verified": true,
           "spec_references": ["backend/services/si05_digest_service.py"],
-          "deviations_filed": false,
-          "notes": "Staging-only AC-04 (Render logs evidence). Current baseline: ERROR logging at line 274; no retry."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {"required_by": "Head of Engineering", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-06-08T13:30:00Z"},
+          "notes": "Retry implemented: max 2 retries, 30s/60s backoff. ERROR logging present. 24 tests passing. Staging AC-04: PASS (Render logs confirmed)."
         },
         "ST-06": {
           "title": "BLG-BE-33: SI-05 digest delivery log table (si05_digest_log)",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Head of Engineering",
           "github_issue": 683,
           "branch": "exec/2026-06-08__release-v5.2/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "4df36369",
           "delegation_record_id": "DEL-20260608-02",
           "blocked_since_utc": "2026-06-08T11:30:00Z",
           "unblock_criteria": "Commit [EPIC-02][ST-06] pushed; CREATE TABLE IF NOT EXISTS guard; log rows on success/failure; Data Model Owner sign-off; staging confirmation",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-06-08T13:30:00Z",
+          "acceptance_verified": true,
           "spec_references": ["docs/specs/api_contracts/digest_endpoints.md"],
-          "deviations_filed": false,
-          "notes": "Staging-only AC-04 (DB migration presence). Optional GET endpoint if scoped — CLAUDE.md §2 compliance required."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {"required_by": "Data Model & Domain Schema Owner", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-06-08T13:30:00Z"},
+          "notes": "ensure_si05_digest_log_table() in database.py; log rows on both paths. Staging AC-04: PASS. Data Model Owner: signed off."
         },
         "ST-07": {
           "title": "BLG-OPS-55: Deployment runbook update for SI-05 operational environment",
@@ -151,6 +155,7 @@
           "acceptance_verified": true,
           "spec_references": ["docs/ops/production_deployment_runbook.md"],
           "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": {"required_by": "Infrastructure & Operations Owner", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-06-08T11:30:00Z"},
           "notes": "Runbook v0.1→v0.2. §6 SI-05 operational requirements section added."
         },
@@ -169,9 +174,10 @@
           "acceptance_verified": true,
           "spec_references": ["docs/ops/si05_health_check_procedure.md"],
           "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "delivery_note": "docs/ops/si05_health_check_procedure.md",
           "sign_off_record": {"required_by": "Infrastructure & Operations Owner", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-06-08T11:30:00Z"},
-          "notes": "Health check procedure v1.0. 3 options (log table/Render logs/Telegram). BLG-BE-33 prerequisite for Option A."
+          "notes": "Health check procedure v1.0. Options: log table, Render logs, Telegram."
         }
       }
     },
@@ -192,7 +198,7 @@
           "assigned_to": "engine",
           "github_issue": 690,
           "branch": "exec/2026-06-08__release-v5.2/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "6929cd0f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -202,7 +208,7 @@
           "deviations_filed": true,
           "delivery_note": "docs/qa/si05_edge_case_gap_analysis.md",
           "sign_off_record": {"required_by": "QA Lead", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-06-08T12:00:00Z"},
-          "notes": "2 gaps found and fixed: test_telegram_api_connection_failure + test_message_truncation_at_character_limit. 23 tests total (21+2). All passing."
+          "notes": "2 gaps found and fixed: test_telegram_api_connection_failure + test_message_truncation_at_character_limit. 23 tests total, all passing."
         },
         "ST-14": {
           "title": "BLG-QA-47 + BLG-GOV-94: SI-05 Phase 1 acceptance test protocol and delivery verification protocol",
@@ -211,7 +217,7 @@
           "assigned_to": "engine",
           "github_issue": 691,
           "branch": "exec/2026-06-08__release-v5.2/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "6929cd0f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -220,7 +226,8 @@
           "spec_references": ["docs/qa/si05_acceptance_test_protocol.md", "docs/qa/si05_delivery_verification_protocol.md"],
           "deviations_filed": true,
           "sign_off_record": {"required_by": "Director of Quality", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-06-08T12:00:00Z"},
-          "notes": "Both protocol documents created and cross-referenced. Acceptance test protocol covers AC-09 and AC-01. Delivery verification protocol covers pass/fail criteria and lifecycle."
+          "notes": "Both protocol docs created and cross-referenced. Covers v5.1 deferred ACs: AC-09 Telegram, AC-01 compliance_summary.",
+          "notes_spec_references_policy": "spec_references set to created artefact paths per LL-v4.5-EX-02"
         },
         "ST-15": {
           "title": "BLG-QA-48: Regression test suite baseline refresh post-v5.1",
@@ -229,7 +236,7 @@
           "assigned_to": "engine",
           "github_issue": 692,
           "branch": "exec/2026-06-08__release-v5.2/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "6929cd0f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -238,7 +245,7 @@
           "spec_references": ["backend/routers/test.py", "tests/e2e/signals-allocation-insufficient.spec.js", "docs/qa/regression_baseline_refresh_v51.md"],
           "deviations_filed": true,
           "sign_off_record": {"required_by": "QA Lead", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-06-08T12:00:00Z"},
-          "notes": "POST /digest/si05/send confirmed in test.py (line 177). 5 Playwright scenarios in signals-allocation-insufficient.spec.js confirmed. No formal baseline doc exists — BLG-QA-50 filed."
+          "notes": "POST /digest/si05/send confirmed in test.py. 5 Playwright scenarios confirmed. No formal baseline doc — BLG-QA-50 filed."
         },
         "ST-16": {
           "title": "BLG-GOV-96: SI-05 Phase 1 effectiveness measurement criteria",
@@ -247,7 +254,7 @@
           "assigned_to": "engine",
           "github_issue": 693,
           "branch": "exec/2026-06-08__release-v5.2/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "6929cd0f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -257,7 +264,7 @@
           "deviations_filed": true,
           "delivery_note": "claude/cycles/2026-06-08__release-v5.2/si05_effectiveness_criteria.md",
           "sign_off_record": {"required_by": "Product Owner", "method": "agent_mediated", "status": "cleared", "cleared_utc": "2026-06-08T12:00:00Z"},
-          "notes": "3 effectiveness criteria defined (frequency, action, reliability). 30-day review date 2026-07-04. PO acknowledged. BLG-GOV-92 Phase 2 activation gate documented."
+          "notes": "3 effectiveness criteria defined. 30-day review 2026-07-04. PO acknowledged."
         }
       }
     },
@@ -279,8 +286,15 @@
           "github_issue": 678,
           "branch": "exec/2026-06-08__release-v5.2/EPIC-01",
           "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
           "spec_references": ["claude/system/release_planning_prompt.md"],
           "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
           "notes": "CLAUDE.md §6 checklist mandatory — v2.33→v2.34, OPERATIONAL_GUIDE §6B+§14, prompt_change_log.md. HoST sign-off required."
         },
         "ST-02": {
@@ -291,8 +305,15 @@
           "github_issue": 679,
           "branch": "exec/2026-06-08__release-v5.2/EPIC-01",
           "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
           "spec_references": ["claude/system/execution_prompt.md"],
           "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
           "notes": "CLAUDE.md §6 checklist mandatory — v3.36→v3.37, OPERATIONAL_GUIDE §8+§14, prompt_change_log.md. HoST sign-off required."
         },
         "ST-03": {
@@ -303,8 +324,15 @@
           "github_issue": 680,
           "branch": "exec/2026-06-08__release-v5.2/EPIC-01",
           "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
           "spec_references": ["docs/product/decisions/si05-telegram-message-format-spec.md", "docs/specs/api_contracts/digest_endpoints.md"],
           "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
           "notes": "HoST canonical determination required. DEV-v51-EPIC01-01 must be resolved. If Option(b): reclassify to delegated_backend."
         },
         "ST-04": {
@@ -315,22 +343,29 @@
           "github_issue": 681,
           "branch": "exec/2026-06-08__release-v5.2/EPIC-01",
           "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
           "spec_references": ["docs/specs/api_contracts/digest_endpoints.md"],
           "deviations_filed": false,
-          "notes": "Contract confirmed existing in ST-12 audit. openapi.yaml and test.py entries confirmed. Need to verify AC-04 auth requirements section."
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Contract confirmed existing in ST-12 audit. Need to verify AC-04 auth requirements section."
         }
       }
     }
   },
 
-  "blocked_items": ["ST-05", "ST-06"],
+  "blocked_items": [],
   "delegated_items": ["ST-05", "ST-06"],
-  "completed_items": ["ST-09", "ST-10", "ST-11", "ST-12", "ST-07", "ST-08", "ST-13", "ST-14", "ST-15", "ST-16"],
+  "completed_items": ["ST-09", "ST-10", "ST-11", "ST-12", "ST-07", "ST-08", "ST-05", "ST-06", "ST-13", "ST-14", "ST-15", "ST-16"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-03", "EPIC-02", "EPIC-04", "EPIC-01"],
+    "epics_merged": ["EPIC-03"],
+    "epics_pending": ["EPIC-02", "EPIC-04", "EPIC-01"],
     "all_merged": false
   },
 
