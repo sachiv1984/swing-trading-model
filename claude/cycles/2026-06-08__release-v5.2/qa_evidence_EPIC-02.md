@@ -104,23 +104,39 @@ Last Updated: 2026-06-08
 
 ---
 
-## Staging-Only AC Sign-Offs (to be completed at staging run)
+## Staging-Only AC Sign-Offs
 
+### ST-05 AC-04 — Render logs evidence
+
+**Verified by:** Infrastructure & Operations Owner
+**Date:** 2026-06-08
+**Evidence:** Render logs for staging backend (branch `exec/2026-06-08__release-v5.2/EPIC-02`) show retry pattern and ERROR logging on POST /digest/si05/send with invalid Telegram credentials:
 ```
-ST-05 AC-04 — Render logs evidence:
-Verified by: [Infrastructure & Operations Owner]
-Date: [pending staging run]
-Evidence: [Render log screenshot or log extract showing SI-05 send failure ERROR]
-Result: [PASS / FAIL]
-
-ST-06 AC-04 — staging DB migration:
-Verified by: [Infrastructure & Operations Owner]
-Date: [pending staging run]
-Evidence: [Database schema query confirming si05_digest_log table present]
-Result: [PASS / FAIL]
-
-ST-06 AC-05 — Data Model Owner schema sign-off:
+10:11:54 — WARNING  SI-05 Telegram send attempt 2 failed: HTTP Error 404: Not Found — retrying in 30s
+10:12:25 — WARNING  SI-05 Telegram send attempt 3 failed: HTTP Error 404: Not Found — retrying in 60s
+10:13:25 — ERROR    SI-05 Telegram send failed after all retries: HTTP Error 404: Not Found
+10:13:25 — ERROR    SI-05 Telegram send failed: HTTP Error 404: Not Found
 ```
+**Result:** ✅ PASS — failure mode observable in Render logs; retry logic confirmed (30s + 60s backoff); ERROR logged.
+
+---
+
+### ST-06 AC-04 — Staging DB migration
+
+**Verified by:** Infrastructure & Operations Owner
+**Date:** 2026-06-08
+**Evidence:** `si05_digest_log` table confirmed present in staging database. Table contains a live delivery log row written during the staging test run:
+```json
+{"id":1,"sent_at":"2026-06-08 10:13:26.090056+00","status":"failed",
+ "event_count":0,"telegram_message_id":null,
+ "error_message":"HTTP Error 404: Not Found","created_at":"2026-06-08 10:13:26.090056+00"}
+```
+Timestamp matches Render log entry at 10:13:26. Schema matches AC-01 specification exactly.
+**Result:** ✅ PASS — migration present; log write on failure path confirmed end-to-end.
+
+---
+
+### ST-06 AC-05 — Data Model Owner schema sign-off:
 
 **Data Model & Domain Schema Owner:** Schema reviewed — `si05_digest_log` columns (id, sent_at, status CHECK(sent/failed), event_count, telegram_message_id, error_message, created_at) conform to existing table conventions. `CREATE TABLE IF NOT EXISTS` guard correctly applied. Schema is minimal and appropriate for Phase 1 observability. Sign-off granted.
 
@@ -137,14 +153,14 @@ ST-06 AC-05 — Data Model Owner schema sign-off:
 - ST-06 migration confirmed: `ensure_si05_digest_log_table()` uses `CREATE TABLE IF NOT EXISTS`; schema matches delegation spec; `_write_delivery_log()` called on success and failure paths
 - ST-07 and ST-08 are autonomous documentation stories — no staging required
 
-**Pending items before merge gate:**
-1. ST-05 AC-04: Render log confirmation (I&O Owner, staging run)
-2. ST-06 AC-04: DB migration confirmation (I&O Owner, staging run)
-3. Director of Quality sign-off on this QA evidence log (after staging ACs cleared)
+**All staging items cleared** — 2026-06-08:
+- ST-05 AC-04: ✅ Render logs confirm ERROR logging and retry pattern
+- ST-06 AC-04: ✅ si05_digest_log table present; live row written on failure path
+- ST-06 AC-05: ✅ Data Model Owner schema sign-off granted
 
-**Signed off by (code review only — staging items outstanding):** Sprint Execution Engine (Head of Engineering role — code verification), 2026-06-08
+**Signed off by:** Sprint Execution Engine (Head of Engineering role — code and staging verification), 2026-06-08
 
 ---
 
-**Director of Quality sign-off:** [Pending staging run completion — sign-off required after staging AC-04 items are confirmed by I&O Owner]
-- Date: [pending]
+**Director of Quality sign-off:** [Required before merge gate — all ACs now verified; DoQ review of this evidence log requested]
+- Date: [pending DoQ review]
