@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-08 (post-ship closure 2026-06-08__release-v5.2)
+**Last Updated:** 2026-06-08 (rebalance 2026-06-08__scheduled — DL-040; 22 backlog adds; v5.3 Now section added (STEP 8.1 Option a); CPS=1.15, Δ=0.00; no initiative changes)
 **Last rebalance:** 2026-06-07 (cycle 2026-06-07__scheduled — Standard-tier, CPS=1.15; Δ=0.00; 25 new backlog items; DL-039; IW-20260607-01; 23 Promoted-Added)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -258,6 +258,44 @@ Today you find stocks through external research and add them to the watchlist ma
 *RA:v5.2 retired — see roadmap_archive.md 2026-06-08 (post-ship closure 2026-06-08__release-v5.2).*
 *RA:v5.1 retired — see roadmap_archive.md 2026-06-04 (post-ship closure 2026-06-21__release-v5.1).*
 *RA:v5.0 retired — see roadmap_archive.md 2026-06-03 (post-ship closure 2026-06-03__release-v5.0).*
+
+### RA:v5.3 — Spec Debt, Security Hardening & Ops Governance
+
+*Added: 2026-06-08 (STEP 8.1 Option (a) — rebalance 2026-06-08__scheduled — DL-040)*
+*Pre-conditions (OA-RP / gate checks before sprint planning):*
+- *BLG-GOV-106: PT-04 trade count re-verified (gate check required before v5.3 sprint planning seals)*
+- *BLG-GOV-111: v5.3 design gate pre-assessed (confirm design gate not required)*
+
+**Candidate scope (from DL-040 backlog adds — to be confirmed at plan release v5.3):**
+
+| Priority | BLG ID | Title | Effort |
+|----------|--------|-------|--------|
+| P1 | BLG-SPEC-53 | SPEC-49–52 contract gap resolution plan | M |
+| P1 | BLG-SPEC-54 | openapi.yaml completeness audit | S |
+| P1 | BLG-OPS-57 | SI-05 Telegram delivery failure alerting | S |
+| P1 | BLG-OPS-58 | CI secret scanning gate | S |
+| P1 | BLG-GOV-106 | PT-04 trade count gate re-verification | S |
+| P2 | BLG-QA-51 | SPEC-49–52 QA acceptance readiness | S |
+| P2 | BLG-GOV-104 | strategy_rules.md §11 parameter validation | M |
+| P2 | BLG-GOV-105 | Arc 6 PS-03 §13 threshold pre-assessment | S |
+| P2 | BLG-GOV-107 | SI-02 frontend activation criteria precision | S |
+| P2 | BLG-GOV-108 | AI model pin update policy | S |
+| P2 | BLG-GOV-109 | AI audit log retention policy | S |
+| P2 | BLG-OPS-59 | SI-05 production p99 latency review | S |
+| P2 | BLG-GOV-110 | Arc 4 trade_plan data completeness audit | S |
+| P2 | BLG-QA-52 | Tax year P&L boundary edge case validation | S |
+| P2 | BLG-QA-53 | SI-05 digest Playwright E2E coverage | M |
+| P2 | BLG-QA-54 | Playwright coverage matrix update post-v5.2 | S |
+| P2 | BLG-FE-67 | BLG-FE-64 design review scope definition | S |
+| P2 | BLG-GOV-111 | v5.3 design gate pre-assessment | S |
+| P3 | BLG-FE-66 | Red Flag Journal post-launch UX review | S |
+| Also target | BLG-BE-35 | Endpoint auth review follow-up (filed v5.2) | TBD |
+
+*Gate-conditional items (add to v5.3 if gates clear before sprint planning seals):*
+- BLG-GOV-112 (gate: 2026-07-04 SI-05 review complete)
+- BLG-GOV-113 (gate: before 2026-07-04 review)
+- BLG-GOV-114 (gate: before 2026-07-04 review)
+- BLG-FE-64 (gate: 2026-06-21 — clears before v5.3 sprint planning)
 
 -----
 

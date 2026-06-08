@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-08 (post-ship closure 2026-06-08__release-v5.2; 15 items marked ✅ COMPLETE: BLG-BE-32/33, BLG-QA-46/47/48, BLG-SPEC-47/48, BLG-OPS-55/56, BLG-GOV-94/96/97/98/99/100)
-**Last rebalance:** 2026-06-01 (cycle 2026-06-01__scheduled — DL-036; IW-20260601-01; 11 new items; 50 ideas classified)
+**Last Updated:** 2026-06-08 (rebalance 2026-06-08__scheduled — DL-040; 22 new items: BLG-SPEC-53/54, BLG-QA-51–54, BLG-OPS-57–59, BLG-FE-66/67, BLG-GOV-104–114)
+**Last rebalance:** 2026-06-08 (cycle 2026-06-08__scheduled — DL-040; IW-20260608-01; 22 new items; 57 ideas classified)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -991,6 +991,56 @@ SI-05 Phase 1 introduces a new workflow pattern: the user receives a Telegram no
 
 ---
 
+### BLG-FE-66 — Red Flag Journal post-launch UX review
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Review
+**Owner:** Base44 Frontend Prompt Owner; Head of UX & Design
+**Source:** IDEA-base44-frontend-20260608-01 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v5.3
+**Displacement:** BLG-FE-55 (mobile responsiveness baseline, P3) deprioritised.
+
+**Problem**
+Red Flag Journal (RFJ.js) shipped v3.9 (2026-05-22 — 7+ weeks ago) with no post-launch UX review. As the most recently shipped complex frontend component, friction points and usability improvements may be present that are not captured by CI tests.
+
+**Scope**
+- Review RFJ.js for: filter UX clarity, pagination interaction, empty state messaging, table readability
+- Identify top-3 friction points with proposed improvements
+- File follow-up backlog items for any identified improvements
+
+**Acceptance Criteria**
+- UX review document produced covering filters, pagination, empty state, table layout
+- Top-3 friction points documented with proposed improvements
+- Any significant friction filed as a separate backlog item
+- Base44 Frontend Prompt Owner and Head of UX & Design sign-off
+
+---
+
+### BLG-FE-67 — BLG-FE-64 visual design review scope definition
+**Priority:** P2 (Medium)
+**Type:** Frontend / Planning
+**Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design
+**Source:** IDEA-frontend-ux-20260608-01 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.3
+**Displacement:** BLG-GOV-101 (governance complexity assessment, P3) deprioritised.
+**Gate:** BLG-FE-64 gate clears 2026-06-21 — scope definition should complete before that date.
+
+**Problem**
+BLG-FE-64 (Red Flag Journal visual design review pre-brief) is in backlog with gate 2026-06-21 but its scope is vague — it is unclear what "visual design review" covers (typography, colours, spacing, component consistency, all of the above). Without a clear scope document, the story cannot be properly estimated or executed at sprint planning.
+
+**Scope**
+- Define the precise scope of BLG-FE-64: which visual elements, which pages/components, what acceptance criteria look like
+- Distinguish BLG-FE-64 from BLG-FE-66 (UX review) — this is visual design, not interaction design
+- Produce a one-page scope document that can be used as the BLG-FE-64 story AC at sprint planning
+
+**Acceptance Criteria**
+- Scope document produced: specifies which components and visual properties are in scope for review
+- Clear distinction from BLG-FE-66 documented
+- Frontend Specs & UX Documentation Owner and Head of UX & Design sign-off
+
+---
+
 ## 4. Backend & Data Backlog
 
 ---
@@ -1856,6 +1906,106 @@ With SI-01, SI-03, and SI-05 Phase 1 shipped (3 of 5 Arc 5 features), an interme
 - Arc 5 Playwright test coverage map produced (feature × AC × test scenario)
 - Top-3 coverage gaps identified with proposed remediation
 - Director of Quality sign-off on coverage assessment
+
+---
+
+### BLG-QA-51 — BLG-SPEC-49–52 QA acceptance criteria definition
+**Priority:** P2 (Medium)
+**Type:** QA / Governance
+**Owner:** Director of Quality; QA Lead
+**Source:** IDEA-director-of-quality-20260608-02 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.3
+**Displacement:** BLG-QA-44 (SI-04 test planning, P3) deprioritised.
+
+**Problem**
+BLG-SPEC-49–52 (6 endpoint contract gaps) need clearly defined acceptance criteria before they enter v5.3 sprint planning. Without QA-defined AC, the contract authoring stories will have vague verification criteria, risking incomplete sign-off.
+
+**Scope**
+- Define AC template for endpoint contract stories: what constitutes a "complete" contract (## METHOD /path at ## level, openapi.yaml entry, test.py entry, SystemStatus fallback count updated)
+- Apply template to all 6 gaps in BLG-SPEC-49–52
+- Ensure Director of Quality can sign off using the AC template at delivery verification
+
+**Acceptance Criteria**
+- QA readiness document produced with AC template and application to SPEC-49–52
+- Template is reusable for future endpoint contract gap stories
+- Director of Quality sign-off
+
+---
+
+### BLG-QA-52 — Tax year P&L boundary edge case validation
+**Priority:** P2 (Medium)
+**Type:** QA / Financial Accuracy
+**Owner:** QA Lead; Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260608-02 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v5.3
+**Displacement:** BLG-QA-44 (SI-04 test planning, P3) deprioritised.
+
+**Problem**
+The tax year P&L report (shipped v2.0, March 2026) generates tax-year-segmented P&L summaries. A trade opened in one UK tax year (before April 5) and closed in the next (after April 6) may be misattributed to the wrong year. This edge case has never been formally tested.
+
+**Scope**
+- Identify the tax year boundary logic in the P&L report endpoint (GET /reports/monthly-pnl or the annual equivalent)
+- Create test data scenarios: trade opened Dec 31, closed April 7 (straddling April 5 boundary); trade opened April 4, closed April 8
+- Verify P&L is attributed to the correct tax year in each scenario
+- Document findings; file a bug item if misattribution detected
+
+**Acceptance Criteria**
+- Year-boundary test scenarios documented and executed
+- P&L attribution confirmed correct for all boundary cases (or bug filed if incorrect)
+- Financial Reporting & Records Owner and QA Lead sign-off
+
+---
+
+### BLG-QA-53 — SI-05 digest Playwright E2E coverage
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA Lead; QA & Testing Owner
+**Source:** IDEA-qa-testing-20260608-01 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v5.3
+**Displacement:** BLG-QA-44 (SI-04 test planning, P3) deprioritised.
+
+**Problem**
+si05_digest_service.py has 21 unit tests but no Playwright E2E coverage for the digest trigger → delivery flow. The observable AC for SI-05 (Telegram message received, compliance data present, red flag summary accurate) cannot be fully verified by unit tests alone. CLAUDE.md §2 requires Playwright coverage or staging sign-off for observable ACs.
+
+**Scope**
+- Define Playwright test scenarios for SI-05: trigger delivery, verify Telegram mock receives message, verify message format/content structure
+- Implement minimum 3 Playwright scenarios covering: happy path delivery, empty red flag scenario, compliance score present
+- Ensure scenarios run in CI without real Telegram API (mock or stub Telegram bot endpoint)
+
+**Acceptance Criteria**
+- ≥ 3 Playwright E2E scenarios for SI-05 digest delivery implemented and passing in CI
+- Scenarios cover: happy path, empty state, compliance score
+- Telegram API mocked or stubbed to avoid real API calls in CI
+- QA Lead sign-off
+
+---
+
+### BLG-QA-54 — Playwright coverage matrix update post-v5.2
+**Priority:** P2 (Medium)
+**Type:** QA / Documentation
+**Owner:** QA Lead; Director of Quality
+**Source:** IDEA-qa-lead-20260608-02 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.3
+**Displacement:** BLG-QA-44 (SI-04 test planning, P3) deprioritised.
+
+**Problem**
+v5.2 added 26 new edge case tests (BLG-QA-44 base scope) and other QA improvements. The Playwright coverage matrix (produced by BLG-QA-49, v5.2) does not yet reflect these additions. A stale matrix leads to incorrect QA sign-off assessments at delivery verification.
+
+**Scope**
+- Count all Playwright E2E test scenarios post-v5.2 (tests/e2e/*.spec.js)
+- Update the coverage matrix to include all new scenarios added in v5.2
+- Map new scenarios to their corresponding feature ACs
+- Identify any ACs still lacking Playwright coverage
+
+**Acceptance Criteria**
+- Coverage matrix updated to reflect all v5.2 Playwright additions
+- New scenarios mapped to feature ACs
+- Coverage gaps identified and noted
+- Director of Quality sign-off
 
 ---
 
@@ -2774,6 +2924,58 @@ Watchlist endpoints (`GET /watchlist`, `POST /watchlist`, `DELETE /watchlist/{en
 
 ---
 
+### BLG-SPEC-53 — BLG-SPEC-49–52 contract gap resolution plan
+**Priority:** P1 (High)
+**Type:** Spec Debt / Governance
+**Owner:** Head of Specs Team; API Contracts & Documentation Owner
+**Source:** IDEA-head-of-specs-20260608-01 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v5.3
+**Displacement:** BLG-GOV-101 (governance complexity assessment, P3) deprioritised.
+
+**Problem**
+v5.2 endpoint coverage audit (BLG-GOV-100, ST-12) found 6 routes without API contracts: GET /ai/journal-summary/history, GET /analytics/compliance-metrics, GET /news/{ticker}, GET /watchlist, POST /watchlist, DELETE /watchlist/{entry_id} (BLG-SPEC-49–52). These contracts are required by CLAUDE.md §2 but were not filed at the time the endpoints shipped. A structured resolution plan ensures they are all resolved in a single v5.3 effort.
+
+**Scope**
+- Produce a resolution plan document for all 6 endpoint contract gaps
+- Priority-rank the 6 gaps by risk (auth exposure, external-facing vs internal, complexity)
+- Define sprint scope for v5.3: which gaps ship in the same sprint story vs separate stories
+- Confirm whether any additional openapi.yaml gaps exist beyond BLG-SPEC-49–52
+
+**Acceptance Criteria**
+- Resolution plan document produced with priority-ranked gap list
+- Sprint scope recommendation made for v5.3 sprint planning
+- Head of Specs Team and API Contracts & Documentation Owner sign-off
+
+---
+
+### BLG-SPEC-54 — openapi.yaml completeness audit against all 50 routes
+**Priority:** P1 (High)
+**Type:** Spec Debt / API Governance
+**Owner:** API Contracts & Documentation Owner; Head of Engineering
+**Source:** IDEA-api-contracts-20260608-02 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v5.3
+**Displacement:** BLG-SPEC-46 (Arc 4 API contract pre-planning, gate-conditional) deprioritised.
+
+**Problem**
+v5.2 found 50 routes in backend/routers/. openapi.yaml coverage against all 50 routes has never been formally audited. The drift detection gate catches routes missing from api_contracts/ documents, but may not catch routes that are in contracts but missing from openapi.yaml. A formal audit ensures the public API surface is fully documented.
+
+**Scope**
+- List all 50 routes from backend/routers/ test.py or router files
+- Compare against docs/reference/openapi.yaml entries
+- Identify any routes present in contract files but absent from openapi.yaml
+- Produce gap report; file additional BLG-SPEC items for any uncovered routes
+- Update openapi.yaml for any confirmed gaps
+
+**Acceptance Criteria**
+- All 50 routes audited against openapi.yaml
+- Gap report produced
+- openapi.yaml updated for any confirmed gaps
+- API Contracts & Documentation Owner sign-off
+
+---
+
 ### BLG-GOV-26 — Arc velocity tracking dashboard
 **Priority:** P3 (Low)
 **Type:** Governance Process
@@ -3576,6 +3778,84 @@ si05_digest_service.py runs on a weekly schedule. There is currently no document
 
 ---
 
+### BLG-OPS-57 — SI-05 Telegram delivery failure alerting
+**Priority:** P1 (High)
+**Type:** Operations / Monitoring
+**Owner:** Infrastructure & Operations Owner; Head of Engineering
+**Source:** IDEA-infra-ops-20260608-01 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v5.3
+**Displacement:** BLG-OPS-13 (performance baseline gaps, P3) deprioritised.
+
+**Problem**
+SI-05 delivers a weekly Telegram digest. BLG-OPS-56 (health check, v5.2) provides a manual verification procedure, but there is no automated alerting when delivery fails — a Telegram API error, revoked bot token, or rejected message would go undetected until manual inspection.
+
+**Scope**
+- Add a delivery confirmation check to si05_digest_service.py: if Telegram API returns non-200 or the send raises an exception, log to si05_digest_log with status = FAILED and trigger an admin alert
+- Admin alert mechanism: write a log entry to stderr/Render logs at ERROR level; optionally post an alert message to the operator's Telegram or email
+- Ensure retry logic (BLG-BE-32, shipped v5.2) still applies before the failure alert triggers
+
+**Acceptance Criteria**
+- Failed digest delivery is logged with status=FAILED in si05_digest_log
+- A human-observable alert is triggered (Render log at ERROR level minimum)
+- Delivery failure alerting documented in ops runbook (update docs/operations/deployment_runbook.md)
+- Infrastructure & Operations Owner sign-off
+
+---
+
+### BLG-OPS-58 — CI secret scanning gate
+**Priority:** P1 (High)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** IDEA-cybersecurity-20260608-01 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v5.3
+**Displacement:** BLG-OPS-13 (performance baseline gaps, P3) deprioritised.
+
+**Problem**
+No secret scanning is configured in the CI pipeline. A developer could accidentally commit TELEGRAM_BOT_TOKEN, ANTHROPIC_API_KEY, or Supabase credentials to the repository. Given that the Telegram bot controls production digest delivery and the Anthropic API key incurs real costs, a leaked secret would be high-impact.
+
+**Scope**
+- Add a secret scanning step to GitHub Actions CI pipeline (e.g., gitleaks action or trufflehog)
+- Configure to scan for: Telegram bot token patterns, Anthropic API key patterns, Supabase URL/key patterns, generic high-entropy strings
+- Fail CI on detection; produce a clear error message identifying the type of secret
+- Add a .gitleaks.toml or equivalent allowlist for known false positives (e.g., test fixture tokens)
+
+**Acceptance Criteria**
+- Secret scanning step added to CI and runs on every PR
+- Confirmed to detect a test dummy token (AAAA-format) before allowlisting it
+- Allowlist documented for any confirmed false positives
+- CI fails and blocks merge when a real-looking secret is detected
+- Cybersecurity & Trust Lead sign-off
+
+---
+
+### BLG-OPS-59 — SI-05 service production p99 latency baseline review
+**Priority:** P2 (Medium)
+**Type:** Operations / Performance
+**Owner:** Infrastructure & Operations Owner; Head of Engineering
+**Source:** IDEA-head-of-engineering-20260608-02 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled (review after 4 weeks production operation, ~2026-07-04)
+**Displacement:** BLG-OPS-13 (performance baseline gaps, P3) deprioritised.
+
+**Problem**
+POST /digest/si05/send was baselined pre-launch in BLG-OPS-54. Production p99 latency under real data volume (actual trade history, real Red Flag Journal entries, real compliance scores) may differ from the pre-launch baseline. Confirming production performance validates the service is not degrading under real conditions.
+
+**Scope**
+- After 4 weeks of production operation (≥ 2026-07-04): extract p99 latency from Render logs for POST /digest/si05/send
+- Compare against BLG-OPS-54 pre-launch baseline
+- If p99 > 2× baseline: file a performance investigation item; otherwise record PASS
+- Document findings in a brief perf review note
+
+**Acceptance Criteria**
+- Post-4-week p99 latency extracted and documented
+- Comparison against BLG-OPS-54 baseline made
+- Performance PASS or investigation item filed
+- Infrastructure & Operations Owner sign-off
+
+---
+
 ### BLG-GOV-78 — roadmap_prompt.md STEP 8.1 Empty Now Horizon gate strengthening
 **Priority:** P3 (Low)
 **Type:** Governance / Process
@@ -4263,6 +4543,293 @@ BLG-GOV-89 (staged verification sprint protocol) defines the pattern. After 2+ u
 - Worksheet template produced and filed
 - Gate condition (BLG-GOV-89 used 2+ times) verified before authoring
 - Director of Quality and PMO Lead sign-off
+
+---
+
+### BLG-GOV-104 — strategy_rules.md §11 parameter validation (first annual instance)
+**Priority:** P2 (Medium)
+**Type:** Governance / Strategy
+**Owner:** Strategy Rules & System Intent Owner; Product Owner
+**Source:** IDEA-strategy-owner-20260608-01 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v5.3
+**Displacement:** BLG-GOV-101 (governance complexity assessment, P3) deprioritised.
+
+**Problem**
+strategy_rules.md §11 defines ATR multiplier, regime gate parameters, and position sizing rules. These parameters have never been formally validated against actual trade outcomes since they were set. BLG-GOV-95 (annual parameter review schedule, v5.2) established that validation should happen annually; this item is the first instance of that schedule.
+
+**Scope**
+- Pull all closed trades from production database; compute per-parameter outcomes
+- For ATR multiplier: was the initial stop placed correctly against ATR? Did trailing stop advances follow the multiplier?
+- For regime gate: how many entries were blocked by the regime gate? Of those that were allowed, what was the pass rate?
+- For position sizing: is the documented formula correctly implemented in the UI?
+- Produce a parameter validation document; recommend any changes (or confirm no changes needed)
+
+**Acceptance Criteria**
+- Parameter validation document produced for §11 parameters
+- Each parameter validated against actual trade data (or documented as "insufficient data if <20 trades")
+- Strategy Rules & System Intent Owner sign-off; Product Owner ratifies any recommended parameter changes
+
+---
+
+### BLG-GOV-105 — Arc 6 PS-03 Monte Carlo §13 threshold pre-assessment
+**Priority:** P2 (Medium)
+**Type:** Governance / §13 Compliance
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260608-02 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Unscheduled (before Arc 6 moves from Later to Next)
+**Displacement:** BLG-GOV-111 (v5.3 design gate pre-assessment, lower-P) deprioritised.
+
+**Problem**
+Arc 6 PS-03 (Monte Carlo simulation) requires a §13 review before sprint planning. The core §13 question — "is Monte Carlo simulation deterministic or predictive?" — can be answered definitively now without knowing implementation details. A pre-assessment scoped to this threshold question de-risks Arc 6 sprint planning entry.
+
+**Scope**
+- Assess whether Monte Carlo simulation as described in current_roadmap.md §5 (PS-03 notes) is deterministic (replaying own trade distribution) or predictive (forecasting future outcomes)
+- Determine: does PS-03 engage the §13 boundary "Not an ML-based prediction system"?
+- Produce a one-page §13 threshold assessment; if PASS (deterministic), note that binding conditions will be defined at full §13 review when Arc 6 moves to Next
+- Note: scope is threshold question only — NOT a full §13 review with binding conditions
+
+**Acceptance Criteria**
+- §13 threshold assessment produced for PS-03 (deterministic vs predictive question answered)
+- PASS/FAIL on the threshold question documented
+- Strategy Rules & System Intent Owner sign-off
+
+---
+
+### BLG-GOV-106 — PT-04 trade count gate re-verification
+**Priority:** P1 (High)
+**Type:** Governance / Gate Tracking
+**Owner:** PMO Lead; Product Owner
+**Source:** IDEA-challenger-20260608-01 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5 hr)
+**Provisional-Target:** Before v5.3 sprint planning seals
+**Displacement:** BLG-GOV-101 (governance complexity assessment, P3) deprioritised.
+
+**Problem**
+PT-04 gate requires 20+ closed trades (trades with pnl IS NOT NULL in trade_history). Last formal count: 6 trades at v4.6 audit (2026-05-31). The count has never been updated. If the gate has cleared, PT-04 should enter v5.3 sprint planning. If not, the gate status record should be updated with the current count.
+
+**Scope**
+- Query: `SELECT COUNT(*) FROM trade_history WHERE pnl IS NOT NULL`
+- Compare against 20-trade gate threshold
+- Update PT-04 gate status in current_roadmap.md and backlog.md (BLG-FEAT-25)
+- If gate cleared: add PT-04 to v5.3 candidate scope
+
+**Acceptance Criteria**
+- Current closed trade count queried and recorded
+- PT-04 gate status updated in current_roadmap.md and BLG-FEAT-25
+- PMO Lead and Product Owner sign-off on gate status
+
+---
+
+### BLG-GOV-107 — SI-02 frontend activation criteria precision
+**Priority:** P2 (Medium)
+**Type:** Governance / Gate Tracking
+**Owner:** PMO Lead; Product Owner; Head of Engineering
+**Source:** IDEA-challenger-20260608-02 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v5.3
+**Displacement:** BLG-GOV-101 (governance complexity assessment, P3) deprioritised.
+
+**Problem**
+SI-02 frontend activation is recorded as "~Nov 2026" — a date estimate rather than a measurable gate. Sprint planning for SI-02 frontend cannot be triggered reliably against a vague date. Precise, measurable criteria are needed.
+
+**Scope**
+- Define 2-3 specific, checkable conditions that unblock SI-02 frontend sprint planning, e.g.:
+  1. 20+ closed trades with linked trade_plans (PT-04 gate condition — SI-02 drift score data quality gate)
+  2. SI-02 backend API performance confirmed stable (GET /analytics/behavioural-drift p99 < 2s)
+  3. SI-02 drift scores confirmed meaningful (not dominated by noise at current trade volume — per BLG-GOV-92 Phase 2 activation criteria)
+- Update SI-02 status in current_roadmap.md with precise gate conditions
+- PMO Lead to check these conditions at each release planning kickoff
+
+**Acceptance Criteria**
+- SI-02 frontend gate conditions defined (2-3 specific, checkable criteria)
+- current_roadmap.md SI-02 entry updated with precise conditions replacing "~Nov 2026"
+- PMO Lead and Product Owner sign-off
+
+---
+
+### BLG-GOV-108 — AI model pin update policy (BLG-GOV-64 gap)
+**Priority:** P2 (Medium)
+**Type:** Governance / AI Compliance
+**Owner:** AI Compliance Governance Officer; Head of Engineering
+**Source:** IDEA-ai-compliance-20260608-01 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v5.3
+**Displacement:** BLG-GOV-101 (governance complexity assessment, P3) deprioritised.
+
+**Problem**
+BLG-GOV-64 (model pinning policy, v4.2) defines that the model must be pinned explicitly, but does not specify when or how to update the pin. claude-haiku-4-5 was pinned at v4.2 (2026-05-28). As new Claude versions release, there is no governed process for evaluating and performing pin updates.
+
+**Scope**
+- Add to BLG-GOV-64 or create a companion document: "AI model pin update policy"
+  - Update trigger: when Anthropic releases a new Claude model or deprecates the current pinned model
+  - Update process: review release notes for breaking changes, run test suite against new model, document cost/quality trade-off
+  - Required sign-offs: AI Compliance Governance Officer + Head of Engineering
+  - Timeline: updates must complete within 30 days of deprecation notice
+
+**Acceptance Criteria**
+- Model pin update policy documented (in BLG-GOV-64 update or companion doc)
+- Policy covers: trigger, process, sign-offs, timeline for deprecation response
+- AI Compliance Governance Officer and Head of Engineering sign-off
+
+---
+
+### BLG-GOV-109 — AI audit log retention policy
+**Priority:** P2 (Medium)
+**Type:** Governance / Data Compliance
+**Owner:** AI Compliance Governance Officer; Infrastructure & Operations Owner
+**Source:** IDEA-ai-compliance-20260608-02 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.3
+**Displacement:** BLG-OPS-13 (performance baseline gaps, P3) deprioritised.
+
+**Problem**
+claude_audit_log entries have been accumulating since v3.8 with no defined retention period. Without a retention policy: (a) storage costs grow indefinitely, (b) it is unclear which log entries are reliable for compliance purposes vs stale.
+
+**Scope**
+- Define retention period for claude_audit_log entries: recommended 12 months (or align with Supabase retention policy from BLG-OPS-53)
+- Implement: add a scheduled cleanup job or Supabase row-level TTL for entries older than the retention period
+- Document in the AI compliance governance records (docs/compliance/ or existing AI audit log spec)
+
+**Acceptance Criteria**
+- Retention policy defined and documented (period, rationale)
+- Cleanup mechanism implemented (scheduled job or TTL)
+- AI Compliance Governance Officer and Infrastructure & Operations Owner sign-off
+
+---
+
+### BLG-GOV-110 — Arc 4 trade_plan data completeness audit
+**Priority:** P2 (Medium)
+**Type:** Governance / Data Readiness
+**Owner:** Data Model & Domain Schema Owner; Product Owner
+**Source:** IDEA-data-model-20260608-01 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v5.3 or before Arc 4 sprint planning (PO-02 gate ~Oct 2026)
+**Displacement:** BLG-GOV-101 (governance complexity assessment, P3) deprioritised.
+
+**Problem**
+Trade plans have been active since v3.1 (3+ months). However, which optional fields (entry_rationale, confirmation_criteria, r_target, setup_type, pre_entry_validation_snapshot) are being consistently populated is unknown. Arc 4 analytics (PO-02 journal pattern recognition, PO-03 behavioural error taxonomy) depend on this data.
+
+**Scope**
+- Query trade_plans table: for each optional field, compute null% and non-null% across all records
+- Identify fields with > 50% null rate as "data gaps" — these are risky dependencies for Arc 4
+- Produce a data completeness report; flag any Arc 4 features that depend on gapped fields
+- If gaps are critical: file backlog items for UI/UX improvements to encourage field completion
+
+**Acceptance Criteria**
+- Data completeness report produced: per-field null% for all trade_plan optional fields
+- Arc 4 data dependency risk assessment included
+- Data Model & Domain Schema Owner and Product Owner sign-off
+
+---
+
+### BLG-GOV-111 — v5.3 design gate pre-assessment
+**Priority:** P2 (Medium)
+**Type:** Governance / Release Planning
+**Owner:** Head of UX & Design; Product Owner
+**Source:** IDEA-head-of-ux-20260608-01 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5 hr)
+**Provisional-Target:** Before plan release v5.3
+**Displacement:** BLG-GOV-101 (governance complexity assessment, P3) deprioritised.
+
+**Problem**
+CLAUDE.md §1 requires a design gate assessment before sprint planning for any release with new UI/UX components. v5.3 candidate scope (governance debt, spec gaps, security, ops) appears to be exclusively backend/governance with no new UI components — but this should be formally assessed rather than assumed.
+
+**Scope**
+- Review v5.3 candidate scope from current_roadmap.md RA:v5.3 section
+- For each candidate item: does it introduce new UI or UX components? (Yes/No)
+- If all items are No: record "Design gate not required" with itemised justification; seal in run_manifest at plan release v5.3
+- If any item is Yes: normal design gate process applies
+
+**Acceptance Criteria**
+- Design gate pre-assessment document produced (or incorporated into plan release v5.3 run manifest)
+- Each v5.3 candidate item assessed for UI/UX dependency
+- Head of UX & Design and Product Owner sign-off
+
+---
+
+### BLG-GOV-112 — SI-05 digest weekly cadence review (gate-conditional)
+**Priority:** P2 (Medium)
+**Type:** Governance / Product Review
+**Owner:** Product Owner; Director of Quality
+**Source:** IDEA-product-owner-20260608-02 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** After 2026-07-04 SI-05 effectiveness review
+**Displacement:** BLG-GOV-85 (Arc 6 §13 pre-assessment boundary doc, gate-conditional) deprioritised.
+
+**Gate criteria:** SI-05 Phase 1 first effectiveness review (BLG-GOV-96) complete — gate clears 2026-07-04.
+
+**Problem**
+SI-05 delivers a weekly digest. After 4+ weeks of production use, the weekly cadence should be reviewed: is weekly too frequent/infrequent? Are users actioning the digest? The first effectiveness review (2026-07-04) will provide the data needed for this cadence assessment.
+
+**Scope**
+- After 2026-07-04 effectiveness review: assess weekly cadence appropriateness
+- Review si05_digest_log delivery count, any feedback from the user, and whether digest content is acted upon (indirectly measurable via red flag journal views post-delivery)
+- Produce a cadence recommendation: maintain weekly / move to bi-weekly / or introduce adaptive cadence
+
+**Acceptance Criteria**
+- Cadence review document produced after 2026-07-04 effectiveness review
+- Recommendation made with data backing
+- Product Owner sign-off
+
+---
+
+### BLG-GOV-113 — SI-05 Phase 1 effectiveness review protocol (gate-conditional)
+**Priority:** P1 (High)
+**Type:** Governance / QA Planning
+**Owner:** Director of Quality; Product Owner
+**Source:** IDEA-director-of-quality-20260608-01 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Before 2026-07-04 effectiveness review
+**Displacement:** BLG-QA-34 (SI-02 test planning, gate-conditional) deprioritised.
+
+**Gate criteria:** Must complete before 2026-07-04. BLG-GOV-96 (effectiveness criteria) defines WHAT to measure; this item defines HOW to conduct the review.
+
+**Problem**
+BLG-GOV-96 (SI-05 effectiveness measurement criteria, v5.2) defines what to measure at the 2026-07-04 review but does not define the review process: who participates, what evidence is examined, what format the output takes, and what decision authority exists. Without a protocol, the review may be inconsistent.
+
+**Scope**
+- Define the SI-05 Phase 1 effectiveness review protocol:
+  - Participants: Product Owner + Director of Quality (minimum)
+  - Evidence sources: si05_digest_log, BLG-GOV-96 criteria, user feedback (if any), Red Flag Journal view counts post-delivery
+  - Output format: a one-page effectiveness review report
+  - Decision authority: Product Owner decides whether to proceed with Phase 2 or extend Phase 1 observation
+- Protocol must complete by 2026-07-01 (3 days before first review date)
+
+**Acceptance Criteria**
+- SI-05 effectiveness review protocol document produced
+- Protocol specifies: participants, evidence sources, output format, decision authority
+- Must complete by 2026-07-01
+- Director of Quality and Product Owner sign-off
+
+---
+
+### BLG-GOV-114 — si05_digest_log schema validation for effectiveness review (gate-conditional)
+**Priority:** P1 (High)
+**Type:** Governance / Data
+**Owner:** Data Model & Domain Schema Owner; Infrastructure & Operations Owner
+**Source:** IDEA-data-model-20260608-02 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
+**Effort:** S (~0.5 hr)
+**Provisional-Target:** Before 2026-07-04 effectiveness review
+**Displacement:** BLG-GOV-90 (Claude model deprecation monitoring, gate-conditional) deprioritised.
+
+**Gate criteria:** Must complete before 2026-07-04. The effectiveness review relies on si05_digest_log data being complete.
+
+**Problem**
+The 2026-07-04 SI-05 effectiveness review (BLG-GOV-96, BLG-GOV-113) will rely on si05_digest_log entries. If the schema is missing fields needed for the review (e.g., send_at timestamp, recipient, status, content_hash), the review will be unable to assess delivery reliability or consistency.
+
+**Scope**
+- Review si05_digest_log schema against BLG-GOV-96 effectiveness criteria
+- Confirm that the schema captures: send_at, status (SUCCESS/FAILED), recipient, digest content hash or preview
+- If any required fields are missing: file an urgent story to add them (before 2026-07-01)
+- If schema is complete: record PASS
+
+**Acceptance Criteria**
+- Schema validated against BLG-GOV-96 effectiveness criteria fields
+- Schema PASS or gap items filed as urgent stories
+- Must complete before 2026-07-01 (before review date)
+- Data Model & Domain Schema Owner sign-off
 
 ---
 

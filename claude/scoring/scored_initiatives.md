@@ -149,3 +149,31 @@
 | BLG-BE-26 (SI-02 drift summary assessment) | 4 | 3 | 4 | 4 | 4 | 4 | 1 | S |
 | BLG-GOV-88 (SI-04 binding conditions doc) | 3 | 2 | 3 | 5 | 5 | 5 | 1 | S |
 | BLG-FE-60 (SI-05 notification channel trade-off) | 4 | 2 | 3 | 5 | 5 | 4 | 1 | S |
+
+---
+
+## Cycle 2026-06-08__scheduled — Scored Initiatives (Standard tier; DL-040)
+
+*All items SPS=1 (no strategy contact). Scores: Strategic / Financial / Risk Reduction / Workforce Intensity / Time-to-Value / Reversibility (1=low, 5=high)*
+
+| BLG-ID | Title | Str | Fin | Risk | WF | TtV | Rev | SPS | Effort |
+|--------|-------|-----|-----|------|----|-----|-----|-----|--------|
+| BLG-SPEC-53 | SPEC-49–52 resolution plan | 4 | 3 | 5 | 2 | 4 | 5 | 1 | M |
+| BLG-QA-51 | SPEC-49–52 QA readiness | 4 | 2 | 4 | 2 | 4 | 5 | 1 | S |
+| BLG-GOV-104 | §11 parameter validation | 5 | 3 | 4 | 2 | 3 | 4 | 1 | M |
+| BLG-GOV-105 | Arc 6 PS-03 §13 pre-assessment | 3 | 2 | 3 | 2 | 2 | 5 | 1 | S |
+| BLG-OPS-57 | SI-05 delivery failure alerting | 4 | 3 | 5 | 2 | 5 | 4 | 1 | S |
+| BLG-GOV-106 | PT-04 gate re-verification | 3 | 2 | 3 | 1 | 5 | 5 | 1 | S |
+| BLG-GOV-107 | SI-02 frontend criteria precision | 3 | 2 | 3 | 1 | 4 | 5 | 1 | S |
+| BLG-GOV-108 | AI model pin update policy | 3 | 3 | 3 | 2 | 3 | 4 | 1 | S |
+| BLG-GOV-109 | AI audit log retention | 3 | 3 | 4 | 1 | 3 | 5 | 1 | S |
+| BLG-OPS-58 | CI secret scanning gate | 4 | 3 | 5 | 2 | 4 | 4 | 1 | S |
+| BLG-OPS-59 | SI-05 production p99 review | 3 | 2 | 3 | 1 | 4 | 5 | 1 | S |
+| BLG-FE-66 | RFJ post-launch UX review | 3 | 1 | 2 | 2 | 3 | 5 | 1 | S |
+| BLG-GOV-110 | Arc 4 trade_plan data audit | 4 | 2 | 3 | 2 | 3 | 5 | 1 | S |
+| BLG-QA-52 | Tax year P&L boundary validation | 4 | 4 | 4 | 1 | 3 | 5 | 1 | S |
+| BLG-SPEC-54 | openapi.yaml completeness audit | 4 | 2 | 4 | 2 | 4 | 5 | 1 | S |
+| BLG-QA-53 | SI-05 Playwright E2E coverage | 3 | 2 | 3 | 2 | 3 | 5 | 1 | M |
+| BLG-QA-54 | Playwright coverage matrix update | 3 | 1 | 3 | 1 | 4 | 5 | 1 | S |
+| BLG-FE-67 | BLG-FE-64 design review scope | 3 | 1 | 2 | 1 | 5 | 5 | 1 | S |
+| BLG-GOV-111 | v5.3 design gate pre-assessment | 3 | 1 | 3 | 1 | 5 | 5 | 1 | S |

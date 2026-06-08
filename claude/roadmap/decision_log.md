@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-03 (cycle 2026-06-03__scheduled — DL-038 appended)
+**Last Updated:** 2026-06-08 (cycle 2026-06-08__scheduled — DL-040 appended)
 
 ---
 
@@ -973,5 +973,55 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **STEP 8.1 decision:** Option (a) — v5.2 section added to current_roadmap.md. Rationale: OA-01/02 due before v5.2 sprint planning seals; BLG-SPEC-47 target v5.2; BLG-GOV-97 (P1) and BLG-SPEC-48 (P1) require immediate attention anchoring v5.2 scope.
 
 **Meta-review:** NOT DUE — 1 cycle since last meta-review (2026-06-02__scheduled). Next meta-review due after 2 more cycles.
+
+**Decision owner:** Product Owner
+
+---
+
+## DL-040
+
+**Date:** 2026-06-08
+**Cycle:** 2026-06-08__scheduled
+**Type:** Add (backlog)
+**Run tier:** Standard (CPS 1.15; delta 0.00; scheduled; 1 day since last scheduled rebalance 2026-06-07__scheduled)
+
+**Roadmap initiative changes:** None. All 13 active initiatives confirmed 🔥 Must continue. No Add / Replace / Defer / Kill for roadmap initiatives.
+
+**22 ideas Promoted (19 Promoted-Added + 3 Promoted-Backlog):**
+
+| BLG ID | Title | Priority | Effort | Displacement |
+|--------|-------|----------|--------|-------------|
+| BLG-SPEC-53 | BLG-SPEC-49–52 contract gap resolution plan | P1 | M | BLG-GOV-101 deprioritised |
+| BLG-QA-51 | BLG-SPEC-49–52 QA acceptance readiness | P2 | S | BLG-QA-44 deprioritised |
+| BLG-GOV-104 | strategy_rules.md §11 parameter validation (first instance) | P2 | M | BLG-GOV-101 deprioritised |
+| BLG-GOV-105 | Arc 6 PS-03 Monte Carlo §13 threshold pre-assessment | P2 | S | BLG-GOV-111 deprioritised (lower-P) |
+| BLG-OPS-57 | SI-05 Telegram delivery failure alerting | P1 | S | BLG-OPS-13 deprioritised |
+| BLG-GOV-106 | PT-04 trade count gate re-verification | P1 | S | BLG-GOV-101 deprioritised |
+| BLG-GOV-107 | SI-02 frontend activation criteria precision | P2 | S | BLG-GOV-101 deprioritised |
+| BLG-GOV-108 | AI model pin update policy (BLG-GOV-64 gap) | P2 | S | BLG-GOV-101 deprioritised |
+| BLG-GOV-109 | AI audit log retention policy | P2 | S | BLG-OPS-13 deprioritised |
+| BLG-OPS-58 | CI secret scanning gate | P1 | S | BLG-OPS-13 deprioritised |
+| BLG-OPS-59 | SI-05 service production p99 latency review | P2 | S | BLG-OPS-13 deprioritised |
+| BLG-FE-66 | Red Flag Journal post-launch UX review | P3 | S | BLG-FE-55 deprioritised |
+| BLG-GOV-110 | Arc 4 trade_plan data completeness audit | P2 | S | BLG-GOV-101 deprioritised |
+| BLG-QA-52 | Tax year P&L boundary edge case validation | P2 | S | BLG-QA-44 deprioritised |
+| BLG-SPEC-54 | openapi.yaml completeness audit (all 50 routes) | P1 | S | BLG-SPEC-46 deprioritised |
+| BLG-QA-53 | SI-05 digest Playwright E2E coverage | P2 | M | BLG-QA-44 deprioritised |
+| BLG-QA-54 | Playwright coverage matrix update post-v5.2 | P2 | S | BLG-QA-44 deprioritised |
+| BLG-FE-67 | BLG-FE-64 design review scope definition | P2 | S | BLG-GOV-101 deprioritised |
+| BLG-GOV-111 | v5.3 design gate pre-assessment | P2 | S | BLG-GOV-101 deprioritised |
+
+**3 ideas gate-conditional Promoted-Backlog:**
+- BLG-GOV-112 (gate: 2026-07-04 SI-05 effectiveness review complete; disp: BLG-GOV-85 deprioritised)
+- BLG-GOV-113 (gate: before 2026-07-04 effectiveness review; disp: BLG-QA-34 deprioritised)
+- BLG-GOV-114 (gate: before 2026-07-04 effectiveness review; disp: BLG-GOV-90 deprioritised)
+
+**1 idea Parked post-debate:** IDEA-metrics-analytics-20260608-01 (Arc 6 data audit) — Challenger Type-A accepted by PO; Arc 6 24+ months away.
+
+**Horizon movements:** v5.3 Now section added to current_roadmap.md per STEP 8.1 Option (a). Rationale: 22 new backlog items from this rebalance plus BLG-SPEC-49–52 and BLG-BE-35 from v5.2 provide clear v5.3 scope; advancing to plan release v5.3.
+
+**STEP 8.1 decision:** Option (a) — v5.3 section added to current_roadmap.md Now horizon. Section: v5.3 — Spec Debt, Security Hardening & Ops Governance.
+
+**Meta-review:** NOT DUE — 2 cycles since last meta-review (2026-06-02__scheduled). Next meta-review due after 1 more cycle.
 
 **Decision owner:** Product Owner

@@ -314,3 +314,28 @@ No initiatives were added, replaced, deferred, or killed. No new backlog items p
 **Skill-Silo check (cycle additions):** Governance load = 0% (both new items are execution-heavy: frontend implementation, backend metrics endpoint). Below 20% floor. Product Owner sign-off capacity confirmed. No Skill-Silo Alert issued.
 
 **Assessment:** 2 S-effort P3 items added. No scarce skill conflicts. Both items are well-bounded and low-complexity. v3.0 candidate pool is balanced; release planning will allocate from the full 14-item pool.
+
+---
+
+## Cycle 2026-06-08__scheduled — Workforce Economics Assessment
+
+**Date:** 2026-06-08
+**Run tier:** Standard
+**Items evaluated:** 22 new backlog items (19 Promoted-Added + 3 Promoted-Backlog)
+
+| Item | Effort | Skill Category | Notes |
+|------|--------|---------------|-------|
+| BLG-SPEC-53/54 | M + S | Head of Specs, API Contracts, Engineering | Spec debt resolution |
+| BLG-QA-51–54 | S + S + M + S | QA Lead, Director of Quality | QA governance |
+| BLG-OPS-57–59 | S + S + S | Infra/Ops, Cybersecurity, Engineering | Operational hardening |
+| BLG-FE-66/67 | S + S | Frontend, UX | UX review + scope definition |
+| BLG-GOV-104–111 | M + S × 7 | Strategy Owner, PO, PMO, AI Compliance, various | Governance |
+| BLG-GOV-112–114 | S × 3 | PO, Director of Quality, Data Model | Gate-conditional |
+
+**Governance load %:** ~35% (BLG-GOV items: 11 of 22 = 50% by count; by effort ≈ 35% due to smaller S vs M items in exec category)
+**Execution load %:** ~65%
+
+**Skill-Silo check:** Governance = 35% < 60% ceiling. No Skill-Silo Alert.
+Floor check: Governance > 20% — PO sign-off capacity confirmed. All items are autonomous-class; sole operator cadence unchanged.
+
+**Workforce constraints:** None. All items are S or M effort. v5.3 candidate pool is manageable within standard sprint capacity.
