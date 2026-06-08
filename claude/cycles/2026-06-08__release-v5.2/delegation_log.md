@@ -27,7 +27,10 @@ Last Updated: 2026-06-08
 - **Spec reference:** `backend/services/si05_digest_service.py` (implementation spec); `docs/ops/production_deployment_runbook.md §6.4` (failure modes reference)
 - **Unblock criteria:** Commit `[EPIC-02][ST-05] ...` pushed to `exec/2026-06-08__release-v5.2/EPIC-02`; unit test for ERROR logging added and passing; retry policy choice documented in code or ops runbook
 - **Commit format required:** `[EPIC-02][ST-05] <description>` pushed to `exec/2026-06-08__release-v5.2/EPIC-02`
-- **Status:** Pending
+- **Status:** Unblocked
+- **Commit SHA:** 4df36369
+- **Unblocked at:** 2026-06-08T13:30:00Z
+- **Unblock notes:** Option (a) exponential backoff implemented in `_send_telegram_request()` — max 2 retries, 30s/60s delays, injectable sleep for CI. ERROR logging preserved and confirmed. 3 new unit tests added (failure logs ERROR, retry succeeds on 2nd attempt, message truncation). All 24 tests passing. Staging AC-04 remains outstanding (I&O Owner Render log confirmation required at staging run).
 
 ---
 
@@ -63,4 +66,7 @@ Last Updated: 2026-06-08
 - **Spec reference:** `docs/specs/api_contracts/digest_endpoints.md` (if GET endpoint implemented); `backend/services/si05_digest_service.py` (write location)
 - **Unblock criteria:** Commit `[EPIC-02][ST-06] ...` pushed to `exec/2026-06-08__release-v5.2/EPIC-02`; migration in database.py with `IF NOT EXISTS` guard; log row written on success and failure paths; Data Model & Domain Schema Owner sign-off; staging confirmation by I&O Owner
 - **Commit format required:** `[EPIC-02][ST-06] <description>` pushed to `exec/2026-06-08__release-v5.2/EPIC-02`
-- **Status:** Pending
+- **Status:** Unblocked
+- **Commit SHA:** 4df36369
+- **Unblocked at:** 2026-06-08T13:30:00Z
+- **Unblock notes:** `ensure_si05_digest_log_table()` added to `database.py` with `CREATE TABLE IF NOT EXISTS` guard; registered in `main.py` `on_startup()`. `_write_delivery_log()` in `si05_digest_service.py` writes on success (`status='sent'`) and failure (`status='failed'`) paths; DB errors swallowed non-fatally. GET /digest/si05/log endpoint deferred (not in scope). Staging AC-04 (DB migration confirmation) and Data Model Owner schema sign-off remain outstanding for staging run.
