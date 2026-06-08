@@ -45,6 +45,7 @@
       "branch": "exec/2026-06-08__release-v5.2/EPIC-04",
       "pr_number": 695,
       "pr_status": "open",
+      "_epic04_sha": "6929cd0f",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.2/qa_evidence_EPIC-04.md",
       "test_scenarios": ["tests/test_si05_digest_service.py"],
@@ -59,8 +60,8 @@
     "EPIC-01": {
       "status": "done",
       "branch": "exec/2026-06-08__release-v5.2/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 696,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.2/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
