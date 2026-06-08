@@ -1,0 +1,30 @@
+{
+  "cycle_id": "2026-06-08__release-v5.3",
+  "release": "v5.3",
+  "generated_utc": "2026-06-08T18:05:00Z",
+  "issues_mode": "none",
+  "items": [
+    { "st_id": "ST-01", "epic": "EPIC-01", "title": "BLG-SPEC-53: API contract gap resolution plan for SPEC-49–52", "priority": "P1", "labels": ["EPIC-01", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-02", "epic": "EPIC-01", "title": "BLG-SPEC-54: openapi.yaml completeness audit vs all 50 routes", "priority": "P1", "labels": ["EPIC-01", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-03", "epic": "EPIC-01", "title": "BLG-QA-51: QA acceptance criteria for SPEC-49–52 contract stories", "priority": "P2", "labels": ["EPIC-01", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-04", "epic": "EPIC-01", "title": "BLG-SPEC-49: GET /ai/journal-summary/history contract + openapi.yaml", "priority": "P2", "labels": ["EPIC-01", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-05", "epic": "EPIC-01", "title": "BLG-SPEC-50: GET /analytics/compliance-metrics contract + openapi.yaml", "priority": "P2", "labels": ["EPIC-01", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-06", "epic": "EPIC-01", "title": "BLG-SPEC-51: GET /news/{ticker} contract + openapi.yaml", "priority": "P2", "labels": ["EPIC-01", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-07", "epic": "EPIC-01", "title": "BLG-SPEC-52: Watchlist endpoint contracts + openapi.yaml + test.py", "priority": "P2", "labels": ["EPIC-01", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-08", "epic": "EPIC-02", "title": "BLG-BE-35: POST /digest/si05/send API key authentication", "priority": "P2", "labels": ["EPIC-02", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-09", "epic": "EPIC-02", "title": "BLG-OPS-57: SI-05 Telegram delivery failure alerting", "priority": "P1", "labels": ["EPIC-02", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-10", "epic": "EPIC-02", "title": "BLG-OPS-58: CI secret scanning gate", "priority": "P1", "labels": ["EPIC-02", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-11", "epic": "EPIC-03", "title": "LL-v5.2-P4-01: qa_evidence_template.md signer format note for mixed-class EPICs", "priority": "P1", "labels": ["EPIC-03", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-12", "epic": "EPIC-03", "title": "LL-v5.2-P4-02: execution_prompt.md STEP 5.3A SSR section creation sub-step", "priority": "P1", "labels": ["EPIC-03", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-13", "epic": "EPIC-03", "title": "BLG-GOV-107: SI-02 frontend activation criteria precision", "priority": "P2", "labels": ["EPIC-03", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-14", "epic": "EPIC-03", "title": "BLG-GOV-108: AI model pin update policy", "priority": "P2", "labels": ["EPIC-03", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-15", "epic": "EPIC-03", "title": "BLG-GOV-109: AI audit log retention policy", "priority": "P2", "labels": ["EPIC-03", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-16", "epic": "EPIC-03", "title": "BLG-GOV-110: Arc 4 trade_plan data completeness audit", "priority": "P2", "labels": ["EPIC-03", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-17", "epic": "EPIC-03", "title": "BLG-GOV-104: strategy_rules.md §11 parameter validation (first annual)", "priority": "P2", "labels": ["EPIC-03", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-18", "epic": "EPIC-04", "title": "BLG-QA-52: Tax year P&L boundary edge case validation", "priority": "P2", "labels": ["EPIC-04", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-19", "epic": "EPIC-04", "title": "BLG-QA-53: SI-05 digest Playwright E2E coverage (≥3 scenarios)", "priority": "P2", "labels": ["EPIC-04", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-20", "epic": "EPIC-04", "title": "BLG-QA-54: Playwright coverage matrix update post-v5.2", "priority": "P2", "labels": ["EPIC-04", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-21", "epic": "EPIC-04", "title": "BLG-FE-66: Red Flag Journal post-launch UX review", "priority": "P3", "labels": ["EPIC-04", "cycle:2026-06-08__release-v5.3"] },
+    { "st_id": "ST-22", "epic": "EPIC-04", "title": "BLG-FE-67: BLG-FE-64 visual design review scope definition", "priority": "P2", "labels": ["EPIC-04", "cycle:2026-06-08__release-v5.3"] }
+  ]
+}

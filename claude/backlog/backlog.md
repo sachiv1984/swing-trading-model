@@ -4879,3 +4879,38 @@ The 2026-07-04 SI-05 effectiveness review (BLG-GOV-96, BLG-GOV-113) will rely on
 
 ---
 
+## Release Slice v5.3 — cycle 2026-06-08__release-v5.3
+
+<!-- release-plan-marker: RP:v5.3:2026-06-08__release-v5.3 -->
+
+**Canonical home:** claude/cycles/2026-06-08__release-v5.3/stage4_backlog_slice.md
+
+| ST-ID | EPIC | Description | Priority | Delegation |
+|-------|------|-------------|----------|-----------|
+| ST-01 | EPIC-01 | BLG-SPEC-53: API contract gap resolution plan for SPEC-49–52 | P1 | autonomous |
+| ST-02 | EPIC-01 | BLG-SPEC-54: openapi.yaml completeness audit vs all 50 routes | P1 | autonomous |
+| ST-03 | EPIC-01 | BLG-QA-51: QA acceptance criteria for SPEC-49–52 contract stories | P2 | autonomous |
+| ST-04 | EPIC-01 | BLG-SPEC-49: GET /ai/journal-summary/history contract + openapi.yaml | P2 | autonomous |
+| ST-05 | EPIC-01 | BLG-SPEC-50: GET /analytics/compliance-metrics contract + openapi.yaml | P2 | autonomous |
+| ST-06 | EPIC-01 | BLG-SPEC-51: GET /news/{ticker} contract + openapi.yaml | P2 | autonomous |
+| ST-07 | EPIC-01 | BLG-SPEC-52: Watchlist endpoint contracts + openapi.yaml + test.py | P2 | autonomous |
+| ST-08 | EPIC-02 | BLG-BE-35: POST /digest/si05/send API key authentication | P2 | autonomous |
+| ST-09 | EPIC-02 | BLG-OPS-57: SI-05 Telegram delivery failure alerting | P1 | autonomous |
+| ST-10 | EPIC-02 | BLG-OPS-58: CI secret scanning gate | P1 | autonomous |
+| ST-11 | EPIC-03 | LL-v5.2-P4-01: qa_evidence_template.md signer format note (CF-1) | P1 | autonomous |
+| ST-12 | EPIC-03 | LL-v5.2-P4-02: execution_prompt.md STEP 5.3A SSR sub-step (CF-2) | P1 | autonomous |
+| ST-13 | EPIC-03 | BLG-GOV-107: SI-02 frontend activation criteria precision | P2 | autonomous |
+| ST-14 | EPIC-03 | BLG-GOV-108: AI model pin update policy | P2 | autonomous |
+| ST-15 | EPIC-03 | BLG-GOV-109: AI audit log retention policy | P2 | autonomous |
+| ST-16 | EPIC-03 | BLG-GOV-110: Arc 4 trade_plan data completeness audit | P2 | autonomous |
+| ST-17 | EPIC-03 | BLG-GOV-104: strategy_rules.md §11 parameter validation (first annual) | P2 | autonomous |
+| ST-18 | EPIC-04 | BLG-QA-52: Tax year P&L boundary edge case validation | P2 | autonomous |
+| ST-19 | EPIC-04 | BLG-QA-53: SI-05 digest Playwright E2E coverage (≥3 scenarios) | P2 | autonomous |
+| ST-20 | EPIC-04 | BLG-QA-54: Playwright coverage matrix update post-v5.2 | P2 | autonomous |
+| ST-21 | EPIC-04 | BLG-FE-66: Red Flag Journal post-launch UX review | P3 | autonomous |
+| ST-22 | EPIC-04 | BLG-FE-67: BLG-FE-64 visual design review scope definition | P2 | autonomous |
+
+*Conditional: ST-23 (BLG-GOV-113), ST-24 (BLG-GOV-114) gate before 2026-07-01; ST-25 (BLG-FE-64) gate 2026-06-21 — add to sprint planning if gates clear.*
+
+---
+

@@ -297,6 +297,18 @@ Today you find stocks through external research and add them to the watchlist ma
 - BLG-GOV-114 (gate: before 2026-07-04 review)
 - BLG-FE-64 (gate: 2026-06-21 — clears before v5.3 sprint planning)
 
+<!-- roadmap-annotation-marker: RA:v5.3:2026-06-08__release-v5.3 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-08__release-v5.3
+- Plan published: 2026-06-08
+- Cycle folder: claude/cycles/2026-06-08__release-v5.3/
+- Backlog slice: claude/cycles/2026-06-08__release-v5.3/stage4_backlog_slice.md
+- Status at annotation: Validated
+- 22 firm stories / 3 conditional / 4 EPICs / 2 sprints
+- Design gate: NOT REQUIRED (0 new UI/UX components)
+- OA-RP-01: PT-04 trade count gate check required before sprint planning seals (BLG-GOV-106)
+
 -----
 
 ## 4. Priority 2 — Horizon: Next Phase (Arcs 1 & 2)
