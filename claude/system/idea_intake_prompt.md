@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.4
-**Last Updated:** 2026-06-02
+**Version:** 2.5
+**Last Updated:** 2026-06-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -254,6 +254,8 @@ Before generating new idea submissions, each agent must:
 4. **If no overlap:** proceed to generate new submissions per §2.1.
 
 This check prevents duplicate submissions that burden STEP 4 with unnecessary classification work (friction type D, recurring — meta-review patch 2026-06-02, idea_intake_prompt.md v2.4).
+
+5. **Backlog scope advisory (non-blocking):** Before finalising new submission topics, briefly scan active backlog items in `claude/backlog/backlog.md` for scope overlap with planned submissions. If an active BLG-ID item already covers the same initiative, problem statement, or feature area as a planned new idea: note this in the submission's Purpose/Rationale field (e.g. "refines BLG-XX-nn"). A submission that restates an existing backlog item is valid only if it provides materially new scope or rationale not captured by the backlog item. Advisory only — does not block submission.
 
 ### 2.1 Per-Agent Process
 

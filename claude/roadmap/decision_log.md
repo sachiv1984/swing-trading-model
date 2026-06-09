@@ -1025,3 +1025,29 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Meta-review:** NOT DUE — 2 cycles since last meta-review (2026-06-02__scheduled). Next meta-review due after 1 more cycle.
 
 **Decision owner:** Product Owner
+
+---
+
+## DL-041
+
+**Date:** 2026-06-09
+**Cycle:** 2026-06-09__scheduled
+**Decision type:** Backlog additions (Promoted-Backlog from Parked-cycle-2 ideas)
+**Initiatives affected:** None (backlog items only — no roadmap initiative changes)
+**Displacement:** N/A (gate-conditional backlog items; no active sprint commitments)
+**Workforce impact:** None (gate-conditional items, not yet in sprint)
+**Rationale:** 12 IW-20260607-01 parked-cycle-2 ideas reached cycle-3 terminal: 4 Rejected (insufficient evidence of value; trigger conditions not met), 8 Promoted-Backlog (all gate-conditional — gates: BLG-FE-45, Phase 2 channel decision, 2026-07-04 effectiveness review, ≥20 closed trades, ≥2026-08-05, PO-02 imminent). New backlog items: BLG-GOV-115, BLG-FE-68/69/70/71, BLG-FEAT-45, BLG-SPEC-55, BLG-QA-55.
+**Decision owner:** Product Owner
+
+---
+
+## DL-042
+
+**Date:** 2026-06-09
+**Cycle:** 2026-06-09__scheduled
+**Decision type:** Roadmap Now horizon — Add v5.4 Now section (STEP 8.1 Option a)
+**Initiatives affected:** v5.4 release planning enabled
+**Displacement:** N/A (scheduled rebalance; no active initiative killed)
+**Workforce impact:** None — v5.4 scope is governance/ops/UX documents and patches; no new FTE commitment
+**Rationale:** Now horizon empty post-v5.3; ~40 active backlog items provide clear v5.4 scope; time-sensitive items (BLG-OPS-59, BLG-GOV-112/115) require action before 2026-07-04 SI-05 effectiveness review; deferred DP-2 governance patch should enter v5.4; pre-entry panel and RFJ UX debt items (BLG-FE-47/49/56/64) are queued. STEP 8.1 Option (a) selected. Section: v5.4 — Ops Monitoring, UX Debt Clearance & Governance Patches.
+**Decision owner:** Product Owner

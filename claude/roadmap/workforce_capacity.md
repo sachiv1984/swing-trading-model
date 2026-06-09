@@ -339,3 +339,29 @@ No initiatives were added, replaced, deferred, or killed. No new backlog items p
 Floor check: Governance > 20% — PO sign-off capacity confirmed. All items are autonomous-class; sole operator cadence unchanged.
 
 **Workforce constraints:** None. All items are S or M effort. v5.3 candidate pool is manageable within standard sprint capacity.
+
+---
+
+## Rebalance 2026-06-09__scheduled
+
+**Date:** 2026-06-09
+**Run tier:** Standard
+**Items evaluated:** 8 new backlog items (all gate-conditional Promoted-Backlog); 0 new Promoted-Added initiatives
+
+| Item | Effort | Skill Category | Notes |
+|------|--------|---------------|-------|
+| BLG-GOV-115 | S | Metrics Analytics, Infra/Ops | Gate-conditional on 2026-07-04 |
+| BLG-FE-68/70 | M + M | Frontend, Metrics Analytics | Gate-conditional on BLG-FE-45 |
+| BLG-FE-69/71 | M + S | Frontend, UX | Gate-conditional on Phase 2 decision |
+| BLG-FEAT-45 | S | Financial Reporting | Gate-conditional ≥ 2026-08-05 |
+| BLG-SPEC-55 | S | API Contracts | Gate-conditional on PO-02 imminence |
+| BLG-QA-55 | S | QA Lead, Director of Quality | Gate-conditional on ≥20 closed trades |
+
+**Governance load %:** ~65% (5 of 8 items are governance/spec/analytics documents; high governance proportion but all gate-conditional so no immediate sprint impact)
+**Execution load %:** ~35%
+
+**Skill-Silo advisory:** Governance = 65% at ceiling threshold. However, all 8 items are gate-conditional — none enter sprint planning until gates clear. No active sprint impact. Advisory noted per STEP 7.1.
+
+**v5.4 capacity outlook:** Candidate v5.4 scope (~11 items from candidate list in cycle_record.md) is S–M effort throughout. Estimated 8–12 stories. Within standard sprint capacity.
+
+**Workforce constraints:** None new. Gate-conditional items create no immediate FTE demand.
