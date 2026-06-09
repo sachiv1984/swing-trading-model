@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.2.0
-**Last Updated:** 2026-05-23
+**Version:** 2.3.0
+**Last Updated:** 2026-06-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -845,6 +845,53 @@ Returns Arc 5 signal compliance metrics for the trading system.
 
 ---
 
+## GET /analytics/compliance-metrics
+
+**Purpose**
+
+Returns discipline and compliance scalars for all closed trades. Used by the frontend analytics dashboard.
+
+**Method & Path**
+
+- `GET /analytics/compliance-metrics`
+
+**Request**
+
+No parameters.
+
+**Response (200)**
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "journal_completion_rate": 80.0,
+    "stop_exit_rate": 60.0,
+    "avg_position_size_pct": 2.5,
+    "trade_count": 15
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `journal_completion_rate` | float | % of closed trades with at least one journal note (entry or exit). Range 0–100. |
+| `stop_exit_rate` | float | % of closed trades exited via Stop Loss Hit or Trailing Stop. Range 0–100. |
+| `avg_position_size_pct` | float | Mean `(total_cost / portfolio_value_at_entry) × 100` across closed trades. |
+| `trade_count` | integer | Total closed trade count (denominator for all metrics). |
+
+**Canonical formulas:** `docs/qa/test_scenarios/metrics_definitions.md` §Discipline & Compliance Metrics (v1.7.0)
+
+**Error responses**
+
+| Status | Condition |
+|--------|-----------|
+| 500 | Database connection failed or query error |
+
+**Backend:** `backend/routers/analytics.py` (`get_compliance_metrics`)
+
+---
+
 ## Known limitations & backlog
 
 - **ValidationService** (`services/validation_service.py`) is a stub and not invoked. Active validation logic lives in `routers/validation.py`. This is tracked as BLG-TECH-03 (consolidate into service layer, deliver alongside BLG-TECH-02).
@@ -856,6 +903,7 @@ Returns Arc 5 signal compliance metrics for the trading system.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.3.0 | 2026-06-09 | v5.3 ST-05 (BLG-SPEC-50, EPIC-01): Added `GET /analytics/compliance-metrics` — discipline and compliance scalars endpoint. API Contracts & Documentation Owner sign-off. |
 | 2.2.0 | 2026-05-23 | ST-01 (BLG-FEAT-36, v4.0): Add `GET /analytics/arc5-compliance` endpoint — Arc 5 compliance metrics (validation_pass_rate_by_rule, events_per_week, override_rate, top_rule_breach, trade_plan_adherence_rate). Adds pre_entry_validation_log table. Metrics canonical per metrics_definitions.md §Arc 5 Compliance Metrics. API Contracts & Documentation Owner. |
 | 2.1.0 | 2026-04-15 | ST-08 (BLG-FEAT-17, v2.7): Add `GET /analytics/market-correlation` endpoint spec — per-position Pearson correlation vs SPY/FTSE benchmark, portfolio-level equal-weighted average, 252-day default lookback, 8-hour TTL cache, graceful Yahoo Finance fallback. API Contracts & Documentation Owner. |
 | 2.0.0 | 2026-03-29 | ST-02 (BLG-FEAT-09, v2.3): Add `last_sync_at` field to `GET /analytics/metrics` response — UTC ISO 8601 timestamp of metrics computation time. Frontend uses this for the Metrics Staleness Indicator (4h default threshold, amber badge when stale). API Contracts & Documentation Owner. |
