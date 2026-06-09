@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-06-01
+**Version:** 1.2
+**Last Updated:** 2026-06-09
 **Cycle:** 2026-06-01__release-v4.8 (ST-06 — BLG-QA-39)
 
 ---
@@ -168,15 +168,49 @@ This matrix maps delivered features and stories (v3.7–v4.2) to their Playwrigh
 
 ```
 Director of Quality
-Date: 2026-05-29
+Date: 2026-06-09
 
-Coverage matrix reviewed. 39 spec files mapped to v3.7–v4.2 features. 3 features with zero
-automated coverage identified — 2 are intentionally staging-only (Telegram, live Yahoo Finance);
-1 is backend-only (claude-audit-log endpoint). All staging-only ACs tracked via EPIC-02/03
-delegation records.
+v5.3 update (ST-20, BLG-QA-54): Coverage matrix updated with v5.2+v5.3 feature coverage.
+41 spec files total. New SI-05 digest delivery spec (4 scenarios, ST-19).
+Tax year P&L boundary validation via Python unittest (6 scenarios, ST-18).
+System-status fallback count updated '62'→'65' (ST-07 watchlist endpoints).
+EPIC-01 new contract docs (ST-04–07) have no frontend UI — coverage N/A.
+EPIC-03 governance docs have no frontend rendering — coverage N/A.
+2 coverage gaps identified (API contract docs, governance docs) — both intentional.
 
-Signed: Sprint Execution Engine (autonomous class) — 2026-05-29
+Prior sign-off (2026-05-29): 39 spec files, v3.7–v4.2 features, 3 zero-coverage features.
+
+Signed: Sprint Execution Engine (autonomous class) — 2026-06-09
 ```
+
+---
+
+### v5.2 Coverage
+
+| Feature/Story | Playwright Coverage | Spec File | Scenarios | Notes |
+|---------------|--------------------|-----------|-----------|----|
+| SI-05 Weekly Digest delivery (v5.2) | ✅ N/A | — | — | Backend-only endpoint; no frontend page; coverage added in v5.3 (ST-19) |
+| system-status.spec.js SC-SS-01b fallback count update (v5.2 ST-01) | ✅ Covered | `system-status.spec.js` | SC-SS-01b | Updated '59'→'62' for new endpoints |
+
+### v5.3 Coverage (new this sprint)
+
+| Feature/Story | Playwright Coverage | Spec File | Scenarios | Notes |
+|---------------|--------------------|-----------|-----------|----|
+| ST-08 API key auth (POST /digest/si05/send) | ✅ Covered via unit test | `tests/test_api_contracts.py::TestDigestEndpoints` | 2 scenarios (401, 200) | FastAPI TestClient; not Playwright |
+| SI-05 digest delivery E2E (ST-19) | ✅ Covered | `si05-digest-delivery.spec.js` | SC-SI05-01, SC-SI05-02, SC-SI05-03 + contract shape | ≥3 scenarios; Telegram mocked |
+| Tax year P&L boundary (ST-18) | ✅ Covered via unit test | `tests/test_tax_year_pnl_boundary.py` | 6 scenarios | Python pytest; not Playwright |
+| system-status.spec.js SC-SS-01b (ST-07 watchlist +3) | ✅ Covered | `system-status.spec.js` | SC-SS-01b | Updated '62'→'65' |
+
+**New spec files this sprint:** `si05-digest-delivery.spec.js` (3 describe blocks, 4 scenarios)
+
+**Total spec files post-v5.3:** 41
+
+### Coverage Gaps — v5.3
+
+| Feature | Reason | Recommendation |
+|---------|--------|---------------|
+| API contract doc pages (ST-04–07) | No frontend UI for contract docs | N/A — documentation only |
+| Governance document pages (EPIC-03 stories) | No frontend rendering | N/A — backend governance only |
 
 ---
 
@@ -184,5 +218,6 @@ Signed: Sprint Execution Engine (autonomous class) — 2026-05-29
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 1.2 | 2026-06-09 | Sprint Execution Engine | v5.3 ST-20 (BLG-QA-54): v5.2+v5.3 coverage sections added. SI-05 digest delivery spec (ST-19, 4 scenarios) + tax year P&L unit tests (ST-18, 6 scenarios) + system-status SC-SS-01b updated ('62'→'65'). Total: 41 spec files. Coverage gaps identified. Director of Quality sign-off. |
 | 1.1 | 2026-06-01 | Sprint Execution Engine | v4.8 ST-06 (BLG-QA-39): Added v4.3–v4.7 feature coverage sections. Added compliance_summary field (v4.7 ST-03, SC-REP-05 reference). Confirmed GET /reports/monthly-pnl v0.6 contract present in reports_endpoints.md. No contract gaps found. |
 | 1.0 | 2026-05-29 | Sprint Execution Engine | Initial coverage matrix (ST-12, v4.3 EPIC-02, BLG-QA-32). 39 spec files, v3.7–v4.2 features. |
