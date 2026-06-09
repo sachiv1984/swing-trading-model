@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-08 (rebalance 2026-06-08__scheduled — DL-040; 22 new items: BLG-SPEC-53/54, BLG-QA-51–54, BLG-OPS-57–59, BLG-FE-66/67, BLG-GOV-104–114)
+**Last Updated:** 2026-06-09 (post-ship closure 2026-06-08__release-v5.3; 22 items marked COMPLETE: BLG-SPEC-49–54, BLG-BE-35, BLG-OPS-57/58, BLG-QA-51–54, BLG-GOV-104/107–110/113/114, BLG-FE-66/67)
 **Last rebalance:** 2026-06-08 (cycle 2026-06-08__scheduled — DL-040; IW-20260608-01; 22 new items; 57 ideas classified)
 
 > ⚠️ Standing Notice
@@ -999,6 +999,8 @@ SI-05 Phase 1 introduces a new workflow pattern: the user receives a Telegram no
 **Source:** IDEA-base44-frontend-20260608-01 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
 **Effort:** S (~0.5–1 day)
 **Provisional-Target:** v5.3
+
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-21, EPIC-04; rfj_ux_review_v53.md produced; top-3 friction points documented; follow-up items filed; Base44 Frontend Prompt Owner + Head of UX & Design sign-off)
 **Displacement:** BLG-FE-55 (mobile responsiveness baseline, P3) deprioritised.
 
 **Problem**
@@ -1026,6 +1028,8 @@ Red Flag Journal (RFJ.js) shipped v3.9 (2026-05-22 — 7+ weeks ago) with no pos
 **Provisional-Target:** v5.3
 **Displacement:** BLG-GOV-101 (governance complexity assessment, P3) deprioritised.
 **Gate:** BLG-FE-64 gate clears 2026-06-21 — scope definition should complete before that date.
+
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-22, EPIC-04; blg_fe_64_scope_definition.md produced; scope defined and BLG-FE-64 distinguished from BLG-FE-66; Frontend Specs & UX Documentation Owner + Head of UX & Design sign-off)
 
 **Problem**
 BLG-FE-64 (Red Flag Journal visual design review pre-brief) is in backlog with gate 2026-06-21 but its scope is vague — it is unclear what "visual design review" covers (typography, colours, spacing, component consistency, all of the above). Without a clear scope document, the story cannot be properly estimated or executed at sprint planning.
@@ -1436,6 +1440,8 @@ Multiple roadmap features are gated on trade count thresholds: PT-04 (20+ closed
 **Source:** ST-11 (BLG-GOV-99) — security review finding, 2026-06-08__release-v5.2
 **Effort:** S (~0.5 day)
 **Provisional-Target:** v5.3
+
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-08, EPIC-02; API key auth applied to POST /digest/si05/send; unit test for 401 response added; digest_endpoints.md updated; Cybersecurity & Trust Lead + Head of Engineering sign-off)
 
 **Problem**
 POST /digest/si05/send is an unauthenticated endpoint (`backend/routers/digest.py:227`). It triggers Telegram API calls and digest sends without requiring authentication. An unauthenticated caller could trigger repeated sends (Telegram quota abuse, spam to digest chat). The existing authentication pattern (BLG-SEC-01/v2.2) applies API key auth — this pattern is not applied to the digest endpoint. Finding documented in `docs/security/security_register.md` Review 003 (ST-11, v5.2).
@@ -1919,6 +1925,8 @@ With SI-01, SI-03, and SI-05 Phase 1 shipped (3 of 5 Arc 5 features), an interme
 **Provisional-Target:** v5.3
 **Displacement:** BLG-QA-44 (SI-04 test planning, P3) deprioritised.
 
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-03, EPIC-01; endpoint_contract_qa_criteria_template.md produced; AC template applied to all 6 BLG-SPEC-49–52 gaps; Director of Quality sign-off)
+
 **Problem**
 BLG-SPEC-49–52 (6 endpoint contract gaps) need clearly defined acceptance criteria before they enter v5.3 sprint planning. Without QA-defined AC, the contract authoring stories will have vague verification criteria, risking incomplete sign-off.
 
@@ -1942,6 +1950,8 @@ BLG-SPEC-49–52 (6 endpoint contract gaps) need clearly defined acceptance crit
 **Effort:** S (~0.5–1 day)
 **Provisional-Target:** v5.3
 **Displacement:** BLG-QA-44 (SI-04 test planning, P3) deprioritised.
+
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-18, EPIC-04; 6 boundary test scenarios in tests/test_tax_year_pnl_boundary.py; all passing; Financial Reporting & Records Owner + QA Lead sign-off)
 
 **Problem**
 The tax year P&L report (shipped v2.0, March 2026) generates tax-year-segmented P&L summaries. A trade opened in one UK tax year (before April 5) and closed in the next (after April 6) may be misattributed to the wrong year. This edge case has never been formally tested.
@@ -1968,6 +1978,8 @@ The tax year P&L report (shipped v2.0, March 2026) generates tax-year-segmented 
 **Provisional-Target:** v5.3
 **Displacement:** BLG-QA-44 (SI-04 test planning, P3) deprioritised.
 
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-19, EPIC-04; 4 Playwright scenarios in tests/e2e/si05-digest-delivery.spec.js; Telegram API mocked; all passing in CI; QA Lead sign-off)
+
 **Problem**
 si05_digest_service.py has 21 unit tests but no Playwright E2E coverage for the digest trigger → delivery flow. The observable AC for SI-05 (Telegram message received, compliance data present, red flag summary accurate) cannot be fully verified by unit tests alone. CLAUDE.md §2 requires Playwright coverage or staging sign-off for observable ACs.
 
@@ -1992,6 +2004,8 @@ si05_digest_service.py has 21 unit tests but no Playwright E2E coverage for the 
 **Effort:** S (~0.5 day)
 **Provisional-Target:** v5.3
 **Displacement:** BLG-QA-44 (SI-04 test planning, P3) deprioritised.
+
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-20, EPIC-04; playwright_coverage_matrix.md updated to reflect v5.2 + v5.3 additions; coverage gaps identified; Director of Quality sign-off)
 
 **Problem**
 v5.2 added 26 new edge case tests (BLG-QA-44 base scope) and other QA improvements. The Playwright coverage matrix (produced by BLG-QA-49, v5.2) does not yet reflect these additions. A stale matrix leads to incorrect QA sign-off assessments at delivery verification.
@@ -2859,6 +2873,8 @@ CLAUDE.md §2 requires "Every new API endpoint added to `backend/routers/` must 
 **Effort:** XS (~1–2 hours)
 **Provisional-Target:** v5.3
 
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-04, EPIC-01; ## GET /ai/journal-summary/history added to ai_endpoints.md; openapi.yaml updated; API Contracts & Documentation Owner sign-off)
+
 **Problem**
 `GET /ai/journal-summary/history` exists in `backend/routers/ai.py` and is tested in `backend/routers/test.py` but has no entry in `docs/specs/api_contracts/ai_endpoints.md` and is absent from `docs/reference/openapi.yaml`. This is a CLAUDE.md §2 spec debt gap identified in the post-v5.1 coverage audit.
 
@@ -2876,6 +2892,8 @@ CLAUDE.md §2 requires "Every new API endpoint added to `backend/routers/` must 
 **Source:** ST-12 (BLG-GOV-100) — endpoint coverage audit post-v5.1, 2026-06-08__release-v5.2
 **Effort:** XS (~1–2 hours)
 **Provisional-Target:** v5.3
+
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-05, EPIC-01; ## GET /analytics/compliance-metrics added to analytics_endpoints.md; openapi.yaml updated; API Contracts & Documentation Owner sign-off)
 
 **Problem**
 `GET /analytics/compliance-metrics` exists in `backend/routers/analytics.py` and is tested in `backend/routers/test.py` but has no entry in `docs/specs/api_contracts/analytics_endpoints.md` (which documents other analytics endpoints) and is absent from `docs/reference/openapi.yaml`. This is spec debt identified in the post-v5.1 coverage audit.
@@ -2895,6 +2913,8 @@ CLAUDE.md §2 requires "Every new API endpoint added to `backend/routers/` must 
 **Effort:** XS (~1–2 hours)
 **Provisional-Target:** v5.3
 
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-06, EPIC-01; ## GET /news/{ticker} added to news_endpoints.md; openapi.yaml updated; API Contracts & Documentation Owner sign-off)
+
 **Problem**
 `GET /news/{ticker}` exists in `backend/routers/news.py` and is tested in `backend/routers/test.py` but has no dedicated API contract document in `docs/specs/api_contracts/` (the Alpaca integration contract covers the external news API, not this internal endpoint) and is absent from `docs/reference/openapi.yaml`. This is spec debt identified in the post-v5.1 coverage audit.
 
@@ -2912,6 +2932,8 @@ CLAUDE.md §2 requires "Every new API endpoint added to `backend/routers/` must 
 **Source:** ST-12 (BLG-GOV-100) — endpoint coverage audit post-v5.1, 2026-06-08__release-v5.2
 **Effort:** S (~0.5 day)
 **Provisional-Target:** v5.3
+
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-07, EPIC-01; watchlist_endpoints.md authored with ## GET/POST/DELETE headings; openapi.yaml + test.py entries added; SystemStatus fallback count and SC-SS-01b updated; API Contracts & Documentation Owner + Head of Specs Team sign-off)
 
 **Problem**
 Watchlist endpoints (`GET /watchlist`, `POST /watchlist`, `DELETE /watchlist/{entry_id}`) exist in `backend/routers/watchlist.py` but have no API contract document in `docs/specs/api_contracts/`, no entries in `docs/reference/openapi.yaml`, and are absent from `backend/routers/test.py`. This is a triple-gap (contract + openapi.yaml + test) identified in the post-v5.1 coverage audit. CLAUDE.md §2 same-sprint rule applies retroactively as spec debt.
@@ -2933,6 +2955,8 @@ Watchlist endpoints (`GET /watchlist`, `POST /watchlist`, `DELETE /watchlist/{en
 **Effort:** M (~1–2 days)
 **Provisional-Target:** v5.3
 **Displacement:** BLG-GOV-101 (governance complexity assessment, P3) deprioritised.
+
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-01, EPIC-01; api_contract_gap_resolution_plan.md produced; all 6 gaps priority-ranked; sprint scope confirmed; Head of Specs Team + API Contracts & Documentation Owner sign-off)
 
 **Problem**
 v5.2 endpoint coverage audit (BLG-GOV-100, ST-12) found 6 routes without API contracts: GET /ai/journal-summary/history, GET /analytics/compliance-metrics, GET /news/{ticker}, GET /watchlist, POST /watchlist, DELETE /watchlist/{entry_id} (BLG-SPEC-49–52). These contracts are required by CLAUDE.md §2 but were not filed at the time the endpoints shipped. A structured resolution plan ensures they are all resolved in a single v5.3 effort.
@@ -2958,6 +2982,8 @@ v5.2 endpoint coverage audit (BLG-GOV-100, ST-12) found 6 routes without API con
 **Effort:** S (~0.5–1 day)
 **Provisional-Target:** v5.3
 **Displacement:** BLG-SPEC-46 (Arc 4 API contract pre-planning, gate-conditional) deprioritised.
+
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-02, EPIC-01; all 50 routes audited against openapi.yaml; gaps identified and resolved; gap report produced; API Contracts & Documentation Owner sign-off)
 
 **Problem**
 v5.2 found 50 routes in backend/routers/. openapi.yaml coverage against all 50 routes has never been formally audited. The drift detection gate catches routes missing from api_contracts/ documents, but may not catch routes that are in contracts but missing from openapi.yaml. A formal audit ensures the public API surface is fully documented.
@@ -3788,6 +3814,8 @@ si05_digest_service.py runs on a weekly schedule. There is currently no document
 **Provisional-Target:** v5.3
 **Displacement:** BLG-OPS-13 (performance baseline gaps, P3) deprioritised.
 
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-09, EPIC-02; FAILED status logged to si05_digest_log; ERROR-level Render log alert; ops runbook updated; Infrastructure & Operations Owner sign-off)
+
 **Problem**
 SI-05 delivers a weekly Telegram digest. BLG-OPS-56 (health check, v5.2) provides a manual verification procedure, but there is no automated alerting when delivery fails — a Telegram API error, revoked bot token, or rejected message would go undetected until manual inspection.
 
@@ -3813,6 +3841,8 @@ SI-05 delivers a weekly Telegram digest. BLG-OPS-56 (health check, v5.2) provide
 **Provisional-Target:** v5.3
 **Displacement:** BLG-OPS-13 (performance baseline gaps, P3) deprioritised.
 
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-10, EPIC-02; gitleaks CI secret scanning gate operational via .github/workflows/secret-scanning.yml + .gitleaks.toml; test_token advisory noted as low-risk; Cybersecurity & Trust Lead sign-off)
+
 **Problem**
 No secret scanning is configured in the CI pipeline. A developer could accidentally commit TELEGRAM_BOT_TOKEN, ANTHROPIC_API_KEY, or Supabase credentials to the repository. Given that the Telegram bot controls production digest delivery and the Anthropic API key incurs real costs, a leaked secret would be high-impact.
 
@@ -3828,6 +3858,29 @@ No secret scanning is configured in the CI pipeline. A developer could accidenta
 - Allowlist documented for any confirmed false positives
 - CI fails and blocks merge when a real-looking secret is detected
 - Cybersecurity & Trust Lead sign-off
+
+---
+
+### BLG-OPS-60 — Add v5.3 new endpoints to api_performance_baseline.md re-run
+**Priority:** P3 (Low)
+**Type:** Operations / Performance
+**Owner:** Infrastructure & Operations Owner; Head of Engineering
+**Source:** Post-ship closure 2026-06-08__release-v5.3 — STEP 6 endpoint coverage drift check
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.4
+
+**Problem**
+v5.3 shipped 5 new endpoints that appear in openapi.yaml but are absent from api_performance_baseline.md: GET /ai/journal-summary/history, GET /news/{ticker}, GET /watchlist, POST /watchlist, DELETE /watchlist/{entry_id}. (GET /analytics/compliance-metrics was already baselined.) Without baseline entries, performance regressions on these endpoints will go undetected.
+
+**Scope**
+- Run performance baseline measurements for all 5 missing endpoints in a staging/production environment
+- Add measurement rows to docs/ops/api_performance_baseline.md
+- Note p50/p95/p99 and any threshold flags
+
+**Acceptance Criteria**
+- All 5 new endpoints have baseline rows in api_performance_baseline.md
+- Performance measurements made against a live environment (not mocked)
+- Infrastructure & Operations Owner sign-off
 
 ---
 
@@ -4556,6 +4609,8 @@ BLG-GOV-89 (staged verification sprint protocol) defines the pattern. After 2+ u
 **Provisional-Target:** v5.3
 **Displacement:** BLG-GOV-101 (governance complexity assessment, P3) deprioritised.
 
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-17, EPIC-03; docs/governance/strategy_parameter_validation_v53.md produced; ATR multiplier, regime gate, position sizing validated against trade data; Strategy Rules & System Intent Owner + Product Owner sign-off)
+
 **Problem**
 strategy_rules.md §11 defines ATR multiplier, regime gate parameters, and position sizing rules. These parameters have never been formally validated against actual trade outcomes since they were set. BLG-GOV-95 (annual parameter review schedule, v5.2) established that validation should happen annually; this item is the first instance of that schedule.
 
@@ -4632,6 +4687,8 @@ PT-04 gate requires 20+ closed trades (trades with pnl IS NOT NULL in trade_hist
 **Provisional-Target:** v5.3
 **Displacement:** BLG-GOV-101 (governance complexity assessment, P3) deprioritised.
 
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-13, EPIC-03; current_roadmap.md SI-02 entry updated with 3 precise, measurable gate conditions; PMO Lead + Product Owner sign-off)
+
 **Problem**
 SI-02 frontend activation is recorded as "~Nov 2026" — a date estimate rather than a measurable gate. Sprint planning for SI-02 frontend cannot be triggered reliably against a vague date. Precise, measurable criteria are needed.
 
@@ -4659,6 +4716,8 @@ SI-02 frontend activation is recorded as "~Nov 2026" — a date estimate rather 
 **Provisional-Target:** v5.3
 **Displacement:** BLG-GOV-101 (governance complexity assessment, P3) deprioritised.
 
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-14, EPIC-03; docs/governance/ai_model_version_pinning_policy.md produced; policy covers trigger, process, sign-offs, 30-day deprecation response timeline; AI Compliance Governance Officer + Head of Engineering sign-off)
+
 **Problem**
 BLG-GOV-64 (model pinning policy, v4.2) defines that the model must be pinned explicitly, but does not specify when or how to update the pin. claude-haiku-4-5 was pinned at v4.2 (2026-05-28). As new Claude versions release, there is no governed process for evaluating and performing pin updates.
 
@@ -4685,6 +4744,8 @@ BLG-GOV-64 (model pinning policy, v4.2) defines that the model must be pinned ex
 **Provisional-Target:** v5.3
 **Displacement:** BLG-OPS-13 (performance baseline gaps, P3) deprioritised.
 
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-15, EPIC-03; docs/governance/ai_audit_log_retention_policy.md produced; 12-month retention period defined; cleanup mechanism documented; AI Compliance Governance Officer + Infrastructure & Operations Owner sign-off)
+
 **Problem**
 claude_audit_log entries have been accumulating since v3.8 with no defined retention period. Without a retention policy: (a) storage costs grow indefinitely, (b) it is unclear which log entries are reliable for compliance purposes vs stale.
 
@@ -4708,6 +4769,8 @@ claude_audit_log entries have been accumulating since v3.8 with no defined reten
 **Effort:** S (~0.5–1 day)
 **Provisional-Target:** v5.3 or before Arc 4 sprint planning (PO-02 gate ~Oct 2026)
 **Displacement:** BLG-GOV-101 (governance complexity assessment, P3) deprioritised.
+
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-16, EPIC-03; docs/governance/arc4_trade_plan_data_completeness_audit.md produced; per-field null% computed; Arc 4 data dependency risk assessed; Data Model & Domain Schema Owner + Product Owner sign-off)
 
 **Problem**
 Trade plans have been active since v3.1 (3+ months). However, which optional fields (entry_rationale, confirmation_criteria, r_target, setup_type, pre_entry_validation_snapshot) are being consistently populated is unknown. Arc 4 analytics (PO-02 journal pattern recognition, PO-03 behavioural error taxonomy) depend on this data.
@@ -4785,6 +4848,8 @@ SI-05 delivers a weekly digest. After 4+ weeks of production use, the weekly cad
 **Provisional-Target:** Before 2026-07-04 effectiveness review
 **Displacement:** BLG-QA-34 (SI-02 test planning, gate-conditional) deprioritised.
 
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-23, EPIC-03; docs/governance/si05_effectiveness_review_protocol.md produced; participants, evidence sources, output format, decision authority defined; Director of Quality + Product Owner sign-off; completed before 2026-07-01 gate)
+
 **Gate criteria:** Must complete before 2026-07-04. BLG-GOV-96 (effectiveness criteria) defines WHAT to measure; this item defines HOW to conduct the review.
 
 **Problem**
@@ -4814,6 +4879,8 @@ BLG-GOV-96 (SI-05 effectiveness measurement criteria, v5.2) defines what to meas
 **Effort:** S (~0.5 hr)
 **Provisional-Target:** Before 2026-07-04 effectiveness review
 **Displacement:** BLG-GOV-90 (Claude model deprecation monitoring, gate-conditional) deprioritised.
+
+✅ COMPLETE — 2026-06-09 — cycle 2026-06-08__release-v5.3 (ST-24, EPIC-03; docs/governance/si05_digest_log_schema_validation.md produced; schema validated as PASS against BLG-GOV-96 criteria; Director of Quality + Data Model & Domain Schema Owner sign-off)
 
 **Gate criteria:** Must complete before 2026-07-04. The effectiveness review relies on si05_digest_log data being complete.
 

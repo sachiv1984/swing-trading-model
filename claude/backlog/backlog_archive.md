@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-04
+**Last Updated:** 2026-06-09
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -5031,3 +5031,34 @@ Archived by: Backlog Management Engine STEP 12, post-ship closure 2026-05-30__re
 | BLG-GOV-98 ✅ | Telegram bot token minimal-permission security review | Shipped v5.2 ST-10, EPIC-03 — PASS with recommendation: send-only confirmed; BotFather manual check recommended; security_register.md updated (Review 002); Cybersecurity & Trust Lead sign-off |
 | BLG-GOV-99 ✅ | SI-05 digest endpoint authentication review | Shipped v5.2 ST-11, EPIC-03 — GAP_FOUND: POST /digest/si05/send unauthenticated; BLG-BE-35 P2 filed; security_register.md updated (Review 003); Cybersecurity & Trust Lead sign-off |
 | BLG-GOV-100 ✅ | Backend endpoint documentation coverage audit post-v5.1 | Shipped v5.2 ST-12, EPIC-03 — 50 routes enumerated; 6 contract gaps (BLG-SPEC-49/50/51/52); audit at docs/ops/endpoint_coverage_audit_v52.md; Head of Engineering sign-off |
+
+---
+
+## Closed Items — v5.3 Post-Ship (2026-06-09)
+
+*Archived: 22 items shipped in v5.3 (cycle 2026-06-08__release-v5.3). Groom date: 2026-06-09.*
+
+| ID | Title | Ship note |
+|----|-------|-----------|
+| BLG-SPEC-49 ✅ | Author GET /ai/journal-summary/history API contract | Shipped v5.3 ST-04, EPIC-01 — ## GET /ai/journal-summary/history added to ai_endpoints.md v1.1; openapi.yaml updated; API Contracts & Documentation Owner sign-off |
+| BLG-SPEC-50 ✅ | Author GET /analytics/compliance-metrics API contract | Shipped v5.3 ST-05, EPIC-01 — ## GET /analytics/compliance-metrics added to analytics_endpoints.md v2.2.0; openapi.yaml updated; API Contracts & Documentation Owner sign-off |
+| BLG-SPEC-51 ✅ | Author GET /news/{ticker} API contract | Shipped v5.3 ST-06, EPIC-01 — news_endpoints.md v1.0 created; openapi.yaml updated; API Contracts & Documentation Owner sign-off |
+| BLG-SPEC-52 ✅ | Author watchlist endpoint contracts + openapi.yaml + test.py | Shipped v5.3 ST-07, EPIC-01 — watchlist_endpoints.md v1.0 created (GET/POST/DELETE); openapi.yaml + test.py + SystemStatus.js + SC-SS-01b updated; API Contracts & Documentation Owner + Head of Specs Team sign-off |
+| BLG-SPEC-53 ✅ | BLG-SPEC-49–52 contract gap resolution plan | Shipped v5.3 ST-01, EPIC-01 — api_contract_gap_resolution_plan.md produced; 6 gaps priority-ranked; Head of Specs Team + API Contracts & Documentation Owner sign-off |
+| BLG-SPEC-54 ✅ | openapi.yaml completeness audit against all 50 routes | Shipped v5.3 ST-02, EPIC-01 — all 50 routes audited; gaps confirmed and resolved; API Contracts & Documentation Owner sign-off |
+| BLG-BE-35 ✅ | Add API key authentication to POST /digest/si05/send | Shipped v5.3 ST-08, EPIC-02 — Depends injection pattern; 401 on missing/invalid key; unit test added; digest_endpoints.md updated; Cybersecurity & Trust Lead + Head of Engineering sign-off |
+| BLG-OPS-57 ✅ | SI-05 Telegram delivery failure alerting | Shipped v5.3 ST-09, EPIC-02 — FAILED status logged; ERROR-level Render log alert; ops runbook updated; Infrastructure & Operations Owner sign-off |
+| BLG-OPS-58 ✅ | CI secret scanning gate | Shipped v5.3 ST-10, EPIC-02 — gitleaks via .github/workflows/secret-scanning.yml + .gitleaks.toml; test_token advisory accepted as low-risk; Cybersecurity & Trust Lead sign-off |
+| BLG-QA-51 ✅ | BLG-SPEC-49–52 QA acceptance criteria definition | Shipped v5.3 ST-03, EPIC-01 — endpoint_contract_qa_criteria_template.md produced; reusable template; Director of Quality sign-off |
+| BLG-QA-52 ✅ | Tax year P&L boundary edge case validation | Shipped v5.3 ST-18, EPIC-04 — 6 boundary scenarios in tests/test_tax_year_pnl_boundary.py; all passing; Financial Reporting & Records Owner + QA Lead sign-off |
+| BLG-QA-53 ✅ | SI-05 digest Playwright E2E coverage | Shipped v5.3 ST-19, EPIC-04 — 4 Playwright scenarios in tests/e2e/si05-digest-delivery.spec.js; Telegram API mocked; all passing in CI; QA Lead sign-off |
+| BLG-QA-54 ✅ | Playwright coverage matrix update post-v5.2 | Shipped v5.3 ST-20, EPIC-04 — playwright_coverage_matrix.md updated; v5.2 + v5.3 additions counted; gaps identified; Director of Quality sign-off |
+| BLG-GOV-104 ✅ | strategy_rules.md §11 parameter validation (first annual) | Shipped v5.3 ST-17, EPIC-03 — strategy_parameter_validation_v53.md produced; ATR multiplier + regime gate + position sizing validated (insufficient data: 6 closed trades); parameters unchanged; Strategy Rules & System Intent Owner + Product Owner sign-off |
+| BLG-GOV-107 ✅ | SI-02 frontend activation criteria precision | Shipped v5.3 ST-13, EPIC-03 — current_roadmap.md SI-02 entry updated with 3 precise checkable gate conditions; PMO Lead + Product Owner sign-off |
+| BLG-GOV-108 ✅ | AI model pin update policy (BLG-GOV-64 gap) | Shipped v5.3 ST-14, EPIC-03 — ai_model_version_pinning_policy.md produced; trigger, process, sign-offs, 30-day deprecation response timeline; AI Compliance Governance Officer + Head of Engineering sign-off |
+| BLG-GOV-109 ✅ | AI audit log retention policy | Shipped v5.3 ST-15, EPIC-03 — ai_audit_log_retention_policy.md produced; 12-month retention; cleanup mechanism; AI Compliance Governance Officer + Infrastructure & Operations Owner sign-off |
+| BLG-GOV-110 ✅ | Arc 4 trade_plan data completeness audit | Shipped v5.3 ST-16, EPIC-03 — arc4_trade_plan_data_completeness_audit.md produced; per-field null% computed; Arc 4 risk assessed; Data Model & Domain Schema Owner + Product Owner sign-off |
+| BLG-GOV-113 ✅ | SI-05 effectiveness review protocol (gate-conditional) | Shipped v5.3 ST-23, EPIC-03 — si05_effectiveness_review_protocol.md produced; participants/evidence/output/authority defined; completed by 2026-07-01 gate; Director of Quality + Product Owner sign-off |
+| BLG-GOV-114 ✅ | si05_digest_log schema validation for effectiveness review | Shipped v5.3 ST-24, EPIC-03 — si05_digest_log_schema_validation.md produced; schema PASS; Director of Quality + Data Model & Domain Schema Owner sign-off |
+| BLG-FE-66 ✅ | Red Flag Journal post-launch UX review | Shipped v5.3 ST-21, EPIC-04 — rfj_ux_review_v53.md produced; top-3 friction points documented; follow-up items filed; Base44 Frontend Prompt Owner + Head of UX & Design sign-off |
+| BLG-FE-67 ✅ | BLG-FE-64 visual design review scope definition | Shipped v5.3 ST-22, EPIC-04 — blg_fe_64_scope_definition.md produced; distinct from BLG-FE-66; Frontend Specs & UX Documentation Owner + Head of UX & Design sign-off |

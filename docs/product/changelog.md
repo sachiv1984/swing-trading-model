@@ -3,9 +3,56 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-08
+**Last Updated:** 2026-06-09
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v5.3 — Spec Debt, Security Hardening & Ops Governance — 2026-06-09
+Cycle: 2026-06-08__release-v5.3
+Verified: Verified
+Verification report: claude/cycles/2026-06-08__release-v5.3/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | API contract spec debt resolution: BLG-SPEC-53 — contract gap resolution plan; BLG-SPEC-54 — openapi.yaml completeness audit (50 routes); BLG-QA-51 — QA acceptance criteria template for SPEC-49–52; BLG-SPEC-49 — GET /ai/journal-summary/history contract; BLG-SPEC-50 — GET /analytics/compliance-metrics contract; BLG-SPEC-51 — GET /news/{ticker} contract; BLG-SPEC-52 — Watchlist endpoint contracts + test.py. All 6 known API contract gaps closed. | docs/specs/api_contracts/ai_endpoints.md; docs/specs/api_contracts/analytics_endpoints.md; docs/specs/api_contracts/news_endpoints.md; docs/specs/api_contracts/watchlist_endpoints.md; docs/reference/openapi.yaml; docs/qa/endpoint_contract_qa_criteria_template.md |
+| EPIC-02 | Security hardening: BLG-BE-35 — POST /digest/si05/send API key authentication implemented; BLG-OPS-57 — SI-05 Telegram delivery failure alerting; BLG-OPS-58 — CI secret scanning gate (gitleaks). | docs/specs/api_contracts/digest_endpoints.md; docs/operations/deployment_runbook.md; .github/workflows/secret-scanning.yml; .gitleaks.toml |
+| EPIC-03 | Governance patches and AI policy: LL-v5.2-P4-01 — qa_evidence_template.md signer format note; LL-v5.2-P4-02 — execution_prompt.md STEP 5.3A SSR sub-step; BLG-GOV-107 — SI-02 frontend activation criteria precision; BLG-GOV-108 — AI model pin update policy; BLG-GOV-109 — AI audit log retention policy; BLG-GOV-110 — Arc 4 trade_plan data completeness audit; BLG-GOV-104 — strategy_rules.md §11 parameter validation; BLG-GOV-113 — SI-05 effectiveness review protocol; BLG-GOV-114 — si05_digest_log schema validation. | claude/system/templates/qa_evidence_template.md; claude/system/execution_prompt.md; claude/roadmap/current_roadmap.md; docs/governance/ai_model_version_pinning_policy.md; docs/governance/ai_audit_log_retention_policy.md; docs/governance/arc4_trade_plan_data_completeness_audit.md; docs/governance/strategy_parameter_validation_v53.md; docs/governance/si05_effectiveness_review_protocol.md; docs/governance/si05_digest_log_schema_validation.md |
+| EPIC-04 | QA coverage and UX review: BLG-QA-52 — Tax year P&L boundary edge case validation (6 test scenarios); BLG-QA-53 — SI-05 digest Playwright E2E coverage (4 scenarios); BLG-QA-54 — Playwright coverage matrix update post-v5.2; BLG-FE-66 — Red Flag Journal post-launch UX review; BLG-FE-67 — BLG-FE-64 visual design review scope definition. | tests/test_tax_year_pnl_boundary.py; tests/e2e/si05-digest-delivery.spec.js; docs/qa/playwright_coverage_matrix.md; docs/governance/rfj_ux_review_v53.md; docs/governance/blg_fe_64_scope_definition.md |
+
+### Deviations accepted
+None
+
+### Tech backlog items shipped
+- [ST-01] BLG-SPEC-53 — API contract gap resolution plan
+- [ST-02] BLG-SPEC-54 — openapi.yaml completeness audit
+- [ST-03] BLG-QA-51 — QA acceptance criteria for SPEC-49–52
+- [ST-04] BLG-SPEC-49 — GET /ai/journal-summary/history contract
+- [ST-05] BLG-SPEC-50 — GET /analytics/compliance-metrics contract
+- [ST-06] BLG-SPEC-51 — GET /news/{ticker} contract
+- [ST-07] BLG-SPEC-52 — Watchlist endpoint contracts + test.py
+- [ST-08] BLG-BE-35 — POST /digest/si05/send API key authentication
+- [ST-09] BLG-OPS-57 — SI-05 Telegram delivery failure alerting
+- [ST-10] BLG-OPS-58 — CI secret scanning gate
+- [ST-11] LL-v5.2-P4-01 — qa_evidence_template.md signer format note
+- [ST-12] LL-v5.2-P4-02 — execution_prompt.md STEP 5.3A SSR sub-step
+- [ST-13] BLG-GOV-107 — SI-02 frontend activation criteria precision (roadmap annotation)
+- [ST-14] BLG-GOV-108 — AI model pin update policy
+- [ST-15] BLG-GOV-109 — AI audit log retention policy
+- [ST-16] BLG-GOV-110 — Arc 4 trade_plan data completeness audit
+- [ST-17] BLG-GOV-104 — strategy_rules.md §11 parameter validation
+- [ST-18] BLG-QA-52 — Tax year P&L boundary edge case validation
+- [ST-19] BLG-QA-53 — SI-05 digest Playwright E2E coverage
+- [ST-20] BLG-QA-54 — Playwright coverage matrix update post-v5.2
+- [ST-21] BLG-FE-66 — Red Flag Journal post-launch UX review
+- [ST-22] BLG-FE-67 — BLG-FE-64 visual design review scope definition
+- [ST-23] BLG-GOV-113 — SI-05 effectiveness review protocol
+- [ST-24] BLG-GOV-114 — si05_digest_log schema validation
+
+Sign-off: Product Owner — 2026-06-09
+QA sign-off: Director of Quality — 2026-06-09
 
 ---
 

@@ -1,9 +1,13 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v5.3
 Cycle: 2026-06-08__release-v5.3
-Last Updated: 2026-06-08
+Last Updated: 2026-06-09
+Superseded by: v5.3 ship — 2026-06-09
+Changelog: docs/product/changelog.md#v53
+Verification report: claude/cycles/2026-06-08__release-v5.3/verification_report.md
+Cycle: 2026-06-08__release-v5.3
 
 ## Release Scope — v5.3 Spec Debt, Security Hardening & Ops Governance
 

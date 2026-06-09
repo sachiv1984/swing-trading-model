@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-04 (post-ship closure 2026-06-21__release-v5.1)
+**Last Updated:** 2026-06-09 (post-ship closure 2026-06-08__release-v5.3)
 
 # Roadmap Archive — Momentum Trading Assistant
 
@@ -1171,3 +1171,20 @@ v5.1 SI-05 Phase 1 & Governance Debt. SI-05 Phase 1 weekly Telegram digest deliv
 ### Original Roadmap Entry
 
 v5.2 Governance Debt, SI-05 Ops & Spec Compliance. OA-01 + OA-02 governance patches (release_planning_prompt.md v2.34; execution_prompt.md v3.37); BLG-SPEC-47 resolved (DEV-v51-EPIC01-01 closed; Option(a) chosen); BLG-SPEC-48 contract authored (digest_endpoints.md v0.3); SI-05 operational hardening (BLG-BE-32 retry; BLG-BE-33 log table); deployment runbook v0.2 + health check procedure; 3 security reviews (model deprecation PASS; bot token PASS with recommendation; endpoint auth GAP_FOUND — BLG-BE-35 filed); endpoint coverage audit (50 routes; 6 gaps: BLG-SPEC-49–52); SI-05 QA acceptance protocol + edge case tests (26 total); effectiveness criteria (review 2026-07-04). 16/16 stories. Zero spec deviations. PRs #694–#697. Verified 2026-06-08.
+
+---
+
+## RA:v5.3 — Spec Debt, Security Hardening & Ops Governance
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-09
+**Shipped version:** v5.3
+**Cycle reference:** 2026-06-08__release-v5.3
+**Verification report:** claude/cycles/2026-06-08__release-v5.3/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-09
+
+### Original Roadmap Entry
+
+v5.3 Spec Debt, Security Hardening & Ops Governance. All 6 known API contract gaps resolved (BLG-SPEC-49–52 contracts authored + openapi.yaml + test.py; BLG-SPEC-53 resolution plan; BLG-SPEC-54 completeness audit); POST /digest/si05/send API key authentication (BLG-BE-35); CI secret scanning gate via gitleaks (BLG-OPS-58); SI-05 Telegram failure alerting (BLG-OPS-57); 3 AI governance policy docs (AI model pin update policy BLG-GOV-108, AI audit log retention policy BLG-GOV-109, Arc 4 trade_plan data completeness audit BLG-GOV-110); SI-05 effectiveness review protocol + digest log schema validation (BLG-GOV-113/114); strategy_rules.md §11 parameter validation (BLG-GOV-104); SI-02 frontend activation gate criteria precision (BLG-GOV-107); QA acceptance criteria template (BLG-QA-51); tax year P&L boundary tests (BLG-QA-52); SI-05 Playwright E2E coverage (BLG-QA-53); Playwright coverage matrix updated (BLG-QA-54); Red Flag Journal UX review (BLG-FE-66); BLG-FE-64 design review scope definition (BLG-FE-67); LL-v5.2-P4-01/02 carry-forwards resolved. 24/24 stories. Zero spec deviations. PRs #722–#725. Verified 2026-06-09. completed_cycle_count = 39.

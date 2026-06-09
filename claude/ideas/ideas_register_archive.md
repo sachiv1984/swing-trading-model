@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-02
+**Last Updated:** 2026-06-09
 
 # Ideas Register Archive — Momentum Trading Assistant
 
@@ -424,4 +424,66 @@ Permanent record of terminal ideas rows retired from `claude/ideas/ideas_registe
 | IDEA-frontend-ux-20260601-01 | Pre-entry panel combined redesign specification | Frontend Specs & UX Documentation Owner | IW-20260601-01 | 2026-06-01 | Rejected | 2 | Terminal park decision 2026-06-03__scheduled: Rejected (not strong) — subsumed by BLG-FE-62. | ❌ Rejected | ❌ Rejected (not strong) |
 | IDEA-head-of-ux-20260601-01 | Arc 5 completion visual consistency pre-review | Head of UX & Design | IW-20260601-01 | 2026-06-01 | Promoted-Backlog | 2 | Terminal park decision 2026-06-03__scheduled: Gate CLEARED (BLG-GOV-88 shipped v5.0). Promoted-Backlog as BLG-FE-63 (gate: SI-04 sprint planning imminent). | 📋 Promoted-Backlog | — |
 | IDEA-head-of-ux-20260601-02 | Mobile responsiveness gap assessment for Arc 5 | Head of UX & Design | IW-20260601-01 | 2026-06-01 | Rejected | 2 | Terminal park decision 2026-06-03__scheduled: Rejected (not strong) — subsumed by BLG-FE-55. | ❌ Rejected | ❌ Rejected (not strong) |
+
+## Archived 2026-06-09 — Ideas Housekeeping post-ship 2026-06-08__release-v5.3
+
+*57 terminal rows archived from IW-20260607-01 (30 rows) and IW-20260608-01 (27 rows). Archive date: 2026-06-09.*
+
+| Idea ID | Title | Submitter | Window | Submitted At | Status | Park Count | Park Rationale | Step 4 | Step 5 |
+|---------|-------|-----------|--------|--------------|--------|------------|----------------|--------|--------|
+| IDEA-product-owner-20260607-01 | SI-05 Phase 2 activation criteria definition | Product Owner | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-92) |
+| IDEA-head-of-specs-20260607-01 | BLG-SPEC-47 resolution plan and spec update path | Head of Specs Team | IW-20260607-01 | 2026-06-07 | Rejected | — | — | Advance | Promoted-Rejected (duplicate: BLG-SPEC-47 fully covers resolution scope) |
+| IDEA-pmo-lead-20260607-02 | OA-01/OA-02 resolution reminder and enforcement | PMO Lead | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-93) |
+| IDEA-director-of-quality-20260607-01 | SI-05 digest delivery verification protocol | Director of Quality | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-94) |
+| IDEA-director-of-quality-20260607-02 | Arc 5 QA completion criteria definition | Director of Quality | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-QA-45) |
+| IDEA-strategy-owner-20260607-01 | SI-04 §13 evidence criteria pre-document | Strategy Rules & System Intent Owner | IW-20260607-01 | 2026-06-07 | Rejected | — | — | Reject | — |
+| IDEA-strategy-owner-20260607-02 | strategy_rules.md annual parameter review schedule | Strategy Rules & System Intent Owner | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-95) |
+| IDEA-finops-20260607-01 | Claude API quarterly cost review initiation | FinOps & Resource Architect | IW-20260607-01 | 2026-06-07 | Rejected | — | — | Reject | — |
+| IDEA-finops-20260607-02 | SI-05 Telegram delivery operational cost assessment | FinOps & Resource Architect | IW-20260607-01 | 2026-06-07 | Rejected | — | — | Reject | — |
+| IDEA-infra-ops-20260607-01 | POST /digest/si05/send performance baseline | Infrastructure & Operations Owner | IW-20260607-01 | 2026-06-07 | Rejected | — | — | Reject | — |
+| IDEA-infra-ops-20260607-02 | Deployment runbook update for SI-05 environment | Infrastructure & Operations Owner | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-OPS-55) |
+| IDEA-challenger-20260607-01 | SI-05 Phase 1 effectiveness measurement criteria | Challenger | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-96) |
+| IDEA-challenger-20260607-02 | OA resolution deadline enforcement mechanism | Challenger | IW-20260607-01 | 2026-06-07 | Rejected | 1 | IDEA-pmo-lead-20260607-02 (BLG-GOV-93) advances the same concern | Reject not strong | — |
+| IDEA-backend-engineering-20260607-01 | SI-05 digest service edge case test gap analysis | Backend Engineering Patterns Owner | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-QA-46) |
+| IDEA-backend-engineering-20260607-02 | SI-05 Telegram delivery retry and failure handling | Backend Engineering Patterns Owner | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-BE-32) |
+| IDEA-ai-compliance-20260607-01 | Claude API model deprecation compliance check | AI Compliance & Governance Officer | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-97) |
+| IDEA-ai-compliance-20260607-02 | AI thesis generation quarterly review preparation | AI Compliance & Governance Officer | IW-20260607-01 | 2026-06-07 | Rejected | — | — | Reject | — |
+| IDEA-cybersecurity-20260607-01 | Telegram bot token minimal-permission security review | Cybersecurity & Trust Lead | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-98) |
+| IDEA-cybersecurity-20260607-02 | SI-05 digest endpoint authentication review | Cybersecurity & Trust Lead | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-99) |
+| IDEA-head-of-engineering-20260607-01 | Backend endpoint documentation coverage audit post-v5.1 | Head of Engineering | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-100) |
+| IDEA-head-of-engineering-20260607-02 | SI-05 service scheduled run health check | Head of Engineering | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-OPS-56) |
+| IDEA-data-model-20260607-01 | SI-05 digest delivery log table | Data Model & Domain Schema Owner | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-BE-33) |
+| IDEA-data-model-20260607-02 | Trade count gate-monitoring view for gate checks | Data Model & Domain Schema Owner | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-BE-34) |
+| IDEA-director-of-hr-20260607-01 | Governance model complexity assessment (evidence-based revisit) | Director of HR | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-101) |
+| IDEA-api-contracts-20260607-01 | POST /digest/si05/send formal API contract document | API Contracts & Documentation Owner | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-SPEC-48) |
+| IDEA-qa-testing-20260607-01 | SI-05 Phase 1 acceptance test protocol | QA & Testing Owner | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-QA-47) |
+| IDEA-qa-lead-20260607-01 | Regression test suite baseline refresh post-v5.1 | QA Lead | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-QA-48) |
+| IDEA-qa-lead-20260607-02 | Arc 5 test scenario completeness assessment | QA Lead | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-QA-49) |
+| IDEA-frontend-ux-20260607-01 | BLG-FE-41 visual design review pre-brief (gate clears 2026-06-21) | Frontend Specs & UX Documentation Owner | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-FE-64) |
+| IDEA-head-of-ux-20260607-02 | User journey mapping: SI-05 digest to app action | Head of UX & Design | IW-20260607-01 | 2026-06-07 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-FE-65) |
+| IDEA-head-of-specs-20260608-01 | BLG-SPEC-49–52 contract gap resolution plan for v5.3 | Head of Specs Team | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-SPEC-53) |
+| IDEA-director-of-quality-20260608-01 | SI-05 effectiveness review protocol — formal criteria for 2026-07-04 review | Director of Quality | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-113) — shipped v5.3 ST-23 |
+| IDEA-director-of-quality-20260608-02 | BLG-SPEC-49–52 QA readiness — acceptance criteria for 6 endpoint contract gaps | Director of Quality | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-QA-51) |
+| IDEA-strategy-owner-20260608-01 | strategy_rules.md §11 parameter annual validation with actual trade data | Strategy Rules & System Intent Owner | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-104) |
+| IDEA-strategy-owner-20260608-02 | Arc 6 PS-03 Monte Carlo §13 pre-assessment | Strategy Rules & System Intent Owner | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-105) |
+| IDEA-finops-20260608-01 | Claude API model tier cost-quality assessment | FinOps & Resource Architect | IW-20260608-01 | 2026-06-08 | Rejected | — | — | Reject not strong — Duplicate of BLG-GOV-74 | — |
+| IDEA-infra-ops-20260608-01 | SI-05 digest failure alerting | Infrastructure & Operations Owner | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-OPS-57) |
+| IDEA-challenger-20260608-01 | PT-04 trade count gate re-verification | Challenger | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-106) |
+| IDEA-challenger-20260608-02 | SI-02 frontend activation criteria precision | Challenger | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-107) |
+| IDEA-backend-engineering-20260608-01 | BLG-BE-35 auth findings implementation plan | Backend Engineering Patterns Owner | IW-20260608-01 | 2026-06-08 | Rejected | — | — | Reject not strong — BLG-BE-35 already covers scope | — |
+| IDEA-ai-compliance-20260608-01 | AI model pin update policy | AI Compliance Governance Officer | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-108) |
+| IDEA-ai-compliance-20260608-02 | AI audit log retention policy | AI Compliance Governance Officer | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-109) |
+| IDEA-cybersecurity-20260608-01 | CI secret scanning gate | Cybersecurity & Trust Lead | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-OPS-58) |
+| IDEA-cybersecurity-20260608-02 | BLG-BE-35 endpoint hardening follow-through | Cybersecurity & Trust Lead | IW-20260608-01 | 2026-06-08 | Rejected | — | — | Reject not strong — Duplicate of BLG-BE-35 | — |
+| IDEA-head-of-engineering-20260608-02 | SI-05 service production performance review — p99 latency | Head of Engineering | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-OPS-59) |
+| IDEA-base44-frontend-20260608-01 | Red Flag Journal UX review — usability review of RFJ.js | Base44 Frontend Prompt Owner | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-FE-66) |
+| IDEA-data-model-20260608-01 | Arc 4 trade_plan data completeness audit | Data Model & Domain Schema Owner | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-110) |
+| IDEA-data-model-20260608-02 | si05_digest_log schema validation | Data Model & Domain Schema Owner | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Backlog-gate-conditional | Promoted-Added (BLG-GOV-114) — shipped v5.3 ST-24 |
+| IDEA-financial-reporting-20260608-02 | Tax year P&L boundary edge case validation | Financial Reporting & Records Owner | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-QA-52) |
+| IDEA-api-contracts-20260608-01 | BLG-SPEC-49–52 documentation priority ranking | API Contracts & Documentation Owner | IW-20260608-01 | 2026-06-08 | Rejected | — | — | Reject not strong — Overlaps with IDEA-head-of-specs-20260608-01 | — |
+| IDEA-api-contracts-20260608-02 | openapi.yaml completeness audit against all 50 routes | API Contracts & Documentation Owner | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-SPEC-54) |
+| IDEA-qa-testing-20260608-01 | SI-05 digest Playwright E2E coverage | QA & Testing Owner | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-QA-53) |
+| IDEA-qa-lead-20260608-02 | Playwright test coverage matrix update post-v5.2 | QA Lead | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-QA-54) |
+| IDEA-frontend-ux-20260608-01 | BLG-FE-64 design review scope definition | Frontend Specs & UX Documentation Owner | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-FE-67) |
+| IDEA-head-of-ux-20260608-01 | v5.3 design gate pre-assessment | Head of UX & Design | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-111) |
 

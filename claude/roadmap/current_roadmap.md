@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-08 (rebalance 2026-06-08__scheduled — DL-040; 22 backlog adds; v5.3 Now section added (STEP 8.1 Option a); CPS=1.15, Δ=0.00; no initiative changes)
+**Last Updated:** 2026-06-09 (post-ship closure 2026-06-08__release-v5.3; v5.3 ✅ Complete; current version updated to v5.3; next planned release v5.4)
 **Last rebalance:** 2026-06-07 (cycle 2026-06-07__scheduled — Standard-tier, CPS=1.15; Δ=0.00; 25 new backlog items; DL-039; IW-20260607-01; 23 Promoted-Added)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,8 +10,8 @@
 
 ## 1. Current Version
 
-**v5.2** — Governance Debt, SI-05 Ops & Spec Compliance — ✅ Shipped 2026-06-08
-**Next planned release:** v5.3 — pending roadmap rebalance
+**v5.3** — Spec Debt, Security Hardening & Ops Governance — ✅ Shipped 2026-06-09
+**Next planned release:** v5.4 — pending roadmap rebalance
 
 *RA:v5.2 retired — see roadmap_archive.md 2026-06-08 (post-ship closure 2026-06-08__release-v5.2).*
 *RA:v5.1 retired — see roadmap_archive.md 2026-06-04 (post-ship closure 2026-06-21__release-v5.1).*
@@ -259,55 +259,7 @@ Today you find stocks through external research and add them to the watchlist ma
 *RA:v5.1 retired — see roadmap_archive.md 2026-06-04 (post-ship closure 2026-06-21__release-v5.1).*
 *RA:v5.0 retired — see roadmap_archive.md 2026-06-03 (post-ship closure 2026-06-03__release-v5.0).*
 
-### RA:v5.3 — Spec Debt, Security Hardening & Ops Governance
-
-*Added: 2026-06-08 (STEP 8.1 Option (a) — rebalance 2026-06-08__scheduled — DL-040)*
-*Pre-conditions (OA-RP / gate checks before sprint planning):*
-- *BLG-GOV-106: PT-04 trade count re-verified (gate check required before v5.3 sprint planning seals)*
-- *BLG-GOV-111: v5.3 design gate pre-assessed (confirm design gate not required)*
-
-**Candidate scope (from DL-040 backlog adds — to be confirmed at plan release v5.3):**
-
-| Priority | BLG ID | Title | Effort |
-|----------|--------|-------|--------|
-| P1 | BLG-SPEC-53 | SPEC-49–52 contract gap resolution plan | M |
-| P1 | BLG-SPEC-54 | openapi.yaml completeness audit | S |
-| P1 | BLG-OPS-57 | SI-05 Telegram delivery failure alerting | S |
-| P1 | BLG-OPS-58 | CI secret scanning gate | S |
-| P1 | BLG-GOV-106 | PT-04 trade count gate re-verification | S |
-| P2 | BLG-QA-51 | SPEC-49–52 QA acceptance readiness | S |
-| P2 | BLG-GOV-104 | strategy_rules.md §11 parameter validation | M |
-| P2 | BLG-GOV-105 | Arc 6 PS-03 §13 threshold pre-assessment | S |
-| P2 | BLG-GOV-107 | SI-02 frontend activation criteria precision | S |
-| P2 | BLG-GOV-108 | AI model pin update policy | S |
-| P2 | BLG-GOV-109 | AI audit log retention policy | S |
-| P2 | BLG-OPS-59 | SI-05 production p99 latency review | S |
-| P2 | BLG-GOV-110 | Arc 4 trade_plan data completeness audit | S |
-| P2 | BLG-QA-52 | Tax year P&L boundary edge case validation | S |
-| P2 | BLG-QA-53 | SI-05 digest Playwright E2E coverage | M |
-| P2 | BLG-QA-54 | Playwright coverage matrix update post-v5.2 | S |
-| P2 | BLG-FE-67 | BLG-FE-64 design review scope definition | S |
-| P2 | BLG-GOV-111 | v5.3 design gate pre-assessment | S |
-| P3 | BLG-FE-66 | Red Flag Journal post-launch UX review | S |
-| Also target | BLG-BE-35 | Endpoint auth review follow-up (filed v5.2) | TBD |
-
-*Gate-conditional items (add to v5.3 if gates clear before sprint planning seals):*
-- BLG-GOV-112 (gate: 2026-07-04 SI-05 review complete)
-- BLG-GOV-113 (gate: before 2026-07-04 review)
-- BLG-GOV-114 (gate: before 2026-07-04 review)
-- BLG-FE-64 (gate: 2026-06-21 — clears before v5.3 sprint planning)
-
-<!-- roadmap-annotation-marker: RA:v5.3:2026-06-08__release-v5.3 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-06-08__release-v5.3
-- Plan published: 2026-06-08
-- Cycle folder: claude/cycles/2026-06-08__release-v5.3/
-- Backlog slice: claude/cycles/2026-06-08__release-v5.3/stage4_backlog_slice.md
-- Status at annotation: Validated
-- 22 firm stories / 3 conditional / 4 EPICs / 2 sprints
-- Design gate: NOT REQUIRED (0 new UI/UX components)
-- OA-RP-01: PT-04 trade count gate check required before sprint planning seals (BLG-GOV-106)
+*RA:v5.3 retired — see roadmap_archive.md 2026-06-09 (post-ship closure 2026-06-08__release-v5.3).*
 
 -----
 
@@ -486,6 +438,7 @@ When evaluating new features:
 |**v5.0** ✅  |Governance Hardening, Product Correctness & SI-05 Phase 1 Pre-work|prompt_change_log.md entries verified; 5 agent file headers corrected; PR template PO acceptance instruction; execution_prompt.md STEP 8 governance check (v3.35→v3.36); post-ship audit advisory dual-condition + last_audit_cycle_count schema; allocation_insufficient signal status + frontend badge; pre-entry regime gate shared cache fix; Anthropic SDK staging verification; SI-05 pre-work documentation suite (notification channel decision, Telegram message format spec, SI-02 re-entry criteria, SI-04 §13 binding conditions, SI-02 drift feasibility). 13/13 stories. Zero deviations. — ✅ Shipped 2026-06-03 — cycle: 2026-06-03__release-v5.0|
 |**v5.1** ✅  |SI-05 Phase 1 & Governance Debt|SI-05 Phase 1 weekly Telegram digest (si05_digest_service.py; POST /digest/si05/send; 21 unit tests; BLG-GOV-67); BLG-SPEC-45 financial reporting scope confirmed OUT OF SCOPE; delivery_verification_prompt.md §-1.3 Tier 2 agent-mediated signer fix (v2.9→v3.0); SignalCard allocation_insufficient Playwright E2E coverage (5 scenarios; BLG-FE-61); compliance_summary validation (BLG-QA-43); staged verification sprint protocol (BLG-GOV-89). 6/6 stories. 1 P3 deviation (DEV-v51-EPIC01-01; BLG-SPEC-47). — ✅ Shipped 2026-06-04 — cycle: 2026-06-21__release-v5.1|
 |**v5.2** ✅  |Governance Debt, SI-05 Ops & Spec Compliance|OA-01 + OA-02 governance patches (release_planning_prompt.md v2.34; execution_prompt.md v3.37); BLG-SPEC-47 resolved — DEV-v51-EPIC01-01 closed; BLG-SPEC-48 contract authored (digest_endpoints.md v0.3); SI-05 retry + log table; deployment runbook v0.2 + health check procedure; Claude API deprecation check (PASS); Telegram bot security review (PASS); endpoint auth review (BLG-BE-35 filed); endpoint coverage audit (50 routes; 6 gaps: BLG-SPEC-49–52); SI-05 QA acceptance protocol + edge case tests (26 total); effectiveness criteria (review 2026-07-04). 16/16 stories. Zero deviations. — ✅ Shipped 2026-06-08 — cycle: 2026-06-08__release-v5.2|
+|**v5.3** ✅  |Spec Debt, Security Hardening & Ops Governance|6 API contract gaps resolved (BLG-SPEC-49–52 + completeness audit + resolution plan); POST /digest/si05/send API key authentication (BLG-BE-35); CI secret scanning gate (BLG-OPS-58); SI-05 Telegram failure alerting (BLG-OPS-57); 3 AI policy governance docs (model pin update, audit log retention, Arc 4 audit); SI-05 effectiveness review protocol + digest log schema validation; strategy_rules.md §11 parameter validation; SI-02 frontend gate precision; Tax year P&L boundary tests + SI-05 E2E Playwright coverage; RFJ UX review; Playwright coverage matrix updated; LL-v5.2-P4-01/02 carry-forward resolved. 24/24 stories. Zero deviations. — ✅ Shipped 2026-06-09 — cycle: 2026-06-08__release-v5.3|
 |**v4.0+**    |Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
 |**v4.0+**    |Arc 5: Strategy Integrity (remainder)                                 |SI-02 behavioural drift detection, SI-04 strategy version comparison, SI-05 weekly digest — 📋 Planned                                    |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

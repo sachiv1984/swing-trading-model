@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-06-08 (post-ship closure 2026-06-08__release-v5.2; digest_endpoints.md updated to v0.3; §6.4 contract gaps added)
+**Last Updated:** 2026-06-09 (post-ship closure 2026-06-08__release-v5.3; §6.4 RESOLVED — BLG-SPEC-49–52 all completed; ai_endpoints.md v1.1, analytics_endpoints.md v2.2.0, news_endpoints.md v1.0, watchlist_endpoints.md v1.0 added to §3.4)
 
 ---
 
@@ -108,9 +108,11 @@ It points to the **single canonical source**.
 - `alerts_endpoints.md` — Class 1 Canonical, v0.3, Active (created 2026-03-20, ST-02; updated v0.3 2026-03-24, ST-05): Alert rules CRUD, alert evaluation, notification feed, notification preferences, alert history (GET /alerts/history). Architecture: FastAPI BackgroundTasks per ADR-003. Sign-off: Head of Specs Team (2026-03-20).
 - `digest_endpoints.md` — Class 1 Canonical, v0.3, Active (created 2026-04-03, ST-08, cycle 2026-03-31__release-v2.4; updated v0.2 ST-03 cycle 2026-06-21__release-v5.1 — POST /digest/si05/send + DEV-v51-EPIC01-01 known deviation; updated v0.3 ST-03/ST-04 cycle 2026-06-08__release-v5.2 — pass_rate computation documented per BLG-SPEC-47 resolution; authentication requirements section added per BLG-SPEC-48): GET /digest/weekly; POST /digest/si05/send. Sign-off: QA Lead + DoQ (v0.1); API Contracts & Documentation Owner + Head of Specs Team (v0.3, 2026-06-08).
 - `health_endpoints.md` — Class 1 Canonical, v1.3, Active (created 2026-03-18; updated v1.1 by ST-07 cycle 2026-03-24__release-v2.3; updated v1.2 by ST-08 adding GET /health/database; updated v1.3 by ST-08/ST-09 cycle 2026-04-25__release-v3.0 adding external_apis + ai_journal sections to GET /health): GET /health + GET /health/database operational health check endpoints. Sign-off: Head of Specs Team (v1.3, 2026-04-26).
-- `analytics_endpoints.md` — Class 1 Canonical, v2.1.0, Active (updated 2026-04-15, ST-08, cycle 2026-04-13__release-v2.7): GET /analytics/market-correlation (Pearson correlation vs benchmark, TTL-cached). Sign-off: Head of Specs Team.
+- `analytics_endpoints.md` — Class 1 Canonical, v2.2.0, Active (updated 2026-04-15, ST-08, cycle 2026-04-13__release-v2.7: GET /analytics/market-correlation; updated v2.2.0 2026-06-09 ST-05 cycle 2026-06-08__release-v5.3 — GET /analytics/compliance-metrics added per BLG-SPEC-50). Sign-off: Head of Specs Team; API Contracts & Documentation Owner (v2.2.0).
 - `signal_endpoints.md` — Class 1 Canonical, v1.2, Active (updated 2026-05-18, ST-01, cycle 2026-05-18__release-v3.7): PATCH /signals/{id} updated to accept `watchlisted` as valid status value; `watchlisted` added to signals table CHECK constraint (signal-to-watchlist workflow). Sign-off: Sprint Execution Engine (autonomous class). Previous: v1.1 (2026-04-15, ST-09, v2.7): POST /signals/generate supplementary display-only indicator fields; Strategy Rules Owner sign-off.
-- `ai_endpoints.md` — Class 1 Canonical, v1.0, Active (created 2026-04-18, ST-07, cycle 2026-04-17__release-v2.8): POST /ai/journal-summary — LLM-based journal entry summarisation; Anthropic API; graceful failure returns HTTP 200 with summary:null; display-only; SRB-v1.7 conditionally compliant. Sign-off: Sprint Execution Engine (autonomous class); DoQ EPIC-level Director of Quality 2026-04-20.
+- `ai_endpoints.md` — Class 1 Canonical, v1.1, Active (created v1.0 2026-04-18, ST-07, cycle 2026-04-17__release-v2.8; updated v1.1 2026-06-09, ST-04, cycle 2026-06-08__release-v5.3 — GET /ai/journal-summary/history added per BLG-SPEC-49): POST /ai/journal-summary; GET /ai/journal-summary/history. Sign-off: Sprint Execution Engine (autonomous class); API Contracts & Documentation Owner (v1.1).
+- `news_endpoints.md` — Class 1 Canonical, v1.0, Active (created 2026-06-09, ST-06, cycle 2026-06-08__release-v5.3 — BLG-SPEC-51): GET /news/{ticker}. Sign-off: API Contracts & Documentation Owner.
+- `watchlist_endpoints.md` — Class 1 Canonical, v1.0, Active (created 2026-06-09, ST-07, cycle 2026-06-08__release-v5.3 — BLG-SPEC-52): GET /watchlist, POST /watchlist, DELETE /watchlist/{entry_id}. Sign-off: API Contracts & Documentation Owner + Head of Specs Team.
 - `ticker_universe_api_contract.md` — Class 2 Canonical (created 2026-04-25, ST-01, cycle 2026-04-25__release-v3.0; updated 2026-05-22 ST-06 v3.9 — company_name field added to GET /ticker-universe response): GET /ticker-universe, POST /ticker-universe, DELETE /ticker-universe/{ticker}; seed data contract; company_name field. Sign-off: Sprint Execution Engine (autonomous class).
 - `screener_api_contract.md` — Class 2 Canonical (created 2026-04-23 v2.9; implementation delivered 2026-04-25 v3.0 ST-04; updated v1.1 2026-05-22 ST-04 v3.9 — degraded_run and failure_rate fields added to GET /screener/results response): GET /screener/results, POST /screener/run; request/response schemas, pagination, error codes, degraded_run flag.
 - `alpaca_integration_contract.md` — Class 2 Canonical (created 2026-04-23 v2.9 ST-02): Alpaca Markets API contract for OHLCV bars and News endpoints; rate limits, error codes, fallback strategy, API version pin.
@@ -280,9 +282,9 @@ This section tracks canonical spec gaps that have been identified but not yet fi
 
 ### 6.4 API contract gaps from v5.2 endpoint coverage audit (BLG-SPEC-49–52)
 
-**Status:** Open — identified 2026-06-08 (ST-12 BLG-GOV-100 coverage audit, cycle 2026-06-08__release-v5.2)
+**Status:** RESOLVED — 2026-06-09 (v5.3 EPIC-01 ST-04/05/06/07; all 4 backlog items completed — see §3.4 for updated contract file entries)
 **Owner:** API Contracts & Documentation Owner; Head of Specs Team
-**Backlog items:** BLG-SPEC-49, BLG-SPEC-50, BLG-SPEC-51, BLG-SPEC-52
+**Backlog items:** BLG-SPEC-49 ✅, BLG-SPEC-50 ✅, BLG-SPEC-51 ✅, BLG-SPEC-52 ✅
 
 Four backend endpoints exist in `backend/routers/` and `docs/reference/openapi.yaml` but have no corresponding `## METHOD /path` entry in `docs/specs/api_contracts/`. These are spec debt items from prior releases:
 
