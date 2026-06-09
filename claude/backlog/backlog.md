@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-09 (post-ship closure 2026-06-08__release-v5.3; 22 items marked COMPLETE: BLG-SPEC-49–54, BLG-BE-35, BLG-OPS-57/58, BLG-QA-51–54, BLG-GOV-104/107–110/113/114, BLG-FE-66/67)
-**Last rebalance:** 2026-06-08 (cycle 2026-06-08__scheduled — DL-040; IW-20260608-01; 22 new items; 57 ideas classified)
+**Last Updated:** 2026-06-09 (rebalance 2026-06-09__scheduled — DL-041; 8 new items BLG-FEAT-45, BLG-FE-68–71, BLG-QA-55, BLG-SPEC-55, BLG-GOV-115 from Promoted-Backlog ideas; 4 ideas Rejected; 17 ideas incremented to Parked-cycle-2)
+**Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — DL-041/042; IW skipped ≥20 open ideas; 8 new items; meta-review DUE conducted; v5.4 Now section added)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -439,6 +439,32 @@ The Arc 5 composite compliance score (shipped v4.1) is computed from fewer than 
 - Assessment document produced (advisory or advisory-not-needed conclusion)
 - If advisory warranted: UI advisory added to Arc5ComplianceSection for sub-20-trade states
 - Gate condition verified before sprint planning
+
+---
+
+### BLG-FEAT-45 — Monthly P&L report format review — 3-month usage retrospective
+**Priority:** P3 (Low)
+**Type:** Product Feature / Analytics
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260607-02 — Promoted-Backlog rebalance 2026-06-09__scheduled (DL-041)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** ≥ 2026-08-05 (3+ months since Monthly P&L shipped 2026-05-05)
+
+**Problem**
+Monthly P&L shipped 2026-05-05 with a fixed column/section layout. After 3 months of real usage, the format may benefit from minor adjustments (column order, section grouping, display precision). A lightweight retrospective assessment at 3 months is appropriate before any format changes are considered.
+
+**Scope**
+- Review current Monthly P&L format against 3+ months of usage experience
+- Identify any column, section, or display precision improvements
+- Produce a brief recommendations document; if no changes warranted, record "no change" decision
+- Product Owner sign-off
+
+**Acceptance Criteria**
+- Format review conducted with 3+ months of data available
+- Recommendations document produced (or "no change" decision recorded)
+- Any format changes flow into the next appropriate sprint as separate stories
+- Gate condition verified: ≥ 2026-08-05
 
 ---
 
@@ -1043,6 +1069,107 @@ BLG-FE-64 (Red Flag Journal visual design review pre-brief) is in backlog with g
 - Scope document produced: specifies which components and visual properties are in scope for review
 - Clear distinction from BLG-FE-66 documented
 - Frontend Specs & UX Documentation Owner and Head of UX & Design sign-off
+
+---
+
+### BLG-FE-68 — Arc 5 compliance score sparkline trend chart (gate-conditional)
+**Priority:** P3 (Low)
+**Type:** Frontend / Analytics Display
+**Owner:** Metrics Definitions & Analytics Owner; Base44 Frontend Prompt Owner
+**Source:** IDEA-metrics-analytics-20260607-02 — Promoted-Backlog rebalance 2026-06-09__scheduled (DL-041)
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** BLG-FE-45 (Arc5ComplianceSection layout expandability review) complete
+
+**Problem**
+The Arc 5 compliance score is displayed as a single value on the compliance section. A sparkline trend chart showing the score's trajectory over recent weeks would help identify improving or degrading compliance at a glance. The gate is BLG-FE-45 — adding widgets to Arc5ComplianceSection before the layout expandability review is premature.
+
+**Scope**
+- Add sparkline trend chart to Arc5ComplianceSection (or equivalent compliance view)
+- Data source: existing compliance score history endpoint or new rolling-window endpoint
+- Chart shows last 8–12 weeks of compliance scores
+- BLG-FE-45 must be complete before this enters sprint planning
+
+**Acceptance Criteria**
+- Sparkline chart renders in compliance section
+- Data sourced from a defined endpoint (not mocked)
+- Gate condition (BLG-FE-45) verified before sprint planning
+- Playwright: chart renders with data; empty state handled
+
+---
+
+### BLG-FE-69 — SI-05 in-app digest panel — read-only last-sent view (gate-conditional)
+**Priority:** P3 (Low)
+**Type:** Frontend / Notification Display
+**Owner:** Base44 Frontend Prompt Owner; Frontend Specs & UX Documentation Owner
+**Source:** IDEA-base44-frontend-20260607-01 — Promoted-Backlog rebalance 2026-06-09__scheduled (DL-041)
+**Effort:** M (~2–3 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Phase 2 channel decision (BLG-GOV-92 SI-05 Phase 2 activation criteria) — if Telegram remains the sole channel, this item is not required
+
+**Problem**
+SI-05 weekly digest is delivered via Telegram (v5.1). Users who miss a Telegram message have no way to retrieve the last digest content from within the app. An in-app read-only panel showing the last-sent digest content would provide a fallback reference point. However, this is premature until the Phase 2 channel decision confirms an in-app component is warranted.
+
+**Scope**
+- Read-only digest panel in Settings or a new SI-05 section
+- Shows last digest sent: date, content summary, link counts
+- No composition or editing — display only
+- Phase 2 channel decision must be made before sprint planning
+
+**Acceptance Criteria**
+- Panel renders last-sent digest content
+- Date and delivery status visible
+- Gate condition (BLG-GOV-92 Phase 2 decision) verified before sprint planning
+
+---
+
+### BLG-FE-70 — Compliance score trend widget on dashboard homepage (gate-conditional)
+**Priority:** P3 (Low)
+**Type:** Frontend / Dashboard
+**Owner:** Base44 Frontend Prompt Owner; Head of UX & Design
+**Source:** IDEA-base44-frontend-20260607-02 — Promoted-Backlog rebalance 2026-06-09__scheduled (DL-041)
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** BLG-FE-45 (Arc5ComplianceSection layout expandability review) complete
+
+**Problem**
+Dashboard homepage shows key portfolio metrics but not the Arc 5 compliance score trend. A small trend widget on the homepage would surface compliance trajectory without requiring navigation to the full compliance section. Gate is BLG-FE-45 — homepage widget additions should follow the expandability assessment.
+
+**Scope**
+- Small compliance score trend widget on dashboard homepage
+- Shows current score + trend arrow (up/down/flat vs prior week)
+- Links to full Arc5ComplianceSection
+- BLG-FE-45 must be complete before this enters sprint planning
+
+**Acceptance Criteria**
+- Widget renders on dashboard with current score and trend indicator
+- Links correctly to full compliance section
+- Gate condition (BLG-FE-45) verified before sprint planning
+
+---
+
+### BLG-FE-71 — SI-05 in-app digest UX spec — Phase 2 potential (gate-conditional)
+**Priority:** P3 (Low)
+**Type:** Frontend Spec / UX
+**Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design
+**Source:** IDEA-frontend-ux-20260607-02 — Promoted-Backlog rebalance 2026-06-09__scheduled (DL-041)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Phase 2 channel decision (BLG-GOV-92) — if in-app delivery is confirmed for Phase 2, this spec should precede implementation
+
+**Problem**
+If SI-05 Phase 2 includes an in-app delivery channel, a UX spec will be required before frontend implementation begins. Authoring the spec before the Phase 2 channel decision is premature — the spec scope depends entirely on which channel(s) Phase 2 targets.
+
+**Scope**
+- Interaction pattern for SI-05 digest delivery in-app (read, dismiss, archive)
+- Visual design: notification panel, badge indicators, read/unread states
+- Produced only if Phase 2 channel decision confirms in-app component
+- Must be completed before BLG-FE-69 sprint planning
+
+**Acceptance Criteria**
+- UX spec produced covering interaction patterns and visual design
+- Reviewed by Head of UX & Design and Frontend Specs & UX Documentation Owner
+- Gate condition (BLG-GOV-92) verified before authoring
 
 ---
 
@@ -2024,6 +2151,32 @@ v5.2 added 26 new edge case tests (BLG-QA-44 base scope) and other QA improvemen
 
 ---
 
+### BLG-QA-55 — SI-02 Playwright scaffold readiness assessment (gate-conditional)
+**Priority:** P3 (Low)
+**Type:** QA / Test Planning
+**Owner:** QA & Testing Owner; Director of Quality
+**Source:** IDEA-qa-testing-20260607-02 — Promoted-Backlog rebalance 2026-06-09__scheduled (DL-041)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** ≥20 closed trades confirmed (same gate as SI-02 frontend activation — BLG-QA-42)
+
+**Problem**
+BLG-QA-42 (SI-02 Playwright scaffold) is gated on 20+ closed trades. When that gate clears and SI-02 frontend enters sprint planning, a readiness assessment of the BLG-QA-42 scaffold design should confirm it still reflects the final drift service implementation (which may have evolved since BLG-QA-42 was authored). This assessment prevents outdated scaffold assumptions from entering sprint planning.
+
+**Scope**
+- Review BLG-QA-42 Playwright pre-design against the final GET /analytics/behavioural-drift response schema
+- Confirm mock strategy is still valid or update scaffold design
+- Produce brief readiness confirmation document
+- Gate: 20+ closed trades must be confirmed before this assessment is commissioned
+
+**Acceptance Criteria**
+- Scaffold design reviewed against current drift endpoint response schema
+- Assessment confirms "proceed with BLG-QA-42 as-is" or produces a revision document
+- Director of Quality sign-off
+- Gate condition verified (≥20 closed trades)
+
+---
+
 ### BLG-QA-50 — Create formal regression test suite baseline document
 **Priority:** P3 (Low)
 **Type:** QA / Documentation
@@ -3000,6 +3153,32 @@ v5.2 found 50 routes in backend/routers/. openapi.yaml coverage against all 50 r
 - Gap report produced
 - openapi.yaml updated for any confirmed gaps
 - API Contracts & Documentation Owner sign-off
+
+---
+
+### BLG-SPEC-55 — Arc 4 API contract pre-planning surface area advancement check (gate-conditional)
+**Priority:** P3 (Low)
+**Type:** Specification / API Contracts
+**Owner:** API Contracts & Documentation Owner; Head of Specs Team
+**Source:** IDEA-api-contracts-20260607-02 — Promoted-Backlog rebalance 2026-06-09__scheduled (DL-041)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** PO-02 (Journal Pattern Recognition) sprint planning confirmed imminent — when PO confirms ≥6 months AI-summarised journal entries gate is cleared and PO-02 is entering sprint planning
+
+**Problem**
+BLG-SPEC-46 (Arc 4 API surface area) is a gate-conditional spec planning item that was parked until PO-02 sprint planning is imminent (~Oct 2026). When that gate clears, an advancement check should confirm BLG-SPEC-46's scope still reflects the final Arc 4 API surface — the surface may have evolved since BLG-SPEC-46 was authored. This item tracks that confirmation step.
+
+**Scope**
+- Review BLG-SPEC-46 against current api_contracts/ documents and openapi.yaml
+- Confirm Arc 4 API surface is still accurately captured or produce a revision scope
+- Produce brief readiness note: "BLG-SPEC-46 proceed as-is" or list required updates
+- Gate: PO-02 sprint planning imminent confirmation by PMO Lead
+
+**Acceptance Criteria**
+- BLG-SPEC-46 scope reviewed against current API surface
+- Readiness note produced with clear proceed/update decision
+- API Contracts & Documentation Owner sign-off
+- Gate condition verified
 
 ---
 
@@ -4898,6 +5077,32 @@ The 2026-07-04 SI-05 effectiveness review (BLG-GOV-96, BLG-GOV-113) will rely on
 - Schema PASS or gap items filed as urgent stories
 - Must complete before 2026-07-01 (before review date)
 - Data Model & Domain Schema Owner sign-off
+
+---
+
+### BLG-GOV-115 — SI-05 digest actionability metric definition (gate-conditional)
+**Priority:** P2 (Medium)
+**Type:** Governance / Metrics
+**Owner:** Metrics Definitions & Analytics Owner; Infrastructure & Operations Owner
+**Source:** IDEA-metrics-analytics-20260607-01 — Promoted-Backlog rebalance 2026-06-09__scheduled (DL-041)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v5.4 (gate: 2026-07-04 SI-05 effectiveness review complete)
+**Gate criteria:** BLG-GOV-113 (SI-05 Phase 1 effectiveness review protocol) complete — i.e., the 2026-07-04 effectiveness review has been conducted
+
+**Problem**
+SI-05 launched 2026-06-04. After the 2026-07-04 effectiveness review (BLG-GOV-113), the digest's actionability should be formally assessed. This requires defining what "actionable" means for an SI-05 digest: did the user open the Red Flag Journal? Did they review their strategy compliance? Did they act on a drift signal? Without formal metric definitions, the effectiveness review cannot produce measurable outcomes.
+
+**Scope**
+- Define 2–4 actionability metrics for SI-05 digest effectiveness
+- Metrics should be measurable from existing data sources (si05_digest_log, red_flag_events, trade data)
+- Produce a brief metrics definition document for Metrics Definitions & Analytics Owner review
+- Input to BLG-GOV-96 (effectiveness measurement criteria) and BLG-GOV-112 (cadence review)
+
+**Acceptance Criteria**
+- 2–4 actionability metrics formally defined with data source mapping
+- Metrics document reviewed by Metrics Definitions & Analytics Owner
+- Gate condition verified: 2026-07-04 effectiveness review (BLG-GOV-113) complete
+- Metrics feed BLG-GOV-112 cadence review and BLG-GOV-96 effectiveness criteria
 
 ---
 

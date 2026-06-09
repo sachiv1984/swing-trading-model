@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-09 (post-ship closure 2026-06-08__release-v5.3; v5.3 ✅ Complete; current version updated to v5.3; next planned release v5.4)
-**Last rebalance:** 2026-06-07 (cycle 2026-06-07__scheduled — Standard-tier, CPS=1.15; Δ=0.00; 25 new backlog items; DL-039; IW-20260607-01; 23 Promoted-Added)
+**Last Updated:** 2026-06-09 (rebalance 2026-06-09__scheduled — v5.4 Now section added; DL-041/042; CPS=1.15; Δ=0.00; 8 backlog items from idea promotions; meta-review conducted)
+**Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — Standard-tier, CPS=1.15; Δ=0.00; 8 new backlog items; DL-041/042; 4 ideas Rejected, 8 Promoted-Backlog, 17 re-parked; v5.4 Now section added)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -11,7 +11,7 @@
 ## 1. Current Version
 
 **v5.3** — Spec Debt, Security Hardening & Ops Governance — ✅ Shipped 2026-06-09
-**Next planned release:** v5.4 — pending roadmap rebalance
+**Next planned release:** v5.4 — Ops Monitoring, UX Debt Clearance & Governance Patches (rebalance 2026-06-09__scheduled — DL-042; Now section added)
 
 *RA:v5.2 retired — see roadmap_archive.md 2026-06-08 (post-ship closure 2026-06-08__release-v5.2).*
 *RA:v5.1 retired — see roadmap_archive.md 2026-06-04 (post-ship closure 2026-06-21__release-v5.1).*
@@ -260,6 +260,32 @@ Today you find stocks through external research and add them to the watchlist ma
 *RA:v5.0 retired — see roadmap_archive.md 2026-06-03 (post-ship closure 2026-06-03__release-v5.0).*
 
 *RA:v5.3 retired — see roadmap_archive.md 2026-06-09 (post-ship closure 2026-06-08__release-v5.3).*
+
+### v5.4 — Ops Monitoring, UX Debt Clearance & Governance Patches
+
+<!-- roadmap-annotation-marker: RA:v5.4:2026-06-09__scheduled -->
+
+**Planned release:** v5.4
+**Theme:** Ops monitoring follow-through on SI-05, UX debt clearance (pre-entry panel, Red Flag Journal), governance patches and deferred prompt maintenance
+**Planning gate:** STEP 8.1 Option (a) — added 2026-06-09 (rebalance 2026-06-09__scheduled, DL-042)
+
+**Candidate scope (P1/P2 from backlog — subject to release planning):**
+
+| Item | Priority | Description |
+|------|----------|-------------|
+| BLG-OPS-60 | P3 | Add v5.3 new endpoints to api_performance_baseline.md |
+| BLG-OPS-59 | P2 | SI-05 service p99 latency baseline review (~2026-07-04) |
+| BLG-GOV-115 | P2 | SI-05 digest actionability metric definition (gate: 2026-07-04) |
+| BLG-GOV-112 | P2 | SI-05 digest weekly cadence review (gate: 2026-07-04 effectiveness review) |
+| BLG-GOV-91 | P2 | SI-04 strategy history access security review |
+| BLG-GOV-92 | P2 | SI-05 Phase 2 activation criteria definition |
+| BLG-FE-49 | P2 | Pre-entry validation panel UX assessment |
+| BLG-FE-56 | P2 | Pre-entry panel: separate warn/fail override acknowledgement flow |
+| BLG-FE-47 | P2 | Red Flag Journal design review scope document |
+| BLG-FE-64 | P2 | RFJ visual design review pre-brief |
+| DP-2 | — | roadmap_prompt.md STEP 8.5.B BLG-ID advisory (deferred patch, Head of Specs Team) |
+
+> **Next step:** `plan release v5.4`
 
 -----
 

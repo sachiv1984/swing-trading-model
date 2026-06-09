@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.35
-**Last Updated:** 2026-06-08
+**Version:** 4.37
+**Last Updated:** 2026-06-09
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -329,7 +329,7 @@ The lifecycle is a deterministic state machine. `.claude_current_state.json` (`s
 
 ## 5. Idea Intake (Integrated — Phase 1 STEP -1.6)
 
-**Source prompt:** `claude/system/idea_intake_prompt.md` (v2.4)
+**Source prompt:** `claude/system/idea_intake_prompt.md` (v2.5)
 **Template:** `claude/system/idea_template.md`
 **Owner:** PMO Lead
 **Trigger:** Automatic — runs as STEP -1.6 of `run roadmap` when fewer than 20 open ideas (status `Submitted` or `Parked-cycle-<n>`) exist in `claude/ideas/ideas_register.md`. Also invocable standalone via `run ideas` for explicit window control.
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v6.8)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v6.9)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1457,13 +1457,13 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Version | 4.31 |
 | Last Updated | 2026-06-21 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
-| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.4 |
+| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.5 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.8 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.8 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.9 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.34 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.8 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
@@ -1494,6 +1494,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.37 | 2026-06-09 | **Roadmap rebalance 2026-06-09__scheduled meta-review action-now — roadmap_prompt.md v6.8→v6.9: STEP 8.5.B BLG-ID collision advisory.** §6 source prompt header updated v6.8→v6.9. §14 Roadmap Engine Source v6.8→v6.9. Change (roadmap v6.9): STEP 8.5.B step 5 added — non-blocking advisory: before assigning new BLG-IDs in debate summaries or decision records, grep backlog.md for the highest existing ID in each series and assign from highest+1; prevents BLG-ID collision when an ID was added between rebalance date and write pass. Meta-review action-now — Type D recurring pattern (cycles 2026-06-07 and 2026-06-08). §14 Version 4.36→4.37/2026-06-09. Authority: Head of Specs Team (meta-review action-now, 2026-06-09__scheduled). |
+| 4.36 | 2026-06-09 | **Roadmap rebalance 2026-06-09__scheduled STEP -1.5 overdue patch — idea_intake_prompt.md v2.4→v2.5: backlog scope advisory added to §2.0.** §5 source prompt header updated v2.4→v2.5. §14 Idea Intake Engine v2.4→v2.5. Change (idea_intake v2.5): §2.0 Parked Queue Pre-Check step 5 added — advisory (non-blocking): before finalising new submission topics, briefly scan active backlog.md items for scope overlap with planned submissions; if an active BLG-ID covers the same initiative, note it in the submission's Purpose/Rationale field. Patch originally filed 2026-06-07__scheduled, carried 2026-06-08__scheduled, classified OVERDUE at 2026-06-09__scheduled STEP -1.5. §14 Version 4.35→4.36/2026-06-09. Authority: Head of Specs Team (deferred patch overdue resolution, 2026-06-09). |
 | 4.35 | 2026-06-09 | **v5.3 ST-12 (LL-v5.2-P4-02, EPIC-03) — execution_prompt.md v3.37→v3.38: STEP 5.3A SSR cycle_id section check sub-step.** §8 source prompt header updated v3.37→v3.38. §14 Execution Engine Source v3.37→v3.38. Change (execution_prompt v3.38): STEP 5.3A — new sub-step "cycle_id section check (LL-v5.2-P4-02)" added: before writing SSR section, check whether `docs/System_status_report.md` already contains `## Sprint: <cycle_id>` heading; if not present create it; if present update in-place. Prevents duplicate sprint sections and ensures every cycle has an SSR entry before commit. Resolves LL-v5.2-P4-02 carry-forward OA. §14 Version 4.34→4.35/2026-06-09. Authority: Head of Specs Team (LL-v5.2-P4-02, v5.3 ST-12, 2026-06-09). |
 | 4.34 | 2026-06-09 | **v5.3 ST-11 (LL-v5.2-P4-01, EPIC-03) — qa_evidence_template.md v1.4→v1.5: mixed-class EPIC signer format note.** §14 QA Evidence Template v1.4→v1.5. Change (qa_evidence_template v1.5): new section "Mixed-Class EPIC Signer Format Note" added specifying the exact signer format `"Sprint Execution Engine (agent-mediated, <Role Name> role — §5.3)"` for EPICs with both delegated_backend and autonomous stories; clarifies that BLG-GOV-19 autonomous class is disqualified by any delegated_* story. Resolves LL-v5.2-P4-01 carry-forward OA. §14 Version 4.33→4.34/2026-06-09. Authority: Head of Specs Team (LL-v5.2-P4-01, v5.3 ST-11, 2026-06-09). |
 | 4.33 | 2026-06-08 | **v5.2 ST-02 (OA-02, EPIC-01) — execution_prompt.md v3.36→v3.37: test-authoring spec_references guidance.** §8 source prompt header updated v3.36→v3.37. §14 Execution Engine Source v3.36→v3.37. Change (execution_prompt v3.37): §3.1.A step 2c added (OA-02): for test-authoring stories (sole deliverable is a new test file, no prior spec applicable), set `spec_references` to the created test file path rather than leaving empty with "no prior spec applicable" note; the test file IS a traceable artefact and its path must be recorded. Prevents traceability flags at delivery verification for test-creation stories. §14 Version 4.32→4.33/2026-06-08. Authority: Head of Specs Team (OA-02, v5.2 ST-02, 2026-06-08). |

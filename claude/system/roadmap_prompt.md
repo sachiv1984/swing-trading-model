@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 6.8
-**Last Updated:** 2026-06-02 (v6.8)
+**Version:** 6.9
+**Last Updated:** 2026-06-09 (v6.8)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -532,6 +532,8 @@ If a change is not implied by a STEP 8 decision or required for lifecycle compli
 2. Re-read Section 10 (Completion Condition).
 3. Construct the write plan using `claude/system/templates/write_plan_template.md`.
 4. **Register row status verification:** Every `Status: Advancing` row from §4.2 must have a terminal status in the write plan (`Promoted-Added` or `Promoted-Rejected`). Missing → add explicitly.
+
+5. **BLG-ID collision advisory (non-blocking):** Before assigning new BLG-IDs in STEP 5 debate summaries or STEP 8 decision records, grep `backlog.md` for the highest existing ID in each series (e.g. `grep -o 'BLG-GOV-[0-9]*' backlog.md | sort -t'-' -k3,3n | tail -1`). Assign IDs starting from highest+1. Prevents collision when an ID was added to backlog.md between the rebalance date and the write pass. Advisory only — does not halt.
 
 #### 8.5.C Verification Rules (Hard)
 
