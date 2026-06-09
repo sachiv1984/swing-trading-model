@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.34
+**Version:** 4.35
 **Last Updated:** 2026-06-08
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.37)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.38)
 
 ### 8.1 Invocation
 
@@ -1467,7 +1467,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.34 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.8 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.37 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.38 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.5 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.0 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.35 | 2026-06-09 | **v5.3 ST-12 (LL-v5.2-P4-02, EPIC-03) — execution_prompt.md v3.37→v3.38: STEP 5.3A SSR cycle_id section check sub-step.** §8 source prompt header updated v3.37→v3.38. §14 Execution Engine Source v3.37→v3.38. Change (execution_prompt v3.38): STEP 5.3A — new sub-step "cycle_id section check (LL-v5.2-P4-02)" added: before writing SSR section, check whether `docs/System_status_report.md` already contains `## Sprint: <cycle_id>` heading; if not present create it; if present update in-place. Prevents duplicate sprint sections and ensures every cycle has an SSR entry before commit. Resolves LL-v5.2-P4-02 carry-forward OA. §14 Version 4.34→4.35/2026-06-09. Authority: Head of Specs Team (LL-v5.2-P4-02, v5.3 ST-12, 2026-06-09). |
 | 4.34 | 2026-06-09 | **v5.3 ST-11 (LL-v5.2-P4-01, EPIC-03) — qa_evidence_template.md v1.4→v1.5: mixed-class EPIC signer format note.** §14 QA Evidence Template v1.4→v1.5. Change (qa_evidence_template v1.5): new section "Mixed-Class EPIC Signer Format Note" added specifying the exact signer format `"Sprint Execution Engine (agent-mediated, <Role Name> role — §5.3)"` for EPICs with both delegated_backend and autonomous stories; clarifies that BLG-GOV-19 autonomous class is disqualified by any delegated_* story. Resolves LL-v5.2-P4-01 carry-forward OA. §14 Version 4.33→4.34/2026-06-09. Authority: Head of Specs Team (LL-v5.2-P4-01, v5.3 ST-11, 2026-06-09). |
 | 4.33 | 2026-06-08 | **v5.2 ST-02 (OA-02, EPIC-01) — execution_prompt.md v3.36→v3.37: test-authoring spec_references guidance.** §8 source prompt header updated v3.36→v3.37. §14 Execution Engine Source v3.36→v3.37. Change (execution_prompt v3.37): §3.1.A step 2c added (OA-02): for test-authoring stories (sole deliverable is a new test file, no prior spec applicable), set `spec_references` to the created test file path rather than leaving empty with "no prior spec applicable" note; the test file IS a traceable artefact and its path must be recorded. Prevents traceability flags at delivery verification for test-creation stories. §14 Version 4.32→4.33/2026-06-08. Authority: Head of Specs Team (OA-02, v5.2 ST-02, 2026-06-08). |
 | 4.32 | 2026-06-08 | **v5.2 ST-01 (OA-01, EPIC-01) — release_planning_prompt.md v2.33→v2.34: §-1.2 STEP 8.1 Option(b) acceptance clause.** §6B source prompt header updated v2.33→v2.34. §14 Release Engine Source v2.33→v2.34. Change (release_planning v2.34): §-1.2 gate expanded from hard halt to two-path check — if planned release section not found: also accept documented STEP 8.1 Option(b) decision (from most recent rebalance run_manifest.md or cycle_summary.md) as equivalent to formal planned release section; if neither exists: halt. Prevents recurring §-1.2 halt when PO intentionally deferred via Option(b). Root cause: OA-01 outstanding from v5.1 (LL-RP-v5.1-01). §14 Version 4.31→4.32/2026-06-08. Authority: Head of Specs Team (OA-01, v5.2 ST-01, 2026-06-08). |
