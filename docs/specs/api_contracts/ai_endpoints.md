@@ -1,7 +1,7 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.2
+**Version:** 1.3
 **Last Updated:** 2026-05-28
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -230,9 +230,69 @@ Results are ordered `generated_at DESC` (newest first).
 
 ---
 
+## GET /ai/journal-summary/history
+
+**Purpose**
+
+Query the AI journal summary audit log. Returns metadata records for past `POST /ai/journal-summary` calls — no summary text stored, only audit metadata.
+
+**Method & Path**
+
+- `GET /ai/journal-summary/history`
+
+**Request**
+
+| Query Parameter | Type | Required | Description |
+|-----------------|------|----------|-------------|
+| `trade_id` | integer | No | Filter records where trade_id matches |
+| `date_from` | date (ISO 8601) | No | Filter by `invoked_at >= date_from` |
+| `date_to` | date (ISO 8601) | No | Filter by `invoked_at <= date_to` |
+| `limit` | integer (1–200) | No | Maximum records to return (default: 50) |
+
+**Response (200)**
+
+```json
+{
+  "ok": true,
+  "data": {
+    "records": [
+      {
+        "id": 1,
+        "trade_id": 42,
+        "invoked_at": "2026-06-01T10:00:00+00:00",
+        "model": "claude-sonnet-4-6",
+        "cost_usd": 0.0012
+      }
+    ],
+    "count": 1
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `records` | array | Audit log entries, newest first |
+| `count` | integer | Length of returned records array |
+| `records[].id` | integer | Audit record ID |
+| `records[].trade_id` | integer or null | Trade this summary was generated for |
+| `records[].invoked_at` | string (ISO 8601) | UTC timestamp of the Claude API call |
+| `records[].model` | string | Model identifier used |
+| `records[].cost_usd` | float or null | Estimated cost in USD |
+
+**Error responses**
+
+| Status | Condition |
+|--------|-----------|
+| 422 | `limit` out of range (< 1 or > 200) |
+
+**Backend:** `backend/routers/ai.py` (`journal_summary_history`)
+**Data source:** `gemini_audit_log` table (queried via `query_audit_log`)
+
+---
+
 ## Known Deviations
 
-None at v1.2.
+None at v1.3.
 
 ---
 
@@ -240,6 +300,7 @@ None at v1.2.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-06-09 | v5.3 ST-04 (BLG-SPEC-49, EPIC-01): Added `GET /ai/journal-summary/history` — AI journal summary audit log query endpoint. API Contracts & Documentation Owner sign-off. |
 | 1.2 | 2026-05-28 | ST-07 (EPIC-03, v4.2): Added `GET /ai/claude-audit-log` — immutable Claude API audit trail query endpoint (BLG-GOV-63). |
 | 1.1 | 2026-05-27 | ST-09 (EPIC-03, v4.1): Added `POST /ai/check-daily-cost` — Claude API daily cost threshold alert endpoint (BLG-OPS-34). |
 | 1.0 | 2026-04-18 | ST-07 (EPIC-04, v2.8): Initial specification for `POST /ai/journal-summary`. Conditionally compliant per SRB-v1.7. API Contracts & Documentation Owner. |

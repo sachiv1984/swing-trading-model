@@ -1,0 +1,33 @@
+# gitleaks configuration for swing-trading-model
+# ST-10 (BLG-OPS-58, v5.3) — CI secret scanning allowlist
+# Authority: Cybersecurity & Trust Lead
+
+title = "swing-trading-model gitleaks config"
+
+[extend]
+# Use the default gitleaks ruleset as the base
+useDefault = true
+
+[[allowlists]]
+description = "Test fixture synthetic credentials — obvious test stubs, not real secrets"
+paths = [
+  "tests/.*\\.py",
+  "tests/conftest\\.py",
+]
+regexes = [
+  # Generic short test token stubs used in unit tests: "tok", "test-token", "test-secret"
+  '''(TELEGRAM_BOT_TOKEN|TELEGRAM_CHAT_ID|API_KEY)['":\s]+['"](tok|test-token|test-secret|test-chat|123|key|secret)['"]\s''',
+  # Synthetic DB URL used in conftest.py stub
+  '''postgresql://test:test@localhost:5432/test_stub''',
+]
+
+[[allowlists]]
+description = "Alpaca test stubs — short placeholder values in integration tests"
+paths = [
+  "tests/test_alpaca_integration\\.py",
+]
+regexes = [
+  # "key" and "secret" are obviously synthetic test values
+  '''"key"''',
+  '''"secret"''',
+]
