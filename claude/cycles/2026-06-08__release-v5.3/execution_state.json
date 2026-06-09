@@ -1,0 +1,635 @@
+{
+  "cycle_id": "2026-06-08__release-v5.3",
+  "sprint_goal": "Ship all 6 known API contract gaps, API key authentication on the SI-05 digest endpoint, and CI secret scanning in Sprint 1 \u2014 then deliver the carry-forward governance patches, AI policy documents, and QA coverage needed to sustain v5.x operations sustainably through Sprint 2.",
+  "backlog_slice_source": "claude/cycles/2026-06-08__release-v5.3/stage4_backlog_slice.md",
+  "invoked_utc": "2026-06-09T00:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-06-09T01:00:00Z",
+  "epics": {
+    "EPIC-02": {
+      "status": "done",
+      "branch": "exec/2026-06-08__release-v5.3/EPIC-02",
+      "pr_number": 722,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.3/qa_evidence_EPIC-02.md",
+      "test_scenarios": [
+        "tests/test_api_contracts.py::TestDigestEndpoints"
+      ],
+      "stories": {
+        "ST-08": {
+          "title": "BLG-BE-35: POST /digest/si05/send API key authentication",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 698,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-02",
+          "commit_sha": "56b0b9f04f623d0fef46418740e63908934c8b1b",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/digest_endpoints.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Cybersecurity & Trust Lead; Head of Engineering",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
+          "notes": ""
+        },
+        "ST-09": {
+          "title": "BLG-OPS-57: SI-05 Telegram delivery failure alerting",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 699,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-02",
+          "commit_sha": "14512d02",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/operations/deployment_runbook.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
+          "notes": ""
+        },
+        "ST-10": {
+          "title": "BLG-OPS-58: CI secret scanning gate",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 700,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-02",
+          "commit_sha": "1770f060",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/secret-scanning.yml",
+            ".gitleaks.toml"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Cybersecurity & Trust Lead",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "test_token underscore variant noted as low-risk advisory \u2014 accepted"
+            ],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
+      "pr_number": 723,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.3/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "tests/test_api_contracts.py"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "BLG-SPEC-53: API contract gap resolution plan",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 701,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
+          "commit_sha": "2fbacd6a",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-06-08__release-v5.3/api_contract_gap_resolution_plan.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team; API Contracts & Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
+          "notes": ""
+        },
+        "ST-02": {
+          "title": "BLG-SPEC-54: openapi.yaml completeness audit",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 702,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
+          "commit_sha": "0c9c6a0a",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/reference/openapi.yaml"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team; API Contracts & Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
+          "notes": ""
+        },
+        "ST-03": {
+          "title": "BLG-QA-51: QA acceptance criteria for SPEC-49\u201352",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 703,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
+          "commit_sha": "392aa09d",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/qa/endpoint_contract_qa_criteria_template.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team; API Contracts & Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
+          "notes": ""
+        },
+        "ST-04": {
+          "title": "BLG-SPEC-49: GET /ai/journal-summary/history contract",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 704,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
+          "commit_sha": "44aacba3",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-03 done",
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team; API Contracts & Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
+          "notes": ""
+        },
+        "ST-05": {
+          "title": "BLG-SPEC-50: GET /analytics/compliance-metrics contract",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 705,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
+          "commit_sha": "4610f363",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-03 done",
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/analytics_endpoints.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team; API Contracts & Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
+          "notes": ""
+        },
+        "ST-06": {
+          "title": "BLG-SPEC-51: GET /news/{ticker} contract",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 706,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
+          "commit_sha": "2910b4e8",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-03 done",
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/news_endpoints.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team; API Contracts & Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
+          "notes": ""
+        },
+        "ST-07": {
+          "title": "BLG-SPEC-52: Watchlist endpoint contracts + test.py",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 707,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
+          "commit_sha": "47afc720",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "ST-03 done",
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/watchlist_endpoints.md",
+            "docs/reference/openapi.yaml",
+            "backend/routers/test.py"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team; API Contracts & Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "not_started",
+      "branch": "exec/2026-06-08__release-v5.3/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.3/qa_evidence_EPIC-03.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-11": {
+          "title": "LL-v5.2-P4-01: qa_evidence_template.md signer format note",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 708,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "claude/system/templates/qa_evidence_template.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-12": {
+          "title": "LL-v5.2-P4-02: execution_prompt.md STEP 5.3A SSR sub-step",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 709,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "claude/system/execution_prompt.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-13": {
+          "title": "BLG-GOV-107: SI-02 frontend activation criteria precision",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 710,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "claude/roadmap/current_roadmap.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-14": {
+          "title": "BLG-GOV-108: AI model pin update policy",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 711,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-15": {
+          "title": "BLG-GOV-109: AI audit log retention policy",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 712,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-16": {
+          "title": "BLG-GOV-110: Arc 4 trade_plan data completeness audit",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 713,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-17": {
+          "title": "BLG-GOV-104: strategy_rules.md \u00a711 parameter validation",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 714,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "claude/strategy/strategy_rules.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-23": {
+          "title": "BLG-GOV-113: SI-05 effectiveness review protocol",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 715,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-24": {
+          "title": "BLG-GOV-114: si05_digest_log schema validation",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 716,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    },
+    "EPIC-04": {
+      "status": "not_started",
+      "branch": "exec/2026-06-08__release-v5.3/EPIC-04",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.3/qa_evidence_EPIC-04.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-18": {
+          "title": "BLG-QA-52: Tax year P&L boundary edge case validation",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 717,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-19": {
+          "title": "BLG-QA-53: SI-05 digest Playwright E2E coverage",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 718,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-20": {
+          "title": "BLG-QA-54: Playwright coverage matrix update post-v5.2",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 719,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "EPIC-01 merged to main (ST-04\u2013ST-07 done)",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-21": {
+          "title": "BLG-FE-66: Red Flag Journal post-launch UX review",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 720,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "P3 \u2014 deferrable to v5.4 if Sprint 2 capacity tightens per PO"
+        },
+        "ST-22": {
+          "title": "BLG-FE-67: BLG-FE-64 visual design review scope definition",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 721,
+          "branch": "exec/2026-06-08__release-v5.3/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Gate: BLG-FE-64 clears 2026-06-21"
+        }
+      }
+    }
+  },
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [
+    "ST-08",
+    "ST-09",
+    "ST-10",
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04",
+    "ST-05",
+    "ST-06",
+    "ST-07"
+  ],
+  "open_escalations": [],
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": [
+      "EPIC-02",
+      "EPIC-01",
+      "EPIC-03",
+      "EPIC-04"
+    ],
+    "all_merged": false
+  },
+  "sealed": false,
+  "sealed_utc": null
+}
