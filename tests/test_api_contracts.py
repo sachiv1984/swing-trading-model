@@ -389,6 +389,21 @@ class TestDigestEndpoints(unittest.TestCase):
         mock_connect.return_value = _mock_conn()
         assert CLIENT.get("/digest/weekly").status_code == 200
 
+    def test_post_digest_si05_send_returns_401_without_api_key(self):
+        """ST-08 (BLG-BE-35): unauthenticated POST /digest/si05/send returns 401."""
+        import os
+        with patch.dict(os.environ, {"API_KEY": "test-secret"}):
+            resp = CLIENT.post("/digest/si05/send")
+        assert resp.status_code == 401
+
+    @patch("routers.digest.send_si05_digest", return_value={"sent": True, "message_length": 100, "error": None})
+    def test_post_digest_si05_send_returns_200_with_api_key(self, _):
+        """ST-08 (BLG-BE-35): authenticated POST /digest/si05/send returns 200."""
+        import os
+        with patch.dict(os.environ, {"API_KEY": "test-secret"}):
+            resp = CLIENT.post("/digest/si05/send", headers={"X-API-Key": "test-secret"})
+        assert resp.status_code == 200
+
 
 # ---------------------------------------------------------------------------
 # 11. Ticker Universe
