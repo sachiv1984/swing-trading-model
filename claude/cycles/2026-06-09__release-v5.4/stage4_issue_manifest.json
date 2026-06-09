@@ -1,0 +1,83 @@
+{
+  "cycle_id": "2026-06-09__release-v5.4",
+  "release": "v5.4",
+  "generated_utc": "2026-06-09T17:00:00Z",
+  "items": [
+    {
+      "id": "ST-01",
+      "epic": "EPIC-01",
+      "title": "Add v5.3 new endpoints to api_performance_baseline.md",
+      "backlog_ref": "BLG-OPS-60",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["story", "release-v5.4", "EPIC-01", "cycle:2026-06-09__release-v5.4"],
+      "milestone": "v5.4"
+    },
+    {
+      "id": "ST-02",
+      "epic": "EPIC-02",
+      "title": "Pre-entry panel: separate warn/fail override acknowledgement flow",
+      "backlog_ref": "BLG-FE-56",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["story", "release-v5.4", "EPIC-02", "cycle:2026-06-09__release-v5.4"],
+      "milestone": "v5.4"
+    },
+    {
+      "id": "ST-03",
+      "epic": "EPIC-02",
+      "title": "RFJ visual design review pre-brief",
+      "backlog_ref": "BLG-FE-64",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["story", "release-v5.4", "EPIC-02", "cycle:2026-06-09__release-v5.4"],
+      "milestone": "v5.4"
+    },
+    {
+      "id": "ST-04",
+      "epic": "EPIC-03",
+      "title": "SI-05 Phase 2 activation criteria definition",
+      "backlog_ref": "BLG-GOV-92",
+      "sprint": 1,
+      "effort": "S",
+      "labels": ["story", "release-v5.4", "EPIC-03", "cycle:2026-06-09__release-v5.4"],
+      "milestone": "v5.4"
+    },
+    {
+      "id": "ST-05",
+      "epic": "EPIC-01",
+      "title": "SI-05 p99 production latency baseline review",
+      "backlog_ref": "BLG-OPS-59",
+      "sprint": 2,
+      "conditional": true,
+      "gate": ">=2026-07-04",
+      "effort": "S",
+      "labels": ["story", "release-v5.4", "EPIC-01", "conditional", "cycle:2026-06-09__release-v5.4"],
+      "milestone": "v5.4"
+    },
+    {
+      "id": "ST-06",
+      "epic": "EPIC-03",
+      "title": "SI-05 digest actionability metric definition",
+      "backlog_ref": "BLG-GOV-115",
+      "sprint": 2,
+      "conditional": true,
+      "gate": "2026-07-04 effectiveness review complete",
+      "effort": "S",
+      "labels": ["story", "release-v5.4", "EPIC-03", "conditional", "cycle:2026-06-09__release-v5.4"],
+      "milestone": "v5.4"
+    },
+    {
+      "id": "ST-07",
+      "epic": "EPIC-03",
+      "title": "SI-05 digest weekly cadence review",
+      "backlog_ref": "BLG-GOV-112",
+      "sprint": 2,
+      "conditional": true,
+      "gate": "2026-07-04 effectiveness review complete + ST-06 complete",
+      "effort": "S",
+      "labels": ["story", "release-v5.4", "EPIC-03", "conditional", "cycle:2026-06-09__release-v5.4"],
+      "milestone": "v5.4"
+    }
+  ]
+}

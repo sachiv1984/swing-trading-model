@@ -285,7 +285,16 @@ Today you find stocks through external research and add them to the watchlist ma
 | BLG-FE-64 | P2 | RFJ visual design review pre-brief |
 | DP-2 | — | roadmap_prompt.md STEP 8.5.B BLG-ID advisory (deferred patch, Head of Specs Team) |
 
-> **Next step:** `plan release v5.4`
+<!-- roadmap-annotation-marker: RA:v5.4:2026-06-09__release-v5.4 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-09__release-v5.4
+- Plan published: 2026-06-09
+- Cycle folder: claude/cycles/2026-06-09__release-v5.4/
+- Backlog slice: claude/cycles/2026-06-09__release-v5.4/stage4_backlog_slice.md
+- Status at annotation: Validated
+
+> **Next step:** `plan sprint --cycle 2026-06-09__release-v5.4`
 
 -----
 

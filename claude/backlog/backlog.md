@@ -5187,3 +5187,20 @@ SI-05 launched 2026-06-04. After the 2026-07-04 effectiveness review (BLG-GOV-11
 
 ---
 
+
+## Release Slice — v5.4 (cycle: 2026-06-09__release-v5.4)
+
+<!-- release-plan-marker: RP:v5.4:2026-06-09__release-v5.4 -->
+
+**Sprint 1 (firm):**
+- ST-01 [EPIC-01]: Add v5.3 new endpoints to api_performance_baseline.md (BLG-OPS-60, S)
+- ST-02 [EPIC-02]: Pre-entry panel: separate warn/fail override acknowledgement flow (BLG-FE-56, S)
+- ST-03 [EPIC-02]: RFJ visual design review pre-brief (BLG-FE-64, S, gate 2026-06-21)
+- ST-04 [EPIC-03]: SI-05 Phase 2 activation criteria definition (BLG-GOV-92, S)
+
+**Sprint 2 (conditional, gate ≥2026-07-04):**
+- ST-05 [EPIC-01]: SI-05 p99 production latency baseline review (BLG-OPS-59, S, gate ≥2026-07-04)
+- ST-06 [EPIC-03]: SI-05 digest actionability metric definition (BLG-GOV-115, S, gate 2026-07-04)
+- ST-07 [EPIC-03]: SI-05 digest weekly cadence review (BLG-GOV-112, S, gate 2026-07-04 + ST-06)
+
+---
