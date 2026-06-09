@@ -7,8 +7,9 @@ alert activity, compliance score, and staleness.
 POST /digest/si05/send — Trigger the SI-05 Phase 1 strategy integrity digest
 via Telegram. Intended for weekly cron/scheduled invocation.
 
-Contracts: docs/specs/api_contracts/digest_endpoints.md v0.2
+Contracts: docs/specs/api_contracts/digest_endpoints.md v0.4
 ST-08 (BLG-FEAT-14 BE component, v2.4) / ST-01 (SI-05 Phase 1, v5.1)
+ST-08 (BLG-BE-35, v5.3) — API key auth on POST /digest/si05/send
 """
 
 import os
@@ -18,7 +19,18 @@ from urllib.parse import urlparse, urlencode, urlunparse, parse_qs
 
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, Header, HTTPException
+
+
+def _verify_api_key(x_api_key: str = Header(default=None)):
+    """
+    Require X-API-Key header matching API_KEY env var.
+    When API_KEY is not set the dependency is a no-op (local dev parity with
+    the global middleware in main.py).
+    """
+    expected = os.environ.get("API_KEY")
+    if expected and x_api_key != expected:
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
 
 def _clean_db_url(url: str) -> str:
@@ -225,7 +237,7 @@ def get_weekly_digest():
 
 
 @router.post("/si05/send")
-def send_si05_digest_endpoint():
+def send_si05_digest_endpoint(_: None = Depends(_verify_api_key)):
     """
     POST /digest/si05/send
 

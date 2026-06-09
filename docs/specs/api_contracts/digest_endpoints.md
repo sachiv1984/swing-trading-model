@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.3
-**Last Updated:** 2026-06-08
+**Version:** 0.4
+**Last Updated:** 2026-06-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint:** 2026-03-31__release-v2.4 — ST-08 (BLG-FEAT-14 BE component)
 **Signed off by:** Head of Specs Team
@@ -167,11 +167,14 @@ No body required. No query parameters.
 
 **Authentication requirements**
 
-⚠️ **Current status: UNAUTHENTICATED** — `POST /digest/si05/send` does not currently require authentication (`backend/routers/digest.py:227`). This is a known security gap documented in `docs/security/security_register.md` Review 003 (ST-11, v5.2). Fix tracked as **BLG-BE-35** (P2).
+✅ **Authenticated** — `POST /digest/si05/send` requires `X-API-Key` header matching the `API_KEY` environment variable. Unauthenticated requests return `401 Unauthorized`. Implemented via `_verify_api_key` dependency in `backend/routers/digest.py` (ST-08, BLG-BE-35, v5.3).
 
-**Expected authentication (post BLG-BE-35):** API key authentication per the existing pattern (Depends injection, consistent with other protected endpoints). Unauthenticated requests should return `401 Unauthorized`.
+**Response (401 — unauthenticated)**
+```json
+{"detail": "Unauthorized"}
+```
 
-This endpoint is intended for internal cron/scheduled invocation only. Until BLG-BE-35 ships, access should be restricted at the network layer (e.g., restrict to Render internal network) if feasible.
+This endpoint is intended for internal cron/scheduled invocation only. The scheduler must supply `X-API-Key: <API_KEY>` in its request headers.
 
 **Format spec:** `docs/product/decisions/si05-telegram-message-format-spec.md` (BLG-GOV-86)
 **Backend:** `backend/services/si05_digest_service.py`
@@ -182,6 +185,7 @@ This endpoint is intended for internal cron/scheduled invocation only. Until BLG
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.4 | 2026-06-09 | v5.3 ST-08 (BLG-BE-35): API key authentication implemented on POST /digest/si05/send via _verify_api_key Depends injection; unauthenticated requests now return 401. Authentication requirements section updated to reflect shipped state. Cybersecurity & Trust Lead and Head of Engineering sign-off. |
 | 0.3 | 2026-06-08 | v5.2 ST-04 (BLG-SPEC-48): Authentication requirements section added — POST /digest/si05/send is currently unauthenticated (security gap per security_register.md Review 003); BLG-BE-35 filed for fix. Consistent with ST-11 security review findings. API Contracts & Documentation Owner and Head of Specs Team sign-off. |
 | 0.2 | 2026-06-21 | Add POST /digest/si05/send endpoint: SI-05 Phase 1 weekly strategy integrity Telegram digest. Data from SI-01 (pre_entry_validation_log) + SI-03 (red_flag_events). Format per BLG-GOV-86. ST-01 (EPIC-01, v5.1). |
 | 0.1 | 2026-04-01 | Initial version. ST-08 (BLG-FEAT-14 BE component, v2.4). GET /digest/weekly endpoint. Scope constraint: raw numeric/boolean fields only. |
