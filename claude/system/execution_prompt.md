@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.37
-**Last Updated:** 2026-06-08
+**Version:** 3.38
+**Last Updated:** 2026-06-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -867,6 +867,8 @@ Must include:
 Update or create: `docs/System_status_report.md`
 
 This is the living record of what is deployed and verified. The Delivery Verification Engine reads it to confirm what the system can do vs what the verification report will check.
+
+**Sub-step — cycle_id section check (LL-v5.2-P4-02):** Before writing the section below, check whether `docs/System_status_report.md` already contains a `## Sprint: <cycle_id>` heading for the current cycle_id. If it does not exist: create it now using the template below. If it already exists (e.g. from a prior partial sprint close attempt): update it in-place — do not create a duplicate section. This check prevents duplicate sprint sections and ensures the SSR has a section for every cycle before the file is committed.
 
 For this sprint, add or update a section:
 
