@@ -1568,3 +1568,50 @@ The system is ready for:
 - QA evidence logs: qa_evidence_EPIC-03.md (autonomous class, 2026-06-08), qa_evidence_EPIC-02.md (Director of Quality, 2026-06-08), qa_evidence_EPIC-04.md (autonomous class, 2026-06-08), qa_evidence_EPIC-01.md (autonomous class, 2026-06-08)
 - Deviations filed: None
 - Test scenarios referenced: tests/test_si05_digest_service.py (26 unit tests)
+
+---
+
+## Sprint: 2026-06-08__release-v5.3
+**Date:** 2026-06-09
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-02 | BLG-BE-35: POST /digest/si05/send API key authentication — Depends injection pattern; 401 on missing/invalid key | docs/specs/api_contracts/digest_endpoints.md | None |
+| EPIC-02 | BLG-OPS-57: SI-05 Telegram delivery failure alerting — ERROR-level log after retry exhaustion; deployment runbook updated | docs/operations/deployment_runbook.md | None |
+| EPIC-02 | BLG-OPS-58: CI secret scanning gate — gitleaks workflow with allowlist for test fixtures; blocks PRs on leaked secrets | .github/workflows/secret-scanning.yml; .gitleaks.toml | None |
+| EPIC-01 | BLG-SPEC-53: API contract gap resolution plan — 6 gaps scoped; resolution order documented | claude/cycles/2026-06-08__release-v5.3/api_contract_gap_resolution_plan.md | None |
+| EPIC-01 | BLG-SPEC-54: openapi.yaml completeness audit — all 50 routes checked; 6 gaps confirmed and added | docs/reference/openapi.yaml | None |
+| EPIC-01 | BLG-QA-51: QA acceptance criteria template for endpoint contracts — reusable template for future gap stories | docs/qa/endpoint_contract_qa_criteria_template.md | None |
+| EPIC-01 | BLG-SPEC-49: GET /ai/journal-summary/history contract added to ai_endpoints.md + openapi.yaml | docs/specs/api_contracts/ai_endpoints.md | None |
+| EPIC-01 | BLG-SPEC-50: GET /analytics/compliance-metrics contract added to analytics_endpoints.md + openapi.yaml | docs/specs/api_contracts/analytics_endpoints.md | None |
+| EPIC-01 | BLG-SPEC-51: GET /news/{ticker} contract — new news_endpoints.md created + openapi.yaml | docs/specs/api_contracts/news_endpoints.md | None |
+| EPIC-01 | BLG-SPEC-52: GET/POST/DELETE /watchlist contracts — watchlist_endpoints.md + openapi.yaml + test.py updated; SystemStatus.js + SC-SS-01b updated | docs/specs/api_contracts/watchlist_endpoints.md; docs/reference/openapi.yaml; backend/routers/test.py | None |
+| EPIC-03 | LL-v5.2-P4-01: qa_evidence_template.md signer format note clarified — engine signer field format documented | claude/system/templates/qa_evidence_template.md v3.9→v4.0 | None |
+| EPIC-03 | LL-v5.2-P4-02: execution_prompt.md STEP 5.3A SSR sub-step added — duplicate section prevention guard | claude/system/execution_prompt.md v3.37→v3.38 | None |
+| EPIC-03 | BLG-GOV-107: SI-02 frontend activation criteria precision — 3 specific checkable gate conditions in current_roadmap.md | claude/roadmap/current_roadmap.md | None |
+| EPIC-03 | BLG-GOV-108: AI model pin update policy — 30-day deprecation notice timeline; CI model-pin drift check | docs/governance/ai_model_version_pinning_policy.md | None |
+| EPIC-03 | BLG-GOV-109: AI audit log retention policy — 12-month retention; cleanup mechanism defined; aligned with Supabase | docs/governance/ai_audit_log_retention_policy.md | None |
+| EPIC-03 | BLG-GOV-110: Arc 4 trade_plan data completeness audit — per-field null% for 5 fields; gap assessment complete | docs/governance/arc4_trade_plan_data_completeness_audit.md | None |
+| EPIC-03 | BLG-GOV-104: strategy_rules.md §11 parameter validation — 6 closed trades insufficient data; parameters unchanged; rationale documented | docs/governance/strategy_parameter_validation_v53.md | None |
+| EPIC-03 | BLG-GOV-113: SI-05 effectiveness review protocol — participants, evidence sources, output format, decision authority by 2026-07-01 | docs/governance/si05_effectiveness_review_protocol.md | None |
+| EPIC-03 | BLG-GOV-114: si05_digest_log schema validation — send_at, status, recipient, content_hash fields confirmed PASS | docs/governance/si05_digest_log_schema_validation.md | None |
+| EPIC-04 | BLG-QA-52: Tax year P&L boundary edge case validation — UK Apr 6 boundary; straddle and edge scenarios covered | tests/test_tax_year_pnl_boundary.py | None |
+| EPIC-04 | BLG-QA-53: SI-05 digest Playwright E2E coverage — 3 scenarios (happy path, empty red flag, compliance score); Telegram mocked | tests/e2e/si05-digest-delivery.spec.js | None |
+| EPIC-04 | BLG-QA-54: Playwright coverage matrix updated post-v5.2 — all new v5.3 scenarios counted | docs/qa/playwright_coverage_matrix.md | None |
+| EPIC-04 | BLG-FE-66: Red Flag Journal post-launch UX review — friction points documented; BLG-FE-68+ filed where needed | docs/governance/rfj_ux_review_v53.md | None |
+| EPIC-04 | BLG-FE-67: BLG-FE-64 visual design review scope definition — distinct from BLG-FE-66; gate date 2026-06-21 | docs/governance/blg_fe_64_scope_definition.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-25 — BLG-FE-64 (conditional) | Gate date 2026-06-21 not reached at planning time; add via amendment cycle if gate clears | backlog.md |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-02.md (autonomous class, 2026-06-09), qa_evidence_EPIC-01.md (autonomous class, 2026-06-09), qa_evidence_EPIC-03.md (autonomous class, 2026-06-09), qa_evidence_EPIC-04.md (autonomous class, 2026-06-09)
+- Deviations filed: None
+- Test scenarios referenced: tests/test_tax_year_pnl_boundary.py, tests/e2e/si05-digest-delivery.spec.js, tests/test_api_contracts.py (EPIC-01/02)
