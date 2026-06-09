@@ -1,12 +1,11 @@
 {
   "cycle_id": "2026-06-08__release-v5.3",
-  "sprint_goal": "Ship all 6 known API contract gaps, API key authentication on the SI-05 digest endpoint, and CI secret scanning in Sprint 1 — then deliver the carry-forward governance patches, AI policy documents, and QA coverage needed to sustain v5.x operations sustainably through Sprint 2.",
+  "sprint_goal": "Ship all 6 known API contract gaps, API key authentication on the SI-05 digest endpoint, and CI secret scanning in Sprint 1 \u2014 then deliver the carry-forward governance patches, AI policy documents, and QA coverage needed to sustain v5.x operations sustainably through Sprint 2.",
   "backlog_slice_source": "claude/cycles/2026-06-08__release-v5.3/stage4_backlog_slice.md",
   "invoked_utc": "2026-06-09T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-09T00:00:00Z",
-
+  "last_updated_utc": "2026-06-09T02:00:00Z",
   "epics": {
     "EPIC-02": {
       "status": "done",
@@ -15,7 +14,9 @@
       "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.3/qa_evidence_EPIC-02.md",
-      "test_scenarios": ["tests/test_api_contracts.py::TestDigestEndpoints"],
+      "test_scenarios": [
+        "tests/test_api_contracts.py::TestDigestEndpoints"
+      ],
       "stories": {
         "ST-08": {
           "title": "BLG-BE-35: POST /digest/si05/send API key authentication",
@@ -30,7 +31,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-09T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/digest_endpoints.md"],
+          "spec_references": [
+            "docs/specs/api_contracts/digest_endpoints.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
@@ -55,7 +58,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-09T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/operations/deployment_runbook.md"],
+          "spec_references": [
+            "docs/operations/deployment_runbook.md"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
@@ -80,14 +85,19 @@
           "unblock_criteria": null,
           "completed_utc": "2026-06-09T00:00:00Z",
           "acceptance_verified": true,
-          "spec_references": [".github/workflows/secret-scanning.yml", ".gitleaks.toml"],
+          "spec_references": [
+            ".github/workflows/secret-scanning.yml",
+            ".gitleaks.toml"
+          ],
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
             "required_by": "Cybersecurity & Trust Lead",
             "method": "agent_mediated",
             "status": "cleared",
-            "findings_applied": ["test_token underscore variant noted as low-risk advisory — accepted"],
+            "findings_applied": [
+              "test_token underscore variant noted as low-risk advisory \u2014 accepted"
+            ],
             "cleared_utc": "2026-06-09T00:00:00Z"
           },
           "notes": ""
@@ -95,145 +105,205 @@
       }
     },
     "EPIC-01": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 723,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-08__release-v5.3/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_api_contracts.py"
+      ],
       "stories": {
         "ST-01": {
           "title": "BLG-SPEC-53: API contract gap resolution plan",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 701,
           "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "2fbacd6a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-06-08__release-v5.3/api_contract_gap_resolution_plan.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team; API Contracts & Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
           "notes": ""
         },
         "ST-02": {
           "title": "BLG-SPEC-54: openapi.yaml completeness audit",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 702,
           "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "0c9c6a0a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/reference/openapi.yaml"],
-          "deviations_filed": false,
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/reference/openapi.yaml"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team; API Contracts & Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
           "notes": ""
         },
         "ST-03": {
-          "title": "BLG-QA-51: QA acceptance criteria for SPEC-49–52",
+          "title": "BLG-QA-51: QA acceptance criteria for SPEC-49\u201352",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 703,
           "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "392aa09d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/qa/endpoint_contract_qa_criteria_template.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team; API Contracts & Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
           "notes": ""
         },
         "ST-04": {
           "title": "BLG-SPEC-49: GET /ai/journal-summary/history contract",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 704,
           "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "44aacba3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": "ST-03 done",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/specs/api_contracts/ai_endpoints.md"],
-          "deviations_filed": false,
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team; API Contracts & Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
           "notes": ""
         },
         "ST-05": {
           "title": "BLG-SPEC-50: GET /analytics/compliance-metrics contract",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 705,
           "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "4610f363",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": "ST-03 done",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/specs/api_contracts/analytics_endpoints.md"],
-          "deviations_filed": false,
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/analytics_endpoints.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team; API Contracts & Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
           "notes": ""
         },
         "ST-06": {
           "title": "BLG-SPEC-51: GET /news/{ticker} contract",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 706,
           "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "2910b4e8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": "ST-03 done",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/news_endpoints.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team; API Contracts & Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
           "notes": ""
         },
         "ST-07": {
           "title": "BLG-SPEC-52: Watchlist endpoint contracts + test.py",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 707,
           "branch": "exec/2026-06-08__release-v5.3/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "47afc720",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": "ST-03 done",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/reference/openapi.yaml", "backend/routers/test.py"],
-          "deviations_filed": false,
+          "completed_utc": "2026-06-09T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/watchlist_endpoints.md",
+            "docs/reference/openapi.yaml",
+            "backend/routers/test.py"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "required_by": "Head of Specs Team; API Contracts & Documentation Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-09T00:00:00Z"
+          },
           "notes": ""
         }
       }
@@ -260,7 +330,9 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["claude/system/templates/qa_evidence_template.md"],
+          "spec_references": [
+            "claude/system/templates/qa_evidence_template.md"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -279,7 +351,9 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["claude/system/execution_prompt.md"],
+          "spec_references": [
+            "claude/system/execution_prompt.md"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -298,7 +372,9 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["claude/roadmap/current_roadmap.md"],
+          "spec_references": [
+            "claude/roadmap/current_roadmap.md"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -362,7 +438,7 @@
           "notes": ""
         },
         "ST-17": {
-          "title": "BLG-GOV-104: strategy_rules.md §11 parameter validation",
+          "title": "BLG-GOV-104: strategy_rules.md \u00a711 parameter validation",
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
@@ -374,7 +450,9 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["claude/strategy/strategy_rules.md"],
+          "spec_references": [
+            "claude/strategy/strategy_rules.md"
+          ],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
@@ -477,7 +555,7 @@
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "EPIC-01 merged to main (ST-04–ST-07 done)",
+          "unblock_criteria": "EPIC-01 merged to main (ST-04\u2013ST-07 done)",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -503,7 +581,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "P3 — deferrable to v5.4 if Sprint 2 capacity tightens per PO"
+          "notes": "P3 \u2014 deferrable to v5.4 if Sprint 2 capacity tightens per PO"
         },
         "ST-22": {
           "title": "BLG-FE-67: BLG-FE-64 visual design review scope definition",
@@ -527,18 +605,31 @@
       }
     }
   },
-
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": [],
+  "completed_items": [
+    "ST-06",
+    "ST-04",
+    "ST-10",
+    "ST-09",
+    "ST-05",
+    "ST-02",
+    "ST-07",
+    "ST-08",
+    "ST-01",
+    "ST-03"
+  ],
   "open_escalations": [],
-
   "merge_gate": {
     "epics_merged": [],
-    "epics_pending": ["EPIC-02", "EPIC-01", "EPIC-03", "EPIC-04"],
+    "epics_pending": [
+      "EPIC-02",
+      "EPIC-01",
+      "EPIC-03",
+      "EPIC-04"
+    ],
     "all_merged": false
   },
-
   "sealed": false,
   "sealed_utc": null
 }
