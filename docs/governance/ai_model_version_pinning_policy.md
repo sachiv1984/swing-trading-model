@@ -1,8 +1,8 @@
 **Owner:** AI Compliance & Governance Officer; Head of Specs Team
 **Class:** Governance Document (Class 1)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-28
+**Version:** 1.1
+**Last Updated:** 2026-06-09
 **Cycle:** 2026-05-27__release-v4.2 (ST-02, BLG-GOV-64)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -102,9 +102,55 @@ This policy is reviewed:
 
 ---
 
-## 7. Sign-Off
+## 7. Model Pin Update Process (v1.1 — ST-14, BLG-GOV-108)
+
+This section defines the process for updating the pinned Claude model version when a new model release or deprecation notice occurs.
+
+### 7.1 Triggers
+
+A model pin update is required when either of the following occurs:
+
+1. **New Claude model release:** Anthropic announces a new production model (e.g. Claude Sonnet 4.7, Claude Opus 4.9). The team must evaluate within **14 days** whether to adopt the new model.
+2. **Deprecation notice:** Anthropic announces deprecation of a currently-pinned model. The update must complete within **30 days of the deprecation notice**, before the model is retired.
+
+### 7.2 Update Process
+
+| Step | Action | Owner |
+|------|--------|-------|
+| 1 | Read Anthropic release notes / deprecation announcement | Head of Engineering |
+| 2 | Run full test suite against new model ID in staging (verify output quality and cost) | Head of Engineering |
+| 3 | Document cost/quality trade-off assessment (token cost delta, output quality regression or improvement) in `docs/ai/` | Head of Engineering |
+| 4 | Review assessment; confirm compliance with §13 constraints (display-only, no automated trading signals) | AI Compliance & Governance Officer |
+| 5 | Update model ID in `backend/services/ai_service.py` (or equivalent pinning location) | Head of Engineering |
+| 6 | Commit with `[GOVERNANCE] Update Claude model pin: <old_id> → <new_id>` | Head of Engineering |
+| 7 | Sign off in this policy changelog | AI Compliance & Governance Officer + Head of Engineering |
+
+### 7.3 Required Sign-Offs
+
+Both of the following must sign off before the model pin update is merged:
+- **AI Compliance & Governance Officer** — confirms compliance constraints remain met
+- **Head of Engineering** — confirms test suite passes and cost/quality assessment is complete
+
+### 7.4 Timeline Enforcement
+
+- New model adoption: **14 days** from release announcement to decision (adopt or pass)
+- Deprecation-driven update: **30 days** from deprecation notice to merged PR
+- SLA breach: file an escalation in `claude/cycles/<active_cycle>/execution_escalations.md`
+
+### 7.5 Changelog (Policy Updates)
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.1 | 2026-06-09 | v5.3 ST-14 (BLG-GOV-108, EPIC-03): §7 Model Pin Update Process added — trigger conditions, 6-step update process, required sign-offs, timeline enforcement (30-day deprecation SLA). AI Compliance & Governance Officer and Head of Engineering sign-off. |
+| 1.0 | 2026-05-28 | Initial version (BLG-GOV-64, v4.2 ST-02). |
+
+---
+
+## 8. Sign-Off
 
 | Role | Status | Date |
 |------|--------|------|
 | AI Compliance & Governance Officer | Approved (agent-mediated) | 2026-05-28 |
 | Head of Specs Team | Approved (agent-mediated) | 2026-05-28 |
+| AI Compliance & Governance Officer (v1.1 ST-14) | Approved (agent-mediated) | 2026-06-09 |
+| Head of Engineering (v1.1 ST-14) | Approved (agent-mediated) | 2026-06-09 |
