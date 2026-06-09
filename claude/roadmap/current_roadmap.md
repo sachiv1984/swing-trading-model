@@ -343,7 +343,7 @@ Items in this section are sequenced and ready for planning when the current vers
 |Pre-Trade Research View  |PT-02|M     |✅ Shipped v3.2 — frontend delivered (research page, ticker data, news, nav integration)             |
 |Prospective Heat at Entry|PT-03|S     |✅ Shipped v3.2 — prospective heat metric integrated into research view                             |
 |Pre-Trade Entry Checklist|PT-05|M     |✅ Shipped v3.2 — checklist component in Trade Plan form, pre-population, persistence               |
-|Setup Quality Score      |PT-04|M     |Deterministic score from own trade history; gate: 20+ closed trades; depends on PT-01 — ⏸️ Parked (v3.6/v3.7/v3.8/v3.9/v4.0 conditional defers — 5 consecutive cycles; gate not met; PO decision 2026-05-19 to park formally — re-open when 20+ closed trades confirmed; PO written rationale required at v4.1 sprint planning per verification_report.md §5(c))|
+|Setup Quality Score      |PT-04|M     |Deterministic score from own trade history; gate: 20+ closed trades; depends on PT-01 — ⏸️ Parked (v3.6/v3.7/v3.8/v3.9/v4.0 conditional defers — 5 consecutive cycles; gate not met; PO decision 2026-05-19 to park formally; v5.3 re-verification 2026-06-09: 6 closed trades / 11 total — gate still NOT MET; re-open when 20+ closed trades confirmed)|
 
 **Arc 2 end-state target:** Every entry is preceded by a structured research view, a completed checklist, and a saved trade plan. The quality of entry decisions is captured and measurable, not assumed.
 

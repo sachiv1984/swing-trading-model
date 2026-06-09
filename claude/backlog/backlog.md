@@ -74,6 +74,7 @@ Performance metrics (R-multiple, win rate, expectancy) use gross P&L figures. Wh
 *PO disposition 2026-05-22: remain on backlog under gate — advance when 20+ closed trades confirmed. STALE flag cleared.*
 *ST-10 (backend) and ST-11 (frontend) returned from 2026-05-22__release-v4.0 at sprint planning — gate not met (PO confirmed <20 closed trades 2026-05-23). 4th deferral noted.*
 *v4.6 gate audit 2026-05-31 (ST-16 BLG-GOV-33): 6 closed trades total (trade_history WHERE pnl IS NOT NULL); 0 with linked trade_plans. Gate NOT MET. EPIC-02 deferred. 6th deferral (SI-02 Frontend also deferred). Advance when ≥20 closed trades with linked trade_plans confirmed.*
+*v5.3 gate re-verification 2026-06-09 (OA-RP-01 / BLG-GOV-106): 6 closed trades (trade_history WHERE pnl IS NOT NULL); 11 total trades. Gate NOT MET. PT-04 remains parked. Next re-verification at v5.4 sprint planning.*
 
 **Problem**
 A deterministic setup quality score (0–100) based on own trade history cannot be computed until sufficient closed trades exist. When the user has entered with similar regime/signal/ATR conditions before, the score reflects historical win rate under those conditions. The gate condition (20+ closed trades) was not met at v3.8 sprint planning (PO confirmed 2026-05-19).
