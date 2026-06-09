@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.1.0
+  version: 3.2.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -1913,6 +1913,33 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /analytics/compliance-metrics:
+    get:
+      tags: [Analytics]
+      summary: Get discipline and compliance scalars
+      description: |
+        Returns journal completion rate, stop exit rate, average position size,
+        and closed trade count for the portfolio. Canonical contract:
+        docs/specs/api_contracts/analytics_endpoints.md v2.3.0 §GET /analytics/compliance-metrics
+      responses:
+        "200":
+          description: Compliance metrics returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  data:
+                    type: object
+                    properties:
+                      journal_completion_rate: { type: number, description: "% trades with notes" }
+                      stop_exit_rate: { type: number, description: "% trades exited via stop" }
+                      avg_position_size_pct: { type: number }
+                      trade_count: { type: integer }
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /analytics/arc5-compliance:
     get:
       tags: [Analytics]
@@ -2111,6 +2138,45 @@ paths:
           description: Neither trade_ids nor a date range provided.
         "500":
           $ref: "#/components/responses/InternalError"
+
+  /ai/journal-summary/history:
+    get:
+      tags: [AI]
+      summary: Query AI journal summary audit log
+      description: |
+        Returns metadata records for past POST /ai/journal-summary calls.
+        No summary text stored — audit metadata only. Canonical contract:
+        docs/specs/api_contracts/ai_endpoints.md v1.3 §GET /ai/journal-summary/history
+      parameters:
+        - name: trade_id
+          in: query
+          schema: { type: integer }
+          description: Filter by trade ID
+        - name: date_from
+          in: query
+          schema: { type: string, format: date }
+        - name: date_to
+          in: query
+          schema: { type: string, format: date }
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      responses:
+        "200":
+          description: Audit records returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      records: { type: array, items: { type: object } }
+                      count: { type: integer }
+        "422":
+          description: limit out of range
 
   /ai/check-daily-cost:
     post:
@@ -2453,6 +2519,162 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/OkEndpointTest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /news/{ticker}:
+    get:
+      tags: [News]
+      summary: Get recent news headlines for a ticker
+      description: |
+        Fetches up to 10 recent news headlines from Alpaca for US tickers.
+        Display-only — no sentiment scoring. UK tickers return empty headlines.
+        Canonical contract: docs/specs/api_contracts/news_endpoints.md v1.0 §GET /news/{ticker}
+      parameters:
+        - name: ticker
+          in: path
+          required: true
+          schema: { type: string }
+          description: Ticker symbol (e.g. AAPL)
+        - name: market
+          in: query
+          schema: { type: string, enum: [US, UK], default: US }
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 10, default: 10 }
+      responses:
+        "200":
+          description: News headlines returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      ticker: { type: string }
+                      market: { type: string }
+                      headlines: { type: array, items: { type: object } }
+                      count: { type: integer }
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /watchlist:
+    get:
+      tags: [Watchlist]
+      summary: List all watchlist entries
+      description: |
+        Returns all watchlist entries for the portfolio with computed signal_status.
+        Canonical contract: docs/specs/api_contracts/watchlist_endpoints.md v1.0 §GET /watchlist
+      responses:
+        "200":
+          description: Watchlist entries returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  data: { type: array, items: { type: object } }
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags: [Watchlist]
+      summary: Add a ticker to the watchlist
+      description: |
+        Adds a ticker to the portfolio watchlist. Returns 409 if already present.
+        Canonical contract: docs/specs/api_contracts/watchlist_endpoints.md v1.0 §POST /watchlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ticker, market]
+              properties:
+                ticker: { type: string }
+                market: { type: string, enum: [US, UK] }
+                target_entry_price: { type: number }
+                initial_stop_price: { type: number }
+                current_stop_price: { type: number }
+      responses:
+        "201":
+          description: Watchlist entry created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  data: { type: object }
+        "400":
+          description: Invalid request
+        "409":
+          description: Ticker already in watchlist
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /watchlist/{entry_id}:
+    delete:
+      tags: [Watchlist]
+      summary: Remove a watchlist entry
+      description: |
+        Removes a watchlist entry by ID. Not idempotent — returns 404 on second call.
+        Canonical contract: docs/specs/api_contracts/watchlist_endpoints.md v1.0 §DELETE /watchlist/{entry_id}
+      parameters:
+        - name: entry_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Entry deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  data: { type: object }
+        "404":
+          description: Entry not found
+        "500":
+          $ref: "#/components/responses/InternalError"
+    patch:
+      tags: [Watchlist]
+      summary: Update watchlist entry price fields
+      description: |
+        Updates price fields on a watchlist entry. ticker and market are read-only.
+        Canonical contract: docs/specs/api_contracts/watchlist_endpoints.md v1.0 §PATCH /watchlist/{entry_id}
+      parameters:
+        - name: entry_id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target_entry_price: { type: number }
+                initial_stop_price: { type: number }
+                current_stop_price: { type: number }
+      responses:
+        "200":
+          description: Entry updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  data: { type: object }
+        "404":
+          description: Entry not found
         "500":
           $ref: "#/components/responses/InternalError"
 
