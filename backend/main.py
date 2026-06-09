@@ -323,6 +323,12 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_si05_digest_log_table FAILED at startup: %s", _e)
     try:
+        from database import ensure_trade_plans_extended_status
+        ensure_trade_plans_extended_status()
+        _log.info("ensure_trade_plans_extended_status: OK")
+    except Exception as _e:
+        _log.error("ensure_trade_plans_extended_status FAILED at startup: %s", _e)
+    try:
         from utils.feature_flags import log_flag_states
         log_flag_states()
     except Exception as _e:

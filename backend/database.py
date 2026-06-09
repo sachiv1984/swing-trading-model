@@ -1795,6 +1795,29 @@ def ensure_si05_digest_log_table() -> None:
         conn.commit()
 
 
+def ensure_trade_plans_extended_status() -> None:
+    """Extend trade_plans_status_check to include workflow statuses (idempotent).
+
+    The original constraint only allowed ('draft', 'active', 'closed').
+    The frontend workflow uses additional statuses: research_pending,
+    research_complete, entry_conditions_set, abandoned.
+    """
+    full_statuses = (
+        "'draft', 'research_pending', 'research_complete', "
+        "'entry_conditions_set', 'active', 'closed', 'abandoned'"
+    )
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_plans DROP CONSTRAINT IF EXISTS trade_plans_status_check"
+            )
+            cur.execute(
+                f"ALTER TABLE trade_plans ADD CONSTRAINT trade_plans_status_check "
+                f"CHECK (status IN ({full_statuses}))"
+            )
+        conn.commit()
+
+
 def get_behavioural_drift_data(portfolio_id: str, window_days: int = 90) -> dict:
     """Fetch all data needed for SI-02 drift metric computation.
 
