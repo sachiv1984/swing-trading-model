@@ -102,6 +102,11 @@ async def test_all_endpoints(request: Request):
         # News
         {"name": "GET /news/AAPL", "method": "GET", "url": f"{base_url}/news/AAPL", "critical": False},
 
+        # Watchlist (v5.3 / ST-07)
+        {"name": "GET /watchlist", "method": "GET", "url": f"{base_url}/watchlist", "critical": False},
+        {"name": "POST /watchlist", "method": "POST", "url": f"{base_url}/watchlist", "body": {"ticker": "TSLA", "market": "US"}, "critical": False},
+        {"name": "DELETE /watchlist/test-entry-id", "method": "DELETE", "url": f"{base_url}/watchlist/test-entry-id", "critical": False},
+
         # Analytics (extended)
         {"name": "GET /analytics/market-correlation", "method": "GET", "url": f"{base_url}/analytics/market-correlation", "critical": False},
 
