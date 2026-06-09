@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-05-29
+**Version:** 1.5
+**Last Updated:** 2026-06-09
 
 # QA Evidence Template
 
@@ -69,6 +69,28 @@ Last Updated: <date>
 > - Date: YYYY-MM-DD
 >
 > Both variants are valid. The `Date:` field must be non-blank in both formats before the PR can be opened and before the merge gate runs. The EPIC-level DoQ block is always required even when per-story sign-offs have been collected — it represents the Director of Quality's acknowledgement of the aggregate evidence.
+
+---
+
+## Mixed-Class EPIC Signer Format Note (ST-11 / LL-v5.2-P4-01)
+
+When an EPIC contains **both** `delegated_backend` (or `delegated_frontend`) stories AND `autonomous` stories in the same EPIC:
+
+- The sign-off block `Signed off by:` field **must** use the exact format:
+  ```
+  Sprint Execution Engine (agent-mediated, <Role Name> role — §5.3)
+  ```
+  where `<Role Name>` is the agent role that cleared the sign-off (e.g. `Head of Engineering`, `Cybersecurity & Trust Lead`, `Infrastructure & Operations Owner`).
+
+- For multiple authority sign-offs in the same EPIC, list all on separate lines:
+  ```
+  Sprint Execution Engine (agent-mediated, Cybersecurity & Trust Lead role — §5.3)
+  Sprint Execution Engine (agent-mediated, Head of Engineering role — §5.3)
+  ```
+
+- The BLG-GOV-19 autonomous class format (`Sprint Execution Engine (autonomous class)`) is only valid when **all** stories in the EPIC are `autonomous` with no `delegated_*` classification. A single `delegated_backend` story in the EPIC disqualifies the autonomous class — use the agent-mediated format above.
+
+- **Rationale:** This prevents ambiguity at delivery verification about which authority cleared which story's AC, especially when one authority covers multiple stories.
 
 ---
 
