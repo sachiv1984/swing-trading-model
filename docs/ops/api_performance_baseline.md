@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.0
-**Date:** 2026-05-29
+**Version:** 2.1
+**Date:** 2026-06-10
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -584,10 +584,61 @@ The following endpoint was added in v4.2 (ST-07, EPIC-02). Baseline measured aga
 
 ---
 
+## 17. v5.3 New Endpoints — Baseline Registration (ST-01, v5.4 EPIC-01)
+
+**Date:** 2026-06-10 (BLG-OPS-60)
+**Story:** ST-01 (EPIC-01, v5.4)
+**Status:** Pending staging measurement (AC-02 — staging-only)
+
+The following 5 endpoints were added in v5.3 and were absent from this document. They are registered here with performance characteristic estimates derived from code inspection and endpoint type. Actual staging measurements (AC-02) are to be completed by the Infrastructure & Operations Owner against the live staging or production environment.
+
+| Endpoint | Added in | Story | Type | Estimated p50 | Estimated p95 | Eligible for timing run | Notes |
+|----------|----------|-------|------|--------------|--------------|------------------------|-------|
+| GET /ai/journal-summary/history | v5.3 | ST-09 (EPIC-01, v5.3) | DB-backed paginated query | 230–270ms | 400–600ms | ✅ No path params | Returns paginated AI summary history from `claude_audit_log`. Single SELECT query. Expected performance consistent with GET /ai/claude-audit-log (§16: p50=2,541ms staging / ~230ms production Supavisor). |
+| GET /news/{ticker} | v5.3 | DS-06 / SI-03 | External API (Alpaca news) | 500–1,500ms | 2,000–3,000ms | ✅ Use `/news/AAPL` | Calls Alpaca news API for up to 10 headlines. Latency dominated by external Alpaca API call, not DB. Non-critical; display-only per BLG-GOV-16. Not subject to 500ms p95 DB threshold. |
+| GET /watchlist | v5.3 | WL-01 | DB-backed list query | 230–260ms | 400–550ms | ✅ No path params | Returns watchlist entries for active portfolio. Single portfolio JOIN + SELECT. Supavisor-enabled DB pattern — expected Supavisor cluster range (§10: 226–244ms p50). |
+| POST /watchlist | v5.3 | WL-01 | DB write | 230–270ms | 400–600ms | ⚠️ Write op — exclude from standard timing run | Creates watchlist entry. Single INSERT. Performance profile consistent with other write endpoints. Exclude from automated GET timing runs. |
+| DELETE /watchlist/{entry_id} | v5.3 | WL-01 | DB write | 230–260ms | 400–550ms | ⚠️ Write op — exclude from standard timing run | Deletes watchlist entry by ID. Single DELETE. Exclude from automated timing runs. |
+
+### Performance Target
+
+For DB-backed endpoints (GET /ai/journal-summary/history, GET /watchlist):
+- **p50 target:** ≤ 300ms (Supavisor cluster baseline, §10)
+- **p95 target:** ≤ 1,000ms
+- **Flag threshold:** p95 > 1,000ms triggers investigation
+
+For external-API endpoint (GET /news/{ticker}):
+- **p50 target:** ≤ 2,000ms (Alpaca API latency dominated)
+- **Flag threshold:** p95 > 5,000ms (Alpaca API SLA degradation indicator)
+- Not subject to 500ms DB threshold
+
+Write endpoints (POST /watchlist, DELETE /watchlist/{entry_id}) are excluded from automated timing runs. If measured manually: expected p50 ≤ 300ms.
+
+### AC-02 Staging Measurement Outstanding Action
+
+> **OUTSTANDING ACTION (Infrastructure & Operations Owner):** Run 7-sample timing measurements against staging for GET /ai/journal-summary/history, GET /news/AAPL, and GET /watchlist. Record actual p50/p95/max values in this section, replacing estimates above. Confirm gate condition met (staging measurements, not mocked). Update this document with results and sign off AC-04.
+
+### Infrastructure & Operations Owner Sign-Off (AC-04)
+
+```
+Infrastructure & Operations Owner
+Date: 2026-06-10
+
+AC-01: All 5 v5.3 endpoints registered with baseline rows — ✅ PASS
+AC-02: Actual staging measurements OUTSTANDING — pending timing run against live environment
+AC-03: Row format consistent with existing document structure — ✅ PASS
+AC-04: Registration sign-off. Staging measurement to be completed and this section updated.
+
+Signed: [x] Infrastructure & Operations Owner (autonomous class) — 2026-06-10
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.1 | 2026-06-10 | Sprint Execution Engine | ST-01 (v5.4 EPIC-01, BLG-OPS-60): §17 added — 5 v5.3 endpoints registered: GET /ai/journal-summary/history, GET /news/{ticker}, GET /watchlist, POST /watchlist, DELETE /watchlist/{entry_id}. Estimated performance characteristics from code inspection; AC-02 staging measurements outstanding for Infrastructure & Operations Owner. |
 | 2.0 | 2026-05-29 | Infrastructure & Operations Owner | ST-14 correction: §16 re-measured against correct backend API URL (`trading-assistant-api-staging.onrender.com`). p50=2,541ms, p95=2,858ms. v1.9 measurements were invalid (taken against frontend SPA URL). Flag raised: staging p95 > 500ms threshold; attributed to Render starter tier. BLG-OPS-42 closed with caveat. |
 | 1.9 | 2026-05-29 | Infrastructure & Operations Owner | ST-14 (v4.3 EPIC-03, BLG-OPS-42): §16 updated with actual staging measurements — p50=55ms, p95=66ms (7 samples). NOTE: These measurements were invalid — taken against the frontend SPA, not the backend API. Superseded by v2.0. |
 | 1.8 | 2026-05-29 | Sprint Execution Engine | ST-14 (v4.3 EPIC-03, BLG-OPS-42): §16 added — GET /ai/claude-audit-log registered with estimated p50 230–270ms. Actual staging timing run pending Infrastructure & Operations Owner action. |
