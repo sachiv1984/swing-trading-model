@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.37
-**Last Updated:** 2026-06-09
+**Version:** 4.40
+**Last Updated:** 2026-06-10
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v6.9)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v7.0)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.38)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.39)
 
 ### 8.1 Invocation
 
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.31 |
-| Last Updated | 2026-06-21 |
+| Version | 4.40 |
+| Last Updated | 2026-06-10 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.5 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1463,17 +1463,17 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.8 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v6.9 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v7.0 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.34 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.8 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.38 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.39 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.5 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.0 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.13 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.4 |
+| Shared Standards | `claude/system/shared_standards.md` v3.5 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.9 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1494,6 +1494,9 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.40 | 2026-06-10 | **AUD-2026-06-10 Tier 1 patches (part 2): roadmap_prompt.md v6.9→v7.0 STEP 8.0.5 candidate list pre-clean + execution_prompt.md v3.38→v3.39 STEP 4 branch clean-state advisory.** §6 source prompt header updated v6.9→v7.0. §8 source prompt header updated v3.38→v3.39. §14 Roadmap Engine Source v6.9→v7.0. §14 Execution Engine Source v3.38→v3.39. Changes: (AUD-2026-06-10-003) roadmap_prompt.md STEP 8.0.5 added — candidate list pre-clean advisory: grep backlog.md for ✅ COMPLETE / RA: markers on each candidate BLG-ID before presenting to PO; removes already-shipped items from candidate list. (AUD-2026-06-10-002) execution_prompt.md STEP 4 halt output — session-close advisory added: operator must verify git status clean on EPIC branch before ending session (2nd recurrence: v5.3+v5.4 stash-at-branch-switch). §14 Version 4.39→4.40/2026-06-10. Authority: Head of Specs Team (AUD-2026-06-10 Tier 1 closure, 2026-06-10). |
+| 4.39 | 2026-06-10 | **AUD-2026-06-10 Tier 1 patches (part 1): §14 self-metadata desync fixed (4th recurrence) + shared_standards.md v3.4→v3.5 amend cycle dry-run row added.** §14 self-metadata table Version corrected from 4.31→4.38/4.39 and Last Updated from 2026-06-21→2026-06-10 (entries v4.32–v4.37 had been added without updating the §14 self-metadata rows — recurring pattern). §14 Shared Standards updated v3.4→v3.5. §14 Version 4.38→4.39/2026-06-10. Authority: Head of Specs Team (AUD-2026-06-10 Tier 1 closure, 2026-06-10). |
+| 4.38 | 2026-06-10 | **AUD-2026-06-10 Tier 1 patches: §14 self-metadata desync fixed (4th recurrence) + shared_standards.md v3.4→v3.5 amend cycle dry-run row added.** §14 self-metadata table Version corrected from 4.31→4.38 and Last Updated from 2026-06-21→2026-06-10 (entries v4.32–v4.37 had been added without updating the §14 self-metadata rows — recurring pattern, now also reinforced in §14 standing rule). §14 Shared Standards updated v3.4→v3.5. §14 Version 4.37→4.38/2026-06-10. Authority: Head of Specs Team (AUD-2026-06-10 Tier 1 closure, 2026-06-10). |
 | 4.37 | 2026-06-09 | **Roadmap rebalance 2026-06-09__scheduled meta-review action-now — roadmap_prompt.md v6.8→v6.9: STEP 8.5.B BLG-ID collision advisory.** §6 source prompt header updated v6.8→v6.9. §14 Roadmap Engine Source v6.8→v6.9. Change (roadmap v6.9): STEP 8.5.B step 5 added — non-blocking advisory: before assigning new BLG-IDs in debate summaries or decision records, grep backlog.md for the highest existing ID in each series and assign from highest+1; prevents BLG-ID collision when an ID was added between rebalance date and write pass. Meta-review action-now — Type D recurring pattern (cycles 2026-06-07 and 2026-06-08). §14 Version 4.36→4.37/2026-06-09. Authority: Head of Specs Team (meta-review action-now, 2026-06-09__scheduled). |
 | 4.36 | 2026-06-09 | **Roadmap rebalance 2026-06-09__scheduled STEP -1.5 overdue patch — idea_intake_prompt.md v2.4→v2.5: backlog scope advisory added to §2.0.** §5 source prompt header updated v2.4→v2.5. §14 Idea Intake Engine v2.4→v2.5. Change (idea_intake v2.5): §2.0 Parked Queue Pre-Check step 5 added — advisory (non-blocking): before finalising new submission topics, briefly scan active backlog.md items for scope overlap with planned submissions; if an active BLG-ID covers the same initiative, note it in the submission's Purpose/Rationale field. Patch originally filed 2026-06-07__scheduled, carried 2026-06-08__scheduled, classified OVERDUE at 2026-06-09__scheduled STEP -1.5. §14 Version 4.35→4.36/2026-06-09. Authority: Head of Specs Team (deferred patch overdue resolution, 2026-06-09). |
 | 4.35 | 2026-06-09 | **v5.3 ST-12 (LL-v5.2-P4-02, EPIC-03) — execution_prompt.md v3.37→v3.38: STEP 5.3A SSR cycle_id section check sub-step.** §8 source prompt header updated v3.37→v3.38. §14 Execution Engine Source v3.37→v3.38. Change (execution_prompt v3.38): STEP 5.3A — new sub-step "cycle_id section check (LL-v5.2-P4-02)" added: before writing SSR section, check whether `docs/System_status_report.md` already contains `## Sprint: <cycle_id>` heading; if not present create it; if present update in-place. Prevents duplicate sprint sections and ensures every cycle has an SSR entry before commit. Resolves LL-v5.2-P4-02 carry-forward OA. §14 Version 4.34→4.35/2026-06-09. Authority: Head of Specs Team (LL-v5.2-P4-02, v5.3 ST-12, 2026-06-09). |

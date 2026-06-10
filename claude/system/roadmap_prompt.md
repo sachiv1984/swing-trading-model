@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 6.9
+**Version:** 7.0
 **Last Updated:** 2026-06-09 (v6.8)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -493,6 +493,12 @@ Hard rules: Adds require stops; stops ≥ adds; scarce skills protected. Quality
 **Displacement candidate flag:** If any initiative is the natural next-stop candidate, record in `claude/roadmap/initiative_register.md`: `Displacement candidate: Yes — <rationale> — <date>`. Not in `cycle_record.md` or `current_roadmap.md`.
 
 Valid outcome: no changes made. Still requires roadmap Last Updated refresh and a "no change" decision log entry.
+
+---
+
+### STEP 8.0.5 — Candidate List Pre-Clean (Advisory)
+
+Before presenting any next-release section candidate list to the PO: grep `claude/backlog/backlog.md` for each BLG-ID in the candidate list. Remove any item that has `✅ COMPLETE` or an `RA:` roadmap annotation marker (already shipped). Record removed items in `run_manifest.md` as "Already shipped — excluded from candidates." Non-blocking if no items need removal. (Added AUD-2026-06-10-003; first occurrence v5.4 LL-RP-01.)
 
 ---
 

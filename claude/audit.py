@@ -24,29 +24,30 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-06-02"
+PRIOR_AUDIT_ID = "AUD-2026-06-10"
 PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-06-02-001",  # 7 missing prompt_change_log entries — OPEN (BLG-GOV-79; v5.0)
-    "AUD-2026-06-02-003",  # Execution engine governance file edit check — OPEN (BLG-GOV-80; v5.0)
-    "AUD-2026-06-02-004",  # 5 agent file non-standard headers — OPEN (BLG-GOV-81; v5.0) — 2nd carry
-    "AUD-2026-06-02-005",  # Post-ship audit advisory strengthening — OPEN (BLG-GOV-82; v5.0)
-    "AUD-2026-06-02-006",  # PO GitHub approval documentation — OPEN (BLG-GOV-83; v5.0)
+    "AUD-2026-06-10-001",  # pr_status ASSERTION write after PR open — OPEN (execution_prompt.md §3.2.B)
+    "AUD-2026-06-10-002",  # EPIC branch clean-state advisory — APPLIED Tier 1 (2026-06-10)
+    "AUD-2026-06-10-003",  # Roadmap candidate list pruning — APPLIED Tier 1 (2026-06-10)
+    "AUD-2026-06-10-004",  # §14 self-metadata desync — APPLIED Tier 1 (2026-06-10)
+    "AUD-2026-06-10-005",  # audit.py config update — APPLIED (this commit)
+    "AUD-2026-06-10-006",  # amend cycle dry-run table — APPLIED Tier 1 (2026-06-10)
 ]
-# AUD-2026-06-02-001 PATCH 1: 7 prompt_change_log entries — applied Tier 1 (2026-06-02)
-# AUD-2026-06-02-002: OPERATIONAL_GUIDE v4.26 changelog entry — applied Tier 1 (2026-06-02, covered by AUD-001 PATCH 2)
+# AUD-2026-06-10-002/003/004/005/006: All Tier 1 items applied 2026-06-10 (same commit as audit)
+# AUD-2026-06-10-001: Tier 2 — open; requires execution_prompt.md §3.2.B targeted patch
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
-    "token_efficiency":      95,   # HIGH CONFIDENCE — no inline blocks; all engines in §13 dry-run table
-    "governance_integrity":  83,   # MEDIUM CONFIDENCE — §13/§14 fully aligned; prompt_change_log enforcement advisory-only in execution engine
-    "execution_reliability": 79,   # MEDIUM CONFIDENCE — prompt_change_log ASSERTION-only write in exec engine; 1 STALE deferred patch
-    "friction_load":         30,   # LOW CONFIDENCE — 5 clean cycles since AUD-2026-05-30; 1 recurring Type C (prompt_change_log)
-    "document_hygiene":      77,   # MEDIUM CONFIDENCE — 5 non-standard agent headers (2nd carry); OPERATIONAL_GUIDE v4.26 entry now fixed
+    "token_efficiency":      95,   # HIGH CONFIDENCE — §13 complete; all preamble refs confirmed; amend cycle dry-run added
+    "governance_integrity":  79,   # MEDIUM CONFIDENCE — §14 self-metadata desync (4th recurrence; now fixed)
+    "execution_reliability": 73,   # MEDIUM CONFIDENCE — pr_status ASSERTION-only write, 2nd recurrence (open)
+    "friction_load":         20,   # LOW CONFIDENCE — 2 new recurring Type B items; incomplete historical data
+    "document_hygiene":      82,   # MEDIUM CONFIDENCE — pmo_lead.md residual; §14 desync now fixed
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 35  # v1.7 through v4.9 (35 completed post-ship closures; confirmed from .claude_current_state.json)
+COMPLETED_CYCLES = 40  # v1.7 through v5.4 (40 completed post-ship closures; confirmed from .claude_current_state.json)
 
 # -------------------------
 # MISSING FILE RULE

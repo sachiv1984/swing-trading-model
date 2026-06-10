@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.4
-**Last Updated:** 2026-05-27
+**Version:** 3.5
+**Last Updated:** 2026-06-10
 
 # Shared Standards — All Governed Routines
 
@@ -374,6 +374,7 @@ The following engines support `--dry-run`. The guarantee is identical in all cas
 | `run ideas housekeeping` | Housekeeping preview — terminal rows to archive, rejected-but-strong revival candidates, pipeline health advisory; no ideas_register.md writes, no archive writes |
 | `plan release --dry-run` | Scope extraction preview — roadmap item, tentative EPIC/ST structure, artefacts that would be created (release_plan.md, backlog_slice, design_gate.md if required); no artefact writes, no state updates |
 | `run delivery verification --dry-run` | Verification plan — list of all STEP checks with their precondition sources; no verification_report.md written, no .claude_current_state.json update |
+| `amend cycle --dry-run` | Amendment preview — proposed backlog slice delta, scope changes, authority ratification requirements; no state.json writes, no slice artefact created |
 
 **Scope of read operations:** Read operations (file reads, git queries, pip-audit scans) are always permitted in dry-run mode. A dry-run that cannot read required inputs should halt with a standard halt report, not silently produce an empty plan.
 

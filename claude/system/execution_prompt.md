@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.38
+**Version:** 3.39
 **Last Updated:** 2026-06-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -733,6 +733,8 @@ If all conditions pass:
 If any condition fails: do not merge. Record which condition is unmet. If QA or Product Owner has not responded within their SLA: file an escalation record.
 
 **The engine may not self-approve a merge.** QA sign-off and Product Owner acceptance are always required and must come from the relevant authority.
+
+> **Session-close advisory (AUD-2026-06-10-002):** Before ending this session, run `git status --short` on the current EPIC branch. If any unstaged or uncommitted changes exist (execution_state.json, qa_evidence files, backlog.md), commit them or stash them before closing. Leaving unstaged changes on an EPIC branch requires `git stash` on next resume and risks merge conflicts. This advisory fires on every STEP 4 halt. (Root cause: v5.3 + v5.4 recurrence of stash-at-branch-switch pattern.)
 
 > **Merge order note (LL-v2.0-P3-5):** If more than one EPIC branch modifies a shared governance file (e.g. `execution_state.json`, `.claude_current_state.json`, `backlog.md`, `delegation_log.md`), establish a merge order at the start of STEP 3. Later EPIC branches **must rebase onto `main`** after the first EPIC merges — before running their final QA review and opening a PR. This prevents merge conflicts at the merge gate and avoids the need to rebase mid-merge-sequence.
 
