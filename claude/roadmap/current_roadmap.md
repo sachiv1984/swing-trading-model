@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-10 (post-ship closure 2026-06-09__release-v5.4 — v5.4 ✅ Complete; Current Version updated to v5.4)
+**Last Updated:** 2026-06-10 (rebalance 2026-06-10__scheduled — STEP 8.1 Option(a): v5.5 Now section added; DL-045)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — Standard-tier, CPS=1.15; Δ=0.00; 8 new backlog items; DL-041/042; 4 ideas Rejected, 8 Promoted-Backlog, 17 re-parked; v5.4 Now section added)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -262,6 +262,32 @@ Today you find stocks through external research and add them to the watchlist ma
 *RA:v5.3 retired — see roadmap_archive.md 2026-06-09 (post-ship closure 2026-06-08__release-v5.3).*
 
 *RA:v5.4 retired — see roadmap_archive.md 2026-06-10 (post-ship closure 2026-06-09__release-v5.4).*
+
+### v5.5 — SI-05 Effectiveness Review, Governance Hardening & UX Debt Clearance
+
+**Status:** Planning (rebalance 2026-06-10__scheduled — STEP 8.1 Option(a), DL-045)
+**Next planned release:** v5.5
+
+**Theme:** Actioning the 2026-07-04 SI-05 effectiveness review, clearing governance carry-forwards from v5.4 lessons learnt, and advancing the UX/FE debt queue.
+
+**Key backlog candidates (advisory — binding at release planning):**
+- BLG-FE-64: Red Flag Journal visual design review pre-brief (gate 2026-06-21)
+- BLG-OPS-59: SI-05 p99 production latency baseline review (gate ≥2026-07-04)
+- BLG-GOV-112: SI-05 digest weekly cadence review (gate 2026-07-04)
+- BLG-GOV-113: SI-05 Phase 1 effectiveness review protocol (gate ≥2026-07-04)
+- BLG-GOV-114: si05_digest_log schema validation for effectiveness review (gate ≥2026-07-04)
+- BLG-GOV-115: SI-05 digest actionability metric definition (gate 2026-07-04)
+- BLG-GOV-116: sprint_planning_prompt.md within-sprint date gate advisory (LL-P3-01)
+- BLG-GOV-117: execution_prompt.md pr_status read-after-open improvement (LL-P3-03)
+- BLG-GOV-118: qa_evidence commit discipline advisory (LL-P3-02)
+- BLG-FE-61: allocation_insufficient SignalCard Playwright E2E coverage (P2, ready)
+- BLG-FE-62: Pre-entry panel combined component specification (P2)
+- BLG-FE-65: User journey map: SI-05 Telegram digest to app action (P2)
+- BLG-BE-16: Red flag events severity field (P2, ready)
+- BLG-OPS-61: v5.1–v5.4 endpoint baseline extension (P3)
+- BLG-GOV-120: Trade data density progress tracker (P2)
+
+**Sprint timing note:** SI-05 effectiveness review gate items (BLG-OPS-59, BLG-GOV-112–115) require the 2026-07-04 review to complete. Sprint planning should account for a Sprint 2 window post-2026-07-04, or a single sprint starting after that date.
 
 -----
 

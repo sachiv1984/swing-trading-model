@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-10 (post-ship closure 2026-06-09__release-v5.4 — BLG-OPS-60 ✅ COMPLETE; BLG-FE-56 ✅ COMPLETE; BLG-GOV-92 already marked COMPLETE; BLG-FE-64 sprint history updated)
+**Last Updated:** 2026-06-10 (rebalance 2026-06-10__scheduled — DL-043/044/045; 7 new items: BLG-GOV-116/117/118/119/120/121/122, BLG-FE-72, BLG-OPS-61; IW-20260610-01 closed; 16 ideas rejected, 1 promoted-backlog; v5.5 Now section added)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — DL-041/042; IW skipped ≥20 open ideas; 8 new items; meta-review DUE conducted; v5.4 Now section added)
 
 > ⚠️ Standing Notice
@@ -5110,6 +5110,218 @@ SI-05 launched 2026-06-04. After the 2026-07-04 effectiveness review (BLG-GOV-11
 - Metrics document reviewed by Metrics Definitions & Analytics Owner
 - Gate condition verified: 2026-07-04 effectiveness review (BLG-GOV-113) complete
 - Metrics feed BLG-GOV-112 cadence review and BLG-GOV-96 effectiveness criteria
+
+---
+
+### BLG-GOV-116 — sprint_planning_prompt.md within-sprint date gate advisory
+**Priority:** P2 (Medium)
+**Type:** Governance / Process Improvement
+**Owner:** Head of Specs Team
+**Source:** LL-P3-01 (v5.4 lessons_learnt_closure.md) — carry-forward; rebalance 2026-06-10__scheduled (DL-044)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.5
+**Displacement:** N/A (governance patch — no displacement required)
+
+**Problem**
+Stories with within-sprint date gates (e.g., "ST-03 CONDITIONAL — gate 2026-06-21") are not marked with a standard notation in sprint_backlog.md at planning time. This led to v5.4 ST-03 being returned mid-sprint when the gate date was not met, which could have been predicted at planning. A standard marker at sprint planning time would make conditional stories visible.
+
+**Scope**
+- Add advisory to sprint_planning_prompt.md: stories with a date gate that falls within the sprint window should be marked `Status at sprint open: conditional — gate <date>` in sprint_backlog.md at planning time
+- Version bump sprint_planning_prompt.md; update OPERATIONAL_GUIDE §14; append prompt_change_log.md entry
+
+**Acceptance Criteria**
+- sprint_planning_prompt.md updated with advisory marker rule
+- Version bumped; §14 and change log updated per CLAUDE.md §6
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-117 — execution_prompt.md pr_status read-after-open improvement
+**Priority:** P2 (Medium)
+**Type:** Governance / Process Improvement
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** LL-P3-03 (v5.4 lessons_learnt_closure.md, 2nd recurrence) — carry-forward; rebalance 2026-06-10__scheduled (DL-044)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.5
+**Displacement:** N/A (governance patch)
+
+**Problem**
+After opening a PR, execution_prompt.md writes `pr_status: "open"` to execution_state.json without reading the actual `gh pr view` response. This means if the PR is created but immediately encounters an issue (merge conflict, CI failure), the state records "open" incorrectly. When the session resumes, STEP 5.0A catches the stale status — but this is reactive rather than proactive. Second recurrence in v5.4.
+
+**Scope**
+- Update execution_prompt.md: after `gh pr create`, immediately read `gh pr view <number> --json state,mergeStateStatus` and write the actual state to execution_state.json
+- Version bump execution_prompt.md; update OPERATIONAL_GUIDE §14; append change log
+
+**Acceptance Criteria**
+- execution_prompt.md updated: pr_status written from `gh pr view` response, not assumed
+- Version bumped; §14 and change log updated per CLAUDE.md §6
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-118 — qa_evidence commit discipline advisory in execution_prompt.md
+**Priority:** P2 (Medium)
+**Type:** Governance / Process Improvement
+**Owner:** PMO Lead; Head of Specs Team
+**Source:** LL-P3-02 (v5.4 lessons_learnt_closure.md) — carry-forward; rebalance 2026-06-10__scheduled (DL-044)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.5
+**Displacement:** N/A (governance patch)
+
+**Problem**
+v5.4 sprint execution had an operator error where qa_evidence_EPIC-xx.md was not committed to the EPIC branch before opening the PR. The existing CLAUDE.md §2 rule says "Every new API endpoint must be added in the same commit" but there is no explicit reminder in execution_prompt.md about committing qa_evidence before PR open.
+
+**Scope**
+- Add advisory to execution_prompt.md STEP 5 (or the PR-opening step): "Before opening the PR, verify qa_evidence_EPIC-xx.md is committed to the EPIC branch"
+- Version bump; update §14; append change log
+
+**Acceptance Criteria**
+- execution_prompt.md updated with qa_evidence pre-PR commit advisory
+- Version bumped; §14 and change log updated per CLAUDE.md §6
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-119 — Arc 5 delivered value retrospective (gate-conditional)
+**Priority:** P3 (Low)
+**Type:** Governance / Strategic Review
+**Owner:** Product Owner; Strategy Rules & System Intent Owner
+**Source:** IDEA-challenger-20260610-01 — Promoted-Backlog rebalance 2026-06-10__scheduled (DL-044)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** SI-04 (strategy version comparison) AND SI-05 Phase 2 both shipped
+
+**Problem**
+Arc 5 is functionally near-complete (SI-01/02/03 shipped; SI-04 pre-planned; SI-05 Phase 1 live). Before committing to Arc 6, a retrospective against the original Arc 5 end-state intent would confirm whether the arc is delivering its stated purpose: "making every deviation visible, deliberate, and recorded."
+
+**Scope**
+- Review Arc 5 end-state description against delivered features
+- Assess whether SI-01/02/03/05 collectively achieve the stated purpose
+- Produce a 1-page retrospective document; note gaps or intent drift
+
+**Acceptance Criteria**
+- Retrospective document produced and filed
+- Gap list (if any) filed as backlog items
+- Product Owner + Strategy Rules & System Intent Owner sign-off
+- Gate: SI-04 + SI-05 Phase 2 both shipped
+
+---
+
+### BLG-GOV-120 — Trade data density progress tracker
+**Priority:** P2 (Medium)
+**Type:** Governance / Operational Visibility
+**Owner:** Product Owner; Infrastructure & Operations Owner
+**Source:** IDEA-product-owner-20260610-01 — Promoted-Backlog rebalance 2026-06-10__scheduled (DL-044)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.5
+
+**Problem**
+Multiple high-value features are gated on closed trade counts (PT-04: 20 trades; SI-02 frontend: 20 trades; Arc 6 PS-01: 100 trades). Current count is 6 closed trades. The count is invisible between sprint planning sessions. A visible progress indicator would make gate-clearing trajectory tangible and help PO set timing expectations.
+
+**Scope**
+- Add trade count display to System Status page or dashboard: "Closed trades: N / Gate 1: 20 / Gate 2: 50 / Gate 3: 100"
+- Alternatively: add to weekly SI-05 Telegram digest as a data density summary line
+- Data source: existing trade_history query (SELECT COUNT(*) WHERE pnl IS NOT NULL)
+
+**Acceptance Criteria**
+- Trade count visible in at least one operational context (System Status or weekly digest)
+- Count queries real production data (not hardcoded)
+- Playwright coverage or staging sign-off for observable AC
+
+---
+
+### BLG-GOV-121 — SI-05 Phase 2 §13 pre-clearance document (gate-conditional)
+**Priority:** P2 (Medium)
+**Type:** Governance / Strategy Compliance
+**Owner:** Strategy Rules & System Intent Owner; Product Owner
+**Source:** IDEA-strategy-owner-20260610-02 — Promoted-Backlog rebalance 2026-06-10__scheduled (DL-044)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** 2026-07-04 SI-05 effectiveness review output (BLG-GOV-113) complete AND Phase 2 activation decision made
+
+**Problem**
+SI-05 Phase 2 integrates drift signals (SI-02) with the Telegram digest. Before Phase 2 activates, a targeted §13 review should confirm that incorporating drift signals into an automated notification remains compliant with the "not an automated trading system" and "human-in-the-loop" principles. Phase 1 cleared §13 (notification of compliance scores + red flags). Phase 2 adds drift-signal interpretation — this boundary warrants formal pre-clearance.
+
+**Scope**
+- Extend the SI-05 Phase 1 §13 review framework to Phase 2 scope
+- Confirm: drift signal summary in digest is informational, not prescriptive; no automated action triggered
+- Document binding conditions for Phase 2 operation (analogous to IT-06 §13 conditions)
+
+**Acceptance Criteria**
+- §13 pre-clearance document produced and filed
+- Strategy Rules & System Intent Owner sign-off
+- Gate condition verified before Phase 2 sprint planning
+
+---
+
+### BLG-GOV-122 — strategy_rules.md §11 parameter annual review
+**Priority:** P3 (Low)
+**Type:** Governance / Strategy Review
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260610-01 — Promoted-Backlog rebalance 2026-06-10__scheduled (DL-044)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+strategy_rules.md §11 defines concrete trading parameters (ATR multipliers, grace period days, regime gate thresholds). These were validated at v5.3 (BLG-GOV-104) but an annual review should confirm they still reflect the operator's current strategy intent. With 40+ cycles and real trading data accumulating, parameter drift (operating differently from what §11 states) should be checked.
+
+**Scope**
+- Review §11 parameters against actual trading behaviour over the last 12 months
+- Identify any divergence between documented parameters and actual practice
+- If divergence found: either update strategy_rules.md (version increment) or document intentional deviation
+
+**Acceptance Criteria**
+- Review conducted; findings documented
+- If changes: strategy_rules.md versioned and change rationale filed
+- Strategy Rules & System Intent Owner sign-off
+
+---
+
+### BLG-FE-72 — Arc 4 PO-02 journal pattern UX spec (gate-conditional)
+**Priority:** P3 (Low)
+**Type:** Frontend & UX / Specification
+**Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design
+**Source:** IDEA-frontend-ux-20260608-02 — Promoted-Backlog rebalance 2026-06-10__scheduled (DL-043)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** PO-02 (Journal Pattern Recognition) sprint planning confirmed imminent — PMO Lead confirmation required before commissioning this work
+
+**Problem**
+PO-02 (Journal Pattern Recognition) requires displaying cross-entry AI analysis results: recurring themes, emotional patterns, setup types, conditions present at winning vs losing entries. No UX specification exists for how this data should be presented. Before PO-02 enters sprint planning (gate: 6+ months AI journals, ~Oct 2026), a UX spec should be prepared to enable accurate scope definition at sprint planning.
+
+**Scope**
+- Define the display patterns for journal theme analysis (list view? heatmap? timeline?)
+- Specify how patterns are surfaced: by entry count, by theme frequency, by outcome correlation
+- Define empty state and gate-not-met state (< 6 months of journals)
+- Produce a canonical frontend spec for the Journal Pattern Recognition UI component
+
+**Acceptance Criteria**
+- Frontend spec document produced: data display patterns, empty states, component architecture
+- Spec reviewed and signed off by Head of UX & Design and Frontend Specs & UX Documentation Owner
+- Gate: PMO Lead confirms PO-02 sprint planning is imminent before this story begins
+
+---
+
+### BLG-OPS-61 — BLG-OPS-13 v5.1–v5.4 endpoint baseline extension
+**Priority:** P3 (Low)
+**Type:** Operations / Performance Baseline
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260610-01 — Promoted-Backlog rebalance 2026-06-10__scheduled (DL-044)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v5.5
+
+**Problem**
+BLG-OPS-60 (completed v5.4) added v5.3 endpoints to api_performance_baseline.md. However, v5.1 and v5.2 endpoints (POST /digest/si05/send, GET /portfolio/paper-positions enhancements, new v5.2 routes from BLG-SPEC-49–52) were not included. BLG-OPS-13 targets v2.8–v4.6 endpoints; BLG-OPS-61 closes the v5.1–v5.4 gap.
+
+**Scope**
+- Identify all new routes added in v5.1 and v5.2 not yet in api_performance_baseline.md
+- Run p50/p95 latency measurements against staging
+- Add entries to api_performance_baseline.md
+
+**Acceptance Criteria**
+- All v5.1/v5.2 new endpoints have latency entries in the baseline document
+- Consistent with existing measurement methodology
+- Infrastructure & Operations Owner sign-off
 
 ---
 

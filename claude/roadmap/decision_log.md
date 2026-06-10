@@ -1028,6 +1028,45 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 
 ---
 
+## DL-043
+
+**Date:** 2026-06-10
+**Cycle:** 2026-06-10__scheduled
+**Decision type:** Terminal disposition — Parked-cycle-2 ideas (IW-20260608-01)
+**Initiatives affected:** None (backlog-level items only)
+**Displacement:** N/A (1 Promoted-Backlog; gate-conditional; not in active sprint)
+**Workforce impact:** None
+**Rationale:** 17 IW-20260608-01 ideas reached Parked-cycle-2 terminal status per §4.5 hard cap. 16 Rejected (not strong or superseded — no novel evidence, gate rationales exhausted, or source scope shipped). 1 Promoted-Backlog: IDEA-frontend-ux-20260608-02 → BLG-FE-72 (Arc 4 PO-02 journal pattern UX spec, gate-conditional on PO-02 imminent). No Rejected-Strong entries — none met the threshold.
+**Decision owner:** Product Owner
+
+---
+
+## DL-044
+
+**Date:** 2026-06-10
+**Cycle:** 2026-06-10__scheduled
+**Decision type:** Backlog additions (from LL carry-forwards + idea intake IW-20260610-01)
+**Initiatives affected:** None (backlog items only — no roadmap initiative changes)
+**Displacement:** N/A (governance patches, gate-conditional; no active sprint commitments)
+**Workforce impact:** None (all items autonomous/documentation class; no new FTE)
+**Rationale:** 9 new backlog items added this cycle. 3 from v5.4 LL carry-forwards (BLG-GOV-116/117/118 — governance patches for sprint_planning_prompt.md and execution_prompt.md targeting LL-P3-01/02/03). 4 gate-conditional from IW-20260610-01 (BLG-GOV-119 Arc 5 retrospective, BLG-GOV-121 Phase 2 §13 pre-clearance, BLG-FE-72 PO-02 UX spec, and BLG-GOV-122 §11 annual review). 2 ready/near-term items (BLG-GOV-120 trade data density tracker, BLG-OPS-61 endpoint baseline extension). IW-20260610-01: 44 submissions; 9 Promoted-Backlog; 35 Parked-cycle-1 with specific rationale.
+**Decision owner:** Product Owner
+
+---
+
+## DL-045
+
+**Date:** 2026-06-10
+**Cycle:** 2026-06-10__scheduled
+**Decision type:** Roadmap Now horizon — Add v5.5 Now section (STEP 8.1 Option a)
+**Initiatives affected:** v5.5 release planning enabled
+**Displacement:** N/A (scheduled rebalance; no active initiative killed)
+**Workforce impact:** None — v5.5 scope is governance/ops/UX documents and patches; no new FTE commitment
+**Rationale:** Now horizon empty post-v5.4; ~37 active backlog items; time-sensitive SI-05 effectiveness review cluster (BLG-OPS-59/GOV-112/113/114/115 gate 2026-07-04) requires sprint window post-July-4; LL-P3-01/02/03 carry-forwards ready as governance patches (BLG-GOV-116/117/118); BLG-FE-64 gate clears 2026-06-21; UX/FE debt queue (BLG-FE-61/62/65/66) and BLG-BE-16/BLG-GOV-120/BLG-OPS-61 available. STEP 8.1 Option (a) selected. Section: v5.5 — SI-05 Effectiveness Review, Governance Hardening & UX Debt Clearance.
+**Decision owner:** Product Owner
+
+---
+
 ## DL-041
 
 **Date:** 2026-06-09
