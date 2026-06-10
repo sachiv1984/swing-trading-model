@@ -289,6 +289,15 @@ Today you find stocks through external research and add them to the watchlist ma
 
 **Sprint timing note:** SI-05 effectiveness review gate items (BLG-OPS-59, BLG-GOV-112–115) require the 2026-07-04 review to complete. Sprint planning should account for a Sprint 2 window post-2026-07-04, or a single sprint starting after that date.
 
+<!-- roadmap-annotation-marker: RA:v5.5:2026-06-10__release-v5.5 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-10__release-v5.5
+- Plan published: 2026-06-10
+- Cycle folder: claude/cycles/2026-06-10__release-v5.5/
+- Backlog slice: claude/cycles/2026-06-10__release-v5.5/stage4_backlog_slice.md
+- Status at annotation: Published — 14 stories / 4 EPICs / 2 sprints
+
 -----
 
 ## 4. Priority 2 — Horizon: Next Phase (Arcs 1 & 2)

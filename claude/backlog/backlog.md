@@ -5406,6 +5406,30 @@ BLG-OPS-60 (completed v5.4) added v5.3 endpoints to api_performance_baseline.md.
 
 ---
 
+## Release Slice — v5.5 (cycle: 2026-06-10__release-v5.5)
+
+<!-- release-plan-marker: RP:v5.5:2026-06-10__release-v5.5 -->
+
+**Sprint 1 (firm, 10 stories):**
+- ST-01 [EPIC-01]: sprint_planning_prompt.md within-sprint date gate advisory (BLG-GOV-116, S)
+- ST-02 [EPIC-01]: execution_prompt.md pr_status read-after-open improvement (BLG-GOV-117, S)
+- ST-03 [EPIC-01]: qa_evidence commit discipline advisory in execution_prompt.md (BLG-GOV-118, S)
+- ST-04 [EPIC-02]: Trade count gate-monitoring view (BLG-BE-34, S)
+- ST-05 [EPIC-02]: Trade data density progress tracker (BLG-GOV-120, S)
+- ST-06 [EPIC-03]: v2.8–v4.6 endpoint performance baseline re-run (BLG-OPS-13, M)
+- ST-07 [EPIC-03]: v5.1–v5.4 endpoint baseline extension (BLG-OPS-61, S)
+- ST-08 [EPIC-03]: POST /digest/si05/send to api_performance_baseline.md (BLG-OPS-54, XS)
+- ST-09 [EPIC-03]: Formal regression test suite baseline document (BLG-QA-50, S)
+- ST-10 [EPIC-03]: User journey map: SI-05 Telegram digest to app action (BLG-FE-65, S)
+
+**Sprint 2 (firm, gate-conditional start ≥2026-06-21/2026-07-04):**
+- ST-11 [EPIC-04]: Red Flag Journal visual design review pre-brief (BLG-FE-64, S, gate 2026-06-21)
+- ST-12 [EPIC-04]: SI-05 p99 production latency baseline review (BLG-OPS-59, S, gate ≥2026-07-04)
+- ST-13 [EPIC-04]: SI-05 digest weekly cadence review (BLG-GOV-112, S, gate 2026-07-04)
+- ST-14 [EPIC-04]: SI-05 digest actionability metric definition (BLG-GOV-115, S, gate 2026-07-04)
+
+---
+
 
 ## Release Slice — v5.4 (cycle: 2026-06-09__release-v5.4)
 

@@ -1,0 +1,166 @@
+{
+  "cycle_id": "2026-06-10__release-v5.5",
+  "release": "v5.5",
+  "generated_utc": "2026-06-10T14:40:00Z",
+  "total_stories": 14,
+  "stories": [
+    {
+      "id": "ST-01",
+      "epic": "EPIC-01",
+      "title": "sprint_planning_prompt.md within-sprint date gate advisory",
+      "source": "BLG-GOV-116",
+      "sprint": 1,
+      "priority": "P2",
+      "effort": "S",
+      "labels": ["v5.5", "EPIC-01", "sprint-1", "governance"],
+      "cycle_label": "cycle:2026-06-10__release-v5.5"
+    },
+    {
+      "id": "ST-02",
+      "epic": "EPIC-01",
+      "title": "execution_prompt.md pr_status read-after-open improvement",
+      "source": "BLG-GOV-117",
+      "sprint": 1,
+      "priority": "P2",
+      "effort": "S",
+      "labels": ["v5.5", "EPIC-01", "sprint-1", "governance"],
+      "cycle_label": "cycle:2026-06-10__release-v5.5"
+    },
+    {
+      "id": "ST-03",
+      "epic": "EPIC-01",
+      "title": "qa_evidence commit discipline advisory in execution_prompt.md",
+      "source": "BLG-GOV-118",
+      "sprint": 1,
+      "priority": "P2",
+      "effort": "S",
+      "labels": ["v5.5", "EPIC-01", "sprint-1", "governance"],
+      "cycle_label": "cycle:2026-06-10__release-v5.5"
+    },
+    {
+      "id": "ST-04",
+      "epic": "EPIC-02",
+      "title": "Trade count gate-monitoring view (backend)",
+      "source": "BLG-BE-34",
+      "sprint": 1,
+      "priority": "P2",
+      "effort": "S",
+      "labels": ["v5.5", "EPIC-02", "sprint-1", "backend"],
+      "cycle_label": "cycle:2026-06-10__release-v5.5"
+    },
+    {
+      "id": "ST-05",
+      "epic": "EPIC-02",
+      "title": "Trade data density progress tracker (frontend display)",
+      "source": "BLG-GOV-120",
+      "sprint": 1,
+      "priority": "P2",
+      "effort": "S",
+      "labels": ["v5.5", "EPIC-02", "sprint-1", "frontend"],
+      "cycle_label": "cycle:2026-06-10__release-v5.5"
+    },
+    {
+      "id": "ST-06",
+      "epic": "EPIC-03",
+      "title": "v2.8–v4.6 endpoint performance baseline re-run (24 endpoints)",
+      "source": "BLG-OPS-13",
+      "sprint": 1,
+      "priority": "P3",
+      "effort": "M",
+      "labels": ["v5.5", "EPIC-03", "sprint-1", "ops"],
+      "cycle_label": "cycle:2026-06-10__release-v5.5"
+    },
+    {
+      "id": "ST-07",
+      "epic": "EPIC-03",
+      "title": "v5.1–v5.4 endpoint baseline extension",
+      "source": "BLG-OPS-61",
+      "sprint": 1,
+      "priority": "P3",
+      "effort": "S",
+      "labels": ["v5.5", "EPIC-03", "sprint-1", "ops"],
+      "cycle_label": "cycle:2026-06-10__release-v5.5"
+    },
+    {
+      "id": "ST-08",
+      "epic": "EPIC-03",
+      "title": "POST /digest/si05/send to api_performance_baseline.md",
+      "source": "BLG-OPS-54",
+      "sprint": 1,
+      "priority": "P3",
+      "effort": "XS",
+      "labels": ["v5.5", "EPIC-03", "sprint-1", "ops"],
+      "cycle_label": "cycle:2026-06-10__release-v5.5"
+    },
+    {
+      "id": "ST-09",
+      "epic": "EPIC-03",
+      "title": "Formal regression test suite baseline document",
+      "source": "BLG-QA-50",
+      "sprint": 1,
+      "priority": "P3",
+      "effort": "S",
+      "labels": ["v5.5", "EPIC-03", "sprint-1", "qa"],
+      "cycle_label": "cycle:2026-06-10__release-v5.5"
+    },
+    {
+      "id": "ST-10",
+      "epic": "EPIC-03",
+      "title": "User journey map: SI-05 Telegram digest to app action",
+      "source": "BLG-FE-65",
+      "sprint": 1,
+      "priority": "P3",
+      "effort": "S",
+      "labels": ["v5.5", "EPIC-03", "sprint-1", "ux"],
+      "cycle_label": "cycle:2026-06-10__release-v5.5"
+    },
+    {
+      "id": "ST-11",
+      "epic": "EPIC-04",
+      "title": "Red Flag Journal visual design review pre-brief (gate 2026-06-21)",
+      "source": "BLG-FE-64",
+      "sprint": 2,
+      "priority": "P2",
+      "effort": "S",
+      "gate": "2026-06-21",
+      "labels": ["v5.5", "EPIC-04", "sprint-2", "ux", "gate-conditional"],
+      "cycle_label": "cycle:2026-06-10__release-v5.5"
+    },
+    {
+      "id": "ST-12",
+      "epic": "EPIC-04",
+      "title": "SI-05 p99 production latency baseline review (gate 2026-07-04)",
+      "source": "BLG-OPS-59",
+      "sprint": 2,
+      "priority": "P2",
+      "effort": "S",
+      "gate": "2026-07-04",
+      "labels": ["v5.5", "EPIC-04", "sprint-2", "ops", "gate-conditional"],
+      "cycle_label": "cycle:2026-06-10__release-v5.5"
+    },
+    {
+      "id": "ST-13",
+      "epic": "EPIC-04",
+      "title": "SI-05 digest weekly cadence review (gate 2026-07-04)",
+      "source": "BLG-GOV-112",
+      "sprint": 2,
+      "priority": "P2",
+      "effort": "S",
+      "gate": "2026-07-04",
+      "labels": ["v5.5", "EPIC-04", "sprint-2", "governance", "gate-conditional"],
+      "cycle_label": "cycle:2026-06-10__release-v5.5"
+    },
+    {
+      "id": "ST-14",
+      "epic": "EPIC-04",
+      "title": "SI-05 digest actionability metric definition (gate 2026-07-04)",
+      "source": "BLG-GOV-115",
+      "sprint": 2,
+      "priority": "P2",
+      "effort": "S",
+      "gate": "2026-07-04",
+      "labels": ["v5.5", "EPIC-04", "sprint-2", "governance", "gate-conditional"],
+      "cycle_label": "cycle:2026-06-10__release-v5.5"
+    }
+  ]
+}
