@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.0
-**Date:** 2026-05-29
+**Version:** 2.2
+**Date:** 2026-06-10
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -584,10 +584,136 @@ The following endpoint was added in v4.2 (ST-07, EPIC-02). Baseline measured aga
 
 ---
 
+## 17. v5.3 New Endpoints — Baseline Registration (ST-01, v5.4 EPIC-01)
+
+**Date:** 2026-06-10 (BLG-OPS-60)
+**Story:** ST-01 (EPIC-01, v5.4)
+**Status:** Measured — 2026-06-10
+
+The following 5 endpoints were added in v5.3 and were absent from this document. Three GET endpoints were timed against staging; two write endpoints excluded from timing run per standard methodology.
+
+**Environment:** Staging — `https://trading-assistant-api-staging.onrender.com`
+**Method:** 7 samples per endpoint, sequential Python `requests`. Service was in cold-start state at run start; first 1–2 samples per DB endpoint reflect wake-up overhead; steady-state values noted separately.
+
+---
+
+#### GET /ai/journal-summary/history
+
+| Sample | ms | Note |
+|--------|----|------|
+| 1 | — | timeout (service sleeping) |
+| 2 | — | timeout (service waking) |
+| 3 | 12,637 | first hit post-wake (cold-start overhead) |
+| 4 | 1,609 | warm |
+| 5 | 1,263 | warm |
+| 6 | 1,277 | warm |
+| 7 | 1,615 | warm |
+
+| Metric | Steady-state (samples 4–7) |
+|--------|---------------------------|
+| p50 | **1,443ms** |
+| p95 | 1,615ms |
+| min | 1,263ms |
+| max | 1,615ms |
+
+**Assessment:** Steady-state p50 ~1,443ms on Render starter staging — consistent with GET /ai/claude-audit-log (§16: staging p50=2,541ms). DB-backed paginated query; production Supavisor equivalent expected ~230ms. Cold-start first hit 12,637ms is normal for Render starter tier service sleep. **Staging flag: ⚠️ p50 > 500ms — Render starter tier. No production flag expected.**
+
+---
+
+#### GET /news/AAPL
+
+| Sample | ms |
+|--------|----|
+| 1 | 561 |
+| 2 | 505 |
+| 3 | 810 |
+| 4 | 480 |
+| 5 | 899 |
+| 6 | 500 |
+| 7 | 497 |
+
+| Metric | Value |
+|--------|-------|
+| p50 | **505ms** |
+| p95 | 899ms |
+| min | 480ms |
+| max | 899ms |
+
+**Assessment:** All 7 samples HTTP 200. Latency dominated by Alpaca news API round-trip, not DB. Not subject to the 500ms p95 DB threshold. Regression threshold: p95 > 3,000ms would indicate Alpaca API degradation. **No flag.**
+
+---
+
+#### GET /watchlist
+
+| Sample | ms |
+|--------|----|
+| 1 | 2,354 |
+| 2 | 2,378 |
+| 3 | 2,365 |
+| 4 | 2,360 |
+| 5 | 2,399 |
+| 6 | 2,632 |
+| 7 | 2,361 |
+
+| Metric | Value |
+|--------|-------|
+| p50 | **2,365ms** |
+| p95 | 2,632ms |
+| min | 2,354ms |
+| max | 2,632ms |
+
+**Assessment:** Very consistent distribution (278ms spread). Pattern consistent with §16 staging baseline. Production Supavisor equivalent expected ~230–260ms. **Staging flag: ⚠️ p95 > 500ms — Render starter tier. No production flag expected.**
+
+---
+
+#### Write Endpoints (Not Timed)
+
+| Endpoint | Reason excluded |
+|----------|----------------|
+| POST /watchlist | Write op — excluded from standard timing run |
+| DELETE /watchlist/{entry_id} | Write op — excluded from standard timing run |
+
+Expected p50 for both: ≤ 300ms (Supavisor, single INSERT/DELETE).
+
+---
+
+### Summary
+
+| Endpoint | Staging p50 | Staging p95 | Expected prod p50 | Flag |
+|----------|------------|------------|-------------------|------|
+| GET /ai/journal-summary/history | 1,443ms (warm) | 1,615ms (warm) | ~230ms | ⚠️ Staging tier only |
+| GET /news/AAPL | 505ms | 899ms | ~500ms | — (external API) |
+| GET /watchlist | 2,365ms | 2,632ms | ~240ms | ⚠️ Staging tier only |
+
+### Infrastructure & Operations Owner Sign-Off (AC-04)
+
+```
+Infrastructure & Operations Owner
+Date: 2026-06-10
+
+AC-01: All 5 v5.3 endpoints registered with baseline rows — ✅ PASS
+AC-02: Staging measurements completed — 7 samples per eligible endpoint against
+       trading-assistant-api-staging.onrender.com. Cold-start pattern noted;
+       steady-state values recorded. Results consistent with Render starter tier
+       pattern (cf. §16). — ✅ PASS
+AC-03: Row format consistent with existing document structure — ✅ PASS
+AC-04: Sign-off complete. BLG-OPS-60 closed.
+
+All staging latency elevated vs production expectation (Render starter tier overhead).
+No investigation items required. Production baselines expected at Supavisor cluster
+range (~226–244ms) for DB endpoints.
+
+Signed: [x] Infrastructure & Operations Owner — 2026-06-10
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.2 | 2026-06-10 | Infrastructure & Operations Owner | ST-01 (v5.4 EPIC-01, BLG-OPS-60): §17 updated with actual staging measurements — GET /ai/journal-summary/history steady-state p50=1,443ms, GET /news/AAPL p50=505ms, GET /watchlist p50=2,365ms. Cold-start pattern noted. All results consistent with Render starter tier. BLG-OPS-60 closed. |
+| 2.1 | 2026-06-10 | Sprint Execution Engine | ST-01 (v5.4 EPIC-01, BLG-OPS-60): §17 added — 5 v5.3 endpoints registered with estimated performance characteristics; AC-02 staging measurements outstanding. |
 | 2.0 | 2026-05-29 | Infrastructure & Operations Owner | ST-14 correction: §16 re-measured against correct backend API URL (`trading-assistant-api-staging.onrender.com`). p50=2,541ms, p95=2,858ms. v1.9 measurements were invalid (taken against frontend SPA URL). Flag raised: staging p95 > 500ms threshold; attributed to Render starter tier. BLG-OPS-42 closed with caveat. |
 | 1.9 | 2026-05-29 | Infrastructure & Operations Owner | ST-14 (v4.3 EPIC-03, BLG-OPS-42): §16 updated with actual staging measurements — p50=55ms, p95=66ms (7 samples). NOTE: These measurements were invalid — taken against the frontend SPA, not the backend API. Superseded by v2.0. |
 | 1.8 | 2026-05-29 | Sprint Execution Engine | ST-14 (v4.3 EPIC-03, BLG-OPS-42): §16 added — GET /ai/claude-audit-log registered with estimated p50 230–270ms. Actual staging timing run pending Infrastructure & Operations Owner action. |
