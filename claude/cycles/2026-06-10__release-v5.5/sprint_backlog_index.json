@@ -1,0 +1,157 @@
+{
+  "cycle_id": "2026-06-10__release-v5.5",
+  "release": "v5.5",
+  "sprint_backlog_path": "claude/cycles/2026-06-10__release-v5.5/sprint_backlog.md",
+  "backlog_slice_path": "claude/cycles/2026-06-10__release-v5.5/stage4_backlog_slice.md",
+  "generated_utc": "2026-06-10T15:30:00Z",
+  "epics": [
+    {
+      "epic_id": "EPIC-01",
+      "theme": "Governance Prompt Hardening",
+      "sprint": 1,
+      "branch": "exec/2026-06-10__release-v5.5/EPIC-01",
+      "execution_state_owner": true,
+      "stories": [
+        {
+          "story_id": "ST-01",
+          "title": "sprint_planning_prompt.md within-sprint date gate advisory",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-01"],
+          "status": "planned"
+        },
+        {
+          "story_id": "ST-02",
+          "title": "execution_prompt.md pr_status read-after-open improvement",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-02"],
+          "status": "planned"
+        },
+        {
+          "story_id": "ST-03",
+          "title": "qa_evidence commit discipline advisory in execution_prompt.md",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-03"],
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "epic_id": "EPIC-02",
+      "theme": "Trade Data Density Visibility",
+      "sprint": 1,
+      "branch": "exec/2026-06-10__release-v5.5/EPIC-02",
+      "execution_state_owner": false,
+      "stories": [
+        {
+          "story_id": "ST-04",
+          "title": "Trade count gate-monitoring view (backend)",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-04"],
+          "status": "planned"
+        },
+        {
+          "story_id": "ST-05",
+          "title": "Trade data density progress tracker (frontend display)",
+          "delegation_class": "autonomous",
+          "depends_on": ["ST-04"],
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-05"],
+          "status": "planned",
+          "staging_only_acs": ["AC-3"]
+        }
+      ]
+    },
+    {
+      "epic_id": "EPIC-03",
+      "theme": "API Baseline & Documentation Clearance",
+      "sprint": 1,
+      "branch": "exec/2026-06-10__release-v5.5/EPIC-03",
+      "execution_state_owner": false,
+      "stories": [
+        {
+          "story_id": "ST-06",
+          "title": "v2.8–v4.6 endpoint performance baseline re-run (24 endpoints)",
+          "delegation_class": "delegated_backend",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-06"],
+          "status": "planned",
+          "staging_only_acs": ["AC-1", "AC-2"]
+        },
+        {
+          "story_id": "ST-07",
+          "title": "v5.1–v5.4 endpoint baseline extension",
+          "delegation_class": "delegated_backend",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-07"],
+          "status": "planned",
+          "staging_only_acs": ["AC-1", "AC-2"]
+        },
+        {
+          "story_id": "ST-08",
+          "title": "POST /digest/si05/send to api_performance_baseline.md",
+          "delegation_class": "delegated_backend",
+          "depends_on": ["ST-07"],
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-08"],
+          "status": "planned",
+          "staging_only_acs": ["AC-1"],
+          "note": "Trivially complete if ST-07 includes POST /digest/si05/send"
+        },
+        {
+          "story_id": "ST-09",
+          "title": "Formal regression test suite baseline document",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-09"],
+          "status": "planned"
+        },
+        {
+          "story_id": "ST-10",
+          "title": "User journey map: SI-05 Telegram digest to app action",
+          "delegation_class": "delegated_qa",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-10"],
+          "status": "planned",
+          "staging_only_acs": ["AC-1"]
+        }
+      ]
+    },
+    {
+      "epic_id": "EPIC-04",
+      "theme": "SI-05 Effectiveness Review & UX Pre-work",
+      "sprint": 2,
+      "branch": "exec/2026-06-10__release-v5.5/EPIC-04",
+      "execution_state_owner": false,
+      "sprint2_gate_note": "Do not open Sprint 2 until gate clearance confirmed: ST-11 gate 2026-06-21; ST-12/13/14 gate 2026-07-04",
+      "stories": [
+        {
+          "story_id": "ST-11",
+          "title": "Red Flag Journal visual design review pre-brief",
+          "delegation_class": "delegated_decision",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-11"],
+          "status": "planned",
+          "gate_condition": "SI-03 Red Flag Journal live ≥ 30 days — clears 2026-06-21"
+        },
+        {
+          "story_id": "ST-12",
+          "title": "SI-05 p99 production latency baseline review",
+          "delegation_class": "delegated_backend",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-12"],
+          "status": "planned",
+          "gate_condition": "≥2026-07-04 (4 weeks of production operation)",
+          "staging_only_acs": ["AC-1", "AC-2"]
+        },
+        {
+          "story_id": "ST-13",
+          "title": "SI-05 digest weekly cadence review",
+          "delegation_class": "delegated_decision",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-13"],
+          "status": "planned",
+          "gate_condition": "2026-07-04 SI-05 effectiveness review complete"
+        },
+        {
+          "story_id": "ST-14",
+          "title": "SI-05 digest actionability metric definition",
+          "delegation_class": "delegated_decision",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-14"],
+          "status": "planned",
+          "gate_condition": "2026-07-04 effectiveness review (BLG-GOV-113 protocol) complete"
+        }
+      ]
+    }
+  ]
+}
