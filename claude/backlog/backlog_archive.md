@@ -5062,3 +5062,15 @@ Archived by: Backlog Management Engine STEP 12, post-ship closure 2026-05-30__re
 | BLG-GOV-114 ✅ | si05_digest_log schema validation for effectiveness review | Shipped v5.3 ST-24, EPIC-03 — si05_digest_log_schema_validation.md produced; schema PASS; Director of Quality + Data Model & Domain Schema Owner sign-off |
 | BLG-FE-66 ✅ | Red Flag Journal post-launch UX review | Shipped v5.3 ST-21, EPIC-04 — rfj_ux_review_v53.md produced; top-3 friction points documented; follow-up items filed; Base44 Frontend Prompt Owner + Head of UX & Design sign-off |
 | BLG-FE-67 ✅ | BLG-FE-64 visual design review scope definition | Shipped v5.3 ST-22, EPIC-04 — blg_fe_64_scope_definition.md produced; distinct from BLG-FE-66; Frontend Specs & UX Documentation Owner + Head of UX & Design sign-off |
+
+---
+
+## Closed Items — v5.4 Post-Ship (2026-06-10)
+
+*Archived: 3 items shipped in v5.4 (cycle 2026-06-09__release-v5.4). Groom date: 2026-06-10.*
+
+| ID | Title | Ship note |
+|----|-------|-----------|
+| BLG-OPS-60 ✅ | Add v5.3 new endpoints to api_performance_baseline.md re-run | Shipped v5.4 ST-01, EPIC-01 — 5 endpoint rows added (GET /ai/journal-summary/history, GET /news/{ticker}, GET /watchlist, POST /watchlist, DELETE /watchlist/{entry_id}) with live Render measurements; I&O Owner sign-off |
+| BLG-FE-56 ✅ | Pre-entry panel: separate warn/fail override acknowledgement flow | Shipped v5.4 ST-02, EPIC-02 — pre_entry_override_ux_spec.md produced; warn/fail override flows separated; agent-mediated Head of UX & Design sign-off |
+| BLG-GOV-92 ✅ | SI-05 Phase 2 activation criteria definition | Shipped v5.4 ST-04, EPIC-03 — si05_phase2_activation_criteria.md produced; hard gate + quality gate + Phase 1 effectiveness gate defined; PO-approved (agent-mediated) |

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-09 (rebalance 2026-06-09__scheduled — DL-041; 8 new items BLG-FEAT-45, BLG-FE-68–71, BLG-QA-55, BLG-SPEC-55, BLG-GOV-115 from Promoted-Backlog ideas; 4 ideas Rejected; 17 ideas incremented to Parked-cycle-2)
+**Last Updated:** 2026-06-10 (post-ship closure 2026-06-09__release-v5.4 — BLG-OPS-60 ✅ COMPLETE; BLG-FE-56 ✅ COMPLETE; BLG-GOV-92 already marked COMPLETE; BLG-FE-64 sprint history updated)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — DL-041/042; IW skipped ≥20 open ideas; 8 new items; meta-review DUE conducted; v5.4 Now section added)
 
 > ⚠️ Standing Notice
@@ -780,6 +780,8 @@ No formal mobile responsiveness testing has been performed. The most frequently 
 **Source:** docs/product/ux/pre_entry_panel_ux_assessment.md — candidate P1 — cycle 2026-05-31__release-v4.7 (ST-09)
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
+
+✅ COMPLETE — 2026-06-10 — cycle 2026-06-09__release-v5.4 (ST-02, EPIC-02; pre_entry_override_ux_spec.md produced; agent-mediated Head of UX & Design sign-off)
 
 **Problem**
 PreEntryValidationPanel treats `warn` and `fail` checks with the same override acknowledgement checkbox. `fail` represents a strategy hard stop; `warn` is advisory. Identical acknowledgement paths may encourage reflexive override of hard stops. As Arc 5 compliance rigour increases, distinct override flows are warranted.
@@ -4049,6 +4051,8 @@ No secret scanning is configured in the CI pipeline. A developer could accidenta
 **Source:** Post-ship closure 2026-06-08__release-v5.3 — STEP 6 endpoint coverage drift check
 **Effort:** S (~0.5 day)
 **Provisional-Target:** v5.4
+
+✅ COMPLETE — 2026-06-10 — cycle 2026-06-09__release-v5.4 (ST-01, EPIC-01; 5 endpoint rows added to api_performance_baseline.md §17 with live Render measurements; I&O Owner sign-off)
 
 **Problem**
 v5.3 shipped 5 new endpoints that appear in openapi.yaml but are absent from api_performance_baseline.md: GET /ai/journal-summary/history, GET /news/{ticker}, GET /watchlist, POST /watchlist, DELETE /watchlist/{entry_id}. (GET /analytics/compliance-metrics was already baselined.) Without baseline entries, performance regressions on these endpoints will go undetected.

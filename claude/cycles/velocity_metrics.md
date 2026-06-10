@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-06-09 (post-ship closure 2026-06-08__release-v5.3)
+**Last Updated:** 2026-06-10 (post-ship closure 2026-06-09__release-v5.4)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -61,8 +61,9 @@
 | v5.1  | 6       | 6         | 1.00     | 1 P3 deviation (DEV-v51-EPIC01-01 — pass_rate computation method; BLG-SPEC-47 filed); all 6 stories autonomous; zero delegations; SI-05 Phase 1 Telegram digest delivered; BLG-FE-61 3-cycle recurrence closed; staged verification protocol filed (BLG-GOV-89) |
 | v5.2  | 16      | 16        | 1.00     | Zero spec deviations — cleanest large-sprint on record; both delegated items (ST-05 BLG-BE-32, ST-06 BLG-BE-33) unblocked and completed with staging evidence; 4 EPICs: security reviews + QA governance docs + SI-05 ops hardening + governance patches; OA-01/OA-02 resolved; DEV-v51-EPIC01-01 closed |
 | v5.3  | 24      | 24        | 1.00     | Largest sprint on record (24 stories, 4 EPICs); zero spec deviations; 100% autonomous class; all 6 API contract gaps resolved; POST /digest/si05/send authenticated; CI secret scanning live; 3 AI policy docs; SI-05 effectiveness protocol + digest log schema validation; LL-v5.2-P4-01/02 carry-forwards resolved; 0 delegations; 0 returns to backlog |
+| v5.4  | 4       | 3         | 0.75     | 3/4 firm Sprint 1 stories done (ST-01 BLG-OPS-60, ST-02 BLG-FE-56, ST-04 BLG-GOV-92); ST-03 BLG-FE-64 returned to backlog — date gate not met (SI-03 live ≥30 days; 2026-06-21); Sprint 2 conditional stories (ST-05/06/07) deferred at planning per gate ≥2026-07-04; zero spec deviations; 3 EPICs |
 
-**Rolling 6-cycle average (v4.8–v5.3):** 1.00
+**Rolling 6-cycle average (v4.9–v5.4):** 0.96
 
 ---
 

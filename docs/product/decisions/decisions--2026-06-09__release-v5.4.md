@@ -1,11 +1,14 @@
 **Owner:** Head of Specs Team
 **Class:** Planning Record (Class 3)
-**Status:** Published
+**Status:** Superseded
 **Version:** 1.0
 **Release:** v5.4
 **Cycle:** 2026-06-09__release-v5.4
-**Last Updated:** 2026-06-09
-**Supersession note:** (to be completed at Post-Ship Closure)
+**Last Updated:** 2026-06-10
+**Supersession note:** Superseded by: v5.4 ship — 2026-06-10
+Changelog: docs/product/changelog.md#v5.4
+Verification report: claude/cycles/2026-06-09__release-v5.4/verification_report.md
+Cycle: 2026-06-09__release-v5.4
 
 ---
 

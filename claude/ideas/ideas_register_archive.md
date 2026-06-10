@@ -487,3 +487,12 @@ Permanent record of terminal ideas rows retired from `claude/ideas/ideas_registe
 | IDEA-frontend-ux-20260608-01 | BLG-FE-64 design review scope definition | Frontend Specs & UX Documentation Owner | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-FE-67) |
 | IDEA-head-of-ux-20260608-01 | v5.3 design gate pre-assessment | Head of UX & Design | IW-20260608-01 | 2026-06-08 | Promoted-Added | — | — | Advance | Promoted-Added (BLG-GOV-111) |
 
+
+## Archived 2026-06-10
+
+| Idea ID | Title | Submitter | Window | Submitted At | Status | Park Count | Park Rationale | Step 4 | Step 5 |
+|---------|-------|-----------|--------|--------------|--------|------------|----------------|--------|--------|
+| IDEA-head-of-specs-20260607-02 | Governance prompt §14 sync check automation advisory | Head of Specs Team | IW-20260607-01 | 2026-06-07 | Rejected | 2 | /governance-drift skill already provides manual checking; automated value not established; no friction evidence from manual approach across 3 cycles; cycle-3 terminal | Reject (not strong) | — |
+| IDEA-financial-reporting-20260607-01 | Monthly P&L compliance section post-SI-05 review | Financial Reporting & Records Owner | IW-20260607-01 | 2026-06-07 | Rejected | 2 | SI-05 delivers via Telegram; monthly P&L already has compliance section (shipped v4.7); no evidence of misalignment after 3 months production; cycle-3 terminal | Reject (not strong) | — |
+| IDEA-director-of-hr-20260607-02 | Sprint capacity calibration review post-37 cycles | Director of HR | IW-20260607-01 | 2026-06-07 | Rejected | 2 | 6-cycle rolling velocity = 1.00 (v4.8–v5.3); trigger condition not met (need velocity < 0.85 for 2+ cycles); cycle-3 terminal | Reject (not strong) | — |
+| IDEA-head-of-ux-20260607-01 | Application design cohesion review post-Arc 5 Phase 1 | Head of UX & Design | IW-20260607-01 | 2026-06-07 | Rejected | 2 | BLG-FE-42 was comprehensive; no new UI surface beyond allocation_insufficient badge since review; re-submit when SI-02 frontend ships; cycle-3 terminal | Reject (not strong) | — |

@@ -3,9 +3,36 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-09
+**Last Updated:** 2026-06-10
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v5.4 — Ops Monitoring, UX Debt Clearance & Governance Patches — 2026-06-10
+Cycle: 2026-06-09__release-v5.4
+Verified: Verified
+Verification report: claude/cycles/2026-06-09__release-v5.4/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Add v5.3 new endpoints to api_performance_baseline.md — 5 endpoint rows with live Render measurements (GET /ai/journal-summary/history, GET /news/AAPL, GET /watchlist) | docs/ops/api_performance_baseline.md#17. v5.3 New Endpoints |
+| EPIC-02 | Pre-entry panel: separate warn/fail override acknowledgement flow — UX spec document produced | docs/product/ux/pre_entry_override_ux_spec.md |
+| EPIC-03 | SI-05 Phase 2 activation criteria definition — governance doc produced, PO-approved | docs/governance/si05_phase2_activation_criteria.md |
+
+### Deviations accepted
+None.
+
+### Tech backlog items shipped
+- [ST-01] Add v5.3 new endpoints to api_performance_baseline.md — BLG-OPS-60 closed
+- [ST-04] SI-05 Phase 2 activation criteria definition — BLG-GOV-92 closed
+
+### Items returned to backlog
+- [ST-03] RFJ visual design review pre-brief — returned; date gate (SI-03 live ≥30 days; 2026-06-21) not met; BLG-FE-64 remains open
+
+Sign-off: Product Owner — 2026-06-10
+QA sign-off: Director of Quality — 2026-06-10
 
 ---
 
