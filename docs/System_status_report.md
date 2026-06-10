@@ -1615,3 +1615,27 @@ The system is ready for:
 - QA evidence logs: qa_evidence_EPIC-02.md (autonomous class, 2026-06-09), qa_evidence_EPIC-01.md (autonomous class, 2026-06-09), qa_evidence_EPIC-03.md (autonomous class, 2026-06-09), qa_evidence_EPIC-04.md (autonomous class, 2026-06-09)
 - Deviations filed: None
 - Test scenarios referenced: tests/test_tax_year_pnl_boundary.py, tests/e2e/si05-digest-delivery.spec.js, tests/test_api_contracts.py (EPIC-01/02)
+
+## Sprint: 2026-06-09__release-v5.4
+**Date:** 2026-06-10
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | v5.3 endpoint performance baselines — 5 new endpoints added to api_performance_baseline.md with live measurements | docs/ops/api_performance_baseline.md#17. v5.3 New Endpoints | None |
+| EPIC-02 | Pre-entry panel UX spec — warn/fail override acknowledgement flows separated; fail requires deliberate modal confirmation | docs/product/ux/pre_entry_override_ux_spec.md | None |
+| EPIC-03 | SI-05 Phase 2 activation criteria — formal document defining hard gate, quality gate, and Phase 1 effectiveness gate for Phase 2 go/no-go | docs/governance/si05_phase2_activation_criteria.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-03 — RFJ visual design review pre-brief | Date gate not met (SI-03 live ≥30 days; 2026-06-21); PO-authorised sprint close | BLG-FE-64 (backlog.md) |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (autonomous class, 2026-06-10), qa_evidence_EPIC-02.md (autonomous class, 2026-06-10), qa_evidence_EPIC-03.md (autonomous class, 2026-06-10)
+- Deviations filed: None
+- Test scenarios referenced: None (all stories produced specification/governance documents; no executable test scenarios)

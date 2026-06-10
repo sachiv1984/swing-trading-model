@@ -4,8 +4,8 @@
   "backlog_slice_source": "claude/cycles/2026-06-09__release-v5.4/stage4_backlog_slice.md",
   "invoked_utc": "2026-06-10T00:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-06-10T09:00:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-06-10T10:15:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -39,11 +39,11 @@
       }
     },
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "merged",
       "branch": "exec/2026-06-09__release-v5.4/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 736,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-09__release-v5.4/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
       "stories": {
@@ -76,21 +76,21 @@
         "ST-03": {
           "title": "RFJ visual design review pre-brief",
           "classification": "autonomous",
-          "status": "blocked_decision",
+          "status": "returned_to_backlog",
           "assigned_to": "engine",
           "github_issue": 729,
           "branch": "exec/2026-06-09__release-v5.4/EPIC-02",
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": "2026-06-10T00:00:00Z",
-          "unblock_criteria": "Date gate: must not execute before 2026-06-21 (SI-03 live ≥30 days). Re-invoke `run sprint` on or after 2026-06-21.",
+          "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": ["docs/governance/blg_fe_64_scope_definition.md"],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Within-sprint sequencing constraint: must not execute before 2026-06-21. Today is 2026-06-10 — execution deferred. Sprint will resume after gate date."
+          "notes": "Returned to backlog 2026-06-10. Date gate (SI-03 live ≥30 days, 2026-06-21) not yet met; PO-authorised sprint close. BLG-FE-64 remains open in backlog for next eligible cycle."
         }
       }
     },
@@ -133,18 +133,19 @@
     }
   },
 
-  "blocked_items": ["ST-03"],
+  "blocked_items": [],
   "delegated_items": [],
   "completed_items": ["ST-01", "ST-02", "ST-04"],
+  "returned_to_backlog_items": ["ST-03"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-03"],
-    "epics_pending": ["EPIC-02"],
-    "all_merged": false,
-    "notes": "EPIC-01 merged via PR #734 at 2026-06-10T08:40:00Z; EPIC-03 merged via PR #735 at 2026-06-10T08:56:25Z. EPIC-02 pending: ST-03 blocked_decision — date gate ≥2026-06-21."
+    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03"],
+    "epics_pending": [],
+    "all_merged": true,
+    "notes": "EPIC-01 merged via PR #734 at 2026-06-10T08:40:00Z; EPIC-03 merged via PR #735 at 2026-06-10T08:56:25Z; EPIC-02 merged via PR #736 at 2026-06-10T10:02:41Z."
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-06-10T10:15:00Z"
 }
