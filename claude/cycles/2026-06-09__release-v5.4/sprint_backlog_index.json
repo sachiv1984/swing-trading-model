@@ -1,0 +1,119 @@
+{
+  "cycle_id": "2026-06-09__release-v5.4",
+  "sprint_backlog_path": "claude/cycles/2026-06-09__release-v5.4/sprint_backlog.md",
+  "backlog_slice_path": "claude/cycles/2026-06-09__release-v5.4/stage4_backlog_slice.md",
+  "generated_utc": "2026-06-10T00:00:00Z",
+  "merge_order": ["EPIC-01", "EPIC-02", "EPIC-03"],
+  "execution_state_owner": "EPIC-01",
+  "epics": [
+    {
+      "epic_id": "EPIC-01",
+      "title": "Ops Monitoring & Performance Baseline",
+      "branch": "exec/2026-06-09__release-v5.4/EPIC-01",
+      "owner": "Infrastructure & Operations Owner; Head of Engineering",
+      "sprint": 1,
+      "stories": [
+        {
+          "story_id": "ST-01",
+          "title": "Add v5.3 new endpoints to api_performance_baseline.md",
+          "backlog_ref": "BLG-OPS-60",
+          "sprint": 1,
+          "status": "included",
+          "delegation_class": "autonomous",
+          "effort": "S",
+          "staging_only_acs": ["AC-02"],
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-01"]
+        },
+        {
+          "story_id": "ST-05",
+          "title": "SI-05 p99 production latency baseline review",
+          "backlog_ref": "BLG-OPS-59",
+          "sprint": 2,
+          "status": "deferred_at_planning",
+          "gate_condition": "SI-05 in production ≥4 weeks (≥2026-07-04)",
+          "delegation_class": "autonomous",
+          "effort": "S",
+          "staging_only_acs": ["AC-01", "AC-04"],
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-05"]
+        }
+      ]
+    },
+    {
+      "epic_id": "EPIC-02",
+      "title": "UX Debt Clearance",
+      "branch": "exec/2026-06-09__release-v5.4/EPIC-02",
+      "owner": "Head of UX & Design; Frontend Specs & UX Documentation Owner",
+      "sprint": 1,
+      "stories": [
+        {
+          "story_id": "ST-02",
+          "title": "Pre-entry panel: separate warn/fail override acknowledgement flow",
+          "backlog_ref": "BLG-FE-56",
+          "sprint": 1,
+          "status": "included",
+          "delegation_class": "autonomous",
+          "effort": "S",
+          "staging_only_acs": [],
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-02"]
+        },
+        {
+          "story_id": "ST-03",
+          "title": "RFJ visual design review pre-brief",
+          "backlog_ref": "BLG-FE-64",
+          "sprint": 1,
+          "status": "included",
+          "delegation_class": "autonomous",
+          "effort": "S",
+          "gate": "SI-03 live ≥30 days (≥2026-06-21) — must not execute before this date",
+          "sequencing_note": "Execute ST-02 first; ST-03 begins no earlier than 2026-06-21",
+          "staging_only_acs": [],
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-03"]
+        }
+      ]
+    },
+    {
+      "epic_id": "EPIC-03",
+      "title": "SI-05 Governance Follow-Through",
+      "branch": "exec/2026-06-09__release-v5.4/EPIC-03",
+      "owner": "Product Owner; PMO Lead",
+      "sprint": 1,
+      "stories": [
+        {
+          "story_id": "ST-04",
+          "title": "SI-05 Phase 2 activation criteria definition",
+          "backlog_ref": "BLG-GOV-92",
+          "sprint": 1,
+          "status": "included",
+          "delegation_class": "autonomous",
+          "effort": "S",
+          "staging_only_acs": [],
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-04"]
+        },
+        {
+          "story_id": "ST-06",
+          "title": "SI-05 digest actionability metric definition",
+          "backlog_ref": "BLG-GOV-115",
+          "sprint": 2,
+          "status": "deferred_at_planning",
+          "gate_condition": "2026-07-04 effectiveness review (BLG-GOV-113) complete",
+          "delegation_class": "autonomous",
+          "effort": "S",
+          "staging_only_acs": [],
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-06"]
+        },
+        {
+          "story_id": "ST-07",
+          "title": "SI-05 digest weekly cadence review",
+          "backlog_ref": "BLG-GOV-112",
+          "sprint": 2,
+          "status": "deferred_at_planning",
+          "gate_condition": "2026-07-04 effectiveness review complete; ST-06 complete",
+          "delegation_class": "autonomous",
+          "effort": "S",
+          "staging_only_acs": [],
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-07"]
+        }
+      ]
+    }
+  ]
+}
