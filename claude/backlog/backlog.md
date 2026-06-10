@@ -4456,6 +4456,7 @@ SI-04 (strategy version comparison) will access historical strategy_rules.md con
 ### BLG-GOV-92 — SI-05 Phase 2 activation criteria definition
 **Priority:** P2 (Medium)
 **Type:** Governance / Feature Scope Definition
+**Status:** COMPLETE — v5.4 ST-04; criteria doc filed at docs/governance/si05_phase2_activation_criteria.md 2026-06-10
 **Owner:** Product Owner; PMO Lead
 **Source:** IDEA-product-owner-20260607-01 — Promoted-Backlog rebalance 2026-06-07__scheduled (DL-039)
 **Effort:** S (~0.5 day)
