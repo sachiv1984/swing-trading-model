@@ -5,14 +5,14 @@
   "invoked_utc": "2026-06-10T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-10T00:00:00Z",
+  "last_updated_utc": "2026-06-10T09:00:00Z",
 
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-09__release-v5.4/EPIC-01",
       "pr_number": 734,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-09__release-v5.4/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -95,10 +95,10 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-09__release-v5.4/EPIC-03",
       "pr_number": 735,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-09__release-v5.4/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
@@ -139,9 +139,10 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03"],
-    "all_merged": false
+    "epics_merged": ["EPIC-01", "EPIC-03"],
+    "epics_pending": ["EPIC-02"],
+    "all_merged": false,
+    "notes": "EPIC-01 merged via PR #734 at 2026-06-10T08:40:00Z; EPIC-03 merged via PR #735 at 2026-06-10T08:56:25Z. EPIC-02 pending: ST-03 blocked_decision — date gate ≥2026-06-21."
   },
 
   "sealed": false,
