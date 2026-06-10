@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-06-09__release-v5.4",
   "cycle_name": "Release Planning — v5.4 Ops Monitoring, UX Debt Clearance & Governance Patches",
-  "status": "Sprint_Planning_Complete",
-  "engine": "sprint_planning",
+  "status": "Executing",
+  "engine": "execution",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-06-09__release-v5.4/stage4_backlog_slice.md",
   "sprint_sealed": true,
