@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-06-10__release-v5.5",
   "cycle_name": "Release Planning — v5.5 SI-05 Effectiveness Review, Governance Hardening & UX Debt Clearance",
-  "status": "Sprint_Planning_Complete",
-  "engine": "sprint_planning",
+  "status": "Executing",
+  "engine": "sprint_execution",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-06-10__release-v5.5/stage4_backlog_slice.md",
   "sprint_sealed": true,
