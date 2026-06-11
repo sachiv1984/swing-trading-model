@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.8
-**Last Updated:** 2026-05-29
+**Version:** 3.9
+**Last Updated:** 2026-06-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -464,6 +464,14 @@ Write per `claude/system/shared_standards.md §16.11` (sprint_backlog.md schema)
 Key constraints: ST item `Acceptance Criteria` must reference `stage4_backlog_slice.md#ST-xx` — do not duplicate the full AC table (Execution Engine reads AC directly via `spec_references`). `[AWAITING SIGN-OFF]` placeholders in the Product Owner Sign-Off section must be replaced with explicit PO confirmation and date before sealing (STEP 6.2).
 
 **Merge order section (Required when > 1 EPIC in scope):** When the sprint has more than one EPIC, the sprint backlog must include a merge order section immediately after the Sprint Scope header. This section must state: (a) the EPIC merge sequence (e.g., EPIC-04→03→01→02), (b) the `execution_state.json` owner EPIC (designated in STEP 5.2), and (c) any shared files across EPICs with the ownership advisory from STEP 5.2. The Execution Engine relies on this to prevent execution-state collisions and to sequence branch rebases at merge time.
+
+**Within-sprint date gate advisory (BLG-GOV-116):** For any ST item whose execution is gated on a specific date that falls within the sprint period (rather than a gate that must be confirmed before the sprint starts), add the following field to that story's entry in `sprint_backlog.md` at planning time:
+
+```
+**Status at sprint open: conditional — gate <YYYY-MM-DD>**
+```
+
+This signals to the Execution Engine that the story must not begin execution until the gate date has passed. Leave it as `**Status at sprint open: ready**` only when there is no within-sprint date gate condition. An unmarked within-sprint date gate is a silent execution blocker — the story would appear `ready` at execution time when it is not.
 
 ### 6.1A Sprint Backlog Index (Required — produce alongside sprint_backlog.md)
 
