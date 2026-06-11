@@ -62,6 +62,7 @@ _DB_STUB_FUNCTIONS = [
     "ensure_si02_trade_plans_columns", "ensure_si02_trade_history_indexes", "get_behavioural_drift_data",
     "ensure_red_flag_events_severity_column",
     "ensure_positions_user_fill_price_column", "ensure_trade_history_fill_price_column",
+    "get_gate_metrics",
 ]
 
 _database_stub = types.ModuleType("database")

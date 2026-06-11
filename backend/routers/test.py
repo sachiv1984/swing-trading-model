@@ -180,6 +180,9 @@ async def test_all_endpoints(request: Request):
 
         # SI-05 Phase 1 strategy integrity digest (v5.1 / ST-01)
         {"name": "POST /digest/si05/send", "method": "POST", "url": f"{base_url}/digest/si05/send", "body": {}, "critical": False},
+
+        # Trade count gate metrics (v5.5 / ST-04)
+        {"name": "GET /portfolio/gate-metrics", "method": "GET", "url": f"{base_url}/portfolio/gate-metrics", "critical": False},
     ]
     
     results = []

@@ -260,6 +260,56 @@ def format_si05_section(data: dict) -> str:
     )
 
 
+def _fetch_trade_count_for_digest() -> Optional[int]:
+    """Return total closed trades count for the active portfolio, or None on error.
+
+    Uses a direct psycopg2 connection consistent with the service's existing pattern.
+    ST-05, EPIC-02, v5.5.
+    """
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        return None
+    try:
+        conn = psycopg2.connect(_clean_db_url(database_url), cursor_factory=RealDictCursor)
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT id FROM portfolios ORDER BY created_at DESC LIMIT 1"
+                )
+                row = cur.fetchone()
+                if not row:
+                    return None
+                portfolio_id = row["id"]
+                cur.execute(
+                    "SELECT COUNT(*)::int AS cnt FROM trade_history WHERE portfolio_id = %s",
+                    (portfolio_id,),
+                )
+                result = cur.fetchone()
+                return result["cnt"] if result else 0
+        finally:
+            conn.close()
+    except Exception as exc:
+        logger.warning("Could not fetch trade count for digest (non-fatal): %s", exc)
+        return None
+
+
+def _format_data_density_line(closed_trades_count: Optional[int]) -> str:
+    """Format the data density progress line for the SI-05 digest.
+
+    Returns a MarkdownV2-escaped line like:
+      📊 Closed trades: 12 / Gate 1: 20 / Gate 2: 50 / Gate 3: 100
+    Returns empty string if count is unavailable.
+    ST-05, EPIC-02, v5.5.
+    """
+    if closed_trades_count is None:
+        return ""
+    count_str = _escape_mdv2(str(closed_trades_count))
+    return (
+        f"📊 Closed trades: {count_str} "
+        "/ Gate 1: 20 / Gate 2: 50 / Gate 3: 100\n"
+    )
+
+
 def _write_delivery_log(
     status: str,
     event_count: Optional[int],
@@ -319,6 +369,12 @@ def send_si05_digest(*, _sleep_fn=None) -> dict:
         return {"sent": False, "message_length": 0, "error": "arc5-compliance data unavailable"}
 
     message = format_si05_section(data)
+
+    # Append data density line (ST-05, EPIC-02, v5.5) — non-fatal if unavailable
+    trade_count = _fetch_trade_count_for_digest()
+    density_line = _format_data_density_line(trade_count)
+    if density_line:
+        message = message + "\n" + density_line
     message_length = len(message)
 
     # Truncate to summary line if over budget (BLG-GOV-86 §7)

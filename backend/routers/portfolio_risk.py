@@ -4,12 +4,13 @@ Portfolio Risk Router
 Implements:
   GET /portfolio/drawdown-status  — drawdown threshold check (IT-04)
   GET /portfolio/concentration-status — position/sector concentration limits (IT-05)
+  GET /portfolio/gate-metrics  — trade count gate progress (ST-04, v5.5)
 
 Contracts: docs/specs/api_contracts/portfolio_endpoints.md
 """
 
 from fastapi import APIRouter
-from database import get_db, get_portfolio, get_positions, get_portfolio_snapshots
+from database import get_db, get_portfolio, get_positions, get_portfolio_snapshots, get_gate_metrics
 from utils.formatting import decimal_to_float
 
 router = APIRouter(prefix="/portfolio", tags=["Portfolio"])
@@ -267,3 +268,34 @@ def get_concentration_status():
         import traceback
         traceback.print_exc()
         return {"status": "ok", "data": {"any_breach": False, "error": str(e)}}
+
+
+# ST-04, EPIC-02, v5.5
+@router.get("/gate-metrics")
+def get_gate_metrics_endpoint():
+    """
+    GET /portfolio/gate-metrics
+
+    Return trade count and data density gate progress metrics.
+    Used by the System Status page and SI-05 digest to surface progress
+    toward the 20/50/100 closed-trade gates.
+
+    Spec: stage4_backlog_slice.md#ST-04
+    """
+    try:
+        portfolio = get_portfolio()
+        if not portfolio:
+            return {"status": "ok", "data": {
+                "closed_trades_count": 0,
+                "closed_trades_with_plans": 0,
+                "active_positions_count": 0,
+                "ai_journal_entry_count": None,
+                "oldest_trade_date": None,
+                "newest_trade_date": None,
+            }}
+        metrics = get_gate_metrics(portfolio["id"])
+        return {"status": "ok", "data": metrics}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "error": str(e)}

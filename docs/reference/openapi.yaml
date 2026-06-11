@@ -304,6 +304,43 @@ paths:
                         items:
                           type: object
 
+  /portfolio/gate-metrics:
+    get:
+      tags: [Portfolio]
+      summary: Get trade count gate progress metrics
+      description: >
+        Returns closed trade count, closed trades with plans, active positions, AI journal entry
+        count (if table exists), oldest and newest trade dates. Used to surface progress toward
+        the 20/50/100 closed-trade gates. Contract: ST-04, EPIC-02, v5.5.
+      responses:
+        "200":
+          description: Gate metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      closed_trades_count:
+                        type: integer
+                      closed_trades_with_plans:
+                        type: integer
+                      active_positions_count:
+                        type: integer
+                      ai_journal_entry_count:
+                        type: integer
+                        nullable: true
+                      oldest_trade_date:
+                        type: string
+                        nullable: true
+                      newest_trade_date:
+                        type: string
+                        nullable: true
+
   /portfolio/paper-positions:
     get:
       tags: [Portfolio]
