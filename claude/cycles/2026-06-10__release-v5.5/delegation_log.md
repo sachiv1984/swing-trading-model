@@ -20,7 +20,9 @@ Last Updated: 2026-06-11
 - **Spec reference:** `docs/ops/api_performance_baseline.md`
 - **Unblock criteria:** All 24 endpoint rows present in `docs/ops/api_performance_baseline.md` with p50/p95/p99 measurements; Infrastructure & Operations Owner sign-off; commit pushed to `exec/2026-06-10__release-v5.5/EPIC-03` with format `[EPIC-03][ST-06]`.
 - **Commit format required:** `[EPIC-03][ST-06] Add v2.8–v4.6 endpoint performance baselines` pushed to `exec/2026-06-10__release-v5.5/EPIC-03`
-- **Status:** Pending
+- **Status:** Unblocked
+- **commit_sha:** bf56a296
+- **Unblocked at:** 2026-06-11T11:30:00Z
 
 ---
 
@@ -37,7 +39,9 @@ Last Updated: 2026-06-11
 - **Spec reference:** `docs/ops/api_performance_baseline.md`
 - **Unblock criteria:** v5.1–v5.4 endpoints added to `api_performance_baseline.md` with measurements; Infrastructure & Operations Owner sign-off; commit pushed with format `[EPIC-03][ST-07]`. Sequence: after DEL-20260611-01 (ST-06) is unblocked.
 - **Commit format required:** `[EPIC-03][ST-07] Add v5.1–v5.4 endpoint performance baselines` pushed to `exec/2026-06-10__release-v5.5/EPIC-03`
-- **Status:** Pending
+- **Status:** Unblocked
+- **commit_sha:** bf56a296
+- **Unblocked at:** 2026-06-11T11:30:00Z
 
 ---
 
@@ -54,7 +58,10 @@ Last Updated: 2026-06-11
 - **Spec reference:** `docs/ops/api_performance_baseline.md`
 - **Unblock criteria:** `POST /digest/si05/send` row present with p50/p95/p99 measurements; Infrastructure & Operations Owner sign-off; commit pushed with format `[EPIC-03][ST-08]` (or confirm trivially complete via ST-07 commit with Infrastructure & Operations Owner confirmation). Sequence: after DEL-20260611-02 (ST-07) is unblocked.
 - **Commit format required:** `[EPIC-03][ST-08] Confirm POST /digest/si05/send baseline present` pushed to `exec/2026-06-10__release-v5.5/EPIC-03`
-- **Status:** Pending
+- **Status:** Unblocked
+- **commit_sha:** bf56a296
+- **Unblocked at:** 2026-06-11T11:30:00Z
+- **Note:** POST /digest/si05/send excluded from timing per methodology (Telegram API dependency causes timeout); documented as such in §19.1
 
 ---
 

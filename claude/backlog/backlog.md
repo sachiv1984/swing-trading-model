@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-10 (rebalance 2026-06-10__scheduled — DL-043/044/045; 7 new items: BLG-GOV-116/117/118/119/120/121/122, BLG-FE-72, BLG-OPS-61; IW-20260610-01 closed; 16 ideas rejected, 1 promoted-backlog; v5.5 Now section added)
+**Last Updated:** 2026-06-11 (v5.5 ST-06 performance baseline — 3 new items: BLG-OPS-62/63/64; BLG-OPS-22 gate cleared; BLG-OPS-13/61 closed in baseline doc)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — DL-041/042; IW skipped ≥20 open ideas; 8 new items; meta-review DUE conducted; v5.4 Now section added)
 
 > ⚠️ Standing Notice
@@ -2364,14 +2364,14 @@ Arc 2 adds screener batch processing, research endpoints, and AI-assisted trade 
 ---
 
 ### BLG-OPS-22 — Research data caching layer
-**Priority:** P3 (Low)
+**Priority:** P2 (Medium)
 **Type:** Operations / Performance
 **Owner:** Infrastructure & Operations Owner; Head of Backend Engineering
 **Source:** IDEA-ops-20260421-06 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
 **Effort:** M (~2–3 days)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v5.6
 
-**Gate criteria:** BLG-OPS-13 (performance baseline) complete AND p95 research endpoint latency exceeds 3s threshold.
+**Gate criteria:** ✅ GATE CLEARED 2026-06-11 — BLG-OPS-13 complete (v5.5 ST-06) AND p95=4,601ms > 3,000ms threshold confirmed on production. Eligible for sprint planning.
 
 **Problem**
 Research view loads require multiple sequential external API calls (YF OHLCV, earnings, news). If p95 latency (measured via BLG-OPS-13) exceeds 3 seconds, a caching layer (TTL-based, per-ticker) would materially reduce latency and external API call volume. Gate ensures implementation effort is only incurred if a real performance concern is observed.
@@ -5322,6 +5322,71 @@ BLG-OPS-60 (completed v5.4) added v5.3 endpoints to api_performance_baseline.md.
 - All v5.1/v5.2 new endpoints have latency entries in the baseline document
 - Consistent with existing measurement methodology
 - Infrastructure & Operations Owner sign-off
+
+---
+
+### BLG-OPS-62 — Investigate GET /portfolio/concentration-status high latency
+**Priority:** P3 (Low)
+**Type:** Operations / Performance
+**Owner:** Infrastructure & Operations Owner
+**Source:** v5.5 ST-06 BLG-OPS-13 re-run §18.3 — 2026-06-11
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.6
+
+**Problem**
+GET /portfolio/concentration-status measured p50=3,985ms and p95=5,917ms on production — the highest-latency DB endpoint in the entire baseline. This endpoint calculates portfolio concentration across all live positions and is likely performing a full portfolio scan without appropriate indexing. Latency at this level makes the endpoint unsuitable for use in any page that loads on navigation.
+
+**Scope**
+- Profile the underlying SQL query for GET /portfolio/concentration-status
+- Identify missing indexes or unoptimised joins
+- Add index or materialised view as appropriate
+
+**Acceptance Criteria**
+- p95 latency reduced to ≤1,000ms on production
+- Infrastructure & Operations Owner sign-off after re-measurement
+
+---
+
+### BLG-OPS-63 — Investigate GET /portfolio/red-flag-journal high latency
+**Priority:** P3 (Low)
+**Type:** Operations / Performance
+**Owner:** Infrastructure & Operations Owner
+**Source:** v5.5 ST-06 BLG-OPS-13 re-run §18.3 — 2026-06-11
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.6
+
+**Problem**
+GET /portfolio/red-flag-journal measured p50=3,005ms and p95=3,200ms on production — consistent ~3s across all 7 samples, indicating a structural query issue rather than variance. The endpoint likely scans the full trade history for red flag patterns without a covering index on the relevant columns.
+
+**Scope**
+- Profile the underlying SQL query for GET /portfolio/red-flag-journal
+- Add index on flagged trade columns or apply result caching
+
+**Acceptance Criteria**
+- p95 latency reduced to ≤1,000ms on production
+- Infrastructure & Operations Owner sign-off after re-measurement
+
+---
+
+### BLG-OPS-64 — Investigate GET /analytics/behavioural-drift high latency
+**Priority:** P3 (Low)
+**Type:** Operations / Performance
+**Owner:** Infrastructure & Operations Owner
+**Source:** v5.5 ST-06 BLG-OPS-13 re-run §18.3 — 2026-06-11
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.6
+
+**Problem**
+GET /analytics/behavioural-drift measured p50=3,293ms and p95=3,798ms on production. The SI-02 drift analysis scans full trade and signal history. Consider a TTL-based result cache (acceptable staleness for an analytics endpoint: 15–30 minutes) to reduce repeated full-history scans.
+
+**Scope**
+- Profile the underlying query for GET /analytics/behavioural-drift
+- Implement TTL-based result caching (in-memory or Redis) with 15–30 minute TTL
+
+**Acceptance Criteria**
+- p95 latency reduced to ≤1,000ms on production for cached calls
+- Cache hit rate ≥50% under typical usage
+- Infrastructure & Operations Owner sign-off after re-measurement
 
 ---
 
