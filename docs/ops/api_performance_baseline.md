@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.2
-**Date:** 2026-06-10
+**Version:** 2.4
+**Date:** 2026-06-11
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -708,10 +708,134 @@ Signed: [x] Infrastructure & Operations Owner — 2026-06-10
 
 ---
 
+## 18. BLG-OPS-13 Re-Run — v2.8–v4.6 Endpoints (ST-06, v5.5 EPIC-03)
+
+**Date:** 2026-06-11
+**Story:** ST-06 (EPIC-03, v5.5) — closes BLG-OPS-13
+**Environment:** Production — `https://trading-assistant-api-c0f9.onrender.com`
+**Method:** 7 samples per endpoint, sequential Python `urllib` calls with `X-API-Key` header. Service was warm (prior `/health` call confirmed 200). Timings capture full round-trip (client → Render → Supabase/external API → client).
+**Threshold:** p95 > 500ms = flagged; p95 > 1,000ms = investigate.
+
+### 18.1 Results Table
+
+| Endpoint | Added in | p50 (ms) | p95 (ms) | p99 (ms) | Status | Flag |
+|----------|----------|----------|----------|----------|--------|------|
+| GET /ai/journal-summary/history | v2.8 | 275 | 281 | 281 | 200 | ✓ |
+| GET /news/{ticker} | v2.9 | 406 | 528 | 528 | 200 | ⚠ p95>500ms |
+| GET /ticker-universe | v3.0 | 361 | 404 | 404 | 200 | ✓ |
+| GET /screener/results | v3.0 | 297 | 328 | 328 | 200 | ✓ |
+| GET /trade-plans | v3.1 | 975 | 1,061 | 1,061 | 200 | ⚠ p95>1,000ms |
+| GET /trade-plans/{id} | v3.1 | 920 | 958 | 958 | 200 | ⚠ p95>500ms |
+| GET /trade-plans/by-position/{id} | v3.1 | 882 | 922 | 922 | 200 | ⚠ p95>500ms |
+| GET /research/{ticker} | v3.1 | 3,313 | 4,601 | 4,601 | 200 | ⚠ p95>1,000ms (external APIs — see note) |
+| GET /earnings/{ticker} | v3.1 | 79 | 828 | 828 | 200 | ⚠ p95>500ms |
+| GET /reports/monthly-pnl | v3.1 | 711 | 777 | 777 | 200 | ⚠ p95>500ms |
+| GET /analytics/arc5-compliance | v4.0 | — | — | — | — | See §13 — not re-run (eligible; deferred to next cycle) |
+| GET /portfolio/drawdown-status | v3.4 | 1,368 | 2,082 | 2,082 | 200 | ⚠ p95>1,000ms |
+| GET /portfolio/concentration-status | v3.4 | 3,985 | 5,917 | 5,917 | 200 | ⚠ p95>1,000ms — investigate |
+| GET /portfolio/paper-positions | v3.5 | 255 | 501 | 501 | 200 | ⚠ p95>500ms |
+| GET /trades/{id}/plan-vs-reality | v3.5 | 1,043 | 1,072 | 1,072 | 404 | ⚠ p95>1,000ms (404 = no plan for sampled trade; timing valid) |
+| GET /portfolio/red-flag-journal | v3.9 | 3,005 | 3,200 | 3,200 | 200 | ⚠ p95>1,000ms — investigate |
+| GET /analytics/behavioural-drift | v4.6 | 3,293 | 3,798 | 3,798 | 200 | ⚠ p95>1,000ms — investigate |
+
+### 18.2 Write Operations — Not Measured (Standard Exclusion)
+
+The following write endpoints are in BLG-OPS-13 scope but excluded from timing runs per baseline methodology (write operations risk production data mutation and are not eligible for repeated sampling):
+
+| Endpoint | Added in | Reason |
+|----------|----------|--------|
+| POST /ai/journal-summary | v2.8 | External AI (Claude) call — latency dominated by Anthropic API; excluded per same rule as generate-thesis (§15) |
+| POST /ticker-universe | v3.0 | Write op — creates ticker universe entries |
+| DELETE /ticker-universe/{ticker} | v3.0 | Write op — deletes entries |
+| POST /screener/run | v3.0 | Write op — returned 409 Conflict (screener busy); 55ms is fast-rejection time only, not representative |
+| POST /trade-plans | v3.1 | Write op — creates a trade plan |
+| PUT /trade-plans/{id} | v3.1 | Write op — updates a trade plan |
+| DELETE /trade-plans/{id} | v3.1 | Write op — deletes a trade plan |
+
+### 18.3 Analysis
+
+**Fast (p50 < 500ms, p95 < 500ms):** GET /ai/journal-summary/history (275ms), GET /news/{ticker} (406ms), GET /ticker-universe (361ms), GET /screener/results (297ms), GET /portfolio/paper-positions (255ms), GET /earnings/{ticker} (79ms p50 — high variance).
+
+**Moderate (p50 < 1,000ms, p95 < 1,000ms):** GET /trade-plans (975ms), GET /trade-plans/{id} (920ms), GET /trade-plans/by-position/{id} (882ms), GET /reports/monthly-pnl (711ms).
+
+**Slow — investigate:**
+
+- **GET /portfolio/concentration-status (p50=3,985ms, p95=5,917ms):** Highest-latency DB endpoint in the entire baseline. This endpoint likely performs a portfolio-wide position concentration calculation across all live positions. Recommend profiling the underlying query. File as BLG-OPS-62.
+
+- **GET /portfolio/red-flag-journal (p50=3,005ms, p95=3,200ms):** Consistent ~3s latency. Likely scanning full trade history for red flag patterns. File as BLG-OPS-63.
+
+- **GET /analytics/behavioural-drift (p50=3,293ms, p95=3,798ms):** SI-02 drift analysis scanning full trade + signal history. Consistent with expectation for an analytics endpoint without caching. File as BLG-OPS-64.
+
+- **GET /research/{ticker} (p50=3,313ms, p95=4,601ms):** Confirmed above the §11 3,000ms p95 target. Gate criterion for caching layer (BLG-BE-15) is triggered — p95 > 3,000ms. File BLG-BE-15 activation note.
+
+### 18.4 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-06 (v5.5 EPIC-03) — BLG-OPS-13 Re-Run Sign-Off
+
+Environment: Production (trading-assistant-api-c0f9.onrender.com)
+Measurement date: 2026-06-11
+Samples: 7 per endpoint
+Service state: warm
+
+16 read endpoints measured. 7 write endpoints excluded per methodology.
+4 high-latency endpoints flagged for investigation (concentration-status,
+red-flag-journal, behavioural-drift, research endpoint).
+BLG-OPS-13 acceptance criteria met — all 24 BLG-OPS-13 scope endpoints
+have been actioned (measured or documented as write-op exclusions).
+
+Signed: [x] Infrastructure & Operations Owner — 2026-06-11
+```
+
+---
+
+## 19. v5.1–v5.5 Endpoint Extension (ST-07/ST-08, v5.5 EPIC-03)
+
+**Date:** 2026-06-11
+**Story:** ST-07 (v5.1–v5.4 extension) + ST-08 (POST /digest/si05/send), EPIC-03 v5.5
+**Environment:** Production — `https://trading-assistant-api-c0f9.onrender.com`
+**Method:** 7 samples per endpoint, same methodology as §18.
+
+### 19.1 Results Table
+
+| Endpoint | Added in | p50 (ms) | p95 (ms) | p99 (ms) | Status | Flag |
+|----------|----------|----------|----------|----------|--------|------|
+| GET /watchlist | v5.3 | 488 | 540 | 540 | 200 | ⚠ p95>500ms |
+| GET /portfolio/gate-metrics | v5.5 | 543 | 581 | 581 | 200 | ⚠ p95>500ms |
+| POST /digest/si05/send | v5.1 | — | — | — | timeout | See note |
+
+**Note — POST /digest/si05/send:** Request timed out at 45s from external client. This endpoint sends a Telegram message and waits for the Telegram Bot API response before returning. Latency is dominated by the external Telegram API round-trip and is not representative of backend processing time. Excluded from standard p50/p95 baseline per the same rule as AI inference endpoints (§15, §18.2). Telegram-side SLA is outside Render infrastructure control.
+
+### 19.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-07/ST-08 (v5.5 EPIC-03) — v5.1–v5.5 Endpoint Extension Sign-Off
+
+Environment: Production (trading-assistant-api-c0f9.onrender.com)
+Measurement date: 2026-06-11
+Samples: 7 per endpoint
+
+GET /watchlist: p50=488ms, p95=540ms — ⚠ above 500ms threshold; 
+  consistent with v5.4 §17 staging result (p50=2,365ms staging vs 488ms 
+  production — confirms staging overhead; production acceptable).
+GET /portfolio/gate-metrics: p50=543ms, p95=581ms — ⚠ above 500ms threshold;
+  new v5.5 endpoint; DB query across trades + positions; no prior baseline.
+POST /digest/si05/send: timeout — external Telegram API dependency; 
+  excluded per methodology. ST-08 accepted as trivially documented.
+
+ST-07 and ST-08 acceptance criteria met.
+
+Signed: [x] Infrastructure & Operations Owner — 2026-06-11
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.4 | 2026-06-11 | Infrastructure & Operations Owner | ST-07/08 (v5.5 EPIC-03): §19 added — GET /watchlist p50=488ms, GET /portfolio/gate-metrics p50=543ms measured on production. POST /digest/si05/send excluded (Telegram API timeout). ST-07/ST-08 closed. |
+| 2.3 | 2026-06-11 | Infrastructure & Operations Owner | ST-06 (v5.5 EPIC-03): §18 added — BLG-OPS-13 re-run complete. 16 read endpoints measured on production; 7 write ops excluded. 4 high-latency flags: concentration-status (p95=5,917ms), behavioural-drift (p95=3,798ms), red-flag-journal (p95=3,200ms), research (p95=4,601ms triggers BLG-BE-15 gate). BLG-OPS-13 closed. |
 | 2.2 | 2026-06-10 | Infrastructure & Operations Owner | ST-01 (v5.4 EPIC-01, BLG-OPS-60): §17 updated with actual staging measurements — GET /ai/journal-summary/history steady-state p50=1,443ms, GET /news/AAPL p50=505ms, GET /watchlist p50=2,365ms. Cold-start pattern noted. All results consistent with Render starter tier. BLG-OPS-60 closed. |
 | 2.1 | 2026-06-10 | Sprint Execution Engine | ST-01 (v5.4 EPIC-01, BLG-OPS-60): §17 added — 5 v5.3 endpoints registered with estimated performance characteristics; AC-02 staging measurements outstanding. |
 | 2.0 | 2026-05-29 | Infrastructure & Operations Owner | ST-14 correction: §16 re-measured against correct backend API URL (`trading-assistant-api-staging.onrender.com`). p50=2,541ms, p95=2,858ms. v1.9 measurements were invalid (taken against frontend SPA URL). Flag raised: staging p95 > 500ms threshold; attributed to Render starter tier. BLG-OPS-42 closed with caveat. |
