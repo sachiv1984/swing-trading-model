@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.39
-**Last Updated:** 2026-06-09
+**Version:** 3.40
+**Last Updated:** 2026-06-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -693,11 +693,13 @@ If any criterion is not met, the autonomous class does not apply — the sign-of
 
 **Pre-condition (BLG-GOV-18):** Do not open the PR until the DoQ sign-off block in `qa_evidence_EPIC-xx.md` has a non-blank `Date:` field. A blank Date means sign-off is incomplete. The merge gate (STEP 4) also enforces this, but checking here prevents opening a PR that will immediately be blocked — which creates unnecessary review noise. If the Date field is blank: complete the sign-off first, then proceed.
 
+**qa_evidence commit advisory (BLG-GOV-118):** Before running `gh pr create`, verify that `qa_evidence_EPIC-xx.md` is committed to the EPIC branch. Run `git status --short` and confirm the file is not listed as untracked or modified. An uncommitted `qa_evidence_EPIC-xx.md` is invisible to reviewers and CI, and will not satisfy the merge gate evidence requirement. Commit it now if it exists only as an untracked or modified file.
+
 1. Open a pull request: `exec/<cycle_id>/EPIC-xx` → `main`
 2. PR title: `[EPIC-xx] <epic description>`
 3. PR body: per Section 8.4 — include link to `qa_evidence_EPIC-xx.md`
 4. Update `execution_state.json`: EPIC `pr_status` = `open`, `pr_number` = PR number.
-5. Run `gh pr view <pr_number> --json state` immediately and sync `pr_status` in `execution_state.json` to the actual current state. **EPIC.status sync rule:** If `state = "MERGED"` (PR was already merged before the engine recorded it), update `EPIC.status` from `"done"` to `"merged"` in `execution_state.json` in the same write.
+5. Run `gh pr view <pr_number> --json state,mergeStateStatus` immediately and sync `pr_status` in `execution_state.json` to the actual current state. **EPIC.status sync rule:** If `state = "MERGED"` (PR was already merged before the engine recorded it), update `EPIC.status` from `"done"` to `"merged"` in `execution_state.json` in the same write.
 6. Do not merge autonomously. The merge gate (STEP 4) governs this.
 
 ---
