@@ -873,3 +873,48 @@ Returns a paginated log of strategy deviation events. Populated when the operato
 | 500 | Database error |
 
 
+
+## GET /portfolio/gate-metrics
+
+Returns trade count and data density gate progress metrics for the active portfolio.
+
+Used to surface progress toward the 20/50/100 closed-trade gates. Called by the SI-05 weekly digest service and available for future dashboard display.
+
+**Source:** ST-04, EPIC-02, v5.5
+
+### Request
+
+No parameters required.
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "closed_trades_count": 12,
+    "closed_trades_with_plans": 5,
+    "active_positions_count": 3,
+    "ai_journal_entry_count": null,
+    "oldest_trade_date": "2024-01-15",
+    "newest_trade_date": "2025-11-30"
+  }
+}
+```
+
+### Response fields — `data`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| closed_trades_count | integer | Total closed trades in `trade_history` for this portfolio |
+| closed_trades_with_plans | integer | Closed trades that have at least one associated `trade_plans` entry (linked via `position_id`) |
+| active_positions_count | integer | Open positions with `status = 'active'` |
+| ai_journal_entry_count | integer \| null | Count from `ai_journal_entries` table if it exists; `null` if table absent |
+| oldest_trade_date | ISO 8601 string \| null | `MIN(exit_date)` across all closed trades; `null` if no trades |
+| newest_trade_date | ISO 8601 string \| null | `MAX(exit_date)` across all closed trades; `null` if no trades |
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 500 | Database error (returns `{"status": "error", "error": "..."}`) |

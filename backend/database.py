@@ -1879,3 +1879,95 @@ def get_behavioural_drift_data(portfolio_id: str, window_days: int = 90) -> dict
             row = cur.fetchone()
             result["settings"] = dict(row) if row else None
     return result
+
+
+# ---------------------------------------------------------------------------
+# Gate Metrics (ST-04, EPIC-02, v5.5)
+# ---------------------------------------------------------------------------
+
+def get_gate_metrics(portfolio_id: str) -> Dict:
+    """Return trade count and gate progress metrics for a portfolio.
+
+    Used by GET /portfolio/gate-metrics and the SI-05 weekly digest to surface
+    data density progress toward the 20/50/100 closed-trade gates.
+
+    Returns:
+        dict with keys:
+          closed_trades_count (int)
+          closed_trades_with_plans (int)
+          active_positions_count (int)
+          ai_journal_entry_count (int | None — None if table absent)
+          oldest_trade_date (str ISO-8601 | None)
+          newest_trade_date (str ISO-8601 | None)
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            # Closed trades total
+            cur.execute(
+                "SELECT COUNT(*)::int AS cnt FROM trade_history WHERE portfolio_id = %s",
+                (portfolio_id,),
+            )
+            closed_trades_count = cur.fetchone()["cnt"]
+
+            # Closed trades that have at least one associated trade plan
+            cur.execute(
+                """
+                SELECT COUNT(DISTINCT th.id)::int AS cnt
+                FROM trade_history th
+                WHERE th.portfolio_id = %s
+                  AND EXISTS (
+                      SELECT 1 FROM trade_plans tp
+                      WHERE tp.position_id = th.position_id
+                  )
+                """,
+                (portfolio_id,),
+            )
+            closed_trades_with_plans = cur.fetchone()["cnt"]
+
+            # Active positions
+            cur.execute(
+                "SELECT COUNT(*)::int AS cnt FROM positions WHERE portfolio_id = %s AND status = 'active'",
+                (portfolio_id,),
+            )
+            active_positions_count = cur.fetchone()["cnt"]
+
+            # Oldest and newest trade dates
+            cur.execute(
+                """
+                SELECT
+                    MIN(exit_date)::text AS oldest,
+                    MAX(exit_date)::text AS newest
+                FROM trade_history
+                WHERE portfolio_id = %s
+                """,
+                (portfolio_id,),
+            )
+            row = cur.fetchone()
+            oldest_trade_date = row["oldest"] if row else None
+            newest_trade_date = row["newest"] if row else None
+
+            # ai_journal_entry_count — only if table exists
+            ai_journal_entry_count = None
+            cur.execute(
+                """
+                SELECT EXISTS (
+                    SELECT 1 FROM information_schema.tables
+                    WHERE table_name = 'ai_journal_entries'
+                ) AS tbl_exists
+                """
+            )
+            if cur.fetchone()["tbl_exists"]:
+                cur.execute(
+                    "SELECT COUNT(*)::int AS cnt FROM ai_journal_entries WHERE portfolio_id = %s",
+                    (portfolio_id,),
+                )
+                ai_journal_entry_count = cur.fetchone()["cnt"]
+
+    return {
+        "closed_trades_count": closed_trades_count,
+        "closed_trades_with_plans": closed_trades_with_plans,
+        "active_positions_count": active_positions_count,
+        "ai_journal_entry_count": ai_journal_entry_count,
+        "oldest_trade_date": oldest_trade_date,
+        "newest_trade_date": newest_trade_date,
+    }
