@@ -27,9 +27,13 @@ MAX_MESSAGE_LENGTH = 4096
 _RETRY_DELAYS = (30, 60)  # seconds: wait after attempt 1, then attempt 2
 
 
-def _send_telegram_request(url: str, sleep_fn=None) -> None:
+def _send_telegram_request(url: str, payload: dict, sleep_fn=None) -> None:
     """
-    Send a Telegram API request with exponential backoff retry.
+    Send a Telegram API request via POST+JSON with exponential backoff retry.
+
+    Uses POST with a JSON body rather than GET with query params — required for
+    MarkdownV2 messages where URL-encoding of escape sequences can corrupt the
+    request path and cause spurious 404 responses from Telegram's API.
 
     Retry policy: up to 2 retries after the initial attempt, with delays of
     30 s and 60 s respectively. Total maximum wait before final failure: 90 s.
@@ -37,12 +41,20 @@ def _send_telegram_request(url: str, sleep_fn=None) -> None:
 
     sleep_fn is injectable for testing to avoid real sleep delays.
     """
+    import json
     import urllib.request
     _sleep = sleep_fn or time.sleep
     last_exc: Exception = RuntimeError("unreachable")
+    body = json.dumps(payload).encode("utf-8")
     for attempt, delay in enumerate(((None,) + _RETRY_DELAYS), start=1):
         try:
-            urllib.request.urlopen(url, timeout=10)  # noqa: S310
+            req = urllib.request.Request(
+                url,
+                data=body,
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            urllib.request.urlopen(req, timeout=10)  # noqa: S310
             return
         except Exception as exc:
             last_exc = exc
@@ -250,7 +262,7 @@ def format_si05_section(data: dict) -> str:
     summary_line = _integrity_summary_line(pass_rate, red_flag_count, override_rate)
 
     return (
-        "---\n"
+        "\\-\\-\\-\n"
         "*📋 Strategy Integrity*\n\n"
         f"✅ Pre\\-entry pass rate \\(7d\\): {pass_rate_fmt}\n"
         f"🚨 Red flag events \\(7d\\): {red_flag_count}\n"
@@ -274,7 +286,7 @@ def _fetch_trade_count_for_digest() -> Optional[int]:
         try:
             with conn.cursor() as cur:
                 cur.execute(
-                    "SELECT id FROM portfolios ORDER BY created_at DESC LIMIT 1"
+                    "SELECT id FROM portfolios ORDER BY created_date DESC LIMIT 1"
                 )
                 row = cur.fetchone()
                 if not row:
@@ -383,21 +395,21 @@ def send_si05_digest(*, _sleep_fn=None) -> dict:
         events_per_week = data.get("events_per_week", 0.0) or 0.0
         override_rate = data.get("override_rate")
         summary_line = _integrity_summary_line(pass_rate, round(events_per_week * 7), override_rate)
-        message = f"---\n*📋 Strategy Integrity*\n\n{summary_line}"
+        message = f"\\-\\-\\-\n*📋 Strategy Integrity*\n\n{summary_line}"
         message_length = len(message)
         logger.warning("SI-05 message truncated to summary line (%d chars)", message_length)
 
     event_count = round((data.get("events_per_week") or 0.0) * 7)
 
-    params = urlencode({
+    url = f"https://api.telegram.org/bot{telegram_token}/sendMessage"
+    payload = {
         "chat_id": telegram_chat_id,
         "text": message,
         "parse_mode": "MarkdownV2",
-    })
-    url = f"https://api.telegram.org/bot{telegram_token}/sendMessage?{params}"
+    }
 
     try:
-        _send_telegram_request(url, sleep_fn=_sleep_fn)
+        _send_telegram_request(url, payload, sleep_fn=_sleep_fn)
         logger.info("SI-05 digest sent (%d chars)", message_length)
         _write_delivery_log("sent", event_count, None, None)
         return {"sent": True, "message_length": message_length, "error": None}

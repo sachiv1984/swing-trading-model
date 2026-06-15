@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-10 (rebalance 2026-06-10__scheduled — DL-043/044/045; 7 new items: BLG-GOV-116/117/118/119/120/121/122, BLG-FE-72, BLG-OPS-61; IW-20260610-01 closed; 16 ideas rejected, 1 promoted-backlog; v5.5 Now section added)
+**Last Updated:** 2026-06-15 (v5.5 ST-10 journey map — 2 new items: BLG-FE-73/74)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — DL-041/042; IW skipped ≥20 open ideas; 8 new items; meta-review DUE conducted; v5.4 Now section added)
 
 > ⚠️ Standing Notice
@@ -1174,6 +1174,50 @@ If SI-05 Phase 2 includes an in-app delivery channel, a UX spec will be required
 - UX spec produced covering interaction patterns and visual design
 - Reviewed by Head of UX & Design and Frontend Specs & UX Documentation Owner
 - Gate condition (BLG-GOV-92) verified before authoring
+
+---
+
+### BLG-FE-73 — Add deep links from SI-05 digest to relevant app screens
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Head of Backend Engineering
+**Source:** ST-10 user journey map (v5.5 EPIC-03) — 2026-06-15
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.6
+
+**Problem**
+The SI-05 weekly Telegram digest contains no links to the app. A user reading "Override rate: 45%" or "Red flag events: 3" has no direct path to the relevant screen — they must open the app manually and navigate to the correct section (minimum 3 steps). This defeats the purpose of the digest as an actionable alert.
+
+**Scope**
+- Add one deep link per digest section to the relevant app screen (e.g. "View Risk Dashboard →" after the strategy integrity block)
+- Links must use the app's public URL with the correct hash/route for the target screen
+
+**Acceptance Criteria**
+- At least one deep link present in the SI-05 digest pointing to a relevant app screen
+- Link navigates correctly on mobile Telegram (where most users read the digest)
+- Head of UX & Design sign-off
+
+---
+
+### BLG-FE-74 — Clarify N/A pass rate reason in SI-05 digest message
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Backend Engineering
+**Source:** ST-10 user journey map (v5.5 EPIC-03) — 2026-06-15
+**Effort:** XS (<1h)
+**Provisional-Target:** v5.6
+
+**Problem**
+When pass rate and override rate show "N/A" in the digest, the user cannot determine whether this is expected (no trades triggered validation this week) or a system issue (validation logging broken). The current message "No pre-entry validation data available this week" is ambiguous.
+
+**Scope**
+- Update `_integrity_summary_line` in `si05_digest_service.py` to include the reason for N/A (e.g. "N/A (no validation events this week)")
+- Distinguish between "no events" and "data unavailable" in the message text
+
+**Acceptance Criteria**
+- N/A values in the digest include a parenthetical reason
+- "No events" and "data unavailable" produce distinct messages
+- No regression to existing digest delivery
 
 ---
 
@@ -2364,14 +2408,14 @@ Arc 2 adds screener batch processing, research endpoints, and AI-assisted trade 
 ---
 
 ### BLG-OPS-22 — Research data caching layer
-**Priority:** P3 (Low)
+**Priority:** P2 (Medium)
 **Type:** Operations / Performance
 **Owner:** Infrastructure & Operations Owner; Head of Backend Engineering
 **Source:** IDEA-ops-20260421-06 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
 **Effort:** M (~2–3 days)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v5.6
 
-**Gate criteria:** BLG-OPS-13 (performance baseline) complete AND p95 research endpoint latency exceeds 3s threshold.
+**Gate criteria:** ✅ GATE CLEARED 2026-06-11 — BLG-OPS-13 complete (v5.5 ST-06) AND p95=4,601ms > 3,000ms threshold confirmed on production. Eligible for sprint planning.
 
 **Problem**
 Research view loads require multiple sequential external API calls (YF OHLCV, earnings, news). If p95 latency (measured via BLG-OPS-13) exceeds 3 seconds, a caching layer (TTL-based, per-ticker) would materially reduce latency and external API call volume. Gate ensures implementation effort is only incurred if a real performance concern is observed.
@@ -5322,6 +5366,71 @@ BLG-OPS-60 (completed v5.4) added v5.3 endpoints to api_performance_baseline.md.
 - All v5.1/v5.2 new endpoints have latency entries in the baseline document
 - Consistent with existing measurement methodology
 - Infrastructure & Operations Owner sign-off
+
+---
+
+### BLG-OPS-62 — Investigate GET /portfolio/concentration-status high latency
+**Priority:** P3 (Low)
+**Type:** Operations / Performance
+**Owner:** Infrastructure & Operations Owner
+**Source:** v5.5 ST-06 BLG-OPS-13 re-run §18.3 — 2026-06-11
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.6
+
+**Problem**
+GET /portfolio/concentration-status measured p50=3,985ms and p95=5,917ms on production — the highest-latency DB endpoint in the entire baseline. This endpoint calculates portfolio concentration across all live positions and is likely performing a full portfolio scan without appropriate indexing. Latency at this level makes the endpoint unsuitable for use in any page that loads on navigation.
+
+**Scope**
+- Profile the underlying SQL query for GET /portfolio/concentration-status
+- Identify missing indexes or unoptimised joins
+- Add index or materialised view as appropriate
+
+**Acceptance Criteria**
+- p95 latency reduced to ≤1,000ms on production
+- Infrastructure & Operations Owner sign-off after re-measurement
+
+---
+
+### BLG-OPS-63 — Investigate GET /portfolio/red-flag-journal high latency
+**Priority:** P3 (Low)
+**Type:** Operations / Performance
+**Owner:** Infrastructure & Operations Owner
+**Source:** v5.5 ST-06 BLG-OPS-13 re-run §18.3 — 2026-06-11
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.6
+
+**Problem**
+GET /portfolio/red-flag-journal measured p50=3,005ms and p95=3,200ms on production — consistent ~3s across all 7 samples, indicating a structural query issue rather than variance. The endpoint likely scans the full trade history for red flag patterns without a covering index on the relevant columns.
+
+**Scope**
+- Profile the underlying SQL query for GET /portfolio/red-flag-journal
+- Add index on flagged trade columns or apply result caching
+
+**Acceptance Criteria**
+- p95 latency reduced to ≤1,000ms on production
+- Infrastructure & Operations Owner sign-off after re-measurement
+
+---
+
+### BLG-OPS-64 — Investigate GET /analytics/behavioural-drift high latency
+**Priority:** P3 (Low)
+**Type:** Operations / Performance
+**Owner:** Infrastructure & Operations Owner
+**Source:** v5.5 ST-06 BLG-OPS-13 re-run §18.3 — 2026-06-11
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.6
+
+**Problem**
+GET /analytics/behavioural-drift measured p50=3,293ms and p95=3,798ms on production. The SI-02 drift analysis scans full trade and signal history. Consider a TTL-based result cache (acceptable staleness for an analytics endpoint: 15–30 minutes) to reduce repeated full-history scans.
+
+**Scope**
+- Profile the underlying query for GET /analytics/behavioural-drift
+- Implement TTL-based result caching (in-memory or Redis) with 15–30 minute TTL
+
+**Acceptance Criteria**
+- p95 latency reduced to ≤1,000ms on production for cached calls
+- Cache hit rate ≥50% under typical usage
+- Infrastructure & Operations Owner sign-off after re-measurement
 
 ---
 
