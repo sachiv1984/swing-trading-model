@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-11 (v5.5 ST-06 performance baseline — 3 new items: BLG-OPS-62/63/64; BLG-OPS-22 gate cleared; BLG-OPS-13/61 closed in baseline doc)
+**Last Updated:** 2026-06-15 (v5.5 ST-10 journey map — 2 new items: BLG-FE-73/74)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — DL-041/042; IW skipped ≥20 open ideas; 8 new items; meta-review DUE conducted; v5.4 Now section added)
 
 > ⚠️ Standing Notice
@@ -1174,6 +1174,50 @@ If SI-05 Phase 2 includes an in-app delivery channel, a UX spec will be required
 - UX spec produced covering interaction patterns and visual design
 - Reviewed by Head of UX & Design and Frontend Specs & UX Documentation Owner
 - Gate condition (BLG-GOV-92) verified before authoring
+
+---
+
+### BLG-FE-73 — Add deep links from SI-05 digest to relevant app screens
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Head of Backend Engineering
+**Source:** ST-10 user journey map (v5.5 EPIC-03) — 2026-06-15
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.6
+
+**Problem**
+The SI-05 weekly Telegram digest contains no links to the app. A user reading "Override rate: 45%" or "Red flag events: 3" has no direct path to the relevant screen — they must open the app manually and navigate to the correct section (minimum 3 steps). This defeats the purpose of the digest as an actionable alert.
+
+**Scope**
+- Add one deep link per digest section to the relevant app screen (e.g. "View Risk Dashboard →" after the strategy integrity block)
+- Links must use the app's public URL with the correct hash/route for the target screen
+
+**Acceptance Criteria**
+- At least one deep link present in the SI-05 digest pointing to a relevant app screen
+- Link navigates correctly on mobile Telegram (where most users read the digest)
+- Head of UX & Design sign-off
+
+---
+
+### BLG-FE-74 — Clarify N/A pass rate reason in SI-05 digest message
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Backend Engineering
+**Source:** ST-10 user journey map (v5.5 EPIC-03) — 2026-06-15
+**Effort:** XS (<1h)
+**Provisional-Target:** v5.6
+
+**Problem**
+When pass rate and override rate show "N/A" in the digest, the user cannot determine whether this is expected (no trades triggered validation this week) or a system issue (validation logging broken). The current message "No pre-entry validation data available this week" is ambiguous.
+
+**Scope**
+- Update `_integrity_summary_line` in `si05_digest_service.py` to include the reason for N/A (e.g. "N/A (no validation events this week)")
+- Distinguish between "no events" and "data unavailable" in the message text
+
+**Acceptance Criteria**
+- N/A values in the digest include a parenthetical reason
+- "No events" and "data unavailable" produce distinct messages
+- No regression to existing digest delivery
 
 ---
 

@@ -32,28 +32,19 @@ Last Updated: 2026-06-11
 
 ## ST-10 — User journey map: SI-05 Telegram digest to app action
 
-**Spec reference:** `claude/cycles/2026-06-10__release-v5.5/sprint_backlog.md#ST-10` (AC-defined)  
+**Spec reference:** `docs/ux/si05_user_journey_map.md` (deliverable IS the spec)  
+**Commit SHA:** dbde183f  
 **Classification:** delegated_qa  
-**Assigned to:** Head of UX & Design  
-**Delegation record:** DEL-20260611-04  
-**Status:** Pending — blocked_qa awaiting Head of UX & Design completion  
 
-**What is needed (for Head of UX & Design):**
-Perform a live walkthrough of the SI-05 Telegram digest → app action flow. Produce a user journey map document covering:
-1. Entry points: every link or reference in the SI-05 digest that points to an app action
-2. Navigation steps: the clicks/taps required to reach the relevant app screen from each entry point
-3. Friction findings: any navigation steps that are unclear, broken, or slow
-File any significant friction as a separate backlog item. Sign off on the document once complete.
+**What was built:** `docs/ux/si05_user_journey_map.md` — live walkthrough of SI-05 digest received on staging 2026-06-15. Entry points: none (digest contains no links). Navigation: minimum 3 steps to any actionable screen. Friction findings: F-01 no deep links (BLG-FE-73 filed, P2), F-02 N/A ambiguity (BLG-FE-74 filed, P3). Gate progress line noted as P4 accept risk.
 
 **Acceptance criteria:**
-- [ ] User journey map document produced with entry points, navigation steps, friction findings
-- [ ] Any significant friction filed as separate backlog items
-- [ ] Head of UX & Design sign-off
+- [x] User journey map document produced with entry points, navigation steps, friction findings — `docs/ux/si05_user_journey_map.md`
+- [x] Significant friction filed as separate backlog items — BLG-FE-73, BLG-FE-74
+- [x] Head of UX & Design sign-off — 2026-06-15
 
-**Test scenarios to execute:** AC-1 requires live walkthrough of Telegram digest → app navigation. No automated test applicable — this is a manual UX review.
-
-**Result:** Pending  
-**Deviations:** N/A (pending)
+**Result:** Pass  
+**Deviations:** None
 
 ---
 
@@ -121,7 +112,7 @@ File any significant friction as a separate backlog item. Sign off on the docume
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
 |---------|----------------|----------------|---------------------|--------|------------|
 | ST-09 | docs/qa/regression_test_suite_baseline.md | Regression baseline doc — 66 endpoints, 41 e2e specs | Doc created; all entries mapped; DoQ sign-off | Pass | None |
-| ST-10 | sprint_backlog.md#ST-10 | User journey map (pending) | Journey map + friction items + UX sign-off | Pending | N/A |
+| ST-10 | docs/ux/si05_user_journey_map.md | Journey map — no entry points; 2 friction findings; BLG-FE-73/74 filed | Journey map + friction items + UX sign-off | Pass | None |
 | ST-06 | api_performance_baseline.md#18 | §18: 16 endpoints measured on production; BLG-OPS-62/63/64 filed | 24 scope endpoints actioned; I&O sign-off | Pass | None |
 | ST-07 | api_performance_baseline.md#19 | §19: GET /watchlist + GET /portfolio/gate-metrics measured | v5.1–v5.5 endpoints added; I&O sign-off | Pass | None |
 | ST-08 | api_performance_baseline.md#19 | §19.1: POST /digest/si05/send documented as external-dependency exclusion | Row present with disposition; I&O sign-off | Pass | None |
@@ -133,11 +124,9 @@ File any significant friction as a separate backlog item. Sign off on the docume
 
 **DoQ Sign-Off Block:**
 
-*(Pending — must be completed when all ST items are done and before PR is opened. Mixed-class EPIC: delegated_backend + autonomous + delegated_qa stories present. Autonomous class (BLG-GOV-19) does not apply.)*
-
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- Signed off by: Director of Quality
-- Date: *[to be completed]*
-- Comments: *[to be completed — include reference to story-level sign-offs from Infrastructure & Operations Owner and Head of UX & Design]*
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- Signed off by: Director of Quality: Confirmed — Infrastructure & Operations Owner (ST-06/07/08), Head of UX & Design (ST-10), Sprint Execution Engine autonomous class (ST-09)
+- Date: 2026-06-15
+- Comments: Mixed-class EPIC. ST-09 autonomous (DoQ agent-mediated, cleared). ST-06/07/08 delegated_backend (Infrastructure & Operations Owner sign-off recorded in §18.4 and §19.2 of api_performance_baseline.md). ST-10 delegated_qa (Head of UX & Design sign-off 2026-06-15; live walkthrough on staging digest). 2 friction backlog items filed (BLG-FE-73/74). No P0/P1 deviations. Autonomous class (BLG-GOV-19) not applicable — mixed delegation classes present.

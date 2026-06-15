@@ -78,4 +78,7 @@ Last Updated: 2026-06-11
 - **Spec reference:** AC defined in `claude/cycles/2026-06-10__release-v5.5/sprint_backlog.md#ST-10`
 - **Unblock criteria:** Journey map document exists with entry points, navigation steps, and friction findings; any significant friction filed as backlog items; Head of UX & Design sign-off; commit pushed with format `[EPIC-03][ST-10]`.
 - **Commit format required:** `[EPIC-03][ST-10] Add SI-05 user journey map` pushed to `exec/2026-06-10__release-v5.5/EPIC-03`
-- **Status:** Pending
+- **Status:** Unblocked
+- **commit_sha:** dbde183f
+- **Unblocked at:** 2026-06-15T20:30:00Z
+- **Note:** Walkthrough conducted on live staging digest. Journey map at docs/ux/si05_user_journey_map.md. BLG-FE-73/74 filed for friction findings.
