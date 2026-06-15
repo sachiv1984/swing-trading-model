@@ -207,7 +207,7 @@ class TestMessageFormatCompliance:
     """Telegram MarkdownV2 format compliance per BLG-GOV-86."""
 
     def test_section_divider_present(self):
-        """Section starts with --- divider per spec §4."""
+        """Section starts with MarkdownV2-escaped --- divider per spec §4."""
         format_si05_section = get_service()[0]
         data = {
             "validation_pass_rate": 0.85,
@@ -216,7 +216,7 @@ class TestMessageFormatCompliance:
             "top_rule_breach": "momentum_gate",
         }
         section = format_si05_section(data)
-        assert section.startswith("---")
+        assert section.startswith("\\-\\-\\-")
 
     def test_emojis_present_for_each_metric(self):
         """Each metric line uses its designated emoji per spec §4."""
