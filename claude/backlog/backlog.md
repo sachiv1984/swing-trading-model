@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-15 (v5.5 ST-10 journey map — 2 new items: BLG-FE-73/74)
+**Last Updated:** 2026-06-15 (v5.5 sprint close — ST-11/12/13/14 returned to backlog with gate constraints: BLG-FE-64 not before 2026-06-21; BLG-OPS-59/BLG-GOV-112/BLG-GOV-115 not before 2026-07-04)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — DL-041/042; IW skipped ≥20 open ideas; 8 new items; meta-review DUE conducted; v5.4 Now section added)
 
 > ⚠️ Standing Notice
@@ -980,7 +980,7 @@ SI-04 (strategy version comparison) and SI-05 (weekly digest display) will intro
 
 **Gate criteria:** SI-03 Red Flag Journal live ≥ 30 days (2026-06-21 — gate clears in 14 days from 2026-06-07).
 
-**Sprint history:** Planned as ST-03 (EPIC-02) in cycle 2026-06-09__release-v5.4; returned to backlog 2026-06-10 — date gate (2026-06-21) not met at sprint close; PO-authorised deferral. Eligible from next cycle on or after 2026-06-21.
+**Sprint history:** Planned as ST-03 (EPIC-02) in cycle 2026-06-09__release-v5.4; returned to backlog 2026-06-10 — date gate (2026-06-21) not met at sprint close; PO-authorised deferral. Planned again as ST-11 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-06-21 still not reached. **Not eligible for sprint planning before 2026-06-21** (gate: SI-03 Red Flag Journal live ≥ 30 days).
 
 **Problem**
 BLG-FE-41 (Red Flag Journal visual design review) has a gate date of 2026-06-21. When the gate clears, sprint planning delay can be avoided if the design review brief is already prepared. The brief defines: scope (which aspects of RedFlagJournal.js are in scope for visual review), evaluation criteria, and deliverables from the review.
@@ -4122,6 +4122,8 @@ v5.3 shipped 5 new endpoints that appear in openapi.yaml but are absent from api
 **Provisional-Target:** Unscheduled (review after 4 weeks production operation, ~2026-07-04)
 **Displacement:** BLG-OPS-13 (performance baseline gaps, P3) deprioritised.
 
+**Sprint history:** Planned as ST-12 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-07-04 not yet reached. **Not eligible for sprint planning before 2026-07-04** (gate: ≥ 4 weeks of POST /digest/si05/send production operation).
+
 **Problem**
 POST /digest/si05/send was baselined pre-launch in BLG-OPS-54. Production p99 latency under real data volume (actual trade history, real Red Flag Journal entries, real compliance scores) may differ from the pre-launch baseline. Confirming production performance validates the service is not degrading under real conditions.
 
@@ -5052,6 +5054,8 @@ CLAUDE.md §1 requires a design gate assessment before sprint planning for any r
 **Provisional-Target:** After 2026-07-04 SI-05 effectiveness review
 **Displacement:** BLG-GOV-85 (Arc 6 §13 pre-assessment boundary doc, gate-conditional) deprioritised.
 
+**Sprint history:** Planned as ST-13 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-07-04 not yet reached. **Not eligible for sprint planning before 2026-07-04** (gate: SI-05 Phase 1 effectiveness review complete).
+
 **Gate criteria:** SI-05 Phase 1 first effectiveness review (BLG-GOV-96) complete — gate clears 2026-07-04.
 
 **Problem**
@@ -5139,6 +5143,8 @@ The 2026-07-04 SI-05 effectiveness review (BLG-GOV-96, BLG-GOV-113) will rely on
 **Effort:** S (~0.5–1 day)
 **Provisional-Target:** v5.4 (gate: 2026-07-04 SI-05 effectiveness review complete)
 **Gate criteria:** BLG-GOV-113 (SI-05 Phase 1 effectiveness review protocol) complete — i.e., the 2026-07-04 effectiveness review has been conducted
+
+**Sprint history:** Planned as ST-14 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-07-04 not yet reached. **Not eligible for sprint planning before 2026-07-04** (gate: BLG-GOV-113 effectiveness review protocol complete).
 
 **Problem**
 SI-05 launched 2026-06-04. After the 2026-07-04 effectiveness review (BLG-GOV-113), the digest's actionability should be formally assessed. This requires defining what "actionable" means for an SI-05 digest: did the user open the Red Flag Journal? Did they review their strategy compliance? Did they act on a drift signal? Without formal metric definitions, the effectiveness review cannot produce measurable outcomes.

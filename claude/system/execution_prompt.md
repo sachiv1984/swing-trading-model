@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.40
-**Last Updated:** 2026-06-11
+**Version:** 3.41
+**Last Updated:** 2026-06-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -726,6 +726,7 @@ If all conditions pass:
 1. Merge the PR (squash or merge as configured).
 2. Update `execution_state.json`: EPIC `pr_status` = `merged`, `status` = `merged`.
 3. Update `merge_gate.epics_merged`.
+3a. **Persist state before halt (LL-v5.5-EX-02 — third recurrence: v5.3/v5.4/v5.5):** Immediately commit `execution_state.json` to the EPIC branch NOW — before outputting the halt message. An uncommitted state write is lost if the session ends, requiring stale-state correction on the next resume. Run: `git add claude/cycles/<cycle_id>/execution_state.json && git commit -m "[EPIC-xx] Persist merged state before session close" && git push origin <branch>`. This is a hard requirement; the halt message must not be the last action in the session if execution_state.json is unstaged.
 4. **[HARD GATE — HALT after every EPIC merge (OA-01, v4.1 ST-01)]** Output the block below and **stop immediately**. Do not proceed to the next EPIC, do not continue the execution loop, do not execute STEP 5 in this invocation. The engine resumes only when the user explicitly re-invokes `run sprint`:
 
 > ✅ EPIC-xx merged. **HARD GATE: Re-invoke `run sprint --cycle <cycle_id>` now.** The engine halts after every EPIC merge and may not auto-advance to the next EPIC or STEP 5. If this is the final EPIC, re-invocation detects `merge_gate.all_merged = true` and executes STEP 5 (Sprint Close) directly, producing `sprint_close.md` and sealing `execution_state.json`. Do not proceed to `run delivery verification` without this re-invocation.
@@ -760,6 +761,8 @@ If any escalations remain `Open` with `Blocks execution: Yes`: set cycle status 
 ## STEP 5 — Sprint Close (All EPICs Merged)
 
 Trigger: all EPICs in `execution_state.json.merge_gate.epics_pending` are empty (all merged).
+
+**Branch ordering gate (LL-v5.5-EX-01 — third recurrence: v5.3/v5.4/v5.5):** Before ANY write in STEP 5 (including STEP 5.2 backlog returns and STEP 5.1 state updates), run `git branch --show-current`. If the result is NOT `main`, switch to main NOW — before writing anything. Do not write backlog.md, execution_state.json, sprint_close.md, lessons_learnt_cycle.md, or System_status_report.md while on an exec/ branch. The STEP 5.3 branch advisory exists but fires too late (after STEP 5.2 backlog writes). This gate fires first.
 
 ### 5.0 Delegation Log Outcome Check (Required before Sprint_Complete)
 

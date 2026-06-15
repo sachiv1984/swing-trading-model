@@ -2,8 +2,37 @@
 **Class:** Living Document (Class 3)
 **Status:** Active
 **Version:** 3.9
-**Last Updated:** 2026-06-08
+**Last Updated:** 2026-06-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-06-10__release-v5.5
+**Date:** 2026-06-15
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Governance prompt hardening — sprint_planning_prompt.md date gate advisory; execution_prompt.md pr_status read-after-open + qa_evidence commit discipline | claude/system/sprint_planning_prompt.md; claude/system/execution_prompt.md | None |
+| EPIC-02 | Trade count gate-monitoring endpoint (GET /portfolio/gate-metrics) + SI-05 digest data density line | stage4_backlog_slice.md#ST-04/05; backend/database.py#get_gate_metrics | None |
+| EPIC-03 | API performance baseline complete (18 endpoints measured; BLG-OPS-13 closed); regression test suite baseline doc (66 endpoints, 41 e2e specs, 387 scenarios); SI-05 user journey map with 2 friction findings (BLG-FE-73/74) | docs/ops/api_performance_baseline.md§18/19; docs/qa/regression_test_suite_baseline.md; docs/ux/si05_user_journey_map.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-11 | Gate date 2026-06-21 not yet reached (SI-03 live ≥ 30 days) | BLG-FE-64 — not eligible before 2026-06-21 |
+| ST-12 | Gate date 2026-07-04 not yet reached (≥ 4 weeks production) | BLG-OPS-59 — not eligible before 2026-07-04 |
+| ST-13 | Gate date 2026-07-04 not yet reached (effectiveness review) | BLG-GOV-112 — not eligible before 2026-07-04 |
+| ST-14 | Gate date 2026-07-04 not yet reached (BLG-GOV-113 protocol) | BLG-GOV-115 — not eligible before 2026-07-04 |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md
+- Deviations filed: None
+- Test scenarios referenced: tests/test_gate_metrics.py (EPIC-02); docs/qa/regression_test_suite_baseline.md (EPIC-03)
 
 ---
 

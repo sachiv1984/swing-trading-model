@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.42
-**Last Updated:** 2026-06-11
+**Version:** 4.43
+**Last Updated:** 2026-06-15
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.40)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.41)
 
 ### 8.1 Invocation
 
@@ -1467,7 +1467,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.34 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.9 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.40 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.41 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.5 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.0 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.43 | 2026-06-15 | **v5.5 sprint close lessons learnt action-now patches — execution_prompt.md v3.40→v3.41: branch ordering gate (STEP 5) + merge state persist before halt (STEP 4).** §8 source prompt header updated v3.40→v3.41. §14 Execution Engine Source v3.40→v3.41. Changes (execution_prompt v3.41): (LL-v5.5-EX-01, third recurrence git-stash-at-branch-switch) STEP 5 opening branch ordering gate added — before ANY STEP 5 writes, engine must confirm `git branch --show-current` is main and switch if not; prevents backlog.md/execution_state.json writes on EPIC branch. (LL-v5.5-EX-02, third recurrence stale-pr_status) STEP 4 step 3a added — immediately after merging, commit execution_state.json to EPIC branch before outputting halt message; prevents stale merged state at next session resume. §14 Version 4.42→4.43/2026-06-15. Authority: Head of Specs Team (v5.5 Phase 3 lessons learnt, 2026-06-15). |
 | 4.42 | 2026-06-11 | **v5.5 ST-02+ST-03 (BLG-GOV-117+118, EPIC-01) — execution_prompt.md v3.39→v3.40: pr_status read-after-open improvement + qa_evidence commit advisory.** §8 source prompt header updated v3.39→v3.40. §14 Execution Engine Source v3.39→v3.40. Changes (execution_prompt v3.40): (ST-02/BLG-GOV-117) §3.2.B step 5 updated: `gh pr view` command expanded from `--json state` to `--json state,mergeStateStatus` — captures actual PR state including merge readiness immediately after open. (ST-03/BLG-GOV-118) §3.2.B — "qa_evidence commit advisory (BLG-GOV-118)" added before step 1: verify `qa_evidence_EPIC-xx.md` is committed to EPIC branch before running `gh pr create`; git status check required. §14 Version 4.41→4.42/2026-06-11. Authority: Head of Specs Team (BLG-GOV-117+118, v5.5 ST-02+ST-03, 2026-06-11). |
 | 4.41 | 2026-06-11 | **v5.5 ST-01 (BLG-GOV-116, EPIC-01) — sprint_planning_prompt.md v3.8→v3.9: within-sprint date gate advisory.** §7 source prompt header updated v3.8→v3.9. §14 Sprint Planning Engine v3.8→v3.9. Change (sprint_planning_prompt v3.9): STEP 6.1 — "Within-sprint date gate advisory (BLG-GOV-116)" added: stories with within-sprint date gates must be marked `**Status at sprint open: conditional — gate <date>**` in sprint_backlog.md at planning time; `ready` only when no within-sprint date gate exists. Resolves v5.4 lessons-learnt carry-forward (ST-11–14 in v5.5 were the first correctly marked instances). §14 Version 4.40→4.41/2026-06-11. Authority: Head of Specs Team (BLG-GOV-116, v5.5 ST-01, 2026-06-11). |
 | 4.40 | 2026-06-10 | **AUD-2026-06-10 Tier 1 patches (part 2): roadmap_prompt.md v6.9→v7.0 STEP 8.0.5 candidate list pre-clean + execution_prompt.md v3.38→v3.39 STEP 4 branch clean-state advisory.** §6 source prompt header updated v6.9→v7.0. §8 source prompt header updated v3.38→v3.39. §14 Roadmap Engine Source v6.9→v7.0. §14 Execution Engine Source v3.38→v3.39. Changes: (AUD-2026-06-10-003) roadmap_prompt.md STEP 8.0.5 added — candidate list pre-clean advisory: grep backlog.md for ✅ COMPLETE / RA: markers on each candidate BLG-ID before presenting to PO; removes already-shipped items from candidate list. (AUD-2026-06-10-002) execution_prompt.md STEP 4 halt output — session-close advisory added: operator must verify git status clean on EPIC branch before ending session (2nd recurrence: v5.3+v5.4 stash-at-branch-switch). §14 Version 4.39→4.40/2026-06-10. Authority: Head of Specs Team (AUD-2026-06-10 Tier 1 closure, 2026-06-10). |
