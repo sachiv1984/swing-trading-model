@@ -250,7 +250,7 @@ def format_si05_section(data: dict) -> str:
     summary_line = _integrity_summary_line(pass_rate, red_flag_count, override_rate)
 
     return (
-        "---\n"
+        "\\-\\-\\-\n"
         "*📋 Strategy Integrity*\n\n"
         f"✅ Pre\\-entry pass rate \\(7d\\): {pass_rate_fmt}\n"
         f"🚨 Red flag events \\(7d\\): {red_flag_count}\n"
@@ -274,7 +274,7 @@ def _fetch_trade_count_for_digest() -> Optional[int]:
         try:
             with conn.cursor() as cur:
                 cur.execute(
-                    "SELECT id FROM portfolios ORDER BY created_at DESC LIMIT 1"
+                    "SELECT id FROM portfolios ORDER BY created_date DESC LIMIT 1"
                 )
                 row = cur.fetchone()
                 if not row:
@@ -383,7 +383,7 @@ def send_si05_digest(*, _sleep_fn=None) -> dict:
         events_per_week = data.get("events_per_week", 0.0) or 0.0
         override_rate = data.get("override_rate")
         summary_line = _integrity_summary_line(pass_rate, round(events_per_week * 7), override_rate)
-        message = f"---\n*📋 Strategy Integrity*\n\n{summary_line}"
+        message = f"\\-\\-\\-\n*📋 Strategy Integrity*\n\n{summary_line}"
         message_length = len(message)
         logger.warning("SI-05 message truncated to summary line (%d chars)", message_length)
 
