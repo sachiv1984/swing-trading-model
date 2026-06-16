@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.9
+**Version:** 3.10
 **Last Updated:** 2026-06-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -187,7 +187,7 @@ Fail fast before any planning work begins. All hard gates must pass before STEP 
 - Advisory — does not block sprint planning.
 
 **7. Hygiene advisories** (both advisory only — no halt):
-- **Prompt change log gaps:** scan the full `## Changes` table in `claude/system/prompt_change_log.md` (not top-first — entries may be at the bottom) for any Class 6 prompt where the current `**Version:**` header exceeds the last logged version. Surface as "⚠ Prompt change log gap: `<filename>` current v<X.Y> — last log v<A.B>. Add a prepended row per CLAUDE.md §6." Record in `sprint_planning_notes.md`.
+- **Prompt change log gaps:** for each Class 6 prompt file, run `grep "<filename>" claude/system/prompt_change_log.md | head -1` to find the most recent logged transition (the file is **prepended newest-first** — `head -1` gives the latest entry; do NOT use `tail` or `grep | tail`). Extract the target version (the `v<X.Y>` after `→` in the version column). If the current `**Version:**` in the file exceeds that version: surface as "⚠ Prompt change log gap: `<filename>` current v<X.Y> — last log v<A.B>. Add a prepended row per CLAUDE.md §6." Record in `sprint_planning_notes.md`.
 - **"Before Sprint Planning" backlog items:** scan `claude/backlog/backlog.md` for items with `Provisional-Target: Before v<X.Y> sprint planning` where X.Y = current release. For each found: surface advisory and record under `## Pre-Sprint Backlog Advisory` in `sprint_planning_notes.md` with item IDs and titles.
 
 ---

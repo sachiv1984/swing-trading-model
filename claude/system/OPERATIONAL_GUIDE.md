@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.46
+**Version:** 4.47
 **Last Updated:** 2026-06-16
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -763,7 +763,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.9)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.10)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -1465,7 +1465,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v7.1 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.35 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.9 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.10 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.42 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.5 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.47 | 2026-06-16 | **sprint_planning_prompt.md v3.9→v3.10 — STEP -1.7 prompt change log gap advisory: replaced `grep | tail` instruction with `grep | head -1` and explicit prepend-sort note.** §7 source prompt header updated v3.9→v3.10. §14 Sprint Planning Engine v3.9→v3.10. §14 Version 4.46→4.47/2026-06-16. Change (sprint_planning_prompt v3.10): STEP -1.7 hygiene advisory — prompt change log gap check rewritten to use `grep "<filename>" prompt_change_log.md | head -1` (file is prepended newest-first; `head -1` gives the most recent entry); explicit note added that `tail` must NOT be used; false-positive root cause: prior wording "not top-first — entries may be at the bottom" predated prepend-sort convention and caused engine to read oldest entries as most recent. Per-file changelogs (post_ship_closure_changelog.md, roadmap_management_changelog.md) backfilled with entries missed since 2026-05-09 refactor. Authority: Head of Specs Team (RCA + v5.7 sprint planning false-positive resolution, 2026-06-16). |
 | 4.46 | 2026-06-16 | **backlog_management_prompt.md v1.8→v1.9 — §6 classification criteria and STEP 6.2 post-write verification extended to catch body-line ✅ COMPLETE markers.** §6M source prompt header updated v1.8→v1.9. §14 Backlog Management Engine v1.8→v1.9. §14 Version 4.45→4.46/2026-06-16. Changes (backlog_management v1.9): §6 Complete—Archive classification — criteria updated from "Status ✅ COMPLETE with delivery date" (ambiguous) to explicitly require checking the heading line OR the first body line immediately following the `### BLG-` heading; STEP 6.2 post-write verification — two-check grep added: (1) heading lines for ✅ COMPLETE/❌ Killed, (2) line immediately following each `### BLG-` heading for same markers. Root cause: the standard backlog format places ✅ COMPLETE on the body line, not the heading; prior single-grep check (v1.8) only caught heading-embedded markers, allowing ~100 completed items to accumulate across cycles before manual intervention on 2026-06-16. Authority: Head of Specs Team (post-groom root cause analysis, 2026-06-16). |
 | 4.45 | 2026-06-16 | **AUD-2026-06-16 Tier 1 patches — release_planning_prompt.md v2.34→v2.35 (STEP 1.4a Perennial-Return Check) + execution_prompt.md v3.41→v3.42 (§5.3 Infrastructure co-sign class).** §6B source prompt header updated v2.34→v2.35. §8 source prompt header updated v3.41→v3.42. §14 Release Engine Source v2.34→v2.35. §14 Execution Engine Source v3.41→v3.42. §14 Version 4.44→4.45/2026-06-16. Changes: (AUD-2026-06-16-001) release_planning STEP 1.4a added — Perennial-Return Check advisory: items returned at planning for 2+ consecutive cycles require PO active disposition (keep with updated gate evidence OR remove from horizon); prevents silent re-entry. (AUD-2026-06-16-002) execution_prompt §5.3 — Infrastructure co-sign class added: "Infrastructure & Operations Owner + Director of Quality: Confirmed" is a valid DoQ sign-off for backend-only EPICs; accepted by delivery_verification §-1.3 Tier 2 as agent-mediated with named domain role. Authority: Head of Specs Team (AUD-2026-06-16 Tier 1 closure, 2026-06-16). |
 | 4.44 | 2026-06-16 | **Rebalance 2026-06-16__scheduled LL-RP-02 action-now patch — roadmap_prompt.md v7.0→v7.1: STEP 8.0.5 candidate list pre-clean elevated from Advisory to Mandatory; now fires at two points: STEP 3 candidate compilation AND before STEP 8.1 presentation.** §6 source prompt header updated v7.0→v7.1. §14 Roadmap Engine Source v7.0→v7.1. Change: STEP 8.0.5 retitled from "Advisory" to "Mandatory"; step description updated to fire at STEP 3 (when compiling candidate list from backlog) in addition to STEP 8.1 (before presenting to PO); root cause note added (two consecutive cycles v5.4+v5.5 saw complete items appear because candidate lists were compiled without running the grep). §14 Version 4.43→4.44/2026-06-16. Authority: Head of Specs Team (LL-RP-02, rebalance 2026-06-16__scheduled). |

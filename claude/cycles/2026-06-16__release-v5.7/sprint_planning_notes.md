@@ -151,8 +151,8 @@ No risks have materialised since release planning.
 
 | ID | Description | Owner | Blocker? |
 |----|-------------|-------|----------|
-| OA-SP-01 | Prompt change log gap: post_ship_closure.md v2.13 vs last logged v2.12 | Head of Specs Team | No |
-| OA-SP-02 | Prompt change log gap: roadmap_management_prompt.md v1.4 vs last logged v1.3 | Head of Specs Team | No |
+| OA-SP-01 | ~~Prompt change log gap: post_ship_closure.md v2.13 vs last logged v2.12~~ **RESOLVED — false positive.** Entry exists in prompt_change_log.md line 25 (prepend-sorted; grep\|tail returned oldest entry). Root cause logged in .claude/skills/lessons_learnt.md; sprint_planning_prompt.md v3.9→v3.10 patches advisory check. Per-file changelog backfilled. | Head of Specs Team | No |
+| OA-SP-02 | ~~Prompt change log gap: roadmap_management_prompt.md v1.4 vs last logged v1.3~~ **RESOLVED — false positive.** Entry exists in prompt_change_log.md line 123 (same root cause as OA-SP-01). Per-file changelog backfilled. | Head of Specs Team | No |
 | OA-SP-03 | LL-RP-v56-01: Rebalance engine maintainer advisory (roadmap_prompt.md changelog gaps) | PMO Lead | No (deferred to rebalance) |
 | OA-SP-04 | LL-v2.2-SP-01: No HoST design session artefact for ST-09 (BLG-FE-64). Advisory: schedule HoST design session before sprint start if gate clears 2026-06-21. | Head of Specs Team | No |
 
