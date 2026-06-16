@@ -174,6 +174,7 @@ export default function Research() {
   const plans = Array.isArray(tradePlansData) ? tradePlansData : [];
   const activePlan =
     plans.find((p) => p.status === "active") ||
+    plans.find((p) => p.status === "entry_conditions_set") ||
     plans.find((p) => p.status === "draft") ||
     null;
 
