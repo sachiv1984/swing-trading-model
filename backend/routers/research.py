@@ -23,6 +23,31 @@ router = APIRouter(prefix="/research", tags=["Research"])
 _YF_UNAVAILABLE = "yf_unavailable"
 _TICKER_NOT_FOUND = "ticker_not_found"
 
+# Per-ticker TTL cache — avoids sequential external API calls on every page load.
+# Gate cleared 2026-06-11: p95=4,601ms > 3,000ms threshold (BLG-OPS-22).
+# TTL: 15 minutes per ticker. Invalidated on screener run (see invalidate_research_cache).
+_RESEARCH_CACHE_TTL_SECONDS = 900
+_research_cache: dict = {}  # key: (ticker_upper, market) → {"data": ..., "expires_at": float}
+_cache_hits = 0
+_cache_misses = 0
+
+
+def invalidate_research_cache(tickers: list = None) -> None:
+    """Invalidate cached research entries. Called after screener run completes.
+
+    Args:
+        tickers: list of ticker strings to invalidate (upper-case). None = invalidate all.
+    """
+    global _cache_hits, _cache_misses
+    if tickers is None:
+        _research_cache.clear()
+        logger.info("[research_cache] Full cache invalidated (screener run)")
+    else:
+        for ticker in tickers:
+            for market in ("US", "UK"):
+                _research_cache.pop((ticker.upper(), market), None)
+        logger.info("[research_cache] Partial invalidation for %d tickers", len(tickers))
+
 _YF_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
     "Accept": "application/json",
@@ -179,11 +204,26 @@ def _get_earnings(ticker: str, market: str) -> Optional[dict]:
 @router.get("/{ticker}")
 def get_research(ticker: str, market: Optional[str] = None):
     """GET /research/{ticker} — aggregated pre-trade research snapshot."""
+    global _cache_hits, _cache_misses
     try:
         if not market:
             market = "UK" if ticker.upper().endswith(".L") else "US"
         else:
             market = market.upper()
+
+        cache_key = (ticker.upper(), market)
+        now = time.monotonic()
+        cached = _research_cache.get(cache_key)
+        if cached and now < cached["expires_at"]:
+            _cache_hits += 1
+            logger.info(
+                "[research_cache] HIT %s (hits=%d misses=%d)", ticker.upper(), _cache_hits, _cache_misses
+            )
+            return cached["data"]
+        _cache_misses += 1
+        logger.info(
+            "[research_cache] MISS %s (hits=%d misses=%d)", ticker.upper(), _cache_hits, _cache_misses
+        )
 
         portfolio = get_portfolio()
         portfolio_id = str(portfolio["id"]) if portfolio else None
@@ -209,7 +249,7 @@ def get_research(ticker: str, market: Optional[str] = None):
         market_cap = _get_market_cap(ticker)
         news_headlines = _get_news(ticker, market)
 
-        return {
+        response = {
             "status": "ok",
             "data": {
                 "ticker": ticker.upper(),
@@ -225,5 +265,7 @@ def get_research(ticker: str, market: Optional[str] = None):
                 "news_headlines": news_headlines,
             },
         }
+        _research_cache[cache_key] = {"data": response, "expires_at": time.monotonic() + _RESEARCH_CACHE_TTL_SECONDS}
+        return response
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})

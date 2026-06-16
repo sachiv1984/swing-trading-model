@@ -76,6 +76,8 @@ def trigger_screener_run(
     def _run_in_background():
         try:
             run_screener(request.ticker_universe, run_id=pending_run_id)
+            from routers.research import invalidate_research_cache
+            invalidate_research_cache()
         except RuntimeError as exc:
             logger.warning("Background screener run failed: %s", exc)
         except Exception as exc:

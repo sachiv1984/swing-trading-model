@@ -24,11 +24,21 @@ from fastapi import APIRouter, Query, HTTPException
 from services.analytics_service import AnalyticsService
 from datetime import date, timedelta, datetime, timezone
 import os
+import time
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import numpy as np
 import pandas as pd
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qs
+
+# Run SI-02 DDL migrations only once per process — calling ensure_* on every
+# /behavioural-drift request adds ~1–2s per DDL statement (BLG-OPS-64).
+_si02_schema_ensured = False
+
+# TTL cache for behavioural drift result (15-min TTL — data changes only when
+# new trades close, which is infrequent relative to page load frequency).
+_drift_cache: dict = {"result": None, "portfolio_id": None, "expires_at": 0.0}
+_DRIFT_CACHE_TTL_SECONDS = 900
 
 
 def _clean_db_url(url: str) -> str:
@@ -938,6 +948,7 @@ async def get_behavioural_drift():
     Contract: docs/specs/api_contracts/behavioural_drift_contract.md
     Spec: docs/specs/metrics/si02_drift_score.md §2–§4
     """
+    global _si02_schema_ensured
     from database import get_portfolio, get_behavioural_drift_data, ensure_si02_trade_plans_columns, ensure_si02_trade_history_indexes
     from services.behavioural_drift_service import compute_drift
 
@@ -947,11 +958,25 @@ async def get_behavioural_drift():
             raise HTTPException(status_code=404, detail="Portfolio not found")
 
         portfolio_id = str(portfolio["id"])
-        ensure_si02_trade_plans_columns()
-        ensure_si02_trade_history_indexes()
+
+        if not _si02_schema_ensured:
+            ensure_si02_trade_plans_columns()
+            ensure_si02_trade_history_indexes()
+            _si02_schema_ensured = True
+
+        now = time.monotonic()
+        if (
+            _drift_cache["result"] is not None
+            and _drift_cache["portfolio_id"] == portfolio_id
+            and now < _drift_cache["expires_at"]
+        ):
+            return {"status": "ok", "data": _drift_cache["result"]}
 
         drift_data = get_behavioural_drift_data(portfolio_id)
         result = compute_drift(drift_data)
+        _drift_cache["result"] = result
+        _drift_cache["portfolio_id"] = portfolio_id
+        _drift_cache["expires_at"] = now + _DRIFT_CACHE_TTL_SECONDS
         return {"status": "ok", "data": result}
 
     except HTTPException:

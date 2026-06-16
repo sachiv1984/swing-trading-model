@@ -9,6 +9,18 @@ from database import ensure_red_flag_events_table, ensure_red_flag_events_severi
 
 router = APIRouter(tags=["Portfolio"])
 
+# Run DDL only once per process lifetime — calling ensure_* on every request
+# adds ~1–2s round-trip per DDL statement against a remote DB (BLG-OPS-63).
+_schema_ensured = False
+
+
+def _ensure_schema_once() -> None:
+    global _schema_ensured
+    if not _schema_ensured:
+        ensure_red_flag_events_table()
+        ensure_red_flag_events_severity_column()
+        _schema_ensured = True
+
 
 def _serialize_event(event: dict) -> dict:
     out = dict(event)
@@ -37,8 +49,7 @@ def get_red_flag_journal(
     ST-09 (v4.6): severity filter added (info / warning / critical).
     """
     try:
-        ensure_red_flag_events_table()
-        ensure_red_flag_events_severity_column()
+        _ensure_schema_once()
         result = get_red_flag_events(
             page=page,
             page_size=page_size,

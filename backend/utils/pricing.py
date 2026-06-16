@@ -20,6 +20,12 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_FX_RATE = 1.27
 
+# TTL cache for GBP/USD rate — refreshed every 5 minutes to avoid a live HTTP
+# call on every portfolio endpoint request (root cause of concentration-status
+# and drawdown-status high latency: BLG-OPS-62).
+_fx_cache: Dict = {"rate": None, "expires_at": 0.0}
+_FX_CACHE_TTL_SECONDS = 300
+
 
 def _is_us_ticker(ticker: str) -> bool:
     return not ticker.endswith(".L")
@@ -84,7 +90,7 @@ def get_current_price(ticker: str) -> Optional[float]:
     return None
 
 
-def get_live_fx_rate() -> float:
+def get_live_fx_rate() -> float:  # noqa: C901
     """
     Fetch live GBP/USD exchange rate from Yahoo Finance
     
@@ -93,11 +99,14 @@ def get_live_fx_rate() -> float:
         Falls back to 1.27 if fetch fails
         
     Notes:
-        - Includes 200ms delay to avoid rate limiting
+        - Cached for 5 minutes (BLG-OPS-62 fix); falls back to DEFAULT_FX_RATE on error
         - Used for converting USD positions to GBP
     """
+    now = time.monotonic()
+    if _fx_cache["rate"] is not None and now < _fx_cache["expires_at"]:
+        return _fx_cache["rate"]
+
     try:
-        time.sleep(0.2)
         
         url = "https://query1.finance.yahoo.com/v8/finance/chart/GBPUSD=X"
         params = {
@@ -120,8 +129,10 @@ def get_live_fx_rate() -> float:
                 fx_rate = float(result["meta"]["regularMarketPrice"])
                 if fx_rate > 0:
                     print(f"✓ Live FX rate (GBP/USD): {fx_rate:.4f}")
+                    _fx_cache["rate"] = fx_rate
+                    _fx_cache["expires_at"] = time.monotonic() + _FX_CACHE_TTL_SECONDS
                     return fx_rate
-            
+
             # Try latest close price
             if "indicators" in result and "quote" in result["indicators"]:
                 quotes = result["indicators"]["quote"]
@@ -131,6 +142,8 @@ def get_live_fx_rate() -> float:
                         fx_rate = float(closes[-1])
                         if fx_rate > 0:
                             print(f"✓ Live FX rate (GBP/USD): {fx_rate:.4f}")
+                            _fx_cache["rate"] = fx_rate
+                            _fx_cache["expires_at"] = time.monotonic() + _FX_CACHE_TTL_SECONDS
                             return fx_rate
         
         print(f"⚠️  Could not fetch live FX rate, using default {DEFAULT_FX_RATE}")
