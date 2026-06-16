@@ -5074,3 +5074,22 @@ Archived by: Backlog Management Engine STEP 12, post-ship closure 2026-05-30__re
 | BLG-OPS-60 ✅ | Add v5.3 new endpoints to api_performance_baseline.md re-run | Shipped v5.4 ST-01, EPIC-01 — 5 endpoint rows added (GET /ai/journal-summary/history, GET /news/{ticker}, GET /watchlist, POST /watchlist, DELETE /watchlist/{entry_id}) with live Render measurements; I&O Owner sign-off |
 | BLG-FE-56 ✅ | Pre-entry panel: separate warn/fail override acknowledgement flow | Shipped v5.4 ST-02, EPIC-02 — pre_entry_override_ux_spec.md produced; warn/fail override flows separated; agent-mediated Head of UX & Design sign-off |
 | BLG-GOV-92 ✅ | SI-05 Phase 2 activation criteria definition | Shipped v5.4 ST-04, EPIC-03 — si05_phase2_activation_criteria.md produced; hard gate + quality gate + Phase 1 effectiveness gate defined; PO-approved (agent-mediated) |
+
+---
+
+## Closed Items — v5.5 Post-Ship (2026-06-16)
+
+*Archived: 10 items shipped in v5.5 (cycle 2026-06-10__release-v5.5). Groom date: 2026-06-16.*
+
+| ID | Title | Ship note |
+|----|-------|-----------|
+| BLG-GOV-116 ✅ | sprint_planning_prompt.md within-sprint date gate advisory | Shipped v5.5 ST-01, EPIC-01 — advisory added to sprint_planning_prompt.md: stories with within-sprint date gates marked Status: conditional — gate <date> at planning; v bumped; Head of Specs Team sign-off |
+| BLG-GOV-117 ✅ | execution_prompt.md pr_status read-after-open improvement | Shipped v5.5 ST-02, EPIC-01 — gh pr view called immediately after pr create; pr_status written from actual response; LL-v5.5-EX-02 mandatory persist-before-halt also applied; v3.41; Head of Specs Team sign-off |
+| BLG-GOV-118 ✅ | qa_evidence commit discipline advisory in execution_prompt.md | Shipped v5.5 ST-03, EPIC-01 — pre-PR commit check for qa_evidence added; LL-v5.5-EX-01 branch ordering gate at STEP 5.0 also applied; v3.41; Head of Specs Team sign-off |
+| BLG-BE-34 ✅ | Trade count gate-monitoring view | Shipped v5.5 ST-04, EPIC-02 — get_gate_metrics() function in database.py; GET /portfolio/gate-metrics endpoint; registered in test.py, openapi.yaml, conftest.py; Data Model & Domain Schema Owner sign-off |
+| BLG-GOV-120 ✅ | Trade data density progress tracker | Shipped v5.5 ST-05, EPIC-02 — data density progress line added to SI-05 digest via si05_digest_service.py; SC-SS-01b Playwright test updated (65→66 fallback); I&O Owner sign-off |
+| BLG-OPS-13 ✅ | Add new v2.8/v2.9/v3.0/v3.4/v3.9/v4.6 endpoints to api_performance_baseline.md re-run | Shipped v5.5 ST-06, EPIC-03 — 16 read endpoints measured; §18 added; 4 high-latency flags filed BLG-OPS-62/63/64; BLG-OPS-22 gate cleared; I&O Owner sign-off |
+| BLG-OPS-54 ✅ | Add POST /digest/si05/send to api_performance_baseline.md | Shipped v5.5 ST-08, EPIC-03 — documented in §19.1 as external-dependency exclusion (Telegram API timeout); I&O Owner sign-off |
+| BLG-OPS-61 ✅ | BLG-OPS-13 v5.1–v5.4 endpoint baseline extension | Shipped v5.5 ST-07, EPIC-03 — GET /watchlist p50=488ms, GET /portfolio/gate-metrics p50=543ms measured; §19 added; I&O Owner sign-off |
+| BLG-QA-50 ✅ | Create formal regression test suite baseline document | Shipped v5.5 ST-09, EPIC-03 — docs/qa/regression_test_suite_baseline.md: 387 scenarios, 66 endpoints, 41 e2e spec files; DoQ sign-off 2026-06-11 |
+| BLG-FE-65 ✅ | User journey map: SI-05 Telegram digest to app action | Shipped v5.5 ST-10, EPIC-03 — docs/ux/si05_user_journey_map.md: live staging walkthrough 2026-06-15; 2 friction findings (BLG-FE-73/74 filed); Head of UX & Design sign-off |

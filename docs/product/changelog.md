@@ -3,9 +3,47 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-10
+**Last Updated:** 2026-06-16
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v5.5 — SI-05 Effectiveness Review, Governance Hardening & UX Debt Clearance — 2026-06-16
+Cycle: 2026-06-10__release-v5.5
+Verified: Verified
+Verification report: claude/cycles/2026-06-10__release-v5.5/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Governance patches: sprint_planning_prompt.md within-sprint date gate advisory (ST-01); execution_prompt.md pr_status read-after-open improvement with mandatory persist-before-halt gate (ST-02 / LL-v5.5-EX-02); qa_evidence commit discipline advisory (ST-03) | claude/system/sprint_planning_prompt.md; claude/system/execution_prompt.md |
+| EPIC-02 | Trade count gate-monitoring view: GET /portfolio/gate-metrics backend endpoint + SI-05 data density progress line in Telegram digest | docs/ops/api_performance_baseline.md; claude/cycles/2026-06-10__release-v5.5/stage4_backlog_slice.md |
+| EPIC-03 | API performance baseline complete: 18 endpoints measured across v2.8–v5.4; formal regression test suite baseline document produced (387 scenarios, 66 endpoints, 41 e2e specs); SI-05 user journey map authored with 2 friction findings | docs/ops/api_performance_baseline.md; docs/qa/regression_test_suite_baseline.md; docs/ux/si05_user_journey_map.md |
+
+### Deviations accepted
+None.
+
+### Tech backlog items shipped
+- [ST-01] sprint_planning_prompt.md within-sprint date gate advisory — BLG-GOV-116 closed
+- [ST-02] execution_prompt.md pr_status read-after-open improvement — BLG-GOV-117 closed
+- [ST-03] qa_evidence commit discipline advisory in execution_prompt.md — BLG-GOV-118 closed
+- [ST-04] Trade count gate-monitoring view (backend) — BLG-BE-34 closed
+- [ST-05] Trade data density progress tracker (frontend display) — BLG-GOV-120 closed
+- [ST-06] v2.8–v4.6 endpoint performance baseline re-run (24 endpoints) — BLG-OPS-13 closed
+- [ST-07] v5.1–v5.4 endpoint baseline extension — BLG-OPS-61 closed
+- [ST-08] POST /digest/si05/send to api_performance_baseline.md — BLG-OPS-54 closed
+- [ST-09] Formal regression test suite baseline document — BLG-QA-50 closed
+- [ST-10] User journey map: SI-05 Telegram digest to app action — BLG-FE-65 closed
+
+### Items returned to backlog
+- [ST-11] Red Flag Journal visual design review pre-brief — gate 2026-06-21 not met; BLG-FE-64 remains open (eligible from 2026-06-21)
+- [ST-12] SI-05 p99 production latency baseline review — gate 2026-07-04 not met; BLG-OPS-59 remains open
+- [ST-13] SI-05 digest weekly cadence review — gate 2026-07-04 not met; BLG-GOV-112 remains open
+- [ST-14] SI-05 digest actionability metric definition — gate 2026-07-04 not met; BLG-GOV-115 remains open
+
+Sign-off: Product Owner — 2026-06-16
+QA sign-off: Director of Quality — 2026-06-16
 
 ---
 

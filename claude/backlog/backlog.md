@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-15 (v5.5 sprint close — ST-11/12/13/14 returned to backlog with gate constraints: BLG-FE-64 not before 2026-06-21; BLG-OPS-59/BLG-GOV-112/BLG-GOV-115 not before 2026-07-04)
+**Last Updated:** 2026-06-16 (v5.5 post-ship closure — ST-01–10 marked complete: BLG-GOV-116/117/118, BLG-BE-34, BLG-GOV-120, BLG-OPS-13/54/61, BLG-QA-50, BLG-FE-65)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — DL-041/042; IW skipped ≥20 open ideas; 8 new items; meta-review DUE conducted; v5.4 Now section added)
 
 > ⚠️ Standing Notice

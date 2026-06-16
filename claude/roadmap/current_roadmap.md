@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-10 (rebalance 2026-06-10__scheduled — STEP 8.1 Option(a): v5.5 Now section added; DL-045)
+**Last Updated:** 2026-06-16 (post-ship closure 2026-06-10__release-v5.5)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — Standard-tier, CPS=1.15; Δ=0.00; 8 new backlog items; DL-041/042; 4 ideas Rejected, 8 Promoted-Backlog, 17 re-parked; v5.4 Now section added)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,8 +10,8 @@
 
 ## 1. Current Version
 
-**v5.4** — Ops Monitoring, UX Debt Clearance & Governance Patches — ✅ Shipped 2026-06-10
-**Next planned release:** [TBD]
+**v5.5** — SI-05 Effectiveness Review, Governance Hardening & UX Debt Clearance — ✅ Shipped 2026-06-16
+**Next planned release:** v5.6
 
 *RA:v5.2 retired — see roadmap_archive.md 2026-06-08 (post-ship closure 2026-06-08__release-v5.2).*
 *RA:v5.1 retired — see roadmap_archive.md 2026-06-04 (post-ship closure 2026-06-21__release-v5.1).*
@@ -263,40 +263,9 @@ Today you find stocks through external research and add them to the watchlist ma
 
 *RA:v5.4 retired — see roadmap_archive.md 2026-06-10 (post-ship closure 2026-06-09__release-v5.4).*
 
-### v5.5 — SI-05 Effectiveness Review, Governance Hardening & UX Debt Clearance
+*RA:v5.5 retired — see roadmap_archive.md 2026-06-16 (post-ship closure 2026-06-10__release-v5.5).*
 
-**Status:** Planning (rebalance 2026-06-10__scheduled — STEP 8.1 Option(a), DL-045)
-**Next planned release:** v5.5
-
-**Theme:** Actioning the 2026-07-04 SI-05 effectiveness review, clearing governance carry-forwards from v5.4 lessons learnt, and advancing the UX/FE debt queue.
-
-**Key backlog candidates (advisory — binding at release planning):**
-- BLG-FE-64: Red Flag Journal visual design review pre-brief (gate 2026-06-21)
-- BLG-OPS-59: SI-05 p99 production latency baseline review (gate ≥2026-07-04)
-- BLG-GOV-112: SI-05 digest weekly cadence review (gate 2026-07-04)
-- BLG-GOV-113: SI-05 Phase 1 effectiveness review protocol (gate ≥2026-07-04)
-- BLG-GOV-114: si05_digest_log schema validation for effectiveness review (gate ≥2026-07-04)
-- BLG-GOV-115: SI-05 digest actionability metric definition (gate 2026-07-04)
-- BLG-GOV-116: sprint_planning_prompt.md within-sprint date gate advisory (LL-P3-01)
-- BLG-GOV-117: execution_prompt.md pr_status read-after-open improvement (LL-P3-03)
-- BLG-GOV-118: qa_evidence commit discipline advisory (LL-P3-02)
-- BLG-FE-61: allocation_insufficient SignalCard Playwright E2E coverage (P2, ready)
-- BLG-FE-62: Pre-entry panel combined component specification (P2)
-- BLG-FE-65: User journey map: SI-05 Telegram digest to app action (P2)
-- BLG-BE-16: Red flag events severity field (P2, ready)
-- BLG-OPS-61: v5.1–v5.4 endpoint baseline extension (P3)
-- BLG-GOV-120: Trade data density progress tracker (P2)
-
-**Sprint timing note:** SI-05 effectiveness review gate items (BLG-OPS-59, BLG-GOV-112–115) require the 2026-07-04 review to complete. Sprint planning should account for a Sprint 2 window post-2026-07-04, or a single sprint starting after that date.
-
-<!-- roadmap-annotation-marker: RA:v5.5:2026-06-10__release-v5.5 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-06-10__release-v5.5
-- Plan published: 2026-06-10
-- Cycle folder: claude/cycles/2026-06-10__release-v5.5/
-- Backlog slice: claude/cycles/2026-06-10__release-v5.5/stage4_backlog_slice.md
-- Status at annotation: Published — 14 stories / 4 EPICs / 2 sprints
+*No active Now horizon item — v5.6 scope TBD. Run `run roadmap --reason scheduled` (rebalance due; completed_cycle_count=41, even) before `plan release v5.6`.*
 
 -----
 
@@ -477,6 +446,7 @@ When evaluating new features:
 |**v5.2** ✅  |Governance Debt, SI-05 Ops & Spec Compliance|OA-01 + OA-02 governance patches (release_planning_prompt.md v2.34; execution_prompt.md v3.37); BLG-SPEC-47 resolved — DEV-v51-EPIC01-01 closed; BLG-SPEC-48 contract authored (digest_endpoints.md v0.3); SI-05 retry + log table; deployment runbook v0.2 + health check procedure; Claude API deprecation check (PASS); Telegram bot security review (PASS); endpoint auth review (BLG-BE-35 filed); endpoint coverage audit (50 routes; 6 gaps: BLG-SPEC-49–52); SI-05 QA acceptance protocol + edge case tests (26 total); effectiveness criteria (review 2026-07-04). 16/16 stories. Zero deviations. — ✅ Shipped 2026-06-08 — cycle: 2026-06-08__release-v5.2|
 |**v5.3** ✅  |Spec Debt, Security Hardening & Ops Governance|6 API contract gaps resolved (BLG-SPEC-49–52 + completeness audit + resolution plan); POST /digest/si05/send API key authentication (BLG-BE-35); CI secret scanning gate (BLG-OPS-58); SI-05 Telegram failure alerting (BLG-OPS-57); 3 AI policy governance docs (model pin update, audit log retention, Arc 4 audit); SI-05 effectiveness review protocol + digest log schema validation; strategy_rules.md §11 parameter validation; SI-02 frontend gate precision; Tax year P&L boundary tests + SI-05 E2E Playwright coverage; RFJ UX review; Playwright coverage matrix updated; LL-v5.2-P4-01/02 carry-forward resolved. 24/24 stories. Zero deviations. — ✅ Shipped 2026-06-09 — cycle: 2026-06-08__release-v5.3|
 |**v5.4** ✅  |Ops Monitoring, UX Debt Clearance & Governance Patches|v5.3 endpoint baseline added to api_performance_baseline.md (5 endpoints with live Render measurements; BLG-OPS-60 closed); pre-entry override UX spec (pre_entry_override_ux_spec.md; BLG-FE-56 closed); SI-05 Phase 2 activation criteria doc (si05_phase2_activation_criteria.md; BLG-GOV-92 closed). ST-03 (BLG-FE-64 RFJ pre-brief) returned — date gate 2026-06-21 not met. 3/4 firm stories. Zero deviations. — ✅ Shipped 2026-06-10 — cycle: 2026-06-09__release-v5.4|
+|**v5.5** ✅  |SI-05 Effectiveness Review, Governance Hardening & UX Debt Clearance|Governance patches (sprint_planning_prompt.md date gate advisory, execution_prompt.md pr_status mandatory persist + branch ordering gate, qa_evidence commit advisory; BLG-GOV-116/117/118 closed); trade count gate-monitoring view GET /portfolio/gate-metrics + SI-05 data density digest line (BLG-BE-34/GOV-120 closed); API performance baseline complete — 18 endpoints measured across v2.8–v5.4 (BLG-OPS-13/54/61 closed); formal regression test suite baseline doc 387 scenarios (BLG-QA-50 closed); SI-05 user journey map (BLG-FE-65 closed; BLG-FE-73/74 filed). 10/14 firm stories; ST-11–14 returned (gate dates 2026-06-21/2026-07-04). Zero deviations. — ✅ Shipped 2026-06-16 — cycle: 2026-06-10__release-v5.5|
 |**v4.0+**    |Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
 |**v4.0+**    |Arc 5: Strategy Integrity (remainder)                                 |SI-02 behavioural drift detection, SI-04 strategy version comparison, SI-05 weekly digest — 📋 Planned                                    |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

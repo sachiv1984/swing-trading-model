@@ -1206,3 +1206,21 @@ v5.3 Spec Debt, Security Hardening & Ops Governance. All 6 known API contract ga
 ### Original Roadmap Entry
 
 v5.4 Ops Monitoring, UX Debt Clearance & Governance Patches. ST-01 (BLG-OPS-60): v5.3 endpoints added to api_performance_baseline.md (5 endpoints with live Render measurements); ST-02 (BLG-FE-56): pre-entry override UX spec (pre_entry_override_ux_spec.md); ST-04 (BLG-GOV-92): SI-05 Phase 2 activation criteria doc (si05_phase2_activation_criteria.md, PO-approved). ST-03 (BLG-FE-64) returned to backlog — date gate 2026-06-21 not met; eligible from next cycle. 3/4 firm stories. Zero spec deviations. PRs #734–#736. Verified 2026-06-10. completed_cycle_count = 40.
+
+
+---
+
+## RA:v5.5 — SI-05 Effectiveness Review, Governance Hardening & UX Debt Clearance
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-16
+**Shipped version:** v5.5
+**Cycle reference:** 2026-06-10__release-v5.5
+**Verification report:** claude/cycles/2026-06-10__release-v5.5/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-16
+
+### Original Roadmap Entry
+
+v5.5 SI-05 Effectiveness Review, Governance Hardening & UX Debt Clearance. Governance patches: sprint_planning_prompt.md date gate advisory (BLG-GOV-116, ST-01); execution_prompt.md pr_status mandatory persist + branch ordering gate (BLG-GOV-117, ST-02; LL-v5.5-EX-02); qa_evidence commit advisory (BLG-GOV-118, ST-03; LL-v5.5-EX-01). Trade count gate-monitoring view GET /portfolio/gate-metrics + SI-05 data density line (BLG-BE-34/GOV-120, ST-04/05). API performance baseline complete — 18 endpoints measured v2.8–v5.4 (BLG-OPS-13/54/61, ST-06/07/08). Formal regression test suite baseline 387 scenarios / 66 endpoints (BLG-QA-50, ST-09). SI-05 user journey map + BLG-FE-73/74 friction (BLG-FE-65, ST-10). ST-11–14 returned — gate dates 2026-06-21/2026-07-04 not met. 10/14 firm stories. Zero spec deviations. PRs #751–#753. Verified 2026-06-16. completed_cycle_count = 41.
