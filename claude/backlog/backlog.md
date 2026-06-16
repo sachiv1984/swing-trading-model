@@ -1222,6 +1222,30 @@ When pass rate and override rate show "N/A" in the digest, the user cannot deter
 
 ---
 
+### BLG-FE-75 — Staging verification: SI-05 digest deep links navigate on mobile Telegram
+**Priority:** P3 (Low)
+**Type:** QA / Staging
+**Owner:** Head of UX & Design
+**Source:** ST-01 AC-02 staging gate — 2026-06-16 (v5.6 sprint execution)
+**Effort:** XS (<1h)
+**Provisional-Target:** v5.7
+
+**Problem**
+ST-01 (BLG-FE-73) added deep links from the SI-05 digest to Risk Dashboard and Red Flag Journal. AC-02 requires verifying the links navigate correctly on mobile Telegram. This requires a Telegram mobile client test which cannot be reproduced in CI. Deferred to post-merge staging.
+
+**Scope**
+- Open the SI-05 weekly Telegram digest on a mobile device
+- Tap each deep link (Risk Dashboard, Red Flag Journal)
+- Confirm navigation to the correct app screen
+- Record staging run date in QA evidence
+
+**Acceptance Criteria**
+- Risk Dashboard deep link navigates to `/RiskDashboard` on mobile Telegram
+- Red Flag Journal deep link navigates to `/RedFlagJournal` on mobile Telegram
+- No broken links or navigation errors
+
+---
+
 ## 4. Backend & Data Backlog
 
 ---

@@ -5,13 +5,13 @@
   "invoked_utc": "2026-06-16T09:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-16T15:45:00Z",
+  "last_updated_utc": "2026-06-16T16:30:00Z",
   "epics": {
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-16__release-v5.6/EPIC-03",
       "pr_number": 764,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-16__release-v5.6/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
@@ -155,18 +155,18 @@
       }
     },
     "EPIC-01": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-06-16__release-v5.6/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-06-16__release-v5.6/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/test_si05_digest_service.py"],
       "stories": {
         "ST-01": {
           "title": "BLG-FE-73: Add deep links from SI-05 digest to relevant app screens",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 758,
           "branch": "exec/2026-06-16__release-v5.6/EPIC-01",
@@ -305,9 +305,8 @@
   ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": [],
+    "epics_merged": ["EPIC-03"],
     "epics_pending": [
-      "EPIC-03",
       "EPIC-01",
       "EPIC-02"
     ],

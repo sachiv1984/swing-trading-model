@@ -402,3 +402,152 @@ class TestSendSi05Digest:
                         result = send_si05_digest()
         assert result["sent"] is True
         assert result["message_length"] <= MAX_MESSAGE_LENGTH
+
+
+# ---------------------------------------------------------------------------
+# BLG-FE-74 (ST-02): N/A reason clarification
+# ---------------------------------------------------------------------------
+
+class TestNaReasonClarification:
+    """AC-01/AC-02: N/A values include parenthetical reason; no-events vs data-unavailable distinct."""
+
+    def test_no_events_reason_shown_in_pass_rate(self):
+        """validation_na_reason='no_events' → pass rate shows 'no validation events this week'."""
+        format_si05_section = get_service()[0]
+        data = {
+            "validation_pass_rate": None,
+            "validation_na_reason": "no_events",
+            "events_per_week": 0.0,
+            "override_rate": None,
+            "top_rule_breach": None,
+        }
+        section = format_si05_section(data)
+        assert "no validation events this week" in section
+
+    def test_data_unavailable_reason_shown_in_pass_rate(self):
+        """validation_na_reason='data_unavailable' → pass rate shows 'data unavailable'."""
+        format_si05_section = get_service()[0]
+        data = {
+            "validation_pass_rate": None,
+            "validation_na_reason": "data_unavailable",
+            "events_per_week": 0.0,
+            "override_rate": None,
+            "top_rule_breach": None,
+        }
+        section = format_si05_section(data)
+        assert "data unavailable" in section
+
+    def test_no_events_and_data_unavailable_produce_distinct_messages(self):
+        """AC-02: 'no events' and 'data unavailable' are not the same string."""
+        format_si05_section = get_service()[0]
+        no_events_data = {
+            "validation_pass_rate": None,
+            "validation_na_reason": "no_events",
+            "events_per_week": 0.0,
+            "override_rate": None,
+            "top_rule_breach": None,
+        }
+        unavailable_data = {
+            "validation_pass_rate": None,
+            "validation_na_reason": "data_unavailable",
+            "events_per_week": 0.0,
+            "override_rate": None,
+            "top_rule_breach": None,
+        }
+        section_no_events = format_si05_section(no_events_data)
+        section_unavailable = format_si05_section(unavailable_data)
+        assert section_no_events != section_unavailable
+
+    def test_no_events_summary_line_distinct_from_data_unavailable(self):
+        """Summary line differs: 'No pre-entry validation events' vs 'data available'."""
+        format_si05_section = get_service()[0]
+        data = {
+            "validation_pass_rate": None,
+            "validation_na_reason": "no_events",
+            "events_per_week": 0.0,
+            "override_rate": None,
+            "top_rule_breach": None,
+        }
+        section = format_si05_section(data)
+        assert "No pre\\-entry validation events this week" in section
+        assert "data available" not in section
+
+    def test_backward_compat_no_na_reason_still_shows_na(self):
+        """Without na_reason key, N/A is still shown (backward compat)."""
+        format_si05_section = get_service()[0]
+        data = {
+            "validation_pass_rate": None,
+            "events_per_week": 0.0,
+            "override_rate": None,
+            "top_rule_breach": None,
+        }
+        section = format_si05_section(data)
+        assert "N/A" in section
+
+
+# ---------------------------------------------------------------------------
+# BLG-FE-73 (ST-01): Deep links in SI-05 digest
+# ---------------------------------------------------------------------------
+
+class TestDeepLinks:
+    """AC-01: Deep links present in digest when FRONTEND_URL is configured."""
+
+    def test_deep_links_present_when_frontend_url_set(self):
+        """With FRONTEND_URL set, digest includes Risk Dashboard and Red Flag Journal links."""
+        format_si05_section = get_service()[0]
+        data = {
+            "validation_pass_rate": 0.85,
+            "events_per_week": 0.5,
+            "override_rate": 0.10,
+            "top_rule_breach": None,
+        }
+        with patch.dict("os.environ", {"FRONTEND_URL": "https://app.example.com"}):
+            section = format_si05_section(data)
+        assert "Risk Dashboard" in section
+        assert "Red Flag Journal" in section
+        assert "https://app.example.com/RiskDashboard" in section
+        assert "https://app.example.com/RedFlagJournal" in section
+
+    def test_deep_links_absent_when_frontend_url_not_set(self):
+        """Without FRONTEND_URL, no deep links in digest (graceful omission)."""
+        format_si05_section = get_service()[0]
+        data = {
+            "validation_pass_rate": 0.85,
+            "events_per_week": 0.5,
+            "override_rate": 0.10,
+            "top_rule_breach": None,
+        }
+        with patch.dict("os.environ", {}, clear=True):
+            import os
+            os.environ.pop("FRONTEND_URL", None)
+            section = format_si05_section(data)
+        # Deep link section is absent but core metrics still present
+        assert "Risk Dashboard" not in section
+        assert "*📋 Strategy Integrity*" in section
+
+    def test_deep_links_url_construction_strips_trailing_slash(self):
+        """FRONTEND_URL with trailing slash produces correct link without double slash."""
+        format_si05_section = get_service()[0]
+        data = {
+            "validation_pass_rate": 0.85,
+            "events_per_week": 0.5,
+            "override_rate": 0.10,
+            "top_rule_breach": None,
+        }
+        with patch.dict("os.environ", {"FRONTEND_URL": "https://app.example.com/"}):
+            section = format_si05_section(data)
+        assert "https://app.example.com/RiskDashboard" in section
+        assert "//RiskDashboard" not in section
+
+    def test_character_limit_with_deep_links(self):
+        """Section with deep links still under 4,096-char Telegram limit."""
+        format_si05_section = get_service()[0]
+        data = {
+            "validation_pass_rate": 0.85,
+            "events_per_week": 0.5,
+            "override_rate": 0.10,
+            "top_rule_breach": "sector_concentration",
+        }
+        with patch.dict("os.environ", {"FRONTEND_URL": "https://app.swingtrading.io"}):
+            section = format_si05_section(data)
+        assert len(section) <= 4096
