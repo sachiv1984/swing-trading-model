@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-06-16__release-v5.6",
   "cycle_name": "Release Planning — v5.6 Research Performance, SI-05 UX Improvements & Backlog Clearance",
-  "status": "Sprint_Planning_Complete",
+  "status": "Executing",
   "engine": "release_planning",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-06-16__release-v5.6/stage4_backlog_slice.md",

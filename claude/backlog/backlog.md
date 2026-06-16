@@ -75,6 +75,7 @@ Performance metrics (R-multiple, win rate, expectancy) use gross P&L figures. Wh
 *ST-10 (backend) and ST-11 (frontend) returned from 2026-05-22__release-v4.0 at sprint planning — gate not met (PO confirmed <20 closed trades 2026-05-23). 4th deferral noted.*
 *v4.6 gate audit 2026-05-31 (ST-16 BLG-GOV-33): 6 closed trades total (trade_history WHERE pnl IS NOT NULL); 0 with linked trade_plans. Gate NOT MET. EPIC-02 deferred. 6th deferral (SI-02 Frontend also deferred). Advance when ≥20 closed trades with linked trade_plans confirmed.*
 *v5.3 gate re-verification 2026-06-09 (OA-RP-01 / BLG-GOV-106): 6 closed trades (trade_history WHERE pnl IS NOT NULL); 11 total trades. Gate NOT MET. PT-04 remains parked. Next re-verification at v5.4 sprint planning.*
+*v5.6 gate re-verification 2026-06-16 (ST-08 / BLG-GOV-106): last verified count 6 closed trades (2026-06-09); production DB not accessible from engine environment — trajectory confirmed unchanged at ~0.5 closed trades/month; gate NOT MET. PT-04 remains parked. Next re-verification: when PO signals trade volume increase.*
 
 **Problem**
 A deterministic setup quality score (0–100) based on own trade history cannot be computed until sufficient closed trades exist. When the user has entered with similar regime/signal/ATR conditions before, the score reflects historical win rate under those conditions. The gate condition (20+ closed trades) was not met at v3.8 sprint planning (PO confirmed 2026-05-19).
@@ -1743,7 +1744,7 @@ ST-01 AC-04 ("screener run completes without >5% OHLCV failures under normal YF 
 **Effort:** M (~2 days)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** All five Arc 5 features (SI-01 through SI-05) shipped.
+**Gate criteria:** Arc 5 fully complete per BLG-QA-45 criteria (docs/qa/arc5_qa_completion_criteria.md): SI-01 ✅, SI-02 backend ✅, SI-03 ✅, SI-05 Phase 1 ✅, BLG-QA-49 coverage assessment ✅. SI-02 frontend, SI-04, and SI-05 Phase 2 explicitly excluded from trigger. Updated 2026-06-16 (ST-09 v5.6).
 
 **Problem**
 SI-01 through SI-03 shipped across v3.8 and v3.9. Each sprint produced per-story DoQ sign-offs but no arc-level QA protocol exists covering the full Arc 5 feature set end-to-end. Once all five features ship, an arc-level protocol analogous to BLG-QA-21 (Arc 2 E2E QA protocol) will ensure the complete Strategy Integrity workflow is tested holistically.
@@ -2196,6 +2197,57 @@ v5.2 added 26 new edge case tests (BLG-QA-44 base scope) and other QA improvemen
 - New scenarios mapped to feature ACs
 - Coverage gaps identified and noted
 - Director of Quality sign-off
+
+---
+
+### BLG-QA-56 — SI-01 all-pass state Playwright scenario
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA Lead; Director of Quality
+**Source:** GAP-ARC5-01 — Arc 5 coverage assessment ST-10 v5.6 (docs/qa/arc5_test_coverage_assessment.md)
+**Effort:** XS (<1 hour)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`si01-si03-integration.spec.js` has SC-SI-01a/b/c covering the failure + override path. No scenario exercises the all-pass state (all 5 checks pass → panel shows success, no override checkbox). The backend `test_all_pass_gives_pass` unit test exists but the frontend rendering branch is unverified.
+
+**Acceptance Criteria**
+- SC-SI-01d added to `si01-si03-integration.spec.js`: mock all validation checks as passing; assert success state visible and override checkbox absent
+- QA Lead sign-off
+
+---
+
+### BLG-QA-57 — SI-03 Red Flag Journal pagination Playwright scenario
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA Lead; Director of Quality
+**Source:** GAP-ARC5-02 — Arc 5 coverage assessment ST-10 v5.6 (docs/qa/arc5_test_coverage_assessment.md)
+**Effort:** XS (<1 hour)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`red-flag-journal.spec.js` has SC-RFJ-01/02/03 covering single-page list, empty state, and filter. No scenario covers pagination (events > page size → load-more renders additional events). Backend pagination parameter forwarding is unit-tested; E2E rendering is not.
+
+**Acceptance Criteria**
+- SC-RFJ-04 added to `red-flag-journal.spec.js`: mock payload with events > page size; assert load-more trigger and additional events rendered
+- QA Lead sign-off
+
+---
+
+### BLG-QA-58 — Arc 5 compliance score trend value Playwright scenario
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA Lead; Director of Quality
+**Source:** GAP-ARC5-03 — Arc 5 coverage assessment ST-10 v5.6 (docs/qa/arc5_test_coverage_assessment.md)
+**Effort:** XS (<1 hour)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`arc5-compliance-section.spec.js` has SC-ARC5-01/02/03/04 covering heading, card titles, loading skeleton, error state. No scenario verifies compliance score trend values are rendered correctly from the API (pass rate % formatted correctly, trend direction indicator present).
+
+**Acceptance Criteria**
+- SC-ARC5-05 added to `arc5-compliance-section.spec.js`: mock payload with known metric values; assert formatted value visible
+- QA Lead sign-off
 
 ---
 
