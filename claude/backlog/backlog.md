@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-16 (v5.5 post-ship closure — ST-01–10 marked complete: BLG-GOV-116/117/118, BLG-BE-34, BLG-GOV-120, BLG-OPS-13/54/61, BLG-QA-50, BLG-FE-65)
+**Last Updated:** 2026-06-16 (rebalance 2026-06-16__scheduled — BLG-OPS-63 added; BLG-OPS-18 deprioritised; DL-046)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — DL-041/042; IW skipped ≥20 open ideas; 8 new items; meta-review DUE conducted; v5.4 Now section added)
 
 > ⚠️ Standing Notice
@@ -5437,6 +5437,31 @@ GET /analytics/behavioural-drift measured p50=3,293ms and p95=3,798ms on product
 - p95 latency reduced to ≤1,000ms on production for cached calls
 - Cache hit rate ≥50% under typical usage
 - Infrastructure & Operations Owner sign-off after re-measurement
+
+---
+
+### BLG-OPS-65 — Anthropic API cost 14-cycle trend analysis
+**Priority:** P3 (Low)
+**Type:** Operations / Cost Governance
+**Owner:** FinOps & Resource Architect
+**Source:** IDEA-finops-20260610-01 — Promoted-Backlog rebalance 2026-06-16__scheduled (DL-046; gate cleared: BLG-GOV-74 COMPLETE v4.4)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Unscheduled
+**Displacement:** BLG-OPS-18 (data pipeline cost baseline, P3, gate-conditional on BLG-OPS-17) deprioritised.
+
+**Problem**
+BLG-GOV-74 (first AI feature usage review, v4.4) established the initial Claude API usage baseline. After 14+ production cycles of Claude API usage (generate-thesis, check-daily-cost), a trend analysis would confirm whether usage is stable, growing, or anomalous relative to the Anthropic tier threshold defined in BLG-OPS-37 ($5/month upgrade threshold). No multi-cycle cost trend document currently exists.
+
+**Scope**
+- Review claude_audit_log (or equivalent) for per-cycle Claude API call counts and estimated costs (v4.4–v5.5 cycles)
+- Produce a trend chart/table: cycles × estimated cost
+- Assess trajectory against BLG-OPS-37 $5/month threshold
+- FinOps & Resource Architect sign-off
+
+**Acceptance Criteria**
+- Trend analysis document produced covering cycles v4.4–present
+- Cost trajectory assessed against defined upgrade threshold
+- FinOps & Resource Architect sign-off recorded
 
 ---
 

@@ -1090,3 +1090,16 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Workforce impact:** None — v5.4 scope is governance/ops/UX documents and patches; no new FTE commitment
 **Rationale:** Now horizon empty post-v5.3; ~40 active backlog items provide clear v5.4 scope; time-sensitive items (BLG-OPS-59, BLG-GOV-112/115) require action before 2026-07-04 SI-05 effectiveness review; deferred DP-2 governance patch should enter v5.4; pre-entry panel and RFJ UX debt items (BLG-FE-47/49/56/64) are queued. STEP 8.1 Option (a) selected. Section: v5.4 — Ops Monitoring, UX Debt Clearance & Governance Patches.
 **Decision owner:** Product Owner
+
+---
+
+## DL-046
+
+**Date:** 2026-06-16
+**Cycle:** 2026-06-16__scheduled
+**Decision type:** Backlog addition (Promoted-Backlog from advancing idea) + Roadmap Now horizon (STEP 8.1 Option a)
+**Initiatives affected:** v5.6 release planning enabled; no roadmap initiative changes
+**Displacement:** BLG-OPS-18 (data pipeline cost baseline, P3, gate-conditional on BLG-OPS-17) deprioritised in favour of BLG-OPS-63
+**Workforce impact:** None — all items are governance/ops/UX documents; no new FTE commitment
+**Rationale:** Scheduled rebalance — Extended tier (CPS 2.85; arc pipeline artefact acknowledged by Strategy Rules & System Intent Owner). 35 Parked-cycle-1 ideas evaluated: 1 advanced (IDEA-finops-20260610-01 → BLG-OPS-65: Anthropic API cost 14-cycle trend analysis — gate cleared via BLG-GOV-74 COMPLETE v4.4); 5 Rejected (BLG-QA-50/48/54/SPEC-54 delivered; advocacy purposes fulfilled); 29 re-parked (Parked-cycle-2) with updated specific rationales — all valid per §4.1 Facilitator gate. No roadmap initiative changes — all 13 active initiatives remain 🔥 Must continue (all gated by data density or date). STEP 8.1 Option (a): Now horizon empty post-v5.5; ~37 active backlog items; BLG-OPS-22 gate cleared; BLG-FE-73/74 outstanding; BLG-FE-64 gate imminent (2026-06-21); LL-RP-02 action-now patch actionable. v5.6 section added. Meta-review NOT DUE — 1 cycle since last meta-review (2026-06-09__scheduled).
+**Decision owner:** Product Owner

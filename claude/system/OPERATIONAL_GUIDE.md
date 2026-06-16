@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.43
-**Last Updated:** 2026-06-15
+**Version:** 4.44
+**Last Updated:** 2026-06-16
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v7.0)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v7.1)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1272,7 +1272,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v7.1) | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.42 |
-| Last Updated | 2026-06-10 |
+| Version | 4.44 |
+| Last Updated | 2026-06-16 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.5 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1463,7 +1463,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.8 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v7.0 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v7.1 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.34 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.9 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.44 | 2026-06-16 | **Rebalance 2026-06-16__scheduled LL-RP-02 action-now patch — roadmap_prompt.md v7.0→v7.1: STEP 8.0.5 candidate list pre-clean elevated from Advisory to Mandatory; now fires at two points: STEP 3 candidate compilation AND before STEP 8.1 presentation.** §6 source prompt header updated v7.0→v7.1. §14 Roadmap Engine Source v7.0→v7.1. Change: STEP 8.0.5 retitled from "Advisory" to "Mandatory"; step description updated to fire at STEP 3 (when compiling candidate list from backlog) in addition to STEP 8.1 (before presenting to PO); root cause note added (two consecutive cycles v5.4+v5.5 saw complete items appear because candidate lists were compiled without running the grep). §14 Version 4.43→4.44/2026-06-16. Authority: Head of Specs Team (LL-RP-02, rebalance 2026-06-16__scheduled). |
 | 4.43 | 2026-06-15 | **v5.5 sprint close lessons learnt action-now patches — execution_prompt.md v3.40→v3.41: branch ordering gate (STEP 5) + merge state persist before halt (STEP 4).** §8 source prompt header updated v3.40→v3.41. §14 Execution Engine Source v3.40→v3.41. Changes (execution_prompt v3.41): (LL-v5.5-EX-01, third recurrence git-stash-at-branch-switch) STEP 5 opening branch ordering gate added — before ANY STEP 5 writes, engine must confirm `git branch --show-current` is main and switch if not; prevents backlog.md/execution_state.json writes on EPIC branch. (LL-v5.5-EX-02, third recurrence stale-pr_status) STEP 4 step 3a added — immediately after merging, commit execution_state.json to EPIC branch before outputting halt message; prevents stale merged state at next session resume. §14 Version 4.42→4.43/2026-06-15. Authority: Head of Specs Team (v5.5 Phase 3 lessons learnt, 2026-06-15). |
 | 4.42 | 2026-06-11 | **v5.5 ST-02+ST-03 (BLG-GOV-117+118, EPIC-01) — execution_prompt.md v3.39→v3.40: pr_status read-after-open improvement + qa_evidence commit advisory.** §8 source prompt header updated v3.39→v3.40. §14 Execution Engine Source v3.39→v3.40. Changes (execution_prompt v3.40): (ST-02/BLG-GOV-117) §3.2.B step 5 updated: `gh pr view` command expanded from `--json state` to `--json state,mergeStateStatus` — captures actual PR state including merge readiness immediately after open. (ST-03/BLG-GOV-118) §3.2.B — "qa_evidence commit advisory (BLG-GOV-118)" added before step 1: verify `qa_evidence_EPIC-xx.md` is committed to EPIC branch before running `gh pr create`; git status check required. §14 Version 4.41→4.42/2026-06-11. Authority: Head of Specs Team (BLG-GOV-117+118, v5.5 ST-02+ST-03, 2026-06-11). |
 | 4.41 | 2026-06-11 | **v5.5 ST-01 (BLG-GOV-116, EPIC-01) — sprint_planning_prompt.md v3.8→v3.9: within-sprint date gate advisory.** §7 source prompt header updated v3.8→v3.9. §14 Sprint Planning Engine v3.8→v3.9. Change (sprint_planning_prompt v3.9): STEP 6.1 — "Within-sprint date gate advisory (BLG-GOV-116)" added: stories with within-sprint date gates must be marked `**Status at sprint open: conditional — gate <date>**` in sprint_backlog.md at planning time; `ready` only when no within-sprint date gate exists. Resolves v5.4 lessons-learnt carry-forward (ST-11–14 in v5.5 were the first correctly marked instances). §14 Version 4.40→4.41/2026-06-11. Authority: Head of Specs Team (BLG-GOV-116, v5.5 ST-01, 2026-06-11). |

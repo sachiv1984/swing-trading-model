@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-07 (rebalance 2026-06-07__scheduled — no FTE changes; no new initiatives; 25 backlog items added, predominantly XS–S effort; no immediate capacity impact; Skill-Silo check PASS: 52% governance load within 20–60% bound)
+**Last Updated:** 2026-06-16 (rebalance 2026-06-16__scheduled — Extended tier (CPS 2.85); no FTE changes; 1 backlog item added (BLG-OPS-65, S effort); no immediate capacity impact; v5.6 horizon ~5–8 days total; Skill-Silo check PASS: ~29% governance load within 20–60% bound; arc pipeline artefact acknowledged)
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 

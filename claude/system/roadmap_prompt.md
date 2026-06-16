@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 7.0
-**Last Updated:** 2026-06-09 (v6.8)
+**Version:** 7.1
+**Last Updated:** 2026-06-16 (v7.0→v7.1: LL-RP-02 — STEP 8.0.5 strengthened from Advisory to Mandatory; now fires at STEP 3 candidate compilation AND before STEP 8.1 presentation; second recurrence of complete-item leakage confirmed)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -496,9 +496,13 @@ Valid outcome: no changes made. Still requires roadmap Last Updated refresh and 
 
 ---
 
-### STEP 8.0.5 — Candidate List Pre-Clean (Advisory)
+### STEP 8.0.5 — Candidate List Pre-Clean (Mandatory)
 
-Before presenting any next-release section candidate list to the PO: grep `claude/backlog/backlog.md` for each BLG-ID in the candidate list. Remove any item that has `✅ COMPLETE` or an `RA:` roadmap annotation marker (already shipped). Record removed items in `run_manifest.md` as "Already shipped — excluded from candidates." Non-blocking if no items need removal. (Added AUD-2026-06-10-003; first occurrence v5.4 LL-RP-01.)
+**Fire at two points: (1) STEP 3 — when compiling the v5.x horizon candidate list from backlog items; (2) STEP 8.1 — immediately before presenting the candidate list to the PO for the Now horizon section.**
+
+For each BLG-ID in the candidate list, grep `claude/backlog/backlog.md`. Remove any item that has `✅ COMPLETE` or an `RA:` roadmap annotation marker (already shipped). Record removed items in `run_manifest.md` as "Already shipped — excluded from candidates."
+
+This is **not advisory** — presenting complete items to the PO wastes debate time and inflates apparent scope. Two consecutive cycles (v5.4 LL-RP-01; v5.5 LL-RP-02) saw complete items appear in candidate lists despite STEP 8.0.5 existing. Root cause: candidate lists were compiled without running the grep. Compile-time execution (STEP 3) is the permanent fix. (Added AUD-2026-06-10-003 v5.4; strengthened to Mandatory at STEP 3 + STEP 8.1 v7.1 LL-RP-02.)
 
 ---
 

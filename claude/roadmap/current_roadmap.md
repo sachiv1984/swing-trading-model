@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-16 (post-ship closure 2026-06-10__release-v5.5)
+**Last Updated:** 2026-06-16 (rebalance 2026-06-16__scheduled — Extended tier, CPS 2.85, DL-046; 1 backlog add (BLG-OPS-63); 5 ideas Rejected; v5.6 Now section added; STEP 8.1 Option(a); arc pipeline artefact acknowledged)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — Standard-tier, CPS=1.15; Δ=0.00; 8 new backlog items; DL-041/042; 4 ideas Rejected, 8 Promoted-Backlog, 17 re-parked; v5.4 Now section added)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -265,7 +265,22 @@ Today you find stocks through external research and add them to the watchlist ma
 
 *RA:v5.5 retired — see roadmap_archive.md 2026-06-16 (post-ship closure 2026-06-10__release-v5.5).*
 
-*No active Now horizon item — v5.6 scope TBD. Run `run roadmap --reason scheduled` (rebalance due; completed_cycle_count=41, even) before `plan release v5.6`.*
+### v5.6 — Research Performance, SI-05 UX Improvements & Governance Patches
+
+**Horizon:** Now (added rebalance 2026-06-16__scheduled — STEP 8.1 Option a; DL-046)
+**Status:** Scope TBD — run `plan release --version v5.6` to define
+
+**Candidate scope (rebalance-identified):**
+- BLG-OPS-22 — Research data caching layer (gate cleared 2026-06-11: p95=4,601ms > 3,000ms threshold; P2, M effort)
+- BLG-OPS-62 — GET /portfolio/concentration-status high latency investigation (p95=5,917ms; P3, S effort)
+- BLG-OPS-65 — Anthropic API cost 14-cycle trend analysis (promoted this rebalance; P3, S effort)
+- BLG-FE-73 — Deep links from SI-05 digest to relevant app screens (P2, S effort)
+- BLG-FE-74 — Clarify N/A pass rate reason in SI-05 digest message (P3, XS effort)
+- BLG-FE-64 — BLG-FE-41 Red Flag Journal visual design review pre-brief (gate clears 2026-06-21; P2, S effort)
+- BLG-QA-49 — Arc 5 test scenario completeness assessment (P2, S-M effort)
+- BLG-QA-45 — Arc 5 QA completion criteria definition (P2, S effort)
+- BLG-GOV-106 — PT-04 trade count gate re-verification (P1, S effort)
+- Governance patches: roadmap_prompt.md LL-RP-02 (action-now); release_planning_prompt.md LL-P3-03-v55/LL-P4-01-v55 (deferred carry-forward)
 
 -----
 
