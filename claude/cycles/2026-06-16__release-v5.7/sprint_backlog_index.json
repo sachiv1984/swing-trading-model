@@ -1,0 +1,139 @@
+{
+  "cycle_id": "2026-06-16__release-v5.7",
+  "release": "v5.7",
+  "sprint_backlog_path": "claude/cycles/2026-06-16__release-v5.7/sprint_backlog.md",
+  "backlog_slice_path": "claude/cycles/2026-06-16__release-v5.7/stage4_backlog_slice.md",
+  "epics": [
+    {
+      "epic_id": "EPIC-01",
+      "branch": "exec/2026-06-16__release-v5.7/EPIC-01",
+      "sprint": 1,
+      "owner": "Infrastructure & Operations Owner; Director of Quality",
+      "execution_state_owner": true,
+      "stories": [
+        {
+          "story_id": "ST-01",
+          "title": "BLG-OPS-66: Staging verification — concentration-status p95",
+          "delegation_class": "delegated_backend",
+          "status_at_sprint_open": "ready",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-01"]
+        },
+        {
+          "story_id": "ST-02",
+          "title": "BLG-OPS-67: Staging verification — red-flag-journal p95",
+          "delegation_class": "delegated_backend",
+          "status_at_sprint_open": "ready",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-02"]
+        },
+        {
+          "story_id": "ST-03",
+          "title": "BLG-OPS-68: Staging verification — behavioural-drift p95 + cache",
+          "delegation_class": "delegated_backend",
+          "status_at_sprint_open": "ready",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-03"]
+        },
+        {
+          "story_id": "ST-04",
+          "title": "BLG-OPS-69: Staging verification — research view p95 + cache",
+          "delegation_class": "delegated_backend",
+          "status_at_sprint_open": "ready",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-04"]
+        },
+        {
+          "story_id": "ST-05",
+          "title": "BLG-FE-75: Staging verification — SI-05 deep links mobile Telegram",
+          "delegation_class": "delegated_qa",
+          "status_at_sprint_open": "ready",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-05"]
+        },
+        {
+          "story_id": "ST-06",
+          "title": "BLG-QA-56: SI-01 all-pass state Playwright scenario",
+          "delegation_class": "autonomous",
+          "status_at_sprint_open": "ready",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-06"]
+        },
+        {
+          "story_id": "ST-07",
+          "title": "BLG-QA-57: SI-03 Red Flag Journal pagination Playwright scenario",
+          "delegation_class": "autonomous",
+          "status_at_sprint_open": "ready",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-07"]
+        },
+        {
+          "story_id": "ST-08",
+          "title": "BLG-QA-58: Arc 5 compliance score trend Playwright scenario",
+          "delegation_class": "autonomous",
+          "status_at_sprint_open": "ready",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-08"]
+        }
+      ]
+    },
+    {
+      "epic_id": "EPIC-02",
+      "branch": "exec/2026-06-16__release-v5.7/EPIC-02",
+      "sprint": 1,
+      "owner": "Head of Specs Team; Head of Backend Engineering",
+      "execution_state_owner": false,
+      "stories": [
+        {
+          "story_id": "ST-09",
+          "title": "BLG-FE-64: RFJ design review pre-brief",
+          "delegation_class": "delegated_decision",
+          "status_at_sprint_open": "conditional — gate 2026-06-21",
+          "gate_condition": "SI-03 Red Flag Journal live ≥30 days; gate clears 2026-06-21",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-09"]
+        },
+        {
+          "story_id": "ST-10",
+          "title": "BLG-BE-36: Lazy-import pattern documentation",
+          "delegation_class": "autonomous",
+          "status_at_sprint_open": "ready",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-10"]
+        },
+        {
+          "story_id": "ST-11",
+          "title": "BLG-GOV-123: Confirm dual sign-off pattern in execution_prompt",
+          "delegation_class": "autonomous",
+          "status_at_sprint_open": "ready",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-11"]
+        }
+      ]
+    },
+    {
+      "epic_id": "EPIC-03",
+      "branch": "exec/2026-06-16__release-v5.7/EPIC-03",
+      "sprint": 2,
+      "sprint_conditional": true,
+      "gate_condition": "SI-05 effectiveness review complete; gate 2026-07-04",
+      "owner": "Product Owner; Infrastructure & Operations Owner; Metrics Definitions & Analytics Owner",
+      "execution_state_owner": false,
+      "stories": [
+        {
+          "story_id": "ST-12",
+          "title": "BLG-GOV-112: SI-05 digest weekly cadence review",
+          "delegation_class": "delegated_decision",
+          "status_at_sprint_open": "conditional — gate 2026-07-04",
+          "gate_condition": "SI-05 effectiveness review complete; gate 2026-07-04",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-12"]
+        },
+        {
+          "story_id": "ST-13",
+          "title": "BLG-GOV-115: SI-05 actionability metric definition",
+          "delegation_class": "delegated_decision",
+          "status_at_sprint_open": "conditional — gate 2026-07-04",
+          "gate_condition": "SI-05 effectiveness review complete; gate 2026-07-04",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-13"]
+        },
+        {
+          "story_id": "ST-14",
+          "title": "BLG-OPS-59: SI-05 service production p99 latency baseline review",
+          "delegation_class": "delegated_backend",
+          "status_at_sprint_open": "conditional — gate 2026-07-04",
+          "gate_condition": "≥4 weeks production operation; gate 2026-07-04",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-14"]
+        }
+      ]
+    }
+  ]
+}
