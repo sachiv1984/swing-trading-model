@@ -1668,3 +1668,28 @@ The system is ready for:
 - QA evidence logs: qa_evidence_EPIC-01.md (autonomous class, 2026-06-10), qa_evidence_EPIC-02.md (autonomous class, 2026-06-10), qa_evidence_EPIC-03.md (autonomous class, 2026-06-10)
 - Deviations filed: None
 - Test scenarios referenced: None (all stories produced specification/governance documents; no executable test scenarios)
+
+## Sprint: 2026-06-16__release-v5.6
+**Date:** 2026-06-16
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-03 | PT-04 trade count gate re-verification (13/20 trades; gate NOT MET; trajectory updated) + Arc 5 QA completion criteria doc + Arc 5 test coverage assessment + Anthropic API cost 14-cycle trend analysis | claude/roadmap/current_roadmap.md#PT-04; docs/qa/arc5_qa_completion_criteria.md; docs/qa/arc5_test_coverage_assessment.md; docs/ops/anthropic_api_cost_trend_2026.md | None |
+| EPIC-01 | SI-05 digest deep links (Risk Dashboard + Red Flag Journal) + N/A pass-rate reason clarification (distinct messages: no_events vs data_unavailable); 13 new unit tests | backend/services/si05_digest_service.py | None |
+| EPIC-02 | Performance hardening: 5-min FX rate TTL cache (concentration-status); schema-once guards for red-flag-journal + behavioural-drift; 15-min per-ticker research TTL cache with screener invalidation + hit/miss logging | backend/utils/pricing.py; backend/routers/red_flag_journal.py; backend/routers/analytics.py; backend/routers/research.py; backend/routers/screener.py | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-03 — BLG-FE-64: RFJ design review pre-brief | Gate 2026-06-21 not cleared at planning (SI-03 live ≥30 days) | BLG-FE-64 (backlog.md) |
+| ST-04/05/06/07 — Production latency re-measurement | Staging-only ACs: production deployment required | BLG-OPS-66/67/68/69 (backlog.md) |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-03.md (agent-mediated, 2026-06-16), qa_evidence_EPIC-01.md (agent-mediated, 2026-06-16), qa_evidence_EPIC-02.md (agent-mediated, 2026-06-16)
+- Deviations filed: None
+- Test scenarios referenced: tests/test_si05_digest_service.py (33 tests; 13 new for EPIC-01)
