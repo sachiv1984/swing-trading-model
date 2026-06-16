@@ -5,7 +5,7 @@
   "invoked_utc": "2026-06-16T09:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-16T10:45:00Z",
+  "last_updated_utc": "2026-06-16T15:30:00Z",
   "epics": {
     "EPIC-03": {
       "status": "done",
@@ -38,15 +38,16 @@
           "sign_off_record": {
             "required_by": "PMO Lead + Product Owner",
             "method": "agent_mediated",
-            "status": "pmo_cleared_po_pending",
+            "status": "cleared",
             "findings_applied": [
               "DB not accessible documented",
               "last verified count 6 (2026-06-09) recorded",
-              "roadmap + BLG-FEAT-25 updated"
+              "roadmap + BLG-FEAT-25 updated",
+              "Actual count: 13 closed trades (PO-provided 2026-06-16); gate NOT MET; 7 more required; trajectory accelerating"
             ],
-            "cleared_utc": null
+            "cleared_utc": "2026-06-16T15:30:00Z"
           },
-          "notes": "Production DB not accessible from engine env. Last verified count: 6 closed trades (2026-06-09). Gate NOT MET. PMO Lead approved. Product Owner sign-off pending (AC-05)."
+          "notes": "AC-01 query result provided by PO: 13 closed trades (pnl IS NOT NULL). Gate NOT MET (need 20). 7 more required. Trajectory accelerating. Roadmap + BLG-FEAT-25 updated. PO + PMO Lead sign-off cleared."
         },
         "ST-09": {
           "title": "BLG-QA-45: Arc 5 QA completion criteria definition",
