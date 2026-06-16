@@ -5,13 +5,13 @@
   "invoked_utc": "2026-06-16T09:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-16T10:30:00Z",
+  "last_updated_utc": "2026-06-16T10:45:00Z",
   "epics": {
     "EPIC-03": {
       "status": "done",
       "branch": "exec/2026-06-16__release-v5.6/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 764,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-16__release-v5.6/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
