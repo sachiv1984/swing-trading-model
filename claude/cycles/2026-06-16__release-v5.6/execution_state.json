@@ -157,8 +157,8 @@
     "EPIC-01": {
       "status": "done",
       "branch": "exec/2026-06-16__release-v5.6/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 765,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-16__release-v5.6/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/test_si05_digest_service.py"],
