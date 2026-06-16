@@ -102,6 +102,7 @@ def fetch_arc5_data_for_digest() -> Optional[dict]:
         try:
             # Overall validation pass rate (7d)
             validation_pass_rate = None
+            validation_na_reason = "data_unavailable"
             try:
                 cursor.execute("""
                     SELECT
@@ -113,6 +114,9 @@ def fetch_arc5_data_for_digest() -> Optional[dict]:
                 row = cursor.fetchone()
                 if row and int(row["total"]) > 0:
                     validation_pass_rate = round(int(row["pass_count"]) / int(row["total"]), 4)
+                    validation_na_reason = None
+                else:
+                    validation_na_reason = "no_events"
             except psycopg2.errors.UndefinedTable:
                 cursor.connection.rollback()
 
@@ -132,6 +136,7 @@ def fetch_arc5_data_for_digest() -> Optional[dict]:
 
             # Override rate (override events / total validations, 7d)
             override_rate = None
+            override_na_reason = "data_unavailable"
             try:
                 cursor.execute("""
                     SELECT COUNT(*) AS override_count
@@ -152,6 +157,9 @@ def fetch_arc5_data_for_digest() -> Optional[dict]:
 
                 if total_validations > 0:
                     override_rate = round(override_count / total_validations, 4)
+                    override_na_reason = None
+                else:
+                    override_na_reason = "no_events"
             except psycopg2.errors.UndefinedTable:
                 cursor.connection.rollback()
 
@@ -175,8 +183,10 @@ def fetch_arc5_data_for_digest() -> Optional[dict]:
 
             return {
                 "validation_pass_rate": validation_pass_rate,
+                "validation_na_reason": validation_na_reason,
                 "events_per_week": events_per_week,
                 "override_rate": override_rate,
+                "override_na_reason": override_na_reason,
                 "top_rule_breach": top_rule_breach,
             }
 
@@ -189,16 +199,24 @@ def fetch_arc5_data_for_digest() -> Optional[dict]:
         return None
 
 
-def _format_pass_rate(rate: Optional[float]) -> str:
-    """Format pass rate (0.0–1.0) as percentage string or 'N/A'."""
+def _format_pass_rate(rate: Optional[float], na_reason: Optional[str] = None) -> str:
+    """Format pass rate (0.0–1.0) as percentage string or 'N/A' with optional reason."""
     if rate is None:
+        if na_reason == "no_events":
+            return r"N/A \(no validation events this week\)"
+        if na_reason == "data_unavailable":
+            return r"N/A \(data unavailable\)"
         return "N/A"
     return f"{rate * 100:.1f}%"
 
 
-def _format_override_rate(rate: Optional[float]) -> str:
-    """Format override rate (0.0–1.0) as percentage string or 'N/A'."""
+def _format_override_rate(rate: Optional[float], na_reason: Optional[str] = None) -> str:
+    """Format override rate (0.0–1.0) as percentage string or 'N/A' with optional reason."""
     if rate is None:
+        if na_reason == "no_events":
+            return r"N/A \(no validation events this week\)"
+        if na_reason == "data_unavailable":
+            return r"N/A \(data unavailable\)"
         return "N/A"
     return f"{rate * 100:.1f}%"
 
@@ -222,12 +240,15 @@ def _integrity_summary_line(
     pass_rate: Optional[float],
     red_flag_count: int,
     override_rate: Optional[float],
+    validation_na_reason: Optional[str] = None,
 ) -> str:
     """
     Rule-based summary line per BLG-GOV-86 §4.2.
     Returns MarkdownV2-escaped italic text. Rules evaluated in order 1–5.
     """
     if pass_rate is None:
+        if validation_na_reason == "no_events":
+            return r"_No pre\-entry validation events this week\._"
         return r"_No pre\-entry validation data available this week\._"
     if pass_rate * 100 < 70:
         return r"_Pass rate below threshold — review pre\-entry rule compliance\._"
@@ -238,13 +259,28 @@ def _integrity_summary_line(
     return r"_Strategy integrity healthy this week\._"
 
 
+def _format_deep_links(frontend_url: Optional[str]) -> str:
+    """
+    Format deep link footer pointing to relevant app screens (BLG-FE-73).
+    Returns empty string if FRONTEND_URL env var is not configured.
+    In MarkdownV2 inline links only ) and backslash need escaping in the URL part.
+    """
+    if not frontend_url:
+        return ""
+    base = frontend_url.rstrip("/")
+    risk_url = f"{base}/RiskDashboard"
+    rfj_url = f"{base}/RedFlagJournal"
+    return f"🔗 [Risk Dashboard]({risk_url}) · [Red Flag Journal]({rfj_url})"
+
+
 def format_si05_section(data: dict) -> str:
     """
     Format the SI-05 strategy integrity section per BLG-GOV-86 §4.
 
     Args:
         data: dict with keys validation_pass_rate, events_per_week,
-              override_rate, top_rule_breach
+              override_rate, top_rule_breach.
+              Optional: validation_na_reason, override_na_reason (BLG-FE-74).
 
     Returns:
         MarkdownV2-formatted section string.
@@ -253,15 +289,17 @@ def format_si05_section(data: dict) -> str:
     events_per_week = data.get("events_per_week", 0.0) or 0.0
     override_rate = data.get("override_rate")
     top_rule_breach = data.get("top_rule_breach")
+    validation_na_reason = data.get("validation_na_reason")
+    override_na_reason = data.get("override_na_reason")
 
     red_flag_count = round(events_per_week * 7)
 
-    pass_rate_fmt = _format_pass_rate(pass_rate)
-    override_rate_fmt = _format_override_rate(override_rate)
+    pass_rate_fmt = _format_pass_rate(pass_rate, validation_na_reason)
+    override_rate_fmt = _format_override_rate(override_rate, override_na_reason)
     top_rule_fmt = _escape_mdv2(_format_top_rule_breach(top_rule_breach))
-    summary_line = _integrity_summary_line(pass_rate, red_flag_count, override_rate)
+    summary_line = _integrity_summary_line(pass_rate, red_flag_count, override_rate, validation_na_reason)
 
-    return (
+    section = (
         "\\-\\-\\-\n"
         "*📋 Strategy Integrity*\n\n"
         f"✅ Pre\\-entry pass rate \\(7d\\): {pass_rate_fmt}\n"
@@ -270,6 +308,13 @@ def format_si05_section(data: dict) -> str:
         f"🔍 Top rule breach: {top_rule_fmt}\n\n"
         f"{summary_line}"
     )
+
+    frontend_url = os.getenv("FRONTEND_URL", "")
+    deep_links = _format_deep_links(frontend_url)
+    if deep_links:
+        section += f"\n\n{deep_links}"
+
+    return section
 
 
 def _fetch_trade_count_for_digest() -> Optional[int]:
