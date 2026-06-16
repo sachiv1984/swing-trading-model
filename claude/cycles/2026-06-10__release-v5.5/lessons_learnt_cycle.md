@@ -28,3 +28,21 @@ Cycle: 2026-06-10__release-v5.5
 
 - "Stale pr_status at resume" (v5.3 first, v5.4 second, v5.5 **third** recurrence): Now escalating from deferred monitor to action-now prompt patch. The STEP 4 halt must guarantee pr_status is written before the session ends.
 - "git stash at branch switch" (v5.3 first, v5.4 second, v5.5 **third** recurrence): Now escalating to hard ordering gate in STEP 5.0 — engine must be on main before making ANY sprint close writes.
+
+---
+
+## Phase 4 — 2026-06-10__release-v5.5
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-06-10__release-v5.5
+**Section anchor:** `## Phase 4 — 2026-06-10__release-v5.5`
+**Filed:** 2026-06-16
+**Reviewed by:** PMO Lead
+
+**Recurrence check (prior cycle: 2026-06-09__release-v5.4 Phase 4):**
+- No Phase 4 recurrence items carried from v5.4 — prior verification ran cleanly.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| EPIC-04 Sprint 2 not executed — all 4 stories returned to backlog due to gate dates not met. This is the second consecutive cycle where a planned Sprint 2 with gated stories was never executed. Pattern from Phase 3 deferred item (v5.5): monitor if "always-deferred Sprint 2" repeats in v5.6. | Phase 4 | D | defer | If v5.6 also has a Sprint 2 that is not executed due to gate dates, escalate to action-now: treat gated stories as conditional backlog items at release planning rather than firm Sprint 2 scope. | PMO Lead | v5.6 |
+| Verification ran with zero friction: all artefacts present, all sign-offs in place, no deviations, no test gaps. Delivery verification gate sequencing was smooth — QA evidence complete before verification invoked. | Phase 4 | A | monitor | Continue pattern: QA evidence logs must be signed off before sprint_close.md verification readiness statement is set to Yes. No action required. | PMO Lead | — |
