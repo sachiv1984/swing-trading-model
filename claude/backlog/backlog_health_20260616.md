@@ -1,50 +1,38 @@
 **Owner:** PMO Lead
-**Class:** Planning Document (Class 4)
+**Class:** Operational Record (Class 3)
 **Status:** Active
 **Last Updated:** 2026-06-16
+**Run:** GROOM-20260616-01 (STEP 12, post-ship closure 2026-06-16__release-v5.6)
 
-# Backlog Health Report — 2026-06-16
+---
 
-## Summary
+# Backlog Health Report — 2026-06-16 (v5.6 Post-Ship)
 
-Groom type: Post-ship closure (v5.5)
-Items archived: 10 (BLG-GOV-116/117/118, BLG-BE-34, BLG-GOV-120, BLG-OPS-13/54/61, BLG-QA-50, BLG-FE-65)
-Items flagged stale: 0
-Items flagged orphan: 0
-Spec debt items validated: N/A (no new spec debt surfaced from v5.5 delivery)
-Promotion shortlist: N/A (roadmap rebalance pending — completed_cycle_count=41 even; run roadmap before plan release)
-ID uniqueness: No duplicates detected.
+## Actions Taken
 
-## Archived Items
+| Action | Count | Items |
+|--------|-------|-------|
+| Items archived to backlog_archive.md | 10 | BLG-FE-73/74, BLG-OPS-22/62/63/64/65, BLG-QA-45/49, BLG-GOV-106 |
+| Ephemeral sections removed | 1 | "Release Slice — v5.6" |
+| Stale parked items flagged | 0 | None |
+| Orphans flagged | 0 | None |
+| Priority revalidation flags | 0 | None |
 
-10 items archived to backlog_archive.md (## Closed Items — v5.5 Post-Ship section):
+## Health Summary
 
-| ID | Title | Cycle |
-|----|-------|-------|
-| BLG-GOV-116 | sprint_planning_prompt.md within-sprint date gate advisory | v5.5 ST-01 |
-| BLG-GOV-117 | execution_prompt.md pr_status read-after-open improvement | v5.5 ST-02 |
-| BLG-GOV-118 | qa_evidence commit discipline advisory in execution_prompt.md | v5.5 ST-03 |
-| BLG-BE-34 | Trade count gate-monitoring view | v5.5 ST-04 |
-| BLG-GOV-120 | Trade data density progress tracker | v5.5 ST-05 |
-| BLG-OPS-13 | Add v2.8–v4.6 endpoints to api_performance_baseline.md | v5.5 ST-06 |
-| BLG-OPS-61 | v5.1–v5.4 endpoint baseline extension | v5.5 ST-07 |
-| BLG-OPS-54 | Add POST /digest/si05/send to api_performance_baseline.md | v5.5 ST-08 |
-| BLG-QA-50 | Create formal regression test suite baseline document | v5.5 ST-09 |
-| BLG-FE-65 | User journey map: SI-05 Telegram digest to app action | v5.5 ST-10 |
+- Active backlog items: ~27 (approximate; excludes v5.6 archived items)
+- Orphans: None identified
+- Stale parked items: None
+- Ephemeral sections remaining: Release Slice v5.2, v5.3, v5.4, v5.5 (older; canonical homes exist in cycle directories; no open items remaining)
+- Blocked items with stale blockers: None
 
-Note: Items archived to backlog_archive.md summary table only; full text remains in backlog.md active body (consistent with prior groom runs). Physical removal deferred to next dedicated `groom backlog` run.
+## Advisory
 
-## Post-Write Verification
+- The v5.2, v5.3, v5.4, v5.5 Release Slice sections remain in backlog.md. All items are shipped. These may be removed in a future groom pass for hygiene.
+- BLG-OPS-66/67/68/69 (staging ACs deferred from v5.6 EPIC-02) are new P3 — eligible for v5.7 if production deployment confirms latency improvement.
+- BLG-FE-75 (ST-01 AC-02 staging) is new P3 — eligible for v5.7 if mobile Telegram staging can be arranged.
+- BLG-FE-64 gate clears 2026-06-21 — first priority for v5.7 sprint planning if gate cleared.
 
-Grep of backlog.md heading lines for `✅ COMPLETE` or `❌ Killed` markers: 0 found in active sections. ✅
+## Outcome
 
-## Gate Items Status
-
-- BLG-FE-64: Not before 2026-06-21 (gate: SI-03 live ≥30 days) — gate now clearable (today is 2026-06-16; 5 days remaining). Eligible at next sprint planning if gate confirmed.
-- BLG-OPS-59, BLG-GOV-112, BLG-GOV-115: Not before 2026-07-04.
-
-## Outstanding Backlog Health Notes
-
-- BLG-OPS-62/63/64: High-latency flags filed during v5.5 ST-06 baseline run. These are new items requiring prioritisation at next rebalance.
-- BLG-FE-73/74: Friction findings from v5.5 ST-10 user journey map. Filed and present in backlog.
-- Approximately 37 active backlog items (estimate; consistent with prior groom count).
+10 items archived; 1 ephemeral section removed; 0 orphans; 0 stale parked items; backlog health: Good

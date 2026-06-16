@@ -527,3 +527,11 @@ Permanent record of terminal ideas rows retired from `claude/ideas/ideas_registe
 | IDEA-strategy-owner-20260610-01 | strategy_rules.md §11 parameter annual review | Strategy Rules & System Intent Owner | IW-20260610-01 | 2026-06-10 | Promoted-Backlog | — | filed as BLG-GOV-122; P3 deferred | Backlog | — |
 | IDEA-infra-ops-20260610-01 | BLG-OPS-13 v5.1–v5.4 endpoint baseline extension | Infrastructure & Operations Owner | IW-20260610-01 | 2026-06-10 | Promoted-Backlog | — | filed as BLG-OPS-61; scope extension to BLG-OPS-13 | Backlog | — |
 | IDEA-head-of-ux-20260610-02 | RFJ visual design review kickoff (BLG-FE-64 gate 2026-06-21) | Head of UX & Design | IW-20260610-01 | 2026-06-10 | Promoted-Backlog | — | BLG-FE-64 already on backlog and gates 2026-06-21; confirmed as v5.5 candidate | Backlog (BLG-FE-64) | — |
+
+## Archived 2026-06-16
+
+| IDEA-director-of-quality-20260610-01 | Regression test baseline document activation (BLG-QA-50) | Director of Quality | IW-20260610-01 | 2026-06-10 | Rejected | 1 | Gate cleared: BLG-QA-50 COMPLETE v5.5 (387-scenario formal baseline doc exists); advocacy purpose fulfilled | Reject | — |
+| IDEA-director-of-quality-20260610-02 | Playwright coverage debt audit post-v5.3/v5.4 | Director of Quality | IW-20260610-01 | 2026-06-10 | Rejected | 1 | Gate cleared: BLG-QA-48 COMPLETE v5.2; BLG-QA-54 COMPLETE v5.3; BLG-QA-49 (Arc 5 test completeness) is the active next-step — scope superseded | Reject | — |
+| IDEA-api-contracts-20260610-01 | openapi.yaml coverage verification post-v5.3 contract gap resolution | API Contracts & Documentation Owner | IW-20260610-01 | 2026-06-10 | Rejected | 1 | Gate cleared: BLG-SPEC-54 COMPLETE v5.3 (all 50 routes audited against openapi.yaml; gap report produced) — purpose delivered | Reject | — |
+| IDEA-qa-lead-20260610-01 | Playwright coverage matrix update to reflect v5.1–v5.4 additions | QA Lead | IW-20260610-01 | 2026-06-10 | Rejected | 1 | Gate cleared: BLG-QA-48 COMPLETE v5.2; BLG-QA-54 (coverage matrix post-v5.2) COMPLETE v5.3 — scope delivered | Reject | — |
+| IDEA-qa-lead-20260610-02 | Regression test suite formal baseline (BLG-QA-50 activation) | QA Lead | IW-20260610-01 | 2026-06-10 | Rejected | 1 | Gate cleared: BLG-QA-50 COMPLETE v5.5; advocacy purpose fulfilled | Reject | — |

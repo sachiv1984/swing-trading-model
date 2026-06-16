@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-16 (rebalance 2026-06-16__scheduled — BLG-OPS-63 added; BLG-OPS-18 deprioritised; DL-046)
+**Last Updated:** 2026-06-16 (post-ship closure 2026-06-16__release-v5.6 — 10 items marked ✅ COMPLETE: BLG-FE-73/74, BLG-OPS-22/62/63/64/65, BLG-QA-45/49, BLG-GOV-106)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — DL-041/042; IW skipped ≥20 open ideas; 8 new items; meta-review DUE conducted; v5.4 Now section added)
 
 > ⚠️ Standing Notice
@@ -1186,6 +1186,8 @@ If SI-05 Phase 2 includes an in-app delivery channel, a UX spec will be required
 **Effort:** S (~0.5 day)
 **Provisional-Target:** v5.6
 
+✅ COMPLETE — 2026-06-16 — cycle 2026-06-16__release-v5.6 (ST-01, EPIC-01, PR #765; deep links to Risk Dashboard and Red Flag Journal added via FRONTEND_URL env var; AC-02 staging-deferred BLG-FE-75)
+
 **Problem**
 The SI-05 weekly Telegram digest contains no links to the app. A user reading "Override rate: 45%" or "Red flag events: 3" has no direct path to the relevant screen — they must open the app manually and navigate to the correct section (minimum 3 steps). This defeats the purpose of the digest as an actionable alert.
 
@@ -1207,6 +1209,8 @@ The SI-05 weekly Telegram digest contains no links to the app. A user reading "O
 **Source:** ST-10 user journey map (v5.5 EPIC-03) — 2026-06-15
 **Effort:** XS (<1h)
 **Provisional-Target:** v5.6
+
+✅ COMPLETE — 2026-06-16 — cycle 2026-06-16__release-v5.6 (ST-02, EPIC-01, PR #765; distinct N/A messages for no_events vs data_unavailable; 13 new tests added)
 
 **Problem**
 When pass rate and override rate show "N/A" in the digest, the user cannot determine whether this is expected (no trades triggered validation this week) or a system issue (validation logging broken). The current message "No pre-entry validation data available this week" is ambiguous.
@@ -1996,6 +2000,8 @@ SI-04 (strategy version comparison) requires test coverage across: unit tests (v
 **Provisional-Target:** Before BLG-QA-26 sprint planning
 **Displacement:** BLG-QA-22 (Arc 2 DoQ standards review, P3, gate-conditional) deprioritised.
 
+✅ COMPLETE — 2026-06-16 — cycle 2026-06-16__release-v5.6 (ST-09, EPIC-03, PR #764; criteria C-01 to C-05 defined; BLG-QA-26 gate condition updated; SI-05 Phase 2/SI-04/SI-02 backend-only explicitly scoped; PO + DoQ approved)
+
 **Problem**
 BLG-QA-26 (Arc 5 E2E QA protocol) gates on "all five Arc 5 features shipped" but "fully complete" is undefined: does SI-05 Phase 2 count? Does SI-02 frontend count separately from SI-02 backend? Without defined criteria, BLG-QA-26 sprint planning will encounter scope ambiguity that delays the protocol.
 
@@ -2099,6 +2105,8 @@ v5.1 shipped POST /digest/si05/send (new endpoint) and tests/e2e/signals-allocat
 **Effort:** S (~0.5–1 day)
 **Provisional-Target:** Unscheduled
 **Displacement:** BLG-FE-39 (Arc 2 user journey map, P3, gate-conditional) deprioritised.
+
+✅ COMPLETE — 2026-06-16 — cycle 2026-06-16__release-v5.6 (ST-10, EPIC-03, PR #764; SI-01/SI-03/SI-05 coverage mapped; 3 P3 Playwright gaps identified: BLG-QA-56/57/58; DoQ approved; arc5_test_coverage_assessment.md produced)
 
 **Problem**
 With SI-01, SI-03, and SI-05 Phase 1 shipped (3 of 5 Arc 5 features), an intermediate test scenario completeness assessment identifies QA gaps before the remaining features ship. This is not BLG-QA-26 (full Arc 5 QA protocol, gated on full completion) — it is a partial completeness check that surfaces gaps while there is still time to address them before the arc closes.
@@ -2490,6 +2498,8 @@ Arc 2 adds screener batch processing, research endpoints, and AI-assisted trade 
 **Source:** IDEA-ops-20260421-06 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
 **Effort:** M (~2–3 days)
 **Provisional-Target:** v5.6
+
+✅ COMPLETE — 2026-06-16 — cycle 2026-06-16__release-v5.6 (ST-07, EPIC-02, PR #766; 15-min per-ticker TTL cache + screener invalidation + hit/miss logging; AC-04/05 staging verification deferred BLG-OPS-69)
 
 **Gate criteria:** ✅ GATE CLEARED 2026-06-11 — BLG-OPS-13 complete (v5.5 ST-06) AND p95=4,601ms > 3,000ms threshold confirmed on production. Eligible for sprint planning.
 
@@ -4970,6 +4980,8 @@ Arc 6 PS-03 (Monte Carlo simulation) requires a §13 review before sprint planni
 **Provisional-Target:** Before v5.3 sprint planning seals
 **Displacement:** BLG-GOV-101 (governance complexity assessment, P3) deprioritised.
 
+✅ COMPLETE — 2026-06-16 — cycle 2026-06-16__release-v5.6 (ST-08, EPIC-03, PR #764; 13 closed trades confirmed by PO — gate NOT MET (need 20); roadmap + BLG-FEAT-25 updated; trajectory accelerating — re-verify when PO confirms 20+)
+
 **Problem**
 PT-04 gate requires 20+ closed trades (trades with pnl IS NOT NULL in trade_history). Last formal count: 6 trades at v4.6 audit (2026-05-31). The count has never been updated. If the gate has cleared, PT-04 should enter v5.3 sprint planning. If not, the gate status record should be updated with the current count.
 
@@ -5459,6 +5471,8 @@ BLG-OPS-60 (completed v5.4) added v5.3 endpoints to api_performance_baseline.md.
 **Effort:** S (~0.5 day)
 **Provisional-Target:** v5.6
 
+✅ COMPLETE — 2026-06-16 — cycle 2026-06-16__release-v5.6 (ST-04, EPIC-02, PR #766; root cause: get_live_fx_rate() external HTTP + 200ms sleep; fix: 5-min TTL cache; AC-03/04 staging verification deferred BLG-OPS-66)
+
 **Problem**
 GET /portfolio/concentration-status measured p50=3,985ms and p95=5,917ms on production — the highest-latency DB endpoint in the entire baseline. This endpoint calculates portfolio concentration across all live positions and is likely performing a full portfolio scan without appropriate indexing. Latency at this level makes the endpoint unsuitable for use in any page that loads on navigation.
 
@@ -5481,6 +5495,8 @@ GET /portfolio/concentration-status measured p50=3,985ms and p95=5,917ms on prod
 **Effort:** S (~0.5 day)
 **Provisional-Target:** v5.6
 
+✅ COMPLETE — 2026-06-16 — cycle 2026-06-16__release-v5.6 (ST-05, EPIC-02, PR #766; root cause: per-request DDL calls; fix: process-lifetime schema-once guard; AC-03/04 staging verification deferred BLG-OPS-67)
+
 **Problem**
 GET /portfolio/red-flag-journal measured p50=3,005ms and p95=3,200ms on production — consistent ~3s across all 7 samples, indicating a structural query issue rather than variance. The endpoint likely scans the full trade history for red flag patterns without a covering index on the relevant columns.
 
@@ -5501,6 +5517,8 @@ GET /portfolio/red-flag-journal measured p50=3,005ms and p95=3,200ms on producti
 **Source:** v5.5 ST-06 BLG-OPS-13 re-run §18.3 — 2026-06-11
 **Effort:** S (~0.5 day)
 **Provisional-Target:** v5.6
+
+✅ COMPLETE — 2026-06-16 — cycle 2026-06-16__release-v5.6 (ST-06, EPIC-02, PR #766; root cause: per-request DDL + 90-day trade scan; fix: schema-once guard + 15-min TTL result cache; AC-03/04/05 staging verification deferred BLG-OPS-68)
 
 **Problem**
 GET /analytics/behavioural-drift measured p50=3,293ms and p95=3,798ms on production. The SI-02 drift analysis scans full trade and signal history. Consider a TTL-based result cache (acceptable staleness for an analytics endpoint: 15–30 minutes) to reduce repeated full-history scans.
@@ -5524,6 +5542,8 @@ GET /analytics/behavioural-drift measured p50=3,293ms and p95=3,798ms on product
 **Effort:** S (~0.5–1 day)
 **Provisional-Target:** Unscheduled
 **Displacement:** BLG-OPS-18 (data pipeline cost baseline, P3, gate-conditional on BLG-OPS-17) deprioritised.
+
+✅ COMPLETE — 2026-06-16 — cycle 2026-06-16__release-v5.6 (ST-11, EPIC-03, PR #764; est. $0.05–$0.15/month vs $5/month threshold; trajectory stable/negligible; next review 2026-12-16; FinOps approved; docs/ops/anthropic_api_cost_trend_2026.md produced)
 
 **Problem**
 BLG-GOV-74 (first AI feature usage review, v4.4) established the initial Claude API usage baseline. After 14+ production cycles of Claude API usage (generate-thesis, check-daily-cost), a trend analysis would confirm whether usage is stable, growing, or anomalous relative to the Anthropic tier threshold defined in BLG-OPS-37 ($5/month upgrade threshold). No multi-cycle cost trend document currently exists.
@@ -5720,27 +5740,6 @@ ST-07 (v5.6) implemented a 15-min per-ticker TTL cache for GET /research/{ticker
 
 ---
 
-
-## Release Slice — v5.6 (cycle: 2026-06-16__release-v5.6)
-
-<!-- release-plan-marker: RP:v5.6:2026-06-16__release-v5.6 -->
-
-**Sprint 1 (firm):**
-- ST-08 [EPIC-03]: PT-04 trade count gate re-verification (BLG-GOV-106, S)
-- ST-09 [EPIC-03]: Arc 5 QA completion criteria definition (BLG-QA-45, S)
-- ST-10 [EPIC-03]: Arc 5 test scenario completeness assessment (BLG-QA-49, S-M)
-- ST-11 [EPIC-03]: Anthropic API cost 14-cycle trend analysis (BLG-OPS-65, S)
-- ST-01 [EPIC-01]: Add deep links from SI-05 digest (BLG-FE-73, S)
-- ST-02 [EPIC-01]: Clarify N/A pass rate in SI-05 digest (BLG-FE-74, XS)
-- ST-03 [EPIC-01]: RFJ visual design review pre-brief (BLG-FE-64, S, conditional gate 2026-06-21)
-
-**Sprint 2 (firm):**
-- ST-04 [EPIC-02]: Investigate concentration-status high latency (BLG-OPS-62, S)
-- ST-05 [EPIC-02]: Investigate red-flag-journal high latency (BLG-OPS-63, S)
-- ST-06 [EPIC-02]: Investigate behavioural-drift high latency (BLG-OPS-64, S)
-- ST-07 [EPIC-02]: Research data caching layer (BLG-OPS-22, M)
-
----
 
 ## Release Slice — v5.4 (cycle: 2026-06-09__release-v5.4)
 

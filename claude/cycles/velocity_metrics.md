@@ -63,8 +63,9 @@
 | v5.3  | 24      | 24        | 1.00     | Largest sprint on record (24 stories, 4 EPICs); zero spec deviations; 100% autonomous class; all 6 API contract gaps resolved; POST /digest/si05/send authenticated; CI secret scanning live; 3 AI policy docs; SI-05 effectiveness protocol + digest log schema validation; LL-v5.2-P4-01/02 carry-forwards resolved; 0 delegations; 0 returns to backlog |
 | v5.4  | 4       | 3         | 0.75     | 3/4 firm Sprint 1 stories done (ST-01 BLG-OPS-60, ST-02 BLG-FE-56, ST-04 BLG-GOV-92); ST-03 BLG-FE-64 returned to backlog — date gate not met (SI-03 live ≥30 days; 2026-06-21); Sprint 2 conditional stories (ST-05/06/07) deferred at planning per gate ≥2026-07-04; zero spec deviations; 3 EPICs |
 | v5.5  | 14      | 10        | 0.71     | 10/14 firm stories done (ST-01–10: governance patches + gate-monitoring backend + API baseline complete + regression test baseline + UX journey map); ST-11–14 returned — gate dates 2026-06-21/2026-07-04 not met; zero spec deviations; 3 EPICs merged (EPIC-04 not executed); 4 delegated items all resolved within sprint |
+| v5.6  | 10      | 10        | 1.00     | 10/10 firm stories done (ST-01/02 SI-05 UX digest improvements; ST-04/05/06/07 performance latency hardening; ST-08/09/10/11 QA + governance docs); ST-03 conditional returned at planning (gate 2026-06-21); zero spec deviations; 3 EPICs merged; 0 delegated items |
 
-**Rolling 6-cycle average (v5.0–v5.5):** 0.91
+**Rolling 6-cycle average (v5.1–v5.6):** 0.91
 
 ---
 

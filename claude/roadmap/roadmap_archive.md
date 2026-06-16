@@ -1223,4 +1223,21 @@ v5.4 Ops Monitoring, UX Debt Clearance & Governance Patches. ST-01 (BLG-OPS-60):
 
 ### Original Roadmap Entry
 
-v5.5 SI-05 Effectiveness Review, Governance Hardening & UX Debt Clearance. Governance patches: sprint_planning_prompt.md date gate advisory (BLG-GOV-116, ST-01); execution_prompt.md pr_status mandatory persist + branch ordering gate (BLG-GOV-117, ST-02; LL-v5.5-EX-02); qa_evidence commit advisory (BLG-GOV-118, ST-03; LL-v5.5-EX-01). Trade count gate-monitoring view GET /portfolio/gate-metrics + SI-05 data density line (BLG-BE-34/GOV-120, ST-04/05). API performance baseline complete — 18 endpoints measured v2.8–v5.4 (BLG-OPS-13/54/61, ST-06/07/08). Formal regression test suite baseline 387 scenarios / 66 endpoints (BLG-QA-50, ST-09). SI-05 user journey map + BLG-FE-73/74 friction (BLG-FE-65, ST-10). ST-11–14 returned — gate dates 2026-06-21/2026-07-04 not met. 10/14 firm stories. Zero spec deviations. PRs #751–#753. Verified 2026-06-16. completed_cycle_count = 41.
+v5.5 SI-05 Effectiveness Review, Governance Hardening & UX Debt Clearance.
+
+---
+
+## RA:v5.6 — Research Performance, SI-05 UX Improvements & Governance Patches
+
+**Original roadmap location:** §3 Now (current_roadmap.md)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-16
+**Shipped version:** v5.6
+**Cycle reference:** 2026-06-16__release-v5.6
+**Verification report:** claude/cycles/2026-06-16__release-v5.6/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-16
+
+### Original Roadmap Entry
+
+v5.6 Research Performance, SI-05 UX Improvements & Governance Patches. SI-05 digest deep links + N/A reason clarification (BLG-FE-73/74, ST-01/02). Performance latency hardening — 4 endpoints: concentration-status 5-min TTL FX cache; red-flag-journal schema-once guard; behavioural-drift schema-once + 15-min cache; research 15-min per-ticker TTL + screener invalidation (BLG-OPS-22/62/63/64, ST-04/05/06/07). PT-04 gate re-verification: 13/20 closed trades — NOT MET (BLG-GOV-106, ST-08). Arc 5 QA completion criteria: BLG-QA-26 gate updated (BLG-QA-45, ST-09). Arc 5 test scenario assessment: 3 P3 Playwright gaps BLG-QA-56/57/58 (BLG-QA-49, ST-10). Anthropic API cost trend: stable, est. $0.05–$0.15/month (BLG-OPS-65, ST-11). ST-03 (BLG-FE-64) conditional — returned at planning (gate 2026-06-21 not cleared). 10/10 firm stories. Zero spec deviations. PRs #764–#766. Verified 2026-06-16. completed_cycle_count = 42. Governance patches: sprint_planning_prompt.md date gate advisory (BLG-GOV-116, ST-01); execution_prompt.md pr_status mandatory persist + branch ordering gate (BLG-GOV-117, ST-02; LL-v5.5-EX-02); qa_evidence commit advisory (BLG-GOV-118, ST-03; LL-v5.5-EX-01). Trade count gate-monitoring view GET /portfolio/gate-metrics + SI-05 data density line (BLG-BE-34/GOV-120, ST-04/05). API performance baseline complete — 18 endpoints measured v2.8–v5.4 (BLG-OPS-13/54/61, ST-06/07/08). Formal regression test suite baseline 387 scenarios / 66 endpoints (BLG-QA-50, ST-09). SI-05 user journey map + BLG-FE-73/74 friction (BLG-FE-65, ST-10). ST-11–14 returned — gate dates 2026-06-21/2026-07-04 not met. 10/14 firm stories. Zero spec deviations. PRs #751–#753. Verified 2026-06-16. completed_cycle_count = 41.

@@ -5093,3 +5093,18 @@ Archived by: Backlog Management Engine STEP 12, post-ship closure 2026-05-30__re
 | BLG-OPS-61 ✅ | BLG-OPS-13 v5.1–v5.4 endpoint baseline extension | Shipped v5.5 ST-07, EPIC-03 — GET /watchlist p50=488ms, GET /portfolio/gate-metrics p50=543ms measured; §19 added; I&O Owner sign-off |
 | BLG-QA-50 ✅ | Create formal regression test suite baseline document | Shipped v5.5 ST-09, EPIC-03 — docs/qa/regression_test_suite_baseline.md: 387 scenarios, 66 endpoints, 41 e2e spec files; DoQ sign-off 2026-06-11 |
 | BLG-FE-65 ✅ | User journey map: SI-05 Telegram digest to app action | Shipped v5.5 ST-10, EPIC-03 — docs/ux/si05_user_journey_map.md: live staging walkthrough 2026-06-15; 2 friction findings (BLG-FE-73/74 filed); Head of UX & Design sign-off |
+
+## Closed Items — v5.6 Post-Ship (2026-06-16)
+
+| ID | Title | Delivery evidence |
+|----|-------|------------------|
+| BLG-FE-73 ✅ | Add deep links from SI-05 digest to relevant app screens | Shipped v5.6 ST-01, EPIC-01, PR #765 — deep links to Risk Dashboard + Red Flag Journal via FRONTEND_URL; AC-02 staging-deferred BLG-FE-75; Head of UX & Design sign-off |
+| BLG-FE-74 ✅ | Clarify N/A pass rate reason in SI-05 digest message | Shipped v5.6 ST-02, EPIC-01, PR #765 — distinct messages: no_events vs data_unavailable; 13 new unit tests; Head of Backend Engineering sign-off |
+| BLG-OPS-62 ✅ | Investigate GET /portfolio/concentration-status high latency | Shipped v5.6 ST-04, EPIC-02, PR #766 — 5-min TTL FX rate cache eliminates live HTTP call on every request; AC-03/04 staging verification deferred BLG-OPS-66; I&O Owner sign-off |
+| BLG-OPS-63 ✅ | Investigate GET /portfolio/red-flag-journal high latency | Shipped v5.6 ST-05, EPIC-02, PR #766 — process-lifetime schema-once guard replaces per-request DDL; AC-03/04 staging verification deferred BLG-OPS-67; I&O Owner sign-off |
+| BLG-OPS-64 ✅ | Investigate GET /analytics/behavioural-drift high latency | Shipped v5.6 ST-06, EPIC-02, PR #766 — schema-once guard + 15-min TTL result cache; AC-03/04/05 staging verification deferred BLG-OPS-68; I&O Owner sign-off |
+| BLG-OPS-22 ✅ | Research data caching layer | Shipped v5.6 ST-07, EPIC-02, PR #766 — 15-min per-ticker TTL cache + screener invalidation + hit/miss logging; AC-04/05 staging verification deferred BLG-OPS-69; I&O Owner sign-off |
+| BLG-OPS-65 ✅ | Anthropic API cost 14-cycle trend analysis | Shipped v5.6 ST-11, EPIC-03, PR #764 — est. $0.05–$0.15/month vs $5/month threshold (33–100× buffer); trajectory stable; next review 2026-12-16; FinOps & Resource Architect sign-off |
+| BLG-QA-45 ✅ | Arc 5 QA completion criteria definition | Shipped v5.6 ST-09, EPIC-03, PR #764 — C-01 to C-05 defined; BLG-QA-26 gate condition updated; SI-05 Phase 2/SI-04/SI-02-backend-only excluded; PO + DoQ approved |
+| BLG-QA-49 ✅ | Arc 5 test scenario completeness assessment | Shipped v5.6 ST-10, EPIC-03, PR #764 — arc5_test_coverage_assessment.md produced; 3 P3 Playwright gaps filed (BLG-QA-56/57/58); DoQ approved |
+| BLG-GOV-106 ✅ | PT-04 trade count gate re-verification | Shipped v5.6 ST-08, EPIC-03, PR #764 — 13 closed trades (PO-provided); gate NOT MET (need 20); roadmap + BLG-FEAT-25 updated; trajectory accelerating; PMO Lead + PO sign-off |

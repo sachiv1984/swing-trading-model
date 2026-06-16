@@ -9,6 +9,41 @@
 
 ---
 
+## v5.6 — Research Performance, SI-05 UX Improvements & Governance Patches — 2026-06-16
+Cycle: 2026-06-16__release-v5.6
+Verified: Verified
+Verification report: claude/cycles/2026-06-16__release-v5.6/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-03 | PT-04 trade count gate re-verification (13/20 closed trades — gate NOT MET, 7 more required; trajectory accelerating); Arc 5 QA completion criteria defined (BLG-QA-26 gate condition updated; SI-05 Phase 2/SI-04 excluded); Arc 5 test scenario completeness assessment (3 P3 Playwright gaps filed as BLG-QA-56/57/58); Anthropic API cost 14-cycle trend analysis (est. $0.05–$0.15/month; stable) | claude/roadmap/current_roadmap.md#PT-04; docs/qa/arc5_qa_completion_criteria.md; docs/qa/arc5_test_coverage_assessment.md; docs/ops/anthropic_api_cost_trend_2026.md |
+| EPIC-01 | SI-05 digest UX: deep links added to Risk Dashboard and Red Flag Journal screens (FRONTEND_URL env var); N/A pass rate reason clarified with distinct messages for no_events vs data_unavailable | backend/services/si05_digest_service.py |
+| EPIC-02 | Performance latency hardening: 5-min TTL FX rate cache for GET /portfolio/concentration-status; process-lifetime schema-once guard for GET /portfolio/red-flag-journal; schema-once guard + 15-min TTL result cache for GET /analytics/behavioural-drift; 15-min per-ticker TTL cache + screener invalidation for GET /research/{ticker} | backend/utils/pricing.py; backend/routers/red_flag_journal.py; backend/routers/analytics.py; backend/routers/research.py; backend/routers/screener.py |
+
+### Deviations accepted
+None.
+
+### Tech backlog items shipped
+- [ST-08] PT-04 trade count gate re-verification — BLG-GOV-106 closed
+- [ST-09] Arc 5 QA completion criteria definition — BLG-QA-45 closed
+- [ST-10] Arc 5 test scenario completeness assessment — BLG-QA-49 closed
+- [ST-11] Anthropic API cost 14-cycle trend analysis — BLG-OPS-65 closed
+- [ST-01] Add deep links from SI-05 digest to relevant app screens — BLG-FE-73 closed
+- [ST-02] Clarify N/A pass rate reason in SI-05 digest — BLG-FE-74 closed
+- [ST-04] Investigate GET /portfolio/concentration-status high latency — BLG-OPS-62 closed
+- [ST-05] Investigate GET /portfolio/red-flag-journal high latency — BLG-OPS-63 closed
+- [ST-06] Investigate GET /analytics/behavioural-drift high latency — BLG-OPS-64 closed
+- [ST-07] Research data caching layer — BLG-OPS-22 closed
+
+### Items returned to backlog
+- [ST-03] BLG-FE-64: RFJ visual design review pre-brief — gate 2026-06-21 not met (SI-03 Red Flag Journal live ≥30 days); BLG-FE-64 remains open (eligible from 2026-06-21)
+
+Sign-off: Product Owner — 2026-06-16
+QA sign-off: Director of Quality — 2026-06-16
+
+---
+
 ## v5.5 — SI-05 Effectiveness Review, Governance Hardening & UX Debt Clearance — 2026-06-16
 Cycle: 2026-06-10__release-v5.5
 Verified: Verified
