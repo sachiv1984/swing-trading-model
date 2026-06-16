@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-06-16__release-v5.7",
   "cycle_name": "Release Planning \u2014 v5.7 Staging Verification Completion, SI-05 Effectiveness Review & Engineering/Governance Patches",
-  "status": "Sprint_Planning_Complete",
-  "engine": "sprint_planning",
+  "status": "Executing",
+  "engine": "sprint_execution",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-06-16__release-v5.7/stage4_backlog_slice.md",
   "sprint_sealed": true,
