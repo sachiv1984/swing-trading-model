@@ -5571,6 +5571,27 @@ BLG-GOV-74 (first AI feature usage review, v4.4) established the initial Claude 
 ---
 
 
+## Release Slice — v5.6 (cycle: 2026-06-16__release-v5.6)
+
+<!-- release-plan-marker: RP:v5.6:2026-06-16__release-v5.6 -->
+
+**Sprint 1 (firm):**
+- ST-08 [EPIC-03]: PT-04 trade count gate re-verification (BLG-GOV-106, S)
+- ST-09 [EPIC-03]: Arc 5 QA completion criteria definition (BLG-QA-45, S)
+- ST-10 [EPIC-03]: Arc 5 test scenario completeness assessment (BLG-QA-49, S-M)
+- ST-11 [EPIC-03]: Anthropic API cost 14-cycle trend analysis (BLG-OPS-65, S)
+- ST-01 [EPIC-01]: Add deep links from SI-05 digest (BLG-FE-73, S)
+- ST-02 [EPIC-01]: Clarify N/A pass rate in SI-05 digest (BLG-FE-74, XS)
+- ST-03 [EPIC-01]: RFJ visual design review pre-brief (BLG-FE-64, S, conditional gate 2026-06-21)
+
+**Sprint 2 (firm):**
+- ST-04 [EPIC-02]: Investigate concentration-status high latency (BLG-OPS-62, S)
+- ST-05 [EPIC-02]: Investigate red-flag-journal high latency (BLG-OPS-63, S)
+- ST-06 [EPIC-02]: Investigate behavioural-drift high latency (BLG-OPS-64, S)
+- ST-07 [EPIC-02]: Research data caching layer (BLG-OPS-22, M)
+
+---
+
 ## Release Slice — v5.4 (cycle: 2026-06-09__release-v5.4)
 
 <!-- release-plan-marker: RP:v5.4:2026-06-09__release-v5.4 -->

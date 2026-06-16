@@ -1,0 +1,119 @@
+{
+  "cycle_id": "2026-06-16__release-v5.6",
+  "release": "v5.6",
+  "generated_utc": "2026-06-16T00:00:00Z",
+  "issues": [
+    {
+      "st_id": "ST-01",
+      "epic_id": "EPIC-01",
+      "title": "BLG-FE-73: Add deep links from SI-05 digest to relevant app screens",
+      "priority": "P2",
+      "effort": "S",
+      "sprint": 1,
+      "labels": ["story", "release-v5.6", "EPIC-01", "cycle:2026-06-16__release-v5.6"],
+      "idempotency_key": "cycle:2026-06-16__release-v5.6"
+    },
+    {
+      "st_id": "ST-02",
+      "epic_id": "EPIC-01",
+      "title": "BLG-FE-74: Clarify N/A pass rate reason in SI-05 digest message",
+      "priority": "P3",
+      "effort": "XS",
+      "sprint": 1,
+      "labels": ["story", "release-v5.6", "EPIC-01", "cycle:2026-06-16__release-v5.6"],
+      "idempotency_key": "cycle:2026-06-16__release-v5.6"
+    },
+    {
+      "st_id": "ST-03",
+      "epic_id": "EPIC-01",
+      "title": "BLG-FE-64: RFJ visual design review pre-brief [CONDITIONAL gate 2026-06-21]",
+      "priority": "P2",
+      "effort": "S",
+      "sprint": 1,
+      "conditional": true,
+      "gate": "2026-06-21",
+      "labels": ["story", "release-v5.6", "EPIC-01", "conditional", "cycle:2026-06-16__release-v5.6"],
+      "idempotency_key": "cycle:2026-06-16__release-v5.6"
+    },
+    {
+      "st_id": "ST-04",
+      "epic_id": "EPIC-02",
+      "title": "BLG-OPS-62: Investigate GET /portfolio/concentration-status high latency",
+      "priority": "P3",
+      "effort": "S",
+      "sprint": 2,
+      "labels": ["story", "release-v5.6", "EPIC-02", "cycle:2026-06-16__release-v5.6"],
+      "idempotency_key": "cycle:2026-06-16__release-v5.6"
+    },
+    {
+      "st_id": "ST-05",
+      "epic_id": "EPIC-02",
+      "title": "BLG-OPS-63: Investigate GET /portfolio/red-flag-journal high latency",
+      "priority": "P3",
+      "effort": "S",
+      "sprint": 2,
+      "labels": ["story", "release-v5.6", "EPIC-02", "cycle:2026-06-16__release-v5.6"],
+      "idempotency_key": "cycle:2026-06-16__release-v5.6"
+    },
+    {
+      "st_id": "ST-06",
+      "epic_id": "EPIC-02",
+      "title": "BLG-OPS-64: Investigate GET /analytics/behavioural-drift high latency",
+      "priority": "P3",
+      "effort": "S",
+      "sprint": 2,
+      "labels": ["story", "release-v5.6", "EPIC-02", "cycle:2026-06-16__release-v5.6"],
+      "idempotency_key": "cycle:2026-06-16__release-v5.6"
+    },
+    {
+      "st_id": "ST-07",
+      "epic_id": "EPIC-02",
+      "title": "BLG-OPS-22: Research data caching layer",
+      "priority": "P2",
+      "effort": "M",
+      "sprint": 2,
+      "labels": ["story", "release-v5.6", "EPIC-02", "cycle:2026-06-16__release-v5.6"],
+      "idempotency_key": "cycle:2026-06-16__release-v5.6"
+    },
+    {
+      "st_id": "ST-08",
+      "epic_id": "EPIC-03",
+      "title": "BLG-GOV-106: PT-04 trade count gate re-verification",
+      "priority": "P1",
+      "effort": "S",
+      "sprint": 1,
+      "labels": ["story", "release-v5.6", "EPIC-03", "cycle:2026-06-16__release-v5.6"],
+      "idempotency_key": "cycle:2026-06-16__release-v5.6"
+    },
+    {
+      "st_id": "ST-09",
+      "epic_id": "EPIC-03",
+      "title": "BLG-QA-45: Arc 5 QA completion criteria definition",
+      "priority": "P2",
+      "effort": "S",
+      "sprint": 1,
+      "labels": ["story", "release-v5.6", "EPIC-03", "cycle:2026-06-16__release-v5.6"],
+      "idempotency_key": "cycle:2026-06-16__release-v5.6"
+    },
+    {
+      "st_id": "ST-10",
+      "epic_id": "EPIC-03",
+      "title": "BLG-QA-49: Arc 5 test scenario completeness assessment",
+      "priority": "P2",
+      "effort": "S-M",
+      "sprint": 1,
+      "labels": ["story", "release-v5.6", "EPIC-03", "cycle:2026-06-16__release-v5.6"],
+      "idempotency_key": "cycle:2026-06-16__release-v5.6"
+    },
+    {
+      "st_id": "ST-11",
+      "epic_id": "EPIC-03",
+      "title": "BLG-OPS-65: Anthropic API cost 14-cycle trend analysis",
+      "priority": "P3",
+      "effort": "S",
+      "sprint": 1,
+      "labels": ["story", "release-v5.6", "EPIC-03", "cycle:2026-06-16__release-v5.6"],
+      "idempotency_key": "cycle:2026-06-16__release-v5.6"
+    }
+  ]
+}

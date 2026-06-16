@@ -268,7 +268,16 @@ Today you find stocks through external research and add them to the watchlist ma
 ### v5.6 — Research Performance, SI-05 UX Improvements & Governance Patches
 
 **Horizon:** Now (added rebalance 2026-06-16__scheduled — STEP 8.1 Option a; DL-046)
-**Status:** Scope TBD — run `plan release --version v5.6` to define
+**Status:** Release Plan Published — 2026-06-16
+
+<!-- roadmap-annotation-marker: RA:v5.6:2026-06-16__release-v5.6 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-16__release-v5.6
+- Plan published: 2026-06-16
+- Cycle folder: claude/cycles/2026-06-16__release-v5.6/
+- Backlog slice: claude/cycles/2026-06-16__release-v5.6/stage4_backlog_slice.md
+- Status at annotation: Validated
 
 **Candidate scope (rebalance-identified):**
 - BLG-OPS-22 — Research data caching layer (gate cleared 2026-06-11: p95=4,601ms > 3,000ms threshold; P2, M effort)
