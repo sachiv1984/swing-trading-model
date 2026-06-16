@@ -13,6 +13,15 @@
 **v5.6** — Research Performance, SI-05 UX Improvements & Governance Patches — ✅ Shipped 2026-06-16
 **Next planned release:** v5.7
 
+<!-- roadmap-annotation-marker: RA:v5.7:2026-06-16__release-v5.7 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-16__release-v5.7
+- Plan published: 2026-06-16
+- Cycle folder: claude/cycles/2026-06-16__release-v5.7/
+- Backlog slice: claude/cycles/2026-06-16__release-v5.7/stage4_backlog_slice.md
+- Status at annotation: Validated
+
 *RA:v5.2 retired — see roadmap_archive.md 2026-06-08 (post-ship closure 2026-06-08__release-v5.2).*
 *RA:v5.1 retired — see roadmap_archive.md 2026-06-04 (post-ship closure 2026-06-21__release-v5.1).*
 

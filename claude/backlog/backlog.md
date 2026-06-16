@@ -2971,3 +2971,30 @@ ST-07 (v5.6) implemented a 15-min per-ticker TTL cache for GET /research/{ticker
 *Release Slice v5.6 removed — cycle 2026-06-16__release-v5.6 closed 2026-06-16. Archived canonical home: claude/cycles/2026-06-16__release-v5.6/stage4_backlog_slice.md*
 
 ---
+
+## Release Slice v5.7 — cycle 2026-06-16__release-v5.7
+
+<!-- release-plan-marker: RP:v5.7:2026-06-16__release-v5.7 -->
+
+**Theme:** Staging Verification Completion, SI-05 Effectiveness Review & Engineering/Governance Patches
+
+| ST-ID | BLG-ID | Title | EPIC | Sprint | Effort | Conditional |
+|-------|--------|-------|------|--------|--------|-------------|
+| ST-01 | BLG-OPS-66 | Staging verification: concentration-status p95 after FX cache fix | EPIC-01 | 1 | XS | No |
+| ST-02 | BLG-OPS-67 | Staging verification: red-flag-journal p95 after schema-once fix | EPIC-01 | 1 | XS | No |
+| ST-03 | BLG-OPS-68 | Staging verification: behavioural-drift p95 + cache hit rate | EPIC-01 | 1 | XS | No |
+| ST-04 | BLG-OPS-69 | Staging verification: research view p95 + cache hit rate | EPIC-01 | 1 | S | No |
+| ST-05 | BLG-FE-75 | Staging verification: SI-05 deep links on mobile Telegram | EPIC-01 | 1 | XS | No |
+| ST-06 | BLG-QA-56 | SI-01 all-pass state Playwright scenario | EPIC-01 | 1 | XS | No |
+| ST-07 | BLG-QA-57 | SI-03 RFJ pagination Playwright scenario | EPIC-01 | 1 | XS | No |
+| ST-08 | BLG-QA-58 | Arc 5 compliance score trend Playwright scenario | EPIC-01 | 1 | XS | No |
+| ST-09 | BLG-FE-64 | RFJ design review pre-brief | EPIC-02 | 1 | XS | Yes — gate 2026-06-21 |
+| ST-10 | BLG-BE-36 | Lazy-import pattern documentation (backend engineering patterns guide) | EPIC-02 | 1 | S | No |
+| ST-11 | BLG-GOV-123 | Confirm dual sign-off pattern documented in execution_prompt.md | EPIC-02 | 1 | S | No |
+| ST-12 | BLG-GOV-112 | SI-05 digest weekly cadence review | EPIC-03 | 2 | S | Yes — gate 2026-07-04 |
+| ST-13 | BLG-GOV-115 | SI-05 actionability metric definition | EPIC-03 | 2 | S | Yes — gate 2026-07-04 |
+| ST-14 | BLG-OPS-59 | SI-05 service production p99 latency baseline review | EPIC-03 | 2 | S | Yes — gate 2026-07-04 |
+
+*Authoritative source: claude/cycles/2026-06-16__release-v5.7/stage4_backlog_slice.md*
+
+---

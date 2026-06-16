@@ -1,0 +1,169 @@
+{
+  "cycle_id": "2026-06-16__release-v5.7",
+  "release": "v5.7",
+  "generated_utc": "2026-06-16T00:00:00Z",
+  "issues_mode": "none",
+  "note": "issues_mode=none — no GitHub issues created. This manifest is retained for audit completeness.",
+  "stories": [
+    {
+      "id": "ST-01",
+      "title": "BLG-OPS-66: Staging verification — concentration-status p95 after FX cache fix",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "effort": "XS",
+      "type": "Operations / Staging Verification",
+      "source_blg": "BLG-OPS-66",
+      "conditional": false,
+      "labels": ["v5.7", "EPIC-01", "sprint-1", "staging-verification"]
+    },
+    {
+      "id": "ST-02",
+      "title": "BLG-OPS-67: Staging verification — red-flag-journal p95 after schema-once fix",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "effort": "XS",
+      "type": "Operations / Staging Verification",
+      "source_blg": "BLG-OPS-67",
+      "conditional": false,
+      "labels": ["v5.7", "EPIC-01", "sprint-1", "staging-verification"]
+    },
+    {
+      "id": "ST-03",
+      "title": "BLG-OPS-68: Staging verification — behavioural-drift p95 + cache hit rate",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "effort": "XS",
+      "type": "Operations / Staging Verification",
+      "source_blg": "BLG-OPS-68",
+      "conditional": false,
+      "labels": ["v5.7", "EPIC-01", "sprint-1", "staging-verification"]
+    },
+    {
+      "id": "ST-04",
+      "title": "BLG-OPS-69: Staging verification — research view p95 + cache hit rate",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "effort": "S",
+      "type": "Operations / Staging Verification",
+      "source_blg": "BLG-OPS-69",
+      "conditional": false,
+      "labels": ["v5.7", "EPIC-01", "sprint-1", "staging-verification"]
+    },
+    {
+      "id": "ST-05",
+      "title": "BLG-FE-75: Staging verification — SI-05 deep links navigate on mobile Telegram",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "effort": "XS",
+      "type": "QA / Staging Verification",
+      "source_blg": "BLG-FE-75",
+      "conditional": false,
+      "labels": ["v5.7", "EPIC-01", "sprint-1", "staging-verification"]
+    },
+    {
+      "id": "ST-06",
+      "title": "BLG-QA-56: SI-01 all-pass state Playwright scenario",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "effort": "XS",
+      "type": "QA / Test Coverage",
+      "source_blg": "BLG-QA-56",
+      "conditional": false,
+      "labels": ["v5.7", "EPIC-01", "sprint-1", "playwright"]
+    },
+    {
+      "id": "ST-07",
+      "title": "BLG-QA-57: SI-03 Red Flag Journal pagination Playwright scenario",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "effort": "XS",
+      "type": "QA / Test Coverage",
+      "source_blg": "BLG-QA-57",
+      "conditional": false,
+      "labels": ["v5.7", "EPIC-01", "sprint-1", "playwright"]
+    },
+    {
+      "id": "ST-08",
+      "title": "BLG-QA-58: Arc 5 compliance score trend Playwright scenario",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "effort": "XS",
+      "type": "QA / Test Coverage",
+      "source_blg": "BLG-QA-58",
+      "conditional": false,
+      "labels": ["v5.7", "EPIC-01", "sprint-1", "playwright"]
+    },
+    {
+      "id": "ST-09",
+      "title": "BLG-FE-64: RFJ design review pre-brief [conditional — gate 2026-06-21]",
+      "epic": "EPIC-02",
+      "sprint": 1,
+      "effort": "XS",
+      "type": "Frontend / UX Pre-work",
+      "source_blg": "BLG-FE-64",
+      "conditional": true,
+      "gate": "2026-06-21",
+      "labels": ["v5.7", "EPIC-02", "sprint-1", "conditional"]
+    },
+    {
+      "id": "ST-10",
+      "title": "BLG-BE-36: Lazy-import pattern documentation in backend engineering patterns guide",
+      "epic": "EPIC-02",
+      "sprint": 1,
+      "effort": "S",
+      "type": "Backend Engineering / Documentation",
+      "source_blg": "BLG-BE-36",
+      "source_lesson": "LL-v5.6-EX-03",
+      "conditional": false,
+      "labels": ["v5.7", "EPIC-02", "sprint-1"]
+    },
+    {
+      "id": "ST-11",
+      "title": "BLG-GOV-123: Confirm dual sign-off pattern documented in execution_prompt.md",
+      "epic": "EPIC-02",
+      "sprint": 1,
+      "effort": "S",
+      "type": "Governance / Verification",
+      "source_blg": "BLG-GOV-123",
+      "source_lesson": "LL-v5.6-DV-03",
+      "conditional": false,
+      "labels": ["v5.7", "EPIC-02", "sprint-1", "governance"]
+    },
+    {
+      "id": "ST-12",
+      "title": "BLG-GOV-112: SI-05 digest weekly cadence review [conditional Sprint 2 — gate 2026-07-04]",
+      "epic": "EPIC-03",
+      "sprint": 2,
+      "effort": "S",
+      "type": "Governance / Product Review",
+      "source_blg": "BLG-GOV-112",
+      "conditional": true,
+      "gate": "2026-07-04",
+      "labels": ["v5.7", "EPIC-03", "sprint-2", "conditional", "si05"]
+    },
+    {
+      "id": "ST-13",
+      "title": "BLG-GOV-115: SI-05 actionability metric definition [conditional Sprint 2 — gate 2026-07-04]",
+      "epic": "EPIC-03",
+      "sprint": 2,
+      "effort": "S",
+      "type": "Governance / Metrics",
+      "source_blg": "BLG-GOV-115",
+      "conditional": true,
+      "gate": "2026-07-04",
+      "labels": ["v5.7", "EPIC-03", "sprint-2", "conditional", "si05"]
+    },
+    {
+      "id": "ST-14",
+      "title": "BLG-OPS-59: SI-05 service production p99 latency baseline review [conditional Sprint 2 — gate 2026-07-04]",
+      "epic": "EPIC-03",
+      "sprint": 2,
+      "effort": "S",
+      "type": "Operations / Performance",
+      "source_blg": "BLG-OPS-59",
+      "conditional": true,
+      "gate": "2026-07-04",
+      "labels": ["v5.7", "EPIC-03", "sprint-2", "conditional", "si05"]
+    }
+  ]
+}
