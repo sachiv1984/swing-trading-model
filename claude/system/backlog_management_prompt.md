@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.8
-**Last Updated:** 2026-06-03
+**Version:** 1.9
+**Last Updated:** 2026-06-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -101,7 +101,7 @@ Violation → halt.
 
 | Classification | Criteria | Action |
 |----------------|----------|--------|
-| **Complete — Archive** | Status ✅ COMPLETE with delivery date and evidence reference | Move to `## Closed Items` section; append to archive |
+| **Complete — Archive** | Item heading line OR the first body line immediately following the heading contains `✅ COMPLETE` with delivery date and evidence reference | Move to `## Closed Items` section; append to archive |
 | **Killed — Archive** | Status ❌ Killed or superseded with decision reference | Move to `## Closed Items` section; append to archive |
 | **Active — Keep** | Open, prioritised, has a roadmap home or is a standalone improvement | No change |
 | **Orphan — Flag** | Open, no roadmap home, no cycle activity, no blocker | Add orphan flag; surface for Product Owner review |
@@ -350,7 +350,11 @@ For each Complete — Archive and Killed — Archive item, append:
 - Update `**Last Updated:**` header field
 - Do not change item definitions, priorities, or descriptions — status and flags only
 
-**Post-write verification:** After completing all STEP 6.2 writes, grep the active sections of `backlog.md` (§1–§8 type sections, above any `## Closed Items` section) for heading lines that retain a `✅ COMPLETE` or `❌ Killed` status marker. If any are found, the archive move is incomplete — return to STEP 6.2 and remove the item from the active body before proceeding. Do not proceed to STEP 6.3 with any terminal-status items remaining in the active backlog sections.
+**Post-write verification:** After completing all STEP 6.2 writes, run two checks on the active sections of `backlog.md` (§1–§8 type sections, above any `## Closed Items` section):
+1. Grep heading lines for `✅ COMPLETE` or `❌ Killed` in the heading itself.
+2. Grep the line immediately following each `### BLG-` heading for a `✅ COMPLETE` or `❌ Killed` marker (the standard body-line completion format).
+
+If any are found by either check, the archive move is incomplete — return to STEP 6.2 and remove the item from the active body before proceeding. Do not proceed to STEP 6.3 with any terminal-status items remaining in the active backlog sections.
 
 ### 6.3 Write health report
 
