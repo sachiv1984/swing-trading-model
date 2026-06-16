@@ -74,4 +74,4 @@ The BLG-QA-26 gate condition field should be updated to:
 | Role | Decision | Date |
 |------|----------|------|
 | Director of Quality | Approved — C-01/05 sufficient; exclusions appropriate; C-05 as final gate correct; BLG-FE-54/63 gate conditions noted for future sprint | 2026-06-16 |
-| Product Owner | [AWAITING SIGN-OFF] | — |
+| Product Owner | Approved — SI-05 Phase 2 excluded (Phase 1 sufficient; Phase 2 is incremental extension gated on SI-02 frontend); SI-02 backend sufficient (frontend a visibility gap, not correctness; addendum when shipped); SI-04 excluded (not in sprint planning; addendum when it ships). BLG-QA-26 should validate what is live and stable. | 2026-06-16 |

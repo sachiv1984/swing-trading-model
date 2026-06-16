@@ -5,7 +5,7 @@
   "invoked_utc": "2026-06-16T09:30:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-16T15:30:00Z",
+  "last_updated_utc": "2026-06-16T15:45:00Z",
   "epics": {
     "EPIC-03": {
       "status": "done",
@@ -71,17 +71,18 @@
           "sign_off_record": {
             "required_by": "Director of Quality + Product Owner",
             "method": "agent_mediated",
-            "status": "doq_cleared_po_pending",
+            "status": "cleared",
             "findings_applied": [
               "SI-05 Phase 2 excluded from BLG-QA-26 trigger",
               "SI-02 backend sufficient",
               "SI-04 excluded",
               "C-01 to C-05 criteria defined",
-              "BLG-QA-26 gate condition updated"
+              "BLG-QA-26 gate condition updated",
+              "PO approved all 3 exclusions: SI-05 Phase 2 excluded, SI-02 backend sufficient, SI-04 excluded. Addendem approach confirmed."
             ],
-            "cleared_utc": "2026-06-16T09:45:00Z"
+            "cleared_utc": "2026-06-16T15:45:00Z"
           },
-          "notes": "Director of Quality approved. Product Owner sign-off pending (AC-04). BLG-QA-26 gate condition updated in backlog.md."
+          "notes": "Director of Quality + Product Owner both approved. All 3 exclusions confirmed. BLG-QA-26 gate condition updated."
         },
         "ST-10": {
           "title": "BLG-QA-49: Arc 5 test scenario completeness assessment",
