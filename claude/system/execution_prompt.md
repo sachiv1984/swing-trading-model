@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.41
-**Last Updated:** 2026-06-15
+**Version:** 3.42
+**Last Updated:** 2026-06-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -142,6 +142,8 @@ When an ST item's seal condition or acceptance criteria require sign-off from a 
 5. If `Approved`: record sign-off in `execution_state.json` `sign_off_record` for the item; proceed. **BLG-GOV-73 — Deviations_filed auto-set on clearance:** When setting `sign_off_record.status = "cleared"` for a delegated story (any delegation class), if no DEV-* deviation record was filed for that story, also set `deviations_filed = true` in the same operation. Condition: delegated story + sign-off cleared + no DEV-* record filed → `deviations_filed = true`. This prevents the batch-correction pattern at sprint close for cleared delegated stories.
 6. If `Blocked`: apply the findings in-session, re-invoke the sign-off agent. Maximum 2 retries.
 7. If still `Blocked` after 2 retries, or if no agent file exists: surface to the user as a `delegated_decision` block with the outstanding findings listed explicitly.
+
+**Infrastructure co-sign class (LL-v5.6-DV-03):** For backend-only EPICs, a valid DoQ sign-off may take the co-sign form: `"Infrastructure & Operations Owner + Director of Quality: Confirmed — [N] stories, YYYY-MM-DD"`. This dual-domain co-sign is accepted by delivery_verification_prompt.md §-1.3 Tier 2 as equivalent to agent-mediated sign-off with named domain role. When using this format, record `"method": "infrastructure_co_sign"` in `sign_off_record` in `execution_state.json` for the EPIC.
 
 **Always-human gates (never agent-mediated):**
 - Product Owner — sprint scope, goal, and acceptance of sprint close are always human decisions.

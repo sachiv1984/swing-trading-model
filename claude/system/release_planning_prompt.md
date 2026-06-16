@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.34
-**Last Updated:** 2026-06-08
+**Version:** 2.35
+**Last Updated:** 2026-06-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -571,6 +571,21 @@ After the Provisional-Target advisory, scan scope candidate backlog items for de
 For each item found: note in the run manifest as "Design dependency detected — surface at Pre-sprint Required Decisions checklist." Non-blocking — does not halt STEP 1. Record count in the run manifest STEP 1 results row as "Design dependency scan: N item(s) flagged."
 
 If no items are found: record "Design dependency scan: 0 items flagged" in run manifest and proceed.
+
+### 1.4a Perennial-Return Check (Advisory — triggers PO active disposition)
+
+Before finalising the scope candidate list, check each conditional or gate-blocked candidate item:
+
+1. Does this item appear in the prior cycle's `stage4_backlog_slice.md` with status `returned_to_backlog`, `deferred`, or equivalent? If yes, increment a consecutive-return counter.
+2. If returned in **2 or more consecutive prior cycles** (including the current cycle): surface to Product Owner as "⚠ Perennial-Return Item — returned N consecutive cycles."
+3. PO must make an **explicit active disposition**:
+   - (a) Keep as conditional — provide updated gate evidence or a revised gate date that differs from prior cycles
+   - (b) Remove from horizon — park in backlog until gate permanently cleared
+4. Silent re-entry (no active PO disposition when N ≥ 2) is **not permitted**. Record PO decision in `run_manifest.md`.
+
+This check is advisory-only — it does not halt execution. It prevents backlog churn on items that recurrently fail to execute due to unchanged gate conditions.
+
+---
 
 ### 1.4 Gate-Condition Proximity Scan (Advisory — not a hard gate)
 

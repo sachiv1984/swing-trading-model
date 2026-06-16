@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.44
+**Version:** 4.45
 **Last Updated:** 2026-06-16
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -620,7 +620,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.34)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.35)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.41)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.42)
 
 ### 8.1 Invocation
 
@@ -1454,7 +1454,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.44 |
+| Version | 4.45 |
 | Last Updated | 2026-06-16 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.5 |
@@ -1464,10 +1464,10 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v7.1 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.34 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.35 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.9 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.41 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.42 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.5 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.0 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.45 | 2026-06-16 | **AUD-2026-06-16 Tier 1 patches — release_planning_prompt.md v2.34→v2.35 (STEP 1.4a Perennial-Return Check) + execution_prompt.md v3.41→v3.42 (§5.3 Infrastructure co-sign class).** §6B source prompt header updated v2.34→v2.35. §8 source prompt header updated v3.41→v3.42. §14 Release Engine Source v2.34→v2.35. §14 Execution Engine Source v3.41→v3.42. §14 Version 4.44→4.45/2026-06-16. Changes: (AUD-2026-06-16-001) release_planning STEP 1.4a added — Perennial-Return Check advisory: items returned at planning for 2+ consecutive cycles require PO active disposition (keep with updated gate evidence OR remove from horizon); prevents silent re-entry. (AUD-2026-06-16-002) execution_prompt §5.3 — Infrastructure co-sign class added: "Infrastructure & Operations Owner + Director of Quality: Confirmed" is a valid DoQ sign-off for backend-only EPICs; accepted by delivery_verification §-1.3 Tier 2 as agent-mediated with named domain role. Authority: Head of Specs Team (AUD-2026-06-16 Tier 1 closure, 2026-06-16). |
 | 4.44 | 2026-06-16 | **Rebalance 2026-06-16__scheduled LL-RP-02 action-now patch — roadmap_prompt.md v7.0→v7.1: STEP 8.0.5 candidate list pre-clean elevated from Advisory to Mandatory; now fires at two points: STEP 3 candidate compilation AND before STEP 8.1 presentation.** §6 source prompt header updated v7.0→v7.1. §14 Roadmap Engine Source v7.0→v7.1. Change: STEP 8.0.5 retitled from "Advisory" to "Mandatory"; step description updated to fire at STEP 3 (when compiling candidate list from backlog) in addition to STEP 8.1 (before presenting to PO); root cause note added (two consecutive cycles v5.4+v5.5 saw complete items appear because candidate lists were compiled without running the grep). §14 Version 4.43→4.44/2026-06-16. Authority: Head of Specs Team (LL-RP-02, rebalance 2026-06-16__scheduled). |
 | 4.43 | 2026-06-15 | **v5.5 sprint close lessons learnt action-now patches — execution_prompt.md v3.40→v3.41: branch ordering gate (STEP 5) + merge state persist before halt (STEP 4).** §8 source prompt header updated v3.40→v3.41. §14 Execution Engine Source v3.40→v3.41. Changes (execution_prompt v3.41): (LL-v5.5-EX-01, third recurrence git-stash-at-branch-switch) STEP 5 opening branch ordering gate added — before ANY STEP 5 writes, engine must confirm `git branch --show-current` is main and switch if not; prevents backlog.md/execution_state.json writes on EPIC branch. (LL-v5.5-EX-02, third recurrence stale-pr_status) STEP 4 step 3a added — immediately after merging, commit execution_state.json to EPIC branch before outputting halt message; prevents stale merged state at next session resume. §14 Version 4.42→4.43/2026-06-15. Authority: Head of Specs Team (v5.5 Phase 3 lessons learnt, 2026-06-15). |
 | 4.42 | 2026-06-11 | **v5.5 ST-02+ST-03 (BLG-GOV-117+118, EPIC-01) — execution_prompt.md v3.39→v3.40: pr_status read-after-open improvement + qa_evidence commit advisory.** §8 source prompt header updated v3.39→v3.40. §14 Execution Engine Source v3.39→v3.40. Changes (execution_prompt v3.40): (ST-02/BLG-GOV-117) §3.2.B step 5 updated: `gh pr view` command expanded from `--json state` to `--json state,mergeStateStatus` — captures actual PR state including merge readiness immediately after open. (ST-03/BLG-GOV-118) §3.2.B — "qa_evidence commit advisory (BLG-GOV-118)" added before step 1: verify `qa_evidence_EPIC-xx.md` is committed to EPIC branch before running `gh pr create`; git status check required. §14 Version 4.41→4.42/2026-06-11. Authority: Head of Specs Team (BLG-GOV-117+118, v5.5 ST-02+ST-03, 2026-06-11). |
