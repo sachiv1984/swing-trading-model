@@ -418,9 +418,10 @@ class TestTickerUniverseEndpoints(unittest.TestCase):
         body = _ok(CLIENT.get("/ticker-universe"))
         assert isinstance(body["data"], list)
 
+    @patch("routers.ticker_universe._validate_ticker_yfinance", return_value=None)
     @patch("routers.ticker_universe.add_ticker",
            return_value={"ticker": "TSLA", "market": "US", "active": True})
-    def test_post_ticker_universe_returns_ok(self, _):
+    def test_post_ticker_universe_returns_ok(self, _add, _validate):
         # POST /ticker-universe returns 201
         assert CLIENT.post("/ticker-universe", json={"ticker": "TSLA", "market": "US"}).status_code == 201
 
