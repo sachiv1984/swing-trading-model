@@ -5541,6 +5541,80 @@ BLG-GOV-74 (first AI feature usage review, v4.4) established the initial Claude 
 
 ---
 
+### BLG-OPS-66 — Staging verification: concentration-status p95 after FX cache fix
+**Priority:** P3 (Low)
+**Type:** Operations / Staging Verification
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-04 (EPIC-02, v5.6) — BLG-OPS-62 AC-03/04 staging-deferred
+**Effort:** XS (<1 hour)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+ST-04 (v5.6) applied a 5-min TTL FX rate cache to `get_live_fx_rate()` to eliminate the live HTTP call on every `/portfolio/concentration-status` request (baseline p95=5,917ms). Production latency re-measurement is required to confirm the fix achieved ≤1,000ms p95.
+
+**Acceptance Criteria**
+- GET /portfolio/concentration-status p95 latency re-measured on production after v5.6 deployment
+- p95 ≤1,000ms confirmed (or further investigation initiated if not met)
+- Infrastructure & Operations Owner sign-off recorded
+
+---
+
+### BLG-OPS-67 — Staging verification: red-flag-journal p95 after schema-once fix
+**Priority:** P3 (Low)
+**Type:** Operations / Staging Verification
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-05 (EPIC-02, v5.6) — BLG-OPS-63 AC-03/04 staging-deferred
+**Effort:** XS (<1 hour)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+ST-05 (v5.6) replaced per-request `ensure_red_flag_events_table/severity_column()` DDL calls with a process-lifetime singleton guard in `red_flag_journal.py` (baseline p95=3,200ms). Production latency re-measurement required to confirm fix achieved ≤1,000ms p95.
+
+**Acceptance Criteria**
+- GET /portfolio/red-flag-journal p95 latency re-measured on production after v5.6 deployment
+- p95 ≤1,000ms confirmed (or further investigation initiated if not met)
+- Infrastructure & Operations Owner sign-off recorded
+
+---
+
+### BLG-OPS-68 — Staging verification: behavioural-drift p95 + cache hit rate after fix
+**Priority:** P3 (Low)
+**Type:** Operations / Staging Verification
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-06 (EPIC-02, v5.6) — BLG-OPS-64 AC-03/04/05 staging-deferred
+**Effort:** XS (<1 hour)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+ST-06 (v5.6) applied schema-once guard + 15-min TTL result cache to `/analytics/behavioural-drift` (baseline p95=3,798ms). Production latency and cache hit rate measurement required.
+
+**Acceptance Criteria**
+- GET /analytics/behavioural-drift p95 latency re-measured on production after v5.6 deployment
+- p95 ≤1,000ms for cached calls confirmed
+- Cache hit rate ≥50% under typical usage confirmed (check logs: `[research_cache] HIT/MISS`)
+- Infrastructure & Operations Owner sign-off recorded
+
+---
+
+### BLG-OPS-69 — Staging verification: research view p95 + cache hit rate after TTL cache
+**Priority:** P2 (Medium)
+**Type:** Operations / Staging Verification
+**Owner:** Infrastructure & Operations Owner; Head of Backend Engineering
+**Source:** ST-07 (EPIC-02, v5.6) — BLG-OPS-22 AC-04/05 staging-deferred
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+ST-07 (v5.6) implemented a 15-min per-ticker TTL cache for GET /research/{ticker} with screener-run cache invalidation (baseline p95=4,601ms). Production measurement required to confirm p95 ≤2,000ms for cached tickers and cache hit rate ≥50%.
+
+**Acceptance Criteria**
+- GET /research/{ticker} p95 latency ≤2,000ms for cached tickers on production
+- Cache hit rate ≥50% under typical usage (check `[research_cache] HIT/MISS` log output)
+- Cache invalidation on screener run confirmed (run screener, verify subsequent research request is a MISS)
+- Infrastructure & Operations Owner sign-off recorded
+
+---
+
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*
 
 ---
