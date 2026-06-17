@@ -11,8 +11,8 @@
     "EPIC-01": {
       "status": "in_progress",
       "branch": "exec/2026-06-17__release-v5.8/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 790,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-17__release-v5.8/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
