@@ -56,7 +56,9 @@ Last Updated: 2026-06-17
 - **Spec reference:** `claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md#ST-03`
 - **Unblock criteria:** FRONTEND_URL set on Render production backend AND deployment runbook updated AND Infrastructure & Operations Owner sign-off committed to branch with `[EPIC-01][ST-03] <description>`. AC-04 (deep link confirmation) may be deferred to a backlog item if timing does not permit pre-PR evidence.
 - **Commit format required:** `[EPIC-01][ST-03] <description>` pushed to `exec/2026-06-17__release-v5.8/EPIC-01`
-- **Status:** Pending
+- **Status:** Unblocked
+- **Commit SHA:** 90c1b202 (docs/ops/production_deployment_runbook.md v0.3 — FRONTEND_URL added to §6.1)
+- **Sign-off cleared:** 2026-06-17 — Infrastructure & Operations Owner confirmed FRONTEND_URL set on trading-assistant-api-c0f9.onrender.com and runbook updated. AC-04 staging-only deferred to BLG-OPS-70.
 
 ---
 

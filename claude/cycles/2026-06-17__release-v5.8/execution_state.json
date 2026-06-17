@@ -58,21 +58,27 @@
         "ST-03": {
           "title": "FRONTEND_URL production env var configuration",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 785,
           "branch": "exec/2026-06-17__release-v5.8/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "90c1b202",
           "delegation_record_id": "DEL-20260617-03",
           "blocked_since_utc": "2026-06-17T00:00:00Z",
           "unblock_criteria": "FRONTEND_URL env var set on production backend (Render: trading-assistant-api-c0f9.onrender.com) AND deployment runbook updated AND Infrastructure & Operations Owner sign-off committed to branch as [EPIC-01][ST-03]",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md#ST-03"],
-          "deviations_filed": false,
+          "completed_utc": "2026-06-17T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md#ST-03", "docs/ops/production_deployment_runbook.md#6.1"],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "AC-04 is staging-only — if deep link confirmation cannot be obtained before PR opens, a backlog item must be filed per CLAUDE.md §2. Production Render dashboard access required."
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "human",
+            "status": "cleared",
+            "findings_applied": ["AC-01: FRONTEND_URL set on Render production backend (trading-assistant-api-c0f9.onrender.com) — confirmed by I&O Owner 2026-06-17", "AC-02: Deployment runbook v0.3 updated — FRONTEND_URL added to §6.1 env var table", "AC-03: Infrastructure & Operations Owner sign-off confirmed 2026-06-17", "AC-04 deferred: staging-only evidence (deep link confirmation in next SI-05 digest delivery) — BLG-OPS-70 filed per CLAUDE.md §2"],
+            "cleared_utc": "2026-06-17T00:00:00Z"
+          },
+          "notes": "AC-04 staging-only deferred — BLG-OPS-70 filed for deep link confirmation at next SI-05 digest delivery. No spec deviation (env var addition is fully consistent with SI-05 digest service design)."
         },
         "ST-04": {
           "title": "Governance model complexity assessment",
@@ -165,9 +171,9 @@
     }
   },
 
-  "blocked_items": ["EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-01/ST-03", "EPIC-01/ST-04"],
+  "blocked_items": ["EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-01/ST-04"],
   "delegated_items": ["EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-01/ST-03", "EPIC-01/ST-04"],
-  "completed_items": [],
+  "completed_items": ["EPIC-01/ST-03"],
   "open_escalations": [],
 
   "merge_gate": {

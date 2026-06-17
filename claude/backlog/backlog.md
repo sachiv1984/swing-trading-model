@@ -2252,6 +2252,21 @@ BLG-OPS-31 defined Render log retention. claude_audit_log (shipped v4.0) and Sup
 
 ---
 
+### BLG-OPS-70 — ST-03 AC-04: Confirm SI-05 deep links work in production after FRONTEND_URL set
+**Priority:** P2 (Medium)
+**Type:** Operations / Staging Verification
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-03 v5.8 — AC-04 staging-only deferral (CLAUDE.md §2). FRONTEND_URL set on production backend 2026-06-17; deep link confirmation requires next scheduled SI-05 digest delivery.
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v5.9 (verify at next SI-05 digest delivery after 2026-06-17)
+
+**Acceptance Criteria**
+- SI-05 Telegram digest received after FRONTEND_URL env var applied
+- Deep links in digest are present and resolve to correct frontend pages
+- Infrastructure & Operations Owner confirmation recorded
+
+---
+
 ### BLG-OPS-59 — SI-05 service production p99 latency baseline review
 **Priority:** P2 (Medium)
 **Type:** Operations / Performance
