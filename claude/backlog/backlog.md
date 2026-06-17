@@ -2823,6 +2823,26 @@ BLG-OPS-60 (completed v5.4) added v5.3 endpoints to api_performance_baseline.md.
 
 ---
 
+## Release Slice v5.8 — cycle 2026-06-17__release-v5.8
+
+<!-- release-plan-marker: RP:v5.8:2026-06-17__release-v5.8 -->
+
+**Theme:** RFJ UX Design Completion, SI-05 Effectiveness Review & Production Hardening
+
+| ST-ID | BLG-ID | Title | EPIC | Sprint | Effort | Conditional |
+|-------|--------|-------|------|--------|--------|-------------|
+| ST-01 | BLG-FE-64 | RFJ design review pre-brief | EPIC-01 | 1 | XS | No — gate 2026-06-21 (time-certain) |
+| ST-02 | BLG-FE-41 | Red Flag Journal visual design review | EPIC-01 | 1 | M | No — gate 2026-06-21 (time-certain) |
+| ST-03 | — | FRONTEND_URL production env var configuration | EPIC-01 | 1 | XS | No |
+| ST-04 | BLG-GOV-101 | Governance model complexity assessment | EPIC-01 | 1 | M | No |
+| ST-05 | BLG-GOV-112 | SI-05 digest weekly cadence review | EPIC-02 | 2 | S | Yes — gate 2026-07-04 |
+| ST-06 | BLG-GOV-115 | SI-05 digest actionability metric definition | EPIC-02 | 2 | S | Yes — gate 2026-07-04 |
+| ST-07 | BLG-OPS-59 | SI-05 service production p99 latency review | EPIC-02 | 2 | S | Yes — gate 2026-07-04 |
+
+*Authoritative source: claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md*
+
+---
+
 ## Release Slice v5.7 — cycle 2026-06-16__release-v5.7
 
 <!-- release-plan-marker: RP:v5.7:2026-06-16__release-v5.7 -->

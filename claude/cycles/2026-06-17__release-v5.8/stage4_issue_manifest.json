@@ -1,0 +1,87 @@
+{
+  "cycle_id": "2026-06-17__release-v5.8",
+  "release": "v5.8",
+  "generated_utc": "2026-06-17T00:00:00Z",
+  "items": [
+    {
+      "st_id": "ST-01",
+      "blg_id": "BLG-FE-64",
+      "title": "RFJ design review pre-brief",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "effort": "XS",
+      "conditional": false,
+      "labels": ["story", "release-v5.8", "EPIC-01", "cycle:2026-06-17__release-v5.8"],
+      "milestone": "v5.8"
+    },
+    {
+      "st_id": "ST-02",
+      "blg_id": "BLG-FE-41",
+      "title": "Red Flag Journal visual design review",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "effort": "M",
+      "conditional": false,
+      "labels": ["story", "release-v5.8", "EPIC-01", "cycle:2026-06-17__release-v5.8"],
+      "milestone": "v5.8"
+    },
+    {
+      "st_id": "ST-03",
+      "blg_id": null,
+      "title": "FRONTEND_URL production env var configuration",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "effort": "XS",
+      "conditional": false,
+      "labels": ["story", "release-v5.8", "EPIC-01", "cycle:2026-06-17__release-v5.8"],
+      "milestone": "v5.8"
+    },
+    {
+      "st_id": "ST-04",
+      "blg_id": "BLG-GOV-101",
+      "title": "Governance model complexity assessment",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "effort": "M",
+      "conditional": false,
+      "labels": ["story", "release-v5.8", "EPIC-01", "cycle:2026-06-17__release-v5.8"],
+      "milestone": "v5.8"
+    },
+    {
+      "st_id": "ST-05",
+      "blg_id": "BLG-GOV-112",
+      "title": "SI-05 digest weekly cadence review",
+      "epic": "EPIC-02",
+      "sprint": 2,
+      "effort": "S",
+      "conditional": true,
+      "gate": "2026-07-04",
+      "labels": ["story", "release-v5.8", "EPIC-02", "cycle:2026-06-17__release-v5.8"],
+      "milestone": "v5.8"
+    },
+    {
+      "st_id": "ST-06",
+      "blg_id": "BLG-GOV-115",
+      "title": "SI-05 digest actionability metric definition",
+      "epic": "EPIC-02",
+      "sprint": 2,
+      "effort": "S",
+      "conditional": true,
+      "gate": "2026-07-04",
+      "labels": ["story", "release-v5.8", "EPIC-02", "cycle:2026-06-17__release-v5.8"],
+      "milestone": "v5.8"
+    },
+    {
+      "st_id": "ST-07",
+      "blg_id": "BLG-OPS-59",
+      "title": "SI-05 service production p99 latency review",
+      "epic": "EPIC-02",
+      "sprint": 2,
+      "effort": "S",
+      "conditional": true,
+      "gate": "2026-07-04",
+      "labels": ["story", "release-v5.8", "EPIC-02", "cycle:2026-06-17__release-v5.8"],
+      "milestone": "v5.8"
+    }
+  ]
+}

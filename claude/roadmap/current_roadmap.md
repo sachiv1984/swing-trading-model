@@ -13,6 +13,15 @@
 **v5.7** — Staging Verification Completion, SI-05 Effectiveness Review & Engineering/Governance Patches — ✅ Shipped 2026-06-17
 **Next planned release:** v5.8
 
+<!-- roadmap-annotation-marker: RA:v5.8:2026-06-17__release-v5.8 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-17__release-v5.8
+- Plan published: 2026-06-17
+- Cycle folder: claude/cycles/2026-06-17__release-v5.8/
+- Backlog slice: claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md
+- Status at annotation: Published
+
 *RA:v5.7 retired — see roadmap_archive.md 2026-06-17 (post-ship closure 2026-06-16__release-v5.7).*
 
 *RA:v5.2 retired — see roadmap_archive.md 2026-06-08 (post-ship closure 2026-06-08__release-v5.2).*
