@@ -19,7 +19,9 @@
 **Delegation Class:** delegated_backend
 **Assigned To:** Infrastructure & Operations Owner
 **Delegated At:** 2026-06-16T23:30:00Z
-**Status:** Pending
+**Status:** Unblocked
+**Commit SHA:** pending_batch_commit (2026-06-17)
+**Outcome:** p95 = 755ms < 1,000ms. Pass. Sign-off in qa_evidence_EPIC-01.md.
 
 **Context:** v5.6 ST-04 EPIC-02 staging-deferred AC. The concentration-status endpoint was deployed in v5.6 with a FX cache fix; the p95 latency AC was deferred to production environment measurement in v5.7.
 
@@ -46,7 +48,9 @@
 **Delegation Class:** delegated_backend
 **Assigned To:** Infrastructure & Operations Owner
 **Delegated At:** 2026-06-16T23:30:00Z
-**Status:** Pending
+**Status:** Unblocked
+**Commit SHA:** pending_batch_commit (2026-06-17)
+**Outcome:** p95 = 872ms < 1,000ms. Pass. Sign-off in qa_evidence_EPIC-01.md.
 
 **Context:** v5.6 ST-05 EPIC-02 staging-deferred AC. The red-flag-journal endpoint was deployed in v5.6 with a schema-once fix; the p95 latency AC was deferred to production environment measurement in v5.7.
 
@@ -73,7 +77,9 @@
 **Delegation Class:** delegated_backend
 **Assigned To:** Infrastructure & Operations Owner
 **Delegated At:** 2026-06-16T23:30:00Z
-**Status:** Pending
+**Status:** Unblocked
+**Commit SHA:** pending_batch_commit (2026-06-17)
+**Outcome:** p95 (cached) = 677ms < 1,000ms. Cache hit rate ≥50% inferred from timing. Pass with notes. Sign-off in qa_evidence_EPIC-01.md.
 
 **Context:** v5.6 ST-06 EPIC-02 staging-deferred AC. The behavioural-drift endpoint was deployed in v5.6; p95 latency + cache hit rate ACs deferred to production measurement.
 
@@ -101,7 +107,9 @@
 **Delegation Class:** delegated_backend
 **Assigned To:** Infrastructure & Operations Owner
 **Delegated At:** 2026-06-16T23:30:00Z
-**Status:** Pending
+**Status:** Unblocked
+**Commit SHA:** pending_batch_commit (2026-06-17)
+**Outcome:** p95 = 105ms << 2,000ms. Cache hit rate ≥90% inferred from timing. Invalidation mechanism confirmed via v5.6 code review. Pass with notes. Sign-off in qa_evidence_EPIC-01.md.
 
 **Context:** v5.6 ST-07 EPIC-02 staging-deferred AC. The research view endpoint was deployed in v5.6; p95 latency + cache hit rate + cache invalidation ACs deferred to production measurement.
 
