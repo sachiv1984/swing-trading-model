@@ -1,0 +1,203 @@
+{
+  "cycle_id": "2026-06-17__release-v5.8",
+  "sprint_goal": "Complete the Red Flag Journal UX design review cycle (pre-brief and review), restore SI-05 deep-link functionality in production via the FRONTEND_URL env var, and produce the governance complexity assessment, delivering all four firm Sprint 1 outcomes for v5.8.",
+  "backlog_slice_source": "claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md",
+  "invoked_utc": "2026-06-17T00:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-06-17T00:00:00Z",
+
+  "epics": {
+    "EPIC-01": {
+      "status": "in_progress",
+      "branch": "exec/2026-06-17__release-v5.8/EPIC-01",
+      "pr_number": 790,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-06-17__release-v5.8/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "RFJ design review pre-brief",
+          "classification": "delegated_decision",
+          "status": "returned_to_backlog",
+          "assigned_to": "Head of UX & Design",
+          "github_issue": 783,
+          "branch": "exec/2026-06-17__release-v5.8/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260617-01",
+          "blocked_since_utc": "2026-06-17T00:00:00Z",
+          "unblock_criteria": "Gate date 2026-06-21 reached AND design review brief produced AND Head of UX & Design sign-off recorded",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md#ST-01"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Returned to backlog 2026-06-17 — PO-authorised mid-sprint deferral. Gate 2026-06-21 not yet reached. BLG-FE-64 updated: not eligible for release planning before 2026-06-21 (5th deferral)."
+        },
+        "ST-02": {
+          "title": "Red Flag Journal visual design review",
+          "classification": "delegated_decision",
+          "status": "returned_to_backlog",
+          "assigned_to": "Head of UX & Design",
+          "github_issue": 784,
+          "branch": "exec/2026-06-17__release-v5.8/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260617-02",
+          "blocked_since_utc": "2026-06-17T00:00:00Z",
+          "unblock_criteria": "ST-01 done AND gate date 2026-06-21 reached AND design recommendation document produced AND Head of UX & Design sign-off recorded",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md#ST-02"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Returned to backlog 2026-06-17 — PO-authorised mid-sprint deferral. Gate 2026-06-21 not yet reached. BLG-FE-41 updated: not eligible for release planning before 2026-06-21."
+        },
+        "ST-03": {
+          "title": "FRONTEND_URL production env var configuration",
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "Infrastructure & Operations Owner",
+          "github_issue": 785,
+          "branch": "exec/2026-06-17__release-v5.8/EPIC-01",
+          "commit_sha": "90c1b202",
+          "delegation_record_id": "DEL-20260617-03",
+          "blocked_since_utc": "2026-06-17T00:00:00Z",
+          "unblock_criteria": "FRONTEND_URL env var set on production backend (Render: trading-assistant-api-c0f9.onrender.com) AND deployment runbook updated AND Infrastructure & Operations Owner sign-off committed to branch as [EPIC-01][ST-03]",
+          "completed_utc": "2026-06-17T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md#ST-03", "docs/ops/production_deployment_runbook.md#6.1"],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "human",
+            "status": "cleared",
+            "findings_applied": ["AC-01: FRONTEND_URL set on Render production backend (trading-assistant-api-c0f9.onrender.com) — confirmed by I&O Owner 2026-06-17", "AC-02: Deployment runbook v0.3 updated — FRONTEND_URL added to §6.1 env var table", "AC-03: Infrastructure & Operations Owner sign-off confirmed 2026-06-17", "AC-04 deferred: staging-only evidence (deep link confirmation in next SI-05 digest delivery) — BLG-OPS-70 filed per CLAUDE.md §2"],
+            "cleared_utc": "2026-06-17T00:00:00Z"
+          },
+          "notes": "AC-04 staging-only deferred — BLG-OPS-70 filed for deep link confirmation at next SI-05 digest delivery. No spec deviation (env var addition is fully consistent with SI-05 digest service design)."
+        },
+        "ST-04": {
+          "title": "Governance model complexity assessment",
+          "classification": "delegated_decision",
+          "status": "done",
+          "assigned_to": "Director of HR; PMO Lead; Head of Specs Team",
+          "github_issue": 786,
+          "branch": "exec/2026-06-17__release-v5.8/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": "DEL-20260617-04",
+          "blocked_since_utc": "2026-06-17T00:00:00Z",
+          "unblock_criteria": "Complexity assessment report produced (covering all 6 governance engines) AND Director of HR sign-off AND PMO Lead sign-off AND Head of Specs Team sign-off — all committed to branch as [EPIC-01][ST-04]",
+          "completed_utc": "2026-06-17T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md#ST-04", "docs/governance/governance_complexity_assessment_2026-06-17.md"],
+          "deviations_filed": true,
+          "delivery_note": "docs/governance/governance_complexity_assessment_2026-06-17.md",
+          "last_completed_substep": null,
+          "sign_off_record": {
+            "required_by": "Director of HR; PMO Lead; Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "AC-01: Assessment produced covering all 6 governance engines (GCA-2026-06-17)",
+              "AC-02: Per-engine step/gate/write counts documented in Section 3 summary table",
+              "AC-03: Hypothesis test outcome stated — complexity IS a contributing factor (secondary), not root cause",
+              "AC-04: 7 simplification candidates (SC-01–SC-07) enumerated and filed as BLG-GOV-123 through BLG-GOV-129",
+              "AC-05: Director of HR approved 2026-06-17; PMO Lead approved 2026-06-17; Head of Specs Team approved 2026-06-17 with two implementation constraints on SC-02/SC-04",
+              "HoST finding: release_planning_prompt.md hard gate count is 11, not 9 (RESUME PRECHECK block contains 3 additional gates) — noted in sign-off, does not change assessment conclusions",
+              "HoST constraint on SC-02: Terminal State Guard and State File Immutability Rule must be preserved when RESUME PRECHECK block is removed — recorded in BLG-GOV-124",
+              "HoST constraint on SC-04: STEP 5 Challenger failure rule must cover convergence bias before STEP 8.6–8.7 deleted — recorded in BLG-GOV-126"
+            ],
+            "cleared_utc": "2026-06-17T00:00:00Z"
+          },
+          "notes": "No spec deviation. Assessment confirms complexity is a secondary contributing risk, not root cause. 7 backlog items filed for future governance sprint implementation."
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "not_started",
+      "branch": "exec/2026-06-17__release-v5.8/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-06-17__release-v5.8/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-05": {
+          "title": "SI-05 digest weekly cadence review",
+          "classification": "delegated_decision",
+          "status": "not_started",
+          "assigned_to": "Product Owner",
+          "github_issue": 787,
+          "branch": "exec/2026-06-17__release-v5.8/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "Gate 2026-07-04 reached AND BLG-GOV-113 (SI-05 Phase 1 effectiveness review) complete",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md#ST-05"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Sprint 2 conditional — gate check required at 2026-07-04. Do not execute before gate clears."
+        },
+        "ST-06": {
+          "title": "SI-05 digest actionability metric definition",
+          "classification": "delegated_decision",
+          "status": "not_started",
+          "assigned_to": "Metrics Definitions & Analytics Owner",
+          "github_issue": 788,
+          "branch": "exec/2026-06-17__release-v5.8/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "Gate 2026-07-04 reached AND BLG-GOV-113 complete",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md#ST-06"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Sprint 2 conditional — gate check required at 2026-07-04."
+        },
+        "ST-07": {
+          "title": "SI-05 service production p99 latency baseline review",
+          "classification": "delegated_backend",
+          "status": "not_started",
+          "assigned_to": "Infrastructure & Operations Owner",
+          "github_issue": 789,
+          "branch": "exec/2026-06-17__release-v5.8/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "Gate 2026-07-04 reached — ≥4 weeks POST /digest/si05/send production operation elapsed",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md#ST-07"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Sprint 2 conditional — gate check required at 2026-07-04."
+        }
+      }
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": ["EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-01/ST-03", "EPIC-01/ST-04"],
+  "completed_items": ["EPIC-01/ST-03", "EPIC-01/ST-04"],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-01"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}

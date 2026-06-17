@@ -502,7 +502,9 @@ Red Flag Journal filter state (date range, severity, rule type) resets on page r
 **Effort:** M (~1–2 days design + spec)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** SI-03 Red Flag Journal live ≥ 30 days (on/after 2026-06-21).
+**Gate criteria:** SI-03 Red Flag Journal live ≥ 30 days (on/after 2026-06-21). **Not eligible for release planning or sprint planning before 2026-06-21.** Depends on BLG-FE-64 (pre-brief) completing first.
+
+**Sprint history:** Planned as ST-02 (EPIC-01) in cycle 2026-06-17__release-v5.8; returned to backlog 2026-06-17 mid-sprint — PO-authorised deferral; gate date 2026-06-21 not yet reached.
 
 **Problem**
 Red Flag Journal (v3.9) is functional but minimally styled. As RFJ becomes a primary Arc 5 review surface, a design review covering severity visual hierarchy, timeline layout option, and colour coding for rule breach types will improve usability and consistency with the rest of the application design language.
@@ -776,7 +778,7 @@ SI-04 (strategy version comparison) and SI-05 (weekly digest display) will intro
 
 **Gate criteria:** SI-03 Red Flag Journal live ≥ 30 days (2026-06-21 — gate clears in 14 days from 2026-06-07).
 
-**Sprint history:** Planned as ST-03 (EPIC-02) in cycle 2026-06-09__release-v5.4; returned to backlog 2026-06-10 — date gate (2026-06-21) not met at sprint close; PO-authorised deferral. Planned again as ST-11 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-06-21 still not reached. Planned again as ST-03 (EPIC-01) in cycle 2026-06-16__release-v5.6; returned to backlog 2026-06-16 — gate date 2026-06-21 not yet cleared at planning time. Planned as ST-09 (EPIC-02) in cycle 2026-06-16__release-v5.7; returned to backlog 2026-06-17 — gate date 2026-06-21 not yet cleared at sprint close (4th deferral). PO to re-disposition at v5.8 planning. **Not eligible for sprint planning before 2026-06-21** (gate: SI-03 Red Flag Journal live ≥ 30 days).
+**Sprint history:** Planned as ST-03 (EPIC-02) in cycle 2026-06-09__release-v5.4; returned to backlog 2026-06-10 — date gate (2026-06-21) not met at sprint close; PO-authorised deferral. Planned again as ST-11 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-06-21 still not reached. Planned again as ST-03 (EPIC-01) in cycle 2026-06-16__release-v5.6; returned to backlog 2026-06-16 — gate date 2026-06-21 not yet cleared at planning time. Planned as ST-09 (EPIC-02) in cycle 2026-06-16__release-v5.7; returned to backlog 2026-06-17 — gate date 2026-06-21 not yet cleared at sprint close (4th deferral). Planned as ST-01 (EPIC-01) in cycle 2026-06-17__release-v5.8; returned to backlog 2026-06-17 mid-sprint — PO-authorised deferral; gate date 2026-06-21 still not reached at time of return (5th deferral). **Not eligible for release planning or sprint planning before 2026-06-21** (gate: SI-03 Red Flag Journal live ≥ 30 days from 2026-05-22).
 
 **Problem**
 BLG-FE-41 (Red Flag Journal visual design review) has a gate date of 2026-06-21. When the gate clears, sprint planning delay can be avoided if the design review brief is already prepared. The brief defines: scope (which aspects of RedFlagJournal.js are in scope for visual review), evaluation criteria, and deliverables from the review.
@@ -2252,6 +2254,21 @@ BLG-OPS-31 defined Render log retention. claude_audit_log (shipped v4.0) and Sup
 
 ---
 
+### BLG-OPS-70 — ST-03 AC-04: Confirm SI-05 deep links work in production after FRONTEND_URL set
+**Priority:** P2 (Medium)
+**Type:** Operations / Staging Verification
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-03 v5.8 — AC-04 staging-only deferral (CLAUDE.md §2). FRONTEND_URL set on production backend 2026-06-17; deep link confirmation requires next scheduled SI-05 digest delivery.
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v5.9 (verify at next SI-05 digest delivery after 2026-06-17)
+
+**Acceptance Criteria**
+- SI-05 Telegram digest received after FRONTEND_URL env var applied
+- Deep links in digest are present and resolve to correct frontend pages
+- Infrastructure & Operations Owner confirmation recorded
+
+---
+
 ### BLG-OPS-59 — SI-05 service production p99 latency baseline review
 **Priority:** P2 (Medium)
 **Type:** Operations / Performance
@@ -2737,6 +2754,144 @@ strategy_rules.md §11 defines concrete trading parameters (ATR multipliers, gra
 - Review conducted; findings documented
 - If changes: strategy_rules.md versioned and change rationale filed
 - Strategy Rules & System Intent Owner sign-off
+
+---
+
+### BLG-GOV-123 — SC-01: Extract Playwright test standard from execution_prompt.md to shared_standards
+**Priority:** P2 (Medium)
+**Type:** Governance / Prompt Simplification
+**Owner:** Head of Specs Team
+**Source:** GCA-2026-06-17 — ST-04 (BLG-GOV-101) simplification candidate SC-01
+**Effort:** XS (~1 hour)
+**Provisional-Target:** v5.9
+
+**Scope**
+Section 14 of `execution_prompt.md` defines Playwright test authoring standards (waitFor patterns, mock payload advisory, ~30 lines). This content is loaded on every invocation of the execution engine regardless of whether the sprint contains any Playwright work. Extract to `shared_standards.md §16` (or a new §17) and replace Section 14 with a single reference line. No logic change — structural refactoring only.
+
+**Acceptance Criteria**
+- Section 14 content moved to shared_standards.md with a new heading
+- execution_prompt.md Section 14 replaced with reference: "Playwright test standard: per shared_standards.md §X"
+- Version bump on both files; changelog entries appended
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-124 — SC-02: Remove RESUME PRECHECK mutation detection block from release_planning_prompt.md
+**Priority:** P3 (Low)
+**Type:** Governance / Prompt Simplification
+**Owner:** Head of Specs Team
+**Source:** GCA-2026-06-17 — ST-04 (BLG-GOV-101) simplification candidate SC-02
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled (governance sprint)
+
+**Scope**
+The RESUME PRECHECK mutation detection block in `release_planning_prompt.md` (~80 lines, lines 417–510) handles interrupted multi-session runs and assumption invalidation. This path has never been exercised in 100% of recorded v4.x–v5.x cycles. The lightweight state.json resume rule (7 lines) provides sufficient resumability for the observed failure mode. Remove the invalidation map and efficiency policy block; retain the state.json check. Requires dry-run validation pass.
+
+**Implementation constraint (Head of Specs Team sign-off GCA-2026-06-17):** The Terminal State Guard ("Published Is Immutable") and State File Immutability Rule hard gates within the RESUME PRECHECK block must be extracted and retained outside the block before the mutation detection/invalidation map machinery is removed. The implementing story must explicitly scope the deletion and confirm these two gates survive.
+
+**Acceptance Criteria**
+- RESUME PRECHECK mutation detection/invalidation map block removed (mutation-detection portion only)
+- Terminal State Guard and State File Immutability Rule hard gates extracted and retained in the prompt body
+- State.json resume rule retained
+- Dry-run validation pass confirming no functional regression
+- Version bump + changelog entry
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-125 — SC-03: Consolidate spec_references policy sub-variants in execution_prompt.md
+**Priority:** P2 (Medium)
+**Type:** Governance / Prompt Simplification
+**Owner:** Head of Specs Team
+**Source:** GCA-2026-06-17 — ST-04 (BLG-GOV-101) simplification candidate SC-03
+**Effort:** XS (~1 hour)
+**Provisional-Target:** v5.9
+
+**Scope**
+STEP 3.1.A steps 2a, 2b, 2c of `execution_prompt.md` each handle a distinct spec_references edge case (path verify, documentation-creation stories, test-authoring stories) as separate numbered sub-steps with prose. Consolidate into a single unified rule with a 3-case lookup table (~25 lines → ~10 lines). No logic change.
+
+**Acceptance Criteria**
+- Steps 2a, 2b, 2c replaced by a single consolidated rule with lookup table
+- All three edge cases preserved in the table
+- Version bump + changelog entry
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-126 — SC-04: Remove STEP 8.6–8.7 fatigue detection guardrail from roadmap_prompt.md
+**Priority:** P3 (Low)
+**Type:** Governance / Prompt Simplification
+**Owner:** Head of Specs Team
+**Source:** GCA-2026-06-17 — ST-04 (BLG-GOV-101) simplification candidate SC-04
+**Effort:** XS (~1 hour)
+**Provisional-Target:** v5.9
+
+**Scope**
+STEP 8.6 (Fatigue Detection Guardrail) and STEP 8.7 (Pivot Loop) in `roadmap_prompt.md` detect convergence bias where all candidates advance and the Challenger issues only Clearance Statements. This condition has never been triggered. The Challenger failure rule in STEP 5 (mandatory counter-argument) provides equivalent protection. Remove STEPs 8.6–8.7; verify Challenger failure rule in STEP 5 is sufficient.
+
+**Implementation constraint (Head of Specs Team sign-off GCA-2026-06-17):** Before removing STEP 8.6–8.7, verify that STEP 5's Challenger failure rule explicitly covers convergence bias (all candidates advance with only clearance statements). If STEP 5's language is narrower, add a consolidating note to STEP 5 before deletion.
+
+**Acceptance Criteria**
+- STEP 5 Challenger failure rule verified to cover convergence bias scenario (or updated to do so)
+- STEPs 8.6 and 8.7 removed from roadmap_prompt.md
+- Version bump + changelog entry
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-127 — SC-05: Remove dead-load advisory steps from release_planning_prompt.md
+**Priority:** P3 (Low)
+**Type:** Governance / Prompt Simplification
+**Owner:** Head of Specs Team
+**Source:** GCA-2026-06-17 — ST-04 (BLG-GOV-101) simplification candidate SC-05
+**Effort:** XS (~1 hour)
+**Provisional-Target:** v5.9
+
+**Scope**
+Two advisory steps in `release_planning_prompt.md` run unconditionally but produce no decision-relevant output in the common case: (a) STEP 1.3 (Design-Gate Language Scan) duplicates Sprint Planning Engine STEP -1 check; (b) STEP 5.7 (Decision Record Integrity) has no effect when no escalations are raised (common in v4.x–v5.x). Make STEP 5.7 conditional on escalations existing. Assess whether STEP 1.3 can be removed or reduced to a single-line reminder.
+
+**Acceptance Criteria**
+- STEP 5.7 made conditional (only runs if escalation records exist)
+- STEP 1.3 removed or reduced to one-line note
+- Version bump + changelog entry
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-128 — SC-06: Make Playwright selector check conditional on DOM changes in execution_prompt.md
+**Priority:** P3 (Low)
+**Type:** Governance / Prompt Simplification
+**Owner:** Head of Specs Team
+**Source:** GCA-2026-06-17 — ST-04 (BLG-GOV-101) simplification candidate SC-06
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v5.9
+
+**Scope**
+STEP 3.1.A step 13 in `execution_prompt.md` mandates a scan of all Playwright spec files for stale selectors whenever any DOM element is modified. For governance-only or backend-only EPICs (~60% of sprints) this is dead load. Tighten the condition: "if this story modifies a DOM element that is targeted by existing Playwright selectors." No logic change for frontend EPICs.
+
+**Acceptance Criteria**
+- Step 13 condition tightened to DOM-change-relevant stories only
+- Existing coverage for frontend EPICs preserved
+- Version bump + changelog entry
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-129 — SC-07: Compress Advisory Summary Block format docs in post_ship_closure.md
+**Priority:** P3 (Low)
+**Type:** Governance / Prompt Simplification
+**Owner:** Head of Specs Team
+**Source:** GCA-2026-06-17 — ST-04 (BLG-GOV-101) simplification candidate SC-07
+**Effort:** XS (<30 min)
+**Provisional-Target:** v5.9
+
+**Scope**
+The Advisory Summary Block section at the end of `post_ship_closure.md` contains ~20 lines of format documentation for a simple 3-line summary block. Compress to a 5-line format block with a single-sentence explanation. No behaviour change.
+
+**Acceptance Criteria**
+- Advisory Summary Block format documentation compressed to ≤5 lines
+- Version bump + changelog entry
+- Head of Specs Team sign-off
 
 ---
 
