@@ -302,6 +302,15 @@ Today you find stocks through external research and add them to the watchlist ma
 
 > **Note:** BLG-FE-64 gate 2026-06-21 clears before any realistic v5.9 sprint open date. Carry-forward from v5.8 confirms this item must be firm in v5.9 — 5 consecutive deferrals; gate is now imminent. Conditional items gated on 2026-07-04 must be confirmed cleared by gate owner before sprint planning seals per release_planning_prompt.md STEP 1.4b (Mandatory, v2.36).
 
+<!-- roadmap-annotation-marker: RA:v5.9:2026-06-17__release-v5.9 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-17__release-v5.9
+- Plan published: 2026-06-17
+- Cycle folder: claude/cycles/2026-06-17__release-v5.9/
+- Backlog slice: claude/cycles/2026-06-17__release-v5.9/stage4_backlog_slice.md
+- Status at annotation: Validated
+
 -----
 
 ## 4. Priority 2 — Horizon: Next Phase (Arcs 1 & 2)

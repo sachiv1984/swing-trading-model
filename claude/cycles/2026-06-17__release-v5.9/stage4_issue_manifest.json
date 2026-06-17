@@ -1,0 +1,161 @@
+{
+  "cycle_id": "2026-06-17__release-v5.9",
+  "release": "v5.9",
+  "generated_utc": "2026-06-17T00:00:00Z",
+  "stories": [
+    {
+      "id": "ST-01",
+      "title": "SC-03: Consolidate spec_references policy sub-variants in execution_prompt.md",
+      "blg_id": "BLG-GOV-125",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "classification": "firm",
+      "effort": "XS",
+      "labels": ["story", "release-v5.9", "EPIC-01", "cycle:2026-06-17__release-v5.9"],
+      "owner": "Head of Specs Team"
+    },
+    {
+      "id": "ST-02",
+      "title": "SC-04: Remove STEP 8.6-8.7 fatigue detection guardrail from roadmap_prompt.md",
+      "blg_id": "BLG-GOV-126",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "classification": "firm",
+      "effort": "XS",
+      "labels": ["story", "release-v5.9", "EPIC-01", "cycle:2026-06-17__release-v5.9"],
+      "owner": "Head of Specs Team"
+    },
+    {
+      "id": "ST-03",
+      "title": "SC-05: Remove dead-load advisory steps from release_planning_prompt.md",
+      "blg_id": "BLG-GOV-127",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "classification": "firm",
+      "effort": "XS",
+      "labels": ["story", "release-v5.9", "EPIC-01", "cycle:2026-06-17__release-v5.9"],
+      "owner": "Head of Specs Team"
+    },
+    {
+      "id": "ST-04",
+      "title": "SC-06: Make Playwright selector check conditional on DOM changes in execution_prompt.md",
+      "blg_id": "BLG-GOV-128",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "classification": "firm",
+      "effort": "XS",
+      "labels": ["story", "release-v5.9", "EPIC-01", "cycle:2026-06-17__release-v5.9"],
+      "owner": "Head of Specs Team"
+    },
+    {
+      "id": "ST-05",
+      "title": "SC-07: Compress Advisory Summary Block format docs in post_ship_closure.md",
+      "blg_id": "BLG-GOV-129",
+      "epic": "EPIC-01",
+      "sprint": 1,
+      "classification": "firm",
+      "effort": "XS",
+      "labels": ["story", "release-v5.9", "EPIC-01", "cycle:2026-06-17__release-v5.9"],
+      "owner": "Head of Specs Team"
+    },
+    {
+      "id": "ST-06",
+      "title": "BLG-FE-64: Red Flag Journal visual design review pre-brief",
+      "blg_id": "BLG-FE-64",
+      "epic": "EPIC-02",
+      "sprint": 1,
+      "classification": "conditional",
+      "gate": "2026-06-21",
+      "effort": "S",
+      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
+      "owner": "Frontend Specs & UX Documentation Owner"
+    },
+    {
+      "id": "ST-07",
+      "title": "BLG-FE-41: Red Flag Journal visual design review",
+      "blg_id": "BLG-FE-41",
+      "epic": "EPIC-02",
+      "sprint": 1,
+      "classification": "conditional",
+      "gate": "2026-06-21",
+      "depends_on": "ST-06",
+      "effort": "M",
+      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
+      "owner": "Head of UX & Design"
+    },
+    {
+      "id": "ST-08",
+      "title": "BLG-OPS-70: Confirm SI-05 deep links work in production after FRONTEND_URL set",
+      "blg_id": "BLG-OPS-70",
+      "epic": "EPIC-02",
+      "sprint": 1,
+      "classification": "conditional",
+      "gate": "~2026-06-23",
+      "effort": "XS",
+      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
+      "owner": "Infrastructure & Operations Owner"
+    },
+    {
+      "id": "ST-09",
+      "title": "BLG-GOV-112: SI-05 digest weekly cadence review",
+      "blg_id": "BLG-GOV-112",
+      "epic": "EPIC-02",
+      "sprint": 2,
+      "classification": "conditional",
+      "gate": "2026-07-04",
+      "effort": "S",
+      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
+      "owner": "Product Owner"
+    },
+    {
+      "id": "ST-10",
+      "title": "BLG-GOV-113: SI-05 effectiveness review protocol execution",
+      "blg_id": "BLG-GOV-113",
+      "epic": "EPIC-02",
+      "sprint": 2,
+      "classification": "conditional",
+      "gate": "2026-07-04",
+      "effort": "S",
+      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
+      "owner": "Director of Quality"
+    },
+    {
+      "id": "ST-11",
+      "title": "BLG-GOV-115: SI-05 digest actionability metric definition",
+      "blg_id": "BLG-GOV-115",
+      "epic": "EPIC-02",
+      "sprint": 2,
+      "classification": "conditional",
+      "gate": "2026-07-04",
+      "depends_on": "ST-10",
+      "effort": "S",
+      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
+      "owner": "Metrics Definitions & Analytics Owner"
+    },
+    {
+      "id": "ST-12",
+      "title": "BLG-OPS-59: SI-05 service production p99 latency baseline review",
+      "blg_id": "BLG-OPS-59",
+      "epic": "EPIC-02",
+      "sprint": 2,
+      "classification": "conditional",
+      "gate": "2026-07-04",
+      "effort": "S",
+      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
+      "owner": "Infrastructure & Operations Owner"
+    },
+    {
+      "id": "ST-13",
+      "title": "BLG-GOV-130: SI-05 Phase 2 activation decision scope",
+      "blg_id": "BLG-GOV-130",
+      "epic": "EPIC-02",
+      "sprint": 2,
+      "classification": "conditional",
+      "gate": "2026-07-04",
+      "depends_on": "ST-10",
+      "effort": "S",
+      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
+      "owner": "Product Owner"
+    }
+  ]
+}
