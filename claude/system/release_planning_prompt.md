@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.36
+**Version:** 2.37
 **Last Updated:** 2026-06-17 (v2.35→v2.36: LL-P3-03-v55/LL-P4-01-v55 — STEP 1.4b added: within-sprint date gate classification mandatory rule; pattern confirmed across v5.4–v5.8; action-now applied rebalance 2026-06-17__scheduled)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -564,13 +564,9 @@ After writing the Readiness section, scan backlog candidates for this release fo
 - Record as an advisory note in the run manifest.
 - **Do not halt.** Scope selection authority remains at STEP 2.
 
-### 1.3 Design-Gate Language Scan (Advisory — not a hard gate)
+### 1.3 Design-Gate Language Scan (Advisory)
 
-After the Provisional-Target advisory, scan scope candidate backlog items for design-gate language: "Product Owner to decide", "design decision required", "pending design", "requires UX decision".
-
-For each item found: note in the run manifest as "Design dependency detected — surface at Pre-sprint Required Decisions checklist." Non-blocking — does not halt STEP 1. Record count in the run manifest STEP 1 results row as "Design dependency scan: N item(s) flagged."
-
-If no items are found: record "Design dependency scan: 0 items flagged" in run manifest and proceed.
+Scan scope candidates for design-gate language ("design decision required", "pending design", "requires UX decision"). Flag items as "Design dependency detected — surface at Pre-sprint Required Decisions checklist." Non-blocking.
 
 ### 1.4a Perennial-Return Check (Advisory — triggers PO active disposition)
 
@@ -959,7 +955,7 @@ Run both integrity checks and write results as subsections of `release_plan.md`:
 
 **5.5 Cross-Stage Integrity:** Verify all S2 IDs map to EPICs, all EPIC IDs in backlog slice match stage3, all RISK IDs in EPIC table appear in Risk Register, no orphaned references.
 
-**5.7 Decision Record Integrity** (only if decision records exist or escalations were raised): Verify `decisions--{cycle_id}.md` is present, all AR/SRB records referenced in escalations exist at their declared paths, all mandatory template fields are populated.
+**5.7 Decision Record Integrity** (SC-05 — run only when `artifacts.escalations = present` in state.json; skip if no escalations were raised): Verify `decisions--{cycle_id}.md` is present, all AR/SRB records referenced in escalations exist at their declared paths, all mandatory template fields are populated.
 
 ```yaml
 # state.json update (STEP 5.5):
