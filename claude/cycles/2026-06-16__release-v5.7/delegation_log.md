@@ -165,7 +165,8 @@
 **Delegation Class:** delegated_decision
 **Assigned To:** Head of UX & Design
 **Delegated At:** 2026-06-16T23:30:00Z
-**Status:** Pending
+**Status:** Cancelled — returned to backlog (4th deferral)
+**Cancelled At:** 2026-06-17T10:00:00Z
 
 **Context:** Conditional story — gate 2026-06-21 (SI-03 Red Flag Journal live ≥30 days). Today is 2026-06-16; the gate has not yet cleared. This is the 4th consecutive deferral of this item. If the sprint closes before 2026-06-21, this story must return to backlog with PO re-disposition required at v5.8.
 
