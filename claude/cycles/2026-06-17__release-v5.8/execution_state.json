@@ -83,7 +83,7 @@
         "ST-04": {
           "title": "Governance model complexity assessment",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Director of HR; PMO Lead; Head of Specs Team",
           "github_issue": 786,
           "branch": "exec/2026-06-17__release-v5.8/EPIC-01",
@@ -91,13 +91,29 @@
           "delegation_record_id": "DEL-20260617-04",
           "blocked_since_utc": "2026-06-17T00:00:00Z",
           "unblock_criteria": "Complexity assessment report produced (covering all 6 governance engines) AND Director of HR sign-off AND PMO Lead sign-off AND Head of Specs Team sign-off — all committed to branch as [EPIC-01][ST-04]",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md#ST-04"],
-          "deviations_filed": false,
+          "completed_utc": "2026-06-17T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md#ST-04", "docs/governance/governance_complexity_assessment_2026-06-17.md"],
+          "deviations_filed": true,
+          "delivery_note": "docs/governance/governance_complexity_assessment_2026-06-17.md",
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Engine may draft the complexity analysis to assist the assessment; sign-off from all 3 named authorities required before mark-done."
+          "sign_off_record": {
+            "required_by": "Director of HR; PMO Lead; Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "AC-01: Assessment produced covering all 6 governance engines (GCA-2026-06-17)",
+              "AC-02: Per-engine step/gate/write counts documented in Section 3 summary table",
+              "AC-03: Hypothesis test outcome stated — complexity IS a contributing factor (secondary), not root cause",
+              "AC-04: 7 simplification candidates (SC-01–SC-07) enumerated and filed as BLG-GOV-123 through BLG-GOV-129",
+              "AC-05: Director of HR approved 2026-06-17; PMO Lead approved 2026-06-17; Head of Specs Team approved 2026-06-17 with two implementation constraints on SC-02/SC-04",
+              "HoST finding: release_planning_prompt.md hard gate count is 11, not 9 (RESUME PRECHECK block contains 3 additional gates) — noted in sign-off, does not change assessment conclusions",
+              "HoST constraint on SC-02: Terminal State Guard and State File Immutability Rule must be preserved when RESUME PRECHECK block is removed — recorded in BLG-GOV-124",
+              "HoST constraint on SC-04: STEP 5 Challenger failure rule must cover convergence bias before STEP 8.6–8.7 deleted — recorded in BLG-GOV-126"
+            ],
+            "cleared_utc": "2026-06-17T00:00:00Z"
+          },
+          "notes": "No spec deviation. Assessment confirms complexity is a secondary contributing risk, not root cause. 7 backlog items filed for future governance sprint implementation."
         }
       }
     },
@@ -171,9 +187,9 @@
     }
   },
 
-  "blocked_items": ["EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-01/ST-04"],
+  "blocked_items": ["EPIC-01/ST-01", "EPIC-01/ST-02"],
   "delegated_items": ["EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-01/ST-03", "EPIC-01/ST-04"],
-  "completed_items": ["EPIC-01/ST-03"],
+  "completed_items": ["EPIC-01/ST-03", "EPIC-01/ST-04"],
   "open_escalations": [],
 
   "merge_gate": {

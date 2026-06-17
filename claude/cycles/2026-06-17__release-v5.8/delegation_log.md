@@ -75,4 +75,5 @@ Last Updated: 2026-06-17
 - **Spec reference:** `claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md#ST-04`
 - **Unblock criteria:** Complexity assessment report produced (all 6 engines, all AC-01–AC-05 met) AND Director of HR sign-off AND PMO Lead sign-off AND Head of Specs Team sign-off — all committed to branch with `[EPIC-01][ST-04] <description>`
 - **Commit format required:** `[EPIC-01][ST-04] <description>` pushed to `exec/2026-06-17__release-v5.8/EPIC-01`
-- **Status:** Pending
+- **Status:** Unblocked
+- **Sign-off cleared:** 2026-06-17 — Director of HR (Approved), PMO Lead (Approved), Head of Specs Team (Approved with 2 implementation constraints on SC-02/SC-04, recorded in BLG-GOV-124/126)
