@@ -11,8 +11,11 @@ Sub-source failures return null fields (200). Critical failure modes:
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from typing import Optional
+import logging
 import requests
 import time
+
+logger = logging.getLogger(__name__)
 from database import get_portfolio
 from services.signal_service import get_signals
 from services.sector_service import get_sector_and_industry
