@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-06-17__release-v5.8",
   "cycle_name": "Release Planning \u2014 v5.8 RFJ UX Design Completion, SI-05 Effectiveness Review & Production Hardening",
-  "status": "Executing",
+  "status": "Sprint_Complete",
   "engine": "execution",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md",
@@ -33,7 +33,8 @@
   "sprint2_gate_confirmed_utc": "",
   "sprint2_close_utc": "",
   "verification_utc": "2026-06-17T00:00:00Z",
-  "last_sync_utc": "2026-06-17T16:00:00Z",
+  "sprint_close_utc": "2026-06-17T00:00:00Z",
+  "last_sync_utc": "2026-06-17T00:00:00Z",
   "last_audit_id": "AUD-2026-06-16",
   "last_audit_utc": "2026-06-16T00:00:00Z",
   "last_audit_overall_score": 72,

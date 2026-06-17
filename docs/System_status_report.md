@@ -1719,3 +1719,29 @@ The system is ready for:
 - QA evidence logs: qa_evidence_EPIC-01.md (I&O co-sign + Head of UX & Design, 2026-06-17), qa_evidence_EPIC-02.md (autonomous class, 2026-06-17)
 - Deviations filed: None
 - Test scenarios referenced: tests/e2e/si01-si03-integration.spec.js, tests/e2e/red-flag-journal.spec.js, tests/e2e/arc5-compliance-section.spec.js
+
+## Sprint: 2026-06-17__release-v5.8
+**Date:** 2026-06-17
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | FRONTEND_URL production env var configured (ST-03): SI-05 digest deep-link support restored in production backend; deployment runbook v0.3 updated. Governance complexity assessment (ST-04): GCA-2026-06-17 produced covering all 6 governance engines; 7 simplification candidates filed (BLG-GOV-123–129) | docs/ops/production_deployment_runbook.md#6.1; docs/governance/governance_complexity_assessment_2026-06-17.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-01 — RFJ design review pre-brief | Gate 2026-06-21 not yet reached; PO-authorised deferral (5th) | BLG-FE-64 |
+| ST-02 — RFJ visual design review | Depends on ST-01; gate 2026-06-21 not reached | BLG-FE-41 |
+| ST-05 — SI-05 cadence review | Sprint 2 gate 2026-07-04 not reached | BLG-GOV-112 |
+| ST-06 — SI-05 actionability metric definition | Sprint 2 gate 2026-07-04 not reached | BLG-GOV-115 |
+| ST-07 — SI-05 p99 latency baseline review | Sprint 2 gate 2026-07-04 not reached | BLG-OPS-59 |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (Director of Quality, 2026-06-17)
+- Deviations filed: None
+- Test scenarios referenced: None (all deliverables are documentation and operational artefacts)

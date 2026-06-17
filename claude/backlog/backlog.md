@@ -2278,7 +2278,7 @@ BLG-OPS-31 defined Render log retention. claude_audit_log (shipped v4.0) and Sup
 **Provisional-Target:** Unscheduled (review after 4 weeks production operation, ~2026-07-04)
 **Displacement:** BLG-OPS-13 (performance baseline gaps, P3) deprioritised.
 
-**Sprint history:** Planned as ST-12 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-07-04 not yet reached. Planned as ST-14 (EPIC-03) in cycle 2026-06-16__release-v5.7; returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. **Not eligible for sprint planning before 2026-07-04** (gate: ≥ 4 weeks of POST /digest/si05/send production operation).
+**Sprint history:** Planned as ST-12 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-07-04 not yet reached. Planned as ST-14 (EPIC-03) in cycle 2026-06-16__release-v5.7; returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. Planned as ST-07 (EPIC-02) in cycle 2026-06-17__release-v5.8; returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. **Not eligible for sprint planning before 2026-07-04** (gate: ≥ 4 weeks of POST /digest/si05/send production operation).
 
 **Problem**
 POST /digest/si05/send was baselined pre-launch in BLG-OPS-54. Production p99 latency under real data volume (actual trade history, real Red Flag Journal entries, real compliance scores) may differ from the pre-launch baseline. Confirming production performance validates the service is not degrading under real conditions.
@@ -2546,7 +2546,7 @@ Arc 6 PS-03 (Monte Carlo simulation) requires a §13 review before sprint planni
 **Provisional-Target:** After 2026-07-04 SI-05 effectiveness review
 **Displacement:** BLG-GOV-85 (Arc 6 §13 pre-assessment boundary doc, gate-conditional) deprioritised.
 
-**Sprint history:** Planned as ST-13 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-07-04 not yet reached. Planned as ST-12 (EPIC-03) in cycle 2026-06-16__release-v5.7; returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. **Not eligible for sprint planning before 2026-07-04** (gate: SI-05 Phase 1 effectiveness review complete).
+**Sprint history:** Planned as ST-13 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-07-04 not yet reached. Planned as ST-12 (EPIC-03) in cycle 2026-06-16__release-v5.7; returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. Planned as ST-05 (EPIC-02) in cycle 2026-06-17__release-v5.8; returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. **Not eligible for sprint planning before 2026-07-04** (gate: SI-05 Phase 1 effectiveness review complete).
 
 **Gate criteria:** SI-05 Phase 1 first effectiveness review (BLG-GOV-96) complete — gate clears 2026-07-04.
 
@@ -2574,7 +2574,7 @@ SI-05 delivers a weekly digest. After 4+ weeks of production use, the weekly cad
 **Provisional-Target:** v5.4 (gate: 2026-07-04 SI-05 effectiveness review complete)
 **Gate criteria:** BLG-GOV-113 (SI-05 Phase 1 effectiveness review protocol) complete — i.e., the 2026-07-04 effectiveness review has been conducted
 
-**Sprint history:** Planned as ST-14 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-07-04 not yet reached. Planned as ST-13 (EPIC-03) in cycle 2026-06-16__release-v5.7; returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. **Not eligible for sprint planning before 2026-07-04** (gate: BLG-GOV-113 effectiveness review protocol complete).
+**Sprint history:** Planned as ST-14 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-07-04 not yet reached. Planned as ST-13 (EPIC-03) in cycle 2026-06-16__release-v5.7; returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. Planned as ST-06 (EPIC-02) in cycle 2026-06-17__release-v5.8; returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. **Not eligible for sprint planning before 2026-07-04** (gate: BLG-GOV-113 effectiveness review protocol complete).
 
 **Problem**
 SI-05 launched 2026-06-04. After the 2026-07-04 effectiveness review (BLG-GOV-113), the digest's actionability should be formally assessed. This requires defining what "actionable" means for an SI-05 digest: did the user open the Red Flag Journal? Did they review their strategy compliance? Did they act on a drift signal? Without formal metric definitions, the effectiveness review cannot produce measurable outcomes.

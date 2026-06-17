@@ -118,18 +118,19 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "gate_deferred",
       "branch": "exec/2026-06-17__release-v5.8/EPIC-02",
       "pr_number": null,
-      "pr_status": "none",
+      "pr_status": "not_created",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-06-17__release-v5.8/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
+      "notes": "EPIC-02 gate-deferred 2026-06-17 — gate date 2026-07-04 not yet reached. All 3 Sprint 2 conditional stories returned to backlog per sprint_backlog.md Sprint 2 gate policy.",
       "stories": {
         "ST-05": {
           "title": "SI-05 digest weekly cadence review",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "returned_to_backlog",
           "assigned_to": "Product Owner",
           "github_issue": 787,
           "branch": "exec/2026-06-17__release-v5.8/EPIC-02",
@@ -143,12 +144,12 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Sprint 2 conditional — gate check required at 2026-07-04. Do not execute before gate clears."
+          "notes": "Returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. Sprint 2 gate-deferred. BLG-GOV-112 updated."
         },
         "ST-06": {
           "title": "SI-05 digest actionability metric definition",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "returned_to_backlog",
           "assigned_to": "Metrics Definitions & Analytics Owner",
           "github_issue": 788,
           "branch": "exec/2026-06-17__release-v5.8/EPIC-02",
@@ -162,12 +163,12 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Sprint 2 conditional — gate check required at 2026-07-04."
+          "notes": "Returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. Sprint 2 gate-deferred. BLG-GOV-115 updated."
         },
         "ST-07": {
           "title": "SI-05 service production p99 latency baseline review",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "returned_to_backlog",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 789,
           "branch": "exec/2026-06-17__release-v5.8/EPIC-02",
@@ -181,7 +182,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Sprint 2 conditional — gate check required at 2026-07-04."
+          "notes": "Returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. Sprint 2 gate-deferred. BLG-OPS-59 updated."
         }
       }
     }
@@ -190,16 +191,20 @@
   "blocked_items": [],
   "delegated_items": ["EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-01/ST-03", "EPIC-01/ST-04"],
   "completed_items": ["EPIC-01/ST-03", "EPIC-01/ST-04"],
+  "returned_to_backlog_items": ["EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-02/ST-05", "EPIC-02/ST-06", "EPIC-02/ST-07"],
   "open_escalations": [],
 
   "merge_gate": {
     "epics_merged": ["EPIC-01"],
     "epics_pending": [],
-    "all_merged": false,
+    "all_merged": true,
     "EPIC-01_merged_utc": "2026-06-17T13:24:57Z",
-    "EPIC-01_merge_sha": "a0d6133cff6223cf851296931d94e744e848726a"
+    "EPIC-01_merge_sha": "a0d6133cff6223cf851296931d94e744e848726a",
+    "EPIC-02_gate_deferred_utc": "2026-06-17T00:00:00Z",
+    "EPIC-02_gate_note": "Sprint 2 gate 2026-07-04 not reached — all stories returned to backlog; EPIC not executed this sprint"
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-06-17T00:00:00Z",
+  "status": "Sealed"
 }
