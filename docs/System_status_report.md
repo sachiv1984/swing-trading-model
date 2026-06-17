@@ -1696,7 +1696,7 @@ The system is ready for:
 
 ## Sprint: 2026-06-16__release-v5.7
 **Date:** 2026-06-17
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified — 2026-06-17
 
 ### Capabilities now live (merged this sprint)
 
