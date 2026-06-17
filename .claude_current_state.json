@@ -76,11 +76,11 @@
       "EPIC-01",
       "EPIC-02"
     ],
-    "story_items": 13,
-    "story_items_firm": 5,
-    "story_items_conditional": 8,
-    "scope_items": 13,
-    "capacity_check": "warn",
+    "story_items": 11,
+    "story_items_firm": 11,
+    "story_items_conditional": 0,
+    "scope_items": 11,
+    "capacity_check": "pass",
     "state_json": "claude/cycles/2026-06-17__release-v5.9/state.json",
     "scope_doc": "docs/product/scope/scope--2026-06-17__release-v5.9-rfj-ux-si05-effectiveness-governance-simplification.md"
   },

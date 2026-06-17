@@ -3017,22 +3017,20 @@ BLG-OPS-60 (completed v5.4) added v5.3 endpoints to api_performance_baseline.md.
 
 <!-- release-plan-marker: RP:v5.9:2026-06-17__release-v5.9 -->
 
-**Cycle:** 2026-06-17__release-v5.9 | **Published:** 2026-06-17 | **Stories:** 5 firm + 8 conditional = 13
+**Cycle:** 2026-06-17__release-v5.9 | **Published:** 2026-06-17 | **Stories:** 11 firm | **Scope revision:** v1
 
-| ST-ID | Title | BLG-ID | EPIC | Sprint | Classification |
-|-------|-------|--------|------|--------|---------------|
-| ST-01 | SC-03: Consolidate spec_references policy | BLG-GOV-125 | EPIC-01 | 1 | Firm |
-| ST-02 | SC-04: Remove STEP 8.6–8.7 fatigue detection | BLG-GOV-126 | EPIC-01 | 1 | Firm |
-| ST-03 | SC-05: Remove dead-load advisory steps | BLG-GOV-127 | EPIC-01 | 1 | Firm |
-| ST-04 | SC-06: Playwright selector check conditional | BLG-GOV-128 | EPIC-01 | 1 | Firm |
-| ST-05 | SC-07: Compress Advisory Summary Block docs | BLG-GOV-129 | EPIC-01 | 1 | Firm |
-| ST-06 | BLG-FE-64: RFJ design review pre-brief | BLG-FE-64 | EPIC-02 | 1 | Conditional (gate 2026-06-21) |
-| ST-07 | BLG-FE-41: RFJ visual design review | BLG-FE-41 | EPIC-02 | 1 | Conditional (gate 2026-06-21; depends ST-06) |
-| ST-08 | BLG-OPS-70: SI-05 deep link production verify | BLG-OPS-70 | EPIC-02 | 1 | Conditional (gate ~2026-06-23) |
-| ST-09 | BLG-GOV-112: SI-05 cadence review | BLG-GOV-112 | EPIC-02 | 2 | Conditional (gate 2026-07-04) |
-| ST-10 | BLG-GOV-113: SI-05 effectiveness review execution | BLG-GOV-113 | EPIC-02 | 2 | Conditional (gate 2026-07-04) |
-| ST-11 | BLG-GOV-115: SI-05 actionability metric definition | BLG-GOV-115 | EPIC-02 | 2 | Conditional (gate 2026-07-04; depends ST-10) |
-| ST-12 | BLG-OPS-59: SI-05 p99 latency baseline review | BLG-OPS-59 | EPIC-02 | 2 | Conditional (gate 2026-07-04) |
-| ST-13 | BLG-GOV-130: SI-05 Phase 2 activation decision | BLG-GOV-130 | EPIC-02 | 2 | Conditional (gate 2026-07-04; depends ST-10) |
+| ST-ID | Title | BLG-ID | EPIC | Classification |
+|-------|-------|--------|------|---------------|
+| ST-01 | SC-03: Consolidate spec_references policy | BLG-GOV-125 | EPIC-01 | Firm |
+| ST-02 | SC-04: Remove STEP 8.6–8.7 fatigue detection | BLG-GOV-126 | EPIC-01 | Firm |
+| ST-03 | SC-05: Remove dead-load advisory steps | BLG-GOV-127 | EPIC-01 | Firm |
+| ST-04 | SC-06: Playwright selector check conditional | BLG-GOV-128 | EPIC-01 | Firm |
+| ST-05 | SC-07: Compress Advisory Summary Block docs | BLG-GOV-129 | EPIC-01 | Firm |
+| ST-06 | BLG-QA-24: Yahoo Finance backoff integration test | BLG-QA-24 | EPIC-02 | Firm |
+| ST-07 | BLG-GOV-38: DoQ sign-off date audit (v3.7–v3.9) | BLG-GOV-38 | EPIC-02 | Firm |
+| ST-08 | BLG-QA-34: QA evidence file format audit (v3.7–v4.0) | BLG-QA-34 | EPIC-02 | Firm |
+| ST-09 | BLG-GOV-53: Agent idea participation tracking | BLG-GOV-53 | EPIC-02 | Firm |
+| ST-10 | BLG-QA-50: Formal regression test suite baseline | BLG-QA-50 | EPIC-02 | Firm |
+| ST-11 | BLG-FE-57: Pre-entry panel warning/fail count badge | BLG-FE-57 | EPIC-02 | Firm |
 
 *Canonical record: claude/cycles/2026-06-17__release-v5.9/stage4_backlog_slice.md*

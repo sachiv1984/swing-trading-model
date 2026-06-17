@@ -2,6 +2,7 @@
   "cycle_id": "2026-06-17__release-v5.9",
   "release": "v5.9",
   "generated_utc": "2026-06-17T00:00:00Z",
+  "scope_revision": "v1",
   "stories": [
     {
       "id": "ST-01",
@@ -60,102 +61,70 @@
     },
     {
       "id": "ST-06",
-      "title": "BLG-FE-64: Red Flag Journal visual design review pre-brief",
-      "blg_id": "BLG-FE-64",
+      "title": "BLG-QA-24: Yahoo Finance backoff path integration test stub",
+      "blg_id": "BLG-QA-24",
       "epic": "EPIC-02",
       "sprint": 1,
-      "classification": "conditional",
-      "gate": "2026-06-21",
+      "classification": "firm",
       "effort": "S",
-      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
-      "owner": "Frontend Specs & UX Documentation Owner"
+      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9"],
+      "owner": "QA Lead"
     },
     {
       "id": "ST-07",
-      "title": "BLG-FE-41: Red Flag Journal visual design review",
-      "blg_id": "BLG-FE-41",
+      "title": "BLG-GOV-38: DoQ sign-off date compliance audit (v3.7–v3.9)",
+      "blg_id": "BLG-GOV-38",
       "epic": "EPIC-02",
       "sprint": 1,
-      "classification": "conditional",
-      "gate": "2026-06-21",
-      "depends_on": "ST-06",
-      "effort": "M",
-      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
-      "owner": "Head of UX & Design"
+      "classification": "firm",
+      "effort": "S",
+      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9"],
+      "owner": "QA Lead"
     },
     {
       "id": "ST-08",
-      "title": "BLG-OPS-70: Confirm SI-05 deep links work in production after FRONTEND_URL set",
-      "blg_id": "BLG-OPS-70",
+      "title": "BLG-QA-34: QA evidence file format audit (v3.7–v4.0)",
+      "blg_id": "BLG-QA-34",
       "epic": "EPIC-02",
       "sprint": 1,
-      "classification": "conditional",
-      "gate": "~2026-06-23",
-      "effort": "XS",
-      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
-      "owner": "Infrastructure & Operations Owner"
+      "classification": "firm",
+      "effort": "S",
+      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9"],
+      "owner": "QA Lead"
     },
     {
       "id": "ST-09",
-      "title": "BLG-GOV-112: SI-05 digest weekly cadence review",
-      "blg_id": "BLG-GOV-112",
+      "title": "BLG-GOV-53: Agent idea participation tracking summary",
+      "blg_id": "BLG-GOV-53",
       "epic": "EPIC-02",
-      "sprint": 2,
-      "classification": "conditional",
-      "gate": "2026-07-04",
+      "sprint": 1,
+      "classification": "firm",
       "effort": "S",
-      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
-      "owner": "Product Owner"
+      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9"],
+      "owner": "Director of HR"
     },
     {
       "id": "ST-10",
-      "title": "BLG-GOV-113: SI-05 effectiveness review protocol execution",
-      "blg_id": "BLG-GOV-113",
+      "title": "BLG-QA-50: Formal regression test suite baseline document",
+      "blg_id": "BLG-QA-50",
       "epic": "EPIC-02",
-      "sprint": 2,
-      "classification": "conditional",
-      "gate": "2026-07-04",
+      "sprint": 1,
+      "classification": "firm",
       "effort": "S",
-      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
-      "owner": "Director of Quality"
+      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9"],
+      "owner": "QA Lead"
     },
     {
       "id": "ST-11",
-      "title": "BLG-GOV-115: SI-05 digest actionability metric definition",
-      "blg_id": "BLG-GOV-115",
+      "title": "BLG-FE-57: Pre-entry panel: show warning/fail count when collapsed",
+      "blg_id": "BLG-FE-57",
       "epic": "EPIC-02",
-      "sprint": 2,
-      "classification": "conditional",
-      "gate": "2026-07-04",
-      "depends_on": "ST-10",
-      "effort": "S",
-      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
-      "owner": "Metrics Definitions & Analytics Owner"
-    },
-    {
-      "id": "ST-12",
-      "title": "BLG-OPS-59: SI-05 service production p99 latency baseline review",
-      "blg_id": "BLG-OPS-59",
-      "epic": "EPIC-02",
-      "sprint": 2,
-      "classification": "conditional",
-      "gate": "2026-07-04",
-      "effort": "S",
-      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
-      "owner": "Infrastructure & Operations Owner"
-    },
-    {
-      "id": "ST-13",
-      "title": "BLG-GOV-130: SI-05 Phase 2 activation decision scope",
-      "blg_id": "BLG-GOV-130",
-      "epic": "EPIC-02",
-      "sprint": 2,
-      "classification": "conditional",
-      "gate": "2026-07-04",
-      "depends_on": "ST-10",
-      "effort": "S",
-      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9", "conditional"],
-      "owner": "Product Owner"
+      "sprint": 1,
+      "classification": "firm",
+      "effort": "XS",
+      "labels": ["story", "release-v5.9", "EPIC-02", "cycle:2026-06-17__release-v5.9"],
+      "owner": "Head of UX & Design",
+      "notes": "Frontend-visible change — Playwright coverage required per CLAUDE.md §2"
     }
   ]
 }

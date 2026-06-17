@@ -4,6 +4,7 @@
 **Release:** v5.9
 **Cycle:** 2026-06-17__release-v5.9
 **Last Updated:** 2026-06-17
+**Scope revision:** v1 — 2026-06-17: EPIC-02 replaced; 8 date-gated items deferred; 6 ungated items added.
 
 ---
 
@@ -13,19 +14,21 @@
 
 | Decision | Rationale | Authority |
 |----------|-----------|-----------|
-| BLG-FE-64/41 classified conditional (not firm) despite carry-forward advisory suggesting firm | STEP 1.4b mandatory rule: gate date 2026-06-21 falls within sprint window; cannot classify as firm regardless of near-certainty. Carry-forward from v5.8 closure was advisory; STEP 1.4b is mandatory. | Head of Specs Team |
-| BLG-GOV-125–129 all classified firm | All five SC items are Ready now with no gate conditions. Confirmed by GCA-2026-06-17 assessment (ST-04, v5.8). | Product Owner |
-| BLG-OPS-70 classified conditional | Gate ~2026-06-23 (next SI-05 digest delivery) falls within sprint window per STEP 1.4b. | Head of Specs Team |
-| BLG-GOV-113 included as separate conditional story | Roadmap lists BLG-GOV-113 as "SI-05 effectiveness review protocol execution" as a discrete story separate from BLG-GOV-112/115. Gate 2026-07-04. | PMO Lead |
-| BLG-GOV-124 (SC-02) deferred | Higher implementation risk (removing a guard with complex extraction constraint); P3 priority; no sprint urgency. | Product Owner |
+| All date-gated items removed from v5.9 scope | Items with gate dates (2026-06-21, ~2026-06-23, 2026-07-04) deferred to v5.10. Release should only contain items executable immediately. | Product Owner |
+| BLG-GOV-125–129 firm (SC-03–SC-07) | All five SC items ready now; no gate conditions. GCA-2026-06-17 confirmed. | Head of Specs Team |
+| BLG-QA-24, BLG-QA-34, BLG-QA-50 added | QA coverage and test infrastructure items with no gate conditions. Ready to execute. | Director of Quality |
+| BLG-GOV-38, BLG-GOV-53 added | Governance audit and process record items with no gate conditions. Ready to execute. | PMO Lead |
+| BLG-FE-57 added | Small UX improvement to PreEntryValidationPanel with no gate condition. XS effort. Requires Playwright coverage per CLAUDE.md §2. | Head of UX & Design |
+| BLG-FE-64/41 deferred to v5.10 | Gate 2026-06-21; date-gated. BLG-FE-64 will be 6th consecutive deferral — mandatory carry-forward to v5.10 release planning. | Product Owner |
+| SI-05 effectiveness review items (BLG-GOV-112/113/115, BLG-OPS-59, BLG-GOV-130) deferred to v5.10 | Gate 2026-07-04; date-gated. v5.10 will be the SI-05 effectiveness review release. | Product Owner |
 
 ## Sequencing Decisions
 
 | Decision | Rationale |
 |----------|-----------|
-| EPIC-01 merges first | All items ready now; governance-only; no dependencies. Can close before sprint 1 ends. |
-| EPIC-02 split across Sprint 1 and Sprint 2 | S2-02/S2-03 items clear by ~2026-06-23 (Sprint 1); S2-04 items clear 2026-07-04 (Sprint 2). Sprint planning engine to manage this split within a single EPIC. |
-| Sprint 2 start: after 2026-07-04 gate confirmed | Gate owner (Infrastructure & Operations Owner / Director of Quality for SI-05 review) must explicitly confirm gate cleared before Sprint 2 items enter execution. |
+| EPIC-01 merges first | Governance prompt changes; independent of EPIC-02. |
+| EPIC-02 merges after EPIC-01 | No hard dependency, but sequencing avoids any governance prompt version conflict. |
+| Single sprint | All 11 stories are ungated; estimated ~13–17 hours total. Single sprint sufficient. |
 
 ## Accepted Risks
 

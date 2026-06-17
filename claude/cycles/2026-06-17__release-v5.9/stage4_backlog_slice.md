@@ -3,6 +3,7 @@
 **Status:** Published
 **Cycle:** 2026-06-17__release-v5.9
 **Published:** 2026-06-17
+**Scope revision:** v1 — 2026-06-17: EPIC-02 replaced with 6 ungated ready-now items. Deferred: BLG-FE-64/41, BLG-OPS-70, BLG-GOV-112/113/115, BLG-OPS-59, BLG-GOV-130 → v5.10.
 
 ---
 
@@ -10,7 +11,7 @@
 
 <!-- release-plan-marker: RP:v5.9:2026-06-17__release-v5.9 -->
 
-**Firm stories:** 5 | **Conditional stories:** 8 | **Total:** 13
+**Firm stories:** 11 | **Conditional stories:** 0 | **Total:** 11
 
 ---
 
@@ -19,41 +20,34 @@
 **Maps to:** S2-01
 **Owner:** Head of Specs Team
 **Sprint:** 1
-**Classification:** Firm (all items Ready now)
+**Classification:** Firm
 
 ### ST-01 — SC-03: Consolidate spec_references policy sub-variants in execution_prompt.md
 
 **Source:** BLG-GOV-125
-**Classification:** Firm
 **Effort:** XS (~1 hour)
-**Owner:** Head of Specs Team
 
-**Scope:**
-STEP 3.1.A steps 2a, 2b, 2c of `execution_prompt.md` each handle a distinct spec_references edge case as separate numbered sub-steps with prose. Consolidate into a single unified rule with a 3-case lookup table (~25 lines → ~10 lines). No logic change.
+**Scope:** STEP 3.1.A steps 2a, 2b, 2c of `execution_prompt.md` each handle a distinct spec_references edge case as separate numbered sub-steps. Consolidate into a single unified rule with a 3-case lookup table (~25 lines → ~10 lines). No logic change.
 
 **Acceptance Criteria:**
 - AC-01: Steps 2a, 2b, 2c replaced by a single consolidated rule with a 3-case lookup table
-- AC-02: All three edge cases preserved in the table (path verify, documentation-creation, test-authoring)
-- AC-03: Version bump on execution_prompt.md; changelog entry appended to prompt_change_log.md
-- AC-04: OPERATIONAL_GUIDE.md §14 updated with new version number
-- AC-05: Head of Specs Team sign-off
+- AC-02: All three edge cases preserved (path verify, documentation-creation, test-authoring)
+- AC-03: Version bump on execution_prompt.md; prompt_change_log.md entry appended; OPERATIONAL_GUIDE §14 updated
+- AC-04: Head of Specs Team sign-off
 
 ---
 
 ### ST-02 — SC-04: Remove STEP 8.6–8.7 fatigue detection guardrail from roadmap_prompt.md
 
 **Source:** BLG-GOV-126
-**Classification:** Firm
 **Effort:** XS (~1 hour)
-**Owner:** Head of Specs Team
 
-**Scope:**
-STEP 8.6 (Fatigue Detection Guardrail) and STEP 8.7 (Pivot Loop) in `roadmap_prompt.md` detect convergence bias. This condition has never been triggered. Remove STEPs 8.6–8.7; first verify STEP 5 Challenger failure rule covers convergence bias (add consolidating note to STEP 5 if narrower).
+**Scope:** STEPs 8.6 (Fatigue Detection Guardrail) and 8.7 (Pivot Loop) have never been triggered. First verify STEP 5 Challenger failure rule covers convergence bias (add consolidating note if narrower); then remove STEPs 8.6–8.7.
 
 **Acceptance Criteria:**
-- AC-01: STEP 5 Challenger failure rule verified to cover convergence bias; if language is narrower, a consolidating note is added to STEP 5 before deletion
+- AC-01: STEP 5 Challenger failure rule verified to cover convergence bias; updated if narrower
 - AC-02: STEPs 8.6 and 8.7 removed from roadmap_prompt.md
-- AC-03: Version bump; prompt_change_log.md entry appended; OPERATIONAL_GUIDE §14 updated
+- AC-03: Version bump; prompt_change_log.md entry; OPERATIONAL_GUIDE §14 updated
 - AC-04: Head of Specs Team sign-off
 
 ---
@@ -61,16 +55,13 @@ STEP 8.6 (Fatigue Detection Guardrail) and STEP 8.7 (Pivot Loop) in `roadmap_pro
 ### ST-03 — SC-05: Remove dead-load advisory steps from release_planning_prompt.md
 
 **Source:** BLG-GOV-127
-**Classification:** Firm
 **Effort:** XS (~1 hour)
-**Owner:** Head of Specs Team
 
-**Scope:**
-Two advisory steps run unconditionally but produce no decision-relevant output in the common case: (a) STEP 5.7 (Decision Record Integrity) — no effect when no escalations raised; (b) STEP 1.3 (Design-Gate Language Scan) — duplicates Sprint Planning Engine STEP -1 check. Make STEP 5.7 conditional on escalations existing; remove or reduce STEP 1.3 to a single-line reminder.
+**Scope:** Make STEP 5.7 (Decision Record Integrity) conditional on escalations existing. Remove or reduce STEP 1.3 (Design-Gate Language Scan) to a single-line reminder.
 
 **Acceptance Criteria:**
-- AC-01: STEP 5.7 made conditional: runs only when escalation records exist in escalations.md (or `artifacts.escalations = present` in state.json)
-- AC-02: STEP 1.3 removed or reduced to a single-line note referencing sprint_planning_prompt.md
+- AC-01: STEP 5.7 conditional: runs only when `artifacts.escalations = present` in state.json
+- AC-02: STEP 1.3 removed or reduced to a single-line note
 - AC-03: Version bump; prompt_change_log.md entry; OPERATIONAL_GUIDE §14 updated
 - AC-04: Head of Specs Team sign-off
 
@@ -79,209 +70,133 @@ Two advisory steps run unconditionally but produce no decision-relevant output i
 ### ST-04 — SC-06: Make Playwright selector check conditional on DOM changes in execution_prompt.md
 
 **Source:** BLG-GOV-128
-**Classification:** Firm
 **Effort:** XS (<1 hour)
-**Owner:** Head of Specs Team
 
-**Scope:**
-STEP 3.1.A step 13 in `execution_prompt.md` mandates a scan of all Playwright spec files for stale selectors whenever any DOM element is modified. For governance-only or backend-only EPICs (~60% of sprints) this is dead load. Tighten the condition to: "if this story modifies a DOM element that is targeted by existing Playwright selectors." No logic change for frontend EPICs.
+**Scope:** STEP 3.1.A step 13: tighten condition to "if this story modifies a DOM element targeted by existing Playwright selectors." Governance-only and backend-only stories skip the scan.
 
 **Acceptance Criteria:**
-- AC-01: Step 13 condition tightened: selector scan required only for stories that modify DOM elements targeted by existing Playwright selectors
-- AC-02: Condition is explicit — governance-only and backend-only stories skip the scan
-- AC-03: Existing coverage for frontend EPICs preserved (no regression)
-- AC-04: Version bump; prompt_change_log.md entry; OPERATIONAL_GUIDE §14 updated
-- AC-05: Head of Specs Team sign-off
+- AC-01: Step 13 condition tightened — scan skipped for stories with no DOM changes
+- AC-02: Frontend EPICs retain full scan requirement (no regression)
+- AC-03: Version bump; prompt_change_log.md entry; OPERATIONAL_GUIDE §14 updated
+- AC-04: Head of Specs Team sign-off
 
 ---
 
 ### ST-05 — SC-07: Compress Advisory Summary Block format docs in post_ship_closure.md
 
 **Source:** BLG-GOV-129
-**Classification:** Firm
 **Effort:** XS (<30 min)
-**Owner:** Head of Specs Team
 
-**Scope:**
-The Advisory Summary Block section at the end of `post_ship_closure.md` contains ~20 lines of format documentation for a simple 3-line summary block. Compress to a ≤5-line format block with a single-sentence explanation.
+**Scope:** Compress ~20-line Advisory Summary Block format documentation to ≤5 lines with a single-sentence explanation. No behaviour change.
 
 **Acceptance Criteria:**
-- AC-01: Advisory Summary Block format documentation compressed to ≤5 lines (from ~20 lines)
-- AC-02: Single-sentence explanation retained; all format elements preserved
+- AC-01: Advisory Summary Block format documentation ≤5 lines (from ~20 lines)
+- AC-02: All format elements preserved
 - AC-03: Version bump; prompt_change_log.md entry; OPERATIONAL_GUIDE §14 updated
 - AC-04: Head of Specs Team sign-off
 
 ---
 
-## EPIC-02 — RFJ UX Pre-work, SI-05 Verification & SI-05 Effectiveness Review
+## EPIC-02 — QA Coverage, Governance Audits & UX Improvement
 
 **Maps to:** S2-02, S2-03, S2-04
-**Owner:** PMO Lead; Infrastructure & Operations Owner; Metrics Definitions & Analytics Owner
-**Sprint:** 1 (ST-06–08, near-term conditional) + Sprint 2 (ST-09–13, gate 2026-07-04 conditional)
-**Classification:** All conditional — see individual gate conditions
+**Owner:** Director of Quality; QA Lead; Head of UX & Design
+**Sprint:** 1
+**Classification:** All firm — no gate conditions
 
-### ST-06 — BLG-FE-64: Red Flag Journal visual design review pre-brief
+### ST-06 — BLG-QA-24: Yahoo Finance backoff path integration test stub
 
-**Source:** BLG-FE-64
-**Classification:** Conditional — gate 2026-06-21 (SI-03 RFJ live ≥ 30 days; 5th sprint attempt)
+**Source:** BLG-QA-24
 **Effort:** S (~0.5 day)
-**Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design
-**Sprint:** 1 (execute after 2026-06-21 gate confirmed)
-**Status at sprint open:** Conditional — gate 2026-06-21
+**Owner:** QA Lead
 
-**Promotion:** Gate owner (Frontend Specs & UX Documentation Owner) must explicitly confirm gate cleared before this story enters execution.
-
-**Scope:**
-Produce a design review brief for BLG-FE-41: define review scope (filters UX, severity visual hierarchy, event type colour coding, timeline vs list layout), evaluation criteria, and expected deliverable. Input to BLG-FE-41 sprint planning when gate clears 2026-06-21.
+**Scope:** Add integration test to `tests/test_screener_data_service.py` that stubs the Yahoo Finance session, injects a 401 followed by a 200 with valid chart data, and verifies the retry occurred exactly once. Verify exponential backoff timing via mock of `_time.sleep`.
 
 **Acceptance Criteria:**
-- AC-01: Design review brief produced and filed in docs/product/ux/ or equivalent
-- AC-02: Brief covers: scope definition (which aspects of RedFlagJournal.js are in scope), evaluation criteria, and deliverable format
-- AC-03: Head of UX & Design sign-off on brief scope
-- AC-04: Gate condition confirmed cleared: SI-03 Red Flag Journal live ≥ 30 days (2026-06-21)
+- AC-01: Integration test runs without a live Yahoo Finance connection
+- AC-02: Test verifies: 401 first call → crumb refresh → sleep called once → 200 second call → valid OHLCV result returned
+- AC-03: Passes in CI
+- AC-04: QA Lead sign-off
 
 ---
 
-### ST-07 — BLG-FE-41: Red Flag Journal visual design review
+### ST-07 — BLG-GOV-38: DoQ sign-off date compliance audit (v3.7–v3.9)
 
-**Source:** BLG-FE-41
-**Classification:** Conditional — gate 2026-06-21; depends on ST-06 (BLG-FE-64 brief complete)
-**Effort:** M (~1–2 days design + spec)
-**Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design
-**Sprint:** 1 (execute after ST-06 complete and gate confirmed)
-**Status at sprint open:** Conditional — gate 2026-06-21; depends on ST-06
-
-**Scope:**
-Design review for Red Flag Journal: severity visual hierarchy, timeline vs list layout evaluation, event type colour coding. Produce design recommendation with rationale; if redesign recommended, produce UX spec and file implementation backlog item.
-
-**Acceptance Criteria:**
-- AC-01: Design recommendation document produced covering: severity visual hierarchy, event type colour coding, timeline vs list layout decision
-- AC-02: Rationale documented with reference to existing design system
-- AC-03: If redesign recommended: UX spec produced and implementation item filed
-- AC-04: Gate condition confirmed: SI-03 live ≥ 30 days (2026-06-21)
-- AC-05: ST-06 (BLG-FE-64 pre-brief) completed before this story begins
-- AC-06: Frontend Specs & UX Documentation Owner + Head of UX & Design sign-off
-
----
-
-### ST-08 — BLG-OPS-70: Confirm SI-05 deep links work in production after FRONTEND_URL set
-
-**Source:** BLG-OPS-70
-**Classification:** Conditional — gate ~2026-06-23 (next SI-05 digest delivery after FRONTEND_URL set 2026-06-17)
-**Effort:** XS (<1 hour)
-**Owner:** Infrastructure & Operations Owner
-**Sprint:** 1 (execute after next SI-05 digest delivery ~2026-06-23)
-**Status at sprint open:** Conditional — gate ~2026-06-23
-
-**Scope:**
-Confirm SI-05 Telegram digest deep links resolve to correct frontend pages after FRONTEND_URL env var was set on production backend 2026-06-17. Check next weekly digest delivery.
-
-**Acceptance Criteria:**
-- AC-01: SI-05 Telegram digest received after FRONTEND_URL env var applied (next delivery ~2026-06-22/23)
-- AC-02: Deep links in digest are present and resolve to correct frontend pages
-- AC-03: Infrastructure & Operations Owner confirmation recorded in a brief verification note
-
----
-
-### ST-09 — BLG-GOV-112: SI-05 digest weekly cadence review
-
-**Source:** BLG-GOV-112
-**Classification:** Conditional — gate 2026-07-04 (SI-05 Phase 1 effectiveness review complete; 3rd sprint attempt)
-**Effort:** S (~0.5 day)
-**Owner:** Product Owner; Director of Quality
-**Sprint:** 2 (gate 2026-07-04)
-**Status at sprint open:** Conditional — gate 2026-07-04
-
-**Scope:**
-After 2026-07-04 effectiveness review: assess weekly cadence appropriateness. Review si05_digest_log delivery count, any feedback from user, and whether digest content is acted upon. Produce cadence recommendation: maintain weekly / move to bi-weekly / introduce adaptive cadence.
-
-**Acceptance Criteria:**
-- AC-01: Cadence review document produced after 2026-07-04 effectiveness review completes
-- AC-02: Recommendation made with data backing from si05_digest_log and observable signals
-- AC-03: Product Owner sign-off on recommendation
-- AC-04: Gate confirmed: SI-05 Phase 1 effectiveness review (BLG-GOV-96) complete
-
----
-
-### ST-10 — BLG-GOV-113: SI-05 effectiveness review protocol execution
-
-**Source:** BLG-GOV-113
-**Classification:** Conditional — gate 2026-07-04
-**Effort:** S (~0.5 day)
-**Owner:** Director of Quality; PMO Lead
-**Sprint:** 2 (gate 2026-07-04)
-**Status at sprint open:** Conditional — gate 2026-07-04
-
-**Scope:**
-Execute the SI-05 Phase 1 effectiveness review protocol (BLG-GOV-96 protocol document). Assess whether SI-05 Phase 1 is producing actionable outputs. Produce effectiveness review output document. Input to ST-09 (cadence review), ST-11 (actionability metric definition), and ST-13 (Phase 2 activation decision).
-
-**Acceptance Criteria:**
-- AC-01: Effectiveness review conducted per BLG-GOV-96 protocol on or after 2026-07-04
-- AC-02: Review output document produced covering: delivery count, content quality assessment, observed user behaviour signals
-- AC-03: Director of Quality + PMO Lead sign-off on review output
-- AC-04: Gate confirmed: 2026-07-04 reached and ≥ 4 weeks of production operation confirmed
-
----
-
-### ST-11 — BLG-GOV-115: SI-05 digest actionability metric definition
-
-**Source:** BLG-GOV-115
-**Classification:** Conditional — gate 2026-07-04 (BLG-GOV-113 complete; 3rd sprint attempt)
+**Source:** BLG-GOV-38
 **Effort:** S (~0.5–1 day)
-**Owner:** Metrics Definitions & Analytics Owner; Infrastructure & Operations Owner
-**Sprint:** 2 (gate 2026-07-04)
-**Status at sprint open:** Conditional — gate 2026-07-04
+**Owner:** QA Lead; Director of Quality
 
-**Scope:**
-Define 2–4 actionability metrics for SI-05 digest effectiveness. Metrics must be measurable from existing data sources (si05_digest_log, red_flag_events, trade data). Produce metrics definition document.
+**Scope:** Review all QA evidence files from v3.7, v3.8, and v3.9 cycles. Check: header fields present, DoQ sign-off date present, sign-off block format consistent with PR template v1.2 standard. Document findings as advisory only — sealed artefacts not modified retroactively.
 
 **Acceptance Criteria:**
-- AC-01: 2–4 actionability metrics formally defined with data source mapping
-- AC-02: Metrics cover at minimum: digest delivery count, indication of user engagement signal, compliance score trend observation
-- AC-03: Metrics definition document reviewed by Metrics Definitions & Analytics Owner
-- AC-04: Gate confirmed: BLG-GOV-113 (effectiveness review execution) complete
-- AC-05: Metrics feed BLG-GOV-112 cadence review and BLG-GOV-96 effectiveness criteria
+- AC-01: All QA evidence files from v3.7, v3.8, v3.9 reviewed
+- AC-02: Format inconsistencies documented (missing sign-off dates, format variations)
+- AC-03: Findings filed as advisory note — no retroactive modification to sealed artefacts
+- AC-04: Director of Quality sign-off on findings
 
 ---
 
-### ST-12 — BLG-OPS-59: SI-05 service production p99 latency baseline review
+### ST-08 — BLG-QA-34: QA evidence file format audit (v3.7–v4.0)
 
-**Source:** BLG-OPS-59
-**Classification:** Conditional — gate 2026-07-04 (≥4 weeks POST /digest/si05/send production operation; 3rd sprint attempt)
+**Source:** BLG-QA-34
 **Effort:** S (~0.5 day)
-**Owner:** Infrastructure & Operations Owner; Head of Engineering
-**Sprint:** 2 (gate 2026-07-04)
-**Status at sprint open:** Conditional — gate 2026-07-04
+**Owner:** QA Lead; Director of Quality
 
-**Scope:**
-After 4 weeks of production operation (≥ 2026-07-04): extract p99 latency from Render logs for POST /digest/si05/send. Compare against BLG-OPS-54 pre-launch baseline. If p99 > 2× baseline: file a performance investigation item; otherwise record PASS.
+**Scope:** Review QA evidence files from v3.7, v3.8, v3.9, and v4.0 cycles for consistency with current standard. Check header fields, DoQ sign-off date field presence, sign-off block format. Findings are advisory only for closed cycles.
 
 **Acceptance Criteria:**
-- AC-01: Post-4-week p99 latency extracted from Render logs for POST /digest/si05/send
-- AC-02: Comparison against BLG-OPS-54 baseline documented
-- AC-03: Performance PASS recorded; or performance investigation item filed if p99 > 2× baseline
-- AC-04: Brief performance review note filed
-- AC-05: Infrastructure & Operations Owner sign-off
-- AC-06: Gate confirmed: ≥ 4 weeks POST /digest/si05/send production operation (2026-07-04)
+- AC-01: All QA evidence files from v3.7–v4.0 reviewed
+- AC-02: Format inconsistencies documented
+- AC-03: Findings submitted to Director of Quality as advisory note
+- AC-04: Director of Quality sign-off
 
 ---
 
-### ST-13 — BLG-GOV-130: SI-05 Phase 2 activation decision scope
+### ST-09 — BLG-GOV-53: Agent idea participation tracking summary
 
-**Source:** BLG-GOV-130
-**Classification:** Conditional — gate 2026-07-04 (SI-05 effectiveness review complete)
+**Source:** BLG-GOV-53
 **Effort:** S (~0.5 day)
-**Owner:** Product Owner; PMO Lead
-**Sprint:** 2 (gate 2026-07-04)
-**Status at sprint open:** Conditional — gate 2026-07-04
+**Owner:** Director of HR
 
-**Scope:**
-After 2026-07-04 effectiveness review: PO reviews review outputs (ST-10) and makes a formal Phase 2 activation decision. Produce decision document: SI-05 Phase 2 activation criteria met/not met, activation timeline (if met), deferral rationale (if not met). File in docs/product/decisions/ as Class 3 Operational Record.
+**Scope:** Produce agent participation summary across all closed idea windows (IW-20260322-01 through the most recent closed window). Per agent: window count, submission count, participation rate. Output: advisory note filed — no governance action required unless pattern identified.
 
 **Acceptance Criteria:**
-- AC-01: 2026-07-04 effectiveness review outputs (ST-10) reviewed by Product Owner
-- AC-02: Formal Phase 2 activation decision document produced and filed in docs/product/decisions/
-- AC-03: If activation criteria met: Phase 2 sprint planning timeline confirmed; SI-02 gate status re-checked
-- AC-04: If not met: deferral rationale documented with revised review date
-- AC-05: Product Owner sign-off
-- AC-06: Gate confirmed: 2026-07-04 effectiveness review complete
+- AC-01: Participation summary produced covering all closed idea windows
+- AC-02: Per-agent data: window count, submission count, participation rate
+- AC-03: Filed as advisory note in appropriate governance location
+- AC-04: Director of HR review and sign-off
+
+---
+
+### ST-10 — BLG-QA-50: Formal regression test suite baseline document
+
+**Source:** BLG-QA-50
+**Effort:** S (~0.5 day)
+**Owner:** QA Lead; Director of Quality
+
+**Scope:** Create a formal regression baseline document covering: all `backend/routers/test.py` entries with feature mapping; all Playwright spec files in `tests/e2e/` with scenario count and feature mapping; version history showing which tests were added at which release.
+
+**Acceptance Criteria:**
+- AC-01: Regression baseline document created in `docs/qa/` or `docs/testing/`
+- AC-02: All test.py entries mapped to features
+- AC-03: All Playwright specs listed with scenario count and feature mapping
+- AC-04: Director of Quality sign-off
+
+---
+
+### ST-11 — BLG-FE-57: Pre-entry panel: show warning/fail count when collapsed
+
+**Source:** BLG-FE-57
+**Effort:** XS (~0.5 day)
+**Owner:** Head of UX & Design
+
+**Scope:** When PreEntryValidationPanel is collapsed and advisory status is `warn` or `fail`: show a count badge in the header ("2 warnings", "1 fail"). Additive change — does not affect expanded panel behaviour. No badge shown when all checks pass.
+
+**Note:** Frontend-visible change — requires Playwright automated test coverage OR human staging sign-off with date recorded in DoQ sign-off block before PR opens (per CLAUDE.md §2).
+
+**Acceptance Criteria:**
+- AC-01: Collapsed header shows count of warn/fail items when advisory status is warn or fail
+- AC-02: No badge shown when all checks pass (no unnecessary visual clutter)
+- AC-03: Existing collapse/expand behaviour preserved
+- AC-04: Playwright test covering: collapsed warn state shows badge; collapsed pass state shows no badge
+- AC-05: Head of UX & Design sign-off

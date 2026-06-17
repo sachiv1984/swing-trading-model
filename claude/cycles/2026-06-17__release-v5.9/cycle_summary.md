@@ -3,6 +3,7 @@
 **Status:** Active
 **Cycle:** 2026-06-17__release-v5.9
 **Published:** 2026-06-17
+**Scope revision:** v1 — 2026-06-17: EPIC-02 replaced with 6 ungated items.
 
 ---
 
@@ -11,52 +12,47 @@
 ## Release Identifier
 
 **Cycle:** 2026-06-17__release-v5.9
-**Release:** v5.9 — RFJ UX Pre-work, SI-05 Effectiveness Review & Governance Simplification
+**Release:** v5.9 — Governance Simplification, QA Coverage & UX Improvement
 
 ## Scope Summary
 
 | Metric | Value |
 |--------|-------|
-| Total stories | 13 |
-| Firm stories | 5 (EPIC-01, all Ready now) |
-| Conditional stories | 8 (EPIC-02, split: 3 near-term + 5 at 2026-07-04) |
+| Total stories | 11 |
+| Firm stories | 11 |
+| Conditional stories | 0 |
 | EPICs | 2 |
-| Sprints | 2 (Sprint 1 immediate; Sprint 2 after 2026-07-04) |
+| Sprints | 1 |
 | Open escalations | 0 |
 | Design gate required | Not required |
 
 ## EPIC Summary
 
-| EPIC | Stories | Sprint | Classification | Status |
-|------|---------|--------|---------------|--------|
-| EPIC-01 Governance Simplification (SC-03–SC-07) | ST-01–05 | 1 | Firm | Ready to execute |
-| EPIC-02 RFJ UX + SI-05 Verification + Effectiveness Review | ST-06–13 | 1 (ST-06–08) + 2 (ST-09–13) | All conditional | Sprint 1 after gates 2026-06-21/23; Sprint 2 after gate 2026-07-04 |
+| EPIC | Stories | Classification | Ready to execute |
+|------|---------|---------------|-----------------|
+| EPIC-01: Governance Simplification SC-03–SC-07 | ST-01–05 | Firm | Immediately |
+| EPIC-02: QA Coverage, Governance Audits & UX Improvement | ST-06–11 | Firm | Immediately |
 
-## Key Planning Decisions
+## Key Decisions
 
-1. STEP 1.4b mandatory rule applied to all date-gated items including BLG-FE-64 (carry-forward advisory suggested firm; mandatory rule overrides).
-2. BLG-FE-64/41 classified conditional (gate 2026-06-21) — near-certain to clear; 5th attempt for BLG-FE-64.
-3. BLG-GOV-125–129 all firm — governance simplification SC-03–SC-07 ready immediately.
-4. BLG-GOV-113 included as separate story (SI-05 effectiveness review execution, gate 2026-07-04).
-5. BLG-GOV-124 (SC-02) deferred — higher risk, P3, not sprint-urgent.
-6. PT-04/SI-02 gate trajectory: ~2026-07-02 (13 closed trades, accelerating ~1.5/week).
+1. All date-gated items removed — v5.9 contains only items executable today.
+2. Deferred to v5.10: BLG-FE-64/41/BLG-OPS-70 (gate 2026-06-21/23) and all SI-05 effectiveness review items (gate 2026-07-04).
+3. BLG-FE-64 will be its **6th deferral** — mandatory carry-forward flag for v5.10 release planning.
+4. BLG-FE-57 (ST-11) is the only frontend implementation story — requires Playwright coverage before PR opens.
 
-## Gate Status at Planning
+## Deferred Items — Carry-Forward to v5.10
 
-| Gate | Item | Status | Projected clear |
-|------|------|--------|----------------|
-| 2026-06-21 | BLG-FE-64, BLG-FE-41 | Not yet cleared | 4 days |
-| ~2026-06-23 | BLG-OPS-70 | Not yet cleared | Next SI-05 digest delivery |
-| 2026-07-04 | BLG-GOV-112/113/115, BLG-OPS-59, BLG-GOV-130 | Not yet cleared | Fixed calendar date |
-| ~2026-07-02 | PT-04 (20 closed trades) | 13/20 trades | ~2 weeks at current trajectory |
+| Item | Gate | Priority |
+|------|------|----------|
+| BLG-FE-64 (RFJ design review pre-brief) | 2026-06-21 | **Mandatory carry-forward — 6th deferral** |
+| BLG-FE-41 (RFJ visual design review) | 2026-06-21 | High |
+| BLG-OPS-70 (SI-05 deep link verification) | ~2026-06-23 | Medium |
+| BLG-GOV-112/113/115/BLG-OPS-59/BLG-GOV-130 (SI-05 effectiveness review) | 2026-07-04 | v5.10 primary scope |
 
 ## Merge Order
 
-Sprint 1: EPIC-01 first (all firm, no dependencies) → EPIC-02 Sprint 1 subset after gates clear
-Sprint 2: EPIC-02 Sprint 2 subset after 2026-07-04 gate confirmed by gate owners
+EPIC-01 → EPIC-02
 
 ## Pre-sprint Planning Required Decisions
 
-No High-priority risks with "must resolve before sprint planning seal" disposition. No required decisions section needed.
-
-*Carry-forward to sprint planning:* BLG-OPS-70 trailing obligation — confirm at delivery verification STEP 5 if unresolved by sprint 1 close.
+None.

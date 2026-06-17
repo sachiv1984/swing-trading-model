@@ -9,6 +9,7 @@
   "publish_eligible": true,
   "last_transition_utc": "2026-06-17T00:00:00Z",
   "sealed": true,
+  "scope_revision": "v1 — scope revised before sprint planning: EPIC-02 replaced (removed date-gated items; added 6 ungated backlog items). Authorized by Product Owner 2026-06-17.",
   "assumptions": {
     "timebox": "",
     "capacity": ""
@@ -44,7 +45,7 @@
     "roadmap_txn": "committed",
     "stage4_backlog_slice": "pass",
     "stage4_issue_manifest": "pass",
-    "stage4_5_capacity_check": "warn",
+    "stage4_5_capacity_check": "pass",
     "stage5_5_cross_stage_integrity": "pass",
     "stage5_7_decision_record_integrity": "not_applicable",
     "escalations": "not_present"
@@ -53,7 +54,7 @@
     "plan_structured": true,
     "plan_executable": true,
     "backlog_committed": true,
-    "capacity_feasible": "warn",
+    "capacity_feasible": "pass",
     "cross_stage_integrity": "pass",
     "decisions_validated": "not_applicable"
   },
@@ -61,7 +62,14 @@
   "deferred_escalations": [],
   "accepted_risk_escalations": [],
   "deferred_execution_blockers": [],
-  "mutations": [],
-  "mutation_seq": 0,
+  "mutations": [
+    {
+      "seq": 1,
+      "timestamp": "2026-06-17T00:00:00Z",
+      "changed_keys": ["scope", "EPIC-02 stories"],
+      "reason": "PO-directed scope revision: removed 8 date-gated conditional stories (gates 2026-06-21/23 and 2026-07-04); added 6 ungated ready-now backlog items. Authorized before sprint planning sealed."
+    }
+  ],
+  "mutation_seq": 1,
   "invalidated_steps": []
 }
