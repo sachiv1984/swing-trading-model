@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-17 (post-ship closure 2026-06-17__release-v5.8 — v5.8 marked ✅ Complete; current version updated to v5.8; v5.8 row added to release summary table)
+**Last Updated:** 2026-06-17 (rebalance 2026-06-17__scheduled — v5.9 Now section added; 29 IW-20260610-01 terminal ideas resolved — 28 rejected, 1 promoted-backlog BLG-GOV-130; no initiative changes; CPS = N/A)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — Standard-tier, CPS=1.15; Δ=0.00; 8 new backlog items; DL-041/042; 4 ideas Rejected, 8 Promoted-Backlog, 17 re-parked; v5.4 Now section added)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -270,6 +270,37 @@ Today you find stocks through external research and add them to the watchlist ma
 *RA:v5.5 retired — see roadmap_archive.md 2026-06-16 (post-ship closure 2026-06-10__release-v5.5).*
 
 *RA:v5.6 retired — see roadmap_archive.md 2026-06-16 (post-ship closure 2026-06-16__release-v5.6).*
+
+### RA:v5.9 — Red Flag Journal UX Improvements, SI-05 Effectiveness Review & Governance Housekeeping
+
+**Target release:** v5.9
+**Added:** 2026-06-17 (rebalance 2026-06-17__scheduled — STEP 8.1 Option (a) PO decision)
+**Theme:** Close outstanding UX debt on Red Flag Journal, consume SI-05 effectiveness review outputs, clear governance complexity simplification items.
+
+**Firm scope (gate confirmed cleared before sprint open):**
+
+| Item | Description | Gate |
+|------|-------------|------|
+| BLG-FE-64 | Red Flag Journal visual design review pre-brief | 2026-06-21 — clears before any sprint open |
+| BLG-FE-41 | Red Flag Journal visual design review | 2026-06-21 — clears before any sprint open |
+| BLG-OPS-70 | SI-05 deep link AC-04 staging verification (FRONTEND_URL production confirm) | ~2026-06-23 (next digest delivery) |
+| BLG-GOV-125 | Governance simplification candidate 1 (GCA-2026-06-17) | Ready now |
+| BLG-GOV-126 | Governance simplification candidate 2 (GCA-2026-06-17) | Ready now |
+| BLG-GOV-127 | Governance simplification candidate 3 (GCA-2026-06-17) | Ready now |
+| BLG-GOV-128 | Governance simplification candidate 4 (GCA-2026-06-17) | Ready now |
+| BLG-GOV-129 | Governance simplification candidate 5 (GCA-2026-06-17) | Ready now |
+
+**Conditional scope (gate must be confirmed cleared at release planning):**
+
+| Item | Description | Gate | Classification per STEP 1.4b |
+|------|-------------|------|------------------------------|
+| BLG-GOV-112 | SI-05 effectiveness review protocol execution | 2026-07-04 | Conditional — within v5.9 sprint window |
+| BLG-GOV-113 | SI-05 digest actionability metric definition | 2026-07-04 | Conditional — within v5.9 sprint window |
+| BLG-GOV-115 | SI-05 effectiveness review outputs — BLG-GOV-115 sub-scope | 2026-07-04 | Conditional — within v5.9 sprint window |
+| BLG-OPS-59 | SI-05 latency review (post-effectiveness review) | 2026-07-04 | Conditional — within v5.9 sprint window |
+| BLG-GOV-130 | SI-05 Phase 2 activation decision (new — filed this rebalance) | 2026-07-04 | Conditional — within v5.9 sprint window |
+
+> **Note:** BLG-FE-64 gate 2026-06-21 clears before any realistic v5.9 sprint open date. Carry-forward from v5.8 confirms this item must be firm in v5.9 — 5 consecutive deferrals; gate is now imminent. Conditional items gated on 2026-07-04 must be confirmed cleared by gate owner before sprint planning seals per release_planning_prompt.md STEP 1.4b (Mandatory, v2.36).
 
 -----
 

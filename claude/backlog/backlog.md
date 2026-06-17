@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-17 (post-ship closure 2026-06-17__release-v5.8 — 1 item marked ✅ COMPLETE: BLG-GOV-101)
-**Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — DL-041/042; IW skipped ≥20 open ideas; 8 new items; meta-review DUE conducted; v5.4 Now section added)
+**Last Updated:** 2026-06-17 (rebalance 2026-06-17__scheduled — DL-047; 1 new item: BLG-GOV-130; 29 IW-20260610-01 terminal ideas resolved)
+**Last rebalance:** 2026-06-17 (cycle 2026-06-17__scheduled — DL-047; BLG-GOV-130 added; 28 ideas rejected; 1 promoted-backlog; v5.9 Now section added to roadmap)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -2893,6 +2893,32 @@ The Advisory Summary Block section at the end of `post_ship_closure.md` contains
 - Advisory Summary Block format documentation compressed to ≤5 lines
 - Version bump + changelog entry
 - Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-130 — SI-05 Phase 2 activation decision scope (gate-conditional)
+**Priority:** P2 (Medium)
+**Type:** Governance / Product Decision
+**Owner:** Product Owner; PMO Lead
+**Source:** IDEA-product-owner-20260610-02 — Promoted-Backlog rebalance 2026-06-17__scheduled (DL-047; terminal cycle 3 disposition)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v5.9 (conditional — gate 2026-07-04)
+**Gate criteria:** 2026-07-04 SI-05 effectiveness review complete (BLG-GOV-113 protocol); review outputs available
+
+**Problem**
+SI-05 Phase 1 (weekly Telegram digest) has been live since 2026-06-04. Phase 2 (SI-02 drift signal integration) requires: (1) the 2026-07-04 effectiveness review confirming Phase 1 is producing actionable outputs, (2) SI-02 frontend activation gate met (20+ closed trades), (3) BLG-GOV-121 §13 pre-clearance complete. A discrete activation decision scope item ensures the PO makes an explicit, documented Phase 2 activation decision (with timeline and activation criteria) after the review — not just a series of gate checks without a named decision point.
+
+**Scope**
+- After 2026-07-04 effectiveness review: PO reviews review outputs and makes a formal Phase 2 activation decision
+- Decision document: SI-05 Phase 2 activation criteria met/not met, activation timeline (if met), deferral rationale (if not met)
+- Filed in `docs/product/decisions/` as a Class 3 Operational Record
+- Consumed by BLG-GOV-121 (§13 pre-clearance) and any future SI-05 Phase 2 sprint planning
+
+**Acceptance Criteria**
+- 2026-07-04 effectiveness review outputs reviewed by PO
+- Formal Phase 2 activation decision document produced and filed
+- If activation criteria met: Phase 2 sprint planning timeline confirmed; SI-02 gate status re-checked
+- If not met: deferral rationale documented with revised review date
 
 ---
 

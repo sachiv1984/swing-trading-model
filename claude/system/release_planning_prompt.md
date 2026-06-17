@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.35
-**Last Updated:** 2026-06-16
+**Version:** 2.36
+**Last Updated:** 2026-06-17 (v2.35→v2.36: LL-P3-03-v55/LL-P4-01-v55 — STEP 1.4b added: within-sprint date gate classification mandatory rule; pattern confirmed across v5.4–v5.8; action-now applied rebalance 2026-06-17__scheduled)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -584,6 +584,21 @@ Before finalising the scope candidate list, check each conditional or gate-block
 4. Silent re-entry (no active PO disposition when N ≥ 2) is **not permitted**. Record PO decision in `run_manifest.md`.
 
 This check is advisory-only — it does not halt execution. It prevents backlog churn on items that recurrently fail to execute due to unchanged gate conditions.
+
+---
+
+### 1.4b Within-Sprint Date Gate Classification (Mandatory)
+
+Before finalising sprint capacity and scope classification, identify any candidate item where the gate condition's earliest clearing date falls **within the planned sprint execution window** (i.e., between sprint start and planned sprint close):
+
+1. **Definition — within-sprint date gate:** A gate condition whose clearing date is a specific calendar date that falls on or after sprint start AND on or before the planned sprint close.
+2. **Mandatory classification rule:** Any item with a within-sprint date gate **must** be classified as **conditional** in the release plan and sprint backlog. It may **not** be classified as firm capacity, regardless of how likely the gate is to clear.
+3. **Promotion path:** The item may be promoted from conditional → firm only when the gate owner **explicitly confirms** the gate condition has been met (dated confirmation recorded in `run_manifest.md` or sprint planning artefact).
+4. **Record:** For each within-sprint date gate item, record in the run manifest: item ID, gate condition, gate clearing date, and "classified: conditional."
+
+**Rationale (why mandatory):** This rule was filed as advisory (LL-P3-03-v55, v5.5 post-ship) and elevated to mandatory after the pattern recurred across five consecutive releases: v5.4 ST-03, v5.5 ST-11–14, v5.6 ST-03, v5.7 ST-09/ST-12–14, v5.8 ST-01/ST-02 — all returned to backlog at sprint close because a within-sprint date gate was not met. Items classified as firm with a within-sprint date gate predictably return to backlog. This rule eliminates the source of that return pattern. Applied action-now: rebalance 2026-06-17__scheduled (LL-P3-03-v55/LL-P4-01-v55 overdue).
+
+**Violation:** A firm-classified item returned to backlog at sprint close due to a within-sprint date gate is a P2 process deviation and must be filed as a BLG-GOV deviation record for the next delivery verification cycle. Recurrence across two sprints escalates to Head of Specs Team.
 
 ---
 

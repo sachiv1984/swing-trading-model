@@ -1103,3 +1103,15 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Workforce impact:** None — all items are governance/ops/UX documents; no new FTE commitment
 **Rationale:** Scheduled rebalance — Extended tier (CPS 2.85; arc pipeline artefact acknowledged by Strategy Rules & System Intent Owner). 35 Parked-cycle-1 ideas evaluated: 1 advanced (IDEA-finops-20260610-01 → BLG-OPS-65: Anthropic API cost 14-cycle trend analysis — gate cleared via BLG-GOV-74 COMPLETE v4.4); 5 Rejected (BLG-QA-50/48/54/SPEC-54 delivered; advocacy purposes fulfilled); 29 re-parked (Parked-cycle-2) with updated specific rationales — all valid per §4.1 Facilitator gate. No roadmap initiative changes — all 13 active initiatives remain 🔥 Must continue (all gated by data density or date). STEP 8.1 Option (a): Now horizon empty post-v5.5; ~37 active backlog items; BLG-OPS-22 gate cleared; BLG-FE-73/74 outstanding; BLG-FE-64 gate imminent (2026-06-21); LL-RP-02 action-now patch actionable. v5.6 section added. Meta-review NOT DUE — 1 cycle since last meta-review (2026-06-09__scheduled).
 **Decision owner:** Product Owner
+
+
+## DL-047
+
+**Date:** 2026-06-17
+**Decision type:** No-change (roadmap initiatives) + Backlog add (BLG-GOV-130) + Roadmap Now section added (STEP 8.1 Option a)
+**Cycle:** 2026-06-17__scheduled
+**Initiatives affected:** No active roadmap initiatives — v5.9 Now section added
+**Displacement:** None (BLG-GOV-130 is a gate-conditional backlog add; no initiative displacement required)
+**Workforce impact:** None — no new FTE commitment
+**Rationale:** Scheduled rebalance — Standard tier (CPS = N/A; zero active initiatives in register; scheduled same-day as prior cycle; > 90 days threshold not met). 29 IW-20260610-01 ideas evaluated at terminal cycle 3: 1 promoted-backlog (IDEA-product-owner-20260610-02 → BLG-GOV-130: SI-05 Phase 2 activation decision scope, gate 2026-07-04); 28 rejected — all duplicates of tracked BLG items or low-value at terminal cycle; none classified Rejected-Strong. No roadmap initiative changes. STEP 8.1 Option (a): v5.9 Now section added with BLG-FE-64/41 (gate 2026-06-21 — 4 days), BLG-OPS-70, BLG-GOV-125–129 as firm scope; BLG-GOV-112/113/115/130/BLG-OPS-59 as conditional (gate 2026-07-04; within v5.9 sprint window per STEP 1.4b mandatory rule). Action-now patch applied: release_planning_prompt.md v2.35→v2.36 (STEP 1.4b Within-Sprint Date Gate Classification mandatory — LL-P3-03-v55/LL-P4-01-v55 overdue resolved). Meta-review DUE (3rd cycle since 2026-06-09__scheduled) — see lessons_learnt.md.
+**Decision owner:** Product Owner
