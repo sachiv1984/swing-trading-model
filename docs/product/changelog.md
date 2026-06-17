@@ -3,9 +3,39 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-17
+**Last Updated:** 2026-06-17 (post-ship closure 2026-06-17__release-v5.8)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v5.8 — RFJ UX Design Completion, SI-05 Effectiveness Review & Production Hardening — 2026-06-17
+Cycle: 2026-06-17__release-v5.8
+Verified: Verified
+Verification report: claude/cycles/2026-06-17__release-v5.8/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | FRONTEND_URL production env var configured on Render backend (trading-assistant-api-c0f9.onrender.com) — restores SI-05 deep-link functionality in production; deployment runbook v0.3 updated (§6.1 env var table); AC-04 staging-only deep link confirmation deferred to BLG-OPS-70 | docs/ops/production_deployment_runbook.md#6.1 |
+| EPIC-01 | Governance model complexity assessment produced (GCA-2026-06-17; docs/governance/governance_complexity_assessment_2026-06-17.md); 7 simplification candidates enumerated (BLG-GOV-123–129); hypothesis test: complexity IS a secondary contributing factor (not root cause); Director of HR + PMO Lead + Head of Specs Team sign-off | docs/governance/governance_complexity_assessment_2026-06-17.md |
+
+### Deviations accepted
+None.
+
+### Tech backlog items shipped
+- [ST-03] BLG-GOV-101: FRONTEND_URL production env var — SI-05 deep-link production support restored (AC-04 staging-only evidence deferred to BLG-OPS-70)
+- [ST-04] BLG-GOV-101: Governance complexity assessment — GCA-2026-06-17 produced; 7 simplification candidates BLG-GOV-123–129 filed
+
+### Items returned to backlog
+- ST-01 (BLG-FE-64): RFJ design review pre-brief — gate 2026-06-21 not yet reached (5th deferral); BLG-FE-64 updated
+- ST-02 (BLG-FE-41): Red Flag Journal visual design review — depends on ST-01; gate 2026-06-21 not reached; BLG-FE-41 updated
+- ST-05 (BLG-GOV-112): SI-05 digest weekly cadence review — Sprint 2 gate 2026-07-04 not reached; BLG-GOV-112 updated
+- ST-06 (BLG-GOV-115): SI-05 digest actionability metric definition — gate 2026-07-04 not reached; BLG-GOV-115 updated
+- ST-07 (BLG-OPS-59): SI-05 service production p99 latency baseline review — gate 2026-07-04 not reached; BLG-OPS-59 updated
+
+Sign-off: Product Owner — 2026-06-17
+QA sign-off: Director of Quality — 2026-06-17
 
 ---
 

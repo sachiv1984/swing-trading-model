@@ -7999,3 +7999,15 @@ BLG-GOV-74 (first AI feature usage review, v4.4) established the initial Claude 
 
 ✅ COMPLETE — 2026-06-17 — cycle: 2026-06-16__release-v5.7 (ST-04; p95=105ms << 2,000ms; cache hit rate ≥90% inferred; cache invalidation mechanism confirmed via v5.6 code review)
 
+
+---
+
+## Closed Items — v5.8 Post-Ship (2026-06-17)
+
+| BLG-ID | Title | Shipped | Release | Cycle |
+|--------|-------|---------|---------|-------|
+| BLG-GOV-101 ✅ | Governance model complexity assessment | 2026-06-17 | v5.8 (ST-04 EPIC-01) | 2026-06-17__release-v5.8 |
+
+### BLG-GOV-101 — Governance model complexity assessment ✅ COMPLETE
+
+**Shipped:** v5.8, ST-04 (EPIC-01), 2026-06-17. GCA-2026-06-17 produced. Complexity confirmed as secondary contributing factor (not root cause). 7 simplification candidates (SC-01–SC-07) filed as BLG-GOV-123–129. Director of HR + PMO Lead + Head of Specs Team sign-off 2026-06-17. Source: docs/governance/governance_complexity_assessment_2026-06-17.md. commit SHA fbdf1745. PR #790 merged 2026-06-17T13:24:57Z.

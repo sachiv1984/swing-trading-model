@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Class:** Planning Document (Class 4)
-**Status:** Published
+**Status:** Superseded
 **Release:** v5.8
 **Cycle:** 2026-06-17__release-v5.8
 **Last Updated:** 2026-06-17
@@ -43,4 +43,7 @@
 
 ## Supersession note
 
-*(Completed at Post-Ship Closure — superseded by [scope--2026-06-17__release-v5.8-rfj-ux-si05-effectiveness-hardening.md v1.0 — authoritative as-shipped]*
+Superseded by: v5.8 ship — 2026-06-17
+Changelog: docs/product/changelog.md#v58
+Verification report: claude/cycles/2026-06-17__release-v5.8/verification_report.md
+Cycle: 2026-06-17__release-v5.8

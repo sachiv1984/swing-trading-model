@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-17 (post-ship closure 2026-06-16__release-v5.7)
+**Last Updated:** 2026-06-17 (post-ship closure 2026-06-17__release-v5.8)
 
 # Roadmap Archive — Momentum Trading Assistant
 
@@ -1259,3 +1259,21 @@ v5.6 Research Performance, SI-05 UX Improvements & Governance Patches. SI-05 dig
 ### Original Roadmap Entry
 
 v5.7 Staging Verification Completion, SI-05 Effectiveness Review & Engineering/Governance Patches. Production latency verifications: concentration-status p95=755ms (BLG-OPS-66, ST-01); red-flag-journal p95=872ms (BLG-OPS-67, ST-02); behavioural-drift p95=677ms cached (BLG-OPS-68, ST-03); research view p95=105ms (BLG-OPS-69, ST-04). SI-05 deep links mobile Telegram staging confirmed (BLG-FE-75, ST-05; 2 in-sprint bug fixes). Arc 5 Playwright coverage gaps closed: SC-SI-01d (BLG-QA-56, ST-06); SC-RFJ-04 (BLG-QA-57, ST-07); SC-ARC5-05 (BLG-QA-58, ST-08). Lazy-import pattern documented in backend_engineering_patterns.md v1.1 (BLG-BE-36, ST-10). Dual sign-off class confirmed in execution_prompt.md §5.3 (BLG-GOV-123, ST-11; LL-v5.6-DV-03 resolved). ST-09 (BLG-FE-64) conditional — 4th deferral, gate 2026-06-21. EPIC-03 (ST-12/13/14) gate-deferred 2026-07-04. 10/10 firm Sprint 1 stories. Zero spec deviations. PRs #781/782. Verified 2026-06-17. completed_cycle_count = 43.
+
+
+---
+
+## RA:v5.8 — RFJ UX Design Completion, SI-05 Effectiveness Review & Production Hardening
+
+**Original roadmap location:** §1 Current Version / Release Summary §8
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-17
+**Shipped version:** v5.8
+**Cycle reference:** 2026-06-17__release-v5.8
+**Verification report:** claude/cycles/2026-06-17__release-v5.8/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-17
+
+### Original Roadmap Entry
+
+v5.8 RFJ UX Design Completion, SI-05 Effectiveness Review & Production Hardening. FRONTEND_URL production env var configured on Render backend (trading-assistant-api-c0f9.onrender.com) — restores SI-05 deep-link functionality; deployment runbook v0.3 updated (ST-03; BLG-OPS-70 AC-04 deferral filed). Governance model complexity assessment produced — GCA-2026-06-17; complexity confirmed secondary factor (not root cause); 7 simplification candidates BLG-GOV-123–129 filed (ST-04; BLG-GOV-101 closed). ST-01/02 (BLG-FE-64/41) returned — gate 2026-06-21 (5th deferral). EPIC-02 (ST-05/06/07) gate-deferred 2026-07-04 (3rd consecutive deferral). 2/7 stories delivered (2/4 firm Sprint 1). Zero spec deviations. PR #790. Verified 2026-06-17. completed_cycle_count = 44.

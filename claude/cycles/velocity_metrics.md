@@ -65,8 +65,9 @@
 | v5.5  | 14      | 10        | 0.71     | 10/14 firm stories done (ST-01–10: governance patches + gate-monitoring backend + API baseline complete + regression test baseline + UX journey map); ST-11–14 returned — gate dates 2026-06-21/2026-07-04 not met; zero spec deviations; 3 EPICs merged (EPIC-04 not executed); 4 delegated items all resolved within sprint |
 | v5.6  | 10      | 10        | 1.00     | 10/10 firm stories done (ST-01/02 SI-05 UX digest improvements; ST-04/05/06/07 performance latency hardening; ST-08/09/10/11 QA + governance docs); ST-03 conditional returned at planning (gate 2026-06-21); zero spec deviations; 3 EPICs merged; 0 delegated items |
 | v5.7  | 14      | 10        | 0.71     | 10/10 firm Sprint 1 stories done (ST-01–08 EPIC-01: staging verifications + Arc 5 Playwright gaps; ST-10/11 EPIC-02: lazy-import docs + dual sign-off confirmation); 4 conditional stories returned as planned (ST-09 gate 2026-06-21; ST-12/13/14 EPIC-03 gate 2026-07-04); zero spec deviations; 5 delegations all resolved; 2 in-sprint bug fixes (ST-05 MarkdownV2 + HashRouter) |
+| v5.8  | 7       | 2         | 0.29     | 2/4 firm Sprint 1 stories done (ST-03 FRONTEND_URL env var; ST-04 governance complexity assessment); ST-01/02 returned mid-sprint — gate 2026-06-21 (5th deferral); EPIC-02 Sprint 2 gate-deferred (gate 2026-07-04; 3rd consecutive deferral); zero spec deviations; 4 delegations all resolved |
 
-**Rolling 6-cycle average (v5.2–v5.7):** 0.86
+**Rolling 6-cycle average (v5.3–v5.8):** 0.72
 
 ---
 

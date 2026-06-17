@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-17 (post-ship closure 2026-06-16__release-v5.7 — 8 items marked ✅ COMPLETE: BLG-FE-75, BLG-QA-56/57/58, BLG-OPS-66/67/68/69)
+**Last Updated:** 2026-06-17 (post-ship closure 2026-06-17__release-v5.8 — 1 item marked ✅ COMPLETE: BLG-GOV-101)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — DL-041/042; IW skipped ≥20 open ideas; 8 new items; meta-review DUE conducted; v5.4 Now section added)
 
 > ⚠️ Standing Notice
@@ -1149,7 +1149,7 @@ PO-04 (Reflection ↔ Outcome Correlation) requires journal entries with quantif
 
 ---
 
-### BLG-BE-34 — Trade count gate-monitoring view
+### BLG-BE-34 — Trade count gate-monitoring view ✅ COMPLETE
 **Priority:** P2 (Medium)
 **Type:** Backend Engineering / Data Infrastructure
 **Owner:** Data Model & Domain Schema Owner; PMO Lead
@@ -2431,13 +2431,14 @@ strategy_rules.md §11 defines production parameters (5× initial ATR, 2× profi
 
 ---
 
-### BLG-GOV-101 — Governance model complexity assessment
+### BLG-GOV-101 — Governance model complexity assessment ✅ COMPLETE
 **Priority:** P2 (Medium)
 **Type:** Governance / Process Assessment
 **Owner:** Director of HR; PMO Lead; Head of Specs Team
 **Source:** IDEA-director-of-hr-20260607-01 — Promoted-Backlog rebalance 2026-06-07__scheduled (DL-039)
 **Effort:** M (~2 days)
 **Provisional-Target:** Unscheduled
+**✅ COMPLETE** — Shipped as ST-04 (EPIC-01) in cycle 2026-06-17__release-v5.8 (2026-06-17). GCA-2026-06-17 produced; 7 simplification candidates BLG-GOV-123–129 filed. Director of HR + PMO Lead + Head of Specs Team sign-off.
 **Displacement:** BLG-QA-34 (QA evidence file format audit, P3, gate-conditional) deprioritised.
 
 **Evidence trigger:** AUD-2026-06-02 overall score = 73 (down from 79 at AUD-2026-05-21; Δ = -6). 5 open audit items (BLG-GOV-79–83). Score decline and open item count provide the evidence-based trigger previously lacking.
@@ -2593,7 +2594,7 @@ SI-05 launched 2026-06-04. After the 2026-07-04 effectiveness review (BLG-GOV-11
 
 ---
 
-### BLG-GOV-116 — sprint_planning_prompt.md within-sprint date gate advisory
+### BLG-GOV-116 — sprint_planning_prompt.md within-sprint date gate advisory ✅ COMPLETE
 **Priority:** P2 (Medium)
 **Type:** Governance / Process Improvement
 **Owner:** Head of Specs Team
@@ -2616,7 +2617,7 @@ Stories with within-sprint date gates (e.g., "ST-03 CONDITIONAL — gate 2026-06
 
 ---
 
-### BLG-GOV-117 — execution_prompt.md pr_status read-after-open improvement
+### BLG-GOV-117 — execution_prompt.md pr_status read-after-open improvement ✅ COMPLETE
 **Priority:** P2 (Medium)
 **Type:** Governance / Process Improvement
 **Owner:** Head of Specs Team; PMO Lead
@@ -2639,7 +2640,7 @@ After opening a PR, execution_prompt.md writes `pr_status: "open"` to execution_
 
 ---
 
-### BLG-GOV-118 — qa_evidence commit discipline advisory in execution_prompt.md
+### BLG-GOV-118 — qa_evidence commit discipline advisory in execution_prompt.md ✅ COMPLETE
 **Priority:** P2 (Medium)
 **Type:** Governance / Process Improvement
 **Owner:** PMO Lead; Head of Specs Team
@@ -2687,7 +2688,7 @@ Arc 5 is functionally near-complete (SI-01/02/03 shipped; SI-04 pre-planned; SI-
 
 ---
 
-### BLG-GOV-120 — Trade data density progress tracker
+### BLG-GOV-120 — Trade data density progress tracker ✅ COMPLETE
 **Priority:** P2 (Medium)
 **Type:** Governance / Operational Visibility
 **Owner:** Product Owner; Infrastructure & Operations Owner
@@ -2978,49 +2979,8 @@ BLG-OPS-60 (completed v5.4) added v5.3 endpoints to api_performance_baseline.md.
 
 ---
 
-## Release Slice v5.8 — cycle 2026-06-17__release-v5.8
+*Release Slice v5.8 removed — cycle 2026-06-17__release-v5.8 closed 2026-06-17. Archived canonical home: claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md*
 
-<!-- release-plan-marker: RP:v5.8:2026-06-17__release-v5.8 -->
-
-**Theme:** RFJ UX Design Completion, SI-05 Effectiveness Review & Production Hardening
-
-| ST-ID | BLG-ID | Title | EPIC | Sprint | Effort | Conditional |
-|-------|--------|-------|------|--------|--------|-------------|
-| ST-01 | BLG-FE-64 | RFJ design review pre-brief | EPIC-01 | 1 | XS | No — gate 2026-06-21 (time-certain) |
-| ST-02 | BLG-FE-41 | Red Flag Journal visual design review | EPIC-01 | 1 | M | No — gate 2026-06-21 (time-certain) |
-| ST-03 | — | FRONTEND_URL production env var configuration | EPIC-01 | 1 | XS | No |
-| ST-04 | BLG-GOV-101 | Governance model complexity assessment | EPIC-01 | 1 | M | No |
-| ST-05 | BLG-GOV-112 | SI-05 digest weekly cadence review | EPIC-02 | 2 | S | Yes — gate 2026-07-04 |
-| ST-06 | BLG-GOV-115 | SI-05 digest actionability metric definition | EPIC-02 | 2 | S | Yes — gate 2026-07-04 |
-| ST-07 | BLG-OPS-59 | SI-05 service production p99 latency review | EPIC-02 | 2 | S | Yes — gate 2026-07-04 |
-
-*Authoritative source: claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md*
-
----
-
-## Release Slice v5.7 — cycle 2026-06-16__release-v5.7
-
-<!-- release-plan-marker: RP:v5.7:2026-06-16__release-v5.7 -->
-
-**Theme:** Staging Verification Completion, SI-05 Effectiveness Review & Engineering/Governance Patches
-
-| ST-ID | BLG-ID | Title | EPIC | Sprint | Effort | Conditional |
-|-------|--------|-------|------|--------|--------|-------------|
-| ST-01 | BLG-OPS-66 | Staging verification: concentration-status p95 after FX cache fix | EPIC-01 | 1 | XS | No |
-| ST-02 | BLG-OPS-67 | Staging verification: red-flag-journal p95 after schema-once fix | EPIC-01 | 1 | XS | No |
-| ST-03 | BLG-OPS-68 | Staging verification: behavioural-drift p95 + cache hit rate | EPIC-01 | 1 | XS | No |
-| ST-04 | BLG-OPS-69 | Staging verification: research view p95 + cache hit rate | EPIC-01 | 1 | S | No |
-| ST-05 | BLG-FE-75 | Staging verification: SI-05 deep links on mobile Telegram | EPIC-01 | 1 | XS | No |
-| ST-06 | BLG-QA-56 | SI-01 all-pass state Playwright scenario | EPIC-01 | 1 | XS | No |
-| ST-07 | BLG-QA-57 | SI-03 RFJ pagination Playwright scenario | EPIC-01 | 1 | XS | No |
-| ST-08 | BLG-QA-58 | Arc 5 compliance score trend Playwright scenario | EPIC-01 | 1 | XS | No |
-| ST-09 | BLG-FE-64 | RFJ design review pre-brief | EPIC-02 | 1 | XS | Yes — gate 2026-06-21 |
-| ST-10 | BLG-BE-36 | Lazy-import pattern documentation (backend engineering patterns guide) | EPIC-02 | 1 | S | No |
-| ST-11 | BLG-GOV-123 | Confirm dual sign-off pattern documented in execution_prompt.md | EPIC-02 | 1 | S | No |
-| ST-12 | BLG-GOV-112 | SI-05 digest weekly cadence review | EPIC-03 | 2 | S | Yes — gate 2026-07-04 |
-| ST-13 | BLG-GOV-115 | SI-05 actionability metric definition | EPIC-03 | 2 | S | Yes — gate 2026-07-04 |
-| ST-14 | BLG-OPS-59 | SI-05 service production p99 latency baseline review | EPIC-03 | 2 | S | Yes — gate 2026-07-04 |
-
-*Authoritative source: claude/cycles/2026-06-16__release-v5.7/stage4_backlog_slice.md*
+*Release Slice v5.7 removed — cycle 2026-06-16__release-v5.7 closed 2026-06-17. Archived canonical home: claude/cycles/2026-06-16__release-v5.7/stage4_backlog_slice.md*
 
 ---

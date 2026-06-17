@@ -1,50 +1,40 @@
-**Owner:** PMO Lead
-**Class:** Operational Record (Class 3)
-**Status:** Active
-**Last Updated:** 2026-06-17
+Owner: PMO Lead
+Class: Operational Record (Class 3)
+Status: Active
+Last Updated: 2026-06-17
+Run: GROOM-20260617-01
 
 ---
 
-# Backlog Health Report — 2026-06-17
+# Backlog Health Report — 2026-06-17 (post-ship closure v5.8)
 
-Invoked by: post-ship closure STEP 12 (2026-06-16__release-v5.7)
+**Triggered by:** STEP 12 post-ship closure 2026-06-17__release-v5.8
 
-## Actions Taken
+## Summary
 
-**Items archived:** 8
-- BLG-FE-75: Staging verification — SI-05 deep links mobile Telegram — ✅ COMPLETE v5.7
-- BLG-QA-56: SI-01 all-pass state Playwright scenario — ✅ COMPLETE v5.7
-- BLG-QA-57: SI-03 RFJ pagination Playwright scenario — ✅ COMPLETE v5.7
-- BLG-QA-58: Arc 5 compliance trend Playwright scenario — ✅ COMPLETE v5.7
-- BLG-OPS-66: concentration-status p95 staging verification — ✅ COMPLETE v5.7
-- BLG-OPS-67: red-flag-journal p95 staging verification — ✅ COMPLETE v5.7
-- BLG-OPS-68: behavioural-drift p95 staging verification — ✅ COMPLETE v5.7
-- BLG-OPS-69: research view p95 staging verification — ✅ COMPLETE v5.7
+| Metric | Value |
+|--------|-------|
+| Items archived to backlog_archive.md | 1 (BLG-GOV-101) |
+| Ghost entries marked complete | 5 (BLG-GOV-116/117/118/BLG-BE-34/BLG-GOV-120) |
+| Ephemeral sections removed | 2 (Release Slice v5.8; Release Slice v5.7) |
+| Priority revalidation flags | 0 |
+| Orphan flags | 0 |
+| Blocked stale flags | 0 |
 
-**Ephemeral sections removed:** 0 (Release Slice v5.7 section to be removed at next groom_backlog)
+## Items Archived
 
-**ID uniqueness:** PASS — no duplicate IDs identified
+| BLG-ID | Title | Shipped | Release |
+|--------|-------|---------|---------|
+| BLG-GOV-101 | Governance model complexity assessment | 2026-06-17 | v5.8 |
 
-## Deferral Age Check
+## Ghost Entries Resolved (LL-RP-v58-03)
 
-- BLG-FE-64: 4th consecutive deferral. Gate 2026-06-21 active. PO explicit re-disposition required at v5.8 planning (OA-01). No additional stale flag required — already noted in backlog sprint history and closure record.
-- BLG-GOV-112, BLG-GOV-115, BLG-OPS-59: 2nd deferral. Gate 2026-07-04. Not at 3-cycle threshold — no flag required.
+Items confirmed shipped in backlog_archive.md but missing COMPLETE markers in backlog.md active sections. Markers added to: BLG-GOV-116/117/118, BLG-BE-34, BLG-GOV-120 (all shipped v5.5).
 
-## Active Item Count
+## Ephemeral Sections Removed
 
-Approximately 19 active items remain after archiving 8 items (prior active count ~27 from last groom on 2026-06-16, minus 8 archived this run).
+Release Slice v5.8 and v5.7 sections removed; replaced with tombstone notes referencing canonical homes.
 
-## Priority Revalidation Notes
+## Health Status
 
-No priority misalignments identified requiring Product Owner confirmation.
-
-## Health Summary
-
-| Check | Result |
-|-------|--------|
-| Items archived | 8 |
-| Stale items | 0 |
-| Deferral age violations | 0 (BLG-FE-64 at 4 cycles — PO action required per OA-01) |
-| ID uniqueness | PASS |
-| Ephemeral sections | Release Slice v5.7 remains — remove at next groom |
-| Overall health | ✅ PASS |
+PASS — No orphans, no stale blockers, no priority anomalies. Ghost entry pattern from LL-RP-v58-03 resolved.
