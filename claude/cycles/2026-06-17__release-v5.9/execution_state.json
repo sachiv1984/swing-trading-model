@@ -1,0 +1,210 @@
+{
+  "cycle_id": "2026-06-17__release-v5.9",
+  "status": "Running",
+  "sealed": false,
+  "sealed_utc": null,
+  "backlog_slice_source": "claude/cycles/2026-06-17__release-v5.9/stage4_backlog_slice.md",
+  "initialised_utc": "2026-06-17T18:30:00Z",
+  "open_escalations": {},
+  "merge_gate": {
+    "epics_pending": ["EPIC-01", "EPIC-02"],
+    "epics_merged": []
+  },
+  "epics": {
+    "EPIC-01": {
+      "title": "Governance Simplification (SC-03–SC-07)",
+      "branch": "exec/2026-06-17__release-v5.9/EPIC-01",
+      "status": "done",
+      "pr_number": 802,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "SC-03: Consolidate spec_references policy sub-variants in execution_prompt.md",
+          "status": "done",
+          "classification": "autonomous",
+          "spec_references": ["claude/system/execution_prompt.md#STEP 3.1.A"],
+          "github_issue": 791,
+          "branch": "exec/2026-06-17__release-v5.9/EPIC-01",
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "52c14fbfdddbb1309828f746077dc7e11a396a54",
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["Section body source prompt headers updated (Finding 1)", "roadmap_prompt.md STEP 9 dangling ref corrected (Finding 2)"],
+            "cleared_utc": "2026-06-17T18:45:00Z"
+          },
+          "notes": "No deviation — pure consolidation; all 3 edge cases (LL-v3.7-EX-03, LL-v4.5-EX-02, OA-02) preserved."
+        },
+        "ST-02": {
+          "title": "SC-04: Remove STEP 8.6–8.7 fatigue detection guardrail from roadmap_prompt.md",
+          "status": "done",
+          "classification": "autonomous",
+          "spec_references": ["claude/system/roadmap_prompt.md#STEP 5", "claude/system/roadmap_prompt.md#STEP 8"],
+          "github_issue": 792,
+          "branch": "exec/2026-06-17__release-v5.9/EPIC-01",
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "52c14fbfdddbb1309828f746077dc7e11a396a54",
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["roadmap_prompt.md STEP 9 dangling STEP 8/8.7 reference corrected (v7.2→v7.3)"],
+            "cleared_utc": "2026-06-17T18:45:00Z"
+          },
+          "notes": "No deviation — STEPs 8.6/8.7 removed; convergence bias coverage added to STEP 5 Challenger rule."
+        },
+        "ST-03": {
+          "title": "SC-05: Remove dead-load advisory steps from release_planning_prompt.md",
+          "status": "done",
+          "classification": "autonomous",
+          "spec_references": ["claude/system/release_planning_prompt.md#STEP 1.3", "claude/system/release_planning_prompt.md#STEP 5.7"],
+          "github_issue": 793,
+          "branch": "exec/2026-06-17__release-v5.9/EPIC-01",
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "52c14fbfdddbb1309828f746077dc7e11a396a54",
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-17T18:45:00Z"
+          },
+          "notes": "No deviation — STEP 5.7 conditional on escalations; STEP 1.3 reduced to advisory note."
+        },
+        "ST-04": {
+          "title": "SC-06: Make Playwright selector check conditional on DOM changes in execution_prompt.md",
+          "status": "done",
+          "classification": "autonomous",
+          "spec_references": ["claude/system/execution_prompt.md#STEP 3.1.A step 13"],
+          "github_issue": 794,
+          "branch": "exec/2026-06-17__release-v5.9/EPIC-01",
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "52c14fbfdddbb1309828f746077dc7e11a396a54",
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-17T18:45:00Z"
+          },
+          "notes": "No deviation — step 13 condition tightened; frontend EPICs retain full scan."
+        },
+        "ST-05": {
+          "title": "SC-07: Compress Advisory Summary Block format docs in post_ship_closure.md",
+          "status": "done",
+          "classification": "autonomous",
+          "spec_references": ["claude/system/post_ship_closure.md#Advisory Summary Block"],
+          "github_issue": 795,
+          "branch": "exec/2026-06-17__release-v5.9/EPIC-01",
+          "deviations_filed": true,
+          "acceptance_verified": true,
+          "commit_sha": "52c14fbfdddbb1309828f746077dc7e11a396a54",
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-06-17T18:45:00Z"
+          },
+          "notes": "No deviation — Advisory Summary Block compressed from ~13 lines to 3 lines; all format elements preserved."
+        }
+      }
+    },
+    "EPIC-02": {
+      "title": "QA Coverage, Governance Audits & UX Improvement",
+      "branch": "exec/2026-06-17__release-v5.9/EPIC-02",
+      "status": "not_started",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "test_scenarios": [],
+      "stories": {
+        "ST-06": {
+          "title": "Yahoo Finance backoff path integration test stub",
+          "status": "not_started",
+          "classification": "autonomous",
+          "spec_references": [],
+          "github_issue": 796,
+          "branch": "exec/2026-06-17__release-v5.9/EPIC-02",
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "sign_off_record": null,
+          "notes": "test-authoring story — spec_references will be set to the created test file path per OA-02"
+        },
+        "ST-07": {
+          "title": "DoQ sign-off date compliance audit (v3.7–v3.9)",
+          "status": "not_started",
+          "classification": "autonomous",
+          "spec_references": [],
+          "github_issue": 797,
+          "branch": "exec/2026-06-17__release-v5.9/EPIC-02",
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "sign_off_record": null,
+          "notes": "documentation-creation story — spec_references will be set to the advisory note artefact path"
+        },
+        "ST-08": {
+          "title": "QA evidence file format audit (v3.7–v4.0)",
+          "status": "not_started",
+          "classification": "autonomous",
+          "spec_references": [],
+          "github_issue": 798,
+          "branch": "exec/2026-06-17__release-v5.9/EPIC-02",
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "sign_off_record": null,
+          "notes": "documentation-creation story — spec_references will be set to the advisory note artefact path"
+        },
+        "ST-09": {
+          "title": "Agent idea participation tracking summary",
+          "status": "not_started",
+          "classification": "autonomous",
+          "spec_references": [],
+          "github_issue": 799,
+          "branch": "exec/2026-06-17__release-v5.9/EPIC-02",
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "sign_off_record": null,
+          "notes": "documentation-creation story — spec_references will be set to the advisory note artefact path"
+        },
+        "ST-10": {
+          "title": "Formal regression test suite baseline document",
+          "status": "not_started",
+          "classification": "autonomous",
+          "spec_references": [],
+          "github_issue": 800,
+          "branch": "exec/2026-06-17__release-v5.9/EPIC-02",
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "sign_off_record": null,
+          "notes": "documentation-creation story — spec_references will be set to the created baseline document path"
+        },
+        "ST-11": {
+          "title": "Pre-entry panel: show warning/fail count when collapsed",
+          "status": "not_started",
+          "classification": "autonomous",
+          "spec_references": [],
+          "github_issue": 801,
+          "branch": "exec/2026-06-17__release-v5.9/EPIC-02",
+          "deviations_filed": false,
+          "acceptance_verified": false,
+          "commit_sha": null,
+          "sign_off_record": null,
+          "notes": "frontend-visible change — Playwright test required per AC-04"
+        }
+      }
+    }
+  }
+}

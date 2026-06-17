@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.13
+**Version:** 2.14
 **Last Updated:** 2026-06-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -681,15 +681,7 @@ If git operations are unavailable: output the exact files to stage and the commi
 
 ## Advisory Summary Block
 
-After STEP 13 completes, output all advisories raised during this run as a single consolidated block. Format:
-
-```
-── Advisory Summary ──────────────────────────────────
-[List each advisory recorded during the run, or "None."]
-──────────────────────────────────────────────────────
-```
-
-Advisories sourced from: STEP 0 (audit cadence, rebalance cadence), STEP 6 (endpoint drift), STEP 12.5 (ideas archive, rejected-but-strong revival, pipeline health), and any other non-blocking flags raised during execution. If no advisories were raised: output "Advisory Summary: None."
+After STEP 13, output a consolidated advisory block using `── Advisory Summary ──────────────────────────────────` / `[list or "None."]` / `──────────────────────────────────────────────────────` format. Sources: STEP 0 (audit/rebalance cadence), STEP 6 (endpoint drift), STEP 12.5 (pipeline health), any other non-blocking flags. If none: output "Advisory Summary: None."
 
 ---
 

@@ -1,8 +1,8 @@
 {
   "active_cycle": "2026-06-17__release-v5.9",
   "cycle_name": "Release Planning \u2014 v5.9 RFJ UX Pre-work, SI-05 Effectiveness Review & Governance Simplification",
-  "status": "Sprint_Planning_Complete",
-  "engine": "release_planning",
+  "status": "Executing",
+  "engine": "execution",
   "execution_state_path": "",
   "backlog_slice_path": "claude/cycles/2026-06-17__release-v5.9/stage4_backlog_slice.md",
   "sprint_sealed": true,

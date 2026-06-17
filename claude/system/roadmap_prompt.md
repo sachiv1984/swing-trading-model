@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 7.1
+**Version:** 7.3
 **Last Updated:** 2026-06-16 (v7.0→v7.1: LL-RP-02 — STEP 8.0.5 strengthened from Advisory to Mandatory; now fires at STEP 3 candidate compilation AND before STEP 8.1 presentation; second recurrence of complete-item leakage confirmed)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -370,7 +370,7 @@ Reviving a Rejected-stale idea requires fresh submission through `run ideas`.
 ### STEP 5 — Structured Debate (Zero-Sum)
 Authorities: Product Owner (chair) + Challenger (non-decision challenge)
 
-**Challenger failure rule:** Challenger must produce an evidence-based counter-argument for every advancing candidate — not silence, not "no objection." Failure → halt; record Type E — Authority Gap in lessons learnt.
+**Challenger failure rule (SC-04):** Challenger must produce an evidence-based counter-argument for every advancing candidate — not silence, not "no objection," and not a blanket Clearance Statement when multiple candidates advance together. Issuing only Clearance Statements across all advancing candidates with no substantive challenge is convergence bias — treat as Challenger failure. Failure → halt; record Type E — Authority Gap in lessons learnt.
 
 **Debate Queue preflight:** Read the `## STEP 5 Debate Queue` table from STEP 4.4. Every IDEA ID in the queue must have a debate entry before STEP 5 is marked complete. Queue empty → record "Queue empty — no debates required" and continue to STEP 6.
 
@@ -568,35 +568,6 @@ Any violation → discard pending write plan; report offending file path(s), vio
 
 ---
 
-### STEP 8.6 — Run-Level Disagreement Guardrail (Fatigue Detection)
-
-Guardrail **passes** if ANY is true:
-1. At least one candidate was Parked or Rejected during this run.
-2. Challenger issued a type-A counter-argument (not only Clearance Statements) for at least one candidate.
-3. Only one candidate was in the pool.
-
-Guardrail **fails** only when: > 1 candidate evaluated, all advanced, Challenger issued only Clearance Statements.
-
-Fails → trigger STEP 8.7 exactly once. After STEP 8.7, re-evaluate. Still fails → halt; record "Fatigue / convergence detected — insufficient challenge diversity."
-
----
-
-### STEP 8.7 — Pivot Loop (Controlled Re-Challenge)
-
-Trigger: STEP 8.6 fails. Runs at most once. No new candidates introduced; no additional file writes.
-
-1. **Facilitator** selects the weakest ✅ Advance candidate citing 2+ of: weakest strategic alignment to `strategy_rules.md`; highest workforce intensity vs impact; lowest time to value; lowest reversibility; weakest displacement rationale. State candidate, selection criteria, and required new challenge angle.
-
-2. **Challenger** produces a materially different counter-argument (not a rephrase) citing a specific `strategy_rules.md` clause and/or economic constraint, concluding with Park or Reject. Cannot produce new angle → halt; record process failure.
-
-3. **Product Owner** explicitly responds: maintain ✅ Advance (with rebuttal), Park, or Reject. Decision is final for this run.
-
-**Anti-gaming:** If all modifications appear designed only to pass STEP 8.6 (scope reductions with no strategic rationale, displacement swaps producing only apparent trade-offs, changes introduced only post-8.6 trigger) → halt; record "Guardrail circumvention attempt."
-
-Re-check STEP 8.6. Proceed to STEP 9 only if guardrail passes.
-
----
-
 ### STEP 9 — Canonical Write
 Authorities: Head of Specs Team + PMO Lead (process), Product Owner (planning owner)
 
@@ -622,7 +593,7 @@ Update (create-if-missing) with lifecycle-compliant headers:
 Rules:
 - No drafts — write as current authoritative planning state.
 - No backfilling history.
-- Reflect STEP 8/8.7 decisions exactly.
+- Reflect STEP 8 decisions exactly.
 - Decision log: append-only per Section 7 invariant.
 - When adding a newly promoted item to `backlog.md`: include `**Provisional-Target:**` field derived from horizon placement per `shared_standards.md §16.6`. Write `TBD` if mapping is ambiguous.
 - **Hard gate marking:** any gate marked "complete" in `current_roadmap.md` must reference the PoG/evidence artefact that cleared it. No artefact → gate stays "pending."
