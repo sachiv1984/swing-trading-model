@@ -502,7 +502,9 @@ Red Flag Journal filter state (date range, severity, rule type) resets on page r
 **Effort:** M (~1–2 days design + spec)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** SI-03 Red Flag Journal live ≥ 30 days (on/after 2026-06-21).
+**Gate criteria:** SI-03 Red Flag Journal live ≥ 30 days (on/after 2026-06-21). **Not eligible for release planning or sprint planning before 2026-06-21.** Depends on BLG-FE-64 (pre-brief) completing first.
+
+**Sprint history:** Planned as ST-02 (EPIC-01) in cycle 2026-06-17__release-v5.8; returned to backlog 2026-06-17 mid-sprint — PO-authorised deferral; gate date 2026-06-21 not yet reached.
 
 **Problem**
 Red Flag Journal (v3.9) is functional but minimally styled. As RFJ becomes a primary Arc 5 review surface, a design review covering severity visual hierarchy, timeline layout option, and colour coding for rule breach types will improve usability and consistency with the rest of the application design language.
@@ -776,7 +778,7 @@ SI-04 (strategy version comparison) and SI-05 (weekly digest display) will intro
 
 **Gate criteria:** SI-03 Red Flag Journal live ≥ 30 days (2026-06-21 — gate clears in 14 days from 2026-06-07).
 
-**Sprint history:** Planned as ST-03 (EPIC-02) in cycle 2026-06-09__release-v5.4; returned to backlog 2026-06-10 — date gate (2026-06-21) not met at sprint close; PO-authorised deferral. Planned again as ST-11 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-06-21 still not reached. Planned again as ST-03 (EPIC-01) in cycle 2026-06-16__release-v5.6; returned to backlog 2026-06-16 — gate date 2026-06-21 not yet cleared at planning time. Planned as ST-09 (EPIC-02) in cycle 2026-06-16__release-v5.7; returned to backlog 2026-06-17 — gate date 2026-06-21 not yet cleared at sprint close (4th deferral). PO to re-disposition at v5.8 planning. **Not eligible for sprint planning before 2026-06-21** (gate: SI-03 Red Flag Journal live ≥ 30 days).
+**Sprint history:** Planned as ST-03 (EPIC-02) in cycle 2026-06-09__release-v5.4; returned to backlog 2026-06-10 — date gate (2026-06-21) not met at sprint close; PO-authorised deferral. Planned again as ST-11 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-06-21 still not reached. Planned again as ST-03 (EPIC-01) in cycle 2026-06-16__release-v5.6; returned to backlog 2026-06-16 — gate date 2026-06-21 not yet cleared at planning time. Planned as ST-09 (EPIC-02) in cycle 2026-06-16__release-v5.7; returned to backlog 2026-06-17 — gate date 2026-06-21 not yet cleared at sprint close (4th deferral). Planned as ST-01 (EPIC-01) in cycle 2026-06-17__release-v5.8; returned to backlog 2026-06-17 mid-sprint — PO-authorised deferral; gate date 2026-06-21 still not reached at time of return (5th deferral). **Not eligible for release planning or sprint planning before 2026-06-21** (gate: SI-03 Red Flag Journal live ≥ 30 days from 2026-05-22).
 
 **Problem**
 BLG-FE-41 (Red Flag Journal visual design review) has a gate date of 2026-06-21. When the gate clears, sprint planning delay can be avoided if the design review brief is already prepared. The brief defines: scope (which aspects of RedFlagJournal.js are in scope for visual review), evaluation criteria, and deliverables from the review.

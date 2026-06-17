@@ -22,7 +22,8 @@ Last Updated: 2026-06-17
 - **Spec reference:** `claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md#ST-01`
 - **Unblock criteria:** Gate date 2026-06-21 reached AND design review brief document produced in `docs/product/ux/` AND Head of UX & Design sign-off committed to branch with `[EPIC-01][ST-01] <description>`
 - **Commit format required:** `[EPIC-01][ST-01] <description>` pushed to `exec/2026-06-17__release-v5.8/EPIC-01`
-- **Status:** Pending
+- **Status:** Cancelled
+- **Reason:** PO-authorised mid-sprint deferral 2026-06-17 — gate date 2026-06-21 not yet reached; story returned to backlog (BLG-FE-64, 5th deferral). Not eligible for release planning before 2026-06-21.
 
 ---
 
@@ -39,7 +40,8 @@ Last Updated: 2026-06-17
 - **Spec reference:** `claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md#ST-02`
 - **Unblock criteria:** ST-01 done AND gate date 2026-06-21 reached AND design recommendation document produced AND (if redesign: UX spec produced + backlog item filed) AND Head of UX & Design sign-off committed to branch with `[EPIC-01][ST-02] <description>`
 - **Commit format required:** `[EPIC-01][ST-02] <description>` pushed to `exec/2026-06-17__release-v5.8/EPIC-01`
-- **Status:** Pending
+- **Status:** Cancelled
+- **Reason:** PO-authorised mid-sprint deferral 2026-06-17 — gate date 2026-06-21 not yet reached; story returned to backlog (BLG-FE-41). Not eligible for release planning before 2026-06-21.
 
 ---
 
