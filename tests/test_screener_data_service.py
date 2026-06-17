@@ -264,3 +264,69 @@ def test_yahoo_crumb_refresh_updates_module_state():
     assert result == "test-crumb-xyz"
     assert svc._yahoo_crumb == "test-crumb-xyz"
     assert svc._yahoo_session is mock_sess
+
+
+# ---------------------------------------------------------------------------
+# ST-06 (BLG-QA-24): Yahoo Finance 401 backoff path integration test stub
+# Verifies: 401 first call → crumb refresh → sleep called once → 200 → result
+# ---------------------------------------------------------------------------
+
+def test_yahoo_backoff_path_401_sleep_once_then_200():
+    """BLG-QA-24 AC-01/02/03: 401→crumb refresh→sleep once→200→valid OHLCV.
+
+    Runs without a live Yahoo Finance connection (all HTTP stubbed via mocks).
+    Verifies that _time.sleep is called exactly once (exponential backoff fires)
+    and that the second request succeeds with a valid OHLCV result.
+
+    Setup: pre-seed a crumb so the initial lazy refresh is skipped; the first
+    chart request returns 401, triggering the backoff+retry path directly.
+    """
+    import services.screener_data_service as svc
+
+    # Crumb refresh response (called when the 401 triggers _refresh_yahoo_crumb)
+    crumb_resp = MagicMock()
+    crumb_resp.status_code = 200
+    crumb_resp.text = "new-crumb-after-401"
+
+    consent_resp = MagicMock()
+    consent_resp.status_code = 200
+
+    chart_200 = _make_yahoo_resp([140, 142, 145, 148, 150])
+
+    chart_call_count = {"n": 0}
+
+    def mock_get(url, **kwargs):
+        if "getcrumb" in url:
+            return crumb_resp
+        if "finance.yahoo.com" in url and "chart" not in url:
+            return consent_resp
+        # chart endpoint
+        chart_call_count["n"] += 1
+        if chart_call_count["n"] == 1:
+            return _make_resp(401)
+        return chart_200
+
+    mock_sess = MagicMock()
+    mock_sess.get.side_effect = mock_get
+
+    with patch("services.screener_data_service.requests") as mock_requests, \
+         patch("services.screener_data_service._time.sleep") as mock_sleep, \
+         patch("services.screener_data_service.random.uniform", return_value=0.0):
+        mock_requests.Session.return_value = mock_sess
+        mock_requests.RequestException = Exception
+
+        # Pre-seed a stale crumb so the chart request fires immediately (no
+        # initial refresh); the 401 on the first chart call triggers the retry
+        # path with crumb refresh + backoff sleep.
+        svc._yahoo_crumb = "stale-crumb"
+        svc._yahoo_session = mock_sess
+
+        result = svc._yahoo_fetch_ohlcv("MSFT", 30)
+
+    # AC-02: sleep called exactly once (backoff between 401 and retry)
+    assert mock_sleep.call_count == 1, (
+        f"Expected _time.sleep called once for backoff; got {mock_sleep.call_count} calls"
+    )
+    # AC-02: result is valid OHLCV with expected record count
+    assert result is not None, "Expected valid OHLCV result after successful retry"
+    assert len(result) == 5, f"Expected 5 OHLCV records; got {len(result)}"

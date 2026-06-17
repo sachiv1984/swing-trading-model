@@ -145,6 +145,8 @@ function PreEntryValidationPanel({ ticker, market, quantity, entryPrice, stopPri
   const advisory = data?.advisory_status;
   const checks = data?.checks || [];
   const hasWarnings = checks.some((c) => c.status === "warn" || c.status === "fail");
+  const warnCount = checks.filter((c) => c.status === "warn").length;
+  const failCount = checks.filter((c) => c.status === "fail").length;
 
   const STATUS_ICON = { pass: "✓", warn: "⚠", fail: "✗", skipped: "—" };
   const STATUS_COLOR = {
@@ -173,6 +175,11 @@ function PreEntryValidationPanel({ ticker, market, quantity, entryPrice, stopPri
           {advisory && (
             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${ADVISORY_BADGE[advisory] || ADVISORY_BADGE.warn}`}>
               {advisory === "pass" ? "Pass" : advisory === "warn" ? "Warn" : "Fail"}
+            </span>
+          )}
+          {collapsed && (advisory === "warn" || advisory === "fail") && (
+            <span data-testid="pre-entry-issue-count" className="text-xs text-slate-400">
+              {[failCount > 0 && `${failCount} fail`, warnCount > 0 && `${warnCount} warn`].filter(Boolean).join(", ")}
             </span>
           )}
           {isLoading && <span className="text-xs text-slate-500">Checking…</span>}
