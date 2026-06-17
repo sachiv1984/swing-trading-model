@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-09
+**Last Updated:** 2026-06-17
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -7915,4 +7915,87 @@ BLG-GOV-74 (first AI feature usage review, v4.4) established the initial Claude 
 - FinOps & Resource Architect sign-off recorded
 
 ---
+
+
+---
+
+### BLG-FE-75 — Staging verification: SI-05 digest deep links navigate on mobile Telegram
+**Priority:** P3 (Low)
+**Type:** QA / Staging
+**Owner:** Head of UX & Design
+**Source:** ST-01 AC-02 staging gate — 2026-06-16 (v5.6 sprint execution)
+**Effort:** XS (<1h)
+**Provisional-Target:** v5.7
+
+✅ COMPLETE — 2026-06-17 — cycle: 2026-06-16__release-v5.7 (ST-05; mobile Telegram staging run confirmed; 2 in-sprint bug fixes: MarkdownV2 decimal escape + HashRouter /#/ prefix)
+
+---
+
+### BLG-QA-56 — SI-01 all-pass state Playwright scenario
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA Lead; Director of Quality
+**Source:** GAP-ARC5-01 — Arc 5 coverage assessment ST-10 v5.6
+
+✅ COMPLETE — 2026-06-17 — cycle: 2026-06-16__release-v5.7 (ST-06; SC-SI-01d added to si01-si03-integration.spec.js)
+
+---
+
+### BLG-QA-57 — SI-03 Red Flag Journal pagination Playwright scenario
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA Lead; Director of Quality
+**Source:** GAP-ARC5-02 — Arc 5 coverage assessment ST-10 v5.6
+
+✅ COMPLETE — 2026-06-17 — cycle: 2026-06-16__release-v5.7 (ST-07; SC-RFJ-04 added to red-flag-journal.spec.js)
+
+---
+
+### BLG-QA-58 — Arc 5 compliance score trend value Playwright scenario
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA Lead; Director of Quality
+**Source:** GAP-ARC5-03 — Arc 5 coverage assessment ST-10 v5.6
+
+✅ COMPLETE — 2026-06-17 — cycle: 2026-06-16__release-v5.7 (ST-08; SC-ARC5-05 added to arc5-compliance-section.spec.js)
+
+---
+
+### BLG-OPS-66 — Staging verification: concentration-status p95 after FX cache fix
+**Priority:** P3 (Low)
+**Type:** Operations / Staging Verification
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-04 (EPIC-02, v5.6) — BLG-OPS-62 AC-03/04 staging-deferred
+
+✅ COMPLETE — 2026-06-17 — cycle: 2026-06-16__release-v5.7 (ST-01; p95=755ms < 1,000ms target; FX cache fix confirmed effective)
+
+---
+
+### BLG-OPS-67 — Staging verification: red-flag-journal p95 after schema-once fix
+**Priority:** P3 (Low)
+**Type:** Operations / Staging Verification
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-05 (EPIC-02, v5.6) — BLG-OPS-63 AC-03/04 staging-deferred
+
+✅ COMPLETE — 2026-06-17 — cycle: 2026-06-16__release-v5.7 (ST-02; p95=872ms < 1,000ms target; schema-once fix confirmed effective)
+
+---
+
+### BLG-OPS-68 — Staging verification: behavioural-drift p95 + cache hit rate after fix
+**Priority:** P3 (Low)
+**Type:** Operations / Staging Verification
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-06 (EPIC-02, v5.6) — BLG-OPS-64 AC-03/04/05 staging-deferred
+
+✅ COMPLETE — 2026-06-17 — cycle: 2026-06-16__release-v5.7 (ST-03; p95=677ms cached < 1,000ms; cache hit rate ≥50% inferred from timing signature)
+
+---
+
+### BLG-OPS-69 — Staging verification: research view p95 + cache hit rate after TTL cache
+**Priority:** P2 (Medium)
+**Type:** Operations / Staging Verification
+**Owner:** Infrastructure & Operations Owner; Head of Backend Engineering
+**Source:** ST-07 (EPIC-02, v5.6) — BLG-OPS-22 AC-04/05 staging-deferred
+
+✅ COMPLETE — 2026-06-17 — cycle: 2026-06-16__release-v5.7 (ST-04; p95=105ms << 2,000ms; cache hit rate ≥90% inferred; cache invalidation mechanism confirmed via v5.6 code review)
 

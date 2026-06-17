@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-16 (post-ship closure 2026-06-16__release-v5.6 — v5.6 marked ✅ Complete; current version updated to v5.6; v5.6 row added to release summary table)
+**Last Updated:** 2026-06-17 (post-ship closure 2026-06-16__release-v5.7 — v5.7 marked ✅ Complete; current version updated to v5.7; v5.7 row added to release summary table)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — Standard-tier, CPS=1.15; Δ=0.00; 8 new backlog items; DL-041/042; 4 ideas Rejected, 8 Promoted-Backlog, 17 re-parked; v5.4 Now section added)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,17 +10,10 @@
 
 ## 1. Current Version
 
-**v5.6** — Research Performance, SI-05 UX Improvements & Governance Patches — ✅ Shipped 2026-06-16
-**Next planned release:** v5.7
+**v5.7** — Staging Verification Completion, SI-05 Effectiveness Review & Engineering/Governance Patches — ✅ Shipped 2026-06-17
+**Next planned release:** v5.8
 
-<!-- roadmap-annotation-marker: RA:v5.7:2026-06-16__release-v5.7 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-06-16__release-v5.7
-- Plan published: 2026-06-16
-- Cycle folder: claude/cycles/2026-06-16__release-v5.7/
-- Backlog slice: claude/cycles/2026-06-16__release-v5.7/stage4_backlog_slice.md
-- Status at annotation: Validated
+*RA:v5.7 retired — see roadmap_archive.md 2026-06-17 (post-ship closure 2026-06-16__release-v5.7).*
 
 *RA:v5.2 retired — see roadmap_archive.md 2026-06-08 (post-ship closure 2026-06-08__release-v5.2).*
 *RA:v5.1 retired — see roadmap_archive.md 2026-06-04 (post-ship closure 2026-06-21__release-v5.1).*
@@ -457,6 +450,7 @@ When evaluating new features:
 |**v5.4** ✅  |Ops Monitoring, UX Debt Clearance & Governance Patches|v5.3 endpoint baseline added to api_performance_baseline.md (5 endpoints with live Render measurements; BLG-OPS-60 closed); pre-entry override UX spec (pre_entry_override_ux_spec.md; BLG-FE-56 closed); SI-05 Phase 2 activation criteria doc (si05_phase2_activation_criteria.md; BLG-GOV-92 closed). ST-03 (BLG-FE-64 RFJ pre-brief) returned — date gate 2026-06-21 not met. 3/4 firm stories. Zero deviations. — ✅ Shipped 2026-06-10 — cycle: 2026-06-09__release-v5.4|
 |**v5.5** ✅  |SI-05 Effectiveness Review, Governance Hardening & UX Debt Clearance|Governance patches (sprint_planning_prompt.md date gate advisory, execution_prompt.md pr_status mandatory persist + branch ordering gate, qa_evidence commit advisory; BLG-GOV-116/117/118 closed); trade count gate-monitoring view GET /portfolio/gate-metrics + SI-05 data density digest line (BLG-BE-34/GOV-120 closed); API performance baseline complete — 18 endpoints measured across v2.8–v5.4 (BLG-OPS-13/54/61 closed); formal regression test suite baseline doc 387 scenarios (BLG-QA-50 closed); SI-05 user journey map (BLG-FE-65 closed; BLG-FE-73/74 filed). 10/14 firm stories; ST-11–14 returned (gate dates 2026-06-21/2026-07-04). Zero deviations. — ✅ Shipped 2026-06-16 — cycle: 2026-06-10__release-v5.5|
 |**v5.6** ✅  |Research Performance, SI-05 UX Improvements & Governance Patches|PT-04 re-verification (13/20 closed trades; gate NOT MET; BLG-GOV-106 closed); Arc 5 QA completion criteria (BLG-QA-45 closed; BLG-QA-26 gate updated); Arc 5 test scenario assessment (3 P3 Playwright gaps: BLG-QA-56/57/58; BLG-QA-49 closed); Anthropic API cost trend (stable, $0.05–$0.15/month; BLG-OPS-65 closed); SI-05 digest deep links + N/A reason clarification (BLG-FE-73/74 closed); performance latency hardening — 4 endpoints (concentration-status, red-flag-journal, behavioural-drift, research cache; BLG-OPS-62/63/64/22 closed; staging verification deferred BLG-OPS-66–69). ST-03 (BLG-FE-64) returned — gate 2026-06-21 not cleared. 10/10 firm stories. Zero deviations. — ✅ Shipped 2026-06-16 — cycle: 2026-06-16__release-v5.6|
+|**v5.7** ✅  |Staging Verification Completion & Engineering/Governance Patches|Production latency verifications: all 4 endpoints confirmed pass (BLG-OPS-66–69 closed; p95 755ms/872ms/677ms/105ms); SI-05 deep links mobile Telegram staging confirmed (BLG-FE-75 closed; 2 in-sprint bug fixes); Arc 5 Playwright coverage gaps closed (BLG-QA-56/57/58 — SC-SI-01d/SC-RFJ-04/SC-ARC5-05 added); lazy-import pattern documented (BLG-BE-36 closed; backend_engineering_patterns.md v1.1); dual sign-off class pattern confirmed (BLG-GOV-123 closed; LL-v5.6-DV-03 resolved). EPIC-03 (ST-12/13/14) gate-deferred 2026-07-04; BLG-FE-64 4th deferral (gate 2026-06-21). 10/10 firm stories. Zero deviations. — ✅ Shipped 2026-06-17 — cycle: 2026-06-16__release-v5.7|
 |**v4.0+**    |Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
 |**v4.0+**    |Arc 5: Strategy Integrity (remainder)                                 |SI-02 behavioural drift detection, SI-04 strategy version comparison, SI-05 weekly digest — 📋 Planned                                    |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

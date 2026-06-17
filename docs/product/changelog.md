@@ -3,9 +3,40 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-16
+**Last Updated:** 2026-06-17
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v5.7 — Staging Verification Completion, SI-05 Effectiveness Review & Engineering/Governance Patches — 2026-06-17
+Cycle: 2026-06-16__release-v5.7
+Verified: Verified
+Verification report: claude/cycles/2026-06-16__release-v5.7/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Production latency staging verifications: concentration-status p95=755ms ✓, red-flag-journal p95=872ms ✓, behavioural-drift p95=677ms (cached) ✓, research view p95=105ms ✓ (all BLG-OPS-66–69 closed); SI-05 deep links mobile Telegram staging run confirmed working after two in-sprint bug fixes (BLG-FE-75 closed); Arc 5 Playwright coverage gaps closed: SC-SI-01d (all-pass state), SC-RFJ-04 (pagination), SC-ARC5-05 (compliance trend values) | docs/ops/api_performance_baseline.md; tests/e2e/si01-si03-integration.spec.js; tests/e2e/red-flag-journal.spec.js; tests/e2e/arc5-compliance-section.spec.js |
+| EPIC-02 | Lazy-import pattern documented in backend_engineering_patterns.md v1.0→v1.1 (BLG-BE-36 closed); dual sign-off class pattern confirmed present in execution_prompt.md §5.3 at v3.42 (BLG-GOV-123 closed; LL-v5.6-DV-03 carry-forward resolved) | docs/specs/api_contracts/backend_engineering_patterns.md; claude/system/execution_prompt.md |
+
+### Deviations accepted
+None.
+
+### Tech backlog items shipped
+- [ST-01] BLG-OPS-66: Staging verification — concentration-status p95 — p95=755ms confirmed, FX cache fix effective
+- [ST-02] BLG-OPS-67: Staging verification — red-flag-journal p95 — p95=872ms confirmed, schema-once fix effective
+- [ST-03] BLG-OPS-68: Staging verification — behavioural-drift p95 + cache — p95=677ms cached, cache hit rate ≥50% inferred
+- [ST-04] BLG-OPS-69: Staging verification — research view p95 + cache — p95=105ms, cache hit rate ≥90%, mechanism confirmed
+- [ST-05] BLG-FE-75: Staging verification — SI-05 deep links on mobile Telegram — two in-sprint fixes, both links confirmed
+- [ST-06] BLG-QA-56: SI-01 all-pass state Playwright scenario (SC-SI-01d added)
+- [ST-07] BLG-QA-57: SI-03 RFJ pagination Playwright scenario (SC-RFJ-04 added)
+- [ST-08] BLG-QA-58: Arc 5 compliance trend Playwright scenario (SC-ARC5-05 added)
+- [ST-10] BLG-BE-36: Lazy-import pattern documentation — backend_engineering_patterns.md v1.1
+- [ST-11] BLG-GOV-123: Dual sign-off class pattern confirmed in execution_prompt.md — LL-v5.6-DV-03 closed
+
+Sign-off: Product Owner (agent-mediated) — 2026-06-17
+QA sign-off: Director of Quality (agent-mediated) — 2026-06-17
 
 ---
 

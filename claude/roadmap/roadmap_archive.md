@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-09 (post-ship closure 2026-06-08__release-v5.3)
+**Last Updated:** 2026-06-17 (post-ship closure 2026-06-16__release-v5.7)
 
 # Roadmap Archive — Momentum Trading Assistant
 
@@ -1241,3 +1241,21 @@ v5.5 SI-05 Effectiveness Review, Governance Hardening & UX Debt Clearance.
 ### Original Roadmap Entry
 
 v5.6 Research Performance, SI-05 UX Improvements & Governance Patches. SI-05 digest deep links + N/A reason clarification (BLG-FE-73/74, ST-01/02). Performance latency hardening — 4 endpoints: concentration-status 5-min TTL FX cache; red-flag-journal schema-once guard; behavioural-drift schema-once + 15-min cache; research 15-min per-ticker TTL + screener invalidation (BLG-OPS-22/62/63/64, ST-04/05/06/07). PT-04 gate re-verification: 13/20 closed trades — NOT MET (BLG-GOV-106, ST-08). Arc 5 QA completion criteria: BLG-QA-26 gate updated (BLG-QA-45, ST-09). Arc 5 test scenario assessment: 3 P3 Playwright gaps BLG-QA-56/57/58 (BLG-QA-49, ST-10). Anthropic API cost trend: stable, est. $0.05–$0.15/month (BLG-OPS-65, ST-11). ST-03 (BLG-FE-64) conditional — returned at planning (gate 2026-06-21 not cleared). 10/10 firm stories. Zero spec deviations. PRs #764–#766. Verified 2026-06-16. completed_cycle_count = 42. Governance patches: sprint_planning_prompt.md date gate advisory (BLG-GOV-116, ST-01); execution_prompt.md pr_status mandatory persist + branch ordering gate (BLG-GOV-117, ST-02; LL-v5.5-EX-02); qa_evidence commit advisory (BLG-GOV-118, ST-03; LL-v5.5-EX-01). Trade count gate-monitoring view GET /portfolio/gate-metrics + SI-05 data density line (BLG-BE-34/GOV-120, ST-04/05). API performance baseline complete — 18 endpoints measured v2.8–v5.4 (BLG-OPS-13/54/61, ST-06/07/08). Formal regression test suite baseline 387 scenarios / 66 endpoints (BLG-QA-50, ST-09). SI-05 user journey map + BLG-FE-73/74 friction (BLG-FE-65, ST-10). ST-11–14 returned — gate dates 2026-06-21/2026-07-04 not met. 10/14 firm stories. Zero spec deviations. PRs #751–#753. Verified 2026-06-16. completed_cycle_count = 41.
+
+
+---
+
+## RA:v5.7 — Staging Verification Completion, SI-05 Effectiveness Review & Engineering/Governance Patches
+
+**Original roadmap location:** §1 Current Version / Release Summary §8
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-17
+**Shipped version:** v5.7
+**Cycle reference:** 2026-06-16__release-v5.7
+**Verification report:** claude/cycles/2026-06-16__release-v5.7/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-17
+
+### Original Roadmap Entry
+
+v5.7 Staging Verification Completion, SI-05 Effectiveness Review & Engineering/Governance Patches. Production latency verifications: concentration-status p95=755ms (BLG-OPS-66, ST-01); red-flag-journal p95=872ms (BLG-OPS-67, ST-02); behavioural-drift p95=677ms cached (BLG-OPS-68, ST-03); research view p95=105ms (BLG-OPS-69, ST-04). SI-05 deep links mobile Telegram staging confirmed (BLG-FE-75, ST-05; 2 in-sprint bug fixes). Arc 5 Playwright coverage gaps closed: SC-SI-01d (BLG-QA-56, ST-06); SC-RFJ-04 (BLG-QA-57, ST-07); SC-ARC5-05 (BLG-QA-58, ST-08). Lazy-import pattern documented in backend_engineering_patterns.md v1.1 (BLG-BE-36, ST-10). Dual sign-off class confirmed in execution_prompt.md §5.3 (BLG-GOV-123, ST-11; LL-v5.6-DV-03 resolved). ST-09 (BLG-FE-64) conditional — 4th deferral, gate 2026-06-21. EPIC-03 (ST-12/13/14) gate-deferred 2026-07-04. 10/10 firm Sprint 1 stories. Zero spec deviations. PRs #781/782. Verified 2026-06-17. completed_cycle_count = 43.

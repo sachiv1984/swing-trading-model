@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-16 (groom backlog 2026-06-16 — 103 items archived: BLG-FEAT/FE/BE/QA/OPS/SPEC/GOV completed items; 4 ephemeral Release Slice sections removed; 117 active items remain)
+**Last Updated:** 2026-06-17 (post-ship closure 2026-06-16__release-v5.7 — 8 items marked ✅ COMPLETE: BLG-FE-75, BLG-QA-56/57/58, BLG-OPS-66/67/68/69)
 **Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — DL-041/042; IW skipped ≥20 open ideas; 8 new items; meta-review DUE conducted; v5.4 Now section added)
 
 > ⚠️ Standing Notice
@@ -919,30 +919,6 @@ If SI-05 Phase 2 includes an in-app delivery channel, a UX spec will be required
 
 ---
 
-### BLG-FE-75 — Staging verification: SI-05 digest deep links navigate on mobile Telegram
-**Priority:** P3 (Low)
-**Type:** QA / Staging
-**Owner:** Head of UX & Design
-**Source:** ST-01 AC-02 staging gate — 2026-06-16 (v5.6 sprint execution)
-**Effort:** XS (<1h)
-**Provisional-Target:** v5.7
-
-**Problem**
-ST-01 (BLG-FE-73) added deep links from the SI-05 digest to Risk Dashboard and Red Flag Journal. AC-02 requires verifying the links navigate correctly on mobile Telegram. This requires a Telegram mobile client test which cannot be reproduced in CI. Deferred to post-merge staging.
-
-**Scope**
-- Open the SI-05 weekly Telegram digest on a mobile device
-- Tap each deep link (Risk Dashboard, Red Flag Journal)
-- Confirm navigation to the correct app screen
-- Record staging run date in QA evidence
-
-**Acceptance Criteria**
-- Risk Dashboard deep link navigates to `/RiskDashboard` on mobile Telegram
-- Red Flag Journal deep link navigates to `/RedFlagJournal` on mobile Telegram
-- No broken links or navigation errors
-
----
-
 ## 4. Backend & Data Backlog
 
 ---
@@ -1414,57 +1390,6 @@ SI-04 (strategy version comparison) requires test coverage across: unit tests (v
 - Test requirements document produced covering all three test tiers
 - Playwright scenario outlines defined
 - Gate condition verified before sprint planning
-
----
-
-### BLG-QA-56 — SI-01 all-pass state Playwright scenario
-**Priority:** P3 (Low)
-**Type:** QA / Test Coverage
-**Owner:** QA Lead; Director of Quality
-**Source:** GAP-ARC5-01 — Arc 5 coverage assessment ST-10 v5.6 (docs/qa/arc5_test_coverage_assessment.md)
-**Effort:** XS (<1 hour)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-`si01-si03-integration.spec.js` has SC-SI-01a/b/c covering the failure + override path. No scenario exercises the all-pass state (all 5 checks pass → panel shows success, no override checkbox). The backend `test_all_pass_gives_pass` unit test exists but the frontend rendering branch is unverified.
-
-**Acceptance Criteria**
-- SC-SI-01d added to `si01-si03-integration.spec.js`: mock all validation checks as passing; assert success state visible and override checkbox absent
-- QA Lead sign-off
-
----
-
-### BLG-QA-57 — SI-03 Red Flag Journal pagination Playwright scenario
-**Priority:** P3 (Low)
-**Type:** QA / Test Coverage
-**Owner:** QA Lead; Director of Quality
-**Source:** GAP-ARC5-02 — Arc 5 coverage assessment ST-10 v5.6 (docs/qa/arc5_test_coverage_assessment.md)
-**Effort:** XS (<1 hour)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-`red-flag-journal.spec.js` has SC-RFJ-01/02/03 covering single-page list, empty state, and filter. No scenario covers pagination (events > page size → load-more renders additional events). Backend pagination parameter forwarding is unit-tested; E2E rendering is not.
-
-**Acceptance Criteria**
-- SC-RFJ-04 added to `red-flag-journal.spec.js`: mock payload with events > page size; assert load-more trigger and additional events rendered
-- QA Lead sign-off
-
----
-
-### BLG-QA-58 — Arc 5 compliance score trend value Playwright scenario
-**Priority:** P3 (Low)
-**Type:** QA / Test Coverage
-**Owner:** QA Lead; Director of Quality
-**Source:** GAP-ARC5-03 — Arc 5 coverage assessment ST-10 v5.6 (docs/qa/arc5_test_coverage_assessment.md)
-**Effort:** XS (<1 hour)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-`arc5-compliance-section.spec.js` has SC-ARC5-01/02/03/04 covering heading, card titles, loading skeleton, error state. No scenario verifies compliance score trend values are rendered correctly from the API (pass rate % formatted correctly, trend direction indicator present).
-
-**Acceptance Criteria**
-- SC-ARC5-05 added to `arc5-compliance-section.spec.js`: mock payload with known metric values; assert formatted value visible
-- QA Lead sign-off
 
 ---
 
@@ -2860,80 +2785,6 @@ BLG-OPS-60 (completed v5.4) added v5.3 endpoints to api_performance_baseline.md.
 - All v5.1/v5.2 new endpoints have latency entries in the baseline document
 - Consistent with existing measurement methodology
 - Infrastructure & Operations Owner sign-off
-
----
-
-### BLG-OPS-66 — Staging verification: concentration-status p95 after FX cache fix
-**Priority:** P3 (Low)
-**Type:** Operations / Staging Verification
-**Owner:** Infrastructure & Operations Owner
-**Source:** ST-04 (EPIC-02, v5.6) — BLG-OPS-62 AC-03/04 staging-deferred
-**Effort:** XS (<1 hour)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-ST-04 (v5.6) applied a 5-min TTL FX rate cache to `get_live_fx_rate()` to eliminate the live HTTP call on every `/portfolio/concentration-status` request (baseline p95=5,917ms). Production latency re-measurement is required to confirm the fix achieved ≤1,000ms p95.
-
-**Acceptance Criteria**
-- GET /portfolio/concentration-status p95 latency re-measured on production after v5.6 deployment
-- p95 ≤1,000ms confirmed (or further investigation initiated if not met)
-- Infrastructure & Operations Owner sign-off recorded
-
----
-
-### BLG-OPS-67 — Staging verification: red-flag-journal p95 after schema-once fix
-**Priority:** P3 (Low)
-**Type:** Operations / Staging Verification
-**Owner:** Infrastructure & Operations Owner
-**Source:** ST-05 (EPIC-02, v5.6) — BLG-OPS-63 AC-03/04 staging-deferred
-**Effort:** XS (<1 hour)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-ST-05 (v5.6) replaced per-request `ensure_red_flag_events_table/severity_column()` DDL calls with a process-lifetime singleton guard in `red_flag_journal.py` (baseline p95=3,200ms). Production latency re-measurement required to confirm fix achieved ≤1,000ms p95.
-
-**Acceptance Criteria**
-- GET /portfolio/red-flag-journal p95 latency re-measured on production after v5.6 deployment
-- p95 ≤1,000ms confirmed (or further investigation initiated if not met)
-- Infrastructure & Operations Owner sign-off recorded
-
----
-
-### BLG-OPS-68 — Staging verification: behavioural-drift p95 + cache hit rate after fix
-**Priority:** P3 (Low)
-**Type:** Operations / Staging Verification
-**Owner:** Infrastructure & Operations Owner
-**Source:** ST-06 (EPIC-02, v5.6) — BLG-OPS-64 AC-03/04/05 staging-deferred
-**Effort:** XS (<1 hour)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-ST-06 (v5.6) applied schema-once guard + 15-min TTL result cache to `/analytics/behavioural-drift` (baseline p95=3,798ms). Production latency and cache hit rate measurement required.
-
-**Acceptance Criteria**
-- GET /analytics/behavioural-drift p95 latency re-measured on production after v5.6 deployment
-- p95 ≤1,000ms for cached calls confirmed
-- Cache hit rate ≥50% under typical usage confirmed (check logs: `[research_cache] HIT/MISS`)
-- Infrastructure & Operations Owner sign-off recorded
-
----
-
-### BLG-OPS-69 — Staging verification: research view p95 + cache hit rate after TTL cache
-**Priority:** P2 (Medium)
-**Type:** Operations / Staging Verification
-**Owner:** Infrastructure & Operations Owner; Head of Backend Engineering
-**Source:** ST-07 (EPIC-02, v5.6) — BLG-OPS-22 AC-04/05 staging-deferred
-**Effort:** S (~0.5 day)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-ST-07 (v5.6) implemented a 15-min per-ticker TTL cache for GET /research/{ticker} with screener-run cache invalidation (baseline p95=4,601ms). Production measurement required to confirm p95 ≤2,000ms for cached tickers and cache hit rate ≥50%.
-
-**Acceptance Criteria**
-- GET /research/{ticker} p95 latency ≤2,000ms for cached tickers on production
-- Cache hit rate ≥50% under typical usage (check `[research_cache] HIT/MISS` log output)
-- Cache invalidation on screener run confirmed (run screener, verify subsequent research request is a MISS)
-- Infrastructure & Operations Owner sign-off recorded
 
 ---
 
