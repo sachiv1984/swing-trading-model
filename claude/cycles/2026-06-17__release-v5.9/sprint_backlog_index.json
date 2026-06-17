@@ -1,0 +1,116 @@
+{
+  "cycle_id": "2026-06-17__release-v5.9",
+  "release": "v5.9",
+  "sprint": 1,
+  "generated_utc": "2026-06-17T00:00:00Z",
+  "epics": [
+    {
+      "epic_id": "EPIC-01",
+      "title": "Governance Simplification (SC-03–SC-07)",
+      "owner": "Head of Specs Team",
+      "branch": "exec/2026-06-17__release-v5.9/EPIC-01",
+      "execution_state_owner": true,
+      "merge_order": 1,
+      "stories": [
+        {
+          "story_id": "ST-01",
+          "source": "BLG-GOV-125",
+          "title": "SC-03: Consolidate spec_references policy sub-variants in execution_prompt.md",
+          "effort": "XS",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-01"]
+        },
+        {
+          "story_id": "ST-02",
+          "source": "BLG-GOV-126",
+          "title": "SC-04: Remove STEP 8.6–8.7 fatigue detection guardrail from roadmap_prompt.md",
+          "effort": "XS",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-02"]
+        },
+        {
+          "story_id": "ST-03",
+          "source": "BLG-GOV-127",
+          "title": "SC-05: Remove dead-load advisory steps from release_planning_prompt.md",
+          "effort": "XS",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-03"]
+        },
+        {
+          "story_id": "ST-04",
+          "source": "BLG-GOV-128",
+          "title": "SC-06: Make Playwright selector check conditional on DOM changes in execution_prompt.md",
+          "effort": "XS",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-04"]
+        },
+        {
+          "story_id": "ST-05",
+          "source": "BLG-GOV-129",
+          "title": "SC-07: Compress Advisory Summary Block format docs in post_ship_closure.md",
+          "effort": "XS",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-05"]
+        }
+      ]
+    },
+    {
+      "epic_id": "EPIC-02",
+      "title": "QA Coverage, Governance Audits & UX Improvement",
+      "owner": "Director of Quality; QA Lead; Head of UX & Design",
+      "branch": "exec/2026-06-17__release-v5.9/EPIC-02",
+      "execution_state_owner": false,
+      "merge_order": 2,
+      "stories": [
+        {
+          "story_id": "ST-06",
+          "source": "BLG-QA-24",
+          "title": "Yahoo Finance backoff path integration test stub",
+          "effort": "S",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-06"]
+        },
+        {
+          "story_id": "ST-07",
+          "source": "BLG-GOV-38",
+          "title": "DoQ sign-off date compliance audit (v3.7–v3.9)",
+          "effort": "S",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-07"]
+        },
+        {
+          "story_id": "ST-08",
+          "source": "BLG-QA-34",
+          "title": "QA evidence file format audit (v3.7–v4.0)",
+          "effort": "S",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-08"]
+        },
+        {
+          "story_id": "ST-09",
+          "source": "BLG-GOV-53",
+          "title": "Agent idea participation tracking summary",
+          "effort": "S",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-09"]
+        },
+        {
+          "story_id": "ST-10",
+          "source": "BLG-QA-50",
+          "title": "Formal regression test suite baseline document",
+          "effort": "S",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-10"]
+        },
+        {
+          "story_id": "ST-11",
+          "source": "BLG-FE-57",
+          "title": "Pre-entry panel: show warning/fail count when collapsed",
+          "effort": "XS",
+          "delegation_class": "autonomous",
+          "backlog_slice_refs": ["stage4_backlog_slice.md#ST-11"]
+        }
+      ]
+    }
+  ]
+}
