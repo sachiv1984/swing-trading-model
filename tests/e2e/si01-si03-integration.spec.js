@@ -345,3 +345,54 @@ test.describe('SC-SI-PATH — Full SI-01→SI-03 integration path', () => {
     await expect(page.locator('text=AAPL').or(page.locator('text=Pre-Entry Override'))).toBeVisible({ timeout: 6000 });
   });
 });
+
+// ---------------------------------------------------------------------------
+// SC-SI-01d: Pre-entry validation all-pass state (BLG-QA-56 — v5.7 ST-06)
+// ---------------------------------------------------------------------------
+
+const PRE_ENTRY_VALIDATION_ALL_PASS = {
+  status: 'ok',
+  data: {
+    ticker: 'AAPL',
+    market: 'US',
+    quantity: 10,
+    advisory_status: 'pass',
+    override_required: false,
+    checks: [
+      { rule: 'regime_gate', status: 'pass', detail: 'US market is Risk-On (SPY above 200-day MA)', severity: 'fail' },
+      { rule: 'cash_constraint', status: 'pass', detail: 'Within available cash', severity: 'fail' },
+      { rule: 'sector_concentration', status: 'pass', detail: 'Technology 22% within 30% limit', severity: 'warn' },
+      { rule: 'earnings_proximity', status: 'pass', detail: 'Earnings 45 days away', severity: 'warn' },
+      { rule: 'sizing_validity', status: 'pass', detail: 'Position sizing valid', severity: 'warn' },
+    ],
+  },
+};
+
+test.describe('SC-SI-01d — Pre-entry validation all-pass state', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockCatchAll(page);
+    await mockHealth(page);
+    await mockSettings(page);
+    await mockMarketStatus(page, { status: 'ok', data: { regime_status: 'risk_on' } });
+    await mockPreEntryValidation(page, PRE_ENTRY_VALIDATION_ALL_PASS);
+    await mockTradePlans(page);
+    await mockPositions(page, POSITIONS_OPEN);
+    await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+    await expect(page.locator('text=Trade Plan')).toBeVisible({ timeout: 8000 });
+  });
+
+  test('SC-SI-01d: All-pass state — "Pass" advisory badge visible', async ({ page }) => {
+    // The pre-entry panel must be present with a Pass advisory badge
+    await expect(page.locator('[data-testid="pre-entry-checks-panel"]')).toBeVisible({ timeout: 8000 });
+    // When advisory_status === 'pass', the badge shows "Pass"
+    await expect(page.locator('[data-testid="pre-entry-checks-panel"]').getByText('Pass')).toBeVisible({ timeout: 8000 });
+  });
+
+  test('SC-SI-01d: All-pass state — override acknowledgement checkbox absent', async ({ page }) => {
+    // Override checkbox only renders when hasWarnings (any check status is warn or fail)
+    // With all checks passing, no warnings exist and the checkbox must not render
+    await expect(page.locator('[data-testid="pre-entry-checks-panel"]')).toBeVisible({ timeout: 8000 });
+    const checkbox = page.locator('[data-testid="override-acknowledgement-checkbox"]');
+    await expect(checkbox).toHaveCount(0);
+  });
+});

@@ -128,6 +128,54 @@ test.describe('Red Flag Journal', () => {
     await expect(page.getByTestId('event-row')).toHaveCount(0);
   });
 
+  test('SC-RFJ-04: Pagination — Next button navigates to page 2 and loads additional events', async ({ page }) => {
+    const PAGE_SIZE = 20;
+
+    // Build 21 events: 20 on page 1, 1 on page 2 — total > page size triggers pagination
+    function makeEvents(count, startIndex = 0) {
+      return Array.from({ length: count }, (_, i) => ({
+        id: `00000000-0000-0000-0000-${String(startIndex + i).padStart(12, '0')}`,
+        event_type: i % 2 === 0 ? 'pre_entry_override' : 'checklist_skipped',
+        ticker: i % 2 === 0 ? 'AAPL' : 'MSFT',
+        position_id: null,
+        context: {},
+        created_at: new Date(Date.now() - (startIndex + i) * 3600 * 1000).toISOString(),
+      }));
+    }
+
+    const PAGE1_EVENTS = makeEvents(PAGE_SIZE, 0);
+    const PAGE2_EVENTS = makeEvents(1, PAGE_SIZE);
+    const TOTAL = 21;
+
+    await mockFallback(page);
+    await page.route(new RegExp(`${API}/portfolio/red-flag-journal`), (route) => {
+      const url = new URL(route.request().url());
+      const pg = parseInt(url.searchParams.get('page') || '1', 10);
+      const items = pg === 1 ? PAGE1_EVENTS : PAGE2_EVENTS;
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(makeJournalResponse(items, TOTAL)),
+      });
+    });
+
+    await page.goto(PAGE_URL);
+    // Wait for page 1 rows to render — element-specific wait (no networkidle)
+    await expect(page.getByTestId('event-row').first()).toBeVisible({ timeout: 8000 });
+    await expect(page.getByTestId('event-row')).toHaveCount(PAGE_SIZE, { timeout: 8000 });
+
+    // Next button must be present and enabled (total > page size → totalPages > 1)
+    const nextButton = page.getByRole('button', { name: /next/i });
+    await expect(nextButton).toBeVisible({ timeout: 5000 });
+    await expect(nextButton).toBeEnabled();
+
+    // Click Next to load page 2
+    await nextButton.click();
+
+    // Page 2: 1 event row visible
+    await expect(page.getByTestId('event-row')).toHaveCount(1, { timeout: 8000 });
+  });
+
   test('SC-RFJ-03: Filter by event_type narrows results in mocked response', async ({ page }) => {
     // Initially returns both events
     await mockFallback(page);

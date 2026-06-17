@@ -167,3 +167,41 @@ test.describe('SC-ARC5-04 — Error state', () => {
     await expect(errorMessages.first()).toBeVisible({ timeout: 8000 });
   });
 });
+
+// ---------------------------------------------------------------------------
+// SC-ARC5-05 — Compliance score metric values formatted correctly (BLG-QA-58 — v5.7 ST-08)
+// ---------------------------------------------------------------------------
+
+const ARC5_KNOWN_VALUES = {
+  status: 'ok',
+  data: {
+    events_per_week: 3.0,
+    override_rate: 0.200,
+    top_rule_breach: 'cash_constraint',
+    trade_plan_adherence_rate: 0.850,
+    validation_pass_rate_by_rule: {
+      regime_gate: 0.90,
+      cash_constraint: 0.75,
+      sector_concentration: 0.95,
+      earnings_proximity: 0.88,
+      sizing_validity: 0.99,
+    },
+  },
+};
+
+test.describe('SC-ARC5-05 — Compliance score metric values formatted as percentages', () => {
+  test('SC-ARC5-05: Trade Plan Adherence displays as formatted percentage (85.0%)', async ({ page }) => {
+    await mockFallback(page);
+    await mockArc5Compliance(page, ARC5_KNOWN_VALUES);
+    await gotoAnalytics(page);
+
+    // Section heading confirms the component is rendered
+    await expect(page.getByText('Arc 5 Signal Compliance')).toBeVisible({ timeout: 10000 });
+
+    // trade_plan_adherence_rate: 0.850 → fmtRate → "85.0%"
+    await expect(page.getByText('85.0%')).toBeVisible({ timeout: 8000 });
+
+    // override_rate: 0.200 → fmtRate → "20.0%"
+    await expect(page.getByText('20.0%')).toBeVisible({ timeout: 8000 });
+  });
+});

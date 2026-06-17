@@ -81,7 +81,7 @@ class TestFormatSi05SectionDataPresent:
             "top_rule_breach": None,
         }
         section = format_si05_section(data)
-        assert "85.0%" in section
+        assert "85\\.0%" in section
 
     def test_red_flag_count_multiplied_by_7(self):
         """events_per_week=1.0 → red_flag_count = round(1.0 * 7) = 7."""
@@ -505,8 +505,8 @@ class TestDeepLinks:
             section = format_si05_section(data)
         assert "Risk Dashboard" in section
         assert "Red Flag Journal" in section
-        assert "https://app.example.com/RiskDashboard" in section
-        assert "https://app.example.com/RedFlagJournal" in section
+        assert "https://app.example.com/#/RiskDashboard" in section
+        assert "https://app.example.com/#/RedFlagJournal" in section
 
     def test_deep_links_absent_when_frontend_url_not_set(self):
         """Without FRONTEND_URL, no deep links in digest (graceful omission)."""
@@ -536,7 +536,7 @@ class TestDeepLinks:
         }
         with patch.dict("os.environ", {"FRONTEND_URL": "https://app.example.com/"}):
             section = format_si05_section(data)
-        assert "https://app.example.com/RiskDashboard" in section
+        assert "https://app.example.com/#/RiskDashboard" in section
         assert "//RiskDashboard" not in section
 
     def test_character_limit_with_deep_links(self):
