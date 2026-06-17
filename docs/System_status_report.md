@@ -1693,3 +1693,29 @@ The system is ready for:
 - QA evidence logs: qa_evidence_EPIC-03.md (agent-mediated, 2026-06-16), qa_evidence_EPIC-01.md (agent-mediated, 2026-06-16), qa_evidence_EPIC-02.md (agent-mediated, 2026-06-16)
 - Deviations filed: None
 - Test scenarios referenced: tests/test_si05_digest_service.py (33 tests; 13 new for EPIC-01)
+
+## Sprint: 2026-06-16__release-v5.7
+**Date:** 2026-06-17
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Production latency verifications (ST-01–04): concentration-status p95=755ms, red-flag-journal p95=872ms, behavioural-drift p95(cached)=677ms, research-view p95=105ms — all within targets; SI-05 deep link mobile fix (ST-05): MarkdownV2 + HashRouter /#/ bugs fixed, both Telegram deep links confirmed working; Arc 5 Playwright coverage (ST-06–08): SC-SI-01d, SC-RFJ-04, SC-ARC5-05 added | stage4_backlog_slice.md#ST-01–05; tests/e2e/si01-si03-integration.spec.js; tests/e2e/red-flag-journal.spec.js; tests/e2e/arc5-compliance-section.spec.js | None |
+| EPIC-02 | Lazy-import pattern documentation in backend engineering guide (ST-10); execution_prompt §5.3 dual sign-off pattern confirmed (ST-11) | docs/specs/api_contracts/backend_engineering_patterns.md; claude/system/execution_prompt.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-09 — BLG-FE-64: RFJ design review pre-brief | Gate 2026-06-21 not cleared (SI-03 live <30 days); 4th deferral | BLG-FE-64 (backlog.md) |
+| ST-12 — BLG-GOV-112: SI-05 cadence review | EPIC-03 Sprint 2 conditional — gate 2026-07-04 not reached | BLG-GOV-112 (backlog.md) |
+| ST-13 — BLG-GOV-115: SI-05 actionability metrics | EPIC-03 Sprint 2 conditional — gate 2026-07-04 not reached | BLG-GOV-115 (backlog.md) |
+| ST-14 — BLG-OPS-59: SI-05 p99 latency baseline | EPIC-03 Sprint 2 conditional — gate 2026-07-04 not reached | BLG-OPS-59 (backlog.md) |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (I&O co-sign + Head of UX & Design, 2026-06-17), qa_evidence_EPIC-02.md (autonomous class, 2026-06-17)
+- Deviations filed: None
+- Test scenarios referenced: tests/e2e/si01-si03-integration.spec.js, tests/e2e/red-flag-journal.spec.js, tests/e2e/arc5-compliance-section.spec.js
