@@ -137,7 +137,9 @@
 **Delegation Class:** delegated_qa
 **Assigned To:** Head of UX & Design
 **Delegated At:** 2026-06-16T23:30:00Z
-**Status:** Pending
+**Status:** Unblocked
+**Commit SHA:** a330876e (2026-06-17)
+**Outcome:** Mobile staging run 2026-06-17. Both deep links pass. Two bugs fixed in-sprint (MarkdownV2 + HashRouter prefix). Sign-off confirmed.
 
 **Context:** v5.6 ST-01 EPIC-01 AC-02 staging-deferred. SI-05 Telegram digest deep links were deployed in v5.1 but mobile navigation confirmation was deferred. All ACs require a physical mobile device and Telegram environment.
 
