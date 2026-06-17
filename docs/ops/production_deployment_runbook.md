@@ -1,8 +1,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.2
-**Last Updated:** 2026-06-08
+**Version:** 0.3
+**Last Updated:** 2026-06-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -186,8 +186,9 @@ This section covers the operational requirements for the SI-05 weekly strategy i
 |---|---|---|
 | `TELEGRAM_BOT_TOKEN` | Authentication token for the Telegram bot | Obtain from BotFather (`@BotFather` in Telegram); rotate via BotFather if compromised |
 | `TELEGRAM_CHAT_ID` | Target chat ID for digest delivery | Obtain from the Telegram chat where the bot should send digests (use `getUpdates` API or Telegram client) |
+| `FRONTEND_URL` | Base URL of the production frontend — used by SI-05 digest service to construct deep links in Telegram messages | Set to the production frontend URL (e.g. `https://<your-frontend-domain>`). Without this, deep links in SI-05 digests will be absent. Added v0.3, ST-03 (v5.8 post-ship OA). |
 
-Both variables are required. If either is absent, the digest service logs a WARNING and returns `sent: false` without error — the weekly digest will not be sent.
+All three variables are required for full SI-05 functionality. If `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` is absent, the digest service logs a WARNING and returns `sent: false`. If `FRONTEND_URL` is absent, digests are sent but deep links are omitted.
 
 **Security note:** Treat `TELEGRAM_BOT_TOKEN` as a secret. Do not commit to source control. Store in Render environment variables (encrypted at rest). Rotate immediately if exposed.
 
@@ -249,4 +250,6 @@ For interim health checks before BLG-BE-33 ships, use Render logs (Option B) or 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3 | 2026-06-17 | Added `FRONTEND_URL` to §6.1 environment variables table (ST-03, v5.8 post-ship OA). Infrastructure & Operations Owner sign-off. |
+| 0.2 | 2026-06-08 | Added §6 SI-05 Phase 1 Operational Requirements (ST-07, BLG-OPS-55, v5.2). Infrastructure & Operations Owner. |
 | 0.1 | 2026-03-17 | Initial version. ST-14 — EPIC-05 (Documentation & Standards Pack). v2.0 sprint cycle 2026-03-17__release-v2.0. Infrastructure & Operations Owner. Reviewed by Head of Engineering. |
