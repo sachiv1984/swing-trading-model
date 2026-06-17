@@ -15,8 +15,8 @@
       "title": "Governance Simplification (SC-03–SC-07)",
       "branch": "exec/2026-06-17__release-v5.9/EPIC-01",
       "status": "done",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 802,
+      "pr_status": "open",
       "qa_signed_off": true,
       "test_scenarios": [],
       "stories": {
