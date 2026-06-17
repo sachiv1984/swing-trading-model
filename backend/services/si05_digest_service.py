@@ -207,7 +207,7 @@ def _format_pass_rate(rate: Optional[float], na_reason: Optional[str] = None) ->
         if na_reason == "data_unavailable":
             return r"N/A \(data unavailable\)"
         return "N/A"
-    return f"{rate * 100:.1f}%"
+    return f"{rate * 100:.1f}%".replace(".", "\\.")
 
 
 def _format_override_rate(rate: Optional[float], na_reason: Optional[str] = None) -> str:
@@ -218,7 +218,7 @@ def _format_override_rate(rate: Optional[float], na_reason: Optional[str] = None
         if na_reason == "data_unavailable":
             return r"N/A \(data unavailable\)"
         return "N/A"
-    return f"{rate * 100:.1f}%"
+    return f"{rate * 100:.1f}%".replace(".", "\\.")
 
 
 def _format_top_rule_breach(rule: Optional[str]) -> str:
