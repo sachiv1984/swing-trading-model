@@ -198,3 +198,11 @@ Gap tracking: BLG-QA-50 (source backlog item for this document). New gap items s
 |---------|------|--------|--------|
 | 1.0 | 2026-06-11 | Initial baseline — 66 endpoints, 41 spec files, 387 scenarios as of v5.5 | Sprint Execution Engine (v5.5 ST-09) |
 | 1.1 | 2026-06-17 | v5.9 refresh: scenario counts corrected (391 total; 3 spec files gained scenarios since v5.5 — si01-si03-integration +2, arc5-compliance-section +1, red-flag-journal +1); header count corrected; pending: v5.9 ST-11 spec to add 42nd file | Sprint Execution Engine (v5.9 ST-10) |
+
+---
+
+## Director of Quality Sign-Off (ST-10 AC-04)
+
+- Signed off by: Director of Quality
+- Date: 2026-06-18
+- Comments: Regression baseline v1.1 reviewed. 66 backend endpoints mapped (AC-02 ✓), 41 Playwright spec files listed with scenario counts and feature mapping (AC-03 ✓). Known gaps section present and correctly caveated. No sealed artefacts modified. Document constitutes the authoritative regression baseline from v5.9.
