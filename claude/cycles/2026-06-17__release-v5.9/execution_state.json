@@ -142,8 +142,8 @@
       "title": "QA Coverage, Governance Audits & UX Improvement",
       "branch": "exec/2026-06-17__release-v5.9/EPIC-02",
       "status": "done",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 803,
+      "pr_status": "open",
       "qa_signed_off": true,
       "test_scenarios": [
         "tests/test_screener_data_service.py",
