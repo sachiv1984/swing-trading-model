@@ -1,17 +1,16 @@
 {
   "cycle_id": "2026-06-17__release-v5.9",
-  "status": "Running",
-  "sealed": false,
-  "sealed_utc": null,
+  "status": "Sealed",
+  "sealed": true,
+  "sealed_utc": "2026-06-18T00:00:00Z",
   "backlog_slice_source": "claude/cycles/2026-06-17__release-v5.9/stage4_backlog_slice.md",
   "initialised_utc": "2026-06-17T18:30:00Z",
   "open_escalations": {},
   "merge_gate": {
-    "epics_pending": [
-      "EPIC-02"
-    ],
+    "epics_pending": [],
     "epics_merged": [
-      "EPIC-01"
+      "EPIC-01",
+      "EPIC-02"
     ]
   },
   "epics": {
@@ -141,9 +140,9 @@
     "EPIC-02": {
       "title": "QA Coverage, Governance Audits & UX Improvement",
       "branch": "exec/2026-06-17__release-v5.9/EPIC-02",
-      "status": "done",
+      "status": "merged",
       "pr_number": 803,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "test_scenarios": [
         "tests/test_screener_data_service.py",

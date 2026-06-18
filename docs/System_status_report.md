@@ -1745,3 +1745,24 @@ The system is ready for:
 - QA evidence logs: qa_evidence_EPIC-01.md (Director of Quality, 2026-06-17)
 - Deviations filed: None
 - Test scenarios referenced: None (all deliverables are documentation and operational artefacts)
+
+## Sprint: 2026-06-17__release-v5.9
+**Date:** 2026-06-18
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Governance simplification SC-03–SC-07: execution_prompt.md v3.44 (spec_references 3-case lookup consolidated; Playwright selector check conditional on DOM changes); roadmap_prompt.md v7.3 (STEPs 8.6/8.7 fatigue guardrail removed; convergence bias coverage added to Challenger); release_planning_prompt.md v2.37 (STEP 5.7 conditional on escalations; STEP 1.3 reduced to advisory note); post_ship_closure.md v2.14 (Advisory Summary Block format docs compressed to 3 lines) | claude/system/execution_prompt.md v3.44; claude/system/roadmap_prompt.md v7.3; claude/system/release_planning_prompt.md v2.37; claude/system/post_ship_closure.md v2.14 | None |
+| EPIC-02 | Yahoo Finance 401 backoff path integration test (ST-06); DoQ sign-off date audit v3.7–v3.9 advisory (ST-07, 10 files reviewed, 3 findings); QA evidence format audit v3.7–v4.0 advisory (ST-08, 13 files, 6 findings); agent idea participation summary (ST-09, 11 windows, 100% participation rate across 22 eligible agents); regression test baseline v1.1 refresh (ST-10, 66 endpoints, 41 Playwright specs); pre-entry panel collapsed badge showing warn/fail count with Playwright tests SC-PEP-BADGE-01a/01b/02 (ST-11) | tests/test_screener_data_service.py; docs/qa/regression_test_suite_baseline.md v1.1; src/pages/TradePlan.js; tests/e2e/pre-entry-panel-badge.spec.js | None |
+
+### Capabilities deferred or returned
+
+None — all 11 stories delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (autonomous class, 2026-06-17), qa_evidence_EPIC-02.md (Director of Quality, 2026-06-18)
+- Deviations filed: None
+- Test scenarios referenced: tests/test_screener_data_service.py::test_yahoo_backoff_path_401_sleep_once_then_200 (ST-06); tests/e2e/pre-entry-panel-badge.spec.js SC-PEP-BADGE-01a/01b/02 (ST-11)
