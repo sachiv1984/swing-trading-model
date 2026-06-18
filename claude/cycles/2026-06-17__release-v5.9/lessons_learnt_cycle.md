@@ -27,3 +27,23 @@ No recurrence items carry into v5.9.
 
 **Recurrence Notes:**
 None. v5.9 Phase 3 was clean. All recurrence items from v5.8 were scoped to story populations not included in v5.9.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-06-17__release-v5.9
+**Section anchor:** `## Phase 4`
+**Filed:** 2026-06-18
+**Reviewed by:** PMO Lead
+
+**Recurrence check (prior cycle: 2026-06-17__release-v5.8 Phase 4):**
+Prior cycle Phase 4 recorded "No friction items identified — verification ran cleanly with all checks passing." No recurrence items carry into v5.9.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| v5.9 SSR section absent at delivery verification time: sprint_close.md referenced "v5.9 SSR section written fresh in STEP 5.3A" but the committed `docs/System_status_report.md` (Version: 3.9, Last Updated: 2026-06-15) contained no v5.9 section at delivery verification invocation. Advisory: SSR sections for v5.6/v5.7/v5.8 also absent — suggests STEP 5.3A SSR write is not included in the sprint close git commit consistently. Section added during STEP 6 of this verification run. | Phase 4 | A | defer | `claude/system/execution_prompt.md` — STEP 5 Sprint Close commit block: add explicit `git add docs/System_status_report.md` after STEP 5.3A SSR write, ensuring the SSR update is staged in the same commit as `sprint_close.md`. | Head of Specs Team | v6.0 sprint |
+
+**Recurrence Notes:**
+Not a direct recurrence from v5.8 (v5.8 Phase 4 was clean and did not detect the SSR miss pattern). However, the advisory observation that v5.6/v5.7/v5.8 SSR sections are also absent indicates a multi-cycle commit discipline gap predating v5.9. The deferred patch targets the root cause (execution_prompt.md STEP 5 commit block) rather than reconciling historical missing sections individually.

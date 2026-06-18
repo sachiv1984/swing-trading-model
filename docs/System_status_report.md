@@ -1,9 +1,32 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 3.9
-**Last Updated:** 2026-06-15
+**Version:** 4.0
+**Last Updated:** 2026-06-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-06-17__release-v5.9
+**Date:** 2026-06-18
+**Status:** Verified — 2026-06-18
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Governance Simplification (SC-03–SC-07): execution_prompt.md v3.42→v3.44 (spec_references policy consolidation SC-03; Playwright selector check made conditional SC-06); roadmap_prompt.md v7.1→v7.3 (fatigue guardrail removed SC-04; STEP 9 dangling ref corrected); release_planning_prompt.md v2.36→v2.37 (dead-load advisory steps removed SC-05); post_ship_closure.md v2.13→v2.14 (Advisory Summary Block compressed SC-07) | claude/system/execution_prompt.md v3.44; claude/system/roadmap_prompt.md v7.3; claude/system/release_planning_prompt.md v2.37; claude/system/post_ship_closure.md v2.14 | None |
+| EPIC-02 | Yahoo Finance 401 backoff integration test stub (test_yahoo_backoff_path_401_sleep_once_then_200, mocked); DoQ sign-off date compliance audit advisory (v3.7–v3.9, 10 files, 3 findings); QA evidence format audit advisory (v3.7–v4.0, 13 files, 6 findings); Agent idea participation summary (11 closed windows, 22 eligible agents, 100% participation rate); Regression test suite baseline v1.1 (66 backend endpoints, 41 Playwright spec files); Pre-entry panel collapsed badge (warn/fail count when collapsed; additive; SC-PEP-BADGE-01a/01b/02 Playwright coverage) | tests/test_screener_data_service.py::test_yahoo_backoff_path_401_sleep_once_then_200; claude/cycles/2026-06-17__release-v5.9/advisory_doq_audit_v37_v39.md; claude/cycles/2026-06-17__release-v5.9/advisory_qa_format_audit_v37_v40.md; claude/cycles/2026-06-17__release-v5.9/advisory_agent_idea_participation.md; docs/qa/regression_test_suite_baseline.md v1.1; src/pages/TradePlan.js; tests/e2e/pre-entry-panel-badge.spec.js | None |
+
+### Capabilities deferred or returned
+
+None — all 11 stories completed within the sprint. 0 returned to backlog.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (Sprint Execution Engine autonomous class, 2026-06-17; Head of Specs Team agent-mediated cleared 2026-06-17T18:45:00Z), qa_evidence_EPIC-02.md (Director of Quality, 2026-06-18)
+- Deviations filed: None
+- Test scenarios referenced: tests/test_screener_data_service.py::test_yahoo_backoff_path_401_sleep_once_then_200 (ST-06); tests/e2e/pre-entry-panel-badge.spec.js — SC-PEP-BADGE-01a/01b/02 (ST-11)
 
 ---
 
