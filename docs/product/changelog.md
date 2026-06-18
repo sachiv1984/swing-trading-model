@@ -3,9 +3,44 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-17 (post-ship closure 2026-06-17__release-v5.8)
+**Last Updated:** 2026-06-18 (post-ship closure 2026-06-17__release-v5.9)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v5.9 — RFJ UX Pre-work, SI-05 Effectiveness Review & Governance Simplification — 2026-06-18
+Cycle: 2026-06-17__release-v5.9
+Verified: Verified
+Verification report: claude/cycles/2026-06-17__release-v5.9/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | 5 governance simplification stories (SC-03–SC-07): consolidated spec_references policy sub-variants in execution_prompt.md; removed STEP 8.6–8.7 fatigue detection guardrail from roadmap_prompt.md; removed dead-load advisory steps from release_planning_prompt.md; made Playwright selector check conditional on DOM changes in execution_prompt.md; compressed Advisory Summary Block format docs in post_ship_closure.md | claude/system/execution_prompt.md, claude/system/roadmap_prompt.md, claude/system/release_planning_prompt.md, claude/system/post_ship_closure.md |
+| EPIC-02 | 6 QA/audit/UX stories: Yahoo Finance backoff path integration test stub (ST-06); DoQ sign-off date compliance audit v3.7–v3.9 (ST-07); QA evidence file format audit v3.7–v4.0 (ST-08); agent idea participation tracking summary (ST-09); formal regression test suite baseline document (ST-10); pre-entry panel warning/fail count badge when collapsed — Playwright coverage SC-PEP-BADGE-01a/01b/02 (ST-11) | tests/test_screener_data_service.py, claude/cycles/2026-06-17__release-v5.9/advisory_doq_audit_v37_v39.md, claude/cycles/2026-06-17__release-v5.9/advisory_qa_format_audit_v37_v40.md, claude/cycles/2026-06-17__release-v5.9/advisory_agent_idea_participation.md, docs/qa/regression_test_suite_baseline.md, src/pages/TradePlan.js, tests/e2e/pre-entry-panel-badge.spec.js |
+
+### Deviations accepted
+None.
+
+### Tech backlog items shipped
+- [ST-01] BLG-GOV-125: SC-03 spec_references policy sub-variants consolidated in execution_prompt.md
+- [ST-02] BLG-GOV-126: SC-04 fatigue detection guardrail (STEP 8.6–8.7) removed from roadmap_prompt.md
+- [ST-03] BLG-GOV-127: SC-05 dead-load advisory steps removed from release_planning_prompt.md
+- [ST-04] BLG-GOV-128: SC-06 Playwright selector check made conditional on DOM changes in execution_prompt.md
+- [ST-05] BLG-GOV-129: SC-07 Advisory Summary Block format docs compressed in post_ship_closure.md
+- [ST-06] BLG-QA-24: Yahoo Finance backoff path integration test stub added (test_yahoo_backoff_path_401_sleep_once_then_200)
+- [ST-07] BLG-GOV-38: DoQ sign-off date compliance audit (v3.7–v3.9) — advisory_doq_audit_v37_v39.md
+- [ST-08] BLG-QA-34: QA evidence file format audit (v3.7–v4.0) — advisory_qa_format_audit_v37_v40.md
+- [ST-09] BLG-GOV-53: Agent idea participation tracking summary — advisory_agent_idea_participation.md
+- [ST-10] BLG-QA-50: Formal regression test suite baseline document — docs/qa/regression_test_suite_baseline.md
+- [ST-11] BLG-FE-57: Pre-entry panel warning/fail count badge when collapsed — TradePlan.js + Playwright SC-PEP-BADGE-01a/01b/02
+
+### Items returned to backlog
+None — all 11 stories shipped.
+
+Sign-off: Product Owner — 2026-06-18
+QA sign-off: Director of Quality — 2026-06-18
 
 ---
 

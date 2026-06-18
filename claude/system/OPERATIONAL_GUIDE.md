@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.55
-**Last Updated:** 2026-06-17
+**Version:** 4.56
+**Last Updated:** 2026-06-18
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.44)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.45)
 
 ### 8.1 Invocation
 
@@ -1467,7 +1467,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.37 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.10 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.44 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.45 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.5 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.0 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.56 | 2026-06-18 | **v5.9 post-ship closure (LL-v5.9-P4-01) — execution_prompt.md v3.44→v3.45: STEP 5.3A immediate staging instruction added for docs/System_status_report.md.** §8 source prompt header updated v3.44→v3.45. §14 Execution Engine Source v3.44→v3.45. §14 Version 4.55→4.56/2026-06-18. Change: STEP 5.3A — added "Immediate staging (LL-v5.9-P4-01)" block after SSR write; explicit `git add docs/System_status_report.md` staged before any branch switch; resolves multi-cycle commit discipline gap (SSR sections absent from committed file across v5.6/v5.7/v5.8/v5.9). Authority: Head of Specs Team (LL-v5.9-P4-01, v5.9 post-ship closure, 2026-06-18). |
 | 4.47 | 2026-06-16 | **sprint_planning_prompt.md v3.9→v3.10 — STEP -1.7 prompt change log gap advisory: replaced `grep | tail` instruction with `grep | head -1` and explicit prepend-sort note.** §7 source prompt header updated v3.9→v3.10. §14 Sprint Planning Engine v3.9→v3.10. §14 Version 4.46→4.47/2026-06-16. Change (sprint_planning_prompt v3.10): STEP -1.7 hygiene advisory — prompt change log gap check rewritten to use `grep "<filename>" prompt_change_log.md | head -1` (file is prepended newest-first; `head -1` gives the most recent entry); explicit note added that `tail` must NOT be used; false-positive root cause: prior wording "not top-first — entries may be at the bottom" predated prepend-sort convention and caused engine to read oldest entries as most recent. Per-file changelogs (post_ship_closure_changelog.md, roadmap_management_changelog.md) backfilled with entries missed since 2026-05-09 refactor. Authority: Head of Specs Team (RCA + v5.7 sprint planning false-positive resolution, 2026-06-16). |
 | 4.46 | 2026-06-16 | **backlog_management_prompt.md v1.8→v1.9 — §6 classification criteria and STEP 6.2 post-write verification extended to catch body-line ✅ COMPLETE markers.** §6M source prompt header updated v1.8→v1.9. §14 Backlog Management Engine v1.8→v1.9. §14 Version 4.45→4.46/2026-06-16. Changes (backlog_management v1.9): §6 Complete—Archive classification — criteria updated from "Status ✅ COMPLETE with delivery date" (ambiguous) to explicitly require checking the heading line OR the first body line immediately following the `### BLG-` heading; STEP 6.2 post-write verification — two-check grep added: (1) heading lines for ✅ COMPLETE/❌ Killed, (2) line immediately following each `### BLG-` heading for same markers. Root cause: the standard backlog format places ✅ COMPLETE on the body line, not the heading; prior single-grep check (v1.8) only caught heading-embedded markers, allowing ~100 completed items to accumulate across cycles before manual intervention on 2026-06-16. Authority: Head of Specs Team (post-groom root cause analysis, 2026-06-16). |
 | 4.55 | 2026-06-17 | **v5.9 EPIC-01 sign-off remediation — OPERATIONAL_GUIDE §6/§6B/§8/§10 section body source prompt headers updated to match §14.** §6 source prompt header: roadmap_prompt.md v7.1→v7.3. §6B source prompt header: release_planning_prompt.md v2.36→v2.37. §8 source prompt header: execution_prompt.md v3.42→v3.44. §10 source prompt header: post_ship_closure.md v2.13→v2.14. §14 Version 4.54→4.55/2026-06-17. Root cause: CLAUDE.md §6 step 3 (update phase section source prompt header) was applied to §14 table only; section body headers were not updated in the same edit. Authority: Head of Specs Team (sign-off remediation, v5.9 EPIC-01, 2026-06-17). |

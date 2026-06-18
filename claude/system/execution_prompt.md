@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.44
-**Last Updated:** 2026-06-16
+**Version:** 3.45
+**Last Updated:** 2026-06-18
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -905,6 +905,12 @@ For this sprint, add or update a section:
 ```
 
 If `docs/System_status_report.md` does not exist: create it with this sprint's section as the initial content. Use lifecycle header (Owner: Director of Quality, Class: Living Document, Status: Active).
+
+**Immediate staging (LL-v5.9-P4-01):** After writing or updating `docs/System_status_report.md`, run:
+```
+git add docs/System_status_report.md
+```
+This ensures the SSR update is staged before any branch switch. Do not wait for the STEP 8 commit block — stage it now.
 
 ### 5.4 Lessons Learnt
 

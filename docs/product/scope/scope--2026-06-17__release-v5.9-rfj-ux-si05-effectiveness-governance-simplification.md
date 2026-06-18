@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Class:** Planning Document (Class 4)
-**Status:** Published
+**Status:** Superseded
 **Release:** v5.9
 **Cycle:** 2026-06-17__release-v5.9
 **Last Updated:** 2026-06-17

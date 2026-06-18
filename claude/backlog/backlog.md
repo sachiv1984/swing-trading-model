@@ -3,7 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-17 (rebalance 2026-06-17__scheduled — DL-047; 1 new item: BLG-GOV-130; 29 IW-20260610-01 terminal ideas resolved)
+**Last Updated:** 2026-06-18 (post-ship closure groom backlog 2026-06-17__release-v5.9)
+**Old Last Updated:** 2026-06-18 (session — 1 new item added: BLG-BE-36)
 **Last rebalance:** 2026-06-17 (cycle 2026-06-17__scheduled — DL-047; BLG-GOV-130 added; 28 ideas rejected; 1 promoted-backlog; v5.9 Now section added to roadmap)
 
 > ⚠️ Standing Notice
@@ -645,28 +646,6 @@ No formal mobile responsiveness testing has been performed. The most frequently 
 
 ---
 
-### BLG-FE-57 — Pre-entry panel: show warning/fail count when collapsed
-**Priority:** P3 (Low)
-**Type:** Frontend / UX Improvement
-**Owner:** Head of UX & Design
-**Source:** docs/product/ux/pre_entry_panel_ux_assessment.md — candidate P2 — cycle 2026-05-31__release-v4.7 (ST-09)
-**Effort:** XS (~0.5 day)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-PreEntryValidationPanel collapses to header only with no visible indicator of warning/fail count. Traders scanning the Trade Plan form cannot determine if there are warnings without expanding the panel.
-
-**Scope**
-- When panel is collapsed and advisory status is `warn` or `fail`: show a count badge in the header ("2 warnings", "1 fail")
-- Additive change — does not affect expanded panel behaviour
-
-**Acceptance Criteria**
-- Collapsed header shows count of warn/fail items when advisory status is warn or fail
-- Count badge is not shown when all checks pass (no unnecessary visual clutter)
-- Existing collapse/expand behaviour preserved
-
----
-
 ### BLG-FE-58 — Pre-entry panel: check grouping for Arc 5 expansion
 **Priority:** P3 (Low)
 **Type:** Frontend / UX Improvement
@@ -1149,28 +1128,30 @@ PO-04 (Reflection ↔ Outcome Correlation) requires journal entries with quantif
 
 ---
 
-### BLG-BE-34 — Trade count gate-monitoring view ✅ COMPLETE
+### BLG-BE-36 — Align signal_service suggested_shares to risk-based sizing model
 **Priority:** P2 (Medium)
-**Type:** Backend Engineering / Data Infrastructure
-**Owner:** Data Model & Domain Schema Owner; PMO Lead
-**Source:** IDEA-data-model-20260607-02 — Promoted-Backlog rebalance 2026-06-07__scheduled (DL-039)
+**Type:** Backend Engineering
+**Owner:** Strategy Rules & System Intent Owner; Head of Engineering
+**Source:** User observation — signal card vs entry tab inconsistency — 2026-06-18
 **Effort:** S (~0.5 day)
-**Provisional-Target:** Unscheduled
-**Displacement:** BLG-BE-13 (screener result history table, P3, gate-conditional) deprioritised.
+**Provisional-Target:** v6.0
 
 **Problem**
-Multiple roadmap features are gated on trade count thresholds: PT-04 (20+ closed trades), SI-02 frontend (20+ closed trades with linked trade_plans), PS-01–PS-05 (50+ or 100+ trades). At each release planning cycle, the PMO Lead must manually query the production database to check gate conditions. A dedicated view or function standardises this check and prevents missed gate opportunities.
+`signal_service.py` calculates `suggested_shares` using a cash-allocation model (available_cash ÷ number_of_new_signals ÷ price_gbp). The entry tab uses `sizing_service.py` which implements the canonical risk-based model from strategy_rules.md §4.1 (portfolio_value × risk_percent ÷ stop_distance). The two methods produce different share counts for the same stock. The share count on a signal card will change depending on how many other signals fire that day, and ignores the stop distance entirely — both of which are wrong. The risk-based model is the correct approach and is already the authoritative implementation in the codebase.
 
 **Scope**
-- Create a database view or PostgreSQL function: `get_gate_metrics()` returning: closed_trades_count (trade_history WHERE pnl IS NOT NULL), closed_trades_with_plans (trade_history WHERE plan_id IS NOT NULL AND pnl IS NOT NULL), active_positions_count, ai_journal_entry_count (if exists), oldest_trade_date, newest_trade_date
-- Optional: expose as GET /portfolio/gate-metrics (read-only, admin-only endpoint) for automated gate checks at sprint planning
-- Document view usage in release planning checklist
+- Strategy Rules & System Intent Owner to confirm risk-based formula (sizing_service.py) is canonical for signal suggested_shares
+- Update signal_service.py to call sizing_service.size_position() using initial_stop as stop_price and the portfolio's default risk_percent from settings
+- Handle edge cases gracefully: missing portfolio snapshot, zero or null initial_stop
+- Remove the cash-allocation sizing logic from signal_service.py
+- Update signal generation tests to reflect the new formula
 
 **Acceptance Criteria**
-- Gate metrics view or function created and tested
-- Returns all key gate condition inputs (closed_trades_count, with_plans_count at minimum)
-- If endpoint added: registered in test.py and openapi.yaml per CLAUDE.md §2
-- Data Model & Domain Schema Owner sign-off
+- Signal card suggested_shares matches what the entry tab would produce for the same entry_price, initial_stop, and risk_percent
+- Share count is independent of how many other signals fire on the same day
+- Signals with no valid initial_stop produce suggested_shares = 0 (not a crash)
+- Cash-allocation model is fully removed from signal generation
+- Existing CI tests pass or are updated
 
 ---
 
@@ -1247,28 +1228,6 @@ No Playwright test covers the full trade plan lifecycle: create → edit → lin
 
 ---
 
-### BLG-QA-24 — Yahoo Finance backoff path integration test stub
-**Priority:** P3 (Low)
-**Type:** QA / Test Coverage
-**Owner:** QA Lead
-**Source:** DoQ sign-off notation — EPIC-01 v3.9 QA evidence, 2026-05-22
-**Effort:** S (~0.5 days)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-ST-01 AC-04 ("screener run completes without >5% OHLCV failures under normal YF conditions") is a runtime/environment-dependent criterion. The crumb refresh mechanism and exponential backoff are unit-tested, but a controlled integration test stub that simulates the full 401 → crumb-refresh → backoff → retry → success path is absent. The DoQ sign-off for EPIC-01 accepted this as staging-only evidence and filed this backlog item.
-
-**Scope**
-- Add integration test to `tests/test_screener_data_service.py` that stubs the Yahoo Finance session, injects a 401 followed by a 200 with valid chart data, and verifies that the result is non-null and the retry occurred exactly once.
-- Verify exponential backoff timing via mock of `_time.sleep`.
-
-**Acceptance Criteria**
-- Integration test runs without a live Yahoo Finance connection
-- Test verifies: 401 first call → crumb refresh → sleep called once → 200 second call → valid OHLCV result returned
-- Passes in CI
-
----
-
 ### BLG-QA-26 — Arc 5 QA protocol
 **Priority:** P2 (Medium)
 **Type:** QA / Test Coverage
@@ -1292,54 +1251,6 @@ SI-01 through SI-03 shipped across v3.8 and v3.9. Each sprint produced per-story
 - Arc 5 E2E protocol document produced and filed
 - Core happy path covered by Playwright
 - Gate condition verified by QA Lead and Product Owner before sprint planning
-
----
-
-### BLG-QA-27 — CI test suite execution time baseline
-**Priority:** P3 (Low)
-**Type:** QA / Operations
-**Owner:** QA Lead
-**Source:** IDEA-qa-lead-20260522-01 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** Unscheduled
-
-**Gate criteria:** CI pipeline total execution time exceeds 5 minutes sustained across 3+ consecutive cycles.
-
-**Problem**
-As the test suite grows with Arc 5 additions (BLG-QA-25 + per-sprint Playwright tests), no baseline exists for total CI pipeline execution time. Without a baseline, suite bloat is invisible until developer cycle time is materially impacted. A baseline established when the gate is met enables regression detection for each subsequent sprint.
-
-**Scope**
-- Establish CI pipeline execution time baseline: unit tests, integration tests, Playwright suite
-- Record p50/p95 execution times per suite tier
-- File baseline in `docs/ops/ci_performance_baseline.md`
-- Define regression threshold: > 1.5× baseline triggers advisory
-
-**Acceptance Criteria**
-- CI execution time baseline measured and filed
-- Regression threshold defined
-- Gate condition verified by QA Lead before sprint planning
-
-### BLG-QA-34 — QA evidence file format audit
-**Priority:** P3 (Low)
-**Type:** QA / Governance
-**Owner:** QA Lead; Director of Quality
-**Source:** IDEA-qa-lead-20260525-02 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-QA evidence files (qa_evidence_EPIC-*.md) from v3.7–v4.0 were produced under evolving standards. PR template v1.2 (shipped v3.9) standardised the DoQ sign-off date field. A format audit confirms whether existing evidence files are consistent with the current standard, identifies format variations that complicate future audit (AUD-2026-05-21 scored QA reliability at 84). Narrow, bounded scope.
-
-**Scope**
-- Review QA evidence files from v3.7, v3.8, v3.9, and v4.0 cycles
-- Check: header fields present, DoQ sign-off date present, sign-off block format consistent
-- Findings documented (advisory only — sealed artefacts not modified retroactively)
-- Inform any future QA evidence template updates
-
-**Acceptance Criteria**
-- All QA evidence files from v3.7–v4.0 reviewed
-- Format inconsistencies documented
-- Findings submitted to Director of Quality as advisory note
 
 ---
 
@@ -1418,32 +1329,6 @@ BLG-QA-42 (SI-02 Playwright scaffold) is gated on 20+ closed trades. When that g
 - Assessment confirms "proceed with BLG-QA-42 as-is" or produces a revision document
 - Director of Quality sign-off
 - Gate condition verified (≥20 closed trades)
-
----
-
-### BLG-QA-50 — Create formal regression test suite baseline document
-**Priority:** P3 (Low)
-**Type:** QA / Documentation
-**Owner:** QA Lead; Director of Quality
-**Source:** ST-15 (BLG-QA-48) — v5.2 regression baseline refresh identified absence of formal document
-**Effort:** S (~0.5 day)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-No formal regression test suite baseline document exists. The current test coverage is tracked ad hoc through `backend/routers/test.py` (endpoint smoke tests) and Playwright specs in `tests/e2e/`. Without a baseline document, there is no authoritative reference for which tests are in scope for regression, which features they cover, or when new test entries were added. This makes it difficult to verify regression coverage at delivery verification and during QA sign-off.
-
-**Scope**
-- Create a formal regression baseline document covering:
-  - All `backend/routers/test.py` entries (endpoint smoke tests) with feature mapping
-  - All Playwright spec files in `tests/e2e/` with scenario count and feature mapping
-  - Version history: which tests were added at which release
-- Document will serve as the authoritative regression scope reference for future sprints
-
-**Acceptance Criteria**
-- Regression baseline document created in docs/qa/ or docs/testing/
-- All test.py entries mapped to features
-- All Playwright specs listed with scenario count
-- Director of Quality sign-off
 
 ---
 
@@ -1705,60 +1590,6 @@ The red_flag_events table has no defined retention or archiving strategy. As ove
 
 ---
 
-### BLG-OPS-44 — DS-07 migration staging verification (v4.6 delivery)
-**Priority:** P3 (Low)
-**Type:** Operations / Staging Verification
-**Owner:** Infrastructure & Operations Owner; Data Model & Domain Schema Owner
-**Source:** v4.6 delivery verification — ST-01 AC-05 deferred to Phase 4 (staging-only AC)
-**Effort:** XS (~0.5 hr)
-**Provisional-Target:** v4.7
-
-✅ COMPLETE — 2026-05-31 — cycle 2026-05-31__release-v4.7 (ST-05, EPIC-03; ds07_migration_staging_verification.md produced; all 5 SI-02 columns confirmed; 3 indexes confirmed; Infrastructure & Operations Owner + Data Model & Domain Schema Owner sign-off)
-
-**Problem**
-ST-01 (DS-07 data migration) was verified by code review only in v4.6. AC-05 (staging verification) was pre-designated as staging-only and explicitly deferred to Phase 4 delivery verification. The migration adds 5 nullable columns (signal_id, risk_percent_used, portfolio_value_at_entry, pre_entry_validation_snapshot, effective_settings_snapshot) and 3 indexes to trade_plans. Confirmation that these applied correctly in the staging environment is outstanding.
-
-**Scope**
-- Apply DS-07 migration to staging environment
-- Run `\d trade_plans` and confirm all 5 SI-02 columns are present
-- Confirm 3 indexes created: idx_trade_plans_signal (P1) + idx_trade_history_exit_date + idx_trade_history_entry_date (P2)
-- Record staging sign-off evidence in a verification note
-
-**Acceptance Criteria**
-- Migration applied cleanly on staging with no errors
-- All 5 columns confirmed present in trade_plans via `\d trade_plans`
-- All 3 indexes confirmed created
-- Staging verification date recorded
-
----
-
-### BLG-OPS-45 — red_flag_events severity field staging verification (v4.6 delivery)
-**Priority:** P3 (Low)
-**Type:** Operations / Staging Verification
-**Owner:** Infrastructure & Operations Owner; Data Model & Domain Schema Owner
-**Source:** v4.6 delivery verification — ST-09 AC-01/02/03 deferred to Phase 4 (staging-only ACs); AC-08 pending
-**Effort:** XS (~0.5 hr)
-**Provisional-Target:** v4.7
-
-✅ COMPLETE — 2026-05-31 — cycle 2026-05-31__release-v4.7 (ST-06, EPIC-03; severity_field_staging_verification.md produced; severity column confirmed; assignment rule verified; backfill confirmed zero nulls; Infrastructure & Operations Owner + Data Model & Domain Schema Owner sign-off; AC-08 cleared)
-
-**Problem**
-ST-09 (BLG-BE-16: red_flag_events severity field) was verified by code review and unit tests in v4.6. Three ACs were pre-designated as staging-only and explicitly deferred to Phase 4 delivery verification: AC-01 (severity column confirmed in staging DB), AC-02 (default severity assignment confirmed), AC-03 (backfill of existing records confirmed). Additionally, AC-08 (Data Model & Domain Schema Owner sign-off) was pending at merge; DoQ accepted at EPIC level.
-
-**Scope**
-- Run migration on staging and confirm severity column in red_flag_events
-- Confirm default severity assignment (pre_entry_override events → warning, others → info)
-- Confirm backfill applied to existing records (all existing events have non-null severity)
-- Obtain Data Model & Domain Schema Owner sign-off on staging evidence
-
-**Acceptance Criteria**
-- severity column confirmed in red_flag_events on staging (`\d red_flag_events`)
-- Default severity assignment confirmed (override events = warning, others = info)
-- Backfill confirmed: no null severity values in existing events
-- Data Model & Domain Schema Owner sign-off recorded
-
----
-
 ### BLG-OPS-48 — ANTHROPIC_API_KEY 6-month scope audit
 **Priority:** P2 (Medium)
 **Type:** Operations / Security
@@ -2011,80 +1842,6 @@ If an AI-assisted trade plan analysis feature is scoped (generating text summari
 - Audit log schema designed and documented
 - Storage mechanism implemented
 - Gate condition (AI trade plan analysis feature scoped) verified by Head of Specs Team before sprint planning
-
----
-
-### BLG-GOV-38 — DoQ sign-off date compliance audit (v3.7–v3.9)
-**Priority:** P3 (Low)
-**Type:** Governance / Quality Audit
-**Owner:** QA Lead; Director of Quality
-**Source:** IDEA-qa-lead-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
-**Effort:** S (~0.5–1 day)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-PR template v1.2 (shipped v3.9, ST-12) now enforces DoQ sign-off date fields on all QA evidence. A one-time historical audit of v3.7–v3.9 QA evidence files confirms whether existing closed-cycle artefacts are compliant with the new standard or require retrospective annotation. Bounded scope (3 cycles); findings are advisory only for closed cycles.
-
-**Scope**
-- Review all QA evidence files from v3.7, v3.8, and v3.9 cycles for DoQ sign-off date presence
-- Document any missing dates
-- Findings filed as advisory annotation — no retroactive modification to sealed artefacts required
-- If pattern found: inform Head of Specs Team for future sprint planning guidance
-
-**Acceptance Criteria**
-- All QA evidence files from v3.7–v3.9 reviewed
-- Missing sign-off dates documented
-- Findings filed; sealed artefacts not modified
-
----
-
-### BLG-GOV-53 — Agent idea participation tracking
-**Priority:** P3 (Low)
-**Type:** Governance / HR
-**Owner:** Director of HR
-**Source:** IDEA-director-of-hr-20260525-01 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-Idea intake windows record per-agent submission counts (ideas_window.json). Director of HR observes that tracking participation trends over multiple windows (e.g., which agents consistently submit, which have reduced participation) could provide early signal of governance engagement health. A simple participation tracking summary across all IW-* windows would formalise this.
-
-**Scope**
-- Produce agent participation summary across all closed idea windows (IW-20260322-01 through IW-20260525-01)
-- Per agent: window count, submission count, participation rate
-- Output: advisory note filed; not a blocking governance gate
-
-**Acceptance Criteria**
-- Participation summary produced covering all closed windows
-- Reviewed by Director of HR
-- Filed as advisory note (no governance action required unless pattern identified)
-
----
-
-### BLG-GOV-62 — SI-04 §13 formal pre-assessment
-**Priority:** P1 (High)
-**Type:** Governance / §13 Compliance
-**Owner:** Strategy Rules & System Intent Owner
-**Source:** IDEA-strategy-owner-20260527-01 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035)
-**Effort:** S (~1 day)
-**Provisional-Target:** Unscheduled
-
-**Gate criteria:** SI-04 sprint planning imminent.
-
-✅ COMPLETE — 2026-05-31 — cycle 2026-05-31__release-v4.7 (ST-01, EPIC-01; si04_section13_preassessment.md produced; determination: PASS; 6 binding conditions; Strategy Rules & System Intent Owner sign-off)
-
-**Problem**
-SI-04 (Strategy Version Comparison) compares performance metrics across strategy versions. Before sprint planning seals, a formal §13 review must confirm this is display-only historical analysis (not adaptive or predictive). Last-minute §13 discoveries blocked v3.5 (IT-06); pre-assessment eliminates this risk.
-
-**Scope**
-- §13 review of SI-04 feature scope: performance comparison across strategy versions
-- Confirm: deterministic historical analysis, display-only, no adaptive or predictive component
-- Produce §13 compliance assessment document
-
-**Acceptance Criteria**
-- §13 assessment document produced (PASS or CONDITIONAL)
-- Reviewed by Strategy Rules & System Intent Owner
-- Gate condition (SI-04 sprint planning imminent) verified before commencing
 
 ---
 
@@ -2431,36 +2188,6 @@ strategy_rules.md §11 defines production parameters (5× initial ATR, 2× profi
 
 ---
 
-### BLG-GOV-101 — Governance model complexity assessment ✅ COMPLETE
-**Priority:** P2 (Medium)
-**Type:** Governance / Process Assessment
-**Owner:** Director of HR; PMO Lead; Head of Specs Team
-**Source:** IDEA-director-of-hr-20260607-01 — Promoted-Backlog rebalance 2026-06-07__scheduled (DL-039)
-**Effort:** M (~2 days)
-**Provisional-Target:** Unscheduled
-**✅ COMPLETE** — Shipped as ST-04 (EPIC-01) in cycle 2026-06-17__release-v5.8 (2026-06-17). GCA-2026-06-17 produced; 7 simplification candidates BLG-GOV-123–129 filed. Director of HR + PMO Lead + Head of Specs Team sign-off.
-**Displacement:** BLG-QA-34 (QA evidence file format audit, P3, gate-conditional) deprioritised.
-
-**Evidence trigger:** AUD-2026-06-02 overall score = 73 (down from 79 at AUD-2026-05-21; Δ = -6). 5 open audit items (BLG-GOV-79–83). Score decline and open item count provide the evidence-based trigger previously lacking.
-
-**Problem**
-The governance system has grown across 37 cycles. AUD-2026-06-02 scored overall 73 — a 6-point decline from AUD-2026-05-21 (79). Hypothesis: some portion of this decline may reflect governance overhead that exceeds the value delivered per cycle, rather than specific item failures. A bounded complexity assessment determines whether the model should be simplified (steps consolidated, gates relaxed, prompts shortened) or whether the decline is fully explained by specific remediable items (BLG-GOV-79–83).
-
-**Scope**
-- Review audit score decline context: are BLG-GOV-79–83 the full explanation, or is there residual structural complexity?
-- Per-engine step count analysis: for each governance prompt, count hard gates, write operations, and step count; compare against pre-v4.0 baseline if available
-- Identify: steps that consistently produce no output (friction with no value), gates that have never fired in 10+ cycles, prompts that are longest vs. their usage frequency
-- Hypothesis test: resolve BLG-GOV-79–83 first; if audit score recovers to ≥78, complexity is not the root cause; if score remains at 73 or below, complexity may be a contributing factor
-- Output: complexity assessment report with finding: "complexity is NOT a root cause — specific items explain the decline" or "complexity IS a contributing factor — recommend simplification candidates"
-
-**Acceptance Criteria**
-- Assessment report produced after BLG-GOV-79–83 are resolved
-- Report includes per-engine step counts and complexity indicators
-- BLG-GOV-71 (gate-conditional: audit score < 70) remains separate; this item is an earlier-trigger analysis
-- Director of HR, PMO Lead, and Head of Specs Team sign-off on findings
-
----
-
 ### BLG-GOV-102 — Arc completion velocity scorecard (gate-conditional)
 **Priority:** P3 (Low)
 **Type:** Governance / Product Planning Reference
@@ -2594,75 +2321,6 @@ SI-05 launched 2026-06-04. After the 2026-07-04 effectiveness review (BLG-GOV-11
 
 ---
 
-### BLG-GOV-116 — sprint_planning_prompt.md within-sprint date gate advisory ✅ COMPLETE
-**Priority:** P2 (Medium)
-**Type:** Governance / Process Improvement
-**Owner:** Head of Specs Team
-**Source:** LL-P3-01 (v5.4 lessons_learnt_closure.md) — carry-forward; rebalance 2026-06-10__scheduled (DL-044)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v5.5
-**Displacement:** N/A (governance patch — no displacement required)
-
-**Problem**
-Stories with within-sprint date gates (e.g., "ST-03 CONDITIONAL — gate 2026-06-21") are not marked with a standard notation in sprint_backlog.md at planning time. This led to v5.4 ST-03 being returned mid-sprint when the gate date was not met, which could have been predicted at planning. A standard marker at sprint planning time would make conditional stories visible.
-
-**Scope**
-- Add advisory to sprint_planning_prompt.md: stories with a date gate that falls within the sprint window should be marked `Status at sprint open: conditional — gate <date>` in sprint_backlog.md at planning time
-- Version bump sprint_planning_prompt.md; update OPERATIONAL_GUIDE §14; append prompt_change_log.md entry
-
-**Acceptance Criteria**
-- sprint_planning_prompt.md updated with advisory marker rule
-- Version bumped; §14 and change log updated per CLAUDE.md §6
-- Head of Specs Team sign-off
-
----
-
-### BLG-GOV-117 — execution_prompt.md pr_status read-after-open improvement ✅ COMPLETE
-**Priority:** P2 (Medium)
-**Type:** Governance / Process Improvement
-**Owner:** Head of Specs Team; PMO Lead
-**Source:** LL-P3-03 (v5.4 lessons_learnt_closure.md, 2nd recurrence) — carry-forward; rebalance 2026-06-10__scheduled (DL-044)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v5.5
-**Displacement:** N/A (governance patch)
-
-**Problem**
-After opening a PR, execution_prompt.md writes `pr_status: "open"` to execution_state.json without reading the actual `gh pr view` response. This means if the PR is created but immediately encounters an issue (merge conflict, CI failure), the state records "open" incorrectly. When the session resumes, STEP 5.0A catches the stale status — but this is reactive rather than proactive. Second recurrence in v5.4.
-
-**Scope**
-- Update execution_prompt.md: after `gh pr create`, immediately read `gh pr view <number> --json state,mergeStateStatus` and write the actual state to execution_state.json
-- Version bump execution_prompt.md; update OPERATIONAL_GUIDE §14; append change log
-
-**Acceptance Criteria**
-- execution_prompt.md updated: pr_status written from `gh pr view` response, not assumed
-- Version bumped; §14 and change log updated per CLAUDE.md §6
-- Head of Specs Team sign-off
-
----
-
-### BLG-GOV-118 — qa_evidence commit discipline advisory in execution_prompt.md ✅ COMPLETE
-**Priority:** P2 (Medium)
-**Type:** Governance / Process Improvement
-**Owner:** PMO Lead; Head of Specs Team
-**Source:** LL-P3-02 (v5.4 lessons_learnt_closure.md) — carry-forward; rebalance 2026-06-10__scheduled (DL-044)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v5.5
-**Displacement:** N/A (governance patch)
-
-**Problem**
-v5.4 sprint execution had an operator error where qa_evidence_EPIC-xx.md was not committed to the EPIC branch before opening the PR. The existing CLAUDE.md §2 rule says "Every new API endpoint must be added in the same commit" but there is no explicit reminder in execution_prompt.md about committing qa_evidence before PR open.
-
-**Scope**
-- Add advisory to execution_prompt.md STEP 5 (or the PR-opening step): "Before opening the PR, verify qa_evidence_EPIC-xx.md is committed to the EPIC branch"
-- Version bump; update §14; append change log
-
-**Acceptance Criteria**
-- execution_prompt.md updated with qa_evidence pre-PR commit advisory
-- Version bumped; §14 and change log updated per CLAUDE.md §6
-- Head of Specs Team sign-off
-
----
-
 ### BLG-GOV-119 — Arc 5 delivered value retrospective (gate-conditional)
 **Priority:** P3 (Low)
 **Type:** Governance / Strategic Review
@@ -2685,29 +2343,6 @@ Arc 5 is functionally near-complete (SI-01/02/03 shipped; SI-04 pre-planned; SI-
 - Gap list (if any) filed as backlog items
 - Product Owner + Strategy Rules & System Intent Owner sign-off
 - Gate: SI-04 + SI-05 Phase 2 both shipped
-
----
-
-### BLG-GOV-120 — Trade data density progress tracker ✅ COMPLETE
-**Priority:** P2 (Medium)
-**Type:** Governance / Operational Visibility
-**Owner:** Product Owner; Infrastructure & Operations Owner
-**Source:** IDEA-product-owner-20260610-01 — Promoted-Backlog rebalance 2026-06-10__scheduled (DL-044)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v5.5
-
-**Problem**
-Multiple high-value features are gated on closed trade counts (PT-04: 20 trades; SI-02 frontend: 20 trades; Arc 6 PS-01: 100 trades). Current count is 6 closed trades. The count is invisible between sprint planning sessions. A visible progress indicator would make gate-clearing trajectory tangible and help PO set timing expectations.
-
-**Scope**
-- Add trade count display to System Status page or dashboard: "Closed trades: N / Gate 1: 20 / Gate 2: 50 / Gate 3: 100"
-- Alternatively: add to weekly SI-05 Telegram digest as a data density summary line
-- Data source: existing trade_history query (SELECT COUNT(*) WHERE pnl IS NOT NULL)
-
-**Acceptance Criteria**
-- Trade count visible in at least one operational context (System Status or weekly digest)
-- Count queries real production data (not hardcoded)
-- Playwright coverage or staging sign-off for observable AC
 
 ---
 
@@ -2795,102 +2430,6 @@ The RESUME PRECHECK mutation detection block in `release_planning_prompt.md` (~8
 - Terminal State Guard and State File Immutability Rule hard gates extracted and retained in the prompt body
 - State.json resume rule retained
 - Dry-run validation pass confirming no functional regression
-- Version bump + changelog entry
-- Head of Specs Team sign-off
-
----
-
-### BLG-GOV-125 — SC-03: Consolidate spec_references policy sub-variants in execution_prompt.md
-**Priority:** P2 (Medium)
-**Type:** Governance / Prompt Simplification
-**Owner:** Head of Specs Team
-**Source:** GCA-2026-06-17 — ST-04 (BLG-GOV-101) simplification candidate SC-03
-**Effort:** XS (~1 hour)
-**Provisional-Target:** v5.9
-
-**Scope**
-STEP 3.1.A steps 2a, 2b, 2c of `execution_prompt.md` each handle a distinct spec_references edge case (path verify, documentation-creation stories, test-authoring stories) as separate numbered sub-steps with prose. Consolidate into a single unified rule with a 3-case lookup table (~25 lines → ~10 lines). No logic change.
-
-**Acceptance Criteria**
-- Steps 2a, 2b, 2c replaced by a single consolidated rule with lookup table
-- All three edge cases preserved in the table
-- Version bump + changelog entry
-- Head of Specs Team sign-off
-
----
-
-### BLG-GOV-126 — SC-04: Remove STEP 8.6–8.7 fatigue detection guardrail from roadmap_prompt.md
-**Priority:** P3 (Low)
-**Type:** Governance / Prompt Simplification
-**Owner:** Head of Specs Team
-**Source:** GCA-2026-06-17 — ST-04 (BLG-GOV-101) simplification candidate SC-04
-**Effort:** XS (~1 hour)
-**Provisional-Target:** v5.9
-
-**Scope**
-STEP 8.6 (Fatigue Detection Guardrail) and STEP 8.7 (Pivot Loop) in `roadmap_prompt.md` detect convergence bias where all candidates advance and the Challenger issues only Clearance Statements. This condition has never been triggered. The Challenger failure rule in STEP 5 (mandatory counter-argument) provides equivalent protection. Remove STEPs 8.6–8.7; verify Challenger failure rule in STEP 5 is sufficient.
-
-**Implementation constraint (Head of Specs Team sign-off GCA-2026-06-17):** Before removing STEP 8.6–8.7, verify that STEP 5's Challenger failure rule explicitly covers convergence bias (all candidates advance with only clearance statements). If STEP 5's language is narrower, add a consolidating note to STEP 5 before deletion.
-
-**Acceptance Criteria**
-- STEP 5 Challenger failure rule verified to cover convergence bias scenario (or updated to do so)
-- STEPs 8.6 and 8.7 removed from roadmap_prompt.md
-- Version bump + changelog entry
-- Head of Specs Team sign-off
-
----
-
-### BLG-GOV-127 — SC-05: Remove dead-load advisory steps from release_planning_prompt.md
-**Priority:** P3 (Low)
-**Type:** Governance / Prompt Simplification
-**Owner:** Head of Specs Team
-**Source:** GCA-2026-06-17 — ST-04 (BLG-GOV-101) simplification candidate SC-05
-**Effort:** XS (~1 hour)
-**Provisional-Target:** v5.9
-
-**Scope**
-Two advisory steps in `release_planning_prompt.md` run unconditionally but produce no decision-relevant output in the common case: (a) STEP 1.3 (Design-Gate Language Scan) duplicates Sprint Planning Engine STEP -1 check; (b) STEP 5.7 (Decision Record Integrity) has no effect when no escalations are raised (common in v4.x–v5.x). Make STEP 5.7 conditional on escalations existing. Assess whether STEP 1.3 can be removed or reduced to a single-line reminder.
-
-**Acceptance Criteria**
-- STEP 5.7 made conditional (only runs if escalation records exist)
-- STEP 1.3 removed or reduced to one-line note
-- Version bump + changelog entry
-- Head of Specs Team sign-off
-
----
-
-### BLG-GOV-128 — SC-06: Make Playwright selector check conditional on DOM changes in execution_prompt.md
-**Priority:** P3 (Low)
-**Type:** Governance / Prompt Simplification
-**Owner:** Head of Specs Team
-**Source:** GCA-2026-06-17 — ST-04 (BLG-GOV-101) simplification candidate SC-06
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v5.9
-
-**Scope**
-STEP 3.1.A step 13 in `execution_prompt.md` mandates a scan of all Playwright spec files for stale selectors whenever any DOM element is modified. For governance-only or backend-only EPICs (~60% of sprints) this is dead load. Tighten the condition: "if this story modifies a DOM element that is targeted by existing Playwright selectors." No logic change for frontend EPICs.
-
-**Acceptance Criteria**
-- Step 13 condition tightened to DOM-change-relevant stories only
-- Existing coverage for frontend EPICs preserved
-- Version bump + changelog entry
-- Head of Specs Team sign-off
-
----
-
-### BLG-GOV-129 — SC-07: Compress Advisory Summary Block format docs in post_ship_closure.md
-**Priority:** P3 (Low)
-**Type:** Governance / Prompt Simplification
-**Owner:** Head of Specs Team
-**Source:** GCA-2026-06-17 — ST-04 (BLG-GOV-101) simplification candidate SC-07
-**Effort:** XS (<30 min)
-**Provisional-Target:** v5.9
-
-**Scope**
-The Advisory Summary Block section at the end of `post_ship_closure.md` contains ~20 lines of format documentation for a simple 3-line summary block. Compress to a 5-line format block with a single-sentence explanation. No behaviour change.
-
-**Acceptance Criteria**
-- Advisory Summary Block format documentation compressed to ≤5 lines
 - Version bump + changelog entry
 - Head of Specs Team sign-off
 

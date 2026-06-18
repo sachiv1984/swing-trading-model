@@ -1,13 +1,57 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-17 (post-ship closure 2026-06-17__release-v5.8)
+**Last Updated:** 2026-06-18 (post-ship closure 2026-06-17__release-v5.9)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v5.9 — Red Flag Journal UX Improvements, SI-05 Effectiveness Review & Governance Housekeeping
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-18
+**Shipped version:** v5.9
+**Cycle reference:** 2026-06-17__release-v5.9
+**Verification report:** claude/cycles/2026-06-17__release-v5.9/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-18
+
+### Original Roadmap Entry
+
+**Target release:** v5.9
+**Added:** 2026-06-17 (rebalance 2026-06-17__scheduled — STEP 8.1 Option (a) PO decision)
+**Theme:** Close outstanding UX debt on Red Flag Journal, consume SI-05 effectiveness review outputs, clear governance complexity simplification items.
+
+**Firm scope (gate confirmed cleared before sprint open):**
+
+| Item | Description | Gate |
+|------|-------------|------|
+| BLG-FE-64 | Red Flag Journal visual design review pre-brief | 2026-06-21 — clears before any sprint open |
+| BLG-FE-41 | Red Flag Journal visual design review | 2026-06-21 — clears before any sprint open |
+| BLG-OPS-70 | SI-05 deep link AC-04 staging verification (FRONTEND_URL production confirm) | ~2026-06-23 (next digest delivery) |
+| BLG-GOV-125 | Governance simplification candidate 1 (GCA-2026-06-17) | Ready now |
+| BLG-GOV-126 | Governance simplification candidate 2 (GCA-2026-06-17) | Ready now |
+| BLG-GOV-127 | Governance simplification candidate 3 (GCA-2026-06-17) | Ready now |
+| BLG-GOV-128 | Governance simplification candidate 4 (GCA-2026-06-17) | Ready now |
+| BLG-GOV-129 | Governance simplification candidate 5 (GCA-2026-06-17) | Ready now |
+
+**Conditional scope (gate must be confirmed cleared at release planning):**
+
+| Item | Description | Gate | Classification per STEP 1.4b |
+|------|-------------|------|------------------------------|
+| BLG-GOV-112 | SI-05 effectiveness review protocol execution | 2026-07-04 | Conditional — within v5.9 sprint window |
+| BLG-GOV-113 | SI-05 digest actionability metric definition | 2026-07-04 | Conditional — within v5.9 sprint window |
+| BLG-GOV-115 | SI-05 effectiveness review outputs — BLG-GOV-115 sub-scope | 2026-07-04 | Conditional — within v5.9 sprint window |
+| BLG-OPS-59 | SI-05 latency review (post-effectiveness review) | 2026-07-04 | Conditional — within v5.9 sprint window |
+| BLG-GOV-130 | SI-05 Phase 2 activation decision (new — filed this rebalance) | 2026-07-04 | Conditional — within v5.9 sprint window |
+
+Execution notes: Cycle 2026-06-17__release-v5.9; Plan published 2026-06-17; 11/11 stories shipped (EPIC-01 governance simplification SC-03–SC-07; EPIC-02 QA/audit/UX); zero deviations; zero returns. RA:v5.9 complete. Shipped 2026-06-18.
 
 ---
 

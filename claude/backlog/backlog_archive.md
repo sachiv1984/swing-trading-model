@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-17
+**Last Updated:** 2026-06-18
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -8007,6 +8007,26 @@ BLG-GOV-74 (first AI feature usage review, v4.4) established the initial Claude 
 | BLG-ID | Title | Shipped | Release | Cycle |
 |--------|-------|---------|---------|-------|
 | BLG-GOV-101 ✅ | Governance model complexity assessment | 2026-06-17 | v5.8 (ST-04 EPIC-01) | 2026-06-17__release-v5.8 |
+
+## Closed Items — v5.9 Post-Ship (2026-06-18)
+
+*Archived: 11 items shipped in v5.9 (cycle 2026-06-17__release-v5.9). Groom date: 2026-06-18.*
+
+| ID | Title | Ship note |
+|----|-------|-----------|
+| BLG-GOV-125 ✅ | SC-03: Consolidate spec_references policy sub-variants in execution_prompt.md | Shipped v5.9 ST-01 (EPIC-01) — STEP 3.1.A steps 2a/2b/2c consolidated into unified 3-case lookup table; version bumped; Head of Specs Team sign-off |
+| BLG-GOV-126 ✅ | SC-04: Remove STEP 8.6–8.7 fatigue detection guardrail from roadmap_prompt.md | Shipped v5.9 ST-02 (EPIC-01) — STEPs 8.6–8.7 removed; STEP 5 Challenger failure rule updated to cover convergence bias; version bumped; Head of Specs Team sign-off |
+| BLG-GOV-127 ✅ | SC-05: Remove dead-load advisory steps from release_planning_prompt.md | Shipped v5.9 ST-03 (EPIC-01) — STEP 5.7 made conditional on escalations; STEP 1.3 reduced to single-line reminder; version bumped; Head of Specs Team sign-off |
+| BLG-GOV-128 ✅ | SC-06: Make Playwright selector check conditional on DOM changes in execution_prompt.md | Shipped v5.9 ST-04 (EPIC-01) — STEP 3.1.A step 13 tightened to DOM-change-relevant stories only; frontend EPICs retain full scan; version bumped; Head of Specs Team sign-off |
+| BLG-GOV-129 ✅ | SC-07: Compress Advisory Summary Block format docs in post_ship_closure.md | Shipped v5.9 ST-05 (EPIC-01) — Advisory Summary Block format documentation compressed to ≤5 lines; version bumped; Head of Specs Team sign-off |
+| BLG-QA-24 ✅ | Yahoo Finance backoff path integration test stub | Shipped v5.9 ST-06 (EPIC-02) — test_yahoo_backoff_path_401_sleep_once_then_200 added to tests/test_screener_data_service.py; passes in CI; QA Lead sign-off |
+| BLG-GOV-38 ✅ | DoQ sign-off date compliance audit (v3.7–v3.9) | Shipped v5.9 ST-07 (EPIC-02) — all QA evidence files v3.7–v3.9 reviewed; findings in advisory_doq_audit_v37_v39.md; sealed artefacts not modified; Director of Quality sign-off |
+| BLG-QA-34 ✅ | QA evidence file format audit | Shipped v5.9 ST-08 (EPIC-02) — QA evidence files v3.7–v4.0 reviewed; format inconsistencies documented in advisory_qa_format_audit_v37_v40.md; Director of Quality notified |
+| BLG-GOV-53 ✅ | Agent idea participation tracking | Shipped v5.9 ST-09 (EPIC-02) — participation summary across all closed idea windows; reviewed by Director of HR; filed as advisory_agent_idea_participation.md |
+| BLG-QA-50 ✅ | Create formal regression test suite baseline document | Shipped v5.9 ST-10 (EPIC-02) — docs/qa/regression_test_suite_baseline.md; all test.py entries and Playwright specs mapped with feature coverage; DoQ sign-off |
+| BLG-FE-57 ✅ | Pre-entry panel: show warning/fail count when collapsed | Shipped v5.9 ST-11 (EPIC-02) — warning/fail count badge implemented in TradePlan.js; Playwright SC-PEP-BADGE-01a/01b/02 pass; Head of UX & Design sign-off |
+
+---
 
 ### BLG-GOV-101 — Governance model complexity assessment ✅ COMPLETE
 
