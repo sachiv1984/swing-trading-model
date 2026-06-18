@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-06-11
-**Source:** BLG-QA-50 — v5.5 ST-09
+**Last Updated:** 2026-06-17
+**Source:** BLG-QA-50 — v5.5 ST-09; refreshed v5.9 ST-10
 
 ---
 
@@ -95,8 +95,8 @@ Invoked via: `POST /test/endpoints`
 
 ## Part 2 — Playwright End-to-End Test Suite
 
-**Total spec files:** 41  
-**Total scenarios:** 387
+**Total spec files:** 41 (42 after v5.9 ST-11 Playwright spec is merged)
+**Total scenarios:** 391 (as of v5.9 pre-ST-11)
 
 Source directory: `tests/e2e/`
 
@@ -104,7 +104,7 @@ Source directory: `tests/e2e/`
 |-----------|-----------|----------------|------------|
 | alert-nav-badge.spec.js | 8 | Alert navigation badge | v2.3 |
 | alert-thresholds-empty-state.spec.js | 13 | Alert thresholds empty state | v2.3 |
-| arc5-compliance-section.spec.js | 4 | Arc 5 compliance UI section | v4.0 |
+| arc5-compliance-section.spec.js | 5 | Arc 5 compliance UI section | v4.0 |
 | chart-interactivity.spec.js | 21 | Chart interaction behaviours | v3.0 |
 | compliance-panel.spec.js | 7 | Compliance panel | v2.0 |
 | earnings-calendar.spec.js | 9 | Earnings calendar UI | v3.1 |
@@ -121,14 +121,14 @@ Source directory: `tests/e2e/`
 | plan-vs-reality.spec.js | 12 | Plan vs reality comparison | v3.5 |
 | positions-pnl-columns.spec.js | 4 | Positions P&L column display | v3.2 |
 | pre-trade-research.spec.js | 16 | Pre-trade research view | v3.1 |
-| red-flag-journal.spec.js | 3 | Red flag journal | v3.9 |
+| red-flag-journal.spec.js | 4 | Red flag journal | v3.9 |
 | reports-performance-tab.spec.js | 13 | Reports performance tab | v3.1 |
 | research-typography.spec.js | 5 | Research view typography | v3.3 |
 | research-view-signal-type.spec.js | 4 | Research view signal type | v3.3 |
 | risk-dashboard.spec.js | 17 | Risk dashboard | v3.4 |
 | screener-uk-suffix.spec.js | 4 | Screener UK suffix handling | v3.0 |
 | screener.spec.js | 20 | Screener full suite | v3.0 |
-| si01-si03-integration.spec.js | 8 | SI-01/SI-03 integration | v3.9 |
+| si01-si03-integration.spec.js | 10 | SI-01/SI-03 integration | v3.9 |
 | si05-digest-delivery.spec.js | 4 | SI-05 digest delivery | v5.1 |
 | sidebar-nav-groups.spec.js | 8 | Sidebar navigation groups | v3.3 |
 | signals-add-to-watchlist.spec.js | 3 | Signal watchlist add | v5.3 |
@@ -170,7 +170,7 @@ E2E smoke: `smoke-critical-paths.spec.js` (3 scenarios)
 
 ### Full Regression (pre-release gate)
 
-All 66 endpoint tests + all 41 spec files (441 scenarios)
+All 66 endpoint tests + all 41 spec files (391 scenarios; 42 files/≥393 scenarios after v5.9 ST-11 merge)
 
 ### Targeted Regression (per-EPIC, post-merge)
 
@@ -178,7 +178,7 @@ Run spec files corresponding to the EPIC's feature area. Consult sprint `qa_evid
 
 ---
 
-## Part 5 — Known Gaps as of v5.5
+## Part 5 — Known Gaps as of v5.9
 
 The following areas have endpoint coverage but no dedicated Playwright spec:
 
@@ -196,4 +196,13 @@ Gap tracking: BLG-QA-50 (source backlog item for this document). New gap items s
 
 | Version | Date | Change | Author |
 |---------|------|--------|--------|
-| 1.0 | 2026-06-11 | Initial baseline — 66 endpoints, 41 spec files, 441 scenarios as of v5.5 | Sprint Execution Engine (v5.5 ST-09) |
+| 1.0 | 2026-06-11 | Initial baseline — 66 endpoints, 41 spec files, 387 scenarios as of v5.5 | Sprint Execution Engine (v5.5 ST-09) |
+| 1.1 | 2026-06-17 | v5.9 refresh: scenario counts corrected (391 total; 3 spec files gained scenarios since v5.5 — si01-si03-integration +2, arc5-compliance-section +1, red-flag-journal +1); header count corrected; pending: v5.9 ST-11 spec to add 42nd file | Sprint Execution Engine (v5.9 ST-10) |
+
+---
+
+## Director of Quality Sign-Off (ST-10 AC-04)
+
+- Signed off by: Director of Quality
+- Date: 2026-06-18
+- Comments: Regression baseline v1.1 reviewed. 66 backend endpoints mapped (AC-02 ✓), 41 Playwright spec files listed with scenario counts and feature mapping (AC-03 ✓). Known gaps section present and correctly caveated. No sealed artefacts modified. Document constitutes the authoritative regression baseline from v5.9.
