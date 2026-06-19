@@ -97,6 +97,9 @@ Response uses the standard success envelope from **conventions.md**.
 | `fill_price` | Actual fill price in native currency at entry. `null` for trades entered before v2.1 (Fill Price capture not yet active) |
 | `slippage_pct` | Per-trade slippage as a percentage: `(fill_price − entry_price) / entry_price * 100`. Negative = favourable (filled below market). Positive = unfavourable (filled above market). `null` when `fill_price` is `null`. Rounded to 2 decimal places |
 | `fee_drag_pct` | Per-trade fee drag as a percentage: `exit_fees / gross_proceeds * 100`. Always non-negative. `null` when `gross_proceeds` is null or zero. Rounded to 2 decimal places |
+| `commission_gbp` | Commission paid at entry and exit (GBP). `null` until recorded via `PATCH /trades/{id}/costs` |
+| `spread_cost_gbp` | Bid-ask spread cost estimate (GBP). `null` until recorded via `PATCH /trades/{id}/costs` |
+| `net_r_multiple` | Net-of-costs R-multiple: `(pnl − commission_gbp − spread_cost_gbp) / initial_risk_gbp`. `null` when `commission_gbp` or `spread_cost_gbp` is absent, or when `stop_price_at_entry` is unavailable. Rounded to 3 decimal places |
 | `pnl_pct` and `pnl_percent` | Both fields are returned with the same value for compatibility |
 | `holding_days` | Number of calendar days from `entry_date` to `exit_date` inclusive |
 | `exit_reason` | The reason recorded at exit. `null` values are normalised to `"Manual Exit"` in the analytics service but stored as-is here |
@@ -337,6 +340,52 @@ Returns the plan vs reality comparison for a closed trade that has a linked trad
 
 ---
 
+## PATCH /trades/{trade_id}/costs
+
+**Auth:** Required (X-API-Key)
+
+Record or update commission and spread costs (in GBP) for a closed trade. Both fields are optional — send only the fields to update. A subsequent call overwrites the previous value. Once both fields are populated, `GET /trades` will compute and return `net_r_multiple` for the trade.
+
+**Story:** ST-03 (EPIC-02, v6.0) — BLG-FEAT-20
+
+### Path parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| trade_id | UUID string | Yes | `id` from `trade_history` |
+
+### Request body
+
+```json
+{
+  "commission_gbp": 12.50,
+  "spread_cost_gbp": 3.20
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `commission_gbp` | float \| null | No | Total commission paid (GBP), entry + exit |
+| `spread_cost_gbp` | float \| null | No | Estimated bid-ask spread cost (GBP) |
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": { "trade_id": "uuid-string" }
+}
+```
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 404 | trade_id not found in trade_history for the active portfolio |
+| 500 | Database error |
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
@@ -348,3 +397,4 @@ Returns the plan vs reality comparison for a closed trade that has a linked trad
 | 2.2.0 | 2026-04-06 | ST-09 (EPIC-03, v2.5): Add `fee_drag_pct` (float\|null) per trade; add `avg_fee_drag_pct` (float\|null) to top-level summary. No schema change. |
 | 2.3.0 | 2026-05-15 | ST-05 (EPIC-02, v3.5): Add GET /trades/{trade_id}/plan-vs-reality — PO-01 Plan vs Reality comparison endpoint. New JSONB column `plan_vs_reality` on `trade_history`; new `planned_stop_price` column on `trade_plans`. Migration: ensure_plan_vs_reality_columns(). |
 | 2.2.0 | 2026-04-06 | ST-09 (EPIC-03, v2.5): Add `fee_drag_pct` (float\|null) per trade (`exit_fees / gross_proceeds * 100`); add `avg_fee_drag_pct` (float\|null) to top-level summary. No schema change — uses existing `exit_fees` and `gross_proceeds` columns. Head of Specs Team co-authorship confirmed. |
+| 2.4.0 | 2026-06-19 | ST-03 (EPIC-02, v6.0): Add `PATCH /trades/{trade_id}/costs` endpoint; add `commission_gbp`, `spread_cost_gbp`, `net_r_multiple` to `GET /trades` per-trade response. Schema migration: data_model.md DS-08 (v2.9). |

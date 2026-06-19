@@ -455,6 +455,10 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+    updateCosts: async (tradeId, costs) => doFetch(`/trades/${tradeId}/costs`, {
+      method: 'PATCH',
+      body: JSON.stringify(costs),
+    }),
   },
 
   analytics: {

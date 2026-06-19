@@ -329,6 +329,12 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_trade_plans_extended_status FAILED at startup: %s", _e)
     try:
+        from database import ensure_trade_cost_columns
+        ensure_trade_cost_columns()
+        _log.info("ensure_trade_cost_columns: OK")
+    except Exception as _e:
+        _log.error("ensure_trade_cost_columns FAILED at startup: %s", _e)
+    try:
         from utils.feature_flags import log_flag_states
         log_flag_states()
     except Exception as _e:
@@ -730,6 +736,46 @@ def save_trade_reflection_endpoint(trade_id: str, request: ReflectionRequest):
         return {"status": "ok", "data": reflection}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class TradeCostsRequest(BaseModel):
+    commission_gbp: Optional[float] = None
+    spread_cost_gbp: Optional[float] = None
+
+
+@app.patch("/trades/{trade_id}/costs")
+def update_trade_costs_endpoint(trade_id: str, request: TradeCostsRequest):
+    """
+    PATCH /trades/{trade_id}/costs
+
+    Record or update commission and spread cost (in GBP) for a closed trade.
+    Both fields are optional; send only the fields you want to update.
+    Returns 404 if trade_id does not exist in trade_history.
+    Spec: docs/specs/api_contracts/trade_endpoints.md — ST-03 (EPIC-02, v6.0)
+    """
+    from database import update_trade_costs
+
+    try:
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+        portfolio_id = str(portfolio["id"])
+
+        updated = update_trade_costs(
+            trade_id=trade_id,
+            portfolio_id=portfolio_id,
+            commission_gbp=request.commission_gbp,
+            spread_cost_gbp=request.spread_cost_gbp,
+        )
+        if not updated:
+            raise HTTPException(status_code=404, detail="Trade not found")
+        return {"status": "ok", "data": {"trade_id": trade_id}}
+    except HTTPException:
+        raise
     except Exception as e:
         import traceback
         traceback.print_exc()

@@ -10,8 +10,41 @@ import csv
 import io
 
 from typing import Dict, List, Optional
-from database import get_portfolio, get_trade_history, get_trade_reflection, upsert_trade_reflection
+from database import (
+    get_portfolio, get_trade_history, get_trade_reflection, upsert_trade_reflection,
+    get_trade_history_with_stops, update_trade_costs,
+)
 from utils.formatting import decimal_to_float
+
+
+def _compute_net_r(pnl: float, commission_gbp: Optional[float], spread_cost_gbp: Optional[float],
+                   entry_price: float, stop_price_at_entry: Optional[float],
+                   shares: float, market: str, entry_fx_rate: Optional[float]) -> Optional[float]:
+    """Compute net-of-costs R-multiple. Returns None when inputs are insufficient.
+
+    ST-03 (EPIC-02, v6.0) — BLG-FEAT-20.
+    net_r = (pnl - commission_gbp - spread_cost_gbp) / initial_risk_gbp
+    initial_risk_gbp: (entry_price - stop_price_at_entry) * shares, then /fx_rate for US stocks.
+    """
+    total_costs = (commission_gbp or 0.0) + (spread_cost_gbp or 0.0)
+    if total_costs == 0.0:
+        return None
+    if stop_price_at_entry is None or stop_price_at_entry <= 0:
+        return None
+    if entry_price <= stop_price_at_entry:
+        return None
+    risk_native = (entry_price - stop_price_at_entry) * shares
+    if risk_native <= 0:
+        return None
+    if market == "US":
+        fx = entry_fx_rate or 1.0
+        risk_gbp = risk_native / fx if fx > 0 else risk_native
+    else:
+        risk_gbp = risk_native
+    if risk_gbp <= 0:
+        return None
+    net_pnl = pnl - total_costs
+    return round(net_pnl / risk_gbp, 3)
 
 
 def get_trade_history_with_stats() -> Dict:
@@ -31,9 +64,9 @@ def get_trade_history_with_stats() -> Dict:
     portfolio = get_portfolio()
     if not portfolio:
         raise ValueError("Portfolio not found")
-    
+
     portfolio_id = str(portfolio['id'])
-    trades = get_trade_history(portfolio_id)
+    trades = get_trade_history_with_stops(portfolio_id)
     trades = [decimal_to_float(t) for t in trades]
     
     if not trades:
@@ -68,6 +101,19 @@ def get_trade_history_with_stats() -> Dict:
         else:
             fee_drag_pct = None
 
+        commission_gbp = t.get('commission_gbp')
+        spread_cost_gbp = t.get('spread_cost_gbp')
+        net_r_multiple = _compute_net_r(
+            pnl=t.get('pnl', 0),
+            commission_gbp=float(commission_gbp) if commission_gbp is not None else None,
+            spread_cost_gbp=float(spread_cost_gbp) if spread_cost_gbp is not None else None,
+            entry_price=float(t.get('entry_price', 0)),
+            stop_price_at_entry=float(t['stop_price_at_entry']) if t.get('stop_price_at_entry') is not None else None,
+            shares=float(t.get('shares', 0)),
+            market=t.get('market', 'UK'),
+            entry_fx_rate=float(t['entry_fx_rate']) if t.get('entry_fx_rate') is not None else None,
+        )
+
         formatted_trades.append({
             "id": str(t.get('id', '')),
             "ticker": t['ticker'],
@@ -88,6 +134,9 @@ def get_trade_history_with_stats() -> Dict:
             "fill_price": float(fill_price) if fill_price is not None else None,
             "slippage_pct": slippage_pct,
             "fee_drag_pct": fee_drag_pct,
+            "commission_gbp": float(commission_gbp) if commission_gbp is not None else None,
+            "spread_cost_gbp": float(spread_cost_gbp) if spread_cost_gbp is not None else None,
+            "net_r_multiple": net_r_multiple,
         })
 
     slippage_values = [t['slippage_pct'] for t in formatted_trades if t['slippage_pct'] is not None]
