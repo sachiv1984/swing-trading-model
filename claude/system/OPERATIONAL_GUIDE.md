@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.57
-**Last Updated:** 2026-06-18
+**Version:** 4.58
+**Last Updated:** 2026-06-19
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v7.4)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v7.5)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1272,7 +1272,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v7.4) | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v7.5) | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1463,7 +1463,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.9 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v7.4 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v7.5 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.37 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.10 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.58 | 2026-06-19 | **LL-P5-03 overdue resolution — roadmap_prompt.md v7.4→v7.5: STEP -1.5 stale release target check added.** §6 source prompt header updated v7.4→v7.5. §13 artefact register Roadmap Rebalance Prompt v7.4→v7.5. §14 Roadmap Engine Source v7.4→v7.5. §14 Version 4.57→4.58/2026-06-19. Change (roadmap v7.5): STEP -1.5 Prompt patch confirmation — third bullet added: if a deferred patch's target event is a named release (`plan release vX.Y`), verify whether that release has already shipped by checking release summary table in `current_roadmap.md`; if shipped → classify OVERDUE immediately without waiting for 2-cycle carry rule. Resolves LL-P5-03 (first filed 2026-06-17__scheduled; carried to 2026-06-19__scheduled as OVERDUE; root cause: LL-P5-02 patch itself had a stale release target that passed before the deferred patch was validated). Authority: Head of Specs Team (LL-P5-03 overdue resolution, rebalance 2026-06-19__scheduled). |
 | 4.57 | 2026-06-18 | **roadmap_prompt.md v7.3→v7.4 — four diagnostic steps added + Skill-Silo ceiling lowered.** §6 source prompt header updated v7.3→v7.4. §14 Roadmap Engine Source v7.3→v7.4. §13 artefact register Roadmap Rebalance Prompt v7.1→v7.4. §14 Version 4.56→4.57/2026-06-18. Changes: STEP 2.4 Product Value Ratio Diagnostic (mandatory) — classifies last 5 cycles' stories as U/G/D/P; fires Product Value Alert if ratio < 0.30; Advisory if < 0.50. STEP 3.1 Actionable Backlog Assessment (mandatory) — categorises each active backlog item as A/T/D/L; surfaces Backlog Accessibility Warning if A-items < 30%. STEP 5 — Challenger Product Velocity Concern exception added: when STEP 2.4 ratio < 0.50, Challenger may raise a Product Velocity Concern without §13 basis. STEP 7.1 — Skill-Silo ceiling reduced from 60% to 40%; metric changed from governance FTE to story-count (solo-developer context). STEP 8.0 Production Correctness Fast-Track (mandatory) — before any horizon debate, scan backlog for P0/P1 correctness/security items; any found must appear in Now horizon ahead of governance/debt items. Authority: Head of Specs Team + Product Owner (strategic review 2026-06-18). |
 | 4.56 | 2026-06-18 | **v5.9 post-ship closure (LL-v5.9-P4-01) — execution_prompt.md v3.44→v3.45: STEP 5.3A immediate staging instruction added for docs/System_status_report.md.** §8 source prompt header updated v3.44→v3.45. §14 Execution Engine Source v3.44→v3.45. §14 Version 4.55→4.56/2026-06-18. Change: STEP 5.3A — added "Immediate staging (LL-v5.9-P4-01)" block after SSR write; explicit `git add docs/System_status_report.md` staged before any branch switch; resolves multi-cycle commit discipline gap (SSR sections absent from committed file across v5.6/v5.7/v5.8/v5.9). Authority: Head of Specs Team (LL-v5.9-P4-01, v5.9 post-ship closure, 2026-06-18). |
 | 4.47 | 2026-06-16 | **sprint_planning_prompt.md v3.9→v3.10 — STEP -1.7 prompt change log gap advisory: replaced `grep | tail` instruction with `grep | head -1` and explicit prepend-sort note.** §7 source prompt header updated v3.9→v3.10. §14 Sprint Planning Engine v3.9→v3.10. §14 Version 4.46→4.47/2026-06-16. Change (sprint_planning_prompt v3.10): STEP -1.7 hygiene advisory — prompt change log gap check rewritten to use `grep "<filename>" prompt_change_log.md | head -1` (file is prepended newest-first; `head -1` gives the most recent entry); explicit note added that `tail` must NOT be used; false-positive root cause: prior wording "not top-first — entries may be at the bottom" predated prepend-sort convention and caused engine to read oldest entries as most recent. Per-file changelogs (post_ship_closure_changelog.md, roadmap_management_changelog.md) backfilled with entries missed since 2026-05-09 refactor. Authority: Head of Specs Team (RCA + v5.7 sprint planning false-positive resolution, 2026-06-16). |

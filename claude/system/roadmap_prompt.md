@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 7.4
-**Last Updated:** 2026-06-18 (v7.3→v7.4: Product Value Ratio Diagnostic (STEP 2.4), Actionable Backlog Assessment (STEP 3.1), Production Correctness Fast-Track (STEP 8.0), Skill-Silo ceiling 60%→40% with story-count measure (STEP 7.1), Challenger Product Velocity Concern exception (STEP 5). Authority: Head of Specs Team + Product Owner (strategic review 2026-06-18).)
+**Version:** 7.5
+**Last Updated:** 2026-06-19 (v7.4→v7.5: STEP -1.5 stale release target check added — deferred patches targeting a named release event are classified OVERDUE immediately if that release has already shipped, without waiting for the 2-cycle carry rule. Authority: Head of Specs Team (LL-P5-03 overdue resolution, rebalance 2026-06-19__scheduled).)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -148,6 +148,7 @@ Any unresolved action with no carry-forward path → halt.
 **Prompt patch confirmation:** Load deferred patches from prior `lessons_learnt.md`. For each:
 - Present in target file → record "applied" in run manifest.
 - Absent and **second consecutive cycle** carrying this patch → classify OVERDUE; escalate to Head of Specs Team immediately. Run may not proceed past -1.5 with any OVERDUE patch.
+- **Stale release target check:** If a deferred patch's target event is a named release (`plan release vX.Y`), verify whether that release has already shipped by checking the release summary table in `current_roadmap.md`. If shipped → classify the patch as OVERDUE immediately; do not wait for the second-consecutive-cycle rule to fire. Record outcome in run manifest.
 
 Record all outcomes under "Prior Cycle Outstanding Actions" in run manifest.
 
