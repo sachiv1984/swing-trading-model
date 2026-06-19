@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 7.3
-**Last Updated:** 2026-06-16 (v7.0→v7.1: LL-RP-02 — STEP 8.0.5 strengthened from Advisory to Mandatory; now fires at STEP 3 candidate compilation AND before STEP 8.1 presentation; second recurrence of complete-item leakage confirmed)
+**Version:** 7.4
+**Last Updated:** 2026-06-18 (v7.3→v7.4: Product Value Ratio Diagnostic (STEP 2.4), Actionable Backlog Assessment (STEP 3.1), Production Correctness Fast-Track (STEP 8.0), Skill-Silo ceiling 60%→40% with story-count measure (STEP 7.1), Challenger Product Velocity Concern exception (STEP 5). Authority: Head of Specs Team + Product Owner (strategic review 2026-06-18).)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -296,10 +296,47 @@ Horizon movements are candidates in STEP 5 only if they represent new commitment
 
 ---
 
+### STEP 2.4 — Product Value Ratio Diagnostic (Mandatory)
+
+Authority: Facilitator (compute), Product Owner (respond if alert fires)
+
+Look back at the last 5 completed cycles from `docs/product/changelog.md`. Classify each story delivered as one of:
+- **U** — User-facing feature or visible UX improvement
+- **G** — Governance / prompt / process work
+- **D** — Debt clearance (spec, QA, ops baseline, audit, pre-planning)
+- **P** — Pre-work for a future feature (pre-design, pre-planning, pre-spec)
+
+Compute: `user_value_ratio = U stories ÷ total stories` across the 5 cycles (one decimal, e.g. 0.42).
+
+| Ratio | Status | Action |
+|-------|--------|--------|
+| ≥ 0.50 | Healthy | Record and continue |
+| 0.30–0.49 | Advisory | Facilitator surfaces in STEP 8 before final decisions |
+| < 0.30 | **Product Value Alert** | Challenger must treat this as equivalent weight to a §13 concern — requires explicit PO written response before STEP 8 concludes; pull-forward of a user-facing backlog item is mandatory unless PO provides written rationale |
+
+Record the classification table and computed ratio in `run_manifest.md` under `## Product Value Ratio Diagnostic`.
+
+---
+
 ### STEP 3 — Backlog Health Review
 Authority: Head of Specs Team (process), Product Owner (planning ownership)
 
 Tag items: Obsolete? Duplicate? Still strategically aligned? Quick wins ignored? Technical debt accumulating? Do not delete or rewrite items at this stage.
+
+#### 3.1 Actionable Backlog Assessment (Mandatory)
+
+Categorise every active backlog item as one of:
+- **A** — Actionable now (no gate, or gate already cleared)
+- **T** — Time-gated (will clear within 3 months based on the stated condition date)
+- **D** — Data-density-gated (depends on trade count, journal volume, or screener history; estimate clearance date from current rate — state the estimate explicitly)
+- **L** — Long-horizon-gated (condition clears > 3 months away, or gate owner is external / uncontrollable)
+
+Report in `run_manifest.md` under `## Actionable Backlog Assessment`:
+- Count per category (A / T / D / L)
+- For D-gated items: current value vs gate threshold vs estimated clearance date (e.g. "13/20 closed trades; ~3 weeks at current rate")
+- For L-gated items: list top 5 by priority — flag any with conditions > 12 months away as archive candidates
+
+**Advisory:** if A-items < 30% of active backlog, surface "Backlog Accessibility Warning" — most tracked items cannot be actioned in the next 2 releases. PO to consider archiving L-gated items with conditions > 12 months away in the next `groom backlog` run.
 
 ---
 
@@ -371,6 +408,8 @@ Reviving a Rejected-stale idea requires fresh submission through `run ideas`.
 Authorities: Product Owner (chair) + Challenger (non-decision challenge)
 
 **Challenger failure rule (SC-04):** Challenger must produce an evidence-based counter-argument for every advancing candidate — not silence, not "no objection," and not a blanket Clearance Statement when multiple candidates advance together. Issuing only Clearance Statements across all advancing candidates with no substantive challenge is convergence bias — treat as Challenger failure. Failure → halt; record Type E — Authority Gap in lessons learnt.
+
+**Challenger Product Velocity Concern (exception to §13 basis requirement):** When STEP 2.4 user_value_ratio < 0.50, the Challenger may raise a "Product Velocity Concern" citing the STEP 2.4 ratio as evidence — this is the one context where a §13-grounded argument is not required. The concern must name the computed ratio, the last 5 cycles breakdown, and propose a specific user-facing pull-forward candidate from the backlog.
 
 **Debate Queue preflight:** Read the `## STEP 5 Debate Queue` table from STEP 4.4. Every IDEA ID in the queue must have a debate entry before STEP 5 is marked complete. Queue empty → record "Queue empty — no debates required" and continue to STEP 6.
 
@@ -473,9 +512,9 @@ For every in-scope initiative: estimated FTE load, skill type, duration, opportu
 
 Classify each initiative: **Governance-heavy** (PO, Strategy Owner, Head of Specs, PMO Lead) or **Execution-heavy** (engineering, QA, design, infrastructure).
 
-Governance load % = governance FTE ÷ total FTE × 100.
+Governance story % = (G + D + P stories from STEP 2.4) ÷ total stories delivered in last 3 cycles × 100. Use story count, not FTE hours — this is a solo-developer context where FTE is not a meaningful unit.
 
-**> 60% Ceiling:** Skill-Silo Alert. Scan backlog for highest-priority execution-heavy item with no blockers and within available capacity — present as pull-forward candidate. PO decides. Check is mandatory; result recorded in `## STEP 8`.
+**> 40% Ceiling:** Skill-Silo Alert. Scan backlog for highest-priority user-facing item (U-classified, no blockers, within available capacity) — present as pull-forward candidate. PO decides. Check is mandatory; result recorded in `## STEP 8`.
 
 **< 20% Floor:** Verify PO has sufficient sign-off capacity. If unconfirmable: record governance capacity risk in `## STEP 8`. Does not halt — must appear in lessons learnt.
 
@@ -493,6 +532,20 @@ Hard rules: Adds require stops; stops ≥ adds; scarce skills protected. Quality
 **Displacement candidate flag:** If any initiative is the natural next-stop candidate, record in `claude/roadmap/initiative_register.md`: `Displacement candidate: Yes — <rationale> — <date>`. Not in `cycle_record.md` or `current_roadmap.md`.
 
 Valid outcome: no changes made. Still requires roadmap Last Updated refresh and a "no change" decision log entry.
+
+---
+
+### STEP 8.0 — Production Correctness Fast-Track (Mandatory Pre-Check)
+
+Authority: Product Owner (decision), Head of Specs Team (escalation)
+
+Before any horizon debate, scan `claude/backlog/backlog.md` for items where the description or Problem section indicates:
+- **Correctness bug** — wrong output, wrong calculation, data shown incorrectly to the user
+- **Security issue** — exposed data, missing authentication, known CVE
+
+For any such item at **P0 or P1**: it must appear in the Now horizon for the next release before any governance, pre-planning, or debt items. PO may override only with a written safety rationale (e.g. "bug is display-only and cannot affect a trading decision").
+
+Record findings in `run_manifest.md` under `## Production Correctness Fast-Track`. If any item is promoted by this check, record as "Correctness Fast-Track Promotion" in the decision log (counts as a net-zero displacement if it displaces a non-product item of equal or lower priority).
 
 ---
 

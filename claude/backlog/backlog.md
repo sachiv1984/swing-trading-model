@@ -3,8 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-18 (post-ship closure groom backlog 2026-06-17__release-v5.9)
-**Old Last Updated:** 2026-06-18 (session — 1 new item added: BLG-BE-36)
+**Last Updated:** 2026-06-19 (strategic review session — 3 new items added: BLG-FEAT-46, BLG-FEAT-47, BLG-OPS-71; BLG-BE-36 promoted P2→P0; BLG-FEAT-20 promoted P2→P1 with v6.0 provisional target)
 **Last rebalance:** 2026-06-17 (cycle 2026-06-17__scheduled — DL-047; BLG-GOV-130 added; 28 ideas rejected; 1 promoted-backlog; v5.9 Now section added to roadmap)
 
 > ⚠️ Standing Notice
@@ -39,12 +38,12 @@
 ---
 
 ### BLG-FEAT-20 — Net-of-costs performance tracking
-**Priority:** P2 (Medium)
+**Priority:** P1 (High)
 **Type:** Product Feature / Analytics
 **Owner:** Financial Reporting & Records Owner
-**Source:** IDEA-financial-reporting-20260321-02 — promoted cycle 2026-05-05__scheduled (DL-024)
+**Source:** IDEA-financial-reporting-20260321-02 — promoted cycle 2026-05-05__scheduled (DL-024); promoted P2→P1 2026-06-18 strategic review (R-multiples ignoring costs overstate edge; correctness concern at small trade volumes)
 **Effort:** M (~2–3 days)
-**Provisional-Target:** Arc 3/4 context (deliver alongside Arc 3 or Arc 4 data model work — not a standalone sprint item)
+**Provisional-Target:** v6.0 (decouple from Arc 3/4 context — standalone item; data model impact is additive/optional-field-only)
 
 **Problem**
 Performance metrics (R-multiple, win rate, expectancy) use gross P&L figures. When evaluating edge in Arc 4/6, R-multiples that ignore transaction costs overstate performance and may mask a genuinely unprofitable strategy. The Fee Drag % metric (v2.4) surfaces aggregate cost impact but per-trade R-multiples remain gross.
@@ -414,6 +413,67 @@ Monthly P&L shipped 2026-05-05 with a fixed column/section layout. After 3 month
 - Recommendations document produced (or "no change" decision recorded)
 - Any format changes flow into the next appropriate sprint as separate stories
 - Gate condition verified: ≥ 2026-08-05
+
+---
+
+### BLG-FEAT-46 — Trader's Morning Briefing dashboard
+**Priority:** P1 (High)
+**Type:** Product Feature / UX
+**Owner:** Head of UX & Design; Base44 Frontend Prompt Owner
+**Source:** Strategic review 2026-06-18 — identified as highest-impact daily workflow gap; morning review information currently spread across 8+ pages
+**Effort:** M (~2–3 days)
+**Provisional-Target:** v6.0
+
+**Problem**
+There is no single-screen "start of day" view. A trader's morning review requires visiting: screener (new hits since last run), positions (any in exit zone or grace period), alerts (new red flags), earnings calendar (this week), and compliance trend — across 8+ separate pages. This friction increases the risk of missing an actionable event. All the underlying data already exists across existing endpoints; the gap is purely a frontend composition problem.
+
+**Scope**
+- Extend DashboardHome.js with a Trader's Morning Briefing section rendered at the top of the page
+- Screener card: count of new screener hits since last visit; link to Screener page
+- Positions card: any positions in EXIT_ZONE or GRACE_PERIOD states with days-in-state; link to Positions page; empty state handled
+- Red flags card: count of new red flag events since last weekly digest; link to Red Flag Journal
+- Earnings card: count of watchlisted or open-position tickers with earnings in the next 7 days; link to earnings calendar
+- Compliance card: current Arc 5 compliance score + trend arrow (up/down/flat vs prior week); link to PerformanceAnalytics
+- Compose from existing endpoints only — no new backend endpoints required: GET /portfolio/grace-period-alerts, GET /positions, GET /portfolio/red-flag-journal, GET /earnings/{ticker}, GET /analytics/arc5-compliance
+- Mobile-responsive: cards stack vertically at breakpoint ≤ 768px
+
+**Acceptance Criteria**
+- Morning Briefing section renders at top of DashboardHome.js on page load
+- All 5 cards (screener hits, positions alert, red flags, earnings this week, compliance score) render with correct data
+- Each card links to the correct destination page
+- All cards handle loading and empty states without error
+- Mobile: cards stack vertically at ≤ 768px breakpoint
+- Playwright: morning briefing section renders; all 5 card types show data or empty state; links navigate correctly
+
+---
+
+### BLG-FEAT-47 — Screener data quality telemetry
+**Priority:** P1 (High)
+**Type:** Product Feature / UX / Trust
+**Owner:** Head of UX & Design; Head of Backend Engineering
+**Source:** Strategic review 2026-06-18 — screener reliability identified as existential risk to user trust; Yahoo Finance 401/backoff issues produce silent degraded runs; degraded-run warning banner (v3.9) is insufficient
+**Effort:** S (~1 day)
+**Provisional-Target:** v6.0
+
+**Problem**
+The screener depends on Yahoo Finance data which is subject to 401 errors, crumb refresh failures, and exponential backoff. When a run is degraded, the user sees results without knowing how complete they are or which tickers failed. The v3.9 degraded-run banner is a generic warning with no quantitative information — the user cannot assess whether results covering 480/500 tickers are actionable vs results covering 200/500. This erodes trust in the screener's core value proposition.
+
+**Scope**
+- Backend: add data quality metadata to GET /screener/results response — fields: `tickers_requested` (int), `tickers_loaded` (int), `tickers_failed` (list of ticker strings), `last_full_run_utc` (ISO timestamp), `run_quality` enum (FULL / DEGRADED / FAILED)
+- Frontend (Screener.js): replace generic degraded-run warning banner with a structured data quality panel showing: run quality badge with colour (green=FULL, amber=DEGRADED, red=FAILED), tickers loaded ratio (e.g. "487 / 500"), expandable failed tickers list, last full run timestamp
+- DEGRADED state: "Results may be incomplete — 13 tickers failed to load" displayed prominently
+- FULL state: "Full run — 500 / 500 tickers loaded" displayed as positive confirmation
+- FAILED state: red badge with retry prompt
+- Stale advisory: if `last_full_run_utc` > 24 hours ago, show "Last full run: X hours ago — trigger a new run for fresh results"
+
+**Acceptance Criteria**
+- GET /screener/results response includes `tickers_requested`, `tickers_loaded`, `tickers_failed[]`, `last_full_run_utc`, `run_quality` (FULL/DEGRADED/FAILED)
+- Screener page shows structured quality panel for all three run_quality values (not the previous generic banner)
+- FULL state: green badge + loaded ratio shown
+- DEGRADED state: amber badge + loaded ratio + expandable failed ticker list + "Results may be incomplete" message
+- FAILED state: red badge + retry prompt
+- Stale advisory renders when last_full_run_utc > 24 hours ago
+- Playwright: all three quality states render correctly; failed ticker count shown in DEGRADED state; retry prompt shown in FAILED state
 
 ---
 
@@ -1129,12 +1189,12 @@ PO-04 (Reflection ↔ Outcome Correlation) requires journal entries with quantif
 ---
 
 ### BLG-BE-36 — Align signal_service suggested_shares to risk-based sizing model
-**Priority:** P2 (Medium)
-**Type:** Backend Engineering
+**Priority:** P0 (Critical — Correctness Bug)
+**Type:** Backend Engineering / Correctness Fix
 **Owner:** Strategy Rules & System Intent Owner; Head of Engineering
-**Source:** User observation — signal card vs entry tab inconsistency — 2026-06-18
+**Source:** User observation — signal card vs entry tab inconsistency — 2026-06-18; promoted P2→P0 by Production Correctness Fast-Track review 2026-06-18 (wrong share counts showing on every signal card)
 **Effort:** S (~0.5 day)
-**Provisional-Target:** v6.0
+**Provisional-Target:** v6.0 (first story in release — correctness fast-track)
 
 **Problem**
 `signal_service.py` calculates `suggested_shares` using a cash-allocation model (available_cash ÷ number_of_new_signals ÷ price_gbp). The entry tab uses `sizing_service.py` which implements the canonical risk-based model from strategy_rules.md §4.1 (portfolio_value × risk_percent ÷ stop_distance). The two methods produce different share counts for the same stock. The share count on a signal card will change depending on how many other signals fire that day, and ignores the stop distance entirely — both of which are wrong. The risk-based model is the correct approach and is already the authoritative implementation in the codebase.
@@ -2506,6 +2566,32 @@ BLG-OPS-60 (completed v5.4) added v5.3 endpoints to api_performance_baseline.md.
 - All v5.1/v5.2 new endpoints have latency entries in the baseline document
 - Consistent with existing measurement methodology
 - Infrastructure & Operations Owner sign-off
+
+---
+
+### BLG-OPS-71 — System threat model document
+**Priority:** P2 (Medium)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** IDEA-cybersecurity-20260304-01 (rejected_but_strong.md) — revival triggered by strategic review 2026-06-18; original rejection condition (no production-scale external exposure) no longer holds; system now handles real position data, stop levels, P&L, Alpaca API credentials, Anthropic/Gemini billing keys, and Telegram bot tokens across staging + production
+**Effort:** S (~1 day)
+**Provisional-Target:** v6.0
+
+**Problem**
+No formal threat model exists. The system handles high-sensitivity financial data (positions, stop levels, P&L) and multiple third-party API credentials with billing exposure (Alpaca, Anthropic, Gemini, Telegram). Current security controls (API key auth on endpoints, CSP, CI secret scanning) were added reactively. A formal threat model identifies attack surfaces and data sensitivity levels in one place — producing a prioritised gap list before an incident forces it.
+
+**Scope**
+- Identify attack surfaces: endpoint auth coverage, Supabase access controls, Render environment variable exposure, Telegram webhook, Alpaca paper trading credentials, AI API keys
+- Data sensitivity classification: position data (HIGH), stop levels (HIGH), P&L (HIGH), API keys (CRITICAL), user preferences (MEDIUM)
+- Threat actors: external web attacker, compromised dependency, accidental exposure
+- Document existing mitigations already in place (API key auth, CSP, CI secret scanning gate)
+- Identify gaps; file a BLG-OPS or BLG-SPEC item for each gap discovered
+- Output: `docs/security/threat_model.md`
+
+**Acceptance Criteria**
+- `docs/security/threat_model.md` produced covering all attack surfaces, data classifications, threat actors, current mitigations, and identified gaps
+- Any gaps produce separate BLG items before sign-off
+- Reviewed and signed off by Cybersecurity & Trust Lead and Infrastructure & Operations Owner
 
 ---
 
