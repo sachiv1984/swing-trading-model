@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-19 (strategic review session — 3 new items added: BLG-FEAT-46, BLG-FEAT-47, BLG-OPS-71; BLG-BE-36 promoted P2→P0; BLG-FEAT-20 promoted P2→P1 with v6.0 provisional target)
-**Last rebalance:** 2026-06-17 (cycle 2026-06-17__scheduled — DL-047; BLG-GOV-130 added; 28 ideas rejected; 1 promoted-backlog; v5.9 Now section added to roadmap)
+**Last Updated:** 2026-06-19 (roadmap rebalance 2026-06-19__scheduled — 7 new items added: BLG-SPEC-56/57, BLG-QA-59, BLG-OPS-72, BLG-BE-37, BLG-GOV-131, BLG-FE-76; total 108 active items)
+**Last rebalance:** 2026-06-19 (cycle 2026-06-19__scheduled — DL-048–051; 7 promoted-backlog, 1 rejected, 8 parked C1; v6.0 Now section added to roadmap; Product Value Alert + Skill-Silo Alert recorded)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -2592,6 +2592,173 @@ No formal threat model exists. The system handles high-sensitivity financial dat
 - `docs/security/threat_model.md` produced covering all attack surfaces, data classifications, threat actors, current mitigations, and identified gaps
 - Any gaps produce separate BLG items before sign-off
 - Reviewed and signed off by Cybersecurity & Trust Lead and Infrastructure & Operations Owner
+
+---
+
+### BLG-SPEC-56 — Arc 4 API contract pre-authoring (PO-02/03/04)
+**Priority:** P3 (Low)
+**Type:** Spec / Pre-authoring
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260619-01 — Promoted-Backlog rebalance 2026-06-19__scheduled (DL-049)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Unscheduled (pre-work before PO-02 gate ~2026-10)
+
+**Problem**
+PO-02 (journal pattern recognition), PO-03 (behavioural error taxonomy), and PO-04 (reflection/outcome correlation) are currently gate-blocked (~2026-10). However, the API contract surface for these features can be pre-authored now, reducing execution risk and spec bottlenecks when the gate clears. Pre-authoring allows the Specs team to identify ambiguities, surface §13 questions, and establish endpoint naming conventions before sprint planning pressure exists.
+
+**Scope**
+- Draft API contract stub files for PO-02, PO-03, PO-04 feature endpoints in `docs/specs/api_contracts/`
+- Flag any §13 boundary questions for BLG-SPEC-35 (§13 pre-assessment, P1, active)
+- No implementation; contract stubs only
+
+**Acceptance Criteria**
+- Stub contract files exist for PO-02, PO-03, PO-04 endpoint groups in `docs/specs/api_contracts/`
+- Each stub includes at minimum: endpoint path, HTTP method, brief description, key request/response fields
+- BLG-SPEC-35 §13 pre-assessment reviewed or updated if new boundary questions arise
+
+---
+
+### BLG-SPEC-57 — Data model v3 pre-definition for Arc 4 journal intelligence
+**Priority:** P3 (Low)
+**Type:** Spec / Pre-authoring
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260619-02 — Promoted-Backlog rebalance 2026-06-19__scheduled (DL-049)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Unscheduled (pre-work before PO-02 gate ~2026-10)
+
+**Problem**
+Arc 4 journal intelligence (PO-02/03/04) will require data model changes. Pre-defining the schema additions now (while the architecture is in working memory post-Arc 3 delivery) reduces execution risk and produces a migration plan that can be reviewed before sprint planning pressure exists.
+
+**Scope**
+- Define data model additions for PO-02/03/04 features (new tables or columns for pattern recognition, error taxonomy, outcome correlation)
+- Document as a pre-definition document in `docs/specs/` or `docs/data_models/`
+- No migration SQL; schema design only
+
+**Acceptance Criteria**
+- Data model pre-definition document produced covering Arc 4 schema additions
+- BLG-SPEC-56 Arc 4 API contracts reference the pre-defined model where applicable
+- Reviewed by Head of Specs Team and Infrastructure & Operations Owner
+
+---
+
+### BLG-QA-59 — Arc 4 E2E test strategy pre-design (PO-02/03/04)
+**Priority:** P3 (Low)
+**Type:** Quality Assurance / Pre-design
+**Owner:** Director of Quality
+**Source:** IDEA-director-of-quality-20260619-01 — Promoted-Backlog rebalance 2026-06-19__scheduled (DL-049)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Unscheduled (pre-work before PO-02 gate ~2026-10)
+
+**Problem**
+Arc 4 AI-driven features (PO-02/03/04) introduce Playwright test challenges not present in current arcs: AI response non-determinism, journal pattern recognition latency, cost implications of running AI calls in CI. Pre-designing the test strategy before sprint planning avoids last-minute patching of the CI pipeline during delivery.
+
+**Scope**
+- Define Playwright test strategy for Arc 4 features: which ACs require Playwright vs unit tests vs staging-only verification
+- Define mocking approach for AI API calls in CI (extend existing mock harness)
+- Document in `docs/specs/qa/` or `docs/operations/`
+
+**Acceptance Criteria**
+- Arc 4 E2E test strategy document produced
+- Mocking approach for PO-02/03/04 AI calls defined and consistent with existing BLG-QA-37 Playwright mock strategy
+- Reviewed by Director of Quality
+
+---
+
+### BLG-OPS-72 — AI API cost model for Arc 4 journal intelligence features
+**Priority:** P3 (Low)
+**Type:** Operations / FinOps
+**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
+**Source:** IDEA-finops-20260619-01 — Promoted-Backlog rebalance 2026-06-19__scheduled (DL-049)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled (before Arc 4 sprint planning)
+
+**Problem**
+PO-02 (journal pattern recognition) and PO-03/04 will call the Anthropic or Gemini API for AI summarisation and pattern analysis. Current AI cost modelling (BLG-OPS-65, completed v5.6) covers the thesis generation feature only. Arc 4 AI features will process trade journal entries in volume — potentially 1 AI call per journal entry per user per week. Without a cost model, Arc 4 budget impact is unknown and could exceed the current $0.05–$0.15/month baseline significantly.
+
+**Scope**
+- Estimate API call volume for PO-02/03/04 features based on expected usage patterns
+- Model monthly cost at current Anthropic/Gemini pricing tiers
+- Identify cost controls (caching, batching, user limits) and their estimated savings
+- Document as `docs/operations/arc4_ai_cost_model.md`
+
+**Acceptance Criteria**
+- Cost model document produced with estimated monthly AI API cost for Arc 4 features
+- Cost controls identified and quantified
+- Reviewed by FinOps & Resource Architect
+
+---
+
+### BLG-BE-37 — Database index audit for Arc 4 cross-table queries
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Performance
+**Owner:** Infrastructure & Operations Owner; Head of Engineering
+**Source:** IDEA-infra-ops-20260619-01 — Promoted-Backlog rebalance 2026-06-19__scheduled (DL-049)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled (before Arc 4 sprint planning)
+
+**Problem**
+Arc 4 (PO-02/03/04) will introduce cross-table queries joining trade_plans, red_flag_events, arc5_compliance_scores, and potentially new journal tables. The current index strategy was designed for Arc 1–3 query patterns. Without an audit, Arc 4 sprint delivery may encounter unexpected latency regressions on production Supabase once real data volumes are involved.
+
+**Scope**
+- Review current index coverage on trade_plans, red_flag_events, arc5_compliance_scores, ai_journal_summaries tables
+- Model likely Arc 4 query patterns based on BLG-SPEC-56 pre-authored contracts
+- Identify missing indexes; file BLG-OPS or BLG-BE items for each gap discovered
+- Document in `docs/operations/` or `docs/data_models/`
+
+**Acceptance Criteria**
+- Index audit document produced covering Arc 4 query patterns
+- Any missing indexes produce separate BLG items before sign-off
+- Reviewed by Infrastructure & Operations Owner
+
+---
+
+### BLG-GOV-131 — Governance overhead ceiling metric and accountability mechanism
+**Priority:** P2 (Medium)
+**Type:** Governance / Process
+**Owner:** PMO Lead; Challenger
+**Source:** IDEA-challenger-20260619-02 — Promoted-Backlog rebalance 2026-06-19__scheduled (DL-049); elevated to P2 given Product Value Alert (user_value_ratio=0.093) and Skill-Silo Alert (G+D+P=90.7% last 5 cycles)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v6.1
+
+**Problem**
+The Skill-Silo ceiling (40% G+D+P per sprint) was added to roadmap_prompt.md v7.4 but operates at the sprint planning gate. There is no mechanism for reporting governance overhead at the cycle level (across sprints), flagging trends before they compound, or providing accountability at the rebalance level. The Product Value Alert (user_value_ratio=0.093 across last 5 cycles) demonstrates that cycle-level governance overhead can persist without a visible metric, even when individual sprint gates pass. A governance overhead ceiling metric would surface this pattern earlier.
+
+**Scope**
+- Define a governance overhead metric: G+D+P% over a rolling cycle window (matching STEP 2.4 last-5-cycles window)
+- Define alert threshold (current ceiling: 40% per sprint → rolling 5-cycle ceiling: 60% as initial proposal)
+- Propose where in the roadmap rebalance workflow this metric is reported (STEP 2.4 or new STEP 2.5)
+- Draft a one-paragraph amendment to roadmap_prompt.md STEP 2 for Head of Specs Team review
+- Document as a proposal doc; implementation requires Head of Specs Team sign-off per §6 governance edit checklist
+
+**Acceptance Criteria**
+- Governance overhead ceiling metric defined (formula, rolling window, alert threshold)
+- Proposal document produced for Head of Specs Team and PMO Lead review
+- If approved: roadmap_prompt.md amendment drafted and queued for GOVERNANCE commit per §6 checklist
+
+---
+
+### BLG-FE-76 — Portfolio sector heat-map visualization
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX / Data Visualisation
+**Owner:** Product Owner; Frontend Specs & UX Documentation Owner
+**Source:** IDEA-product-owner-20260619-01 — Promoted-Backlog (via STEP 5 debate) rebalance 2026-06-19__scheduled (DL-050); Challenger Product Velocity Concern supports — product value ratio 0.093 mandates user-facing investment
+**Effort:** M (~2–3 days)
+**Provisional-Target:** v6.1
+
+**Problem**
+Current portfolio view (positions, heat, P&L) has no sector-level aggregation. A trader running 3–5 positions across sectors cannot see at a glance whether they are sector-concentrated (e.g. 60% Technology, 20% Energy, 20% Healthcare). The sector data already exists: DS-03 (v2.9) added sector/industry enrichment to the screener and ticker universe. A heat-map that surfaces portfolio sector weight (by exposure %) would immediately help the user spot concentration risk and make more balanced entry decisions.
+
+**Scope**
+- Frontend: `SectorHeatMap.js` component — percentage bars or tile grid by sector, coloured by exposure level
+- Backend: derive sector weights from existing positions data + ticker sector_name field; no new data provider
+- Integration: add to the Portfolio or Dashboard page
+- Spec: one endpoint or query approach to be defined by Head of Specs Team
+
+**Acceptance Criteria**
+- Sector heat-map component visible on Portfolio or Dashboard page
+- Each sector displays: name, position count, exposure % of portfolio
+- Concentration alert (e.g. > 40% in one sector) highlighted visually
+- Playwright E2E coverage for at least one sector concentration scenario
 
 ---
 

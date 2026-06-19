@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-08 (cycle 2026-06-08__scheduled — DL-040 appended)
+**Last Updated:** 2026-06-19 (cycle 2026-06-19__scheduled — DL-048–051 appended)
 
 ---
 
@@ -1111,7 +1111,59 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Decision type:** No-change (roadmap initiatives) + Backlog add (BLG-GOV-130) + Roadmap Now section added (STEP 8.1 Option a)
 **Cycle:** 2026-06-17__scheduled
 **Initiatives affected:** No active roadmap initiatives — v5.9 Now section added
-**Displacement:** None (BLG-GOV-130 is a gate-conditional backlog add; no initiative displacement required)
+**Displacement:** None (BLG-GOV-130 is a gate-conditional backlog add; no initiative displacement requirement)
 **Workforce impact:** None — no new FTE commitment
 **Rationale:** Scheduled rebalance — Standard tier (CPS = N/A; zero active initiatives in register; scheduled same-day as prior cycle; > 90 days threshold not met). 29 IW-20260610-01 ideas evaluated at terminal cycle 3: 1 promoted-backlog (IDEA-product-owner-20260610-02 → BLG-GOV-130: SI-05 Phase 2 activation decision scope, gate 2026-07-04); 28 rejected — all duplicates of tracked BLG items or low-value at terminal cycle; none classified Rejected-Strong. No roadmap initiative changes. STEP 8.1 Option (a): v5.9 Now section added with BLG-FE-64/41 (gate 2026-06-21 — 4 days), BLG-OPS-70, BLG-GOV-125–129 as firm scope; BLG-GOV-112/113/115/130/BLG-OPS-59 as conditional (gate 2026-07-04; within v5.9 sprint window per STEP 1.4b mandatory rule). Action-now patch applied: release_planning_prompt.md v2.35→v2.36 (STEP 1.4b Within-Sprint Date Gate Classification mandatory — LL-P3-03-v55/LL-P4-01-v55 overdue resolved). Meta-review DUE (3rd cycle since 2026-06-09__scheduled) — see lessons_learnt.md.
+**Decision owner:** Product Owner
+
+---
+
+## DL-048
+
+**Date:** 2026-06-19
+**Cycle:** 2026-06-19__scheduled
+**Decision type:** Roadmap Now horizon — Add v6.0 Now section (STEP 8.1 Option a)
+**Initiatives affected:** v6.0 release planning enabled; no active roadmap initiative changes (0 active initiatives)
+**Displacement:** N/A — no active initiative displaced. BLG-FE-76 (heat-map, v6.1) displaces no firm v6.0 item.
+**Workforce impact:** None — all v6.0 items are existing backlog entries; no new FTE commitment
+**Rationale:** Scheduled rebalance — Standard tier (CPS = N/A; 0 active initiatives). Now horizon empty post-v5.9 retirement 2026-06-18. STEP 8.0 Production Correctness Fast-Track: BLG-BE-36 (P0 — signal_service.py uses cash-allocation model for suggested_shares; wrong share counts on every signal card) must be first story. Product Value Alert (user_value_ratio = 4/43 = 0.093 < 0.30): mandatory pull-forward — BLG-FEAT-46 (Trader's Morning Briefing, U) + BLG-FEAT-20 (net-of-costs, U) + BLG-BE-36 (U) satisfy the obligation. Skill-Silo Alert (G+D+P = 90.7% > 40% ceiling): Skill-Silo ceiling constraint applied to sprint planning. Carry-forward items (BLG-FE-64/41 gate 2026-06-21; BLG-OPS-70 gate ~2026-06-23) included as conditional/firm scope. SI-05 effectiveness cluster (BLG-GOV-112/115/130; BLG-OPS-59) gate 2026-07-04 included as conditional scope (BLG-GOV-96 effectiveness criteria shipped v5.2; BLG-GOV-113 effectiveness protocol shipped v5.3). v6.0 Now section added with 5 firm + 2 gate-conditional June + 4 gate-conditional July = 11 items.
+**Decision owner:** Product Owner
+
+---
+
+## DL-049
+
+**Date:** 2026-06-19
+**Cycle:** 2026-06-19__scheduled
+**Decision type:** Backlog additions — Promoted-Backlog from IW-20260619-01 (immediate)
+**Initiatives affected:** None (backlog items only)
+**Displacement:** None — all are additive; no existing item displaced
+**Workforce impact:** None — all gate-conditional or pre-authoring items; no current sprint commitment
+**Rationale:** 6 ideas promoted to backlog without STEP 5 debate per STEP 4.2 rules (all non-competing, aligned with charter, non-duplicate): BLG-SPEC-56 (Arc 4 API contract pre-authoring), BLG-SPEC-57 (Data model v3 pre-definition), BLG-QA-59 (Arc 4 E2E test strategy pre-design), BLG-OPS-72 (AI API cost model for Arc 4), BLG-BE-37 (Database index audit for Arc 4), BLG-GOV-131 (Governance overhead ceiling metric — elevated given Product Value Alert + Skill-Silo Alert). All are Arc 4 pre-work or governance accountability items; none require §13 pre-assessment at this stage (design/planning docs only).
+**Decision owner:** Product Owner; PMO Lead
+
+---
+
+## DL-050
+
+**Date:** 2026-06-19
+**Cycle:** 2026-06-19__scheduled
+**Decision type:** Backlog addition (Promoted-Backlog post-debate) — BLG-FE-76
+**Initiatives affected:** None (backlog item only; v6.1 target)
+**Displacement:** None
+**Workforce impact:** None — not in current sprint window
+**Rationale:** IDEA-product-owner-20260619-01 (Portfolio sector heat-map visualization) advanced via STEP 5 debate. Challenger Product Velocity Concern formally endorses the heat-map as addressing the Product Value Alert structural gap. No §13 concerns. Head of Specs Team confirms sector data is already available (DS-03 v2.9). Assigned BLG-FE-76, P2, M effort, Provisional-Target v6.1. v6.0 user-value obligation already satisfied by BLG-BE-36/FEAT-46/FEAT-20.
+**Decision owner:** Product Owner
+
+---
+
+## DL-051
+
+**Date:** 2026-06-19
+**Cycle:** 2026-06-19__scheduled
+**Decision type:** Idea rejection + 8 ideas Parked Cycle 1
+**Initiatives affected:** None
+**Displacement:** N/A
+**Workforce impact:** None
+**Rationale:** IDEA-strategy-owner-20260619-01 (§13 pre-assessment for Arc 4 AI features) rejected — exact duplicate of BLG-SPEC-35 (P1, active). 8 ideas parked Cycle 1: IDEA-product-owner-20260619-02 (trade tagging — v6.0 user-value quota absorbed by existing P1s; heat-map BLG-FE-76 covers portfolio visualisation investment for v6.1), IDEA-pmo-lead-20260619-01/02 (governance health script and velocity chart — useful but not critical-path), IDEA-director-of-quality-20260619-02 (axe-core accessibility — no Arc at this stage), IDEA-strategy-owner-20260619-02 (strategy rules cadence — contradicts governance simplification direction), IDEA-finops-20260619-02 (Alpaca tier optimization — BLG-OPS-37 completed with no-upgrade outcome; stable), IDEA-infra-ops-20260619-02 (enhanced health check — not on critical path), IDEA-challenger-20260619-01 (data provider diversity — known accepted risk at current stage). Challenger product velocity concern addressed via BLG-GOV-131 promotion and v6.0 user-value commitment.
 **Decision owner:** Product Owner

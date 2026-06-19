@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-18 (post-ship closure 2026-06-17__release-v5.9)
-**Last rebalance:** 2026-06-09 (cycle 2026-06-09__scheduled — Standard-tier, CPS=1.15; Δ=0.00; 8 new backlog items; DL-041/042; 4 ideas Rejected, 8 Promoted-Backlog, 17 re-parked; v5.4 Now section added)
+**Last Updated:** 2026-06-19 (roadmap rebalance 2026-06-19__scheduled — v6.0 Now section added)
+**Last rebalance:** 2026-06-19 (cycle 2026-06-19__scheduled — Standard-tier, CPS=N/A (0 active initiatives); Product Value Alert (ratio=0.093); Skill-Silo Alert (G+D+P=90.7%); 7 new backlog items; DL-048–051; 1 Rejected, 6 Promoted-Backlog immediate, 1 Promoted-Backlog post-debate, 8 Parked C1; v6.0 Now section added)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -275,6 +275,42 @@ Today you find stocks through external research and add them to the watchlist ma
 
 *RA:v5.9 retired — see roadmap_archive.md 2026-06-18 (post-ship closure 2026-06-17__release-v5.9).*
 
+### Release v6.0 — Signal Correctness, User Intelligence & SI-05 Effectiveness *(planning)*
+
+**Theme:** Correct the signal suggested_shares calculation (every signal card shows wrong share counts), complete Trader's Morning Briefing and net-of-costs analytics (user-value pull-forward against Product Value Alert), complete SI-05 Phase 1 effectiveness reviews.
+
+**Product Value Alert commitment:** v6.0 must achieve U/(total) ≥ 25% per sprint (correctness fix + two P1 user-facing features). BLG-FE-76 (heat-map) targets v6.1 as the first dedicated user-value cycle post-governance-consolidation.
+
+#### Firm scope
+
+| BLG-ID | Title | Priority | Effort | Classification |
+|--------|-------|----------|--------|---------------|
+| BLG-BE-36 | Align signal_service suggested_shares to risk-based sizing model | P0 | S | U — Correctness Fast-Track (FIRST STORY) |
+| BLG-FEAT-47 | Screener data quality telemetry | P1 | S | G |
+| BLG-FEAT-46 | Trader's Morning Briefing dashboard | P1 | M | U |
+| BLG-FEAT-20 | Net-of-costs performance tracking | P1 | M | U |
+| BLG-OPS-70 | SI-05 deep link AC-04 staging confirmation | P2 | XS | D — gate ~2026-06-23 |
+
+#### Conditional scope — gate 2026-06-21 (SI-03 Red Flag Journal live ≥ 30 days)
+
+| BLG-ID | Title | Priority | Effort | Notes |
+|--------|-------|----------|--------|-------|
+| BLG-FE-64 | RFJ design review pre-brief | P2 | S | Gate clears 2026-06-21; 6th planned attempt |
+| BLG-FE-41 | Red Flag Journal visual design review | P3 | M | Gate clears 2026-06-21; depends on BLG-FE-64 |
+
+#### Conditional scope — gate 2026-07-04 (SI-05 Phase 1 effectiveness review period)
+
+Note: BLG-GOV-96 (effectiveness criteria) and BLG-GOV-113 (effectiveness review protocol) both shipped in v5.2/v5.3. The items below become actionable once the 2026-07-04 review event has been conducted.
+
+| BLG-ID | Title | Priority | Effort | Notes |
+|--------|-------|----------|--------|-------|
+| BLG-GOV-112 | SI-05 digest weekly cadence review | P2 | S | Gate 2026-07-04 (BLG-GOV-96 shipped) |
+| BLG-GOV-115 | SI-05 digest actionability metric definition | P2 | S | Gate 2026-07-04 (BLG-GOV-113 shipped) |
+| BLG-GOV-130 | SI-05 Phase 2 activation decision scope | P2 | S | Gate 2026-07-04 effectiveness review conducted |
+| BLG-OPS-59 | SI-05 service production p99 latency baseline review | P2 | S | Gate 2026-07-04 |
+
+**Skill-Silo constraint:** Sprint planning for v6.0 must not seal any sprint with G+D+P > 60% of total stories (roadmap_prompt.md v7.4 Skill-Silo ceiling). PMO Lead gate at sprint planning.
+
 -----
 
 ## 4. Priority 2 — Horizon: Next Phase (Arcs 1 & 2)
@@ -459,6 +495,7 @@ When evaluating new features:
 |**v5.7** ✅  |Staging Verification Completion & Engineering/Governance Patches|Production latency verifications: all 4 endpoints confirmed pass (BLG-OPS-66–69 closed; p95 755ms/872ms/677ms/105ms); SI-05 deep links mobile Telegram staging confirmed (BLG-FE-75 closed; 2 in-sprint bug fixes); Arc 5 Playwright coverage gaps closed (BLG-QA-56/57/58 — SC-SI-01d/SC-RFJ-04/SC-ARC5-05 added); lazy-import pattern documented (BLG-BE-36 closed; backend_engineering_patterns.md v1.1); dual sign-off class pattern confirmed (BLG-GOV-123 closed; LL-v5.6-DV-03 resolved). EPIC-03 (ST-12/13/14) gate-deferred 2026-07-04; BLG-FE-64 4th deferral (gate 2026-06-21). 10/10 firm stories. Zero deviations. — ✅ Shipped 2026-06-17 — cycle: 2026-06-16__release-v5.7|
 |**v5.8** ✅  |RFJ UX Design Completion, SI-05 Effectiveness Review & Production Hardening|FRONTEND_URL env var set on production backend — restores SI-05 deep-link functionality (BLG-OPS-70 filed for AC-04 staging-only confirmation); governance complexity assessment produced (GCA-2026-06-17; 7 simplification candidates BLG-GOV-123–129 filed; complexity confirmed secondary factor not root cause). ST-01/02 (BLG-FE-64/41) returned — gate 2026-06-21 (5th deferral); EPIC-02 ST-05/06/07 gate-deferred 2026-07-04. 2/7 stories delivered. Zero deviations. — ✅ Shipped 2026-06-17 — cycle: 2026-06-17__release-v5.8|
 |**v5.9** ✅  |Governance Simplification, QA Coverage & UX Pre-work|EPIC-01 (SC-03–SC-07): consolidated spec_references policy (execution_prompt.md); fatigue detection guardrail removed (roadmap_prompt.md); dead-load advisory steps removed (release_planning_prompt.md); Playwright selector check made conditional (execution_prompt.md); Advisory Summary Block compressed (post_ship_closure.md). EPIC-02: Yahoo Finance backoff integration test stub (BLG-QA-24); DoQ sign-off date audit v3.7–v3.9 (BLG-GOV-38); QA evidence format audit v3.7–v4.0 (BLG-QA-34); agent idea participation summary (BLG-GOV-53); regression test suite baseline (BLG-QA-50); pre-entry panel warning/fail count badge + Playwright SC-PEP-BADGE-01a/01b/02 (BLG-FE-57). 11/11 stories. Zero deviations. — ✅ Shipped 2026-06-18 — cycle: 2026-06-17__release-v5.9|
+|**v6.0** 📋  |Signal Correctness, User Intelligence & SI-05 Effectiveness|BLG-BE-36 signal suggested_shares correctness fix (P0 fast-track); BLG-FEAT-46 Trader's Morning Briefing dashboard; BLG-FEAT-20 net-of-costs tracking; BLG-FEAT-47 screener data quality telemetry; BLG-OPS-70 SI-05 deep link AC-04 staging; BLG-FE-64/41 RFJ design (gate 2026-06-21); BLG-GOV-112/115/130 SI-05 Phase 1 effectiveness + BLG-OPS-59 latency baseline (gate 2026-07-04). Product Value Alert pull-forward: 3 U-stories (BE-36, FEAT-46, FEAT-20). 11 items total. — ⏳ In planning — cycle: TBD|
 |**v4.0+**    |Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
 |**v4.0+**    |Arc 5: Strategy Integrity (remainder)                                 |SI-02 behavioural drift detection, SI-04 strategy version comparison, SI-05 weekly digest — 📋 Planned                                    |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |
