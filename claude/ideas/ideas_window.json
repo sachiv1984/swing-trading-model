@@ -1,52 +1,31 @@
 {
-  "window_id": "IW-20260610-01",
-  "opened_utc": "2026-06-10T08:00:00Z",
+  "window_id": "IW-20260619-01",
+  "opened_utc": "2026-06-19T09:00:00Z",
   "opened_by": "PMO Lead (inline — roadmap STEP -1.6)",
   "status": "Closed",
   "mode": "standard",
   "eligible_agents": [
     "product-owner", "head-of-specs", "pmo-lead", "director-of-quality",
-    "strategy-owner", "finops", "infra-ops", "facilitator", "challenger",
-    "backend-engineering", "ai-compliance", "cybersecurity", "metrics-analytics",
-    "head-of-engineering", "base44-frontend", "data-model", "financial-reporting",
-    "director-of-hr", "api-contracts", "qa-testing", "qa-lead", "frontend-ux", "head-of-ux"
+    "strategy-owner", "finops", "infra-ops", "facilitator", "challenger"
   ],
   "submissions_received": [
-    "IDEA-product-owner-20260610-01", "IDEA-product-owner-20260610-02",
-    "IDEA-head-of-specs-20260610-01", "IDEA-head-of-specs-20260610-02",
-    "IDEA-pmo-lead-20260610-01", "IDEA-pmo-lead-20260610-02",
-    "IDEA-director-of-quality-20260610-01", "IDEA-director-of-quality-20260610-02",
-    "IDEA-strategy-owner-20260610-01", "IDEA-strategy-owner-20260610-02",
-    "IDEA-finops-20260610-01", "IDEA-finops-20260610-02",
-    "IDEA-infra-ops-20260610-01", "IDEA-infra-ops-20260610-02",
-    "IDEA-challenger-20260610-01", "IDEA-challenger-20260610-02",
-    "IDEA-backend-engineering-20260610-01", "IDEA-backend-engineering-20260610-02",
-    "IDEA-ai-compliance-20260610-01", "IDEA-ai-compliance-20260610-02",
-    "IDEA-cybersecurity-20260610-01", "IDEA-cybersecurity-20260610-02",
-    "IDEA-metrics-analytics-20260610-01", "IDEA-metrics-analytics-20260610-02",
-    "IDEA-head-of-engineering-20260610-01", "IDEA-head-of-engineering-20260610-02",
-    "IDEA-base44-frontend-20260610-01", "IDEA-base44-frontend-20260610-02",
-    "IDEA-data-model-20260610-01", "IDEA-data-model-20260610-02",
-    "IDEA-financial-reporting-20260610-01", "IDEA-financial-reporting-20260610-02",
-    "IDEA-director-of-hr-20260610-01", "IDEA-director-of-hr-20260610-02",
-    "IDEA-api-contracts-20260610-01", "IDEA-api-contracts-20260610-02",
-    "IDEA-qa-testing-20260610-01", "IDEA-qa-testing-20260610-02",
-    "IDEA-qa-lead-20260610-01", "IDEA-qa-lead-20260610-02",
-    "IDEA-frontend-ux-20260610-01", "IDEA-frontend-ux-20260610-02",
-    "IDEA-head-of-ux-20260610-01", "IDEA-head-of-ux-20260610-02"
+    "IDEA-product-owner-20260619-01", "IDEA-product-owner-20260619-02",
+    "IDEA-head-of-specs-20260619-01", "IDEA-head-of-specs-20260619-02",
+    "IDEA-pmo-lead-20260619-01", "IDEA-pmo-lead-20260619-02",
+    "IDEA-director-of-quality-20260619-01", "IDEA-director-of-quality-20260619-02",
+    "IDEA-strategy-owner-20260619-01", "IDEA-strategy-owner-20260619-02",
+    "IDEA-finops-20260619-01", "IDEA-finops-20260619-02",
+    "IDEA-infra-ops-20260619-01", "IDEA-infra-ops-20260619-02",
+    "IDEA-challenger-20260619-01", "IDEA-challenger-20260619-02"
   ],
-  "stale_warning_advisory": "17 rows at Parked-cycle-2 — advisory surfaced at STEP -0.5; all reached terminal disposition in STEP 4",
   "register_path": "claude/ideas/ideas_register.md",
-  "closed_utc": "2026-06-10T09:00:00Z",
-  "total_submissions": 44,
-  "new_submissions": 44,
+  "closed_utc": "2026-06-19T09:30:00Z",
+  "total_submissions": 16,
+  "new_submissions": 16,
   "parked_ideas_carried": 0,
   "agents_submitted": [
     "product-owner", "head-of-specs", "pmo-lead", "director-of-quality",
-    "strategy-owner", "finops", "infra-ops", "challenger",
-    "backend-engineering", "ai-compliance", "cybersecurity", "metrics-analytics",
-    "head-of-engineering", "base44-frontend", "data-model", "financial-reporting",
-    "director-of-hr", "api-contracts", "qa-testing", "qa-lead", "frontend-ux", "head-of-ux"
+    "strategy-owner", "finops", "infra-ops", "challenger"
   ],
   "agents_not_submitted": ["facilitator"],
   "agents_not_submitted_notes": {
@@ -54,10 +33,6 @@
   },
   "per_agent_submission_count": {
     "product-owner": 2, "head-of-specs": 2, "pmo-lead": 2, "director-of-quality": 2,
-    "strategy-owner": 2, "finops": 2, "infra-ops": 2, "facilitator": 0,
-    "challenger": 2, "backend-engineering": 2, "ai-compliance": 2, "cybersecurity": 2,
-    "metrics-analytics": 2, "head-of-engineering": 2, "base44-frontend": 2, "data-model": 2,
-    "financial-reporting": 2, "director-of-hr": 2, "api-contracts": 2, "qa-testing": 2,
-    "qa-lead": 2, "frontend-ux": 2, "head-of-ux": 2
+    "strategy-owner": 2, "finops": 2, "infra-ops": 2, "facilitator": 0, "challenger": 2
   }
 }
