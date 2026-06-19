@@ -402,7 +402,7 @@ def generate_momentum_signals(
     
     return {
         "signals_generated": len(signals_sorted),
-        "new_signals": len(new_signals),
+        "new_signals": len([s for s in signals_sorted if s['status'] == 'new']),
         "already_held": len([s for s in signals_sorted if s['status'] == 'already_held']),
         "signal_date": signal_date_str,
         "fx_rate": live_fx_rate,
