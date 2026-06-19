@@ -420,6 +420,11 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(positionData),
       }),
+    // ST-02 (BLG-FEAT-46, v6.0): Morning Briefing — red flag journal summary
+    redFlagJournal: async (params = {}) => {
+      const qs = Object.entries(params).filter(([, v]) => v !== undefined && v !== null).map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
+      return doFetch(`/portfolio/red-flag-journal${qs ? '?' + qs : ''}`);
+    },
     // Added for Position Sizing Calculator (roadmap 3.2)
     size: async (sizeData) =>
       doFetch('/portfolio/size', {
@@ -439,6 +444,8 @@ export const api = {
     analyze: async () => doFetch('/positions/analyze'),
     // ST-01 (BLG-FEAT-11, v2.3): ATR-based per-position compliance flags
     positionCompliance: async () => doFetch('/positions/compliance'),
+    // ST-02 (BLG-FEAT-46, v6.0): Morning Briefing — positions in exit zone
+    gracePeriodAlerts: async () => doFetch('/positions/grace-period-alerts'),
   },
 
   trades: {

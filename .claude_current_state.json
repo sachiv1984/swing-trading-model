@@ -1,10 +1,10 @@
 {
   "active_cycle": "2026-06-19__release-v6.0",
   "cycle_name": "Release Planning — v6.0 Signal Correctness, User Intelligence & SI-05 Effectiveness",
-  "status": "Sprint_Planning_Complete",
+  "status": "Executing",
   "prior_status": null,
   "engine": "sprint_planning",
-  "execution_state_path": "",
+  "execution_state_path": "claude/cycles/2026-06-19__release-v6.0/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md",
   "sprint_sealed": true,
   "sprint_goal_path": "claude/cycles/2026-06-19__release-v6.0/sprint_goal.md",
