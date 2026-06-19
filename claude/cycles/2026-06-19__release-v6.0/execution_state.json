@@ -55,9 +55,9 @@
     "EPIC-02": {
       "status": "done",
       "branch": "exec/2026-06-19__release-v6.0/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 816,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-19__release-v6.0/qa_evidence_EPIC-02.md",
       "test_scenarios": ["docs/testing/staging_visual_test_script_EPIC-02.md"],
       "stories": {
