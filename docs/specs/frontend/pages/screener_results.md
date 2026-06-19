@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-05-21
+**Version:** 1.3
+**Last Updated:** 2026-06-19
+**Design Source (v1.3):** docs/design/2026-06-19__release-v6.0/screener-quality-telemetry/ux_spec.md
 **Design Source (v1.2):** docs/design/2026-05-21__release-v3.9/degraded-run-banner/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Schema reference:** docs/specs/screener_results_schema.md
@@ -42,7 +43,7 @@ Users should be able to:
 
 ## 3. API Reference
 
-- `GET /screener/results` — fetch screener result records (paginated); response includes `degraded_run` (boolean) and `failure_rate` (float) on the run record
+- `GET /screener/results` — fetch screener result records (paginated); response envelope includes run quality fields: `tickers_requested` (int), `tickers_loaded` (int), `tickers_failed` (string[]), `last_full_run_utc` (ISO 8601), `run_quality` (FULL|DEGRADED|FAILED). Legacy fields `degraded_run` (boolean) and `failure_rate` (float) are deprecated in v6.0 — replaced by the run quality panel (§12)
 - `POST /screener/run` — trigger a new screener run
 - Canonical contract: `docs/specs/api_contracts/screener_api_contract.md`
 - Schema: `docs/specs/screener_results_schema.md`
@@ -201,24 +202,40 @@ Each ticker row in the screener results table has a **"Research"** action (text 
 
 ---
 
-## 12. Degraded Run Warning Banner (v3.9 — ST-04)
+## 12. Run Quality Panel (v6.0 — ST-04)
 
-**Design source:** `docs/design/2026-05-21__release-v3.9/degraded-run-banner/ux_spec.md`
+**Design source:** `docs/design/2026-06-19__release-v6.0/screener-quality-telemetry/ux_spec.md`
 
-When `GET /screener/results` returns `degraded_run: true`, display a warning banner above the results table.
+Supersedes the v3.9 degraded-run banner (`degraded_run: boolean`). Displays a structured quality panel below the page header, above the data freshness indicator (§6) and results table, covering three distinct states driven by `run_quality`.
+
+### FULL State
 
 | Attribute | Specification |
 |-----------|---------------|
-| Placement | Below page header, above data freshness indicator (§6) and results table |
-| Background | Amber/yellow warning tone (consistent with §7 stale data badge) |
-| Icon | ⚠ warning icon, left-aligned |
-| Text | "Results may be incomplete — {N}% of tickers failed data fetch" where N = `Math.round(failure_rate * 100)` |
-| Hidden when | `degraded_run: false`, field absent, or after user triggers new run (`POST /screener/run`) |
-| Dismiss | No dismiss button — persists while degraded run is the latest result |
+| Badge | Green — "✓ FULL" |
+| Content | Loaded ratio: "{tickers_loaded} / {tickers_requested}" |
+| Stale advisory | Amber sub-line "Last full run: {N} hours ago" when `last_full_run_utc` > 24h ago |
 
-**§13 Compliance:** Display-only. No automated decisions.
+### DEGRADED State
 
-**Playwright tests:** SC-SCR-DEG-01 (banner present with correct %), SC-SCR-DEG-02 (banner absent when degraded_run: false)
+| Attribute | Specification |
+|-----------|---------------|
+| Badge | Amber — "⚠ DEGRADED" |
+| Content | Loaded ratio + "Results may be incomplete — {N} tickers failed to load" |
+| Expandable | Chevron "Show failed tickers ▾" → expands `tickers_failed` list; collapses on new run |
+| Stale advisory | As per FULL state |
+
+### FAILED State
+
+| Attribute | Specification |
+|-----------|---------------|
+| Badge | Red — "✗ FAILED" |
+| Content | "Screener run failed — no results available" |
+| Retry | "Retry Run" button (secondary) — fires `POST /screener/run`; spinner while running |
+
+**§13 Compliance:** Display-only quality telemetry. No automated decisions.
+
+**Playwright tests:** SC-SQT-01a (FULL state badge + ratio), SC-SQT-01b (FULL + stale advisory), SC-SQT-01c (DEGRADED badge + ratio + message + toggle), SC-SQT-01d (DEGRADED expand/collapse ticker list), SC-SQT-01e (FAILED badge + retry button), SC-SQT-01f (backward-compat: old response without new fields gracefully handled)
 
 ---
 
@@ -237,7 +254,7 @@ This spec covers all DS-02 interaction patterns:
 | News panel | §9 |
 | Skeleton/progressive loading | §10 |
 | Research navigation (v3.2) | §11 |
-| Degraded run warning banner (v3.9) | §12 |
+| Run quality panel — FULL/DEGRADED/FAILED states (v6.0) | §12 |
 
 ---
 
@@ -267,6 +284,7 @@ This spec covers all DS-02 interaction patterns:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-06-19 | v6.0 design gate — §12 replaced: Degraded Run Warning Banner (v3.9) superseded by Run Quality Panel with FULL/DEGRADED/FAILED states, loaded ratio, expandable failed ticker list, stale advisory, and retry prompt. §3 API reference updated: new response fields (tickers_requested, tickers_loaded, tickers_failed, last_full_run_utc, run_quality); legacy degraded_run/failure_rate deprecated. Design source: screener-quality-telemetry/ux_spec.md. Approved: Product Owner 2026-06-19. Head of Specs Team confirmed. |
 | 1.2 | 2026-05-21 | v3.9 design gate — added §12 Degraded Run Warning Banner (ST-04: banner when degraded_run: true, percentage text, amber style, SC-SCR-DEG-01/02). §3 API reference updated to note degraded_run and failure_rate fields. Design source: degraded-run-banner/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |
 | 1.1 | 2026-05-05 | v3.2 design gate — added §11 Research Navigation (ST-04); added Actions column to §4 column layout. Design source: screener-to-research-navigation/ux_spec.md. |
 | 1.0 | 2026-04-23 | Initial spec. |

@@ -3,13 +3,14 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.0
-**Last Updated:** 2026-03-06
+**Version:** 2.1
+**Last Updated:** 2026-06-19
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Release:** v1.9
-**EPIC:** EPIC-03
-**Design Source:** docs/design/2026-03-06__release-v1.9/dashboard-home/ux_spec.md
-**Confirmed by:** Head of Specs Team — 2026-03-06
+**Release:** v6.0
+**EPIC:** EPIC-02
+**Design Source (v2.1):** docs/design/2026-06-19__release-v6.0/morning-briefing/ux_spec.md
+**Design Source (v2.0):** docs/design/2026-03-06__release-v1.9/dashboard-home/ux_spec.md
+**Confirmed by:** Head of Specs Team — 2026-06-19
 
 ---
 
@@ -25,6 +26,48 @@ Users should immediately see:
 - How many positions are in grace period and when the next expires
 - Current market regime signals and today’s signal count
 - Recent trade activity (closes, opens, stop updates)
+
+---
+
+## 1A. Morning Briefing Section
+
+**Design source:** `docs/design/2026-06-19__release-v6.0/morning-briefing/ux_spec.md`
+
+A new section at the top of `DashboardHome.js`, placed **above** the existing five session-summary cards. It provides start-of-day intelligence across five focused cards. The section is always visible and not collapsible.
+
+### Section Header
+
+Label: **"Trader's Morning Briefing"** — left-aligned, secondary text weight. Not a prominent heading.
+
+### Layout
+
+**Desktop (> 768px):** Five equal-width cards in a single horizontal row.
+
+```
+[ Screener Hits ] [ Positions to Act On ] [ Red Flags ] [ Earnings Alert ] [ Compliance ]
+```
+
+**Mobile (≤ 768px):** Cards stack vertically in the order listed above.
+
+### Cards
+
+| Card | Primary Metric | Sub-Label / Detail | Empty State | Data Source | Click Target |
+|------|----------------|--------------------|-------------|-------------|--------------|
+| Screener Hits | Count of new hits since last visit | "since your last visit" | "No new hits" | `GET /screener/results` | `/screener` |
+| Positions to Act On | Count in EXIT_ZONE or GRACE_PERIOD state | Up to 3 tickers with state + days-in-state; "+N more" on overflow | "All clear" | `GET /positions` filtered by state | `/positions` |
+| Red Flags | Count of new events since last weekly digest | "since last digest" | "No new red flags" | `GET /portfolio/red-flag-journal` | `/red-flag-journal` |
+| Earnings Alert | Count of watchlisted/open-position tickers with earnings in next 7 days | Up to 2 tickers with day-of-week; "+N more" on overflow | "No earnings this week" | `GET /earnings/{ticker}` per ticker | Earnings calendar or `/watchlist` |
+| Compliance | Current Arc 5 compliance score | Trend arrow ↑↓→ vs prior week; "vs last week" | N/A — score always present when endpoint available | `GET /analytics/arc5-compliance` | `/analytics` |
+
+**Compliance card colour coding:** ≥ 80%: green; 60–79%: amber; < 60%: red.
+
+### Shared Card Behaviour
+
+| Behaviour | Specification |
+|-----------|---------------|
+| Loading | Skeleton placeholder (same height as loaded card); no section-level spinner |
+| Card error | "Unable to load" in muted text; other cards unaffected |
+| Click affordance | Entire card surface clickable; hover: subtle border highlight or shadow lift |
 
 ---
 
@@ -149,5 +192,6 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.1 | 2026-06-19 | v6.0 design gate — §1A Morning Briefing Section added: new section at top of DashboardHome above existing cards; 5 intelligence cards (Screener Hits, Positions to Act On, Red Flags, Earnings Alert, Compliance); horizontal desktop layout, vertical mobile stack; per-card loading/error/empty state behaviour; Compliance card colour-coded by score. Design source: morning-briefing/ux_spec.md. Approved: Product Owner 2026-06-19. Head of Specs Team confirmed. |
 | 2.0 | 2026-03-06 | Full rewrite for v1.9 EPIC-03 (ST-05). Dashboard Homepage session summary with 5 data cards. Governance header upgraded to Class 1 compliant format. Design source: docs/design/2026-03-06__release-v1.9/dashboard-home/ux_spec.md. |
 | 1.0 | 2026-02-18 | Initial version (pre-governance, general portfolio overview). |

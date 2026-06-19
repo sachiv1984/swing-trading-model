@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.4
-**Last Updated:** 2026-05-29
+**Version:** 0.5
+**Last Updated:** 2026-06-19
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.1 PDF export):** docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md
 
@@ -158,6 +158,26 @@ When the composite score is unavailable (null API inputs), individual metric com
 
 ---
 
+### Gross vs Net Comparison (v6.0 — ST-03)
+
+**Design source:** `docs/design/2026-06-19__release-v6.0/net-of-costs-tracking/ux_spec.md`
+
+A gross vs net comparison row is shown in the Summary Bar **only when** the selected tax year's trade set contains at least one trade with cost data (`commission_gbp` or `spread_cost_gbp` non-null and non-zero).
+
+**Placement:** New row below the Win Rate row in the summary bar.
+
+| Metric | Gross | Net (after costs) |
+|--------|-------|-------------------|
+| Average R-multiple | +0.72R | +0.54R |
+
+- "Net (after costs)" column: computed average across trades that have cost data; trades without cost data excluded from net average
+- Footnote below row: _(Net figures based on N trades with brokerage cost data recorded.)_
+- When no trades in the year have cost data: row is absent (no "0" placeholder)
+
+All values sourced from API response — frontend does not calculate averages.
+
+---
+
 ### Empty State
 
 When `trades[]` is empty (no closed trades in the selected tax year):
@@ -251,6 +271,7 @@ Follows the Arc 5 Compliance Summary design language from the tax-year report (�
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.5 | 2026-06-19 | v6.0 design gate — Gross vs Net Comparison section added to Summary Bar (ST-03): conditional row showing average gross vs net R-multiple when ≥1 trade in selected year has brokerage cost data; footnote showing trade count with cost data; absent when no cost data. Design source: net-of-costs-tracking/ux_spec.md. Approved: Product Owner 2026-06-19. Head of Specs Team confirmed. |
 | 0.4 | 2026-05-29 | v4.3 Monthly P&L Strategy Compliance section (ST-18, BLG-FE-38): Monthly P&L Report section added — financial table spec and Strategy Compliance section (validation pass rate, override rate, red flag events/week, most frequent rule breach from GET /analytics/arc5-compliance). AC field mapping resolved (override_count→override_rate, red_flag_events_count→events_per_week). Design artefact: Arc 5 Compliance Summary v4.1 pattern. Design gate: 2026-05-29__release-v4.3. Head of UX & Design + Product Owner sign-off. |
 | 0.3 | 2026-05-27 | v4.1 Arc 5 P&L integration (ST-08, BLG-FEAT-42): Arc 5 Compliance Summary section added — collapsible, collapsed by default, data from GET /analytics/arc5-compliance, composite score or individual metrics per FEAT-40 formula availability. Financial Reporting & Records Owner + Product Owner agent-mediated sign-off cleared. |
 | 0.2 | 2026-03-18 | v2.1 PDF export (ST-12, BLG-FR-01): Page Header Controls section added with Download PDF button spec (idle, generating, success, error states). API Reference updated to include PDF and CSV export endpoints. Design source: docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md. Design gate: 2026-03-18__release-v2.1. |

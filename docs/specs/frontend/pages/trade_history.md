@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.9
-**Last Updated:** 2026-05-16
+**Version:** 1.10
+**Last Updated:** 2026-06-19
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.8 AI Journal Summary):** docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md
 **Design Source (v2.6 UX polish):** docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md
@@ -363,6 +363,46 @@ The expandable card uses a clean, visually distinct layout to support long‑for
 
 ---
 
+## Brokerage Cost Capture (v6.0 — ST-03)
+
+**Design source:** `docs/design/2026-06-19__release-v6.0/net-of-costs-tracking/ux_spec.md`
+
+Two new optional fields on the trade record edit form, in a **"Brokerage Costs"** subsection below existing P&L fields:
+
+| Field | Label | Type | Required | Format |
+|-------|-------|------|----------|--------|
+| `commission_gbp` | **Commission (£)** | Decimal numeric | No | 2dp (e.g. 6.00) |
+| `spread_cost_gbp` | **Spread Cost (£)** | Decimal numeric | No | 2dp (e.g. 2.40) |
+
+**Validation:** Non-numeric input → "Enter a number (e.g. 6.00)". Zero is valid. Both fields default to empty (null) — existing trades are unaffected.
+
+---
+
+## Net-of-Costs R-Multiple Display (v6.0 — ST-03)
+
+**Design source:** `docs/design/2026-06-19__release-v6.0/net-of-costs-tracking/ux_spec.md`
+
+Net R is displayed **only when** at least one of `commission_gbp` or `spread_cost_gbp` is non-null and non-zero on the trade record.
+
+### Trade History Table
+
+In the R-Multiple column, when cost data is present:
+- Gross R shown in normal weight (existing display; unchanged)
+- Net R shown directly below in smaller, muted text: "Net: –0.85R"
+
+When no cost data: column behaves identically to current spec.
+
+### Expanded Trade Row
+
+| Label | Condition |
+|-------|-----------|
+| Gross R | Always shown (existing behaviour) |
+| Net R (after costs) | Shown only when cost data present |
+
+**Net R colour:** Positive → green; Negative → red; Zero → neutral grey. Matches gross R colour convention.
+
+---
+
 ## Key Components Used
 - Trade summary cards  
 - Filters and tag selector  
@@ -428,6 +468,7 @@ Displays:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.10 | 2026-06-19 | v6.0 design gate — Brokerage Cost Capture section added: two new optional trade edit form fields (commission_gbp, spread_cost_gbp) in "Brokerage Costs" subsection. Net-of-Costs R-Multiple Display section added: Net R shown below Gross R in table and expanded row when cost data present; absent when no cost data (backward-compatible). Design source: net-of-costs-tracking/ux_spec.md. Approved: Product Owner 2026-06-19. Head of Specs Team confirmed. |
 | 1.9 | 2026-05-16 | v3.6 design gate (ST-02, EPIC-01): Entry Delta row added to Plan vs Reality comparison table — displays `entry_delta_pct` as signed percentage (+X.XX%/−X.XX%) with green/red colouring; null state shows "Entry delta: data not available for historical trades" in muted style. API source: `GET /trades/{id}/plan-vs-reality` `entry_delta_pct` field (added in ST-01). Head of UX & Design confirmed 2026-05-16. |
 | 1.8 | 2026-05-15 | v3.5 design gate: (ST-06 PO-01) Plan vs Reality section added to Expandable Journal Row — 4th section, conditionally rendered for closed trades with a trade plan; displays entry timing accuracy, R achieved vs R target (colour-coded), exit alignment badge, lifecycle state at exit badge; lazy-loaded on row expand via `GET /trades/{id}/plan-vs-reality`; hidden entirely when 404 (no plan). Design source: docs/ux_specs/plan-vs-reality/ux_spec.md. Approved: Product Owner 2026-05-15. |
 | 1.7 | 2026-04-17 | v2.8 design gate (ST-08, EPIC-04): AI Journal Summary section added — collapsible section above trade table (below filters), collapsed by default, disclaimer always visible when expanded, Generate/Refresh button calls `POST /ai/journal-summary` with filter context, 4 states (not-generated/loading/loaded/error). SRB-v1.7 conditional compliance constraints documented. Strategy Rules sign-off required before merge. Design source: `docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md`. Head of Specs Team confirmed compliant. |
