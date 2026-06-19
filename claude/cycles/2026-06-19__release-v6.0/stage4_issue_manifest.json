@@ -1,0 +1,101 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Align signal_service suggested_shares to risk-based sizing model",
+    "epic": "EPIC-01",
+    "description": "Correct suggested_shares in signal_service.py to use sizing_service.size_position() (canonical risk-based model) instead of cash-allocation model",
+    "ac_summary": "Signal card suggested_shares matches entry tab; share count independent of concurrent signals; no crash on null initial_stop; cash-allocation model removed; CI tests pass",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-06-19__release-v6.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Trader's Morning Briefing dashboard",
+    "epic": "EPIC-02",
+    "description": "Extend DashboardHome.js with a Trader's Morning Briefing section composing 5 existing endpoint data sources into a start-of-day view",
+    "ac_summary": "Morning Briefing renders at top of DashboardHome; 5 cards (screener hits, positions alert, red flags, earnings, compliance) with correct data and links; mobile-responsive; Playwright coverage",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-06-19__release-v6.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Net-of-costs performance tracking",
+    "epic": "EPIC-02",
+    "description": "Add optional brokerage cost fields per trade and surface net-of-costs R-multiple where cost data is present",
+    "ac_summary": "Optional commission_gbp/spread_cost_gbp fields; net R-multiple calculated where costs present; gross vs net comparison in performance reports; no impact to existing data",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-06-19__release-v6.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Screener data quality telemetry",
+    "epic": "EPIC-03",
+    "description": "Replace generic degraded-run banner with structured data quality panel showing run quality badge, loaded ratio, failed tickers, and stale advisory",
+    "ac_summary": "GET /screener/results includes quality fields; structured panel replaces banner; FULL/DEGRADED/FAILED states render correctly; Playwright coverage",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-06-19__release-v6.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "SI-05 deep link AC-04 staging confirmation",
+    "epic": "EPIC-03",
+    "description": "Confirm SI-05 Telegram digest deep links resolve correctly after FRONTEND_URL env var was set on production backend",
+    "ac_summary": "Digest received post-FRONTEND_URL; deep links present and resolve to correct pages; Infra & Ops Owner confirmation recorded",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-06-19__release-v6.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "RFJ design review pre-brief",
+    "epic": "EPIC-04",
+    "description": "Produce design review brief for BLG-FE-41 covering review scope, evaluation criteria, and deliverable format (conditional: gate 2026-06-21)",
+    "ac_summary": "Gate confirmed (SI-03 ≥30 days); brief covers scope/criteria/deliverable; Head of UX & Design sign-off; serves as input to ST-07",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-06-19__release-v6.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Red Flag Journal visual design review",
+    "epic": "EPIC-04",
+    "description": "Conduct visual design review of RedFlagJournal.js against severity hierarchy, colour coding, and layout (conditional: gate 2026-06-21, depends on ST-06)",
+    "ac_summary": "Gate confirmed; design recommendation produced; if redesign: UX spec + follow-up item filed; reviewed against design system",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-06-19__release-v6.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "SI-05 digest weekly cadence review",
+    "epic": "EPIC-04",
+    "description": "Review SI-05 weekly delivery cadence against 4+ weeks of production data and produce a cadence recommendation (conditional: gate 2026-07-04)",
+    "ac_summary": "Gate confirmed (effectiveness review complete); cadence review document produced; recommendation with data backing; PO sign-off",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-06-19__release-v6.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-09",
+    "title": "SI-05 digest actionability metric definition",
+    "epic": "EPIC-04",
+    "description": "Define 2–4 actionability metrics for SI-05 digest effectiveness with data source mapping (conditional: gate 2026-07-04)",
+    "ac_summary": "Gate confirmed; 2–4 metrics defined with data source mapping; reviewed by Metrics Owner; feeds BLG-GOV-112 and BLG-GOV-96",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-06-19__release-v6.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-10",
+    "title": "SI-05 Phase 2 activation decision scope",
+    "epic": "EPIC-04",
+    "description": "PO formal decision document on SI-05 Phase 2 activation after 2026-07-04 effectiveness review (conditional: gate 2026-07-04)",
+    "ac_summary": "Gate confirmed; formal activation decision doc produced and filed in docs/product/decisions/; activation criteria met/not met; timeline or deferral rationale documented",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-06-19__release-v6.0"],
+    "assignee": null
+  },
+  {
+    "id": "ST-11",
+    "title": "SI-05 service production p99 latency baseline review",
+    "epic": "EPIC-04",
+    "description": "Extract p99 latency for POST /digest/si05/send from Render logs after 4 weeks production operation and compare against pre-launch baseline (conditional: gate 2026-07-04)",
+    "ac_summary": "p99 extracted from Render logs; comparison vs BLG-OPS-54 baseline; PASS or investigation item filed; Infra & Ops Owner sign-off",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-06-19__release-v6.0"],
+    "assignee": null
+  }
+]

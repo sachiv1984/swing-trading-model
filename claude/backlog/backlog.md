@@ -2826,3 +2826,27 @@ Current portfolio view (positions, heat, P&L) has no sector-level aggregation. A
 | ST-11 | BLG-FE-57: Pre-entry panel warning/fail count badge | BLG-FE-57 | EPIC-02 | Firm |
 
 *Canonical record: claude/cycles/2026-06-17__release-v5.9/stage4_backlog_slice.md*
+
+---
+
+## Release Slice — v6.0
+
+<!-- release-plan-marker: RP:v6.0:2026-06-19__release-v6.0 -->
+
+**Cycle:** 2026-06-19__release-v6.0 | **Published:** 2026-06-19 | **Stories:** 4 firm + 7 conditional | **Scope revision:** v1
+
+| ST-ID | Title | BLG-ID | EPIC | Classification |
+|-------|-------|--------|------|---------------|
+| ST-01 | Align signal_service suggested_shares to risk-based sizing model | BLG-BE-36 | EPIC-01 | Firm |
+| ST-02 | Trader's Morning Briefing dashboard | BLG-FEAT-46 | EPIC-02 | Firm |
+| ST-03 | Net-of-costs performance tracking | BLG-FEAT-20 | EPIC-02 | Firm |
+| ST-04 | Screener data quality telemetry | BLG-FEAT-47 | EPIC-03 | Firm |
+| ST-05 | SI-05 deep link AC-04 staging confirmation | BLG-OPS-70 | EPIC-03 | Conditional (gate ~2026-06-23) |
+| ST-06 | RFJ design review pre-brief | BLG-FE-64 | EPIC-04 | Conditional (gate 2026-06-21) |
+| ST-07 | Red Flag Journal visual design review | BLG-FE-41 | EPIC-04 | Conditional (gate 2026-06-21, depends ST-06) |
+| ST-08 | SI-05 digest weekly cadence review | BLG-GOV-112 | EPIC-04 | Conditional (gate 2026-07-04) |
+| ST-09 | SI-05 digest actionability metric definition | BLG-GOV-115 | EPIC-04 | Conditional (gate 2026-07-04) |
+| ST-10 | SI-05 Phase 2 activation decision scope | BLG-GOV-130 | EPIC-04 | Conditional (gate 2026-07-04) |
+| ST-11 | SI-05 service production p99 latency baseline review | BLG-OPS-59 | EPIC-04 | Conditional (gate 2026-07-04) |
+
+*Canonical record: claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md*

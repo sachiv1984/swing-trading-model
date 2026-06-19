@@ -311,6 +311,15 @@ Note: BLG-GOV-96 (effectiveness criteria) and BLG-GOV-113 (effectiveness review 
 
 **Skill-Silo constraint:** Sprint planning for v6.0 must not seal any sprint with G+D+P > 60% of total stories (roadmap_prompt.md v7.4 Skill-Silo ceiling). PMO Lead gate at sprint planning.
 
+<!-- roadmap-annotation-marker: RA:v6.0:2026-06-19__release-v6.0 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-19__release-v6.0
+- Plan published: 2026-06-19
+- Cycle folder: claude/cycles/2026-06-19__release-v6.0/
+- Backlog slice: claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md
+- Status at annotation: Committed
+
 -----
 
 ## 4. Priority 2 — Horizon: Next Phase (Arcs 1 & 2)
