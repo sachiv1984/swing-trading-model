@@ -29,6 +29,7 @@ from database import (
 
 from utils.pricing import get_live_fx_rate
 from utils.formatting import decimal_to_float
+from .sizing_service import size_position
 
 
 def generate_momentum_signals(
@@ -37,8 +38,6 @@ def generate_momentum_signals(
     ma_period: int = 200,
     atr_period: int = 14,
     volatility_window: int = 60,
-    min_position_pct: float = 0.05,
-    max_position_pct: float = 0.20
 ) -> Dict:
     """
     Generate momentum signals based on current portfolio state
@@ -49,8 +48,6 @@ def generate_momentum_signals(
         ma_period: Moving average period for trend filter (default 200)
         atr_period: ATR calculation period (default 14)
         volatility_window: Volatility calculation window (default 60)
-        min_position_pct: Minimum position size as % of cash (default 5%)
-        max_position_pct: Maximum position size as % of cash (default 20%)
     
     Returns:
         Dictionary with:
@@ -348,56 +345,43 @@ def generate_momentum_signals(
     
     # Sort by rank
     signals_sorted = sorted(signals, key=lambda x: x['rank'])
-    
-    # Calculate position sizing (equal weight)
-    available_for_new = available_cash
-    new_signals = [s for s in signals_sorted if s['status'] == 'new']
-    
-    if new_signals:
-        allocation_per_stock = available_for_new / len(new_signals)
-        
-        # Clamp to min/max
-        min_allocation = available_for_new * min_position_pct
-        max_allocation = available_for_new * max_position_pct
-        allocation_per_stock = max(min_allocation, min(max_allocation, allocation_per_stock))
-    
-    # Add position sizing to signals
+
+    # Risk-based position sizing per strategy_rules.md §4.1
+    risk_percent = float(settings.get('default_risk_percent', 1.0)) if settings else 1.0
+
     for signal in signals_sorted:
         if signal['status'] == 'new':
-            signal['suggested_shares'] = int(allocation_per_stock / signal['price_gbp'])
+            entry_price = signal['current_price']
+            initial_stop = signal['initial_stop']
 
-            # ST-06 (BLG-FEAT-43): flag signals where price exceeds allocation.
-            # If the capped allocation can't buy 1 share but total cash can, suggest 1
-            # share (oversized but actionable). Only mark insufficient when total cash
-            # is genuinely less than the price of 1 share.
-            if signal['suggested_shares'] == 0:
-                if available_for_new >= signal['price_gbp']:
-                    signal['suggested_shares'] = 1
-                    signal['allocation_gbp'] = round(signal['price_gbp'], 2)
+            # AC-05: signals with no valid initial_stop produce suggested_shares = 0
+            if (initial_stop is None or initial_stop <= 0 or initial_stop >= entry_price):
+                signal['suggested_shares'] = 0
+                signal['allocation_gbp'] = 0
+                signal['total_cost'] = 0
+                signal['reason'] = 'No valid initial stop — suggested_shares set to 0'
+            else:
+                sizing_result = size_position(
+                    entry_price=entry_price,
+                    stop_price=initial_stop,
+                    risk_percent=risk_percent,
+                    market=signal['market'],
+                    fx_rate=live_fx_rate if signal['market'] == 'US' else None,
+                )
+                if sizing_result.get('valid'):
+                    # Whole shares only at generation time (signal_endpoints.md data model note)
+                    signal['suggested_shares'] = int(sizing_result['suggested_shares'])
+                    signal['allocation_gbp'] = round(sizing_result.get('estimated_cost', 0), 2)
+                    signal['total_cost'] = round(sizing_result.get('estimated_cost', 0), 2)
                     signal['reason'] = (
-                        f"1 share sized above normal limit "
-                        f"(£{signal['price_gbp']:,.0f} vs £{allocation_per_stock:,.0f} allocation)"
+                        None if signal['suggested_shares'] > 0
+                        else 'Risk-based sizing yielded 0 shares for this entry/stop'
                     )
                 else:
-                    signal['allocation_gbp'] = round(allocation_per_stock, 2)
-                    signal['status'] = 'allocation_insufficient'
-                    signal['reason'] = (
-                        f"1 share (£{signal['price_gbp']:,.0f}) exceeds available cash "
-                        f"(£{available_for_new:,.0f}) — cannot size"
-                    )
-            else:
-                signal['allocation_gbp'] = round(allocation_per_stock, 2)
-                signal['reason'] = None
-
-            # Calculate fees
-            if signal['market'] == 'UK':
-                fee_rate = 0.005  # 0.5% stamp duty
-            else:
-                fee_rate = 0.0015  # 0.15% FX fee
-
-            gross_cost = signal['suggested_shares'] * signal['price_gbp']
-            fees = gross_cost * fee_rate
-            signal['total_cost'] = round(gross_cost + fees, 2)
+                    signal['suggested_shares'] = 0
+                    signal['allocation_gbp'] = 0
+                    signal['total_cost'] = 0
+                    signal['reason'] = sizing_result.get('reason_detail', 'Invalid sizing result')
         else:
             # Already held - no allocation
             signal['allocation_gbp'] = 0

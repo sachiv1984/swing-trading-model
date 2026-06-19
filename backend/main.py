@@ -749,8 +749,6 @@ def generate_signals_endpoint(
             ma_period=200,
             atr_period=14,
             volatility_window=60,
-            min_position_pct=0.05,
-            max_position_pct=0.20
         )
         
         return {
