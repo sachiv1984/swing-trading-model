@@ -5,7 +5,7 @@
   "invoked_utc": "2026-06-19T09:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-20T00:00:00Z",
+  "last_updated_utc": "2026-06-20T12:30:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -153,7 +153,7 @@
             "status": "cleared",
             "cleared_utc": "2026-06-19T14:00:00Z"
           },
-          "notes": "New GET /screener/results response fields. Screener contract updated to v1.2; openapi.yaml updated in same commit. EPIC-03 branch must rebase onto main after EPIC-02 merges before PR opens. Playwright coverage AC-07 satisfied by screener-quality.spec.js. deviations_filed corrected at sprint resume 2026-06-20 — no spec deviation found."
+          "notes": "New GET /screener/results response fields. Screener contract updated to v1.2; openapi.yaml updated in same commit. EPIC-03 rebased onto main 2026-06-20 after EPIC-02 merged. Playwright coverage AC-07 satisfied by screener-quality.spec.js. deviations_filed corrected at sprint resume 2026-06-20 — no spec deviation found."
         },
         "ST-05": {
           "title": "SI-05 deep link AC-04 staging confirmation",

@@ -4154,6 +4154,11 @@ components:
                       offset: { type: integer }
                       degraded_run: { type: boolean, description: "true when >20% of tickers returned no OHLCV data" }
                       failure_rate: { type: number, format: float, description: "Fraction of tickers with no OHLCV data (0.0–1.0)" }
+                      tickers_requested: { type: integer, description: "Number of tickers the screener attempted to evaluate" }
+                      tickers_loaded: { type: integer, description: "Number of tickers that successfully returned OHLCV data" }
+                      tickers_failed: { type: array, items: { type: string }, description: "Tickers that failed to load OHLCV data" }
+                      run_quality: { type: string, enum: [FULL, DEGRADED, FAILED], description: "FULL (≤20% failure), DEGRADED (>20%), FAILED (no tickers loaded)" }
+                      last_full_run_utc: { type: string, format: date-time, nullable: true, description: "Timestamp of most recent FULL run. null if no FULL run recorded yet" }
 
   /screener/run:
     post:
