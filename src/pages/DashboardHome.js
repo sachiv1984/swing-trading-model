@@ -4,6 +4,7 @@ import PortfolioHeatCard from "../components/dashboard/home/PortfolioHeatCard";
 import GracePeriodCard from "../components/dashboard/home/GracePeriodCard";
 import SignalStatusCard from "../components/dashboard/home/SignalStatusCard";
 import RecentActivityCard from "../components/dashboard/home/RecentActivityCard";
+import MorningBriefing from "../components/dashboard/home/MorningBriefing";
 
 const DASHBOARD_QUERY_KEYS = [
   "home-open-positions",
@@ -12,6 +13,12 @@ const DASHBOARD_QUERY_KEYS = [
   "home-market-status",
   "home-signals-today",
   "home-recent-activity",
+  "morning-screener-hits",
+  "morning-grace-alerts",
+  "morning-positions",
+  "morning-red-flags",
+  "morning-compliance-7d",
+  "morning-compliance-30d",
 ];
 
 export default function DashboardHome() {
@@ -27,6 +34,8 @@ export default function DashboardHome() {
         <h1 className="text-2xl font-bold text-white tracking-tight">Dashboard</h1>
         <p className="text-sm text-slate-400 mt-1">Session summary — live data</p>
       </div>
+
+      <MorningBriefing />
 
       {/* Top row: Open Positions, Portfolio Heat, In Grace Today */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

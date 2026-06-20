@@ -104,7 +104,7 @@ class TestFeeDragFormula(unittest.TestCase):
         trade = _make_trade(exit_fees=exit_fees, gross_proceeds=gross_proceeds)
         with (
             patch('services.trade_service.get_portfolio', return_value=PORTFOLIO),
-            patch('services.trade_service.get_trade_history', return_value=[trade]),
+            patch('services.trade_service.get_trade_history_with_stops', return_value=[trade]),
         ):
             result = get_trade_history_with_stats()
         return result["trades"][0]["fee_drag_pct"]
@@ -167,7 +167,7 @@ class TestAvgFeeDragAggregation(unittest.TestCase):
     def _run(self, trades_raw):
         with (
             patch('services.trade_service.get_portfolio', return_value=PORTFOLIO),
-            patch('services.trade_service.get_trade_history', return_value=trades_raw),
+            patch('services.trade_service.get_trade_history_with_stops', return_value=trades_raw),
         ):
             return get_trade_history_with_stats()
 
@@ -194,7 +194,7 @@ class TestAvgFeeDragAggregation(unittest.TestCase):
         """No trades at all → avg_fee_drag_pct = None"""
         with (
             patch('services.trade_service.get_portfolio', return_value=PORTFOLIO),
-            patch('services.trade_service.get_trade_history', return_value=[]),
+            patch('services.trade_service.get_trade_history_with_stops', return_value=[]),
         ):
             result = get_trade_history_with_stats()
         self.assertIsNone(result["avg_fee_drag_pct"])
