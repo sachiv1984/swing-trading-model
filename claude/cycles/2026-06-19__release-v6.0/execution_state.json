@@ -5,7 +5,7 @@
   "invoked_utc": "2026-06-19T09:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-20T13:00:00Z",
+  "last_updated_utc": "2026-06-20T14:30:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -248,7 +248,7 @@
         "ST-09": {
           "title": "SI-05 digest actionability metric definition",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 812,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
@@ -256,13 +256,24 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-06-20T14:30:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-09"],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Cluster B gate override — PO authority 2026-06-20. Autonomous metrics definition document."
+          "last_completed_substep": "doq_sign_off",
+          "sign_off_record": {
+            "required_by": "Metrics Definitions & Analytics Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "4 metrics defined: ATCR, RFAR, DDCR, EPAR — all with formulas, data source mapping, and interpretation thresholds",
+              "All derivable from existing tables (si05_digest_log, red_flag_events, trades, positions) — no new instrumentation required",
+              "Feeds BLG-GOV-112 cadence review and BLG-GOV-96 effectiveness criteria explicitly stated",
+              "RFAR 'reviewed' observability ambiguity noted as minor — acceptable at v1; to be addressed in future revision"
+            ],
+            "cleared_utc": "2026-06-20T14:30:00Z"
+          },
+          "notes": "Cluster B gate override — PO authority 2026-06-20. Deliverable: docs/product/decisions/si05-actionability-metrics-definition.md. AC-03 agent-mediated sign-off by Metrics Definitions & Analytics Owner. AC-04 satisfied — metrics explicitly feed BLG-GOV-112 and BLG-GOV-96."
         },
         "ST-10": {
           "title": "SI-05 Phase 2 activation decision scope",
@@ -300,7 +311,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Cluster B gate override — PO authority 2026-06-20. P3 deviation: measurement at 16 days post-launch vs AC-01 post-4-week spec. All ACs staging-only — I&O Owner to extract Render logs. DEL-20260620-05."
+          "notes": "Cluster B gate override — PO authority 2026-06-20. P3 deviation: measurement at 16 days post-launch vs AC-01 post-4-week spec. Engine staging framework created: docs/testing/staging_latency_review_ST-11.md. All ACs staging-only — I&O Owner to extract Render logs and complete sign-off per DEL-20260620-05."
         }
       }
     }
@@ -308,7 +319,7 @@
 
   "blocked_items": [],
   "delegated_items": ["ST-06", "ST-07", "ST-08", "ST-10", "ST-11"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-09"],
   "open_escalations": [],
 
   "merge_gate": {
@@ -317,7 +328,7 @@
     "all_merged": false
   },
 
-  "last_updated_utc": "2026-06-20T13:00:00Z",
+  "last_updated_utc": "2026-06-20T14:30:00Z",
 
   "sealed": false,
   "sealed_utc": null
