@@ -1568,6 +1568,43 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /trades/{trade_id}/costs:
+    patch:
+      tags: [Trades]
+      summary: Record trade costs
+      description: "Record or update commission and spread costs (GBP) for a closed trade. Both fields optional. Populates net_r_multiple on GET /trades. ST-03 (EPIC-02, v6.0) — BLG-FEAT-20. Spec: docs/specs/api_contracts/trade_endpoints.md"
+      parameters:
+        - name: trade_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                commission_gbp: { type: number, nullable: true, description: Total commission paid in GBP }
+                spread_cost_gbp: { type: number, nullable: true, description: Estimated bid-ask spread cost in GBP }
+      responses:
+        "200":
+          description: Costs recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  data:
+                    type: object
+                    properties:
+                      trade_id: { type: string, format: uuid }
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /trades/export/csv:
     get:
       tags: [Trades]

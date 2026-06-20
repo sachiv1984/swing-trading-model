@@ -379,6 +379,13 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
         >
           R-Multiple <RSortIcon />
         </TableHead>
+        {/* ST-03 (EPIC-02, v6.0): Net R column — visible only when trade has cost data */}
+        <TableHead
+          className={cn(TH_CLASS, "text-right")}
+          title="Net-of-costs R-multiple: (P&L − commission − spread) / initial risk. Only shown when costs recorded."
+        >
+          Net R
+        </TableHead>
       </TableHeader>
 
       <TableBody>
@@ -485,12 +492,23 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                     {rText}
                   </span>
                 </TableCell>
+
+                {/* Net R — ST-03 (EPIC-02, v6.0) — visible only when cost data present */}
+                <TableCell className={cn(TD_CLASS, "text-right")}>
+                  {trade.net_r_multiple != null ? (
+                    <span className={cn("font-medium tabular-nums", trade.net_r_multiple > 0 ? "text-emerald-400" : trade.net_r_multiple < 0 ? "text-rose-400" : "text-slate-300")}>
+                      {(trade.net_r_multiple > 0 ? "+" : "") + trade.net_r_multiple.toFixed(2)}R
+                    </span>
+                  ) : (
+                    <span className="text-slate-600">—</span>
+                  )}
+                </TableCell>
               </TableRow>
 
-              {/* Expanded journal row — colSpan 10 (ST-11 added Days Held column) */}
+              {/* Expanded journal row — colSpan 11 (ST-03 added Net R column) */}
               {isExpanded && hasExpandableContent && (
                 <TableRow key={`${tradeId}-details`} className="bg-slate-900/50 border-t-2 border-slate-700/50">
-                  <TableCell colSpan={10} className="!p-0">
+                  <TableCell colSpan={11} className="!p-0">
                     <div className="w-full px-6 py-5 space-y-5">
                       <div className="flex items-center gap-2 pb-3 border-b border-slate-700/50">
                         <div className="w-1 h-4 bg-gradient-to-b from-cyan-500 to-violet-500 rounded-full" />

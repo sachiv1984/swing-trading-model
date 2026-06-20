@@ -1112,6 +1112,57 @@ COMMIT;
 
 ---
 
-**Document Version:** 2.8
+---
+
+## DS-08 — Add commission and spread cost columns to trade_history (v2.9, 2026-06-19)
+
+**Story:** ST-03 (EPIC-02, v6.0) — BLG-FEAT-20
+
+Adds two optional cost columns to `trade_history` to support net-of-costs performance tracking. Both columns are nullable; existing rows are unaffected. The migration is idempotent (`ADD COLUMN IF NOT EXISTS`).
+
+### Up Migration (v2.8 → v2.9)
+
+```sql
+BEGIN;
+ALTER TABLE trade_history ADD COLUMN IF NOT EXISTS commission_gbp NUMERIC(10, 2);
+ALTER TABLE trade_history ADD COLUMN IF NOT EXISTS spread_cost_gbp NUMERIC(10, 2);
+COMMIT;
+```
+
+### Verification
+
+```sql
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'trade_history'
+  AND column_name IN ('commission_gbp', 'spread_cost_gbp');
+-- Expected: 2 rows, data_type=numeric, is_nullable=YES
+```
+
+### Down Migration (v2.9 → v2.8)
+
+```sql
+BEGIN;
+ALTER TABLE trade_history DROP COLUMN IF EXISTS commission_gbp;
+ALTER TABLE trade_history DROP COLUMN IF EXISTS spread_cost_gbp;
+COMMIT;
+```
+
+### New computed field: net_r_multiple
+
+`net_r_multiple` is not stored in the database. It is computed at query time in `trade_service.get_trade_history_with_stats()` using the formula:
+
+```
+net_r = (pnl - commission_gbp - spread_cost_gbp) / initial_risk_gbp
+```
+
+where `initial_risk_gbp = (entry_price - stop_price_at_entry) × shares / fx_rate` (USD-denominated positions are converted to GBP). Returns `null` when cost data or stop data is absent.
+
+**Sign-off:**
+- Data Model Domain & Schema Owner: Accepted — 2026-06-19 (agent-mediated, v6.0 sprint execution)
+
+---
+
+**Document Version:** 2.9
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-05-18
+**Last Review:** 2026-06-19
