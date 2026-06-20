@@ -5,14 +5,14 @@
   "invoked_utc": "2026-06-19T09:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-19T15:00:00Z",
+  "last_updated_utc": "2026-06-20T13:00:00Z",
 
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-19__release-v6.0/EPIC-01",
       "pr_number": 815,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-19__release-v6.0/qa_evidence_EPIC-01.md",
       "test_scenarios": ["docs/testing/signals_scenarios.md"],
@@ -47,16 +47,16 @@
             ],
             "cleared_utc": "2026-06-19T09:15:00Z"
           },
-          "notes": "P0 correctness fast-track. AC-01 agent-mediated sign-off cleared 2026-06-19 by Strategy Rules & System Intent Owner. Implementation uses size_position() per §4.1 canonical formula."
+          "notes": "P0 correctness fast-track. AC-01 agent-mediated sign-off cleared 2026-06-19 by Strategy Rules & System Intent Owner. Implementation uses size_position() per §4.1 canonical formula. PR #815 merged 2026-06-20."
         }
       }
     },
 
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-19__release-v6.0/EPIC-02",
       "pr_number": 816,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-19__release-v6.0/qa_evidence_EPIC-02.md",
       "test_scenarios": ["docs/testing/staging_visual_test_script_EPIC-02.md"],
@@ -81,10 +81,10 @@
             "docs/specs/api_contracts/earnings_endpoints.md",
             "docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/arc5-compliance"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Frontend composition from 5 existing live endpoints. Playwright coverage required (AC-09). Frontend testing gate applies — observable UI ACs require Playwright or human staging run."
+          "notes": "Frontend composition from 5 existing live endpoints. Playwright coverage required (AC-09). Frontend testing gate applies. deviations_filed corrected at sprint resume 2026-06-20 — no spec deviation found."
         },
         "ST-03": {
           "title": "Net-of-costs performance tracking",
@@ -103,7 +103,7 @@
             "docs/specs/api_contracts/trade_endpoints.md",
             "docs/specs/data_model.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "doq_sign_off",
           "sign_off_record": {
             "required_by": "Director of Quality",
@@ -111,7 +111,7 @@
             "status": "cleared",
             "cleared_utc": "2026-06-19T12:00:00Z"
           },
-          "notes": "Additive data model + backend + frontend. Optional cost fields — backward-compatible. EPIC-02 owns data_model.md and trade history endpoints. EPIC-03 branch must rebase after EPIC-02 merges."
+          "notes": "Additive data model + backend + frontend. Optional cost fields — backward-compatible. EPIC-02 owns data_model.md and trade history endpoints. deviations_filed corrected at sprint resume 2026-06-20 — no spec deviation found."
         }
       }
     },
@@ -119,8 +119,8 @@
     "EPIC-03": {
       "status": "done",
       "branch": "exec/2026-06-19__release-v6.0/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 821,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-19__release-v6.0/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -145,7 +145,7 @@
           "spec_references": [
             "docs/specs/api_contracts/screener_api_contract.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "doq_sign_off",
           "sign_off_record": {
             "required_by": "Director of Quality",
@@ -153,7 +153,7 @@
             "status": "cleared",
             "cleared_utc": "2026-06-19T14:00:00Z"
           },
-          "notes": "New GET /screener/results response fields. Screener contract updated to v1.2; openapi.yaml updated in same commit (CLAUDE.md §2). EPIC-03 branch must rebase onto main after EPIC-02 merges before PR opens. Playwright coverage AC-07 satisfied by screener-quality.spec.js."
+          "notes": "New GET /screener/results response fields. Screener contract updated to v1.2; openapi.yaml updated in same commit. EPIC-03 rebased onto main 2026-06-20 after EPIC-02 merged. Playwright coverage AC-07 satisfied by screener-quality.spec.js. deviations_filed corrected at sprint resume 2026-06-20 — no spec deviation found."
         },
         "ST-05": {
           "title": "SI-05 deep link AC-04 staging confirmation",
@@ -174,7 +174,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Conditional — gate ~2026-06-23 (SI-05 Telegram digest delivery after FRONTEND_URL set). All ACs (AC-01/02/03) are staging-only. Do not begin until digest delivery confirmed. Backlog item required before PR opens if staging sign-off deferred post-merge. BLG-OPS-70 5th carry-forward."
+          "notes": "Conditional — gate ~2026-06-23. All ACs staging-only. Do not begin until digest delivery confirmed."
         }
       }
     },
@@ -186,26 +186,26 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-06-19__release-v6.0/qa_evidence_EPIC-04.md",
-      "test_scenarios": ["docs/testing/staging_visual_test_script_ST-06.md"],
+      "test_scenarios": [],
       "stories": {
         "ST-06": {
           "title": "RFJ design review pre-brief",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "in_progress",
           "assigned_to": "Head of UX & Design",
           "github_issue": 809,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": "ESC-2026-06-19-01",
-          "blocked_since_utc": "2026-06-19T15:00:00Z",
-          "unblock_criteria": "Gate 2026-06-21: SI-03 Red Flag Journal live ≥30 days confirmed",
+          "delegation_record_id": "DEL-20260620-01",
+          "blocked_since_utc": null,
+          "unblock_criteria": "Head of UX & Design produces design review brief per AC-02/03; AC-01 date (2026-06-21) satisfied",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-06"],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Conditional — gate 2026-06-21. EPIC-04 Cluster A. 6th consecutive carry-forward (v5.3–v5.9). delegated_decision — Head of UX & Design to produce design review brief. ST-07 depends on this. Schedule promptly on gate confirmation to avoid 7th deferral. Escalation record: ESC-2026-06-19-01."
+          "notes": "Cluster A gate override — PO authority 2026-06-20. AC-01 date formally satisfied 2026-06-21. Head of UX & Design delegation active: DEL-20260620-01."
         },
         "ST-07": {
           "title": "Red Flag Journal visual design review",
@@ -215,144 +215,109 @@
           "github_issue": 810,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": "ESC-2026-06-19-02",
-          "blocked_since_utc": "2026-06-19T15:00:00Z",
-          "unblock_criteria": "ST-06 brief complete AND gate 2026-06-21 confirmed",
+          "delegation_record_id": "DEL-20260620-02",
+          "blocked_since_utc": "2026-06-20T13:00:00Z",
+          "unblock_criteria": "ST-06 brief complete AND AC-01 date 2026-06-21 satisfied",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-07"],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Conditional — gate 2026-06-21; depends on ST-06. EPIC-04 Cluster A. delegated_decision — Head of UX & Design conducts design review. If redesign recommended, UX spec produced and implementation backlog item filed (AC-03). Escalation record: ESC-2026-06-19-02."
+          "notes": "Cluster A gate override — PO authority 2026-06-20. Blocked on ST-06 completion. Head of UX & Design delegation active: DEL-20260620-02."
         },
         "ST-08": {
           "title": "SI-05 digest weekly cadence review",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "in_progress",
           "assigned_to": "Product Owner",
           "github_issue": 811,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": "ESC-2026-06-19-03",
-          "blocked_since_utc": "2026-06-19T15:00:00Z",
-          "unblock_criteria": "Gate 2026-07-04: SI-05 effectiveness review (BLG-GOV-96) complete and outputs available",
+          "delegation_record_id": "DEL-20260620-03",
+          "blocked_since_utc": null,
+          "unblock_criteria": "Product Owner produces cadence review document (AC-02 through AC-05)",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-08"],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Conditional — gate 2026-07-04. EPIC-04 Cluster B. 3rd consecutive carry-forward (v5.5, v5.7, v5.8). delegated_decision — PO product review. Gate is scheduled event. Independent within Cluster B. Escalation record: ESC-2026-06-19-03."
+          "notes": "Cluster B gate override — PO authority 2026-06-20. Proceeds with 16-day production data; PO acknowledged. DEL-20260620-03."
         },
         "ST-09": {
           "title": "SI-05 digest actionability metric definition",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 812,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "Gate 2026-07-04: BLG-GOV-113 SI-05 effectiveness review protocol complete",
+          "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-09"],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Conditional — gate 2026-07-04. EPIC-04 Cluster B. 3rd consecutive carry-forward. autonomous — metrics definition document to be created as primary deliverable. Do not begin until 2026-07-04 gate clears. Independent within Cluster B."
+          "notes": "Cluster B gate override — PO authority 2026-06-20. Autonomous metrics definition document."
         },
         "ST-10": {
           "title": "SI-05 Phase 2 activation decision scope",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "in_progress",
           "assigned_to": "Product Owner",
           "github_issue": 813,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": "ESC-2026-06-19-04",
-          "blocked_since_utc": "2026-06-19T15:00:00Z",
-          "unblock_criteria": "Gate 2026-07-04: effectiveness review outputs reviewed by PO; BLG-GOV-121 §13 pre-clearance status available",
+          "delegation_record_id": "DEL-20260620-04",
+          "blocked_since_utc": null,
+          "unblock_criteria": "Product Owner produces Phase 2 activation decision document filed in docs/product/decisions/ (AC-02 through AC-05)",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-10"],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Conditional — gate 2026-07-04. EPIC-04 Cluster B. delegated_decision — PO formal Phase 2 activation decision document; filed as Class 3 Operational Record in docs/product/decisions/. Independent within Cluster B. Escalation record: ESC-2026-06-19-04."
+          "notes": "Cluster B gate override — PO authority 2026-06-20. PO is the decision-maker; proceeds with available information. DEL-20260620-04."
         },
         "ST-11": {
           "title": "SI-05 service production p99 latency baseline review",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 814,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
+          "delegation_record_id": "DEL-20260620-05",
           "blocked_since_utc": null,
-          "unblock_criteria": "Gate 2026-07-04: ≥4 weeks POST /digest/si05/send production operation (SI-05 live 2026-06-04)",
+          "unblock_criteria": "Infrastructure & Operations Owner extracts Render log p99 data and completes AC-01 through AC-04",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-11"],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Conditional — gate 2026-07-04. EPIC-04 Cluster B. 3rd consecutive carry-forward. autonomous — ops measurement + doc. All ACs require live production Render log data (staging-only). Backlog filing required before PR opens if staging sign-off deferred post-merge. Independent within Cluster B."
+          "notes": "Cluster B gate override — PO authority 2026-06-20. P3 deviation: measurement at 16 days post-launch vs AC-01 post-4-week spec. All ACs staging-only — I&O Owner to extract Render logs. DEL-20260620-05."
         }
       }
     }
   },
 
   "blocked_items": [],
-  "delegated_items": ["ST-06", "ST-07", "ST-08", "ST-10"],
+  "delegated_items": ["ST-06", "ST-07", "ST-08", "ST-10", "ST-11"],
   "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04"],
-  "open_escalations": [
-    {
-      "id": "ESC-2026-06-19-01",
-      "story_id": "ST-06",
-      "owner": "Head of UX & Design",
-      "type": "delegated_decision",
-      "raised_utc": "2026-06-19T15:00:00Z",
-      "unblock_criteria": "Gate 2026-06-21: SI-03 Red Flag Journal live ≥30 days confirmed",
-      "status": "open"
-    },
-    {
-      "id": "ESC-2026-06-19-02",
-      "story_id": "ST-07",
-      "owner": "Head of UX & Design",
-      "type": "delegated_decision",
-      "raised_utc": "2026-06-19T15:00:00Z",
-      "unblock_criteria": "ST-06 brief complete AND gate 2026-06-21 confirmed",
-      "status": "open"
-    },
-    {
-      "id": "ESC-2026-06-19-03",
-      "story_id": "ST-08",
-      "owner": "Product Owner",
-      "type": "delegated_decision",
-      "raised_utc": "2026-06-19T15:00:00Z",
-      "unblock_criteria": "Gate 2026-07-04: SI-05 effectiveness review (BLG-GOV-96) complete and outputs available",
-      "status": "open"
-    },
-    {
-      "id": "ESC-2026-06-19-04",
-      "story_id": "ST-10",
-      "owner": "Product Owner",
-      "type": "delegated_decision",
-      "raised_utc": "2026-06-19T15:00:00Z",
-      "unblock_criteria": "Gate 2026-07-04: effectiveness review outputs reviewed by PO; BLG-GOV-121 §13 pre-clearance status available",
-      "status": "open"
-    }
-  ],
+  "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04"],
+    "epics_merged": ["EPIC-01", "EPIC-02"],
+    "epics_pending": ["EPIC-03", "EPIC-04"],
     "all_merged": false
   },
+
+  "last_updated_utc": "2026-06-20T13:00:00Z",
 
   "sealed": false,
   "sealed_utc": null

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-19 (roadmap rebalance 2026-06-19__scheduled — 7 new items added: BLG-SPEC-56/57, BLG-QA-59, BLG-OPS-72, BLG-BE-37, BLG-GOV-131, BLG-FE-76; total 108 active items)
+**Last Updated:** 2026-06-19 (session — 2 new items added: BLG-GOV-132, BLG-GOV-133; total 110 active items)
 **Last rebalance:** 2026-06-19 (cycle 2026-06-19__scheduled — DL-048–051; 7 promoted-backlog, 1 rejected, 8 parked C1; v6.0 Now section added to roadmap; Product Value Alert + Skill-Silo Alert recorded)
 
 > ⚠️ Standing Notice
@@ -2734,6 +2734,61 @@ The Skill-Silo ceiling (40% G+D+P per sprint) was added to roadmap_prompt.md v7.
 - Governance overhead ceiling metric defined (formula, rolling window, alert threshold)
 - Proposal document produced for Head of Specs Team and PMO Lead review
 - If approved: roadmap_prompt.md amendment drafted and queued for GOVERNANCE commit per §6 checklist
+
+---
+
+### BLG-GOV-132 — Release planning: emit explicit Design Gate Required flag for UI-facing scope
+**Priority:** P1 (High)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** v6.0 design gate — design gate was skipped because release planning emitted no explicit "design gate required" signal, allowing sprint planning to start out of sequence — 2026-06-19
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.1
+
+**Problem**
+When the release planning engine produces a backlog slice containing user-facing UI items it does not set a machine-readable flag or emit a prominent advisory that the design gate must run before sprint planning. The PMO Lead has no automated signal to distinguish "design gate required" from "design gate not required" cycles. In v6.0 this omission led to sprint planning starting from Release_Planning_Complete with design_gate_status = not_started and no bypass recorded, requiring a lifecycle guard halt and manual state restoration.
+
+**Scope**
+- STEP 4 of release_planning_prompt.md: scan backlog slice items for UI-facing delegation class (delegated_frontend, autonomous with observable UI ACs); classify cycle as design gate required or not required
+- Set `design_gate_required = true | false` in cycle/state.json and .claude_current_state.json at STEP 4 completion (additive — does not overwrite other fields)
+- Emit prominent advisory in release planning output: "⚠ DESIGN GATE REQUIRED before plan sprint — N items classified as UI-facing. Run: run design-gate --cycle <cycle_id>"
+- When no UI-facing items: set false and emit "Design Gate: Not Required — proceed directly to plan sprint"
+- Include design_gate_required status in cycle_summary.md header section
+- Bump release_planning_prompt.md version; update §14 OPERATIONAL_GUIDE.md and prompt_change_log.md
+
+**Acceptance Criteria**
+- AC-01: Backlog slice with UI-facing items → release planning output includes "⚠ DESIGN GATE REQUIRED" and design_gate_required = true in cycle/state.json
+- AC-02: Backlog slice with no UI-facing items → design_gate_required = false; advisory says "Design Gate: Not Required"
+- AC-03: cycle_summary.md header includes design_gate_required status line
+- AC-04: release_planning_prompt.md version bumped; §14 and prompt_change_log.md updated in same commit per §6 governance edit checklist
+
+---
+
+### BLG-GOV-133 — Sprint planning: enforce hard gate on design_gate_status at STEP -1 preflight
+**Priority:** P1 (High)
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** v6.0 design gate — sprint planning proceeded from Release_Planning_Complete with design_gate_status = not_started and no bypass record — 2026-06-19
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.1
+
+**Problem**
+The lifecycle schema and shared_standards §10.1 specify that sprint planning entering from Release_Planning_Complete requires either design_gate_status = Passed or explicit bypass fields (design_gate_bypass_authority + design_gate_bypass_reason). However, sprint planning's own STEP -1 preflight did not enforce this as a hard gate — it was possible to proceed with design_gate_status = not_started and no bypass, producing an uncommitted out-of-sequence artefact set. The schema is correct; the prompt enforcement is missing.
+
+**Scope**
+- Add or strengthen STEP -1.3 in sprint_planning_prompt.md: when entering from Release_Planning_Complete, explicitly check design_gate_status before any further step
+- Hard gate rule (fires if design_gate_required = true): design_gate_status ≠ Passed AND (design_gate_bypass_authority empty OR design_gate_bypass_reason empty) → halt with halt report, status = Blocked
+- Bypass path: bypass authority + reason both populated → proceed with bypass acknowledgement appended to sprint planning notes (not silent)
+- Pass path: design_gate_status = Passed → proceed normally; log "Design gate: Passed" in output
+- If design_gate_required = false: skip gate; note "Design gate: Not Required for this cycle"
+- Bump sprint_planning_prompt.md version; update §14 OPERATIONAL_GUIDE.md and prompt_change_log.md
+
+**Acceptance Criteria**
+- AC-01: plan sprint from Release_Planning_Complete with design_gate_required = true, design_gate_status = not_started, no bypass → hard gate fires, halt report, status = Blocked
+- AC-02: plan sprint from Release_Planning_Complete with bypass authority + reason populated → proceeds with bypass acknowledgement in sprint planning notes
+- AC-03: plan sprint from Design_Gate_Passed → proceeds normally; gate check logged as Pass
+- AC-04: plan sprint with design_gate_required = false → gate check skipped; noted in output
+- AC-05: sprint_planning_prompt.md version bumped; §14 and prompt_change_log.md updated same commit
 
 ---
 

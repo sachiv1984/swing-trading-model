@@ -1340,6 +1340,63 @@ def get_trade_by_id(trade_id: str) -> Optional[Dict]:
             return dict(row) if row else None
 
 
+def ensure_trade_cost_columns() -> None:
+    """Add commission_gbp and spread_cost_gbp columns to trade_history (idempotent).
+
+    ST-03 (EPIC-02, v6.0) — BLG-FEAT-20. Optional cost fields for net-of-costs
+    R-multiple tracking. Nullable; existing records default NULL (backward-compatible).
+    Spec: docs/specs/data_model.md §Migration v6.0
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_history ADD COLUMN IF NOT EXISTS commission_gbp NUMERIC(10, 2)"
+            )
+            cur.execute(
+                "ALTER TABLE trade_history ADD COLUMN IF NOT EXISTS spread_cost_gbp NUMERIC(10, 2)"
+            )
+        conn.commit()
+
+
+def update_trade_costs(trade_id: str, portfolio_id: str, commission_gbp: Optional[float], spread_cost_gbp: Optional[float]) -> bool:
+    """Update commission_gbp and spread_cost_gbp for a trade_history record.
+
+    Returns True if a row was updated, False if trade not found.
+    ST-03 (EPIC-02, v6.0) — BLG-FEAT-20.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """UPDATE trade_history
+                   SET commission_gbp = %s, spread_cost_gbp = %s
+                   WHERE id = %s AND portfolio_id = %s""",
+                (commission_gbp, spread_cost_gbp, trade_id, portfolio_id)
+            )
+            updated = cur.rowcount > 0
+        conn.commit()
+    return updated
+
+
+def get_trade_history_with_stops(portfolio_id: str) -> List[Dict]:
+    """Get trade history joined with positions.initial_stop for net-R computation.
+
+    LEFT JOINs positions on position_id to add stop_price_at_entry.
+    Records without a linked position have stop_price_at_entry = NULL.
+    ST-03 (EPIC-02, v6.0) — BLG-FEAT-20.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT th.*, p.initial_stop AS stop_price_at_entry
+                   FROM trade_history th
+                   LEFT JOIN positions p ON th.position_id = p.id
+                   WHERE th.portfolio_id = %s
+                   ORDER BY th.exit_date DESC""",
+                (portfolio_id,)
+            )
+            return cur.fetchall()
+
+
 def get_database_size_bytes() -> int:
     """Return the current database size in bytes.
 
