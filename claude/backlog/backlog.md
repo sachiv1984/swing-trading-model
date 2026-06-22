@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-22 (session — 2 new items added: BLG-FE-66, BLG-FE-67; total 112 active items)
+**Last Updated:** 2026-06-22 (session — 3 new items added: BLG-FE-66, BLG-FE-67, BLG-QA-60; total 113 active items)
 **Last rebalance:** 2026-06-19 (cycle 2026-06-19__scheduled — DL-048–051; 7 promoted-backlog, 1 rejected, 8 parked C1; v6.0 Now section added to roadmap; Product Value Alert + Skill-Silo Alert recorded)
 
 > ⚠️ Standing Notice
@@ -2714,6 +2714,30 @@ Arc 4 AI-driven features (PO-02/03/04) introduce Playwright test challenges not 
 - Arc 4 E2E test strategy document produced
 - Mocking approach for PO-02/03/04 AI calls defined and consistent with existing BLG-QA-37 Playwright mock strategy
 - Reviewed by Director of Quality
+
+---
+
+### BLG-QA-60 — Register morning-briefing.spec.js and screener-quality.spec.js in playwright.yml CI workflow
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; Head of Engineering
+**Source:** EPIC-04 sprint execution 2026-06-22 — Playwright E2E gate failure on PR #822 revealed EPIC-02 ST-02 and EPIC-03 ST-04 spec files not registered in CI
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v6.1
+
+**Problem**
+`morning-briefing.spec.js` (11 scenarios, EPIC-02 ST-02 AC-09) and `screener-quality.spec.js` (5 scenarios, EPIC-03 ST-04 AC-07) were authored and committed but never added to the explicit test list in `.github/workflows/playwright.yml`. As a result, regressions in the Screener quality panel (SC-SCR-DEG-01) only surfaced at the EPIC-04 merge gate rather than when EPIC-03 landed. Both spec files cover observable ACs that the frontend testing gate requires to be in CI.
+
+**Scope**
+- Add `tests/e2e/morning-briefing.spec.js` to the `npx playwright test` command in `playwright.yml`
+- Add `tests/e2e/screener-quality.spec.js` to the same command
+- Update the spec inventory comment block in `playwright.yml` to list both new files
+- Confirm both specs pass in CI before closing
+
+**Acceptance Criteria**
+- Both spec files appear in the `playwright.yml` `Run all E2E acceptance tests` step
+- CI `Playwright E2E Acceptance Tests` job passes with the new specs included
+- Spec inventory comment in `playwright.yml` updated to reflect 25 total spec files
 
 ---
 

@@ -170,7 +170,7 @@
           "spec_references": [
             "docs/specs/api_contracts/digest_endpoints.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "doq_sign_off",
           "sign_off_record": {
             "required_by": "Infrastructure & Operations Owner",
@@ -183,16 +183,16 @@
             ],
             "cleared_utc": "2026-06-22T10:00:00Z"
           },
-          "notes": "Gate confirmed 2026-06-22. Digest received 2026-06-17 (post-FRONTEND_URL). Both deep links verified by I&O Owner."
+          "notes": "Gate confirmed 2026-06-22. Digest received 2026-06-17 (post-FRONTEND_URL). Both deep links verified by I&O Owner. No spec deviation found — deviations_filed corrected at sprint close (BLG-GOV-73)."
         }
       }
     },
 
     "EPIC-04": {
-      "status": "qa_complete",
+      "status": "merged",
       "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
       "pr_number": 822,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-19__release-v6.0/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
@@ -211,7 +211,7 @@
           "completed_utc": "2026-06-22T13:00:00Z",
           "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-06"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "doq_sign_off",
           "sign_off_record": {
             "required_by": "Head of UX & Design",
@@ -225,7 +225,7 @@
             ],
             "cleared_utc": "2026-06-22T13:00:00Z"
           },
-          "notes": "Cluster A gate override — PO authority 2026-06-20. AC-01 satisfied 2026-06-21 (SI-03 live ≥30 days). Deliverable: docs/design/2026-06-19__release-v6.0/rfj-design-review/brief.md."
+          "notes": "Cluster A gate override — PO authority 2026-06-20. AC-01 satisfied 2026-06-21 (SI-03 live ≥30 days). Deliverable: docs/design/2026-06-19__release-v6.0/rfj-design-review/brief.md. No spec deviation found — deviations_filed corrected at sprint close (BLG-GOV-73)."
         },
         "ST-07": {
           "title": "Red Flag Journal visual design review",
@@ -241,7 +241,7 @@
           "completed_utc": "2026-06-22T13:30:00Z",
           "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-07"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "doq_sign_off",
           "sign_off_record": {
             "required_by": "Head of UX & Design",
@@ -256,7 +256,7 @@
             ],
             "cleared_utc": "2026-06-22T13:30:00Z"
           },
-          "notes": "Cluster A gate override — PO authority 2026-06-20. Deliverable: docs/design/2026-06-19__release-v6.0/rfj-design-review/review.md. No redesign — 2 P3 backlog items filed (BLG-FE-66, BLG-FE-67)."
+          "notes": "Cluster A gate override — PO authority 2026-06-20. Deliverable: docs/design/2026-06-19__release-v6.0/rfj-design-review/review.md. No redesign — 2 P3 backlog items filed (BLG-FE-66, BLG-FE-67). No spec deviation found — deviations_filed corrected at sprint close (BLG-GOV-73)."
         },
         "ST-08": {
           "title": "SI-05 digest weekly cadence review",
@@ -272,7 +272,7 @@
           "completed_utc": "2026-06-22T12:00:00Z",
           "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-08"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "doq_sign_off",
           "sign_off_record": {
             "required_by": "Product Owner",
@@ -286,7 +286,7 @@
             ],
             "cleared_utc": "2026-06-22T12:00:00Z"
           },
-          "notes": "Cluster B gate override — PO authority 2026-06-20. Deliverable: docs/product/decisions/si05-digest-cadence-review--2026-06-22.md. Decision: maintain weekly cadence; reassess 2026-07-04."
+          "notes": "Cluster B gate override — PO authority 2026-06-20. Deliverable: docs/product/decisions/si05-digest-cadence-review--2026-06-22.md. Decision: maintain weekly cadence; reassess 2026-07-04. No spec deviation found — deviations_filed corrected at sprint close (BLG-GOV-73)."
         },
         "ST-09": {
           "title": "SI-05 digest actionability metric definition",
@@ -302,7 +302,7 @@
           "completed_utc": "2026-06-20T14:30:00Z",
           "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-09"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "doq_sign_off",
           "sign_off_record": {
             "required_by": "Metrics Definitions & Analytics Owner",
@@ -316,7 +316,7 @@
             ],
             "cleared_utc": "2026-06-20T14:30:00Z"
           },
-          "notes": "Cluster B gate override — PO authority 2026-06-20. Deliverable: docs/product/decisions/si05-actionability-metrics-definition.md. AC-03 agent-mediated sign-off by Metrics Definitions & Analytics Owner. AC-04 satisfied — metrics explicitly feed BLG-GOV-112 and BLG-GOV-96."
+          "notes": "Cluster B gate override — PO authority 2026-06-20. Deliverable: docs/product/decisions/si05-actionability-metrics-definition.md. AC-03 agent-mediated sign-off by Metrics Definitions & Analytics Owner. AC-04 satisfied — metrics explicitly feed BLG-GOV-112 and BLG-GOV-96. No spec deviation found — deviations_filed corrected at sprint close (BLG-GOV-73)."
         },
         "ST-10": {
           "title": "SI-05 Phase 2 activation decision scope",
@@ -332,7 +332,7 @@
           "completed_utc": "2026-06-22T12:00:00Z",
           "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-10"],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": "doq_sign_off",
           "sign_off_record": {
             "required_by": "Product Owner",
@@ -346,7 +346,7 @@
             ],
             "cleared_utc": "2026-06-22T12:00:00Z"
           },
-          "notes": "Cluster B gate override — PO authority 2026-06-20. Deliverable: docs/product/decisions/si05-phase2-activation-decision--2026-06-22.md. Decision: DEFER, revised review date 2026-08-04."
+          "notes": "Cluster B gate override — PO authority 2026-06-20. Deliverable: docs/product/decisions/si05-phase2-activation-decision--2026-06-22.md. Decision: DEFER, revised review date 2026-08-04. No spec deviation found — deviations_filed corrected at sprint close (BLG-GOV-73)."
         },
         "ST-11": {
           "title": "SI-05 service production p99 latency baseline review",
@@ -389,15 +389,16 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03"],
-    "epics_pending": ["EPIC-04"],
-    "all_merged": false
+    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04"],
+    "epics_pending": [],
+    "all_merged": true
   },
 
-  "last_updated_utc": "2026-06-22T16:00:00Z",
+  "last_updated_utc": "2026-06-22T17:00:00Z",
 
   "merge_gate_notes": "Playwright E2E CI gate was BLOCKED on PR #822 due to SC-SCR-DEG-01 in screener.spec.js — test used data-testid='degraded-run-banner' which EPIC-03 ST-04 replaced with data-testid='screener-quality-panel'. Fixed in commit 892b2945 (EPIC-03 test gap, landed on EPIC-04 branch to unblock PR). qa_evidence_EPIC-04.md updated with post-sign-off maintenance note. CI re-run triggered 2026-06-22.",
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-06-22T17:00:00Z",
+  "status": "Sealed"
 }

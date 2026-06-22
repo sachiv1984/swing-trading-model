@@ -1789,3 +1789,26 @@ None — all 11 stories delivered within the sprint.
 - QA evidence logs: qa_evidence_EPIC-01.md (autonomous class, 2026-06-17), qa_evidence_EPIC-02.md (Director of Quality, 2026-06-18)
 - Deviations filed: None
 - Test scenarios referenced: tests/test_screener_data_service.py::test_yahoo_backoff_path_401_sleep_once_then_200 (ST-06); tests/e2e/pre-entry-panel-badge.spec.js SC-PEP-BADGE-01a/01b/02 (ST-11)
+
+## Sprint: 2026-06-19__release-v6.0
+**Date:** 2026-06-22
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | P0 signal correctness fix: signal_service.suggested_shares now calls size_position() per strategy_rules.md §4.1 canonical risk-based sizing formula; cash-allocation model removed | docs/specs/api_contracts/signal_endpoints.md; claude/strategy/strategy_rules.md#4.1 | None |
+| EPIC-02 | Trader's Morning Briefing dashboard (ST-02): frontend composition from 5 live endpoints (grace-period-alerts, positions, red-flag-journal, earnings, arc5-compliance); Playwright coverage in tests/e2e/morning-briefing.spec.js. Net-of-costs performance tracking (ST-03): optional commission/spread/slippage fields on trade records; net R-multiple calculation; trade history display updated | docs/specs/api_contracts/trade_endpoints.md; docs/specs/data_model.md | None |
+| EPIC-03 | Screener data quality telemetry (ST-04): screener results enriched with data_source, data_freshness_utc, degraded_run indicator; ScreenerQualityPanel component; screener contract updated to v1.2; Playwright coverage in tests/e2e/screener-quality.spec.js. SI-05 deep link AC-04 staging confirmation (ST-05): both deep links verified by I&O Owner post-FRONTEND_URL | docs/specs/api_contracts/screener_api_contract.md v1.2; docs/specs/api_contracts/digest_endpoints.md | None |
+| EPIC-04 | RFJ design review pre-brief (ST-06) and visual design review (ST-07): HoUX&D Accept/Refine decisions; BLG-FE-66/67 filed. SI-05 effectiveness reviews: cadence maintained weekly (ST-08); 4 actionability metrics defined ATCR/RFAR/DDCR/EPAR (ST-09); Phase 2 DEFERRED to 2026-08-04 (ST-10); p99 latency baseline established at 16-day mark with PASS WITH DEVIATION (ST-11) | docs/design/2026-06-19__release-v6.0/rfj-design-review/; docs/product/decisions/si05-*; docs/testing/staging_latency_review_ST-11.md | P3 (ST-11): 16-day measurement window; AC-02 N/A — no prior baseline |
+
+### Capabilities deferred or returned
+
+None — all 11 stories delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (agent-mediated, 2026-06-19), qa_evidence_EPIC-02.md (Director of Quality, 2026-06-19), qa_evidence_EPIC-03.md (Director of Quality + I&O staging, 2026-06-22), qa_evidence_EPIC-04.md (autonomous class, 2026-06-22)
+- Deviations filed: None (P3 process deviations for ST-11 documented in qa_evidence_EPIC-04.md only)
+- Test scenarios referenced: tests/e2e/morning-briefing.spec.js (ST-02 AC-09); tests/e2e/screener-quality.spec.js (ST-04 AC-07)
