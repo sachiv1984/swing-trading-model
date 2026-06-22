@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-22 (session — 1 new item added: BLG-FE-77)
-**Last rebalance:** 2026-06-19 (cycle 2026-06-19__scheduled — DL-048–051; 7 promoted-backlog, 1 rejected, 8 parked C1; v6.0 Now section added to roadmap; Product Value Alert + Skill-Silo Alert recorded)
+**Last Updated:** 2026-06-22 (cycle 2026-06-22__scheduled — 4 new items: BLG-FE-78, BLG-GOV-134, BLG-QA-62, BLG-OPS-74; DL-052–055)
+**Last rebalance:** 2026-06-22 (cycle 2026-06-22__scheduled — DL-052–055; 4 promoted-backlog, 0 rejected, 11 parked C1, 8 parked C2; v6.1 Now section added to roadmap; Product Value Alert + Skill-Silo Alert; STEP 8.2 BLG-FE-52/53 excluded)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -2637,6 +2637,100 @@ Current portfolio view (positions, heat, P&L) has no sector-level aggregation. A
 - Each sector displays: name, position count, exposure % of portfolio
 - Concentration alert (e.g. > 40% in one sector) highlighted visually
 - Playwright E2E coverage for at least one sector concentration scenario
+
+---
+
+### BLG-FE-78 — Trade gate proximity indicator on dashboard
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Frontend Engineering
+**Source:** IW-20260622-01 (IDEA-product-owner-20260622-01) — Promoted-Backlog STEP 4; DL-054 (Challenger PVC outcome); rebalance 2026-06-22__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.1
+
+**Problem**
+The PT-04/SI-02 gate requires ≥20 closed trades. The operator has no visible indicator showing current closed-trade count vs the threshold without running SQL queries against the database. Gate proximity is invisible until sprint planning time.
+
+**Scope**
+- Add a small badge or counter to the dashboard or system status page showing `[N]/20 trades (PT-04/SI-02 gate)`
+- Read from existing `GET /portfolio/gate-metrics` endpoint (shipped v5.5, BLG-BE-34)
+- Display-only; no new backend work required
+
+**Acceptance Criteria**
+- Dashboard or system status page shows current closed-trade count vs 20-trade gate threshold
+- Display updates on page refresh using existing gate-metrics endpoint
+- Shows "Gate cleared" state when count reaches 20
+
+---
+
+### BLG-GOV-134 — CI: inline OpenAPI drift detection for api_performance_baseline.md
+**Priority:** P2 (Medium)
+**Type:** Governance Process / CI
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** IW-20260622-01 (IDEA-head-of-specs-20260622-01) — Promoted-Backlog STEP 4; rebalance 2026-06-22__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.1
+
+**Problem**
+BLG-OPS-73 (PATCH /trades/{trade_id}/costs missing from api_performance_baseline.md) revealed a systemic gap: when an endpoint is added to `docs/reference/openapi.yaml`, there is no CI check confirming a corresponding entry exists in `docs/operations/api_performance_baseline.md`. The execution_prompt.md v3.47 advisory is a reminder, not enforcement.
+
+**Scope**
+- Add a CI step (GitHub Actions workflow) that extracts endpoint paths from `openapi.yaml` and compares against entries in `api_performance_baseline.md`
+- Output a warning (non-blocking advisory gate) listing any endpoints in openapi.yaml that have no baseline entry
+- Does not block PR merge; surfaces as advisory annotation on PR
+
+**Acceptance Criteria**
+- CI workflow step runs on PRs that modify `openapi.yaml` or `api_performance_baseline.md`
+- Step outputs a diff list of endpoints present in openapi.yaml but absent from baseline
+- Advisory only — does not fail the CI run
+
+---
+
+### BLG-QA-62 — Playwright spec auto-registration via glob pattern in playwright.yml
+**Priority:** P2 (Medium)
+**Type:** QA / Test Coverage
+**Owner:** Director of Quality; Head of Frontend Engineering
+**Source:** IW-20260622-01 (IDEA-director-of-quality-20260622-01) — Promoted-Backlog STEP 4; rebalance 2026-06-22__scheduled
+**Effort:** S (<0.5 day)
+**Provisional-Target:** v6.1
+
+**Problem**
+BLG-QA-60 (morning-briefing.spec.js and screener-quality.spec.js unregistered in playwright.yml) exists because spec registration is manual. The root cause is an explicit file list in playwright.yml — each new spec file requires a deliberate registration step that is easily missed, as demonstrated by v6.0.
+
+**Scope**
+- Replace the explicit spec file list in playwright.yml with a glob pattern (e.g., `tests/e2e/**/*.spec.js`)
+- CI automatically discovers and runs all spec files without manual registration
+- May be implemented in the same sprint as or after BLG-QA-60
+
+**Note:** BLG-QA-62 is the structural (root-cause) fix; BLG-QA-60 is the immediate fix for two specific missing registrations. Both may coexist: implement BLG-QA-60 first if BLG-QA-62 requires more validation time.
+
+**Acceptance Criteria**
+- playwright.yml uses glob pattern for spec file discovery
+- All existing spec files continue to run in CI (no regression)
+- New spec files added to `tests/e2e/` are automatically included in CI without manual registration
+
+---
+
+### BLG-OPS-74 — Log Anthropic API token usage and cost per morning briefing call
+**Priority:** P3 (Low)
+**Type:** Operations / Monitoring
+**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
+**Source:** IW-20260622-01 (IDEA-finops-20260622-01) — Promoted-Backlog STEP 4; rebalance 2026-06-22__scheduled
+**Effort:** S (<0.5 day)
+**Provisional-Target:** v6.1
+
+**Problem**
+The Trader Morning Briefing (BLG-FEAT-46, shipped v6.0) calls the Claude API each time it generates a briefing. Token usage and estimated cost per call are not tracked. As briefing frequency or complexity grows, cost visibility is needed for informed FinOps decisions.
+
+**Scope**
+- Log token usage (prompt_tokens, completion_tokens) and estimated cost per morning briefing generation call
+- Follow the established `claude_audit_log` pattern (from Gemini wiring v3.8); extend or add a parallel log entry for Claude briefing calls
+- Surface aggregate monthly cost in `/system-status` or the existing AI cost review mechanism
+
+**Acceptance Criteria**
+- Each morning briefing API call produces a log entry with token counts and estimated cost
+- Log entries are queryable for weekly/monthly cost aggregation
+- GET /system-status or equivalent surfaces cumulative briefing cost for the current month
 
 ---
 

@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-19 (cycle 2026-06-19__scheduled — DL-048–051 appended)
+**Last Updated:** 2026-06-22 (cycle 2026-06-22__scheduled — DL-052–055 appended)
 
 ---
 
@@ -1167,3 +1167,55 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Workforce impact:** None
 **Rationale:** IDEA-strategy-owner-20260619-01 (§13 pre-assessment for Arc 4 AI features) rejected — exact duplicate of BLG-SPEC-35 (P1, active). 8 ideas parked Cycle 1: IDEA-product-owner-20260619-02 (trade tagging — v6.0 user-value quota absorbed by existing P1s; heat-map BLG-FE-76 covers portfolio visualisation investment for v6.1), IDEA-pmo-lead-20260619-01/02 (governance health script and velocity chart — useful but not critical-path), IDEA-director-of-quality-20260619-02 (axe-core accessibility — no Arc at this stage), IDEA-strategy-owner-20260619-02 (strategy rules cadence — contradicts governance simplification direction), IDEA-finops-20260619-02 (Alpaca tier optimization — BLG-OPS-37 completed with no-upgrade outcome; stable), IDEA-infra-ops-20260619-02 (enhanced health check — not on critical path), IDEA-challenger-20260619-01 (data provider diversity — known accepted risk at current stage). Challenger product velocity concern addressed via BLG-GOV-131 promotion and v6.0 user-value commitment.
 **Decision owner:** Product Owner
+
+---
+
+## DL-052
+
+**Date:** 2026-06-22
+**Cycle:** 2026-06-22__scheduled
+**Decision type:** Roadmap Now horizon — STEP 8.0 Production Correctness Fast-Track (BLG-GOV-132, BLG-GOV-133)
+**Initiatives affected:** None
+**Displacement:** N/A — fast-track items are P1 governance correctness; take precedence over governance/debt items by STEP 8.0 rule
+**Workforce impact:** None — both are S effort; consistent with solo-developer sprint capacity
+**Rationale:** Scheduled rebalance 2026-06-22__scheduled. STEP 8.0 scan identified BLG-GOV-132 (P1 — release planning does not emit an explicit "Design Gate Required" flag, allowing sprint planning to start out of sequence without triggering the design gate) and BLG-GOV-133 (P1 — sprint planning STEP -1 preflight does not enforce a hard gate on design_gate_status, permitting execution to begin from Release_Planning_Complete state with design gate not started). Both items represent process correctness gaps that caused the v6.0 design gate sequencing deviation. Per STEP 8.0, P1 correctness items must appear in Now horizon ahead of governance/debt items. Both assigned to v6.1 Now section as firm scope.
+**Decision owner:** Product Owner; Head of Specs Team
+
+---
+
+## DL-053
+
+**Date:** 2026-06-22
+**Cycle:** 2026-06-22__scheduled
+**Decision type:** Roadmap Now horizon — Add v6.1 Now section (STEP 8.1 Option a)
+**Initiatives affected:** None (0 active initiatives; CPS = N/A)
+**Displacement:** N/A — Now horizon was empty post-v6.0 retirement. New section establishes v6.1 scope from existing backlog items.
+**Workforce impact:** None — all firm items are existing backlog entries; no new FTE commitment
+**Rationale:** Scheduled rebalance — Standard tier (CPS = N/A; 0 active initiatives; 3 days since last rebalance). Now horizon empty (RA:v6.0 retired 2026-06-22). Both STEP 8.1 conditions true → gate fires. PO decision: Option (a) — add v6.1 Now section. Basis: 104 active backlog items with 36.5% A-items; Product Value Alert (ratio=0.136 < 0.30) and Skill-Silo Alert (86.4% > 40%) both in force; BLG-GOV-132/133 P1 correctness fast-track requires immediate sprint targeting; v6.1 Now section composition: 7 firm items (3G, 2U, 2D) + 1 conditional (1U, gate ≥20 trades ~2026-07-02). STEP 8.2 verification: BLG-FE-52 and BLG-FE-53 excluded (found in archive — pre-design docs shipped v4.4; SI-02 frontend implementation BLG items do not exist yet; assess at v6.1 release planning). SI-02 frontend not included in conditional scope at this stage.
+**Decision owner:** Product Owner
+
+---
+
+## DL-054
+
+**Date:** 2026-06-22
+**Cycle:** 2026-06-22__scheduled
+**Decision type:** Backlog addition + Now horizon firm scope inclusion — BLG-FE-78 (Challenger PVC outcome)
+**Initiatives affected:** None
+**Displacement:** None
+**Workforce impact:** S effort (~0.5 day); included in v6.1 Now firm scope
+**Rationale:** IDEA-challenger-20260622-01 (hard cap on G/D/P stories) advanced to STEP 5 via Challenger Product Velocity Concern exception (user_value_ratio = 0.136 < 0.50). Hard cap rule rejected by Head of Specs Team (creates inflexibility for P0/P1 governance emergencies) and Product Owner. Resolution: BLG-FE-78 (Trade gate proximity indicator, U-story, S effort, P3) created from IDEA-product-owner-20260622-01 and added to v6.1 Now horizon as second named firm U-story alongside BLG-FE-76. Named commitment: v6.1 sprint planning must include BLG-FE-76 and BLG-FE-78 as firm scope (not conditional, not deferred) — Challenger accepted this as the Clearance Statement. BLG-GOV-131 (governance overhead ceiling metric, v6.1 firm scope) remains as the formal accountability mechanism addressing the structural concern underlying the Challenger's position.
+**Decision owner:** Product Owner
+
+---
+
+## DL-055
+
+**Date:** 2026-06-22
+**Cycle:** 2026-06-22__scheduled
+**Decision type:** Backlog additions + 11 ideas Parked Cycle 1 (IW-20260622-01 outcomes)
+**Initiatives affected:** None
+**Displacement:** None — all are additive from new idea window
+**Workforce impact:** None at this stage
+**Rationale:** IW-20260622-01 (16 submissions from 8 agents; Facilitator excluded per charter): 4 ideas Promoted-Backlog immediately: IDEA-product-owner-20260622-01 (trade gate proximity indicator → BLG-FE-78, P3, S, v6.1), IDEA-head-of-specs-20260622-01 (CI OpenAPI drift validation → BLG-GOV-134, P2, S, v6.1), IDEA-director-of-quality-20260622-01 (Playwright glob registration → BLG-QA-62, P2, S, v6.1), IDEA-finops-20260622-01 (cost-per-briefing logging → BLG-OPS-74, P3, S, v6.1). Note: BLG-FE-78 included in Now horizon via DL-054 (Challenger PVC). 11 ideas Parked-C1 (IDEA-challenger-20260622-01 included — hard cap concept covered by BLG-GOV-131; IDEA-challenger-20260622-02 PT-04 gate challenge declined; all others parked for v6.2 consideration). 0 ideas Rejected. 8 prior IW-20260619-01 ideas incremented to Parked-C2.
+**Decision owner:** Product Owner; PMO Lead

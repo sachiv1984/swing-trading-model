@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.60
+**Version:** 4.61
 **Last Updated:** 2026-06-22
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v7.5)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v7.6)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1272,7 +1272,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v7.5) | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v7.6) | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.61 | 2026-06-22 | **roadmap_prompt.md v7.5→v7.6 — STEP 8.2 Now Horizon Item Verification added (mandatory).** §6 source prompt header updated v7.5→v7.6. §14 Roadmap Rebalance Prompt v7.5→v7.6. §14 Version 4.60→4.61/2026-06-22. Change: STEP 8.2 inserted between STEP 8.1 and STEP 8.5 — for every item proposed for Now horizon inclusion (firm or conditional), grep backlog.md to confirm active status; if not found in active backlog, check backlog_archive.md; if archived/shipped, exclude and log; if found in neither, escalate. Distinct from STEP 8.0.5: catches items introduced via prose references (run_manifest text, sprint history) that bypass the STEP 3 formal candidate list. Root cause: 2026-06-19__scheduled included BLG-GOV-113 (archived v5.3) via context-window prose reference; error propagated to cycle_summary.md and DL-048 before correction at STEP 9. Authority: Head of Specs Team (LL-RP-01 deferred patch, rebalance 2026-06-22__scheduled). |
 | 4.60 | 2026-06-22 | **AUD-2026-06-22 latent improvements — post_ship_closure.md v2.14→v2.15, delivery_verification_prompt.md v3.0→v3.1, execution_prompt.md v3.46→v3.47.** §8 source prompt header v3.46→v3.47. §9 source prompt header v3.0→v3.1. §10 source prompt header v2.14→v2.15. §14 Execution Engine Source v3.46→v3.47. §14 Verification Engine Source v3.0→v3.1. §14 Post-Ship Closure Engine v2.14→v2.15. §14 Version 4.59→4.60/2026-06-22. Changes: (AUD-2026-06-22-005) post_ship_closure.md STEP 7 — new sub-step 7.3 TSG backlog reconciliation added: for each §27 entry with status "Open", cross-check backlog.md; if BLG item is COMPLETE/DONE, update §27 to RESOLVED with resolution cycle; prevents stale TSG entries accumulating across cycles. (AUD-2026-06-22-006) execution_prompt.md STEP 3.1.A step 3 — API performance baseline advisory added: when committing a new entry to openapi.yaml, also add a row to api_performance_baseline.md in same commit; advisory-only, omission caught at post-ship STEP 6. (AUD-2026-06-22-007) delivery_verification_prompt.md STEP 5.1 — algorithm replacement advisory added: for stories replacing a core algorithm/model, cross-check that all test_scenarios entries were either run (confirmed in qa_evidence) or declared superseded in DoQ sign-off block; purpose-built unit test does not satisfy prior domain-level scenario file automatically. Authority: Head of Specs Team + PMO Lead (AUD-2026-06-22 latent improvements, 2026-06-22). |
 | 4.59 | 2026-06-22 | **AUD-2026-06-22 Tier 2 patches — execution_prompt.md v3.45→v3.46: STEP 5.3A write+verify sub-step + STEP 4 step 3b pre-halt governance commit.** §8 source prompt header updated v3.45→v3.46. §14 Execution Engine Source v3.45→v3.46. §14 Version 4.58→4.59/2026-06-22. Changes (execution_prompt v3.46): (AUD-2026-06-22-001) STEP 5.3A — added "Write verification" block immediately after `git add docs/System_status_report.md`; `grep -c "Sprint: <cycle_id>" docs/System_status_report.md` must return ≥1 before proceeding to STEP 5.4; if count=0, the write step was skipped — re-run write now; resolves 3rd-cycle recurrence of silent SSR write skip (v3.45 patch staged a write that never happened). (AUD-2026-06-22-002) STEP 4 step 3b added before hard-gate halt — mandatory `git status --short` check; if any governance files (backlog.md, qa_evidence_EPIC-xx.md) are unstaged, commit and push to EPIC branch before outputting halt message; session-close advisory updated to reference 3b and remain active for non-governance changes only; resolves 4th-cycle recurrence of stash-at-branch-switch (v5.3/v5.4/v5.5/v6.0). Authority: Head of Specs Team (AUD-2026-06-22 Tier 2, 2026-06-22). |
 | 4.58 | 2026-06-19 | **LL-P5-03 overdue resolution — roadmap_prompt.md v7.4→v7.5: STEP -1.5 stale release target check added.** §6 source prompt header updated v7.4→v7.5. §13 artefact register Roadmap Rebalance Prompt v7.4→v7.5. §14 Roadmap Engine Source v7.4→v7.5. §14 Version 4.57→4.58/2026-06-19. Change (roadmap v7.5): STEP -1.5 Prompt patch confirmation — third bullet added: if a deferred patch's target event is a named release (`plan release vX.Y`), verify whether that release has already shipped by checking release summary table in `current_roadmap.md`; if shipped → classify OVERDUE immediately without waiting for 2-cycle carry rule. Resolves LL-P5-03 (first filed 2026-06-17__scheduled; carried to 2026-06-19__scheduled as OVERDUE; root cause: LL-P5-02 patch itself had a stale release target that passed before the deferred patch was validated). Authority: Head of Specs Team (LL-P5-03 overdue resolution, rebalance 2026-06-19__scheduled). |

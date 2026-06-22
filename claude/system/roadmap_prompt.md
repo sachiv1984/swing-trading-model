@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 7.5
-**Last Updated:** 2026-06-19 (v7.4→v7.5: STEP -1.5 stale release target check added — deferred patches targeting a named release event are classified OVERDUE immediately if that release has already shipped, without waiting for the 2-cycle carry rule. Authority: Head of Specs Team (LL-P5-03 overdue resolution, rebalance 2026-06-19__scheduled).)
+**Version:** 7.6
+**Last Updated:** 2026-06-22 (v7.5→v7.6: STEP 8.2 — Now Horizon Item Verification added (mandatory); checks every proposed Now horizon item against active backlog.md before scope inclusion; catches prose-referenced archived items that bypass STEP 3 candidate list. Root cause: 2026-06-19__scheduled included BLG-GOV-113 (archived v5.3) via run_manifest prose reference, caught at STEP 9. Authority: Head of Specs Team (LL-RP-01 deferred patch, rebalance 2026-06-22__scheduled).)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -577,6 +577,26 @@ Record: `PO decision (STEP 8.1): Option (b) — defer. Now horizon intentionally
 This is **non-blocking** — either choice clears the gate. The gate prevents silent omission; it does not mandate adding a release section. If no PO decision is recorded, the gate re-fires at the next invocation of the Release Planning Engine (STEP -1.2) until resolved.
 
 If this gate fires on consecutive scheduled rebalances without a recorded decision, escalate to Product Owner as a recurring advisory in `run_manifest.md`.
+
+---
+
+### STEP 8.2 — Now Horizon Item Verification (Mandatory)
+
+**Scope:** Every item (firm or conditional) proposed for inclusion in a Now horizon section — whether introduced via the formal STEP 3 candidate list or via prose references in run_manifest text, sprint history citations, or prior-cycle records.
+
+For each BLG-ID proposed for Now horizon inclusion:
+
+1. **Active backlog check:** `grep "BLG-<ID>" claude/backlog/backlog.md` — item must appear as a current row in the active backlog.
+2. **If NOT found in active backlog:**
+   - Check `claude/backlog/backlog_archive.md` — if found → item is archived/shipped → **exclude from scope**; record as `STEP 8.2 exclusion: [BLG-ID] — archived/shipped (found in backlog_archive.md)`.
+   - If not found in either file → escalate to Head of Specs Team before proceeding.
+3. **If found in active backlog AND carries `✅ COMPLETE` or `RA:` annotation:** exclude per STEP 8.0.5 rules.
+
+**Why this step is distinct from STEP 8.0.5:** STEP 8.0.5 pre-cleans the *formal candidate list compiled at STEP 3*. STEP 8.2 catches items introduced at STEP 8 scope composition time via prose references — run_manifest entries, sprint history text, or prior-cycle conditional cluster notes — that did not go through the STEP 3 candidate list. Root cause: `2026-06-19__scheduled` included BLG-GOV-113 (archived since v5.3) in the v6.0 Now conditional scope because it was cited in a context-window run_manifest entry; the error propagated to `cycle_summary.md` and `DL-048` before correction at STEP 9 write verification. This step prevents that class of error. (Added v7.6, deferred patch from `2026-06-19__scheduled` lessons_learnt, Head of Specs Team sign-off.)
+
+**Record in `run_manifest.md`:**
+- For each exclusion: `STEP 8.2 verification: [BLG-ID] — excluded (archived/shipped).`
+- On completion: `STEP 8.2 verification complete — [N] items verified active, [M] items excluded.`
 
 ---
 

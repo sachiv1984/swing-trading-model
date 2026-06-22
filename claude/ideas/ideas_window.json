@@ -1,7 +1,7 @@
 {
-  "window_id": "IW-20260619-01",
-  "opened_utc": "2026-06-19T09:00:00Z",
-  "opened_by": "PMO Lead (inline — roadmap STEP -1.6)",
+  "window_id": "IW-20260622-01",
+  "opened_utc": "2026-06-22T00:30:00Z",
+  "opened_by": "PMO Lead (inline — roadmap STEP -1.6; trigger: open ideas count 8 < threshold 20)",
   "status": "Closed",
   "mode": "standard",
   "eligible_agents": [
@@ -9,20 +9,20 @@
     "strategy-owner", "finops", "infra-ops", "facilitator", "challenger"
   ],
   "submissions_received": [
-    "IDEA-product-owner-20260619-01", "IDEA-product-owner-20260619-02",
-    "IDEA-head-of-specs-20260619-01", "IDEA-head-of-specs-20260619-02",
-    "IDEA-pmo-lead-20260619-01", "IDEA-pmo-lead-20260619-02",
-    "IDEA-director-of-quality-20260619-01", "IDEA-director-of-quality-20260619-02",
-    "IDEA-strategy-owner-20260619-01", "IDEA-strategy-owner-20260619-02",
-    "IDEA-finops-20260619-01", "IDEA-finops-20260619-02",
-    "IDEA-infra-ops-20260619-01", "IDEA-infra-ops-20260619-02",
-    "IDEA-challenger-20260619-01", "IDEA-challenger-20260619-02"
+    "IDEA-product-owner-20260622-01", "IDEA-product-owner-20260622-02",
+    "IDEA-head-of-specs-20260622-01", "IDEA-head-of-specs-20260622-02",
+    "IDEA-pmo-lead-20260622-01", "IDEA-pmo-lead-20260622-02",
+    "IDEA-director-of-quality-20260622-01", "IDEA-director-of-quality-20260622-02",
+    "IDEA-strategy-owner-20260622-01", "IDEA-strategy-owner-20260622-02",
+    "IDEA-finops-20260622-01", "IDEA-finops-20260622-02",
+    "IDEA-infra-ops-20260622-01", "IDEA-infra-ops-20260622-02",
+    "IDEA-challenger-20260622-01", "IDEA-challenger-20260622-02"
   ],
   "register_path": "claude/ideas/ideas_register.md",
-  "closed_utc": "2026-06-19T09:30:00Z",
+  "closed_utc": "2026-06-22T00:45:00Z",
   "total_submissions": 16,
   "new_submissions": 16,
-  "parked_ideas_carried": 0,
+  "parked_ideas_carried": 8,
   "agents_submitted": [
     "product-owner", "head-of-specs", "pmo-lead", "director-of-quality",
     "strategy-owner", "finops", "infra-ops", "challenger"
@@ -34,5 +34,6 @@
   "per_agent_submission_count": {
     "product-owner": 2, "head-of-specs": 2, "pmo-lead": 2, "director-of-quality": 2,
     "strategy-owner": 2, "finops": 2, "infra-ops": 2, "facilitator": 0, "challenger": 2
-  }
+  },
+  "context_note": "3-day window since IW-20260619-01; v6.0 shipped 2026-06-22; submissions focus on v6.1 priorities, morning briefing follow-on, and PT-04 gate approach"
 }

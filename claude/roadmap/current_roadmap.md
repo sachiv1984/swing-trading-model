@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-22 (manage roadmap — post-ship closure 2026-06-19__release-v6.0)
-**Last rebalance:** 2026-06-19 (cycle 2026-06-19__scheduled — Standard-tier, CPS=N/A (0 active initiatives); Product Value Alert (ratio=0.093); Skill-Silo Alert (G+D+P=90.7%); 7 new backlog items; DL-048–051; 1 Rejected, 6 Promoted-Backlog immediate, 1 Promoted-Backlog post-debate, 8 Parked C1; v6.0 Now section added)
+**Last Updated:** 2026-06-22 (cycle 2026-06-22__scheduled — v6.1 Now section added)
+**Last rebalance:** 2026-06-22 (cycle 2026-06-22__scheduled — Standard-tier, CPS=N/A (0 active initiatives); Product Value Alert (ratio=0.136); Skill-Silo Alert (G+D+P=86.4%); 4 new backlog items (BLG-FE-78, BLG-GOV-134, BLG-QA-62, BLG-OPS-74); DL-052–055; 0 Rejected, 4 Promoted-Backlog immediate, 0 Promoted-Backlog post-debate, 11 Parked C1, 8 Parked C2; v6.1 Now section added (STEP 8.1 Option a); STEP 8.2 first activation — BLG-FE-52/53 excluded from Now horizon (archived); deferred patch roadmap_prompt.md STEP 8.2 applied action-now (v7.5→v7.6))
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -276,6 +276,26 @@ Today you find stocks through external research and add them to the watchlist ma
 *RA:v5.9 retired — see roadmap_archive.md 2026-06-18 (post-ship closure 2026-06-17__release-v5.9).*
 
 *RA:v6.0 retired — see roadmap_archive.md 2026-06-22 (post-ship closure 2026-06-19__release-v6.0).*
+
+### v6.1 — Governance Correctness, CI Quality & User Value Foundation
+
+**Added:** 2026-06-22 (rebalance 2026-06-22__scheduled — DL-053; STEP 8.1 Option a)
+**Skill-Silo ceiling:** 40% G+D+P stories per sprint (STEP 7.1)
+
+| BLG ID | Title | Priority | Effort | Type | Status |
+|--------|-------|----------|--------|------|--------|
+| BLG-GOV-132 | Release planning: emit explicit Design Gate Required flag for UI-facing scope | P1 | S | G | Firm — Correctness Fast-Track (STEP 8.0; DL-052) |
+| BLG-GOV-133 | Sprint planning: enforce hard gate on design_gate_status at STEP -1 preflight | P1 | S | G | Firm — Correctness Fast-Track (STEP 8.0; DL-052) |
+| BLG-QA-60 | Playwright CI registration gap (morning-briefing.spec.js, screener-quality.spec.js) | P2 | M | D | Firm — no-further-deferral carry-forward |
+| BLG-FE-76 | Portfolio sector heat-map visualization | P2 | M | U | Firm — Product Value Alert pull-forward |
+| BLG-GOV-131 | Governance overhead ceiling metric and accountability mechanism | P2 | S | G | Firm — v6.1 target confirmed (promoted IW-20260619-01; DL-049) |
+| BLG-FE-78 | Trade gate proximity indicator on dashboard | P3 | S | U | Firm — STEP 5 Challenger PVC outcome (DL-054) |
+| BLG-OPS-73 | api_performance_baseline.md: add row for PATCH /trades/{trade_id}/costs | P3 | XS | D | Firm — spec compliance advisory |
+| BLG-FEAT-25/PT-04 | Setup Quality Score (deterministic win-rate from own trade history) | P1 | M | U | **Conditional** — Gate: ≥20 closed trades (currently ~13; projected ~2026-07-02). PMO Lead to re-verify count at v6.1 sprint planning. |
+
+> **STEP 8.2 note:** BLG-FE-52 and BLG-FE-53 were referenced as SI-02 frontend candidates in the prior session context but were found in `backlog_archive.md` (pre-design docs shipped v4.4). SI-02 frontend implementation BLG items do not yet exist. Assess at v6.1 release planning once PT-04 gate review is complete.
+
+> **User value commitment (STEP 5 Challenger PVC):** v6.1 sprint planning must include BLG-FE-76 and BLG-FE-78 as firm scope — not conditional, not deferred. Challenger Clearance Statement accepted on this basis (DL-054).
 
 -----
 
