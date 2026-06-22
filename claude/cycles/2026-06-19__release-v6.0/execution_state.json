@@ -5,7 +5,6 @@
   "invoked_utc": "2026-06-19T09:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-22T11:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -190,173 +189,204 @@
     },
 
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "qa_complete",
       "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 822,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-19__release-v6.0/qa_evidence_EPIC-04.md",
-      "test_scenarios": ["docs/testing/staging_visual_test_script_ST-06.md"],
+      "test_scenarios": [],
       "stories": {
         "ST-06": {
           "title": "RFJ design review pre-brief",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Head of UX & Design",
           "github_issue": 809,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
-          "commit_sha": null,
-          "delegation_record_id": "ESC-2026-06-19-01",
-          "blocked_since_utc": "2026-06-19T15:00:00Z",
-          "unblock_criteria": "Gate 2026-06-21: SI-03 Red Flag Journal live ≥30 days confirmed",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "commit_sha": "a3d0ce3d",
+          "delegation_record_id": "DEL-20260620-01",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-22T13:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-06"],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Conditional — gate 2026-06-21. EPIC-04 Cluster A. 6th consecutive carry-forward (v5.3–v5.9). delegated_decision — Head of UX & Design to produce design review brief. ST-07 depends on this. Escalation record: ESC-2026-06-19-01."
+          "last_completed_substep": "doq_sign_off",
+          "sign_off_record": {
+            "required_by": "Head of UX & Design",
+            "method": "delegated_decision",
+            "status": "cleared",
+            "findings_applied": [
+              "Brief scopes all 4 areas: filters UX, severity visual hierarchy, event type colour coding, timeline vs list",
+              "Evaluation criteria framework defined (Accept / Refine / Redesign)",
+              "Expected ST-07 deliverable format specified",
+              "HoUX&D sign-off recorded in docs/design/2026-06-19__release-v6.0/rfj-design-review/brief.md"
+            ],
+            "cleared_utc": "2026-06-22T13:00:00Z"
+          },
+          "notes": "Cluster A gate override — PO authority 2026-06-20. AC-01 satisfied 2026-06-21 (SI-03 live ≥30 days). Deliverable: docs/design/2026-06-19__release-v6.0/rfj-design-review/brief.md."
         },
         "ST-07": {
           "title": "Red Flag Journal visual design review",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Head of UX & Design",
           "github_issue": 810,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
-          "commit_sha": null,
-          "delegation_record_id": "ESC-2026-06-19-02",
-          "blocked_since_utc": "2026-06-19T15:00:00Z",
-          "unblock_criteria": "ST-06 brief complete AND gate 2026-06-21 confirmed",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "commit_sha": "a3d0ce3d",
+          "delegation_record_id": "DEL-20260620-02",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-22T13:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-07"],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Conditional — gate 2026-06-21; depends on ST-06. EPIC-04 Cluster A. delegated_decision — Head of UX & Design conducts design review. Escalation record: ESC-2026-06-19-02."
+          "last_completed_substep": "doq_sign_off",
+          "sign_off_record": {
+            "required_by": "Head of UX & Design",
+            "method": "delegated_decision",
+            "status": "cleared",
+            "findings_applied": [
+              "Filters UX: Accept current filters; Refine — BLG-FE-66 date-range backlog item filed",
+              "Severity visual hierarchy: Accept — no severity field in data model; equal weight rendering is correct",
+              "Event type colour coding: Refine — BLG-FE-67 palette refinement backlog item filed (sky-400 for checklist_skipped, red-500 for drawdown_prompt_dismissed)",
+              "Timeline vs list: Accept — list layout appropriate for sole-trader low-frequency use case",
+              "No redesign recommended — AC-03 N/A"
+            ],
+            "cleared_utc": "2026-06-22T13:30:00Z"
+          },
+          "notes": "Cluster A gate override — PO authority 2026-06-20. Deliverable: docs/design/2026-06-19__release-v6.0/rfj-design-review/review.md. No redesign — 2 P3 backlog items filed (BLG-FE-66, BLG-FE-67)."
         },
         "ST-08": {
           "title": "SI-05 digest weekly cadence review",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Product Owner",
           "github_issue": 811,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
-          "commit_sha": null,
-          "delegation_record_id": "ESC-2026-06-19-03",
-          "blocked_since_utc": "2026-06-19T15:00:00Z",
-          "unblock_criteria": "Gate 2026-07-04: SI-05 effectiveness review (BLG-GOV-96) complete and outputs available",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "commit_sha": "3c61fe03",
+          "delegation_record_id": "DEL-20260620-03",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-22T12:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-08"],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Conditional — gate 2026-07-04. EPIC-04 Cluster B. 3rd consecutive carry-forward. delegated_decision — PO product review. Escalation record: ESC-2026-06-19-03."
+          "last_completed_substep": "doq_sign_off",
+          "sign_off_record": {
+            "required_by": "Product Owner",
+            "method": "delegated_decision",
+            "status": "cleared",
+            "findings_applied": [
+              "Weekly cadence maintained — no change recommended at 16-day mark",
+              "Reviewed weekly vs bi-weekly vs adaptive; weekly retained as appropriate for Phase 1",
+              "Formal reassessment deferred to 2026-07-04 effectiveness review using ATCR and RFAR metrics",
+              "PO sign-off recorded in docs/product/decisions/si05-digest-cadence-review--2026-06-22.md"
+            ],
+            "cleared_utc": "2026-06-22T12:00:00Z"
+          },
+          "notes": "Cluster B gate override — PO authority 2026-06-20. Deliverable: docs/product/decisions/si05-digest-cadence-review--2026-06-22.md. Decision: maintain weekly cadence; reassess 2026-07-04."
         },
         "ST-09": {
           "title": "SI-05 digest actionability metric definition",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 812,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "2ef31913",
           "delegation_record_id": null,
           "blocked_since_utc": null,
-          "unblock_criteria": "Gate 2026-07-04: BLG-GOV-113 SI-05 effectiveness review protocol complete",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-20T14:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-09"],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Conditional — gate 2026-07-04. autonomous — metrics definition document. Do not begin until 2026-07-04 gate clears."
+          "last_completed_substep": "doq_sign_off",
+          "sign_off_record": {
+            "required_by": "Metrics Definitions & Analytics Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "4 metrics defined: ATCR, RFAR, DDCR, EPAR — all with formulas, data source mapping, and interpretation thresholds",
+              "All derivable from existing tables (si05_digest_log, red_flag_events, trades, positions) — no new instrumentation required",
+              "Feeds BLG-GOV-112 cadence review and BLG-GOV-96 effectiveness criteria explicitly stated",
+              "RFAR 'reviewed' observability ambiguity noted as minor — acceptable at v1; to be addressed in future revision"
+            ],
+            "cleared_utc": "2026-06-20T14:30:00Z"
+          },
+          "notes": "Cluster B gate override — PO authority 2026-06-20. Deliverable: docs/product/decisions/si05-actionability-metrics-definition.md. AC-03 agent-mediated sign-off by Metrics Definitions & Analytics Owner. AC-04 satisfied — metrics explicitly feed BLG-GOV-112 and BLG-GOV-96."
         },
         "ST-10": {
           "title": "SI-05 Phase 2 activation decision scope",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Product Owner",
           "github_issue": 813,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
-          "commit_sha": null,
-          "delegation_record_id": "ESC-2026-06-19-04",
-          "blocked_since_utc": "2026-06-19T15:00:00Z",
-          "unblock_criteria": "Gate 2026-07-04: effectiveness review outputs reviewed by PO; BLG-GOV-121 §13 pre-clearance status available",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "commit_sha": "3c61fe03",
+          "delegation_record_id": "DEL-20260620-04",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-22T12:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-10"],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Conditional — gate 2026-07-04. delegated_decision — PO formal Phase 2 activation decision document (Class 3 Operational Record). Escalation record: ESC-2026-06-19-04."
+          "last_completed_substep": "doq_sign_off",
+          "sign_off_record": {
+            "required_by": "Product Owner",
+            "method": "delegated_decision",
+            "status": "cleared",
+            "findings_applied": [
+              "Decision: DEFER Phase 2 — activation criteria not met (effectiveness review incomplete, BLG-GOV-121 §13 pre-clearance outstanding, SI-02 gate unchecked)",
+              "Revised review date: 2026-08-04",
+              "BLG-GOV-121 §13 pre-clearance action raised: Strategy Rules & System Intent Owner, target 2026-07-18",
+              "Document filed as Class 3 Operational Record in docs/product/decisions/"
+            ],
+            "cleared_utc": "2026-06-22T12:00:00Z"
+          },
+          "notes": "Cluster B gate override — PO authority 2026-06-20. Deliverable: docs/product/decisions/si05-phase2-activation-decision--2026-06-22.md. Decision: DEFER, revised review date 2026-08-04."
         },
         "ST-11": {
           "title": "SI-05 service production p99 latency baseline review",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 814,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "commit_sha": "9710cf40",
+          "delegation_record_id": "DEL-20260620-05",
           "blocked_since_utc": null,
-          "unblock_criteria": "Gate 2026-07-04: ≥4 weeks POST /digest/si05/send production operation",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Conditional — gate 2026-07-04. autonomous — ops measurement + doc. All ACs require live production Render log data (staging-only)."
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-22T14:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-11"],
+          "deviations_filed": true,
+          "last_completed_substep": "doq_sign_off",
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "delegated_decision",
+            "status": "cleared",
+            "findings_applied": [
+              "No external p99 baseline exists for POST /digest/si05/send — excluded from §19 standard run (Telegram API timeout)",
+              "BLG-OPS-54 contains no measurement data — scope revised to Render internal log approach",
+              "AC-02 comparison: N/A (no prior baseline); PASS WITH DEVIATION accepted",
+              "Positive evidence: 7 successful weekly dispatches over measurement window; ST-05 functional staging sign-off confirmed",
+              "BLG-OPS-54 scope revised with correct measurement method (Render internal log duration + success rate)"
+            ],
+            "cleared_utc": "2026-06-22T14:00:00Z"
+          },
+          "notes": "Cluster B gate override — PO authority 2026-06-20. P3 deviations: (1) 16-day vs 4-week measurement window; (2) AC-02 N/A — no BLG-OPS-54 baseline exists (endpoint excluded from §19 standard run, Telegram API timeout). PASS WITH DEVIATION: functional evidence satisfactory (7 dispatches, ST-05 staging confirmed). BLG-OPS-54 scope revised."
         }
       }
     }
   },
 
   "blocked_items": [],
-  "delegated_items": ["ST-06", "ST-07", "ST-08", "ST-10"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05"],
-  "open_escalations": [
-    {
-      "id": "ESC-2026-06-19-01",
-      "story_id": "ST-06",
-      "owner": "Head of UX & Design",
-      "type": "delegated_decision",
-      "raised_utc": "2026-06-19T15:00:00Z",
-      "unblock_criteria": "Gate 2026-06-21: SI-03 Red Flag Journal live ≥30 days confirmed",
-      "status": "open"
-    },
-    {
-      "id": "ESC-2026-06-19-02",
-      "story_id": "ST-07",
-      "owner": "Head of UX & Design",
-      "type": "delegated_decision",
-      "raised_utc": "2026-06-19T15:00:00Z",
-      "unblock_criteria": "ST-06 brief complete AND gate 2026-06-21 confirmed",
-      "status": "open"
-    },
-    {
-      "id": "ESC-2026-06-19-03",
-      "story_id": "ST-08",
-      "owner": "Product Owner",
-      "type": "delegated_decision",
-      "raised_utc": "2026-06-19T15:00:00Z",
-      "unblock_criteria": "Gate 2026-07-04: SI-05 effectiveness review (BLG-GOV-96) complete and outputs available",
-      "status": "open"
-    },
-    {
-      "id": "ESC-2026-06-19-04",
-      "story_id": "ST-10",
-      "owner": "Product Owner",
-      "type": "delegated_decision",
-      "raised_utc": "2026-06-19T15:00:00Z",
-      "unblock_criteria": "Gate 2026-07-04: effectiveness review outputs reviewed by PO; BLG-GOV-121 §13 pre-clearance status available",
-      "status": "open"
-    }
-  ],
+  "delegated_items": [],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11"],
+  "open_escalations": [],
 
   "merge_gate": {
     "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03"],
@@ -364,7 +394,9 @@
     "all_merged": false
   },
 
-  "last_updated_utc": "2026-06-22T11:00:00Z",
+  "last_updated_utc": "2026-06-22T16:00:00Z",
+
+  "merge_gate_notes": "Playwright E2E CI gate was BLOCKED on PR #822 due to SC-SCR-DEG-01 in screener.spec.js — test used data-testid='degraded-run-banner' which EPIC-03 ST-04 replaced with data-testid='screener-quality-panel'. Fixed in commit 892b2945 (EPIC-03 test gap, landed on EPIC-04 branch to unblock PR). qa_evidence_EPIC-04.md updated with post-sign-off maintenance note. CI re-run triggered 2026-06-22.",
 
   "sealed": false,
   "sealed_utc": null

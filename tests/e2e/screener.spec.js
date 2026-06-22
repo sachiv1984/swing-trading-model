@@ -439,10 +439,19 @@ test('SC-SCR-17: UK ticker rows show no news badge', async ({ page }) => {
   await expect(newsBtn).not.toBeVisible();
 });
 
-// SC-SCR-DEG-01 — Degraded run banner visible when degraded_run true
-test('SC-SCR-DEG-01: Degraded run banner shown with correct percentage', async ({ page }) => {
+// SC-SCR-DEG-01 — Degraded quality panel visible when run_quality DEGRADED
+// Updated v6.0: DegradedRunBanner replaced by ScreenerQualityPanel (ST-04, EPIC-03).
+// Panel driven by run_quality field; old degraded_run/failure_rate banner no longer rendered.
+test('SC-SCR-DEG-01: Degraded quality panel shown with loaded ratio and incomplete warning', async ({ page }) => {
   const results = [makeResult({ ticker: 'AAPL', signal_score: 0.82 })];
-  const body = { ...makeScreenerResponse(results), degraded_run: true, failure_rate: 0.35 };
+  const body = {
+    ...makeScreenerResponse(results),
+    run_quality: 'DEGRADED',
+    tickers_requested: 200,
+    tickers_loaded: 130,
+    tickers_failed: ['XYZ', 'ABC'],
+    last_full_run_utc: new Date().toISOString(),
+  };
   await page.route(`${API}/screener/results**`, (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, data: body }) })
   );
@@ -452,16 +461,24 @@ test('SC-SCR-DEG-01: Degraded run banner shown with correct percentage', async (
   await stubWatchlist(page);
   await goto(page, '/#/Screener');
 
-  const banner = page.getByTestId('degraded-run-banner');
-  await expect(banner).toBeVisible({ timeout: 8000 });
-  await expect(banner).toContainText('35%');
-  await expect(banner).toContainText('Results may be incomplete');
+  const panel = page.getByTestId('screener-quality-panel');
+  await expect(panel).toBeVisible({ timeout: 8000 });
+  await expect(panel).toContainText('Degraded run');
+  await expect(panel).toContainText('Results may be incomplete');
 });
 
-// SC-SCR-DEG-02 — Degraded run banner absent when degraded_run false
-test('SC-SCR-DEG-02: Degraded run banner absent when degraded_run false', async ({ page }) => {
+// SC-SCR-DEG-02 — No degraded panel when run_quality FULL
+// Updated v6.0: checks new screener-quality-panel testid (replaces degraded-run-banner).
+test('SC-SCR-DEG-02: No degraded panel shown when run_quality is FULL', async ({ page }) => {
   const results = [makeResult({ ticker: 'AAPL', signal_score: 0.82 })];
-  const body = { ...makeScreenerResponse(results), degraded_run: false, failure_rate: 0.05 };
+  const body = {
+    ...makeScreenerResponse(results),
+    run_quality: 'FULL',
+    tickers_requested: 200,
+    tickers_loaded: 200,
+    tickers_failed: [],
+    last_full_run_utc: new Date().toISOString(),
+  };
   await page.route(`${API}/screener/results**`, (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, data: body }) })
   );
@@ -471,8 +488,9 @@ test('SC-SCR-DEG-02: Degraded run banner absent when degraded_run false', async 
   await stubWatchlist(page);
   await goto(page, '/#/Screener');
 
-  await page.waitForSelector('[data-testid="screener-table"]', { timeout: 8000 }).catch(() => null);
-  await expect(page.getByTestId('degraded-run-banner')).not.toBeVisible({ timeout: 3000 });
+  const panel = page.getByTestId('screener-quality-panel');
+  await expect(panel).toBeVisible({ timeout: 8000 });
+  await expect(panel).toHaveAttribute('data-quality', 'FULL');
 });
 
 // SC-SCR-18 — Screener nav item in Tools group links to /Screener
