@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.0
-**Last Updated:** 2026-06-21
+**Version:** 3.1
+**Last Updated:** 2026-06-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -358,6 +358,8 @@ For each EPIC:
 - `test_scenarios = []`: record "no scenarios available — manual acceptance review only."
 - `test_scenarios` populated: cross-reference with `qa_evidence_EPIC-xx.md` "Scenarios run" field.
   - Scenarios available but not referenced as run: flag as "available but not executed."
+
+**Algorithm replacement advisory (AUD-2026-06-22-007):** For any story that replaces a core algorithm, model, or scoring function: cross-check that every file listed in `test_scenarios` for that story was either (a) confirmed run in `qa_evidence_EPIC-xx.md` "Scenarios run" field, or (b) explicitly declared superseded in the DoQ sign-off block with a note naming the replacement test file. A purpose-built unit test for a new algorithm does not automatically satisfy domain-level scenario coverage from a prior scenario file — both must be addressed or the prior file must be retired with a note. If neither condition is met, flag as a coverage gap and produce a TSG entry in STEP 5.3.
 
 ### 5.2 Feedback to QA & Testing Owner
 

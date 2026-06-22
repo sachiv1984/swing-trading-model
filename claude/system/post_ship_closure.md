@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.14
-**Last Updated:** 2026-06-17
+**Version:** 2.15
+**Last Updated:** 2026-06-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -469,6 +469,15 @@ For each item in Section 6 (Pending Spec Work) and Section 7 (Open Compliance Is
 
 From `verification_report.md §6` (Test Coverage Assessment) and `qa_evidence_EPIC-xx.md` notes: identify any new spec gaps or compliance issues surfaced during this delivery that are not yet in the Specs Index.
 - Add each as a new entry in the appropriate section.
+
+### 7.3 TSG backlog reconciliation (AUD-2026-06-22-005)
+
+For each entry in §27 (Technical Specification Gaps) with status "Open":
+1. Look up the corresponding BLG item ID in `claude/backlog/backlog.md`.
+2. If the BLG item is marked COMPLETE or DONE: update the §27 entry status from "Open" to "RESOLVED" and record the cycle in which it was resolved.
+3. If the BLG item remains open: leave the §27 entry unchanged.
+
+Record any corrections made in `lessons_learnt_closure.md` "What worked well" or "Friction Log" as applicable. This prevents stale "Open" TSG entries from accumulating across cycles and misleading roadmap engine STEP 0 gap-checks.
 
 Update `Last Updated` on `docs/specs/Specs_Index.md` to today's date if any changes were made.
 

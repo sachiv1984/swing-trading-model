@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.59
+**Version:** 4.60
 **Last Updated:** 2026-06-22
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.46)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.47)
 
 ### 8.1 Invocation
 
@@ -973,7 +973,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.0)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.1)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.14)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.15)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1454,7 +1454,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.59 |
+| Version | 4.60 |
 | Last Updated | 2026-06-22 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.5 |
@@ -1467,11 +1467,11 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.37 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.10 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.46 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.47 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.5 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.0 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.1 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.14 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.15 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.5 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.60 | 2026-06-22 | **AUD-2026-06-22 latent improvements — post_ship_closure.md v2.14→v2.15, delivery_verification_prompt.md v3.0→v3.1, execution_prompt.md v3.46→v3.47.** §8 source prompt header v3.46→v3.47. §9 source prompt header v3.0→v3.1. §10 source prompt header v2.14→v2.15. §14 Execution Engine Source v3.46→v3.47. §14 Verification Engine Source v3.0→v3.1. §14 Post-Ship Closure Engine v2.14→v2.15. §14 Version 4.59→4.60/2026-06-22. Changes: (AUD-2026-06-22-005) post_ship_closure.md STEP 7 — new sub-step 7.3 TSG backlog reconciliation added: for each §27 entry with status "Open", cross-check backlog.md; if BLG item is COMPLETE/DONE, update §27 to RESOLVED with resolution cycle; prevents stale TSG entries accumulating across cycles. (AUD-2026-06-22-006) execution_prompt.md STEP 3.1.A step 3 — API performance baseline advisory added: when committing a new entry to openapi.yaml, also add a row to api_performance_baseline.md in same commit; advisory-only, omission caught at post-ship STEP 6. (AUD-2026-06-22-007) delivery_verification_prompt.md STEP 5.1 — algorithm replacement advisory added: for stories replacing a core algorithm/model, cross-check that all test_scenarios entries were either run (confirmed in qa_evidence) or declared superseded in DoQ sign-off block; purpose-built unit test does not satisfy prior domain-level scenario file automatically. Authority: Head of Specs Team + PMO Lead (AUD-2026-06-22 latent improvements, 2026-06-22). |
 | 4.59 | 2026-06-22 | **AUD-2026-06-22 Tier 2 patches — execution_prompt.md v3.45→v3.46: STEP 5.3A write+verify sub-step + STEP 4 step 3b pre-halt governance commit.** §8 source prompt header updated v3.45→v3.46. §14 Execution Engine Source v3.45→v3.46. §14 Version 4.58→4.59/2026-06-22. Changes (execution_prompt v3.46): (AUD-2026-06-22-001) STEP 5.3A — added "Write verification" block immediately after `git add docs/System_status_report.md`; `grep -c "Sprint: <cycle_id>" docs/System_status_report.md` must return ≥1 before proceeding to STEP 5.4; if count=0, the write step was skipped — re-run write now; resolves 3rd-cycle recurrence of silent SSR write skip (v3.45 patch staged a write that never happened). (AUD-2026-06-22-002) STEP 4 step 3b added before hard-gate halt — mandatory `git status --short` check; if any governance files (backlog.md, qa_evidence_EPIC-xx.md) are unstaged, commit and push to EPIC branch before outputting halt message; session-close advisory updated to reference 3b and remain active for non-governance changes only; resolves 4th-cycle recurrence of stash-at-branch-switch (v5.3/v5.4/v5.5/v6.0). Authority: Head of Specs Team (AUD-2026-06-22 Tier 2, 2026-06-22). |
 | 4.58 | 2026-06-19 | **LL-P5-03 overdue resolution — roadmap_prompt.md v7.4→v7.5: STEP -1.5 stale release target check added.** §6 source prompt header updated v7.4→v7.5. §13 artefact register Roadmap Rebalance Prompt v7.4→v7.5. §14 Roadmap Engine Source v7.4→v7.5. §14 Version 4.57→4.58/2026-06-19. Change (roadmap v7.5): STEP -1.5 Prompt patch confirmation — third bullet added: if a deferred patch's target event is a named release (`plan release vX.Y`), verify whether that release has already shipped by checking release summary table in `current_roadmap.md`; if shipped → classify OVERDUE immediately without waiting for 2-cycle carry rule. Resolves LL-P5-03 (first filed 2026-06-17__scheduled; carried to 2026-06-19__scheduled as OVERDUE; root cause: LL-P5-02 patch itself had a stale release target that passed before the deferred patch was validated). Authority: Head of Specs Team (LL-P5-03 overdue resolution, rebalance 2026-06-19__scheduled). |
 | 4.57 | 2026-06-18 | **roadmap_prompt.md v7.3→v7.4 — four diagnostic steps added + Skill-Silo ceiling lowered.** §6 source prompt header updated v7.3→v7.4. §14 Roadmap Engine Source v7.3→v7.4. §13 artefact register Roadmap Rebalance Prompt v7.1→v7.4. §14 Version 4.56→4.57/2026-06-18. Changes: STEP 2.4 Product Value Ratio Diagnostic (mandatory) — classifies last 5 cycles' stories as U/G/D/P; fires Product Value Alert if ratio < 0.30; Advisory if < 0.50. STEP 3.1 Actionable Backlog Assessment (mandatory) — categorises each active backlog item as A/T/D/L; surfaces Backlog Accessibility Warning if A-items < 30%. STEP 5 — Challenger Product Velocity Concern exception added: when STEP 2.4 ratio < 0.50, Challenger may raise a Product Velocity Concern without §13 basis. STEP 7.1 — Skill-Silo ceiling reduced from 60% to 40%; metric changed from governance FTE to story-count (solo-developer context). STEP 8.0 Production Correctness Fast-Track (mandatory) — before any horizon debate, scan backlog for P0/P1 correctness/security items; any found must appear in Now horizon ahead of governance/debt items. Authority: Head of Specs Team + Product Owner (strategic review 2026-06-18). |
