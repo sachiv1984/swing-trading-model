@@ -42,6 +42,9 @@ All 6 EPIC-04 stories are complete (ST-06 through ST-11).
 - Date: 2026-06-22
 - Comments: EPIC-04 is a documentation-only EPIC — all 6 stories deliver design artefacts, product decisions, metrics definitions, and staging evidence. No code changes; no regression risk; no new API endpoints; no Playwright gap. All ACs verified against spec via delegated role sign-offs (HoUX&D, PO, Metrics Definitions & Analytics Owner, I&O Owner). Two P3 deviations accepted under PO gate override (2026-06-20): (1) ST-11 AC-02 N/A — no BLG-OPS-54 prior baseline (endpoint excluded from §19 standard run); (2) ST-11 16-day measurement window vs 4-week spec. No P0 or P1 deviations. ESC-01 through ESC-04 all resolved 2026-06-20. Delegation log entries DEL-20260620-01 through 05 all cleared.
 
+**Post-sign-off test maintenance note (2026-06-22):**
+Commit 892b2945 added after DoQ sign-off. Fixes `tests/e2e/screener.spec.js` SC-SCR-DEG-01 and SC-SCR-DEG-02 — test was referencing `data-testid="degraded-run-banner"` which EPIC-03 ST-04 replaced with `data-testid="screener-quality-panel"`. Mock payload updated to use `run_quality: "DEGRADED"` (new field). This is a test maintenance fix for an EPIC-03 gap, not an EPIC-04 story deliverable. No frontend-visible behaviour change. DoQ sign-off above covers EPIC-04 deliverables; this fix is a cross-EPIC CI gate unblock and is self-evidently correct (testid alignment). Autonomous sign-off class (BLG-GOV-19) continues to apply — no frontend-visible change introduced by this EPIC's own stories or this fix.
+
 **Product Owner Acceptance:**
 - Accepted by: Product Owner
 - Date: 2026-06-22

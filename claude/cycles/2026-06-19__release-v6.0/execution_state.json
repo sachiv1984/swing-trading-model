@@ -394,7 +394,9 @@
     "all_merged": false
   },
 
-  "last_updated_utc": "2026-06-22T15:00:00Z",
+  "last_updated_utc": "2026-06-22T16:00:00Z",
+
+  "merge_gate_notes": "Playwright E2E CI gate was BLOCKED on PR #822 due to SC-SCR-DEG-01 in screener.spec.js — test used data-testid='degraded-run-banner' which EPIC-03 ST-04 replaced with data-testid='screener-quality-panel'. Fixed in commit 892b2945 (EPIC-03 test gap, landed on EPIC-04 branch to unblock PR). qa_evidence_EPIC-04.md updated with post-sign-off maintenance note. CI re-run triggered 2026-06-22.",
 
   "sealed": false,
   "sealed_utc": null
