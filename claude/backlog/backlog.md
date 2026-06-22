@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-22 (session — 3 new items added: BLG-FE-66, BLG-FE-67, BLG-QA-60; total 113 active items)
+**Last Updated:** 2026-06-22 (session — 4 new items added: BLG-FE-66, BLG-FE-67, BLG-QA-60, BLG-QA-61; total 114 active items)
 **Last rebalance:** 2026-06-19 (cycle 2026-06-19__scheduled — DL-048–051; 7 promoted-backlog, 1 rejected, 8 parked C1; v6.0 Now section added to roadmap; Product Value Alert + Skill-Silo Alert recorded)
 
 > ⚠️ Standing Notice
@@ -2738,6 +2738,25 @@ Arc 4 AI-driven features (PO-02/03/04) introduce Playwright test challenges not 
 - Both spec files appear in the `playwright.yml` `Run all E2E acceptance tests` step
 - CI `Playwright E2E Acceptance Tests` job passes with the new specs included
 - Spec inventory comment in `playwright.yml` updated to reflect 25 total spec files
+
+---
+
+### BLG-QA-61 — Review signals_scenarios.md against ST-01 signal sizing model changes
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA & Testing Owner; Director of Quality
+**Source:** v6.0 delivery verification (TSG-v60-01) — signals_scenarios.md listed in execution_state.json test_scenarios for EPIC-01 but not referenced as run in QA evidence; ST-01 removed cash-allocation model and replaced with risk-based sizing
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v6.1 (before next sprint touching signal generation)
+
+**Problem**
+`docs/testing/signals_scenarios.md` documents broader signal domain scenarios. ST-01 (v6.0) removed the cash-allocation model for `suggested_shares` and replaced it with `size_position()` per strategy_rules.md §4.1. Any scenario in `signals_scenarios.md` that asserts a specific `suggested_shares` value based on the old cash-allocation formula (cash / n_signals) will now produce incorrect expected values. These scenarios were not run in v6.0 QA — `tests/test_signal_sizing.py` (new) covered the story-specific ACs, but broader domain regression via `signals_scenarios.md` was not confirmed.
+
+**Acceptance Criteria**
+- QA & Testing Owner reviews each scenario in `docs/testing/signals_scenarios.md` that references `suggested_shares`
+- Any scenario with stale cash-allocation-based expected values is updated to reflect the risk-based formula output
+- Confirmed "no changes needed" or updated scenarios committed before next sprint touching signal generation
+- Review outcome noted in next sprint's QA evidence or as a backlog closure note
 
 ---
 

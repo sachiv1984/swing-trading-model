@@ -1,9 +1,34 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.0
-**Last Updated:** 2026-06-18
+**Version:** 4.1
+**Last Updated:** 2026-06-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-06-19__release-v6.0
+**Date:** 2026-06-22
+**Status:** Verified_with_deviations — 2026-06-22
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Signal correctness fix — signal_service.suggested_shares now uses size_position() per strategy_rules.md §4.1 canonical risk-based formula; cash-allocation model removed; tests/test_signal_sizing.py added (AC-02–05 coverage); Strategy Rules & System Intent Owner sign-off cleared via agent-mediated review | claude/strategy/strategy_rules.md#4.1; docs/specs/api_contracts/signal_endpoints.md | None |
+| EPIC-02 | Trader's Morning Briefing dashboard (MorningBriefing.js + 5 sub-cards; DashboardHome.js integration; 11 Playwright scenarios covering all 5 cards, empty states, links); Net-of-costs performance tracking (PATCH /trades/{id}/costs; net_r_multiple in TradeHistoryTable.js; data_model.md DS-08; openapi.yaml + test.py + SystemStatus.js 66→67; 5 Playwright scenarios) | docs/specs/api_contracts/grace_period_alert_endpoint.md; docs/specs/api_contracts/position_endpoints.md; docs/specs/api_contracts/red_flag_journal.md; docs/specs/api_contracts/earnings_endpoints.md; docs/specs/api_contracts/analytics_endpoints.md; docs/specs/api_contracts/trade_endpoints.md; docs/specs/data_model.md | None |
+| EPIC-03 | Screener data quality telemetry — ScreenerQualityPanel replaces DegradedRunBanner; new GET /screener/results fields (tickers_requested, tickers_loaded, tickers_failed, last_full_run_utc, run_quality); screener_api_contract.md v1.2; 5 Playwright scenarios (3 quality states + expandable list + stale advisory). SI-05 deep link staging confirmation — digest received 2026-06-17 post-FRONTEND_URL; both deep links confirmed by I&O Owner | docs/specs/api_contracts/screener_api_contract.md v1.2; docs/specs/api_contracts/digest_endpoints.md | None |
+| EPIC-04 | RFJ design review brief (docs/design/2026-06-19__release-v6.0/rfj-design-review/brief.md; HoUX&D sign-off); RFJ visual design review — Accept verdict, no redesign, 2 P3 refinements filed (BLG-FE-66, BLG-FE-67); SI-05 digest cadence review — weekly maintained, reassessment 2026-07-04; SI-05 actionability metrics definition — 4 metrics (ATCR, RFAR, DDCR, EPAR); SI-05 Phase 2 activation decision — DEFER, revised review 2026-08-04; SI-05 p99 latency baseline review — PASS WITH DEVIATION (7 dispatches confirmed; no prior baseline) | docs/design/2026-06-19__release-v6.0/rfj-design-review/; docs/product/decisions/si05-digest-cadence-review--2026-06-22.md; docs/product/decisions/si05-actionability-metrics-definition.md; docs/product/decisions/si05-phase2-activation-decision--2026-06-22.md; docs/testing/staging_latency_review_ST-11.md | P3 (ST-11): 16-day vs 4-week measurement window; AC-02 N/A (no prior BLG-OPS-54 baseline); PO gate override 2026-06-20; BLG-OPS-54 scope revised |
+
+### Capabilities deferred or returned
+
+None — all 11 stories (ST-01 through ST-11) delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (Sprint Execution Engine autonomous class 2026-06-19), qa_evidence_EPIC-02.md (Director of Quality agent-mediated BLG-GOV-19 2026-06-19), qa_evidence_EPIC-03.md (Director of Quality agent-mediated BLG-GOV-19 2026-06-19 + I&O Owner addendum 2026-06-22), qa_evidence_EPIC-04.md (Director of Quality 2026-06-22; PO acceptance 2026-06-22)
+- Deviations filed: None (spec deviations); ST-11 P3 process deviations in QA evidence (measurement constraints, PO gate override 2026-06-20)
+- Test scenarios referenced: tests/test_signal_sizing.py (EPIC-01); tests/e2e/morning-briefing.spec.js, tests/e2e/net-r-trade-history.spec.js (EPIC-02); tests/e2e/screener-quality.spec.js (EPIC-03); delegated sign-offs (EPIC-04)
 
 ---
 
