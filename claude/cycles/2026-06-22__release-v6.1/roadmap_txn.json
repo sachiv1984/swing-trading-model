@@ -1,0 +1,14 @@
+{
+  "txn_id": "RATX-20260622-01",
+  "cycle_id": "2026-06-22__release-v6.1",
+  "release": "v6.1",
+  "txn_state": "committed",
+  "marker": "RA:v6.1:2026-06-22__release-v6.1",
+  "acquired_utc": "2026-06-22T00:00:00Z",
+  "committed_utc": "2026-06-22T00:00:00Z",
+  "released_utc": "2026-06-22T00:00:00Z",
+  "annotation_type": "release_plan",
+  "annotation_target": "claude/roadmap/current_roadmap.md",
+  "annotation_section": "v6.1 Now section",
+  "annotation_summary": "Release plan annotation: 4 EPICs, 9 stories (7 firm, 2 conditional); design_gate_required=true; cycle_id=2026-06-22__release-v6.1"
+}

@@ -1,0 +1,26 @@
+{
+  "txn_id": "BLTX-20260622-01",
+  "cycle_id": "2026-06-22__release-v6.1",
+  "release": "v6.1",
+  "txn_state": "committed",
+  "marker": "RP:v6.1:2026-06-22__release-v6.1",
+  "acquired_utc": "2026-06-22T00:00:00Z",
+  "committed_utc": "2026-06-22T00:00:00Z",
+  "released_utc": "2026-06-22T00:00:00Z",
+  "lock_file": "claude/backlog/.lock",
+  "slice_file": "claude/cycles/2026-06-22__release-v6.1/stage4_backlog_slice.md",
+  "stories": [
+    {"id": "ST-01", "blg_id": "BLG-GOV-132", "epic": "EPIC-01", "title": "Release planning: Design Gate Required flag", "type": "G", "effort": "S", "classification": "firm"},
+    {"id": "ST-02", "blg_id": "BLG-GOV-133", "epic": "EPIC-01", "title": "Sprint planning: Design Gate hard gate at preflight", "type": "G", "effort": "S", "classification": "firm"},
+    {"id": "ST-03", "blg_id": "BLG-GOV-131", "epic": "EPIC-01", "title": "Governance overhead ceiling metric and accountability mechanism", "type": "G", "effort": "S", "classification": "firm"},
+    {"id": "ST-04", "blg_id": "BLG-QA-60", "epic": "EPIC-02", "title": "Register morning-briefing.spec.js and screener-quality.spec.js in playwright.yml", "type": "D", "effort": "XS", "classification": "firm"},
+    {"id": "ST-05", "blg_id": "BLG-OPS-73", "epic": "EPIC-02", "title": "Add PATCH /trades/{id}/costs to api_performance_baseline.md", "type": "D", "effort": "XS", "classification": "firm"},
+    {"id": "ST-06", "blg_id": "BLG-FE-76", "epic": "EPIC-03", "title": "Portfolio sector heat-map visualization", "type": "U", "effort": "M", "classification": "firm"},
+    {"id": "ST-07", "blg_id": "BLG-FE-78", "epic": "EPIC-03", "title": "Trade gate proximity indicator on dashboard", "type": "U", "effort": "S", "classification": "firm"},
+    {"id": "ST-08", "blg_id": "BLG-FEAT-25", "epic": "EPIC-04", "title": "Setup Quality Score — backend engine (PT-04)", "type": "U", "effort": "S", "classification": "conditional", "gate": "≥20 closed trades"},
+    {"id": "ST-09", "blg_id": "BLG-FEAT-25", "epic": "EPIC-04", "title": "Setup Quality Score — frontend display (PT-04)", "type": "U", "effort": "S", "classification": "conditional", "gate": "≥20 closed trades"}
+  ],
+  "stories_firm": 7,
+  "stories_conditional": 2,
+  "stories_total": 9
+}

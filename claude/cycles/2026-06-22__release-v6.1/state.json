@@ -1,0 +1,119 @@
+{
+  "_notes": {
+    "design_gate_status": "Written by Design Gate Engine (Phase 1.5) after publish. This engine initialises to not_started only.",
+    "amended_backlog_slice_path": "Written by Amendment Cycle Engine if amendment sealed after publish. This engine initialises to empty string only."
+  },
+
+  "cycle_id": "2026-06-22__release-v6.1",
+  "release": "v6.1",
+  "date": "2026-06-22",
+  "mode": "standard",
+  "issues_mode": "none",
+  "auto_escalate": true,
+  "prompt_schema_version": "v2",
+  "status": "Published",
+  "publish_eligible": true,
+  "last_transition_utc": "2026-06-22T00:00:00Z",
+
+  "sealed": {
+    "sealed_utc": "2026-06-22T00:00:00Z",
+    "sealed_assumptions": {
+      "timebox": "~3 weeks (2 sprints)",
+      "capacity": "~10-15 hrs/week solo dev"
+    },
+    "state_snapshot_hash": ""
+  },
+
+  "mutation_seq": 0,
+  "assumptions": {
+    "timebox": "~3 weeks (2 sprints)",
+    "capacity": "~10-15 hrs/week solo dev"
+  },
+
+  "locks": {
+    "backlog_lock": {
+      "required": true,
+      "lock_file": "claude/backlog/.lock",
+      "owned": false,
+      "owner_cycle_id": "2026-06-22__release-v6.1",
+      "owner_release": "v6.1",
+      "acquired_utc": "2026-06-22T00:00:00Z",
+      "txn_file": "claude/cycles/2026-06-22__release-v6.1/backlog_txn.json",
+      "txn_id": "BLTX-20260622-01",
+      "txn_state": "committed",
+      "marker": "RP:v6.1:2026-06-22__release-v6.1",
+      "status": "released"
+    },
+    "roadmap_lock": {
+      "required": false,
+      "lock_file": "claude/roadmap/.lock",
+      "owned": false,
+      "owner_cycle_id": "",
+      "owner_release": "",
+      "acquired_utc": "",
+      "txn_file": "claude/cycles/2026-06-22__release-v6.1/roadmap_txn.json",
+      "txn_id": "RATX-20260622-01",
+      "txn_state": "committed",
+      "marker": "RA:v6.1:2026-06-22__release-v6.1",
+      "status": "released"
+    }
+  },
+
+  "mutations": [
+    {"seq": 1, "step": "STEP 0", "summary": "Run manifest created; state initialized", "utc": "2026-06-22T00:00:00Z"},
+    {"seq": 2, "step": "STEP 1/2/3", "summary": "release_plan.md created: Readiness, Scope (8 S2 items), Execution Plan (4 EPICs, 4 RISKs), 3.5 integrity PASS, 4.5 capacity warn, 5.5 cross-stage integrity PASS", "utc": "2026-06-22T00:00:00Z"},
+    {"seq": 3, "step": "STEP 3 scope/decisions docs", "summary": "scope document and decisions record created in docs/product/", "utc": "2026-06-22T00:00:00Z"},
+    {"seq": 4, "step": "STEP 3.9", "summary": "Backlog lock acquired (BLTX-20260622-01)", "utc": "2026-06-22T00:00:00Z"},
+    {"seq": 5, "step": "STEP 4", "summary": "backlog_txn.json committed; stage4_backlog_slice.md created (9 stories: ST-01 through ST-09); stage4_issue_manifest.json created; backlog.md marker appended; lock released", "utc": "2026-06-22T00:00:00Z"},
+    {"seq": 6, "step": "STEP 5", "summary": "Roadmap annotation appended to current_roadmap.md v6.1 section; roadmap_txn.json committed", "utc": "2026-06-22T00:00:00Z"},
+    {"seq": 7, "step": "STEP 7", "summary": "cycle_summary.md created", "utc": "2026-06-22T00:00:00Z"},
+    {"seq": 8, "step": "STEP 8", "summary": "lessons_learnt.md seeded (draft — to be completed at post-ship)", "utc": "2026-06-22T00:00:00Z"},
+    {"seq": 9, "step": "STEP 9", "summary": "state.json set to Published; .claude_current_state.json updated to Release_Planning_Complete / active_cycle=2026-06-22__release-v6.1", "utc": "2026-06-22T00:00:00Z"}
+  ],
+  "invalidated_steps": [],
+
+  "open_escalations": [],
+  "deferred_escalations": [],
+  "deferred_execution_blockers": [],
+  "accepted_risk_escalations": [],
+
+  "attributes": {
+    "plan_structured": true,
+    "plan_executable": true,
+    "backlog_committed": true,
+    "capacity_feasible": "warn",
+    "cross_stage_integrity": "pass",
+    "decisions_validated": "pass"
+  },
+
+  "design_gate_status": "not_started",
+  "design_gate_required": true,
+  "design_gate_completed_utc": "",
+  "design_gate_record": "",
+  "sprint_planning_pre_condition": false,
+  "amended_backlog_slice_path": "",
+
+  "artifacts": {
+    "run_manifest": "present",
+    "backlog_lock": "released",
+    "backlog_txn": "committed",
+    "roadmap_lock": "not_required",
+    "roadmap_txn": "committed",
+
+    "stage1_readiness": "present",
+    "stage2_scope_extraction": "present",
+    "stage2_scope_document": "present",
+    "stage3_execution_plan": "present",
+    "stage3_decisions_record": "present",
+    "stage3_5_model_integrity": "pass",
+    "stage4_backlog_slice": "present",
+    "stage4_5_capacity_check": "warn",
+    "stage4_issue_manifest": "present",
+    "stage5_5_cross_stage_integrity": "pass",
+    "stage5_7_decision_record_integrity": "not_applicable",
+
+    "cycle_summary": "present",
+    "lessons_learnt": "seeded",
+    "escalations": "none"
+  }
+}

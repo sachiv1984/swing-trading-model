@@ -2805,3 +2805,9 @@ The Trader Morning Briefing (BLG-FEAT-46, shipped v6.0) calls the Claude API eac
 *Release Slice v5.9 removed — cycle 2026-06-17__release-v5.9 closed 2026-06-18. Archived canonical home: claude/cycles/2026-06-17__release-v5.9/stage4_backlog_slice.md*
 
 *Release Slice v6.0 removed — cycle 2026-06-19__release-v6.0 closed 2026-06-22. Archived canonical home: claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md*
+
+---
+
+<!-- release-plan-marker: RP:v6.1:2026-06-22__release-v6.1 -->
+
+*Release Slice v6.1 — cycle 2026-06-22__release-v6.1 — Planning Date: 2026-06-22. Canonical home: claude/cycles/2026-06-22__release-v6.1/stage4_backlog_slice.md. 9 stories (7 firm, 2 conditional). EPICs: EPIC-01 (Governance Correctness), EPIC-02 (CI Quality), EPIC-03 (User Value), EPIC-04 (Conditional PT-04).*

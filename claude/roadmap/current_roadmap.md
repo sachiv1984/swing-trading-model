@@ -297,6 +297,8 @@ Today you find stocks through external research and add them to the watchlist ma
 
 > **User value commitment (STEP 5 Challenger PVC):** v6.1 sprint planning must include BLG-FE-76 and BLG-FE-78 as firm scope — not conditional, not deferred. Challenger Clearance Statement accepted on this basis (DL-054).
 
+> **Release Plan:** cycle_id=2026-06-22__release-v6.1 — Published 2026-06-22. 4 EPICs: EPIC-01 (Governance Correctness, 3 stories), EPIC-02 (CI Quality, 2 stories), EPIC-03 (User Value, 2 stories), EPIC-04 (Conditional PT-04, 2 stories). 7 firm stories + 2 conditional stories = 9 total. design_gate_required=true. Capacity check: warn (phasing required). Slice: claude/cycles/2026-06-22__release-v6.1/stage4_backlog_slice.md. (RA:v6.1:2026-06-22__release-v6.1)
+
 -----
 
 ## 4. Priority 2 — Horizon: Next Phase (Arcs 1 & 2)

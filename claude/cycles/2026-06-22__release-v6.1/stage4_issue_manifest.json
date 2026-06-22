@@ -1,0 +1,94 @@
+{
+  "cycle_id": "2026-06-22__release-v6.1",
+  "release": "v6.1",
+  "issues_mode": "none",
+  "generated_utc": "2026-06-22T00:00:00Z",
+  "note": "issues_mode=none — GitHub Issues sync not requested at planning time. Run 'sync gh' when ready to push issues.",
+  "stories": [
+    {
+      "id": "ST-01",
+      "blg_id": "BLG-GOV-132",
+      "epic": "EPIC-01",
+      "title": "[ST-01] Release planning: Design Gate Required flag",
+      "labels": ["v6.1", "sprint-1", "EPIC-01"],
+      "github_issue": null,
+      "sync_status": "pending"
+    },
+    {
+      "id": "ST-02",
+      "blg_id": "BLG-GOV-133",
+      "epic": "EPIC-01",
+      "title": "[ST-02] Sprint planning: Design Gate hard gate at preflight",
+      "labels": ["v6.1", "sprint-1", "EPIC-01"],
+      "github_issue": null,
+      "sync_status": "pending"
+    },
+    {
+      "id": "ST-03",
+      "blg_id": "BLG-GOV-131",
+      "epic": "EPIC-01",
+      "title": "[ST-03] Governance overhead ceiling metric and accountability mechanism",
+      "labels": ["v6.1", "sprint-2", "EPIC-01"],
+      "github_issue": null,
+      "sync_status": "pending"
+    },
+    {
+      "id": "ST-04",
+      "blg_id": "BLG-QA-60",
+      "epic": "EPIC-02",
+      "title": "[ST-04] Register morning-briefing.spec.js and screener-quality.spec.js in playwright.yml",
+      "labels": ["v6.1", "sprint-2", "EPIC-02"],
+      "github_issue": null,
+      "sync_status": "pending"
+    },
+    {
+      "id": "ST-05",
+      "blg_id": "BLG-OPS-73",
+      "epic": "EPIC-02",
+      "title": "[ST-05] Add PATCH /trades/{id}/costs to api_performance_baseline.md",
+      "labels": ["v6.1", "sprint-2", "EPIC-02"],
+      "github_issue": null,
+      "sync_status": "pending"
+    },
+    {
+      "id": "ST-06",
+      "blg_id": "BLG-FE-76",
+      "epic": "EPIC-03",
+      "title": "[ST-06] Portfolio sector heat-map visualization",
+      "labels": ["v6.1", "sprint-1", "EPIC-03"],
+      "github_issue": null,
+      "sync_status": "pending"
+    },
+    {
+      "id": "ST-07",
+      "blg_id": "BLG-FE-78",
+      "epic": "EPIC-03",
+      "title": "[ST-07] Trade gate proximity indicator on dashboard",
+      "labels": ["v6.1", "sprint-1", "EPIC-03"],
+      "github_issue": null,
+      "sync_status": "pending"
+    },
+    {
+      "id": "ST-08",
+      "blg_id": "BLG-FEAT-25",
+      "epic": "EPIC-04",
+      "title": "[ST-08] Setup Quality Score — backend engine (PT-04) [CONDITIONAL]",
+      "labels": ["v6.1", "EPIC-04", "conditional"],
+      "github_issue": null,
+      "sync_status": "pending",
+      "conditional": true,
+      "gate": "≥20 closed trades"
+    },
+    {
+      "id": "ST-09",
+      "blg_id": "BLG-FEAT-25",
+      "epic": "EPIC-04",
+      "title": "[ST-09] Setup Quality Score — frontend display (PT-04) [CONDITIONAL]",
+      "labels": ["v6.1", "EPIC-04", "conditional"],
+      "github_issue": null,
+      "sync_status": "pending",
+      "conditional": true,
+      "gate": "≥20 closed trades"
+    }
+  ]
+}
