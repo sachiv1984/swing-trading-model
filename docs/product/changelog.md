@@ -3,9 +3,43 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-18 (post-ship closure 2026-06-17__release-v5.9)
+**Last Updated:** 2026-06-22 (post-ship closure 2026-06-19__release-v6.0)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v6.0 — Signal Correctness, User Intelligence & SI-05 Effectiveness — 2026-06-22
+Cycle: 2026-06-19__release-v6.0
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-06-19__release-v6.0/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | P0 correctness fast-track: aligned signal_service suggested_shares to risk-based sizing model per strategy_rules.md §4.1 — cash-allocation model removed; size_position() now canonical for suggested_shares | claude/strategy/strategy_rules.md#4.1; docs/specs/api_contracts/signal_endpoints.md |
+| EPIC-02 | Trader's Morning Briefing dashboard (ST-02): frontend composition from 5 existing live endpoints; net-of-costs performance tracking (ST-03): additive trade_costs column + backend net-of-costs calculation + frontend net cost/R display | docs/specs/api_contracts/grace_period_alert_endpoint.md; docs/specs/api_contracts/position_endpoints.md; docs/specs/api_contracts/red_flag_journal.md; docs/specs/api_contracts/earnings_endpoints.md; docs/specs/api_contracts/analytics_endpoints.md; docs/specs/api_contracts/trade_endpoints.md; docs/specs/data_model.md |
+| EPIC-03 | Screener data quality telemetry (ST-04): ScreenerQualityPanel with data source, freshness, and degradation indicator; screener_api_contract.md updated to v1.2; openapi.yaml updated. SI-05 deep link AC-04 staging confirmation (ST-05): digest received 2026-06-17 post-FRONTEND_URL; both deep links verified by I&O Owner | docs/specs/api_contracts/screener_api_contract.md; docs/specs/api_contracts/digest_endpoints.md |
+| EPIC-04 | RFJ design review pre-brief (ST-06) and visual design review (ST-07): brief and review artefacts delivered; 2 P3 backlog items filed (BLG-FE-66, BLG-FE-67). SI-05 digest cadence review (ST-08): weekly cadence maintained; reassess 2026-07-04. SI-05 actionability metrics (ST-09): 4 metrics defined (ATCR, RFAR, DDCR, EPAR). SI-05 Phase 2 activation scope (ST-10): DEFER — review date revised to 2026-08-04. SI-05 p99 latency baseline review (ST-11): PASS WITH DEVIATION; functional evidence satisfactory | docs/design/2026-06-19__release-v6.0/rfj-design-review/brief.md; docs/design/2026-06-19__release-v6.0/rfj-design-review/review.md; docs/product/decisions/si05-digest-cadence-review--2026-06-22.md; docs/product/decisions/si05-actionability-metrics-definition.md; docs/product/decisions/si05-phase2-activation-decision--2026-06-22.md; docs/testing/staging_latency_review_ST-11.md |
+
+### Deviations accepted
+2 minor P3 process deviations for ST-11 — see verification_report.md §4 (ST-11-DEV-1: 16-day vs 4-week measurement window; ST-11-DEV-2: AC-02 N/A — no BLG-OPS-54 baseline; both accepted under PO gate override 2026-06-20).
+
+### Tech backlog items shipped
+- [ST-01] BLG-BE-36: Align signal_service suggested_shares to risk-based sizing model — P0 correctness fix; size_position() per §4.1 now canonical
+- [ST-02] BLG-FEAT-46: Trader's Morning Briefing dashboard — morning summary view from 5 live endpoints with Playwright coverage (11 scenarios)
+- [ST-03] BLG-FEAT-20: Net-of-costs performance tracking — additive trade_costs fields + frontend net-of-costs display; 5 Playwright scenarios
+- [ST-04] BLG-FEAT-47: Screener data quality telemetry — ScreenerQualityPanel; screener contract v1.2; 5 Playwright scenarios
+- [ST-05] BLG-OPS-70: SI-05 deep link AC-04 staging confirmation — digest received 2026-06-17; both deep links verified by I&O Owner
+- [ST-06] BLG-FE-64: RFJ design review pre-brief — brief.md authored; scope for ST-07 defined; HoUX&D sign-off
+- [ST-07] BLG-FE-41: Red Flag Journal visual design review — Accept/Refine verdict; BLG-FE-66 + BLG-FE-67 filed; HoUX&D sign-off
+- [ST-08] BLG-GOV-112: SI-05 digest weekly cadence review — weekly cadence maintained; reassess 2026-07-04
+- [ST-09] BLG-GOV-115: SI-05 digest actionability metric definition — 4 metrics (ATCR, RFAR, DDCR, EPAR) defined; feeds BLG-GOV-112 and BLG-GOV-96
+- [ST-10] BLG-GOV-130: SI-05 Phase 2 activation decision scope — DEFER; revised review date 2026-08-04; BLG-GOV-121 §13 pre-clearance action raised
+- [ST-11] BLG-OPS-59: SI-05 service production p99 latency baseline review — PASS WITH DEVIATION; BLG-OPS-54 scope revised to Render internal log approach
+
+Sign-off: Product Owner — 2026-06-22
+QA sign-off: Director of Quality — 2026-06-22
 
 ---
 

@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-06-09 (post-ship closure 2026-06-08__release-v5.3; §6.4 RESOLVED — BLG-SPEC-49–52 all completed; ai_endpoints.md v1.1, analytics_endpoints.md v2.2.0, news_endpoints.md v1.0, watchlist_endpoints.md v1.0 added to §3.4)
+**Last Updated:** 2026-06-22 (post-ship closure 2026-06-19__release-v6.0; screener_api_contract.md updated to v1.2; §27.1 TSG-v50-01 marked RESOLVED (BLG-FE-61 closed v5.1); §28 v6.0 test coverage gaps added — TSG-v60-01 open/BLG-QA-61, TSG-v60-02/03 deferred, TSG-v60-04 N/A)
 
 ---
 
@@ -114,7 +114,7 @@ It points to the **single canonical source**.
 - `news_endpoints.md` — Class 1 Canonical, v1.0, Active (created 2026-06-09, ST-06, cycle 2026-06-08__release-v5.3 — BLG-SPEC-51): GET /news/{ticker}. Sign-off: API Contracts & Documentation Owner.
 - `watchlist_endpoints.md` — Class 1 Canonical, v1.0, Active (created 2026-06-09, ST-07, cycle 2026-06-08__release-v5.3 — BLG-SPEC-52): GET /watchlist, POST /watchlist, DELETE /watchlist/{entry_id}. Sign-off: API Contracts & Documentation Owner + Head of Specs Team.
 - `ticker_universe_api_contract.md` — Class 2 Canonical (created 2026-04-25, ST-01, cycle 2026-04-25__release-v3.0; updated 2026-05-22 ST-06 v3.9 — company_name field added to GET /ticker-universe response): GET /ticker-universe, POST /ticker-universe, DELETE /ticker-universe/{ticker}; seed data contract; company_name field. Sign-off: Sprint Execution Engine (autonomous class).
-- `screener_api_contract.md` — Class 2 Canonical (created 2026-04-23 v2.9; implementation delivered 2026-04-25 v3.0 ST-04; updated v1.1 2026-05-22 ST-04 v3.9 — degraded_run and failure_rate fields added to GET /screener/results response): GET /screener/results, POST /screener/run; request/response schemas, pagination, error codes, degraded_run flag.
+- `screener_api_contract.md` — Class 2 Canonical (created 2026-04-23 v2.9; implementation delivered 2026-04-25 v3.0 ST-04; updated v1.1 2026-05-22 ST-04 v3.9 — degraded_run and failure_rate fields added; updated v1.2 2026-06-22 ST-04 v6.0 — tickers_requested, tickers_loaded, tickers_failed, last_full_run_utc, run_quality fields added to GET /screener/results response; DegradedRunBanner replaced by ScreenerQualityPanel): GET /screener/results, POST /screener/run; request/response schemas, pagination, error codes, quality telemetry fields. Sign-off: Sprint Execution Engine (autonomous class) v6.0.
 - `alpaca_integration_contract.md` — Class 2 Canonical (created 2026-04-23 v2.9 ST-02): Alpaca Markets API contract for OHLCV bars and News endpoints; rate limits, error codes, fallback strategy, API version pin.
 - `portfolio_endpoints.md` — Class 1 Canonical (created v2.0; updated v2.3 2026-05-22 ST-07 v3.9 — GET /portfolio/red-flag-journal added; red_flag_events table; SI-01 override event write path; updated v2.4 2026-05-31 ST-09 v4.6 — severity field + filter query parameter added to red_flag_events endpoints): GET /portfolio, GET /portfolio/pre-entry-validation, GET /portfolio/prospective-heat, GET /portfolio/red-flag-journal + other portfolio endpoints. Sign-off: Sprint Execution Engine (autonomous class).
 - `behavioural_drift_contract.md` — Class 1 Canonical, v1.0, Active (created 2026-05-31, ST-04, cycle 2026-05-30__release-v4.6): GET /analytics/behavioural-drift — SI-02 4-metric behavioural drift response schema; §13 binding conditions; green/amber/red band thresholds; insufficient_data path. Sign-off: Sprint Execution Engine (autonomous class).
@@ -709,14 +709,33 @@ Identified during delivery verification (verification_report.md §6 — TSG-v50-
 ### 27.1 TSG-v50-01 — EPIC-03: no Playwright coverage for allocation_insufficient SignalCard badge
 
 **Identified:** 2026-06-03 (delivery verification 2026-06-03__release-v5.0)
-**Status:** Open — backlog item BLG-FE-61
+**Status:** RESOLVED — 2026-06-04 (v5.1, EPIC-01, ST-11, cycle 2026-06-21__release-v5.1) — SignalCard allocation_insufficient Playwright E2E coverage (5 scenarios) delivered; BLG-FE-61 closed.
 **Owner:** QA & Testing Owner
-**Gap:** ST-06 (allocation_insufficient signal status) introduced a visible frontend change: SignalCard renders an orange "Cannot Size" badge and displays the reason string inline when `signal.status === 'allocation_insufficient'`. No Playwright E2E test covers this observable AC. Code review was accepted for the v5.0 PR under the CLAUDE.md §2 hard gate, with BLG-FE-61 filed before the PR opened.
-**Required action:** QA & Testing Owner to author `tests/e2e/signals-allocation.spec.js` covering:
-- SC-SIG-ALLOC-01: SignalCard renders orange "Cannot Size" badge when signal status is `allocation_insufficient` (against spec: signal_endpoints.md §allocation_insufficient status value)
-- SC-SIG-ALLOC-02: reason string is displayed inline on signal card when status = `allocation_insufficient` (against spec: signal_endpoints.md §reason field)
-**Resolution target:** v5.1
-**Backlog item:** BLG-FE-61 (filed 2026-06-03 per CLAUDE.md §2 hard gate before PR opened)
+**Gap (resolved):** ST-06 (allocation_insufficient signal status) introduced a visible frontend change: SignalCard renders an orange "Cannot Size" badge and displays the reason string inline when `signal.status === 'allocation_insufficient'`. Playwright coverage (5 scenarios: SC-SIG-ALLOC-01, SC-SIG-ALLOC-02) delivered in v5.1.
+**Resolution:** BLG-FE-61 closed — v5.1 cycle 2026-06-21__release-v5.1 — post-ship closure 2026-06-22 (gap identified as stale open during v6.0 closure Specs Index review)
+
+---
+
+## 28. Test Coverage Gaps — v6.0 (2026-06-19__release-v6.0)
+
+Identified during delivery verification (verification_report.md §6 — TSG-v60-01 through TSG-v60-04). One backlog item required.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| TSG-v60-01 | EPIC-01 | docs/testing/signals_scenarios.md listed in execution_state.json test_scenarios for EPIC-01 but not referenced as run in QA evidence — broader signal domain scenarios may contain stale assertions after cash-allocation model removal (ST-01 replaced with risk-based sizing) | backlog_item_created — BLG-QA-61 |
+| TSG-v60-02 | EPIC-02 | docs/testing/staging_visual_test_script_EPIC-02.md listed but not run in sprint QA | deferred — post-deploy staging review; all CI-verifiable ACs satisfied by Playwright (morning-briefing.spec.js, net-r-trade-history.spec.js) |
+| TSG-v60-03 | EPIC-03 | docs/testing/screener_accuracy_protocol.md and docs/testing/staging_visual_test_script_EPIC-03.md listed but not run in sprint QA | deferred — post-deploy staging review; screener-quality.spec.js covers all 7 AC-07 requirements |
+| TSG-v60-04 | EPIC-04 | test_scenarios = [] | not_applicable — documentation-only EPIC; no frontend-visible ACs; no automated test scenarios applicable |
+
+### 28.1 TSG-v60-01 — EPIC-01: signals_scenarios.md not run against ST-01 sizing model changes
+
+**Identified:** 2026-06-22 (delivery verification 2026-06-19__release-v6.0)
+**Status:** Open — backlog item BLG-QA-61
+**Owner:** QA & Testing Owner
+**Gap:** ST-01 removed the cash-allocation model for `suggested_shares` and replaced it with `size_position()` per strategy_rules.md §4.1. `docs/testing/signals_scenarios.md` was listed in execution_state.json test_scenarios but was not referenced as run in QA evidence. New `tests/test_signal_sizing.py` covered story-specific ACs but broader domain regression via signals_scenarios.md was not confirmed. Any scenario asserting specific suggested_shares values based on the old cash-allocation formula (cash / n_signals) will produce incorrect expected values.
+**Required action:** QA & Testing Owner to review docs/testing/signals_scenarios.md against ST-01 changes, update any stale scenario assertions, and confirm coverage status before next sprint touching signal generation domain.
+**Resolution target:** Before next sprint on signal generation domain
+**Backlog item:** BLG-QA-61 (filed 2026-06-22 during delivery verification)
 
 ---
 

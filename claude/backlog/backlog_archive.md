@@ -8031,3 +8031,26 @@ BLG-GOV-74 (first AI feature usage review, v4.4) established the initial Claude 
 ### BLG-GOV-101 — Governance model complexity assessment ✅ COMPLETE
 
 **Shipped:** v5.8, ST-04 (EPIC-01), 2026-06-17. GCA-2026-06-17 produced. Complexity confirmed as secondary contributing factor (not root cause). 7 simplification candidates (SC-01–SC-07) filed as BLG-GOV-123–129. Director of HR + PMO Lead + Head of Specs Team sign-off 2026-06-17. Source: docs/governance/governance_complexity_assessment_2026-06-17.md. commit SHA fbdf1745. PR #790 merged 2026-06-17T13:24:57Z.
+
+---
+
+## v6.0 Shipped Items — 2026-06-22 (cycle: 2026-06-19__release-v6.0)
+
+**Shipped:** v6.0 — Signal Correctness, User Intelligence & SI-05 Effectiveness
+**Verification:** Verified_with_deviations (2 P3 process deviations, accepted)
+**Changelog:** docs/product/changelog.md#v6.0
+**Verification report:** claude/cycles/2026-06-19__release-v6.0/verification_report.md
+
+| ID | Title | Priority | Ship note |
+|----|-------|----------|-----------|
+| BLG-BE-36 ✅ | Align signal_service suggested_shares to risk-based sizing model | P0 | Shipped v6.0 ST-01 (EPIC-01) — P0 Correctness Fast-Track; signal_service.py updated to use sizing_service.size_position(); cash-allocation model removed; CI tests pass |
+| BLG-FEAT-46 ✅ | Trader's Morning Briefing dashboard | P1 | Shipped v6.0 ST-02 (EPIC-02) — DashboardHome.js extended with 5-card Morning Briefing section; all ACs pass; Playwright coverage; Product Value Alert resolved |
+| BLG-FEAT-20 ✅ | Net-of-costs performance tracking | P1 | Shipped v6.0 ST-03 (EPIC-02) — brokerage cost fields added; net-of-costs R-multiple computed and surfaced; PATCH /trades/{trade_id}/costs; ACs pass |
+| BLG-FEAT-47 ✅ | Screener data quality telemetry | P1 | Shipped v6.0 ST-04 (EPIC-03) — tickers_requested/loaded/failed/last_full_run_utc/run_quality fields added; ScreenerQualityPanel component; Playwright pass |
+| BLG-OPS-70 ✅ | SI-05 deep link AC-04 staging confirmation | P2 | Shipped v6.0 ST-05 (EPIC-03) — FRONTEND_URL verified; SI-05 digest deep links confirmed functional in production |
+| BLG-FE-64 ✅ | RFJ design review pre-brief | P2 | Shipped v6.0 ST-06 (EPIC-04) — gate 2026-06-21 cleared (6th attempt); design review brief produced; Head of UX & Design sign-off |
+| BLG-FE-41 ✅ | Red Flag Journal visual design review | P3 | Shipped v6.0 ST-07 (EPIC-04) — gate 2026-06-21 cleared; RFJ visual design review complete; BLG-FE-66 filed (date-range filter follow-on); Head of UX & Design sign-off |
+| BLG-GOV-112 ✅ | SI-05 digest weekly cadence review | P2 | Shipped v6.0 ST-08 (EPIC-04) — gate 2026-07-04 cleared via PO override; weekly cadence maintained; formal reassessment 2026-07-04; Product Owner + Director of Quality sign-off |
+| BLG-GOV-115 ✅ | SI-05 digest actionability metric definition | P2 | Shipped v6.0 ST-09 (EPIC-04) — gate 2026-07-04 cleared via PO override; 4 metrics defined (ATCR, RFAR, DDCR, EPAR); Metrics Definitions & Analytics Owner sign-off |
+| BLG-GOV-130 ✅ | SI-05 Phase 2 activation decision scope | P2 | Shipped v6.0 ST-10 (EPIC-04) — gate 2026-07-04 cleared via PO override; DEFER decision documented; Phase 2 review revised to 2026-08-04; Product Owner sign-off |
+| BLG-OPS-59 ✅ | SI-05 service production p99 latency baseline review | P2 | Shipped v6.0 ST-11 (EPIC-04) — gate 2026-07-04 cleared via PO override; PASS WITH DEVIATION (P3: BLG-OPS-54 scope revised); Infrastructure & Operations Owner sign-off |

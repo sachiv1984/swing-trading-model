@@ -1321,3 +1321,20 @@ v5.7 Staging Verification Completion, SI-05 Effectiveness Review & Engineering/G
 ### Original Roadmap Entry
 
 v5.8 RFJ UX Design Completion, SI-05 Effectiveness Review & Production Hardening. FRONTEND_URL production env var configured on Render backend (trading-assistant-api-c0f9.onrender.com) — restores SI-05 deep-link functionality; deployment runbook v0.3 updated (ST-03; BLG-OPS-70 AC-04 deferral filed). Governance model complexity assessment produced — GCA-2026-06-17; complexity confirmed secondary factor (not root cause); 7 simplification candidates BLG-GOV-123–129 filed (ST-04; BLG-GOV-101 closed). ST-01/02 (BLG-FE-64/41) returned — gate 2026-06-21 (5th deferral). EPIC-02 (ST-05/06/07) gate-deferred 2026-07-04 (3rd consecutive deferral). 2/7 stories delivered (2/4 firm Sprint 1). Zero spec deviations. PR #790. Verified 2026-06-17. completed_cycle_count = 44.
+
+---
+
+## RA:v6.0 — Signal Correctness, User Intelligence & SI-05 Effectiveness
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-22
+**Shipped version:** v6.0
+**Cycle reference:** 2026-06-19__release-v6.0
+**Verification report:** claude/cycles/2026-06-19__release-v6.0/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-22
+
+### Original Roadmap Entry
+
+Release v6.0 — Signal Correctness, User Intelligence & SI-05 Effectiveness. Theme: Correct signal suggested_shares calculation (P0 correctness fast-track BLG-BE-36 — every signal card shows wrong share counts); Trader's Morning Briefing dashboard (BLG-FEAT-46, P1 user-value); net-of-costs performance tracking (BLG-FEAT-20, P1 user-value); screener data quality telemetry (BLG-FEAT-47, P1); SI-05 deep link AC-04 staging confirmation (BLG-OPS-70); RFJ design review pre-brief (BLG-FE-64, gate 2026-06-21, 6th attempt — cleared); Red Flag Journal visual design review (BLG-FE-41, gate 2026-06-21); SI-05 Phase 1 effectiveness reviews (BLG-GOV-112/115/130, gate 2026-07-04); SI-05 latency baseline (BLG-OPS-59, gate 2026-07-04). Product Value Alert resolved. Skill-Silo constraint: G+D+P ≤ 60% per sprint (roadmap_prompt.md v7.4 ceiling — note: v7.5 corrects to 40%). 11/11 stories delivered. 2 P3 process deviations (ST-11), accepted under PO gate-override authority. Verified_with_deviations. PRs #808–822. Verified 2026-06-22. completed_cycle_count = 46.

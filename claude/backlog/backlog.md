@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-22 (session — 4 new items added: BLG-FE-66, BLG-FE-67, BLG-QA-60, BLG-QA-61; total 114 active items)
+**Last Updated:** 2026-06-22 (groom backlog — post-ship closure 2026-06-19__release-v6.0: 11 v6.0 items archived, Release Slices v5.9 and v6.0 retired; report: claude/backlog/backlog_health_20260622.md)
 **Last rebalance:** 2026-06-19 (cycle 2026-06-19__scheduled — DL-048–051; 7 promoted-backlog, 1 rejected, 8 parked C1; v6.0 Now section added to roadmap; Product Value Alert + Skill-Silo Alert recorded)
 
 > ⚠️ Standing Notice
@@ -34,31 +34,6 @@
 ---
 
 ## 2. Product Feature Backlog (User-Facing)
-
----
-
-### BLG-FEAT-20 — Net-of-costs performance tracking
-**Priority:** P1 (High)
-**Type:** Product Feature / Analytics
-**Owner:** Financial Reporting & Records Owner
-**Source:** IDEA-financial-reporting-20260321-02 — promoted cycle 2026-05-05__scheduled (DL-024); promoted P2→P1 2026-06-18 strategic review (R-multiples ignoring costs overstate edge; correctness concern at small trade volumes)
-**Effort:** M (~2–3 days)
-**Provisional-Target:** v6.0 (decouple from Arc 3/4 context — standalone item; data model impact is additive/optional-field-only)
-
-**Problem**
-Performance metrics (R-multiple, win rate, expectancy) use gross P&L figures. When evaluating edge in Arc 4/6, R-multiples that ignore transaction costs overstate performance and may mask a genuinely unprofitable strategy. The Fee Drag % metric (v2.4) surfaces aggregate cost impact but per-trade R-multiples remain gross.
-
-**Scope**
-- Add brokerage cost fields per trade (commission, spread cost in GBP) — optional capture, not mandatory
-- Recalculate R-multiple as net-of-costs where cost data is present
-- Surface net-of-costs vs gross R-multiple on trade records and performance reports
-- Sequence alongside Arc 3/4 data model work to avoid standalone migration overhead
-
-**Acceptance Criteria**
-- Brokerage cost fields capturable per trade (optional — not all trades will have explicit cost data)
-- Net-of-costs R-multiple calculated and displayed where cost data exists
-- Performance report breakdowns show gross vs net comparison where material
-- No impact to existing R-multiple calculations where cost data is absent
 
 ---
 
@@ -416,67 +391,6 @@ Monthly P&L shipped 2026-05-05 with a fixed column/section layout. After 3 month
 
 ---
 
-### BLG-FEAT-46 — Trader's Morning Briefing dashboard
-**Priority:** P1 (High)
-**Type:** Product Feature / UX
-**Owner:** Head of UX & Design; Base44 Frontend Prompt Owner
-**Source:** Strategic review 2026-06-18 — identified as highest-impact daily workflow gap; morning review information currently spread across 8+ pages
-**Effort:** M (~2–3 days)
-**Provisional-Target:** v6.0
-
-**Problem**
-There is no single-screen "start of day" view. A trader's morning review requires visiting: screener (new hits since last run), positions (any in exit zone or grace period), alerts (new red flags), earnings calendar (this week), and compliance trend — across 8+ separate pages. This friction increases the risk of missing an actionable event. All the underlying data already exists across existing endpoints; the gap is purely a frontend composition problem.
-
-**Scope**
-- Extend DashboardHome.js with a Trader's Morning Briefing section rendered at the top of the page
-- Screener card: count of new screener hits since last visit; link to Screener page
-- Positions card: any positions in EXIT_ZONE or GRACE_PERIOD states with days-in-state; link to Positions page; empty state handled
-- Red flags card: count of new red flag events since last weekly digest; link to Red Flag Journal
-- Earnings card: count of watchlisted or open-position tickers with earnings in the next 7 days; link to earnings calendar
-- Compliance card: current Arc 5 compliance score + trend arrow (up/down/flat vs prior week); link to PerformanceAnalytics
-- Compose from existing endpoints only — no new backend endpoints required: GET /portfolio/grace-period-alerts, GET /positions, GET /portfolio/red-flag-journal, GET /earnings/{ticker}, GET /analytics/arc5-compliance
-- Mobile-responsive: cards stack vertically at breakpoint ≤ 768px
-
-**Acceptance Criteria**
-- Morning Briefing section renders at top of DashboardHome.js on page load
-- All 5 cards (screener hits, positions alert, red flags, earnings this week, compliance score) render with correct data
-- Each card links to the correct destination page
-- All cards handle loading and empty states without error
-- Mobile: cards stack vertically at ≤ 768px breakpoint
-- Playwright: morning briefing section renders; all 5 card types show data or empty state; links navigate correctly
-
----
-
-### BLG-FEAT-47 — Screener data quality telemetry
-**Priority:** P1 (High)
-**Type:** Product Feature / UX / Trust
-**Owner:** Head of UX & Design; Head of Backend Engineering
-**Source:** Strategic review 2026-06-18 — screener reliability identified as existential risk to user trust; Yahoo Finance 401/backoff issues produce silent degraded runs; degraded-run warning banner (v3.9) is insufficient
-**Effort:** S (~1 day)
-**Provisional-Target:** v6.0
-
-**Problem**
-The screener depends on Yahoo Finance data which is subject to 401 errors, crumb refresh failures, and exponential backoff. When a run is degraded, the user sees results without knowing how complete they are or which tickers failed. The v3.9 degraded-run banner is a generic warning with no quantitative information — the user cannot assess whether results covering 480/500 tickers are actionable vs results covering 200/500. This erodes trust in the screener's core value proposition.
-
-**Scope**
-- Backend: add data quality metadata to GET /screener/results response — fields: `tickers_requested` (int), `tickers_loaded` (int), `tickers_failed` (list of ticker strings), `last_full_run_utc` (ISO timestamp), `run_quality` enum (FULL / DEGRADED / FAILED)
-- Frontend (Screener.js): replace generic degraded-run warning banner with a structured data quality panel showing: run quality badge with colour (green=FULL, amber=DEGRADED, red=FAILED), tickers loaded ratio (e.g. "487 / 500"), expandable failed tickers list, last full run timestamp
-- DEGRADED state: "Results may be incomplete — 13 tickers failed to load" displayed prominently
-- FULL state: "Full run — 500 / 500 tickers loaded" displayed as positive confirmation
-- FAILED state: red badge with retry prompt
-- Stale advisory: if `last_full_run_utc` > 24 hours ago, show "Last full run: X hours ago — trigger a new run for fresh results"
-
-**Acceptance Criteria**
-- GET /screener/results response includes `tickers_requested`, `tickers_loaded`, `tickers_failed[]`, `last_full_run_utc`, `run_quality` (FULL/DEGRADED/FAILED)
-- Screener page shows structured quality panel for all three run_quality values (not the previous generic banner)
-- FULL state: green badge + loaded ratio shown
-- DEGRADED state: amber badge + loaded ratio + expandable failed ticker list + "Results may be incomplete" message
-- FAILED state: red badge + retry prompt
-- Stale advisory renders when last_full_run_utc > 24 hours ago
-- Playwright: all three quality states render correctly; failed ticker count shown in DEGRADED state; retry prompt shown in FAILED state
-
----
-
 ## 3. Frontend & UX Backlog
 
 ---
@@ -552,34 +466,6 @@ Red Flag Journal filter state (date range, severity, rule type) resets on page r
 - Stale state (version mismatch) cleared gracefully without error
 - Playwright test: set filter → reload page → verify filter state restored
 - Gate condition verified by Product Owner before sprint planning
-
----
-
-### BLG-FE-41 — Red Flag Journal visual design review
-**Priority:** P3 (Low)
-**Type:** Frontend / UX Design
-**Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design
-**Source:** IDEA-frontend-ux-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
-**Effort:** M (~1–2 days design + spec)
-**Provisional-Target:** Unscheduled
-
-**Gate criteria:** SI-03 Red Flag Journal live ≥ 30 days (on/after 2026-06-21). **Not eligible for release planning or sprint planning before 2026-06-21.** Depends on BLG-FE-64 (pre-brief) completing first.
-
-**Sprint history:** Planned as ST-02 (EPIC-01) in cycle 2026-06-17__release-v5.8; returned to backlog 2026-06-17 mid-sprint — PO-authorised deferral; gate date 2026-06-21 not yet reached.
-
-**Problem**
-Red Flag Journal (v3.9) is functional but minimally styled. As RFJ becomes a primary Arc 5 review surface, a design review covering severity visual hierarchy, timeline layout option, and colour coding for rule breach types will improve usability and consistency with the rest of the application design language.
-
-**Scope**
-- Design review: severity visual hierarchy; event type colour coding; timeline vs list layout evaluation
-- Produce design recommendation with rationale
-- If redesign recommended: produce UX spec and file implementation backlog item
-- Review against existing design system
-
-**Acceptance Criteria**
-- Design recommendation document produced
-- If redesign: UX spec produced and implementation item filed
-- Gate condition verified before sprint planning
 
 ---
 
@@ -803,34 +689,6 @@ SI-04 (strategy version comparison) and SI-05 (weekly digest display) will intro
 - Design vocabulary note produced covering existing Arc 5 panels
 - Consistency patterns identified; input to SI-04/SI-05 sprint planning
 - Gate condition verified before sprint planning
-
----
-
-### BLG-FE-64 — BLG-FE-41 Red Flag Journal visual design review pre-brief
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX Pre-work
-**Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design
-**Source:** IDEA-frontend-ux-20260607-01 — Promoted-Backlog rebalance 2026-06-07__scheduled (DL-039)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v5.2 (gate clears 2026-06-21 — 14 days)
-**Displacement:** BLG-FE-27 (Nav bar redesign exploration, P3) deprioritised.
-
-**Gate criteria:** SI-03 Red Flag Journal live ≥ 30 days (2026-06-21 — gate clears in 14 days from 2026-06-07).
-
-**Sprint history:** Planned as ST-03 (EPIC-02) in cycle 2026-06-09__release-v5.4; returned to backlog 2026-06-10 — date gate (2026-06-21) not met at sprint close; PO-authorised deferral. Planned again as ST-11 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-06-21 still not reached. Planned again as ST-03 (EPIC-01) in cycle 2026-06-16__release-v5.6; returned to backlog 2026-06-16 — gate date 2026-06-21 not yet cleared at planning time. Planned as ST-09 (EPIC-02) in cycle 2026-06-16__release-v5.7; returned to backlog 2026-06-17 — gate date 2026-06-21 not yet cleared at sprint close (4th deferral). Planned as ST-01 (EPIC-01) in cycle 2026-06-17__release-v5.8; returned to backlog 2026-06-17 mid-sprint — PO-authorised deferral; gate date 2026-06-21 still not reached at time of return (5th deferral). **Not eligible for release planning or sprint planning before 2026-06-21** (gate: SI-03 Red Flag Journal live ≥ 30 days from 2026-05-22).
-
-**Problem**
-BLG-FE-41 (Red Flag Journal visual design review) has a gate date of 2026-06-21. When the gate clears, sprint planning delay can be avoided if the design review brief is already prepared. The brief defines: scope (which aspects of RedFlagJournal.js are in scope for visual review), evaluation criteria, and deliverables from the review.
-
-**Scope**
-- Produce a design review brief for BLG-FE-41: define review scope (filters UX, severity visual hierarchy, event type colour coding, timeline vs list layout), evaluation criteria, and expected deliverable
-- Input to BLG-FE-41 sprint planning when gate clears 2026-06-21
-- Brief reviewed by Head of UX & Design
-
-**Acceptance Criteria**
-- Design review brief produced and reviewed before 2026-06-21
-- Brief covers: scope definition, evaluation criteria, deliverable format
-- Head of UX & Design sign-off on brief scope
 
 ---
 
@@ -1235,33 +1093,6 @@ PO-04 (Reflection ↔ Outcome Correlation) requires journal entries with quantif
 - Data prerequisites assessment document produced
 - New fields required for PO-04 identified and estimated
 - Gate condition verified before sprint planning
-
----
-
-### BLG-BE-36 — Align signal_service suggested_shares to risk-based sizing model
-**Priority:** P0 (Critical — Correctness Bug)
-**Type:** Backend Engineering / Correctness Fix
-**Owner:** Strategy Rules & System Intent Owner; Head of Engineering
-**Source:** User observation — signal card vs entry tab inconsistency — 2026-06-18; promoted P2→P0 by Production Correctness Fast-Track review 2026-06-18 (wrong share counts showing on every signal card)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.0 (first story in release — correctness fast-track)
-
-**Problem**
-`signal_service.py` calculates `suggested_shares` using a cash-allocation model (available_cash ÷ number_of_new_signals ÷ price_gbp). The entry tab uses `sizing_service.py` which implements the canonical risk-based model from strategy_rules.md §4.1 (portfolio_value × risk_percent ÷ stop_distance). The two methods produce different share counts for the same stock. The share count on a signal card will change depending on how many other signals fire that day, and ignores the stop distance entirely — both of which are wrong. The risk-based model is the correct approach and is already the authoritative implementation in the codebase.
-
-**Scope**
-- Strategy Rules & System Intent Owner to confirm risk-based formula (sizing_service.py) is canonical for signal suggested_shares
-- Update signal_service.py to call sizing_service.size_position() using initial_stop as stop_price and the portfolio's default risk_percent from settings
-- Handle edge cases gracefully: missing portfolio snapshot, zero or null initial_stop
-- Remove the cash-allocation sizing logic from signal_service.py
-- Update signal generation tests to reflect the new formula
-
-**Acceptance Criteria**
-- Signal card suggested_shares matches what the entry tab would produce for the same entry_price, initial_stop, and risk_percent
-- Share count is independent of how many other signals fire on the same day
-- Signals with no valid initial_stop produce suggested_shares = 0 (not a crash)
-- Cash-allocation model is fully removed from signal generation
-- Existing CI tests pass or are updated
 
 ---
 
@@ -2124,49 +1955,6 @@ BLG-OPS-31 defined Render log retention. claude_audit_log (shipped v4.0) and Sup
 
 ---
 
-### BLG-OPS-70 — ST-03 AC-04: Confirm SI-05 deep links work in production after FRONTEND_URL set
-**Priority:** P2 (Medium)
-**Type:** Operations / Staging Verification
-**Owner:** Infrastructure & Operations Owner
-**Source:** ST-03 v5.8 — AC-04 staging-only deferral (CLAUDE.md §2). FRONTEND_URL set on production backend 2026-06-17; deep link confirmation requires next scheduled SI-05 digest delivery.
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v5.9 (verify at next SI-05 digest delivery after 2026-06-17)
-
-**Acceptance Criteria**
-- SI-05 Telegram digest received after FRONTEND_URL env var applied
-- Deep links in digest are present and resolve to correct frontend pages
-- Infrastructure & Operations Owner confirmation recorded
-
----
-
-### BLG-OPS-59 — SI-05 service production p99 latency baseline review
-**Priority:** P2 (Medium)
-**Type:** Operations / Performance
-**Owner:** Infrastructure & Operations Owner; Head of Engineering
-**Source:** IDEA-head-of-engineering-20260608-02 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** Unscheduled (review after 4 weeks production operation, ~2026-07-04)
-**Displacement:** BLG-OPS-13 (performance baseline gaps, P3) deprioritised.
-
-**Sprint history:** Planned as ST-12 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-07-04 not yet reached. Planned as ST-14 (EPIC-03) in cycle 2026-06-16__release-v5.7; returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. Planned as ST-07 (EPIC-02) in cycle 2026-06-17__release-v5.8; returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. **Not eligible for sprint planning before 2026-07-04** (gate: ≥ 4 weeks of POST /digest/si05/send production operation).
-
-**Problem**
-POST /digest/si05/send was baselined pre-launch in BLG-OPS-54. Production p99 latency under real data volume (actual trade history, real Red Flag Journal entries, real compliance scores) may differ from the pre-launch baseline. Confirming production performance validates the service is not degrading under real conditions.
-
-**Scope**
-- After 4 weeks of production operation (≥ 2026-07-04): extract p99 latency from Render logs for POST /digest/si05/send
-- Compare against BLG-OPS-54 pre-launch baseline
-- If p99 > 2× baseline: file a performance investigation item; otherwise record PASS
-- Document findings in a brief perf review note
-
-**Acceptance Criteria**
-- Post-4-week p99 latency extracted and documented
-- Comparison against BLG-OPS-54 baseline made
-- Performance PASS or investigation item filed
-- Infrastructure & Operations Owner sign-off
-
----
-
 ### BLG-GOV-84 — Arc 6 gate revision and threshold assessment
 **Priority:** P3 (Low)
 **Type:** Governance / Product Planning
@@ -2378,62 +2166,6 @@ Arc 6 PS-03 (Monte Carlo simulation) requires a §13 review before sprint planni
 
 ---
 
-### BLG-GOV-112 — SI-05 digest weekly cadence review (gate-conditional)
-**Priority:** P2 (Medium)
-**Type:** Governance / Product Review
-**Owner:** Product Owner; Director of Quality
-**Source:** IDEA-product-owner-20260608-02 — Promoted-Backlog rebalance 2026-06-08__scheduled (DL-040)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** After 2026-07-04 SI-05 effectiveness review
-**Displacement:** BLG-GOV-85 (Arc 6 §13 pre-assessment boundary doc, gate-conditional) deprioritised.
-
-**Sprint history:** Planned as ST-13 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-07-04 not yet reached. Planned as ST-12 (EPIC-03) in cycle 2026-06-16__release-v5.7; returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. Planned as ST-05 (EPIC-02) in cycle 2026-06-17__release-v5.8; returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. **Not eligible for sprint planning before 2026-07-04** (gate: SI-05 Phase 1 effectiveness review complete).
-
-**Gate criteria:** SI-05 Phase 1 first effectiveness review (BLG-GOV-96) complete — gate clears 2026-07-04.
-
-**Problem**
-SI-05 delivers a weekly digest. After 4+ weeks of production use, the weekly cadence should be reviewed: is weekly too frequent/infrequent? Are users actioning the digest? The first effectiveness review (2026-07-04) will provide the data needed for this cadence assessment.
-
-**Scope**
-- After 2026-07-04 effectiveness review: assess weekly cadence appropriateness
-- Review si05_digest_log delivery count, any feedback from the user, and whether digest content is acted upon (indirectly measurable via red flag journal views post-delivery)
-- Produce a cadence recommendation: maintain weekly / move to bi-weekly / or introduce adaptive cadence
-
-**Acceptance Criteria**
-- Cadence review document produced after 2026-07-04 effectiveness review
-- Recommendation made with data backing
-- Product Owner sign-off
-
----
-
-### BLG-GOV-115 — SI-05 digest actionability metric definition (gate-conditional)
-**Priority:** P2 (Medium)
-**Type:** Governance / Metrics
-**Owner:** Metrics Definitions & Analytics Owner; Infrastructure & Operations Owner
-**Source:** IDEA-metrics-analytics-20260607-01 — Promoted-Backlog rebalance 2026-06-09__scheduled (DL-041)
-**Effort:** S (~0.5–1 day)
-**Provisional-Target:** v5.4 (gate: 2026-07-04 SI-05 effectiveness review complete)
-**Gate criteria:** BLG-GOV-113 (SI-05 Phase 1 effectiveness review protocol) complete — i.e., the 2026-07-04 effectiveness review has been conducted
-
-**Sprint history:** Planned as ST-14 (EPIC-04) in cycle 2026-06-10__release-v5.5; returned to backlog 2026-06-15 — gate date 2026-07-04 not yet reached. Planned as ST-13 (EPIC-03) in cycle 2026-06-16__release-v5.7; returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. Planned as ST-06 (EPIC-02) in cycle 2026-06-17__release-v5.8; returned to backlog 2026-06-17 — gate date 2026-07-04 not yet reached. **Not eligible for sprint planning before 2026-07-04** (gate: BLG-GOV-113 effectiveness review protocol complete).
-
-**Problem**
-SI-05 launched 2026-06-04. After the 2026-07-04 effectiveness review (BLG-GOV-113), the digest's actionability should be formally assessed. This requires defining what "actionable" means for an SI-05 digest: did the user open the Red Flag Journal? Did they review their strategy compliance? Did they act on a drift signal? Without formal metric definitions, the effectiveness review cannot produce measurable outcomes.
-
-**Scope**
-- Define 2–4 actionability metrics for SI-05 digest effectiveness
-- Metrics should be measurable from existing data sources (si05_digest_log, red_flag_events, trade data)
-- Produce a brief metrics definition document for Metrics Definitions & Analytics Owner review
-- Input to BLG-GOV-96 (effectiveness measurement criteria) and BLG-GOV-112 (cadence review)
-
-**Acceptance Criteria**
-- 2–4 actionability metrics formally defined with data source mapping
-- Metrics document reviewed by Metrics Definitions & Analytics Owner
-- Gate condition verified: 2026-07-04 effectiveness review (BLG-GOV-113) complete
-- Metrics feed BLG-GOV-112 cadence review and BLG-GOV-96 effectiveness criteria
-
----
-
 ### BLG-GOV-119 — Arc 5 delivered value retrospective (gate-conditional)
 **Priority:** P3 (Low)
 **Type:** Governance / Strategic Review
@@ -2545,32 +2277,6 @@ The RESUME PRECHECK mutation detection block in `release_planning_prompt.md` (~8
 - Dry-run validation pass confirming no functional regression
 - Version bump + changelog entry
 - Head of Specs Team sign-off
-
----
-
-### BLG-GOV-130 — SI-05 Phase 2 activation decision scope (gate-conditional)
-**Priority:** P2 (Medium)
-**Type:** Governance / Product Decision
-**Owner:** Product Owner; PMO Lead
-**Source:** IDEA-product-owner-20260610-02 — Promoted-Backlog rebalance 2026-06-17__scheduled (DL-047; terminal cycle 3 disposition)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v5.9 (conditional — gate 2026-07-04)
-**Gate criteria:** 2026-07-04 SI-05 effectiveness review complete (BLG-GOV-113 protocol); review outputs available
-
-**Problem**
-SI-05 Phase 1 (weekly Telegram digest) has been live since 2026-06-04. Phase 2 (SI-02 drift signal integration) requires: (1) the 2026-07-04 effectiveness review confirming Phase 1 is producing actionable outputs, (2) SI-02 frontend activation gate met (20+ closed trades), (3) BLG-GOV-121 §13 pre-clearance complete. A discrete activation decision scope item ensures the PO makes an explicit, documented Phase 2 activation decision (with timeline and activation criteria) after the review — not just a series of gate checks without a named decision point.
-
-**Scope**
-- After 2026-07-04 effectiveness review: PO reviews review outputs and makes a formal Phase 2 activation decision
-- Decision document: SI-05 Phase 2 activation criteria met/not met, activation timeline (if met), deferral rationale (if not met)
-- Filed in `docs/product/decisions/` as a Class 3 Operational Record
-- Consumed by BLG-GOV-121 (§13 pre-clearance) and any future SI-05 Phase 2 sprint planning
-
-**Acceptance Criteria**
-- 2026-07-04 effectiveness review outputs reviewed by PO
-- Formal Phase 2 activation decision document produced and filed
-- If activation criteria met: Phase 2 sprint planning timeline confirmed; SI-02 gate status re-checked
-- If not met: deferral rationale documented with revised review date
 
 ---
 
@@ -2784,6 +2490,27 @@ PO-02 (journal pattern recognition) and PO-03/04 will call the Anthropic or Gemi
 
 ---
 
+### BLG-OPS-73 — Add PATCH /trades/{trade_id}/costs to api_performance_baseline.md
+**Priority:** P3 (Low)
+**Type:** Operations / Performance Baseline
+**Owner:** Infrastructure & Operations Owner
+**Source:** Post-ship closure 2026-06-19__release-v6.0 — endpoint coverage drift check detected 1 new endpoint in openapi.yaml absent from api_performance_baseline.md
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v6.1
+
+**Problem**
+`PATCH /trades/{trade_id}/costs` was added in v6.0 (ST-03 EPIC-02, BLG-FEAT-20). The endpoint is in `docs/reference/openapi.yaml` (line 1571) but has no performance baseline entry in `docs/ops/api_performance_baseline.md`. Endpoint coverage drift — measurement gap for the new costs endpoint.
+
+**Scope**
+- Measure PATCH /trades/{id}/costs p50/p95 latency using the standard §19 methodology from a representative request
+- Add the measurement row to `docs/ops/api_performance_baseline.md`
+
+**Acceptance Criteria**
+- PATCH /trades/{id}/costs entry added to api_performance_baseline.md with p50, p95, and measurement date
+- Measurement taken from Render internal logs or live test
+
+---
+
 ### BLG-BE-37 — Database index audit for Arc 4 cross-table queries
 **Priority:** P3 (Low)
 **Type:** Backend Engineering / Performance
@@ -2956,48 +2683,6 @@ Current portfolio view (positions, heat, P&L) has no sector-level aggregation. A
 
 ---
 
-## Release Slice — v5.9
+*Release Slice v5.9 removed — cycle 2026-06-17__release-v5.9 closed 2026-06-18. Archived canonical home: claude/cycles/2026-06-17__release-v5.9/stage4_backlog_slice.md*
 
-<!-- release-plan-marker: RP:v5.9:2026-06-17__release-v5.9 -->
-
-**Cycle:** 2026-06-17__release-v5.9 | **Published:** 2026-06-17 | **Stories:** 11 firm | **Scope revision:** v1
-
-| ST-ID | Title | BLG-ID | EPIC | Classification |
-|-------|-------|--------|------|---------------|
-| ST-01 | SC-03: Consolidate spec_references policy | BLG-GOV-125 | EPIC-01 | Firm |
-| ST-02 | SC-04: Remove STEP 8.6–8.7 fatigue detection | BLG-GOV-126 | EPIC-01 | Firm |
-| ST-03 | SC-05: Remove dead-load advisory steps | BLG-GOV-127 | EPIC-01 | Firm |
-| ST-04 | SC-06: Playwright selector check conditional | BLG-GOV-128 | EPIC-01 | Firm |
-| ST-05 | SC-07: Compress Advisory Summary Block docs | BLG-GOV-129 | EPIC-01 | Firm |
-| ST-06 | BLG-QA-24: Yahoo Finance backoff integration test | BLG-QA-24 | EPIC-02 | Firm |
-| ST-07 | BLG-GOV-38: DoQ sign-off date audit (v3.7–v3.9) | BLG-GOV-38 | EPIC-02 | Firm |
-| ST-08 | BLG-QA-34: QA evidence file format audit (v3.7–v4.0) | BLG-QA-34 | EPIC-02 | Firm |
-| ST-09 | BLG-GOV-53: Agent idea participation tracking | BLG-GOV-53 | EPIC-02 | Firm |
-| ST-10 | BLG-QA-50: Formal regression test suite baseline | BLG-QA-50 | EPIC-02 | Firm |
-| ST-11 | BLG-FE-57: Pre-entry panel warning/fail count badge | BLG-FE-57 | EPIC-02 | Firm |
-
-*Canonical record: claude/cycles/2026-06-17__release-v5.9/stage4_backlog_slice.md*
-
----
-
-## Release Slice — v6.0
-
-<!-- release-plan-marker: RP:v6.0:2026-06-19__release-v6.0 -->
-
-**Cycle:** 2026-06-19__release-v6.0 | **Published:** 2026-06-19 | **Stories:** 4 firm + 7 conditional | **Scope revision:** v1
-
-| ST-ID | Title | BLG-ID | EPIC | Classification |
-|-------|-------|--------|------|---------------|
-| ST-01 | Align signal_service suggested_shares to risk-based sizing model | BLG-BE-36 | EPIC-01 | Firm |
-| ST-02 | Trader's Morning Briefing dashboard | BLG-FEAT-46 | EPIC-02 | Firm |
-| ST-03 | Net-of-costs performance tracking | BLG-FEAT-20 | EPIC-02 | Firm |
-| ST-04 | Screener data quality telemetry | BLG-FEAT-47 | EPIC-03 | Firm |
-| ST-05 | SI-05 deep link AC-04 staging confirmation | BLG-OPS-70 | EPIC-03 | Conditional (gate ~2026-06-23) |
-| ST-06 | RFJ design review pre-brief | BLG-FE-64 | EPIC-04 | Conditional (gate 2026-06-21) |
-| ST-07 | Red Flag Journal visual design review | BLG-FE-41 | EPIC-04 | Conditional (gate 2026-06-21, depends ST-06) |
-| ST-08 | SI-05 digest weekly cadence review | BLG-GOV-112 | EPIC-04 | Conditional (gate 2026-07-04) |
-| ST-09 | SI-05 digest actionability metric definition | BLG-GOV-115 | EPIC-04 | Conditional (gate 2026-07-04) |
-| ST-10 | SI-05 Phase 2 activation decision scope | BLG-GOV-130 | EPIC-04 | Conditional (gate 2026-07-04) |
-| ST-11 | SI-05 service production p99 latency baseline review | BLG-OPS-59 | EPIC-04 | Conditional (gate 2026-07-04) |
-
-*Canonical record: claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md*
+*Release Slice v6.0 removed — cycle 2026-06-19__release-v6.0 closed 2026-06-22. Archived canonical home: claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md*

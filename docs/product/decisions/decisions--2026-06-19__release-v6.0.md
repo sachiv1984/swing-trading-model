@@ -1,9 +1,14 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v6.0
 Cycle: 2026-06-19__release-v6.0
-Last Updated: 2026-06-19
+Last Updated: 2026-06-22
+
+Superseded by: v6.0 ship — 2026-06-22
+Changelog: docs/product/changelog.md#v6.0
+Verification report: claude/cycles/2026-06-19__release-v6.0/verification_report.md
+Cycle: 2026-06-19__release-v6.0
 
 ## Planning Decisions — v6.0 Signal Correctness, User Intelligence & SI-05 Effectiveness
 

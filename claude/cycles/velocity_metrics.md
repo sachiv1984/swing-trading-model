@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-06-18 (post-ship closure 2026-06-17__release-v5.9)
+**Last Updated:** 2026-06-22 (post-ship closure 2026-06-19__release-v6.0)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -67,8 +67,9 @@
 | v5.7  | 14      | 10        | 0.71     | 10/10 firm Sprint 1 stories done (ST-01–08 EPIC-01: staging verifications + Arc 5 Playwright gaps; ST-10/11 EPIC-02: lazy-import docs + dual sign-off confirmation); 4 conditional stories returned as planned (ST-09 gate 2026-06-21; ST-12/13/14 EPIC-03 gate 2026-07-04); zero spec deviations; 5 delegations all resolved; 2 in-sprint bug fixes (ST-05 MarkdownV2 + HashRouter) |
 | v5.8  | 7       | 2         | 0.29     | 2/4 firm Sprint 1 stories done (ST-03 FRONTEND_URL env var; ST-04 governance complexity assessment); ST-01/02 returned mid-sprint — gate 2026-06-21 (5th deferral); EPIC-02 Sprint 2 gate-deferred (gate 2026-07-04; 3rd consecutive deferral); zero spec deviations; 4 delegations all resolved |
 | v5.9  | 11      | 11        | 1.00     | All 11 stories done; zero deviations; EPIC-01 5 governance simplification stories (autonomous class); EPIC-02 6 QA/audit/UX stories; ST-11 frontend badge with Playwright SC-PEP-BADGE-01a/01b/02 coverage; 0 delegations; 0 deviations; 0 returns |
+| v6.0  | 11      | 11        | 1.00     | All 11 stories done; 2 P3 process deviations for ST-11 (accepted under PO gate override 2026-06-20); 5 delegated_decision stories all resolved within sprint; P0 correctness fast-track (ST-01 BLG-BE-36) + Product Value Alert resolved (ST-02/03); all EPIC-04 conditional clusters (A: 2026-06-21, B: 2026-07-04) activated and completed; Verified_with_deviations |
 
-**Rolling 6-cycle average (v5.4–v5.9):** 0.74
+**Rolling 6-cycle average (v5.5–v6.0):** 0.79
 
 ---
 
