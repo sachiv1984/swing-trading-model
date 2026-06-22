@@ -346,7 +346,7 @@
           "assigned_to": "engine",
           "github_issue": 814,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "9710cf40",
           "delegation_record_id": "DEL-20260620-05",
           "blocked_since_utc": null,
           "unblock_criteria": null,
