@@ -5,7 +5,7 @@
   "invoked_utc": "2026-06-19T09:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-20T12:30:00Z",
+  "last_updated_utc": "2026-06-22T10:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -158,7 +158,7 @@
         "ST-05": {
           "title": "SI-05 deep link AC-04 staging confirmation",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 808,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-03",
@@ -166,15 +166,25 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-06-22T10:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/digest_endpoints.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Conditional — gate ~2026-06-23. All ACs staging-only. Do not begin until digest delivery confirmed."
+          "last_completed_substep": "doq_sign_off",
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "staging_confirmation",
+            "status": "cleared",
+            "findings_applied": [
+              "AC-01: SI-05 Telegram digest received 2026-06-17 after FRONTEND_URL applied to production backend",
+              "AC-02: Risk Dashboard and Red Flag Journal deep links both present and resolved to correct frontend pages",
+              "AC-03: I&O Owner (user) confirmation recorded in qa_evidence_EPIC-03.md 2026-06-22"
+            ],
+            "cleared_utc": "2026-06-22T10:00:00Z"
+          },
+          "notes": "Gate confirmed 2026-06-22. Digest received 2026-06-17 (post-FRONTEND_URL). Both deep links verified by I&O Owner."
         }
       }
     },
@@ -308,7 +318,7 @@
 
   "blocked_items": [],
   "delegated_items": ["ST-06", "ST-07", "ST-08", "ST-10"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05"],
   "open_escalations": [
     {
       "id": "ESC-2026-06-19-01",
@@ -354,7 +364,7 @@
     "all_merged": false
   },
 
-  "last_updated_utc": "2026-06-20T12:45:00Z",
+  "last_updated_utc": "2026-06-22T10:00:00Z",
 
   "sealed": false,
   "sealed_utc": null

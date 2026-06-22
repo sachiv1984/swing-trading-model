@@ -30,7 +30,10 @@ Last Updated: 2026-06-19
 **Spec changes:** screener_api_contract.md v1.1→v1.2 with new field documentation; openapi.yaml /screener/results schema updated.
 **Note:** EPIC-03 branch must rebase onto main after EPIC-02 merges before PR is opened (per ST-04 notes and CLAUDE.md §8 merge conflict resolution guidance). No PR opened until post-rebase.
 
-**ST-05 (Conditional):** Gate ~2026-06-23 (SI-05 Telegram digest delivery after FRONTEND_URL set). All ACs are staging-only. Not started — awaiting gate confirmation.
+**ST-05 (Conditional) — CONFIRMED 2026-06-22:**
+- AC-01: SI-05 Telegram digest received 2026-06-17 (after FRONTEND_URL applied to production backend) ✓
+- AC-02: Two deep links present in digest — Risk Dashboard and Red Flag Journal — both resolved to correct frontend pages ✓
+- AC-03: Infrastructure & Operations Owner confirmation recorded below ✓
 
 **Deviations:** None
 
@@ -41,7 +44,7 @@ Last Updated: 2026-06-19
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
 |---------|----------------|----------------|---------------------|--------|------------|
 | ST-04 | stage4_backlog_slice.md#ST-04, screener_api_contract.md v1.2 | screener_batch_service.py: failed_ticker tracking in run_screener(), tickers_requested + failed_tickers columns in screener_runs, get_screener_results() returns 5 new fields; Screener.js: ScreenerQualityPanel replaces DegradedRunBanner; screener_api_contract.md v1.2; openapi.yaml updated; 5 Playwright scenarios | All 7 ACs verified; Playwright AC-07 satisfied | Pass | None |
-| ST-05 | stage4_backlog_slice.md#ST-05 | Conditional — gate ~2026-06-23. Not started. Awaiting SI-05 digest delivery confirmation | N/A (gate pending) | Not applicable | None |
+| ST-05 | stage4_backlog_slice.md#ST-05 | SI-05 Telegram digest received 2026-06-17 post-FRONTEND_URL; two deep links (Risk Dashboard, Red Flag Journal) both resolved correctly | AC-01: digest received post-FRONTEND_URL; AC-02: deep links present and correct; AC-03: I&O Owner sign-off | **Pass** | None |
 
 **QA test coverage:**
 - Scenarios run: tests/e2e/screener-quality.spec.js (5 tests — FULL, DEGRADED (badge+ratio), DEGRADED (expandable list), FAILED, stale advisory)
@@ -64,4 +67,11 @@ Classification: Autonomous — ST-04 is `classification: autonomous`. DoQ sign-o
 - [x] Playwright coverage confirmed for all frontend-visible observable ACs (AC-07)
 - Signed off by: Director of Quality (agent-mediated, BLG-GOV-19)
 - Date: 2026-06-19
-- Comments: ST-04 Screener quality telemetry — 5 Playwright scenarios covering all 3 run_quality states (FULL/DEGRADED/FAILED), expandable failed ticker list, and stale advisory. Frontend testing gate satisfied. OpenAPI drift gate requirements met (same-commit openapi.yaml update). ST-05 deferred pending gate 2026-06-23 — no PR impact until gate confirmed. EPIC-03 branch requires rebase onto main after EPIC-02 merges before PR can be opened.
+- Comments: ST-04 Screener quality telemetry — 5 Playwright scenarios covering all 3 run_quality states (FULL/DEGRADED/FAILED), expandable failed ticker list, and stale advisory. Frontend testing gate satisfied. OpenAPI drift gate requirements met (same-commit openapi.yaml update).
+
+**ST-05 staging addendum (2026-06-22):**
+- Signed off by: Infrastructure & Operations Owner (user confirmation 2026-06-22)
+- AC-01: SI-05 Telegram digest received 2026-06-17, after FRONTEND_URL env var applied to production backend — confirmed
+- AC-02: Risk Dashboard deep link and Red Flag Journal deep link both present in digest and resolved to correct frontend pages — confirmed
+- AC-03: I&O Owner sign-off recorded — confirmed
+- All EPIC-03 stories now Pass. EPIC-03 QA evidence complete.
