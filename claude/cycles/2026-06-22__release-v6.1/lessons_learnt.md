@@ -47,6 +47,25 @@ Firm scope (~17 hrs) fits a single sprint but the phasing recommendation flags t
 
 ---
 
+## Sprint Planning Scope Intent (Pre-Sprint Note)
+
+### SP-01: PO-directed scope additions for sprint planning
+
+**Date noted:** 2026-06-22
+
+Product Owner has directed that the following two items be included in the v6.1 sprint at sprint planning time, via explicit PO scope addition (not amendment cycle — routine scope change, not emergency):
+
+| BLG ID | Title | Effort | Type | Notes |
+|--------|-------|--------|------|-------|
+| BLG-GOV-134 | CI: inline OpenAPI drift detection for api_performance_baseline.md | S (~0.5 day) | G | Advisory CI step; non-blocking |
+| BLG-QA-62 | Playwright spec auto-registration via glob pattern | S (<0.5 day) | D | Root-cause fix for BLG-QA-60 class of bug |
+
+These were deferred at release planning (scope-lock rule — not in rebalance Now section). PO confirmed intent to include them at sprint planning on 2026-06-22. Sprint planning engine must treat these as PO-directed additions at preflight. Story IDs ST-10 (BLG-GOV-134) and ST-11 (BLG-QA-62) are reserved for sprint planning to assign.
+
+**Capacity note:** Both items are S/XS effort (~1 day combined). Firm scope is currently ~17 hrs; addition brings firm total to ~18 hrs — still within single-sprint range. Skill-Silo ceiling impact: +1G +1D against existing 3G+2D = 4G+3D out of 9 firm stories = 77.8% G+D before U stories — sprint planning must phase accordingly.
+
+---
+
 ## Deferred to Post-Ship
 
 The following observations require delivery data before they can be completed:
