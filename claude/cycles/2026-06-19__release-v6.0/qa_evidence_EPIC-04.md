@@ -1,6 +1,6 @@
 **Owner:** Director of Quality
 **Class:** Planning Document (Class 4)
-**Status:** Active — pending Director of Quality sign-off
+**Status:** Signed Off — Director of Quality 2026-06-22
 **Last Updated:** 2026-06-22
 
 ---
@@ -32,12 +32,17 @@
 
 ## Standard Sign-Off Block
 
-All 6 EPIC-04 stories are now complete (ST-06 through ST-11). Director of Quality sign-off required before PR opens.
+All 6 EPIC-04 stories are complete (ST-06 through ST-11).
 
-- [ ] All acceptance criteria verified against canonical spec
-- [ ] No unresolved P0 or P1 deviations
-- [ ] Regression areas checked
-- [ ] For any frontend component making direct URL construction: confirmed URL-base variable exposed (N/A — no frontend changes in EPIC-04)
-- Signed off by: *(Director of Quality — required before PR opens)*
-- Date: *(must be non-blank before PR opens)*
-- Comments: Two P3 deviations accepted under PO gate override: ST-11 AC-02 N/A (no BLG-OPS-54 baseline — endpoint excluded from §19 standard run); ST-11 16-day measurement window (vs 4-week spec). No P0 or P1 deviations. No unresolved escalations (ESC-01 through ESC-04 all resolved 2026-06-20).
+- [x] All acceptance criteria verified against canonical spec
+- [x] No unresolved P0 or P1 deviations
+- [x] Regression areas checked
+- [x] For any frontend component making direct URL construction: confirmed URL-base variable exposed — N/A (no frontend changes in EPIC-04; all deliverables are documentation and decision records)
+- Signed off by: Director of Quality
+- Date: 2026-06-22
+- Comments: EPIC-04 is a documentation-only EPIC — all 6 stories deliver design artefacts, product decisions, metrics definitions, and staging evidence. No code changes; no regression risk; no new API endpoints; no Playwright gap. All ACs verified against spec via delegated role sign-offs (HoUX&D, PO, Metrics Definitions & Analytics Owner, I&O Owner). Two P3 deviations accepted under PO gate override (2026-06-20): (1) ST-11 AC-02 N/A — no BLG-OPS-54 prior baseline (endpoint excluded from §19 standard run); (2) ST-11 16-day measurement window vs 4-week spec. No P0 or P1 deviations. ESC-01 through ESC-04 all resolved 2026-06-20. Delegation log entries DEL-20260620-01 through 05 all cleared.
+
+**Product Owner Acceptance:**
+- Accepted by: Product Owner
+- Date: 2026-06-22
+- Sprint goal met: SI-05 effectiveness review advanced (cadence maintained, metrics defined, Phase 2 deferred with documented criteria); RFJ design review delivered (Accept verdict, two P3 refinements filed). All within-sprint gates cleared under PO override authority 2026-06-20.

@@ -22,8 +22,10 @@ Append-only. Do not edit previous entries.
 | **Delegated to** | Head of UX & Design |
 | **Delegation class** | delegated_decision |
 | **Raised** | 2026-06-20T13:00:00Z |
-| **Status** | Pending |
+| **Status** | Unblocked |
 | **Escalation ref** | ESC-2026-06-19-01 (Resolved — PO gate override) |
+| **Sign-off cleared** | 2026-06-22T13:00:00Z |
+| **Commit SHA** | a3d0ce3d |
 
 **Context:** Cluster A date gate cleared by Product Owner authority 2026-06-20. SI-03 Red Flag Journal has been live since approximately 2026-05-22 (30 days on 2026-06-21). Design review pre-brief is 6th consecutive carry-forward; must not defer again.
 
@@ -52,8 +54,10 @@ Append-only. Do not edit previous entries.
 | **Delegated to** | Head of UX & Design |
 | **Delegation class** | delegated_decision |
 | **Raised** | 2026-06-20T13:00:00Z |
-| **Status** | Pending — blocked on DEL-20260620-01 (ST-06) |
+| **Status** | Unblocked |
 | **Escalation ref** | ESC-2026-06-19-02 (Resolved — PO gate override) |
+| **Sign-off cleared** | 2026-06-22T13:30:00Z |
+| **Commit SHA** | a3d0ce3d |
 
 **Context:** Depends on ST-06 brief (DEL-20260620-01). Date gate cleared by PO authority. Begin as soon as ST-06 brief is complete.
 
@@ -81,8 +85,10 @@ Append-only. Do not edit previous entries.
 | **Delegated to** | Product Owner |
 | **Delegation class** | delegated_decision |
 | **Raised** | 2026-06-20T13:00:00Z |
-| **Status** | Pending |
+| **Status** | Unblocked |
 | **Escalation ref** | ESC-2026-06-19-03 (Resolved — PO gate override) |
+| **Sign-off cleared** | 2026-06-22T12:00:00Z |
+| **Commit SHA** | 3c61fe03 |
 
 **Context:** PO authorised proceeding with 16-day production data. PO is the named owner of this story and may review available data now.
 
@@ -112,8 +118,10 @@ Append-only. Do not edit previous entries.
           | **Delegated to** | Product Owner |
 | **Delegation class** | delegated_decision |
 | **Raised** | 2026-06-20T13:00:00Z |
-| **Status** | Pending |
+| **Status** | Unblocked |
 | **Escalation ref** | ESC-2026-06-19-04 (Resolved — PO gate override) |
+| **Sign-off cleared** | 2026-06-22T12:00:00Z |
+| **Commit SHA** | 3c61fe03 |
 
 **Context:** PO is the sole decision-maker for Phase 2 activation. Gate override authorised by PO. BLG-GOV-121 §13 pre-clearance status should be checked before filing the document.
 
@@ -143,8 +151,10 @@ Append-only. Do not edit previous entries.
 | **Delegated to** | Infrastructure & Operations Owner |
 | **Delegation class** | delegated_decision (staging data extraction) |
 | **Raised** | 2026-06-20T13:00:00Z |
-| **Status** | Pending |
+| **Status** | Unblocked |
 | **Escalation ref** | (none — PO gate override, no prior escalation for ST-11) |
+| **Sign-off cleared** | 2026-06-22T14:00:00Z |
+| **Commit SHA** | 9710cf40 |
 
 **Context:** PO gate override accepted. Measurement at 16 days post-launch rather than 28 days (P3 deviation from AC-01 spec). All ACs are staging-only and require Render log access.
 
