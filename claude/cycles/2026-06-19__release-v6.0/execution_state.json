@@ -5,7 +5,6 @@
   "invoked_utc": "2026-06-19T09:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-20T14:30:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -117,10 +116,10 @@
     },
 
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-06-19__release-v6.0/EPIC-03",
       "pr_number": 821,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-19__release-v6.0/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -158,23 +157,33 @@
         "ST-05": {
           "title": "SI-05 deep link AC-04 staging confirmation",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 808,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "18b5b489",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-06-22T10:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/digest_endpoints.md"
           ],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Conditional — gate ~2026-06-23. All ACs staging-only. Do not begin until digest delivery confirmed."
+          "last_completed_substep": "doq_sign_off",
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "staging_confirmation",
+            "status": "cleared",
+            "findings_applied": [
+              "AC-01: SI-05 Telegram digest received 2026-06-17 after FRONTEND_URL applied to production backend",
+              "AC-02: Risk Dashboard and Red Flag Journal deep links both present and resolved to correct frontend pages",
+              "AC-03: I&O Owner (user) confirmation recorded in qa_evidence_EPIC-03.md 2026-06-22"
+            ],
+            "cleared_utc": "2026-06-22T10:00:00Z"
+          },
+          "notes": "Gate confirmed 2026-06-22. Digest received 2026-06-17 (post-FRONTEND_URL). Both deep links verified by I&O Owner."
         }
       }
     },
@@ -182,8 +191,8 @@
     "EPIC-04": {
       "status": "qa_complete",
       "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 822,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-19__release-v6.0/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
@@ -376,7 +385,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11"],
   "open_escalations": [],
 
   "merge_gate": {

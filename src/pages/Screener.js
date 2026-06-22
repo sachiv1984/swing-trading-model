@@ -301,18 +301,82 @@ function SortHeader({ label, field, current, dir, onSort, className }) {
 }
 
 // ---------------------------------------------------------------------------
-// Degraded run banner
+// Screener quality panel (ST-04, EPIC-03, v6.0 — replaces DegradedRunBanner)
 // ---------------------------------------------------------------------------
 
-function DegradedRunBanner({ failureRate }) {
-  const pct = Math.round((failureRate || 0) * 100);
+function ScreenerQualityPanel({ runQuality, tickersRequested, tickersLoaded, tickersFailed, lastFullRunUtc }) {
+  const [failedExpanded, setFailedExpanded] = useState(false);
+
+  const staleHours = lastFullRunUtc
+    ? Math.round((Date.now() - new Date(lastFullRunUtc).getTime()) / 3600000)
+    : null;
+  const isStale = staleHours !== null && staleHours > 24;
+
+  if (runQuality === "FULL") {
+    return (
+      <div data-testid="screener-quality-panel" data-quality="FULL" className="mb-4 space-y-2">
+        <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-sm text-emerald-400">
+          <span className="font-semibold">Full run</span>
+          <span className="text-emerald-300">{tickersLoaded} / {tickersRequested} tickers loaded</span>
+        </div>
+        {isStale && (
+          <div data-testid="stale-advisory" className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-400">
+            Last full run: {staleHours} hours ago
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (runQuality === "DEGRADED") {
+    const failedCount = Array.isArray(tickersFailed) ? tickersFailed.length : 0;
+    return (
+      <div data-testid="screener-quality-panel" data-quality="DEGRADED" className="mb-4 space-y-2">
+        <div className="flex items-start gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-sm text-amber-400">
+          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-semibold">Degraded run</span>
+              <span className="text-amber-300">{tickersLoaded} / {tickersRequested} tickers loaded</span>
+            </div>
+            <p className="text-amber-300/80">Results may be incomplete — {failedCount} ticker{failedCount !== 1 ? "s" : ""} failed to load</p>
+            {failedCount > 0 && (
+              <button
+                className="mt-1 text-xs underline text-amber-400/70 hover:text-amber-400"
+                onClick={() => setFailedExpanded(v => !v)}
+                aria-expanded={failedExpanded}
+              >
+                {failedExpanded ? "Hide" : "Show"} failed tickers
+              </button>
+            )}
+            {failedExpanded && failedCount > 0 && (
+              <div data-testid="failed-ticker-list" className="mt-2 text-xs text-amber-300/60 flex flex-wrap gap-1">
+                {tickersFailed.map(t => (
+                  <span key={t} className="px-1.5 py-0.5 bg-amber-500/10 rounded">{t}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+        {isStale && (
+          <div data-testid="stale-advisory" className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-400">
+            Last full run: {staleHours} hours ago
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // FAILED state
   return (
-    <div
-      data-testid="degraded-run-banner"
-      className="mb-4 flex items-center gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-sm text-amber-400"
-    >
-      <AlertTriangle className="w-4 h-4 shrink-0" />
-      <span>Results may be incomplete — {pct}% of tickers failed data fetch</span>
+    <div data-testid="screener-quality-panel" data-quality="FAILED" className="mb-4">
+      <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/30 text-sm text-red-400">
+        <AlertTriangle className="w-4 h-4 shrink-0" />
+        <span>Screener run failed — </span>
+        <button className="underline hover:text-red-300" onClick={() => window.dispatchEvent(new Event("app:refresh"))}>
+          retry
+        </button>
+      </div>
     </div>
   );
 }
@@ -332,6 +396,11 @@ export default function Screener() {
   const [scanError, setScanError] = useState(false);
   const [degradedRun, setDegradedRun] = useState(false);
   const [failureRate, setFailureRate] = useState(0);
+  const [runQuality, setRunQuality] = useState(null);
+  const [tickersRequested, setTickersRequested] = useState(0);
+  const [tickersLoaded, setTickersLoaded] = useState(0);
+  const [tickersFailed, setTickersFailed] = useState([]);
+  const [lastFullRunUtc, setLastFullRunUtc] = useState(null);
 
   const [sortField, setSortField] = useState("signal_score");
   const [sortDir, setSortDir] = useState("desc");
@@ -372,6 +441,11 @@ export default function Screener() {
       setRunId(payload.run_id || null);
       setDegradedRun(!!payload.degraded_run);
       setFailureRate(payload.failure_rate || 0);
+      setRunQuality(payload.run_quality || null);
+      setTickersRequested(payload.tickers_requested || 0);
+      setTickersLoaded(payload.tickers_loaded || 0);
+      setTickersFailed(payload.tickers_failed || []);
+      setLastFullRunUtc(payload.last_full_run_utc || null);
     } catch {
       setError(true);
     } finally {
@@ -420,6 +494,8 @@ export default function Screener() {
     if (scanning) return;
     setScanError(false);
     setDegradedRun(false);
+    setRunQuality(null);
+    setTickersFailed([]);
     setScanning(true);
     scanStartRef.current = Date.now();
     try {
@@ -474,6 +550,11 @@ export default function Screener() {
           setRunId(payload.run_id || null);
           setDegradedRun(!!payload.degraded_run);
           setFailureRate(payload.failure_rate || 0);
+          setRunQuality(payload.run_quality || null);
+          setTickersRequested(payload.tickers_requested || 0);
+          setTickersLoaded(payload.tickers_loaded || 0);
+          setTickersFailed(payload.tickers_failed || []);
+          setLastFullRunUtc(payload.last_full_run_utc || null);
           clearInterval(pollRef.current);
           setScanning(false);
         }
@@ -601,7 +682,15 @@ export default function Screener() {
         }
       />
 
-      {degradedRun && <DegradedRunBanner failureRate={failureRate} />}
+      {runQuality && (
+        <ScreenerQualityPanel
+          runQuality={runQuality}
+          tickersRequested={tickersRequested}
+          tickersLoaded={tickersLoaded}
+          tickersFailed={tickersFailed}
+          lastFullRunUtc={lastFullRunUtc}
+        />
+      )}
 
       {scanError && (
         <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-sm text-red-400">

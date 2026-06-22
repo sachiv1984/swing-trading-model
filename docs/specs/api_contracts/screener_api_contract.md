@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2 Canonical Specification
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-05-22
+**Version:** 1.2
+**Last Updated:** 2026-06-19
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Schema reference:** docs/specs/screener_results_schema.md
 
@@ -42,7 +42,12 @@ Returns screener result records from the latest completed screener run (or a spe
     "limit": 50,
     "offset": 0,
     "degraded_run": false,
-    "failure_rate": 0.04
+    "failure_rate": 0.04,
+    "tickers_requested": 500,
+    "tickers_loaded": 480,
+    "tickers_failed": ["BBBY", "SVFAU"],
+    "run_quality": "FULL",
+    "last_full_run_utc": "2026-06-19T08:00:00Z"
   }
 }
 ```
@@ -51,6 +56,11 @@ Returns screener result records from the latest completed screener run (or a spe
 |---------------|------|-------------|
 | `degraded_run` | boolean | `true` when >20% of tickers returned no OHLCV data during the run |
 | `failure_rate` | float | Fraction of tickers with no OHLCV data (0.0–1.0) |
+| `tickers_requested` | int | Number of tickers the screener attempted to evaluate in this run |
+| `tickers_loaded` | int | Number of tickers that successfully returned OHLCV data |
+| `tickers_failed` | list\<string\> | Tickers that failed to load OHLCV data. Empty list when `run_quality = FULL` |
+| `run_quality` | string | `FULL` (≤20% failure), `DEGRADED` (>20% failure), or `FAILED` (no tickers loaded) |
+| `last_full_run_utc` | string \| null | ISO-8601 timestamp of most recent FULL run. `null` if no FULL run recorded yet |
 
 **ScreenerResultRecord fields:** See `docs/specs/screener_results_schema.md §1.1`.
 
