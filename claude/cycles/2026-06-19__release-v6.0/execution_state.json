@@ -191,40 +191,63 @@
         "ST-06": {
           "title": "RFJ design review pre-brief",
           "classification": "delegated_decision",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "Head of UX & Design",
           "github_issue": 809,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260620-01",
           "blocked_since_utc": null,
-          "unblock_criteria": "Head of UX & Design produces design review brief per AC-02/03; AC-01 date (2026-06-21) satisfied",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-22T13:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-06"],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Cluster A gate override — PO authority 2026-06-20. AC-01 date formally satisfied 2026-06-21. Head of UX & Design delegation active: DEL-20260620-01."
+          "last_completed_substep": "doq_sign_off",
+          "sign_off_record": {
+            "required_by": "Head of UX & Design",
+            "method": "delegated_decision",
+            "status": "cleared",
+            "findings_applied": [
+              "Brief scopes all 4 areas: filters UX, severity visual hierarchy, event type colour coding, timeline vs list",
+              "Evaluation criteria framework defined (Accept / Refine / Redesign)",
+              "Expected ST-07 deliverable format specified",
+              "HoUX&D sign-off recorded in docs/design/2026-06-19__release-v6.0/rfj-design-review/brief.md"
+            ],
+            "cleared_utc": "2026-06-22T13:00:00Z"
+          },
+          "notes": "Cluster A gate override — PO authority 2026-06-20. AC-01 satisfied 2026-06-21 (SI-03 live ≥30 days). Deliverable: docs/design/2026-06-19__release-v6.0/rfj-design-review/brief.md."
         },
         "ST-07": {
           "title": "Red Flag Journal visual design review",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Head of UX & Design",
           "github_issue": 810,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260620-02",
-          "blocked_since_utc": "2026-06-20T13:00:00Z",
-          "unblock_criteria": "ST-06 brief complete AND AC-01 date 2026-06-21 satisfied",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-22T13:30:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-07"],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Cluster A gate override — PO authority 2026-06-20. Blocked on ST-06 completion. Head of UX & Design delegation active: DEL-20260620-02."
+          "last_completed_substep": "doq_sign_off",
+          "sign_off_record": {
+            "required_by": "Head of UX & Design",
+            "method": "delegated_decision",
+            "status": "cleared",
+            "findings_applied": [
+              "Filters UX: Accept current filters; Refine — BLG-FE-66 date-range backlog item filed",
+              "Severity visual hierarchy: Accept — no severity field in data model; equal weight rendering is correct",
+              "Event type colour coding: Refine — BLG-FE-67 palette refinement backlog item filed (sky-400 for checklist_skipped, red-500 for drawdown_prompt_dismissed)",
+              "Timeline vs list: Accept — list layout appropriate for sole-trader low-frequency use case",
+              "No redesign recommended — AC-03 N/A"
+            ],
+            "cleared_utc": "2026-06-22T13:30:00Z"
+          },
+          "notes": "Cluster A gate override — PO authority 2026-06-20. Deliverable: docs/design/2026-06-19__release-v6.0/rfj-design-review/review.md. No redesign — 2 P3 backlog items filed (BLG-FE-66, BLG-FE-67)."
         },
         "ST-08": {
           "title": "SI-05 digest weekly cadence review",
@@ -340,17 +363,17 @@
   },
 
   "blocked_items": [],
-  "delegated_items": ["ST-06", "ST-07", "ST-11"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-08", "ST-09", "ST-10"],
+  "delegated_items": ["ST-11"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-02"],
-    "epics_pending": ["EPIC-03", "EPIC-04"],
+    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03"],
+    "epics_pending": ["EPIC-04"],
     "all_merged": false
   },
 
-  "last_updated_utc": "2026-06-20T14:30:00Z",
+  "last_updated_utc": "2026-06-22T13:30:00Z",
 
   "sealed": false,
   "sealed_utc": null

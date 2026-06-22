@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-19 (session — 2 new items added: BLG-GOV-132, BLG-GOV-133; total 110 active items)
+**Last Updated:** 2026-06-22 (session — 2 new items added: BLG-FE-66, BLG-FE-67; total 112 active items)
 **Last rebalance:** 2026-06-19 (cycle 2026-06-19__scheduled — DL-048–051; 7 promoted-backlog, 1 rejected, 8 parked C1; v6.0 Now section added to roadmap; Product Value Alert + Skill-Silo Alert recorded)
 
 > ⚠️ Standing Notice
@@ -856,6 +856,56 @@ SI-05 Phase 1 introduces a new workflow pattern: the user receives a Telegram no
 - Entry points and navigation steps documented
 - Friction findings enumerated; any significant friction filed as a separate backlog item
 - Head of UX & Design sign-off
+
+---
+
+### BLG-FE-66 — RFJ date-range filter (date-to field)
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Refinement
+**Owner:** Head of UX & Design; Base44 Frontend Prompt Owner
+**Source:** ST-07 RFJ visual design review — filed 2026-06-22 (cycle 2026-06-19__release-v6.0)
+**Effort:** XS
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Event volume makes date-from-only filtering insufficient for review workflows.
+
+**Problem**
+The Red Flag Journal filter panel supports a "From date" input only. A growing journal has no upper date bound — a user reviewing "last month's" events cannot scope the view to a period. At current low event volume this is acceptable, but will become limiting as the journal grows.
+
+**Scope**
+- Add a "To date" input to the RFJ filter panel
+- Update `GET /portfolio/red-flag-journal` to accept an optional `until` parameter
+- Convert current date-from-only filter to a date range (from + to)
+
+**Acceptance Criteria**
+- "To date" filter input present in filter panel
+- Results are scoped to [date-from, date-to] when both are set
+- "Clear filters" clears both date inputs
+- Existing "From date" behaviour unchanged when "To date" is not set
+
+---
+
+### BLG-FE-67 — RFJ event type colour palette refinement
+**Priority:** P3 (Low)
+**Type:** Frontend / Cosmetic / Accessibility
+**Owner:** Head of UX & Design; Base44 Frontend Prompt Owner
+**Source:** ST-07 RFJ visual design review — filed 2026-06-22 (cycle 2026-06-19__release-v6.0)
+**Effort:** XS
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The Red Flag Journal uses four warm-spectrum colours (amber-400, orange-400, red-400, rose-400) that are semantically arbitrary and difficult to distinguish under the `light-daltonized` theme. The colour for `checklist_skipped` (orange-400) blends with risk-event colours, and `drawdown_prompt_dismissed` (rose-400) is perceptually similar to `stop_prompt_dismissed` (red-400).
+
+**Scope**
+- Update `EVENT_TYPE_CONFIG` in `src/pages/RedFlagJournal.js`:
+  - `checklist_skipped`: `orange-400` → `sky-400` (administrative miss, not a risk event)
+  - `drawdown_prompt_dismissed`: `rose-400` → `red-500` (deeper risk signal, distinguishable from red-400)
+- No other changes required (icons, layout, data model unchanged)
+
+**Acceptance Criteria**
+- `checklist_skipped` renders with `sky-400` colour indicator
+- `drawdown_prompt_dismissed` renders with `red-500` colour indicator
+- Other two event types (amber-400, red-400) unchanged
+- Colours visible and semantically distinct under `light-daltonized` theme
 
 ---
 
