@@ -2108,16 +2108,19 @@ BLG-OPS-31 defined Render log retention. claude_audit_log (shipped v4.0) and Sup
 **Source:** Post-ship closure 2026-06-21__release-v5.1 — endpoint drift check (STEP 6)
 **Effort:** XS (~1–2 hours)
 **Provisional-Target:** Unscheduled (pending live environment access)
+**Scope revision (I&O Owner, 2026-06-22):** Standard external HTTP measurement is not viable for this endpoint — it blocks on the Telegram Bot API and timed out at 45s in the §19 baseline run. Revised approach: (1) Render internal log duration (server-side p50/p95), (2) weekly delivery success rate from `si05_digest_log`, (3) Telegram API timeout flag if request duration > 30s. See ST-11 staging evidence (docs/testing/staging_latency_review_ST-11.md).
 
 **Problem**
-`POST /digest/si05/send` was added to `docs/reference/openapi.yaml` in v5.1 (ST-01, EPIC-01). This endpoint is not present in `docs/ops/api_performance_baseline.md`. Performance baseline re-runs require a live environment and human coordination — cannot be filled autonomously.
+`POST /digest/si05/send` was added to `docs/reference/openapi.yaml` in v5.1 (ST-01, EPIC-01). This endpoint is not present in `docs/ops/api_performance_baseline.md`. Standard external HTTP measurement is not viable (Telegram API timeout — excluded from §19 standard run). A Render internal log-based measurement approach is required.
 
 **Scope**
-- Add `POST /digest/si05/send` to `docs/ops/api_performance_baseline.md` performance measurement table
-- Capture baseline latency, payload size, and response time in live/staging environment
+- Add `POST /digest/si05/send` to `docs/ops/api_performance_baseline.md` using Render internal log duration (server-side), not external HTTP timing
+- Extract p50/p95 from Render production logs for the dispatch endpoint
+- Record weekly delivery success rate from `si05_digest_log` as the primary health metric
 
 **Acceptance Criteria**
-- POST /digest/si05/send present in api_performance_baseline.md with baseline measurements recorded
+- POST /digest/si05/send present in api_performance_baseline.md with Render internal log-based measurements recorded
+- Measurement methodology note added explaining why standard external HTTP timing does not apply
 
 ---
 

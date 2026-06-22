@@ -342,29 +342,41 @@
         "ST-11": {
           "title": "SI-05 service production p99 latency baseline review",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 814,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260620-05",
           "blocked_since_utc": null,
-          "unblock_criteria": "Infrastructure & Operations Owner extracts Render log p99 data and completes AC-01 through AC-04",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-22T14:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-11"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Cluster B gate override — PO authority 2026-06-20. P3 deviation: measurement at 16 days post-launch vs AC-01 post-4-week spec. Engine staging framework created: docs/testing/staging_latency_review_ST-11.md. All ACs staging-only — I&O Owner to extract Render logs and complete sign-off per DEL-20260620-05."
+          "deviations_filed": true,
+          "last_completed_substep": "doq_sign_off",
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "delegated_decision",
+            "status": "cleared",
+            "findings_applied": [
+              "No external p99 baseline exists for POST /digest/si05/send — excluded from §19 standard run (Telegram API timeout)",
+              "BLG-OPS-54 contains no measurement data — scope revised to Render internal log approach",
+              "AC-02 comparison: N/A (no prior baseline); PASS WITH DEVIATION accepted",
+              "Positive evidence: 7 successful weekly dispatches over measurement window; ST-05 functional staging sign-off confirmed",
+              "BLG-OPS-54 scope revised with correct measurement method (Render internal log duration + success rate)"
+            ],
+            "cleared_utc": "2026-06-22T14:00:00Z"
+          },
+          "notes": "Cluster B gate override — PO authority 2026-06-20. P3 deviations: (1) 16-day vs 4-week measurement window; (2) AC-02 N/A — no BLG-OPS-54 baseline exists (endpoint excluded from §19 standard run, Telegram API timeout). PASS WITH DEVIATION: functional evidence satisfactory (7 dispatches, ST-05 staging confirmed). BLG-OPS-54 scope revised."
         }
       }
     }
   },
 
   "blocked_items": [],
-  "delegated_items": ["ST-11"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10"],
+  "delegated_items": [],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11"],
   "open_escalations": [],
 
   "merge_gate": {
