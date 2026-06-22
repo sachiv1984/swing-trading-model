@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.5
-**Last Updated:** 2026-06-09
+**Version:** 2.6
+**Last Updated:** 2026-06-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -9,7 +9,7 @@
 
 # Idea Intake Engine — Governance Prompt
 
-(Window-Controlled, All-Agent, Template-Enforced, Document-Managed)
+(Window-Controlled, Role-Selective, Template-Enforced, Document-Managed)
 
 ---
 
@@ -59,7 +59,7 @@ Shared standards: `claude/system/shared_standards.md`.
 
 ## 4. Required Roles
 
-All agent roles defined in `claude/agents/` are eligible and expected to submit ideas. This includes:
+The following agent roles are eligible and expected to submit ideas:
 
 - Product Owner
 - Head of Specs Team
@@ -68,8 +68,9 @@ All agent roles defined in `claude/agents/` are eligible and expected to submit 
 - Strategy Rules & System Intent Owner
 - FinOps & Resource Architect
 - Infrastructure & Operations Owner
-- Facilitator
 - Challenger
+
+**Excluded role:** The Facilitator does not submit ideas. The Facilitator's role is to manage the intake process, not to generate submissions. This is a permanent structural exclusion — absent a window count is expected and is not a process error. When computing `agents_not_submitted`, the Facilitator must not be counted as missing.
 
 **Minimum submissions per agent:** 2 net-new ideas per window (ideas that have not been submitted in a prior window, or that were previously parked and are being resubmitted with updated content).
 
