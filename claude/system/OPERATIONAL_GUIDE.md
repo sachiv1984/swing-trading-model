@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.63
+**Version:** 4.64
 **Last Updated:** 2026-06-22
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -620,7 +620,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.37)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.38)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -763,7 +763,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.10)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.11)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -1464,8 +1464,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v7.5 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.37 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.10 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.38 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.11 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.47 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.5 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.64 | 2026-06-22 | **v6.1 ST-01/ST-02 (BLG-GOV-132/133, EPIC-01) — release_planning_prompt.md v2.37→v2.38 + sprint_planning_prompt.md v3.10→v3.11.** §6B source prompt header updated v2.37→v2.38. §7 source prompt header updated v3.10→v3.11. §14 Release Engine Source v2.37→v2.38. §14 Sprint Planning Engine v3.10→v3.11. §14 Version 4.63→4.64/2026-06-22. Changes: (ST-01/BLG-GOV-132) release_planning_prompt.md STEP 4.1 Design Gate Classification added — after writing backlog slice, scans all ST items for UI-facing scope (delegated_frontend OR autonomous with observable UI ACs); sets design_gate_required=true/false in state.json and .claude_current_state.json; outputs advisory "⚠ DESIGN GATE REQUIRED" or "Design Gate: Not Required"; STEP 7 updated to include design_gate_required status line in cycle_summary.md header. (ST-02/BLG-GOV-133) sprint_planning_prompt.md STEP -1 check 3 updated — design gate hard gate now conditional on design_gate_required=true; reads attributes.design_gate_required from state.json; when false/not_required: skips gate with log note "Design gate: Not Required for this cycle"; when true/absent (safety default): applies full hard gate as before. Authority: Head of Specs Team (v6.1 EPIC-01 Sprint 1, 2026-06-22). |
 | 4.61 | 2026-06-22 | **roadmap_prompt.md v7.5→v7.6 — STEP 8.2 Now Horizon Item Verification added (mandatory).** §6 source prompt header updated v7.5→v7.6. §14 Roadmap Rebalance Prompt v7.5→v7.6. §14 Version 4.60→4.61/2026-06-22. Change: STEP 8.2 inserted between STEP 8.1 and STEP 8.5 — for every item proposed for Now horizon inclusion (firm or conditional), grep backlog.md to confirm active status; if not found in active backlog, check backlog_archive.md; if archived/shipped, exclude and log; if found in neither, escalate. Distinct from STEP 8.0.5: catches items introduced via prose references (run_manifest text, sprint history) that bypass the STEP 3 formal candidate list. Root cause: 2026-06-19__scheduled included BLG-GOV-113 (archived v5.3) via context-window prose reference; error propagated to cycle_summary.md and DL-048 before correction at STEP 9. Authority: Head of Specs Team (LL-RP-01 deferred patch, rebalance 2026-06-22__scheduled). |
 | 4.60 | 2026-06-22 | **AUD-2026-06-22 latent improvements — post_ship_closure.md v2.14→v2.15, delivery_verification_prompt.md v3.0→v3.1, execution_prompt.md v3.46→v3.47.** §8 source prompt header v3.46→v3.47. §9 source prompt header v3.0→v3.1. §10 source prompt header v2.14→v2.15. §14 Execution Engine Source v3.46→v3.47. §14 Verification Engine Source v3.0→v3.1. §14 Post-Ship Closure Engine v2.14→v2.15. §14 Version 4.59→4.60/2026-06-22. Changes: (AUD-2026-06-22-005) post_ship_closure.md STEP 7 — new sub-step 7.3 TSG backlog reconciliation added: for each §27 entry with status "Open", cross-check backlog.md; if BLG item is COMPLETE/DONE, update §27 to RESOLVED with resolution cycle; prevents stale TSG entries accumulating across cycles. (AUD-2026-06-22-006) execution_prompt.md STEP 3.1.A step 3 — API performance baseline advisory added: when committing a new entry to openapi.yaml, also add a row to api_performance_baseline.md in same commit; advisory-only, omission caught at post-ship STEP 6. (AUD-2026-06-22-007) delivery_verification_prompt.md STEP 5.1 — algorithm replacement advisory added: for stories replacing a core algorithm/model, cross-check that all test_scenarios entries were either run (confirmed in qa_evidence) or declared superseded in DoQ sign-off block; purpose-built unit test does not satisfy prior domain-level scenario file automatically. Authority: Head of Specs Team + PMO Lead (AUD-2026-06-22 latent improvements, 2026-06-22). |
 | 4.59 | 2026-06-22 | **AUD-2026-06-22 Tier 2 patches — execution_prompt.md v3.45→v3.46: STEP 5.3A write+verify sub-step + STEP 4 step 3b pre-halt governance commit.** §8 source prompt header updated v3.45→v3.46. §14 Execution Engine Source v3.45→v3.46. §14 Version 4.58→4.59/2026-06-22. Changes (execution_prompt v3.46): (AUD-2026-06-22-001) STEP 5.3A — added "Write verification" block immediately after `git add docs/System_status_report.md`; `grep -c "Sprint: <cycle_id>" docs/System_status_report.md` must return ≥1 before proceeding to STEP 5.4; if count=0, the write step was skipped — re-run write now; resolves 3rd-cycle recurrence of silent SSR write skip (v3.45 patch staged a write that never happened). (AUD-2026-06-22-002) STEP 4 step 3b added before hard-gate halt — mandatory `git status --short` check; if any governance files (backlog.md, qa_evidence_EPIC-xx.md) are unstaged, commit and push to EPIC branch before outputting halt message; session-close advisory updated to reference 3b and remain active for non-governance changes only; resolves 4th-cycle recurrence of stash-at-branch-switch (v5.3/v5.4/v5.5/v6.0). Authority: Head of Specs Team (AUD-2026-06-22 Tier 2, 2026-06-22). |
