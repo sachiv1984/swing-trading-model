@@ -38,12 +38,13 @@ _spec.loader.exec_module(watchlist_service)
 
 def _make_row(ticker="AAPL", market="US", signal_status="active",
               target=None, initial=None, current=None,
-              entry_id="aaaa-0001"):
+              entry_id="aaaa-0001", company_name=None):
     """Build a mock DB row dict as returned by the signal-status query."""
     return {
         "id": entry_id,
         "ticker": ticker,
         "market": market,
+        "company_name": company_name,
         "signal_status": signal_status,
         "target_entry_price": target,
         "initial_stop_price": initial,
@@ -132,11 +133,13 @@ class TestCreateWatchlistEntry(unittest.TestCase):
         """Patch get_db for INSERT (returns new_id) and get_watchlist for fetch-back.
 
         fetchone side_effect: first call = None (no duplicate), second call = new_id (RETURNING).
+        _fetch_and_store_company_name is patched to a no-op (Phase A — no network).
         """
         insert_ctx, insert_cur = _make_db(returning_id=new_id)
         insert_cur.fetchone.side_effect = [None, {"id": new_id}]
 
         with patch.object(watchlist_service, "get_db", insert_ctx), \
+             patch.object(watchlist_service, "_fetch_and_store_company_name"), \
              patch.object(watchlist_service, "get_watchlist", return_value=get_rows):
             return watchlist_service.create_watchlist_entry(
                 "portfolio-1",
@@ -158,6 +161,7 @@ class TestCreateWatchlistEntry(unittest.TestCase):
         get_row = _make_row(ticker="AAPL", entry_id="dddd-0001")
 
         with patch.object(watchlist_service, "get_db", insert_ctx), \
+             patch.object(watchlist_service, "_fetch_and_store_company_name"), \
              patch.object(watchlist_service, "get_watchlist", return_value=[get_row]):
             watchlist_service.create_watchlist_entry(
                 "portfolio-1",

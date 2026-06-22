@@ -20,7 +20,6 @@ Data model: docs/specs/data_model.md §11 (watchlist table, migration v2.0→v2.
 
 import logging
 from typing import Dict, List, Optional
-
 import yfinance as yf
 
 from database import get_db, get_portfolio
@@ -29,15 +28,10 @@ logger = logging.getLogger(__name__)
 
 
 def _fetch_and_store_company_name(ticker: str, market: str) -> None:
-    """Look up company name via yfinance and upsert into ticker_universe if missing.
-
-    UK tickers are stored in ticker_universe with the .L suffix (e.g. BP → BP.L),
-    while the watchlist stores them without it (backend isalnum() validation).
-    """
+    """Look up company name via yfinance and upsert into ticker_universe if missing."""
     try:
-        # ticker_universe key matches yfinance symbol: BP.L for UK, AAPL for US
-        tu_ticker = ticker + ".L" if market == "UK" and not ticker.endswith(".L") else ticker
-        info = yf.Ticker(tu_ticker).info
+        yf_symbol = ticker + ".L" if market == "UK" and not ticker.endswith(".L") else ticker
+        info = yf.Ticker(yf_symbol).info
         name = info.get("longName") or info.get("shortName")
         if not name:
             return
@@ -46,10 +40,10 @@ def _fetch_and_store_company_name(ticker: str, market: str) -> None:
                 cur.execute("""
                     INSERT INTO ticker_universe (ticker, market, active, company_name)
                     VALUES (%s, %s, true, %s)
-                    ON CONFLICT (ticker)
+                    ON CONFLICT (ticker, market)
                     DO UPDATE SET company_name = EXCLUDED.company_name
                     WHERE ticker_universe.company_name IS NULL
-                """, (tu_ticker, market, name))
+                """, (ticker, market, name))
     except Exception:
         logger.debug("company name lookup failed for %s/%s", ticker, market)
 
@@ -103,7 +97,7 @@ def _row_to_dict(row) -> Dict:
         "id": str(row["id"]),
         "ticker": row["ticker"],
         "market": row["market"],
-        "company_name": row["company_name"] if row["company_name"] else None,
+        "company_name": row.get("company_name") or None,
         "signal_status": row["signal_status"],
         "target_entry_price": float(row["target_entry_price"]) if row["target_entry_price"] is not None else None,
         "initial_stop_price": float(row["initial_stop_price"]) if row["initial_stop_price"] is not None else None,
