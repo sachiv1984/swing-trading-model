@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-22 (groom backlog — post-ship closure 2026-06-19__release-v6.0: 11 v6.0 items archived, Release Slices v5.9 and v6.0 retired; report: claude/backlog/backlog_health_20260622.md)
+**Last Updated:** 2026-06-22 (session — 1 new item added: BLG-FE-77)
 **Last rebalance:** 2026-06-19 (cycle 2026-06-19__scheduled — DL-048–051; 7 promoted-backlog, 1 rejected, 8 parked C1; v6.0 Now section added to roadmap; Product Value Alert + Skill-Silo Alert recorded)
 
 > ⚠️ Standing Notice
@@ -2637,6 +2637,31 @@ Current portfolio view (positions, heat, P&L) has no sector-level aggregation. A
 - Each sector displays: name, position count, exposure % of portfolio
 - Concentration alert (e.g. > 40% in one sector) highlighted visually
 - Playwright E2E coverage for at least one sector concentration scenario
+
+---
+
+### BLG-FE-77 — Refactor `Watchlist.js` to ESLint compliance
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Frontend Engineering
+**Source:** ESLint hook run — pre-existing violations surfaced after eslint-plugin-playwright, eslint-plugin-no-comments, eslint-plugin-better-max-params installed — 2026-06-22
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v6.1
+
+**Problem**
+`src/pages/Watchlist.js` has 16 pre-existing ESLint violations that were hidden because three required plugins were not installed. Now that the plugins are in place, the lint-feedback hook fires on every edit to this file, creating noise and discouraging changes. The primary violations are: `max-lines-per-function` (the `Watchlist` component body is 312 lines against a 50-line limit), multiple magic number literals (`200`, `220`, `5`, `60`, `1000`), and inline comments in state declarations. Zero violations were introduced by recent changes — all are pre-existing.
+
+**Scope**
+- Extract sub-components from `Watchlist.js`: `WatchlistTableRow`, `WatchlistNewsRow`, and inline badges are all candidates
+- Replace magic number literals with named constants at the top of the file
+- Remove inline comments; express intent through component and variable names instead
+- Ensure all extracted components independently pass ESLint
+
+**Acceptance Criteria**
+- `npx eslint src/pages/Watchlist.js` exits 0 with no errors or warnings
+- All extracted sub-components also pass ESLint clean
+- Watchlist page renders and behaves identically to pre-refactor (no functional regression)
+- Playwright E2E watchlist specs continue to pass
 
 ---
 
