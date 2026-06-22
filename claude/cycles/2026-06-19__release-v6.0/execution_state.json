@@ -229,21 +229,32 @@
         "ST-08": {
           "title": "SI-05 digest weekly cadence review",
           "classification": "delegated_decision",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "Product Owner",
           "github_issue": 811,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260620-03",
           "blocked_since_utc": null,
-          "unblock_criteria": "Product Owner produces cadence review document (AC-02 through AC-05)",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-22T12:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-08"],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Cluster B gate override — PO authority 2026-06-20. Proceeds with 16-day production data; PO acknowledged. DEL-20260620-03."
+          "last_completed_substep": "doq_sign_off",
+          "sign_off_record": {
+            "required_by": "Product Owner",
+            "method": "delegated_decision",
+            "status": "cleared",
+            "findings_applied": [
+              "Weekly cadence maintained — no change recommended at 16-day mark",
+              "Reviewed weekly vs bi-weekly vs adaptive; weekly retained as appropriate for Phase 1",
+              "Formal reassessment deferred to 2026-07-04 effectiveness review using ATCR and RFAR metrics",
+              "PO sign-off recorded in docs/product/decisions/si05-digest-cadence-review--2026-06-22.md"
+            ],
+            "cleared_utc": "2026-06-22T12:00:00Z"
+          },
+          "notes": "Cluster B gate override — PO authority 2026-06-20. Deliverable: docs/product/decisions/si05-digest-cadence-review--2026-06-22.md. Decision: maintain weekly cadence; reassess 2026-07-04."
         },
         "ST-09": {
           "title": "SI-05 digest actionability metric definition",
@@ -278,21 +289,32 @@
         "ST-10": {
           "title": "SI-05 Phase 2 activation decision scope",
           "classification": "delegated_decision",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "Product Owner",
           "github_issue": 813,
           "branch": "exec/2026-06-19__release-v6.0/EPIC-04",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260620-04",
           "blocked_since_utc": null,
-          "unblock_criteria": "Product Owner produces Phase 2 activation decision document filed in docs/product/decisions/ (AC-02 through AC-05)",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-22T12:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md#ST-10"],
           "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Cluster B gate override — PO authority 2026-06-20. PO is the decision-maker; proceeds with available information. DEL-20260620-04."
+          "last_completed_substep": "doq_sign_off",
+          "sign_off_record": {
+            "required_by": "Product Owner",
+            "method": "delegated_decision",
+            "status": "cleared",
+            "findings_applied": [
+              "Decision: DEFER Phase 2 — activation criteria not met (effectiveness review incomplete, BLG-GOV-121 §13 pre-clearance outstanding, SI-02 gate unchecked)",
+              "Revised review date: 2026-08-04",
+              "BLG-GOV-121 §13 pre-clearance action raised: Strategy Rules & System Intent Owner, target 2026-07-18",
+              "Document filed as Class 3 Operational Record in docs/product/decisions/"
+            ],
+            "cleared_utc": "2026-06-22T12:00:00Z"
+          },
+          "notes": "Cluster B gate override — PO authority 2026-06-20. Deliverable: docs/product/decisions/si05-phase2-activation-decision--2026-06-22.md. Decision: DEFER, revised review date 2026-08-04."
         },
         "ST-11": {
           "title": "SI-05 service production p99 latency baseline review",
@@ -318,8 +340,8 @@
   },
 
   "blocked_items": [],
-  "delegated_items": ["ST-06", "ST-07", "ST-08", "ST-10", "ST-11"],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-09"],
+  "delegated_items": ["ST-06", "ST-07", "ST-11"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-08", "ST-09", "ST-10"],
   "open_escalations": [],
 
   "merge_gate": {
