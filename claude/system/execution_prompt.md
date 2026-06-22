@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.45
-**Last Updated:** 2026-06-18
+**Version:** 3.46
+**Last Updated:** 2026-06-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -731,6 +731,18 @@ If all conditions pass:
 2. Update `execution_state.json`: EPIC `pr_status` = `merged`, `status` = `merged`.
 3. Update `merge_gate.epics_merged`.
 3a. **Persist state before halt (LL-v5.5-EX-02 — third recurrence: v5.3/v5.4/v5.5):** Immediately commit `execution_state.json` to the EPIC branch NOW — before outputting the halt message. An uncommitted state write is lost if the session ends, requiring stale-state correction on the next resume. Run: `git add claude/cycles/<cycle_id>/execution_state.json && git commit -m "[EPIC-xx] Persist merged state before session close" && git push origin <branch>`. This is a hard requirement; the halt message must not be the last action in the session if execution_state.json is unstaged.
+3b. **Pre-halt governance commit (AUD-2026-06-22-002):** Before outputting the halt message, run:
+```
+git status --short
+```
+If any tracked governance files are modified or unstaged — in particular `claude/backlog/backlog.md`, `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md`, or any other `claude/` file written during this EPIC's execution — stage and commit them now on the EPIC branch:
+```
+git add claude/backlog/backlog.md claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md
+git commit -m "[EPIC-xx] Commit governance file updates before merge halt"
+git push origin exec/<cycle_id>/EPIC-xx
+```
+Do not leave governance files unstaged. An unstaged backlog.md or qa_evidence file at session close requires `git stash` on next resume and risks stash-pop conflicts. This step fires after step 3a (execution_state.json persist) and before the halt output.
+
 4. **[HARD GATE — HALT after every EPIC merge (OA-01, v4.1 ST-01)]** Output the block below and **stop immediately**. Do not proceed to the next EPIC, do not continue the execution loop, do not execute STEP 5 in this invocation. The engine resumes only when the user explicitly re-invokes `run sprint`:
 
 > ✅ EPIC-xx merged. **HARD GATE: Re-invoke `run sprint --cycle <cycle_id>` now.** The engine halts after every EPIC merge and may not auto-advance to the next EPIC or STEP 5. If this is the final EPIC, re-invocation detects `merge_gate.all_merged = true` and executes STEP 5 (Sprint Close) directly, producing `sprint_close.md` and sealing `execution_state.json`. Do not proceed to `run delivery verification` without this re-invocation.
@@ -741,7 +753,7 @@ If any condition fails: do not merge. Record which condition is unmet. If QA or 
 
 **The engine may not self-approve a merge.** QA sign-off and Product Owner acceptance are always required and must come from the relevant authority.
 
-> **Session-close advisory (AUD-2026-06-10-002):** Before ending this session, run `git status --short` on the current EPIC branch. If any unstaged or uncommitted changes exist (execution_state.json, qa_evidence files, backlog.md), commit them or stash them before closing. Leaving unstaged changes on an EPIC branch requires `git stash` on next resume and risks merge conflicts. This advisory fires on every STEP 4 halt. (Root cause: v5.3 + v5.4 recurrence of stash-at-branch-switch pattern.)
+> **Session-close advisory (AUD-2026-06-10-002, superseded by step 3b for governance files):** Step 3b above now enforces a mandatory pre-halt commit of governance files (backlog.md, qa_evidence). This advisory remains active for any non-governance working-tree changes not covered by step 3b (e.g. source code edits left open). If `git status --short` shows any remaining changes after step 3b: commit or stash before closing. (Root cause: v5.3 + v5.4 + v5.5 + v6.0 recurrence of stash-at-branch-switch pattern — AUD-2026-06-22-002.)
 
 > **Merge order note (LL-v2.0-P3-5):** If more than one EPIC branch modifies a shared governance file (e.g. `execution_state.json`, `.claude_current_state.json`, `backlog.md`, `delegation_log.md`), establish a merge order at the start of STEP 3. Later EPIC branches **must rebase onto `main`** after the first EPIC merges — before running their final QA review and opening a PR. This prevents merge conflicts at the merge gate and avoids the need to rebase mid-merge-sequence.
 
@@ -911,6 +923,12 @@ If `docs/System_status_report.md` does not exist: create it with this sprint's s
 git add docs/System_status_report.md
 ```
 This ensures the SSR update is staged before any branch switch. Do not wait for the STEP 8 commit block — stage it now.
+
+**Write verification (AUD-2026-06-22-001):** Immediately after the `git add` above, confirm the new section actually exists in the file:
+```
+grep -c "Sprint: <cycle_id>" docs/System_status_report.md
+```
+If the count is 0, the write step did not execute. Re-run the SSR section write now — do not proceed to STEP 5.4 until `grep` returns ≥ 1. The `git add` instruction above can only stage a write that happened; this verification detects a silent skip.
 
 ### 5.4 Lessons Learnt
 
