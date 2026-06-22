@@ -1,11 +1,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1.8
-**Last Updated:** 2026-03-09 (v1.9 Sprint 1 post-ship — §11 deviations resolved)
+**Version:** 0.1.9
+**Last Updated:** 2026-06-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Design Source:** docs/design/2026-03-04__release-v1.8/risk-dashboard/ux_spec.md
-**Confirmed by:** Head of Specs Team — 2026-03-04
+**Design Source (v0.1.9):** docs/design/2026-06-22__release-v6.1/sector-heatmap/ux_spec.md
+**Design Source (v0.1.0):** docs/design/2026-03-04__release-v1.8/risk-dashboard/ux_spec.md
+**Confirmed by:** Head of Specs Team — 2026-06-22
 
 ---
 
@@ -32,7 +33,7 @@
 
 ## 2. Layout
 
-Two-column top row (Portfolio Heat Gauge + Drawdown Summary, approximately equal width), followed by three full-width rows: Grace Period Status Panel, Position-Level Risk Table, Prospective Heat Indicator.
+Two-column top row (Portfolio Heat Gauge + Drawdown Summary, approximately equal width), followed by four full-width rows: Grace Period Status Panel, Position-Level Risk Table, Sector Concentration Heat Map (§8a), Prospective Heat Indicator.
 
 Single-column layout on narrow viewports (below standard breakpoint).
 
@@ -202,6 +203,67 @@ Secondary within group: ascending by stop distance (tightest/smallest distance f
 
 ---
 
+## 8a. Component: Sector Concentration Heat Map
+
+**Design source:** `docs/design/2026-06-22__release-v6.1/sector-heatmap/ux_spec.md`
+**Story:** ST-06 (BLG-FE-76)
+
+### 8a.1 Data
+
+- **Source:** `GET /portfolio/sector-weights` (new endpoint, ST-06 AC-04)
+- **Key fields:** `sectors[].sector_name`, `sectors[].position_count`, `sectors[].exposure_pct`, `concentration_alert`
+
+### 8a.2 Layout
+
+**Section heading:** "Sector Concentration" (card heading consistent with other Risk Dashboard headings)
+
+**Desktop (> 768px):** Grid of sector tiles, 4 columns (3 minimum). Ordered by `exposure_pct` descending.
+**Mobile (≤ 768px):** 2-column grid, same ordering.
+
+### 8a.3 Tile Content
+
+Per sector tile:
+
+| Element | Source | Format |
+|---------|--------|--------|
+| Sector name | `sector_name` | Title case; truncated with ellipsis > 20 chars |
+| Exposure % | `exposure_pct` | `XX.X%` — primary metric, large text |
+| Position count | `position_count` | `N position` / `N positions` — secondary muted |
+
+### 8a.4 Tile Colour Thresholds
+
+| Condition | Treatment |
+|-----------|-----------|
+| `exposure_pct` < 20% | Standard card styling |
+| 20% ≤ `exposure_pct` < 40% | Amber left-border accent |
+| `exposure_pct` ≥ 40% | Amber/orange background tint + amber border (concentration alert) |
+
+**Concentration threshold: 40% in one sector.** Fixed in v6.1. Not configurable.
+
+### 8a.5 Section-Level Alert
+
+When `concentration_alert: true`: amber alert bar below "Sector Concentration" heading: "⚠ Sector concentration alert: one or more sectors exceed 40% of portfolio". Non-interactive.
+
+When `concentration_alert: false`: no alert bar.
+
+### 8a.6 States
+
+| State | Behaviour |
+|-------|-----------|
+| Loaded | Tile grid renders; alert bar shown if applicable |
+| Empty | "No sector data — open at least one position to see sector concentration." Muted text. |
+| Loading | Skeleton tile grid (4 placeholder tiles, animated) |
+| Error | "Unable to load sector data." + Retry. Does not affect other Risk Dashboard panels. |
+
+### 8a.7 Constraints
+
+- Display-only in v6.1 MVP. No click interaction on tiles.
+- All exposure values sourced from backend. No client-side recalculation.
+- `§13 compliance`: informational display only. No trading recommendation.
+- `GET /portfolio/sector-weights` must be documented in `docs/specs/api_contracts/` and added to `docs/reference/openapi.yaml` in the same commit as implementation (CLAUDE.md non-negotiable).
+
+---
+
 ## 7. Component: Prospective Heat Indicator
 
 ### 7.1 Purpose
@@ -316,6 +378,7 @@ The following deviations were identified at v1.8 sprint execution and accepted f
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.9 | 2026-06-22 | v6.1 design gate — §8a Sector Concentration Heat Map added (ST-06, BLG-FE-76): new full-width panel inserted between §6 Position Risk and §7 Prospective Heat; tile grid by sector, exposure % + position count per tile, amber colour-coding ≥ 40% concentration threshold, alert bar when concentration_alert: true; uses new GET /portfolio/sector-weights endpoint; display-only MVP. §2 Layout updated to four full-width rows. Design source: sector-heatmap/ux_spec.md. Approved: Product Owner 2026-06-22. Head of Specs Team confirmed. |
 | 0.1.8 | 2026-03-09 | v1.9 Sprint 1 post-ship closure: §11 deviations DEV-ST03-01 through DEV-ST03-07, DEV-ST03-09, DEV-ST03-11, DEV-ST03-12 all marked RESOLVED with resolution detail (EPIC-04 commits b31536f, 20e688f). QA-OBS-ST07-01 noted. Table header updated from "Resolution Target" to "Resolution". |
 | 0.1.7 | 2026-03-06 | ST-06 / DEV-ST03-08 resolution: §4.1 updated to split-source data model — `current_drawdown_percent` from `GET /portfolio`, `days_underwater` from `GET /analytics/metrics`. DEV-ST03-08 marked resolved in §11. Head of Specs Team decision 2026-03-06. |
 | 0.1.6 | 2026-03-06 | §11 deviation compliance update: backlog references assigned for all active deviations (BLG-RD-01 through BLG-RD-11). Updated by Delivery Verification Engine 2026-03-06 per standard mode deviation compliance. |

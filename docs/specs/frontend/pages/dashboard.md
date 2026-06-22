@@ -3,11 +3,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.1
-**Last Updated:** 2026-06-19
+**Version:** 2.2
+**Last Updated:** 2026-06-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Release:** v6.0
-**EPIC:** EPIC-02
+**Release:** v6.1
+**EPIC:** EPIC-03
+**Design Source (v2.2):** docs/design/2026-06-22__release-v6.1/gate-proximity-indicator/ux_spec.md
 **Design Source (v2.1):** docs/design/2026-06-19__release-v6.0/morning-briefing/ux_spec.md
 **Design Source (v2.0):** docs/design/2026-03-06__release-v1.9/dashboard-home/ux_spec.md
 **Confirmed by:** Head of Specs Team — 2026-06-19
@@ -161,7 +162,35 @@ If no recent activity: show “No recent trade activity”
 
 ---
 
-## 5. States
+## 5. Gate Progress Indicator
+
+**Design source:** `docs/design/2026-06-22__release-v6.1/gate-proximity-indicator/ux_spec.md`
+**Story:** ST-07 (BLG-FE-78)
+
+A compact full-width strip placed below the 5 session-summary cards. Does not replace or modify any existing section. Lighter visual weight than session-summary cards (no card frame).
+
+**Section label:** “Gate Progress” — left-aligned, muted text (consistent with Morning Briefing label weight)
+
+**Data source:** `GET /portfolio/gate-metrics` (existing endpoint, BLG-BE-34)
+
+### Display
+
+| State | Format |
+|-------|--------|
+| Gate not met | `{closed_trades}/20 trades` + `(PT-04/SI-02 gate)` muted sub-label + amber progress bar |
+| Gate met | `Gate cleared ✓` in green + `(PT-04/SI-02 gate)` muted sub-label + full green progress bar |
+| Loading | Single-line skeleton placeholder |
+| Error | Strip hidden silently — gate-metrics failure must not affect Dashboard primary content |
+
+**Progress bar:** 4px height, full content width. Fill proportional to `closed_trades / gate_threshold`. Amber while in progress; green when `gate_met = true`.
+
+**Threshold:** sourced from `gate_threshold` field in API response — not hardcoded client-side.
+
+**Interaction:** Display-only. No click, no navigation. Refreshes on page load (no polling).
+
+---
+
+## 6. States
 
 | State | Behaviour |
 |-------|-----------|
@@ -174,7 +203,7 @@ Individual card failure must not break other cards. Each card fetches its data i
 
 ---
 
-## 6. Navigation Targets
+## 7. Navigation Targets
 
 | Card | Click navigates to |
 |------|--------------------|
@@ -188,10 +217,11 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 ---
 
-## 7. Change Log
+## 8. Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.2 | 2026-06-22 | v6.1 design gate — §5 Gate Progress Indicator added (ST-07, BLG-FE-78): compact full-width strip below session-summary cards showing closed-trade count vs 20-trade PT-04/SI-02 gate threshold; uses existing GET /portfolio/gate-metrics endpoint; display-only; error hidden silently. Sections renumbered (old §5→§6, §6→§7, §7→§8). Design source: gate-proximity-indicator/ux_spec.md. Approved: Product Owner 2026-06-22. Head of Specs Team confirmed. |
 | 2.1 | 2026-06-19 | v6.0 design gate — §1A Morning Briefing Section added: new section at top of DashboardHome above existing cards; 5 intelligence cards (Screener Hits, Positions to Act On, Red Flags, Earnings Alert, Compliance); horizontal desktop layout, vertical mobile stack; per-card loading/error/empty state behaviour; Compliance card colour-coded by score. Design source: morning-briefing/ux_spec.md. Approved: Product Owner 2026-06-19. Head of Specs Team confirmed. |
 | 2.0 | 2026-03-06 | Full rewrite for v1.9 EPIC-03 (ST-05). Dashboard Homepage session summary with 5 data cards. Governance header upgraded to Class 1 compliant format. Design source: docs/design/2026-03-06__release-v1.9/dashboard-home/ux_spec.md. |
 | 1.0 | 2026-02-18 | Initial version (pre-governance, general portfolio overview). |
