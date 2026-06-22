@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.6
+**Version:** 2.7
 **Last Updated:** 2026-06-22
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -59,16 +59,30 @@ Shared standards: `claude/system/shared_standards.md`.
 
 ## 4. Required Roles
 
-The following agent roles are eligible and expected to submit ideas:
+The following agent roles are eligible and expected to submit ideas (all roles defined in `claude/agents/` except the Facilitator):
 
-- Product Owner
-- Head of Specs Team
-- PMO Lead
-- Director of Quality
-- Strategy Rules & System Intent Owner
-- FinOps & Resource Architect
-- Infrastructure & Operations Owner
+- AI Compliance & Governance Officer
+- API Contracts & Documentation Owner
+- Backend Engineering Patterns Owner
+- Base44 Frontend Prompt Owner
 - Challenger
+- Cybersecurity & Trust Lead
+- Data Model & Domain Schema Owner
+- Director of HR
+- Director of Quality
+- Financial Reporting & Records Owner
+- FinOps & Resource Architect
+- Frontend Specifications & UX Documentation Owner
+- Head of Engineering
+- Head of Specs Team
+- Head of UX & Design
+- Infrastructure & Operations Owner
+- Metrics Definitions & Analytics Canonical Owner
+- PMO Lead
+- Product Owner
+- QA Lead
+- QA & Testing Owner
+- Strategy Rules & System Intent Owner
 
 **Excluded role:** The Facilitator does not submit ideas. The Facilitator's role is to manage the intake process, not to generate submissions. This is a permanent structural exclusion — absent a window count is expected and is not a process error. When computing `agents_not_submitted`, the Facilitator must not be counted as missing.
 
@@ -108,13 +122,39 @@ IDEA-<agent-slug>-<YYYYMMDD>-<nn>
 ```
 
 Where:
-- `<agent-slug>` is the role slug (e.g., `product-owner`, `head-of-specs`, `pmo-lead`)
+- `<agent-slug>` is the role slug from the table below
 - `<YYYYMMDD>` is today's date
 - `<nn>` is a two-digit sequence number per agent per window (e.g., `01`, `02`)
+
+| Role | Slug |
+|------|------|
+| AI Compliance & Governance Officer | `ai-compliance` |
+| API Contracts & Documentation Owner | `api-contracts` |
+| Backend Engineering Patterns Owner | `backend-engineering` |
+| Base44 Frontend Prompt Owner | `base44-frontend` |
+| Challenger | `challenger` |
+| Cybersecurity & Trust Lead | `cybersecurity` |
+| Data Model & Domain Schema Owner | `data-model` |
+| Director of HR | `director-of-hr` |
+| Director of Quality | `director-of-quality` |
+| Financial Reporting & Records Owner | `financial-reporting` |
+| FinOps & Resource Architect | `finops` |
+| Frontend Specifications & UX Documentation Owner | `frontend-specs` |
+| Head of Engineering | `head-of-engineering` |
+| Head of Specs Team | `head-of-specs` |
+| Head of UX & Design | `head-of-ux` |
+| Infrastructure & Operations Owner | `infra-ops` |
+| Metrics Definitions & Analytics Canonical Owner | `metrics` |
+| PMO Lead | `pmo-lead` |
+| Product Owner | `product-owner` |
+| QA Lead | `qa-lead` |
+| QA & Testing Owner | `qa-testing` |
+| Strategy Rules & System Intent Owner | `strategy-owner` |
 
 Examples:
 - `IDEA-product-owner-20260303-01`
 - `IDEA-challenger-20260303-02`
+- `IDEA-ai-compliance-20260303-01`
 
 **Parked ideas from a prior window** are already rows in `ideas_register.md` — they are not renamed or re-entered. The intake engine surfaces them for agent review and updates their status if resubmitted.
 

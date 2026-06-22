@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.62
+**Version:** 4.63
 **Last Updated:** 2026-06-22
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -329,7 +329,7 @@ The lifecycle is a deterministic state machine. `.claude_current_state.json` (`s
 
 ## 5. Idea Intake (Integrated — Phase 1 STEP -1.6)
 
-**Source prompt:** `claude/system/idea_intake_prompt.md` (v2.6)
+**Source prompt:** `claude/system/idea_intake_prompt.md` (v2.7)
 **Template:** `claude/system/idea_template.md`
 **Owner:** PMO Lead
 **Trigger:** Automatic — runs as STEP -1.6 of `run roadmap` when fewer than 20 open ideas (status `Submitted` or `Parked-cycle-<n>`) exist in `claude/ideas/ideas_register.md`. Also invocable standalone via `run ideas` for explicit window control.
@@ -351,7 +351,7 @@ run ideas [--window-id "<id>"] [--mode "strict|standard"]
 
 ### 5.2 Who Submits
 
-All agent roles defined in `claude/agents/` except the Facilitator. The Facilitator manages the intake process and is permanently excluded from idea generation — an absent window count is expected, not a process error. Minimum 2 net-new ideas per eligible agent per window. A resubmitted parked idea counts as net-new only if materially updated.
+All 22 agent roles defined in `claude/agents/` except the Facilitator. The Facilitator manages the intake process and is permanently excluded from idea generation — an absent window count is expected, not a process error. Minimum 2 net-new ideas per eligible agent per window. A resubmitted parked idea counts as net-new only if materially updated.
 
 ### 5.3 Idea Lifecycle
 
@@ -1454,10 +1454,10 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.62 |
+| Version | 4.63 |
 | Last Updated | 2026-06-22 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
-| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.6 |
+| Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.9 |
