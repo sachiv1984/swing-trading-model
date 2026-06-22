@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
 **Version:** 3.10
-**Last Updated:** 2026-06-11
+**Last Updated:** 2026-06-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 

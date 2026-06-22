@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
 **Version:** 2.14
-**Last Updated:** 2026-06-03
+**Last Updated:** 2026-06-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)

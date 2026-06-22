@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.57 |
-| Last Updated | 2026-06-18 |
+| Version | 4.58 |
+| Last Updated | 2026-06-19 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.5 |
 | Idea Template | `claude/system/idea_template.md` |

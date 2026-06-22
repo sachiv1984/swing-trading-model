@@ -24,21 +24,21 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-06-16"
-PRIOR_AUDIT_OPEN_ITEMS = []  # All AUD-2026-06-16 items applied Tier 1 same commit; 0 open items
+PRIOR_AUDIT_ID = "AUD-2026-06-22"
+PRIOR_AUDIT_OPEN_ITEMS = []  # All AUD-2026-06-22 Tier 1 items applied same commit; 0 open items
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
-    "token_efficiency":      95,   # HIGH CONFIDENCE — §13 complete; all preamble refs confirmed; no inline blocks
-    "governance_integrity":  82,   # HIGH CONFIDENCE — §14 fully aligned; all roles chartered; §13 complete
-    "execution_reliability": 79,   # HIGH CONFIDENCE — AUD-2026-06-10-001 RESOLVED (v3.40+v3.41+§5.0A); no open deferred patches
-    "friction_load":         20,   # MEDIUM CONFIDENCE — no Type A/C in v5.5–v5.6; Type D "always-deferred Sprint 2" monitored
-    "document_hygiene":      82,   # HIGH CONFIDENCE — all Class 6 headers compliant; §14 desync pattern broken
+    "token_efficiency":      95,   # HIGH CONFIDENCE — no deductions; all engines demand-loaded
+    "governance_integrity":  78,   # HIGH CONFIDENCE — §14 desync (-4); 5th recurrence; fixed AUD-2026-06-22-003
+    "execution_reliability": 79,   # HIGH CONFIDENCE — no new confirmed deductions; SSR recurrence captured in friction
+    "friction_load":          0,   # MEDIUM CONFIDENCE — Type A×1 + Type C×3 (2 recurring) = -25; floored at 0
+    "document_hygiene":      70,   # HIGH CONFIDENCE — sprint_planning/post_ship stale headers + §14 desync = -12 from 82
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 42  # v1.7 through v5.6 (42 completed post-ship closures; confirmed from .claude_current_state.json)
+COMPLETED_CYCLES = 46  # v1.7 through v6.0 (46 completed post-ship closures; confirmed from .claude_current_state.json)
 
 # -------------------------
 # MISSING FILE RULE
