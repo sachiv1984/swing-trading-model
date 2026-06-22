@@ -265,9 +265,16 @@ export default function Watchlist() {
                     <td className="px-5 py-4">
                       <button
                         onClick={() => setModal({ mode: "edit", entry })}
-                        className="text-cyan-400 hover:text-cyan-300 font-semibold text-sm transition-colors"
+                        className="text-left group"
                       >
-                        {entry.ticker}
+                        <span className="block text-cyan-400 group-hover:text-cyan-300 font-semibold text-sm transition-colors">
+                          {entry.ticker}
+                        </span>
+                        {entry.company_name && (
+                          <span className="block text-slate-500 text-xs truncate max-w-[140px]">
+                            {entry.company_name}
+                          </span>
+                        )}
                       </button>
                     </td>
                     <td className="px-5 py-4">

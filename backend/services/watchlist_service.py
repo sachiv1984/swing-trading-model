@@ -20,10 +20,32 @@ Data model: docs/specs/data_model.md §11 (watchlist table, migration v2.0→v2.
 
 import logging
 from typing import Dict, List, Optional
+import yfinance as yf
 
 from database import get_db, get_portfolio
 
 logger = logging.getLogger(__name__)
+
+
+def _fetch_and_store_company_name(ticker: str, market: str) -> None:
+    """Look up company name via yfinance and upsert into ticker_universe if missing."""
+    try:
+        yf_symbol = ticker + ".L" if market == "UK" and not ticker.endswith(".L") else ticker
+        info = yf.Ticker(yf_symbol).info
+        name = info.get("longName") or info.get("shortName")
+        if not name:
+            return
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO ticker_universe (ticker, market, active, company_name)
+                    VALUES (%s, %s, true, %s)
+                    ON CONFLICT (ticker, market)
+                    DO UPDATE SET company_name = EXCLUDED.company_name
+                    WHERE ticker_universe.company_name IS NULL
+                """, (ticker, market, name))
+    except Exception:
+        logger.debug("company name lookup failed for %s/%s", ticker, market)
 
 # ---------------------------------------------------------------------------
 # Table bootstrap
@@ -75,6 +97,7 @@ def _row_to_dict(row) -> Dict:
         "id": str(row["id"]),
         "ticker": row["ticker"],
         "market": row["market"],
+        "company_name": row.get("company_name") or None,
         "signal_status": row["signal_status"],
         "target_entry_price": float(row["target_entry_price"]) if row["target_entry_price"] is not None else None,
         "initial_stop_price": float(row["initial_stop_price"]) if row["initial_stop_price"] is not None else None,
@@ -107,12 +130,18 @@ def get_watchlist(portfolio_id: str) -> List[Dict]:
                     w.current_stop_price,
                     w.created_at,
                     w.updated_at,
+                    tu.company_name,
                     CASE
                         WHEN s.status = 'new'                     THEN 'active'
                         WHEN s.status IN ('dismissed', 'expired') THEN 'watch'
                         ELSE                                           'no_signal'
                     END AS signal_status
                 FROM watchlist w
+                LEFT JOIN ticker_universe tu
+                    ON tu.ticker = CASE
+                        WHEN w.market = 'UK' THEN w.ticker || '.L'
+                        ELSE w.ticker
+                    END
                 LEFT JOIN LATERAL (
                     SELECT status
                     FROM signals
@@ -168,6 +197,11 @@ def create_watchlist_entry(portfolio_id: str, data: Dict) -> Dict:
             if cur.fetchone():
                 raise LookupError(f"ticker '{ticker}' is already on the watchlist")
 
+    # Ensure company name is in ticker_universe before fetching back (best-effort)
+    _fetch_and_store_company_name(ticker, market)
+
+    with get_db() as conn:
+        with conn.cursor() as cur:
             cur.execute("""
                 INSERT INTO watchlist
                     (portfolio_id, ticker, market,
