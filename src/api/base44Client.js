@@ -435,6 +435,10 @@ export const api = {
       doFetch(
         `/portfolio/prospective-heat?ticker=${encodeURIComponent(ticker)}&shares=${shares}&entry_price=${entry_price}&stop_price=${stop_price}`
       ),
+    // ST-06 (v6.1): Sector concentration heat map
+    sectorWeights: async () => doFetch('/portfolio/sector-weights'),
+    // ST-07 (v6.1): Trade gate proximity indicator
+    gateMetrics: async () => doFetch('/portfolio/gate-metrics'),
   },
 
   positions: {

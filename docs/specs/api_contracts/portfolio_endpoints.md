@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.3.0
-**Last Updated:** 2026-03-18
+**Version:** 2.4.0
+**Last Updated:** 2026-06-23
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -640,6 +640,7 @@ Positions without sector data are excluded from the sector calculation. No error
 |---------|------|--------|
 | 2.1.0 | 2026-05-14 | ST-04/ST-06 (EPIC-02 v3.4): Added GET /portfolio/drawdown-status and GET /portfolio/concentration-status (IT-04/IT-05 Arc 3). |
 | 2.2.0 | 2026-05-15 | ST-02 (EPIC-01, v3.5): Add GET /portfolio/paper-positions — IT-06 Alpaca paper trading positions panel. |
+| 2.4.0 | 2026-06-23 | ST-06 (EPIC-03, v6.1): Add GET /portfolio/sector-weights — open-position sector exposure breakdown for SectorHeatMap component. |
 | 2.3.0 | 2026-05-20 | ST-02 (EPIC-01, v3.8): Add GET /portfolio/pre-entry-validation — SI-01 non-blocking advisory pre-entry rule check (§13 PASS). |
 
 ---
@@ -873,6 +874,60 @@ Returns a paginated log of strategy deviation events. Populated when the operato
 | 500 | Database error |
 
 
+
+## GET /portfolio/sector-weights
+
+Returns open-position sector breakdown by market value exposure.
+
+**Source:** ST-06, EPIC-03, v6.1
+
+### Request
+
+No parameters required.
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "sectors": [
+      { "sector_name": "Technology", "position_count": 3, "exposure_pct": 42.5 },
+      { "sector_name": "Financials", "position_count": 2, "exposure_pct": 31.0 },
+      { "sector_name": "Healthcare", "position_count": 1, "exposure_pct": 18.2 },
+      { "sector_name": "Industrials", "position_count": 1, "exposure_pct": 8.3 }
+    ],
+    "total_positions": 7,
+    "concentration_alert": true
+  }
+}
+```
+
+### Response fields — `data`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| sectors | array | Sectors sorted by exposure_pct descending |
+| sectors[].sector_name | string | Sector label (from `positions.sector`; falls back to `"Unclassified"`) |
+| sectors[].position_count | integer | Number of open positions in this sector |
+| sectors[].exposure_pct | number | Market value of sector / total open positions market value × 100 (1 dp) |
+| total_positions | integer | Total open position count |
+| concentration_alert | boolean | `true` when any single sector `exposure_pct ≥ 40` |
+
+### Notes
+
+- Positions missing a `sector` value are grouped under `"Unclassified"`.
+- Market value uses `current_price` if available, else falls back to `entry_price`.
+- US positions are converted to GBP using the live FX rate.
+- On any error, returns `{"sectors": [], "total_positions": 0, "concentration_alert": false}` — does not propagate exceptions to the UI.
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 500 | Internal error (silently falls back to empty sectors response) |
+
+---
 
 ## GET /portfolio/gate-metrics
 
