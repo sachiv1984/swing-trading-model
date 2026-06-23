@@ -2687,6 +2687,52 @@ BLG-OPS-73 (PATCH /trades/{trade_id}/costs missing from api_performance_baseline
 
 ---
 
+### BLG-GOV-135 — execution_prompt: hard gate on autonomous class sign-off for EPICs with frontend-visible changes
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Delivery verification 2026-06-22__release-v6.1 — Phase 4 lessons learnt friction item 1 (recurrence of BLG-GOV-19 misapplication pattern); Phase 4 filed 2026-06-23
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v6.2
+
+**Problem**
+In v6.1, the Sprint Execution Engine applied autonomous class sign-off (BLG-GOV-19) to EPIC-03 and EPIC-04 despite both introducing frontend-visible changes (SectorHeatMap.js, GateProgressStrip.js, SetupQualityScorePanel.js). Criterion 3 of BLG-GOV-19 ("no frontend-visible change") was interpreted as satisfied by Playwright coverage — but the criterion is binary and entirely independent of test coverage. A template advisory was added in v3.7 (qa_evidence_template.md v1.1) but proved insufficient. Delivery verification required retrospective DoQ counter-sign.
+
+**Scope**
+- Add a pre-PR-open check in `execution_prompt.md §3.2.A` (or §3.2.B) that scans all stories in the EPIC for frontend-visible changes (new React components, new pages, modified UI rendering logic)
+- If any story introduces frontend-visible changes: skip autonomous class path entirely; require Director of Quality sign-off block
+- Update the autonomous class eligibility note to state: "If any story in this EPIC creates or modifies a `.js` file in `src/components/` or `src/pages/`, autonomous class is unavailable regardless of Playwright coverage"
+
+**Acceptance Criteria**
+- AC-01: execution_prompt.md §3.2.A updated with explicit frontend-visible change detection rule
+- AC-02: Rule blocks autonomous class path when any story creates/modifies `src/components/**` or `src/pages/**`
+- AC-03: Prompt version bumped; OPERATIONAL_GUIDE.md §14 and prompt_change_log.md updated per CLAUDE.md §6
+- AC-04: qa_evidence_template.md criterion 3 advisory updated to reference the new rule
+
+---
+
+### BLG-GOV-136 — execution_prompt STEP 12: validate test_scenarios paths reference current cycle
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Delivery verification 2026-06-22__release-v6.1 — Phase 4 lessons learnt friction item 2; Phase 4 filed 2026-06-23
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v6.2
+
+**Problem**
+In v6.1, `execution_state.json` for EPIC-03 had `test_scenarios` referencing two staging test scripts from prior cycles (v2.3 and v2.5) — neither covering v6.1 stories (ST-06 sector heatmap, ST-07 gate proximity). The actual Playwright E2E specs (sector-heatmap.spec.js, gate-progress.spec.js) were not registered in `test_scenarios`. The coverage gap was detected at delivery verification via QA evidence cross-check — actual coverage was complete. No quality impact, but the metadata error added noise to the Phase 4 test coverage assessment.
+
+**Scope**
+- Add a validation note in `execution_prompt.md §3.2.A` (test_scenarios population) that test file paths must be in `tests/` or `tests/e2e/` and must correspond to test files created or used in the current sprint
+- Flag staging visual test scripts (`docs/testing/staging_visual_test_script_*.md`) as NOT valid entries for test_scenarios; those are evidence records, not test scenario files
+- Consider adding an advisory: "Only include files under tests/ or tests/e2e/ — docs/testing/ paths are QA evidence artefacts, not scenario files"
+
+**Acceptance Criteria**
+- AC-01: execution_prompt.md §3.2.A updated with test_scenarios path validation advisory
+- AC-02: Prompt version bumped; OPERATIONAL_GUIDE.md §14 and prompt_change_log.md updated per CLAUDE.md §6
+
+---
+
 ### BLG-QA-62 — Playwright spec auto-registration via glob pattern in playwright.yml
 **Priority:** P2 (Medium)
 **Type:** QA / Test Coverage

@@ -101,3 +101,29 @@
 - Signed off by: Sprint Execution Engine (autonomous class)
 - Date: 2026-06-23
 - Comments: ST-08 (backend) and ST-09 (frontend) both complete. Rebase requirement noted: EPIC-04 must rebase on main after EPIC-03 merge to resolve shared-file conflicts (test.py, openapi.yaml, playwright.yml). SystemStatus.js and SC-SS-01b will require updating at rebase time.
+
+---
+
+## Director of Quality Counter-Sign (Retrospective — BLG-GOV-14)
+
+EPIC-04 introduces frontend-visible changes (SetupQualityScorePanel.js integrated into Research.js and TradePlan.js). The autonomous class sign-off applied by the Sprint Execution Engine (BLG-GOV-19) is insufficient per `execution_prompt.md §3.2.A` criteria 2 and 3 — ST-09 has observable UI ACs and introduces frontend-visible changes.
+
+**Review basis:**
+
+ST-08 (backend only): All ACs code-review-verifiable. No observable UI behaviour. Unit tests `tests/test_setup_quality_score.py` cover gate_not_met, mixed history, and perfect history cases.
+
+ST-09 (frontend display): All observable ACs verified by Playwright E2E tests:
+- SC-SQS-01: Panel renders in Research.js and TradePlan.js
+- SC-SQS-02: Score badge with numeric value and qualitative label (Excellent/Good/Fair/Low)
+- SC-SQS-03: Gate-not-met message (`data-testid="setup-quality-gate-not-met"`)
+- SC-SQS-04: Expandable detail rows (matching_trades, win_rate, average_pnl_pct)
+- SC-SQS-05: Score updates on ticker change (no stale data)
+- SC-SQS-06: Silent error hide
+
+All observable ACs are covered by Playwright per CLAUDE.md option (a). No staging-only ACs declared in the backlog slice. No deviations found. Code review alone was not used as evidence for any observable AC.
+
+QA evidence reviewed and accepted. Substantive quality verification is complete and adequate.
+
+- Signed off by: Director of Quality
+- Date: 2026-06-23
+- Comments: Retrospective counter-sign per delivery verification Phase 4 Tier 2 compliance flag. Playwright E2E coverage (SC-SQS-01..06) satisfies the CLAUDE.md option (a) evidence requirement for all observable ACs in ST-09. ST-08 backend evidence complete via unit tests. No open quality concerns.

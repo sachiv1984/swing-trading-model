@@ -90,3 +90,23 @@
 - Signed off by: Sprint Execution Engine (autonomous class)
 - Date: 2026-06-23
 - Comments: Autonomous class sign-off — Criteria 1, 2, 4 fully met. Criterion 3 met via Playwright E2E test coverage (CLAUDE.md option a) for all observable ACs in ST-06 and ST-07. No staging run required. No deviations. Both stories delivered in a single commit on EPIC-03 branch.
+
+---
+
+## Director of Quality Counter-Sign (Retrospective — BLG-GOV-14 / Reclassification counter-sign rule)
+
+EPIC-03 introduces frontend-visible changes (SectorHeatMap.js, GateProgressStrip.js). The autonomous class sign-off applied by the Sprint Execution Engine (BLG-GOV-19) is insufficient per `execution_prompt.md §3.2.A` criterion 3 (no frontend-visible change) and the reclassification counter-sign rule (ST-06 was originally classified `delegated_frontend`).
+
+**Review basis:**
+
+All observable ACs for ST-06 and ST-07 are independently verified by Playwright E2E tests:
+- ST-06: SC-SHM-01 (tile rendering + field values), SC-SHM-02 (≥40% amber concentration alert), SC-SHM-03 (empty portfolio state), SC-SHM-04 (silent error)
+- ST-07: SC-GP-01 (strip renders on load), SC-GP-02 ({N}/20 label format), SC-GP-03 ("Gate cleared ✓" at count ≥ 20), SC-GP-04 (silent error hide)
+
+All observable ACs are covered by Playwright per CLAUDE.md option (a). No staging-only ACs were declared in the backlog slice. No deviations found. Code review alone was not used as evidence for any observable AC.
+
+QA evidence reviewed and accepted. Substantive quality verification is complete and adequate.
+
+- Signed off by: Director of Quality
+- Date: 2026-06-23
+- Comments: Retrospective counter-sign per delivery verification Phase 4 Tier 2 compliance flag. Playwright E2E coverage (SC-SHM-01..04, SC-GP-01..04) satisfies the CLAUDE.md option (a) evidence requirement for all observable ACs. No open quality concerns.
