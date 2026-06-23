@@ -9,10 +9,10 @@
 
   "epics": {
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "merged",
       "branch": "exec/2026-06-22__release-v6.1/EPIC-01",
       "pr_number": 835,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-22__release-v6.1/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -72,7 +72,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC-01: G+D+P% metric defined over rolling 5-cycle window, ≥60% alert threshold. AC-02: Proposal at docs/product/decisions/gov_overhead_ceiling_proposal_v6.1.md. AC-03: Draft STEP 2.4 amendment included. AC-04: Prior 5-cycle data tabulated, G+D+P%=86.0%. No prompt files modified (requires HoST sign-off). deviations_filed corrected at conflict resolution (no deviation record found)."
+          "notes": "AC-01: G+D+P% metric defined over rolling 5-cycle window, ≥60% alert threshold. AC-02: Proposal at docs/product/decisions/gov_overhead_ceiling_proposal_v6.1.md — awaiting HoST + PMO Lead review. AC-03: Draft STEP 2.4 amendment included in §6 of proposal. AC-04: Prior 5-cycle data tabulated, G+D+P%=86.0%. No prompt files modified (requires HoST sign-off). deviations_filed corrected at conflict resolution (no deviation record found)."
         }
       }
     },
@@ -250,8 +250,8 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-03"],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-04"],
+    "epics_merged": ["EPIC-03", "EPIC-01"],
+    "epics_pending": ["EPIC-02", "EPIC-04"],
     "all_merged": false
   },
 
