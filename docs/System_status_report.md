@@ -1,9 +1,34 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.1
-**Last Updated:** 2026-06-22
+**Version:** 4.2
+**Last Updated:** 2026-06-23
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-06-22__release-v6.1
+**Date:** 2026-06-23
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Design Gate enforcement in governance engines: release_planning_prompt.md now requires STEP 4.1 design gate check and emits advisory; sprint_planning_prompt.md enforces design gate as hard gate at preflight (STEP -1, check 3); governance overhead ceiling proposal with G+D+P% metric and 86.0% 5-cycle baseline | claude/system/release_planning_prompt.md; claude/system/sprint_planning_prompt.md; docs/product/decisions/gov_overhead_ceiling_proposal_v6.1.md | None |
+| EPIC-02 | CI quality hygiene: morning-briefing.spec.js and screener-quality.spec.js registered in playwright.yml (26 total spec files); PATCH /trades/{id}/costs performance baseline documented in api_performance_baseline.md §20 | .github/workflows/playwright.yml; docs/ops/api_performance_baseline.md v2.5 | None |
+| EPIC-03 | Portfolio sector heat-map: GET /portfolio/sector-weights endpoint; SectorHeatMap.js on RiskDashboard; amber alert ≥40% concentration; SC-SHM-01..04 Playwright tests. Trade gate proximity indicator: GateProgressStrip.js on DashboardHome; {N}/20 trades progress bar; Gate cleared ✓ state; SC-GP-01..04 Playwright tests | docs/design/2026-06-22__release-v6.1/sector-heatmap/ux_spec.md; docs/design/2026-06-22__release-v6.1/gate-proximity-indicator/ux_spec.md; docs/specs/api_contracts/portfolio_endpoints.md v2.4.0 | None |
+| EPIC-04 | Setup Quality Score backend: GET /trade-plans/setup-quality-score; score = clamp(win_rate×0.6 + avg_pnl_pct×0.4, 0, 100); gate_not_met when <20 trades; unit tests in test_setup_quality_score.py. Frontend: SetupQualityScorePanel in Research.js + TradePlan.js; gate-not-met advisory; expand/collapse detail view; SC-SQS-01..06 Playwright tests; test.py 67→69; SystemStatus.js 68→69 | docs/specs/api_contracts/trade_plan_endpoints.md v0.5; docs/design/2026-05-21__release-v3.9/setup-quality-score-v2/ux_spec.md | None |
+
+### Capabilities deferred or returned
+
+None — all 9 stories (ST-01 through ST-09) delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md (all Sprint Execution Engine autonomous class, 2026-06-23)
+- Deviations filed: None (spec deviations)
+- Test scenarios referenced: tests/e2e/morning-briefing.spec.js, tests/e2e/screener-quality.spec.js, tests/e2e/sector-heatmap.spec.js (SC-SHM-01..04), tests/e2e/gate-progress.spec.js (SC-GP-01..04), tests/e2e/setup-quality-score.spec.js (SC-SQS-01..06)
 
 ---
 
