@@ -6,6 +6,7 @@ import HeatGauge from "../components/risk/HeatGauge";
 import DrawdownSummary from "../components/risk/DrawdownSummary";
 import GracePeriodPanel from "../components/risk/GracePeriodPanel";
 import PositionRiskTable from "../components/risk/PositionRiskTable";
+import SectorHeatMap from "../components/risk/SectorHeatMap";
 import ProspectiveHeatPanel from "../components/risk/ProspectiveHeatPanel";
 
 export default function RiskDashboard() {
@@ -92,6 +93,9 @@ export default function RiskDashboard() {
 
           {/* Position Risk Table */}
           <PositionRiskTable positions={positions} error={positionError} />
+
+          {/* Sector Concentration Heat Map — manages its own query */}
+          <SectorHeatMap />
 
           {/* Prospective Heat Calculator — manages its own error state */}
           <ProspectiveHeatPanel currentHeat={heatPercent} />

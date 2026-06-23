@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.2.0
+  version: 3.3.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -303,6 +303,43 @@ paths:
                         type: array
                         items:
                           type: object
+
+  /portfolio/sector-weights:
+    get:
+      tags: [Portfolio]
+      summary: Get open-position sector exposure breakdown
+      description: >
+        Returns sector breakdown by market value: sector name, position count, exposure %,
+        and a concentration_alert flag (true when any sector ≥40%). Positions without a
+        sector are grouped as "Unclassified". Contract: ST-06, EPIC-03, v6.1.
+      responses:
+        "200":
+          description: Sector weights
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      sectors:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            sector_name:
+                              type: string
+                            position_count:
+                              type: integer
+                            exposure_pct:
+                              type: number
+                      total_positions:
+                        type: integer
+                      concentration_alert:
+                        type: boolean
 
   /portfolio/gate-metrics:
     get:

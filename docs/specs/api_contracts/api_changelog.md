@@ -1,11 +1,26 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.5.0
-**Last Updated:** 2026-04-23
+**Version:** 1.6.0
+**Last Updated:** 2026-06-23
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
+
+## v6.1.0 (2026-06-23 — Release v6.1)
+
+### portfolio_endpoints.md — v2.4.0 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-06
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /portfolio/sector-weights | Returns open-position sector breakdown by market value: sectors array (sector_name, position_count, exposure_pct), total_positions, concentration_alert (true when ≥40% in single sector). Positions without sector field grouped as "Unclassified". Silent graceful degradation on error. |
+
+**Sign-off:** Sprint Execution Engine (autonomous class) — 2026-06-23
+
+---
 
 ## v2.9.0 (2026-04-23 — Release v2.9)
 
