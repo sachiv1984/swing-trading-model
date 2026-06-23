@@ -195,7 +195,7 @@ test.describe('SC-MB-03 — Screener Hits card (AC-02)', () => {
     await expect(page.getByText('Morning Briefing')).toBeVisible({ timeout: 10000 });
     // 2 signals have status=new in SIGNALS_WITH_NEW
     await expect(page.getByText('2', { exact: true })).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText(/new signals today/)).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="morning-briefing"]').getByText(/new signals today/)).toBeVisible({ timeout: 5000 });
   });
 
   test('SC-MB-03b: Screener Hits card links to /Screener', async ({ page }) => {
