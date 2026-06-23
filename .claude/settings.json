@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/home/ubuntu/swing-trading-model/.claude/hooks/protect-eslint-config.sh"
+            "command": "/root/swing-trading-model/.claude/hooks/protect-eslint-config.sh"
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/home/ubuntu/swing-trading-model/.claude/hooks/lint-feedback.sh"
+            "command": "/root/swing-trading-model/.claude/hooks/lint-feedback.sh"
           }
         ]
       }

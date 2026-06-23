@@ -9,6 +9,15 @@
 
 ## v6.1.0 (2026-06-23 — Release v6.1)
 
+### portfolio_endpoints.md — v2.4.0 (UPDATED)
+
+**EPIC:** EPIC-03
+**ST:** ST-06
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /portfolio/sector-weights | Returns open-position sector breakdown by market value: sectors array (sector_name, position_count, exposure_pct), total_positions, concentration_alert (true when ≥40% in single sector). Positions without sector field grouped as "Unclassified". Silent graceful degradation on error. |
+
 ### trade_plan_endpoints.md — v0.5 (UPDATED)
 
 **EPIC:** EPIC-04

@@ -187,6 +187,9 @@ async def test_all_endpoints(request: Request):
         # Net-of-costs trade cost update (v6.0 / EPIC-02 ST-03)
         {"name": "PATCH /trades/{id}/costs", "method": "PATCH", "url": f"{base_url}/trades/00000000-0000-0000-0000-000000000000/costs", "critical": False},
 
+        # Sector concentration heat map (v6.1 / EPIC-03 ST-06)
+        {"name": "GET /portfolio/sector-weights", "method": "GET", "url": f"{base_url}/portfolio/sector-weights", "critical": False},
+
         # Setup Quality Score (v6.1 / EPIC-04 ST-08)
         {"name": "GET /trade-plans/setup-quality-score", "method": "GET", "url": f"{base_url}/trade-plans/setup-quality-score?ticker=AAPL", "critical": False},
     ]

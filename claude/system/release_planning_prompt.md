@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.37
-**Last Updated:** 2026-06-17 (v2.35→v2.36: LL-P3-03-v55/LL-P4-01-v55 — STEP 1.4b added: within-sprint date gate classification mandatory rule; pattern confirmed across v5.4–v5.8; action-now applied rebalance 2026-06-17__scheduled)
+**Version:** 2.38
+**Last Updated:** 2026-06-22 (v2.37→v2.38: ST-01/BLG-GOV-132 — STEP 4.1 Design Gate Classification added: STEP 4 now scans backlog slice for UI-facing scope and sets design_gate_required in state.json and .claude_current_state.json; STEP 7 updated to include design_gate_required status line in cycle_summary.md header)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -848,8 +848,33 @@ One entry per ST item in `stage4_backlog_slice.md`. The `cycle:<cycle_id>` label
 artifacts.stage4_backlog_slice: pass|fail|blocked
 artifacts.stage4_issue_manifest: pass|fail|blocked
 attributes.backlog_committed: true          # on pass
+attributes.design_gate_required: true|false # set in STEP 4.1 below
 status: Committed                           # on pass
 ```
+
+### STEP 4.1 — Design Gate Classification (Required — same session as STEP 4)
+
+After writing `stage4_backlog_slice.md`, scan all ST items for UI-facing scope:
+
+**Classification rule:**
+- `design_gate_required = true` if ANY item has delegation class `delegated_frontend` OR is `autonomous` with at least one observable UI acceptance criterion (visible rendering, element presence/absence, colour, interaction, timing)
+- `design_gate_required = false` if all items are backend, spec/documentation, CI/infrastructure, or autonomous with no observable UI ACs
+
+**Required output:**
+- If `design_gate_required = true`: output `⚠ DESIGN GATE REQUIRED before plan sprint — N items classified as UI-facing. Run: run design-gate --cycle <cycle_id>`
+- If `design_gate_required = false`: output `Design Gate: Not Required — proceed directly to plan sprint`
+
+**Required state updates (same session — Hard Requirement):**
+```yaml
+# state.json:
+attributes.design_gate_required: true|false
+
+# .claude_current_state.json:
+design_gate_required: true|false
+design_gate_status: "not_started"  # only when design_gate_required = true and not yet run
+```
+
+If `design_gate_required = false`: set `design_gate_status = "not_required"` in both files.
 
 ### STEP 4 Postcondition — Release Backlog Lock (Strict)
 
@@ -1006,6 +1031,14 @@ last_sync_utc: <ISO-8601 UTC now>
 ```
 
 STEP 9 (Global State Synchronization) is the terminal sync and is the only step that sets status = `Published`. Do not set Published here.
+
+**`cycle_summary.md` header must include `design_gate_required` status line (AC-05):** When writing `cycle_summary.md`, include the following line in its header metadata block:
+
+```
+Design Gate Required: true | false | not_required
+```
+
+Source: `attributes.design_gate_required` from `state.json` (set in STEP 4.1). Use `not_required` if the field is absent (prior-cycle artefact without STEP 4.1 classification).
 
 ---
 

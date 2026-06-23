@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.10
-**Last Updated:** 2026-06-16
+**Version:** 3.11
+**Last Updated:** 2026-06-22 (v3.10→v3.11: ST-02/BLG-GOV-133 — STEP -1 check 3 updated: design gate hard gate now conditional on design_gate_required = true; when design_gate_required = false gate check is skipped with explicit log note; source reads from state.json attributes.design_gate_required)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -161,9 +161,16 @@ Fail fast before any planning work begins. All hard gates must pass before STEP 
 - `status = Published`, `publish_eligible = true`, `open_escalations` empty.
 - `deferred_execution_blockers`: if non-empty — `strict` halt; `standard` record each in `sprint_escalations.md` as a named risk; PO must accept each explicitly before sprint seals.
 
-**3. Design gate** — read `design_gate_status` from `state.json`:
-- Must be `Passed`. If `not_started`, `Blocked`, or absent: halt (absent = process deviation — Release Planning Engine should have initialised this field).
-- Exception: if every sprint item is confirmed `Design Not Applicable` by the Head of UX & Design, recorded in `state.json` or escalations, the PMO Lead may proceed with a recorded deviation.
+**3. Design gate** — read `design_gate_required` from `state.json` (`attributes.design_gate_required`) OR `.claude_current_state.json` (`design_gate_required`); fall back to checking `design_gate_status` if neither field is set (pre-v2.38 release planning artefact):
+
+- **If `design_gate_required = false` (or `not_required`):** Skip this gate check. Log: "Design gate: Not Required for this cycle — check skipped." Proceed to check 4.
+- **If `design_gate_required = true` (or absent / field not initialised — treat absent as true for safety):** Apply the full design gate hard gate below.
+
+Design gate hard gate (fires when `design_gate_required = true`):
+- Read `design_gate_status` from `state.json`:
+  - `Passed` → proceed normally; log "Design gate: Passed ✅".
+  - `not_started`, `Blocked`, or absent → halt (absent = process deviation — Release Planning Engine STEP 4.1 should have initialised this field).
+  - Exception: if every sprint item is confirmed `Design Not Applicable` by the Head of UX & Design, recorded in `state.json` or escalations, the PMO Lead may proceed with a recorded deviation.
 - **Bypass audit (IMP-04, Hard Gate):** If entered from `Release_Planning_Complete` (design gate was skipped entirely): read `design_gate_bypass_authority` and `design_gate_bypass_reason` from `.claude_current_state.json`. If either is absent or empty — `strict` halt; `standard` surface + block seal until present. Per IMP-30: `design_gate_bypass_authority` must contain both `"Head of UX & Design + Product Owner"` — a single role is non-compliant. If entered from `Design_Gate_Passed`: skip bypass audit.
 
 **4. Files, roles & write access** (may be checked in parallel):

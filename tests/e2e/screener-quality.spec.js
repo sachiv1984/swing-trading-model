@@ -117,7 +117,7 @@ test.describe('SC-SQ-01 — FULL state quality panel (AC-02, AC-03)', () => {
 
     const panel = page.locator('[data-testid="screener-quality-panel"][data-quality="FULL"]');
     await expect(panel).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('Full run')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Full run', { exact: true })).toBeVisible({ timeout: 5000 });
     await expect(page.getByText(/500 \/ 500/)).toBeVisible({ timeout: 5000 });
   });
 });
