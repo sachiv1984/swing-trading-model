@@ -7,6 +7,7 @@ import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
 import SignalContextPanel, { buildSignalPrePopulation } from "../components/trades/SignalContextPanel";
+import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
 import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon, ShieldCheck } from "lucide-react";
 import { TradePlanStatusBadge } from "./TradePlans";
 
@@ -643,6 +644,9 @@ export default function TradePlan() {
             ))}
           </select>
         </Field>
+
+        {/* Setup Quality Score — ST-09 (v6.1) */}
+        <SetupQualityScorePanel ticker={form.ticker} />
 
         <NewsContextPanel ticker={form.ticker} market={form.market} />
 
