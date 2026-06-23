@@ -162,11 +162,11 @@ test.describe('SC-MB-02 — All 5 cards render without error', () => {
     await gotoDashboard(page);
 
     await expect(page.getByText('Morning Briefing')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('Screener Hits')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Positions to Watch')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Red Flags')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Earnings')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Arc 5 Compliance')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Screener Hits', { exact: true })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Positions to Watch', { exact: true })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Red Flags', { exact: true })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Earnings', { exact: true })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Arc 5 Compliance', { exact: true })).toBeVisible({ timeout: 5000 });
   });
 
   test('SC-MB-02b: Empty state text renders for all cards with no data', async ({ page }) => {
@@ -175,8 +175,8 @@ test.describe('SC-MB-02 — All 5 cards render without error', () => {
     await gotoDashboard(page);
 
     await expect(page.getByText('Morning Briefing')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('No new signals')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('No positions to watch')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('No new signals', { exact: true })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('No positions to watch', { exact: true })).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('No red flags this week')).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('No earnings in 7 days')).toBeVisible({ timeout: 5000 });
   });
@@ -194,7 +194,7 @@ test.describe('SC-MB-03 — Screener Hits card (AC-02)', () => {
 
     await expect(page.getByText('Morning Briefing')).toBeVisible({ timeout: 10000 });
     // 2 signals have status=new in SIGNALS_WITH_NEW
-    await expect(page.getByText('2')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('2', { exact: true })).toBeVisible({ timeout: 5000 });
     await expect(page.getByText(/new signals today/)).toBeVisible({ timeout: 5000 });
   });
 
@@ -267,7 +267,7 @@ test.describe('SC-MB-06 — Earnings card (AC-05)', () => {
     await gotoDashboard(page);
 
     await expect(page.getByText('Morning Briefing')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('Earnings')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Earnings', { exact: true })).toBeVisible({ timeout: 5000 });
     const link = page.locator('a[href*="Positions"]');
     await expect(link.first()).toBeVisible({ timeout: 5000 });
   });
