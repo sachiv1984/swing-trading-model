@@ -5,9 +5,51 @@ Manages the set of tickers eligible for screener runs.
 Supports UK (.L suffix) and US tickers.
 """
 import csv
+import logging
 import os
 from typing import Dict, List, Optional
 from database import get_db
+
+_log = logging.getLogger(__name__)
+
+
+def _yfinance_company_name(ticker: str) -> Optional[str]:
+    """Return company name from yfinance, or None on failure."""
+    try:
+        import yfinance as yf
+        info = yf.Ticker(ticker).info
+        return info.get("longName") or info.get("shortName") or None
+    except Exception:
+        return None
+
+
+def backfill_company_names() -> int:
+    """Fetch company names from yfinance for any ticker_universe rows where company_name IS NULL.
+
+    Called at startup to recover tickers added before the yfinance lookup was wired in.
+    Returns the number of rows updated.
+    """
+    updated = 0
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT ticker, market FROM ticker_universe WHERE company_name IS NULL AND active = TRUE")
+                rows = cur.fetchall()
+        for row in rows:
+            name = _yfinance_company_name(row["ticker"])
+            if name:
+                with get_db() as conn:
+                    with conn.cursor() as cur:
+                        cur.execute(
+                            "UPDATE ticker_universe SET company_name = %s WHERE ticker = %s AND company_name IS NULL",
+                            (name, row["ticker"]),
+                        )
+                        if cur.rowcount:
+                            updated += 1
+                    conn.commit()
+    except Exception as exc:
+        _log.warning("backfill_company_names failed: %s", exc)
+    return updated
 
 _CSV_PATH = os.path.join(os.path.dirname(__file__), "..", "tickers_full_list.csv")
 
@@ -121,7 +163,7 @@ def add_ticker(ticker: str, market: str, sector: Optional[str] = None, industry:
     if market not in VALID_MARKETS:
         raise ValueError(f"market must be one of: {', '.join(sorted(VALID_MARKETS))}")
     ticker = ticker.strip().upper()
-    company_name = _load_company_names().get(ticker)
+    company_name = _load_company_names().get(ticker) or _yfinance_company_name(ticker)
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute(

@@ -12,7 +12,7 @@ export default function GateProgressStrip() {
 
   if (isError || !data) return null;
 
-  const metrics = data?.data ?? {};
+  const metrics = data ?? {};
   const closed = metrics.closed_trades_count ?? 0;
   const threshold = metrics.gate_threshold ?? GATE_THRESHOLD;
   const gateMet = metrics.gate_met ?? closed >= threshold;
@@ -24,9 +24,9 @@ export default function GateProgressStrip() {
         className="rounded-lg bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 flex items-center gap-2"
         data-testid="gate-progress-strip"
       >
-        <span className="text-sm text-emerald-400 font-medium">Gate cleared ✓</span>
+        <span className="text-sm text-emerald-400 font-medium">Quality insights unlocked ✓</span>
         <span className="text-xs text-slate-500">
-          {closed}/{threshold} trades (PT-04/SI-02 gate)
+          {closed} closed trades
         </span>
       </div>
     );
@@ -39,7 +39,7 @@ export default function GateProgressStrip() {
     >
       <div className="flex items-center justify-between mb-1.5">
         <span className="text-xs text-slate-400">
-          {closed}/{threshold} trades (PT-04/SI-02 gate)
+          {closed}/{threshold} closed trades · {threshold - closed} more to unlock quality insights
         </span>
         <span className="text-xs text-slate-500">{Math.round(progressPct)}%</span>
       </div>

@@ -47,7 +47,7 @@ export default function ComplianceCard() {
     "text-slate-400";
 
   return (
-    <DashboardCard title="Arc 5 Compliance" to="/PerformanceAnalytics" isLoading={loading7d || loading30d} error={error7d}>
+    <DashboardCard title="Signal Compliance" to="/PerformanceAnalytics" isLoading={loading7d || loading30d} error={error7d}>
       <div className="flex items-end gap-2 mb-2">
         <p className="text-4xl font-bold text-emerald-400">{display}</p>
         <TrendIcon className={`w-5 h-5 mb-1 ${trendColor}`} />

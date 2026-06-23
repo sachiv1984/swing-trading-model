@@ -199,11 +199,10 @@ test('SC-TP-03: Regime context input auto-populated from market status API', asy
   await mockMarketStatus(page, { status: 'ok', data: { regime_status: 'risk_off' } });
   await gotoTradePlan(page, { ticker: 'AAPL', market: 'US' });
 
-  // The regime context input shows the value from the API.
-  // Placeholder is dynamic (regimeFromHealth || "e.g. risk_on"), so when risk_off
-  // loads, placeholder becomes "risk_off". Locate by the Field label instead.
-  const regimeInput = page.locator('label').filter({ hasText: /regime context/i }).locator('xpath=../input');
-  await expect(regimeInput).toHaveValue('risk_off', { timeout: 5000 });
+  // Regime at Entry is now a read-only display div (not an input) — auto-populated
+  // from the market status API and not editable by the user to prevent bypass.
+  const regimeField = page.locator('label').filter({ hasText: /regime at entry/i }).locator('xpath=../div');
+  await expect(regimeField).toContainText('risk_off', { timeout: 5000 });
 });
 
 // ---------------------------------------------------------------------------

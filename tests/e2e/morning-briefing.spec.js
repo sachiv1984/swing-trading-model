@@ -166,7 +166,7 @@ test.describe('SC-MB-02 — All 5 cards render without error', () => {
     await expect(page.getByText('Positions to Watch', { exact: true })).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('Red Flags', { exact: true })).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('Earnings', { exact: true })).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Arc 5 Compliance', { exact: true })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Signal Compliance', { exact: true })).toBeVisible({ timeout: 5000 });
   });
 
   test('SC-MB-02b: Empty state text renders for all cards with no data', async ({ page }) => {
@@ -284,7 +284,7 @@ test.describe('SC-MB-07 — Compliance card (AC-06)', () => {
     await gotoDashboard(page);
 
     await expect(page.getByText('Morning Briefing')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('Arc 5 Compliance')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Signal Compliance')).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('7-day compliance score')).toBeVisible({ timeout: 5000 });
   });
 

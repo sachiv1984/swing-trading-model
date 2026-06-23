@@ -480,7 +480,7 @@ function MonthlyPnlTable() {
         <div className="px-6 py-4 border-b border-slate-700/50">
           <h3 className="text-sm font-semibold text-white">Strategy Compliance</h3>
           <p className="text-xs text-slate-400 mt-0.5">
-            Arc 5 pre-entry discipline metrics — last {compliance?.period_days ?? 30} days.
+            Pre-entry discipline metrics — last {compliance?.period_days ?? 30} days.
           </p>
         </div>
         {compliance === null ? (

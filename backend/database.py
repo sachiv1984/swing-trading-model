@@ -1983,7 +1983,7 @@ def get_gate_metrics(portfolio_id: str) -> Dict:
 
             # Active positions
             cur.execute(
-                "SELECT COUNT(*)::int AS cnt FROM positions WHERE portfolio_id = %s AND status = 'active'",
+                "SELECT COUNT(*)::int AS cnt FROM positions WHERE portfolio_id = %s AND status = 'open'",
                 (portfolio_id,),
             )
             active_positions_count = cur.fetchone()["cnt"]
