@@ -353,8 +353,9 @@ export default function TradePlan() {
   const regimeFromHealth = (() => {
     if (healthData?.data?.regime_status) return healthData.data.regime_status;
     if (healthData?.regime_status) return healthData.regime_status;
-    const spy = healthData?.data?.spy;
-    if (spy != null) return spy.is_risk_on ? "risk_on" : "risk_off";
+    const isUK = (form.market || "US").toUpperCase() === "UK";
+    const indicator = isUK ? healthData?.data?.ftse : healthData?.data?.spy;
+    if (indicator != null) return indicator.is_risk_on ? "risk_on" : "risk_off";
     return "";
   })();
 
@@ -499,10 +500,14 @@ export default function TradePlan() {
   };
 
   const handleSubmit = () => {
+    const toNum = (v, parse) => (v === "" || v == null ? null : (n => isNaN(n) ? null : n)(parse(v)));
     const payload = {
       ...form,
       regime_context_at_entry: form.regime_context_at_entry || regimeFromHealth || null,
-      r_target: form.r_target !== "" ? parseFloat(form.r_target) : null,
+      r_target: toNum(form.r_target, parseFloat),
+      planned_quantity: toNum(form.planned_quantity, v => parseInt(v, 10)),
+      planned_entry_price: toNum(form.planned_entry_price, parseFloat),
+      planned_stop_price: toNum(form.planned_stop_price, parseFloat),
     };
     if (editId) {
       updateMutation.mutate({ id: editId, data: payload });
@@ -621,12 +626,10 @@ export default function TradePlan() {
               placeholder="e.g. 2.5"
             />
           </Field>
-          <Field label="Regime Context at Entry">
-            <TextInput
-              value={form.regime_context_at_entry || regimeFromHealth}
-              onChange={set("regime_context_at_entry")}
-              placeholder={regimeFromHealth || "e.g. risk_on"}
-            />
+          <Field label="Regime at Entry">
+            <div className="px-3 py-2 text-sm bg-slate-800/50 border border-slate-700 rounded-lg text-slate-300 min-h-[38px] flex items-center">
+              {form.regime_context_at_entry || regimeFromHealth || <span className="text-slate-500 italic">loading…</span>}
+            </div>
           </Field>
         </div>
 
