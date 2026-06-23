@@ -49,8 +49,8 @@ export default function SectorHeatMap() {
     return null;
   }
 
-  const sectors = data?.data?.sectors ?? [];
-  const concentrationAlert = data?.data?.concentration_alert ?? false;
+  const sectors = data?.sectors ?? [];
+  const concentrationAlert = data?.concentration_alert ?? false;
 
   if (sectors.length === 0) {
     return (
