@@ -5,11 +5,11 @@
   "invoked_utc": "2026-06-22T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-22T00:00:00Z",
+  "last_updated_utc": "2026-06-23T00:00:00Z",
 
   "epics": {
     "EPIC-01": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-06-22__release-v6.1/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
@@ -20,40 +20,40 @@
         "ST-01": {
           "title": "Release planning: Design Gate Required flag",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 824,
           "branch": "exec/2026-06-22__release-v6.1/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "cb0bb33f3553907f274722936ea7b8ad1c73edc4",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-06-23T00:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/system/release_planning_prompt.md"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "All 6 ACs verified: STEP 4.1 added (AC-01), advisory output (AC-02/03), state.json update (AC-04), STEP 7 header (AC-05), governance edit checklist (AC-06). No deviations — implementation matches spec intent."
         },
         "ST-02": {
           "title": "Sprint planning: Design Gate hard gate at preflight",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 825,
           "branch": "exec/2026-06-22__release-v6.1/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "cb0bb33f3553907f274722936ea7b8ad1c73edc4",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["claude/system/sprint_planning_prompt.md", "claude/system/shared_standards.md"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "completed_utc": "2026-06-23T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/system/sprint_planning_prompt.md"],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "All 5 ACs verified: STEP -1 check 3 conditional on design_gate_required (AC-01), bypass path preserved (AC-02), pass path logs Passed (AC-03), false case skips with note (AC-04), governance edit checklist (AC-05). No deviations."
         },
         "ST-03": {
           "title": "Governance overhead ceiling metric and accountability mechanism",
@@ -238,7 +238,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": [],
+  "completed_items": ["ST-01", "ST-02"],
   "open_escalations": [],
 
   "merge_gate": {
