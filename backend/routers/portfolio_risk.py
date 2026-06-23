@@ -270,6 +270,80 @@ def get_concentration_status():
         return {"status": "ok", "data": {"any_breach": False, "error": str(e)}}
 
 
+# ST-06, EPIC-03, v6.1
+@router.get("/sector-weights")
+def get_sector_weights():
+    """
+    GET /portfolio/sector-weights
+
+    Return open-position sector breakdown: exposure % by market value,
+    position count per sector, and a concentration alert flag (≥40% in one sector).
+
+    Spec: stage4_backlog_slice.md#ST-06
+    """
+    try:
+        from utils.pricing import get_live_fx_rate
+        live_fx_rate = get_live_fx_rate()
+
+        with get_db() as conn:
+            portfolio = get_portfolio(conn=conn)
+            if not portfolio:
+                return {"status": "ok", "data": {"sectors": [], "total_positions": 0, "concentration_alert": False}}
+            portfolio_id = str(portfolio["id"])
+            raw_positions = get_positions(portfolio_id, status="open", conn=conn)
+
+        sector_values: dict = {}
+        sector_counts: dict = {}
+        total_market_value = 0.0
+
+        for pos in raw_positions:
+            pos = decimal_to_float(dict(pos))
+            shares = float(pos.get("shares", 0))
+            market = pos.get("market", "UK")
+            sector = pos.get("sector") or "Unclassified"
+            entry_price = float(pos.get("entry_price", 0))
+            fx_rate = float(pos.get("fx_rate") or 1.27)
+
+            if market == "US":
+                entry_price_native = float(pos.get("fill_price") or (entry_price * fx_rate))
+                current_price_native = float(pos.get("current_price") or entry_price_native)
+                current_value_gbp = (current_price_native / live_fx_rate) * shares
+            else:
+                current_price_gbp = float(pos.get("current_price") or entry_price)
+                current_value_gbp = current_price_gbp * shares
+
+            sector_values[sector] = sector_values.get(sector, 0.0) + current_value_gbp
+            sector_counts[sector] = sector_counts.get(sector, 0) + 1
+            total_market_value += current_value_gbp
+
+        sectors = []
+        concentration_alert = False
+
+        for sector, value in sorted(sector_values.items(), key=lambda x: x[1], reverse=True):
+            exposure_pct = round(value / total_market_value * 100, 1) if total_market_value > 0 else 0.0
+            if exposure_pct >= 40.0:
+                concentration_alert = True
+            sectors.append({
+                "sector_name": sector,
+                "position_count": sector_counts[sector],
+                "exposure_pct": exposure_pct,
+            })
+
+        return {
+            "status": "ok",
+            "data": {
+                "sectors": sectors,
+                "total_positions": sum(sector_counts.values()),
+                "concentration_alert": concentration_alert,
+            },
+        }
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "ok", "data": {"sectors": [], "total_positions": 0, "concentration_alert": False, "error": str(e)}}
+
+
 # ST-04, EPIC-02, v5.5
 @router.get("/gate-metrics")
 def get_gate_metrics_endpoint():

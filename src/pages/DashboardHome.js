@@ -5,6 +5,7 @@ import GracePeriodCard from "../components/dashboard/home/GracePeriodCard";
 import SignalStatusCard from "../components/dashboard/home/SignalStatusCard";
 import RecentActivityCard from "../components/dashboard/home/RecentActivityCard";
 import MorningBriefing from "../components/dashboard/home/MorningBriefing";
+import GateProgressStrip from "../components/dashboard/home/GateProgressStrip";
 
 const DASHBOARD_QUERY_KEYS = [
   "home-open-positions",
@@ -49,6 +50,9 @@ export default function DashboardHome() {
         <SignalStatusCard />
         <RecentActivityCard />
       </div>
+
+      {/* Trade gate proximity strip — hidden silently on error */}
+      <GateProgressStrip />
 
       {/* All-endpoints-failed retry (spec §5) — hidden by default, shown via retry button */}
       <div className="hidden" id="dashboard-retry-root">
