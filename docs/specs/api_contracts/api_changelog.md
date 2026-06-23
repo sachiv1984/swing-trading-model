@@ -1,11 +1,26 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.5.0
-**Last Updated:** 2026-04-23
+**Version:** 1.6.0
+**Last Updated:** 2026-06-23
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
+
+## v6.1.0 (2026-06-23 — Release v6.1)
+
+### trade_plan_endpoints.md — v0.5 (UPDATED)
+
+**EPIC:** EPIC-04
+**ST:** ST-08
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /trade-plans/setup-quality-score | Returns 0-100 setup quality score from closed trade history. Gate: returns gate_not_met=true when <20 closed trades. Score = clamp(win_rate×0.6 + max(avg_pnl_pct,0)×0.4, 0, 100). Response includes: score, matching_trades, win_rate, average_pnl_pct, score_explanation. |
+
+**Sign-off:** Sprint Execution Engine (autonomous class) — 2026-06-23
+
+---
 
 ## v2.9.0 (2026-04-23 — Release v2.9)
 
