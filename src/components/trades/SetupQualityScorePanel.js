@@ -22,11 +22,7 @@ export default function SetupQualityScorePanel({ ticker }) {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["setup-quality-score", ticker],
-    queryFn: async () => {
-      const res = await api.tradePlans.setupQualityScore(ticker);
-      if (!res.status || res.status === "error") throw new Error("error");
-      return res.data ?? res;
-    },
+    queryFn: () => api.tradePlans.setupQualityScore(ticker),
     enabled: !!ticker,
     retry: false,
   });
