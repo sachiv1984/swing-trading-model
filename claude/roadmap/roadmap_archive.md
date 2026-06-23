@@ -1,13 +1,50 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-18 (post-ship closure 2026-06-17__release-v5.9)
+**Last Updated:** 2026-06-23 (post-ship closure 2026-06-22__release-v6.1 — RA:v6.1 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v6.1 — Governance Correctness, CI Quality & User Value Foundation
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-23
+**Shipped version:** v6.1
+**Cycle reference:** 2026-06-22__release-v6.1
+**Verification report:** claude/cycles/2026-06-22__release-v6.1/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-23
+
+### Original Roadmap Entry
+
+**Added:** 2026-06-22 (rebalance 2026-06-22__scheduled — DL-053; STEP 8.1 Option a)
+**Skill-Silo ceiling:** 40% G+D+P stories per sprint (STEP 7.1)
+
+| BLG ID | Title | Priority | Effort | Type | Status |
+|--------|-------|----------|--------|------|--------|
+| BLG-GOV-132 | Release planning: emit explicit Design Gate Required flag for UI-facing scope | P1 | S | G | Firm — Correctness Fast-Track (STEP 8.0; DL-052) |
+| BLG-GOV-133 | Sprint planning: enforce hard gate on design_gate_status at STEP -1 preflight | P1 | S | G | Firm — Correctness Fast-Track (STEP 8.0; DL-052) |
+| BLG-QA-60 | Playwright CI registration gap (morning-briefing.spec.js, screener-quality.spec.js) | P2 | M | D | Firm — no-further-deferral carry-forward |
+| BLG-FE-76 | Portfolio sector heat-map visualization | P2 | M | U | Firm — Product Value Alert pull-forward |
+| BLG-GOV-131 | Governance overhead ceiling metric and accountability mechanism | P2 | S | G | Firm — v6.1 target confirmed (promoted IW-20260619-01; DL-049) |
+| BLG-FE-78 | Trade gate proximity indicator on dashboard | P3 | S | U | Firm — STEP 5 Challenger PVC outcome (DL-054) |
+| BLG-OPS-73 | api_performance_baseline.md: add row for PATCH /trades/{trade_id}/costs | P3 | XS | D | Firm — spec compliance advisory |
+| BLG-FEAT-25/PT-04 | Setup Quality Score (deterministic win-rate from own trade history) | P1 | M | U | **Conditional** — Gate: ≥20 closed trades (currently ~13; projected ~2026-07-02). PMO Lead to re-verify count at v6.1 sprint planning. |
+
+> **STEP 8.2 note:** BLG-FE-52 and BLG-FE-53 were referenced as SI-02 frontend candidates in the prior session context but were found in `backlog_archive.md` (pre-design docs shipped v4.4). SI-02 frontend implementation BLG items do not yet exist. Assess at v6.1 release planning once PT-04 gate review is complete.
+
+> **User value commitment (STEP 5 Challenger PVC):** v6.1 sprint planning must include BLG-FE-76 and BLG-FE-78 as firm scope — not conditional, not deferred. Challenger Clearance Statement accepted on this basis (DL-054).
+
+> **Release Plan:** cycle_id=2026-06-22__release-v6.1 — Published 2026-06-22. 4 EPICs: EPIC-01 (Governance Correctness, 3 stories), EPIC-02 (CI Quality, 2 stories), EPIC-03 (User Value, 2 stories), EPIC-04 (Conditional PT-04, 2 stories). 7 firm stories + 2 conditional stories = 9 total. design_gate_required=true. Capacity check: warn (phasing required). Slice: claude/cycles/2026-06-22__release-v6.1/stage4_backlog_slice.md. (RA:v6.1:2026-06-22__release-v6.1)
+
+✅ **Complete — Shipped 2026-06-23 — cycle: 2026-06-22__release-v6.1** — 9/9 stories delivered; Verified; zero deviations; autonomous class sign-off misapplication (EPIC-03/04) resolved via retrospective DoQ counter-sign at delivery verification; PT-04 gate cleared (15 trades confirmed at sprint planning).
 
 ---
 

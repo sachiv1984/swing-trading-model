@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-22 (cycle 2026-06-22__scheduled — v6.1 Now section added)
+**Last Updated:** 2026-06-23 (post-ship closure 2026-06-22__release-v6.1 — v6.1 marked ✅ Complete)
 **Last rebalance:** 2026-06-22 (cycle 2026-06-22__scheduled — Standard-tier, CPS=N/A (0 active initiatives); Product Value Alert (ratio=0.136); Skill-Silo Alert (G+D+P=86.4%); 4 new backlog items (BLG-FE-78, BLG-GOV-134, BLG-QA-62, BLG-OPS-74); DL-052–055; 0 Rejected, 4 Promoted-Backlog immediate, 0 Promoted-Backlog post-debate, 11 Parked C1, 8 Parked C2; v6.1 Now section added (STEP 8.1 Option a); STEP 8.2 first activation — BLG-FE-52/53 excluded from Now horizon (archived); deferred patch roadmap_prompt.md STEP 8.2 applied action-now (v7.5→v7.6))
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,8 +10,8 @@
 
 ## 1. Current Version
 
-**v6.0** — Signal Correctness, User Intelligence & SI-05 Effectiveness — ✅ Shipped 2026-06-22
-**Next planned release:** v6.1
+**v6.1** — Governance Correctness, CI Quality & User Value Foundation — ✅ Shipped 2026-06-23
+**Next planned release:** [TBD]
 
 *RA:v5.9 retired — see roadmap_archive.md 2026-06-18 (post-ship closure 2026-06-17__release-v5.9).*
 
@@ -277,27 +277,7 @@ Today you find stocks through external research and add them to the watchlist ma
 
 *RA:v6.0 retired — see roadmap_archive.md 2026-06-22 (post-ship closure 2026-06-19__release-v6.0).*
 
-### v6.1 — Governance Correctness, CI Quality & User Value Foundation
-
-**Added:** 2026-06-22 (rebalance 2026-06-22__scheduled — DL-053; STEP 8.1 Option a)
-**Skill-Silo ceiling:** 40% G+D+P stories per sprint (STEP 7.1)
-
-| BLG ID | Title | Priority | Effort | Type | Status |
-|--------|-------|----------|--------|------|--------|
-| BLG-GOV-132 | Release planning: emit explicit Design Gate Required flag for UI-facing scope | P1 | S | G | Firm — Correctness Fast-Track (STEP 8.0; DL-052) |
-| BLG-GOV-133 | Sprint planning: enforce hard gate on design_gate_status at STEP -1 preflight | P1 | S | G | Firm — Correctness Fast-Track (STEP 8.0; DL-052) |
-| BLG-QA-60 | Playwright CI registration gap (morning-briefing.spec.js, screener-quality.spec.js) | P2 | M | D | Firm — no-further-deferral carry-forward |
-| BLG-FE-76 | Portfolio sector heat-map visualization | P2 | M | U | Firm — Product Value Alert pull-forward |
-| BLG-GOV-131 | Governance overhead ceiling metric and accountability mechanism | P2 | S | G | Firm — v6.1 target confirmed (promoted IW-20260619-01; DL-049) |
-| BLG-FE-78 | Trade gate proximity indicator on dashboard | P3 | S | U | Firm — STEP 5 Challenger PVC outcome (DL-054) |
-| BLG-OPS-73 | api_performance_baseline.md: add row for PATCH /trades/{trade_id}/costs | P3 | XS | D | Firm — spec compliance advisory |
-| BLG-FEAT-25/PT-04 | Setup Quality Score (deterministic win-rate from own trade history) | P1 | M | U | **Conditional** — Gate: ≥20 closed trades (currently ~13; projected ~2026-07-02). PMO Lead to re-verify count at v6.1 sprint planning. |
-
-> **STEP 8.2 note:** BLG-FE-52 and BLG-FE-53 were referenced as SI-02 frontend candidates in the prior session context but were found in `backlog_archive.md` (pre-design docs shipped v4.4). SI-02 frontend implementation BLG items do not yet exist. Assess at v6.1 release planning once PT-04 gate review is complete.
-
-> **User value commitment (STEP 5 Challenger PVC):** v6.1 sprint planning must include BLG-FE-76 and BLG-FE-78 as firm scope — not conditional, not deferred. Challenger Clearance Statement accepted on this basis (DL-054).
-
-> **Release Plan:** cycle_id=2026-06-22__release-v6.1 — Published 2026-06-22. 4 EPICs: EPIC-01 (Governance Correctness, 3 stories), EPIC-02 (CI Quality, 2 stories), EPIC-03 (User Value, 2 stories), EPIC-04 (Conditional PT-04, 2 stories). 7 firm stories + 2 conditional stories = 9 total. design_gate_required=true. Capacity check: warn (phasing required). Slice: claude/cycles/2026-06-22__release-v6.1/stage4_backlog_slice.md. (RA:v6.1:2026-06-22__release-v6.1)
+*RA:v6.1 retired — see roadmap_archive.md 2026-06-23 (post-ship closure 2026-06-22__release-v6.1).*
 
 -----
 
@@ -484,6 +464,7 @@ When evaluating new features:
 |**v5.8** ✅  |RFJ UX Design Completion, SI-05 Effectiveness Review & Production Hardening|FRONTEND_URL env var set on production backend — restores SI-05 deep-link functionality (BLG-OPS-70 filed for AC-04 staging-only confirmation); governance complexity assessment produced (GCA-2026-06-17; 7 simplification candidates BLG-GOV-123–129 filed; complexity confirmed secondary factor not root cause). ST-01/02 (BLG-FE-64/41) returned — gate 2026-06-21 (5th deferral); EPIC-02 ST-05/06/07 gate-deferred 2026-07-04. 2/7 stories delivered. Zero deviations. — ✅ Shipped 2026-06-17 — cycle: 2026-06-17__release-v5.8|
 |**v5.9** ✅  |Governance Simplification, QA Coverage & UX Pre-work|EPIC-01 (SC-03–SC-07): consolidated spec_references policy (execution_prompt.md); fatigue detection guardrail removed (roadmap_prompt.md); dead-load advisory steps removed (release_planning_prompt.md); Playwright selector check made conditional (execution_prompt.md); Advisory Summary Block compressed (post_ship_closure.md). EPIC-02: Yahoo Finance backoff integration test stub (BLG-QA-24); DoQ sign-off date audit v3.7–v3.9 (BLG-GOV-38); QA evidence format audit v3.7–v4.0 (BLG-QA-34); agent idea participation summary (BLG-GOV-53); regression test suite baseline (BLG-QA-50); pre-entry panel warning/fail count badge + Playwright SC-PEP-BADGE-01a/01b/02 (BLG-FE-57). 11/11 stories. Zero deviations. — ✅ Shipped 2026-06-18 — cycle: 2026-06-17__release-v5.9|
 |**v6.0** ✅  |Signal Correctness, User Intelligence & SI-05 Effectiveness|BLG-BE-36 signal suggested_shares correctness fix (P0 fast-track); BLG-FEAT-46 Trader's Morning Briefing dashboard; BLG-FEAT-20 net-of-costs tracking; BLG-FEAT-47 screener data quality telemetry; BLG-OPS-70 SI-05 deep link AC-04 staging; BLG-FE-64/41 RFJ design (gate cleared 2026-06-21); BLG-GOV-112/115/130 SI-05 Phase 1 effectiveness + BLG-OPS-59 latency baseline. Product Value Alert resolved. 11/11 stories. Verified_with_deviations (2 P3). — ✅ Complete — Shipped 2026-06-22 — cycle: 2026-06-19__release-v6.0|
+|**v6.1** ✅  |Governance Correctness, CI Quality & User Value Foundation|EPIC-01: design_gate_required flag (release_planning_prompt.md STEP 4.1), design gate hard gate (sprint_planning_prompt.md STEP -1.3), governance overhead ceiling proposal (G+D+P%=86.0% 5-cycle baseline). EPIC-02: Playwright CI registration (morning-briefing + screener-quality specs, 23→25 spec files), PATCH /trades/{id}/costs baseline in api_performance_baseline.md. EPIC-03: portfolio sector heat-map (SectorHeatMap.js, GET /portfolio/sector-weights, amber ≥40%), trade gate proximity strip (GateProgressStrip.js, {N}/20 progress, Gate cleared ✓). EPIC-04: Setup Quality Score backend (GET /trade-plans/setup-quality-score, gate enforcement) + frontend (SetupQualityScorePanel in Research + TradePlan; PT-04 conditional, gate cleared at sprint planning 15 trades). 9/9 stories. Verified. Zero deviations. — ✅ Complete — Shipped 2026-06-23 — cycle: 2026-06-22__release-v6.1|
 |**v4.0+**    |Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
 |**v4.0+**    |Arc 5: Strategy Integrity (remainder)                                 |SI-02 behavioural drift detection, SI-04 strategy version comparison, SI-05 weekly digest — 📋 Planned                                    |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

@@ -1,11 +1,150 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-18
+**Last Updated:** 2026-06-23 (groom backlog post-ship closure 2026-06-22__release-v6.1 — 8 items archived)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-GOV-133 — Sprint planning: enforce hard gate on design_gate_status at STEP -1 preflight
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-06-23
+**Shipped in:** v6.1 (ST-02, cycle: 2026-06-22__release-v6.1)
+**Evidence:** docs/product/changelog.md — v6.1; claude/cycles/2026-06-22__release-v6.1/verification_report.md
+
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** v6.0 design gate — sprint planning proceeded from Release_Planning_Complete with design_gate_status = not_started and no bypass record — 2026-06-19
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.1
+Add or strengthen STEP -1.3 in sprint_planning_prompt.md: when entering from Release_Planning_Complete, check design_gate_status; hard gate when design_gate_required=true and status≠Passed and no bypass authority/reason → halt. Bypass path and not-required path documented. Bump sprint_planning_prompt.md version; update §14 OPERATIONAL_GUIDE.md and prompt_change_log.md.
+
+---
+
+### BLG-GOV-132 — Release planning: emit explicit Design Gate Required flag for UI-facing scope
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-06-23
+**Shipped in:** v6.1 (ST-01, cycle: 2026-06-22__release-v6.1)
+**Evidence:** docs/product/changelog.md — v6.1; claude/cycles/2026-06-22__release-v6.1/verification_report.md
+
+**Type:** Governance Process
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** v6.0 design gate — design gate was skipped because release planning emitted no explicit "design gate required" signal — 2026-06-19
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.1
+STEP 4 of release_planning_prompt.md: scan backlog slice items for UI-facing delegation class; classify cycle as design gate required or not required; set design_gate_required in state.json and .claude_current_state.json; emit advisory; include in cycle_summary.md header. Bump version; update §14 OPERATIONAL_GUIDE.md and prompt_change_log.md.
+
+---
+
+### BLG-GOV-131 — Governance overhead ceiling metric and accountability mechanism
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-23
+**Shipped in:** v6.1 (ST-03, cycle: 2026-06-22__release-v6.1)
+**Evidence:** docs/product/changelog.md — v6.1; claude/cycles/2026-06-22__release-v6.1/verification_report.md
+
+**Type:** Governance / Process
+**Owner:** PMO Lead; Challenger
+**Source:** IDEA-challenger-20260619-02 — Promoted-Backlog rebalance 2026-06-19__scheduled (DL-049)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** v6.1
+Define G+D+P% governance overhead metric (rolling 5-cycle window); define alert threshold (initial proposal 60%); proposal doc produced at docs/product/decisions/gov_overhead_ceiling_proposal_v6.1.md. 5-cycle baseline established at 86.0%. Requires Head of Specs Team sign-off before implementation as prompt amendment.
+
+---
+
+### BLG-QA-60 — Register morning-briefing.spec.js and screener-quality.spec.js in playwright.yml CI workflow
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-23
+**Shipped in:** v6.1 (ST-04, cycle: 2026-06-22__release-v6.1)
+**Evidence:** docs/product/changelog.md — v6.1; claude/cycles/2026-06-22__release-v6.1/verification_report.md
+
+**Type:** QA / Test Automation
+**Owner:** Director of Quality; Head of Engineering
+**Source:** EPIC-04 sprint execution 2026-06-22 — Playwright E2E gate failure revealed spec files not registered in CI
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v6.1
+Added tests/e2e/morning-briefing.spec.js and tests/e2e/screener-quality.spec.js to playwright.yml explicit test list; spec inventory comment updated to reflect 25 total spec files; both specs confirmed passing in CI.
+
+---
+
+### BLG-OPS-73 — Add PATCH /trades/{trade_id}/costs to api_performance_baseline.md
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-06-23
+**Shipped in:** v6.1 (ST-05, cycle: 2026-06-22__release-v6.1)
+**Evidence:** docs/product/changelog.md — v6.1; claude/cycles/2026-06-22__release-v6.1/verification_report.md
+
+**Type:** Operations / Performance Baseline
+**Owner:** Infrastructure & Operations Owner
+**Source:** Post-ship closure 2026-06-19__release-v6.0 — endpoint coverage drift check detected 1 new endpoint in openapi.yaml absent from api_performance_baseline.md
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v6.1
+PATCH /trades/{id}/costs baseline entry added to docs/ops/api_performance_baseline.md; api_performance_baseline.md bumped v2.4→v2.5.
+
+---
+
+### BLG-FE-76 — Portfolio sector heat-map visualization
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-23
+**Shipped in:** v6.1 (ST-06, cycle: 2026-06-22__release-v6.1)
+**Evidence:** docs/product/changelog.md — v6.1; claude/cycles/2026-06-22__release-v6.1/verification_report.md
+
+**Type:** Frontend / UX / Data Visualisation
+**Owner:** Product Owner; Frontend Specs & UX Documentation Owner
+**Source:** IDEA-product-owner-20260619-01 — Promoted-Backlog rebalance 2026-06-19__scheduled (DL-050)
+**Effort:** M (~2–3 days)
+**Provisional-Target:** v6.1
+SectorHeatMap.js component on RiskDashboard page; GET /portfolio/sector-weights backend endpoint; percentage bars by sector; amber alert ≥40% concentration; SC-SHM-01..04 Playwright coverage (4 scenarios).
+
+---
+
+### BLG-FE-78 — Trade gate proximity indicator on dashboard
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-06-23
+**Shipped in:** v6.1 (ST-07, cycle: 2026-06-22__release-v6.1)
+**Evidence:** docs/product/changelog.md — v6.1; claude/cycles/2026-06-22__release-v6.1/verification_report.md
+
+**Type:** Frontend / UX
+**Owner:** Head of Frontend Engineering
+**Source:** IW-20260622-01 (IDEA-product-owner-20260622-01) — Promoted-Backlog STEP 4; DL-054 (Challenger PVC outcome); rebalance 2026-06-22__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.1
+GateProgressStrip.js component on DashboardHome; reads from GET /portfolio/gate-metrics; shows {N}/20 trades progress; "Gate cleared ✓" state; SC-GP-01..04 Playwright coverage (4 scenarios).
+
+---
+
+### BLG-FEAT-25 — PT-04 Setup Quality Score (backend + frontend)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-23
+**Shipped in:** v6.1 (ST-08 backend + ST-09 frontend, cycle: 2026-06-22__release-v6.1)
+**Evidence:** docs/product/changelog.md — v6.1; claude/cycles/2026-06-22__release-v6.1/verification_report.md
+
+**Type:** Product Feature / Analytics
+**Owner:** Head of Backend Engineering; Metrics & Analytics Owner; Head of UX & Design
+**Source:** Arc 2 roadmap — deferred from v3.8 (ST-04/ST-05, EPIC-02) — gate not met 2026-05-19: < 20 closed trades.
+**Effort:** L (~2–4 days, backend + frontend)
+**Provisional-Target:** v4.0+ (gate-conditional — gate cleared at v6.1 sprint planning: 15 trades confirmed 2026-06-22; conditional classification accepted)
+**Gate:** PO confirmed 15 closed trades at v6.1 sprint planning (2026-06-22); conditional gate accepted; EPIC-04 executed and delivered.
+Gate history: 6 trades (v4.6), 6 trades (v5.3), 13 trades (v5.6), 15 trades (v6.1 release planning), gate cleared conditional at sprint planning.
+Backend: GET /trade-plans/setup-quality-score endpoint; gate enforcement (<20 trades returns gate_not_met); 3 unit test cases; registered in test.py and openapi.yaml.
+Frontend: SetupQualityScorePanel in Research.js and TradePlan.js; score badge (0–100); "Insufficient trade history" gate-not-met state; SC-SQS-01..06 Playwright coverage (6 scenarios).
 
 ---
 

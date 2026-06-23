@@ -1,9 +1,10 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Published
+Status: Superseded
+Superseded by: claude/cycles/2026-06-22__release-v6.1/closure_record.md — post-ship closure 2026-06-23
 Release: v6.1
 Cycle: 2026-06-22__release-v6.1
-Last Updated: 2026-06-22
+Last Updated: 2026-06-23
 
 ---
 

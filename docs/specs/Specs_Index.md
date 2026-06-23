@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-06-22 (post-ship closure 2026-06-19__release-v6.0; screener_api_contract.md updated to v1.2; §27.1 TSG-v50-01 marked RESOLVED (BLG-FE-61 closed v5.1); §28 v6.0 test coverage gaps added — TSG-v60-01 open/BLG-QA-61, TSG-v60-02/03 deferred, TSG-v60-04 N/A)
+**Last Updated:** 2026-06-23 (post-ship closure 2026-06-22__release-v6.1; §29 v6.1 test coverage gaps added — all 4 TSGs not_applicable; no backlog items created)
 
 ---
 
@@ -736,6 +736,21 @@ Identified during delivery verification (verification_report.md §6 — TSG-v60-
 **Required action:** QA & Testing Owner to review docs/testing/signals_scenarios.md against ST-01 changes, update any stale scenario assertions, and confirm coverage status before next sprint touching signal generation domain.
 **Resolution target:** Before next sprint on signal generation domain
 **Backlog item:** BLG-QA-61 (filed 2026-06-22 during delivery verification)
+
+---
+
+## 29. Test Coverage Gaps — v6.1 (2026-06-22__release-v6.1)
+
+Identified during delivery verification (verification_report.md §6 — TSG-v61-01 through TSG-v61-04). No backlog items required.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| TSG-v61-01 | EPIC-01 | Governance prompts (release_planning_prompt.md STEP 4.1, sprint_planning_prompt.md STEP -1.3) — no Playwright coverage applicable | not_applicable — prompt-only changes; no frontend-visible ACs; no automated test scenarios applicable |
+| TSG-v61-02 | EPIC-02 | CI registration (playwright.yml) and api_performance_baseline.md update | not_applicable — infrastructure and docs only; no observable UI changes; CI itself validates the registered specs |
+| TSG-v61-03 | EPIC-03 | Sector heat-map (SC-SHM-01..04) and gate proximity indicator (SC-GP-01..04) | not_applicable — full Playwright coverage delivered in sprint (8 scenarios across 2 features); no residual gap |
+| TSG-v61-04 | EPIC-04 | Setup Quality Score frontend (SC-SQS-01..06) | not_applicable — full Playwright coverage delivered in sprint (6 scenarios); no residual gap |
+
+No open TSG items for v6.1. All observable ACs have Playwright coverage confirmed in CI.
 
 ---
 

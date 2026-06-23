@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-23 (BLG-BE-38 added — sector concentration shows "Unclassified" due to missing ticker_universe join)
+**Last Updated:** 2026-06-23 (post-ship closure 2026-06-22__release-v6.1 — 8 items marked ✅ COMPLETE; BLG-OPS-75 added)
 **Last rebalance:** 2026-06-22 (cycle 2026-06-22__scheduled — DL-052–055; 4 promoted-backlog, 0 rejected, 11 parked C1, 8 parked C2; v6.1 Now section added to roadmap; Product Value Alert + Skill-Silo Alert; STEP 8.2 BLG-FE-52/53 excluded)
 
 > ⚠️ Standing Notice
@@ -34,45 +34,6 @@
 ---
 
 ## 2. Product Feature Backlog (User-Facing)
-
----
-
-### BLG-FEAT-25 — PT-04 Setup Quality Score (backend + frontend)
-**Priority:** P2 (Medium)
-**Type:** Product Feature / Analytics
-**Owner:** Head of Backend Engineering; Metrics & Analytics Owner; Head of UX & Design
-**Source:** Arc 2 roadmap — deferred from v3.8 (ST-04/ST-05, EPIC-02) — gate not met 2026-05-19: < 20 closed trades. Traceability entry added by delivery verification engine 2026-05-20.
-**Effort:** L (~2–4 days, backend + frontend)
-**Provisional-Target:** v4.0+ (gate-conditional — explicit re-park confirmed by PO 2026-05-22: advance when 20+ closed trades confirmed)
-**Gate:** PO confirms 20+ closed trades in production before sprint planning for the target release. PMO Lead checks gate status at each release planning kickoff.
-
-*PO disposition 2026-05-22: remain on backlog under gate — advance when 20+ closed trades confirmed. STALE flag cleared.*
-*ST-10 (backend) and ST-11 (frontend) returned from 2026-05-22__release-v4.0 at sprint planning — gate not met (PO confirmed <20 closed trades 2026-05-23). 4th deferral noted.*
-*v4.6 gate audit 2026-05-31 (ST-16 BLG-GOV-33): 6 closed trades total (trade_history WHERE pnl IS NOT NULL); 0 with linked trade_plans. Gate NOT MET. EPIC-02 deferred. 6th deferral (SI-02 Frontend also deferred). Advance when ≥20 closed trades with linked trade_plans confirmed.*
-*v5.3 gate re-verification 2026-06-09 (OA-RP-01 / BLG-GOV-106): 6 closed trades (trade_history WHERE pnl IS NOT NULL); 11 total trades. Gate NOT MET. PT-04 remains parked. Next re-verification at v5.4 sprint planning.*
-*v5.6 gate re-verification 2026-06-16 (ST-08 / BLG-GOV-106): **13 closed trades** (SELECT COUNT(*) FROM trade_history WHERE pnl IS NOT NULL — PO-provided data, 2026-06-16). Gate NOT MET (need 20; 7 more required). Trajectory: accelerating — 7 new closed trades in 7 days (vs prior ~0.5/month estimate). PT-04 remains parked. Next re-verification: when PO confirms 20+ closed trades.*
-*v6.1 gate re-verification 2026-06-22 (release planning): **15 closed trades** (PO-provided trade history, 2026-06-22). Gate NOT MET (need 20; 5 more required). +2 new closed trades since 2026-06-16 (STX exited 2026-06-18, WDC exited 2026-06-22). Trajectory: ~1.5–2 trades/week. Revised gate clearing estimate: ~2026-07-07. PT-04 remains conditional in v6.1 scope (S2-08). PMO Lead to re-verify at sprint planning.*
-
-**Problem**
-A deterministic setup quality score (0–100) based on own trade history cannot be computed until sufficient closed trades exist. When the user has entered with similar regime/signal/ATR conditions before, the score reflects historical win rate under those conditions. The gate condition (20+ closed trades) was not met at v3.8 sprint planning (PO confirmed 2026-05-19).
-
-**Scope (Backend — ST-04)**
-- `GET /trade-plans/setup-quality-score?ticker={ticker}` endpoint
-- Score (0–100) computed from closed trade history matching current regime/signal/ATR conditions
-- Gate response: `{"gate_not_met": true, "min_trades_required": 20}` when fewer than 20 closed trades
-- Score factors: matching_trades count, win_rate, average_R, score_explanation
-- Endpoint registered in backend/routers/test.py and openapi.yaml
-
-**Scope (Frontend — ST-05)**
-- Setup Quality Score displayed in Pre-Trade Research View and Trade Plan form
-- Score badge with numeric value (0–100) and qualitative label (Excellent/Good/Fair/Low)
-- "Insufficient trade history (< 20 trades)" message when gate not met
-- Tooltip/expandable: matching_trades, win_rate, average_R
-
-**Acceptance Criteria**
-- Backend: endpoint implemented, gate enforced, unit tests cover gate_not_met, gate_met mixed, perfect history
-- Frontend: score renders in Pre-Trade Research View and Trade Plan form; gate-not-met state clearly displayed; score updates when ticker changes
-- Playwright: score renders; gate-not-met message renders; score updates on ticker change
 
 ---
 
@@ -2424,30 +2385,6 @@ Arc 4 AI-driven features (PO-02/03/04) introduce Playwright test challenges not 
 
 ---
 
-### BLG-QA-60 — Register morning-briefing.spec.js and screener-quality.spec.js in playwright.yml CI workflow
-**Priority:** P2 (Medium)
-**Type:** QA / Test Automation
-**Owner:** Director of Quality; Head of Engineering
-**Source:** EPIC-04 sprint execution 2026-06-22 — Playwright E2E gate failure on PR #822 revealed EPIC-02 ST-02 and EPIC-03 ST-04 spec files not registered in CI
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v6.1
-
-**Problem**
-`morning-briefing.spec.js` (11 scenarios, EPIC-02 ST-02 AC-09) and `screener-quality.spec.js` (5 scenarios, EPIC-03 ST-04 AC-07) were authored and committed but never added to the explicit test list in `.github/workflows/playwright.yml`. As a result, regressions in the Screener quality panel (SC-SCR-DEG-01) only surfaced at the EPIC-04 merge gate rather than when EPIC-03 landed. Both spec files cover observable ACs that the frontend testing gate requires to be in CI.
-
-**Scope**
-- Add `tests/e2e/morning-briefing.spec.js` to the `npx playwright test` command in `playwright.yml`
-- Add `tests/e2e/screener-quality.spec.js` to the same command
-- Update the spec inventory comment block in `playwright.yml` to list both new files
-- Confirm both specs pass in CI before closing
-
-**Acceptance Criteria**
-- Both spec files appear in the `playwright.yml` `Run all E2E acceptance tests` step
-- CI `Playwright E2E Acceptance Tests` job passes with the new specs included
-- Spec inventory comment in `playwright.yml` updated to reflect 25 total spec files
-
----
-
 ### BLG-QA-61 — Review signals_scenarios.md against ST-01 signal sizing model changes
 **Priority:** P3 (Low)
 **Type:** QA / Test Coverage
@@ -2488,27 +2425,6 @@ PO-02 (journal pattern recognition) and PO-03/04 will call the Anthropic or Gemi
 - Cost model document produced with estimated monthly AI API cost for Arc 4 features
 - Cost controls identified and quantified
 - Reviewed by FinOps & Resource Architect
-
----
-
-### BLG-OPS-73 — Add PATCH /trades/{trade_id}/costs to api_performance_baseline.md
-**Priority:** P3 (Low)
-**Type:** Operations / Performance Baseline
-**Owner:** Infrastructure & Operations Owner
-**Source:** Post-ship closure 2026-06-19__release-v6.0 — endpoint coverage drift check detected 1 new endpoint in openapi.yaml absent from api_performance_baseline.md
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v6.1
-
-**Problem**
-`PATCH /trades/{trade_id}/costs` was added in v6.0 (ST-03 EPIC-02, BLG-FEAT-20). The endpoint is in `docs/reference/openapi.yaml` (line 1571) but has no performance baseline entry in `docs/ops/api_performance_baseline.md`. Endpoint coverage drift — measurement gap for the new costs endpoint.
-
-**Scope**
-- Measure PATCH /trades/{id}/costs p50/p95 latency using the standard §19 methodology from a representative request
-- Add the measurement row to `docs/ops/api_performance_baseline.md`
-
-**Acceptance Criteria**
-- PATCH /trades/{id}/costs entry added to api_performance_baseline.md with p50, p95, and measurement date
-- Measurement taken from Render internal logs or live test
 
 ---
 
@@ -2557,134 +2473,6 @@ Arc 4 (PO-02/03/04) will introduce cross-table queries joining trade_plans, red_
 - AC-02: Positions whose ticker has no sector in `ticker_universe` still render as "Unclassified" (graceful fallback preserved)
 - AC-03: `GET /portfolio/concentration-status` sector breach calculation also reflects correct sectors
 - AC-04: No yfinance live-call added to the hot path — sector is read from `ticker_universe` only
-
----
-
-### BLG-GOV-131 — Governance overhead ceiling metric and accountability mechanism
-**Priority:** P2 (Medium)
-**Type:** Governance / Process
-**Owner:** PMO Lead; Challenger
-**Source:** IDEA-challenger-20260619-02 — Promoted-Backlog rebalance 2026-06-19__scheduled (DL-049); elevated to P2 given Product Value Alert (user_value_ratio=0.093) and Skill-Silo Alert (G+D+P=90.7% last 5 cycles)
-**Effort:** S (~0.5–1 day)
-**Provisional-Target:** v6.1
-
-**Problem**
-The Skill-Silo ceiling (40% G+D+P per sprint) was added to roadmap_prompt.md v7.4 but operates at the sprint planning gate. There is no mechanism for reporting governance overhead at the cycle level (across sprints), flagging trends before they compound, or providing accountability at the rebalance level. The Product Value Alert (user_value_ratio=0.093 across last 5 cycles) demonstrates that cycle-level governance overhead can persist without a visible metric, even when individual sprint gates pass. A governance overhead ceiling metric would surface this pattern earlier.
-
-**Scope**
-- Define a governance overhead metric: G+D+P% over a rolling cycle window (matching STEP 2.4 last-5-cycles window)
-- Define alert threshold (current ceiling: 40% per sprint → rolling 5-cycle ceiling: 60% as initial proposal)
-- Propose where in the roadmap rebalance workflow this metric is reported (STEP 2.4 or new STEP 2.5)
-- Draft a one-paragraph amendment to roadmap_prompt.md STEP 2 for Head of Specs Team review
-- Document as a proposal doc; implementation requires Head of Specs Team sign-off per §6 governance edit checklist
-
-**Acceptance Criteria**
-- Governance overhead ceiling metric defined (formula, rolling window, alert threshold)
-- Proposal document produced for Head of Specs Team and PMO Lead review
-- If approved: roadmap_prompt.md amendment drafted and queued for GOVERNANCE commit per §6 checklist
-
----
-
-### BLG-GOV-132 — Release planning: emit explicit Design Gate Required flag for UI-facing scope
-**Priority:** P1 (High)
-**Type:** Governance Process
-**Owner:** Head of Specs Team; PMO Lead
-**Source:** v6.0 design gate — design gate was skipped because release planning emitted no explicit "design gate required" signal, allowing sprint planning to start out of sequence — 2026-06-19
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.1
-
-**Problem**
-When the release planning engine produces a backlog slice containing user-facing UI items it does not set a machine-readable flag or emit a prominent advisory that the design gate must run before sprint planning. The PMO Lead has no automated signal to distinguish "design gate required" from "design gate not required" cycles. In v6.0 this omission led to sprint planning starting from Release_Planning_Complete with design_gate_status = not_started and no bypass recorded, requiring a lifecycle guard halt and manual state restoration.
-
-**Scope**
-- STEP 4 of release_planning_prompt.md: scan backlog slice items for UI-facing delegation class (delegated_frontend, autonomous with observable UI ACs); classify cycle as design gate required or not required
-- Set `design_gate_required = true | false` in cycle/state.json and .claude_current_state.json at STEP 4 completion (additive — does not overwrite other fields)
-- Emit prominent advisory in release planning output: "⚠ DESIGN GATE REQUIRED before plan sprint — N items classified as UI-facing. Run: run design-gate --cycle <cycle_id>"
-- When no UI-facing items: set false and emit "Design Gate: Not Required — proceed directly to plan sprint"
-- Include design_gate_required status in cycle_summary.md header section
-- Bump release_planning_prompt.md version; update §14 OPERATIONAL_GUIDE.md and prompt_change_log.md
-
-**Acceptance Criteria**
-- AC-01: Backlog slice with UI-facing items → release planning output includes "⚠ DESIGN GATE REQUIRED" and design_gate_required = true in cycle/state.json
-- AC-02: Backlog slice with no UI-facing items → design_gate_required = false; advisory says "Design Gate: Not Required"
-- AC-03: cycle_summary.md header includes design_gate_required status line
-- AC-04: release_planning_prompt.md version bumped; §14 and prompt_change_log.md updated in same commit per §6 governance edit checklist
-
----
-
-### BLG-GOV-133 — Sprint planning: enforce hard gate on design_gate_status at STEP -1 preflight
-**Priority:** P1 (High)
-**Type:** Governance Process
-**Owner:** Head of Specs Team; PMO Lead
-**Source:** v6.0 design gate — sprint planning proceeded from Release_Planning_Complete with design_gate_status = not_started and no bypass record — 2026-06-19
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.1
-
-**Problem**
-The lifecycle schema and shared_standards §10.1 specify that sprint planning entering from Release_Planning_Complete requires either design_gate_status = Passed or explicit bypass fields (design_gate_bypass_authority + design_gate_bypass_reason). However, sprint planning's own STEP -1 preflight did not enforce this as a hard gate — it was possible to proceed with design_gate_status = not_started and no bypass, producing an uncommitted out-of-sequence artefact set. The schema is correct; the prompt enforcement is missing.
-
-**Scope**
-- Add or strengthen STEP -1.3 in sprint_planning_prompt.md: when entering from Release_Planning_Complete, explicitly check design_gate_status before any further step
-- Hard gate rule (fires if design_gate_required = true): design_gate_status ≠ Passed AND (design_gate_bypass_authority empty OR design_gate_bypass_reason empty) → halt with halt report, status = Blocked
-- Bypass path: bypass authority + reason both populated → proceed with bypass acknowledgement appended to sprint planning notes (not silent)
-- Pass path: design_gate_status = Passed → proceed normally; log "Design gate: Passed" in output
-- If design_gate_required = false: skip gate; note "Design gate: Not Required for this cycle"
-- Bump sprint_planning_prompt.md version; update §14 OPERATIONAL_GUIDE.md and prompt_change_log.md
-
-**Acceptance Criteria**
-- AC-01: plan sprint from Release_Planning_Complete with design_gate_required = true, design_gate_status = not_started, no bypass → hard gate fires, halt report, status = Blocked
-- AC-02: plan sprint from Release_Planning_Complete with bypass authority + reason populated → proceeds with bypass acknowledgement in sprint planning notes
-- AC-03: plan sprint from Design_Gate_Passed → proceeds normally; gate check logged as Pass
-- AC-04: plan sprint with design_gate_required = false → gate check skipped; noted in output
-- AC-05: sprint_planning_prompt.md version bumped; §14 and prompt_change_log.md updated same commit
-
----
-
-### BLG-FE-76 — Portfolio sector heat-map visualization
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX / Data Visualisation
-**Owner:** Product Owner; Frontend Specs & UX Documentation Owner
-**Source:** IDEA-product-owner-20260619-01 — Promoted-Backlog (via STEP 5 debate) rebalance 2026-06-19__scheduled (DL-050); Challenger Product Velocity Concern supports — product value ratio 0.093 mandates user-facing investment
-**Effort:** M (~2–3 days)
-**Provisional-Target:** v6.1
-
-**Problem**
-Current portfolio view (positions, heat, P&L) has no sector-level aggregation. A trader running 3–5 positions across sectors cannot see at a glance whether they are sector-concentrated (e.g. 60% Technology, 20% Energy, 20% Healthcare). The sector data already exists: DS-03 (v2.9) added sector/industry enrichment to the screener and ticker universe. A heat-map that surfaces portfolio sector weight (by exposure %) would immediately help the user spot concentration risk and make more balanced entry decisions.
-
-**Scope**
-- Frontend: `SectorHeatMap.js` component — percentage bars or tile grid by sector, coloured by exposure level
-- Backend: derive sector weights from existing positions data + ticker sector_name field; no new data provider
-- Integration: add to the Portfolio or Dashboard page
-- Spec: one endpoint or query approach to be defined by Head of Specs Team
-
-**Acceptance Criteria**
-- Sector heat-map component visible on Portfolio or Dashboard page
-- Each sector displays: name, position count, exposure % of portfolio
-- Concentration alert (e.g. > 40% in one sector) highlighted visually
-- Playwright E2E coverage for at least one sector concentration scenario
-
----
-
-### BLG-FE-78 — Trade gate proximity indicator on dashboard
-**Priority:** P3 (Low)
-**Type:** Frontend / UX
-**Owner:** Head of Frontend Engineering
-**Source:** IW-20260622-01 (IDEA-product-owner-20260622-01) — Promoted-Backlog STEP 4; DL-054 (Challenger PVC outcome); rebalance 2026-06-22__scheduled
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.1
-
-**Problem**
-The PT-04/SI-02 gate requires ≥20 closed trades. The operator has no visible indicator showing current closed-trade count vs the threshold without running SQL queries against the database. Gate proximity is invisible until sprint planning time.
-
-**Scope**
-- Add a small badge or counter to the dashboard or system status page showing `[N]/20 trades (PT-04/SI-02 gate)`
-- Read from existing `GET /portfolio/gate-metrics` endpoint (shipped v5.5, BLG-BE-34)
-- Display-only; no new backend work required
-
-**Acceptance Criteria**
-- Dashboard or system status page shows current closed-trade count vs 20-trade gate threshold
-- Display updates on page refresh using existing gate-metrics endpoint
-- Shows "Gate cleared" state when count reaches 20
 
 ---
 
@@ -2805,6 +2593,29 @@ The Trader Morning Briefing (BLG-FEAT-46, shipped v6.0) calls the Claude API eac
 
 ---
 
+### BLG-OPS-75 — Add GET /portfolio/sector-weights and GET /trade-plans/setup-quality-score to api_performance_baseline.md
+**Priority:** P3 (Low)
+**Type:** Operations / Performance Baseline
+**Owner:** Infrastructure & Operations Owner
+**Source:** Post-ship closure 2026-06-22__release-v6.1 — endpoint coverage drift check detected 2 new v6.1 endpoints absent from api_performance_baseline.md
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v6.2
+
+**Problem**
+`GET /portfolio/sector-weights` (shipped EPIC-03 ST-06, BLG-FE-76) and `GET /trade-plans/setup-quality-score` (shipped EPIC-04 ST-08, BLG-FEAT-25) are present in `docs/reference/openapi.yaml` but have no performance baseline entries in `docs/ops/api_performance_baseline.md`. Endpoint coverage drift — measurement gap for 2 new v6.1 endpoints.
+
+**Scope**
+- Measure GET /portfolio/sector-weights p50/p95 latency using the standard §19 methodology
+- Measure GET /trade-plans/setup-quality-score p50/p95 latency
+- Add both measurement rows to `docs/ops/api_performance_baseline.md`
+
+**Acceptance Criteria**
+- GET /portfolio/sector-weights entry added with p50, p95, and measurement date
+- GET /trade-plans/setup-quality-score entry added with p50, p95, and measurement date
+- Measurements taken from Render internal logs or live test
+
+---
+
 ### BLG-FE-77 — Refactor `Watchlist.js` to ESLint compliance
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
@@ -2879,6 +2690,4 @@ The Trader Morning Briefing (BLG-FEAT-46, shipped v6.0) calls the Claude API eac
 
 ---
 
-<!-- release-plan-marker: RP:v6.1:2026-06-22__release-v6.1 -->
-
-*Release Slice v6.1 — cycle 2026-06-22__release-v6.1 — Planning Date: 2026-06-22. Canonical home: claude/cycles/2026-06-22__release-v6.1/stage4_backlog_slice.md. 9 stories (7 firm, 2 conditional). EPICs: EPIC-01 (Governance Correctness), EPIC-02 (CI Quality), EPIC-03 (User Value), EPIC-04 (Conditional PT-04).*
+*Release Slice v6.1 removed — cycle 2026-06-22__release-v6.1 closed 2026-06-23. Archived canonical home: claude/cycles/2026-06-22__release-v6.1/stage4_backlog_slice.md*

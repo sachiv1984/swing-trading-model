@@ -1,9 +1,9 @@
 Owner: PMO Lead
 Class: Governance Record (Class 3)
-Status: Draft — to be finalised at post-ship closure
+Status: Final — post-ship closure 2026-06-23
 Release: v6.1
 Cycle: 2026-06-22__release-v6.1
-Last Updated: 2026-06-22
+Last Updated: 2026-06-23
 
 ---
 

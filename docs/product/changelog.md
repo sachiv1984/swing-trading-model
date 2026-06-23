@@ -3,9 +3,40 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-22 (post-ship closure 2026-06-19__release-v6.0)
+**Last Updated:** 2026-06-23 (post-ship closure 2026-06-22__release-v6.1)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v6.1 — Governance Correctness, CI Quality & User Value Foundation — 2026-06-23
+Cycle: 2026-06-22__release-v6.1
+Verified: Verified
+Verification report: claude/cycles/2026-06-22__release-v6.1/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Governance prompt correctness: release_planning_prompt.md STEP 4.1 added design gate detection and `design_gate_required` flag; sprint_planning_prompt.md enforces design gate as hard gate at STEP -1 preflight; governance overhead ceiling proposal produced (G+D+P% metric, 5-cycle baseline=86.0%) | claude/system/release_planning_prompt.md; claude/system/sprint_planning_prompt.md; docs/product/decisions/gov_overhead_ceiling_proposal_v6.1.md |
+| EPIC-02 | CI quality hygiene: morning-briefing.spec.js and screener-quality.spec.js registered in playwright.yml (23→25 spec files); PATCH /trades/{id}/costs baseline entry added to api_performance_baseline.md v2.4→v2.5 | .github/workflows/playwright.yml; docs/ops/api_performance_baseline.md |
+| EPIC-03 | User value features: portfolio sector heat-map (SectorHeatMap.js on RiskDashboard, GET /portfolio/sector-weights endpoint, amber alert ≥40%); trade gate proximity indicator (GateProgressStrip.js on DashboardHome, {N}/20 trades progress, Gate cleared ✓ state) | docs/design/2026-06-22__release-v6.1/sector-heatmap/ux_spec.md; docs/design/2026-06-22__release-v6.1/gate-proximity-indicator/ux_spec.md; docs/specs/api_contracts/portfolio_endpoints.md |
+| EPIC-04 | Setup Quality Score (PT-04, gate cleared): GET /trade-plans/setup-quality-score backend endpoint (gate enforcement, 3 unit test cases); SetupQualityScorePanel frontend in Research.js and TradePlan.js; SC-SQS-01..06 Playwright tests | docs/specs/api_contracts/trade_plan_endpoints.md; docs/design/2026-05-21__release-v3.9/setup-quality-score-v2/ux_spec.md |
+
+### Deviations accepted
+None — no spec deviations this sprint.
+
+### Tech backlog items shipped
+- [ST-01] BLG-GOV-132: Release planning design gate required flag — STEP 4.1 detection + design_gate_required field
+- [ST-02] BLG-GOV-133: Sprint planning design gate hard gate at preflight — STEP -1.3 halt when gate not passed
+- [ST-03] BLG-GOV-131: Governance overhead ceiling metric — proposal doc + G+D+P% baseline at 86.0%
+- [ST-04] BLG-QA-60: Playwright CI registration gap — morning-briefing.spec.js + screener-quality.spec.js registered
+- [ST-05] BLG-OPS-73: api_performance_baseline.md PATCH /trades/{id}/costs baseline entry added
+- [ST-06] BLG-FE-76: Portfolio sector heat-map — SectorHeatMap.js + GET /portfolio/sector-weights
+- [ST-07] BLG-FE-78: Trade gate proximity indicator — GateProgressStrip.js on DashboardHome
+- [ST-08/09] BLG-FEAT-25: Setup Quality Score — backend engine + frontend display (PT-04 conditional, gate cleared)
+
+Sign-off: Product Owner — 2026-06-23
+QA sign-off: Director of Quality — 2026-06-23
 
 ---
 

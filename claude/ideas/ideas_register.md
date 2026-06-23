@@ -2,7 +2,7 @@
 **Class:** Planning Document (Class 4)
 **Status:** Active
 **Version:** 1.9
-**Last Updated:** 2026-06-22 (IW-20260622-01 — 16 new submissions added; 8 IW-20260619-01 parked ideas incremented to Parked-cycle-2; 5 promoted to backlog in STEP 4/5 — run roadmap 2026-06-22__scheduled)
+**Last Updated:** 2026-06-23 (ideas_housekeeping post-ship closure 2026-06-22__release-v6.1 — 0 rows archived; all 20 rows non-terminal; rejected_but_strong revival conditions: all 5 unmet)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # Ideas Register
