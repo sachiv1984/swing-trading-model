@@ -223,36 +223,18 @@ export const base44 = {
         }),
 
       // ✅ NEW: Update position note
-      updateNote: async (positionId, entryNote) => {
-        const response = await fetch(`${API_BASE_URL}/positions/${positionId}/note`, {
+      updateNote: async (positionId, entryNote) =>
+        doFetch(`/positions/${positionId}/note`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ entry_note: entryNote })
-        });
-
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.detail || 'Failed to update note');
-        }
-
-        return response.json();
-      },
+          body: JSON.stringify({ entry_note: entryNote }),
+        }),
 
       // ✅ NEW: Update position tags
-      updateTags: async (positionId, tags) => {
-        const response = await fetch(`${API_BASE_URL}/positions/${positionId}/tags`, {
+      updateTags: async (positionId, tags) =>
+        doFetch(`/positions/${positionId}/tags`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tags })
-        });
-
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.detail || 'Failed to update tags');
-        }
-
-        return response.json();
-      },
+          body: JSON.stringify({ tags }),
+        }),
 
       // Exit supports both call shapes:
       //   exit(id, {exit_price, shares, ...})
