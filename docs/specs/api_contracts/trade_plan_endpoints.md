@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.4
-**Last Updated:** 2026-05-26
+**Version:** 0.5
+**Last Updated:** 2026-06-23
 **Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12)
 
 ---
@@ -311,10 +311,74 @@ Returns all fields when `ANTHROPIC_API_KEY` is configured. Returns a graceful er
 
 ---
 
+## GET /trade-plans/setup-quality-score
+
+Returns a 0–100 setup quality score derived from closed trade history for a given ticker.
+
+**Source:** ST-08, EPIC-04, v6.1. Gate: ≥20 closed trades required.
+
+### Query Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| ticker | string | Yes | Ticker symbol (case-insensitive; echoed uppercase) |
+
+### Response (200) — gate not met
+
+```json
+{ "status": "ok", "data": { "gate_not_met": true, "min_trades_required": 20, "current_trades": 15 } }
+```
+
+### Response (200) — gate met
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "gate_not_met": false,
+    "ticker": "AAPL",
+    "score": 70,
+    "matching_trades": 25,
+    "win_rate": 64.0,
+    "average_pnl_pct": 8.5,
+    "score_explanation": "Based on 25 closed trades: 64.0% win rate, 8.5% average return. Score = win_rate×0.6 + max(avg_return,0)×0.4."
+  }
+}
+```
+
+### Response fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| gate_not_met | boolean | `true` when fewer than 20 closed trades exist |
+| min_trades_required | integer | Always 20 |
+| current_trades | integer | Present when `gate_not_met: true` — current closed trade count |
+| ticker | string | Echoed from query parameter (uppercase). Present when `gate_not_met: false` |
+| score | integer | 0–100 setup quality score. Present when `gate_not_met: false` |
+| matching_trades | integer | Total closed trades used in calculation |
+| win_rate | number | % of closed trades with pnl > 0 (1 dp) |
+| average_pnl_pct | number | Average pnl_pct across all closed trades (2 dp) |
+| score_explanation | string | Human-readable breakdown of the score |
+
+### Score formula
+
+```
+score = clamp(round(win_rate × 0.6 + max(average_pnl_pct, 0) × 0.4), 0, 100)
+```
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 500 | Database error |
+
+---
+
 ## Changelog
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.5 | 2026-06-23 | ST-08 (EPIC-04, v6.1): Add GET /trade-plans/setup-quality-score — 0–100 score from closed trade history, gate_not_met response when <20 trades. |
 | 0.4 | 2026-05-26 | Switch generate-thesis from Gemini Flash to Claude Haiku 4.5; replace GEMINI_API_KEY with ANTHROPIC_API_KEY; update model_version in examples; add POST /trade-plans/generate-plan endpoint |
 | 0.3 | 2026-05-24 | ST-12 (BLG-BE-19, v4.0 EPIC-03): Add POST /trade-plans/{plan_id}/generate-thesis — Gemini Flash thesis generation |
 | 0.2 | 2026-05-20 | Add pre_entry_override_acknowledged to POST/PUT schemas — ST-03 EPIC-01 v3.8 |

@@ -5,7 +5,7 @@
   "invoked_utc": "2026-06-22T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-23T09:00:00Z",
+  "last_updated_utc": "2026-06-23T13:05:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -78,10 +78,10 @@
     },
 
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "merged",
       "branch": "exec/2026-06-22__release-v6.1/EPIC-02",
       "pr_number": 834,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-22__release-v6.1/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
@@ -103,7 +103,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "All 3 ACs verified. playwright.yml 23→25 spec files. Both specs registered. deviations_filed corrected at conflict resolution (no deviation record found — CI-only change)."
+          "notes": "All 3 ACs verified. playwright.yml 23→25 spec files. Both specs registered. Playwright strict mode violations fixed (exact: true for card title assertions, scoped locator for /new signals today/). CI pass confirmed. deviations_filed corrected at conflict resolution (no deviation record found — CI-only change)."
         },
         "ST-05": {
           "title": "Add PATCH /trades/{id}/costs to api_performance_baseline.md",
@@ -238,7 +238,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC-01..06 verified. SetupQualityScorePanel in Research.js + TradePlan.js. SC-SQS-01..06 Playwright tests. Rebase on main after EPIC-03 merge required (test.py 68→69, SystemStatus.js+SC-SS-01b). deviations_filed corrected at conflict resolution (no deviation record found)."
+          "notes": "AC-01..06 verified. SetupQualityScorePanel in Research.js + TradePlan.js. SC-SQS-01..06 Playwright tests. playwright.yml 23→24 (EPIC-04 branch); after main merge: 25→26 total. test.py 68→69 (sector-weights + setup-quality-score both registered). SystemStatus.js + SC-SS-01b updated 68→69. deviations_filed corrected at conflict resolution (no deviation record found)."
         }
       }
     }
@@ -250,8 +250,8 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-03", "EPIC-01"],
-    "epics_pending": ["EPIC-02", "EPIC-04"],
+    "epics_merged": ["EPIC-03", "EPIC-01", "EPIC-02"],
+    "epics_pending": ["EPIC-04"],
     "all_merged": false
   },
 

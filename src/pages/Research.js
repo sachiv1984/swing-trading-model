@@ -4,6 +4,7 @@ import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
 import EntryChecklist from "../components/trades/EntryChecklist";
+import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
 import { ArrowLeft, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "../lib/utils";
 
@@ -314,6 +315,9 @@ export default function Research() {
           </div>
         </div>
       </div>
+
+      {/* Setup Quality Score — ST-09 (v6.1) */}
+      <SetupQualityScorePanel ticker={ticker} />
 
       {/* Trade Plan Context Panel */}
       <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6">

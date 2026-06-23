@@ -4437,6 +4437,60 @@ components:
         "404":
           description: Trade plan not found
 
+  /trade-plans/setup-quality-score:
+    get:
+      tags: [Trade Plans]
+      summary: Get setup quality score from closed trade history
+      description: >
+        Returns a 0-100 setup quality score derived from closed trade history.
+        Returns gate_not_met=true when fewer than 20 closed trades exist.
+        Score formula: clamp(win_rate*0.6 + max(avg_pnl_pct,0)*0.4, 0, 100).
+        Contract: ST-08, EPIC-04, v6.1.
+      parameters:
+        - name: ticker
+          in: query
+          required: true
+          schema: { type: string }
+          description: Ticker symbol
+      responses:
+        "200":
+          description: Score or gate_not_met response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      gate_not_met:
+                        type: boolean
+                      min_trades_required:
+                        type: integer
+                      current_trades:
+                        type: integer
+                        nullable: true
+                      ticker:
+                        type: string
+                        nullable: true
+                      score:
+                        type: integer
+                        nullable: true
+                      matching_trades:
+                        type: integer
+                        nullable: true
+                      win_rate:
+                        type: number
+                        nullable: true
+                      average_pnl_pct:
+                        type: number
+                        nullable: true
+                      score_explanation:
+                        type: string
+                        nullable: true
+
   /earnings/{ticker}:
     get:
       summary: Get next earnings date for a ticker

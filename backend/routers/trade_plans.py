@@ -23,7 +23,10 @@ from database import (
     ensure_red_flag_events_table,
     get_latest_snapshot,
     get_settings,
+    get_trade_history,
 )
+
+_SETUP_QUALITY_MIN_TRADES = 20
 
 router = APIRouter(prefix="/trade-plans", tags=["Trade Plans"])
 
@@ -193,6 +196,71 @@ def list_plans_by_position(position_id: str):
     except HTTPException:
         raise
     except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+
+# ST-08, EPIC-04, v6.1
+@router.get("/setup-quality-score")
+def get_setup_quality_score(ticker: str = Query(..., description="Ticker symbol")):
+    """
+    GET /trade-plans/setup-quality-score?ticker={ticker}
+
+    Return a 0–100 setup quality score derived from closed trade history.
+    Gate: returns gate_not_met when fewer than 20 closed trades exist.
+
+    Score factors:
+      - win_rate: % of closed trades where pnl > 0
+      - average_pnl_pct: average pnl_pct across all closed trades
+      - score: clamp(round(win_rate * 0.6 + max(average_pnl_pct, 0) * 0.4), 0, 100)
+
+    Spec: stage4_backlog_slice.md#ST-08
+    """
+    try:
+        portfolio = get_portfolio()
+        if not portfolio:
+            return {"status": "ok", "data": {"gate_not_met": True, "min_trades_required": _SETUP_QUALITY_MIN_TRADES, "current_trades": 0}}
+
+        trades = get_trade_history(str(portfolio["id"]))
+        closed = [t for t in trades if t.get("pnl") is not None]
+        total = len(closed)
+
+        if total < _SETUP_QUALITY_MIN_TRADES:
+            return {
+                "status": "ok",
+                "data": {
+                    "gate_not_met": True,
+                    "min_trades_required": _SETUP_QUALITY_MIN_TRADES,
+                    "current_trades": total,
+                },
+            }
+
+        winning = [t for t in closed if float(t["pnl"]) > 0]
+        win_rate = round(len(winning) / total * 100, 1)
+        avg_pnl = round(sum(float(t.get("pnl_pct") or 0) for t in closed) / total, 2)
+
+        raw_score = win_rate * 0.6 + max(avg_pnl, 0) * 0.4
+        score = max(0, min(100, round(raw_score)))
+
+        return {
+            "status": "ok",
+            "data": {
+                "gate_not_met": False,
+                "ticker": ticker.upper(),
+                "score": score,
+                "matching_trades": total,
+                "win_rate": win_rate,
+                "average_pnl_pct": avg_pnl,
+                "score_explanation": (
+                    f"Based on {total} closed trades: {win_rate}% win rate, "
+                    f"{avg_pnl}% average return. "
+                    f"Score = win_rate×0.6 + max(avg_return,0)×0.4."
+                ),
+            },
+        }
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
 

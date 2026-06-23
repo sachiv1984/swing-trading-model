@@ -512,6 +512,12 @@ export const api = {
       doFetch(`/cash/transactions?order=${order}`),
     getSummary: async () => doFetch('/cash/summary'),
   },
+
+  tradePlans: {
+    // ST-08/09 (v6.1): Setup Quality Score
+    setupQualityScore: async (ticker) =>
+      doFetch(`/trade-plans/setup-quality-score?ticker=${encodeURIComponent(ticker)}`),
+  },
 };
 
 export const Signal = base44.entities.Signal;
