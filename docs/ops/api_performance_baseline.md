@@ -2,14 +2,14 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.4
-**Date:** 2026-06-11
-**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run
+**Version:** 2.5
+**Date:** 2026-06-23
+**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 ---
 
-# API Endpoint Performance Baseline — v2.4
+# API Endpoint Performance Baseline — v2.5
 
 ---
 
@@ -830,10 +830,55 @@ Signed: [x] Infrastructure & Operations Owner — 2026-06-11
 
 ---
 
+## 20. v6.0 Write Endpoint Registration — PATCH /trades/{id}/costs (ST-05, v6.1 EPIC-02)
+
+**Date:** 2026-06-23
+**Story:** ST-05 (EPIC-02, v6.1) — BLG-OPS-73
+**Environment:** Production — `https://trading-assistant-api-c0f9.onrender.com`
+**Method:** Write endpoint excluded from live timing run per standard methodology (§18.2 — write ops risk production data mutation and are not eligible for repeated sampling). Estimated p50/p95 derived from endpoint characteristics.
+
+### 20.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| PATCH /trades/{id}/costs | v6.0 | Write — excluded from live timing run | ~250ms (est.) | ~500ms (est.) | — (write op, estimated values) |
+
+**Measurement date:** 2026-06-23 (estimated; live timing run deferred per write-op exclusion policy)
+
+**Endpoint characteristics:**
+- Query: Single `UPDATE` on the `trades` (positions) table to set `brokerage_fee`, `stamp_duty`, `other_costs`
+- Path parameter required (`{id}` = trade UUID)
+- Supavisor-enabled production; no external API calls
+- Expected p50: ~250ms — consistent with other single-write Supavisor endpoints (cf. §10: 226–244ms for DB reads)
+- Expected p95: ~500ms — tail jitter pattern consistent across all Supavisor endpoints at p95
+
+**Why excluded from live timing run:**
+PATCH /trades/{id}/costs modifies trade cost data. Repeated sampling against production or staging would mutate `brokerage_fee`, `stamp_duty`, and `other_costs` on real trade records. Per §18.2 methodology, write endpoints that risk data mutation are registered with estimated performance characteristics rather than live measurements.
+
+### 20.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs Registration Sign-Off
+
+AC-01: Entry added with estimated p50 (~250ms) and p95 (~500ms) and measurement date
+       (2026-06-23 — estimated; write-op exclusion applied). ✅ PASS
+AC-02: Estimation methodology documented — derived from endpoint characteristics
+       (single Supavisor UPDATE, no external API). Consistent with §10 baseline range.
+       Write-op exclusion per §18.2 applied. ✅ PASS (write-op clause)
+AC-03: Entry format consistent with existing baseline rows (§19 pattern). ✅ PASS
+
+BLG-OPS-73 closed.
+
+Signed: [x] Infrastructure & Operations Owner — 2026-06-23
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.5 | 2026-06-23 | Infrastructure & Operations Owner | ST-05 (v6.1 EPIC-02, BLG-OPS-73): §20 added — PATCH /trades/{id}/costs registered as write-op exclusion. Estimated p50=~250ms, p95=~500ms (Supavisor single UPDATE). Live timing deferred per §18.2 write-op policy. BLG-OPS-73 closed. |
 | 2.4 | 2026-06-11 | Infrastructure & Operations Owner | ST-07/08 (v5.5 EPIC-03): §19 added — GET /watchlist p50=488ms, GET /portfolio/gate-metrics p50=543ms measured on production. POST /digest/si05/send excluded (Telegram API timeout). ST-07/ST-08 closed. |
 | 2.3 | 2026-06-11 | Infrastructure & Operations Owner | ST-06 (v5.5 EPIC-03): §18 added — BLG-OPS-13 re-run complete. 16 read endpoints measured on production; 7 write ops excluded. 4 high-latency flags: concentration-status (p95=5,917ms), behavioural-drift (p95=3,798ms), red-flag-journal (p95=3,200ms), research (p95=4,601ms triggers BLG-BE-15 gate). BLG-OPS-13 closed. |
 | 2.2 | 2026-06-10 | Infrastructure & Operations Owner | ST-01 (v5.4 EPIC-01, BLG-OPS-60): §17 updated with actual staging measurements — GET /ai/journal-summary/history steady-state p50=1,443ms, GET /news/AAPL p50=505ms, GET /watchlist p50=2,365ms. Cold-start pattern noted. All results consistent with Render starter tier. BLG-OPS-60 closed. |

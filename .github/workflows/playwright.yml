@@ -3,7 +3,7 @@ name: Playwright E2E Acceptance Tests
 # Two jobs:
 #
 # 1. playwright-e2e  — behavioural acceptance tests (blocking gate)
-#    All 23 spec files using page.route() interception. No live backend required.
+#    All 25 spec files using page.route() interception. No live backend required.
 #
 # 2. playwright-visual — CSS class/attribute assertions for visual AC (blocking gate)
 #    visual-snapshots.spec.js — 14 element-level tests verifying colours and structure
@@ -33,6 +33,8 @@ name: Playwright E2E Acceptance Tests
 #   screener-uk-suffix.spec.js   — ST-06 (EPIC-03, v3.1): UK ticker .L suffix stripping
 #   earnings-calendar.spec.js    — ST-08 (EPIC-03, v3.1): Earnings Calendar UI (Screener/Watchlist/Positions)
 #   trade-plan.spec.js           — ST-03 (EPIC-01, v3.1): Trade Plan form
+#   morning-briefing.spec.js     — ST-07 (EPIC-03, v6.0): Morning Briefing panel
+#   screener-quality.spec.js     — ST-06 (EPIC-02, v6.0): Screener data quality telemetry
 #   visual-snapshots.spec.js     — VS-01–VS-14 pixel snapshots (job 2)
 
 on:
@@ -115,7 +117,9 @@ jobs:
             tests/e2e/weekly-digest.spec.js \
             tests/e2e/screener-uk-suffix.spec.js \
             tests/e2e/earnings-calendar.spec.js \
-            tests/e2e/trade-plan.spec.js
+            tests/e2e/trade-plan.spec.js \
+            tests/e2e/morning-briefing.spec.js \
+            tests/e2e/screener-quality.spec.js
         env:
           CI: true
           REACT_APP_API_URL: http://localhost:8000
