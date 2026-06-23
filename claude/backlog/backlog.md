@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-22 (cycle 2026-06-22__scheduled — 4 new items: BLG-FE-78, BLG-GOV-134, BLG-QA-62, BLG-OPS-74; DL-052–055)
+**Last Updated:** 2026-06-23 (BLG-BE-38 added — sector concentration shows "Unclassified" due to missing ticker_universe join)
 **Last rebalance:** 2026-06-22 (cycle 2026-06-22__scheduled — DL-052–055; 4 promoted-backlog, 0 rejected, 11 parked C1, 8 parked C2; v6.1 Now section added to roadmap; Product Value Alert + Skill-Silo Alert; STEP 8.2 BLG-FE-52/53 excluded)
 
 > ⚠️ Standing Notice
@@ -2533,6 +2533,30 @@ Arc 4 (PO-02/03/04) will introduce cross-table queries joining trade_plans, red_
 - Index audit document produced covering Arc 4 query patterns
 - Any missing indexes produce separate BLG items before sign-off
 - Reviewed by Infrastructure & Operations Owner
+
+---
+
+### BLG-BE-38 — Sector Concentration: join ticker_universe for sector data
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Bug
+**Owner:** Head of Backend Engineering
+**Source:** User-reported 2026-06-23 — Sector Concentration panel shows all positions as "Unclassified"
+**Effort:** XS (~2 hours)
+**Provisional-Target:** Next available sprint
+
+**Problem**
+`GET /portfolio/sector-weights` fetches raw `positions` rows and reads `pos.get("sector")`, falling back to `"Unclassified"` when the field is absent. The `positions` table has no `sector` column — sector data lives in `ticker_universe` (columns `sector`, `industry`), which is populated at ticker-add time via yfinance. Because no join is made, every position shows as "Unclassified" regardless of what is stored in `ticker_universe`.
+
+**Scope**
+- In `backend/routers/portfolio_risk.py` `get_sector_weights()`: after fetching `raw_positions`, resolve each position's sector by looking up `(ticker, market)` in `ticker_universe`. Fall back to `"Unclassified"` only when the ticker is genuinely absent from the universe or has a NULL sector.
+- Same fix should be applied to the concentration-status endpoint (`GET /portfolio/concentration-status`) which has the same `pos.get("sector")` pattern at line 240.
+- No schema change required — `ticker_universe.sector` already exists.
+
+**Acceptance Criteria**
+- AC-01: Sector Concentration panel on Risk Dashboard shows correct sector tiles for open positions whose tickers exist in `ticker_universe` with a non-null sector
+- AC-02: Positions whose ticker has no sector in `ticker_universe` still render as "Unclassified" (graceful fallback preserved)
+- AC-03: `GET /portfolio/concentration-status` sector breach calculation also reflects correct sectors
+- AC-04: No yfinance live-call added to the hot path — sector is read from `ticker_universe` only
 
 ---
 
