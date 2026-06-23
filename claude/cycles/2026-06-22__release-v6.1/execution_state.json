@@ -13,7 +13,7 @@
       "branch": "exec/2026-06-22__release-v6.1/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-06-22__release-v6.1/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
       "stories": {
@@ -58,21 +58,21 @@
         "ST-03": {
           "title": "Governance overhead ceiling metric and accountability mechanism",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 826,
           "branch": "exec/2026-06-22__release-v6.1/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "322a884d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["claude/system/roadmap_prompt.md", "CLAUDE.md"],
+          "completed_utc": "2026-06-23T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/product/decisions/gov_overhead_ceiling_proposal_v6.1.md"],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Primary deliverable is proposal document at docs/product/decisions/gov_overhead_ceiling_proposal_v6.1.md — spec_references will be updated to that path at commit time (Case B)"
+          "notes": "AC-01: G+D+P% metric defined over rolling 5-cycle window, ≥60% alert threshold. AC-02: Proposal at docs/product/decisions/gov_overhead_ceiling_proposal_v6.1.md — awaiting HoST + PMO Lead review. AC-03: Draft STEP 2.4 amendment included in §6 of proposal. AC-04: Prior 5-cycle data (v5.5–v5.9) tabulated in §4, G+D+P%=86.0%. No prompt files modified (implementation requires HoST sign-off per CLAUDE.md §6)."
         }
       }
     },
@@ -238,7 +238,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02"],
+  "completed_items": ["ST-01", "ST-02", "ST-03"],
   "open_escalations": [],
 
   "merge_gate": {
