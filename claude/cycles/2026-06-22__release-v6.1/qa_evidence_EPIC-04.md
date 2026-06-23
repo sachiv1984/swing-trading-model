@@ -50,21 +50,54 @@
 | ST Item | Spec Reference | What was built | Acceptance criteria | Result | Deviations |
 |---------|---------------|----------------|---------------------|--------|------------|
 | ST-08 | trade_plan_endpoints.md v0.5 | GET /trade-plans/setup-quality-score + unit tests | AC-01..06 verified (gate response, score computation, Playwright suite not required — AC-06 unit tests + no observable UI ACs) | Pass | None |
+| ST-09 | BLG-FEAT-25 (Frontend); ux_spec.md v3.9 | SetupQualityScorePanel in Research.js and TradePlan.js | AC-01..06 verified (score badge, gate-not-met message, detail expansion, ticker change, Playwright SC-SQS-01..06) | Pass | None |
 
 **QA test coverage:**
-- Scenarios run: tests/test_setup_quality_score.py (gate_not_met case, mixed history, perfect history)
-- Regression areas checked: GET /trade-plans/{plan_id} routing order confirmed unaffected (static path `/setup-quality-score` defined before parameterized `/{plan_id}`); no frontend changes in this story
+- Scenarios run: tests/test_setup_quality_score.py (ST-08 backend); tests/e2e/setup-quality-score.spec.js SC-SQS-01..06 (ST-09 frontend)
+- Regression areas checked: GET /trade-plans/{plan_id} routing order confirmed unaffected; Research.js and TradePlan.js existing panels unaffected by panel insertion
 - Known deviations filed: None
+
+---
+
+## ST-09 — Setup Quality Score — frontend display (PT-04)
+
+**Spec reference:** `docs/design/2026-05-21__release-v3.9/setup-quality-score-v2/ux_spec.md`; BLG-FEAT-25 Frontend scope
+**Commit SHA:** 2ab3a6f0
+**Delegation class:** autonomous
+
+**What was built:**
+- `src/components/trades/SetupQualityScorePanel.js` — new React component using `useQuery`
+- Score badge (0–100) with qualitative label: Excellent (≥80) / Good (≥60) / Fair (≥40) / Low (<40)
+- Gate-not-met message when insufficient trade history (`gate_not_met = true`)
+- Expandable detail showing: matching_trades, win_rate, average_pnl_pct
+- Score updates on ticker change (query key includes ticker)
+- Silent error hide (returns null on error)
+- `data-testid` attributes for Playwright targeting
+- Integrated into `src/pages/Research.js` (Pre-Trade Research View, before Trade Plan section)
+- Integrated into `src/pages/TradePlan.js` (after Setup Type field)
+- `api.tradePlans.setupQualityScore(ticker)` added to `src/api/base44Client.js`
+- `tests/e2e/setup-quality-score.spec.js` — SC-SQS-01..06 Playwright tests
+- `.github/workflows/playwright.yml` updated 23→24 spec files; setup-quality-score.spec.js registered
+
+**Acceptance criteria verification:**
+- [x] AC-01: Panel displayed in Pre-Trade Research View (`Research.js`) and Trade Plan form (`TradePlan.js`)
+- [x] AC-02: Score badge with numeric value and qualitative label (Excellent ≥80 / Good ≥60 / Fair ≥40 / Low <40)
+- [x] AC-03: "Insufficient trade history (< 20 trades)" message when gate_not_met = true; uses `data-testid="setup-quality-gate-not-met"`
+- [x] AC-04: Expandable detail section shows matching_trades, win_rate, average_pnl_pct (Avg Return %)
+- [x] AC-05: Query key includes ticker — new query per ticker, no stale data across ticker changes
+- [x] AC-06: SC-SQS-01..06 Playwright tests cover: panel renders (Research + TradePlan), score badge value/label, gate-not-met message, expanded detail values, ticker change score update
+
+**Note on rebase:** EPIC-04 must rebase on main after EPIC-03 merges. After rebase: test.py count 68→69, SystemStatus.js `'68'`→`'69'`, SC-SS-01b "68"→"69". playwright.yml will need conflict resolution with EPIC-02's additions (23→25 → combined 26 spec files).
 
 ---
 
 ## Autonomous class eligibility check
 
-- [x] Criterion 1: ST-08 has `delegation_class: autonomous` — ✓
-- [x] Criterion 2: All ACs verifiable by code review + unit tests; no observable UI ACs in ST-08 (backend-only story) — ✓
-- [x] Criterion 3: No frontend-visible change — ST-08 is a backend-only endpoint. SystemStatus.js fallback count update is a non-observable change (only visible after running tests) — ✓
+- [x] Criterion 1: Both ST-08 and ST-09 have `delegation_class: autonomous` — ✓
+- [x] Criterion 2: All ACs verifiable by code review + Playwright tests. ST-08 has no observable UI ACs (backend-only). ST-09 observable UI ACs covered by SC-SQS-01..06 Playwright tests — ✓
+- [x] Criterion 3: Frontend changes (ST-09) have Playwright coverage (option-a per CLAUDE.md) — ✓
 - [x] Criterion 4: Engine signer populated as "Sprint Execution Engine (autonomous class)" — ✓
 
 - Signed off by: Sprint Execution Engine (autonomous class)
 - Date: 2026-06-23
-- Comments: Autonomous class sign-off — all four qualifying criteria met. Gate-not-met path verified as the primary testable state (15 closed trades in production). Score computation validated via standalone logic tests and unit test file. Rebase requirement noted: EPIC-04 must rebase on main after EPIC-03 merge to resolve shared-file conflicts (test.py + openapi.yaml entry counts). SystemStatus.js and SC-SS-01b will require updating from 68→69 at rebase time.
+- Comments: ST-08 (backend) and ST-09 (frontend) both complete. Rebase requirement noted: EPIC-04 must rebase on main after EPIC-03 merge to resolve shared-file conflicts (test.py, openapi.yaml, playwright.yml). SystemStatus.js and SC-SS-01b will require updating at rebase time.
