@@ -1,0 +1,257 @@
+{
+  "cycle_id": "2026-06-22__release-v6.1",
+  "sprint_goal": "Correct the governance engine deficiencies that allowed the design gate to be bypassed, and deliver the user-facing visualisation and analytics features — sector heat-map, gate proximity indicator, and Setup Quality Score — that make the trading system more transparent and actionable.",
+  "backlog_slice_source": "claude/cycles/2026-06-22__release-v6.1/stage4_backlog_slice.md",
+  "invoked_utc": "2026-06-22T00:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-06-23T00:00:00Z",
+
+  "epics": {
+    "EPIC-01": {
+      "status": "in_progress",
+      "branch": "exec/2026-06-22__release-v6.1/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-06-22__release-v6.1/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "Release planning: Design Gate Required flag",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 824,
+          "branch": "exec/2026-06-22__release-v6.1/EPIC-01",
+          "commit_sha": "cb0bb33f3553907f274722936ea7b8ad1c73edc4",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-23T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/system/release_planning_prompt.md"],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "All 6 ACs verified. No deviations."
+        },
+        "ST-02": {
+          "title": "Sprint planning: Design Gate hard gate at preflight",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 825,
+          "branch": "exec/2026-06-22__release-v6.1/EPIC-01",
+          "commit_sha": "cb0bb33f3553907f274722936ea7b8ad1c73edc4",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-23T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/system/sprint_planning_prompt.md"],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push",
+          "sign_off_record": null,
+          "notes": "All 5 ACs verified. No deviations."
+        },
+        "ST-03": {
+          "title": "Governance overhead ceiling metric and accountability mechanism",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 826,
+          "branch": "exec/2026-06-22__release-v6.1/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["claude/system/roadmap_prompt.md", "CLAUDE.md"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Sprint 2 story. Proposal document deliverable."
+        }
+      }
+    },
+
+    "EPIC-02": {
+      "status": "not_started",
+      "branch": "exec/2026-06-22__release-v6.1/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-06-22__release-v6.1/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-04": {
+          "title": "Register morning-briefing.spec.js and screener-quality.spec.js in playwright.yml",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 827,
+          "branch": "exec/2026-06-22__release-v6.1/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [".github/workflows/playwright.yml"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-05": {
+          "title": "Add PATCH /trades/{id}/costs to api_performance_baseline.md",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 828,
+          "branch": "exec/2026-06-22__release-v6.1/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["docs/ops/api_performance_baseline.md", "docs/reference/openapi.yaml"],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    },
+
+    "EPIC-03": {
+      "status": "in_progress",
+      "branch": "exec/2026-06-22__release-v6.1/EPIC-03",
+      "pr_number": 833,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-06-22__release-v6.1/qa_evidence_EPIC-03.md",
+      "test_scenarios": [
+        "docs/testing/staging_visual_test_script_EPIC-03.md",
+        "docs/testing/staging_visual_test_script_ST-06.md"
+      ],
+      "stories": {
+        "ST-06": {
+          "title": "Portfolio sector heat-map visualization",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 829,
+          "branch": "exec/2026-06-22__release-v6.1/EPIC-03",
+          "commit_sha": "1d611f8f76226b153558e6c05316d061d25f6775",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-23T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-06-22__release-v6.1/sector-heatmap/ux_spec.md",
+            "docs/specs/api_contracts/portfolio_endpoints.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "All ACs. portfolio_endpoints.md v2.4.0. SC-SHM-01..04 Playwright tests."
+        },
+        "ST-07": {
+          "title": "Trade gate proximity indicator on dashboard",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 830,
+          "branch": "exec/2026-06-22__release-v6.1/EPIC-03",
+          "commit_sha": "1d611f8f76226b153558e6c05316d061d25f6775",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-23T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-06-22__release-v6.1/gate-proximity-indicator/ux_spec.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "All ACs. GateProgressStrip.js. SC-GP-01..04 Playwright tests."
+        }
+      }
+    },
+
+    "EPIC-04": {
+      "status": "in_progress",
+      "branch": "exec/2026-06-22__release-v6.1/EPIC-04",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-06-22__release-v6.1/qa_evidence_EPIC-04.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-08": {
+          "title": "Setup Quality Score — backend engine (PT-04)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 831,
+          "branch": "exec/2026-06-22__release-v6.1/EPIC-04",
+          "commit_sha": "302046d8",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-23T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/trade_plan_endpoints.md",
+            "claude/strategy/strategy_rules.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": null,
+          "notes": "AC-01..06 verified. Gate-not-met path primary testable state (15 trades). trade_plan_endpoints.md v0.5. Unit tests in tests/test_setup_quality_score.py. Endpoint registered test.py+openapi.yaml."
+        },
+        "ST-09": {
+          "title": "Setup Quality Score — frontend display (PT-04)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 832,
+          "branch": "exec/2026-06-22__release-v6.1/EPIC-04",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/design/2026-05-21__release-v3.9/setup-quality-score-v2/ux_spec.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Sprint 2 story. Depends on ST-08."
+        }
+      }
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": ["ST-01", "ST-02", "ST-06", "ST-07", "ST-08"],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-03", "EPIC-01", "EPIC-02", "EPIC-04"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}
