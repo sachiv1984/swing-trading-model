@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-23 (post-ship closure 2026-06-22__release-v6.1 — v6.1 marked ✅ Complete)
+**Last Updated:** 2026-06-23 (session — 6 items added to Now horizon: BLG-FEAT-46–51 — production strategy fidelity & AI intelligence)
 **Last rebalance:** 2026-06-22 (cycle 2026-06-22__scheduled — Standard-tier, CPS=N/A (0 active initiatives); Product Value Alert (ratio=0.136); Skill-Silo Alert (G+D+P=86.4%); 4 new backlog items (BLG-FE-78, BLG-GOV-134, BLG-QA-62, BLG-OPS-74); DL-052–055; 0 Rejected, 4 Promoted-Backlog immediate, 0 Promoted-Backlog post-debate, 11 Parked C1, 8 Parked C2; v6.1 Now section added (STEP 8.1 Option a); STEP 8.2 first activation — BLG-FE-52/53 excluded from Now horizon (archived); deferred patch roadmap_prompt.md STEP 8.2 applied action-now (v7.5→v7.6))
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -278,6 +278,21 @@ Today you find stocks through external research and add them to the watchlist ma
 *RA:v6.0 retired — see roadmap_archive.md 2026-06-22 (post-ship closure 2026-06-19__release-v6.0).*
 
 *RA:v6.1 retired — see roadmap_archive.md 2026-06-23 (post-ship closure 2026-06-22__release-v6.1).*
+
+### v[TBD] — Production Strategy Fidelity & AI Intelligence
+
+**Added:** 2026-06-23 (user request — production_strategy.py gap analysis)
+
+These six items close the gap between the live application and the `production_strategy.py` backtest logic, and layer in AI decision support. P1 items (BLG-FEAT-46–49) form a prerequisite cluster; P2 items (BLG-FEAT-50–51) depend on the P1 cluster completing first.
+
+| BLG ID | Title | Priority | Effort | Type | Status |
+|--------|-------|----------|--------|------|--------|
+| BLG-FEAT-46 | Add nightly trailing stop computation for open positions | P1 | M | U | Queued |
+| BLG-FEAT-47 | Add month-end rebalance exit signal generation | P1 | M | U | Queued |
+| BLG-FEAT-48 | Implement inverse-volatility position sizing for signal-driven entries | P1 | M | U | Queued |
+| BLG-FEAT-49 | Add risk-off exit alerts for existing positions | P1 | S | U | Queued |
+| BLG-FEAT-50 | Build AI daily briefing endpoint and dashboard panel | P2 | M | U | Queued — depends on BLG-FEAT-46/47/49 |
+| BLG-FEAT-51 | Build conversational AI trade advisor | P2 | M | U | Queued — depends on BLG-FEAT-50 |
 
 -----
 

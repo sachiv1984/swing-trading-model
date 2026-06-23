@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-23 (post-ship closure 2026-06-22__release-v6.1 — 8 items marked ✅ COMPLETE; BLG-OPS-75 added)
+**Last Updated:** 2026-06-23 (session — 6 new item(s) added: BLG-FEAT-46, BLG-FEAT-47, BLG-FEAT-48, BLG-FEAT-49, BLG-FEAT-50, BLG-FEAT-51)
 **Last rebalance:** 2026-06-22 (cycle 2026-06-22__scheduled — DL-052–055; 4 promoted-backlog, 0 rejected, 11 parked C1, 8 parked C2; v6.1 Now section added to roadmap; Product Value Alert + Skill-Silo Alert; STEP 8.2 BLG-FE-52/53 excluded)
 
 > ⚠️ Standing Notice
@@ -350,6 +350,158 @@ Monthly P&L shipped 2026-05-05 with a fixed column/section layout. After 3 month
 - Recommendations document produced (or "no change" decision recorded)
 - Any format changes flow into the next appropriate sprint as separate stories
 - Gate condition verified: ≥ 2026-08-05
+
+---
+
+### BLG-FEAT-46 — Add nightly trailing stop computation for open positions
+**Priority:** P1 (High)
+**Type:** Product Feature / In-Trade Risk Management
+**Owner:** Product Owner
+**Source:** User request — production_strategy.py gap analysis — 2026-06-23
+**Effort:** M (~2 days)
+**Provisional-Target:** [TBD]
+
+**Problem**
+The live system records an `initial_stop` at signal entry but never updates it. The production strategy ratchets the stop daily using profit-lock logic: if the position is in profit, use `current_price − 2×ATR`; otherwise use `entry_price − 5×ATR`, and the stop can only ever move up. Without a nightly update, users have no signal of where their current stop should be and cannot tell if a position has already breached it.
+
+**Scope**
+- Nightly job that iterates all open positions, fetches current price + ATR for each ticker, and computes the updated trailing stop using profit-lock logic
+- Stop level stored per position and surfaced in the portfolio view alongside the original initial stop
+- Badge/alert displayed when current price ≤ computed trailing stop
+- Logic must match `production_strategy.py` exactly (profit-lock: `INITIAL_ATR_MULT=5`, `PROFIT_ATR_MULT=2`)
+
+**Acceptance Criteria**
+- Each open position displays a current trailing stop (not just the original initial stop)
+- Stop level is recalculated nightly; ratchet is enforced (stop only moves up)
+- A visible badge/alert is shown when `current_price ≤ trailing_stop`
+- Profit-lock logic is verified to match `production_strategy.py` backtest parameters
+
+---
+
+### BLG-FEAT-47 — Add month-end rebalance exit signal generation
+**Priority:** P1 (High)
+**Type:** Product Feature / In-Trade Risk Management
+**Owner:** Product Owner
+**Source:** User request — production_strategy.py gap analysis — 2026-06-23
+**Effort:** M (~1.5 days)
+**Provisional-Target:** [TBD]
+
+**Problem**
+The production strategy exits any held position at month-end if it has dropped out of the top-5 momentum ranking. The live signal service has no equivalent: positions that fall out of top-5 are marked `already_held` indefinitely with no "you should sell this" signal. Rebalance exits are therefore completely invisible to the user, breaking parity with the backtest.
+
+**Scope**
+- On the last trading day of each calendar month, compute which open positions are NOT in the current top-5 momentum signal list
+- Generate a signal record with `status = exit_rebalance` for each such position
+- Surface these in the UI with distinct styling (separate from stop exits and risk-off exits)
+- Correct month-end date detection using last trading day (not last calendar day)
+
+**Acceptance Criteria**
+- `exit_rebalance` signals are generated on the last trading day of each month for positions no longer in top-5
+- Signals are clearly labelled in the UI as rebalance exits, visually distinct from stop exits
+- Month-end detection uses last trading day logic, not calendar month-end
+- No duplicate `exit_rebalance` signal is generated if the position is also crossing a stop
+
+---
+
+### BLG-FEAT-48 — Implement inverse-volatility position sizing for signal-driven entries
+**Priority:** P1 (High)
+**Type:** Product Feature / Signal Generation
+**Owner:** Product Owner
+**Source:** User request — production_strategy.py gap analysis — 2026-06-23
+**Effort:** M (~2 days)
+**Provisional-Target:** [TBD]
+
+**Problem**
+The live system sizes new signal entries using a fixed-risk model (1% of portfolio value ÷ stop distance), which produces recurring £200 allocations and yields 0 shares for high-priced stocks such as SNDK at ~$2,274. The `production_strategy.py` backtest uses inverse-volatility weighting: each new slot gets a capital weight proportional to `1/ATR`, constrained to 5–20% of available cash and normalised across all new entries. The live sizing method is incompatible with the backtest and misrepresents expected position sizes.
+
+**Scope**
+- For each batch of new signals at a rebalance event, compute inv-vol weights across all new candidates: `weight_i = (1/ATR_i) / Σ(1/ATR_j)`
+- Constrain each weight to `[min_position_pct=5%, max_position_pct=20%]` of available cash, then re-normalise
+- Replace the fixed-risk sizing path in `sizing_service.py` for signal-driven entries with this model
+- Retain fixed-risk sizing path for manual (non-signal-driven) position entries
+
+**Acceptance Criteria**
+- New signal allocations use inv-vol weighting, not the fixed-risk £200 model
+- Weights are constrained to 5–20% of available cash and normalise to 100% across new slots
+- Manual position sizing (non-signal entries) continues to use fixed-risk path unchanged
+- Sizing output matches `production_strategy.py` backtest logic for equivalent inputs
+
+---
+
+### BLG-FEAT-49 — Add risk-off exit alerts for existing positions
+**Priority:** P1 (High)
+**Type:** Product Feature / In-Trade Risk Management
+**Owner:** Product Owner
+**Source:** User request — production_strategy.py gap analysis — 2026-06-23
+**Effort:** S (~1 day)
+**Provisional-Target:** [TBD]
+
+**Problem**
+When SPY drops below its 200-day MA the production strategy exits ALL open US positions immediately, not just stops new entries. The same applies to UK positions when FTSE drops below its MA200. The live system currently only suppresses new entry signals during risk-off regimes; it does not generate exit alerts for existing holdings. Users holding live positions receive no warning when the regime flips.
+
+**Scope**
+- Nightly regime check: if `SPY < MA200`, flag all open US positions with a `risk_off_exit` alert; if `FTSE < MA200`, flag all open UK positions
+- Generate a visible per-position alert in the portfolio view distinct from stop and rebalance exit alerts
+- Alerts clear automatically when the regime returns to risk-on
+- Per-market logic: SPY governs US-listed positions, FTSE governs UK-listed positions
+
+**Acceptance Criteria**
+- `risk_off_exit` alerts appear for all affected positions within 24 hours of a regime flip
+- Alerts are visually distinct from trailing stop breaches and `exit_rebalance` signals
+- Alerts clear when the index recovers above MA200
+- Per-market logic is correct: a US risk-off event does not trigger alerts on UK positions and vice versa
+
+---
+
+### BLG-FEAT-50 — Build AI daily briefing endpoint and dashboard panel
+**Priority:** P2 (Medium)
+**Type:** Product Feature / AI Intelligence
+**Owner:** Product Owner
+**Source:** User request — production_strategy.py gap analysis — 2026-06-23
+**Effort:** M (~2 days)
+**Provisional-Target:** [TBD]
+**Depends on:** BLG-FEAT-46 (trailing stop data), BLG-FEAT-47 (rebalance exit signals), BLG-FEAT-49 (risk-off alerts)
+
+**Problem**
+The system has all the data required to tell the user what to do each day, but no mechanism to synthesise it into a plain-English action plan. The existing `ai_service.py` is limited to journal note summarisation. Users must manually interpret signals, trailing stops, regime status, and the rebalance calendar across multiple screens — a cognitive load that defeats the purpose of having a systematic strategy.
+
+**Scope**
+- `POST /ai/daily-briefing` endpoint: assembles current portfolio state, today's top-5 signals, per-position trailing stops, regime status, and whether today is a rebalance date; submits to Claude (`claude-sonnet-4-6`) and returns a structured action plan
+- Response format: summary paragraph + ordered action list (e.g. "Exit DELL — rebalance exit", "Hold MU — trailing stop at $1,039", "No new entries today — not a rebalance date")
+- "Today's Briefing" card on the dashboard, generated on demand with a visible timestamp
+- AI output is display-only and clearly labelled advisory — all actions require human confirmation (§13 compliant)
+
+**Acceptance Criteria**
+- `/ai/daily-briefing` returns a structured action plan in < 10s
+- Plan covers: regime status, trailing stop alerts, rebalance exits, new entry signals (if month-end), stop breach alerts
+- Dashboard card displays the briefing with a timestamp and a "Regenerate" button
+- Output is clearly labelled as AI advisory; no action is taken without explicit user confirmation
+
+---
+
+### BLG-FEAT-51 — Build conversational AI trade advisor
+**Priority:** P2 (Medium)
+**Type:** Product Feature / AI Intelligence
+**Owner:** Product Owner
+**Source:** User request — production_strategy.py gap analysis — 2026-06-23
+**Effort:** M (~2 days)
+**Provisional-Target:** [TBD]
+**Depends on:** BLG-FEAT-50 (AI daily briefing — shared context assembly pattern)
+
+**Problem**
+Users need to ask ad-hoc questions about specific signals or positions ("should I buy SNDK today?", "what is my current trailing stop on MU?", "is the market risk-on?") without navigating multiple screens. The existing `ai_service.py` has no portfolio-context injection and cannot answer strategy-grounded questions. A conversational interface that receives full live portfolio and signal context at query time would provide immediate, relevant answers within the strategy rules.
+
+**Scope**
+- `POST /ai/chat` endpoint: accepts a user question and optional context (ticker, position_id); loads full portfolio + signal state; calls Claude with a system prompt embedding the strategy rules; returns a direct, strategy-grounded answer
+- Frontend chat widget on the signals or portfolio page
+- Conversation is stateless per request (each question receives full injected context; no session memory)
+- AI output is advisory only; the interface cannot execute or confirm trades (§13 compliant)
+
+**Acceptance Criteria**
+- `/ai/chat` answers questions about current signals, open positions, trailing stops, and regime status
+- Responses are grounded in live portfolio state (not generic strategy descriptions)
+- Response time < 15s
+- Interface is clearly labelled as AI advisory; no trade action is taken from the chat widget
 
 ---
 
