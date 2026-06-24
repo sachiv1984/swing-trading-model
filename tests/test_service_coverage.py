@@ -21,7 +21,7 @@ DB calls in drawdown_service are patched via unittest.mock.
 
 import sys
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 # ---------------------------------------------------------------------------
 # Path setup: allow importing from backend/services directly
@@ -29,6 +29,14 @@ from unittest.mock import patch
 
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
+
+# Stub yfinance before importing the services package.  services/__init__.py
+# eagerly imports position_service → sector_service → yfinance → numpy.
+# Under pytest-cov, numpy 2.x's C extension init detects re-entry and raises
+# "cannot load module more than once per process".  Neither grace_service nor
+# drawdown_service uses yfinance, so the stub is safe.
+if 'yfinance' not in sys.modules:
+    sys.modules['yfinance'] = MagicMock()
 
 # Database stub is registered by tests/conftest.py (BLG-QA-20).
 
