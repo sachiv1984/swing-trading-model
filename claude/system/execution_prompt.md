@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.47
-**Last Updated:** 2026-06-22
+**Version:** 3.48
+**Last Updated:** 2026-06-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -457,7 +457,7 @@ Create `claude/cycles/<cycle_id>/execution_state.json` if it does not exist.
    - `autonomous`: record spec if one governs the work; leave `[]` only if purely infrastructural
    - `delegated_decision`: leave `[]` until resolved — populate when re-classified
    If a `delegated_backend` item has no lockable spec reference: classify as `delegated_decision` instead and surface to Head of Specs Team.
-6. For each EPIC: check `docs/testing/` for existing test scenario files. Record found paths in `execution_state.json` EPIC `test_scenarios` field. If none: set `test_scenarios: []`.
+6. For each EPIC: check `tests/` and `tests/e2e/` for existing runnable test script files that exercise acceptance criteria for this EPIC's stories. Record found paths in `execution_state.json` EPIC `test_scenarios` field. If none: set `test_scenarios: []`. **Advisory (BLG-GOV-136):** `docs/testing/` paths are QA evidence artefacts (scenario description documents), not runnable test files — do not record `docs/testing/` paths in `test_scenarios`.
 
 ```yaml
 # execution_state.json initial schema (∀ ST item at STEP 0):
@@ -470,7 +470,7 @@ epics.<EPIC-xx>.stories.<ST-xx>:
   deviations_filed: false
   acceptance_verified: false
   commit_sha: null
-epics.<EPIC-xx>.test_scenarios: []   # populate if found in docs/testing/
+epics.<EPIC-xx>.test_scenarios: []   # populate with runnable test file paths from tests/ or tests/e2e/ only
 execution_state.status: Running
 backlog_slice_source: <authoritative slice path>
 
@@ -685,7 +685,7 @@ When all four of the following qualifying criteria are met, the engine may apply
 **Qualifying criteria:**
 1. All stories in the EPIC have `delegation_class: autonomous`. **Verification-class sub-criterion (LL-v4.5-EX-01 — pre-planning sprint pattern):** Criterion 1 may be satisfied when all stories' VERIFICATION is by document inspection only (regardless of EXECUTION class), provided criteria 2–4 are also met. Applies when: the EPIC's primary deliverable is a governance or spec document; no observable UI behaviour, staging run, or live system interaction is required. Does not apply to EPICs with `delegated_backend` execution where the deliverable is a running system component.
 2. All AC is verifiable by code review alone — no observable UI behaviour, no staging run required, and no live system interaction
-3. No frontend-visible change is introduced by this EPIC
+3. No frontend-visible change is introduced by this EPIC — **detection rule (BLG-GOV-135):** if any story in this EPIC creates or modifies a file under `src/components/**` or `src/pages/**`, this criterion is automatically unmet and the autonomous class path is unavailable, regardless of Playwright test coverage
 4. Engine signer field is populated as "Sprint Execution Engine (autonomous class)"
 
 When all criteria are met, populate the sign-off block using the **BLG-GOV-19 template in `claude/system/templates/qa_evidence_template.md`**.
