@@ -2940,3 +2940,29 @@ All market data (OHLCV, signals, news) is sourced exclusively from Alpaca and Ya
 ---
 
 *Release Slice v6.1 removed — cycle 2026-06-22__release-v6.1 closed 2026-06-23. Archived canonical home: claude/cycles/2026-06-22__release-v6.1/stage4_backlog_slice.md*
+
+---
+
+<!-- release-plan-marker: RP:v6.2:2026-06-24__release-v6.2 -->
+
+## Release Slice — v6.2 (2026-06-24__release-v6.2)
+
+*This section is ephemeral and will be removed at the next `groom backlog` run after v6.2 closes.*
+
+| ST-ID | EPIC | Description | BLG Source |
+|-------|------|-------------|-----------|
+| ST-01 | EPIC-01 | Nightly trailing stop computation — backend | BLG-FEAT-46 |
+| ST-02 | EPIC-01 | Trailing stop display + breach badge — frontend | BLG-FEAT-46 |
+| ST-03 | EPIC-01 | Month-end rebalance exit signal generation | BLG-FEAT-47 |
+| ST-04 | EPIC-01 | Inverse-volatility position sizing — backend | BLG-FEAT-48 |
+| ST-05 | EPIC-01 | Risk-off exit alerts for existing positions | BLG-FEAT-49 |
+| ST-06 | EPIC-02 | AI daily briefing — backend endpoint | BLG-FEAT-50 |
+| ST-07 | EPIC-02 | AI Daily Briefing card — frontend | BLG-FEAT-50 |
+| ST-08 | EPIC-02 | Conversational AI trade advisor — backend | BLG-FEAT-51 |
+| ST-09 | EPIC-02 | AI chat widget — frontend | BLG-FEAT-51 |
+| ST-10 | EPIC-03 | execution_prompt autonomous class hard gate | BLG-GOV-135 |
+| ST-11 | EPIC-03 | execution_prompt test_scenarios path validation | BLG-GOV-136 |
+| ST-12 | EPIC-03 | api_performance_baseline.md 2 new endpoints | BLG-OPS-75 |
+| ST-13 | EPIC-03 | Playwright glob auto-registration | BLG-QA-62 |
+
+*Canonical home: claude/cycles/2026-06-24__release-v6.2/stage4_backlog_slice.md*

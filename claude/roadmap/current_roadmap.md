@@ -281,6 +281,15 @@ Today you find stocks through external research and add them to the watchlist ma
 
 ### v[TBD] — Production Strategy Fidelity & AI Intelligence
 
+<!-- roadmap-annotation-marker: RA:v6.2:2026-06-24__release-v6.2 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-24__release-v6.2
+- Plan published: 2026-06-24
+- Cycle folder: claude/cycles/2026-06-24__release-v6.2/
+- Backlog slice: claude/cycles/2026-06-24__release-v6.2/stage4_backlog_slice.md
+- Status at annotation: Committed (13 stories; 3 EPICs; 2-sprint plan; design gate required)
+
 **Added:** 2026-06-23 (user request — production_strategy.py gap analysis)
 
 These six items close the gap between the live application and the `production_strategy.py` backtest logic, and layer in AI decision support. P1 items (BLG-FEAT-46–49) form a prerequisite cluster; P2 items (BLG-FEAT-50–51) depend on the P1 cluster completing first.
