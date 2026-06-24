@@ -20,20 +20,57 @@ DB calls in drawdown_service are patched via unittest.mock.
 """
 
 import sys
+import os
+import types
+import importlib.util
 import unittest
 from unittest.mock import patch
 
 # ---------------------------------------------------------------------------
-# Path setup: allow importing from backend/services directly
+# Direct module loading — bypasses services/__init__.py entirely.
+#
+# services/__init__.py eagerly imports the full service tree, pulling in
+# sector_service → yfinance → numpy and signal_service → pandas → numpy.
+# pytest-cov 7.x pre-imports the package during source-discovery; numpy 2.x
+# then raises "cannot load module more than once per process" when the test
+# file's own import runs. grace_service and drawdown_service are pure-math
+# with no external deps, so loading them directly from their .py files is
+# both correct and sufficient.
 # ---------------------------------------------------------------------------
 
-import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
+_backend = os.path.normpath(
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'backend')
+)
+if _backend not in sys.path:
+    sys.path.insert(0, _backend)
 
-# Database stub is registered by tests/conftest.py (BLG-QA-20).
+# Register a minimal 'services' package stub so --cov=services.grace_service
+# resolves to the correct source file and patch() targets work correctly,
+# without triggering services/__init__.py.
+if 'services' not in sys.modules:
+    _svc = types.ModuleType('services')
+    _svc.__path__ = [os.path.join(_backend, 'services')]
+    _svc.__package__ = 'services'
+    sys.modules['services'] = _svc
 
-from services.grace_service import compute_grace_days_remaining
-from services.drawdown_service import get_drawdown_fields
+
+def _load_direct(name, rel_path):
+    """Load a module directly from its file, bypassing the package __init__."""
+    spec = importlib.util.spec_from_file_location(
+        name, os.path.join(_backend, rel_path)
+    )
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[name] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+# Database stub registered by tests/conftest.py (BLG-QA-20).
+_grace = _load_direct('services.grace_service', 'services/grace_service.py')
+_drawdown = _load_direct('services.drawdown_service', 'services/drawdown_service.py')
+
+compute_grace_days_remaining = _grace.compute_grace_days_remaining
+get_drawdown_fields = _drawdown.get_drawdown_fields
 
 
 # ---------------------------------------------------------------------------
