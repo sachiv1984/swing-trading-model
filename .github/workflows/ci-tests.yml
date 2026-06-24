@@ -4,9 +4,10 @@ name: CI Pytest Suite
 #
 # Phase A (clean tests) — runs immediately, no DATABASE_URL secret required.
 # Scope: test_stop_reconciliation.py, test_watchlist_service.py,
-#         test_service_coverage.py, test_alerts_service.py,
-#         test_golden_outputs.py, test_db_monitoring.py,
-#         test_trade_service.py (SC-FEE-05/06 fee drag formula)
+#         test_alerts_service.py, test_golden_outputs.py, test_db_monitoring.py,
+#         test_trade_service.py (SC-FEE-05/06 fee drag formula),
+#         test_api_contracts.py, test_service_coverage.py (must run last —
+#         its importlib stub for services must not precede test_api_contracts)
 #
 # Phase B (all tests including integration) — requires DATABASE_URL secret.
 # Enabled once test collection errors are fixed (ST-04) and secrets are wired.
@@ -52,7 +53,6 @@ jobs:
           python -m pytest \
             tests/test_stop_reconciliation.py \
             tests/test_watchlist_service.py \
-            tests/test_service_coverage.py \
             tests/test_alerts_service.py \
             tests/test_golden_outputs.py \
             tests/test_db_monitoring.py \
@@ -66,6 +66,7 @@ jobs:
             tests/test_health_extensions.py \
             tests/test_ai_audit_service.py \
             tests/test_api_contracts.py \
+            tests/test_service_coverage.py \
             -v --tb=short
 
       - name: Run mock harness smoke tests (BLG-QA-08)
