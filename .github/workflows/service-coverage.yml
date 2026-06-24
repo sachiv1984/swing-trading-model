@@ -48,8 +48,6 @@ jobs:
             --cov=services.drawdown_service \
             --cov-report=term-missing \
             --cov-fail-under=80
-        env:
-          PYTHONPATH: ${{ github.workspace }}/backend
 
       - name: Summary
         if: always()
