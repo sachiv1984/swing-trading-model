@@ -1219,3 +1219,16 @@ Zero active initiatives post-v2.2 ship. Extended-tier horizon review confirmed n
 **Workforce impact:** None at this stage
 **Rationale:** IW-20260622-01 (16 submissions from 8 agents; Facilitator excluded per charter): 4 ideas Promoted-Backlog immediately: IDEA-product-owner-20260622-01 (trade gate proximity indicator → BLG-FE-78, P3, S, v6.1), IDEA-head-of-specs-20260622-01 (CI OpenAPI drift validation → BLG-GOV-134, P2, S, v6.1), IDEA-director-of-quality-20260622-01 (Playwright glob registration → BLG-QA-62, P2, S, v6.1), IDEA-finops-20260622-01 (cost-per-briefing logging → BLG-OPS-74, P3, S, v6.1). Note: BLG-FE-78 included in Now horizon via DL-054 (Challenger PVC). 11 ideas Parked-C1 (IDEA-challenger-20260622-01 included — hard cap concept covered by BLG-GOV-131; IDEA-challenger-20260622-02 PT-04 gate challenge declined; all others parked for v6.2 consideration). 0 ideas Rejected. 8 prior IW-20260619-01 ideas incremented to Parked-C2.
 **Decision owner:** Product Owner; PMO Lead
+
+---
+
+## DL-056
+
+**Date:** 2026-06-24
+**Cycle:** 2026-06-24__scheduled
+**Decision type:** No-change scheduled rebalance — idea disposals + 4 backlog-gate-conditional additions (IW-20260619-01 terminal cycle; IW-20260622-01 second cycle)
+**Initiatives affected:** None (CPS = N/A; 0 active initiatives)
+**Displacement:** None — 4 backlog additions are gate-conditional; no Now horizon changes
+**Workforce impact:** None at this stage — gate-conditional items carry no sprint commitment
+**Rationale:** Scheduled rebalance 2026-06-24__scheduled. Standard tier (2 days since last rebalance; CPS = N/A). Now horizon v[TBD] confirmed with 6 items (BLG-FEAT-46–51) — all active, all Queued, STEP 8.2 verification PASS. Product Value Alert in force (ratio=0.209 < 0.30; improvement from 0.136); Now horizon already satisfies mandatory pull-forward requirement. Skill-Silo Alert in force (G+D+P=79.1% > 40%); pull-forward requirement satisfied by existing Now horizon U-items. STEP 8.0 scan: no P0/P1 items outside Now horizon; P2 advisory BLG-BE-38 (sector concentration Unclassified, XS effort) — recommend v[TBD] inclusion at release planning. Ideas: 8 IW-20260619-01 ideas at 3-cycle hard cap — 4 Rejected (rationale coverage by existing backlog items), 4 Backlog-gate-conditional (BLG-FEAT-52, BLG-QA-63, BLG-OPS-76, BLG-OPS-77); 2 IW-20260622-01 ideas gate-condition mandatory re-eval — both Rejected (PT-04 shipped, scope subsumed); 1 IW-20260622-01 idea Rejected (intent fulfilled by BLG-GOV-112); 8 IW-20260622-01 ideas → Parked-cycle-2. Arc 2 PT-04 completion noted in roadmap (shipped v6.1). Meta-review NOT due (2 cycles at run start; incremented to 3 in state → due at next rebalance).
+**Decision owner:** Product Owner; PMO Lead

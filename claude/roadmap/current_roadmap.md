@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-23 (session — 6 items added to Now horizon: BLG-FEAT-46–51 — production strategy fidelity & AI intelligence)
-**Last rebalance:** 2026-06-22 (cycle 2026-06-22__scheduled — Standard-tier, CPS=N/A (0 active initiatives); Product Value Alert (ratio=0.136); Skill-Silo Alert (G+D+P=86.4%); 4 new backlog items (BLG-FE-78, BLG-GOV-134, BLG-QA-62, BLG-OPS-74); DL-052–055; 0 Rejected, 4 Promoted-Backlog immediate, 0 Promoted-Backlog post-debate, 11 Parked C1, 8 Parked C2; v6.1 Now section added (STEP 8.1 Option a); STEP 8.2 first activation — BLG-FE-52/53 excluded from Now horizon (archived); deferred patch roadmap_prompt.md STEP 8.2 applied action-now (v7.5→v7.6))
+**Last Updated:** 2026-06-24 (cycle 2026-06-24__scheduled — Arc 2 PT-04 completion noted; Now horizon v[TBD] confirmed; 4 backlog items added from idea promotions (BLG-FEAT-52, BLG-QA-63, BLG-OPS-76, BLG-OPS-77))
+**Last rebalance:** 2026-06-24 (cycle 2026-06-24__scheduled — Standard-tier, CPS=N/A (0 active initiatives); Product Value Alert (ratio=0.209); Skill-Silo Alert (G+D+P=79.1%); DL-056; 7 Rejected, 4 Backlog-gate-conditional (BLG-FEAT-52, BLG-QA-63, BLG-OPS-76, BLG-OPS-77), 8 Parked C2 remaining; STEP 8.2: 6 Now horizon items verified (BLG-FEAT-46–51); STEP 8.0 P2 advisory BLG-BE-38; no net roadmap changes)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -328,7 +328,9 @@ Items in this section are sequenced and ready for planning when the current vers
 |Pre-Trade Research View  |PT-02|M     |✅ Shipped v3.2 — frontend delivered (research page, ticker data, news, nav integration)             |
 |Prospective Heat at Entry|PT-03|S     |✅ Shipped v3.2 — prospective heat metric integrated into research view                             |
 |Pre-Trade Entry Checklist|PT-05|M     |✅ Shipped v3.2 — checklist component in Trade Plan form, pre-population, persistence               |
-|Setup Quality Score      |PT-04|M     |Deterministic score from own trade history; gate: 20+ closed trades; depends on PT-01 — ⏸️ Parked (v3.6/v3.7/v3.8/v3.9/v4.0 conditional defers — 5 consecutive cycles; gate not met; PO decision 2026-05-19 to park formally; v5.3 re-verification 2026-06-09: 6 closed trades — gate NOT MET; v5.6 re-verification 2026-06-16: **13 closed trades** (pnl IS NOT NULL, verified from trade_history) — gate still NOT MET (need 20); 7 more trades required; trajectory accelerating — re-open when 20+ closed trades confirmed)|
+|Setup Quality Score      |PT-04|M     |Deterministic score from own trade history; gate: 20+ closed trades; depends on PT-01 — ✅ Shipped v6.1 (2026-06-23; gate cleared at sprint planning — 15 closed trades confirmed; EPIC-04 ST-08/ST-09; SetupQualityScorePanel frontend in Research + TradePlan flows)|
+
+> **Arc 2 ✅ Fully Complete (v3.1–v6.1):** All five features PT-01 through PT-05 shipped. PT-01 (v3.1), PT-02 + PT-03 + PT-05 (v3.2), PT-04 (v6.1 — gate cleared at sprint planning, 15 trades). Arc 2 end-state achieved — every entry preceded by structured research view, completed checklist, and saved trade plan.
 
 **Arc 2 end-state target:** Every entry is preceded by a structured research view, a completed checklist, and a saved trade plan. The quality of entry decisions is captured and measurable, not assumed.
 
@@ -448,7 +450,7 @@ When evaluating new features:
 *RA:v3.1 retired — see roadmap_archive.md 2026-05-05.*
 
 |**v3.1–v3.2** ✅|Arc 2: Pre-Trade Research & Planning (partial)                       |PT-01 (v3.1), PT-02 + PT-03 + PT-05 (v3.2) — ✅ Complete. PT-04 (Setup Quality Score) deferred to v3.3+                                 |
-|**TBD (gate)**|Arc 2: Pre-Trade Research & Planning (remainder)                      |PT-04 Setup Quality Score — ⏸️ Parked — gate not met for 3 consecutive cycles (v3.6, v3.7, v3.8); PO decision 2026-05-19 to formally park; re-open when PO confirms 20+ closed trades  |
+|**v6.1** ✅  |Arc 2: Pre-Trade Research & Planning (remainder) complete             |PT-04 Setup Quality Score — ✅ Shipped v6.1 (gate cleared at sprint planning — 15 closed trades; EPIC-04 ST-08/ST-09 — SetupQualityScorePanel in Research + TradePlan; zero deviations)|
 |**v3.3** ✅  |Arc 3: In-Trade Risk Management (partial)                              |IT-01/02/03 backend (lifecycle state machine, grace period alerts, stop trail); research view spec closure (BLG-SPEC-24/25/26, BLG-FE-28); entry checklist E2E; governance patches (OA-01–05); feature flag infra (BLG-FEAT-13); trade plan abandonment backend (BLG-FEAT-21 partial) — ✅ Shipped 2026-05-13 — cycle: 2026-05-09__release-v3.3|
 |**v3.4** ✅  |Arc 3: In-Trade Risk Management (continued)                            |IT-01 lifecycle badge frontend, IT-02 grace period alert frontend, IT-03 stop trail frontend, IT-04 drawdown review prompt (backend+frontend), IT-05 concentration limits (backend+frontend); v3.3 deferred frontend quick wins; spec/QA debt — ✅ Shipped 2026-05-14 — cycle: 2026-05-14__release-v3.4|
 |**v3.5** ✅  |Arc 3 Completion + Arc 4 Foundation                                   |IT-06 Alpaca paper trading (§13 PASS; backend sync + frontend panel + Playwright); PO-01 Plan vs Reality (arc4_data_requirements.md v1.0 + backend + frontend + Playwright); spec/QA debt (BLG-SPEC-29/30/31, BLG-QA-19); governance patches (BLG-GOV-22, execution_prompt.md v3.20) — ✅ Shipped 2026-05-15 — cycle: 2026-05-15__release-v3.5|

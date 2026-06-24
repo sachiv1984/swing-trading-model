@@ -78,3 +78,17 @@ This document captures ideas that were rejected from active roadmap/backlog cons
 **Why rejected:** `decision_log.md` provides adequate partial coverage at current governance volume. Searchable audit log with structured format deferred until governance volume increases substantially and the overhead of structured decision capture is warranted. Rejected as strong because the idea has genuine merit — current tooling is adequate but would not scale to a higher-volume governance environment.
 
 **Revival condition:** Governance decision volume increases substantially (e.g. concurrent multi-team delivery, external audit requirements, or compliance review mandating structured decision capture). PMO Lead to raise for re-evaluation at that point.
+
+---
+
+## IDEA-pmo-lead-20260619-02 — Sprint Velocity Trend Chart
+
+**Submitter:** PMO Lead
+**Window:** IW-20260619-01 (2026-06-19)
+**Rejected in:** 2026-06-24__scheduled (3-cycle hard cap; third consecutive park decision)
+
+**Core idea:** A visualisation of sprint velocity trend across the last 10 rebalance cycles — delivered stories per sprint, U/G/D story breakdown, and delivery rate. Would make velocity trajectory immediately visible at rebalance time rather than requiring manual changelog analysis.
+
+**Why rejected:** velocity_metrics.md (the canonical data source) does not exist. The underlying data infrastructure for automated velocity trending has not been established. Building a chart before the data file exists would produce nothing actionable. Hard cap reached at third consecutive park.
+
+**Revival condition:** velocity_metrics.md created and populated with at least 5 cycles of structured data (story counts, U/G/D classification, delivery rate). PMO Lead to assess and raise for re-evaluation once the file is established and updated for 2+ rebalances.

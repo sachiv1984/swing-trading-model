@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-23 (session — 6 new item(s) added: BLG-FEAT-46, BLG-FEAT-47, BLG-FEAT-48, BLG-FEAT-49, BLG-FEAT-50, BLG-FEAT-51)
-**Last rebalance:** 2026-06-22 (cycle 2026-06-22__scheduled — DL-052–055; 4 promoted-backlog, 0 rejected, 11 parked C1, 8 parked C2; v6.1 Now section added to roadmap; Product Value Alert + Skill-Silo Alert; STEP 8.2 BLG-FE-52/53 excluded)
+**Last Updated:** 2026-06-24 (cycle 2026-06-24__scheduled — 4 new item(s) added from idea promotions: BLG-FEAT-52, BLG-QA-63, BLG-OPS-76, BLG-OPS-77)
+**Last rebalance:** 2026-06-24 (cycle 2026-06-24__scheduled — DL-056; 7 rejected, 4 backlog-gate-conditional, 8 parked C2; Now horizon v[TBD] confirmed; Product Value Alert (0.209) + Skill-Silo Alert (79.1%); STEP 8.0 P2 advisory BLG-BE-38)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -502,6 +502,30 @@ Users need to ask ad-hoc questions about specific signals or positions ("should 
 - Responses are grounded in live portfolio state (not generic strategy descriptions)
 - Response time < 15s
 - Interface is clearly labelled as AI advisory; no trade action is taken from the chat widget
+
+---
+
+### BLG-FEAT-52 — Trade tagging and tag-based performance filtering
+**Priority:** P3 (Low)
+**Type:** Product Feature / User Value
+**Owner:** Product Owner
+**Source:** IDEA-product-owner-20260619-02 (IW-20260619-01) — Backlog-gate-conditional; rebalance 2026-06-24__scheduled
+**Effort:** L (~1 week)
+**Provisional-Target:** [TBD — gate-conditional]
+**Gate:** Arc 4 PO-02 (Journal Pattern Recognition) sprint planning imminent — tag data model provides complementary structure for cross-trade pattern analysis
+
+**Problem**
+Trades are currently classified only by market, sector, and signal type. There is no mechanism for a user to apply free-form tags (e.g. "earnings catalyst", "gap-and-go", "sector rotation") and subsequently filter performance analytics by those tags. Tag-based filtering would allow comparison of win rate and average R across user-defined trade categories.
+
+**Scope**
+- Data model: `trade_tags` table (trade_id, tag_name, created_at); many-to-many relationship
+- API: POST/DELETE /trades/{id}/tags; GET /analytics/tag-performance (win rate, avg R, count by tag)
+- Frontend: tag input on Trade Plan form; tag filter on PerformanceAnalytics page
+
+**Acceptance Criteria**
+- AC-01: User can add/remove tags on any trade plan
+- AC-02: GET /analytics/tag-performance returns win rate and average R broken down by tag
+- AC-03: PerformanceAnalytics page surfaces tag-based filter controls
 
 ---
 
@@ -2722,6 +2746,30 @@ BLG-QA-60 (morning-briefing.spec.js and screener-quality.spec.js unregistered in
 
 ---
 
+### BLG-QA-63 — Automated accessibility testing (axe-core) in Playwright CI
+**Priority:** P3 (Low)
+**Type:** QA / Accessibility
+**Owner:** Director of Quality; Head of Frontend Engineering
+**Source:** IDEA-director-of-quality-20260619-02 (IW-20260619-01) — Backlog-gate-conditional; rebalance 2026-06-24__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** [TBD — gate-conditional]
+**Gate:** Arc 5 fully complete (all SI features shipped) — accessibility testing added after frontend feature set stabilises
+
+**Problem**
+The Playwright E2E suite provides functional coverage but no accessibility validation. axe-core (via @axe-core/playwright) can be added to the existing Playwright setup to surface WCAG 2.1 AA violations in CI without blocking test runs.
+
+**Scope**
+- Install @axe-core/playwright
+- Add a dedicated accessibility spec (tests/e2e/accessibility.spec.js) that visits each major page (Dashboard, Positions, Signals, Screener, Watchlist, Risk, Research, Reports, SystemStatus) and runs axe analysis
+- Report violations as CI warnings (non-blocking initially); convert to hard failure after a clean baseline is established
+
+**Acceptance Criteria**
+- AC-01: axe-core runs on all major pages in CI (advisory, non-blocking)
+- AC-02: Zero critical (level A) violations on any page at time of implementation
+- AC-03: Violation report surfaced as CI annotation on PRs
+
+---
+
 ### BLG-OPS-74 — Log Anthropic API token usage and cost per morning briefing call
 **Priority:** P3 (Low)
 **Type:** Operations / Monitoring
@@ -2765,6 +2813,55 @@ The Trader Morning Briefing (BLG-FEAT-46, shipped v6.0) calls the Claude API eac
 - GET /portfolio/sector-weights entry added with p50, p95, and measurement date
 - GET /trade-plans/setup-quality-score entry added with p50, p95, and measurement date
 - Measurements taken from Render internal logs or live test
+
+---
+
+### BLG-OPS-76 — Enhanced health check with external dependency verification
+**Priority:** P3 (Low)
+**Type:** Operations / Observability
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260619-02 (IW-20260619-01) — Backlog-gate-conditional; rebalance 2026-06-24__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** [TBD — gate-conditional]
+**Gate:** BLG-OPS-25 (automated staging smoke test) complete AND ≥3 external dependency failures observed in production logs
+
+**Problem**
+GET /health returns only internal service health (database connectivity, scheduler status). External dependency status (Alpaca API reachability, Anthropic API reachability, Yahoo Finance fallback) is not surfaced in the health check, making degraded-run detection reactive rather than proactive.
+
+**Scope**
+- Add optional `?extended=true` query param to GET /health
+- Extended check: attempt lightweight connectivity test for each external dependency (Alpaca: GET /v2/clock; Anthropic: no-op; Yahoo Finance: HEAD check)
+- Return dependency status map in health response
+- No latency regression on default (non-extended) health check
+
+**Acceptance Criteria**
+- AC-01: GET /health?extended=true returns a `dependencies` object with status for each external dependency
+- AC-02: GET /health (no param) remains unchanged in response shape and latency
+- AC-03: Degraded dependency status visible in `/system-status` page
+
+---
+
+### BLG-OPS-77 — Data provider diversity risk assessment and failover strategy
+**Priority:** P3 (Low)
+**Type:** Operations / Risk
+**Owner:** Infrastructure & Operations Owner; FinOps & Resource Architect
+**Source:** IDEA-challenger-20260619-01 (IW-20260619-01) — Backlog-gate-conditional; rebalance 2026-06-24__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** [TBD — gate-conditional]
+**Gate:** BLG-OPS-71 (system threat model) complete — data provider risk will be enumerated in the threat model
+
+**Problem**
+All market data (OHLCV, signals, news) is sourced exclusively from Alpaca and Yahoo Finance. No documented failover strategy exists for a scenario where either provider becomes unavailable for an extended period. The risk has been accepted at current scale but has not been formally assessed.
+
+**Scope**
+- Produce a data provider risk assessment document (docs/operations/data_provider_risk_assessment.md): enumerate current dependencies, failure modes, estimated impact per provider loss, and mitigation options
+- Identify any quick-win failover paths (e.g. Yahoo Finance as sole fallback if Alpaca unavailable)
+- Document accepted risk and conditions under which a more robust failover should be re-evaluated
+
+**Acceptance Criteria**
+- AC-01: data_provider_risk_assessment.md produced covering all active external data providers
+- AC-02: Failure modes and impact documented per provider
+- AC-03: Accepted risk statement signed off by Infrastructure & Operations Owner and FinOps & Resource Architect
 
 ---
 
