@@ -25,6 +25,7 @@ import types
 import importlib.util
 import unittest
 from unittest.mock import patch
+import pytest
 
 # ---------------------------------------------------------------------------
 # Direct module loading — bypasses services/__init__.py entirely.
@@ -71,6 +72,18 @@ _drawdown = _load_direct('services.drawdown_service', 'services/drawdown_service
 
 compute_grace_days_remaining = _grace.compute_grace_days_remaining
 get_drawdown_fields = _drawdown.get_drawdown_fields
+
+_stub_registered = 'services' in sys.modules and not hasattr(sys.modules['services'], 'get_positions_with_prices')
+
+
+@pytest.fixture(autouse=True, scope='module')
+def _restore_services_after_module():
+    """Remove the services stub after this module so later test modules import the real package."""
+    yield
+    if _stub_registered:
+        for key in list(sys.modules):
+            if key == 'services' or key.startswith('services.'):
+                del sys.modules[key]
 
 
 # ---------------------------------------------------------------------------
