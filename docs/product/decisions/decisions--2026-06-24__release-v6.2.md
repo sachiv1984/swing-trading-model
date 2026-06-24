@@ -24,6 +24,7 @@ Last Updated: 2026-06-24
 | EPIC-01 (strategy parity) runs Sprint 1; EPIC-02 (AI intelligence) runs Sprint 2 | EPIC-02 (daily briefing, chat) requires live trailing stop, rebalance exit, and risk-off data from EPIC-01; dependency is absolute | Product Owner | 2026-06-24 |
 | EPIC-03 (governance debt) runs Sprint 1 alongside EPIC-01 | All EPIC-03 items (XS–S effort) are independent of EPIC-01/02; batching minimises sprint overhead | Head of Specs Team | 2026-06-24 |
 | RISK-01 §13 review for BLG-FEAT-50/51 required before sprint planning seal | AI endpoints (daily briefing, chat) must be confirmed advisory-only per strategy_rules.md §13 before implementation proceeds | Strategy Rules & System Intent Owner | 2026-06-24 |
+| §13 review completed — BLG-FEAT-50/51: PASS | LLM is a presentation layer on top of deterministic strategy outputs; advisory-only, no execution path, no signal generation, stateless per request. 9 binding conditions recorded. Full review: `docs/product/decisions/decisions--2026-06-24__release-v6.2--BLG-FEAT-50-51-section13-review.md` | Strategy Rules & System Intent Owner | 2026-06-24 |
 
 ### Accepted risks
 
