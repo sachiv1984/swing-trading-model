@@ -41,7 +41,7 @@
   "last_audit_overall_score": 64,
   "last_audit_open_items": 10,
   "last_audit_cycle_count": 46,
-  "next_release": "[TBD]",
+  "next_release": "v6.2",
   "prior_cycle": "2026-06-22__release-v6.1",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",

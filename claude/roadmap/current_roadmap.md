@@ -11,7 +11,7 @@
 ## 1. Current Version
 
 **v6.1** — Governance Correctness, CI Quality & User Value Foundation — ✅ Shipped 2026-06-23
-**Next planned release:** [TBD]
+**Next planned release:** v6.2
 
 *RA:v5.9 retired — see roadmap_archive.md 2026-06-18 (post-ship closure 2026-06-17__release-v5.9).*
 
