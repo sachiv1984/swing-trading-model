@@ -3,12 +3,13 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.7
-**Last Updated:** 2026-05-15
+**Version:** 1.8
+**Last Updated:** 2026-06-24
 **Design Source (v2.3 additions):** docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md
 **Design Source (v3.3 additions):** docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md, docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md, docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md
 **Design Source (v3.4 additions):** docs/design/2026-05-14__release-v3.4/drawdown-review-prompt/ux_spec.md, docs/design/2026-05-14__release-v3.4/concentration-limits-warning/ux_spec.md
 **Design Source (v3.5 additions):** docs/ux_specs/paper-trading/ux_spec.md
+**Design Source (v6.2 additions):** docs/design/2026-06-24__release-v6.2/trailing-stop-display/ux_spec.md, docs/design/2026-06-24__release-v6.2/risk-off-exit-alert/ux_spec.md, docs/design/2026-06-24__release-v6.2/ai-chat-widget/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -17,6 +18,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.8 | 2026-06-24 | v6.2 design gate: (ST-02) Trail Stop column added to Table View — displays `current_trailing_stop` alongside existing Initial Stop (renamed from "Stop"); breach badge "⚠ BREACH" (orange #EA580C) shown inline when `current_price ≤ current_trailing_stop`; Grid View adds Trail value and ⚠ icon. (ST-05) Alerts column added to Table View — shows "RISK OFF" badge (deep blue #1E40AF) when `risk_off_exit = true`; US/UK market isolation server-enforced. (ST-09) AI Trade Advisor Widget — fixed-position floating chat button (bottom-right); expands to 350×480px panel; display-only advisory; stateless per request; §13 compliant. Design sources: v6.2 additions listed above. Approved: Product Owner 2026-06-24. |
 | 1.7 | 2026-05-15 | v3.5 design gate: (ST-03 IT-06) Paper Account Panel — collapsible panel below Strategy Compliance Panel in Table View; conditionally rendered when `ALPACA_PAPER_API_KEY` configured; displays US-market paper positions (ticker, paper entry price, current price, paper P&L $ and %, date opened, size); error state "Paper tracking temporarily unavailable"; hidden entirely when credentials absent. §13 compliant display-only. Design source: docs/ux_specs/paper-trading/ux_spec.md. Approved: Product Owner 2026-05-15. |
 | 1.6 | 2026-05-14 | v3.4 design gate: (ST-05) Drawdown review prompt — amber banner above positions table when portfolio drawdown threshold breached; displays drawdown %, threshold, portfolio heat %, regime status, positions by lifecycle state counts; session-scoped dismissal; §13 compliant display-only. (ST-06) Concentration limits warning — amber summary card listing positions/sectors exceeding configurable thresholds; persistent (no dismiss); graceful degradation when DS-03 sector data absent. Design sources: v3.4 additions listed above. Approved: Product Owner 2026-05-14. |
 | 1.5 | 2026-05-09 | v3.3 design gate: (ST-03) Arc 3 position lifecycle state badge — five-state set (GRACE/LOSING/PROFITABLE/EXIT ZONE/UNKNOWN) with days_in_state inline and next-trigger tooltip; (ST-05) Grace period alert zone at top of page for GRACE positions ≥ day 8; (ST-07) Trail Stop action and guided modal for PROFITABLE/EXIT ZONE positions. Design sources listed above. Approved: Product Owner 2026-05-09. |
@@ -63,8 +65,8 @@ Displays each open position as a row with:
 - Market flag (US / UK)
 - Entry price (native currency)
 - Current price (native currency)
-- Stop price
-  - Shows £0.00 / $0.00 during grace period
+- Initial Stop *(renamed from "Stop"; shows £0.00 / $0.00 during grace period)*
+- Trail Stop *(v6.2 — ST-02; see §Trailing Stop Column)*
 - Shares (supports fractional values)
 - P&L (GBP)
 - P&L %
@@ -72,6 +74,7 @@ Displays each open position as a row with:
   - Grace period indicator if under minimum hold days
 - Status (lifecycle state badge — see §Position Lifecycle State Badge)
 - Grace Days Remaining *(BLG-FEAT-06)*
+- Alerts *(v6.2 — ST-05; see §Alerts Column)*
 - Tags (as colored pills)
 - Actions:
   - **Exit** (opens exit modal)
@@ -327,6 +330,105 @@ When `GET /portfolio/paper-positions` returns 5xx or timeout: display **"Paper t
 
 ---
 
+## Trailing Stop Column (v6.2 — ST-02)
+
+**Design source:** docs/design/2026-06-24__release-v6.2/trailing-stop-display/ux_spec.md
+
+**Data source:** `current_trailing_stop` from `GET /positions` (new field; nightly update by ST-01).
+
+**Column label:** "Trail Stop" (added after "Initial Stop" — existing "Stop" column renamed).
+
+**Display format:** Native currency, 2dp (matches Initial Stop format). Null: dash ("—").
+
+**Breach Badge:**
+
+Shown when `current_price ≤ current_trailing_stop`:
+
+| Element | Spec |
+|---------|------|
+| Label | "⚠ BREACH" |
+| Background | `#EA580C` (orange-600) |
+| Text | White, weight 500, 11px |
+| Shape | Rounded pill |
+| Placement | Below trailing stop value in same cell |
+| `aria-label` | "Trailing stop breach: current price is at or below trailing stop level" |
+
+Not shown when price is above trailing stop (no reserved space).
+
+**Grid View:** Trailing stop value shown in card summary alongside Initial Stop. Breach: ⚠ icon appended inline (icon only, no pill).
+
+**§13 constraint:** Display-only. No automated action.
+
+---
+
+## Alerts Column (v6.2 — ST-05)
+
+**Design source:** docs/design/2026-06-24__release-v6.2/risk-off-exit-alert/ux_spec.md
+
+**Data source:** `risk_off_exit` (boolean) from `GET /positions` (new field; nightly regime check by ST-05).
+
+**Column label:** "Alerts" (rightmost column before Actions).
+
+**Risk-Off Badge:**
+
+Shown when `risk_off_exit = true`:
+
+| Element | Spec |
+|---------|------|
+| Label | "RISK OFF" |
+| Background | `#1E40AF` (blue-800) |
+| Text | White, weight 500, 11px |
+| Shape | Rounded pill |
+| `aria-label` | "Risk-off exit alert: regime signal indicates exit this {US/UK} position" |
+
+No alert: dash ("—").
+
+**Market isolation:** US positions flag only when SPY < MA200; UK positions flag only when FTSE < MA200. Enforced server-side — frontend renders `risk_off_exit` as-is.
+
+**Alert clearing:** When `risk_off_exit = false` (regime recovered), badge absent automatically. No manual dismiss.
+
+**§13 constraint:** Display-only. No automated exit triggered.
+
+---
+
+## AI Trade Advisor Widget (v6.2 — ST-09)
+
+**Design source:** docs/design/2026-06-24__release-v6.2/ai-chat-widget/ux_spec.md
+
+**Placement:** Fixed-position floating widget, `bottom: 24px; right: 24px; z-index: 100`. Present on Positions page; also on Signals page (AC-01: "signals or portfolio page").
+
+### Collapsed State
+
+Rounded pill button: chat icon + "Ask Advisor" text (white on `#1D4ED8` blue-700). Hover: `#1E3A8A`.
+
+### Expanded State
+
+350px × 480px floating panel above the collapsed button.
+
+| Element | Spec |
+|---------|------|
+| Header | "AI Trade Advisor" + amber "Advisory" badge + ✕ close button |
+| Messages area | Scrollable; user bubbles right-aligned (blue); AI bubbles left-aligned (grey) |
+| Input row | Text field ("Ask about your portfolio…") + "Ask" button |
+| Footer | Static advisory text: "AI responses are advisory only. All trade decisions require human confirmation." (muted italic, 11px, non-dismissible) |
+
+### States
+
+| State | Behaviour |
+|-------|-----------|
+| Empty (just opened) | Prompt: "Ask about your portfolio, positions, or signals." |
+| Loading (API call) | Typing indicator (three dots); input + Ask disabled |
+| Error | Inline error in messages area: "Unable to get a response. Please try again." Input re-enabled |
+| ✕ close | Collapses to button; message history cleared |
+
+### Stateless per request
+
+Each POST /ai/chat is stateless (no session state persisted to backend). In-memory conversation display only — cleared on widget close.
+
+**§13 constraint:** Display-only advisory. No trade entry, exit, or modification action executable from widget.
+
+---
+
 ## Key Components Used
 
 - Position cards
@@ -373,6 +475,8 @@ For Journal View empty states, see the Journal View section above.
 | `GET /positions/{id}/stop-trail` | *(v3.3 — ST-07)* Returns ATR trail stop calculation for a single position. Source for Trail Stop Modal. |
 | `PUT /positions/{id}` | *(v3.3 — ST-07)* Updates stop price after user confirms trail stop action. |
 | `GET /portfolio/paper-positions` | *(v3.5 — ST-03)* Paper Account Panel data source. Returns Alpaca paper positions with P&L. Returns `{"paper_tracking_enabled": false}` when ALPACA_PAPER_API_KEY absent. |
+| `GET /positions` (extended) | *(v6.2 — ST-02/ST-05)* Now returns two new fields per position: `current_trailing_stop` (number \| null) for Trail Stop column; `risk_off_exit` (boolean) for Alerts column. |
+| `POST /ai/chat` | *(v6.2 — ST-09)* AI Trade Advisor widget. Accepts `{ question: string, context?: { ticker?, position_id? } }`. Returns AI response grounded in live portfolio state. |
 
 > For full dependency behaviour rules, see `patterns/api_dependencies.md`.
 

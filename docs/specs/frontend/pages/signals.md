@@ -3,11 +3,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.3
-**Last Updated:** 2026-05-18
+**Version:** 0.4
+**Last Updated:** 2026-06-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v0.2 date default):** docs/design/2026-05-09__release-v3.3/trade-plan-quick-wins/ux_spec.md §E
 **Design Source (v0.3 watchlist CTA):** docs/design/2026-05-18__release-v3.7/signals-add-to-watchlist/ux_spec.md
+**Design Source (v0.4 signal type badges):** docs/design/2026-06-24__release-v6.2/rebalance-exit-signal-style/ux_spec.md
 
 ---
 
@@ -79,6 +80,22 @@ Columns correspond to the fields returned by the signal endpoint (see `docs/spec
 
 Column set must not be derived independently — it must match the canonical response fields defined in the API contract.
 
+### Signal Type Badge Styling (v6.2 — ST-03)
+
+**Design source:** docs/design/2026-06-24__release-v6.2/rebalance-exit-signal-style/ux_spec.md
+
+The Signal Type column renders a styled badge for exit-class signal types to provide instant visual distinction:
+
+| Signal Type (API value) | Display Label | Badge Background | Rationale |
+|------------------------|--------------|-----------------|-----------|
+| `exit_rebalance` | "Rebalance Exit" | `#0891B2` (cyan-600) | Planned/scheduled exit; distinct from urgency-red stop exits |
+| `stop_exit` | "Stop Exit" | `#DC2626` (red-600) | Stop trigger; red conveys urgency |
+| Other types | Existing label (no change) | No badge change | Not affected by this story |
+
+Badge format: white text, weight 500, 11px, rounded pill. Signal type text label ("Rebalance Exit", "Stop Exit") is the primary differentiator — colour is supplementary.
+
+The frontend maps API snake_case type values to display labels via a client-side constant (not runtime-derived).
+
 ---
 
 ## Signal Card Actions (v3.7 — BLG-FE-33)
@@ -138,6 +155,7 @@ The frontend must not calculate or derive signal scores, rankings, or fields. Al
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.4 | 2026-06-24 | v6.2 design gate — §Signal Type Badge Styling added (ST-03, BLG-FEAT-47): `exit_rebalance` signals rendered as "Rebalance Exit" teal badge (#0891B2); `stop_exit` signals rendered as "Stop Exit" red badge (#DC2626); visual distinction satisfies AC-05. Design source: rebalance-exit-signal-style/ux_spec.md. Approved: Product Owner 2026-06-24. |
 | 0.3 | 2026-05-18 | v3.7 design gate — added §Signal Card Actions (BLG-FE-33: "Add to Watchlist" CTA replaces "Add Position"; watchlisted state with "View in Watchlist" link; duplicate add handling; Dismiss retained). Design source: signals-add-to-watchlist/ux_spec.md. Approved: Product Owner 2026-05-18. |
 | 0.2 | 2026-05-09 | v3.3 design gate — added Date control (BLG-FE-25: default to most recent trading day; "Latest" quick-link; date parameter added to API call); updated empty state message to include date. Design source: trade-plan-quick-wins/ux_spec.md §E. Approved: Product Owner 2026-05-09. |
 | 0.1 | 2026-03-17 | Initial spec. ST-01 / ST-02 — EPIC-01 (4.3 Signal Exposure Enhancement). Design gate: 2026-03-17__release-v2.0. Approved by Head of UX & Design + Product Owner. |

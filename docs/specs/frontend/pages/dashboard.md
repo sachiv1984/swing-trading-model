@@ -3,15 +3,16 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.2
-**Last Updated:** 2026-06-22
+**Version:** 2.3
+**Last Updated:** 2026-06-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Release:** v6.1
-**EPIC:** EPIC-03
+**Release:** v6.2
+**EPIC:** EPIC-02
+**Design Source (v2.3):** docs/design/2026-06-24__release-v6.2/ai-daily-briefing-card/ux_spec.md
 **Design Source (v2.2):** docs/design/2026-06-22__release-v6.1/gate-proximity-indicator/ux_spec.md
 **Design Source (v2.1):** docs/design/2026-06-19__release-v6.0/morning-briefing/ux_spec.md
 **Design Source (v2.0):** docs/design/2026-03-06__release-v1.9/dashboard-home/ux_spec.md
-**Confirmed by:** Head of Specs Team — 2026-06-19
+**Confirmed by:** Head of Specs Team — 2026-06-24
 
 ---
 
@@ -83,6 +84,10 @@ Label: **"Trader's Morning Briefing"** — left-aligned, secondary text weight. 
 | Recent Activity | `GET /trades` or activity endpoint | last 3–5 trade events |
 
 A composite endpoint (`GET /dashboard/summary`) may be introduced to reduce page-load request count. This is an engineering decision to be confirmed at pre-alignment. If introduced, it must be documented in `docs/specs/api_contracts/` and added to `docs/reference/openapi.yaml`. Composite endpoint must only aggregate — no new server-side computations.
+
+| AI Briefing | Endpoint | Key fields |
+|-------------|----------|------------|
+| AI Daily Briefing Card | `POST /ai/daily-briefing` | `summary`, `actions[]`, `generated_at`, `advisory: true` |
 
 ---
 
@@ -162,7 +167,71 @@ If no recent activity: show “No recent trade activity”
 
 ---
 
-## 5. Gate Progress Indicator
+## 5. AI Daily Briefing Card (v6.2 — ST-07)
+
+**Design source:** `docs/design/2026-06-24__release-v6.2/ai-daily-briefing-card/ux_spec.md`
+**Story:** ST-07 (BLG-FEAT-50)
+
+A full-width card placed below the session-summary cards (§4) and above the Gate Progress Indicator strip (§6). The card synthesises trailing stop alerts, rebalance exits, regime status, and new entries into a plain-English action plan.
+
+### Placement
+
+Full-width card spanning the content area. Does not replace or modify any existing section.
+
+### Card Header
+
+| Element | Position | Spec |
+|---------|----------|------|
+| Title | Left | "Today's Briefing" |
+| Timestamp | Centre-right | "Generated HH:MM" (muted, 12px) |
+| Regenerate button | Right | Secondary/outlined style; disabled during load |
+
+### Advisory Label
+
+Below header bar, above body:
+- Amber badge "AI Advisory" (`#D97706` background, white text)
+- Inline static text: "All actions require your confirmation" (muted italic, 12px)
+- **Non-dismissible**
+
+### Card Body
+
+| Section | Content |
+|---------|---------|
+| Summary | `response.summary` — plain paragraph, 2–4 sentences |
+| Actions | `response.actions[]` — ordered list: type chip + bold ticker + description |
+
+**Action type chips:**
+
+| Type | Chip Colour | Label |
+|------|------------|-------|
+| `EXIT` | `#DC2626` (red) | "EXIT" |
+| `ENTER` | `#16A34A` (green) | "ENTER" |
+| `MONITOR` | `#D97706` (amber) | "MONITOR" |
+| `HOLD` | `#6B7280` (grey) | "HOLD" |
+
+### States
+
+| State | Behaviour |
+|-------|-----------|
+| No briefing yet | "No briefing for today. Click Regenerate to generate your daily summary." + Regenerate button enabled |
+| Loading | Skeleton body (2-line summary, 3-row actions); Regenerate disabled |
+| Normal | Summary + action list |
+| Empty actions | Summary shown; "No specific actions required today." (muted) |
+| Error | "Unable to generate briefing. Try regenerating." (muted red); Regenerate enabled |
+
+### Interactions
+
+**Regenerate button:** Calls `POST /ai/daily-briefing`. Card enters Loading state. On success: updates summary, actions, and timestamp. On error: Error state.
+
+Card content is **display-only** — action items are informational only; no one-click trade execution.
+
+### Constraints
+
+**§13 compliance:** Advisory-only. No action type is executable from this card. Advisory label is non-dismissible. `response.advisory = true` must be verified client-side; if absent or false, show error.
+
+---
+
+## 6. Gate Progress Indicator
 
 **Design source:** `docs/design/2026-06-22__release-v6.1/gate-proximity-indicator/ux_spec.md`
 **Story:** ST-07 (BLG-FE-78)
@@ -190,7 +259,7 @@ A compact full-width strip placed below the 5 session-summary cards. Does not re
 
 ---
 
-## 6. States
+## 7. States
 
 | State | Behaviour |
 |-------|-----------|
@@ -203,7 +272,7 @@ Individual card failure must not break other cards. Each card fetches its data i
 
 ---
 
-## 7. Navigation Targets
+## 8. Navigation Targets
 
 | Card | Click navigates to |
 |------|--------------------|
@@ -217,10 +286,11 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 ---
 
-## 8. Change Log
+## 9. Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.3 | 2026-06-24 | v6.2 design gate — §5 AI Daily Briefing Card added (ST-07, BLG-FEAT-50): full-width card below session-summary cards; Regenerate button calls POST /ai/daily-briefing; summary paragraph + ordered action list with type chips (EXIT/ENTER/MONITOR/HOLD); advisory label non-dismissible; §13 compliant display-only; advisory=true verified client-side. Sections renumbered (old §5 Gate Progress→§6, §6 States→§7, §7 Navigation→§8, §8 Change Log→§9). Design source: ai-daily-briefing-card/ux_spec.md. Approved: Product Owner 2026-06-24. Head of Specs Team confirmed. |
 | 2.2 | 2026-06-22 | v6.1 design gate — §5 Gate Progress Indicator added (ST-07, BLG-FE-78): compact full-width strip below session-summary cards showing closed-trade count vs 20-trade PT-04/SI-02 gate threshold; uses existing GET /portfolio/gate-metrics endpoint; display-only; error hidden silently. Sections renumbered (old §5→§6, §6→§7, §7→§8). Design source: gate-proximity-indicator/ux_spec.md. Approved: Product Owner 2026-06-22. Head of Specs Team confirmed. |
 | 2.1 | 2026-06-19 | v6.0 design gate — §1A Morning Briefing Section added: new section at top of DashboardHome above existing cards; 5 intelligence cards (Screener Hits, Positions to Act On, Red Flags, Earnings Alert, Compliance); horizontal desktop layout, vertical mobile stack; per-card loading/error/empty state behaviour; Compliance card colour-coded by score. Design source: morning-briefing/ux_spec.md. Approved: Product Owner 2026-06-19. Head of Specs Team confirmed. |
 | 2.0 | 2026-03-06 | Full rewrite for v1.9 EPIC-03 (ST-05). Dashboard Homepage session summary with 5 data cards. Governance header upgraded to Class 1 compliant format. Design source: docs/design/2026-03-06__release-v1.9/dashboard-home/ux_spec.md. |
