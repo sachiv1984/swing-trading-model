@@ -123,6 +123,10 @@ from services import (
     get_signals,
     update_signal_status,
     delete_signal,
+    generate_rebalance_exit_signals,
+    # Nightly jobs (ST-01, ST-05)
+    run_nightly_trailing_stop_update,
+    run_nightly_risk_off_alerts,
     # Health service
     get_basic_health,
     get_detailed_health,
@@ -338,6 +342,18 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_trade_cost_columns FAILED at startup: %s", _e)
     try:
+        from database import ensure_signals_exit_rebalance_status
+        ensure_signals_exit_rebalance_status()
+        _log.info("ensure_signals_exit_rebalance_status: OK")
+    except Exception as _e:
+        _log.error("ensure_signals_exit_rebalance_status FAILED at startup: %s", _e)
+    try:
+        from database import ensure_risk_off_exit_column
+        ensure_risk_off_exit_column()
+        _log.info("ensure_risk_off_exit_column: OK")
+    except Exception as _e:
+        _log.error("ensure_risk_off_exit_column FAILED at startup: %s", _e)
+    try:
         from utils.feature_flags import log_flag_states
         log_flag_states()
     except Exception as _e:
@@ -502,6 +518,51 @@ def analyze_positions_endpoint():
         print(f"\n❌ ANALYSIS FAILED: {str(e)}")
         import traceback
         traceback.print_exc()
+        return {"status": "error", "message": str(e)}
+
+
+@app.post("/positions/nightly-stop-update")
+def nightly_stop_update_endpoint():
+    """ST-01 (BLG-FEAT-46): Recompute trailing stop for all open positions and store.
+
+    Spec: docs/specs/api_contracts/position_endpoints.md#POST /positions/nightly-stop-update
+    """
+    try:
+        result = run_nightly_trailing_stop_update()
+        return {"status": "ok", "data": result}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+
+@app.post("/positions/risk-off-alerts")
+def risk_off_alerts_endpoint():
+    """ST-05 (BLG-FEAT-49): Flag open positions with risk_off_exit alert per market regime.
+
+    Spec: docs/specs/api_contracts/position_endpoints.md#POST /positions/risk-off-alerts
+    """
+    try:
+        result = run_nightly_risk_off_alerts()
+        return {"status": "ok", "data": result}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+
+@app.post("/signals/rebalance-exit")
+def rebalance_exit_signals_endpoint():
+    """ST-03 (BLG-FEAT-47): Generate exit_rebalance signals on last trading day of month.
+
+    Spec: docs/specs/api_contracts/signal_endpoints.md#POST /signals/rebalance-exit
+    """
+    try:
+        result = generate_rebalance_exit_signals()
+        return {"status": "ok", "data": result}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
         return {"status": "error", "message": str(e)}
 
 

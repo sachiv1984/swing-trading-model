@@ -210,3 +210,101 @@ def size_position(
         result["max_affordable_shares"] = _floor_4dp(max_raw)
 
     return result
+
+
+# ---------------------------------------------------------------------------
+# ST-04 (BLG-FEAT-48) — Inverse-volatility batch sizing
+# ---------------------------------------------------------------------------
+# Production strategy parameters (must match production_strategy.py OPTIMAL_PARAMS):
+_INV_VOL_MIN_WEIGHT = 0.05   # 5% of available cash minimum allocation
+_INV_VOL_MAX_WEIGHT = 0.20   # 20% of available cash maximum allocation
+
+
+def size_batch_inv_vol(signals: list, available_cash: float, fx_rate: float = 1.0) -> list:
+    """
+    Compute inverse-volatility position sizes for a batch of momentum signals.
+
+    Algorithm (production_strategy.py OPTIMAL_PARAMS):
+      1. weight_i = (1 / ATR_i) / sum(1 / ATR_j)   for all signals with ATR > 0
+      2. Cap each weight to [_INV_VOL_MIN_WEIGHT, _INV_VOL_MAX_WEIGHT]
+      3. Re-normalise capped weights so they sum to 1.0
+      4. allocation_gbp_i = available_cash * normalised_weight_i
+      5. suggested_shares_i = floor(allocation_gbp_i / price_gbp_i)  (whole shares)
+
+    Args:
+        signals:        List of signal dicts, each with 'atr_value', 'price_gbp',
+                        'current_price', and 'market' fields (from generate_momentum_signals).
+        available_cash: Portfolio cash available for allocation (GBP).
+        fx_rate:        Live GBP/USD rate; used only for fee estimation on US stocks.
+
+    Returns:
+        Same list of signals with 'suggested_shares', 'allocation_gbp', 'total_cost'
+        and 'inv_vol_weight' populated in-place. Signals with atr_value == 0 get 0 shares.
+
+    AC-04 / RISK-03: This function is only called for signal-driven batch entries.
+    Manual sizing (size_position()) is untouched.
+    """
+    # Step 1 — inverse-ATR weights
+    inv_atrs = []
+    for sig in signals:
+        atr = sig.get('atr_value', 0) or 0
+        inv_atrs.append(1.0 / atr if atr > 0 else 0.0)
+
+    total_inv_atr = sum(inv_atrs)
+    if total_inv_atr == 0:
+        for sig in signals:
+            sig['suggested_shares'] = 0
+            sig['allocation_gbp'] = 0
+            sig['total_cost'] = 0
+            sig['inv_vol_weight'] = 0
+            sig['reason'] = 'Inv-vol sizing: no valid ATR values'
+        return signals
+
+    raw_weights = [v / total_inv_atr for v in inv_atrs]
+
+    # Step 2 — cap to [min, max]
+    capped = [max(_INV_VOL_MIN_WEIGHT, min(_INV_VOL_MAX_WEIGHT, w)) for w in raw_weights]
+
+    # Step 3 — re-normalise so sum == 1.0
+    cap_total = sum(capped)
+    normalised = [w / cap_total for w in capped]
+
+    # Step 4 & 5 — allocate and compute shares
+    settings_list = get_settings()
+    settings = settings_list[0] if settings_list else {}
+
+    for sig, weight in zip(signals, normalised):
+        allocation_gbp = available_cash * weight
+        price_gbp = sig.get('price_gbp', 0) or 0
+
+        if price_gbp <= 0:
+            sig['suggested_shares'] = 0
+            sig['allocation_gbp'] = 0
+            sig['total_cost'] = 0
+            sig['inv_vol_weight'] = round(weight, 6)
+            sig['reason'] = 'Inv-vol sizing: price_gbp unavailable'
+            continue
+
+        # Whole shares only (consistent with signal_endpoints.md data model note)
+        raw_shares = allocation_gbp / price_gbp
+        whole_shares = int(math.floor(raw_shares))
+
+        # Fee estimation
+        gross_cost = whole_shares * (sig.get('current_price', price_gbp))
+        if sig.get('market') == 'US':
+            fee = calculate_us_entry_fees(gross_cost, settings).get('total_fee', 0)
+        else:
+            fee = calculate_uk_entry_fees(gross_cost, settings).get('total_fee', 0)
+
+        total_cost = round(gross_cost + fee, 2) if whole_shares > 0 else 0
+
+        sig['suggested_shares'] = whole_shares
+        sig['allocation_gbp'] = round(allocation_gbp, 2)
+        sig['total_cost'] = total_cost
+        sig['inv_vol_weight'] = round(weight, 6)
+        sig['reason'] = (
+            None if whole_shares > 0
+            else 'Inv-vol sizing yielded 0 shares for this allocation'
+        )
+
+    return signals

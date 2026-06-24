@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.1.0
-**Last Updated:** 2026-05-12
+**Version:** 2.2.0
+**Last Updated:** 2026-06-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -26,6 +26,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.2.0 | 2026-06-24 | v6.2 ST-01 (BLG-FEAT-46): Added `current_trailing_stop` field to `GET /positions` response. Added `POST /positions/nightly-stop-update` endpoint. v6.2 ST-05 (BLG-FEAT-49): Added `risk_off_exit` field to `GET /positions` response. Added `POST /positions/risk-off-alerts` endpoint. |
 | 2.0.0 | 2026-03-29 | ST-01 (BLG-FEAT-11, v2.3): Added `GET /positions/compliance` — returns ATR-based per-position stop compliance, stop age, and size compliance flags. Display-only; §13.3 constraint enforced. Strategy Rules & System Intent Owner DoQ sign-off required at delivery verification (SPS=4). |
 | 1.8.3 | 2026-02-25 | BLG-FEAT-06 (A-S03): Added `grace_days_remaining` (integer \| null) to `GET /positions` response. Derived server-side as `max(0, 10 - holding_days)` when `grace_period = true`; `null` when `grace_period = false`. Always present. No data model change required. QWB decision D4. |
 | 1.8.3 | 2026-02-27 | A-QA-05 (F-02): Removed contradictory sentence "Returns 0 on day 10 (grace period ends)" from `grace_days_remaining` field note. Canonical behaviour is `null` when `grace_period = false` (consistent with decision D4 and `implementation_notes.md`). No behaviour change — correction only. |
@@ -93,6 +94,8 @@ Response uses the standard success envelope from **conventions.md**.
     "atr_value": 15.32,
     "fx_rate": 1.3642,
     "live_fx_rate": 1.3650,
+    "current_trailing_stop": 560.50,
+    "risk_off_exit": false,
     "entry_note": "Breakout above $800 resistance",
     "exit_note": null,
     "tags": ["momentum", "breakout"]
@@ -114,10 +117,109 @@ Response uses the standard success envelope from **conventions.md**.
 | `live_fx_rate` | The current GBP/USD rate (fetched live) |
 | `exit_note` | Always `null` for open positions. Present for schema consistency with closed trade records |
 | `tags` | Array of tag strings. Empty array if no tags set |
+| `current_trailing_stop` | The computed trailing stop in GBP (profit-lock logic: profit → `price − 2×ATR`, else `entry − 5×ATR`, ratcheted). Always present and non-zero after the first nightly update. `0` if no stop has been computed yet. Unlike `stop_price`, this field is always non-zero — it is informational even during the grace period. (v6.2 ST-01 BLG-FEAT-46) |
+| `risk_off_exit` | `boolean`. `true` when the position's market index (SPY for US, FTSE for UK) is below its 200-day MA. Cleared to `false` when the index recovers. Set nightly by `POST /positions/risk-off-alerts`. (v6.2 ST-05 BLG-FEAT-49) |
 | `pnl_percent` | Percentage P&L relative to entry cost. Same value as would be seen in `pnl_pct` in trade records. Both field names exist in the system for compatibility; `pnl_percent` is the canonical name in position responses |
 | `grace_days_remaining` | `integer` when `grace_period = true`; `null` when `grace_period = false`. Derived server-side as `max(0, 10 - holding_days)` during the grace period. Represents the number of days remaining in the grace window. On day 10, `grace_period` becomes `false` and this field returns `null` — not `0`. Intended display format: `"Day {holding_days + 1} of 10"`. Always present in the response object. |
 
 > **Note:** For a summary view of open positions alongside portfolio totals, use `GET /portfolio`. This endpoint returns the full enriched position object including native prices, stop context, and journal fields; `GET /portfolio` returns a lighter position shape.
+
+### Errors
+
+Errors use the standard error envelope from **conventions.md**.
+
+---
+
+## POST /positions/nightly-stop-update
+
+**Purpose** (v6.2 ST-01 BLG-FEAT-46)
+
+Recomputes the trailing stop for every open position using the profit-lock strategy logic and stores the result in the database.
+
+**Method & Path**
+
+- `POST /positions/nightly-stop-update`
+
+**Strategy constants (must match `production_strategy.py` OPTIMAL_PARAMS):**
+- `INITIAL_ATR_MULT = 5` — wide stop when position is not in profit
+- `PROFIT_ATR_MULT = 2` — tight stop when position is in profit
+- `ATR_PERIOD = 14` — 14-day ATR
+
+**Ratchet invariant:** `stored_stop = max(previous_stop, newly_calculated_stop)` — stop only ever moves up.
+
+### Request
+
+No body required.
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "run_date": "2026-06-24",
+    "positions_processed": 3,
+    "updated": 3,
+    "skipped": 0,
+    "results": [
+      {
+        "ticker": "NVDA",
+        "market": "US",
+        "status": "updated",
+        "previous_stop": 545.00,
+        "new_stop": 562.80,
+        "stop_moved": true,
+        "atr_mult": 2.0,
+        "reason": "Profitable (tight 2x ATR)"
+      }
+    ]
+  }
+}
+```
+
+### Errors
+
+Errors use the standard error envelope from **conventions.md**.
+
+---
+
+## POST /positions/risk-off-alerts
+
+**Purpose** (v6.2 ST-05 BLG-FEAT-49)
+
+Runs the nightly market-regime check and sets or clears the `risk_off_exit` flag on each open position based on whether its market index is below MA200.
+
+**Method & Path**
+
+- `POST /positions/risk-off-alerts`
+
+**Logic:**
+- `SPY < MA200` → set `risk_off_exit = true` for all open US positions
+- `FTSE < MA200` → set `risk_off_exit = true` for all open UK positions
+- Index recovers → clear `risk_off_exit = false` for the relevant market
+- **Market isolation:** US risk-off does not affect UK positions and vice versa.
+
+### Request
+
+No body required.
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "run_date": "2026-06-24",
+    "market_regime": { "spy_risk_on": true, "ftse_risk_on": false },
+    "us_risk_off": false,
+    "uk_risk_off": true,
+    "us_positions_flagged": 0,
+    "us_positions_cleared": 2,
+    "uk_positions_flagged": 1,
+    "uk_positions_cleared": 0
+  }
+}
+```
 
 ### Errors
 

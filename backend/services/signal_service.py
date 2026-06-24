@@ -24,12 +24,13 @@ from database import (
     delete_signal as db_delete_signal,
     get_all_tickers,
     download_ticker_data,
-    compute_atr_simple
+    compute_atr_simple,
+    create_rebalance_exit_signal,
 )
 
 from utils.pricing import get_live_fx_rate
 from utils.formatting import decimal_to_float
-from .sizing_service import size_position
+from .sizing_service import size_position, size_batch_inv_vol
 
 
 def generate_momentum_signals(
@@ -346,48 +347,22 @@ def generate_momentum_signals(
     # Sort by rank
     signals_sorted = sorted(signals, key=lambda x: x['rank'])
 
-    # Risk-based position sizing per strategy_rules.md §4.1
-    risk_percent = float(settings.get('default_risk_percent', 1.0)) if settings else 1.0
+    # ST-04 (BLG-FEAT-48): Inverse-volatility batch sizing for new signal entries.
+    # Manual position sizing (POST /portfolio/size → size_position()) is untouched — RISK-03.
+    new_signals = [s for s in signals_sorted if s['status'] == 'new']
+    already_held_signals = [s for s in signals_sorted if s['status'] != 'new']
 
-    for signal in signals_sorted:
-        if signal['status'] == 'new':
-            entry_price = signal['current_price']
-            initial_stop = signal['initial_stop']
+    if new_signals:
+        new_signals = size_batch_inv_vol(new_signals, available_cash, fx_rate=live_fx_rate)
 
-            # AC-05: signals with no valid initial_stop produce suggested_shares = 0
-            if (initial_stop is None or initial_stop <= 0 or initial_stop >= entry_price):
-                signal['suggested_shares'] = 0
-                signal['allocation_gbp'] = 0
-                signal['total_cost'] = 0
-                signal['reason'] = 'No valid initial stop — suggested_shares set to 0'
-            else:
-                sizing_result = size_position(
-                    entry_price=entry_price,
-                    stop_price=initial_stop,
-                    risk_percent=risk_percent,
-                    market=signal['market'],
-                    fx_rate=live_fx_rate if signal['market'] == 'US' else None,
-                )
-                if sizing_result.get('valid'):
-                    # Whole shares only at generation time (signal_endpoints.md data model note)
-                    signal['suggested_shares'] = int(sizing_result['suggested_shares'])
-                    signal['allocation_gbp'] = round(sizing_result.get('estimated_cost', 0), 2)
-                    signal['total_cost'] = round(sizing_result.get('estimated_cost', 0), 2)
-                    signal['reason'] = (
-                        None if signal['suggested_shares'] > 0
-                        else 'Risk-based sizing yielded 0 shares for this entry/stop'
-                    )
-                else:
-                    signal['suggested_shares'] = 0
-                    signal['allocation_gbp'] = 0
-                    signal['total_cost'] = 0
-                    signal['reason'] = sizing_result.get('reason_detail', 'Invalid sizing result')
-        else:
-            # Already held - no allocation
-            signal['allocation_gbp'] = 0
-            signal['suggested_shares'] = 0
-            signal['total_cost'] = 0
-            signal['reason'] = None
+    for signal in already_held_signals:
+        signal['allocation_gbp'] = 0
+        signal['suggested_shares'] = 0
+        signal['total_cost'] = 0
+        signal['inv_vol_weight'] = 0
+        signal['reason'] = None
+
+    signals_sorted = sorted(new_signals + already_held_signals, key=lambda x: x['rank'])
     
     # Save to database
     print(f"Saving {len(signals_sorted)} signals to database...")
@@ -412,6 +387,113 @@ def generate_momentum_signals(
             "ftse_risk_on": ftse_risk_on
         },
         "signals": [decimal_to_float(s) for s in signals_sorted]
+    }
+
+
+def _is_last_trading_day_of_month(check_date: datetime) -> bool:
+    """Return True if check_date is the last trading day of its calendar month.
+
+    Uses a simple rule: it is the last trading day if the next calendar
+    day that is not Saturday/Sunday falls in the following month.
+    Public holidays are not modelled (acceptable per spec — AC-03 requires
+    only weekend awareness).
+    """
+    import calendar
+    d = check_date.date()
+    next_day = d + __import__('datetime').timedelta(days=1)
+    # Skip weekends on the 'next trading day' check
+    while next_day.weekday() >= 5:
+        next_day += __import__('datetime').timedelta(days=1)
+    return next_day.month != d.month
+
+
+def generate_rebalance_exit_signals() -> Dict:
+    """
+    ST-03 (BLG-FEAT-47): Generate exit_rebalance signals on the last trading day
+    of each calendar month.
+
+    Logic:
+      1. If today is not the last trading day of the month, return early.
+      2. Fetch current top-5 momentum signal tickers (most recent signal_date).
+      3. For each open position NOT in the top-5 list:
+         - Generate an exit_rebalance signal record.
+         - Skip if the position is already at a trailing stop (avoid duplicate exit).
+      4. Returns summary + list of exit_rebalance signals created.
+    """
+    today = datetime.now()
+    if not _is_last_trading_day_of_month(today):
+        return {
+            "run_date": today.strftime('%Y-%m-%d'),
+            "is_last_trading_day": False,
+            "signals_created": 0,
+            "message": "Not the last trading day of the month — no action taken",
+        }
+
+    portfolio = get_portfolio()
+    if not portfolio:
+        raise ValueError("Portfolio not found")
+
+    portfolio_id = str(portfolio['id'])
+    live_fx_rate = get_live_fx_rate()
+    signal_date_str = today.strftime('%Y-%m-%d')
+
+    # Get the latest set of momentum signals (top-5 tickers from most recent run)
+    all_signals = db_get_signals(portfolio_id, status=None)
+    if all_signals:
+        latest_date = max(s['signal_date'] for s in all_signals if s.get('signal_date'))
+        top5_tickers = {
+            s['ticker'] for s in all_signals
+            if s.get('signal_date') == latest_date
+            and s.get('status') not in ('dismissed', 'expired', 'exit_rebalance')
+        }
+    else:
+        top5_tickers = set()
+
+    # Get current open positions
+    positions = get_positions(portfolio_id, status='open')
+    from utils.formatting import decimal_to_float
+    from utils.pricing import get_current_price
+
+    created = []
+    for pos in positions:
+        pos = decimal_to_float(pos)
+        ticker = pos['ticker']
+
+        # Only rebalance positions NOT in the top-5 momentum list
+        if ticker in top5_tickers:
+            continue
+
+        # Deduplication: skip if position is already at its trailing stop
+        current_price = pos.get('current_price', 0) or 0
+        current_stop = pos.get('current_stop', 0) or 0
+        if current_stop > 0 and current_price <= current_stop:
+            continue  # Stop already triggered — exit_rebalance is redundant
+
+        is_uk = pos['market'] == 'UK'
+        if is_uk:
+            price_gbp = current_price
+        else:
+            price_gbp = current_price / live_fx_rate if current_price else 0
+
+        reason = f"Month-end rebalance: {ticker} not in top-5 momentum list as of {signal_date_str}"
+        signal = create_rebalance_exit_signal(
+            portfolio_id=portfolio_id,
+            ticker=ticker,
+            market=pos['market'],
+            current_price=round(current_price, 2),
+            price_gbp=round(price_gbp, 2),
+            signal_date=signal_date_str,
+            reason=reason,
+        )
+        if signal:
+            created.append(decimal_to_float(signal))
+
+    return {
+        "run_date": signal_date_str,
+        "is_last_trading_day": True,
+        "signals_created": len(created),
+        "top5_tickers": list(top5_tickers),
+        "exit_rebalance_signals": created,
     }
 
 

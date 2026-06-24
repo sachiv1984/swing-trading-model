@@ -64,6 +64,10 @@ _DB_STUB_FUNCTIONS = [
     "ensure_positions_user_fill_price_column", "ensure_trade_history_fill_price_column",
     "get_gate_metrics",
     "ensure_trade_cost_columns", "update_trade_costs", "get_trade_history_with_stops",
+    # ST-03 (BLG-FEAT-47) — rebalance exit signal support
+    "ensure_signals_exit_rebalance_status", "create_rebalance_exit_signal",
+    # ST-05 (BLG-FEAT-49) — risk-off exit alert column
+    "ensure_risk_off_exit_column", "update_positions_risk_off_exit",
 ]
 
 _database_stub = types.ModuleType("database")

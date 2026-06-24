@@ -74,6 +74,9 @@ async def test_all_endpoints(request: Request):
         # Signals & Market
         {"name": "GET /signals", "method": "GET", "url": f"{base_url}/signals", "critical": False},
         {"name": "PATCH /signals/{id} (watchlisted)", "method": "PATCH", "url": f"{base_url}/signals/00000000-0000-0000-0000-000000000000", "body": {"status": "watchlisted"}, "critical": False},
+        {"name": "POST /signals/rebalance-exit", "method": "POST", "url": f"{base_url}/signals/rebalance-exit", "critical": False},
+        {"name": "POST /positions/nightly-stop-update", "method": "POST", "url": f"{base_url}/positions/nightly-stop-update", "critical": False},
+        {"name": "POST /positions/risk-off-alerts", "method": "POST", "url": f"{base_url}/positions/risk-off-alerts", "critical": False},
         {"name": "GET /market/status", "method": "GET", "url": f"{base_url}/market/status", "critical": True},
 
         # Alerts (v2.3+)
