@@ -3,40 +3,16 @@ name: Playwright E2E Acceptance Tests
 # Two jobs:
 #
 # 1. playwright-e2e  — behavioural acceptance tests (blocking gate)
-#    All 26 spec files using page.route() interception. No live backend required.
+#    All spec files under tests/e2e/**/*.spec.js discovered automatically via glob.
+#    No live backend required (page.route() interception).
+#    New spec files added to tests/e2e/ are automatically included — no manual registration.
 #
 # 2. playwright-visual — CSS class/attribute assertions for visual AC (blocking gate)
 #    visual-snapshots.spec.js — 14 element-level tests verifying colours and structure
 #    via CSS class assertions (no pixel comparison — reliable across Chromium versions).
 #
-# Spec inventory:
-#   risk-dashboard.spec.js       — ST-11: Risk Dashboard (17 scenarios)
-#   chart-interactivity.spec.js  — ST-06: Chart Interactivity
-#   market-correlation.spec.js   — ST-01 (EPIC-01, v2.8): Market Correlation
-#   screener.spec.js             — ST-05/ST-06/ST-07 (EPIC-02, v3.0): Screener page
-#   keyboard-shortcuts.spec.js   — ST-11 (EPIC-03, v3.0): Keyboard shortcuts
-#   sidebar-nav-groups.spec.js   — ST-13 (BLG-UX-01, v2.3): Nav group collapse
-#   alert-nav-badge.spec.js      — ST-10 (BLG-FE-05, v2.3): Alert badge
-#   alert-thresholds-empty-state.spec.js  — alert thresholds empty state
-#   compliance-panel.spec.js     — compliance panel
-#   fee-drag-trade-history.spec.js        — fee drag in trade history
-#   loading-states.spec.js       — loading state skeletons
-#   notifications.spec.js        — notifications page
-#   positions-pnl-columns.spec.js         — positions P&L columns
-#   reports-performance-tab.spec.js       — reports performance tab
-#   signals-cash-balance.spec.js          — signals cash balance
-#   slippage-tracking.spec.js    — slippage tracking
-#   smoke-critical-paths.spec.js — critical path smoke tests
-#   staleness-indicator.spec.js  — staleness indicator
-#   system-status.spec.js        — system status page
-#   weekly-digest.spec.js        — weekly digest page
-#   screener-uk-suffix.spec.js   — ST-06 (EPIC-03, v3.1): UK ticker .L suffix stripping
-#   earnings-calendar.spec.js    — ST-08 (EPIC-03, v3.1): Earnings Calendar UI (Screener/Watchlist/Positions)
-#   trade-plan.spec.js           — ST-03 (EPIC-01, v3.1): Trade Plan form
-#   morning-briefing.spec.js     — ST-07 (EPIC-03, v6.0): Morning Briefing panel
-#   screener-quality.spec.js     — ST-06 (EPIC-02, v6.0): Screener data quality telemetry
-#   setup-quality-score.spec.js  — ST-09 (EPIC-04, v6.1): Setup Quality Score panel
-#   visual-snapshots.spec.js     — VS-01–VS-14 pixel snapshots (job 2)
+# Spec registration: automatic via glob (BLG-QA-62, v6.2 ST-13).
+# No manual spec inventory maintained here — add spec files to tests/e2e/ and they run.
 
 on:
   push:
@@ -94,34 +70,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run all E2E acceptance tests
-        run: |
-          npx playwright test \
-            tests/e2e/smoke-critical-paths.spec.js \
-            tests/e2e/risk-dashboard.spec.js \
-            tests/e2e/chart-interactivity.spec.js \
-            tests/e2e/market-correlation.spec.js \
-            tests/e2e/screener.spec.js \
-            tests/e2e/keyboard-shortcuts.spec.js \
-            tests/e2e/sidebar-nav-groups.spec.js \
-            tests/e2e/alert-nav-badge.spec.js \
-            tests/e2e/alert-thresholds-empty-state.spec.js \
-            tests/e2e/compliance-panel.spec.js \
-            tests/e2e/fee-drag-trade-history.spec.js \
-            tests/e2e/loading-states.spec.js \
-            tests/e2e/notifications.spec.js \
-            tests/e2e/positions-pnl-columns.spec.js \
-            tests/e2e/reports-performance-tab.spec.js \
-            tests/e2e/signals-cash-balance.spec.js \
-            tests/e2e/slippage-tracking.spec.js \
-            tests/e2e/staleness-indicator.spec.js \
-            tests/e2e/system-status.spec.js \
-            tests/e2e/weekly-digest.spec.js \
-            tests/e2e/screener-uk-suffix.spec.js \
-            tests/e2e/earnings-calendar.spec.js \
-            tests/e2e/trade-plan.spec.js \
-            tests/e2e/morning-briefing.spec.js \
-            tests/e2e/screener-quality.spec.js \
-            tests/e2e/setup-quality-score.spec.js
+        run: npx playwright test
         env:
           CI: true
           REACT_APP_API_URL: http://localhost:8000

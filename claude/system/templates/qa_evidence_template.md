@@ -102,7 +102,8 @@ Use this block ONLY when all four qualifying criteria in `execution_prompt.md §
 **Autonomous class eligibility check (BLG-GOV-19):**
 - [ ] Criterion 1: All stories in this EPIC have `delegation_class: autonomous` — ✓ / ✗
 - [ ] Criterion 2: All AC verifiable by code review alone — no observable UI behaviour, no staging run required — ✓ / ✗
-- [ ] Criterion 3: No frontend-visible change — confirm no React page or UI component was created or modified (check src/pages/ and src/components/) — ✓ / ✗
+- [ ] Criterion 3: No frontend-visible change — confirm no React page or UI component was created or modified (check `src/pages/` and `src/components/`) — ✓ / ✗
+  - **Detection rule (BLG-GOV-135 — execution_prompt.md §3.2.A):** if any story in this EPIC creates or modifies a file under `src/components/**` or `src/pages/**`, this criterion is automatically unmet and the autonomous class path is unavailable, regardless of Playwright test coverage.
   - **Criterion 3 fail-path:** If any story in this EPIC has observable AC (frontend-visible change, UI rendering, user interaction) — autonomous class does not apply regardless of Playwright test coverage. Use the Standard Sign-Off Block above instead; record Playwright test file references in the DoQ Comments field.
 - [ ] Criterion 4: Engine signer field populated as "Sprint Execution Engine (autonomous class)" — ✓ / ✗
 

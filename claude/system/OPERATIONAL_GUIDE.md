@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.64
+**Version:** 4.65
 **Last Updated:** 2026-06-22
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.47)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.48)
 
 ### 8.1 Invocation
 
@@ -1467,7 +1467,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.38 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.11 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.47 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.48 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.5 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.1 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
