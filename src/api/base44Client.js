@@ -500,6 +500,17 @@ export const api = {
     setupQualityScore: async (ticker) =>
       doFetch(`/trade-plans/setup-quality-score?ticker=${encodeURIComponent(ticker)}`),
   },
+
+  // ST-06/ST-08 (v6.2 EPIC-02): AI advisory endpoints — display-only, SRB-v1.7
+  ai: {
+    dailyBriefing: async () =>
+      doFetch('/ai/daily-briefing', { method: 'POST', body: JSON.stringify({}) }),
+    chat: async (question, context = null) =>
+      doFetch('/ai/chat', {
+        method: 'POST',
+        body: JSON.stringify({ question, ...(context ? { context } : {}) }),
+      }),
+  },
 };
 
 export const Signal = base44.entities.Signal;

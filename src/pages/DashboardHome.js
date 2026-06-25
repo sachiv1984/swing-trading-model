@@ -6,6 +6,7 @@ import SignalStatusCard from "../components/dashboard/home/SignalStatusCard";
 import RecentActivityCard from "../components/dashboard/home/RecentActivityCard";
 import MorningBriefing from "../components/dashboard/home/MorningBriefing";
 import GateProgressStrip from "../components/dashboard/home/GateProgressStrip";
+import AiDailyBriefing from "../components/dashboard/home/AiDailyBriefing";
 
 const DASHBOARD_QUERY_KEYS = [
   "home-open-positions",
@@ -50,6 +51,9 @@ export default function DashboardHome() {
         <SignalStatusCard />
         <RecentActivityCard />
       </div>
+
+      {/* ST-07 (EPIC-02, v6.2): AI Daily Briefing card — display-only advisory */}
+      <AiDailyBriefing />
 
       {/* Trade gate proximity strip — hidden silently on error */}
       <GateProgressStrip />

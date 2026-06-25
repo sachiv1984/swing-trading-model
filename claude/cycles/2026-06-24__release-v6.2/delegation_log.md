@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Planning Document (Class 4)
 Status: Active
-Last Updated: 2026-06-24
+Last Updated: 2026-06-25
 
 ---
 
@@ -30,8 +30,8 @@ This file is append-only. Do not edit previous entries.
   - AC-04 (regression): manual position sizing path unchanged; only nightly computation affected
   - Unit tests: profit-lock branch, ratchet invariant, ATR-14 parameter validation; integration test: GET /positions schema
 - **Unblock criteria:** Commit `[EPIC-01][ST-01]` pushed to exec/2026-06-24__release-v6.2/EPIC-01 with all 5 ACs implemented
-- **Status:** Pending
-- **commit_sha:** null
+- **Status:** Unblocked
+- **commit_sha:** e49d5a8b1a5dd14247d28338ae19765c77cf33c3
 
 ---
 
@@ -55,8 +55,8 @@ This file is append-only. Do not edit previous entries.
   5. **Non-functional rules:** §13 compliant — display only, no signal/recommendation use
   6. **Expected outcome:** Playwright tests for AC-01, AC-02, AC-04; human staging sign-off for AC-03 (badge colour/icon distinctiveness)
 - **Unblock criteria:** Commit `[EPIC-01][ST-02]` pushed; Playwright tests for AC-01/02/04 passing; AC-03 staging sign-off obtained
-- **Status:** Pending
-- **commit_sha:** null
+- **Status:** Unblocked
+- **commit_sha:** e49d5a8b1a5dd14247d28338ae19765c77cf33c3
 
 ---
 
@@ -79,8 +79,8 @@ This file is append-only. Do not edit previous entries.
   - `exit_rebalance` signals returned by `GET /signals`; UI label "Rebalance Exit" teal #0891B2 per v6.2 design gate
   - Pre-check: confirm `stop_exit` is a live API value in GET /signals before applying red badge styling — if not live, defer that badge variant
 - **Unblock criteria:** Commit `[EPIC-01][ST-03]` pushed with all 5 ACs implemented
-- **Status:** Pending
-- **commit_sha:** null
+- **Status:** Unblocked
+- **commit_sha:** e49d5a8b1a5dd14247d28338ae19765c77cf33c3
 
 ---
 
@@ -102,8 +102,8 @@ This file is append-only. Do not edit previous entries.
   - Output must match production_strategy.py backtest logic for equivalent inputs
   - Unit tests: weight calculation, constraint+normalisation, manual path unchanged, reference calculation match; integration: new signal response includes inv-vol allocated shares
 - **Unblock criteria:** Commit `[EPIC-01][ST-04]` pushed with all 5 ACs implemented; manual sizing regression test passing
-- **Status:** Pending
-- **commit_sha:** null
+- **Status:** Unblocked
+- **commit_sha:** e49d5a8b1a5dd14247d28338ae19765c77cf33c3
 
 ---
 
@@ -125,8 +125,8 @@ This file is append-only. Do not edit previous entries.
   - `risk_off_exit` alert visible per position in portfolio view; visually distinct from trailing stop breach and `exit_rebalance` signals per UX spec (deep blue #1E40AF per v6.2 design gate)
   - ST-06 (Sprint 2) depends on risk_off_exit alerts being live — verify AC-01/03/04 before Sprint 1 close
 - **Unblock criteria:** Commit `[EPIC-01][ST-05]` pushed with all 4 ACs implemented
-- **Status:** Pending
-- **commit_sha:** null
+- **Status:** Unblocked
+- **commit_sha:** e49d5a8b1a5dd14247d28338ae19765c77cf33c3
 
 ---
 
@@ -149,8 +149,8 @@ This file is append-only. Do not edit previous entries.
   - `advisory: true` required in response metadata
   - **Same-commit requirements (CLAUDE.md §2):** (a) `## POST /ai/daily-briefing` entry in `docs/specs/api_contracts/ai_endpoints.md`; (b) `POST /ai/daily-briefing` path in `docs/reference/openapi.yaml`; (c) route registered in `backend/routers/test.py`; (d) `src/pages/SystemStatus.js` fallback count updated; (e) SC-SS-01b in `tests/e2e/system-status.spec.js` updated to match new fallback count
 - **Unblock criteria:** EPIC-01 complete + §13 PASS confirmed; commit `[EPIC-02][ST-06]` pushed with all 6 ACs and all same-commit requirements met
-- **Status:** Pending
-- **commit_sha:** null
+- **Status:** Unblocked
+- **commit_sha:** 98ca767119318072be8644daef222ee818f4cc77
 
 ---
 
@@ -174,8 +174,8 @@ This file is append-only. Do not edit previous entries.
   5. **Non-functional rules:** §13 compliant — advisory-only display; AI advisory label "AI Advisory — all actions require your confirmation" must be present and non-dismissible
   6. **Expected outcome:** Playwright for AC-01/02/03/05; human staging sign-off for AC-04 (advisory label wording and styling)
 - **Unblock criteria:** ST-06 done; commit `[EPIC-02][ST-07]` pushed with Playwright tests for AC-01/02/03/05; AC-04 staging sign-off
-- **Status:** Pending
-- **commit_sha:** null
+- **Status:** Unblocked
+- **commit_sha:** bbcb38e395bdc3cff7e3a90a08e931dade7e10e3
 
 ---
 
@@ -197,8 +197,8 @@ This file is append-only. Do not edit previous entries.
   - Uses `claude-sonnet-4-6`; token usage logged
   - **Same-commit requirements (CLAUDE.md §2):** (a) `## POST /ai/chat` entry in `docs/specs/api_contracts/ai_endpoints.md`; (b) `POST /ai/chat` path in `docs/reference/openapi.yaml`; (c) route registered in `backend/routers/test.py`; (d) `src/pages/SystemStatus.js` fallback count updated; (e) SC-SS-01b in `tests/e2e/system-status.spec.js` updated to match new fallback count
 - **Unblock criteria:** ST-06 done; commit `[EPIC-02][ST-08]` pushed with all 6 ACs and same-commit requirements met
-- **Status:** Pending
-- **commit_sha:** null
+- **Status:** Unblocked
+- **commit_sha:** 98ca767119318072be8644daef222ee818f4cc77
 
 ---
 
@@ -222,5 +222,5 @@ This file is append-only. Do not edit previous entries.
   5. **Non-functional rules:** §13 compliant — advisory-only; "AI Advisory — all actions require your confirmation" label present
   6. **Expected outcome:** Playwright for AC-01/02/04/05; human staging sign-off for AC-03 (advisory label wording and non-executability). Signals page placement is stretch goal only — do not treat as in-scope.
 - **Unblock criteria:** ST-08 done; commit `[EPIC-02][ST-09]` pushed; Playwright for AC-01/02/04/05; AC-03 staging sign-off
-- **Status:** Pending
-- **commit_sha:** null
+- **Status:** Unblocked
+- **commit_sha:** bbcb38e395bdc3cff7e3a90a08e931dade7e10e3

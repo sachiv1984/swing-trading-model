@@ -1,18 +1,20 @@
 """
 AI Router
 
-POST /ai/journal-summary — Summarise trade journal notes via external LLM API.
-GET  /ai/claude-audit-log — Query the immutable Claude API call audit trail.
+POST /ai/journal-summary      — Summarise trade journal notes via external LLM API.
+POST /ai/daily-briefing       — Plain-English portfolio briefing + ordered action list.
+POST /ai/chat                 — Stateless per-request AI trade advisor.
+GET  /ai/claude-audit-log     — Query the immutable Claude API call audit trail.
 
 AI output is display-only and must NOT feed into any signal, scoring,
 or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 
-Contract: docs/specs/api_contracts/ai_endpoints.md v1.2
+Contract: docs/specs/api_contracts/ai_endpoints.md v1.4
 """
 
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Any
 from datetime import date
 from database import get_db
 from services.ai_service import summarise_journal_notes
@@ -141,6 +143,50 @@ def check_daily_cost():
     """
     from services.gemini_service import check_and_alert_daily_cost
     return check_and_alert_daily_cost(threshold_usd=AI_DAILY_COST_THRESHOLD)
+
+
+class DailyBriefingResponse(BaseModel):
+    summary: Optional[str]
+    actions: List[Any]
+    generated_at: str
+    advisory: bool
+    model: Optional[str] = None
+    error: Optional[str] = None
+
+
+@router.post("/daily-briefing", response_model=DailyBriefingResponse)
+def daily_briefing():
+    """
+    Assemble live portfolio context and call claude-sonnet-4-6 to produce a
+    plain-English daily briefing with an ordered action list.
+    Advisory-only — SRB-v1.7. Not integrated with trade execution.
+    Contract: docs/specs/api_contracts/ai_endpoints.md v1.4
+    """
+    from services.ai_service import generate_daily_briefing
+    return generate_daily_briefing()
+
+
+class ChatRequest(BaseModel):
+    question: str
+    context: Optional[dict] = None
+
+
+class ChatResponse(BaseModel):
+    response: str
+    advisory: bool
+    model: Optional[str] = None
+
+
+@router.post("/chat", response_model=ChatResponse)
+def ai_chat_endpoint(body: ChatRequest):
+    """
+    Stateless per-request AI trade advisor grounded in live portfolio and signal state.
+    No session memory is stored or returned across calls.
+    Advisory-only — SRB-v1.7. Not integrated with trade execution.
+    Contract: docs/specs/api_contracts/ai_endpoints.md v1.4
+    """
+    from services.ai_service import ai_chat
+    return ai_chat(question=body.question, context_opts=body.context)
 
 
 @router.get("/claude-audit-log")

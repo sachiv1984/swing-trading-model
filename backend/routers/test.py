@@ -195,6 +195,12 @@ async def test_all_endpoints(request: Request):
 
         # Setup Quality Score (v6.1 / EPIC-04 ST-08)
         {"name": "GET /trade-plans/setup-quality-score", "method": "GET", "url": f"{base_url}/trade-plans/setup-quality-score?ticker=AAPL", "critical": False},
+
+        # AI Daily Briefing (v6.2 / EPIC-02 ST-06)
+        {"name": "POST /ai/daily-briefing", "method": "POST", "url": f"{base_url}/ai/daily-briefing", "critical": False},
+
+        # AI Chat Advisor (v6.2 / EPIC-02 ST-08)
+        {"name": "POST /ai/chat", "method": "POST", "url": f"{base_url}/ai/chat", "body": {"question": "How many positions do I have open?"}, "critical": False},
     ]
     
     results = []
