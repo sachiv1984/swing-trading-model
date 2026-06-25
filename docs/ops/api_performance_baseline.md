@@ -874,10 +874,63 @@ Signed: [x] Infrastructure & Operations Owner — 2026-06-23
 
 ---
 
+## 21. v6.1 Endpoint Measurements — GET /portfolio/sector-weights and GET /trade-plans/setup-quality-score (ST-12, v6.2 EPIC-03)
+
+**Date:** 2026-06-25
+**Story:** ST-12 (EPIC-03, v6.2) — BLG-OPS-75
+**Environment:** Production — `https://trading-assistant-api-c0f9.onrender.com`
+**Method:** Live timing run — 20 warm production samples per endpoint, authenticated with `X-API-Key` header. Both are read endpoints; standard timing methodology applies.
+
+### 21.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /portfolio/sector-weights | v6.1 | Read — live production timing | 287ms | 356ms | — |
+| GET /trade-plans/setup-quality-score | v6.1 | Read — live production timing | 464ms | 516ms | ⚠ p95 > 500ms threshold |
+
+**Measurement date:** 2026-06-25
+**Samples:** 20 warm requests per endpoint (sequential, no cold-start spike observed)
+
+**GET /portfolio/sector-weights — sample distribution:**
+277, 279, 282, 283, 283, 284, 285, 285, 286, 286, 287, 288, 288, 290, 292, 294, 296, 311, 322, 356 ms
+
+**GET /trade-plans/setup-quality-score — sample distribution:**
+455, 456, 456, 456, 457, 458, 460, 461, 461, 463, 464, 465, 468, 469, 470, 470, 472, 487, 492, 516 ms
+
+**Notes:**
+- `GET /portfolio/sector-weights`: p50=287ms, p95=356ms — well within the ≤500ms p95 threshold. Consistent with other Supavisor portfolio read endpoints (§10 baseline: 226–244ms p50). Slightly higher p50 attributable to JOIN across positions/trades tables for sector aggregation.
+- `GET /trade-plans/setup-quality-score`: p50=464ms, p95=516ms — p95 marginally exceeds the 500ms flag threshold. Attributable to multi-table join (trade plans, trades, positions) with quality score computation. No BLG-BE item raised — margin is 16ms and consistent across all 20 samples (tight distribution). Monitor at next BLG-OPS-13 re-run.
+
+**Regression thresholds set:**
+- GET /portfolio/sector-weights: flag if p95 > 712ms (2× measured p95)
+- GET /trade-plans/setup-quality-score: flag if p95 > 1,032ms (2× measured p95)
+
+### 21.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-12 (v6.2 EPIC-03) — GET /portfolio/sector-weights + GET /trade-plans/setup-quality-score Sign-Off
+
+AC-01: GET /portfolio/sector-weights entry added — p50=287ms, p95=356ms,
+       measurement date 2026-06-25 (20 live production samples). ✅ PASS
+AC-02: GET /trade-plans/setup-quality-score entry added — p50=464ms, p95=516ms,
+       measurement date 2026-06-25 (20 live production samples). ✅ PASS
+AC-03: Measurements sourced from live production endpoint timing run (20 samples,
+       authenticated X-API-Key, warm requests). Superior to staging evidence.
+       ✅ PASS — p95 flag on setup-quality-score noted; no BLG-BE item required
+       (16ms margin, tight distribution).
+
+BLG-OPS-75 closed.
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, autonomous class) — 2026-06-25
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.6 | 2026-06-25 | Infrastructure & Operations Owner | ST-12 (v6.2 EPIC-03, BLG-OPS-75): §21 added — GET /portfolio/sector-weights p50=287ms p95=356ms; GET /trade-plans/setup-quality-score p50=464ms p95=516ms (⚠ p95 flag). 20 live production samples each. BLG-OPS-75 closed. |
 | 2.5 | 2026-06-23 | Infrastructure & Operations Owner | ST-05 (v6.1 EPIC-02, BLG-OPS-73): §20 added — PATCH /trades/{id}/costs registered as write-op exclusion. Estimated p50=~250ms, p95=~500ms (Supavisor single UPDATE). Live timing deferred per §18.2 write-op policy. BLG-OPS-73 closed. |
 | 2.4 | 2026-06-11 | Infrastructure & Operations Owner | ST-07/08 (v5.5 EPIC-03): §19 added — GET /watchlist p50=488ms, GET /portfolio/gate-metrics p50=543ms measured on production. POST /digest/si05/send excluded (Telegram API timeout). ST-07/ST-08 closed. |
 | 2.3 | 2026-06-11 | Infrastructure & Operations Owner | ST-06 (v5.5 EPIC-03): §18 added — BLG-OPS-13 re-run complete. 16 read endpoints measured on production; 7 write ops excluded. 4 high-latency flags: concentration-status (p95=5,917ms), behavioural-drift (p95=3,798ms), red-flag-journal (p95=3,200ms), research (p95=4,601ms triggers BLG-BE-15 gate). BLG-OPS-13 closed. |
