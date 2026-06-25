@@ -1,9 +1,33 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.2
-**Last Updated:** 2026-06-23
+**Version:** 4.3
+**Last Updated:** 2026-06-25
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-06-24__release-v6.2
+**Date:** 2026-06-25
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Production strategy parity cluster: nightly trailing stop computation (profit-lock logic, INITIAL_ATR_MULT=5, PROFIT_ATR_MULT=2, ATR_PERIOD=14, ratchet invariant); month-end rebalance exit signals (`exit_rebalance` status, teal badge); inverse-volatility position sizing for signal-driven entries (`weight_i = (1/ATR_i) / Σ(1/ATR_j)`, [5%–20%] cash constraints); risk-off exit alerts (SPY/FTSE MA200 regime check, US/UK isolated); trailing stop display and breach badge on portfolio positions view | docs/specs/api_contracts/position_endpoints.md#GET /positions; docs/specs/api_contracts/signal_endpoints.md#GET /signals; docs/specs/api_contracts/signal_endpoints.md#POST /signals/generate; docs/specs/frontend/pages/positions.md | None |
+| EPIC-02 | AI intelligence layer: POST /ai/daily-briefing (portfolio context assembly, claude-sonnet-4-6, advisory-only per §13 SRB-v1.7 PASS); AiDailyBriefing.js dashboard card (summary, action list with type chips, Regenerate button, non-dismissible advisory label); POST /ai/chat (stateless conversational advisor, grounded in live portfolio state); AiChatWidget.js on Positions + Signals pages (collapsed pill, expanded panel, advisory footer, error state) | docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing; docs/specs/api_contracts/ai_endpoints.md#POST /ai/chat; docs/specs/frontend/pages/dashboard.md; docs/specs/frontend/pages/positions.md | None |
+| EPIC-03 | Governance patches: execution_prompt.md v3.48 (BLG-GOV-135 autonomous class hard gate — criterion 3 detection rule for src/components/\*\* or src/pages/\*\* changes; BLG-GOV-136 test_scenarios path validation advisory); API performance baseline §21 (GET /portfolio/sector-weights p50=287ms p95=356ms; GET /trade-plans/setup-quality-score p50=464ms p95=516ms; BLG-OPS-75 closed); Playwright spec auto-registration via glob pattern (playwright.config.js testDir; BLG-QA-62 closed; 12 pre-existing dark specs excluded via testIgnore, BLG-QA-64 filed) | claude/system/execution_prompt.md v3.48; docs/ops/api_performance_baseline.md v2.6 §21; playwright.config.js | None |
+
+### Capabilities deferred or returned
+
+None — all 13 stories (ST-01 through ST-13) delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (Director of Quality, 2026-06-25), qa_evidence_EPIC-02.md (Director of Quality, 2026-06-25), qa_evidence_EPIC-03.md (Director of Quality autonomous class, 2026-06-25)
+- Deviations filed: None (spec deviations); ST-04 test suite replacement documented in EPIC-01 QA evidence as implementation note (not a spec deviation)
+- Test scenarios referenced: tests/e2e/epic01-v62-stops-alerts.spec.js (EPIC-01, 9 scenarios), tests/e2e/epic02-v62-ai-briefing-chat.spec.js (EPIC-02, 9 scenarios)
 
 ---
 
