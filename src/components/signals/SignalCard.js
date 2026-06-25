@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { TrendingUp, Bookmark, Award, CheckCircle2, Lock, XCircle, BookmarkCheck } from "lucide-react";
+import { TrendingUp, TrendingDown, Bookmark, Award, CheckCircle2, Lock, XCircle, BookmarkCheck } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddingToWatchlist }) {
@@ -51,6 +51,11 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
     allocation_insufficient: {
       label: "Cannot Size",
       color: "bg-orange-500/20 text-orange-400 border-orange-500/40"
+    },
+    exit_rebalance: {
+      label: "Month-End Exit",
+      color: "bg-amber-500/20 text-amber-400 border-amber-500/40",
+      icon: TrendingDown
     }
   };
 

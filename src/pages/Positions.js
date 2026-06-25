@@ -15,6 +15,7 @@ import {
   AlertTriangle,
   X,
   ArrowUpDown,
+  ShieldAlert,
 } from "lucide-react";
 
 import DataState from "../components/ui/DataState";
@@ -679,7 +680,7 @@ export default function Positions() {
             <TableHead>Ticker</TableHead>
             <TableHead>Entry Price</TableHead>
             <TableHead>Current Price</TableHead>
-            <TableHead>Stop</TableHead>
+            <TableHead title="Initial stop (entry) / Current trailing stop (computed)">Stop</TableHead>
             <TableHead>Shares</TableHead>
             <TableHead className="text-right">P&amp;L (GBP)</TableHead>
             <TableHead className="text-right">P&amp;L %</TableHead>
@@ -710,6 +711,15 @@ export default function Positions() {
               const displayStopPrice =
                 position.stop_price_native || position.stop_price;
 
+              // ST-01 (BLG-FEAT-46): trailing stop breach detection
+              const trailStop = position.current_trailing_stop;
+              const currentPriceGbp = position.current_price;
+              const trailBreached =
+                trailStop > 0 && currentPriceGbp > 0 && currentPriceGbp <= trailStop;
+
+              // ST-05 (BLG-FEAT-49): risk-off exit alert
+              const riskOffExit = position.risk_off_exit === true;
+
               return (
                 <TableRow key={position.id}>
                   <TableCell>
@@ -720,6 +730,16 @@ export default function Positions() {
                       <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
                         {position.market}
                       </span>
+                      {/* ST-05: risk-off exit alert badge */}
+                      {riskOffExit && (
+                        <span
+                          className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-amber-900/60 text-amber-300 border border-amber-700/60 font-medium"
+                          title="Risk-off regime: index below MA200 — consider exit"
+                        >
+                          <ShieldAlert className="w-3 h-3" />
+                          Risk-Off
+                        </span>
+                      )}
                     </div>
                   </TableCell>
 
@@ -733,9 +753,28 @@ export default function Positions() {
                     {displayCurrentPrice?.toFixed(2) || "—"}
                   </TableCell>
 
+                  {/* ST-01 (BLG-FEAT-46): two-line stop cell — initial stop / trailing stop + breach badge */}
                   <TableCell className="text-rose-400 font-medium">
-                    {currencySymbol}
-                    {displayStopPrice?.toFixed(2) || "—"}
+                    <div className="flex flex-col gap-0.5 leading-tight">
+                      <span className="text-xs text-slate-500">
+                        Init: {position.initial_stop != null ? `${currencySymbol}${Number(position.initial_stop).toFixed(2)}` : "—"}
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span>
+                          {trailStop > 0 ? `${currencySymbol}${trailStop.toFixed(2)}` : (displayStopPrice != null ? `${currencySymbol}${Number(displayStopPrice).toFixed(2)}` : "—")}
+                        </span>
+                        {/* ST-01 AC-02: breach badge — visible when price ≤ trailing stop */}
+                        {trailBreached && (
+                          <span
+                            className="inline-flex items-center gap-0.5 text-xs px-1.5 py-0.5 rounded bg-rose-800/80 text-rose-200 border border-rose-600/60 font-semibold"
+                            title="Stop breach: current price at or below trailing stop"
+                          >
+                            <AlertTriangle className="w-3 h-3" />
+                            Breach
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </TableCell>
 
                   <TableCell className="text-slate-300">

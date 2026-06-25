@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.3.0
+  version: 3.4.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -1138,6 +1138,90 @@ paths:
                               nullable: true
         "404":
           $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /positions/nightly-stop-update:
+    post:
+      tags: [Positions]
+      summary: Recompute trailing stops for all open positions (ST-01 v6.2 BLG-FEAT-46)
+      description: |
+        Nightly job: recalculates trailing stop for every open position using
+        profit-lock logic (INITIAL_ATR_MULT=5, PROFIT_ATR_MULT=2, ATR_PERIOD=14)
+        and stores result. Stop only ever moves up (ratchet invariant).
+        Result accessible via GET /positions as current_trailing_stop field.
+      responses:
+        "200":
+          description: Stop update summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  data:
+                    type: object
+                    properties:
+                      run_date: { type: string }
+                      positions_processed: { type: integer }
+                      updated: { type: integer }
+                      skipped: { type: integer }
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /positions/risk-off-alerts:
+    post:
+      tags: [Positions]
+      summary: Flag open positions with risk_off_exit alert per market regime (ST-05 v6.2 BLG-FEAT-49)
+      description: |
+        Nightly job: checks SPY vs MA200 (US positions) and FTSE vs MA200 (UK positions).
+        Sets risk_off_exit=true on positions in risk-off markets; clears when recovered.
+        Market isolation: US risk-off does not affect UK positions and vice versa.
+        Result accessible via GET /positions as risk_off_exit boolean field.
+      responses:
+        "200":
+          description: Risk-off alert summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  data:
+                    type: object
+                    properties:
+                      run_date: { type: string }
+                      us_risk_off: { type: boolean }
+                      uk_risk_off: { type: boolean }
+                      us_positions_flagged: { type: integer }
+                      uk_positions_flagged: { type: integer }
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /signals/rebalance-exit:
+    post:
+      tags: [Signals]
+      summary: Generate exit_rebalance signals on last trading day of month (ST-03 v6.2 BLG-FEAT-47)
+      description: |
+        Month-end rebalance: on the last trading day, generates exit_rebalance signals
+        for open positions not in the current top-5 momentum list.
+        No-op if today is not the last trading day.
+        Deduplicates: skips positions already at their trailing stop.
+      responses:
+        "200":
+          description: Rebalance exit signal summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  data:
+                    type: object
+                    properties:
+                      run_date: { type: string }
+                      is_last_trading_day: { type: boolean }
+                      signals_created: { type: integer }
         "500":
           $ref: "#/components/responses/InternalError"
 

@@ -177,18 +177,30 @@ def get_positions_with_prices() -> List[Dict]:
 
         
         initial_stop = pos.get("initial_stop")
-        
+
         # Fallbacks if your DB uses different column names
         if initial_stop is None:
             initial_stop = pos.get("initial_stop_price", pos.get("stop_price"))
 
-        
+        # ST-01 (BLG-FEAT-46): current_trailing_stop — always the computed stop value,
+        # non-zero even during grace period (informational; stop_price is 0 during grace)
+        current_trailing_stop_native = pos.get('current_stop', 0) or 0
+        if pos['market'] == 'US':
+            current_trailing_stop_gbp = current_trailing_stop_native / live_fx_rate if current_trailing_stop_native > 0 else 0
+        else:
+            current_trailing_stop_gbp = current_trailing_stop_native
+
+        # risk_off_exit — per-position alert flag, set by nightly risk-off job (ST-05)
+        risk_off_exit = bool(pos.get('risk_off_exit', False))
+
         # Build position dict
         positions_list.append({
             "id": str(pos['id']),
             "ticker": display_ticker,
             "market": pos['market'],
             "initial_stop": round(initial_stop, 2) if initial_stop is not None else None,
+            "current_trailing_stop": round(current_trailing_stop_gbp, 2),
+            "risk_off_exit": risk_off_exit,
             "entry_date": str(pos['entry_date']),
             "entry_price": round(entry_price_display, 2),
             "shares": pos['shares'],
@@ -204,7 +216,6 @@ def get_positions_with_prices() -> List[Dict]:
             "exit_reason": None,
             "grace_period": grace_period,
             "grace_days_remaining": grace_days_remaining,
-            "grace_period": grace_period,
             "stop_reason": f"Grace period ({holding_days}/10 days)" if grace_period else "Active",
             "atr_value": pos.get('atr', 0),
             "fx_rate": pos.get('fx_rate', 1.0),
@@ -480,6 +491,186 @@ def analyze_positions() -> Dict:
             "exit_count": exit_count
         },
         "actions": actions
+    }
+
+
+# ============================================================================
+# NIGHTLY TRAILING STOP UPDATE (ST-01 / BLG-FEAT-46)
+# ============================================================================
+
+# Production strategy constants — must match production_strategy.py exactly
+_INITIAL_ATR_MULT = 5.0   # Wide stop when position not in profit
+_PROFIT_ATR_MULT = 2.0    # Tight stop when position in profit
+_ATR_PERIOD = 14          # 14-day ATR
+
+
+def run_nightly_trailing_stop_update() -> Dict:
+    """
+    Nightly job: recompute trailing stop for every open position and store result.
+
+    Strategy (production_strategy.py profit-lock logic):
+      - In profit: new_stop = current_price − (PROFIT_ATR_MULT × ATR)
+      - Not in profit: new_stop = entry_price − (INITIAL_ATR_MULT × ATR)
+      - Ratchet: stored stop only ever moves up — max(current_stop, new_stop)
+
+    Constants:
+      INITIAL_ATR_MULT=5, PROFIT_ATR_MULT=2, ATR_PERIOD=14
+
+    Returns summary dict with per-position results.
+    """
+    _SETTINGS = {
+        'atr_multiplier_trailing': _PROFIT_ATR_MULT,
+        'atr_multiplier_initial': _INITIAL_ATR_MULT,
+    }
+
+    portfolio = get_portfolio()
+    if not portfolio:
+        raise ValueError("Portfolio not found")
+
+    portfolio_id = str(portfolio['id'])
+    positions = get_positions(portfolio_id, status='open')
+    live_fx_rate = get_live_fx_rate()
+
+    results = []
+    for pos in positions:
+        pos = decimal_to_float(pos)
+        position_id = str(pos['id'])
+
+        live_price = get_current_price(pos['ticker'])
+        if not live_price:
+            results.append({"ticker": pos['ticker'], "status": "skipped", "reason": "price unavailable"})
+            continue
+
+        if pos['market'] == 'UK' and live_price > 1000:
+            live_price = live_price / 100
+
+        entry_price = pos.get('fill_price', pos['entry_price']) if pos['market'] == 'US' else pos['entry_price']
+
+        # Recalculate ATR at _ATR_PERIOD to ensure freshness
+        atr_value = calculate_atr(pos['ticker'], period=_ATR_PERIOD)
+        if not atr_value or atr_value == 0:
+            atr_value = pos.get('atr', 0)
+        if not atr_value or atr_value == 0:
+            results.append({"ticker": pos['ticker'], "status": "skipped", "reason": "ATR unavailable"})
+            continue
+
+        if pos['market'] == 'UK' and atr_value > 100:
+            atr_value = atr_value / 100
+
+        current_stop_native = pos.get('current_stop', pos.get('initial_stop', 0)) or 0
+        holding_days = calculate_holding_days(str(pos['entry_date']))
+
+        if pos['market'] == 'US':
+            pnl_native = (live_price - entry_price) * pos['shares']
+        else:
+            pnl_native = (live_price - entry_price) * pos['shares']
+
+        new_stop_native, stop_reason, atr_mult = calculate_trailing_stop(
+            current_price=live_price,
+            atr=atr_value,
+            is_profitable=(pnl_native > 0),
+            current_stop=current_stop_native,
+            entry_price=entry_price,
+            settings=_SETTINGS,
+        )
+
+        update_position(position_id, {
+            'current_stop': round(new_stop_native, 2),
+            'current_price': round(live_price, 4),
+            'atr': round(atr_value, 4),
+            'holding_days': holding_days,
+        })
+
+        results.append({
+            "ticker": pos['ticker'],
+            "market": pos['market'],
+            "status": "updated",
+            "previous_stop": round(current_stop_native, 2),
+            "new_stop": round(new_stop_native, 2),
+            "stop_moved": new_stop_native > current_stop_native,
+            "atr_mult": atr_mult,
+            "reason": stop_reason,
+        })
+
+    updated = sum(1 for r in results if r['status'] == 'updated')
+    skipped = sum(1 for r in results if r['status'] == 'skipped')
+    return {
+        "run_date": datetime.now().strftime('%Y-%m-%d'),
+        "positions_processed": len(positions),
+        "updated": updated,
+        "skipped": skipped,
+        "results": results,
+    }
+
+
+# ============================================================================
+# NIGHTLY RISK-OFF EXIT ALERTS (ST-05 / BLG-FEAT-49)
+# ============================================================================
+
+def run_nightly_risk_off_alerts() -> Dict:
+    """
+    Nightly job: flag open positions with risk_off_exit alert based on market regime.
+
+    Logic:
+      - If SPY < MA200: set risk_off_exit=True for all open US positions
+      - If FTSE < MA200: set risk_off_exit=True for all open UK positions
+      - Clear (risk_off_exit=False) when the relevant index recovers above MA200
+
+    Market isolation: US risk-off does NOT affect UK positions and vice versa.
+    """
+    from database import update_positions_risk_off_exit
+
+    portfolio = get_portfolio()
+    if not portfolio:
+        raise ValueError("Portfolio not found")
+
+    portfolio_id = str(portfolio['id'])
+    positions = get_positions(portfolio_id, status='open')
+    market_regime = check_market_regime()
+
+    spy_risk_on = market_regime.get('spy_risk_on', True)
+    ftse_risk_on = market_regime.get('ftse_risk_on', True)
+
+    us_risk_off = not spy_risk_on
+    uk_risk_off = not ftse_risk_on
+
+    flagged_us = 0
+    cleared_us = 0
+    flagged_uk = 0
+    cleared_uk = 0
+
+    for pos in positions:
+        pos = decimal_to_float(pos)
+        position_id = str(pos['id'])
+        market = pos['market']
+
+        if market == 'US':
+            new_flag = us_risk_off
+            if new_flag:
+                flagged_us += 1
+            else:
+                cleared_us += 1
+        else:
+            new_flag = uk_risk_off
+            if new_flag:
+                flagged_uk += 1
+            else:
+                cleared_uk += 1
+
+        update_positions_risk_off_exit(position_id, new_flag)
+
+    return {
+        "run_date": datetime.now().strftime('%Y-%m-%d'),
+        "market_regime": {
+            "spy_risk_on": spy_risk_on,
+            "ftse_risk_on": ftse_risk_on,
+        },
+        "us_risk_off": us_risk_off,
+        "uk_risk_off": uk_risk_off,
+        "us_positions_flagged": flagged_us,
+        "us_positions_cleared": cleared_us,
+        "uk_positions_flagged": flagged_uk,
+        "uk_positions_cleared": cleared_uk,
     }
 
 

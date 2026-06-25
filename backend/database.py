@@ -2028,3 +2028,88 @@ def get_gate_metrics(portfolio_id: str) -> Dict:
         "oldest_trade_date": oldest_trade_date,
         "newest_trade_date": newest_trade_date,
     }
+
+
+# ============================================================================
+# ST-03 (BLG-FEAT-47) — Rebalance exit signal support
+# ============================================================================
+
+def ensure_signals_exit_rebalance_status():
+    """Extend signals_status_check constraint to include 'exit_rebalance' (idempotent).
+
+    ST-03 (EPIC-01, v6.2) — BLG-FEAT-47. Month-end rebalance exit signals need
+    a dedicated status value distinct from momentum signal statuses.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE signals DROP CONSTRAINT IF EXISTS signals_status_check"
+            )
+            cur.execute(
+                "ALTER TABLE signals ADD CONSTRAINT signals_status_check "
+                "CHECK (status IN ('new', 'entered', 'dismissed', 'expired', "
+                "'already_held', 'watchlisted', 'allocation_insufficient', 'exit_rebalance'))"
+            )
+        conn.commit()
+
+
+def create_rebalance_exit_signal(portfolio_id: str, ticker: str, market: str,
+                                  current_price: float, price_gbp: float,
+                                  signal_date: str, reason: str) -> Dict:
+    """Insert an exit_rebalance signal for a position not in top-5 momentum list.
+
+    Uses the existing signals table with non-applicable sizing fields set to 0/null.
+    The UNIQUE(portfolio_id, ticker, signal_date) constraint prevents duplicates.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO signals (
+                    portfolio_id, ticker, market, signal_date, rank,
+                    momentum_percent, current_price, price_gbp, atr_value,
+                    volatility, initial_stop, suggested_shares, allocation_gbp,
+                    total_cost, status, reason
+                ) VALUES (
+                    %s, %s, %s, %s, 0,
+                    0, %s, %s, 0,
+                    0, 0, 0, 0,
+                    0, 'exit_rebalance', %s
+                )
+                ON CONFLICT (portfolio_id, ticker, signal_date) DO UPDATE SET
+                    status = 'exit_rebalance',
+                    reason = EXCLUDED.reason,
+                    updated_at = NOW()
+                RETURNING *
+            """, (portfolio_id, ticker, market, signal_date,
+                  current_price, price_gbp, reason))
+            conn.commit()
+            return cur.fetchone()
+
+
+# ============================================================================
+# ST-05 (BLG-FEAT-49) — Risk-off exit alert column
+# ============================================================================
+
+def ensure_risk_off_exit_column():
+    """Add risk_off_exit boolean column to positions table (idempotent).
+
+    ST-05 (EPIC-01, v6.2) — BLG-FEAT-49. Per-position flag set by the nightly
+    risk-off alert job. Cleared automatically when the index recovers.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE positions ADD COLUMN IF NOT EXISTS risk_off_exit BOOLEAN NOT NULL DEFAULT FALSE"
+            )
+        conn.commit()
+
+
+def update_positions_risk_off_exit(position_id: str, risk_off_exit: bool) -> None:
+    """Set or clear the risk_off_exit flag for a single position."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "UPDATE positions SET risk_off_exit = %s WHERE id = %s",
+                (risk_off_exit, position_id)
+            )
+        conn.commit()
