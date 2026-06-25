@@ -10,6 +10,7 @@ import MarketStatusBar from "../components/signals/MarketStatusBar";
 import { Zap, RefreshCw, Filter, TrendingUp, DollarSign, Target } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
+import AiChatWidget from "../components/AiChatWidget";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -433,6 +434,8 @@ export default function SignalsPage() {
         </div>
       )}
 
+      {/* ST-09 (EPIC-02, v6.2): AI Trade Advisor — fixed floating widget, display-only advisory */}
+      <AiChatWidget />
     </div>
   );
 }

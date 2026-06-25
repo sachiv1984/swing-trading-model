@@ -42,6 +42,7 @@ import { createPageUrl } from "../utils";
 import MetricsStalenessIndicator from "../components/analytics/MetricsStalenessIndicator";
 import StrategyCompliancePanel from "../components/positions/StrategyCompliancePanel";
 import PaperAccountPanel from "../components/positions/PaperAccountPanel";
+import AiChatWidget from "../components/AiChatWidget";
 import { toast } from "sonner";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -925,6 +926,9 @@ export default function Positions() {
           onClose={() => setTrailStopPosition(null)}
         />
       )}
+
+      {/* ST-09 (EPIC-02, v6.2): AI Trade Advisor — fixed floating widget, display-only advisory */}
+      <AiChatWidget />
     </div>
   );
 }
