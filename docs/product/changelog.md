@@ -3,9 +3,35 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-23 (post-ship closure 2026-06-22__release-v6.1)
+**Last Updated:** 2026-06-25 (post-ship closure 2026-06-24__release-v6.2)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v6.2 — Production Strategy Parity & AI Intelligence — 2026-06-25
+Cycle: 2026-06-24__release-v6.2
+Verified: Verified
+Verification report: claude/cycles/2026-06-24__release-v6.2/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Production strategy parity cluster: nightly trailing stop computation with profit-lock ratchet (INITIAL_ATR_MULT=5, PROFIT_ATR_MULT=2, ATR_PERIOD=14); month-end rebalance exit signal generation (exit_rebalance status, last-trading-day detection, teal badge); inverse-volatility position sizing for signal-driven entries (weight_i = 1/ATR_i, [5–20%] cash constraints, re-normalised); risk-off exit alerts for open positions (SPY/FTSE MA200 regime check, per-market isolation) | docs/specs/api_contracts/position_endpoints.md#GET /positions; docs/specs/api_contracts/signal_endpoints.md#GET /signals; docs/specs/api_contracts/signal_endpoints.md#POST /signals/generate; docs/specs/frontend/pages/positions.md |
+| EPIC-02 | AI intelligence layer: POST /ai/daily-briefing (portfolio/signals/trailing-stops/regime/rebalance context assembly, claude-sonnet-4-6, advisory-only §13 SRB-v1.7 PASS); AiDailyBriefing.js dashboard card (summary, action list, Regenerate button, timestamp); POST /ai/chat (stateless conversational advisor grounded in live portfolio state); AiChatWidget.js on Positions page (canonical) and Signals page (stretch goal); advisory: true enforced in all AI responses | docs/specs/api_contracts/ai_endpoints.md#POST /ai/daily-briefing; docs/specs/api_contracts/ai_endpoints.md#POST /ai/chat; docs/specs/frontend/pages/dashboard.md; docs/specs/frontend/pages/positions.md |
+| EPIC-03 | Governance & QA debt: execution_prompt.md v3.47→v3.48 (BLG-GOV-135 autonomous class hard gate — blocks when src/components/** or src/pages/** modified; BLG-GOV-136 test_scenarios path validation advisory); api_performance_baseline.md v2.5→v2.6 §21 (GET /portfolio/sector-weights p50=287ms p95=356ms; GET /trade-plans/setup-quality-score p50=464ms p95=516ms — 20 live production samples; BLG-OPS-75); Playwright spec auto-registration via glob pattern (playwright.config.js testDir — BLG-QA-62; 12 dark specs excluded via testIgnore, BLG-QA-64 filed) | claude/system/execution_prompt.md v3.48; docs/ops/api_performance_baseline.md v2.6; playwright.config.js; tests/e2e/ |
+
+### Deviations accepted
+None — no spec deviations this sprint.
+
+### Tech backlog items shipped
+- [ST-10] BLG-GOV-135: execution_prompt autonomous class hard gate — v3.48 criterion blocks autonomous sign-off when any story modifies src/components/** or src/pages/**
+- [ST-11] BLG-GOV-136: execution_prompt test_scenarios path validation advisory — CI/test files only; docs/testing/ paths flagged as evidence artefacts, not scenario files
+- [ST-12] BLG-OPS-75: api_performance_baseline.md §21 — GET /portfolio/sector-weights and GET /trade-plans/setup-quality-score measured (20 live production samples each; p95 flag noted for setup-quality-score)
+- [ST-13] BLG-QA-62: Playwright spec auto-registration via glob pattern — eliminates manual registration step; 12 pre-existing dark specs excluded via testIgnore (BLG-QA-64 filed for resolution)
+
+Sign-off: Product Owner (agent-mediated — sachiv.patel@hotmail.co.uk) — 2026-06-25
+QA sign-off: Director of Quality (agent-mediated) — 2026-06-25
 
 ---
 

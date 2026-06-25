@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-25 (cycle 2026-06-24__release-v6.2 — 1 new item added: BLG-QA-64 dark spec remediation backlog from ST-13 glob discovery)
+**Last Updated:** 2026-06-25 (groom backlog — post-ship closure 2026-06-24__release-v6.2: 10 items archived to backlog_archive.md: BLG-FEAT-46/47/48/49/50/51, BLG-GOV-135/136, BLG-OPS-75, BLG-QA-62; v6.2 Release Slice removed; BLG-OPS-78 added; 109 active items)
 **Last rebalance:** 2026-06-24 (cycle 2026-06-24__scheduled — DL-056; 7 rejected, 4 backlog-gate-conditional, 8 parked C2; Now horizon v[TBD] confirmed; Product Value Alert (0.209) + Skill-Silo Alert (79.1%); STEP 8.0 P2 advisory BLG-BE-38)
 
 > ⚠️ Standing Notice
@@ -350,158 +350,6 @@ Monthly P&L shipped 2026-05-05 with a fixed column/section layout. After 3 month
 - Recommendations document produced (or "no change" decision recorded)
 - Any format changes flow into the next appropriate sprint as separate stories
 - Gate condition verified: ≥ 2026-08-05
-
----
-
-### BLG-FEAT-46 — Add nightly trailing stop computation for open positions
-**Priority:** P1 (High)
-**Type:** Product Feature / In-Trade Risk Management
-**Owner:** Product Owner
-**Source:** User request — production_strategy.py gap analysis — 2026-06-23
-**Effort:** M (~2 days)
-**Provisional-Target:** [TBD]
-
-**Problem**
-The live system records an `initial_stop` at signal entry but never updates it. The production strategy ratchets the stop daily using profit-lock logic: if the position is in profit, use `current_price − 2×ATR`; otherwise use `entry_price − 5×ATR`, and the stop can only ever move up. Without a nightly update, users have no signal of where their current stop should be and cannot tell if a position has already breached it.
-
-**Scope**
-- Nightly job that iterates all open positions, fetches current price + ATR for each ticker, and computes the updated trailing stop using profit-lock logic
-- Stop level stored per position and surfaced in the portfolio view alongside the original initial stop
-- Badge/alert displayed when current price ≤ computed trailing stop
-- Logic must match `production_strategy.py` exactly (profit-lock: `INITIAL_ATR_MULT=5`, `PROFIT_ATR_MULT=2`)
-
-**Acceptance Criteria**
-- Each open position displays a current trailing stop (not just the original initial stop)
-- Stop level is recalculated nightly; ratchet is enforced (stop only moves up)
-- A visible badge/alert is shown when `current_price ≤ trailing_stop`
-- Profit-lock logic is verified to match `production_strategy.py` backtest parameters
-
----
-
-### BLG-FEAT-47 — Add month-end rebalance exit signal generation
-**Priority:** P1 (High)
-**Type:** Product Feature / In-Trade Risk Management
-**Owner:** Product Owner
-**Source:** User request — production_strategy.py gap analysis — 2026-06-23
-**Effort:** M (~1.5 days)
-**Provisional-Target:** [TBD]
-
-**Problem**
-The production strategy exits any held position at month-end if it has dropped out of the top-5 momentum ranking. The live signal service has no equivalent: positions that fall out of top-5 are marked `already_held` indefinitely with no "you should sell this" signal. Rebalance exits are therefore completely invisible to the user, breaking parity with the backtest.
-
-**Scope**
-- On the last trading day of each calendar month, compute which open positions are NOT in the current top-5 momentum signal list
-- Generate a signal record with `status = exit_rebalance` for each such position
-- Surface these in the UI with distinct styling (separate from stop exits and risk-off exits)
-- Correct month-end date detection using last trading day (not last calendar day)
-
-**Acceptance Criteria**
-- `exit_rebalance` signals are generated on the last trading day of each month for positions no longer in top-5
-- Signals are clearly labelled in the UI as rebalance exits, visually distinct from stop exits
-- Month-end detection uses last trading day logic, not calendar month-end
-- No duplicate `exit_rebalance` signal is generated if the position is also crossing a stop
-
----
-
-### BLG-FEAT-48 — Implement inverse-volatility position sizing for signal-driven entries
-**Priority:** P1 (High)
-**Type:** Product Feature / Signal Generation
-**Owner:** Product Owner
-**Source:** User request — production_strategy.py gap analysis — 2026-06-23
-**Effort:** M (~2 days)
-**Provisional-Target:** [TBD]
-
-**Problem**
-The live system sizes new signal entries using a fixed-risk model (1% of portfolio value ÷ stop distance), which produces recurring £200 allocations and yields 0 shares for high-priced stocks such as SNDK at ~$2,274. The `production_strategy.py` backtest uses inverse-volatility weighting: each new slot gets a capital weight proportional to `1/ATR`, constrained to 5–20% of available cash and normalised across all new entries. The live sizing method is incompatible with the backtest and misrepresents expected position sizes.
-
-**Scope**
-- For each batch of new signals at a rebalance event, compute inv-vol weights across all new candidates: `weight_i = (1/ATR_i) / Σ(1/ATR_j)`
-- Constrain each weight to `[min_position_pct=5%, max_position_pct=20%]` of available cash, then re-normalise
-- Replace the fixed-risk sizing path in `sizing_service.py` for signal-driven entries with this model
-- Retain fixed-risk sizing path for manual (non-signal-driven) position entries
-
-**Acceptance Criteria**
-- New signal allocations use inv-vol weighting, not the fixed-risk £200 model
-- Weights are constrained to 5–20% of available cash and normalise to 100% across new slots
-- Manual position sizing (non-signal entries) continues to use fixed-risk path unchanged
-- Sizing output matches `production_strategy.py` backtest logic for equivalent inputs
-
----
-
-### BLG-FEAT-49 — Add risk-off exit alerts for existing positions
-**Priority:** P1 (High)
-**Type:** Product Feature / In-Trade Risk Management
-**Owner:** Product Owner
-**Source:** User request — production_strategy.py gap analysis — 2026-06-23
-**Effort:** S (~1 day)
-**Provisional-Target:** [TBD]
-
-**Problem**
-When SPY drops below its 200-day MA the production strategy exits ALL open US positions immediately, not just stops new entries. The same applies to UK positions when FTSE drops below its MA200. The live system currently only suppresses new entry signals during risk-off regimes; it does not generate exit alerts for existing holdings. Users holding live positions receive no warning when the regime flips.
-
-**Scope**
-- Nightly regime check: if `SPY < MA200`, flag all open US positions with a `risk_off_exit` alert; if `FTSE < MA200`, flag all open UK positions
-- Generate a visible per-position alert in the portfolio view distinct from stop and rebalance exit alerts
-- Alerts clear automatically when the regime returns to risk-on
-- Per-market logic: SPY governs US-listed positions, FTSE governs UK-listed positions
-
-**Acceptance Criteria**
-- `risk_off_exit` alerts appear for all affected positions within 24 hours of a regime flip
-- Alerts are visually distinct from trailing stop breaches and `exit_rebalance` signals
-- Alerts clear when the index recovers above MA200
-- Per-market logic is correct: a US risk-off event does not trigger alerts on UK positions and vice versa
-
----
-
-### BLG-FEAT-50 — Build AI daily briefing endpoint and dashboard panel
-**Priority:** P2 (Medium)
-**Type:** Product Feature / AI Intelligence
-**Owner:** Product Owner
-**Source:** User request — production_strategy.py gap analysis — 2026-06-23
-**Effort:** M (~2 days)
-**Provisional-Target:** [TBD]
-**Depends on:** BLG-FEAT-46 (trailing stop data), BLG-FEAT-47 (rebalance exit signals), BLG-FEAT-49 (risk-off alerts)
-
-**Problem**
-The system has all the data required to tell the user what to do each day, but no mechanism to synthesise it into a plain-English action plan. The existing `ai_service.py` is limited to journal note summarisation. Users must manually interpret signals, trailing stops, regime status, and the rebalance calendar across multiple screens — a cognitive load that defeats the purpose of having a systematic strategy.
-
-**Scope**
-- `POST /ai/daily-briefing` endpoint: assembles current portfolio state, today's top-5 signals, per-position trailing stops, regime status, and whether today is a rebalance date; submits to Claude (`claude-sonnet-4-6`) and returns a structured action plan
-- Response format: summary paragraph + ordered action list (e.g. "Exit DELL — rebalance exit", "Hold MU — trailing stop at $1,039", "No new entries today — not a rebalance date")
-- "Today's Briefing" card on the dashboard, generated on demand with a visible timestamp
-- AI output is display-only and clearly labelled advisory — all actions require human confirmation (§13 compliant)
-
-**Acceptance Criteria**
-- `/ai/daily-briefing` returns a structured action plan in < 10s
-- Plan covers: regime status, trailing stop alerts, rebalance exits, new entry signals (if month-end), stop breach alerts
-- Dashboard card displays the briefing with a timestamp and a "Regenerate" button
-- Output is clearly labelled as AI advisory; no action is taken without explicit user confirmation
-
----
-
-### BLG-FEAT-51 — Build conversational AI trade advisor
-**Priority:** P2 (Medium)
-**Type:** Product Feature / AI Intelligence
-**Owner:** Product Owner
-**Source:** User request — production_strategy.py gap analysis — 2026-06-23
-**Effort:** M (~2 days)
-**Provisional-Target:** [TBD]
-**Depends on:** BLG-FEAT-50 (AI daily briefing — shared context assembly pattern)
-
-**Problem**
-Users need to ask ad-hoc questions about specific signals or positions ("should I buy SNDK today?", "what is my current trailing stop on MU?", "is the market risk-on?") without navigating multiple screens. The existing `ai_service.py` has no portfolio-context injection and cannot answer strategy-grounded questions. A conversational interface that receives full live portfolio and signal context at query time would provide immediate, relevant answers within the strategy rules.
-
-**Scope**
-- `POST /ai/chat` endpoint: accepts a user question and optional context (ticker, position_id); loads full portfolio + signal state; calls Claude with a system prompt embedding the strategy rules; returns a direct, strategy-grounded answer
-- Frontend chat widget on the signals or portfolio page
-- Conversation is stateless per request (each question receives full injected context; no session memory)
-- AI output is advisory only; the interface cannot execute or confirm trades (§13 compliant)
-
-**Acceptance Criteria**
-- `/ai/chat` answers questions about current signals, open positions, trailing stops, and regime status
-- Responses are grounded in live portfolio state (not generic strategy descriptions)
-- Response time < 15s
-- Interface is clearly labelled as AI advisory; no trade action is taken from the chat widget
 
 ---
 
@@ -2652,6 +2500,29 @@ Arc 4 (PO-02/03/04) will introduce cross-table queries joining trade_plans, red_
 
 ---
 
+### BLG-BE-39 — Fix AI journal summary on Trade History tab
+**Priority:** P1 (High)
+**Type:** Backend Engineering / Bug
+**Owner:** Head of Backend Engineering
+**Source:** User-reported — 2026-06-25
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.2
+
+**Problem**
+The AI journal summary feature on the Trade History tab does not work. Users expect an AI-generated summary of their journal notes for a given trade, but the feature is non-functional. This may be a broken endpoint, a failed Claude API call, a missing API key, or a silent error in ai_service.py's journal summarisation path.
+
+**Scope**
+- Reproduce and diagnose the failure in the AI journal summary endpoint
+- Fix the root cause (endpoint error, AI service config, prompt construction, or response parsing)
+- Confirm the summary generates and displays correctly on the Trade History tab
+
+**Acceptance Criteria**
+- AI journal summary generates successfully for trades with journal notes on the Trade History tab
+- Error states are surfaced clearly to the user rather than silently failing
+- No regression to other ai_service.py functionality
+
+---
+
 ### BLG-GOV-134 — CI: inline OpenAPI drift detection for api_performance_baseline.md
 **Priority:** P2 (Medium)
 **Type:** Governance Process / CI
@@ -2672,77 +2543,6 @@ BLG-OPS-73 (PATCH /trades/{trade_id}/costs missing from api_performance_baseline
 - CI workflow step runs on PRs that modify `openapi.yaml` or `api_performance_baseline.md`
 - Step outputs a diff list of endpoints present in openapi.yaml but absent from baseline
 - Advisory only — does not fail the CI run
-
----
-
-### BLG-GOV-135 — execution_prompt: hard gate on autonomous class sign-off for EPICs with frontend-visible changes
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** Delivery verification 2026-06-22__release-v6.1 — Phase 4 lessons learnt friction item 1 (recurrence of BLG-GOV-19 misapplication pattern); Phase 4 filed 2026-06-23
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v6.2
-
-**Problem**
-In v6.1, the Sprint Execution Engine applied autonomous class sign-off (BLG-GOV-19) to EPIC-03 and EPIC-04 despite both introducing frontend-visible changes (SectorHeatMap.js, GateProgressStrip.js, SetupQualityScorePanel.js). Criterion 3 of BLG-GOV-19 ("no frontend-visible change") was interpreted as satisfied by Playwright coverage — but the criterion is binary and entirely independent of test coverage. A template advisory was added in v3.7 (qa_evidence_template.md v1.1) but proved insufficient. Delivery verification required retrospective DoQ counter-sign.
-
-**Scope**
-- Add a pre-PR-open check in `execution_prompt.md §3.2.A` (or §3.2.B) that scans all stories in the EPIC for frontend-visible changes (new React components, new pages, modified UI rendering logic)
-- If any story introduces frontend-visible changes: skip autonomous class path entirely; require Director of Quality sign-off block
-- Update the autonomous class eligibility note to state: "If any story in this EPIC creates or modifies a `.js` file in `src/components/` or `src/pages/`, autonomous class is unavailable regardless of Playwright coverage"
-
-**Acceptance Criteria**
-- AC-01: execution_prompt.md §3.2.A updated with explicit frontend-visible change detection rule
-- AC-02: Rule blocks autonomous class path when any story creates/modifies `src/components/**` or `src/pages/**`
-- AC-03: Prompt version bumped; OPERATIONAL_GUIDE.md §14 and prompt_change_log.md updated per CLAUDE.md §6
-- AC-04: qa_evidence_template.md criterion 3 advisory updated to reference the new rule
-
----
-
-### BLG-GOV-136 — execution_prompt STEP 12: validate test_scenarios paths reference current cycle
-**Priority:** P3 (Low)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** Delivery verification 2026-06-22__release-v6.1 — Phase 4 lessons learnt friction item 2; Phase 4 filed 2026-06-23
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v6.2
-
-**Problem**
-In v6.1, `execution_state.json` for EPIC-03 had `test_scenarios` referencing two staging test scripts from prior cycles (v2.3 and v2.5) — neither covering v6.1 stories (ST-06 sector heatmap, ST-07 gate proximity). The actual Playwright E2E specs (sector-heatmap.spec.js, gate-progress.spec.js) were not registered in `test_scenarios`. The coverage gap was detected at delivery verification via QA evidence cross-check — actual coverage was complete. No quality impact, but the metadata error added noise to the Phase 4 test coverage assessment.
-
-**Scope**
-- Add a validation note in `execution_prompt.md §3.2.A` (test_scenarios population) that test file paths must be in `tests/` or `tests/e2e/` and must correspond to test files created or used in the current sprint
-- Flag staging visual test scripts (`docs/testing/staging_visual_test_script_*.md`) as NOT valid entries for test_scenarios; those are evidence records, not test scenario files
-- Consider adding an advisory: "Only include files under tests/ or tests/e2e/ — docs/testing/ paths are QA evidence artefacts, not scenario files"
-
-**Acceptance Criteria**
-- AC-01: execution_prompt.md §3.2.A updated with test_scenarios path validation advisory
-- AC-02: Prompt version bumped; OPERATIONAL_GUIDE.md §14 and prompt_change_log.md updated per CLAUDE.md §6
-
----
-
-### BLG-QA-62 — Playwright spec auto-registration via glob pattern in playwright.yml
-**Priority:** P2 (Medium)
-**Type:** QA / Test Coverage
-**Owner:** Director of Quality; Head of Frontend Engineering
-**Source:** IW-20260622-01 (IDEA-director-of-quality-20260622-01) — Promoted-Backlog STEP 4; rebalance 2026-06-22__scheduled
-**Effort:** S (<0.5 day)
-**Provisional-Target:** v6.1
-
-**Problem**
-BLG-QA-60 (morning-briefing.spec.js and screener-quality.spec.js unregistered in playwright.yml) exists because spec registration is manual. The root cause is an explicit file list in playwright.yml — each new spec file requires a deliberate registration step that is easily missed, as demonstrated by v6.0.
-
-**Scope**
-- Replace the explicit spec file list in playwright.yml with a glob pattern (e.g., `tests/e2e/**/*.spec.js`)
-- CI automatically discovers and runs all spec files without manual registration
-- May be implemented in the same sprint as or after BLG-QA-60
-
-**Note:** BLG-QA-62 is the structural (root-cause) fix; BLG-QA-60 is the immediate fix for two specific missing registrations. Both may coexist: implement BLG-QA-60 first if BLG-QA-62 requires more validation time.
-
-**Acceptance Criteria**
-- playwright.yml uses glob pattern for spec file discovery
-- All existing spec files continue to run in CI (no regression)
-- New spec files added to `tests/e2e/` are automatically included in CI without manual registration
 
 ---
 
@@ -2829,29 +2629,6 @@ The Trader Morning Briefing (BLG-FEAT-46, shipped v6.0) calls the Claude API eac
 
 ---
 
-### BLG-OPS-75 — Add GET /portfolio/sector-weights and GET /trade-plans/setup-quality-score to api_performance_baseline.md
-**Priority:** P3 (Low)
-**Type:** Operations / Performance Baseline
-**Owner:** Infrastructure & Operations Owner
-**Source:** Post-ship closure 2026-06-22__release-v6.1 — endpoint coverage drift check detected 2 new v6.1 endpoints absent from api_performance_baseline.md
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v6.2
-
-**Problem**
-`GET /portfolio/sector-weights` (shipped EPIC-03 ST-06, BLG-FE-76) and `GET /trade-plans/setup-quality-score` (shipped EPIC-04 ST-08, BLG-FEAT-25) are present in `docs/reference/openapi.yaml` but have no performance baseline entries in `docs/ops/api_performance_baseline.md`. Endpoint coverage drift — measurement gap for 2 new v6.1 endpoints.
-
-**Scope**
-- Measure GET /portfolio/sector-weights p50/p95 latency using the standard §19 methodology
-- Measure GET /trade-plans/setup-quality-score p50/p95 latency
-- Add both measurement rows to `docs/ops/api_performance_baseline.md`
-
-**Acceptance Criteria**
-- GET /portfolio/sector-weights entry added with p50, p95, and measurement date
-- GET /trade-plans/setup-quality-score entry added with p50, p95, and measurement date
-- Measurements taken from Render internal logs or live test
-
----
-
 ### BLG-OPS-76 — Enhanced health check with external dependency verification
 **Priority:** P3 (Low)
 **Type:** Operations / Observability
@@ -2901,6 +2678,29 @@ All market data (OHLCV, signals, news) is sourced exclusively from Alpaca and Ya
 
 ---
 
+### BLG-OPS-78 — Measure live latency for POST /ai/daily-briefing and POST /ai/chat
+**Priority:** P3 (Low)
+**Type:** Operations / Performance Baseline
+**Owner:** Infrastructure & Operations Owner
+**Source:** Post-ship closure 2026-06-24__release-v6.2 — endpoint drift advisory; api_performance_baseline.md §22.3 timing run deferred
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v6.3
+
+**Problem**
+`POST /ai/daily-briefing` and `POST /ai/chat` were registered in api_performance_baseline.md §22 during v6.2 with estimated latency characteristics (AI inference, claude-sonnet-4-6). Actual timing measurements were deferred until post-deployment to production. Without live p50/p95 measurements, the regression threshold from §22.2 ("p95 > 2× measured p95 triggers a review") cannot be established.
+
+**Scope**
+- Run minimum 5 authenticated warm requests against production for each endpoint
+- Record p50/p95 using standard §19 methodology
+- Update api_performance_baseline.md §22.3 with actual measurements
+- Establish regression threshold: p95 > 2× measured p95
+
+**Acceptance Criteria**
+- AC-01: api_performance_baseline.md §22.3 populated with actual p50/p95 for both endpoints
+- AC-02: Regression threshold documented per §22.2 formula
+
+---
+
 ### BLG-FE-77 — Refactor `Watchlist.js` to ESLint compliance
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
@@ -2923,6 +2723,29 @@ All market data (OHLCV, signals, news) is sourced exclusively from Alpaca and Ya
 - All extracted sub-components also pass ESLint clean
 - Watchlist page renders and behaves identically to pre-refactor (no functional regression)
 - Playwright E2E watchlist specs continue to pass
+
+---
+
+### BLG-FE-79 — Fix R-multiple not displaying on Reflection page
+**Priority:** P1 (High)
+**Type:** Frontend / Bug
+**Owner:** Base44 Frontend Prompt Owner; Head of Backend Engineering
+**Source:** User-reported — 2026-06-25
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.2
+
+**Problem**
+The Reflection page shows a dash ("—") for the R-multiple column across all tickers, rather than a calculated value. R-multiple is a core trade evaluation metric; its absence makes the Reflection page unreliable for post-trade review. The root cause may be either the backend not computing/returning the field, or the frontend not reading it correctly.
+
+**Scope**
+- Identify whether R-multiple is absent from the API response or null in the database
+- Fix calculation or field mapping at the source (backend service or frontend display logic)
+- Verify R-multiple renders correctly for all closed tickers on the Reflection page
+
+**Acceptance Criteria**
+- R-multiple is displayed as a numeric value for all closed trades with sufficient data on the Reflection page
+- Trades with insufficient data (no stop loss recorded) show a clearly labelled "N/A" rather than a silent dash
+- No regression to other Reflection page columns
 
 ---
 
@@ -2979,26 +2802,4 @@ All market data (OHLCV, signals, news) is sourced exclusively from Alpaca and Ya
 
 ---
 
-<!-- release-plan-marker: RP:v6.2:2026-06-24__release-v6.2 -->
-
-## Release Slice — v6.2 (2026-06-24__release-v6.2)
-
-*This section is ephemeral and will be removed at the next `groom backlog` run after v6.2 closes.*
-
-| ST-ID | EPIC | Description | BLG Source |
-|-------|------|-------------|-----------|
-| ST-01 | EPIC-01 | Nightly trailing stop computation — backend | BLG-FEAT-46 |
-| ST-02 | EPIC-01 | Trailing stop display + breach badge — frontend | BLG-FEAT-46 |
-| ST-03 | EPIC-01 | Month-end rebalance exit signal generation | BLG-FEAT-47 |
-| ST-04 | EPIC-01 | Inverse-volatility position sizing — backend | BLG-FEAT-48 |
-| ST-05 | EPIC-01 | Risk-off exit alerts for existing positions | BLG-FEAT-49 |
-| ST-06 | EPIC-02 | AI daily briefing — backend endpoint | BLG-FEAT-50 |
-| ST-07 | EPIC-02 | AI Daily Briefing card — frontend | BLG-FEAT-50 |
-| ST-08 | EPIC-02 | Conversational AI trade advisor — backend | BLG-FEAT-51 |
-| ST-09 | EPIC-02 | AI chat widget — frontend | BLG-FEAT-51 |
-| ST-10 | EPIC-03 | execution_prompt autonomous class hard gate | BLG-GOV-135 |
-| ST-11 | EPIC-03 | execution_prompt test_scenarios path validation | BLG-GOV-136 |
-| ST-12 | EPIC-03 | api_performance_baseline.md 2 new endpoints | BLG-OPS-75 |
-| ST-13 | EPIC-03 | Playwright glob auto-registration | BLG-QA-62 |
-
-*Canonical home: claude/cycles/2026-06-24__release-v6.2/stage4_backlog_slice.md*
+*Release Slice v6.2 removed — cycle 2026-06-24__release-v6.2 closed 2026-06-25. Archived canonical home: claude/cycles/2026-06-24__release-v6.2/stage4_backlog_slice.md*

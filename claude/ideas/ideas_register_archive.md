@@ -1,11 +1,30 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-18
+**Last Updated:** 2026-06-25
 
 # Ideas Register Archive — Momentum Trading Assistant
 
 Permanent record of terminal ideas rows retired from `claude/ideas/ideas_register.md`. Append-only — do not edit existing entries.
+
+---
+
+## Archived 2026-06-25 (ideas_housekeeping — post-ship closure 2026-06-24__release-v6.2)
+
+*Terminal classification: Promoted-Backlog/Backlog-gate-conditional (lifecycle complete; backlog item tracks from here), Rejected-hard-cap (evaluated and closed per §6.1), Rejected-gate-condition-re-eval (gate no longer viable per §6.1), Rejected-intent-fulfilled (scope delivered per §6.1). Note: IDEA-pmo-lead-20260619-02 (Sprint Velocity Trend Chart — Rejected hard-cap) is NOT archived here; it appears in `rejected_but_strong.md` per §6.2 and must be retained until revival conditions are assessed.*
+
+| Idea ID | Title | Submitter | Window | Submitted At | Status | Park Count | Park Rationale | Step 4 | Step 5 |
+|---------|-------|-----------|--------|--------------|--------|------------|----------------|--------|--------|
+| IDEA-product-owner-20260619-02 | Trade tagging and tag-based performance filtering | Product Owner | IW-20260619-01 | 2026-06-19 | Promoted-Backlog | 1 | gate: Arc 4 PO-02 sprint planning imminent — tag data model provides complementary structure for cross-trade pattern analysis | Backlog-gate-conditional (BLG-FEAT-52) | — |
+| IDEA-pmo-lead-20260619-01 | Governance automation for post-ship closure recurring checks | PMO Lead | IW-20260619-01 | 2026-06-19 | Rejected | 3 | Hard cap — automation adds overhead without proportional value at current governance volume; manual review adequate | ❌ Rejected (not strong) | — |
+| IDEA-director-of-quality-20260619-02 | Automated accessibility testing (axe-core) in Playwright CI | Director of Quality | IW-20260619-01 | 2026-06-19 | Promoted-Backlog | 1 | gate: Arc 5 fully complete (all SI features shipped) — accessibility testing added after frontend feature set stabilises | Backlog-gate-conditional (BLG-QA-63) | — |
+| IDEA-strategy-owner-20260619-02 | Strategy parameter annual review schedule formalisation | Strategy Rules & System Intent Owner | IW-20260619-01 | 2026-06-19 | Rejected | 3 | Hard cap — scope fully covered by BLG-GOV-122 (strategy_rules.md §11 parameter annual review) and BLG-GOV-95 (strategy_rules.md annual parameter review schedule); no independent scope remains | ❌ Rejected (not strong) | — |
+| IDEA-finops-20260619-02 | Alpaca API cost optimisation assessment | FinOps & Resource Architect | IW-20260619-01 | 2026-06-19 | Rejected | 3 | Hard cap — BLG-OPS-17 (Alpaca API cost monitoring, COMPLETE v5.6) and BLG-OPS-65 (cost trend analysis) address cost optimization; no independent scope remains | ❌ Rejected (not strong) | — |
+| IDEA-infra-ops-20260619-02 | Enhanced health check with external dependency verification | Infrastructure & Operations Owner | IW-20260619-01 | 2026-06-19 | Promoted-Backlog | 1 | gate: BLG-OPS-25 (automated staging smoke test) complete AND ≥3 external dependency failures observed in production logs | Backlog-gate-conditional (BLG-OPS-76) | — |
+| IDEA-challenger-20260619-01 | Data provider diversity risk assessment and failover strategy | Challenger | IW-20260619-01 | 2026-06-19 | Promoted-Backlog | 1 | gate: ≥2 data provider outage incidents observed in production OR Arc 4 sprint planning imminent | Backlog-gate-conditional (BLG-OPS-77) | — |
+| IDEA-strategy-owner-20260622-01 | Production strategy position sizing UI cross-reference | Strategy Rules & System Intent Owner | IW-20260622-01 | 2026-06-22 | Rejected | 1 | Gate-condition re-eval: PT-04 (Setup Quality Score) shipped; scope subsumed by BLG-FE-78 (setup quality score panel) and BLG-FEAT-50 (AI daily briefing sizing context); no residual scope | ❌ Rejected (not strong) | — |
+| IDEA-strategy-owner-20260622-02 | SI-05 Phase 1 effectiveness review outcome summary | Strategy Rules & System Intent Owner | IW-20260622-01 | 2026-06-22 | Rejected | 1 | Intent fulfilled: BLG-GOV-112 (SI-05 Phase 1 effectiveness review) completed in v6.0; review outcome documented; no further action required | ❌ Rejected (not strong) | — |
+| IDEA-challenger-20260622-02 | Setup Quality Score threshold calibration challenge | Challenger | IW-20260622-01 | 2026-06-22 | Rejected | 1 | Gate-condition re-eval: PT-04 shipped under count-based gate (≥20 closed trades); threshold question resolved at implementation; no open calibration question remains | ❌ Rejected (not strong) | — |
 
 ---
 

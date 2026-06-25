@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-06-23 (post-ship closure 2026-06-22__release-v6.1; §29 v6.1 test coverage gaps added — all 4 TSGs not_applicable; no backlog items created)
+**Last Updated:** 2026-06-25 (post-ship closure 2026-06-24__release-v6.2; §30 v6.2 test coverage gaps added — all 3 EPICs not_applicable/no gaps; TSG-v60-01 remains Open)
 
 ---
 
@@ -751,6 +751,24 @@ Identified during delivery verification (verification_report.md §6 — TSG-v61-
 | TSG-v61-04 | EPIC-04 | Setup Quality Score frontend (SC-SQS-01..06) | not_applicable — full Playwright coverage delivered in sprint (6 scenarios); no residual gap |
 
 No open TSG items for v6.1. All observable ACs have Playwright coverage confirmed in CI.
+
+---
+
+## 30. Test Coverage Gaps — v6.2 (2026-06-24__release-v6.2)
+
+Identified during delivery verification (verification_report.md §6 — no gap items). No backlog items required.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| — | EPIC-01 | Trailing stop display, breach badge, rebalance exit label, risk-off alert (16 E2E scenarios in epic01-v62-stops-alerts.spec.js @ 534b137f) | not_applicable — full Playwright coverage confirmed in CI |
+| — | EPIC-02 | AI daily briefing card, AI chat widget (9 Playwright scenarios SC-AB-01..04, SC-AC-01..05 in epic02-v62-ai-briefing-chat.spec.js) | not_applicable — full Playwright coverage confirmed in CI |
+| — | EPIC-03 | execution_prompt governance changes, api_performance_baseline ops doc, playwright.config.js CI change | not_applicable — autonomous/governance/CI class; no frontend-visible ACs |
+
+No open TSG items for v6.2. All observable ACs have Playwright coverage confirmed in CI (EPIC-01, EPIC-02). EPIC-03 not_applicable (autonomous/CI class).
+
+**TSG backlog reconciliation (§7.3):**
+- TSG-v60-01 (BLG-QA-61): signals_scenarios.md review — **remains Open** — BLG-QA-61 not resolved in v6.2 sprint; no resolution action taken.
+- All other open TSG entries checked; no v6.2 stories close any outstanding TSG items.
 
 ---
 

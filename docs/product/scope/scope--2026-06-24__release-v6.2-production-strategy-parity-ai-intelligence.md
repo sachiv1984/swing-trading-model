@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v6.2
 Cycle: 2026-06-24__release-v6.2
-Last Updated: 2026-06-24
+Last Updated: 2026-06-25
+
+Superseded by: v6.2 ship — 2026-06-25
+Changelog: docs/product/changelog.md#v6.2
+Verification report: claude/cycles/2026-06-24__release-v6.2/verification_report.md
+Cycle: 2026-06-24__release-v6.2
 
 ## Release Scope — v6.2 Production Strategy Parity & AI Intelligence
 

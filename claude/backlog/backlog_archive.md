@@ -1,11 +1,181 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-23 (groom backlog post-ship closure 2026-06-22__release-v6.1 — 8 items archived)
+**Last Updated:** 2026-06-25 (groom backlog post-ship closure 2026-06-24__release-v6.2 — 10 items archived)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-FEAT-46 — Add nightly trailing stop computation for open positions
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-06-25
+**Shipped in:** v6.2 (ST-01/ST-02, cycle: 2026-06-24__release-v6.2)
+**Evidence:** docs/product/changelog.md — v6.2; claude/cycles/2026-06-24__release-v6.2/verification_report.md
+
+**Type:** Product Feature / In-Trade Risk Management
+**Owner:** Product Owner
+**Source:** User request — production_strategy.py gap analysis — 2026-06-23
+**Effort:** M (~2 days)
+
+Nightly trailing stop computation for open positions using profit-lock ratchet logic (INITIAL_ATR_MULT=5, PROFIT_ATR_MULT=2, ATR_PERIOD=14). Stop level stored per position; breach badge displayed when current_price ≤ trailing_stop. Stop ratchet is enforced (stop only moves up).
+
+---
+
+### BLG-FEAT-47 — Add month-end rebalance exit signal generation
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-06-25
+**Shipped in:** v6.2 (ST-03, cycle: 2026-06-24__release-v6.2)
+**Evidence:** docs/product/changelog.md — v6.2; claude/cycles/2026-06-24__release-v6.2/verification_report.md
+
+**Type:** Product Feature / In-Trade Risk Management
+**Owner:** Product Owner
+**Source:** User request — production_strategy.py gap analysis — 2026-06-23
+**Effort:** M (~1.5 days)
+
+Month-end rebalance exit signal generation: exit_rebalance status for positions dropping out of top-5 momentum ranking on last trading day of each month. Teal badge in UI, distinct from stop exits and risk-off exits.
+
+---
+
+### BLG-FEAT-48 — Implement inverse-volatility position sizing for signal-driven entries
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-06-25
+**Shipped in:** v6.2 (ST-04, cycle: 2026-06-24__release-v6.2)
+**Evidence:** docs/product/changelog.md — v6.2; claude/cycles/2026-06-24__release-v6.2/verification_report.md
+
+**Type:** Product Feature / Signal Generation
+**Owner:** Product Owner
+**Source:** User request — production_strategy.py gap analysis — 2026-06-23
+**Effort:** M (~2 days)
+
+Inverse-volatility position sizing for signal-driven entries: weight_i = (1/ATR_i) / Σ(1/ATR_j), constrained to [5%–20%] of available cash, re-normalised. Replaces fixed-risk sizing path for signal-driven entries; manual entries unchanged.
+
+---
+
+### BLG-FEAT-49 — Add risk-off exit alerts for existing positions
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-06-25
+**Shipped in:** v6.2 (ST-05, cycle: 2026-06-24__release-v6.2)
+**Evidence:** docs/product/changelog.md — v6.2; claude/cycles/2026-06-24__release-v6.2/verification_report.md
+
+**Type:** Product Feature / In-Trade Risk Management
+**Owner:** Product Owner
+**Source:** User request — production_strategy.py gap analysis — 2026-06-23
+**Effort:** S (~1 day)
+
+Risk-off exit alerts for existing positions: nightly regime check, SPY/FTSE MA200, per-market isolation (US/UK). risk_off_exit alert per position when regime flips; clears automatically when regime returns to risk-on.
+
+---
+
+### BLG-FEAT-50 — Build AI daily briefing endpoint and dashboard panel
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-25
+**Shipped in:** v6.2 (ST-06/ST-07, cycle: 2026-06-24__release-v6.2)
+**Evidence:** docs/product/changelog.md — v6.2; claude/cycles/2026-06-24__release-v6.2/verification_report.md
+
+**Type:** Product Feature / AI Intelligence
+**Owner:** Product Owner
+**Source:** User request — production_strategy.py gap analysis — 2026-06-23
+**Effort:** M (~2 days)
+
+POST /ai/daily-briefing: assembles portfolio/signals/trailing-stops/regime/rebalance context, calls claude-sonnet-4-6, returns structured action plan. AiDailyBriefing.js dashboard card with summary, action list, Regenerate button, timestamp. Advisory-only §13 SRB-v1.7 PASS.
+
+---
+
+### BLG-FEAT-51 — Build conversational AI trade advisor
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-25
+**Shipped in:** v6.2 (ST-08/ST-09, cycle: 2026-06-24__release-v6.2)
+**Evidence:** docs/product/changelog.md — v6.2; claude/cycles/2026-06-24__release-v6.2/verification_report.md
+
+**Type:** Product Feature / AI Intelligence
+**Owner:** Product Owner
+**Source:** User request — production_strategy.py gap analysis — 2026-06-23
+**Effort:** M (~2 days)
+
+POST /ai/chat: stateless conversational advisor, accepts {question, context?}, loads full portfolio + signal state, calls claude-sonnet-4-6. AiChatWidget.js on Positions page (canonical) and Signals page (stretch). Advisory-only §13 SRB-v1.7 PASS.
+
+---
+
+### BLG-GOV-135 — execution_prompt: hard gate on autonomous class sign-off for EPICs with frontend-visible changes
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-25
+**Shipped in:** v6.2 (ST-10, cycle: 2026-06-24__release-v6.2)
+**Evidence:** docs/product/changelog.md — v6.2; claude/cycles/2026-06-24__release-v6.2/verification_report.md
+
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Delivery verification 2026-06-22__release-v6.1 — Phase 4 lessons learnt friction item 1
+**Effort:** XS (<1 hour)
+
+execution_prompt.md v3.47→v3.48: criterion 3 updated — autonomous class blocked when any story creates/modifies src/components/** or src/pages/**. qa_evidence_template.md criterion 3 advisory updated with detection rule cross-reference.
+
+---
+
+### BLG-GOV-136 — execution_prompt STEP 12: validate test_scenarios paths reference current cycle
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-06-25
+**Shipped in:** v6.2 (ST-11, cycle: 2026-06-24__release-v6.2)
+**Evidence:** docs/product/changelog.md — v6.2; claude/cycles/2026-06-24__release-v6.2/verification_report.md
+
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Delivery verification 2026-06-22__release-v6.1 — Phase 4 lessons learnt friction item 2
+**Effort:** XS (<1 hour)
+
+execution_prompt.md STEP 0 instruction 6: advisory added — test_scenarios must reference tests/ or tests/e2e/ paths only; docs/testing/ paths flagged as evidence artefacts not scenario files.
+
+---
+
+### BLG-QA-62 — Playwright spec auto-registration via glob pattern in playwright.yml
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-25
+**Shipped in:** v6.2 (ST-13, cycle: 2026-06-24__release-v6.2)
+**Evidence:** docs/product/changelog.md — v6.2; claude/cycles/2026-06-24__release-v6.2/verification_report.md
+
+**Type:** QA / Test Coverage
+**Owner:** Director of Quality; Head of Frontend Engineering
+**Source:** IW-20260622-01 — Promoted-Backlog; rebalance 2026-06-22__scheduled
+**Effort:** S (<0.5 day)
+
+Replaced explicit spec file list in playwright.yml with npx playwright test (auto-discovery via playwright.config.js testDir). 12 pre-existing dark specs excluded via testIgnore (BLG-QA-64 filed). All 27 old-explicit-list specs pass in CI; 9 additional dark specs now run and pass.
+
+---
+
+### BLG-OPS-75 — Add GET /portfolio/sector-weights and GET /trade-plans/setup-quality-score to api_performance_baseline.md
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-06-25
+**Shipped in:** v6.2 (ST-12, cycle: 2026-06-24__release-v6.2)
+**Evidence:** docs/product/changelog.md — v6.2; claude/cycles/2026-06-24__release-v6.2/verification_report.md
+
+**Type:** Operations / Performance Baseline
+**Owner:** Infrastructure & Operations Owner
+**Source:** Post-ship closure 2026-06-22__release-v6.1 — endpoint drift advisory
+**Effort:** XS (<1 hour)
+
+api_performance_baseline.md v2.5→v2.6 §21: GET /portfolio/sector-weights p50=287ms p95=356ms; GET /trade-plans/setup-quality-score p50=464ms p95=516ms. 20 live production samples each. ⚠ p95=516ms for setup-quality-score noted, within acceptable range.
 
 ---
 

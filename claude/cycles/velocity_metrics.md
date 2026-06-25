@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-06-22 (post-ship closure 2026-06-19__release-v6.0)
+**Last Updated:** 2026-06-25 (post-ship closure 2026-06-24__release-v6.2)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -69,8 +69,9 @@
 | v5.9  | 11      | 11        | 1.00     | All 11 stories done; zero deviations; EPIC-01 5 governance simplification stories (autonomous class); EPIC-02 6 QA/audit/UX stories; ST-11 frontend badge with Playwright SC-PEP-BADGE-01a/01b/02 coverage; 0 delegations; 0 deviations; 0 returns |
 | v6.0  | 11      | 11        | 1.00     | All 11 stories done; 2 P3 process deviations for ST-11 (accepted under PO gate override 2026-06-20); 5 delegated_decision stories all resolved within sprint; P0 correctness fast-track (ST-01 BLG-BE-36) + Product Value Alert resolved (ST-02/03); all EPIC-04 conditional clusters (A: 2026-06-21, B: 2026-07-04) activated and completed; Verified_with_deviations |
 | v6.1  | 9       | 9         | 1.00     | All 9 stories done; zero deviations; autonomous class sign-off misapplication (EPIC-03/04) retrospective DoQ counter-sign applied at verification; PT-04 gate cleared at sprint planning (15 trades confirmed); BLG-GOV-135/136 filed for v6.2 governance hardening; 0 returns; 0 delegations |
+| v6.2  | 13      | 13        | 1.00     | All 13 stories done; zero deviations; full delivery of both Sprint 1 (EPIC-01: production strategy parity cluster — trailing stops, rebalance exits, inv-vol sizing, risk-off alerts) and Sprint 2 (EPIC-02: AI intelligence layer — daily briefing, chat advisor); EPIC-03 governance/QA debt closed (BLG-GOV-135/136, BLG-OPS-75, BLG-QA-62); §13 SRB-v1.7 advisory-only compliance confirmed; BLG-QA-64 filed (12 dark specs); Verified |
 
-**Rolling 6-cycle average (v5.6–v6.1):** 0.83
+**Rolling 6-cycle average (v5.7–v6.2):** 0.83
 
 ---
 

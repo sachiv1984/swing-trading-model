@@ -2,7 +2,7 @@
 **Class:** Planning Document (Class 4)
 **Status:** Active
 **Version:** 2.0
-**Last Updated:** 2026-06-24 (rebalance 2026-06-24__scheduled — 8 terminal hard-cap ideas disposed (4 Rejected, 4 Backlog-gate-conditional); 3 Parked-cycle-1 ideas Rejected (2 gate-condition re-eval, 1 intent fulfilled); 8 Parked-cycle-1 → Parked-cycle-2; 8 rows remain)
+**Last Updated:** 2026-06-25 (ideas_housekeeping — post-ship closure 2026-06-24__release-v6.2: 10 terminal rows archived; 8 active rows remain; IDEA-pmo-lead-20260619-02 retained in rejected_but_strong.md)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # Ideas Register
@@ -21,17 +21,3 @@ Schema: per `shared_standards.md §16.5`
 | IDEA-infra-ops-20260622-01 | Background scheduler health monitoring endpoint | Infrastructure & Operations Owner | IW-20260622-01 | 2026-06-22 | Parked-cycle-2 | 1 | BLG-FEAT-46/47 in Now horizon — background job complexity will increase post-v[TBD]; monitoring value higher after v[TBD] ships | Park C2 | — |
 | IDEA-infra-ops-20260622-02 | Deployment health dashboard widget showing version and timestamp | Infrastructure & Operations Owner | IW-20260622-01 | 2026-06-22 | Parked-cycle-2 | 1 | System status page remains adequate at current single-environment scale; deployment version display low urgency | Park C2 | — |
 
----
-
-*Terminal disposals from 2026-06-24__scheduled (pending housekeeping archival):*
-*IDEA-product-owner-20260619-02 → Backlog-gate-conditional (BLG-FEAT-52)*
-*IDEA-pmo-lead-20260619-01 → Rejected (hard cap; automation adds overhead without proportional value)*
-*IDEA-pmo-lead-20260619-02 → Rejected (hard cap; velocity_metrics.md infrastructure not yet established)*
-*IDEA-director-of-quality-20260619-02 → Backlog-gate-conditional (BLG-QA-63)*
-*IDEA-strategy-owner-20260619-02 → Rejected (hard cap; scope covered by BLG-GOV-122 and BLG-GOV-95)*
-*IDEA-finops-20260619-02 → Rejected (hard cap; BLG-OPS-17 addresses cost optimization)*
-*IDEA-infra-ops-20260619-02 → Backlog-gate-conditional (BLG-OPS-76)*
-*IDEA-challenger-20260619-01 → Backlog-gate-conditional (BLG-OPS-77)*
-*IDEA-strategy-owner-20260622-01 → Rejected (gate-condition re-eval: PT-04 shipped; scope subsumed by BLG-FE-78 + planned BLG-FEAT-50)*
-*IDEA-strategy-owner-20260622-02 → Rejected (intent fulfilled: BLG-GOV-112 completed SI-05 Phase 1 effectiveness review in v6.0)*
-*IDEA-challenger-20260622-02 → Rejected (gate-condition re-eval: PT-04 shipped under count-based gate; threshold question resolved)*

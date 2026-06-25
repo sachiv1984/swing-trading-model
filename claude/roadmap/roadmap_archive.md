@@ -1,13 +1,41 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-23 (post-ship closure 2026-06-22__release-v6.1 — RA:v6.1 retired)
+**Last Updated:** 2026-06-25 (post-ship closure 2026-06-24__release-v6.2 — RA:v6.2 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v6.2 — Production Strategy Parity & AI Intelligence
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now (v[TBD] section)
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-25
+**Shipped version:** v6.2
+**Cycle reference:** 2026-06-24__release-v6.2
+**Verification report:** claude/cycles/2026-06-24__release-v6.2/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-25
+
+### Original Roadmap Entry
+
+**Added:** 2026-06-23 (user request — production_strategy.py gap analysis)
+
+These six items close the gap between the live application and the `production_strategy.py` backtest logic, and layer in AI decision support. P1 items (BLG-FEAT-46–49) form a prerequisite cluster; P2 items (BLG-FEAT-50–51) depend on the P1 cluster completing first.
+
+| BLG ID | Title | Priority | Effort | Type | Status |
+|--------|-------|----------|--------|------|--------|
+| BLG-FEAT-46 | Add nightly trailing stop computation for open positions | P1 | M | U | Queued |
+| BLG-FEAT-47 | Add month-end rebalance exit signal generation | P1 | M | U | Queued |
+| BLG-FEAT-48 | Implement inverse-volatility position sizing for signal-driven entries | P1 | M | U | Queued |
+| BLG-FEAT-49 | Add risk-off exit alerts for existing positions | P1 | S | U | Queued |
+| BLG-FEAT-50 | Build AI daily briefing endpoint and dashboard panel | P2 | M | U | Queued — depends on BLG-FEAT-46/47/49 |
+| BLG-FEAT-51 | Build conversational AI trade advisor | P2 | M | U | Queued — depends on BLG-FEAT-50 |
 
 ---
 
