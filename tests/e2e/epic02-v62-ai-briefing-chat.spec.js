@@ -173,8 +173,8 @@ test.describe('ST-07 — AI Daily Briefing Card', () => {
 
     // Action list
     await expect(page.getByTestId('briefing-actions')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('NVDA')).toBeVisible({ timeout: 3000 });
-    await expect(page.getByText('MONITOR').first()).toBeVisible({ timeout: 3000 });
+    await expect(page.getByTestId('briefing-actions').getByText('NVDA', { exact: true })).toBeVisible({ timeout: 3000 });
+    await expect(page.getByTestId('briefing-actions').getByText('MONITOR', { exact: true })).toBeVisible({ timeout: 3000 });
   });
 
   test('SC-AB-03: Card shows Regenerate button on initial render', async ({ page }) => {
@@ -213,6 +213,8 @@ test.describe('ST-07 — AI Daily Briefing Card', () => {
       },
     ];
 
+    await stubDashboardRoutes(page, responses[0]);
+    // Counter route registered after stubDashboardRoutes so it takes LIFO precedence
     await page.route('**/ai/daily-briefing', (route) => {
       const payload = responses[callCount] ?? responses[responses.length - 1];
       callCount++;
@@ -223,8 +225,6 @@ test.describe('ST-07 — AI Daily Briefing Card', () => {
       });
     });
 
-    await stubDashboardRoutes(page, responses[0]);
-    // Override daily-briefing with counter-tracking route (done above)
     await page.goto('/#/');
 
     const regenBtn = page.getByTestId('regenerate-briefing-btn');
