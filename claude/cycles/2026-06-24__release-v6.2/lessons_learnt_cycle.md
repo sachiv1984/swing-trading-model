@@ -34,3 +34,32 @@ Cycle: 2026-06-24__release-v6.2
 **Recurrence Notes:**
 - Friction item 1 (Playwright strict mode violation) is a **Recurrence** from v6.1 Phase 3 item 1. Prior action from v6.1: "no template change needed — pattern documented here. Spec author checklist: always scope page-wide getByText() with exact:true or testid scoping." That documentation-only action was insufficient — the pattern recurred in EPIC-02 tests authored this sprint. Escalation: this must now be encoded as a hard advisory in the delegation spec template (Base44 prompt draft), not just conversation history. Head of Specs Team to confirm template change scope at v6.3 planning.
 - Friction item 2: first occurrence this cycle.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-06-24__release-v6.2
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-06-25
+**Reviewed by:** PMO Lead
+
+### What went well
+
+- Both v6.1 Phase 4 outstanding actions resolved within v6.2: BLG-GOV-135 (autonomous class hard gate) closed as ST-10 and BLG-GOV-136 (test_scenarios path validation) closed as ST-11 — the pattern of surfacing a governance gap in Phase 4 and closing it as an EPIC-03 story in the next sprint is functioning as designed.
+- Delivery verification ran to completion in a single session with no hard gates fired — sprint close readiness statement was clean (all three fields = Yes), all 13 QA evidence rows Pass, zero deviations.
+- Zero deviations (P0–P3) across all 13 stories — the algorithm replacement advisory (AUD-2026-06-22-007) was correctly applied to ST-04 with no false positive: the advisory correctly distinguished between unit test replacement (test_signal_sizing.py) and domain-level e2e scenario coverage (which had no prior file to supersede).
+- §13 SRB-v1.7 advisory-only compliance confirmed for both EPIC-02 AI endpoints during verification — `advisory: true` enforced in all responses, non-dismissible labels in both UI components, no trade execution pathway. No re-check friction.
+
+### Friction Log
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| CI/infrastructure stories leave spec_references = [] creating a recurring STEP 1 traceability flag — ST-13 (Playwright glob registration, CI workflow change) had no prior canonical spec; three occurrences in five cycles (ST-13 v6.2, CI workflow changes in v5.9 and v5.2 governance sprints). No established convention for what constitutes a valid spec_references entry for pure CI/infrastructure changes | Phase 4 | B | defer | Add a convention to execution_prompt.md §3.1.A (spec_references population guidance): for CI/infrastructure stories with no prior canonical spec document, spec_references should reference the primary file changed (e.g., `.github/workflows/playwright.yml`, `playwright.config.js`) as the de facto spec reference; delivery verification STEP 1 should treat this as a valid reference, not a gap | Head of Specs Team | v6.3 |
+
+**Recurrence Notes:**
+- v6.1 Phase 4 friction item 1 (autonomous class misapplication → BLG-GOV-135): RESOLVED this cycle as EPIC-03/ST-10 (execution_prompt.md v3.48 — autonomous class hard gate added). No recurrence in Phase 4 of v6.2.
+- v6.1 Phase 4 friction item 2 (test_scenarios stale paths → BLG-GOV-136): RESOLVED this cycle as EPIC-03/ST-11 (test_scenarios path validation advisory added to execution_prompt.md v3.48). No recurrence in Phase 4 of v6.2.
+- v6.1 Phase 4 friction item 3 (QA evidence Pending CI documentation gap, deferred to v6.3): Not due; not a recurrence — this cycle had no Pending CI entries at sprint close (all QA evidence complete before verification ran).
+- Phase 4 friction item 1 (CI spec_references convention): First occurrence captured at Phase 4 level. Prior cycles documented the pattern in QA evidence notes only; no process patch was ever filed.
