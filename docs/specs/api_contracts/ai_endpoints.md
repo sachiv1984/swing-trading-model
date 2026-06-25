@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.3
-**Last Updated:** 2026-05-28
+**Version:** 1.4
+**Last Updated:** 2026-06-25
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -18,6 +18,8 @@ All AI output is **display-only** and must NOT be used as input to any signal, s
 ## Table of Contents
 
 - [POST /ai/journal-summary](#post-aijournal-summary)
+- [POST /ai/daily-briefing](#post-aidaily-briefing)
+- [POST /ai/chat](#post-aichat)
 - [POST /ai/check-daily-cost](#post-aicheck-daily-cost)
 - [GET /ai/claude-audit-log](#get-aiclaude-audit-log)
 
@@ -104,6 +106,150 @@ When the external LLM API is unreachable or returns an error, the endpoint retur
 - Default model: `claude-haiku-4-5-20251001`. Override via `AI_MODEL` env var.
 - If LLM API is unreachable: return HTTP 200 with `summary: null` and informational `message`. Do not raise HTTP 500.
 - Endpoint is read-only: no trade data is modified.
+
+---
+
+## POST /ai/daily-briefing
+
+Assembles a read-only context object from live portfolio state and calls `claude-sonnet-4-6` to produce a plain-English daily summary and ordered action list. Advisory-only — display-only, not integrated with any trade execution path.
+
+**§13 Status:** PASS — SRB-v1.7. LLM output is advisory-only, display-only. Does not modify positions, signals, or trade plans. See `docs/product/decisions/decisions--2026-06-24__release-v6.2--BLG-FEAT-50-51-section13-review.md`.
+
+**Story:** ST-06 (BLG-FEAT-50, EPIC-02, v6.2)
+
+### Request
+
+```
+POST /ai/daily-briefing
+Content-Type: application/json
+```
+
+No request body required.
+
+### Response — 200 OK
+
+```json
+{
+  "summary": "Your portfolio has 3 open positions. NVDA is near its trailing stop — monitor closely today. Markets are risk-on with two strong new signals.",
+  "actions": [
+    { "type": "MONITOR", "ticker": "NVDA", "description": "Within 3% of trailing stop — watch closely." },
+    { "type": "ENTER", "ticker": "AAPL", "description": "Rank #1 momentum signal today." }
+  ],
+  "generated_at": "2026-06-25T08:30:00Z",
+  "advisory": true,
+  "model": "claude-sonnet-4-6"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `summary` | string or null | Plain-English portfolio summary (2–4 sentences). `null` if LLM unavailable. |
+| `actions` | array | Ordered action list. Empty array if no actions or LLM unavailable. |
+| `actions[].type` | string | One of: `EXIT`, `ENTER`, `MONITOR`, `HOLD`. |
+| `actions[].ticker` | string | Ticker symbol the action applies to. |
+| `actions[].description` | string | Human-readable description of the action. |
+| `generated_at` | string (ISO 8601) | UTC timestamp of generation. |
+| `advisory` | boolean | Always `true`. Client must verify this field; render error if absent or false. |
+| `model` | string or null | Model identifier used. `null` if LLM unavailable. |
+| `error` | string or null | Error message when LLM unavailable (`summary` will be `null`). |
+
+### Context assembled by backend
+
+- Current portfolio state (cash, open position count)
+- Per-position: ticker, market, current price, trailing stop, risk-off flag
+- Today's top-5 momentum signals (most recent signal date)
+- Market regime: SPY and FTSE MA200 status
+- Month-end rebalance check
+
+### Error responses
+
+| Status | Condition |
+|--------|-----------|
+| 200 | Always returns 200. LLM errors return `summary: null` with `error` message. |
+| 401 | Missing or invalid API key. |
+
+### Implementation constraints (SRB-v1.7)
+
+- Uses `claude-sonnet-4-6` model.
+- Token usage logged to `claude_audit_log` via `create_claude_audit_entry`.
+- No writes to `positions`, `signals`, `trade_plans`, or any strategy table.
+- `advisory: true` is always present in the response.
+
+---
+
+## POST /ai/chat
+
+Accepts a user question with optional context (ticker, position_id) and returns a response grounded in the full live portfolio and signal state. Stateless per request — no session memory stored or returned across calls. Advisory-only, display-only.
+
+**§13 Status:** PASS — SRB-v1.7. LLM output is advisory-only, display-only. No integration with trade execution. See `docs/product/decisions/decisions--2026-06-24__release-v6.2--BLG-FEAT-50-51-section13-review.md`.
+
+**Story:** ST-08 (BLG-FEAT-51, EPIC-02, v6.2)
+
+### Request
+
+```
+POST /ai/chat
+Content-Type: application/json
+```
+
+#### Request body
+
+```json
+{
+  "question": "Which of my positions is closest to its trailing stop?",
+  "context": {
+    "ticker": "NVDA",
+    "position_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  }
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `question` | string | Yes | The user's question. |
+| `context` | object | No | Optional focus: `ticker` (string) and/or `position_id` (UUID). Injected into system prompt context. |
+
+### Response — 200 OK
+
+```json
+{
+  "response": "NVDA is currently closest to its trailing stop, sitting 2.8% above the stop level of £450.00.",
+  "advisory": true,
+  "model": "claude-sonnet-4-6"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `response` | string | AI-generated answer grounded in live portfolio state. |
+| `advisory` | boolean | Always `true`. |
+| `model` | string or null | Model identifier used. |
+
+### Stateless behaviour
+
+Each call is independent — the backend loads fresh portfolio and signal state on every request. No conversation history is stored server-side. In-memory display history in the frontend is cleared on widget close.
+
+### Context injected into system prompt
+
+- Portfolio cash and open position count
+- Per-position: ticker, market, current price, trailing stop, risk-off flag, P&L
+- Latest top-5 momentum signals
+- Optional: focused ticker from `context.ticker`
+
+### Error responses
+
+| Status | Condition |
+|--------|-----------|
+| 200 | Always returns 200. LLM errors return a `response` error string. |
+| 422 | `question` field missing. |
+| 401 | Missing or invalid API key. |
+
+### Implementation constraints (SRB-v1.7)
+
+- Uses `claude-sonnet-4-6` model.
+- Token usage logged to `claude_audit_log` via `create_claude_audit_entry`.
+- No writes to any table. Conversation state is not persisted.
+- `advisory: true` always present.
 
 ---
 
@@ -292,7 +438,7 @@ Query the AI journal summary audit log. Returns metadata records for past `POST 
 
 ## Known Deviations
 
-None at v1.3.
+None at v1.4.
 
 ---
 
@@ -300,6 +446,7 @@ None at v1.3.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4 | 2026-06-25 | v6.2 EPIC-02 ST-06/ST-08: Added `POST /ai/daily-briefing` (daily portfolio briefing + action list) and `POST /ai/chat` (stateless conversational advisor). Both endpoints use `claude-sonnet-4-6`, log to `claude_audit_log`, return `advisory: true`. §13 PASS per 2026-06-24 review. Head of Engineering sign-off. |
 | 1.3 | 2026-06-09 | v5.3 ST-04 (BLG-SPEC-49, EPIC-01): Added `GET /ai/journal-summary/history` — AI journal summary audit log query endpoint. API Contracts & Documentation Owner sign-off. |
 | 1.2 | 2026-05-28 | ST-07 (EPIC-03, v4.2): Added `GET /ai/claude-audit-log` — immutable Claude API audit trail query endpoint (BLG-GOV-63). |
 | 1.1 | 2026-05-27 | ST-09 (EPIC-03, v4.1): Added `POST /ai/check-daily-cost` — Claude API daily cost threshold alert endpoint (BLG-OPS-34). |

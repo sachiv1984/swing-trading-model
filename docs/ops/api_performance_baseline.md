@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.5
-**Date:** 2026-06-23
+**Version:** 2.7
+**Date:** 2026-06-25
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -926,10 +926,46 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, autonomous class)
 
 ---
 
+## 22. v6.2 AI Inference Endpoints — Registration (ST-06 / ST-08, v6.2 EPIC-02)
+
+**Date:** 2026-06-25
+**Story:** ST-06 (EPIC-02, v6.2) — POST /ai/daily-briefing; ST-08 (EPIC-02, v6.2) — POST /ai/chat
+**Status:** Registered — live timing run deferred pending production deployment
+
+Two new AI inference endpoints added in v6.2 EPIC-02. Both call `claude-sonnet-4-6` via the Anthropic API and are classified as AI inference endpoints — latency is dominated by the external API call, not database processing. Standard p50/p95 DB-endpoint methodology does not apply.
+
+### 22.1 Endpoint Registration
+
+| Endpoint | Added in | Story | Method | AC latency target |
+|----------|----------|-------|--------|-------------------|
+| POST /ai/daily-briefing | v6.2 | ST-06 (EPIC-02) | AI inference — claude-sonnet-4-6 | < 10s (AC-03) |
+| POST /ai/chat | v6.2 | ST-08 (EPIC-02) | AI inference — claude-sonnet-4-6 | < 15s (AC-04) |
+
+### 22.2 Expected Latency Characteristics
+
+Both endpoints share a two-phase latency profile:
+1. **Context assembly (DB):** 1–4 reads (`get_portfolio`, `get_positions`, `get_signals`, optional regime check) via Supavisor. Expected: 50–300ms total (consistent with Supavisor fast-cluster baseline, §10).
+2. **AI inference (Anthropic API):** claude-sonnet-4-6 — higher latency than Haiku 4.5 (ref §15: Haiku p50≈3,560ms). Sonnet-4-6 expected range: 3–8 seconds depending on context length and model load.
+
+**Estimated total response time:**
+- `POST /ai/daily-briefing`: estimated p50 ≈ 4–6s; well within the 10s AC target.
+- `POST /ai/chat`: estimated p50 ≈ 3–5s; well within the 15s AC target.
+
+These endpoints are intentionally excluded from the standard ≤400ms p50 budget. AI inference latency is a function of the external Anthropic API and cannot be reduced without model changes or caching. Both AC latency targets (10s / 15s) reflect this reality.
+
+**Regression threshold (to be confirmed after first live timing run):** p95 > 2× measured p95 triggers a review.
+
+### 22.3 Timing Run Status
+
+Actual timing run deferred until post-deployment to production. Infrastructure & Operations Owner to schedule a BLG-OPS item for the next ops review cycle (BLG-OPS-78 recommended). Timing methodology: authenticated warm requests against production API, minimum 5 samples, same approach as §15.
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.7 | 2026-06-25 | Sprint Execution Engine | ST-06/ST-08 (v6.2 EPIC-02): §22 added — POST /ai/daily-briefing and POST /ai/chat registered as AI inference endpoints. Timing run deferred to post-deployment; BLG-OPS-78 recommended for live measurement. |
 | 2.6 | 2026-06-25 | Infrastructure & Operations Owner | ST-12 (v6.2 EPIC-03, BLG-OPS-75): §21 added — GET /portfolio/sector-weights p50=287ms p95=356ms; GET /trade-plans/setup-quality-score p50=464ms p95=516ms (⚠ p95 flag). 20 live production samples each. BLG-OPS-75 closed. |
 | 2.5 | 2026-06-23 | Infrastructure & Operations Owner | ST-05 (v6.1 EPIC-02, BLG-OPS-73): §20 added — PATCH /trades/{id}/costs registered as write-op exclusion. Estimated p50=~250ms, p95=~500ms (Supavisor single UPDATE). Live timing deferred per §18.2 write-op policy. BLG-OPS-73 closed. |
 | 2.4 | 2026-06-11 | Infrastructure & Operations Owner | ST-07/08 (v5.5 EPIC-03): §19 added — GET /watchlist p50=488ms, GET /portfolio/gate-metrics p50=543ms measured on production. POST /digest/si05/send excluded (Telegram API timeout). ST-07/ST-08 closed. |

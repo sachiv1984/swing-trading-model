@@ -1,19 +1,23 @@
 """
 AI Service
 
-Provides journal summarisation via external LLM API (Anthropic).
+Provides journal summarisation, daily briefing, and chat advisory via Anthropic.
 AI output is display-only — must NOT be used in any signal, scoring,
 or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 
-Contract: docs/specs/api_contracts/ai_endpoints.md v1.0
+Contract: docs/specs/api_contracts/ai_endpoints.md v1.4
 """
 
 import os
+import json
+import time
 import anthropic
+from datetime import datetime
 from typing import Optional
 
 
 MODEL_VERSION = "claude-haiku-4-5-20251001"
+MODEL_BRIEFING = "claude-sonnet-4-6"
 
 
 def summarise_journal_notes(
@@ -74,3 +78,284 @@ def summarise_journal_notes(
             "model": None,
             "message": "AI summarisation is currently unavailable. Please try again later.",
         }
+
+
+# ---------------------------------------------------------------------------
+# ST-06 — Daily briefing (POST /ai/daily-briefing)
+# ---------------------------------------------------------------------------
+
+def generate_daily_briefing() -> dict:
+    """
+    Assembles portfolio context and calls claude-sonnet-4-6 to produce a
+    plain-English daily briefing with ordered action list.
+    Returns: { summary, actions, generated_at, advisory, model }
+    Advisory-only — SRB-v1.7.
+    """
+    from database import get_portfolio, get_positions, get_signals, create_claude_audit_entry
+
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    now = datetime.utcnow()
+
+    portfolio = get_portfolio()
+    if not portfolio:
+        return _briefing_error("Portfolio not found", now)
+
+    portfolio_id = str(portfolio["id"])
+    positions = get_positions(portfolio_id, status="open")
+    all_signals = get_signals(portfolio_id)
+
+    regime_label = _get_regime_label()
+
+    try:
+        from services.signal_service import _is_last_trading_day_of_month
+        is_month_end = _is_last_trading_day_of_month(datetime.now())
+    except Exception:
+        is_month_end = False
+
+    # Top-5 signals from the most recent signal date
+    top_signals = []
+    if all_signals:
+        latest_date = max((s["signal_date"] for s in all_signals if s.get("signal_date")), default=None)
+        if latest_date:
+            top_signals = sorted(
+                [s for s in all_signals if s.get("signal_date") == latest_date and s.get("status") == "new"],
+                key=lambda s: s.get("rank", 99),
+            )[:5]
+
+    context_lines = [
+        f"Today: {now.strftime('%Y-%m-%d')}",
+        f"Market regime: {regime_label or 'Unknown'}",
+        f"Month-end rebalance due today: {'Yes' if is_month_end else 'No'}",
+        "",
+        f"Portfolio: {len(positions)} open positions, "
+        f"cash £{portfolio.get('cash', 0):,.0f} of £{portfolio.get('initial_cash', 0):,.0f}",
+        "",
+    ]
+
+    if positions:
+        context_lines.append("Open positions:")
+        for p in positions:
+            ticker = p.get("ticker", "?")
+            market = p.get("market", "?")
+            price = p.get("current_price", 0) or 0
+            stop = p.get("current_stop", 0) or 0
+            risk_off = bool(p.get("risk_off_exit", False))
+            breach = stop > 0 and price > 0 and price <= stop
+            alerts = []
+            if breach:
+                alerts.append("STOP BREACH")
+            if risk_off:
+                alerts.append("RISK-OFF")
+            alert_str = f" [{', '.join(alerts)}]" if alerts else ""
+            context_lines.append(f"  - {ticker} ({market}): price £{price:.2f}, stop £{stop:.2f}{alert_str}")
+    else:
+        context_lines.append("No open positions.")
+
+    context_lines.append("")
+    if top_signals:
+        context_lines.append("Top momentum signals today:")
+        for s in top_signals:
+            context_lines.append(
+                f"  #{s.get('rank', '?')} {s.get('ticker', '?')} ({s.get('market', '?')}): "
+                f"momentum {s.get('momentum_percent', 0):.1f}%"
+            )
+    else:
+        context_lines.append("No new signals today.")
+
+    context = "\n".join(context_lines)
+
+    if not api_key:
+        return _briefing_error("AI briefing unavailable — ANTHROPIC_API_KEY not configured", now)
+
+    system_prompt = (
+        "You are a trading assistant for a disciplined momentum strategy. "
+        "You receive a daily portfolio snapshot and must produce: "
+        "(1) a plain-English summary (2-4 sentences) of the key portfolio state, "
+        "(2) an ordered action list in JSON. "
+        "Action types: EXIT for stop breach or risk-off regime, ENTER for strong new signals, "
+        "MONITOR for near-stop positions, HOLD for stable positions. "
+        "Respond with JSON only, no markdown fences, in this exact shape: "
+        '{"summary": "...", "actions": [{"type": "EXIT|ENTER|MONITOR|HOLD", "ticker": "...", "description": "..."}]}'
+    )
+
+    try:
+        t0 = time.time()
+        client = anthropic.Anthropic(api_key=api_key)
+        response = client.messages.create(
+            model=MODEL_BRIEFING,
+            max_tokens=1024,
+            system=system_prompt,
+            messages=[{"role": "user", "content": context}],
+        )
+        elapsed_ms = int((time.time() - t0) * 1000)
+
+        content = response.content[0].text if response.content else "{}"
+        usage = response.usage
+        input_tokens = usage.input_tokens if usage else None
+        output_tokens = usage.output_tokens if usage else None
+
+        try:
+            cost_usd = None
+            if input_tokens and output_tokens:
+                cost_usd = (input_tokens * 3.0 + output_tokens * 15.0) / 1_000_000
+            create_claude_audit_entry(
+                endpoint="POST /ai/daily-briefing",
+                model_id=MODEL_BRIEFING,
+                prompt_version="v1.0",
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                cost_usd=cost_usd,
+            )
+        except Exception:
+            pass
+
+        parsed = json.loads(content)
+        return {
+            "summary": parsed.get("summary", ""),
+            "actions": parsed.get("actions", []),
+            "generated_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "advisory": True,
+            "model": MODEL_BRIEFING,
+        }
+    except Exception:
+        return _briefing_error("AI briefing temporarily unavailable. Please try again.", now)
+
+
+def _briefing_error(message: str, now: datetime) -> dict:
+    return {
+        "summary": None,
+        "actions": [],
+        "generated_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "advisory": True,
+        "model": None,
+        "error": message,
+    }
+
+
+def _get_regime_label() -> Optional[str]:
+    try:
+        from position_manager import check_market_regime
+        r = check_market_regime()
+        spy_on = r.get("spy_risk_on", False)
+        ftse_on = r.get("ftse_risk_on", False)
+        if spy_on and ftse_on:
+            return "Risk-On (SPY and FTSE both above MA200)"
+        elif not spy_on and not ftse_on:
+            return "Risk-Off (both markets below MA200)"
+        return f"Neutral ({'SPY on' if spy_on else 'SPY off'}, {'FTSE on' if ftse_on else 'FTSE off'})"
+    except Exception:
+        return None
+
+
+# ---------------------------------------------------------------------------
+# ST-08 — Conversational AI chat (POST /ai/chat)
+# ---------------------------------------------------------------------------
+
+def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
+    """
+    Stateless per-request AI chat grounded in live portfolio and signal state.
+    context_opts: optional { ticker, position_id }
+    Returns: { response, advisory }
+    Advisory-only — SRB-v1.7.
+    """
+    from database import get_portfolio, get_positions, get_signals, create_claude_audit_entry
+
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        return {
+            "response": "AI Trade Advisor is currently unavailable — ANTHROPIC_API_KEY not configured.",
+            "advisory": True,
+        }
+
+    portfolio = get_portfolio()
+    if not portfolio:
+        return {"response": "Unable to load portfolio data.", "advisory": True}
+
+    portfolio_id = str(portfolio["id"])
+    positions = get_positions(portfolio_id, status="open")
+    signals = get_signals(portfolio_id)
+
+    context_lines = [
+        f"Portfolio snapshot — {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}",
+        f"Cash: £{portfolio.get('cash', 0):,.0f} of £{portfolio.get('initial_cash', 0):,.0f} initial capital",
+        f"Open positions: {len(positions)}",
+        "",
+    ]
+
+    if positions:
+        context_lines.append("Positions:")
+        for p in positions:
+            ticker = p.get("ticker", "?")
+            market = p.get("market", "?")
+            price = p.get("current_price", 0) or 0
+            stop = p.get("current_stop", 0) or 0
+            risk_off = bool(p.get("risk_off_exit", False))
+            pnl = p.get("pnl", 0) or 0
+            context_lines.append(
+                f"  {ticker} ({market}): price £{price:.2f}, stop £{stop:.2f}, "
+                f"P&L £{pnl:+.0f}, risk_off={risk_off}"
+            )
+
+    latest_date = None
+    if signals:
+        latest_date = max((s["signal_date"] for s in signals if s.get("signal_date")), default=None)
+    if latest_date:
+        top = sorted(
+            [s for s in signals if s.get("signal_date") == latest_date],
+            key=lambda s: s.get("rank", 99),
+        )[:5]
+        context_lines.append("\nTop momentum signals:")
+        for s in top:
+            context_lines.append(
+                f"  #{s.get('rank', '?')} {s.get('ticker', '?')} ({s.get('market', '?')}): "
+                f"momentum {s.get('momentum_percent', 0):.1f}%"
+            )
+
+    if context_opts and context_opts.get("ticker"):
+        context_lines.append(f"\nUser asking about: {context_opts['ticker']}")
+
+    portfolio_context = "\n".join(context_lines)
+
+    system_prompt = (
+        "You are an AI trade advisor for a disciplined momentum trading strategy. "
+        "You have access to the user's live portfolio snapshot below. "
+        "Answer the user's question concisely and accurately based on the data provided. "
+        "Do not fabricate data. Your responses are advisory only — you cannot execute trades. "
+        "Keep responses to 2-4 sentences unless more detail is genuinely needed.\n\n"
+        f"Portfolio context:\n{portfolio_context}"
+    )
+
+    try:
+        t0 = time.time()
+        client = anthropic.Anthropic(api_key=api_key)
+        response = client.messages.create(
+            model=MODEL_BRIEFING,
+            max_tokens=512,
+            system=system_prompt,
+            messages=[{"role": "user", "content": question}],
+        )
+        elapsed_ms = int((time.time() - t0) * 1000)
+
+        content = response.content[0].text if response.content else "I was unable to generate a response."
+        usage = response.usage
+        input_tokens = usage.input_tokens if usage else None
+        output_tokens = usage.output_tokens if usage else None
+
+        try:
+            cost_usd = None
+            if input_tokens and output_tokens:
+                cost_usd = (input_tokens * 3.0 + output_tokens * 15.0) / 1_000_000
+            create_claude_audit_entry(
+                endpoint="POST /ai/chat",
+                model_id=MODEL_BRIEFING,
+                prompt_version="v1.0",
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                cost_usd=cost_usd,
+            )
+        except Exception:
+            pass
+
+        return {"response": content, "advisory": True, "model": MODEL_BRIEFING}
+    except Exception:
+        return {"response": "Unable to get a response. Please try again.", "advisory": True}
