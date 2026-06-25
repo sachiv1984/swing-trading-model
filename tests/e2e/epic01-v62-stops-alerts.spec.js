@@ -156,10 +156,10 @@ async function stubSignalsPage(page, signals, positions = []) {
 // ---------------------------------------------------------------------------
 
 test('SC-TS-01: Trailing stop value shown in Stop column', async ({ page }) => {
-  const pos = makePosition({ current_trailing_stop: 115.00, current_price: 118.00 });
+  const pos = makePosition({ current_trailing_stop: 115.00, current_price: 118.00, market: 'UK' });
   await gotoPositionsTable(page, [pos]);
 
-  // Trailing stop £115.00 rendered in Stop cell
+  // Trailing stop £115.00 rendered in Stop cell (UK position → £ symbol)
   await expect(page.locator('text=£115.00').first()).toBeVisible({ timeout: 5000 });
 });
 
@@ -334,13 +334,11 @@ test('SC-RB-02: exit_rebalance badge has amber styling — distinct from new-sig
 
   await page.waitForSelector('text=Month-End Exit', { timeout: 8000 });
 
-  // The Badge wrapper element carries the colour classes from statusConfig.exit_rebalance
-  // Walk up one level from the label text to the Badge component
-  const labelSpan = page.locator('text=Month-End Exit').first();
-  const badgeWrapper = labelSpan.locator('..');
-  await expect(badgeWrapper).toHaveClass(/text-amber-400/);
+  // The Badge component carries the colour classes directly on the element containing the text
+  const badge = page.locator('text=Month-End Exit').first();
+  await expect(badge).toHaveClass(/text-amber-400/);
   // Must NOT be cyan (that's the "New Signal" colour)
-  await expect(badgeWrapper).not.toHaveClass(/text-cyan-400/);
+  await expect(badge).not.toHaveClass(/text-cyan-400/);
 });
 
 test('SC-RB-03: exit_rebalance signal visible alongside new signals', async ({ page }) => {
