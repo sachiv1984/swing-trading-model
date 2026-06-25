@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-24 (cycle 2026-06-24__scheduled — 4 new item(s) added from idea promotions: BLG-FEAT-52, BLG-QA-63, BLG-OPS-76, BLG-OPS-77)
+**Last Updated:** 2026-06-25 (cycle 2026-06-24__release-v6.2 — 1 new item added: BLG-QA-64 dark spec remediation backlog from ST-13 glob discovery)
 **Last rebalance:** 2026-06-24 (cycle 2026-06-24__scheduled — DL-056; 7 rejected, 4 backlog-gate-conditional, 8 parked C2; Now horizon v[TBD] confirmed; Product Value Alert (0.209) + Skill-Silo Alert (79.1%); STEP 8.0 P2 advisory BLG-BE-38)
 
 > ⚠️ Standing Notice
@@ -2767,6 +2767,42 @@ The Playwright E2E suite provides functional coverage but no accessibility valid
 - AC-01: axe-core runs on all major pages in CI (advisory, non-blocking)
 - AC-02: Zero critical (level A) violations on any page at time of implementation
 - AC-03: Violation report surfaced as CI annotation on PRs
+
+---
+
+### BLG-QA-64 — Fix 12 dark spec files surfaced by Playwright glob discovery
+**Priority:** P2 (Medium)
+**Type:** QA / Test Infrastructure
+**Owner:** Director of Quality; Head of Frontend Engineering
+**Source:** ST-13 (EPIC-03, v6.2) — glob discovery surfaced 12 pre-existing spec files that were excluded from the old explicit playwright.yml list. Identified 2026-06-25.
+**Effort:** M (~1 day — each spec needs investigation and either fix or deletion)
+**Provisional-Target:** v6.3
+**Gate:** None
+
+**Problem**
+ST-13 replaced the explicit 26-file spec list in `playwright.yml` with `npx playwright test` (auto-discovery via `playwright.config.js` `testDir`). This surfaced 12 spec files that existed in `tests/e2e/` but were never included in CI. All 12 are failing — likely due to UI text mismatches (component text evolved after spec was written) or pending feature implementations.
+
+Currently excluded via `testIgnore` in `playwright.config.js`:
+- arc5-compliance-section.spec.js
+- entry-checklist.spec.js
+- gate-progress.spec.js
+- paper-account.spec.js
+- plan-vs-reality.spec.js
+- pre-entry-panel-badge.spec.js
+- red-flag-journal.spec.js
+- sector-heatmap.spec.js
+- si01-si03-integration.spec.js
+- si05-digest-delivery.spec.js
+- signals-add-to-watchlist.spec.js
+- signals-allocation-insufficient.spec.js
+
+**Scope**
+For each spec file above: investigate failure cause, fix assertions to match current UI/API, remove from `testIgnore` in `playwright.config.js`. Delete any spec that tests a feature not yet implemented (refile as spec debt in appropriate epic).
+
+**Acceptance Criteria**
+- AC-01: All 12 spec files removed from `testIgnore` in `playwright.config.js`
+- AC-02: All assertions pass in CI without modification to application source
+- AC-03: `playwright.config.js` `testIgnore` array is empty or removed
 
 ---
 
