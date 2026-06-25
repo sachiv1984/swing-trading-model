@@ -14,7 +14,7 @@ Last Updated: 2026-06-25
 
 **Story:** ST-13 — Playwright spec auto-registration via glob pattern (BLG-QA-62)
 **Classification:** delegated_qa
-**Commit:** 61890e35d6950cb499f58f3e3e78eb159405c002
+**Commit:** cc52e2d463c2157051b1d0a2cf5948ef9b929617 (fix; original impl: 61890e35)
 **Status:** Done — Director of Quality sign-off cleared 2026-06-25
 
 **What was built:**
