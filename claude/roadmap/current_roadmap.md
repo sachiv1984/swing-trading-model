@@ -13,6 +13,15 @@
 **v6.2** — Production Strategy Parity & AI Intelligence — ✅ Shipped 2026-06-25
 **Next planned release:** v6.3
 
+<!-- roadmap-annotation-marker: RA:v6.3:2026-06-26__release-v6.3 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-26__release-v6.3
+- Plan published: 2026-06-26
+- Cycle folder: claude/cycles/2026-06-26__release-v6.3/
+- Backlog slice: claude/cycles/2026-06-26__release-v6.3/stage4_backlog_slice.md
+- Status at annotation: Validated
+
 *RA:v5.9 retired — see roadmap_archive.md 2026-06-18 (post-ship closure 2026-06-17__release-v5.9).*
 
 *RA:v5.8 retired — see roadmap_archive.md 2026-06-17 (post-ship closure 2026-06-17__release-v5.8).*

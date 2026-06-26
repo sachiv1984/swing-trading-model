@@ -1,0 +1,173 @@
+{
+  "cycle_id": "2026-06-26__release-v6.3",
+  "release": "v6.3",
+  "generated_utc": "2026-06-26T00:00:00Z",
+  "idempotency_label": "cycle:2026-06-26__release-v6.3",
+  "stories": [
+    {
+      "st_id": "ST-01",
+      "blg_id": "BLG-BE-39",
+      "epic_id": "EPIC-01",
+      "title": "Fix AI journal summary on Trade History tab",
+      "type": "Firm",
+      "effort": "S",
+      "owner": "Head of Backend Engineering",
+      "sprint": "Sprint 1",
+      "labels": ["v6.3", "sprint-1", "EPIC-01", "cycle:2026-06-26__release-v6.3"]
+    },
+    {
+      "st_id": "ST-02",
+      "blg_id": "BLG-FE-79",
+      "epic_id": "EPIC-01",
+      "title": "Fix R-multiple not displaying on Reflection page",
+      "type": "Firm",
+      "effort": "S",
+      "owner": "Base44 Frontend Prompt Owner; Head of Backend Engineering",
+      "sprint": "Sprint 1",
+      "labels": ["v6.3", "sprint-1", "EPIC-01", "cycle:2026-06-26__release-v6.3"]
+    },
+    {
+      "st_id": "ST-03",
+      "blg_id": "BLG-OPS-81",
+      "epic_id": "EPIC-01",
+      "title": "AI endpoint per-endpoint rate limiting hardening",
+      "type": "Firm",
+      "effort": "S",
+      "owner": "Cybersecurity & Trust Lead; Infrastructure & Operations Owner",
+      "sprint": "Sprint 1",
+      "labels": ["v6.3", "sprint-1", "EPIC-01", "cycle:2026-06-26__release-v6.3"]
+    },
+    {
+      "st_id": "ST-04",
+      "blg_id": "BLG-GOV-146",
+      "epic_id": "EPIC-01",
+      "title": "AI response injection risk assessment",
+      "type": "Firm",
+      "effort": "S",
+      "owner": "Cybersecurity & Trust Lead; AI Compliance & Governance Officer",
+      "sprint": "Sprint 1",
+      "labels": ["v6.3", "sprint-1", "EPIC-01", "cycle:2026-06-26__release-v6.3"]
+    },
+    {
+      "st_id": "ST-05",
+      "blg_id": "BLG-GOV-147",
+      "epic_id": "EPIC-01",
+      "title": "AI feature advisory disclaimer visibility assessment",
+      "type": "Conditional",
+      "effort": "S",
+      "owner": "AI Compliance & Governance Officer; Head of UX & Design",
+      "sprint": "Sprint 1",
+      "labels": ["v6.3", "sprint-1", "EPIC-01", "conditional", "cycle:2026-06-26__release-v6.3"]
+    },
+    {
+      "st_id": "ST-06",
+      "blg_id": "BLG-GOV-148",
+      "epic_id": "EPIC-01",
+      "title": "API contract review checklist for AI advisory endpoints",
+      "type": "Conditional",
+      "effort": "S",
+      "owner": "API Contracts & Documentation Owner; Head of Specs Team",
+      "sprint": "Sprint 1",
+      "labels": ["v6.3", "sprint-1", "EPIC-01", "conditional", "cycle:2026-06-26__release-v6.3"]
+    },
+    {
+      "st_id": "ST-07",
+      "blg_id": "BLG-QA-65",
+      "epic_id": "EPIC-02",
+      "title": "Nightly stop computation CI simulation tests",
+      "type": "Firm",
+      "effort": "S",
+      "owner": "QA Lead; Backend Engineering Patterns Owner",
+      "sprint": "Sprint 1",
+      "labels": ["v6.3", "sprint-1", "EPIC-02", "cycle:2026-06-26__release-v6.3"]
+    },
+    {
+      "st_id": "ST-08",
+      "blg_id": "BLG-QA-66",
+      "epic_id": "EPIC-02",
+      "title": "Strategy signal regression test specification",
+      "type": "Firm",
+      "effort": "S",
+      "owner": "QA & Testing Owner; Director of Quality",
+      "sprint": "Sprint 1",
+      "labels": ["v6.3", "sprint-1", "EPIC-02", "cycle:2026-06-26__release-v6.3"]
+    },
+    {
+      "st_id": "ST-09",
+      "blg_id": "BLG-QA-67",
+      "epic_id": "EPIC-02",
+      "title": "AI chat response schema validation tests",
+      "type": "Conditional",
+      "effort": "S",
+      "owner": "QA Lead; API Contracts & Documentation Owner",
+      "sprint": "Sprint 1",
+      "labels": ["v6.3", "sprint-1", "EPIC-02", "conditional", "cycle:2026-06-26__release-v6.3"]
+    },
+    {
+      "st_id": "ST-10",
+      "blg_id": "BLG-QA-68",
+      "epic_id": "EPIC-02",
+      "title": "§13 boundary test suite for AI advisory endpoints",
+      "type": "Conditional",
+      "effort": "S",
+      "owner": "QA & Testing Owner; AI Compliance & Governance Officer",
+      "sprint": "Sprint 1",
+      "labels": ["v6.3", "sprint-1", "EPIC-02", "conditional", "cycle:2026-06-26__release-v6.3"]
+    },
+    {
+      "st_id": "ST-11",
+      "blg_id": "BLG-FEAT-53",
+      "epic_id": "EPIC-03",
+      "title": "Strategy Benchmark page: compare live trades against backtest",
+      "type": "Firm",
+      "effort": "L",
+      "owner": "Product Owner",
+      "sprint": "Sprint 2",
+      "labels": ["v6.3", "sprint-2", "EPIC-03", "cycle:2026-06-26__release-v6.3"]
+    },
+    {
+      "st_id": "ST-12",
+      "blg_id": "BLG-FE-80",
+      "epic_id": "EPIC-03",
+      "title": "Morning briefing progressive disclosure (expand/collapse sections)",
+      "type": "Firm",
+      "effort": "S",
+      "owner": "Base44 Frontend Prompt Owner; Head of UX & Design",
+      "sprint": "Sprint 2",
+      "labels": ["v6.3", "sprint-2", "EPIC-03", "cycle:2026-06-26__release-v6.3"]
+    },
+    {
+      "st_id": "ST-13",
+      "blg_id": "BLG-OPS-79",
+      "epic_id": "EPIC-03",
+      "title": "Background scheduler health monitoring endpoint",
+      "type": "Conditional",
+      "effort": "S",
+      "owner": "Infrastructure & Operations Owner; Backend Engineering Patterns Owner",
+      "sprint": "Sprint 2",
+      "labels": ["v6.3", "sprint-2", "EPIC-03", "conditional", "cycle:2026-06-26__release-v6.3"]
+    },
+    {
+      "st_id": "ST-14",
+      "blg_id": "BLG-OPS-78",
+      "epic_id": "EPIC-03",
+      "title": "Measure live latency for POST /ai/daily-briefing and POST /ai/chat",
+      "type": "Conditional",
+      "effort": "XS",
+      "owner": "Infrastructure & Operations Owner",
+      "sprint": "Sprint 2",
+      "labels": ["v6.3", "sprint-2", "EPIC-03", "conditional", "cycle:2026-06-26__release-v6.3"]
+    },
+    {
+      "st_id": "ST-15",
+      "blg_id": "BLG-OPS-80",
+      "epic_id": "EPIC-03",
+      "title": "Render deployment rollback procedure documentation",
+      "type": "Conditional",
+      "effort": "XS",
+      "owner": "Infrastructure & Operations Owner",
+      "sprint": "Sprint 2",
+      "labels": ["v6.3", "sprint-2", "EPIC-03", "conditional", "cycle:2026-06-26__release-v6.3"]
+    }
+  ]
+}

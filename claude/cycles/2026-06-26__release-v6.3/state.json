@@ -1,0 +1,117 @@
+{
+  "_notes": {
+    "design_gate_status": "Written by Design Gate Engine (Phase 1.5) after publish. This engine initialises to not_started only.",
+    "amended_backlog_slice_path": "Written by Amendment Cycle Engine if amendment sealed after publish. This engine initialises to empty string only."
+  },
+
+  "cycle_id": "2026-06-26__release-v6.3",
+  "release": "v6.3",
+  "date": "2026-06-26",
+  "mode": "standard",
+  "issues_mode": "none",
+  "auto_escalate": true,
+  "prompt_schema_version": "v2",
+  "status": "Published",
+  "publish_eligible": true,
+  "last_transition_utc": "2026-06-26T00:00:00Z",
+
+  "sealed": {
+    "sealed_utc": "2026-06-26T00:00:00Z",
+    "sealed_assumptions": {
+      "timebox": "2 sprints (~2–3 weeks)",
+      "capacity": "~10–15 hrs/week solo dev"
+    },
+    "state_snapshot_hash": ""
+  },
+
+  "mutation_seq": 7,
+  "assumptions": {
+    "timebox": "2 sprints (~2–3 weeks)",
+    "capacity": "~10–15 hrs/week solo dev"
+  },
+
+  "locks": {
+    "backlog_lock": {
+      "required": true,
+      "lock_file": "claude/backlog/.lock",
+      "owned": false,
+      "owner_cycle_id": "2026-06-26__release-v6.3",
+      "owner_release": "v6.3",
+      "acquired_utc": "2026-06-26T00:00:00Z",
+      "txn_file": "claude/cycles/2026-06-26__release-v6.3/backlog_txn.json",
+      "txn_id": "BLTX-20260626-01",
+      "txn_state": "committed",
+      "marker": "RP:v6.3:2026-06-26__release-v6.3",
+      "status": "released"
+    },
+    "roadmap_lock": {
+      "required": false,
+      "lock_file": "claude/roadmap/.lock",
+      "owned": false,
+      "owner_cycle_id": "2026-06-26__release-v6.3",
+      "owner_release": "v6.3",
+      "acquired_utc": "2026-06-26T00:00:00Z",
+      "txn_file": "claude/cycles/2026-06-26__release-v6.3/roadmap_txn.json",
+      "txn_id": "RATX-20260626-01",
+      "txn_state": "committed",
+      "marker": "RA:v6.3:2026-06-26__release-v6.3",
+      "status": "released"
+    }
+  },
+
+  "mutations": [
+    {"seq": 1, "step": "STEP 0", "summary": "Run manifest created; state initialized; cycle folder created; write test passed and deleted", "utc": "2026-06-26T00:00:00Z"},
+    {"seq": 2, "step": "STEP 1/2/3", "summary": "release_plan.md created: Readiness (3 advisories), Scope (15 S2 items: 8 firm, 7 conditional), Execution Plan (3 EPICs, 3 RISKs), model integrity PASS", "utc": "2026-06-26T00:00:00Z"},
+    {"seq": 3, "step": "STEP 2/3 docs", "summary": "Scope document and decisions record created in docs/product/", "utc": "2026-06-26T00:00:00Z"},
+    {"seq": 4, "step": "STEP 3.9", "summary": "Backlog lock acquired (BLTX-20260626-01); backlog_txn prepared", "utc": "2026-06-26T00:00:00Z"},
+    {"seq": 5, "step": "STEP 4", "summary": "stage4_backlog_slice.md created (15 stories: ST-01 through ST-15, 8 firm, 7 conditional); stage4_issue_manifest.json created; backlog.md marker appended (RP:v6.3:2026-06-26__release-v6.3); backlog lock released", "utc": "2026-06-26T00:00:00Z"},
+    {"seq": 6, "step": "STEP 4.1", "summary": "design_gate_required = true — 3 stories with observable UI ACs (ST-02, ST-11, ST-12)", "utc": "2026-06-26T00:00:00Z"},
+    {"seq": 7, "step": "STEP 5/5.5/7/8/9", "summary": "Roadmap annotation appended (RA:v6.3:2026-06-26__release-v6.3); roadmap_txn committed; roadmap lock released. Cross-stage integrity PASS. cycle_summary.md created (design gate required; 2-sprint phasing). lessons_learnt.md seeded. state.json set to Published; .claude_current_state.json updated to Published/active_cycle=2026-06-26__release-v6.3", "utc": "2026-06-26T00:00:00Z"}
+  ],
+  "invalidated_steps": [],
+
+  "open_escalations": [],
+  "deferred_escalations": [],
+  "deferred_execution_blockers": [],
+  "accepted_risk_escalations": [],
+
+  "attributes": {
+    "plan_structured": true,
+    "plan_executable": true,
+    "backlog_committed": true,
+    "capacity_feasible": "warn",
+    "cross_stage_integrity": "pass",
+    "decisions_validated": "not_applicable",
+    "design_gate_required": true
+  },
+
+  "design_gate_status": "not_started",
+  "design_gate_completed_utc": "",
+  "design_gate_record": "",
+  "sprint_planning_pre_condition": "design_gate_status == Passed",
+  "amended_backlog_slice_path": "",
+
+  "artifacts": {
+    "run_manifest": "present",
+    "backlog_lock": "released",
+    "backlog_txn": "committed",
+    "roadmap_lock": "released",
+    "roadmap_txn": "committed",
+
+    "stage1_readiness": "pass",
+    "stage2_scope_extraction": "pass",
+    "stage2_scope_document": "present",
+    "stage3_execution_plan": "pass",
+    "stage3_decisions_record": "present",
+    "stage3_5_model_integrity": "pass",
+    "stage4_backlog_slice": "pass",
+    "stage4_5_capacity_check": "warn",
+    "stage4_issue_manifest": "present",
+    "stage5_5_cross_stage_integrity": "pass",
+    "stage5_7_decision_record_integrity": "not_applicable",
+
+    "cycle_summary": "present",
+    "lessons_learnt": "seeded",
+    "escalations": "none"
+  }
+}

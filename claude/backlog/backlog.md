@@ -3451,3 +3451,31 @@ The AI daily briefing card (AiDailyBriefing.js, shipped v6.2) displays three con
 ---
 
 *Release Slice v6.2 removed — cycle 2026-06-24__release-v6.2 closed 2026-06-25. Archived canonical home: claude/cycles/2026-06-24__release-v6.2/stage4_backlog_slice.md*
+
+---
+
+## Release Slice — v6.3 (2026-06-26__release-v6.3)
+
+<!-- release-plan-marker: RP:v6.3:2026-06-26__release-v6.3 -->
+
+**Canonical slice:** `claude/cycles/2026-06-26__release-v6.3/stage4_backlog_slice.md`
+
+15 stories across 3 EPICs (8 firm, 7 conditional). See canonical slice for full acceptance criteria.
+
+| ST-ID | BLG-ID | Description | EPIC | Type | Effort |
+|-------|--------|-------------|------|------|--------|
+| ST-01 | BLG-BE-39 | Fix AI journal summary on Trade History tab | EPIC-01 | Firm | S |
+| ST-02 | BLG-FE-79 | Fix R-multiple not displaying on Reflection page | EPIC-01 | Firm | S |
+| ST-03 | BLG-OPS-81 | AI endpoint per-endpoint rate limiting hardening | EPIC-01 | Firm | S |
+| ST-04 | BLG-GOV-146 | AI response injection risk assessment | EPIC-01 | Firm | S |
+| ST-05 | BLG-GOV-147 | AI feature advisory disclaimer visibility assessment | EPIC-01 | Conditional | S |
+| ST-06 | BLG-GOV-148 | API contract review checklist for AI advisory endpoints | EPIC-01 | Conditional | S |
+| ST-07 | BLG-QA-65 | Nightly stop computation CI simulation tests | EPIC-02 | Firm | S |
+| ST-08 | BLG-QA-66 | Strategy signal regression test specification | EPIC-02 | Firm | S |
+| ST-09 | BLG-QA-67 | AI chat response schema validation tests | EPIC-02 | Conditional | S |
+| ST-10 | BLG-QA-68 | §13 boundary test suite for AI advisory endpoints | EPIC-02 | Conditional | S |
+| ST-11 | BLG-FEAT-53 | Strategy Benchmark page: compare live trades against backtest | EPIC-03 | Firm | L |
+| ST-12 | BLG-FE-80 | Morning briefing progressive disclosure (expand/collapse sections) | EPIC-03 | Firm | S |
+| ST-13 | BLG-OPS-79 | Background scheduler health monitoring endpoint | EPIC-03 | Conditional | S |
+| ST-14 | BLG-OPS-78 | Measure live latency for POST /ai/daily-briefing and POST /ai/chat | EPIC-03 | Conditional | XS |
+| ST-15 | BLG-OPS-80 | Render deployment rollback procedure documentation | EPIC-03 | Conditional | XS |
