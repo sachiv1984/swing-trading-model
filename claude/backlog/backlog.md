@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-26 (BLG-FEAT-53 added — Strategy Benchmark page; Product Owner decision; Provisional-Target v6.3; 110 active items)
-**Last rebalance:** 2026-06-24 (cycle 2026-06-24__scheduled — DL-056; 7 rejected, 4 backlog-gate-conditional, 8 parked C2; Now horizon v[TBD] confirmed; Product Value Alert (0.209) + Skill-Silo Alert (79.1%); STEP 8.0 P2 advisory BLG-BE-38)
+**Last Updated:** 2026-06-26 (rebalance 2026-06-26__scheduled — DL-057; 25 new items added (IW-20260626-01): BLG-FE-80, BLG-QA-65–68, BLG-OPS-79–81, BLG-GOV-137–149, BLG-SPEC-58–61; 135 active items)
+**Last rebalance:** 2026-06-26 (cycle 2026-06-26__scheduled — DL-057; 14 Promoted-Backlog, 10 Backlog-gate-conditional, 19 Parked C1, 6 Parked C3; STEP 8.0: BLG-BE-39 + BLG-FE-79 mandatory v6.3 Now; PVR=0.37 Advisory; Skill-Silo=51.5% Advisory)
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -2422,6 +2422,100 @@ Arc 4 journal intelligence (PO-02/03/04) will require data model changes. Pre-de
 
 ---
 
+### BLG-SPEC-58 — Dashboard homepage visual hierarchy review post-v6.2
+**Priority:** P3 (Low)
+**Type:** UX Spec / Assessment
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** IDEA-head-of-ux-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.3
+
+**Problem**
+v6.2 added an AI daily briefing card to the dashboard homepage alongside existing portfolio summary, positions overview, and system status. The information architecture and visual hierarchy may no longer optimally match trader workflow priority. A rapid assessment before v6.3 scope is defined confirms the hierarchy is correct or surfaces actionable improvements.
+
+**Scope**
+- Review current dashboard homepage layout against trader workflow priority (morning review: briefing → positions → action)
+- Assess visual weight, card ordering, and information density after AI briefing card addition
+- Produce short findings note: "hierarchy confirmed" or list of priority-order or layout improvements
+- File any actionable improvements as separate backlog items
+
+**Acceptance Criteria**
+- Assessment document produced covering visual hierarchy post-v6.2 dashboard changes
+- Findings reviewed by Head of UX & Design and Product Owner
+- Any improvements filed as separate backlog items with priority and effort estimates
+
+---
+
+### BLG-SPEC-59 — R-multiple cross-currency normalization specification
+**Priority:** P2 (Medium)
+**Type:** Spec / Documentation
+**Owner:** Financial Reporting & Records Owner; Head of Specs Team
+**Source:** IDEA-financial-reporting-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.3
+
+**Problem**
+R-multiple is a core trade evaluation metric. GBP-denominated positions have a different native currency from USD positions. The specification for how R-multiple is calculated and displayed for cross-currency positions is not documented. This gap is directly related to BLG-FE-79 (P1 R-multiple display bug) — fixing the display correctly requires a clear specification of cross-currency behaviour.
+
+**Scope**
+- Define R-multiple calculation behaviour for GBP/USD positions: native currency vs normalised currency
+- Specify aggregate R-multiple behaviour (how GBP and USD R-multiples aggregate in portfolio-level views)
+- Document "N/A" vs "0.00" vs empty rendering for trades with insufficient stop loss data
+- Reviewed by Financial Reporting & Records Owner and Product Owner before BLG-FE-79 fix enters sprint
+
+**Acceptance Criteria**
+- Specification document produced covering per-trade and aggregate R-multiple cross-currency behaviour
+- "Insufficient data" display contract specified
+- Reviewed by Financial Reporting & Records Owner and Product Owner
+
+---
+
+### BLG-SPEC-60 — Trailing stop visual indicator frontend specification
+**Priority:** P2 (Medium)
+**Type:** Frontend Spec / UX
+**Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design
+**Source:** IDEA-frontend-specs-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.3
+
+**Problem**
+v6.2 ships nightly trailing stop computation. The positions page shows current open positions but does not display the current trailing stop price or distance-to-stop. Users must recall the stop level from memory or refer to external records. A frontend specification for a visual stop indicator enables a future sprint to implement this without spec ambiguity.
+
+**Scope**
+- Define visual indicator design: where on the position row the stop price and distance-to-stop appear
+- Define data source: trailing_stop field from positions endpoint (confirm field name and availability)
+- Define display states: stop set (show price + distance), stop not set (show "Not set" or omit indicator)
+- Reviewed by Head of UX & Design and Product Owner before implementation sprint
+
+**Acceptance Criteria**
+- Frontend specification document produced covering indicator placement, data source, and display states
+- Reviewed by Head of UX & Design and Product Owner
+
+---
+
+### BLG-SPEC-61 — Trailing stop effectiveness metric definition
+**Priority:** P2 (Medium)
+**Type:** Spec / Metrics
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** IDEA-metrics-20260626-01 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.3
+
+**Problem**
+v6.2 ships nightly trailing stop computation. There is no metric tracking whether computed trailing stop updates were acted upon (position adjusted) vs ignored (position held unchanged). Without this metric, it is impossible to evaluate the feature's impact on trading behaviour or demonstrate the ROI of the v6.2 trailing stop investment. Defining the metric now ensures data is captured from the first day of usage.
+
+**Scope**
+- Define metric: trailing_stop_action_rate = positions_adjusted_after_stop_update / positions_with_stop_update_computed
+- Define data capture requirement: link trailing stop computation events to subsequent position adjustment events
+- Document in `docs/specs/metrics_definitions.md` or equivalent
+- Reviewed by Metrics Definitions & Analytics Owner, FinOps & Resource Architect, and Product Owner
+
+**Acceptance Criteria**
+- Metric definition document produced covering definition, data sources, and capture requirements
+- Reviewed by Metrics Definitions & Analytics Owner and Product Owner
+
+---
+
 ### BLG-QA-59 — Arc 4 E2E test strategy pre-design (PO-02/03/04)
 **Priority:** P3 (Low)
 **Type:** Quality Assurance / Pre-design
@@ -2582,6 +2676,326 @@ BLG-OPS-73 (PATCH /trades/{trade_id}/costs missing from api_performance_baseline
 
 ---
 
+### BLG-GOV-137 — API contract version tagging for all api_contracts documents
+**Priority:** P3 (Low)
+**Type:** Governance Process / Spec Quality
+**Owner:** Head of Specs Team; API Contracts & Documentation Owner
+**Source:** IDEA-head-of-specs-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Tooling assessment confirming version tagging adds drift detection value not already covered by `quality_gate.yml` OpenAPI validation.
+
+**Problem**
+API contract documents in `docs/specs/api_contracts/` do not carry a version field. When a contract is amended (endpoint added, field type changed), there is no audit trail of which version was in force when a sprint was planned. Version tagging creates a lightweight reference that enables contract consumers to identify changes.
+
+**Scope**
+- Add `version:` field to each api_contracts document (start at v1.0 for all existing docs)
+- Define version bump rules: patch for additive changes, minor for breaking changes
+- Update checklist for new endpoint authoring to include version bump step
+
+**Acceptance Criteria**
+- All api_contracts documents carry a `version:` field
+- Version bump rules documented
+- Gate condition verified before sprint planning
+
+---
+
+### BLG-GOV-138 — Sprint velocity trend alert in run_manifest (rolling 3-cycle drop)
+**Priority:** P3 (Low)
+**Type:** Governance Process / Metrics
+**Owner:** PMO Lead; Infrastructure & Operations Owner
+**Source:** IDEA-pmo-lead-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** velocity_metrics.md path discrepancy resolved (file currently at `claude/cycles/velocity_metrics.md` instead of `claude/roadmap/velocity_metrics.md` — see DL-057 friction items).
+
+**Problem**
+The roadmap_prompt.md reads velocity_metrics.md but does not auto-surface a warning when the rolling 3-cycle velocity falls below 0.90. PMO must manually compare values and raise the concern. An explicit alert rule in the run_manifest generation step ensures degrading velocity is visible without manual tracking.
+
+**Scope**
+- Add rule to roadmap_prompt.md STEP 1.1: if rolling 3-cycle average velocity < 0.90, surface "Velocity Trend Advisory" in run_manifest header
+- Rule documents the threshold, current value, and whether the advisory is advisory or hard gate
+
+**Acceptance Criteria**
+- Rule added to roadmap_prompt.md per §6 governance checklist (version bump, OPERATIONAL_GUIDE update, prompt_change_log entry)
+- Gate condition (velocity_metrics.md path resolved) verified before sprint planning
+
+---
+
+### BLG-GOV-139 — Regression impact analysis at sprint planning
+**Priority:** P3 (Low)
+**Type:** Governance Process / Quality
+**Owner:** Director of Quality; QA Lead
+**Source:** IDEA-director-of-quality-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Tooling approach identified — cross-reference methodology between changed files and Playwright coverage map assessed (automated script vs manual checklist approach).
+
+**Problem**
+When sprint planning seals scope, there is no step to cross-reference the changed files against existing Playwright coverage. A regression could be introduced in a file that has Playwright coverage but whose coverage is not triggered by the specific code path being changed. A lightweight impact analysis would surface this risk at planning time.
+
+**Scope**
+- Define methodology: compare sprint story file scope against `tests/e2e/` coverage map
+- Produce a "coverage gap report" template: stories × files × test coverage status
+- Integrate as an advisory step in sprint_planning_prompt.md STEP 3 or STEP 4
+
+**Acceptance Criteria**
+- Methodology document produced; approach decision (automated vs manual) recorded
+- Gate condition verified before sprint planning entry
+- If integrated into sprint_planning_prompt.md: all §6 governance checklist steps completed
+
+---
+
+### BLG-GOV-140 — AI chat advisory §13 quarterly self-audit checklist
+**Priority:** P2 (Medium)
+**Type:** Governance Process / §13 Compliance
+**Owner:** Strategy Rules & System Intent Owner; AI Compliance & Governance Officer
+**Source:** IDEA-strategy-owner-20260626-02 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.3
+
+**Gate criteria:** First review due 2026-09-24 (90 days post-v6.2 ship 2026-06-25). Quarterly cadence thereafter.
+
+**Problem**
+v6.2 AI chat advisor and daily briefing are now live. §13 requires AI advisory outputs to remain advisory-only and not cross into automated decision-making. Periodic self-audit confirms this boundary is maintained as prompts and response handling evolve. Without a scheduled review, §13 compliance depends on individual vigilance rather than a governed cadence.
+
+**Scope**
+- Author §13 self-audit checklist document covering: output advisory language confirmation, no-automated-action verification, disclaimer visibility check, prompt injection risk review
+- Schedule first review 2026-09-24; quarterly cadence thereafter
+- Owner: Strategy Rules & System Intent Owner; co-reviewer: AI Compliance & Governance Officer
+
+**Acceptance Criteria**
+- Checklist document produced and filed
+- First review date scheduled (2026-09-24)
+- Product Owner and Strategy Rules owner sign-off
+
+---
+
+### BLG-GOV-141 — AI model output logging completeness audit
+**Priority:** P2 (Medium)
+**Type:** Governance Process / §13 Compliance
+**Owner:** AI Compliance & Governance Officer; Infrastructure & Operations Owner
+**Source:** IDEA-ai-compliance-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.3
+
+**Gate criteria:** Schedule within 90 days of v6.2 ship (by 2026-09-24).
+
+**Problem**
+v6.2 AI features (briefing, chat) should be logging all AI responses with model ID, prompt hash, and response length per AI governance policy. A completeness audit verifies the logging is in place and complete. Without this audit, log completeness is assumed rather than verified.
+
+**Scope**
+- Review claude_audit_log (or equivalent) for completeness: all POST /ai/daily-briefing and POST /ai/chat responses logged
+- Verify fields: model_id, prompt_hash, response_length, timestamp
+- If gaps found: file remediation items
+- Schedule review by 2026-09-24
+
+**Acceptance Criteria**
+- Audit completed before 2026-09-24
+- Logging completeness confirmed or gaps filed as remediation backlog items
+- AI Compliance Officer sign-off
+
+---
+
+### BLG-GOV-142 — AI feature ROI assessment at 3-month post-ship mark
+**Priority:** P2 (Medium)
+**Type:** Governance Process / Value Assessment
+**Owner:** Challenger; FinOps & Resource Architect; Product Owner
+**Source:** IDEA-challenger-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** 2026-09-24 (90 days post-v6.2 ship). Assess: adoption rate of AI briefing and chat features, cost per use (Anthropic API cost / sessions), and whether usage data justifies continued investment.
+
+**Problem**
+v6.2 AI features have a per-use cost (Anthropic API call for each briefing and chat interaction). Without a formal ROI assessment at 3 months, there is no trigger to reconsider the feature investment if adoption is low or costs are disproportionate. The assessment is a formal governance checkpoint, not a presumption of cancellation.
+
+**Scope**
+- Assess: AI briefing usage rate (sessions/week), AI chat usage rate (questions/week), cost-per-session
+- Compare against: value hypothesis from v6.2 release planning (trader intelligence value)
+- Output: continue / sunset / modify recommendation with rationale
+- Product Owner decision authority
+
+**Acceptance Criteria**
+- Assessment document produced by 2026-09-24
+- Recommendation with rationale produced
+- Product Owner decision recorded
+
+---
+
+### BLG-GOV-143 — OpenAPI completeness validation in CI (endpoint count reconciliation)
+**Priority:** P3 (Low)
+**Type:** Governance Process / CI
+**Owner:** API Contracts & Documentation Owner; Head of Specs Team
+**Source:** IDEA-api-contracts-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Coverage methodology assessment confirming this complements (not duplicates) the existing OpenAPI drift detection in `quality_gate.yml`.
+
+**Problem**
+The existing `quality_gate.yml` drift detection checks `openapi.yaml` for new endpoints mentioned in contract files. BLG-GOV-134 adds advisory CI annotation. This item proposes a complementary check: validate that `openapi.yaml` covers 100% of routes in `backend/routers/`. These are distinct checks (forward vs backward coverage). Gate: confirm no duplication before implementing.
+
+**Scope**
+- Assess current coverage gap between quality_gate.yml (contract → openapi) and a hypothetical route scan (routes → openapi)
+- If gap confirmed: author CI step to scan `backend/routers/` for `@router.[get|post|put|delete]` and cross-reference against openapi.yaml paths
+- Gate condition assessment first; CI implementation only if gap confirmed
+
+**Acceptance Criteria**
+- Coverage gap assessment document produced
+- If gap confirmed: CI step implemented as advisory (non-blocking, analogous to BLG-GOV-134)
+- Gate condition verified before implementation
+
+---
+
+### BLG-GOV-144 — Agent role charter annual review schedule
+**Priority:** P3 (Low)
+**Type:** Governance Process / HR
+**Owner:** Director of HR
+**Source:** IDEA-director-of-hr-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Time-gated — first review due 2027-06-26 (annual cadence from first filing).
+
+**Problem**
+Agent role charter files (`claude/agents/*.md`) define role responsibilities and decision authorities. As the governance system evolves, role definitions may become stale. Without a scheduled review cadence, charter drift accumulates silently. An annual review ensures each role definition remains current.
+
+**Scope**
+- Author an annual review procedure for all `claude/agents/*.md` charter files
+- Schedule first review: 2027-06-26
+- Procedure: review each charter for accuracy; propose amendments through Head of Specs Team; record in prompt_change_log.md
+
+**Acceptance Criteria**
+- Annual review procedure documented
+- First review date: 2027-06-26 recorded
+- Director of HR sign-off
+
+---
+
+### BLG-GOV-145 — Database connection pool sizing review for AI endpoints
+**Priority:** P3 (Low)
+**Type:** Governance Process / Operations Assessment
+**Owner:** Head of Engineering; Infrastructure & Operations Owner
+**Source:** IDEA-head-of-engineering-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** 30+ days AI endpoint usage observation post-v6.2 ship (by 2026-07-25). v6.2 AI endpoints make additional DB reads; pool sizing should be reviewed under real load.
+
+**Problem**
+v6.2 added POST /ai/daily-briefing and POST /ai/chat, both of which read from the database (portfolio state, trade history for context). Supavisor connection pool configuration was set before AI endpoints existed. Under sustained AI endpoint load, the pool may be undersized. A review at 30 days confirms the pool is sized correctly or identifies adjustment needed.
+
+**Scope**
+- Review current Supavisor pool configuration (connection count, timeout settings)
+- Cross-reference with AI endpoint DB query volume (from logs or monitoring)
+- Identify whether pool size adjustment is warranted
+- Document findings; file implementation item if adjustment needed
+
+**Acceptance Criteria**
+- Pool configuration review document produced
+- Findings: "no change needed" or specific adjustment filed as a separate item
+- Gate condition (30+ days usage) verified before review commences
+
+---
+
+### BLG-GOV-146 — AI response injection risk assessment
+**Priority:** P1 (High)
+**Type:** Governance Process / Security
+**Owner:** Cybersecurity & Trust Lead; AI Compliance & Governance Officer
+**Source:** IDEA-cybersecurity-20260626-01 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.3
+
+**Problem**
+v6.2 AI chat and daily briefing features consume external data (market data, strategy rules, trade history) as context for Anthropic API calls. A threat model question: can a malicious actor craft market data API responses or strategy_rules.md content that causes the AI output to produce misleading trading advice? This threat category was not covered by the SRB-v1.7 §13 design gate review. A formal threat model assessment is time-sensitive for a live production AI system.
+
+**Scope**
+- Enumerate external data inputs to the AI prompt construction pipeline (POST /ai/daily-briefing and POST /ai/chat context assembly)
+- For each input: assess injection risk (can this input contain content that changes advisory output in ways the user would not expect?)
+- Document: accepted risks, mitigations, and any remediation items
+
+**Acceptance Criteria**
+- Threat model document produced covering all external data inputs to the AI pipeline
+- Risk classification per input: accepted / mitigated / open
+- Open risks filed as separate backlog items
+- Cybersecurity & Trust Lead and AI Compliance Officer sign-off
+
+---
+
+### BLG-GOV-147 — AI feature advisory disclaimer visibility assessment
+**Priority:** P2 (Medium)
+**Type:** Governance Process / §13 Compliance
+**Owner:** AI Compliance & Governance Officer; Head of UX & Design
+**Source:** IDEA-ai-compliance-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (<0.5 day)
+**Provisional-Target:** v6.3
+
+**Problem**
+§13 requires AI advisory disclaimers to be prominently visible on all AI outputs. v6.2 shipped with the assumption that disclaimers were properly implemented. Playwright spec SC-AI-01 confirms the disclaimer is rendered, but does not verify prominence (size, contrast, position, ability to dismiss). A visual assessment confirms §13 compliance at the presentation layer.
+
+**Scope**
+- Visual assessment of AI daily briefing and AI chat disclaimer display: font size, colour contrast, position relative to AI output, dismissal behaviour (if any)
+- Confirm disclaimer is visible on first render without scrolling
+- If gaps found: file remediation items targeting v6.3
+
+**Acceptance Criteria**
+- Visual assessment completed and documented
+- Confirmation: "disclaimer prominent and compliant" OR remediation items filed
+- AI Compliance Officer and Head of UX & Design sign-off
+
+---
+
+### BLG-GOV-148 — API contract review checklist for AI advisory endpoints
+**Priority:** P2 (Medium)
+**Type:** Governance Process / Spec Quality
+**Owner:** API Contracts & Documentation Owner; Head of Specs Team
+**Source:** IDEA-api-contracts-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.3
+
+**Problem**
+API contracts for AI advisory endpoints (POST /ai/daily-briefing, POST /ai/chat) require §13 boundary confirmation in addition to standard endpoint documentation. No standardised checklist exists for this confirmation step. Without a checklist, §13 compliance review quality depends on the individual contract author's knowledge of §13 requirements.
+
+**Scope**
+- Author a §13 boundary confirmation checklist for AI advisory endpoint contracts: advisory-only response structure, no automated action fields in response, disclaimer presence, rate limiting documented, audit logging documented
+- Apply checklist retroactively to existing v6.2 AI endpoint contracts (POST /ai/daily-briefing, POST /ai/chat)
+- Integrate checklist into the API contract authoring procedure
+
+**Acceptance Criteria**
+- Checklist document produced and filed in `docs/specs/api_contracts/`
+- Checklist applied to existing v6.2 AI endpoint contracts; gaps (if any) filed as remediation items
+- API Contracts Owner and Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-149 — AI response caching evaluation for morning briefing
+**Priority:** P3 (Low)
+**Type:** Governance Process / Architecture Assessment
+**Owner:** Backend Engineering Patterns Owner; FinOps & Resource Architect
+**Source:** IDEA-backend-engineering-20260626-01 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+POST /ai/daily-briefing makes an Anthropic API call on every request. If the same briefing is requested multiple times in the same trading day, each call incurs API cost and latency. A caching evaluation assesses whether same-day caching is technically feasible and whether the staleness risk (briefing should reflect the day's market data) outweighs the cost benefit.
+
+**Scope**
+- Evaluate caching feasibility: cache key options (date, user, market open/close state), cache invalidation triggers
+- Assess staleness risk: how often does market data change in a way that would materially change the briefing during a trading day?
+- Produce evaluation document: recommend cache (with approach) or no-cache (with rationale)
+- No implementation commitment; evaluation output only
+
+**Acceptance Criteria**
+- Evaluation document produced covering cache key design, staleness risk, and cost-benefit analysis
+- Recommendation: cache / no-cache with rationale
+- Backend Engineering Owner and FinOps sign-off
+
+---
+
 ### BLG-QA-63 — Automated accessibility testing (axe-core) in Playwright CI
 **Priority:** P3 (Low)
 **Type:** QA / Accessibility
@@ -2639,6 +3053,103 @@ For each spec file above: investigate failure cause, fix assertions to match cur
 - AC-01: All 12 spec files removed from `testIgnore` in `playwright.config.js`
 - AC-02: All assertions pass in CI without modification to application source
 - AC-03: `playwright.config.js` `testIgnore` array is empty or removed
+
+---
+
+### BLG-QA-65 — Nightly stop computation CI simulation tests
+**Priority:** P1 (High)
+**Type:** QA / Test Coverage
+**Owner:** QA Lead; Backend Engineering Patterns Owner
+**Source:** IDEA-qa-lead-20260626-01 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~1 day)
+**Provisional-Target:** v6.3
+
+**Problem**
+v6.2 introduced nightly computation of trailing stops, rebalance exits, and inverse-vol position sizing. These computations run on a schedule (no on-demand CI trigger) and have zero automated test coverage. A silent regression in any of these computations would affect production trailing stop levels without any CI alarm. A fixture-based CI simulation detects regressions before they reach production.
+
+**Scope**
+- Author fixture dataset representing known portfolio state (positions with stop history, price data)
+- Run trailing stop computation, rebalance exit detection, and inv-vol sizing computation against fixtures
+- Assert computed outputs match expected values
+- Register tests in CI to run on any change to the nightly computation services
+
+**Acceptance Criteria**
+- AC-01: Trailing stop computation test passes against fixture dataset
+- AC-02: Rebalance exit detection test passes against fixture dataset
+- AC-03: Inverse-vol sizing computation test passes against fixture dataset
+- AC-04: All tests run in CI on changes to affected services
+- AC-05: Fixture update procedure documented
+
+---
+
+### BLG-QA-66 — Strategy signal regression test specification
+**Priority:** P1 (High)
+**Type:** QA / Spec
+**Owner:** QA & Testing Owner; Director of Quality
+**Source:** IDEA-qa-testing-20260626-01 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.3
+
+**Problem**
+BLG-QA-65 (nightly stop CI simulation) requires a formal specification document defining: which scenarios the fixture dataset must cover, what the expected outputs are, and how fixture data should be maintained. Without a specification, the CI simulation tests may cover an incomplete scenario set or drift from production behaviour.
+
+**Scope**
+- Define scenario coverage requirements for BLG-QA-65: which portfolio states must be represented (trailing stop active, no stop, position at rebalance threshold, inv-vol position, mixed)
+- Define expected output format and tolerance ranges
+- Define fixture maintenance procedure (when and how to update fixtures after strategy_rules.md changes)
+- Document filed as `docs/specs/qa/strategy_signal_regression_spec.md`
+
+**Acceptance Criteria**
+- Specification document produced covering all scenario coverage requirements
+- Expected output formats and tolerances defined
+- Fixture maintenance procedure documented
+- Director of Quality and QA Lead sign-off
+
+---
+
+### BLG-QA-67 — AI chat response schema validation tests
+**Priority:** P2 (Medium)
+**Type:** QA / Test Coverage
+**Owner:** QA Lead; API Contracts & Documentation Owner
+**Source:** IDEA-qa-lead-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.3
+
+**Problem**
+POST /ai/chat must return advisory-only structured responses conforming to the expected JSON schema. No test currently validates the response schema or confirms that directive language patterns are absent. Schema drift or an Anthropic SDK update could silently change response structure without any CI alarm.
+
+**Scope**
+- Define expected POST /ai/chat response schema (fields, types, optional fields)
+- Author schema validation tests: response conforms to expected schema, advisory-only language constraint confirmed
+- Tests registered in CI alongside existing API endpoint tests in `backend/routers/test.py`
+
+**Acceptance Criteria**
+- AC-01: Response schema validation test passes in CI
+- AC-02: Advisory-only constraint test (no directive language patterns) passes in CI
+- AC-03: Tests registered in `backend/routers/test.py` or equivalent CI test entry point
+
+---
+
+### BLG-QA-68 — §13 boundary test suite for AI advisory endpoints
+**Priority:** P2 (Medium)
+**Type:** QA / Spec
+**Owner:** QA & Testing Owner; AI Compliance & Governance Officer
+**Source:** IDEA-qa-testing-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.3
+
+**Problem**
+§13 compliance for AI advisory endpoints depends on consistent enforcement of advisory-only output constraints across all AI endpoints. No document defines the full set of §13 boundary test scenarios for POST /ai/daily-briefing, POST /ai/chat, and any future AI endpoints. Without this document, §13 compliance testing is inconsistent and new AI endpoints may not be assessed against the same criteria.
+
+**Scope**
+- Author §13 boundary test scenario document: enumerate all AI advisory endpoints; for each, define the §13 compliance test scenarios (advisory language confirmation, no automated action, disclaimer rendered, no financial instrument recommendations)
+- Document applies to current endpoints and serves as the template for future AI endpoint §13 test scenarios
+- Filed as `docs/specs/qa/ai_s13_boundary_test_suite.md`
+
+**Acceptance Criteria**
+- §13 boundary test scenario document produced covering all current AI endpoints
+- Scenarios cover: advisory-only language, no automated-action fields, disclaimer visibility, no specific instrument recommendations
+- AI Compliance Officer and QA & Testing Owner sign-off
 
 ---
 
@@ -2737,6 +3248,81 @@ All market data (OHLCV, signals, news) is sourced exclusively from Alpaca and Ya
 
 ---
 
+### BLG-OPS-79 — Background scheduler health monitoring endpoint
+**Priority:** P2 (Medium)
+**Type:** Operations / Monitoring
+**Owner:** Infrastructure & Operations Owner; Backend Engineering Patterns Owner
+**Source:** IDEA-infra-ops-20260622-01 — Promoted-Backlog (gate cleared: BLG-FEAT-46/47 shipped v6.2); rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.3
+
+**Gate criteria:** v6.2 scheduler architecture reviewed and monitoring endpoint design specified. BLG-FEAT-46/47 shipped (gate event cleared 2026-06-25); new condition: architecture review before endpoint design.
+
+**Problem**
+v6.2 added a production background scheduler running nightly trailing stop computation, rebalance exits, and inverse-vol sizing. These computations run without any health monitoring endpoint. If the scheduler silently fails, there is no alert and no way to detect the failure from an external monitoring system. A health endpoint enables uptime monitoring and operational visibility.
+
+**Scope**
+- Design health monitoring endpoint: `GET /health/scheduler` returning last-run timestamps per job type, status (success/failure), and any error details from most recent run
+- Integrate with existing `GET /health` endpoint or create separate scheduler health endpoint
+- Review v6.2 scheduler architecture before endpoint design to confirm available data fields
+
+**Acceptance Criteria**
+- AC-01: `GET /health/scheduler` returns last-run status for each nightly computation job
+- AC-02: Endpoint registered in `backend/routers/test.py` and `docs/reference/openapi.yaml`
+- AC-03: Architecture review documented before implementation begins
+
+---
+
+### BLG-OPS-80 — Render deployment rollback procedure documentation
+**Priority:** P3 (Low)
+**Type:** Operations / Runbook
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** XS (<0.5 day)
+**Provisional-Target:** v6.3
+
+**Gate criteria:** None — documentation can be produced now.
+
+**Problem**
+There is no documented runbook for rolling back to the prior Render deployment version in case of a production incident. If a deployment causes a regression, the resolution depends on whoever is on call knowing the correct steps. A documented rollback procedure removes single-point-of-knowledge risk.
+
+**Scope**
+- Document Render deployment rollback procedure: navigate to Render dashboard, identify prior deploy version, initiate rollback, verify rollback succeeded
+- Include: rollback decision criteria (what severity warrants immediate rollback vs fix-forward), estimated rollback time, how to verify the rollback deployed the correct version
+
+**Acceptance Criteria**
+- Rollback procedure document produced and filed in `docs/operations/`
+- Document covers: rollback steps, decision criteria, verification steps
+- Infrastructure & Operations Owner sign-off
+
+---
+
+### BLG-OPS-81 — AI endpoint per-endpoint rate limiting hardening
+**Priority:** P1 (High)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner; Backend Engineering Patterns Owner
+**Source:** IDEA-cybersecurity-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.3
+
+**Problem**
+POST /ai/daily-briefing and POST /ai/chat have no per-endpoint rate limiting. Both endpoints make Anthropic API calls on every request. A single automated abuse vector (web scraper, API probe, or broken client loop) could exhaust the monthly Anthropic API budget within minutes without any circuit-breaker. Rate limiting is a standard security control for API endpoints with external service cost implications.
+
+**Scope**
+- Implement per-endpoint rate limits: POST /ai/daily-briefing (~10 req/min/IP), POST /ai/chat (~30 req/min/IP)
+- Return standard 429 Too Many Requests with Retry-After header
+- Document rate limits in openapi.yaml and api_contracts
+- Test: verify 429 returned after limit exceeded; verify Retry-After header is set
+
+**Acceptance Criteria**
+- AC-01: POST /ai/daily-briefing rate limit enforced (429 returned after limit exceeded)
+- AC-02: POST /ai/chat rate limit enforced (429 returned after limit exceeded)
+- AC-03: Retry-After header present in 429 responses
+- AC-04: Rate limits documented in openapi.yaml and api_contracts
+- AC-05: Endpoint test updated to cover 429 scenario
+
+---
+
 ### BLG-FE-77 — Refactor `Watchlist.js` to ESLint compliance
 **Priority:** P3 (Low)
 **Type:** Frontend / UX
@@ -2782,6 +3368,32 @@ The Reflection page shows a dash ("—") for the R-multiple column across all ti
 - R-multiple is displayed as a numeric value for all closed trades with sufficient data on the Reflection page
 - Trades with insufficient data (no stop loss recorded) show a clearly labelled "N/A" rather than a silent dash
 - No regression to other Reflection page columns
+
+---
+
+### BLG-FE-80 — Morning briefing progressive disclosure (expand/collapse sections)
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX Enhancement
+**Owner:** Base44 Frontend Prompt Owner; Head of UX & Design
+**Source:** IDEA-base44-frontend-20260626-01 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.3
+
+**Problem**
+The AI daily briefing card (AiDailyBriefing.js, shipped v6.2) displays three content-dense sections: market context, signals, and chat prompt. All sections are always fully expanded. A user who has already read the market context and signals but wants to access the AI chat prompt must scroll past the full briefing content on every page load. Progressive disclosure (expand/collapse per section) reduces visual noise for repeat daily usage.
+
+**Scope**
+- Add expand/collapse toggle per section in AiDailyBriefing.js (market context, signals, chat prompt)
+- Default state: all sections expanded (no UX regression for new users)
+- Persist section collapse state to localStorage (collapsed sections stay collapsed on next page load)
+- Version the localStorage key to handle section schema changes gracefully
+
+**Acceptance Criteria**
+- AC-01: Each section of the AI daily briefing has a visible expand/collapse toggle
+- AC-02: Sections collapse and expand without losing content
+- AC-03: Section state persists across page reloads via localStorage
+- AC-04: Default state is all expanded (no UX regression)
+- AC-05: Playwright: expand all → collapse market context → reload → verify market context still collapsed
 
 ---
 

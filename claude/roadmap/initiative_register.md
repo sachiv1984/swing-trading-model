@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-08 (rebalance 2026-06-08__scheduled — DL-040; no initiative changes; 13 active initiatives all confirmed 🔥 Must continue; CPS=1.15, Δ=0.00)
+**Last Updated:** 2026-06-26 (rebalance 2026-06-26__scheduled — DL-057; no initiative changes; 0 active initiatives; CPS=N/A)
 
 > ⚠️ Standing Notice: This register is a planning inventory only. It does not constitute canonical specification. All implementation detail is indicative until confirmed in canonical specs.
 

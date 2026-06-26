@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-25 (post-ship closure 2026-06-24__release-v6.2 — v6.2 ✅ Complete; Current Version → v6.2; Next planned release → v6.3)
-**Last rebalance:** 2026-06-24 (cycle 2026-06-24__scheduled — Standard-tier, CPS=N/A (0 active initiatives); Product Value Alert (ratio=0.209); Skill-Silo Alert (G+D+P=79.1%); DL-056; 7 Rejected, 4 Backlog-gate-conditional (BLG-FEAT-52, BLG-QA-63, BLG-OPS-76, BLG-OPS-77), 8 Parked C2 remaining; STEP 8.2: 6 Now horizon items verified (BLG-FEAT-46–51); STEP 8.0 P2 advisory BLG-BE-38; no net roadmap changes)
+**Last Updated:** 2026-06-26 (scheduled rebalance 2026-06-26__scheduled — DL-057; 14 Promoted-Backlog (IW-20260626-01), 10 Backlog-gate-conditional, 19 Parked C1, 6 Parked C3 carry; STEP 8.0: BLG-BE-39 + BLG-FE-79 mandatory v6.3 Now; STEP 8.1: Now horizon intentionally empty — deferred to plan release v6.3; PVR=0.37 Advisory; Skill-Silo=51.5% Advisory; Meta-review conducted)
+**Last rebalance:** 2026-06-26 (cycle 2026-06-26__scheduled — Standard-tier, CPS=N/A (0 active initiatives); Product Value Advisory (ratio=0.37); Skill-Silo Advisory (G+D+P=51.5%); DL-057; 25 new backlog items; Now horizon intentionally empty; v6.3 deferred to plan release v6.3)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
