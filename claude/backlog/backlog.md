@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-25 (groom backlog — post-ship closure 2026-06-24__release-v6.2: 10 items archived to backlog_archive.md: BLG-FEAT-46/47/48/49/50/51, BLG-GOV-135/136, BLG-OPS-75, BLG-QA-62; v6.2 Release Slice removed; BLG-OPS-78 added; 109 active items)
+**Last Updated:** 2026-06-26 (BLG-FEAT-53 added — Strategy Benchmark page; Product Owner decision; Provisional-Target v6.3; 110 active items)
 **Last rebalance:** 2026-06-24 (cycle 2026-06-24__scheduled — DL-056; 7 rejected, 4 backlog-gate-conditional, 8 parked C2; Now horizon v[TBD] confirmed; Product Value Alert (0.209) + Skill-Silo Alert (79.1%); STEP 8.0 P2 advisory BLG-BE-38)
 
 > ⚠️ Standing Notice
@@ -374,6 +374,41 @@ Trades are currently classified only by market, sector, and signal type. There i
 - AC-01: User can add/remove tags on any trade plan
 - AC-02: GET /analytics/tag-performance returns win rate and average R broken down by tag
 - AC-03: PerformanceAnalytics page surfaces tag-based filter controls
+
+---
+
+### BLG-FEAT-53 — Strategy Benchmark page: compare live trades against backtest
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Analytics
+**Owner:** Product Owner
+**Source:** Product Owner decision 2026-06-26 — session design proposal (Head of UX & Design)
+**Effort:** L (~1 week)
+**Provisional-Target:** v6.3
+
+**Problem**
+There is no way to know whether live trading is tracking the production strategy's backtest performance. The backtest (`production_strategy.py`) generates trade-level and annual performance data in CSV files, but these are not connected to the live system. Without a comparison view, there is no way to answer: "Am I trading this strategy?", "Is it still producing the outcomes the backtest predicted?", or "How does my actual win rate compare to the 56.7% backtest baseline?"
+
+**Design**
+UX specification: Head of UX & Design design proposal 2026-06-26 — single scrollable page with sticky year + market filters, three panels:
+- Panel 1 — Performance Parity: backtest vs actual side-by-side stat cards (CAGR, Win Rate, Avg Hold Days, Total PnL) + yearly PnL bar chart
+- Panel 2 — Yearly Breakdown: year-by-year table (Num Trades, Win Rate %, Total PnL for both backtest and actual)
+- Panel 3 — Trade Log: toggleable backtest / actual / side-by-side view, filterable by year and market; exit reason badges matching existing Positions/Signals badge language
+
+**Scope**
+- One-time import of existing backtest CSVs into two new DB tables: `backtest_trades`, `backtest_yearly_performance`
+- Backend endpoints: `GET /strategy/benchmark/summary?year=&market=` and `GET /strategy/benchmark/trades?year=&market=`
+- Frontend: `StrategyBenchmark.js` page with all three panels, sticky filter bar, toggle modes
+- Backtest refresh: server-side job re-runs `production_strategy.py` with the **current** `tickers_full_list.csv` (not the fixed set used in the original backtest); "Refresh data" button triggers re-run; "Last updated: {date}" timestamp displayed
+- Route registered in app router; endpoint registered in `backend/routers/test.py`
+
+**Acceptance Criteria**
+- AC-01: Strategy Benchmark page accessible from main navigation
+- AC-02: Year filter (All / individual year) applies to all three panels simultaneously
+- AC-03: Panel 1 shows backtest stats and actual stats side-by-side; actual shows `—` when no live trades exist for the selected period (not zero)
+- AC-04: Panel 2 yearly breakdown table covers all years present in backtest data (2018–present)
+- AC-05: Panel 3 trade log supports three toggle modes; exit reason badges use Stop (red) / Risk-Off (amber) / Rebalance (teal) consistent with existing badge language
+- AC-06: "Refresh data" button re-runs backtest with current ticker universe; shows last-run timestamp
+- AC-07: All new API endpoints documented in `docs/reference/openapi.yaml` and `docs/specs/api_contracts/` in the same sprint
 
 ---
 
