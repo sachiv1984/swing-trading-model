@@ -395,11 +395,11 @@ UX specification: Head of UX & Design design proposal 2026-06-26 — single scro
 - Panel 3 — Trade Log: toggleable backtest / actual / side-by-side view, filterable by year and market; exit reason badges matching existing Positions/Signals badge language
 
 **Scope**
-- One-time import of existing backtest CSVs into two new DB tables: `backtest_trades`, `backtest_yearly_performance`
-- Backend endpoints: `GET /strategy/benchmark/summary?year=&market=` and `GET /strategy/benchmark/trades?year=&market=`
-- Frontend: `StrategyBenchmark.js` page with all three panels, sticky filter bar, toggle modes
-- Backtest refresh: server-side job re-runs `production_strategy.py` with the **current** `tickers_full_list.csv` (not the fixed set used in the original backtest); "Refresh data" button triggers re-run; "Last updated: {date}" timestamp displayed
-- Route registered in app router; endpoint registered in `backend/routers/test.py`
+- Two new DB tables: `backtest_trades` (Ticker, Entry Date, Exit Date, Holding Days, Entry, Exit, PnL, PnL %, Market, Exit Reason, Was Profitable, Entry Year) and `backtest_yearly_performance` (Entry Year, Num Trades, Avg PnL, Total PnL, Avg Hold Days, Win Rate %)
+- Import mechanism: `POST /strategy/benchmark/import` endpoint accepts the three CSV outputs from `production_strategy.py` and upserts into DB; companion local script `import_backtest.py` reads latest CSVs from `production_results/` and posts to this endpoint. User runs this nightly (or on any schedule) from their local machine — no server-side execution of `production_strategy.py`
+- Read endpoints: `GET /strategy/benchmark/summary?year=&market=` and `GET /strategy/benchmark/trades?year=&market=`
+- Frontend: `StrategyBenchmark.js` page with all three panels, sticky filter bar, toggle modes; displays "Last updated: {date}" timestamp from DB (no Refresh button — data is managed externally)
+- Route registered in app router; all endpoints registered in `backend/routers/test.py`
 
 **Acceptance Criteria**
 - AC-01: Strategy Benchmark page accessible from main navigation
@@ -407,8 +407,9 @@ UX specification: Head of UX & Design design proposal 2026-06-26 — single scro
 - AC-03: Panel 1 shows backtest stats and actual stats side-by-side; actual shows `—` when no live trades exist for the selected period (not zero)
 - AC-04: Panel 2 yearly breakdown table covers all years present in backtest data (2018–present)
 - AC-05: Panel 3 trade log supports three toggle modes; exit reason badges use Stop (red) / Risk-Off (amber) / Rebalance (teal) consistent with existing badge language
-- AC-06: "Refresh data" button re-runs backtest with current ticker universe; shows last-run timestamp
-- AC-07: All new API endpoints documented in `docs/reference/openapi.yaml` and `docs/specs/api_contracts/` in the same sprint
+- AC-06: `POST /strategy/benchmark/import` upserts data correctly; "Last updated" timestamp reflects the most recent import date
+- AC-07: `import_backtest.py` script reads latest CSVs from `production_results/` and calls the import endpoint; runnable with `python import_backtest.py`
+- AC-08: All new API endpoints documented in `docs/reference/openapi.yaml` and `docs/specs/api_contracts/` in the same sprint
 
 ---
 
