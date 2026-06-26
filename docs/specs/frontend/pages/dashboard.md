@@ -3,16 +3,17 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.3
-**Last Updated:** 2026-06-24
+**Version:** 2.4
+**Last Updated:** 2026-06-26
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Release:** v6.2
-**EPIC:** EPIC-02
+**Release:** v6.3
+**EPIC:** EPIC-03
+**Design Source (v2.4):** docs/design/2026-06-26__release-v6.3/morning-briefing-progressive-disclosure/ux_spec.md
 **Design Source (v2.3):** docs/design/2026-06-24__release-v6.2/ai-daily-briefing-card/ux_spec.md
 **Design Source (v2.2):** docs/design/2026-06-22__release-v6.1/gate-proximity-indicator/ux_spec.md
 **Design Source (v2.1):** docs/design/2026-06-19__release-v6.0/morning-briefing/ux_spec.md
 **Design Source (v2.0):** docs/design/2026-03-06__release-v1.9/dashboard-home/ux_spec.md
-**Confirmed by:** Head of Specs Team — 2026-06-24
+**Confirmed by:** Head of Specs Team — 2026-06-26
 
 ---
 
@@ -229,6 +230,71 @@ Card content is **display-only** — action items are informational only; no one
 
 **§13 compliance:** Advisory-only. No action type is executable from this card. Advisory label is non-dismissible. `response.advisory = true` must be verified client-side; if absent or false, show error.
 
+### Progressive Disclosure — Section Collapse (v6.3 — ST-12)
+
+**Design source:** `docs/design/2026-06-26__release-v6.3/morning-briefing-progressive-disclosure/ux_spec.md`
+
+The card body sections are individually collapsible. The advisory label and card header remain always visible (§13 requirement).
+
+#### Collapsible Sections
+
+| Section Key | Section Label | Content |
+|------------|--------------|---------|
+| `summary` | **Market Context** | `response.summary` paragraph |
+| `actions` | **Suggested Actions** | `response.actions[]` ordered list |
+
+#### Section Header Row
+
+Each section is preceded by a header row:
+
+| Element | Spec |
+|---------|------|
+| Section label | Left-aligned, `text-sm font-semibold text-slate-300` |
+| Toggle icon | `ChevronDown` (expanded) / `ChevronRight` (collapsed) — Lucide; right-aligned; `text-slate-400` |
+| Separator | `border-t border-slate-700/50` above each section header (except the first) |
+| Hover | `hover:bg-slate-700/20`; `cursor-pointer` on full header row width |
+| Click target | Full width of section header row |
+
+#### Collapse Behaviour
+
+- Each section collapses and expands independently
+- Collapsed state: content hidden; section header visible
+- Expanded state: content fully visible below section header
+- Transition: instant toggle; smooth 150ms height transition preferred
+
+#### localStorage Persistence
+
+**Key:** `ai-briefing-collapse-state-v1`
+
+**Value:**
+```json
+{ "summary": false, "actions": false }
+```
+
+`false` = expanded (default); `true` = collapsed.
+
+- On mount: read and apply stored state
+- On toggle: update localStorage synchronously
+- If key absent or parse error: default all expanded; do not throw
+- No server-side persistence
+
+#### Default State
+
+All sections expanded — ensures no content is hidden for first-time users.
+
+#### States Integration
+
+| Card State | Section Header Behaviour |
+|-----------|------------------------|
+| Loading | Section headers shown; toggle disabled; skeleton body |
+| No briefing yet | Section headers not shown; placeholder fills card body |
+| Error | Section headers not shown; error message fills card body |
+| Normal | Section headers shown; localStorage state applied |
+
+#### Playwright Coverage
+
+Test ID `SC-BRIEF-01`: expand all → collapse Market Context → reload → assert Market Context collapsed, Suggested Actions expanded.
+
 ---
 
 ## 6. Gate Progress Indicator
@@ -290,6 +356,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.4 | 2026-06-26 | v6.3 design gate — §5 progressive disclosure added (ST-12, BLG-FE-80): AI Daily Briefing Card sections (Market Context, Suggested Actions) are individually collapsible; section header rows with ChevronDown/Right toggle; localStorage key ai-briefing-collapse-state-v1 persists state across reloads; default all expanded; §13 advisory label remains non-dismissible and always visible; Playwright test SC-BRIEF-01 required. Design source: morning-briefing-progressive-disclosure/ux_spec.md. Approved: Product Owner 2026-06-26. Head of Specs Team confirmed. |
 | 2.3 | 2026-06-24 | v6.2 design gate — §5 AI Daily Briefing Card added (ST-07, BLG-FEAT-50): full-width card below session-summary cards; Regenerate button calls POST /ai/daily-briefing; summary paragraph + ordered action list with type chips (EXIT/ENTER/MONITOR/HOLD); advisory label non-dismissible; §13 compliant display-only; advisory=true verified client-side. Sections renumbered (old §5 Gate Progress→§6, §6 States→§7, §7 Navigation→§8, §8 Change Log→§9). Design source: ai-daily-briefing-card/ux_spec.md. Approved: Product Owner 2026-06-24. Head of Specs Team confirmed. |
 | 2.2 | 2026-06-22 | v6.1 design gate — §5 Gate Progress Indicator added (ST-07, BLG-FE-78): compact full-width strip below session-summary cards showing closed-trade count vs 20-trade PT-04/SI-02 gate threshold; uses existing GET /portfolio/gate-metrics endpoint; display-only; error hidden silently. Sections renumbered (old §5→§6, §6→§7, §7→§8). Design source: gate-proximity-indicator/ux_spec.md. Approved: Product Owner 2026-06-22. Head of Specs Team confirmed. |
 | 2.1 | 2026-06-19 | v6.0 design gate — §1A Morning Briefing Section added: new section at top of DashboardHome above existing cards; 5 intelligence cards (Screener Hits, Positions to Act On, Red Flags, Earnings Alert, Compliance); horizontal desktop layout, vertical mobile stack; per-card loading/error/empty state behaviour; Compliance card colour-coded by score. Design source: morning-briefing/ux_spec.md. Approved: Product Owner 2026-06-19. Head of Specs Team confirmed. |
