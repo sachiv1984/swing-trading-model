@@ -3,7 +3,7 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.2
+**Version:** 1.3
 **Last Updated:** 2026-03-25
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -334,6 +334,77 @@ No request body.
 
 ---
 
+## GET /health/scheduler
+
+**Method:** GET  
+**Path:** `/health/scheduler`  
+**Auth:** API key required  
+**Story:** ST-13 (BLG-OPS-79, EPIC-03, v6.3)
+
+Returns last-run status, timestamps, and any error details for each nightly computation job.
+
+**Architecture note:** The scheduler is GitHub Actions (external cron) calling HTTP endpoints — not an in-process background scheduler. The three tracked jobs are triggered by:
+- `trailing_stop` — `POST /positions/nightly-stop-update`
+- `rebalance_exit` — `POST /signals/rebalance-exit`
+- `inv_vol_sizing` — co-invoked by `POST /signals/rebalance-exit`
+
+### Request
+
+No request body.
+
+### Response (200)
+
+```json
+{
+  "scheduler_type": "github_actions_external_cron",
+  "trigger_endpoints": {
+    "trailing_stop": "POST /positions/nightly-stop-update",
+    "rebalance_exit": "POST /signals/rebalance-exit",
+    "inv_vol_sizing": "co-invoked by rebalance-exit"
+  },
+  "overall_status": "ok",
+  "jobs": {
+    "trailing_stop": {
+      "last_run_utc": "2026-06-29T16:00:00+00:00",
+      "last_status": "ok",
+      "last_error": null,
+      "detail": { "positions_updated": 3 }
+    },
+    "rebalance_exit": {
+      "last_run_utc": "2026-06-29T16:00:00+00:00",
+      "last_status": "ok",
+      "last_error": null,
+      "detail": { "is_last_trading_day": false, "signals_created": 0 }
+    },
+    "inv_vol_sizing": {
+      "last_run_utc": "2026-06-29T16:00:00+00:00",
+      "last_status": "ok",
+      "last_error": null,
+      "detail": { "note": "co-invoked by rebalance-exit" }
+    }
+  },
+  "note": "Status resets on process restart. A never_run status after a recent deploy is normal."
+}
+```
+
+#### Field notes
+
+| Field | Type | Values |
+|-------|------|--------|
+| `scheduler_type` | string | Always `"github_actions_external_cron"` |
+| `overall_status` | string | `"ok"` — all jobs ok or never_run; `"degraded"` — at least one job errored |
+| `jobs[*].last_run_utc` | ISO 8601 timestamp or null | null if job has never run since last deploy |
+| `jobs[*].last_status` | string | `"ok"`, `"error"`, `"never_run"` |
+| `jobs[*].last_error` | string or null | Error message if `last_status == "error"` |
+| `jobs[*].detail` | object or null | Job-specific result summary |
+
+### Notes
+
+- Status is in-memory; a `"never_run"` status after a recent Render deploy is expected and normal.
+- `"degraded"` overall_status indicates at least one job's most recent invocation returned an error. Check `last_error` for the specific failure.
+
+---
+
 ## Known Deviations
 
 None — all known deviations resolved as of v1.1 (BLG-SPEC-D14, 2026-03-25).
@@ -346,6 +417,7 @@ None — all known deviations resolved as of v1.1 (BLG-SPEC-D14, 2026-03-25).
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-06-29 | ST-13 (BLG-OPS-79): Added `GET /health/scheduler` — nightly computation job health monitoring endpoint. Returns last-run status for trailing_stop, rebalance_exit, inv_vol_sizing jobs. Authority: Infrastructure & Operations Owner. |
 | 1.2 | 2026-03-25 | ST-08 (BLG-OPS-09): Added `GET /health/database` — database size monitoring endpoint with configurable alert threshold and Telegram notification. Authority: Head of Engineering + FinOps & Resource Architect. |
 | 1.1 | 2026-03-25 | ST-07 (BLG-SPEC-D14): `GET /health` section updated to document actual v2.2 schema — `status: ok\|error`, `db: connected\|error`, `last_market_status_check`, `last_alert_evaluation`. DEV-HEALTH-001 closed. Authority: API Contracts & Documentation Owner. |
 | 1.0 | 2026-03-18 | Initial spec. |

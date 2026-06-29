@@ -53,6 +53,20 @@ _DB_ALERT_COOLDOWN_SECONDS: int = 3600
 # Last DB size alert timestamp (module-level; resets on process restart)
 _last_db_size_alert_utc: Optional[datetime] = None
 
+# Nightly job last-run status (ST-13, BLG-OPS-79).
+# Updated by each nightly computation endpoint on completion.
+# Resets on process restart (Render spins up a fresh process on each deploy).
+_NIGHTLY_JOB_NAMES = ("trailing_stop", "rebalance_exit", "inv_vol_sizing")
+_nightly_job_status: Dict = {
+    job: {
+        "last_run_utc": None,
+        "last_status": "never_run",
+        "last_error": None,
+        "detail": None,
+    }
+    for job in _NIGHTLY_JOB_NAMES
+}
+
 
 def record_external_api_call(api_name: str, success: bool, latency_ms: float) -> None:
     """Record the outcome of an external API call for health monitoring (ST-08)."""
@@ -427,6 +441,47 @@ def test_all_endpoints(base_url: str = None, api_key: str = None) -> Dict:
     },
     "results": test_results
 }
+
+
+def record_nightly_job(job_name: str, status: str, detail: Optional[Dict] = None, error: Optional[str] = None) -> None:
+    """Record completion of a nightly computation job (ST-13, BLG-OPS-79)."""
+    if job_name not in _nightly_job_status:
+        return
+    _nightly_job_status[job_name]["last_run_utc"] = datetime.now(timezone.utc).isoformat()
+    _nightly_job_status[job_name]["last_status"] = status
+    _nightly_job_status[job_name]["last_error"] = error
+    _nightly_job_status[job_name]["detail"] = detail
+
+
+def get_scheduler_health() -> Dict:
+    """Return last-run status for all nightly computation jobs (ST-13, BLG-OPS-79).
+
+    Trigger mechanism: GitHub Actions external cron (not an in-process scheduler).
+    Jobs: trailing_stop (POST /positions/nightly-stop-update),
+          rebalance_exit (POST /signals/rebalance-exit),
+          inv_vol_sizing (co-invoked by rebalance-exit or manual trigger).
+    Status resets on process restart — Render spins up a fresh process on each deploy.
+    """
+    jobs = {}
+    for job_name, state in _nightly_job_status.items():
+        jobs[job_name] = {
+            "last_run_utc": state["last_run_utc"],
+            "last_status": state["last_status"],
+            "last_error": state["last_error"],
+            "detail": state["detail"],
+        }
+    all_ok = all(s["last_status"] in ("ok", "never_run") for s in _nightly_job_status.values())
+    return {
+        "scheduler_type": "github_actions_external_cron",
+        "trigger_endpoints": {
+            "trailing_stop": "POST /positions/nightly-stop-update",
+            "rebalance_exit": "POST /signals/rebalance-exit",
+            "inv_vol_sizing": "co-invoked by rebalance-exit",
+        },
+        "overall_status": "ok" if all_ok else "degraded",
+        "jobs": jobs,
+        "note": "Status resets on process restart. A never_run status after a recent deploy is normal.",
+    }
 
 
 def get_db_size_info() -> Dict:

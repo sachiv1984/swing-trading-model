@@ -53,6 +53,7 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /", "method": "GET", "url": f"{base_url}/", "critical": True},
         {"name": "GET /health", "method": "GET", "url": f"{base_url}/health", "critical": True},
         {"name": "GET /health/detailed", "method": "GET", "url": f"{base_url}/health/detailed", "critical": True},
+        {"name": "GET /health/scheduler", "method": "GET", "url": f"{base_url}/health/scheduler", "critical": False},
 
         # Settings & Configuration
         {"name": "GET /settings", "method": "GET", "url": f"{base_url}/settings", "critical": True},
