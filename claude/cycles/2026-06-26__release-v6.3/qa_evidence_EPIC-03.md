@@ -18,7 +18,7 @@
 | ST-12 | Morning briefing progressive disclosure | blocked_frontend | DEL-20260629-03 |
 | ST-13 | Background scheduler health monitoring endpoint | done | aea5966f |
 | ST-14 | Measure live latency for AI endpoints | blocked_ops | — |
-| ST-15 | Render deployment rollback procedure documentation | done | PENDING |
+| ST-15 | Render deployment rollback procedure documentation | done | 2d2c290c |
 
 ---
 

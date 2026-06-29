@@ -133,7 +133,7 @@
           "assigned_to": "engine",
           "github_issue": 869,
           "branch": "exec/2026-06-26__release-v6.3/EPIC-03",
-          "commit_sha": "PENDING_COMMIT",
+          "commit_sha": "2d2c290c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
