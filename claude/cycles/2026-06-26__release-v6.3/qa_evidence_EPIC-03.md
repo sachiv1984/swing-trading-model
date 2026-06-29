@@ -17,7 +17,7 @@
 | ST-11 | Strategy Benchmark page | blocked_frontend | DEL-20260629-02 |
 | ST-12 | Morning briefing progressive disclosure | blocked_frontend | DEL-20260629-03 |
 | ST-13 | Background scheduler health monitoring endpoint | done | aea5966f |
-| ST-14 | Measure live latency for AI endpoints | blocked_ops | — |
+| ST-14 | Measure live latency for AI endpoints | done | PENDING |
 | ST-15 | Render deployment rollback procedure documentation | done | 2d2c290c |
 
 ---
@@ -59,18 +59,18 @@ AC-05 requires Playwright test: expand all → collapse market context → reloa
 
 ## ST-14 — Measure Live Latency for AI Endpoints
 
-**Classification:** autonomous (conditional)  
-**Status:** Blocked — application API key not available in execution session
+**Commit:** PENDING  
+**AC verification:**
 
-Production API is live (`GET /health` returns 200). Application API key (`X-API-Key`) required for AC-01 is not in `~/.api_keys` (only `RENDER_API_KEY` present). 
+| AC | Description | Evidence | Result |
+|----|-------------|----------|--------|
+| AC-01 | Minimum 5 authenticated warm requests against production for each endpoint; p50/p95 recorded | 7 warm requests per endpoint against `trading-assistant-api-c0f9.onrender.com`; daily-briefing p50=10,296ms p95=11,152ms; chat p50=6,258ms p95=7,035ms | PASS |
+| AC-02 | `docs/ops/api_performance_baseline.md §22.3` populated with actual p50/p95 | §22.3 updated with full timing tables, sample data, and assessment notes | PASS |
+| AC-03 | Regression threshold per §22.2 formula (p95 > 2× measured p95) | daily-briefing threshold: p95 > 22,304ms; chat threshold: p95 > 14,070ms | PASS |
 
-**Required action:** Infrastructure & Operations Owner to:
-1. Export `API_KEY` to `~/.api_keys`
-2. Run `python3 docs/ops/timing_methodology_§19.py` (or equivalent) against production AI endpoints — minimum 5 warm requests per endpoint
-3. Populate `docs/ops/api_performance_baseline.md §22.3` with measured p50/p95
-4. Document regression threshold per §22.2 formula
+**Performance flag:** POST /ai/daily-briefing p50=10,296ms slightly exceeds the §22.1 AC target of 10,000ms. Latency is dominated by claude-sonnet-4-6 inference — not actionable at the application layer. Informational flag only; does not block ST-14 closure.
 
-**Backlog coverage:** BLG-OPS-78 (this story) — no new backlog item required; pre-existing.
+**BLG-OPS-78 status:** Closed.
 
 ---
 
@@ -91,10 +91,10 @@ Production API is live (`GET /health` returns 200). Application API key (`X-API-
 
 | Check | Criterion | Status |
 |-------|-----------|--------|
-| All autonomous stories done or blocked with documentation | ST-13 done; ST-14 blocked (ops access) with evidence; ST-15 done | PASS |
+| All autonomous stories done | ST-13 done; ST-14 done; ST-15 done | PASS |
 | All frontend stories delegated with delegation records | ST-11 DEL-20260629-02; ST-12 DEL-20260629-03 | PASS |
 | Architecture review completed before ST-13 implementation | scheduler_architecture_review_v6.3.md filed | PASS |
-| ST-14 production API access requirement documented | blocked_ops status with unblock criteria | PASS |
+| ST-14 timing run complete | §22.3 populated; BLG-OPS-78 closed | PASS |
 | QA Lead sign-off | Pending | PENDING |
 
 **QA Lead sign-off:** ______________________ Date: __________

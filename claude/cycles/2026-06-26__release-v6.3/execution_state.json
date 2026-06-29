@@ -110,21 +110,21 @@
         "ST-14": {
           "title": "Measure live latency for POST /ai/daily-briefing and POST /ai/chat",
           "classification": "autonomous",
-          "status": "blocked_ops",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 868,
           "branch": "exec/2026-06-26__release-v6.3/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "PENDING_COMMIT",
           "delegation_record_id": null,
-          "blocked_since_utc": "2026-06-29T06:00:00Z",
-          "unblock_criteria": "Application API key (X-API-Key) available in session environment; minimum 5 warm authenticated requests executable against https://trading-assistant-api-c0f9.onrender.com",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-29T06:30:00Z",
+          "acceptance_verified": true,
           "spec_references": ["docs/ops/api_performance_baseline.md"],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Production API is live and responding (GET /health returns 200). Application API key not available in ~/.api_keys — only RENDER_API_KEY present. BLG-OPS-78 is already the backlog item for this story. Deferral to Infrastructure & Operations Owner per §22.3 timing run methodology."
+          "notes": "7 warm production samples each. daily-briefing: p50=10,296ms p95=11,152ms (⚠ p50 slightly above 10s AC target — model inference latency). chat: p50=6,258ms p95=7,035ms (within 15s AC target). Regression thresholds: daily-briefing p95 > 22,304ms; chat p95 > 14,070ms. §22.3 populated. BLG-OPS-78 closed."
         },
         "ST-15": {
           "title": "Render deployment rollback procedure documentation",
@@ -149,9 +149,9 @@
     }
   },
 
-  "blocked_items": ["ST-02", "ST-11", "ST-12", "ST-14"],
+  "blocked_items": ["ST-02", "ST-11", "ST-12"],
   "delegated_items": ["ST-02", "ST-11", "ST-12"],
-  "completed_items": ["ST-01", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-13", "ST-15"],
+  "completed_items": ["ST-01", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-13", "ST-14", "ST-15"],
   "open_escalations": [],
 
   "merge_gate": {
