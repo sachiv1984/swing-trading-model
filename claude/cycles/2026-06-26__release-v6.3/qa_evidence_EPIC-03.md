@@ -17,7 +17,7 @@
 | ST-11 | Strategy Benchmark page | blocked_frontend | DEL-20260629-02 |
 | ST-12 | Morning briefing progressive disclosure | blocked_frontend | DEL-20260629-03 |
 | ST-13 | Background scheduler health monitoring endpoint | done | aea5966f |
-| ST-14 | Measure live latency for AI endpoints | done | PENDING |
+| ST-14 | Measure live latency for AI endpoints | done | d54b557d |
 | ST-15 | Render deployment rollback procedure documentation | done | 2d2c290c |
 
 ---
