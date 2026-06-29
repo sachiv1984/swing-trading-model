@@ -3443,6 +3443,52 @@ The AI daily briefing card (AiDailyBriefing.js, shipped v6.2) displays three con
 
 ---
 
+### BLG-UX-01 — Improve AI daily briefing disclaimer text contrast
+**Priority:** P3 (Low)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Head of UX & Design; AI Compliance & Governance Officer
+**Source:** ST-05 disclaimer visibility assessment — 2026-06-29
+**Effort:** XS (<0.25 day)
+**Provisional-Target:** v6.4
+
+**Problem**
+The AI Advisory disclaimer text in `AiDailyBriefing.js` uses `text-slate-500 italic` (≈2.7:1 contrast on slate-800 background). WCAG AA requires ≥4.5:1 for text <18px. The amber "AI Advisory" badge meets §13 as the primary signal; this improvement upgrades the secondary text to meet accessibility standards.
+
+**Scope**
+- Change `text-slate-500` to `text-slate-300` on the disclaimer text span in `AiDailyBriefing.js`
+- Verify no visual regression to the badge or surrounding layout
+
+**Acceptance Criteria**
+- Disclaimer text contrast ≥4.5:1 on the dark background
+- No visual regression to the "AI Advisory" badge or briefing card layout
+- Head of UX & Design sign-off
+
+---
+
+### BLG-UX-02 — Improve AI chat widget footer disclaimer contrast and add test coverage
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Head of UX & Design; AI Compliance & Governance Officer
+**Source:** ST-05 disclaimer visibility assessment — 2026-06-29
+**Effort:** XS (<0.25 day)
+**Provisional-Target:** v6.4
+
+**Problem**
+The AI Chat Widget footer disclaimer uses `text-slate-600 italic text-xs` (≈1.9:1 contrast on slate-800 background — critically low). The text is effectively unreadable in standard display conditions. Additionally the footer paragraph has no `data-testid`, preventing Playwright assertion of text presence.
+
+**Scope**
+- Change `text-slate-600` to `text-slate-400` on the footer disclaimer in `AiChatWidget.js`
+- Add `data-testid="ai-chat-advisory-footer"` to the footer paragraph
+- Add Playwright assertion: footer disclaimer text visible when chat widget open
+
+**Acceptance Criteria**
+- Footer disclaimer text contrast ≥4.5:1 on dark background
+- `data-testid="ai-chat-advisory-footer"` present
+- Playwright test asserts footer text visible and contains "advisory" keyword
+- Head of UX & Design sign-off
+
+---
+
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*
 
 ---
