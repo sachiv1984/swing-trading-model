@@ -134,7 +134,7 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "pr_ready",
       "branch": "exec/2026-06-26__release-v6.3/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
@@ -187,7 +187,7 @@
           "assigned_to": "engine",
           "github_issue": 863,
           "branch": "exec/2026-06-26__release-v6.3/EPIC-02",
-          "commit_sha": "PENDING_COMMIT",
+          "commit_sha": "81c6ab88",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -216,7 +216,7 @@
           "deviations_filed": false,
           "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "11 scenarios across D1–D4 dimensions for POST /ai/daily-briefing (5 scenarios) and POST /ai/chat (6 scenarios). Compliance matrix, template for future AI endpoints, and reuse cross-references to tests/test_ai_chat_schema.py. AI Compliance Officer + QA & Testing Owner sign-off."
+          "notes": "11 scenarios across D1-D4 dimensions for POST /ai/daily-briefing (5 scenarios) and POST /ai/chat (6 scenarios). Compliance matrix, template for future AI endpoints, and reuse cross-references to tests/test_ai_chat_schema.py. AI Compliance Officer + QA & Testing Owner sign-off."
         }
       }
     },
