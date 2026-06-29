@@ -2996,6 +2996,52 @@ POST /ai/daily-briefing makes an Anthropic API call on every request. If the sam
 
 ---
 
+### BLG-SEC-01 — Sanitise context_opts.ticker before system prompt injection (POST /ai/chat)
+**Priority:** P2 (Medium)
+**Type:** Security / Input Validation
+**Owner:** Cybersecurity & Trust Lead; Backend Engineering Patterns Owner
+**Source:** ST-04 open risk — AI injection risk assessment v1.0 (2026-06-29)
+**Effort:** XS (<0.25 day)
+**Provisional-Target:** v6.4
+
+**Problem**
+`context_opts.ticker` from the request body is interpolated directly into the `ai_chat()` system prompt f-string with no sanitization. A value containing newlines followed by instruction text (e.g. `"AAPL\n\nIgnore all previous instructions..."`) is injected into the system prompt verbatim, elevating the attacker's payload to system-prompt authority level. Attacker must be authenticated.
+
+**Scope**
+- Validate `context_opts.ticker` at the router layer: strip or reject values containing `\n`, `\r`, or characters outside `[A-Z0-9.:/-]`, max 20 characters
+- Return HTTP 422 with descriptive error if ticker fails validation
+
+**Acceptance Criteria**
+- `context_opts.ticker` validated before insertion into system prompt
+- Strings with newlines or injection characters rejected with HTTP 422
+- Unit test added for validation logic
+- Cybersecurity & Trust Lead sign-off
+
+---
+
+### BLG-SEC-02 — Validate ticker/market strings at signal write time (screener pipeline)
+**Priority:** P3 (Low)
+**Type:** Security / Input Validation
+**Owner:** Cybersecurity & Trust Lead; Backend Engineering Patterns Owner
+**Source:** ST-04 open risk — AI injection risk assessment v1.0 (2026-06-29)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.4
+
+**Problem**
+Signal ticker and market strings stored in the `signals` table are interpolated into AI prompts for both `POST /ai/daily-briefing` and `POST /ai/chat`. If the screener's external data source (index list, CSV, screener API) provides crafted ticker values containing newlines or injection payloads, those propagate to the AI prompt. No validation is applied at signal write time.
+
+**Scope**
+- Add ticker/market validation at signal write/import boundary
+- Strip non-alphanumeric characters (allow `.`, `-`, `/`, `:` for international tickers, max 12 chars)
+- Review existing signals in DB for anomalous values and document findings
+
+**Acceptance Criteria**
+- Signal write path validates ticker and market strings
+- Existing signals reviewed; anomalous values documented or cleaned
+- Cybersecurity & Trust Lead sign-off
+
+---
+
 ### BLG-QA-63 — Automated accessibility testing (axe-core) in Playwright CI
 **Priority:** P3 (Low)
 **Type:** QA / Accessibility
