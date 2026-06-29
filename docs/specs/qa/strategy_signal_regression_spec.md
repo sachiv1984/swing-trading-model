@@ -60,9 +60,9 @@ All scenarios test `size_batch_inv_vol(signals, available_cash, fx_rate)`.
 |-------------|------|-------------|---------------|
 | IV-01 | Single signal — standard inv-vol allocation | 1 signal with valid ATR; `available_cash = 10000` | `inv_vol_weight = 1.0`; `allocation_gbp = 10000`; `suggested_shares = floor(10000 / price)` |
 | IV-02 | Two signals — unequal ATR → proportional allocation | 2 signals with different ATR values; weights computed proportionally | Weights sum to 1.0; lower-ATR signal gets higher weight |
-| IV-03 | Min weight cap enforced | Signal has very low ATR (high weight) that exceeds `_INV_VOL_MAX_WEIGHT` | Weight capped at `_INV_VOL_MAX_WEIGHT`; re-normalised weights sum to 1.0 |
-| IV-04 | Max weight floor enforced | Signal has very high ATR (low weight) below `_INV_VOL_MIN_WEIGHT` | Weight floored at `_INV_VOL_MIN_WEIGHT`; re-normalised weights sum to 1.0 |
-| IV-05 | ATR = 0 for one signal | One signal has `atr_value = 0`; other has valid ATR | Zero-ATR signal gets `suggested_shares = 0`; valid signal gets full allocation |
+| IV-03 | Max weight cap reduces dominance | Signal has very low ATR (high raw weight) that exceeds `_INV_VOL_MAX_WEIGHT` | Pre-normalisation weight capped at `_INV_VOL_MAX_WEIGHT`; post-normalisation weight is strictly less than the uncapped raw weight; re-normalised weights sum to 1.0. Note: post-normalisation weight may still exceed `_INV_VOL_MAX_WEIGHT` — the cap reduces concentration, not constrains the final output. |
+| IV-04 | Min weight floor raises near-zero allocation | Signal has very high ATR (near-zero raw weight) below `_INV_VOL_MIN_WEIGHT` | Pre-normalisation weight floored at `_INV_VOL_MIN_WEIGHT`; post-normalisation weight is strictly greater than the uncapped raw weight; re-normalised weights sum to 1.0. |
+| IV-05 | ATR = 0 for one signal | One signal has `atr_value = 0`; other has valid ATR | Zero-ATR signal gets `_INV_VOL_MIN_WEIGHT` allocation (floor applied before normalisation); valid signal gets higher weight. Full-zero allocation only occurs when ALL ATR values are 0 (IV-06). |
 | IV-06 | All ATR = 0 | All signals have `atr_value = 0` | All signals get `suggested_shares = 0`; no division by zero |
 | IV-07 | Mixed volatility — 3 signals | Low ATR (large position), medium ATR, high ATR (small position) | Weights inversely proportional to ATR; all sum to 1.0 after normalisation |
 
