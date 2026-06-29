@@ -1,10 +1,10 @@
 {
   "active_cycle": "2026-06-26__release-v6.3",
   "cycle_name": "v6.3 — Strategy Benchmark, AI Security & Quality Infrastructure",
-  "status": "Sprint_Planning_Complete",
+  "status": "Executing",
   "prior_status": "Published",
   "engine": "sprint_planning",
-  "execution_state_path": "",
+  "execution_state_path": "claude/cycles/2026-06-26__release-v6.3/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-06-26__release-v6.3/stage4_backlog_slice.md",
   "sprint_sealed": true,
   "sprint_goal_path": "claude/cycles/2026-06-26__release-v6.3/sprint_goal.md",
