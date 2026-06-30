@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { api } from '../../../api/base44Client';
-import { RefreshCw, AlertTriangle } from 'lucide-react';
+import { RefreshCw, ChevronDown, ChevronRight, Send } from 'lucide-react';
+
+const STORAGE_KEY = 'ai-briefing-collapsed-sections-v1';
 
 const TYPE_COLOURS = {
   EXIT: 'bg-red-600 text-white',
@@ -11,10 +13,61 @@ const TYPE_COLOURS = {
   HOLD: 'bg-slate-600 text-white',
 };
 
+function loadCollapsed() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveCollapsed(state) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {}
+}
+
+function Section({ label, sectionKey, collapsed, onToggle, children }) {
+  return (
+    <div className="border border-slate-700 rounded-lg overflow-hidden">
+      <button
+        onClick={() => onToggle(sectionKey)}
+        className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-400 hover:text-slate-300 hover:bg-slate-800 transition-colors"
+        aria-expanded={!collapsed}
+        data-testid={`section-toggle-${sectionKey}`}
+      >
+        <span>{label}</span>
+        {collapsed
+          ? <ChevronRight className="w-3.5 h-3.5 shrink-0" />
+          : <ChevronDown className="w-3.5 h-3.5 shrink-0" />}
+      </button>
+      {!collapsed && (
+        <div className="px-3 pb-3" data-testid={`section-content-${sectionKey}`}>
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AiDailyBriefing() {
   const [briefing, setBriefing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [collapsed, setCollapsed] = useState(() => loadCollapsed());
+  const [chatQuestion, setChatQuestion] = useState('');
+  const [chatResponse, setChatResponse] = useState(null);
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatError, setChatError] = useState(null);
+
+  const toggleSection = (key) => {
+    setCollapsed(prev => {
+      const next = { ...prev, [key]: !prev[key] };
+      saveCollapsed(next);
+      return next;
+    });
+  };
 
   const regenerate = async () => {
     setLoading(true);
@@ -34,6 +87,21 @@ export default function AiDailyBriefing() {
       setError('Unable to generate briefing. Try regenerating.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const sendChat = async () => {
+    if (!chatQuestion.trim()) return;
+    setChatLoading(true);
+    setChatError(null);
+    setChatResponse(null);
+    try {
+      const data = await api.ai.chat(chatQuestion.trim(), briefing?.summary || null);
+      setChatResponse(data.response);
+    } catch {
+      setChatError('Unable to get a response. Try again.');
+    } finally {
+      setChatLoading(false);
     }
   };
 
@@ -97,33 +165,90 @@ export default function AiDailyBriefing() {
       )}
 
       {!loading && !error && briefing && (
-        <div className="space-y-3" data-testid="briefing-content">
-          {briefing.summary && (
-            <p className="text-sm text-slate-300 leading-relaxed">{briefing.summary}</p>
-          )}
+        <div className="space-y-2" data-testid="briefing-content">
 
-          {briefing.actions && briefing.actions.length > 0 ? (
-            <ol className="space-y-1.5" data-testid="briefing-actions">
-              {briefing.actions.map((action, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                  <span
-                    className={`mt-0.5 shrink-0 text-xs font-bold px-1.5 py-0.5 rounded ${TYPE_COLOURS[action.type] || 'bg-slate-600 text-white'}`}
-                  >
-                    {action.type}
-                  </span>
-                  <span>
-                    <span className="font-semibold text-white">{action.ticker}</span>
-                    {' — '}
-                    {action.description}
-                  </span>
-                </li>
-              ))}
-            </ol>
-          ) : (
-            <p className="text-xs text-slate-500 italic" data-testid="briefing-no-actions">
-              No specific actions required today.
-            </p>
-          )}
+          {/* Market Context */}
+          <Section
+            label="Market Context"
+            sectionKey="market_context"
+            collapsed={!!collapsed.market_context}
+            onToggle={toggleSection}
+          >
+            {briefing.summary
+              ? <p className="text-sm text-slate-300 leading-relaxed pt-2">{briefing.summary}</p>
+              : <p className="text-xs text-slate-500 italic pt-2">No market context available.</p>}
+          </Section>
+
+          {/* Signals */}
+          <Section
+            label="Signals"
+            sectionKey="signals"
+            collapsed={!!collapsed.signals}
+            onToggle={toggleSection}
+          >
+            {briefing.actions && briefing.actions.length > 0 ? (
+              <ol className="space-y-1.5 pt-2" data-testid="briefing-actions">
+                {briefing.actions.map((action, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                    <span
+                      className={`mt-0.5 shrink-0 text-xs font-bold px-1.5 py-0.5 rounded ${TYPE_COLOURS[action.type] || 'bg-slate-600 text-white'}`}
+                    >
+                      {action.type}
+                    </span>
+                    <span>
+                      <span className="font-semibold text-white">{action.ticker}</span>
+                      {' — '}
+                      {action.description}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="text-xs text-slate-500 italic pt-2" data-testid="briefing-no-actions">
+                No specific actions required today.
+              </p>
+            )}
+          </Section>
+
+          {/* Chat Prompt */}
+          <Section
+            label="Ask the AI"
+            sectionKey="chat_prompt"
+            collapsed={!!collapsed.chat_prompt}
+            onToggle={toggleSection}
+          >
+            <div className="pt-2 space-y-2">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatQuestion}
+                  onChange={e => setChatQuestion(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && !chatLoading && sendChat()}
+                  placeholder="Ask about today's briefing…"
+                  className="flex-1 text-sm bg-slate-800 border border-slate-600 rounded-md px-3 py-1.5 text-slate-300 placeholder-slate-500 focus:outline-none focus:border-slate-400"
+                  disabled={chatLoading}
+                  data-testid="briefing-chat-input"
+                />
+                <button
+                  onClick={sendChat}
+                  disabled={chatLoading || !chatQuestion.trim()}
+                  className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-slate-600 text-slate-300 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  data-testid="briefing-chat-send"
+                >
+                  <Send className="w-3 h-3" />
+                </button>
+              </div>
+              {chatError && (
+                <p className="text-xs text-rose-400" data-testid="briefing-chat-error">{chatError}</p>
+              )}
+              {chatResponse && (
+                <p className="text-sm text-slate-300 leading-relaxed" data-testid="briefing-chat-response">
+                  {chatResponse}
+                </p>
+              )}
+            </div>
+          </Section>
+
         </div>
       )}
     </div>

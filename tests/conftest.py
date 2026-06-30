@@ -68,6 +68,9 @@ _DB_STUB_FUNCTIONS = [
     "ensure_signals_exit_rebalance_status", "create_rebalance_exit_signal",
     # ST-05 (BLG-FEAT-49) — risk-off exit alert column
     "ensure_risk_off_exit_column", "update_positions_risk_off_exit",
+    # ST-11 (BLG-FEAT-53) — strategy benchmark backtest import
+    "ensure_backtest_tables", "upsert_backtest_data",
+    "get_backtest_trades", "get_backtest_summary", "get_actual_stats_for_benchmark",
 ]
 
 _database_stub = types.ModuleType("database")

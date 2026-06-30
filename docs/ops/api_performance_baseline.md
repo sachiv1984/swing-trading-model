@@ -955,9 +955,54 @@ These endpoints are intentionally excluded from the standard ≤400ms p50 budget
 
 **Regression threshold (to be confirmed after first live timing run):** p95 > 2× measured p95 triggers a review.
 
-### 22.3 Timing Run Status
+### 22.3 Timing Run Results (ST-14, BLG-OPS-78)
 
-Actual timing run deferred until post-deployment to production. Infrastructure & Operations Owner to schedule a BLG-OPS item for the next ops review cycle (BLG-OPS-78 recommended). Timing methodology: authenticated warm requests against production API, minimum 5 samples, same approach as §15.
+**Date:** 2026-06-29  
+**Environment:** Production — `https://trading-assistant-api-c0f9.onrender.com`  
+**Method:** 1 warmup call (discarded) + 7 timed samples, warm service, sequential Python `urllib` POST calls with `X-API-Key` header. Inter-sample delay: 2 seconds. Service confirmed live (`GET /health` → 200) before run.
+
+#### POST /ai/daily-briefing — Production Latency
+
+**Request:** `POST /ai/daily-briefing` (no body required)  
+**Samples (ms):** 11,152 | 9,532 | 10,857 | 10,296 | 10,196 | 10,352 | 10,007  
+
+| Metric | Value |
+|--------|-------|
+| p50 | **10,296ms** |
+| p95 | **11,152ms** |
+| min | 9,532ms |
+| max | 11,152ms |
+| samples | 7 (warm) |
+
+**Assessment:** p50 = 10.3s. All samples in the 9.5–11.2s range — tight band consistent with stable claude-sonnet-4-6 API response times. Exceeds the §22.1 AC target of < 10s on the p50 but within a 1.2s margin. This is the full daily briefing context (portfolio + positions + signals + regime + AI response) — latency is dominated by Anthropic API inference. Intentionally excluded from the ≤400ms p50 budget. Flag: ⚠️ p50 slightly above 10s AC target — model inference latency; not actionable at application layer.
+
+**Regression threshold (§22.2):** p95 > **22,304ms** (2× measured p95 of 11,152ms) triggers review.
+
+#### POST /ai/chat — Production Latency
+
+**Request:** `POST /ai/chat` body: `{"question": "What is the current portfolio summary?"}`  
+**Samples (ms):** 5,599 | 7,035 | 5,891 | 6,258 | 5,711 | 6,346 | 6,296  
+
+| Metric | Value |
+|--------|-------|
+| p50 | **6,258ms** |
+| p95 | **7,035ms** |
+| min | 5,599ms |
+| max | 7,035ms |
+| samples | 7 (warm) |
+
+**Assessment:** p50 = 6.3s. All samples in the 5.6–7.0s range — tight, consistent with stable claude-sonnet-4-6 inference. Well within the §22.1 AC target of < 15s. Chat context is lighter than daily briefing (user question + portfolio context, no nightly signals or regime check), explaining the lower latency relative to daily-briefing. No flag.
+
+**Regression threshold (§22.2):** p95 > **14,070ms** (2× measured p95 of 7,035ms) triggers review.
+
+#### Summary Table
+
+| Endpoint | p50 | p95 | AC target | Status | Regression threshold |
+|----------|-----|-----|-----------|--------|---------------------|
+| POST /ai/daily-briefing | 10,296ms | 11,152ms | < 10,000ms | ⚠️ p50 slightly above target | p95 > 22,304ms |
+| POST /ai/chat | 6,258ms | 7,035ms | < 15,000ms | ✓ | p95 > 14,070ms |
+
+**BLG-OPS-78 status:** Closed. Timing run complete. §22.3 populated.
 
 ---
 
@@ -965,6 +1010,7 @@ Actual timing run deferred until post-deployment to production. Infrastructure &
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.8 | 2026-06-29 | Sprint Execution Engine | ST-14 (v6.3 EPIC-03, BLG-OPS-78): §22.3 added — production timing run complete. POST /ai/daily-briefing p50=10,296ms p95=11,152ms; POST /ai/chat p50=6,258ms p95=7,035ms. 7 warm production samples each. Regression thresholds: daily-briefing p95 > 22,304ms; chat p95 > 14,070ms. BLG-OPS-78 closed. |
 | 2.7 | 2026-06-25 | Sprint Execution Engine | ST-06/ST-08 (v6.2 EPIC-02): §22 added — POST /ai/daily-briefing and POST /ai/chat registered as AI inference endpoints. Timing run deferred to post-deployment; BLG-OPS-78 recommended for live measurement. |
 | 2.6 | 2026-06-25 | Infrastructure & Operations Owner | ST-12 (v6.2 EPIC-03, BLG-OPS-75): §21 added — GET /portfolio/sector-weights p50=287ms p95=356ms; GET /trade-plans/setup-quality-score p50=464ms p95=516ms (⚠ p95 flag). 20 live production samples each. BLG-OPS-75 closed. |
 | 2.5 | 2026-06-23 | Infrastructure & Operations Owner | ST-05 (v6.1 EPIC-02, BLG-OPS-73): §20 added — PATCH /trades/{id}/costs registered as write-op exclusion. Estimated p50=~250ms, p95=~500ms (Supavisor single UPDATE). Live timing deferred per §18.2 write-op policy. BLG-OPS-73 closed. |

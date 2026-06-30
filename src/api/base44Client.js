@@ -511,6 +511,29 @@ export const api = {
         body: JSON.stringify({ question, ...(context ? { context } : {}) }),
       }),
   },
+
+  // ST-11 (v6.3 EPIC-03): Strategy Benchmark — backtest vs live comparison
+  strategyBenchmark: {
+    getSummary: async ({ year, market } = {}) => {
+      const params = new URLSearchParams();
+      if (year != null) params.set('year', year);
+      if (market && market !== 'ALL') params.set('market', market);
+      const qs = params.toString();
+      return doFetch(`/strategy/benchmark/summary${qs ? '?' + qs : ''}`);
+    },
+    getTrades: async ({ year, market } = {}) => {
+      const params = new URLSearchParams();
+      if (year != null) params.set('year', year);
+      if (market && market !== 'ALL') params.set('market', market);
+      const qs = params.toString();
+      return doFetch(`/strategy/benchmark/trades${qs ? '?' + qs : ''}`);
+    },
+    importData: async (payload) =>
+      doFetch('/strategy/benchmark/import', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      }),
+  },
 };
 
 export const Signal = base44.entities.Signal;

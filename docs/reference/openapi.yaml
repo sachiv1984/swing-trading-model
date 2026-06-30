@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.5.0
+  version: 3.7.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -2832,6 +2832,56 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /health/scheduler:
+    get:
+      tags: [Health]
+      summary: Nightly computation job health (ST-13, BLG-OPS-79)
+      description: |
+        Returns last-run status, timestamps, and any error details for each nightly
+        computation job: trailing_stop, rebalance_exit, inv_vol_sizing.
+        Trigger mechanism: GitHub Actions external cron (not an in-process scheduler).
+        Status is in-memory and resets on process restart.
+        Contract: docs/specs/api_contracts/health_endpoints.md
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "200":
+          description: Scheduler health status
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [scheduler_type, overall_status, jobs]
+                properties:
+                  scheduler_type:
+                    type: string
+                    example: github_actions_external_cron
+                  overall_status:
+                    type: string
+                    enum: [ok, degraded]
+                  jobs:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        last_run_utc:
+                          type: string
+                          format: date-time
+                          nullable: true
+                        last_status:
+                          type: string
+                          enum: [ok, error, never_run]
+                        last_error:
+                          type: string
+                          nullable: true
+                        detail:
+                          type: object
+                          nullable: true
+                  note:
+                    type: string
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /health/database:
     get:
       tags: [Health]
@@ -4880,6 +4930,202 @@ components:
                   status: { type: string, example: error }
                   code: { type: string, enum: [insufficient_data, invalid_date_range, version_order_error] }
                   message: { type: string }
+
+  /strategy/benchmark/import:
+    post:
+      summary: Import backtest data from production_strategy.py CSV outputs
+      description: |
+        Upserts trade-level and yearly performance records produced by production_strategy.py
+        into backtest_trades and backtest_yearly_performance tables. Called by import_backtest.py.
+        ST-11 (BLG-FEAT-53, EPIC-03, v6.3)
+      tags: [Strategy Benchmark]
+      security:
+        - ApiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [trades, yearly_performance]
+              properties:
+                trades:
+                  type: array
+                  items:
+                    type: object
+                    required: [ticker, entry_date, exit_date, entry_year]
+                    properties:
+                      ticker: { type: string }
+                      entry_date: { type: string, format: date }
+                      exit_date: { type: string, format: date }
+                      holding_days: { type: integer, nullable: true }
+                      entry_price: { type: number, nullable: true }
+                      exit_price: { type: number, nullable: true }
+                      pnl_gbp: { type: number, nullable: true }
+                      pnl_pct: { type: number, nullable: true }
+                      market: { type: string, default: US }
+                      exit_reason: { type: string, nullable: true }
+                      was_profitable: { type: boolean, nullable: true }
+                      entry_year: { type: integer }
+                yearly_performance:
+                  type: array
+                  items:
+                    type: object
+                    required: [entry_year]
+                    properties:
+                      entry_year: { type: integer }
+                      num_trades: { type: integer, nullable: true }
+                      avg_pnl_gbp: { type: number, nullable: true }
+                      total_pnl_gbp: { type: number, nullable: true }
+                      avg_hold_days: { type: number, nullable: true }
+                      win_rate_pct: { type: number, nullable: true }
+      responses:
+        "200":
+          description: Import complete
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  trades_imported: { type: integer }
+                  years_imported: { type: integer }
+                  imported_at: { type: string, format: date-time }
+
+  /strategy/benchmark/summary:
+    get:
+      summary: Panel 1 stats and Panel 2 yearly breakdown for the Strategy Benchmark page
+      description: |
+        Returns backtest stats and actual live trade stats side-by-side for Panel 1,
+        and per-year rows for Panel 2. actual_stats is null if no live trades match
+        the filter (frontend displays '—' per AC-03). ST-11 (BLG-FEAT-53, EPIC-03, v6.3)
+      tags: [Strategy Benchmark]
+      security:
+        - ApiKey: []
+      parameters:
+        - name: year
+          in: query
+          required: false
+          schema: { type: integer }
+          description: Filter to a specific entry year; omit for all years
+        - name: market
+          in: query
+          required: false
+          schema: { type: string, enum: [US, UK, ALL] }
+          description: Filter by market; omit or ALL for all markets
+      responses:
+        "200":
+          description: Benchmark summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  filters:
+                    type: object
+                    properties:
+                      year: { type: integer, nullable: true }
+                      market: { type: string }
+                  last_imported_at: { type: string, format: date-time, nullable: true }
+                  available_years:
+                    type: array
+                    items: { type: integer }
+                  backtest_stats:
+                    nullable: true
+                    type: object
+                    properties:
+                      total_trades: { type: integer }
+                      win_rate_pct: { type: number }
+                      avg_pnl_gbp: { type: number }
+                      total_pnl_gbp: { type: number }
+                      avg_hold_days: { type: number }
+                  actual_stats:
+                    nullable: true
+                    type: object
+                    properties:
+                      total_trades: { type: integer }
+                      win_rate_pct: { type: number }
+                      avg_pnl_gbp: { type: number }
+                      total_pnl_gbp: { type: number }
+                      avg_hold_days: { type: number }
+                  yearly_breakdown:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        entry_year: { type: integer }
+                        num_trades: { type: integer }
+                        avg_pnl_gbp: { type: number }
+                        total_pnl_gbp: { type: number }
+                        avg_hold_days: { type: number }
+                        win_rate_pct: { type: number }
+
+  /strategy/benchmark/trades:
+    get:
+      summary: Panel 3 trade log for the Strategy Benchmark page
+      description: |
+        Returns backtest_trades and actual_trades separately. The frontend renders
+        the appropriate subset based on the selected toggle mode (backtest only /
+        actual only / side-by-side). ST-11 (BLG-FEAT-53, EPIC-03, v6.3)
+      tags: [Strategy Benchmark]
+      security:
+        - ApiKey: []
+      parameters:
+        - name: year
+          in: query
+          required: false
+          schema: { type: integer }
+          description: Filter to a specific entry year
+        - name: market
+          in: query
+          required: false
+          schema: { type: string, enum: [US, UK, ALL] }
+          description: Filter by market
+      responses:
+        "200":
+          description: Trade log data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  filters:
+                    type: object
+                    properties:
+                      year: { type: integer, nullable: true }
+                      market: { type: string }
+                  backtest_trades:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ticker: { type: string }
+                        entry_date: { type: string, format: date }
+                        exit_date: { type: string, format: date }
+                        holding_days: { type: integer, nullable: true }
+                        entry_price: { type: number, nullable: true }
+                        exit_price: { type: number, nullable: true }
+                        pnl_gbp: { type: number, nullable: true }
+                        pnl_pct: { type: number, nullable: true }
+                        market: { type: string }
+                        exit_reason: { type: string, nullable: true }
+                        was_profitable: { type: boolean, nullable: true }
+                        entry_year: { type: integer }
+                  actual_trades:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ticker: { type: string }
+                        entry_date: { type: string, format: date, nullable: true }
+                        exit_date: { type: string, format: date, nullable: true }
+                        holding_days: { type: integer, nullable: true }
+                        pnl_gbp: { type: number, nullable: true }
+                        pnl_pct: { type: number, nullable: true }
+                        market: { type: string }
+                        exit_reason: { type: string, nullable: true }
+                        was_profitable: { type: boolean, nullable: true }
+                        entry_year: { type: integer, nullable: true }
 
 security:
   - ApiKey: []

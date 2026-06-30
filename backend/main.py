@@ -28,6 +28,7 @@ from routers import plan_vs_reality as plan_vs_reality_router
 from routers import paper_trading as paper_trading_router
 from routers import pre_entry_validation as pre_entry_validation_router
 from routers import red_flag_journal as red_flag_journal_router
+from routers import strategy_benchmark as strategy_benchmark_router
 from services.watchlist_service import ensure_watchlist_table
 from services.ai_audit_service import ensure_ai_audit_table
 from services.ticker_universe_service import ensure_ticker_universe_table, ensure_company_name_column, seed_default_tickers, deactivate_invalid_tickers, backfill_company_names
@@ -135,6 +136,8 @@ from services import (
     test_all_endpoints,
     get_db_size_info,
     send_db_size_alert_if_needed,
+    record_nightly_job,
+    get_scheduler_health,
     # Reports service
     get_tax_year_report,
     build_tax_year_pdf,
@@ -195,6 +198,7 @@ app.include_router(pre_entry_validation_router.router)
 app.include_router(plan_vs_reality_router.router)
 app.include_router(paper_trading_router.router)
 app.include_router(red_flag_journal_router.router)
+app.include_router(strategy_benchmark_router.router)
 
 
 @app.on_event("startup")
@@ -529,10 +533,13 @@ def nightly_stop_update_endpoint():
     """
     try:
         result = run_nightly_trailing_stop_update()
+        record_nightly_job("trailing_stop", "ok", detail=result)
         return {"status": "ok", "data": result}
     except ValueError as e:
+        record_nightly_job("trailing_stop", "error", error=str(e))
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
+        record_nightly_job("trailing_stop", "error", error=str(e))
         return {"status": "error", "message": str(e)}
 
 
@@ -559,10 +566,15 @@ def rebalance_exit_signals_endpoint():
     """
     try:
         result = generate_rebalance_exit_signals()
+        record_nightly_job("rebalance_exit", "ok", detail=result)
+        # inv_vol_sizing runs inside generate_rebalance_exit_signals for sized signals
+        record_nightly_job("inv_vol_sizing", "ok", detail={"note": "co-invoked by rebalance-exit"})
         return {"status": "ok", "data": result}
     except ValueError as e:
+        record_nightly_job("rebalance_exit", "error", error=str(e))
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
+        record_nightly_job("rebalance_exit", "error", error=str(e))
         return {"status": "error", "message": str(e)}
 
 
@@ -1019,14 +1031,35 @@ def database_size_check():
         return {"status": "error", "message": str(e)}
 
 
+@app.get("/health/scheduler")
+def scheduler_health():
+    """
+    Nightly computation job health (ST-13, BLG-OPS-79).
+
+    Returns last-run status, timestamps, and any error details for each nightly
+    computation job: trailing_stop, rebalance_exit, inv_vol_sizing.
+
+    Trigger mechanism: GitHub Actions external cron (not an in-process scheduler).
+    Status is in-memory and resets on process restart.
+
+    Contract: docs/specs/api_contracts/health_endpoints.md
+    """
+    try:
+        return get_scheduler_health()
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "message": str(e)}
+
+
 @app.post("/test/endpoints")
 def test_endpoints(request: Request):
     """
     Test all API endpoints
-    
+
     Returns:
         Test results for all endpoints
-    
+
     Note:
         - Can take 10-30 seconds to complete
         - Tests all GET endpoints

@@ -31,3 +31,16 @@ regexes = [
   '''"key"''',
   '''"secret"''',
 ]
+
+[[allowlists]]
+description = "localStorage key strings in governance docs — not secrets, UI state keys"
+paths = [
+  "claude/cycles/.*\\.md",
+  "docs/.*\\.md",
+]
+regexes = [
+  # localStorage versioned keys such as 'ai-briefing-collapsed-sections-v1' are
+  # UI state identifiers, not credentials. The variable name STORAGE_KEY triggers
+  # the generic-api-key rule on entropy alone.
+  '''STORAGE_KEY\s*=\s*['"][a-z][a-z0-9-]+-v\d+['"]''',
+]

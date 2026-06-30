@@ -5,7 +5,7 @@
   "invoked_utc": "2026-06-29T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-30T00:00:00Z",
+  "last_updated_utc": "2026-06-30T01:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -224,10 +224,10 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "pr_open",
       "branch": "exec/2026-06-26__release-v6.3/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 872,
+      "pr_status": "open",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-06-26__release-v6.3/qa_evidence_EPIC-03.md",
       "test_scenarios": "pending — QA & Testing Owner to author Playwright test scenarios before next sprint on this domain",
@@ -235,97 +235,111 @@
         "ST-11": {
           "title": "Strategy Benchmark page: compare live trades against backtest",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Base44 Frontend Prompt Owner",
           "github_issue": 865,
           "branch": "exec/2026-06-26__release-v6.3/EPIC-03",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "commit_sha": "74dd2300",
+          "delegation_record_id": "DEL-20260629-02",
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-06-30T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/routers/strategy_benchmark.py",
+            "docs/specs/api_contracts/strategy_benchmark_endpoints.md",
+            "docs/reference/openapi.yaml",
+            "import_backtest.py",
+            "src/pages/StrategyBenchmark.js",
+            "docs/frontend/prompts/strategy-benchmark-v1.md"
+          ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Per LL-v2.0-P4-2: test_scenarios for EPIC-03 set to pending at init; QA & Testing Owner to author Playwright test scenarios before next sprint. Internal sequencing: DB schema → API → frontend. import_backtest.py can develop in parallel."
+          "notes": "Full implementation: DB schema (backtest_trades, backtest_yearly_performance), 3 backend endpoints (POST /strategy/benchmark/import, GET /strategy/benchmark/summary, GET /strategy/benchmark/trades), import_backtest.py companion script, StrategyBenchmark.js page (3 panels, sticky filters, toggle modes, exit reason badges), Layout.js nav entry, pages.config.js registration, base44Client.js API calls. test.py 78→81, SystemStatus.js fallback 78→81, SC-SS-01b updated. openapi.yaml v3.6.0→v3.7.0. conftest.py _DB_STUB_FUNCTIONS updated. services/__init__.py missing exports (record_nightly_job, get_scheduler_health) fixed. Build clean."
         },
         "ST-12": {
           "title": "Morning briefing progressive disclosure",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Base44 Frontend Prompt Owner",
           "github_issue": 866,
           "branch": "exec/2026-06-26__release-v6.3/EPIC-03",
-          "commit_sha": null,
-          "delegation_record_id": null,
+          "commit_sha": "ca9930a0",
+          "delegation_record_id": "DEL-20260629-03",
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-06-30T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/frontend/prompts/ai-briefing-progressive-disclosure-v1.md",
+            "tests/e2e/ai-briefing-progressive-disclosure.spec.js"
+          ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC-05 requires Playwright test: expand all → collapse market context → reload → verify still collapsed. Test file to be created as part of delivery."
+          "notes": "Three collapsible sections: Market Context (summary), Signals (actions), Ask the AI (inline chat). localStorage key ai-briefing-collapsed-sections-v1. Default expanded. Playwright SC-PD-05 covers AC-05 (expand all → collapse market context → reload → verify still collapsed). Playwright CI-verifiable only (browsers not available on Ubuntu 26.04 host). Build clean."
         },
         "ST-13": {
           "title": "Background scheduler health monitoring endpoint",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 867,
           "branch": "exec/2026-06-26__release-v6.3/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "aea5966f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-06-29T06:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/qa/scheduler_architecture_review_v6.3.md",
+            "docs/specs/api_contracts/health_endpoints.md",
+            "docs/reference/openapi.yaml"
+          ],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Conditional. Gate: architecture review of v6.2 scheduler must be documented (AC-01) before API implementation. spec_references to be set to openapi.yaml#/paths/GET /health/scheduler on completion."
+          "notes": "Architecture review (AC-01): scheduler is GitHub Actions external cron, not in-process. Three jobs tracked in-memory: trailing_stop, rebalance_exit, inv_vol_sizing. GET /health/scheduler added to main.py, health_service.py, test.py (78 entries), SystemStatus.js fallback 77→78, SC-SS-01b e2e updated. openapi.yaml v3.4.0→v3.6.0, health_endpoints.md v1.2→v1.3."
         },
         "ST-14": {
           "title": "Measure live latency for POST /ai/daily-briefing and POST /ai/chat",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 868,
           "branch": "exec/2026-06-26__release-v6.3/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "d54b557d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/operations/api_performance_baseline.md"],
+          "completed_utc": "2026-06-29T06:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/ops/api_performance_baseline.md"],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Conditional. Requires production deployment to be live — staging-only ACs AC-01/02/03. Backlog item must be filed before PR opens per CLAUDE.md §2 if deferred."
+          "notes": "7 warm production samples each. daily-briefing: p50=10,296ms p95=11,152ms (⚠ p50 slightly above 10s AC target — model inference latency). chat: p50=6,258ms p95=7,035ms (within 15s AC target). Regression thresholds: daily-briefing p95 > 22,304ms; chat p95 > 14,070ms. §22.3 populated. BLG-OPS-78 closed."
         },
         "ST-15": {
           "title": "Render deployment rollback procedure documentation",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 869,
           "branch": "exec/2026-06-26__release-v6.3/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "2d2c290c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-06-29T06:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/operations/render_rollback_runbook.md"],
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "spec_references to be set to created runbook path on completion (Case B — primary deliverable IS the runbook document)."
+          "notes": "Runbook at docs/operations/render_rollback_runbook.md. Covers: rollback vs fix-forward decision matrix (AC-02), step-by-step Render dashboard procedure (AC-02), verification steps (AC-02), DB migration considerations. Infrastructure & Operations Owner sign-off (AC-03)."
         }
       }
     }
@@ -333,12 +347,12 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14", "ST-15"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-02"],
-    "epics_pending": ["EPIC-01", "EPIC-03"],
+    "epics_merged": ["EPIC-02", "EPIC-01"],
+    "epics_pending": ["EPIC-03"],
     "all_merged": false
   },
 

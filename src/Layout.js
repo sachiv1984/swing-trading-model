@@ -25,6 +25,7 @@ import {
   ScanSearch,
   Globe,
   Flag,
+  BarChart2,
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
@@ -60,11 +61,12 @@ const NAV_GROUPS = [
     label: "Analytics",
     key: "analytics",
     items: [
-      { name: "Analytics",      icon: TrendingUp,   page: "PerformanceAnalytics" },
-      { name: "Risk Dashboard", icon: ShieldAlert,  page: "RiskDashboard" },
-      { name: "Signals",        icon: Zap,          page: "Signals" },
-      { name: "Reports",        icon: FileBarChart,  page: "Reports" },
-      { name: "Weekly Digest",  icon: CalendarDays, page: "WeeklyDigest" },
+      { name: "Analytics",           icon: TrendingUp,   page: "PerformanceAnalytics" },
+      { name: "Strategy Benchmark",  icon: BarChart2,    page: "StrategyBenchmark" },
+      { name: "Risk Dashboard",      icon: ShieldAlert,  page: "RiskDashboard" },
+      { name: "Signals",             icon: Zap,          page: "Signals" },
+      { name: "Reports",             icon: FileBarChart,  page: "Reports" },
+      { name: "Weekly Digest",       icon: CalendarDays, page: "WeeklyDigest" },
     ],
   },
   {

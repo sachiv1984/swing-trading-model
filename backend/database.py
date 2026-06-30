@@ -2112,4 +2112,260 @@ def update_positions_risk_off_exit(position_id: str, risk_off_exit: bool) -> Non
                 "UPDATE positions SET risk_off_exit = %s WHERE id = %s",
                 (risk_off_exit, position_id)
             )
+
+
+# ============================================================================
+# ST-11 (BLG-FEAT-53) — Strategy Benchmark: backtest vs live comparison
+# ============================================================================
+
+def ensure_backtest_tables():
+    """Create backtest_trades and backtest_yearly_performance tables (idempotent).
+
+    ST-11 (EPIC-03, v6.3) — BLG-FEAT-53. These tables store imported backtest
+    results from production_strategy.py CSV outputs so they can be compared
+    against live trade history on the Strategy Benchmark page.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS backtest_trades (
+                    id SERIAL PRIMARY KEY,
+                    ticker VARCHAR(20) NOT NULL,
+                    entry_date DATE NOT NULL,
+                    exit_date DATE NOT NULL,
+                    holding_days INTEGER,
+                    entry_price NUMERIC(12, 4),
+                    exit_price NUMERIC(12, 4),
+                    pnl_gbp NUMERIC(12, 2),
+                    pnl_pct NUMERIC(8, 4),
+                    market VARCHAR(10) NOT NULL DEFAULT 'US',
+                    exit_reason VARCHAR(50),
+                    was_profitable BOOLEAN,
+                    entry_year INTEGER NOT NULL,
+                    imported_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    UNIQUE (ticker, entry_date, exit_date)
+                )
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS backtest_yearly_performance (
+                    id SERIAL PRIMARY KEY,
+                    entry_year INTEGER NOT NULL,
+                    num_trades INTEGER,
+                    avg_pnl_gbp NUMERIC(12, 2),
+                    total_pnl_gbp NUMERIC(12, 2),
+                    avg_hold_days NUMERIC(8, 2),
+                    win_rate_pct NUMERIC(5, 2),
+                    imported_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    UNIQUE (entry_year)
+                )
+            """)
+        conn.commit()
+
+
+def upsert_backtest_data(trades: List[Dict], yearly_performance: List[Dict]) -> Dict:
+    """Upsert backtest trade and yearly performance records.
+
+    Returns a dict with 'trades_imported' and 'years_imported' counts.
+    """
+    now = datetime.utcnow()
+    trades_count = 0
+    years_count = 0
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            for trade in trades:
+                cur.execute("""
+                    INSERT INTO backtest_trades (
+                        ticker, entry_date, exit_date, holding_days,
+                        entry_price, exit_price, pnl_gbp, pnl_pct,
+                        market, exit_reason, was_profitable, entry_year, imported_at
+                    ) VALUES (
+                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    )
+                    ON CONFLICT (ticker, entry_date, exit_date) DO UPDATE SET
+                        holding_days = EXCLUDED.holding_days,
+                        entry_price = EXCLUDED.entry_price,
+                        exit_price = EXCLUDED.exit_price,
+                        pnl_gbp = EXCLUDED.pnl_gbp,
+                        pnl_pct = EXCLUDED.pnl_pct,
+                        market = EXCLUDED.market,
+                        exit_reason = EXCLUDED.exit_reason,
+                        was_profitable = EXCLUDED.was_profitable,
+                        entry_year = EXCLUDED.entry_year,
+                        imported_at = EXCLUDED.imported_at
+                """, (
+                    trade.get("ticker"),
+                    trade.get("entry_date"),
+                    trade.get("exit_date"),
+                    trade.get("holding_days"),
+                    trade.get("entry_price"),
+                    trade.get("exit_price"),
+                    trade.get("pnl_gbp"),
+                    trade.get("pnl_pct"),
+                    trade.get("market", "US"),
+                    trade.get("exit_reason"),
+                    trade.get("was_profitable"),
+                    trade.get("entry_year"),
+                    now,
+                ))
+                trades_count += 1
+            for row in yearly_performance:
+                cur.execute("""
+                    INSERT INTO backtest_yearly_performance (
+                        entry_year, num_trades, avg_pnl_gbp, total_pnl_gbp,
+                        avg_hold_days, win_rate_pct, imported_at
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    ON CONFLICT (entry_year) DO UPDATE SET
+                        num_trades = EXCLUDED.num_trades,
+                        avg_pnl_gbp = EXCLUDED.avg_pnl_gbp,
+                        total_pnl_gbp = EXCLUDED.total_pnl_gbp,
+                        avg_hold_days = EXCLUDED.avg_hold_days,
+                        win_rate_pct = EXCLUDED.win_rate_pct,
+                        imported_at = EXCLUDED.imported_at
+                """, (
+                    row.get("entry_year"),
+                    row.get("num_trades"),
+                    row.get("avg_pnl_gbp"),
+                    row.get("total_pnl_gbp"),
+                    row.get("avg_hold_days"),
+                    row.get("win_rate_pct"),
+                    now,
+                ))
+                years_count += 1
+        conn.commit()
+    return {
+        "trades_imported": trades_count,
+        "years_imported": years_count,
+        "imported_at": now.isoformat() + "Z",
+    }
+
+
+def get_backtest_trades(
+    year_filter: Optional[int] = None,
+    market_filter: Optional[str] = None,
+) -> List[Dict]:
+    """Return backtest trades filtered by year and/or market."""
+    conditions = []
+    params: List = []
+    if year_filter is not None:
+        conditions.append("entry_year = %s")
+        params.append(year_filter)
+    if market_filter and market_filter.upper() != "ALL":
+        conditions.append("market = %s")
+        params.append(market_filter.upper())
+    where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                f"SELECT * FROM backtest_trades {where} ORDER BY entry_date ASC",
+                params,
+            )
+            return [dict(r) for r in cur.fetchall()]
+
+
+def get_backtest_summary(
+    year_filter: Optional[int] = None,
+    market_filter: Optional[str] = None,
+) -> Dict:
+    """Return aggregated backtest stats and yearly breakdown for the Strategy Benchmark page.
+
+    backtest_stats covers Panel 1 stats. yearly_breakdown covers Panel 2.
+    """
+    trade_conditions = []
+    trade_params: List = []
+    if year_filter is not None:
+        trade_conditions.append("entry_year = %s")
+        trade_params.append(year_filter)
+    if market_filter and market_filter.upper() != "ALL":
+        trade_conditions.append("market = %s")
+        trade_params.append(market_filter.upper())
+    where = ("WHERE " + " AND ".join(trade_conditions)) if trade_conditions else ""
+
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            # Panel 1 aggregated stats from backtest_trades
+            cur.execute(f"""
+                SELECT
+                    COUNT(*) AS total_trades,
+                    ROUND(
+                        100.0 * SUM(CASE WHEN was_profitable THEN 1 ELSE 0 END)
+                        / NULLIF(COUNT(*), 0), 1
+                    ) AS win_rate_pct,
+                    ROUND(AVG(pnl_gbp)::numeric, 2) AS avg_pnl_gbp,
+                    ROUND(SUM(pnl_gbp)::numeric, 2) AS total_pnl_gbp,
+                    ROUND(AVG(holding_days)::numeric, 1) AS avg_hold_days
+                FROM backtest_trades {where}
+            """, trade_params)
+            row = cur.fetchone()
+            backtest_stats = dict(row) if row and row["total_trades"] else None
+
+            # Panel 2 yearly breakdown
+            yearly_conditions = []
+            yearly_params: List = []
+            cur.execute("""
+                SELECT entry_year, num_trades, avg_pnl_gbp, total_pnl_gbp,
+                       avg_hold_days, win_rate_pct
+                FROM backtest_yearly_performance
+                ORDER BY entry_year ASC
+            """)
+            yearly_breakdown = [dict(r) for r in cur.fetchall()]
+
+            # Last imported_at
+            cur.execute("SELECT MAX(imported_at) AS last_imported FROM backtest_trades")
+            ts_row = cur.fetchone()
+            last_imported_at = (
+                ts_row["last_imported"].isoformat() + "Z"
+                if ts_row and ts_row["last_imported"]
+                else None
+            )
+
+            # Available years for filter dropdown
+            cur.execute(
+                "SELECT DISTINCT entry_year FROM backtest_trades ORDER BY entry_year ASC"
+            )
+            available_years = [r["entry_year"] for r in cur.fetchall()]
+
+    return {
+        "last_imported_at": last_imported_at,
+        "backtest_stats": backtest_stats,
+        "yearly_breakdown": yearly_breakdown,
+        "available_years": available_years,
+    }
+
+
+def get_actual_stats_for_benchmark(
+    portfolio_id: str,
+    year_filter: Optional[int] = None,
+    market_filter: Optional[str] = None,
+) -> Optional[Dict]:
+    """Return live trade stats for Panel 1 comparison.
+
+    Returns None if no live trades match the filter (frontend shows '—' per AC-03).
+    """
+    conditions = ["portfolio_id = %s"]
+    params: List = [portfolio_id]
+    if year_filter is not None:
+        conditions.append("EXTRACT(YEAR FROM entry_date) = %s")
+        params.append(year_filter)
+    if market_filter and market_filter.upper() != "ALL":
+        conditions.append("market = %s")
+        params.append(market_filter.upper())
+    where = "WHERE " + " AND ".join(conditions)
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(f"""
+                SELECT
+                    COUNT(*) AS total_trades,
+                    ROUND(
+                        100.0 * SUM(CASE WHEN pnl > 0 THEN 1 ELSE 0 END)
+                        / NULLIF(COUNT(*), 0), 1
+                    ) AS win_rate_pct,
+                    ROUND(AVG(pnl)::numeric, 2) AS avg_pnl_gbp,
+                    ROUND(SUM(pnl)::numeric, 2) AS total_pnl_gbp,
+                    ROUND(AVG(holding_days)::numeric, 1) AS avg_hold_days
+                FROM trade_history {where}
+            """, params)
+            row = cur.fetchone()
+            if row is None or row["total_trades"] == 0:
+                return None
+            return dict(row)
         conn.commit()

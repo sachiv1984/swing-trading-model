@@ -53,6 +53,7 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /", "method": "GET", "url": f"{base_url}/", "critical": True},
         {"name": "GET /health", "method": "GET", "url": f"{base_url}/health", "critical": True},
         {"name": "GET /health/detailed", "method": "GET", "url": f"{base_url}/health/detailed", "critical": True},
+        {"name": "GET /health/scheduler", "method": "GET", "url": f"{base_url}/health/scheduler", "critical": False},
 
         # Settings & Configuration
         {"name": "GET /settings", "method": "GET", "url": f"{base_url}/settings", "critical": True},
@@ -201,6 +202,11 @@ async def test_all_endpoints(request: Request):
 
         # AI Chat Advisor (v6.2 / EPIC-02 ST-08)
         {"name": "POST /ai/chat", "method": "POST", "url": f"{base_url}/ai/chat", "body": {"question": "How many positions do I have open?"}, "critical": False},
+
+        # Strategy Benchmark (v6.3 / EPIC-03 ST-11)
+        {"name": "GET /strategy/benchmark/summary", "method": "GET", "url": f"{base_url}/strategy/benchmark/summary", "critical": False},
+        {"name": "GET /strategy/benchmark/trades", "method": "GET", "url": f"{base_url}/strategy/benchmark/trades", "critical": False},
+        {"name": "POST /strategy/benchmark/import", "method": "POST", "url": f"{base_url}/strategy/benchmark/import", "body": {"trades": [], "yearly_performance": []}, "critical": False},
 
         # AI rate limit 429 scenario verification (v6.3 / EPIC-01 ST-03)
         {"name": "POST /test/rate-limit-scenarios", "method": "POST", "url": f"{base_url}/test/rate-limit-scenarios", "critical": False},

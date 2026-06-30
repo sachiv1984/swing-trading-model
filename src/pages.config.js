@@ -66,6 +66,7 @@ import TradePlan from './pages/TradePlan';
 import TradePlans from './pages/TradePlans';
 import TickerUniverse from './pages/TickerUniverse';
 import RedFlagJournal from './pages/RedFlagJournal';
+import StrategyBenchmark from './pages/StrategyBenchmark';
 import __Layout from './Layout.js';
 
 
@@ -89,6 +90,7 @@ export const PAGES = {
     "TradePlans": TradePlans,
     "TickerUniverse": TickerUniverse,
     "RedFlagJournal": RedFlagJournal,
+    "StrategyBenchmark": StrategyBenchmark,
 }
 
 export const pagesConfig = {
