@@ -218,12 +218,16 @@ test.describe('SC-PD-05 — Collapse state persists via localStorage (AC-05)', (
   test('SC-PD-05: Expand all → collapse market context → reload → market context still collapsed', async ({ page }) => {
     await stubRoutes(page);
 
-    // Start with a clean slate — ensure all expanded
-    await page.addInitScript(() => {
-      localStorage.removeItem('ai-briefing-collapsed-sections-v1');
-    });
+    // Clear localStorage once via evaluate (not addInitScript — addInitScript runs on every
+    // navigation including page.reload(), which would erase the state we're trying to persist).
+    await page.goto('/#/');
+    await page.evaluate((key) => localStorage.removeItem(key), STORAGE_KEY);
 
-    await loadDashboardWithBriefing(page);
+    // Reload so React reads the now-clean localStorage → all sections default to expanded.
+    await page.reload();
+    await expect(page.getByTestId('ai-daily-briefing-card')).toBeVisible({ timeout: 8000 });
+    await page.getByTestId('regenerate-briefing-btn').click();
+    await expect(page.getByTestId('briefing-content')).toBeVisible({ timeout: 8000 });
 
     // Verify all expanded
     await expect(page.getByTestId('section-toggle-market_context')).toHaveAttribute('aria-expanded', 'true');
@@ -240,11 +244,10 @@ test.describe('SC-PD-05 — Collapse state persists via localStorage (AC-05)', (
     const parsed = JSON.parse(stored);
     expect(parsed.market_context).toBe(true);
 
-    // Reload the page (routes are re-registered because they are registered globally above)
+    // Reload — routes persist (page.route() survives reload); localStorage is NOT cleared
+    // because we are no longer using addInitScript.
     await page.reload();
     await expect(page.getByTestId('ai-daily-briefing-card')).toBeVisible({ timeout: 8000 });
-
-    // Trigger regenerate to restore briefing state after reload
     await page.getByTestId('regenerate-briefing-btn').click();
     await expect(page.getByTestId('briefing-content')).toBeVisible({ timeout: 8000 });
 
