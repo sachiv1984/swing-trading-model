@@ -108,7 +108,7 @@ def generate_daily_briefing() -> dict:
     positions = get_positions(portfolio_id, status="open")
     all_signals = get_signals(portfolio_id)
 
-    regime_label = _get_regime_label()
+    regime = _get_regime_data()
 
     try:
         from services.signal_service import _is_last_trading_day_of_month
@@ -126,9 +126,18 @@ def generate_daily_briefing() -> dict:
                 key=lambda s: s.get("rank", 99),
             )[:5]
 
+    if regime:
+        regime_lines = [
+            f"Market regime: {regime['label']}",
+            f"  SPY: {regime['spy_price']:.2f} vs MA200 {regime['spy_ma200']:.2f} → {'Risk-On' if regime['spy_risk_on'] else 'Risk-Off'}",
+            f"  FTSE: {regime['ftse_price']:.2f} vs MA200 {regime['ftse_ma200']:.2f} → {'Risk-On' if regime['ftse_risk_on'] else 'Risk-Off'}",
+        ]
+    else:
+        regime_lines = ["Market regime: Unknown (data unavailable)"]
+
     context_lines = [
         f"Today: {now.strftime('%Y-%m-%d')}",
-        f"Market regime: {regime_label or 'Unknown'}",
+        *regime_lines,
         f"Month-end rebalance due today: {'Yes' if is_month_end else 'No'}",
         "",
         f"Portfolio: {len(positions)} open positions, "
@@ -143,15 +152,25 @@ def generate_daily_briefing() -> dict:
             market = p.get("market", "?")
             price = p.get("current_price", 0) or 0
             stop = p.get("current_stop", 0) or 0
+            pnl_pct = p.get("pnl_pct", 0) or 0
+            holding_days = p.get("holding_days", 0) or 0
             risk_off = bool(p.get("risk_off_exit", False))
+            grace = holding_days > 0 and holding_days < 10
+            grace_days_left = max(0, 10 - holding_days) if grace else None
             breach = stop > 0 and price > 0 and price <= stop
             alerts = []
             if breach:
-                alerts.append("STOP BREACH")
+                if grace:
+                    alerts.append(f"STOP BREACH (grace {grace_days_left}d remaining — do not force exit yet)")
+                else:
+                    alerts.append("STOP BREACH")
             if risk_off:
-                alerts.append("RISK-OFF")
+                alerts.append("RISK-OFF-EXIT-FLAGGED")
             alert_str = f" [{', '.join(alerts)}]" if alerts else ""
-            context_lines.append(f"  - {ticker} ({market}): price £{price:.2f}, stop £{stop:.2f}{alert_str}")
+            context_lines.append(
+                f"  - {ticker} ({market}): price £{price:.2f}, trailing stop £{stop:.2f},"
+                f" P&L {pnl_pct:+.1f}%{alert_str}"
+            )
     else:
         context_lines.append("No open positions.")
 
@@ -236,17 +255,27 @@ def _briefing_error(message: str, now: datetime) -> dict:
     }
 
 
-def _get_regime_label() -> Optional[str]:
+def _get_regime_data() -> Optional[dict]:
     try:
-        from position_manager import check_market_regime
+        from utils.pricing import check_market_regime
         r = check_market_regime()
         spy_on = r.get("spy_risk_on", False)
         ftse_on = r.get("ftse_risk_on", False)
         if spy_on and ftse_on:
-            return "Risk-On (SPY and FTSE both above MA200)"
+            label = "Risk-On (SPY and FTSE both above MA200)"
         elif not spy_on and not ftse_on:
-            return "Risk-Off (both markets below MA200)"
-        return f"Neutral ({'SPY on' if spy_on else 'SPY off'}, {'FTSE on' if ftse_on else 'FTSE off'})"
+            label = "Risk-Off (both markets below MA200)"
+        else:
+            label = f"Neutral ({'SPY on' if spy_on else 'SPY off'}, {'FTSE on' if ftse_on else 'FTSE off'})"
+        return {
+            "label": label,
+            "spy_price": r.get("spy_price", 0),
+            "spy_ma200": r.get("spy_ma200", 0),
+            "spy_risk_on": spy_on,
+            "ftse_price": r.get("ftse_price", 0),
+            "ftse_ma200": r.get("ftse_ma200", 0),
+            "ftse_risk_on": ftse_on,
+        }
     except Exception:
         return None
 

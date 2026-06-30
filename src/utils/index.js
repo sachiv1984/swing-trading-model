@@ -20,6 +20,7 @@ export const createPageUrl = (pageName) => {
     Screener: '/Screener',
     TickerUniverse: '/TickerUniverse',
     RedFlagJournal: '/RedFlagJournal',
+    StrategyBenchmark: '/StrategyBenchmark',
   };
   return routes[pageName] || '/';
 };
