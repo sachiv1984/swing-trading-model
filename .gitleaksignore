@@ -1,7 +1,4 @@
-# Gitleaks false positive suppression — STORAGE_KEY localStorage identifiers
-# All findings from commit 8680d28f (ST-12 progressive disclosure implementation).
-# STORAGE_KEY = 'ai-briefing-collapsed-sections-v1' is a localStorage state key,
-# not a credential. The generic-api-key rule triggers on entropy + variable name pattern.
+# False positive suppressions — localStorage UI state key identifiers, not credentials.
 # Authority: Cybersecurity & Trust Lead
 8680d28f48803d8ec7402552d4789365a0eff8d3:tests/e2e/ai-briefing-progressive-disclosure.spec.js:generic-api-key:22
 8680d28f48803d8ec7402552d4789365a0eff8d3:src/components/dashboard/home/AiDailyBriefing.js:generic-api-key:7
