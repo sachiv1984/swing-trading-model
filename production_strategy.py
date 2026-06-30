@@ -68,7 +68,8 @@ print("=" * 70)
 print("PRODUCTION MOMENTUM STRATEGY - BACKTEST")
 print("=" * 70)
 
-df = pd.read_csv("tickers_full_list.csv")
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+df = pd.read_csv(os.path.join(_SCRIPT_DIR, "backend", "tickers_full_list.csv"))
 tickers = df["Ticker"].dropna().unique().tolist()
 print(f"\nUniverse size: {len(tickers)}")
 
