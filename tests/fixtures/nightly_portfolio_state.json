@@ -1,0 +1,131 @@
+{
+  "spec_version": "1.0",
+  "description": "Fixture dataset for nightly computation CI simulation tests (ST-07 BLG-QA-65). Update spec_version when strategy_rules.md constants change.",
+  "settings": {
+    "atr_multiplier_trailing": 2.0,
+    "atr_multiplier_initial": 5.0
+  },
+  "trailing_stop_scenarios": {
+    "TS-01_profitable_stop_trails_up": {
+      "current_price": 120.0,
+      "atr": 5.0,
+      "is_profitable": true,
+      "current_stop": 100.0,
+      "entry_price": 100.0,
+      "expected_stop": 110.0,
+      "expected_atr_mult": 2.0,
+      "note": "stop = max(100, 120-2*5, 100) = max(100, 110, 100) = 110.0"
+    },
+    "TS-02_profitable_stop_unchanged": {
+      "current_price": 105.0,
+      "atr": 5.0,
+      "is_profitable": true,
+      "current_stop": 102.0,
+      "entry_price": 100.0,
+      "expected_stop": 102.0,
+      "expected_atr_mult": 2.0,
+      "note": "new = 105-2*5 = 95; max(102, 95, 100) = 102 (ratchet, unchanged)"
+    },
+    "TS-03_profitable_stop_floored_at_entry": {
+      "current_price": 101.0,
+      "atr": 5.0,
+      "is_profitable": true,
+      "current_stop": 95.0,
+      "entry_price": 100.0,
+      "expected_stop": 100.0,
+      "expected_atr_mult": 2.0,
+      "note": "new = 101-2*5 = 91; max(95, 91, 100) = 100 (floored at entry)"
+    },
+    "TS-04_losing_wide_stop": {
+      "current_price": 90.0,
+      "atr": 5.0,
+      "is_profitable": false,
+      "current_stop": 60.0,
+      "entry_price": 100.0,
+      "expected_stop": 65.0,
+      "expected_atr_mult": 5.0,
+      "note": "new = 90-5*5 = 65; max(60, 65) = 65"
+    },
+    "TS-05_losing_stop_unchanged": {
+      "current_price": 85.0,
+      "atr": 5.0,
+      "is_profitable": false,
+      "current_stop": 70.0,
+      "entry_price": 100.0,
+      "expected_stop": 70.0,
+      "expected_atr_mult": 5.0,
+      "note": "new = 85-5*5 = 60; max(70, 60) = 70 (ratchet, unchanged)"
+    },
+    "TS-06_zero_atr": {
+      "current_price": 100.0,
+      "atr": 0.0,
+      "is_profitable": true,
+      "current_stop": 95.0,
+      "entry_price": 90.0,
+      "expected_stop": 100.0,
+      "expected_atr_mult": 2.0,
+      "note": "new = 100-2*0 = 100; max(95, 100, 90) = 100"
+    }
+  },
+  "inv_vol_scenarios": {
+    "IV-01_single_signal": {
+      "signals": [
+        {"ticker": "AAPL", "market": "US", "atr_value": 5.0, "current_price": 200.0, "price_gbp": 157.48}
+      ],
+      "available_cash": 10000.0,
+      "fx_rate": 1.27,
+      "expected": [
+        {"inv_vol_weight": 1.0, "allocation_gbp": 10000.0, "suggested_shares": 63}
+      ],
+      "note": "Single signal: weight=1.0; shares=floor(10000/157.48)=63"
+    },
+    "IV-02_two_signals_unequal_atr": {
+      "signals": [
+        {"ticker": "NVDA", "market": "US", "atr_value": 2.0, "current_price": 100.0, "price_gbp": 78.74},
+        {"ticker": "MSFT", "market": "US", "atr_value": 8.0, "current_price": 100.0, "price_gbp": 78.74}
+      ],
+      "available_cash": 10000.0,
+      "fx_rate": 1.27,
+      "expected": [
+        {"inv_vol_weight": 0.8, "allocation_gbp": 8000.0, "suggested_shares": 101},
+        {"inv_vol_weight": 0.2, "allocation_gbp": 2000.0, "suggested_shares": 25}
+      ],
+      "note": "inv_atr = [0.5, 0.125]; total=0.625; raw=[0.8, 0.2]; within [0.05, 0.20]? 0.8>0.20 so capped. This tests IV-03 scenario too — see IV-05 for clean IV-02."
+    },
+    "IV-02_clean_two_signals": {
+      "signals": [
+        {"ticker": "AAPL", "market": "US", "atr_value": 4.0, "current_price": 100.0, "price_gbp": 78.74},
+        {"ticker": "MSFT", "market": "US", "atr_value": 8.0, "current_price": 100.0, "price_gbp": 78.74}
+      ],
+      "available_cash": 10000.0,
+      "fx_rate": 1.27,
+      "note": "inv_atr=[0.25, 0.125]; total=0.375; raw=[0.667, 0.333]; 0.667>0.20 so capped. Use IV-07 for multi-signal within bounds."
+    },
+    "IV-05_zero_atr_signal": {
+      "signals": [
+        {"ticker": "AAPL", "market": "US", "atr_value": 0.0, "current_price": 150.0, "price_gbp": 118.11},
+        {"ticker": "GOOGL", "market": "US", "atr_value": 10.0, "current_price": 150.0, "price_gbp": 118.11}
+      ],
+      "available_cash": 10000.0,
+      "fx_rate": 1.27,
+      "expected": [
+        {"suggested_shares": 0, "allocation_gbp": 0},
+        {"inv_vol_weight": 1.0, "allocation_gbp": 10000.0, "suggested_shares": 84}
+      ],
+      "note": "AAPL ATR=0 gets 0 shares; GOOGL gets full allocation; floor(10000/118.11)=84"
+    },
+    "IV-06_all_zero_atr": {
+      "signals": [
+        {"ticker": "AAPL", "market": "US", "atr_value": 0.0, "current_price": 150.0, "price_gbp": 118.11},
+        {"ticker": "GOOGL", "market": "US", "atr_value": 0.0, "current_price": 150.0, "price_gbp": 118.11}
+      ],
+      "available_cash": 10000.0,
+      "fx_rate": 1.27,
+      "expected": [
+        {"suggested_shares": 0, "allocation_gbp": 0},
+        {"suggested_shares": 0, "allocation_gbp": 0}
+      ],
+      "note": "All ATR=0: total_inv_atr=0; early return with 0 shares for all"
+    }
+  }
+}
