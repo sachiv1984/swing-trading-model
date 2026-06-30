@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.4
-**Last Updated:** 2026-06-25
+**Version:** 1.5
+**Last Updated:** 2026-06-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -161,12 +161,39 @@ No request body required.
 - Market regime: SPY and FTSE MA200 status
 - Month-end rebalance check
 
+### Rate limiting
+
+| Limit | Scope | Response |
+|-------|-------|----------|
+| 10 requests/minute | Per client IP | HTTP 429 with `Retry-After` header |
+
+### Response — 429 Too Many Requests
+
+Returned when the per-IP rate limit is exceeded.
+
+```
+HTTP/1.1 429 Too Many Requests
+Retry-After: 42
+Content-Type: application/json
+```
+
+```json
+{
+  "detail": "Rate limit exceeded. Try again later."
+}
+```
+
+| Header | Description |
+|--------|-------------|
+| `Retry-After` | Seconds until the oldest request in the window expires; client should wait this long before retrying. |
+
 ### Error responses
 
 | Status | Condition |
 |--------|-----------|
-| 200 | Always returns 200. LLM errors return `summary: null` with `error` message. |
+| 200 | Always returns 200 when rate limit not exceeded. LLM errors return `summary: null` with `error` message. |
 | 401 | Missing or invalid API key. |
+| 429 | Rate limit exceeded (10 req/min/IP). `Retry-After` header present. |
 
 ### Implementation constraints (SRB-v1.7)
 
@@ -174,6 +201,7 @@ No request body required.
 - Token usage logged to `claude_audit_log` via `create_claude_audit_entry`.
 - No writes to `positions`, `signals`, `trade_plans`, or any strategy table.
 - `advisory: true` is always present in the response.
+- Rate limit implementation: in-memory sliding-window (`backend/services/rate_limiter.py`). Limit applies per client IP. Single-process scope; sufficient for single-instance Render deployment.
 
 ---
 
@@ -236,13 +264,40 @@ Each call is independent — the backend loads fresh portfolio and signal state 
 - Latest top-5 momentum signals
 - Optional: focused ticker from `context.ticker`
 
+### Rate limiting
+
+| Limit | Scope | Response |
+|-------|-------|----------|
+| 30 requests/minute | Per client IP | HTTP 429 with `Retry-After` header |
+
+### Response — 429 Too Many Requests
+
+Returned when the per-IP rate limit is exceeded.
+
+```
+HTTP/1.1 429 Too Many Requests
+Retry-After: 28
+Content-Type: application/json
+```
+
+```json
+{
+  "detail": "Rate limit exceeded. Try again later."
+}
+```
+
+| Header | Description |
+|--------|-------------|
+| `Retry-After` | Seconds until the oldest request in the window expires. |
+
 ### Error responses
 
 | Status | Condition |
 |--------|-----------|
-| 200 | Always returns 200. LLM errors return a `response` error string. |
+| 200 | Always returns 200 when rate limit not exceeded. LLM errors return a `response` error string. |
 | 422 | `question` field missing. |
 | 401 | Missing or invalid API key. |
+| 429 | Rate limit exceeded (30 req/min/IP). `Retry-After` header present. |
 
 ### Implementation constraints (SRB-v1.7)
 
@@ -250,6 +305,7 @@ Each call is independent — the backend loads fresh portfolio and signal state 
 - Token usage logged to `claude_audit_log` via `create_claude_audit_entry`.
 - No writes to any table. Conversation state is not persisted.
 - `advisory: true` always present.
+- Rate limit implementation: in-memory sliding-window (`backend/services/rate_limiter.py`). Limit applies per client IP. Single-process scope; sufficient for single-instance Render deployment.
 
 ---
 
@@ -438,7 +494,7 @@ Query the AI journal summary audit log. Returns metadata records for past `POST 
 
 ## Known Deviations
 
-None at v1.4.
+None at v1.5.
 
 ---
 
@@ -446,6 +502,7 @@ None at v1.4.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-06-29 | v6.3 EPIC-01 ST-03: Added per-endpoint rate limiting to `POST /ai/daily-briefing` (10 req/min/IP) and `POST /ai/chat` (30 req/min/IP). 429 + `Retry-After` documented. In-memory sliding-window implementation (`backend/services/rate_limiter.py`). AC-05: rate limit scenario tests added to `backend/routers/test.py`. |
 | 1.4 | 2026-06-25 | v6.2 EPIC-02 ST-06/ST-08: Added `POST /ai/daily-briefing` (daily portfolio briefing + action list) and `POST /ai/chat` (stateless conversational advisor). Both endpoints use `claude-sonnet-4-6`, log to `claude_audit_log`, return `advisory: true`. §13 PASS per 2026-06-24 review. Head of Engineering sign-off. |
 | 1.3 | 2026-06-09 | v5.3 ST-04 (BLG-SPEC-49, EPIC-01): Added `GET /ai/journal-summary/history` — AI journal summary audit log query endpoint. API Contracts & Documentation Owner sign-off. |
 | 1.2 | 2026-05-28 | ST-07 (EPIC-03, v4.2): Added `GET /ai/claude-audit-log` — immutable Claude API audit trail query endpoint (BLG-GOV-63). |

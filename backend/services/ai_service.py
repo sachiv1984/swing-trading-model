@@ -8,12 +8,15 @@ or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 Contract: docs/specs/api_contracts/ai_endpoints.md v1.4
 """
 
+import logging
 import os
 import json
 import time
 import anthropic
 from datetime import datetime
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 
 MODEL_VERSION = "claude-haiku-4-5-20251001"
@@ -72,7 +75,8 @@ def summarise_journal_notes(
         )
         summary_text = response.content[0].text if response.content else None
         return {"summary": summary_text, "model": model, "message": None}
-    except Exception:
+    except Exception as exc:
+        logger.error("summarise_journal_notes failed: %s", exc, exc_info=True)
         return {
             "summary": None,
             "model": None,
