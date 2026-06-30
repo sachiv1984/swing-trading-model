@@ -102,4 +102,9 @@ Last Updated: 2026-06-29
   exists in staging data).
 - **Commit format required:** `[EPIC-01][ST-02] <description>` pushed to
   `exec/2026-06-26__release-v6.3/EPIC-01`
-- **Status:** Pending
+- **Status:** Completed — commit 154c8dae (2026-06-30)
+- **Actual fix:** Investigation confirmed `/trades` already returns `net_r_multiple`
+  (fee-adjusted R-multiple computed by `trade_service.py`). The fix was a single
+  field-name correction in `base44Client.js` (`t.r_multiple` → `t.net_r_multiple`),
+  not an `/analytics/metrics` join as originally drafted. No extra fetch required.
+  Playwright SC-RM-01 through SC-RM-03c added and all pass (5 tests, 18.2s).
