@@ -1,11 +1,191 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-25 (groom backlog post-ship closure 2026-06-24__release-v6.2 — 10 items archived)
+**Last Updated:** 2026-06-30 (groom backlog post-ship closure 2026-06-26__release-v6.3 — 15 items archived)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-FEAT-53 — Strategy Benchmark page: compare live trades against backtest
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-30
+**Shipped in:** v6.3 (ST-11, cycle: 2026-06-26__release-v6.3)
+**Evidence:** docs/product/changelog.md — v6.3; claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+Two new DB tables (backtest_trades, backtest_yearly_performance), POST /strategy/benchmark/import, GET /strategy/benchmark/summary, GET /strategy/benchmark/trades, StrategyBenchmark.js frontend page with three panels, sticky filter bar, and toggle modes. import_backtest.py companion script. All 8 ACs delivered.
+
+---
+
+### BLG-FE-80 — Morning briefing progressive disclosure (expand/collapse sections)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-30
+**Shipped in:** v6.3 (ST-12, cycle: 2026-06-26__release-v6.3)
+**Evidence:** docs/product/changelog.md — v6.3; claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+Expand/collapse toggle per section in AiDailyBriefing.js (market context, signals, chat prompt). Default all expanded. localStorage persistence with versioned key. Playwright SC-PD-05 coverage.
+
+---
+
+### BLG-FE-79 — Fix R-multiple not displaying on Reflection page
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-06-30
+**Shipped in:** v6.3 (ST-02, cycle: 2026-06-26__release-v6.3)
+**Evidence:** docs/product/changelog.md — v6.3; claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+Fixed R-multiple field mapping (backend service or frontend display logic). R-multiple rendered as numeric value for all closed trades; trades with insufficient data show "N/A". No regression to other Reflection page columns.
+
+---
+
+### BLG-OPS-81 — AI endpoint per-endpoint rate limiting hardening
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-06-30
+**Shipped in:** v6.3 (ST-03, cycle: 2026-06-26__release-v6.3)
+**Evidence:** docs/product/changelog.md — v6.3; claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+Per-endpoint rate limits: POST /ai/daily-briefing (~10 req/min/IP), POST /ai/chat (~30 req/min/IP). 429 Too Many Requests with Retry-After header. Rate limits documented in openapi.yaml and api_contracts.
+
+---
+
+### BLG-OPS-80 — Render deployment rollback procedure documentation
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-06-30
+**Shipped in:** v6.3 (ST-15, cycle: 2026-06-26__release-v6.3)
+**Evidence:** docs/product/changelog.md — v6.3; claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+Render deployment rollback procedure documented in docs/operations/ covering rollback steps, decision criteria (severity thresholds), and verification steps.
+
+---
+
+### BLG-OPS-79 — Background scheduler health monitoring endpoint
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-30
+**Shipped in:** v6.3 (ST-13, cycle: 2026-06-26__release-v6.3)
+**Evidence:** docs/product/changelog.md — v6.3; claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+GET /health/scheduler endpoint returning last-run timestamps per nightly computation job type, status (success/failure), and error details. Registered in backend/routers/test.py and openapi.yaml. Architecture review documented.
+
+---
+
+### BLG-OPS-78 — Measure live latency for POST /ai/daily-briefing and POST /ai/chat
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-06-30
+**Shipped in:** v6.3 (ST-14, cycle: 2026-06-26__release-v6.3)
+**Evidence:** docs/product/changelog.md — v6.3; claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+Live p50/p95 measurements recorded for both AI endpoints using §19 methodology. api_performance_baseline.md §22.3 populated with actual measurements and regression thresholds.
+
+---
+
+### BLG-QA-68 — §13 boundary test suite for AI advisory endpoints
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-30
+**Shipped in:** v6.3 (ST-10, cycle: 2026-06-26__release-v6.3)
+**Evidence:** docs/product/changelog.md — v6.3; claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+§13 boundary test scenario document filed as docs/specs/qa/ai_s13_boundary_test_suite.md. Covers all current AI endpoints: advisory-only language, no automated-action fields, disclaimer visibility, no specific instrument recommendations. AI Compliance Officer and QA & Testing Owner sign-off.
+
+---
+
+### BLG-QA-67 — AI chat response schema validation tests
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-30
+**Shipped in:** v6.3 (ST-09, cycle: 2026-06-26__release-v6.3)
+**Evidence:** docs/product/changelog.md — v6.3; claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+POST /ai/chat response schema validation tests and advisory-only language constraint tests registered in backend/routers/test.py. CI-passing.
+
+---
+
+### BLG-QA-66 — Strategy signal regression test specification
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-06-30
+**Shipped in:** v6.3 (ST-08, cycle: 2026-06-26__release-v6.3)
+**Evidence:** docs/product/changelog.md — v6.3; claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+Specification document docs/specs/qa/strategy_signal_regression_spec.md. Covers scenario requirements for BLG-QA-65 fixture dataset, expected output formats and tolerances, and fixture maintenance procedure. Director of Quality and QA Lead sign-off.
+
+---
+
+### BLG-QA-65 — Nightly stop computation CI simulation tests
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-06-30
+**Shipped in:** v6.3 (ST-07, cycle: 2026-06-26__release-v6.3)
+**Evidence:** docs/product/changelog.md — v6.3; claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+Fixture-based CI simulation tests for trailing stop computation, rebalance exit detection, and inverse-vol sizing. All 5 ACs delivered; tests run in CI on changes to affected services.
+
+---
+
+### BLG-GOV-148 — API contract review checklist for AI advisory endpoints
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-30
+**Shipped in:** v6.3 (ST-06, cycle: 2026-06-26__release-v6.3)
+**Evidence:** docs/product/changelog.md — v6.3; claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+§13 boundary confirmation checklist for AI advisory endpoint contracts filed in docs/specs/api_contracts/. Applied retroactively to v6.2 AI endpoint contracts. API Contracts Owner and Head of Specs Team sign-off.
+
+---
+
+### BLG-GOV-147 — AI feature advisory disclaimer visibility assessment
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-06-30
+**Shipped in:** v6.3 (ST-05, cycle: 2026-06-26__release-v6.3)
+**Evidence:** docs/product/changelog.md — v6.3; claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+Visual assessment of AI daily briefing and AI chat disclaimer: font size, colour contrast, position. Disclaimer confirmed prominent on first render without scrolling. Remediation items (BLG-UX-01, BLG-UX-02) filed for contrast improvements. AI Compliance Officer and Head of UX & Design sign-off.
+
+---
+
+### BLG-GOV-146 — AI response injection risk assessment
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-06-30
+**Shipped in:** v6.3 (ST-04, cycle: 2026-06-26__release-v6.3)
+**Evidence:** docs/product/changelog.md — v6.3; claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+Threat model document covering all external data inputs to the AI prompt construction pipeline (POST /ai/daily-briefing, POST /ai/chat). Risk classification per input: accepted/mitigated/open. BLG-SEC-01 and BLG-SEC-02 filed as open risk remediation items. Cybersecurity & Trust Lead and AI Compliance Officer sign-off.
+
+---
+
+### BLG-BE-39 — Fix AI journal summary on Trade History tab
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-06-30
+**Shipped in:** v6.3 (ST-01, cycle: 2026-06-26__release-v6.3)
+**Evidence:** docs/product/changelog.md — v6.3; claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+Diagnosed and fixed the AI journal summary endpoint failure (ai_service.py). AI journal summary generates successfully for trades with journal notes on Trade History tab. Error states surfaced clearly. No regression to other ai_service.py functionality.
 
 ---
 

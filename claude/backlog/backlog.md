@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-26 (rebalance 2026-06-26__scheduled — DL-057; 25 new items added (IW-20260626-01): BLG-FE-80, BLG-QA-65–68, BLG-OPS-79–81, BLG-GOV-137–149, BLG-SPEC-58–61; 135 active items)
+**Last Updated:** 2026-06-30 (post-ship closure 2026-06-26__release-v6.3 — 15 items marked ✅ COMPLETE (BLG-BE-39, BLG-FE-79, BLG-FE-80, BLG-OPS-78–81, BLG-GOV-146–148, BLG-QA-65–68, BLG-FEAT-53); Phase 4 additions confirmed (BLG-UX-01/02, BLG-SEC-01/02, TEST-GAP-EPIC-01/03); BLG-OPS-82 filed — endpoint drift advisory)
 **Last rebalance:** 2026-06-26 (cycle 2026-06-26__scheduled — DL-057; 14 Promoted-Backlog, 10 Backlog-gate-conditional, 19 Parked C1, 6 Parked C3; STEP 8.0: BLG-BE-39 + BLG-FE-79 mandatory v6.3 Now; PVR=0.37 Advisory; Skill-Silo=51.5% Advisory)
 
 > ⚠️ Standing Notice
@@ -374,42 +374,6 @@ Trades are currently classified only by market, sector, and signal type. There i
 - AC-01: User can add/remove tags on any trade plan
 - AC-02: GET /analytics/tag-performance returns win rate and average R broken down by tag
 - AC-03: PerformanceAnalytics page surfaces tag-based filter controls
-
----
-
-### BLG-FEAT-53 — Strategy Benchmark page: compare live trades against backtest
-**Priority:** P2 (Medium)
-**Type:** Product Feature / Analytics
-**Owner:** Product Owner
-**Source:** Product Owner decision 2026-06-26 — session design proposal (Head of UX & Design)
-**Effort:** L (~1 week)
-**Provisional-Target:** v6.3
-
-**Problem**
-There is no way to know whether live trading is tracking the production strategy's backtest performance. The backtest (`production_strategy.py`) generates trade-level and annual performance data in CSV files, but these are not connected to the live system. Without a comparison view, there is no way to answer: "Am I trading this strategy?", "Is it still producing the outcomes the backtest predicted?", or "How does my actual win rate compare to the 56.7% backtest baseline?"
-
-**Design**
-UX specification: Head of UX & Design design proposal 2026-06-26 — single scrollable page with sticky year + market filters, three panels:
-- Panel 1 — Performance Parity: backtest vs actual side-by-side stat cards (CAGR, Win Rate, Avg Hold Days, Total PnL) + yearly PnL bar chart
-- Panel 2 — Yearly Breakdown: year-by-year table (Num Trades, Win Rate %, Total PnL for both backtest and actual)
-- Panel 3 — Trade Log: toggleable backtest / actual / side-by-side view, filterable by year and market; exit reason badges matching existing Positions/Signals badge language
-
-**Scope**
-- Two new DB tables: `backtest_trades` (Ticker, Entry Date, Exit Date, Holding Days, Entry, Exit, PnL, PnL %, Market, Exit Reason, Was Profitable, Entry Year) and `backtest_yearly_performance` (Entry Year, Num Trades, Avg PnL, Total PnL, Avg Hold Days, Win Rate %)
-- Import mechanism: `POST /strategy/benchmark/import` endpoint accepts the three CSV outputs from `production_strategy.py` and upserts into DB; companion local script `import_backtest.py` reads latest CSVs from `production_results/` and posts to this endpoint. User runs this nightly (or on any schedule) from their local machine — no server-side execution of `production_strategy.py`
-- Read endpoints: `GET /strategy/benchmark/summary?year=&market=` and `GET /strategy/benchmark/trades?year=&market=`
-- Frontend: `StrategyBenchmark.js` page with all three panels, sticky filter bar, toggle modes; displays "Last updated: {date}" timestamp from DB (no Refresh button — data is managed externally)
-- Route registered in app router; all endpoints registered in `backend/routers/test.py`
-
-**Acceptance Criteria**
-- AC-01: Strategy Benchmark page accessible from main navigation
-- AC-02: Year filter (All / individual year) applies to all three panels simultaneously
-- AC-03: Panel 1 shows backtest stats and actual stats side-by-side; actual shows `—` when no live trades exist for the selected period (not zero)
-- AC-04: Panel 2 yearly breakdown table covers all years present in backtest data (2018–present)
-- AC-05: Panel 3 trade log supports three toggle modes; exit reason badges use Stop (red) / Risk-Off (amber) / Rebalance (teal) consistent with existing badge language
-- AC-06: `POST /strategy/benchmark/import` upserts data correctly; "Last updated" timestamp reflects the most recent import date
-- AC-07: `import_backtest.py` script reads latest CSVs from `production_results/` and calls the import endpoint; runnable with `python import_backtest.py`
-- AC-08: All new API endpoints documented in `docs/reference/openapi.yaml` and `docs/specs/api_contracts/` in the same sprint
 
 ---
 
@@ -2630,29 +2594,6 @@ Arc 4 (PO-02/03/04) will introduce cross-table queries joining trade_plans, red_
 
 ---
 
-### BLG-BE-39 — Fix AI journal summary on Trade History tab
-**Priority:** P1 (High)
-**Type:** Backend Engineering / Bug
-**Owner:** Head of Backend Engineering
-**Source:** User-reported — 2026-06-25
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.2
-
-**Problem**
-The AI journal summary feature on the Trade History tab does not work. Users expect an AI-generated summary of their journal notes for a given trade, but the feature is non-functional. This may be a broken endpoint, a failed Claude API call, a missing API key, or a silent error in ai_service.py's journal summarisation path.
-
-**Scope**
-- Reproduce and diagnose the failure in the AI journal summary endpoint
-- Fix the root cause (endpoint error, AI service config, prompt construction, or response parsing)
-- Confirm the summary generates and displays correctly on the Trade History tab
-
-**Acceptance Criteria**
-- AI journal summary generates successfully for trades with journal notes on the Trade History tab
-- Error states are surfaced clearly to the user rather than silently failing
-- No regression to other ai_service.py functionality
-
----
-
 ### BLG-GOV-134 — CI: inline OpenAPI drift detection for api_performance_baseline.md
 **Priority:** P2 (Medium)
 **Type:** Governance Process / CI
@@ -2902,76 +2843,6 @@ v6.2 added POST /ai/daily-briefing and POST /ai/chat, both of which read from th
 
 ---
 
-### BLG-GOV-146 — AI response injection risk assessment
-**Priority:** P1 (High)
-**Type:** Governance Process / Security
-**Owner:** Cybersecurity & Trust Lead; AI Compliance & Governance Officer
-**Source:** IDEA-cybersecurity-20260626-01 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.3
-
-**Problem**
-v6.2 AI chat and daily briefing features consume external data (market data, strategy rules, trade history) as context for Anthropic API calls. A threat model question: can a malicious actor craft market data API responses or strategy_rules.md content that causes the AI output to produce misleading trading advice? This threat category was not covered by the SRB-v1.7 §13 design gate review. A formal threat model assessment is time-sensitive for a live production AI system.
-
-**Scope**
-- Enumerate external data inputs to the AI prompt construction pipeline (POST /ai/daily-briefing and POST /ai/chat context assembly)
-- For each input: assess injection risk (can this input contain content that changes advisory output in ways the user would not expect?)
-- Document: accepted risks, mitigations, and any remediation items
-
-**Acceptance Criteria**
-- Threat model document produced covering all external data inputs to the AI pipeline
-- Risk classification per input: accepted / mitigated / open
-- Open risks filed as separate backlog items
-- Cybersecurity & Trust Lead and AI Compliance Officer sign-off
-
----
-
-### BLG-GOV-147 — AI feature advisory disclaimer visibility assessment
-**Priority:** P2 (Medium)
-**Type:** Governance Process / §13 Compliance
-**Owner:** AI Compliance & Governance Officer; Head of UX & Design
-**Source:** IDEA-ai-compliance-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
-**Effort:** S (<0.5 day)
-**Provisional-Target:** v6.3
-
-**Problem**
-§13 requires AI advisory disclaimers to be prominently visible on all AI outputs. v6.2 shipped with the assumption that disclaimers were properly implemented. Playwright spec SC-AI-01 confirms the disclaimer is rendered, but does not verify prominence (size, contrast, position, ability to dismiss). A visual assessment confirms §13 compliance at the presentation layer.
-
-**Scope**
-- Visual assessment of AI daily briefing and AI chat disclaimer display: font size, colour contrast, position relative to AI output, dismissal behaviour (if any)
-- Confirm disclaimer is visible on first render without scrolling
-- If gaps found: file remediation items targeting v6.3
-
-**Acceptance Criteria**
-- Visual assessment completed and documented
-- Confirmation: "disclaimer prominent and compliant" OR remediation items filed
-- AI Compliance Officer and Head of UX & Design sign-off
-
----
-
-### BLG-GOV-148 — API contract review checklist for AI advisory endpoints
-**Priority:** P2 (Medium)
-**Type:** Governance Process / Spec Quality
-**Owner:** API Contracts & Documentation Owner; Head of Specs Team
-**Source:** IDEA-api-contracts-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.3
-
-**Problem**
-API contracts for AI advisory endpoints (POST /ai/daily-briefing, POST /ai/chat) require §13 boundary confirmation in addition to standard endpoint documentation. No standardised checklist exists for this confirmation step. Without a checklist, §13 compliance review quality depends on the individual contract author's knowledge of §13 requirements.
-
-**Scope**
-- Author a §13 boundary confirmation checklist for AI advisory endpoint contracts: advisory-only response structure, no automated action fields in response, disclaimer presence, rate limiting documented, audit logging documented
-- Apply checklist retroactively to existing v6.2 AI endpoint contracts (POST /ai/daily-briefing, POST /ai/chat)
-- Integrate checklist into the API contract authoring procedure
-
-**Acceptance Criteria**
-- Checklist document produced and filed in `docs/specs/api_contracts/`
-- Checklist applied to existing v6.2 AI endpoint contracts; gaps (if any) filed as remediation items
-- API Contracts Owner and Head of Specs Team sign-off
-
----
-
 ### BLG-GOV-149 — AI response caching evaluation for morning briefing
 **Priority:** P3 (Low)
 **Type:** Governance Process / Architecture Assessment
@@ -3102,103 +2973,6 @@ For each spec file above: investigate failure cause, fix assertions to match cur
 
 ---
 
-### BLG-QA-65 — Nightly stop computation CI simulation tests
-**Priority:** P1 (High)
-**Type:** QA / Test Coverage
-**Owner:** QA Lead; Backend Engineering Patterns Owner
-**Source:** IDEA-qa-lead-20260626-01 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
-**Effort:** S (~1 day)
-**Provisional-Target:** v6.3
-
-**Problem**
-v6.2 introduced nightly computation of trailing stops, rebalance exits, and inverse-vol position sizing. These computations run on a schedule (no on-demand CI trigger) and have zero automated test coverage. A silent regression in any of these computations would affect production trailing stop levels without any CI alarm. A fixture-based CI simulation detects regressions before they reach production.
-
-**Scope**
-- Author fixture dataset representing known portfolio state (positions with stop history, price data)
-- Run trailing stop computation, rebalance exit detection, and inv-vol sizing computation against fixtures
-- Assert computed outputs match expected values
-- Register tests in CI to run on any change to the nightly computation services
-
-**Acceptance Criteria**
-- AC-01: Trailing stop computation test passes against fixture dataset
-- AC-02: Rebalance exit detection test passes against fixture dataset
-- AC-03: Inverse-vol sizing computation test passes against fixture dataset
-- AC-04: All tests run in CI on changes to affected services
-- AC-05: Fixture update procedure documented
-
----
-
-### BLG-QA-66 — Strategy signal regression test specification
-**Priority:** P1 (High)
-**Type:** QA / Spec
-**Owner:** QA & Testing Owner; Director of Quality
-**Source:** IDEA-qa-testing-20260626-01 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.3
-
-**Problem**
-BLG-QA-65 (nightly stop CI simulation) requires a formal specification document defining: which scenarios the fixture dataset must cover, what the expected outputs are, and how fixture data should be maintained. Without a specification, the CI simulation tests may cover an incomplete scenario set or drift from production behaviour.
-
-**Scope**
-- Define scenario coverage requirements for BLG-QA-65: which portfolio states must be represented (trailing stop active, no stop, position at rebalance threshold, inv-vol position, mixed)
-- Define expected output format and tolerance ranges
-- Define fixture maintenance procedure (when and how to update fixtures after strategy_rules.md changes)
-- Document filed as `docs/specs/qa/strategy_signal_regression_spec.md`
-
-**Acceptance Criteria**
-- Specification document produced covering all scenario coverage requirements
-- Expected output formats and tolerances defined
-- Fixture maintenance procedure documented
-- Director of Quality and QA Lead sign-off
-
----
-
-### BLG-QA-67 — AI chat response schema validation tests
-**Priority:** P2 (Medium)
-**Type:** QA / Test Coverage
-**Owner:** QA Lead; API Contracts & Documentation Owner
-**Source:** IDEA-qa-lead-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.3
-
-**Problem**
-POST /ai/chat must return advisory-only structured responses conforming to the expected JSON schema. No test currently validates the response schema or confirms that directive language patterns are absent. Schema drift or an Anthropic SDK update could silently change response structure without any CI alarm.
-
-**Scope**
-- Define expected POST /ai/chat response schema (fields, types, optional fields)
-- Author schema validation tests: response conforms to expected schema, advisory-only language constraint confirmed
-- Tests registered in CI alongside existing API endpoint tests in `backend/routers/test.py`
-
-**Acceptance Criteria**
-- AC-01: Response schema validation test passes in CI
-- AC-02: Advisory-only constraint test (no directive language patterns) passes in CI
-- AC-03: Tests registered in `backend/routers/test.py` or equivalent CI test entry point
-
----
-
-### BLG-QA-68 — §13 boundary test suite for AI advisory endpoints
-**Priority:** P2 (Medium)
-**Type:** QA / Spec
-**Owner:** QA & Testing Owner; AI Compliance & Governance Officer
-**Source:** IDEA-qa-testing-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.3
-
-**Problem**
-§13 compliance for AI advisory endpoints depends on consistent enforcement of advisory-only output constraints across all AI endpoints. No document defines the full set of §13 boundary test scenarios for POST /ai/daily-briefing, POST /ai/chat, and any future AI endpoints. Without this document, §13 compliance testing is inconsistent and new AI endpoints may not be assessed against the same criteria.
-
-**Scope**
-- Author §13 boundary test scenario document: enumerate all AI advisory endpoints; for each, define the §13 compliance test scenarios (advisory language confirmation, no automated action, disclaimer rendered, no financial instrument recommendations)
-- Document applies to current endpoints and serves as the template for future AI endpoint §13 test scenarios
-- Filed as `docs/specs/qa/ai_s13_boundary_test_suite.md`
-
-**Acceptance Criteria**
-- §13 boundary test scenario document produced covering all current AI endpoints
-- Scenarios cover: advisory-only language, no automated-action fields, disclaimer visibility, no specific instrument recommendations
-- AI Compliance Officer and QA & Testing Owner sign-off
-
----
-
 ### BLG-OPS-74 — Log Anthropic API token usage and cost per morning briefing call
 **Priority:** P3 (Low)
 **Type:** Operations / Monitoring
@@ -3271,101 +3045,31 @@ All market data (OHLCV, signals, news) is sourced exclusively from Alpaca and Ya
 
 ---
 
-### BLG-OPS-78 — Measure live latency for POST /ai/daily-briefing and POST /ai/chat
+### BLG-OPS-82 — Add v6.3 endpoints to api_performance_baseline.md
 **Priority:** P3 (Low)
 **Type:** Operations / Performance Baseline
 **Owner:** Infrastructure & Operations Owner
-**Source:** Post-ship closure 2026-06-24__release-v6.2 — endpoint drift advisory; api_performance_baseline.md §22.3 timing run deferred
+**Source:** Post-ship closure 2026-06-30 — endpoint drift advisory (v6.3 new endpoints not registered in api_performance_baseline.md v2.7)
 **Effort:** XS (<1 hour)
-**Provisional-Target:** v6.3
+**Provisional-Target:** v6.4
 
 **Problem**
-`POST /ai/daily-briefing` and `POST /ai/chat` were registered in api_performance_baseline.md §22 during v6.2 with estimated latency characteristics (AI inference, claude-sonnet-4-6). Actual timing measurements were deferred until post-deployment to production. Without live p50/p95 measurements, the regression threshold from §22.2 ("p95 > 2× measured p95 triggers a review") cannot be established.
+Three new GET endpoints shipped in v6.3 are not registered in `docs/ops/api_performance_baseline.md`:
+- `GET /strategy/benchmark/summary` (EPIC-03 BLG-FEAT-53)
+- `GET /strategy/benchmark/trades` (EPIC-03 BLG-FEAT-53)
+- `GET /health/scheduler` (EPIC-03 BLG-OPS-79)
+
+Note: `POST /strategy/benchmark/import` is excluded from baseline per §19 methodology (write-path import endpoints are out of scope). Only readable GET endpoints are tracked.
 
 **Scope**
-- Run minimum 5 authenticated warm requests against production for each endpoint
-- Record p50/p95 using standard §19 methodology
-- Update api_performance_baseline.md §22.3 with actual measurements
-- Establish regression threshold: p95 > 2× measured p95
+- Register all three GET endpoints in api_performance_baseline.md with estimated latency characteristics
+- Run minimum 5 warm requests per endpoint against production to establish p50/p95 baselines
+- Set regression threshold per §19.2 formula
 
 **Acceptance Criteria**
-- AC-01: api_performance_baseline.md §22.3 populated with actual p50/p95 for both endpoints
-- AC-02: Regression threshold documented per §22.2 formula
-
----
-
-### BLG-OPS-79 — Background scheduler health monitoring endpoint
-**Priority:** P2 (Medium)
-**Type:** Operations / Monitoring
-**Owner:** Infrastructure & Operations Owner; Backend Engineering Patterns Owner
-**Source:** IDEA-infra-ops-20260622-01 — Promoted-Backlog (gate cleared: BLG-FEAT-46/47 shipped v6.2); rebalance 2026-06-26__scheduled (DL-057)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.3
-
-**Gate criteria:** v6.2 scheduler architecture reviewed and monitoring endpoint design specified. BLG-FEAT-46/47 shipped (gate event cleared 2026-06-25); new condition: architecture review before endpoint design.
-
-**Problem**
-v6.2 added a production background scheduler running nightly trailing stop computation, rebalance exits, and inverse-vol sizing. These computations run without any health monitoring endpoint. If the scheduler silently fails, there is no alert and no way to detect the failure from an external monitoring system. A health endpoint enables uptime monitoring and operational visibility.
-
-**Scope**
-- Design health monitoring endpoint: `GET /health/scheduler` returning last-run timestamps per job type, status (success/failure), and any error details from most recent run
-- Integrate with existing `GET /health` endpoint or create separate scheduler health endpoint
-- Review v6.2 scheduler architecture before endpoint design to confirm available data fields
-
-**Acceptance Criteria**
-- AC-01: `GET /health/scheduler` returns last-run status for each nightly computation job
-- AC-02: Endpoint registered in `backend/routers/test.py` and `docs/reference/openapi.yaml`
-- AC-03: Architecture review documented before implementation begins
-
----
-
-### BLG-OPS-80 — Render deployment rollback procedure documentation
-**Priority:** P3 (Low)
-**Type:** Operations / Runbook
-**Owner:** Infrastructure & Operations Owner
-**Source:** IDEA-infra-ops-20260626-01 — Backlog-gate-conditional; rebalance 2026-06-26__scheduled (DL-057)
-**Effort:** XS (<0.5 day)
-**Provisional-Target:** v6.3
-
-**Gate criteria:** None — documentation can be produced now.
-
-**Problem**
-There is no documented runbook for rolling back to the prior Render deployment version in case of a production incident. If a deployment causes a regression, the resolution depends on whoever is on call knowing the correct steps. A documented rollback procedure removes single-point-of-knowledge risk.
-
-**Scope**
-- Document Render deployment rollback procedure: navigate to Render dashboard, identify prior deploy version, initiate rollback, verify rollback succeeded
-- Include: rollback decision criteria (what severity warrants immediate rollback vs fix-forward), estimated rollback time, how to verify the rollback deployed the correct version
-
-**Acceptance Criteria**
-- Rollback procedure document produced and filed in `docs/operations/`
-- Document covers: rollback steps, decision criteria, verification steps
-- Infrastructure & Operations Owner sign-off
-
----
-
-### BLG-OPS-81 — AI endpoint per-endpoint rate limiting hardening
-**Priority:** P1 (High)
-**Type:** Operations / Security
-**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner; Backend Engineering Patterns Owner
-**Source:** IDEA-cybersecurity-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.3
-
-**Problem**
-POST /ai/daily-briefing and POST /ai/chat have no per-endpoint rate limiting. Both endpoints make Anthropic API calls on every request. A single automated abuse vector (web scraper, API probe, or broken client loop) could exhaust the monthly Anthropic API budget within minutes without any circuit-breaker. Rate limiting is a standard security control for API endpoints with external service cost implications.
-
-**Scope**
-- Implement per-endpoint rate limits: POST /ai/daily-briefing (~10 req/min/IP), POST /ai/chat (~30 req/min/IP)
-- Return standard 429 Too Many Requests with Retry-After header
-- Document rate limits in openapi.yaml and api_contracts
-- Test: verify 429 returned after limit exceeded; verify Retry-After header is set
-
-**Acceptance Criteria**
-- AC-01: POST /ai/daily-briefing rate limit enforced (429 returned after limit exceeded)
-- AC-02: POST /ai/chat rate limit enforced (429 returned after limit exceeded)
-- AC-03: Retry-After header present in 429 responses
-- AC-04: Rate limits documented in openapi.yaml and api_contracts
-- AC-05: Endpoint test updated to cover 429 scenario
+- AC-01: All three endpoints registered in api_performance_baseline.md with measured p50/p95
+- AC-02: Regression threshold documented per §19.2 for each endpoint
+- AC-03: Infrastructure & Operations Owner sign-off
 
 ---
 
@@ -3391,55 +3095,6 @@ POST /ai/daily-briefing and POST /ai/chat have no per-endpoint rate limiting. Bo
 - All extracted sub-components also pass ESLint clean
 - Watchlist page renders and behaves identically to pre-refactor (no functional regression)
 - Playwright E2E watchlist specs continue to pass
-
----
-
-### BLG-FE-79 — Fix R-multiple not displaying on Reflection page
-**Priority:** P1 (High)
-**Type:** Frontend / Bug
-**Owner:** Base44 Frontend Prompt Owner; Head of Backend Engineering
-**Source:** User-reported — 2026-06-25
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.2
-
-**Problem**
-The Reflection page shows a dash ("—") for the R-multiple column across all tickers, rather than a calculated value. R-multiple is a core trade evaluation metric; its absence makes the Reflection page unreliable for post-trade review. The root cause may be either the backend not computing/returning the field, or the frontend not reading it correctly.
-
-**Scope**
-- Identify whether R-multiple is absent from the API response or null in the database
-- Fix calculation or field mapping at the source (backend service or frontend display logic)
-- Verify R-multiple renders correctly for all closed tickers on the Reflection page
-
-**Acceptance Criteria**
-- R-multiple is displayed as a numeric value for all closed trades with sufficient data on the Reflection page
-- Trades with insufficient data (no stop loss recorded) show a clearly labelled "N/A" rather than a silent dash
-- No regression to other Reflection page columns
-
----
-
-### BLG-FE-80 — Morning briefing progressive disclosure (expand/collapse sections)
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX Enhancement
-**Owner:** Base44 Frontend Prompt Owner; Head of UX & Design
-**Source:** IDEA-base44-frontend-20260626-01 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.3
-
-**Problem**
-The AI daily briefing card (AiDailyBriefing.js, shipped v6.2) displays three content-dense sections: market context, signals, and chat prompt. All sections are always fully expanded. A user who has already read the market context and signals but wants to access the AI chat prompt must scroll past the full briefing content on every page load. Progressive disclosure (expand/collapse per section) reduces visual noise for repeat daily usage.
-
-**Scope**
-- Add expand/collapse toggle per section in AiDailyBriefing.js (market context, signals, chat prompt)
-- Default state: all sections expanded (no UX regression for new users)
-- Persist section collapse state to localStorage (collapsed sections stay collapsed on next page load)
-- Version the localStorage key to handle section schema changes gracefully
-
-**Acceptance Criteria**
-- AC-01: Each section of the AI daily briefing has a visible expand/collapse toggle
-- AC-02: Sections collapse and expand without losing content
-- AC-03: Section state persists across page reloads via localStorage
-- AC-04: Default state is all expanded (no UX regression)
-- AC-05: Playwright: expand all → collapse market context → reload → verify market context still collapsed
 
 ---
 
@@ -3588,28 +3243,4 @@ See verification_report.md §6 (cycle 2026-06-26__release-v6.3) for gap detail a
 
 ---
 
-## Release Slice — v6.3 (2026-06-26__release-v6.3)
-
-<!-- release-plan-marker: RP:v6.3:2026-06-26__release-v6.3 -->
-
-**Canonical slice:** `claude/cycles/2026-06-26__release-v6.3/stage4_backlog_slice.md`
-
-15 stories across 3 EPICs (8 firm, 7 conditional). See canonical slice for full acceptance criteria.
-
-| ST-ID | BLG-ID | Description | EPIC | Type | Effort |
-|-------|--------|-------------|------|------|--------|
-| ST-01 | BLG-BE-39 | Fix AI journal summary on Trade History tab | EPIC-01 | Firm | S |
-| ST-02 | BLG-FE-79 | Fix R-multiple not displaying on Reflection page | EPIC-01 | Firm | S |
-| ST-03 | BLG-OPS-81 | AI endpoint per-endpoint rate limiting hardening | EPIC-01 | Firm | S |
-| ST-04 | BLG-GOV-146 | AI response injection risk assessment | EPIC-01 | Firm | S |
-| ST-05 | BLG-GOV-147 | AI feature advisory disclaimer visibility assessment | EPIC-01 | Conditional | S |
-| ST-06 | BLG-GOV-148 | API contract review checklist for AI advisory endpoints | EPIC-01 | Conditional | S |
-| ST-07 | BLG-QA-65 | Nightly stop computation CI simulation tests | EPIC-02 | Firm | S |
-| ST-08 | BLG-QA-66 | Strategy signal regression test specification | EPIC-02 | Firm | S |
-| ST-09 | BLG-QA-67 | AI chat response schema validation tests | EPIC-02 | Conditional | S |
-| ST-10 | BLG-QA-68 | §13 boundary test suite for AI advisory endpoints | EPIC-02 | Conditional | S |
-| ST-11 | BLG-FEAT-53 | Strategy Benchmark page: compare live trades against backtest | EPIC-03 | Firm | L |
-| ST-12 | BLG-FE-80 | Morning briefing progressive disclosure (expand/collapse sections) | EPIC-03 | Firm | S |
-| ST-13 | BLG-OPS-79 | Background scheduler health monitoring endpoint | EPIC-03 | Conditional | S |
-| ST-14 | BLG-OPS-78 | Measure live latency for POST /ai/daily-briefing and POST /ai/chat | EPIC-03 | Conditional | XS |
-| ST-15 | BLG-OPS-80 | Render deployment rollback procedure documentation | EPIC-03 | Conditional | XS |
+*Release Slice v6.3 removed — cycle 2026-06-26__release-v6.3 closed 2026-06-30. Archived canonical home: claude/cycles/2026-06-26__release-v6.3/stage4_backlog_slice.md*

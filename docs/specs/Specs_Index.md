@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-06-25 (post-ship closure 2026-06-24__release-v6.2; §30 v6.2 test coverage gaps added — all 3 EPICs not_applicable/no gaps; TSG-v60-01 remains Open)
+**Last Updated:** 2026-06-30 (post-ship closure 2026-06-26__release-v6.3; §31 v6.3 test coverage gaps added — TSG-v63-01 EPIC-01 AI journal error states, TSG-v63-02 EPIC-03 Strategy Benchmark Playwright gaps; TSG-v60-01 remains Open — 2nd cycle)
 
 ---
 
@@ -769,6 +769,21 @@ No open TSG items for v6.2. All observable ACs have Playwright coverage confirme
 **TSG backlog reconciliation (§7.3):**
 - TSG-v60-01 (BLG-QA-61): signals_scenarios.md review — **remains Open** — BLG-QA-61 not resolved in v6.2 sprint; no resolution action taken.
 - All other open TSG entries checked; no v6.2 stories close any outstanding TSG items.
+
+---
+
+## 31. Test Coverage Gaps — v6.3 (2026-06-26__release-v6.3)
+
+Identified during delivery verification (verification_report.md §6 — 2 gap items). Backlog items created.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| TSG-v63-01 | EPIC-01 | AI journal error states not covered by Playwright — ST-01 (BLG-BE-39) fixed the silent failure but error state paths (network error, API timeout, empty notes) have no automated test coverage | backlog_item_created — TEST-GAP-EPIC-01 (BLG-QA backlog, Provisional-Target: v6.4) |
+| TSG-v63-02 | EPIC-03 | Strategy Benchmark page (StrategyBenchmark.js) — test_scenarios pending; no Playwright E2E coverage for the page's 5 observable ACs (navigation, year filter, panel rendering, toggle modes, badge language) | backlog_item_created — TEST-GAP-EPIC-03 (BLG-QA backlog, Provisional-Target: v6.4) |
+
+**TSG backlog reconciliation (§7.3):**
+- TSG-v60-01 (BLG-QA-61): signals_scenarios.md review — **remains Open** — BLG-QA-61 not resolved in v6.3 sprint (2nd cycle without resolution; escalates to 2-cycle recurrence at v6.4 if still open).
+- All other open TSG entries checked; no v6.3 stories close any outstanding pre-v6.3 TSG items.
 
 ---
 
