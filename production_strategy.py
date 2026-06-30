@@ -68,9 +68,34 @@ print("=" * 70)
 print("PRODUCTION MOMENTUM STRATEGY - BACKTEST")
 print("=" * 70)
 
-_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-df = pd.read_csv(os.path.join(_SCRIPT_DIR, "backend", "tickers_full_list.csv"))
-tickers = df["Ticker"].dropna().unique().tolist()
+def _load_tickers() -> list:
+    """Load active tickers from the DB ticker_universe table.
+    Falls back to the CSV if DATABASE_URL is not set (local runs without DB).
+    """
+    db_url = os.getenv("DATABASE_URL")
+    if db_url:
+        try:
+            import psycopg2
+            # Render appends ?sslmode=require — strip the scheme prefix Render uses
+            clean_url = db_url.replace("postgres://", "postgresql://", 1)
+            conn = psycopg2.connect(clean_url)
+            with conn.cursor() as cur:
+                cur.execute("SELECT ticker FROM ticker_universe WHERE active = TRUE ORDER BY ticker")
+                rows = cur.fetchall()
+            conn.close()
+            tickers = [r[0] for r in rows]
+            print(f"Loaded {len(tickers)} tickers from DB ticker_universe")
+            return tickers
+        except Exception as e:
+            print(f"Warning: DB load failed ({e}), falling back to CSV")
+
+    _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+    df = pd.read_csv(os.path.join(_SCRIPT_DIR, "backend", "tickers_full_list.csv"))
+    tickers = df["Ticker"].dropna().unique().tolist()
+    print(f"Loaded {len(tickers)} tickers from CSV fallback")
+    return tickers
+
+tickers = _load_tickers()
 print(f"\nUniverse size: {len(tickers)}")
 
 def download_in_chunks(tickers, start="2018-01-01", chunk_size=50):

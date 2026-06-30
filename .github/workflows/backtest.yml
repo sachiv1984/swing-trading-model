@@ -27,9 +27,11 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install pandas numpy yfinance matplotlib requests
+        run: pip install pandas numpy yfinance matplotlib requests psycopg2-binary
 
       - name: Run backtest
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: python production_strategy.py
 
       - name: Import results into API
