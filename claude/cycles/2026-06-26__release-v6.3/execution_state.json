@@ -5,7 +5,7 @@
   "invoked_utc": "2026-06-29T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-29T06:00:00Z",
+  "last_updated_utc": "2026-06-30T00:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -68,21 +68,24 @@
         "ST-12": {
           "title": "Morning briefing progressive disclosure",
           "classification": "delegated_frontend",
-          "status": "blocked_frontend",
+          "status": "done",
           "assigned_to": "Base44 Frontend Prompt Owner",
           "github_issue": 866,
           "branch": "exec/2026-06-26__release-v6.3/EPIC-03",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260629-03",
-          "blocked_since_utc": "2026-06-29T05:00:00Z",
-          "unblock_criteria": "Commit [EPIC-03][ST-12] pushed to EPIC-03 branch with: expand/collapse toggles, localStorage persistence, default expanded, Playwright AC-05 test passing.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-30T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/frontend/prompts/ai-briefing-progressive-disclosure-v1.md",
+            "tests/e2e/ai-briefing-progressive-disclosure.spec.js"
+          ],
           "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegation_created",
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "AC-05 requires Playwright test: expand all → collapse market context → reload → verify still collapsed."
+          "notes": "Three collapsible sections: Market Context (summary), Signals (actions), Ask the AI (inline chat). localStorage key ai-briefing-collapsed-sections-v1. Default expanded. Playwright SC-PD-05 covers AC-05 (expand all → collapse market context → reload → verify still collapsed). Playwright CI-verifiable only (browsers not available on Ubuntu 26.04 host). Build clean."
         },
         "ST-13": {
           "title": "Background scheduler health monitoring endpoint",
@@ -149,9 +152,9 @@
     }
   },
 
-  "blocked_items": ["ST-02", "ST-11", "ST-12"],
+  "blocked_items": ["ST-02", "ST-11"],
   "delegated_items": ["ST-02", "ST-11", "ST-12"],
-  "completed_items": ["ST-01", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-13", "ST-14", "ST-15"],
+  "completed_items": ["ST-01", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-12", "ST-13", "ST-14", "ST-15"],
   "open_escalations": [],
 
   "merge_gate": {
