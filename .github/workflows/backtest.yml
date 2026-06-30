@@ -1,0 +1,39 @@
+# .github/workflows/backtest.yml
+name: Nightly Backtest
+
+# Runs production_strategy.py on the GitHub Actions runner overnight, then
+# imports results into the live API via import_backtest.py.
+# This mirrors the daily-snapshot.yml pattern: heavy compute runs in CI,
+# results are pushed to the API, data persists in the DB.
+
+on:
+  schedule:
+    - cron: '0 1 * * *'  # 1 AM UTC daily (overnight, after US market close)
+  workflow_dispatch:
+
+jobs:
+  run-backtest:
+    name: Run backtest and import results
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pandas numpy yfinance matplotlib requests
+
+      - name: Run backtest
+        run: python production_strategy.py
+
+      - name: Import results into API
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          RENDER_API_KEY: ${{ secrets.API_KEY }}
+        run: python import_backtest.py --api-url "${API_URL}"
