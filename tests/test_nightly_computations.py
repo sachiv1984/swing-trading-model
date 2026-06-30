@@ -14,6 +14,7 @@ Fixture data: tests/fixtures/nightly_portfolio_state.json (spec_version: 1.0).
 
 import json
 import math
+import sys
 import pytest
 from datetime import datetime
 from pathlib import Path
@@ -45,6 +46,13 @@ def _approx(val, expected, rel_tol=1e-6):
 # Trailing Stop Computation Tests (TS-01 … TS-07)
 # ===========================================================================
 
+# test_alerts_service.py installs a fake types.ModuleType("utils") stub and replaces
+# sys.modules["utils.calculations"] with a MagicMock stub at collection time
+# (alphabetically earlier). Evict both the submodule and the parent stub so Python
+# re-imports the real utils package (backend/utils/) and binds calculate_trailing_stop
+# to the real function rather than the MagicMock.
+sys.modules.pop("utils.calculations", None)
+sys.modules.pop("utils", None)
 from utils.calculations import calculate_trailing_stop
 
 
@@ -169,6 +177,31 @@ def test_TS07_mixed_portfolio_independent(ts_settings):
 # ===========================================================================
 
 from services.signal_service import _is_last_trading_day_of_month, generate_rebalance_exit_signals
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _rebind_service_db(database_stub):
+    """
+    test_api_contracts.py evicts sys.modules["database"] and loads the real database
+    during collection; signal_service and sizing_service module-level
+    'from database import X' names end up bound to real DB functions rather than the
+    conftest stub. Re-point them to the stub's MagicMocks so database_stub.X.return_value
+    assignments in individual tests take effect correctly.
+    """
+    import services.signal_service as _ss
+    import services.sizing_service as _sz
+    orig = (
+        _ss.get_portfolio, _ss.get_positions, _ss.db_get_signals,
+        _ss.create_rebalance_exit_signal, _sz.get_settings,
+    )
+    _ss.get_portfolio = database_stub.get_portfolio
+    _ss.get_positions = database_stub.get_positions
+    _ss.db_get_signals = database_stub.get_signals
+    _ss.create_rebalance_exit_signal = database_stub.create_rebalance_exit_signal
+    _sz.get_settings = database_stub.get_settings
+    yield
+    _ss.get_portfolio, _ss.get_positions, _ss.db_get_signals, \
+        _ss.create_rebalance_exit_signal, _sz.get_settings = orig
 
 
 def test_RX01_non_rebalance_day_no_signals():

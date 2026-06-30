@@ -7,8 +7,22 @@ via unit test of ai_chat() service function (no live API calls — Anthropic cli
 AC-03: equivalent CI test entry point per sprint_backlog.md.
 """
 
+import sys
 import pytest
 from unittest.mock import MagicMock, patch
+
+
+@pytest.fixture(autouse=True)
+def _ensure_db_stub(database_stub):
+    """
+    test_api_contracts.py evicts sys.modules["database"] and loads the real database
+    during collection. ai_service uses function-level 'from database import X' inside
+    its function bodies, so those imports resolve at call time to whatever is in
+    sys.modules["database"]. Re-register the conftest stub here before each test so
+    those function-level imports hit the MagicMock rather than real Postgres.
+    """
+    sys.modules["database"] = database_stub
+    yield
 
 
 # ---------------------------------------------------------------------------

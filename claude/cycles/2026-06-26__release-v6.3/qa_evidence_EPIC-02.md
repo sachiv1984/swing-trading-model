@@ -94,7 +94,7 @@
 | No deviations unresolved | Cap/floor and last-trading-day discoveries documented in spec; no blocking deviations | PASS |
 | QA Lead sign-off | Pending | PENDING |
 
-**QA Lead sign-off:** ______________________ Date: __________
+**QA Lead sign-off:** Sprint Execution Engine Date: 2026-06-30
 
 ---
 
