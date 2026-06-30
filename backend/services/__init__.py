@@ -80,6 +80,8 @@ from .health_service import (
     test_all_endpoints,
     get_db_size_info,
     send_db_size_alert_if_needed,
+    record_nightly_job,
+    get_scheduler_health,
 )
 
 # Analytics service
@@ -133,6 +135,8 @@ __all__ = [
     'test_all_endpoints',
     'get_db_size_info',
     'send_db_size_alert_if_needed',
+    'record_nightly_job',
+    'get_scheduler_health',
     # Analytics service
     'AnalyticsService',
     # Validation service

@@ -28,6 +28,7 @@ from routers import plan_vs_reality as plan_vs_reality_router
 from routers import paper_trading as paper_trading_router
 from routers import pre_entry_validation as pre_entry_validation_router
 from routers import red_flag_journal as red_flag_journal_router
+from routers import strategy_benchmark as strategy_benchmark_router
 from services.watchlist_service import ensure_watchlist_table
 from services.ai_audit_service import ensure_ai_audit_table
 from services.ticker_universe_service import ensure_ticker_universe_table, ensure_company_name_column, seed_default_tickers, deactivate_invalid_tickers, backfill_company_names
@@ -197,6 +198,7 @@ app.include_router(pre_entry_validation_router.router)
 app.include_router(plan_vs_reality_router.router)
 app.include_router(paper_trading_router.router)
 app.include_router(red_flag_journal_router.router)
+app.include_router(strategy_benchmark_router.router)
 
 
 @app.on_event("startup")

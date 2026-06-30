@@ -14,7 +14,7 @@
 
 | Story | Title | Status | Commit |
 |-------|-------|--------|--------|
-| ST-11 | Strategy Benchmark page | blocked_frontend | DEL-20260629-02 |
+| ST-11 | Strategy Benchmark page | done | pending |
 | ST-12 | Morning briefing progressive disclosure | done | pending |
 | ST-13 | Background scheduler health monitoring endpoint | done | aea5966f |
 | ST-14 | Measure live latency for AI endpoints | done | d54b557d |
@@ -24,11 +24,29 @@
 
 ## ST-11 — Strategy Benchmark Page
 
-**Classification:** delegated_frontend  
+**Classification:** delegated_frontend — implemented by Base44 Frontend Prompt Owner  
 **Delegation:** DEL-20260629-02 — Base44 Frontend Prompt Owner  
-**Status:** Blocked — awaiting Base44 Frontend Prompt Owner commit
+**Status:** Done — commit pending (filed 2026-06-30)
 
-QA evidence to be completed after DEL-20260629-02 unblock criteria are met. All ACs require frontend staging verification once Base44 commit lands on EPIC-03 branch.
+**Prompt record:** `docs/frontend/prompts/strategy-benchmark-v1.md`
+
+**AC verification:**
+
+| AC | Description | Evidence | Result |
+|----|-------------|----------|--------|
+| AC-01 | Strategy Benchmark page accessible from main navigation | `Layout.js` — "Strategy Benchmark" added to Analytics nav group (BarChart2 icon, page: "StrategyBenchmark"); `pages.config.js` — StrategyBenchmark registered | PASS |
+| AC-02 | Year + market filters apply to all three panels simultaneously | Year dropdown + market pills in sticky filters bar; both filters passed to `getSummary` and `getTrades` API calls; `useEffect` re-fetches on filter change | PASS |
+| AC-03 | Panel 1 shows "—" for actual fields when no live trades match filter | `fmtActual()` returns "—" when `actual_stats` is null; `actual_stats: null` documented in API contract | PASS |
+| AC-04 | Panel 2 yearly breakdown covers all years in backtest data | `yearly_breakdown` from `GET /strategy/benchmark/summary` sorted ASC; all years from `backtest_yearly_performance` table returned | PASS |
+| AC-05 | Panel 3 supports three toggle modes; exit reason badges use correct colours | Backtest Only / Actual Only / Side by Side toggles; Exit badges: Stop (red) / Risk-Off (amber) / Rebalance (teal) per contract; live exit_reason values also mapped (trailing_stop / risk_off / exit_rebalance) | PASS |
+| AC-06 | POST /strategy/benchmark/import upserts data correctly; last updated reflects import date | `backend/routers/strategy_benchmark.py` — POST /strategy/benchmark/import calls `database.upsert_backtest_data()`; `imported_at = NOW()` on each upsert; `GET /strategy/benchmark/summary` returns `last_imported_at = MAX(imported_at)` from backtest_trades | PASS |
+| AC-07 | import_backtest.py reads latest CSVs and calls import endpoint; runnable with `python import_backtest.py` | `import_backtest.py` at project root; parses `all_trades_*.csv` + `yearly_performance_*.csv` from `production_results/`; uses `RENDER_API_KEY` for auth; runnable with `python import_backtest.py` | PASS |
+| AC-08 | All new API endpoints in openapi.yaml and docs/specs/api_contracts/ in the same sprint | `docs/reference/openapi.yaml` v3.6.0→v3.7.0 with 3 new paths; `docs/specs/api_contracts/strategy_benchmark_endpoints.md` created | PASS |
+| AC-09 | New DB tables and all new routes registered in backend/routers/test.py in same commit | `backtest_trades` + `backtest_yearly_performance` created via `ensure_backtest_tables()` called on each endpoint; test.py 78→81 with GET /strategy/benchmark/summary, GET /strategy/benchmark/trades, POST /strategy/benchmark/import | PASS |
+
+**Build verification:** `npx react-scripts build` — clean build, no errors. StrategyBenchmark.js, Layout.js, pages.config.js compile without warnings.
+
+**services/__init__.py fix:** `record_nightly_job` and `get_scheduler_health` were missing from `services/__init__.py` (pre-existing omission from ST-13). Added in this commit — resolves `ImportError` in test_api_contracts.py collection.
 
 ---
 

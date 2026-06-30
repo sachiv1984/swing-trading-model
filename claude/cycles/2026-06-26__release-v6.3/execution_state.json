@@ -5,7 +5,7 @@
   "invoked_utc": "2026-06-29T00:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-06-30T00:00:00Z",
+  "last_updated_utc": "2026-06-30T01:00:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -49,21 +49,28 @@
         "ST-11": {
           "title": "Strategy Benchmark page: compare live trades against backtest",
           "classification": "delegated_frontend",
-          "status": "blocked_frontend",
+          "status": "done",
           "assigned_to": "Base44 Frontend Prompt Owner",
           "github_issue": 865,
           "branch": "exec/2026-06-26__release-v6.3/EPIC-03",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260629-02",
-          "blocked_since_utc": "2026-06-29T05:00:00Z",
-          "unblock_criteria": "Commit [EPIC-03][ST-11] pushed to EPIC-03 branch with all 3 panels, filters, and toggle modes working; AC-06 import endpoint working; AC-07 import_backtest.py runnable.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-30T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/routers/strategy_benchmark.py",
+            "docs/specs/api_contracts/strategy_benchmark_endpoints.md",
+            "docs/reference/openapi.yaml",
+            "import_backtest.py",
+            "src/pages/StrategyBenchmark.js",
+            "docs/frontend/prompts/strategy-benchmark-v1.md"
+          ],
           "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegation_created",
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Major frontend feature — DB schema + API sequencing constraint requires engine to implement backend first, then delegate frontend to Base44."
+          "notes": "Full implementation: DB schema (backtest_trades, backtest_yearly_performance), 3 backend endpoints (POST /strategy/benchmark/import, GET /strategy/benchmark/summary, GET /strategy/benchmark/trades), import_backtest.py companion script, StrategyBenchmark.js page (3 panels, sticky filters, toggle modes, exit reason badges), Layout.js nav entry, pages.config.js registration, base44Client.js API calls. test.py 78→81, SystemStatus.js fallback 78→81, SC-SS-01b updated. openapi.yaml v3.6.0→v3.7.0. conftest.py _DB_STUB_FUNCTIONS updated. services/__init__.py missing exports (record_nightly_job, get_scheduler_health) fixed. Build clean."
         },
         "ST-12": {
           "title": "Morning briefing progressive disclosure",
@@ -152,9 +159,9 @@
     }
   },
 
-  "blocked_items": ["ST-02", "ST-11"],
+  "blocked_items": ["ST-02"],
   "delegated_items": ["ST-02", "ST-11", "ST-12"],
-  "completed_items": ["ST-01", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-12", "ST-13", "ST-14", "ST-15"],
+  "completed_items": ["ST-01", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14", "ST-15"],
   "open_escalations": [],
 
   "merge_gate": {

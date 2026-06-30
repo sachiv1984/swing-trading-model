@@ -202,6 +202,11 @@ async def test_all_endpoints(request: Request):
 
         # AI Chat Advisor (v6.2 / EPIC-02 ST-08)
         {"name": "POST /ai/chat", "method": "POST", "url": f"{base_url}/ai/chat", "body": {"question": "How many positions do I have open?"}, "critical": False},
+
+        # Strategy Benchmark (v6.3 / EPIC-03 ST-11)
+        {"name": "GET /strategy/benchmark/summary", "method": "GET", "url": f"{base_url}/strategy/benchmark/summary", "critical": False},
+        {"name": "GET /strategy/benchmark/trades", "method": "GET", "url": f"{base_url}/strategy/benchmark/trades", "critical": False},
+        {"name": "POST /strategy/benchmark/import", "method": "POST", "url": f"{base_url}/strategy/benchmark/import", "body": {"trades": [], "yearly_performance": []}, "critical": False},
     ]
     
     results = []
