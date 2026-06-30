@@ -1,6 +1,7 @@
-# False positive suppressions — localStorage UI state key identifiers, not credentials.
+# False positive suppressions — localStorage UI state identifiers, not credentials.
 # Authority: Cybersecurity & Trust Lead
 8680d28f48803d8ec7402552d4789365a0eff8d3:tests/e2e/ai-briefing-progressive-disclosure.spec.js:generic-api-key:22
 8680d28f48803d8ec7402552d4789365a0eff8d3:src/components/dashboard/home/AiDailyBriefing.js:generic-api-key:7
 8680d28f48803d8ec7402552d4789365a0eff8d3:claude/cycles/2026-06-26__release-v6.3/qa_evidence_EPIC-03.md:generic-api-key:49
 8680d28f48803d8ec7402552d4789365a0eff8d3:docs/frontend/prompts/ai-briefing-progressive-disclosure-v1.md:generic-api-key:70
+5438ac65842638c132fbe0c25ac15ce5013f7916:.gitleaksignore:generic-api-key:3
