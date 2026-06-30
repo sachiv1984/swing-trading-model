@@ -31,7 +31,7 @@
 | AC-01 | ≥5 trailing stop scenarios pass in CI | `tests/test_nightly_computations.py` — 7 TS scenarios (TS-01..TS-07); all passing | PASS |
 | AC-02 | Rebalance exit detection tests cover rebalance/non-rebalance days | 5 RX scenarios (RX-01..RX-05) covering last-day/non-last-day, top-5 retention, deduplication, mixed portfolio | PASS |
 | AC-03 | Inv-vol sizing tests cover standard, zero-ATR, max-cap | 9 IV scenarios (IV-01..IV-07 plus edge cases); all passing | PASS |
-| AC-04 | All tests pass in CI (no flaky tests) | 21/21 tests pass in 0.50s; `pytest tests/test_nightly_computations.py -v` clean run | PASS |
+| AC-04 | All tests pass in CI (no flaky tests) | 21/21 tests pass; `pytest tests/test_nightly_computations.py -v` clean run. Phase B isolation fix commit 9484c174 resolves sys.modules contamination from test_alerts_service.py and test_api_contracts.py | PASS |
 | AC-05 | Fixture dataset at `tests/fixtures/nightly_portfolio_state.json` | File created with spec_version, settings, trailing_stop_scenarios, inv_vol_scenarios | PASS |
 
 **Deviations and discoveries:**
@@ -64,7 +64,7 @@
 |----|-------------|----------|--------|
 | AC-01 | Response schema validation test passes in CI | `tests/test_ai_chat_schema.py` — 4 schema tests: required fields, types, error-path conformance (no-API-key, no-portfolio) | PASS |
 | AC-02 | Advisory-only constraint test passes — no directive language patterns | 4 advisory tests: `advisory is True` invariant, system prompt advisory language capture, pattern detector validation, production-representative response check | PASS |
-| AC-03 | Tests registered in equivalent CI test entry point | `tests/test_ai_chat_schema.py` collected by pytest from `tests/`; all 8 tests pass in 1.60s | PASS |
+| AC-03 | Tests registered in equivalent CI test entry point | `tests/test_ai_chat_schema.py` collected by pytest from `tests/`; all 8 tests pass. Phase B isolation fix commit 9484c174 adds autouse fixture ensuring sys.modules["database"] = stub at call time | PASS |
 
 **Observed:** `services/ai_service.py:279` uses deprecated `datetime.utcnow()` — DeprecationWarning in Python 3.14. Not a test failure; remediation deferred to post-v6.3.
 
