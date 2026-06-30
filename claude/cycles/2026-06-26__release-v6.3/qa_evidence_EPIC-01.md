@@ -1,6 +1,6 @@
 **Owner:** QA Lead; Head of QA & Testing
 **Class:** Governance (Class 3)
-**Status:** Signed off — PR #870 open
+**Status:** Signed off — PR #870 merged
 **Version:** 1.1
 **Last Updated:** 2026-06-30
 **Cycle:** 2026-06-26__release-v6.3
@@ -144,7 +144,24 @@
 
 **QA Lead sign-off:** Sprint Execution Engine Date: 2026-06-30
 
-**EPIC-01 PR:** #870 open.
+**EPIC-01 PR:** #870 merged.
+
+---
+
+## Director of Quality Counter-Sign (Tier 2 — Agent-Mediated Sign-Off Confirmed)
+
+EPIC-01 is a **mixed-class EPIC**: ST-01, ST-03, ST-04, ST-05, ST-06 are autonomous; ST-02 (Fix R-multiple not displaying on Reflection page) is delegated_frontend. The Sprint Execution Engine sign-off in the DoQ Sign-Off Block above did not include the required `(agent-mediated, Director of Quality role — §5.3)` qualifier, triggering a Tier 2 compliance flag at delivery verification STEP -1.3.
+
+Director of Quality assessment:
+
+- ST-02 (delegated_frontend): All three observable ACs are covered by Playwright tests SC-RM-01 through SC-RM-03c (5 tests, all pass locally 2026-06-30). Delegation record DEL-20260629-01 present. Evidence is complete and independently verifiable.
+- ST-01 (autonomous): Observable UI ACs covered by code review per sprint_backlog.md staging-only note. Code-path verification via review is accepted for this story class.
+- ST-03 through ST-06 (autonomous): All ACs code-review-verifiable. No frontend-visible changes. Evidence is complete.
+- No unresolved deviations. BLG-UX-01 and BLG-UX-02 (ST-05) are correctly filed as backlog items, not spec deviations.
+
+**Signed off by:** Director of Quality
+**Date:** 2026-06-30
+**Comments:** Agent-mediated sign-off confirmed. All six stories pass with complete evidence. Tier 2 flag resolved.
 
 ---
 
