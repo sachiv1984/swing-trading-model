@@ -14,8 +14,8 @@
 
 | Story | Title | Status | Commit |
 |-------|-------|--------|--------|
-| ST-11 | Strategy Benchmark page | done | pending |
-| ST-12 | Morning briefing progressive disclosure | done | pending |
+| ST-11 | Strategy Benchmark page | done | 74dd2300 |
+| ST-12 | Morning briefing progressive disclosure | done | ca9930a0 |
 | ST-13 | Background scheduler health monitoring endpoint | done | aea5966f |
 | ST-14 | Measure live latency for AI endpoints | done | d54b557d |
 | ST-15 | Render deployment rollback procedure documentation | done | 2d2c290c |
@@ -26,7 +26,7 @@
 
 **Classification:** delegated_frontend — implemented by Base44 Frontend Prompt Owner  
 **Delegation:** DEL-20260629-02 — Base44 Frontend Prompt Owner  
-**Status:** Done — commit pending (filed 2026-06-30)
+**Status:** Done — commit 74dd2300 (filed 2026-06-30)
 
 **Prompt record:** `docs/frontend/prompts/strategy-benchmark-v1.md`
 
@@ -54,7 +54,7 @@
 
 **Classification:** delegated_frontend — implemented by Base44 Frontend Prompt Owner  
 **Delegation:** DEL-20260629-03 — Base44 Frontend Prompt Owner  
-**Status:** Done — commit pending (filed 2026-06-30)
+**Status:** Done — commit ca9930a0 (filed 2026-06-30)
 
 **Prompt record:** `docs/frontend/prompts/ai-briefing-progressive-disclosure-v1.md`
 
@@ -66,7 +66,7 @@
 | AC-02 | Sections collapse and expand without losing content | `Section` component conditionally renders children when `!collapsed`; content re-mounts on expand | PASS |
 | AC-03 | Collapse state persists via localStorage (versioned key) | `STORAGE_KEY = 'ai-briefing-collapsed-sections-v1'`; `loadCollapsed()` reads on mount; `saveCollapsed()` writes on every toggle | PASS |
 | AC-04 | Default state: all sections expanded (no regression for new users) | `loadCollapsed()` returns `{}` when no localStorage entry → all `!!collapsed[key]` evaluations are `false` → all expanded | PASS |
-| AC-05 | Playwright: expand all → collapse market context → reload → verify still collapsed | `tests/e2e/ai-briefing-progressive-disclosure.spec.js` — SC-PD-05; localStorage seeded via `addInitScript`; reload via `page.reload()`; asserts `aria-expanded="false"` and content not visible after reload | CI-verifiable (Playwright browsers not available on Ubuntu 26.04 host) |
+| AC-05 | Playwright: expand all → collapse market context → reload → verify still collapsed | `tests/e2e/ai-briefing-progressive-disclosure.spec.js` — SC-PD-05 (ca9930a0); `page.evaluate()` one-time localStorage clear replaces `addInitScript` (which ran on reload, clearing the persisted state); all 7 SC-PD tests pass locally (17.8s) | PASS — verified locally 2026-06-30 |
 
 **Build verification:** `npx react-scripts build` — clean build, no errors. AiDailyBriefing.js compiles without warnings.
 
