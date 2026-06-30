@@ -15,13 +15,34 @@
 | Story | Title | Classification | Status |
 |-------|-------|---------------|--------|
 | ST-01 | Fix AI journal summary on Trade History tab | autonomous | done |
-| ST-02 | Fix R-multiple not displaying on Reflection page | delegated_frontend | blocked — awaiting Base44 commit |
+| ST-02 | Fix R-multiple not displaying on Reflection page | delegated_frontend | done |
 | ST-03 | AI endpoint per-endpoint rate limiting hardening | autonomous | done |
 | ST-04 | AI response injection risk assessment | autonomous | done |
 | ST-05 | AI feature advisory disclaimer visibility assessment | autonomous | done |
 | ST-06 | API contract review checklist for AI advisory endpoints | autonomous | done |
 
-**Note:** ST-02 is blocked_frontend and will be merged separately when the Base44 Frontend Prompt Owner delivers. This PR covers ST-01, ST-03, ST-04, ST-05, ST-06.
+---
+
+## ST-02 — Fix R-multiple not displaying on Reflection page
+
+**Classification:** delegated_frontend — implemented by Base44 Frontend Prompt Owner
+**Delegation:** DEL-20260629-01
+**Prompt record:** `docs/frontend/prompts/r-multiple-reflection-fix-v1.md`
+**Status:** Done — pending commit SHA
+
+### Root cause
+
+`base44Client.js` read `t.r_multiple` but the backend returns `t.net_r_multiple`. Field name mismatch caused every trade to show "—".
+
+### Acceptance criteria verification
+
+| AC | Description | Evidence | Result |
+|----|-------------|----------|--------|
+| AC-01 | R-multiple displays as numeric for trades with stop price | `base44Client.js` — `r_multiple: t.net_r_multiple ?? null`; SC-RM-01 Playwright test verifies "+1.50R" rendered on NVDA card | PASS |
+| AC-02 | Trades with no stop loss show "N/A" not "—" | `TradeReflection.js` — null branch renders "N/A"; SC-RM-02 verifies SHEL card shows "N/A" and "—" is absent | PASS |
+| AC-03 | No regression to other Reflection page columns | All existing data-testids and column rendering untouched; SC-RM-03 verifies colour coding only; P&L/Hold/ticker/exit-date not modified | PASS |
+
+**Playwright tests:** SC-RM-01, SC-RM-02, SC-RM-03a, SC-RM-03b, SC-RM-03c — 5 tests, all pass locally (18.2s, 2026-06-30).
 
 ---
 
@@ -109,7 +130,7 @@
 | Story | Deviation | Filed |
 |-------|-----------|-------|
 | ST-01 | Observable UI ACs (message display) not tested on staging — code review substituted per sprint_backlog.md staging-only note | No backlog item required — condition is code-review-acceptable per sprint_backlog.md |
-| ST-02 | Blocked frontend — PR will not include ST-02 commit | ST-02 tracked in delegation_log.md (DEL-20260629-01); to be merged separately |
+| ST-02 | All observable ACs covered by Playwright (SC-RM-01 through SC-RM-03c) | No backlog item required |
 | ST-05 | Disclaimer text contrast below WCAG AA on both surfaces | BLG-UX-01 (P3), BLG-UX-02 (P2) filed; §13 core intent met via badge |
 
 ---
@@ -132,7 +153,7 @@
 | Story | Status | Sign-off |
 |-------|--------|---------|
 | ST-01 | Pending QA sign-off | Pending |
-| ST-02 | Blocked — deferred to separate merge | N/A |
+| ST-02 | Pending QA sign-off | Pending |
 | ST-03 | Pending QA sign-off | Pending |
 | ST-04 | Pending QA sign-off | Pending |
 | ST-05 | Pending QA sign-off | Pending |

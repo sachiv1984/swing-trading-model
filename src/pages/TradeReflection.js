@@ -98,8 +98,8 @@ export default function TradeReflection() {
                   </div>
                   <div>
                     <div className="text-xs text-slate-500">R-Multiple</div>
-                    <div className={cn("text-sm font-semibold", (r.r_multiple ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400")}>
-                      {r.r_multiple != null ? `${r.r_multiple >= 0 ? "+" : ""}${r.r_multiple.toFixed(2)}R` : "—"}
+                    <div className={cn("text-sm font-semibold", r.r_multiple == null ? "text-slate-400" : r.r_multiple >= 0 ? "text-emerald-400" : "text-rose-400")}>
+                      {r.r_multiple != null ? `${r.r_multiple >= 0 ? "+" : ""}${r.r_multiple.toFixed(2)}R` : "N/A"}
                     </div>
                   </div>
                   <div>

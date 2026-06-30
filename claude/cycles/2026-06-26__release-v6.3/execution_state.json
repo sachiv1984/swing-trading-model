@@ -39,21 +39,24 @@
         "ST-02": {
           "title": "Fix R-multiple not displaying on Reflection page",
           "classification": "delegated_frontend",
-          "status": "blocked_frontend",
+          "status": "done",
           "assigned_to": "Base44 Frontend Prompt Owner",
           "github_issue": 856,
           "branch": "exec/2026-06-26__release-v6.3/EPIC-01",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260629-01",
-          "blocked_since_utc": "2026-06-29T00:10:00Z",
-          "unblock_criteria": "Commit [EPIC-01][ST-02] pushed to exec/2026-06-26__release-v6.3/EPIC-01 with TradeReflection.js updated to compute R-multiple from analytics/metrics; R-multiple displays as numeric on staging; N/A shown for trades with no stop loss.",
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-06-30T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/frontend/prompts/r-multiple-reflection-fix-v1.md",
+            "tests/e2e/r-multiple-reflection.spec.js"
+          ],
           "deviations_filed": false,
-          "last_completed_substep": "3.1.B.delegation_created",
+          "last_completed_substep": "3.1.A.push",
           "sign_off_record": null,
-          "notes": "Root cause: TradeReflection.list() maps r_multiple from /trades but /trades returns net_r_multiple not r_multiple; basic R-multiple requires stop_price from /analytics/metrics. Full Base44 prompt in DEL-20260629-01."
+          "notes": "Root cause confirmed: base44Client.js read t.r_multiple but backend returns t.net_r_multiple. Fix: one-line field name correction in base44Client.js + 'N/A' display with neutral colour in TradeReflection.js. Playwright SC-RM-01 through SC-RM-03c (5 tests) all pass locally."
         },
         "ST-03": {
           "title": "AI endpoint per-endpoint rate limiting hardening",
