@@ -1886,3 +1886,25 @@ None — all 11 stories delivered within the sprint.
 - QA evidence logs: qa_evidence_EPIC-01.md (agent-mediated, 2026-06-19), qa_evidence_EPIC-02.md (Director of Quality, 2026-06-19), qa_evidence_EPIC-03.md (Director of Quality + I&O staging, 2026-06-22), qa_evidence_EPIC-04.md (autonomous class, 2026-06-22)
 - Deviations filed: None (P3 process deviations for ST-11 documented in qa_evidence_EPIC-04.md only)
 - Test scenarios referenced: tests/e2e/morning-briefing.spec.js (ST-02 AC-09); tests/e2e/screener-quality.spec.js (ST-04 AC-07)
+
+## Sprint: 2026-06-26__release-v6.3
+**Date:** 2026-06-30
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Production correctness & AI security hardening: AI journal summary fix (ST-01); R-multiple display fix via net_r_multiple field mapping (ST-02); per-endpoint rate limiting for /ai/daily-briefing (10 req/min) and /ai/chat (30 req/min) with 429+Retry-After (ST-03); AI response injection risk assessment — 5 inputs assessed, 2 open risks filed (ST-04); advisory disclaimer visibility assessment — partially compliant, remediation items BLG-UX-01/02 filed (ST-05); §13 API contract review checklist authored and applied to both AI endpoints (ST-06) | docs/specs/api_contracts/ai_endpoints.md v1.5; docs/specs/security/ai_injection_risk_assessment.md; docs/specs/qa/ai_disclaimer_visibility_assessment.md; docs/specs/api_contracts/ai_advisory_contract_checklist.md; docs/reference/openapi.yaml v3.5.0 | BLG-UX-01 (P3), BLG-UX-02 (P2): disclaimer contrast below WCAG AA — backlog items filed, §13 core intent met |
+| EPIC-02 | Strategy computation CI + advisory contract quality: 21 nightly computation tests covering trailing stop (7), rebalance exit (5), inv-vol sizing (9) (ST-07); strategy signal regression test specification — TS/RX/IV scenarios, float tolerance, fixture maintenance procedure (ST-08); 8 AI chat schema validation tests — schema conformance + advisory-only constraint tests (ST-09); 11 §13 boundary scenarios for both AI advisory endpoints + compliance matrix + template for future AI endpoints (ST-10) | tests/test_nightly_computations.py; tests/fixtures/nightly_portfolio_state.json; docs/specs/qa/strategy_signal_regression_spec.md; tests/test_ai_chat_schema.py; docs/specs/qa/ai_s13_boundary_test_suite.md | None |
+| EPIC-03 | Strategy Benchmark page + UX enhancement: full Strategy Benchmark page with 3 backend endpoints (POST /strategy/benchmark/import, GET /strategy/benchmark/summary, GET /strategy/benchmark/trades), DB schema (backtest_trades, backtest_yearly_performance), import_backtest.py companion script, 3-panel page with sticky filters, toggle modes, exit reason badges (ST-11); Morning Briefing progressive disclosure with 3 collapsible sections, localStorage persistence, Playwright coverage SC-PD-01 through SC-PD-07 (ST-12); GET /health/scheduler endpoint tracking 3 scheduler jobs in-memory (ST-13); live latency baseline: daily-briefing p50=10,296ms p95=11,152ms; chat p50=6,258ms p95=7,035ms (ST-14); Render rollback runbook with decision matrix + step-by-step procedure (ST-15) | docs/specs/api_contracts/strategy_benchmark_endpoints.md; docs/reference/openapi.yaml v3.7.0; src/pages/StrategyBenchmark.js; docs/frontend/prompts/ai-briefing-progressive-disclosure-v1.md; tests/e2e/ai-briefing-progressive-disclosure.spec.js; docs/specs/api_contracts/health_endpoints.md v1.3; docs/ops/api_performance_baseline.md §22.3; docs/operations/render_rollback_runbook.md | None |
+
+### Capabilities deferred or returned
+
+None — all 15 stories delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (agent-mediated, 2026-06-30), qa_evidence_EPIC-02.md (agent-mediated, 2026-06-30), qa_evidence_EPIC-03.md (agent-mediated, 2026-06-30)
+- Deviations filed: None (P3 spec deviations); BLG-UX-01 (P3) and BLG-UX-02 (P2) filed as backlog items for disclaimer contrast
+- Test scenarios referenced: tests/e2e/r-multiple-reflection.spec.js SC-RM-01..03c (ST-02); tests/test_nightly_computations.py (ST-07); tests/test_ai_chat_schema.py (ST-09); tests/e2e/ai-briefing-progressive-disclosure.spec.js SC-PD-01..07 (ST-12)

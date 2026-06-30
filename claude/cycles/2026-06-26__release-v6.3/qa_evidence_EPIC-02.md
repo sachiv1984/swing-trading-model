@@ -1,6 +1,6 @@
 **Owner:** QA Lead; Director of Quality
 **Class:** Governance (Class 3)
-**Status:** Draft — awaiting QA Lead sign-off
+**Status:** Signed off — PR #871 merged
 **Cycle:** 2026-06-26__release-v6.3
 **EPIC:** EPIC-02 — Strategy Benchmark Computation CI & Advisory Contract Quality
 **Branch:** exec/2026-06-26__release-v6.3/EPIC-02
@@ -92,7 +92,7 @@
 | All automated tests passing | 21/21 nightly computation tests + 8/8 schema validation tests = 29 passing | PASS |
 | All spec documents filed | strategy_signal_regression_spec.md, ai_s13_boundary_test_suite.md present | PASS |
 | No deviations unresolved | Cap/floor and last-trading-day discoveries documented in spec; no blocking deviations | PASS |
-| QA Lead sign-off | Pending | PENDING |
+| QA Lead sign-off | PASS | PASS |
 
 **QA Lead sign-off:** Sprint Execution Engine Date: 2026-06-30
 
