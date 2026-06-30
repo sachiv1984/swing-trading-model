@@ -34,6 +34,15 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: python production_strategy.py
 
+      - name: Wake up API
+        env:
+          API_URL: ${{ secrets.API_URL }}
+        run: |
+          curl --max-time 90 --retry 3 --retry-delay 10 --retry-all-errors \
+            -s -o /dev/null -w "%{http_code}" \
+            -X GET "${API_URL}/health" || true
+          sleep 10
+
       - name: Import results into API
         env:
           API_URL: ${{ secrets.API_URL }}

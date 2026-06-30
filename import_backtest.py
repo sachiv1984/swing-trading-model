@@ -159,7 +159,7 @@ def main():
         endpoint,
         headers={"X-API-Key": api_key, "Content-Type": "application/json"},
         data=json.dumps({"trades": trades, "yearly_performance": yearly}),
-        timeout=60,
+        timeout=300,
     )
 
     if resp.status_code != 200:
