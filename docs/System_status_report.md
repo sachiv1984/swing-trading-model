@@ -1,9 +1,33 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.3
-**Last Updated:** 2026-06-25
+**Version:** 4.4
+**Last Updated:** 2026-06-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-06-26__release-v6.3
+**Date:** 2026-06-30
+**Status:** Verified — 2026-06-30
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | AI Security & Quality Hardening: AI journal summary fixed (error surfaced to user, logger.error added); R-multiple display fixed on Reflection page (field name correction base44Client.js + N/A handling); per-endpoint rate limiting hardened (POST /ai/daily-briefing 10 req/min/IP; POST /ai/chat 30 req/min/IP; 429+Retry-After); AI response injection risk assessment (5 inputs assessed, BLG-SEC-01/02 filed); AI disclaimer visibility assessment (partially compliant — BLG-UX-01/02 filed); API contract review checklist for AI advisory endpoints (11-item checklist authored, both endpoints ALL PASS) | docs/specs/api_contracts/ai_endpoints.md v1.5; docs/specs/security/ai_injection_risk_assessment.md; docs/specs/qa/ai_disclaimer_visibility_assessment.md; docs/specs/api_contracts/ai_advisory_contract_checklist.md | None (BLG-UX-01 P3, BLG-UX-02 P2, BLG-SEC-01 P2, BLG-SEC-02 P3 filed as backlog items; not spec deviations) |
+| EPIC-02 | Test Infrastructure & Quality Coverage: 21 nightly computation CI simulation tests (7 trailing stop, 5 rebalance exit, 9 inv-vol) passing; strategy signal regression test specification authored; 8 AI chat response schema validation tests passing; §13 boundary test suite (11 scenarios for POST /ai/daily-briefing and POST /ai/chat) | tests/test_nightly_computations.py; tests/fixtures/nightly_portfolio_state.json; docs/specs/qa/strategy_signal_regression_spec.md; tests/test_ai_chat_schema.py; docs/specs/qa/ai_s13_boundary_test_suite.md | None |
+| EPIC-03 | Strategy Benchmark & UX Enhancement: Strategy Benchmark page live (3 panels with sticky filters, toggle modes, exit reason badges; 3 backend endpoints; DB schema backtest_trades + backtest_yearly_performance; import_backtest.py script); Morning briefing progressive disclosure (3 collapsible sections with localStorage persistence; SC-PD Playwright coverage); GET /health/scheduler endpoint (architecture review + 3 job tracking); live latency baseline established (daily-briefing p50=10,296ms p95=11,152ms; chat p50=6,258ms p95=7,035ms); Render deployment rollback runbook | src/pages/StrategyBenchmark.js; docs/specs/api_contracts/strategy_benchmark_endpoints.md; docs/reference/openapi.yaml v3.7.0; docs/specs/api_contracts/health_endpoints.md v1.3; docs/ops/api_performance_baseline.md §22.3; docs/operations/render_rollback_runbook.md | None |
+
+### Capabilities deferred or returned
+
+None — all 15 stories (ST-01 through ST-15) delivered within the sprint. Zero items returned to backlog.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (Sprint Execution Engine + Director of Quality counter-sign 2026-06-30), qa_evidence_EPIC-02.md (Sprint Execution Engine autonomous class + Director of Quality counter-sign 2026-06-30), qa_evidence_EPIC-03.md (Sprint Execution Engine + Director of Quality counter-sign 2026-06-30)
+- Deviations filed: None (spec deviations); process notes and backlog items only
+- Test scenarios referenced: tests/e2e/r-multiple-reflection.spec.js (SC-RM-01..03c); tests/test_nightly_computations.py (21 tests); tests/test_ai_chat_schema.py (8 tests); tests/e2e/ai-briefing-progressive-disclosure.spec.js (SC-PD-01..07)
 
 ---
 

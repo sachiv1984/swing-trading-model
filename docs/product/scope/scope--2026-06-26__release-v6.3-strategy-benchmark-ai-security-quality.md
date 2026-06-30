@@ -1,9 +1,9 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v6.3
 Cycle: 2026-06-26__release-v6.3
-Last Updated: 2026-06-26
+Last Updated: 2026-06-30
 
 ## Release Scope — v6.3 Strategy Benchmark, AI Security & Quality Infrastructure
 
@@ -44,9 +44,7 @@ Last Updated: 2026-06-26
 
 ### Supersession note
 
-*To be completed at Post-Ship Closure — do not populate at planning time.*
-
-Superseded by: [TBD]
-Changelog: [TBD]
-Verification report: [TBD]
+Superseded by: v6.3 ship — 2026-06-30
+Changelog: docs/product/changelog.md#v63--strategy-benchmark-ai-security--quality-infrastructure--2026-06-30
+Verification report: claude/cycles/2026-06-26__release-v6.3/verification_report.md
 Cycle: 2026-06-26__release-v6.3

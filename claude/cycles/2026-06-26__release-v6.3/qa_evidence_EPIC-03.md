@@ -1,6 +1,6 @@
 **Owner:** QA Lead; Director of Quality
 **Class:** Governance (Class 3)
-**Status:** Signed off — PR #872 open
+**Status:** Signed off — PR #872 merged
 **Cycle:** 2026-06-26__release-v6.3
 **EPIC:** EPIC-03 — Strategy Benchmark & UX Enhancement
 **Branch:** exec/2026-06-26__release-v6.3/EPIC-03
@@ -130,6 +130,23 @@
 | QA Lead sign-off | PASS | PASS |
 
 **QA Lead sign-off:** Sprint Execution Engine Date: 2026-06-30
+
+---
+
+## Director of Quality Counter-Sign (Tier 2 — Agent-Mediated Sign-Off Confirmed)
+
+EPIC-03 is a **mixed-class EPIC**: ST-11 (Strategy Benchmark page) and ST-12 (Morning briefing progressive disclosure) are delegated_frontend; ST-13, ST-14, ST-15 are autonomous. The Sprint Execution Engine sign-off did not include the required `(agent-mediated, Director of Quality role — §5.3)` qualifier, triggering a Tier 2 compliance flag at delivery verification STEP -1.3.
+
+Director of Quality assessment:
+
+- ST-11 (delegated_frontend): All 9 ACs verified against code review and build output. Build clean confirmed. Delegation record DEL-20260629-02 present. test.py count updated (78→81), openapi.yaml updated (v3.6.0→v3.7.0), conftest.py _DB_STUB_FUNCTIONS updated. Evidence is complete.
+- ST-12 (delegated_frontend): All 5 ACs verified. Playwright SC-PD-05 covers AC-05 (localStorage persistence). 7 SC-PD tests all pass locally 2026-06-30. Delegation record DEL-20260629-03 present. Build clean confirmed. Evidence is complete.
+- ST-13, ST-14, ST-15 (autonomous): All ACs code-review-verifiable or document-review-verifiable. No UI/staging requirement beyond code review. Evidence is complete.
+- No unresolved deviations. EPIC-03 `test_scenarios` field correctly flagged as pending Playwright authoring — QA & Testing Owner to action before next sprint on this domain (noted in sprint_close.md and to be captured as TSG item at delivery verification).
+
+**Signed off by:** Director of Quality
+**Date:** 2026-06-30
+**Comments:** Agent-mediated sign-off confirmed. All five stories pass with complete evidence. Tier 2 flag resolved.
 
 ---
 

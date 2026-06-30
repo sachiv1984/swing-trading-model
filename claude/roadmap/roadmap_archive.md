@@ -1,13 +1,37 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-25 (post-ship closure 2026-06-24__release-v6.2 — RA:v6.2 retired)
+**Last Updated:** 2026-06-30 (post-ship closure 2026-06-26__release-v6.3 — RA:v6.3 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v6.3 — Strategy Benchmark, AI Security & Quality Infrastructure
+
+**Original roadmap location:** §1 Current Version / §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-06-30
+**Shipped version:** v6.3
+**Cycle reference:** 2026-06-26__release-v6.3
+**Verification report:** claude/cycles/2026-06-26__release-v6.3/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-06-30
+
+### Original Roadmap Entry
+
+<!-- roadmap-annotation-marker: RA:v6.3:2026-06-26__release-v6.3 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-06-26__release-v6.3
+- Plan published: 2026-06-26
+- Cycle folder: claude/cycles/2026-06-26__release-v6.3/
+- Backlog slice: claude/cycles/2026-06-26__release-v6.3/stage4_backlog_slice.md
+- Status at annotation: Shipped 2026-06-30 (cycle 2026-06-26__release-v6.3)
 
 ---
 

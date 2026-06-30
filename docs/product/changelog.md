@@ -3,9 +3,46 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-25 (post-ship closure 2026-06-24__release-v6.2)
+**Last Updated:** 2026-06-30 (post-ship closure 2026-06-26__release-v6.3)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v6.3 — Strategy Benchmark, AI Security & Quality Infrastructure — 2026-06-30
+Cycle: 2026-06-26__release-v6.3
+Verified: Verified
+Verification report: claude/cycles/2026-06-26__release-v6.3/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | AI Security & Quality Hardening: AI journal summary fixed (data.message stored and displayed; logger.error added to ai_service.py); R-multiple display fixed on Reflection page (field name correction base44Client.js net_r_multiple → r_multiple; N/A display for no-stop trades); per-endpoint rate limiting hardened (POST /ai/daily-briefing 10 req/min/IP; POST /ai/chat 30 req/min/IP; 429+Retry-After); AI response injection risk assessment (5 inputs assessed, 3 accepted, 2 open — BLG-SEC-01/02 filed); AI disclaimer visibility assessment (§13 amber badge PASS; WCAG contrast gaps filed BLG-UX-01/02); API contract review checklist (11-item checklist authored, both AI endpoints ALL PASS) | docs/specs/api_contracts/ai_endpoints.md v1.5; docs/specs/security/ai_injection_risk_assessment.md; docs/specs/qa/ai_disclaimer_visibility_assessment.md; docs/specs/api_contracts/ai_advisory_contract_checklist.md |
+| EPIC-02 | Test Infrastructure & Quality Coverage: 21 nightly computation CI simulation tests passing (7 trailing stop, 5 rebalance exit, 9 inv-vol sizing); strategy signal regression test specification authored (scenario coverage, float tolerance, fixture maintenance procedure); 8 AI chat response schema validation tests passing; §13 boundary test suite (11 scenarios across D1–D4 dimensions for both AI advisory endpoints) | tests/test_nightly_computations.py; tests/fixtures/nightly_portfolio_state.json; docs/specs/qa/strategy_signal_regression_spec.md; tests/test_ai_chat_schema.py; docs/specs/qa/ai_s13_boundary_test_suite.md |
+| EPIC-03 | Strategy Benchmark & UX Enhancement: Strategy Benchmark page live (DB schema backtest_trades + backtest_yearly_performance; POST /strategy/benchmark/import + GET summary + GET trades; import_backtest.py companion script; full page with 3 panels, sticky filters, toggle modes, exit reason badges); Morning briefing progressive disclosure (3 collapsible sections, localStorage persistence, SC-PD Playwright coverage); GET /health/scheduler endpoint (architecture review + 3-job tracking); live AI endpoint latency baseline (daily-briefing p50=10,296ms p95=11,152ms; chat p50=6,258ms p95=7,035ms); Render deployment rollback runbook | docs/specs/api_contracts/strategy_benchmark_endpoints.md; src/pages/StrategyBenchmark.js; docs/reference/openapi.yaml v3.7.0; docs/specs/api_contracts/health_endpoints.md v1.3; docs/ops/api_performance_baseline.md §22.3; docs/operations/render_rollback_runbook.md |
+
+### Deviations accepted
+None — no spec deviations this sprint.
+
+### Tech backlog items shipped
+- [ST-01] BLG-BE-39: AI journal summary fixed — data.message surfaced to user on Trade History tab; logger.error added to ai_service.py
+- [ST-02] BLG-FE-79: R-multiple display fixed on Reflection page — field name correction + N/A handling for no-stop trades
+- [ST-03] BLG-OPS-81: AI endpoint per-endpoint rate limiting — 10 req/min/IP (daily-briefing), 30 req/min/IP (chat); 429+Retry-After
+- [ST-04] BLG-GOV-146: AI response injection risk assessment — threat model, 5 inputs assessed, BLG-SEC-01/02 filed
+- [ST-05] BLG-GOV-147: AI disclaimer visibility assessment — §13 amber badge PASS; contrast gaps BLG-UX-01/02 filed
+- [ST-06] BLG-GOV-148: API contract review checklist — 11-item checklist, both AI endpoints ALL PASS
+- [ST-07] BLG-QA-65: Nightly stop computation CI simulation tests — 21 tests (7 TS, 5 RX, 9 IV) all passing
+- [ST-08] BLG-QA-66: Strategy signal regression test specification — scenario coverage, tolerance, fixture procedure
+- [ST-09] BLG-QA-67: AI chat response schema validation tests — 8 tests, schema + advisory-only constraints
+- [ST-10] BLG-QA-68: §13 boundary test suite — 11 scenarios across both AI advisory endpoints
+- [ST-11] BLG-FEAT-53: Strategy Benchmark page — 3 endpoints, 2 DB tables, import script, full page (3 panels)
+- [ST-12] BLG-FE-80: Morning briefing progressive disclosure — 3 collapsible sections, localStorage, Playwright
+- [ST-13] BLG-OPS-79: GET /health/scheduler — architecture review + 3-job tracking; test.py updated
+- [ST-14] BLG-OPS-78: AI endpoint live latency baseline — daily-briefing p50/p95, chat p50/p95 measured
+- [ST-15] BLG-OPS-80: Render deployment rollback runbook — steps, decision matrix, Infrastructure Owner sign-off
+
+Sign-off: Product Owner (agent-mediated — sachiv.patel@hotmail.co.uk) — 2026-06-30
+QA sign-off: Director of Quality (agent-mediated) — 2026-06-30
 
 ---
 

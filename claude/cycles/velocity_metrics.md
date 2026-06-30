@@ -70,8 +70,9 @@
 | v6.0  | 11      | 11        | 1.00     | All 11 stories done; 2 P3 process deviations for ST-11 (accepted under PO gate override 2026-06-20); 5 delegated_decision stories all resolved within sprint; P0 correctness fast-track (ST-01 BLG-BE-36) + Product Value Alert resolved (ST-02/03); all EPIC-04 conditional clusters (A: 2026-06-21, B: 2026-07-04) activated and completed; Verified_with_deviations |
 | v6.1  | 9       | 9         | 1.00     | All 9 stories done; zero deviations; autonomous class sign-off misapplication (EPIC-03/04) retrospective DoQ counter-sign applied at verification; PT-04 gate cleared at sprint planning (15 trades confirmed); BLG-GOV-135/136 filed for v6.2 governance hardening; 0 returns; 0 delegations |
 | v6.2  | 13      | 13        | 1.00     | All 13 stories done; zero deviations; full delivery of both Sprint 1 (EPIC-01: production strategy parity cluster — trailing stops, rebalance exits, inv-vol sizing, risk-off alerts) and Sprint 2 (EPIC-02: AI intelligence layer — daily briefing, chat advisor); EPIC-03 governance/QA debt closed (BLG-GOV-135/136, BLG-OPS-75, BLG-QA-62); §13 SRB-v1.7 advisory-only compliance confirmed; BLG-QA-64 filed (12 dark specs); Verified |
+| v6.3  | 15      | 15        | 1.00     | All 15 stories done; zero deviations; full delivery of all 3 EPICs (EPIC-01: AI correctness + security + compliance; EPIC-02: QA infrastructure; EPIC-03: Strategy Benchmark + UX); LP-02 validated — Sprint 2 L-effort pattern works; TSG-v63-01/02 filed; BLG-OPS-82 endpoint drift advisory; Verified |
 
-**Rolling 6-cycle average (v5.7–v6.2):** 0.83
+**Rolling 6-cycle average (v5.8–v6.3):** 0.88
 
 ---
 
