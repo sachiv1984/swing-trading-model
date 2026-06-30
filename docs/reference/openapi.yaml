@@ -2491,7 +2491,8 @@ paths:
         Assembles live portfolio context (positions, signals, regime, trailing stops) and
         calls claude-sonnet-4-6 to produce a plain-English summary and ordered action list.
         Advisory-only — display-only, not integrated with trade execution. §13 PASS.
-        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.4 §POST /ai/daily-briefing
+        Rate limit: 10 requests/minute/IP; 429 + Retry-After returned when exceeded.
+        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.5 §POST /ai/daily-briefing
       requestBody:
         required: false
         content:
@@ -2536,6 +2537,21 @@ paths:
                     nullable: true
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "429":
+          description: Rate limit exceeded (10 req/min/IP). Retry-After header present.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds to wait before retrying.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Rate limit exceeded. Try again later."
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -2547,7 +2563,8 @@ paths:
         Accepts a user question and returns a response grounded in live portfolio and
         signal state. Stateless per request — no session history stored server-side.
         Advisory-only — display-only, not integrated with trade execution. §13 PASS.
-        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.4 §POST /ai/chat
+        Rate limit: 30 requests/minute/IP; 429 + Retry-After returned when exceeded.
+        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.5 §POST /ai/chat
       requestBody:
         required: true
         content:
@@ -2589,6 +2606,21 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "422":
           description: question field missing.
+        "429":
+          description: Rate limit exceeded (30 req/min/IP). Retry-After header present.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds to wait before retrying.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Rate limit exceeded. Try again later."
         "500":
           $ref: "#/components/responses/InternalError"
 

@@ -2996,6 +2996,52 @@ POST /ai/daily-briefing makes an Anthropic API call on every request. If the sam
 
 ---
 
+### BLG-SEC-01 — Sanitise context_opts.ticker before system prompt injection (POST /ai/chat)
+**Priority:** P2 (Medium)
+**Type:** Security / Input Validation
+**Owner:** Cybersecurity & Trust Lead; Backend Engineering Patterns Owner
+**Source:** ST-04 open risk — AI injection risk assessment v1.0 (2026-06-29)
+**Effort:** XS (<0.25 day)
+**Provisional-Target:** v6.4
+
+**Problem**
+`context_opts.ticker` from the request body is interpolated directly into the `ai_chat()` system prompt f-string with no sanitization. A value containing newlines followed by instruction text (e.g. `"AAPL\n\nIgnore all previous instructions..."`) is injected into the system prompt verbatim, elevating the attacker's payload to system-prompt authority level. Attacker must be authenticated.
+
+**Scope**
+- Validate `context_opts.ticker` at the router layer: strip or reject values containing `\n`, `\r`, or characters outside `[A-Z0-9.:/-]`, max 20 characters
+- Return HTTP 422 with descriptive error if ticker fails validation
+
+**Acceptance Criteria**
+- `context_opts.ticker` validated before insertion into system prompt
+- Strings with newlines or injection characters rejected with HTTP 422
+- Unit test added for validation logic
+- Cybersecurity & Trust Lead sign-off
+
+---
+
+### BLG-SEC-02 — Validate ticker/market strings at signal write time (screener pipeline)
+**Priority:** P3 (Low)
+**Type:** Security / Input Validation
+**Owner:** Cybersecurity & Trust Lead; Backend Engineering Patterns Owner
+**Source:** ST-04 open risk — AI injection risk assessment v1.0 (2026-06-29)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.4
+
+**Problem**
+Signal ticker and market strings stored in the `signals` table are interpolated into AI prompts for both `POST /ai/daily-briefing` and `POST /ai/chat`. If the screener's external data source (index list, CSV, screener API) provides crafted ticker values containing newlines or injection payloads, those propagate to the AI prompt. No validation is applied at signal write time.
+
+**Scope**
+- Add ticker/market validation at signal write/import boundary
+- Strip non-alphanumeric characters (allow `.`, `-`, `/`, `:` for international tickers, max 12 chars)
+- Review existing signals in DB for anomalous values and document findings
+
+**Acceptance Criteria**
+- Signal write path validates ticker and market strings
+- Existing signals reviewed; anomalous values documented or cleaned
+- Cybersecurity & Trust Lead sign-off
+
+---
+
 ### BLG-QA-63 — Automated accessibility testing (axe-core) in Playwright CI
 **Priority:** P3 (Low)
 **Type:** QA / Accessibility
@@ -3394,6 +3440,52 @@ The AI daily briefing card (AiDailyBriefing.js, shipped v6.2) displays three con
 - AC-03: Section state persists across page reloads via localStorage
 - AC-04: Default state is all expanded (no UX regression)
 - AC-05: Playwright: expand all → collapse market context → reload → verify market context still collapsed
+
+---
+
+### BLG-UX-01 — Improve AI daily briefing disclaimer text contrast
+**Priority:** P3 (Low)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Head of UX & Design; AI Compliance & Governance Officer
+**Source:** ST-05 disclaimer visibility assessment — 2026-06-29
+**Effort:** XS (<0.25 day)
+**Provisional-Target:** v6.4
+
+**Problem**
+The AI Advisory disclaimer text in `AiDailyBriefing.js` uses `text-slate-500 italic` (≈2.7:1 contrast on slate-800 background). WCAG AA requires ≥4.5:1 for text <18px. The amber "AI Advisory" badge meets §13 as the primary signal; this improvement upgrades the secondary text to meet accessibility standards.
+
+**Scope**
+- Change `text-slate-500` to `text-slate-300` on the disclaimer text span in `AiDailyBriefing.js`
+- Verify no visual regression to the badge or surrounding layout
+
+**Acceptance Criteria**
+- Disclaimer text contrast ≥4.5:1 on the dark background
+- No visual regression to the "AI Advisory" badge or briefing card layout
+- Head of UX & Design sign-off
+
+---
+
+### BLG-UX-02 — Improve AI chat widget footer disclaimer contrast and add test coverage
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX / Accessibility
+**Owner:** Head of UX & Design; AI Compliance & Governance Officer
+**Source:** ST-05 disclaimer visibility assessment — 2026-06-29
+**Effort:** XS (<0.25 day)
+**Provisional-Target:** v6.4
+
+**Problem**
+The AI Chat Widget footer disclaimer uses `text-slate-600 italic text-xs` (≈1.9:1 contrast on slate-800 background — critically low). The text is effectively unreadable in standard display conditions. Additionally the footer paragraph has no `data-testid`, preventing Playwright assertion of text presence.
+
+**Scope**
+- Change `text-slate-600` to `text-slate-400` on the footer disclaimer in `AiChatWidget.js`
+- Add `data-testid="ai-chat-advisory-footer"` to the footer paragraph
+- Add Playwright assertion: footer disclaimer text visible when chat widget open
+
+**Acceptance Criteria**
+- Footer disclaimer text contrast ≥4.5:1 on dark background
+- `data-testid="ai-chat-advisory-footer"` present
+- Playwright test asserts footer text visible and contains "advisory" keyword
+- Head of UX & Design sign-off
 
 ---
 

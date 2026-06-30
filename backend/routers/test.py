@@ -207,6 +207,9 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /strategy/benchmark/summary", "method": "GET", "url": f"{base_url}/strategy/benchmark/summary", "critical": False},
         {"name": "GET /strategy/benchmark/trades", "method": "GET", "url": f"{base_url}/strategy/benchmark/trades", "critical": False},
         {"name": "POST /strategy/benchmark/import", "method": "POST", "url": f"{base_url}/strategy/benchmark/import", "body": {"trades": [], "yearly_performance": []}, "critical": False},
+
+        # AI rate limit 429 scenario verification (v6.3 / EPIC-01 ST-03)
+        {"name": "POST /test/rate-limit-scenarios", "method": "POST", "url": f"{base_url}/test/rate-limit-scenarios", "critical": False},
     ]
     
     results = []
@@ -343,3 +346,56 @@ async def quick_health_check(request: Request):
         "status": "healthy" if all_healthy else "degraded",
         "checks": results
     }
+
+
+@router.post("/rate-limit-scenarios")
+async def rate_limit_scenarios():
+    """
+    Verify rate limiting logic for POST /ai/daily-briefing (limit=10) and
+    POST /ai/chat (limit=30). Uses isolated test keys so live traffic is not
+    affected. AC-05 for ST-03 (BLG-OPS-81, EPIC-01, v6.3).
+    """
+    from services.rate_limiter import _ai_limiter
+
+    results = []
+
+    for endpoint, key, limit in [
+        ("POST /ai/daily-briefing", "daily-briefing:__test__", 10),
+        ("POST /ai/chat", "chat:__test__", 30),
+    ]:
+        _ai_limiter.reset(key)
+        try:
+            # Drain the window
+            for _ in range(limit):
+                allowed, _ = _ai_limiter.is_allowed(key, limit=limit)
+                if not allowed:
+                    results.append({
+                        "endpoint": endpoint,
+                        "status": "fail",
+                        "error": f"Rate limiter rejected before {limit} requests were consumed",
+                    })
+                    _ai_limiter.reset(key)
+                    break
+            else:
+                # One more call must be rejected (429 territory)
+                allowed, retry_after = _ai_limiter.is_allowed(key, limit=limit)
+                if allowed:
+                    results.append({
+                        "endpoint": endpoint,
+                        "status": "fail",
+                        "error": f"Expected rejection after {limit} requests but was still allowed",
+                    })
+                else:
+                    results.append({
+                        "endpoint": endpoint,
+                        "status": "pass",
+                        "limit": limit,
+                        "retry_after_secs": retry_after,
+                    })
+                _ai_limiter.reset(key)
+        except Exception as exc:
+            results.append({"endpoint": endpoint, "status": "error", "error": str(exc)[:200]})
+            _ai_limiter.reset(key)
+
+    all_pass = all(r["status"] == "pass" for r in results)
+    return {"status": "ok" if all_pass else "fail", "scenarios": results}

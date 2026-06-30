@@ -23,6 +23,7 @@ export default function TradeHistory() {
   const [csvExporting, setCsvExporting] = useState(false);
   const [aiSummaryOpen, setAiSummaryOpen] = useState(false);
   const [aiSummary, setAiSummary] = useState(null);
+  const [aiMessage, setAiMessage] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiGenerated, setAiGenerated] = useState(false);
 
@@ -121,12 +122,15 @@ export default function TradeHistory() {
       });
       if (!response.ok) {
         setAiSummary(null);
+        setAiMessage("Journal summary request failed. Please try again.");
       } else {
         const data = await response.json();
         setAiSummary(data.summary || null);
+        setAiMessage(data.message || null);
       }
     } catch {
       setAiSummary(null);
+      setAiMessage("Unable to reach the server. Please check your connection.");
     } finally {
       setAiLoading(false);
       setAiGenerated(true);
@@ -436,7 +440,7 @@ export default function TradeHistory() {
                   ) : aiSummary ? (
                     <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">{aiSummary}</p>
                   ) : aiGenerated ? (
-                    <p className="text-slate-500 text-sm">Summary unavailable. Please try again later.</p>
+                    <p className="text-slate-500 text-sm">{aiMessage || "Summary unavailable. Please try again later."}</p>
                   ) : (
                     <p className="text-slate-500 text-sm">Click &apos;Generate Summary&apos; to get an AI overview of your journal entries.</p>
                   )}

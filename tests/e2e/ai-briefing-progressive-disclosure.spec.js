@@ -19,7 +19,7 @@
 
 const { test, expect } = require('@playwright/test');
 
-const STORAGE_KEY = 'ai-briefing-collapsed-sections-v1';
+const STORAGE_KEY = 'ai-briefing-collapsed-sections-v1'; // gitleaks:allow
 
 const BRIEFING_PAYLOAD = {
   summary: 'Markets are stable. SPY risk-on. NVDA near trailing stop — monitor closely.',

@@ -375,7 +375,7 @@ export const base44 = {
           exit_reason: t.exit_reason,
           exit_date: t.exit_date,
           hold_days: t.holding_days,
-          r_multiple: t.r_multiple ?? null,
+          r_multiple: t.net_r_multiple ?? null,
           pnl: t.pnl,
         }));
       },

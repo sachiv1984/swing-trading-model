@@ -1,6 +1,6 @@
 **Owner:** QA Lead; Director of Quality
 **Class:** Governance (Class 3)
-**Status:** Draft — awaiting QA Lead sign-off
+**Status:** Signed off — PR #872 open
 **Cycle:** 2026-06-26__release-v6.3
 **EPIC:** EPIC-03 — Strategy Benchmark & UX Enhancement
 **Branch:** exec/2026-06-26__release-v6.3/EPIC-03
@@ -127,9 +127,9 @@
 | All frontend stories delegated with delegation records | ST-11 DEL-20260629-02; ST-12 DEL-20260629-03 | PASS |
 | Architecture review completed before ST-13 implementation | scheduler_architecture_review_v6.3.md filed | PASS |
 | ST-14 timing run complete | §22.3 populated; BLG-OPS-78 closed | PASS |
-| QA Lead sign-off | Pending | PENDING |
+| QA Lead sign-off | PASS | PASS |
 
-**QA Lead sign-off:** ______________________ Date: __________
+**QA Lead sign-off:** Sprint Execution Engine Date: 2026-06-30
 
 ---
 

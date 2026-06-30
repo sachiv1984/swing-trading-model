@@ -12,14 +12,20 @@ or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 Contract: docs/specs/api_contracts/ai_endpoints.md v1.4
 """
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional, List, Any
 from datetime import date
 from database import get_db
 from services.ai_service import summarise_journal_notes
 from services.ai_audit_service import log_ai_summary_run, query_audit_log
+from services.rate_limiter import _ai_limiter
 from config import AI_DAILY_COST_THRESHOLD
+
+# Per-endpoint rate limits (requests per minute per IP)
+_DAILY_BRIEFING_LIMIT = 10
+_CHAT_LIMIT = 30
 
 router = APIRouter(prefix="/ai", tags=["AI"])
 
@@ -155,13 +161,23 @@ class DailyBriefingResponse(BaseModel):
 
 
 @router.post("/daily-briefing", response_model=DailyBriefingResponse)
-def daily_briefing():
+def daily_briefing(request: Request):
     """
     Assemble live portfolio context and call claude-sonnet-4-6 to produce a
     plain-English daily briefing with an ordered action list.
     Advisory-only — SRB-v1.7. Not integrated with trade execution.
-    Contract: docs/specs/api_contracts/ai_endpoints.md v1.4
+    Rate limit: 10 requests/minute/IP. Contract: docs/specs/api_contracts/ai_endpoints.md v1.5
     """
+    client_ip = request.client.host if request.client else "unknown"
+    allowed, retry_after = _ai_limiter.is_allowed(
+        f"daily-briefing:{client_ip}", limit=_DAILY_BRIEFING_LIMIT
+    )
+    if not allowed:
+        return JSONResponse(
+            status_code=429,
+            content={"detail": "Rate limit exceeded. Try again later."},
+            headers={"Retry-After": str(retry_after)},
+        )
     from services.ai_service import generate_daily_briefing
     return generate_daily_briefing()
 
@@ -178,13 +194,23 @@ class ChatResponse(BaseModel):
 
 
 @router.post("/chat", response_model=ChatResponse)
-def ai_chat_endpoint(body: ChatRequest):
+def ai_chat_endpoint(body: ChatRequest, request: Request):
     """
     Stateless per-request AI trade advisor grounded in live portfolio and signal state.
     No session memory is stored or returned across calls.
     Advisory-only — SRB-v1.7. Not integrated with trade execution.
-    Contract: docs/specs/api_contracts/ai_endpoints.md v1.4
+    Rate limit: 30 requests/minute/IP. Contract: docs/specs/api_contracts/ai_endpoints.md v1.5
     """
+    client_ip = request.client.host if request.client else "unknown"
+    allowed, retry_after = _ai_limiter.is_allowed(
+        f"chat:{client_ip}", limit=_CHAT_LIMIT
+    )
+    if not allowed:
+        return JSONResponse(
+            status_code=429,
+            content={"detail": "Rate limit exceeded. Try again later."},
+            headers={"Retry-After": str(retry_after)},
+        )
     from services.ai_service import ai_chat
     return ai_chat(question=body.question, context_opts=body.context)
 
