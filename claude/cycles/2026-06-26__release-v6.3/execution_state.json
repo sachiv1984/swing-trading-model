@@ -39,10 +39,10 @@
       }
     },
     "EPIC-03": {
-      "status": "pr_ready",
+      "status": "pr_open",
       "branch": "exec/2026-06-26__release-v6.3/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 872,
+      "pr_status": "open",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-06-26__release-v6.3/qa_evidence_EPIC-03.md",
       "stories": {
