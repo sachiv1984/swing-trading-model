@@ -1,11 +1,11 @@
 {
   "cycle_id": "2026-06-26__release-v6.3",
   "release": "v6.3",
-  "status": "In_Progress",
+  "status": "Closed",
   "mode": "standard",
   "dry_run": false,
   "started_utc": "2026-06-30T00:00:00Z",
-  "last_updated_utc": "2026-06-30T03:00:00Z",
+  "last_updated_utc": "2026-06-30T04:00:00Z",
   "steps": {
     "preflight": "pass",
     "step_0_context": "pass",
@@ -23,7 +23,7 @@
     "step_11_manage_roadmap": "pass",
     "step_12_groom_backlog": "pass",
     "step_12_5_ideas_housekeeping": "pass",
-    "step_13_commit": "not_started"
+    "step_13_commit": "pass"
   },
   "step_notes": {
     "step_3_backlog": "15 items marked COMPLETE; BLG-OPS-82 endpoint drift advisory added; Phase 4 additions confirmed (BLG-UX-01/02, BLG-SEC-01/02, TEST-GAP-EPIC-01/03); no stale parked items",
