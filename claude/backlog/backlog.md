@@ -3489,6 +3489,48 @@ The AI Chat Widget footer disclaimer uses `text-slate-600 italic text-xs` (≈1.
 
 ---
 
+### TEST-GAP-EPIC-01 — Playwright coverage for ST-01 observable UI ACs (AI journal summary error states)
+**Priority:** P3 (Low)
+**Type:** Test Coverage / QA
+**Owner:** QA & Testing Owner
+**Source:** Delivery verification v6.3 — TSG-v63-01 (2026-06-30)
+**Effort:** XS (<0.5 day)
+**Provisional-Target:** v6.4
+
+**Problem**
+ST-01 (Fix AI journal summary on Trade History tab) introduced observable UI changes: `data.message` displayed to the user on API failure, specific server error text on HTTP error, specific network error text on connection failure (AC-02, AC-03, AC-04). These ACs were cleared by code review only; no Playwright test exists for the AI journal summary error states on the Trade History tab. Staging sign-off was deferred (reproducibility condition: requires a trade with journal notes and a failed summary condition). This gap leaves error state rendering unverified by automated tests.
+
+**Acceptance Criteria**
+- Playwright test covering AC-02 (specific error message displayed when AI journal summary unavailable)
+- Playwright test covering AC-03/AC-04 (server error and network error messages rendered correctly)
+- Tests in `tests/e2e/` referencing `data-testid` selectors on the Trade History tab AI summary component
+
+See verification_report.md §6 (cycle 2026-06-26__release-v6.3) for gap detail.
+
+---
+
+### TEST-GAP-EPIC-03 — Playwright scenario coverage for Strategy Benchmark page
+**Priority:** P2 (Medium)
+**Type:** Test Coverage / QA
+**Owner:** QA & Testing Owner
+**Source:** Delivery verification v6.3 — TSG-v63-02 (2026-06-30); sprint_backlog.md ST-11 LL-v2.0-P4-2
+**Effort:** S (~1 day)
+**Provisional-Target:** v6.4
+
+**Problem**
+ST-11 (Strategy Benchmark page) delivered a major new feature page (3 panels, sticky filters, toggle modes, exit reason badges, 3 backend endpoints). The `test_scenarios` field in execution_state.json for EPIC-03 was intentionally set to "pending" at execution time (per LL-v2.0-P4-2). No Playwright scenarios exist for the Strategy Benchmark page at sprint end. ST-12 (morning briefing progressive disclosure) is covered by SC-PD tests, but the Strategy Benchmark page (AC-01 through AC-05 — page accessibility, filters, panel rendering, toggle modes, badge colours) has zero Playwright coverage.
+
+**Acceptance Criteria**
+- Playwright tests covering AC-01 (page accessible from navigation)
+- Playwright tests covering AC-02 (year + market filters apply to all panels simultaneously)
+- Playwright tests covering AC-03 (Panel 1 shows "—" for actual fields when no live trades match)
+- Playwright tests covering AC-05 (Panel 3 toggle modes; exit reason badge colours)
+- Tests in `tests/e2e/strategy-benchmark.spec.js` or equivalent
+
+See verification_report.md §6 (cycle 2026-06-26__release-v6.3) for gap detail and recommended scenarios.
+
+---
+
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*
 
 ---
