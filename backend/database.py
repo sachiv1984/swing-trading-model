@@ -2163,7 +2163,16 @@ def ensure_backtest_tables():
 
 
 def upsert_backtest_data(trades: List[Dict], yearly_performance: List[Dict]) -> Dict:
-    """Upsert backtest trade and yearly performance records.
+    """Replace backtest trade and yearly performance records with a fresh snapshot.
+
+    production_strategy.py recomputes the entire trade history from scratch on
+    every run, so each import is the complete, authoritative picture rather
+    than an incremental delta. Deleting existing rows first (in the same
+    transaction — a failed import rolls back and leaves prior data intact)
+    means a trade the model no longer produces (e.g. a stale exit invalidated
+    by a bug fix) doesn't linger forever. The previous upsert-only approach
+    had no way to remove rows that stopped being generated, which is exactly
+    how 5 fictional trades from a fixed phantom-date bug stayed in the table.
 
     Returns a dict with 'trades_imported' and 'years_imported' counts.
     """
@@ -2172,6 +2181,8 @@ def upsert_backtest_data(trades: List[Dict], yearly_performance: List[Dict]) -> 
     years_count = 0
     with get_db() as conn:
         with conn.cursor() as cur:
+            cur.execute("DELETE FROM backtest_trades")
+            cur.execute("DELETE FROM backtest_yearly_performance")
             for trade in trades:
                 cur.execute("""
                     INSERT INTO backtest_trades (
