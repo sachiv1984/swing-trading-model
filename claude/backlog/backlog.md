@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-01 (session — 1 new item added: BLG-BE-40)
+**Last Updated:** 2026-07-01 (session — 1 new item added: BLG-FEAT-54)
 **Last rebalance:** 2026-06-26 (cycle 2026-06-26__scheduled — DL-057; 14 Promoted-Backlog, 10 Backlog-gate-conditional, 19 Parked C1, 6 Parked C3; STEP 8.0: BLG-BE-39 + BLG-FE-79 mandatory v6.3 Now; PVR=0.37 Advisory; Skill-Silo=51.5% Advisory)
 
 > ⚠️ Standing Notice
@@ -374,6 +374,31 @@ Trades are currently classified only by market, sector, and signal type. There i
 - AC-01: User can add/remove tags on any trade plan
 - AC-02: GET /analytics/tag-performance returns win rate and average R broken down by tag
 - AC-03: PerformanceAnalytics page surfaces tag-based filter controls
+
+---
+
+### BLG-FEAT-54 — Add Open Positions panel to Strategy Benchmark page
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Data Transparency
+**Owner:** Head of UX & Design; Backend Engineering Patterns Owner
+**Source:** User request following backtest pipeline investigation (PRs #877–#883) — 2026-07-01
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v6.4
+
+**Problem**
+The Strategy Benchmark page's trade log and Panel 1/2 aggregates only reflect closed trades. When the backtest is fully invested (holding its max `top_n` positions), the page shows no activity past the last entry date, reading as stalled or out of signals when real capital is actively deployed with real unrealized P&L. Observed directly: ~£46k unrealized across 5 open positions as of 2026-06-30, with the page showing nothing since 2026-06-23/24.
+
+**Scope**
+- New `backtest_open_positions` table with the same full-replace nightly semantics as `backtest_trades` (pattern established in PR #882)
+- `production_strategy.py` / `import_backtest.py`: send the currently-filtered-out `"Open (Unrealized)"` rows here instead of discarding them
+- New read path — either a field on `GET /strategy/benchmark/summary` or a new `GET /strategy/benchmark/open-positions` endpoint; if a new route, ship `openapi.yaml` entry, `docs/specs/api_contracts/` doc, and `backend/routers/test.py` registration in the same commit
+- New frontend panel on `StrategyBenchmark.js`, placed above the existing trade log: a one-line summary (`"X of top_n slots held · Unrealized P&L: ±£Y"`) plus a per-position table (Ticker, Market, Entry Date, Entry Price, Current Price, Unrealized P&L £/%), using the page's existing `pnlClass`/`fmtGbp` conventions
+
+**Acceptance Criteria**
+- Panel appears whenever ≥1 unrealized position exists, showing the summary line and per-position table
+- Panel 1/2 realized win-rate/PnL stats are unaffected — unrealized positions never enter those aggregates
+- New table is fully replaced (not upserted) on each nightly import, consistent with `backtest_trades`
+- Any new endpoint ships with `openapi.yaml`, contract doc, and `test.py` registration in the same commit
 
 ---
 
