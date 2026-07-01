@@ -76,8 +76,13 @@ def _load_tickers() -> list:
     if db_url:
         try:
             import psycopg2
-            # Render appends ?sslmode=require — strip the scheme prefix Render uses
+            from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
+            # Render uses postgres:// scheme and may include ?pgbouncer=true which
+            # psycopg2 rejects as an unknown DSN parameter — strip it here.
             clean_url = db_url.replace("postgres://", "postgresql://", 1)
+            parsed = urlparse(clean_url)
+            qs = {k: v for k, v in parse_qs(parsed.query).items() if k != "pgbouncer"}
+            clean_url = urlunparse(parsed._replace(query=urlencode(qs, doseq=True)))
             conn = psycopg2.connect(clean_url)
             with conn.cursor() as cur:
                 cur.execute("SELECT ticker FROM ticker_universe WHERE active = TRUE ORDER BY ticker")
