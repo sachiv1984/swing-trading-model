@@ -70,6 +70,8 @@ async def import_backtest(request: Request, body: BacktestImportRequest):
         "status": "ok",
         "trades_imported": result["trades_imported"],
         "years_imported": result["years_imported"],
+        "trades_deleted": result["trades_deleted"],
+        "years_deleted": result["years_deleted"],
         "imported_at": result["imported_at"],
     }
 

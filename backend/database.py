@@ -2182,7 +2182,9 @@ def upsert_backtest_data(trades: List[Dict], yearly_performance: List[Dict]) -> 
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute("DELETE FROM backtest_trades")
+            trades_deleted = cur.rowcount
             cur.execute("DELETE FROM backtest_yearly_performance")
+            years_deleted = cur.rowcount
             for trade in trades:
                 cur.execute("""
                     INSERT INTO backtest_trades (
@@ -2246,6 +2248,8 @@ def upsert_backtest_data(trades: List[Dict], yearly_performance: List[Dict]) -> 
     return {
         "trades_imported": trades_count,
         "years_imported": years_count,
+        "trades_deleted": trades_deleted,
+        "years_deleted": years_deleted,
         "imported_at": now.isoformat() + "Z",
     }
 
