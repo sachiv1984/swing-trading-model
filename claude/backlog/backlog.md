@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-06-30 (post-ship closure 2026-06-26__release-v6.3 — 15 items marked ✅ COMPLETE (BLG-BE-39, BLG-FE-79, BLG-FE-80, BLG-OPS-78–81, BLG-GOV-146–148, BLG-QA-65–68, BLG-FEAT-53); Phase 4 additions confirmed (BLG-UX-01/02, BLG-SEC-01/02, TEST-GAP-EPIC-01/03); BLG-OPS-82 filed — endpoint drift advisory)
+**Last Updated:** 2026-07-01 (session — 1 new item added: BLG-BE-40)
 **Last rebalance:** 2026-06-26 (cycle 2026-06-26__scheduled — DL-057; 14 Promoted-Backlog, 10 Backlog-gate-conditional, 19 Parked C1, 6 Parked C3; STEP 8.0: BLG-BE-39 + BLG-FE-79 mandatory v6.3 Now; PVR=0.37 Advisory; Skill-Silo=51.5% Advisory)
 
 > ⚠️ Standing Notice
@@ -1079,6 +1079,28 @@ PO-04 (Reflection ↔ Outcome Correlation) requires journal entries with quantif
 - Data prerequisites assessment document produced
 - New fields required for PO-04 identified and estimated
 - Gate condition verified before sprint planning
+
+---
+
+### BLG-BE-40 — Signal generation reads deprecated `tickers` table instead of `ticker_universe`
+**Priority:** P1 (High)
+**Type:** Backend Engineering / Data Model
+**Owner:** Backend Engineering Patterns Owner
+**Source:** Investigation of hotfix/backtest-import-timeout (PRs #877/#878) — 2026-07-01
+**Effort:** XS (<1h)
+**Provisional-Target:** v6.4
+
+**Problem**
+`signal_service.py`'s `generate_momentum_signals()` imports `get_all_tickers` from `database.py`, which runs `SELECT ticker FROM tickers` against the legacy `tickers` table. Per the v3.9/EPIC-04 ST-09 changelog, the `public.tickers` startup sync was intentionally removed and `ticker_universe` was declared the sole authoritative source for screener and signal generation — `signal_service.py` was never switched over, so live signal generation reads a frozen, unmaintained snapshot instead of the actively-managed ticker list. This diverges from both the screener (`screener_batch_service.py`, which already uses the correct getter) and `production_strategy.py`'s backtest (now correctly reading `ticker_universe` directly per the pgbouncer hotfix).
+
+**Scope**
+- Switch `signal_service.py`'s import from `database.get_all_tickers()` to `services.ticker_universe_service.get_all_tickers(active_only=True)`
+- Adjust the consuming loop (`for ticker in tickers:` around line 115), since the correct getter returns a list of dicts (with a `ticker` key) rather than a flat list of strings
+
+**Acceptance Criteria**
+- `signal_service.py` sources its ticker universe from `ticker_universe`, not `tickers`
+- Live signal generation matches the `ticker_universe` active list — verified by adding/deactivating a ticker in Ticker Universe Management and confirming it appears/disappears in generated signals
+- No regression to existing signal fields or downstream sizing logic
 
 ---
 
