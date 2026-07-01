@@ -177,7 +177,9 @@ def main():
 
     result = resp.json()
     print("Import complete:")
+    print(f"  trades_deleted:   {result.get('trades_deleted', 'n/a')}")
     print(f"  trades_imported:  {result['trades_imported']}")
+    print(f"  years_deleted:    {result.get('years_deleted', 'n/a')}")
     print(f"  years_imported:   {result['years_imported']}")
     print(f"  imported_at:      {result['imported_at']}")
 
