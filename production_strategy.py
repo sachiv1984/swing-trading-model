@@ -133,6 +133,16 @@ def download_in_chunks(tickers, calendar_index, start="2018-01-01", chunk_size=5
 spy = yf.download("SPY", start="2018-01-01", auto_adjust=True, progress=False)["Close"].squeeze()
 ftse = yf.download("^FTSE", start="2018-01-01", auto_adjust=True, progress=False)["Close"].squeeze()
 
+# Never trust "today" (run time) as a completed trading day. Liquid
+# instruments like SPY get live pre-market quotes stamped with today's date
+# well before the session actually opens/closes, regardless of which
+# instrument sources them — anchoring the calendar to SPY's own index isn't
+# enough if SPY itself carries that incomplete snapshot. Truncating here
+# drops it from the shared calendar before anything else is built from it.
+_today = pd.Timestamp.now().normalize()
+spy = spy[spy.index < _today]
+ftse = ftse[ftse.index < _today]
+
 print("Downloading price data...")
 prices = download_in_chunks(tickers, calendar_index=spy.index)
 prices = prices.dropna(axis=1, thresh=252 * 3)
