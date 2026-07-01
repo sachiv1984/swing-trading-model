@@ -48,11 +48,19 @@ def load_api_key_from_file() -> str | None:
 
 
 def parse_trades_csv(path: Path) -> list:
-    """Parse all_trades_*.csv into the request body 'trades' array."""
+    """Parse all_trades_*.csv into the request body 'trades' array.
+
+    Rows with Exit Reason "Open (Unrealized)" describe positions still held when
+    production_strategy.py's price data ended, not completed round trips. The
+    Strategy Benchmark page's win-rate/PnL aggregates assume closed trades, so
+    these are excluded here rather than silently changing that page's semantics.
+    """
     trades = []
     with open(path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
+            if row.get("Exit Reason", "").strip() == "Open (Unrealized)":
+                continue
             try:
                 entry_year = int(row.get("Entry Year", 0) or 0)
                 pnl_pct_raw = row.get("PnL %", "0")

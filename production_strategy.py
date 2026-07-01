@@ -386,6 +386,32 @@ def backtest(signals, prices, volatility, atr, rebalance_freq, atr_mult,
         daily_value = cash + (holdings * prices.loc[date]).sum()
         portfolio_values.append(daily_value)
 
+    # Positions still open when the price data ends never hit a stop, risk-off,
+    # or rebalance exit, so the loop above never appends a trade for them — without
+    # this they vanish from trades_df entirely, making the final weeks of a run
+    # look like no activity took place even though capital is deployed.
+    last_date = prices.index[-1]
+    for t in list(holdings[holdings > 0].index):
+        shares = holdings[t]
+        entry_price = entry_prices[t]
+        current_price = prices.loc[last_date, t]
+        current_profit_pct = (current_price - entry_price) / entry_price
+        holding_days = (last_date - entry_dates[t]).days
+
+        trades.append({
+            "Ticker": t,
+            "Entry Date": entry_dates[t],
+            "Exit Date": last_date,
+            "Holding Days": holding_days,
+            "Entry": entry_price,
+            "Exit": current_price,
+            "PnL (£)": (current_price - entry_price) * shares,
+            "PnL %": round(current_profit_pct * 100, 2),
+            "Market": "UK" if t.endswith(".L") else "US",
+            "Exit Reason": "Open (Unrealized)",
+            "Was Profitable": current_profit_pct > 0
+        })
+
     pv = pd.Series(portfolio_values, index=prices.index)
     returns = pv.pct_change().fillna(0)
     trades_df = pd.DataFrame(trades)
@@ -503,28 +529,34 @@ print("\n" + "=" * 70)
 print("TRADE STATISTICS - FULL PERIOD")
 print("=" * 70)
 
-win_trades = trades_full[trades_full["PnL (£)"] > 0]
-loss_trades = trades_full[trades_full["PnL (£)"] <= 0]
+# Realized (closed) vs still-open positions — win rate, avg win/loss, and grace-period
+# stats describe completed round trips, so mixing in unrealized marks would conflate
+# the two. Open positions are reported separately below instead.
+closed_trades = trades_full[trades_full["Exit Reason"] != "Open (Unrealized)"].copy()
+open_trades = trades_full[trades_full["Exit Reason"] == "Open (Unrealized)"].copy()
 
-print(f"\nTotal trades: {len(trades_full)}")
-print(f"Win rate: {len(win_trades)/len(trades_full)*100:.2f}%")
+win_trades = closed_trades[closed_trades["PnL (£)"] > 0]
+loss_trades = closed_trades[closed_trades["PnL (£)"] <= 0]
+
+print(f"\nTotal closed trades: {len(closed_trades)}")
+print(f"Win rate: {len(win_trades)/len(closed_trades)*100:.2f}%")
 print(f"Average win: £{win_trades['PnL (£)'].mean():.2f}")
 print(f"Average loss: £{loss_trades['PnL (£)'].mean():.2f}")
 print(f"Win/Loss ratio: {abs(win_trades['PnL (£)'].mean() / loss_trades['PnL (£)'].mean()):.2f}")
-print(f"Average holding period: {trades_full['Holding Days'].mean():.1f} days")
+print(f"Average holding period: {closed_trades['Holding Days'].mean():.1f} days")
 print(f"Largest win: £{win_trades['PnL (£)'].max():.2f}")
 print(f"Largest loss: £{loss_trades['PnL (£)'].min():.2f}")
 
 # Exit reason breakdown
 print("\n--- Exit Reason Breakdown ---")
-print(trades_full["Exit Reason"].value_counts())
+print(closed_trades["Exit Reason"].value_counts())
 
 # Grace period analysis
-early_exits = trades_full[trades_full["Holding Days"] <= params['min_hold_days']]
-print(f"\nTrades exiting at/before {params['min_hold_days']}-day grace period: {len(early_exits)} ({len(early_exits)/len(trades_full)*100:.1f}%)")
+early_exits = closed_trades[closed_trades["Holding Days"] <= params['min_hold_days']]
+print(f"\nTrades exiting at/before {params['min_hold_days']}-day grace period: {len(early_exits)} ({len(early_exits)/len(closed_trades)*100:.1f}%)")
 
 # Profitable vs unprofitable stops
-stop_trades = trades_full[trades_full["Exit Reason"] == "Stop"]
+stop_trades = closed_trades[closed_trades["Exit Reason"] == "Stop"]
 profitable_stops = stop_trades[stop_trades["Was Profitable"]]
 losing_stops = stop_trades[~stop_trades["Was Profitable"]]
 
@@ -533,13 +565,23 @@ print(f"Total stops: {len(stop_trades)}")
 print(f"Profitable stops (tight 2x ATR): {len(profitable_stops)} ({len(profitable_stops)/len(stop_trades)*100:.1f}%)")
 print(f"Losing stops (wide 5x ATR): {len(losing_stops)} ({len(losing_stops)/len(stop_trades)*100:.1f}%)")
 
+# Still-open positions (never hit an exit condition before the price data ended)
+if len(open_trades) > 0:
+    print(f"\n--- Open Positions (unrealized, as of {prices.index[-1].date()}) ---")
+    print(open_trades[["Ticker", "Entry Date", "Entry", "Exit", "PnL (£)", "PnL %"]].to_string(index=False))
+
 # Yearly breakdown
 print("\n" + "=" * 70)
 print("YEARLY PERFORMANCE")
 print("=" * 70)
 
 trades_full['Entry Year'] = trades_full['Entry Date'].dt.year
-yearly_stats = trades_full.groupby('Entry Year').agg({
+
+# Yearly aggregates feed backtest_yearly_performance on the Strategy Benchmark page,
+# which (like Panel 1) assumes closed trades — computed on closed_trades to stay
+# consistent with the win-rate/PnL stats above and with import_backtest.py's filtering.
+closed_trades['Entry Year'] = closed_trades['Entry Date'].dt.year
+yearly_stats = closed_trades.groupby('Entry Year').agg({
     'PnL (£)': ['count', 'mean', 'sum'],
     'Holding Days': 'mean',
     'Was Profitable': lambda x: x.sum() / len(x) * 100
