@@ -103,7 +103,7 @@ def _load_tickers() -> list:
 tickers = _load_tickers()
 print(f"\nUniverse size: {len(tickers)}")
 
-def download_in_chunks(tickers, start="2018-01-01", chunk_size=50):
+def download_in_chunks(tickers, calendar_index, start="2018-01-01", chunk_size=50):
     chunks = []
     for i in range(0, len(tickers), chunk_size):
         data = yf.download(
@@ -120,23 +120,33 @@ def download_in_chunks(tickers, start="2018-01-01", chunk_size=50):
         chunks.append(data)
 
     prices = pd.concat(chunks, axis=1).sort_index()
+    # Constrain to SPY's own trading calendar so a stray off-calendar quote
+    # from any single instrument (e.g. an index feed, or a live intraday
+    # snapshot picked up mid-session on a manual run) can't inject a phantom
+    # "trading day" that every other ticker then gets forward-filled into —
+    # that previously produced fake same-day round-trip trades.
+    prices = prices.reindex(calendar_index)
     return prices.ffill().bfill()
 
+# Regime indicators, downloaded first so the reference US trading calendar
+# (SPY's own index) is available to constrain the price universe below.
+spy = yf.download("SPY", start="2018-01-01", auto_adjust=True, progress=False)["Close"].squeeze()
+ftse = yf.download("^FTSE", start="2018-01-01", auto_adjust=True, progress=False)["Close"].squeeze()
+
 print("Downloading price data...")
-prices = download_in_chunks(tickers)
+prices = download_in_chunks(tickers, calendar_index=spy.index)
 prices = prices.dropna(axis=1, thresh=252 * 3)
 print(f"Tickers after cleaning: {prices.shape[1]}")
 print(f"Date range: {prices.index.min().date()} to {prices.index.max().date()}")
 
-# Download regime indicators
-spy = yf.download("SPY", start=prices.index.min(), auto_adjust=True, progress=False)["Close"].squeeze()
-ftse = yf.download("^FTSE", start=prices.index.min(), auto_adjust=True, progress=False)["Close"].squeeze()
-
 spy_ma200 = spy.rolling(200).mean()
-spy_risk_on = (spy > spy_ma200).reindex(prices.index, fill_value=False).astype(bool)
+# Reindex then forward-fill (not fill_value=False): a date missing from
+# spy/ftse's own data (e.g. a market holiday for one side) should carry
+# forward the last known regime state, not be silently treated as risk-off.
+spy_risk_on = (spy > spy_ma200).reindex(prices.index).ffill().fillna(False).astype(bool)
 
 ftse_ma200 = ftse.rolling(200).mean()
-ftse_risk_on = (ftse > ftse_ma200).reindex(prices.index, fill_value=False).astype(bool)
+ftse_risk_on = (ftse > ftse_ma200).reindex(prices.index).ffill().fillna(False).astype(bool)
 
 def is_risk_on(ticker, date, mode="single"):
     spy_on = bool(spy_risk_on.at[date])
@@ -197,7 +207,15 @@ def backtest(signals, prices, volatility, atr, rebalance_freq, atr_mult,
     if profit_atr_mult is None:
         profit_atr_mult = atr_mult
     
-    rebalance_dates = prices.resample(rebalance_freq).last().index
+    # prices.resample(rebalance_freq).last().index would return calendar
+    # period-end labels (e.g. 2026-01-31) even when that exact date is a
+    # weekend and never appears in prices.index — silently skipping monthly
+    # rotation for any month whose last calendar day falls on a Sat/Sun.
+    # Group the actual (business-day) index by period and take each period's
+    # real last row instead, so rebalance_dates only ever contains dates that
+    # genuinely exist in prices.index.
+    period_freq = rebalance_freq[:-1] if rebalance_freq.endswith("E") else rebalance_freq
+    rebalance_dates = prices.groupby(prices.index.to_period(period_freq)).tail(1).index
     holdings = pd.Series(0.0, index=prices.columns)
     entry_prices = {}
     entry_dates = {}
@@ -306,23 +324,27 @@ def backtest(signals, prices, volatility, atr, rebalance_freq, atr_mult,
                 entry_dates.pop(t, None)
                 stop_prices.pop(t, None)
 
-        # Rebalancing
-        if date in rebalance_dates:
-            selected = signals.loc[date][signals.loc[date]].index.tolist()
-            selected = [t for t in selected if is_risk_on(t, date, mode=risk_off_mode)]
+        # Today's qualifying, risk-on candidates — used both for the monthly
+        # rotation-out below and the daily slot fill-in that follows it.
+        selected = signals.loc[date][signals.loc[date]].index.tolist()
+        selected = [t for t in selected if is_risk_on(t, date, mode=risk_off_mode)]
 
+        # Monthly rebalance: rotate out any holding that has fallen out of the
+        # current top-n qualifying set. Only evaluated on rebalance dates so a
+        # position isn't force-sold mid-month over a temporary rank dip.
+        if date in rebalance_dates:
             exits = []
             for t in list(holdings[holdings > 0].index):
                 if t not in selected:
                     exits.append(t)
-            
+
             for t in exits:
                 shares = holdings[t]
                 holding_days = (date - entry_dates[t]).days
                 exit_price = prices.loc[date, t]
                 entry_price = entry_prices[t]
                 current_profit_pct = (exit_price - entry_price) / entry_price
-                
+
                 fee = transaction_fee(t, "sell")
                 exit_adj = exit_price * (1 - fee)
                 pnl = (exit_adj - entry_price) * shares
@@ -347,46 +369,49 @@ def backtest(signals, prices, volatility, atr, rebalance_freq, atr_mult,
                 entry_dates.pop(t, None)
                 stop_prices.pop(t, None)
 
-            portfolio_value = cash + (holdings * prices.loc[date]).sum()
-            num_existing = (holdings > 0).sum()
-            num_new_slots = len(selected) - num_existing
-            
-            if num_new_slots > 0:
-                existing_tickers = holdings[holdings > 0].index.tolist()
-                new_candidates = [t for t in selected if t not in existing_tickers][:num_new_slots]
-                
-                if len(new_candidates) > 0:
-                    available_cash = cash
-                    vols = volatility.loc[date, new_candidates].replace(0, np.nan).dropna()
-                    
-                    if len(vols) > 0:
-                        inv_vol = 1 / vols
-                        weights = inv_vol / inv_vol.sum()
+        # Daily slot fill-in: whenever fewer than top-n positions are held
+        # (a stop, risk-off, or rotation exit freed up a slot), buy a
+        # qualifying candidate as soon as one is available rather than
+        # waiting for the next month-end rebalance to deploy the cash.
+        num_existing = (holdings > 0).sum()
+        num_new_slots = len(selected) - num_existing
 
-                        weights_constrained = {}
-                        for t, w in weights.items():
-                            weights_constrained[t] = max(min_position_pct, min(w, max_position_pct))
-                        
-                        total_weight = sum(weights_constrained.values())
-                        weights_final = {t: w / total_weight for t, w in weights_constrained.items()}
+        if num_new_slots > 0:
+            existing_tickers = holdings[holdings > 0].index.tolist()
+            new_candidates = [t for t in selected if t not in existing_tickers][:num_new_slots]
 
-                        for t, w in weights_final.items():
-                            buy_fee = transaction_fee(t, "buy")
-                            price = prices.loc[date, t] * (1 + buy_fee)
-                            alloc = available_cash * w
-                            shares = alloc / price
+            if len(new_candidates) > 0:
+                available_cash = cash
+                vols = volatility.loc[date, new_candidates].replace(0, np.nan).dropna()
 
-                            holdings[t] = shares
-                            entry_prices[t] = price
-                            entry_dates[t] = date
+                if len(vols) > 0:
+                    inv_vol = 1 / vols
+                    weights = inv_vol / inv_vol.sum()
 
-                            atr_val = atr.loc[date, t]
-                            if stop_loss_mode == "simple":
-                                stop_prices[t] = price - atr_mult * atr_val
-                            else:
-                                stop_prices[t] = price - initial_atr_mult * atr_val
+                    weights_constrained = {}
+                    for t, w in weights.items():
+                        weights_constrained[t] = max(min_position_pct, min(w, max_position_pct))
 
-                            cash -= shares * price
+                    total_weight = sum(weights_constrained.values())
+                    weights_final = {t: w / total_weight for t, w in weights_constrained.items()}
+
+                    for t, w in weights_final.items():
+                        buy_fee = transaction_fee(t, "buy")
+                        price = prices.loc[date, t] * (1 + buy_fee)
+                        alloc = available_cash * w
+                        shares = alloc / price
+
+                        holdings[t] = shares
+                        entry_prices[t] = price
+                        entry_dates[t] = date
+
+                        atr_val = atr.loc[date, t]
+                        if stop_loss_mode == "simple":
+                            stop_prices[t] = price - atr_mult * atr_val
+                        else:
+                            stop_prices[t] = price - initial_atr_mult * atr_val
+
+                        cash -= shares * price
 
         daily_value = cash + (holdings * prices.loc[date]).sum()
         portfolio_values.append(daily_value)
