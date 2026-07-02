@@ -132,6 +132,13 @@ test.describe('SC-SB-01 — Strategy Benchmark page accessible from navigation',
     await page.goto('/#/Positions');
     await page.waitForSelector('h1', { timeout: 10000 });
 
+    // The sidebar groups items under collapsible sections (Trading, Analytics,
+    // Tools, System — see Layout.js NAV_GROUPS). Only the group containing the
+    // *current* page starts expanded; "Strategy Benchmark" lives in the
+    // "Analytics" group, which is collapsed by default when navigating from
+    // Positions (in the "Trading" group). Expand it before clicking the link.
+    await page.getByRole('button', { name: 'Analytics' }).click();
+
     await page.getByRole('link', { name: 'Strategy Benchmark' }).first().click();
 
     await expect(page).toHaveURL(/#\/StrategyBenchmark/);
