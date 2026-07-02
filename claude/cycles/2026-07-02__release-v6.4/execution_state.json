@@ -217,10 +217,10 @@
       "notes": "Merged via PR #898, mergeCommit c906611f5cf5a119875cd30d671c5d68b9933c4e, 2026-07-02T15:15:46Z. Confirmed via merge-gate state sync (LL-v3.9-P3-1) — user reported merge; verified via gh pr view --json mergedAt."
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-02__release-v6.4/EPIC-03",
       "pr_number": 899,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-02__release-v6.4/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -380,7 +380,8 @@
           "sign_off_record": null,
           "notes": "Test-authoring (Case C). AC-01 (nav accessibility) covered by SC-SB-01; AC-02 (simultaneous filters) by SC-SB-02; AC-03 (Panel 1 placeholder) by SC-SB-03; AC-04 (toggle modes + badge colours) by SC-SB-04; AC-05 satisfied \u2014 file is tests/e2e/strategy-benchmark.spec.js. Scoped to Panels 1/3 only per sprint_backlog.md; Panel 0 (ST-08) stubbed to zero positions to avoid interference. CI defect caught + fixed pre-merge (PR #899, QA Lead/Director of Quality/Product Owner review pass): (1) initial SC-SB-01a navigated via /#/DashboardHome with insufficient route stubs -> 30s locator timeout; fixed in 4ca88dc4 by navigating from /#/Positions instead. (2) Second failure, same symptom: Layout.js groups sidebar items into collapsible sections (NAV_GROUPS) and only the group containing the current page starts expanded; 'Strategy Benchmark' lives in the 'Analytics' group, which stays collapsed (and its Link isn't even rendered) when navigating from Positions ('Trading' group). Fixed in 6883280462c0 by clicking the 'Analytics' group header to expand it before clicking the link. All 24 CI checks green as of this commit (Playwright E2E Acceptance Tests: pass, 9m52s). No spec-intent deviation \u2014 2 CI catches, not AC gaps."
         }
-      }
+      },
+      "notes": "Merged via PR #899, mergeCommit 488b34343230c597b3c12c94916c3b533b705777, 2026-07-02T17:38:26Z. Confirmed via merge-gate state sync on run sprint resume \u2014 verified via gh pr view --json mergedAt,mergeCommit."
     }
   },
   "blocked_items": [],
@@ -404,12 +405,11 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
-      "EPIC-02"
-    ],
-    "epics_pending": [
+      "EPIC-02",
       "EPIC-03"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
   "sealed": false,
   "sealed_utc": null
