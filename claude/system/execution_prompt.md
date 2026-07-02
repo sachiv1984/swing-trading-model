@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.49
+**Version:** 3.50
 **Last Updated:** 2026-07-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -665,7 +665,7 @@ Last Updated: <date>
 
 The consolidation block must include: EPIC, Cycle, Sprint goal, Test scenarios used, a row per ST item (Spec Reference / What was built / AC / Result / Deviations), QA test coverage (scenarios run, regression areas, deviations), and the sign-off block. **Template: `claude/system/templates/qa_evidence_template.md`** — read this file to get the exact header, consolidation block format, and sign-off block template. Key rule: the sign-off block `Date:` field must be non-blank before the PR can be opened (§3.2.B pre-condition) and before the merge gate runs.
 
-**Advisory (OA-1/ST-01):** After completing DoQ sign-off and committing `qa_evidence_EPIC-xx.md`, update `execution_state.json` `qa_signed_off: true` in the same commit.
+**Hard requirement (OA-1/ST-01, elevated from advisory — DF-02, v6.3 Phase 3 LL, applied v6.4 post-ship closure):** After completing DoQ sign-off and committing `qa_evidence_EPIC-xx.md`, update `execution_state.json` `qa_signed_off: true` in the same commit. The STEP 4 merge gate table's `qa_signed_off = true (execution_state.json)` row enforces this — the merge gate blocks if the flag is unset, even if the qa_evidence log and PR comment are both present.
 
 This file is the evidence backing `qa_signed_off = true` in `execution_state.json`. A PR comment alone is not sufficient — this file must exist and the sign-off block must be complete before the merge gate runs.
 
@@ -725,6 +725,7 @@ A PR may only be merged when **all** of the following are true:
 | `spec_references` | populated for all `done` ST items |
 | `qa_evidence_EPIC-xx.md` | exists; all ST item disposition sections completed by Director of Quality |
 | QA sign-off | comment from Director of Quality on PR referencing qa_evidence log |
+| `qa_signed_off = true` (execution_state.json) | flag set in the same commit as the qa_evidence sign-off block (DF-02, v6.3 Phase 3 LL) — a PR comment alone does not satisfy this row |
 | Product Owner acceptance | recorded (comment on PR or in `sprint_backlog.md`) |
 | `quality_gate.yml` CI | passed (PR title has `[EPIC-xx]`, all checks green) |
 | No open escalations | for items in this EPIC |

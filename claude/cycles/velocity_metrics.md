@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-06-25 (post-ship closure 2026-06-24__release-v6.2)
+**Last Updated:** 2026-07-02 (post-ship closure 2026-07-02__release-v6.4)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -71,8 +71,9 @@
 | v6.1  | 9       | 9         | 1.00     | All 9 stories done; zero deviations; autonomous class sign-off misapplication (EPIC-03/04) retrospective DoQ counter-sign applied at verification; PT-04 gate cleared at sprint planning (15 trades confirmed); BLG-GOV-135/136 filed for v6.2 governance hardening; 0 returns; 0 delegations |
 | v6.2  | 13      | 13        | 1.00     | All 13 stories done; zero deviations; full delivery of both Sprint 1 (EPIC-01: production strategy parity cluster — trailing stops, rebalance exits, inv-vol sizing, risk-off alerts) and Sprint 2 (EPIC-02: AI intelligence layer — daily briefing, chat advisor); EPIC-03 governance/QA debt closed (BLG-GOV-135/136, BLG-OPS-75, BLG-QA-62); §13 SRB-v1.7 advisory-only compliance confirmed; BLG-QA-64 filed (12 dark specs); Verified |
 | v6.3  | 15      | 15        | 1.00     | All 15 stories done; zero deviations; full delivery of all 3 EPICs (EPIC-01: AI correctness + security + compliance; EPIC-02: QA infrastructure; EPIC-03: Strategy Benchmark + UX); LP-02 validated — Sprint 2 L-effort pattern works; TSG-v63-01/02 filed; BLG-OPS-82 endpoint drift advisory; Verified |
+| v6.4  | 13      | 13        | 1.00     | All 13 stories done; zero deviations; full delivery of all 3 EPICs (EPIC-01: production correctness fast-track BLG-BE-40 + AI security hardening BLG-SEC-01/02; EPIC-02: AUD-2026-07-01 lifecycle-audit remediation, all 4 clusters BLG-GOV-150–153 including 2-cycle-carried FI-P3-01/FI-P3-02/FI-P4-01 re-targets closed; EPIC-03: Strategy Benchmark Open Positions panel BLG-FEAT-54 Skill-Silo pull-forward + UX contrast fixes + endpoint baseline + Playwright coverage); BLG-OPS-83 filed (v6.4 endpoint drift advisory); 0 delegations; 0 returns; Verified |
 
-**Rolling 6-cycle average (v5.8–v6.3):** 0.88
+**Rolling 6-cycle average (v5.9–v6.4):** 1.00
 
 ---
 

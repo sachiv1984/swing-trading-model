@@ -3,9 +3,44 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-30 (post-ship closure 2026-06-26__release-v6.3)
+**Last Updated:** 2026-07-02 (post-ship closure 2026-07-02__release-v6.4)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v6.4 — Audit Remediation, Security Hardening & Strategy Benchmark Enhancement — 2026-07-02
+Cycle: 2026-07-02__release-v6.4
+Verified: Verified
+Verification report: claude/cycles/2026-07-02__release-v6.4/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Production correctness fix + AI security hardening: signal generation now reads `ticker_universe` instead of the deprecated `tickers` table (BLG-BE-40, P1 fast-track); `context_opts.ticker` sanitised before system prompt injection, including a trailing-newline regex bypass closed during sign-off (BLG-SEC-01); ticker/market strings validated at all 3 signal write paths, including a second write path (`database.update_signal()`) discovered during sign-off review (BLG-SEC-02) | docs/specs/api_contracts/signal_endpoints.md#POST /signals/generate; docs/specs/api_contracts/ticker_universe_api_contract.md; docs/specs/security/ai_injection_risk_assessment.md; docs/specs/api_contracts/ai_endpoints.md#POST /ai/chat |
+| EPIC-02 | AUD-2026-07-01 lifecycle-audit remediation: governance version-sync drift corrected (BLG-GOV-150); document hygiene cleanup (BLG-GOV-151); structural reliability gaps closed, including the 2-cycle-carried FI-P4-01/DF-10 `spec_references` convention and FI-P3-02 staging-AC wording ambiguity, plus FI-P3-01 Base44 advisory (BLG-GOV-152); audit/governance process fixes — design gate bypass dual-authority rule, `run audit` dry-run table entry, FRICTION_LOAD formula wording, `scored_initiatives.md` naming (BLG-GOV-153) | claude/system/OPERATIONAL_GUIDE.md; claude/system/roadmap_prompt.md; claude/agents/metrics_definitions_analytics_owner.md; claude/README.md; claude/system/shared_standards.md; claude/system/execution_prompt.md; CLAUDE.md; claude/system/amendment_cycle_prompt.md; claude/agents/base44_frontend_prompt_owner.md; claude/charter/team_charter.md; claude/audit.py |
+| EPIC-03 | Strategy Benchmark Open Positions panel + UX/QA polish: Panel 0 (Open Positions) added to Strategy Benchmark page, showing unrealized P&L for open backtest positions (BLG-FEAT-54 — Skill-Silo pull-forward); AI daily briefing and chat widget disclaimer contrast fixed to meet WCAG AA (BLG-UX-01/02); v6.3 endpoints added to API performance baseline, measured against production after staging returned 404 (BLG-OPS-82); Playwright coverage added for AI journal summary error states and the full Strategy Benchmark page — nav, filters, toggle modes, badge colours (TEST-GAP-EPIC-01, TEST-GAP-EPIC-03) | docs/design/2026-07-02__release-v6.4/open-positions-panel/ux_spec.md; docs/specs/frontend/pages/strategy_benchmark.md; docs/specs/api_contracts/strategy_benchmark_endpoints.md; docs/reference/openapi.yaml; docs/specs/qa/ai_disclaimer_visibility_assessment.md; docs/ops/api_performance_baseline.md |
+
+### Deviations accepted
+None — no spec deviations this sprint.
+
+### Tech backlog items shipped
+- [ST-01] BLG-BE-40: Signal generation reads deprecated `tickers` table instead of `ticker_universe` — switched to `ticker_universe_service.get_all_tickers(active_only=True)`
+- [ST-02] BLG-SEC-01: Sanitise `context_opts.ticker` before system prompt injection — HTTP 422 on newline/injection characters; trailing-newline regex bypass closed at sign-off
+- [ST-03] BLG-SEC-02: Validate ticker/market strings at signal write time — all 3 signal write paths sanitised, including `update_signal()` discovered during review
+- [ST-04] BLG-GOV-150: Fix governance version-sync drift — OPERATIONAL_GUIDE.md self-desync, stale §14 roadmap version, metrics owner role-name drift
+- [ST-05] BLG-GOV-151: Document hygiene cleanup — README coverage/staleness/broken path, Class 6 header format, agent header bolding
+- [ST-06] BLG-GOV-152: Close structural reliability gaps — append-only guard parity, FI-P4-01/DF-10 spec_references convention, FI-P3-02 staging AC protocol, FI-P3-01 Base44 advisory, amendment_lessons sunset contradiction
+- [ST-07] BLG-GOV-153: Audit & governance process fixes — design gate bypass authority, run audit dry-run entry, friction_load formula wording, scored_initiatives naming
+- [ST-08] BLG-FEAT-54: Add Open Positions panel to Strategy Benchmark page — `backtest_open_positions` table, one-line summary + per-position table
+- [ST-09] BLG-UX-01: Improve AI daily briefing disclaimer text contrast — text-slate-500 → text-slate-300
+- [ST-10] BLG-UX-02: Improve AI chat widget footer disclaimer contrast and add test coverage — text-slate-600 → text-slate-400; data-testid + Playwright assertion
+- [ST-11] BLG-OPS-82: Add v6.3 endpoints to `api_performance_baseline.md` — 3 GET endpoints measured against production
+- [ST-12] TEST-GAP-EPIC-01: Playwright coverage for ST-01 observable UI ACs — AI journal summary error states on Trade History tab
+- [ST-13] TEST-GAP-EPIC-03: Playwright scenario coverage for Strategy Benchmark page — nav, filters, Panel 1 placeholder, toggle modes/badge colours
+
+Sign-off: Product Owner — 2026-07-02
+QA sign-off: Director of Quality — 2026-07-02
 
 ---
 

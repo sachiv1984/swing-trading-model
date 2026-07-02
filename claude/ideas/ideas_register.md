@@ -2,7 +2,7 @@
 **Class:** Planning Document (Class 4)
 **Status:** Active
 **Version:** 2.4
-**Last Updated:** 2026-07-01 (roadmap rebalance 2026-07-01__scheduled — 19 rows advanced Parked-cycle-1→Parked-cycle-2; 1 row (IDEA-infra-ops-20260622-02) reached 3rd-park decision point and moved to Rejected per §4.5 hard cap; 20 active rows processed, 19 active rows remain)
+**Last Updated:** 2026-07-02 (ideas_housekeeping — post-ship closure 2026-07-02__release-v6.4 — 1 terminal row archived (IDEA-infra-ops-20260622-02, Rejected); 18 rows remain, all Parked-cycle-2)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # Ideas Register
@@ -12,7 +12,6 @@ Schema: per `shared_standards.md §16.5`
 
 | Idea ID | Title | Submitter | Window | Submitted At | Status | Park Count | Park Rationale | Step 4 | Step 5 |
 |---------|-------|-----------|--------|--------------|--------|------------|----------------|--------|--------|
-| IDEA-infra-ops-20260622-02 | Deployment health widget: version, uptime, and last-deploy timestamp on homepage | Infrastructure & Operations Owner | IW-20260622-01 | 2026-06-22 | Rejected | 2 | 3rd-park decision point (§4.5 hard cap) reached 2026-07-01: System Status page already surfaces API health/version/uptime adequately; duplicate homepage widget adds dashboard complexity for marginal value; no unmet gate identified that would change this — Reject rather than re-park | Reject (not strong) | — |
 | IDEA-product-owner-20260626-01 | AI chat conversation history persistence across sessions | Product Owner | IW-20260626-01 | 2026-06-26 | Parked-cycle-2 | 2 | v6.2 AI chat shipped 2026-06-25; only 6 days usage data as of 2026-07-01 (target ~30 days, clears ~2026-07-25); §13 review still required before persistence design | Park C2 | — |
 | IDEA-product-owner-20260626-02 | Trade entry confirmation: AI-assisted setup thesis digest at order placement | Product Owner | IW-20260626-01 | 2026-06-26 | Parked-cycle-2 | 2 | AI feature layer shipped 6 days ago; user adoption pattern not yet established; premature to add another AI touchpoint before existing ones validated | Park C2 | — |
 | IDEA-head-of-specs-20260626-02 | Spec coverage gap detection: auto-compare frontend page specs against deployed routes | Head of Specs Team | IW-20260626-01 | 2026-06-26 | Parked-cycle-2 | 2 | Useful but requires script design decision; timing depends on spec ecosystem maturity, unchanged since last park | Park C2 | — |

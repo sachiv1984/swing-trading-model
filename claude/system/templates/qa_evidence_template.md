@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.5
+**Version:** 1.6
 **Last Updated:** 2026-06-09
 
 # QA Evidence Template
@@ -48,6 +48,7 @@ Last Updated: <date>
 
 > **Authoring note:** When completing the sign-off block, update all AC table rows from "Pending"/"Awaiting QA" to "Pass" or "Pass with notes" in the same edit. Sign-off block and AC table must be consistent.
 > **Date field requirement:** The `Date:` field must be non-blank before the PR can be opened and before the merge gate runs. Fill in the date when signing off, not at sprint close.
+> **Signer format requirement (v6.3 Phase 4 LL, applied v6.4 post-ship closure):** The `Signed off by:` value must be exactly one of: `Director of Quality`, `Sprint Execution Engine (autonomous class)`, or `Sprint Execution Engine (agent-mediated, <Role Name> role — §X.Y)` (or one of the two delegated-QA aggregate formats below). No other format is compliant — Tier 2 sign-off format flags at Delivery Verification STEP -1.3 are triggered by deviation from these exact strings.
 
 - [x] All acceptance criteria verified against canonical spec
 - [x] No unresolved P0 or P1 deviations

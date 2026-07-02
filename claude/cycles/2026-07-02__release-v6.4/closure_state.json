@@ -1,0 +1,30 @@
+{
+  "cycle_id": "2026-07-02__release-v6.4",
+  "release": "v6.4",
+  "status": "In_Progress",
+  "mode": "standard",
+  "dry_run": false,
+  "started_utc": "2026-07-02T19:00:00Z",
+  "last_updated_utc": "2026-07-02T20:00:00Z",
+  "steps": {
+    "preflight": "pass",
+    "step_0_context": "pass",
+    "step_1_changelog": "pass",
+    "step_2_roadmap": "pass",
+    "step_3_backlog": "pass",
+    "step_4_scope_decisions": "pass",
+    "step_5_deviation_compliance": "pass",
+    "step_6_operational_docs": "pass",
+    "step_7_specs_index": "pass",
+    "step_8_lessons_learnt": "pass",
+    "step_8_5_lessons_closure": "pass",
+    "step_9_closure_record": "pass",
+    "step_10_global_state": "pass",
+    "step_11_manage_roadmap": "complete",
+    "step_12_groom_backlog": "complete",
+    "step_12_5_ideas_housekeeping": "complete",
+    "step_13_commit": "not_started"
+  },
+  "step_12_5_outcome": "1 row archived (IDEA-infra-ops-20260622-02, Rejected — §4.5 hard cap); 18 rows kept (Parked-cycle-2); revival review: IDEA-pmo-lead-20260619-02 (Sprint Velocity Trend Chart) assessed Met — velocity_metrics.md now populated with 35+ cycles and updated across many rebalances, well past the 5-cycle/2-rebalance revival gate; 4 other rejected-but-strong entries remain Unmet; pipeline health: 124 active backlog items — healthy, no advisory",
+  "closure_status": "Closed_with_actions"
+}

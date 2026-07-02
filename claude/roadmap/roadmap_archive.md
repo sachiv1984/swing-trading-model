@@ -1,13 +1,47 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-30 (post-ship closure 2026-06-26__release-v6.3 — RA:v6.3 retired)
+**Last Updated:** 2026-07-02 (post-ship closure 2026-07-02__release-v6.4 — RA:v6.4 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v6.4 — Production Correctness Fast-Track (Audit Remediation, Security Hardening & Strategy Benchmark Enhancement)
+
+**Original roadmap location:** §1 Current Version / §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-07-02
+**Shipped version:** v6.4
+**Cycle reference:** 2026-07-02__release-v6.4
+**Verification report:** claude/cycles/2026-07-02__release-v6.4/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-07-02
+
+### Original Roadmap Entry
+
+<!-- roadmap-annotation-marker: RA:v6.4:2026-07-02__release-v6.4 -->
+
+### v6.4 — Production Correctness Fast-Track — ✅ Complete — Shipped 2026-07-02 — cycle: 2026-07-02__release-v6.4
+
+**Added:** 2026-07-01 (roadmap rebalance 2026-07-01__scheduled — STEP 8.0 mandatory fast-track)
+
+| BLG ID | Title | Priority | Effort | Type | Status |
+|--------|-------|----------|--------|------|--------|
+| BLG-BE-40 | Signal generation reads deprecated `tickers` table instead of `ticker_universe` | P1 | XS | D | ✅ Shipped |
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-02__release-v6.4
+- Plan published: 2026-07-02
+- Cycle folder: claude/cycles/2026-07-02__release-v6.4/
+- Backlog slice: claude/cycles/2026-07-02__release-v6.4/stage4_backlog_slice.md
+- Status at annotation: Committed
+
+**Verified:** 2026-07-02 (post-ship closure 2026-07-02__release-v6.4) — verification report: `claude/cycles/2026-07-02__release-v6.4/verification_report.md`. Full v6.4 scope (13 stories, 3 EPICs — production correctness, AI security hardening, AUD-2026-07-01 lifecycle-audit remediation, Strategy Benchmark Open Positions panel, UX/QA polish) delivered; see `docs/product/changelog.md#v6.4`.
 
 ---
 

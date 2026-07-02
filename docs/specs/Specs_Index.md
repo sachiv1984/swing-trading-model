@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-06-30 (post-ship closure 2026-06-26__release-v6.3; §31 v6.3 test coverage gaps added — TSG-v63-01 EPIC-01 AI journal error states, TSG-v63-02 EPIC-03 Strategy Benchmark Playwright gaps; TSG-v60-01 remains Open — 2nd cycle)
+**Last Updated:** 2026-07-02 (post-ship closure 2026-07-02__release-v6.4; §31 TSG-v63-01/02 resolved; §32 v6.4 test coverage gap added — TSG-v64-01 EPIC-03 Panel 0 Playwright gap; TSG-v60-01 (BLG-QA-61) remains Open — 3rd cycle, 2-cycle recurrence escalation)
 
 ---
 
@@ -778,12 +778,25 @@ Identified during delivery verification (verification_report.md §6 — 2 gap it
 
 | gap_id | EPIC | Description | Disposition |
 |--------|------|-------------|-------------|
-| TSG-v63-01 | EPIC-01 | AI journal error states not covered by Playwright — ST-01 (BLG-BE-39) fixed the silent failure but error state paths (network error, API timeout, empty notes) have no automated test coverage | backlog_item_created — TEST-GAP-EPIC-01 (BLG-QA backlog, Provisional-Target: v6.4) |
-| TSG-v63-02 | EPIC-03 | Strategy Benchmark page (StrategyBenchmark.js) — test_scenarios pending; no Playwright E2E coverage for the page's 5 observable ACs (navigation, year filter, panel rendering, toggle modes, badge language) | backlog_item_created — TEST-GAP-EPIC-03 (BLG-QA backlog, Provisional-Target: v6.4) |
+| TSG-v63-01 | EPIC-01 | AI journal error states not covered by Playwright — ST-01 (BLG-BE-39) fixed the silent failure but error state paths (network error, API timeout, empty notes) have no automated test coverage | **RESOLVED — 2026-07-02 (v6.4 ST-12, cycle 2026-07-02__release-v6.4).** SC-TH-AI-01/02/03 added to `tests/e2e/trade-history-ai-journal-summary.spec.js`; backlog item TEST-GAP-EPIC-01 closed. |
+| TSG-v63-02 | EPIC-03 | Strategy Benchmark page (StrategyBenchmark.js) — test_scenarios pending; no Playwright E2E coverage for the page's 5 observable ACs (navigation, year filter, panel rendering, toggle modes, badge language) | **RESOLVED — 2026-07-02 (v6.4 ST-13, cycle 2026-07-02__release-v6.4).** SC-SB-01/02/03/04 added to `tests/e2e/strategy-benchmark.spec.js` (scoped to Panels 1/3 per sprint_backlog.md; Panel 0 tracked separately as TSG-v64-01); backlog item TEST-GAP-EPIC-03 closed. |
 
 **TSG backlog reconciliation (§7.3):**
-- TSG-v60-01 (BLG-QA-61): signals_scenarios.md review — **remains Open** — BLG-QA-61 not resolved in v6.3 sprint (2nd cycle without resolution; escalates to 2-cycle recurrence at v6.4 if still open).
-- All other open TSG entries checked; no v6.3 stories close any outstanding pre-v6.3 TSG items.
+- TSG-v60-01 (BLG-QA-61): signals_scenarios.md review — **remains Open** — BLG-QA-61 not resolved in v6.4 sprint either (3rd consecutive cycle without resolution; per the v6.3 note this is now a 2-cycle recurrence escalation). Escalated to Head of Specs Team — see `lessons_learnt_closure.md` Carry-Forward, cycle 2026-07-02__release-v6.4.
+- All other open TSG entries checked; no v6.4 stories close any other outstanding pre-v6.4 TSG items.
+
+---
+
+## 32. Test Coverage Gaps — v6.4 (2026-07-02__release-v6.4)
+
+Identified during delivery verification (verification_report.md §6 — 1 gap item). Backlog item created.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| TSG-v64-01 | EPIC-03 | ST-08/AC-01 — Open Positions Panel 0 conditional rendering on Strategy Benchmark page has no Playwright coverage this sprint (ST-13/TEST-GAP-EPIC-03 scoped to Panels 1/3 only; AC-01 cleared by code review only) | backlog_item_created — TEST-GAP-EPIC-03-v64 (BLG-QA backlog, Provisional-Target: v6.5) |
+
+**TSG backlog reconciliation (§7.3):**
+- No pre-v6.4 TSG items closed by this cycle beyond TSG-v63-01/02 (recorded in §31 above).
 
 ---
 

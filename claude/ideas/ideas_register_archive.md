@@ -1,11 +1,21 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-30
+**Last Updated:** 2026-07-02
 
 # Ideas Register Archive — Momentum Trading Assistant
 
 Permanent record of terminal ideas rows retired from `claude/ideas/ideas_register.md`. Append-only — do not edit existing entries.
+
+---
+
+## Archived 2026-07-02 (ideas_housekeeping — post-ship closure 2026-07-02__release-v6.4)
+
+*Terminal classification: Rejected (not strong) — 3rd-park decision point (§4.5 hard cap) reached; idea ID confirmed absent from `rejected_but_strong.md`.*
+
+| Idea ID | Title | Submitter | Window | Submitted At | Status | Park Count | Park Rationale | Step 4 | Step 5 |
+|---------|-------|-----------|--------|--------------|--------|------------|----------------|--------|--------|
+| IDEA-infra-ops-20260622-02 | Deployment health widget: version, uptime, and last-deploy timestamp on homepage | Infrastructure & Operations Owner | IW-20260622-01 | 2026-06-22 | Rejected | 2 | 3rd-park decision point (§4.5 hard cap) reached 2026-07-01: System Status page already surfaces API health/version/uptime adequately; duplicate homepage widget adds dashboard complexity for marginal value; no unmet gate identified that would change this — Reject rather than re-park | Reject (not strong) | — |
 
 ---
 

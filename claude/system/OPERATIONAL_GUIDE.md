@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.69
+**Version:** 4.71
 **Last Updated:** 2026-07-02
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.49)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.50)
 
 ### 8.1 Invocation
 
@@ -1467,8 +1467,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.39 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.12 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.49 |
-| QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.5 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.50 |
+| QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.6 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.1 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.15 |
@@ -1494,6 +1494,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.71 | 2026-07-02 | **Post-ship closure 2026-07-02__release-v6.4 STEP 8 immediate action — execution_prompt.md v3.49→v3.50: qa_signed_off elevated from advisory to hard merge-gate requirement (DF-02).** §8 source prompt header v3.49→v3.50. §14 Execution Engine Source v3.49→v3.50. §14 Version 4.70→4.71/2026-07-02. Change: §3.2.B `qa_signed_off` note upgraded from "Advisory (OA-1/ST-01)" to a hard requirement; STEP 4 merge gate table gained a new row — `qa_signed_off = true (execution_state.json)` must be set, independent of the PR-comment QA sign-off row. Resolves a deferred v6.3 Phase 3 lessons-learnt patch (DF-02) not applied at v6.4 planning time (1st missed target); applied now rather than re-deferred, per post-ship closure's non-deferrable immediate-action rule. Cross-check also confirmed DF-01 and DF-05 (v6.3 carry-forward) are already satisfied by pre-existing patches (LL-v3.7-EX-01 and AUD-2026-06-22-001 respectively) — no further action required; DF-06 confirmed applied in sprint_backlog.md this cycle. Authority: Head of Specs Team (v6.4 post-ship closure, 2026-07-02). |
+| 4.70 | 2026-07-02 | **Post-ship closure 2026-07-02__release-v6.4 STEP 8 immediate action — qa_evidence_template.md v1.5→v1.6: signer format requirement made explicit.** §14 QA Evidence Template v1.5→v1.6. §14 Version 4.69→4.70/2026-07-02. Change: new authoring note added to the Standard Sign-Off Block specifying the exact set of compliant `Signed off by:` values (`Director of Quality`, `Sprint Execution Engine (autonomous class)`, `Sprint Execution Engine (agent-mediated, <Role Name> role — §X.Y)`, or the two delegated-QA aggregate formats). Resolves a deferred v6.3 Phase 4 lessons-learnt patch that was not applied at v6.4 planning time (1st missed target); applied now per post-ship closure's non-deferrable immediate-action rule rather than deferred a second time. Authority: Head of Specs Team (v6.4 post-ship closure, 2026-07-02). |
 | 4.69 | 2026-07-02 | **v6.4 ST-07 (BLG-GOV-153, EPIC-02) — audit & governance process fixes.** §6 source prompt header updated v7.8→v7.9. §13 Artefact Register Roadmap Rebalance Prompt row updated v7.8→v7.9. §14 Roadmap Engine Source v7.8→v7.9. §14 Shared Standards v3.6→v3.7. §14 Team Charter v1.6→v1.7. §14 Version 4.68→4.69/2026-07-02. Changes: (AC-01/G5) `team_charter.md` new §5.7 "Design gate bypass disputes" added — codifies the dual-authority requirement (Head of UX & Design + Product Owner) already enforced procedurally at `sprint_planning_prompt.md` STEP -1, closing G5 FAIL. (AC-02) `shared_standards.md` §13 dry-run table — `run audit` row added (N/A, read-only by design). (AC-03) `claude/audit.py` FRICTION_LOAD formula — wording clarified to "since PRIOR_AUDIT_ID" rather than ambiguous "across all cycles" (comment/docstring only, no AUDIT_VERSION bump — scoring behaviour unchanged). (AC-04) `roadmap_prompt.md` STEP write instruction — `scored_initiatives.md` documented as intentionally current-cycle-only (overwritten each run, no cycle-dated copies); orphaned `claude/scoring/scored_initiatives_2026-03-06.md` removed. Authority: Head of Specs Team (v6.4 ST-07, 2026-07-02). |
 | 4.68 | 2026-07-02 | **v6.4 ST-06 (BLG-GOV-152 + FI-P3-01/FI-P3-02/FI-P4-01 re-target, EPIC-02) — 4 structural reliability gaps closed.** §14 Shared Standards v3.5→v3.6. §14 Execution Engine Source v3.48→v3.49. §14 Amendment Cycle Engine v1.8→v1.9. §14 Version 4.67→4.68/2026-07-02. Changes: (AC-01) shared_standards.md §7 — structural verification requirement note added covering the 4 append-only files without a structural guard (`escalations.md`, `execution_escalations.md`, `verification_escalations.md`, `delegation_log.md`), referencing `decision_log.md`'s existing structural pattern as the model to apply. (AC-02/FI-P4-01/DF-10) execution_prompt.md `spec_references` policy — Case D (CI/infrastructure) added; trailing sentence corrected so `spec_references = []` no longer the recommended default for infra stories with an identifiable primary file. (AC-03/FI-P3-02) CLAUDE.md §2 frontend testing gate — wording-only vs visual/rendering AC exception added (not a Class 6 prompt, no version bump). (AC-04) amendment_cycle_prompt.md §9 completion condition — `amendment_lessons.md` bullet made explicitly conditional on file version <2.0, matching §8's deprecation framing. (AC-05/FI-P3-01) `claude/agents/base44_frontend_prompt_owner.md` v1.2→v1.3 (agent charter, not §14-tracked) — Playwright strict-mode `data-testid` advisory added to §3 "6. Expected outcome". Authority: Head of Specs Team (v6.4 ST-06, 2026-07-02). |
 | 4.67 | 2026-07-02 | **v6.4 ST-05 (BLG-GOV-151, EPIC-02) — Class 6 header format fix: roadmap_prompt.md v7.7→v7.8, release_planning_prompt.md v2.38→v2.39, sprint_planning_prompt.md v3.11→v3.12.** §6 source prompt header updated v7.7→v7.8. §6B source prompt header updated v2.38→v2.39. §7 source prompt header updated v3.11→v3.12. §13 Artefact Register Roadmap Rebalance Prompt row updated v7.7→v7.8. §14 Roadmap Engine Source v7.7→v7.8. §14 Release Engine Source v2.38→v2.39. §14 Sprint Planning Engine v3.11→v3.12. §14 Version 4.66→4.67/2026-07-02. Change: all 3 files' `**Last Updated:**` header field changed from date-plus-change-description prose to date-only, per `document_lifecycle_guide.md` Class 6 spec (`Last Updated: [date]`); change descriptions already duplicated in `prompt_change_log.md` are not lost. Authority: Head of Specs Team (AUD-2026-07-01-011, v6.4 ST-05, 2026-07-02). |

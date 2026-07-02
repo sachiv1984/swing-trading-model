@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-02 (session — 1 new item added: TEST-GAP-EPIC-03-v64)
+**Last Updated:** 2026-07-02 (groom backlog post-ship closure 2026-07-02__release-v6.4 — 13 items archived (BLG-BE-40, BLG-SEC-01/02, BLG-GOV-150/151/152/153, BLG-FEAT-54, BLG-UX-01/02, BLG-OPS-82, TEST-GAP-EPIC-01/03); 1 ephemeral release slice retired (v6.4); 0 orphans; 1 new item added (BLG-OPS-83); Phase 4 additions confirmed present (BLG-SEC-07/08, TEST-GAP-EPIC-03-v64))
 **Last rebalance:** 2026-07-01 (cycle 2026-07-01__scheduled — DL-058; 0 new backlog items this cycle; STEP 8.0: BLG-BE-40 mandatory v6.4 Now horizon addition (BLG-SPEC-35 excluded, not a correctness bug); STEP 3.1 Actionable Backlog Assessment: A=42/32%, T=7/5%, D=27/21%, L=55/42% of 131 items (BLG-GOV-144 flagged >12mo archive candidate); PVR=0.36 Advisory; Skill-Silo rolling-3-cycle avg=53.2% Alert (pull-forward candidate BLG-FEAT-54))
 
 > ⚠️ Standing Notice
@@ -374,31 +374,6 @@ Trades are currently classified only by market, sector, and signal type. There i
 - AC-01: User can add/remove tags on any trade plan
 - AC-02: GET /analytics/tag-performance returns win rate and average R broken down by tag
 - AC-03: PerformanceAnalytics page surfaces tag-based filter controls
-
----
-
-### BLG-FEAT-54 — Add Open Positions panel to Strategy Benchmark page
-**Priority:** P2 (Medium)
-**Type:** Product Feature / Data Transparency
-**Owner:** Head of UX & Design; Backend Engineering Patterns Owner
-**Source:** User request following backtest pipeline investigation (PRs #877–#883) — 2026-07-01
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v6.4
-
-**Problem**
-The Strategy Benchmark page's trade log and Panel 1/2 aggregates only reflect closed trades. When the backtest is fully invested (holding its max `top_n` positions), the page shows no activity past the last entry date, reading as stalled or out of signals when real capital is actively deployed with real unrealized P&L. Observed directly: ~£46k unrealized across 5 open positions as of 2026-06-30, with the page showing nothing since 2026-06-23/24.
-
-**Scope**
-- New `backtest_open_positions` table with the same full-replace nightly semantics as `backtest_trades` (pattern established in PR #882)
-- `production_strategy.py` / `import_backtest.py`: send the currently-filtered-out `"Open (Unrealized)"` rows here instead of discarding them
-- New read path — either a field on `GET /strategy/benchmark/summary` or a new `GET /strategy/benchmark/open-positions` endpoint; if a new route, ship `openapi.yaml` entry, `docs/specs/api_contracts/` doc, and `backend/routers/test.py` registration in the same commit
-- New frontend panel on `StrategyBenchmark.js`, placed above the existing trade log: a one-line summary (`"X of top_n slots held · Unrealized P&L: ±£Y"`) plus a per-position table (Ticker, Market, Entry Date, Entry Price, Current Price, Unrealized P&L £/%), using the page's existing `pnlClass`/`fmtGbp` conventions
-
-**Acceptance Criteria**
-- Panel appears whenever ≥1 unrealized position exists, showing the summary line and per-position table
-- Panel 1/2 realized win-rate/PnL stats are unaffected — unrealized positions never enter those aggregates
-- New table is fully replaced (not upserted) on each nightly import, consistent with `backtest_trades`
-- Any new endpoint ships with `openapi.yaml`, contract doc, and `test.py` registration in the same commit
 
 ---
 
@@ -1104,28 +1079,6 @@ PO-04 (Reflection ↔ Outcome Correlation) requires journal entries with quantif
 - Data prerequisites assessment document produced
 - New fields required for PO-04 identified and estimated
 - Gate condition verified before sprint planning
-
----
-
-### BLG-BE-40 — Signal generation reads deprecated `tickers` table instead of `ticker_universe`
-**Priority:** P1 (High)
-**Type:** Backend Engineering / Data Model
-**Owner:** Backend Engineering Patterns Owner
-**Source:** Investigation of hotfix/backtest-import-timeout (PRs #877/#878) — 2026-07-01
-**Effort:** XS (<1h)
-**Provisional-Target:** v6.4
-
-**Problem**
-`signal_service.py`'s `generate_momentum_signals()` imports `get_all_tickers` from `database.py`, which runs `SELECT ticker FROM tickers` against the legacy `tickers` table. Per the v3.9/EPIC-04 ST-09 changelog, the `public.tickers` startup sync was intentionally removed and `ticker_universe` was declared the sole authoritative source for screener and signal generation — `signal_service.py` was never switched over, so live signal generation reads a frozen, unmaintained snapshot instead of the actively-managed ticker list. This diverges from both the screener (`screener_batch_service.py`, which already uses the correct getter) and `production_strategy.py`'s backtest (now correctly reading `ticker_universe` directly per the pgbouncer hotfix).
-
-**Scope**
-- Switch `signal_service.py`'s import from `database.get_all_tickers()` to `services.ticker_universe_service.get_all_tickers(active_only=True)`
-- Adjust the consuming loop (`for ticker in tickers:` around line 115), since the correct getter returns a list of dicts (with a `ticker` key) rather than a flat list of strings
-
-**Acceptance Criteria**
-- `signal_service.py` sources its ticker universe from `ticker_universe`, not `tickers`
-- Live signal generation matches the `ticker_universe` active list — verified by adding/deactivating a ticker in Ticker Universe Management and confirming it appears/disappears in generated signals
-- No regression to existing signal fields or downstream sizing logic
 
 ---
 
@@ -2914,152 +2867,6 @@ POST /ai/daily-briefing makes an Anthropic API call on every request. If the sam
 
 ---
 
-### BLG-GOV-150 — Fix governance version-sync drift (OPERATIONAL_GUIDE self-desync, stale §14 roadmap version, metrics owner role-name drift)
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** Lifecycle Audit AUD-2026-07-01 (AUD-2026-07-01-001, AUD-2026-07-01-003, AUD-2026-07-01-016) — claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md — 2026-07-01
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.4
-
-**Problem**
-Three confirmed version/naming desyncs found by the lifecycle audit: (1) `OPERATIONAL_GUIDE.md` disagrees with itself — document header says v4.65, the §14 self-row says v4.63, and the §14 Change Log's top entry says v4.64 — a 6th recurrence of a pattern already "fixed" once at AUD-2026-06-22-003; (2) the §14 table's "Roadmap Engine Source" row is stuck at v7.5 while the actual file (and the prompt_change_log) confirm v7.6; (3) `metrics_definitions_analytics_owner.md` self-declares "...Canonical Owner" while `team_charter.md` names the role "...Owner" (no "Canonical"), a role-name mismatch that could break an automated role lookup.
-
-**Scope**
-- Update `OPERATIONAL_GUIDE.md` §14 self-row to Version 4.65 / Last Updated 2026-06-24; insert the missing v4.65 Change Log entry (content drafted in audit report AUD-2026-07-01-001)
-- Update `OPERATIONAL_GUIDE.md` §14 "Roadmap Engine Source" row from v7.5 to v7.6 (AUD-2026-07-01-003)
-- Rename `metrics_definitions_analytics_owner.md` title/Role field to match team_charter.md's "Metrics Definitions & Analytics Owner" (AUD-2026-07-01-016)
-
-**Acceptance Criteria**
-- `OPERATIONAL_GUIDE.md` header, §14 self-row, and §14 Change Log top entry all show the same version number
-- §14 "Roadmap Engine Source" row matches `roadmap_prompt.md`'s actual `**Version:**` header
-- `metrics_definitions_analytics_owner.md` role name matches `team_charter.md` §3.3 exactly
-
----
-
-### BLG-GOV-151 — Document hygiene cleanup (README coverage/staleness/broken path, Class 6 header format, agent header bolding)
-**Priority:** P3 (Low)
-**Type:** Governance Process / Documentation
-**Owner:** Head of Specs Team
-**Source:** Lifecycle Audit AUD-2026-07-01 (AUD-2026-07-01-006, AUD-2026-07-01-009, AUD-2026-07-01-010, AUD-2026-07-01-011, AUD-2026-07-01-015) — claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md — 2026-07-01
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.4
-
-**Problem**
-The lifecycle audit found five low-severity but confirmed documentation defects: `claude/README.md` §4 documents only 1 of the 13 governed routines that actually exist; README §2 references a non-existent path (`documentation_lifecycle_guide.md` instead of the real `document_lifecycle_guide.md`); README's own `Last Updated` field is 101 days stale; three governance prompts (`roadmap_prompt.md`, `release_planning_prompt.md`, `sprint_planning_prompt.md`) violate the Class 6 `Last Updated: [date]` header spec by appending long prose instead of a clean date; and `pmo_lead.md`'s header fields are unbolded, inconsistent with the other 5 versioned agent files.
-
-**Scope**
-- Add a summary table to README §4 covering all 13 governed routines with command + prompt path (AUD-2026-07-01-006)
-- Fix the broken lifecycle-guide path in README §2 (AUD-2026-07-01-009)
-- Refresh README's `Last Updated` date once the above two edits land (AUD-2026-07-01-010)
-- Strip the prose from the `Last Updated` header field in the 3 named prompts, leaving a clean date (detail remains in prompt_change_log.md) (AUD-2026-07-01-011)
-- Bold the 4 header fields in `pmo_lead.md` to match convention (AUD-2026-07-01-015)
-
-**Acceptance Criteria**
-- README §4 lists all 13 governed routines with working command + path references
-- No broken file paths remain in README §2
-- README `Last Updated` reflects the date of this change
-- `roadmap_prompt.md`, `release_planning_prompt.md`, `sprint_planning_prompt.md` headers show `Last Updated: [date]` only, matching Class 6 spec
-- `pmo_lead.md` header fields use `**Field:**` bold-label format
-
----
-
-### BLG-GOV-152 — Close structural reliability gaps (append-only guard parity, DF-10 spec_references convention, staging AC protocol, amendment_lessons sunset contradiction)
-**Priority:** P2 (Medium)
-**Type:** Governance Process / Lifecycle Reliability
-**Owner:** Head of Specs Team
-**Source:** Lifecycle Audit AUD-2026-07-01 (AUD-2026-07-01-002, AUD-2026-07-01-004, AUD-2026-07-01-007, AUD-2026-07-01-017) — claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md — 2026-07-01
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v6.4
-
-**Problem**
-Four confirmed reliability/process gaps, two of which are already 2-cycle-carried deferred patches approaching the audit SLA's P0-escalation threshold: (1) 4 of the 5 append-only files listed in `shared_standards.md` §7 (`escalations.md`, `execution_escalations.md`, `verification_escalations.md`, `delegation_log.md`) lack the structural entry-count verification that `decision_log.md` has in `roadmap_prompt.md` STEP 9 — they rely on prose instruction only; (2) the CI/infrastructure `spec_references=[]` convention (FI-P4-01/DF-10) has been deferred since v6.2, unresolved through v6.3, and is explicitly flagged "ESCALATION RISK (2-cycle if missed)" for v6.4; (3) the staging-only AC protocol ambiguity (FI-P3-02) — when code review of static JSX substitutes for staging sign-off — is also unresolved since v6.2; (4) `amendment_cycle_prompt.md` §9's Completion Condition still unconditionally requires `amendment_lessons.md`, contradicting §8's deprecation notice that the file sunsets at v2.0.
-
-**Scope**
-- Add a canonical append-only structural verification pattern to `shared_standards.md` §7 and apply it to the 4 named files (AUD-2026-07-01-002)
-- Add a "Case D — CI/infrastructure" row to the `spec_references` policy table in `execution_prompt.md` §3.1.A (AUD-2026-07-01-004)
-- Add the wording-only vs visual-rendering AC distinction to the CLAUDE.md §2 frontend testing gate bullet (AUD-2026-07-01-007)
-- Make the `amendment_lessons.md` bullet in `amendment_cycle_prompt.md` §9 conditional on prompt version, matching §8's framing (AUD-2026-07-01-017)
-
-**Acceptance Criteria**
-- All 5 files in shared_standards.md §7 have an equivalent structural (not prose-only) append-only guard, or the guard requirement is explicitly documented as N/A with rationale
-- `execution_prompt.md`'s spec_references policy has no remaining path that defaults to `[]` for infrastructural stories with an identifiable primary file
-- CLAUDE.md §2 explicitly distinguishes wording-only ACs from visual/rendering ACs for the staging sign-off substitution rule
-- `amendment_cycle_prompt.md` §8 and §9 agree on the status of `amendment_lessons.md`
-
----
-
-### BLG-GOV-153 — Audit & governance process fixes (design gate bypass authority, run audit dry-run entry, friction_load formula wording, scored_initiatives naming)
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** Lifecycle Audit AUD-2026-07-01 (AUD-2026-07-01-005, AUD-2026-07-01-008, AUD-2026-07-01-012, AUD-2026-07-01-014) — claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md — 2026-07-01
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.4
-
-**Problem**
-Four confirmed process gaps from the lifecycle audit: (1) the design gate bypass dual-authority rule ("Head of UX & Design + Product Owner") is defined only in `sprint_planning_prompt.md` (a Class 6 prompt), not in `team_charter.md` (the Class 1 canonical authority document) — audit check G5 FAIL; (2) `run audit` is the only CLAUDE.md-listed governed routine absent from the `shared_standards.md` §13 dry-run table; (3) `claude/audit.py`'s FRICTION_LOAD formula says "across all cycles" but is actually evaluated as "since last audit" (confirmed by cross-checking the PRIOR_SCORES baseline against true all-time totals) — ambiguous wording risks a non-reproducible score on a future audit run; (4) `claude/scoring/scored_initiatives.md` uses a static filename, overwritten every cycle with no per-cycle scoring history retained.
-
-**Scope**
-- Add a §5.7 "Design gate bypass disputes" subsection to `team_charter.md` codifying the dual-authority rule (AUD-2026-07-01-005)
-- Add a `run audit` row to the `shared_standards.md` §13 dry-run table noting its read-only nature (AUD-2026-07-01-008)
-- Clarify `claude/audit.py`'s FRICTION_LOAD formula wording to say "since PRIOR_AUDIT_ID" (AUD-2026-07-01-012)
-- Decide and document whether `scored_initiatives.md` should be cycle-scoped or explicitly current-cycle-only; remove the stray inconsistently-named historical file if the latter (AUD-2026-07-01-014)
-
-**Acceptance Criteria**
-- team_charter.md names the design gate bypass dual-authority requirement explicitly
-- `shared_standards.md` §13 table includes all CLAUDE.md-listed governed routines, including `run audit`
-- `claude/audit.py`'s FRICTION_LOAD formula wording is unambiguous about its evaluation window
-- `scored_initiatives.md` naming convention is either consistently cycle-scoped or explicitly documented as current-only, with no orphaned dated files implying an unfollowed convention
-
----
-
-### BLG-SEC-01 — Sanitise context_opts.ticker before system prompt injection (POST /ai/chat)
-**Priority:** P2 (Medium)
-**Type:** Security / Input Validation
-**Owner:** Cybersecurity & Trust Lead; Backend Engineering Patterns Owner
-**Source:** ST-04 open risk — AI injection risk assessment v1.0 (2026-06-29)
-**Effort:** XS (<0.25 day)
-**Provisional-Target:** v6.4
-
-**Problem**
-`context_opts.ticker` from the request body is interpolated directly into the `ai_chat()` system prompt f-string with no sanitization. A value containing newlines followed by instruction text (e.g. `"AAPL\n\nIgnore all previous instructions..."`) is injected into the system prompt verbatim, elevating the attacker's payload to system-prompt authority level. Attacker must be authenticated.
-
-**Scope**
-- Validate `context_opts.ticker` at the router layer: strip or reject values containing `\n`, `\r`, or characters outside `[A-Z0-9.:/-]`, max 20 characters
-- Return HTTP 422 with descriptive error if ticker fails validation
-
-**Acceptance Criteria**
-- `context_opts.ticker` validated before insertion into system prompt
-- Strings with newlines or injection characters rejected with HTTP 422
-- Unit test added for validation logic
-- Cybersecurity & Trust Lead sign-off
-
----
-
-### BLG-SEC-02 — Validate ticker/market strings at signal write time (screener pipeline)
-**Priority:** P3 (Low)
-**Type:** Security / Input Validation
-**Owner:** Cybersecurity & Trust Lead; Backend Engineering Patterns Owner
-**Source:** ST-04 open risk — AI injection risk assessment v1.0 (2026-06-29)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.4
-
-**Problem**
-Signal ticker and market strings stored in the `signals` table are interpolated into AI prompts for both `POST /ai/daily-briefing` and `POST /ai/chat`. If the screener's external data source (index list, CSV, screener API) provides crafted ticker values containing newlines or injection payloads, those propagate to the AI prompt. No validation is applied at signal write time.
-
-**Scope**
-- Add ticker/market validation at signal write/import boundary
-- Strip non-alphanumeric characters (allow `.`, `-`, `/`, `:` for international tickers, max 12 chars)
-- Review existing signals in DB for anomalous values and document findings
-
-**Acceptance Criteria**
-- Signal write path validates ticker and market strings
-- Existing signals reviewed; anomalous values documented or cleaned
-- Cybersecurity & Trust Lead sign-off
-
----
-
 ### BLG-SEC-07 — Manual review of existing signals for anomalous ticker/market values
 **Priority:** P3 (Low)
 **Type:** Security / Input Validation
@@ -3240,30 +3047,26 @@ All market data (OHLCV, signals, news) is sourced exclusively from Alpaca and Ya
 
 ---
 
-### BLG-OPS-82 — Add v6.3 endpoints to api_performance_baseline.md
+### BLG-OPS-83 — Add v6.4 endpoint to api_performance_baseline.md
 **Priority:** P3 (Low)
 **Type:** Operations / Performance Baseline
 **Owner:** Infrastructure & Operations Owner
-**Source:** Post-ship closure 2026-06-30 — endpoint drift advisory (v6.3 new endpoints not registered in api_performance_baseline.md v2.7)
+**Source:** Post-ship closure 2026-07-02__release-v6.4 — endpoint drift advisory (v6.4 new endpoint not registered in api_performance_baseline.md v2.9)
 **Effort:** XS (<1 hour)
-**Provisional-Target:** v6.4
+**Provisional-Target:** v6.5
 
 **Problem**
-Three new GET endpoints shipped in v6.3 are not registered in `docs/ops/api_performance_baseline.md`:
-- `GET /strategy/benchmark/summary` (EPIC-03 BLG-FEAT-53)
-- `GET /strategy/benchmark/trades` (EPIC-03 BLG-FEAT-53)
-- `GET /health/scheduler` (EPIC-03 BLG-OPS-79)
-
-Note: `POST /strategy/benchmark/import` is excluded from baseline per §19 methodology (write-path import endpoints are out of scope). Only readable GET endpoints are tracked.
+One new GET endpoint shipped in v6.4 is not registered in `docs/ops/api_performance_baseline.md`:
+- `GET /strategy/benchmark/open-positions` (EPIC-03 BLG-FEAT-54)
 
 **Scope**
-- Register all three GET endpoints in api_performance_baseline.md with estimated latency characteristics
-- Run minimum 5 warm requests per endpoint against production to establish p50/p95 baselines
-- Set regression threshold per §19.2 formula
+- Register the endpoint in api_performance_baseline.md with estimated latency characteristics
+- Run minimum 5 warm requests against production (or staging, if deployed) to establish p50/p95 baselines
+- Set regression threshold per §22.2/§22.3 dynamic-2x pattern (the precedent used for the v6.3 endpoint registration, BLG-OPS-82)
 
 **Acceptance Criteria**
-- AC-01: All three endpoints registered in api_performance_baseline.md with measured p50/p95
-- AC-02: Regression threshold documented per §19.2 for each endpoint
+- AC-01: Endpoint registered in api_performance_baseline.md with measured p50/p95
+- AC-02: Regression threshold documented
 - AC-03: Infrastructure & Operations Owner sign-off
 
 ---
@@ -3290,94 +3093,6 @@ Note: `POST /strategy/benchmark/import` is excluded from baseline per §19 metho
 - All extracted sub-components also pass ESLint clean
 - Watchlist page renders and behaves identically to pre-refactor (no functional regression)
 - Playwright E2E watchlist specs continue to pass
-
----
-
-### BLG-UX-01 — Improve AI daily briefing disclaimer text contrast
-**Priority:** P3 (Low)
-**Type:** Frontend / UX / Accessibility
-**Owner:** Head of UX & Design; AI Compliance & Governance Officer
-**Source:** ST-05 disclaimer visibility assessment — 2026-06-29
-**Effort:** XS (<0.25 day)
-**Provisional-Target:** v6.4
-
-**Problem**
-The AI Advisory disclaimer text in `AiDailyBriefing.js` uses `text-slate-500 italic` (≈2.7:1 contrast on slate-800 background). WCAG AA requires ≥4.5:1 for text <18px. The amber "AI Advisory" badge meets §13 as the primary signal; this improvement upgrades the secondary text to meet accessibility standards.
-
-**Scope**
-- Change `text-slate-500` to `text-slate-300` on the disclaimer text span in `AiDailyBriefing.js`
-- Verify no visual regression to the badge or surrounding layout
-
-**Acceptance Criteria**
-- Disclaimer text contrast ≥4.5:1 on the dark background
-- No visual regression to the "AI Advisory" badge or briefing card layout
-- Head of UX & Design sign-off
-
----
-
-### BLG-UX-02 — Improve AI chat widget footer disclaimer contrast and add test coverage
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX / Accessibility
-**Owner:** Head of UX & Design; AI Compliance & Governance Officer
-**Source:** ST-05 disclaimer visibility assessment — 2026-06-29
-**Effort:** XS (<0.25 day)
-**Provisional-Target:** v6.4
-
-**Problem**
-The AI Chat Widget footer disclaimer uses `text-slate-600 italic text-xs` (≈1.9:1 contrast on slate-800 background — critically low). The text is effectively unreadable in standard display conditions. Additionally the footer paragraph has no `data-testid`, preventing Playwright assertion of text presence.
-
-**Scope**
-- Change `text-slate-600` to `text-slate-400` on the footer disclaimer in `AiChatWidget.js`
-- Add `data-testid="ai-chat-advisory-footer"` to the footer paragraph
-- Add Playwright assertion: footer disclaimer text visible when chat widget open
-
-**Acceptance Criteria**
-- Footer disclaimer text contrast ≥4.5:1 on dark background
-- `data-testid="ai-chat-advisory-footer"` present
-- Playwright test asserts footer text visible and contains "advisory" keyword
-- Head of UX & Design sign-off
-
----
-
-### TEST-GAP-EPIC-01 — Playwright coverage for ST-01 observable UI ACs (AI journal summary error states)
-**Priority:** P3 (Low)
-**Type:** Test Coverage / QA
-**Owner:** QA & Testing Owner
-**Source:** Delivery verification v6.3 — TSG-v63-01 (2026-06-30)
-**Effort:** XS (<0.5 day)
-**Provisional-Target:** v6.4
-
-**Problem**
-ST-01 (Fix AI journal summary on Trade History tab) introduced observable UI changes: `data.message` displayed to the user on API failure, specific server error text on HTTP error, specific network error text on connection failure (AC-02, AC-03, AC-04). These ACs were cleared by code review only; no Playwright test exists for the AI journal summary error states on the Trade History tab. Staging sign-off was deferred (reproducibility condition: requires a trade with journal notes and a failed summary condition). This gap leaves error state rendering unverified by automated tests.
-
-**Acceptance Criteria**
-- Playwright test covering AC-02 (specific error message displayed when AI journal summary unavailable)
-- Playwright test covering AC-03/AC-04 (server error and network error messages rendered correctly)
-- Tests in `tests/e2e/` referencing `data-testid` selectors on the Trade History tab AI summary component
-
-See verification_report.md §6 (cycle 2026-06-26__release-v6.3) for gap detail.
-
----
-
-### TEST-GAP-EPIC-03 — Playwright scenario coverage for Strategy Benchmark page
-**Priority:** P2 (Medium)
-**Type:** Test Coverage / QA
-**Owner:** QA & Testing Owner
-**Source:** Delivery verification v6.3 — TSG-v63-02 (2026-06-30); sprint_backlog.md ST-11 LL-v2.0-P4-2
-**Effort:** S (~1 day)
-**Provisional-Target:** v6.4
-
-**Problem**
-ST-11 (Strategy Benchmark page) delivered a major new feature page (3 panels, sticky filters, toggle modes, exit reason badges, 3 backend endpoints). The `test_scenarios` field in execution_state.json for EPIC-03 was intentionally set to "pending" at execution time (per LL-v2.0-P4-2). No Playwright scenarios exist for the Strategy Benchmark page at sprint end. ST-12 (morning briefing progressive disclosure) is covered by SC-PD tests, but the Strategy Benchmark page (AC-01 through AC-05 — page accessibility, filters, panel rendering, toggle modes, badge colours) has zero Playwright coverage.
-
-**Acceptance Criteria**
-- Playwright tests covering AC-01 (page accessible from navigation)
-- Playwright tests covering AC-02 (year + market filters apply to all panels simultaneously)
-- Playwright tests covering AC-03 (Panel 1 shows "—" for actual fields when no live trades match)
-- Playwright tests covering AC-05 (Panel 3 toggle modes; exit reason badge colours)
-- Tests in `tests/e2e/strategy-benchmark.spec.js` or equivalent
-
-See verification_report.md §6 (cycle 2026-06-26__release-v6.3) for gap detail and recommended scenarios.
 
 ---
 
@@ -3468,26 +3183,6 @@ See `claude/cycles/2026-07-02__release-v6.4/qa_evidence_EPIC-03.md` (ST-08 entry
 
 ---
 
-## Release Slice — v6.4 (2026-07-02__release-v6.4)
+*Release Slice v6.4 removed — cycle 2026-07-02__release-v6.4 closed 2026-07-02. Archived canonical home: claude/cycles/2026-07-02__release-v6.4/stage4_backlog_slice.md*
 
-<!-- release-plan-marker: RP:v6.4:2026-07-02__release-v6.4 -->
-
-**Canonical slice:** `claude/cycles/2026-07-02__release-v6.4/stage4_backlog_slice.md`
-
-13 stories across 3 EPICs (8 firm, 5 conditional). See canonical slice for full acceptance criteria.
-
-| ST-ID | BLG-ID | Description | EPIC | Type | Effort |
-|-------|--------|-------------|------|------|--------|
-| ST-01 | BLG-BE-40 | Signal generation reads deprecated `tickers` table instead of `ticker_universe` | EPIC-01 | Firm | XS |
-| ST-02 | BLG-SEC-01 | Sanitise `context_opts.ticker` before system prompt injection | EPIC-01 | Firm | XS |
-| ST-03 | BLG-SEC-02 | Validate ticker/market strings at signal write time | EPIC-01 | Conditional | S |
-| ST-04 | BLG-GOV-150 | Fix governance version-sync drift | EPIC-02 | Firm | S |
-| ST-05 | BLG-GOV-151 | Document hygiene cleanup | EPIC-02 | Conditional | S |
-| ST-06 | BLG-GOV-152 | Close structural reliability gaps (+ FI-P3-01/FI-P3-02/FI-P4-01 re-target) | EPIC-02 | Firm | M |
-| ST-07 | BLG-GOV-153 | Audit & governance process fixes | EPIC-02 | Firm | S |
-| ST-08 | BLG-FEAT-54 | Add Open Positions panel to Strategy Benchmark page | EPIC-03 | Firm | M |
-| ST-09 | BLG-UX-01 | Improve AI daily briefing disclaimer text contrast | EPIC-03 | Conditional | XS |
-| ST-10 | BLG-UX-02 | Improve AI chat widget footer disclaimer contrast and add test coverage | EPIC-03 | Firm | XS |
-| ST-11 | BLG-OPS-82 | Add v6.3 endpoints to `api_performance_baseline.md` | EPIC-03 | Conditional | XS |
-| ST-12 | TEST-GAP-EPIC-01 | Playwright coverage for ST-01 observable UI ACs (AI journal summary error states) | EPIC-03 | Conditional | XS |
-| ST-13 | TEST-GAP-EPIC-03 | Playwright scenario coverage for Strategy Benchmark page | EPIC-03 | Firm | S |
+---

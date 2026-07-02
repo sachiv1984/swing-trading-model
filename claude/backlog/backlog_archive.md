@@ -1,11 +1,167 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-30 (groom backlog post-ship closure 2026-06-26__release-v6.3 — 15 items archived)
+**Last Updated:** 2026-07-02 (groom backlog post-ship closure 2026-07-02__release-v6.4 — 13 items archived)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-BE-40 — Signal generation reads deprecated `tickers` table instead of `ticker_universe`
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-07-02
+**Shipped in:** v6.4 (ST-01, cycle: 2026-07-02__release-v6.4)
+**Evidence:** docs/product/changelog.md#v6.4; claude/cycles/2026-07-02__release-v6.4/verification_report.md
+
+P1 production correctness fast-track. `signal_service.py` switched from the deprecated `tickers` table to `services.ticker_universe_service.get_all_tickers(active_only=True)`. Verified via full backend test suite (551 passed, 0 failed); AC-02 (live add/deactivate confirmation) deferred to post-merge staging.
+
+---
+
+### BLG-SEC-01 — Sanitise context_opts.ticker before system prompt injection (POST /ai/chat)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-02
+**Shipped in:** v6.4 (ST-02, cycle: 2026-07-02__release-v6.4)
+**Evidence:** docs/product/changelog.md#v6.4; claude/cycles/2026-07-02__release-v6.4/verification_report.md
+
+`context_opts.ticker` validated before insertion into the system prompt; strings with newlines/injection characters rejected with HTTP 422. A trailing-newline regex bypass (`re.match` matching before a trailing `\n`) was found and closed during Cybersecurity & Trust Lead sign-off by switching to `.fullmatch()`.
+
+---
+
+### BLG-SEC-02 — Validate ticker/market strings at signal write time (screener pipeline)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-02
+**Shipped in:** v6.4 (ST-03, cycle: 2026-07-02__release-v6.4)
+**Evidence:** docs/product/changelog.md#v6.4; claude/cycles/2026-07-02__release-v6.4/verification_report.md
+
+Ticker/market strings validated at all 3 signal write paths (`create_signal`, `create_rebalance_exit_signal`, `update_signal`) — the sign-off review discovered `update_signal()` was a second, previously-unprotected write path and it was fixed in scope. AC-02 (manual live-DB review) deferred — BLG-SEC-07 filed; BLG-SEC-08 (unvalidated dict keys as SQL column names in `update_signal`) filed as an out-of-scope follow-up.
+
+---
+
+### BLG-GOV-150 — Fix governance version-sync drift (OPERATIONAL_GUIDE self-desync, stale §14 roadmap version, metrics owner role-name drift)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-02
+**Shipped in:** v6.4 (ST-04, cycle: 2026-07-02__release-v6.4)
+**Evidence:** docs/product/changelog.md#v6.4; claude/cycles/2026-07-02__release-v6.4/verification_report.md
+
+OPERATIONAL_GUIDE.md header/§14 self-row/§14 Change Log top entry version-synced; §14 "Roadmap Engine Source" row corrected to match `roadmap_prompt.md`'s actual version; `metrics_definitions_analytics_owner.md` role name aligned with `team_charter.md` §3.3.
+
+---
+
+### BLG-GOV-151 — Document hygiene cleanup (README coverage/staleness/broken path, Class 6 header format, agent header bolding)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-02
+**Shipped in:** v6.4 (ST-05, cycle: 2026-07-02__release-v6.4)
+**Evidence:** docs/product/changelog.md#v6.4; claude/cycles/2026-07-02__release-v6.4/verification_report.md
+
+`claude/README.md` §4 now lists all 13 governed routines; §2 broken lifecycle-guide path fixed; `Last Updated` refreshed. 3 governance prompts' `Last Updated` headers stripped to date-only per Class 6 spec. `pmo_lead.md` header fields bolded to match convention.
+
+---
+
+### BLG-GOV-152 — Close structural reliability gaps (append-only guard parity, DF-10 spec_references convention, staging AC protocol, amendment_lessons sunset contradiction)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-02
+**Shipped in:** v6.4 (ST-06, cycle: 2026-07-02__release-v6.4)
+**Evidence:** docs/product/changelog.md#v6.4; claude/cycles/2026-07-02__release-v6.4/verification_report.md
+
+Append-only structural verification pattern added to `shared_standards.md` §7; `execution_prompt.md`'s `spec_references` policy gained a Case D (CI/infrastructure) row, closing FI-P4-01/DF-10; CLAUDE.md §2 gained the wording-only vs visual-rendering AC distinction, closing FI-P3-02; `amendment_cycle_prompt.md` §8/§9 `amendment_lessons.md` contradiction resolved; FI-P3-01 Base44 Playwright strict-mode advisory added. Resolves three 2-cycle-carried carry-forward items in a single sprint (LP-01 pattern, validated at post-ship closure).
+
+---
+
+### BLG-GOV-153 — Audit & governance process fixes (design gate bypass authority, run audit dry-run entry, friction_load formula wording, scored_initiatives naming)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-02
+**Shipped in:** v6.4 (ST-07, cycle: 2026-07-02__release-v6.4)
+**Evidence:** docs/product/changelog.md#v6.4; claude/cycles/2026-07-02__release-v6.4/verification_report.md
+
+`team_charter.md` new §5.7 codifies the design gate bypass dual-authority rule; `shared_standards.md` §13 dry-run table gained a `run audit` row; `claude/audit.py`'s FRICTION_LOAD formula wording clarified ("since PRIOR_AUDIT_ID"); `scored_initiatives.md` documented as intentionally current-cycle-only and an orphaned dated copy removed.
+
+---
+
+### BLG-FEAT-54 — Add Open Positions panel to Strategy Benchmark page
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-02
+**Shipped in:** v6.4 (ST-08, cycle: 2026-07-02__release-v6.4)
+**Evidence:** docs/product/changelog.md#v6.4; claude/cycles/2026-07-02__release-v6.4/verification_report.md
+
+Skill-Silo pull-forward feature. New `backtest_open_positions` table (full-replace nightly semantics), `GET /strategy/benchmark/open-positions` endpoint, Panel 0 on `StrategyBenchmark.js` showing a one-line unrealized-P&L summary plus a per-position table. AC-01 (Panel 0 rendering) cleared by code review only this sprint — `TEST-GAP-EPIC-03-v64` filed for Playwright coverage before the PR opened.
+
+---
+
+### BLG-UX-01 — Improve AI daily briefing disclaimer text contrast
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-02
+**Shipped in:** v6.4 (ST-09, cycle: 2026-07-02__release-v6.4)
+**Evidence:** docs/product/changelog.md#v6.4; claude/cycles/2026-07-02__release-v6.4/verification_report.md
+
+`AiDailyBriefing.js` disclaimer text colour changed `text-slate-500`→`text-slate-300`, meeting WCAG AA ≥4.5:1 contrast. Head of UX & Design sign-off cleared agent-mediated, no findings.
+
+---
+
+### BLG-UX-02 — Improve AI chat widget footer disclaimer contrast and add test coverage
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-02
+**Shipped in:** v6.4 (ST-10, cycle: 2026-07-02__release-v6.4)
+**Evidence:** docs/product/changelog.md#v6.4; claude/cycles/2026-07-02__release-v6.4/verification_report.md
+
+`AiChatWidget.js` footer disclaimer colour changed `text-slate-600`→`text-slate-400`, meeting WCAG AA; `data-testid="ai-chat-advisory-footer"` added; new Playwright assertion (SC-AC-06) added to `epic02-v62-ai-briefing-chat.spec.js`. Head of UX & Design sign-off cleared agent-mediated, no findings.
+
+---
+
+### BLG-OPS-82 — Add v6.3 endpoints to api_performance_baseline.md
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-02
+**Shipped in:** v6.4 (ST-11, cycle: 2026-07-02__release-v6.4)
+**Evidence:** docs/product/changelog.md#v6.4; claude/cycles/2026-07-02__release-v6.4/verification_report.md
+
+Three v6.3 GET endpoints (`/strategy/benchmark/summary`, `/strategy/benchmark/trades`, `/health/scheduler`) registered in `api_performance_baseline.md` with measured p50/p95, measured against production after staging returned 404. Regression thresholds documented per the §22.2/§22.3 dynamic-2x pattern. Infrastructure & Operations Owner sign-off cleared agent-mediated after 1 retry (2 citation-accuracy findings applied). `BLG-OPS-83` filed for the new v6.4 Panel 0 endpoint.
+
+---
+
+### TEST-GAP-EPIC-01 — Playwright coverage for ST-01 observable UI ACs (AI journal summary error states)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-02
+**Shipped in:** v6.4 (ST-12, cycle: 2026-07-02__release-v6.4)
+**Evidence:** docs/product/changelog.md#v6.4; claude/cycles/2026-07-02__release-v6.4/verification_report.md
+
+SC-TH-AI-01/02/03 added to `tests/e2e/trade-history-ai-journal-summary.spec.js` covering server-error and network-error message rendering; `data-testid` selectors added to the Trade History AI Journal Summary component (none existed previously).
+
+---
+
+### TEST-GAP-EPIC-03 — Playwright scenario coverage for Strategy Benchmark page
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-02
+**Shipped in:** v6.4 (ST-13, cycle: 2026-07-02__release-v6.4)
+**Evidence:** docs/product/changelog.md#v6.4; claude/cycles/2026-07-02__release-v6.4/verification_report.md
+
+SC-SB-01–04 added to `tests/e2e/strategy-benchmark.spec.js` covering nav accessibility, simultaneous filters, Panel 1 placeholder, and toggle modes/badge colours (scoped to Panels 1/3 per sprint_backlog.md; Panel 0 tracked separately as TSG-v64-01/TEST-GAP-EPIC-03-v64). Two CI-caught defects (nav route stubbing, collapsed Analytics nav group) fixed pre-merge — all 24 CI checks green.
 
 ---
 
