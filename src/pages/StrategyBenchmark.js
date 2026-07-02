@@ -58,6 +58,51 @@ function pnlClass(val) {
   return Number(val) >= 0 ? 'text-green-400' : 'text-red-400';
 }
 
+// Panel 0 (Open Positions) uses emerald/rose per ux_spec.md, distinct from the
+// green-400/red-400 used by the realized-trade panels above — reinforces that
+// unrealized figures are visually separate from realized ones (AC-02).
+function unrealizedPnlClass(val) {
+  if (val == null) return 'text-slate-400';
+  return Number(val) >= 0 ? 'text-emerald-400' : 'text-rose-400';
+}
+
+function fmtGbpSigned(val, decimals = 0) {
+  if (val == null) return '—';
+  const n = Number(val);
+  const sign = n >= 0 ? '+' : '-';
+  return sign + '£' + Math.abs(n).toLocaleString('en-GB', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+}
+
+function fmtGbpPrice(val) {
+  if (val == null) return '—';
+  return '£' + Number(val).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function fmtPctSigned(val) {
+  if (val == null) return '—';
+  const n = Number(val);
+  return (n >= 0 ? '+' : '') + n.toFixed(1) + '%';
+}
+
+function fmtDateLong(val) {
+  if (!val) return '—';
+  const d = new Date(val);
+  if (Number.isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function MarketBadge({ market }) {
+  const cls =
+    market === 'UK'
+      ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+      : 'bg-violet-500/20 text-violet-400 border-violet-500/30';
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${cls}`}>
+      {market}
+    </span>
+  );
+}
+
 function ExitBadge({ reason }) {
   const config = EXIT_REASON_BADGE[reason] || null;
   if (!config) return <span className="text-xs text-slate-500">{reason || '—'}</span>;
@@ -65,6 +110,95 @@ function ExitBadge({ reason }) {
     <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${config.cls}`}>
       {config.label}
     </span>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Panel 0 — Open Positions
+// ---------------------------------------------------------------------------
+
+function Panel0({ openPositions, loading, error, showMarketBadge }) {
+  // Error state: header + muted inline message only — does not break rest of page (AC per ux_spec.md "States").
+  if (error) {
+    return (
+      <section data-testid="benchmark-panel-0">
+        <h2 className="text-sm font-semibold text-white mb-3">Open Positions</h2>
+        <p className="text-sm text-slate-500" data-testid="benchmark-open-positions-error">
+          Open positions temporarily unavailable.
+        </p>
+      </section>
+    );
+  }
+
+  if (loading) {
+    return (
+      <section data-testid="benchmark-panel-0">
+        <h2 className="text-sm font-semibold text-white mb-3">Open Positions</h2>
+        <div className="space-y-2 animate-pulse" data-testid="benchmark-open-positions-loading">
+          {[1, 2, 3].map(i => <div key={i} className="h-8 bg-slate-800 rounded-md" />)}
+        </div>
+      </section>
+    );
+  }
+
+  const positions = openPositions?.open_positions || [];
+  const summary = openPositions?.summary;
+
+  // Zero open positions: panel omitted entirely — no empty-state card (ux_spec.md "Conditional Rendering").
+  if (positions.length === 0) return null;
+
+  const count = summary?.count ?? positions.length;
+  const total = summary?.total_unrealized_pnl_gbp;
+  const summaryColour = total != null && Number(total) < 0 ? 'text-rose-400' : 'text-emerald-400';
+
+  return (
+    <section data-testid="benchmark-panel-0">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-sm font-semibold text-white">Open Positions</h2>
+      </div>
+      <p className={`text-sm mb-3 ${summaryColour}`} data-testid="benchmark-open-positions-summary">
+        {count} open position{count === 1 ? '' : 's'} · {fmtGbpSigned(total)} unrealized
+      </p>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm" data-testid="benchmark-open-positions-table">
+          <thead>
+            <tr className="text-xs text-slate-500 border-b border-slate-700">
+              <th scope="col" className="text-left py-2 pr-3">Ticker</th>
+              <th scope="col" className="text-left py-2 pr-3">Entry</th>
+              <th scope="col" className="text-right py-2 pr-3">Entry £</th>
+              <th scope="col" className="text-right py-2 pr-3">Current £</th>
+              <th scope="col" className="text-right py-2 pr-3">P&L £</th>
+              <th scope="col" className="text-right py-2 pr-3">P&L %</th>
+              <th scope="col" className="text-right py-2">Days</th>
+            </tr>
+          </thead>
+          <tbody>
+            {positions.map(pos => (
+              <tr
+                key={`${pos.ticker}-${pos.entry_date}`}
+                className="border-b border-slate-800 hover:bg-slate-800/40"
+                data-testid={`benchmark-open-position-${pos.ticker}`}
+              >
+                <td className="py-2 pr-3">
+                  <span className="font-semibold text-white">{pos.ticker}</span>
+                  {showMarketBadge && (
+                    <span className="ml-1.5 inline-block align-middle">
+                      <MarketBadge market={pos.market} />
+                    </span>
+                  )}
+                </td>
+                <td className="py-2 pr-3 text-slate-400">{fmtDateLong(pos.entry_date)}</td>
+                <td className="py-2 pr-3 text-right text-slate-300">{fmtGbpPrice(pos.entry_price)}</td>
+                <td className="py-2 pr-3 text-right text-slate-300">{fmtGbpPrice(pos.current_price)}</td>
+                <td className={`py-2 pr-3 text-right ${unrealizedPnlClass(pos.unrealized_pnl_gbp)}`}>{fmtGbpSigned(pos.unrealized_pnl_gbp, 2)}</td>
+                <td className={`py-2 pr-3 text-right ${unrealizedPnlClass(pos.unrealized_pnl_pct)}`}>{fmtPctSigned(pos.unrealized_pnl_pct)}</td>
+                <td className="py-2 text-right text-slate-300">{pos.days_held ?? '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 }
 
@@ -305,24 +439,45 @@ export default function StrategyBenchmark() {
 
   const [summary, setSummary] = useState(null);
   const [trades, setTrades] = useState(null);
+  const [openPositions, setOpenPositions] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [openPositionsLoading, setOpenPositionsLoading] = useState(false);
+  const [openPositionsError, setOpenPositionsError] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
-    try {
-      const [s, t] = await Promise.all([
+    setOpenPositionsLoading(true);
+    setOpenPositionsError(false);
+
+    // Open Positions (Panel 0) is fetched independently of summary/trades — an
+    // API error here must not take down the rest of the page (ux_spec.md
+    // "States"). No year param: open positions are current-state, not
+    // historical-per-year (see Filter Interaction in the spec).
+    const [mainResult, openPositionsResult] = await Promise.allSettled([
+      Promise.all([
         api.strategyBenchmark.getSummary({ year, market }),
         api.strategyBenchmark.getTrades({ year, market }),
-      ]);
+      ]),
+      api.strategyBenchmark.getOpenPositions({ market }),
+    ]);
+
+    if (mainResult.status === 'fulfilled') {
+      const [s, t] = mainResult.value;
       setSummary(s);
       setTrades(t);
-    } catch {
+    } else {
       setError('Failed to load benchmark data. Check the API is running.');
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
+
+    if (openPositionsResult.status === 'fulfilled') {
+      setOpenPositions(openPositionsResult.value);
+    } else {
+      setOpenPositionsError(true);
+    }
+    setOpenPositionsLoading(false);
   }, [year, market]);
 
   useEffect(() => {
@@ -399,6 +554,19 @@ export default function StrategyBenchmark() {
           </div>
         </div>
       </div>
+
+      {/* Panel 0 — Open Positions (independent loading/error state; renders even if
+          Panel 1-3's fetch fails, per ux_spec.md "does not break rest of page") */}
+      {(openPositionsLoading || openPositionsError || (openPositions?.open_positions?.length > 0)) && (
+        <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
+          <Panel0
+            openPositions={openPositions}
+            loading={openPositionsLoading}
+            error={openPositionsError}
+            showMarketBadge={market === 'ALL'}
+          />
+        </div>
+      )}
 
       {/* Error state */}
       {error && (

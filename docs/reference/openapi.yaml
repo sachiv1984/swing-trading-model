@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.7.0
+  version: 3.8.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -5126,6 +5126,54 @@ components:
                         exit_reason: { type: string, nullable: true }
                         was_profitable: { type: boolean, nullable: true }
                         entry_year: { type: integer, nullable: true }
+
+  /strategy/benchmark/open-positions:
+    get:
+      summary: Panel 0 open (unrealized) positions for the Strategy Benchmark page
+      description: |
+        Returns current open positions with unrealized P&L, sourced from
+        backtest_open_positions (fully replaced on each nightly import, same
+        pattern as backtest_trades). No year parameter — open positions are
+        current-state, not historical-per-year data. ST-08 (BLG-FEAT-54, EPIC-03, v6.4)
+      tags: [Strategy Benchmark]
+      security:
+        - ApiKey: []
+      parameters:
+        - name: market
+          in: query
+          required: false
+          schema: { type: string, enum: [US, UK, ALL] }
+          description: Filter by market
+      responses:
+        "200":
+          description: Open positions data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  filters:
+                    type: object
+                    properties:
+                      market: { type: string }
+                  open_positions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ticker: { type: string }
+                        market: { type: string }
+                        entry_date: { type: string, format: date }
+                        entry_price: { type: number, nullable: true }
+                        current_price: { type: number, nullable: true }
+                        unrealized_pnl_gbp: { type: number, nullable: true }
+                        unrealized_pnl_pct: { type: number, nullable: true }
+                        days_held: { type: integer }
+                  summary:
+                    type: object
+                    properties:
+                      count: { type: integer }
+                      total_unrealized_pnl_gbp: { type: number, nullable: true }
 
 security:
   - ApiKey: []

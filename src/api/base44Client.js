@@ -528,6 +528,12 @@ export const api = {
       const qs = params.toString();
       return doFetch(`/strategy/benchmark/trades${qs ? '?' + qs : ''}`);
     },
+    getOpenPositions: async ({ market } = {}) => {
+      const params = new URLSearchParams();
+      if (market && market !== 'ALL') params.set('market', market);
+      const qs = params.toString();
+      return doFetch(`/strategy/benchmark/open-positions${qs ? '?' + qs : ''}`);
+    },
     importData: async (payload) =>
       doFetch('/strategy/benchmark/import', {
         method: 'POST',

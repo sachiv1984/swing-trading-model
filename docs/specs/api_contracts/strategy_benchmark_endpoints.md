@@ -1,9 +1,9 @@
 **Owner:** Backend Engineering Patterns Owner; Product Owner
 **Class:** API Contract (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-06-30
-**Story:** ST-11 (BLG-FEAT-53, EPIC-03, v6.3)
+**Version:** 1.1
+**Last Updated:** 2026-07-02
+**Story:** ST-11 (BLG-FEAT-53, EPIC-03, v6.3); ST-08 (BLG-FEAT-54, EPIC-03, v6.4)
 
 ---
 
@@ -11,7 +11,7 @@
 
 Endpoints supporting the Strategy Benchmark page — comparison of live trade performance against production_strategy.py backtest results.
 
-Data flow: `production_strategy.py` → CSV files in `production_results/` → `import_backtest.py` → `POST /strategy/benchmark/import` → `backtest_trades` + `backtest_yearly_performance` tables → `GET /strategy/benchmark/summary` / `GET /strategy/benchmark/trades` → frontend.
+Data flow: `production_strategy.py` → CSV files in `production_results/` → `import_backtest.py` → `POST /strategy/benchmark/import` → `backtest_trades` + `backtest_yearly_performance` + `backtest_open_positions` tables → `GET /strategy/benchmark/summary` / `GET /strategy/benchmark/trades` / `GET /strategy/benchmark/open-positions` → frontend.
 
 All endpoints require `X-API-Key` header authentication.
 
@@ -196,6 +196,48 @@ Returns Panel 3 trade log data. Returns `backtest_trades` and `actual_trades` se
 - `backtest only`: render `backtest_trades` list; hide `actual_trades`
 - `actual only`: render `actual_trades` list; hide `backtest_trades`
 - `side-by-side`: render both lists in separate columns or interspersed with source labels
+
+---
+
+## GET /strategy/benchmark/open-positions
+
+Returns Panel 0 open (unrealized) positions. Sourced from `backtest_open_positions`, which is fully replaced (not upserted) on each nightly import, the same pattern as `backtest_trades`. No `year` parameter — open positions are current-state, not historical-per-year data (a position may have been entered in a prior year and remain open today).
+
+**Auth:** X-API-Key required
+
+**Query parameters:**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `market` | string | No | `US`, `UK`, or `ALL`. |
+
+**Response (200):**
+
+```json
+{
+  "filters": { "market": "ALL" },
+  "open_positions": [
+    {
+      "ticker": "MSFT",
+      "market": "US",
+      "entry_date": "2026-05-12",
+      "entry_price": 412.30,
+      "current_price": 438.90,
+      "unrealized_pnl_gbp": 266.00,
+      "unrealized_pnl_pct": 6.45,
+      "days_held": 51
+    }
+  ],
+  "summary": {
+    "count": 5,
+    "total_unrealized_pnl_gbp": 46230.00
+  }
+}
+```
+
+**Null behaviour:** `summary.total_unrealized_pnl_gbp` is `null` when `count` is `0`. Individual position fields (`entry_price`, `current_price`, `unrealized_pnl_gbp`, `unrealized_pnl_pct`) are `null` only if the source CSV row was missing that value at import time.
+
+**Sort order:** Results are ordered by `unrealized_pnl_pct` descending (largest movers first) — not user-sortable in v1.0.
 
 ---
 

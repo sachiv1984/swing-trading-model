@@ -2185,11 +2185,29 @@ def ensure_backtest_tables():
                     UNIQUE (entry_year)
                 )
             """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS backtest_open_positions (
+                    id SERIAL PRIMARY KEY,
+                    ticker VARCHAR(20) NOT NULL,
+                    entry_date DATE NOT NULL,
+                    entry_price NUMERIC(12, 4),
+                    current_price NUMERIC(12, 4),
+                    unrealized_pnl_gbp NUMERIC(12, 2),
+                    unrealized_pnl_pct NUMERIC(8, 4),
+                    market VARCHAR(10) NOT NULL DEFAULT 'US',
+                    imported_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    UNIQUE (ticker, entry_date)
+                )
+            """)
         conn.commit()
 
 
-def upsert_backtest_data(trades: List[Dict], yearly_performance: List[Dict]) -> Dict:
-    """Replace backtest trade and yearly performance records with a fresh snapshot.
+def upsert_backtest_data(
+    trades: List[Dict],
+    yearly_performance: List[Dict],
+    open_positions: Optional[List[Dict]] = None,
+) -> Dict:
+    """Replace backtest trade, yearly performance, and open position records with a fresh snapshot.
 
     production_strategy.py recomputes the entire trade history from scratch on
     every run, so each import is the complete, authoritative picture rather
@@ -2200,17 +2218,26 @@ def upsert_backtest_data(trades: List[Dict], yearly_performance: List[Dict]) -> 
     had no way to remove rows that stopped being generated, which is exactly
     how 5 fictional trades from a fixed phantom-date bug stayed in the table.
 
-    Returns a dict with 'trades_imported' and 'years_imported' counts.
+    backtest_open_positions is replaced with the same full-wipe pattern
+    (ST-08, BLG-FEAT-54, AC-03) — a position that has since closed must not
+    linger in the table past the next import.
+
+    Returns a dict with 'trades_imported', 'years_imported', and
+    'open_positions_imported' counts (plus their _deleted counterparts).
     """
     now = datetime.utcnow()
     trades_count = 0
     years_count = 0
+    open_positions_count = 0
+    open_positions = open_positions or []
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute("DELETE FROM backtest_trades")
             trades_deleted = cur.rowcount
             cur.execute("DELETE FROM backtest_yearly_performance")
             years_deleted = cur.rowcount
+            cur.execute("DELETE FROM backtest_open_positions")
+            open_positions_deleted = cur.rowcount
             for trade in trades:
                 cur.execute("""
                     INSERT INTO backtest_trades (
@@ -2270,12 +2297,40 @@ def upsert_backtest_data(trades: List[Dict], yearly_performance: List[Dict]) -> 
                     now,
                 ))
                 years_count += 1
+            for pos in open_positions:
+                cur.execute("""
+                    INSERT INTO backtest_open_positions (
+                        ticker, entry_date, entry_price, current_price,
+                        unrealized_pnl_gbp, unrealized_pnl_pct, market, imported_at
+                    ) VALUES (
+                        %s, %s, %s, %s, %s, %s, %s, %s
+                    )
+                    ON CONFLICT (ticker, entry_date) DO UPDATE SET
+                        entry_price = EXCLUDED.entry_price,
+                        current_price = EXCLUDED.current_price,
+                        unrealized_pnl_gbp = EXCLUDED.unrealized_pnl_gbp,
+                        unrealized_pnl_pct = EXCLUDED.unrealized_pnl_pct,
+                        market = EXCLUDED.market,
+                        imported_at = EXCLUDED.imported_at
+                """, (
+                    pos.get("ticker"),
+                    pos.get("entry_date"),
+                    pos.get("entry_price"),
+                    pos.get("current_price"),
+                    pos.get("unrealized_pnl_gbp"),
+                    pos.get("unrealized_pnl_pct"),
+                    pos.get("market", "US"),
+                    now,
+                ))
+                open_positions_count += 1
         conn.commit()
     return {
         "trades_imported": trades_count,
         "years_imported": years_count,
+        "open_positions_imported": open_positions_count,
         "trades_deleted": trades_deleted,
         "years_deleted": years_deleted,
+        "open_positions_deleted": open_positions_deleted,
         "imported_at": now.isoformat() + "Z",
     }
 
@@ -2301,6 +2356,51 @@ def get_backtest_trades(
                 params,
             )
             return [dict(r) for r in cur.fetchall()]
+
+
+def get_backtest_open_positions(market_filter: Optional[str] = None) -> Dict:
+    """Return current open (unrealized) backtest positions for Panel 0.
+
+    ST-08 (BLG-FEAT-54, EPIC-03, v6.4). No year filter — open positions are
+    current-state, not historical-per-year data (per ux_spec.md "Filter
+    Interaction"). days_held is derived live from entry_date rather than
+    stored, so it stays correct between imports.
+    """
+    conditions = []
+    params: List = []
+    if market_filter and market_filter.upper() != "ALL":
+        conditions.append("market = %s")
+        params.append(market_filter.upper())
+    where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(f"""
+                SELECT
+                    ticker, market, entry_date, entry_price, current_price,
+                    unrealized_pnl_gbp, unrealized_pnl_pct,
+                    (CURRENT_DATE - entry_date) AS days_held
+                FROM backtest_open_positions
+                {where}
+                ORDER BY unrealized_pnl_pct DESC NULLS LAST
+            """, params)
+            positions = [dict(r) for r in cur.fetchall()]
+
+            cur.execute(f"""
+                SELECT
+                    COUNT(*) AS count,
+                    ROUND(SUM(unrealized_pnl_gbp)::numeric, 2) AS total_unrealized_pnl_gbp
+                FROM backtest_open_positions
+                {where}
+            """, params)
+            summary_row = cur.fetchone()
+
+    return {
+        "open_positions": positions,
+        "summary": {
+            "count": summary_row["count"] if summary_row else 0,
+            "total_unrealized_pnl_gbp": summary_row["total_unrealized_pnl_gbp"] if summary_row else None,
+        },
+    }
 
 
 def get_backtest_summary(
