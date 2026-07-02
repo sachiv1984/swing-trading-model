@@ -1,10 +1,10 @@
 # PMO Lead
 
 **Role:** PMO Lead
-Owner: Head of Specs Team
-Status: Canonical
-Version: 2.2
-Last Updated: 2026-03-01
+**Owner:** Head of Specs Team
+**Status:** Canonical
+**Version:** 2.2
+**Last Updated:** 2026-03-01
 
 ---
 

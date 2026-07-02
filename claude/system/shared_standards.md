@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.5
-**Last Updated:** 2026-06-10
+**Version:** 3.7
+**Last Updated:** 2026-07-02
 
 # Shared Standards — All Governed Routines
 
@@ -223,6 +223,8 @@ The following files are append-only within their cycle. Never edit a previous en
 
 If a correction is needed to a previous entry, append a correction note referencing the original entry ID. Do not overwrite.
 
+**Structural verification requirement:** `claude/roadmap/decision_log.md` has a confirmed structural guard (`roadmap_prompt.md` STEP 9: count entries before/after write, confirm count only increased, confirm no existing entry text changed — halt if either check fails). The remaining four files above (`escalations.md`, `execution_escalations.md`, `verification_escalations.md`, `delegation_log.md`) currently rely on prose instruction only. Any engine that appends to one of these files should apply the same before/after count-verify pattern at its write step.
+
 ---
 
 ## 8. Resumability Protocol
@@ -375,6 +377,7 @@ The following engines support `--dry-run`. The guarantee is identical in all cas
 | `plan release --dry-run` | Scope extraction preview — roadmap item, tentative EPIC/ST structure, artefacts that would be created (release_plan.md, backlog_slice, design_gate.md if required); no artefact writes, no state updates |
 | `run delivery verification --dry-run` | Verification plan — list of all STEP checks with their precondition sources; no verification_report.md written, no .claude_current_state.json update |
 | `amend cycle --dry-run` | Amendment preview — proposed backlog slice delta, scope changes, authority ratification requirements; no state.json writes, no slice artefact created |
+| `run audit` | N/A — `claude/audit.py` is read-only by design (produces a report + a PATCH manifest for Claude Code to apply separately); no `--dry-run` flag needed, no writes occur during the audit run itself |
 
 **Scope of read operations:** Read operations (file reads, git queries, pip-audit scans) are always permitted in dry-run mode. A dry-run that cannot read required inputs should halt with a standard halt report, not silently produce an empty plan.
 

@@ -1,7 +1,7 @@
 Owner: Head of Specs Team
 Status: Supporting  
 Canonical Source: /charter/team_charter.md  
-Last Updated: 2026-03-22  
+Last Updated: 2026-07-02  
 
 ---
 
@@ -27,7 +27,7 @@ Claude **enforces the conditions under which decisions are allowed to exist**.
 All behaviour in this repository is governed by the following **canonical documents**:
 
 - `/charter/team_charter.md`
-- `/charter/documentation_lifecycle_guide.md`
+- `/charter/document_lifecycle_guide.md`
 
 If any routine, document, or output conflicts with these authorities,  
 **the governance documents prevail**.
@@ -71,6 +71,27 @@ This routine performs a full integrity sweep:
 
 Execution logic is defined in:
 - `claude/system/roadmap_prompt.md`
+
+---
+
+### 4.2 Other Governed Routines (Summary)
+
+| Routine | Command | Prompt |
+|---|---|---|
+| Release Planning | `plan release` | `claude/system/release_planning_prompt.md` |
+| Sprint Planning | `plan sprint` | `claude/system/sprint_planning_prompt.md` |
+| Sprint Execution | `run sprint` | `claude/system/execution_prompt.md` |
+| Delivery Verification | `run delivery verification` | `claude/system/delivery_verification_prompt.md` |
+| Post-Ship Closure | `run post-ship` | `claude/system/post_ship_closure.md` |
+| Amendment Cycle | `amend cycle` | `claude/system/amendment_cycle_prompt.md` |
+| Design Gate | `run design-gate` | `claude/system/design_gate_prompt.md` |
+| Idea Intake | `run ideas` | `claude/system/idea_intake_prompt.md` |
+| Roadmap Management | `manage roadmap` | `claude/system/roadmap_management_prompt.md` |
+| Backlog Management | `groom backlog` | `claude/system/backlog_management_prompt.md` |
+| Ideas Housekeeping | `run ideas housekeeping` | `claude/system/ideas_housekeeping_prompt.md` |
+| Lifecycle Audit | `run audit` | `claude/audit.py` |
+
+Full trigger conditions and phase sequencing: see `claude/system/OPERATIONAL_GUIDE.md` §4.
 
 ---
 
@@ -129,6 +150,6 @@ If ambiguity exists about:
 
 Refer to:
 - `/charter/team_charter.md`
-- `/charter/documentation_lifecycle_guide.md`
+- `/charter/document_lifecycle_guide.md`
 
 Those documents are authoritative.

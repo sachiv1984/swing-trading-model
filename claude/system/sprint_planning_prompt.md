@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.11
-**Last Updated:** 2026-06-22 (v3.10→v3.11: ST-02/BLG-GOV-133 — STEP -1 check 3 updated: design gate hard gate now conditional on design_gate_required = true; when design_gate_required = false gate check is skipped with explicit log note; source reads from state.json attributes.design_gate_required)
+**Version:** 3.12
+**Last Updated:** 2026-07-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 

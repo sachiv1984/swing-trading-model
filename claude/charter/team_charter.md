@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team  
 **Status:** Canonical  
-**Version:** 1.6
-**Last Updated:** 2026-03-16  
+**Version:** 1.7
+**Last Updated:** 2026-07-02  
 
 ---
 
@@ -458,6 +458,12 @@ If Facilitator halts a governed routine:
 - No decision authority may override the halt
 - Resolution requires the specific gate violation to be remediated
 - Product Owner + Head of Specs Team must jointly agree that the gate is satisfied before the routine resumes
+
+### 5.7 Design gate bypass disputes
+
+If a cycle enters `Sprint_Planning_Complete` from `Release_Planning_Complete` without passing through `Design_Gate_Passed` (design gate skipped):
+- `design_gate_bypass_authority` must name both **Head of UX & Design and Product Owner** — a single role is non-compliant (IMP-30, enforced at `sprint_planning_prompt.md` STEP -1 Bypass Audit).
+- A bypass without both authorities recorded may not be treated as valid; the sprint may not seal.
 
 ---
 
