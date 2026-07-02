@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.8
-**Last Updated:** 2026-05-09
+**Version:** 1.9
+**Last Updated:** 2026-07-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -583,7 +583,7 @@ The run is complete only if:
 - `amendment_state.json` status = `Sealed`
 - `backlog.md` updated with amendment marker present
 - Backlog lock released
-- `amendment_lessons.md` filed (standalone, in amendment sub-folder)
+- `amendment_lessons.md` filed (standalone, in amendment sub-folder) — **required only while this prompt is <v2.0**; per §8 deprecation notice, this output is dropped entirely from v2.0 onward and this bullet becomes void at that point
 - `lessons_learnt_cycle.md` Amendment section appended (idempotency guard applied)
 - `.claude_current_state.json` updated with `amended_backlog_slice_path` and `amendment_status = Sealed`
 - STEP 9 commit complete (or commit manifest produced)

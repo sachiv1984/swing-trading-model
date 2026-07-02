@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.5
-**Last Updated:** 2026-06-10
+**Version:** 3.6
+**Last Updated:** 2026-07-02
 
 # Shared Standards — All Governed Routines
 
@@ -222,6 +222,8 @@ The following files are append-only within their cycle. Never edit a previous en
 - `claude/roadmap/decision_log.md`
 
 If a correction is needed to a previous entry, append a correction note referencing the original entry ID. Do not overwrite.
+
+**Structural verification requirement:** `claude/roadmap/decision_log.md` has a confirmed structural guard (`roadmap_prompt.md` STEP 9: count entries before/after write, confirm count only increased, confirm no existing entry text changed — halt if either check fails). The remaining four files above (`escalations.md`, `execution_escalations.md`, `verification_escalations.md`, `delegation_log.md`) currently rely on prose instruction only. Any engine that appends to one of these files should apply the same before/after count-verify pattern at its write step.
 
 ---
 

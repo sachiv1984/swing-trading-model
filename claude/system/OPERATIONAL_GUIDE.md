@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.67
+**Version:** 4.68
 **Last Updated:** 2026-07-02
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -738,7 +738,7 @@ The cycle may only be sealed `Published` if **all** of the following are true:
 
 ### 6B.8 Amendment Cycle (Emergency Only)
 
-**Source prompt:** `claude/system/amendment_cycle_prompt.md` (v1.8)
+**Source prompt:** `claude/system/amendment_cycle_prompt.md` (v1.9)
 
 An amendment cycle may be opened after Phase 1B publishes and before Phase 2 seals (`sprint_sealed = true`). It is the only permitted mechanism for changing the backlog slice after the release plan is sealed.
 
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.48)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.49)
 
 ### 8.1 Invocation
 
@@ -1454,7 +1454,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.67 |
+| Version | 4.68 |
 | Last Updated | 2026-07-02 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
@@ -1466,14 +1466,14 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v7.8 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.39 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.12 |
-| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.48 |
+| Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.49 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.5 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.1 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.15 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.5 |
+| Shared Standards | `claude/system/shared_standards.md` v3.6 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.9 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.68 | 2026-07-02 | **v6.4 ST-06 (BLG-GOV-152 + FI-P3-01/FI-P3-02/FI-P4-01 re-target, EPIC-02) — 4 structural reliability gaps closed.** §14 Shared Standards v3.5→v3.6. §14 Execution Engine Source v3.48→v3.49. §14 Amendment Cycle Engine v1.8→v1.9. §14 Version 4.67→4.68/2026-07-02. Changes: (AC-01) shared_standards.md §7 — structural verification requirement note added covering the 4 append-only files without a structural guard (`escalations.md`, `execution_escalations.md`, `verification_escalations.md`, `delegation_log.md`), referencing `decision_log.md`'s existing structural pattern as the model to apply. (AC-02/FI-P4-01/DF-10) execution_prompt.md `spec_references` policy — Case D (CI/infrastructure) added; trailing sentence corrected so `spec_references = []` no longer the recommended default for infra stories with an identifiable primary file. (AC-03/FI-P3-02) CLAUDE.md §2 frontend testing gate — wording-only vs visual/rendering AC exception added (not a Class 6 prompt, no version bump). (AC-04) amendment_cycle_prompt.md §9 completion condition — `amendment_lessons.md` bullet made explicitly conditional on file version <2.0, matching §8's deprecation framing. (AC-05/FI-P3-01) `claude/agents/base44_frontend_prompt_owner.md` v1.2→v1.3 (agent charter, not §14-tracked) — Playwright strict-mode `data-testid` advisory added to §3 "6. Expected outcome". Authority: Head of Specs Team (v6.4 ST-06, 2026-07-02). |
 | 4.67 | 2026-07-02 | **v6.4 ST-05 (BLG-GOV-151, EPIC-02) — Class 6 header format fix: roadmap_prompt.md v7.7→v7.8, release_planning_prompt.md v2.38→v2.39, sprint_planning_prompt.md v3.11→v3.12.** §6 source prompt header updated v7.7→v7.8. §6B source prompt header updated v2.38→v2.39. §7 source prompt header updated v3.11→v3.12. §13 Artefact Register Roadmap Rebalance Prompt row updated v7.7→v7.8. §14 Roadmap Engine Source v7.7→v7.8. §14 Release Engine Source v2.38→v2.39. §14 Sprint Planning Engine v3.11→v3.12. §14 Version 4.66→4.67/2026-07-02. Change: all 3 files' `**Last Updated:**` header field changed from date-plus-change-description prose to date-only, per `document_lifecycle_guide.md` Class 6 spec (`Last Updated: [date]`); change descriptions already duplicated in `prompt_change_log.md` are not lost. Authority: Head of Specs Team (AUD-2026-07-01-011, v6.4 ST-05, 2026-07-02). |
 | 4.66 | 2026-07-01 | **Roadmap rebalance 2026-07-01__scheduled — roadmap_prompt.md v7.6→v7.7 (FI-META-02 action-now patch) + drift correction.** §6 source prompt header updated v7.6→v7.7. §13 Artefact Register Roadmap Rebalance Prompt row updated v7.6→v7.7. §14 Roadmap Engine Source v7.5→v7.7 (corrects a pre-existing stale row that was never updated at the v7.6 bump on 2026-06-22 — §6/§13 already showed v7.6 but §14 still showed v7.5). §14 Version 4.63→4.66/2026-07-01 (catches up 2 versions of un-recorded drift — see 4.65 backfill entry below — plus this cycle's bump). Change: STEP -1.6 large-window budget note added — when the inline idea intake window produces >30 submissions, budget additional context depth for STEPs 4 and 5; if advancing idea count exceeds 15, prioritise advancing only the highest-scoring ideas (per STEP 6 criteria) and park the remainder. Root cause: IW-20260626-01 (44 submissions, 22 agents) flagged as a context-budget risk at meta-review (STEP 11.4, rebalance 2026-06-26__scheduled). Authority: Head of Specs Team (FI-META-02 deferred patch; applied action-now per STEP -1.5 stale-release-target rule since target release v6.3 had already shipped). |
 | 4.65 | 2026-06-24 | **Backfill entry — v6.2 ST-10+ST-11 (BLG-GOV-135+136, EPIC-03), execution_prompt.md v3.47→v3.48.** This row documents a change already applied to the document header and §8 source prompt header at the time (see `prompt_change_log.md` 2026-06-24 entry) but never recorded in this Change Log table, leaving §14 Version stuck at 4.63 across two subsequent bumps. §8 source prompt header v3.47→v3.48. §14 Execution Engine Source v3.47→v3.48. §14 Version 4.64→4.65/2026-06-24 (recorded retroactively 2026-07-01). Changes: §3.2.A Autonomous DoQ sign-off class criterion 3 updated with detection rule (ST-10/BLG-GOV-135) — autonomous class path unavailable if any story modifies `src/components/**` or `src/pages/**`, regardless of Playwright coverage. STEP 0 instruction 6 updated with advisory (ST-11/BLG-GOV-136) — test_scenarios paths must be runnable test files under `tests/` or `tests/e2e/`, not `docs/testing/` scenario description artefacts. Authority: Head of Specs Team (BLG-GOV-135+136, v6.2 ST-10+ST-11, 2026-06-24). |
