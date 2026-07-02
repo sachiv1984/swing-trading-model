@@ -365,7 +365,7 @@
           "assigned_to": "engine",
           "github_issue": 896,
           "branch": "exec/2026-07-02__release-v6.4/EPIC-03",
-          "commit_sha": "9f71bb9ba0db611fe6f236d00a603787b2dddf9b",
+          "commit_sha": "4ca88dc4a2a4caba57e835c705509465f49cf3f2",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -377,7 +377,7 @@
           "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Test-authoring (Case C). AC-01 (nav accessibility) covered by SC-SB-01; AC-02 (simultaneous filters) by SC-SB-02; AC-03 (Panel 1 placeholder) by SC-SB-03; AC-04 (toggle modes + badge colours) by SC-SB-04; AC-05 satisfied \u2014 file is tests/e2e/strategy-benchmark.spec.js. Scoped to Panels 1/3 only per sprint_backlog.md; Panel 0 (ST-08) stubbed to zero positions to avoid interference. No deviation from spec intent \u2014 none filed."
+          "notes": "Test-authoring (Case C). AC-01 (nav accessibility) covered by SC-SB-01; AC-02 (simultaneous filters) by SC-SB-02; AC-03 (Panel 1 placeholder) by SC-SB-03; AC-04 (toggle modes + badge colours) by SC-SB-04; AC-05 satisfied \u2014 file is tests/e2e/strategy-benchmark.spec.js. Scoped to Panels 1/3 only per sprint_backlog.md; Panel 0 (ST-08) stubbed to zero positions to avoid interference. CI defect caught + fixed pre-merge (PR #899, QA/DoQ/PO review pass): initial SC-SB-01a implementation navigated via /#/DashboardHome with insufficient route stubs, causing a 30s locator timeout in the 'Playwright E2E Acceptance Tests' CI job (2 failed attempts). Fixed in commit 4ca88dc4 by navigating from /#/Positions with the same minimal stub set already proven in epic02-v62-ai-briefing-chat.spec.js. No spec-intent deviation \u2014 CI catch, not an AC gap."
         }
       }
     }
