@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.38
-**Last Updated:** 2026-06-22 (v2.37→v2.38: ST-01/BLG-GOV-132 — STEP 4.1 Design Gate Classification added: STEP 4 now scans backlog slice for UI-facing scope and sets design_gate_required in state.json and .claude_current_state.json; STEP 7 updated to include design_gate_required status line in cycle_summary.md header)
+**Version:** 2.39
+**Last Updated:** 2026-07-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 

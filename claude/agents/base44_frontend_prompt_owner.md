@@ -5,13 +5,14 @@
 **Governance alignment:** Head of Specs Team (documentation lifecycle, document classes, headers, naming conventions); Frontend Specifications & UX Documentation Owner (canonical source of truth for all UI behaviour)
 **Scope:** Producing precise, complete prompts for the Base44 code generation platform to implement frontend changes; reviewing and integrating Base44-generated code into the codebase
 **Status:** Canonical
-**Version:** 1.2
-**Last Updated:** 2026-03-06
+**Version:** 1.3
+**Last Updated:** 2026-07-02
 
 ### Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-07-02 | Added Playwright strict-mode advisory to Section 3 "6. Expected outcome" — require Base44 to add a unique `data-testid` and state its exact value in the prompt when a generated element could match more than one Playwright locator. Resolves FI-P3-01 (2nd recurrence, v6.1/v6.2), folded into BLG-GOV-152 (v6.4 ST-06) per Head of Specs Team re-targeting decision. |
 | 1.2 | 2026-03-06 | Added Section 12 (Delegation Requirements) — mandatory "Target branch" field for delegation records. Immediate lessons learnt action from 2026-03-04__release-v1.8 friction item 1 (EX-LL): ST-03 committed to main bypassing EPIC branch due to missing "Target branch" field in delegation. |
 | 1.1 | 2026-02-19 | Added Section 5 rules 2a (import path validation), 2b (spec reconciliation), and 6 (deployment confirmation). Added Section 11 (Frontend File Naming Conventions). Changes actioned from lessons learnt review: 3.2 Position Sizing Calculator, filed 2026-02-19. |
 | 1.0 | — | Initial canonical version |
@@ -68,6 +69,8 @@ State what must not change — existing form fields that must remain, submission
 
 **6. Expected outcome — what Base44 should return**
 Tell Base44 exactly what to produce: the complete modified file, or a specific named component. State the exact intended filename per the naming convention in Section 11.
+
+**Playwright strict-mode advisory (FI-P3-01):** If the generated component introduces an element that could match more than one Playwright locator on the page (e.g. a repeated label, icon-only button, or list item with a shared class), require Base44 to add a unique `data-testid` to that element and state the exact `data-testid` value in the prompt. Existing Playwright specs use `page.getByTestId(...)` with `{ exact: true }` or role/text scoping — an element with an ambiguous locator will fail Playwright strict mode (multiple elements matched) even if the feature itself works correctly. This has recurred twice (v6.1, v6.2); state the required `data-testid` explicitly rather than leaving selector strategy to Base44's discretion.
 
 ---
 

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.48
-**Last Updated:** 2026-06-24
+**Version:** 3.49
+**Last Updated:** 2026-07-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -531,15 +531,16 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 #### 3.1.A If `autonomous`:
 
 1. Execute the work defined in the acceptance criteria. **Test scenarios advisory (ST-13):** When tests are created as part of this work, populate `test_scenarios` in `execution_state.json` for the parent EPIC with the test file paths (e.g. `tests/test_screener_service.py`). This is non-blocking — story execution does not halt if the field is not updated immediately — but it must be populated before the EPIC-level QA evidence log is created at STEP 3.2.A. **Scoping rule (AUD-2026-05-21-003):** Only list spec files that contain at least one scenario directly exercising an acceptance criterion for this EPIC. Do not list shared utilities or spec files from other EPICs whose tests happen to run in the same suite.
-2. **Spec_references policy (SC-03):** Populate `spec_references` in `execution_state.json` using this 3-case lookup:
+2. **Spec_references policy (SC-03):** Populate `spec_references` in `execution_state.json` using this 4-case lookup:
 
    | Case | Story type | Rule |
    |------|-----------|------|
    | A — Path verify | Any story | Verify each path exists on disk (file read or ls) before recording. Non-existent paths cause false traceability — record only resolving paths. (LL-v3.7-EX-03) |
    | B — Documentation-creation | Primary deliverable IS a new/updated spec or doc artefact (API contract, metrics definition, schema spec) | Set `spec_references` to the created/updated artefact path — the artefact IS the governing spec. Also record path in `delivery_note` field. `spec_references = []` is non-compliant. (LL-v4.5-EX-02) |
    | C — Test-authoring | Sole deliverable is a new test file; no prior canonical spec governs the work | Set `spec_references` to the created test file path. Do not leave empty with `notes: "no prior spec applicable"` — the file IS a traceable artefact. (OA-02) |
+   | D — CI/infrastructure | Sole deliverable is a CI/pipeline/tooling config change (e.g. `playwright.config.js`, workflow YAML) with no prior canonical spec | Set `spec_references` to the primary file changed — it is the de facto spec reference. (FI-P4-01 / DF-10) |
 
-   If none of the above cases apply and a governing spec exists: set `spec_references` to that spec path. Leave `[]` only for purely infrastructural items with no governing spec.
+   If none of the above cases apply and a governing spec exists: set `spec_references` to that spec path. `spec_references = []` should not occur for any story type covered by Cases A–D above.
 
 3. Commit to the EPIC branch (format: see STEP 3 header schema).
 
