@@ -5,10 +5,10 @@
   "invoked_utc": "2026-07-02T08:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-02T09:05:00Z",
+  "last_updated_utc": "2026-07-02T09:06:00Z",
   "epics": {
     "EPIC-01": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-02__release-v6.4/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
@@ -76,20 +76,20 @@
         "ST-03": {
           "title": "Validate ticker/market strings at signal write time (BLG-SEC-02)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 886,
           "branch": "exec/2026-07-02__release-v6.4/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "2ff162715b8ff9da6749cd64317ecf227bec7d8b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-07-02T09:06:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/security/ai_injection_risk_assessment.md#Input 5 \u2014 Signal ticker and market strings"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": {
             "required_by": "Cybersecurity & Trust Lead",
@@ -101,7 +101,7 @@
             ],
             "cleared_utc": "2026-07-02T09:05:00Z"
           },
-          "notes": "Requires Cybersecurity & Trust Lead sign-off (AC-03). AC-02 (review existing signals) is a manual data-cleanup step, not CI-testable."
+          "notes": "AC-01 verified via unit tests covering all 3 signal write paths (create_signal, create_rebalance_exit_signal, update_signal). AC-02 deferred to BLG-SEC-07 (manual live-DB review, not CI-testable, per sprint_planning_notes.md). Sign-off review also surfaced BLG-SEC-08 (out-of-scope follow-up)."
         }
       }
     },
@@ -353,7 +353,8 @@
   "delegated_items": [],
   "completed_items": [
     "ST-01",
-    "ST-02"
+    "ST-02",
+    "ST-03"
   ],
   "open_escalations": [],
   "merge_gate": {
