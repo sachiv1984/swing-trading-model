@@ -5,7 +5,7 @@
   "invoked_utc": "2026-07-02T08:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-02T08:25:00Z",
+  "last_updated_utc": "2026-07-02T08:35:00Z",
   "epics": {
     "EPIC-01": {
       "status": "not_started",
@@ -23,24 +23,24 @@
         "ST-01": {
           "title": "Signal generation reads deprecated tickers table instead of ticker_universe (BLG-BE-40)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 884,
           "branch": "exec/2026-07-02__release-v6.4/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "4d56dc428fd89a6f3ad2800a5f8286fe44c40aaa",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-07-02T08:35:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/signal_endpoints.md#POST /signals/generate",
             "docs/specs/api_contracts/ticker_universe_api_contract.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC-01/03 verified via full backend test suite (551 passed, 0 failed). AC-02 is staging-only (per sprint_backlog.md) \u2014 deferred to post-merge staging verification (Ticker Universe Management add/deactivate test)."
         },
         "ST-02": {
           "title": "Sanitise context_opts.ticker before system prompt injection (BLG-SEC-01)",
@@ -333,7 +333,9 @@
   },
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": [],
+  "completed_items": [
+    "ST-01"
+  ],
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": [],
