@@ -5,19 +5,20 @@
   "invoked_utc": "2026-07-02T08:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-02T09:06:00Z",
+  "last_updated_utc": "2026-07-02T09:20:00Z",
   "epics": {
     "EPIC-01": {
       "status": "done",
       "branch": "exec/2026-07-02__release-v6.4/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-02__release-v6.4/qa_evidence_EPIC-01.md",
       "test_scenarios": [
         "tests/test_signal_sizing.py",
         "tests/test_nightly_computations.py",
-        "tests/test_ai_chat_schema.py"
+        "tests/test_ai_chat_schema.py",
+        "tests/test_signal_write_sanitization.py"
       ],
       "stories": {
         "ST-01": {
