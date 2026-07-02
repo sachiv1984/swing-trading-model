@@ -55,7 +55,7 @@ def _build_generate_patches(
         f"{_DB_TARGET}.get_portfolio": {"id": "p-001", "cash": portfolio_cash},
         f"{_DB_TARGET}.get_positions": [],
         f"{_DB_TARGET}.get_settings": [{"default_risk_percent": 1.0}],
-        f"{_DB_TARGET}.get_all_tickers": [ticker],
+        f"{_DB_TARGET}.get_all_tickers": [{"ticker": ticker}],
         f"{_DB_TARGET}.get_live_fx_rate": 1.25,
         f"{_DB_TARGET}.create_signal": None,
         f"{_DB_TARGET}.download_ticker_data": ticker_df,
