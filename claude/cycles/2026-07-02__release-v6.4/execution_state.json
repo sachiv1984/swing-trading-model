@@ -5,7 +5,7 @@
   "invoked_utc": "2026-07-02T08:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-02T10:30:00Z",
+  "last_updated_utc": "2026-07-02T10:35:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -192,26 +192,26 @@
         "ST-07": {
           "title": "Audit & governance process fixes (BLG-GOV-153)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 890,
           "branch": "exec/2026-07-02__release-v6.4/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "5a52c02fdfaa9a3808a4eb72c3e24b58ffe1895d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-07-02T10:15:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/charter/team_charter.md",
             "claude/system/shared_standards.md",
             "claude/audit.py",
             "claude/scoring/scored_initiatives.md"
           ],
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Source: audit_report_AUD-2026-07-01.md. Depends on ST-06 (same-file section sequencing)."
+          "notes": "AC-01/02/03/04 verified via file review + /governance-drift (all touched Class 6 files version-synced). Process deviation: the scored_initiatives_2026-03-06.md orphan deletion landed in a separate commit (5ab2ee2a) from the rest of the story's content changes (5a52c02f) due to a `git add` pathspec error — both carry the [EPIC-02][ST-07] tag so governance_sync.yml closes the issue correctly; noted here for QA evidence traceability. No spec deviation — none filed."
         }
       }
     },
@@ -358,7 +358,8 @@
     "ST-02",
     "ST-03",
     "ST-05",
-    "ST-06"
+    "ST-06",
+    "ST-07"
   ],
   "open_escalations": [],
   "merge_gate": {
