@@ -22,11 +22,11 @@ from database import (
     get_signals as db_get_signals,
     update_signal as db_update_signal,
     delete_signal as db_delete_signal,
-    get_all_tickers,
     download_ticker_data,
     compute_atr_simple,
     create_rebalance_exit_signal,
 )
+from services.ticker_universe_service import get_all_tickers
 
 from utils.pricing import get_live_fx_rate
 from utils.formatting import decimal_to_float
@@ -93,9 +93,9 @@ def generate_momentum_signals(
     settings_list = get_settings()
     settings = settings_list[0] if settings_list else None
     
-    # Load universe
-    tickers = get_all_tickers()
-    
+    # Load universe — active ticker_universe entries, not the deprecated `tickers` table (BLG-BE-40)
+    tickers = [row['ticker'] for row in get_all_tickers(active_only=True)]
+
     print(f"Universe: {len(tickers)} tickers")
     
     # Calculate dates

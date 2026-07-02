@@ -11,16 +11,41 @@ Contract: docs/specs/api_contracts/ai_endpoints.md v1.4
 import logging
 import os
 import json
+import re
 import time
 import anthropic
 from datetime import datetime
 from typing import Optional
+
+from fastapi import HTTPException
 
 logger = logging.getLogger(__name__)
 
 
 MODEL_VERSION = "claude-haiku-4-5-20251001"
 MODEL_BRIEFING = "claude-sonnet-4-6"
+
+# BLG-SEC-01: context_opts.ticker is interpolated into the ai_chat() system prompt.
+# Reject anything outside this charset (in particular \n / \r, which could otherwise
+# forge additional system-prompt lines) before it reaches the prompt.
+_CONTEXT_TICKER_PATTERN = re.compile(r'[A-Z0-9.:/-]{1,20}')
+
+
+def _validate_context_ticker(context_opts: Optional[dict]) -> None:
+    """Validate context_opts['ticker'] before it is interpolated into the system prompt (BLG-SEC-01)."""
+    if not context_opts:
+        return
+    ticker = context_opts.get("ticker")
+    if ticker is None:
+        return
+    if not isinstance(ticker, str) or not _CONTEXT_TICKER_PATTERN.fullmatch(ticker):
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                "context.ticker is invalid — must be 1-20 characters matching "
+                "[A-Z0-9.:/-] with no newlines or other special characters"
+            ),
+        )
 
 
 def summarise_journal_notes(
@@ -291,6 +316,8 @@ def ai_chat(question: str, context_opts: Optional[dict] = None) -> dict:
     Returns: { response, advisory }
     Advisory-only — SRB-v1.7.
     """
+    _validate_context_ticker(context_opts)
+
     from database import get_portfolio, get_positions, get_signals, create_claude_audit_entry
 
     api_key = os.getenv("ANTHROPIC_API_KEY")

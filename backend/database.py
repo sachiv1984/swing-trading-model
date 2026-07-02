@@ -1,4 +1,5 @@
 import os
+import re
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
@@ -571,8 +572,26 @@ def get_latest_snapshot(portfolio_id: str) -> Optional[Dict]:
 # SIGNALS FUNCTIONS
 # ============================================================================
 
+# BLG-SEC-02: ticker/market strings are interpolated into AI prompts (daily
+# briefing, chat) downstream of signal writes. Sanitise at write time so no
+# unvalidated value from an upstream data source (screener, ticker universe)
+# reaches the signals table. Allow '.', '-', '/', ':' for international
+# ticker formats (e.g. "VOD.L"); strip everything else; cap at 12 chars.
+_SIGNAL_STRING_DISALLOWED = re.compile(r'[^A-Za-z0-9.\-/:]')
+_SIGNAL_STRING_MAX_LEN = 12
+
+
+def _sanitize_signal_string(value: str) -> str:
+    if value is None:
+        return value
+    cleaned = _SIGNAL_STRING_DISALLOWED.sub('', str(value))
+    return cleaned[:_SIGNAL_STRING_MAX_LEN]
+
+
 def create_signal(portfolio_id: str, signal_data: Dict) -> Dict:
     """Create or update a signal"""
+    ticker = _sanitize_signal_string(signal_data['ticker'])
+    market = _sanitize_signal_string(signal_data['market'])
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute("""
@@ -601,8 +620,8 @@ def create_signal(portfolio_id: str, signal_data: Dict) -> Dict:
                 RETURNING *
             """, (
                 portfolio_id,
-                signal_data['ticker'],
-                signal_data['market'],
+                ticker,
+                market,
                 signal_data['signal_date'],
                 signal_data['rank'],
                 signal_data['momentum_percent'],
@@ -643,8 +662,13 @@ def update_signal(signal_id: str, updates: Dict) -> Dict:
         with conn.cursor() as cur:
             set_parts = []
             values = []
-            
+
             for key, value in updates.items():
+                # BLG-SEC-02: PATCH /signals/{id} is a second signal write path — ticker/market
+                # must be sanitised here too, or the INSERT-time protection in create_signal()
+                # is bypassed entirely.
+                if key in ("ticker", "market"):
+                    value = _sanitize_signal_string(value)
                 set_parts.append(f"{key} = %s")
                 values.append(value)
             
@@ -2061,6 +2085,8 @@ def create_rebalance_exit_signal(portfolio_id: str, ticker: str, market: str,
     Uses the existing signals table with non-applicable sizing fields set to 0/null.
     The UNIQUE(portfolio_id, ticker, signal_date) constraint prevents duplicates.
     """
+    ticker = _sanitize_signal_string(ticker)
+    market = _sanitize_signal_string(market)
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute("""
