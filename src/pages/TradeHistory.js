@@ -391,10 +391,12 @@ export default function TradeHistory() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="rounded-2xl bg-slate-800/50 border border-slate-700/50 overflow-hidden"
+            data-testid="ai-journal-summary-section"
           >
             <div
               className="flex items-center justify-between p-6 cursor-pointer select-none"
               onClick={() => setAiSummaryOpen(!aiSummaryOpen)}
+              data-testid="ai-journal-summary-toggle"
             >
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-cyan-400" />
@@ -409,6 +411,7 @@ export default function TradeHistory() {
                     variant="outline"
                     size="sm"
                     className="bg-slate-700/50 border-slate-600 text-slate-200 hover:bg-slate-700 disabled:opacity-50 text-xs"
+                    data-testid="ai-journal-summary-generate-btn"
                   >
                     {aiLoading ? (
                       <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
@@ -434,15 +437,15 @@ export default function TradeHistory() {
                 </div>
                 <div className="rounded-xl bg-slate-900/50 border border-slate-700/30 p-4 min-h-[80px] max-h-64 overflow-y-auto">
                   {aiLoading ? (
-                    <div className="flex items-center justify-center py-6">
+                    <div className="flex items-center justify-center py-6" data-testid="ai-journal-summary-loading">
                       <Loader2 className="w-5 h-5 animate-spin text-slate-500" />
                     </div>
                   ) : aiSummary ? (
-                    <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">{aiSummary}</p>
+                    <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap" data-testid="ai-journal-summary-content">{aiSummary}</p>
                   ) : aiGenerated ? (
-                    <p className="text-slate-500 text-sm">{aiMessage || "Summary unavailable. Please try again later."}</p>
+                    <p className="text-slate-500 text-sm" data-testid="ai-journal-summary-error">{aiMessage || "Summary unavailable. Please try again later."}</p>
                   ) : (
-                    <p className="text-slate-500 text-sm">Click &apos;Generate Summary&apos; to get an AI overview of your journal entries.</p>
+                    <p className="text-slate-500 text-sm" data-testid="ai-journal-summary-placeholder">Click &apos;Generate Summary&apos; to get an AI overview of your journal entries.</p>
                   )}
                 </div>
               </div>
