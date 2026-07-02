@@ -138,7 +138,7 @@ export default function AiDailyBriefing() {
         <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-600 text-white">
           AI Advisory
         </span>
-        <span className="text-xs text-slate-500 italic">All actions require your confirmation</span>
+        <span className="text-xs text-slate-300 italic">All actions require your confirmation</span>
       </div>
 
       {/* Body */}

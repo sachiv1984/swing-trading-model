@@ -208,6 +208,9 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /strategy/benchmark/trades", "method": "GET", "url": f"{base_url}/strategy/benchmark/trades", "critical": False},
         {"name": "POST /strategy/benchmark/import", "method": "POST", "url": f"{base_url}/strategy/benchmark/import", "body": {"trades": [], "yearly_performance": []}, "critical": False},
 
+        # Strategy Benchmark Open Positions (v6.4 / EPIC-03 ST-08)
+        {"name": "GET /strategy/benchmark/open-positions", "method": "GET", "url": f"{base_url}/strategy/benchmark/open-positions", "critical": False},
+
         # AI rate limit 429 scenario verification (v6.3 / EPIC-01 ST-03)
         {"name": "POST /test/rate-limit-scenarios", "method": "POST", "url": f"{base_url}/test/rate-limit-scenarios", "critical": False},
     ]

@@ -2,9 +2,9 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.7
-**Date:** 2026-06-25
-**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration
+**Version:** 2.9
+**Date:** 2026-07-02
+**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 ---
@@ -1006,10 +1006,74 @@ These endpoints are intentionally excluded from the standard ≤400ms p50 budget
 
 ---
 
+## 23. v6.3 Endpoint Registration — GET /strategy/benchmark/summary, GET /strategy/benchmark/trades, GET /health/scheduler (ST-11, v6.4 EPIC-03, BLG-OPS-82)
+
+**Date:** 2026-07-02
+**Story:** ST-11 (EPIC-03, v6.4) — BLG-OPS-82
+**Environment:** Production — `https://trading-assistant-api-c0f9.onrender.com` (staging returned 404 for all three paths at measurement time — v6.3 not yet deployed to `trading-assistant-api-staging.onrender.com`; production confirmed live via `GET /health` → 200 before the run)
+**Method:** 5 warm samples per endpoint, sequential Python `urllib` GET calls with `X-API-Key` header, same methodology as §18/§19.
+
+### 23.1 Results Table
+
+| Endpoint | Added in | p50 (ms) | p95 (ms) | max (ms) | HTTP | Flag |
+|----------|----------|----------|----------|----------|------|------|
+| GET /strategy/benchmark/summary | v6.3 (ST-11, BLG-FEAT-53) | 970.1 | 972.7 | 972.7 | 200 | ⚠️ p95>500ms |
+| GET /strategy/benchmark/trades | v6.3 (ST-11, BLG-FEAT-53) | 1,198.1 | 1,240.3 | 1,240.3 | 200 | ⚠️ p95>500ms |
+| GET /health/scheduler | v6.3 (unstoried infra endpoint) | 76.2 | 161.8 | 161.8 | 200 | ✓ |
+
+**Assessment:** `/strategy/benchmark/summary` and `/strategy/benchmark/trades` are both DB-backed aggregation endpoints (multi-table joins/aggregates per `backend/database.py` §"Strategy Benchmark" — `get_backtest_summary`, `get_backtest_trades`) and land in the same 900–1,300ms band as other aggregation endpoints in this baseline (§2, §18) — consistent with the documented Supabase free-tier connection-establishment floor (§3), not a new regression. `/health/scheduler` is a lightweight status-check endpoint and comfortably clears the 500ms threshold.
+
+### 23.2 Regression Thresholds (per endpoint)
+
+Dynamic 2× threshold methodology per §22.2/§22.3 (used there for endpoints already above the flat 500ms baseline):
+
+- `GET /strategy/benchmark/summary`: p95 > **1,945ms** (2× measured p95 of 972.7ms) triggers review.
+- `GET /strategy/benchmark/trades`: p95 > **2,481ms** (2× measured p95 of 1,240.3ms) triggers review.
+- `GET /health/scheduler`: p95 > **500ms** (standard §1.2 flat threshold — already well under; endpoint is not DB-aggregation-heavy so the 2× dynamic threshold used for the other two is not warranted here) triggers review.
+
+### 23.3 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 Endpoint Registration Sign-Off
+
+Environment: Production (trading-assistant-api-c0f9.onrender.com)
+Measurement date: 2026-07-02
+Samples: 5 per endpoint (warm)
+
+GET /strategy/benchmark/summary: p50=970.1ms, p95=972.7ms — ⚠ above 500ms
+  flat threshold, but consistent with existing aggregation-endpoint band
+  (§2, §18); regression threshold set at p95>1,945ms (2x measured).
+GET /strategy/benchmark/trades: p50=1,198.1ms, p95=1,240.3ms — ⚠ above 500ms
+  flat threshold, same aggregation-endpoint profile; regression threshold
+  set at p95>2,481ms (2x measured).
+GET /health/scheduler: p50=76.2ms, p95=161.8ms — well under 500ms threshold,
+  no flag; regression threshold remains the standard 500ms.
+
+Staging (trading-assistant-api-staging.onrender.com) returned 404 for all
+three paths at measurement time — v6.3 has not yet been deployed to
+staging. §4.2 documents the prior staging-404 case (GET /digest/weekly)
+and that one was resolved by deferring until staging caught up; this is
+a deliberate departure from that precedent, not a repeat of it — v6.4
+ST-11's AC-01 requires a measurement in this sprint, deferral would miss
+the sprint window, and production is a doc-recognised measurement
+environment elsewhere in this file (§19, §20-22 all measure against
+production). Production was confirmed live (GET /health -> 200) before
+the run and is used here as a one-off substitution, not a new standing
+rule superseding §4.2's deferral default.
+
+ST-11 acceptance criteria met: AC-01 (measured, 5 warm requests per
+endpoint), AC-02 (regression thresholds documented above).
+
+Signed: [x] Infrastructure & Operations Owner — 2026-07-02
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.9 | 2026-07-02 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-11 (v6.4 EPIC-03, BLG-OPS-82): §23 added — GET /strategy/benchmark/summary, GET /strategy/benchmark/trades, GET /health/scheduler registered. Staging returned 404 (v6.3 not yet deployed there); measured on production instead (5 warm samples each): summary p50=970.1ms p95=972.7ms; trades p50=1,198.1ms p95=1,240.3ms; health/scheduler p50=76.2ms p95=161.8ms. Regression thresholds documented per §22.2/§22.3 dynamic-2x pattern (not §19.2, which sets no threshold). Staging-404 handling departs from §4.2's deferral precedent — deliberate one-off substitution, not a new standing rule (see §23.3). Also corrects a pre-existing header/Document-History version desync (header was still 2.7; last logged change was already 2.8). BLG-OPS-82 closed. |
 | 2.8 | 2026-06-29 | Sprint Execution Engine | ST-14 (v6.3 EPIC-03, BLG-OPS-78): §22.3 added — production timing run complete. POST /ai/daily-briefing p50=10,296ms p95=11,152ms; POST /ai/chat p50=6,258ms p95=7,035ms. 7 warm production samples each. Regression thresholds: daily-briefing p95 > 22,304ms; chat p95 > 14,070ms. BLG-OPS-78 closed. |
 | 2.7 | 2026-06-25 | Sprint Execution Engine | ST-06/ST-08 (v6.2 EPIC-02): §22 added — POST /ai/daily-briefing and POST /ai/chat registered as AI inference endpoints. Timing run deferred to post-deployment; BLG-OPS-78 recommended for live measurement. |
 | 2.6 | 2026-06-25 | Infrastructure & Operations Owner | ST-12 (v6.2 EPIC-03, BLG-OPS-75): §21 added — GET /portfolio/sector-weights p50=287ms p95=356ms; GET /trade-plans/setup-quality-score p50=464ms p95=516ms (⚠ p95 flag). 20 live production samples each. BLG-OPS-75 closed. |

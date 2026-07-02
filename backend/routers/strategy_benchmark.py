@@ -1,12 +1,13 @@
 """
 Strategy Benchmark router — compare live trades against backtest results.
 
-ST-11 (BLG-FEAT-53, EPIC-03, v6.3)
+ST-11 (BLG-FEAT-53, EPIC-03, v6.3); ST-08 (BLG-FEAT-54, EPIC-03, v6.4)
 
 Endpoints:
-  POST /strategy/benchmark/import   — upsert backtest data from production_strategy.py CSVs
-  GET  /strategy/benchmark/summary  — Panel 1 stats + Panel 2 yearly breakdown
-  GET  /strategy/benchmark/trades   — Panel 3 trade log (backtest + live)
+  POST /strategy/benchmark/import          — upsert backtest data from production_strategy.py CSVs
+  GET  /strategy/benchmark/summary         — Panel 1 stats + Panel 2 yearly breakdown
+  GET  /strategy/benchmark/trades          — Panel 3 trade log (backtest + live)
+  GET  /strategy/benchmark/open-positions  — Panel 0 unrealized open positions
 """
 
 from fastapi import APIRouter, Request, HTTPException, Query
@@ -45,9 +46,20 @@ class BacktestYearlyRecord(BaseModel):
     win_rate_pct: Optional[float] = None
 
 
+class BacktestOpenPositionRecord(BaseModel):
+    ticker: str
+    entry_date: str
+    entry_price: Optional[float] = None
+    current_price: Optional[float] = None
+    unrealized_pnl_gbp: Optional[float] = None
+    unrealized_pnl_pct: Optional[float] = None
+    market: str = "US"
+
+
 class BacktestImportRequest(BaseModel):
     trades: List[BacktestTradeRecord]
     yearly_performance: List[BacktestYearlyRecord]
+    open_positions: List[BacktestOpenPositionRecord] = []
 
 
 # ---------------------------------------------------------------------------
@@ -65,13 +77,16 @@ async def import_backtest(request: Request, body: BacktestImportRequest):
     result = database.upsert_backtest_data(
         trades=[t.dict() for t in body.trades],
         yearly_performance=[y.dict() for y in body.yearly_performance],
+        open_positions=[p.dict() for p in body.open_positions],
     )
     return {
         "status": "ok",
         "trades_imported": result["trades_imported"],
         "years_imported": result["years_imported"],
+        "open_positions_imported": result["open_positions_imported"],
         "trades_deleted": result["trades_deleted"],
         "years_deleted": result["years_deleted"],
+        "open_positions_deleted": result["open_positions_deleted"],
         "imported_at": result["imported_at"],
     }
 
@@ -186,4 +201,32 @@ async def get_benchmark_trades(
             for t in backtest_trades
         ],
         "actual_trades": actual_trades,
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /strategy/benchmark/open-positions
+# ---------------------------------------------------------------------------
+
+@router.get("/strategy/benchmark/open-positions")
+async def get_benchmark_open_positions(
+    request: Request,
+    market: Optional[str] = Query(None, description="Filter by market (US, UK, ALL); omit for all"),
+):
+    """Return Panel 0 open (unrealized) positions for the Strategy Benchmark page.
+
+    ST-08 (BLG-FEAT-54, EPIC-03, v6.4). No year parameter — open positions are
+    current-state, not historical-per-year data (ux_spec.md "Filter Interaction").
+    """
+    database.ensure_backtest_tables()
+
+    result = database.get_backtest_open_positions(market_filter=market)
+
+    return {
+        "filters": {"market": market or "ALL"},
+        "open_positions": [
+            {**p, "entry_date": str(p["entry_date"]), "days_held": int(p["days_held"])}
+            for p in result["open_positions"]
+        ],
+        "summary": result["summary"],
     }

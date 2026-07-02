@@ -54,6 +54,7 @@ def parse_trades_csv(path: Path) -> list:
     production_strategy.py's price data ended, not completed round trips. The
     Strategy Benchmark page's win-rate/PnL aggregates assume closed trades, so
     these are excluded here rather than silently changing that page's semantics.
+    (They are captured separately by parse_open_positions_csv — ST-08, BLG-FEAT-54.)
     """
     trades = []
     with open(path, newline="", encoding="utf-8") as f:
@@ -83,6 +84,36 @@ def parse_trades_csv(path: Path) -> list:
             except (KeyError, ValueError) as exc:
                 print(f"  Warning: skipping row {row} — {exc}", file=sys.stderr)
     return trades
+
+
+def parse_open_positions_csv(path: Path) -> list:
+    """Parse all_trades_*.csv rows with Exit Reason "Open (Unrealized)" into
+    the request body 'open_positions' array (ST-08, BLG-FEAT-54, EPIC-03, v6.4).
+
+    production_strategy.py reuses the "Exit" column to record the current mark
+    price (not a real exit) for positions still held when its price data ended.
+    """
+    open_positions = []
+    with open(path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if row.get("Exit Reason", "").strip() != "Open (Unrealized)":
+                continue
+            try:
+                pnl_pct_raw = row.get("PnL %", "0")
+                pnl_gbp_raw = row.get("PnL (£)", "0")
+                open_positions.append({
+                    "ticker": row["Ticker"].strip(),
+                    "entry_date": row["Entry Date"].strip(),
+                    "entry_price": float(row["Entry"]) if row.get("Entry") else None,
+                    "current_price": float(row["Exit"]) if row.get("Exit") else None,
+                    "unrealized_pnl_gbp": float(pnl_gbp_raw) if pnl_gbp_raw else None,
+                    "unrealized_pnl_pct": float(pnl_pct_raw) if pnl_pct_raw else None,
+                    "market": row.get("Market", "US").strip() or "US",
+                })
+            except (KeyError, ValueError) as exc:
+                print(f"  Warning: skipping open position row {row} — {exc}", file=sys.stderr)
+    return open_positions
 
 
 def parse_yearly_csv(path: Path) -> list:
@@ -155,6 +186,10 @@ def main():
     trades = parse_trades_csv(trades_csv)
     print(f"  {len(trades)} trade records parsed")
 
+    print("Parsing open positions…")
+    open_positions = parse_open_positions_csv(trades_csv)
+    print(f"  {len(open_positions)} open position records parsed")
+
     print("Parsing yearly performance…")
     yearly = parse_yearly_csv(yearly_csv)
     print(f"  {len(yearly)} yearly records parsed")
@@ -166,7 +201,7 @@ def main():
     resp = requests.post(
         endpoint,
         headers={"X-API-Key": api_key, "Content-Type": "application/json"},
-        data=json.dumps({"trades": trades, "yearly_performance": yearly}),
+        data=json.dumps({"trades": trades, "yearly_performance": yearly, "open_positions": open_positions}),
         timeout=300,
     )
 
@@ -177,10 +212,12 @@ def main():
 
     result = resp.json()
     print("Import complete:")
-    print(f"  trades_deleted:   {result.get('trades_deleted', 'n/a')}")
-    print(f"  trades_imported:  {result['trades_imported']}")
-    print(f"  years_deleted:    {result.get('years_deleted', 'n/a')}")
-    print(f"  years_imported:   {result['years_imported']}")
+    print(f"  trades_deleted:          {result.get('trades_deleted', 'n/a')}")
+    print(f"  trades_imported:         {result['trades_imported']}")
+    print(f"  open_positions_deleted:  {result.get('open_positions_deleted', 'n/a')}")
+    print(f"  open_positions_imported: {result.get('open_positions_imported', 'n/a')}")
+    print(f"  years_deleted:           {result.get('years_deleted', 'n/a')}")
+    print(f"  years_imported:          {result['years_imported']}")
     print(f"  imported_at:      {result['imported_at']}")
 
 

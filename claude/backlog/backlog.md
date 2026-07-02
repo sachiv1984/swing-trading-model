@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-02 (session — 2 new items added: BLG-SEC-07, BLG-SEC-08)
+**Last Updated:** 2026-07-02 (session — 1 new item added: TEST-GAP-EPIC-03-v64)
 **Last rebalance:** 2026-07-01 (cycle 2026-07-01__scheduled — DL-058; 0 new backlog items this cycle; STEP 8.0: BLG-BE-40 mandatory v6.4 Now horizon addition (BLG-SPEC-35 excluded, not a correctness bug); STEP 3.1 Actionable Backlog Assessment: A=42/32%, T=7/5%, D=27/21%, L=55/42% of 131 items (BLG-GOV-144 flagged >12mo archive candidate); PVR=0.36 Advisory; Skill-Silo rolling-3-cycle avg=53.2% Alert (pull-forward candidate BLG-FEAT-54))
 
 > ⚠️ Standing Notice
@@ -3378,6 +3378,32 @@ ST-11 (Strategy Benchmark page) delivered a major new feature page (3 panels, st
 - Tests in `tests/e2e/strategy-benchmark.spec.js` or equivalent
 
 See verification_report.md §6 (cycle 2026-06-26__release-v6.3) for gap detail and recommended scenarios.
+
+---
+
+### TEST-GAP-EPIC-03-v64 — Playwright coverage for Strategy Benchmark Panel 0 (Open Positions) rendering
+**Priority:** P3 (Low)
+**Type:** Test Coverage / QA
+**Owner:** QA & Testing Owner
+**Source:** v6.4 EPIC-03 ST-08 sprint execution (2026-07-02)
+**Effort:** XS (<0.5 day)
+**Provisional-Target:** v6.5
+
+**Problem**
+ST-08 (BLG-FEAT-54, v6.4) added a new "Panel 0 — Open Positions" section to the Strategy Benchmark page with an observable rendering AC (AC-01: panel appears whenever ≥1 unrealized position exists, showing a one-line summary and per-position table). No Playwright test was scoped for Panel 0 this sprint — ST-13 (TEST-GAP-EPIC-03) closed the pre-existing Panels 1/3 gap but was explicitly scoped to exclude Panel 0. AC-01 was cleared by code review only this sprint (v6.4 EPIC-03 QA evidence log, engine sign-off), per the CLAUDE.md §2 frontend testing gate.
+
+**Scope**
+- Playwright test(s) for `tests/e2e/strategy-benchmark.spec.js` covering Panel 0 conditional rendering (≥1 open position renders the panel; 0 positions omits it entirely), the one-line summary format/colour, and the per-position table columns
+- Playwright test covering the Market filter narrowing Panel 0 rows (Year filter explicitly does not apply to Panel 0, per ux_spec.md)
+- Playwright test covering the Panel 0 API-error state ("Open positions temporarily unavailable.")
+
+**Acceptance Criteria**
+- Playwright test covering ST-08/AC-01 (Panel 0 conditional rendering — ≥1 position renders, 0 positions omits)
+- Playwright test covering the Market-filter-only interaction (no Year filter dependency)
+- Playwright test covering the API-error state message
+- Tests added to `tests/e2e/strategy-benchmark.spec.js`
+
+See `claude/cycles/2026-07-02__release-v6.4/qa_evidence_EPIC-03.md` (ST-08 entry) for the code-review-only disposition this item follows up on.
 
 ---
 
