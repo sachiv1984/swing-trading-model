@@ -1,13 +1,14 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.1
-**Last Updated:** 2026-06-26
+**Version:** 0.2
+**Last Updated:** 2026-07-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Release:** v6.3
+**Release:** v6.4
 **EPIC:** EPIC-03
-**Design Source:** docs/design/2026-06-26__release-v6.3/strategy-benchmark-page/ux_spec.md
-**Confirmed by:** Head of Specs Team — 2026-06-26
+**Design Source (v0.1):** docs/design/2026-06-26__release-v6.3/strategy-benchmark-page/ux_spec.md
+**Design Source (v0.2 additions):** docs/design/2026-07-02__release-v6.4/open-positions-panel/ux_spec.md
+**Confirmed by:** Head of Specs Team — 2026-07-02
 
 ---
 
@@ -49,7 +50,8 @@ Positioned below the page header. Remains visible while scrolling.
 | Year | Pill/tab selector | All + individual years derived from data (e.g. 2018–2026) |
 | Market | Pill/tab selector | All + markets present in data (e.g. UK, US) |
 
-- Both filters apply simultaneously to all three panels
+- Both filters apply simultaneously to Panels 1–3
+- **Exception:** Panel 0 (Open Positions) respects the Market filter but ignores the Year filter — see §4.5
 - Default: Year = All, Market = All
 - Active pill: filled background (consistent with existing pill-tab pattern)
 - Order: Year filter first, Market filter second
@@ -70,6 +72,62 @@ Shown when no benchmark data has been imported yet:
 | Container | Centred, full-width card; no error styling — this is expected first-run state |
 
 This state replaces all three panels. Filter bar is hidden when no data.
+
+---
+
+## 4.5 Panel 0 — Open Positions
+
+**Design source:** docs/design/2026-07-02__release-v6.4/open-positions-panel/ux_spec.md
+
+**Placement:** Between the Sticky Filter Bar and Panel 1. Panel 1/2/3 numbering is unchanged.
+
+**Conditional rendering:** Rendered only when ≥1 open position exists for the current filter context (see Filter Interaction below). Omitted entirely (no placeholder) when zero open positions match.
+
+### Panel Header
+
+| Element | Spec |
+|---------|------|
+| Label | "Open Positions" |
+| One-line summary | `"<N> open position(s) · <sign>£X,XXX unrealized"` |
+| Summary colour | `text-emerald-400` if aggregate unrealized P&L ≥ 0; `text-rose-400` if negative |
+| Expand/collapse | None — always expanded when rendered |
+
+### Open Positions Table
+
+| Column | Format |
+|--------|--------|
+| Ticker | Uppercase |
+| Market | Badge (only shown when Market filter = All) |
+| Entry Date | DD Mon YYYY |
+| Entry Price | `£X.XX` |
+| Current Price | `£X.XX` |
+| Unrealized P&L (£) | Signed `£X,XXX.XX`; `text-emerald-400` profit / `text-rose-400` loss |
+| Unrealized P&L (%) | Signed `X.X%`; `text-emerald-400` profit / `text-rose-400` loss |
+| Days Held | Integer, derived from entry date |
+
+**Sorting:** Default sort is Unrealized P&L (%) descending. No user-sortable columns in v0.2.
+
+### Filter Interaction
+
+- Market filter: applies normally — filters rows to the selected market
+- Year filter: **does not apply to Panel 0** — panel always shows all currently open positions regardless of the selected year. Open positions are current-state, not historical-per-year data.
+
+### Realized Metric Isolation (Hard Rule)
+
+Unrealized positions must never enter Panel 1 stat cards, Panel 1 PnL bar chart, or Panel 2 yearly breakdown aggregates. No combined figure anywhere on the page mixes realized and unrealized values.
+
+### States
+
+| State | Behaviour |
+|-------|-----------|
+| ≥1 open position | Panel renders, sorted by P&L% descending |
+| 0 open positions (or 0 after Market filter) | Panel omitted entirely |
+| Loading | Skeleton row placeholders within panel bounds |
+| API error (5xx/timeout) | Panel header renders; muted inline message "Open positions temporarily unavailable." — no icon; rest of page unaffected |
+
+### Data Source
+
+New `backtest_open_positions` table — **fully replaced** (not upserted) on each nightly import, consistent with `backtest_trades`.
 
 ---
 
@@ -200,8 +258,9 @@ Rows interleaved per trade pair:
 | `POST /strategy/benchmark/import` | Import backtest CSV data |
 | `GET /strategy/benchmark/summary` | Fetch stat cards + chart data |
 | `GET /strategy/benchmark/trades` | Fetch trade log records |
+| `GET /strategy/benchmark/open-positions` | Fetch open positions with unrealized P&L (Panel 0 — v0.2/ST-08) |
 
-All three endpoints must be documented in `docs/reference/openapi.yaml` and `docs/specs/api_contracts/` in the same sprint as implementation (AC-08).
+All endpoints must be documented in `docs/reference/openapi.yaml` and `docs/specs/api_contracts/` in the same commit as implementation (per CLAUDE.md §2), with `backend/routers/test.py` registration for `GET /strategy/benchmark/open-positions`.
 
 ---
 
@@ -217,4 +276,5 @@ All three endpoints must be documented in `docs/reference/openapi.yaml` and `doc
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.2 | 2026-07-02 | v6.4 EPIC-03 ST-08 (BLG-FEAT-54). Added §4.5 Panel 0 — Open Positions (header/summary, table columns, Market-only filter interaction, realized-metric isolation hard rule, states, `backtest_open_positions` replace-on-import data source). §3 filter bar note updated with Panel 0 Year-filter exception. §9 API Endpoints: added `GET /strategy/benchmark/open-positions`. Design source: open-positions-panel/ux_spec.md. Design Gate cleared: Head of UX & Design, Product Owner — 2026-07-02. Head of Specs Team confirmed. |
 | 0.1 | 2026-06-26 | Initial spec — v6.3 EPIC-03 ST-11. Covers full page layout: sticky filter bar, empty state, Panel 1 (stat cards + PnL bar chart), Panel 2 (yearly breakdown table), Panel 3 (trade log with 3 toggle modes and exit reason badges). Design source: strategy-benchmark-page/ux_spec.md. Approved: Product Owner 2026-06-26. Head of Specs Team confirmed. |
