@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.7
-**Last Updated:** 2026-05-21
+**Version:** 0.8
+**Last Updated:** 2026-07-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v0.1):** docs/design/2026-04-29__release-v3.1/trade-plan/ux_spec.md (v3.1 — artefact reference only; file not present in repo)
 **Design Source (v0.2 checklist):** docs/design/2026-05-05__release-v3.2/pre-trade-entry-checklist/ux_spec.md
@@ -10,6 +10,7 @@
 **Design Source (v0.5 signal context panel):** docs/design/2026-05-18__release-v3.7/signal-context-panel/ux_spec.md
 **Design Source (v0.6 quality score):** docs/design/2026-05-18__release-v3.7/quality-score-display/ux_spec.md
 **Design Source (v0.7 quality score v2):** docs/design/2026-05-21__release-v3.9/setup-quality-score-v2/ux_spec.md
+**Design Source (v0.8 thesis feedback):** docs/design/2026-07-02__release-v6.5/thesis-feedback-mechanism/ux_spec.md
 **API contract:** docs/specs/api_contracts/trade_plan_endpoints.md
 **v0.4 Sign-off:** Head of Specs Team — 2026-05-14 (BLG-SPEC-28: §6.2 pre-population rules correction)
 
@@ -160,6 +161,37 @@ Pre-population does not apply in edit mode. Existing user-set values are never o
 - If signal fetch fails: panel hidden silently; no error shown; form submission unaffected
 - While loading: single-line skeleton placeholder
 - If no linked signal: panel hidden (not an error)
+
+---
+
+## 5b. Claude Thesis Generation & Feedback (v0.8 — ST-07 BLG-FE-46)
+
+**Design source:** docs/design/2026-07-02__release-v6.5/thesis-feedback-mechanism/ux_spec.md
+
+> **§13 Compliance:** Generated content is advisory only. The trader may use, edit, or discard it; nothing here gates trade entry or is treated as a recommendation.
+
+Shown in the Setup Thesis field header row (creation and edit form), alongside the local template button:
+
+- **"Generate thesis"** (`generate-thesis-btn`) — client-side template fill from setup type/signal/headlines; no model call.
+- **"Improve with AI"** (`improve-with-ai-btn`, shown only when `HAS_AI` and a ticker is set) — calls `POST /trade-plans/generate-plan` (Claude Haiku 4.5; see `docs/specs/api_contracts/ai_thesis_generation.md`), populating Setup Thesis, Entry Rationale, Confirmation Criteria, Early Exit Conditions, Regime Context, and R-Target. Sets `isAiDraft = true` and shows the **"AI draft"** badge (violet, `Sparkles` icon).
+
+### 5b.1 Feedback Control
+
+When an AI draft is present (`isAiDraft = true`, Claude-generated — see spec correction note below), a `👍 Useful` / `👎 Not useful` control renders beneath the field label row. Selecting an option highlights it (`emerald-400` / `rose-400`), disables both options, and shows a transient "Thanks — feedback recorded." confirmation. The control is single-shot per generation: editing the thesis textarea clears `isAiDraft` and hides the control; a fresh "Improve with AI" call re-shows it in the un-rated state.
+
+**Spec correction:** `isAiDraft` was previously set by both the local template button and the Claude-backed button, conflating the two. The feedback control must only ever appear for genuine Claude output — implementation distinguishes this via a Claude-specific draft flag, not the shared `isAiDraft` flag alone. See the design source for full rationale.
+
+Feedback is persisted per generation (recommended: `thesis_feedback` field on the corresponding `claude_audit_log` row, via `POST /trade-plans/{plan_id}/thesis-feedback`) and feeds the `thesis_adoption_rate` metric (`docs/specs/metrics/metrics_definitions.md`, BLG-FEAT-41, ST-08).
+
+### 5b.2 States
+
+| State | Behaviour |
+|-------|-----------|
+| No AI draft | Feedback control not rendered |
+| AI draft present, unrated | Both options shown, clickable |
+| Feedback given | Selected option highlighted, both disabled, transient confirmation text |
+| Thesis edited after feedback | Control hidden (existing `isAiDraft → false` on edit) |
+| Draft regenerated | Feedback control resets to unrated |
 
 ---
 
@@ -336,6 +368,7 @@ All badges: filled pill, white text. Contrast ≥ 4.5:1 (WCAG AA) for all combin
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.8 | 2026-07-02 | v6.5 design gate — added §5b Claude Thesis Generation & Feedback (ST-07, BLG-FE-46): documents the previously-unspecified "Improve with AI" button (Claude Haiku 4.5, `POST /trade-plans/generate-plan`) and a new 👍/👎 feedback control on generated drafts, single-shot per generation, feeding `thesis_adoption_rate` (ST-08). Notes a spec correction: the shared `isAiDraft` flag conflates the local template button and the Claude-backed button — implementation must gate the feedback control on a Claude-specific signal. Design source: thesis-feedback-mechanism/ux_spec.md. Approved: Product Owner 2026-07-02. Head of Specs Team confirmed. |
 | 0.7 | 2026-05-21 | v3.9 design gate — updated §7a Setup Quality Score (ST-14, conditional EPIC-05): endpoint changed to ticker-based `GET /trade-plans/setup-quality-score?ticker={plan.ticker}`; qualitative labels added (Excellent/Good/Fair/Low); expandable detail panel (matching_trades, win_rate, average_R); gate_not_met message replaces "N/A" text. Added §7b: score panel in creation form (shown after ticker entered, debounced refetch). Design source: setup-quality-score-v2/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |
 | 0.6 | 2026-05-18 | v3.7 design gate — added §7a Setup Quality Score (PT-04: score display on detail view, 0–100 or "N/A — insufficient history", §13 compliant). Conditional on EPIC-02 gate. Design source: quality-score-display/ux_spec.md. Approved: Product Owner 2026-05-18. |
 | 0.5 | 2026-05-18 | v3.7 design gate — added §5a Signal Context Panel (BLG-FE-34: read-only signal data panel in creation form; pre-population of rationale and stop fields; conditional on linked signal). Design source: signal-context-panel/ux_spec.md. Approved: Product Owner 2026-05-18. |
