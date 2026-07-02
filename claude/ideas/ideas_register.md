@@ -1,8 +1,8 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 2.4
-**Last Updated:** 2026-07-02 (ideas_housekeeping — post-ship closure 2026-07-02__release-v6.4 — 1 terminal row archived (IDEA-infra-ops-20260622-02, Rejected); 18 rows remain, all Parked-cycle-2)
+**Version:** 2.5
+**Last Updated:** 2026-07-02 (idea intake window IW-20260702-01, inline STEP -1.6 of roadmap rebalance 2026-07-02__scheduled — 44 new Submitted rows appended (22 agents × 2); 19 prior Parked-cycle-2 rows carried, none resubmitted)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # Ideas Register
@@ -31,3 +31,47 @@ Schema: per `shared_standards.md §16.5`
 | IDEA-head-of-engineering-20260626-02 | Frontend bundle size optimization assessment: assess current React bundle size and heavy dependencies | Head of Engineering | IW-20260626-01 | 2026-06-26 | Parked-cycle-2 | 2 | No user-reported performance issues from bundle size; defer until profiling indicates need | Park C2 | — |
 | IDEA-head-of-ux-20260626-01 | AI chat UI interaction study protocol: 5-question user research protocol to assess chat advisor usage | Head of UX & Design | IW-20260626-01 | 2026-06-26 | Parked-cycle-2 | 2 | 6 days of usage insufficient to design a meaningful research protocol around interaction patterns that haven't stabilised | Park C2 | — |
 | IDEA-metrics-20260626-02 | AI chat engagement metric: sessions per week, questions per session, and response acceptance rate | Metrics Definitions & Analytics Owner | IW-20260626-01 | 2026-06-26 | Parked-cycle-2 | 2 | Usage patterns remain unestablished at 6 days post-ship; metric definition would be premature | Park C2 | — |
+| IDEA-product-owner-20260702-01 | Screener-to-watchlist promotion friction audit | Product Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-product-owner-20260702-02 | Trade plan template presets by setup type | Product Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-head-of-specs-20260702-01 | Spec staleness scan across owning code paths | Head of Specs Team | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-head-of-specs-20260702-02 | Governance prompt cross-reference integrity check | Head of Specs Team | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-pmo-lead-20260702-01 | Escalation SLA dashboard | PMO Lead | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-pmo-lead-20260702-02 | Cross-cycle friction-item recurrence tracker | PMO Lead | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-director-of-quality-20260702-01 | Playwright flake-rate tracking | Director of Quality | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-director-of-quality-20260702-02 | QA evidence cross-link audit | Director of Quality | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-strategy-owner-20260702-01 | §13 boundary drift early-warning scan | Strategy Rules & System Intent Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-strategy-owner-20260702-02 | Strategy parameter change impact preview | Strategy Rules & System Intent Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-finops-20260702-01 | Render dyno right-sizing review | FinOps & Resource Architect | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-finops-20260702-02 | Anthropic API budget alert threshold calibration | FinOps & Resource Architect | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-infra-ops-20260702-01 | Staging environment drift detector | Infrastructure & Operations Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-infra-ops-20260702-02 | Deploy rollback runbook dry-run | Infrastructure & Operations Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-challenger-20260702-01 | Governance overhead ceiling second threshold | Challenger | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-challenger-20260702-02 | Skill-Silo Alert historical trend chart | Challenger | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-ai-compliance-20260702-01 | AI feature §13 re-attestation checklist | AI Compliance & Governance Officer | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-ai-compliance-20260702-02 | AI output disclaimer consistency sweep | AI Compliance & Governance Officer | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-api-contracts-20260702-01 | OpenAPI example-response completeness sweep | API Contracts & Documentation Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-api-contracts-20260702-02 | API contract deprecation marker convention | API Contracts & Documentation Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-backend-engineering-20260702-01 | Ticker/market input sanitisation regression suite | Backend Engineering Patterns Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-backend-engineering-20260702-02 | Database read-path audit for deprecated tables | Backend Engineering Patterns Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-base44-frontend-20260702-01 | Base44 prompt draft changelog | Base44 Frontend Prompt Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-base44-frontend-20260702-02 | Disclaimer component extraction | Base44 Frontend Prompt Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-cybersecurity-20260702-01 | Injection risk assessment refresh cadence | Cybersecurity & Trust Lead | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-cybersecurity-20260702-02 | Rate-limit bypass test | Cybersecurity & Trust Lead | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-data-model-20260702-01 | Trade plan field usage audit | Data Model & Domain Schema Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-data-model-20260702-02 | Signal write-path schema consolidation | Data Model & Domain Schema Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-director-of-hr-20260702-01 | Agent role charter gap spot-check | Director of HR | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-director-of-hr-20260702-02 | Facilitator workload note | Director of HR | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-financial-reporting-20260702-01 | P&L report AI narrative cost estimate | Financial Reporting & Records Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-financial-reporting-20260702-02 | Trade cost field completeness check | Financial Reporting & Records Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-frontend-specs-20260702-01 | Open Positions panel spec backfill | Frontend Specifications & UX Documentation Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-frontend-specs-20260702-02 | Disclaimer contrast standard | Frontend Specifications & UX Documentation Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-head-of-engineering-20260702-01 | Playwright suite runtime trend | Head of Engineering | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-head-of-engineering-20260702-02 | Dependency update review | Head of Engineering | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-head-of-ux-20260702-01 | Open Positions panel visual consistency check | Head of UX & Design | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-head-of-ux-20260702-02 | Colour contrast audit sweep | Head of UX & Design | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-metrics-20260702-01 | Signal correctness fix impact measurement | Metrics Definitions & Analytics Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-metrics-20260702-02 | Security fix false-positive rate | Metrics Definitions & Analytics Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-qa-lead-20260702-01 | Regression suite gap check for BLG-SEC-01/02 | QA Lead | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-qa-lead-20260702-02 | DoQ sign-off audit spot-check | QA Lead | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-qa-testing-20260702-01 | Test data fixture staleness check | QA & Testing Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
+| IDEA-qa-testing-20260702-02 | Dark spec resolution follow-up | QA & Testing Owner | IW-20260702-01 | 2026-07-02 | Submitted | — | — | — | — |
