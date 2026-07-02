@@ -13,9 +13,11 @@
  *   SC-AC-03  User can type a question and submit; response displayed in widget (ST-09/AC-02)
  *   SC-AC-04  Loading indicator shown while POST /ai/chat is in-flight (ST-09/AC-04)
  *   SC-AC-05  Error state shown when POST /ai/chat fails (ST-09/AC-05)
+ *   SC-AC-06  Advisory footer disclaimer visible and mentions "advisory" (ST-10/AC-02, AC-03, v6.4)
  *
  * AC-04 (ST-07) and AC-03 (ST-09) are staging-only human sign-off items and are
- * not covered by automated Playwright tests (per spec).
+ * not covered by automated Playwright tests (per spec). ST-10/AC-04 (Head of UX &
+ * Design sign-off) is a human/agent-mediated sign-off, not Playwright-testable.
  *
  * HashRouter: all navigation via page.goto('/#/…')
  */
@@ -321,5 +323,17 @@ test.describe('ST-09 — AI Chat Widget', () => {
 
     await expect(page.getByTestId('ai-chat-error')).toBeVisible({ timeout: 8000 });
     await expect(page.getByText(/unable to get a response/i)).toBeVisible({ timeout: 5000 });
+  });
+
+  test('SC-AC-06: Advisory footer disclaimer is visible and mentions "advisory" (ST-10/AC-02, AC-03)', async ({ page }) => {
+    await stubPositionsRoutes(page);
+    await page.goto('/#/Positions');
+
+    await page.getByTestId('ai-chat-open-btn').click();
+    await expect(page.getByTestId('ai-chat-panel')).toBeVisible({ timeout: 5000 });
+
+    const footer = page.getByTestId('ai-chat-advisory-footer');
+    await expect(footer).toBeVisible({ timeout: 5000 });
+    await expect(footer).toContainText(/advisory/i);
   });
 });

@@ -153,7 +153,7 @@ export default function AiChatWidget() {
 
           {/* Advisory footer — non-dismissible */}
           <div className="px-3 pb-2">
-            <p className="text-xs text-slate-600 italic text-center">
+            <p className="text-xs text-slate-400 italic text-center" data-testid="ai-chat-advisory-footer">
               AI responses are advisory only. All trade decisions require human confirmation.
             </p>
           </div>
