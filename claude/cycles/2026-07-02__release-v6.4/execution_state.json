@@ -1,0 +1,349 @@
+{
+  "cycle_id": "2026-07-02__release-v6.4",
+  "sprint_goal": "Deliver v6.4's mandatory production correctness fix, AI prompt-injection security hardening, full AUD-2026-07-01 lifecycle-audit remediation, and the Strategy Benchmark Open Positions panel (with accessibility contrast and Playwright coverage fixes) in a single sealed sprint.",
+  "backlog_slice_source": "claude/cycles/2026-07-02__release-v6.4/stage4_backlog_slice.md",
+  "invoked_utc": "2026-07-02T08:20:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-07-02T08:25:00Z",
+  "epics": {
+    "EPIC-01": {
+      "status": "not_started",
+      "branch": "exec/2026-07-02__release-v6.4/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-02__release-v6.4/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "tests/test_signal_sizing.py",
+        "tests/test_nightly_computations.py",
+        "tests/test_ai_chat_schema.py"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "Signal generation reads deprecated tickers table instead of ticker_universe (BLG-BE-40)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 884,
+          "branch": "exec/2026-07-02__release-v6.4/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/api_contracts/signal_endpoints.md#POST /signals/generate",
+            "docs/specs/api_contracts/ticker_universe_api_contract.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-02": {
+          "title": "Sanitise context_opts.ticker before system prompt injection (BLG-SEC-01)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 885,
+          "branch": "exec/2026-07-02__release-v6.4/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/security/ai_injection_risk_assessment.md#Input 2 \u2014 context_opts.ticker (POST /ai/chat only)",
+            "docs/specs/api_contracts/ai_endpoints.md#POST /ai/chat"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Requires Cybersecurity & Trust Lead sign-off (AC-04)."
+        },
+        "ST-03": {
+          "title": "Validate ticker/market strings at signal write time (BLG-SEC-02)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 886,
+          "branch": "exec/2026-07-02__release-v6.4/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/security/ai_injection_risk_assessment.md#Input 5 \u2014 Signal ticker and market strings"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Requires Cybersecurity & Trust Lead sign-off (AC-03). AC-02 (review existing signals) is a manual data-cleanup step, not CI-testable."
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "not_started",
+      "branch": "exec/2026-07-02__release-v6.4/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-02__release-v6.4/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-04": {
+          "title": "Fix governance version-sync drift (BLG-GOV-150)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 887,
+          "branch": "exec/2026-07-02__release-v6.4/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "OPERATIONAL_GUIDE.md",
+            "claude/system/roadmap_prompt.md",
+            "claude/agents/metrics_definitions_analytics_owner.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Source: audit_report_AUD-2026-07-01.md. Apply last within EPIC-02 per ST-05 note re: in-flight header mutation avoidance."
+        },
+        "ST-05": {
+          "title": "Document hygiene cleanup (BLG-GOV-151)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 888,
+          "branch": "exec/2026-07-02__release-v6.4/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "README.md",
+            "claude/system/roadmap_prompt.md",
+            "claude/system/release_planning_prompt.md",
+            "claude/system/sprint_planning_prompt.md",
+            "claude/agents/pmo_lead.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Source: audit_report_AUD-2026-07-01.md."
+        },
+        "ST-06": {
+          "title": "Close structural reliability gaps (BLG-GOV-152 + FI-P3-01/FI-P3-02/FI-P4-01 re-target)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 889,
+          "branch": "exec/2026-07-02__release-v6.4/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "claude/system/shared_standards.md",
+            "claude/system/execution_prompt.md",
+            "CLAUDE.md",
+            "claude/system/amendment_cycle_prompt.md",
+            "claude/agents/base44_frontend_prompt_owner.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Source: audit_report_AUD-2026-07-01.md + FI-P3-01/FI-P3-02/FI-P4-01 re-target (rebalance 2026-07-01__scheduled). Sequence before ST-07 (shared_standards.md overlap)."
+        },
+        "ST-07": {
+          "title": "Audit & governance process fixes (BLG-GOV-153)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 890,
+          "branch": "exec/2026-07-02__release-v6.4/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "claude/charter/team_charter.md",
+            "claude/system/shared_standards.md",
+            "claude/audit.py",
+            "claude/scoring/scored_initiatives.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Source: audit_report_AUD-2026-07-01.md. Depends on ST-06 (same-file section sequencing)."
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "not_started",
+      "branch": "exec/2026-07-02__release-v6.4/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-02__release-v6.4/qa_evidence_EPIC-03.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-08": {
+          "title": "Add Open Positions panel to Strategy Benchmark page (BLG-FEAT-54)",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 891,
+          "branch": "exec/2026-07-02__release-v6.4/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/design/2026-07-02__release-v6.4/open-positions-panel/ux_spec.md",
+            "docs/specs/frontend/pages/strategy_benchmark.md",
+            "docs/specs/api_contracts/strategy_benchmark_endpoints.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Default-to-autonomous per LL-v2.3-CL-01 \u2014 engine attempts direct implementation before delegating. New GET /strategy/benchmark/open-positions endpoint (RISK-05 sequencing applies)."
+        },
+        "ST-09": {
+          "title": "Improve AI daily briefing disclaimer text contrast (BLG-UX-01)",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 892,
+          "branch": "exec/2026-07-02__release-v6.4/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/qa/ai_disclaimer_visibility_assessment.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Default-to-autonomous per LL-v2.3-CL-01. Requires Head of UX & Design sign-off (AC-03)."
+        },
+        "ST-10": {
+          "title": "Improve AI chat widget footer disclaimer contrast and add test coverage (BLG-UX-02)",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 893,
+          "branch": "exec/2026-07-02__release-v6.4/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/specs/qa/ai_disclaimer_visibility_assessment.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Default-to-autonomous per LL-v2.3-CL-01. Requires Head of UX & Design sign-off (AC-04)."
+        },
+        "ST-11": {
+          "title": "Add v6.3 endpoints to api_performance_baseline.md (BLG-OPS-82)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 894,
+          "branch": "exec/2026-07-02__release-v6.4/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/ops/api_performance_baseline.md"
+          ],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "AC-01 (p50/p95 warm-request measurement) is staging-only. Requires Infrastructure & Operations Owner sign-off (AC-03)."
+        },
+        "ST-12": {
+          "title": "Playwright coverage for ST-01 observable UI ACs, AI journal summary error states (TEST-GAP-EPIC-01)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 895,
+          "branch": "exec/2026-07-02__release-v6.4/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Test-authoring (Case C) \u2014 spec_references will be set to the created test file path per STEP 3.1.A."
+        },
+        "ST-13": {
+          "title": "Playwright scenario coverage for Strategy Benchmark page (TEST-GAP-EPIC-03)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 896,
+          "branch": "exec/2026-07-02__release-v6.4/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Test-authoring (Case C) \u2014 spec_references will be set to tests/e2e/strategy-benchmark.spec.js per STEP 3.1.A. Depends on ST-08 (merge after, per Dependency Map)."
+        }
+      }
+    }
+  },
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [],
+  "open_escalations": [],
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": [
+      "EPIC-01",
+      "EPIC-02",
+      "EPIC-03"
+    ],
+    "all_merged": false
+  },
+  "sealed": false,
+  "sealed_utc": null
+}
