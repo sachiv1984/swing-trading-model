@@ -91,14 +91,45 @@ async function mockBaseEndpoints(page, { summary = SUMMARY_WITH_ACTUAL, trades =
   );
 }
 
+// Minimal Positions-page route set (same shape as the proven-in-CI
+// stubPositionsRoutes helper in epic02-v62-ai-briefing-chat.spec.js) — used
+// as the navigation origin for SC-SB-01a instead of DashboardHome, which
+// requires a much larger stub surface (market/status, signals, ai/*,
+// red-flag-journal, etc.) that this spec has no reason to duplicate.
+async function mockPositionsOrigin(page) {
+  await page.route('**/positions*', (route) => {
+    const url = route.request().url();
+    if (url.includes('/compliance') || url.includes('/grace-period-alerts')) {
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) });
+    }
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) });
+  });
+  await page.route('**/portfolio**', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { cash: 10000, initial_cash: 50000 } }) })
+  );
+  await page.route('**/analytics/**', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: { last_sync_at: null } }) })
+  );
+  await page.route('**/alerts/history**', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: { evaluations: [] } }) })
+  );
+  await page.route('**/watchlist**', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ items: [] }) })
+  );
+  await page.route('**/earnings/**', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ next_earnings_date: null }) })
+  );
+}
+
 // ---------------------------------------------------------------------------
 // SC-SB-01 — Page accessible from navigation
 // ---------------------------------------------------------------------------
 
 test.describe('SC-SB-01 — Strategy Benchmark page accessible from navigation', () => {
   test('SC-SB-01a: clicking the sidebar "Strategy Benchmark" link navigates to the page', async ({ page }) => {
+    await mockPositionsOrigin(page);
     await mockBaseEndpoints(page);
-    await page.goto('/#/DashboardHome');
+    await page.goto('/#/Positions');
     await page.waitForSelector('h1', { timeout: 10000 });
 
     await page.getByRole('link', { name: 'Strategy Benchmark' }).first().click();
