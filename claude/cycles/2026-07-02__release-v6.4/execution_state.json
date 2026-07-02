@@ -5,7 +5,7 @@
   "invoked_utc": "2026-07-02T08:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-02T08:56:00Z",
+  "last_updated_utc": "2026-07-02T09:05:00Z",
   "epics": {
     "EPIC-01": {
       "status": "not_started",
@@ -91,7 +91,16 @@
           ],
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "required_by": "Cybersecurity & Trust Lead",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "PATCH /signals/{id} (database.update_signal) was a second signal write path bypassing the INSERT-time sanitization entirely \u2014 fixed by sanitizing ticker/market keys in update_signal() before building the SET clause.",
+              "Filed BLG-SEC-07 (AC-02 manual live-DB review, deferred) and BLG-SEC-08 (follow-up: unvalidated dict keys as SQL column names in update_signal, out of scope for this story) to claude/backlog/backlog.md."
+            ],
+            "cleared_utc": "2026-07-02T09:05:00Z"
+          },
           "notes": "Requires Cybersecurity & Trust Lead sign-off (AC-03). AC-02 (review existing signals) is a manual data-cleanup step, not CI-testable."
         }
       }

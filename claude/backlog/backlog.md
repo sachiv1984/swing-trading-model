@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-01 (session — 4 new items added: BLG-GOV-150, BLG-GOV-151, BLG-GOV-152, BLG-GOV-153)
+**Last Updated:** 2026-07-02 (session — 2 new items added: BLG-SEC-07, BLG-SEC-08)
 **Last rebalance:** 2026-07-01 (cycle 2026-07-01__scheduled — DL-058; 0 new backlog items this cycle; STEP 8.0: BLG-BE-40 mandatory v6.4 Now horizon addition (BLG-SPEC-35 excluded, not a correctness bug); STEP 3.1 Actionable Backlog Assessment: A=42/32%, T=7/5%, D=27/21%, L=55/42% of 131 items (BLG-GOV-144 flagged >12mo archive candidate); PVR=0.36 Advisory; Skill-Silo rolling-3-cycle avg=53.2% Alert (pull-forward candidate BLG-FEAT-54))
 
 > ⚠️ Standing Notice
@@ -3056,6 +3056,54 @@ Signal ticker and market strings stored in the `signals` table are interpolated 
 **Acceptance Criteria**
 - Signal write path validates ticker and market strings
 - Existing signals reviewed; anomalous values documented or cleaned
+- Cybersecurity & Trust Lead sign-off
+
+---
+
+### BLG-SEC-07 — Manual review of existing signals for anomalous ticker/market values
+**Priority:** P3 (Low)
+**Type:** Security / Input Validation
+**Owner:** Cybersecurity & Trust Lead; Backend Engineering Patterns Owner
+**Source:** ST-03 (BLG-SEC-02) AC-02, deferred at sprint execution — cycle 2026-07-02__release-v6.4 — 2026-07-02
+**Effort:** XS (<1h)
+**Provisional-Target:** v6.4
+
+**Problem**
+BLG-SEC-02 (ST-03, cycle 2026-07-02__release-v6.4) added write-time sanitisation to `database.create_signal()` / `create_rebalance_exit_signal()`, stripping any character outside `[A-Za-z0-9.\-/:]` and capping ticker/market values at 12 characters. This closes the forward-going gap but does not touch rows already in the `signals` table written before the fix shipped. AC-02 of ST-03 requires a one-time review of existing rows — this is a live-database data-hygiene task, not CI-testable, and was explicitly deferred to a tracked manual execution step per `sprint_planning_notes.md`.
+
+**Scope**
+- Query the production `signals` table for `ticker` or `market` values containing characters outside `[A-Za-z0-9.\-/:]`, or longer than 12 characters
+- Document any anomalous rows found (ticker, market, signal_date, portfolio_id)
+- Clean (correct or null out) any confirmed-anomalous values; leave benign historical values (e.g. legitimate tickers longer than 12 chars, if any) documented as accepted
+
+**Acceptance Criteria**
+- Existing `signals` table rows reviewed for anomalous ticker/market values
+- Findings documented (count of anomalies found, or "none found")
+- Any confirmed-anomalous values cleaned or explicitly accepted with rationale
+- Cybersecurity & Trust Lead sign-off
+
+---
+
+### BLG-SEC-08 — Unvalidated dict keys used as SQL column names in database.update_signal()
+**Priority:** P2 (Medium)
+**Type:** Security / Input Validation
+**Owner:** Cybersecurity & Trust Lead; Backend Engineering Patterns Owner
+**Source:** Cybersecurity & Trust Lead sign-off review, ST-03 (BLG-SEC-02) — cycle 2026-07-02__release-v6.4 — 2026-07-02
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.4
+
+**Problem**
+`database.update_signal(signal_id, updates)` builds its `SET` clause via `f"{key} = %s"` for every key in the caller-supplied `updates` dict, with values (but not keys) parameterised. `PATCH /signals/{signal_id}` (`main.py`) passes an arbitrary `updates: dict` request body through to this function with no key allowlist — only the `status` value is checked, and only if the `status` key is present. An authenticated caller can therefore submit arbitrary column names in the request body, which are interpolated unvalidated into the SQL statement text. This is a structural SQL-construction risk (malformed/rejected queries at minimum; potential to target unintended columns if a key happens to match one) independent of the ticker/market value sanitisation added by BLG-SEC-02.
+
+**Scope**
+- Define an explicit allowlist of columns `PATCH /signals/{signal_id}` may update (e.g. `status`, `ticker`, `market`, `reason`) in `database.update_signal()` or at the router/service layer
+- Reject (400/422) any key outside the allowlist
+- Add regression test(s) confirming an out-of-allowlist key is rejected rather than reaching the SQL statement
+
+**Acceptance Criteria**
+- `update_signal()` (or its caller) rejects any `updates` key not on an explicit allowlist
+- Existing legitimate update flows (status transitions, ticker/market corrections) continue to work
+- Unit test covers rejection of an arbitrary/unexpected key
 - Cybersecurity & Trust Lead sign-off
 
 ---
