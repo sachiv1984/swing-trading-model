@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-02 (groom backlog post-ship closure 2026-07-02__release-v6.4 — 13 items archived (BLG-BE-40, BLG-SEC-01/02, BLG-GOV-150/151/152/153, BLG-FEAT-54, BLG-UX-01/02, BLG-OPS-82, TEST-GAP-EPIC-01/03); 1 ephemeral release slice retired (v6.4); 0 orphans; 1 new item added (BLG-OPS-83); Phase 4 additions confirmed present (BLG-SEC-07/08, TEST-GAP-EPIC-03-v64))
+**Last Updated:** 2026-07-02 (session — 3 new item(s) added: BLG-GOV-157, BLG-GOV-158, BLG-GOV-159)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -3436,6 +3436,77 @@ No versioning exists to track which version of the Base44 generation prompt prod
 
 ---
 
+### BLG-GOV-157 — OPERATIONAL_GUIDE/prompt version-sync drift
+**Priority:** P3 (Low)
+**Type:** Governance
+**Owner:** Head of Specs Team
+**Source:** AUD-2026-07-01 (claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md) — AUD-2026-07-01-001, -003, -016 — 2026-07-02
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v6.5
+
+**Problem**
+Three version-sync drift findings remain open from the AUD-2026-07-01 lifecycle audit (v6.4's BLG-GOV-150/151/152/153 closed 7 of 17 findings; these 3 were not among them): (AUD-001) `OPERATIONAL_GUIDE.md` header, §14 self-row, and Change Log top entry have shown three different version numbers at various points — the self-row/Change-Log sync pattern needs a durable fix, not just a one-off correction; (AUD-003) §14's Roadmap Rebalance Prompt row must be verified against `roadmap_prompt.md`'s actual current version (v8.0 as of the 2026-07-02__scheduled rebalance) rather than trusted as already correct; (AUD-016) the Metrics owner role name drifts from `team_charter.md`.
+
+**Scope**
+- Verify and correct `OPERATIONAL_GUIDE.md` header, §14 self-row, and Change Log top entry all show the same current version number
+- Verify §14 Roadmap Rebalance Prompt row matches `roadmap_prompt.md`'s actual current version
+- Correct the Metrics owner role name in `OPERATIONAL_GUIDE.md` (or wherever the drift was found) to match `team_charter.md` exactly
+
+**Acceptance Criteria**
+- AC-01: `OPERATIONAL_GUIDE.md` header, §14 self-row, and Change Log top entry show one consistent version number
+- AC-02: §14 Roadmap Rebalance Prompt row matches `roadmap_prompt.md`'s actual current version
+- AC-03: Metrics owner role name matches `team_charter.md` exactly
+
+---
+
+### BLG-GOV-158 — README.md document hygiene sweep
+**Priority:** P3 (Low)
+**Type:** Documentation / Governance
+**Owner:** Head of Specs Team
+**Source:** AUD-2026-07-01 (claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md) — AUD-2026-07-01-006, -009, -010, -015 — 2026-07-02
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.5
+
+**Problem**
+Four document-hygiene findings remain open from the AUD-2026-07-01 lifecycle audit. (AUD-006, Medium effort — flagged in the audit's own SLA section as a P0-escalation risk if still open at the next audit) README §4 documents only 1 of the 13 governed routines listed in `CLAUDE.md` §1; (AUD-009) README §2 references a file path that no longer exists; (AUD-010) `README.md` is 101 days stale; (AUD-015) `pmo_lead.md` header fields are not bolded, unlike other agent charter files.
+
+**Scope**
+- Update README §4 to list all current governed routines per `CLAUDE.md` §1's command table
+- Correct README §2's file path reference to an existing path
+- Refresh `README.md` content and Last Updated date to reflect current system state
+- Bold `pmo_lead.md` header fields (Owner/Status/etc.) to match the Class 6 header convention used by other agent charter files
+
+**Acceptance Criteria**
+- AC-01: README §4 lists all governed routines currently in `CLAUDE.md` §1
+- AC-02: README §2's referenced file path exists
+- AC-03: `README.md` Last Updated date and content reflect current state
+- AC-04: `pmo_lead.md` header fields bolded consistent with other agent charter files
+
+---
+
+### BLG-GOV-159 — Lifecycle/prompt/state wording and consistency fixes
+**Priority:** P3 (Low)
+**Type:** Governance / Lifecycle
+**Owner:** Head of Specs Team
+**Source:** AUD-2026-07-01 (claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md) — AUD-2026-07-01-007, -012, -013 — 2026-07-02
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v6.5
+
+**Problem**
+Three governance wording/consistency findings remain open from the AUD-2026-07-01 lifecycle audit: (AUD-007) the staging-only AC protocol has carried an unresolved ambiguity for 2 audit cycles; (AUD-012) the `FRICTION_LOAD` formula's wording does not specify its time window precisely; (AUD-013) a state file's prior open-item count contradicts the audit config's own figure for the same metric.
+
+**Scope**
+- Resolve the staging-only AC protocol ambiguity with explicit wording in the relevant governance prompt
+- Clarify the `FRICTION_LOAD` formula's time window in its defining prompt/spec
+- Reconcile the contradicting open-item counts between the state file and the audit config to a single consistent value
+
+**Acceptance Criteria**
+- AC-01: Staging-only AC protocol ambiguity resolved with explicit wording
+- AC-02: `FRICTION_LOAD` formula wording specifies its time window
+- AC-03: State file and audit config open-item counts match
+
+---
+
 ### BLG-QA-69 — Ticker/market input sanitisation regression suite
 **Priority:** P2 (Medium)
 **Type:** QA / Security Regression
@@ -3713,5 +3784,28 @@ No view partitions Render dyno compute cost by feature area. Meaningful cost tre
 ---
 
 *Release Slice v6.4 removed — cycle 2026-07-02__release-v6.4 closed 2026-07-02. Archived canonical home: claude/cycles/2026-07-02__release-v6.4/stage4_backlog_slice.md*
+
+---
+
+### v6.5 Release Slice — 2026-07-02__release-v6.5
+
+<!-- release-plan-marker: RP:v6.5:2026-07-02__release-v6.5 -->
+
+**Status:** Planning
+**Cycle folder:** `claude/cycles/2026-07-02__release-v6.5/`
+**Canonical backlog slice:** `claude/cycles/2026-07-02__release-v6.5/stage4_backlog_slice.md`
+
+| ID | Title | Story | EPIC |
+|----|-------|-------|------|
+| BLG-GOV-157 | Lifecycle/prompt/state wording and consistency fixes | ST-01 | EPIC-01 |
+| BLG-GOV-158 | README.md document hygiene sweep | ST-02 | EPIC-01 |
+| BLG-GOV-159 | OPERATIONAL_GUIDE/prompt version-sync drift | ST-03 | EPIC-01 |
+| BLG-OPS-83 | Add v6.4 endpoint to `api_performance_baseline.md` | ST-04 | EPIC-02 |
+| TEST-GAP-EPIC-03-v64 | Playwright coverage for Strategy Benchmark Panel 0 | ST-05 | EPIC-02 |
+| BLG-QA-61 | Review `signals_scenarios.md` against ST-01 signal sizing changes | ST-06 | EPIC-02 |
+| BLG-FE-46 | Claude thesis generation user feedback mechanism | ST-07 | EPIC-03 |
+| BLG-FEAT-41 | Claude thesis adoption rate metric | ST-08 | EPIC-03 |
+
+*This is an ephemeral section (see Placement Rule at top of file) — to be removed by the next `groom backlog` run after this cycle closes.*
 
 ---

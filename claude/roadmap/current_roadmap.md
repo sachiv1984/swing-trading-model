@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v6.4** — Audit Remediation, Security Hardening & Strategy Benchmark Enhancement — ✅ Shipped 2026-07-02 — cycle: 2026-07-02__release-v6.4
-**Next planned release:** [TBD]
+**Next planned release:** v6.5 — Audit Debt Clearance, Backlog Debt Clearance & AI Thesis Feedback Loop — cycle: 2026-07-02__release-v6.5
+
+<!-- roadmap-annotation-marker: RA:v6.5:2026-07-02__release-v6.5 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-02__release-v6.5
+- Plan published: 2026-07-02
+- Cycle folder: claude/cycles/2026-07-02__release-v6.5/
+- Backlog slice: claude/cycles/2026-07-02__release-v6.5/stage4_backlog_slice.md
+- Status at annotation: Committed
 
 *RA:v6.3 retired — see roadmap_archive.md 2026-06-30 (post-ship closure 2026-06-26__release-v6.3).*
 
