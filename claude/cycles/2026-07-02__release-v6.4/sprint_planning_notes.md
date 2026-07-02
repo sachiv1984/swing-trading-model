@@ -69,14 +69,14 @@ No risk has materialised since release planning. All mitigations remain valid as
 
 ## Pre-Sprint Vulnerability Scan
 
-`pip-audit` is **unavailable** in this environment (`pip-audit: command not found`). Advisory only — does not block sprint planning. Recommend installing `pip-audit` before sprint execution begins so STEP -1's mandatory scan can run cleanly at the next governed routine invocation.
+`pip-audit` was unavailable at the time sprint planning ran (`pip-audit: command not found`) and was recorded as an advisory. **Update (2026-07-02, post-seal):** `pip-audit` 2.10.1 installed via `pipx` (`pipx install pip-audit`; `pipx ensurepath` run so it is on `PATH` for future sessions). Re-ran `pip-audit -r backend/requirements.txt --format=json`: **clean — no known vulnerabilities found** across all 60 resolved dependencies (fastapi 0.135.1, pandas 3.0.3, pydantic 2.13.4, anthropic 0.105.2, etc.). No High/Critical CVEs to record; no PO/Head of Engineering risk acceptance required.
 
 ## Outstanding Actions
 
 | Action | Owner | Required Before Seal? |
 |--------|-------|----------------------|
 | Resolve `cycle_summary.md` Pre-sprint Planning Required Decision — RISK-06 Design Gate clearance | Head of UX & Design | Yes — **Resolved**: `run design-gate` completed 2026-07-02, status PASSED, all 3 UI-facing items (ST-08/09/10) cleared. Not a blocker to seal. |
-| Install `pip-audit` in the execution environment | Infrastructure & Operations Owner | No — advisory |
+| Install `pip-audit` in the execution environment | Infrastructure & Operations Owner | No — advisory — **Done** (2026-07-02, post-seal): installed via pipx, scan clean. |
 | DF-06 minimum-scenario check: ST-08 has 4 ACs (below the ≥5 threshold that mandates a Playwright scenario stub in the delegation spec per DF-06) — no stub is strictly required, but recommended given RISK-05/RISK-06 profile and the staging-only AC noted below | QA & Testing Owner | No — advisory |
 | Pre-stage backlog filing obligation for staging-only ACs deferred to post-merge sign-off (see `sprint_backlog.md` per-story **Staging-only ACs** fields) — per CLAUDE.md §2, if staging sign-off is deferred, a backlog item must be filed before the PR opens | Execution Engine (at delegation time) | No — advisory, flagged now per LL-v3.9-P3-2 to avoid a surprise P3 deviation |
 
