@@ -40,3 +40,32 @@ Cycle: 2026-07-02__release-v6.4
 - New friction items 1–3 above are first-time captures for this cycle — no prior-cycle match found in `claude/cycles/2026-06-26__release-v6.3/lessons_learnt_cycle.md` `## Phase 3`.
 
 ---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-07-02__release-v6.4
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-07-02
+**Reviewed by:** PMO Lead
+
+### What went well
+
+- All 13 stories verified in a single run — 0 traceability gaps, 0 QA Fail results, 0 P0/P1/P2 deviations. Verification reached `Verified` status directly, no re-run required.
+- All three EPICs' QA evidence sign-off blocks used a fully compliant signer format this cycle — no Tier 2 flags fired at STEP -1.3, despite this being a recurring friction source in v6.3 (see Recurrence Notes).
+- The one genuine test coverage gap (ST-08/AC-01, Panel 0 rendering) had already been dispositioned correctly at execution time — a backlog item (`TEST-GAP-EPIC-03-v64`) was filed before the PR opened per CLAUDE.md §2, so STEP 5.3 required no new backlog write, only confirmation.
+- `deferred_execution_blockers = []` and zero parked items in the backlog slice meant STEP 4 required no corrective writes — a genuinely clean sprint close.
+
+### Friction Log
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| v6.3 Phase 4 friction item 1's deferred patch (add an explicit signer-format validation note to `claude/system/templates/qa_evidence_template.md`, target v6.4) was not applied this cycle — no matching text found in the template and no corresponding `prompt_change_log.md` entry exists. The symptom did not recur this cycle only because all three EPICs happened to use the correct format; the underlying gap (template does not make the exact required signer string sufficiently visible during authoring) remains open | Phase 4 | A | defer | Add the validation note to `qa_evidence_template.md`'s Standard Sign-Off Block section: signer value must be one of "Director of Quality", "Sprint Execution Engine (autonomous class)", or "Sprint Execution Engine (agent-mediated, <Role Name> role — §X.Y)" — no other format is compliant. This is the 1st missed target (deferred v6.3 → due v6.4, not applied); if unresolved at v6.5 Phase 4 this becomes a 2-cycle recurrence escalation per lessons_learnt_prompt.md §3.7 | Head of Specs Team | v6.5 |
+
+**Recurrence Notes:**
+- v6.3 Phase 4 friction item 1 (QA sign-off format qualifier missing, deferred to v6.4): **Symptom not recurring, but deferred patch not applied** — see Friction Log row above. Re-deferred to v6.5 with an explicit 2-cycle escalation warning.
+- v6.3 Phase 4 friction item 2 (`System_status_report.md` sprint section not written correctly at sprint close, deferred to v6.4): **Resolved — not a recurrence.** The v6.4 sprint section was present, complete, and accurate at STEP 6 this cycle (only a status-line correction was needed, a normal STEP 6 reconciliation action, not a missing-section failure).
+- v6.3 Phase 4 friction item 3 (EPIC-03 `test_scenarios` pending pattern / DF-06 minimum-scenario advisory, deferred to v6.4, owner QA & Testing Owner): **Resolved — not a recurrence.** DF-06 was applied in `sprint_backlog.md` this cycle (ST-08 note explicitly cites and applies the ≥5-AC threshold check); confirmed via `sprint_planning_notes.md` Outstanding Actions.
+- No new friction items beyond the one carried-forward row above — this was a clean verification run with no fresh process gaps encountered.
+
+---
