@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-07-02__release-v6.4",
   "cycle_name": "v6.4 — Audit Remediation, Security Hardening & Strategy Benchmark Enhancement",
-  "status": "Executing",
+  "status": "Sprint_Complete",
   "prior_status": "Sprint_Planning_Complete",
   "engine": "sprint_execution",
   "execution_state_path": "claude/cycles/2026-07-02__release-v6.4/execution_state.json",
@@ -35,7 +35,8 @@
   "sprint2_gate_confirmed_utc": "",
   "sprint2_close_utc": "",
   "verification_utc": "",
-  "last_sync_utc": "2026-07-02T00:10:00Z",
+  "last_sync_utc": "2026-07-02T17:45:00Z",
+  "release_complete": true,
   "last_audit_id": "AUD-2026-07-01",
   "last_audit_utc": "2026-07-01T00:00:00Z",
   "last_audit_overall_score": 74,

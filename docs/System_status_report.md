@@ -1,9 +1,33 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.4
-**Last Updated:** 2026-06-30
+**Version:** 4.5
+**Last Updated:** 2026-07-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-07-02__release-v6.4
+**Date:** 2026-07-02
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Production correctness fix + AI security hardening: signal generation now reads `ticker_universe` instead of the deprecated `tickers` table (BLG-BE-40); `context_opts.ticker` sanitised before system prompt injection including a trailing-newline regex bypass fix (BLG-SEC-01); ticker/market strings validated at all 3 signal write paths including a second write path (`update_signal`) discovered during sign-off (BLG-SEC-02) | docs/specs/api_contracts/signal_endpoints.md; docs/specs/api_contracts/ticker_universe_api_contract.md; docs/specs/security/ai_injection_risk_assessment.md; docs/specs/api_contracts/ai_endpoints.md | None (BLG-SEC-07, BLG-SEC-08 filed as backlog follow-ups; not spec deviations) |
+| EPIC-02 | AUD-2026-07-01 lifecycle-audit remediation: governance version-sync drift corrected (BLG-GOV-150); document hygiene cleanup (BLG-GOV-151); structural reliability gaps closed (BLG-GOV-152); audit/governance process fixes (BLG-GOV-153); FI-P3-01/FI-P3-02/FI-P4-01 re-targets resolved | claude/system/OPERATIONAL_GUIDE.md; claude/system/roadmap_prompt.md; claude/README.md; claude/system/shared_standards.md; claude/system/execution_prompt.md; claude/audit.py | None |
+| EPIC-03 | Strategy Benchmark Open Positions panel + UX/QA polish: Panel 0 (Open Positions) added to Strategy Benchmark page (BLG-FEAT-54); AI daily briefing and chat widget disclaimer contrast fixed to WCAG AA (BLG-UX-01/02); v6.3 endpoints added to API performance baseline (BLG-OPS-82); Playwright coverage added for AI journal summary error states and full Strategy Benchmark page nav/filters/toggle modes/badge colours (TEST-GAP-EPIC-01/TEST-GAP-EPIC-03) | docs/specs/frontend/pages/strategy_benchmark.md; docs/specs/api_contracts/strategy_benchmark_endpoints.md; docs/reference/openapi.yaml; docs/specs/qa/ai_disclaimer_visibility_assessment.md; docs/ops/api_performance_baseline.md | None |
+
+### Capabilities deferred or returned
+
+None — all 13 stories (ST-01 through ST-13) delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (Cybersecurity & Trust Lead agent-mediated + Product Owner/Director of Quality PR acceptance), qa_evidence_EPIC-02.md (autonomous class), qa_evidence_EPIC-03.md (Head of UX & Design + Infrastructure & Operations Owner agent-mediated + QA Lead/Director of Quality/Product Owner PR review)
+- Deviations filed: None (spec deviations); BLG-SEC-07, BLG-SEC-08, TEST-GAP-EPIC-03-v64 filed as backlog follow-ups
+- Test scenarios referenced: tests/e2e/epic02-v62-ai-briefing-chat.spec.js; tests/e2e/trade-history-ai-journal-summary.spec.js (SC-TH-AI-01..03); tests/e2e/strategy-benchmark.spec.js (SC-SB-01..04)
 
 ---
 
