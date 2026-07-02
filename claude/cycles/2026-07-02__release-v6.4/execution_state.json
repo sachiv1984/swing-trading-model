@@ -5,7 +5,7 @@
   "invoked_utc": "2026-07-02T08:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-02T08:35:00Z",
+  "last_updated_utc": "2026-07-02T08:55:00Z",
   "epics": {
     "EPIC-01": {
       "status": "not_started",
@@ -61,7 +61,16 @@
           ],
           "deviations_filed": false,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "required_by": "Cybersecurity & Trust Lead",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "Regex trailing-newline bypass: `re.match(r'^[...]+$')` matches before a trailing \\n; switched to `.fullmatch()` on an unanchored pattern to close the gap.",
+              "Added test_context_ticker_bare_trailing_newline_rejected_with_422 covering the exact bypass case."
+            ],
+            "cleared_utc": "2026-07-02T08:55:00Z"
+          },
           "notes": "Requires Cybersecurity & Trust Lead sign-off (AC-04)."
         },
         "ST-03": {
