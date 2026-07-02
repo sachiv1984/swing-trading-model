@@ -5,7 +5,7 @@
   "invoked_utc": "2026-07-02T08:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-02T09:25:00Z",
+  "last_updated_utc": "2026-07-02T09:35:00Z",
   "epics": {
     "EPIC-01": {
       "status": "done",
@@ -104,7 +104,8 @@
           },
           "notes": "AC-01 verified via unit tests covering all 3 signal write paths (create_signal, create_rebalance_exit_signal, update_signal). AC-02 deferred to BLG-SEC-07 (manual live-DB review, not CI-testable, per sprint_planning_notes.md). Sign-off review also surfaced BLG-SEC-08 (out-of-scope follow-up)."
         }
-      }
+      },
+      "notes": ""
     },
     "EPIC-02": {
       "status": "not_started",
