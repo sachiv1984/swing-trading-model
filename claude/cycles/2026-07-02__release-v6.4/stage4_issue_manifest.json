@@ -1,0 +1,119 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Signal generation reads deprecated `tickers` table instead of `ticker_universe`",
+    "epic": "EPIC-01",
+    "description": "BLG-BE-40 — switch signal_service.py to ticker_universe_service.get_all_tickers(active_only=True)",
+    "ac_summary": "Signal generation sources from ticker_universe; active-list parity verified; no regression to sizing logic",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-02__release-v6.4"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Sanitise context_opts.ticker before system prompt injection",
+    "epic": "EPIC-01",
+    "description": "BLG-SEC-01 — validate ticker at router layer, reject injection characters with HTTP 422",
+    "ac_summary": "Ticker validated pre-prompt; injection strings rejected 422; unit test added; Cybersecurity sign-off",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-02__release-v6.4"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Validate ticker/market strings at signal write time",
+    "epic": "EPIC-01",
+    "description": "BLG-SEC-02 — validate signal ticker/market at write/import boundary, review existing signals",
+    "ac_summary": "Write path validates ticker/market strings; anomalous existing signals documented/cleaned; sign-off",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-02__release-v6.4"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Fix governance version-sync drift",
+    "epic": "EPIC-02",
+    "description": "BLG-GOV-150 — OPERATIONAL_GUIDE.md self-desync, §14 roadmap version, metrics owner role-name drift",
+    "ac_summary": "OPERATIONAL_GUIDE.md version consistent; §14 roadmap row matches actual; role name matches team_charter.md",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-02__release-v6.4"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Document hygiene cleanup",
+    "epic": "EPIC-02",
+    "description": "BLG-GOV-151 — README coverage/staleness/broken path, Class 6 header format, agent header bolding",
+    "ac_summary": "README covers all 13 routines, no broken paths, dates refreshed; 3 prompts' headers cleaned; pmo_lead.md bolded",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-02__release-v6.4"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Close structural reliability gaps (+ FI-P3-01/FI-P3-02/FI-P4-01 re-target)",
+    "epic": "EPIC-02",
+    "description": "BLG-GOV-152 — append-only guard parity, spec_references convention, staging AC protocol, amendment_lessons sunset, Base44 §6 Playwright strict-mode advisory",
+    "ac_summary": "5 append-only guards structural; spec_references no [] default; CLAUDE.md AC distinction added; amendment_lessons contradiction resolved; Base44 §6 advisory added",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-02__release-v6.4"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Audit & governance process fixes",
+    "epic": "EPIC-02",
+    "description": "BLG-GOV-153 — design gate bypass authority, run audit dry-run entry, FRICTION_LOAD wording, scored_initiatives naming",
+    "ac_summary": "team_charter.md §5.7 added; shared_standards.md §13 table complete; FRICTION_LOAD wording unambiguous; scored_initiatives naming resolved",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-02__release-v6.4"],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "Add Open Positions panel to Strategy Benchmark page",
+    "epic": "EPIC-03",
+    "description": "BLG-FEAT-54 — backtest_open_positions table, read path, new frontend panel for unrealized positions",
+    "ac_summary": "Panel shows unrealized positions summary + table; realized aggregates unaffected; full-replace import; contract/test.py registered if new endpoint",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-02__release-v6.4"],
+    "assignee": null
+  },
+  {
+    "id": "ST-09",
+    "title": "Improve AI daily briefing disclaimer text contrast",
+    "epic": "EPIC-03",
+    "description": "BLG-UX-01 — text-slate-500 to text-slate-300 in AiDailyBriefing.js",
+    "ac_summary": "Contrast >=4.5:1; no visual regression; UX sign-off",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-02__release-v6.4"],
+    "assignee": null
+  },
+  {
+    "id": "ST-10",
+    "title": "Improve AI chat widget footer disclaimer contrast and add test coverage",
+    "epic": "EPIC-03",
+    "description": "BLG-UX-02 — text-slate-600 to text-slate-400 in AiChatWidget.js, add data-testid + Playwright test",
+    "ac_summary": "Contrast >=4.5:1; data-testid present; Playwright test asserts visible advisory text; UX sign-off",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-02__release-v6.4"],
+    "assignee": null
+  },
+  {
+    "id": "ST-11",
+    "title": "Add v6.3 endpoints to api_performance_baseline.md",
+    "epic": "EPIC-03",
+    "description": "BLG-OPS-82 — register 3 GET endpoints with measured p50/p95",
+    "ac_summary": "3 endpoints registered with measured latency; regression threshold documented; Infra sign-off",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-02__release-v6.4"],
+    "assignee": null
+  },
+  {
+    "id": "ST-12",
+    "title": "Playwright coverage for ST-01 observable UI ACs (AI journal summary error states)",
+    "epic": "EPIC-03",
+    "description": "TEST-GAP-EPIC-01 — close v6.3 TSG-v63-01 gap",
+    "ac_summary": "Playwright tests cover unavailable/server/network error message rendering on Trade History tab",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-02__release-v6.4"],
+    "assignee": null
+  },
+  {
+    "id": "ST-13",
+    "title": "Playwright scenario coverage for Strategy Benchmark page",
+    "epic": "EPIC-03",
+    "description": "TEST-GAP-EPIC-03 — close v6.3 TSG-v63-02 gap",
+    "ac_summary": "Playwright tests cover page accessibility, filters, Panel 1 placeholder, Panel 3 toggle/badges",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-02__release-v6.4"],
+    "assignee": null
+  }
+]

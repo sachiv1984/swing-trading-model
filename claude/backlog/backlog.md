@@ -3391,3 +3391,29 @@ See verification_report.md §6 (cycle 2026-06-26__release-v6.3) for gap detail a
 ---
 
 *Release Slice v6.3 removed — cycle 2026-06-26__release-v6.3 closed 2026-06-30. Archived canonical home: claude/cycles/2026-06-26__release-v6.3/stage4_backlog_slice.md*
+
+---
+
+## Release Slice — v6.4 (2026-07-02__release-v6.4)
+
+<!-- release-plan-marker: RP:v6.4:2026-07-02__release-v6.4 -->
+
+**Canonical slice:** `claude/cycles/2026-07-02__release-v6.4/stage4_backlog_slice.md`
+
+13 stories across 3 EPICs (8 firm, 5 conditional). See canonical slice for full acceptance criteria.
+
+| ST-ID | BLG-ID | Description | EPIC | Type | Effort |
+|-------|--------|-------------|------|------|--------|
+| ST-01 | BLG-BE-40 | Signal generation reads deprecated `tickers` table instead of `ticker_universe` | EPIC-01 | Firm | XS |
+| ST-02 | BLG-SEC-01 | Sanitise `context_opts.ticker` before system prompt injection | EPIC-01 | Firm | XS |
+| ST-03 | BLG-SEC-02 | Validate ticker/market strings at signal write time | EPIC-01 | Conditional | S |
+| ST-04 | BLG-GOV-150 | Fix governance version-sync drift | EPIC-02 | Firm | S |
+| ST-05 | BLG-GOV-151 | Document hygiene cleanup | EPIC-02 | Conditional | S |
+| ST-06 | BLG-GOV-152 | Close structural reliability gaps (+ FI-P3-01/FI-P3-02/FI-P4-01 re-target) | EPIC-02 | Firm | M |
+| ST-07 | BLG-GOV-153 | Audit & governance process fixes | EPIC-02 | Firm | S |
+| ST-08 | BLG-FEAT-54 | Add Open Positions panel to Strategy Benchmark page | EPIC-03 | Firm | M |
+| ST-09 | BLG-UX-01 | Improve AI daily briefing disclaimer text contrast | EPIC-03 | Conditional | XS |
+| ST-10 | BLG-UX-02 | Improve AI chat widget footer disclaimer contrast and add test coverage | EPIC-03 | Firm | XS |
+| ST-11 | BLG-OPS-82 | Add v6.3 endpoints to `api_performance_baseline.md` | EPIC-03 | Conditional | XS |
+| ST-12 | TEST-GAP-EPIC-01 | Playwright coverage for ST-01 observable UI ACs (AI journal summary error states) | EPIC-03 | Conditional | XS |
+| ST-13 | TEST-GAP-EPIC-03 | Playwright scenario coverage for Strategy Benchmark page | EPIC-03 | Firm | S |

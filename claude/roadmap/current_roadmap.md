@@ -293,6 +293,15 @@ Today you find stocks through external research and add them to the watchlist ma
 |--------|-------|----------|--------|------|--------|
 | BLG-BE-40 | Signal generation reads deprecated `tickers` table instead of `ticker_universe` | P1 | XS | D | Queued |
 
+<!-- roadmap-annotation-marker: RA:v6.4:2026-07-02__release-v6.4 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-02__release-v6.4
+- Plan published: 2026-07-02
+- Cycle folder: claude/cycles/2026-07-02__release-v6.4/
+- Backlog slice: claude/cycles/2026-07-02__release-v6.4/stage4_backlog_slice.md
+- Status at annotation: Committed
+
 -----
 
 ## 4. Priority 2 — Horizon: Next Phase (Arcs 1 & 2)
