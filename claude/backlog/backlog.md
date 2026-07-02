@@ -4,7 +4,7 @@
 **Status:** Active
 **Class:** Planning Document (Class 4)
 **Last Updated:** 2026-07-02 (groom backlog post-ship closure 2026-07-02__release-v6.4 — 13 items archived (BLG-BE-40, BLG-SEC-01/02, BLG-GOV-150/151/152/153, BLG-FEAT-54, BLG-UX-01/02, BLG-OPS-82, TEST-GAP-EPIC-01/03); 1 ephemeral release slice retired (v6.4); 0 orphans; 1 new item added (BLG-OPS-83); Phase 4 additions confirmed present (BLG-SEC-07/08, TEST-GAP-EPIC-03-v64))
-**Last rebalance:** 2026-07-01 (cycle 2026-07-01__scheduled — DL-058; 0 new backlog items this cycle; STEP 8.0: BLG-BE-40 mandatory v6.4 Now horizon addition (BLG-SPEC-35 excluded, not a correctness bug); STEP 3.1 Actionable Backlog Assessment: A=42/32%, T=7/5%, D=27/21%, L=55/42% of 131 items (BLG-GOV-144 flagged >12mo archive candidate); PVR=0.36 Advisory; Skill-Silo rolling-3-cycle avg=53.2% Alert (pull-forward candidate BLG-FEAT-54))
+**Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -374,6 +374,141 @@ Trades are currently classified only by market, sector, and signal type. There i
 - AC-01: User can add/remove tags on any trade plan
 - AC-02: GET /analytics/tag-performance returns win rate and average R broken down by tag
 - AC-03: PerformanceAnalytics page surfaces tag-based filter controls
+
+---
+
+### BLG-FEAT-55 — AI chat conversation history persistence across sessions
+**Priority:** P3 (Low)
+**Type:** Product Feature / AI
+**Owner:** Product Owner; Data Model & Domain Schema Owner
+**Source:** IDEA-product-owner-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** M (~2–3 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** ≥30 days of AI chat usage (v6.2 shipped 2026-06-25; clears ~2026-07-25) AND a §13 review opened and passed for persistence design (chat is currently stateless per SRB-v1.7).
+
+**Problem**
+POST /ai/chat (shipped v6.2) is stateless — no conversation history persists across sessions. Users who want to continue a prior chat thread cannot. Persisting history is a genuine schema and §13 boundary question (stored AI conversation content) that should not be designed ahead of both an established usage pattern and a formal boundary review.
+
+**Scope**
+- §13 review: does persisting chat history change SRB-v1.7's stateless-advisory classification?
+- Schema design: chat session/message data model (companion to BLG-SPEC-65/66)
+- Frontend: session list, resume-conversation UX
+
+**Acceptance Criteria**
+- §13 review passed before design begins
+- Chat session schema designed and reviewed by Data Model & Domain Schema Owner
+- Gate condition (30 days usage) verified by Product Owner before sprint planning
+
+---
+
+### BLG-FEAT-56 — AI-assisted setup thesis digest at order placement
+**Priority:** P3 (Low)
+**Type:** Product Feature / AI
+**Owner:** Product Owner
+**Source:** IDEA-product-owner-20260626-02 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** AI adoption window clears ~2026-07-25 AND existing AI touchpoints (daily briefing, chat) show established, validated usage patterns.
+
+**Problem**
+The AI thesis generation button (v4.0) populates `setup_thesis` on demand. Adding a further AI touchpoint — an automatic digest surfaced at order placement — before existing AI features are validated risks layering unvalidated AI surface area on top of unvalidated AI surface area.
+
+**Scope**
+- Digest content: setup thesis + key risk factors summarised at the order-placement step
+- Reuses existing Claude thesis generation infrastructure (v4.0)
+- Gated behind confirmed adoption of the existing AI touchpoints
+
+**Acceptance Criteria**
+- Digest renders at order placement using existing thesis generation service
+- Gate condition (adoption validated) verified by Product Owner before sprint planning
+
+---
+
+### BLG-FEAT-57 — Strategy parameter sensitivity analysis framework
+**Priority:** P3 (Low)
+**Type:** Product Feature / Strategy Analytics
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** L (~3–4 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** ≥20 closed trades (currently ~15–17) AND Arc 5/6 tooling prerequisite in place.
+
+**Problem**
+There is no systematic pre-process to evaluate the effect of a §11 strategy parameter change (e.g. ATR multiplier) against historical trade data before committing to a version bump. Building this ahead of sufficient trade density or the Arc 5/6 analytical foundation would produce statistically unreliable output.
+
+**Scope**
+- Sensitivity analysis: apply candidate parameter values against historical trade set, compare outcome deltas
+- Feeds into SI-04 (Strategy Version Comparison) as a pre-change evaluation step
+
+**Acceptance Criteria**
+- Framework produces before/after outcome comparison for a candidate parameter change
+- Gate condition (≥20 closed trades) verified by Strategy Rules & System Intent Owner before sprint planning
+
+---
+
+### BLG-FEAT-58 — Trade annotation model
+**Priority:** P3 (Low)
+**Type:** Product Feature / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** IDEA-data-model-20260626-02 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** M (~2–3 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Arc 4 PO-02 (Journal Pattern Recognition) data model established (~2026-10-20, 6+ months AI-summarised journal data).
+
+**Problem**
+No schema exists for user-authored free-text annotations on individual trades, distinct from the AI-summarised journal entry. Designing this ahead of PO-02's data model risks a schema that conflicts with or duplicates the eventual journal-pattern data structure.
+
+**Scope**
+- `trade_annotations` schema: trade_id, annotation_text, created_at, tags (optional, see BLG-FEAT-52)
+- Co-designed with PO-02 data model once that gate clears
+
+**Acceptance Criteria**
+- Schema co-designed with PO-02 data model, not ahead of it
+- Gate condition (PO-02 data model established) verified before sprint planning
+
+---
+
+### BLG-FEAT-59 — AI-assisted monthly P&L narrative
+**Priority:** P3 (Low)
+**Type:** Product Feature / AI
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** AI adoption window clears ~2026-07-25 (same constraint as BLG-FEAT-55/56 — too early to layer additional AI-generated content onto financial reporting).
+
+**Problem**
+Monthly P&L (shipped v2.x) is a fixed-format report. An optional AI-generated narrative commentary could add interpretive value, but adding it before existing AI features (daily briefing, chat) are validated risks compounding unvalidated AI surface area onto a financial-reporting document specifically.
+
+**Scope**
+- Optional AI narrative section appended to Monthly P&L using existing Claude infrastructure
+- Advisory-only framing consistent with §13 SRB-v1.7
+
+**Acceptance Criteria**
+- Narrative section renders as optional/dismissible
+- Gate condition (AI adoption window) verified by Financial Reporting & Records Owner before sprint planning
+
+---
+
+### BLG-FEAT-60 — AI chat engagement metric
+**Priority:** P3 (Low)
+**Type:** Product Feature / Analytics
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** IDEA-metrics-20260626-02 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** AI adoption window clears ~2026-07-25 — usage patterns remain unestablished at current usage duration; metric definition would be premature.
+
+**Problem**
+No metric tracks AI chat engagement (sessions per week, questions per session, response acceptance rate). Defining the metric before usage patterns stabilise risks needing early revision.
+
+**Scope**
+- Define engagement metric set: sessions/week, questions/session, response-acceptance rate
+- Document in `metrics_definitions.md`
+
+**Acceptance Criteria**
+- Metric set defined and documented
+- Gate condition (AI adoption window) verified before sprint planning
 
 ---
 
@@ -854,6 +989,96 @@ If SI-05 Phase 2 includes an in-app delivery channel, a UX spec will be required
 
 ---
 
+### BLG-FE-81 — AI disclaimer component extraction
+**Priority:** P3 (Low)
+**Type:** Frontend / Refactor
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** IDEA-base44-frontend-20260702-02 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
+**Provisional-Target:** TBD
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+BLG-UX-01 and BLG-UX-02 (both shipped v6.4) independently fixed disclaimer contrast on the AI daily briefing and AI chat widget respectively, each editing its own component's Tailwind classes. Without a shared component, a future third AI surface risks repeating the same contrast mistake.
+
+**Scope**
+- Extract a single `AiDisclaimer` component with the now-corrected WCAG-AA-passing slate values
+- Replace the two existing inline disclaimer implementations with the shared component
+- No visual change — refactor only
+
+**Acceptance Criteria**
+- Single shared disclaimer component used by both AI daily briefing and AI chat widget
+- No visual regression (same rendered contrast as post-v6.4 fix)
+- Playwright: existing disclaimer visibility assertions still pass
+
+---
+
+### BLG-FE-82 — Colour contrast audit sweep
+**Priority:** P2 (Medium)
+**Type:** Frontend / Accessibility
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20260702-02 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
+**Provisional-Target:** TBD
+**Effort:** S (~1 day)
+
+**Problem**
+BLG-UX-01/02 (v6.4) fixed WCAG-AA contrast failures on the two AI disclaimer surfaces specifically, found via ad hoc review. No systematic sweep has checked other secondary/disclaimer-style text surfaces in the app for the same class of issue.
+
+**Scope**
+- Apply the same WCAG-AA contrast review method used for BLG-UX-01/02 across all other secondary-text/disclaimer surfaces app-wide
+- Produce a findings list; file follow-up backlog items for any additional failures found
+
+**Acceptance Criteria**
+- Contrast audit completed across all identified secondary-text surfaces
+- Findings documented; any failures filed as follow-up backlog items
+- Head of UX & Design sign-off
+
+---
+
+### BLG-FE-83 — Frontend bundle size optimization assessment
+**Priority:** P3 (Low)
+**Type:** Frontend / Performance
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-engineering-20260626-02 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** A user-reported performance issue OR profiling data indicates bundle-size impact.
+
+**Problem**
+No formal assessment of current React bundle size or heavy dependencies has been performed. No user-reported issue currently motivates this — the gate exists specifically to avoid speculative optimisation work.
+
+**Scope**
+- Bundle analysis (e.g. source-map-explorer or equivalent) to identify heaviest dependencies
+- Recommendations report; no implementation required at this stage
+
+**Acceptance Criteria**
+- Bundle analysis report produced
+- Gate condition (reported issue or profiling signal) verified before commencing
+
+---
+
+### BLG-FE-84 — AI chat UI interaction study protocol
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Research
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** AI adoption window clears ~2026-07-25 — usage patterns must stabilise before a research protocol targeting them is designed.
+
+**Problem**
+No structured protocol exists to study how the AI chat advisor is actually used. Designing one before interaction patterns stabilise risks studying patterns that later shift.
+
+**Scope**
+- 5-question interaction study protocol targeting chat advisor usage
+- Applied once gate clears
+
+**Acceptance Criteria**
+- Protocol document produced
+- Gate condition (AI adoption window) verified before use
+
+---
+
 ## 4. Backend & Data Backlog
 
 ---
@@ -1256,6 +1481,51 @@ BLG-QA-42 (SI-02 Playwright scaffold) is gated on 20+ closed trades. When that g
 - Assessment confirms "proceed with BLG-QA-42 as-is" or produces a revision document
 - Director of Quality sign-off
 - Gate condition verified (≥20 closed trades)
+
+---
+
+### BLG-BE-41 — Deprecated table read-path audit
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Data Integrity
+**Owner:** Head of Backend Engineering
+**Source:** IDEA-backend-engineering-20260702-02 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
+**Provisional-Target:** TBD
+**Effort:** S (~1 day)
+
+**Problem**
+BLG-BE-40 (v6.4) fixed a P1 correctness bug where signal generation read the deprecated `tickers` table instead of `ticker_universe`. No systematic check has been done to confirm this was the only deprecated-table read remaining in the codebase.
+
+**Scope**
+- Grep/audit all `database.py` read functions for references to tables superseded by a documented migration
+- Cross-check against `data_model.md` migration history for tables marked deprecated
+- File follow-up correctness items for any additional instances found
+
+**Acceptance Criteria**
+- Audit completed across all `database.py` read functions
+- Findings documented; any additional deprecated-table reads filed as P0/P1 correctness items per severity
+- Head of Backend Engineering sign-off
+
+---
+
+### BLG-BE-42 — Backend request tracing
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Observability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** IDEA-backend-engineering-20260626-02 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** A demonstrated multi-service call failure requiring cross-service tracing to diagnose.
+
+**Problem**
+No per-request trace ID propagation exists across routers/services. No incident has yet demonstrated a need for this level of observability — the gate exists to avoid speculative infrastructure investment.
+
+**Scope**
+- Trace ID generation at request entry; propagation through service-layer calls
+- Surfaced in structured logs
+
+**Acceptance Criteria**
+- Trace ID present in logs across a multi-service call path
+- Gate condition (demonstrated failure requiring tracing) verified before commencing
 
 ---
 
@@ -3122,6 +3392,265 @@ See `claude/cycles/2026-07-02__release-v6.4/qa_evidence_EPIC-03.md` (ST-08 entry
 
 ---
 
+
+### BLG-GOV-154 — API contract deprecation marker convention
+**Priority:** P3 (Low)
+**Type:** Governance / API Design
+**Owner:** API Contracts & Documentation Owner
+**Source:** IDEA-api-contracts-20260702-02 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
+**Provisional-Target:** TBD
+**Effort:** S (~0.5 day)
+
+**Problem**
+No formal process exists for marking an API contract's endpoint as deprecated once its backing implementation is retired. BLG-BE-40 (v6.4) removed a deprecated-table read path but the affected contract sections were updated ad hoc rather than via a defined convention.
+
+**Scope**
+- Define a `**Deprecated:**` marker convention for `## METHOD /path` headings in `docs/specs/api_contracts/`
+- Document in the API contracts style guide / openapi.yaml preamble
+
+**Acceptance Criteria**
+- Deprecation marker convention documented
+- Reviewed by Head of Specs Team
+
+---
+
+### BLG-GOV-156 — Base44 prompt template versioning
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** IDEA-base44-frontend-20260626-02 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** ≥3 Base44 prompt draft revisions within a single release cycle (current iteration frequency does not warrant versioning overhead).
+
+**Problem**
+No versioning exists to track which version of the Base44 generation prompt produced each delivered component. At current low iteration frequency this is not yet a problem, but the gate defines a concrete trigger for when it would become one.
+
+**Scope**
+- Lightweight per-revision log (date, summary of change) appended to the Base44 prompt draft file
+- No tooling required — a changelog section within the existing prompt file
+
+**Acceptance Criteria**
+- Changelog section added once gate condition is met
+- Gate condition (≥3 revisions/cycle) verified before commencing
+
+---
+
+### BLG-QA-69 — Ticker/market input sanitisation regression suite
+**Priority:** P2 (Medium)
+**Type:** QA / Security Regression
+**Owner:** Director of Quality; Backend Engineering Patterns Owner
+**Source:** IDEA-backend-engineering-20260702-01 (IW-20260702-01) — Promoted-Backlog; merges IDEA-qa-lead-20260702-01; rebalance 2026-07-02__scheduled
+**Provisional-Target:** TBD
+**Effort:** M (~1–2 days)
+
+**Problem**
+BLG-SEC-01 and BLG-SEC-02 (both v6.4) fixed ticker/market injection and validation gaps at 3 signal write paths and the AI chat context path. These fixes currently rely on the sign-off manual review rather than a standing regression suite, risking silent regression on a future refactor.
+
+**Scope**
+- Consolidate BLG-SEC-01/02 test cases (injection strings, trailing-newline bypass, invalid ticker/market values) into a standing pytest regression suite
+- Cover all 4 fixed paths: `create_signal`, `create_rebalance_exit_signal`, `update_signal`, AI chat `context_opts.ticker`
+
+**Acceptance Criteria**
+- Regression suite covers all 4 previously-vulnerable paths
+- Suite runs in CI on every PR touching `backend/services/signal_service.py`, `database.py`, or `ai_service.py`
+- Director of Quality sign-off
+
+---
+
+### BLG-QA-70 — Signal correctness fix impact measurement
+**Priority:** P3 (Low)
+**Type:** QA / Data Audit
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** IDEA-metrics-20260702-01 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
+**Provisional-Target:** TBD
+**Effort:** S (~0.5–1 day)
+
+**Problem**
+BLG-BE-40 (v6.4) fixed signal generation reading the deprecated `tickers` table instead of `ticker_universe`. No retrospective measurement exists of how many historical `suggested_shares` values were affected by the bug before the fix.
+
+**Scope**
+- Query historical signals generated before the BLG-BE-40 fix; identify count and magnitude of affected `suggested_shares` values
+- Document findings — informational, no remediation implied unless a material discrepancy is found
+
+**Acceptance Criteria**
+- Impact measurement query run and findings documented
+- Reviewed by Metrics Definitions & Analytics Owner and Product Owner
+
+---
+
+### BLG-QA-71 — Playwright fixture isolation tooling
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** Director of Quality
+**Source:** IDEA-director-of-quality-20260626-02 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** First empirical Playwright fixture-isolation failure observed in CI (no such failure has occurred to date).
+
+**Problem**
+No test data fixtures or state-reset mechanism exists between Playwright runs. No empirical fixture-isolation failure has occurred — the gate exists to avoid building tooling for a problem not yet demonstrated.
+
+**Scope**
+- Fixture reset mechanism between Playwright test runs
+- Applied once a real isolation failure is observed
+
+**Acceptance Criteria**
+- Fixture isolation tooling implemented once gate condition met
+- Gate condition (demonstrated failure) verified before commencing
+
+---
+
+### BLG-SEC-09 — AI rate-limit bypass test
+**Priority:** P2 (Medium)
+**Type:** Security / Verification
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260702-02 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
+**Provisional-Target:** TBD
+**Effort:** S (~1 day)
+
+**Problem**
+BLG-OPS-81 (v6.3) added per-endpoint AI rate limiting (10 req/min/IP daily-briefing; 30 req/min/IP chat). No verification has been done that these limits cannot be bypassed via IP rotation or header spoofing in the current deployment.
+
+**Scope**
+- Test rate-limit enforcement against IP-rotation and X-Forwarded-For header spoofing attempts
+- Document findings; file a security fix item if a bypass is confirmed
+
+**Acceptance Criteria**
+- Bypass test performed against both rate-limited AI endpoints
+- Findings documented; any confirmed bypass filed as a P1/P0 security item
+- Cybersecurity & Trust Lead sign-off
+
+---
+
+### BLG-SPEC-62 — Open Positions panel spec backfill
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-specs-20260702-01 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
+**Provisional-Target:** TBD
+**Effort:** S (~0.5 day)
+
+**Problem**
+BLG-FEAT-54 (Open Positions panel, v6.4) shipped with a UX spec (`docs/design/2026-07-02__release-v6.4/open-positions-panel/ux_spec.md`) but no corresponding entry was backfilled into the canonical `docs/specs/frontend/pages/strategy_benchmark.md` page spec, leaving the page spec incomplete relative to what shipped.
+
+**Scope**
+- Backfill Panel 0 (Open Positions) into `docs/specs/frontend/pages/strategy_benchmark.md`
+- Cross-reference the existing UX spec and API contract
+
+**Acceptance Criteria**
+- `strategy_benchmark.md` page spec includes Panel 0 documentation
+- Reviewed by Frontend Specifications & UX Documentation Owner
+
+---
+
+### BLG-SPEC-63 — Spec coverage gap detection script design
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Tooling
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260626-02 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Head of Specs Team completes a script-design scoping decision (static route diff vs frontend spec inventory approach).
+
+**Problem**
+No automated check compares frontend page specs against deployed routes to detect coverage gaps. The scoping approach (static diff vs inventory-based) has not yet been decided.
+
+**Scope**
+- Scope and select an implementation approach
+- Build a lightweight script to flag routes with no corresponding spec file (or vice versa)
+
+**Acceptance Criteria**
+- Scoping decision recorded
+- Script implemented and run at least once with findings documented
+
+---
+
+### BLG-SPEC-65 — AI interaction history data model
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Data Model
+**Owner:** Data Model & Domain Schema Owner
+**Source:** IDEA-data-model-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Same gate as BLG-FEAT-55 — §13 review opened and passed for chat persistence AND AI adoption window clears ~2026-07-25.
+
+**Problem**
+Companion spec item to BLG-FEAT-55 (chat persistence). §13-compliant schema design for persisting user chat sessions must not precede the boundary review itself.
+
+**Scope**
+- §13-compliant schema design, co-developed with BLG-FEAT-55
+- No implementation ahead of the §13 review passing
+
+**Acceptance Criteria**
+- Schema spec produced only after §13 review passes
+- Gate condition verified before commencing
+
+---
+
+### BLG-SPEC-66 — AI chat conversation persistence spec
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Frontend Spec
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-specs-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Same §13 review gate as BLG-FEAT-55/BLG-SPEC-65.
+
+**Problem**
+Companion frontend spec item to BLG-FEAT-55/BLG-SPEC-65 — persisting and displaying chat session history. Authoring this spec ahead of the §13 boundary decision risks rework or discard.
+
+**Scope**
+- Frontend spec for session list and resume-conversation UX, authored only once the §13 gate clears
+
+**Acceptance Criteria**
+- Spec produced only after §13 review passes
+- Gate condition verified before commencing
+
+---
+
+### BLG-OPS-84 — Annual data provider cost comparison review
+**Priority:** P3 (Low)
+**Type:** Operations / FinOps
+**Owner:** FinOps & Resource Architect
+**Source:** IDEA-finops-20260626-01 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Annual cadence — first review due ≥2027-06-25.
+
+**Problem**
+No scheduled review compares current data provider (Yahoo Finance, Alpaca) costs against alternatives. Annual cadence is appropriate; the gate simply establishes when the first review is due.
+
+**Scope**
+- Cost/feature comparison of current vs alternative data providers
+- Recommendation: retain or switch
+
+**Acceptance Criteria**
+- Review conducted and documented at gate date
+- FinOps & Resource Architect sign-off
+
+---
+
+### BLG-OPS-85 — Compute cost trending by feature area
+**Priority:** P3 (Low)
+**Type:** Operations / FinOps
+**Owner:** FinOps & Resource Architect
+**Source:** IDEA-finops-20260626-02 (IW-20260626-01) — Promoted-Backlog, 3-cycle hard cap; rebalance 2026-07-02__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** BLG-OPS-74 (Anthropic API cost logging) ships.
+
+**Problem**
+No view partitions Render dyno compute cost by feature area. Meaningful cost trending depends on the per-call cost logging BLG-OPS-74 will provide — building this ahead of that data source would have nothing to trend.
+
+**Scope**
+- Partition compute cost by feature area (AI endpoints, screener, core CRUD) once BLG-OPS-74 data is available
+
+**Acceptance Criteria**
+- Cost trending view implemented and populated
+- Gate condition (BLG-OPS-74 shipped) verified before sprint planning
+
+---
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*
 
 ---

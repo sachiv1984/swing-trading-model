@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.71
+**Version:** 4.72
 **Last Updated:** 2026-07-02
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v7.9)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v8.0)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1272,7 +1272,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v7.9) | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v8.0) | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1454,7 +1454,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.69 |
+| Version | 4.72 |
 | Last Updated | 2026-07-02 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
@@ -1463,7 +1463,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.9 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v7.9 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v8.0 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.39 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.12 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.72 | 2026-07-02 | **Roadmap rebalance 2026-07-02__scheduled — roadmap_prompt.md v7.9→v8.0: three lessons-learnt patches applied.** §6 source prompt header updated v7.9→v8.0. §13 Artefact Register Roadmap Rebalance Prompt row updated v7.9→v8.0. §14 Roadmap Engine Source v7.9→v8.0. §14 Version 4.71→4.72/2026-07-02. Changes: (1, Friction Item 2 deferred patch from `2026-07-01__scheduled`, due this cycle) STEP 11.2 — deferred-patch Target fields must name a cycle_id or absolute date, not a bare release version alone; if a release version is given, a concrete date estimate must also be recorded. (2, this cycle's Friction Item 1) STEP 4.0 gate-condition re-check — explicit two-step check added (grep `backlog.md`, then `backlog_archive.md` before concluding "not shipped"); corrects the false-negative that let `2026-07-01__scheduled` record BLG-GOV-131 as unshipped when it had in fact shipped v6.1. (3, this cycle's Friction Item 3) STEP 7.1 Skill-Silo Alert — wording clarified that a single U-item pull-forward is not guaranteed to correct the rolling ceiling breach across a heavy governance/debt window; PO should consider multiple U-items after 2+ consecutive Alert cycles. Authority: Head of Specs Team (roadmap rebalance 2026-07-02__scheduled). |
 | 4.71 | 2026-07-02 | **Post-ship closure 2026-07-02__release-v6.4 STEP 8 immediate action — execution_prompt.md v3.49→v3.50: qa_signed_off elevated from advisory to hard merge-gate requirement (DF-02).** §8 source prompt header v3.49→v3.50. §14 Execution Engine Source v3.49→v3.50. §14 Version 4.70→4.71/2026-07-02. Change: §3.2.B `qa_signed_off` note upgraded from "Advisory (OA-1/ST-01)" to a hard requirement; STEP 4 merge gate table gained a new row — `qa_signed_off = true (execution_state.json)` must be set, independent of the PR-comment QA sign-off row. Resolves a deferred v6.3 Phase 3 lessons-learnt patch (DF-02) not applied at v6.4 planning time (1st missed target); applied now rather than re-deferred, per post-ship closure's non-deferrable immediate-action rule. Cross-check also confirmed DF-01 and DF-05 (v6.3 carry-forward) are already satisfied by pre-existing patches (LL-v3.7-EX-01 and AUD-2026-06-22-001 respectively) — no further action required; DF-06 confirmed applied in sprint_backlog.md this cycle. Authority: Head of Specs Team (v6.4 post-ship closure, 2026-07-02). |
 | 4.70 | 2026-07-02 | **Post-ship closure 2026-07-02__release-v6.4 STEP 8 immediate action — qa_evidence_template.md v1.5→v1.6: signer format requirement made explicit.** §14 QA Evidence Template v1.5→v1.6. §14 Version 4.69→4.70/2026-07-02. Change: new authoring note added to the Standard Sign-Off Block specifying the exact set of compliant `Signed off by:` values (`Director of Quality`, `Sprint Execution Engine (autonomous class)`, `Sprint Execution Engine (agent-mediated, <Role Name> role — §X.Y)`, or the two delegated-QA aggregate formats). Resolves a deferred v6.3 Phase 4 lessons-learnt patch that was not applied at v6.4 planning time (1st missed target); applied now per post-ship closure's non-deferrable immediate-action rule rather than deferred a second time. Authority: Head of Specs Team (v6.4 post-ship closure, 2026-07-02). |
 | 4.69 | 2026-07-02 | **v6.4 ST-07 (BLG-GOV-153, EPIC-02) — audit & governance process fixes.** §6 source prompt header updated v7.8→v7.9. §13 Artefact Register Roadmap Rebalance Prompt row updated v7.8→v7.9. §14 Roadmap Engine Source v7.8→v7.9. §14 Shared Standards v3.6→v3.7. §14 Team Charter v1.6→v1.7. §14 Version 4.68→4.69/2026-07-02. Changes: (AC-01/G5) `team_charter.md` new §5.7 "Design gate bypass disputes" added — codifies the dual-authority requirement (Head of UX & Design + Product Owner) already enforced procedurally at `sprint_planning_prompt.md` STEP -1, closing G5 FAIL. (AC-02) `shared_standards.md` §13 dry-run table — `run audit` row added (N/A, read-only by design). (AC-03) `claude/audit.py` FRICTION_LOAD formula — wording clarified to "since PRIOR_AUDIT_ID" rather than ambiguous "across all cycles" (comment/docstring only, no AUDIT_VERSION bump — scoring behaviour unchanged). (AC-04) `roadmap_prompt.md` STEP write instruction — `scored_initiatives.md` documented as intentionally current-cycle-only (overwritten each run, no cycle-dated copies); orphaned `claude/scoring/scored_initiatives_2026-03-06.md` removed. Authority: Head of Specs Team (v6.4 ST-07, 2026-07-02). |

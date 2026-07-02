@@ -384,3 +384,31 @@ Floor check: Governance > 20% — PO sign-off capacity confirmed. All items are 
 **v6.4 capacity outlook:** Now horizon carries only BLG-BE-40 (XS) at this stage; full v6.4 scope deferred to `plan release v6.4` per STEP 8.1 Option (b). No capacity constraint identified.
 
 **Workforce constraints:** None new. Gate-conditional items create no immediate FTE demand.
+
+---
+
+## Rebalance 2026-07-02__scheduled
+
+**Date:** 2026-07-02
+**Run tier:** Standard
+**Items evaluated:** 24 new backlog items (from idea intake IW-20260702-01 disposition — 8 immediately-actionable, 16 gate-conditional); 0 new Promoted-Added initiatives
+
+| Item | Effort | Skill Category | Notes |
+|------|--------|---------------|-------|
+| BLG-GOV-154, BLG-GOV-156 | S | Governance / API Design | Process conventions, ungated/lightly-gated |
+| BLG-QA-69, BLG-QA-70, BLG-QA-71 | S–M | QA / Testing | 1 immediately actionable, 2 gate-conditional |
+| BLG-BE-41, BLG-BE-42 | S–M | Backend Engineering | 1 immediately actionable, 1 gate-conditional |
+| BLG-SEC-09 | S | Security Verification | Immediately actionable |
+| BLG-SPEC-62, BLG-SPEC-63, BLG-SPEC-65, BLG-SPEC-66 | S–M | Spec Debt | 1 immediately actionable, 3 gate-conditional |
+| BLG-FE-81, BLG-FE-82, BLG-FE-83, BLG-FE-84 | S–M | Frontend / UX | 2 immediately actionable, 2 gate-conditional |
+| BLG-FEAT-55–60 | M–L | Product Feature / AI | All gate-conditional (AI adoption window, data density, or dependent feature) |
+| BLG-OPS-84, BLG-OPS-85 | S | FinOps / Ops | Both gate-conditional (annual cadence / dependent item) |
+
+**Governance load %:** ~46% (11 of 24 items are GOV/QA/SPEC/SEC process or spec-debt items)
+**Execution load %:** ~54% (13 of 24 are FE/BE/FEAT/OPS execution items)
+
+**Skill-Silo advisory:** Rolling 3-cycle average (v6.2 30.8%, v6.3 86.7%, v6.4 76.9%) = **64.8%**, above the 40% ceiling — Alert triggered per STEP 7.1, worse than the prior 53.2% reading. Bundling a single U-story pull-forward (BLG-FEAT-54, v6.4) did not correct this. Mandatory pull-forward scan identified **BLG-FE-46** (Claude thesis feedback mechanism, U-story, P3, S effort, no gate) as the pull-forward candidate; PO acknowledged for `plan release v6.5`, with an advisory that more than one U-item should be prioritised next release if the ceiling is to be meaningfully corrected.
+
+**v6.5 capacity outlook:** Now horizon remains empty; full v6.5 scope deferred to `plan release v6.5` per STEP 8.1 Option (b). All 24 new items are gate-conditional or small/unscheduled — no capacity constraint identified at roadmap level.
+
+**Workforce constraints:** None new. Gate-conditional items create no immediate FTE demand.

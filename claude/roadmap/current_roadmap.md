@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-02 (post-ship closure 2026-07-02__release-v6.4 — v6.4 marked ✅ Complete; Current Version updated)
-**Last rebalance:** 2026-07-01 (cycle 2026-07-01__scheduled — Standard-tier, CPS=N/A (0 active initiatives); Product Value Advisory (ratio=0.36); Skill-Silo Alert (G+D+P rolling-3-cycle avg=53.2%, pull-forward candidate BLG-FEAT-54); DL-058; 0 new backlog items this cycle; STEP 8.0 fast-track BLG-BE-40 added to Now horizon; v6.4 scoping deferred to plan release v6.4; ideas register 3-cycle disposition — 1 Rejected, 19 Parked-cycle-2)
+**Last Updated:** 2026-07-02 (roadmap rebalance 2026-07-02__scheduled — DL-059, no roadmap content change)
+**Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — Standard-tier, CPS=N/A (0 active initiatives); Product Value Advisory (ratio=0.344); Skill-Silo Alert (G+D+P rolling-3-cycle avg=64.8%, worse than prior 53.2%; pull-forward candidate BLG-FE-46); DL-059; 24 new backlog items (idea intake IW-20260702-01, 44 submissions + 19 carried ideas at 3-cycle hard cap); Backlog Accessibility Warning triggered (A=28% < 30% floor); STEP 8.0: 0 fast-track items; v6.5 scoping deferred to plan release v6.5; ideas register 3-cycle disposition — 3 Rejected, 16 Backlog-gate-conditional)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 

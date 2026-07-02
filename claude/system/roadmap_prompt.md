@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 7.9
+**Version:** 8.0
 **Last Updated:** 2026-07-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -355,9 +355,9 @@ Do not generate new ideas here — only `run ideas` may collect ideas.
 #### 4.0 Gate-Condition Re-Check
 
 For any loaded idea whose Park Rationale references a specific backlog item (BLG-ID or named feature reference):
-1. Check whether the referenced item has shipped (in `backlog.md` as COMPLETE, or in prior `sprint_backlog.md`).
+1. Check whether the referenced item has shipped. **Check both locations, in order:** (a) grep `backlog.md` — if absent from the active backlog, (b) grep `backlog_archive.md` before concluding "not shipped." An item absent from `backlog.md` alone is not evidence of non-shipment — archived/shipped items are removed from `backlog.md` by `groom backlog`. (Added after `2026-07-01__scheduled` recorded a false "still unshipped" finding for an item that had in fact archived weeks earlier — the check had not been extended to `backlog_archive.md`.)
 2. **Shipped:** surface to PO as "Gate cleared — mandatory re-evaluation." Silent re-park not permitted — PO must Advance or Reject; re-park requires a new rationale not referencing the shipped item.
-3. **Not shipped:** park rationale remains valid.
+3. **Not shipped (confirmed absent from both files):** park rationale remains valid.
 
 Record all checks in `### Gate-Condition Re-Check` under `## STEP 4 — Ideas` in `cycle_record.md`.
 
@@ -517,7 +517,7 @@ Classify each initiative: **Governance-heavy** (PO, Strategy Owner, Head of Spec
 
 Governance story % = (G + D + P stories from STEP 2.4) ÷ total stories delivered in last 3 cycles × 100. Use story count, not FTE hours — this is a solo-developer context where FTE is not a meaningful unit.
 
-**> 40% Ceiling:** Skill-Silo Alert. Scan backlog for highest-priority user-facing item (U-classified, no blockers, within available capacity) — present as pull-forward candidate. PO decides. Check is mandatory; result recorded in `## STEP 8`.
+**> 40% Ceiling:** Skill-Silo Alert. Scan backlog for highest-priority user-facing item (U-classified, no blockers, within available capacity) — present as pull-forward candidate. PO decides. Check is mandatory; result recorded in `## STEP 8`. **A single U-item pull-forward is not guaranteed to bring the rolling average back under the ceiling** — a heavy governance/debt cycle can outweigh one prior cycle's correction (observed: bundling one U-story at v6.4 raised the 3-cycle average from 53.2% to 64.8% rather than lowering it, since the two remaining cycles in the window were both debt-heavy). If the alert has fired for 2+ consecutive cycles despite a prior pull-forward, the PO should consider prioritising more than one user-facing item at the next release rather than repeating a single-item correction.
 
 **< 20% Floor:** Verify PO has sufficient sign-off capacity. If unconfirmable: record governance capacity risk in `## STEP 8`. Does not halt — must appear in lessons learnt.
 
@@ -728,7 +728,7 @@ Terminal block (machine-readable, at end of file):
 
 Every process patch classified as:
 - **Action-now:** Head of Specs Team explicit confirmation required → apply patch → version bump → update `Last Updated` → record in `prompt_change_log.md`.
-- **Defer:** must name exact file path, exact section, exact one-sentence change, named owner (role), target date. Vague defers → escalations.
+- **Defer:** must name exact file path, exact section, exact one-sentence change, named owner (role), target date. Vague defers → escalations. **Target date must be a cycle_id or an absolute date — not a bare release version (e.g. "v6.3") alone.** A release version is not a reliable synchronisation point: it can ship before or after any given rebalance independent of cycle cadence. If a release version is the natural reference at filing time, also record a concrete date estimate alongside it (e.g., "v6.3 (target ships ~2026-06-28, revisit by 2026-07-01__scheduled)") so STEP -1.5's stale-release-target check has a deterministic fallback even before the named release itself resolves. (Added 2026-07-02 — Friction Item 2, `2026-07-01__scheduled` lessons learnt.)
 
 #### 11.3 Prompt Change Log (Append-Only)
 
