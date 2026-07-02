@@ -5,7 +5,7 @@
   "invoked_utc": "2026-07-02T08:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-02T09:35:00Z",
+  "last_updated_utc": "2026-07-02T09:45:00Z",
   "epics": {
     "EPIC-01": {
       "status": "done",
@@ -105,7 +105,7 @@
           "notes": "AC-01 verified via unit tests covering all 3 signal write paths (create_signal, create_rebalance_exit_signal, update_signal). AC-02 deferred to BLG-SEC-07 (manual live-DB review, not CI-testable, per sprint_planning_notes.md). Sign-off review also surfaced BLG-SEC-08 (out-of-scope follow-up)."
         }
       },
-      "notes": ""
+      "notes": "Product Owner acceptance and Director of Quality QA sign-off posted as PR #897 comments 2026-07-02 (PO acting per user instruction 'act as product_owner.md and review PR #897'). GitHub required approving review (branch protection, required_approving_review_count=1) not yet submitted \u2014 pending explicit user confirmation before that final consequential step."
     },
     "EPIC-02": {
       "status": "not_started",
