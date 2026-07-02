@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-30 (post-ship closure 2026-06-26__release-v6.3 — v6.3 marked ✅ Complete; current version updated v6.2→v6.3; v6.3 entry added to §8 release summary table)
-**Last rebalance:** 2026-06-26 (cycle 2026-06-26__scheduled — Standard-tier, CPS=N/A (0 active initiatives); Product Value Advisory (ratio=0.37); Skill-Silo Advisory (G+D+P=51.5%); DL-057; 25 new backlog items; Now horizon intentionally empty; v6.3 deferred to plan release v6.3)
+**Last Updated:** 2026-07-01 (roadmap rebalance 2026-07-01__scheduled — BLG-BE-40 added to Now horizon via STEP 8.0 Production Correctness Fast-Track; DL-058)
+**Last rebalance:** 2026-07-01 (cycle 2026-07-01__scheduled — Standard-tier, CPS=N/A (0 active initiatives); Product Value Advisory (ratio=0.36); Skill-Silo Alert (G+D+P rolling-3-cycle avg=53.2%, pull-forward candidate BLG-FEAT-54); DL-058; 0 new backlog items this cycle; STEP 8.0 fast-track BLG-BE-40 added to Now horizon; v6.4 scoping deferred to plan release v6.4; ideas register 3-cycle disposition — 1 Rejected, 19 Parked-cycle-2)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -282,6 +282,16 @@ Today you find stocks through external research and add them to the watchlist ma
 *RA:v6.1 retired — see roadmap_archive.md 2026-06-23 (post-ship closure 2026-06-22__release-v6.1).*
 
 *RA:v6.2 retired — see roadmap_archive.md 2026-06-25 (post-ship closure 2026-06-24__release-v6.2).*
+
+*RA:v6.3 retired — see roadmap_archive.md 2026-06-30 (post-ship closure 2026-06-26__release-v6.3).*
+
+### v[TBD] — Production Correctness Fast-Track
+
+**Added:** 2026-07-01 (roadmap rebalance 2026-07-01__scheduled — STEP 8.0 mandatory fast-track)
+
+| BLG ID | Title | Priority | Effort | Type | Status |
+|--------|-------|----------|--------|------|--------|
+| BLG-BE-40 | Signal generation reads deprecated `tickers` table instead of `ticker_universe` | P1 | XS | D | Queued |
 
 -----
 

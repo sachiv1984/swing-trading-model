@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-01 (session — 1 new item added: BLG-FEAT-54)
-**Last rebalance:** 2026-06-26 (cycle 2026-06-26__scheduled — DL-057; 14 Promoted-Backlog, 10 Backlog-gate-conditional, 19 Parked C1, 6 Parked C3; STEP 8.0: BLG-BE-39 + BLG-FE-79 mandatory v6.3 Now; PVR=0.37 Advisory; Skill-Silo=51.5% Advisory)
+**Last Updated:** 2026-07-01 (session — 4 new items added: BLG-GOV-150, BLG-GOV-151, BLG-GOV-152, BLG-GOV-153)
+**Last rebalance:** 2026-07-01 (cycle 2026-07-01__scheduled — DL-058; 0 new backlog items this cycle; STEP 8.0: BLG-BE-40 mandatory v6.4 Now horizon addition (BLG-SPEC-35 excluded, not a correctness bug); STEP 3.1 Actionable Backlog Assessment: A=42/32%, T=7/5%, D=27/21%, L=55/42% of 131 items (BLG-GOV-144 flagged >12mo archive candidate); PVR=0.36 Advisory; Skill-Silo rolling-3-cycle avg=53.2% Alert (pull-forward candidate BLG-FEAT-54))
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -2911,6 +2911,106 @@ POST /ai/daily-briefing makes an Anthropic API call on every request. If the sam
 - Evaluation document produced covering cache key design, staleness risk, and cost-benefit analysis
 - Recommendation: cache / no-cache with rationale
 - Backend Engineering Owner and FinOps sign-off
+
+---
+
+### BLG-GOV-150 — Fix governance version-sync drift (OPERATIONAL_GUIDE self-desync, stale §14 roadmap version, metrics owner role-name drift)
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Lifecycle Audit AUD-2026-07-01 (AUD-2026-07-01-001, AUD-2026-07-01-003, AUD-2026-07-01-016) — claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md — 2026-07-01
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.4
+
+**Problem**
+Three confirmed version/naming desyncs found by the lifecycle audit: (1) `OPERATIONAL_GUIDE.md` disagrees with itself — document header says v4.65, the §14 self-row says v4.63, and the §14 Change Log's top entry says v4.64 — a 6th recurrence of a pattern already "fixed" once at AUD-2026-06-22-003; (2) the §14 table's "Roadmap Engine Source" row is stuck at v7.5 while the actual file (and the prompt_change_log) confirm v7.6; (3) `metrics_definitions_analytics_owner.md` self-declares "...Canonical Owner" while `team_charter.md` names the role "...Owner" (no "Canonical"), a role-name mismatch that could break an automated role lookup.
+
+**Scope**
+- Update `OPERATIONAL_GUIDE.md` §14 self-row to Version 4.65 / Last Updated 2026-06-24; insert the missing v4.65 Change Log entry (content drafted in audit report AUD-2026-07-01-001)
+- Update `OPERATIONAL_GUIDE.md` §14 "Roadmap Engine Source" row from v7.5 to v7.6 (AUD-2026-07-01-003)
+- Rename `metrics_definitions_analytics_owner.md` title/Role field to match team_charter.md's "Metrics Definitions & Analytics Owner" (AUD-2026-07-01-016)
+
+**Acceptance Criteria**
+- `OPERATIONAL_GUIDE.md` header, §14 self-row, and §14 Change Log top entry all show the same version number
+- §14 "Roadmap Engine Source" row matches `roadmap_prompt.md`'s actual `**Version:**` header
+- `metrics_definitions_analytics_owner.md` role name matches `team_charter.md` §3.3 exactly
+
+---
+
+### BLG-GOV-151 — Document hygiene cleanup (README coverage/staleness/broken path, Class 6 header format, agent header bolding)
+**Priority:** P3 (Low)
+**Type:** Governance Process / Documentation
+**Owner:** Head of Specs Team
+**Source:** Lifecycle Audit AUD-2026-07-01 (AUD-2026-07-01-006, AUD-2026-07-01-009, AUD-2026-07-01-010, AUD-2026-07-01-011, AUD-2026-07-01-015) — claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md — 2026-07-01
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.4
+
+**Problem**
+The lifecycle audit found five low-severity but confirmed documentation defects: `claude/README.md` §4 documents only 1 of the 13 governed routines that actually exist; README §2 references a non-existent path (`documentation_lifecycle_guide.md` instead of the real `document_lifecycle_guide.md`); README's own `Last Updated` field is 101 days stale; three governance prompts (`roadmap_prompt.md`, `release_planning_prompt.md`, `sprint_planning_prompt.md`) violate the Class 6 `Last Updated: [date]` header spec by appending long prose instead of a clean date; and `pmo_lead.md`'s header fields are unbolded, inconsistent with the other 5 versioned agent files.
+
+**Scope**
+- Add a summary table to README §4 covering all 13 governed routines with command + prompt path (AUD-2026-07-01-006)
+- Fix the broken lifecycle-guide path in README §2 (AUD-2026-07-01-009)
+- Refresh README's `Last Updated` date once the above two edits land (AUD-2026-07-01-010)
+- Strip the prose from the `Last Updated` header field in the 3 named prompts, leaving a clean date (detail remains in prompt_change_log.md) (AUD-2026-07-01-011)
+- Bold the 4 header fields in `pmo_lead.md` to match convention (AUD-2026-07-01-015)
+
+**Acceptance Criteria**
+- README §4 lists all 13 governed routines with working command + path references
+- No broken file paths remain in README §2
+- README `Last Updated` reflects the date of this change
+- `roadmap_prompt.md`, `release_planning_prompt.md`, `sprint_planning_prompt.md` headers show `Last Updated: [date]` only, matching Class 6 spec
+- `pmo_lead.md` header fields use `**Field:**` bold-label format
+
+---
+
+### BLG-GOV-152 — Close structural reliability gaps (append-only guard parity, DF-10 spec_references convention, staging AC protocol, amendment_lessons sunset contradiction)
+**Priority:** P2 (Medium)
+**Type:** Governance Process / Lifecycle Reliability
+**Owner:** Head of Specs Team
+**Source:** Lifecycle Audit AUD-2026-07-01 (AUD-2026-07-01-002, AUD-2026-07-01-004, AUD-2026-07-01-007, AUD-2026-07-01-017) — claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md — 2026-07-01
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v6.4
+
+**Problem**
+Four confirmed reliability/process gaps, two of which are already 2-cycle-carried deferred patches approaching the audit SLA's P0-escalation threshold: (1) 4 of the 5 append-only files listed in `shared_standards.md` §7 (`escalations.md`, `execution_escalations.md`, `verification_escalations.md`, `delegation_log.md`) lack the structural entry-count verification that `decision_log.md` has in `roadmap_prompt.md` STEP 9 — they rely on prose instruction only; (2) the CI/infrastructure `spec_references=[]` convention (FI-P4-01/DF-10) has been deferred since v6.2, unresolved through v6.3, and is explicitly flagged "ESCALATION RISK (2-cycle if missed)" for v6.4; (3) the staging-only AC protocol ambiguity (FI-P3-02) — when code review of static JSX substitutes for staging sign-off — is also unresolved since v6.2; (4) `amendment_cycle_prompt.md` §9's Completion Condition still unconditionally requires `amendment_lessons.md`, contradicting §8's deprecation notice that the file sunsets at v2.0.
+
+**Scope**
+- Add a canonical append-only structural verification pattern to `shared_standards.md` §7 and apply it to the 4 named files (AUD-2026-07-01-002)
+- Add a "Case D — CI/infrastructure" row to the `spec_references` policy table in `execution_prompt.md` §3.1.A (AUD-2026-07-01-004)
+- Add the wording-only vs visual-rendering AC distinction to the CLAUDE.md §2 frontend testing gate bullet (AUD-2026-07-01-007)
+- Make the `amendment_lessons.md` bullet in `amendment_cycle_prompt.md` §9 conditional on prompt version, matching §8's framing (AUD-2026-07-01-017)
+
+**Acceptance Criteria**
+- All 5 files in shared_standards.md §7 have an equivalent structural (not prose-only) append-only guard, or the guard requirement is explicitly documented as N/A with rationale
+- `execution_prompt.md`'s spec_references policy has no remaining path that defaults to `[]` for infrastructural stories with an identifiable primary file
+- CLAUDE.md §2 explicitly distinguishes wording-only ACs from visual/rendering ACs for the staging sign-off substitution rule
+- `amendment_cycle_prompt.md` §8 and §9 agree on the status of `amendment_lessons.md`
+
+---
+
+### BLG-GOV-153 — Audit & governance process fixes (design gate bypass authority, run audit dry-run entry, friction_load formula wording, scored_initiatives naming)
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Lifecycle Audit AUD-2026-07-01 (AUD-2026-07-01-005, AUD-2026-07-01-008, AUD-2026-07-01-012, AUD-2026-07-01-014) — claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md — 2026-07-01
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.4
+
+**Problem**
+Four confirmed process gaps from the lifecycle audit: (1) the design gate bypass dual-authority rule ("Head of UX & Design + Product Owner") is defined only in `sprint_planning_prompt.md` (a Class 6 prompt), not in `team_charter.md` (the Class 1 canonical authority document) — audit check G5 FAIL; (2) `run audit` is the only CLAUDE.md-listed governed routine absent from the `shared_standards.md` §13 dry-run table; (3) `claude/audit.py`'s FRICTION_LOAD formula says "across all cycles" but is actually evaluated as "since last audit" (confirmed by cross-checking the PRIOR_SCORES baseline against true all-time totals) — ambiguous wording risks a non-reproducible score on a future audit run; (4) `claude/scoring/scored_initiatives.md` uses a static filename, overwritten every cycle with no per-cycle scoring history retained.
+
+**Scope**
+- Add a §5.7 "Design gate bypass disputes" subsection to `team_charter.md` codifying the dual-authority rule (AUD-2026-07-01-005)
+- Add a `run audit` row to the `shared_standards.md` §13 dry-run table noting its read-only nature (AUD-2026-07-01-008)
+- Clarify `claude/audit.py`'s FRICTION_LOAD formula wording to say "since PRIOR_AUDIT_ID" (AUD-2026-07-01-012)
+- Decide and document whether `scored_initiatives.md` should be cycle-scoped or explicitly current-cycle-only; remove the stray inconsistently-named historical file if the latter (AUD-2026-07-01-014)
+
+**Acceptance Criteria**
+- team_charter.md names the design gate bypass dual-authority requirement explicitly
+- `shared_standards.md` §13 table includes all CLAUDE.md-listed governed routines, including `run audit`
+- `claude/audit.py`'s FRICTION_LOAD formula wording is unambiguous about its evaluation window
+- `scored_initiatives.md` naming convention is either consistently cycle-scoped or explicitly documented as current-only, with no orphaned dated files implying an unfollowed convention
 
 ---
 

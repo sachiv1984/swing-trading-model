@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-06-16 (rebalance 2026-06-16__scheduled — Extended tier (CPS 2.85); no FTE changes; 1 backlog item added (BLG-OPS-65, S effort); no immediate capacity impact; v5.6 horizon ~5–8 days total; Skill-Silo check PASS: ~29% governance load within 20–60% bound; arc pipeline artefact acknowledged)
+**Last Updated:** 2026-07-01 (rebalance 2026-07-01__scheduled — Standard tier (CPS=N/A, 0 active initiatives); no FTE changes; 0 new backlog items this cycle; BLG-BE-40 (XS effort) added to v6.4 Now horizon via STEP 8.0 fast-track; Skill-Silo Alert: rolling-3-cycle avg 53.2% (>40% ceiling); pull-forward candidate BLG-FEAT-54 acknowledged by PO)
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -363,5 +363,24 @@ Floor check: Governance > 20% — PO sign-off capacity confirmed. All items are 
 **Skill-Silo advisory:** Governance = 65% at ceiling threshold. However, all 8 items are gate-conditional — none enter sprint planning until gates clear. No active sprint impact. Advisory noted per STEP 7.1.
 
 **v5.4 capacity outlook:** Candidate v5.4 scope (~11 items from candidate list in cycle_record.md) is S–M effort throughout. Estimated 8–12 stories. Within standard sprint capacity.
+
+---
+
+## Rebalance 2026-07-01__scheduled
+
+**Date:** 2026-07-01
+**Run tier:** Standard
+**Items evaluated:** 1 item — BLG-BE-40 (STEP 8.0 Production Correctness Fast-Track, mandatory addition to v6.4 Now horizon); 0 new Promoted-Added initiatives
+
+| Item | Effort | Skill Category | Notes |
+|------|--------|---------------|-------|
+| BLG-BE-40 | XS | Backend Engineering / Data Model | P1 correctness bug — mandatory Now horizon inclusion per STEP 8.0, no PO discretion |
+
+**Governance load %:** N/A — no governance/spec items added this cycle
+**Execution load %:** 100% (single correctness item)
+
+**Skill-Silo advisory:** Rolling 3-cycle average (v6.1 55.6%, v6.2 30.8%, v6.3 73.3%) = 53.2%, above the 40% ceiling — Alert triggered per STEP 7.1. Mandatory pull-forward scan identified BLG-FEAT-54 (Open Positions panel, U-story, P2) as the pull-forward candidate; PO acknowledged for consideration at `plan release v6.4`.
+
+**v6.4 capacity outlook:** Now horizon carries only BLG-BE-40 (XS) at this stage; full v6.4 scope deferred to `plan release v6.4` per STEP 8.1 Option (b). No capacity constraint identified.
 
 **Workforce constraints:** None new. Gate-conditional items create no immediate FTE demand.

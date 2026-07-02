@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 7.6
-**Last Updated:** 2026-06-22 (v7.5→v7.6: STEP 8.2 — Now Horizon Item Verification added (mandatory); checks every proposed Now horizon item against active backlog.md before scope inclusion; catches prose-referenced archived items that bypass STEP 3 candidate list. Root cause: 2026-06-19__scheduled included BLG-GOV-113 (archived v5.3) via run_manifest prose reference, caught at STEP 9. Authority: Head of Specs Team (LL-RP-01 deferred patch, rebalance 2026-06-22__scheduled).)
+**Version:** 7.7
+**Last Updated:** 2026-07-01 (v7.6→v7.7: STEP -1.6 — Large-window budget note added; when the inline idea intake window produces >30 submissions, budget additional context depth for STEPs 4 and 5, and if advancing idea count exceeds 15, prioritise advancing only the highest-scoring ideas (per STEP 6 criteria) and park the remainder. Root cause: IW-20260626-01 (44 submissions, 22 agents) flagged as a context-budget risk at meta-review. Authority: Head of Specs Team (FI-META-02 deferred patch, rebalance 2026-06-26__scheduled; applied action-now 2026-07-01__scheduled since target release v6.3 had already shipped).)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -160,6 +160,8 @@ Count `claude/ideas/ideas_register.md` rows where Status is `Submitted` or `Park
 
 - **< 20 open ideas (or register absent/empty):** invoke `claude/system/idea_intake_prompt.md` inline — open window, collect submissions, close. Proceed with new submissions available.
 - **≥ 20 open ideas:** note count, skip intake.
+
+**Large-window budget note:** When the inline window produces >30 submissions, budget additional context depth for STEPs 4 and 5. If advancing idea count exceeds 15, prioritise advancing only the highest-scoring ideas (per STEP 6 criteria) and park the remainder.
 
 **State age advisory:** If `.claude_current_state.json` `last_updated_utc` is absent or > 30 days old: surface "State file not updated in >30 days — confirm active_cycle is current." Record in run manifest. Advisory only — do not halt.
 
