@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 7.7
-**Last Updated:** 2026-07-01 (v7.6→v7.7: STEP -1.6 — Large-window budget note added; when the inline idea intake window produces >30 submissions, budget additional context depth for STEPs 4 and 5, and if advancing idea count exceeds 15, prioritise advancing only the highest-scoring ideas (per STEP 6 criteria) and park the remainder. Root cause: IW-20260626-01 (44 submissions, 22 agents) flagged as a context-budget risk at meta-review. Authority: Head of Specs Team (FI-META-02 deferred patch, rebalance 2026-06-26__scheduled; applied action-now 2026-07-01__scheduled since target release v6.3 had already shipped).)
+**Version:** 7.8
+**Last Updated:** 2026-07-02
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 

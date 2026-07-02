@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.66
-**Last Updated:** 2026-07-01
+**Version:** 4.67
+**Last Updated:** 2026-07-02
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v7.7)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v7.8)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -620,7 +620,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.38)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.39)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -763,7 +763,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.11)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.12)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -1272,7 +1272,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v7.7) | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v7.8) | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.66 |
-| Last Updated | 2026-07-01 |
+| Version | 4.67 |
+| Last Updated | 2026-07-02 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1463,9 +1463,9 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.9 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v7.7 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.38 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.11 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v7.8 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.39 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.12 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.8 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.48 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.5 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.67 | 2026-07-02 | **v6.4 ST-05 (BLG-GOV-151, EPIC-02) — Class 6 header format fix: roadmap_prompt.md v7.7→v7.8, release_planning_prompt.md v2.38→v2.39, sprint_planning_prompt.md v3.11→v3.12.** §6 source prompt header updated v7.7→v7.8. §6B source prompt header updated v2.38→v2.39. §7 source prompt header updated v3.11→v3.12. §13 Artefact Register Roadmap Rebalance Prompt row updated v7.7→v7.8. §14 Roadmap Engine Source v7.7→v7.8. §14 Release Engine Source v2.38→v2.39. §14 Sprint Planning Engine v3.11→v3.12. §14 Version 4.66→4.67/2026-07-02. Change: all 3 files' `**Last Updated:**` header field changed from date-plus-change-description prose to date-only, per `document_lifecycle_guide.md` Class 6 spec (`Last Updated: [date]`); change descriptions already duplicated in `prompt_change_log.md` are not lost. Authority: Head of Specs Team (AUD-2026-07-01-011, v6.4 ST-05, 2026-07-02). |
 | 4.66 | 2026-07-01 | **Roadmap rebalance 2026-07-01__scheduled — roadmap_prompt.md v7.6→v7.7 (FI-META-02 action-now patch) + drift correction.** §6 source prompt header updated v7.6→v7.7. §13 Artefact Register Roadmap Rebalance Prompt row updated v7.6→v7.7. §14 Roadmap Engine Source v7.5→v7.7 (corrects a pre-existing stale row that was never updated at the v7.6 bump on 2026-06-22 — §6/§13 already showed v7.6 but §14 still showed v7.5). §14 Version 4.63→4.66/2026-07-01 (catches up 2 versions of un-recorded drift — see 4.65 backfill entry below — plus this cycle's bump). Change: STEP -1.6 large-window budget note added — when the inline idea intake window produces >30 submissions, budget additional context depth for STEPs 4 and 5; if advancing idea count exceeds 15, prioritise advancing only the highest-scoring ideas (per STEP 6 criteria) and park the remainder. Root cause: IW-20260626-01 (44 submissions, 22 agents) flagged as a context-budget risk at meta-review (STEP 11.4, rebalance 2026-06-26__scheduled). Authority: Head of Specs Team (FI-META-02 deferred patch; applied action-now per STEP -1.5 stale-release-target rule since target release v6.3 had already shipped). |
 | 4.65 | 2026-06-24 | **Backfill entry — v6.2 ST-10+ST-11 (BLG-GOV-135+136, EPIC-03), execution_prompt.md v3.47→v3.48.** This row documents a change already applied to the document header and §8 source prompt header at the time (see `prompt_change_log.md` 2026-06-24 entry) but never recorded in this Change Log table, leaving §14 Version stuck at 4.63 across two subsequent bumps. §8 source prompt header v3.47→v3.48. §14 Execution Engine Source v3.47→v3.48. §14 Version 4.64→4.65/2026-06-24 (recorded retroactively 2026-07-01). Changes: §3.2.A Autonomous DoQ sign-off class criterion 3 updated with detection rule (ST-10/BLG-GOV-135) — autonomous class path unavailable if any story modifies `src/components/**` or `src/pages/**`, regardless of Playwright coverage. STEP 0 instruction 6 updated with advisory (ST-11/BLG-GOV-136) — test_scenarios paths must be runnable test files under `tests/` or `tests/e2e/`, not `docs/testing/` scenario description artefacts. Authority: Head of Specs Team (BLG-GOV-135+136, v6.2 ST-10+ST-11, 2026-06-24). |
 | 4.64 | 2026-06-22 | **v6.1 ST-01/ST-02 (BLG-GOV-132/133, EPIC-01) — release_planning_prompt.md v2.37→v2.38 + sprint_planning_prompt.md v3.10→v3.11.** §6B source prompt header updated v2.37→v2.38. §7 source prompt header updated v3.10→v3.11. §14 Release Engine Source v2.37→v2.38. §14 Sprint Planning Engine v3.10→v3.11. §14 Version 4.63→4.64/2026-06-22. Changes: (ST-01/BLG-GOV-132) release_planning_prompt.md STEP 4.1 Design Gate Classification added — after writing backlog slice, scans all ST items for UI-facing scope (delegated_frontend OR autonomous with observable UI ACs); sets design_gate_required=true/false in state.json and .claude_current_state.json; outputs advisory "⚠ DESIGN GATE REQUIRED" or "Design Gate: Not Required"; STEP 7 updated to include design_gate_required status line in cycle_summary.md header. (ST-02/BLG-GOV-133) sprint_planning_prompt.md STEP -1 check 3 updated — design gate hard gate now conditional on design_gate_required=true; reads attributes.design_gate_required from state.json; when false/not_required: skips gate with log note "Design gate: Not Required for this cycle"; when true/absent (safety default): applies full hard gate as before. Authority: Head of Specs Team (v6.1 EPIC-01 Sprint 1, 2026-06-22). |
