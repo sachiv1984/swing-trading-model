@@ -5,13 +5,13 @@
   "invoked_utc": "2026-07-02T08:20:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-02T09:45:00Z",
+  "last_updated_utc": "2026-07-02T09:50:00Z",
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-02__release-v6.4/EPIC-01",
       "pr_number": 897,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-02__release-v6.4/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -105,7 +105,7 @@
           "notes": "AC-01 verified via unit tests covering all 3 signal write paths (create_signal, create_rebalance_exit_signal, update_signal). AC-02 deferred to BLG-SEC-07 (manual live-DB review, not CI-testable, per sprint_planning_notes.md). Sign-off review also surfaced BLG-SEC-08 (out-of-scope follow-up)."
         }
       },
-      "notes": "Product Owner acceptance and Director of Quality QA sign-off posted as PR #897 comments 2026-07-02 (PO acting per user instruction 'act as product_owner.md and review PR #897'). GitHub required approving review (branch protection, required_approving_review_count=1) not yet submitted \u2014 pending explicit user confirmation before that final consequential step."
+      "notes": "Merged via PR #897, mergeCommit 4a2d417db32fb8e5d20dc7eff7526332b7f467fa, 2026-07-02T09:22:00Z. Product Owner acceptance + Director of Quality sign-off recorded as PR comments (user confirmed 'its approved')."
     },
     "EPIC-02": {
       "status": "not_started",
@@ -360,9 +360,10 @@
   ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": [],
+    "epics_merged": [
+      "EPIC-01"
+    ],
     "epics_pending": [
-      "EPIC-01",
       "EPIC-02",
       "EPIC-03"
     ],
