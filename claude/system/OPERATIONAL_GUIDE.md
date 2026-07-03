@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.75
+**Version:** 4.77
 **Last Updated:** 2026-07-03
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v8.0)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v8.1)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.16)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.17)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1272,7 +1272,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v8.0) | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v8.1) | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1463,7 +1463,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.9 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v8.0 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v8.1 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.40 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.12 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
@@ -1471,7 +1471,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.6 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.1 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.16 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.17 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.7 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1494,6 +1494,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.77 | 2026-07-03 | **Roadmap rebalance 2026-07-03__scheduled STEP 11.4 meta-review action-now — roadmap_prompt.md v8.0→v8.1: STEP 2.4 now reads the inline U/G/D/P ship-time tag (post_ship_closure.md v2.17) instead of re-deriving it, when present.** §6 source prompt header updated v8.0→v8.1. §13 Artefact Register Roadmap Rebalance Prompt row updated v8.0→v8.1. §14 Roadmap Engine Source v8.0→v8.1. §14 Version 4.76→4.77/2026-07-03. Change: closes the read-side gap left by the write-side patch applied earlier this same cycle (post_ship_closure.md v2.17) — without this, the newly-written ship-time tags would never actually be consulted, and STEP 2.4 would keep re-deriving classifications by judgment even for tagged cycles. Fall-back to judgment-based classification retained for untagged (pre-v6.6) cycles. Identified at STEP 11.4 meta-review (3-cycle trigger, `2026-06-26__scheduled` → this cycle) as a Type B (Semantic Mismatch) pattern spanning 2+ consecutive cycles. Authority: Head of Specs Team (roadmap rebalance 2026-07-03__scheduled meta-review). |
+| 4.76 | 2026-07-03 | **Roadmap rebalance 2026-07-03__scheduled — resolved deferred patch (Friction Item 3, `2026-07-02__scheduled` lessons learnt) — post_ship_closure.md v2.16→v2.17: Tech backlog items shipped lines now require an inline `[U\|G\|D\|P]` classification tag.** §10 source prompt header updated v2.16→v2.17. §14 Post-Ship Closure Engine v2.16→v2.17. §14 Version 4.75→4.76/2026-07-03. Change: STEP 1.1 entry template and STEP 1.2 entry rules updated so each shipped story is tagged `U`/`G`/`D`/`P` at the point the changelog entry is written, using `roadmap_prompt.md` STEP 2.4's classification schema — removes the reconstruction-variance risk of re-deriving these tags from prose each time the Product Value Ratio Diagnostic runs. Deferred patch's own named target was "`2026-07-05__scheduled` or next roadmap rebalance, whichever comes first" — this cycle is that next rebalance, so applied action-now rather than deferred again. Authority: Head of Specs Team (roadmap rebalance 2026-07-03__scheduled, acting on the patch's own arrived target date). |
 | 4.75 | 2026-07-03 | **Post-ship closure 2026-07-02__release-v6.5 self-identified closure-phase friction — post_ship_closure.md v2.15→v2.16: STEP 2/STEP 11 roadmap-retirement boundary clarified.** §10 source prompt header updated v2.15→v2.16. §14 Post-Ship Closure Engine v2.15→v2.16. §14 Version 4.74→4.75/2026-07-03. Change: STEP 2 (Roadmap Update) gained a clarifying note that the `*RA:<release> retired...*` annotation line is written by STEP 11 (roadmap_management_prompt.md), not STEP 2 — prevents a premature write recording an archival that has not yet happened. Caught and self-corrected during this cycle's own STEP 2 (v6.5 roadmap update) before commit; patched at source per the non-deferrable immediate-action rule rather than left as a one-off correction. See `claude/cycles/2026-07-02__release-v6.5/lessons_learnt_closure.md` Friction Log. Authority: Head of Specs Team (v6.5 post-ship closure, 2026-07-03). |
 | 4.74 | 2026-07-03 | **Post-ship closure 2026-07-02__release-v6.5 STEP 8 immediate actions — release_planning_prompt.md v2.39→v2.40 (LP-02, LP-03).** §6B source prompt header updated v2.39→v2.40. §14 Release Engine Source v2.39→v2.40. §14 Version 4.73→4.74/2026-07-03. Changes: (LP-02, Release Planning lessons_learnt.md Friction Item 2) STEP 5 Roadmap Annotation — added explicit fallback wording: if no formal `## vX.Y` roadmap section exists for the release, annotate the `**Next planned release:**` line in §1 (Current Version) instead. (LP-03, Friction Item 3) §1.4a Perennial-Return Check — added a third named disposition option "(c) Resolve directly this cycle" for low-effort items where the cheapest fix is closure rather than further deferral or parking. LP-01 (STEP 4.1/STEP 7 state-sync sequencing) and LP-04 (Skill-Silo monitoring) deferred — see `claude/cycles/2026-07-02__release-v6.5/closure_record.md` §5. Authority: Head of Specs Team (v6.5 post-ship closure, 2026-07-03). |
 | 4.73 | 2026-07-03 | **Sprint execution 2026-07-02__release-v6.5 STEP 5.4 action-now — execution_prompt.md v3.50→v3.51: STEP 4 resume-sync branch check added (LL-v6.4-P3-01).** §8 source prompt header v3.50→v3.51. §14 Execution Engine Source v3.50→v3.51. §14 Version 4.72→4.73/2026-07-03. Change: STEP 4's "on session resume — merge gate state sync" sub-step now requires an explicit `git branch --show-current` check (and `git checkout main && git pull` if not already on `main`) before performing the merge-gate sync write, mirroring STEP 5's branch-ordering gate. Resolves a deferred v6.4 Phase 3 lessons-learnt friction item targeted at v6.5 (this cycle) — a fresh session resuming after an EPIC merge could previously land on any `exec/**` branch and orphan the sync write there. Applied action-now during this cycle's own STEP 5.4 rather than deferred again, per §6.2. Authority: Head of Specs Team (sprint execution 2026-07-02__release-v6.5, 2026-07-03). |

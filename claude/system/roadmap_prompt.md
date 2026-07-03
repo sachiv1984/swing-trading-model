@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 8.0
-**Last Updated:** 2026-07-02
+**Version:** 8.1
+**Last Updated:** 2026-07-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -303,11 +303,13 @@ Horizon movements are candidates in STEP 5 only if they represent new commitment
 
 Authority: Facilitator (compute), Product Owner (respond if alert fires)
 
-Look back at the last 5 completed cycles from `docs/product/changelog.md`. Classify each story delivered as one of:
+Look back at the last 5 completed cycles from `docs/product/changelog.md`. For each story, use the classification below:
 - **U** — User-facing feature or visible UX improvement
 - **G** — Governance / prompt / process work
 - **D** — Debt clearance (spec, QA, ops baseline, audit, pre-planning)
 - **P** — Pre-work for a future feature (pre-design, pre-planning, pre-spec)
+
+**Read the tag, don't re-derive it, when one exists:** from `post_ship_closure.md` v2.17 onward, each `Tech backlog items shipped` line carries an inline `[U|G|D|P]` tag assigned at ship time. If present, use that tag directly. Only fall back to judgment-based classification from the story's prose description for cycles shipped before this tagging convention existed (pre-v6.6) or in the rare case a line is missing its tag. This removes the reconstruction-variance risk documented in `2026-07-02__scheduled` / `2026-07-03__scheduled` lessons learnt (Friction Item 3 / Friction Items 1–2), where independent re-derivation of the same historical cycle produced different splits across sessions.
 
 Compute: `user_value_ratio = U stories ÷ total stories` across the 5 cycles (one decimal, e.g. 0.42).
 

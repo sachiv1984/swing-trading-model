@@ -387,6 +387,24 @@ Floor check: Governance > 20% — PO sign-off capacity confirmed. All items are 
 
 ---
 
+## Rebalance 2026-07-03__scheduled
+
+**Date:** 2026-07-03
+**Run tier:** Standard
+**Items evaluated:** 0 new backlog items this cycle (idea intake skipped — 34 open ideas ≥ 20 threshold; all 34 re-parked, none advanced/backlogged). 0 new Promoted-Added initiatives.
+
+**Skill-Silo advisory:** Rolling 3-cycle average (v6.3 86.7%, v6.4 76.9%, v6.5 87.5%) = **83.7%**, above the 40% ceiling — Alert triggered per STEP 7.1, **worse again** than the prior reading (64.8%), despite v6.5's release plan naming two nominal U-item pull-forwards (BLG-FE-46, BLG-FEAT-41). Under this cycle's classification, only BLG-FE-46 counted as U — BLG-FEAT-41 (thesis adoption rate metric) was reclassified D at STEP 2.4 because its shipped description names only a metrics-definition spec update, no user-visible endpoint or UI panel. This is itself a material finding: the "does 2 U-items correct the ceiling" carry-forward test (DF-17/LP-04) was confounded by classification-method disagreement over whether BLG-FEAT-41 actually counted as user-facing — see STEP 11 friction log.
+
+Three consecutive Alert cycles now (v6.3-area through this one), each worse than the last despite an attempted correction. Per the standing STEP 7.1 wording (added v8.0): the PO should strongly consider committing **more than one** substantive U-item at the next release rather than a single small item.
+
+Mandatory pull-forward scan of `backlog.md` (P0/P1/P2 first, ungated, no blockers): no P0/P1 user-facing item is currently ungated. Highest-priority ungated candidate found: **BLG-FE-82** (Colour contrast audit sweep, P2, S effort, Owner: Head of UX & Design, no gate) — though this is audit-shaped (produces findings + follow-up items) rather than a direct feature, it is the best available candidate under the letter of the rule. Secondary candidate for PO consideration alongside it: **BLG-FEAT-52** (Trade tagging and tag-based performance filtering, P3, no gate) — a substantive feature-shaped item, offered given the severity/duration of this Alert and the wording's advice to consider multiple items.
+
+**v6.6 capacity outlook:** Now horizon remains empty; STEP 8.1 gate applies (see `run_manifest.md`/`cycle_record.md`). No capacity constraint identified at roadmap level — all evaluation is advisory pending `plan release`.
+
+**Workforce constraints:** None new.
+
+---
+
 ## Rebalance 2026-07-02__scheduled
 
 **Date:** 2026-07-02

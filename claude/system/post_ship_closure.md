@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.16
+**Version:** 2.17
 **Last Updated:** 2026-07-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -266,7 +266,7 @@ Verification report: claude/cycles/<cycle_id>/verification_report.md
 *(If no deviations accepted: "None")*
 
 ### Tech backlog items shipped
-- [ST-xx] <title> — <one line description>
+- [ST-xx] [U|G|D|P] <title> — <one line description>
 
 *(If none: "None")*
 
@@ -281,6 +281,7 @@ QA sign-off: Director of Quality — <date>
 - All accepted P1/P2 deviations from the deviation register must appear.
 - P3 deviations need not appear individually — they may be summarised as "N minor deviations — see verification_report.md".
 - Tech backlog items that shipped alongside the primary feature must appear as a distinct sub-section.
+- **Each `Tech backlog items shipped` line must carry a `[U|G|D|P]` classification tag** immediately after the story ID, per `roadmap_prompt.md` STEP 2.4's schema: `U` = user-facing feature or visible UX improvement; `G` = governance/prompt/process work; `D` = debt clearance (spec, QA, ops baseline, audit, security hardening, backend correctness fix with no direct visible surface); `P` = pre-work for a future feature (pre-design/pre-planning/pre-spec). Assign the tag using the story's own backlog item content — do not defer this to a later reconstruction. This removes the reconstruction-variance risk documented in `2026-07-02__scheduled` lessons learnt Friction Item 3, where `roadmap_prompt.md` STEP 2.4 had to re-derive U/G/D/P per story from changelog prose each time it ran, producing different splits for the same cycle across sessions.
 - Update `Last Updated` on `docs/product/changelog.md` to today's date.
 
 **Failure condition:** If `docs/product/changelog.md` does not exist: create it with a standard header (Owner: PMO Lead, Class: Operational Record, Status: Active) and then add the entry. A ship without a changelog entry is not recorded — this is a hard gate.
