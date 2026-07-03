@@ -9,10 +9,10 @@
 
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-02__release-v6.5/EPIC-01",
       "pr_number": 908,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-02__release-v6.5/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -225,8 +225,8 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03"],
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-02", "EPIC-03"],
     "all_merged": false
   },
 
