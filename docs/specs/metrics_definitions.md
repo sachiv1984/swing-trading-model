@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.11.0
-**Last Updated:** 2026-05-27
+**Version:** 1.12.0
+**Last Updated:** 2026-07-03
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -974,6 +974,64 @@ Both are logged per trade. Neither is included in P&L calculations — they are 
 
 ---
 
+## Thesis Adoption Rate
+
+**Added:** v1.12.0 — ST-08 (EPIC-03, v6.5, BLG-FEAT-41)
+
+Thesis adoption rate measures whether Claude-generated trade theses (`POST /trade-plans/{plan_id}/generate-thesis`, shipped v4.0) are actually kept and used at entry, versus discarded. It is an early signal of feature value and cost-per-use justification, complementing the ST-07 feedback mechanism (BLG-FE-46).
+
+### Definition
+
+```
+thesis_adoption_rate = COUNT(trade_plans with non-empty setup_thesis, restricted to plans a thesis was generated for)
+                        / COUNT(DISTINCT trade_plans a thesis was generated for)
+```
+
+- **Numerator:** trade plans where a thesis was generated AND `trade_plans.setup_thesis` is non-empty at entry (i.e. the user kept the generated thesis, whether unedited or lightly edited — see ST-07's feedback mechanism for finer-grained adoption signal).
+- **Denominator:** distinct trade plans for which `POST /trade-plans/{plan_id}/generate-thesis` was called at least once.
+- **Returns:** `null` if the denominator is 0 (no thesis generation calls recorded yet).
+
+### Query Approach
+
+**Join key correction (verified against `backend/database.py` at implementation time):** the sprint scope for this item names `claude_audit_log` as the join target, but `claude_audit_log` (see `backend/database.py` `ensure_claude_audit_log_table`) has no `plan_id` column — it cannot be joined to `trade_plans`. The table that actually carries the per-plan linkage is `gemini_audit_log` (`backend/database.py` `ensure_gemini_audit_log_table`), which has an indexed `plan_id UUID` column populated by `generate_setup_thesis()` (`backend/services/gemini_service.py`) on every `POST /trade-plans/{plan_id}/generate-thesis` call. This matches the AC's intent (join the AI thesis-generation audit trail to `trade_plans`) even though the literal table name differs — see implementation note below.
+
+```sql
+SELECT
+  COUNT(*) FILTER (WHERE tp.setup_thesis IS NOT NULL AND tp.setup_thesis != '') AS adopted,
+  COUNT(*) AS total_generated
+FROM trade_plans tp
+WHERE tp.id IN (
+  SELECT DISTINCT plan_id
+  FROM gemini_audit_log
+  WHERE plan_id IS NOT NULL
+);
+
+-- thesis_adoption_rate = adopted::float / NULLIF(total_generated, 0)
+```
+
+**Why `plan_id IS NOT NULL` isolates thesis-generation calls:** `gemini_audit_log` is also written by `generate_full_plan()` (`POST /trade-plans/generate-plan`, called before a plan exists — no `plan_id` available, always `NULL`). Only `generate_setup_thesis()` (`POST /trade-plans/{plan_id}/generate-thesis`, requires an existing plan) passes a non-null `plan_id`. `gemini_audit_log` does not store the calling endpoint, so this `plan_id IS NOT NULL` filter is the only way to isolate thesis-generation rows from full-plan-generation rows in that table.
+
+### Data Source
+
+| Field | Source |
+|-------|--------|
+| `setup_thesis` | `trade_plans.setup_thesis` (existing column) |
+| Thesis-generated flag | `gemini_audit_log.plan_id` (existing column, indexed `idx_gal_plan_id`) — no schema change required |
+
+### Implementation Note
+
+No new endpoint or schema change is required to compute this metric — both source columns already exist. This section documents the query approach only; no `GET` endpoint has been built for this metric as of v6.5 (ST-08 scope is metric definition, not endpoint delivery per `stage4_backlog_slice.md#ST-08`: "Design Not Applicable — no UI acceptance criterion").
+
+**Caveat:** the query does not account for `trade_plans` rows deleted after thesis generation — a dangling `gemini_audit_log.plan_id` reference would silently drop from the denominator. Not a defect (no delete-cascade concern is evident today), but worth a one-line check if this metric is later exposed via an endpoint.
+
+### Sign-off
+
+- **Metrics Definitions & Analytics Owner:** agent-mediated sign-off cleared 2026-07-03 (ST-08, EPIC-03, v6.5)
+- **Financial Reporting & Records Owner:** agent-mediated sign-off cleared 2026-07-03 (ST-08, EPIC-03, v6.5)
+- **Product Owner:** pending — Product Owner sign-off is always a human decision (execution_prompt.md §5.3), not agent-mediated. See PR review comment for Product Owner acceptance of this story.
+
+---
+
 ## Appendix A: Data Lineage (Referential)
 
 This Metrics Definitions document is the canonical source for **metric semantics and formulas**.
@@ -1033,6 +1091,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 | 2026-03-02 | 1.6.0 | EPIC-03 (v1.7): Add Portfolio Risk Metrics section — canonical Position Risk formula (GBP-adjusted, FX handling for US positions, pence conversion for UK), Portfolio Heat formula (sum of position risks / portfolio value × 100), and explicit display threshold bands (Low <10%, Moderate 10–20%, High 20–30%, Extreme ≥30%) with canonical hex colour codes. TASK-06 through TASK-10 complete. Head of Specs Team lifecycle sign-off granted 2026-03-02 (Delegated Authority). v1.8 pre-alignment gate cleared. | Metrics Definitions & Analytics Owner + Head of Specs Team |
 | 2026-03-11 | 1.7.0 | EPIC-01/02 (v1.9): Add Discipline & Compliance Metrics section (ST-01) — Journal Completion Rate, Stop-Based Exit Rate, Average Position Size % formulas for GET /analytics/compliance-metrics. Add Cohort Analysis Metrics section (ST-03 batch) — period grouping, per-cohort field definitions, minimum data threshold. Add R-Multiple Distribution (Backend) section (ST-04 batch) — canonical server-side R-multiple formula, 8 fixed buckets, summary statistics. Appendix B updated to list all three new endpoints. Metrics Definitions & Analytics Owner + Head of Engineering sign-off granted 2026-03-11 (EPIC-01 ST-01 delivery). | Metrics Definitions & Analytics Owner + Head of Engineering |
 | 2026-04-06 | 1.9.0 | ST-09 (EPIC-03, v2.5): Add Fee Drag section — canonical formula (`exit_fees / gross_proceeds × 100`), portfolio average (`avg_fee_drag_pct`), qualifying conditions, sign convention, data source (existing columns, no schema change), display spec. Head of Specs Team co-authorship confirmed (ST-09 design gate cleared). | Metrics Definitions & Analytics Owner + Head of Specs Team |
+| 2026-07-03 | 1.12.0 | ST-08 (EPIC-03, v6.5, BLG-FEAT-41): Add Thesis Adoption Rate section — definition (adopted / generated), query approach joining `trade_plans.setup_thesis` to `gemini_audit_log.plan_id` (corrects the sprint scope's literal `claude_audit_log` reference, which has no `plan_id` column — see section's Query Approach note), data source, no schema/endpoint change required. Metrics Definitions & Analytics Owner + Financial Reporting & Records Owner + Product Owner sign-off. | Metrics Definitions & Analytics Owner |
 
 ---
 

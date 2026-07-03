@@ -1,0 +1,227 @@
+{
+  "cycle_id": "2026-07-02__release-v6.5",
+  "sprint_goal": "Clear all 10 remaining AUD-2026-07-01 audit findings, resolve the 3-cycle-stagnant BLG-QA-61 carry-forward and the two v6.5-provisional-target backlog debt items, and ship the Claude thesis feedback mechanism together with its adoption-rate metric.",
+  "backlog_slice_source": "claude/cycles/2026-07-02__release-v6.5/stage4_backlog_slice.md",
+  "invoked_utc": "2026-07-03T07:30:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-07-03T07:30:00Z",
+
+  "epics": {
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-07-02__release-v6.5/EPIC-01",
+      "pr_number": 908,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-07-02__release-v6.5/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "Lifecycle/prompt/state wording and consistency fixes (BLG-GOV-157)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 900,
+          "branch": "exec/2026-07-02__release-v6.5/EPIC-01",
+          "commit_sha": "255b64c5",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-03T07:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "CLAUDE.md#Governance Non-Negotiables (AC-01, pre-met v6.4 commit f1f280c8)",
+            "claude/audit.py#FRICTION_LOAD (AC-02, pre-met v6.4 commit 5a52c02f)",
+            "claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md#11. Config Update (AC-03, this commit)"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "AC-01/AC-02 verified pre-met on main (v6.4 EPIC-02 ST-06/ST-07, commits f1f280c8 + 5a52c02f) — no further action required, no deviation. AC-03 was genuinely open: audit.py PRIOR_AUDIT_ID/PRIOR_AUDIT_OPEN_ITEMS/PRIOR_SCORES/COMPLETED_CYCLES still referenced AUD-2026-06-22 while .claude_current_state.json had already advanced to AUD-2026-07-01/17 open items. Fixed this sprint (commit 255b64c5) by applying the audit report's own §11 Config Update block verbatim. No deviation — implementation matches spec intent."
+        },
+        "ST-02": {
+          "title": "README.md document hygiene sweep (BLG-GOV-158)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 901,
+          "branch": "exec/2026-07-02__release-v6.5/EPIC-01",
+          "commit_sha": "ce943582",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-03T07:50:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/README.md#4. Organisational Routines (AC-01)",
+            "claude/README.md#2. Governing Authorities (AC-02)",
+            "claude/README.md (AC-03, AC-04 pmo_lead.md header)"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Pre-met path (LL-v2.4-P4-02). All 4 ACs verified already satisfied on main by v6.4 EPIC-02 ST-05 (BLG-GOV-151, commit ce943582): README §4.2 lists all 12 non-roadmap governed routines (+ §4.1 roadmap = 13 total, matching CLAUDE.md §1); §2 broken path corrected to claude/charter/document_lifecycle_guide.md; header Last Updated refreshed to 2026-07-02; pmo_lead.md header fields bolded. Verified by direct file read this sprint — no changes needed, no deviation."
+        },
+        "ST-03": {
+          "title": "OPERATIONAL_GUIDE/prompt version-sync drift (BLG-GOV-159)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 902,
+          "branch": "exec/2026-07-02__release-v6.5/EPIC-01",
+          "commit_sha": "e5ae090e",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-03T07:50:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/OPERATIONAL_GUIDE.md#14. Governance Table (AC-01, AC-02)",
+            "claude/agents/metrics_definitions_analytics_owner.md (AC-03)"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Pre-met path (LL-v2.4-P4-02). AC-01/AC-02 verified already satisfied on main: OPERATIONAL_GUIDE.md header (line 5), §14 self-row (line 1457), and Change Log top entry (line 1497) all show Version 4.72 consistently; §14 Roadmap Engine Source row shows v8.0 matching roadmap_prompt.md's actual header version 8.0 — both synced by the 2026-07-02__scheduled roadmap rebalance (commit e5ae090e) and subsequent disciplined version-bump commits. AC-03 verified already satisfied via v6.4 EPIC-02 ST-04 (BLG-GOV-150, commit fd6c9f10): metrics_definitions_analytics_owner.md role name reads 'Metrics Definitions & Analytics Owner', matching team_charter.md line 298 exactly (no 'Canonical' suffix). Verified by direct file read this sprint — no changes needed, no deviation."
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "blocked",
+      "branch": "exec/2026-07-02__release-v6.5/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-02__release-v6.5/qa_evidence_EPIC-02.md",
+      "test_scenarios": ["tests/e2e/strategy-benchmark.spec.js"],
+      "stories": {
+        "ST-04": {
+          "title": "Add v6.4 endpoint to api_performance_baseline.md (BLG-OPS-83)",
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
+          "assigned_to": "Infrastructure & Operations Owner",
+          "github_issue": 903,
+          "branch": "exec/2026-07-02__release-v6.5/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": "2026-07-03T08:10:00Z",
+          "unblock_criteria": "ESC-EXEC-20260703-01 resolved: Infrastructure & Operations Owner either supplies a working X-API-Key/RENDER_API_KEY, performs the live staging/production measurement directly, or Product Owner accepts risk and defers to next cycle.",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Reclassified from autonomous to delegated_decision — AC-01 requires ≥5 warm authenticated staging/production requests, but this execution environment has no working X-API-Key (not in ~/.api_keys, blank in .env.production/.env.staging by design) and the stored RENDER_API_KEY returns 401 from Render's own API. Network egress itself is confirmed working (DNS + TLS + unauthenticated /health succeed on both staging and production). See ESC-EXEC-20260703-01."
+        },
+        "ST-05": {
+          "title": "Playwright coverage for Strategy Benchmark Panel 0 rendering (TEST-GAP-EPIC-03-v64)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 904,
+          "branch": "exec/2026-07-02__release-v6.5/EPIC-02",
+          "commit_sha": "74a00514",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-03T10:52:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-07-02__release-v6.4/open-positions-panel/ux_spec.md",
+            "tests/e2e/strategy-benchmark.spec.js"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "AC-01 (SC-SB-05a/b), AC-02 (SC-SB-06a/b), AC-03 (SC-SB-07a) all added. All 13 tests in the spec file (6 new + 7 pre-existing) verified passing locally against the dev server (npx playwright test, chromium) before commit. No deviation from ux_spec.md."
+        },
+        "ST-06": {
+          "title": "Review signals_scenarios.md against ST-01 signal sizing model changes (BLG-QA-61)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 905,
+          "branch": "exec/2026-07-02__release-v6.5/EPIC-02",
+          "commit_sha": "ca4573ef",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-03T11:05:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/testing/signals_scenarios.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "AC-01/AC-02: reviewed all scenarios — zero references to suggested_shares/sizing/cash-allocation found; no stale scenarios to update. AC-03: outcome ('no changes needed') committed as signals_scenarios.md v1.2->v1.3 changelog entry. Resolves 3-cycle carry-forward (v6.2->v6.3->v6.4). No deviation."
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "not_started",
+      "branch": "exec/2026-07-02__release-v6.5/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-02__release-v6.5/qa_evidence_EPIC-03.md",
+      "test_scenarios": "pending — QA & Testing Owner to author before next sprint on this domain",
+      "stories": {
+        "ST-07": {
+          "title": "Claude thesis generation user feedback mechanism (BLG-FE-46)",
+          "classification": "delegated_frontend",
+          "status": "not_started",
+          "assigned_to": "Base44 Frontend Prompt Owner",
+          "github_issue": 906,
+          "branch": "exec/2026-07-02__release-v6.5/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-08": {
+          "title": "Claude thesis adoption rate metric (BLG-FEAT-41)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 907,
+          "branch": "exec/2026-07-02__release-v6.5/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    }
+  },
+
+  "blocked_items": ["EPIC-02/ST-04"],
+  "delegated_items": [],
+  "completed_items": ["EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-01/ST-03", "EPIC-02/ST-05", "EPIC-02/ST-06"],
+  "open_escalations": ["ESC-EXEC-20260703-01"],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}
