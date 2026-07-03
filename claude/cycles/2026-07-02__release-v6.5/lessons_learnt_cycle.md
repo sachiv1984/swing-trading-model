@@ -39,3 +39,32 @@ Cycle: 2026-07-02__release-v6.5
 - New friction item (ESC-EXEC-20260703-01 credential identity) is a first-time capture — no prior-cycle match found in `claude/cycles/2026-07-02__release-v6.4/lessons_learnt_cycle.md` `## Phase 3`.
 
 ---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-07-02__release-v6.5
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-07-03
+**Reviewed by:** PMO Lead
+
+### What went well
+
+- All 8 stories verified in a single run — 0 traceability gaps, 0 QA Fail results, 0 P0/P1/P2 deviations. Verification reached `Verified` status directly, no re-run required.
+- All three EPICs' QA evidence sign-off blocks used a fully compliant signer format this cycle — no Tier 2 flags fired at STEP -1.3. The v6.3 Phase 4 deferred patch (explicit signer-format validation note in `qa_evidence_template.md`) that carried an open 2-cycle recurrence-escalation warning into v6.5 was in fact already applied at v6.4 post-ship closure (v1.5→v1.6, 2026-07-02) — ahead of its own target, so no escalation triggers here.
+- Zero test scenario gaps this cycle — EPIC-02 and EPIC-03 both had populated `test_scenarios` fully confirmed run in their QA evidence logs, and EPIC-01's empty `test_scenarios` correctly short-circuited to `not_applicable` (governance/documentation/config-only, no frontend-visible AC).
+- `deferred_execution_blockers = []` and zero parked items in the backlog slice meant STEP 4 required no corrective writes — a genuinely clean sprint close, consistent with v6.4's pattern.
+
+### Friction Log
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| `backlog.md` entry headers for `BLG-GOV-157` and `BLG-GOV-159` are swapped relative to their actual titles (confirmed by direct read at STEP 4: `BLG-GOV-157`'s header reads ST-03's title, `BLG-GOV-159`'s header reads ST-01's title). This was already flagged non-blocking at Sprint Planning (`sprint_backlog.md` Outstanding Actions) but was not corrected during execution, so it reached Delivery Verification still unresolved | Phase 4 | A | defer | Not corrected this run — outside Delivery Verification's write scope for `backlog.md` (append-only, outstanding items and test scenario gaps only; a header-text correction is a content edit, not an append). Requires a `groom backlog` run or a Head of Specs Team-directed edit to swap the two entry headers back to their correct titles | Head of Specs Team | Next `groom backlog` run |
+
+**Recurrence Notes:**
+- v6.4 Phase 4 friction item 1 (`qa_evidence_template.md` signer-format validation note, deferred v6.3→v6.4, carried a 2-cycle-recurrence-escalation warning into v6.5 if unapplied): **Resolved — not a recurrence.** Confirmed applied at v6.4 post-ship closure (`prompt_change_log.md` 2026-07-02, v1.5→v1.6), ahead of its v6.5 target. No escalation triggered.
+- v6.4 Phase 4 friction item 2 (`System_status_report.md` sprint section not written correctly at sprint close, resolved v6.4): No recurrence — the v6.5 sprint section was present, complete, and accurate at STEP 6 this cycle (only the same routine status-line correction was needed, consistent with both v6.4 and v6.3's pattern).
+- v6.4 Phase 4 friction item 3 (EPIC-03 `test_scenarios` pending pattern, resolved v6.4): No recurrence — EPIC-03's `test_scenarios` was fully populated (`tests/e2e/trade-plan.spec.js`) at sprint close this cycle, with the corresponding Outstanding Action in `sprint_backlog.md` (LL-v2.0-P4-2) already dispositioned before this verification run began.
+- New friction item (BLG-ID cross-reference defect in `backlog.md`) is a first-time capture at Delivery Verification — no prior-cycle match found in `claude/cycles/2026-07-02__release-v6.4/lessons_learnt_cycle.md` `## Phase 4`. Note it was already visible at Sprint Planning (`sprint_backlog.md` Outstanding Actions) but had not previously been logged as a Phase 4 friction item.
+
+---
