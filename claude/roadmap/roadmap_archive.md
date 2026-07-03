@@ -1,13 +1,42 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-02 (post-ship closure 2026-07-02__release-v6.4 — RA:v6.4 retired)
+**Last Updated:** 2026-07-03 (post-ship closure 2026-07-02__release-v6.5 — RA:v6.5 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v6.5 — Audit Debt Clearance, Backlog Debt Clearance & AI Thesis Feedback Loop
+
+**Original roadmap location:** §1 Current Version
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-07-03
+**Shipped version:** v6.5
+**Cycle reference:** 2026-07-02__release-v6.5
+**Verification report:** claude/cycles/2026-07-02__release-v6.5/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-07-03
+
+### Original Roadmap Entry
+
+**v6.4** — Audit Remediation, Security Hardening & Strategy Benchmark Enhancement — ✅ Shipped 2026-07-02 — cycle: 2026-07-02__release-v6.4
+**Next planned release:** v6.5 — Audit Debt Clearance, Backlog Debt Clearance & AI Thesis Feedback Loop — cycle: 2026-07-02__release-v6.5
+
+<!-- roadmap-annotation-marker: RA:v6.5:2026-07-02__release-v6.5 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-02__release-v6.5
+- Plan published: 2026-07-02
+- Cycle folder: claude/cycles/2026-07-02__release-v6.5/
+- Backlog slice: claude/cycles/2026-07-02__release-v6.5/stage4_backlog_slice.md
+- Status at annotation: Committed
+
+**Verified:** 2026-07-03 (post-ship closure 2026-07-02__release-v6.5) — verification report: `claude/cycles/2026-07-02__release-v6.5/verification_report.md`. Full v6.5 scope (8 stories, 3 EPICs — AUD-2026-07-01 governance/lifecycle debt clearance, backlog debt clearance (api_performance_baseline.md registration + Playwright coverage + signals_scenarios.md review), Claude thesis feedback mechanism + adoption rate metric) delivered; see `docs/product/changelog.md#v6.5`.
 
 ---
 

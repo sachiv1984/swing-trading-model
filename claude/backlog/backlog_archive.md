@@ -1,11 +1,107 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-02 (groom backlog post-ship closure 2026-07-02__release-v6.4 — 13 items archived)
+**Last Updated:** 2026-07-03 (groom backlog post-ship closure 2026-07-02__release-v6.5 — 8 items archived)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-GOV-157 — Lifecycle/prompt/state wording and consistency fixes
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-03
+**Shipped in:** v6.5 (ST-01 per stage4_backlog_slice.md — see known BLG-ID/ST-item cross-reference note in verification_report.md §5(a), cycle: 2026-07-02__release-v6.5)
+**Evidence:** docs/product/changelog.md#v6.5; claude/cycles/2026-07-02__release-v6.5/verification_report.md
+
+Three governance wording/consistency findings from AUD-2026-07-01 closed: staging-only AC protocol ambiguity resolved, `FRICTION_LOAD` formula time-window clarified, state-file/audit-config open-item counts reconciled. `claude/audit.py` config block (PRIOR_AUDIT_ID/PRIOR_AUDIT_OPEN_ITEMS/PRIOR_SCORES/COMPLETED_CYCLES) synced to current audit state.
+
+---
+
+### BLG-GOV-158 — README.md document hygiene sweep
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-03
+**Shipped in:** v6.5 (ST-02, cycle: 2026-07-02__release-v6.5)
+**Evidence:** docs/product/changelog.md#v6.5; claude/cycles/2026-07-02__release-v6.5/verification_report.md
+
+Four AUD-2026-07-01 document-hygiene findings closed: README §4 lists all 13 governed routines; §2 broken path corrected; staleness refreshed; `pmo_lead.md` header fields bolded. Verified pre-met on `main` from v6.4 EPIC-02 ST-05 work — no changes needed this sprint, no deviation.
+
+---
+
+### BLG-GOV-159 — OPERATIONAL_GUIDE/prompt version-sync drift
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-03
+**Shipped in:** v6.5 (ST-03 per stage4_backlog_slice.md — see known BLG-ID/ST-item cross-reference note in verification_report.md §5(a), cycle: 2026-07-02__release-v6.5)
+**Evidence:** docs/product/changelog.md#v6.5; claude/cycles/2026-07-02__release-v6.5/verification_report.md
+
+Three AUD-2026-07-01 version-sync drift findings closed: OPERATIONAL_GUIDE.md header/§14 self-row/Change Log consistency verified; §14 Roadmap Rebalance Prompt row matches `roadmap_prompt.md`'s actual version; Metrics owner role name matches `team_charter.md`. Verified pre-met on `main` from the 2026-07-02__scheduled roadmap rebalance and v6.4 EPIC-02 ST-04 — no changes needed this sprint, no deviation.
+
+---
+
+### BLG-OPS-83 — Add v6.4 endpoint to api_performance_baseline.md
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-03
+**Shipped in:** v6.5 (ST-04, cycle: 2026-07-02__release-v6.5)
+**Evidence:** docs/product/changelog.md#v6.5; claude/cycles/2026-07-02__release-v6.5/verification_report.md; docs/ops/api_performance_baseline.md#24
+
+`GET /strategy/benchmark/open-positions` (v6.4, BLG-FEAT-54) registered in `api_performance_baseline.md` §24 with a live 5-warm-sample production measurement (p50=524.5ms, p95=600.0ms) and a dynamic-2x regression threshold, following the BLG-OPS-82 staging-404-fallback precedent.
+
+---
+
+### TEST-GAP-EPIC-03-v64 — Playwright coverage for Strategy Benchmark Panel 0 (Open Positions) rendering
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-03
+**Shipped in:** v6.5 (ST-05, cycle: 2026-07-02__release-v6.5)
+**Evidence:** docs/product/changelog.md#v6.5; claude/cycles/2026-07-02__release-v6.5/verification_report.md; tests/e2e/strategy-benchmark.spec.js
+
+SC-SB-05a/b, SC-SB-06a/b, SC-SB-07a added covering Panel 0 conditional rendering, the Market-filter-only interaction, and the API-error state — closing the code-review-only disposition carried from v6.4 EPIC-03 ST-08. All 13 tests in the spec file (6 new + 7 pre-existing) verified passing locally before commit.
+
+---
+
+### BLG-QA-61 — Review signals_scenarios.md against ST-01 signal sizing model changes
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-03
+**Shipped in:** v6.5 (ST-06, cycle: 2026-07-02__release-v6.5)
+**Evidence:** docs/product/changelog.md#v6.5; claude/cycles/2026-07-02__release-v6.5/verification_report.md; docs/testing/signals_scenarios.md
+
+All scenarios reviewed against the risk-based sizing model (`size_position()`, replacing the removed cash-allocation formula) — zero stale references found; outcome committed as `signals_scenarios.md` v1.2→v1.3. Resolves a 3-cycle carry-forward (v6.2→v6.3→v6.4) and closes TSG-v60-01 (open since v6.2, escalated to Head of Specs Team at v6.4 closure).
+
+---
+
+### BLG-FE-46 — Claude thesis generation user feedback mechanism
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-03
+**Shipped in:** v6.5 (ST-07, cycle: 2026-07-02__release-v6.5)
+**Evidence:** docs/product/changelog.md#v6.5; claude/cycles/2026-07-02__release-v6.5/verification_report.md; tests/e2e/trade-plan.spec.js
+
+Thumbs-up/down feedback control added to the Trade Plan form, gated on `isClaudeDraft`, persisted to `trade_plans.thesis_feedback` (DS-09). 6 new Playwright scenarios (SC-TP-23a–f), full regression of `trade-plan.spec.js` (29 tests) plus 3 adjacent spec files. Persistence-location choice is an implementation note, not a deviation — the ux_spec.md's `claude_audit_log` suggestion was explicitly non-binding.
+
+---
+
+### BLG-FEAT-41 — Claude thesis adoption rate metric
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-03
+**Shipped in:** v6.5 (ST-08, cycle: 2026-07-02__release-v6.5)
+**Evidence:** docs/product/changelog.md#v6.5; claude/cycles/2026-07-02__release-v6.5/verification_report.md; docs/specs/metrics_definitions.md#Thesis Adoption Rate
+
+`thesis_adoption_rate` metric defined in `metrics_definitions.md`, joined against `gemini_audit_log.plan_id` (corrected from the sprint scope's literal `claude_audit_log` reference, which has no `plan_id` column). Metrics Definitions & Analytics Owner + Financial Reporting & Records Owner agent-mediated sign-off Approved.
 
 ---
 

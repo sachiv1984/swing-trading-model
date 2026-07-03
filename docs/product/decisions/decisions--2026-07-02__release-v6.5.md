@@ -1,9 +1,13 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v6.5
 Cycle: 2026-07-02__release-v6.5
-Last Updated: 2026-07-02
+Last Updated: 2026-07-03
+
+Superseded by: v6.5 ship — 2026-07-03
+Changelog: docs/product/changelog.md#v6.5
+Cycle: 2026-07-02__release-v6.5
 
 ## Planning Decisions — v6.5 Audit Debt Clearance, Backlog Debt Clearance & AI Thesis Feedback Loop
 

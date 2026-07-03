@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.73
+**Version:** 4.75
 **Last Updated:** 2026-07-03
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -620,7 +620,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.39)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.40)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.15)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.16)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1464,14 +1464,14 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v8.0 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.39 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.40 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.12 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.51 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.6 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.1 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.15 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.16 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.7 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1494,6 +1494,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.75 | 2026-07-03 | **Post-ship closure 2026-07-02__release-v6.5 self-identified closure-phase friction — post_ship_closure.md v2.15→v2.16: STEP 2/STEP 11 roadmap-retirement boundary clarified.** §10 source prompt header updated v2.15→v2.16. §14 Post-Ship Closure Engine v2.15→v2.16. §14 Version 4.74→4.75/2026-07-03. Change: STEP 2 (Roadmap Update) gained a clarifying note that the `*RA:<release> retired...*` annotation line is written by STEP 11 (roadmap_management_prompt.md), not STEP 2 — prevents a premature write recording an archival that has not yet happened. Caught and self-corrected during this cycle's own STEP 2 (v6.5 roadmap update) before commit; patched at source per the non-deferrable immediate-action rule rather than left as a one-off correction. See `claude/cycles/2026-07-02__release-v6.5/lessons_learnt_closure.md` Friction Log. Authority: Head of Specs Team (v6.5 post-ship closure, 2026-07-03). |
+| 4.74 | 2026-07-03 | **Post-ship closure 2026-07-02__release-v6.5 STEP 8 immediate actions — release_planning_prompt.md v2.39→v2.40 (LP-02, LP-03).** §6B source prompt header updated v2.39→v2.40. §14 Release Engine Source v2.39→v2.40. §14 Version 4.73→4.74/2026-07-03. Changes: (LP-02, Release Planning lessons_learnt.md Friction Item 2) STEP 5 Roadmap Annotation — added explicit fallback wording: if no formal `## vX.Y` roadmap section exists for the release, annotate the `**Next planned release:**` line in §1 (Current Version) instead. (LP-03, Friction Item 3) §1.4a Perennial-Return Check — added a third named disposition option "(c) Resolve directly this cycle" for low-effort items where the cheapest fix is closure rather than further deferral or parking. LP-01 (STEP 4.1/STEP 7 state-sync sequencing) and LP-04 (Skill-Silo monitoring) deferred — see `claude/cycles/2026-07-02__release-v6.5/closure_record.md` §5. Authority: Head of Specs Team (v6.5 post-ship closure, 2026-07-03). |
 | 4.73 | 2026-07-03 | **Sprint execution 2026-07-02__release-v6.5 STEP 5.4 action-now — execution_prompt.md v3.50→v3.51: STEP 4 resume-sync branch check added (LL-v6.4-P3-01).** §8 source prompt header v3.50→v3.51. §14 Execution Engine Source v3.50→v3.51. §14 Version 4.72→4.73/2026-07-03. Change: STEP 4's "on session resume — merge gate state sync" sub-step now requires an explicit `git branch --show-current` check (and `git checkout main && git pull` if not already on `main`) before performing the merge-gate sync write, mirroring STEP 5's branch-ordering gate. Resolves a deferred v6.4 Phase 3 lessons-learnt friction item targeted at v6.5 (this cycle) — a fresh session resuming after an EPIC merge could previously land on any `exec/**` branch and orphan the sync write there. Applied action-now during this cycle's own STEP 5.4 rather than deferred again, per §6.2. Authority: Head of Specs Team (sprint execution 2026-07-02__release-v6.5, 2026-07-03). |
 | 4.72 | 2026-07-02 | **Roadmap rebalance 2026-07-02__scheduled — roadmap_prompt.md v7.9→v8.0: three lessons-learnt patches applied.** §6 source prompt header updated v7.9→v8.0. §13 Artefact Register Roadmap Rebalance Prompt row updated v7.9→v8.0. §14 Roadmap Engine Source v7.9→v8.0. §14 Version 4.71→4.72/2026-07-02. Changes: (1, Friction Item 2 deferred patch from `2026-07-01__scheduled`, due this cycle) STEP 11.2 — deferred-patch Target fields must name a cycle_id or absolute date, not a bare release version alone; if a release version is given, a concrete date estimate must also be recorded. (2, this cycle's Friction Item 1) STEP 4.0 gate-condition re-check — explicit two-step check added (grep `backlog.md`, then `backlog_archive.md` before concluding "not shipped"); corrects the false-negative that let `2026-07-01__scheduled` record BLG-GOV-131 as unshipped when it had in fact shipped v6.1. (3, this cycle's Friction Item 3) STEP 7.1 Skill-Silo Alert — wording clarified that a single U-item pull-forward is not guaranteed to correct the rolling ceiling breach across a heavy governance/debt window; PO should consider multiple U-items after 2+ consecutive Alert cycles. Authority: Head of Specs Team (roadmap rebalance 2026-07-02__scheduled). |
 | 4.71 | 2026-07-02 | **Post-ship closure 2026-07-02__release-v6.4 STEP 8 immediate action — execution_prompt.md v3.49→v3.50: qa_signed_off elevated from advisory to hard merge-gate requirement (DF-02).** §8 source prompt header v3.49→v3.50. §14 Execution Engine Source v3.49→v3.50. §14 Version 4.70→4.71/2026-07-02. Change: §3.2.B `qa_signed_off` note upgraded from "Advisory (OA-1/ST-01)" to a hard requirement; STEP 4 merge gate table gained a new row — `qa_signed_off = true (execution_state.json)` must be set, independent of the PR-comment QA sign-off row. Resolves a deferred v6.3 Phase 3 lessons-learnt patch (DF-02) not applied at v6.4 planning time (1st missed target); applied now rather than re-deferred, per post-ship closure's non-deferrable immediate-action rule. Cross-check also confirmed DF-01 and DF-05 (v6.3 carry-forward) are already satisfied by pre-existing patches (LL-v3.7-EX-01 and AUD-2026-06-22-001 respectively) — no further action required; DF-06 confirmed applied in sprint_backlog.md this cycle. Authority: Head of Specs Team (v6.4 post-ship closure, 2026-07-02). |

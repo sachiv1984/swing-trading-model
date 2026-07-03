@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.15
-**Last Updated:** 2026-06-22
+**Version:** 2.16
+**Last Updated:** 2026-07-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -302,6 +302,8 @@ Update `claude/roadmap/current_roadmap.md`:
 5. If the release contained P0/P1 quality gate items (confirmed in `verification_report.md`): mark those complete within their roadmap section.
 6. Update the release summary table if present.
 7. Update `Last Updated` to today's date.
+
+**Note (STEP 2 / STEP 11 boundary):** Do not write a `*RA:<release> retired — see roadmap_archive.md...*` annotation line at this step, even though prior cycles' roadmap entries show one immediately adjacent to the Current Version section. That line is written by STEP 11 (`roadmap_management_prompt.md`, invoked later in this same routine) when the item is actually archived — it does not yet exist at STEP 2. Writing it here records an archival that has not happened.
 
 **Failure condition (hard gate in `strict` mode; flag in `standard`):** Roadmap entry still shows Planned or In Progress after this step. Stale roadmap status will cause Phase 1 (Roadmap Rebalance) to misread the current state.
 

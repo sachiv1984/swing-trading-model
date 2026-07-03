@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-07-02 (post-ship closure 2026-07-02__release-v6.4; §31 TSG-v63-01/02 resolved; §32 v6.4 test coverage gap added — TSG-v64-01 EPIC-03 Panel 0 Playwright gap; TSG-v60-01 (BLG-QA-61) remains Open — 3rd cycle, 2-cycle recurrence escalation)
+**Last Updated:** 2026-07-03 (post-ship closure 2026-07-02__release-v6.5; §28/§32 TSG-v60-01 and TSG-v64-01 both RESOLVED — closes the 2-cycle recurrence escalation on BLG-QA-61; §33 v6.5 test coverage gap section added — no open items)
 
 ---
 
@@ -722,7 +722,7 @@ Identified during delivery verification (verification_report.md §6 — TSG-v60-
 
 | gap_id | EPIC | Description | Disposition |
 |--------|------|-------------|-------------|
-| TSG-v60-01 | EPIC-01 | docs/testing/signals_scenarios.md listed in execution_state.json test_scenarios for EPIC-01 but not referenced as run in QA evidence — broader signal domain scenarios may contain stale assertions after cash-allocation model removal (ST-01 replaced with risk-based sizing) | backlog_item_created — BLG-QA-61 |
+| TSG-v60-01 | EPIC-01 | docs/testing/signals_scenarios.md listed in execution_state.json test_scenarios for EPIC-01 but not referenced as run in QA evidence — broader signal domain scenarios may contain stale assertions after cash-allocation model removal (ST-01 replaced with risk-based sizing) | **RESOLVED — 2026-07-03 (v6.5 ST-06, cycle 2026-07-02__release-v6.5).** All scenarios in `signals_scenarios.md` reviewed against the risk-based sizing model — zero references to suggested_shares/sizing/cash-allocation found; no stale scenarios to update. Outcome committed as `signals_scenarios.md` v1.2→v1.3 changelog entry. Resolves 3-cycle carry-forward (v6.2→v6.3→v6.4); backlog item BLG-QA-61 closed. |
 | TSG-v60-02 | EPIC-02 | docs/testing/staging_visual_test_script_EPIC-02.md listed but not run in sprint QA | deferred — post-deploy staging review; all CI-verifiable ACs satisfied by Playwright (morning-briefing.spec.js, net-r-trade-history.spec.js) |
 | TSG-v60-03 | EPIC-03 | docs/testing/screener_accuracy_protocol.md and docs/testing/staging_visual_test_script_EPIC-03.md listed but not run in sprint QA | deferred — post-deploy staging review; screener-quality.spec.js covers all 7 AC-07 requirements |
 | TSG-v60-04 | EPIC-04 | test_scenarios = [] | not_applicable — documentation-only EPIC; no frontend-visible ACs; no automated test scenarios applicable |
@@ -730,7 +730,7 @@ Identified during delivery verification (verification_report.md §6 — TSG-v60-
 ### 28.1 TSG-v60-01 — EPIC-01: signals_scenarios.md not run against ST-01 sizing model changes
 
 **Identified:** 2026-06-22 (delivery verification 2026-06-19__release-v6.0)
-**Status:** Open — backlog item BLG-QA-61
+**Status:** RESOLVED — 2026-07-03 (v6.5 ST-06, cycle 2026-07-02__release-v6.5) — backlog item BLG-QA-61 closed
 **Owner:** QA & Testing Owner
 **Gap:** ST-01 removed the cash-allocation model for `suggested_shares` and replaced it with `size_position()` per strategy_rules.md §4.1. `docs/testing/signals_scenarios.md` was listed in execution_state.json test_scenarios but was not referenced as run in QA evidence. New `tests/test_signal_sizing.py` covered story-specific ACs but broader domain regression via signals_scenarios.md was not confirmed. Any scenario asserting specific suggested_shares values based on the old cash-allocation formula (cash / n_signals) will produce incorrect expected values.
 **Required action:** QA & Testing Owner to review docs/testing/signals_scenarios.md against ST-01 changes, update any stale scenario assertions, and confirm coverage status before next sprint touching signal generation domain.
@@ -793,10 +793,29 @@ Identified during delivery verification (verification_report.md §6 — 1 gap it
 
 | gap_id | EPIC | Description | Disposition |
 |--------|------|-------------|-------------|
-| TSG-v64-01 | EPIC-03 | ST-08/AC-01 — Open Positions Panel 0 conditional rendering on Strategy Benchmark page has no Playwright coverage this sprint (ST-13/TEST-GAP-EPIC-03 scoped to Panels 1/3 only; AC-01 cleared by code review only) | backlog_item_created — TEST-GAP-EPIC-03-v64 (BLG-QA backlog, Provisional-Target: v6.5) |
+| TSG-v64-01 | EPIC-03 | ST-08/AC-01 — Open Positions Panel 0 conditional rendering on Strategy Benchmark page has no Playwright coverage this sprint (ST-13/TEST-GAP-EPIC-03 scoped to Panels 1/3 only; AC-01 cleared by code review only) | **RESOLVED — 2026-07-03 (v6.5 ST-05, cycle 2026-07-02__release-v6.5).** SC-SB-05a/b, SC-SB-06a/b, SC-SB-07a added to `tests/e2e/strategy-benchmark.spec.js` (Panel 0 conditional rendering, Market-filter interaction, API-error state); backlog item TEST-GAP-EPIC-03-v64 closed. |
 
 **TSG backlog reconciliation (§7.3):**
 - No pre-v6.4 TSG items closed by this cycle beyond TSG-v63-01/02 (recorded in §31 above).
+
+---
+
+## 33. Test Coverage Gaps — v6.5 (2026-07-02__release-v6.5)
+
+Identified during delivery verification (verification_report.md §6 — no gap items). No backlog items required.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| — | EPIC-01 | Governance/documentation/config-only EPIC (audit.py config sync, README hygiene, OPERATIONAL_GUIDE/prompt version-sync drift) — `test_scenarios: []` | not_applicable — no frontend-visible ACs; verification method was direct file review |
+| — | EPIC-02 | API baseline registration + Playwright coverage for Strategy Benchmark Panel 0 + signals_scenarios.md review | not_applicable — full Playwright coverage confirmed in `tests/e2e/strategy-benchmark.spec.js` (13/13 passing) |
+| — | EPIC-03 | Claude thesis feedback mechanism + adoption rate metric | not_applicable — full Playwright coverage confirmed in `tests/e2e/trade-plan.spec.js` (29/29 passing, 6 new SC-TP-23a–f scenarios) |
+
+No open TSG items for v6.5. All observable ACs have Playwright coverage confirmed in CI (EPIC-02, EPIC-03). EPIC-01 not_applicable (governance/documentation/config class).
+
+**TSG backlog reconciliation (§7.3):**
+- TSG-v60-01 (BLG-QA-61): **RESOLVED this cycle** — see §28 above. Closes a 2-cycle recurrence escalation open since v6.2.
+- TSG-v64-01 (TEST-GAP-EPIC-03-v64): **RESOLVED this cycle** — see §32 above.
+- All other open TSG entries checked; no other pre-v6.5 TSG items closed by this cycle.
 
 ---
 

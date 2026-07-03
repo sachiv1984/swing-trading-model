@@ -3,9 +3,39 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-02 (post-ship closure 2026-07-02__release-v6.4)
+**Last Updated:** 2026-07-03 (post-ship closure 2026-07-02__release-v6.5)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v6.5 — Audit Debt Clearance, Backlog Debt Clearance & AI Thesis Feedback Loop — 2026-07-03
+Cycle: 2026-07-02__release-v6.5
+Verified: Verified
+Verification report: claude/cycles/2026-07-02__release-v6.5/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | AUD-2026-07-01 governance/lifecycle debt clearance: `audit.py` config block (PRIOR_AUDIT_ID/PRIOR_AUDIT_OPEN_ITEMS/PRIOR_SCORES/COMPLETED_CYCLES) brought in sync with `.claude_current_state.json` (BLG-GOV-157); README.md hygiene sweep — all 13 governed routines listed, broken §2 path corrected, staleness refreshed, `pmo_lead.md` header bolded (BLG-GOV-158); OPERATIONAL_GUIDE/prompt version-sync drift resolved — header/§14/Change Log consistency, §14 Roadmap Rebalance Prompt row, Metrics owner role name (BLG-GOV-159) | CLAUDE.md#Governance Non-Negotiables; claude/audit.py#FRICTION_LOAD; claude/README.md#4. Organisational Routines; claude/README.md#2. Governing Authorities; claude/system/OPERATIONAL_GUIDE.md#14. Governance Table; claude/agents/metrics_definitions_analytics_owner.md |
+| EPIC-02 | Backlog debt clearance: v6.4's `GET /strategy/benchmark/open-positions` endpoint registered in `api_performance_baseline.md` with live production measurement, p50=524.5ms/p95=600.0ms (BLG-OPS-83); Playwright coverage added for Strategy Benchmark Panel 0 (Open Positions) rendering, Market-filter interaction, and API-error state (TEST-GAP-EPIC-03-v64); 3-cycle-stagnant `signals_scenarios.md` review against the v6.0 risk-based sizing model completed — zero stale scenarios found (BLG-QA-61) | docs/ops/api_performance_baseline.md#24; docs/design/2026-07-02__release-v6.4/open-positions-panel/ux_spec.md; tests/e2e/strategy-benchmark.spec.js; docs/testing/signals_scenarios.md |
+| EPIC-03 | Claude thesis generation user feedback mechanism — thumbs-up/down control gated on `isClaudeDraft`, persisted to `trade_plans.thesis_feedback` (BLG-FE-46); Claude thesis adoption rate metric defined, joined against `gemini_audit_log.plan_id` (BLG-FEAT-41) | docs/design/2026-07-02__release-v6.5/thesis-feedback-mechanism/ux_spec.md; docs/specs/data_model.md#DS-09; tests/e2e/trade-plan.spec.js; docs/specs/metrics_definitions.md#Thesis Adoption Rate |
+
+### Deviations accepted
+None — no spec deviations this sprint (2 non-binding implementation notes recorded, not deviations: ST-07's `trade_plans.thesis_feedback` persistence location and ST-08's `gemini_audit_log.plan_id` join-key correction, both against the ux_spec.md's non-binding suggestions).
+
+### Tech backlog items shipped
+- [ST-01] BLG-GOV-157: Lifecycle/prompt/state wording and consistency fixes — `audit.py` config block synced to current audit/open-item counts
+- [ST-02] BLG-GOV-158: README.md document hygiene sweep — governed routines list, broken path, staleness, header bolding
+- [ST-03] BLG-GOV-159: OPERATIONAL_GUIDE/prompt version-sync drift — header/§14/Change Log consistency, Metrics owner role name
+- [ST-04] BLG-OPS-83: Add v6.4 endpoint to `api_performance_baseline.md` — live 5-warm-sample production measurement
+- [ST-05] TEST-GAP-EPIC-03-v64: Playwright coverage for Strategy Benchmark Panel 0 rendering
+- [ST-06] BLG-QA-61: Review `signals_scenarios.md` against ST-01 signal sizing model changes — resolves 3-cycle carry-forward (v6.2→v6.3→v6.4)
+- [ST-07] BLG-FE-46: Claude thesis generation user feedback mechanism
+- [ST-08] BLG-FEAT-41: Claude thesis adoption rate metric
+
+Sign-off: Product Owner — 2026-07-03
+QA sign-off: Director of Quality — 2026-07-03
 
 ---
 

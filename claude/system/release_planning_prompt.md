@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.39
-**Last Updated:** 2026-07-02
+**Version:** 2.40
+**Last Updated:** 2026-07-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -577,6 +577,7 @@ Before finalising the scope candidate list, check each conditional or gate-block
 3. PO must make an **explicit active disposition**:
    - (a) Keep as conditional — provide updated gate evidence or a revised gate date that differs from prior cycles
    - (b) Remove from horizon — park in backlog until gate permanently cleared
+   - (c) Resolve directly this cycle — promote to firm scope and complete it now, for low-effort items where the cheapest fix is closure rather than further deferral or parking
 4. Silent re-entry (no active PO disposition when N ≥ 2) is **not permitted**. Record PO decision in `run_manifest.md`.
 
 This check is advisory-only — it does not halt execution. It prevents backlog churn on items that recurrently fail to execute due to unchanged gate conditions.
@@ -930,7 +931,7 @@ attributes.capacity_feasible: pass|warn|fail|blocked
 
 Purpose: Record that planning is underway for this release by adding execution notes to the roadmap entry. This does not change scope, priority, or strategy — it adds a link to the cycle folder and current status.
 
-Write: Update `claude/roadmap/current_roadmap.md` — under the existing release section only.
+Write: Update `claude/roadmap/current_roadmap.md` — under the existing release section only. If no formal `## vX.Y` roadmap section exists for this release (e.g. an Option (b)-deferred release with no dedicated section yet), annotate the `**Next planned release:**` line in §1 (Current Version) instead.
 
 Required annotation content (append under the release section heading; do not modify any other content):
 

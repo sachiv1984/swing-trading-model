@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-02 (roadmap rebalance 2026-07-02__scheduled — DL-059, no roadmap content change)
+**Last Updated:** 2026-07-03 (post-ship closure 2026-07-02__release-v6.5)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — Standard-tier, CPS=N/A (0 active initiatives); Product Value Advisory (ratio=0.344); Skill-Silo Alert (G+D+P rolling-3-cycle avg=64.8%, worse than prior 53.2%; pull-forward candidate BLG-FE-46); DL-059; 24 new backlog items (idea intake IW-20260702-01, 44 submissions + 19 carried ideas at 3-cycle hard cap); Backlog Accessibility Warning triggered (A=28% < 30% floor); STEP 8.0: 0 fast-track items; v6.5 scoping deferred to plan release v6.5; ideas register 3-cycle disposition — 3 Rejected, 16 Backlog-gate-conditional)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,17 +10,10 @@
 
 ## 1. Current Version
 
-**v6.4** — Audit Remediation, Security Hardening & Strategy Benchmark Enhancement — ✅ Shipped 2026-07-02 — cycle: 2026-07-02__release-v6.4
-**Next planned release:** v6.5 — Audit Debt Clearance, Backlog Debt Clearance & AI Thesis Feedback Loop — cycle: 2026-07-02__release-v6.5
+**v6.5** — Audit Debt Clearance, Backlog Debt Clearance & AI Thesis Feedback Loop — ✅ Complete — Shipped 2026-07-03 — cycle: 2026-07-02__release-v6.5
+**Next planned release:** [TBD]
 
-<!-- roadmap-annotation-marker: RA:v6.5:2026-07-02__release-v6.5 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-07-02__release-v6.5
-- Plan published: 2026-07-02
-- Cycle folder: claude/cycles/2026-07-02__release-v6.5/
-- Backlog slice: claude/cycles/2026-07-02__release-v6.5/stage4_backlog_slice.md
-- Status at annotation: Committed
+*RA:v6.5 retired — see roadmap_archive.md 2026-07-03 (post-ship closure 2026-07-02__release-v6.5).*
 
 *RA:v6.3 retired — see roadmap_archive.md 2026-06-30 (post-ship closure 2026-06-26__release-v6.3).*
 
@@ -487,6 +480,7 @@ When evaluating new features:
 |**v6.2** ✅  |Production Strategy Parity & AI Intelligence|EPIC-01: nightly trailing stop computation (profit-lock ratchet, INITIAL_ATR_MULT=5, PROFIT_ATR_MULT=2), month-end rebalance exit signals (exit_rebalance, last-trading-day detection), inverse-volatility position sizing ([5–20%] cash constraints), risk-off exit alerts (SPY/FTSE MA200, per-market). EPIC-02: POST /ai/daily-briefing (context assembly + claude-sonnet-4-6, advisory-only §13 SRB-v1.7 PASS) + AiDailyBriefing.js; POST /ai/chat (stateless conversational advisor) + AiChatWidget.js. EPIC-03: execution_prompt.md v3.48 (BLG-GOV-135 autonomous class hard gate + BLG-GOV-136 test_scenarios advisory); api_performance_baseline.md §21 (2 v6.1 endpoints measured, BLG-OPS-75); Playwright glob auto-registration (BLG-QA-62). 13/13 stories. Verified. Zero deviations. — ✅ Complete — Shipped 2026-06-25 — cycle: 2026-06-24__release-v6.2|
 |**v6.3** ✅  |Strategy Benchmark, AI Security & Quality Infrastructure|EPIC-01: AI journal summary fixed (data.message surfaced; logger.error added); R-multiple display fixed (field name base44Client.js net_r_multiple→r_multiple; N/A handling); per-endpoint rate limiting (POST /ai/daily-briefing 10 req/min/IP; POST /ai/chat 30 req/min/IP; 429+Retry-After); AI injection risk assessment (5 inputs, BLG-SEC-01/02 open); disclaimer visibility (§13 amber PASS; BLG-UX-01/02 filed); API contract review checklist (11-item, both endpoints ALL PASS). EPIC-02: 21 nightly stop CI simulation tests; strategy signal regression spec; 8 AI schema validation tests; §13 boundary test suite (11 scenarios). EPIC-03: Strategy Benchmark page (3 endpoints, 2 DB tables, import_backtest.py, 3-panel page); morning briefing progressive disclosure (localStorage; SC-PD Playwright); GET /health/scheduler; live AI latency baseline; Render rollback runbook. 15/15 stories. Verified. Zero deviations. — ✅ Complete — Shipped 2026-06-30 — cycle: 2026-06-26__release-v6.3|
 |**v6.4** ✅  |Audit Remediation, Security Hardening & Strategy Benchmark Enhancement|EPIC-01: production correctness fix (BLG-BE-40, signal generation now reads ticker_universe not deprecated tickers table); AI security hardening (BLG-SEC-01 context_opts.ticker sanitisation incl. trailing-newline bypass fix; BLG-SEC-02 ticker/market write-time validation incl. update_signal() 2nd write path). EPIC-02: AUD-2026-07-01 lifecycle-audit remediation — governance version-sync drift (BLG-GOV-150), document hygiene (BLG-GOV-151), structural reliability gaps incl. FI-P3-01/FI-P3-02/FI-P4-01 re-targets closed (BLG-GOV-152), audit/governance process fixes (BLG-GOV-153). EPIC-03: Strategy Benchmark Open Positions panel (BLG-FEAT-54, Skill-Silo pull-forward); AI disclaimer contrast fixes to WCAG AA (BLG-UX-01/02); v6.3 endpoint baseline registration (BLG-OPS-82); Playwright coverage for AI journal summary + Strategy Benchmark page (TEST-GAP-EPIC-01/03). 13/13 stories. Verified. Zero deviations. — ✅ Complete — Shipped 2026-07-02 — cycle: 2026-07-02__release-v6.4|
+|**v6.5** ✅  |Audit Debt Clearance, Backlog Debt Clearance & AI Thesis Feedback Loop|EPIC-01: AUD-2026-07-01 governance/lifecycle debt clearance — audit.py config block sync (BLG-GOV-157), README.md hygiene sweep (BLG-GOV-158), OPERATIONAL_GUIDE/prompt version-sync drift resolved (BLG-GOV-159). EPIC-02: v6.4 endpoint registered in api_performance_baseline.md with live production measurement (BLG-OPS-83); Playwright coverage for Strategy Benchmark Panel 0 (TEST-GAP-EPIC-03-v64); signals_scenarios.md reviewed against v6.0 sizing model, zero stale scenarios — resolves 3-cycle carry-forward (BLG-QA-61). EPIC-03: Claude thesis generation user feedback mechanism (BLG-FE-46); Claude thesis adoption rate metric (BLG-FEAT-41). 8/8 stories. Verified. Zero deviations. — ✅ Complete — Shipped 2026-07-03 — cycle: 2026-07-02__release-v6.5|
 |**v4.0+**    |Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
 |**v4.0+**    |Arc 5: Strategy Integrity (remainder)                                 |SI-02 behavioural drift detection, SI-04 strategy version comparison, SI-05 weekly digest — 📋 Planned                                    |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

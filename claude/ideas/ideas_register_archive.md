@@ -1,11 +1,49 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-02
+**Last Updated:** 2026-07-03 (29 rows archived — post-ship closure 2026-07-02__release-v6.5)
 
 # Ideas Register Archive — Momentum Trading Assistant
 
 Permanent record of terminal ideas rows retired from `claude/ideas/ideas_register.md`. Append-only — do not edit existing entries.
+
+---
+
+## Archived 2026-07-03 (ideas_housekeeping — post-ship closure 2026-07-02__release-v6.5)
+
+*Terminal classification: Promoted-Backlog (idea lifecycle complete; tracked from here via its backlog item) and Rejected (not strong) — confirmed absent from `rejected_but_strong.md`.*
+
+| Idea ID | Title | Submitter | Window | Submitted At | Status | Park Count | Park Rationale | Step 4 | Step 5 |
+|---------|-------|-----------|--------|--------------|--------|------------|----------------|--------|--------|
+| IDEA-product-owner-20260626-01 | AI chat conversation history persistence across sessions | Product Owner | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-FEAT-55 (gate: >=30 days AI chat usage, clears ~2026-07-25, AND §13 review opened for persistence design) | Backlog (gate-conditional) | N/A |
+| IDEA-product-owner-20260626-02 | Trade entry confirmation: AI-assisted setup thesis digest at order placement | Product Owner | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-FEAT-56 (gate: AI adoption window clears ~2026-07-25; existing AI touchpoints validated first) | Backlog (gate-conditional) | N/A |
+| IDEA-head-of-specs-20260626-02 | Spec coverage gap detection: auto-compare frontend page specs against deployed routes | Head of Specs Team | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-SPEC-63 (gate: Head of Specs Team completes script-design scoping decision) | Backlog (gate-conditional) | N/A |
+| IDEA-director-of-quality-20260626-02 | Playwright test data fixtures and state reset between runs for isolation | Director of Quality | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-QA-71 (gate: first empirical Playwright fixture-isolation failure observed in CI) | Backlog (gate-conditional) | N/A |
+| IDEA-strategy-owner-20260626-01 | Strategy parameter sensitivity analysis framework: systematic pre-process to evaluate §11 parameter changes using historical trade data | Strategy Rules & System Intent Owner | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-FEAT-57 (gate: >=20 closed trades, currently ~15-17, AND Arc 5/6 tooling prerequisite in place) | Backlog (gate-conditional) | N/A |
+| IDEA-finops-20260626-01 | External data provider cost comparison: annual review of data provider costs | FinOps & Resource Architect | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-OPS-84 (gate: annual cadence, first review due >=2027-06-25) | Backlog (gate-conditional) | N/A |
+| IDEA-finops-20260626-02 | Compute cost trending by feature area: partition Render dyno costs by feature area | FinOps & Resource Architect | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-OPS-85 (gate: BLG-OPS-74 Anthropic API cost logging ships) | Backlog (gate-conditional) | N/A |
+| IDEA-backend-engineering-20260626-02 | Backend request tracing: per-request trace ID propagation across routers/services | Backend Engineering Patterns Owner | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-BE-42 (gate: demonstrated multi-service call failure requiring cross-service tracing to diagnose) | Backlog (gate-conditional) | N/A |
+| IDEA-base44-frontend-20260626-02 | Prompt template versioning: track which version of the Base44 generation prompt produced each delivered component | Base44 Frontend Prompt Owner | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-GOV-156 (gate: >=3 Base44 prompt draft revisions within a single release cycle) | Backlog (gate-conditional) | N/A |
+| IDEA-data-model-20260626-01 | AI interaction history data model: schema design for persisting user chat sessions (§13-compliant) | Data Model & Domain Schema Owner | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-SPEC-65 (gate: same §13 review + AI adoption window as BLG-FEAT-55) | Backlog (gate-conditional) | N/A |
+| IDEA-data-model-20260626-02 | Trade annotation model: schema for user-authored annotations on individual trades | Data Model & Domain Schema Owner | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-FEAT-58 (gate: Arc 4 PO-02 data model established, ~2026-10-20) | Backlog (gate-conditional) | N/A |
+| IDEA-financial-reporting-20260626-01 | AI-assisted monthly P&L narrative: optional AI-generated commentary for monthly P&L report | Financial Reporting & Records Owner | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-FEAT-59 (gate: AI adoption window clears ~2026-07-25) | Backlog (gate-conditional) | N/A |
+| IDEA-frontend-specs-20260626-01 | AI chat conversation persistence spec: frontend specification for persisting and displaying chat session history | Frontend Specifications & UX Documentation Owner | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-SPEC-66 (gate: same §13 review gate as BLG-FEAT-55/BLG-SPEC-65) | Backlog (gate-conditional) | N/A |
+| IDEA-head-of-engineering-20260626-02 | Frontend bundle size optimization assessment: assess current React bundle size and heavy dependencies | Head of Engineering | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-FE-83 (gate: user-reported performance issue OR profiling data indicates bundle-size impact) | Backlog (gate-conditional) | N/A |
+| IDEA-head-of-ux-20260626-01 | AI chat UI interaction study protocol: 5-question user research protocol to assess chat advisor usage | Head of UX & Design | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-FE-84 (gate: AI adoption window clears ~2026-07-25, stabilised usage pattern) | Backlog (gate-conditional) | N/A |
+| IDEA-metrics-20260626-02 | AI chat engagement metric: sessions per week, questions per session, and response acceptance rate | Metrics Definitions & Analytics Owner | IW-20260626-01 | 2026-06-26 | Promoted-Backlog | 2 | BLG-FEAT-60 (gate: AI adoption window clears ~2026-07-25) | Backlog (gate-conditional) | N/A |
+| IDEA-api-contracts-20260702-02 | API contract deprecation marker convention | API Contracts & Documentation Owner | IW-20260702-01 | 2026-07-02 | Promoted-Backlog | - | BLG-GOV-154 (no gate — immediately actionable) | Backlog (gate-conditional) | N/A |
+| IDEA-backend-engineering-20260702-01 | Ticker/market input sanitisation regression suite | Backend Engineering Patterns Owner | IW-20260702-01 | 2026-07-02 | Promoted-Backlog | - | BLG-QA-69 (no gate — immediately actionable; merges IDEA-qa-lead-20260702-01) | Backlog (gate-conditional) | N/A |
+| IDEA-backend-engineering-20260702-02 | Database read-path audit for deprecated tables | Backend Engineering Patterns Owner | IW-20260702-01 | 2026-07-02 | Promoted-Backlog | - | BLG-BE-41 (no gate — immediately actionable) | Backlog (gate-conditional) | N/A |
+| IDEA-base44-frontend-20260702-02 | Disclaimer component extraction | Base44 Frontend Prompt Owner | IW-20260702-01 | 2026-07-02 | Promoted-Backlog | - | BLG-FE-81 (no gate — immediately actionable) | Backlog (gate-conditional) | N/A |
+| IDEA-cybersecurity-20260702-02 | Rate-limit bypass test | Cybersecurity & Trust Lead | IW-20260702-01 | 2026-07-02 | Promoted-Backlog | - | BLG-SEC-09 (no gate — immediately actionable) | Backlog (gate-conditional) | N/A |
+| IDEA-frontend-specs-20260702-01 | Open Positions panel spec backfill | Frontend Specifications & UX Documentation Owner | IW-20260702-01 | 2026-07-02 | Promoted-Backlog | - | BLG-SPEC-62 (no gate — immediately actionable) | Backlog (gate-conditional) | N/A |
+| IDEA-head-of-ux-20260702-02 | Colour contrast audit sweep | Head of UX & Design | IW-20260702-01 | 2026-07-02 | Promoted-Backlog | - | BLG-FE-82 (no gate — immediately actionable) | Backlog (gate-conditional) | N/A |
+| IDEA-metrics-20260702-01 | Signal correctness fix impact measurement | Metrics Definitions & Analytics Owner | IW-20260702-01 | 2026-07-02 | Promoted-Backlog | - | BLG-QA-70 (no gate — immediately actionable) | Backlog (gate-conditional) | N/A |
+| IDEA-pmo-lead-20260626-02 | Post-ship closure duration metric: track time from cycle close to closure complete in velocity_metrics.md | PMO Lead | IW-20260626-01 | 2026-06-26 | Rejected | 2 | Not strong — velocity_metrics.md already captures sprint performance adequately; no unmet gate motivates a new metric. | Reject (not strong) | N/A |
+| IDEA-challenger-20260626-02 | Governance overhead ceiling enforcement mechanism: formal quarterly review of G+D+P% against 40% ceiling | Challenger | IW-20260626-01 | 2026-06-26 | Rejected | 2 | Not strong — STEP 4.0 gate-condition re-check found BLG-GOV-131 (referenced gate) shipped v6.1 2026-06-23, missed by the prior cycle's re-check. Mandatory re-evaluation: superseded by the already-live STEP 7.1 Skill-Silo Alert mechanism, which fires every scheduled rebalance — a stricter cadence than the proposed quarterly review. | Reject (not strong) - gate cleared, mandatory re-eval | N/A |
+| IDEA-director-of-hr-20260626-02 | Role capacity documentation: formal record of which governance routines require which roles | Director of HR | IW-20260626-01 | 2026-06-26 | Rejected | 2 | Not strong — role capacity remains implicit in run manifests at current governance maturity; no unmet gate. | Reject (not strong) | N/A |
+| IDEA-qa-lead-20260702-01 | Regression suite gap check for BLG-SEC-01/02 | QA Lead | IW-20260702-01 | 2026-07-02 | Rejected | - | Not strong — duplicate scope, merged into BLG-QA-69 (IDEA-backend-engineering-20260702-01). | Reject (not strong) | N/A |
+| IDEA-qa-testing-20260702-02 | Dark spec resolution follow-up | QA & Testing Owner | IW-20260702-01 | 2026-07-02 | Rejected | - | Not strong — superseded by existing tracked item BLG-QA-64 (12 dark specs, filed v6.2). | Reject (not strong) | N/A |
 
 ---
 

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-03 (session — 2 new item(s) added: BLG-QA-72, BLG-QA-73)
+**Last Updated:** 2026-07-03 (groom backlog, post-ship closure 2026-07-02__release-v6.5 — 8 items archived: BLG-GOV-157/158/159, BLG-OPS-83, TEST-GAP-EPIC-03-v64, BLG-QA-61, BLG-FE-46, BLG-FEAT-41; v6.5 release slice ephemeral section removed)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -278,27 +278,6 @@ No metric tracks whether entries were executed within the planned entry zone. `e
 - Gate condition verified by Product Owner before sprint planning
 
 ---
-
-### BLG-FEAT-41 — Claude thesis adoption rate metric
-**Priority:** P3 (Low)
-**Type:** Product Feature / Analytics
-**Owner:** Metrics Definitions & Analytics Owner
-**Source:** IDEA-metrics-analytics-20260525-02 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~0.5 day)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-The Claude thesis generation feature (shipped v4.0) writes to the setup_thesis field on trade plans. There is no metric tracking whether generated theses are accepted, edited, or discarded. Adoption rate is a useful early signal of feature value and cost-per-use justification.
-
-**Scope**
-- Define metric: thesis_adoption_rate = trade_plans_with_non-empty_setup_thesis_at_entry / trade_plans_with_thesis_generated
-- Requires comparing claude_audit_log (thesis generated) against trade_plan final setup_thesis at position entry
-- Document in metrics_definitions.md
-
-**Acceptance Criteria**
-- Metric defined in metrics_definitions.md
-- Query approach documented (claude_audit_log join trade_plans)
-- Reviewed by Financial Reporting & Records Owner and Product Owner
 
 ---
 
@@ -639,27 +618,6 @@ Arc5ComplianceSection.js (shipped v4.0) displays 5 compliance metrics. Arc 6 wil
 - Gate condition verified before sprint planning
 
 ---
-
-### BLG-FE-46 — Claude thesis generation user feedback mechanism
-**Priority:** P3 (Low)
-**Type:** Frontend / UX
-**Owner:** Base44 Frontend; Head of UX & Design
-**Source:** IDEA-base44-frontend-20260525-02 — Promoted-Backlog cycle 2026-05-25__scheduled (DL-034)
-**Effort:** S (~1 day)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-The Claude thesis generation button (shipped v4.0) produces a thesis and populates the setup_thesis field. There is no feedback mechanism: the user cannot signal whether the generated thesis was useful, edited heavily, or discarded. Without feedback, the system cannot track thesis quality or improve prompt engineering over time.
-
-**Scope**
-- Simple feedback UI on thesis generation: "Useful / Not useful" binary or a brief edit indicator
-- Data stored in claude_audit_log or a lightweight feedback table
-- Does not require a full feedback loop — MVP is a binary signal
-
-**Acceptance Criteria**
-- Feedback mechanism available after thesis generation
-- Feedback data persisted (table or audit log field)
-- UX reviewed by Head of UX & Design before sprint planning
 
 ---
 
@@ -2773,23 +2731,6 @@ Arc 4 AI-driven features (PO-02/03/04) introduce Playwright test challenges not 
 
 ---
 
-### BLG-QA-61 — Review signals_scenarios.md against ST-01 signal sizing model changes
-**Priority:** P3 (Low)
-**Type:** QA / Test Coverage
-**Owner:** QA & Testing Owner; Director of Quality
-**Source:** v6.0 delivery verification (TSG-v60-01) — signals_scenarios.md listed in execution_state.json test_scenarios for EPIC-01 but not referenced as run in QA evidence; ST-01 removed cash-allocation model and replaced with risk-based sizing
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v6.1 (before next sprint touching signal generation)
-
-**Problem**
-`docs/testing/signals_scenarios.md` documents broader signal domain scenarios. ST-01 (v6.0) removed the cash-allocation model for `suggested_shares` and replaced it with `size_position()` per strategy_rules.md §4.1. Any scenario in `signals_scenarios.md` that asserts a specific `suggested_shares` value based on the old cash-allocation formula (cash / n_signals) will now produce incorrect expected values. These scenarios were not run in v6.0 QA — `tests/test_signal_sizing.py` (new) covered the story-specific ACs, but broader domain regression via `signals_scenarios.md` was not confirmed.
-
-**Acceptance Criteria**
-- QA & Testing Owner reviews each scenario in `docs/testing/signals_scenarios.md` that references `suggested_shares`
-- Any scenario with stale cash-allocation-based expected values is updated to reflect the risk-based formula output
-- Confirmed "no changes needed" or updated scenarios committed before next sprint touching signal generation
-- Review outcome noted in next sprint's QA evidence or as a backlog closure note
-
 ---
 
 ### BLG-OPS-72 — AI API cost model for Arc 4 journal intelligence features
@@ -3317,28 +3258,6 @@ All market data (OHLCV, signals, news) is sourced exclusively from Alpaca and Ya
 
 ---
 
-### BLG-OPS-83 — Add v6.4 endpoint to api_performance_baseline.md
-**Priority:** P3 (Low)
-**Type:** Operations / Performance Baseline
-**Owner:** Infrastructure & Operations Owner
-**Source:** Post-ship closure 2026-07-02__release-v6.4 — endpoint drift advisory (v6.4 new endpoint not registered in api_performance_baseline.md v2.9)
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v6.5
-
-**Problem**
-One new GET endpoint shipped in v6.4 is not registered in `docs/ops/api_performance_baseline.md`:
-- `GET /strategy/benchmark/open-positions` (EPIC-03 BLG-FEAT-54)
-
-**Scope**
-- Register the endpoint in api_performance_baseline.md with estimated latency characteristics
-- Run minimum 5 warm requests against production (or staging, if deployed) to establish p50/p95 baselines
-- Set regression threshold per §22.2/§22.3 dynamic-2x pattern (the precedent used for the v6.3 endpoint registration, BLG-OPS-82)
-
-**Acceptance Criteria**
-- AC-01: Endpoint registered in api_performance_baseline.md with measured p50/p95
-- AC-02: Regression threshold documented
-- AC-03: Infrastructure & Operations Owner sign-off
-
 ---
 
 ### BLG-FE-77 — Refactor `Watchlist.js` to ESLint compliance
@@ -3365,30 +3284,6 @@ One new GET endpoint shipped in v6.4 is not registered in `docs/ops/api_performa
 - Playwright E2E watchlist specs continue to pass
 
 ---
-
-### TEST-GAP-EPIC-03-v64 — Playwright coverage for Strategy Benchmark Panel 0 (Open Positions) rendering
-**Priority:** P3 (Low)
-**Type:** Test Coverage / QA
-**Owner:** QA & Testing Owner
-**Source:** v6.4 EPIC-03 ST-08 sprint execution (2026-07-02)
-**Effort:** XS (<0.5 day)
-**Provisional-Target:** v6.5
-
-**Problem**
-ST-08 (BLG-FEAT-54, v6.4) added a new "Panel 0 — Open Positions" section to the Strategy Benchmark page with an observable rendering AC (AC-01: panel appears whenever ≥1 unrealized position exists, showing a one-line summary and per-position table). No Playwright test was scoped for Panel 0 this sprint — ST-13 (TEST-GAP-EPIC-03) closed the pre-existing Panels 1/3 gap but was explicitly scoped to exclude Panel 0. AC-01 was cleared by code review only this sprint (v6.4 EPIC-03 QA evidence log, engine sign-off), per the CLAUDE.md §2 frontend testing gate.
-
-**Scope**
-- Playwright test(s) for `tests/e2e/strategy-benchmark.spec.js` covering Panel 0 conditional rendering (≥1 open position renders the panel; 0 positions omits it entirely), the one-line summary format/colour, and the per-position table columns
-- Playwright test covering the Market filter narrowing Panel 0 rows (Year filter explicitly does not apply to Panel 0, per ux_spec.md)
-- Playwright test covering the Panel 0 API-error state ("Open positions temporarily unavailable.")
-
-**Acceptance Criteria**
-- Playwright test covering ST-08/AC-01 (Panel 0 conditional rendering — ≥1 position renders, 0 positions omits)
-- Playwright test covering the Market-filter-only interaction (no Year filter dependency)
-- Playwright test covering the API-error state message
-- Tests added to `tests/e2e/strategy-benchmark.spec.js`
-
-See `claude/cycles/2026-07-02__release-v6.4/qa_evidence_EPIC-03.md` (ST-08 entry) for the code-review-only disposition this item follows up on.
 
 ---
 
@@ -3436,74 +3331,9 @@ No versioning exists to track which version of the Base44 generation prompt prod
 
 ---
 
-### BLG-GOV-157 — OPERATIONAL_GUIDE/prompt version-sync drift
-**Priority:** P3 (Low)
-**Type:** Governance
-**Owner:** Head of Specs Team
-**Source:** AUD-2026-07-01 (claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md) — AUD-2026-07-01-001, -003, -016 — 2026-07-02
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v6.5
-
-**Problem**
-Three version-sync drift findings remain open from the AUD-2026-07-01 lifecycle audit (v6.4's BLG-GOV-150/151/152/153 closed 7 of 17 findings; these 3 were not among them): (AUD-001) `OPERATIONAL_GUIDE.md` header, §14 self-row, and Change Log top entry have shown three different version numbers at various points — the self-row/Change-Log sync pattern needs a durable fix, not just a one-off correction; (AUD-003) §14's Roadmap Rebalance Prompt row must be verified against `roadmap_prompt.md`'s actual current version (v8.0 as of the 2026-07-02__scheduled rebalance) rather than trusted as already correct; (AUD-016) the Metrics owner role name drifts from `team_charter.md`.
-
-**Scope**
-- Verify and correct `OPERATIONAL_GUIDE.md` header, §14 self-row, and Change Log top entry all show the same current version number
-- Verify §14 Roadmap Rebalance Prompt row matches `roadmap_prompt.md`'s actual current version
-- Correct the Metrics owner role name in `OPERATIONAL_GUIDE.md` (or wherever the drift was found) to match `team_charter.md` exactly
-
-**Acceptance Criteria**
-- AC-01: `OPERATIONAL_GUIDE.md` header, §14 self-row, and Change Log top entry show one consistent version number
-- AC-02: §14 Roadmap Rebalance Prompt row matches `roadmap_prompt.md`'s actual current version
-- AC-03: Metrics owner role name matches `team_charter.md` exactly
-
 ---
 
-### BLG-GOV-158 — README.md document hygiene sweep
-**Priority:** P3 (Low)
-**Type:** Documentation / Governance
-**Owner:** Head of Specs Team
-**Source:** AUD-2026-07-01 (claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md) — AUD-2026-07-01-006, -009, -010, -015 — 2026-07-02
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.5
-
-**Problem**
-Four document-hygiene findings remain open from the AUD-2026-07-01 lifecycle audit. (AUD-006, Medium effort — flagged in the audit's own SLA section as a P0-escalation risk if still open at the next audit) README §4 documents only 1 of the 13 governed routines listed in `CLAUDE.md` §1; (AUD-009) README §2 references a file path that no longer exists; (AUD-010) `README.md` is 101 days stale; (AUD-015) `pmo_lead.md` header fields are not bolded, unlike other agent charter files.
-
-**Scope**
-- Update README §4 to list all current governed routines per `CLAUDE.md` §1's command table
-- Correct README §2's file path reference to an existing path
-- Refresh `README.md` content and Last Updated date to reflect current system state
-- Bold `pmo_lead.md` header fields (Owner/Status/etc.) to match the Class 6 header convention used by other agent charter files
-
-**Acceptance Criteria**
-- AC-01: README §4 lists all governed routines currently in `CLAUDE.md` §1
-- AC-02: README §2's referenced file path exists
-- AC-03: `README.md` Last Updated date and content reflect current state
-- AC-04: `pmo_lead.md` header fields bolded consistent with other agent charter files
-
 ---
-
-### BLG-GOV-159 — Lifecycle/prompt/state wording and consistency fixes
-**Priority:** P3 (Low)
-**Type:** Governance / Lifecycle
-**Owner:** Head of Specs Team
-**Source:** AUD-2026-07-01 (claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md) — AUD-2026-07-01-007, -012, -013 — 2026-07-02
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v6.5
-
-**Problem**
-Three governance wording/consistency findings remain open from the AUD-2026-07-01 lifecycle audit: (AUD-007) the staging-only AC protocol has carried an unresolved ambiguity for 2 audit cycles; (AUD-012) the `FRICTION_LOAD` formula's wording does not specify its time window precisely; (AUD-013) a state file's prior open-item count contradicts the audit config's own figure for the same metric.
-
-**Scope**
-- Resolve the staging-only AC protocol ambiguity with explicit wording in the relevant governance prompt
-- Clarify the `FRICTION_LOAD` formula's time window in its defining prompt/spec
-- Reconcile the contradicting open-item counts between the state file and the audit config to a single consistent value
-
-**Acceptance Criteria**
-- AC-01: Staging-only AC protocol ambiguity resolved with explicit wording
-- AC-02: `FRICTION_LOAD` formula wording specifies its time window
-- AC-03: State file and audit config open-item counts match
 
 ---
 
@@ -3831,25 +3661,6 @@ No view partitions Render dyno compute cost by feature area. Meaningful cost tre
 
 ---
 
-### v6.5 Release Slice — 2026-07-02__release-v6.5
-
-<!-- release-plan-marker: RP:v6.5:2026-07-02__release-v6.5 -->
-
-**Status:** Planning
-**Cycle folder:** `claude/cycles/2026-07-02__release-v6.5/`
-**Canonical backlog slice:** `claude/cycles/2026-07-02__release-v6.5/stage4_backlog_slice.md`
-
-| ID | Title | Story | EPIC |
-|----|-------|-------|------|
-| BLG-GOV-157 | Lifecycle/prompt/state wording and consistency fixes | ST-01 | EPIC-01 |
-| BLG-GOV-158 | README.md document hygiene sweep | ST-02 | EPIC-01 |
-| BLG-GOV-159 | OPERATIONAL_GUIDE/prompt version-sync drift | ST-03 | EPIC-01 |
-| BLG-OPS-83 | Add v6.4 endpoint to `api_performance_baseline.md` | ST-04 | EPIC-02 |
-| TEST-GAP-EPIC-03-v64 | Playwright coverage for Strategy Benchmark Panel 0 | ST-05 | EPIC-02 |
-| BLG-QA-61 | Review `signals_scenarios.md` against ST-01 signal sizing changes | ST-06 | EPIC-02 |
-| BLG-FE-46 | Claude thesis generation user feedback mechanism | ST-07 | EPIC-03 |
-| BLG-FEAT-41 | Claude thesis adoption rate metric | ST-08 | EPIC-03 |
-
-*This is an ephemeral section (see Placement Rule at top of file) — to be removed by the next `groom backlog` run after this cycle closes.*
+*Release Slice v6.5 removed — cycle 2026-07-02__release-v6.5 closed 2026-07-03. Archived canonical home: claude/cycles/2026-07-02__release-v6.5/stage4_backlog_slice.md*
 
 ---

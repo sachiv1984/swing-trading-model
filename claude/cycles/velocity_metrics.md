@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-07-02 (post-ship closure 2026-07-02__release-v6.4)
+**Last Updated:** 2026-07-03 (post-ship closure 2026-07-02__release-v6.5)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -72,8 +72,9 @@
 | v6.2  | 13      | 13        | 1.00     | All 13 stories done; zero deviations; full delivery of both Sprint 1 (EPIC-01: production strategy parity cluster — trailing stops, rebalance exits, inv-vol sizing, risk-off alerts) and Sprint 2 (EPIC-02: AI intelligence layer — daily briefing, chat advisor); EPIC-03 governance/QA debt closed (BLG-GOV-135/136, BLG-OPS-75, BLG-QA-62); §13 SRB-v1.7 advisory-only compliance confirmed; BLG-QA-64 filed (12 dark specs); Verified |
 | v6.3  | 15      | 15        | 1.00     | All 15 stories done; zero deviations; full delivery of all 3 EPICs (EPIC-01: AI correctness + security + compliance; EPIC-02: QA infrastructure; EPIC-03: Strategy Benchmark + UX); LP-02 validated — Sprint 2 L-effort pattern works; TSG-v63-01/02 filed; BLG-OPS-82 endpoint drift advisory; Verified |
 | v6.4  | 13      | 13        | 1.00     | All 13 stories done; zero deviations; full delivery of all 3 EPICs (EPIC-01: production correctness fast-track BLG-BE-40 + AI security hardening BLG-SEC-01/02; EPIC-02: AUD-2026-07-01 lifecycle-audit remediation, all 4 clusters BLG-GOV-150–153 including 2-cycle-carried FI-P3-01/FI-P3-02/FI-P4-01 re-targets closed; EPIC-03: Strategy Benchmark Open Positions panel BLG-FEAT-54 Skill-Silo pull-forward + UX contrast fixes + endpoint baseline + Playwright coverage); BLG-OPS-83 filed (v6.4 endpoint drift advisory); 0 delegations; 0 returns; Verified |
+| v6.5  | 8       | 8         | 1.00     | All 8 stories done; zero deviations; full delivery of all 3 EPICs (EPIC-01: AUD-2026-07-01 governance/lifecycle debt clearance — audit.py config sync, README hygiene, OPERATIONAL_GUIDE/prompt version-sync drift; EPIC-02: v6.4 endpoint baseline registration + Playwright coverage for Strategy Benchmark Panel 0 + signals_scenarios.md review resolving 3-cycle BLG-QA-61 carry-forward; EPIC-03: Claude thesis feedback mechanism + adoption rate metric); 0 delegations; 0 returns; Verified |
 
-**Rolling 6-cycle average (v5.9–v6.4):** 1.00
+**Rolling 6-cycle average (v6.0–v6.5):** 1.00
 
 ---
 
