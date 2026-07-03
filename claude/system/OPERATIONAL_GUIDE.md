@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.72
-**Last Updated:** 2026-07-02
+**Version:** 4.73
+**Last Updated:** 2026-07-03
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.50)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.51)
 
 ### 8.1 Invocation
 
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.72 |
-| Last Updated | 2026-07-02 |
+| Version | 4.73 |
+| Last Updated | 2026-07-03 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1467,7 +1467,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.39 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.12 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.50 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.51 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.6 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.1 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.73 | 2026-07-03 | **Sprint execution 2026-07-02__release-v6.5 STEP 5.4 action-now — execution_prompt.md v3.50→v3.51: STEP 4 resume-sync branch check added (LL-v6.4-P3-01).** §8 source prompt header v3.50→v3.51. §14 Execution Engine Source v3.50→v3.51. §14 Version 4.72→4.73/2026-07-03. Change: STEP 4's "on session resume — merge gate state sync" sub-step now requires an explicit `git branch --show-current` check (and `git checkout main && git pull` if not already on `main`) before performing the merge-gate sync write, mirroring STEP 5's branch-ordering gate. Resolves a deferred v6.4 Phase 3 lessons-learnt friction item targeted at v6.5 (this cycle) — a fresh session resuming after an EPIC merge could previously land on any `exec/**` branch and orphan the sync write there. Applied action-now during this cycle's own STEP 5.4 rather than deferred again, per §6.2. Authority: Head of Specs Team (sprint execution 2026-07-02__release-v6.5, 2026-07-03). |
 | 4.72 | 2026-07-02 | **Roadmap rebalance 2026-07-02__scheduled — roadmap_prompt.md v7.9→v8.0: three lessons-learnt patches applied.** §6 source prompt header updated v7.9→v8.0. §13 Artefact Register Roadmap Rebalance Prompt row updated v7.9→v8.0. §14 Roadmap Engine Source v7.9→v8.0. §14 Version 4.71→4.72/2026-07-02. Changes: (1, Friction Item 2 deferred patch from `2026-07-01__scheduled`, due this cycle) STEP 11.2 — deferred-patch Target fields must name a cycle_id or absolute date, not a bare release version alone; if a release version is given, a concrete date estimate must also be recorded. (2, this cycle's Friction Item 1) STEP 4.0 gate-condition re-check — explicit two-step check added (grep `backlog.md`, then `backlog_archive.md` before concluding "not shipped"); corrects the false-negative that let `2026-07-01__scheduled` record BLG-GOV-131 as unshipped when it had in fact shipped v6.1. (3, this cycle's Friction Item 3) STEP 7.1 Skill-Silo Alert — wording clarified that a single U-item pull-forward is not guaranteed to correct the rolling ceiling breach across a heavy governance/debt window; PO should consider multiple U-items after 2+ consecutive Alert cycles. Authority: Head of Specs Team (roadmap rebalance 2026-07-02__scheduled). |
 | 4.71 | 2026-07-02 | **Post-ship closure 2026-07-02__release-v6.4 STEP 8 immediate action — execution_prompt.md v3.49→v3.50: qa_signed_off elevated from advisory to hard merge-gate requirement (DF-02).** §8 source prompt header v3.49→v3.50. §14 Execution Engine Source v3.49→v3.50. §14 Version 4.70→4.71/2026-07-02. Change: §3.2.B `qa_signed_off` note upgraded from "Advisory (OA-1/ST-01)" to a hard requirement; STEP 4 merge gate table gained a new row — `qa_signed_off = true (execution_state.json)` must be set, independent of the PR-comment QA sign-off row. Resolves a deferred v6.3 Phase 3 lessons-learnt patch (DF-02) not applied at v6.4 planning time (1st missed target); applied now rather than re-deferred, per post-ship closure's non-deferrable immediate-action rule. Cross-check also confirmed DF-01 and DF-05 (v6.3 carry-forward) are already satisfied by pre-existing patches (LL-v3.7-EX-01 and AUD-2026-06-22-001 respectively) — no further action required; DF-06 confirmed applied in sprint_backlog.md this cycle. Authority: Head of Specs Team (v6.4 post-ship closure, 2026-07-02). |
 | 4.70 | 2026-07-02 | **Post-ship closure 2026-07-02__release-v6.4 STEP 8 immediate action — qa_evidence_template.md v1.5→v1.6: signer format requirement made explicit.** §14 QA Evidence Template v1.5→v1.6. §14 Version 4.69→4.70/2026-07-02. Change: new authoring note added to the Standard Sign-Off Block specifying the exact set of compliant `Signed off by:` values (`Director of Quality`, `Sprint Execution Engine (autonomous class)`, `Sprint Execution Engine (agent-mediated, <Role Name> role — §X.Y)`, or the two delegated-QA aggregate formats). Resolves a deferred v6.3 Phase 4 lessons-learnt patch that was not applied at v6.4 planning time (1st missed target); applied now per post-ship closure's non-deferrable immediate-action rule rather than deferred a second time. Authority: Head of Specs Team (v6.4 post-ship closure, 2026-07-02). |

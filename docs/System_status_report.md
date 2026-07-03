@@ -1,9 +1,33 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.5
-**Last Updated:** 2026-07-02
+**Version:** 4.6
+**Last Updated:** 2026-07-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-07-02__release-v6.5
+**Date:** 2026-07-03
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Audit remediation cluster: `claude/audit.py` config block (PRIOR_AUDIT_ID/PRIOR_AUDIT_OPEN_ITEMS/PRIOR_SCORES/COMPLETED_CYCLES) reconciled with AUD-2026-07-01 (BLG-GOV-157); README.md document hygiene and OPERATIONAL_GUIDE/prompt version-sync drift verified pre-met on main from v6.4 work (BLG-GOV-158, BLG-GOV-159) | `claude/audit.py`#FRICTION_LOAD; `claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md`#11; `claude/README.md`; `claude/system/OPERATIONAL_GUIDE.md`#14 | None |
+| EPIC-02 | Backlog debt clearance: `GET /strategy/benchmark/open-positions` added to the API performance baseline with a live production measurement (p50=524.5ms, p95=600.0ms, BLG-OPS-83); 6 new Playwright scenarios for Strategy Benchmark Panel 0 conditional rendering (TEST-GAP-EPIC-03-v64); `signals_scenarios.md` reviewed against the risk-based sizing model — no stale references found, resolving the 3-cycle BLG-QA-61 carry-forward | `docs/ops/api_performance_baseline.md`#24; `tests/e2e/strategy-benchmark.spec.js`; `docs/testing/signals_scenarios.md` | None |
+| EPIC-03 | Claude thesis feedback loop: thumbs-up/down feedback control on the Trade Plan form gated on a new `isClaudeDraft` flag, persisted to `trade_plans.thesis_feedback` (BLG-FE-46); `thesis_adoption_rate` metric definition (adopted-thesis-at-entry / thesis-generated-plans) with corrected `gemini_audit_log.plan_id` join key (BLG-FEAT-41) | `docs/design/2026-07-02__release-v6.5/thesis-feedback-mechanism/ux_spec.md`; `docs/specs/data_model.md`#DS-09; `tests/e2e/trade-plan.spec.js`; `docs/specs/metrics_definitions.md`#Thesis Adoption Rate | None |
+
+### Capabilities deferred or returned
+
+None — all 8 stories (ST-01 through ST-08) delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (autonomous class, 2026-07-03), qa_evidence_EPIC-02.md (autonomous class, 2026-07-03), qa_evidence_EPIC-03.md (agent-mediated Director of Quality role, 2026-07-03)
+- Deviations filed: None
+- Test scenarios referenced: tests/e2e/strategy-benchmark.spec.js (SC-SB-05..07); tests/e2e/trade-plan.spec.js (SC-TP-23a..f)
 
 ---
 
