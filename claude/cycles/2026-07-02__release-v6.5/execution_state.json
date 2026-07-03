@@ -88,7 +88,7 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "blocked",
       "branch": "exec/2026-07-02__release-v6.5/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
@@ -98,60 +98,65 @@
       "stories": {
         "ST-04": {
           "title": "Add v6.4 endpoint to api_performance_baseline.md (BLG-OPS-83)",
-          "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
+          "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 903,
           "branch": "exec/2026-07-02__release-v6.5/EPIC-02",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-07-03T08:10:00Z",
+          "unblock_criteria": "ESC-EXEC-20260703-01 resolved: Infrastructure & Operations Owner either supplies a working X-API-Key/RENDER_API_KEY, performs the live staging/production measurement directly, or Product Owner accepts risk and defers to next cycle.",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Reclassified from autonomous to delegated_decision — AC-01 requires ≥5 warm authenticated staging/production requests, but this execution environment has no working X-API-Key (not in ~/.api_keys, blank in .env.production/.env.staging by design) and the stored RENDER_API_KEY returns 401 from Render's own API. Network egress itself is confirmed working (DNS + TLS + unauthenticated /health succeed on both staging and production). See ESC-EXEC-20260703-01."
         },
         "ST-05": {
           "title": "Playwright coverage for Strategy Benchmark Panel 0 rendering (TEST-GAP-EPIC-03-v64)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 904,
           "branch": "exec/2026-07-02__release-v6.5/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "74a00514",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
+          "completed_utc": "2026-07-03T10:52:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-07-02__release-v6.4/open-positions-panel/ux_spec.md",
+            "tests/e2e/strategy-benchmark.spec.js"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC-01 (SC-SB-05a/b), AC-02 (SC-SB-06a/b), AC-03 (SC-SB-07a) all added. All 13 tests in the spec file (6 new + 7 pre-existing) verified passing locally against the dev server (npx playwright test, chromium) before commit. No deviation from ux_spec.md."
         },
         "ST-06": {
           "title": "Review signals_scenarios.md against ST-01 signal sizing model changes (BLG-QA-61)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 905,
           "branch": "exec/2026-07-02__release-v6.5/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "ca4573ef",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
+          "completed_utc": "2026-07-03T11:05:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/testing/signals_scenarios.md"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC-01/AC-02: reviewed all scenarios — zero references to suggested_shares/sizing/cash-allocation found; no stale scenarios to update. AC-03: outcome ('no changes needed') committed as signals_scenarios.md v1.2->v1.3 changelog entry. Resolves 3-cycle carry-forward (v6.2->v6.3->v6.4). No deviation."
         }
       }
     },
@@ -206,10 +211,10 @@
     }
   },
 
-  "blocked_items": [],
+  "blocked_items": ["EPIC-02/ST-04"],
   "delegated_items": [],
-  "completed_items": ["EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-01/ST-03"],
-  "open_escalations": [],
+  "completed_items": ["EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-01/ST-03", "EPIC-02/ST-05", "EPIC-02/ST-06"],
+  "open_escalations": ["ESC-EXEC-20260703-01"],
 
   "merge_gate": {
     "epics_merged": [],
