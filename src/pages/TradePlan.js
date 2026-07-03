@@ -8,7 +8,7 @@ import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
 import SignalContextPanel, { buildSignalPrePopulation } from "../components/trades/SignalContextPanel";
 import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
-import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon, ShieldCheck } from "lucide-react";
+import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon, ShieldCheck, ThumbsUp, ThumbsDown } from "lucide-react";
 import { TradePlanStatusBadge } from "./TradePlans";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -280,6 +280,7 @@ const EMPTY_FORM = {
   checklist_items: DEFAULT_CHECKLIST_ITEMS.map((i) => ({ ...i })),
   status: "draft",
   pre_entry_override_acknowledged: false,
+  thesis_feedback: null,
   planned_quantity: "",
   planned_entry_price: "",
   planned_stop_price: "",
@@ -337,6 +338,12 @@ export default function TradePlan() {
   });
   const [saved, setSaved] = useState(false);
   const [isAiDraft, setIsAiDraft] = useState(false);
+  // isClaudeDraft: true only for "Improve with AI" (Claude Haiku 4.5) output — the
+  // pre-existing "Generate thesis" button is a client-side template fill (isAiDraft
+  // also true there) with no model call, so it must never trigger the feedback
+  // control (ux_spec.md "Trigger Condition" note, ST-07/BLG-FE-46, v6.5).
+  const [isClaudeDraft, setIsClaudeDraft] = useState(false);
+  const [feedbackJustGiven, setFeedbackJustGiven] = useState(false);
   const hasUnsavedAiChanges = useRef(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [showAbandonModal, setShowAbandonModal] = useState(false);
@@ -390,6 +397,7 @@ export default function TradePlan() {
         checklist_items: checklistItems,
         checklist_completed: checklistItems.every((i) => i.checked),
         status: existingPlan.status || "draft",
+        thesis_feedback: existingPlan.thesis_feedback || null,
       });
     }
   }, [existingPlan]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -713,8 +721,9 @@ export default function TradePlan() {
                     signal: linkedSignal,
                     headlines: newsForGenerator,
                   });
-                  setForm((prev) => ({ ...prev, setup_thesis: draft }));
+                  setForm((prev) => ({ ...prev, setup_thesis: draft, thesis_feedback: null }));
                   setIsAiDraft(true);
+                  setIsClaudeDraft(false);
                 }}
                 className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 transition-colors"
                 title="Generate thesis from setup type and signal data"
@@ -764,9 +773,12 @@ export default function TradePlan() {
                             ...(f.regime_context_at_entry ? { regime_context_at_entry: f.regime_context_at_entry } : {}),
                             ...(f.r_target != null ? { r_target: f.r_target } : {}),
                             checklist_items: updatedChecklist,
+                            thesis_feedback: null,
                           };
                         });
                         setIsAiDraft(true);
+                        setIsClaudeDraft(true);
+                        setFeedbackJustGiven(false);
                         hasUnsavedAiChanges.current = true;
                       }
                     } catch (_) {}
@@ -779,6 +791,52 @@ export default function TradePlan() {
               )}
             </div>
           </div>
+          {isClaudeDraft && (
+            <div className="flex items-center gap-3" data-testid="thesis-feedback-control">
+              {form.thesis_feedback && feedbackJustGiven ? (
+                <span className="text-xs text-slate-500" data-testid="thesis-feedback-confirmation">
+                  Thanks — feedback recorded.
+                </span>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    data-testid="thesis-feedback-useful"
+                    disabled={!!form.thesis_feedback}
+                    aria-pressed={form.thesis_feedback === "useful"}
+                    onClick={() => {
+                      setForm((prev) => ({ ...prev, thesis_feedback: "useful" }));
+                      setFeedbackJustGiven(true);
+                      setTimeout(() => setFeedbackJustGiven(false), 2000);
+                    }}
+                    className={`flex items-center gap-1 text-xs transition-colors disabled:cursor-not-allowed ${
+                      form.thesis_feedback === "useful" ? "text-emerald-400" : "text-slate-500 hover:text-slate-400"
+                    }`}
+                  >
+                    <ThumbsUp size={12} />
+                    Useful
+                  </button>
+                  <button
+                    type="button"
+                    data-testid="thesis-feedback-not-useful"
+                    disabled={!!form.thesis_feedback}
+                    aria-pressed={form.thesis_feedback === "not_useful"}
+                    onClick={() => {
+                      setForm((prev) => ({ ...prev, thesis_feedback: "not_useful" }));
+                      setFeedbackJustGiven(true);
+                      setTimeout(() => setFeedbackJustGiven(false), 2000);
+                    }}
+                    className={`flex items-center gap-1 text-xs transition-colors disabled:cursor-not-allowed ${
+                      form.thesis_feedback === "not_useful" ? "text-rose-400" : "text-slate-500 hover:text-slate-400"
+                    }`}
+                  >
+                    <ThumbsDown size={12} />
+                    Not useful
+                  </button>
+                </>
+              )}
+            </div>
+          )}
           <textarea
             data-testid="setup-thesis-textarea"
             className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 resize-none"
@@ -787,6 +845,7 @@ export default function TradePlan() {
             onChange={(e) => {
               setForm((prev) => ({ ...prev, setup_thesis: e.target.value }));
               if (isAiDraft) setIsAiDraft(false);
+              if (isClaudeDraft) setIsClaudeDraft(false);
             }}
             placeholder="Describe the setup — what technical or fundamental condition makes this a candidate?"
           />

@@ -56,6 +56,7 @@ class TradePlanCreate(BaseModel):
     checklist_items: list = []
     status: str = "draft"
     pre_entry_override_acknowledged: Optional[bool] = None
+    thesis_feedback: Optional[str] = None
     # Pre-entry check inputs — persisted so they survive save/reload
     planned_quantity: Optional[int] = None
     planned_entry_price: Optional[float] = None
@@ -80,6 +81,7 @@ class TradePlanUpdate(BaseModel):
     status: Optional[str] = None
     abandonment_reason: Optional[str] = None
     pre_entry_override_acknowledged: Optional[bool] = None
+    thesis_feedback: Optional[str] = None
     planned_quantity: Optional[int] = None
     planned_entry_price: Optional[float] = None
     planned_stop_price: Optional[float] = None

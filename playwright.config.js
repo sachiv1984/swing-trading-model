@@ -72,6 +72,11 @@ module.exports = defineConfig({
       // Ensure deterministic API base URL for route interception
       REACT_APP_API_URL: 'http://localhost:8000',
       REACT_APP_DEV_FAKE_AUTH: 'true',
+      // Gates the "Improve with AI" button's client-side HAS_AI check
+      // (src/pages/TradePlan.js) so it renders in tests. The real
+      // POST /trade-plans/generate-plan call is always intercepted via
+      // page.route() — this value is never used to call a live API.
+      REACT_APP_ANTHROPIC_API_KEY: 'playwright-ui-gate-only',
       BROWSER: 'none',
       // eslint.config.mjs (ESLint v9 flat config) conflicts with react-scripts'
       // eslint-config-react-app loader; disabling prevents the webpack error
