@@ -188,7 +188,6 @@ None — all 8 items from the authoritative backlog slice enter scope.
 |--------|-------|---------|
 | BLG-ID cross-reference defect: ST-01/ST-03 backlog-ref labels are swapped relative to actual `backlog.md` entries (content/AC unaffected) | Head of Specs Team | No |
 | LL-v2.0-P4-2 test scenario gap: ST-07 new user-facing control has no Playwright AC yet; set `execution_state.json` EPIC-03 `test_scenarios = pending` at Sprint Execution STEP 0 | QA & Testing Owner | No |
-| `pip-audit` not installed in this environment; install before Sprint Execution's own vulnerability scan step | Head of Engineering / Infrastructure & Operations Owner | No |
 
 ---
 

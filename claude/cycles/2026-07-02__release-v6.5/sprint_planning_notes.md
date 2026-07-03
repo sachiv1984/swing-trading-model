@@ -53,7 +53,7 @@ No overlap — no rebase-ordering constraint required at merge time beyond the g
 
 ## Pre-Sprint Vulnerability Scan
 
-`pip-audit` is not installed in this environment (`pip-audit: command not found`; confirmed no `pip_audit` module via `python3 -m pip_audit` / `pip3 show pip-audit`). **Unavailable — flagged.** Recommend installing `pip-audit` before sprint execution so the STEP -1.8-equivalent scan in `execution_prompt.md` is not also skipped. Advisory only — does not block sprint planning.
+`pip-audit -r backend/requirements.txt --format=json`: **clean** — no known vulnerabilities found across all 60 resolved backend dependencies (fastapi 0.135.1, anthropic 0.105.2, sqlalchemy 2.0.23, etc.). Initial invocation failed (`pip-audit: command not found` — not on this shell's `PATH`); the tool is installed via pipx (`/root/.local/bin/pip-audit`, v2.10.1) and was re-run directly at that path. No High/Critical CVEs; no PO/Head of Engineering risk acceptance required.
 
 ## Carry-Forward Items
 
@@ -75,9 +75,7 @@ Recorded per `shared_standards.md §16.8` — advisory only, no halt.
 |--------|-------|----------------------|
 | **BLG-ID cross-reference defect:** `stage4_backlog_slice.md` (and `release_plan.md`, `cycle_summary.md`, and `backlog.md`'s own release-slice mapping table) label ST-01 as `BLG-GOV-157` and ST-03 as `BLG-GOV-159`, but the actual `backlog.md` entries have these titles swapped (`BLG-GOV-157` = "OPERATIONAL_GUIDE/prompt version-sync drift" = ST-03's real content; `BLG-GOV-159` = "Lifecycle/prompt/state wording and consistency fixes" = ST-01's real content). ST content/ACs are internally correct and unaffected — only the upstream ID label is wrong. Risk: post-ship closure / `groom backlog` may archive the wrong BLG item against each story. Not fixable within Sprint Planning's write scope (`stage4_backlog_slice.md` sealed; `backlog.md` grooming out of scope). | Head of Specs Team | No |
 | **LL-v2.0-P4-2 test scenario gap:** ST-07 (delegated_frontend) introduces a new user-facing control (thesis feedback 👍/👎) with no Playwright AC defined at planning time. Per CLAUDE.md's frontend Playwright hard gate, Sprint Execution must either add Playwright coverage for ST-07 AC-01, or file a backlog item via `/backlog-add` before the PR opens if staging sign-off is deferred. Set EPIC-03 `test_scenarios = "pending — QA & Testing Owner to author before next sprint on this domain"` in `execution_state.json` at Sprint Execution STEP 0. | QA & Testing Owner | No |
-| **pip-audit unavailable:** install `pip-audit` before Sprint Execution's own vulnerability scan step runs, to avoid a second consecutive skipped scan. | Head of Engineering / Infrastructure & Operations Owner | No |
-
-No action above is a seal blocker (`Blocker? No` for all three) — all are advisory/process-hygiene items for Head of Specs Team, QA & Testing Owner, and Head of Engineering respectively, to be actioned during or after Sprint Execution.
+No action above is a seal blocker (`Blocker? No` for both) — both are advisory/process-hygiene items for Head of Specs Team and QA & Testing Owner respectively, to be actioned during or after Sprint Execution.
 
 ## Capacity WARN Acknowledgement
 
