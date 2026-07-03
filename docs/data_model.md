@@ -1,13 +1,14 @@
 **Owner:** Head of Engineering
-**Class:** Living Document (Class 2)
-**Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-15
-**Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Class:** Class 2 — Supporting
+**Status:** Deprecated
+**Canonical Source:** docs/specs/data_model.md
+**Last Updated:** 2026-07-03
 
 ---
 
-# Data Model Reference
+# Data Model Reference (Deprecated)
+
+**This document is deprecated.** It forked from the canonical data model instead of pointing to it, so its content (the `trade_history.plan_vs_reality` and `trade_plans.planned_stop_price` fields below) went undocumented in the canonical source for several cycles. That content has now been backfilled into `docs/specs/data_model.md` (see DS-10). Refer to that document going forward — the content below is retained only so existing links from historical cycle records (e.g. `claude/cycles/2026-05-15__release-v3.5/`) still resolve to something.
 
 This document records the canonical data model for the swing trading system database. Each section describes a table, its key fields, and any schema migrations applied.
 

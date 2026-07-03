@@ -3,7 +3,7 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.10
+**Version:** 2.11
 **Last Updated:** 2026-07-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1202,6 +1202,48 @@ COMMIT;
 
 ---
 
-**Document Version:** 2.10
+## DS-10 — Backfill: plan_vs_reality (trade_history) and planned_stop_price (trade_plans) (v2.11, 2026-07-03)
+
+**Story:** ST-05 (EPIC-02, v3.5) — PO-01 Plan vs Reality
+
+**Documentation backfill — no new migration applied.** These two columns were migrated into production on 2026-05-15 (v3.5) via `ensure_plan_vs_reality_columns()` at startup, but were only ever documented in `docs/data_model.md` — a non-canonical Class 2 (Supporting) file that had drifted into an independent fork rather than pointing at this document as its canonical source. That file is now marked Deprecated; this entry backfills the gap so the schema is documented in one place.
+
+### Schema (already live since v3.5)
+
+```sql
+ALTER TABLE trade_history ADD COLUMN IF NOT EXISTS plan_vs_reality JSONB;
+ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS planned_stop_price NUMERIC(20, 6);
+```
+
+### Field Reference
+
+| Table | Field | Type | Description |
+|-------|-------|------|-------------|
+| `trade_history` | `plan_vs_reality` | JSONB | Plan vs Reality comparison record (PO-01). Populated by `plan_vs_reality_service` on trade close. NULL if no trade plan was linked. |
+| `trade_plans` | `planned_stop_price` | NUMERIC(20,6) | Planned stop price at plan creation. Optional; NULL for plans created before v3.5. Per `docs/product/arc4_data_requirements.md` §3.1 Decision 1. |
+
+#### `plan_vs_reality` JSONB structure
+
+| Key | Type | Description |
+|-----|------|-------------|
+| plan_linked | boolean | Whether a trade plan was linked |
+| trade_plan_id | uuid | ID of the linked trade plan |
+| r_achieved | float \| null | Actual R-multiple achieved: (exit - entry) / (entry - initial_stop) |
+| r_target | float \| null | Planned R target from trade plan |
+| r_delta | float \| null | r_achieved - r_target |
+| entry_delta_pct | float \| null | Entry timing accuracy: (actual - planned) / planned * 100. Null until planned_entry_price snapshot is implemented. |
+| stop_discipline | string | "on_plan" / "minor_deviation" / "deviation" / "not_captured" |
+| exit_reason_actual | string \| null | Actual exit reason |
+| exit_reason_planned | string \| null | Planned early exit conditions (free text) |
+| lifecycle_state_at_exit | string \| null | Position lifecycle state at time of exit |
+| plan_adherence_flag | string | "on_plan" / "entry_deviation" / "stop_deviation" / "early_exit" |
+| deviation_note | string \| null | User-authored deviation note (populated via ST-06 frontend view) |
+
+**Sign-off:**
+- Data Model Domain & Schema Owner: Accepted — 2026-07-03 (backfill, agent-mediated)
+
+---
+
+**Document Version:** 2.11
 **Maintained By:** Data Model & Domain Schema Owner
 **Last Review:** 2026-07-03
