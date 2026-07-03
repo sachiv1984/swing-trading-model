@@ -161,51 +161,69 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-02__release-v6.5/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-02__release-v6.5/qa_evidence_EPIC-03.md",
-      "test_scenarios": "pending — QA & Testing Owner to author before next sprint on this domain",
+      "test_scenarios": ["tests/e2e/trade-plan.spec.js"],
       "stories": {
         "ST-07": {
           "title": "Claude thesis generation user feedback mechanism (BLG-FE-46)",
-          "classification": "delegated_frontend",
-          "status": "not_started",
-          "assigned_to": "Base44 Frontend Prompt Owner",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 906,
           "branch": "exec/2026-07-02__release-v6.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "355a2ef7",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
+          "completed_utc": "2026-07-03T11:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-07-02__release-v6.5/thesis-feedback-mechanism/ux_spec.md",
+            "docs/specs/data_model.md#DS-09",
+            "tests/e2e/trade-plan.spec.js"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "required_by": "Data Model & Domain Schema Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-07-03T11:35:00Z"
+          },
+          "notes": "Reclassified delegated_frontend -> autonomous (LL-v2.3-EX-02) — no delegation record existed yet; implemented directly (src/pages/TradePlan.js), matching this repo's established autonomous frontend delivery pattern. AC-02 persistence landed on trade_plans.thesis_feedback (DS-09) rather than the ux_spec.md's recommended claude_audit_log field, because that table has no plan_id column (same finding as ST-08) and the spec frames its recommendation as non-binding. No new endpoint created (rides existing POST/PUT trade-plans payload) so no openapi.yaml/API-contract obligation. 6 new Playwright scenarios (SC-TP-23a-f) added and verified passing locally, plus full regression of trade-plan.spec.js (29 tests) and 3 adjacent spec files after the playwright.config.js HAS_AI env change. No deviation from ux_spec.md intent."
         },
         "ST-08": {
           "title": "Claude thesis adoption rate metric (BLG-FEAT-41)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 907,
           "branch": "exec/2026-07-02__release-v6.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "9e4f3db5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
+          "completed_utc": "2026-07-03T11:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Thesis Adoption Rate"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "required_by": "Metrics Definitions & Analytics Owner + Financial Reporting & Records Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": ["Added dangling-plan_id caveat note per subagent review"],
+            "cleared_utc": "2026-07-03T11:08:00Z"
+          },
+          "notes": "AC-01/AC-02 defined per docs/specs/metrics_definitions.md#Thesis Adoption Rate. Corrected sprint scope's literal 'claude_audit_log' reference to the actual join table (gemini_audit_log has plan_id; claude_audit_log does not) — verified against backend/database.py and backend/services/gemini_service.py. AC-03: Metrics Definitions & Analytics Owner + Financial Reporting & Records Owner agent-mediated sign-off Approved. Product Owner review pending human PR acceptance (PO sign-off is never agent-mediated per §5.3) — will be satisfied by the EPIC-03 PR-level Product Owner acceptance at merge gate."
         }
       }
     }
@@ -213,7 +231,7 @@
 
   "blocked_items": ["EPIC-02/ST-04"],
   "delegated_items": [],
-  "completed_items": ["EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-01/ST-03", "EPIC-02/ST-05", "EPIC-02/ST-06"],
+  "completed_items": ["EPIC-01/ST-01", "EPIC-01/ST-02", "EPIC-01/ST-03", "EPIC-02/ST-05", "EPIC-02/ST-06", "EPIC-03/ST-07", "EPIC-03/ST-08"],
   "open_escalations": ["ESC-EXEC-20260703-01"],
 
   "merge_gate": {
