@@ -601,3 +601,141 @@ test('SC-TP-22: AI thesis generation UI contains no Gemini references', async ({
   const pageContent = await page.locator('body').innerText();
   expect(pageContent.toLowerCase()).not.toContain('gemini');
 });
+
+// ---------------------------------------------------------------------------
+// SC-TP-23 — Claude thesis feedback mechanism (ST-07, BLG-FE-46, v6.5)
+// docs/design/2026-07-02__release-v6.5/thesis-feedback-mechanism/ux_spec.md
+// ---------------------------------------------------------------------------
+
+const GENERATE_PLAN_RESPONSE = {
+  status: 'ok',
+  data: {
+    available: true,
+    fields: {
+      setup_thesis: 'Claude-generated thesis: AAPL breaking out above 200 EMA on rising volume.',
+      entry_rationale: 'Momentum confirmed by relative strength vs SPY.',
+      confirmation_criteria: 'Close above prior resistance on 2x avg volume.',
+    },
+  },
+};
+
+async function mockImproveWithAi(page, payload = GENERATE_PLAN_RESPONSE) {
+  await page.route(`${API}/trade-plans/generate-plan`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(payload) })
+  );
+}
+
+// mockFallback registers a catch-all `${API}/` route; Playwright resolves
+// overlapping routes in most-recently-registered-first order, so any
+// specific mock (e.g. mockImproveWithAi) must be (re-)registered AFTER
+// mockFallback runs inside this helper, not before it's called — otherwise
+// the catch-all silently wins and the specific mock is never reached.
+async function gotoTradePlanForAi(page, { improveWithAi } = {}) {
+  await mockFallback(page);
+  if (improveWithAi) await mockImproveWithAi(page, improveWithAi === true ? undefined : improveWithAi);
+  await mockMarketStatus(page);
+  await page.route(new RegExp(`${API}/news/AAPL`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
+  );
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 10000 });
+}
+
+test('SC-TP-23a: feedback control is not shown for template-only "Generate thesis" (not a Claude draft)', async ({ page }) => {
+  await gotoTradePlanForAi(page);
+  await expect(page.getByTestId('generate-thesis-btn')).toBeVisible({ timeout: 8000 });
+
+  await page.getByTestId('generate-thesis-btn').click();
+  await expect(page.getByTestId('ai-draft-badge')).toBeVisible({ timeout: 3000 });
+
+  // Template-only draft sets isAiDraft but must never set isClaudeDraft — the
+  // feedback control must not render (ux_spec.md "Trigger Condition" note).
+  await expect(page.getByTestId('thesis-feedback-control')).toHaveCount(0);
+});
+
+test('SC-TP-23b: feedback control appears after "Improve with AI" (Claude draft) and not before', async ({ page }) => {
+  await gotoTradePlanForAi(page, { improveWithAi: true });
+
+  const improveBtn = page.getByTestId('improve-with-ai-btn');
+  await expect(improveBtn).toBeVisible({ timeout: 8000 });
+  await expect(page.getByTestId('thesis-feedback-control')).toHaveCount(0);
+
+  await improveBtn.click();
+  await expect(page.getByTestId('thesis-feedback-control')).toBeVisible({ timeout: 5000 });
+  await expect(page.getByTestId('thesis-feedback-useful')).toBeVisible();
+  await expect(page.getByTestId('thesis-feedback-not-useful')).toBeVisible();
+});
+
+test('SC-TP-23c: selecting "Useful" highlights it, disables both options, and shows the confirmation', async ({ page }) => {
+  await gotoTradePlanForAi(page, { improveWithAi: true });
+
+  await page.getByTestId('improve-with-ai-btn').click();
+  await expect(page.getByTestId('thesis-feedback-useful')).toBeVisible({ timeout: 5000 });
+
+  await page.getByTestId('thesis-feedback-useful').click();
+
+  await expect(page.getByTestId('thesis-feedback-confirmation')).toBeVisible({ timeout: 1000 });
+  await expect(page.getByTestId('thesis-feedback-confirmation')).toHaveText('Thanks — feedback recorded.');
+
+  // After the confirmation fades (~2s), both options remain visible but disabled,
+  // with the selected option highlighted (ux_spec.md "Post-selection").
+  await expect(page.getByTestId('thesis-feedback-useful')).toBeVisible({ timeout: 3000 });
+  await expect(page.getByTestId('thesis-feedback-useful')).toBeDisabled();
+  await expect(page.getByTestId('thesis-feedback-useful')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('thesis-feedback-not-useful')).toBeDisabled();
+});
+
+test('SC-TP-23d: selecting "Not useful" highlights it and disables both options (single-shot per draft)', async ({ page }) => {
+  await gotoTradePlanForAi(page, { improveWithAi: true });
+
+  await page.getByTestId('improve-with-ai-btn').click();
+  await expect(page.getByTestId('thesis-feedback-not-useful')).toBeVisible({ timeout: 5000 });
+
+  await page.getByTestId('thesis-feedback-not-useful').click();
+  await expect(page.getByTestId('thesis-feedback-confirmation')).toBeVisible({ timeout: 1000 });
+
+  await expect(page.getByTestId('thesis-feedback-not-useful')).toBeVisible({ timeout: 3000 });
+  await expect(page.getByTestId('thesis-feedback-not-useful')).toBeDisabled();
+  await expect(page.getByTestId('thesis-feedback-not-useful')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('thesis-feedback-useful')).toBeDisabled();
+});
+
+test('SC-TP-23e: editing the thesis textarea after feedback hides the control entirely', async ({ page }) => {
+  await gotoTradePlanForAi(page, { improveWithAi: true });
+
+  await page.getByTestId('improve-with-ai-btn').click();
+  await expect(page.getByTestId('thesis-feedback-useful')).toBeVisible({ timeout: 5000 });
+  await page.getByTestId('thesis-feedback-useful').click();
+  await expect(page.getByTestId('thesis-feedback-confirmation')).toBeVisible({ timeout: 1000 });
+
+  await page.getByTestId('setup-thesis-textarea').click();
+  await page.keyboard.press('End');
+  await page.keyboard.type(' edited by trader');
+
+  await expect(page.getByTestId('thesis-feedback-control')).toHaveCount(0);
+  await expect(page.getByTestId('ai-draft-badge')).not.toBeVisible();
+});
+
+test('SC-TP-23f: thesis_feedback is included in the save payload once feedback is given', async ({ page }) => {
+  await gotoTradePlanForAi(page, { improveWithAi: true });
+
+  let savedPayload = null;
+  await page.route(`${API}/trade-plans`, (route) => {
+    if (route.request().method() === 'POST') {
+      savedPayload = route.request().postDataJSON();
+      route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(TRADE_PLAN_SAVED) });
+    } else {
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) });
+    }
+  });
+
+  await page.getByTestId('improve-with-ai-btn').click();
+  await expect(page.getByTestId('thesis-feedback-useful')).toBeVisible({ timeout: 5000 });
+  await page.getByTestId('thesis-feedback-useful').click();
+  await expect(page.getByTestId('thesis-feedback-confirmation')).toBeVisible({ timeout: 1000 });
+
+  await page.getByRole('button', { name: /save plan/i }).click();
+  await expect(page.locator('[class*="emerald"]').filter({ hasText: /saved successfully/i })).toBeVisible({ timeout: 8000 });
+
+  expect(savedPayload.thesis_feedback).toBe('useful');
+});

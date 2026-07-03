@@ -975,7 +975,8 @@ def ensure_trade_plans_table():
                     checklist_completed BOOLEAN NOT NULL DEFAULT FALSE,
                     checklist_items JSONB NOT NULL DEFAULT '[]'::JSONB,
                     status VARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'closed')),
-                    pre_entry_override_acknowledged BOOLEAN
+                    pre_entry_override_acknowledged BOOLEAN,
+                    thesis_feedback VARCHAR(20) CHECK (thesis_feedback IN ('useful', 'not_useful'))
                 )
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_trade_plans_portfolio ON trade_plans(portfolio_id)")
@@ -994,10 +995,11 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                    (portfolio_id, position_id, ticker, market, setup_type, setup_thesis, entry_rationale,
                     regime_context_at_entry, r_target, early_exit_conditions, confirmation_criteria,
                     checklist_completed, checklist_items, status, pre_entry_override_acknowledged,
+                    thesis_feedback,
                     planned_quantity, planned_entry_price, planned_stop_price,
                     signal_id, risk_percent_used, portfolio_value_at_entry,
                     pre_entry_validation_snapshot, effective_settings_snapshot)
-                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb)
                    RETURNING *""",
                 (
                     portfolio_id,
@@ -1015,6 +1017,7 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                     _json(data.get("checklist_items", [])),
                     data.get("status", "draft"),
                     data.get("pre_entry_override_acknowledged"),
+                    data.get("thesis_feedback"),
                     data.get("planned_quantity"),
                     data.get("planned_entry_price"),
                     data.get("planned_stop_price"),
@@ -1065,7 +1068,7 @@ def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict
         "position_id", "setup_type", "setup_thesis", "entry_rationale", "regime_context_at_entry",
         "r_target", "early_exit_conditions", "confirmation_criteria",
         "checklist_completed", "checklist_items", "status", "abandonment_reason",
-        "pre_entry_override_acknowledged",
+        "pre_entry_override_acknowledged", "thesis_feedback",
         "planned_quantity", "planned_entry_price", "planned_stop_price",
     }
     fields = {k: v for k, v in data.items() if k in allowed}
@@ -1222,6 +1225,20 @@ def ensure_regime_context_text_column():
         with conn.cursor() as cur:
             cur.execute(
                 "ALTER TABLE trade_plans ALTER COLUMN regime_context_at_entry TYPE TEXT"
+            )
+        conn.commit()
+
+
+def ensure_thesis_feedback_column():
+    """Add thesis_feedback VARCHAR(20) to trade_plans table (idempotent).
+
+    ST-07 (EPIC-03, v6.5, BLG-FE-46) — Claude thesis generation feedback mechanism.
+    Nullable; 'useful' | 'not_useful'. Feeds ST-08's thesis_adoption_rate metric.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS thesis_feedback VARCHAR(20)"
             )
         conn.commit()
 

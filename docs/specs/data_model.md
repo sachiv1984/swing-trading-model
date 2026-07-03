@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.8
-**Last Updated:** 2026-05-18
+**Version:** 2.10
+**Last Updated:** 2026-07-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1163,6 +1163,45 @@ where `initial_risk_gbp = (entry_price - stop_price_at_entry) × shares / fx_rat
 
 ---
 
-**Document Version:** 2.9
+## DS-09 — Add thesis_feedback to trade_plans (v2.10, 2026-07-03)
+
+**Story:** ST-07 (EPIC-03, v6.5) — BLG-FE-46
+
+Adds one nullable column to `trade_plans` to persist the Claude thesis generation feedback control (`docs/design/2026-07-02__release-v6.5/thesis-feedback-mechanism/ux_spec.md`). Feeds ST-08's `thesis_adoption_rate` metric (`docs/specs/metrics_definitions.md#Thesis Adoption Rate`).
+
+### Up Migration (v2.9 → v2.10)
+
+```sql
+BEGIN;
+ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS thesis_feedback VARCHAR(20)
+    CHECK (thesis_feedback IN ('useful', 'not_useful'));
+COMMIT;
+```
+
+### Verification
+
+```sql
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'trade_plans' AND column_name = 'thesis_feedback';
+-- Expected: 1 row, data_type=character varying, is_nullable=YES
+```
+
+### Down Migration (v2.10 → v2.9)
+
+```sql
+BEGIN;
+ALTER TABLE trade_plans DROP COLUMN IF EXISTS thesis_feedback;
+COMMIT;
+```
+
+**Persistence approach note:** the UX spec recommended a `thesis_feedback` field on `claude_audit_log` (attributed to the specific generation call). That table has no `plan_id` column (see `docs/specs/metrics_definitions.md#Thesis Adoption Rate` Query Approach note for the same finding at ST-08), so attributing feedback to a specific `claude_audit_log` row was not viable without a schema change to that table too. Storing on `trade_plans` directly avoids a second migration, requires no new endpoint (feedback rides the existing `POST /trade-plans` / `PUT /trade-plans/{id}` payload), and is sufficient for AC-02 ("feedback data persisted") — the spec's own wording frames the `claude_audit_log` approach as "a recommendation, not a hard constraint."
+
+**Sign-off:**
+- Data Model Domain & Schema Owner: Accepted — 2026-07-03 (agent-mediated, v6.5 sprint execution)
+
+---
+
+**Document Version:** 2.10
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-06-19
+**Last Review:** 2026-07-03

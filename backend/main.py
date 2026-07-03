@@ -262,6 +262,12 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_override_acknowledged_column FAILED at startup: %s", _e)
     try:
+        from database import ensure_thesis_feedback_column
+        ensure_thesis_feedback_column()
+        _log.info("ensure_thesis_feedback_column: OK")
+    except Exception as _e:
+        _log.error("ensure_thesis_feedback_column FAILED at startup: %s", _e)
+    try:
         from database import ensure_signals_watchlisted_status
         ensure_signals_watchlisted_status()
         _log.info("ensure_signals_watchlisted_status: OK")
