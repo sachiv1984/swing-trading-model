@@ -1,11 +1,11 @@
 **Owner:** QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.2
-**Last Updated:** 2026-05-18
+**Version:** 1.3
+**Last Updated:** 2026-07-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Derived from:** `docs/specs/frontend/pages/signals.md` v0.1; `docs/specs/api_contracts/signal_endpoints.md` v1.1
-**Sprint:** 2026-03-18__release-v2.1 — ST-18 (closes TEST-GAP-SIG-01); 2026-04-17__release-v2.8 — ST-03
+**Sprint:** 2026-03-18__release-v2.1 — ST-18 (closes TEST-GAP-SIG-01); 2026-04-17__release-v2.8 — ST-03; 2026-07-02__release-v6.5 — ST-06 (BLG-QA-61 review, no changes needed)
 
 ---
 
@@ -277,6 +277,7 @@ These scenarios verify Signals page behaviour against the canonical specificatio
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-07-03 | ST-06 (BLG-QA-61, EPIC-02, v6.5): Reviewed all scenarios in this document against the risk-based `size_position()` sizing formula that replaced the cash-allocation model in v6.0 ST-01. **Outcome: no changes needed.** Confirmed by direct text search — this document contains zero references to `suggested_shares`, position sizing, or cash allocation anywhere in its 5 scenario groups (§3 Signals page controls, §4 Add to Watchlist CTA, §5 Supplementary Indicator Fields); §6 "Out of Scope" already excludes signal score/sizing calculation, which this file has never covered (that logic is tested in `tests/test_signal_sizing.py`, added alongside the v6.0 ST-01 change). No scenario in this document required updating. QA & Testing Owner; Director of Quality. |
 | 1.2 | 2026-05-18 | ST-02 (BLG-FE-33, v3.7): Added §4 Add to Watchlist CTA scenarios — SC-SIG-WL-01 (happy path), SC-SIG-WL-02 (duplicate 409), SC-SIG-WL-03 (no Add Position regression). Playwright: tests/e2e/signals-add-to-watchlist.spec.js. QA & Testing Owner. |
 | 1.1 | 2026-04-18 | ST-03 (EPIC-02, v2.8): Added §4 Supplementary Indicator Field scenarios — SC-SIG-IND-01, SC-SIG-IND-02. Updated spec reference to signal_endpoints.md v1.1. Existing scenarios not modified. QA & Testing Owner. |
 | 1.0 | 2026-03-18 | Initial version — SC-SIG-01 through SC-SIG-03 authored for ST-18. QA & Testing Owner. |

@@ -1,19 +1,20 @@
 /**
  * Strategy Benchmark Page — Scenario Coverage
- * TEST-GAP-EPIC-03 (v6.4, EPIC-03, ST-13)
+ * TEST-GAP-EPIC-03 (v6.4, EPIC-03, ST-13); Panel 0 gap closed by
+ * TEST-GAP-EPIC-03-v64 (v6.5, EPIC-02, ST-05).
  *
  * v6.3 ST-11 shipped the Strategy Benchmark page with test_scenarios: "pending"
  * (per LL-v2.0-P4-2) — zero Playwright coverage for its 3 panels, sticky
  * filters, toggle modes, and exit reason badges. See verification_report.md §6
  * (cycle 2026-06-26__release-v6.3, TSG-v63-02).
  *
- * Scope: Panels 1 and 3 only (per sprint_backlog.md — Panel 0 Open Positions
- * from ST-08/v6.4 is out of scope for this story; its Playwright gap is
- * tracked separately). The open-positions endpoint is stubbed to return zero
- * positions so Panel 0 renders nothing and does not interfere with Panel 1/3
- * assertions.
+ * Panel 0 (Open Positions, v6.4 EPIC-03 BLG-FEAT-54) was deferred to this
+ * sprint per the v6.4 QA evidence log (code review only, backlog item filed).
+ * Covered here: conditional rendering (SC-SB-05), Market-filter-only
+ * interaction with no Year dependency (SC-SB-06), and the API-error state
+ * (SC-SB-07). See docs/design/2026-07-02__release-v6.4/open-positions-panel/ux_spec.md.
  *
- * Covers: SC-SB-01, SC-SB-02, SC-SB-03, SC-SB-04
+ * Covers: SC-SB-01, SC-SB-02, SC-SB-03, SC-SB-04, SC-SB-05, SC-SB-06, SC-SB-07
  *
  * Component: src/pages/StrategyBenchmark.js
  * ROUTING NOTE: App uses HashRouter. Navigate via page.goto('/#/StrategyBenchmark')
@@ -75,13 +76,30 @@ const OPEN_POSITIONS_EMPTY = {
   summary: { count: 0, total_unrealized_pnl_gbp: null },
 };
 
+const OPEN_POSITIONS_WITH_DATA = {
+  filters: { market: 'ALL' },
+  open_positions: [
+    {
+      ticker: 'TSLA',
+      market: 'US',
+      entry_date: '2026-06-01',
+      entry_price: 210.0,
+      current_price: 228.5,
+      unrealized_pnl_gbp: 18.5,
+      unrealized_pnl_pct: 8.81,
+      days_held: 32,
+    },
+  ],
+  summary: { count: 1, total_unrealized_pnl_gbp: 18.5 },
+};
+
 // ---------------------------------------------------------------------------
 // Shared mock setup
 // ---------------------------------------------------------------------------
 
-async function mockBaseEndpoints(page, { summary = SUMMARY_WITH_ACTUAL, trades = TRADES_RESPONSE } = {}) {
+async function mockBaseEndpoints(page, { summary = SUMMARY_WITH_ACTUAL, trades = TRADES_RESPONSE, openPositions = OPEN_POSITIONS_EMPTY } = {}) {
   await page.route(/\/strategy\/benchmark\/open-positions/, (route) =>
-    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(OPEN_POSITIONS_EMPTY) })
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(openPositions) })
   );
   await page.route(/\/strategy\/benchmark\/summary/, (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(summary) })
@@ -273,5 +291,102 @@ test.describe('SC-SB-04 — Panel 3 toggle modes and exit reason badges', () => 
     // Playwright strict mode).
     await expect(table.getByText('BT', { exact: true })).toHaveCount(3);
     await expect(table.getByText('Live', { exact: true })).toHaveCount(1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-SB-05 — Panel 0 conditional rendering (TEST-GAP-EPIC-03-v64, AC-01)
+// ---------------------------------------------------------------------------
+
+test.describe('SC-SB-05 — Panel 0 conditional rendering', () => {
+  test('SC-SB-05a: panel is omitted entirely when there are 0 open positions', async ({ page }) => {
+    await mockBaseEndpoints(page, { openPositions: OPEN_POSITIONS_EMPTY });
+    await page.goto('/#/StrategyBenchmark');
+    await expect(page.getByTestId('benchmark-panel-1')).toBeVisible({ timeout: 10000 });
+
+    await expect(page.getByTestId('benchmark-panel-0')).toHaveCount(0);
+  });
+
+  test('SC-SB-05b: panel renders with the position row when ≥1 open position exists', async ({ page }) => {
+    await mockBaseEndpoints(page, { openPositions: OPEN_POSITIONS_WITH_DATA });
+    await page.goto('/#/StrategyBenchmark');
+
+    const panel = page.getByTestId('benchmark-panel-0');
+    await expect(panel).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('benchmark-open-positions-summary')).toContainText('1 open position');
+    await expect(page.getByTestId('benchmark-open-position-TSLA')).toBeVisible();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-SB-06 — Panel 0 Market-filter-only interaction (TEST-GAP-EPIC-03-v64, AC-02)
+// ---------------------------------------------------------------------------
+
+test.describe('SC-SB-06 — Panel 0 Market-filter-only interaction', () => {
+  test('SC-SB-06a: selecting a Market re-requests open-positions with the market param', async ({ page }) => {
+    await mockBaseEndpoints(page, { openPositions: OPEN_POSITIONS_WITH_DATA });
+
+    let openPositionsUrl = null;
+    await page.route(/\/strategy\/benchmark\/open-positions/, (route) => {
+      openPositionsUrl = route.request().url();
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(OPEN_POSITIONS_WITH_DATA) });
+    });
+
+    await page.goto('/#/StrategyBenchmark');
+    await expect(page.getByTestId('benchmark-market-uk')).toBeVisible({ timeout: 10000 });
+
+    await page.getByTestId('benchmark-market-uk').click();
+    await page.waitForTimeout(500);
+
+    expect(openPositionsUrl).toContain('market=UK');
+  });
+
+  test('SC-SB-06b: selecting a Year does not add a year param to the open-positions request', async ({ page }) => {
+    await mockBaseEndpoints(page, { openPositions: OPEN_POSITIONS_WITH_DATA });
+
+    let openPositionsUrl = null;
+    await page.route(/\/strategy\/benchmark\/open-positions/, (route) => {
+      openPositionsUrl = route.request().url();
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(OPEN_POSITIONS_WITH_DATA) });
+    });
+
+    await page.goto('/#/StrategyBenchmark');
+    await expect(page.getByTestId('benchmark-year-filter')).toBeVisible({ timeout: 10000 });
+
+    await page.getByTestId('benchmark-year-filter').selectOption('2023');
+    await page.waitForTimeout(500);
+
+    // Open positions are current-state, not year-filtered (ux_spec.md "Filter
+    // Interaction") — the endpoint is still re-requested (fetchData refires
+    // on every year/market change) but must never carry a year query param.
+    expect(openPositionsUrl).not.toBeNull();
+    expect(openPositionsUrl).not.toContain('year=');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SC-SB-07 — Panel 0 API-error state (TEST-GAP-EPIC-03-v64, AC-03)
+// ---------------------------------------------------------------------------
+
+test.describe('SC-SB-07 — Panel 0 API-error state', () => {
+  test('SC-SB-07a: shows "Open positions temporarily unavailable." on a 500 and does not break the rest of the page', async ({ page }) => {
+    await page.route(/\/strategy\/benchmark\/open-positions/, (route) =>
+      route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'Internal Server Error' }) })
+    );
+    await page.route(/\/strategy\/benchmark\/summary/, (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(SUMMARY_WITH_ACTUAL) })
+    );
+    await page.route(/\/strategy\/benchmark\/trades/, (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(TRADES_RESPONSE) })
+    );
+
+    await page.goto('/#/StrategyBenchmark');
+
+    const panel = page.getByTestId('benchmark-panel-0');
+    await expect(panel).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('benchmark-open-positions-error')).toHaveText('Open positions temporarily unavailable.');
+
+    // Rest of the page (Panel 1) must still render normally.
+    await expect(page.getByTestId('benchmark-stat-cards')).toBeVisible();
   });
 });
