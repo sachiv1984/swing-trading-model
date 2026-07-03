@@ -18,5 +18,5 @@ Last Updated: 2026-07-03
 - **Unblock criteria:** Infrastructure & Operations Owner either (a) provides a working `X-API-Key` (or a refreshed `RENDER_API_KEY` with permission to read the service's env vars) in this environment so the engine can complete the measurement, or (b) performs the live 5-sample staging/production timing run directly and records the results in `docs/ops/api_performance_baseline.md` §24 following the §22.2/§22.3 dynamic-2x regression-threshold pattern, or (c) accepts the risk and defers ST-04 to the next cycle (Product Owner authority required for risk acceptance).
 - **SLA due-by:** Next planning checkpoint (Workforce/Capacity trigger type per `shared_standards.md` §4)
 - **Blocks execution:** No (other EPIC-02 items, ST-05/ST-06, are not blocked by this and continue)
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** Resolved by the reporting user 2026-07-03 — the stored `RENDER_API_KEY` (`~/.api_keys`) is in fact the app's `X-API-Key` auth token; the earlier 401 was from querying Render's separate *management* API (`api.render.com`), not the trading-assistant app itself. Confirmed via `curl -H "X-API-Key: $RENDER_API_KEY"` against both staging (404 — endpoint not yet deployed there) and production (200, live data) hosts. Completed the live 5-warm-sample measurement per the BLG-OPS-82 staging-404-fallback precedent: p50=524.5ms, p95=600.0ms, documented in `docs/ops/api_performance_baseline.md` §24. ST-04 unblocked and done.

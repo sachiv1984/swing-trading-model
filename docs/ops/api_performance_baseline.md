@@ -2,9 +2,9 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.9
-**Date:** 2026-07-02
-**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration
+**Version:** 2.10
+**Date:** 2026-07-03
+**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 ---
@@ -1069,10 +1069,62 @@ Signed: [x] Infrastructure & Operations Owner — 2026-07-02
 
 ---
 
+## 24. v6.4 Endpoint Registration — GET /strategy/benchmark/open-positions (ST-04, v6.5 EPIC-02, BLG-OPS-83)
+
+**Date:** 2026-07-03
+**Story:** ST-04 (EPIC-02, v6.5) — BLG-OPS-83
+**Environment:** Production — `https://trading-assistant-api-c0f9.onrender.com` (staging returned 404 — this v6.4 endpoint, like the v6.3 endpoints in §23, has not yet been deployed to `trading-assistant-api-staging.onrender.com`; production confirmed live via `GET /health` → 200 before the run)
+**Method:** 5 warm samples, sequential Python `urllib` GET calls with `X-API-Key` header, same methodology as §18/§19/§23.
+
+### 24.1 Results Table
+
+| Endpoint | Added in | p50 (ms) | p95 (ms) | max (ms) | HTTP | Flag |
+|----------|----------|----------|----------|----------|------|------|
+| GET /strategy/benchmark/open-positions | v6.4 (EPIC-03, BLG-FEAT-54) | 524.5 | 600.0 | 600.0 | 200 | ⚠️ p95>500ms |
+
+**Raw samples (ms):** 568.5, 600.0, 524.5, 514.5, 518.4
+
+**Assessment:** DB-backed aggregation endpoint (`database.get_backtest_open_positions`) returning current open positions with unrealized P&L — lands in the same aggregation-endpoint band documented in §2/§18/§23 for similar multi-field queries, consistent with the free-tier connection-establishment floor (§3), not a new regression. Tight distribution (514.5–600.0ms, 85.5ms spread) indicates stable steady-state latency, not cold-start jitter (service was confirmed warm via `GET /health` before this run).
+
+### 24.2 Regression Threshold
+
+Dynamic 2× threshold methodology per §22.2/§22.3/§23.2 (endpoint already above the flat 500ms baseline):
+
+- `GET /strategy/benchmark/open-positions`: p95 > **1,200.0ms** (2× measured p95 of 600.0ms) triggers review.
+
+### 24.3 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 Endpoint Registration Sign-Off
+
+Environment: Production (trading-assistant-api-c0f9.onrender.com)
+Measurement date: 2026-07-03
+Samples: 5 (warm)
+
+GET /strategy/benchmark/open-positions: p50=524.5ms, p95=600.0ms — ⚠ above
+  500ms flat threshold, consistent with the existing aggregation-endpoint
+  band (§2, §18, §23); regression threshold set at p95>1,200.0ms (2x
+  measured).
+
+Staging (trading-assistant-api-staging.onrender.com) returned 404 —
+this v6.4 endpoint has not yet been deployed to staging (same pattern
+as the v6.3 endpoints in §23; production substitution per the same
+established precedent, not a new standing rule).
+
+ST-04 acceptance criteria met: AC-01 (measured, 5 warm requests),
+AC-02 (regression threshold documented per the §22.2/§22.3 dynamic-2x
+pattern, precedent BLG-OPS-82).
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, autonomous class) — 2026-07-03
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.10 | 2026-07-03 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-04 (v6.5 EPIC-02, BLG-OPS-83): §24 added — GET /strategy/benchmark/open-positions (v6.4, BLG-FEAT-54) registered. Staging returned 404 (endpoint not yet deployed there, same pattern as §23); measured on production instead (5 warm samples): p50=524.5ms, p95=600.0ms. Regression threshold documented per §22.2/§22.3/§23.2 dynamic-2x pattern: p95>1,200.0ms. Resolves ESC-EXEC-20260703-01 (credential gap — resolved once the correct app X-API-Key value was identified). BLG-OPS-83 closed. |
 | 2.9 | 2026-07-02 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-11 (v6.4 EPIC-03, BLG-OPS-82): §23 added — GET /strategy/benchmark/summary, GET /strategy/benchmark/trades, GET /health/scheduler registered. Staging returned 404 (v6.3 not yet deployed there); measured on production instead (5 warm samples each): summary p50=970.1ms p95=972.7ms; trades p50=1,198.1ms p95=1,240.3ms; health/scheduler p50=76.2ms p95=161.8ms. Regression thresholds documented per §22.2/§22.3 dynamic-2x pattern (not §19.2, which sets no threshold). Staging-404 handling departs from §4.2's deferral precedent — deliberate one-off substitution, not a new standing rule (see §23.3). Also corrects a pre-existing header/Document-History version desync (header was still 2.7; last logged change was already 2.8). BLG-OPS-82 closed. |
 | 2.8 | 2026-06-29 | Sprint Execution Engine | ST-14 (v6.3 EPIC-03, BLG-OPS-78): §22.3 added — production timing run complete. POST /ai/daily-briefing p50=10,296ms p95=11,152ms; POST /ai/chat p50=6,258ms p95=7,035ms. 7 warm production samples each. Regression thresholds: daily-briefing p95 > 22,304ms; chat p95 > 14,070ms. BLG-OPS-78 closed. |
 | 2.7 | 2026-06-25 | Sprint Execution Engine | ST-06/ST-08 (v6.2 EPIC-02): §22 added — POST /ai/daily-briefing and POST /ai/chat registered as AI inference endpoints. Timing run deferred to post-deployment; BLG-OPS-78 recommended for live measurement. |
