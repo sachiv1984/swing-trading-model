@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-02 (session — 3 new item(s) added: BLG-GOV-157, BLG-GOV-158, BLG-GOV-159)
+**Last Updated:** 2026-07-03 (session — 2 new item(s) added: BLG-QA-72, BLG-QA-73)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -3569,6 +3569,50 @@ No test data fixtures or state-reset mechanism exists between Playwright runs. N
 **Acceptance Criteria**
 - Fixture isolation tooling implemented once gate condition met
 - Gate condition (demonstrated failure) verified before commencing
+
+---
+
+### BLG-QA-72 — Audit colliding backlog IDs in claude/backlog/backlog.md
+**Priority:** P2 (Medium)
+**Type:** QA / Process Integrity
+**Owner:** Director of Quality; Product Owner
+**Source:** Technical-debt review session — 2026-07-03
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`groom backlog`'s last run flagged "pre-existing duplicate IDs" as known-but-unresolved without naming them. A direct scan confirms real collisions: `BLG-OPS-13` and `BLG-FE-45` each appear 9 times, `BLG-OPS-17`/`BLG-GOV-88`/`BLG-FEAT-55` appear 8 times, `BLG-SPEC-46`/`BLG-QA-42` appear 7 times, plus a dozen more IDs appearing 4–6 times. It is unclear which are legitimate repeated citations in prose versus genuinely duplicate register entries.
+
+**Scope**
+- For each flagged ID, classify occurrences as (a) single canonical entry cited repeatedly in prose — no action, or (b) multiple distinct `### BLG-xxx` entries sharing one ID — needs renumbering/dedup
+- Produce a resolution list for any true collisions found
+
+**Acceptance Criteria**
+- All IDs appearing ≥4 times classified as prose-citation vs. true collision
+- Any true collisions renumbered with no ID reused across backlog.md/backlog_archive.md
+- Next `groom backlog` health report shows 0 unresolved duplicate IDs
+
+---
+
+### BLG-QA-73 — database.py / _DB_STUB_FUNCTIONS manual-sync risk
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** QA & Testing Owner; Backend Engineering Patterns Owner
+**Source:** Technical-debt review session — 2026-07-03
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`backend/database.py` is a 2,529-line module. `tests/conftest.py` maintains a hand-written parallel list (`_DB_STUB_FUNCTIONS`, currently 37 entries) that must list every `database` function imported by `backend/services/position_service.py`, or CI fails with an opaque `ImportError` (this exact failure mode is already codified as a CLAUDE.md rule referencing `BLG-QA-20`). Nothing enforces the two lists stay in sync beyond the rule being followed by hand on every new import.
+
+**Scope**
+- Investigate whether `_DB_STUB_FUNCTIONS` can be derived automatically (e.g. introspecting `database.py`'s public functions, or generating the stub from an explicit `__all__`) instead of hand-maintained
+- If feasible, implement the derivation and remove the manual-sync burden; if not feasible, document why and leave the existing CLAUDE.md rule as the control
+
+**Acceptance Criteria**
+- Decision recorded: automated derivation adopted, or documented as infeasible with reasoning
+- If adopted: adding a new `database` import to `position_service.py` no longer requires a manual `conftest.py` edit, verified by a CI run
+- CLAUDE.md rule updated or retired to match the outcome
 
 ---
 
