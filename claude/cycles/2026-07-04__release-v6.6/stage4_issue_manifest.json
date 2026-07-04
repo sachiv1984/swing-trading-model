@@ -1,0 +1,38 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Colour contrast audit sweep",
+    "epic": "EPIC-01",
+    "description": "Systematic WCAG-AA contrast review across all secondary/disclaimer text surfaces app-wide (BLG-FE-82)",
+    "ac_summary": "Audit completed; findings documented and filed as follow-up items; Head of UX & Design sign-off",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-04__release-v6.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Red Flag Journal filter state persistence",
+    "epic": "EPIC-01",
+    "description": "Persist RFJ filter state (date range, event type, severity) to localStorage (BLG-FE-40)",
+    "ac_summary": "Filter state persists across reloads; stale state cleared gracefully; Playwright coverage",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-04__release-v6.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Audit colliding backlog IDs",
+    "epic": "EPIC-02",
+    "description": "Classify all backlog IDs appearing 4+ times as prose-citation vs. true collision and resolve any true collisions (BLG-QA-72)",
+    "ac_summary": "All flagged IDs classified; true collisions renumbered; next groom backlog shows 0 unresolved duplicates",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-04__release-v6.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "database.py / _DB_STUB_FUNCTIONS manual-sync risk",
+    "epic": "EPIC-02",
+    "description": "Investigate automated derivation of _DB_STUB_FUNCTIONS from database.py to remove manual-sync burden (BLG-QA-73)",
+    "ac_summary": "Decision recorded (adopted or documented infeasible); if adopted, verified by CI run; CLAUDE.md rule updated to match",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-04__release-v6.6"],
+    "assignee": null
+  }
+]

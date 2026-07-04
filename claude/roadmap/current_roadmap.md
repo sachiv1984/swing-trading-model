@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v6.5** — Audit Debt Clearance, Backlog Debt Clearance & AI Thesis Feedback Loop — ✅ Complete — Shipped 2026-07-03 — cycle: 2026-07-02__release-v6.5
-**Next planned release:** [TBD]
+**Next planned release:** v6.6 — UX & QA Debt Clearance — 📋 Planning
+
+<!-- roadmap-annotation-marker: RA:v6.6:2026-07-04__release-v6.6 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-04__release-v6.6
+- Plan published: 2026-07-04
+- Cycle folder: claude/cycles/2026-07-04__release-v6.6/
+- Backlog slice: claude/cycles/2026-07-04__release-v6.6/stage4_backlog_slice.md
+- Status at annotation: Committed
 
 *RA:v6.5 retired — see roadmap_archive.md 2026-07-03 (post-ship closure 2026-07-02__release-v6.5).*
 

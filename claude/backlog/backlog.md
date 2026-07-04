@@ -3664,3 +3664,25 @@ No view partitions Render dyno compute cost by feature area. Meaningful cost tre
 *Release Slice v6.5 removed — cycle 2026-07-02__release-v6.5 closed 2026-07-03. Archived canonical home: claude/cycles/2026-07-02__release-v6.5/stage4_backlog_slice.md*
 
 ---
+
+### §Release Slice v6.6 — 2026-07-04__release-v6.6
+
+<!-- release-plan-marker: RP:v6.6:2026-07-04__release-v6.6 -->
+
+**Cycle:** 2026-07-04__release-v6.6
+**Planning Date:** 2026-07-04
+**Status:** Planning
+**Reference:** claude/cycles/2026-07-04__release-v6.6/stage4_backlog_slice.md
+
+| S2 ID | Item | Epic | Priority | Effort |
+|-------|------|------|----------|--------|
+| S2-01 | BLG-FE-82 — Colour contrast audit sweep | EPIC-01 | P2 | S (~1 day) |
+| S2-02 | BLG-FE-40 — Red Flag Journal filter state persistence | EPIC-01 | P3 | S (~0.5 day) |
+| S2-03 | BLG-QA-72 — Audit colliding backlog IDs | EPIC-02 | P2 | S (~0.5 day) |
+| S2-04 | BLG-QA-73 — database.py stub-sync risk investigation | EPIC-02 | P3 | M (~1–2 days) |
+
+**Total estimated effort:** ~3–4 days
+
+*This is an ephemeral section — removed by the next `groom backlog` run after this cycle closes, per the Placement Rule at the top of this file.*
+
+---
