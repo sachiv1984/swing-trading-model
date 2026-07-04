@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-03 (groom backlog, post-ship closure 2026-07-02__release-v6.5 — 8 items archived: BLG-GOV-157/158/159, BLG-OPS-83, TEST-GAP-EPIC-03-v64, BLG-QA-61, BLG-FE-46, BLG-FEAT-41; v6.5 release slice ephemeral section removed)
+**Last Updated:** 2026-07-04 (session — 1 new item added: BLG-GOV-160)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -3328,6 +3328,33 @@ No versioning exists to track which version of the Base44 generation prompt prod
 **Acceptance Criteria**
 - Changelog section added once gate condition is met
 - Gate condition (≥3 revisions/cycle) verified before commencing
+
+---
+
+### BLG-GOV-160 — File SI-05 Phase 1 30-day effectiveness review record
+**Priority:** P2 (Medium)
+**Type:** Governance / Process
+**Owner:** Product Owner; Infrastructure & Operations Owner; Director of Quality
+**Source:** Scheduled 30-day SI-05 effectiveness review routine (BLG-GOV-96 / BLG-GOV-113) — 2026-07-04
+**Effort:** XS (<1 hour)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+The SI-05 Phase 1 effectiveness review was due 2026-07-01 per BLG-GOV-113 protocol but has not been formally conducted or recorded. Criteria 1 (PO reads ≥4 of last 5 digests) and Criterion 2 (≥1 digest-triggered app action) require PO self-assessment; Criterion 3 (service delivered ≥4 of last 5 scheduled sends) requires a `si05_digest_log` query to confirm the June 22 and June 29 delivery windows. The formal review record must be filed before the Phase 2 revised review date of 2026-08-04.
+
+**Scope**
+- PO provides self-assessment for Criterion 1: number of last 5 digests reviewed
+- PO provides self-assessment for Criterion 2: describes any digest-triggered app action in the 30-day period
+- I&O Owner runs `si05_digest_log` health check (Option A) for June 22 and June 29 send windows
+- PMO Lead records overall verdict (PROCEED / ITERATE / PAUSE) and Phase 2 activation decision
+- Review record filed per BLG-GOV-113 §4 format in `claude/cycles/2026-06-08__release-v5.2/si05_effectiveness_criteria.md`
+
+**Acceptance Criteria**
+- Formal review record filed with all three criteria assessed (PASS / FAIL for each)
+- `si05_digest_log` evidence for June 22 and June 29 sends recorded
+- PO self-assessments for Criteria 1 and 2 attested in the record
+- Phase 2 activation decision (PROCEED / ITERATE / PAUSE) recorded by Product Owner
+- Director of Quality sign-off on evidence completeness recorded
 
 ---
 
