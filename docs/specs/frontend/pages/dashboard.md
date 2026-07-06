@@ -3,11 +3,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.5
-**Last Updated:** 2026-07-02
+**Version:** 2.6
+**Last Updated:** 2026-07-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v6.4
 **EPIC:** EPIC-03
+**Design Source (v2.6):** docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md (BLG-FE-88 remediation)
 **Design Source (v2.5):** docs/specs/qa/ai_disclaimer_visibility_assessment.md (BLG-UX-01 remediation)
 **Design Source (v2.4):** docs/design/2026-06-26__release-v6.3/morning-briefing-progressive-disclosure/ux_spec.md
 **Design Source (v2.3):** docs/design/2026-06-24__release-v6.2/ai-daily-briefing-card/ux_spec.md
@@ -192,7 +193,7 @@ Full-width card spanning the content area. Does not replace or modify any existi
 
 Below header bar, above body:
 - Amber badge "AI Advisory" (`#D97706` background, white text)
-- Inline static text: "All actions require your confirmation" (`text-slate-300` italic, 12px — contrast ≥4.5:1 on `bg-slate-800`; was `text-slate-500` prior to v2.5/BLG-UX-01)
+- Inline static text: "All actions require your confirmation" (`text-slate-700 dark:text-slate-300` italic, 12px — contrast ≥4.5:1 on both `bg-slate-800` (dark) and `bg-slate-100` (light); dark value unchanged since v2.5/BLG-UX-01, light companion added v2.6/BLG-FE-88; was bare `text-slate-500` prior to v2.5/BLG-UX-01)
 - **Non-dismissible**
 
 ### Card Body
@@ -357,6 +358,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.6 | 2026-07-06 | v6.7 design gate — Advisory Label disclaimer light-theme fix (ST-02, BLG-FE-88): added `dark:` companion — `text-slate-700 dark:text-slate-300` (light-mode value was missing entirely; dark-theme value unchanged, already passing since v2.5/BLG-UX-01). No layout or badge change. Design source: `docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md` §4. Head of UX & Design sign-off: 2026-07-06. Head of Specs Team confirmed. |
 | 2.5 | 2026-07-02 | v6.4 design gate — Advisory Label disclaimer text contrast fix (ST-09, BLG-UX-01): `text-slate-500` → `text-slate-300` (≈2.7:1 → ≥4.5:1 on `bg-slate-800`, WCAG AA). No layout or badge change. Design source: `docs/specs/qa/ai_disclaimer_visibility_assessment.md` (finding C5, approved 2026-06-29). Head of UX & Design sign-off: 2026-07-02. Head of Specs Team confirmed. |
 | 2.4 | 2026-06-26 | v6.3 design gate — §5 progressive disclosure added (ST-12, BLG-FE-80): AI Daily Briefing Card sections (Market Context, Suggested Actions) are individually collapsible; section header rows with ChevronDown/Right toggle; localStorage key ai-briefing-collapse-state-v1 persists state across reloads; default all expanded; §13 advisory label remains non-dismissible and always visible; Playwright test SC-BRIEF-01 required. Design source: morning-briefing-progressive-disclosure/ux_spec.md. Approved: Product Owner 2026-06-26. Head of Specs Team confirmed. |
 | 2.3 | 2026-06-24 | v6.2 design gate — §5 AI Daily Briefing Card added (ST-07, BLG-FEAT-50): full-width card below session-summary cards; Regenerate button calls POST /ai/daily-briefing; summary paragraph + ordered action list with type chips (EXIT/ENTER/MONITOR/HOLD); advisory label non-dismissible; §13 compliant display-only; advisory=true verified client-side. Sections renumbered (old §5 Gate Progress→§6, §6 States→§7, §7 Navigation→§8, §8 Change Log→§9). Design source: ai-daily-briefing-card/ux_spec.md. Approved: Product Owner 2026-06-24. Head of Specs Team confirmed. |

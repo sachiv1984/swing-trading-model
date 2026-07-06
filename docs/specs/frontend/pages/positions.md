@@ -3,14 +3,15 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.9
-**Last Updated:** 2026-07-02
+**Version:** 2.0
+**Last Updated:** 2026-07-06
 **Design Source (v2.3 additions):** docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md
 **Design Source (v3.3 additions):** docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md, docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md, docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md
 **Design Source (v3.4 additions):** docs/design/2026-05-14__release-v3.4/drawdown-review-prompt/ux_spec.md, docs/design/2026-05-14__release-v3.4/concentration-limits-warning/ux_spec.md
 **Design Source (v3.5 additions):** docs/ux_specs/paper-trading/ux_spec.md
 **Design Source (v6.2 additions):** docs/design/2026-06-24__release-v6.2/trailing-stop-display/ux_spec.md, docs/design/2026-06-24__release-v6.2/risk-off-exit-alert/ux_spec.md, docs/design/2026-06-24__release-v6.2/ai-chat-widget/ux_spec.md
 **Design Source (v6.4 additions):** docs/specs/qa/ai_disclaimer_visibility_assessment.md (BLG-UX-02 remediation)
+**Design Source (v6.7 additions):** docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md (BLG-FE-88 remediation)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -19,6 +20,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.0 | 2026-07-06 | v6.7 design gate — AI Trade Advisor Widget footer disclaimer light-theme fix (ST-02, BLG-FE-88): `text-slate-400` → `text-slate-600 dark:text-slate-400` (bare class had no light-mode companion; was 2.34–2.56:1 FAIL in light theme). Dark-theme value unchanged — already matches the canonical secondary-text token. Design source: `docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md` §4. Head of UX & Design sign-off: 2026-07-06. Head of Specs Team confirmed. |
 | 1.9 | 2026-07-02 | v6.4 design gate — AI Trade Advisor Widget footer disclaimer contrast fix (ST-10, BLG-UX-02): `text-slate-600` → `text-slate-400` (≈1.9:1 → ≥4.5:1 on `bg-slate-800`, WCAG AA); `data-testid="ai-chat-advisory-footer"` added to footer container to enable Playwright assertion (resolves coverage gap noted in QA assessment). Design source: `docs/specs/qa/ai_disclaimer_visibility_assessment.md` (finding C5, approved 2026-06-29). Head of UX & Design sign-off: 2026-07-02. Head of Specs Team confirmed. |
 | 1.8 | 2026-06-24 | v6.2 design gate: (ST-02) Trail Stop column added to Table View — displays `current_trailing_stop` alongside existing Initial Stop (renamed from "Stop"); breach badge "⚠ BREACH" (orange #EA580C) shown inline when `current_price ≤ current_trailing_stop`; Grid View adds Trail value and ⚠ icon. (ST-05) Alerts column added to Table View — shows "RISK OFF" badge (deep blue #1E40AF) when `risk_off_exit = true`; US/UK market isolation server-enforced. (ST-09) AI Trade Advisor Widget — fixed-position floating chat button (bottom-right); expands to 350×480px panel; display-only advisory; stateless per request; §13 compliant. Design sources: v6.2 additions listed above. Approved: Product Owner 2026-06-24. |
 | 1.7 | 2026-05-15 | v3.5 design gate: (ST-03 IT-06) Paper Account Panel — collapsible panel below Strategy Compliance Panel in Table View; conditionally rendered when `ALPACA_PAPER_API_KEY` configured; displays US-market paper positions (ticker, paper entry price, current price, paper P&L $ and %, date opened, size); error state "Paper tracking temporarily unavailable"; hidden entirely when credentials absent. §13 compliant display-only. Design source: docs/ux_specs/paper-trading/ux_spec.md. Approved: Product Owner 2026-05-15. |
@@ -412,7 +414,7 @@ Rounded pill button: chat icon + "Ask Advisor" text (white on `#1D4ED8` blue-700
 | Header | "AI Trade Advisor" + amber "Advisory" badge + ✕ close button |
 | Messages area | Scrollable; user bubbles right-aligned (blue); AI bubbles left-aligned (grey) |
 | Input row | Text field ("Ask about your portfolio…") + "Ask" button |
-| Footer | Static advisory text: "AI responses are advisory only. All trade decisions require human confirmation." (`text-slate-400` italic, 11px, non-dismissible — contrast ≥4.5:1 on `bg-slate-800`; was `text-slate-600` prior to v1.9/BLG-UX-02); `data-testid="ai-chat-advisory-footer"` on footer container |
+| Footer | Static advisory text: "AI responses are advisory only. All trade decisions require human confirmation." (`text-slate-600 dark:text-slate-400` italic, 11px, non-dismissible — contrast ≥4.5:1 on both `bg-slate-800` (dark) and `bg-slate-100` (light); was bare `text-slate-400` (dark-only, no light companion) prior to v2.0/BLG-FE-88, and `text-slate-600` (dark-only) prior to v1.9/BLG-UX-02); `data-testid="ai-chat-advisory-footer"` on footer container |
 
 ### States
 
