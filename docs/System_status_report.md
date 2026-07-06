@@ -2,14 +2,14 @@
 **Class:** Living Document (Class 3)
 **Status:** Active
 **Version:** 4.7
-**Last Updated:** 2026-07-03
+**Last Updated:** 2026-07-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
 
 ## Sprint: 2026-07-04__release-v6.6
 **Date:** 2026-07-06
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified — 2026-07-06
 
 ### Capabilities now live (merged this sprint)
 
