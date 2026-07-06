@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-04 (session — 1 new item added: BLG-GOV-160)
+**Last Updated:** 2026-07-06 (session — 1 new item added: BLG-QA-74)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -3470,6 +3470,28 @@ No test data fixtures or state-reset mechanism exists between Playwright runs. N
 - Decision recorded: automated derivation adopted, or documented as infeasible with reasoning
 - If adopted: adding a new `database` import to `position_service.py` no longer requires a manual `conftest.py` edit, verified by a CI run
 - CLAUDE.md rule updated or retired to match the outcome
+
+---
+
+### BLG-QA-74 — Duplicate archival records for 5 backlog items — Product Owner confirmation needed before dedup
+**Priority:** P3 (Low)
+**Type:** Governance / Data Hygiene
+**Owner:** PMO Lead; Product Owner
+**Source:** v6.6 ST-03 (BLG-QA-72) audit of colliding backlog IDs — 2026-07-06
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+BLG-QA-72's audit of `### BLG-xxx` header collisions across `claude/backlog/backlog.md` and `claude/backlog/backlog_archive.md` found 5 IDs (BLG-FE-49, BLG-FEAT-38, BLG-OPS-28, BLG-OPS-31, BLG-OPS-37) each carrying **3** header entries in `backlog_archive.md`, not 2. In each case one pair is the compliant §6.1 stub+verbatim archive format (near the top of the file, most-recent-first ordering), and the third is an older-convention duplicate (embedded inline `✅ COMPLETE` marker, filed under the `## Groomed 2026-06-16` section further down) describing the **same** completed item — not a different item reusing the ID, so it was intentionally *not* renumbered under BLG-QA-72's AC-02 (renumbering is for true ID collisions between different items). `backlog_management_prompt.md` §6.2 requires Product Owner confirmation before archiving further copies of a duplicated item, and `backlog_archive.md`'s own header states "Append-only — do not edit existing entries" — so no autonomous deletion was performed. Until resolved, `groom backlog`'s STEP 4.5 ID Uniqueness Scan (v1.10, fixed this cycle to stop false-flagging compliant stub+verbatim pairs) will correctly continue flagging these 5 as genuine duplicates.
+
+**Scope**
+- Product Owner / PMO Lead reviews the 5 flagged pairs and decides: keep the modern stub+verbatim entry as canonical and append a one-line "superseded by" cross-reference note to the older entry, or accept both as an acceptable historical artefact (no-op)
+- If dedup is approved: apply the agreed correction per the decision (append-only correction note, not a deletion, per the archive's own policy)
+
+**Acceptance Criteria**
+- Product Owner decision recorded (dedup vs. accept-as-is)
+- If dedup approved: correction applied and `groom backlog` STEP 4.5 shows these 5 IDs no longer flagged
+- If accepted as-is: no further action required; note recorded here for traceability
 
 ---
 

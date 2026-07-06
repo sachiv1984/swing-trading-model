@@ -2068,7 +2068,8 @@ GET /health extended with external_apis section covering Alpaca and Yahoo Financ
 
 ---
 
-### BLG-OPS-12 — Fix auth forwarding in POST /test/endpoints internal calls
+### BLG-OPS-86 — Fix auth forwarding in POST /test/endpoints internal calls
+**Renumbered from:** BLG-OPS-12 (ID collision resolved — v6.6 ST-03; BLG-OPS-12 retained by the earlier-archived entry "External API health check extension")
 **Priority:** P2 (High)
 **Type:** Operational / Infrastructure
 **Owner:** Head of Engineering + Infrastructure & Operations Owner
@@ -2092,7 +2093,8 @@ GET /health extended with external_apis section covering Alpaca and Yahoo Financ
 
 ---
 
-### BLG-OPS-13 — Keep endpoint test list in sync with openapi.yaml
+### BLG-OPS-87 — Keep endpoint test list in sync with openapi.yaml
+**Renumbered from:** BLG-OPS-13 (ID collision resolved — v6.6 ST-03; BLG-OPS-13 retained by the active backlog.md entry "Add new v2.8/v2.9/v3.0/v3.4/v3.9/v4.6 endpoints to api_performance_baseline.md re-run")
 **Priority:** P3 (Low)
 **Type:** Operational / Infrastructure
 **Owner:** Infrastructure & Operations Owner
@@ -5414,7 +5416,8 @@ Update qa_evidence_template.md to include both sign-off format examples for dele
 
 ---
 
-### BLG-GOV-71 — roadmap_prompt.md STEP 8.1: advisory for empty Now horizon after Extended-tier rebalance
+### BLG-GOV-163 — roadmap_prompt.md STEP 8.1: advisory for empty Now horizon after Extended-tier rebalance
+**Renumbered from:** BLG-GOV-71 (ID collision resolved — v6.6 ST-03; BLG-GOV-71 retained by the active backlog.md entry "Governance engine complexity assessment (gate-conditional)")
 **Priority:** P2 (Medium)
 **Type:** Governance / Process Improvement
 **Owner:** Head of Specs Team
@@ -5460,7 +5463,8 @@ Add a "frontend classification fast-path" to sprint_planning_prompt.md for these
 
 ---
 
-### BLG-GOV-73 — execution_prompt.md: auto-set deviations_filed on delegation sign-off clearance
+### BLG-GOV-165 — execution_prompt.md: auto-set deviations_filed on delegation sign-off clearance
+**Renumbered from:** BLG-GOV-73 (ID collision resolved — v6.6 ST-03; BLG-GOV-73 retained by the active backlog.md entry "Scheduled rebalance cadence review")
 **Priority:** P3 (Low)
 **Type:** Governance / Process Improvement
 **Owner:** Head of Specs Team
@@ -5483,7 +5487,8 @@ Add a substep to execution_prompt.md delegation sign-off: when cleared + no devi
 
 ---
 
-### BLG-GOV-74 — qa_evidence_template.md: DoQ sign-off block example for delegated_qa pattern
+### BLG-GOV-166 — qa_evidence_template.md: DoQ sign-off block example for delegated_qa pattern
+**Renumbered from:** BLG-GOV-74 (ID collision resolved — v6.6 ST-03; BLG-GOV-74 retained by the active backlog.md entry "AI feature usage quarterly review (BLG-GOV-63 mandate)")
 **Priority:** P3 (Low)
 **Type:** Governance / Template Improvement
 **Owner:** Head of Specs Team
@@ -6070,7 +6075,8 @@ ST-06 introduced a visible frontend change (SignalCard orange "Cannot Size" badg
 ---
 
 
-### BLG-FE-66 — Red Flag Journal post-launch UX review
+### BLG-FE-85 — Red Flag Journal post-launch UX review
+**Renumbered from:** BLG-FE-66 (ID collision resolved — v6.6 ST-03; BLG-FE-66 retained by the active backlog.md entry "RFJ date-range filter (date-to field)")
 **Priority:** P3 (Low)
 **Type:** Frontend / UX Review
 **Owner:** Base44 Frontend Prompt Owner; Head of UX & Design
@@ -6098,7 +6104,8 @@ Red Flag Journal (RFJ.js) shipped v3.9 (2026-05-22 — 7+ weeks ago) with no pos
 ---
 
 
-### BLG-FE-67 — BLG-FE-64 visual design review scope definition
+### BLG-FE-86 — BLG-FE-64 visual design review scope definition
+**Renumbered from:** BLG-FE-67 (ID collision resolved — v6.6 ST-03; BLG-FE-67 retained by the active backlog.md entry "RFJ event type colour palette refinement")
 **Priority:** P2 (Medium)
 **Type:** Frontend / Planning
 **Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design
@@ -7558,7 +7565,8 @@ SI-05 (Weekly Strategy Integrity Digest) requires SI-02 (drift detection) for th
 ---
 
 
-### BLG-GOV-69 — §13 register completion (AUD-2026-05-30-001 gap) ✅ COMPLETE v4.8 (2026-06-02)
+### BLG-GOV-161 — §13 register completion (AUD-2026-05-30-001 gap) ✅ COMPLETE v4.8 (2026-06-02)
+**Renumbered from:** BLG-GOV-69 (ID collision resolved — v6.6 ST-03; BLG-GOV-69 retained by the earlier-archived entry "spec_references policy for documentation-creation stories")
 **Priority:** P2 (Medium)
 **Type:** Governance / Compliance
 **Owner:** Head of Specs Team
@@ -7582,7 +7590,8 @@ AUD-2026-05-30-001 identified 7 governance prompts missing from §13 ARTEFACT_ST
 ---
 
 
-### BLG-GOV-70 — Agent charter header compliance remediation ✅ COMPLETE v4.8 (2026-06-02)
+### BLG-GOV-162 — Agent charter header compliance remediation ✅ COMPLETE v4.8 (2026-06-02)
+**Renumbered from:** BLG-GOV-70 (ID collision resolved — v6.6 ST-03; BLG-GOV-70 retained by the earlier-archived entry "qa_evidence_template.md: DoQ sign-off format for delegated_qa")
 **Priority:** P2 (Medium)
 **Type:** Governance / Compliance
 **Owner:** Director of HR; Head of Specs Team
@@ -7610,7 +7619,8 @@ Non-compliant headers may cause governance engines to fail role validation.
 ---
 
 
-### BLG-GOV-72 — AUD-2026-05-30-006 gap resolution verification ✅ COMPLETE v4.8 (2026-06-02)
+### BLG-GOV-164 — AUD-2026-05-30-006 gap resolution verification ✅ COMPLETE v4.8 (2026-06-02)
+**Renumbered from:** BLG-GOV-72 (ID collision resolved — v6.6 ST-03; BLG-GOV-72 retained by the earlier-archived entry "sprint_planning_prompt.md: frontend classification fast-path")
 **Priority:** P2 (Medium)
 **Type:** Governance / Audit Follow-up
 **Owner:** PMO Lead
