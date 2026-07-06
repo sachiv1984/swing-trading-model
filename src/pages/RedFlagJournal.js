@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
@@ -46,6 +46,29 @@ const EVENT_TYPE_OPTIONS = [
   { value: "stop_prompt_dismissed", label: "Stop Prompt Dismissed" },
   { value: "drawdown_prompt_dismissed", label: "Drawdown Prompt Dismissed" },
 ];
+
+const FILTER_STORAGE_KEY = "redFlagJournal.filters";
+const FILTER_STORAGE_VERSION = 1;
+
+function loadStoredFilters() {
+  try {
+    const raw = localStorage.getItem(FILTER_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || parsed.version !== FILTER_STORAGE_VERSION || !parsed.data) {
+      localStorage.removeItem(FILTER_STORAGE_KEY);
+      return null;
+    }
+    return parsed.data;
+  } catch {
+    try {
+      localStorage.removeItem(FILTER_STORAGE_KEY);
+    } catch {
+      // ignore — localStorage unavailable (e.g. private browsing)
+    }
+    return null;
+  }
+}
 
 function stripLSuffix(ticker) {
   if (!ticker) return ticker;
@@ -144,12 +167,34 @@ function SkeletonRow() {
 
 export default function RedFlagJournal() {
   const [page, setPage] = useState(1);
-  const [eventTypeFilter, setEventTypeFilter] = useState("");
-  const [tickerFilter, setTickerFilter] = useState("");
-  const [sinceFilter, setSinceFilter] = useState("");
-  const [tickerInput, setTickerInput] = useState("");
+  const [eventTypeFilter, setEventTypeFilter] = useState(
+    () => loadStoredFilters()?.eventTypeFilter ?? ""
+  );
+  const [tickerFilter, setTickerFilter] = useState(
+    () => loadStoredFilters()?.tickerFilter ?? ""
+  );
+  const [sinceFilter, setSinceFilter] = useState(
+    () => loadStoredFilters()?.sinceFilter ?? ""
+  );
+  const [tickerInput, setTickerInput] = useState(
+    () => loadStoredFilters()?.tickerFilter ?? ""
+  );
 
   const PAGE_SIZE = 20;
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        FILTER_STORAGE_KEY,
+        JSON.stringify({
+          version: FILTER_STORAGE_VERSION,
+          data: { eventTypeFilter, tickerFilter, sinceFilter },
+        })
+      );
+    } catch {
+      // ignore — localStorage unavailable (e.g. private browsing)
+    }
+  }, [eventTypeFilter, tickerFilter, sinceFilter]);
 
   const queryKey = ["red-flag-journal", page, eventTypeFilter, tickerFilter, sinceFilter];
 
