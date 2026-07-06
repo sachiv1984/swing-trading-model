@@ -1,0 +1,20 @@
+{
+  "cycle_id": "2026-07-04__release-v6.6",
+  "generated_utc": "2026-07-06T00:00:00Z",
+  "epics": {
+    "EPIC-02": {
+      "st_items": ["ST-03", "ST-04"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-03",
+        "stage4_backlog_slice.md#ST-04"
+      ]
+    },
+    "EPIC-01": {
+      "st_items": ["ST-01", "ST-02"],
+      "backlog_slice_refs": [
+        "stage4_backlog_slice.md#ST-01",
+        "stage4_backlog_slice.md#ST-02"
+      ]
+    }
+  }
+}
