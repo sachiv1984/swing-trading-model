@@ -71,6 +71,12 @@
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-04__release-v6.6/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/e2e/red-flag-journal-filter-persistence.spec.js"],
+      "product_owner_acceptance": {
+        "status": "accepted",
+        "recorded_at": "https://github.com/sachiv1984/swing-trading-model/pull/918#issuecomment-4892497836",
+        "date": "2026-07-06",
+        "notes": "ST-01 findings-only approach accepted as correct trade-off (preserves Design Not Applicable design-gate classification, avoids mid-sprint scope creep). BLG-FE-87 (P1, default-theme contrast failure) elevated by Product Owner from provisional to a firm v6.7 commitment -- to be formalized at v6.7 release planning. ST-02 outcome accepted; mid-sprint autonomous reclassification noted as an execution-method decision, not a product one."
+      },
       "stories": {
         "ST-01": {
           "title": "Colour contrast audit sweep (BLG-FE-82)",
