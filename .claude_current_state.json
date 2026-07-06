@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-07-06__release-v6.7",
   "cycle_name": "v6.7 — Contrast Remediation & Governance Hardening",
-  "status": "Sprint_Planning_Complete",
+  "status": "Executing",
   "prior_status": "Closed",
   "engine": "sprint_planning",
   "execution_state_path": "claude/cycles/2026-07-04__release-v6.6/execution_state.json",
