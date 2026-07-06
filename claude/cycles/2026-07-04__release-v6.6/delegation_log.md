@@ -24,4 +24,5 @@ Last Updated: 2026-07-06
 - **Base44 prompt draft:** Not applicable — this is an audit/investigation task producing a findings report, not a code change. No Base44 delivery is required for AC-01/AC-02. (If the audit surfaces contrast failures, each resulting follow-up backlog item will carry its own future Base44 prompt draft when scoped and scheduled — not part of this delegation.)
 - **Unblock criteria:** A findings document exists (contrast audit results + any filed follow-up backlog items), and Head of UX & Design sign-off is recorded (either as a comment on GitHub issue #914, or directly in the findings document) — then a commit referencing this story is pushed to the branch below.
 - **Commit format required:** `[EPIC-01][ST-01] <description>` pushed to `exec/2026-07-04__release-v6.6/EPIC-01`
-- **Status:** Pending
+- **Status:** sign_off_cleared
+- **Sign-off:** Head of UX & Design, 2026-07-06 — findings document at `claude/cycles/2026-07-04__release-v6.6/contrast_audit_findings.md`; 3 follow-up items filed (BLG-FE-87, BLG-FE-88, BLG-FE-89)

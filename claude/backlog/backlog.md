@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-06 (session — 1 new item added: BLG-QA-74; PO decision recorded on BLG-QA-74, accept-as-is)
+**Last Updated:** 2026-07-06 (session — 3 new items added: BLG-FE-87, BLG-FE-88, BLG-FE-89)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -1034,6 +1034,71 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 **Acceptance Criteria**
 - Protocol document produced
 - Gate condition (AI adoption window) verified before use
+
+---
+
+### BLG-FE-87 — App-wide secondary-text contrast failure against dark theme (default theme)
+**Priority:** P1 (High)
+**Type:** Frontend / Accessibility
+**Owner:** Head of UX & Design; Head of Engineering
+**Source:** ST-01 (EPIC-01, v6.6) — colour contrast audit sweep (BLG-FE-82) — 2026-07-06
+**Effort:** L (~2–3 days)
+**Provisional-Target:** v6.7
+
+**Problem**
+The ST-01 contrast audit found `text-slate-500` (#64748b) used for small (text-xs/text-sm) secondary/label text in approximately 262 instances across ~90 files, rendered against the app's default dark-theme surface backgrounds (`bg-slate-950` #020617, `bg-slate-900` #0f172a, `bg-slate-800` #1e293b). Computed WCAG contrast ratios are 3.07–4.24:1, below the 4.5:1 required for normal-size text (the 3:1 "large text" allowance does not apply — all found usages are text-xs/text-sm). This is the app's default theme (confirmed in `src/Layout.js`), so the failure is visible today to the majority of users who have never toggled the theme. It is the same defect class already fixed once in `BLG-UX-01` (`AiDailyBriefing.js`, `text-slate-500`→`text-slate-300`) — that fix addressed one component; this finding shows it recurring at scale elsewhere.
+
+**Scope**
+- Systematic replacement of `text-slate-500` usages that fail contrast against their actual rendered dark-surface background, verified per-surface (some may sit on lighter card backgrounds where `text-slate-500` already passes)
+- Contrast spot-checks recorded for a representative sample of affected pages
+
+**Acceptance Criteria**
+- All identified failing `text-slate-500` instances remediated to a WCAG-AA-passing shade (e.g. `text-slate-300`/`text-slate-400`) against their actual background
+- No visual regression beyond the intended contrast fix
+- Contrast verification recorded (manual or Playwright) for a representative sample
+
+---
+
+### BLG-FE-88 — App-wide secondary-text contrast failure against light theme (missing dark:/light: variants)
+**Priority:** P2 (Medium)
+**Type:** Frontend / Accessibility
+**Owner:** Head of UX & Design; Head of Engineering
+**Source:** ST-01 (EPIC-01, v6.6) — colour contrast audit sweep (BLG-FE-82) — 2026-07-06
+**Effort:** L (~3–4 days)
+**Provisional-Target:** v6.7
+**Depends on:** BLG-FE-87 (sequence after, to avoid rework — a dark-theme fix landing on `text-slate-400` does not solve light-theme contrast)
+
+**Problem**
+The app supports a user-toggleable light theme (`src/Layout.js`, `toggleTheme`, persisted to `localStorage`; default is dark). Tailwind's class-based dark mode (`darkMode: ["class"]`) requires an explicit `dark:` variant to change any style between themes — a bare class such as `text-slate-400` or `text-slate-500` applies identically in both. The audit found 502 bare `text-slate-400` instances and 262 bare `text-slate-500` instances (764 total, 102 files) with no `dark:text-*` companion class and no `isDark` conditional, meaning these were only ever visually verified against the dark theme. Computed contrast against light-theme surfaces (`bg-slate-100` #f1f5f9, `bg-slate-50` #f8fafc, `white`): `text-slate-400` = 2.3–2.6:1 (severe failure), `text-slate-500` = 4.3–4.8:1 (borderline, fails specifically against `bg-slate-100` at 4.34:1). Both existing precedent fixes (`BLG-UX-01`, `BLG-UX-02`) addressed only the dark-theme case and added no light-theme variant, confirming the light theme has never been contrast-audited in this codebase.
+
+**Scope**
+- For each affected secondary-text surface, add a paired `dark:text-*` / light-mode class combination (or `isDark` conditional, matching the pattern already used correctly in `src/Layout.js`) so both themes independently pass WCAG-AA
+- Prioritise by page traffic/visibility
+
+**Acceptance Criteria**
+- Identified surfaces pass WCAG-AA in both light and dark theme
+- Playwright coverage or a recorded manual light-theme QA pass for at least the highest-traffic pages
+
+---
+
+### BLG-FE-89 — Introduce a shared secondary-text design token or component to prevent recurring contrast regressions
+**Priority:** P3 (Low)
+**Type:** Frontend / Design System
+**Owner:** Head of UX & Design; Head of Engineering
+**Source:** ST-01 (EPIC-01, v6.6) — colour contrast audit sweep (BLG-FE-82) — 2026-07-06
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v6.7
+
+**Problem**
+Three separate contrast defects (`BLG-UX-01`, `BLG-UX-02`, and `BLG-FE-87`/`BLG-FE-88` above) all trace back to the same root cause: secondary/label text colour is chosen ad hoc per-component with no shared token or component enforcing a WCAG-AA-safe value per theme. A prior backlog item already proposed extracting a shared `AiDisclaimer` component for the two AI surfaces; this item generalises that idea app-wide.
+
+**Scope**
+- Define one or two Tailwind utility class pairs (or a small `<SecondaryText>` component) as the canonical secondary-text treatment, documented in the frontend design spec
+- Net-new secondary-text usage going forward uses the token/component rather than raw slate/gray/zinc/neutral/stone classes
+
+**Acceptance Criteria**
+- Canonical secondary-text treatment defined and documented
+- Frontend spec updated to reference it
 
 ---
 
