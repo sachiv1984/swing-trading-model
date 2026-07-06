@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.51
-**Last Updated:** 2026-07-03
+**Version:** 3.52
+**Last Updated:** 2026-07-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -346,6 +346,8 @@ All delegated tasks must be recorded in:
 This file is append-only. Do not edit previous entries.
 
 Schema: per `claude/system/shared_standards.md §16.3` (header format, delegation record format, compliance rules).
+
+**Structural append-verification (BLG-GOV-168):** Apply the Structural Append-Verification Procedure per `shared_standards.md §7.1` at every append (count before/after, confirm exactly +1, confirm no prior entry text changed — halt on either failure).
 
 ---
 
@@ -772,6 +774,8 @@ Create or append to: `claude/cycles/<cycle_id>/execution_escalations.md`
 
 Escalation entry format, SLAs, append-only rule, and Accepted Risk constraints: `claude/system/shared_standards.md` §4.
 Use `ESC-EXEC-YYYYMMDD-nn` as the ID prefix (to distinguish from Release Planning escalations which use `ESC-YYYYMMDD-nn`).
+
+**Structural append-verification (BLG-GOV-168):** Apply the Structural Append-Verification Procedure per `shared_standards.md §7.1` at every append (count before/after, confirm exactly +1, confirm no prior entry text changed — halt on either failure).
 
 After processing escalations: update `execution_state.json.open_escalations`.
 

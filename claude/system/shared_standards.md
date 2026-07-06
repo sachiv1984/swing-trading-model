@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.8
+**Version:** 3.9
 **Last Updated:** 2026-07-06
 
 # Shared Standards — All Governed Routines
@@ -223,7 +223,30 @@ The following files are append-only within their cycle. Never edit a previous en
 
 If a correction is needed to a previous entry, append a correction note referencing the original entry ID. Do not overwrite.
 
-**Structural verification requirement:** `claude/roadmap/decision_log.md` has a confirmed structural guard (`roadmap_prompt.md` STEP 9: count entries before/after write, confirm count only increased, confirm no existing entry text changed — halt if either check fails). The remaining four files above (`escalations.md`, `execution_escalations.md`, `verification_escalations.md`, `delegation_log.md`) currently rely on prose instruction only. Any engine that appends to one of these files should apply the same before/after count-verify pattern at its write step.
+### 7.1 Structural Append-Verification Procedure (canonical, reusable — BLG-GOV-168)
+
+`claude/roadmap/decision_log.md` has a confirmed structural guard (`roadmap_prompt.md` STEP 9). The procedure below generalises that guard into a single reusable block. Every engine that appends to one of the four files in the table must apply this exact procedure at its write step — do not restate or paraphrase it inline; reference this section.
+
+**Procedure:**
+1. **Before write:** count existing entries in the target file (count occurrences of the file's entry-header pattern, e.g. via `grep -c '^## ESC-EXEC-'`).
+2. **Perform the append.**
+3. **After write:** re-count entries using the same pattern.
+4. **Verify:**
+   - New count = old count + 1 exactly (not zero — a silent no-op; not more than one — an unintended double-append).
+   - No existing entry's text changed (diff the file's pre-write content against post-write, excluding the newly appended entry — confirm every prior line is byte-identical).
+5. **If either check fails:** halt. Do not proceed past a failed structural verification. Report which check failed (count mismatch vs. altered prior entry) in the halt report.
+
+**Applies to:**
+
+| File | Entry header pattern | Owning engine |
+|------|----------------------|----------------|
+| `claude/cycles/<cycle_id>/escalations.md` | `^## ESC-` | `release_planning_prompt.md` |
+| `claude/cycles/<cycle_id>/execution_escalations.md` | `^## ESC-EXEC-` | `execution_prompt.md` |
+| `claude/cycles/<cycle_id>/verification_escalations.md` | `^## ESC-VERIF-` | `delivery_verification_prompt.md` |
+| `claude/cycles/<cycle_id>/delegation_log.md` | `^## DEL-` | `execution_prompt.md` |
+| `claude/roadmap/decision_log.md` | `^## DEC-` (or equivalent decision entry marker) | `roadmap_prompt.md` (existing guard — reference model for this procedure) |
+
+Each owning engine's write step for its file(s) above must state: "Apply the Structural Append-Verification Procedure per `shared_standards.md §7.1`" at the point of append — not a re-description of the steps.
 
 ---
 

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.1
-**Last Updated:** 2026-06-22
+**Version:** 3.2
+**Last Updated:** 2026-07-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -120,7 +120,7 @@ Must not modify: `claude/cycles/<cycle_id>/execution_state.json` (sealed), `clau
 
 ---
 
-ESCALATION: Create/append `verification_escalations.md`. Use ESC-VER-YYYYMMDD-nn prefix per `shared_standards.md §4`. Record: blocking condition, owning authority, resolution path, SLA. Reference from `verification_report.md §8`. Escalation does not change verification status — only resolution does.
+ESCALATION: Create/append `verification_escalations.md`. Use ESC-VER-YYYYMMDD-nn prefix per `shared_standards.md §4`. Record: blocking condition, owning authority, resolution path, SLA. Reference from `verification_report.md §8`. Escalation does not change verification status — only resolution does. **Structural append-verification (BLG-GOV-168):** Apply the Structural Append-Verification Procedure per `shared_standards.md §7.1` at every append (count before/after, confirm exactly +1, confirm no prior entry text changed — halt on either failure).
 
 ---
 

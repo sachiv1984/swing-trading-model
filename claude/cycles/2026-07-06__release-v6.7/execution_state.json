@@ -24,7 +24,7 @@
           "assigned_to": "engine",
           "github_issue": 919,
           "branch": "exec/2026-07-06__release-v6.7/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "519c5e5c908cdba64201426ad114fb249d2db21e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -39,7 +39,7 @@
         "ST-05": {
           "title": "Structural guard for 4 append-only governance logs (BLG-GOV-168)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 920,
           "branch": "exec/2026-07-06__release-v6.7/EPIC-02",
@@ -47,13 +47,13 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["claude/system/shared_standards.md", "claude/system/release_planning_prompt.md", "claude/system/execution_prompt.md", "claude/system/delivery_verification_prompt.md"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "completed_utc": "2026-07-06T20:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/system/shared_standards.md", "claude/system/release_planning_prompt.md", "claude/system/execution_prompt.md", "claude/system/delivery_verification_prompt.md", "claude/system/OPERATIONAL_GUIDE.md"],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.pre-commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC-03 verified via direct read of each of the 3 engine write steps (release_planning_prompt.md, execution_prompt.md x2 for execution_escalations.md + delegation_log.md, delivery_verification_prompt.md) after editing — not documentation alone."
         },
         "ST-06": {
           "title": "audit.py SLA — same-session commit requirement (BLG-GOV-169)",
