@@ -64,32 +64,32 @@
       }
     },
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-07-04__release-v6.6/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-04__release-v6.6/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/e2e/red-flag-journal-filter-persistence.spec.js"],
       "stories": {
         "ST-01": {
           "title": "Colour contrast audit sweep (BLG-FE-82)",
           "classification": "delegated_frontend",
-          "status": "blocked_frontend",
+          "status": "done",
           "assigned_to": "Head of UX & Design",
           "github_issue": 914,
           "branch": "exec/2026-07-04__release-v6.6/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "64d631241ad4c94aa72e1dc21240182eb16ab905",
           "delegation_record_id": "DEL-20260706-01",
           "blocked_since_utc": "2026-07-06T09:05:00Z",
           "unblock_criteria": "Findings document exists (contrast audit results + any filed follow-up backlog items) and Head of UX & Design sign-off recorded, then a commit referencing ST-01 pushed to exec/2026-07-04__release-v6.6/EPIC-01",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-07-06T09:45:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/cycles/2026-07-04__release-v6.6/contrast_audit_findings.md"
           ],
-          "deviations_filed": false,
-          "last_completed_substep": "sign_off_cleared",
+          "deviations_filed": true,
+          "last_completed_substep": null,
           "sign_off_record": {
             "required_by": "Head of UX & Design",
             "method": "human",
@@ -126,9 +126,9 @@
     }
   },
 
-  "blocked_items": ["EPIC-01/ST-01"],
+  "blocked_items": [],
   "delegated_items": ["EPIC-01/ST-01"],
-  "completed_items": ["EPIC-02/ST-03", "EPIC-02/ST-04", "EPIC-01/ST-02"],
+  "completed_items": ["EPIC-02/ST-03", "EPIC-02/ST-04", "EPIC-01/ST-02", "EPIC-01/ST-01"],
   "open_escalations": [],
 
   "merge_gate": {
