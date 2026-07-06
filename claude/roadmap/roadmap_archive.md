@@ -1,13 +1,42 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-03 (post-ship closure 2026-07-02__release-v6.5 — RA:v6.5 retired)
+**Last Updated:** 2026-07-06 (post-ship closure 2026-07-04__release-v6.6 — RA:v6.6 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v6.6 — UX & QA Debt Clearance
+
+**Original roadmap location:** §1 Current Version
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-07-06
+**Shipped version:** v6.6
+**Cycle reference:** 2026-07-04__release-v6.6
+**Verification report:** claude/cycles/2026-07-04__release-v6.6/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-07-06
+
+### Original Roadmap Entry
+
+**v6.5** — Audit Debt Clearance, Backlog Debt Clearance & AI Thesis Feedback Loop — ✅ Complete — Shipped 2026-07-03 — cycle: 2026-07-02__release-v6.5
+**Next planned release:** v6.6 — UX & QA Debt Clearance — 📋 Planning
+
+<!-- roadmap-annotation-marker: RA:v6.6:2026-07-04__release-v6.6 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-04__release-v6.6
+- Plan published: 2026-07-04
+- Cycle folder: claude/cycles/2026-07-04__release-v6.6/
+- Backlog slice: claude/cycles/2026-07-04__release-v6.6/stage4_backlog_slice.md
+- Status at annotation: Committed
+
+**Verified:** 2026-07-06 (post-ship closure 2026-07-04__release-v6.6) — verification report: `claude/cycles/2026-07-04__release-v6.6/verification_report.md`. Full v6.6 scope (4 stories, 2 EPICs — systematic WCAG-AA contrast audit sweep (findings-only), Red Flag Journal filter-state persistence, backlog-ID collision cleanup, `_DB_STUB_FUNCTIONS` AST-scan derivation) delivered; see `docs/product/changelog.md#v6.6`.
 
 ---
 

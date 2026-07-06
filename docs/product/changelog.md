@@ -3,9 +3,34 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-03 (post-ship closure 2026-07-02__release-v6.5)
+**Last Updated:** 2026-07-06 (post-ship closure 2026-07-04__release-v6.6)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v6.6 — UX & QA Debt Clearance — 2026-07-06
+Cycle: 2026-07-04__release-v6.6
+Verified: Verified
+Verification report: claude/cycles/2026-07-04__release-v6.6/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | UX & Accessibility Debt: systematic class-based WCAG-AA contrast audit across `text-slate-400/500` secondary-text usages app-wide (764 instances, 102 files) — findings-only (Design Not Applicable), 3 follow-up items filed (BLG-FE-87 P1, BLG-FE-88 P2, BLG-FE-89 P3) (BLG-FE-82); Red Flag Journal filter state (event type, ticker, since-date) now persists across reload via a versioned localStorage envelope, with graceful stale/corrupt-state recovery (BLG-FE-40) | `claude/cycles/2026-07-04__release-v6.6/contrast_audit_findings.md`; `src/pages/RedFlagJournal.js`; `tests/e2e/red-flag-journal-filter-persistence.spec.js`; `docs/specs/frontend/pages/red_flag_journal.md#Filter Controls` |
+| EPIC-02 | QA & Test Infrastructure Debt: all 10 true backlog-ID collisions renumbered with traceability notes, 0 IDs reused; `backlog_management_prompt.md` STEP 4.5 fixed to stop false-flagging compliant §6.1 stub+verbatim archive pairs as duplicates (BLG-QA-72); hand-maintained `_DB_STUB_FUNCTIONS` test-stub list replaced with an AST scan of `backend/` imports (excluding vendored/`.venv` paths), retiring the corresponding CLAUDE.md manual-sync rule (BLG-QA-73) | `claude/backlog/backlog.md`; `claude/backlog/backlog_archive.md`; `claude/system/backlog_management_prompt.md#STEP 4.5 — ID Uniqueness Scan`; `tests/conftest.py` |
+
+### Deviations accepted
+None — no spec deviations filed this sprint. One partial-AC outcome (ST-03/AC-03 — 5 of 15 flagged ID groups left unresolved pending Product Owner disposition) is a documented governance-correct boundary, not a deviation; tracked via `BLG-QA-74`.
+
+### Tech backlog items shipped
+- [ST-01] [D] BLG-FE-82: Colour contrast audit sweep — systematic WCAG-AA audit app-wide; findings-only (no in-story fix, preserves Design Not Applicable classification); 3 follow-up items filed
+- [ST-02] [U] BLG-FE-40: Red Flag Journal filter state persistence — filter state now survives reload via versioned localStorage envelope, with graceful stale-state clearing
+- [ST-03] [D] BLG-QA-72: Audit colliding backlog IDs — 10 true collisions renumbered with traceability notes; `backlog_management_prompt.md` STEP 4.5 scan-logic fix
+- [ST-04] [D] BLG-QA-73: `database.py` / `_DB_STUB_FUNCTIONS` manual-sync risk — replaced with automated AST-scan derivation; CLAUDE.md rule retired
+
+Sign-off: Product Owner — 2026-07-06
+QA sign-off: Director of Quality — 2026-07-06
 
 ---
 

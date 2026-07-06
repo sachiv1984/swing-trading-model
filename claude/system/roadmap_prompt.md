@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 8.1
-**Last Updated:** 2026-07-03
+**Version:** 8.2
+**Last Updated:** 2026-07-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -520,6 +520,8 @@ Classify each initiative: **Governance-heavy** (PO, Strategy Owner, Head of Spec
 Governance story % = (G + D + P stories from STEP 2.4) ÷ total stories delivered in last 3 cycles × 100. Use story count, not FTE hours — this is a solo-developer context where FTE is not a meaningful unit.
 
 **> 40% Ceiling:** Skill-Silo Alert. Scan backlog for highest-priority user-facing item (U-classified, no blockers, within available capacity) — present as pull-forward candidate. PO decides. Check is mandatory; result recorded in `## STEP 8`. **A single U-item pull-forward is not guaranteed to bring the rolling average back under the ceiling** — a heavy governance/debt cycle can outweigh one prior cycle's correction (observed: bundling one U-story at v6.4 raised the 3-cycle average from 53.2% to 64.8% rather than lowering it, since the two remaining cycles in the window were both debt-heavy). If the alert has fired for 2+ consecutive cycles despite a prior pull-forward, the PO should consider prioritising more than one user-facing item at the next release rather than repeating a single-item correction.
+
+**Candidate gate verification (LP-05, v8.2 — fixes silent naming of gated candidates):** Before naming any item as a pull-forward candidate, read that item's own backlog entry (`claude/backlog/backlog.md`) for a `**Gate criteria:**` line. If a gate exists, confirm it is met or near-term-clearing as of this rebalance's date. If the gate is unmet with no confirmed near-term clearance: do not name the item as a candidate — select the next-highest-priority ungated U-item instead, or if none exists, name the gated item but explicitly mark it `[gate status unverified/unmet — release planning to confirm before accepting into scope]`. This closes the gap where `2026-07-03__scheduled` named BLG-FEAT-52 as a candidate without checking its own PO-02 gate, which release planning then had to catch and reject.
 
 **< 20% Floor:** Verify PO has sufficient sign-off capacity. If unconfirmable: record governance capacity risk in `## STEP 8`. Does not halt — must appear in lessons learnt.
 

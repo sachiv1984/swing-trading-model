@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-07-03 (post-ship closure 2026-07-02__release-v6.5; §28/§32 TSG-v60-01 and TSG-v64-01 both RESOLVED — closes the 2-cycle recurrence escalation on BLG-QA-61; §33 v6.5 test coverage gap section added — no open items)
+**Last Updated:** 2026-07-06 (post-ship closure 2026-07-04__release-v6.6; §34 v6.6 test coverage gap section added — no open items; no pre-v6.6 TSG items to reconcile)
 
 ---
 
@@ -816,6 +816,22 @@ No open TSG items for v6.5. All observable ACs have Playwright coverage confirme
 - TSG-v60-01 (BLG-QA-61): **RESOLVED this cycle** — see §28 above. Closes a 2-cycle recurrence escalation open since v6.2.
 - TSG-v64-01 (TEST-GAP-EPIC-03-v64): **RESOLVED this cycle** — see §32 above.
 - All other open TSG entries checked; no other pre-v6.5 TSG items closed by this cycle.
+
+---
+
+## 34. Test Coverage Gaps — v6.6 (2026-07-04__release-v6.6)
+
+Identified during delivery verification (verification_report.md §6 — no gap items). No backlog items required.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| — | EPIC-01 | ST-01 audit/findings-only story (Design Not Applicable, no in-story fix) + ST-02 Red Flag Journal filter persistence | not_applicable — ST-01 has no runnable ACs (audit report is the deliverable); ST-02 fully covered by `tests/e2e/red-flag-journal-filter-persistence.spec.js` (2/2 passing, SC-RFJ-05a/05b) |
+| — | EPIC-02 | Backlog-ID collision audit (BLG-QA-72) + `_DB_STUB_FUNCTIONS` AST-scan derivation (BLG-QA-73) | not_applicable — backend/governance-data class, no frontend-visible AC; verification method was full local `pytest` before/after comparison plus direct document/archive audit |
+
+No open TSG items for v6.6. All observable ACs have Playwright coverage confirmed in CI (EPIC-01/ST-02). EPIC-01/ST-01 and EPIC-02 not_applicable (audit / backend-governance class, no frontend-visible AC).
+
+**TSG backlog reconciliation (§7.3):**
+- No pre-v6.6 open TSG items existed at cycle start (all resolved as of §33/v6.5). Nothing to reconcile.
 
 ---
 

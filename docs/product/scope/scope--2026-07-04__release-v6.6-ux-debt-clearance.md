@@ -1,9 +1,9 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v6.6
 Cycle: 2026-07-04__release-v6.6
-Last Updated: 2026-07-04
+Last Updated: 2026-07-06
 
 ## Release Scope — v6.6 UX & QA Debt Clearance
 
@@ -23,9 +23,7 @@ Last Updated: 2026-07-04
 | PO-02/PO-04 (Arc 4 remainder) | Data-density gates not met | Re-check at next release planning readiness scan |
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
-
-Superseded by: [TBD]
-Changelog: [TBD]
-Verification report: [TBD]
+Superseded by: v6.6 ship — 2026-07-06
+Changelog: docs/product/changelog.md#v6.6
+Verification report: claude/cycles/2026-07-04__release-v6.6/verification_report.md
 Cycle: 2026-07-04__release-v6.6

@@ -1,11 +1,172 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-03 (groom backlog post-ship closure 2026-07-02__release-v6.5 — 8 items archived)
+**Last Updated:** 2026-07-06 (groom backlog post-ship closure 2026-07-04__release-v6.6 — 5 items archived)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-FE-40 — Red Flag Journal filter state persistence
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-06
+**Shipped in:** v6.6 (ST-02, cycle: 2026-07-04__release-v6.6)
+**Evidence:** docs/product/changelog.md#v6.6; claude/cycles/2026-07-04__release-v6.6/verification_report.md
+
+### BLG-FE-40 — Red Flag Journal filter state persistence
+**Status:** ✅ COMPLETE — 2026-07-06 — cycle: 2026-07-04__release-v6.6 (ST-02)
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Base44 Frontend; Head of UX & Design
+**Source:** IDEA-base44-frontend-20260522-02 — Promoted-Backlog cycle 2026-05-22__scheduled (DL-033)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Red Flag Journal in active use for ≥ 30 days post-v3.9 (confirm filter persistence adds value before implementing).
+
+**Problem**
+Red Flag Journal filter state (date range, severity, rule type) resets on page reload. Users who open the RFJ daily to review recent events must re-apply their filter preferences on each visit. localStorage persistence is a standard UX pattern that reduces friction on repeat visits.
+
+**Scope**
+- Persist RFJ filter state to localStorage (date range, event type, severity if/when added)
+- Version the localStorage key to handle filter schema changes gracefully
+- Restore filter state on page load; clear stale state if key version mismatch
+
+**Acceptance Criteria**
+- Filter state persists across page reloads
+- Stale state (version mismatch) cleared gracefully without error
+- Playwright test: set filter → reload page → verify filter state restored
+- Gate condition verified by Product Owner before sprint planning
+
+---
+
+### BLG-FE-82 — Colour contrast audit sweep
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-06
+**Shipped in:** v6.6 (ST-01, cycle: 2026-07-04__release-v6.6 — findings-only, Design Not Applicable)
+**Evidence:** docs/product/changelog.md#v6.6; claude/cycles/2026-07-04__release-v6.6/contrast_audit_findings.md; claude/cycles/2026-07-04__release-v6.6/verification_report.md
+
+### BLG-FE-82 — Colour contrast audit sweep
+**Status:** ✅ COMPLETE — 2026-07-06 — cycle: 2026-07-04__release-v6.6 (ST-01; findings-only, Design Not Applicable — see contrast_audit_findings.md)
+**Priority:** P2 (Medium)
+**Type:** Frontend / Accessibility
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20260702-02 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
+**Provisional-Target:** TBD
+**Effort:** S (~1 day)
+
+**Problem**
+BLG-UX-01/02 (v6.4) fixed WCAG-AA contrast failures on the two AI disclaimer surfaces specifically, found via ad hoc review. No systematic sweep has checked other secondary/disclaimer-style text surfaces in the app for the same class of issue.
+
+**Scope**
+- Apply the same WCAG-AA contrast review method used for BLG-UX-01/02 across all other secondary-text/disclaimer surfaces app-wide
+- Produce a findings list; file follow-up backlog items for any additional failures found
+
+**Acceptance Criteria**
+- Contrast audit completed across all identified secondary-text surfaces
+- Findings documented; any failures filed as follow-up backlog items
+- Head of UX & Design sign-off
+
+---
+
+### BLG-QA-72 — Audit colliding backlog IDs in claude/backlog/backlog.md
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-06
+**Shipped in:** v6.6 (ST-03, cycle: 2026-07-04__release-v6.6 — AC-03 partial, see BLG-QA-74)
+**Evidence:** docs/product/changelog.md#v6.6; claude/cycles/2026-07-04__release-v6.6/verification_report.md
+
+### BLG-QA-72 — Audit colliding backlog IDs in claude/backlog/backlog.md
+**Status:** ✅ COMPLETE — 2026-07-06 — cycle: 2026-07-04__release-v6.6 (ST-03; AC-03 partial — see BLG-QA-74)
+**Priority:** P2 (Medium)
+**Type:** QA / Process Integrity
+**Owner:** Director of Quality; Product Owner
+**Source:** Technical-debt review session — 2026-07-03
+**Effort:** S (~0.5d)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`groom backlog`'s last run flagged "pre-existing duplicate IDs" as known-but-unresolved without naming them. A direct scan confirms real collisions: `BLG-OPS-13` and `BLG-FE-45` each appear 9 times, `BLG-OPS-17`/`BLG-GOV-88`/`BLG-FEAT-55` appear 8 times, `BLG-SPEC-46`/`BLG-QA-42` appear 7 times, plus a dozen more IDs appearing 4–6 times. It is unclear which are legitimate repeated citations in prose versus genuinely duplicate register entries.
+
+**Scope**
+- For each flagged ID, classify occurrences as (a) single canonical entry cited repeatedly in prose — no action, or (b) multiple distinct `### BLG-xxx` entries sharing one ID — needs renumbering/dedup
+- Produce a resolution list for any true collisions found
+
+**Acceptance Criteria**
+- All IDs appearing ≥4 times classified as prose-citation vs. true collision
+- Any true collisions renumbered with no ID reused across backlog.md/backlog_archive.md
+- Next `groom backlog` health report shows 0 unresolved duplicate IDs
+
+---
+
+### BLG-QA-73 — database.py / _DB_STUB_FUNCTIONS manual-sync risk
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-06
+**Shipped in:** v6.6 (ST-04, cycle: 2026-07-04__release-v6.6)
+**Evidence:** docs/product/changelog.md#v6.6; claude/cycles/2026-07-04__release-v6.6/verification_report.md; tests/conftest.py
+
+### BLG-QA-73 — database.py / _DB_STUB_FUNCTIONS manual-sync risk
+**Status:** ✅ COMPLETE — 2026-07-06 — cycle: 2026-07-04__release-v6.6 (ST-04)
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** QA & Testing Owner; Backend Engineering Patterns Owner
+**Source:** Technical-debt review session — 2026-07-03
+**Effort:** M (~1–2 days)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`backend/database.py` is a 2,529-line module. `tests/conftest.py` maintains a hand-written parallel list (`_DB_STUB_FUNCTIONS`, currently 37 entries) that must list every `database` function imported by `backend/services/position_service.py`, or CI fails with an opaque `ImportError` (this exact failure mode is already codified as a CLAUDE.md rule referencing `BLG-QA-20`). Nothing enforces the two lists stay in sync beyond the rule being followed by hand on every new import.
+
+**Scope**
+- Investigate whether `_DB_STUB_FUNCTIONS` can be derived automatically (e.g. introspecting `database.py`'s public functions, or generating the stub from an explicit `__all__`) instead of hand-maintained
+- If feasible, implement the derivation and remove the manual-sync burden; if not feasible, document why and leave the existing CLAUDE.md rule as the control
+
+**Acceptance Criteria**
+- Decision recorded: automated derivation adopted, or documented as infeasible with reasoning
+- If adopted: adding a new `database` import to `position_service.py` no longer requires a manual `conftest.py` edit, verified by a CI run
+- CLAUDE.md rule updated or retired to match the outcome
+
+---
+
+### BLG-QA-74 — Duplicate archival records for 5 backlog items — Product Owner confirmation needed before dedup
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-06
+**Shipped in:** v6.6 (PO decision recorded, no code/data change required, cycle: 2026-07-04__release-v6.6)
+**Evidence:** claude/backlog/backlog.md (Product Owner decision recorded in-entry, 2026-07-06)
+
+### BLG-QA-74 — Duplicate archival records for 5 backlog items — Product Owner confirmation needed before dedup
+**Status:** ✅ COMPLETE — 2026-07-06 — cycle: 2026-07-04__release-v6.6 (PO decision: accept both archive copies as-is, no dedup)
+**Priority:** P3 (Low)
+**Type:** Governance / Data Hygiene
+**Owner:** PMO Lead; Product Owner
+**Source:** v6.6 ST-03 (BLG-QA-72) audit of colliding backlog IDs — 2026-07-06
+**Effort:** XS (~0.5 hr)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-06 (decision recorded, no code/data change required)
+
+**Product Owner decision (2026-07-06):** Accept both archive copies as-is — no dedup. Reviewed all 5 flagged pairs (BLG-FE-49, BLG-FEAT-38, BLG-OPS-28, BLG-OPS-31, BLG-OPS-37); both copies agree on content in every case (no data-integrity risk, just a historical artefact of two different `groom backlog` eras). At P3/XS sizing with zero product impact, the "superseded by" cross-reference cleanup isn't worth the churn. `groom backlog` STEP 4.5 will continue to correctly flag these 5 as duplicates on future runs — that is expected and acceptable; no further action is required against this item.
+
+**Problem**
+BLG-QA-72's audit of `### BLG-xxx` header collisions across `claude/backlog/backlog.md` and `claude/backlog/backlog_archive.md` found 5 IDs (BLG-FE-49, BLG-FEAT-38, BLG-OPS-28, BLG-OPS-31, BLG-OPS-37) each carrying **3** header entries in `backlog_archive.md`, not 2. In each case one pair is the compliant §6.1 stub+verbatim archive format (near the top of the file, most-recent-first ordering), and the third is an older-convention duplicate (embedded inline `✅ COMPLETE` marker, filed under the `## Groomed 2026-06-16` section further down) describing the **same** completed item — not a different item reusing the ID, so it was intentionally *not* renumbered under BLG-QA-72's AC-02 (renumbering is for true ID collisions between different items). `backlog_management_prompt.md` §6.2 requires Product Owner confirmation before archiving further copies of a duplicated item, and `backlog_archive.md`'s own header states "Append-only — do not edit existing entries" — so no autonomous deletion was performed. Until resolved, `groom backlog`'s STEP 4.5 ID Uniqueness Scan (v1.10, fixed this cycle to stop false-flagging compliant stub+verbatim pairs) will correctly continue flagging these 5 as genuine duplicates.
+
+**Scope**
+- Product Owner / PMO Lead reviews the 5 flagged pairs and decides: keep the modern stub+verbatim entry as canonical and append a one-line "superseded by" cross-reference note to the older entry, or accept both as an acceptable historical artefact (no-op)
+- If dedup is approved: apply the agreed correction per the decision (append-only correction note, not a deletion, per the archive's own policy)
+
+**Acceptance Criteria**
+- Product Owner decision recorded (dedup vs. accept-as-is)
+- If dedup approved: correction applied and `groom backlog` STEP 4.5 shows these 5 IDs no longer flagged
+- If accepted as-is: no further action required; note recorded here for traceability
 
 ---
 

@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-07-03 (post-ship closure 2026-07-02__release-v6.5)
+**Last Updated:** 2026-07-06 (post-ship closure 2026-07-04__release-v6.6)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -73,8 +73,9 @@
 | v6.3  | 15      | 15        | 1.00     | All 15 stories done; zero deviations; full delivery of all 3 EPICs (EPIC-01: AI correctness + security + compliance; EPIC-02: QA infrastructure; EPIC-03: Strategy Benchmark + UX); LP-02 validated — Sprint 2 L-effort pattern works; TSG-v63-01/02 filed; BLG-OPS-82 endpoint drift advisory; Verified |
 | v6.4  | 13      | 13        | 1.00     | All 13 stories done; zero deviations; full delivery of all 3 EPICs (EPIC-01: production correctness fast-track BLG-BE-40 + AI security hardening BLG-SEC-01/02; EPIC-02: AUD-2026-07-01 lifecycle-audit remediation, all 4 clusters BLG-GOV-150–153 including 2-cycle-carried FI-P3-01/FI-P3-02/FI-P4-01 re-targets closed; EPIC-03: Strategy Benchmark Open Positions panel BLG-FEAT-54 Skill-Silo pull-forward + UX contrast fixes + endpoint baseline + Playwright coverage); BLG-OPS-83 filed (v6.4 endpoint drift advisory); 0 delegations; 0 returns; Verified |
 | v6.5  | 8       | 8         | 1.00     | All 8 stories done; zero deviations; full delivery of all 3 EPICs (EPIC-01: AUD-2026-07-01 governance/lifecycle debt clearance — audit.py config sync, README hygiene, OPERATIONAL_GUIDE/prompt version-sync drift; EPIC-02: v6.4 endpoint baseline registration + Playwright coverage for Strategy Benchmark Panel 0 + signals_scenarios.md review resolving 3-cycle BLG-QA-61 carry-forward; EPIC-03: Claude thesis feedback mechanism + adoption rate metric); 0 delegations; 0 returns; Verified |
+| v6.6  | 4       | 4         | 1.00     | All 4 stories done; zero deviations; full delivery of both EPICs (EPIC-01: app-wide WCAG-AA contrast audit BLG-FE-82, findings-only + 3 follow-ups filed (BLG-FE-87/88/89); Red Flag Journal filter-state persistence BLG-FE-40; EPIC-02: 10 true backlog-ID collisions renumbered BLG-QA-72 + backlog_management_prompt.md STEP 4.5 scan fix; _DB_STUB_FUNCTIONS AST-scan derivation BLG-QA-73, CLAUDE.md rule retired); 1 delegation (DEL-20260706-01, cleanly unblocked); 0 returns; Verified |
 
-**Rolling 6-cycle average (v6.0–v6.5):** 1.00
+**Rolling 6-cycle average (v6.1–v6.6):** 1.00
 
 ---
 

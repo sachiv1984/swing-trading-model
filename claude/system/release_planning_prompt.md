@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.40
-**Last Updated:** 2026-07-03
+**Version:** 2.41
+**Last Updated:** 2026-07-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -869,13 +869,11 @@ After writing `stage4_backlog_slice.md`, scan all ST items for UI-facing scope:
 ```yaml
 # state.json:
 attributes.design_gate_required: true|false
-
-# .claude_current_state.json:
-design_gate_required: true|false
-design_gate_status: "not_started"  # only when design_gate_required = true and not yet run
 ```
 
-If `design_gate_required = false`: set `design_gate_status = "not_required"` in both files.
+If `design_gate_required = false`: set `design_gate_status = "not_required"` in `state.json` (via `attributes.design_gate_status`, mirrored to `.claude_current_state.json` at STEP 7 as below).
+
+**Note (LP-01 fix, v2.41 — resolves 2-cycle recurrence):** Do **not** write `design_gate_required`/`design_gate_status` to `.claude_current_state.json` here. Writing it at STEP 4.1 — before `active_cycle` has been advanced to this cycle at STEP 7 — creates a transient window where `.claude_current_state.json` carries this cycle's design-gate fields while `active_cycle` still points at the just-closed prior cycle, overwriting that cycle's own completed design-gate record. `.claude_current_state.json` is updated for this field once only, atomically with `active_cycle`, at STEP 7's intermediate sync (see STEP 7).
 
 ### STEP 4 Postcondition — Release Backlog Lock (Strict)
 
@@ -1028,6 +1026,8 @@ Before writing `cycle_summary.md`, update `.claude_current_state.json` to reflec
 active_cycle: <cycle_id>
 status: <current macro-state>       # e.g. Validated — NOT Published
 backlog_slice_path: claude/cycles/<cycle_id>/stage4_backlog_slice.md
+design_gate_required: true|false          # LP-01 fix, v2.41 — carried from state.json attributes.design_gate_required (set at STEP 4.1); written here, atomically with active_cycle, not at STEP 4.1
+design_gate_status: "not_started"|"not_required"   # LP-01 fix, v2.41 — "not_started" if design_gate_required=true and not yet run, else "not_required"
 last_sync_utc: <ISO-8601 UTC now>
 ```
 
