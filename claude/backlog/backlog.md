@@ -4250,3 +4250,21 @@ No test failures have been attributed to stale fixtures since v6.4's signal/secu
 *Release Slice v6.6 removed — cycle 2026-07-04__release-v6.6 closed 2026-07-06. Archived canonical home: claude/cycles/2026-07-04__release-v6.6/stage4_backlog_slice.md*
 
 ---
+
+## Release Slice v6.7 — 2026-07-06__release-v6.7
+
+<!-- release-plan-marker: RP:v6.7:2026-07-06__release-v6.7 -->
+
+Canonical home: `claude/cycles/2026-07-06__release-v6.7/stage4_backlog_slice.md`
+
+| ST-ID | Backlog ref | EPIC | Title |
+|-------|-------------|------|-------|
+| ST-01 | BLG-FE-87 | EPIC-01 | Dark-theme secondary-text contrast fix |
+| ST-02 | BLG-FE-88 | EPIC-01 | Light-theme secondary-text contrast fix |
+| ST-03 | BLG-FE-89 | EPIC-01 | Shared secondary-text design token |
+| ST-04 | BLG-GOV-167 | EPIC-02 | `.claude/skills/` write-scope authority + commit-check patch |
+| ST-05 | BLG-GOV-168 | EPIC-02 | Structural guard for 4 append-only governance logs |
+| ST-06 | BLG-GOV-169 | EPIC-02 | `audit.py` SLA same-session commit requirement |
+| ST-07 | BLG-GOV-170 | EPIC-02 | Delivery Verification STEP 6 status-line documentation |
+
+---

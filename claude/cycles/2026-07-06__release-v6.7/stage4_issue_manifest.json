@@ -1,0 +1,65 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Dark-theme secondary-text contrast fix",
+    "epic": "EPIC-01",
+    "description": "Systematic WCAG-AA contrast fix for text-slate-500 secondary text against dark-theme surfaces (BLG-FE-87)",
+    "ac_summary": "Contrast fixed per-surface; spot-checks recorded; Playwright/staging sign-off",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-06__release-v6.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Light-theme secondary-text contrast fix",
+    "epic": "EPIC-01",
+    "description": "Add dark:/light-mode variants for 764 bare secondary-text instances missing theme-aware contrast (BLG-FE-88)",
+    "ac_summary": "Paired dark:/light class combinations added, prioritised by traffic; Playwright/staging sign-off",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-06__release-v6.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Shared secondary-text design token",
+    "epic": "EPIC-01",
+    "description": "Canonical secondary-text treatment (token or component) to prevent recurring contrast regressions (BLG-FE-89)",
+    "ac_summary": "Canonical treatment defined and documented; frontend spec updated",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-06__release-v6.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": ".claude/skills/ write-scope authority + commit-check patch",
+    "epic": "EPIC-02",
+    "description": "Grant Head of Specs Team write authority for .claude/skills/ and apply the carried commit-check diff-verification patch (BLG-GOV-167)",
+    "ac_summary": "shared_standards.md documents authority; commit-check patch applied; 3-cycle carry-forward closed",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-06__release-v6.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Structural guard for 4 append-only governance logs",
+    "epic": "EPIC-02",
+    "description": "Extract decision_log.md's structural guard into a reusable procedure and apply to 4 engines' write steps (BLG-GOV-168)",
+    "ac_summary": "Canonical procedure defined; all 4 engines' write steps updated and verified by direct read",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-06__release-v6.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "audit.py SLA same-session commit requirement",
+    "epic": "EPIC-02",
+    "description": "Add explicit same-session commit instruction to audit.py's SLA block (BLG-GOV-169)",
+    "ac_summary": "SLA block states report must be committed same-session",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-06__release-v6.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Delivery Verification STEP 6 status-line documentation",
+    "epic": "EPIC-02",
+    "description": "Document the sprint status-line update as an expected STEP 6 action (BLG-GOV-170)",
+    "ac_summary": "STEP 6 documents the status-line update as expected behaviour",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-06__release-v6.7"],
+    "assignee": null
+  }
+]

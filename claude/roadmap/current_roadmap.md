@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v6.6** — UX & QA Debt Clearance — ✅ Complete — Shipped 2026-07-06 — cycle: 2026-07-04__release-v6.6
-**Next planned release:** v6.7 — [TBD]
+**Next planned release:** v6.7 — Contrast Remediation & Governance Hardening — Planning
+
+<!-- roadmap-annotation-marker: RA:v6.7:2026-07-06__release-v6.7 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-06__release-v6.7
+- Plan published: 2026-07-06
+- Cycle folder: claude/cycles/2026-07-06__release-v6.7/
+- Backlog slice: claude/cycles/2026-07-06__release-v6.7/stage4_backlog_slice.md
+- Status at annotation: Validated
 
 *RA:v6.6 retired — see roadmap_archive.md 2026-07-06 (post-ship closure 2026-07-04__release-v6.6).*
 
