@@ -1,10 +1,10 @@
 {
   "active_cycle": "2026-07-04__release-v6.6",
   "cycle_name": "v6.6 — UX & QA Debt Clearance",
-  "status": "Sprint_Planning_Complete",
+  "status": "Executing",
   "prior_status": "Published",
-  "engine": "sprint_planning",
-  "execution_state_path": "claude/cycles/2026-07-02__release-v6.4/execution_state.json",
+  "engine": "sprint_execution",
+  "execution_state_path": "claude/cycles/2026-07-04__release-v6.6/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-07-04__release-v6.6/stage4_backlog_slice.md",
   "sprint_sealed": true,
   "sprint_goal_path": "claude/cycles/2026-07-04__release-v6.6/sprint_goal.md",

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.9
-**Last Updated:** 2026-06-16
+**Version:** 1.10
+**Last Updated:** 2026-07-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -261,12 +261,16 @@ Before producing the health summary, scan for duplicate item IDs across the clos
 2. Collect all item IDs from `backlog_archive.md`
 3. Identify any ID that appears more than once across either list
 
-For each duplicate found:
+**§6.1 stub+verbatim exemption (BLG-QA-72, v6.6 ST-03):** The §6.1 archive format deliberately writes each ID's `### BLG-xxx — Title` header **twice** in immediate succession — once for the retirement stub (`**Status at retirement:**` / `**Retired:**` / `**Shipped in:**` / `**Evidence:**` block) and once as the first line of the verbatim full-entry copy that follows it. Before flagging an ID as a duplicate:
+- If the ID appears **exactly twice**, the two headers carry the **same title text**, and the first occurrence is immediately followed by a `**Status at retirement:**` line: this is a compliant §6.1 stub+verbatim pair, not a duplicate. Do not flag.
+- If the ID appears more than twice, or appears twice with **different title text**, or twice with the same title but *without* the `**Status at retirement:**` stub marker preceding the first: this is a genuine duplicate — flag per below.
+
+For each genuine duplicate found:
 - Record it in the health summary under a **Duplicate IDs** subsection
 - Flag it in the change plan with action: `Investigate — duplicate ID in closed items`
 - Do not archive further copies of a duplicated item without Product Owner confirmation
 
-If no duplicates found: note "ID uniqueness: PASS" in the health summary.
+If no genuine duplicates found: note "ID uniqueness: PASS" in the health summary.
 
 ---
 

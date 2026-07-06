@@ -24,54 +24,46 @@ if not os.getenv("DATABASE_URL"):
     os.environ["DATABASE_URL"] = "postgresql://test:test@localhost:5432/test_stub"
 
 # ---------------------------------------------------------------------------
-# Session-scoped database stub (BLG-QA-20 / ST-09)
+# Session-scoped database stub (BLG-QA-20 / ST-09; auto-derived per BLG-QA-73)
 #
 # Registered at conftest load time (before any test file is collected) so that
 # import-time `from database import <fn>` bindings in service modules resolve
 # to MagicMock instances rather than a real DB connection.
 #
+# The stub's function list is derived automatically by an AST scan of backend/
+# for `from database import (...)` statements, rather than hand-maintained.
+# This removes the manual-sync requirement that previously lived in CLAUDE.md
+# (adding a new `database` import no longer requires a matching conftest.py
+# edit — see claude/backlog resolution for BLG-QA-73).
+#
 # test_api_contracts.py intentionally evicts this stub (sys.modules.pop) to
 # load the real database.py — that is the correct behaviour for contract tests.
 # ---------------------------------------------------------------------------
 
-_DB_STUB_FUNCTIONS = [
-    "get_db", "get_portfolio", "get_positions", "update_position",
-    "create_position", "update_portfolio_cash", "get_settings",
-    "create_trade_history", "update_position_note", "update_position_tags",
-    "get_all_tags", "search_positions_by_tags", "get_trade_history",
-    "get_trade_history_by_tax_year", "create_cash_transaction",
-    "get_cash_transactions", "get_total_deposits_withdrawals",
-    "create_portfolio_snapshot", "get_portfolio_snapshots", "get_latest_snapshot",
-    "create_signal", "get_signals", "update_signal", "delete_signal",
-    "get_all_tickers", "get_peak_portfolio_value",
-    "get_all_closed_trades_for_csv_export",
-    "get_trade_reflection", "upsert_trade_reflection",
-    "get_database_size_bytes", "delete_position",
-    "download_ticker_data", "compute_atr_simple", "create_settings", "update_settings",
-    "get_trade_plans_by_position", "ensure_planned_entry_price_column",
-    "get_monthly_pnl",
-    "create_trade_plan", "update_trade_plan", "get_trade_plans", "get_trade_plan_by_id",
-    "delete_trade_plan", "ensure_setup_type_column", "ensure_override_acknowledged_column", "ensure_trade_plans_table",
-    "get_trade_by_id", "get_position_by_id", "update_position_lifecycle_state",
-    "ensure_plan_vs_reality_columns", "ensure_signals_watchlisted_status",
-    "ensure_red_flag_events_table", "create_red_flag_event", "get_red_flag_events",
-    "ensure_pre_entry_validation_log_table", "log_pre_entry_validation_results",
-    "ensure_gemini_audit_log_table", "create_gemini_audit_entry", "purge_gemini_audit_log_older_than_90_days",
-    "get_daily_ai_cost",
-    "ensure_claude_audit_log_table", "create_claude_audit_entry", "query_claude_audit_log",
-    "ensure_si02_trade_plans_columns", "ensure_si02_trade_history_indexes", "get_behavioural_drift_data",
-    "ensure_red_flag_events_severity_column",
-    "ensure_positions_user_fill_price_column", "ensure_trade_history_fill_price_column",
-    "get_gate_metrics",
-    "ensure_trade_cost_columns", "update_trade_costs", "get_trade_history_with_stops",
-    # ST-03 (BLG-FEAT-47) — rebalance exit signal support
-    "ensure_signals_exit_rebalance_status", "create_rebalance_exit_signal",
-    # ST-05 (BLG-FEAT-49) — risk-off exit alert column
-    "ensure_risk_off_exit_column", "update_positions_risk_off_exit",
-    # ST-11 (BLG-FEAT-53) — strategy benchmark backtest import
-    "ensure_backtest_tables", "upsert_backtest_data",
-    "get_backtest_trades", "get_backtest_summary", "get_actual_stats_for_benchmark",
-]
+import ast  # noqa: E402
+
+_DB_STUB_SCAN_EXCLUDE_DIRS = {".venv", "venv", "site-packages", "node_modules", "__pycache__", "build", "dist"}
+
+
+def _discover_database_stub_functions(backend_dir: Path) -> list:
+    """AST-scan backend/ for `from database import (...)` and return the
+    sorted union of imported names, excluding vendored/virtualenv paths."""
+    names = set()
+    for py_file in backend_dir.rglob("*.py"):
+        if any(part in _DB_STUB_SCAN_EXCLUDE_DIRS for part in py_file.parts):
+            continue
+        try:
+            tree = ast.parse(py_file.read_text(), filename=str(py_file))
+        except SyntaxError:
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ImportFrom) and node.module == "database":
+                for alias in node.names:
+                    names.add(alias.name)
+    return sorted(names)
+
+
+_DB_STUB_FUNCTIONS = _discover_database_stub_functions(Path(__file__).parent.parent / "backend")
 
 _database_stub = types.ModuleType("database")
 for _fn in _DB_STUB_FUNCTIONS:

@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.77
-**Last Updated:** 2026-07-03
+**Version:** 4.78
+**Last Updated:** 2026-07-06
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -475,7 +475,7 @@ Any other input is treated as conversational — the Engine will not run.
 
 ## 6M. Phase 1M — Document Management (Optional)
 
-**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.4), `claude/system/backlog_management_prompt.md` (v1.9), `claude/system/ideas_housekeeping_prompt.md` (v1.0)  
+**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.4), `claude/system/backlog_management_prompt.md` (v1.10), `claude/system/ideas_housekeeping_prompt.md` (v1.0)  
 **Owner:** PMO Lead / Product Owner  
 **Trigger:** Optional — strongly recommended at either of the following windows:
 
@@ -1454,13 +1454,13 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.73 |
-| Last Updated | 2026-07-03 |
+| Version | 4.78 |
+| Last Updated | 2026-07-06 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
-| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.9 |
+| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.10 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v8.1 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.78 | 2026-07-06 | **v6.6 ST-03 (BLG-QA-72, EPIC-02) — backlog_management_prompt.md v1.9→v1.10: STEP 4.5 ID Uniqueness Scan §6.1 stub+verbatim exemption added.** §6M source prompt header updated v1.9→v1.10. §14 Backlog Management Engine v1.9→v1.10. §14 Version 4.77→4.78/2026-07-06. Change: STEP 4.5 now excludes the §6.1 archive format's compliant stub+verbatim header pair (same ID, same title, retirement stub immediately preceding the verbatim copy) from the duplicate-ID count — only flags IDs appearing >2 times, or twice with differing titles, or twice without the stub marker. Root cause: the prior scan flagged all §6.1-format archived entries as duplicates by design, producing a permanent false-positive baseline (~29 legitimate pairs) that made "0 unresolved duplicate IDs" unreachable; confirmed via direct audit that of the 39 IDs with >1 `###` header found across backlog.md/backlog_archive.md, 29 were compliant §6.1 pairs, 10 were genuine collisions (different items sharing one ID — renumbered in the same commit: BLG-FE-66/67, BLG-GOV-69/70/71/72/73/74, BLG-OPS-12/13 → new IDs BLG-FE-85/86, BLG-GOV-161–166, BLG-OPS-86/87), and a further 5 (BLG-FE-49, BLG-FEAT-38, BLG-OPS-28/31/37) were the same item archived twice under two different historical archive conventions — flagged as a follow-up dedup item, not renumbered (renumbering would incorrectly imply two different items). Authority: Head of Specs Team (v6.6 ST-03, BLG-QA-72, 2026-07-06). |
 | 4.77 | 2026-07-03 | **Roadmap rebalance 2026-07-03__scheduled STEP 11.4 meta-review action-now — roadmap_prompt.md v8.0→v8.1: STEP 2.4 now reads the inline U/G/D/P ship-time tag (post_ship_closure.md v2.17) instead of re-deriving it, when present.** §6 source prompt header updated v8.0→v8.1. §13 Artefact Register Roadmap Rebalance Prompt row updated v8.0→v8.1. §14 Roadmap Engine Source v8.0→v8.1. §14 Version 4.76→4.77/2026-07-03. Change: closes the read-side gap left by the write-side patch applied earlier this same cycle (post_ship_closure.md v2.17) — without this, the newly-written ship-time tags would never actually be consulted, and STEP 2.4 would keep re-deriving classifications by judgment even for tagged cycles. Fall-back to judgment-based classification retained for untagged (pre-v6.6) cycles. Identified at STEP 11.4 meta-review (3-cycle trigger, `2026-06-26__scheduled` → this cycle) as a Type B (Semantic Mismatch) pattern spanning 2+ consecutive cycles. Authority: Head of Specs Team (roadmap rebalance 2026-07-03__scheduled meta-review). |
 | 4.76 | 2026-07-03 | **Roadmap rebalance 2026-07-03__scheduled — resolved deferred patch (Friction Item 3, `2026-07-02__scheduled` lessons learnt) — post_ship_closure.md v2.16→v2.17: Tech backlog items shipped lines now require an inline `[U\|G\|D\|P]` classification tag.** §10 source prompt header updated v2.16→v2.17. §14 Post-Ship Closure Engine v2.16→v2.17. §14 Version 4.75→4.76/2026-07-03. Change: STEP 1.1 entry template and STEP 1.2 entry rules updated so each shipped story is tagged `U`/`G`/`D`/`P` at the point the changelog entry is written, using `roadmap_prompt.md` STEP 2.4's classification schema — removes the reconstruction-variance risk of re-deriving these tags from prose each time the Product Value Ratio Diagnostic runs. Deferred patch's own named target was "`2026-07-05__scheduled` or next roadmap rebalance, whichever comes first" — this cycle is that next rebalance, so applied action-now rather than deferred again. Authority: Head of Specs Team (roadmap rebalance 2026-07-03__scheduled, acting on the patch's own arrived target date). |
 | 4.75 | 2026-07-03 | **Post-ship closure 2026-07-02__release-v6.5 self-identified closure-phase friction — post_ship_closure.md v2.15→v2.16: STEP 2/STEP 11 roadmap-retirement boundary clarified.** §10 source prompt header updated v2.15→v2.16. §14 Post-Ship Closure Engine v2.15→v2.16. §14 Version 4.74→4.75/2026-07-03. Change: STEP 2 (Roadmap Update) gained a clarifying note that the `*RA:<release> retired...*` annotation line is written by STEP 11 (roadmap_management_prompt.md), not STEP 2 — prevents a premature write recording an archival that has not yet happened. Caught and self-corrected during this cycle's own STEP 2 (v6.5 roadmap update) before commit; patched at source per the non-deferrable immediate-action rule rather than left as a one-off correction. See `claude/cycles/2026-07-02__release-v6.5/lessons_learnt_closure.md` Friction Log. Authority: Head of Specs Team (v6.5 post-ship closure, 2026-07-03). |
