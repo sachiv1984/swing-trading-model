@@ -64,7 +64,7 @@
       }
     },
     "EPIC-01": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-07-04__release-v6.6/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
@@ -75,21 +75,21 @@
         "ST-01": {
           "title": "Colour contrast audit sweep (BLG-FE-82)",
           "classification": "delegated_frontend",
-          "status": "not_started",
-          "assigned_to": null,
+          "status": "blocked_frontend",
+          "assigned_to": "Head of UX & Design",
           "github_issue": 914,
-          "branch": null,
+          "branch": "exec/2026-07-04__release-v6.6/EPIC-01",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "DEL-20260706-01",
+          "blocked_since_utc": "2026-07-06T09:05:00Z",
+          "unblock_criteria": "Findings document exists (contrast audit results + any filed follow-up backlog items) and Head of UX & Design sign-off recorded, then a commit referencing ST-01 pushed to exec/2026-07-04__release-v6.6/EPIC-01",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Delegated to Head of UX & Design per DEL-20260706-01; kept delegated_frontend (not reclassified) per user decision this session — audit requires visual/design judgment the engine should not substitute for, unlike ST-02 which was a pure code+test task."
         },
         "ST-02": {
           "title": "Red Flag Journal filter state persistence (BLG-FE-40)",
@@ -118,8 +118,8 @@
     }
   },
 
-  "blocked_items": [],
-  "delegated_items": [],
+  "blocked_items": ["EPIC-01/ST-01"],
+  "delegated_items": ["EPIC-01/ST-01"],
   "completed_items": ["EPIC-02/ST-03", "EPIC-02/ST-04", "EPIC-01/ST-02"],
   "open_escalations": [],
 
