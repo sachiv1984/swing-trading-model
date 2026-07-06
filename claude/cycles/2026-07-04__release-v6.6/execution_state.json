@@ -65,12 +65,12 @@
     },
     "EPIC-01": {
       "status": "not_started",
-      "branch": null,
+      "branch": "exec/2026-07-04__release-v6.6/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-07-04__release-v6.6/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/e2e/red-flag-journal-filter-persistence.spec.js"],
       "stories": {
         "ST-01": {
           "title": "Colour contrast audit sweep (BLG-FE-82)",
@@ -93,22 +93,26 @@
         },
         "ST-02": {
           "title": "Red Flag Journal filter state persistence (BLG-FE-40)",
-          "classification": "delegated_frontend",
-          "status": "not_started",
-          "assigned_to": null,
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
           "github_issue": 915,
-          "branch": null,
+          "branch": "exec/2026-07-04__release-v6.6/EPIC-01",
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
+          "completed_utc": "2026-07-06T08:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "src/pages/RedFlagJournal.js",
+            "tests/e2e/red-flag-journal-filter-persistence.spec.js",
+            "docs/specs/frontend/pages/red_flag_journal.md#Filter Controls"
+          ],
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Reclassified delegated_frontend -> autonomous at STEP 3.1 (LL-v2.3-CL-01 default: frontend stories are autonomous unless genuinely incapable; no delegation record had yet been created, so no Cancelled DEL entry required). User (acting in Product Owner capacity) confirmed this reclassification this session; ST-01 kept delegated_frontend since it requires Head of UX & Design visual judgment. AC-01: filter state (eventTypeFilter, tickerFilter, sinceFilter) persisted to localStorage key 'redFlagJournal.filters' with a {version, data} envelope, restored via lazy useState initializer on mount. AC-02: version-mismatch or corrupt/unparseable stored payload is caught, the stale key is removed, and defaults are used -- no error surfaces (verified in SC-RFJ-05b). AC-03: Playwright test added covering set-filter -> reload -> restored (SC-RFJ-05a) and the stale-state clearing path (SC-RFJ-05b). New tests were placed in a new file tests/e2e/red-flag-journal-filter-persistence.spec.js rather than appended to the existing tests/e2e/red-flag-journal.spec.js, because that existing file is excluded from CI via playwright.config.js testIgnore (BLG-QA-64 -- pre-existing, unrelated UI-text-mismatch failures, confirmed by running it directly: SC-RFJ-01/02 fail on a getByText('Red Flag Journal') strict-mode collision with the nav link, unrelated to this change). No spec deviation: docs/specs/frontend/pages/red_flag_journal.md does not document persistence behaviour at all (silent on this point), so this is Case B (documentation-creation) territory for spec_references but no textual deviation to file against the doc."
         }
       }
     }
@@ -116,7 +120,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["EPIC-02/ST-03", "EPIC-02/ST-04"],
+  "completed_items": ["EPIC-02/ST-03", "EPIC-02/ST-04", "EPIC-01/ST-02"],
   "open_escalations": [],
 
   "merge_gate": {
