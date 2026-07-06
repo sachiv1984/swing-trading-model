@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.7
-**Last Updated:** 2026-07-02
+**Version:** 3.8
+**Last Updated:** 2026-07-06
 
 # Shared Standards — All Governed Routines
 
@@ -864,6 +864,22 @@ Original / Amended — <file path used>
 ```
 
 **Status transition:** `Active` → `Sealed` when sign-off gate (STEP 6.2) passes. `sprint_sealed = true` in `.claude_current_state.json` must be set concurrently. Phase 3 may not invoke while status is `Active`.
+
+---
+
+## 17. `.claude/skills/` Write Authority (BLG-GOV-167)
+
+No governed engine's declared Write Scope (§7 pattern, `claude/system/shared/governance_preamble.md §Write-Scope`) includes `.claude/skills/`. Skill files (`.claude/skills/**/SKILL.md`) are process tooling that sits adjacent to, but outside, the five governed routines — they are invoked directly by the user or by Claude Code's skill dispatch, not by any of the phase engines.
+
+This left a gap: a deferred patch to `.claude/skills/commit-check/SKILL.md` (adding a diff-verification step) carried unresolved across three consecutive cycles (v6.4 → v6.5 → v6.6) because no engine's write scope covered the file, and no explicit authority was named to action it outside a governed routine.
+
+**Provision:** The **Head of Specs Team** holds standing write authority over `.claude/skills/**`, independent of any single engine's per-run Write Scope. This authority may be exercised:
+- Directly, at any time, without opening a governed cycle — skill files are process tooling, not release-scoped artefacts.
+- As part of a sprint story (e.g. an EPIC-02-style governance-hardening story), in which case the story's own Write Scope entry for `claude/system/`-class files extends to cover the specific `.claude/skills/` path named in the story's acceptance criteria.
+
+**Compliance rule:** Any commit that edits a file under `.claude/skills/` must be authored or reviewed by the Head of Specs Team (directly, or via delegated sprint-story execution under this provision). No other role may modify `.claude/skills/` content.
+
+This closes the 3-cycle carry-forward escalation `ESC-CLOSE-20260706-01`.
 
 ---
 

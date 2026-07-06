@@ -145,6 +145,21 @@ This check is advisory for stories with `delegated_qa` status that have not yet 
 
 ---
 
+### Check 9 — Diff verification for multi-file governance commits
+
+This check fires when **2 or more** governance files (`claude/system/**`, `claude/charter/**`, `claude/agents/**`, `claude/roadmap/**`, `claude/backlog/**`) are staged together in the same commit.
+
+1. Build the **intended file set** — the list of files the commit was actually meant to touch (from the task/story description, or from what was just edited in this session).
+2. Compare against `git diff --cached --name-only` (the actual staged set).
+3. **FAIL if:**
+   - A file in the intended set is missing from staged (would silently drop a required change — e.g. a §6 checklist file left unstaged).
+   - A file appears in staged that isn't in the intended set (would silently bundle an unrelated change into this commit — e.g. a leftover edit from earlier in the session).
+4. **PASS if** the two sets match exactly.
+
+This is the diff-verification step required by BLG-GOV-167 / `shared_standards.md §17` — multi-file governance commits are the highest-risk case for a partial or over-broad `git add`, since §6 compliance (version bump + OPERATIONAL_GUIDE.md + phase header + prompt_change_log.md) spans several files that must land together.
+
+---
+
 ## Step 4 — Render the result
 
 ```
