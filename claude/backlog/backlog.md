@@ -339,7 +339,7 @@ Monthly P&L shipped 2026-05-05 with a fixed column/section layout. After 3 month
 **Source:** IDEA-product-owner-20260619-02 (IW-20260619-01) — Backlog-gate-conditional; rebalance 2026-06-24__scheduled
 **Effort:** L (~1 week)
 **Provisional-Target:** [TBD — gate-conditional]
-**Gate:** Arc 4 PO-02 (Journal Pattern Recognition) sprint planning imminent — tag data model provides complementary structure for cross-trade pattern analysis
+**Gate criteria:** Arc 4 PO-02 (Journal Pattern Recognition) sprint planning imminent — tag data model provides complementary structure for cross-trade pattern analysis
 
 **Problem**
 Trades are currently classified only by market, sector, and signal type. There is no mechanism for a user to apply free-form tags (e.g. "earnings catalyst", "gap-and-go", "sector rotation") and subsequently filter performance analytics by those tags. Tag-based filtering would allow comparison of win rate and average R across user-defined trade categories.
@@ -3673,6 +3673,509 @@ No view partitions Render dyno compute cost by feature area. Meaningful cost tre
 **Acceptance Criteria**
 - Cost trending view implemented and populated
 - Gate condition (BLG-OPS-74 shipped) verified before sprint planning
+
+---
+
+### BLG-FEAT-61 — Screener-to-watchlist promotion friction audit
+**Priority:** P3 (Low)
+**Type:** Product Feature / UX Research
+**Owner:** Product Owner
+**Source:** IDEA-product-owner-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** A user-reported friction signal on the DS-07 promotion flow, or an observed drop in promotion-to-watchlist conversion rate.
+
+**Problem**
+DS-07 (screener → watchlist promotion) has been unchanged since v3.0 with no reported usage issue. Auditing it now would be speculative.
+
+**Scope**
+- Review promotion flow usage once a friction signal exists
+- Recommend UX changes if warranted
+
+**Acceptance Criteria**
+- Audit conducted and documented only after gate signal observed
+
+---
+
+### BLG-FEAT-62 — Trade plan template presets by setup type
+**Priority:** P3 (Low)
+**Type:** Product Feature
+**Owner:** Product Owner
+**Source:** IDEA-product-owner-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** ≥20 closed trades captured post-PT-04 (2026-06-23) with sufficient `setup_type` diversity to justify presets (at least 3 distinct setup types with ≥3 trades each).
+
+**Problem**
+PT-04 (Setup Quality Score) is live, but trade volume since its gate clearance is too low to know which setup-type presets would actually be useful.
+
+**Scope**
+- Analyse `setup_type` distribution once gate clears
+- Design preset templates for the most common setup types
+
+**Acceptance Criteria**
+- Preset design only commences after gate condition confirmed
+
+---
+
+### BLG-GOV-171 — Spec staleness scan across owning code paths
+**Priority:** P3 (Low)
+**Type:** Governance / Spec Debt
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** A staleness-threshold definition (e.g. "spec unedited N releases while its code path changed") is authored first — this item is the scan itself, not the threshold definition.
+
+**Problem**
+No demonstrated spec-drift incident motivates this yet, and no threshold exists to define "stale."
+
+**Scope**
+- Author a staleness threshold, then run a one-off scan of specs against their owning code paths
+
+**Acceptance Criteria**
+- Threshold defined before scan is run
+- Scan report produced identifying any specs exceeding the threshold
+
+---
+
+### BLG-GOV-172 — Governance prompt cross-reference integrity check
+**Priority:** P3 (Low)
+**Type:** Governance
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Opportunistic — run at the next scheduled lifecycle audit (`run audit`, every 3 cycles) or upon discovery of a broken cross-reference, whichever comes first.
+
+**Problem**
+No evidence yet of a broken cross-reference between governance prompts, but none has been checked systematically either.
+
+**Scope**
+- Scan all `claude/system/*.md` cross-references for validity, bundled into the next scheduled `run audit` pass
+
+**Acceptance Criteria**
+- Check performed alongside next lifecycle audit; findings (if any) filed as backlog items
+
+---
+
+### BLG-GOV-173 — Escalation SLA dashboard
+**Priority:** P3 (Low)
+**Type:** Governance / Tooling
+**Owner:** PMO Lead
+**Source:** IDEA-pmo-lead-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Open escalation volume grows to ≥3 concurrent open escalations (current baseline: 0) — below that, existing manual tracking is sufficient.
+
+**Problem**
+Escalation volume is currently zero; a dashboard has no data to justify its build cost yet.
+
+**Scope**
+- Build a simple SLA-tracking view once escalation volume justifies it
+
+**Acceptance Criteria**
+- Dashboard built only after gate condition confirmed
+
+---
+
+### BLG-QA-75 — Playwright flake-rate tracking
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** Director of Quality
+**Source:** IDEA-director-of-quality-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** First demonstrated flaky-test incident in CI (a test that fails intermittently without a code change).
+
+**Problem**
+No flaky-test incidents have been observed in CI to date; building tracking tooling now would be premature.
+
+**Scope**
+- Add flake-rate tracking to the CI pipeline once a first flaky test is observed
+
+**Acceptance Criteria**
+- Tooling built only after gate condition (first flaky-test incident) confirmed
+
+---
+
+### BLG-QA-76 — QA evidence cross-link audit
+**Priority:** P3 (Low)
+**Type:** QA / Governance
+**Owner:** Director of Quality
+**Source:** IDEA-director-of-quality-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Opportunistic — bundle into the next scheduled lifecycle audit, or run on discovery of a dangling DoQ claim.
+
+**Problem**
+No evidence yet of a dangling (unlinked/broken) DoQ sign-off claim, but none has been checked systematically.
+
+**Scope**
+- Scan `qa_evidence_*.md` files for DoQ claims lacking a valid evidence link, bundled with the next `run audit` pass
+
+**Acceptance Criteria**
+- Check performed alongside next lifecycle audit; findings (if any) filed as backlog items
+
+---
+
+### BLG-OPS-88 — Render dyno right-sizing review
+**Priority:** P3 (Low)
+**Type:** Operations / FinOps
+**Owner:** FinOps & Resource Architect
+**Source:** IDEA-finops-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Bundle with the existing scheduled 90-day AI cost review (due 2026-09-24) — no standalone signal yet indicates the current dyno tier is mismatched.
+
+**Problem**
+The 2 AI endpoints are only 8 days live as of this idea's submission; no cost/performance signal yet indicates a right-sizing need.
+
+**Scope**
+- Review dyno tier alongside the 2026-09-24 AI cost review
+
+**Acceptance Criteria**
+- Review conducted at or after the 2026-09-24 gate date
+
+---
+
+### BLG-OPS-89 — Anthropic API budget alert threshold calibration
+**Priority:** P3 (Low)
+**Type:** Operations / FinOps
+**Owner:** FinOps & Resource Architect
+**Source:** IDEA-finops-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** The existing `POST /ai/check-daily-cost` alert (shipped v4.1) produces a first false positive or false negative.
+
+**Problem**
+The existing cost alert has not misfired since shipping; recalibrating its threshold now would be speculative.
+
+**Scope**
+- Recalibrate the alert threshold once a false positive/negative is observed
+
+**Acceptance Criteria**
+- Recalibration only performed after gate condition confirmed
+
+---
+
+### BLG-OPS-90 — Staging environment drift detector
+**Priority:** P3 (Low)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** A second occurrence of a staging/production configuration drift incident (first occurrence: BLG-OPS-82, a one-off missing-deploy issue).
+
+**Problem**
+BLG-OPS-82 was a single one-off incident, not a demonstrated recurring pattern; building detector tooling for a non-recurring issue is premature.
+
+**Scope**
+- Build automated drift detection between staging and production config once a second incident occurs
+
+**Acceptance Criteria**
+- Tooling built only after gate condition (2nd occurrence) confirmed
+
+---
+
+### BLG-OPS-91 — Deploy rollback runbook dry-run
+**Priority:** P3 (Low)
+**Type:** Operations
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** After the next real production deploy that uses the BLG-OPS-80 rollback runbook.
+
+**Problem**
+The rollback runbook (BLG-OPS-80) is authored but has not yet been exercised against a real production deploy.
+
+**Scope**
+- Perform a dry-run (or live use) of the runbook at the next production deploy
+
+**Acceptance Criteria**
+- Dry-run performed and runbook gaps (if any) documented after the next deploy
+
+---
+
+### BLG-GOV-174 — Skill-Silo Alert historical trend chart
+**Priority:** P3 (Low)
+**Type:** Governance / Tooling
+**Owner:** PMO Lead
+**Source:** IDEA-challenger-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Adoption of a second Skill-Silo escalation tier (BLG-GOV-176a / companion idea IDEA-challenger-20260702-01, Advanced this cycle — see `cycle_record.md` STEP 5) — if a second tier is adopted, this chart becomes part of its supporting dashboard; if not adopted, defer indefinitely.
+
+**Problem**
+The underlying data already exists across `workforce_capacity.md` and `decision_log.md` cycle entries; a chart is a presentation nice-to-have, not new capability, and its value depends on whether a second escalation tier is adopted.
+
+**Scope**
+- Build a historical trend chart of the rolling Skill-Silo percentage, contingent on the companion escalation-tier decision
+
+**Acceptance Criteria**
+- Built only if the companion decision (STEP 5, this cycle) adopts a second tier
+
+---
+
+### BLG-SPEC-67 — OpenAPI example-response completeness sweep
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** IDEA-api-contracts-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Opportunistic documentation debt — bundle with the next scheduled lifecycle audit.
+
+**Problem**
+No evidence gaps in `openapi.yaml` example responses have caused an actual integration problem; this is opportunistic hygiene, not urgent.
+
+**Scope**
+- Sweep `docs/reference/openapi.yaml` for endpoints missing example responses, bundled with the next `run audit` pass
+
+**Acceptance Criteria**
+- Sweep performed alongside next lifecycle audit; gaps (if any) filed as backlog items
+
+---
+
+### BLG-GOV-175 — Base44 prompt draft changelog
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** IDEA-base44-frontend-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Base44 prompt draft revision frequency increases to a point where informal tracking becomes error-prone (e.g. ≥3 revisions to the same prompt draft within a single sprint).
+
+**Problem**
+Prompt revision frequency remains low; a formal changelog/versioning process is not yet warranted.
+
+**Scope**
+- Introduce a lightweight changelog for Base44 prompt drafts once revision frequency justifies it
+
+**Acceptance Criteria**
+- Changelog introduced only after gate condition confirmed
+
+---
+
+### BLG-BE-43 — Trade plan field usage audit
+**Priority:** P3 (Low)
+**Type:** Backend / Data
+**Owner:** Data Model & Domain Schema Owner
+**Source:** IDEA-data-model-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Arc 4 PO-02 (Journal Pattern Recognition) design phase begins (gated to ~2026-10-20, 6+ months AI-summarised journal data).
+
+**Problem**
+This audit would directly inform Arc 4 PO-02/PO-03 design, but running it ahead of that design phase risks auditing fields that later change.
+
+**Scope**
+- Audit actual usage of trade plan fields once PO-02 design phase begins
+
+**Acceptance Criteria**
+- Audit conducted only after gate condition (PO-02 design phase start) confirmed
+
+---
+
+### BLG-BE-44 — Signal write-path schema consolidation
+**Priority:** P3 (Low)
+**Type:** Backend / Refactor
+**Owner:** Data Model & Domain Schema Owner
+**Source:** IDEA-data-model-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** BLG-SEC-02's 3-path sanitisation fix (shipped v6.4) has run in production for ≥30 days with no incident (clears ~2026-08-01).
+
+**Problem**
+BLG-SEC-02 just shipped a 3-path sanitisation fix to the signal write path; consolidating that code now, before it has stabilised in production, risks compounding an unproven change with a refactor.
+
+**Scope**
+- Consolidate the 3 signal write paths into a single validated path once the sanitisation fix has proven stable
+
+**Acceptance Criteria**
+- Refactor only commences after gate condition (30-day stability window) confirmed
+
+---
+
+### BLG-GOV-176 — Facilitator workload note
+**Priority:** P3 (Low)
+**Type:** Governance / HR
+**Owner:** Director of HR
+**Source:** IDEA-director-of-hr-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Facilitator workload is reported as a bottleneck in any cycle's lessons learnt or escalation record.
+
+**Problem**
+No signal currently indicates Facilitator workload is a bottleneck; formal tracking is not yet warranted.
+
+**Scope**
+- Produce a workload note/assessment once a bottleneck signal is reported
+
+**Acceptance Criteria**
+- Assessment produced only after gate condition confirmed
+
+---
+
+### BLG-FEAT-63 — P&L report AI narrative cost estimate
+**Priority:** P3 (Low)
+**Type:** Product Feature / FinOps
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Same AI-adoption gate as BLG-FEAT-59 (AI-assisted monthly P&L narrative) — clears ~2026-07-25.
+
+**Problem**
+This cost estimate directly feeds BLG-FEAT-59, which is itself gated on the AI-adoption window; estimating cost ahead of that gate is premature.
+
+**Scope**
+- Produce a cost estimate for AI-generated P&L narrative once the adoption window clears
+
+**Acceptance Criteria**
+- Estimate produced only after gate condition confirmed
+
+---
+
+### BLG-BE-45 — Trade cost field completeness check
+**Priority:** P3 (Low)
+**Type:** Backend / Data Quality
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** Opportunistic — bundle with the next scheduled lifecycle audit.
+
+**Problem**
+No evidence yet of missing `trade_costs` values; this is a data-quality hygiene check, not an urgent fix.
+
+**Scope**
+- Check completeness of `trade_costs` fields across closed trades, bundled with the next `run audit` pass
+
+**Acceptance Criteria**
+- Check performed alongside next lifecycle audit; gaps (if any) filed as backlog items
+
+---
+
+### BLG-QA-77 — Playwright suite runtime trend
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-engineering-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** CI suite runtime is reported as a bottleneck (e.g. blocking rapid iteration or exceeding a defined CI time budget).
+
+**Problem**
+CI suite runtime has not been reported as a bottleneck at the current spec-file count; trend tracking now would be premature.
+
+**Scope**
+- Add runtime trend tracking to CI once runtime is reported as a bottleneck
+
+**Acceptance Criteria**
+- Tracking added only after gate condition confirmed
+
+---
+
+### BLG-OPS-92 — Dependency update review
+**Priority:** P2 (Medium)
+**Type:** Operations / Security Hygiene
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-engineering-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** A new CVE or deprecation warning surfaces on a project dependency, OR the next quarterly hygiene cadence (~2026-10-06, 3 months post v4.0 starlette remediation).
+
+**Problem**
+No known CVE or deprecation warning is currently outstanding since the v4.0 starlette remediation; a full review now would be opportunistic rather than urgent.
+
+**Scope**
+- Full dependency update review triggered by either a new CVE/deprecation signal or the quarterly cadence, whichever comes first
+
+**Acceptance Criteria**
+- Review conducted at or after the gate condition (signal or cadence date)
+
+---
+
+### BLG-FE-90 — Open Positions panel visual consistency check
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** A visual inconsistency in the Open Positions panel (BLG-FEAT-54, shipped v6.4) is reported.
+
+**Problem**
+BLG-FEAT-54 shipped with Head of UX & Design input already incorporated at design-gate time; no visual inconsistency has been reported since.
+
+**Scope**
+- Review and correct any reported visual inconsistency once one surfaces
+
+**Acceptance Criteria**
+- Review conducted only after a specific inconsistency is reported
+
+---
+
+### BLG-SEC-10 — Security fix false-positive rate assessment
+**Priority:** P2 (Medium)
+**Type:** Security / QA
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** IDEA-metrics-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** A production observation window of ≥30 days post-BLG-SEC-02 ship (shipped v6.4, 2026-07-02; clears ~2026-08-01). Revisit alongside BLG-QA-70.
+
+**Problem**
+BLG-SEC-02's write-time validation just shipped; a false-positive rate cannot be meaningfully measured without a production observation window.
+
+**Scope**
+- Measure false-positive rate of BLG-SEC-02 validation once the observation window elapses, alongside BLG-QA-70
+
+**Acceptance Criteria**
+- Measurement conducted only after gate condition (30-day window) confirmed
+
+---
+
+### BLG-GOV-177 — DoQ sign-off audit spot-check
+**Priority:** P3 (Low)
+**Type:** Governance / QA
+**Owner:** QA Lead
+**Source:** IDEA-qa-lead-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** A non-compliant DoQ sign-off is found, OR bundle with the next scheduled lifecycle audit.
+
+**Problem**
+Every recent cycle has shipped Verified with zero deviations; no evidence yet of a non-compliant DoQ sign-off.
+
+**Scope**
+- Spot-check DoQ sign-off compliance, bundled with the next `run audit` pass
+
+**Acceptance Criteria**
+- Spot-check performed alongside next lifecycle audit; findings (if any) filed as backlog items
+
+---
+
+### BLG-QA-78 — Test data fixture staleness check
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** QA & Testing Owner
+**Source:** IDEA-qa-testing-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** A test failure is attributed to a stale test fixture.
+
+**Problem**
+No test failures have been attributed to stale fixtures since v6.4's signal/security changes; a staleness check now would be speculative.
+
+**Scope**
+- Check test data fixtures for staleness once a failure is attributed to one
+
+**Acceptance Criteria**
+- Check conducted only after gate condition confirmed
 
 ---
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*

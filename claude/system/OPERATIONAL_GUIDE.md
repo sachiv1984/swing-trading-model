@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.78
+**Version:** 4.80
 **Last Updated:** 2026-07-06
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v8.2)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v8.3)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1272,7 +1272,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v8.2) | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v8.3) | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1463,7 +1463,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.10 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v8.2 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v8.3 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.41 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.12 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.80 | 2026-07-06 | **Roadmap rebalance 2026-07-06__scheduled — resolved deferred patch (`lessons_learnt_closure.md` v6.6, Carry-Forward #2) via STEP 5 debate — roadmap_prompt.md v8.2→v8.3.** §6 source prompt header updated v8.2→v8.3. §13 Artefact Register Roadmap Rebalance Prompt row updated v8.2→v8.3. §14 Roadmap Engine Source v8.2→v8.3. §14 Version 4.78→4.80/2026-07-06 (also corrects a found header-drift: this document's top `**Version:**` field was left at 4.78 when the 4.79 entry below was added at v6.6 post-ship closure — the Change Log table was updated but the header field was not; both the missed 4.79 bump and this cycle's own change are reflected in this single 4.80 update). Change: `roadmap_prompt.md` §7.1 — added "Mandatory pull-forward on sustained failure": after 3+ consecutive worsening/unresolved rolling-3-cycle Skill-Silo readings, the pull-forward recommendation becomes mandatory (PO must commit ≥2 build-and-ship-shaped U-items at the next release; audit/investigation-shaped stories do not count per the STEP 2.4 content-based test). Closes the gap where v6.5 and v6.6 each bundled 2 nominal U-items but only 1 resolved to genuine U at ship in both cases. Authority: Head of Specs Team (STEP 5.2 PO Modify decision, roadmap rebalance 2026-07-06__scheduled). |
 | 4.79 | 2026-07-06 | **Post-ship closure 2026-07-04__release-v6.6 STEP 8 immediate actions — release_planning_prompt.md v2.40→v2.41 (LP-01) + roadmap_prompt.md v8.1→v8.2 (LP-05).** §6B source prompt header updated v2.40→v2.41. §6 source prompt header updated v8.1→v8.2. §13 Artefact Register Roadmap Rebalance Prompt row updated v8.1→v8.2. §14 Release Engine Source v2.40→v2.41. §14 Roadmap Engine Source v8.1→v8.2. §14 Version 4.78→4.79/2026-07-06. Changes: (LP-01, resolves 2-cycle recurrence v6.5→v6.6) release_planning_prompt.md STEP 4.1 no longer writes `design_gate_required`/`design_gate_status` directly to `.claude_current_state.json` — writes `state.json` only; STEP 7's intermediate sync now carries these fields into `.claude_current_state.json` atomically with `active_cycle`, closing the transient window where the new cycle's design-gate write could overwrite the just-closed prior cycle's own completed design-gate record before `active_cycle` had advanced. (LP-05) roadmap_prompt.md §7.1 Skill-Silo Alert — pull-forward candidate selection now requires reading the candidate's own `**Gate criteria:**` backlog line and confirming it is met/near-term before naming it; unmet-gate candidates must be flagged `[gate status unverified/unmet]` rather than named silently. Fixes the gap that let `2026-07-03__scheduled` name BLG-FEAT-52 as a candidate despite its own unmet PO-02 gate. Authority: Head of Specs Team (v6.6 post-ship closure, 2026-07-06). |
 | 4.78 | 2026-07-06 | **v6.6 ST-03 (BLG-QA-72, EPIC-02) — backlog_management_prompt.md v1.9→v1.10: STEP 4.5 ID Uniqueness Scan §6.1 stub+verbatim exemption added.** §6M source prompt header updated v1.9→v1.10. §14 Backlog Management Engine v1.9→v1.10. §14 Version 4.77→4.78/2026-07-06. Change: STEP 4.5 now excludes the §6.1 archive format's compliant stub+verbatim header pair (same ID, same title, retirement stub immediately preceding the verbatim copy) from the duplicate-ID count — only flags IDs appearing >2 times, or twice with differing titles, or twice without the stub marker. Root cause: the prior scan flagged all §6.1-format archived entries as duplicates by design, producing a permanent false-positive baseline (~29 legitimate pairs) that made "0 unresolved duplicate IDs" unreachable; confirmed via direct audit that of the 39 IDs with >1 `###` header found across backlog.md/backlog_archive.md, 29 were compliant §6.1 pairs, 10 were genuine collisions (different items sharing one ID — renumbered in the same commit: BLG-FE-66/67, BLG-GOV-69/70/71/72/73/74, BLG-OPS-12/13 → new IDs BLG-FE-85/86, BLG-GOV-161–166, BLG-OPS-86/87), and a further 5 (BLG-FE-49, BLG-FEAT-38, BLG-OPS-28/31/37) were the same item archived twice under two different historical archive conventions — flagged as a follow-up dedup item, not renumbered (renumbering would incorrectly imply two different items). Authority: Head of Specs Team (v6.6 ST-03, BLG-QA-72, 2026-07-06). |
 | 4.77 | 2026-07-03 | **Roadmap rebalance 2026-07-03__scheduled STEP 11.4 meta-review action-now — roadmap_prompt.md v8.0→v8.1: STEP 2.4 now reads the inline U/G/D/P ship-time tag (post_ship_closure.md v2.17) instead of re-deriving it, when present.** §6 source prompt header updated v8.0→v8.1. §13 Artefact Register Roadmap Rebalance Prompt row updated v8.0→v8.1. §14 Roadmap Engine Source v8.0→v8.1. §14 Version 4.76→4.77/2026-07-03. Change: closes the read-side gap left by the write-side patch applied earlier this same cycle (post_ship_closure.md v2.17) — without this, the newly-written ship-time tags would never actually be consulted, and STEP 2.4 would keep re-deriving classifications by judgment even for tagged cycles. Fall-back to judgment-based classification retained for untagged (pre-v6.6) cycles. Identified at STEP 11.4 meta-review (3-cycle trigger, `2026-06-26__scheduled` → this cycle) as a Type B (Semantic Mismatch) pattern spanning 2+ consecutive cycles. Authority: Head of Specs Team (roadmap rebalance 2026-07-03__scheduled meta-review). |

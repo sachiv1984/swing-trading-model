@@ -430,3 +430,31 @@ Mandatory pull-forward scan of `backlog.md` (P0/P1/P2 first, ungated, no blocker
 **v6.5 capacity outlook:** Now horizon remains empty; full v6.5 scope deferred to `plan release v6.5` per STEP 8.1 Option (b). All 24 new items are gate-conditional or small/unscheduled — no capacity constraint identified at roadmap level.
 
 **Workforce constraints:** None new. Gate-conditional items create no immediate FTE demand.
+
+---
+
+## Rebalance 2026-07-06__scheduled
+
+**Date:** 2026-07-06
+**Run tier:** Standard
+**Items evaluated:** 25 new backlog items (from ideas 3-cycle hard cap disposition — 25 gate-conditional, 8 rejected, 1 resolved as a governance-prompt patch); 0 new Promoted-Added initiatives
+
+| Item | Effort | Skill Category | Notes |
+|------|--------|---------------|-------|
+| BLG-FEAT-61, BLG-FEAT-62, BLG-FEAT-63 | S–M | Product Feature | All gate-conditional (usage signal, trade count, or AI-adoption date) |
+| BLG-GOV-171–177 | S–M | Governance / Process | All gate-conditional (opportunistic/audit-bundle or signal-triggered) |
+| BLG-QA-75, BLG-QA-76, BLG-QA-77, BLG-QA-78 | S–M | QA / Testing | All gate-conditional (first-incident or audit-bundle triggers) |
+| BLG-OPS-88, BLG-OPS-89, BLG-OPS-90, BLG-OPS-91, BLG-OPS-92 | S | FinOps / Infrastructure | All gate-conditional (scheduled cadence or signal-triggered) |
+| BLG-SPEC-67 | M | Spec Debt | Gate-conditional (audit-bundle) |
+| BLG-BE-43, BLG-BE-44, BLG-BE-45 | S–M | Backend Engineering | All gate-conditional (design-phase trigger, stability window, or audit-bundle) |
+| BLG-FE-90 | S | Frontend / UX | Gate-conditional (signal-triggered) |
+| BLG-SEC-10 | S | Security / QA | Gate-conditional (30-day production observation window) |
+
+**Governance load %:** ~48% (12 of 25 items are GOV/QA/SPEC/SEC process or spec-debt items)
+**Execution load %:** ~52% (13 of 25 are FE/BE/FEAT/OPS execution items)
+
+**Skill-Silo advisory:** Rolling 3-cycle average (v6.4 76.9%, v6.5 87.5%, v6.6 75.0%) = **79.8%**, above the 40% ceiling — Alert remains triggered per STEP 7.1, but improved for the first time after 3 consecutive worsening readings (was 83.7%). This cycle adopted a mandatory (not advisory) pull-forward clause in `roadmap_prompt.md` §7.1 (v8.2→v8.3) — after 3+ consecutive worsening/unresolved readings, the Product Owner must commit ≥2 build-and-ship-shaped U-items (per the STEP 2.4 story-shape distinction) at the next release, not merely "nominal" U-items. Mandatory pull-forward scan (LP-05 gate-verified) identified **BLG-FE-87** (P1, ungated, build-and-ship-shaped) and **BLG-FE-88** (P2, same defect class, ungated) as candidates for `plan release v6.7`; **BLG-FEAT-52** explicitly excluded — its own backlog entry confirms an unmet PO-02 gate (previously missed at `2026-07-03__scheduled` due to a non-standard `**Gate:**` field label, caught this cycle via direct inspection).
+
+**v6.7 capacity outlook:** Now horizon remains empty; full v6.7 scope deferred to `plan release v6.7` per STEP 8.1 Option (b). All 25 new items are gate-conditional or small/unscheduled — no capacity constraint identified at roadmap level. The mandatory pull-forward clause constrains `plan release v6.7`'s scope decision (≥2 build-and-ship U-items required), which should be weighed at that engine's own STEP 4.5/7.
+
+**Workforce constraints:** None new. Gate-conditional items create no immediate FTE demand.

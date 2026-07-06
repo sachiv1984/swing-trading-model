@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 8.2
+**Version:** 8.3
 **Last Updated:** 2026-07-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -522,6 +522,8 @@ Governance story % = (G + D + P stories from STEP 2.4) ÷ total stories delivere
 **> 40% Ceiling:** Skill-Silo Alert. Scan backlog for highest-priority user-facing item (U-classified, no blockers, within available capacity) — present as pull-forward candidate. PO decides. Check is mandatory; result recorded in `## STEP 8`. **A single U-item pull-forward is not guaranteed to bring the rolling average back under the ceiling** — a heavy governance/debt cycle can outweigh one prior cycle's correction (observed: bundling one U-story at v6.4 raised the 3-cycle average from 53.2% to 64.8% rather than lowering it, since the two remaining cycles in the window were both debt-heavy). If the alert has fired for 2+ consecutive cycles despite a prior pull-forward, the PO should consider prioritising more than one user-facing item at the next release rather than repeating a single-item correction.
 
 **Candidate gate verification (LP-05, v8.2 — fixes silent naming of gated candidates):** Before naming any item as a pull-forward candidate, read that item's own backlog entry (`claude/backlog/backlog.md`) for a `**Gate criteria:**` line. If a gate exists, confirm it is met or near-term-clearing as of this rebalance's date. If the gate is unmet with no confirmed near-term clearance: do not name the item as a candidate — select the next-highest-priority ungated U-item instead, or if none exists, name the gated item but explicitly mark it `[gate status unverified/unmet — release planning to confirm before accepting into scope]`. This closes the gap where `2026-07-03__scheduled` named BLG-FEAT-52 as a candidate without checking its own PO-02 gate, which release planning then had to catch and reject.
+
+**Mandatory pull-forward on sustained failure (v8.3 — closes the story-shape gap identified at `2026-07-04__release-v6.6` closure and confirmed a 2nd time at `2026-07-06__scheduled`):** If the rolling 3-cycle Skill-Silo average has worsened or remained unresolved (i.e. not shown a net improvement) for 3 or more consecutive readings, the pull-forward recommendation is no longer advisory — it becomes a mandatory scope requirement: the Product Owner must commit **at least 2 build-and-ship-shaped U-items** at the next release. A build-and-ship-shaped story is one whose acceptance criteria require a shipped, user-visible change; an audit/investigation-shaped story (AC requires only findings, a decision, or a document) does not count toward this minimum, even if nominally labelled user-facing at scoping time — classify using the same content-based test as STEP 2.4. This closes the gap where v6.5 and v6.6 each bundled 2 nominal U-items but only 1 resolved to genuine `U` at ship in both cases (the other was audit-shaped and correctly reclassified `D`), so the "2-item correction" was never actually tested as designed.
 
 **< 20% Floor:** Verify PO has sufficient sign-off capacity. If unconfirmable: record governance capacity risk in `## STEP 8`. Does not halt — must appear in lessons learnt.
 
