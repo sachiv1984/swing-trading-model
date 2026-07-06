@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.2
+**Version:** 3.3
 **Last Updated:** 2026-07-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -426,6 +426,8 @@ Verify:
 If any discrepancy: correct the system status report now (permitted write). Record the correction in `verification_report.md` §7.
 
 If `docs/System_status_report.md` does not exist: create it (the execution engine should have done this — if missing, create it using the execution_prompt §5.3A template).
+
+**Status-line update (expected step, BLG-GOV-170):** As part of this reconciliation, update the section's `**Status:**` line from `Sprint_Complete — pending verification` (written by `execution_prompt.md` STEP 5.3A) to `Verified — <date>` or `Verified_with_deviations — <date>` — whichever matches the STEP 7 outcome for this cycle, using the date this verification run completes. This is expected, routine behaviour on every verification run, not a new or unusual finding — do not log it as friction in `lessons_learnt_cycle.md`.
 
 ---
 

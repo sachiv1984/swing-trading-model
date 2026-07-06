@@ -973,7 +973,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.2)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.3)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1454,7 +1454,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.82 |
+| Version | 4.83 |
 | Last Updated | 2026-07-06 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
@@ -1469,7 +1469,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.52 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.6 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.2 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.3 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.17 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1494,6 +1494,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.83 | 2026-07-06 | **v6.7 ST-07 (EPIC-02, BLG-GOV-170) — delivery_verification_prompt.md v3.2→v3.3: STEP 6 now documents the System Status Report status-line update as an expected step.** §9 source prompt header v3.2→v3.3. §14 Verification Engine Source v3.2→v3.3. §14 Version 4.82→4.83/2026-07-06. Change: STEP 6 (System Status Report Reconciliation) — added explicit sub-step naming the `**Status:**` line transition (`Sprint_Complete — pending verification` → `Verified — <date>` / `Verified_with_deviations — <date>`) as routine, expected behaviour on every verification run; states this must not be logged as friction in `lessons_learnt_cycle.md`. This update was correctly performed every cycle but had gone undocumented in the engine's own STEP 6 text for 4+ consecutive cycles, repeatedly re-surfacing as a "new" friction item at lessons-learnt time instead of being recognised as expected. Authority: Head of Specs Team (v6.7 ST-07, BLG-GOV-170, 2026-07-06). |
 | 4.82 | 2026-07-06 | **v6.7 ST-05 (EPIC-02, BLG-GOV-168) — shared_standards.md v3.8→v3.9: new §7.1 canonical Structural Append-Verification Procedure, applied to all 4 append-only governance logs.** §6B source prompt header v2.41→v2.42; §8 source prompt header v3.51→v3.52; §9 source prompt header v3.1→v3.2. §14 Shared Standards v3.8→v3.9; Release Engine Source v2.41→v2.42; Execution Engine Source v3.51→v3.52; Verification Engine Source v3.1→v3.2. §14 Version 4.81→4.82/2026-07-06. Change: closes BLG-GOV-168 — the prior §7 "structural verification requirement" note was prose-only and produced zero engine adoptions. `shared_standards.md` §7.1 now defines one reusable count-before/after + no-prior-entry-changed procedure (generalising the existing `decision_log.md` guard) with an explicit file→owning-engine table; `release_planning_prompt.md` (escalations.md), `execution_prompt.md` (execution_escalations.md §"ESCALATION HANDLING SUBROUTINE" + delegation_log.md §11), and `delivery_verification_prompt.md` (verification_escalations.md) each now carry an explicit "Apply the Structural Append-Verification Procedure per shared_standards.md §7.1" line at their write step — confirmed via direct read of each, not documentation alone. Authority: Head of Specs Team (v6.7 ST-05, BLG-GOV-168, 2026-07-06). |
 | 4.81 | 2026-07-06 | **v6.7 ST-04 (EPIC-02, BLG-GOV-167) — shared_standards.md v3.7→v3.8: new §17 `.claude/skills/` write authority provision, naming Head of Specs Team.** §14 Shared Standards v3.7→v3.8. §14 Version 4.79→4.81/2026-07-06 (also corrects a repeat of the header-drift pattern: the top `**Version:**`/`**Last Updated:**` fields were still at 4.79 despite the 4.80 Change Log entry below claiming the header had been updated to 4.80 — that correction was never actually applied to the header fields; both the missed 4.80 bump and this cycle's own v6.7 ST-04 change are reflected in this single 4.81 update). Change: closes the 3-cycle-carried (v6.4→v6.5→v6.6) `.claude/skills/commit-check/SKILL.md` diff-verification patch escalation (`ESC-CLOSE-20260706-01`) — no governed engine's Write Scope covered `.claude/skills/`, so the deferred patch had no governed path to landing. `shared_standards.md` §17 now grants the Head of Specs Team standing write authority over `.claude/skills/**` independent of any single engine's per-run Write Scope; `.claude/skills/commit-check/SKILL.md` Check 9 (diff-verification: staged set vs. intended file set for multi-file governance commits) added in the same story. Authority: Head of Specs Team (v6.7 ST-04, BLG-GOV-167, 2026-07-06). |
 | 4.80 | 2026-07-06 | **Roadmap rebalance 2026-07-06__scheduled — resolved deferred patch (`lessons_learnt_closure.md` v6.6, Carry-Forward #2) via STEP 5 debate — roadmap_prompt.md v8.2→v8.3.** §6 source prompt header updated v8.2→v8.3. §13 Artefact Register Roadmap Rebalance Prompt row updated v8.2→v8.3. §14 Roadmap Engine Source v8.2→v8.3. §14 Version 4.78→4.80/2026-07-06 (also corrects a found header-drift: this document's top `**Version:**` field was left at 4.78 when the 4.79 entry below was added at v6.6 post-ship closure — the Change Log table was updated but the header field was not; both the missed 4.79 bump and this cycle's own change are reflected in this single 4.80 update). Change: `roadmap_prompt.md` §7.1 — added "Mandatory pull-forward on sustained failure": after 3+ consecutive worsening/unresolved rolling-3-cycle Skill-Silo readings, the pull-forward recommendation becomes mandatory (PO must commit ≥2 build-and-ship-shaped U-items at the next release; audit/investigation-shaped stories do not count per the STEP 2.4 content-based test). Closes the gap where v6.5 and v6.6 each bundled 2 nominal U-items but only 1 resolved to genuine U at ship in both cases. Authority: Head of Specs Team (STEP 5.2 PO Modify decision, roadmap rebalance 2026-07-06__scheduled). |
