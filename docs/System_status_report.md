@@ -7,6 +7,29 @@
 
 ---
 
+## Sprint: 2026-07-04__release-v6.6
+**Date:** 2026-07-06
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | UX & Accessibility Debt: systematic app-wide WCAG-AA contrast audit (764 instances, 102 files) — findings-only, 3 follow-up items filed (BLG-FE-87/88/89); Red Flag Journal filter state (event type, ticker, since-date) now persists across reload via versioned localStorage envelope, with graceful stale-state recovery | `claude/cycles/2026-07-04__release-v6.6/contrast_audit_findings.md`; `src/pages/RedFlagJournal.js`; `docs/specs/frontend/pages/red_flag_journal.md#Filter Controls` | None |
+| EPIC-02 | QA & Test Infrastructure Debt: 10 true backlog-ID collisions renumbered with traceability notes (BLG-QA-72); manual `_DB_STUB_FUNCTIONS` sync list replaced with an AST scan of `backend/` imports, retiring the CLAUDE.md manual-sync rule (BLG-QA-73) | `claude/backlog/backlog.md`; `claude/backlog/backlog_archive.md`; `tests/conftest.py` | None |
+
+### Capabilities deferred or returned
+
+None — all 4 stories (ST-01 through ST-04) delivered within the sprint. One partial AC (backlog-ID AC-03 for ST-03) is gated on a pending Product Owner decision (BLG-QA-74, duplicate archival records), not deferred work.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (agent-mediated Director of Quality, mixed-class, 2026-07-06), qa_evidence_EPIC-02.md (autonomous class, 2026-07-06)
+- Deviations filed: None
+- Test scenarios referenced: tests/e2e/red-flag-journal-filter-persistence.spec.js (SC-RFJ-05a, SC-RFJ-05b)
+
+---
+
 ## Sprint: 2026-07-02__release-v6.5
 **Date:** 2026-07-03
 **Status:** Verified — 2026-07-03
