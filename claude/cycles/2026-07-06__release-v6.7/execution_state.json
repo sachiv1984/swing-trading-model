@@ -43,7 +43,7 @@
           "assigned_to": "engine",
           "github_issue": 920,
           "branch": "exec/2026-07-06__release-v6.7/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "14a693c769b9b73d7a9799a5c4bbea227b8e2e32",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -58,7 +58,7 @@
         "ST-06": {
           "title": "audit.py SLA — same-session commit requirement (BLG-GOV-169)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 921,
           "branch": "exec/2026-07-06__release-v6.7/EPIC-02",
@@ -66,13 +66,13 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-07-06T20:55:00Z",
+          "acceptance_verified": true,
           "spec_references": ["claude/audit.py"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.pre-commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Also corrected a stale filename in the SLA block (audit_report.md -> audit_report_AUD-<date>.md) to match CLAUDE.md §1. Comment/prose-only, no AUDIT_VERSION bump per AC-03 precedent (v6.4 ST-07)."
         },
         "ST-07": {
           "title": "Delivery Verification STEP 6 status-line documentation (BLG-GOV-170)",

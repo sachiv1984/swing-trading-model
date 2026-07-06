@@ -834,7 +834,8 @@ SLA BLOCK FORMAT (print verbatim at §9)
 - Cadence: every 3 cycles
 - OBSERVED + Blast Radius ≥ 3, open after 2 audit cycles → P0 escalation to Head of Specs Team
 - Overall score < 65 → GOVERNANCE HOLD: no new cycles until resolved
-- Output filed as: claude/cycles/<cycle_id>/audit_report.md  (Class 3)
+- Output filed as: claude/cycles/<cycle_id>/audit_report_AUD-<date>.md  (Class 3)
+- The audit report must be committed in the same session it is produced — do not defer the commit to a later session (BLG-GOV-169). An audit report that exists only as an uncommitted working-tree file is not filed.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 PRIOR AUDIT STATE
