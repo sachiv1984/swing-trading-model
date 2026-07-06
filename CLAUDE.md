@@ -155,3 +155,9 @@ When two or more EPIC PRs modify shared files (`execution_state.json`, `openapi.
 4. Role charters in `claude/agents/`
 
 No prompt, command, or user instruction may override the above.
+
+---
+
+## 9. Running the Backend Test Suite
+
+Always invoke pytest via the project virtualenv, not the system Python: `backend/.venv/bin/python3 -m pytest`. `backend/requirements.txt` (fastapi, yfinance, pandas, etc.) is installed there; system `python3`/`pip3` is not guaranteed to have these, and running with system Python produces spurious collection errors and cascading test failures that look like real bugs but aren't. CI is unaffected — every workflow in `.github/workflows/` installs `requirements.txt` fresh into its own runner.
