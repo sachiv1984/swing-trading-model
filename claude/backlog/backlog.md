@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-06 (groom backlog, post-ship closure 2026-07-04__release-v6.6 — 5 items archived: BLG-FE-40/82, BLG-QA-72/73/74; BLG-FE-87 target elevated to firm v6.7; §Release Slice v6.6 ephemeral section removed)
+**Last Updated:** 2026-07-06 (session — 4 new items added: BLG-GOV-167, BLG-GOV-168, BLG-GOV-169, BLG-GOV-170)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -3375,9 +3375,88 @@ The SI-05 Phase 1 effectiveness review was due 2026-07-01 per BLG-GOV-113 protoc
 
 ---
 
----
+### BLG-GOV-167 — Grant write-scope authority for .claude/skills/ maintenance
+**Priority:** P1 (High)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** Lifecycle Audit AUD-2026-07-06 (improvement AUD-2026-07-06-002) — 2026-07-06
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v6.7
+
+**Problem**
+No governed routine's declared write scope includes `.claude/skills/` (`execution_prompt.md` §7 confirms this path is excluded). A deferred patch — adding a diff-verification step to `.claude/skills/commit-check/SKILL.md` so it checks `git add`'s target list against the intended file set before multi-file governance commits — has been carried across 3 consecutive cycles (v6.4 → v6.5 → v6.6) with no routine able to apply it. The v6.6 `lessons_learnt_cycle.md` confirms this now meets the automatic-escalation threshold in `lessons_learnt_prompt.md` §3.7, with no governed path to resolution.
+
+**Scope**
+- Add a provision to `shared_standards.md` §1 (Governance Stack) naming Head of Specs Team's authority to directly edit `.claude/skills/` files outside any governed routine's declared write scope
+- Apply the carried `/commit-check` diff-verification patch under that authority
+- Record the resolution in the next cycle's `lessons_learnt_cycle.md`
+
+**Acceptance Criteria**
+- `shared_standards.md` documents the `.claude/skills/` write-authority provision
+- `.claude/skills/commit-check/SKILL.md` contains the diff-verification step (`git add` target list vs. intended file set) before multi-file governance commits
+- 3-cycle carry-forward item closed in `prompt_change_log.md` or an equivalent record
 
 ---
+
+### BLG-GOV-168 — Implement structural guard for 4 append-only governance logs
+**Priority:** P2 (Medium)
+**Type:** Governance / Process — Lifecycle Reliability
+**Owner:** Head of Specs Team
+**Source:** Lifecycle Audit AUD-2026-07-06 (improvement AUD-2026-07-06-004) — 2026-07-06
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v6.7
+
+**Problem**
+`shared_standards.md` §7 documents a "should apply the same pattern" pointer (added by AUD-2026-07-01-002) directing engines to give `escalations.md`, `execution_escalations.md`, `verification_escalations.md`, and `delegation_log.md` the same structural count-before/after guard that `decision_log.md` already has (`roadmap_prompt.md` STEP 9). No engine's actual write step for these 4 files was changed to perform the check — the fix was documentation-only and produced zero adoptions in the cycle since it was written, leaving 4 audit-trail files with no corruption guard.
+
+**Scope**
+- Extract `decision_log.md`'s structural pattern into a reusable named "Canonical Append-Only Verification Procedure" block in `shared_standards.md`
+- Update the write step for each of the 4 affected engines (`release_planning_prompt.md` for `escalations.md`; `execution_prompt.md` for `execution_escalations.md`; `delivery_verification_prompt.md` for `verification_escalations.md`; the relevant engine for `delegation_log.md`) to invoke the procedure by reference
+
+**Acceptance Criteria**
+- `shared_standards.md` contains a single canonical, reusable verification procedure block
+- All 4 affected engines' write steps reference and apply it (count-before, count-after, text-unchanged check, halt on failure)
+- Confirmed via direct read of each engine's write step — not documentation alone
+
+---
+
+### BLG-GOV-169 — Require audit report commit in same session (audit.py SLA)
+**Priority:** P2 (Medium)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** Lifecycle Audit AUD-2026-07-06 (improvement AUD-2026-07-06-001) — 2026-07-06
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v6.7
+
+**Problem**
+`claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md` was produced but never committed to git — confirmed via `git status`/`git log` — until AUD-2026-07-06's own session retroactively committed it. `claude/audit.py`'s SLA block does not instruct the audit engine to commit its own output, unlike other governed routines whose write steps are explicitly paired with a commit instruction.
+
+**Scope**
+- Add an explicit "must be committed in the same session" line to `claude/audit.py`'s SLA block (per the PATCH already drafted in `audit_report_AUD-2026-07-06.md` improvement AUD-2026-07-06-001)
+
+**Acceptance Criteria**
+- `claude/audit.py` SLA block states the report must be committed same-session
+- Verified: the config-block portion of this fix was already applied at AUD-2026-07-06 (2026-07-06); only the SLA-block text edit remains outstanding
+
+---
+
+### BLG-GOV-170 — Document sprint-status-line fix at Delivery Verification STEP 6
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** Lifecycle Audit AUD-2026-07-06 (improvement AUD-2026-07-06-003) — 2026-07-06
+**Effort:** XS (<1 hour)
+**Provisional-Target:** v6.7
+
+**Problem**
+`docs/System_status_report.md`'s sprint status line reads `Sprint_Complete — pending verification` at Delivery Verification STEP 6 and is correctly, manually updated to `Verified — <date>` every cycle — but `delivery_verification_prompt.md` STEP 6's bullets never name this step. It has been logged as a "new" friction item for 4+ consecutive cycles (v6.3–v6.6) rather than recognised as expected, routine behaviour.
+
+**Scope**
+- Add a bullet to `delivery_verification_prompt.md` STEP 6 explicitly naming the status-line update from `pending verification` to `Verified — <date>`
+
+**Acceptance Criteria**
+- STEP 6 documents the status-line update as an expected step
+- No further recurrence logged as a novel friction item in future `lessons_learnt_cycle.md` entries
 
 ---
 
