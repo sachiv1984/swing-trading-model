@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-08 (groom backlog post-ship closure 2026-07-06__release-v6.7 — 7 items archived: BLG-FE-87/88/89, BLG-GOV-167/168/169/170; 1 ephemeral release slice retired)
+**Last Updated:** 2026-07-08 (session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -488,6 +488,126 @@ No metric tracks AI chat engagement (sessions per week, questions per session, r
 **Acceptance Criteria**
 - Metric set defined and documented
 - Gate condition (AI adoption window) verified before sprint planning
+
+---
+
+### BLG-FEAT-64 — On-demand pre-entry rule recheck for open positions
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Risk Management
+**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
+**Source:** Product feature brainstorming session — 2026-07-08
+**Effort:** M (~2–3 days)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+SI-01 (Pre-Entry Rule Validation Gate) validates the 5 strategy checks only at entry time. Once a position is open, there is no way to see whether it would still pass those same checks against current market/regime conditions. SI-02 (Behavioural Drift Detection) would eventually provide an aggregate view, but it has been gate-blocked (20 closed trades required) for multiple consecutive cycles with no resolution in sight. This leaves open positions with no individual-trade drift visibility until SI-02 clears, if it ever does.
+
+**Scope**
+- New endpoint: `GET /positions/{position_id}/compliance-recheck` — re-applies the existing SI-01 rule set (`strategy_rules.md` §4.2, 5 checks) against the position's current state (current regime, current signal conditions, current heat/sizing) rather than the entry-time snapshot
+- Frontend: "Recheck compliance" action on the Positions page / position detail view, rendering pass/fail per rule using the same visual pattern as `PreEntryValidationPanel`
+- Pure re-application of SI-01's existing deterministic rules — no new statistical model or scoring
+- Explicitly does not replace or duplicate SI-02 — this is a manual, on-demand, single-position check; SI-02 remains the aggregate/rolling drift analysis when it eventually ships
+
+**Acceptance Criteria**
+- AC-01: `GET /positions/{position_id}/compliance-recheck` returns pass/fail for each of the 5 SI-01 rules evaluated against current conditions
+- AC-02: Frontend action available on open positions; renders using the same visual pattern as `PreEntryValidationPanel` (pass/fail/override-acknowledged states)
+- AC-03: Recheck is on-demand only (no automatic polling/background job) — user-triggered
+- AC-04: §13 sign-off confirming re-running existing deterministic rules on demand introduces no new automation/prediction surface (expected to be a fast pass given SI-01 precedent)
+
+---
+
+### BLG-FEAT-65 — Overnight/weekend gap risk flag for open positions
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Risk Management
+**Owner:** Head of UX & Design; Head of Engineering
+**Source:** Product feature brainstorming session — 2026-07-08
+**Effort:** M (~2–3 days)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+Swing positions are held overnight and over weekends, exposed to gap risk from earnings releases or major macro events. The system already has an earnings calendar (DS-04, shipped v3.1) and historical OHLCV data, but nothing surfaces the two together as a proactive risk flag on currently open positions. Users must manually cross-reference the earnings calendar against their open positions to know if they are exposed.
+
+**Scope**
+- Backend: for each open position, check the existing earnings calendar data source for an earnings date falling before the next trading session; compute historical overnight/weekend gap magnitude for that ticker (e.g. average absolute overnight move over the trailing N earnings events, using existing OHLCV history)
+- Frontend: risk flag badge on the Positions page for any position with an upcoming earnings date or a Friday-close weekend hold, showing the historical average gap magnitude as context
+- Deterministic only — flags a known calendar event plus historical statistics; makes no directional prediction about the gap
+
+**Acceptance Criteria**
+- AC-01: Position flagged when an earnings date falls before the next trading session
+- AC-02: Weekend-hold positions flagged at Friday close
+- AC-03: Flag displays historical average overnight/weekend gap magnitude for that ticker (or "insufficient history" if fewer than N historical events)
+- AC-04: No prediction of gap direction or magnitude — informational only, per §13 boundary
+
+---
+
+### BLG-FEAT-66 — Watchlist staleness and decay review
+**Priority:** P3 (Low)
+**Type:** Product Feature / Workflow
+**Owner:** Head of UX & Design; Product Owner
+**Source:** Product feature brainstorming session — 2026-07-08
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+DS-07 (Watchlist Promotion Flow, shipped v3.0) provides a one-click path from screener result to watchlist, but there is no corresponding exit path other than promotion to a trade plan. Tickers can accumulate on the watchlist indefinitely with no forcing function to review or remove them, degrading the watchlist's usefulness as a curated shortlist over time.
+
+**Scope**
+- Track days-on-watchlist per entry (`added_at` timestamp already captured at add time)
+- Frontend: staleness indicator (e.g. "45 days, no action") on watchlist entries past a configurable threshold (default 30 days)
+- Explicit user action required: Keep (resets the clock) or Remove — no automatic removal
+
+**Acceptance Criteria**
+- AC-01: Watchlist entries display days-since-added
+- AC-02: Entries past the staleness threshold are visually flagged
+- AC-03: User can explicitly "Keep" (resets staleness clock with a new timestamp) or "Remove" a stale entry
+- AC-04: No automatic removal — user decision required in all cases
+
+---
+
+### BLG-FEAT-67 — Historical sector/regime exposure trend
+**Priority:** P3 (Low)
+**Type:** Product Feature / Analytics
+**Owner:** Metrics Definitions & Analytics Owner; Head of UX & Design
+**Source:** Product feature brainstorming session — 2026-07-08
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`SectorHeatMap` (shipped v6.2) and regime status displays show only the current point-in-time snapshot of sector concentration and regime. There is no way to see whether concentration or regime exposure has been drifting over recent months — a trend view needs only aggregation of data the system already captures (`portfolio_history`, sector classification, regime status at each snapshot), not a new data source.
+
+**Scope**
+- Backend: aggregate existing `portfolio_history` + sector/regime data into a rolling time series (weekly or monthly buckets)
+- Frontend: trend chart (sector concentration % over time, regime status over time) added alongside the existing `SectorHeatMap` on the Positions or Reports page
+- No new inputs — purely a historical view of data already captured
+
+**Acceptance Criteria**
+- AC-01: Sector concentration trend chart renders using existing `portfolio_history` + sector data, no new data collection required
+- AC-02: Regime status trend shown over the same time window
+- AC-03: Chart handles insufficient-history state gracefully (e.g. fewer than 8 weeks of data)
+
+---
+
+### BLG-FEAT-68 — Position review cadence nudge
+**Priority:** P3 (Low)
+**Type:** Product Feature / Workflow
+**Owner:** Head of UX & Design; Product Owner
+**Source:** Product feature brainstorming session — 2026-07-08
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+Existing position prompts (Grace Period Decision Support, Drawdown-Triggered Review Prompt) only fire on price/performance triggers. A position that is neither in grace period nor drawdown can go unreviewed indefinitely — there is no cadence-based nudge independent of P&L performance.
+
+**Scope**
+- Track days-since-last-reviewed per position (introduce an explicit "Mark Reviewed" action as the reset trigger)
+- Frontend: a "N days since last review" indicator on positions exceeding a configurable threshold (default 14 days), independent of any price-triggered alert
+- Not a substitute for Grace Period / Drawdown prompts — this catches quietly-performing positions those triggers don't cover
+
+**Acceptance Criteria**
+- AC-01: Positions display days-since-last-review
+- AC-02: Positions past the threshold are visually flagged, independent of P&L state
+- AC-03: An explicit "Mark Reviewed" action resets the counter
+- AC-04: Flag does not fire for positions already flagged by Grace Period or Drawdown prompts (avoid duplicate noise)
 
 ---
 
