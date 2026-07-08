@@ -24,7 +24,7 @@ export default function NotificationTabBar() {
               "px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors",
               isActive
                 ? "border-cyan-400 text-cyan-400"
-                : "border-transparent text-slate-400 hover:text-white"
+                : "border-transparent text-slate-600 dark:text-slate-400 hover:text-white"
             )}
           >
             {tab.label}

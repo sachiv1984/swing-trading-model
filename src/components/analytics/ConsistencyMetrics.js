@@ -11,11 +11,11 @@ export default function ConsistencyMetrics({ metrics }) {
               <TrendingUp className="w-4 h-4 text-emerald-400" />
             </div>
             <div>
-              <p className="text-xs text-slate-400">Consecutive Months Profitable</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Consecutive Months Profitable</p>
               <p className="text-2xl font-bold text-white mt-1">{metrics.consecutiveProfitableMonths}</p>
             </div>
           </div>
-          <p className="text-xs text-slate-400">Current streak: {metrics.currentStreak} months</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Current streak: {metrics.currentStreak} months</p>
         </div>
 
         <div className="p-4 rounded-lg bg-slate-900/50 border border-slate-700/30">
@@ -24,11 +24,11 @@ export default function ConsistencyMetrics({ metrics }) {
               <BarChart3 className="w-4 h-4 text-cyan-400" />
             </div>
             <div>
-              <p className="text-xs text-slate-400">Win Rate Consistency</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Win Rate Consistency</p>
               <p className="text-2xl font-bold text-white mt-1">{metrics.winRateStdDev.toFixed(1)}%</p>
             </div>
           </div>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-600 dark:text-slate-400">
             {metrics.winRateStdDev < 10 ? "Very consistent" : metrics.winRateStdDev < 20 ? "Consistent" : "Variable"}
           </p>
         </div>
@@ -39,11 +39,11 @@ export default function ConsistencyMetrics({ metrics }) {
               <Activity className="w-4 h-4 text-violet-400" />
             </div>
             <div>
-              <p className="text-xs text-slate-400">Monthly P&L Volatility</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Monthly P&L Volatility</p>
               <p className="text-2xl font-bold text-white mt-1">£{metrics.pnlStdDev.toFixed(0)}</p>
             </div>
           </div>
-          <p className="text-xs text-slate-400">Standard deviation of returns</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Standard deviation of returns</p>
         </div>
       </div>
     </div>

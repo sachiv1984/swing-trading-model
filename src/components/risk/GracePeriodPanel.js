@@ -33,7 +33,7 @@ export default function GracePeriodPanel({ positions = [], error }) {
           <p className="text-sm text-rose-300">Unable to load position data</p>
         </div>
       ) : gracePosts.length === 0 ? (
-        <p className="text-sm text-slate-400 italic">No positions currently in grace period.</p>
+        <p className="text-sm text-slate-600 dark:text-slate-400 italic">No positions currently in grace period.</p>
       ) : (
         <div className="space-y-2">
           {gracePosts.map((p) => {
@@ -46,10 +46,10 @@ export default function GracePeriodPanel({ positions = [], error }) {
               >
                 <div className="flex items-center gap-3">
                   <span className="font-semibold text-white">{p.ticker}</span>
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-slate-600 dark:text-slate-400">
                     {p.entry_date ? format(new Date(p.entry_date), "dd MMM yy") : "—"}
                   </span>
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-slate-600 dark:text-slate-400">
                     {p.holding_days != null ? `${p.holding_days}d in grace` : "—"}
                   </span>
                 </div>

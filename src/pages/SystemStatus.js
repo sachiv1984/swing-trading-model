@@ -88,7 +88,7 @@ export default function SystemStatus() {
     'Alerts': { icon: Bell, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
     'Notifications': { icon: BellRing, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/30' },
     'Digest': { icon: Mail, color: 'text-teal-400', bg: 'bg-teal-500/10', border: 'border-teal-500/30' },
-    'Other': { icon: HelpCircle, color: 'text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-500/30' }
+    'Other': { icon: HelpCircle, color: 'text-slate-600 dark:text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-500/30' }
   };
 
   // Fetch health status
@@ -242,7 +242,7 @@ export default function SystemStatus() {
     healthy: { color: "text-emerald-400", bg: "bg-emerald-500/20", border: "border-emerald-500/40", icon: CheckCircle2 },
     degraded: { color: "text-yellow-400", bg: "bg-yellow-500/20", border: "border-yellow-500/40", icon: AlertTriangle },
     unhealthy: { color: "text-rose-400", bg: "bg-rose-500/20", border: "border-rose-500/40", icon: XCircle },
-    unknown: { color: "text-slate-400", bg: "bg-slate-500/20", border: "border-slate-500/40", icon: HelpCircle }
+    unknown: { color: "text-slate-600 dark:text-slate-400", bg: "bg-slate-500/20", border: "border-slate-500/40", icon: HelpCircle }
   };
 
   const testStatusConfig = {
@@ -276,7 +276,7 @@ export default function SystemStatus() {
           <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent">
             System Status
           </h1>
-          <p className="text-slate-400 mt-1">Monitor system health and validate calculations</p>
+          <p className="text-slate-600 dark:text-slate-400 mt-1">Monitor system health and validate calculations</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50">
@@ -348,7 +348,7 @@ export default function SystemStatus() {
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <RefreshCw className="w-12 h-12 text-slate-400 animate-spin mx-auto mb-4" />
-              <p className="text-slate-400">Loading system status...</p>
+              <p className="text-slate-600 dark:text-slate-400">Loading system status...</p>
             </div>
           </div>
         ) : (
@@ -369,7 +369,7 @@ export default function SystemStatus() {
                   "text-4xl font-bold mb-2",
                   isHealthy && "text-emerald-400",
                   isDegraded && "text-yellow-400",
-                  !isHealthy && !isDegraded && "text-slate-400"
+                  !isHealthy && !isDegraded && "text-slate-600 dark:text-slate-400"
                 )}>
                   {isHealthy && "Healthy"}
                   {isDegraded && "Degraded"}
@@ -384,7 +384,7 @@ export default function SystemStatus() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-700/50">
-                <div className="flex items-center gap-2 text-slate-400 text-sm mb-1">
+                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-sm mb-1">
                   <Zap className="w-4 h-4" />
                   Response Time
                 </div>
@@ -393,7 +393,7 @@ export default function SystemStatus() {
                 </p>
               </div>
               <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-700/50">
-                <div className="flex items-center gap-2 text-slate-400 text-sm mb-1">
+                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-sm mb-1">
                   <Clock className="w-4 h-4" />
                   Last Updated
                 </div>
@@ -446,7 +446,7 @@ export default function SystemStatus() {
                     variant="ghost"
                     size="sm"
                     onClick={() => toggleComponentExpanded(key)}
-                    className="text-slate-400 hover:text-white"
+                    className="text-slate-600 dark:text-slate-400 hover:text-white"
                   >
                     <ChevronDown className={cn(
                       "w-4 h-4 transition-transform",
@@ -480,32 +480,32 @@ export default function SystemStatus() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-xl font-bold text-white">Endpoint Tests</h2>
-            <p className="text-slate-400 text-sm mt-1">Testing {totalTests} endpoints across all system modules</p>
+            <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Testing {totalTests} endpoints across all system modules</p>
           </div>
           {testResults && (
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-slate-400">Total:</span>
+                <span className="text-slate-600 dark:text-slate-400">Total:</span>
                 <span className="font-bold text-white">{totalTests}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-slate-400">Passed:</span>
+                <span className="text-slate-600 dark:text-slate-400">Passed:</span>
                 <span className="font-bold text-emerald-400">{passedTests}</span>
               </div>
               {failedTests > 0 && (
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="text-slate-400">Failed:</span>
+                  <span className="text-slate-600 dark:text-slate-400">Failed:</span>
                   <span className="font-bold text-rose-400">{failedTests}</span>
                 </div>
               )}
               {errorTests > 0 && (
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="text-slate-400">Errors:</span>
+                  <span className="text-slate-600 dark:text-slate-400">Errors:</span>
                   <span className="font-bold text-yellow-400">{errorTests}</span>
                 </div>
               )}
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-slate-400">Success Rate:</span>
+                <span className="text-slate-600 dark:text-slate-400">Success Rate:</span>
                 <span className={cn(
                   "font-bold",
                   parseFloat(successRate) === 100 ? "text-emerald-400" :
@@ -521,16 +521,16 @@ export default function SystemStatus() {
           <div className="flex items-center justify-center py-12 bg-slate-800/30 rounded-xl border border-slate-700/50">
             <div className="text-center">
               <RefreshCw className="w-10 h-10 text-slate-400 animate-spin mx-auto mb-3" />
-              <p className="text-slate-400">Running endpoint tests...</p>
-              <p className="text-slate-400 text-sm mt-1">This may take 10-30 seconds</p>
+              <p className="text-slate-600 dark:text-slate-400">Running endpoint tests...</p>
+              <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">This may take 10-30 seconds</p>
             </div>
           </div>
         ) : !testResults ? (
           <div className="flex items-center justify-center py-12 bg-slate-800/30 rounded-xl border border-slate-700/50">
             <div className="text-center">
               <Play className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-              <p className="text-slate-400">Click 'Run Tests' to verify all endpoints</p>
-              <p className="text-slate-400 text-sm mt-1">Tests {totalTests || '80'} endpoints</p>
+              <p className="text-slate-600 dark:text-slate-400">Click 'Run Tests' to verify all endpoints</p>
+              <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Tests {totalTests || '80'} endpoints</p>
             </div>
           </div>
         ) : (
@@ -557,7 +557,7 @@ export default function SystemStatus() {
                       </Badge>
                     </div>
                     <ChevronDown className={cn(
-                      "w-4 h-4 text-slate-400 transition-transform",
+                      "w-4 h-4 text-slate-600 dark:text-slate-400 transition-transform",
                       isExpanded && "rotate-180"
                     )} />
                   </button>
@@ -592,7 +592,7 @@ export default function SystemStatus() {
                                   <div className="flex-1">
                                     <p className="font-medium text-white text-sm">{test.endpoint}</p>
                                     {test.error && (
-                                      <p className="text-xs text-slate-400 mt-1 truncate max-w-md">
+                                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 truncate max-w-md">
                                         {test.error}
                                       </p>
                                     )}
@@ -631,22 +631,22 @@ export default function SystemStatus() {
           {validationResults && (
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-slate-400">Total:</span>
+                <span className="text-slate-600 dark:text-slate-400">Total:</span>
                 <span className="font-bold text-white">{totalValidations}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-slate-400">Passed:</span>
+                <span className="text-slate-600 dark:text-slate-400">Passed:</span>
                 <span className="font-bold text-emerald-400">{passedValidations}</span>
               </div>
               {warnedValidations > 0 && (
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="text-slate-400">Warned:</span>
+                  <span className="text-slate-600 dark:text-slate-400">Warned:</span>
                   <span className="font-bold text-amber-400">{warnedValidations}</span>
                 </div>
               )}
               {failedValidations > 0 && (
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="text-slate-400">Failed:</span>
+                  <span className="text-slate-600 dark:text-slate-400">Failed:</span>
                   <span className="font-bold text-rose-400">{failedValidations}</span>
                 </div>
               )}
@@ -667,16 +667,16 @@ export default function SystemStatus() {
           <div className="flex items-center justify-center py-12 bg-slate-800/30 rounded-xl border border-slate-700/50">
             <div className="text-center">
               <RefreshCw className="w-10 h-10 text-slate-400 animate-spin mx-auto mb-3" />
-              <p className="text-slate-400">Running validation checks...</p>
-              <p className="text-slate-400 text-sm mt-1">Validating calculations...</p>
+              <p className="text-slate-600 dark:text-slate-400">Running validation checks...</p>
+              <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Validating calculations...</p>
             </div>
           </div>
         ) : !validationResults ? (
           <div className="flex items-center justify-center py-12 bg-slate-800/30 rounded-xl border border-slate-700/50">
             <div className="text-center">
               <Calculator className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-              <p className="text-slate-400">Click 'Run Validation' to verify calculations</p>
-              <p className="text-slate-400 text-sm mt-1">Validates 12 metrics</p>
+              <p className="text-slate-600 dark:text-slate-400">Click 'Run Validation' to verify calculations</p>
+              <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Validates 12 metrics</p>
               <Button
                 onClick={() => runValidation()}
                 className="mt-4 bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-500 hover:to-violet-500"
@@ -721,7 +721,7 @@ export default function SystemStatus() {
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleValidationExpanded(validation.metric)}
-                      className="text-slate-400 hover:text-white"
+                      className="text-slate-600 dark:text-slate-400 hover:text-white"
                     >
                       <ChevronDown className={cn(
                         "w-4 h-4 transition-transform",
@@ -732,15 +732,15 @@ export default function SystemStatus() {
 
                   <div className="grid grid-cols-3 gap-4 mb-3">
                     <div>
-                      <p className="text-xs text-slate-400 mb-1">Expected</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Expected</p>
                       <p className="font-mono text-sm text-white">{validation.expected}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-slate-400 mb-1">Actual</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Actual</p>
                       <p className="font-mono text-sm text-white">{validation.actual}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-slate-400 mb-1">Difference</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Difference</p>
                       <p className={cn(
                         "font-mono text-sm",
                         validation.status === 'pass' ? "text-emerald-400" :
@@ -775,13 +775,13 @@ export default function SystemStatus() {
                         <h4 className="text-sm font-medium text-slate-300 mb-2">
                           Calculation Details
                         </h4>
-                        <div className="text-xs text-slate-400 bg-slate-900/50 p-3 rounded space-y-1">
-                          <p><span className="text-slate-400">Formula:</span> {validation.formula}</p>
+                        <div className="text-xs text-slate-600 dark:text-slate-400 bg-slate-900/50 p-3 rounded space-y-1">
+                          <p><span className="text-slate-600 dark:text-slate-400">Formula:</span> {validation.formula}</p>
                           {validation.method && (
-                            <p><span className="text-slate-400">Method:</span> {validation.method}</p>
+                            <p><span className="text-slate-600 dark:text-slate-400">Method:</span> {validation.method}</p>
                           )}
                           {validation.data_points && (
-                            <p><span className="text-slate-400">Data Points:</span> {validation.data_points}</p>
+                            <p><span className="text-slate-600 dark:text-slate-400">Data Points:</span> {validation.data_points}</p>
                           )}
                         </div>
                       </motion.div>

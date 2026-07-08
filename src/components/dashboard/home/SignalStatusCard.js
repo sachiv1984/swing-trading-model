@@ -49,7 +49,7 @@ export default function SignalStatusCard() {
       <div className="space-y-2 mb-3">
         {regimes.map(r => <RegimeRow key={r.market} market={r.market} status={r.status} />)}
       </div>
-      <p className="text-sm text-slate-400">
+      <p className="text-sm text-slate-600 dark:text-slate-400">
         {todaySignals.length > 0
           ? `${todaySignals.length} new signal${todaySignals.length !== 1 ? "s" : ""} today`
           : "No new signals today"}

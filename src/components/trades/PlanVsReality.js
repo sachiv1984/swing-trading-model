@@ -55,8 +55,8 @@ function Skeleton() {
 function CompRow({ label, planned, actual, actualClass }) {
   return (
     <div className="grid grid-cols-3 gap-2 text-xs items-baseline">
-      <span className="text-slate-400 font-medium">{label}</span>
-      <span className="text-slate-400 truncate">{planned ?? "—"}</span>
+      <span className="text-slate-600 dark:text-slate-400 font-medium">{label}</span>
+      <span className="text-slate-600 dark:text-slate-400 truncate">{planned ?? "—"}</span>
       <span className={cn("font-semibold truncate", actualClass || "text-slate-200")}>{actual ?? "—"}</span>
     </div>
   );
@@ -129,7 +129,7 @@ export default function PlanVsReality({ tradeId }) {
       <div className="w-full bg-slate-800/50 rounded-xl border-l-4 border-l-[#2563EB] border border-slate-700/30 shadow-lg">
         <div className="p-4 space-y-3">
           {/* Column headers */}
-          <div className="grid grid-cols-3 gap-2 text-xs text-slate-400 font-medium pb-1 border-b border-slate-700/30">
+          <div className="grid grid-cols-3 gap-2 text-xs text-slate-600 dark:text-slate-400 font-medium pb-1 border-b border-slate-700/30">
             <span>Metric</span>
             <span>Planned</span>
             <span>Actual</span>
@@ -160,14 +160,14 @@ export default function PlanVsReality({ tradeId }) {
             />
           ) : (
             <div className="grid grid-cols-3 gap-2 text-xs items-baseline" data-testid="entry-delta-historical">
-              <span className="text-slate-400 font-medium">Entry Delta</span>
-              <span className="col-span-2 text-slate-400 italic">data not available for historical trades</span>
+              <span className="text-slate-600 dark:text-slate-400 font-medium">Entry Delta</span>
+              <span className="col-span-2 text-slate-600 dark:text-slate-400 italic">data not available for historical trades</span>
             </div>
           )}
 
           {/* Lifecycle State at Exit */}
           <div className="grid grid-cols-3 gap-2 text-xs items-center">
-            <span className="text-slate-400 font-medium">State at Exit</span>
+            <span className="text-slate-600 dark:text-slate-400 font-medium">State at Exit</span>
             <span />
             <span>
               <StateBadge state={lifecycle_state_at_exit || "UNKNOWN"} />
@@ -176,7 +176,7 @@ export default function PlanVsReality({ tradeId }) {
 
           {/* R delta summary */}
           {r_delta != null && (
-            <div className="pt-2 border-t border-slate-700/30 text-xs text-slate-400">
+            <div className="pt-2 border-t border-slate-700/30 text-xs text-slate-600 dark:text-slate-400">
               R delta:{" "}
               <span className={r_delta >= 0 ? "text-emerald-400 font-semibold" : "text-rose-400 font-semibold"}>
                 {r_delta >= 0 ? "+" : ""}{r_delta.toFixed(2)}R vs target

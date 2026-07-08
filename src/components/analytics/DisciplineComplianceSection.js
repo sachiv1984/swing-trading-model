@@ -10,7 +10,7 @@ function ComplianceCard({ title, value, subLabel, icon: CardIcon, gradient, isLo
       <div className={cn("absolute inset-0 opacity-10 bg-gradient-to-br", gradient)} />
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-4">
-          <p className="text-xs text-slate-400 uppercase tracking-wider">{title}</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">{title}</p>
           <div className={cn("p-2 rounded-lg bg-gradient-to-br", gradient)}>
             <Icon className="w-4 h-4 text-white" />
           </div>
@@ -25,7 +25,7 @@ function ComplianceCard({ title, value, subLabel, icon: CardIcon, gradient, isLo
         ) : (
           <>
             <p className="text-2xl font-bold text-white">{value}</p>
-            {subLabel && <p className="text-xs text-slate-400 mt-1">{subLabel}</p>}
+            {subLabel && <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{subLabel}</p>}
           </>
         )}
       </div>

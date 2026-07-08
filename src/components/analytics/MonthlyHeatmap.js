@@ -105,7 +105,7 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
             );
           })}
         </div>
-        <div className="flex items-center justify-center gap-4 mt-6 text-xs text-slate-400">
+        <div className="flex items-center justify-center gap-4 mt-6 text-xs text-slate-600 dark:text-slate-400">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-emerald-500" />
             <span>&gt;£500</span>
@@ -149,7 +149,7 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
               <button
                 data-testid="heatmap-modal-close"
                 onClick={() => setSelectedMonth(null)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors"
+                className="p-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -174,11 +174,11 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
               <table className="w-full">
                 <thead className="bg-slate-800/70 sticky top-0">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase">Ticker</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase">Exit Date</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-slate-400 uppercase">P&L</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-slate-400 uppercase">R-Multiple</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase">Exit Reason</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase">Ticker</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase">Exit Date</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase">P&L</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase">R-Multiple</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase">Exit Reason</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-700/30">
@@ -199,7 +199,7 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
                         <td className="px-4 py-3 text-sm text-right text-slate-300">
                           {r !== null
                             ? <span className={r >= 0 ? "text-emerald-400" : "text-rose-400"}>{r.toFixed(2)}R</span>
-                            : <span className="text-slate-400">—</span>
+                            : <span className="text-slate-600 dark:text-slate-400">—</span>
                           }
                         </td>
                         <td className="px-4 py-3 text-sm text-slate-300">

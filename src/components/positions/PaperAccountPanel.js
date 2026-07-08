@@ -17,7 +17,7 @@ import { cn } from "../../lib/utils";
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
 function PnlCell({ value, suffix = "" }) {
-  if (value == null) return <span className="text-slate-400">—</span>;
+  if (value == null) return <span className="text-slate-600 dark:text-slate-400">—</span>;
   const pos = value >= 0;
   return (
     <span className={cn("font-semibold", pos ? "text-emerald-400" : "text-rose-400")}>
@@ -70,7 +70,7 @@ export default function PaperAccountPanel() {
       >
         <div>
           <span className="text-sm font-semibold text-slate-200">Paper Account</span>
-          <span className="ml-2 text-xs text-slate-400">Hypothetical tracking — US market positions only. Not real capital.</span>
+          <span className="ml-2 text-xs text-slate-600 dark:text-slate-400">Hypothetical tracking — US market positions only. Not real capital.</span>
         </div>
         {expanded ? (
           <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0" />
@@ -83,16 +83,16 @@ export default function PaperAccountPanel() {
       {expanded && (
         <div className="px-4 pb-4">
           {isError ? (
-            <p className="text-xs text-slate-400 py-2">Paper tracking temporarily unavailable.</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 py-2">Paper tracking temporarily unavailable.</p>
           ) : !hasPositions ? (
-            <p className="text-xs text-slate-400 py-2">
+            <p className="text-xs text-slate-600 dark:text-slate-400 py-2">
               No paper positions tracked. Open a US market position to begin tracking.
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-xs" data-testid="paper-positions-table">
                 <thead>
-                  <tr className="text-slate-400 border-b border-slate-700/50">
+                  <tr className="text-slate-600 dark:text-slate-400 border-b border-slate-700/50">
                     <th className="text-left py-2 pr-4 font-medium">Ticker</th>
                     <th className="text-right py-2 pr-4 font-medium">Paper Entry</th>
                     <th className="text-right py-2 pr-4 font-medium">Current</th>
@@ -118,7 +118,7 @@ export default function PaperAccountPanel() {
                       <td className="py-2 pr-4 text-right">
                         <PnlCell value={pos.paper_pnl_pct} suffix="%" />
                       </td>
-                      <td className="py-2 pr-4 text-right text-slate-400">
+                      <td className="py-2 pr-4 text-right text-slate-600 dark:text-slate-400">
                         {formatDate(pos.date_opened)}
                       </td>
                       <td className="py-2 text-right text-slate-300">

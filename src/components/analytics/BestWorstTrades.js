@@ -69,7 +69,7 @@ function TradeCard({ trade, rValue, isBest }) {
       </div>
 
       {/* Secondary row: P&L + exit date */}
-      <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+      <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 mb-2">
         <span className={cn("font-medium", pnlPos ? "text-emerald-400" : "text-rose-400")}>
           {formatPnL(trade.pnl ?? 0)}
         </span>
@@ -79,7 +79,7 @@ function TradeCard({ trade, rValue, isBest }) {
       {/* Exit reason */}
       {trade.exitReason && (
         <div className="mt-1">
-          <span className="text-xs text-slate-400 capitalize">
+          <span className="text-xs text-slate-600 dark:text-slate-400 capitalize">
             {trade.exitReason.replace(/_/g, " ")}
           </span>
         </div>
@@ -115,7 +115,7 @@ function Panel({ title, trades, isBest, emptyMessage }) {
       {/* Cards or empty state */}
       {trades.length === 0 ? (
         <div className="flex items-center justify-center py-8">
-          <p className="text-slate-400 text-sm">{emptyMessage}</p>
+          <p className="text-slate-600 dark:text-slate-400 text-sm">{emptyMessage}</p>
         </div>
       ) : (
         <div className="space-y-3">

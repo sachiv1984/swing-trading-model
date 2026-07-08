@@ -46,7 +46,7 @@ export default function EntryChecklist({ items, ticker, onToggle, readOnly = fal
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs text-slate-400">
+        <span className="text-xs text-slate-600 dark:text-slate-400">
           {checkedCount} / {items.length} complete
         </span>
         {allChecked && (

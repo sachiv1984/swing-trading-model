@@ -16,7 +16,7 @@ export default function TopPerformers({ topWinners, topLosers }) {
             <div className="flex items-start justify-between mb-2">
               <div>
                 <p className="font-semibold text-white">{trade.ticker?.replace(".L", "")}</p>
-                <p className="text-xs text-slate-400 mt-1">{trade.entryDate}</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{trade.entryDate}</p>
               </div>
               <div className="text-right">
                 <p className={cn(
@@ -33,7 +33,7 @@ export default function TopPerformers({ topWinners, topLosers }) {
                 </p>
               </div>
             </div>
-            <div className="flex items-center justify-between text-xs text-slate-400">
+            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
               <span>{trade.daysHeld} days</span>
               <span className="capitalize">{trade.exitReason ? trade.exitReason.replace(/_/g, ' ') : '—'}</span>
             </div>

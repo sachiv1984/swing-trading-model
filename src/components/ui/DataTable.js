@@ -27,7 +27,7 @@ export function TableHeader({ children }) {
 export function TableHead({ children, className, ...props }) {
   return (
     <th className={cn(
-      "px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider",
+      "px-6 py-4 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider",
       className
     )} {...props}>
       {children}

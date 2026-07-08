@@ -29,8 +29,8 @@ function SignalBadge({ status }) {
     {
       active: { label: "Active", cls: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
       watch: { label: "Watch", cls: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
-      no_signal: { label: "No Signal", cls: "bg-slate-700/50 text-slate-400 border-slate-600/30" },
-    }[status] || { label: status, cls: "bg-slate-700/50 text-slate-400 border-slate-600/30" };
+      no_signal: { label: "No Signal", cls: "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30" },
+    }[status] || { label: status, cls: "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30" };
   return (
     <span
       className={cn(
@@ -73,7 +73,7 @@ function WatchlistEarningsBadge({ ticker, market }) {
   const days = data.days_until_earnings;
   if (days < 0) return <span className="text-slate-600 text-xs">—</span>;
   if (days === 0) return <span className="text-amber-400 font-medium text-xs" title={data.next_earnings_date}>Today</span>;
-  const cls = days <= 5 ? "text-amber-400 font-medium" : days <= 14 ? "text-yellow-500" : "text-slate-400";
+  const cls = days <= 5 ? "text-amber-400 font-medium" : days <= 14 ? "text-yellow-500" : "text-slate-600 dark:text-slate-400";
   return <span className={`text-xs ${cls}`} title={data.next_earnings_date}>{days}d</span>;
 }
 
@@ -245,7 +245,7 @@ export default function Watchlist() {
                   ].map((h) => (
                     <th
                       key={h}
-                      className="px-5 py-3.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap"
+                      className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap"
                     >
                       {h}
                     </th>
@@ -271,7 +271,7 @@ export default function Watchlist() {
                           {entry.ticker}
                         </span>
                         {entry.company_name && (
-                          <span className="block text-slate-400 text-xs truncate max-w-[140px]">
+                          <span className="block text-slate-600 dark:text-slate-400 text-xs truncate max-w-[140px]">
                             {entry.company_name}
                           </span>
                         )}
@@ -304,7 +304,7 @@ export default function Watchlist() {
                       {entry.market === "US" ? (
                         <button
                           onClick={() => toggleNews(entry)}
-                          className="flex items-center gap-1 text-xs text-slate-400 hover:text-cyan-400 transition-colors"
+                          className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400 hover:text-cyan-400 transition-colors"
                           title="Show news headlines"
                         >
                           <Newspaper className="w-3.5 h-3.5" />
@@ -340,7 +340,7 @@ export default function Watchlist() {
                           onClick={() =>
                             setModal({ mode: "edit-confirm", entry })
                           }
-                          className="h-7 w-7 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10"
+                          className="h-7 w-7 text-slate-600 dark:text-slate-400 hover:text-rose-400 hover:bg-rose-500/10"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -351,7 +351,7 @@ export default function Watchlist() {
                     <tr key={`${entry.id}-news`} className="bg-slate-800/40">
                       <td colSpan={9} className="px-6 py-3">
                         {newsCache[entry.ticker]?.loading ? (
-                          <p className="text-slate-400 text-xs animate-pulse">Loading headlines…</p>
+                          <p className="text-slate-600 dark:text-slate-400 text-xs animate-pulse">Loading headlines…</p>
                         ) : newsCache[entry.ticker]?.headlines?.length > 0 ? (
                           <ul className="space-y-1.5">
                             {newsCache[entry.ticker].headlines.map((h, i) => (
@@ -361,7 +361,7 @@ export default function Watchlist() {
                                 ) : (
                                   <span className="text-slate-200 text-xs">{h.headline}</span>
                                 )}
-                                <span className="text-slate-400 text-xs">
+                                <span className="text-slate-600 dark:text-slate-400 text-xs">
                                   {h.source ? `${h.source} · ` : ""}
                                   {h.published_at
                                     ? new Date(h.published_at).toLocaleDateString()
@@ -371,11 +371,11 @@ export default function Watchlist() {
                             ))}
                           </ul>
                         ) : (
-                          <p className="text-slate-400 text-xs">No recent news available for {entry.ticker}.</p>
+                          <p className="text-slate-600 dark:text-slate-400 text-xs">No recent news available for {entry.ticker}.</p>
                         )}
                         <button
                           onClick={() => setExpandedNews((prev) => ({ ...prev, [entry.ticker]: false }))}
-                          className="mt-2 text-slate-400 hover:text-slate-300 text-xs underline"
+                          className="mt-2 text-slate-600 dark:text-slate-400 hover:text-slate-300 text-xs underline"
                         >
                           Close
                         </button>

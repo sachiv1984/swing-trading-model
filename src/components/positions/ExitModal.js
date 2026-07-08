@@ -233,7 +233,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
             <AlertTriangle className="w-5 h-5" />
             Exit Position
           </DialogTitle>
-          <DialogDescription className="text-slate-400">
+          <DialogDescription className="text-slate-600 dark:text-slate-400">
             {position ? (
               <>You are about to close your position in {position.ticker}</>
             ) : (
@@ -249,15 +249,15 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
               {/* Top summary */}
               <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 grid grid-cols-3 gap-3 text-center">
                 <div>
-                  <div className="text-xs text-slate-400">Ticker</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400">Ticker</div>
                   <div className="font-medium text-white">{position.ticker}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-slate-400">Total Shares</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400">Total Shares</div>
                   <div className="font-medium text-white">{position.shares}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-slate-400">Entry Price</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400">Entry Price</div>
                   <div className="font-medium text-white">
                     {currencySymbol}
                     {Number(position.entry_price || 0).toFixed(2)}
@@ -269,7 +269,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <Label className="text-xs text-slate-400">Shares to Exit</Label>
+                    <Label className="text-xs text-slate-600 dark:text-slate-400">Shares to Exit</Label>
                     <Input
                       type="number"
                       step="0.01"
@@ -288,7 +288,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                     )}
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs text-slate-400">
+                    <Label className="text-xs text-slate-600 dark:text-slate-400">
                       Exit Price ({currencySymbol})
                     </Label>
                     <Input
@@ -311,7 +311,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <Label className="text-xs text-slate-400">Exit Date</Label>
+                    <Label className="text-xs text-slate-600 dark:text-slate-400">Exit Date</Label>
                     <Input
                       type="date"
                       value={exitData.exit_date}
@@ -323,7 +323,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                   </div>
                   {position.market === "US" ? (
                     <div className="space-y-1">
-                      <Label className="text-xs text-slate-400">FX Rate (GBP/USD)</Label>
+                      <Label className="text-xs text-slate-600 dark:text-slate-400">FX Rate (GBP/USD)</Label>
                       <Input
                         type="number"
                         step="0.0001"
@@ -342,7 +342,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="text-xs text-slate-400">Exit Reason</Label>
+                  <Label className="text-xs text-slate-600 dark:text-slate-400">Exit Reason</Label>
                   <Select
                     value={exitData.exit_reason}
                     onValueChange={(value) =>
@@ -365,7 +365,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
                 {/* ✅ NEW: Exit Note Field */}
                 <div className="space-y-1">
-                  <Label className="text-xs text-slate-400">Exit Note (Optional)</Label>
+                  <Label className="text-xs text-slate-600 dark:text-slate-400">Exit Note (Optional)</Label>
                   <Textarea
                     value={exitData.exit_note}
                     onChange={(e) => {
@@ -374,13 +374,13 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                       }
                     }}
                     placeholder="How did the trade play out? What did you learn?"
-                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400 focus:border-cyan-500/50 resize-none"
+                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 focus:border-cyan-500/50 resize-none"
                     rows={3}
                   />
                   <div className="flex justify-end">
                     <span className={cn(
                       "text-xs",
-                      exitData.exit_note.length > 450 ? "text-rose-400" : "text-slate-400"
+                      exitData.exit_note.length > 450 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"
                     )}>
                       {exitData.exit_note.length}/500
                     </span>
@@ -397,7 +397,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
                   <div className="space-y-1.5 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">
+                      <span className="text-slate-600 dark:text-slate-400">
                         Gross Value {position.market === "US" ? "(USD)" : ""}
                       </span>
                       <span className="text-white">
@@ -408,8 +408,8 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                     
                     {/* ALWAYS show commission (even if $0.00) */}
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Commission</span>
-                      <span className={commission > 0 ? "text-rose-400" : "text-slate-400"}>
+                      <span className="text-slate-600 dark:text-slate-400">Commission</span>
+                      <span className={commission > 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"}>
                         {commission > 0 ? "-" : ""}
                         {currencySymbol}
                         {commission.toFixed(2)}
@@ -419,7 +419,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                     {/* Show FX fee for US stocks */}
                     {position.market === "US" && (
                       <div className="flex justify-between">
-                        <span className="text-slate-400">FX Fee (0.15%)</span>
+                        <span className="text-slate-600 dark:text-slate-400">FX Fee (0.15%)</span>
                         <span className="text-rose-400">
                           -${fxFee.toFixed(2)}
                         </span>
@@ -430,7 +430,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                     {position.market === "US" && (
                       <>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">
+                          <span className="text-slate-600 dark:text-slate-400">
                             Net Proceeds (USD)
                           </span>
                           <span className="text-white">
@@ -438,10 +438,10 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                           </span>
                         </div>
                         <div className="flex justify-between text-xs opacity-75">
-                          <span className="text-slate-400">
+                          <span className="text-slate-600 dark:text-slate-400">
                             @ 1.{(exitFxRate - 1).toFixed(4).substring(2)}
                           </span>
-                          <span className="text-slate-400">
+                          <span className="text-slate-600 dark:text-slate-400">
                             ÷ {exitFxRate.toFixed(4)} = GBP
                           </span>
                         </div>
@@ -458,7 +458,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
 
                   <div className="space-y-1.5 pt-2 border-t-2 border-slate-700 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Entry Cost (incl. fees)</span>
+                      <span className="text-slate-600 dark:text-slate-400">Entry Cost (incl. fees)</span>
                       <span className="text-white">
                         £{entryCostForExitShares.toFixed(2)}
                       </span>
@@ -485,7 +485,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
           <Button
             variant="ghost"
             onClick={onClose}
-            className="text-slate-400 hover:text-white hover:bg-slate-800"
+            className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
           >
             Cancel
           </Button>

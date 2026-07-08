@@ -173,7 +173,7 @@ function TaxYearReport() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Calendar className="w-4 h-4 text-slate-400" />
-          <span className="text-sm text-slate-400">Tax Year</span>
+          <span className="text-sm text-slate-600 dark:text-slate-400">Tax Year</span>
           <Select
             value={String(selectedYear)}
             onValueChange={(v) => setSelectedYear(Number(v))}
@@ -247,7 +247,7 @@ function TaxYearReport() {
               animate={{ opacity: 1, y: 0 }}
               className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4"
             >
-              <p className="text-xs text-slate-400 mb-1">Total Realised P&L</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Realised P&L</p>
               <p className={`text-xl font-bold ${(reportData?.summary?.total_realised_pnl ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
                 {formatGBP(reportData?.summary?.total_realised_pnl)}
               </p>
@@ -258,7 +258,7 @@ function TaxYearReport() {
               transition={{ delay: 0.05 }}
               className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4"
             >
-              <p className="text-xs text-slate-400 mb-1">Gross Profit</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Gross Profit</p>
               <p className="text-xl font-bold text-emerald-400">
                 {formatGBP(reportData?.summary?.total_gross_profit)}
               </p>
@@ -269,7 +269,7 @@ function TaxYearReport() {
               transition={{ delay: 0.1 }}
               className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4"
             >
-              <p className="text-xs text-slate-400 mb-1">Gross Loss</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Gross Loss</p>
               <p className="text-xl font-bold text-rose-400">
                 {formatGBP(reportData?.summary?.total_gross_loss)}
               </p>
@@ -280,7 +280,7 @@ function TaxYearReport() {
               transition={{ delay: 0.15 }}
               className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4"
             >
-              <p className="text-xs text-slate-400 mb-1">Win Rate</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Win Rate</p>
               <p className="text-xl font-bold text-white">
                 {formatPct(reportData?.summary?.win_rate)}
               </p>
@@ -291,7 +291,7 @@ function TaxYearReport() {
               transition={{ delay: 0.2 }}
               className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4"
             >
-              <p className="text-xs text-slate-400 mb-1">Trades</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Trades</p>
               <p className="text-xl font-bold text-white">
                 {reportData?.summary?.total_closed_trades ?? 0}
               </p>
@@ -302,7 +302,7 @@ function TaxYearReport() {
           {sortedTrades.length === 0 ? (
             <div className="rounded-xl border border-slate-700/50 bg-slate-800/50 py-12 text-center">
               <FileText className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-              <p className="text-slate-400">
+              <p className="text-slate-600 dark:text-slate-400">
                 No closed trades recorded for the {taxYearLabel} tax year.
               </p>
             </div>
@@ -329,7 +329,7 @@ function TaxYearReport() {
                       <th
                         key={key}
                         onClick={() => handleSort(key)}
-                        className="px-3 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:text-white select-none whitespace-nowrap"
+                        className="px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-white select-none whitespace-nowrap"
                       >
                         {label}<SortIcon field={key} />
                       </th>
@@ -358,11 +358,11 @@ function TaxYearReport() {
                         <td className="px-3 py-3 text-slate-300">{trade.holding_days}</td>
                         <td className="px-3 py-3 text-slate-300">
                           {priceSymbol}{Number(trade.entry_price_native ?? 0).toFixed(2)}
-                          <span className="text-xs text-slate-400 ml-1">{currency}</span>
+                          <span className="text-xs text-slate-600 dark:text-slate-400 ml-1">{currency}</span>
                         </td>
                         <td className="px-3 py-3 text-slate-300">
                           {priceSymbol}{Number(trade.exit_price_native ?? 0).toFixed(2)}
-                          <span className="text-xs text-slate-400 ml-1">{currency}</span>
+                          <span className="text-xs text-slate-600 dark:text-slate-400 ml-1">{currency}</span>
                         </td>
                         <td className="px-3 py-3 text-slate-300">{trade.shares}</td>
                         <td className="px-3 py-3 text-slate-300">{formatGBP(trade.total_cost_gbp)}</td>
@@ -395,14 +395,14 @@ function TaxYearReport() {
               <p className={`text-2xl font-bold mb-3 ${(reportData.estimated_unrealised_pnl ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
                 {formatGBP(reportData.estimated_unrealised_pnl)}
               </p>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 {reportData.unrealised_note}
               </p>
             </div>
           )}
 
           {/* Scope Note */}
-          <p className="text-xs text-slate-400 text-center pb-2">
+          <p className="text-xs text-slate-600 dark:text-slate-400 text-center pb-2">
             UK tax year only (6 April to 5 April). Verify all figures against your broker records and seek qualified tax advice before filing.
           </p>
         </>
@@ -441,23 +441,23 @@ function MonthlyPnlTable() {
       <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-700/50">
           <h3 className="text-sm font-semibold text-white">Monthly Realised P&L</h3>
-          <p className="text-xs text-slate-400 mt-0.5">Current and prior calendar year. Only months with closed trades shown.</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Current and prior calendar year. Only months with closed trades shown.</p>
         </div>
         {rows.length === 0 ? (
-          <div className="px-6 py-10 text-center text-slate-400 text-sm">No closed trades in scope.</div>
+          <div className="px-6 py-10 text-center text-slate-600 dark:text-slate-400 text-sm">No closed trades in scope.</div>
         ) : (
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-700/50">
-                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Month</th>
-                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Realised P&L</th>
-                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Trades</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Month</th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Realised P&L</th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Trades</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-700/30">
               {rows.map((row) => {
                 const pnl = row.realised_pnl_gbp ?? 0;
-                const pnlColor = pnl > 0 ? "text-emerald-400" : pnl < 0 ? "text-rose-400" : "text-slate-400";
+                const pnlColor = pnl > 0 ? "text-emerald-400" : pnl < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400";
                 return (
                   <tr key={`${row.year}-${row.month}`} className="hover:bg-slate-700/20 transition-colors">
                     <td className="px-6 py-3 text-slate-200">
@@ -466,7 +466,7 @@ function MonthlyPnlTable() {
                     <td className={`px-6 py-3 text-right font-medium ${pnlColor}`}>
                       {formatGBP(pnl)}
                     </td>
-                    <td className="px-6 py-3 text-right text-slate-400">{row.trade_count}</td>
+                    <td className="px-6 py-3 text-right text-slate-600 dark:text-slate-400">{row.trade_count}</td>
                   </tr>
                 );
               })}
@@ -479,16 +479,16 @@ function MonthlyPnlTable() {
       <div data-testid="strategy-compliance-section" className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-700/50">
           <h3 className="text-sm font-semibold text-white">Strategy Compliance</h3>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
             Pre-entry discipline metrics — last {compliance?.period_days ?? 30} days.
           </p>
         </div>
         {compliance === null ? (
-          <div className="px-6 py-6 text-center text-slate-400 text-sm">Compliance data unavailable.</div>
+          <div className="px-6 py-6 text-center text-slate-600 dark:text-slate-400 text-sm">Compliance data unavailable.</div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-slate-700/30">
             <div data-testid="compliance-pass-rate" className="bg-slate-800/50 px-5 py-4">
-              <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Validation Pass Rate</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Validation Pass Rate</p>
               <p className="text-lg font-semibold text-white">
                 {compliance.validation_pass_rate != null
                   ? `${(compliance.validation_pass_rate * 100).toFixed(1)}%`
@@ -496,15 +496,15 @@ function MonthlyPnlTable() {
               </p>
             </div>
             <div data-testid="compliance-override-count" className="bg-slate-800/50 px-5 py-4">
-              <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Override Count</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Override Count</p>
               <p className="text-lg font-semibold text-white">{compliance.override_count ?? "—"}</p>
             </div>
             <div data-testid="compliance-red-flag-count" className="bg-slate-800/50 px-5 py-4">
-              <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Red Flag Events</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Red Flag Events</p>
               <p className="text-lg font-semibold text-white">{compliance.red_flag_events_count ?? "—"}</p>
             </div>
             <div data-testid="compliance-rule-breach" className="bg-slate-800/50 px-5 py-4">
-              <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Most Frequent Breach</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Most Frequent Breach</p>
               <p className="text-lg font-semibold text-white">
                 {compliance.most_frequent_rule_breach ?? "None"}
               </p>
@@ -660,7 +660,7 @@ export default function Reports() {
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === "performance"
               ? "border-cyan-500 text-white"
-              : "border-transparent text-slate-400 hover:text-slate-300"
+              : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-300"
           }`}
         >
           Performance
@@ -670,7 +670,7 @@ export default function Reports() {
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === "taxYear"
               ? "border-cyan-500 text-white"
-              : "border-transparent text-slate-400 hover:text-slate-300"
+              : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-300"
           }`}
         >
           Tax Year P&L
@@ -680,7 +680,7 @@ export default function Reports() {
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === "monthly"
               ? "border-cyan-500 text-white"
-              : "border-transparent text-slate-400 hover:text-slate-300"
+              : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-300"
           }`}
         >
           Monthly P&L

@@ -66,12 +66,12 @@ export default function PortfolioGrowthChart({ positions, period, periodDates })
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-lg font-semibold text-white">Portfolio Growth</h3>
-          <p className="text-sm text-slate-400">Cumulative P&L over time</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">Cumulative P&L over time</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-gradient-to-r from-cyan-400 to-violet-400" />
-            <span className="text-xs text-slate-400">Cumulative P&L</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400">Cumulative P&L</span>
           </div>
         </div>
       </div>

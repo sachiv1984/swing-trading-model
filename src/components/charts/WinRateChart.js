@@ -11,7 +11,7 @@ export default function WinRateChart({ winRate, wins, losses }) {
       className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6"
     >
       <h3 className="text-lg font-semibold text-white mb-2">Win Rate</h3>
-      <p className="text-sm text-slate-400 mb-6">Overall performance</p>
+      <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">Overall performance</p>
 
       <div className="flex items-center justify-center">
         <div className="relative">
@@ -57,7 +57,7 @@ export default function WinRateChart({ winRate, wins, losses }) {
             <div className="w-3 h-3 rounded-full bg-emerald-400" />
             <span className="text-2xl font-semibold text-white">{wins}</span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">Wins</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Wins</p>
         </div>
         <div className="w-px h-10 bg-slate-700" />
         <div className="text-center">
@@ -65,7 +65,7 @@ export default function WinRateChart({ winRate, wins, losses }) {
             <div className="w-3 h-3 rounded-full bg-rose-400" />
             <span className="text-2xl font-semibold text-white">{losses}</span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">Losses</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Losses</p>
         </div>
       </div>
     </motion.div>

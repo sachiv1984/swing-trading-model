@@ -89,14 +89,14 @@ export default function StatsCard({
           </p>
           <p className="text-lg lg:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{value}</p>
           {subtitle && (
-            <p className="text-xs text-slate-400 dark:text-slate-400 truncate">{subtitle}</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 truncate">{subtitle}</p>
           )}
           {trendValue && (
             <div className={cn(
               "inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full",
               isPositive && "bg-emerald-500/20 text-emerald-400",
               isNegative && "bg-rose-500/20 text-rose-400",
-              !isPositive && !isNegative && "bg-slate-800 text-slate-400"
+              !isPositive && !isNegative && "bg-slate-800 text-slate-600 dark:text-slate-400"
             )}>
               {isPositive && "↑"}
               {isNegative && "↓"}

@@ -106,7 +106,7 @@ export default function HeatGauge({ heatPercent, positionRisks = [], error, onRe
             ].map((t) => (
               <div key={t.label} className="flex items-center gap-1">
                 <div className="w-2 h-2 rounded-full" style={{ background: t.color }} />
-                <span className="text-slate-400">{t.range}</span>
+                <span className="text-slate-600 dark:text-slate-400">{t.range}</span>
               </div>
             ))}
           </div>

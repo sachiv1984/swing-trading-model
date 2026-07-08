@@ -61,7 +61,7 @@ export default function MonitorModal({
             </div>
           ) : positions?.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-slate-400">No open positions to monitor</p>
+              <p className="text-slate-600 dark:text-slate-400">No open positions to monitor</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -105,11 +105,11 @@ export default function MonitorModal({
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-semibold text-white">{position.ticker}</span>
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
                               {position.market}
                             </span>
                           </div>
-                          <p className="text-xs text-slate-400 mt-0.5">{reason}</p>
+                          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">{reason}</p>
                         </div>
                       </div>
                       <StatusBadge status={status} />
@@ -118,19 +118,19 @@ export default function MonitorModal({
                     {isExitSuggested && (
                       <div className="mt-3 pt-3 border-t border-slate-700/50 grid grid-cols-3 gap-4 text-sm">
                         <div>
-                          <p className="text-xs text-slate-400">Current</p>
+                          <p className="text-xs text-slate-600 dark:text-slate-400">Current</p>
                           <p className="text-white font-medium">
                             {currencySymbol}{position.current_price?.toFixed(2) || "—"}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-slate-400">Stop</p>
+                          <p className="text-xs text-slate-600 dark:text-slate-400">Stop</p>
                           <p className="text-rose-400 font-medium">
                             {currencySymbol}{position.stop_price?.toFixed(2) || "—"}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-slate-400">Entry</p>
+                          <p className="text-xs text-slate-600 dark:text-slate-400">Entry</p>
                           <p className="text-slate-300">
                             {currencySymbol}{position.entry_price?.toFixed(2)}
                           </p>
@@ -146,7 +146,7 @@ export default function MonitorModal({
 
         <DialogFooter className="border-t border-slate-700 pt-4">
           <div className="flex items-center justify-between w-full">
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
               {selectedExits.length > 0 
                 ? `${selectedExits.length} position${selectedExits.length > 1 ? "s" : ""} selected for exit`
                 : exitSuggestions.length > 0 
@@ -158,7 +158,7 @@ export default function MonitorModal({
               <Button 
                 variant="ghost" 
                 onClick={onClose} 
-                className="text-slate-400 hover:text-white hover:bg-slate-800"
+                className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
               >
                 Close
               </Button>

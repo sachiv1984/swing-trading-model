@@ -59,7 +59,7 @@ export default function TagPerformance({ trades }) {
   const getWinRateColor = (rate) => {
     if (rate >= 60) return "bg-emerald-500/20 text-emerald-400";
     if (rate >= 50) return "bg-cyan-500/20 text-cyan-400";
-    return "bg-slate-500/20 text-slate-400";
+    return "bg-slate-500/20 text-slate-600 dark:text-slate-400";
   };
 
   // Best tag insight
@@ -79,18 +79,18 @@ export default function TagPerformance({ trades }) {
           </div>
           <h3 className="text-lg font-semibold text-white">Performance by Strategy Tag</h3>
         </div>
-        <p className="text-sm text-slate-400">Analyze which strategies are working best</p>
+        <p className="text-sm text-slate-600 dark:text-slate-400">Analyze which strategies are working best</p>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-slate-800/50 border-b border-slate-700/50">
             <tr>
-              <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                 Tag
               </th>
               <th
-                className="px-6 py-4 text-right text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-300 transition-colors"
+                className="px-6 py-4 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-300 transition-colors"
                 onClick={() => handleSort("count")}
               >
                 <div className="flex items-center justify-end gap-1">
@@ -99,7 +99,7 @@ export default function TagPerformance({ trades }) {
                 </div>
               </th>
               <th
-                className="px-6 py-4 text-right text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-300 transition-colors"
+                className="px-6 py-4 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-300 transition-colors"
                 onClick={() => handleSort("winRate")}
               >
                 <div className="flex items-center justify-end gap-1">
@@ -108,7 +108,7 @@ export default function TagPerformance({ trades }) {
                 </div>
               </th>
               <th
-                className="px-6 py-4 text-right text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-300 transition-colors"
+                className="px-6 py-4 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-300 transition-colors"
                 onClick={() => handleSort("pnl")}
               >
                 <div className="flex items-center justify-end gap-1">
@@ -116,7 +116,7 @@ export default function TagPerformance({ trades }) {
                   <ArrowUpDown className="w-3 h-3" />
                 </div>
               </th>
-              <th className="px-6 py-4 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <th className="px-6 py-4 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                 Avg P&L
               </th>
             </tr>
@@ -150,7 +150,7 @@ export default function TagPerformance({ trades }) {
       </div>
 
       <div className="p-4 bg-slate-800/30 border-t border-slate-700/50">
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           Your <span className="text-violet-400 font-semibold">'{bestTag.tag}'</span> strategy has the {metricLabels[sortBy]} with {bestTag.count} trades.
         </p>
       </div>

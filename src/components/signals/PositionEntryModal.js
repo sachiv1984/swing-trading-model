@@ -43,7 +43,7 @@ export default function PositionEntryModal({ signal, open, onClose, onConfirm })
             <CheckCircle2 className="w-6 h-6" />
             Confirm Position Entry
           </DialogTitle>
-          <DialogDescription className="text-slate-400">
+          <DialogDescription className="text-slate-600 dark:text-slate-400">
             Review and confirm the details for {signal.ticker}
           </DialogDescription>
         </DialogHeader>
@@ -53,11 +53,11 @@ export default function PositionEntryModal({ signal, open, onClose, onConfirm })
           <div className="p-4 rounded-lg bg-gradient-to-br from-cyan-500/10 to-violet-500/10 border border-cyan-500/30">
             <div className="grid grid-cols-2 gap-3 text-center">
               <div>
-                <div className="text-xs text-slate-400">Ticker</div>
+                <div className="text-xs text-slate-600 dark:text-slate-400">Ticker</div>
                 <div className="text-lg font-bold text-white">{signal.ticker}</div>
               </div>
               <div>
-                <div className="text-xs text-slate-400">Market</div>
+                <div className="text-xs text-slate-600 dark:text-slate-400">Market</div>
                 <div className="text-lg font-bold text-white">{signal.market} {isUS ? "🇺🇸" : "🇬🇧"}</div>
               </div>
             </div>
@@ -67,7 +67,7 @@ export default function PositionEntryModal({ signal, open, onClose, onConfirm })
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label className="text-xs text-slate-400">Shares</Label>
+                <Label className="text-xs text-slate-600 dark:text-slate-400">Shares</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -77,7 +77,7 @@ export default function PositionEntryModal({ signal, open, onClose, onConfirm })
                 />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs text-slate-400">Entry Price ({currencySymbol})</Label>
+                <Label className="text-xs text-slate-600 dark:text-slate-400">Entry Price ({currencySymbol})</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -89,7 +89,7 @@ export default function PositionEntryModal({ signal, open, onClose, onConfirm })
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label className="text-xs text-slate-400">Stop Price ({currencySymbol})</Label>
+                <Label className="text-xs text-slate-600 dark:text-slate-400">Stop Price ({currencySymbol})</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -99,7 +99,7 @@ export default function PositionEntryModal({ signal, open, onClose, onConfirm })
                 />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs text-slate-400">Entry Date</Label>
+                <Label className="text-xs text-slate-600 dark:text-slate-400">Entry Date</Label>
                 <Input
                   type="date"
                   value={positionData.entry_date}
@@ -113,11 +113,11 @@ export default function PositionEntryModal({ signal, open, onClose, onConfirm })
           {/* Cost Summary */}
           <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
             <div className="flex justify-between text-sm mb-1">
-              <span className="text-slate-400">Total Cost (inc. fees)</span>
+              <span className="text-slate-600 dark:text-slate-400">Total Cost (inc. fees)</span>
               <span className="text-white font-bold">£{signal.total_cost.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-400">Momentum</span>
+              <span className="text-slate-600 dark:text-slate-400">Momentum</span>
               <span className="text-emerald-400 font-bold">+{signal.momentum_percent.toFixed(1)}%</span>
             </div>
           </div>
@@ -127,7 +127,7 @@ export default function PositionEntryModal({ signal, open, onClose, onConfirm })
           <Button 
             variant="ghost" 
             onClick={onClose} 
-            className="text-slate-400 hover:text-white hover:bg-slate-800"
+            className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
           >
             Cancel
           </Button>

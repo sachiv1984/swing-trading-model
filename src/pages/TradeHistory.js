@@ -275,7 +275,7 @@ export default function TradeHistory() {
             animate={{ opacity: 1, y: 0 }}
             className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 space-y-4"
           >
-            <div className="flex items-center gap-2 text-slate-400">
+            <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
               <Filter className="w-4 h-4" />
               <span className="text-sm font-medium">Filters</span>
             </div>
@@ -338,7 +338,7 @@ export default function TradeHistory() {
                 <div className="relative">
                   <button
                     onClick={() => setShowTagDropdown(!showTagDropdown)}
-                    className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-200 transition-colors"
+                    className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-200 transition-colors"
                   >
                     <Tag className="w-4 h-4" />
                     Filter by tag
@@ -401,7 +401,7 @@ export default function TradeHistory() {
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-cyan-400" />
                 <span className="text-sm font-medium text-slate-300">AI Journal Summary</span>
-                <span className="text-xs text-slate-400 hidden sm:inline">AI-generated themes across your journal entries.</span>
+                <span className="text-xs text-slate-600 dark:text-slate-400 hidden sm:inline">AI-generated themes across your journal entries.</span>
               </div>
               <div className="flex items-center gap-3">
                 {aiSummaryOpen && (
@@ -443,9 +443,9 @@ export default function TradeHistory() {
                   ) : aiSummary ? (
                     <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap" data-testid="ai-journal-summary-content">{aiSummary}</p>
                   ) : aiGenerated ? (
-                    <p className="text-slate-400 text-sm" data-testid="ai-journal-summary-error">{aiMessage || "Summary unavailable. Please try again later."}</p>
+                    <p className="text-slate-600 dark:text-slate-400 text-sm" data-testid="ai-journal-summary-error">{aiMessage || "Summary unavailable. Please try again later."}</p>
                   ) : (
-                    <p className="text-slate-400 text-sm" data-testid="ai-journal-summary-placeholder">Click &apos;Generate Summary&apos; to get an AI overview of your journal entries.</p>
+                    <p className="text-slate-600 dark:text-slate-400 text-sm" data-testid="ai-journal-summary-placeholder">Click &apos;Generate Summary&apos; to get an AI overview of your journal entries.</p>
                   )}
                 </div>
               </div>
@@ -456,7 +456,7 @@ export default function TradeHistory() {
           <TradeHistoryTable trades={filteredTrades} tradesForCharts={tradesForCharts} />
 
           {filteredTrades.length > 0 && (
-            <p className="text-center text-sm text-slate-400">
+            <p className="text-center text-sm text-slate-600 dark:text-slate-400">
               Showing {filteredTrades.length} of {trades.length} trades
             </p>
           )}

@@ -25,7 +25,7 @@ export default function PortfolioHeatCard() {
       <p className={cn("text-4xl font-bold mb-2", heatColor(heat))}>
         {heat != null ? `${heat.toFixed(1)}%` : "—"}
       </p>
-      <p className="text-sm text-slate-400">
+      <p className="text-sm text-slate-600 dark:text-slate-400">
         {heat == null ? "No data" : heat < 15 ? "Heat within safe range" : heat <= 25 ? "Heat elevated — monitor closely" : "Heat critical — review positions"}
       </p>
     </DashboardCard>

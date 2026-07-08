@@ -16,7 +16,7 @@ export default function StatusBadge({ status, className }) {
     },
     closed: {
       label: "Closed",
-      className: "bg-slate-500/20 text-slate-400 border-slate-500/30"
+      className: "bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-500/30"
     },
     hold: {
       label: "Hold",

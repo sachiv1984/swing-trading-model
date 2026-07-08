@@ -19,7 +19,7 @@ function exitReasonColor(r) {
     manual:        "bg-violet-500/20 text-violet-400 border-violet-500/30",
     target:        "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
     market_regime: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  }[r] || "bg-slate-800 text-slate-400 border-slate-700";
+  }[r] || "bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-700";
 }
 
 export default function TradeReflection() {
@@ -59,7 +59,7 @@ export default function TradeReflection() {
       ) : filtered.length === 0 ? (
         <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-12 text-center">
           <BookOpen className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-          <p className="text-slate-400">No closed trades yet — close a trade to write your first reflection.</p>
+          <p className="text-slate-600 dark:text-slate-400">No closed trades yet — close a trade to write your first reflection.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -77,7 +77,7 @@ export default function TradeReflection() {
                     <span className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors">
                       {r.ticker}
                     </span>
-                    <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                    <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
                       {r.market || "—"}
                     </span>
                   </div>
@@ -91,19 +91,19 @@ export default function TradeReflection() {
 
                 <div className="grid grid-cols-3 gap-2 mb-3">
                   <div>
-                    <div className="text-xs text-slate-400">P&L</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">P&L</div>
                     <div className={cn("text-sm font-semibold", isProfit ? "text-emerald-400" : "text-rose-400")}>
                       {isProfit ? "+" : ""}£{(r.pnl || 0).toFixed(2)}
                     </div>
                   </div>
                   <div>
-                    <div className="text-xs text-slate-400">R-Multiple</div>
-                    <div className={cn("text-sm font-semibold", r.r_multiple == null ? "text-slate-400" : r.r_multiple >= 0 ? "text-emerald-400" : "text-rose-400")}>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">R-Multiple</div>
+                    <div className={cn("text-sm font-semibold", r.r_multiple == null ? "text-slate-600 dark:text-slate-400" : r.r_multiple >= 0 ? "text-emerald-400" : "text-rose-400")}>
                       {r.r_multiple != null ? `${r.r_multiple >= 0 ? "+" : ""}${r.r_multiple.toFixed(2)}R` : "N/A"}
                     </div>
                   </div>
                   <div>
-                    <div className="text-xs text-slate-400">Hold</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">Hold</div>
                     <div className="text-sm font-medium text-slate-300">
                       {r.hold_days != null ? `${r.hold_days}d` : "—"}
                     </div>

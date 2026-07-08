@@ -222,7 +222,7 @@ export default function TradeEntry() {
         description="Add a new trade to your portfolio"
         actions={
           <Link to={createPageUrl("Positions")}>
-            <Button variant="ghost" className="text-slate-400 hover:text-white hover:bg-slate-800">
+            <Button variant="ghost" className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Button>
@@ -239,16 +239,16 @@ export default function TradeEntry() {
           {/* Ticker & Market */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-400">Ticker Symbol</Label>
+              <Label className="text-slate-600 dark:text-slate-400">Ticker Symbol</Label>
               <Input
                 value={formData.ticker}
                 onChange={(e) => handleTickerChange(e.target.value)}
                 placeholder="e.g., AAPL or VOD.L"
-                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20"
+                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20"
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-400">Market</Label>
+              <Label className="text-slate-600 dark:text-slate-400">Market</Label>
               <Select
                 value={formData.market}
                 onValueChange={(value) => handleChange("market", value)}
@@ -266,7 +266,7 @@ export default function TradeEntry() {
 
           {/* Entry Date */}
           <div className="space-y-2">
-            <Label className="text-slate-400">Entry Date</Label>
+            <Label className="text-slate-600 dark:text-slate-400">Entry Date</Label>
             <Input
               type="date"
               value={formData.entry_date}
@@ -277,34 +277,34 @@ export default function TradeEntry() {
 
           {/* Entry Price */}
           <div className="space-y-2">
-            <Label className="text-slate-400">Fill Price ({costs.currencySymbol})</Label>
+            <Label className="text-slate-600 dark:text-slate-400">Fill Price ({costs.currencySymbol})</Label>
             <Input
               type="number"
               step="0.01"
               value={formData.entry_price}
               onChange={(e) => handleChange("entry_price", e.target.value)}
               placeholder="0.00"
-              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400"
+              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400"
             />
           </div>
 
           {/* Fill Price (optional) */}
           <div className="space-y-2">
-            <Label className="text-slate-400">Fill Price (optional)</Label>
+            <Label className="text-slate-600 dark:text-slate-400">Fill Price (optional)</Label>
             <Input
               type="number"
               step="0.01"
               value={formData.fill_price}
               onChange={(e) => handleChange("fill_price", e.target.value)}
               placeholder="Actual broker fill price"
-              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400"
+              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400"
             />
           </div>
 
           {/* FX Rate (US only) */}
           {formData.market === "US" && (
             <div className="space-y-2">
-              <Label className="text-slate-400">FX Rate (USD/GBP)</Label>
+              <Label className="text-slate-600 dark:text-slate-400">FX Rate (USD/GBP)</Label>
               <Input
                 type="number"
                 step="0.0001"
@@ -318,17 +318,17 @@ export default function TradeEntry() {
           {/* ATR & Stop Price */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-400">ATR Value (Optional)</Label>
+              <Label className="text-slate-600 dark:text-slate-400">ATR Value (Optional)</Label>
               <Input
                 type="number"
                 step="0.01"
                 value={formData.atr_value}
                 onChange={(e) => handleChange("atr_value", e.target.value)}
                 placeholder="For stop suggestion"
-                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400"
+                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400"
               />
               {formData.atr_value && costs.suggestedStop > 0 && (
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600 dark:text-slate-400">
                   Suggested stop:{" "}
                   <span className="text-rose-400">
                     {costs.currencySymbol}{costs.suggestedStop.toFixed(2)}
@@ -338,14 +338,14 @@ export default function TradeEntry() {
               )}
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-400">Stop Price ({costs.currencySymbol})</Label>
+              <Label className="text-slate-600 dark:text-slate-400">Stop Price ({costs.currencySymbol})</Label>
               <Input
                 type="number"
                 step="0.01"
                 value={formData.stop_price}
                 onChange={(e) => handleChange("stop_price", e.target.value)}
                 placeholder="0.00"
-                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400"
+                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400"
               />
             </div>
           </div>
@@ -364,19 +364,19 @@ export default function TradeEntry() {
 
           {/* Shares */}
           <div className="space-y-2">
-            <Label className="text-slate-400">Number of Shares</Label>
+            <Label className="text-slate-600 dark:text-slate-400">Number of Shares</Label>
             <Input
               type="number"
               value={formData.shares}
               onChange={(e) => handleChange("shares", e.target.value)}
               placeholder="0"
-              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400"
+              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400"
             />
           </div>
 
           {/* Entry Note */}
           <div className="space-y-2">
-            <Label className="text-slate-400">Entry Note (Optional)</Label>
+            <Label className="text-slate-600 dark:text-slate-400">Entry Note (Optional)</Label>
             <Textarea
               value={formData.entry_note}
               onChange={(e) => {
@@ -385,13 +385,13 @@ export default function TradeEntry() {
                 }
               }}
               placeholder="Why are you entering this trade? What's your thesis?"
-              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20 resize-none"
+              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20 resize-none"
               rows={4}
             />
             <div className="flex justify-end">
               <span className={cn(
                 "text-xs",
-                formData.entry_note.length > 450 ? "text-rose-400" : "text-slate-400"
+                formData.entry_note.length > 450 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"
               )}>
                 {formData.entry_note.length}/500
               </span>
@@ -400,7 +400,7 @@ export default function TradeEntry() {
 
           {/* Tags */}
           <div className="space-y-2">
-            <Label className="text-slate-400">Tags (Optional)</Label>
+            <Label className="text-slate-600 dark:text-slate-400">Tags (Optional)</Label>
             <div className="space-y-2">
               {formData.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2">
@@ -433,7 +433,7 @@ export default function TradeEntry() {
                     onBlur={() => setTimeout(() => setShowTagSuggestions(false), 200)}
                     onKeyDown={handleTagInputKeyDown}
                     placeholder="Type to add tags..."
-                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20"
+                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20"
                   />
                   {showTagSuggestions && filteredTags.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl max-h-48 overflow-auto">
@@ -452,7 +452,7 @@ export default function TradeEntry() {
               )}
 
               {formData.tags.length >= 5 && (
-                <p className="text-xs text-slate-400">Maximum 5 tags reached</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400">Maximum 5 tags reached</p>
               )}
             </div>
           </div>
@@ -471,32 +471,32 @@ export default function TradeEntry() {
               <Calculator className="w-5 h-5 text-cyan-400" />
             </div>
             <h3 className="font-semibold text-white">Estimated Cost</h3>
-            <span className="text-xs text-slate-400 ml-1">(preview — actual fees calculated on submission)</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400 ml-1">(preview — actual fees calculated on submission)</span>
           </div>
 
           <div className="space-y-3">
             <div className="flex justify-between text-sm">
-              <span className="text-slate-400">Gross Value</span>
+              <span className="text-slate-600 dark:text-slate-400">Gross Value</span>
               <span className="text-white">
                 {costs.currencySymbol}{costs.grossValue.toFixed(2)}
                 {formData.market === "US" && (
-                  <span className="text-slate-400 ml-1">(£{costs.grossValueGBP.toFixed(2)})</span>
+                  <span className="text-slate-600 dark:text-slate-400 ml-1">(£{costs.grossValueGBP.toFixed(2)})</span>
                 )}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-400">Commission</span>
+              <span className="text-slate-600 dark:text-slate-400">Commission</span>
               <span className="text-white">£{costs.commission.toFixed(2)}</span>
             </div>
             {costs.stampDuty > 0 && (
               <div className="flex justify-between text-sm">
-                <span className="text-slate-400">Stamp Duty (0.5%)</span>
+                <span className="text-slate-600 dark:text-slate-400">Stamp Duty (0.5%)</span>
                 <span className="text-white">£{costs.stampDuty.toFixed(2)}</span>
               </div>
             )}
             {costs.fxFee > 0 && (
               <div className="flex justify-between text-sm">
-                <span className="text-slate-400">FX Fee (0.15%)</span>
+                <span className="text-slate-600 dark:text-slate-400">FX Fee (0.15%)</span>
                 <span className="text-white">£{costs.fxFee.toFixed(2)}</span>
               </div>
             )}
@@ -511,7 +511,7 @@ export default function TradeEntry() {
             {costs.riskPerShare > 0 && (
               <div className="pt-3 border-t border-slate-700">
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-400">Risk (to stop)</span>
+                  <span className="text-slate-600 dark:text-slate-400">Risk (to stop)</span>
                   <span className="text-rose-400 font-medium">£{costs.totalRisk.toFixed(2)}</span>
                 </div>
               </div>
@@ -523,7 +523,7 @@ export default function TradeEntry() {
       {/* Submit */}
       <div className="flex justify-end gap-3">
         <Link to={createPageUrl("Positions")}>
-          <Button variant="ghost" className="text-slate-400 hover:text-white hover:bg-slate-800">
+          <Button variant="ghost" className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800">
             Cancel
           </Button>
         </Link>

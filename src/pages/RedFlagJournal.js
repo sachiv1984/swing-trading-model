@@ -105,7 +105,7 @@ function EventRow({ event }) {
   const config = EVENT_TYPE_CONFIG[event.event_type] || {
     label: event.event_type,
     icon: AlertTriangle,
-    className: "text-slate-400",
+    className: "text-slate-600 dark:text-slate-400",
   };
   const Icon = config.icon;
   const displayTicker = stripLSuffix(event.ticker);
@@ -136,13 +136,13 @@ function EventRow({ event }) {
           </span>
         </div>
         {summary && (
-          <p className="text-xs text-slate-400 mt-0.5 truncate">{summary}</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 truncate">{summary}</p>
         )}
       </div>
       <div className="shrink-0 text-right">
         <span
           data-testid="event-date"
-          className="text-xs text-slate-400"
+          className="text-xs text-slate-600 dark:text-slate-400"
           title={absDate}
         >
           {relTime}
@@ -252,7 +252,7 @@ export default function RedFlagJournal() {
         className="flex flex-wrap gap-3 items-end"
       >
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-slate-400">Event type</label>
+          <label className="text-xs text-slate-600 dark:text-slate-400">Event type</label>
           <select
             data-testid="event-type-filter"
             value={eventTypeFilter}
@@ -268,7 +268,7 @@ export default function RedFlagJournal() {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-slate-400">Ticker</label>
+          <label className="text-xs text-slate-600 dark:text-slate-400">Ticker</label>
           <div className="flex gap-1">
             <input
               data-testid="ticker-filter-input"
@@ -291,7 +291,7 @@ export default function RedFlagJournal() {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-slate-400">From date</label>
+          <label className="text-xs text-slate-600 dark:text-slate-400">From date</label>
           <input
             type="date"
             value={sinceFilter}
@@ -301,7 +301,7 @@ export default function RedFlagJournal() {
         </div>
 
         {hasFilters && (
-          <Button variant="ghost" size="sm" onClick={clearFilters} className="text-xs text-slate-400 mt-5">
+          <Button variant="ghost" size="sm" onClick={clearFilters} className="text-xs text-slate-600 dark:text-slate-400 mt-5">
             Clear filters
           </Button>
         )}
@@ -345,7 +345,7 @@ export default function RedFlagJournal() {
               </p>
               <button
                 onClick={clearFilters}
-                className="text-xs text-slate-400 underline hover:text-slate-300"
+                className="text-xs text-slate-600 dark:text-slate-400 underline hover:text-slate-300"
               >
                 Clear filters
               </button>
@@ -353,7 +353,7 @@ export default function RedFlagJournal() {
           ) : (
             <>
               <p className="text-slate-300">No strategy deviations recorded yet</p>
-              <p className="text-xs text-slate-400 max-w-xs">
+              <p className="text-xs text-slate-600 dark:text-slate-400 max-w-xs">
                 Override events will appear here when you proceed past a strategy gate warning.
               </p>
             </>
@@ -364,7 +364,7 @@ export default function RedFlagJournal() {
       {/* Event list */}
       {!isLoading && !isError && items.length > 0 && (
         <>
-          <p className="text-xs text-slate-400">{total} event{total === 1 ? "" : "s"} recorded</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">{total} event{total === 1 ? "" : "s"} recorded</p>
           <div className="space-y-2">
             {items.map((event) => (
               <EventRow key={event.id} event={event} />
@@ -382,7 +382,7 @@ export default function RedFlagJournal() {
               <ChevronLeft className="w-4 h-4 mr-1" />
               Previous
             </Button>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-600 dark:text-slate-400">
               Page {page} of {totalPages}
             </span>
             <Button

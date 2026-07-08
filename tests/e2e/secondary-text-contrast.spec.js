@@ -5,6 +5,9 @@
  *   SC-CTR-01  Dark theme (default): secondary-text elements resolve to slate-400
  *              (rgb(148, 163, 184)) — WCAG-AA pass (5.71:1 vs bg-slate-800),
  *              not the pre-fix slate-500 (rgb(100, 116, 139), 3.07:1 FAIL).
+ *   SC-CTR-02  Light theme (toggled): the same elements resolve to slate-600
+ *              (rgb(71, 85, 105)) — WCAG-AA pass (6.92:1 vs bg-slate-100),
+ *              not bare slate-400 (rgb(148, 163, 184), 2.34–2.56:1 FAIL in light).
  *
  * Design source: docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md §3
  * Canonical class pair: text-slate-600 dark:text-slate-400 (light bare / dark: variant)
@@ -14,6 +17,10 @@
  * mirrors the audit's own documented "class-based" method (contrast_audit_findings.md
  * §Scope and Method) — verifying resolved computed colour on a representative,
  * testid-addressable sample rather than asserting all 226 remediated instances.
+ *
+ * Theme toggle: Layout.js reads localStorage["theme"] (default "dark") on mount and
+ * applies a literal "dark" class to the shell wrapper (Tailwind darkMode: ["class"]).
+ * Light theme is set via page.addInitScript before navigation.
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
  *
@@ -28,6 +35,7 @@ const { test, expect } = require('@playwright/test');
 
 const SLATE_400_RGB = 'rgb(148, 163, 184)';
 const SLATE_500_RGB = 'rgb(100, 116, 139)';
+const SLATE_600_RGB = 'rgb(71, 85, 105)';
 
 async function mockCommonRoutes(page) {
   await page.route('**/positions*', (route) => {
@@ -80,5 +88,31 @@ test.describe('Secondary-Text Contrast — Dark Theme (SC-CTR-01)', () => {
     const color = await footer.evaluate((el) => getComputedStyle(el).color);
     expect(color).toBe(SLATE_400_RGB);
     expect(color).not.toBe(SLATE_500_RGB);
+  });
+});
+
+test.describe('Secondary-Text Contrast — Light Theme (SC-CTR-02)', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockCommonRoutes(page);
+    await page.addInitScript(() => window.localStorage.setItem('theme', 'light'));
+    await page.goto('/#/positions');
+  });
+
+  test('SC-CTR-02a — AI chat empty-state message resolves to slate-600 in light theme', async ({ page }) => {
+    await page.locator('[data-testid="ai-chat-open-btn"]').click();
+    const empty = page.locator('[data-testid="ai-chat-empty"]');
+    await expect(empty).toBeVisible({ timeout: 8000 });
+    const color = await empty.evaluate((el) => getComputedStyle(el).color);
+    expect(color).toBe(SLATE_600_RGB);
+    expect(color).not.toBe(SLATE_400_RGB);
+  });
+
+  test('SC-CTR-02b — AI chat advisory footer resolves to slate-600 in light theme', async ({ page }) => {
+    await page.locator('[data-testid="ai-chat-open-btn"]').click();
+    const footer = page.locator('[data-testid="ai-chat-advisory-footer"]');
+    await expect(footer).toBeVisible({ timeout: 8000 });
+    const color = await footer.evaluate((el) => getComputedStyle(el).color);
+    expect(color).toBe(SLATE_600_RGB);
+    expect(color).not.toBe(SLATE_400_RGB);
   });
 });

@@ -207,7 +207,7 @@ export default function ExportModal({ open, onClose, positions, metrics, period,
       <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-white">Export Report</DialogTitle>
-          <DialogDescription className="text-slate-400">
+          <DialogDescription className="text-slate-600 dark:text-slate-400">
             Export your {period.toLowerCase()} trading data
           </DialogDescription>
         </DialogHeader>
@@ -238,7 +238,7 @@ export default function ExportModal({ open, onClose, positions, metrics, period,
                 </div>
                 <div className="flex-1">
                   <p className="font-medium text-white">{option.title}</p>
-                  <p className="text-sm text-slate-400">{option.description}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">{option.description}</p>
                 </div>
                 <Download className="w-5 h-5 text-slate-500" />
               </motion.button>
@@ -247,7 +247,7 @@ export default function ExportModal({ open, onClose, positions, metrics, period,
         </div>
 
         <div className="mt-4 p-3 rounded-lg bg-slate-800/30 border border-slate-700/30">
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-600 dark:text-slate-400">
             <strong className="text-slate-300">Included data:</strong> {positions.filter(p => p.status === "closed").length} closed trades, 
             performance metrics, and trade breakdown for {period.toLowerCase()}.
           </p>

@@ -213,13 +213,13 @@ test.describe('SC-SLIP-04 — Null fill price shows em dash', () => {
   });
 
   test('SC-SLIP-04a: Trade without fill price shows em dash in Slippage column', async ({ page }) => {
-    // VOD has slippage_pct: null — formatSlippage → "—", slippageColour → text-slate-400
+    // VOD has slippage_pct: null — formatSlippage → "—", slippageColour → text-slate-600 dark:text-slate-400
     // Find the VOD row and assert its slippage cell contains "—" with slate colour
     const vodRow = page.locator('tr').filter({ hasText: 'VOD' });
     await expect(vodRow).toBeVisible();
-    // VOD has null slippage, fee_drag, and R-multiple — all show '—' in text-slate-400.
+    // VOD has null slippage, fee_drag, and R-multiple — all show '—' in text-slate-600 (light) / dark:text-slate-400 (dark).
     // Use .first() since all three are valid evidence that null renders as em-dash in slate.
-    const slippageCell = vodRow.locator('.text-slate-400').filter({ hasText: '—' }).first();
+    const slippageCell = vodRow.locator('.text-slate-600').filter({ hasText: '—' }).first();
     await expect(slippageCell).toBeVisible();
   });
 

@@ -20,7 +20,7 @@ export default function GracePeriodCard() {
   return (
     <DashboardCard title="In Grace Today" to="/RiskDashboard" isLoading={isLoading} error={error}>
       <p className="text-4xl font-bold text-amber-400 mb-2">{gracePositions.length}</p>
-      <p className="text-sm text-slate-400">
+      <p className="text-sm text-slate-600 dark:text-slate-400">
         {nextExpiry
           ? `Next expiry: ${format(new Date(nextExpiry.grace_end_date), "d MMM")}`
           : gracePositions.length === 0

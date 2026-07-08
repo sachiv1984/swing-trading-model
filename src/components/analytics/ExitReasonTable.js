@@ -8,12 +8,12 @@ export default function ExitReasonTable({ exitReasonData }) {
         <table className="w-full">
           <thead>
             <tr className="border-b border-slate-700/50">
-              <th className="text-left text-xs text-slate-400 font-medium py-3 px-4">Exit Reason</th>
-              <th className="text-right text-xs text-slate-400 font-medium py-3 px-4">Count</th>
-              <th className="text-right text-xs text-slate-400 font-medium py-3 px-4">Win Rate</th>
-              <th className="text-right text-xs text-slate-400 font-medium py-3 px-4">Total P&L</th>
-              <th className="text-right text-xs text-slate-400 font-medium py-3 px-4">Avg P&L</th>
-              <th className="text-right text-xs text-slate-400 font-medium py-3 px-4">% of Trades</th>
+              <th className="text-left text-xs text-slate-600 dark:text-slate-400 font-medium py-3 px-4">Exit Reason</th>
+              <th className="text-right text-xs text-slate-600 dark:text-slate-400 font-medium py-3 px-4">Count</th>
+              <th className="text-right text-xs text-slate-600 dark:text-slate-400 font-medium py-3 px-4">Win Rate</th>
+              <th className="text-right text-xs text-slate-600 dark:text-slate-400 font-medium py-3 px-4">Total P&L</th>
+              <th className="text-right text-xs text-slate-600 dark:text-slate-400 font-medium py-3 px-4">Avg P&L</th>
+              <th className="text-right text-xs text-slate-600 dark:text-slate-400 font-medium py-3 px-4">% of Trades</th>
             </tr>
           </thead>
           <tbody>

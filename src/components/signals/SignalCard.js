@@ -35,7 +35,7 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
     },
     already_held: {
       label: "Already Held",
-      color: "bg-slate-500/20 text-slate-400 border-slate-500/40",
+      color: "bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-500/40",
       icon: Lock
     },
     dismissed: {
@@ -100,7 +100,7 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
               <h3 className="text-3xl font-bold text-white">{signal.ticker.replace(".L", "")}</h3>
               <span className="text-2xl">{isUS ? "🇺🇸" : "🇬🇧"}</span>
             </div>
-            <p className="text-sm text-slate-400 font-medium">{signal.market} Market</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">{signal.market} Market</p>
           </div>
         </div>
         <Badge className={cn("border", status.color)}>
@@ -112,7 +112,7 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
       {/* Key Metrics Grid */}
       <div className="grid grid-cols-3 gap-3 mb-4">
         <div className="p-3 rounded-lg bg-slate-900/40 border border-slate-700/50">
-          <p className="text-xs text-slate-400 mb-1">Momentum</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Momentum</p>
           <div className="flex items-center gap-1">
             <TrendingUp className="w-4 h-4 text-emerald-400" />
             <p className="text-lg font-bold text-emerald-400">
@@ -121,11 +121,11 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
           </div>
         </div>
         <div className="p-3 rounded-lg bg-slate-900/40 border border-slate-700/50">
-          <p className="text-xs text-slate-400 mb-1">Price</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Price</p>
           <p className="text-lg font-bold text-white">{currencySymbol}{signal.current_price.toFixed(2)}</p>
         </div>
         <div className="p-3 rounded-lg bg-slate-900/40 border border-slate-700/50">
-          <p className="text-xs text-slate-400 mb-1">Stop</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Stop</p>
           <p className="text-lg font-bold text-rose-400">{currencySymbol}{signal.initial_stop.toFixed(2)}</p>
         </div>
       </div>
@@ -141,11 +141,11 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
             <p className="text-xs font-semibold text-cyan-400 mb-3">POSITION DETAILS</p>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-slate-400 mb-1">Suggested Shares</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Suggested Shares</p>
                 <p className="text-xl font-bold text-white">{formatShares(signal.suggested_shares)}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-400 mb-1">Allocation Cost</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Allocation Cost</p>
                 <p className="text-xl font-bold text-white">£{signal.total_cost.toFixed(2)}</p>
               </div>
             </div>
@@ -154,7 +154,7 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
                 Buy <span className="font-bold text-cyan-400">{formatShares(signal.suggested_shares)} shares</span> at{" "}
                 <span className="font-bold text-white">{currencySymbol}{signal.current_price.toFixed(2)}</span>
               </p>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                 Stop distance: <span className="text-rose-400 font-mono">{currencySymbol}{(signal.current_price - signal.initial_stop).toFixed(2)}</span>
               </p>
               {signal.reason && (
@@ -180,7 +180,7 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
           <Button
             onClick={() => onDismiss(signal.id)}
             variant="outline"
-            className="border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800 h-11 px-6"
+            className="border-slate-700 text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800 h-11 px-6"
           >
             Dismiss
           </Button>
@@ -210,7 +210,7 @@ export default function SignalCard({ signal, onAddToWatchlist, onDismiss, isAddi
 
       {isAlreadyHeld && (
         <div className="text-center py-2 px-4 rounded-lg bg-slate-700/30 border border-slate-600/30">
-          <p className="text-sm text-slate-400">◉ You already hold this position</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">◉ You already hold this position</p>
         </div>
       )}
 

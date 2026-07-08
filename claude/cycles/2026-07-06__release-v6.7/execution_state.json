@@ -126,7 +126,7 @@
         "ST-02": {
           "title": "Light-theme secondary-text contrast fix (BLG-FE-88)",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 924,
           "branch": "exec/2026-07-06__release-v6.7/EPIC-01",
@@ -134,13 +134,13 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-07-08T12:45:00Z",
+          "acceptance_verified": true,
           "spec_references": ["docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md", "docs/specs/frontend/pages/positions.md", "docs/specs/frontend/pages/dashboard.md", "docs/specs/frontend/pages/reflections.md"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.pre-commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC-01: added text-slate-600 (light bare) / dark:text-slate-400 pairing to every in-scope bare text-slate-400 instance (697 instances, 101 files) per ux_spec.md §3 canonical pair (6.92:1 vs bg-slate-100, was 2.34-2.56:1 FAIL bare). Also fixed 1 broken pre-existing pairing (StatsCard.js:92 had text-slate-400 dark:text-slate-400 - light half never updated) and applied the exception treatment for the Dashboard Advisory Label (AiDailyBriefing.js:141: text-slate-300 -> text-slate-700 dark:text-slate-300, per ux_spec.md §4 - not the generic token, dark value preserved unchanged). 29 icon-only instances excluded per §5. Verified via full Babel/JSX parse of all 159 touched-directory files: 0 syntax errors. AC-02: prioritised naturally by ST-01's file set (top-traffic pages already covered: Positions, Screener, Reports, TradeEntry, Research, Settings per contrast_audit_findings.md top-10 list). AC-03: extended tests/e2e/secondary-text-contrast.spec.js with SC-CTR-02a/02b (light theme via localStorage theme=light + addInitScript), confirmed passing (4/4 total) with computed color rgb(71,85,105) [slate-600] in light theme, rgb(148,163,184) [slate-400] in dark. Cross-spec selector check (LL-v3.2-P3-02): 3 stale .text-slate-400 CSS class selectors found and fixed (fee-drag-trade-history.spec.js, slippage-tracking.spec.js, research-typography.spec.js) - Tailwind's dark: variant makes the paired class a distinct classList token ('dark:text-slate-400'), so a bare '.text-slate-400' selector no longer matches; updated to '.text-slate-600' (the new light-mode base class). toHaveClass(/text-slate-400/) regex-based assertions (r-multiple-reflection.spec.js, visual-snapshots.spec.js) were unaffected — substring match against the full className string still succeeds. Full e2e suite: 428 passed, 3 skipped (pre-existing), 1 failed on first run (alert-nav-badge.spec.js SC-ANB-05, unrelated timing flake - confirmed pre-existing by re-running 3x in isolation, all passed; no text-slate reference in that test or its underlying component)."
         },
         "ST-03": {
           "title": "Shared secondary-text design token (BLG-FE-89)",

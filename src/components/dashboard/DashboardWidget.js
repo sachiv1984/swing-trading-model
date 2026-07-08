@@ -32,7 +32,7 @@ export default function DashboardWidget({
             variant="ghost"
             size="icon"
             onClick={() => onRemove(id)}
-            className="h-7 w-7 bg-slate-800/80 hover:bg-rose-500/80 text-slate-400 hover:text-white"
+            className="h-7 w-7 bg-slate-800/80 hover:bg-rose-500/80 text-slate-600 dark:text-slate-400 hover:text-white"
           >
             <X className="w-4 h-4" />
           </Button>
@@ -42,7 +42,7 @@ export default function DashboardWidget({
       {isEditing && (
         <div 
           {...dragHandleProps}
-          className="absolute top-2 left-2 z-10 p-1.5 rounded-lg bg-slate-800/80 cursor-grab active:cursor-grabbing text-slate-400 hover:text-white"
+          className="absolute top-2 left-2 z-10 p-1.5 rounded-lg bg-slate-800/80 cursor-grab active:cursor-grabbing text-slate-600 dark:text-slate-400 hover:text-white"
         >
           <GripVertical className="w-4 h-4" />
         </div>

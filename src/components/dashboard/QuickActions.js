@@ -64,7 +64,7 @@ export default function QuickActions({ onRunMonitor }) {
                 </div>
                 <div>
                   <h3 className="font-semibold text-white">{action.label}</h3>
-                  <p className="text-sm text-slate-400 mt-0.5">{action.description}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">{action.description}</p>
                 </div>
               </div>
               <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-slate-400 group-hover:translate-x-1 transition-all" />

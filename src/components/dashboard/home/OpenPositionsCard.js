@@ -18,7 +18,7 @@ export default function OpenPositionsCard() {
   return (
     <DashboardCard title="Open Positions" to="/Positions" isLoading={isLoading} error={error}>
       <p className="text-4xl font-bold text-white mb-2">{open.length}</p>
-      <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-slate-400">
+      <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-slate-600 dark:text-slate-400">
         {profitable > 0 && <span className="text-emerald-400">{profitable} profitable</span>}
         {losing > 0 && <span className="text-rose-400">{losing} losing</span>}
         {grace > 0 && <span className="text-amber-400">{grace} in grace</span>}

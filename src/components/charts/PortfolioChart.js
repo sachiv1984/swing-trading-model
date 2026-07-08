@@ -34,7 +34,7 @@ export default function PortfolioChart() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-lg font-semibold text-white">Portfolio Performance</h3>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             {historyData?.length > 0 
               ? `Last ${historyData.length} days` 
               : "Sample data - create snapshots to see real history"}
@@ -43,11 +43,11 @@ export default function PortfolioChart() {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-cyan-400" />
-            <span className="text-xs text-slate-400">Value</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400">Value</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-violet-400" />
-            <span className="text-xs text-slate-400">P&L</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400">P&L</span>
           </div>
         </div>
       </div>

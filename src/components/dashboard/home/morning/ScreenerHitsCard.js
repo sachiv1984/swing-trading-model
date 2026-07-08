@@ -14,7 +14,7 @@ export default function ScreenerHitsCard() {
   return (
     <DashboardCard title="Screener Hits" to="/Screener" isLoading={isLoading} error={error}>
       <p className="text-4xl font-bold text-indigo-400 mb-2">{newHits}</p>
-      <p className="text-sm text-slate-400">
+      <p className="text-sm text-slate-600 dark:text-slate-400">
         {newHits === 0 ? "No new signals" : `new signal${newHits !== 1 ? "s" : ""} today`}
       </p>
     </DashboardCard>

@@ -35,7 +35,7 @@ function ActiveBadge({ active }) {
       Active
     </span>
   ) : (
-    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600/30">
+    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-700/50 text-slate-600 dark:text-slate-400 border border-slate-600/30">
       Inactive
     </span>
   );
@@ -84,13 +84,13 @@ function AddTickerForm({ onAdded, onCancel }) {
   }
 
   const inputCls = "w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-cyan-500";
-  const labelCls = "block text-xs text-slate-400 mb-1";
+  const labelCls = "block text-xs text-slate-600 dark:text-slate-400 mb-1";
 
   return (
     <form onSubmit={handleSubmit} data-testid="add-ticker-form" className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4">
       <div className="flex items-center justify-between mb-3">
         <span className="text-sm font-medium text-slate-200">Add Ticker</span>
-        <button type="button" onClick={onCancel} className="text-slate-400 hover:text-slate-300">
+        <button type="button" onClick={onCancel} className="text-slate-600 dark:text-slate-400 hover:text-slate-300">
           <X size={16} />
         </button>
       </div>
@@ -238,7 +238,7 @@ export default function TickerUniverse() {
       "px-3 py-1.5 text-xs rounded-lg border transition-colors",
       active
         ? "bg-cyan-600 border-cyan-500 text-white"
-        : "bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200"
+        : "bg-slate-800 border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-200"
     );
 
   return (
@@ -261,7 +261,7 @@ export default function TickerUniverse() {
       {/* Filters */}
       <div className="flex flex-wrap gap-2 mb-4" data-testid="filter-bar">
         <div className="flex items-center gap-1">
-          <span className="text-xs text-slate-400 mr-1">Market:</span>
+          <span className="text-xs text-slate-600 dark:text-slate-400 mr-1">Market:</span>
           {["all", "US", "UK"].map((m) => (
             <button key={m} className={filterBtnCls(marketFilter === m)} onClick={() => setMarketFilter(m)} aria-label={`Filter market ${m}`}>
               {m === "all" ? "All" : m}
@@ -269,7 +269,7 @@ export default function TickerUniverse() {
           ))}
         </div>
         <div className="flex items-center gap-1">
-          <span className="text-xs text-slate-400 mr-1">Status:</span>
+          <span className="text-xs text-slate-600 dark:text-slate-400 mr-1">Status:</span>
           {[["all", "All"], ["active", "Active"], ["inactive", "Inactive"]].map(([val, label]) => (
             <button key={val} className={filterBtnCls(activeFilter === val)} onClick={() => setActiveFilter(val)} aria-label={`Filter status ${val}`}>
               {label}
@@ -293,11 +293,11 @@ export default function TickerUniverse() {
           <table className="w-full text-sm" data-testid="ticker-table">
             <thead>
               <tr className="border-b border-slate-700 text-left">
-                <th className="px-4 py-3 text-xs font-medium text-slate-400">Ticker</th>
-                <th className="px-4 py-3 text-xs font-medium text-slate-400 hidden sm:table-cell">Company Name</th>
-                <th className="px-4 py-3 text-xs font-medium text-slate-400">Market</th>
-                <th className="px-4 py-3 text-xs font-medium text-slate-400">Status</th>
-                <th className="px-4 py-3 text-xs font-medium text-slate-400 text-right">Actions</th>
+                <th className="px-4 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">Ticker</th>
+                <th className="px-4 py-3 text-xs font-medium text-slate-600 dark:text-slate-400 hidden sm:table-cell">Company Name</th>
+                <th className="px-4 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">Market</th>
+                <th className="px-4 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">Status</th>
+                <th className="px-4 py-3 text-xs font-medium text-slate-600 dark:text-slate-400 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -317,7 +317,7 @@ export default function TickerUniverse() {
                           title={row.active ? "Deactivate" : "Reactivate"}
                           aria-label={row.active ? `Deactivate ${row.ticker}` : `Reactivate ${row.ticker}`}
                           data-testid={`toggle-${row.ticker}`}
-                          className="text-slate-400 hover:text-amber-400 disabled:opacity-40 transition-colors"
+                          className="text-slate-600 dark:text-slate-400 hover:text-amber-400 disabled:opacity-40 transition-colors"
                         >
                           {busy ? (
                             <Loader2 size={16} className="animate-spin" />
@@ -333,7 +333,7 @@ export default function TickerUniverse() {
                           title={`Delete ${row.ticker}`}
                           aria-label={`Delete ${row.ticker}`}
                           data-testid={`delete-${row.ticker}`}
-                          className="text-slate-400 hover:text-red-400 disabled:opacity-40 transition-colors"
+                          className="text-slate-600 dark:text-slate-400 hover:text-red-400 disabled:opacity-40 transition-colors"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -344,7 +344,7 @@ export default function TickerUniverse() {
               })}
             </tbody>
           </table>
-          <div className="px-4 py-2 border-t border-slate-700 text-xs text-slate-400">
+          <div className="px-4 py-2 border-t border-slate-700 text-xs text-slate-600 dark:text-slate-400">
             Showing {filtered.length} of {tickers.length} tickers
           </div>
         </div>

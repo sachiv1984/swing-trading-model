@@ -160,7 +160,7 @@ export default function JournalView({ positions, availableTags }) {
       <div className="space-y-3">
         {filteredPositions.length === 0 ? (
           <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-12 text-center">
-            <p className="text-slate-400">No journal entries found</p>
+            <p className="text-slate-600 dark:text-slate-400">No journal entries found</p>
           </div>
         ) : (
           filteredPositions.map((position) => {
@@ -184,16 +184,16 @@ export default function JournalView({ positions, availableTags }) {
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="text-lg font-bold text-white">{position.ticker}</h3>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
                           {position.market}
                         </span>
                         {isClosed && (
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-400">
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-600 dark:text-slate-400">
                             CLOSED
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-slate-400">
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
                         {format(new Date(position.entry_date), "MMM d, yyyy")}
                       </p>
                     </div>
@@ -245,7 +245,7 @@ export default function JournalView({ positions, availableTags }) {
                       {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                       Exit Details
                       {position.exit_date && (
-                        <span className="text-xs text-slate-400 ml-auto">
+                        <span className="text-xs text-slate-600 dark:text-slate-400 ml-auto">
                           {format(new Date(position.exit_date), "MMM d, yyyy")}
                         </span>
                       )}
@@ -277,7 +277,7 @@ export default function JournalView({ positions, availableTags }) {
       </div>
 
       {filteredPositions.length > 0 && (
-        <p className="text-center text-sm text-slate-400">
+        <p className="text-center text-sm text-slate-600 dark:text-slate-400">
           Showing {filteredPositions.length} of {positions.length} entries
         </p>
       )}

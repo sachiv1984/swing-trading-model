@@ -11,7 +11,7 @@
  *   Data value (prominent): text-xl font-semibold text-white (or colour variant)
  *   Data value (normal):   text-sm text-slate-200
  *   Chip / badge:          text-xs font-medium
- *   Muted caption:         text-xs text-slate-400
+ *   Muted caption:         text-xs text-slate-600 dark:text-slate-400
  *
  * Infrastructure: page.route() network interception. No live backend required.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/research/AAPL').
@@ -117,7 +117,7 @@ test.describe('SC-RV-TYP-01 — Research page typography conforms to design_syst
       const label = regionLabels.nth(i);
       await expect(label).toHaveClass(/text-xs/);
       await expect(label).toHaveClass(/font-medium/);
-      await expect(label).toHaveClass(/text-slate-400/);
+      await expect(label).toHaveClass(/text-slate-600/);
       await expect(label).toHaveClass(/uppercase/);
       await expect(label).toHaveClass(/tracking-wider/);
     }
@@ -157,24 +157,24 @@ test.describe('SC-RV-TYP-01 — Research page typography conforms to design_syst
     // "Current Price" and "ATR (14d)" are field sub-labels
     const currentPriceLabel = page.getByText('Current Price');
     await expect(currentPriceLabel).toHaveClass(/text-xs/);
-    await expect(currentPriceLabel).toHaveClass(/text-slate-400/);
+    await expect(currentPriceLabel).toHaveClass(/text-slate-600/);
 
     const atrLabel = page.getByText('ATR (14d)');
     await expect(atrLabel).toHaveClass(/text-xs/);
-    await expect(atrLabel).toHaveClass(/text-slate-400/);
+    await expect(atrLabel).toHaveClass(/text-slate-600/);
   });
 
-  test('News source caption uses text-xs text-slate-400', async ({ page }) => {
+  test('News source caption uses text-xs text-slate-600 dark:text-slate-400', async ({ page }) => {
     await setupRoutes(page);
     await page.goto(`/#/research/${TICKER}`);
 
     await expect(page.getByText('Recent News')).toBeVisible({ timeout: 8000 });
 
     // News source/timestamp line — muted caption class
-    const caption = page.locator('p.text-xs.text-slate-400').first();
+    const caption = page.locator('p.text-xs.text-slate-600').first();
     await expect(caption).toBeVisible();
     await expect(caption).toHaveClass(/text-xs/);
-    await expect(caption).toHaveClass(/text-slate-400/);
+    await expect(caption).toHaveClass(/text-slate-600/);
   });
 
 });

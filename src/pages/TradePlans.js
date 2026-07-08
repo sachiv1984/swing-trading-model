@@ -99,7 +99,7 @@ export default function TradePlans() {
                   {["Ticker", "Status", "R Target", "Notes", "Updated", "Actions"].map((h) => (
                     <th
                       key={h}
-                      className="px-5 py-3.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap"
+                      className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap"
                     >
                       {h}
                     </th>
@@ -115,7 +115,7 @@ export default function TradePlans() {
                     <td className="px-5 py-4">
                       <span className="font-semibold text-white text-sm">{plan.ticker}</span>
                       {plan.market && (
-                        <span className="ml-2 text-xs text-slate-400">{plan.market}</span>
+                        <span className="ml-2 text-xs text-slate-600 dark:text-slate-400">{plan.market}</span>
                       )}
                     </td>
                     <td className="px-5 py-4">
@@ -124,12 +124,12 @@ export default function TradePlans() {
                     <td className="px-5 py-4 text-sm text-slate-300">
                       {plan.r_target != null ? `${plan.r_target}R` : "—"}
                     </td>
-                    <td className="px-5 py-4 text-sm text-slate-400 max-w-xs truncate">
+                    <td className="px-5 py-4 text-sm text-slate-600 dark:text-slate-400 max-w-xs truncate">
                       {plan.setup_thesis
                         ? plan.setup_thesis.slice(0, 60) + (plan.setup_thesis.length > 60 ? "…" : "")
                         : "—"}
                     </td>
-                    <td className="px-5 py-4 text-sm text-slate-400 whitespace-nowrap">
+                    <td className="px-5 py-4 text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap">
                       {plan.updated_at
                         ? formatDistanceToNow(new Date(plan.updated_at), { addSuffix: true })
                         : "—"}
@@ -140,7 +140,7 @@ export default function TradePlans() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-slate-400 hover:text-white hover:bg-slate-800"
+                            className="h-7 w-7 text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
                             onClick={() =>
                               navigate(
                                 `/TradePlan?edit=${plan.id}&ticker=${plan.ticker}&market=${plan.market || "US"}`
@@ -153,7 +153,7 @@ export default function TradePlans() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10"
+                          className="h-7 w-7 text-slate-600 dark:text-slate-400 hover:text-rose-400 hover:bg-rose-500/10"
                           onClick={() => setDeleteTarget(plan)}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -178,9 +178,9 @@ export default function TradePlans() {
                 Delete plan for {deleteTarget.ticker}?
               </h2>
             </div>
-            <p className="text-sm text-slate-400">This action cannot be undone.</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400">This action cannot be undone.</p>
             <div className="flex gap-3 justify-end">
-              <Button variant="ghost" onClick={() => setDeleteTarget(null)} className="text-slate-400">
+              <Button variant="ghost" onClick={() => setDeleteTarget(null)} className="text-slate-600 dark:text-slate-400">
                 Cancel
               </Button>
               <Button

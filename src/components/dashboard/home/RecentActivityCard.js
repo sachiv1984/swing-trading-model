@@ -33,7 +33,7 @@ export default function RecentActivityCard() {
   return (
     <DashboardCard title="Recent Activity" to="/TradeHistory" isLoading={isLoading} error={error}>
       {recent.length === 0 ? (
-        <p className="text-sm text-slate-400">No recent trade activity</p>
+        <p className="text-sm text-slate-600 dark:text-slate-400">No recent trade activity</p>
       ) : (
         <ul className="space-y-2">
           {recent.map((t, i) => {
@@ -42,9 +42,9 @@ export default function RecentActivityCard() {
             return (
               <li key={t.id ?? i} className="flex items-start justify-between gap-2">
                 <span className="text-sm text-slate-200 truncate">
-                  {label} <span className="text-slate-400">{detail}</span>
+                  {label} <span className="text-slate-600 dark:text-slate-400">{detail}</span>
                 </span>
-                <span className="text-xs text-slate-400 whitespace-nowrap shrink-0">{ago}</span>
+                <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap shrink-0">{ago}</span>
               </li>
             );
           })}

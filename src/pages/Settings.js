@@ -172,31 +172,31 @@ export default function Settings() {
           {/* Row 1 — ATR Period (solo, matching existing layout) */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-400">Minimum Hold Days</Label>
+              <Label className="text-slate-600 dark:text-slate-400">Minimum Hold Days</Label>
               <Input
                 type="number"
                 value={formData.min_hold_days}
                 onChange={(e) => handleChange("min_hold_days", parseInt(e.target.value))}
                 className="bg-slate-800/50 border-slate-700 text-white"
               />
-              <p className="text-xs text-slate-400">Days before stop can trail</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Days before stop can trail</p>
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-400">ATR Period</Label>
+              <Label className="text-slate-600 dark:text-slate-400">ATR Period</Label>
               <Input
                 type="number"
                 value={formData.atr_period}
                 onChange={(e) => handleChange("atr_period", parseInt(e.target.value))}
                 className="bg-slate-800/50 border-slate-700 text-white"
               />
-              <p className="text-xs text-slate-400">Lookback for ATR calculation</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Lookback for ATR calculation</p>
             </div>
           </div>
 
           {/* Row 2 — ATR Multipliers */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-400">Initial Stop (ATR Multiple)</Label>
+              <Label className="text-slate-600 dark:text-slate-400">Initial Stop (ATR Multiple)</Label>
               <Input
                 type="number"
                 step="0.1"
@@ -204,10 +204,10 @@ export default function Settings() {
                 onChange={(e) => handleChange("atr_multiplier_initial", parseFloat(e.target.value))}
                 className="bg-slate-800/50 border-slate-700 text-white"
               />
-              <p className="text-xs text-slate-400">e.g., 5 = Entry − 5×ATR (wide stop for losing positions)</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">e.g., 5 = Entry − 5×ATR (wide stop for losing positions)</p>
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-400">Trailing Stop (ATR Multiple)</Label>
+              <Label className="text-slate-600 dark:text-slate-400">Trailing Stop (ATR Multiple)</Label>
               <Input
                 type="number"
                 step="0.1"
@@ -215,14 +215,14 @@ export default function Settings() {
                 onChange={(e) => handleChange("atr_multiplier_trailing", parseFloat(e.target.value))}
                 className="bg-slate-800/50 border-slate-700 text-white"
               />
-              <p className="text-xs text-slate-400">e.g., 2 = High − 2×ATR (tight trailing stop for profitable positions)</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">e.g., 2 = High − 2×ATR (tight trailing stop for profitable positions)</p>
             </div>
           </div>
 
           {/* Row 3 — Default Risk % */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-400">Default Risk % Per Trade</Label>
+              <Label className="text-slate-600 dark:text-slate-400">Default Risk % Per Trade</Label>
               <Input
                 type="number"
                 step="0.1"
@@ -239,7 +239,7 @@ export default function Settings() {
               {fieldErrors.default_risk_percent ? (
                 <p className="text-xs text-red-400">{fieldErrors.default_risk_percent}</p>
               ) : (
-                <p className="text-xs text-slate-400">Pre-populates the position sizing calculator</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400">Pre-populates the position sizing calculator</p>
               )}
             </div>
           </div>
@@ -255,7 +255,7 @@ export default function Settings() {
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-400">UK Commission (£)</Label>
+              <Label className="text-slate-600 dark:text-slate-400">UK Commission (£)</Label>
               <Input
                 type="number"
                 step="0.01"
@@ -265,7 +265,7 @@ export default function Settings() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-400">US Commission ($)</Label>
+              <Label className="text-slate-600 dark:text-slate-400">US Commission ($)</Label>
               <Input
                 type="number"
                 step="0.01"
@@ -278,7 +278,7 @@ export default function Settings() {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-400">UK Stamp Duty Rate</Label>
+              <Label className="text-slate-600 dark:text-slate-400">UK Stamp Duty Rate</Label>
               <Input
                 type="number"
                 step="0.001"
@@ -286,10 +286,10 @@ export default function Settings() {
                 onChange={(e) => handleChange("stamp_duty_rate", parseFloat(e.target.value))}
                 className="bg-slate-800/50 border-slate-700 text-white"
               />
-              <p className="text-xs text-slate-400">Default: 0.005 (0.5%)</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Default: 0.005 (0.5%)</p>
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-400">US FX Fee Rate</Label>
+              <Label className="text-slate-600 dark:text-slate-400">US FX Fee Rate</Label>
               <Input
                 type="number"
                 step="0.0001"
@@ -297,7 +297,7 @@ export default function Settings() {
                 onChange={(e) => handleChange("fx_fee_rate", parseFloat(e.target.value))}
                 className="bg-slate-800/50 border-slate-700 text-white"
               />
-              <p className="text-xs text-slate-400">Default: 0.0015 (0.15%)</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Default: 0.0015 (0.15%)</p>
             </div>
           </div>
         </div>
@@ -311,7 +311,7 @@ export default function Settings() {
       >
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-slate-400">Default Currency</Label>
+            <Label className="text-slate-600 dark:text-slate-400">Default Currency</Label>
             <Select
               value={formData.default_currency}
               onValueChange={(value) => handleChange("default_currency", value)}
@@ -326,7 +326,7 @@ export default function Settings() {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-slate-400">Theme</Label>
+            <Label className="text-slate-600 dark:text-slate-400">Theme</Label>
             <Select
               value={formData.theme}
               onValueChange={(value) => handleChange("theme", value)}
@@ -352,7 +352,7 @@ export default function Settings() {
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-400">Position Concentration Limit (%)</Label>
+              <Label className="text-slate-600 dark:text-slate-400">Position Concentration Limit (%)</Label>
               <Input
                 type="number"
                 step="1"
@@ -362,10 +362,10 @@ export default function Settings() {
                 onChange={(e) => handleChange("concentration_position_threshold_pct", parseFloat(e.target.value))}
                 className="bg-slate-800/50 border-slate-700 text-white"
               />
-              <p className="text-xs text-slate-400">Alert when 1 position exceeds this % of total portfolio heat (default: 15%)</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Alert when 1 position exceeds this % of total portfolio heat (default: 15%)</p>
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-400">Sector Concentration Limit (%)</Label>
+              <Label className="text-slate-600 dark:text-slate-400">Sector Concentration Limit (%)</Label>
               <Input
                 type="number"
                 step="1"
@@ -375,7 +375,7 @@ export default function Settings() {
                 onChange={(e) => handleChange("concentration_sector_threshold_pct", parseFloat(e.target.value))}
                 className="bg-slate-800/50 border-slate-700 text-white"
               />
-              <p className="text-xs text-slate-400">Alert when 1 sector exceeds this % of total portfolio heat (default: 30%)</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Alert when 1 sector exceeds this % of total portfolio heat (default: 30%)</p>
             </div>
           </div>
         </div>
@@ -388,7 +388,7 @@ export default function Settings() {
         iconColor="bg-emerald-500/20 text-emerald-400"
       >
         <div className="space-y-2">
-          <Label className="text-slate-400">Minimum Trades for Analytics</Label>
+          <Label className="text-slate-600 dark:text-slate-400">Minimum Trades for Analytics</Label>
           <Input
             type="number"
             step="1"
@@ -397,7 +397,7 @@ export default function Settings() {
             onChange={(e) => handleChange("min_trades_for_analytics", parseInt(e.target.value))}
             className="bg-slate-800/50 border-slate-700 text-white"
           />
-          <p className="text-xs text-slate-400">Minimum number of closed trades required to display analytics</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Minimum number of closed trades required to display analytics</p>
         </div>
       </SectionCard>
     </div>

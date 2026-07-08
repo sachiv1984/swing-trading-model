@@ -21,7 +21,7 @@ export default function RedFlagsCard() {
   return (
     <DashboardCard title="Red Flags" to="/RedFlagJournal" isLoading={isLoading} error={error}>
       <p className="text-4xl font-bold text-rose-400 mb-2">{total}</p>
-      <p className="text-sm text-slate-400">
+      <p className="text-sm text-slate-600 dark:text-slate-400">
         {total === 0 ? "No red flags this week" : `event${total !== 1 ? "s" : ""} in last 7 days`}
       </p>
     </DashboardCard>

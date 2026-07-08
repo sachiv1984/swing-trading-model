@@ -20,7 +20,7 @@ function relativeTime(iso) {
 export default function NotificationRow({ notification, onMarkRead }) {
   const { Icon, color, bg } = ICON_MAP[notification.alert_type] || {
     Icon: ShieldAlert,
-    color: "text-slate-400",
+    color: "text-slate-600 dark:text-slate-400",
     bg: "bg-slate-500/10",
   };
 
@@ -41,10 +41,10 @@ export default function NotificationRow({ notification, onMarkRead }) {
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <p className="text-sm font-medium text-white truncate">{notification.title}</p>
-            <p className="text-xs text-slate-400 mt-0.5 truncate">{notification.message}</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 truncate">{notification.message}</p>
           </div>
           <span
-            className="text-xs text-slate-400 shrink-0 mt-0.5 cursor-default"
+            className="text-xs text-slate-600 dark:text-slate-400 shrink-0 mt-0.5 cursor-default"
             title={notification.created_at}
           >
             {relativeTime(notification.created_at)}
