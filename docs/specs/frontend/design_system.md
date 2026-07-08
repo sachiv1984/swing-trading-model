@@ -1,5 +1,12 @@
 # design_system.md
 
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Class:** Class 1
+**Status:** Canonical
+**Version:** 1.0
+**Last Updated:** 2026-07-06
+**Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+
 ## Overview
 The Design System defines the shared visual language, interaction patterns, and reusable UI elements for the Position Manager Web App. Its purpose is to ensure consistency, clarity, and accessibility across all pages and components.
 
@@ -25,6 +32,15 @@ The original specification does not define hex values, but design intent indicat
 
 - **Error colors**  
   - Inline errors and error banners use a strong, high‑contrast color to remain visible in dark mode
+
+- **Secondary/label text (canonical token, v6.7)**
+  - Canonical class pair: `text-slate-600 dark:text-slate-400`
+  - Use for all de-emphasised/label text (small `text-xs`/`text-sm` captions, sub-labels, muted values) that is not a status indicator, P&L value, or error
+  - Contrast: `text-slate-400` = 5.71:1 vs `bg-slate-800` (dark, PASS); `text-slate-600` = 6.92:1 vs `bg-slate-100` (light, PASS) — both ≥4.5:1 WCAG-AA for normal-size text
+  - Do not use a bare (non-`dark:`-paired) `text-slate-400` or `text-slate-500` value — Tailwind's `darkMode: ["class"]` strategy requires an explicit `dark:` variant to differ by theme; a bare class renders identically in both themes and will fail one of them
+  - **Exception — elevated/compliance disclaimer text:** surfaces carrying §13 compliance-disclosure weight (e.g. AI Trade Advisor footer, Dashboard Advisory Label) may use a stronger-than-generic value for extra headroom on a compliance-sensitive surface (e.g. `text-slate-700 dark:text-slate-300`); do not collapse an existing elevated instance onto the generic token
+  - Icon-only usages (Lucide icon `text-slate-*` classes, WCAG 1.4.11 non-text contrast) are governed separately and are not required to use this token
+  - Design source: `docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md` §3, §4, §6 (BLG-FE-87/88/89)
 
 ---
 
@@ -156,7 +172,7 @@ The application adheres to core accessibility principles:
 - Semantic HTML structure  
 - Full keyboard navigation  
 - Screen reader announcements for dynamic content  
-- Color contrast meeting WCAG AA in dark mode  
+- Color contrast meeting WCAG AA in both dark mode and light mode (v6.7 — secondary/label text now uses an explicit paired `dark:` class per theme; see §Color Usage "Secondary/label text" token)  
 - Focus trapping and restoration in modals  
 - ARIA labels where needed (tables, buttons, inputs)  
 

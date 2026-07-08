@@ -145,7 +145,7 @@
         "ST-03": {
           "title": "Shared secondary-text design token (BLG-FE-89)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 925,
           "branch": "exec/2026-07-06__release-v6.7/EPIC-01",
@@ -153,13 +153,13 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-07-08T13:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md", "docs/specs/frontend/design_system.md"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.pre-commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC-01/AC-02: transcribed ux_spec.md §3/§4/§6 canonical secondary-text token verbatim into design_system.md §Color Usage (new 'Secondary/label text' subsection: class pair, contrast values, bare-class prohibition, disclaimer exception) and §Accessibility (updated dark-mode-only claim to both-themes, cross-referencing the new token). QA evidence must verify transcription matches ux_spec.md exactly per design_gate.md Notes -- confirmed by direct comparison, values match verbatim (5.71:1/6.92:1, text-slate-600 dark:text-slate-400). Header remediation applied (shared_standards.md §9): design_system.md had no lifecycle header at all (confirmed via git log - single commit, no version history) -- added Owner/Class/Status/Version/Last Updated header stamped at v1.0, documented as remediation not content change. No further design review required per design_gate.md (decision already locked)."
         }
       }
     }
