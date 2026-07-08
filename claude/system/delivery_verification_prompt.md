@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.1
-**Last Updated:** 2026-06-22
+**Version:** 3.3
+**Last Updated:** 2026-07-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -120,7 +120,7 @@ Must not modify: `claude/cycles/<cycle_id>/execution_state.json` (sealed), `clau
 
 ---
 
-ESCALATION: Create/append `verification_escalations.md`. Use ESC-VER-YYYYMMDD-nn prefix per `shared_standards.md §4`. Record: blocking condition, owning authority, resolution path, SLA. Reference from `verification_report.md §8`. Escalation does not change verification status — only resolution does.
+ESCALATION: Create/append `verification_escalations.md`. Use ESC-VER-YYYYMMDD-nn prefix per `shared_standards.md §4`. Record: blocking condition, owning authority, resolution path, SLA. Reference from `verification_report.md §8`. Escalation does not change verification status — only resolution does. **Structural append-verification (BLG-GOV-168):** Apply the Structural Append-Verification Procedure per `shared_standards.md §7.1` at every append (count before/after, confirm exactly +1, confirm no prior entry text changed — halt on either failure).
 
 ---
 
@@ -426,6 +426,8 @@ Verify:
 If any discrepancy: correct the system status report now (permitted write). Record the correction in `verification_report.md` §7.
 
 If `docs/System_status_report.md` does not exist: create it (the execution engine should have done this — if missing, create it using the execution_prompt §5.3A template).
+
+**Status-line update (expected step, BLG-GOV-170):** As part of this reconciliation, update the section's `**Status:**` line from `Sprint_Complete — pending verification` (written by `execution_prompt.md` STEP 5.3A) to `Verified — <date>` or `Verified_with_deviations — <date>` — whichever matches the STEP 7 outcome for this cycle, using the date this verification run completes. This is expected, routine behaviour on every verification run, not a new or unusual finding — do not log it as friction in `lessons_learnt_cycle.md`.
 
 ---
 

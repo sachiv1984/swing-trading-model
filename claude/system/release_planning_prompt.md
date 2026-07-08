@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.41
+**Version:** 2.42
 **Last Updated:** 2026-07-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -531,6 +531,7 @@ Full procedure: `claude/system/shared/escalation_subroutine.md`.
 - ESC entries in `escalations.md` store decision/status only. Full risk context lives in `release_plan.md §Execution Plan` via the `escalation_ref` field on each RISK-ID row.
 - When escalations.md is created: `artifacts.escalations = present`.
 - Escalation Freeze Rule: If `status == Published`, `escalations.md` becomes read-only — any append → HALT.
+- **Structural append-verification (BLG-GOV-168):** Apply the Structural Append-Verification Procedure per `shared_standards.md §7.1` at every append to `escalations.md` (count before/after, confirm exactly +1, confirm no prior entry text changed — halt on either failure).
 
 ---
 
