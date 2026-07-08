@@ -44,8 +44,8 @@ No AC in this EPIC is "code review only" for an observable/colour/rendering clai
 
 - [x] All acceptance criteria verified against canonical spec
 - [x] No unresolved P0 or P1 deviations
-- [x] Regression areas checked (full e2e suite, 2 full runs)
+- [x] Regression areas checked (full e2e suite, 3 full runs — post-ST-01, post-ST-02, post-Layout.js fix; 429 passed, 3 skipped, 0 failed on final run)
 - [ ] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no new URL construction introduced by this EPIC
-- Signed off by: [pending agent-mediated review — Director of Quality role, §5.3]
-- Date:
-- Comments:
+- Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
+- Date: 2026-07-08
+- Comments: Approved. ST-01/ST-02/ST-03 verified against ux_spec.md and stage4_backlog_slice.md ACs; Playwright coverage (SC-CTR-01a/01b/02a/02b) confirmed to assert genuine computed-style values matching the design record. One material gap found at initial review — src/Layout.js (app shell, out of scope of the ST-01/ST-02 scripted transformations) contained 4 secondary-text instances with the same-failing-colour-in-both-themes bug — was fixed in-session (commit 184a26a3) and independently re-verified: all 4 corrected, remaining isDark-conditional text instances in Layout.js already compliant, no regression in the re-run e2e suite.
