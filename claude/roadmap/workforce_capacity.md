@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-01 (rebalance 2026-07-01__scheduled — Standard tier (CPS=N/A, 0 active initiatives); no FTE changes; 0 new backlog items this cycle; BLG-BE-40 (XS effort) added to v6.4 Now horizon via STEP 8.0 fast-track; Skill-Silo Alert: rolling-3-cycle avg 53.2% (>40% ceiling); pull-forward candidate BLG-FEAT-54 acknowledged by PO)
+**Last Updated:** 2026-07-08 (rebalance 2026-07-08__scheduled — Standard tier (CPS=N/A, 0 active initiatives); no FTE changes; 40 new/updated backlog items, 2 approved as mandatory pull-forward candidates (BLG-FEAT-52 ungated, BLG-FEAT-71 new); Skill-Silo Alert: rolling-3-cycle avg 78.0% (>40% ceiling, 2nd consecutive improvement); Product Value Alert (ratio 0.26) independently mandated the same pull-forward outcome)
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
@@ -458,3 +458,31 @@ Mandatory pull-forward scan of `backlog.md` (P0/P1/P2 first, ungated, no blocker
 **v6.7 capacity outlook:** Now horizon remains empty; full v6.7 scope deferred to `plan release v6.7` per STEP 8.1 Option (b). All 25 new items are gate-conditional or small/unscheduled — no capacity constraint identified at roadmap level. The mandatory pull-forward clause constrains `plan release v6.7`'s scope decision (≥2 build-and-ship U-items required), which should be weighed at that engine's own STEP 4.5/7.
 
 **Workforce constraints:** None new. Gate-conditional items create no immediate FTE demand.
+
+---
+
+## Rebalance 2026-07-08__scheduled
+
+Both approved candidates (`BLG-FEAT-52` ungated/descoped, new `BLG-FEAT-71`) are S-effort, single-developer-context, no scarce-skill contention. 39 further Promoted-Backlog items (idea-driven, window `IW-20260708-01`) are all S–M effort, gate-conditional or immediately unscheduled — no capacity constraint identified.
+
+| Item | Effort | Skill Category | Notes |
+|------|--------|-----------------|-------|
+| BLG-FEAT-52 (ungated), BLG-FEAT-71, BLG-FEAT-69, BLG-FEAT-70 | S–M | Product Feature | 2 are mandatory pull-forward candidates; 2 are ordinary backlog additions |
+| BLG-GOV-178–189 | S–M | Governance / Process | All gate-conditional or None-gated backlog items |
+| BLG-QA-79–85 | S–M | QA / Testing | All None-gated except BLG-QA-81 (implicit — contrast work now stable) |
+| BLG-OPS-93–100 | S–M | FinOps / Infrastructure | BLG-OPS-99 (X-API-Key provisioning) is P1, resolves the LP-08 credential gap |
+| BLG-SEC-11 | S | Security | None-gated |
+| BLG-SPEC-68–70 | S–M | Spec Debt | All None-gated |
+| BLG-BE-47–49 | S–M | Backend Engineering | All None-gated |
+| BLG-FE-91–94 | S–M | Frontend / UX | All None-gated |
+
+**Governance load %:** ~50% (20 of 40 items are GOV/QA/SPEC/SEC process or spec-debt items)
+**Execution load %:** ~50% (20 of 40 are FE/BE/FEAT/OPS execution items)
+
+**Skill-Silo advisory:** Rolling 3-cycle average (v6.5 87.5%, v6.6 75.0%, v6.7 71.4%) = **78.0%**, above the 40% ceiling — Alert remains triggered, 2nd consecutive improvement (down from 79.8%). The v8.3 mandatory-≥2-U-items escalation clause (3+ consecutive worsening readings) is not independently re-triggered this reading. However, the STEP 2.4 Product Value Alert (ratio 0.26, first time below the 0.30 floor) independently mandated the same pull-forward outcome — already actioned via `BLG-FEAT-52` (ungated) + `BLG-FEAT-71` (new), both approved at STEP 5.
+
+**Key finding this cycle:** `BLG-BE-46` (filed same day, P1) shows the SI-02 gate's true status is materially worse than believed — 0 linked trade-plans (not 15 or 20) due to a `trade_plans.position_id` linkage bug, despite 20 total closed trades being confirmed accurate via `GET /trades`. This does not change workforce capacity directly but should be weighed heavily at the next `plan release` scoping decision (SI-02 frontend work remains gated regardless of trade-count optimism).
+
+**v6.8+ capacity outlook:** Now horizon remains empty; scope deferred to next `plan release` per STEP 8.1 Option (b). The 2 mandatory pull-forward candidates (`BLG-FEAT-52`, `BLG-FEAT-71`) should anchor that release's U-item minimum.
+
+**Workforce constraints:** None new. `BLG-OPS-99` (X-API-Key provisioning) remains the most consequential unresolved gap — blocks direct production verification of the SI-02 gate and similar data-dependent gates going forward.

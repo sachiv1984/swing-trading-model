@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 8.3
-**Last Updated:** 2026-07-06
+**Version:** 8.4
+**Last Updated:** 2026-07-08
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -294,6 +294,8 @@ Record scores, CPS, and trend in `## STEP 2 — Re-Validation` of `cycle_record.
 Roadmap must use Now / Next / Later structure. If absent: record required update in STEP 9 Write Plan; map existing items without changing content — Head of Specs Team responsibility at STEP 9.
 
 For each Later item: case for promoting to Next? For each Next item: promote to Now, stay, or demote to Later? Record outcomes in a `### Horizon Review` subsection within `## STEP 2`. Extended tier: explicit Now→Next promotion check required.
+
+**SI-02 gate read instruction (v8.4, LP-09):** When citing the SI-02 trade-count gate, read the structured `**Last formally confirmed:**` / `**Unverified report:**` sub-fields directly below the SI-02 row in `current_roadmap.md` §5 (Arc 5 Later horizon table) rather than re-deriving the distinction from prose. Cite `**Last formally confirmed:**` as the authoritative value for gate-clearance decisions; note `**Unverified report:**` as context only. Only a governed routine with direct production database/API access may update `**Last formally confirmed:**`.
 
 Horizon movements are candidates in STEP 5 only if they represent new commitments — zero-sum displacement rules apply.
 

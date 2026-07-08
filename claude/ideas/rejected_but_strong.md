@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-08 (PMO Lead decision recorded — IDEA-pmo-lead-20260619-02 revival condition confirmed Met)
+**Last Updated:** 2026-07-08 (roadmap rebalance 2026-07-08__scheduled — IDEA-pmo-lead-20260619-02 entry marked Resolved, resubmission confirmed in ideas_register.md as IDEA-pmo-lead-20260708-01 → Promoted-Backlog, BLG-GOV-188; entry retained per append-only write scope)
 
 ---
 
@@ -93,4 +93,6 @@ This document captures ideas that were rejected from active roadmap/backlog cons
 
 **Revival condition:** velocity_metrics.md created and populated with at least 5 cycles of structured data (story counts, U/G/D classification, delivery rate). PMO Lead to assess and raise for re-evaluation once the file is established and updated for 2+ rebalances.
 
-**PMO Lead Decision (2026-07-08):** Revival condition confirmed **Met** — `velocity_metrics.md` now carries 49 structured rows spanning far more than 5 cycles and 2 rebalances (created 2026-07-03, updated at every post-ship closure since, most recently 2026-07-08 for v6.7). This is the second consecutive housekeeping pass to confirm Met with no resubmission yet actioned. Decision: resubmit this idea at the next `run ideas` intake window rather than let it carry a third time. This entry may be removed from `rejected_but_strong.md` once resubmission is confirmed in the ideas register.
+**PMO Lead Decision (2026-07-08):** Revival condition confirmed **Met** — `velocity_metrics.md` now carries 49 structured rows spanning far more than 5 cycles and 2 rebalances (created 2026-07-03, updated at every post-ship closure since, most recently 2026-07-08 for v6.7). Decision: resubmit this idea at the next `run ideas` intake window rather than let it carry a third time.
+
+**Status: RESOLVED (2026-07-08, roadmap rebalance 2026-07-08__scheduled).** Resubmitted as `IDEA-pmo-lead-20260708-01` in window `IW-20260708-01`, classified Backlog (gate-conditional) at STEP 4, added to `backlog.md` as `BLG-GOV-188`. This entry is retained per the write-scope append-only rule for this file (roadmap engine may not delete rejected_but_strong.md entries) — kept for audit trail, superseded by `BLG-GOV-188`.

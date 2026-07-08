@@ -333,19 +333,19 @@ Monthly P&L shipped 2026-05-05 with a fixed column/section layout. After 3 month
 ---
 
 ### BLG-FEAT-52 — Trade tagging and tag-based performance filtering
-**Priority:** P3 (Low)
+**Priority:** P2 (Medium) — upgraded from P3 (mandatory pull-forward candidate, roadmap rebalance 2026-07-08__scheduled)
 **Type:** Product Feature / User Value
 **Owner:** Product Owner
-**Source:** IDEA-product-owner-20260619-02 (IW-20260619-01) — Backlog-gate-conditional; rebalance 2026-06-24__scheduled
-**Effort:** L (~1 week)
-**Provisional-Target:** [TBD — gate-conditional]
-**Gate criteria:** Arc 4 PO-02 (Journal Pattern Recognition) sprint planning imminent — tag data model provides complementary structure for cross-trade pattern analysis
+**Source:** IDEA-product-owner-20260619-02 (IW-20260619-01) — Backlog-gate-conditional; rebalance 2026-06-24__scheduled. Ungated and descoped via `IDEA-product-owner-20260708-01` (IW-20260708-01), roadmap rebalance 2026-07-08__scheduled STEP 5 — see `claude/cycles/2026-07-08__scheduled/cycle_record.md`.
+**Effort:** S (~2–3 days, descoped from L)
+**Provisional-Target:** Next release (mandatory pull-forward candidate — STEP 2.4 Product Value Alert, ratio 0.26)
+**Gate criteria:** None — ungated 2026-07-08. Original PO-02 (Journal Pattern Recognition) gate removed: tagging and tag-based filtering do not require PO-02's cross-trade pattern infrastructure to ship value; confirmed at STEP 5 debate that the descoped AC set below does not re-introduce the dependency via `BLG-FEAT-16`'s `trade_annotations` cross-reference.
 
 **Problem**
 Trades are currently classified only by market, sector, and signal type. There is no mechanism for a user to apply free-form tags (e.g. "earnings catalyst", "gap-and-go", "sector rotation") and subsequently filter performance analytics by those tags. Tag-based filtering would allow comparison of win rate and average R across user-defined trade categories.
 
-**Scope**
-- Data model: `trade_tags` table (trade_id, tag_name, created_at); many-to-many relationship
+**Scope (descoped 2026-07-08 — tags-only, no cross-trade pattern dependency)**
+- Data model: `trade_tags` table (trade_id, tag_name, created_at); many-to-many relationship. Self-contained — does not read or write `trade_annotations` (BLG-FEAT-16) or any PO-02 structure.
 - API: POST/DELETE /trades/{id}/tags; GET /analytics/tag-performance (win rate, avg R, count by tag)
 - Frontend: tag input on Trade Plan form; tag filter on PerformanceAnalytics page
 
@@ -353,6 +353,7 @@ Trades are currently classified only by market, sector, and signal type. There i
 - AC-01: User can add/remove tags on any trade plan
 - AC-02: GET /analytics/tag-performance returns win rate and average R broken down by tag
 - AC-03: PerformanceAnalytics page surfaces tag-based filter controls
+- AC-04: Confirm at sprint planning that `trade_tags` has no foreign-key or service dependency on `trade_annotations`/PO-02 structures (independence check per STEP 5 Challenger condition)
 
 ---
 
@@ -3230,7 +3231,7 @@ BLG-SEC-02 (ST-03, cycle 2026-07-02__release-v6.4) added write-time sanitisation
 **Source:** IDEA-director-of-quality-20260619-02 (IW-20260619-01) — Backlog-gate-conditional; rebalance 2026-06-24__scheduled
 **Effort:** S (~0.5 day)
 **Provisional-Target:** [TBD — gate-conditional]
-**Gate:** Arc 5 fully complete (all SI features shipped) — accessibility testing added after frontend feature set stabilises
+**Gate criteria:** Arc 5 fully complete (all SI features shipped) — accessibility testing added after frontend feature set stabilises
 
 **Problem**
 The Playwright E2E suite provides functional coverage but no accessibility validation. axe-core (via @axe-core/playwright) can be added to the existing Playwright setup to surface WCAG 2.1 AA violations in CI without blocking test runs.
@@ -3254,7 +3255,7 @@ The Playwright E2E suite provides functional coverage but no accessibility valid
 **Source:** ST-13 (EPIC-03, v6.2) — glob discovery surfaced 12 pre-existing spec files that were excluded from the old explicit playwright.yml list. Identified 2026-06-25.
 **Effort:** M (~1 day — each spec needs investigation and either fix or deletion)
 **Provisional-Target:** v6.3
-**Gate:** None
+**Gate criteria:** None
 
 **Problem**
 ST-13 replaced the explicit 26-file spec list in `playwright.yml` with `npx playwright test` (auto-discovery via `playwright.config.js` `testDir`). This surfaced 12 spec files that existed in `tests/e2e/` but were never included in CI. All 12 are failing — likely due to UI text mismatches (component text evolved after spec was written) or pending feature implementations.
@@ -3313,7 +3314,7 @@ The Trader Morning Briefing (BLG-FEAT-46, shipped v6.0) calls the Claude API eac
 **Source:** IDEA-infra-ops-20260619-02 (IW-20260619-01) — Backlog-gate-conditional; rebalance 2026-06-24__scheduled
 **Effort:** S (~0.5 day)
 **Provisional-Target:** [TBD — gate-conditional]
-**Gate:** BLG-OPS-25 (automated staging smoke test) complete AND ≥3 external dependency failures observed in production logs
+**Gate criteria:** BLG-OPS-25 (automated staging smoke test) complete AND ≥3 external dependency failures observed in production logs
 
 **Problem**
 GET /health returns only internal service health (database connectivity, scheduler status). External dependency status (Alpaca API reachability, Anthropic API reachability, Yahoo Finance fallback) is not surfaced in the health check, making degraded-run detection reactive rather than proactive.
@@ -3338,7 +3339,7 @@ GET /health returns only internal service health (database connectivity, schedul
 **Source:** IDEA-challenger-20260619-01 (IW-20260619-01) — Backlog-gate-conditional; rebalance 2026-06-24__scheduled
 **Effort:** S (~0.5 day)
 **Provisional-Target:** [TBD — gate-conditional]
-**Gate:** BLG-OPS-71 (system threat model) complete — data provider risk will be enumerated in the threat model
+**Gate criteria:** BLG-OPS-71 (system threat model) complete — data provider risk will be enumerated in the threat model
 
 **Problem**
 All market data (OHLCV, signals, news) is sourced exclusively from Alpaca and Yahoo Finance. No documented failover strategy exists for a scenario where either provider becomes unavailable for an extended period. The risk has been accepted at current scale but has not been formally assessed.
@@ -4171,6 +4172,818 @@ No test failures have been attributed to stale fixtures since v6.4's signal/secu
 
 **Acceptance Criteria**
 - Check conducted only after gate condition confirmed
+
+---
+
+### BLG-FEAT-71 — SI-02 gate visibility indicator (Reports page)
+**Priority:** P2 (Medium) — mandatory pull-forward candidate (roadmap rebalance 2026-07-08__scheduled)
+**Type:** Product Feature / Governance Transparency
+**Owner:** Product Owner
+**Source:** IDEA-product-owner-20260708-02 (IW-20260708-01) — Advance; rebalance 2026-07-08__scheduled STEP 5
+**Effort:** S (~1–2 days)
+**Provisional-Target:** Next release (mandatory pull-forward candidate — STEP 2.4 Product Value Alert, ratio 0.26)
+**Gate criteria:** None — ships showing current state today (0 linked / 20 closed trades, per `BLG-BE-46`).
+
+**Problem**
+The SI-02 behavioural-drift gate's true status has repeatedly required a full governed routine to reconcile — twice this cycle alone (the 15-vs-20 trade-count discrepancy, then the `BLG-BE-46` linkage-bug finding that the real linked count is 0). No user-facing surface shows this gate's status at all.
+
+**Scope**
+- Frontend: small status panel/badge on the Reports page (or Trading nav) surfacing: total closed trades, trades linked to a trade plan, and the 3 SI-02 gate conditions (linked-trade count, drift-endpoint latency, drift-score variance) with a MET/NOT MET indicator per condition
+- Backend: read from existing endpoints (`GET /trades`, `GET /trade-plans`, `GET /analytics/arc5-compliance`) — no new data model required
+- Must display the corrected linked-plan count (reads live, or the structured `current_roadmap.md` field once available), not a stale hardcoded estimate
+
+**Acceptance Criteria**
+- AC-01: Indicator shows total closed trades and total trade-plan-linked closed trades as two distinct numbers
+- AC-02: Indicator shows MET/NOT MET for each of the 3 SI-02 gate conditions
+- AC-03: Values are read live from existing endpoints, not hardcoded
+- AC-04: Confirmed at sprint planning that AC-01/02 correctly reflect the `BLG-BE-46` finding (0 linked trades) if that bug is still unresolved at build time
+
+---
+
+### BLG-BE-47 — Standardise pagination cursor pattern across list endpoints
+**Priority:** P3 (Low)
+**Type:** Backend / Code Quality
+**Owner:** Backend Engineering Patterns Owner
+**Source:** IDEA-backend-engineering-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2–3 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+List endpoints currently use 3 different pagination styles (offset/limit, cursor-based, and page-number based) depending on when each was built, with no documented convention.
+
+**Scope**
+- Audit all paginated endpoints; document current styles
+- Define one canonical pattern in `backend_engineering_patterns.md`; migrate endpoints opportunistically (not a single big-bang migration)
+
+**Acceptance Criteria**
+- Canonical pattern documented
+- At least the next 2 new/modified list endpoints follow it
+
+---
+
+### BLG-BE-48 — Structured logging correlation-ID propagation across FastAPI request lifecycle
+**Priority:** P3 (Low)
+**Type:** Backend / Observability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** IDEA-backend-engineering-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Log lines from a single request cannot currently be correlated across service boundaries (e.g. a signal-generation request that also calls the AI service) — debugging multi-step requests requires manual timestamp correlation.
+
+**Scope**
+- Add a request-scoped correlation ID (middleware-generated or accepted via header), included in all log lines emitted during that request
+
+**Acceptance Criteria**
+- Correlation ID present in logs for at least 2 representative multi-step endpoints
+- Documented in `backend_engineering_patterns.md`
+
+---
+
+### BLG-BE-49 — Down-migration rollback verification tests
+**Priority:** P3 (Low)
+**Type:** Backend / Data Integrity
+**Owner:** Data Model & Domain Schema Owner
+**Source:** IDEA-data-model-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Schema migrations are tested forward (apply) but not backward (rollback) — a bad migration in production has no verified rollback path.
+
+**Scope**
+- Add rollback tests for the 5 most recent schema migrations, confirming `down()` (or equivalent) restores the prior schema state cleanly
+
+**Acceptance Criteria**
+- 5 migrations have passing rollback tests
+- Pattern documented for future migrations
+
+---
+
+### BLG-GOV-178 — Quarterly AI output sampling audit
+**Priority:** P3 (Low)
+**Type:** Governance / AI Compliance
+**Owner:** AI Compliance & Governance Officer
+**Source:** IDEA-ai-compliance-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day per quarter)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+AI output (thesis generation, chat, daily briefing) has no recurring compliance sampling — only ad hoc review during feature work.
+
+**Scope**
+- Sample 10 random AI outputs per quarter; check against §13.2 boundary language (no autonomous-sounding directives, advisory framing preserved)
+
+**Acceptance Criteria**
+- First quarterly sample conducted and findings (if any) filed as backlog items
+
+---
+
+### BLG-GOV-179 — Local pre-commit lint for OpenAPI contract completeness
+**Priority:** P3 (Low)
+**Type:** Governance / Tooling
+**Owner:** API Contracts & Documentation Owner
+**Source:** IDEA-api-contracts-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The `openapi.yaml` completeness check currently only fires at PR/CI time — a local pre-commit lint would catch omissions before push, reducing CI churn.
+
+**Scope**
+- Pre-commit hook scanning `docs/specs/api_contracts/*.md` for new `## METHOD /path` headings without a matching `openapi.yaml` entry, mirroring the existing CI gate's logic
+
+**Acceptance Criteria**
+- Hook catches at least the same class of omission as the CI gate, locally, before commit
+
+---
+
+### BLG-SPEC-68 — Deprecation lifecycle policy for removed/renamed endpoints
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** IDEA-api-contracts-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+No documented policy exists for how an endpoint is deprecated (sunset header, changelog entry, removal timeline) — the current process is ad hoc.
+
+**Scope**
+- Author a short policy doc: sunset-header convention, minimum deprecation window, changelog entry format
+
+**Acceptance Criteria**
+- Policy doc authored and referenced from `api_contracts` documentation index
+
+---
+
+### BLG-GOV-180 — Base44 prompt versioning changelog
+**Priority:** P3 (Low)
+**Type:** Governance / Tooling
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** IDEA-base44-frontend-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Base44 frontend scaffold prompts change over time with no changelog — regressions from a prompt change are hard to trace.
+
+**Scope**
+- Create a changelog file tracking Base44 prompt versions and what changed
+
+**Acceptance Criteria**
+- Changelog created; first entry backfilled from the most recent known prompt change
+
+---
+
+### BLG-GOV-181 — Base44 component regeneration diff review checklist
+**Priority:** P3 (Low)
+**Type:** Governance / QA
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** IDEA-base44-frontend-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+When a Base44-generated component is regenerated, there's no checklist to catch silent regressions (e.g. dropped props, changed class names) before merge.
+
+**Scope**
+- Short checklist: diff review points to check when a Base44 component is regenerated
+
+**Acceptance Criteria**
+- Checklist authored and referenced from the Base44 frontend prompt owner's charter
+
+---
+
+### BLG-OPS-93 — Automate monthly dependency vulnerability re-scan
+**Priority:** P3 (Low)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+`npm audit`/`pip audit` are run ad hoc rather than on a fixed schedule — vulnerabilities can go undetected for extended periods between manual runs.
+
+**Scope**
+- Add a scheduled CI job (monthly) running both audits and filing a backlog item for any new HIGH/CRITICAL finding
+
+**Acceptance Criteria**
+- Scheduled job runs successfully at least once and reports results
+
+---
+
+### BLG-SEC-11 — API key rotation drill
+**Priority:** P3 (Low)
+**Type:** Security / Operations
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The API key rotation runbook has never been exercised end-to-end — its first real use would be during an actual incident, the worst time to discover a gap.
+
+**Scope**
+- Exercise the rotation runbook for one non-critical key; document any gaps found
+
+**Acceptance Criteria**
+- Drill completed; runbook corrected if any step failed
+
+---
+
+### BLG-OPS-94 — Data retention policy for AI audit log tables
+**Priority:** P3 (Low)
+**Type:** Operations / Data Management
+**Owner:** Data Model & Domain Schema Owner
+**Source:** IDEA-data-model-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+`gemini_audit_log` and the Claude audit log table grow without a retention policy — unbounded growth over a multi-year horizon.
+
+**Scope**
+- Define a retention window (e.g. 12–24 months) and an archival/deletion procedure
+
+**Acceptance Criteria**
+- Policy documented; first cleanup pass (if any rows exceed the window) executed or explicitly deferred with rationale
+
+---
+
+### BLG-GOV-182 — Annual agent role charter freshness review cadence
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Director of HR
+**Source:** IDEA-director-of-hr-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day annually)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Agent role charters (`claude/agents/*.md`) have no scheduled freshness review — drift between a charter and actual role usage could go unnoticed indefinitely.
+
+**Scope**
+- Define an annual review cadence; first review checks each charter against 12 months of actual role activity
+
+**Acceptance Criteria**
+- Cadence documented; first review scheduled
+
+---
+
+### BLG-GOV-183 — Onboarding template for new agent role charters
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Director of HR
+**Source:** IDEA-director-of-hr-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Adding a new agent role charter currently means copying and adapting an existing one with no explicit template — inconsistent header/section coverage risk.
+
+**Scope**
+- Author a template charter file with required sections annotated
+
+**Acceptance Criteria**
+- Template authored and referenced from `claude/agents/` documentation
+
+---
+
+### BLG-QA-80 — Flaky Playwright test tracker
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** Director of Quality
+**Source:** IDEA-director-of-quality-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Occasionally-flaky Playwright tests are re-run ad hoc with no tracking of which tests flake, how often, or why — no visibility into whether flake rate is worsening.
+
+**Scope**
+- Maintain a quarantine list: test name, first-flagged date, flake count, re-enable criteria
+
+**Acceptance Criteria**
+- Tracker created; any currently-known flaky test logged
+
+---
+
+### BLG-QA-81 — Visual regression baselines for contrast-sensitive components
+**Priority:** P3 (Low)
+**Type:** QA / Visual Testing
+**Owner:** Director of Quality
+**Source:** IDEA-director-of-quality-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None — Arc 5/contrast remediation work (v6.6/v6.7) now stable; a good time to baseline before further drift accumulates.
+
+**Problem**
+No visual regression baseline exists for the components remediated in v6.6/v6.7's contrast work — a future change could silently reintroduce a contrast regression with no automated catch.
+
+**Scope**
+- Capture baseline screenshots for the highest-risk contrast-sensitive components; wire into CI visual diff (if tooling supports it) or a manual comparison checklist
+
+**Acceptance Criteria**
+- Baselines captured for at least the components touched by `BLG-FE-87/88/89`
+
+---
+
+### BLG-FEAT-69 — Tax-year P&L CSV export
+**Priority:** P3 (Low)
+**Type:** Product Feature / User Value
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The monthly P&L report has no export mechanism — a user wanting to hand tax-year figures to an accountant must manually transcribe them.
+
+**Scope**
+- CSV export of the tax-year P&L view (existing report data, new export button/endpoint)
+
+**Acceptance Criteria**
+- User can export a tax-year P&L as CSV
+- Exported figures match the on-screen report
+
+---
+
+### BLG-FEAT-70 — Realized vs. unrealized gain distinction in monthly P&L
+**Priority:** P3 (Low)
+**Type:** Product Feature / User Value
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The monthly P&L report currently shows a single combined figure — a user cannot distinguish realized gains (closed positions) from unrealized (open positions), which matters for both trading decisions and tax planning.
+
+**Scope**
+- Split the monthly P&L view into realized/unrealized sections using existing position-status data
+
+**Acceptance Criteria**
+- Report shows realized and unrealized gain figures separately
+- Figures sum to the existing combined total (regression check)
+
+---
+
+### BLG-OPS-95 — Render hosting cost trend dashboard
+**Priority:** P3 (Low)
+**Type:** Operations / FinOps
+**Owner:** FinOps & Resource Architect
+**Source:** IDEA-finops-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Render hosting cost is reviewed monthly ad hoc with no trend visualisation — harder to spot a cost trajectory shift early.
+
+**Scope**
+- Simple monthly cost-vs-request-volume trend chart, sourced from existing monthly review data
+
+**Acceptance Criteria**
+- Trend chart built with at least 3 months of historical data points
+
+---
+
+### BLG-OPS-96 — Anthropic API cost per-feature attribution
+**Priority:** P3 (Low)
+**Type:** Operations / FinOps
+**Owner:** FinOps & Resource Architect
+**Source:** IDEA-finops-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Anthropic API cost is tracked in aggregate — no breakdown by feature (thesis generation vs. chat vs. daily briefing), making it hard to identify which feature drives cost.
+
+**Scope**
+- Tag cost-tracking records by feature/endpoint; produce a per-feature monthly breakdown
+
+**Acceptance Criteria**
+- Monthly cost breakdown available by feature for at least 1 reporting cycle
+
+---
+
+### BLG-FE-91 — Design token audit: v6.7 contrast fix consistency
+**Priority:** P3 (Low)
+**Type:** Frontend / Design System
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-specs-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+`BLG-FE-89` locked a canonical secondary-text design token into `design_system.md`, but no audit has confirmed every component actually uses the token rather than a hardcoded equivalent class.
+
+**Scope**
+- Spot-check a sample of components across the app for token usage vs. hardcoded classes
+
+**Acceptance Criteria**
+- Audit conducted; any drift found filed as a follow-up backlog item
+
+---
+
+### BLG-FE-92 — Empty-state illustration/microcopy consistency pass
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-specs-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Empty states across pages (e.g. no trades, no watchlist items, no journal entries) use inconsistent copy tone and layout — no shared pattern.
+
+**Scope**
+- Audit existing empty states; define one shared pattern; apply to the most visible pages
+
+**Acceptance Criteria**
+- Shared pattern documented; applied to at least 3 pages
+
+---
+
+### BLG-OPS-97 — CI pipeline build-time reduction via parallelized test jobs
+**Priority:** P3 (Low)
+**Type:** Operations / CI
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-engineering-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Backend and frontend test suites currently run sequentially in CI, extending PR feedback time as the suites grow.
+
+**Scope**
+- Parallelize independent CI test jobs (backend/frontend at minimum)
+
+**Acceptance Criteria**
+- Measured CI wall-clock time reduced for a representative PR
+
+---
+
+### BLG-OPS-98 — Quarterly dependency minor-version upgrade cadence policy
+**Priority:** P3 (Low)
+**Type:** Operations / Engineering
+**Owner:** Head of Engineering
+**Source:** IDEA-head-of-engineering-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day per quarter)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Dependency minor-version upgrades happen reactively (security patch, feature need) rather than on a cadence — small upgrades accumulate into larger, riskier jumps.
+
+**Scope**
+- Define a quarterly minor-version upgrade window; first pass applies safe minor bumps across `requirements.txt`/`package.json`
+
+**Acceptance Criteria**
+- Policy documented; first quarterly pass completed
+
+---
+
+### BLG-SPEC-69 — Spec debt dashboard
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Tooling
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+All `BLG-SPEC-*` items must currently be found by grepping `backlog.md` — no single view shows spec debt volume or age.
+
+**Scope**
+- Generate a single-page summary of all open `BLG-SPEC-*` items with age since filing
+
+**Acceptance Criteria**
+- Dashboard produced; refreshable at future `groom backlog` runs
+
+---
+
+### BLG-SPEC-70 — Canonical spec cross-reference linter
+**Priority:** P3 (Low)
+**Type:** Spec Debt / Tooling
+**Owner:** Head of Specs Team
+**Source:** IDEA-head-of-specs-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+A canonical spec document can become orphaned (no backlog item or code references it) with no automated way to detect this.
+
+**Scope**
+- Script scanning `docs/specs/**` for files not referenced by any backlog item or codebase comment
+
+**Acceptance Criteria**
+- Linter run once; any orphaned specs found are triaged (kept, merged, or archived)
+
+---
+
+### BLG-FE-93 — Confirm theme-toggle persistence across sessions
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The dark/light theme toggle is assumed to persist via localStorage, but this has not been explicitly verified across all entry points (e.g. a fresh session after a long gap, or after a browser storage-clearing event).
+
+**Scope**
+- Verify theme persistence behaviour across session boundaries; fix if any gap found
+
+**Acceptance Criteria**
+- Verification conducted; any gap found fixed or filed as a follow-up
+
+---
+
+### BLG-FE-94 — Mobile responsive audit for PerformanceAnalytics page
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+PerformanceAnalytics is one of the densest pages (multiple charts, tables) and has not had a dedicated mobile responsive audit.
+
+**Scope**
+- Audit page at common mobile breakpoints; document/fix any overflow, truncation, or unusable-control issues
+
+**Acceptance Criteria**
+- Audit conducted; critical issues (if any) fixed or filed
+
+---
+
+### BLG-OPS-99 — Provision application X-API-Key for governed routines
+**Priority:** P1 (High) — resolves LP-08, 2nd occurrence of this credential gap blocking SI-02 gate verification
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner; PMO Lead
+**Source:** IDEA-infra-ops-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Next release — high priority, blocks reliable SI-02 gate re-verification
+**Gate criteria:** None — this item itself is the unblocking action
+
+**Problem**
+No governed routine holds an application-level API key with production database/API access, so gate conditions requiring live data (notably SI-02's trade-count/linkage condition) can only ever be checked via self-report or by whoever last ran a manual query — a recurring credential gap (LP-08, cited in `2026-07-06__release-v6.7` closure §6 item #1).
+
+**Scope**
+- Provision an application `X-API-Key` (or equivalent scoped credential) and document its storage location (e.g. `~/.api_keys`) so governed routines (roadmap rebalance, release planning) can query production directly
+
+**Acceptance Criteria**
+- Key provisioned and documented
+- A governed routine successfully uses it to directly confirm a gate condition (e.g. SI-02 linked-trade count) without relying on self-report
+
+---
+
+### BLG-OPS-100 — Automated staging smoke test on every deploy
+**Priority:** P3 (Low)
+**Type:** Operations / CI
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Staging deploys have no automated smoke test — issues are caught manually or not until the next staging verification pass.
+
+**Scope**
+- Add a lightweight automated smoke test (health check + 2–3 critical endpoint checks) triggered on every staging deploy
+
+**Acceptance Criteria**
+- Smoke test runs on next staging deploy and reports pass/fail
+
+---
+
+### BLG-GOV-184 — Canonical "win rate" definition consistency confirmation
+**Priority:** P3 (Low)
+**Type:** Governance / Metrics
+**Owner:** Metrics Definitions & Analytics Canonical Owner
+**Source:** IDEA-metrics-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+"Win rate" is surfaced in at least 4 places (dashboard, P&L report, drift analytics, journal) with no confirmation they all use the same calculation.
+
+**Scope**
+- Confirm calculation consistency across all 4 surfaces against `metrics_definitions.md`
+
+**Acceptance Criteria**
+- Consistency confirmed, or discrepancy filed as a correctness backlog item
+
+---
+
+### BLG-GOV-185 — Changelog section in metrics_definitions.md
+**Priority:** P3 (Low)
+**Type:** Governance / Tooling
+**Owner:** Metrics Definitions & Analytics Canonical Owner
+**Source:** IDEA-metrics-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+`metrics_definitions.md` has no changelog — formula version bumps are not tracked, making it hard to know when a metric's calculation last changed.
+
+**Scope**
+- Add a changelog section; backfill known recent formula changes
+
+**Acceptance Criteria**
+- Changelog section added with at least the most recent known change recorded
+
+---
+
+### BLG-GOV-186 — §13 boundary illustrative examples appendix
+**Priority:** P3 (Low)
+**Type:** Governance / Documentation
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Score-4/5 debates require citing specific §13 clauses, but §13 itself has no worked examples — every debate re-derives what "engaging a boundary" looks like in practice.
+
+**Scope**
+- Add an appendix to `strategy_rules.md` (or a companion doc) with 1–2 concrete right/wrong examples per §13 sub-clause
+
+**Acceptance Criteria**
+- Appendix authored, reviewed by Strategy Rules & System Intent Owner
+
+---
+
+### BLG-GOV-187 — Annual §11 production parameter review
+**Priority:** P3 (Low)
+**Type:** Governance / Strategy
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days annually)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** 12 months of trade outcome data since parameters were last reviewed
+
+**Problem**
+`strategy_rules.md` §11 production parameters (ATR multipliers, etc.) have not been formally reviewed against realised trade outcomes since being set.
+
+**Scope**
+- Once 12 months of data are available, conduct a formal review comparing parameter assumptions to realised outcomes
+
+**Acceptance Criteria**
+- Review conducted once gate clears; findings recorded (parameters validated or a §12.3 change-control process opened)
+
+---
+
+### BLG-GOV-188 — Sprint Velocity Trend Chart
+**Priority:** P3 (Low)
+**Type:** Governance / Process Visibility
+**Owner:** PMO Lead
+**Source:** IDEA-pmo-lead-20260708-01 (IW-20260708-01), resubmission of IDEA-pmo-lead-20260619-02 (originally rejected at `2026-06-24__scheduled`, 3-cycle hard cap) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1–2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None — revival condition (velocity_metrics.md populated ≥5 cycles/2 rebalances) confirmed Met 2026-07-08 (49 rows across 8 rebalance-tracked cycles)
+
+**Problem**
+Sprint velocity trend (delivered stories per sprint, U/G/D/P breakdown, delivery rate) requires manual changelog/velocity_metrics.md analysis to see at rebalance time — no visualisation exists.
+
+**Scope**
+- Chart of velocity trend across the last 10 rebalance-tracked cycles, sourced from `velocity_metrics.md`
+
+**Acceptance Criteria**
+- Chart built, showing at least delivered-story-count and U/G/D/P split per cycle over the available history
+
+---
+
+### BLG-QA-82 — Consolidate 3 overlapping SignalCard Playwright specs
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** QA Lead
+**Source:** IDEA-qa-lead-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+3 Playwright spec files cover overlapping SignalCard scenarios, accumulated incrementally across features (allocation_insufficient, badge colours, etc.) — redundant coverage slows the suite without adding confidence.
+
+**Scope**
+- Audit the 3 spec files; consolidate into 1 with no coverage loss
+
+**Acceptance Criteria**
+- Consolidated into 1 spec file; full scenario coverage confirmed retained; suite runtime reduced
+
+---
+
+### BLG-QA-83 — Standalone axe-core accessibility CI scan
+**Priority:** P3 (Low)
+**Type:** QA / Accessibility
+**Owner:** QA Lead
+**Source:** IDEA-qa-lead-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None — independent of `BLG-QA-63`'s "Arc 5 fully complete" gate; an automated axe-core scan doesn't require the full frontend feature set to stabilise first, unlike the fuller accessibility-testing programme `BLG-QA-63` describes.
+
+**Problem**
+No automated accessibility scanning exists in CI at all — `BLG-QA-63` gates a fuller programme behind Arc 5 completion, but a basic axe-core pass could run today at low cost.
+
+**Scope**
+- Add axe-core to the existing Playwright CI run for the highest-traffic pages; fail (or warn, initially) on critical violations
+
+**Acceptance Criteria**
+- axe-core scan running in CI for at least 3 pages; results visible in CI output
+
+---
+
+### BLG-QA-84 — Publish backend test coverage report to PR comments
+**Priority:** P3 (Low)
+**Type:** QA / CI
+**Owner:** QA & Testing Owner
+**Source:** IDEA-qa-testing-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Backend test coverage is only visible by running pytest locally with coverage flags — no visibility in the PR review flow, so coverage regressions can slip through unnoticed.
+
+**Scope**
+- Add a CI step posting a coverage summary (and delta vs. base branch, if feasible) as a PR comment
+
+**Acceptance Criteria**
+- Coverage summary posted automatically on the next PR after this ships
+
+---
+
+### BLG-QA-85 — Contract test suite: openapi.yaml vs. actual route behaviour
+**Priority:** P3 (Low)
+**Type:** QA / API Contracts
+**Owner:** QA & Testing Owner
+**Source:** IDEA-qa-testing-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2–3 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The existing OpenAPI drift gate only checks that a `## METHOD /path` heading has a matching `openapi.yaml` entry (presence check) — it does not verify the entry's schema (request/response shape) actually matches route behaviour.
+
+**Scope**
+- Contract tests for a representative sample of endpoints, asserting actual response shape matches the documented `openapi.yaml` schema
+
+**Acceptance Criteria**
+- Contract tests passing for at least 5 representative endpoints; documented pattern for extending coverage
+
+---
+
+### BLG-GOV-189 — Governance overhead audit (PMO/spec time per shipped story)
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Challenger; PMO Lead
+**Source:** IDEA-challenger-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The Product Value Ratio and Skill-Silo alerts both measure governance overhead indirectly (via story classification) — no direct measurement exists of actual PMO/spec time cost per shipped user story, which would ground future governance-cadence decisions (e.g. `IDEA-pmo-lead-20260708-02`, debated this cycle) in harder evidence.
+
+**Scope**
+- Retrospective estimate of PMO/spec/governance effort vs. shipped-story count over the last 10 cycles, using available run_manifest/cycle_record artefacts as a proxy
+
+**Acceptance Criteria**
+- Estimate produced; findings inform the next cycle-cadence discussion if one recurs
 
 ---
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*

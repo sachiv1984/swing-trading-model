@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.10
-**Last Updated:** 2026-07-06
+**Version:** 1.11
+**Last Updated:** 2026-07-08
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -157,6 +157,10 @@ Load `docs/product/changelog.md` if present (to cross-check completed items).
 ---
 
 ## STEP 1 — Classify All Items
+
+### 1.1 Gate Field Label Normalization (Mandatory Pre-Scan)
+
+Before classifying, grep `backlog.md` and `backlog_archive.md` for any `**Gate:**` field label (non-canonical synonym). The canonical label is `**Gate criteria:**` — items using `**Gate:**` are silently miscounted as ungated (Actionable) by the roadmap engine's STEP 3.1 automated scan, which searches only for the literal string `**Gate criteria:**`. Normalise every `**Gate:**` occurrence found to `**Gate criteria:**` (label only — do not alter the condition text). Record the count normalised in the health summary under a `Gate Field Normalisation` line. (Added v1.11 — closes the deferred patch from `2026-07-06__scheduled` roadmap rebalance lessons learnt, Friction Item 1: `BLG-FEAT-52` was found using the non-canonical label and silently excluded from the D-gated count.)
 
 For every item in `backlog.md`, apply the classification rules in §6.
 

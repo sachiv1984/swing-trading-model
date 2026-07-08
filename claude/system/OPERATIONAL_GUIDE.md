@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.80
-**Last Updated:** 2026-07-06
+**Version:** 4.85
+**Last Updated:** 2026-07-08
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v8.3)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v8.4)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -475,7 +475,7 @@ Any other input is treated as conversational — the Engine will not run.
 
 ## 6M. Phase 1M — Document Management (Optional)
 
-**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.4), `claude/system/backlog_management_prompt.md` (v1.10), `claude/system/ideas_housekeeping_prompt.md` (v1.0)  
+**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.4), `claude/system/backlog_management_prompt.md` (v1.11), `claude/system/ideas_housekeeping_prompt.md` (v1.0)  
 **Owner:** PMO Lead / Product Owner  
 **Trigger:** Optional — strongly recommended at either of the following windows:
 
@@ -1272,7 +1272,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v8.3) | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v8.4) | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1460,10 +1460,10 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
-| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.10 |
+| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.11 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v8.3 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v8.4 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.42 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.12 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
@@ -1473,7 +1473,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.17 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.9 |
+| Shared Standards | `claude/system/shared_standards.md` v3.10 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.9 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1492,8 +1492,12 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 ### Change Log
 
+**Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
+
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.85 | 2026-07-08 | **Roadmap rebalance 2026-07-08__scheduled — 2 further friction-item patches applied same cycle.** §14 Shared Standards v3.9→v3.10. §14 Version 4.84→4.85/2026-07-08. Changes: (1) `shared_standards.md` §16.5 — clarified that `Promoted-Added` status also covers a STEP 5 debate resolving into a process patch rather than a roadmap/backlog addition (this reuse had recurred twice, `2026-07-06__scheduled` and `2026-07-08__scheduled`, without being documented — Type B Semantic Mismatch). (2) This document — added a header-drift prevention note directly above this Change Log table (4th recurrence of the header-Version-field-lagging-the-table pattern, per the 4.79/4.80/4.81 entries below); future edits should read the table's own top row rather than trusting the header field. Authority: Head of Specs Team (roadmap rebalance 2026-07-08__scheduled, STEP 11). |
+| 4.84 | 2026-07-08 | **Roadmap rebalance 2026-07-08__scheduled — resolved 2 deferred patches carried from `2026-07-06__scheduled` lessons learnt (one re-routed via `2026-07-06__release-v6.7` closure LP-09).** §6 source prompt header updated v8.3→v8.4. §6M source prompts updated (backlog_management_prompt.md v1.10→v1.11). §13 Artefact Register Roadmap Rebalance Prompt row updated v8.3→v8.4. §14 Roadmap Engine Source v8.3→v8.4; Backlog Management Engine v1.10→v1.11. §14 Version 4.83→4.84/2026-07-08 (also corrects a repeat of the header-drift pattern flagged in the 4.79/4.80/4.81 entries below: the top `**Version:**`/`**Last Updated:**` fields were still at 4.80 despite the 4.81/4.82/4.83 Change Log entries below recording that they had been bumped further — those corrections were never actually applied to the header fields; the missed bumps and this cycle's own change are reflected in this single 4.84 update). Changes: (1) `roadmap_prompt.md` STEP 2.3 — added SI-02 gate read instruction pointing to a new structured `**Last formally confirmed:**`/`**Unverified report:**` sub-field on the SI-02 row in `current_roadmap.md` §5, resolving the trade-count reconciliation gap (Friction Item 2, `2026-07-06__scheduled`; misrouted to `plan release v6.7` by that cycle, corrected to this engine by `2026-07-06__release-v6.7` closure LP-09). (2) `backlog_management_prompt.md` STEP 1 — new §1.1 Gate Field Label Normalization mandatory pre-scan, closing Friction Item 1 (`2026-07-06__scheduled`): 3 backlog items (`BLG-QA-63`, `BLG-OPS-76`, `BLG-OPS-77`) plus 1 ungated item (`BLG-QA-64`) were found still using the non-canonical `**Gate:**` label and silently excluded from the roadmap engine's STEP 3.1 gated-item scan; all 4 normalised to `**Gate criteria:**` directly in `backlog.md` this run. Authority: Head of Specs Team (roadmap rebalance 2026-07-08__scheduled, STEP -1.5 prior-cycle outstanding actions). |
 | 4.83 | 2026-07-06 | **v6.7 ST-07 (EPIC-02, BLG-GOV-170) — delivery_verification_prompt.md v3.2→v3.3: STEP 6 now documents the System Status Report status-line update as an expected step.** §9 source prompt header v3.2→v3.3. §14 Verification Engine Source v3.2→v3.3. §14 Version 4.82→4.83/2026-07-06. Change: STEP 6 (System Status Report Reconciliation) — added explicit sub-step naming the `**Status:**` line transition (`Sprint_Complete — pending verification` → `Verified — <date>` / `Verified_with_deviations — <date>`) as routine, expected behaviour on every verification run; states this must not be logged as friction in `lessons_learnt_cycle.md`. This update was correctly performed every cycle but had gone undocumented in the engine's own STEP 6 text for 4+ consecutive cycles, repeatedly re-surfacing as a "new" friction item at lessons-learnt time instead of being recognised as expected. Authority: Head of Specs Team (v6.7 ST-07, BLG-GOV-170, 2026-07-06). |
 | 4.82 | 2026-07-06 | **v6.7 ST-05 (EPIC-02, BLG-GOV-168) — shared_standards.md v3.8→v3.9: new §7.1 canonical Structural Append-Verification Procedure, applied to all 4 append-only governance logs.** §6B source prompt header v2.41→v2.42; §8 source prompt header v3.51→v3.52; §9 source prompt header v3.1→v3.2. §14 Shared Standards v3.8→v3.9; Release Engine Source v2.41→v2.42; Execution Engine Source v3.51→v3.52; Verification Engine Source v3.1→v3.2. §14 Version 4.81→4.82/2026-07-06. Change: closes BLG-GOV-168 — the prior §7 "structural verification requirement" note was prose-only and produced zero engine adoptions. `shared_standards.md` §7.1 now defines one reusable count-before/after + no-prior-entry-changed procedure (generalising the existing `decision_log.md` guard) with an explicit file→owning-engine table; `release_planning_prompt.md` (escalations.md), `execution_prompt.md` (execution_escalations.md §"ESCALATION HANDLING SUBROUTINE" + delegation_log.md §11), and `delivery_verification_prompt.md` (verification_escalations.md) each now carry an explicit "Apply the Structural Append-Verification Procedure per shared_standards.md §7.1" line at their write step — confirmed via direct read of each, not documentation alone. Authority: Head of Specs Team (v6.7 ST-05, BLG-GOV-168, 2026-07-06). |
 | 4.81 | 2026-07-06 | **v6.7 ST-04 (EPIC-02, BLG-GOV-167) — shared_standards.md v3.7→v3.8: new §17 `.claude/skills/` write authority provision, naming Head of Specs Team.** §14 Shared Standards v3.7→v3.8. §14 Version 4.79→4.81/2026-07-06 (also corrects a repeat of the header-drift pattern: the top `**Version:**`/`**Last Updated:**` fields were still at 4.79 despite the 4.80 Change Log entry below claiming the header had been updated to 4.80 — that correction was never actually applied to the header fields; both the missed 4.80 bump and this cycle's own v6.7 ST-04 change are reflected in this single 4.81 update). Change: closes the 3-cycle-carried (v6.4→v6.5→v6.6) `.claude/skills/commit-check/SKILL.md` diff-verification patch escalation (`ESC-CLOSE-20260706-01`) — no governed engine's Write Scope covered `.claude/skills/`, so the deferred patch had no governed path to landing. `shared_standards.md` §17 now grants the Head of Specs Team standing write authority over `.claude/skills/**` independent of any single engine's per-run Write Scope; `.claude/skills/commit-check/SKILL.md` Check 9 (diff-verification: staged set vs. intended file set for multi-file governance commits) added in the same story. Authority: Head of Specs Team (v6.7 ST-04, BLG-GOV-167, 2026-07-06). |
