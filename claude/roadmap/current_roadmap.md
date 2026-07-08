@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-08 (roadmap rebalance 2026-07-08__scheduled)
+**Last Updated:** 2026-07-08 (release planning 2026-07-08__release-v6.8 — Next planned release annotated; prior: roadmap rebalance 2026-07-08__scheduled)
 **Last rebalance:** 2026-07-08 (cycle 2026-07-08__scheduled — Standard-tier, CPS=N/A (0 active initiatives); no horizon movements (Arc 1/Arc 2 Next horizon fully complete; Arc 3–6 remainder items genuinely gated; SI-02 gate condition corrected via `BLG-BE-46` finding — 20 total closed trades confirmed via production API, but 0 linked trade-plans due to a `position_id` linkage bug, worse than the prior 15/20 estimate); 🔴 Product Value Alert (ratio=0.26, U=12/G=14/D=21/P=0 of 47, v6.3–v6.7 window — below the 0.30 floor for the first time); mandatory pull-forward actioned: `BLG-FEAT-52` ungated/descoped + new `BLG-FEAT-71` (SI-02 gate visibility indicator) both approved as pull-forward candidates; Skill-Silo Alert still triggered but improved 2nd consecutive reading (G+D+P rolling-3-cycle avg=78.0%, down from 79.8%); idea intake IW-20260708-01 (44 submissions, register was empty): 3 Advancing (2 approved as above, 1 resolved as deferred prompt patch — cycle-cadence review), 1 Parked, 40 Promoted-Backlog; DL-062; Backlog Accessibility Warning remains CLEARED (A=35%, 173 active items pre-write); STEP 8.0: 0 fast-track items; v6.8 scoping deferred to plan release (Option (b)))
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -11,7 +11,7 @@
 ## 1. Current Version
 
 **v6.7** — Contrast Remediation & Governance Hardening — ✅ Complete — Shipped 2026-07-08 — cycle: 2026-07-06__release-v6.7
-**Next planned release:** [TBD]
+**Next planned release:** v6.8 — Production Correctness, Value Pull-Forward & Debt Clearance — In Planning — cycle: 2026-07-08__release-v6.8
 
 <!-- roadmap-annotation-marker: RA:v6.7:2026-07-06__release-v6.7 -->
 
@@ -20,6 +20,15 @@
 - Plan published: 2026-07-06
 - Cycle folder: claude/cycles/2026-07-06__release-v6.7/
 - Backlog slice: claude/cycles/2026-07-06__release-v6.7/stage4_backlog_slice.md
+- Status at annotation: Validated
+
+<!-- roadmap-annotation-marker: RA:v6.8:2026-07-08__release-v6.8 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-08__release-v6.8
+- Plan published: 2026-07-08
+- Cycle folder: claude/cycles/2026-07-08__release-v6.8/
+- Backlog slice: claude/cycles/2026-07-08__release-v6.8/stage4_backlog_slice.md
 - Status at annotation: Validated
 
 *RA:v6.7 retired — see roadmap_archive.md 2026-07-08 (post-ship closure 2026-07-06__release-v6.7).*

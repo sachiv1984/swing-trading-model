@@ -1,0 +1,101 @@
+{
+  "cycle_id": "2026-07-08__release-v6.8",
+  "release": "v6.8",
+  "date": "2026-07-08",
+  "mode": "standard",
+  "issues_mode": "none",
+  "auto_escalate": true,
+  "prompt_schema_version": "v2",
+  "status": "Published",
+  "publish_eligible": true,
+  "last_transition_utc": "2026-07-08T19:35:00Z",
+
+  "sealed": {
+    "sealed_utc": "2026-07-08T19:30:00Z",
+    "sealed_assumptions": {
+      "timebox": "",
+      "capacity": ""
+    },
+    "state_snapshot_hash": ""
+  },
+
+  "mutation_seq": 0,
+  "assumptions": {
+    "timebox": "",
+    "capacity": ""
+  },
+
+  "locks": {
+    "backlog_lock": {
+      "required": true,
+      "lock_file": "claude/backlog/.lock",
+      "owned": false,
+      "owner_cycle_id": "2026-07-08__release-v6.8",
+      "owner_release": "v6.8",
+      "acquired_utc": "2026-07-08T19:10:00Z",
+      "txn_file": "claude/cycles/2026-07-08__release-v6.8/backlog_txn.json",
+      "txn_id": "BLTX-20260708-01",
+      "txn_state": "committed",
+      "marker": "RP:v6.8:2026-07-08__release-v6.8",
+      "status": "released"
+    },
+    "roadmap_lock": {
+      "required": false,
+      "lock_file": "claude/roadmap/.lock",
+      "owned": false,
+      "owner_cycle_id": "2026-07-08__release-v6.8",
+      "owner_release": "v6.8",
+      "acquired_utc": "2026-07-08T19:20:00Z",
+      "txn_file": "claude/cycles/2026-07-08__release-v6.8/roadmap_txn.json",
+      "txn_id": "",
+      "txn_state": "committed",
+      "marker": "RA:v6.8:2026-07-08__release-v6.8",
+      "status": "released"
+    }
+  },
+
+  "mutations": [],
+  "invalidated_steps": [],
+
+  "open_escalations": [],
+  "deferred_escalations": [],
+  "deferred_execution_blockers": [],
+  "accepted_risk_escalations": [],
+
+  "attributes": {
+    "plan_structured": true,
+    "plan_executable": true,
+    "backlog_committed": true,
+    "capacity_feasible": "pass",
+    "cross_stage_integrity": "pass",
+    "decisions_validated": "not_applicable",
+    "design_gate_required": true
+  },
+
+  "design_gate_status": "not_started",
+  "sprint_planning_pre_condition": "design_gate_status == Passed",
+  "amended_backlog_slice_path": "",
+
+  "artifacts": {
+    "run_manifest": "present",
+    "backlog_lock": "released",
+    "backlog_txn": "committed",
+    "roadmap_lock": "released",
+    "roadmap_txn": "committed",
+
+    "stage1_readiness": "pass",
+    "stage2_scope_extraction": "pass",
+    "stage2_scope_document": "present",
+    "stage3_execution_plan": "pass",
+    "stage3_decisions_record": "present",
+    "stage3_5_model_integrity": "pass",
+    "stage4_backlog_slice": "pass",
+    "stage4_5_capacity_check": "pass",
+    "stage5_5_cross_stage_integrity": "pass",
+    "stage5_7_decision_record_integrity": "not_applicable",
+
+    "cycle_summary": "present",
+    "lessons_learnt": "present",
+    "escalations": "not_started"
+  }
+}

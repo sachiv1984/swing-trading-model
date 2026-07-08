@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-08 (session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-08 (release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -5060,5 +5060,33 @@ The Product Value Ratio and Skill-Silo alerts both measure governance overhead i
 ---
 
 *Release Slice v6.7 removed — cycle 2026-07-06__release-v6.7 closed 2026-07-08. Archived canonical home: claude/cycles/2026-07-06__release-v6.7/stage4_backlog_slice.md*
+
+---
+
+## Release Slice v6.8 — 2026-07-08__release-v6.8
+
+<!-- release-plan-marker: RP:v6.8:2026-07-08__release-v6.8 -->
+
+Canonical home: `claude/cycles/2026-07-08__release-v6.8/stage4_backlog_slice.md`
+
+| ST-ID | Backlog ref | EPIC | Title |
+|-------|-------------|------|-------|
+| ST-01 | BLG-BE-46 | EPIC-01 | Investigate `trade_plans.position_id` never populated in production |
+| ST-02 | BLG-SEC-08 | EPIC-01 | Unvalidated dict keys used as SQL column names in `database.update_signal()` |
+| ST-03 | BLG-SEC-07 | EPIC-01 | Manual review of existing signals for anomalous ticker/market values |
+| ST-04 | BLG-OPS-99 | EPIC-01 | Provision application `X-API-Key` for governed routines |
+| ST-05 | BLG-FEAT-52 | EPIC-02 | Trade tagging and tag-based performance filtering |
+| ST-06 | BLG-FEAT-71 | EPIC-02 | SI-02 gate visibility indicator (Reports page) |
+| ST-07 | BLG-SPEC-58 | EPIC-03 | Dashboard homepage visual hierarchy review post-v6.2 |
+| ST-08 | BLG-SPEC-59 | EPIC-03 | R-multiple cross-currency normalization specification |
+| ST-09 | BLG-SPEC-60 | EPIC-03 | Trailing stop visual indicator frontend specification |
+| ST-10 | BLG-SPEC-61 | EPIC-03 | Trailing stop effectiveness metric definition |
+| ST-11 | BLG-QA-64 | EPIC-03 | Fix 12 dark spec files surfaced by Playwright glob discovery |
+| ST-12 | BLG-GOV-134 | EPIC-03 | CI inline OpenAPI drift detection for `api_performance_baseline.md` |
+| ST-13 | BLG-OPS-74 | EPIC-03 | Log Anthropic API token usage and cost per morning briefing call |
+| ST-14 | BLG-FE-77 | EPIC-03 | Refactor `Watchlist.js` to ESLint compliance |
+| ST-15 | BLG-OPS-61 | EPIC-03 | `BLG-OPS-13` v5.1–v5.4 endpoint baseline extension |
+| ST-16 | BLG-GOV-123 | EPIC-03 | Extract Playwright test standard from `execution_prompt.md` to `shared_standards.md` |
+| ST-17 | BLG-OPS-71 | EPIC-03 | System threat model document |
 
 ---
