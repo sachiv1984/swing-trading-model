@@ -106,7 +106,9 @@
       "stories": {
         "ST-01": {
           "title": "Dark-theme secondary-text contrast fix (BLG-FE-87)",
-          "classification": "delegated_frontend",
+          "classification": "autonomous",
+          "classification_at_planning": "delegated_frontend",
+          "reclassification_note": "Reclassified delegated_frontend -> autonomous per LL-v2.3-CL-01 (frontend delivery model defaults to engine-autonomous; delegated_frontend applies only when the engine genuinely cannot complete the work). No delegation record was ever created and no human handoff occurred -- the engine completed the full scripted transformation, Playwright coverage, and stale-selector fixes directly. Applied at EPIC completion (CF-01 backfill) rather than mid-story since the reclassification was recognised only once the DoQ agent-mediated review confirmed the work was fully engine-verifiable.",
           "status": "done",
           "assigned_to": "engine",
           "github_issue": 923,
@@ -131,7 +133,9 @@
         },
         "ST-02": {
           "title": "Light-theme secondary-text contrast fix (BLG-FE-88)",
-          "classification": "delegated_frontend",
+          "classification": "autonomous",
+          "classification_at_planning": "delegated_frontend",
+          "reclassification_note": "Reclassified delegated_frontend -> autonomous per LL-v2.3-CL-01 (frontend delivery model defaults to engine-autonomous; delegated_frontend applies only when the engine genuinely cannot complete the work). No delegation record was ever created and no human handoff occurred -- the engine completed the full scripted transformation, Playwright coverage, and stale-selector fixes directly. Applied at EPIC completion (CF-01 backfill) rather than mid-story since the reclassification was recognised only once the DoQ agent-mediated review confirmed the work was fully engine-verifiable.",
           "status": "done",
           "assigned_to": "engine",
           "github_issue": 924,
