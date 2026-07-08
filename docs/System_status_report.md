@@ -2003,3 +2003,24 @@ None — all 15 stories delivered within the sprint.
 - QA evidence logs: qa_evidence_EPIC-01.md (agent-mediated, 2026-06-30), qa_evidence_EPIC-02.md (agent-mediated, 2026-06-30), qa_evidence_EPIC-03.md (agent-mediated, 2026-06-30)
 - Deviations filed: None (P3 spec deviations); BLG-UX-01 (P3) and BLG-UX-02 (P2) filed as backlog items for disclaimer contrast
 - Test scenarios referenced: tests/e2e/r-multiple-reflection.spec.js SC-RM-01..03c (ST-02); tests/test_nightly_computations.py (ST-07); tests/test_ai_chat_schema.py (ST-09); tests/e2e/ai-briefing-progressive-disclosure.spec.js SC-PD-01..07 (ST-12)
+
+## Sprint: 2026-07-06__release-v6.7
+**Date:** 2026-07-08
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-02 | Governance process hardening (AUD-2026-07-06 follow-through): `.claude/skills/` write-scope authority provision + commit-check diff-verification patch, closing the 3-cycle-carried write-scope escalation (ST-04); canonical Structural Append-Verification Procedure applied to all 4 append-only governance logs (ST-05); `audit.py` same-session commit SLA requirement (ST-06); Delivery Verification STEP 6 status-line documentation (ST-07) | `shared_standards.md` §17, §7.1; `.claude/skills/commit-check/SKILL.md`; `claude/audit.py`; `delivery_verification_prompt.md` STEP 6 | None |
+| EPIC-01 | UX & Accessibility contrast remediation: app-wide dark-theme secondary-text fix (226 instances, 59 files) (ST-01); light-theme companion pairing (697 instances, 101 files), including a `src/Layout.js` app-shell gap found and fixed at DoQ review (ST-02); canonical `text-slate-600 dark:text-slate-400` secondary-text token locked into `design_system.md` (ST-03) | `docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md`; `docs/specs/frontend/pages/positions.md` v2.0; `dashboard.md` v2.6; `reflections.md` v0.2; `docs/specs/frontend/design_system.md` v1.0 | None |
+
+### Capabilities deferred or returned
+
+None — all 7 stories delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-02.md (autonomous class, 2026-07-06), qa_evidence_EPIC-01.md (agent-mediated, Director of Quality role, 2026-07-08)
+- Deviations filed: None
+- Test scenarios referenced: tests/e2e/secondary-text-contrast.spec.js SC-CTR-01a/01b/02a/02b (ST-01/ST-02)

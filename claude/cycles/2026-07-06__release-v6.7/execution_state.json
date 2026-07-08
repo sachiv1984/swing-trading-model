@@ -4,7 +4,7 @@
   "backlog_slice_source": "claude/cycles/2026-07-06__release-v6.7/stage4_backlog_slice.md",
   "invoked_utc": "2026-07-06T20:00:00Z",
   "mode": "standard",
-  "status": "Running",
+  "status": "Sealed",
   "last_updated_utc": "2026-07-06T20:00:00Z",
 
   "epics": {
@@ -192,6 +192,6 @@
     "all_merged": true
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-07-08T13:55:00Z"
 }
