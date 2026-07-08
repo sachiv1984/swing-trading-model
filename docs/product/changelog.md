@@ -3,9 +3,37 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-06 (post-ship closure 2026-07-04__release-v6.6)
+**Last Updated:** 2026-07-08 (post-ship closure 2026-07-06__release-v6.7)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v6.7 — Contrast Remediation & Governance Hardening — 2026-07-08
+Cycle: 2026-07-06__release-v6.7
+Verified: Verified
+Verification report: claude/cycles/2026-07-06__release-v6.7/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | UX & Accessibility Contrast Remediation: systematic dark-theme secondary-text contrast fix — bare `text-slate-500`→`text-slate-400` across 226 in-scope instances (59 files) + 4 `src/Layout.js` instances found at DoQ review, 33 icon-only instances correctly excluded (BLG-FE-87); light-theme companion pairing — `text-slate-600 dark:text-slate-400` added to 697 in-scope bare `text-slate-400` instances (101 files), plus 1 broken pre-existing pairing fixed and the Dashboard Advisory Label exception applied (BLG-FE-88); canonical secondary-text design token locked into `design_system.md` (BLG-FE-89) | `docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md`; `docs/specs/frontend/pages/positions.md` v2.0; `docs/specs/frontend/pages/dashboard.md` v2.6; `docs/specs/frontend/pages/reflections.md` v0.2; `docs/specs/frontend/design_system.md` v1.0 |
+| EPIC-02 | Governance Process Hardening — full AUD-2026-07-06 follow-through: `.claude/skills/` write-scope authority granted to Head of Specs Team + commit-check diff-verification patch applied, closing the 3-cycle-carried `ESC-CLOSE-20260706-01` escalation (BLG-GOV-167); Canonical Append-Only Verification Procedure extracted and applied to all 4 append-only governance logs (`execution_escalations.md`, `verification_escalations.md`, `delegation_log.md`, plus the existing `decision_log.md` pattern) (BLG-GOV-168); `audit.py` SLA block updated to require same-session commit of audit reports (BLG-GOV-169); Delivery Verification STEP 6 status-line update documented as expected, routine behaviour (BLG-GOV-170) | `claude/system/shared_standards.md`; `.claude/skills/commit-check/SKILL.md`; `claude/system/prompt_change_log.md`; `claude/system/release_planning_prompt.md`; `claude/system/execution_prompt.md`; `claude/system/delivery_verification_prompt.md`; `claude/audit.py`; `claude/system/OPERATIONAL_GUIDE.md` |
+
+### Deviations accepted
+None — all 7 ST items met their acceptance criteria without divergence from canonical specs.
+
+### Tech backlog items shipped
+- [ST-01] [U] BLG-FE-87: Dark-theme secondary-text contrast fix — 226+4 instances remediated to WCAG-AA (5.71:1), Playwright coverage added
+- [ST-02] [U] BLG-FE-88: Light-theme secondary-text contrast fix — 697 instances paired to WCAG-AA (6.92:1), Playwright coverage extended
+- [ST-03] [D] BLG-FE-89: Shared secondary-text design token — canonical token locked into `design_system.md`, closing the third recurrence of this defect class
+- [ST-04] [G] BLG-GOV-167: `.claude/skills/` write-scope authority + commit-check diff-verification patch — closes 3-cycle-carried escalation
+- [ST-05] [G] BLG-GOV-168: Structural guard extended to 4 append-only governance logs
+- [ST-06] [G] BLG-GOV-169: `audit.py` same-session commit SLA
+- [ST-07] [G] BLG-GOV-170: Delivery Verification STEP 6 status-line documentation
+
+Sign-off: Product Owner — 2026-07-08
+QA sign-off: Director of Quality — 2026-07-08
 
 ---
 

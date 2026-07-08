@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-06 (session — 1 new item added: BLG-BE-46)
+**Last Updated:** 2026-07-08 (groom backlog post-ship closure 2026-07-06__release-v6.7 — 7 items archived: BLG-FE-87/88/89, BLG-GOV-167/168/169/170; 1 ephemeral release slice retired)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -986,71 +986,6 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 **Acceptance Criteria**
 - Protocol document produced
 - Gate condition (AI adoption window) verified before use
-
----
-
-### BLG-FE-87 — App-wide secondary-text contrast failure against dark theme (default theme)
-**Priority:** P1 (High)
-**Type:** Frontend / Accessibility
-**Owner:** Head of UX & Design; Head of Engineering
-**Source:** ST-01 (EPIC-01, v6.6) — colour contrast audit sweep (BLG-FE-82) — 2026-07-06
-**Effort:** L (~2–3 days)
-**Target:** v6.7 (firm — elevated from provisional by Product Owner, PR #918 acceptance comment, 2026-07-06; to be formalized at v6.7 release planning)
-
-**Problem**
-The ST-01 contrast audit found `text-slate-500` (#64748b) used for small (text-xs/text-sm) secondary/label text in approximately 262 instances across ~90 files, rendered against the app's default dark-theme surface backgrounds (`bg-slate-950` #020617, `bg-slate-900` #0f172a, `bg-slate-800` #1e293b). Computed WCAG contrast ratios are 3.07–4.24:1, below the 4.5:1 required for normal-size text (the 3:1 "large text" allowance does not apply — all found usages are text-xs/text-sm). This is the app's default theme (confirmed in `src/Layout.js`), so the failure is visible today to the majority of users who have never toggled the theme. It is the same defect class already fixed once in `BLG-UX-01` (`AiDailyBriefing.js`, `text-slate-500`→`text-slate-300`) — that fix addressed one component; this finding shows it recurring at scale elsewhere.
-
-**Scope**
-- Systematic replacement of `text-slate-500` usages that fail contrast against their actual rendered dark-surface background, verified per-surface (some may sit on lighter card backgrounds where `text-slate-500` already passes)
-- Contrast spot-checks recorded for a representative sample of affected pages
-
-**Acceptance Criteria**
-- All identified failing `text-slate-500` instances remediated to a WCAG-AA-passing shade (e.g. `text-slate-300`/`text-slate-400`) against their actual background
-- No visual regression beyond the intended contrast fix
-- Contrast verification recorded (manual or Playwright) for a representative sample
-
----
-
-### BLG-FE-88 — App-wide secondary-text contrast failure against light theme (missing dark:/light: variants)
-**Priority:** P2 (Medium)
-**Type:** Frontend / Accessibility
-**Owner:** Head of UX & Design; Head of Engineering
-**Source:** ST-01 (EPIC-01, v6.6) — colour contrast audit sweep (BLG-FE-82) — 2026-07-06
-**Effort:** L (~3–4 days)
-**Provisional-Target:** v6.7
-**Depends on:** BLG-FE-87 (sequence after, to avoid rework — a dark-theme fix landing on `text-slate-400` does not solve light-theme contrast)
-
-**Problem**
-The app supports a user-toggleable light theme (`src/Layout.js`, `toggleTheme`, persisted to `localStorage`; default is dark). Tailwind's class-based dark mode (`darkMode: ["class"]`) requires an explicit `dark:` variant to change any style between themes — a bare class such as `text-slate-400` or `text-slate-500` applies identically in both. The audit found 502 bare `text-slate-400` instances and 262 bare `text-slate-500` instances (764 total, 102 files) with no `dark:text-*` companion class and no `isDark` conditional, meaning these were only ever visually verified against the dark theme. Computed contrast against light-theme surfaces (`bg-slate-100` #f1f5f9, `bg-slate-50` #f8fafc, `white`): `text-slate-400` = 2.3–2.6:1 (severe failure), `text-slate-500` = 4.3–4.8:1 (borderline, fails specifically against `bg-slate-100` at 4.34:1). Both existing precedent fixes (`BLG-UX-01`, `BLG-UX-02`) addressed only the dark-theme case and added no light-theme variant, confirming the light theme has never been contrast-audited in this codebase.
-
-**Scope**
-- For each affected secondary-text surface, add a paired `dark:text-*` / light-mode class combination (or `isDark` conditional, matching the pattern already used correctly in `src/Layout.js`) so both themes independently pass WCAG-AA
-- Prioritise by page traffic/visibility
-
-**Acceptance Criteria**
-- Identified surfaces pass WCAG-AA in both light and dark theme
-- Playwright coverage or a recorded manual light-theme QA pass for at least the highest-traffic pages
-
----
-
-### BLG-FE-89 — Introduce a shared secondary-text design token or component to prevent recurring contrast regressions
-**Priority:** P3 (Low)
-**Type:** Frontend / Design System
-**Owner:** Head of UX & Design; Head of Engineering
-**Source:** ST-01 (EPIC-01, v6.6) — colour contrast audit sweep (BLG-FE-82) — 2026-07-06
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v6.7
-
-**Problem**
-Three separate contrast defects (`BLG-UX-01`, `BLG-UX-02`, and `BLG-FE-87`/`BLG-FE-88` above) all trace back to the same root cause: secondary/label text colour is chosen ad hoc per-component with no shared token or component enforcing a WCAG-AA-safe value per theme. A prior backlog item already proposed extracting a shared `AiDisclaimer` component for the two AI surfaces; this item generalises that idea app-wide.
-
-**Scope**
-- Define one or two Tailwind utility class pairs (or a small `<SecondaryText>` component) as the canonical secondary-text treatment, documented in the frontend design spec
-- Net-new secondary-text usage going forward uses the token/component rather than raw slate/gray/zinc/neutral/stone classes
-
-**Acceptance Criteria**
-- Canonical secondary-text treatment defined and documented
-- Frontend spec updated to reference it
 
 ---
 
@@ -3400,91 +3335,6 @@ The SI-05 Phase 1 effectiveness review was due 2026-07-01 per BLG-GOV-113 protoc
 
 ---
 
-### BLG-GOV-167 — Grant write-scope authority for .claude/skills/ maintenance
-**Priority:** P1 (High)
-**Type:** Governance / Process
-**Owner:** Head of Specs Team
-**Source:** Lifecycle Audit AUD-2026-07-06 (improvement AUD-2026-07-06-002) — 2026-07-06
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v6.7
-
-**Problem**
-No governed routine's declared write scope includes `.claude/skills/` (`execution_prompt.md` §7 confirms this path is excluded). A deferred patch — adding a diff-verification step to `.claude/skills/commit-check/SKILL.md` so it checks `git add`'s target list against the intended file set before multi-file governance commits — has been carried across 3 consecutive cycles (v6.4 → v6.5 → v6.6) with no routine able to apply it. The v6.6 `lessons_learnt_cycle.md` confirms this now meets the automatic-escalation threshold in `lessons_learnt_prompt.md` §3.7, with no governed path to resolution.
-
-**Scope**
-- Add a provision to `shared_standards.md` §1 (Governance Stack) naming Head of Specs Team's authority to directly edit `.claude/skills/` files outside any governed routine's declared write scope
-- Apply the carried `/commit-check` diff-verification patch under that authority
-- Record the resolution in the next cycle's `lessons_learnt_cycle.md`
-
-**Acceptance Criteria**
-- `shared_standards.md` documents the `.claude/skills/` write-authority provision
-- `.claude/skills/commit-check/SKILL.md` contains the diff-verification step (`git add` target list vs. intended file set) before multi-file governance commits
-- 3-cycle carry-forward item closed in `prompt_change_log.md` or an equivalent record
-
----
-
-### BLG-GOV-168 — Implement structural guard for 4 append-only governance logs
-**Priority:** P2 (Medium)
-**Type:** Governance / Process — Lifecycle Reliability
-**Owner:** Head of Specs Team
-**Source:** Lifecycle Audit AUD-2026-07-06 (improvement AUD-2026-07-06-004) — 2026-07-06
-**Effort:** M (~1–2 days)
-**Provisional-Target:** v6.7
-
-**Problem**
-`shared_standards.md` §7 documents a "should apply the same pattern" pointer (added by AUD-2026-07-01-002) directing engines to give `escalations.md`, `execution_escalations.md`, `verification_escalations.md`, and `delegation_log.md` the same structural count-before/after guard that `decision_log.md` already has (`roadmap_prompt.md` STEP 9). No engine's actual write step for these 4 files was changed to perform the check — the fix was documentation-only and produced zero adoptions in the cycle since it was written, leaving 4 audit-trail files with no corruption guard.
-
-**Scope**
-- Extract `decision_log.md`'s structural pattern into a reusable named "Canonical Append-Only Verification Procedure" block in `shared_standards.md`
-- Update the write step for each of the 4 affected engines (`release_planning_prompt.md` for `escalations.md`; `execution_prompt.md` for `execution_escalations.md`; `delivery_verification_prompt.md` for `verification_escalations.md`; the relevant engine for `delegation_log.md`) to invoke the procedure by reference
-
-**Acceptance Criteria**
-- `shared_standards.md` contains a single canonical, reusable verification procedure block
-- All 4 affected engines' write steps reference and apply it (count-before, count-after, text-unchanged check, halt on failure)
-- Confirmed via direct read of each engine's write step — not documentation alone
-
----
-
-### BLG-GOV-169 — Require audit report commit in same session (audit.py SLA)
-**Priority:** P2 (Medium)
-**Type:** Governance / Process
-**Owner:** Head of Specs Team
-**Source:** Lifecycle Audit AUD-2026-07-06 (improvement AUD-2026-07-06-001) — 2026-07-06
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v6.7
-
-**Problem**
-`claude/cycles/2026-06-26__release-v6.3/audit_report_AUD-2026-07-01.md` was produced but never committed to git — confirmed via `git status`/`git log` — until AUD-2026-07-06's own session retroactively committed it. `claude/audit.py`'s SLA block does not instruct the audit engine to commit its own output, unlike other governed routines whose write steps are explicitly paired with a commit instruction.
-
-**Scope**
-- Add an explicit "must be committed in the same session" line to `claude/audit.py`'s SLA block (per the PATCH already drafted in `audit_report_AUD-2026-07-06.md` improvement AUD-2026-07-06-001)
-
-**Acceptance Criteria**
-- `claude/audit.py` SLA block states the report must be committed same-session
-- Verified: the config-block portion of this fix was already applied at AUD-2026-07-06 (2026-07-06); only the SLA-block text edit remains outstanding
-
----
-
-### BLG-GOV-170 — Document sprint-status-line fix at Delivery Verification STEP 6
-**Priority:** P3 (Low)
-**Type:** Governance / Process
-**Owner:** Head of Specs Team
-**Source:** Lifecycle Audit AUD-2026-07-06 (improvement AUD-2026-07-06-003) — 2026-07-06
-**Effort:** XS (<1 hour)
-**Provisional-Target:** v6.7
-
-**Problem**
-`docs/System_status_report.md`'s sprint status line reads `Sprint_Complete — pending verification` at Delivery Verification STEP 6 and is correctly, manually updated to `Verified — <date>` every cycle — but `delivery_verification_prompt.md` STEP 6's bullets never name this step. It has been logged as a "new" friction item for 4+ consecutive cycles (v6.3–v6.6) rather than recognised as expected, routine behaviour.
-
-**Scope**
-- Add a bullet to `delivery_verification_prompt.md` STEP 6 explicitly naming the status-line update from `pending verification` to `Verified — <date>`
-
-**Acceptance Criteria**
-- STEP 6 documents the status-line update as an expected step
-- No further recurrence logged as a novel friction item in future `lessons_learnt_cycle.md` entries
-
----
-
 ### BLG-QA-69 — Ticker/market input sanitisation regression suite
 **Priority:** P2 (Medium)
 **Type:** QA / Security Regression
@@ -4276,20 +4126,6 @@ No test failures have been attributed to stale fixtures since v6.4's signal/secu
 
 ---
 
-## Release Slice v6.7 — 2026-07-06__release-v6.7
-
-<!-- release-plan-marker: RP:v6.7:2026-07-06__release-v6.7 -->
-
-Canonical home: `claude/cycles/2026-07-06__release-v6.7/stage4_backlog_slice.md`
-
-| ST-ID | Backlog ref | EPIC | Title |
-|-------|-------------|------|-------|
-| ST-01 | BLG-FE-87 | EPIC-01 | Dark-theme secondary-text contrast fix |
-| ST-02 | BLG-FE-88 | EPIC-01 | Light-theme secondary-text contrast fix |
-| ST-03 | BLG-FE-89 | EPIC-01 | Shared secondary-text design token |
-| ST-04 | BLG-GOV-167 | EPIC-02 | `.claude/skills/` write-scope authority + commit-check patch |
-| ST-05 | BLG-GOV-168 | EPIC-02 | Structural guard for 4 append-only governance logs |
-| ST-06 | BLG-GOV-169 | EPIC-02 | `audit.py` SLA same-session commit requirement |
-| ST-07 | BLG-GOV-170 | EPIC-02 | Delivery Verification STEP 6 status-line documentation |
+*Release Slice v6.7 removed — cycle 2026-07-06__release-v6.7 closed 2026-07-08. Archived canonical home: claude/cycles/2026-07-06__release-v6.7/stage4_backlog_slice.md*
 
 ---

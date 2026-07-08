@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-07-06 (post-ship closure 2026-07-04__release-v6.6; §34 v6.6 test coverage gap section added — no open items; no pre-v6.6 TSG items to reconcile)
+**Last Updated:** 2026-07-08 (post-ship closure 2026-07-06__release-v6.7; §35 v6.7 test coverage gap section added — no open items; no pre-v6.7 TSG items to reconcile)
 
 ---
 
@@ -832,6 +832,22 @@ No open TSG items for v6.6. All observable ACs have Playwright coverage confirme
 
 **TSG backlog reconciliation (§7.3):**
 - No pre-v6.6 open TSG items existed at cycle start (all resolved as of §33/v6.5). Nothing to reconcile.
+
+---
+
+## 35. Test Coverage Gaps — v6.7 (2026-07-06__release-v6.7)
+
+Identified during delivery verification (verification_report.md §6 — no gap items). No backlog items required.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| — | EPIC-01 | Dark-theme contrast fix (ST-01) + light-theme companion pairing (ST-02) + shared design token (ST-03) | not_applicable — ST-01/ST-02 fully covered by `tests/e2e/secondary-text-contrast.spec.js` (SC-CTR-01a/01b/02a/02b, 4/4 passing); ST-03 is documentation-only (design token transcription into `design_system.md`), no runnable AC |
+| — | EPIC-02 | Full AUD-2026-07-06 governance-hardening bundle (ST-04–ST-07) | not_applicable — governance/documentation/process class, no frontend-visible AC; verification method was direct read of each modified write step |
+
+No open TSG items for v6.7. All observable ACs have Playwright coverage confirmed in CI (EPIC-01/ST-01/ST-02). EPIC-01/ST-03 and EPIC-02 not_applicable (documentation / governance-process class, no frontend-visible AC).
+
+**TSG backlog reconciliation (§7.3):**
+- No pre-v6.7 open TSG items existed at cycle start (all resolved as of §34/v6.6). Nothing to reconcile.
 
 ---
 

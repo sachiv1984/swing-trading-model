@@ -1,9 +1,9 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v6.7
 Cycle: 2026-07-06__release-v6.7
-Last Updated: 2026-07-06
+Last Updated: 2026-07-08
 
 ## Planning Decisions — v6.7 Contrast Remediation & Governance Hardening
 
@@ -26,7 +26,9 @@ Last Updated: 2026-07-06
 None.
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
+Superseded by: v6.7 ship — 2026-07-08
+Changelog: docs/product/changelog.md#v6.7
+Cycle: 2026-07-06__release-v6.7
 
 Superseded by: [TBD]
 Changelog: [TBD]
