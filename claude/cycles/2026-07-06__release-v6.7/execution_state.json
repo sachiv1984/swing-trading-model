@@ -9,10 +9,10 @@
 
   "epics": {
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-06__release-v6.7/EPIC-02",
       "pr_number": 926,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-06__release-v6.7/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
@@ -96,10 +96,10 @@
       }
     },
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-06__release-v6.7/EPIC-01",
       "pr_number": 927,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-06__release-v6.7/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/e2e/secondary-text-contrast.spec.js"],
@@ -179,13 +179,13 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": [],
+  "completed_items": ["ST-04", "ST-05", "ST-06", "ST-07", "ST-01", "ST-02", "ST-03"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-02", "EPIC-01"],
-    "all_merged": false
+    "epics_merged": ["EPIC-02", "EPIC-01"],
+    "epics_pending": [],
+    "all_merged": true
   },
 
   "sealed": false,
