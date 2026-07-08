@@ -36,7 +36,7 @@ export default function ExitZoneCard() {
   return (
     <DashboardCard title="Positions to Watch" to="/Positions" isLoading={alertsLoading || posLoading} error={alertsError}>
       <p className="text-4xl font-bold text-amber-400 mb-2">{total}</p>
-      <p className="text-sm text-slate-400">{subtext}</p>
+      <p className="text-sm text-slate-600 dark:text-slate-400">{subtext}</p>
     </DashboardCard>
   );
 }

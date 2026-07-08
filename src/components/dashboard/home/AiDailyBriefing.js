@@ -33,7 +33,7 @@ function Section({ label, sectionKey, collapsed, onToggle, children }) {
     <div className="border border-slate-700 rounded-lg overflow-hidden">
       <button
         onClick={() => onToggle(sectionKey)}
-        className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-400 hover:text-slate-300 hover:bg-slate-800 transition-colors"
+        className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-300 hover:bg-slate-800 transition-colors"
         aria-expanded={!collapsed}
         data-testid={`section-toggle-${sectionKey}`}
       >
@@ -119,7 +119,7 @@ export default function AiDailyBriefing() {
         <span className="text-sm font-semibold text-white">Today's Briefing</span>
         <div className="flex items-center gap-3">
           {generatedTime && (
-            <span className="text-xs text-slate-500">Generated {generatedTime}</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400">Generated {generatedTime}</span>
           )}
           <button
             onClick={regenerate}
@@ -138,7 +138,7 @@ export default function AiDailyBriefing() {
         <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-600 text-white">
           AI Advisory
         </span>
-        <span className="text-xs text-slate-300 italic">All actions require your confirmation</span>
+        <span className="text-xs text-slate-700 dark:text-slate-300 italic">All actions require your confirmation</span>
       </div>
 
       {/* Body */}
@@ -159,7 +159,7 @@ export default function AiDailyBriefing() {
       )}
 
       {!loading && !error && !briefing && (
-        <p className="text-sm text-slate-500" data-testid="briefing-empty">
+        <p className="text-sm text-slate-600 dark:text-slate-400" data-testid="briefing-empty">
           No briefing for today. Click Regenerate to generate your daily summary.
         </p>
       )}
@@ -176,7 +176,7 @@ export default function AiDailyBriefing() {
           >
             {briefing.summary
               ? <p className="text-sm text-slate-300 leading-relaxed pt-2">{briefing.summary}</p>
-              : <p className="text-xs text-slate-500 italic pt-2">No market context available.</p>}
+              : <p className="text-xs text-slate-600 dark:text-slate-400 italic pt-2">No market context available.</p>}
           </Section>
 
           {/* Signals */}
@@ -204,7 +204,7 @@ export default function AiDailyBriefing() {
                 ))}
               </ol>
             ) : (
-              <p className="text-xs text-slate-500 italic pt-2" data-testid="briefing-no-actions">
+              <p className="text-xs text-slate-600 dark:text-slate-400 italic pt-2" data-testid="briefing-no-actions">
                 No specific actions required today.
               </p>
             )}

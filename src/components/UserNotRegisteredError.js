@@ -17,7 +17,7 @@ export default function UserNotRegisteredError() {
           <AlertCircle className="w-8 h-8 text-rose-400" />
         </div>
         <h2 className="text-2xl font-bold text-white mb-2">User Not Registered</h2>
-        <p className="text-slate-400 mb-6">
+        <p className="text-slate-600 dark:text-slate-400 mb-6">
           Your account exists but hasn't been set up in this application yet. 
           Please contact support to complete your registration.
         </p>

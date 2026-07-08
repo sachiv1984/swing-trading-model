@@ -104,7 +104,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             <span className="text-xl font-bold">{position.ticker}</span>
-            <span className="text-xs px-2 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+            <span className="text-xs px-2 py-1 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
               {position.market}
             </span>
           </DialogTitle>
@@ -115,11 +115,11 @@ export default function PositionModal({ position, open, onClose, onSave }) {
           {/* Summary Stats */}
           <div className="grid grid-cols-3 gap-3">
             <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
-              <p className="text-xs text-slate-500 mb-1">Days Held</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Days Held</p>
               <p className="text-lg font-semibold text-white">{daysHeld}</p>
             </div>
             <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
-              <p className="text-xs text-slate-500 mb-1">Shares</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Shares</p>
               <p className="text-lg font-semibold text-white">{shares}</p>
             </div>
             <div className={cn(
@@ -128,7 +128,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                 ? "bg-emerald-500/10 border-emerald-500/30" 
                 : "bg-rose-500/10 border-rose-500/30"
             )}>
-              <p className="text-xs text-slate-500 mb-1">P&L</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">P&L</p>
               <p className={cn(
                 "text-lg font-semibold",
                 isProfit ? "text-emerald-400" : "text-rose-400"
@@ -140,22 +140,22 @@ export default function PositionModal({ position, open, onClose, onSave }) {
 
           {/* Entry Details */}
           <div className="p-4 rounded-xl bg-slate-800/30 border border-slate-700/50 space-y-3">
-            <h4 className="text-sm font-medium text-slate-400">Entry Details</h4>
+            <h4 className="text-sm font-medium text-slate-600 dark:text-slate-400">Entry Details</h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-slate-500">Entry Date</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400">Entry Date</p>
                 <p className="text-sm text-white">{format(new Date(position.entry_date), "MMM d, yyyy")}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-500">Entry Price</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400">Entry Price</p>
                 <p className="text-sm text-white">{currencySymbol}{entryPriceNative.toFixed(2)}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-500">ATR Value</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400">ATR Value</p>
                 <p className="text-sm text-white">{position.atr_value?.toFixed(2) || "—"}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-500">FX Rate</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400">FX Rate</p>
                 <p className="text-sm text-white">{position.fx_rate?.toFixed(4) || "1.0000"}</p>
               </div>
             </div>
@@ -166,14 +166,14 @@ export default function PositionModal({ position, open, onClose, onSave }) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-cyan-400" />
-                <h4 className="text-sm font-medium text-slate-400">Trade Journal</h4>
+                <h4 className="text-sm font-medium text-slate-600 dark:text-slate-400">Trade Journal</h4>
               </div>
               {!journalEdit && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setJournalEdit(true)}
-                  className="h-8 text-slate-400 hover:text-white hover:bg-slate-800"
+                  className="h-8 text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
                 >
                   <Edit2 className="w-3 h-3 mr-1" />
                   Edit
@@ -188,7 +188,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                     <p className="text-sm text-slate-300 whitespace-pre-wrap">{journalData.entry_note}</p>
                   </div>
                 ) : (
-                  <p className="text-sm text-slate-500 italic">No entry note</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 italic">No entry note</p>
                 )}
 
                 {journalData.tags.length > 0 && (
@@ -208,7 +208,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
               <div className="space-y-3">
                 {/* Edit Note */}
                 <div className="space-y-2">
-                  <Label className="text-slate-400 text-xs">Entry Note</Label>
+                  <Label className="text-slate-600 dark:text-slate-400 text-xs">Entry Note</Label>
                   <Textarea
                     value={journalData.entry_note}
                     onChange={(e) => {
@@ -217,13 +217,13 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                       }
                     }}
                     placeholder="Why are you entering this trade? What's your thesis?"
-                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-cyan-500/50 resize-none"
+                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 focus:border-cyan-500/50 resize-none"
                     rows={4}
                   />
                   <div className="flex justify-end">
                     <span className={cn(
                       "text-xs",
-                      journalData.entry_note.length > 450 ? "text-rose-400" : "text-slate-500"
+                      journalData.entry_note.length > 450 ? "text-rose-400" : "text-slate-600 dark:text-slate-400"
                     )}>
                       {journalData.entry_note.length}/500
                     </span>
@@ -233,7 +233,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                 {/* Edit Tags */}
                 <div className="space-y-2">
                   {/* ✅ FIX: Counter reflects the correct limit of 10 */}
-                  <Label className="text-slate-400 text-xs">Tags ({journalData.tags.length}/10)</Label>
+                  <Label className="text-slate-600 dark:text-slate-400 text-xs">Tags ({journalData.tags.length}/10)</Label>
                   {journalData.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {journalData.tags.map((tag) => (
@@ -266,7 +266,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                         onBlur={() => setTimeout(() => setShowTagSuggestions(false), 200)}
                         onKeyDown={handleTagInputKeyDown}
                         placeholder="Type to add tags..."
-                        className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-cyan-500/50"
+                        className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 focus:border-cyan-500/50"
                       />
 
                       {showTagSuggestions && filteredTags.length > 0 && (
@@ -296,7 +296,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                       tags: position.tags || []
                     });
                   }}
-                  className="text-slate-400 hover:text-white hover:bg-slate-800"
+                  className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
                 >
                   Cancel
                 </Button>
@@ -310,7 +310,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
           <Button 
             variant="ghost" 
             onClick={onClose} 
-            className="text-slate-400 hover:text-white hover:bg-slate-800"
+            className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
           >
             Cancel
           </Button>

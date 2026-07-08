@@ -72,7 +72,7 @@ export default function AiChatWidget() {
             </div>
             <button
               onClick={handleClose}
-              className="text-slate-400 hover:text-white"
+              className="text-slate-600 dark:text-slate-400 hover:text-white"
               data-testid="ai-chat-close"
             >
               <X className="w-4 h-4" />
@@ -82,7 +82,7 @@ export default function AiChatWidget() {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-3 space-y-2" data-testid="ai-chat-messages">
             {messages.length === 0 && !loading && !error && (
-              <p className="text-xs text-slate-500 text-center mt-4" data-testid="ai-chat-empty">
+              <p className="text-xs text-slate-600 dark:text-slate-400 text-center mt-4" data-testid="ai-chat-empty">
                 Ask about your portfolio, positions, or signals.
               </p>
             )}
@@ -107,7 +107,7 @@ export default function AiChatWidget() {
             {loading && (
               <div className="flex justify-start" data-testid="ai-chat-loading">
                 <div className="bg-slate-700 rounded-lg px-3 py-2">
-                  <span className="flex gap-1 items-center text-slate-400 text-xs">
+                  <span className="flex gap-1 items-center text-slate-600 dark:text-slate-400 text-xs">
                     <span className="animate-bounce" style={{ animationDelay: '0ms' }}>•</span>
                     <span className="animate-bounce" style={{ animationDelay: '150ms' }}>•</span>
                     <span className="animate-bounce" style={{ animationDelay: '300ms' }}>•</span>
@@ -153,7 +153,7 @@ export default function AiChatWidget() {
 
           {/* Advisory footer — non-dismissible */}
           <div className="px-3 pb-2">
-            <p className="text-xs text-slate-400 italic text-center" data-testid="ai-chat-advisory-footer">
+            <p className="text-xs text-slate-600 dark:text-slate-400 italic text-center" data-testid="ai-chat-advisory-footer">
               AI responses are advisory only. All trade decisions require human confirmation.
             </p>
           </div>

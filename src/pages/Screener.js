@@ -92,7 +92,7 @@ function RegimeBadge({ status }) {
     );
   }
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600/30">
+    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-600 dark:text-slate-400 border border-slate-600/30">
       Risk Off
     </span>
   );
@@ -122,7 +122,7 @@ function EarningsBadge({ ticker, market }) {
       ? "text-amber-400 font-medium"
       : days <= 14
       ? "text-yellow-500"
-      : "text-slate-400";
+      : "text-slate-600 dark:text-slate-400";
   return <span className={`text-xs ${cls}`}>{days}d</span>;
 }
 
@@ -186,11 +186,11 @@ function WatchlistPopover({ result, onClose, onAdded }) {
             <span className="text-sm font-medium text-white">
               Add <span className="text-emerald-400">{result.market === "UK" ? stripUkSuffix(result.ticker) : result.ticker}</span> to Watchlist
             </span>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-600 dark:text-slate-400">
               {formatPrice(result.price, result.currency)}
             </span>
             <div className="flex items-center gap-2">
-              <label className="text-xs text-slate-400">Target entry</label>
+              <label className="text-xs text-slate-600 dark:text-slate-400">Target entry</label>
               <input
                 type="number"
                 step="0.01"
@@ -213,7 +213,7 @@ function WatchlistPopover({ result, onClose, onAdded }) {
             </Button>
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-white p-1 rounded"
+              className="text-slate-600 dark:text-slate-400 hover:text-white p-1 rounded"
             >
               <X className="w-4 h-4" />
             </button>
@@ -238,17 +238,17 @@ function NewsPanel({ ticker, cache, onClose }) {
             <Newspaper className="w-3 h-3 inline mr-1" />
             Recent news — {ticker}
           </span>
-          <button onClick={onClose} className="text-slate-500 hover:text-white">
+          <button onClick={onClose} className="text-slate-600 dark:text-slate-400 hover:text-white">
             <X className="w-3 h-3" />
           </button>
         </div>
         {loading ? (
-          <p className="text-xs text-slate-400 animate-pulse">Loading headlines…</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 animate-pulse">Loading headlines…</p>
         ) : headlines.length > 0 ? (
           <ul className="space-y-1.5">
             {headlines.slice(0, 10).map((h, i) => (
               <li key={i} className="text-xs text-slate-300 flex gap-2">
-                <span className="shrink-0 text-slate-500 mt-0.5">
+                <span className="shrink-0 text-slate-600 dark:text-slate-400 mt-0.5">
                   {h.published_at ? relativeTime(h.published_at) : ""}
                 </span>
                 {h.url ? (
@@ -260,11 +260,11 @@ function NewsPanel({ ticker, cache, onClose }) {
             ))}
           </ul>
         ) : (
-          <p className="text-xs text-slate-500">No recent news available for {ticker}.</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">No recent news available for {ticker}.</p>
         )}
         <button
           onClick={onClose}
-          className="mt-2 text-xs text-slate-500 hover:text-slate-300 underline"
+          className="mt-2 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-300 underline"
         >
           Close
         </button>
@@ -282,7 +282,7 @@ function SortHeader({ label, field, current, dir, onSort, className }) {
   return (
     <th
       className={cn(
-        "px-3 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer select-none whitespace-nowrap",
+        "px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider cursor-pointer select-none whitespace-nowrap",
         active && "text-white",
         className
       )}
@@ -320,7 +320,7 @@ function ScreenerQualityPanel({ runQuality, tickersRequested, tickersLoaded, tic
           <span className="text-emerald-300">{tickersLoaded} / {tickersRequested} tickers loaded</span>
         </div>
         {isStale && (
-          <div data-testid="stale-advisory" className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-400">
+          <div data-testid="stale-advisory" className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-600 dark:text-slate-400">
             Last full run: {staleHours} hours ago
           </div>
         )}
@@ -359,7 +359,7 @@ function ScreenerQualityPanel({ runQuality, tickersRequested, tickersLoaded, tic
           </div>
         </div>
         {isStale && (
-          <div data-testid="stale-advisory" className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-400">
+          <div data-testid="stale-advisory" className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-600 dark:text-slate-400">
             Last full run: {staleHours} hours ago
           </div>
         )}
@@ -633,14 +633,14 @@ export default function Screener() {
         "text-xs px-2 py-0.5 rounded-full border",
         stale
           ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
-          : "bg-slate-700/50 text-slate-400 border-slate-600/30"
+          : "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30"
       )}
     >
       {stale ? "Results may be stale — " : "Last screened: "}
       {relativeTime(runTimestamp)}
     </span>
   ) : (
-    <span className="text-xs text-slate-500">No screener run yet</span>
+    <span className="text-xs text-slate-600 dark:text-slate-400">No screener run yet</span>
   );
 
   const refreshBtn = (
@@ -711,7 +711,7 @@ export default function Screener() {
                   "px-3 py-1.5 transition-colors",
                   marketFilter === m
                     ? "bg-slate-700 text-white"
-                    : "bg-slate-900 text-slate-400 hover:text-white"
+                    : "bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-white"
                 )}
               >
                 {m}
@@ -726,7 +726,7 @@ export default function Screener() {
               "px-3 py-1.5 rounded-md border text-xs transition-colors",
               regimeFilter
                 ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
-                : "border-slate-700 bg-slate-900 text-slate-400 hover:text-white"
+                : "border-slate-700 bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-white"
             )}
           >
             Risk-On only
@@ -741,7 +741,7 @@ export default function Screener() {
                   "px-3 py-1.5 rounded-md border text-xs transition-colors flex items-center gap-1",
                   sectorFilter.length > 0
                     ? "border-blue-500/50 bg-blue-500/10 text-blue-400"
-                    : "border-slate-700 bg-slate-900 text-slate-400 hover:text-white"
+                    : "border-slate-700 bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-white"
                 )}
               >
                 <Search className="w-3 h-3" />
@@ -751,7 +751,7 @@ export default function Screener() {
               {sectorMenuOpen && (
                 <div className="absolute top-full left-0 mt-1 z-20 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-1 max-h-52 overflow-y-auto">
                   <button
-                    className="w-full text-left px-3 py-1.5 text-xs text-slate-400 hover:text-white hover:bg-slate-700"
+                    className="w-full text-left px-3 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-700"
                     onClick={() => { setSectorFilter([]); setSectorMenuOpen(false); }}
                   >
                     All sectors
@@ -783,7 +783,7 @@ export default function Screener() {
           {(marketFilter !== "All" || regimeFilter || sectorFilter.length > 0) && (
             <button
               onClick={() => { setMarketFilter("All"); setRegimeFilter(false); setSectorFilter([]); }}
-              className="text-xs text-slate-500 hover:text-slate-300 underline"
+              className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-300 underline"
             >
               Clear filters
             </button>
@@ -806,16 +806,16 @@ export default function Screener() {
         }
       >
         {noPass && (
-          <div className="text-center py-16 text-slate-400">
+          <div className="text-center py-16 text-slate-600 dark:text-slate-400">
             <p className="text-sm">No tickers pass your current strategy filters.</p>
-            <p className="text-xs mt-1 text-slate-500">
+            <p className="text-xs mt-1 text-slate-600 dark:text-slate-400">
               This may indicate a risk-off market regime.
             </p>
           </div>
         )}
 
         {allFiltered && (
-          <div className="text-center py-8 text-slate-400 text-sm">
+          <div className="text-center py-8 text-slate-600 dark:text-slate-400 text-sm">
             No tickers match your current filters. Adjust filters to see results.
           </div>
         )}
@@ -825,16 +825,16 @@ export default function Screener() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-800 bg-slate-900/50">
-                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Ticker</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Market</th>
+                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">Ticker</th>
+                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">Market</th>
                   <SortHeader label="Price" field="price" current={sortField} dir={sortDir} onSort={handleSort} />
                   <SortHeader label="ATR" field="atr" current={sortField} dir={sortDir} onSort={handleSort} />
-                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Regime</th>
+                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">Regime</th>
                   <SortHeader label="Signal" field="signal_score" current={sortField} dir={sortDir} onSort={handleSort} />
-                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider hidden md:table-cell">Sector</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider hidden md:table-cell">Entry Zone</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider hidden lg:table-cell" title="Days until next earnings">Earnings</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">News</th>
+                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider hidden md:table-cell">Sector</th>
+                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider hidden md:table-cell">Entry Zone</th>
+                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider hidden lg:table-cell" title="Days until next earnings">Earnings</th>
+                  <th className="px-3 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">News</th>
                 </tr>
               </thead>
               <tbody>
@@ -879,10 +879,10 @@ export default function Screener() {
                                 </span>
                               </div>
                             </td>
-                            <td className="px-3 py-3 text-slate-400 hidden md:table-cell">
+                            <td className="px-3 py-3 text-slate-600 dark:text-slate-400 hidden md:table-cell">
                               {row.sector || "—"}
                             </td>
-                            <td className="px-3 py-3 text-slate-400 hidden md:table-cell">
+                            <td className="px-3 py-3 text-slate-600 dark:text-slate-400 hidden md:table-cell">
                               {entryZoneLabel(row.proximity_to_entry_zone)}
                             </td>
                             <td className="px-3 py-3 hidden lg:table-cell">
@@ -898,7 +898,7 @@ export default function Screener() {
                                       "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-colors",
                                       newsOpen
                                         ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
-                                        : "bg-slate-700/50 text-slate-400 border-slate-600/30 hover:text-blue-400"
+                                        : "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30 hover:text-blue-400"
                                     )}
                                     title="Show news headlines"
                                   >
@@ -921,7 +921,7 @@ export default function Screener() {
                                       "inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border transition-colors",
                                       isPromoOpen
                                         ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
-                                        : "border-slate-600/30 text-slate-400 hover:text-emerald-400 hover:border-emerald-500/30"
+                                        : "border-slate-600/30 text-slate-600 dark:text-slate-400 hover:text-emerald-400 hover:border-emerald-500/30"
                                     )}
                                     title="Add to watchlist"
                                   >
@@ -932,7 +932,7 @@ export default function Screener() {
                                 {/* Research link */}
                                 <button
                                   onClick={() => navigate(`/research/${row.ticker}`)}
-                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border border-slate-600/30 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors"
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border border-slate-600/30 text-slate-600 dark:text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors"
                                   title="Pre-trade research"
                                 >
                                   Research

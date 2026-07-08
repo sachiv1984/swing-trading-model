@@ -13,7 +13,7 @@
  * - api.trades.list() → GET /trades → { trades: [...], avg_fee_drag_pct: N }
  * - tradesData.avg_fee_drag_pct drives the Avg Fee Drag StatsCard
  * - Each trade.fee_drag_pct drives individual row colour in TradeHistoryTable
- *   (null → text-slate-500 "—", non-null → text-amber-400 "+X.XX%")
+ *   (null → text-slate-600 dark:text-slate-400 "—", non-null → text-amber-400 "+X.XX%")
  */
 
 'use strict';
@@ -244,12 +244,12 @@ test.describe('SC-FEE-04 — Null fee drag shows em dash', () => {
   });
 
   test('SC-FEE-04a: Trade without fee drag shows em dash in slate colour', async ({ page }) => {
-    // BARC has fee_drag_pct: null → formatFeeDrag → "—", class → text-slate-500
+    // BARC has fee_drag_pct: null → formatFeeDrag → "—", class → text-slate-600 dark:text-slate-400
     const barcRow = page.locator('tr').filter({ hasText: 'BARC' });
     await expect(barcRow).toBeVisible();
-    // BARC has null fee_drag, slippage, and R-multiple — all show '—' in text-slate-500.
+    // BARC has null fee_drag, slippage, and R-multiple — all show '—' in text-slate-600 (light) / dark:text-slate-400 (dark).
     // Use .first() since any em-dash in slate-500 on this row confirms null renders correctly.
-    const feeDragCell = barcRow.locator('.text-slate-500').filter({ hasText: '—' }).first();
+    const feeDragCell = barcRow.locator('.text-slate-600').filter({ hasText: '—' }).first();
     await expect(feeDragCell).toBeVisible();
   });
 

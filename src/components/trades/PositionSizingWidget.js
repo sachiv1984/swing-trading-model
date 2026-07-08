@@ -164,7 +164,7 @@ export default function PositionSizingWidget({
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <Label className="text-slate-400 text-xs">Risk %</Label>
+          <Label className="text-slate-600 dark:text-slate-400 text-xs">Risk %</Label>
           <Input
             type="number"
             step="0.01"
@@ -176,7 +176,7 @@ export default function PositionSizingWidget({
           />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-slate-400 text-xs">Suggested Shares</Label>
+          <Label className="text-slate-600 dark:text-slate-400 text-xs">Suggested Shares</Label>
           <div
             className={cn(
               "h-9 px-3 rounded-md border bg-slate-900/60 border-slate-700 flex items-center",
@@ -190,7 +190,7 @@ export default function PositionSizingWidget({
                 className={cn(
                   "text-sm font-medium",
                   isValid && cashSufficient && "text-cyan-400",
-                  (!isValid || !cashSufficient) && "text-slate-400",
+                  (!isValid || !cashSufficient) && "text-slate-600 dark:text-slate-400",
                   isValid && !cashSufficient && "line-through"
                 )}
               >
@@ -205,7 +205,7 @@ export default function PositionSizingWidget({
         <p className="text-amber-400 text-xs">{status.text}</p>
       )}
       {status?.type === "grey" && (
-        <p className="text-slate-400 text-xs">{status.text}</p>
+        <p className="text-slate-600 dark:text-slate-400 text-xs">{status.text}</p>
       )}
       {status?.type === "button" && (
         <Button

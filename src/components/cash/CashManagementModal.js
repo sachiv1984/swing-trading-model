@@ -53,7 +53,7 @@ export default function CashManagementModal({ open, onClose, portfolio, transact
         </DialogHeader>
 
         <div className="mb-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700">
-          <p className="text-sm text-slate-400">Current Cash Balance</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">Current Cash Balance</p>
           <p className="text-2xl font-bold text-white">
             £{(portfolio?.cash_balance || 0).toLocaleString("en-GB", { minimumFractionDigits: 2 })}
           </p>
@@ -113,7 +113,7 @@ export default function CashManagementModal({ open, onClose, portfolio, transact
 
         {recentTransactions.length > 0 && (
           <div className="mt-6 pt-4 border-t border-slate-800">
-            <p className="text-sm font-medium text-slate-400 mb-3">Recent Transactions</p>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">Recent Transactions</p>
             <div className="space-y-2">
               {recentTransactions.map((tx) => (
                 <div key={tx.id} className="flex items-center justify-between text-sm">

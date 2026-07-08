@@ -9,7 +9,7 @@ const SEVERITY_STYLES = {
   high: "bg-rose-500/20 text-rose-400 border-rose-500/30",
   moderate: "bg-amber-500/20 text-amber-400 border-amber-500/30",
   low: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-  unknown: "bg-slate-500/20 text-slate-400 border-slate-500/30",
+  unknown: "bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-500/30",
 };
 
 function SeverityBadge({ severity }) {
@@ -58,7 +58,7 @@ export default function MarketCorrelationSection() {
         </div>
         <div>
           <h3 className="text-sm font-semibold text-white">Market Correlation</h3>
-          <p className="text-xs text-slate-500">Per-position Pearson correlation vs benchmark</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Per-position Pearson correlation vs benchmark</p>
         </div>
       </div>
 
@@ -72,13 +72,13 @@ export default function MarketCorrelationSection() {
           <span>Unable to load correlation data. Please try again later.</span>
         </div>
       ) : noPositions ? (
-        <p className="text-slate-500 text-sm py-4">No open positions to correlate.</p>
+        <p className="text-slate-600 dark:text-slate-400 text-sm py-4">No open positions to correlate.</p>
       ) : (
         <>
           {portfolioCorr && (
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-700/30">
               <div className="flex-1">
-                <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Portfolio Weighted Average</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Portfolio Weighted Average</p>
                 <div className="flex items-center gap-2">
                   <span className="text-xl font-bold text-white">
                     {portfolioCorr.value != null ? portfolioCorr.value.toFixed(2) : "N/A"}
@@ -88,7 +88,7 @@ export default function MarketCorrelationSection() {
                   )}
                 </div>
               </div>
-              <p className="text-xs text-slate-500 text-right max-w-[140px]">
+              <p className="text-xs text-slate-600 dark:text-slate-400 text-right max-w-[140px]">
                 High correlation signals clustered risk
               </p>
             </div>
@@ -98,10 +98,10 @@ export default function MarketCorrelationSection() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-700/50">
-                  <th className="text-left py-2 pr-4 text-xs text-slate-400 font-medium uppercase tracking-wider">Ticker</th>
-                  <th className="text-left py-2 pr-4 text-xs text-slate-400 font-medium uppercase tracking-wider">Correlation</th>
-                  <th className="text-left py-2 pr-4 text-xs text-slate-400 font-medium uppercase tracking-wider">Severity</th>
-                  <th className="text-left py-2 text-xs text-slate-400 font-medium uppercase tracking-wider">vs. Market</th>
+                  <th className="text-left py-2 pr-4 text-xs text-slate-600 dark:text-slate-400 font-medium uppercase tracking-wider">Ticker</th>
+                  <th className="text-left py-2 pr-4 text-xs text-slate-600 dark:text-slate-400 font-medium uppercase tracking-wider">Correlation</th>
+                  <th className="text-left py-2 pr-4 text-xs text-slate-600 dark:text-slate-400 font-medium uppercase tracking-wider">Severity</th>
+                  <th className="text-left py-2 text-xs text-slate-600 dark:text-slate-400 font-medium uppercase tracking-wider">vs. Market</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700/30">
@@ -115,10 +115,10 @@ export default function MarketCorrelationSection() {
                       {row.correlation != null ? (
                         <SeverityBadge severity={row.severity} />
                       ) : (
-                        <span className="text-slate-500 text-xs">—</span>
+                        <span className="text-slate-600 dark:text-slate-400 text-xs">—</span>
                       )}
                     </td>
-                    <td className="py-2.5 text-slate-400 text-xs">{row.benchmark ?? "—"}</td>
+                    <td className="py-2.5 text-slate-600 dark:text-slate-400 text-xs">{row.benchmark ?? "—"}</td>
                   </tr>
                 ))}
               </tbody>

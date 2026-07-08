@@ -216,7 +216,7 @@ export default function SignalsPage() {
         description={
           <div>
             <div>Signals for {currentMonth}</div>
-            <div className="text-xs text-slate-500 mt-1">
+            <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">
               Last updated: {latestSignalDate} • Auto-refreshes every minute
             </div>
           </div>
@@ -229,7 +229,7 @@ export default function SignalsPage() {
               queryClient.invalidateQueries({ queryKey: ["signals"] });
               queryClient.invalidateQueries({ queryKey: ["marketStatus"] });
             }}
-            className="border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800"
+            className="border-slate-700 text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             Refresh
@@ -263,7 +263,7 @@ export default function SignalsPage() {
               <Zap className="w-5 h-5 text-cyan-400" />
             </div>
             <div>
-              <p className="text-sm text-slate-400">New Signals</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">New Signals</p>
               <p className="text-2xl font-bold text-white">{newSignals.length}</p>
             </div>
           </div>
@@ -280,7 +280,7 @@ export default function SignalsPage() {
               <DollarSign className="w-5 h-5 text-violet-400" />
             </div>
             <div>
-              <p className="text-sm text-slate-400">Total Capital</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">Total Capital</p>
               <p className="text-2xl font-bold text-white">£{totalCapital.toLocaleString()}</p>
             </div>
           </div>
@@ -297,7 +297,7 @@ export default function SignalsPage() {
               <TrendingUp className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
-              <p className="text-sm text-slate-400">Avg Momentum</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">Avg Momentum</p>
               <p className="text-2xl font-bold text-white">{avgMomentum.toFixed(1)}%</p>
             </div>
           </div>
@@ -314,7 +314,7 @@ export default function SignalsPage() {
               <Target className="w-5 h-5 text-fuchsia-400" />
             </div>
             <div>
-              <p className="text-sm text-slate-400">Distribution</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">Distribution</p>
               <p className="text-2xl font-bold text-white">{usCount} US, {ukCount} UK</p>
             </div>
           </div>
@@ -349,7 +349,7 @@ export default function SignalsPage() {
         </Select>
 
         <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-400 whitespace-nowrap">Top N</label>
+          <label className="text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap">Top N</label>
           <input
             type="number"
             min="1"
@@ -360,7 +360,7 @@ export default function SignalsPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-400 whitespace-nowrap">Lookback Days</label>
+          <label className="text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap">Lookback Days</label>
           <input
             type="number"
             min="1"
@@ -376,7 +376,7 @@ export default function SignalsPage() {
           onClick={() => setShowDismissed(!showDismissed)}
           className={cn(
             "border-slate-700 h-9",
-            showDismissed ? "bg-slate-700 text-white" : "text-slate-400 hover:text-white hover:bg-slate-800"
+            showDismissed ? "bg-slate-700 text-white" : "text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
           )}
         >
           {showDismissed ? "Hide" : "Show"} Dismissed
@@ -388,7 +388,7 @@ export default function SignalsPage() {
           onClick={() => setShowRecentOnly(!showRecentOnly)}
           className={cn(
             "border-slate-700 h-9",
-            showRecentOnly ? "bg-slate-700 text-white" : "text-slate-400 hover:text-white hover:bg-slate-800"
+            showRecentOnly ? "bg-slate-700 text-white" : "text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
           )}
         >
           {showRecentOnly ? "Most Recent Day" : "All Days"}
@@ -399,7 +399,7 @@ export default function SignalsPage() {
       {isLoading ? (
         <div className="text-center py-12">
           <RefreshCw className="w-8 h-8 text-slate-400 animate-spin mx-auto mb-4" />
-          <p className="text-slate-400">Loading signals...</p>
+          <p className="text-slate-600 dark:text-slate-400">Loading signals...</p>
         </div>
       ) : filteredSignals.length === 0 ? (
         <motion.div
@@ -409,10 +409,10 @@ export default function SignalsPage() {
         >
           <Zap className="w-12 h-12 text-slate-600 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-white mb-2">No signals found for the selected parameters.</h3>
-          <p className="text-slate-400 mb-4">
+          <p className="text-slate-600 dark:text-slate-400 mb-4">
             Signals are generated daily at 4 PM UTC weekdays
           </p>
-          <p className="text-sm text-slate-500">Last update: {latestSignalDate}</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">Last update: {latestSignalDate}</p>
         </motion.div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

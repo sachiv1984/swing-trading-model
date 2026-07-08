@@ -91,7 +91,7 @@ export default function MetricsStalenessIndicator() {
   ) : (
     <span
       title={absoluteTime}
-      className="inline-flex items-center gap-1.5 text-slate-400 text-xs cursor-default select-none"
+      className="inline-flex items-center gap-1.5 text-slate-600 dark:text-slate-400 text-xs cursor-default select-none"
     >
       <Clock className="w-3 h-3 shrink-0 text-slate-500" />
       Data as of {relativeTime}

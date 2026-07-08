@@ -23,7 +23,7 @@ export default function CohortAnalysis() {
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white">Cohort Analysis</h3>
-            <p className="text-sm text-slate-400">Closed trade performance grouped by entry period</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400">Closed trade performance grouped by entry period</p>
           </div>
         </div>
         <Select value={period} onValueChange={setPeriod}>
@@ -58,11 +58,11 @@ export default function CohortAnalysis() {
             <table className="w-full">
               <thead>
                 <tr className="bg-slate-800/50 rounded-lg">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Period</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">Trades</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">Win Rate</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">Avg R-Multiple</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">Net P&L (GBP)</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">Period</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">Trades</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">Win Rate</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">Avg R-Multiple</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">Net P&L (GBP)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700/30">
@@ -70,7 +70,7 @@ export default function CohortAnalysis() {
                   const isProfit = row.total_pnl >= 0;
                   const rColor =
                     row.avg_r_multiple == null
-                      ? "text-slate-500"
+                      ? "text-slate-600 dark:text-slate-400"
                       : row.avg_r_multiple >= 1
                       ? "text-emerald-400"
                       : row.avg_r_multiple >= 0.5

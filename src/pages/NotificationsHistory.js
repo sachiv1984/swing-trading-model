@@ -91,7 +91,7 @@ function TriggeredBadge({ value }) {
       Yes
     </span>
   ) : (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600/30">
+    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-600 dark:text-slate-400 border border-slate-600/30">
       No
     </span>
   );
@@ -103,7 +103,7 @@ function NotifiedBadge({ value }) {
       Yes
     </span>
   ) : (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600/30">
+    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-600 dark:text-slate-400 border border-slate-600/30">
       No
     </span>
   );
@@ -199,7 +199,7 @@ export default function NotificationsHistory() {
 
       {/* Controls */}
       <div className="flex justify-end items-center gap-3">
-        <span className="text-sm text-slate-400">Filter by type:</span>
+        <span className="text-sm text-slate-600 dark:text-slate-400">Filter by type:</span>
         <Select value={filterType} onValueChange={setFilterType}>
           <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white w-52">
             <SelectValue />
@@ -227,7 +227,7 @@ export default function NotificationsHistory() {
                 <tr className="border-b border-slate-700/50">
                   {/* Date / Time — sortable */}
                   <th
-                    className="px-5 py-3.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap cursor-pointer select-none hover:text-white transition-colors"
+                    className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap cursor-pointer select-none hover:text-white transition-colors"
                     onClick={toggleSort}
                   >
                     <span className="inline-flex items-center gap-1">
@@ -240,7 +240,7 @@ export default function NotificationsHistory() {
                     </span>
                   </th>
                   {["Alert Type", "Symbol", "Triggered", "Notified", "Values"].map((h) => (
-                    <th key={h} className="px-5 py-3.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap">
+                    <th key={h} className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">
                       {h}
                     </th>
                   ))}
@@ -255,11 +255,11 @@ export default function NotificationsHistory() {
                       {filterType === "all" ? (
                         <div>
                           <p className="text-base font-semibold text-white mb-1">No alert history yet.</p>
-                          <p className="text-sm text-slate-400">Alert evaluations will appear here once the system has run.</p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">Alert evaluations will appear here once the system has run.</p>
                         </div>
                       ) : (
                         <div>
-                          <p className="text-sm text-slate-400 mb-2">No evaluations found for the selected alert type.</p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">No evaluations found for the selected alert type.</p>
                           <button
                             onClick={() => setFilterType("all")}
                             className="text-sm text-cyan-400 hover:text-cyan-300 underline transition-colors"
@@ -302,7 +302,7 @@ export default function NotificationsHistory() {
                           <td className="px-5 py-4">
                             <NotifiedBadge value={ev.notification_sent} />
                           </td>
-                          <td className="px-5 py-4 text-sm text-slate-400 max-w-xs truncate">
+                          <td className="px-5 py-4 text-sm text-slate-600 dark:text-slate-400 max-w-xs truncate">
                             {isExpanded ? null : compactValues(ev.values_compared, ev.rule_type)}
                           </td>
                         </tr>
@@ -314,7 +314,7 @@ export default function NotificationsHistory() {
                               <div className="font-mono text-xs text-slate-300 space-y-1 pt-1">
                                 {formatValuesExpanded(ev.values_compared).map(({ label, value, isNegative }) => (
                                   <div key={label} className="flex gap-3">
-                                    <span className="text-slate-500 whitespace-pre">{label}</span>
+                                    <span className="text-slate-600 dark:text-slate-400 whitespace-pre">{label}</span>
                                     <span className={isNegative ? "text-amber-400" : undefined}>{String(value)}</span>
                                   </div>
                                 ))}

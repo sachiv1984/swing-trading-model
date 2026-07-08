@@ -74,8 +74,8 @@ export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
           <div className="relative z-10">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <p className="text-xs text-slate-400 uppercase tracking-wider">{card.title}</p>
-                <p className="text-xs text-slate-500 mt-1">{card.subtitle}</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider">{card.title}</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{card.subtitle}</p>
               </div>
               <div className={cn("p-2 rounded-lg bg-gradient-to-br", card.gradient)}>
                 <card.icon className="w-4 h-4 text-white" />
@@ -83,8 +83,8 @@ export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
             </div>
             <div>
               <p className="text-2xl font-bold text-white mb-1">{card.value}</p>
-              {card.subValue && <p className="text-sm text-slate-400">{card.subValue}</p>}
-              {card.date && <p className="text-xs text-slate-500 mt-1">{card.date}</p>}
+              {card.subValue && <p className="text-sm text-slate-600 dark:text-slate-400">{card.subValue}</p>}
+              {card.date && <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{card.date}</p>}
               {card.benchmark && (
                 <div className="mt-2">
                   <span className={cn(
@@ -93,7 +93,7 @@ export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
                       ? "bg-emerald-500/20 text-emerald-400"
                       : card.benchmark.includes("Good")
                       ? "bg-cyan-500/20 text-cyan-400"
-                      : "bg-slate-500/20 text-slate-400"
+                      : "bg-slate-500/20 text-slate-600 dark:text-slate-400"
                   )}>
                     {card.benchmark}
                   </span>

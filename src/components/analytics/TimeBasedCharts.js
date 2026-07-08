@@ -33,7 +33,7 @@ export default function TimeBasedCharts({ dayOfWeekData, monthlyData, holdingPer
           <div className="grid grid-cols-5 gap-2 text-xs text-center">
             {dayOfWeekData.map((day, idx) => (
               <div key={idx} className="p-2 bg-slate-900/50 rounded-lg">
-                <p className="text-slate-400">{day.day}</p>
+                <p className="text-slate-600 dark:text-slate-400">{day.day}</p>
                 <p className="text-white font-semibold">{day.trades} trades</p>
               </div>
             ))}
@@ -75,9 +75,9 @@ export default function TimeBasedCharts({ dayOfWeekData, monthlyData, holdingPer
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 text-xs text-center">
             {holdingPeriodData.map((period, idx) => (
               <div key={idx} className="p-2 bg-slate-900/50 rounded-lg">
-                <p className="text-slate-400">{period.period}</p>
+                <p className="text-slate-600 dark:text-slate-400">{period.period}</p>
                 <p className="text-white font-semibold">{period.trades} trades</p>
-                <p className="text-slate-400">{period.winRate}% win</p>
+                <p className="text-slate-600 dark:text-slate-400">{period.winRate}% win</p>
               </div>
             ))}
           </div>
@@ -102,11 +102,11 @@ export default function TimeBasedCharts({ dayOfWeekData, monthlyData, holdingPer
           <div className="flex items-center justify-center gap-6 text-xs">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-cyan-500" />
-              <span className="text-slate-400">UK Market</span>
+              <span className="text-slate-600 dark:text-slate-400">UK Market</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-violet-500" />
-              <span className="text-slate-400">US Market</span>
+              <span className="text-slate-600 dark:text-slate-400">US Market</span>
             </div>
           </div>
         </TabsContent>

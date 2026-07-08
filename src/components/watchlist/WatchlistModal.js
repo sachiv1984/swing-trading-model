@@ -97,14 +97,14 @@ export default function WatchlistModal({ mode, entry, onClose, onAdded, onUpdate
 
   const priceField = (label, key) => (
     <div className="space-y-1.5">
-      <Label className="text-slate-400 text-xs">{label}</Label>
+      <Label className="text-slate-600 dark:text-slate-400 text-xs">{label}</Label>
       <Input
         type="number"
         step="0.01"
         value={form[key]}
         onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
         placeholder="Optional"
-        className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 h-9"
+        className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 h-9"
       />
     </div>
   );
@@ -116,7 +116,7 @@ export default function WatchlistModal({ mode, entry, onClose, onAdded, onUpdate
           <DialogTitle className="text-white">
             {isEdit ? `Edit ${entry.ticker}` : "Add Ticker to Watchlist"}
           </DialogTitle>
-          <DialogDescription className="text-slate-400">
+          <DialogDescription className="text-slate-600 dark:text-slate-400">
             {isEdit
               ? "Update price levels for this ticker."
               : "Track a new ticker for entry opportunities."}
@@ -142,7 +142,7 @@ export default function WatchlistModal({ mode, entry, onClose, onAdded, onUpdate
               <Button
                 variant="ghost"
                 onClick={() => setConfirmDelete(false)}
-                className="text-slate-400 hover:text-white hover:bg-slate-800"
+                className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
               >
                 Cancel
               </Button>
@@ -154,14 +154,14 @@ export default function WatchlistModal({ mode, entry, onClose, onAdded, onUpdate
             <div className="space-y-4 py-2">
               {/* Ticker */}
               <div className="space-y-1.5">
-                <Label className="text-slate-400 text-xs">Ticker Symbol</Label>
+                <Label className="text-slate-600 dark:text-slate-400 text-xs">Ticker Symbol</Label>
                 <Input
                   value={form.ticker}
                   onChange={(e) => handleTickerChange(e.target.value)}
                   disabled={isEdit}
                   placeholder="e.g. AAPL"
                   className={cn(
-                    "bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 h-9",
+                    "bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 h-9",
                     isEdit && "opacity-50 cursor-not-allowed",
                     tickerError && "border-rose-500/60"
                   )}
@@ -173,7 +173,7 @@ export default function WatchlistModal({ mode, entry, onClose, onAdded, onUpdate
 
               {/* Market toggle */}
               <div className="space-y-1.5">
-                <Label className="text-slate-400 text-xs">Market</Label>
+                <Label className="text-slate-600 dark:text-slate-400 text-xs">Market</Label>
                 <div className="grid grid-cols-2 gap-2">
                   {["UK", "US"].map((m) => (
                     <button
@@ -187,7 +187,7 @@ export default function WatchlistModal({ mode, entry, onClose, onAdded, onUpdate
                         "py-2 rounded-lg text-sm font-medium border transition-all",
                         form.market === m
                           ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 border-cyan-500/40 text-cyan-400"
-                          : "bg-slate-800/50 border-slate-700 text-slate-400",
+                          : "bg-slate-800/50 border-slate-700 text-slate-600 dark:text-slate-400",
                         isEdit && "opacity-50 cursor-not-allowed"
                       )}
                     >
@@ -218,7 +218,7 @@ export default function WatchlistModal({ mode, entry, onClose, onAdded, onUpdate
                 <Button
                   variant="ghost"
                   onClick={onClose}
-                  className="text-slate-400 hover:text-white hover:bg-slate-800"
+                  className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
                 >
                   Cancel
                 </Button>

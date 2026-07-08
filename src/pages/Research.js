@@ -43,8 +43,8 @@ function SignalBadge({ status }) {
     {
       active: { label: "Active", cls: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
       watch: { label: "Watch", cls: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
-      no_signal: { label: "No Signal", cls: "bg-slate-700/50 text-slate-400 border-slate-600/30" },
-    }[status] || { label: status ?? "—", cls: "bg-slate-700/50 text-slate-400 border-slate-600/30" };
+      no_signal: { label: "No Signal", cls: "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30" },
+    }[status] || { label: status ?? "—", cls: "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30" };
   return (
     <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border whitespace-nowrap", cfg.cls)}>
       {cfg.label}
@@ -53,8 +53,8 @@ function SignalBadge({ status }) {
 }
 
 function HeatValue({ value, isError }) {
-  if (isError) return <span className="text-slate-400 text-sm">N/A</span>;
-  if (value == null) return <span className="text-slate-400 text-sm">—</span>;
+  if (isError) return <span className="text-slate-600 dark:text-slate-400 text-sm">N/A</span>;
+  if (value == null) return <span className="text-slate-600 dark:text-slate-400 text-sm">—</span>;
   const pct = Number(value).toFixed(1);
   const cls = value > 25 ? "text-red-400" : value >= 15 ? "text-amber-400" : "text-emerald-400";
   return <span className={cn("text-xl font-semibold", cls)}>{pct}%</span>;
@@ -64,9 +64,9 @@ function PlanStatusBadge({ status }) {
   const cfg =
     {
       active: { label: "Active", cls: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
-      draft: { label: "Draft", cls: "bg-slate-700/50 text-slate-400 border-slate-600/30" },
+      draft: { label: "Draft", cls: "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30" },
       closed: { label: "Closed", cls: "bg-rose-500/20 text-rose-400 border-rose-500/30" },
-    }[status] || { label: status ?? "—", cls: "bg-slate-700/50 text-slate-400 border-slate-600/30" };
+    }[status] || { label: status ?? "—", cls: "bg-slate-700/50 text-slate-600 dark:text-slate-400 border-slate-600/30" };
   return (
     <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border", cfg.cls)}>
       {cfg.label}
@@ -147,7 +147,7 @@ export default function Research() {
               variant="ghost"
               size="sm"
               onClick={() => navigate(-1)}
-              className="text-slate-400 hover:text-white"
+              className="text-slate-600 dark:text-slate-400 hover:text-white"
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
               Back
@@ -195,7 +195,7 @@ export default function Research() {
             variant="ghost"
             size="sm"
             onClick={() => navigate(-1)}
-            className="text-slate-400 hover:text-white"
+            className="text-slate-600 dark:text-slate-400 hover:text-white"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
             Back
@@ -207,20 +207,20 @@ export default function Research() {
       {!researchLoading && (
         <div className="flex flex-wrap gap-4 items-center text-xs">
           {r?.market_cap != null && (
-            <span className="text-slate-400">
+            <span className="text-slate-600 dark:text-slate-400">
               Market cap:{" "}
               <span className="text-slate-200">{formatMarketCap(r.market_cap)}</span>
             </span>
           )}
           {r?.updated_at && (
-            <span className="text-slate-500">Updated {relativeTime(r.updated_at)}</span>
+            <span className="text-slate-600 dark:text-slate-400">Updated {relativeTime(r.updated_at)}</span>
           )}
         </div>
       )}
 
       {/* Price and Signal */}
       <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6">
-        <h2 className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-4">
+        <h2 className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-4">
           Price &amp; Signal
         </h2>
         {researchLoading ? (
@@ -235,18 +235,18 @@ export default function Research() {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div>
-              <p className="text-xs text-slate-400 mb-1">Current Price</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current Price</p>
               <p className="text-xl font-semibold text-white">
                 {r?.price != null ? `${sym}${Number(r.price).toFixed(2)}` : "—"}
               </p>
             </div>
             <div>
-              <p className="text-xs text-slate-400 mb-1">Price Change</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Price Change</p>
               <p
                 className={cn(
                   "text-sm font-medium flex items-center gap-1",
                   priceChangePct == null
-                    ? "text-slate-400"
+                    ? "text-slate-600 dark:text-slate-400"
                     : priceChangePos
                     ? "text-emerald-400"
                     : "text-red-400"
@@ -268,17 +268,17 @@ export default function Research() {
               </p>
             </div>
             <div>
-              <p className="text-xs text-slate-400 mb-1">Momentum Signal</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Momentum Signal</p>
               <SignalBadge status={r?.signal?.status} />
             </div>
             <div>
-              <p className="text-xs text-slate-400 mb-1">Setup Type</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Setup Type</p>
               <p className="text-sm text-slate-200">
                 {r?.signal?.signal_type ?? "—"}
               </p>
             </div>
             <div>
-              <p className="text-xs text-slate-400 mb-1">ATR (14d)</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">ATR (14d)</p>
               <p className="text-sm text-slate-200">
                 {r?.signal?.atr != null ? `${sym}${Number(r.signal.atr).toFixed(2)}` : "—"}
               </p>
@@ -289,12 +289,12 @@ export default function Research() {
 
       {/* Prospective Heat */}
       <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6">
-        <h2 className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-4">
+        <h2 className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-4">
           Prospective heat at entry
         </h2>
         <div className="grid grid-cols-2 gap-6">
           <div>
-            <p className="text-xs text-slate-400 mb-1">Current Portfolio Heat</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current Portfolio Heat</p>
             {heatLoading ? (
               <Skeleton className="w-16 h-6" />
             ) : heatData?.valid && heatData.current_heat_percent != null ? (
@@ -304,7 +304,7 @@ export default function Research() {
             )}
           </div>
           <div>
-            <p className="text-xs text-slate-400 mb-1">Prospective Heat (if entered)</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Prospective Heat (if entered)</p>
             {heatLoading ? (
               <Skeleton className="w-16 h-6" />
             ) : heatData?.valid && heatData.prospective_heat_percent != null ? (
@@ -321,14 +321,14 @@ export default function Research() {
 
       {/* Trade Plan Context Panel */}
       <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6">
-        <h2 className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-4">
+        <h2 className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-4">
           Trade Plan
         </h2>
         {plansLoading && !tradePlansError ? (
           <Skeleton className="w-full h-5" />
         ) : tradePlansError || !activePlan ? (
           <div className="flex items-center justify-between flex-wrap gap-3">
-            <p className="text-sm text-slate-400">No trade plan for {ticker}.</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400">No trade plan for {ticker}.</p>
             <Button
               size="sm"
               onClick={() => navigate(`/TradePlan?ticker=${ticker}`)}
@@ -350,14 +350,14 @@ export default function Research() {
             </div>
             {activePlan.stop_level != null && (
               <div>
-                <p className="text-xs text-slate-400 mb-1">Stop Level</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Stop Level</p>
                 <p className="text-sm text-slate-200">{sym}{Number(activePlan.stop_level).toFixed(2)}</p>
               </div>
             )}
             {activePlan.risk_reward_notes && (
               <div>
-                <p className="text-xs text-slate-400 mb-1">Notes</p>
-                <p className="text-sm text-slate-400 italic">
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Notes</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400 italic">
                   {activePlan.risk_reward_notes.length > 100
                     ? `${activePlan.risk_reward_notes.slice(0, 100)}…`
                     : activePlan.risk_reward_notes}
@@ -366,13 +366,13 @@ export default function Research() {
             )}
             {activePlan.r_target != null && (
               <div>
-                <p className="text-xs text-slate-400 mb-1">R Target</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">R Target</p>
                 <p className="text-sm text-slate-200">{activePlan.r_target}R</p>
               </div>
             )}
             {Array.isArray(activePlan.checklist_items) && activePlan.checklist_items.length > 0 && (
               <div>
-                <p className="text-xs text-slate-400 mb-2">Pre-Entry Checklist</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">Pre-Entry Checklist</p>
                 <EntryChecklist
                   items={activePlan.checklist_items}
                   ticker={ticker}
@@ -386,7 +386,7 @@ export default function Research() {
 
       {/* Recent News */}
       <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6">
-        <h2 className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-4">
+        <h2 className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-4">
           Recent News
         </h2>
         {researchLoading ? (
@@ -407,7 +407,7 @@ export default function Research() {
                 ) : (
                   <p className="text-sm text-slate-200">{h.headline || h.title}</p>
                 )}
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
                   {h.source ? `${h.source} · ` : ""}
                   {h.published_at ? relativeTime(h.published_at) : ""}
                 </p>
@@ -415,7 +415,7 @@ export default function Research() {
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-slate-500">No recent news available.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">No recent news available.</p>
         )}
       </div>
     </div>

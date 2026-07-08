@@ -26,13 +26,13 @@ export default function AdvancedMetricsGrid({ metrics, executiveMetrics }) {
           <div key={rowIdx} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {row.map((metric, idx) => (
               <div key={idx} className="p-4 rounded-lg bg-slate-900/50 border border-slate-700/30">
-                <p className="text-xs text-slate-400 mb-2">{metric.label}</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">{metric.label}</p>
                 <div className="flex items-baseline gap-2">
                   <p className="text-xl font-bold text-white">
                     {metric.value}{metric.suffix || ""}
                   </p>
                   {metric.target && (
-                    <span className="text-xs text-slate-500">target {metric.target}</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-400">target {metric.target}</span>
                   )}
                 </div>
               </div>

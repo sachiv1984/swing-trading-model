@@ -42,7 +42,7 @@ function WinRateTooltip({ active, payload, label }) {
       <p className="text-slate-300">
         Win rate: <span className="font-medium text-white">{d.winRate.toFixed(1)}%</span>
       </p>
-      <p className="text-slate-400 text-xs mt-0.5">
+      <p className="text-slate-600 dark:text-slate-400 text-xs mt-0.5">
         {d.tradeCount} trade{d.tradeCount !== 1 ? "s" : ""}
       </p>
     </div>
@@ -62,7 +62,7 @@ export default function WinRateByMonth({ monthlyData = [] }) {
     <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 backdrop-blur-sm">
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-white">Win Rate by Month</h3>
-        <p className="text-sm text-slate-400 mt-1">
+        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
           Monthly win rate with 50% break-even reference
         </p>
       </div>

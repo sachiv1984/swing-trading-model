@@ -42,24 +42,24 @@ export default function MarketComparison({ ukMetrics, usMetrics }) {
 
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <span className="text-sm text-slate-400">Win Rate</span>
+            <span className="text-sm text-slate-600 dark:text-slate-400">Win Rate</span>
             <span className="text-sm font-semibold text-white">{m.winRate}%</span>
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="text-sm text-slate-400">Total P&amp;L</span>
+            <span className="text-sm text-slate-600 dark:text-slate-400">Total P&amp;L</span>
             <span className={`text-sm font-semibold ${m.totalPnl >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
               {m.totalPnl >= 0 ? "+" : ""}£{m.totalPnl.toFixed(2)}
             </span>
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="text-sm text-slate-400">Avg Win</span>
+            <span className="text-sm text-slate-600 dark:text-slate-400">Avg Win</span>
             <span className="text-sm font-semibold text-emerald-400">+£{m.avgWin.toFixed(2)}</span>
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="text-sm text-slate-400">Avg Loss</span>
+            <span className="text-sm text-slate-600 dark:text-slate-400">Avg Loss</span>
             <span className="text-sm font-semibold text-rose-400">
               -£{Math.abs(m.avgLoss).toFixed(2)}
             </span>
@@ -68,7 +68,7 @@ export default function MarketComparison({ ukMetrics, usMetrics }) {
           <div className="pt-4 border-t border-slate-700/50">
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs text-slate-400">Best Performer</span>
+              <span className="text-xs text-slate-600 dark:text-slate-400">Best Performer</span>
             </div>
 
             {m.bestPerformer ? (
@@ -77,14 +77,14 @@ export default function MarketComparison({ ukMetrics, usMetrics }) {
                 <p className="text-xs text-emerald-400">+£{m.bestPerformer.pnl.toFixed(2)}</p>
               </>
             ) : (
-              <p className="text-sm text-slate-400">No trades yet</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">No trades yet</p>
             )}
           </div>
 
           <div className="pt-2">
             <div className="flex items-center gap-2 mb-2">
               <TrendingDown className="w-4 h-4 text-rose-400" />
-              <span className="text-xs text-slate-400">Worst Performer</span>
+              <span className="text-xs text-slate-600 dark:text-slate-400">Worst Performer</span>
             </div>
 
             {m.worstPerformer ? (
@@ -93,7 +93,7 @@ export default function MarketComparison({ ukMetrics, usMetrics }) {
                 <p className="text-xs text-rose-400">-£{Math.abs(m.worstPerformer.pnl).toFixed(2)}</p>
               </>
             ) : (
-              <p className="text-sm text-slate-400">No trades yet</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">No trades yet</p>
             )}
           </div>
         </div>

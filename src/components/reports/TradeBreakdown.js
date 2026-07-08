@@ -59,7 +59,7 @@ export default function TradeBreakdown({ positions }) {
       return (
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-3 shadow-xl">
           <p className="text-white font-medium">{data.name}</p>
-          <p className="text-slate-400 text-sm">{data.value} trades</p>
+          <p className="text-slate-600 dark:text-slate-400 text-sm">{data.value} trades</p>
           <p className={`text-sm ${data.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
             £{data.pnl.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
@@ -77,7 +77,7 @@ export default function TradeBreakdown({ positions }) {
     >
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-white">Trade Breakdown</h3>
-        <p className="text-sm text-slate-400">Analysis by market and exit reason</p>
+        <p className="text-sm text-slate-600 dark:text-slate-400">Analysis by market and exit reason</p>
       </div>
 
       <div className="grid grid-cols-2 gap-6">
@@ -111,7 +111,7 @@ export default function TradeBreakdown({ positions }) {
                   className="w-2.5 h-2.5 rounded-full" 
                   style={{ backgroundColor: COLORS[idx % COLORS.length] }}
                 />
-                <span className="text-xs text-slate-400">{item.name}</span>
+                <span className="text-xs text-slate-600 dark:text-slate-400">{item.name}</span>
               </div>
             ))}
           </div>
@@ -147,7 +147,7 @@ export default function TradeBreakdown({ positions }) {
                   className="w-2.5 h-2.5 rounded-full" 
                   style={{ backgroundColor: COLORS[(idx + 2) % COLORS.length] }}
                 />
-                <span className="text-xs text-slate-400">{item.name}</span>
+                <span className="text-xs text-slate-600 dark:text-slate-400">{item.name}</span>
               </div>
             ))}
           </div>

@@ -15,7 +15,7 @@ export default function PnLBarChart({ trades }) {
       className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6"
     >
       <h3 className="text-lg font-semibold text-white mb-2">Trade P&L</h3>
-      <p className="text-sm text-slate-400 mb-6">Recent closed positions</p>
+      <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">Recent closed positions</p>
 
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">

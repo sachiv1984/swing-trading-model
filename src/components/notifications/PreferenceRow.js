@@ -22,7 +22,7 @@ export default function PreferenceRow({ label, description, enabled, saved, erro
               )}
             </AnimatePresence>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">{description}</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">{description}</p>
         </div>
         <Switch
           checked={enabled}

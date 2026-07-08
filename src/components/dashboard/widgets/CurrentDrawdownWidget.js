@@ -57,8 +57,8 @@ export default function CurrentDrawdownWidget(props) {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <Database className="w-8 h-8 text-slate-500 mx-auto mb-2" />
-            <p className="text-slate-400 text-sm">Establishing Peak</p>
-            <p className="text-slate-500 text-xs mt-1">Building your performance baseline...</p>
+            <p className="text-slate-600 dark:text-slate-400 text-sm">Establishing Peak</p>
+            <p className="text-slate-600 dark:text-slate-400 text-xs mt-1">Building your performance baseline...</p>
           </div>
         </div>
       </div>

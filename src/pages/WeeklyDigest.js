@@ -75,7 +75,7 @@ export default function WeeklyDigest() {
             variant="ghost"
             size="sm"
             onClick={() => refetch()}
-            className="text-slate-400 hover:text-white hover:bg-slate-800"
+            className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             Refresh
@@ -99,7 +99,7 @@ export default function WeeklyDigest() {
             {FIELD_LABELS.map(({ field, label, unit }) => (
               <TableRow key={field}>
                 <TableCell className="font-medium text-slate-200">{label}</TableCell>
-                <TableCell className="text-slate-500 text-sm">{unit}</TableCell>
+                <TableCell className="text-slate-600 dark:text-slate-400 text-sm">{unit}</TableCell>
                 <TableCell className="text-right font-mono text-slate-300">
                   {data ? formatValue(field, data[field]) : "—"}
                 </TableCell>

@@ -45,7 +45,7 @@ export default function EarningsAlertCard() {
   return (
     <DashboardCard title="Earnings" to="/Positions" isLoading={posLoading || earningsLoading} error={posError}>
       <p className="text-4xl font-bold text-yellow-400 mb-2">{count}</p>
-      <p className="text-sm text-slate-400">{subtext}</p>
+      <p className="text-sm text-slate-600 dark:text-slate-400">{subtext}</p>
     </DashboardCard>
   );
 }

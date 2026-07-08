@@ -8,7 +8,7 @@ export default function DashboardCard({ title, to, isLoading, error, children, c
       "relative rounded-2xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm p-6 transition-all hover:border-slate-600/70 hover:bg-slate-800/70 cursor-pointer h-full",
       className
     )}>
-      <p className="text-xs text-slate-400 uppercase tracking-wider mb-3">{title}</p>
+      <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-3">{title}</p>
 
       {isLoading && (
         <div className="flex justify-center py-4">

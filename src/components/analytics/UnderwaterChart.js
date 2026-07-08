@@ -130,10 +130,10 @@ export default function UnderwaterChart({ trades }) {
       const d = payload[0].payload;
       return (
         <div className="bg-slate-900 border border-slate-700 rounded-lg p-3 shadow-xl">
-          <p className="text-xs text-slate-400 mb-1">{new Date(d.date).toLocaleDateString()}</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">{new Date(d.date).toLocaleDateString()}</p>
           <p className="text-sm font-semibold text-rose-400">{d.drawdown.toFixed(2)}%</p>
-          <p className="text-xs text-slate-400 mt-1">Current: £{d.equity.toFixed(0)}</p>
-          <p className="text-xs text-slate-400">Peak: £{d.peak.toFixed(0)}</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Current: £{d.equity.toFixed(0)}</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Peak: £{d.peak.toFixed(0)}</p>
         </div>
       );
     }
@@ -167,21 +167,21 @@ export default function UnderwaterChart({ trades }) {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-white">Underwater Equity Curve</h3>
-              <p className="text-sm text-slate-400">% Below Peak Equity</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">% Below Peak Equity</p>
             </div>
           </div>
           {hasData && (
             <div className="flex items-center gap-1">
               <button
                 onClick={() => applyZoom(1)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors"
+                className="p-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors"
                 title="Zoom in"
               >
                 <ZoomIn className="w-4 h-4" />
               </button>
               <button
                 onClick={() => applyZoom(-1)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors"
+                className="p-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors"
                 title="Zoom out"
               >
                 <ZoomOut className="w-4 h-4" />
@@ -213,17 +213,17 @@ export default function UnderwaterChart({ trades }) {
         onMouseEnter={handleMouseEnter}
       >
         {data.length === 0 ? (
-          <div className="h-64 flex items-center justify-center text-slate-400">
+          <div className="h-64 flex items-center justify-center text-slate-600 dark:text-slate-400">
             No trade data available
           </div>
         ) : data.length <= 2 ? (
-          <div className="h-64 flex items-center justify-center text-slate-400">
+          <div className="h-64 flex items-center justify-center text-slate-600 dark:text-slate-400">
             Need more trades for trend analysis
           </div>
         ) : (
           <>
             {hintVisible && (
-              <p className="text-xs text-slate-500 text-center mb-2 transition-opacity duration-300">
+              <p className="text-xs text-slate-600 dark:text-slate-400 text-center mb-2 transition-opacity duration-300">
                 Scroll to zoom
               </p>
             )}

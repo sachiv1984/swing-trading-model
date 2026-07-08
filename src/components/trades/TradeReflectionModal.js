@@ -27,7 +27,7 @@ function formatExitReason(reason) {
 function SummaryRow({ label, value }) {
   return (
     <div className="flex flex-col">
-      <span className="text-xs text-slate-500 mb-0.5">{label}</span>
+      <span className="text-xs text-slate-600 dark:text-slate-400 mb-0.5">{label}</span>
       <span className="text-sm font-medium text-white">{value ?? "—"}</span>
     </div>
   );
@@ -116,7 +116,7 @@ export default function TradeReflectionModal({ trade, open, onClose }) {
             <BookOpen className="w-5 h-5" />
             Trade Reflection — <span className="font-bold">{trade.ticker}</span>
           </DialogTitle>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
             Reflect on this trade to reinforce discipline and learning.
           </p>
         </DialogHeader>
@@ -124,7 +124,7 @@ export default function TradeReflectionModal({ trade, open, onClose }) {
         <div className="overflow-y-auto space-y-6 pr-1" style={{ maxHeight: "calc(90vh - 200px)" }}>
           {/* Trade Summary — read-only; all values backend-sourced (spec §4) */}
           <div className="rounded-xl bg-slate-800/60 border border-slate-700/50 p-4">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+            <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-3">
               Trade Summary
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -184,7 +184,7 @@ export default function TradeReflectionModal({ trade, open, onClose }) {
             variant="ghost"
             onClick={onClose}
             disabled={saving}
-            className="text-slate-400 hover:text-white hover:bg-slate-800"
+            className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
           >
             Skip
           </Button>

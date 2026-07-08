@@ -29,7 +29,7 @@ export default function MarketRegimeCard({ market, status, index }) {
           </div>
           <div>
             <p className="text-base font-semibold text-white">{market} Market</p>
-            <p className="text-sm text-slate-400">{index}</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400">{index}</p>
           </div>
         </div>
         <div className={cn(

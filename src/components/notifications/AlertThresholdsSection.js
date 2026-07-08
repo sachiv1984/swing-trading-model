@@ -31,7 +31,7 @@ function ThresholdText({ rule }) {
   const val = rule.threshold_percent ?? 5.0;
   const isDefault = val === 5.0;
   return (
-    <span className="text-xs text-slate-500 mt-0.5">
+    <span className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
       Within {val}% of stop{isDefault ? " (default)" : ""}
     </span>
   );
@@ -96,7 +96,7 @@ function CreateForm({ onSave, onCancel }) {
   return (
     <div className="px-6 py-5 bg-slate-800/40 border-t border-slate-700/50 space-y-4">
       <div className="space-y-1">
-        <Label className="text-slate-400 text-xs">Alert Type</Label>
+        <Label className="text-slate-600 dark:text-slate-400 text-xs">Alert Type</Label>
         <select
           value={alertType}
           onChange={(e) => { setAlertType(e.target.value); setValidationError(null); }}
@@ -110,7 +110,7 @@ function CreateForm({ onSave, onCancel }) {
 
       {showThresholdField && (
         <div className="space-y-1.5">
-          <Label className="text-slate-400 text-xs">
+          <Label className="text-slate-600 dark:text-slate-400 text-xs">
             Notify when within ___ % of stop
           </Label>
           <Input
@@ -120,14 +120,14 @@ function CreateForm({ onSave, onCancel }) {
             onChange={(e) => handleThresholdChange(e.target.value)}
             placeholder="5"
             className={cn(
-              'bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 h-9 w-40',
+              'bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 h-9 w-40',
               validationError && '!border-rose-500/60'
             )}
           />
           {validationError ? (
             <p className="text-xs text-rose-400">{validationError}</p>
           ) : (
-            <p className="text-xs text-slate-500">Leave blank to use the default (5%).</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Leave blank to use the default (5%).</p>
           )}
         </div>
       )}
@@ -145,7 +145,7 @@ function CreateForm({ onSave, onCancel }) {
         <Button
           variant="ghost"
           onClick={onCancel}
-          className="text-slate-400 hover:text-white hover:bg-slate-800 h-8 text-xs"
+          className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800 h-8 text-xs"
         >
           Cancel
         </Button>
@@ -194,14 +194,14 @@ function EditForm({ rule, onSave, onCancel }) {
     <div className="px-6 py-5 bg-slate-800/40 border-t border-slate-700/50 space-y-4">
       {/* Alert type — display only when editing */}
       <div className="space-y-1">
-        <Label className="text-slate-400 text-xs">Alert Type</Label>
+        <Label className="text-slate-600 dark:text-slate-400 text-xs">Alert Type</Label>
         <p className="text-sm text-white font-medium">{TYPE_LABELS[rule?.type] ?? "—"}</p>
       </div>
 
       {/* Threshold field — only for stop_loss_approach */}
       {showThresholdField && (
         <div className="space-y-1.5">
-          <Label className="text-slate-400 text-xs">
+          <Label className="text-slate-600 dark:text-slate-400 text-xs">
             Notify when within ___ % of stop
           </Label>
           <Input
@@ -211,14 +211,14 @@ function EditForm({ rule, onSave, onCancel }) {
             onChange={(e) => handleThresholdChange(e.target.value)}
             placeholder="5"
             className={cn(
-              "bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 h-9 w-40",
+              "bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 dark:text-slate-400 h-9 w-40",
               validationError && "!border-rose-500/60"
             )}
           />
           {validationError ? (
             <p className="text-xs text-rose-400">{validationError}</p>
           ) : (
-            <p className="text-xs text-slate-500">Leave blank to use the default (5%).</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Leave blank to use the default (5%).</p>
           )}
         </div>
       )}
@@ -238,7 +238,7 @@ function EditForm({ rule, onSave, onCancel }) {
         <Button
           variant="ghost"
           onClick={onCancel}
-          className="text-slate-400 hover:text-white hover:bg-slate-800 h-8 text-xs"
+          className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800 h-8 text-xs"
         >
           Cancel
         </Button>
@@ -281,7 +281,7 @@ export default function AlertThresholdsSection() {
       {/* Section heading */}
       <div className="px-1">
         <h2 className="text-base font-semibold text-white">Alert Thresholds</h2>
-        <p className="text-sm text-slate-500 mt-0.5">Configure trigger thresholds for individual alert rules.</p>
+        <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">Configure trigger thresholds for individual alert rules.</p>
       </div>
 
       <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 divide-y divide-slate-700/50 overflow-hidden">
@@ -296,7 +296,7 @@ export default function AlertThresholdsSection() {
             <div className="flex flex-col items-center justify-center py-16 text-center px-6">
               <BellPlus className="w-10 h-10 text-slate-600 mb-3" />
               <h3 className="text-base font-semibold text-white mb-1">No alert rules configured.</h3>
-              <p className="text-sm text-slate-400 mb-5">Add an alert rule to receive notifications.</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mb-5">Add an alert rule to receive notifications.</p>
               {!showCreateForm && (
                 <Button
                   onClick={() => setShowCreateForm(true)}
@@ -329,7 +329,7 @@ export default function AlertThresholdsSection() {
                     variant="ghost"
                     size="sm"
                     onClick={() => setOpenEditId(openEditId === rule.id ? null : rule.id)}
-                    className="text-slate-400 hover:text-white hover:bg-slate-800 h-7 w-7 p-0"
+                    className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800 h-7 w-7 p-0"
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                   </Button>

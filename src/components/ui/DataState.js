@@ -50,7 +50,7 @@ export default function DataState({
         <AlertCircle className="w-10 h-10 text-rose-400" />
         <div>
           <p className="text-sm font-semibold text-white mb-1">Something went wrong</p>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-600 dark:text-slate-400">
             Unable to load data. Please try again.
           </p>
         </div>
@@ -76,7 +76,7 @@ export default function DataState({
           <p className="text-sm font-semibold text-white">{emptyHeading}</p>
         )}
         {emptyBody && (
-          <p className="text-xs text-slate-400">{emptyBody}</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">{emptyBody}</p>
         )}
         {emptyAction && <div className="mt-2">{emptyAction}</div>}
       </div>

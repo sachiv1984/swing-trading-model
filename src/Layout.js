@@ -254,7 +254,7 @@ export default function Layout({ children, currentPageName }) {
                   className={cn(
                     "text-[10px] font-semibold tracking-[0.15em] uppercase",
                     "font-variant-numeric-tabular",
-                    isDark ? "text-slate-500" : "text-slate-400"
+                    isDark ? "text-slate-400" : "text-slate-600"
                   )}
                   style={{ fontVariant: "small-caps" }}
                 >
@@ -546,7 +546,7 @@ export default function Layout({ children, currentPageName }) {
             <span
               className={cn(
                 "text-xs",
-                isDark ? "text-slate-500" : "text-slate-500"
+                isDark ? "text-slate-400" : "text-slate-600"
               )}
             >
               Theme
@@ -582,7 +582,7 @@ export default function Layout({ children, currentPageName }) {
               <div className="mb-3 space-y-1">
                 {shortcuts.map(({ key, label }) => (
                   <div key={key} className="flex items-center justify-between">
-                    <span className={cn("text-xs", isDark ? "text-slate-500" : "text-slate-500")}>
+                    <span className={cn("text-xs", isDark ? "text-slate-400" : "text-slate-600")}>
                       {label}
                     </span>
                     <kbd
@@ -603,7 +603,7 @@ export default function Layout({ children, currentPageName }) {
           <div
             className={cn(
               "flex items-center justify-between text-xs",
-              isDark ? "text-slate-500" : "text-slate-500"
+              isDark ? "text-slate-400" : "text-slate-600"
             )}
           >
             <span>v1.0.0</span>

@@ -43,7 +43,7 @@ export default function PerformanceSummary({ metrics, period }) {
       label: "Total Fees",
       value: `£${metrics.totalFees.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       icon: DollarSign,
-      color: "text-slate-400"
+      color: "text-slate-600 dark:text-slate-400"
     },
     {
       label: "Net P&L",
@@ -62,7 +62,7 @@ export default function PerformanceSummary({ metrics, period }) {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-lg font-semibold text-white">Performance Summary</h3>
-          <p className="text-sm text-slate-400">{period}</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">{period}</p>
         </div>
       </div>
 
@@ -78,7 +78,7 @@ export default function PerformanceSummary({ metrics, period }) {
                 <Icon className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-xs text-slate-400">{item.label}</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400">{item.label}</p>
                 <p className={`text-sm font-semibold ${item.color}`}>{item.value}</p>
               </div>
             </div>

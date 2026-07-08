@@ -142,12 +142,12 @@ function GracePeriodAlertZone() {
             <p className="text-sm text-amber-200/80 mt-1">{bodyText}</p>
             {tp ? (
               <div className="mt-2 text-xs text-slate-300 space-y-0.5">
-                {tp.setup_thesis && <div><span className="text-slate-500">Thesis: </span>"{tp.setup_thesis.slice(0, 120)}{tp.setup_thesis.length > 120 ? "…" : ""}"</div>}
-                {tp.stop_level != null && <div><span className="text-slate-500">Stop: </span>{tp.stop_level}</div>}
-                {tp.r_target != null && <div><span className="text-slate-500">R-target: </span>{tp.r_target}R</div>}
+                {tp.setup_thesis && <div><span className="text-slate-600 dark:text-slate-400">Thesis: </span>"{tp.setup_thesis.slice(0, 120)}{tp.setup_thesis.length > 120 ? "…" : ""}"</div>}
+                {tp.stop_level != null && <div><span className="text-slate-600 dark:text-slate-400">Stop: </span>{tp.stop_level}</div>}
+                {tp.r_target != null && <div><span className="text-slate-600 dark:text-slate-400">R-target: </span>{tp.r_target}R</div>}
               </div>
             ) : (
-              <p className="text-xs text-slate-400 mt-1">No trade plan linked. Consider adding a plan for context.</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">No trade plan linked. Consider adding a plan for context.</p>
             )}
             {alert.trade_plan_id && (
               <Link
@@ -218,9 +218,9 @@ function TrailStopModal({ position, onClose }) {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-white">Trail Stop — {position?.ticker}</h2>
-            <p className="text-xs text-slate-400">ATR-based stop trail calculation</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400">ATR-based stop trail calculation</p>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="text-slate-600 dark:text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
         </div>
 
         {isLoading && (
@@ -238,19 +238,19 @@ function TrailStopModal({ position, onClose }) {
         {!isLoading && !isError && trailData && (
           <dl className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <dt className="text-slate-400">Current Stop</dt>
+              <dt className="text-slate-600 dark:text-slate-400">Current Stop</dt>
               <dd className="text-white font-medium">{currencySymbol}{Number(trailData.current_stop ?? stopValue ?? 0).toFixed(2)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-400">ATR Trail Stop</dt>
+              <dt className="text-slate-600 dark:text-slate-400">ATR Trail Stop</dt>
               <dd className="text-white font-medium">{currencySymbol}{Number(atrTrailStop).toFixed(2)}</dd>
             </div>
             {trailDiff != null && (
               <div className="flex justify-between">
-                <dt className="text-slate-400">Trail Difference</dt>
+                <dt className="text-slate-600 dark:text-slate-400">Trail Difference</dt>
                 <dd className={cn("font-medium", isNegativeDiff ? "text-amber-400" : "text-emerald-400")}>
                   {trailDiff >= 0 ? "+" : "−"}{currencySymbol}{Math.abs(trailDiff).toFixed(2)}
-                  {trailR != null && <span className="text-slate-400 ml-1">({trailR >= 0 ? "+" : ""}{Number(trailR).toFixed(1)}R)</span>}
+                  {trailR != null && <span className="text-slate-600 dark:text-slate-400 ml-1">({trailR >= 0 ? "+" : ""}{Number(trailR).toFixed(1)}R)</span>}
                 </dd>
               </div>
             )}
@@ -258,7 +258,7 @@ function TrailStopModal({ position, onClose }) {
         )}
 
         {!isLoading && !isError && trailData && (
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-600 dark:text-slate-400">
             ATR trail stop = current price − (ATR × 2.0). ATR period: 14 days. Multiplier per strategy rules.
           </p>
         )}
@@ -272,7 +272,7 @@ function TrailStopModal({ position, onClose }) {
             {updateStopMutation.isPending ? "Updating…" : confirmLabel}
           </Button>
           {!updateStopMutation.isPending && (
-            <button onClick={onClose} className="text-slate-400 hover:text-slate-200 text-sm text-center">
+            <button onClick={onClose} className="text-slate-600 dark:text-slate-400 hover:text-slate-200 text-sm text-center">
               Cancel
             </button>
           )}
@@ -440,7 +440,7 @@ function PositionEarningsCell({ ticker, market }) {
   return (
     <TableCell>
       <span
-        className={`text-xs font-medium px-2 py-0.5 rounded ${isNear ? "bg-amber-500/15 text-amber-400 border border-amber-500/25" : "text-slate-400"}`}
+        className={`text-xs font-medium px-2 py-0.5 rounded ${isNear ? "bg-amber-500/15 text-amber-400 border border-amber-500/25" : "text-slate-600 dark:text-slate-400"}`}
         title={data.next_earnings_date}
       >
         {isNear ? `⚠ ${days}d` : `${days}d`}
@@ -584,7 +584,7 @@ export default function Positions() {
                   "h-8 w-8 p-0 rounded-lg",
                   viewMode === "grid"
                     ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-400"
-                    : "text-slate-400 hover:text-white"
+                    : "text-slate-600 dark:text-slate-400 hover:text-white"
                 )}
               >
                 <LayoutGrid className="w-4 h-4" />
@@ -599,7 +599,7 @@ export default function Positions() {
                   "h-8 w-8 p-0 rounded-lg",
                   viewMode === "table"
                     ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-400"
-                    : "text-slate-400 hover:text-white"
+                    : "text-slate-600 dark:text-slate-400 hover:text-white"
                 )}
               >
                 <List className="w-4 h-4" />
@@ -614,7 +614,7 @@ export default function Positions() {
                   "h-8 w-8 p-0 rounded-lg",
                   viewMode === "journal"
                     ? "bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-400"
-                    : "text-slate-400 hover:text-white"
+                    : "text-slate-600 dark:text-slate-400 hover:text-white"
                 )}
               >
                 <BookOpen className="w-4 h-4" />
@@ -728,7 +728,7 @@ export default function Positions() {
                       <span className="font-semibold text-white">
                         {position.ticker}
                       </span>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
                         {position.market}
                       </span>
                       {/* ST-05: risk-off exit alert badge */}
@@ -757,7 +757,7 @@ export default function Positions() {
                   {/* ST-01 (BLG-FEAT-46): two-line stop cell — initial stop / trailing stop + breach badge */}
                   <TableCell className="text-rose-400 font-medium">
                     <div className="flex flex-col gap-0.5 leading-tight">
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-slate-600 dark:text-slate-400">
                         Init: {position.initial_stop != null ? `${currencySymbol}${Number(position.initial_stop).toFixed(2)}` : "—"}
                       </span>
                       <div className="flex items-center gap-1.5">
@@ -809,7 +809,7 @@ export default function Positions() {
                     </span>
                   </TableCell>
 
-                  <TableCell className="text-slate-400">{daysHeld}</TableCell>
+                  <TableCell className="text-slate-600 dark:text-slate-400">{daysHeld}</TableCell>
 
                   {/* ST-01 (IT-01): Lifecycle state badge */}
                   <TableCell>
@@ -842,7 +842,7 @@ export default function Positions() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800"
+                        className="h-8 w-8 text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
                         onClick={() => setEditingPosition(position)}
                       >
                         <Edit2 className="w-4 h-4" />
