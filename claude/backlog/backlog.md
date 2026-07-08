@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-06 (session — 4 new items added: BLG-GOV-167, BLG-GOV-168, BLG-GOV-169, BLG-GOV-170)
+**Last Updated:** 2026-07-06 (session — 1 new item added: BLG-BE-46)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -1501,6 +1501,31 @@ No per-request trace ID propagation exists across routers/services. No incident 
 **Acceptance Criteria**
 - Trace ID present in logs across a multi-service call path
 - Gate condition (demonstrated failure requiring tracing) verified before commencing
+
+---
+
+### BLG-BE-46 — Investigate trade_plans.position_id never populated in production
+**Priority:** P1 (High)
+**Type:** Backend / Data Integrity
+**Owner:** Backend Engineering Patterns Owner; PMO Lead
+**Source:** `plan release v6.7` session — SI-02 production re-verification — 2026-07-06
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v6.8
+
+**Problem**
+Verified via production API (2026-07-06): `GET /trades` reports `total_trades: 20` (closed trades). `GET /trade-plans` reports 11 total trade plans, but all 11 have `position_id: null` — none are linked to any closed trade record. `GET /analytics/arc5-compliance` independently confirms `trade_plan_adherence_rate: 0.0`. This has silently distorted the SI-02 gate's "closed trades with linked trade_plans" condition across many cycles — carried forward as an estimated 15–20 when the real, verified value is 0. Trade plans do exist and are reportedly used, so this looks like a genuine linkage bug rather than an unused feature.
+
+**Scope**
+- Audit the position-lifecycle and trade-plan services for where `trade_plans.position_id` should be set when a plan's associated trade opens and later closes
+- Determine root cause: backend bug (field never written), workflow gap (user not linking plans), or migration/schema gap
+- If a bug is confirmed: implement the fix so new `trade_plans` rows populate `position_id` correctly
+- Assess whether the 11 existing rows can be reliably backfilled (e.g. ticker + date-proximity match against `trade_history`), or document why backfill isn't feasible
+
+**Acceptance Criteria**
+- Root cause documented (bug / workflow gap / other)
+- If a bug: fix implemented and verified — a newly closed trade with an associated plan shows `position_id` set, confirmed via API
+- Decision recorded on whether historical backfill was performed or explicitly deferred
+- `current_roadmap.md`'s SI-02 gate row reflects the corrected linked-plan count once this resolves
 
 ---
 
