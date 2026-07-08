@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-05-19
+**Last Updated:** 2026-07-08 (PMO Lead decision recorded — IDEA-pmo-lead-20260619-02 revival condition confirmed Met)
 
 ---
 
@@ -92,3 +92,5 @@ This document captures ideas that were rejected from active roadmap/backlog cons
 **Why rejected:** velocity_metrics.md (the canonical data source) does not exist. The underlying data infrastructure for automated velocity trending has not been established. Building a chart before the data file exists would produce nothing actionable. Hard cap reached at third consecutive park.
 
 **Revival condition:** velocity_metrics.md created and populated with at least 5 cycles of structured data (story counts, U/G/D classification, delivery rate). PMO Lead to assess and raise for re-evaluation once the file is established and updated for 2+ rebalances.
+
+**PMO Lead Decision (2026-07-08):** Revival condition confirmed **Met** — `velocity_metrics.md` now carries 49 structured rows spanning far more than 5 cycles and 2 rebalances (created 2026-07-03, updated at every post-ship closure since, most recently 2026-07-08 for v6.7). This is the second consecutive housekeeping pass to confirm Met with no resubmission yet actioned. Decision: resubmit this idea at the next `run ideas` intake window rather than let it carry a third time. This entry may be removed from `rejected_but_strong.md` once resubmission is confirmed in the ideas register.
