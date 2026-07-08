@@ -55,7 +55,7 @@ function ComplianceFlag({ value }) {
 
 function StopAge({ days }) {
   if (days === null || days === undefined) {
-    return <span className="text-slate-500 italic">Not set</span>;
+    return <span className="text-slate-400 italic">Not set</span>;
   }
   return <span className="text-slate-300">{days} {days === 1 ? "day" : "days"}</span>;
 }
@@ -155,7 +155,7 @@ export default function StrategyCompliancePanel() {
             <div className="border-t border-slate-700/50 pt-3">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="text-slate-500 border-b border-slate-700/40">
+                  <tr className="text-slate-400 border-b border-slate-700/40">
                     <th className="text-left pb-2 font-medium">Ticker</th>
                     <th className="text-center pb-2 font-medium">Stop Compliance</th>
                     <th className="text-center pb-2 font-medium">Stop Age</th>

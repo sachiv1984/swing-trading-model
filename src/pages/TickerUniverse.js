@@ -90,7 +90,7 @@ function AddTickerForm({ onAdded, onCancel }) {
     <form onSubmit={handleSubmit} data-testid="add-ticker-form" className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-4">
       <div className="flex items-center justify-between mb-3">
         <span className="text-sm font-medium text-slate-200">Add Ticker</span>
-        <button type="button" onClick={onCancel} className="text-slate-500 hover:text-slate-300">
+        <button type="button" onClick={onCancel} className="text-slate-400 hover:text-slate-300">
           <X size={16} />
         </button>
       </div>
@@ -261,7 +261,7 @@ export default function TickerUniverse() {
       {/* Filters */}
       <div className="flex flex-wrap gap-2 mb-4" data-testid="filter-bar">
         <div className="flex items-center gap-1">
-          <span className="text-xs text-slate-500 mr-1">Market:</span>
+          <span className="text-xs text-slate-400 mr-1">Market:</span>
           {["all", "US", "UK"].map((m) => (
             <button key={m} className={filterBtnCls(marketFilter === m)} onClick={() => setMarketFilter(m)} aria-label={`Filter market ${m}`}>
               {m === "all" ? "All" : m}
@@ -269,7 +269,7 @@ export default function TickerUniverse() {
           ))}
         </div>
         <div className="flex items-center gap-1">
-          <span className="text-xs text-slate-500 mr-1">Status:</span>
+          <span className="text-xs text-slate-400 mr-1">Status:</span>
           {[["all", "All"], ["active", "Active"], ["inactive", "Inactive"]].map(([val, label]) => (
             <button key={val} className={filterBtnCls(activeFilter === val)} onClick={() => setActiveFilter(val)} aria-label={`Filter status ${val}`}>
               {label}
@@ -344,7 +344,7 @@ export default function TickerUniverse() {
               })}
             </tbody>
           </table>
-          <div className="px-4 py-2 border-t border-slate-700 text-xs text-slate-500">
+          <div className="px-4 py-2 border-t border-slate-700 text-xs text-slate-400">
             Showing {filtered.length} of {tickers.length} tickers
           </div>
         </div>

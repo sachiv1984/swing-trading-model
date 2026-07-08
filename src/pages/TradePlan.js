@@ -89,7 +89,7 @@ function NewsContextPanel({ ticker, market }) {
           <Newspaper size={14} className="text-slate-400" />
           <span>News Context</span>
           {headlines.length > 0 && (
-            <span className="text-xs text-slate-500">{headlines.length} headlines</span>
+            <span className="text-xs text-slate-400">{headlines.length} headlines</span>
           )}
         </div>
         {collapsed ? <ChevronDown size={14} className="text-slate-500" /> : <ChevronUp size={14} className="text-slate-500" />}
@@ -99,7 +99,7 @@ function NewsContextPanel({ ticker, market }) {
           {headlines.map((item, i) => (
             <li key={i} className="py-2 space-y-0.5">
               <p className="text-sm text-slate-200 leading-snug">{item.title || item.headline}</p>
-              <div className="flex items-center gap-2 text-xs text-slate-500">
+              <div className="flex items-center gap-2 text-xs text-slate-400">
                 {(item.source || item.author) && <span>{item.source || item.author}</span>}
                 <span>{relativeAge(item.created_at || item.updated_at)}</span>
               </div>
@@ -154,7 +154,7 @@ function PreEntryValidationPanel({ ticker, market, quantity, entryPrice, stopPri
     pass: "text-emerald-400",
     warn: "text-amber-400",
     fail: "text-red-400",
-    skipped: "text-slate-500",
+    skipped: "text-slate-400",
   };
   const ADVISORY_BADGE = {
     pass: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
@@ -183,25 +183,25 @@ function PreEntryValidationPanel({ ticker, market, quantity, entryPrice, stopPri
               {[failCount > 0 && `${failCount} fail`, warnCount > 0 && `${warnCount} warn`].filter(Boolean).join(", ")}
             </span>
           )}
-          {isLoading && <span className="text-xs text-slate-500">Checking…</span>}
+          {isLoading && <span className="text-xs text-slate-400">Checking…</span>}
         </div>
         {collapsed ? <ChevronDown className="w-4 h-4 text-slate-500" /> : <ChevronUp className="w-4 h-4 text-slate-500" />}
       </button>
       {!collapsed && (
         <div className="px-4 pb-4 space-y-2 border-t border-slate-700/50 pt-3">
-          {isError && <p className="text-xs text-slate-500">Validation unavailable — proceed with manual checks</p>}
+          {isError && <p className="text-xs text-slate-400">Validation unavailable — proceed with manual checks</p>}
           {!isLoading && !isError && checks.length === 0 && (
-            <p className="text-xs text-slate-500">No checks available</p>
+            <p className="text-xs text-slate-400">No checks available</p>
           )}
           {!isLoading && !isError && checks.map((check) => (
             <div key={check.rule} className="flex items-start gap-2 text-xs">
-              <span className={`mt-0.5 font-mono w-3 shrink-0 ${STATUS_COLOR[check.status] || "text-slate-500"}`}>
+              <span className={`mt-0.5 font-mono w-3 shrink-0 ${STATUS_COLOR[check.status] || "text-slate-400"}`}>
                 {STATUS_ICON[check.status] || "?"}
               </span>
               <div className="flex-1 min-w-0">
                 <span className="text-slate-300">{RULE_LABELS[check.rule] || check.rule}</span>
                 {check.detail && (
-                  <span className="text-slate-500"> — {check.detail}</span>
+                  <span className="text-slate-400"> — {check.detail}</span>
                 )}
               </div>
             </div>
@@ -636,7 +636,7 @@ export default function TradePlan() {
           </Field>
           <Field label="Regime at Entry">
             <div className="px-3 py-2 text-sm bg-slate-800/50 border border-slate-700 rounded-lg text-slate-300 min-h-[38px] flex items-center">
-              {form.regime_context_at_entry || regimeFromHealth || <span className="text-slate-500 italic">loading…</span>}
+              {form.regime_context_at_entry || regimeFromHealth || <span className="text-slate-400 italic">loading…</span>}
             </div>
           </Field>
         </div>
@@ -794,7 +794,7 @@ export default function TradePlan() {
           {isClaudeDraft && (
             <div className="flex items-center gap-3" data-testid="thesis-feedback-control">
               {form.thesis_feedback && feedbackJustGiven ? (
-                <span className="text-xs text-slate-500" data-testid="thesis-feedback-confirmation">
+                <span className="text-xs text-slate-400" data-testid="thesis-feedback-confirmation">
                   Thanks — feedback recorded.
                 </span>
               ) : (
@@ -810,7 +810,7 @@ export default function TradePlan() {
                       setTimeout(() => setFeedbackJustGiven(false), 2000);
                     }}
                     className={`flex items-center gap-1 text-xs transition-colors disabled:cursor-not-allowed ${
-                      form.thesis_feedback === "useful" ? "text-emerald-400" : "text-slate-500 hover:text-slate-400"
+                      form.thesis_feedback === "useful" ? "text-emerald-400" : "text-slate-400 hover:text-slate-400"
                     }`}
                   >
                     <ThumbsUp size={12} />
@@ -827,7 +827,7 @@ export default function TradePlan() {
                       setTimeout(() => setFeedbackJustGiven(false), 2000);
                     }}
                     className={`flex items-center gap-1 text-xs transition-colors disabled:cursor-not-allowed ${
-                      form.thesis_feedback === "not_useful" ? "text-rose-400" : "text-slate-500 hover:text-slate-400"
+                      form.thesis_feedback === "not_useful" ? "text-rose-400" : "text-slate-400 hover:text-slate-400"
                     }`}
                   >
                     <ThumbsDown size={12} />

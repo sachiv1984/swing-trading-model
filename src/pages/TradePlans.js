@@ -115,7 +115,7 @@ export default function TradePlans() {
                     <td className="px-5 py-4">
                       <span className="font-semibold text-white text-sm">{plan.ticker}</span>
                       {plan.market && (
-                        <span className="ml-2 text-xs text-slate-500">{plan.market}</span>
+                        <span className="ml-2 text-xs text-slate-400">{plan.market}</span>
                       )}
                     </td>
                     <td className="px-5 py-4">
@@ -129,7 +129,7 @@ export default function TradePlans() {
                         ? plan.setup_thesis.slice(0, 60) + (plan.setup_thesis.length > 60 ? "…" : "")
                         : "—"}
                     </td>
-                    <td className="px-5 py-4 text-sm text-slate-500 whitespace-nowrap">
+                    <td className="px-5 py-4 text-sm text-slate-400 whitespace-nowrap">
                       {plan.updated_at
                         ? formatDistanceToNow(new Date(plan.updated_at), { addSuffix: true })
                         : "—"}
@@ -153,7 +153,7 @@ export default function TradePlans() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10"
+                          className="h-7 w-7 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10"
                           onClick={() => setDeleteTarget(plan)}
                         >
                           <Trash2 className="w-4 h-4" />

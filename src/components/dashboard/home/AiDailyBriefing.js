@@ -119,7 +119,7 @@ export default function AiDailyBriefing() {
         <span className="text-sm font-semibold text-white">Today's Briefing</span>
         <div className="flex items-center gap-3">
           {generatedTime && (
-            <span className="text-xs text-slate-500">Generated {generatedTime}</span>
+            <span className="text-xs text-slate-400">Generated {generatedTime}</span>
           )}
           <button
             onClick={regenerate}
@@ -159,7 +159,7 @@ export default function AiDailyBriefing() {
       )}
 
       {!loading && !error && !briefing && (
-        <p className="text-sm text-slate-500" data-testid="briefing-empty">
+        <p className="text-sm text-slate-400" data-testid="briefing-empty">
           No briefing for today. Click Regenerate to generate your daily summary.
         </p>
       )}
@@ -176,7 +176,7 @@ export default function AiDailyBriefing() {
           >
             {briefing.summary
               ? <p className="text-sm text-slate-300 leading-relaxed pt-2">{briefing.summary}</p>
-              : <p className="text-xs text-slate-500 italic pt-2">No market context available.</p>}
+              : <p className="text-xs text-slate-400 italic pt-2">No market context available.</p>}
           </Section>
 
           {/* Signals */}
@@ -204,7 +204,7 @@ export default function AiDailyBriefing() {
                 ))}
               </ol>
             ) : (
-              <p className="text-xs text-slate-500 italic pt-2" data-testid="briefing-no-actions">
+              <p className="text-xs text-slate-400 italic pt-2" data-testid="briefing-no-actions">
                 No specific actions required today.
               </p>
             )}

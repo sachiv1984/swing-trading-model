@@ -244,7 +244,7 @@ export default function TradeEntry() {
                 value={formData.ticker}
                 onChange={(e) => handleTickerChange(e.target.value)}
                 placeholder="e.g., AAPL or VOD.L"
-                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-cyan-500/50 focus:ring-cyan-500/20"
+                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20"
               />
             </div>
             <div className="space-y-2">
@@ -284,7 +284,7 @@ export default function TradeEntry() {
               value={formData.entry_price}
               onChange={(e) => handleChange("entry_price", e.target.value)}
               placeholder="0.00"
-              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400"
             />
           </div>
 
@@ -297,7 +297,7 @@ export default function TradeEntry() {
               value={formData.fill_price}
               onChange={(e) => handleChange("fill_price", e.target.value)}
               placeholder="Actual broker fill price"
-              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400"
             />
           </div>
 
@@ -325,10 +325,10 @@ export default function TradeEntry() {
                 value={formData.atr_value}
                 onChange={(e) => handleChange("atr_value", e.target.value)}
                 placeholder="For stop suggestion"
-                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400"
               />
               {formData.atr_value && costs.suggestedStop > 0 && (
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-400">
                   Suggested stop:{" "}
                   <span className="text-rose-400">
                     {costs.currencySymbol}{costs.suggestedStop.toFixed(2)}
@@ -345,7 +345,7 @@ export default function TradeEntry() {
                 value={formData.stop_price}
                 onChange={(e) => handleChange("stop_price", e.target.value)}
                 placeholder="0.00"
-                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+                className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400"
               />
             </div>
           </div>
@@ -370,7 +370,7 @@ export default function TradeEntry() {
               value={formData.shares}
               onChange={(e) => handleChange("shares", e.target.value)}
               placeholder="0"
-              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400"
             />
           </div>
 
@@ -385,13 +385,13 @@ export default function TradeEntry() {
                 }
               }}
               placeholder="Why are you entering this trade? What's your thesis?"
-              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-cyan-500/50 focus:ring-cyan-500/20 resize-none"
+              className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20 resize-none"
               rows={4}
             />
             <div className="flex justify-end">
               <span className={cn(
                 "text-xs",
-                formData.entry_note.length > 450 ? "text-rose-400" : "text-slate-500"
+                formData.entry_note.length > 450 ? "text-rose-400" : "text-slate-400"
               )}>
                 {formData.entry_note.length}/500
               </span>
@@ -433,7 +433,7 @@ export default function TradeEntry() {
                     onBlur={() => setTimeout(() => setShowTagSuggestions(false), 200)}
                     onKeyDown={handleTagInputKeyDown}
                     placeholder="Type to add tags..."
-                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-cyan-500/50 focus:ring-cyan-500/20"
+                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20"
                   />
                   {showTagSuggestions && filteredTags.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl max-h-48 overflow-auto">
@@ -452,7 +452,7 @@ export default function TradeEntry() {
               )}
 
               {formData.tags.length >= 5 && (
-                <p className="text-xs text-slate-500">Maximum 5 tags reached</p>
+                <p className="text-xs text-slate-400">Maximum 5 tags reached</p>
               )}
             </div>
           </div>
@@ -471,7 +471,7 @@ export default function TradeEntry() {
               <Calculator className="w-5 h-5 text-cyan-400" />
             </div>
             <h3 className="font-semibold text-white">Estimated Cost</h3>
-            <span className="text-xs text-slate-500 ml-1">(preview — actual fees calculated on submission)</span>
+            <span className="text-xs text-slate-400 ml-1">(preview — actual fees calculated on submission)</span>
           </div>
 
           <div className="space-y-3">
@@ -480,7 +480,7 @@ export default function TradeEntry() {
               <span className="text-white">
                 {costs.currencySymbol}{costs.grossValue.toFixed(2)}
                 {formData.market === "US" && (
-                  <span className="text-slate-500 ml-1">(£{costs.grossValueGBP.toFixed(2)})</span>
+                  <span className="text-slate-400 ml-1">(£{costs.grossValueGBP.toFixed(2)})</span>
                 )}
               </span>
             </div>

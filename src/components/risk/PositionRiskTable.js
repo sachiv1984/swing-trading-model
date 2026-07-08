@@ -48,7 +48,7 @@ export default function PositionRiskTable({ positions = [], error }) {
   if (sorted.length === 0) {
     return (
       <div className="rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 p-8 text-center">
-        <p className="text-slate-500 text-sm">No open positions to display.</p>
+        <p className="text-slate-400 text-sm">No open positions to display.</p>
       </div>
     );
   }
@@ -60,14 +60,14 @@ export default function PositionRiskTable({ positions = [], error }) {
           <ArrowDown className="w-5 h-5 text-violet-400" />
         </div>
         <h3 className="text-sm font-medium text-slate-300">Position Risk</h3>
-        <span className="ml-auto text-xs text-slate-500">{sorted.length} open</span>
+        <span className="ml-auto text-xs text-slate-400">{sorted.length} open</span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-700/30">
               {["Ticker", "Status", "Entry Price", "Current (GBP)", "Stop Price", "Stop Dist %", "Held"].map((h) => (
-                <th key={h} className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                <th key={h} className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                   {h}
                 </th>
               ))}

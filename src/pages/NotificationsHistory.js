@@ -314,7 +314,7 @@ export default function NotificationsHistory() {
                               <div className="font-mono text-xs text-slate-300 space-y-1 pt-1">
                                 {formatValuesExpanded(ev.values_compared).map(({ label, value, isNegative }) => (
                                   <div key={label} className="flex gap-3">
-                                    <span className="text-slate-500 whitespace-pre">{label}</span>
+                                    <span className="text-slate-400 whitespace-pre">{label}</span>
                                     <span className={isNegative ? "text-amber-400" : undefined}>{String(value)}</span>
                                   </div>
                                 ))}

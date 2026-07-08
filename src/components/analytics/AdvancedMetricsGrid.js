@@ -32,7 +32,7 @@ export default function AdvancedMetricsGrid({ metrics, executiveMetrics }) {
                     {metric.value}{metric.suffix || ""}
                   </p>
                   {metric.target && (
-                    <span className="text-xs text-slate-500">target {metric.target}</span>
+                    <span className="text-xs text-slate-400">target {metric.target}</span>
                   )}
                 </div>
               </div>

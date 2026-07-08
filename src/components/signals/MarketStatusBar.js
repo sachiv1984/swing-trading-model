@@ -22,7 +22,7 @@ export default function MarketStatusBar({ spyStatus, ftseStatus, fxRate, availab
             </>
           )}
         </div>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="text-xs text-slate-400 mt-1">
           ${spyStatus?.price.toFixed(2)} vs MA200
         </p>
       </div>
@@ -45,7 +45,7 @@ export default function MarketStatusBar({ spyStatus, ftseStatus, fxRate, availab
             </>
           )}
         </div>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="text-xs text-slate-400 mt-1">
           £{ftseStatus?.price.toFixed(2)} vs MA200
         </p>
       </div>

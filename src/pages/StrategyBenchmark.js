@@ -105,7 +105,7 @@ function MarketBadge({ market }) {
 
 function ExitBadge({ reason }) {
   const config = EXIT_REASON_BADGE[reason] || null;
-  if (!config) return <span className="text-xs text-slate-500">{reason || '—'}</span>;
+  if (!config) return <span className="text-xs text-slate-400">{reason || '—'}</span>;
   return (
     <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${config.cls}`}>
       {config.label}
@@ -123,7 +123,7 @@ function Panel0({ openPositions, loading, error, showMarketBadge }) {
     return (
       <section data-testid="benchmark-panel-0">
         <h2 className="text-sm font-semibold text-white mb-3">Open Positions</h2>
-        <p className="text-sm text-slate-500" data-testid="benchmark-open-positions-error">
+        <p className="text-sm text-slate-400" data-testid="benchmark-open-positions-error">
           Open positions temporarily unavailable.
         </p>
       </section>
@@ -162,7 +162,7 @@ function Panel0({ openPositions, loading, error, showMarketBadge }) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm" data-testid="benchmark-open-positions-table">
           <thead>
-            <tr className="text-xs text-slate-500 border-b border-slate-700">
+            <tr className="text-xs text-slate-400 border-b border-slate-700">
               <th scope="col" className="text-left py-2 pr-3">Ticker</th>
               <th scope="col" className="text-left py-2 pr-3">Entry</th>
               <th scope="col" className="text-right py-2 pr-3">Entry £</th>
@@ -209,14 +209,14 @@ function Panel0({ openPositions, loading, error, showMarketBadge }) {
 function StatCard({ label, backtest, actual }) {
   return (
     <div className="bg-slate-800 rounded-lg p-3 border border-slate-700">
-      <p className="text-xs text-slate-500 mb-2">{label}</p>
+      <p className="text-xs text-slate-400 mb-2">{label}</p>
       <div className="flex items-end justify-between gap-2">
         <div>
-          <p className="text-xs text-slate-500 mb-0.5">Backtest</p>
+          <p className="text-xs text-slate-400 mb-0.5">Backtest</p>
           <p className="text-base font-semibold text-white">{backtest}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-slate-500 mb-0.5">Actual</p>
+          <p className="text-xs text-slate-400 mb-0.5">Actual</p>
           <p className="text-base font-semibold text-slate-400">{actual}</p>
         </div>
       </div>
@@ -235,14 +235,14 @@ function Panel1({ backtest, actual, lastImportedAt }) {
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-sm font-semibold text-white">Performance Parity</h2>
         {lastImportedAt && (
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-slate-400">
             Last updated {new Date(lastImportedAt).toLocaleDateString('en-GB')}
           </span>
         )}
       </div>
 
       {!backtest ? (
-        <p className="text-sm text-slate-500 italic" data-testid="benchmark-no-data">
+        <p className="text-sm text-slate-400 italic" data-testid="benchmark-no-data">
           No backtest data imported yet. Run{' '}
           <code className="text-xs bg-slate-800 px-1 py-0.5 rounded">python import_backtest.py</code>{' '}
           to import production_strategy.py results.
@@ -289,7 +289,7 @@ function Panel2({ rows }) {
     return (
       <section data-testid="benchmark-panel-2">
         <h2 className="text-sm font-semibold text-white mb-3">Yearly Breakdown</h2>
-        <p className="text-sm text-slate-500 italic">No yearly data available.</p>
+        <p className="text-sm text-slate-400 italic">No yearly data available.</p>
       </section>
     );
   }
@@ -300,7 +300,7 @@ function Panel2({ rows }) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm" data-testid="benchmark-yearly-table">
           <thead>
-            <tr className="text-xs text-slate-500 border-b border-slate-700">
+            <tr className="text-xs text-slate-400 border-b border-slate-700">
               <th className="text-left py-2 pr-4">Year</th>
               <th className="text-right py-2 pr-4">Trades</th>
               <th className="text-right py-2 pr-4">Win Rate</th>
@@ -399,14 +399,14 @@ function Panel3({ backtestTrades, actualTrades, toggleMode, onToggleMode }) {
       </div>
 
       {rows.length === 0 ? (
-        <p className="text-sm text-slate-500 italic" data-testid="benchmark-trades-empty">
+        <p className="text-sm text-slate-400 italic" data-testid="benchmark-trades-empty">
           No trades for the selected filter.
         </p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm" data-testid="benchmark-trade-table">
             <thead>
-              <tr className="text-xs text-slate-500 border-b border-slate-700">
+              <tr className="text-xs text-slate-400 border-b border-slate-700">
                 <th className="text-left py-2 pr-3">Ticker</th>
                 <th className="text-left py-2 pr-3">Entry</th>
                 <th className="text-left py-2 pr-3">Exit</th>
@@ -495,7 +495,7 @@ export default function StrategyBenchmark() {
           <BarChart2 className="w-5 h-5 text-slate-400" />
           <div>
             <h1 className="text-lg font-semibold text-white">Strategy Benchmark</h1>
-            <p className="text-xs text-slate-500">Compare live trades against production backtest results</p>
+            <p className="text-xs text-slate-400">Compare live trades against production backtest results</p>
           </div>
         </div>
         <button
@@ -516,7 +516,7 @@ export default function StrategyBenchmark() {
       >
         {/* Year filter */}
         <div className="flex items-center gap-2">
-          <label className="text-xs text-slate-500 shrink-0">Year</label>
+          <label className="text-xs text-slate-400 shrink-0">Year</label>
           <div className="relative">
             <select
               value={year == null ? 'all' : String(year)}
@@ -535,7 +535,7 @@ export default function StrategyBenchmark() {
 
         {/* Market filter */}
         <div className="flex items-center gap-2">
-          <label className="text-xs text-slate-500 shrink-0">Market</label>
+          <label className="text-xs text-slate-400 shrink-0">Market</label>
           <div className="flex gap-1">
             {MARKETS.map(m => (
               <button

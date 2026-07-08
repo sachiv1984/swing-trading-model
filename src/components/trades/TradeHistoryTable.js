@@ -42,7 +42,7 @@ function formatR(r) {
  * Binary profit/loss — drawdown thresholds do NOT apply here.
  */
 function rColour(r) {
-  if (r === null) return "text-slate-500";
+  if (r === null) return "text-slate-400";
   if (r > 0)  return "text-emerald-400";
   if (r < 0)  return "text-rose-400";
   return "text-slate-300";
@@ -61,7 +61,7 @@ function formatSlippage(pct) {
 }
 
 function slippageColour(pct) {
-  if (pct === null || pct === undefined) return "text-slate-500";
+  if (pct === null || pct === undefined) return "text-slate-400";
   if (pct < 0) return "text-emerald-400";
   if (pct > 0) return "text-rose-400";
   return "text-slate-300";
@@ -298,7 +298,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
   if (!trades || trades.length === 0) {
     return (
       <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-12 text-center">
-        <p className="text-slate-500">No trade history yet</p>
+        <p className="text-slate-400">No trade history yet</p>
       </div>
     );
   }
@@ -480,7 +480,7 @@ export default function TradeHistoryTable({ trades, tradesForCharts = [] }) {
                 <TableCell className={cn(TD_CLASS, "text-right")}>
                   <span className={cn(
                     "font-medium tabular-nums",
-                    trade.fee_drag_pct != null ? "text-amber-400" : "text-slate-500"
+                    trade.fee_drag_pct != null ? "text-amber-400" : "text-slate-400"
                   )}>
                     {formatFeeDrag(trade.fee_drag_pct)}
                   </span>

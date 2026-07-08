@@ -115,11 +115,11 @@ export default function PositionModal({ position, open, onClose, onSave }) {
           {/* Summary Stats */}
           <div className="grid grid-cols-3 gap-3">
             <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
-              <p className="text-xs text-slate-500 mb-1">Days Held</p>
+              <p className="text-xs text-slate-400 mb-1">Days Held</p>
               <p className="text-lg font-semibold text-white">{daysHeld}</p>
             </div>
             <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
-              <p className="text-xs text-slate-500 mb-1">Shares</p>
+              <p className="text-xs text-slate-400 mb-1">Shares</p>
               <p className="text-lg font-semibold text-white">{shares}</p>
             </div>
             <div className={cn(
@@ -128,7 +128,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                 ? "bg-emerald-500/10 border-emerald-500/30" 
                 : "bg-rose-500/10 border-rose-500/30"
             )}>
-              <p className="text-xs text-slate-500 mb-1">P&L</p>
+              <p className="text-xs text-slate-400 mb-1">P&L</p>
               <p className={cn(
                 "text-lg font-semibold",
                 isProfit ? "text-emerald-400" : "text-rose-400"
@@ -143,19 +143,19 @@ export default function PositionModal({ position, open, onClose, onSave }) {
             <h4 className="text-sm font-medium text-slate-400">Entry Details</h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-slate-500">Entry Date</p>
+                <p className="text-xs text-slate-400">Entry Date</p>
                 <p className="text-sm text-white">{format(new Date(position.entry_date), "MMM d, yyyy")}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-500">Entry Price</p>
+                <p className="text-xs text-slate-400">Entry Price</p>
                 <p className="text-sm text-white">{currencySymbol}{entryPriceNative.toFixed(2)}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-500">ATR Value</p>
+                <p className="text-xs text-slate-400">ATR Value</p>
                 <p className="text-sm text-white">{position.atr_value?.toFixed(2) || "—"}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-500">FX Rate</p>
+                <p className="text-xs text-slate-400">FX Rate</p>
                 <p className="text-sm text-white">{position.fx_rate?.toFixed(4) || "1.0000"}</p>
               </div>
             </div>
@@ -188,7 +188,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                     <p className="text-sm text-slate-300 whitespace-pre-wrap">{journalData.entry_note}</p>
                   </div>
                 ) : (
-                  <p className="text-sm text-slate-500 italic">No entry note</p>
+                  <p className="text-sm text-slate-400 italic">No entry note</p>
                 )}
 
                 {journalData.tags.length > 0 && (
@@ -217,13 +217,13 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                       }
                     }}
                     placeholder="Why are you entering this trade? What's your thesis?"
-                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-cyan-500/50 resize-none"
+                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400 focus:border-cyan-500/50 resize-none"
                     rows={4}
                   />
                   <div className="flex justify-end">
                     <span className={cn(
                       "text-xs",
-                      journalData.entry_note.length > 450 ? "text-rose-400" : "text-slate-500"
+                      journalData.entry_note.length > 450 ? "text-rose-400" : "text-slate-400"
                     )}>
                       {journalData.entry_note.length}/500
                     </span>
@@ -266,7 +266,7 @@ export default function PositionModal({ position, open, onClose, onSave }) {
                         onBlur={() => setTimeout(() => setShowTagSuggestions(false), 200)}
                         onKeyDown={handleTagInputKeyDown}
                         placeholder="Type to add tags..."
-                        className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-cyan-500/50"
+                        className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400 focus:border-cyan-500/50"
                       />
 
                       {showTagSuggestions && filteredTags.length > 0 && (

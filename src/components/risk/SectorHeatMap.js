@@ -18,7 +18,7 @@ function SectorTile({ sector_name, position_count, exposure_pct }) {
       <span className="text-lg font-semibold text-white leading-tight">
         {exposure_pct.toFixed(1)}%
       </span>
-      <span className="text-xs text-slate-500">
+      <span className="text-xs text-slate-400">
         {position_count} {position_count === 1 ? "position" : "positions"}
       </span>
     </div>
@@ -56,7 +56,7 @@ export default function SectorHeatMap() {
     return (
       <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
         <h3 className="text-sm font-medium text-slate-300 mb-2">Sector Concentration</h3>
-        <p className="text-sm text-slate-500">No open positions.</p>
+        <p className="text-sm text-slate-400">No open positions.</p>
       </div>
     );
   }

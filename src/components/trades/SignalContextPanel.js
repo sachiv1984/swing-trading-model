@@ -38,12 +38,12 @@ export default function SignalContextPanel({ signal, market }) {
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         <div>
-          <p className="text-xs text-slate-500 mb-0.5">Rank</p>
+          <p className="text-xs text-slate-400 mb-0.5">Rank</p>
           <p className="text-sm font-semibold text-white">#{signal.rank}</p>
         </div>
 
         <div>
-          <p className="text-xs text-slate-500 mb-0.5">Momentum</p>
+          <p className="text-xs text-slate-400 mb-0.5">Momentum</p>
           <p className={cn(
             "text-sm font-semibold flex items-center gap-1",
             signal.momentum_percent >= 0 ? "text-emerald-400" : "text-red-400"
@@ -55,7 +55,7 @@ export default function SignalContextPanel({ signal, market }) {
 
         {showMA && (
           <div>
-            <p className="text-xs text-slate-500 mb-0.5">vs 200-day MA</p>
+            <p className="text-xs text-slate-400 mb-0.5">vs 200-day MA</p>
             <p className={cn(
               "text-sm font-semibold",
               maPercent >= 0 ? "text-emerald-400" : "text-amber-400"
@@ -67,7 +67,7 @@ export default function SignalContextPanel({ signal, market }) {
 
         {signal.regime != null && (
           <div>
-            <p className="text-xs text-slate-500 mb-0.5">Regime</p>
+            <p className="text-xs text-slate-400 mb-0.5">Regime</p>
             <span className={cn(
               "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium",
               regimeOn
@@ -81,7 +81,7 @@ export default function SignalContextPanel({ signal, market }) {
 
         {signal.atr_value != null && (
           <div>
-            <p className="text-xs text-slate-500 mb-0.5">ATR (14d)</p>
+            <p className="text-xs text-slate-400 mb-0.5">ATR (14d)</p>
             <p className="text-sm font-semibold text-white">
               {currencySymbol}{signal.atr_value.toFixed(2)}
             </p>
@@ -90,7 +90,7 @@ export default function SignalContextPanel({ signal, market }) {
 
         {suggestedStop != null && (
           <div>
-            <p className="text-xs text-slate-500 mb-0.5">Suggested stop</p>
+            <p className="text-xs text-slate-400 mb-0.5">Suggested stop</p>
             <p className="text-sm font-semibold text-rose-400">
               {currencySymbol}{suggestedStop.toFixed(2)}
             </p>

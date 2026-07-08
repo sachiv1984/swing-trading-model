@@ -223,7 +223,7 @@ export default function UnderwaterChart({ trades }) {
         ) : (
           <>
             {hintVisible && (
-              <p className="text-xs text-slate-500 text-center mb-2 transition-opacity duration-300">
+              <p className="text-xs text-slate-400 text-center mb-2 transition-opacity duration-300">
                 Scroll to zoom
               </p>
             )}

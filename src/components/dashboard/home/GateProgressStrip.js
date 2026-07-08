@@ -25,7 +25,7 @@ export default function GateProgressStrip() {
         data-testid="gate-progress-strip"
       >
         <span className="text-sm text-emerald-400 font-medium">Quality insights unlocked ✓</span>
-        <span className="text-xs text-slate-500">
+        <span className="text-xs text-slate-400">
           {closed} closed trades
         </span>
       </div>
@@ -41,7 +41,7 @@ export default function GateProgressStrip() {
         <span className="text-xs text-slate-400">
           {closed}/{threshold} closed trades · {threshold - closed} more to unlock quality insights
         </span>
-        <span className="text-xs text-slate-500">{Math.round(progressPct)}%</span>
+        <span className="text-xs text-slate-400">{Math.round(progressPct)}%</span>
       </div>
       <div className="h-1.5 rounded-full bg-slate-700 overflow-hidden">
         <div

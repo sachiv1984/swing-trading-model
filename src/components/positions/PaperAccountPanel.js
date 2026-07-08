@@ -83,16 +83,16 @@ export default function PaperAccountPanel() {
       {expanded && (
         <div className="px-4 pb-4">
           {isError ? (
-            <p className="text-xs text-slate-500 py-2">Paper tracking temporarily unavailable.</p>
+            <p className="text-xs text-slate-400 py-2">Paper tracking temporarily unavailable.</p>
           ) : !hasPositions ? (
-            <p className="text-xs text-slate-500 py-2">
+            <p className="text-xs text-slate-400 py-2">
               No paper positions tracked. Open a US market position to begin tracking.
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-xs" data-testid="paper-positions-table">
                 <thead>
-                  <tr className="text-slate-500 border-b border-slate-700/50">
+                  <tr className="text-slate-400 border-b border-slate-700/50">
                     <th className="text-left py-2 pr-4 font-medium">Ticker</th>
                     <th className="text-right py-2 pr-4 font-medium">Paper Entry</th>
                     <th className="text-right py-2 pr-4 font-medium">Current</th>

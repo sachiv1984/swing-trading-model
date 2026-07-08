@@ -89,7 +89,7 @@ export default function StatsCard({
           </p>
           <p className="text-lg lg:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{value}</p>
           {subtitle && (
-            <p className="text-xs text-slate-500 dark:text-slate-500 truncate">{subtitle}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-400 truncate">{subtitle}</p>
           )}
           {trendValue && (
             <div className={cn(

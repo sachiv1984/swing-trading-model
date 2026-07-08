@@ -271,7 +271,7 @@ export default function Watchlist() {
                           {entry.ticker}
                         </span>
                         {entry.company_name && (
-                          <span className="block text-slate-500 text-xs truncate max-w-[140px]">
+                          <span className="block text-slate-400 text-xs truncate max-w-[140px]">
                             {entry.company_name}
                           </span>
                         )}
@@ -340,7 +340,7 @@ export default function Watchlist() {
                           onClick={() =>
                             setModal({ mode: "edit-confirm", entry })
                           }
-                          className="h-7 w-7 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10"
+                          className="h-7 w-7 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -361,7 +361,7 @@ export default function Watchlist() {
                                 ) : (
                                   <span className="text-slate-200 text-xs">{h.headline}</span>
                                 )}
-                                <span className="text-slate-500 text-xs">
+                                <span className="text-slate-400 text-xs">
                                   {h.source ? `${h.source} · ` : ""}
                                   {h.published_at
                                     ? new Date(h.published_at).toLocaleDateString()
@@ -371,11 +371,11 @@ export default function Watchlist() {
                             ))}
                           </ul>
                         ) : (
-                          <p className="text-slate-500 text-xs">No recent news available for {entry.ticker}.</p>
+                          <p className="text-slate-400 text-xs">No recent news available for {entry.ticker}.</p>
                         )}
                         <button
                           onClick={() => setExpandedNews((prev) => ({ ...prev, [entry.ticker]: false }))}
-                          className="mt-2 text-slate-500 hover:text-slate-300 text-xs underline"
+                          className="mt-2 text-slate-400 hover:text-slate-300 text-xs underline"
                         >
                           Close
                         </button>

@@ -358,11 +358,11 @@ function TaxYearReport() {
                         <td className="px-3 py-3 text-slate-300">{trade.holding_days}</td>
                         <td className="px-3 py-3 text-slate-300">
                           {priceSymbol}{Number(trade.entry_price_native ?? 0).toFixed(2)}
-                          <span className="text-xs text-slate-500 ml-1">{currency}</span>
+                          <span className="text-xs text-slate-400 ml-1">{currency}</span>
                         </td>
                         <td className="px-3 py-3 text-slate-300">
                           {priceSymbol}{Number(trade.exit_price_native ?? 0).toFixed(2)}
-                          <span className="text-xs text-slate-500 ml-1">{currency}</span>
+                          <span className="text-xs text-slate-400 ml-1">{currency}</span>
                         </td>
                         <td className="px-3 py-3 text-slate-300">{trade.shares}</td>
                         <td className="px-3 py-3 text-slate-300">{formatGBP(trade.total_cost_gbp)}</td>
@@ -395,14 +395,14 @@ function TaxYearReport() {
               <p className={`text-2xl font-bold mb-3 ${(reportData.estimated_unrealised_pnl ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
                 {formatGBP(reportData.estimated_unrealised_pnl)}
               </p>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-xs text-slate-400 leading-relaxed">
                 {reportData.unrealised_note}
               </p>
             </div>
           )}
 
           {/* Scope Note */}
-          <p className="text-xs text-slate-500 text-center pb-2">
+          <p className="text-xs text-slate-400 text-center pb-2">
             UK tax year only (6 April to 5 April). Verify all figures against your broker records and seek qualified tax advice before filing.
           </p>
         </>
@@ -444,7 +444,7 @@ function MonthlyPnlTable() {
           <p className="text-xs text-slate-400 mt-0.5">Current and prior calendar year. Only months with closed trades shown.</p>
         </div>
         {rows.length === 0 ? (
-          <div className="px-6 py-10 text-center text-slate-500 text-sm">No closed trades in scope.</div>
+          <div className="px-6 py-10 text-center text-slate-400 text-sm">No closed trades in scope.</div>
         ) : (
           <table className="w-full text-sm">
             <thead>
@@ -484,7 +484,7 @@ function MonthlyPnlTable() {
           </p>
         </div>
         {compliance === null ? (
-          <div className="px-6 py-6 text-center text-slate-500 text-sm">Compliance data unavailable.</div>
+          <div className="px-6 py-6 text-center text-slate-400 text-sm">Compliance data unavailable.</div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-slate-700/30">
             <div data-testid="compliance-pass-rate" className="bg-slate-800/50 px-5 py-4">

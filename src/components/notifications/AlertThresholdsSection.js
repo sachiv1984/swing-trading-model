@@ -31,7 +31,7 @@ function ThresholdText({ rule }) {
   const val = rule.threshold_percent ?? 5.0;
   const isDefault = val === 5.0;
   return (
-    <span className="text-xs text-slate-500 mt-0.5">
+    <span className="text-xs text-slate-400 mt-0.5">
       Within {val}% of stop{isDefault ? " (default)" : ""}
     </span>
   );
@@ -120,14 +120,14 @@ function CreateForm({ onSave, onCancel }) {
             onChange={(e) => handleThresholdChange(e.target.value)}
             placeholder="5"
             className={cn(
-              'bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 h-9 w-40',
+              'bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400 h-9 w-40',
               validationError && '!border-rose-500/60'
             )}
           />
           {validationError ? (
             <p className="text-xs text-rose-400">{validationError}</p>
           ) : (
-            <p className="text-xs text-slate-500">Leave blank to use the default (5%).</p>
+            <p className="text-xs text-slate-400">Leave blank to use the default (5%).</p>
           )}
         </div>
       )}
@@ -211,14 +211,14 @@ function EditForm({ rule, onSave, onCancel }) {
             onChange={(e) => handleThresholdChange(e.target.value)}
             placeholder="5"
             className={cn(
-              "bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 h-9 w-40",
+              "bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400 h-9 w-40",
               validationError && "!border-rose-500/60"
             )}
           />
           {validationError ? (
             <p className="text-xs text-rose-400">{validationError}</p>
           ) : (
-            <p className="text-xs text-slate-500">Leave blank to use the default (5%).</p>
+            <p className="text-xs text-slate-400">Leave blank to use the default (5%).</p>
           )}
         </div>
       )}
@@ -281,7 +281,7 @@ export default function AlertThresholdsSection() {
       {/* Section heading */}
       <div className="px-1">
         <h2 className="text-base font-semibold text-white">Alert Thresholds</h2>
-        <p className="text-sm text-slate-500 mt-0.5">Configure trigger thresholds for individual alert rules.</p>
+        <p className="text-sm text-slate-400 mt-0.5">Configure trigger thresholds for individual alert rules.</p>
       </div>
 
       <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 divide-y divide-slate-700/50 overflow-hidden">

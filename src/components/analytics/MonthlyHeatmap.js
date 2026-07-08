@@ -199,7 +199,7 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
                         <td className="px-4 py-3 text-sm text-right text-slate-300">
                           {r !== null
                             ? <span className={r >= 0 ? "text-emerald-400" : "text-rose-400"}>{r.toFixed(2)}R</span>
-                            : <span className="text-slate-500">—</span>
+                            : <span className="text-slate-400">—</span>
                           }
                         </td>
                         <td className="px-4 py-3 text-sm text-slate-300">

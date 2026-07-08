@@ -11,7 +11,7 @@
  *   Data value (prominent): text-xl font-semibold text-white (or colour variant)
  *   Data value (normal):   text-sm text-slate-200
  *   Chip / badge:          text-xs font-medium
- *   Muted caption:         text-xs text-slate-500
+ *   Muted caption:         text-xs text-slate-400
  *
  * Infrastructure: page.route() network interception. No live backend required.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/research/AAPL').
@@ -164,17 +164,17 @@ test.describe('SC-RV-TYP-01 — Research page typography conforms to design_syst
     await expect(atrLabel).toHaveClass(/text-slate-400/);
   });
 
-  test('News source caption uses text-xs text-slate-500', async ({ page }) => {
+  test('News source caption uses text-xs text-slate-400', async ({ page }) => {
     await setupRoutes(page);
     await page.goto(`/#/research/${TICKER}`);
 
     await expect(page.getByText('Recent News')).toBeVisible({ timeout: 8000 });
 
     // News source/timestamp line — muted caption class
-    const caption = page.locator('p.text-xs.text-slate-500').first();
+    const caption = page.locator('p.text-xs.text-slate-400').first();
     await expect(caption).toBeVisible();
     await expect(caption).toHaveClass(/text-xs/);
-    await expect(caption).toHaveClass(/text-slate-500/);
+    await expect(caption).toHaveClass(/text-slate-400/);
   });
 
 });

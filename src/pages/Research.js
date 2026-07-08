@@ -213,7 +213,7 @@ export default function Research() {
             </span>
           )}
           {r?.updated_at && (
-            <span className="text-slate-500">Updated {relativeTime(r.updated_at)}</span>
+            <span className="text-slate-400">Updated {relativeTime(r.updated_at)}</span>
           )}
         </div>
       )}
@@ -407,7 +407,7 @@ export default function Research() {
                 ) : (
                   <p className="text-sm text-slate-200">{h.headline || h.title}</p>
                 )}
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-400 mt-0.5">
                   {h.source ? `${h.source} · ` : ""}
                   {h.published_at ? relativeTime(h.published_at) : ""}
                 </p>
@@ -415,7 +415,7 @@ export default function Research() {
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-slate-500">No recent news available.</p>
+          <p className="text-sm text-slate-400">No recent news available.</p>
         )}
       </div>
     </div>

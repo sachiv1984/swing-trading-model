@@ -44,7 +44,7 @@ export default function NotificationRow({ notification, onMarkRead }) {
             <p className="text-xs text-slate-400 mt-0.5 truncate">{notification.message}</p>
           </div>
           <span
-            className="text-xs text-slate-500 shrink-0 mt-0.5 cursor-default"
+            className="text-xs text-slate-400 shrink-0 mt-0.5 cursor-default"
             title={notification.created_at}
           >
             {relativeTime(notification.created_at)}

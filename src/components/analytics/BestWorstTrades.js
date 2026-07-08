@@ -79,7 +79,7 @@ function TradeCard({ trade, rValue, isBest }) {
       {/* Exit reason */}
       {trade.exitReason && (
         <div className="mt-1">
-          <span className="text-xs text-slate-500 capitalize">
+          <span className="text-xs text-slate-400 capitalize">
             {trade.exitReason.replace(/_/g, " ")}
           </span>
         </div>
@@ -115,7 +115,7 @@ function Panel({ title, trades, isBest, emptyMessage }) {
       {/* Cards or empty state */}
       {trades.length === 0 ? (
         <div className="flex items-center justify-center py-8">
-          <p className="text-slate-500 text-sm">{emptyMessage}</p>
+          <p className="text-slate-400 text-sm">{emptyMessage}</p>
         </div>
       ) : (
         <div className="space-y-3">

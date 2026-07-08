@@ -522,7 +522,7 @@ export default function SystemStatus() {
             <div className="text-center">
               <RefreshCw className="w-10 h-10 text-slate-400 animate-spin mx-auto mb-3" />
               <p className="text-slate-400">Running endpoint tests...</p>
-              <p className="text-slate-500 text-sm mt-1">This may take 10-30 seconds</p>
+              <p className="text-slate-400 text-sm mt-1">This may take 10-30 seconds</p>
             </div>
           </div>
         ) : !testResults ? (
@@ -530,7 +530,7 @@ export default function SystemStatus() {
             <div className="text-center">
               <Play className="w-10 h-10 text-slate-400 mx-auto mb-3" />
               <p className="text-slate-400">Click 'Run Tests' to verify all endpoints</p>
-              <p className="text-slate-500 text-sm mt-1">Tests {totalTests || '80'} endpoints</p>
+              <p className="text-slate-400 text-sm mt-1">Tests {totalTests || '80'} endpoints</p>
             </div>
           </div>
         ) : (
@@ -668,7 +668,7 @@ export default function SystemStatus() {
             <div className="text-center">
               <RefreshCw className="w-10 h-10 text-slate-400 animate-spin mx-auto mb-3" />
               <p className="text-slate-400">Running validation checks...</p>
-              <p className="text-slate-500 text-sm mt-1">Validating calculations...</p>
+              <p className="text-slate-400 text-sm mt-1">Validating calculations...</p>
             </div>
           </div>
         ) : !validationResults ? (
@@ -676,7 +676,7 @@ export default function SystemStatus() {
             <div className="text-center">
               <Calculator className="w-10 h-10 text-slate-400 mx-auto mb-3" />
               <p className="text-slate-400">Click 'Run Validation' to verify calculations</p>
-              <p className="text-slate-500 text-sm mt-1">Validates 12 metrics</p>
+              <p className="text-slate-400 text-sm mt-1">Validates 12 metrics</p>
               <Button
                 onClick={() => runValidation()}
                 className="mt-4 bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-500 hover:to-violet-500"
@@ -776,12 +776,12 @@ export default function SystemStatus() {
                           Calculation Details
                         </h4>
                         <div className="text-xs text-slate-400 bg-slate-900/50 p-3 rounded space-y-1">
-                          <p><span className="text-slate-500">Formula:</span> {validation.formula}</p>
+                          <p><span className="text-slate-400">Formula:</span> {validation.formula}</p>
                           {validation.method && (
-                            <p><span className="text-slate-500">Method:</span> {validation.method}</p>
+                            <p><span className="text-slate-400">Method:</span> {validation.method}</p>
                           )}
                           {validation.data_points && (
-                            <p><span className="text-slate-500">Data Points:</span> {validation.data_points}</p>
+                            <p><span className="text-slate-400">Data Points:</span> {validation.data_points}</p>
                           )}
                         </div>
                       </motion.div>

@@ -42,7 +42,7 @@ export default function SetupQualityScorePanel({ ticker }) {
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className="text-slate-500 hover:text-slate-300 transition-colors"
+            className="text-slate-400 hover:text-slate-300 transition-colors"
             aria-label={expanded ? "Collapse details" : "Expand details"}
           >
             {expanded ? (
@@ -65,7 +65,7 @@ export default function SetupQualityScorePanel({ ticker }) {
         >
           Insufficient trade history (&lt; {MIN_TRADES} trades) — score not yet available
           {data.current_trades != null && (
-            <span className="ml-1 text-slate-500">({data.current_trades}/{MIN_TRADES})</span>
+            <span className="ml-1 text-slate-400">({data.current_trades}/{MIN_TRADES})</span>
           )}
         </p>
       )}
@@ -93,15 +93,15 @@ export default function SetupQualityScorePanel({ ticker }) {
               className="mt-3 grid grid-cols-3 gap-3 text-xs"
             >
               <div>
-                <p className="text-slate-500 mb-0.5">Trades</p>
+                <p className="text-slate-400 mb-0.5">Trades</p>
                 <p className="text-slate-200 font-medium">{data.matching_trades}</p>
               </div>
               <div>
-                <p className="text-slate-500 mb-0.5">Win Rate</p>
+                <p className="text-slate-400 mb-0.5">Win Rate</p>
                 <p className="text-slate-200 font-medium">{data.win_rate}%</p>
               </div>
               <div>
-                <p className="text-slate-500 mb-0.5">Avg Return</p>
+                <p className="text-slate-400 mb-0.5">Avg Return</p>
                 <p className="text-slate-200 font-medium">
                   {data.average_pnl_pct != null ? `${data.average_pnl_pct}%` : "—"}
                 </p>

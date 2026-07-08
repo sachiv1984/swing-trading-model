@@ -16,7 +16,7 @@ export default function RecentTradesWidget({ positions }) {
       </div>
       
       {recentTrades.length === 0 ? (
-        <div className="text-center py-8 text-slate-500">
+        <div className="text-center py-8 text-slate-400">
           <p>No recent trades</p>
         </div>
       ) : (
@@ -38,7 +38,7 @@ export default function RecentTradesWidget({ positions }) {
                 </div>
                 <div>
                   <p className="font-medium text-slate-900 dark:text-white">{trade.ticker?.replace(".L", "")}</p>
-                  <p className="text-xs text-slate-500">{trade.exit_date}</p>
+                  <p className="text-xs text-slate-400">{trade.exit_date}</p>
                 </div>
               </div>
               <div className="text-right">
@@ -48,7 +48,7 @@ export default function RecentTradesWidget({ positions }) {
                 )}>
                   {(trade.pnl || 0) >= 0 ? "+" : ""}£{(trade.pnl || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </p>
-                <p className="text-xs text-slate-500">{trade.shares} shares</p>
+                <p className="text-xs text-slate-400">{trade.shares} shares</p>
               </div>
             </motion.div>
           ))}

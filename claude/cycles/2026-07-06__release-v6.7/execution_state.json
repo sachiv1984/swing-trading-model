@@ -102,12 +102,12 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-07-06__release-v6.7/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/e2e/secondary-text-contrast.spec.js"],
       "stories": {
         "ST-01": {
           "title": "Dark-theme secondary-text contrast fix (BLG-FE-87)",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 923,
           "branch": "exec/2026-07-06__release-v6.7/EPIC-01",
@@ -115,13 +115,13 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-07-06T22:00:00Z",
+          "acceptance_verified": true,
           "spec_references": ["docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md", "docs/specs/frontend/pages/positions.md", "docs/specs/frontend/pages/dashboard.md", "docs/specs/frontend/pages/reflections.md"],
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.pre-commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC-01: systematic replacement of bare text-slate-500 -> text-slate-400 across src/pages + src/components, per ux_spec.md §3/§6 canonical dark value (5.71:1 vs bg-slate-800, was 3.07:1 FAIL). Method: reproduced audit grep (contrast_audit_findings.md), 259 bare text-slate-500 instances found (matches audit's 262 within normal drift), 226 in-scope text instances replaced across 59 files, 33 icon-only instances (Lucide components, WCAG 1.4.11 scope per ux_spec.md §5) correctly excluded and left unchanged. Verified via full Babel/JSX parse of all 159 touched-directory files: 0 syntax errors. AC-02: spot-check computed in ux_spec.md §3 (text-slate-400 vs bg-slate-950/900/800 = worst case 5.71:1 vs bg-slate-800, PASS at 4.5:1 threshold) applies uniformly since all replaced instances are the same literal class -> class substitution; representative sample manually diff-reviewed: TradePlan.js, Settings.js, TradeHistory.js, StrategyCompliancePanel.js, AiChatWidget.js. AC-03: Playwright coverage added — tests/e2e/secondary-text-contrast.spec.js (SC-CTR-01a/01b), run locally and confirmed passing (2/2) against the actual fix: computed color resolves to rgb(148, 163, 184) [slate-400], not rgb(100, 116, 139) [slate-500]. Cross-spec selector check (LL-v3.2-P3-02, SC-06): scanned tests/e2e/ for .text-slate-500 selectors against elements this story modified (TradeHistoryTable.js rColour/slippageColour null-case, Research.js news caption) — found and fixed 3 stale selectors in the same commit: fee-drag-trade-history.spec.js, slippage-tracking.spec.js, research-typography.spec.js. All 3 files + secondary-text-contrast.spec.js re-run and confirmed passing after the fix."
         },
         "ST-02": {
           "title": "Light-theme secondary-text contrast fix (BLG-FE-88)",

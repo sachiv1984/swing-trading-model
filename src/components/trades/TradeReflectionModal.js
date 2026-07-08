@@ -27,7 +27,7 @@ function formatExitReason(reason) {
 function SummaryRow({ label, value }) {
   return (
     <div className="flex flex-col">
-      <span className="text-xs text-slate-500 mb-0.5">{label}</span>
+      <span className="text-xs text-slate-400 mb-0.5">{label}</span>
       <span className="text-sm font-medium text-white">{value ?? "—"}</span>
     </div>
   );
@@ -116,7 +116,7 @@ export default function TradeReflectionModal({ trade, open, onClose }) {
             <BookOpen className="w-5 h-5" />
             Trade Reflection — <span className="font-bold">{trade.ticker}</span>
           </DialogTitle>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-400 mt-0.5">
             Reflect on this trade to reinforce discipline and learning.
           </p>
         </DialogHeader>

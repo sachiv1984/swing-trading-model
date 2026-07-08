@@ -58,7 +58,7 @@ export default function MarketCorrelationSection() {
         </div>
         <div>
           <h3 className="text-sm font-semibold text-white">Market Correlation</h3>
-          <p className="text-xs text-slate-500">Per-position Pearson correlation vs benchmark</p>
+          <p className="text-xs text-slate-400">Per-position Pearson correlation vs benchmark</p>
         </div>
       </div>
 
@@ -72,7 +72,7 @@ export default function MarketCorrelationSection() {
           <span>Unable to load correlation data. Please try again later.</span>
         </div>
       ) : noPositions ? (
-        <p className="text-slate-500 text-sm py-4">No open positions to correlate.</p>
+        <p className="text-slate-400 text-sm py-4">No open positions to correlate.</p>
       ) : (
         <>
           {portfolioCorr && (
@@ -88,7 +88,7 @@ export default function MarketCorrelationSection() {
                   )}
                 </div>
               </div>
-              <p className="text-xs text-slate-500 text-right max-w-[140px]">
+              <p className="text-xs text-slate-400 text-right max-w-[140px]">
                 High correlation signals clustered risk
               </p>
             </div>
@@ -115,7 +115,7 @@ export default function MarketCorrelationSection() {
                       {row.correlation != null ? (
                         <SeverityBadge severity={row.severity} />
                       ) : (
-                        <span className="text-slate-500 text-xs">—</span>
+                        <span className="text-slate-400 text-xs">—</span>
                       )}
                     </td>
                     <td className="py-2.5 text-slate-400 text-xs">{row.benchmark ?? "—"}</td>

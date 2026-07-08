@@ -142,7 +142,7 @@ function EventRow({ event }) {
       <div className="shrink-0 text-right">
         <span
           data-testid="event-date"
-          className="text-xs text-slate-500"
+          className="text-xs text-slate-400"
           title={absDate}
         >
           {relTime}
@@ -353,7 +353,7 @@ export default function RedFlagJournal() {
           ) : (
             <>
               <p className="text-slate-300">No strategy deviations recorded yet</p>
-              <p className="text-xs text-slate-500 max-w-xs">
+              <p className="text-xs text-slate-400 max-w-xs">
                 Override events will appear here when you proceed past a strategy gate warning.
               </p>
             </>
@@ -364,7 +364,7 @@ export default function RedFlagJournal() {
       {/* Event list */}
       {!isLoading && !isError && items.length > 0 && (
         <>
-          <p className="text-xs text-slate-500">{total} event{total === 1 ? "" : "s"} recorded</p>
+          <p className="text-xs text-slate-400">{total} event{total === 1 ? "" : "s"} recorded</p>
           <div className="space-y-2">
             {items.map((event) => (
               <EventRow key={event.id} event={event} />

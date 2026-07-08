@@ -34,7 +34,7 @@ export default function DrawdownSummary({ drawdownPercent, peakValue, error, cur
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <p className="text-xs text-slate-500 mb-1">Current Drawdown</p>
+          <p className="text-xs text-slate-400 mb-1">Current Drawdown</p>
           {dd === null ? (
             <p className="text-xl font-bold text-slate-400">N/A</p>
           ) : isAtPeak ? (
@@ -44,7 +44,7 @@ export default function DrawdownSummary({ drawdownPercent, peakValue, error, cur
           )}
         </div>
         <div>
-          <p className="text-xs text-slate-500 mb-1">Peak Portfolio Value</p>
+          <p className="text-xs text-slate-400 mb-1">Peak Portfolio Value</p>
           <div className="flex items-center gap-1.5">
             <Mountain className="w-4 h-4 text-slate-400" />
             <p className="text-lg font-semibold text-slate-200">

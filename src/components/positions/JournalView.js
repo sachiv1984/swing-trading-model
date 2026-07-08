@@ -160,7 +160,7 @@ export default function JournalView({ positions, availableTags }) {
       <div className="space-y-3">
         {filteredPositions.length === 0 ? (
           <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-12 text-center">
-            <p className="text-slate-500">No journal entries found</p>
+            <p className="text-slate-400">No journal entries found</p>
           </div>
         ) : (
           filteredPositions.map((position) => {
@@ -245,7 +245,7 @@ export default function JournalView({ positions, availableTags }) {
                       {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                       Exit Details
                       {position.exit_date && (
-                        <span className="text-xs text-slate-500 ml-auto">
+                        <span className="text-xs text-slate-400 ml-auto">
                           {format(new Date(position.exit_date), "MMM d, yyyy")}
                         </span>
                       )}
@@ -277,7 +277,7 @@ export default function JournalView({ positions, availableTags }) {
       </div>
 
       {filteredPositions.length > 0 && (
-        <p className="text-center text-sm text-slate-500">
+        <p className="text-center text-sm text-slate-400">
           Showing {filteredPositions.length} of {positions.length} entries
         </p>
       )}

@@ -104,7 +104,7 @@ export default function WatchlistModal({ mode, entry, onClose, onAdded, onUpdate
         value={form[key]}
         onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
         placeholder="Optional"
-        className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 h-9"
+        className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400 h-9"
       />
     </div>
   );
@@ -161,7 +161,7 @@ export default function WatchlistModal({ mode, entry, onClose, onAdded, onUpdate
                   disabled={isEdit}
                   placeholder="e.g. AAPL"
                   className={cn(
-                    "bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 h-9",
+                    "bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400 h-9",
                     isEdit && "opacity-50 cursor-not-allowed",
                     tickerError && "border-rose-500/60"
                   )}

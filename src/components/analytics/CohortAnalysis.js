@@ -70,7 +70,7 @@ export default function CohortAnalysis() {
                   const isProfit = row.total_pnl >= 0;
                   const rColor =
                     row.avg_r_multiple == null
-                      ? "text-slate-500"
+                      ? "text-slate-400"
                       : row.avg_r_multiple >= 1
                       ? "text-emerald-400"
                       : row.avg_r_multiple >= 0.5

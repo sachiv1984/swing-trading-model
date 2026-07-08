@@ -82,7 +82,7 @@ export default function AiChatWidget() {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-3 space-y-2" data-testid="ai-chat-messages">
             {messages.length === 0 && !loading && !error && (
-              <p className="text-xs text-slate-500 text-center mt-4" data-testid="ai-chat-empty">
+              <p className="text-xs text-slate-400 text-center mt-4" data-testid="ai-chat-empty">
                 Ask about your portfolio, positions, or signals.
               </p>
             )}

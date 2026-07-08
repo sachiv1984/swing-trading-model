@@ -209,7 +209,7 @@ export default function RMultipleAnalysis({ trades }) {
               <div className={`text-3xl font-bold ${getAvgRColor(avgR)}`}>
                 {avgR.toFixed(2)}R
               </div>
-              <div className="text-xs text-slate-500 mt-1">Per trade</div>
+              <div className="text-xs text-slate-400 mt-1">Per trade</div>
             </div>
 
             {/* Best Trade */}
@@ -217,7 +217,7 @@ export default function RMultipleAnalysis({ trades }) {
               <div className="text-3xl font-bold text-emerald-400">
                 {bestTrade.rMultiple.toFixed(1)}R
               </div>
-              <div className="text-xs text-slate-500 mt-1">Max R • {bestTrade.ticker}</div>
+              <div className="text-xs text-slate-400 mt-1">Max R • {bestTrade.ticker}</div>
             </div>
 
             {/* Worst Trade */}
@@ -225,7 +225,7 @@ export default function RMultipleAnalysis({ trades }) {
               <div className="text-3xl font-bold text-rose-400">
                 {worstTrade.rMultiple.toFixed(1)}R
               </div>
-              <div className="text-xs text-slate-500 mt-1">Max loss • {worstTrade.ticker}</div>
+              <div className="text-xs text-slate-400 mt-1">Max loss • {worstTrade.ticker}</div>
             </div>
 
             {/* Win Rate */}
@@ -233,7 +233,7 @@ export default function RMultipleAnalysis({ trades }) {
               <div className="text-3xl font-bold text-cyan-400">
                 {winRate.toFixed(0)}%
               </div>
-              <div className="text-xs text-slate-500 mt-1">Profitable trades</div>
+              <div className="text-xs text-slate-400 mt-1">Profitable trades</div>
             </div>
 
             {/* Avg Winner */}
@@ -241,7 +241,7 @@ export default function RMultipleAnalysis({ trades }) {
               <div className="text-3xl font-bold text-emerald-400">
                 {avgWinner.toFixed(1)}R
               </div>
-              <div className="text-xs text-slate-500 mt-1">When profitable</div>
+              <div className="text-xs text-slate-400 mt-1">When profitable</div>
             </div>
 
             {/* Avg Loser */}
@@ -249,7 +249,7 @@ export default function RMultipleAnalysis({ trades }) {
               <div className="text-3xl font-bold text-rose-400">
                 {avgLoser.toFixed(1)}R
               </div>
-              <div className="text-xs text-slate-500 mt-1">When stopped</div>
+              <div className="text-xs text-slate-400 mt-1">When stopped</div>
             </div>
           </div>
         </div>

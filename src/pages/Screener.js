@@ -238,7 +238,7 @@ function NewsPanel({ ticker, cache, onClose }) {
             <Newspaper className="w-3 h-3 inline mr-1" />
             Recent news — {ticker}
           </span>
-          <button onClick={onClose} className="text-slate-500 hover:text-white">
+          <button onClick={onClose} className="text-slate-400 hover:text-white">
             <X className="w-3 h-3" />
           </button>
         </div>
@@ -248,7 +248,7 @@ function NewsPanel({ ticker, cache, onClose }) {
           <ul className="space-y-1.5">
             {headlines.slice(0, 10).map((h, i) => (
               <li key={i} className="text-xs text-slate-300 flex gap-2">
-                <span className="shrink-0 text-slate-500 mt-0.5">
+                <span className="shrink-0 text-slate-400 mt-0.5">
                   {h.published_at ? relativeTime(h.published_at) : ""}
                 </span>
                 {h.url ? (
@@ -260,11 +260,11 @@ function NewsPanel({ ticker, cache, onClose }) {
             ))}
           </ul>
         ) : (
-          <p className="text-xs text-slate-500">No recent news available for {ticker}.</p>
+          <p className="text-xs text-slate-400">No recent news available for {ticker}.</p>
         )}
         <button
           onClick={onClose}
-          className="mt-2 text-xs text-slate-500 hover:text-slate-300 underline"
+          className="mt-2 text-xs text-slate-400 hover:text-slate-300 underline"
         >
           Close
         </button>
@@ -640,7 +640,7 @@ export default function Screener() {
       {relativeTime(runTimestamp)}
     </span>
   ) : (
-    <span className="text-xs text-slate-500">No screener run yet</span>
+    <span className="text-xs text-slate-400">No screener run yet</span>
   );
 
   const refreshBtn = (
@@ -783,7 +783,7 @@ export default function Screener() {
           {(marketFilter !== "All" || regimeFilter || sectorFilter.length > 0) && (
             <button
               onClick={() => { setMarketFilter("All"); setRegimeFilter(false); setSectorFilter([]); }}
-              className="text-xs text-slate-500 hover:text-slate-300 underline"
+              className="text-xs text-slate-400 hover:text-slate-300 underline"
             >
               Clear filters
             </button>
@@ -808,7 +808,7 @@ export default function Screener() {
         {noPass && (
           <div className="text-center py-16 text-slate-400">
             <p className="text-sm">No tickers pass your current strategy filters.</p>
-            <p className="text-xs mt-1 text-slate-500">
+            <p className="text-xs mt-1 text-slate-400">
               This may indicate a risk-off market regime.
             </p>
           </div>

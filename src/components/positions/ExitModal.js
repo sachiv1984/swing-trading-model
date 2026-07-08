@@ -374,13 +374,13 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                       }
                     }}
                     placeholder="How did the trade play out? What did you learn?"
-                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-cyan-500/50 resize-none"
+                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-400 focus:border-cyan-500/50 resize-none"
                     rows={3}
                   />
                   <div className="flex justify-end">
                     <span className={cn(
                       "text-xs",
-                      exitData.exit_note.length > 450 ? "text-rose-400" : "text-slate-500"
+                      exitData.exit_note.length > 450 ? "text-rose-400" : "text-slate-400"
                     )}>
                       {exitData.exit_note.length}/500
                     </span>
@@ -409,7 +409,7 @@ export default function ExitModal({ position, open, onClose, onConfirm }) {
                     {/* ALWAYS show commission (even if $0.00) */}
                     <div className="flex justify-between">
                       <span className="text-slate-400">Commission</span>
-                      <span className={commission > 0 ? "text-rose-400" : "text-slate-500"}>
+                      <span className={commission > 0 ? "text-rose-400" : "text-slate-400"}>
                         {commission > 0 ? "-" : ""}
                         {currencySymbol}
                         {commission.toFixed(2)}

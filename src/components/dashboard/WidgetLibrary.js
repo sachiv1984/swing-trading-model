@@ -113,15 +113,15 @@ export default function WidgetLibrary({ open, onClose, onAddWidget, activeWidget
                 >
                   <div className={cn(
                     "p-2.5 rounded-xl",
-                    isActive ? "bg-slate-700/50 text-slate-500" : "bg-gradient-to-br from-cyan-500/20 to-violet-500/20 text-cyan-400"
+                    isActive ? "bg-slate-700/50 text-slate-400" : "bg-gradient-to-br from-cyan-500/20 to-violet-500/20 text-cyan-400"
                   )}>
                     <Icon className="w-5 h-5" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={cn("font-medium", isActive ? "text-slate-500" : "text-white")}>
+                    <p className={cn("font-medium", isActive ? "text-slate-400" : "text-white")}>
                       {widget.name}
                     </p>
-                    <p className="text-xs text-slate-500 mt-0.5">{widget.description}</p>
+                    <p className="text-xs text-slate-400 mt-0.5">{widget.description}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <span className={cn(
                         "text-xs px-2 py-0.5 rounded-full",
@@ -132,7 +132,7 @@ export default function WidgetLibrary({ open, onClose, onAddWidget, activeWidget
                         {widget.size}
                       </span>
                       {isActive && (
-                        <span className="text-xs text-slate-500">Already added</span>
+                        <span className="text-xs text-slate-400">Already added</span>
                       )}
                     </div>
                   </div>

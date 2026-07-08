@@ -123,7 +123,7 @@ export default function ProspectiveHeatPanel({ currentHeat }) {
               {result && !apiError && (
                 <div className="flex items-center gap-4 text-sm">
                   <div>
-                    <span className="text-slate-500 text-xs">Projected Heat</span>
+                    <span className="text-slate-400 text-xs">Projected Heat</span>
                     <div className="flex items-center gap-2">
                       <p className="font-bold text-white">{result.projected_heat_percent?.toFixed(1)}%</p>
                       {threshold && (
@@ -135,7 +135,7 @@ export default function ProspectiveHeatPanel({ currentHeat }) {
                   </div>
                   {delta !== null && (
                     <div>
-                      <span className="text-slate-500 text-xs">Delta</span>
+                      <span className="text-slate-400 text-xs">Delta</span>
                       <p className={cn("font-bold", delta > 0 ? "text-rose-400" : "text-emerald-400")}>
                         {delta > 0 ? "+" : ""}{delta.toFixed(1)}%
                       </p>

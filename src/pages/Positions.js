@@ -142,9 +142,9 @@ function GracePeriodAlertZone() {
             <p className="text-sm text-amber-200/80 mt-1">{bodyText}</p>
             {tp ? (
               <div className="mt-2 text-xs text-slate-300 space-y-0.5">
-                {tp.setup_thesis && <div><span className="text-slate-500">Thesis: </span>"{tp.setup_thesis.slice(0, 120)}{tp.setup_thesis.length > 120 ? "…" : ""}"</div>}
-                {tp.stop_level != null && <div><span className="text-slate-500">Stop: </span>{tp.stop_level}</div>}
-                {tp.r_target != null && <div><span className="text-slate-500">R-target: </span>{tp.r_target}R</div>}
+                {tp.setup_thesis && <div><span className="text-slate-400">Thesis: </span>"{tp.setup_thesis.slice(0, 120)}{tp.setup_thesis.length > 120 ? "…" : ""}"</div>}
+                {tp.stop_level != null && <div><span className="text-slate-400">Stop: </span>{tp.stop_level}</div>}
+                {tp.r_target != null && <div><span className="text-slate-400">R-target: </span>{tp.r_target}R</div>}
               </div>
             ) : (
               <p className="text-xs text-slate-400 mt-1">No trade plan linked. Consider adding a plan for context.</p>
@@ -258,7 +258,7 @@ function TrailStopModal({ position, onClose }) {
         )}
 
         {!isLoading && !isError && trailData && (
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-400">
             ATR trail stop = current price − (ATR × 2.0). ATR period: 14 days. Multiplier per strategy rules.
           </p>
         )}
@@ -757,7 +757,7 @@ export default function Positions() {
                   {/* ST-01 (BLG-FEAT-46): two-line stop cell — initial stop / trailing stop + breach badge */}
                   <TableCell className="text-rose-400 font-medium">
                     <div className="flex flex-col gap-0.5 leading-tight">
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-slate-400">
                         Init: {position.initial_stop != null ? `${currencySymbol}${Number(position.initial_stop).toFixed(2)}` : "—"}
                       </span>
                       <div className="flex items-center gap-1.5">

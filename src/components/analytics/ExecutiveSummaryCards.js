@@ -75,7 +75,7 @@ export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
             <div className="flex items-start justify-between mb-4">
               <div>
                 <p className="text-xs text-slate-400 uppercase tracking-wider">{card.title}</p>
-                <p className="text-xs text-slate-500 mt-1">{card.subtitle}</p>
+                <p className="text-xs text-slate-400 mt-1">{card.subtitle}</p>
               </div>
               <div className={cn("p-2 rounded-lg bg-gradient-to-br", card.gradient)}>
                 <card.icon className="w-4 h-4 text-white" />
@@ -84,7 +84,7 @@ export default function ExecutiveSummaryCards({ metrics, advancedMetrics }) {
             <div>
               <p className="text-2xl font-bold text-white mb-1">{card.value}</p>
               {card.subValue && <p className="text-sm text-slate-400">{card.subValue}</p>}
-              {card.date && <p className="text-xs text-slate-500 mt-1">{card.date}</p>}
+              {card.date && <p className="text-xs text-slate-400 mt-1">{card.date}</p>}
               {card.benchmark && (
                 <div className="mt-2">
                   <span className={cn(

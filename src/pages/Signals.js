@@ -216,7 +216,7 @@ export default function SignalsPage() {
         description={
           <div>
             <div>Signals for {currentMonth}</div>
-            <div className="text-xs text-slate-500 mt-1">
+            <div className="text-xs text-slate-400 mt-1">
               Last updated: {latestSignalDate} • Auto-refreshes every minute
             </div>
           </div>
@@ -412,7 +412,7 @@ export default function SignalsPage() {
           <p className="text-slate-400 mb-4">
             Signals are generated daily at 4 PM UTC weekdays
           </p>
-          <p className="text-sm text-slate-500">Last update: {latestSignalDate}</p>
+          <p className="text-sm text-slate-400">Last update: {latestSignalDate}</p>
         </motion.div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

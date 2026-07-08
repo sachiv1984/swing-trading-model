@@ -36,7 +36,7 @@ export default function PositionCard({ position, onEdit, onExit }) {
               {position.market}
             </span>
           </div>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-400 mt-1">
             {daysHeld} days held • {position.shares} shares
           </p>
         </div>
@@ -60,19 +60,19 @@ export default function PositionCard({ position, onEdit, onExit }) {
 
       <div className="grid grid-cols-3 gap-4 mb-4">
         <div className="p-3 rounded-xl bg-slate-800/50">
-          <p className="text-xs text-slate-500 mb-1">Entry</p>
+          <p className="text-xs text-slate-400 mb-1">Entry</p>
           <p className="text-sm font-semibold text-white">
             {currencySymbol}{position.entry_price.toFixed(2)}
           </p>
         </div>
         <div className="p-3 rounded-xl bg-slate-800/50">
-          <p className="text-xs text-slate-500 mb-1">Current</p>
+          <p className="text-xs text-slate-400 mb-1">Current</p>
           <p className="text-sm font-semibold text-white">
             {currencySymbol}{displayCurrentPrice?.toFixed(2) || "—"}
           </p>
         </div>
         <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
-          <p className="text-xs text-slate-500 mb-1">Stop</p>
+          <p className="text-xs text-slate-400 mb-1">Stop</p>
           <p className="text-sm font-semibold text-rose-400">
             {currencySymbol}{displayStopPrice?.toFixed(2) || "—"}
           </p>
@@ -103,7 +103,7 @@ export default function PositionCard({ position, onEdit, onExit }) {
                 </span>
               ))}
               {position.tags.length > 3 && (
-                <span className="px-2 py-0.5 text-xs text-slate-500">
+                <span className="px-2 py-0.5 text-xs text-slate-400">
                   +{position.tags.length - 3} more
                 </span>
               )}
@@ -151,7 +151,7 @@ export default function PositionCard({ position, onEdit, onExit }) {
             </p>
             {position.tags?.length > 0 && (
               <div className="mt-4 pt-4 border-t border-slate-700/50">
-                <p className="text-xs text-slate-500 mb-2">Tags:</p>
+                <p className="text-xs text-slate-400 mb-2">Tags:</p>
                 <div className="flex flex-wrap gap-2">
                   {position.tags.map((tag) => (
                     <span
