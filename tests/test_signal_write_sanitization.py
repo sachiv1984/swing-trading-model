@@ -1,7 +1,8 @@
 """
-ST-03 (BLG-SEC-02): Signal write-path ticker/market sanitisation regression tests.
+Signal write-path security regression tests.
 
-Per docs/specs/security/ai_injection_risk_assessment.md ("Input 5 — Signal ticker
+ST-03 (BLG-SEC-02): ticker/market sanitisation. Per
+docs/specs/security/ai_injection_risk_assessment.md ("Input 5 — Signal ticker
 and market strings"), ticker/market values are interpolated into AI prompts
 (daily briefing, chat) downstream of signal writes. database.create_signal() and
 database.create_rebalance_exit_signal() must strip any character outside
@@ -13,14 +14,27 @@ AC coverage:
            non-alphanumeric characters (allow ., -, /, : for international
            tickers, max 12 chars)
 
-No live database calls — create_signal / create_rebalance_exit_signal are
-exercised against a mocked get_db() connection to isolate the sanitization
-logic from SQL execution.
+ST-02 (BLG-SEC-08, v6.8): update_signal() dict-key allowlist. Dict keys passed
+to database.update_signal() are spliced directly into the SQL UPDATE statement
+as column names — %s parameterization only covers values, not identifiers, so
+an unvalidated key is a SQL-injection-adjacent arbitrary column write. Keys
+must be validated against SIGNAL_UPDATABLE_COLUMNS before any SQL is built.
+
+AC coverage:
+    AC-01: dict keys used as SQL column names are validated against an
+           allowlist of known columns before use
+    AC-02: regression test confirms rejection of an unrecognised key
+
+No live database calls — create_signal / create_rebalance_exit_signal /
+update_signal are exercised against a mocked get_db() connection to isolate
+the validation/sanitization logic from SQL execution.
 """
 
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
@@ -168,3 +182,41 @@ def test_update_signal_leaves_non_ticker_market_fields_untouched():
     args = mock_cursor.execute.call_args[0][1]
     assert args[0] == "entered"
     assert args[1] == "Manual entry, see note."
+
+
+# ---------------------------------------------------------------------------
+# update_signal — BLG-SEC-08: dict keys are used as SQL column names via an
+# f-string (parameterization only covers values, not identifiers), so an
+# unvalidated key is a SQL-injection-adjacent arbitrary column write. Keys
+# must be checked against SIGNAL_UPDATABLE_COLUMNS before any SQL is built.
+# ---------------------------------------------------------------------------
+
+def test_update_signal_rejects_unrecognised_key():
+    mock_conn, mock_cursor = _mock_conn()
+    with patch.object(database, "get_db", return_value=mock_conn):
+        with pytest.raises(ValueError, match="Unrecognised signal field"):
+            database.update_signal("sig-1", {"portfolio_id = (SELECT id FROM portfolios LIMIT 1); --": "x"})
+
+    # Rejected before any SQL is built — no query executed against the mock cursor.
+    mock_cursor.execute.assert_not_called()
+
+
+def test_update_signal_rejects_unrecognised_key_mixed_with_valid_keys():
+    """A single bad key anywhere in the payload must reject the whole update —
+    partial application of an unvalidated write is not acceptable."""
+    mock_conn, mock_cursor = _mock_conn()
+    with patch.object(database, "get_db", return_value=mock_conn):
+        with pytest.raises(ValueError, match="Unrecognised signal field"):
+            database.update_signal("sig-1", {"status": "entered", "is_admin": True})
+
+    mock_cursor.execute.assert_not_called()
+
+
+def test_update_signal_accepts_all_documented_updatable_columns():
+    """Every column in the allowlist itself must remain a legal update target."""
+    mock_conn, mock_cursor = _mock_conn()
+    for column in database.SIGNAL_UPDATABLE_COLUMNS:
+        mock_cursor.execute.reset_mock()
+        with patch.object(database, "get_db", return_value=mock_conn):
+            database.update_signal("sig-1", {column: "x"})
+        mock_cursor.execute.assert_called_once()

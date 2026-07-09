@@ -656,8 +656,29 @@ def get_signals(portfolio_id: str, status: str = None) -> List[Dict]:
             return cur.fetchall()
 
 
+# BLG-SEC-08: dict keys passed to update_signal() are spliced directly into the
+# SQL UPDATE statement as column names (parameterization only covers values,
+# not identifiers) — an unvalidated key is a SQL-injection-adjacent arbitrary
+# column write. This is the full set of signals columns a client update may
+# legitimately target; id/portfolio_id/created_at/updated_at are excluded.
+SIGNAL_UPDATABLE_COLUMNS = frozenset({
+    "ticker", "market", "signal_date", "rank", "momentum_percent",
+    "current_price", "price_gbp", "atr_value", "volatility", "initial_stop",
+    "suggested_shares", "allocation_gbp", "total_cost", "status", "reason",
+})
+
+
 def update_signal(signal_id: str, updates: Dict) -> Dict:
-    """Update a signal"""
+    """Update a signal.
+
+    Raises:
+        ValueError: If `updates` contains a key outside SIGNAL_UPDATABLE_COLUMNS
+            (BLG-SEC-08 — see module-level comment above).
+    """
+    unknown_keys = set(updates) - SIGNAL_UPDATABLE_COLUMNS
+    if unknown_keys:
+        raise ValueError(f"Unrecognised signal field(s): {sorted(unknown_keys)}")
+
     with get_db() as conn:
         with conn.cursor() as cur:
             set_parts = []
