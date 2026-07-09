@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.12.0
-**Last Updated:** 2026-07-03
+**Version:** 1.13.0
+**Last Updated:** 2026-07-09
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -346,6 +346,28 @@ Served via `GET /analytics/r-multiple-distribution`:
 ### Failure Behaviour
 - No positions.initial_stop data (migration not run): all trades non-qualifying; returns `has_enough_data: false`.
 - Fewer than 5 qualifying trades: `has_enough_data: false`.
+
+### Cross-Currency Normalization (BLG-SPEC-59)
+
+**Applies to:** the canonical server-side R-multiple formula above and every metric derived from it (median R, `pct_above_1r`, `avg_winner_r`, `avg_loser_r`, cohort average R).
+
+**Finding: no FX conversion is required.** Unlike absolute GBP-denominated metrics (Position Risk §below, Capital Efficiency §below) which explicitly apply `fx_adjustment` to avoid mixing USD and GBP currency units, R-multiple is **dimensionless by construction** — it is a ratio of two differences expressed in the same native currency:
+
+```text
+R = (exit_price − entry_price) / (entry_price − initial_stop_price)
+```
+
+`exit_price`, `entry_price`, and `initial_stop_price` are always the same native currency for a given trade (all three columns are populated from the same position — a UK position's three prices are all GBP; a US position's three prices are all USD). The currency unit cancels algebraically in both numerator and denominator, so the resulting `R` value carries no currency dimension.
+
+**Consequence for aggregation:** because per-trade R values are already currency-neutral, aggregating R across a mixed portfolio of US and UK trades (mean, median, bucket counts, cohort averages) requires **no FX conversion at any step**. This differs from GBP-safety metrics like Capital Efficiency §below, where `pnl` and `total_cost` are absolute monetary values that must be normalised to a single currency (GBP) before summing or averaging — R-multiple has no equivalent risk, because it is never summed or averaged as a currency amount.
+
+**Explicit non-requirement:** implementations must **not** apply `position.fx_rate` or any `fx_adjustment` factor to R-multiple inputs or outputs. Doing so would incorrectly treat a dimensionless ratio as a currency amount and silently corrupt the result (e.g. multiplying a US trade's R by `1/fx_rate` would scale it relative to GBP trades, breaking the ratio's currency-neutral property that makes cross-market R comparison valid in the first place).
+
+**Validation:** a regression fixture should include at least one qualifying USD trade and one qualifying GBP trade with deliberately different `fx_rate` values and confirm `avg_winner_r`/`avg_loser_r`/`median_r` are unaffected by the FX rate difference (i.e. R depends only on each trade's own three native-currency prices, never on `fx_rate`).
+
+### Sign-off
+
+- **Metrics Definitions & Analytics Owner:** agent-mediated sign-off cleared 2026-07-09 (ST-08, EPIC-03, v6.8)
 
 ---
 

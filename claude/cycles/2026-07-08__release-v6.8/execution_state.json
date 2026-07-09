@@ -242,7 +242,7 @@
         "ST-08": {
           "title": "R-multiple cross-currency normalization specification (BLG-SPEC-59)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 935,
           "branch": "exec/2026-07-08__release-v6.8/EPIC-03",
@@ -250,13 +250,24 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "completed_utc": "2026-07-09T12:35:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Cross-Currency Normalization (BLG-SPEC-59)"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "required_by": "Metrics Definitions & Analytics Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "Retry 1: cross-references to 'Portfolio Risk §below'/'Cost-Basis Efficiency (§above)' cited non-existent headings -- corrected to actual headings 'Position Risk' and 'Capital Efficiency'.",
+              "Retry 2: 'Capital Efficiency (§above)' was directionally wrong (that heading is below the new section, not above) -- corrected both occurrences to '§below'."
+            ],
+            "cleared_utc": "2026-07-09T12:50:00Z"
+          },
+          "notes": "AC-01: Added Cross-Currency Normalization subsection to the canonical R-Multiple (Server-Side) metric in metrics_definitions.md (v1.12.0->1.13.0). Finding: R-multiple requires NO FX conversion -- it is dimensionless by construction (exit/entry/stop are always same native currency per trade, so currency cancels algebraically), unlike absolute GBP-denominated metrics (Position Risk, Capital Efficiency) which explicitly apply fx_adjustment. Includes explicit non-requirement warning against applying fx_rate to R-multiple, plus a regression-fixture validation approach. AC-02: Metrics Definitions & Analytics Owner agent-mediated sign-off cleared after 2 retries (both fixing cross-reference headings, not the underlying math which was correct on first pass)."
         },
         "ST-09": {
           "title": "Trailing stop visual indicator frontend specification (BLG-SPEC-60)",
@@ -441,7 +452,8 @@
     "ST-04",
     "ST-05",
     "ST-06",
-    "ST-07"
+    "ST-07",
+    "ST-08"
   ],
   "open_escalations": [],
   "merge_gate": {
