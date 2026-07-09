@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-09 (session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -1645,6 +1645,29 @@ Verified via production API (2026-07-06): `GET /trades` reports `total_trades: 2
 - If a bug: fix implemented and verified — a newly closed trade with an associated plan shows `position_id` set, confirmed via API
 - Decision recorded on whether historical backfill was performed or explicitly deferred
 - `current_roadmap.md`'s SI-02 gate row reflects the corrected linked-plan count once this resolves
+
+---
+
+### BLG-BE-50 — Instrument trailing-stop recommendation capture for trailing_stop_action_rate metric
+**Priority:** P2 (Medium)
+**Type:** Backend / Observability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-10 (BLG-SPEC-61), EPIC-03, v6.8 trailing stop effectiveness metric definition — 2026-07-09
+**Effort:** S (~1 day)
+**Provisional-Target:** v6.9
+
+**Problem**
+`docs/specs/metrics_definitions.md` §Trailing Stop Action Rate defines `trailing_stop_action_rate = recommendations applied / recommendations generated`, using `GET /positions/{id}/stop-trail` (the manual ATR trail-stop recommendation, distinct from the automatic nightly ratchet) as the numerator/denominator source. Neither side is currently captured: the GET endpoint is stateless (no log write) and the subsequent `PATCH /positions/{id}` that may apply the recommendation is a generic position-update endpoint with no linkage back to the recommendation that prompted it. The metric cannot be computed until this instrumentation exists.
+
+**Scope**
+- Add `trailing_stop_recommendation_log` table (schema proposed in `metrics_definitions.md` §Trailing Stop Action Rate) — `position_id`, `current_stop_at_recommendation`, `recommended_stop`, `recommended_at`
+- Write one row per `GET /positions/{id}/stop-trail` call (fire-and-forget, matching `log_pre_entry_validation_results()`'s pattern in `backend/database.py`)
+- Confirm the proposed 24-hour capture window (recommendation → matching `PATCH` with `stop_price >= recommended_stop`) with Product Owner before implementing the join query
+
+**Acceptance Criteria**
+- `trailing_stop_recommendation_log` table created and populated on every `GET /positions/{id}/stop-trail` call
+- `trailing_stop_action_rate` computable via the query approach documented in `metrics_definitions.md`
+- Capture window confirmed by Product Owner
 
 ---
 

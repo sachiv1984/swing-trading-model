@@ -2,7 +2,7 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.13.0
+**Version:** 1.14.0
 **Last Updated:** 2026-07-09
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -1051,6 +1051,60 @@ No new endpoint or schema change is required to compute this metric — both sou
 - **Metrics Definitions & Analytics Owner:** agent-mediated sign-off cleared 2026-07-03 (ST-08, EPIC-03, v6.5)
 - **Financial Reporting & Records Owner:** agent-mediated sign-off cleared 2026-07-03 (ST-08, EPIC-03, v6.5)
 - **Product Owner:** pending — Product Owner sign-off is always a human decision (execution_prompt.md §5.3), not agent-mediated. See PR review comment for Product Owner acceptance of this story.
+
+---
+
+## Trailing Stop Action Rate
+
+**Added:** v1.13.0 — ST-10 (EPIC-03, v6.8, BLG-SPEC-61)
+
+Trailing stop action rate measures whether the system's ATR-based trail-stop recommendations (`GET /positions/{id}/stop-trail`) are actually applied by the user, versus shown and ignored. It is the ratio needed to evaluate the ROI of the v6.2 trailing-stop feature investment (BLG-FEAT-46), analogous in purpose to Thesis Adoption Rate (§above) for AI thesis generation.
+
+**Scope clarification (important — two distinct trailing-stop mechanisms exist in this system):**
+
+1. **Automatic nightly ratchet** (`run_nightly_trailing_stop_update()`, `backend/services/position_service.py:509`) — recomputes and writes `positions.current_stop` for every open position every night, fully automatically, with no user decision point. This is the value shown as "Trail Stop" in Table/Grid views (`positions.md` §Trailing Stop Column). It is **not** in scope for this metric — there is no "action" to measure because the system always applies it.
+2. **Manual trail-stop recommendation** (`GET /positions/{id}/stop-trail`, `backend/main.py:1431`, surfaced via the "Trail Stop" button/modal for PROFITABLE/EXIT ZONE positions, `positions.md` §Trail Stop Action) — computes `atr_trail_stop = current_price − (ATR × 2.0)` and displays it as a recommendation (`recommendation: "Raise stop to {atr_trail_stop}"`, explicitly `§13 display-only`). The user then either applies it (clicking the modal's confirm button, which issues `PATCH /positions/{id}` with `stop_price: atr_trail_stop`) or dismisses the modal, leaving the stop unchanged. **This is the computed-vs-acted-upon decision point BLG-SPEC-61 is measuring.**
+
+### Definition
+
+```
+trailing_stop_action_rate = COUNT(recommendations where the recommended stop was applied within the capture window)
+                             / COUNT(recommendations generated)
+```
+
+- **Numerator:** trail-stop recommendations (`GET /positions/{id}/stop-trail` calls) for which a subsequent `PATCH /positions/{id}` set `stop_price` to (or above) the recommended `atr_trail_stop` value for the same position, within the capture window.
+- **Denominator:** total trail-stop recommendations generated (`GET /positions/{id}/stop-trail` calls, one per modal open).
+- **Returns:** `null` if the denominator is 0 (no recommendations generated yet).
+
+### Data Capture Requirement (gap — not yet instrumented)
+
+Neither side of this ratio is currently captured. `GET /positions/{id}/stop-trail` is stateless (computes and returns; no log write) and `PATCH /positions/{id}` is a generic position-update endpoint used for many purposes unrelated to trail-stop confirmation — there is no existing linkage between a shown recommendation and a later stop change, unlike the AI thesis flow (§above) which already has `gemini_audit_log.plan_id`.
+
+Computing this metric requires new instrumentation, following the existing `pre_entry_validation_log` pattern (`backend/database.py:1566`, a lightweight append-only capture table for system-recommendation events):
+
+```sql
+CREATE TABLE trailing_stop_recommendation_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    position_id UUID NOT NULL REFERENCES positions(id),
+    current_stop_at_recommendation DECIMAL(10,4),
+    recommended_stop DECIMAL(10,4) NOT NULL,
+    recommended_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+```
+
+Written once per `GET /positions/{id}/stop-trail` call (fire-and-forget, matching `log_pre_entry_validation_results()`'s pattern). The action-rate query then joins each log row to the earliest `PATCH /positions/{id}` that set `stop_price >= recommended_stop` within the capture window (proposed: 24 hours from `recommended_at`, matching the daily trading cadence — Product Owner to confirm before implementation).
+
+**This instrumentation is not built as part of ST-10** — ST-10's scope (per `stage4_backlog_slice.md#ST-10`) is metric definition only. Implementing `trailing_stop_recommendation_log` and wiring it into the `GET /positions/{id}/stop-trail` and `PATCH /positions/{id}` handlers is follow-up backend work, filed as BLG-BE-50.
+
+### Tooling Assessment (AC-02)
+
+**Note on this AC:** `stage4_backlog_slice.md#ST-10` AC-02 reads "Tooling assessment recorded on whether version tagging adds drift-detection value beyond existing `quality_gate.yml` OpenAPI validation" — wording that describes CI/OpenAPI-contract drift tooling (the subject of the unrelated ST-12/BLG-GOV-134 story in this same EPIC), not trailing-stop metrics. This appears to be a sealed-artefact copy/paste carry-over from sprint planning rather than a deliberate AC for this story; flagged here transparently per `execution_prompt.md` standard-mode ambiguity handling (proceed with an explicit assumption, do not silently guess or block the whole item). The backlog slice is sealed and cannot be corrected retroactively, so AC-02 is answered on its literal terms below rather than left unaddressed.
+
+Applying the question as literally asked to this metric's documentation: `metrics_definitions.md` already uses manual version tagging (the `**Version:**` header plus the `## Document History` table). Assessed whether this adds drift-detection value beyond `quality_gate.yml`'s OpenAPI validation (which checks that `docs/reference/openapi.yaml` reflects `backend/routers/` endpoints — a mechanically detectable code-vs-contract signal): **not directly comparable, and no new automated tooling is recommended at this time.** Metric *formula* drift (backend calculation logic silently diverging from this document) has no code-side symbol as clean as a `@router.get` decorator to key an automated check off; the existing safeguard is the agent-mediated sign-off gate at write time (§5.3), which is a prevention control rather than a detection control like the OpenAPI gate. If metric-implementation drift incidents occur in production (analogous to the Capital Efficiency currency-basis defect resolved as Appendix E, Backlog Item 2), an automated drift check would become justified — noted as a future candidate, not actioned now.
+
+### Sign-off
+
+- **Metrics Definitions & Analytics Owner:** agent-mediated sign-off cleared 2026-07-09 (ST-10, EPIC-03, v6.8)
 
 ---
 
