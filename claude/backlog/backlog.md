@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-08 (session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -5005,6 +5005,29 @@ The Product Value Ratio and Skill-Silo alerts both measure governance overhead i
 **Acceptance Criteria**
 - AC-01: After a design gate passes, `.claude_current_state.json`'s `design_gate_status` (or the session-start protocol's read path) correctly reflects `Passed` without manual correction
 - AC-02: No other write-scope-restricted file is touched by the fix beyond what STEP 5 already governs
+
+---
+
+### BLG-SPEC-71 — Reports.js Tax Year P&L tab missing Arc 5 Compliance Summary and Gross vs Net Comparison sections claimed shipped in reports.md
+**Priority:** P2 (Medium)
+**Type:** Spec Debt
+**Owner:** Head of Specs Team / Frontend Specifications & UX Documentation Owner
+**Source:** ST-06 (BLG-FEAT-71, EPIC-02, v6.8) implementation session — 2026-07-09
+**Effort:** S (~0.5–1 day investigation + reconciliation)
+**Provisional-Target:** v6.9
+
+**Problem**
+`docs/specs/frontend/pages/reports.md` §Arc 5 Compliance Summary (v4.1, ST-08 BLG-FEAT-42) and §Gross vs Net Comparison (v6.0, ST-03) both carry changelog entries and agent-mediated sign-off records claiming these collapsible sections were added to the Tax Year P&L tab. Neither section is actually rendered in `src/pages/Reports.js`'s Tax Year P&L view (`TaxYearPnLView` component) — confirmed by direct code inspection during ST-06 implementation, which needed to place a new section using these two as placement anchors ("below Arc 5 Compliance Summary, above Gross vs Net Comparison") and found neither exists. This means the spec has documented shipped, signed-off behaviour for roughly a year (v4.1 → v6.0) that was never actually built, or was built and later silently removed without a spec update. Either way, `reports.md` currently misrepresents production behaviour for two sections covering compliance data and cost-tracking figures.
+
+**Scope**
+- Investigate git history for `src/pages/Reports.js` to determine whether these sections were ever implemented and later removed, or never implemented at all
+- Reconcile: either (a) implement both sections per the existing locked spec text (they already have full field mappings and sign-off records), or (b) correct `reports.md` to remove the false "shipped" claims and file the sections as net-new backlog features instead
+- Apply the CLAUDE.md §6 governance file edit checklist if `reports.md`'s version/changelog is corrected
+
+**Acceptance Criteria**
+- AC-01: `reports.md`'s description of the Tax Year P&L tab matches what `Reports.js` actually renders
+- AC-02: If sections are implemented, Playwright coverage added per the CLAUDE.md frontend-visible-change rule
+- AC-03: Root cause documented (removed without spec update vs. never implemented) to prevent recurrence
 
 ---
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*
