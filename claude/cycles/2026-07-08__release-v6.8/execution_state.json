@@ -204,13 +204,25 @@
       }
     },
     "EPIC-03": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-07-08__release-v6.8/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-07-08__release-v6.8/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/arc5-compliance-section.spec.js",
+        "tests/e2e/entry-checklist.spec.js",
+        "tests/e2e/gate-progress.spec.js",
+        "tests/e2e/paper-account.spec.js",
+        "tests/e2e/plan-vs-reality.spec.js",
+        "tests/e2e/pre-entry-panel-badge.spec.js",
+        "tests/e2e/red-flag-journal.spec.js",
+        "tests/e2e/sector-heatmap.spec.js",
+        "tests/e2e/si01-si03-integration.spec.js",
+        "tests/e2e/signals-add-to-watchlist.spec.js",
+        "tests/e2e/signals-allocation-insufficient.spec.js"
+      ],
       "stories": {
         "ST-07": {
           "title": "Dashboard homepage visual hierarchy review post-v6.2 (BLG-SPEC-58)",
@@ -325,6 +337,7 @@
             "cleared_utc": "2026-07-09T13:55:00Z"
           },
           "notes": "AC-01: Defined trailing_stop_action_rate = recommendations applied / recommendations generated, scoped correctly to the manual GET /positions/{id}/stop-trail recommendation flow (distinct from the fully-automatic nightly current_stop ratchet, which is out of scope since it has no user decision point). Documented the data-capture gap (neither side currently logged) and proposed a trailing_stop_recommendation_log table following the existing pre_entry_validation_log pattern; filed the actual instrumentation as backend follow-up BLG-BE-50 (out of this 0.5-day spec-only story's scope). AC-02: stage4_backlog_slice.md's literal AC-02 text ('version tagging... drift-detection... OpenAPI validation') is topically mismatched to this story -- appears to be a sealed-artefact copy/paste carry-over from ST-12's scope. Per standard-mode ambiguity handling, flagged transparently and answered on its literal terms (assessed metrics_definitions.md's manual version-tagging convention against automated drift-detection value; concluded no new tooling justified at this time) rather than silently ignored or escalated to a full halt."
+        },
         "ST-11": {
           "title": "Fix 12 dark spec files surfaced by Playwright glob discovery (BLG-QA-64)",
           "classification": "autonomous",
