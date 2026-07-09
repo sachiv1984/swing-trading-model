@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -1170,6 +1170,28 @@ Primary page headings on `DashboardHome.js` (`<h1>` "Dashboard") and `StrategyBe
 - Grid View position cards show both Initial Stop and current trailing stop values
 - Breach state shown via icon only (not a full badge/pill), matching Table View's breach condition logic
 - No change to Table View behaviour
+
+---
+
+### BLG-FE-98 — WatchlistModal.js fails ESLint (24 problems) — same patterns fixed in Watchlist.js
+**Priority:** P3 (Low)
+**Type:** Frontend / Tech Debt
+**Owner:** Head of Engineering
+**Source:** ST-14 (BLG-FE-77), EPIC-03, v6.8 — Head of Engineering sign-off review — 2026-07-09
+**Effort:** M (~1 day)
+**Provisional-Target:** v6.9
+
+**Problem**
+`src/components/watchlist/WatchlistModal.js` (rendered directly by the just-refactored `Watchlist.js`) fails `npx eslint` with 24 problems (8 errors, 16 warnings): `process` referenced directly instead of importing `API_BASE_URL` from `base44Client.js` (same `no-undef` pattern fixed in Watchlist.js this sprint), the component function is 209 lines (max 50), a magic number (`409`), 5 forbidden-comment violations, and missing PropTypes on most props. Was out of scope for ST-14 (AC-01 was scoped to `Watchlist.js` only) but is the natural next file to bring into compliance given it shares the same defect patterns and is directly coupled to the file just fixed.
+
+**Scope**
+- Import `API_BASE_URL` from `base44Client.js` instead of reading `process.env` directly
+- Decompose the 209-line component into smaller sub-components/hooks (mirroring the `useWatchlistData`/`useWatchlistModal` pattern from ST-14)
+- Add PropTypes, remove comments, extract the magic number to a named constant
+
+**Acceptance Criteria**
+- `npx eslint src/components/watchlist/WatchlistModal.js` exits 0 with zero warnings/errors
+- No functional or visual behaviour change
 
 ---
 
