@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-09 (PMO Lead direct action, post-ship closure 2026-07-08__release-v6.8 outstanding actions — IDEA-cybersecurity-20260304-01 entry marked Resolved, delivered as BLG-OPS-71/ST-17; entry retained per append-only write scope)
+**Last Updated:** 2026-07-09 (Product Owner direct action — IDEA-cybersecurity-20260304-02 entry marked Resolved as superseded by BLG-OPS-71's threat_model.md §3; prior — PMO Lead direct action, post-ship closure 2026-07-08__release-v6.8 outstanding actions — IDEA-cybersecurity-20260304-01 entry marked Resolved, delivered as BLG-OPS-71/ST-17; entries retained per append-only write scope)
 
 ---
 
@@ -68,6 +68,10 @@ This document captures ideas that were rejected from active roadmap/backlog cons
 **Why rejected:** Same reasoning as IDEA-cybersecurity-20260304-01. Strong merit as pre-scale governance work. No immediate compliance driver.
 
 **Revival condition:** Same as IDEA-cybersecurity-20260304-01. Complementary to the threat model — both should be considered together.
+
+**Product Owner Decision (2026-07-09): Resolved as superseded — no standalone document commissioned.** The companion threat model (`docs/security/threat_model.md`, `BLG-OPS-71`) shipped with its own §3 Data Classification table covering exactly this idea's original scope: API keys/secrets (CRITICAL), position data/stop levels/P&L (HIGH), signals/screener results (MEDIUM), settings/user preferences (MEDIUM), AI audit logs (MEDIUM) — with rationale per tier. Combined with the existing `docs/specs/security/trade_plan_data_sensitivity.md` (trade-plan field-level classification plus per-tier access control rules, live since v3.3), the system now has a written, sensitivity-tiered view of all data it handles. A dedicated standalone "Sensitive Data Classification Policy" document would substantially duplicate `threat_model.md §3` for no added value — the natural home for a system-wide classification table turned out to be the threat model itself, not a separate artefact. Checked for the one real gap versus `trade_plan_data_sensitivity.md`'s pattern (explicit per-tier access-control/handling rules beyond trade-plan fields): the system's single shared-API-key auth model doesn't support per-tier ACLs the way trade-plan portfolio-scoping does, so a system-wide access-control writeup wouldn't currently describe anything beyond "authenticate, then trust" — not a gap worth a dedicated document today. If a genuine handling-requirement gap surfaces later (e.g. at incident review or a future audit), file it as a specific `BLG-SEC` item at that time rather than reviving this broader idea.
+
+**Status: RESOLVED (2026-07-09, Product Owner direct action).** This entry is retained per the write-scope append-only rule for this file — kept for audit trail, superseded by `BLG-OPS-71` (`docs/security/threat_model.md` §3).
 
 ---
 
