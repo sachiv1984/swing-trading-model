@@ -62,10 +62,35 @@ const ARC5_COMPLIANCE_ERROR = {
 // Shared helpers
 // ---------------------------------------------------------------------------
 
+/**
+ * PerformanceAnalytics gates all sections behind a minimum-trades check
+ * (settingsData.min_trades_for_analytics, default 10). Without at least 10
+ * closed trades in the selected period, the page shows "Not enough trades"
+ * and none of the analytics sections (including Arc5ComplianceSection)
+ * render at all.
+ */
+function buildMockTrades(count = 12) {
+  const now = new Date();
+  return Array.from({ length: count }, (_, i) => ({
+    id: `trade-${i}`,
+    ticker: 'AAPL',
+    market: 'US',
+    entry_date: new Date(now.getTime() - (i + 5) * 86400000).toISOString(),
+    exit_date: new Date(now.getTime() - i * 86400000).toISOString(),
+    entry_price: 100,
+    exit_price: 105,
+    pnl: 50,
+    shares: 10,
+  }));
+}
+
 /** Mock all API calls not explicitly set to return empty 200s to prevent hangs. */
 async function mockFallback(page) {
   await page.route(new RegExp(`${API}/`), (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: {} }) })
+  );
+  await page.route(new RegExp(`${API}/trades$`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: buildMockTrades() }) })
   );
 }
 
@@ -128,13 +153,19 @@ test.describe('SC-ARC5-03 — Loading skeleton state', () => {
     let resolveRoute;
     const routePromise = new Promise((resolve) => { resolveRoute = resolve; });
 
+    // mockFallback must be registered FIRST: Playwright evaluates page.route()
+    // handlers in reverse registration order (most-recently-registered first).
+    // Registering the delayed arc5-compliance route last ensures it — not
+    // mockFallback's generic catch-all — wins the match and actually holds
+    // the request open (shared_standards.md §18 route-ordering advisory).
+    await mockFallback(page);
+
     await page.route(new RegExp(`${API}/analytics/arc5-compliance`), async (route) => {
       // Hold the request until the test resolves it — this simulates the loading state
       await routePromise;
       await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(ARC5_COMPLIANCE_OK) });
     });
 
-    await mockFallback(page);
     await gotoAnalytics(page);
 
     // While the request is pending, the heading should be visible and skeleton pulses should be rendered

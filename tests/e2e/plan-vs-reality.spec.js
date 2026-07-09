@@ -291,7 +291,10 @@ test.describe('SC-PVR-04 — entry_delta_pct null shows historical placeholder',
 
     await page.getByText('AAPL').first().click();
     await expect(page.getByText(/plan vs reality/i).first()).toBeVisible({ timeout: 8000 });
-    await expect(page.getByText(/\+\d+\.\d+%/)).toHaveCount(0);
+    // Scoped to the Plan vs Reality section — the page's other rows/badges
+    // (e.g. R Achieved on unrelated trades) legitimately show "+X.X%" text.
+    const section = page.getByTestId('plan-vs-reality-section').first();
+    await expect(section.getByText(/\+\d+\.\d+%/)).toHaveCount(0);
   });
 });
 

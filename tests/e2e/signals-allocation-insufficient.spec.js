@@ -60,7 +60,7 @@ const ACTIVE_SIGNAL = {
 // ---------------------------------------------------------------------------
 
 async function mockSignals(page, signals) {
-  await page.route(`${API}/signals`, (route) => {
+  await page.route(`${API}/signals**`, (route) => {
     if (route.request().method() === 'GET') {
       route.fulfill({
         status: 200,
@@ -182,8 +182,7 @@ test.describe('SC-SIG-AI-03 — Distinct from active signals', () => {
     await navigateToSignals(page);
     // Both cards rendered
     await expect(page.getByText('Cannot Size')).toBeVisible({ timeout: 8000 });
-    await expect(page.getByText('New Signal')).toBeVisible({ timeout: 8000 });
-    // Only one "Cannot Size" badge (the allocation_insufficient signal)
+    await expect(page.getByText('New Signal', { exact: true })).toBeVisible({ timeout: 8000 });
     await expect(page.getByText('Cannot Size')).toHaveCount(1);
   });
 });

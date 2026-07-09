@@ -1,7 +1,7 @@
 // src/api/base44Client.js
 
 // ---------- Config ----------
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 const APP_ID = process.env.REACT_APP_APP_ID || 'local-app-id';
 const DEV_FAKE_AUTH = String(process.env.REACT_APP_DEV_FAKE_AUTH || '').toLowerCase() === 'true';
 

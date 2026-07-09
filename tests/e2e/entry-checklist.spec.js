@@ -174,12 +174,12 @@ async function gotoNewTradePlan(page) {
 }
 
 async function gotoEditTradePlan(page) {
-  await page.goto(`/#/TradePlan/${PLAN_ID}`);
+  await page.goto(`/#/TradePlan?edit=${PLAN_ID}&ticker=${TICKER}`);
   await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 10000 });
 }
 
 async function gotoResearch(page) {
-  await page.goto(`/#/Research?ticker=${TICKER}&market=US`);
+  await page.goto(`/#/research/${TICKER}?market=US`);
   await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: new RegExp(TICKER, 'i') })).toBeVisible({ timeout: 10000 });
 }
 
@@ -213,18 +213,17 @@ test('SC-CL-02: Checklist items can be checked and unchecked', async ({ page }) 
   await mockTradePlansListEmpty(page);
   await gotoNewTradePlan(page);
 
-  // Find the "Strategy signal confirmed" checkbox by proximity to its label
+  // EntryChecklist.js renders a custom checkbox (styled div, no real <input>) —
+  // observe toggled state via the "N / total complete" counter instead.
+  const counter = page.getByText(/^\d+ \/ \d+ complete$/);
+  await expect(counter).toHaveText('0 / 4 complete');
+
   const signalLabel = page.getByText('Strategy signal confirmed');
-  await signalLabel.waitFor({ timeout: 5000 });
-
-  // Click the label or its associated checkbox
-  const checkboxNear = page.locator('input[type="checkbox"]').first();
-  const initialChecked = await checkboxNear.isChecked().catch(() => false);
   await signalLabel.click();
+  await expect(counter).toHaveText('1 / 4 complete');
 
-  // State should have toggled (check or uncheck)
-  const afterChecked = await checkboxNear.isChecked().catch(() => !initialChecked);
-  expect(afterChecked).not.toBe(initialChecked);
+  await signalLabel.click();
+  await expect(counter).toHaveText('0 / 4 complete');
 });
 
 // ---------------------------------------------------------------------------

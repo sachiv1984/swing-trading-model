@@ -91,13 +91,21 @@ test.describe('Sector Concentration Heat Map', () => {
     await navigateToRiskDashboard(page);
 
     await expect(page.getByText('Sector Concentration')).toBeVisible({ timeout: 8000 });
-    await expect(page.getByText('Technology')).toBeVisible();
-    await expect(page.getByText('35.0%')).toBeVisible();
-    await expect(page.getByText('2 positions')).toBeVisible();
-    await expect(page.getByText('Financials')).toBeVisible();
-    await expect(page.getByText('Healthcare')).toBeVisible();
-    await expect(page.getByText('30.0%')).toBeVisible();
-    await expect(page.getByText('1 position')).toBeVisible();
+
+    const techTile = page.locator('[data-testid="sector-tile"][data-sector="Technology"]');
+    await expect(techTile).toContainText('Technology');
+    await expect(techTile).toContainText('35.0%');
+    await expect(techTile).toContainText('2 positions');
+
+    const financialsTile = page.locator('[data-testid="sector-tile"][data-sector="Financials"]');
+    await expect(financialsTile).toContainText('Financials');
+    await expect(financialsTile).toContainText('35.0%');
+    await expect(financialsTile).toContainText('2 positions');
+
+    const healthcareTile = page.locator('[data-testid="sector-tile"][data-sector="Healthcare"]');
+    await expect(healthcareTile).toContainText('Healthcare');
+    await expect(healthcareTile).toContainText('30.0%');
+    await expect(healthcareTile).toContainText('1 position');
   });
 
   test('SC-SHM-02: Concentration alert badge visible when a sector reaches ≥40%', async ({ page }) => {
@@ -117,7 +125,9 @@ test.describe('Sector Concentration Heat Map', () => {
     await navigateToRiskDashboard(page);
 
     await expect(page.getByText('Sector Concentration')).toBeVisible({ timeout: 8000 });
-    await expect(page.getByText(/no open positions/i)).toBeVisible();
+    // Exact text (SectorHeatMap.js: "No open positions.") — the page also has an
+    // unrelated "No open positions to display." message elsewhere.
+    await expect(page.getByText('No open positions.', { exact: true })).toBeVisible();
     await expect(page.getByText('Concentration Alert')).not.toBeVisible();
   });
 

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -1110,6 +1110,91 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 
 ---
 
+### BLG-FE-95 — Dashboard/StrategyBenchmark page-title light-theme contrast gap
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Head of Engineering
+**Source:** ST-07 (BLG-SPEC-58), EPIC-03, v6.8 dashboard visual hierarchy review — 2026-07-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v6.9
+
+**Problem**
+Primary page headings on `DashboardHome.js` (`<h1>` "Dashboard") and `StrategyBenchmark.js` (`<h1>` "Strategy Benchmark") use a bare `text-white` class with no light-theme value, unlike correctly-graded nearby text (e.g. the Dashboard subtitle's `text-slate-600 dark:text-slate-400`). On light theme this renders the page's primary heading with insufficient contrast against the light background. Same defect class as BLG-FE-87/BLG-FE-88 (fixed v6.7).
+
+**Scope**
+- Add a light-theme-safe value (`dark:` companion pattern) to the `text-white` heading classes on `DashboardHome.js:36` and `StrategyBenchmark.js:497`
+- Grep for the same bare `text-white` heading pattern elsewhere (e.g. stat values on `Signals.js`, `SystemStatus.js`) and assess whether they warrant the same fix in the same pass
+
+**Acceptance Criteria**
+- Both named headings pass WCAG AA contrast (≥4.5:1) against both light and dark backgrounds
+- No visual change on dark theme (colour value on dark theme unchanged)
+
+---
+
+### BLG-FE-96 — Positions Table View breach badge does not match approved spec colour/label
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** ST-09 (BLG-SPEC-60), EPIC-03, v6.8 trailing stop visual indicator reconciliation — 2026-07-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v6.9
+
+**Problem**
+`docs/specs/frontend/pages/positions.md` §Trailing Stop Column specifies the breach badge as orange `#EA580C` background with label "⚠ BREACH", chosen specifically to be visually distinct from the page's existing rose/red loss colouring. The shipped implementation (`src/pages/Positions.js:769-775`) instead uses `bg-rose-800/80 text-rose-200` with an `AlertTriangle` icon and label "Breach" — the same hue family already used for P&L loss and stop-price text elsewhere on the page, undermining the spec's stated rationale for a distinct colour.
+
+**Scope**
+- Update the breach badge styling in `Positions.js` to match the approved spec: orange `#EA580C` background, "⚠ BREACH" label
+
+**Acceptance Criteria**
+- Breach badge renders with `#EA580C` background and "⚠ BREACH" label, matching `positions.md` §Trailing Stop Column
+- No other Table View styling changed
+
+---
+
+### BLG-FE-97 — Positions Grid View missing trailing-stop value and breach indicator
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** ST-09 (BLG-SPEC-60), EPIC-03, v6.8 trailing stop visual indicator reconciliation — 2026-07-09
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.9
+
+**Problem**
+`docs/specs/frontend/pages/positions.md` §Trailing Stop Column requires Grid View to show the trailing stop value alongside Initial Stop, with an icon-only (no pill) breach indicator. `src/components/positions/PositionCard.js` shows only a single generic "Stop" value (`stop_price_native`) and has no `current_trailing_stop` display or breach indicator at all — Grid View users have no trailing-stop visibility that Table View users already have.
+
+**Scope**
+- Add `current_trailing_stop` display to `PositionCard.js`, alongside the existing Initial Stop value
+- Add icon-only breach indicator (no pill, per spec) when `current_price <= current_trailing_stop`
+
+**Acceptance Criteria**
+- Grid View position cards show both Initial Stop and current trailing stop values
+- Breach state shown via icon only (not a full badge/pill), matching Table View's breach condition logic
+- No change to Table View behaviour
+
+---
+
+### BLG-FE-98 — WatchlistModal.js fails ESLint (24 problems) — same patterns fixed in Watchlist.js
+**Priority:** P3 (Low)
+**Type:** Frontend / Tech Debt
+**Owner:** Head of Engineering
+**Source:** ST-14 (BLG-FE-77), EPIC-03, v6.8 — Head of Engineering sign-off review — 2026-07-09
+**Effort:** M (~1 day)
+**Provisional-Target:** v6.9
+
+**Problem**
+`src/components/watchlist/WatchlistModal.js` (rendered directly by the just-refactored `Watchlist.js`) fails `npx eslint` with 24 problems (8 errors, 16 warnings): `process` referenced directly instead of importing `API_BASE_URL` from `base44Client.js` (same `no-undef` pattern fixed in Watchlist.js this sprint), the component function is 209 lines (max 50), a magic number (`409`), 5 forbidden-comment violations, and missing PropTypes on most props. Was out of scope for ST-14 (AC-01 was scoped to `Watchlist.js` only) but is the natural next file to bring into compliance given it shares the same defect patterns and is directly coupled to the file just fixed.
+
+**Scope**
+- Import `API_BASE_URL` from `base44Client.js` instead of reading `process.env` directly
+- Decompose the 209-line component into smaller sub-components/hooks (mirroring the `useWatchlistData`/`useWatchlistModal` pattern from ST-14)
+- Add PropTypes, remove comments, extract the magic number to a named constant
+
+**Acceptance Criteria**
+- `npx eslint src/components/watchlist/WatchlistModal.js` exits 0 with zero warnings/errors
+- No functional or visual behaviour change
+
+---
+
 ## 4. Backend & Data Backlog
 
 ---
@@ -1582,6 +1667,52 @@ Verified via production API (2026-07-06): `GET /trades` reports `total_trades: 2
 - If a bug: fix implemented and verified — a newly closed trade with an associated plan shows `position_id` set, confirmed via API
 - Decision recorded on whether historical backfill was performed or explicitly deferred
 - `current_roadmap.md`'s SI-02 gate row reflects the corrected linked-plan count once this resolves
+
+---
+
+### BLG-BE-50 — Instrument trailing-stop recommendation capture for trailing_stop_action_rate metric
+**Priority:** P2 (Medium)
+**Type:** Backend / Observability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-10 (BLG-SPEC-61), EPIC-03, v6.8 trailing stop effectiveness metric definition — 2026-07-09
+**Effort:** S (~1 day)
+**Provisional-Target:** v6.9
+
+**Problem**
+`docs/specs/metrics_definitions.md` §Trailing Stop Action Rate defines `trailing_stop_action_rate = recommendations applied / recommendations generated`, using `GET /positions/{id}/stop-trail` (the manual ATR trail-stop recommendation, distinct from the automatic nightly ratchet) as the numerator/denominator source. Neither side is currently captured: the GET endpoint is stateless (no log write) and the subsequent `PATCH /positions/{id}` that may apply the recommendation is a generic position-update endpoint with no linkage back to the recommendation that prompted it. The metric cannot be computed until this instrumentation exists.
+
+**Scope**
+- Add `trailing_stop_recommendation_log` table (schema proposed in `metrics_definitions.md` §Trailing Stop Action Rate) — `position_id`, `current_stop_at_recommendation`, `recommended_stop`, `recommended_at`
+- Write one row per `GET /positions/{id}/stop-trail` call (fire-and-forget, matching `log_pre_entry_validation_results()`'s pattern in `backend/database.py`)
+- Confirm the proposed 24-hour capture window (recommendation → matching `PATCH` with `stop_price >= recommended_stop`) with Product Owner before implementing the join query
+
+**Acceptance Criteria**
+- `trailing_stop_recommendation_log` table created and populated on every `GET /positions/{id}/stop-trail` call
+- `trailing_stop_action_rate` computable via the query approach documented in `metrics_definitions.md`
+- Capture window confirmed by Product Owner
+
+---
+
+### BLG-BE-51 — Add endpoint and date-range filters to GET /ai/claude-audit-log
+**Priority:** P3 (Low)
+**Type:** Backend / Observability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-13 (BLG-OPS-74), EPIC-03, v6.8 Anthropic API token/cost logging verification — 2026-07-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v6.9
+
+**Problem**
+`GET /ai/claude-audit-log` (`backend/routers/ai.py`) queries the `claude_audit_log` table, which stores an `endpoint` column per row (e.g. `POST /ai/daily-briefing`, `POST /trade-plans/generate-plan`), but the endpoint only accepts a `limit` query parameter (max 200) — no server-side filter by `endpoint` or by date range. A caller doing cost-trend analysis for one specific Claude-calling flow (e.g. isolating morning-briefing costs from chat/thesis-generation costs) must over-fetch up to 200 rows and filter client-side, which may not even cover the desired date range as call volume grows.
+
+**Scope**
+- Add optional `endpoint` query parameter to `GET /ai/claude-audit-log` (exact match against the stored `endpoint` column)
+- Add optional `date_from`/`date_to` query parameters (filtering on `generated_at`)
+- Update `docs/specs/api_contracts/ai_endpoints.md` and `docs/reference/openapi.yaml` in the same commit
+
+**Acceptance Criteria**
+- `GET /ai/claude-audit-log?endpoint=POST%20/ai/daily-briefing` returns only matching rows
+- `date_from`/`date_to` filters work independently and combined with `endpoint`
+- Existing unfiltered behaviour (no params) unchanged
 
 ---
 
@@ -4404,6 +4535,50 @@ The API key rotation runbook has never been exercised end-to-end — its first r
 
 ---
 
+### BLG-SEC-12 — CSP allows 'unsafe-inline' for script-src and style-src
+**Priority:** P3 (Low)
+**Type:** Security / Frontend
+**Owner:** Head of Engineering; Cybersecurity & Trust Lead
+**Source:** ST-17 (BLG-OPS-71), EPIC-03, v6.8 system threat model review — 2026-07-09
+**Effort:** M (~1-2 days — requires nonce/hash-based CSP migration and testing across all inline scripts/styles)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`public/index.html`'s Content-Security-Policy permits `'unsafe-inline'` for both `script-src` and `style-src`. This significantly weakens the CSP's XSS mitigation value — an attacker who achieves any injection point (e.g. via a compromised dependency or a future reflected-XSS bug) can execute inline script/style despite the CSP being present, since `'unsafe-inline'` is a blanket allowance.
+
+**Scope**
+- Audit all inline `<script>`/`<style>` usage in the built SPA (CRA's default build may inject some)
+- Migrate to nonce-based or hash-based CSP directives where feasible, removing `'unsafe-inline'`
+- If full removal isn't feasible (e.g. due to a build-tool constraint), document the specific residual need and narrow the exception as much as possible
+
+**Acceptance Criteria**
+- CSP no longer includes a blanket `'unsafe-inline'` for `script-src`; `style-src` narrowed or justified explicitly if any exception remains
+- No functional regression (app loads and renders correctly under the tightened CSP)
+
+---
+
+### BLG-SEC-13 — Raw exception text returned in API error responses
+**Priority:** P3 (Low)
+**Type:** Security / Backend
+**Owner:** Head of Engineering
+**Source:** ST-17 (BLG-OPS-71), EPIC-03, v6.8 system threat model review — 2026-07-09
+**Effort:** M (~1-2 days — touches 44 call sites in backend/main.py)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+44 call sites in `backend/main.py` construct `HTTPException` responses with `detail=str(e)`, returning the raw Python exception message directly to the API caller. This risks incidental disclosure of internal file paths, database schema hints, or library version details to anyone holding the API key. Impact is bounded (the API is already key-gated and this is a single-user system), but it is a defense-in-depth gap — if the key is ever compromised, verbose errors give an attacker more reconnaissance than a generic message would.
+
+**Scope**
+- Replace `detail=str(e)` with a generic client-facing message for 500-class errors; log the full exception server-side (already partially done via `traceback.print_exc()` at some sites)
+- Preserve specific, safe detail messages for expected 4xx errors (e.g. validation failures) where the detail is not derived from a raw exception object
+
+**Acceptance Criteria**
+- 500-class error responses no longer include raw exception text in the client-facing `detail` field
+- Full exception detail still logged server-side for debugging
+- No change to intentional, safe 4xx error messages
+
+---
+
 ### BLG-OPS-94 — Data retention policy for AI audit log tables
 **Priority:** P3 (Low)
 **Type:** Operations / Data Management
@@ -4967,6 +5142,26 @@ The existing OpenAPI drift gate only checks that a `## METHOD /path` heading has
 
 ---
 
+### BLG-QA-86 — Add baseline Playwright coverage for Watchlist.js
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality
+**Source:** ST-14 (BLG-FE-77), EPIC-03, v6.8 — QA evidence consolidation frontend testing gate — 2026-07-09
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** v6.9
+
+**Problem**
+`src/pages/Watchlist.js` has no pre-existing Playwright spec file (confirmed via repo search during ST-14's refactor to ESLint compliance). ST-14's own AC-02 (no functional/visual behaviour change) was verified via agent-mediated diff review and a manual smoke script rather than an automated spec, since none exists to run as a regression baseline. This is a pre-existing coverage gap on an actively-used page, not something ST-14 introduced.
+
+**Scope**
+- Add `tests/e2e/watchlist.spec.js` covering: entries render with ticker/market/signal data; news-toggle expand/collapse for US-market entries; Add Ticker modal opens; edit/delete flows
+
+**Acceptance Criteria**
+- New spec file passes in CI
+- Covers at minimum: entry rendering, news toggle, Add Ticker modal open
+
+---
+
 ### BLG-GOV-189 — Governance overhead audit (PMO/spec time per shipped story)
 **Priority:** P3 (Low)
 **Type:** Governance / Process
@@ -5056,6 +5251,28 @@ The locked ux_spec (`docs/design/2026-07-08__release-v6.8/si02-gate-visibility-i
 **Acceptance Criteria**
 - AC-01: Gate Condition 2 and 3 definitions are explicitly product-reviewed and documented in the canonical spec, no longer marked as an engine-filled gap
 - AC-02: If thresholds change, `src/pages/Reports.js`'s `SI02GateStatusSection` is updated to match, with Playwright coverage for the new thresholds
+
+---
+
+### BLG-SPEC-73 — Gate Progress Indicator copy diverges from dashboard.md §6 (choose canonical wording)
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Head of UX & Design / Head of Specs Team
+**Source:** ST-11 (BLG-QA-64), EPIC-03, v6.8 — fixing dark Playwright spec `gate-progress.spec.js` — 2026-07-09
+**Effort:** XS (<1h — copy decision, then sync spec + component if needed)
+**Provisional-Target:** v6.9
+
+**Problem**
+`docs/specs/frontend/pages/dashboard.md` §6 specifies Gate Progress Indicator copy as `{N}/20 trades (PT-04/SI-02 gate)` (not met) and `Gate cleared ✓` (met). The shipped `src/components/dashboard/home/GateProgressStrip.js` instead renders `{N}/{threshold} closed trades · {M} more to unlock quality insights` and `Quality insights unlocked ✓` — omitting the internal `PT-04`/`SI-02` code names entirely. Both are internally consistent (component matches itself; spec matches itself) but they disagree with each other, and it's unclear which is the intended canonical wording going forward.
+
+**Scope**
+- Head of UX & Design confirms whether the "quality insights" framing (current shipped copy) is the deliberate intended direction, or whether it was an undocumented ad-hoc change that should be reverted to match the spec
+- Update whichever side is wrong (spec §6 Display table, or the component) so both agree
+- Playwright coverage (`tests/e2e/gate-progress.spec.js`) already asserts the shipped copy as an interim measure — update if the component changes
+
+**Acceptance Criteria**
+- `dashboard.md` §6 and `GateProgressStrip.js` use identical copy
+- Known Deviations note in `dashboard.md` §6 (added v2.7) removed once resolved
 
 ---
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*
