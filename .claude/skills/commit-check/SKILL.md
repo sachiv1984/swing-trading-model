@@ -160,6 +160,19 @@ This is the diff-verification step required by BLG-GOV-167 / `shared_standards.m
 
 ---
 
+### Check 10 — Backend route four-way sync
+
+This check fires when the staged diff in any `backend/routers/*.py` file adds a new `@router.get`, `@router.post`, `@router.put`, or `@router.delete` decorator.
+
+1. Confirm `backend/routers/test.py` is also staged and contains a new test entry for the route (for parameterised routes like `/{ticker}`, a representative safe value such as `AAPL` is expected).
+2. Confirm `src/pages/SystemStatus.js` is staged with the hardcoded fallback count (`Tests {totalTests || 'N'} endpoints`) incremented to the new total.
+3. Confirm `tests/e2e/system-status.spec.js` is staged with `SC-SS-01b` updated to match the same new fallback value.
+4. **FAIL if:** a new route decorator is staged but any of the other three files is missing from the staged set, or the counts don't agree with each other.
+
+Per CLAUDE.md §2 — omitting any of these four steps is a process deviation.
+
+---
+
 ## Step 4 — Render the result
 
 ```

@@ -7,6 +7,19 @@
           {
             "type": "command",
             "command": "/root/swing-trading-model/.claude/hooks/protect-eslint-config.sh"
+          },
+          {
+            "type": "command",
+            "command": "/root/swing-trading-model/.claude/hooks/protect-governance-files.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/root/swing-trading-model/.claude/hooks/check-commit-format.sh"
           }
         ]
       }
