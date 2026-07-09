@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -5028,6 +5028,29 @@ The Product Value Ratio and Skill-Silo alerts both measure governance overhead i
 - AC-01: `reports.md`'s description of the Tax Year P&L tab matches what `Reports.js` actually renders
 - AC-02: If sections are implemented, Playwright coverage added per the CLAUDE.md frontend-visible-change rule
 - AC-03: Root cause documented (removed without spec update vs. never implemented) to prevent recurrence
+
+---
+
+### BLG-SPEC-72 — Revisit SI-02 Gate Status Condition 2/3 threshold definitions once real adherence data exists
+**Priority:** P2 (Medium)
+**Type:** Spec Debt
+**Owner:** Product Owner / Head of UX & Design
+**Source:** ST-06 (BLG-FEAT-71, v6.8) Product Owner PR review — 2026-07-09
+**Effort:** S (~0.5 day — product decision + spec update, no new engineering)
+**Provisional-Target:** Unscheduled
+**Depends on:** Sufficient real trade-plan-linkage volume in production to make a data-informed threshold call (soft — could also be resolved by product judgment alone)
+
+**Problem**
+The locked ux_spec (`docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md`) named Gate Condition 1 ("20-trade threshold") and Condition 3's topic ("trade plan adherence") but left Condition 2 unlabeled and gave no numeric MET threshold for Condition 3. At implementation, the engine filled the gap with Condition 2 = "linked closed trades ≥ 20" and Condition 3 = `trade_plan_adherence_rate > 0` — both spec-conformant (confirmed by agent-mediated Director of Quality review) but never explicitly reviewed as a *product* decision. `adherence > 0` in particular is a very low bar — a single linked trade among hundreds would read as MET — and risks becoming a permanent, unexamined default if not revisited.
+
+**Scope**
+- Product Owner + Head of UX & Design review the current Condition 2/3 definitions against real production adherence data once available
+- Decide whether the thresholds should change (e.g. a percentage-based adherence bar rather than `> 0`)
+- Update `docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md` (or its successor) and `docs/specs/frontend/pages/reports.md` to formally codify the decision, replacing the engine's placeholder language
+
+**Acceptance Criteria**
+- AC-01: Gate Condition 2 and 3 definitions are explicitly product-reviewed and documented in the canonical spec, no longer marked as an engine-filled gap
+- AC-02: If thresholds change, `src/pages/Reports.js`'s `SI02GateStatusSection` is updated to match, with Playwright coverage for the new thresholds
 
 ---
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*
