@@ -1,7 +1,7 @@
 Owner: PMO Lead
 Class: Operational Record (Class 3)
 Status: Active
-Last Updated: 2026-07-09
+Last Updated: 2026-07-09 (Phase 4 appended — Delivery Verification)
 Cycle: 2026-07-08__release-v6.8
 
 ## Phase 3
@@ -33,4 +33,27 @@ Cycle: 2026-07-08__release-v6.8
 
 ## Phase 4
 
-*(To be appended by Delivery Verification — STEP 8.5 of `delivery_verification_prompt.md`.)*
+**Phase:** Delivery Verification
+**Cycle:** 2026-07-08__release-v6.8
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-07-09
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-07-06__release-v6.7 (`lessons_learnt_cycle.md` `## Phase 4`)
+
+### What went well
+
+- All 17 stories verified in a single run — 0 QA Fail results, 0 unaccepted P0/P1/P2 deviations. Verification reached `Verified` status directly, no re-run required, despite this being the largest single-sprint story count since v6.3/v6.4.
+- All three EPIC QA sign-off blocks used the compliant agent-mediated signer format (role name + `execution_prompt.md §5.3` reference both present) and passed the STEP -1.3 structural check without a Tier 2 flag, even though none qualified for the BLG-GOV-19 autonomous class (EPIC-01: ST-04's live API call; EPIC-02: `delegated_frontend` + frontend-visible change; EPIC-03: frontend-visible change via ST-11/ST-14 per BLG-GOV-135).
+- Two of three EPIC sign-offs required a retry before Approval, and both were genuine catches rather than rubber-stamping: EPIC-02's ST-06 linked-closed-trade filter was missing a `status='closed'` condition required by `reports.md`'s literal field definition (fixed pre-merge, commit `02423690`); EPIC-03's post-PR CI failure on `SC-ARC5-03` was correctly re-investigated (not dismissed as a re-confirmed flake) and traced to a genuine `page.route()` registration-order bug, fixed and independently re-verified 5/5 deterministic before approval.
+- The one identified test scenario gap this cycle (`Watchlist.js` has zero baseline Playwright coverage, TSG-v6.8-01) was already caught and filed as `BLG-QA-86` during execution itself, rather than surfacing for the first time at this gate.
+- Two items (ST-13, ST-15) correctly used the LL-v2.4-P4-02 pre-met path with full QA evidence entries rather than being silently skipped.
+
+### Friction Log
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| Two `done` items (ST-01, ST-02) carry `spec_references: []` in `execution_state.json` — both are production bug fixes with no prior canonical spec to cite. STEP 1's literal traceability rule reads any empty `spec_references` as a flaggable gap, with no distinction between "spec exists but wasn't cited" (a real gap) and "no spec could exist because this is a from-scratch bug fix" (not a gap, by design). This is the second consecutive cycle where a bug-fix-classed story with no prior spec produced a flagged-but-non-blocking traceability row (rationale each time was self-documented in `execution_state.json` notes as "no prior spec applicable"). | Phase 4 | C | defer | No prompt change applied this run — the current flag-and-continue behaviour in standard mode is not incorrect, just noisy for a now-recurring, well-understood case. Consider adding an explicit `spec_reference_not_applicable: true` field (with a required one-line reason) to `execution_state.json` story records at Sprint Execution STEP 3.1.A, so Delivery Verification STEP 1 can distinguish "no spec, by design" from "spec exists, not cited" without re-deriving the rationale from prose notes each time. | Head of Specs Team | Next scheduled prompt review |
+
+**Recurrence Notes:**
+- The `spec_references: []` traceability flag for bug-fix-classed stories has now appeared in this cycle without a matching item in v6.7's Phase 4 friction log — this is a new observation, not a recurrence of a prior open action. Recorded above as a `defer` item for the next prompt review rather than escalated, since it is non-blocking and has a clear, low-risk resolution path.
+- No recurrence-escalation-triggering friction items identified this cycle (no friction item here matches a prior-cycle item with an open outstanding action).

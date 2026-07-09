@@ -2027,7 +2027,7 @@ None — all 7 stories delivered within the sprint.
 
 ## Sprint: 2026-07-08__release-v6.8
 **Date:** 2026-07-09
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified — 2026-07-09
 
 ### Capabilities now live (merged this sprint)
 
