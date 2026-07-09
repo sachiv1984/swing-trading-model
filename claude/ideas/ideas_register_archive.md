@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-08 (34 rows archived — 33 post-ship closure 2026-07-06__release-v6.7 + 1 PMO Lead direct action)
+**Last Updated:** 2026-07-09 (3 rows archived — post-ship closure 2026-07-08__release-v6.8)
 
 # Ideas Register Archive — Momentum Trading Assistant
 
@@ -753,3 +753,9 @@ Permanent record of terminal ideas rows retired from `claude/ideas/ideas_registe
 *Terminal classification: the STEP 5 debate this idea advanced to concluded with an applied prompt patch (`roadmap_prompt.md` v8.2→v8.3, mandatory pull-forward clause for the Skill-Silo Alert — per `claude/cycles/2026-07-06__release-v6.7/lessons_learnt.md` "What worked well" #1 and `prompt_change_log.md`). The register row itself was never updated to reflect this at STEP 5 time — `ideas_housekeeping_prompt.md`'s write scope only permits removing terminal rows verbatim, not rewording kept rows, so this was correctly left for PMO Lead direct action rather than archived under ambiguity during the routine `run ideas housekeeping` pass.*
 
 | IDEA-challenger-20260702-01 | Governance overhead ceiling second threshold | Challenger | IW-20260702-01 | 2026-07-02 | Promoted-Added | 2 | Gate condition (ceiling failing to self-correct across multiple cycles) met — Skill-Silo Alert had worsened for 3 consecutive cycles prior to advancement (v6.3 86.7%→v6.4 76.9%→v6.5 87.5%). Advanced to STEP 5 debate at `2026-07-06__scheduled` rebalance. | Advance | Applied — `roadmap_prompt.md` v8.2→v8.3 (mandatory pull-forward clause), 2026-07-06. Disposition confirmed by PMO Lead 2026-07-08. |
+
+## Archived 2026-07-09 (post-ship closure 2026-07-08__release-v6.8)
+
+| IDEA-product-owner-20260708-01 | Ungate BLG-FEAT-52 by descoping to tags-only (drop cross-trade pattern dependency) | Product Owner | IW-20260708-01 | 2026-07-08 | Promoted-Added | — | — | Advance | Approved — BLG-FEAT-52 ungated/descoped |
+| IDEA-product-owner-20260708-02 | Self-serve closed-trade-count indicator on Reports page (SI-02 gate visibility) | Product Owner | IW-20260708-01 | 2026-07-08 | Promoted-Added | — | — | Advance | Approved — new item BLG-FEAT-71 |
+| IDEA-pmo-lead-20260708-02 | Cycle cadence review — assess governance value of running scheduled rebalances every 2 days vs. weekly | PMO Lead | IW-20260708-01 | 2026-07-08 | Promoted-Added | — | — | Advance | Modified — resolved as deferred prompt patch, not a roadmap/backlog item (see lessons_learnt.md) |

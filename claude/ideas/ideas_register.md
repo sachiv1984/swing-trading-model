@@ -2,7 +2,7 @@
 **Class:** Planning Document (Class 4)
 **Status:** Active
 **Version:** 3.0
-**Last Updated:** 2026-07-08 (roadmap rebalance 2026-07-08__scheduled STEP 4/9 — all 44 IW-20260708-01 rows dispositioned)
+**Last Updated:** 2026-07-09 (ideas_housekeeping, post-ship closure 2026-07-08__release-v6.8 — 3 rows archived, Promoted-Added; 40 `Promoted-Backlog` rows kept pending non-canonical-status review — see manage_roadmap/closure advisory; prior: roadmap rebalance 2026-07-08__scheduled STEP 4/9 — all 44 IW-20260708-01 rows dispositioned)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # Ideas Register
@@ -12,12 +12,9 @@ Schema: per `shared_standards.md §16.5`
 
 | Idea ID | Title | Submitter | Window | Submitted At | Status | Park Count | Park Rationale | Step 4 | Step 5 |
 |---------|-------|-----------|--------|--------------|--------|------------|----------------|--------|--------|
-| IDEA-product-owner-20260708-01 | Ungate BLG-FEAT-52 by descoping to tags-only (drop cross-trade pattern dependency) | Product Owner | IW-20260708-01 | 2026-07-08 | Promoted-Added | — | — | Advance | Approved — BLG-FEAT-52 ungated/descoped |
-| IDEA-product-owner-20260708-02 | Self-serve closed-trade-count indicator on Reports page (SI-02 gate visibility) | Product Owner | IW-20260708-01 | 2026-07-08 | Promoted-Added | — | — | Advance | Approved — new item BLG-FEAT-71 |
 | IDEA-head-of-specs-20260708-01 | Spec debt dashboard — single view of all BLG-SPEC-* items with age | Head of Specs Team | IW-20260708-01 | 2026-07-08 | Promoted-Backlog | — | — | Backlog (gate-conditional) | — |
 | IDEA-head-of-specs-20260708-02 | Canonical spec cross-reference linter (detect orphaned specs unreferenced by any backlog item) | Head of Specs Team | IW-20260708-01 | 2026-07-08 | Promoted-Backlog | — | — | Backlog (gate-conditional) | — |
 | IDEA-pmo-lead-20260708-01 | Sprint Velocity Trend Chart (resubmission of IDEA-pmo-lead-20260619-02 — revival condition confirmed Met 2026-07-08) | PMO Lead | IW-20260708-01 | 2026-07-08 | Promoted-Backlog | — | — | Backlog (gate-conditional) | — |
-| IDEA-pmo-lead-20260708-02 | Cycle cadence review — assess governance value of running scheduled rebalances every 2 days vs. weekly | PMO Lead | IW-20260708-01 | 2026-07-08 | Promoted-Added | — | — | Advance | Modified — resolved as deferred prompt patch, not a roadmap/backlog item (see lessons_learnt.md) |
 | IDEA-director-of-quality-20260708-01 | Flaky Playwright test tracker — quarantine list with re-enable criteria | Director of Quality | IW-20260708-01 | 2026-07-08 | Promoted-Backlog | — | — | Backlog (gate-conditional) | — |
 | IDEA-director-of-quality-20260708-02 | Visual regression baseline screenshots for contrast-sensitive components (post v6.7) | Director of Quality | IW-20260708-01 | 2026-07-08 | Promoted-Backlog | — | — | Backlog (gate-conditional) | — |
 | IDEA-strategy-owner-20260708-01 | §13 boundary illustrative examples appendix — concrete right/wrong examples per clause | Strategy Rules & System Intent Owner | IW-20260708-01 | 2026-07-08 | Promoted-Backlog | — | — | Backlog (gate-conditional) | — |

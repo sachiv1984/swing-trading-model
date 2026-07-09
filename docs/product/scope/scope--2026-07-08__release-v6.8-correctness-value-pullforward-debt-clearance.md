@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v6.8
 Cycle: 2026-07-08__release-v6.8
-Last Updated: 2026-07-08
+Last Updated: 2026-07-09
+
+Superseded by: v6.8 ship — 2026-07-09
+Changelog: docs/product/changelog.md#v6.8
+Verification report: claude/cycles/2026-07-08__release-v6.8/verification_report.md
+Cycle: 2026-07-08__release-v6.8
 
 ## Release Scope — v6.8 Correctness, Value Pull-Forward & Debt Clearance
 

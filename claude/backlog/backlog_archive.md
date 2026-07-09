@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-08 (groom backlog post-ship closure 2026-07-06__release-v6.7 — 7 items archived)
+**Last Updated:** 2026-07-09 (groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived)
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -9172,3 +9172,535 @@ BLG-GOV-74 (first AI feature usage review, v4.4) established the initial Claude 
 | BLG-GOV-115 ✅ | SI-05 digest actionability metric definition | P2 | Shipped v6.0 ST-09 (EPIC-04) — gate 2026-07-04 cleared via PO override; 4 metrics defined (ATCR, RFAR, DDCR, EPAR); Metrics Definitions & Analytics Owner sign-off |
 | BLG-GOV-130 ✅ | SI-05 Phase 2 activation decision scope | P2 | Shipped v6.0 ST-10 (EPIC-04) — gate 2026-07-04 cleared via PO override; DEFER decision documented; Phase 2 review revised to 2026-08-04; Product Owner sign-off |
 | BLG-OPS-59 ✅ | SI-05 service production p99 latency baseline review | P2 | Shipped v6.0 ST-11 (EPIC-04) — gate 2026-07-04 cleared via PO override; PASS WITH DEVIATION (P3: BLG-OPS-54 scope revised); Infrastructure & Operations Owner sign-off |
+---
+
+### BLG-BE-46 — Investigate trade_plans.position_id never populated in production
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-BE-46 — Investigate trade_plans.position_id never populated in production
+**Priority:** P1 (High)
+**Type:** Backend / Data Integrity
+**Owner:** Backend Engineering Patterns Owner; PMO Lead
+**Source:** `plan release v6.7` session — SI-02 production re-verification — 2026-07-06
+**Effort:** M (~1–2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-01)
+
+**Problem**
+Verified via production API (2026-07-06): `GET /trades` reports `total_trades: 20` (closed trades). `GET /trade-plans` reports 11 total trade plans, but all 11 have `position_id: null` — none are linked to any closed trade record. `GET /analytics/arc5-compliance` independently confirms `trade_plan_adherence_rate: 0.0`. This has silently distorted the SI-02 gate's "closed trades with linked trade_plans" condition across many cycles — carried forward as an estimated 15–20 when the real, verified value is 0. Trade plans do exist and are reportedly used, so this looks like a genuine linkage bug rather than an unused feature.
+
+**Scope**
+- Audit the position-lifecycle and trade-plan services for where `trade_plans.position_id` should be set when a plan's associated trade opens and later closes
+- Determine root cause: backend bug (field never written), workflow gap (user not linking plans), or migration/schema gap
+- If a bug is confirmed: implement the fix so new `trade_plans` rows populate `position_id` correctly
+- Assess whether the 11 existing rows can be reliably backfilled (e.g. ticker + date-proximity match against `trade_history`), or document why backfill isn't feasible
+
+**Acceptance Criteria**
+- Root cause documented (bug / workflow gap / other)
+- If a bug: fix implemented and verified — a newly closed trade with an associated plan shows `position_id` set, confirmed via API
+- Decision recorded on whether historical backfill was performed or explicitly deferred
+- `current_roadmap.md`'s SI-02 gate row reflects the corrected linked-plan count once this resolves
+---
+
+### BLG-SEC-08 — Unvalidated dict keys used as SQL column names in database.update_signal()
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-SEC-08 — Unvalidated dict keys used as SQL column names in database.update_signal()
+**Priority:** P2 (Medium)
+**Type:** Security / Input Validation
+**Owner:** Cybersecurity & Trust Lead; Backend Engineering Patterns Owner
+**Source:** Cybersecurity & Trust Lead sign-off review, ST-03 (BLG-SEC-02) — cycle 2026-07-02__release-v6.4 — 2026-07-02
+**Effort:** S (~0.5 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-02)
+
+**Problem**
+`database.update_signal(signal_id, updates)` builds its `SET` clause via `f"{key} = %s"` for every key in the caller-supplied `updates` dict, with values (but not keys) parameterised. `PATCH /signals/{signal_id}` (`main.py`) passes an arbitrary `updates: dict` request body through to this function with no key allowlist — only the `status` value is checked, and only if the `status` key is present. An authenticated caller can therefore submit arbitrary column names in the request body, which are interpolated unvalidated into the SQL statement text. This is a structural SQL-construction risk (malformed/rejected queries at minimum; potential to target unintended columns if a key happens to match one) independent of the ticker/market value sanitisation added by BLG-SEC-02.
+
+**Scope**
+- Define an explicit allowlist of columns `PATCH /signals/{signal_id}` may update (e.g. `status`, `ticker`, `market`, `reason`) in `database.update_signal()` or at the router/service layer
+- Reject (400/422) any key outside the allowlist
+- Add regression test(s) confirming an out-of-allowlist key is rejected rather than reaching the SQL statement
+
+**Acceptance Criteria**
+- `update_signal()` (or its caller) rejects any `updates` key not on an explicit allowlist
+- Existing legitimate update flows (status transitions, ticker/market corrections) continue to work
+- Unit test covers rejection of an arbitrary/unexpected key
+- Cybersecurity & Trust Lead sign-off
+---
+
+### BLG-SEC-07 — Manual review of existing signals for anomalous ticker/market values
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-SEC-07 — Manual review of existing signals for anomalous ticker/market values
+**Priority:** P3 (Low)
+**Type:** Security / Input Validation
+**Owner:** Cybersecurity & Trust Lead; Backend Engineering Patterns Owner
+**Source:** ST-03 (BLG-SEC-02) AC-02, deferred at sprint execution — cycle 2026-07-02__release-v6.4 — 2026-07-02
+**Effort:** XS (<1h)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-03)
+
+**Problem**
+BLG-SEC-02 (ST-03, cycle 2026-07-02__release-v6.4) added write-time sanitisation to `database.create_signal()` / `create_rebalance_exit_signal()`, stripping any character outside `[A-Za-z0-9.\-/:]` and capping ticker/market values at 12 characters. This closes the forward-going gap but does not touch rows already in the `signals` table written before the fix shipped. AC-02 of ST-03 requires a one-time review of existing rows — this is a live-database data-hygiene task, not CI-testable, and was explicitly deferred to a tracked manual execution step per `sprint_planning_notes.md`.
+
+**Scope**
+- Query the production `signals` table for `ticker` or `market` values containing characters outside `[A-Za-z0-9.\-/:]`, or longer than 12 characters
+- Document any anomalous rows found (ticker, market, signal_date, portfolio_id)
+- Clean (correct or null out) any confirmed-anomalous values; leave benign historical values (e.g. legitimate tickers longer than 12 chars, if any) documented as accepted
+
+**Acceptance Criteria**
+- Existing `signals` table rows reviewed for anomalous ticker/market values
+- Findings documented (count of anomalies found, or "none found")
+- Any confirmed-anomalous values cleaned or explicitly accepted with rationale
+- Cybersecurity & Trust Lead sign-off
+---
+
+### BLG-OPS-99 — Provision application X-API-Key for governed routines
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-OPS-99 — Provision application X-API-Key for governed routines
+**Priority:** P1 (High) — resolves LP-08, 2nd occurrence of this credential gap blocking SI-02 gate verification
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner; PMO Lead
+**Source:** IDEA-infra-ops-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-04)
+**Gate criteria:** None — this item itself is the unblocking action
+
+**Problem**
+No governed routine holds an application-level API key with production database/API access, so gate conditions requiring live data (notably SI-02's trade-count/linkage condition) can only ever be checked via self-report or by whoever last ran a manual query — a recurring credential gap (LP-08, cited in `2026-07-06__release-v6.7` closure §6 item #1).
+
+**Scope**
+- Provision an application `X-API-Key` (or equivalent scoped credential) and document its storage location (e.g. `~/.api_keys`) so governed routines (roadmap rebalance, release planning) can query production directly
+
+**Acceptance Criteria**
+- Key provisioned and documented
+- A governed routine successfully uses it to directly confirm a gate condition (e.g. SI-02 linked-trade count) without relying on self-report
+---
+
+### BLG-FEAT-52 — Trade tagging and tag-based performance filtering
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-FEAT-52 — Trade tagging and tag-based performance filtering
+**Priority:** P2 (Medium) — upgraded from P3 (mandatory pull-forward candidate, roadmap rebalance 2026-07-08__scheduled)
+**Type:** Product Feature / User Value
+**Owner:** Product Owner
+**Source:** IDEA-product-owner-20260619-02 (IW-20260619-01) — Backlog-gate-conditional; rebalance 2026-06-24__scheduled. Ungated and descoped via `IDEA-product-owner-20260708-01` (IW-20260708-01), roadmap rebalance 2026-07-08__scheduled STEP 5 — see `claude/cycles/2026-07-08__scheduled/cycle_record.md`.
+**Effort:** S (~2–3 days, descoped from L)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-05)
+**Gate criteria:** None — ungated 2026-07-08. Original PO-02 (Journal Pattern Recognition) gate removed: tagging and tag-based filtering do not require PO-02's cross-trade pattern infrastructure to ship value; confirmed at STEP 5 debate that the descoped AC set below does not re-introduce the dependency via `BLG-FEAT-16`'s `trade_annotations` cross-reference.
+
+**Problem**
+Trades are currently classified only by market, sector, and signal type. There is no mechanism for a user to apply free-form tags (e.g. "earnings catalyst", "gap-and-go", "sector rotation") and subsequently filter performance analytics by those tags. Tag-based filtering would allow comparison of win rate and average R across user-defined trade categories.
+
+**Scope (descoped 2026-07-08 — tags-only, no cross-trade pattern dependency)**
+- Data model: `trade_tags` table (trade_id, tag_name, created_at); many-to-many relationship. Self-contained — does not read or write `trade_annotations` (BLG-FEAT-16) or any PO-02 structure.
+- API: POST/DELETE /trades/{id}/tags; GET /analytics/tag-performance (win rate, avg R, count by tag)
+- Frontend: tag input on Trade Plan form; tag filter on PerformanceAnalytics page
+
+**Acceptance Criteria**
+- AC-01: User can add/remove tags on any trade plan
+- AC-02: GET /analytics/tag-performance returns win rate and average R broken down by tag
+- AC-03: PerformanceAnalytics page surfaces tag-based filter controls
+- AC-04: Confirm at sprint planning that `trade_tags` has no foreign-key or service dependency on `trade_annotations`/PO-02 structures (independence check per STEP 5 Challenger condition)
+---
+
+### BLG-FEAT-71 — SI-02 gate visibility indicator (Reports page)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-FEAT-71 — SI-02 gate visibility indicator (Reports page)
+**Priority:** P2 (Medium) — mandatory pull-forward candidate (roadmap rebalance 2026-07-08__scheduled)
+**Type:** Product Feature / Governance Transparency
+**Owner:** Product Owner
+**Source:** IDEA-product-owner-20260708-02 (IW-20260708-01) — Advance; rebalance 2026-07-08__scheduled STEP 5
+**Effort:** S (~1–2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-06)
+**Gate criteria:** None — ships showing current state today (0 linked / 20 closed trades, per `BLG-BE-46`).
+
+**Problem**
+The SI-02 behavioural-drift gate's true status has repeatedly required a full governed routine to reconcile — twice this cycle alone (the 15-vs-20 trade-count discrepancy, then the `BLG-BE-46` linkage-bug finding that the real linked count is 0). No user-facing surface shows this gate's status at all.
+
+**Scope**
+- Frontend: small status panel/badge on the Reports page (or Trading nav) surfacing: total closed trades, trades linked to a trade plan, and the 3 SI-02 gate conditions (linked-trade count, drift-endpoint latency, drift-score variance) with a MET/NOT MET indicator per condition
+- Backend: read from existing endpoints (`GET /trades`, `GET /trade-plans`, `GET /analytics/arc5-compliance`) — no new data model required
+- Must display the corrected linked-plan count (reads live, or the structured `current_roadmap.md` field once available), not a stale hardcoded estimate
+
+**Acceptance Criteria**
+- AC-01: Indicator shows total closed trades and total trade-plan-linked closed trades as two distinct numbers
+- AC-02: Indicator shows MET/NOT MET for each of the 3 SI-02 gate conditions
+- AC-03: Values are read live from existing endpoints, not hardcoded
+- AC-04: Confirmed at sprint planning that AC-01/02 correctly reflect the `BLG-BE-46` finding (0 linked trades) if that bug is still unresolved at build time
+---
+
+### BLG-SPEC-58 — Dashboard homepage visual hierarchy review post-v6.2
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-SPEC-58 — Dashboard homepage visual hierarchy review post-v6.2
+**Priority:** P3 (Low)
+**Type:** UX Spec / Assessment
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** IDEA-head-of-ux-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-07)
+
+**Problem**
+v6.2 added an AI daily briefing card to the dashboard homepage alongside existing portfolio summary, positions overview, and system status. The information architecture and visual hierarchy may no longer optimally match trader workflow priority. A rapid assessment before v6.3 scope is defined confirms the hierarchy is correct or surfaces actionable improvements.
+
+**Scope**
+- Review current dashboard homepage layout against trader workflow priority (morning review: briefing → positions → action)
+- Assess visual weight, card ordering, and information density after AI briefing card addition
+- Produce short findings note: "hierarchy confirmed" or list of priority-order or layout improvements
+- File any actionable improvements as separate backlog items
+
+**Acceptance Criteria**
+- Assessment document produced covering visual hierarchy post-v6.2 dashboard changes
+- Findings reviewed by Head of UX & Design and Product Owner
+- Any improvements filed as separate backlog items with priority and effort estimates
+---
+
+### BLG-SPEC-59 — R-multiple cross-currency normalization specification
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-SPEC-59 — R-multiple cross-currency normalization specification
+**Priority:** P2 (Medium)
+**Type:** Spec / Documentation
+**Owner:** Financial Reporting & Records Owner; Head of Specs Team
+**Source:** IDEA-financial-reporting-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-08)
+
+**Problem**
+R-multiple is a core trade evaluation metric. GBP-denominated positions have a different native currency from USD positions. The specification for how R-multiple is calculated and displayed for cross-currency positions is not documented. This gap is directly related to BLG-FE-79 (P1 R-multiple display bug) — fixing the display correctly requires a clear specification of cross-currency behaviour.
+
+**Scope**
+- Define R-multiple calculation behaviour for GBP/USD positions: native currency vs normalised currency
+- Specify aggregate R-multiple behaviour (how GBP and USD R-multiples aggregate in portfolio-level views)
+- Document "N/A" vs "0.00" vs empty rendering for trades with insufficient stop loss data
+- Reviewed by Financial Reporting & Records Owner and Product Owner before BLG-FE-79 fix enters sprint
+
+**Acceptance Criteria**
+- Specification document produced covering per-trade and aggregate R-multiple cross-currency behaviour
+- "Insufficient data" display contract specified
+- Reviewed by Financial Reporting & Records Owner and Product Owner
+---
+
+### BLG-SPEC-60 — Trailing stop visual indicator frontend specification
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-SPEC-60 — Trailing stop visual indicator frontend specification
+**Priority:** P2 (Medium)
+**Type:** Frontend Spec / UX
+**Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design
+**Source:** IDEA-frontend-specs-20260626-02 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-09)
+
+**Problem**
+v6.2 ships nightly trailing stop computation. The positions page shows current open positions but does not display the current trailing stop price or distance-to-stop. Users must recall the stop level from memory or refer to external records. A frontend specification for a visual stop indicator enables a future sprint to implement this without spec ambiguity.
+
+**Scope**
+- Define visual indicator design: where on the position row the stop price and distance-to-stop appear
+- Define data source: trailing_stop field from positions endpoint (confirm field name and availability)
+- Define display states: stop set (show price + distance), stop not set (show "Not set" or omit indicator)
+- Reviewed by Head of UX & Design and Product Owner before implementation sprint
+
+**Acceptance Criteria**
+- Frontend specification document produced covering indicator placement, data source, and display states
+- Reviewed by Head of UX & Design and Product Owner
+---
+
+### BLG-SPEC-61 — Trailing stop effectiveness metric definition
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-SPEC-61 — Trailing stop effectiveness metric definition
+**Priority:** P2 (Medium)
+**Type:** Spec / Metrics
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** IDEA-metrics-20260626-01 — Promoted-Backlog rebalance 2026-06-26__scheduled (DL-057)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-10)
+
+**Problem**
+v6.2 ships nightly trailing stop computation. There is no metric tracking whether computed trailing stop updates were acted upon (position adjusted) vs ignored (position held unchanged). Without this metric, it is impossible to evaluate the feature's impact on trading behaviour or demonstrate the ROI of the v6.2 trailing stop investment. Defining the metric now ensures data is captured from the first day of usage.
+
+**Scope**
+- Define metric: trailing_stop_action_rate = positions_adjusted_after_stop_update / positions_with_stop_update_computed
+- Define data capture requirement: link trailing stop computation events to subsequent position adjustment events
+- Document in `docs/specs/metrics_definitions.md` or equivalent
+- Reviewed by Metrics Definitions & Analytics Owner, FinOps & Resource Architect, and Product Owner
+
+**Acceptance Criteria**
+- Metric definition document produced covering definition, data sources, and capture requirements
+- Reviewed by Metrics Definitions & Analytics Owner and Product Owner
+---
+
+### BLG-QA-64 — Fix 12 dark spec files surfaced by Playwright glob discovery
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-QA-64 — Fix 12 dark spec files surfaced by Playwright glob discovery
+**Priority:** P2 (Medium)
+**Type:** QA / Test Infrastructure
+**Owner:** Director of Quality; Head of Frontend Engineering
+**Source:** ST-13 (EPIC-03, v6.2) — glob discovery surfaced 12 pre-existing spec files that were excluded from the old explicit playwright.yml list. Identified 2026-06-25.
+**Effort:** M (~1 day — each spec needs investigation and either fix or deletion)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-11)
+**Gate criteria:** None
+
+**Problem**
+ST-13 replaced the explicit 26-file spec list in `playwright.yml` with `npx playwright test` (auto-discovery via `playwright.config.js` `testDir`). This surfaced 12 spec files that existed in `tests/e2e/` but were never included in CI. All 12 are failing — likely due to UI text mismatches (component text evolved after spec was written) or pending feature implementations.
+
+Currently excluded via `testIgnore` in `playwright.config.js`:
+- arc5-compliance-section.spec.js
+- entry-checklist.spec.js
+- gate-progress.spec.js
+- paper-account.spec.js
+- plan-vs-reality.spec.js
+- pre-entry-panel-badge.spec.js
+- red-flag-journal.spec.js
+- sector-heatmap.spec.js
+- si01-si03-integration.spec.js
+- si05-digest-delivery.spec.js
+- signals-add-to-watchlist.spec.js
+- signals-allocation-insufficient.spec.js
+
+**Scope**
+For each spec file above: investigate failure cause, fix assertions to match current UI/API, remove from `testIgnore` in `playwright.config.js`. Delete any spec that tests a feature not yet implemented (refile as spec debt in appropriate epic).
+
+**Acceptance Criteria**
+- AC-01: All 12 spec files removed from `testIgnore` in `playwright.config.js`
+- AC-02: All assertions pass in CI without modification to application source
+- AC-03: `playwright.config.js` `testIgnore` array is empty or removed
+---
+
+### BLG-GOV-134 — CI: inline OpenAPI drift detection for api_performance_baseline.md
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-GOV-134 — CI: inline OpenAPI drift detection for api_performance_baseline.md
+**Priority:** P2 (Medium)
+**Type:** Governance Process / CI
+**Owner:** Head of Specs Team; PMO Lead
+**Source:** IW-20260622-01 (IDEA-head-of-specs-20260622-01) — Promoted-Backlog STEP 4; rebalance 2026-06-22__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-12)
+
+**Problem**
+BLG-OPS-73 (PATCH /trades/{trade_id}/costs missing from api_performance_baseline.md) revealed a systemic gap: when an endpoint is added to `docs/reference/openapi.yaml`, there is no CI check confirming a corresponding entry exists in `docs/operations/api_performance_baseline.md`. The execution_prompt.md v3.47 advisory is a reminder, not enforcement.
+
+**Scope**
+- Add a CI step (GitHub Actions workflow) that extracts endpoint paths from `openapi.yaml` and compares against entries in `api_performance_baseline.md`
+- Output a warning (non-blocking advisory gate) listing any endpoints in openapi.yaml that have no baseline entry
+- Does not block PR merge; surfaces as advisory annotation on PR
+
+**Acceptance Criteria**
+- CI workflow step runs on PRs that modify `openapi.yaml` or `api_performance_baseline.md`
+- Step outputs a diff list of endpoints present in openapi.yaml but absent from baseline
+- Advisory only — does not fail the CI run
+---
+
+### BLG-OPS-74 — Log Anthropic API token usage and cost per morning briefing call
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-OPS-74 — Log Anthropic API token usage and cost per morning briefing call
+**Priority:** P3 (Low)
+**Type:** Operations / Monitoring
+**Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
+**Source:** IW-20260622-01 (IDEA-finops-20260622-01) — Promoted-Backlog STEP 4; rebalance 2026-06-22__scheduled
+**Effort:** S (<0.5 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-13)
+
+**Problem**
+The Trader Morning Briefing (BLG-FEAT-46, shipped v6.0) calls the Claude API each time it generates a briefing. Token usage and estimated cost per call are not tracked. As briefing frequency or complexity grows, cost visibility is needed for informed FinOps decisions.
+
+**Scope**
+- Log token usage (prompt_tokens, completion_tokens) and estimated cost per morning briefing generation call
+- Follow the established `claude_audit_log` pattern (from Gemini wiring v3.8); extend or add a parallel log entry for Claude briefing calls
+- Surface aggregate monthly cost in `/system-status` or the existing AI cost review mechanism
+
+**Acceptance Criteria**
+- Each morning briefing API call produces a log entry with token counts and estimated cost
+- Log entries are queryable for weekly/monthly cost aggregation
+- GET /system-status or equivalent surfaces cumulative briefing cost for the current month
+---
+
+### BLG-FE-77 — Refactor `Watchlist.js` to ESLint compliance
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-FE-77 — Refactor `Watchlist.js` to ESLint compliance
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Frontend Engineering
+**Source:** ESLint hook run — pre-existing violations surfaced after eslint-plugin-playwright, eslint-plugin-no-comments, eslint-plugin-better-max-params installed — 2026-06-22
+**Effort:** M (~1–2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-14)
+
+**Problem**
+`src/pages/Watchlist.js` has 16 pre-existing ESLint violations that were hidden because three required plugins were not installed. Now that the plugins are in place, the lint-feedback hook fires on every edit to this file, creating noise and discouraging changes. The primary violations are: `max-lines-per-function` (the `Watchlist` component body is 312 lines against a 50-line limit), multiple magic number literals (`200`, `220`, `5`, `60`, `1000`), and inline comments in state declarations. Zero violations were introduced by recent changes — all are pre-existing.
+
+**Scope**
+- Extract sub-components from `Watchlist.js`: `WatchlistTableRow`, `WatchlistNewsRow`, and inline badges are all candidates
+- Replace magic number literals with named constants at the top of the file
+- Remove inline comments; express intent through component and variable names instead
+- Ensure all extracted components independently pass ESLint
+
+**Acceptance Criteria**
+- `npx eslint src/pages/Watchlist.js` exits 0 with no errors or warnings
+- All extracted sub-components also pass ESLint clean
+- Watchlist page renders and behaves identically to pre-refactor (no functional regression)
+- Playwright E2E watchlist specs continue to pass
+---
+
+### BLG-OPS-61 — BLG-OPS-13 v5.1–v5.4 endpoint baseline extension
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-OPS-61 — BLG-OPS-13 v5.1–v5.4 endpoint baseline extension
+**Priority:** P3 (Low)
+**Type:** Operations / Performance Baseline
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260610-01 — Promoted-Backlog rebalance 2026-06-10__scheduled (DL-044)
+**Effort:** S (~0.5–1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-15)
+
+**Problem**
+BLG-OPS-60 (completed v5.4) added v5.3 endpoints to api_performance_baseline.md. However, v5.1 and v5.2 endpoints (POST /digest/si05/send, GET /portfolio/paper-positions enhancements, new v5.2 routes from BLG-SPEC-49–52) were not included. BLG-OPS-13 targets v2.8–v4.6 endpoints; BLG-OPS-61 closes the v5.1–v5.4 gap.
+
+**Scope**
+- Identify all new routes added in v5.1 and v5.2 not yet in api_performance_baseline.md
+- Run p50/p95 latency measurements against staging
+- Add entries to api_performance_baseline.md
+
+**Acceptance Criteria**
+- All v5.1/v5.2 new endpoints have latency entries in the baseline document
+- Consistent with existing measurement methodology
+- Infrastructure & Operations Owner sign-off
+---
+
+### BLG-GOV-123 — SC-01: Extract Playwright test standard from execution_prompt.md to shared_standards
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-GOV-123 — SC-01: Extract Playwright test standard from execution_prompt.md to shared_standards
+**Priority:** P2 (Medium)
+**Type:** Governance / Prompt Simplification
+**Owner:** Head of Specs Team
+**Source:** GCA-2026-06-17 — ST-04 (BLG-GOV-101) simplification candidate SC-01
+**Effort:** XS (~1 hour)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-16)
+
+**Scope**
+Section 14 of `execution_prompt.md` defines Playwright test authoring standards (waitFor patterns, mock payload advisory, ~30 lines). This content is loaded on every invocation of the execution engine regardless of whether the sprint contains any Playwright work. Extract to `shared_standards.md §16` (or a new §17) and replace Section 14 with a single reference line. No logic change — structural refactoring only.
+
+**Acceptance Criteria**
+- Section 14 content moved to shared_standards.md with a new heading
+- execution_prompt.md Section 14 replaced with reference: "Playwright test standard: per shared_standards.md §X"
+- Version bump on both files; changelog entries appended
+- Head of Specs Team sign-off
+---
+
+### BLG-OPS-71 — System threat model document
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-09
+**Shipped in:** v6.8 (cycle: 2026-07-08__release-v6.8)
+**Evidence:** docs/product/changelog.md#v6.8; claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### BLG-OPS-71 — System threat model document
+**Priority:** P2 (Medium)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead; Infrastructure & Operations Owner
+**Source:** IDEA-cybersecurity-20260304-01 (rejected_but_strong.md) — revival triggered by strategic review 2026-06-18; original rejection condition (no production-scale external exposure) no longer holds; system now handles real position data, stop levels, P&L, Alpaca API credentials, Anthropic/Gemini billing keys, and Telegram bot tokens across staging + production
+**Effort:** S (~1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — cycle: 2026-07-08__release-v6.8 (ST-17)
+
+**Problem**
+No formal threat model exists. The system handles high-sensitivity financial data (positions, stop levels, P&L) and multiple third-party API credentials with billing exposure (Alpaca, Anthropic, Gemini, Telegram). Current security controls (API key auth on endpoints, CSP, CI secret scanning) were added reactively. A formal threat model identifies attack surfaces and data sensitivity levels in one place — producing a prioritised gap list before an incident forces it.
+
+**Scope**
+- Identify attack surfaces: endpoint auth coverage, Supabase access controls, Render environment variable exposure, Telegram webhook, Alpaca paper trading credentials, AI API keys
+- Data sensitivity classification: position data (HIGH), stop levels (HIGH), P&L (HIGH), API keys (CRITICAL), user preferences (MEDIUM)
+- Threat actors: external web attacker, compromised dependency, accidental exposure
+- Document existing mitigations already in place (API key auth, CSP, CI secret scanning gate)
+- Identify gaps; file a BLG-OPS or BLG-SPEC item for each gap discovered
+- Output: `docs/security/threat_model.md`
+
+**Acceptance Criteria**
+- `docs/security/threat_model.md` produced covering all attack surfaces, data classifications, threat actors, current mitigations, and identified gaps
+- Any gaps produce separate BLG items before sign-off
+- Reviewed and signed off by Cybersecurity & Trust Lead and Infrastructure & Operations Owner

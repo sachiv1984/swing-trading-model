@@ -1,13 +1,42 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-08 (post-ship closure 2026-07-06__release-v6.7 — RA:v6.7 retired)
+**Last Updated:** 2026-07-09 (post-ship closure 2026-07-08__release-v6.8 — RA:v6.8 retired; leftover RA:v6.7 execution-notes block pruned from current_roadmap.md)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v6.8 — Production Correctness, Value Pull-Forward & Debt Clearance
+
+**Original roadmap location:** §1 Current Version
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-07-09
+**Shipped version:** v6.8
+**Cycle reference:** 2026-07-08__release-v6.8
+**Verification report:** claude/cycles/2026-07-08__release-v6.8/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-07-09
+
+### Original Roadmap Entry
+
+**v6.7** — Contrast Remediation & Governance Hardening — ✅ Complete — Shipped 2026-07-08 — cycle: 2026-07-06__release-v6.7
+**Next planned release:** v6.8 — Production Correctness, Value Pull-Forward & Debt Clearance — In Planning — cycle: 2026-07-08__release-v6.8
+
+<!-- roadmap-annotation-marker: RA:v6.8:2026-07-08__release-v6.8 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-08__release-v6.8
+- Plan published: 2026-07-08
+- Cycle folder: claude/cycles/2026-07-08__release-v6.8/
+- Backlog slice: claude/cycles/2026-07-08__release-v6.8/stage4_backlog_slice.md
+- Status at annotation: Validated
+
+**Verified:** 2026-07-09 (post-ship closure 2026-07-08__release-v6.8) — verification report: `claude/cycles/2026-07-08__release-v6.8/verification_report.md`. Full v6.8 scope (17 stories, 3 EPICs — production correctness & security fixes, both mandatory Product Value Alert pull-forwards, spec/QA/governance debt clearance) delivered; see `docs/product/changelog.md#v6.8`.
 
 ---
 

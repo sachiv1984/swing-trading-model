@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-07-08 (post-ship closure 2026-07-06__release-v6.7; §35 v6.7 test coverage gap section added — no open items; no pre-v6.7 TSG items to reconcile)
+**Last Updated:** 2026-07-09 (post-ship closure 2026-07-08__release-v6.8; §36 v6.8 test coverage gap section added — 1 open item TSG-v6.8-01/BLG-QA-86; §6.5–6.7 new spec gaps added — BLG-SPEC-71/72/73; no pre-v6.8 TSG items to reconcile)
 
 ---
 
@@ -296,6 +296,39 @@ Four backend endpoints exist in `backend/routers/` and `docs/reference/openapi.y
 | BLG-SPEC-52 | Watchlist endpoints | new watchlist_endpoints.md |
 
 Each contract must include `## METHOD /path` heading, request/response schema, error codes, and openapi.yaml confirmation. Per CLAUDE.md §2.
+
+---
+
+### 6.5 Reports.js Tax Year P&L tab — two spec-authored sections never implemented (BLG-SPEC-71)
+
+**Identified:** 2026-07-09 (v6.8 EPIC-02 ST-06 implementation session)
+**Status:** OPEN
+**Backlog item:** BLG-SPEC-71
+**Owner:** Head of Specs Team / Frontend Specifications & UX Documentation Owner
+
+`docs/specs/frontend/pages/reports.md` §Arc 5 Compliance Summary (v4.1) and §Gross vs Net Comparison (v6.0) both carry changelog entries and sign-off records claiming these sections were added to the Tax Year P&L tab, but neither is actually rendered in `src/pages/Reports.js`. Root cause confirmed via `git log -S`: both were spec-authoring-only stories whose changelog wording was indistinguishable from a shipped-feature entry. Resolution: correct `reports.md` to state clearly these are specified but not yet implemented, and/or file net-new `BLG-FEAT` items if the Product Owner wants them built.
+
+---
+
+### 6.6 SI-02 Gate Status Condition 2/3 thresholds — engine-filled placeholder, not yet product-reviewed (BLG-SPEC-72)
+
+**Identified:** 2026-07-09 (v6.8 EPIC-02 ST-06, Product Owner PR review)
+**Status:** OPEN
+**Backlog item:** BLG-SPEC-72
+**Owner:** Product Owner / Head of UX & Design
+
+The locked `si02-gate-visibility-indicator/ux_spec.md` left Gate Condition 2 unlabeled and gave no numeric MET threshold for Condition 3. The implementing engine filled the gap with Condition 2 = "linked closed trades ≥ 20" and Condition 3 = `trade_plan_adherence_rate > 0` — both spec-conformant but never explicitly product-reviewed. Resolution: Product Owner + Head of UX & Design review against real production adherence data once available and codify the decision in the canonical spec.
+
+---
+
+### 6.7 Gate Progress Indicator copy diverges from dashboard.md §6 (BLG-SPEC-73)
+
+**Identified:** 2026-07-09 (v6.8 EPIC-03 ST-11, dark Playwright spec fix)
+**Status:** OPEN
+**Backlog item:** BLG-SPEC-73
+**Owner:** Head of UX & Design / Head of Specs Team
+
+`dashboard.md` §6 specifies Gate Progress Indicator copy as `{N}/20 trades (PT-04/SI-02 gate)` / `Gate cleared ✓`; the shipped `GateProgressStrip.js` instead renders `{N}/{threshold} closed trades · {M} more to unlock quality insights` / `Quality insights unlocked ✓`. Both sides are internally consistent but disagree with each other. Documented as a Known Deviation in `dashboard.md` §6 (v2.7). Resolution: Head of UX & Design confirms canonical wording; update whichever side is wrong.
 
 ---
 
@@ -848,6 +881,19 @@ No open TSG items for v6.7. All observable ACs have Playwright coverage confirme
 
 **TSG backlog reconciliation (§7.3):**
 - No pre-v6.7 open TSG items existed at cycle start (all resolved as of §34/v6.6). Nothing to reconcile.
+
+---
+
+## 36. Test Coverage Gaps — v6.8 (2026-07-08__release-v6.8)
+
+Identified during delivery verification (verification_report.md §6 — 1 gap item). Backlog item created.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| TSG-v6.8-01 | EPIC-03 | `Watchlist.js` (core Watchlist page) has zero baseline Playwright coverage — ST-14's decomposition relied on manual smoke testing + diff review, not automated regression coverage | **OPEN** — backlog item `BLG-QA-86` filed during execution (Provisional-Target v6.9) |
+
+**TSG backlog reconciliation (§7.3):**
+- No pre-v6.8 open TSG items existed at cycle start (all resolved as of §35/v6.7). Nothing to reconcile.
 
 ---
 

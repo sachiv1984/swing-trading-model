@@ -3,9 +3,48 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-08 (post-ship closure 2026-07-06__release-v6.7)
+**Last Updated:** 2026-07-09 (post-ship closure 2026-07-08__release-v6.8)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v6.8 — Production Correctness, Value Pull-Forward & Debt Clearance — 2026-07-09
+Cycle: 2026-07-08__release-v6.8
+Verified: Verified
+Verification report: claude/cycles/2026-07-08__release-v6.8/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Production Correctness, Security & Infrastructure: `trade_plans.position_id` linkage bug root-caused (workflow gap, not a code defect) and forward-fixed via backend auto-link in `add_position()` — no historical backfill (BLG-BE-46); SQL injection defense-in-depth — `SIGNAL_UPDATABLE_COLUMNS` allowlist added to `database.update_signal()` plus `PATCH /signals/{id}` pre-validation (BLG-SEC-08); manual security review of all 300 production signal records for anomalous ticker/market values — PASS, no anomalies found (BLG-SEC-07); application `X-API-Key` formally registered in the security register, closing a 2-cycle-recurring credential gap and enabling direct production reads for governed routines (BLG-OPS-99) | `docs/security/signal_anomaly_review_2026-07-09.md`; `docs/security/api_key_security_register.md#6-application-x-api-key` |
+| EPIC-02 | Product Value Pull-Forward (mandatory): trade tagging and tag-based performance filtering — `trade_tags` on `trade_plans`, Tag Editor on `TradePlan.js`, `GET /analytics/tag-performance`, `TradePlanTagFilter.js` on `PerformanceAnalytics.js` (BLG-FEAT-52); SI-02 gate visibility indicator — collapsible "SI-02 Gate Status" section on `Reports.js` Tax Year P&L tab showing total vs linked closed-trade counts and 3 MET/NOT MET gate condition badges, sourced live from `GET /trades`, `GET /trade-plans`, `GET /analytics/arc5-compliance` (BLG-FEAT-71) | `docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md`; `docs/specs/frontend/pages/trade_plan.md#5c`; `docs/specs/frontend/pages/analytics.md#14a`; `docs/specs/api_contracts/trade_plan_endpoints.md`; `docs/specs/api_contracts/analytics_endpoints.md`; `docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md`; `docs/specs/frontend/pages/reports.md#SI-02 Gate Status` |
+| EPIC-03 | Spec & Governance Debt Clearance: dashboard visual hierarchy review (no discrepancy found, contrast follow-up BLG-FE-95 filed; BLG-SPEC-58); R-multiple cross-currency normalization spec — confirmed dimensionless by construction, no FX conversion required (BLG-SPEC-59); trailing stop visual indicator spec reconciliation — 2 implementation-vs-spec deviations found and filed as BLG-FE-96/97 (BLG-SPEC-60); trailing stop effectiveness metric definition — `trailing_stop_action_rate`, instrumentation follow-up filed BLG-BE-50 (BLG-SPEC-61); 11 of 12 dark Playwright spec files fixed (`route.fallback()` ordering fix, mock/URL corrections), 1 file deleted as architecturally incompatible, 2 genuine production bugs found and fixed along the way — `sonner` Toaster never mounted app-wide, `Arc5ComplianceSection.js` heading mismatch (BLG-QA-64); CI inline OpenAPI drift detection job added to `quality_gate.yml` (BLG-GOV-134); Anthropic API token usage/cost logging confirmed already shipped, pre-met (BLG-OPS-74); `Watchlist.js` decomposed to ESLint compliance — 3 hooks + 6 components, zero functional change (BLG-FE-77); v5.1–v5.4 endpoint baseline extension confirmed already closed, pre-met (BLG-OPS-61); Playwright test authoring standard extracted from `execution_prompt.md` to `shared_standards.md` §18 (BLG-GOV-123); system threat model document produced, 2 new gaps filed (BLG-SEC-12/13), Telegram credential added to security register (BLG-OPS-71) | `docs/specs/qa/dashboard_visual_hierarchy_review_v6.8.md`; `docs/specs/metrics_definitions.md#Cross-Currency Normalization`; `docs/specs/frontend/pages/positions.md#Trailing Stop Column`; `docs/specs/qa/trailing_stop_visual_indicator_review_v6.8.md`; `docs/specs/metrics_definitions.md#Trailing Stop Action Rate`; `playwright.config.js`; `.github/workflows/quality_gate.yml#api_baseline_drift`; `docs/specs/api_contracts/ai_endpoints.md#GET /ai/claude-audit-log`; `src/pages/Watchlist.js`; `docs/ops/api_performance_baseline.md` §17, §19; `claude/system/shared_standards.md#18`; `docs/security/threat_model.md` |
+
+### Deviations accepted
+None — all 17 ST items met their acceptance criteria without divergence from canonical spec intent. 10 follow-up backlog items were filed for pre-existing or descoped gaps found along the way (see `verification_report.md §4`).
+
+### Tech backlog items shipped
+- [ST-01] [D] BLG-BE-46: `trade_plans.position_id` never populated in production — root cause = workflow gap, forward-fixed via backend auto-link, no historical backfill
+- [ST-02] [D] BLG-SEC-08: Unvalidated dict keys used as SQL column names in `database.update_signal()` — allowlist defense added
+- [ST-03] [D] BLG-SEC-07: Manual review of existing signals for anomalous ticker/market values — PASS, no anomalies found
+- [ST-04] [D] BLG-OPS-99: Application X-API-Key formally registered in security register — closes 2-cycle-recurring credential gap
+- [ST-05] [U] BLG-FEAT-52: Trade tagging and tag-based performance filtering — mandatory Product Value Alert pull-forward
+- [ST-06] [U] BLG-FEAT-71: SI-02 gate visibility indicator, Reports page — mandatory Product Value Alert pull-forward
+- [ST-07] [D] BLG-SPEC-58: Dashboard homepage visual hierarchy review post-v6.2 — no discrepancy found, contrast follow-up filed
+- [ST-08] [D] BLG-SPEC-59: R-multiple cross-currency normalization specification
+- [ST-09] [D] BLG-SPEC-60: Trailing stop visual indicator frontend specification — reconciliation review, 2 deviations found and filed
+- [ST-10] [D] BLG-SPEC-61: Trailing stop effectiveness metric definition
+- [ST-11] [D] BLG-QA-64: Fix 12 dark spec files surfaced by Playwright glob discovery — 2 production bugs found and fixed
+- [ST-12] [G] BLG-GOV-134: CI inline OpenAPI drift detection for `api_performance_baseline.md`
+- [ST-13] [D] BLG-OPS-74: Log Anthropic API token usage and cost per morning briefing call (pre-met)
+- [ST-14] [D] BLG-FE-77: Refactor `Watchlist.js` to ESLint compliance
+- [ST-15] [D] BLG-OPS-61: v5.1–v5.4 endpoint baseline extension (pre-met)
+- [ST-16] [G] BLG-GOV-123: Extract Playwright test standard from `execution_prompt.md` to `shared_standards.md`
+- [ST-17] [D] BLG-OPS-71: System threat model document
+
+Sign-off: Product Owner — 2026-07-09
+QA sign-off: Director of Quality — 2026-07-09
 
 ---
 

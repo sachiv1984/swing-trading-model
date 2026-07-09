@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-07-06 (post-ship closure 2026-07-04__release-v6.6)
+**Last Updated:** 2026-07-09 (post-ship closure 2026-07-08__release-v6.8)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -75,8 +75,9 @@
 | v6.5  | 8       | 8         | 1.00     | All 8 stories done; zero deviations; full delivery of all 3 EPICs (EPIC-01: AUD-2026-07-01 governance/lifecycle debt clearance — audit.py config sync, README hygiene, OPERATIONAL_GUIDE/prompt version-sync drift; EPIC-02: v6.4 endpoint baseline registration + Playwright coverage for Strategy Benchmark Panel 0 + signals_scenarios.md review resolving 3-cycle BLG-QA-61 carry-forward; EPIC-03: Claude thesis feedback mechanism + adoption rate metric); 0 delegations; 0 returns; Verified |
 | v6.6  | 4       | 4         | 1.00     | All 4 stories done; zero deviations; full delivery of both EPICs (EPIC-01: app-wide WCAG-AA contrast audit BLG-FE-82, findings-only + 3 follow-ups filed (BLG-FE-87/88/89); Red Flag Journal filter-state persistence BLG-FE-40; EPIC-02: 10 true backlog-ID collisions renumbered BLG-QA-72 + backlog_management_prompt.md STEP 4.5 scan fix; _DB_STUB_FUNCTIONS AST-scan derivation BLG-QA-73, CLAUDE.md rule retired); 1 delegation (DEL-20260706-01, cleanly unblocked); 0 returns; Verified |
 | v6.7  | 7       | 7         | 1.00     | All 7 stories done; zero deviations; full delivery of both EPICs (EPIC-01: dark-theme secondary-text contrast fix BLG-FE-87 (226+4 instances), light-theme companion pairing BLG-FE-88 (697 instances), shared secondary-text design token BLG-FE-89 locked into design_system.md; EPIC-02: full AUD-2026-07-06 governance-hardening bundle — .claude/skills/ write-scope authority BLG-GOV-167 (closes 3-cycle-carried escalation ESC-CLOSE-20260706-01), append-only log structural guard BLG-GOV-168, audit.py same-session commit SLA BLG-GOV-169, Delivery Verification STEP 6 documentation BLG-GOV-170); 0 delegations; 0 returns; Verified |
+| v6.8  | 17      | 17        | 1.00     | All 17 stories done; zero deviations; full delivery of all 3 EPICs (EPIC-01: production correctness fix BLG-BE-46 (trade_plans.position_id linkage, backend auto-link), SQL column allowlist BLG-SEC-08, signal anomaly review BLG-SEC-07 (PASS), X-API-Key registered BLG-OPS-99; EPIC-02: both mandatory Product Value Alert pull-forwards — trade tagging BLG-FEAT-52, SI-02 gate visibility indicator BLG-FEAT-71; EPIC-03: 11 spec/QA/governance debt items — dashboard hierarchy review, R-multiple FX spec, trailing stop specs, 11 dark Playwright specs fixed (2 production bugs found), CI OpenAPI drift gate, Watchlist.js ESLint refactor, Playwright standard extraction, system threat model); 0 delegations outstanding (2 delegated_frontend items unblocked and delivered); 0 returns; largest single-sprint story count since v5.3; Verified |
 
-**Rolling 6-cycle average (v6.2–v6.7):** 1.00
+**Rolling 6-cycle average (v6.3–v6.8):** 1.00
 
 ---
 
