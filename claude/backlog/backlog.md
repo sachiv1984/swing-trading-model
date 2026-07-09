@@ -5012,22 +5012,27 @@ The Product Value Ratio and Skill-Silo alerts both measure governance overhead i
 **Priority:** P2 (Medium)
 **Type:** Spec Debt
 **Owner:** Head of Specs Team / Frontend Specifications & UX Documentation Owner
-**Source:** ST-06 (BLG-FEAT-71, EPIC-02, v6.8) implementation session — 2026-07-09
-**Effort:** S (~0.5–1 day investigation + reconciliation)
+**Source:** ST-06 (BLG-FEAT-71, EPIC-02, v6.8) implementation session — 2026-07-09; root cause investigated by Head of Specs Team review — 2026-07-09
+**Effort:** S (~0.5 day — reconciliation only, investigation complete)
 **Provisional-Target:** v6.9
 
 **Problem**
-`docs/specs/frontend/pages/reports.md` §Arc 5 Compliance Summary (v4.1, ST-08 BLG-FEAT-42) and §Gross vs Net Comparison (v6.0, ST-03) both carry changelog entries and agent-mediated sign-off records claiming these collapsible sections were added to the Tax Year P&L tab. Neither section is actually rendered in `src/pages/Reports.js`'s Tax Year P&L view (`TaxYearPnLView` component) — confirmed by direct code inspection during ST-06 implementation, which needed to place a new section using these two as placement anchors ("below Arc 5 Compliance Summary, above Gross vs Net Comparison") and found neither exists. This means the spec has documented shipped, signed-off behaviour for roughly a year (v4.1 → v6.0) that was never actually built, or was built and later silently removed without a spec update. Either way, `reports.md` currently misrepresents production behaviour for two sections covering compliance data and cost-tracking figures.
+`docs/specs/frontend/pages/reports.md` §Arc 5 Compliance Summary (v4.1, ST-08 BLG-FEAT-42) and §Gross vs Net Comparison (v6.0, ST-03) both carry changelog entries and agent-mediated sign-off records claiming these collapsible sections were added to the Tax Year P&L tab. Neither section is actually rendered in `src/pages/Reports.js`'s Tax Year P&L view (`TaxYearPnLView` component) — confirmed by direct code inspection during ST-06 implementation.
+
+**Root cause (confirmed via `git log -S` across all history — never implemented, not removed):**
+- **Arc 5 Compliance Summary (v4.1):** commit `5c7d8587` ("ST-08: Arc 5 compliance composite score formula + P&L report compliance section") touched only `metrics_definitions.md`, `reports.md`, and `execution_state.json` — zero `src/` files. The v4.1 `qa_evidence_EPIC-03.md` confirms ST-08's actual acceptance criteria were entirely spec-authoring ("AC-03: Arc 5 compliance section in **reports.md**" — the document, not the page). This was a legitimate spec-only story; the changelog wording ("section added") reads as if the page changed, but only the spec defining a future section was written. No follow-up implementation story was ever separately tracked or scheduled.
+- **Gross vs Net Comparison (v6.0):** design gate commit `b8e9df34` touched only `reports.md`/`dashboard.md`/etc., no `src/` files. The v6.0 `qa_evidence_EPIC-02.md` shows ST-03 (BLG-FEAT-20, Net-of-costs) actually shipped a "Net R column" on the **Trade History** page (`TradeHistoryTable.js`) — a real, delivered, differently-scoped feature — while the broader net-of-costs design's Reports-page summary row was written into the spec but never built.
+- **Systemic pattern worth Head of Specs Team attention beyond this one item:** in both cases, a design/spec-authoring story's changelog entry was worded identically to a shipped-feature entry, with no textual marker distinguishing "specified" from "implemented." This let two Reports-page sections sit undetected as spec/code drift for 8+ release cycles (v4.1 → v6.8). Worth considering a lightweight convention (e.g. a "Design Only — Implementation Pending" changelog tag) for future spec-authoring stories that describe UI not yet built, so this class of drift is machine-greppable rather than requiring an implementation story to stumble into it as a placement anchor, as happened here.
 
 **Scope**
-- Investigate git history for `src/pages/Reports.js` to determine whether these sections were ever implemented and later removed, or never implemented at all
-- Reconcile: either (a) implement both sections per the existing locked spec text (they already have full field mappings and sign-off records), or (b) correct `reports.md` to remove the false "shipped" claims and file the sections as net-new backlog features instead
-- Apply the CLAUDE.md §6 governance file edit checklist if `reports.md`'s version/changelog is corrected
+- Correct `reports.md` §Arc 5 Compliance Summary and §Gross vs Net Comparison to state clearly that these are specified but not yet implemented in `Reports.js` (option (b) from the original investigation — re-implementing 1–2-year-old, never-prioritized design intent is a Product Owner scheduling call, not a default reconciliation path)
+- File the two sections as net-new `BLG-FEAT` backlog items if Product Owner still wants them built, referencing the existing locked spec text (already has full field mappings and sign-off records, so re-implementation effort is low if/when scheduled)
+- Apply the CLAUDE.md §6 governance file edit checklist to `reports.md`'s version/changelog correction
 
 **Acceptance Criteria**
 - AC-01: `reports.md`'s description of the Tax Year P&L tab matches what `Reports.js` actually renders
-- AC-02: If sections are implemented, Playwright coverage added per the CLAUDE.md frontend-visible-change rule
-- AC-03: Root cause documented (removed without spec update vs. never implemented) to prevent recurrence
+- AC-02: If sections are subsequently implemented (as new BLG-FEAT items), Playwright coverage added per the CLAUDE.md frontend-visible-change rule
+- AC-03: Root cause documented — done above (spec-authoring stories' changelog entries indistinguishable from shipped-feature entries; no follow-up implementation tracking)
 
 ---
 
