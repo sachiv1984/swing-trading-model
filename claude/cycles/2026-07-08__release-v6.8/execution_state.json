@@ -4,8 +4,8 @@
   "backlog_slice_source": "claude/cycles/2026-07-08__release-v6.8/stage4_backlog_slice.md",
   "invoked_utc": "2026-07-09T07:36:29Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-07-09T12:00:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-07-09T18:20:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -569,6 +569,32 @@
     "epics_pending": [],
     "all_merged": true
   },
-  "sealed": false,
-  "sealed_utc": null
+  "process_notes": [
+    {
+      "epic": "EPIC-03",
+      "check": "orphaned post-merge commit scan (LL-v6.8-P3-01)",
+      "finding": "Commit 80772225 on exec/2026-07-08__release-v6.8/EPIC-03 (\"Persist merged state — PR #947 merged\") landed after PR #947 merged (17:28:19Z); execution_state.json on main still showed EPIC-03.status=done, pr_status=open, merge_gate.all_merged=false as of this session's resume.",
+      "action": "Reconciled directly onto main: EPIC-03.status=merged, pr_status=merged, merge_gate.epics_merged=[EPIC-01,EPIC-02,EPIC-03], epics_pending=[], all_merged=true.",
+      "commit_sha": "aee1d24de5cf54c6cecdafc2000a60304e20c198",
+      "utc": "2026-07-09T18:15:00Z"
+    },
+    {
+      "epic": "EPIC-01",
+      "check": "orphaned post-merge commit scan (LL-v6.8-P3-01)",
+      "finding": "Commit 11c7dbc2 on exec/2026-07-08__release-v6.8/EPIC-01 (execution_state.json state sync) landed after PR #945 merged.",
+      "action": "No reconciliation needed — main's execution_state.json already reflects EPIC-01 status=merged/pr_status=merged in equivalent form.",
+      "commit_sha": null,
+      "utc": "2026-07-09T18:15:00Z"
+    },
+    {
+      "epic": "EPIC-02",
+      "check": "orphaned post-merge commit scan (LL-v6.8-P3-01)",
+      "finding": "Commits 8fb776cc (file BLG-SPEC-72) and 7a42d41a (BLG-SPEC-71 root-cause update) on exec/2026-07-08__release-v6.8/EPIC-02 landed after PR #946 merged (10:28:10Z), modifying claude/backlog/backlog.md.",
+      "action": "No reconciliation needed — diffed against main's backlog.md and confirmed both BLG-SPEC-71 (with root-cause update) and BLG-SPEC-72 entries are already present in equivalent form (carried forward incidentally via EPIC-03's later branch state, not by a designed mechanism — this is the gap LL-v6.8-P3-01 now closes).",
+      "commit_sha": null,
+      "utc": "2026-07-09T18:15:00Z"
+    }
+  ],
+  "sealed": true,
+  "sealed_utc": "2026-07-09T18:20:00Z"
 }

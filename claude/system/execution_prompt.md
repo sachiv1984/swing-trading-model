@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.53
+**Version:** 3.54
 **Last Updated:** 2026-07-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -717,6 +717,8 @@ If any criterion is not met, the autonomous class does not apply — the sign-of
 ## STEP 4 — Merge Gate (Hard Gate, Per EPIC)
 
 > **On session resume — merge gate state sync (required, LL-v3.9-P3-1):** When invoking `run sprint` in a fresh session, `execution_state.json.merge_gate.epics_merged` may be stale if one or more EPICs were merged via GitHub between sessions. **Branch check before syncing (LL-v6.4-P3-01):** Run `git branch --show-current` before performing the sync write. If the result is not `main`, run `git checkout main && git pull` first — a fresh session can resume on any `exec/**` branch, and the sync write below must land on `main`, not on whatever branch happened to be checked out (a write orphaned on a stale exec branch has to be redone against main's post-merge file). Before evaluating any EPIC's merge gate conditions, run `gh pr view <pr_number> --json mergedAt,mergeStateStatus` for every EPIC in `merge_gate.epics_pending`. If `mergedAt` is non-null, that EPIC is already merged — add it to `merge_gate.epics_merged`, remove it from `merge_gate.epics_pending`, and set the EPIC's `pr_status = "merged"` in `execution_state.json`. If `epics_pending` is now empty after the sync, proceed directly to STEP 5 (Sprint Close) — do not re-evaluate merge gate conditions for already-merged EPICs.
+>
+> **Orphaned post-merge commit check (LL-v6.8-P3-01):** The sync above only covers `execution_state.json`'s own merge_gate fields. Separately, for every EPIC now confirmed merged, run `git fetch origin` then `git log origin/main..origin/exec/<cycle_id>/<epic_id> --oneline`. Any commit listed was made *after* that EPIC's PR merged and is orphaned — it never entered `main` via the PR merge diff. For each orphaned commit: inspect its content (`git show <sha> --stat`); if it modifies a shared governance file (e.g. `claude/backlog/backlog.md`, `execution_state.json`, `claude/system/*`) with content not already present on `main`, reconcile it onto `main` now (apply the equivalent change directly, or cherry-pick if clean) and commit with message `[EPIC-xx] Reconcile orphaned post-merge commit <sha> onto main`. If the content is already present on `main` in equivalent or superseding form, no action is needed beyond noting the redundancy. Record every check performed (reconciled or redundant) in `execution_state.json`'s `process_notes` array (create if absent) — this check runs per-EPIC at merge-gate resume, before `sprint_close.md` exists; STEP 5.3 rolls `process_notes` up into the sprint close record's Process Notes section. This check exists because STEP 4's post-merge hard-gate halt does not itself prevent a session from continuing to commit governance-file changes (e.g. mid-session backlog filings) to an EPIC branch after that branch's PR has already merged — any such commit is stranded unless explicitly reconciled.
 
 A PR may only be merged when **all** of the following are true:
 
@@ -876,6 +878,7 @@ Must include:
 - Items Returned to Backlog (with reason)
 - Items Delegated and outstanding (with delegation record IDs)
 - QA evidence logs produced (list: `qa_evidence_EPIC-xx.md` per EPIC)
+- Process notes (roll up `execution_state.json.process_notes`, if any — orphaned post-merge commit checks per LL-v6.8-P3-01)
 - Deviations filed this sprint (list: spec file, deviation ref, priority — or "None") — **spec deviations only** (implementation diverges from what the spec requires; filed via `/dev-file`). Process notations, execution observations, and deferred items belong in `execution_state.json` notes column or `execution_escalations.md`, not this register.
   - **Deviation severity consistency check (LL-v3.3-CF-01):** Before writing this section, verify deviation priorities here match the DoQ assessment in `qa_evidence_EPIC-xx.md` sign-off blocks. If they diverge, correct one or both documents before closing. Severity must be consistent between `sprint_close.md` and the QA evidence.
   - **Backlog ID completeness check (LL-v3.3-CF-02):** Every deviation listed as "backlog item filed" must include the BLG ID in the table row. A "backlog item filed" note without a BLG ID is incomplete — query `backlog.md` for the assigned ID and record it before writing `sprint_close.md`.

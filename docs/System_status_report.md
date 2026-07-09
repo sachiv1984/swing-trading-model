@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.7
-**Last Updated:** 2026-07-06
+**Version:** 4.8
+**Last Updated:** 2026-07-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -2024,3 +2024,25 @@ None — all 7 stories delivered within the sprint.
 - QA evidence logs: qa_evidence_EPIC-02.md (autonomous class, 2026-07-06), qa_evidence_EPIC-01.md (agent-mediated, Director of Quality role, 2026-07-08)
 - Deviations filed: None
 - Test scenarios referenced: tests/e2e/secondary-text-contrast.spec.js SC-CTR-01a/01b/02a/02b (ST-01/ST-02)
+
+## Sprint: 2026-07-08__release-v6.8
+**Date:** 2026-07-09
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Production correctness & security hardening: `trade_plans.position_id` linkage bug root-caused and forward-fixed via backend auto-link in `add_position()` (ST-01, BLG-BE-46); SQL column allowlist added to `database.update_signal()` closing an injection-shaped vulnerability (ST-02, BLG-SEC-08); manual anomaly review of all 300 production signal records, no anomalies found (ST-03, BLG-SEC-07); application X-API-Key formally registered in the security register, enabling direct gate-condition verification (ST-04, BLG-OPS-99) | `docs/security/signal_anomaly_review_2026-07-09.md`; `docs/security/api_key_security_register.md#6-application-x-api-key` | None |
+| EPIC-02 | Mandatory Product Value Alert pull-forwards: trade-plan tagging with tag-based performance filtering on Analytics, independent of position/journal tags (ST-05, BLG-FEAT-52); collapsible SI-02 Gate Status section on Reports page showing live total/linked closed-trade counts and 3 gate condition badges (ST-06, BLG-FEAT-71) | `docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md`; `trade_plan.md` §5c; `analytics.md` §14a; `trade_plan_endpoints.md`; `analytics_endpoints.md`; `docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md`; `reports.md` §SI-02 Gate Status | None |
+| EPIC-03 | Spec & governance debt clearance: dashboard visual hierarchy review (ST-07, BLG-SPEC-58); R-multiple cross-currency normalization spec (ST-08, BLG-SPEC-59); trailing stop visual indicator spec (ST-09, BLG-SPEC-60) and effectiveness metric definition (ST-10, BLG-SPEC-61); 12 dark Playwright spec files fixed via route-ordering/locator corrections (ST-11, BLG-QA-64); CI inline OpenAPI-vs-baseline drift detection (ST-12, BLG-GOV-134); Anthropic API token usage/cost logging verified pre-met (ST-13, BLG-OPS-74); `Watchlist.js` decomposed into hooks + presentational components for ESLint compliance (ST-14, BLG-FE-77); v5.1–v5.4 endpoint baseline extension verified pre-met (ST-15, BLG-OPS-61); Playwright Test Authoring Standard extracted to `shared_standards.md` §18 (ST-16, BLG-GOV-123); system threat model document (ST-17, BLG-OPS-71) | `docs/specs/qa/dashboard_visual_hierarchy_review_v6.8.md`; `metrics_definitions.md`; `positions.md#Trailing Stop Column`; `docs/specs/qa/trailing_stop_visual_indicator_review_v6.8.md`; `playwright.config.js`; `.github/workflows/quality_gate.yml#api_baseline_drift`; `ai_endpoints.md#GET /ai/claude-audit-log`; `src/pages/Watchlist.js`; `api_performance_baseline.md` §17/§19; `shared_standards.md#18`; `docs/security/threat_model.md` | None |
+
+### Capabilities deferred or returned
+
+None — all 17 stories delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (agent-mediated, 2026-07-09), qa_evidence_EPIC-02.md (agent-mediated, 2026-07-09), qa_evidence_EPIC-03.md (agent-mediated across multiple domain authorities, 2026-07-09)
+- Deviations filed: None (2 backlog items filed as follow-up: BLG-SPEC-71, BLG-SPEC-72, plus BLG-FE-95, BLG-BE-50)
+- Test scenarios referenced: tests/test_position_trade_plan_link.py; tests/test_signal_write_sanitization.py; tests/e2e/trade-plan.spec.js SC-TP-24-27; tests/e2e/trade-plan-tag-filter.spec.js SC-TPTF-01-05; tests/e2e/reports-si02-gate-status.spec.js SC-SI02-01-06; tests/e2e/arc5-compliance-section.spec.js; tests/e2e/entry-checklist.spec.js; tests/e2e/gate-progress.spec.js; tests/e2e/paper-account.spec.js; tests/e2e/plan-vs-reality.spec.js; tests/e2e/pre-entry-panel-badge.spec.js; tests/e2e/red-flag-journal.spec.js; tests/e2e/sector-heatmap.spec.js; tests/e2e/si01-si03-integration.spec.js; tests/e2e/signals-add-to-watchlist.spec.js; tests/e2e/signals-allocation-insufficient.spec.js
