@@ -224,12 +224,17 @@ test.describe('SC-SI-01 — Pre-entry validation panel (SI-01)', () => {
     await mockTradePlans(page);
     await mockPositions(page, POSITIONS_OPEN);
     await page.goto('/#/TradePlan?ticker=AAPL&market=US');
-    await expect(page.locator('text=Trade Plan')).toBeVisible({ timeout: 8000 });
+    await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 8000 });
+    // PreEntryValidationPanel requires a non-zero quantity to render at all
+    // (TradePlan.js: `if (!ticker || !quantity || Number(quantity) <= 0) return null`).
+    await page.getByPlaceholder('e.g. 50').fill('10');
+    await expect(page.locator('[data-testid="pre-entry-checks-panel"]')).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SI-01a: Pre-entry validation panel shows with failing check', async ({ page }) => {
-    // Wait for the validation panel to appear with at least one check result
-    await expect(page.locator('text=regime_gate').or(page.locator('text=Regime')).or(page.locator('[data-testid="override-acknowledgement-checkbox"]'))).toBeVisible({ timeout: 8000 });
+    const panel = page.locator('[data-testid="pre-entry-checks-panel"]');
+    await expect(panel).toBeVisible({ timeout: 8000 });
+    await expect(panel.getByText('Regime Gate')).toBeVisible();
   });
 
   test('SC-SI-01b: Override acknowledgement checkbox present when override required', async ({ page }) => {
@@ -259,19 +264,19 @@ test.describe('SC-SI-03 — Red Flag Journal (SI-03)', () => {
     await mockSettings(page);
     await mockRedFlagJournal(page, RFJ_EVENTS_WITH_OVERRIDE);
     await page.goto('/#/RedFlagJournal');
-    await expect(page.locator('text=Red Flag Journal')).toBeVisible({ timeout: 8000 });
+    await expect(page.getByRole('heading', { name: 'Red Flag Journal' })).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SI-03a: RedFlagJournal renders event list with pre_entry_override event', async ({ page }) => {
     // Verify the override event appears
-    await expect(page.locator('text=Pre-Entry Override').or(page.locator('text=AAPL'))).toBeVisible({ timeout: 8000 });
+    await expect(page.getByTestId('event-row').first()).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SI-03b: Event metadata correct — ticker AAPL and override context visible', async ({ page }) => {
     // AAPL ticker should appear in the event
-    await expect(page.locator('text=AAPL').first()).toBeVisible({ timeout: 8000 });
+    await expect(page.getByTestId('event-ticker').first()).toHaveText('AAPL', { timeout: 8000 });
     // Override context: "Override acknowledged" should appear (per contextSummary function)
-    await expect(page.locator('text=Override acknowledged').or(page.locator('text=Pre-Entry Override'))).toBeVisible({ timeout: 8000 });
+    await expect(page.getByTestId('event-row').first()).toContainText('Pre-Entry Override', { timeout: 8000 });
   });
 
   test('SC-SI-03c: Event type filter shows pre_entry_override events; filter dropdown present', async ({ page }) => {
@@ -283,7 +288,7 @@ test.describe('SC-SI-03 — Red Flag Journal (SI-03)', () => {
     await filterDropdown.selectOption('pre_entry_override');
 
     // After filter applied, event should still show (mocked endpoint returns same result)
-    await expect(page.locator('text=AAPL').or(page.locator('text=Pre-Entry Override'))).toBeVisible({ timeout: 6000 });
+    await expect(page.getByTestId('event-row').first()).toBeVisible({ timeout: 6000 });
   });
 });
 
@@ -305,7 +310,9 @@ test.describe('SC-SI-PATH — Full SI-01→SI-03 integration path', () => {
 
     // Step 1: Navigate to TradePlan page (position + ticker context)
     await page.goto('/#/TradePlan?ticker=AAPL&market=US');
-    await expect(page.locator('text=Trade Plan')).toBeVisible({ timeout: 8000 });
+    await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 8000 });
+    // PreEntryValidationPanel requires a non-zero quantity to render at all.
+    await page.getByPlaceholder('e.g. 50').fill('10');
 
     // Step 2: Pre-entry validation panel is present
     await expect(
@@ -319,12 +326,10 @@ test.describe('SC-SI-PATH — Full SI-01→SI-03 integration path', () => {
 
     // Step 4: Navigate to Red Flag Journal
     await page.goto('/#/RedFlagJournal');
-    await expect(page.locator('text=Red Flag Journal')).toBeVisible({ timeout: 8000 });
+    await expect(page.getByRole('heading', { name: 'Red Flag Journal' })).toBeVisible({ timeout: 8000 });
 
     // Step 5: Override event is present in the journal
-    await expect(
-      page.locator('text=Pre-Entry Override').or(page.locator('text=AAPL'))
-    ).toBeVisible({ timeout: 8000 });
+    await expect(page.getByTestId('event-row').first()).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SI-PATH-02: Filter by event type in RFJ contains override event', async ({ page }) => {
@@ -334,7 +339,7 @@ test.describe('SC-SI-PATH — Full SI-01→SI-03 integration path', () => {
     await mockRedFlagJournal(page, RFJ_EVENTS_WITH_OVERRIDE);
 
     await page.goto('/#/RedFlagJournal');
-    await expect(page.locator('text=Red Flag Journal')).toBeVisible({ timeout: 8000 });
+    await expect(page.getByRole('heading', { name: 'Red Flag Journal' })).toBeVisible({ timeout: 8000 });
 
     // Apply event type filter
     const filterDropdown = page.locator('[data-testid="event-type-filter"]');
@@ -342,7 +347,7 @@ test.describe('SC-SI-PATH — Full SI-01→SI-03 integration path', () => {
     await filterDropdown.selectOption('pre_entry_override');
 
     // Filtered results still contain the override event (mock returns same data)
-    await expect(page.locator('text=AAPL').or(page.locator('text=Pre-Entry Override'))).toBeVisible({ timeout: 6000 });
+    await expect(page.getByTestId('event-row').first()).toBeVisible({ timeout: 6000 });
   });
 });
 
@@ -378,7 +383,8 @@ test.describe('SC-SI-01d — Pre-entry validation all-pass state', () => {
     await mockTradePlans(page);
     await mockPositions(page, POSITIONS_OPEN);
     await page.goto('/#/TradePlan?ticker=AAPL&market=US');
-    await expect(page.locator('text=Trade Plan')).toBeVisible({ timeout: 8000 });
+    await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 8000 });
+    await page.getByPlaceholder('e.g. 50').fill('10');
   });
 
   test('SC-SI-01d: All-pass state — "Pass" advisory badge visible', async ({ page }) => {

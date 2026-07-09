@@ -3,8 +3,8 @@
  *
  * Covers:
  *   SC-GP-01: Gate progress strip renders below session-summary cards on Dashboard
- *   SC-GP-02: Shows "{N}/20 trades (PT-04/SI-02 gate)" with progress bar
- *   SC-GP-03: "Gate cleared ✓" shown when gate is met
+ *   SC-GP-02: Shows "{N}/20 closed trades · {M} more to unlock quality insights" with progress bar
+ *   SC-GP-03: "Quality insights unlocked ✓" shown when gate is met
  *   SC-GP-04: Component hides silently on API error
  *
  * Infrastructure: Playwright page.route() network interception.
@@ -70,16 +70,20 @@ test.describe('Trade Gate Proximity Indicator', () => {
     await mockGateMetrics(page, GATE_IN_PROGRESS);
     await navigateToDashboard(page);
 
-    await expect(page.getByText(/12\/20 trades/i)).toBeVisible({ timeout: 8000 });
-    await expect(page.getByText(/PT-04\/SI-02 gate/i)).toBeVisible();
+    // Current shipped copy (GateProgressStrip.js): "{closed}/{threshold} closed
+    // trades · {remaining} more to unlock quality insights" — the "PT-04/SI-02
+    // gate" internal code name is not surfaced to end users. Spec
+    // (dashboard.md §6) is stale relative to this; see BLG-SPEC-73.
+    await expect(page.getByText(/12\/20 closed trades/i)).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText(/more to unlock quality insights/i)).toBeVisible();
   });
 
-  test('SC-GP-03: "Gate cleared" shown when closed trades meet or exceed threshold', async ({ page }) => {
+  test('SC-GP-03: "Quality insights unlocked" shown when closed trades meet or exceed threshold', async ({ page }) => {
     await mockGateMetrics(page, GATE_MET);
     await navigateToDashboard(page);
 
     await expect(page.getByTestId('gate-progress-strip')).toBeVisible({ timeout: 8000 });
-    await expect(page.getByText(/gate cleared/i)).toBeVisible();
+    await expect(page.getByText(/quality insights unlocked/i)).toBeVisible();
   });
 
   test('SC-GP-04: Component hides silently on API error — Dashboard remains usable', async ({ page }) => {

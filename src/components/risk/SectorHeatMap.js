@@ -10,6 +10,8 @@ function tileClass(exposurePct) {
 function SectorTile({ sector_name, position_count, exposure_pct }) {
   return (
     <div
+      data-testid="sector-tile"
+      data-sector={sector_name}
       className={`rounded-lg p-3 flex flex-col gap-1 min-w-0 ${tileClass(exposure_pct)}`}
     >
       <span className="text-xs text-slate-600 dark:text-slate-400 truncate" title={sector_name}>

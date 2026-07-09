@@ -101,7 +101,11 @@ async function mockFallback(page) {
 
 async function gotoTradePlanWithChecks(page) {
   await page.goto('/#/TradePlan?ticker=AAPL&market=US');
-  await expect(page.locator('[data-testid="pre-entry-checks-panel"]')).toBeVisible({ timeout: 10000 });
+  // PreEntryValidationPanel requires a non-zero quantity to render at all
+  // (TradePlan.js: `if (!ticker || !quantity || Number(quantity) <= 0) return null`)
+  // — it cannot be visible yet at this point, before quantity is filled in.
+  // Wait for the page itself instead; each test fills quantity afterward.
+  await expect(page.locator('h1, [class*="PageHeader"]').filter({ hasText: /Trade Plan/i })).toBeVisible({ timeout: 10000 });
 }
 
 // ---------------------------------------------------------------------------
@@ -109,12 +113,12 @@ async function gotoTradePlanWithChecks(page) {
 // ---------------------------------------------------------------------------
 
 test('SC-PEP-BADGE-01a: collapsed warn panel shows warn count badge', async ({ page }) => {
-  await mockPreEntry(page, PRE_ENTRY_WARN);
   await mockFallback(page);
+  await mockPreEntry(page, PRE_ENTRY_WARN);
   await gotoTradePlanWithChecks(page);
 
   // Panel starts expanded — fill quantity to trigger validation query
-  await page.fill('[placeholder*="Shares"], [placeholder*="shares"], input[name="quantity"], #quantity', '10');
+  await page.getByPlaceholder('e.g. 50').fill('10');
 
   // Wait for checks to load
   await expect(page.locator('[data-testid="pre-entry-checks-panel"]')).toBeVisible({ timeout: 8000 });
@@ -129,11 +133,11 @@ test('SC-PEP-BADGE-01a: collapsed warn panel shows warn count badge', async ({ p
 });
 
 test('SC-PEP-BADGE-01b: collapsed fail panel shows fail+warn count badge', async ({ page }) => {
-  await mockPreEntry(page, PRE_ENTRY_FAIL);
   await mockFallback(page);
+  await mockPreEntry(page, PRE_ENTRY_FAIL);
   await gotoTradePlanWithChecks(page);
 
-  await page.fill('[placeholder*="Shares"], [placeholder*="shares"], input[name="quantity"], #quantity', '10');
+  await page.getByPlaceholder('e.g. 50').fill('10');
 
   await expect(page.locator('[data-testid="pre-entry-checks-panel"]')).toBeVisible({ timeout: 8000 });
 
@@ -152,11 +156,11 @@ test('SC-PEP-BADGE-01b: collapsed fail panel shows fail+warn count badge', async
 // ---------------------------------------------------------------------------
 
 test('SC-PEP-BADGE-02: collapsed pass panel shows no count badge', async ({ page }) => {
-  await mockPreEntry(page, PRE_ENTRY_PASS);
   await mockFallback(page);
+  await mockPreEntry(page, PRE_ENTRY_PASS);
   await gotoTradePlanWithChecks(page);
 
-  await page.fill('[placeholder*="Shares"], [placeholder*="shares"], input[name="quantity"], #quantity', '10');
+  await page.getByPlaceholder('e.g. 50').fill('10');
 
   await expect(page.locator('[data-testid="pre-entry-checks-panel"]')).toBeVisible({ timeout: 8000 });
 

@@ -62,10 +62,35 @@ const ARC5_COMPLIANCE_ERROR = {
 // Shared helpers
 // ---------------------------------------------------------------------------
 
+/**
+ * PerformanceAnalytics gates all sections behind a minimum-trades check
+ * (settingsData.min_trades_for_analytics, default 10). Without at least 10
+ * closed trades in the selected period, the page shows "Not enough trades"
+ * and none of the analytics sections (including Arc5ComplianceSection)
+ * render at all.
+ */
+function buildMockTrades(count = 12) {
+  const now = new Date();
+  return Array.from({ length: count }, (_, i) => ({
+    id: `trade-${i}`,
+    ticker: 'AAPL',
+    market: 'US',
+    entry_date: new Date(now.getTime() - (i + 5) * 86400000).toISOString(),
+    exit_date: new Date(now.getTime() - i * 86400000).toISOString(),
+    entry_price: 100,
+    exit_price: 105,
+    pnl: 50,
+    shares: 10,
+  }));
+}
+
 /** Mock all API calls not explicitly set to return empty 200s to prevent hangs. */
 async function mockFallback(page) {
   await page.route(new RegExp(`${API}/`), (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: {} }) })
+  );
+  await page.route(new RegExp(`${API}/trades$`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: buildMockTrades() }) })
   );
 }
 

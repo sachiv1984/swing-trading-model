@@ -64,7 +64,7 @@ async function setupBaseRoutes(page, signalStatus = 'new') {
     if (route.request().method() === 'GET') {
       await route.fulfill({ json: { status: 'ok', data: [signal] } });
     } else {
-      await route.continue();
+      await route.fallback();
     }
   });
 
@@ -128,7 +128,7 @@ test.describe('SC-SIG-WL-01 — Add to Watchlist happy path', () => {
         const signal = fetchCount > 1 ? MOCK_WATCHLISTED_SIGNAL : MOCK_SIGNAL;
         await route.fulfill({ json: { status: 'ok', data: [signal] } });
       } else {
-        await route.continue();
+        await route.fallback();
       }
     });
 
@@ -173,7 +173,7 @@ test.describe('SC-SIG-WL-02 — Duplicate add handling', () => {
         const signal = fetchCount > 1 ? MOCK_WATCHLISTED_SIGNAL : MOCK_SIGNAL;
         await route.fulfill({ json: { status: 'ok', data: [signal] } });
       } else {
-        await route.continue();
+        await route.fallback();
       }
     });
 

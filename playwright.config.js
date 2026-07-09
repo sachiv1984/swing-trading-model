@@ -10,23 +10,8 @@ module.exports = defineConfig({
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 1 : undefined,
 
-  // Pre-existing spec files that were never registered in the old explicit CI list and
-  // are currently failing (text/UI mismatches or pending feature implementations).
-  // Tracked under BLG-QA-64. Remove each entry here once the spec is fixed.
-  testIgnore: [
-    '**/arc5-compliance-section.spec.js',
-    '**/entry-checklist.spec.js',
-    '**/gate-progress.spec.js',
-    '**/paper-account.spec.js',
-    '**/plan-vs-reality.spec.js',
-    '**/pre-entry-panel-badge.spec.js',
-    '**/red-flag-journal.spec.js',
-    '**/sector-heatmap.spec.js',
-    '**/si01-si03-integration.spec.js',
-    '**/si05-digest-delivery.spec.js',
-    '**/signals-add-to-watchlist.spec.js',
-    '**/signals-allocation-insufficient.spec.js',
-  ],
+  // All spec files under tests/e2e/ are CI-registered — none excluded.
+  // (BLG-QA-64, ST-11 EPIC-03 v6.8: last 12 dark/ignored specs resolved — 11 fixed, 1 deleted.)
 
   // Visual snapshot configuration
   // Baseline PNGs live in tests/e2e/__snapshots__/ (committed to repo).

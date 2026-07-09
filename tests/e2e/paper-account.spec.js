@@ -88,10 +88,9 @@ const PORTFOLIO_STUB = {
   },
 };
 
-const POSITIONS_STUB = {
-  status: 'ok',
-  data: PORTFOLIO_STUB.data.positions,
-};
+// GET /positions returns a raw array directly (backend/main.py get_positions_endpoint),
+// not the {status, data} envelope used by GET /portfolio.
+const POSITIONS_STUB = PORTFOLIO_STUB.data.positions;
 
 // ─── Route helpers ─────────────────────────────────────────────────────────────
 
@@ -137,6 +136,8 @@ test.describe('SC-PA-01 — Paper Account Panel visible when configured', () => 
 
     await page.goto('/#/Positions');
     await expect(page.locator('h1')).toBeVisible({ timeout: 10000 });
+    // PaperAccountPanel only mounts in Table view (Positions.js: viewMode === "table").
+    await page.getByLabel('Table view').click();
   });
 
   test('SC-PA-01a: Paper Account panel header is visible', async ({ page }) => {
@@ -166,6 +167,7 @@ test.describe('SC-PA-02 — Paper Account Panel hidden when not configured', () 
 
     await page.goto('/#/Positions');
     await expect(page.locator('h1')).toBeVisible({ timeout: 10000 });
+    await page.getByLabel('Table view').click();
   });
 
   test('SC-PA-02a: Paper Account panel is NOT rendered when credentials absent', async ({ page }) => {

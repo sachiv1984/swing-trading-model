@@ -78,7 +78,7 @@ export default function Arc5ComplianceSection() {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold text-white mb-4">Signal Compliance</h2>
+      <h2 className="text-lg font-semibold text-white mb-4">Arc 5 Signal Compliance</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((card) => (
           <ComplianceCard

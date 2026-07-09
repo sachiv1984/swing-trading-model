@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -5165,6 +5165,28 @@ The locked ux_spec (`docs/design/2026-07-08__release-v6.8/si02-gate-visibility-i
 **Acceptance Criteria**
 - AC-01: Gate Condition 2 and 3 definitions are explicitly product-reviewed and documented in the canonical spec, no longer marked as an engine-filled gap
 - AC-02: If thresholds change, `src/pages/Reports.js`'s `SI02GateStatusSection` is updated to match, with Playwright coverage for the new thresholds
+
+---
+
+### BLG-SPEC-73 — Gate Progress Indicator copy diverges from dashboard.md §6 (choose canonical wording)
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Head of UX & Design / Head of Specs Team
+**Source:** ST-11 (BLG-QA-64), EPIC-03, v6.8 — fixing dark Playwright spec `gate-progress.spec.js` — 2026-07-09
+**Effort:** XS (<1h — copy decision, then sync spec + component if needed)
+**Provisional-Target:** v6.9
+
+**Problem**
+`docs/specs/frontend/pages/dashboard.md` §6 specifies Gate Progress Indicator copy as `{N}/20 trades (PT-04/SI-02 gate)` (not met) and `Gate cleared ✓` (met). The shipped `src/components/dashboard/home/GateProgressStrip.js` instead renders `{N}/{threshold} closed trades · {M} more to unlock quality insights` and `Quality insights unlocked ✓` — omitting the internal `PT-04`/`SI-02` code names entirely. Both are internally consistent (component matches itself; spec matches itself) but they disagree with each other, and it's unclear which is the intended canonical wording going forward.
+
+**Scope**
+- Head of UX & Design confirms whether the "quality insights" framing (current shipped copy) is the deliberate intended direction, or whether it was an undocumented ad-hoc change that should be reverted to match the spec
+- Update whichever side is wrong (spec §6 Display table, or the component) so both agree
+- Playwright coverage (`tests/e2e/gate-progress.spec.js`) already asserts the shipped copy as an interim measure — update if the component changes
+
+**Acceptance Criteria**
+- `dashboard.md` §6 and `GateProgressStrip.js` use identical copy
+- Known Deviations note in `dashboard.md` §6 (added v2.7) removed once resolved
 
 ---
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*

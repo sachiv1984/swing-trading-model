@@ -79,7 +79,7 @@ async function setup(page, journalResponse) {
   await mockFallback(page);
   await mockJournal(page, journalResponse);
   await page.goto(PAGE_URL);
-  await page.waitForLoadState('networkidle');
+  await page.getByRole('heading', { name: 'Red Flag Journal' }).waitFor({ timeout: 8000 });
 }
 
 // ---------------------------------------------------------------------------
@@ -92,7 +92,7 @@ test.describe('Red Flag Journal', () => {
     await setup(page, makeJournalResponse(MOCK_EVENTS));
 
     // Page title visible
-    await expect(page.getByText('Red Flag Journal')).toBeVisible({ timeout: 8000 });
+    await expect(page.getByRole('heading', { name: 'Red Flag Journal' })).toBeVisible({ timeout: 8000 });
 
     // Event rows rendered
     const rows = page.getByTestId('event-row');
@@ -118,7 +118,7 @@ test.describe('Red Flag Journal', () => {
     await setup(page, makeJournalResponse([], 0));
 
     // Page title visible
-    await expect(page.getByText('Red Flag Journal')).toBeVisible({ timeout: 8000 });
+    await expect(page.getByRole('heading', { name: 'Red Flag Journal' })).toBeVisible({ timeout: 8000 });
 
     // Empty state message
     await expect(page.getByTestId('empty-state')).toBeVisible({ timeout: 8000 });
@@ -197,7 +197,6 @@ test.describe('Red Flag Journal', () => {
     });
 
     await page.goto(PAGE_URL);
-    await page.waitForLoadState('networkidle');
 
     // Initially 2 rows
     await expect(page.getByTestId('event-row')).toHaveCount(2, { timeout: 8000 });

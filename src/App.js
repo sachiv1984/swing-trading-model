@@ -1,4 +1,5 @@
 import { Toaster } from "./components/ui/toaster"
+import { Toaster as SonnerToaster } from "sonner"
 import NotificationPreferences from "./pages/NotificationPreferences"
 import Notifications from "./pages/Notifications"
 import NotificationsHistory from "./pages/NotificationsHistory"
@@ -103,6 +104,7 @@ function App() {
           <AuthenticatedApp />
         </Router>
         <Toaster />
+        <SonnerToaster />
       </QueryClientProvider>
     </AuthProvider>
   )
