@@ -1116,6 +1116,34 @@ def get_trade_plans_by_position(position_id: str, portfolio_id: str) -> list:
             return [dict(r) for r in cur.fetchall()]
 
 
+def get_unlinked_trade_plan_for_entry(portfolio_id: str, ticker: str, market: str) -> Optional[Dict]:
+    """Find the most recent not-yet-linked trade plan for a ticker/market (BLG-BE-46).
+
+    Used by add_position() to auto-link a newly entered position back to the
+    draft plan it was entered from — the pre-trade planning flow (TradePlan.js)
+    and the position-entry flow (TradeEntry.js) are separate pages with no
+    explicit hand-off, so position_id was never populated on trade_plans in
+    production. Matches on ticker+market with position_id still NULL and status
+    still in a pre-entry state; excludes 'active', 'closed', 'abandoned' plans.
+    """
+    ticker_upper = ticker.upper()
+    ticker_bare = ticker_upper[:-2] if ticker_upper.endswith(".L") else ticker_upper
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT * FROM trade_plans
+                   WHERE portfolio_id=%s
+                     AND (UPPER(ticker)=%s OR UPPER(ticker)=%s)
+                     AND market=%s
+                     AND position_id IS NULL
+                     AND status NOT IN ('active', 'closed', 'abandoned')
+                   ORDER BY created_at DESC LIMIT 1""",
+                (portfolio_id, ticker_bare, ticker_bare + ".L", market),
+            )
+            row = cur.fetchone()
+            return dict(row) if row else None
+
+
 def get_position_by_id(position_id: str) -> Optional[Dict]:
     """Fetch a single position by its UUID."""
     with get_db() as conn:
