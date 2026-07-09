@@ -2201,6 +2201,57 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /analytics/tag-performance:
+    get:
+      tags: [Analytics]
+      summary: Get win rate and average R-multiple per trade-plan tag
+      description: |
+        Returns per-tag performance (win rate, average R-multiple, trade count)
+        for the requested trade-plan tags. Reads only trade_plans.trade_tags and
+        existing closed-trade linkage — no dependency on trade_annotations/PO-02.
+        ST-05, BLG-FEAT-52, v6.8.
+        Canonical contract: docs/specs/api_contracts/analytics_endpoints.md
+      parameters:
+        - name: tags
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Comma-separated trade-plan tags (e.g. "breakout,earnings-play")
+      responses:
+        "200":
+          description: Per-tag performance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        tag:
+                          type: string
+                        win_rate:
+                          type: number
+                          format: float
+                        avg_r_multiple:
+                          type: number
+                          format: float
+                          nullable: true
+                        trade_count:
+                          type: integer
+        "400":
+          description: Missing tags parameter
+        "404":
+          description: Portfolio not found
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /analytics/behavioural-drift:
     get:
       tags: [Analytics]
@@ -4711,6 +4762,32 @@ components:
                       error: { type: string }
         "404":
           description: Trade plan not found
+
+  /trade-plans/tags:
+    get:
+      tags: [Trade Plans]
+      summary: Get all unique trade-plan tags for autocomplete
+      description: |
+        Returns unique tags used across trade_plans.trade_tags for the portfolio.
+        Mirrors GET /positions/tags. Data-independent from the existing
+        position/journal tags. ST-05, BLG-FEAT-52, v6.8.
+      responses:
+        "200":
+          description: List of unique trade-plan tags
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      type: string
+        "500":
+          $ref: "#/components/responses/InternalError"
 
   /trade-plans/setup-quality-score:
     get:

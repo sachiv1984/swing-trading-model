@@ -1005,6 +1005,7 @@ def ensure_trade_plans_table():
             cur.execute("CREATE INDEX IF NOT EXISTS idx_trade_plans_status ON trade_plans(status)")
         conn.commit()
     ensure_regime_context_text_column()
+    ensure_trade_plan_tags_column()
 
 
 def create_trade_plan(portfolio_id: str, data: dict) -> dict:
@@ -1019,8 +1020,8 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                     thesis_feedback,
                     planned_quantity, planned_entry_price, planned_stop_price,
                     signal_id, risk_percent_used, portfolio_value_at_entry,
-                    pre_entry_validation_snapshot, effective_settings_snapshot)
-                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb)
+                    pre_entry_validation_snapshot, effective_settings_snapshot, trade_tags)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s)
                    RETURNING *""",
                 (
                     portfolio_id,
@@ -1047,6 +1048,7 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                     data.get("portfolio_value_at_entry"),
                     _json(data["pre_entry_validation_snapshot"]) if data.get("pre_entry_validation_snapshot") is not None else None,
                     _json(data["effective_settings_snapshot"]) if data.get("effective_settings_snapshot") is not None else None,
+                    data.get("trade_tags") or [],
                 ),
             )
             row = cur.fetchone()
@@ -1091,6 +1093,7 @@ def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict
         "checklist_completed", "checklist_items", "status", "abandonment_reason",
         "pre_entry_override_acknowledged", "thesis_feedback",
         "planned_quantity", "planned_entry_price", "planned_stop_price",
+        "trade_tags",
     }
     fields = {k: v for k, v in data.items() if k in allowed}
     if not fields:
@@ -1896,6 +1899,98 @@ def ensure_si02_trade_plans_columns():
                 "ON trade_plans(signal_id) WHERE signal_id IS NOT NULL"
             )
         conn.commit()
+
+
+def ensure_trade_plan_tags_column():
+    """Add trade_tags TEXT[] column to trade_plans (idempotent).
+
+    ST-05 (BLG-FEAT-52) migration — v6.8 EPIC-02. Independent, data-only field
+    from the existing positions.tags / trade_history.tags columns (no FK, no
+    shared service). Nullable-equivalent default '{}'; no backfill required.
+    Reversible: DROP COLUMN trade_tags.
+    Spec: docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS trade_tags TEXT[] NOT NULL DEFAULT '{}'"
+            )
+        conn.commit()
+
+
+def get_all_trade_plan_tags(portfolio_id: str) -> List[str]:
+    """Get all unique tags used across trade_plans.trade_tags for a portfolio (ST-05)."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT DISTINCT unnest(trade_tags) as tag
+                FROM trade_plans
+                WHERE portfolio_id = %s AND trade_tags IS NOT NULL
+                ORDER BY tag
+                """,
+                (portfolio_id,),
+            )
+            return [row['tag'] for row in cur.fetchall()]
+
+
+def get_tag_performance(portfolio_id: str, tags: List[str]) -> List[Dict]:
+    """Win rate and average R-multiple per requested trade-plan tag (ST-05 AC-02).
+
+    Joins trade_plans (trade_tags) to trade_history via position_id, then to
+    positions for initial_stop to compute R-multiple using the same formula as
+    GET /analytics/r-multiple-distribution: R = (exit - entry) / (entry - stop).
+    Only closed trades (trade_history rows) linked to a plan carrying the tag
+    are counted. No dependency on trade_annotations/PO-02 (ST-05 AC-04).
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT tp.trade_tags, th.pnl, th.entry_price, th.exit_price, p.initial_stop
+                FROM trade_plans tp
+                JOIN trade_history th ON th.position_id = tp.position_id
+                LEFT JOIN positions p ON p.id = th.position_id
+                WHERE tp.portfolio_id = %s
+                  AND tp.position_id IS NOT NULL
+                  AND tp.trade_tags && %s
+                """,
+                (portfolio_id, tags),
+            )
+            rows = cur.fetchall()
+
+    per_tag: Dict[str, Dict] = {tag: {"wins": 0, "count": 0, "r_values": []} for tag in tags}
+    for row in rows:
+        row_tags = set(row["trade_tags"] or [])
+        pnl = float(row["pnl"]) if row["pnl"] is not None else 0.0
+        entry = float(row["entry_price"]) if row["entry_price"] is not None else None
+        exit_ = float(row["exit_price"]) if row["exit_price"] is not None else None
+        stop = float(row["initial_stop"]) if row["initial_stop"] is not None else None
+        r_value = None
+        if entry is not None and exit_ is not None and stop is not None and entry > stop:
+            r_value = (exit_ - entry) / (entry - stop)
+        for tag in tags:
+            if tag in row_tags:
+                bucket = per_tag[tag]
+                bucket["count"] += 1
+                if pnl > 0:
+                    bucket["wins"] += 1
+                if r_value is not None:
+                    bucket["r_values"].append(r_value)
+
+    result = []
+    for tag in tags:
+        bucket = per_tag[tag]
+        count = bucket["count"]
+        win_rate = round(bucket["wins"] / count * 100, 1) if count else 0.0
+        avg_r = round(sum(bucket["r_values"]) / len(bucket["r_values"]), 2) if bucket["r_values"] else None
+        result.append({
+            "tag": tag,
+            "win_rate": win_rate,
+            "avg_r_multiple": avg_r,
+            "trade_count": count,
+        })
+    return result
 
 
 def ensure_si02_trade_history_indexes():

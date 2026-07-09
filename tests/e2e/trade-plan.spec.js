@@ -739,3 +739,80 @@ test('SC-TP-23f: thesis_feedback is included in the save payload once feedback i
 
   expect(savedPayload.thesis_feedback).toBe('useful');
 });
+
+// ---------------------------------------------------------------------------
+// SC-TP-24–27 — Trade Plan Tags (ST-05, BLG-FEAT-52, EPIC-02, v6.8)
+// Design source: docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md
+// ---------------------------------------------------------------------------
+
+async function mockTradePlanTags(page, tags = []) {
+  await page.route(`${API}/trade-plans/tags`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: tags }) })
+  );
+}
+
+test('SC-TP-24: Tags section renders with "No tags" placeholder when plan has no tags', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await mockTradePlanTags(page, ['momentum', 'breakout']);
+  await gotoTradePlan(page, { ticker: 'AAPL', market: 'US' });
+
+  await expect(page.getByTestId('trade-plan-tags')).toBeVisible({ timeout: 5000 });
+  await expect(page.getByTestId('trade-plan-tags')).toContainText(/no tags/i);
+  await expect(page.getByTestId('trade-plan-tag-input')).toBeVisible();
+});
+
+test('SC-TP-25: Typing a tag and pressing Enter adds it as a pill', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await mockTradePlanTags(page);
+  await gotoTradePlan(page, { ticker: 'AAPL', market: 'US' });
+
+  await page.getByTestId('trade-plan-tag-input').fill('Breakout Setup');
+  await page.getByTestId('trade-plan-tag-input').press('Enter');
+
+  // Normalised: lowercase, spaces -> hyphens
+  await expect(page.getByTestId('trade-plan-tags')).toContainText('breakout-setup');
+  await expect(page.getByTestId('trade-plan-tag-remove-breakout-setup')).toBeVisible();
+});
+
+test('SC-TP-26: Clicking the X on a tag pill removes it', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await mockTradePlanTags(page);
+  await gotoTradePlan(page, { ticker: 'AAPL', market: 'US' });
+
+  await page.getByTestId('trade-plan-tag-input').fill('momentum');
+  await page.getByTestId('trade-plan-tag-input').press('Enter');
+  await expect(page.getByTestId('trade-plan-tag-remove-momentum')).toBeVisible();
+
+  await page.getByTestId('trade-plan-tag-remove-momentum').click();
+
+  await expect(page.getByTestId('trade-plan-tag-remove-momentum')).toHaveCount(0);
+  await expect(page.getByTestId('trade-plan-tags')).toContainText(/no tags/i);
+});
+
+test('SC-TP-27: trade_tags is included in the save payload', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await mockTradePlanTags(page);
+  await gotoTradePlan(page, { ticker: 'AAPL', market: 'US' });
+
+  let savedPayload = null;
+  await page.route(`${API}/trade-plans`, (route) => {
+    if (route.request().method() === 'POST') {
+      savedPayload = route.request().postDataJSON();
+      route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(TRADE_PLAN_SAVED) });
+    } else {
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) });
+    }
+  });
+
+  await page.getByTestId('trade-plan-tag-input').fill('earnings-play');
+  await page.getByTestId('trade-plan-tag-input').press('Enter');
+
+  await page.getByRole('button', { name: /save plan/i }).click();
+  await expect(page.locator('[class*="emerald"]').filter({ hasText: /saved successfully/i })).toBeVisible({ timeout: 8000 });
+
+  expect(savedPayload.trade_tags).toEqual(['earnings-play']);
+});

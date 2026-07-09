@@ -117,6 +117,9 @@ async def test_all_endpoints(request: Request):
         # Arc 5 Compliance Metrics (v4.0 / ST-01)
         {"name": "GET /analytics/arc5-compliance", "method": "GET", "url": f"{base_url}/analytics/arc5-compliance", "critical": False},
 
+        # Trade Plan Tag Performance (v6.8 / ST-05, BLG-FEAT-52)
+        {"name": "GET /analytics/tag-performance", "method": "GET", "url": f"{base_url}/analytics/tag-performance?tags=momentum", "critical": False},
+
         # Ticker Universe (v3.0 / ST-01)
         {"name": "GET /ticker-universe", "method": "GET", "url": f"{base_url}/ticker-universe", "critical": False},
         {"name": "POST /ticker-universe", "method": "POST", "url": f"{base_url}/ticker-universe", "body": {"ticker": "AAPL", "market": "US"}, "critical": False},
@@ -128,6 +131,7 @@ async def test_all_endpoints(request: Request):
 
         # Trade Plans (v3.1 / ST-02)
         {"name": "GET /trade-plans", "method": "GET", "url": f"{base_url}/trade-plans", "critical": False},
+        {"name": "GET /trade-plans/tags", "method": "GET", "url": f"{base_url}/trade-plans/tags", "critical": False},
         {"name": "POST /trade-plans", "method": "POST", "url": f"{base_url}/trade-plans", "body": {"ticker": "AAPL", "market": "US"}, "critical": False},
         {"name": "GET /trade-plans/by-position/00000000-0000-0000-0000-000000000000", "method": "GET", "url": f"{base_url}/trade-plans/by-position/00000000-0000-0000-0000-000000000000", "critical": False},
         {"name": "GET /trade-plans/00000000-0000-0000-0000-000000000001", "method": "GET", "url": f"{base_url}/trade-plans/00000000-0000-0000-0000-000000000001", "critical": False},
