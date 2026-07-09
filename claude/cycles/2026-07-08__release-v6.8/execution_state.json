@@ -208,7 +208,7 @@
       "branch": "exec/2026-07-08__release-v6.8/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-08__release-v6.8/qa_evidence_EPIC-03.md",
       "test_scenarios": [
         "tests/e2e/arc5-compliance-section.spec.js",
