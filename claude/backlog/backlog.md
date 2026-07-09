@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-08 (release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-08 (session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -4984,6 +4984,27 @@ The Product Value Ratio and Skill-Silo alerts both measure governance overhead i
 
 **Acceptance Criteria**
 - Estimate produced; findings inform the next cycle-cadence discussion if one recurs
+
+---
+
+### BLG-GOV-190 — Design gate prompt does not sync design_gate_status to top-level state pointer
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** Design gate run, cycle 2026-07-08__release-v6.8 (commit 028e7fed) — 2026-07-08
+**Effort:** XS (~1 hour)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`design_gate_prompt.md` §5 Write Scope Restriction lists only `claude/cycles/<cycle_id>/design_gate.md`, the cycle's own `state.json`, and `docs/specs/frontend/pages/` as writable. It does not include `.claude_current_state.json`. But that top-level file also carries a mirrored `design_gate_status` field, initialised to `"not_started"` by the Release Planning Engine's STEP 0. Because STEP 5 (Update Global State) has no write scope to update the top-level mirror, a passed gate is recorded correctly in the cycle-level `state.json` but the top-level pointer keeps reporting `"not_started"` indefinitely. Since CLAUDE.md §0 instructs every session to read `.claude_current_state.json` first and report status from it, a future session could misreport an already-passed design gate as not started. This is the same class of drift already logged against `OPERATIONAL_GUIDE.md` (header vs. table mismatch, 4 prior recurrences).
+
+**Scope**
+- Either (a) add `.claude_current_state.json` (additive-only, restricted to the `design_gate_*` fields) to `design_gate_prompt.md` §5's write scope and have STEP 5 mirror `design_gate_status`, `design_gate_completed_utc`, and `design_gate_record` there, or (b) update CLAUDE.md §0's session-start protocol to cross-check the active cycle's own `state.json` for `design_gate_status` rather than relying solely on the top-level pointer
+- Apply the CLAUDE.md §6 governance file edit checklist (version bump, OPERATIONAL_GUIDE §14 sync, prompt_change_log.md entry) to whichever file is changed
+
+**Acceptance Criteria**
+- AC-01: After a design gate passes, `.claude_current_state.json`'s `design_gate_status` (or the session-start protocol's read path) correctly reflects `Passed` without manual correction
+- AC-02: No other write-scope-restricted file is touched by the fix beyond what STEP 5 already governs
 
 ---
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*
