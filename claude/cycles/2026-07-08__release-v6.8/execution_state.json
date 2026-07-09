@@ -472,7 +472,7 @@
           "assigned_to": "engine",
           "github_issue": 943,
           "branch": "exec/2026-07-08__release-v6.8/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "611ce8a072508a796e7455de6b17bc4db3153a2f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
