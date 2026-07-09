@@ -347,7 +347,7 @@
         "ST-12": {
           "title": "CI inline OpenAPI drift detection for api_performance_baseline.md (BLG-GOV-134)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 939,
           "branch": "exec/2026-07-08__release-v6.8/EPIC-03",
@@ -355,13 +355,23 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "completed_utc": "2026-07-09T14:20:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/quality_gate.yml#api_baseline_drift"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "required_by": "Infrastructure & Operations Owner",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "Retry 1: first review pass returned a false-positive Blocked (claimed IndentationError in the embedded Python heredoc) because the reviewer extracted the script via raw text tools instead of a YAML parser -- GitHub Actions' `run: |` block scalar strips the base indentation before execution. Re-invoked with explicit instruction to parse via PyYAML and actually execute the extracted script; confirmed correct and cleared."
+            ],
+            "cleared_utc": "2026-07-09T14:35:00Z"
+          },
+          "notes": "AC-01: Added api_baseline_drift job to quality_gate.yml -- parses openapi.yaml via PyYAML, normalises path params to generic {id} (openapi.yaml uses semantic names like {position_id}; api_performance_baseline.md uses {id} generically), fails CI if any endpoint string is missing from the baseline doc except a hardcoded 17-entry KNOWN_GAPS allowlist (pre-existing debt predating this gate, grandfathered per the openapi-drift.yml precedent pattern). Validated computationally (both manually and via agent re-execution) that KNOWN_GAPS is accurate and the check passes with 0 missing against current repo state -- will not break CI on merge. AC-02: added as a new job within the existing quality_gate.yml workflow file (Quality & Governance Gate), per the literal AC-02 wording. Deviation check: none -- follows the existing openapi-drift.yml regex/allowlist pattern precedent."
         },
         "ST-13": {
           "title": "Log Anthropic API token usage and cost per morning briefing call (BLG-OPS-74)",
@@ -473,7 +483,8 @@
     "ST-07",
     "ST-08",
     "ST-09",
-    "ST-10"
+    "ST-10",
+    "ST-12"
   ],
   "open_escalations": [],
   "merge_gate": {

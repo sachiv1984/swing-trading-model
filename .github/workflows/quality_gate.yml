@@ -68,3 +68,98 @@ jobs:
 
           echo "QA evidence verified: $QA_FILE"
           grep -P 'Date:\s*\d{4}-\d{2}-\d{2}' "$QA_FILE" | head -3
+
+  api_baseline_drift:
+    name: API Performance Baseline Drift Detection (ST-12)
+    runs-on: ubuntu-latest
+
+    # [EPIC-03][ST-12] — Flags endpoints present in docs/reference/openapi.yaml
+    # that are not yet reflected in docs/ops/api_performance_baseline.md.
+    # Complements openapi-drift.yml (which checks openapi.yaml against
+    # docs/specs/api_contracts/*.md) with a separate check against the
+    # performance baseline record. See CLAUDE.md "API performance baseline
+    # advisory (AUD-2026-06-22-006)" — this promotes that advisory to a hard gate.
+    #
+    # Path parameters are normalised to {id} before comparison (openapi.yaml
+    # uses semantic names like {position_id}/{trade_id}; the baseline doc
+    # uses a generic {id} placeholder throughout) to avoid false positives.
+    #
+    # KNOWN_GAPS grandfathers pre-existing endpoints that predate this gate
+    # (v6.8) — new entries must not be added to this list; they must be
+    # measured and added to api_performance_baseline.md instead (BLG-OPS-61
+    # tracks closing the pre-existing gap list itself).
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PyYAML
+        run: pip install pyyaml -q
+
+      - name: Detect baseline drift
+        run: |
+          python3 - <<'EOF'
+          import re
+          import sys
+          from pathlib import Path
+
+          import yaml
+
+          OPENAPI_PATH  = Path("docs/reference/openapi.yaml")
+          BASELINE_PATH = Path("docs/ops/api_performance_baseline.md")
+          HTTP_METHODS  = {"get", "post", "put", "patch", "delete"}
+
+          # Pre-existing gaps as of v6.8 (ST-12) — grandfathered, not to be
+          # added to going forward. Tracked for closure under BLG-OPS-61.
+          KNOWN_GAPS = {
+              "DELETE /watchlist/{id}",
+              "GET /analytics/market-correlation",
+              "GET /analytics/metrics",
+              "GET /analytics/tag-performance",
+              "GET /news/{id}",
+              "GET /positions/analyze",
+              "GET /positions/grace-period-alerts",
+              "GET /positions/tags",
+              "GET /positions/{id}",
+              "GET /positions/{id}/stop-trail",
+              "PATCH /watchlist/{id}",
+              "POST /alerts/rules",
+              "POST /positions/nightly-stop-update",
+              "POST /positions/risk-off-alerts",
+              "POST /positions/{id}/refresh-state",
+              "POST /settings",
+              "POST /signals/rebalance-exit",
+          }
+
+          spec = yaml.safe_load(OPENAPI_PATH.read_text())
+          paths = spec.get("paths", {}) or {}
+
+          endpoints = set()
+          for path, methods in paths.items():
+              norm_path = re.sub(r"\{[^}]+\}", "{id}", path)
+              for method in methods or {}:
+                  if method.lower() in HTTP_METHODS:
+                      endpoints.add(f"{method.upper()} {norm_path}")
+
+          baseline_text = BASELINE_PATH.read_text()
+          missing = sorted(e for e in endpoints if e not in baseline_text and e not in KNOWN_GAPS)
+
+          if missing:
+              print("MERGE BLOCKED: endpoint(s) in openapi.yaml not reflected in "
+                    "docs/ops/api_performance_baseline.md:")
+              for m in missing:
+                  print(f"  - {m}")
+              print("")
+              print("Add a baseline measurement row (or an 'Endpoints Not "
+                    "Measured' / 'Pending Baseline Measurement' entry) for each "
+                    "endpoint above, per CLAUDE.md's API performance baseline "
+                    "advisory (AUD-2026-06-22-006).")
+              sys.exit(1)
+
+          print(f"No new baseline drift detected. {len(endpoints)} endpoint(s) "
+                f"checked, {len(KNOWN_GAPS)} pre-existing gap(s) grandfathered.")
+          EOF
