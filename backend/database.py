@@ -656,8 +656,29 @@ def get_signals(portfolio_id: str, status: str = None) -> List[Dict]:
             return cur.fetchall()
 
 
+# BLG-SEC-08: dict keys passed to update_signal() are spliced directly into the
+# SQL UPDATE statement as column names (parameterization only covers values,
+# not identifiers) — an unvalidated key is a SQL-injection-adjacent arbitrary
+# column write. This is the full set of signals columns a client update may
+# legitimately target; id/portfolio_id/created_at/updated_at are excluded.
+SIGNAL_UPDATABLE_COLUMNS = frozenset({
+    "ticker", "market", "signal_date", "rank", "momentum_percent",
+    "current_price", "price_gbp", "atr_value", "volatility", "initial_stop",
+    "suggested_shares", "allocation_gbp", "total_cost", "status", "reason",
+})
+
+
 def update_signal(signal_id: str, updates: Dict) -> Dict:
-    """Update a signal"""
+    """Update a signal.
+
+    Raises:
+        ValueError: If `updates` contains a key outside SIGNAL_UPDATABLE_COLUMNS
+            (BLG-SEC-08 — see module-level comment above).
+    """
+    unknown_keys = set(updates) - SIGNAL_UPDATABLE_COLUMNS
+    if unknown_keys:
+        raise ValueError(f"Unrecognised signal field(s): {sorted(unknown_keys)}")
+
     with get_db() as conn:
         with conn.cursor() as cur:
             set_parts = []
@@ -1114,6 +1135,34 @@ def get_trade_plans_by_position(position_id: str, portfolio_id: str) -> list:
                 (position_id, portfolio_id),
             )
             return [dict(r) for r in cur.fetchall()]
+
+
+def get_unlinked_trade_plan_for_entry(portfolio_id: str, ticker: str, market: str) -> Optional[Dict]:
+    """Find the most recent not-yet-linked trade plan for a ticker/market (BLG-BE-46).
+
+    Used by add_position() to auto-link a newly entered position back to the
+    draft plan it was entered from — the pre-trade planning flow (TradePlan.js)
+    and the position-entry flow (TradeEntry.js) are separate pages with no
+    explicit hand-off, so position_id was never populated on trade_plans in
+    production. Matches on ticker+market with position_id still NULL and status
+    still in a pre-entry state; excludes 'active', 'closed', 'abandoned' plans.
+    """
+    ticker_upper = ticker.upper()
+    ticker_bare = ticker_upper[:-2] if ticker_upper.endswith(".L") else ticker_upper
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT * FROM trade_plans
+                   WHERE portfolio_id=%s
+                     AND (UPPER(ticker)=%s OR UPPER(ticker)=%s)
+                     AND market=%s
+                     AND position_id IS NULL
+                     AND status NOT IN ('active', 'closed', 'abandoned')
+                   ORDER BY created_at DESC LIMIT 1""",
+                (portfolio_id, ticker_bare, ticker_bare + ".L", market),
+            )
+            row = cur.fetchone()
+            return dict(row) if row else None
 
 
 def get_position_by_id(position_id: str) -> Optional[Dict]:

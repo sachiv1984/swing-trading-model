@@ -30,6 +30,8 @@ from database import (
     get_all_tags,
     search_positions_by_tags,
     get_trade_plans_by_position,
+    get_unlinked_trade_plan_for_entry,
+    update_trade_plan,
     get_signals,
     ensure_planned_entry_price_column,
 )
@@ -837,11 +839,28 @@ def add_position(
     
     # Create position in database
     new_position = create_position(portfolio_id, position_data)
-    
+
     # Update portfolio cash
     new_cash = current_cash - total_cost_gbp
     update_portfolio_cash(portfolio_id, new_cash)
-    
+
+    # BLG-BE-46: auto-link this new position to the most recent unlinked draft
+    # trade plan for the same ticker/market, if one exists. The pre-trade
+    # planning flow (TradePlan.js) and position-entry flow (TradeEntry.js) are
+    # separate pages with no explicit hand-off between them, which left
+    # trade_plans.position_id permanently NULL in production. Best-effort —
+    # a lookup/link failure must not block position creation.
+    try:
+        unlinked_plan = get_unlinked_trade_plan_for_entry(portfolio_id, ticker, market)
+        if unlinked_plan:
+            update_trade_plan(str(unlinked_plan["id"]), portfolio_id, {
+                "position_id": str(new_position["id"]),
+                "status": "active",
+            })
+            print(f"   ✓ Linked trade plan {unlinked_plan['id']} to new position")
+    except Exception as e:
+        print(f"   ⚠️  Trade plan auto-link skipped: {e}")
+
     print(f"   ✓ Position created")
     print(f"   Cash: £{current_cash:.2f} → £{new_cash:.2f}\n")
     

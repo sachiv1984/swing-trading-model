@@ -96,6 +96,7 @@ from services.position_lifecycle_service import (
     compute_days_in_state,
 )
 from database import get_position_by_id
+from database import SIGNAL_UPDATABLE_COLUMNS
 
 from services import (
     # Position service
@@ -959,6 +960,12 @@ def update_signal_endpoint(signal_id: str, updates: dict):
     """Update a signal (e.g., change status)"""
     if "status" in updates and updates["status"] not in _ALLOWED_SIGNAL_STATUSES:
         raise HTTPException(status_code=400, detail=f"Invalid status '{updates['status']}'. Allowed: {sorted(_ALLOWED_SIGNAL_STATUSES)}")
+    # BLG-SEC-08: reject unrecognised fields with 400 here (in addition to the
+    # defense-in-depth allowlist check inside database.update_signal()) so a bad
+    # request doesn't surface as a misleading 404.
+    unknown_keys = set(updates) - SIGNAL_UPDATABLE_COLUMNS
+    if unknown_keys:
+        raise HTTPException(status_code=400, detail=f"Unrecognised signal field(s): {sorted(unknown_keys)}")
     try:
         updated = update_signal_status(signal_id, updates)
         return {
