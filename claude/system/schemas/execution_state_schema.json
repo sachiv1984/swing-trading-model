@@ -1,6 +1,6 @@
 {
   "_doc": "Schema for claude/cycles/<cycle_id>/execution_state.json. Created by the Sprint Execution Engine at STEP 0.",
-  "_spec_references_note": "spec_references may be empty (set to []) ONLY for delegated_qa documentation artefacts (test scenario files, readiness assessments) OR autonomous infrastructure/tooling items with no prior canonical spec. When leaving spec_references empty, set notes field to exactly 'no prior spec applicable'. This phrase is the exemption token — the completion condition check and delivery verification must NOT flag spec_references:[] as a traceability gap when this phrase is present in notes.",
+  "_spec_references_note": "spec_references may be empty (set to []) ONLY for delegated_qa documentation artefacts (test scenario files, readiness assessments) OR autonomous infrastructure/tooling items with no prior canonical spec — e.g. Case E in execution_prompt.md STEP 3.1.A (bug/correctness fixes with no governing spec and no new artefact). When leaving spec_references empty, set spec_reference_not_applicable: true and spec_reference_not_applicable_reason to a one-line rationale (added v1.1, BLG-GOV per lessons_learnt_closure.md v6.8 Phase 4 friction item — this is the structured exemption signal). The completion condition check and delivery verification must NOT flag spec_references:[] as a traceability gap when spec_reference_not_applicable is true. Legacy compatibility: for records written before this field existed, delivery verification also honours notes containing exactly 'no prior spec applicable' as an equivalent (but no longer written going forward).",
   "_sign_off_record_note": "method is 'agent_mediated' when §5.3 sign-off protocol ran, or 'human' when resolved by the user directly.",
 
   "cycle_id": "<cycle_id>",
@@ -35,6 +35,8 @@
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,

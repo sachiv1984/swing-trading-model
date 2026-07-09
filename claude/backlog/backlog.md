@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-09 (groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-BE-52; prior — groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -1667,6 +1667,29 @@ No per-request trace ID propagation exists across routers/services. No incident 
 - `GET /ai/claude-audit-log?endpoint=POST%20/ai/daily-briefing` returns only matching rows
 - `date_from`/`date_to` filters work independently and combined with `endpoint`
 - Existing unfiltered behaviour (no params) unchanged
+
+---
+
+### BLG-BE-52 — Formal disposition for BLG-BE-46's 11 permanently-unlinked historical trade_plans rows
+**Priority:** P3 (Low)
+**Type:** Backend / Data Integrity
+**Owner:** Backend Engineering Patterns Owner / PMO Lead
+**Source:** LP-12, `claude/cycles/2026-07-08__release-v6.8/lessons_learnt.md` — 2026-07-09
+**Effort:** XS (<1h — decision-recording only, unless reconciliation is chosen)
+**Provisional-Target:** v6.9
+
+**Problem**
+`BLG-BE-46` (fixed in v6.8, ST-01) forward-fixed the `trade_plans.position_id` linkage bug via a backend auto-link in `add_position()` — newly-created `trade_plans` rows now link correctly going forward. The 11 pre-existing `trade_plans` rows (predating the fix) were explicitly decided *not* to be backfilled at the time, on the grounds that they have no reliable ticker/time match to `trade_history` (per `BLG-BE-46`'s own RISK-01). That decision was never given a tracking item or a named owner — `LP-12` (the lessons-learnt action item that called for exactly this) targeted "Delivery Verification, this cycle," but that target passed without action, and neither Delivery Verification's nor Post-Ship Closure's `backlog.md` write scope permits filing a net-new item of this kind inline. This item exists to close that gap and give the decision a permanent, ownable record.
+
+**Scope**
+- Product Owner confirms whether the 11 historical unlinked `trade_plans` rows should remain permanently unlinked, or whether a manual/administrative reconciliation pass (e.g. a one-off admin script matching by ticker + date proximity, with human review of ambiguous matches) is worth the effort
+- If reconciliation is wanted: scope it as a new story with its own acceptance criteria
+- If not: mark this item resolved, with the decision and rationale recorded here as the permanent record
+
+**Acceptance Criteria**
+- Product Owner disposition recorded (backfill / no backfill, with rationale)
+- If backfill is chosen: a follow-up story is filed and referenced here
+- If not: this item is closed with the decision as its resolution — no further action needed
 
 ---
 

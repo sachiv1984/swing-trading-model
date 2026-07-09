@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.11
+**Version:** 3.12
 **Last Updated:** 2026-07-09
 
 # Shared Standards — All Governed Routines
@@ -601,7 +601,7 @@ Reference: `execution_prompt.md` STEP 3.1.D (delegated_decision items) and STEP 
 | Submitter | string | Yes | Full role name of submitting agent |
 | Window | string | Yes | Window ID (e.g. `IW-20260304-01`) |
 | Submitted At | date | Yes | ISO date (YYYY-MM-DD) |
-| Status | enum | Yes | One of: `Submitted`, `Advancing`, `Parked-cycle-<n>`, `Rejected`, `Promoted-Added`, `Promoted-Rejected`, `Withdrawn`. **`Promoted-Added` also covers a STEP 5 debate that resolves into a governance/prompt process patch rather than a roadmap/backlog addition** (e.g. `IDEA-challenger-20260702-01` at `2026-07-06__scheduled`, `IDEA-pmo-lead-20260708-02` at `2026-07-08__scheduled`) — use `Promoted-Added` with the Step 5 column noting "resolved as process patch, not a roadmap/backlog item." (Clarified v3.10 — this reuse had occurred twice without being documented, a Type B friction item.) |
+| Status | enum | Yes | One of: `Submitted`, `Advancing`, `Parked-cycle-<n>`, `Rejected`, `Promoted-Added`, `Promoted-Backlog`, `Promoted-Rejected`, `Withdrawn`. **`Promoted-Added` also covers a STEP 5 debate that resolves into a governance/prompt process patch rather than a roadmap/backlog addition** (e.g. `IDEA-challenger-20260702-01` at `2026-07-06__scheduled`, `IDEA-pmo-lead-20260708-02` at `2026-07-08__scheduled`) — use `Promoted-Added` with the Step 5 column noting "resolved as process patch, not a roadmap/backlog item." (Clarified v3.10 — this reuse had occurred twice without being documented, a Type B friction item.) **`Promoted-Backlog`** is a distinct terminal status, set by `roadmap_prompt.md`'s STEP 5/9 disposition table for the `📋 Backlog (gate-conditional)` Step 4 outcome — idea lifecycle complete, tracked as a gate-conditional backlog item from here, without having passed through `Advancing`/STEP 5 debate. It is functionally terminal in the same sense as `Promoted-Added` (idea → tracked backlog item) but distinguishes "advanced directly" from "sent to backlog pending a gate condition." (Formalised v3.11 — added retroactively; the status had been in continuous use by `roadmap_prompt.md` for many cycles but was never added to this enum, which `ideas_housekeeping_prompt.md §6` and this table both need to classify it correctly. Root cause: `claude/cycles/2026-07-08__release-v6.8/lessons_learnt_closure.md` Advisory Summary.) |
 | Park Count | integer | Conditional | Number of consecutive cycles parked; required when Status = `Parked-cycle-<n>`; `—` otherwise |
 | Park Rationale | string | Conditional | PO one-line rationale; required on every park action; `—` if never parked |
 | Step 4 | string | Conditional | Product Owner classification from most recent roadmap run; `—` if no roadmap run yet |

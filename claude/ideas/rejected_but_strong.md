@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-08 (roadmap rebalance 2026-07-08__scheduled — IDEA-pmo-lead-20260619-02 entry marked Resolved, resubmission confirmed in ideas_register.md as IDEA-pmo-lead-20260708-01 → Promoted-Backlog, BLG-GOV-188; entry retained per append-only write scope)
+**Last Updated:** 2026-07-09 (PMO Lead direct action, post-ship closure 2026-07-08__release-v6.8 outstanding actions — IDEA-cybersecurity-20260304-01 entry marked Resolved, delivered as BLG-OPS-71/ST-17; entry retained per append-only write scope)
 
 ---
 
@@ -50,6 +50,10 @@ This document captures ideas that were rejected from active roadmap/backlog cons
 **Why rejected:** No active security incident or compliance requirement driving urgency. Current single-user deployment limits immediate threat surface. Strong merit as pre-scale governance — rejected only due to timing and capacity constraints.
 
 **Revival condition:** System approaches multi-user scale, external exposure increases, or a security-related compliance requirement emerges. Should be prioritised at that point without a new idea submission.
+
+**PMO Lead Decision (2026-07-09):** Revival condition confirmed **Met** — the strategic review of 2026-06-18 (external exposure: real position data, stop levels, P&L, and multiple billing-exposed API credentials across staging + production) triggered a direct revival ahead of a formal re-submission, and the threat model was delivered in full at cycle `2026-07-08__release-v6.8` (ST-17, `BLG-OPS-71`).
+
+**Status: RESOLVED (2026-07-09, post-ship closure 2026-07-08__release-v6.8).** Delivered as `docs/security/threat_model.md` v1.0 — covers attack surfaces, data classification, threat actors, and current mitigations per this entry's original scope; 2 new gaps found and filed (`BLG-SEC-12`, `BLG-SEC-13`); dual sign-off from Cybersecurity & Trust Lead and Infrastructure & Operations Owner. This entry is retained per the write-scope append-only rule for this file (governed routines may not delete `rejected_but_strong.md` entries) — kept for audit trail, superseded by `BLG-OPS-71`.
 
 ---
 

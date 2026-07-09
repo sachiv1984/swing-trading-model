@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-16
+**Version:** 1.1
+**Last Updated:** 2026-07-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -101,6 +101,7 @@ Violation → halt.
 | Status | Condition | Notes |
 |--------|-----------|-------|
 | `Promoted-Added` | Always | Idea lifecycle complete; backlog item tracks from here |
+| `Promoted-Backlog` | Always | Idea lifecycle complete; tracked as a gate-conditional backlog item from here (`roadmap_prompt.md` STEP 5/9 `📋 Backlog (gate-conditional)` disposition). Added v1.1 — formalised alongside `shared_standards.md §16.5` after this status was found in continuous use but absent from both schemas (`claude/cycles/2026-07-08__release-v6.8/lessons_learnt_closure.md` Advisory Summary). |
 | `Promoted-Rejected` | Always | Idea was evaluated and closed |
 | `Rejected` | Step 5 column shows `❌ Rejected (not strong)` AND idea ID does NOT appear in `rejected_but_strong.md` | Confirm cross-reference before archiving |
 | `Rejected` | Park Rationale contains "Retired", "Permanently closed", or equivalent explicit closure language AND idea ID does NOT appear in `rejected_but_strong.md` | Confirm cross-reference before archiving |

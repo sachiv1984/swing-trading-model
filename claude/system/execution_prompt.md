@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.54
+**Version:** 3.55
 **Last Updated:** 2026-07-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -295,7 +295,7 @@ All per-item progress is recorded in:
 
 ### 9.1 Schema
 
-Schema: `claude/system/schemas/execution_state_schema.json` — read this file when creating `execution_state.json`. `backlog_slice_source` records the exact authoritative backlog slice path used; set at STEP 0 (used by Delivery Verification to confirm scope provenance). `spec_references` exemption token: when `notes` contains `"no prior spec applicable"`, `spec_references: []` must NOT be flagged as a traceability gap by completion condition checks or delivery verification.
+Schema: `claude/system/schemas/execution_state_schema.json` — read this file when creating `execution_state.json`. `backlog_slice_source` records the exact authoritative backlog slice path used; set at STEP 0 (used by Delivery Verification to confirm scope provenance). `spec_references` exemption: when `spec_reference_not_applicable: true` (with `spec_reference_not_applicable_reason` populated — see STEP 3.1.A Case E), `spec_references: []` must NOT be flagged as a traceability gap by completion condition checks or delivery verification. Legacy records written before this field existed may instead carry `notes` containing exactly `"no prior spec applicable"` — Delivery Verification honours both forms.
 
 ### 9.2 State Update Rule (Hard Requirement)
 
@@ -467,6 +467,8 @@ epics.<EPIC-xx>.stories.<ST-xx>:
   status: not_started
   classification: autonomous|delegated_backend|delegated_frontend|delegated_qa|delegated_decision
   spec_references: []          # populate per rule above; [] only if purely infrastructural
+  spec_reference_not_applicable: false          # set true only per STEP 3.1.A Case E (no governing spec, no new artefact)
+  spec_reference_not_applicable_reason: null    # required one-line reason when spec_reference_not_applicable is true
   github_issue: null           # filled at STEP 1
   branch: null                 # filled at STEP 2
   deviations_filed: false
@@ -541,8 +543,9 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
    | B — Documentation-creation | Primary deliverable IS a new/updated spec or doc artefact (API contract, metrics definition, schema spec) | Set `spec_references` to the created/updated artefact path — the artefact IS the governing spec. Also record path in `delivery_note` field. `spec_references = []` is non-compliant. (LL-v4.5-EX-02) |
    | C — Test-authoring | Sole deliverable is a new test file; no prior canonical spec governs the work | Set `spec_references` to the created test file path. Do not leave empty with `notes: "no prior spec applicable"` — the file IS a traceable artefact. (OA-02) |
    | D — CI/infrastructure | Sole deliverable is a CI/pipeline/tooling config change (e.g. `playwright.config.js`, workflow YAML) with no prior canonical spec | Set `spec_references` to the primary file changed — it is the de facto spec reference. (FI-P4-01 / DF-10) |
+   | E — No governing spec exists | Bug/correctness fix (backend or otherwise) with no prior canonical spec to cite and no new artefact created that would itself serve as one — e.g. a data-integrity or security fix verified only against its own stated acceptance criteria and a regression test | Set `spec_references: []`, `spec_reference_not_applicable: true`, and `spec_reference_not_applicable_reason` to a one-line rationale (e.g. `"bug fix, no prior canonical spec — verified via tests/test_x.py"`). This structured pair is the required signal — do not rely on freeform `notes` text alone. (Added v3.55, lessons_learnt_closure.md v6.8 Phase 4 friction item — replaces the undocumented `notes: "no prior spec applicable"` convention with a field Delivery Verification can check directly instead of re-deriving rationale from prose each time.) |
 
-   If none of the above cases apply and a governing spec exists: set `spec_references` to that spec path. `spec_references = []` should not occur for any story type covered by Cases A–D above.
+   If none of the above cases apply and a governing spec exists: set `spec_references` to that spec path. `spec_references = []` should not occur for any story type covered by Cases A–E above.
 
 3. Commit to the EPIC branch (format: see STEP 3 header schema).
 
@@ -718,7 +721,7 @@ If any criterion is not met, the autonomous class does not apply — the sign-of
 
 > **On session resume — merge gate state sync (required, LL-v3.9-P3-1):** When invoking `run sprint` in a fresh session, `execution_state.json.merge_gate.epics_merged` may be stale if one or more EPICs were merged via GitHub between sessions. **Branch check before syncing (LL-v6.4-P3-01):** Run `git branch --show-current` before performing the sync write. If the result is not `main`, run `git checkout main && git pull` first — a fresh session can resume on any `exec/**` branch, and the sync write below must land on `main`, not on whatever branch happened to be checked out (a write orphaned on a stale exec branch has to be redone against main's post-merge file). Before evaluating any EPIC's merge gate conditions, run `gh pr view <pr_number> --json mergedAt,mergeStateStatus` for every EPIC in `merge_gate.epics_pending`. If `mergedAt` is non-null, that EPIC is already merged — add it to `merge_gate.epics_merged`, remove it from `merge_gate.epics_pending`, and set the EPIC's `pr_status = "merged"` in `execution_state.json`. If `epics_pending` is now empty after the sync, proceed directly to STEP 5 (Sprint Close) — do not re-evaluate merge gate conditions for already-merged EPICs.
 >
-> **Orphaned post-merge commit check (LL-v6.8-P3-01):** The sync above only covers `execution_state.json`'s own merge_gate fields. Separately, for every EPIC now confirmed merged, run `git fetch origin` then `git log origin/main..origin/exec/<cycle_id>/<epic_id> --oneline`. Any commit listed was made *after* that EPIC's PR merged and is orphaned — it never entered `main` via the PR merge diff. For each orphaned commit: inspect its content (`git show <sha> --stat`); if it modifies a shared governance file (e.g. `claude/backlog/backlog.md`, `execution_state.json`, `claude/system/*`) with content not already present on `main`, reconcile it onto `main` now (apply the equivalent change directly, or cherry-pick if clean) and commit with message `[EPIC-xx] Reconcile orphaned post-merge commit <sha> onto main`. If the content is already present on `main` in equivalent or superseding form, no action is needed beyond noting the redundancy. Record every check performed (reconciled or redundant) in `execution_state.json`'s `process_notes` array (create if absent) — this check runs per-EPIC at merge-gate resume, before `sprint_close.md` exists; STEP 5.3 rolls `process_notes` up into the sprint close record's Process Notes section. This check exists because STEP 4's post-merge hard-gate halt does not itself prevent a session from continuing to commit governance-file changes (e.g. mid-session backlog filings) to an EPIC branch after that branch's PR has already merged — any such commit is stranded unless explicitly reconciled.
+> **Orphaned post-merge commit check (LL-v6.8-P3-01):** The sync above only covers `execution_state.json`'s own merge_gate fields. Separately, for every EPIC now confirmed merged, run `git fetch origin` then `git log origin/main..origin/exec/<cycle_id>/<epic_id> --oneline`. Any commit listed was made *after* that EPIC's PR merged and is orphaned — it never entered `main` via the PR merge diff. For each orphaned commit: inspect its content (`git show <sha> --stat`); if it modifies a shared governance file (e.g. `claude/backlog/backlog.md`, `execution_state.json`, `claude/system/*`) with content not already present on `main`, reconcile it onto `main` now (apply the equivalent change directly, or cherry-pick if clean) and commit with message `[EPIC-xx] Reconcile orphaned post-merge commit <sha> onto main`. If the content is already present on `main` in equivalent or superseding form, no action is needed beyond noting the redundancy. Record every check performed (reconciled or redundant) in `execution_state.json`'s `process_notes` array (create if absent) — this check runs per-EPIC at merge-gate resume, before `sprint_close.md` exists; STEP 5.3 rolls `process_notes` up into the sprint close record's Process Notes section. This check exists because STEP 4's post-merge hard-gate halt does not itself prevent a session from continuing to commit governance-file changes (e.g. mid-session backlog filings) to an EPIC branch after that branch's PR has already merged — any such commit is stranded unless explicitly reconciled. **Note (LL-v6.8-P3-02):** the "If all conditions pass" flow below now checks out `main` before its own state-sync and governance-file commits (step 3a0), so this scan should find nothing to reconcile from that flow going forward — it remains active only as a safety net for commits made outside it.
 
 A PR may only be merged when **all** of the following are true:
 
@@ -739,16 +742,17 @@ If all conditions pass:
 1. Merge the PR (squash or merge as configured).
 2. Update `execution_state.json`: EPIC `pr_status` = `merged`, `status` = `merged`.
 3. Update `merge_gate.epics_merged`.
-3a. **Persist state before halt (LL-v5.5-EX-02 — third recurrence: v5.3/v5.4/v5.5):** Immediately commit `execution_state.json` to the EPIC branch NOW — before outputting the halt message. An uncommitted state write is lost if the session ends, requiring stale-state correction on the next resume. Run: `git add claude/cycles/<cycle_id>/execution_state.json && git commit -m "[EPIC-xx] Persist merged state before session close" && git push origin <branch>`. This is a hard requirement; the halt message must not be the last action in the session if execution_state.json is unstaged.
+3a0. **Branch checkout before state-sync commits (LL-v6.8-P3-02 — supersedes committing to the EPIC branch post-merge):** Immediately run `git checkout main && git pull origin main` (same branch-check pattern used at session resume, above). Steps 3a and 3b below commit onto `main`, not the just-merged `exec/<cycle_id>/<epic_id>` branch. Committing to that branch after its own PR has merged produces an orphaned commit that never reaches `main` via the merge diff — this was LL-v6.8-P3-01's root cause (all three EPIC branches in the v6.8 cycle received post-merge commits stranded on the now-inert branch, one of which required manual reconciliation at the next `run sprint` resume). The "Orphaned post-merge commit check (LL-v6.8-P3-01)" note above remains active as a secondary safety net (e.g. for commits made outside this flow), but this fix removes the routine cause of it firing.
+3a. **Persist state before halt (LL-v5.5-EX-02 — third recurrence: v5.3/v5.4/v5.5):** Immediately commit `execution_state.json` on `main` NOW — before outputting the halt message. An uncommitted state write is lost if the session ends, requiring stale-state correction on the next resume. Run: `git add claude/cycles/<cycle_id>/execution_state.json && git commit -m "[EPIC-xx] Persist merged state before session close" && git push origin main`. This is a hard requirement; the halt message must not be the last action in the session if execution_state.json is unstaged.
 3b. **Pre-halt governance commit (AUD-2026-06-22-002):** Before outputting the halt message, run:
 ```
 git status --short
 ```
-If any tracked governance files are modified or unstaged — in particular `claude/backlog/backlog.md`, `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md`, or any other `claude/` file written during this EPIC's execution — stage and commit them now on the EPIC branch:
+If any tracked governance files are modified or unstaged — in particular `claude/backlog/backlog.md`, `claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md`, or any other `claude/` file written during this EPIC's execution — stage and commit them now on `main` (per 3a0 above):
 ```
 git add claude/backlog/backlog.md claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md
 git commit -m "[EPIC-xx] Commit governance file updates before merge halt"
-git push origin exec/<cycle_id>/EPIC-xx
+git push origin main
 ```
 Do not leave governance files unstaged. An unstaged backlog.md or qa_evidence file at session close requires `git stash` on next resume and risks stash-pop conflicts. This step fires after step 3a (execution_state.json persist) and before the halt output.
 
@@ -1056,7 +1060,7 @@ The run is complete only if:
 
 - `execution_state.json.status = Sealed`
 - All in-scope ST items have a recorded outcome (`done`, `merged`, or `returned_to_backlog`)
-- All `done` ST items have `spec_references` populated — exemption: items where `notes` contains "no prior spec applicable" (LL-v2.2-EX-04) are exempt and must **not** be flagged as traceability gaps
+- All `done` ST items have `spec_references` populated — exemption: items with `spec_reference_not_applicable: true` (LL-v2.2-EX-04; structured field per STEP 3.1.A Case E, added v3.55) are exempt and must **not** be flagged as traceability gaps. Legacy records predating this field are exempt if `notes` contains "no prior spec applicable".
 - All `done` ST items have `deviations_filed = true`
 - One `qa_evidence_EPIC-xx.md` exists per merged EPIC, with consolidation block complete
 - `docs/System_status_report.md` updated with this sprint's section

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.3
-**Last Updated:** 2026-07-06
+**Version:** 3.4
+**Last Updated:** 2026-07-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -229,7 +229,8 @@ For every ST item in the authoritative backlog slice (identified in STEP -1.1):
 2. Check status — must be `done`, `merged`, or `returned_to_backlog`.
    - If any item has no record, or has status `not_started` / `in_progress` / `blocked_*` without a `returned_to_backlog` disposition: traceability gap — halt in `strict` mode; flag and continue in `standard` mode.
 3. For `done` / `merged` items: confirm `spec_references` is non-empty.
-   - If `spec_references = []`: flag as traceability gap. Cannot verify against spec with no reference.
+   - If `spec_references = []`: check `spec_reference_not_applicable`. If `true` (per `execution_prompt.md` STEP 3.1.A Case E — a structured field, added v3.55): this is exempt, not a gap — record it in the traceability matrix as `spec_reference_not_applicable` with the story's `spec_reference_not_applicable_reason` as the rationale, and do **not** count it toward the `Traceability gaps` flag count. Legacy records predating this field are exempt on the same terms if `notes` contains exactly "no prior spec applicable".
+   - If `spec_references = []` and neither exemption applies: flag as traceability gap. Cannot verify against spec with no reference.
 4. For `returned_to_backlog` items: confirm a corresponding entry exists in `claude/backlog/backlog.md` referencing this `cycle_id`.
    - If the backlog entry is missing: **add it now** (permitted write):
      ```
@@ -241,7 +242,7 @@ For every ST item in the authoritative backlog slice (identified in STEP -1.1):
 
 | ST Item | Title | Outcome | Spec Reference | Backlog Entry |
 |---------|-------|---------|---------------|---------------|
-| ST-xx | <title> | done/merged/returned | <spec#section or "none filed"> | N/A / ✓ / ⚠ added |
+| ST-xx | <title> | done/merged/returned | <spec#section or "none filed" or "spec_reference_not_applicable: <reason>"> | N/A / ✓ / ⚠ added |
 
 Flag counts: `Traceability gaps: N | Items returned: N | Backlog entries added this run: N`
 

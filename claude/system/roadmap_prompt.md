@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 8.4
-**Last Updated:** 2026-07-08
+**Version:** 8.5
+**Last Updated:** 2026-07-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -156,7 +156,7 @@ Record all outcomes under "Prior Cycle Outstanding Actions" in run manifest.
 
 ### STEP -1.6 — Idea Intake (Conditional)
 
-Count `claude/ideas/ideas_register.md` rows where Status is `Submitted` or `Parked-cycle-<n>` (exclude Promoted-Added, Promoted-Rejected, Rejected, Rejected-Strong, Withdrawn).
+Count `claude/ideas/ideas_register.md` rows where Status is `Submitted` or `Parked-cycle-<n>` (exclude Promoted-Added, Promoted-Backlog, Promoted-Rejected, Rejected, Rejected-Strong, Withdrawn).
 
 - **< 20 open ideas (or register absent/empty):** invoke `claude/system/idea_intake_prompt.md` inline — open window, collect submissions, close. Proceed with new submissions available.
 - **≥ 20 open ideas:** note count, skip intake.
