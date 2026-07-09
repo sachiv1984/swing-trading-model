@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.5
-**Last Updated:** 2026-06-19
+**Version:** 0.6
+**Last Updated:** 2026-07-08
+**Design Source (v0.6 SI-02 gate status):** docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.1 PDF export):** docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md
 
@@ -158,6 +159,40 @@ When the composite score is unavailable (null API inputs), individual metric com
 
 ---
 
+### SI-02 Gate Status (v0.6 — ST-06, BLG-FEAT-71)
+
+**Design source:** `docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md`
+
+Displayed below "Arc 5 Compliance Summary" and above "Gross vs Net Comparison". Collapsible, collapsed by default — same pattern as Arc 5 Compliance Summary. Distinct from the Dashboard's "Gate Progress" strip (`dashboard.md` §6, single headline count only) — this section surfaces the fuller breakdown: total vs. trade-plan-linked closed trades, plus per-condition MET/NOT MET status.
+
+**Data sources:** `GET /trades` (total closed trades), `GET /trade-plans` (trade-plan-linked closed trade count), `GET /analytics/arc5-compliance` (`trade_plan_adherence_rate` and other gate-condition inputs)
+
+#### Fields Displayed
+
+| Field | Source | Label | Notes |
+|-------|--------|-------|-------|
+| Total closed trades | `GET /trades` count | "{N} total closed trades" | |
+| Linked closed trades | `GET /trade-plans` closed, `position_id` non-null count | "{N} linked to a trade plan" | Reflects ST-01 (BLG-BE-46) finding as-is, live — not suppressed or approximated if 0 |
+| Gate Condition 1 (20-trade threshold) | derived | MET / NOT MET badge | |
+| Gate Condition 2 | derived | MET / NOT MET badge | |
+| Gate Condition 3 (trade plan adherence) | `trade_plan_adherence_rate` | MET / NOT MET badge | |
+
+**Badge style:** green "MET" pill / amber "NOT MET" pill — consistent with Dashboard gate colour treatment (`dashboard.md` §6).
+
+#### Rendering Conditions
+
+- Section header: **"SI-02 Gate Status"**
+- Collapsed by default; user can expand with a chevron toggle
+- Loading state: skeleton placeholder
+- Error state: "Unable to load gate status" — does not block rest of Reports page
+- Empty state (no closed trades): all counts show 0; all conditions show NOT MET
+
+**§13 Compliance:** Display-only status readout. No automated action or recommendation.
+
+**Playwright coverage required:** section presence/collapse, two-count display, 3-condition MET/NOT MET rendering, loading/error states (ST-06 AC-05).
+
+---
+
 ### Gross vs Net Comparison (v6.0 — ST-03)
 
 **Design source:** `docs/design/2026-06-19__release-v6.0/net-of-costs-tracking/ux_spec.md`
@@ -201,6 +236,7 @@ A note at the bottom of the page:
 - **Endpoint:** `GET /reports/tax-year?year=YYYY` — page data
 - **PDF export:** `GET /reports/tax-year?format=pdf&year=YYYY` — server-side PDF download (`Content-Disposition: attachment`)
 - **CSV export:** `GET /reports/tax-year?format=csv&year=YYYY` — CSV download (ST-13; no UI control beyond API — URL parameter only; no button on this page)
+- **SI-02 Gate Status section (v0.6 — ST-06):** `GET /trades`, `GET /trade-plans`, `GET /analytics/arc5-compliance` — existing endpoints, no new backend work
 - **Canonical contract:** `docs/specs/api_contracts/reports_endpoints.md`
 
 All values displayed on this page are sourced from the API response. The frontend must not recalculate P&L, FX conversions, or fee adjustments.
@@ -271,6 +307,7 @@ Follows the Arc 5 Compliance Summary design language from the tax-year report (�
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6 | 2026-07-08 | v6.8 design gate — SI-02 Gate Status section added (ST-06, BLG-FEAT-71): collapsible, collapsed by default, below Arc 5 Compliance Summary and above Gross vs Net Comparison. Shows total closed trades vs. trade-plan-linked closed trades as two distinct numbers, plus MET/NOT MET badges for 3 SI-02 gate conditions. Sourced from existing `GET /trades`, `GET /trade-plans`, `GET /analytics/arc5-compliance` — no new backend work. Reflects ST-01 (BLG-BE-46) finding live, as-is. Distinct from Dashboard's single-metric Gate Progress strip (dashboard.md §6). Design source: si02-gate-visibility-indicator/ux_spec.md. Approved: Product Owner 2026-07-08. Head of Specs Team confirmed. |
 | 0.5 | 2026-06-19 | v6.0 design gate — Gross vs Net Comparison section added to Summary Bar (ST-03): conditional row showing average gross vs net R-multiple when ≥1 trade in selected year has brokerage cost data; footnote showing trade count with cost data; absent when no cost data. Design source: net-of-costs-tracking/ux_spec.md. Approved: Product Owner 2026-06-19. Head of Specs Team confirmed. |
 | 0.4 | 2026-05-29 | v4.3 Monthly P&L Strategy Compliance section (ST-18, BLG-FE-38): Monthly P&L Report section added — financial table spec and Strategy Compliance section (validation pass rate, override rate, red flag events/week, most frequent rule breach from GET /analytics/arc5-compliance). AC field mapping resolved (override_count→override_rate, red_flag_events_count→events_per_week). Design artefact: Arc 5 Compliance Summary v4.1 pattern. Design gate: 2026-05-29__release-v4.3. Head of UX & Design + Product Owner sign-off. |
 | 0.3 | 2026-05-27 | v4.1 Arc 5 P&L integration (ST-08, BLG-FEAT-42): Arc 5 Compliance Summary section added — collapsible, collapsed by default, data from GET /analytics/arc5-compliance, composite score or individual metrics per FEAT-40 formula availability. Financial Reporting & Records Owner + Product Owner agent-mediated sign-off cleared. |

@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.9
-**Last Updated:** 2026-05-30
+**Version:** 2.0
+**Last Updated:** 2026-07-08
+**Design Source (v2.0 additions):** docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md
 **Design Source (v4.6 additions):** docs/specs/si02/si02_fe_component_predesign.md v1.0; docs/specs/si02/si02_fe_interaction_spec.md v1.0
 **Design Source (v2.8 additions):** docs/design/2026-04-17__release-v2.8/market-correlation/ux_spec.md
 **Design Source (v2.3 additions):** docs/design/2026-03-24__release-v2.3/staleness-indicator/ux_spec.md
@@ -50,6 +51,9 @@ All core analytics data is sourced from this call. The frontend transforms the s
 
 **Additional endpoints (v4.6 additions):**
 - `GET /analytics/behavioural-drift` — Behavioural Drift panel (§20)
+
+**Additional endpoints (v2.0/v6.8 additions):**
+- `GET /analytics/tag-performance?tags={csv}` — Trade Plan Tag Filter comparison row (§14a)
 
 The page must never recalculate, derive, or override values returned by the backend.
 
@@ -495,6 +499,22 @@ A summary line beneath the table names the top-performing tag by the currently s
 
 Returns `null` (renders nothing) if no tagged trades exist.
 
+#### 14a. Trade Plan Tag Filter (v2.0 — ST-05, BLG-FEAT-52)
+
+**Design source:** `docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md`
+
+Separate from the table above — this filter operates on **trade-plan tags** (`trade_plans.trade_tags`, independent of the position/journal `tags` field used by the §14 table itself, which is unaffected).
+
+- Multi-select dropdown directly above the §14 heading: "Filter by trade plan tag"
+- Selected tags appear as dismissible pills below the dropdown (OR logic across selections — matches `positions.md` Tag filter interaction pattern)
+- **Data source:** `GET /analytics/tag-performance?tags={csv}`
+- When ≥1 tag selected: a comparison row renders above the §14 table showing win rate + avg R-multiple per selected tag
+- No tags selected: comparison row hidden; §14 table renders as today, unaffected
+- No matching closed trades for a selected tag: "No closed trades for selected tag(s)"
+- Loading: inline skeleton on the comparison row. Error: comparison row hidden silently — does not block §14 table
+
+**§13 Compliance:** Display-only. No automated action taken on tag values.
+
 ---
 
 ### 15. Cohort Analysis
@@ -738,6 +758,7 @@ All component props are null-safe with safe defaults. If the API returns partial
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.0 | 2026-07-08 | v6.8 design gate — §14a Trade Plan Tag Filter added (ST-05, BLG-FEAT-52): multi-select filter on `trade_plans.trade_tags` (independent from §14's existing position/journal `tags` field), dismissible pills, OR logic; comparison row (win rate + avg R per selected tag) via new `GET /analytics/tag-performance?tags={csv}` endpoint; existing §14 table unaffected. API Dependency updated. Design source: trade-tagging/ux_spec.md. Approved: Product Owner 2026-07-08. Head of Specs Team confirmed. |
 | 1.9 | 2026-05-30 | v4.6 design gate (ST-06/ST-07, EPIC-02): §20 Behavioural Drift section added — 4 drift metric cards (entry timing, sizing adherence, post-loss sizing, regime adherence); Option B Percentage Deviation Display; 5 states (loading, insufficient_data, no_drift, drift_detected, error); collapse/expand with localStorage persistence; §13 advisory-only constraints enforced. API Dependency updated with `GET /analytics/behavioural-drift`. Component Rendering Order updated to 20 items. Purpose & User Goals updated. Design source: `docs/specs/si02/si02_fe_component_predesign.md` v1.0 + `docs/specs/si02/si02_fe_interaction_spec.md` v1.0. Approved: Head of UX & Design + Product Owner 2026-05-30. Head of Specs Team confirmed compliant. Nav decision: drift panel integrates as §20 section within PerformanceAnalytics (no new sidebar nav item; consistent with §19 Arc 5 Signal Compliance pattern; ST-11 Arc 5 nav cohesion review to validate in Sprint 2). |
 | 1.8 | 2026-05-23 | v4.0 design gate (ST-02/ST-04, EPIC-01): §19 Arc 5 Signal Compliance section added — 4 stat cards (events_per_week, override_rate, top_rule_breach, trade_plan_adherence_rate). API Dependency updated with `GET /analytics/arc5-compliance`. Component Rendering Order updated to 19 items. Design source: docs/design/2026-05-22__release-v4.0/arc5-analytics-metrics/ux_spec.md. Approved: Head of UX & Design + Product Owner 2026-05-23. Head of Specs Team confirmed compliant. |
 | 1.7 | 2026-04-17 | v2.8 design gate (ST-01, EPIC-01): §18 Market Correlation section added — portfolio-level weighted average card + per-position Pearson correlation table. Severity scheme: high=Rose-500, moderate=Amber-500, low=Emerald-500, null=Slate-500. Sort: severity descending. API Dependency updated with `GET /analytics/market-correlation`. Component Rendering Order updated to 18 items. Design source: docs/design/2026-04-17__release-v2.8/market-correlation/ux_spec.md. Head of Specs Team confirmed compliant. |

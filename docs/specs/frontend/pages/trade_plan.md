@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.8
-**Last Updated:** 2026-07-02
+**Version:** 0.9
+**Last Updated:** 2026-07-08
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v0.1):** docs/design/2026-04-29__release-v3.1/trade-plan/ux_spec.md (v3.1 — artefact reference only; file not present in repo)
 **Design Source (v0.2 checklist):** docs/design/2026-05-05__release-v3.2/pre-trade-entry-checklist/ux_spec.md
@@ -11,6 +11,7 @@
 **Design Source (v0.6 quality score):** docs/design/2026-05-18__release-v3.7/quality-score-display/ux_spec.md
 **Design Source (v0.7 quality score v2):** docs/design/2026-05-21__release-v3.9/setup-quality-score-v2/ux_spec.md
 **Design Source (v0.8 thesis feedback):** docs/design/2026-07-02__release-v6.5/thesis-feedback-mechanism/ux_spec.md
+**Design Source (v0.9 tags):** docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md
 **API contract:** docs/specs/api_contracts/trade_plan_endpoints.md
 **v0.4 Sign-off:** Head of Specs Team — 2026-05-14 (BLG-SPEC-28: §6.2 pre-population rules correction)
 
@@ -59,6 +60,7 @@ Users should be able to:
 | `GET /trade-plans/{id}` | Fetch single trade plan |
 | `PUT /trade-plans/{id}` | Update trade plan (full replace) |
 | `DELETE /trade-plans/{id}` | Delete trade plan |
+| `GET /trade-plans/tags` | *(v0.9 — ST-05)* Tag autocomplete source for the Trade Plan Tag Editor (§5c) |
 
 Canonical contract: `docs/specs/api_contracts/trade_plan_endpoints.md`
 
@@ -111,12 +113,29 @@ Per v3.1 design gate decision:
 | Status | Select | Yes | Draft / Active / Closed (Abandoned is set via Abandon action — not in this dropdown) |
 | Stop Level | Numeric | No | Positive decimal; native currency |
 | Risk/Reward Notes | Textarea | No | Free text; used for pre-population of CHK-04 |
+| Tags | Component (Tag Editor) | No | See §5c |
 | Pre-Trade Checklist | Component | No | See §6 |
 
 ### 5.2 Actions (Form Footer)
 
 - **"Save Trade Plan"** (primary) — `POST /trade-plans` (new) or `PUT /trade-plans/{id}` (edit)
 - **"Cancel"** (secondary) — returns to previous page without saving
+
+---
+
+## 5c. Trade Plan Tags (v0.9 — ST-05 BLG-FEAT-52)
+
+**Design source:** docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md
+
+Independent tag field on `trade_plans` (`trade_tags`) — data-independent from the existing position/journal tags documented in `journal_components.md` (`GET /positions/tags`); same components reused for visual consistency only.
+
+**Edit form / creation form:** Tag Editor (Autocomplete Input) — `journal_components.md` §4 behaviour unchanged (Enter to add, click X to remove, lowercase/hyphen validation, max 20 chars, dedup, tag limit). Autocomplete source: `GET /trade-plans/tags`.
+
+**Detail view (read-only):** Tag List pill display, positioned directly below the core plan fields and above the Pre-Trade Checklist (§6) read-only section. Empty state: "No tags" (muted).
+
+> **§13 Compliance:** Display-only classification field. No automated action taken on tag values.
+
+**Playwright coverage required:** tag add/remove on the edit form (ST-05 AC-05).
 
 ---
 
@@ -245,6 +264,7 @@ Checklist state stored as `checklist` array on the trade plan record. Submitted 
 ## 7. Trade Plan Detail View
 
 - Shows all plan fields in read-only layout
+- Tags shown as pill list below core fields, above Pre-Trade Checklist (§5c)
 - Pre-trade checklist shown in read-only state (§6.4)
 - Setup Quality Score shown (§7a) if EPIC-02 (PT-04) is in scope
 - Action buttons: **"Edit"** (primary) + **"Abandon"** (amber outlined — see §8) + **"Delete"** (destructive, with confirmation)
@@ -368,6 +388,7 @@ All badges: filled pill, white text. Contrast ≥ 4.5:1 (WCAG AA) for all combin
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.9 | 2026-07-08 | v6.8 design gate — added §5c Trade Plan Tags (ST-05, BLG-FEAT-52): new independent `trade_tags` field on `trade_plans` (data-independent from existing position/journal tags), Tag Editor on edit form, Tag List (read-only) on detail view, new `GET /trade-plans/tags` autocomplete endpoint. Reuses `journal_components.md` §4 Tag Editor and §1-equivalent pill display for visual consistency only. §5.1 form fields table and §7 detail view updated. Design source: trade-tagging/ux_spec.md. Approved: Product Owner 2026-07-08. Head of Specs Team confirmed. |
 | 0.8 | 2026-07-02 | v6.5 design gate — added §5b Claude Thesis Generation & Feedback (ST-07, BLG-FE-46): documents the previously-unspecified "Improve with AI" button (Claude Haiku 4.5, `POST /trade-plans/generate-plan`) and a new 👍/👎 feedback control on generated drafts, single-shot per generation, feeding `thesis_adoption_rate` (ST-08). Notes a spec correction: the shared `isAiDraft` flag conflates the local template button and the Claude-backed button — implementation must gate the feedback control on a Claude-specific signal. Design source: thesis-feedback-mechanism/ux_spec.md. Approved: Product Owner 2026-07-02. Head of Specs Team confirmed. |
 | 0.7 | 2026-05-21 | v3.9 design gate — updated §7a Setup Quality Score (ST-14, conditional EPIC-05): endpoint changed to ticker-based `GET /trade-plans/setup-quality-score?ticker={plan.ticker}`; qualitative labels added (Excellent/Good/Fair/Low); expandable detail panel (matching_trades, win_rate, average_R); gate_not_met message replaces "N/A" text. Added §7b: score panel in creation form (shown after ticker entered, debounced refetch). Design source: setup-quality-score-v2/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |
 | 0.6 | 2026-05-18 | v3.7 design gate — added §7a Setup Quality Score (PT-04: score display on detail view, 0–100 or "N/A — insufficient history", §13 compliant). Conditional on EPIC-02 gate. Design source: quality-score-display/ux_spec.md. Approved: Product Owner 2026-05-18. |
