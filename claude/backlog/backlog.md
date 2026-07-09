@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-09 (session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -1128,6 +1128,48 @@ Primary page headings on `DashboardHome.js` (`<h1>` "Dashboard") and `StrategyBe
 **Acceptance Criteria**
 - Both named headings pass WCAG AA contrast (≥4.5:1) against both light and dark backgrounds
 - No visual change on dark theme (colour value on dark theme unchanged)
+
+---
+
+### BLG-FE-96 — Positions Table View breach badge does not match approved spec colour/label
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** ST-09 (BLG-SPEC-60), EPIC-03, v6.8 trailing stop visual indicator reconciliation — 2026-07-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v6.9
+
+**Problem**
+`docs/specs/frontend/pages/positions.md` §Trailing Stop Column specifies the breach badge as orange `#EA580C` background with label "⚠ BREACH", chosen specifically to be visually distinct from the page's existing rose/red loss colouring. The shipped implementation (`src/pages/Positions.js:769-775`) instead uses `bg-rose-800/80 text-rose-200` with an `AlertTriangle` icon and label "Breach" — the same hue family already used for P&L loss and stop-price text elsewhere on the page, undermining the spec's stated rationale for a distinct colour.
+
+**Scope**
+- Update the breach badge styling in `Positions.js` to match the approved spec: orange `#EA580C` background, "⚠ BREACH" label
+
+**Acceptance Criteria**
+- Breach badge renders with `#EA580C` background and "⚠ BREACH" label, matching `positions.md` §Trailing Stop Column
+- No other Table View styling changed
+
+---
+
+### BLG-FE-97 — Positions Grid View missing trailing-stop value and breach indicator
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** ST-09 (BLG-SPEC-60), EPIC-03, v6.8 trailing stop visual indicator reconciliation — 2026-07-09
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v6.9
+
+**Problem**
+`docs/specs/frontend/pages/positions.md` §Trailing Stop Column requires Grid View to show the trailing stop value alongside Initial Stop, with an icon-only (no pill) breach indicator. `src/components/positions/PositionCard.js` shows only a single generic "Stop" value (`stop_price_native`) and has no `current_trailing_stop` display or breach indicator at all — Grid View users have no trailing-stop visibility that Table View users already have.
+
+**Scope**
+- Add `current_trailing_stop` display to `PositionCard.js`, alongside the existing Initial Stop value
+- Add icon-only breach indicator (no pill, per spec) when `current_price <= current_trailing_stop`
+
+**Acceptance Criteria**
+- Grid View position cards show both Initial Stop and current trailing stop values
+- Breach state shown via icon only (not a full badge/pill), matching Table View's breach condition logic
+- No change to Table View behaviour
 
 ---
 

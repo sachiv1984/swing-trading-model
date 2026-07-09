@@ -246,7 +246,7 @@
           "assigned_to": "engine",
           "github_issue": 935,
           "branch": "exec/2026-07-08__release-v6.8/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "78095da04fe618bf2caed426ac148f0b870e2461",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -272,7 +272,7 @@
         "ST-09": {
           "title": "Trailing stop visual indicator frontend specification (BLG-SPEC-60)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 936,
           "branch": "exec/2026-07-08__release-v6.8/EPIC-03",
@@ -280,13 +280,22 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "completed_utc": "2026-07-09T13:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Trailing Stop Column",
+            "docs/specs/qa/trailing_stop_visual_indicator_review_v6.8.md"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "required_by": "Head of UX & Design",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-07-09T13:10:00Z"
+          },
+          "notes": "AC-01/AC-02: Found the canonical spec BLG-SPEC-60 asks for already exists (positions.md v1.8 Trailing Stop Column, approved 2026-06-24, shipped v6.2) -- original BLG-SPEC-60 problem statement was stale. Produced a reconciliation review instead of a duplicate spec: confirmed the existing spec fully covers placement/data source/colours/states, then found 2 genuine implementation-vs-spec deviations via code inspection (Table View breach badge uses rose/AlertTriangle/'Breach' instead of spec's orange #EA580C/'BREACH' pill; Grid View has no trailing-stop or breach display at all, contra spec). Both filed as backlog follow-ups (BLG-FE-96, BLG-FE-97) rather than fixed inline -- implementation fixes are outside this spec-authoring story's scope. 'Distance-to-stop' from original problem statement confirmed as an intentionally descoped v6.2 design-gate decision, not a gap -- no action per Head of UX & Design charter (does not redefine product intent)."
         },
         "ST-10": {
           "title": "Trailing stop effectiveness metric definition (BLG-SPEC-61)",
@@ -453,7 +462,8 @@
     "ST-05",
     "ST-06",
     "ST-07",
-    "ST-08"
+    "ST-08",
+    "ST-09"
   ],
   "open_escalations": [],
   "merge_gate": {
