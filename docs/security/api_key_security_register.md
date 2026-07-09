@@ -1,9 +1,9 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-05-29
-**Cycle:** 2026-05-29__release-v4.3 (ST-15 — BLG-GOV-50)
+**Version:** 1.3
+**Last Updated:** 2026-07-09
+**Cycle:** 2026-07-08__release-v6.8 (ST-04 — BLG-OPS-99)
 
 ---
 
@@ -103,6 +103,24 @@ For rotation procedures, see: `docs/ops/api_key_rotation_policy.md`
 | Last rotation date | Not applicable (emergency-only) |
 | Next rotation due | Not applicable |
 | Notes | Connection string includes the password inline — treat entire string as a secret. Uses Supabase Supavisor Transaction Pooler (port 6543, `?pgbouncer=true&sslmode=require`) for connection pooling. Staging and production use separate Supabase projects; rotate independently. |
+
+---
+
+### 6. Application X-API-Key
+
+| Field | Value |
+|-------|-------|
+| Key name | Application X-API-Key |
+| Env var (backend/Render) | `API_KEY` |
+| Local storage variable name | `RENDER_API_KEY` in `~/.api_keys` — **note the naming mismatch**: despite the local variable being named `RENDER_API_KEY`, its value is the app-level `X-API-Key`, not a Render platform/service API key. Prior sessions incorrectly concluded no application key existed because they searched for a differently-named variable — this entry exists to prevent that recurrence (LP-08, v6.7 closure carry-forward). |
+| Purpose | Authenticates governed routines (roadmap, release planning, sprint execution) against the production API so gate conditions (e.g. SI-02 trade/trade-plan counts) can be confirmed directly via `GET` endpoints instead of relying on self-report |
+| Scope | Full API access, subject to `api_key_middleware` (`backend/main.py`) — required on every request via `X-API-Key` header except `OPTIONS` and `GET /health`. Read-only in practice: governed routines only ever issue `GET` requests with this key. |
+| Storage location | Render environment variable `API_KEY` (production service `srv-d5r98jm3jp1c73figm1g`); local copy in `~/.api_keys` as `RENDER_API_KEY` for use by governed-routine sessions |
+| Rotation cadence | Annual minimum (12 months), aligned with other keys in this register |
+| Rotation procedure | Generate new value → update `API_KEY` in Render production service env vars → update `RENDER_API_KEY` in `~/.api_keys` → verify with `curl -H "X-API-Key: $RENDER_API_KEY" https://trading-assistant-api-c0f9.onrender.com/health` |
+| Last rotation date | Not tracked prior to this register entry (key already provisioned and in use as of 2026-07-06) |
+| Next rotation due | 2026-07-09 + 12 months |
+| Notes | Confirmed working 2026-07-09 (ST-04, BLG-OPS-99, v6.8): `curl -H "X-API-Key: $RENDER_API_KEY" .../signals` → 200, used to directly confirm the SI-02 gate condition (`GET /trades` → `total_trades: 20`; `GET /trade-plans` → 11 plans, 0 with `position_id` set, pre-ST-01-fix baseline) rather than relying on self-report. See `docs/security/signal_anomaly_review_2026-07-09.md` for a second example use (ST-03). |
 
 ---
 
