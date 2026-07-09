@@ -468,7 +468,7 @@
         "ST-16": {
           "title": "Extract Playwright test standard from execution_prompt.md to shared_standards.md (BLG-GOV-123)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 943,
           "branch": "exec/2026-07-08__release-v6.8/EPIC-03",
@@ -476,13 +476,21 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "completed_utc": "2026-07-09T20:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/shared_standards.md#18. Playwright Test Authoring Standard"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "required_by": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-07-09T20:20:00Z"
+          },
+          "notes": "AC-01: Moved execution_prompt.md's Section 14 content verbatim to shared_standards.md as new §18, also folding in the route.fallback()-vs-route.continue() ordering advisory discovered during this same sprint's ST-11 (BLG-QA-64). AC-02: execution_prompt.md §14 body replaced with a one-line reference to shared_standards.md §18. AC-03: full CLAUDE.md §6 governance file edit checklist applied in same commit -- execution_prompt.md v3.52->3.53, shared_standards.md v3.10->3.11, both per-file changelogs (execution_prompt_changelog.md, shared_standards_changelog.md) got new prepended top rows, OPERATIONAL_GUIDE.md header v4.85->4.86 + §14 table (both file versions) + §8 phase-section source-prompt header synced + new Change Log row, prompt_change_log.md got 3 new prepended rows (one per file changed: execution_prompt.md, shared_standards.md, OPERATIONAL_GUIDE.md). AC-04: Head of Specs Team agent-mediated sign-off cleared after independently verifying all diffs and confirming content-fidelity (moved section matches original, no truncation/meaning change)."
         },
         "ST-17": {
           "title": "System threat model document (BLG-OPS-71)",
@@ -523,7 +531,8 @@
     "ST-13",
     "ST-11",
     "ST-14",
-    "ST-15"
+    "ST-15",
+    "ST-16"
   ],
   "open_escalations": [],
   "merge_gate": {

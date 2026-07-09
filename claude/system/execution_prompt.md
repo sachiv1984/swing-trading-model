@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.52
-**Last Updated:** 2026-07-06
+**Version:** 3.53
+**Last Updated:** 2026-07-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -1080,25 +1080,9 @@ The run is complete only if:
 
 ---
 
-## 14. Playwright Test Authoring Standard (OA-05 / ST-10)
+## 14. Playwright Test Authoring Standard
 
-When writing or updating Playwright tests in this project:
-
-**Use `waitFor` patterns — not `networkidle`.**
-
-`page.waitForLoadState('networkidle')` is unreliable on CI and is prohibited in new tests. Replace with:
-
-- **`await expect(page.locator('selector')).toBeVisible({ timeout: N })`** — preferred; waits for a specific element that confirms the page/component has rendered.
-- **`await page.waitForSelector('selector')`** — acceptable when `expect` is not available at the point of navigation.
-- **`await page.waitForResponse(urlPattern)`** — when the test needs to confirm a specific API call was made.
-- **`await page.waitForLoadState('domcontentloaded')`** — only in navigation helper functions where a specific element is unknown. Never in the body of a test scenario.
-
-**Standard:**
-1. Every `page.goto()` or `page.reload()` must be followed by an element-specific wait, not `networkidle`.
-2. In test helper functions (e.g. `async function goto(page, hash)`), use `domcontentloaded` as the base wait only when no specific element is available.
-3. `waitForLoadState('networkidle')` is never permitted in new test code. The QA Evidence sign-off block for any EPIC introducing new Playwright tests must confirm this standard was followed.
-
-**Mock payload advisory (OA-02/CF-02):** Mock payloads must match the canonical API spec response shape. Before authoring mocks, read the relevant `openapi.yaml` path and use the documented response schema. Nested objects (e.g. `{data: {field: value}}`) must not be flattened in mocks. Mismatch = silent test failure in prod.
+Moved to `claude/system/shared_standards.md §18` (BLG-GOV-123, v6.8 ST-16). Apply that standard whenever this routine writes or updates Playwright tests.
 
 ---
 

@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.85
-**Last Updated:** 2026-07-08
+**Version:** 4.86
+**Last Updated:** 2026-07-09
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.52)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.53)
 
 ### 8.1 Invocation
 
@@ -1467,13 +1467,13 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.42 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.12 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.52 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.53 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.6 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.3 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.0 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.17 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.10 |
+| Shared Standards | `claude/system/shared_standards.md` v3.11 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.9 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.86 | 2026-07-09 | **v6.8 ST-16 (BLG-GOV-123, EPIC-03) — execution_prompt.md §14 Playwright Test Authoring Standard extracted to shared_standards.md §18.** §8 source prompt header v3.52→v3.53. §14 Execution Engine Source v3.52→v3.53. §14 Shared Standards v3.10→v3.11. §14 Version 4.85→4.86/2026-07-09. Change: the Playwright Test Authoring Standard (waitFor patterns, mock payload advisory) applies to Playwright tests written by any governed routine, not just sprint execution — moved to the cross-engine shared_standards.md as new §18, with execution_prompt.md §14 replaced by a reference line. Also folds in a new route-ordering advisory discovered during the same sprint's ST-11 (BLG-QA-64): page.route() handlers evaluate in reverse registration order; route.continue() sends to the real network rather than falling through to an earlier-registered handler — use route.fallback() to defer correctly. Authority: Head of Specs Team (v6.8 ST-16, 2026-07-09). |
 | 4.85 | 2026-07-08 | **Roadmap rebalance 2026-07-08__scheduled — 2 further friction-item patches applied same cycle.** §14 Shared Standards v3.9→v3.10. §14 Version 4.84→4.85/2026-07-08. Changes: (1) `shared_standards.md` §16.5 — clarified that `Promoted-Added` status also covers a STEP 5 debate resolving into a process patch rather than a roadmap/backlog addition (this reuse had recurred twice, `2026-07-06__scheduled` and `2026-07-08__scheduled`, without being documented — Type B Semantic Mismatch). (2) This document — added a header-drift prevention note directly above this Change Log table (4th recurrence of the header-Version-field-lagging-the-table pattern, per the 4.79/4.80/4.81 entries below); future edits should read the table's own top row rather than trusting the header field. Authority: Head of Specs Team (roadmap rebalance 2026-07-08__scheduled, STEP 11). |
 | 4.84 | 2026-07-08 | **Roadmap rebalance 2026-07-08__scheduled — resolved 2 deferred patches carried from `2026-07-06__scheduled` lessons learnt (one re-routed via `2026-07-06__release-v6.7` closure LP-09).** §6 source prompt header updated v8.3→v8.4. §6M source prompts updated (backlog_management_prompt.md v1.10→v1.11). §13 Artefact Register Roadmap Rebalance Prompt row updated v8.3→v8.4. §14 Roadmap Engine Source v8.3→v8.4; Backlog Management Engine v1.10→v1.11. §14 Version 4.83→4.84/2026-07-08 (also corrects a repeat of the header-drift pattern flagged in the 4.79/4.80/4.81 entries below: the top `**Version:**`/`**Last Updated:**` fields were still at 4.80 despite the 4.81/4.82/4.83 Change Log entries below recording that they had been bumped further — those corrections were never actually applied to the header fields; the missed bumps and this cycle's own change are reflected in this single 4.84 update). Changes: (1) `roadmap_prompt.md` STEP 2.3 — added SI-02 gate read instruction pointing to a new structured `**Last formally confirmed:**`/`**Unverified report:**` sub-field on the SI-02 row in `current_roadmap.md` §5, resolving the trade-count reconciliation gap (Friction Item 2, `2026-07-06__scheduled`; misrouted to `plan release v6.7` by that cycle, corrected to this engine by `2026-07-06__release-v6.7` closure LP-09). (2) `backlog_management_prompt.md` STEP 1 — new §1.1 Gate Field Label Normalization mandatory pre-scan, closing Friction Item 1 (`2026-07-06__scheduled`): 3 backlog items (`BLG-QA-63`, `BLG-OPS-76`, `BLG-OPS-77`) plus 1 ungated item (`BLG-QA-64`) were found still using the non-canonical `**Gate:**` label and silently excluded from the roadmap engine's STEP 3.1 gated-item scan; all 4 normalised to `**Gate criteria:**` directly in `backlog.md` this run. Authority: Head of Specs Team (roadmap rebalance 2026-07-08__scheduled, STEP -1.5 prior-cycle outstanding actions). |
 | 4.83 | 2026-07-06 | **v6.7 ST-07 (EPIC-02, BLG-GOV-170) — delivery_verification_prompt.md v3.2→v3.3: STEP 6 now documents the System Status Report status-line update as an expected step.** §9 source prompt header v3.2→v3.3. §14 Verification Engine Source v3.2→v3.3. §14 Version 4.82→4.83/2026-07-06. Change: STEP 6 (System Status Report Reconciliation) — added explicit sub-step naming the `**Status:**` line transition (`Sprint_Complete — pending verification` → `Verified — <date>` / `Verified_with_deviations — <date>`) as routine, expected behaviour on every verification run; states this must not be logged as friction in `lessons_learnt_cycle.md`. This update was correctly performed every cycle but had gone undocumented in the engine's own STEP 6 text for 4+ consecutive cycles, repeatedly re-surfacing as a "new" friction item at lessons-learnt time instead of being recognised as expected. Authority: Head of Specs Team (v6.7 ST-07, BLG-GOV-170, 2026-07-06). |

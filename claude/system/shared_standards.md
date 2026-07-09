@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.10
-**Last Updated:** 2026-07-08
+**Version:** 3.11
+**Last Updated:** 2026-07-09
 
 # Shared Standards — All Governed Routines
 
@@ -903,6 +903,30 @@ This left a gap: a deferred patch to `.claude/skills/commit-check/SKILL.md` (add
 **Compliance rule:** Any commit that edits a file under `.claude/skills/` must be authored or reviewed by the Head of Specs Team (directly, or via delegated sprint-story execution under this provision). No other role may modify `.claude/skills/` content.
 
 This closes the 3-cycle carry-forward escalation `ESC-CLOSE-20260706-01`.
+
+---
+
+## 18. Playwright Test Authoring Standard (BLG-GOV-123 — moved from `execution_prompt.md` §14)
+
+When writing or updating Playwright tests in this project:
+
+**Use `waitFor` patterns — not `networkidle`.**
+
+`page.waitForLoadState('networkidle')` is unreliable on CI and is prohibited in new tests. Replace with:
+
+- **`await expect(page.locator('selector')).toBeVisible({ timeout: N })`** — preferred; waits for a specific element that confirms the page/component has rendered.
+- **`await page.waitForSelector('selector')`** — acceptable when `expect` is not available at the point of navigation.
+- **`await page.waitForResponse(urlPattern)`** — when the test needs to confirm a specific API call was made.
+- **`await page.waitForLoadState('domcontentloaded')`** — only in navigation helper functions where a specific element is unknown. Never in the body of a test scenario.
+
+**Standard:**
+1. Every `page.goto()` or `page.reload()` must be followed by an element-specific wait, not `networkidle`.
+2. In test helper functions (e.g., `async function goto(page, hash)`), use `domcontentloaded` as the base wait only when no specific element is available.
+3. `waitForLoadState('networkidle')` is never permitted in new test code. The QA Evidence sign-off block for any EPIC introducing new Playwright tests must confirm this standard was followed.
+
+**Mock payload advisory (OA-02/CF-02):** Mock payloads must match the canonical API spec response shape. Before authoring mocks, read the relevant `openapi.yaml` path and use the documented response schema. Nested objects (e.g. `{data: {field: value}}`) must not be flattened in mocks. Mismatch = silent test failure in prod.
+
+**Route ordering advisory (ST-11, v6.8, BLG-QA-64):** When registering multiple `page.route()` handlers for overlapping URL patterns (e.g. a generic catch-all plus a more specific handler for one path), Playwright evaluates handlers in reverse registration order (most-recently-registered first). A handler's `route.continue()` call sends the request onward to the real network — it does **not** fall through to an earlier-registered, more-specific handler. Use `route.fallback()` instead of `route.continue()` when the intent is to defer to a previously-registered handler for the same request. Register generic catch-all mocks **first**, specific mocks **last**, and use `route.fallback()` in any generic handler's non-matching branch.
 
 ---
 
