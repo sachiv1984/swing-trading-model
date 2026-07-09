@@ -1,9 +1,9 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.3
+**Version:** 1.4
 **Last Updated:** 2026-07-09
-**Cycle:** 2026-07-08__release-v6.8 (ST-04 — BLG-OPS-99)
+**Cycle:** 2026-07-08__release-v6.8 (ST-04 — BLG-OPS-99; ST-17 — BLG-OPS-71, entry #7 added)
 
 ---
 
@@ -121,6 +121,23 @@ For rotation procedures, see: `docs/ops/api_key_rotation_policy.md`
 | Last rotation date | Not tracked prior to this register entry (key already provisioned and in use as of 2026-07-06) |
 | Next rotation due | 2026-07-09 + 12 months |
 | Notes | Confirmed working 2026-07-09 (ST-04, BLG-OPS-99, v6.8): `curl -H "X-API-Key: $RENDER_API_KEY" .../signals` → 200, used to directly confirm the SI-02 gate condition (`GET /trades` → `total_trades: 20`; `GET /trade-plans` → 11 plans, 0 with `position_id` set, pre-ST-01-fix baseline) rather than relying on self-report. See `docs/security/signal_anomaly_review_2026-07-09.md` for a second example use (ST-03). |
+
+---
+
+### 7. Telegram Bot Token and Chat ID
+
+| Field | Value |
+|-------|-------|
+| Key name | Telegram Bot Token / Chat ID |
+| Env var | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` |
+| Purpose | Outbound-only alert and digest delivery (e.g. `POST /digest/si05/send`) via the Telegram Bot API |
+| Scope | Send-message capability to a single fixed chat (`TELEGRAM_CHAT_ID`); no inbound webhook is configured, no read/admin Telegram calls exist in this codebase |
+| Storage location | Render environment variables (staging and production services) |
+| Rotation cadence | Annual minimum (12 months), aligned with other keys in this register |
+| Rotation procedure | Revoke and regenerate token via @BotFather → update `TELEGRAM_BOT_TOKEN` in Render → verify with a manual `POST /digest/si05/send` test send |
+| Last rotation date | Unknown (pre-register baseline) |
+| Next rotation due | 12 months from last rotation |
+| Notes | Identified as a gap during the ST-17 system threat model review (BLG-OPS-71, EPIC-03, v6.8) — this credential was already in production use (`backend/config.py:57-58`) but had never been added to this register. Bot token scope reviewed as minimal-permission (send-only) in `docs/security/security_register.md`; BotFather-side configuration itself was noted there as unverified. |
 
 ---
 

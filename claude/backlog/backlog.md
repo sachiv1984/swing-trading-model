@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-09 (session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -4532,6 +4532,50 @@ The API key rotation runbook has never been exercised end-to-end — its first r
 
 **Acceptance Criteria**
 - Drill completed; runbook corrected if any step failed
+
+---
+
+### BLG-SEC-12 — CSP allows 'unsafe-inline' for script-src and style-src
+**Priority:** P3 (Low)
+**Type:** Security / Frontend
+**Owner:** Head of Engineering; Cybersecurity & Trust Lead
+**Source:** ST-17 (BLG-OPS-71), EPIC-03, v6.8 system threat model review — 2026-07-09
+**Effort:** M (~1-2 days — requires nonce/hash-based CSP migration and testing across all inline scripts/styles)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`public/index.html`'s Content-Security-Policy permits `'unsafe-inline'` for both `script-src` and `style-src`. This significantly weakens the CSP's XSS mitigation value — an attacker who achieves any injection point (e.g. via a compromised dependency or a future reflected-XSS bug) can execute inline script/style despite the CSP being present, since `'unsafe-inline'` is a blanket allowance.
+
+**Scope**
+- Audit all inline `<script>`/`<style>` usage in the built SPA (CRA's default build may inject some)
+- Migrate to nonce-based or hash-based CSP directives where feasible, removing `'unsafe-inline'`
+- If full removal isn't feasible (e.g. due to a build-tool constraint), document the specific residual need and narrow the exception as much as possible
+
+**Acceptance Criteria**
+- CSP no longer includes a blanket `'unsafe-inline'` for `script-src`; `style-src` narrowed or justified explicitly if any exception remains
+- No functional regression (app loads and renders correctly under the tightened CSP)
+
+---
+
+### BLG-SEC-13 — Raw exception text returned in API error responses
+**Priority:** P3 (Low)
+**Type:** Security / Backend
+**Owner:** Head of Engineering
+**Source:** ST-17 (BLG-OPS-71), EPIC-03, v6.8 system threat model review — 2026-07-09
+**Effort:** M (~1-2 days — touches 44 call sites in backend/main.py)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+44 call sites in `backend/main.py` construct `HTTPException` responses with `detail=str(e)`, returning the raw Python exception message directly to the API caller. This risks incidental disclosure of internal file paths, database schema hints, or library version details to anyone holding the API key. Impact is bounded (the API is already key-gated and this is a single-user system), but it is a defense-in-depth gap — if the key is ever compromised, verbose errors give an attacker more reconnaissance than a generic message would.
+
+**Scope**
+- Replace `detail=str(e)` with a generic client-facing message for 500-class errors; log the full exception server-side (already partially done via `traceback.print_exc()` at some sites)
+- Preserve specific, safe detail messages for expected 4xx errors (e.g. validation failures) where the detail is not derived from a raw exception object
+
+**Acceptance Criteria**
+- 500-class error responses no longer include raw exception text in the client-facing `detail` field
+- Full exception detail still logged server-side for debugging
+- No change to intentional, safe 4xx error messages
 
 ---
 
