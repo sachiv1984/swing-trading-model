@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -1668,6 +1668,29 @@ Verified via production API (2026-07-06): `GET /trades` reports `total_trades: 2
 - `trailing_stop_recommendation_log` table created and populated on every `GET /positions/{id}/stop-trail` call
 - `trailing_stop_action_rate` computable via the query approach documented in `metrics_definitions.md`
 - Capture window confirmed by Product Owner
+
+---
+
+### BLG-BE-51 — Add endpoint and date-range filters to GET /ai/claude-audit-log
+**Priority:** P3 (Low)
+**Type:** Backend / Observability
+**Owner:** Backend Engineering Patterns Owner
+**Source:** ST-13 (BLG-OPS-74), EPIC-03, v6.8 Anthropic API token/cost logging verification — 2026-07-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v6.9
+
+**Problem**
+`GET /ai/claude-audit-log` (`backend/routers/ai.py`) queries the `claude_audit_log` table, which stores an `endpoint` column per row (e.g. `POST /ai/daily-briefing`, `POST /trade-plans/generate-plan`), but the endpoint only accepts a `limit` query parameter (max 200) — no server-side filter by `endpoint` or by date range. A caller doing cost-trend analysis for one specific Claude-calling flow (e.g. isolating morning-briefing costs from chat/thesis-generation costs) must over-fetch up to 200 rows and filter client-side, which may not even cover the desired date range as call volume grows.
+
+**Scope**
+- Add optional `endpoint` query parameter to `GET /ai/claude-audit-log` (exact match against the stored `endpoint` column)
+- Add optional `date_from`/`date_to` query parameters (filtering on `generated_at`)
+- Update `docs/specs/api_contracts/ai_endpoints.md` and `docs/reference/openapi.yaml` in the same commit
+
+**Acceptance Criteria**
+- `GET /ai/claude-audit-log?endpoint=POST%20/ai/daily-briefing` returns only matching rows
+- `date_from`/`date_to` filters work independently and combined with `endpoint`
+- Existing unfiltered behaviour (no params) unchanged
 
 ---
 

@@ -376,7 +376,7 @@
         "ST-13": {
           "title": "Log Anthropic API token usage and cost per morning briefing call (BLG-OPS-74)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 940,
           "branch": "exec/2026-07-08__release-v6.8/EPIC-03",
@@ -384,13 +384,23 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "completed_utc": "2026-07-09T15:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md#GET /ai/claude-audit-log",
+            "backend/services/ai_service.py#generate_daily_briefing",
+            "backend/database.py#create_claude_audit_entry"
+          ],
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "required_by": "FinOps & Resource Architect",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-07-09T15:05:00Z"
+          },
+          "notes": "Pre-met path (LL-v2.4-P4-02): both ACs were already shipped in a prior sprint, not new work this sprint. AC-01: generate_daily_briefing() (ai_service.py) already calls create_claude_audit_entry() with real input_tokens/output_tokens/cost_usd from the Anthropic response.usage object on every successful daily-briefing call. AC-02: GET /ai/claude-audit-log (backend/routers/ai.py, registered in openapi.yaml/api_contracts/test.py since v4.2 ST-07 BLG-GOV-63) already exposes the claude_audit_log table for review, ordered newest-first with endpoint/tokens/cost/timestamp fields. Verified via direct code read plus agent-mediated FinOps review (confirmed real, non-placeholder data; not a fake-success case). One genuine minor gap found and filed as follow-up rather than fixed inline (XS effort, out of this story's pre-met-verification scope): the query endpoint has no endpoint= or date-range filter, only limit -- filed as BLG-BE-51."
         },
         "ST-14": {
           "title": "Refactor Watchlist.js to ESLint compliance (BLG-FE-77)",
@@ -484,7 +494,8 @@
     "ST-08",
     "ST-09",
     "ST-10",
-    "ST-12"
+    "ST-12",
+    "ST-13"
   ],
   "open_escalations": [],
   "merge_gate": {
