@@ -8,7 +8,7 @@ import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
 import SignalContextPanel, { buildSignalPrePopulation } from "../components/trades/SignalContextPanel";
 import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
-import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon, ShieldCheck, ThumbsUp, ThumbsDown } from "lucide-react";
+import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon, ShieldCheck, ThumbsUp, ThumbsDown, Tag as TagIcon } from "lucide-react";
 import { TradePlanStatusBadge } from "./TradePlans";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -284,7 +284,12 @@ const EMPTY_FORM = {
   planned_quantity: "",
   planned_entry_price: "",
   planned_stop_price: "",
+  trade_tags: [],
 };
+
+// ST-05 (BLG-FEAT-52): Tag Rules per journal_components.md §3/§4, reused for trade_tags
+const TRADE_TAG_MAX_LENGTH = 20;
+const TRADE_TAG_MAX_COUNT = 10;
 
 function Field({ label, children }) {
   return (
@@ -398,9 +403,44 @@ export default function TradePlan() {
         checklist_completed: checklistItems.every((i) => i.checked),
         status: existingPlan.status || "draft",
         thesis_feedback: existingPlan.thesis_feedback || null,
+        trade_tags: Array.isArray(existingPlan.trade_tags) ? existingPlan.trade_tags : [],
       });
     }
   }, [existingPlan]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ST-05 (BLG-FEAT-52): trade-plan tag autocomplete source
+  const [tagInput, setTagInput] = useState("");
+  const [showTagSuggestions, setShowTagSuggestions] = useState(false);
+  const { data: existingTradeTags = [] } = useQuery({
+    queryKey: ["trade-plan-tags"],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE}/trade-plans/tags`);
+      const json = await res.json();
+      return Array.isArray(json.data) ? json.data : [];
+    },
+    staleTime: 60 * 1000,
+  });
+
+  const handleAddTradeTag = (rawTag) => {
+    if (form.trade_tags.length >= TRADE_TAG_MAX_COUNT) return;
+    const clean = rawTag.trim().toLowerCase().replace(/\s+/g, "-");
+    if (!clean || clean.length > TRADE_TAG_MAX_LENGTH || !/^[a-z0-9-]+$/.test(clean)) return;
+    if (form.trade_tags.includes(clean)) return;
+    setForm((prev) => ({ ...prev, trade_tags: [...prev.trade_tags, clean] }));
+    setTagInput("");
+    setShowTagSuggestions(false);
+  };
+
+  const handleRemoveTradeTag = (tagToRemove) => {
+    setForm((prev) => ({ ...prev, trade_tags: prev.trade_tags.filter((t) => t !== tagToRemove) }));
+  };
+
+  const handleTradeTagInputKeyDown = (e) => {
+    if (e.key === "Enter" && tagInput.trim()) {
+      e.preventDefault();
+      handleAddTradeTag(tagInput.trim());
+    }
+  };
 
   const { data: newsForGenerator = [] } = useQuery({
     queryKey: ["plan-news", form.ticker],
@@ -640,6 +680,76 @@ export default function TradePlan() {
             </div>
           </Field>
         </div>
+
+        {/* Trade Plan Tags — ST-05 (v6.8, BLG-FEAT-52). Independent from position/journal
+            tags (journal_components.md); data-only field on trade_plans.trade_tags. */}
+        <Field label={`Tags (${form.trade_tags.length}/${TRADE_TAG_MAX_COUNT})`}>
+          <div className="space-y-2" data-testid="trade-plan-tags">
+            {form.trade_tags.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {form.trade_tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                  >
+                    {tag}
+                    {!isAbandoned && (
+                      <button
+                        type="button"
+                        data-testid={`trade-plan-tag-remove-${tag}`}
+                        onClick={() => handleRemoveTradeTag(tag)}
+                        className="hover:text-cyan-300 transition-colors"
+                        aria-label={`Remove tag ${tag}`}
+                      >
+                        <XIcon className="w-3 h-3" />
+                      </button>
+                    )}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-slate-600 dark:text-slate-400 italic">No tags</p>
+            )}
+
+            {!isAbandoned && form.trade_tags.length < TRADE_TAG_MAX_COUNT && (
+              <div className="relative">
+                <div className="relative">
+                  <TagIcon className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    data-testid="trade-plan-tag-input"
+                    type="text"
+                    value={tagInput}
+                    onChange={(e) => {
+                      setTagInput(e.target.value);
+                      setShowTagSuggestions(e.target.value.length > 0);
+                    }}
+                    onFocus={() => setShowTagSuggestions(tagInput.length > 0)}
+                    onBlur={() => setTimeout(() => setShowTagSuggestions(false), 200)}
+                    onKeyDown={handleTradeTagInputKeyDown}
+                    placeholder="Type to add tags…"
+                    className="w-full pl-9 pr-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+                {showTagSuggestions && (
+                  <div className="absolute z-10 mt-1 w-full max-h-40 overflow-y-auto rounded-lg bg-slate-800 border border-slate-700 shadow-lg">
+                    {existingTradeTags
+                      .filter((t) => t.toLowerCase().includes(tagInput.toLowerCase()) && !form.trade_tags.includes(t))
+                      .map((t) => (
+                        <button
+                          type="button"
+                          key={t}
+                          onMouseDown={() => handleAddTradeTag(t)}
+                          className="block w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-slate-700"
+                        >
+                          {t}
+                        </button>
+                      ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </Field>
 
         {!editId && <SignalContextPanel signal={linkedSignal} market={form.market} />}
 

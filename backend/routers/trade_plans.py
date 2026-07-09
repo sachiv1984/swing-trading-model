@@ -4,6 +4,7 @@ Trade Plans Router (DS-04 / ST-02)
 CRUD endpoints for pre-trade reasoning documents.
 Spec: docs/specs/api_contracts/trade_plan_endpoints.md v0.1
 """
+import re
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -24,7 +25,25 @@ from database import (
     get_latest_snapshot,
     get_settings,
     get_trade_history,
+    get_all_trade_plan_tags,
 )
+
+# Tag Rules — journal_components.md §3/§4 (reused for trade_tags, ST-05 BLG-FEAT-52)
+_TAG_MAX_LENGTH = 20
+_TAG_MAX_COUNT = 10
+_TAG_PATTERN = re.compile(r"^[a-z0-9-]+$")
+
+
+def _validate_trade_tags(tags: Optional[List[str]]) -> List[str]:
+    """Lowercase, alphanumeric+hyphen, max 20 chars, max 10 tags, deduped."""
+    if not tags:
+        return []
+    validated: List[str] = []
+    for tag in tags:
+        clean = (tag or "").strip().lower()
+        if clean and len(clean) <= _TAG_MAX_LENGTH and _TAG_PATTERN.match(clean) and clean not in validated:
+            validated.append(clean)
+    return validated[:_TAG_MAX_COUNT]
 
 _SETUP_QUALITY_MIN_TRADES = 20
 
@@ -65,6 +84,7 @@ class TradePlanCreate(BaseModel):
     signal_id: Optional[str] = None
     risk_percent_used: Optional[float] = None
     pre_entry_validation_snapshot: Optional[Any] = None
+    trade_tags: Optional[List[str]] = None
 
 
 class TradePlanUpdate(BaseModel):
@@ -85,6 +105,7 @@ class TradePlanUpdate(BaseModel):
     planned_quantity: Optional[int] = None
     planned_entry_price: Optional[float] = None
     planned_stop_price: Optional[float] = None
+    trade_tags: Optional[List[str]] = None
 
 
 def _get_portfolio_id():
@@ -138,6 +159,7 @@ def create_plan(body: TradePlanCreate):
         portfolio_id = _get_portfolio_id()
 
         plan_data = body.dict()
+        plan_data["trade_tags"] = _validate_trade_tags(plan_data.get("trade_tags"))
 
         # Capture portfolio_value_at_entry from latest snapshot
         try:
@@ -266,6 +288,25 @@ def get_setup_quality_score(ticker: str = Query(..., description="Ticker symbol"
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
 
+@router.get("/tags")
+def get_trade_plan_tags_endpoint():
+    """GET /trade-plans/tags — unique trade-plan tags for autocomplete (ST-05 BLG-FEAT-52).
+
+    Mirrors GET /positions/tags. Reads trade_plans.trade_tags only — data-independent
+    from the existing position/journal tags (journal_components.md).
+    Spec: docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md
+    """
+    try:
+        ensure_trade_plans_table()
+        portfolio_id = _get_portfolio_id()
+        tags = get_all_trade_plan_tags(portfolio_id)
+        return {"status": "ok", "data": tags}
+    except HTTPException:
+        raise
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+
 @router.get("/{plan_id}")
 def get_plan(plan_id: str):
     """GET /trade-plans/{id} — retrieve a single trade plan."""
@@ -294,6 +335,8 @@ def update_plan(plan_id: str, body: TradePlanUpdate):
         ensure_trade_plans_table()
         portfolio_id = _get_portfolio_id()
         data = {k: v for k, v in body.dict().items() if v is not None}
+        if "trade_tags" in data:
+            data["trade_tags"] = _validate_trade_tags(data["trade_tags"])
 
         if data.get("status") == "abandoned":
             if not data.get("abandonment_reason"):

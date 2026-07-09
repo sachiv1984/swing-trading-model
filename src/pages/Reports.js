@@ -401,11 +401,112 @@ function TaxYearReport() {
             </div>
           )}
 
+          {/* SI-02 Gate Status — ST-06 (v6.8, BLG-FEAT-71) */}
+          <SI02GateStatusSection />
+
           {/* Scope Note */}
           <p className="text-xs text-slate-600 dark:text-slate-400 text-center pb-2">
             UK tax year only (6 April to 5 April). Verify all figures against your broker records and seek qualified tax advice before filing.
           </p>
         </>
+      )}
+    </div>
+  );
+}
+
+// ─── SI-02 Gate Status ──────────────────────────────────────────────────────
+// reports.md §SI-02 Gate Status (v0.6 — ST-06, BLG-FEAT-71)
+// Design source: docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md
+// Collapsible, collapsed by default. Distinct from Dashboard's single-metric Gate
+// Progress strip (dashboard.md §6) — surfaces total vs. trade-plan-linked closed
+// trades plus a per-condition MET/NOT MET breakdown. Values sourced live from
+// GET /trades, GET /trade-plans, GET /analytics/arc5-compliance — never hardcoded.
+function SI02GateStatusSection() {
+  const [collapsed, setCollapsed] = useState(true);
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["si02-gate-status"],
+    queryFn: async () => {
+      const [tradesRes, plansRes, arc5] = await Promise.all([
+        api.trades.list(),
+        apiFetch(`${base44.baseUrl}/trade-plans`).then((r) => r.json()),
+        api.analytics.arc5Compliance("7d"),
+      ]);
+      const totalClosedTrades = tradesRes?.total_trades ?? 0;
+      const plans = Array.isArray(plansRes?.data) ? plansRes.data : [];
+      // reports.md §SI-02 Gate Status: "GET /trade-plans closed, position_id non-null count"
+      // — both conditions required, not position_id alone (an active-but-linked plan
+      // must not be counted as a linked *closed* trade).
+      const linkedClosedTrades = plans.filter((p) => p.status === "closed" && p.position_id != null).length;
+      const tradePlanAdherenceRate = arc5?.trade_plan_adherence_rate ?? null;
+      return {
+        totalClosedTrades,
+        linkedClosedTrades,
+        gateCondition1Met: totalClosedTrades >= 20,
+        gateCondition2Met: linkedClosedTrades >= 20,
+        gateCondition3Met: tradePlanAdherenceRate != null && tradePlanAdherenceRate > 0,
+      };
+    },
+    retry: 1,
+  });
+
+  const GateBadge = ({ met }) => (
+    <span
+      className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+        met ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+      }`}
+    >
+      {met ? "MET" : "NOT MET"}
+    </span>
+  );
+
+  return (
+    <div data-testid="si02-gate-status-section" className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
+      <button
+        type="button"
+        data-testid="si02-gate-status-toggle"
+        onClick={() => setCollapsed(!collapsed)}
+        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-slate-700/20 transition-colors"
+      >
+        <h3 className="text-sm font-semibold text-white">SI-02 Gate Status</h3>
+        {collapsed ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronUp className="w-4 h-4 text-slate-400" />}
+      </button>
+
+      {!collapsed && (
+        <div className="px-6 py-5 border-t border-slate-700/50">
+          {isLoading ? (
+            <div className="h-16 rounded-lg bg-slate-800/50 animate-pulse" />
+          ) : isError ? (
+            <p className="text-sm text-slate-600 dark:text-slate-400">Unable to load gate status</p>
+          ) : (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Total Closed Trades</p>
+                  <p className="text-lg font-semibold text-white">{data.totalClosedTrades} total closed trades</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Linked to a Trade Plan</p>
+                  <p className="text-lg font-semibold text-white">{data.linkedClosedTrades} linked to a trade plan</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="flex items-center justify-between rounded-lg bg-slate-800/50 border border-slate-700/50 px-4 py-3">
+                  <span className="text-sm text-slate-300">Gate Condition 1</span>
+                  <GateBadge met={data.gateCondition1Met} />
+                </div>
+                <div className="flex items-center justify-between rounded-lg bg-slate-800/50 border border-slate-700/50 px-4 py-3">
+                  <span className="text-sm text-slate-300">Gate Condition 2</span>
+                  <GateBadge met={data.gateCondition2Met} />
+                </div>
+                <div className="flex items-center justify-between rounded-lg bg-slate-800/50 border border-slate-700/50 px-4 py-3">
+                  <span className="text-sm text-slate-300">Gate Condition 3</span>
+                  <GateBadge met={data.gateCondition3Met} />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

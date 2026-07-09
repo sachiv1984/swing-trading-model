@@ -938,6 +938,35 @@ async def get_arc5_compliance(
         )
 
 
+@router.get("/tag-performance")
+def get_tag_performance_endpoint(tags: str = Query(..., description="Comma-separated trade-plan tags")):
+    """GET /analytics/tag-performance?tags={csv} — win rate & avg R per trade-plan tag (ST-05 BLG-FEAT-52).
+
+    Reads only trade_plans.trade_tags and existing closed-trade linkage — no
+    dependency on trade_annotations/PO-02 structures (ST-05 AC-04).
+    Spec: docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md §4
+    """
+    from database import get_portfolio, get_tag_performance
+
+    try:
+        tag_list = [t.strip().lower() for t in tags.split(",") if t.strip()]
+        if not tag_list:
+            raise HTTPException(status_code=400, detail="At least one tag is required")
+
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+
+        result = get_tag_performance(str(portfolio["id"]), tag_list)
+        return {"status": "ok", "data": result}
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Tag performance failed: {str(e)}")
+
+
 @router.get("/behavioural-drift")
 async def get_behavioural_drift():
     """GET /analytics/behavioural-drift — SI-02 Behavioural Drift Detection.

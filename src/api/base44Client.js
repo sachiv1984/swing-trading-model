@@ -460,6 +460,9 @@ export const api = {
       doFetch('/analytics/market-correlation'),
     arc5Compliance: async (period = '7d') =>
       doFetch(`/analytics/arc5-compliance?period=${encodeURIComponent(period)}`),
+    // ST-05 (v6.8, BLG-FEAT-52): trade-plan tag performance comparison
+    tagPerformance: async (tags) =>
+      doFetch(`/analytics/tag-performance?tags=${encodeURIComponent(tags.join(','))}`),
   },
 
   market: {
@@ -499,6 +502,8 @@ export const api = {
     // ST-08/09 (v6.1): Setup Quality Score
     setupQualityScore: async (ticker) =>
       doFetch(`/trade-plans/setup-quality-score?ticker=${encodeURIComponent(ticker)}`),
+    // ST-05 (v6.8, BLG-FEAT-52): trade-plan tag autocomplete source
+    tags: async () => doFetch('/trade-plans/tags'),
   },
 
   // ST-06/ST-08 (v6.2 EPIC-02): AI advisory endpoints — display-only, SRB-v1.7

@@ -1,9 +1,9 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.5
-**Last Updated:** 2026-06-23
-**Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12)
+**Version:** 0.6
+**Last Updated:** 2026-07-09
+**Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05)
 
 ---
 
@@ -64,6 +64,7 @@ Create a new trade plan.
 | checklist_items | array | No | `[{item: string, checked: boolean}]` |
 | status | string | No | `draft` \| `active` \| `closed` — default: `draft` |
 | pre_entry_override_acknowledged | boolean | No | Whether user acknowledged pre-entry advisory warnings. Default: false. |
+| trade_tags | array of string | No | *(v0.6 — ST-05)* Data-independent tag field on `trade_plans`. Lowercase, alphanumeric+hyphen, max 20 chars per tag, max 10 tags. Invalid entries silently dropped server-side. Default: `[]`. |
 
 ### Response (201 Created)
 
@@ -311,6 +312,26 @@ Returns all fields when `ANTHROPIC_API_KEY` is configured. Returns a graceful er
 
 ---
 
+## GET /trade-plans/tags
+
+Returns all unique tags used across `trade_plans.trade_tags` for the portfolio. Autocomplete source for the Trade Plan Tag Editor.
+
+**Source:** ST-05, BLG-FEAT-52, v6.8. Mirrors `GET /positions/tags`. Data-independent from the existing position/journal tags (`journal_components.md`).
+
+### Response (200)
+
+```json
+{ "status": "ok", "data": ["breakout", "earnings-play", "momentum"] }
+```
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 500 | Database error |
+
+---
+
 ## GET /trade-plans/setup-quality-score
 
 Returns a 0–100 setup quality score derived from closed trade history for a given ticker.
@@ -378,6 +399,7 @@ score = clamp(round(win_rate × 0.6 + max(average_pnl_pct, 0) × 0.4), 0, 100)
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.6 | 2026-07-09 | ST-05 (EPIC-02, v6.8, BLG-FEAT-52): Add GET /trade-plans/tags (tag autocomplete source); add `trade_tags` field to POST/PUT /trade-plans request schema. Data-independent from trade_annotations/PO-02 and from the existing position/journal tags. |
 | 0.5 | 2026-06-23 | ST-08 (EPIC-04, v6.1): Add GET /trade-plans/setup-quality-score — 0–100 score from closed trade history, gate_not_met response when <20 trades. |
 | 0.4 | 2026-05-26 | Switch generate-thesis from Gemini Flash to Claude Haiku 4.5; replace GEMINI_API_KEY with ANTHROPIC_API_KEY; update model_version in examples; add POST /trade-plans/generate-plan endpoint |
 | 0.3 | 2026-05-24 | ST-12 (BLG-BE-19, v4.0 EPIC-03): Add POST /trade-plans/{plan_id}/generate-thesis — Gemini Flash thesis generation |

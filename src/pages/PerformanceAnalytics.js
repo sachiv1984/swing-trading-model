@@ -16,6 +16,7 @@ import TimeBasedCharts from "../components/analytics/TimeBasedCharts";
 import TopPerformers from "../components/analytics/TopPerformers";
 import ConsistencyMetrics from "../components/analytics/ConsistencyMetrics";
 import TagPerformance from "../components/analytics/TagPerformance";
+import TradePlanTagFilter from "../components/analytics/TradePlanTagFilter";
 import DisciplineComplianceSection from "../components/analytics/DisciplineComplianceSection";
 import MarketCorrelationSection from "../components/analytics/MarketCorrelationSection";
 import Arc5ComplianceSection from "../components/analytics/Arc5ComplianceSection";
@@ -664,6 +665,10 @@ export default function PerformanceAnalytics() {
       <TopPerformers {...getTopPerformers()} />
       <BestWorstTrades trades={filteredTrades} />
       <ConsistencyMetrics metrics={getConsistencyMetrics()} />
+      {/* §14a Trade Plan Tag Filter — ST-05 (v6.8, BLG-FEAT-52). Operates on
+          trade_plans.trade_tags, independent of the position/journal tags used
+          by TagPerformance below. Design source: trade-tagging/ux_spec.md §3. */}
+      <TradePlanTagFilter />
       <TagPerformance trades={filteredTrades} />
       <CohortAnalysis />
       {/* Component 17 — v1.9 ST-01: Discipline & Compliance

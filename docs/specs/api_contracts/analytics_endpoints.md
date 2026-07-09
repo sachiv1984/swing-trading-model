@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.3.0
-**Last Updated:** 2026-06-09
+**Version:** 2.4.0
+**Last Updated:** 2026-07-09
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -845,6 +845,55 @@ Returns Arc 5 signal compliance metrics for the trading system.
 
 ---
 
+## GET /analytics/tag-performance
+
+Returns win rate and average R-multiple per requested trade-plan tag.
+
+**Source:** ST-05, BLG-FEAT-52, v6.8. Reads only `trade_plans.trade_tags` and existing closed-trade linkage — no dependency on `trade_annotations`/PO-02.
+
+### Request
+
+**Method:** GET
+**Path:** `/analytics/tag-performance`
+**Authentication:** API Key required
+
+#### Query parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `tags` | string | Yes | Comma-separated trade-plan tags (e.g. `breakout,earnings-play`) |
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": [
+    {"tag": "breakout", "win_rate": 62.5, "avg_r_multiple": 1.8, "trade_count": 8},
+    {"tag": "earnings-play", "win_rate": 40.0, "avg_r_multiple": -0.3, "trade_count": 5}
+  ]
+}
+```
+
+#### `data` schema (array, one entry per requested tag)
+
+| Field | Type | Description |
+|-------|------|--------------|
+| `tag` | string | Echoed tag (lowercase) |
+| `win_rate` | number | % of linked closed trades with `pnl > 0` (1 dp). 0.0 if no matching trades. |
+| `avg_r_multiple` | number\|null | Mean R-multiple across matching trades with a resolvable stop (`(exit-entry)/(entry-stop)`); null if no qualifying trade has a resolvable stop |
+| `trade_count` | integer | Closed trades linked to a plan carrying this tag |
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 400 | `tags` parameter missing or empty |
+| 404 | Portfolio not found |
+| 500 | Database error |
+
+---
+
 ## GET /analytics/compliance-metrics
 
 **Purpose**
@@ -903,6 +952,7 @@ No parameters.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.4.0 | 2026-07-09 | v6.8 ST-05 (BLG-FEAT-52, EPIC-02): Added `GET /analytics/tag-performance` — win rate and average R-multiple per trade-plan tag. Reads only `trade_plans.trade_tags` and existing closed-trade linkage; no dependency on `trade_annotations`/PO-02. API Contracts & Documentation Owner sign-off. |
 | 2.3.0 | 2026-06-09 | v5.3 ST-05 (BLG-SPEC-50, EPIC-01): Added `GET /analytics/compliance-metrics` — discipline and compliance scalars endpoint. API Contracts & Documentation Owner sign-off. |
 | 2.2.0 | 2026-05-23 | ST-01 (BLG-FEAT-36, v4.0): Add `GET /analytics/arc5-compliance` endpoint — Arc 5 compliance metrics (validation_pass_rate_by_rule, events_per_week, override_rate, top_rule_breach, trade_plan_adherence_rate). Adds pre_entry_validation_log table. Metrics canonical per metrics_definitions.md §Arc 5 Compliance Metrics. API Contracts & Documentation Owner. |
 | 2.1.0 | 2026-04-15 | ST-08 (BLG-FEAT-17, v2.7): Add `GET /analytics/market-correlation` endpoint spec — per-position Pearson correlation vs SPY/FTSE benchmark, portfolio-level equal-weighted average, 252-day default lookback, 8-hour TTL cache, graceful Yahoo Finance fallback. API Contracts & Documentation Owner. |
