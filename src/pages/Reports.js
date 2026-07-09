@@ -434,7 +434,10 @@ function SI02GateStatusSection() {
       ]);
       const totalClosedTrades = tradesRes?.total_trades ?? 0;
       const plans = Array.isArray(plansRes?.data) ? plansRes.data : [];
-      const linkedClosedTrades = plans.filter((p) => p.position_id != null).length;
+      // reports.md §SI-02 Gate Status: "GET /trade-plans closed, position_id non-null count"
+      // — both conditions required, not position_id alone (an active-but-linked plan
+      // must not be counted as a linked *closed* trade).
+      const linkedClosedTrades = plans.filter((p) => p.status === "closed" && p.position_id != null).length;
       const tradePlanAdherenceRate = arc5?.trade_plan_adherence_rate ?? null;
       return {
         totalClosedTrades,

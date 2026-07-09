@@ -143,7 +143,7 @@ test('SC-SI02-04: Conditions show MET once trades are linked and adherence is po
   await mockFallback(page);
   await mockTaxYearReport(page);
   await mockTrades(page, 20);
-  const linkedPlans = Array.from({ length: 20 }, (_, i) => ({ id: `p${i}`, ticker: 'AAPL', position_id: `pos-${i}` }));
+  const linkedPlans = Array.from({ length: 20 }, (_, i) => ({ id: `p${i}`, ticker: 'AAPL', status: 'closed', position_id: `pos-${i}` }));
   await mockTradePlans(page, linkedPlans);
   await mockArc5Compliance(page, 1.0);
   await gotoTaxYearTab(page);
@@ -152,6 +152,24 @@ test('SC-SI02-04: Conditions show MET once trades are linked and adherence is po
   await expect(page.getByText('20 total closed trades')).toBeVisible({ timeout: 5000 });
   await expect(page.getByText('20 linked to a trade plan')).toBeVisible();
   await expect(page.getByText('MET', { exact: true })).toHaveCount(3);
+});
+
+test('SC-SI02-06: An active (not closed) plan with position_id set is not counted as linked', async ({ page }) => {
+  await mockFallback(page);
+  await mockTaxYearReport(page);
+  await mockTrades(page, 20);
+  await mockTradePlans(page, [
+    // Linked to a position but still "active" — must NOT count per reports.md
+    // §SI-02 Gate Status: "GET /trade-plans closed, position_id non-null count".
+    { id: 'p1', ticker: 'AAPL', status: 'active', position_id: 'pos-1' },
+    { id: 'p2', ticker: 'MSFT', status: 'closed', position_id: 'pos-2' },
+  ]);
+  await mockArc5Compliance(page, 0.5);
+  await gotoTaxYearTab(page);
+  await page.getByTestId('si02-gate-status-toggle').click();
+
+  await expect(page.getByText('20 total closed trades')).toBeVisible({ timeout: 5000 });
+  await expect(page.getByText('1 linked to a trade plan')).toBeVisible();
 });
 
 test('SC-SI02-05: Error state shown without blocking rest of Reports page', async ({ page }) => {
