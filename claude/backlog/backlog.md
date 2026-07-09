@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-09 (session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
 
 > ⚠️ Standing Notice
@@ -1107,6 +1107,27 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 **Acceptance Criteria**
 - Protocol document produced
 - Gate condition (AI adoption window) verified before use
+
+---
+
+### BLG-FE-95 — Dashboard/StrategyBenchmark page-title light-theme contrast gap
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Head of Engineering
+**Source:** ST-07 (BLG-SPEC-58), EPIC-03, v6.8 dashboard visual hierarchy review — 2026-07-09
+**Effort:** XS (<1h)
+**Provisional-Target:** v6.9
+
+**Problem**
+Primary page headings on `DashboardHome.js` (`<h1>` "Dashboard") and `StrategyBenchmark.js` (`<h1>` "Strategy Benchmark") use a bare `text-white` class with no light-theme value, unlike correctly-graded nearby text (e.g. the Dashboard subtitle's `text-slate-600 dark:text-slate-400`). On light theme this renders the page's primary heading with insufficient contrast against the light background. Same defect class as BLG-FE-87/BLG-FE-88 (fixed v6.7).
+
+**Scope**
+- Add a light-theme-safe value (`dark:` companion pattern) to the `text-white` heading classes on `DashboardHome.js:36` and `StrategyBenchmark.js:497`
+- Grep for the same bare `text-white` heading pattern elsewhere (e.g. stat values on `Signals.js`, `SystemStatus.js`) and assess whether they warrant the same fix in the same pass
+
+**Acceptance Criteria**
+- Both named headings pass WCAG AA contrast (≥4.5:1) against both light and dark backgrounds
+- No visual change on dark theme (colour value on dark theme unchanged)
 
 ---
 
