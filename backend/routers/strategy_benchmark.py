@@ -88,6 +88,9 @@ async def import_backtest(request: Request, body: BacktestImportRequest):
         "years_deleted": result["years_deleted"],
         "open_positions_deleted": result["open_positions_deleted"],
         "imported_at": result["imported_at"],
+        "previous_total_pnl_gbp": result["previous_total_pnl_gbp"],
+        "total_pnl_gbp_delta": result["total_pnl_gbp_delta"],
+        "previous_total_unrealized_pnl_gbp": result["previous_total_unrealized_pnl_gbp"],
     }
 
 

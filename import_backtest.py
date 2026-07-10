@@ -220,6 +220,18 @@ def main():
     print(f"  years_imported:          {result['years_imported']}")
     print(f"  imported_at:      {result['imported_at']}")
 
+    prev_total = result.get("previous_total_pnl_gbp")
+    delta = result.get("total_pnl_gbp_delta")
+    prev_unrealized = result.get("previous_total_unrealized_pnl_gbp")
+    if prev_total is not None:
+        print("\nTotal P&L drift check (vs previous import):")
+        print(f"  previous total_pnl_gbp:            £{prev_total:,.2f}")
+        print(f"  delta this import:                 £{delta:,.2f}")
+        print(f"  previous total_unrealized_pnl_gbp: "
+              f"{'£' + format(prev_unrealized, ',.2f') if prev_unrealized is not None else 'n/a'}")
+        print("  (delta should track previous unrealized P&L, less any exit fees, "
+              "if only positions closed — a larger swing warrants a closer look)")
+
 
 if __name__ == "__main__":
     main()

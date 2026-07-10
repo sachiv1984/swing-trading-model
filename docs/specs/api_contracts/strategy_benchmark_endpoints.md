@@ -68,9 +68,20 @@ Upserts backtest trade records and yearly performance data parsed from productio
   "status": "ok",
   "trades_imported": 147,
   "years_imported": 8,
-  "imported_at": "2026-06-30T10:15:00Z"
+  "open_positions_imported": 3,
+  "trades_deleted": 145,
+  "years_deleted": 8,
+  "open_positions_deleted": 4,
+  "imported_at": "2026-06-30T10:15:00Z",
+  "previous_total_pnl_gbp": 111890.12,
+  "total_pnl_gbp_delta": 335.88,
+  "previous_total_unrealized_pnl_gbp": 412.50
 }
 ```
+
+**Field notes (drift diagnostic):**
+- `previous_total_pnl_gbp` / `previous_total_unrealized_pnl_gbp`: the aggregate totals as they stood immediately before this import overwrote them (snapshotted into `backtest_import_history`). `null` on the very first import.
+- `total_pnl_gbp_delta`: `new total_pnl_gbp - previous_total_pnl_gbp`. With a stable ticker universe, this should track `previous_total_unrealized_pnl_gbp` (less any exit fees) if the only change was open positions closing — a delta far outside that range warrants investigation rather than being assumed to be normal market movement.
 
 ---
 
