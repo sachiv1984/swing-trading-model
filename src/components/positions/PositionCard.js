@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, TrendingDown, Edit2, LogOut } from "lucide-react";
+import { TrendingUp, TrendingDown, Edit2, LogOut, Zap } from "lucide-react";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { cn } from "../../lib/utils";
 import { differenceInDays } from "date-fns";
 
-export default function PositionCard({ position, onEdit, onExit }) {
+export default function PositionCard({ position, onEdit, onExit, onRecheck }) {
   const [showNoteModal, setShowNoteModal] = useState(false);
   const pnl = position.pnl || 0;
   const pnlPercent = position.pnl_percent || 0;
@@ -121,6 +121,19 @@ export default function PositionCard({ position, onEdit, onExit }) {
         >
           <Edit2 className="w-4 h-4 mr-2" />
           Edit
+        </Button>
+        {/* ST-01 (v6.9, BLG-FEAT-64): Recheck Compliance — grid card footer action */}
+        <Button
+          variant="ghost"
+          size="sm"
+          title="Recheck Compliance"
+          aria-label={`Recheck compliance for ${position.ticker}`}
+          data-testid="recheck-compliance-button"
+          className="flex-1 text-amber-400/80 hover:text-amber-300 hover:bg-amber-500/10"
+          onClick={() => onRecheck(position)}
+        >
+          <Zap className="w-4 h-4 mr-2" />
+          Recheck
         </Button>
         <Button
           variant="ghost"
