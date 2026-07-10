@@ -2360,6 +2360,17 @@ def ensure_backtest_tables():
                     UNIQUE (ticker, entry_date)
                 )
             """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS backtest_import_history (
+                    id SERIAL PRIMARY KEY,
+                    imported_at TIMESTAMPTZ NOT NULL UNIQUE,
+                    trades_count INTEGER NOT NULL,
+                    total_pnl_gbp NUMERIC(14, 2),
+                    open_positions_count INTEGER NOT NULL,
+                    total_unrealized_pnl_gbp NUMERIC(14, 2),
+                    recorded_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
         conn.commit()
 
 
@@ -2383,6 +2394,14 @@ def upsert_backtest_data(
     (ST-08, BLG-FEAT-54, AC-03) — a position that has since closed must not
     linger in the table past the next import.
 
+    Before the wipe, the about-to-be-replaced aggregate (total_pnl_gbp,
+    total_unrealized_pnl_gbp) is snapshotted into backtest_import_history —
+    the full-replace pattern above means the prior night's totals would
+    otherwise be unrecoverable, making it impossible to tell a legitimate
+    unrealized-to-realized swing apart from an unexplained jump after the
+    fact. Returned as previous_total_pnl_gbp / total_pnl_gbp_delta /
+    previous_total_unrealized_pnl_gbp so import_backtest.py can print it.
+
     Returns a dict with 'trades_imported', 'years_imported', and
     'open_positions_imported' counts (plus their _deleted counterparts).
     """
@@ -2391,8 +2410,39 @@ def upsert_backtest_data(
     years_count = 0
     open_positions_count = 0
     open_positions = open_positions or []
+    new_total_pnl_gbp = sum(t.get("pnl_gbp") or 0 for t in trades)
+    new_total_unrealized_pnl_gbp = sum(p.get("unrealized_pnl_gbp") or 0 for p in open_positions)
     with get_db() as conn:
         with conn.cursor() as cur:
+            cur.execute("""
+                SELECT COUNT(*) AS c, COALESCE(SUM(pnl_gbp), 0) AS total, MAX(imported_at) AS ts
+                FROM backtest_trades
+            """)
+            prev_trades = cur.fetchone()
+            previous_total_pnl_gbp = None
+            previous_total_unrealized_pnl_gbp = None
+            if prev_trades and prev_trades["c"] > 0:
+                cur.execute("""
+                    SELECT COUNT(*) AS c, COALESCE(SUM(unrealized_pnl_gbp), 0) AS total
+                    FROM backtest_open_positions
+                """)
+                prev_open = cur.fetchone()
+                previous_total_pnl_gbp = float(prev_trades["total"])
+                previous_total_unrealized_pnl_gbp = float(prev_open["total"]) if prev_open else None
+                cur.execute("""
+                    INSERT INTO backtest_import_history (
+                        imported_at, trades_count, total_pnl_gbp,
+                        open_positions_count, total_unrealized_pnl_gbp
+                    ) VALUES (%s, %s, %s, %s, %s)
+                    ON CONFLICT (imported_at) DO NOTHING
+                """, (
+                    prev_trades["ts"],
+                    prev_trades["c"],
+                    previous_total_pnl_gbp,
+                    prev_open["c"] if prev_open else 0,
+                    previous_total_unrealized_pnl_gbp,
+                ))
+
             cur.execute("DELETE FROM backtest_trades")
             trades_deleted = cur.rowcount
             cur.execute("DELETE FROM backtest_yearly_performance")
@@ -2493,6 +2543,12 @@ def upsert_backtest_data(
         "years_deleted": years_deleted,
         "open_positions_deleted": open_positions_deleted,
         "imported_at": now.isoformat() + "Z",
+        "previous_total_pnl_gbp": previous_total_pnl_gbp,
+        "total_pnl_gbp_delta": (
+            round(new_total_pnl_gbp - previous_total_pnl_gbp, 2)
+            if previous_total_pnl_gbp is not None else None
+        ),
+        "previous_total_unrealized_pnl_gbp": previous_total_unrealized_pnl_gbp,
     }
 
 

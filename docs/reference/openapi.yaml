@@ -5067,7 +5067,14 @@ components:
                   status: { type: string, example: ok }
                   trades_imported: { type: integer }
                   years_imported: { type: integer }
+                  open_positions_imported: { type: integer }
+                  trades_deleted: { type: integer }
+                  years_deleted: { type: integer }
+                  open_positions_deleted: { type: integer }
                   imported_at: { type: string, format: date-time }
+                  previous_total_pnl_gbp: { type: number, nullable: true }
+                  total_pnl_gbp_delta: { type: number, nullable: true }
+                  previous_total_unrealized_pnl_gbp: { type: number, nullable: true }
 
   /strategy/benchmark/summary:
     get:
