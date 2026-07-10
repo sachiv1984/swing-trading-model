@@ -1,8 +1,8 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-09 (manage roadmap, post-ship closure 2026-07-08__release-v6.8 — RA:v6.8 retired to archive; leftover RA:v6.7 execution-notes block pruned; prior: v6.8 marked Complete)
-**Last rebalance:** 2026-07-08 (cycle 2026-07-08__scheduled — Standard-tier, CPS=N/A (0 active initiatives); no horizon movements (Arc 1/Arc 2 Next horizon fully complete; Arc 3–6 remainder items genuinely gated; SI-02 gate condition corrected via `BLG-BE-46` finding — 20 total closed trades confirmed via production API, but 0 linked trade-plans due to a `position_id` linkage bug, worse than the prior 15/20 estimate); 🔴 Product Value Alert (ratio=0.26, U=12/G=14/D=21/P=0 of 47, v6.3–v6.7 window — below the 0.30 floor for the first time); mandatory pull-forward actioned: `BLG-FEAT-52` ungated/descoped + new `BLG-FEAT-71` (SI-02 gate visibility indicator) both approved as pull-forward candidates; Skill-Silo Alert still triggered but improved 2nd consecutive reading (G+D+P rolling-3-cycle avg=78.0%, down from 79.8%); idea intake IW-20260708-01 (44 submissions, register was empty): 3 Advancing (2 approved as above, 1 resolved as deferred prompt patch — cycle-cadence review), 1 Parked, 40 Promoted-Backlog; DL-062; Backlog Accessibility Warning remains CLEARED (A=35%, 173 active items pre-write); STEP 8.0: 0 fast-track items; v6.8 scoping deferred to plan release (Option (b)))
+**Last Updated:** 2026-07-10 (roadmap rebalance 2026-07-10__scheduled — Last rebalance line updated, STEP 8.1 Option (b) recorded; prior: manage roadmap, post-ship closure 2026-07-08__release-v6.8 — RA:v6.8 retired to archive; leftover RA:v6.7 execution-notes block pruned; prior: v6.8 marked Complete)
+**Last rebalance:** 2026-07-10 (cycle 2026-07-10__scheduled — Standard-tier, CPS=N/A (0 active initiatives); no horizon movements (Arc 1/Arc 2 Next horizon fully complete; Arc 3–6 remainder items genuinely gated); 🔴 Product Value Alert (ratio=0.18, U=9/G=16/D=24/P=0 of 49, v6.4–v6.8 window — 2nd consecutive alert, worse than prior 0.26); mandatory pull-forward: `BLG-FEAT-64` (On-demand pre-entry rule recheck) named as anchor candidate for `plan release v6.9`, `BLG-FEAT-65` as secondary; Skill-Silo Alert persists (rolling-3-cycle avg=78.2%, single-reading worsening after 2 consecutive improvements); idea intake IW-20260710-01 (44 submissions, 22 agents; 1 idea carried, incremented to Parked-cycle-2): 0 Advancing, 3 Parked, 2 Rejected, 39 Promoted-Backlog; DL-063; Backlog Accessibility Warning remains CLEARED (A=38.8%, 209 active items pre-write); STEP 8.0: 0 fast-track items; STEP 8.1: PO chose Option (b) — Now horizon intentionally empty, v6.9 scoping deferred to `plan release v6.9`; STEP 11.4 meta-review conducted (due at 3 cycles) — `shared_standards.md` §9.1 version/state header cross-check patch applied)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
 
@@ -11,7 +11,7 @@
 ## 1. Current Version
 
 **v6.8** — Production Correctness, Value Pull-Forward & Debt Clearance — ✅ Complete — Shipped 2026-07-09 — cycle: 2026-07-08__release-v6.8
-**Next planned release:** [TBD]
+**Next planned release:** v6.9 — scope TBD, deferred to `plan release v6.9` (STEP 8.1 Option (b), roadmap rebalance 2026-07-10__scheduled, DL-063)
 
 *RA:v6.8 retired — see roadmap_archive.md 2026-07-09 (post-ship closure 2026-07-08__release-v6.8).*
 

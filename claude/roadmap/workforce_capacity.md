@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-08 (rebalance 2026-07-08__scheduled — Standard tier (CPS=N/A, 0 active initiatives); no FTE changes; 40 new/updated backlog items, 2 approved as mandatory pull-forward candidates (BLG-FEAT-52 ungated, BLG-FEAT-71 new); Skill-Silo Alert: rolling-3-cycle avg 78.0% (>40% ceiling, 2nd consecutive improvement); Product Value Alert (ratio 0.26) independently mandated the same pull-forward outcome)
+**Last Updated:** 2026-07-10 (rebalance 2026-07-10__scheduled — Standard tier (CPS=N/A, 0 active initiatives); no FTE changes; 39 new backlog items added (all S effort, no sprint commitment made); Skill-Silo Alert: rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8, >40% ceiling, single-reading worsening after 2 consecutive improvements — not yet 3+ consecutive, so the v8.3 mandatory-≥2-U-items clause is not independently triggered); 🔴 Product Value Alert (ratio 0.18, 2nd consecutive alert, worse than prior 0.26) independently mandates a pull-forward — `BLG-FEAT-64` (P2, ungated, build-and-ship-shaped) named as anchor candidate for `plan release v6.9`; prior — 2026-07-08 (rebalance 2026-07-08__scheduled — Standard tier (CPS=N/A, 0 active initiatives); no FTE changes; 40 new/updated backlog items, 2 approved as mandatory pull-forward candidates (BLG-FEAT-52 ungated, BLG-FEAT-71 new); Skill-Silo Alert: rolling-3-cycle avg 78.0% (>40% ceiling, 2nd consecutive improvement); Product Value Alert (ratio 0.26) independently mandated the same pull-forward outcome))
 
 > ⚠️ Standing Notice: This document records workforce planning estimates. All effort figures are indicative. Canonical project records take precedence.
 
