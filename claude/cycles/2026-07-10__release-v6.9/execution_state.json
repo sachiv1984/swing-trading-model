@@ -9,10 +9,10 @@
 
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-10__release-v6.9/EPIC-01",
       "pr_number": 951,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-10__release-v6.9/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -106,8 +106,8 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02"],
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-02"],
     "all_merged": false
   },
 
@@ -116,6 +116,8 @@
   "process_notes": [
     "RESOLVED: git push to origin was blocked by a missing git credential helper (gh CLI itself was already authenticated). Fixed via `gh auth setup-git`, which wires git to use the gh-stored token. See reference_git_push_credentials.md memory. Both branches, plus a governance-only commit on main, pushed successfully.",
     "PR #951 (EPIC-01, exec/2026-07-10__release-v6.9/EPIC-01) and PR #952 (EPIC-02, exec/2026-07-10__release-v6.9/EPIC-02) opened. CI Quality & Governance Gate initially failed 'API Performance Baseline Drift Detection (ST-12)' on both -- GET /positions/{id}/compliance-recheck and GET /positions/{id}/gap-risk were missing from docs/ops/api_performance_baseline.md (a real hard CI gate, not the advisory referenced in CLAUDE.md which points to a docs/operations/ path that does not exist in this repo). Fixed by adding 'pending baseline measurement' rows to docs/ops/api_performance_baseline.md on each branch (commits 4698a3b1 on EPIC-01, bbe38db1 on EPIC-02) and re-pushed.",
-    "As of 2026-07-10T16:17:00Z: all CI checks green on both PR #951 and PR #952 (23 checks each, including the full serial Playwright E2E Acceptance Tests suite -- 12m22s on EPIC-01, 24m54s on EPIC-02). Both PRs report mergeable: MERGEABLE but mergeStateStatus: BLOCKED / reviewDecision: REVIEW_REQUIRED -- this repo's branch protection requires a human-approved review before merge. Per CLAUDE.md ('Never merge a PR autonomously... QA sign-off and Product Owner acceptance are always required') the engine has intentionally NOT merged either PR and is halting here. Manual steps remaining: (1) human review + approval of PR #951 and PR #952 on GitHub, (2) merge #951 first per the Merge Order note in sprint_backlog.md, (3) merge #952 -- GitHub will likely auto-rebase/merge cleanly via the merge commit strategy since both PRs target the same base (main) and modify overlapping files only in additive/non-conflicting hunks in most cases; if GitHub reports a conflict on #952 after #951 merges, resolve per CLAUDE.md §8 (accept the union of both endpoint registrations in backend/main.py, backend/routers/test.py, openapi.yaml, position_endpoints.md, docs/ops/api_performance_baseline.md, SystemStatus.js, system-status.spec.js, Positions.js, PositionCard.js -- DoQ already verified in qa_evidence_EPIC-02.md that the combined result passes the full test suite), (4) re-invoke `run sprint --cycle 2026-07-10__release-v6.9` once both are merged to complete STEP 4 (merge gate state sync) and STEP 5 (Sprint Close)."
+    "All CI checks went green on both PR #951 and PR #952 (23 checks each, including the full serial Playwright E2E Acceptance Tests suite -- 12m22s on EPIC-01, 24m54s on EPIC-02). Product Owner (human, acting per claude/agents/product_owner.md) reviewed both PRs and accepted; PR #951 (EPIC-01) was merged by the Product Owner via GitHub.",
+    "PR #952 (EPIC-02) then showed mergeStateStatus: DIRTY / mergeable: CONFLICTING after #951 merged, exactly as anticipated (both PRs modified the same set of files). Resolved per CLAUDE.md §8 Cross-EPIC Merge Conflict Resolution on the exec/2026-07-10__release-v6.9/EPIC-02 branch: `git merge origin/main --no-commit --no-edit`, took the union of both endpoint registrations in backend/main.py, backend/routers/test.py (endpoint count -> 84), docs/reference/openapi.yaml (version -> 3.10.0), docs/specs/api_contracts/position_endpoints.md (version -> 2.4.0, both sections + changelog rows combined descending), docs/ops/api_performance_baseline.md (version -> 2.12, both pending-measurement rows + Story field combined), src/pages/SystemStatus.js + tests/e2e/system-status.spec.js (updated to the combined 84-endpoint count). src/pages/Positions.js and src/components/positions/PositionCard.js auto-merged cleanly with no conflict (ST-01 and ST-02 touched non-overlapping regions in the original surgical branch split). Resolution committed (92ec37ec, '[EPIC-02] Merge main (post-EPIC-01 merge) into EPIC-02 -- conflict resolution') and pushed. Verified before pushing: full backend suite (605 passed, 2 skipped) and 55 relevant e2e tests (compliance-recheck, gap-risk-flag, epic01-v62-stops-alerts, system-status, compliance-panel) all green on the merged result. PR #952 now reports mergeable: MERGEABLE (DIRTY resolved); CI re-running on the new commit; still awaiting the same human review + merge step for #952 that #951 already received.",
+    "Next steps once PR #952 is reviewed and merged: re-invoke `run sprint --cycle 2026-07-10__release-v6.9` to sync merge_gate.all_merged and proceed to STEP 5 (Sprint Close)."
   ]
 }
