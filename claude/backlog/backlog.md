@@ -5641,3 +5641,17 @@ Product Owner reviews both entries and either closes `BLG-GOV-105` as a confirme
 ---
 
 *Release Slice v6.8 removed — cycle 2026-07-08__release-v6.8 closed 2026-07-09. Archived canonical home: claude/cycles/2026-07-08__release-v6.8/stage4_backlog_slice.md*
+
+---
+
+<!-- release-plan-marker: RP:v6.9:2026-07-10__release-v6.9 -->
+
+## Release Slice v6.9 (ephemeral — removed at next `groom backlog` after cycle closes)
+
+**Cycle:** 2026-07-10__release-v6.9
+**Canonical source:** claude/cycles/2026-07-10__release-v6.9/stage4_backlog_slice.md
+
+| ST-ID | Backlog Ref | EPIC | Title |
+|-------|-------------|------|-------|
+| ST-01 | BLG-FEAT-64 | EPIC-01 | On-demand pre-entry rule recheck for open positions |
+| ST-02 | BLG-FEAT-65 | EPIC-02 | Overnight/weekend gap risk flag for open positions |
