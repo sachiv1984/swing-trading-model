@@ -2049,7 +2049,7 @@ None — all 17 stories delivered within the sprint.
 
 ## Sprint: 2026-07-10__release-v6.9
 **Date:** 2026-07-10
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified — 2026-07-10
 
 ### Capabilities now live (merged this sprint)
 
