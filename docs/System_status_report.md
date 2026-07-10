@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.8
-**Last Updated:** 2026-07-09
+**Version:** 4.9
+**Last Updated:** 2026-07-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -2046,3 +2046,24 @@ None — all 17 stories delivered within the sprint.
 - QA evidence logs: qa_evidence_EPIC-01.md (agent-mediated, 2026-07-09), qa_evidence_EPIC-02.md (agent-mediated, 2026-07-09), qa_evidence_EPIC-03.md (agent-mediated across multiple domain authorities, 2026-07-09)
 - Deviations filed: None (2 backlog items filed as follow-up: BLG-SPEC-71, BLG-SPEC-72, plus BLG-FE-95, BLG-BE-50)
 - Test scenarios referenced: tests/test_position_trade_plan_link.py; tests/test_signal_write_sanitization.py; tests/e2e/trade-plan.spec.js SC-TP-24-27; tests/e2e/trade-plan-tag-filter.spec.js SC-TPTF-01-05; tests/e2e/reports-si02-gate-status.spec.js SC-SI02-01-06; tests/e2e/arc5-compliance-section.spec.js; tests/e2e/entry-checklist.spec.js; tests/e2e/gate-progress.spec.js; tests/e2e/paper-account.spec.js; tests/e2e/plan-vs-reality.spec.js; tests/e2e/pre-entry-panel-badge.spec.js; tests/e2e/red-flag-journal.spec.js; tests/e2e/sector-heatmap.spec.js; tests/e2e/si01-si03-integration.spec.js; tests/e2e/signals-add-to-watchlist.spec.js; tests/e2e/signals-allocation-insufficient.spec.js
+
+## Sprint: 2026-07-10__release-v6.9
+**Date:** 2026-07-10
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | On-demand SI-01 compliance recheck for open positions: `GET /positions/{position_id}/compliance-recheck` re-applies the 5 existing SI-01 pre-entry deterministic rule checks against a position's current state (regime, cash, sector, earnings, sizing) rather than its entry-time snapshot; `ComplianceRecheckModal.js` reuses the `PreEntryValidationPanel` pass/warn/fail visual pattern, wired into a new "Recheck Compliance" action in the Positions Table View Actions column and Grid View card footer (ST-01, BLG-FEAT-64) | `docs/design/2026-07-10__release-v6.9/on-demand-compliance-recheck/ux_spec.md`; `docs/specs/frontend/pages/positions.md#Compliance Recheck Panel`; `docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id}/compliance-recheck` | None |
+| EPIC-02 | Overnight/weekend gap risk flag for open positions: `GET /positions/{position_id}/gap-risk` combines the DS-04 earnings calendar with historical OHLCV gap statistics to flag earnings-before-next-session and Friday-close weekend-hold positions; new "Alerts" Table View column (completing the column documented since v6.2 ST-05 but never built as a separate column — RISK OFF badge relocated into it, GAP RISK badge added, stacked); Grid View GAP RISK badge near ticker (ST-02, BLG-FEAT-65) | `docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md`; `docs/specs/frontend/pages/positions.md#Gap Risk Badge`; `docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id}/gap-risk` | None |
+
+### Capabilities deferred or returned
+
+None — both named mandatory Product Value Alert pull-forwards were delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (agent-mediated: Strategy Rules & System Intent Owner §13 AC-04, Director of Quality EPIC consolidation, 2026-07-10), qa_evidence_EPIC-02.md (agent-mediated: Strategy Rules & System Intent Owner §13 AC-04, Director of Quality EPIC consolidation, 2026-07-10)
+- Deviations filed: None
+- Test scenarios referenced: tests/test_compliance_recheck.py; tests/e2e/compliance-recheck.spec.js SC-CR-01–08; tests/test_gap_risk.py; tests/e2e/gap-risk-flag.spec.js SC-GR-01–08
