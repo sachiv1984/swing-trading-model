@@ -1,0 +1,119 @@
+{
+  "cycle_id": "2026-07-10__release-v6.9",
+  "sprint_goal": "Give traders on-demand visibility into whether an open position still passes its original SI-01 entry rules and whether it carries overnight/weekend gap risk, closing out both named Product Value Alert pull-forward anchors from the 2026-07-10 rebalance.",
+  "backlog_slice_source": "claude/cycles/2026-07-10__release-v6.9/stage4_backlog_slice.md",
+  "invoked_utc": "2026-07-10T13:58:22Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-07-10T14:45:00Z",
+
+  "epics": {
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-07-10__release-v6.9/EPIC-01",
+      "pr_number": null,
+      "pr_status": "not_created",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-07-10__release-v6.9/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "tests/test_compliance_recheck.py",
+        "tests/e2e/compliance-recheck.spec.js"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "On-demand pre-entry rule recheck for open positions (BLG-FEAT-64)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 949,
+          "branch": "exec/2026-07-10__release-v6.9/EPIC-01",
+          "commit_sha": "b1a2fd796164adba3462d8d2ccbdf6e276a79084",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-10T14:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-07-10__release-v6.9/on-demand-compliance-recheck/ux_spec.md",
+            "docs/specs/frontend/pages/positions.md#Compliance Recheck Panel",
+            "docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id}/compliance-recheck"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.2.A.qa_evidence_signed_off",
+          "sign_off_record": {
+            "required_by": "Strategy Rules & System Intent Owner (AC-04, §13); Director of Quality (EPIC consolidation)",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-07-10T14:45:00Z"
+          },
+          "notes": "Reclassified delegated_frontend -> autonomous at STEP 0 per LL-v2.3-CL-01 (frontend delivery model default is engine-autonomous; sprint_backlog.md's planning-time class was a default estimate, not a hard requirement for external ownership). Engine fully implemented backend (GET /positions/{position_id}/compliance-recheck, re-applying the 5 SI-01 checks against current position state) and frontend (ComplianceRecheckModal.js reusing PreEntryValidationPanel visual pattern, wired into Positions.js Table View Actions column and PositionCard.js Grid View footer). Sector concentration check adapted (not reused verbatim) to exclude the rechecked position from its own baseline sum, avoiding a double-count that the literal prospective-entry formula would otherwise produce for an already-open position -- see compliance_recheck_service.py module docstring. Unit tests (6 cases) and Playwright coverage (8 scenarios, AC-02) all passing; §13 AC-04 sign-off cleared by Strategy Rules & System Intent Owner (agent-mediated); EPIC-level DoQ sign-off cleared (agent-mediated) -- see qa_evidence_EPIC-01.md. No deviation filed -- deviation check completed, none found. PR could not be opened: git push to origin fails/hangs in this sandbox session (no stored git credentials -- see reference_git_push_credentials.md memory); commit is ready locally on exec/2026-07-10__release-v6.9/EPIC-01, requires manual `git push origin exec/2026-07-10__release-v6.9/EPIC-01` and `gh pr create` from an environment with GitHub auth configured before the merge gate can run."
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "done",
+      "branch": "exec/2026-07-10__release-v6.9/EPIC-02",
+      "pr_number": null,
+      "pr_status": "not_created",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-07-10__release-v6.9/qa_evidence_EPIC-02.md",
+      "test_scenarios": [
+        "tests/test_gap_risk.py",
+        "tests/e2e/gap-risk-flag.spec.js"
+      ],
+      "stories": {
+        "ST-02": {
+          "title": "Overnight/weekend gap risk flag for open positions (BLG-FEAT-65)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 950,
+          "branch": "exec/2026-07-10__release-v6.9/EPIC-02",
+          "commit_sha": "34bdb5aaaa0371d242b5d6628a61f805ba1fe486",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-10T14:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md",
+            "docs/specs/frontend/pages/positions.md#Gap Risk Badge",
+            "docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id}/gap-risk"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.2.A.qa_evidence_signed_off",
+          "sign_off_record": {
+            "required_by": "Strategy Rules & System Intent Owner (AC-04, §13); Director of Quality (EPIC consolidation)",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-07-10T14:45:00Z"
+          },
+          "notes": "Reclassified delegated_frontend -> autonomous at STEP 0 per LL-v2.3-CL-01 (same rationale as ST-01). Implemented as a dedicated GET /positions/{position_id}/gap-risk endpoint rather than a field on GET /positions -- pre-authorised alternative per the story notes ('If implementation requires a new endpoint instead, the same registration rules apply') -- because the historical-OHLCV yfinance lookup is too slow to run inline for every open position on every list load; mirrors the existing per-ticker GET /earnings/{ticker} pattern (useEarnings.js) via a new useGapRisk.js hook. Frontend: Alerts column added to Table View (RISK OFF badge relocated into it from the Ticker cell, per the already-documented but not-yet-implemented v6.2 Alerts Column spec -- see qa_evidence_EPIC-02.md observation) plus new GAP RISK badge stacked in the same cell; Grid View gets the GAP RISK badge near the ticker. Unit tests (9 cases) and Playwright coverage (8 scenarios, AC-01-03) all passing; §13 AC-04 sign-off cleared by Strategy Rules & System Intent Owner (agent-mediated); EPIC-level DoQ sign-off cleared (agent-mediated) -- see qa_evidence_EPIC-02.md, which also verified the two branches merge and re-test cleanly together (605 passed, 2 skipped) subject to the routine CLAUDE.md §8 backend/main.py + backend/routers/test.py conflict resolution. No deviation filed -- deviation check completed, none found. PR could not be opened: git push to origin fails/hangs in this sandbox session (no stored git credentials -- see reference_git_push_credentials.md memory); commit is ready locally on exec/2026-07-10__release-v6.9/EPIC-02, requires manual `git push origin exec/2026-07-10__release-v6.9/EPIC-02` and `gh pr create` from an environment with GitHub auth configured before the merge gate can run."
+        }
+      }
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": ["EPIC-01/ST-01", "EPIC-02/ST-02"],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-01", "EPIC-02"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null,
+  "process_notes": [
+    "git push to origin (and therefore gh pr create, which requires the branch to exist remotely) fails/hangs in this sandbox session -- no stored GitHub credentials. Both EPIC branches are fully implemented, tested, QA-signed-off, and committed locally (exec/2026-07-10__release-v6.9/EPIC-01 @ b1a2fd79, exec/2026-07-10__release-v6.9/EPIC-02 @ 34bdb5aa). Manual steps required before the merge gate (execution_prompt.md STEP 4) can run: (1) push both branches to origin from an environment with GitHub auth configured, (2) open PRs for each (titles: '[EPIC-01] On-Demand Pre-Entry (SI-01) Compliance Recheck', '[EPIC-02] Overnight/Weekend Gap Risk Flag'), (3) obtain human Product Owner acceptance (QA sign-off is already recorded, agent-mediated, in qa_evidence_EPIC-01.md / qa_evidence_EPIC-02.md), (4) merge per the Merge Order note in sprint_backlog.md (EPIC-01 then EPIC-02) -- both branches modify shared files (backend/main.py, backend/routers/test.py, docs/reference/openapi.yaml, docs/specs/api_contracts/position_endpoints.md, src/pages/SystemStatus.js, tests/e2e/system-status.spec.js, src/pages/Positions.js, src/components/positions/PositionCard.js) so EPIC-02 will need to rebase onto post-EPIC-01 main and resolve conflicts per CLAUDE.md §8. Director of Quality (agent-mediated review) independently verified in qa_evidence_EPIC-02.md that the two branches merge and the full test suite (605 tests) passes cleanly once that conflict is resolved."
+  ]
+}
