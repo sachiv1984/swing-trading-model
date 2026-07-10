@@ -24,23 +24,23 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-07-06"
+PRIOR_AUDIT_ID = "AUD-2026-07-10"
 PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-07-06-001", "AUD-2026-07-06-002", "AUD-2026-07-06-003", "AUD-2026-07-06-004"
-]  # all recorded OPEN at AUD-2026-07-06 run time — re-classify at next audit once patches are applied
+    "AUD-2026-07-10-001", "AUD-2026-07-10-002"
+]  # all recorded OPEN at AUD-2026-07-10 run time — re-classify at next audit once patches are applied
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
     "token_efficiency":      100,
-    "governance_integrity":  92,
+    "governance_integrity":  96,
     "execution_reliability": 53,
-    "friction_load":         58,
+    "friction_load":         78,
     "document_hygiene":      100,
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 52  # updated from 49 to current completed_cycle_count at AUD-2026-07-06
+COMPLETED_CYCLES = 55  # updated from 52 to current completed_cycle_count at AUD-2026-07-10
 
 # -------------------------
 # MISSING FILE RULE
