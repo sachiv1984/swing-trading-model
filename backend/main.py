@@ -90,6 +90,7 @@ from utils.calculations import (
 
 from services.alerts_service import ensure_alerts_tables
 from services.compliance_service import get_position_compliance
+from services.compliance_recheck_service import get_compliance_recheck
 from services.gap_risk_service import get_gap_risk
 from services.position_lifecycle_service import (
     get_lifecycle_fields_for_position,
@@ -1428,6 +1429,34 @@ def refresh_position_state_endpoint(position_id: str):
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/positions/{position_id}/compliance-recheck")
+def get_position_compliance_recheck_endpoint(position_id: str):
+    """
+    GET /positions/{position_id}/compliance-recheck
+
+    Re-applies the 5 existing SI-01 pre-entry deterministic rule checks against
+    an open position's current state (current regime, current signal conditions,
+    current heat/sizing) rather than its entry-time snapshot. On-demand only —
+    no automatic polling or background job (AC-03). Does not replace or duplicate
+    SI-02 (drift detection), which remains a separate gated capability.
+
+    §13 compliance: display-only re-application of existing deterministic rules;
+    no new statistical model, scoring, or prediction introduced (AC-04).
+    Spec: docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id}/compliance-recheck
+    """
+    try:
+        result = get_compliance_recheck(position_id)
+        if result is None:
+            raise HTTPException(status_code=404, detail="Position not found")
+        return {"status": "ok", "data": result}
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/positions/{position_id}/gap-risk")
 def get_position_gap_risk_endpoint(position_id: str):

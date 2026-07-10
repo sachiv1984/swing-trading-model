@@ -17,6 +17,7 @@ import {
   X,
   ArrowUpDown,
   ShieldAlert,
+  Zap,
 } from "lucide-react";
 
 import DataState from "../components/ui/DataState";
@@ -27,6 +28,7 @@ import PositionModal from "../components/positions/PositionModal";
 import ExitModal from "../components/positions/ExitModal";
 import JournalView from "../components/positions/JournalView";
 import TradeReflectionModal from "../components/trades/TradeReflectionModal";
+import ComplianceRecheckModal from "../components/positions/ComplianceRecheckModal";
 import {
   DataTable,
   TableHeader,
@@ -524,6 +526,7 @@ export default function Positions() {
   const [exitingPosition, setExitingPosition] = useState(null);
   const [reflectionTrade, setReflectionTrade] = useState(null);
   const [trailStopPosition, setTrailStopPosition] = useState(null);
+  const [recheckingPosition, setRecheckingPosition] = useState(null);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -741,6 +744,7 @@ export default function Positions() {
               position={position}
               onEdit={setEditingPosition}
               onExit={setExitingPosition}
+              onRecheck={setRecheckingPosition}
             />
           ))}
         </div>
@@ -935,6 +939,19 @@ export default function Positions() {
                         </Button>
                       )}
 
+                      {/* ST-01 (v6.9, BLG-FEAT-64): Recheck Compliance — on-demand SI-01 recheck */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        title="Recheck Compliance"
+                        aria-label={`Recheck compliance for ${position.ticker}`}
+                        data-testid="recheck-compliance-button"
+                        className="h-8 w-8 text-amber-400/80 hover:text-amber-300 hover:bg-amber-500/10"
+                        onClick={() => setRecheckingPosition(position)}
+                      >
+                        <Zap className="w-4 h-4" />
+                      </Button>
+
                       <Button
                         variant="ghost"
                         size="icon"
@@ -986,6 +1003,14 @@ export default function Positions() {
         <TrailStopModal
           position={trailStopPosition}
           onClose={() => setTrailStopPosition(null)}
+        />
+      )}
+
+      {/* ST-01 (v6.9, BLG-FEAT-64): Compliance Recheck modal */}
+      {recheckingPosition && (
+        <ComplianceRecheckModal
+          position={recheckingPosition}
+          onClose={() => setRecheckingPosition(null)}
         />
       )}
 

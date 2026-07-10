@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.9.0
+  version: 3.10.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -1431,6 +1431,60 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/OkTagsList"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /positions/{position_id}/compliance-recheck:
+    get:
+      tags: [Positions]
+      summary: Re-apply SI-01 pre-entry checks against current position state
+      description: |
+        Re-applies the 5 existing SI-01 pre-entry deterministic rule checks against an
+        open position's current state (current regime, current signal conditions,
+        current heat/sizing) rather than its entry-time snapshot. Manual, on-demand,
+        single-position check. §13 display-only — no new statistical model, scoring,
+        or prediction; no automated action. Does not replace SI-02 (drift detection).
+        (v6.9 ST-01, BLG-FEAT-64)
+      parameters:
+        - in: path
+          name: position_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Position UUID
+      responses:
+        "200":
+          description: Compliance recheck result returned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      overall_status:
+                        type: string
+                        enum: [pass, warn, fail]
+                      checks:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            rule_key:
+                              type: string
+                              enum: [regime_gate, cash_constraint, sector_concentration, earnings_proximity, sizing_validity]
+                            status:
+                              type: string
+                              enum: [pass, warn, fail, skipped]
+                            detail:
+                              type: string
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/InternalError"
 

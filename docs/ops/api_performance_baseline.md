@@ -2,9 +2,9 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.11
+**Version:** 2.12
 **Date:** 2026-07-10
-**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration
+**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 ---
@@ -95,6 +95,7 @@ parameters, POST body, or authenticated write operations:
 | POST /portfolio/size | Write — requires body |
 | GET /portfolio/prospective-heat | Requires query params |
 | POST /positions/{id}/exit | Write — requires path param + body |
+| GET /positions/{id}/compliance-recheck | Requires path param (v6.9 ST-01, BLG-FEAT-64) — pending baseline measurement |
 | GET /positions/{id}/gap-risk | Requires path param (v6.9 ST-02, BLG-FEAT-65) — pending baseline measurement |
 | PATCH /positions/{id}/note | Write |
 | PATCH /positions/{id}/tags | Write |

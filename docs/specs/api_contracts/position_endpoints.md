@@ -3,7 +3,7 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.3.0
+**Version:** 2.4.0
 **Last Updated:** 2026-07-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -26,7 +26,8 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
-| 2.3.0 | 2026-07-10 | v6.9 ST-02 (BLG-FEAT-65): Added `GET /positions/{position_id}/gap-risk` — overnight/weekend gap risk flag for a single position, combining the DS-04 earnings calendar with historical OHLCV gap statistics. Implemented as a dedicated per-position endpoint rather than a field on `GET /positions` (pre-authorised alternative per the story notes) because the historical-OHLCV lookup is too slow to run inline for every open position on every list load. Display-only; §13 sign-off required (AC-04). |
+| 2.4.0 | 2026-07-10 | v6.9 ST-02 (BLG-FEAT-65): Added `GET /positions/{position_id}/gap-risk` — overnight/weekend gap risk flag for a single position, combining the DS-04 earnings calendar with historical OHLCV gap statistics. Implemented as a dedicated per-position endpoint rather than a field on `GET /positions` (pre-authorised alternative per the story notes) because the historical-OHLCV lookup is too slow to run inline for every open position on every list load. Display-only; §13 sign-off required (AC-04). |
+| 2.3.0 | 2026-07-10 | v6.9 ST-01 (BLG-FEAT-64): Added `GET /positions/{position_id}/compliance-recheck` — re-applies the 5 SI-01 pre-entry deterministic rule checks against an open position's current state (current regime, current signal conditions, current heat/sizing), not its entry-time snapshot. On-demand only, no automation. Display-only; §13 sign-off required (AC-04). |
 | 2.2.0 | 2026-06-24 | v6.2 ST-01 (BLG-FEAT-46): Added `current_trailing_stop` field to `GET /positions` response. Added `POST /positions/nightly-stop-update` endpoint. v6.2 ST-05 (BLG-FEAT-49): Added `risk_off_exit` field to `GET /positions` response. Added `POST /positions/risk-off-alerts` endpoint. |
 | 2.0.0 | 2026-03-29 | ST-01 (BLG-FEAT-11, v2.3): Added `GET /positions/compliance` — returns ATR-based per-position stop compliance, stop age, and size compliance flags. Display-only; §13.3 constraint enforced. Strategy Rules & System Intent Owner DoQ sign-off required at delivery verification (SPS=4). |
 | 1.8.3 | 2026-02-25 | BLG-FEAT-06 (A-S03): Added `grace_days_remaining` (integer \| null) to `GET /positions` response. Derived server-side as `max(0, 10 - holding_days)` when `grace_period = true`; `null` when `grace_period = false`. Always present. No data model change required. QWB decision D4. |
@@ -44,6 +45,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 - [PATCH /positions/{position_id}/note](#patch-positionsposition_idnote)
 - [PATCH /positions/{position_id}/tags](#patch-positionsposition_idtags)
 - [GET /positions/tags](#get-positionstags)
+- [GET /positions/{position_id}/compliance-recheck](#get-positionsposition_idcompliance-recheck)
 - [GET /positions/{position_id}/gap-risk](#get-positionsposition_idgap-risk)
 
 ---
@@ -825,6 +827,85 @@ Explicitly recalculates and persists the Arc 3 lifecycle state for a position.
 | HTTP Status | Condition |
 |-------------|-----------|
 | `404` | Position not found |
+| `500` | Internal server error |
+
+---
+
+## GET /positions/{position_id}/compliance-recheck
+
+**Added:** v6.9 (ST-01, BLG-FEAT-64)
+
+**Purpose**
+
+Re-applies the 5 existing SI-01 pre-entry deterministic rule checks against an open
+position's **current** state (current regime, current signal conditions, current
+heat/sizing) rather than its entry-time snapshot. Manual, on-demand, single-position
+check — does not replace or duplicate SI-02 (drift detection), which remains a
+separate gated capability.
+
+**Scope constraint (§13):** Display-only. Pure re-application of the existing
+deterministic rule set — no new statistical model, scoring, or prediction. No
+automated action (exit, alert, notification) is triggered. On-demand only — no
+polling or background job. Strategy Rules & System Intent Owner DoQ sign-off
+required at delivery verification.
+
+**Method & Path**
+
+- `GET /positions/{position_id}/compliance-recheck`
+
+**Idempotency**
+
+- Safe to repeat (read-only). Reflects current conditions at time of call.
+
+### Request
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `position_id` | string (UUID) | Yes | Position identifier |
+
+### Response (200)
+
+Response uses the standard success envelope from **conventions.md**.
+
+#### `data` schema
+
+```json
+{
+  "overall_status": "fail",
+  "checks": [
+    { "rule_key": "regime_gate", "status": "pass", "detail": "US market is Risk-On (SPY above 200-day MA)" },
+    { "rule_key": "cash_constraint", "status": "fail", "detail": "Estimated cost £2,150.00 exceeds available cash £500.00" },
+    { "rule_key": "sector_concentration", "status": "warn", "detail": "Current Energy sector allocation 34.2% exceeds 30.0% advisory limit" },
+    { "rule_key": "earnings_proximity", "status": "pass", "detail": "Next earnings 2026-08-01 (22 days) — outside 5-day proximity window" },
+    { "rule_key": "sizing_validity", "status": "pass", "detail": "Stop distance 15.0 is valid (entry 215.0, stop 200.0)" }
+  ]
+}
+```
+
+#### Field notes
+
+| Field | Notes |
+|-------|-------|
+| `overall_status` | `"pass"` / `"warn"` / `"fail"`. Aggregated fail > warn > pass across the 5 checks; `skipped` checks excluded from aggregation (same aggregation rule as `GET /portfolio/pre-entry-validation`). |
+| `checks` | Array of exactly 5 entries — the same rule keys as `strategy_rules.md` §4.2: `regime_gate`, `cash_constraint`, `sector_concentration`, `earnings_proximity`, `sizing_validity`. |
+| `checks[].rule_key` | One of the 5 canonical SI-01 rule keys above. |
+| `checks[].status` | `"pass"` / `"warn"` / `"fail"` / `"skipped"` (skipped when required data is unavailable, e.g. no live price). |
+| `checks[].detail` | Human-readable explanation, matching the phrasing convention of `GET /portfolio/pre-entry-validation`. |
+
+**Current-state adaptation notes:**
+- `sizing_validity` uses the position's current effective stop (trailing stop if set, else the entry-time initial stop) against its original entry price — reflecting current risk state, not the entry-time snapshot.
+- `sector_concentration` excludes the position being rechecked from the baseline sector-value sum before adding back its own live-priced contribution, avoiding the double-count that a literal reuse of the prospective-entry formula would produce for an already-open position.
+- `cash_constraint` and `regime_gate` re-run unmodified — they reflect current market/cash conditions regardless of whether the position is new or already open.
+
+### Errors
+
+Errors use the standard error envelope from **conventions.md**.
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `404` | Position not found, or position is not open |
 | `500` | Internal server error |
 
 ---
