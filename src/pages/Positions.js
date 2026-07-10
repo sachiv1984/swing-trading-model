@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEarnings } from "../hooks/useEarnings";
+import { useGapRisk } from "../hooks/useGapRisk";
 import { base44, api, apiFetch } from "../api/base44Client";
 import {
   LayoutGrid,
@@ -449,6 +450,74 @@ function PositionEarningsCell({ ticker, market }) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// ST-02 (v6.9, BLG-FEAT-65) — Gap Risk badge, stacked in the Alerts column
+// ---------------------------------------------------------------------------
+
+const GAP_RISK_REASON_LABELS = {
+  earnings: "Earnings before next session",
+  weekend_hold: "Weekend hold (flagged at Friday close)",
+};
+
+function GapRiskBadge({ ticker, gapRisk }) {
+  const reasonText = (gapRisk.reasons || [])
+    .map((r) => GAP_RISK_REASON_LABELS[r] || r)
+    .join(" + ");
+  const statText = gapRisk.insufficient_history
+    ? "insufficient history"
+    : `±${gapRisk.avg_gap_pct}% avg (${gapRisk.event_count} events)`;
+  const tooltipText = `Gap Risk — ${ticker}\n${reasonText}\nAvg gap: ${statText}`;
+  const descId = `gap-risk-desc-${ticker}`;
+
+  return (
+    <span
+      tabIndex={0}
+      title={tooltipText}
+      aria-describedby={descId}
+      aria-label={`Gap risk flag: ${reasonText}, average gap ${statText}`}
+      className="inline-flex items-center w-fit text-xs px-2 py-0.5 rounded-full font-medium text-white"
+      style={{ backgroundColor: "#D97706" }}
+      data-testid="gap-risk-badge"
+    >
+      GAP RISK
+      <span id={descId} className="sr-only">{tooltipText}</span>
+    </span>
+  );
+}
+
+function AlertsCell({ position }) {
+  const { data: gapRisk, loading: gapRiskLoading } = useGapRisk(position.id);
+  const riskOffExit = position.risk_off_exit === true;
+
+  const riskOffBadge = riskOffExit ? (
+    <span
+      className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-amber-900/60 text-amber-300 border border-amber-700/60 font-medium w-fit"
+      title="Risk-off regime: index below MA200 — consider exit"
+      aria-label="Risk-off exit alert: regime signal indicates exit this position"
+    >
+      <ShieldAlert className="w-3 h-3" />
+      Risk-Off
+    </span>
+  ) : null;
+
+  const gapBadge = gapRiskLoading ? (
+    <span className="inline-block h-4 w-20 rounded bg-slate-700/50 animate-pulse" data-testid="gap-risk-skeleton" />
+  ) : gapRisk?.flagged ? (
+    <GapRiskBadge ticker={position.ticker} gapRisk={gapRisk} />
+  ) : null;
+
+  if (!riskOffBadge && !gapBadge) {
+    return <span className="text-slate-600 text-xs">—</span>;
+  }
+
+  return (
+    <div className="flex flex-col gap-1 items-start">
+      {riskOffBadge}
+      {gapBadge}
+    </div>
+  );
+}
+
 export default function Positions() {
   const [viewMode, setViewMode] = useState("grid");
   const [editingPosition, setEditingPosition] = useState(null);
@@ -690,6 +759,8 @@ export default function Positions() {
             <TableHead title="Position lifecycle state">State</TableHead>
             <TableHead>Grace</TableHead>
             <TableHead title="Days until next earnings">Earnings</TableHead>
+            {/* ST-05 (v6.2) / ST-02 (v6.9): Alerts column — Risk-Off + Gap Risk badges, stacked */}
+            <TableHead>Alerts</TableHead>
             <TableHead>Actions</TableHead>
           </TableHeader>
 
@@ -718,9 +789,6 @@ export default function Positions() {
               const trailBreached =
                 trailStop > 0 && currentPriceGbp > 0 && currentPriceGbp <= trailStop;
 
-              // ST-05 (BLG-FEAT-49): risk-off exit alert
-              const riskOffExit = position.risk_off_exit === true;
-
               return (
                 <TableRow key={position.id}>
                   <TableCell>
@@ -731,16 +799,6 @@ export default function Positions() {
                       <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
                         {position.market}
                       </span>
-                      {/* ST-05: risk-off exit alert badge */}
-                      {riskOffExit && (
-                        <span
-                          className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-amber-900/60 text-amber-300 border border-amber-700/60 font-medium"
-                          title="Risk-off regime: index below MA200 — consider exit"
-                        >
-                          <ShieldAlert className="w-3 h-3" />
-                          Risk-Off
-                        </span>
-                      )}
                     </div>
                   </TableCell>
 
@@ -836,6 +894,10 @@ export default function Positions() {
                   </TableCell>
 
                   <PositionEarningsCell ticker={position.ticker} market={position.market} />
+
+                  <TableCell>
+                    <AlertsCell position={position} />
+                  </TableCell>
 
                   <TableCell>
                     <div className="flex items-center gap-2">

@@ -5,6 +5,40 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { cn } from "../../lib/utils";
 import { differenceInDays } from "date-fns";
+import { useGapRisk } from "../../hooks/useGapRisk";
+
+const GAP_RISK_REASON_LABELS = {
+  earnings: "Earnings before next session",
+  weekend_hold: "Weekend hold (flagged at Friday close)",
+};
+
+// ST-02 (v6.9, BLG-FEAT-65) — Gap Risk badge, same row as other alert icons on the card
+function GapRiskCardBadge({ positionId, ticker }) {
+  const { data: gapRisk, loading } = useGapRisk(positionId);
+  if (loading || !gapRisk?.flagged) return null;
+
+  const reasonText = (gapRisk.reasons || []).map((r) => GAP_RISK_REASON_LABELS[r] || r).join(" + ");
+  const statText = gapRisk.insufficient_history
+    ? "insufficient history"
+    : `±${gapRisk.avg_gap_pct}% avg (${gapRisk.event_count} events)`;
+  const tooltipText = `Gap Risk — ${ticker}\n${reasonText}\nAvg gap: ${statText}`;
+  const descId = `gap-risk-card-desc-${positionId}`;
+
+  return (
+    <span
+      tabIndex={0}
+      title={tooltipText}
+      aria-describedby={descId}
+      aria-label={`Gap risk flag: ${reasonText}, average gap ${statText}`}
+      className="inline-flex items-center text-xs px-2 py-0.5 rounded-full font-medium text-white"
+      style={{ backgroundColor: "#D97706" }}
+      data-testid="gap-risk-badge"
+    >
+      GAP RISK
+      <span id={descId} className="sr-only">{tooltipText}</span>
+    </span>
+  );
+}
 
 export default function PositionCard({ position, onEdit, onExit }) {
   const [showNoteModal, setShowNoteModal] = useState(false);
@@ -30,11 +64,13 @@ export default function PositionCard({ position, onEdit, onExit }) {
     >
       <div className="flex items-start justify-between mb-4">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <h3 className="text-lg font-bold text-white">{position.ticker}</h3>
             <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
               {position.market}
             </span>
+            {/* ST-02 (v6.9, BLG-FEAT-65): Gap Risk badge — same row as other alert icons */}
+            <GapRiskCardBadge positionId={position.id} ticker={position.ticker} />
           </div>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
             {daysHeld} days held • {position.shares} shares
