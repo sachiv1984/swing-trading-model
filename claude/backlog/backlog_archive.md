@@ -9704,3 +9704,41 @@ No formal threat model exists. The system handles high-sensitivity financial dat
 - `docs/security/threat_model.md` produced covering all attack surfaces, data classifications, threat actors, current mitigations, and identified gaps
 - Any gaps produce separate BLG items before sign-off
 - Reviewed and signed off by Cybersecurity & Trust Lead and Infrastructure & Operations Owner
+
+---
+
+### BLG-BE-52 — Formal disposition for BLG-BE-46's 11 permanently-unlinked historical trade_plans rows
+
+**Status at retirement:** ✅ Complete (Product Owner decision — no backfill)
+**Priority at retirement:** P3
+**Retired:** 2026-07-10 (backlog consistency audit — item carried a completed PO decision but had not yet been archived)
+**Resolved via:** Direct Product Owner action, no cycle (decision recorded 2026-07-09)
+**Evidence:** Full decision text below; referenced in commit `b339b175`
+
+### BLG-BE-52 — Formal disposition for BLG-BE-46's 11 permanently-unlinked historical trade_plans rows
+**Priority:** P3 (Low)
+**Type:** Backend / Data Integrity
+**Owner:** Backend Engineering Patterns Owner / PMO Lead
+**Source:** LP-12, `claude/cycles/2026-07-08__release-v6.8/lessons_learnt.md` — 2026-07-09
+**Effort:** XS (<1h — decision-recording only, unless reconciliation is chosen)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — Product Owner decision, no cycle (direct action)
+
+**Problem**
+`BLG-BE-46` (fixed in v6.8, ST-01) forward-fixed the `trade_plans.position_id` linkage bug via a backend auto-link in `add_position()` — newly-created `trade_plans` rows now link correctly going forward. The 11 pre-existing `trade_plans` rows (predating the fix) were explicitly decided *not* to be backfilled at the time, on the grounds that they have no reliable ticker/time match to `trade_history` (per `BLG-BE-46`'s own RISK-01). That decision was never given a tracking item or a named owner — `LP-12` (the lessons-learnt action item that called for exactly this) targeted "Delivery Verification, this cycle," but that target passed without action, and neither Delivery Verification's nor Post-Ship Closure's `backlog.md` write scope permits filing a net-new item of this kind inline. This item exists to close that gap and give the decision a permanent, ownable record.
+
+**Scope**
+- Product Owner confirms whether the 11 historical unlinked `trade_plans` rows should remain permanently unlinked, or whether a manual/administrative reconciliation pass (e.g. a one-off admin script matching by ticker + date proximity, with human review of ambiguous matches) is worth the effort
+- If reconciliation is wanted: scope it as a new story with its own acceptance criteria
+- If not: mark this item resolved, with the decision and rationale recorded here as the permanent record
+
+**Acceptance Criteria**
+- Product Owner disposition recorded (backfill / no backfill, with rationale)
+- If backfill is chosen: a follow-up story is filed and referenced here
+- If not: this item is closed with the decision as its resolution — no further action needed
+
+**Product Owner Decision (2026-07-09): No backfill.** The 11 historical `trade_plans` rows remain permanently unlinked (`position_id: null`). Rationale:
+- The original engineering assessment (`BLG-BE-46` RISK-01) already found no reliable ticker/time match exists — any backfill would require fuzzy matching with human review of ambiguous cases, and the whole point of this cycle's EPIC-01 was to make the SI-02 gate's underlying data *trustworthy*. Writing uncertain fuzzy-matched links into `trade_plans.position_id` risks trading a visible, honest gap (11 known NULLs) for silent wrong data (incorrect links that look correct but aren't) — a worse outcome for a gate specifically about strategy-adherence integrity.
+- Value is capped even in the best case: at most 11 additional linked rows, against a gate that needs 20 linked closed trades — backfilling these 11 would not by itself clear the SI-02 gate, so the effort doesn't buy gate clearance either.
+- The system now has a trustworthy path forward without touching historical data: `BLG-BE-46`'s forward-fix links all newly-created `trade_plans` correctly, and `BLG-FEAT-71`'s SI-02 Gate Status section on the Reports page shows the live, honest gate state (currently 0/20 linked, correctly reflecting that only forward-fixed data counts). That transparency is the more valuable investment than chasing an unreliable historical reconciliation.
+
+No follow-up story required. Item closed.

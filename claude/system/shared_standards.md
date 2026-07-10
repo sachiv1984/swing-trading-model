@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.12
-**Last Updated:** 2026-07-09
+**Version:** 3.13
+**Last Updated:** 2026-07-10
 
 # Shared Standards — All Governed Routines
 
@@ -279,6 +279,8 @@ Every governed artefact must have a complete header. Minimum required fields by 
 | Class 6 (Governance Prompt) | Owner, Status: Active, Version, Last Updated |
 
 A document without a complete header is non-compliant and must not be relied upon. Non-compliant documents discovered during a routine: apply header remediation (headers only) and continue.
+
+**§9.1 Version/state header cross-check (meta-review pattern, `2026-07-10__scheduled` — Type A Governance Drift recurring 3+ times across 2 cycles: `scored_initiatives.md` unbounded accumulation, `OPERATIONAL_GUIDE.md` header lagging its own Change Log table on 4 occasions, a backlog gate-field-label synonym silently excluded from an automated scan):** Before any edit that bumps a document's own `**Version:**`/`**Last Updated:**` header field, or before any step that is documented as "overwrite" rather than "append," first read the document's current on-disk state (its own Change Log table's top row, or its full existing body) to confirm the header/content is not already ahead of — or behind — what the edit assumes. Do not trust a header field or an instruction's label ("overwritten each run") in isolation; cross-check against the document's own recorded state before writing.
 
 ---
 

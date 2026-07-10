@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-09 (Product Owner direct action — BLG-BE-52 resolved: no backfill; prior — session — 1 new item(s) added: BLG-BE-52; prior — groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
-**Last rebalance:** 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46))
+**Last Updated:** 2026-07-10 (roadmap rebalance 2026-07-10__scheduled — 39 new items added via idea intake IW-20260710-01 disposition: BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72; DL-063; prior — backlog consistency audit — BLG-BE-52 archived to backlog_archive.md (already-resolved item not yet retired); BLG-GOV-105 flagged possible duplicate of shipped BLG-GOV-45, not dispositioned (see new BLG-GOV-202); BLG-GOV-28 flagged overdue §13 gate (PT-04 sealed v6.1, review not run), not dispositioned; prior — 2026-07-09 Product Owner direct action — BLG-BE-52 resolved: no backfill; prior — session — 1 new item(s) added: BLG-BE-52; prior — groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last rebalance:** 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -1670,36 +1670,6 @@ No per-request trace ID propagation exists across routers/services. No incident 
 
 ---
 
-### BLG-BE-52 — Formal disposition for BLG-BE-46's 11 permanently-unlinked historical trade_plans rows
-**Priority:** P3 (Low)
-**Type:** Backend / Data Integrity
-**Owner:** Backend Engineering Patterns Owner / PMO Lead
-**Source:** LP-12, `claude/cycles/2026-07-08__release-v6.8/lessons_learnt.md` — 2026-07-09
-**Effort:** XS (<1h — decision-recording only, unless reconciliation is chosen)
-**Provisional-Target:** ✅ COMPLETE — 2026-07-09 — Product Owner decision, no cycle (direct action)
-
-**Problem**
-`BLG-BE-46` (fixed in v6.8, ST-01) forward-fixed the `trade_plans.position_id` linkage bug via a backend auto-link in `add_position()` — newly-created `trade_plans` rows now link correctly going forward. The 11 pre-existing `trade_plans` rows (predating the fix) were explicitly decided *not* to be backfilled at the time, on the grounds that they have no reliable ticker/time match to `trade_history` (per `BLG-BE-46`'s own RISK-01). That decision was never given a tracking item or a named owner — `LP-12` (the lessons-learnt action item that called for exactly this) targeted "Delivery Verification, this cycle," but that target passed without action, and neither Delivery Verification's nor Post-Ship Closure's `backlog.md` write scope permits filing a net-new item of this kind inline. This item exists to close that gap and give the decision a permanent, ownable record.
-
-**Scope**
-- Product Owner confirms whether the 11 historical unlinked `trade_plans` rows should remain permanently unlinked, or whether a manual/administrative reconciliation pass (e.g. a one-off admin script matching by ticker + date proximity, with human review of ambiguous matches) is worth the effort
-- If reconciliation is wanted: scope it as a new story with its own acceptance criteria
-- If not: mark this item resolved, with the decision and rationale recorded here as the permanent record
-
-**Acceptance Criteria**
-- Product Owner disposition recorded (backfill / no backfill, with rationale)
-- If backfill is chosen: a follow-up story is filed and referenced here
-- If not: this item is closed with the decision as its resolution — no further action needed
-
-**Product Owner Decision (2026-07-09): No backfill.** The 11 historical `trade_plans` rows remain permanently unlinked (`position_id: null`). Rationale:
-- The original engineering assessment (`BLG-BE-46` RISK-01) already found no reliable ticker/time match exists — any backfill would require fuzzy matching with human review of ambiguous cases, and the whole point of this cycle's EPIC-01 was to make the SI-02 gate's underlying data *trustworthy*. Writing uncertain fuzzy-matched links into `trade_plans.position_id` risks trading a visible, honest gap (11 known NULLs) for silent wrong data (incorrect links that look correct but aren't) — a worse outcome for a gate specifically about strategy-adherence integrity.
-- Value is capped even in the best case: at most 11 additional linked rows, against a gate that needs 20 linked closed trades — backfilling these 11 would not by itself clear the SI-02 gate, so the effort doesn't buy gate clearance either.
-- The system now has a trustworthy path forward without touching historical data: `BLG-BE-46`'s forward-fix links all newly-created `trade_plans` correctly, and `BLG-FEAT-71`'s SI-02 Gate Status section on the Reports page shows the live, honest gate state (currently 0/20 linked, correctly reflecting that only forward-fixed data counts). That transparency is the more valuable investment than chasing an unreliable historical reconciliation.
-
-No follow-up story required. Item closed.
-
----
-
 ## 6. Operations & Infrastructure Backlog
 
 ---
@@ -2186,6 +2156,8 @@ PT-04 (Setup Quality Score) involves a new backend scoring algorithm and a new A
 - §13 review completed and sign-off recorded
 - Gate condition (PT-04 sprint planning imminent) verified before initiating review
 
+**Gate overdue — flagged 2026-07-10 (backlog consistency audit, not yet dispositioned):** PT-04 (Setup Quality Score) shipped and its sprint planning sealed in v6.1 (2026-06-23) — 2.5+ weeks ago. No evidence found anywhere in the repo (v6.1 `sprint_planning_notes.md`, `release_plan.md`, or elsewhere) that this §13 review was run before that seal, or since. The gate window has closed without the required action being taken or recorded. Not actioned here — this needs Head of Specs Team / Product Owner disposition: either run a retroactive §13 review against PT-04's shipped implementation now, or record an explicit waiver with rationale.
+
 ---
 
 ### BLG-GOV-29 — Trade plan AI summary audit log
@@ -2590,6 +2562,8 @@ Arc 6 PS-03 (Monte Carlo simulation) requires a §13 review before sprint planni
 - §13 threshold assessment produced for PS-03 (deterministic vs predictive question answered)
 - PASS/FAIL on the threshold question documented
 - Strategy Rules & System Intent Owner sign-off
+
+**Possible duplicate — flagged 2026-07-10 (backlog consistency audit, not yet dispositioned):** This item's threshold question — "is Monte Carlo simulation deterministic or predictive, does PS-03 engage the §13 boundary" — appears to already be answered by `BLG-GOV-45` ("Arc 6 Monte Carlo §13 pre-assessment"), which shipped in v4.6 (2026-05-31, ST-18): PASS, 10 binding conditions, decision doc filed at `docs/product/decisions/arc6_ps03_section13_preassessment.md` (confirmed on disk). This item may have been filed without visibility into that prior work. Not closed here — requires Strategy Rules & System Intent Owner confirmation that BLG-GOV-45 fully supersedes this item before disposition as duplicate/pre-met.
 
 ---
 
@@ -4924,6 +4898,669 @@ The locked ux_spec (`docs/design/2026-07-08__release-v6.8/si02-gate-visibility-i
 **Acceptance Criteria**
 - `dashboard.md` §6 and `GateProgressStrip.js` use identical copy
 - Known Deviations note in `dashboard.md` §6 (added v2.7) removed once resolved
+
+### BLG-GOV-191 — Spec debt aging report
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** Idea intake IW-20260710-01 (IDEA-head-of-specs-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+There is no standing report surfacing which `BLG-SPEC-*` items are approaching the 2-cycle-without-story-assignment advisory threshold defined in `release_planning_prompt.md` STEP 1.1 — it currently only fires reactively when a release plan happens to scan for it.
+
+**Proposed solution**
+Add a lightweight scan (reusable at `groom backlog` or release planning time) that lists spec-debt items by cycles-aged, surfaced proactively rather than only at the moment a release plan checks.
+
+---
+
+### BLG-GOV-192 — Governance prompt cross-reference sweep cadence
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** Idea intake IW-20260710-01 (IDEA-head-of-specs-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+§14 OPERATIONAL_GUIDE.md version drift is currently only caught opportunistically (e.g. by the `governance-drift` skill when invoked, or when a friction item happens to surface it) rather than on a fixed cadence.
+
+**Proposed solution**
+Schedule a periodic (e.g. every-3-cycle, alongside the meta-review) explicit governance-drift check rather than relying on incidental discovery.
+
+---
+
+### BLG-GOV-193 — Escalation SLA breach dry-run test
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** PMO Lead
+**Source:** Idea intake IW-20260710-01 (IDEA-pmo-lead-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The `BLOCKED_SLA_BREACH` 72-hour notice path (`shared_standards.md` §4) has never been exercised end-to-end in this repository's history — it is untested governance machinery.
+
+**Proposed solution**
+Construct a deliberate dry-run (e.g. a synthetic escalation with a backdated timestamp) to confirm the breach notice actually fires and halts as designed.
+
+---
+
+### BLG-QA-87 — Playwright flake tracking log
+**Priority:** P3 (Low)
+**Type:** QA / Process
+**Owner:** Director of Quality
+**Source:** Idea intake IW-20260710-01 (IDEA-director-of-quality-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Intermittent CI failures are currently indistinguishable from confirmed defects in QA evidence logs — there is no separate flake-tracking mechanism.
+
+**Proposed solution**
+Add a lightweight flake log (e.g. a table in a QA-owned file) capturing test name, failure date, and whether a re-run passed, to separate signal from noise over time.
+
+---
+
+### BLG-QA-88 — DoQ sign-off template freshness check
+**Priority:** P3 (Low)
+**Type:** QA / Process
+**Owner:** Director of Quality
+**Source:** Idea intake IW-20260710-01 (IDEA-director-of-quality-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The `record-visual-qa` skill's evidence format was defined against a staging practice that may have since evolved; no periodic check confirms the template still matches actual practice.
+
+**Proposed solution**
+Periodically (e.g. every few releases) confirm the DoQ sign-off template and the skill that populates it still reflect current staging sign-off practice.
+
+---
+
+### BLG-GOV-194 — §13 boundary language clarity pass — AI journal summarisation
+**Priority:** P3 (Low)
+**Type:** Governance / Strategy
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-strategy-owner-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+`strategy_rules.md` §13's "deterministic scoring" boundary language pre-dates the AI journal summarisation feature; it has not been explicitly re-read against that feature to confirm the language still functions as an unambiguous boundary.
+
+**Proposed solution**
+Strategy Rules & System Intent Owner re-reads §13 against the AI journal summarisation feature specifically and confirms (or clarifies) the boundary language remains unambiguous.
+
+---
+
+### BLG-GOV-195 — Strategic exclusions review cadence
+**Priority:** P3 (Low)
+**Type:** Governance / Strategy
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-strategy-owner-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The 4 product-scope exclusions in `current_roadmap.md` §2 (broker API integration, real-time streaming, social features, options/futures) have not been explicitly re-confirmed since they were first recorded — they could be stale rather than deliberate.
+
+**Proposed solution**
+Add a periodic (e.g. every-N-cycle) explicit re-confirmation that each exclusion remains a deliberate choice, not simply an un-revisited default.
+
+---
+
+### BLG-OPS-101 — Render hosting tier review
+**Priority:** P3 (Low)
+**Type:** Operations
+**Owner:** FinOps & Resource Architect
+**Source:** Idea intake IW-20260710-01 (IDEA-finops-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The current Render service tier was set early in the project's life and has not been reviewed against actual usage since v6.8's added traffic (SI-02 indicator, trade tagging).
+
+**Proposed solution**
+Compare current Render tier cost/limits against actual measured usage and confirm the tier still fits, or right-size it.
+
+---
+
+### BLG-OPS-102 — Staging smoke-test automation
+**Priority:** P3 (Low)
+**Type:** Operations / QA
+**Owner:** Infrastructure & Operations Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-infra-ops-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Manual staging sign-off is required for every observable-UI story without Playwright coverage (per CLAUDE.md's frontend evidence rule), which is a growing manual burden as story count increases.
+
+**Proposed solution**
+Investigate a lightweight automated staging smoke-test (e.g. a small Playwright suite pointed at the staging URL) to reduce — not eliminate — manual sign-off burden for straightforward cases.
+
+---
+
+### BLG-OPS-103 — Production database backup/restore drill
+**Priority:** P2 (Medium)
+**Type:** Operations
+**Owner:** Infrastructure & Operations Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-infra-ops-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+No governed routine has ever exercised a full backup/restore drill against the production database; the recovery procedure's correctness is currently unverified.
+
+**Proposed solution**
+Document the current backup mechanism (if any) and perform one full restore drill against a non-production target to confirm the procedure actually works.
+
+---
+
+### BLG-GOV-196 — Sunset review for Priority 3 — Deferred initiatives
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Product Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-challenger-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The 7-item `initiative_register.md` Priority 3 — Deferred list (Position Correlation Analysis, Backtesting Module, Multi-Portfolio Support, Mobile App, Full Compliance Scoring, Prometheus, Customisable Dashboard Layout) has not been explicitly re-confirmed since first recorded; some entries may now be stale rather than deliberately deferred.
+
+**Proposed solution**
+Product Owner reviews each Priority 3 item and confirms it is still deliberately deferred (not simply forgotten), recording the confirmation date.
+
+---
+
+### BLG-SEC-14 — AI journal generation audit trail
+**Priority:** P3 (Low)
+**Type:** Security / Compliance
+**Owner:** AI Compliance & Governance Officer
+**Source:** Idea intake IW-20260710-01 (IDEA-ai-compliance-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Generated AI journal entries do not currently log which model/version produced them, limiting compliance traceability if AI output quality or behaviour is later questioned.
+
+**Proposed solution**
+Log model identifier and version alongside each AI-generated journal entry at generation time.
+
+---
+
+### BLG-GOV-197 — Quarterly AI output sampling review
+**Priority:** P3 (Low)
+**Type:** Governance / Compliance
+**Owner:** AI Compliance & Governance Officer
+**Source:** Idea intake IW-20260710-01 (IDEA-ai-compliance-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+There is no recurring spot-check of AI-generated trade commentary against the `strategy_rules.md` §13 boundary — compliance currently relies on the boundary holding at generation time, with no independent sampling review.
+
+**Proposed solution**
+Establish a lightweight quarterly sampling review of a handful of AI-generated outputs against §13, recording findings.
+
+---
+
+### BLG-SPEC-74 — OpenAPI response examples for Arc 5 endpoints
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-api-contracts-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+`docs/reference/openapi.yaml` lacks example response payloads for Arc 5 endpoints, slowing frontend integration since developers must infer shapes from the schema alone.
+
+**Proposed solution**
+Add representative example payloads to the Arc 5 endpoint definitions in `openapi.yaml`.
+
+---
+
+### BLG-OPS-104 — Contract drift dashboard
+**Priority:** P3 (Low)
+**Type:** Operations / Governance
+**Owner:** API Contracts & Documentation Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-api-contracts-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Routes missing a `docs/specs/api_contracts` entry are currently only caught when the CI OpenAPI Drift Detection gate fires on a PR — there is no proactive, pre-PR way to see the gap.
+
+**Proposed solution**
+Add a simple script/report surfacing any `backend/routers/` endpoint lacking a matching contract entry, runnable ahead of opening a PR.
+
+---
+
+### BLG-BE-53 — Standardise pagination pattern across list endpoints
+**Priority:** P2 (Medium)
+**Type:** Backend
+**Owner:** Backend Engineering Patterns Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-backend-engineering-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Trades, signals, and watchlist list endpoints currently use 3 divergent pagination implementations, increasing maintenance cost and inconsistent frontend handling.
+
+**Proposed solution**
+Define one canonical pagination pattern and migrate the 3 endpoints to it.
+
+---
+
+### BLG-BE-54 — Database connection pool tuning review
+**Priority:** P3 (Low)
+**Type:** Backend / Operations
+**Owner:** Backend Engineering Patterns Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-backend-engineering-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The database connection pool size has not been reviewed against actual concurrent load since v6.8's added traffic; it may be mis-sized in either direction.
+
+**Proposed solution**
+Measure current concurrent connection usage and compare against the configured pool size; adjust if warranted.
+
+---
+
+### BLG-FE-99 — Reusable empty-state component spec for Base44 prompts
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-base44-frontend-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Each page's empty-state currently gets a bespoke Base44 prompt, producing visual/copy drift across pages with no shared source of truth.
+
+**Proposed solution**
+Define one reusable empty-state component spec that future Base44 prompts reference instead of reinventing per page.
+
+---
+
+### BLG-GOV-198 — Base44 prompt versioning convention
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-base44-frontend-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+There is no convention tracking which Base44 prompt draft shipped with which ST-id, making future regression triage ("which prompt produced this component") harder than necessary.
+
+**Proposed solution**
+Adopt a lightweight convention (e.g. a comment header or delegation log field) recording the ST-id alongside each Base44 prompt draft.
+
+---
+
+### BLG-SEC-15 — Recurring dependency vulnerability re-scan cadence
+**Priority:** P2 (Medium)
+**Type:** Security
+**Owner:** Cybersecurity & Trust Lead
+**Source:** Idea intake IW-20260710-01 (IDEA-cybersecurity-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+npm/pip dependency audits have so far only run ad hoc (triggered by specific backlog items), with no scheduled recurring cadence — new CVEs in existing dependencies could go unnoticed between ad hoc scans.
+
+**Proposed solution**
+Establish a recurring (e.g. per-release) dependency audit step, independent of any single backlog item.
+
+---
+
+### BLG-SEC-16 — API key rotation runbook
+**Priority:** P2 (Medium)
+**Type:** Security
+**Owner:** Cybersecurity & Trust Lead
+**Source:** Idea intake IW-20260710-01 (IDEA-cybersecurity-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The application `X-API-Key` was formally registered in v6.8 (BLG-OPS-99) but no rotation procedure has been documented — if the key were ever compromised, there is no defined runbook for rotating it.
+
+**Proposed solution**
+Document a rotation runbook: steps, owner, and verification checklist for rotating the registered API key.
+
+---
+
+### BLG-BE-55 — trade_plans.position_id historical backfill design
+**Priority:** P2 (Medium)
+**Type:** Backend / Data
+**Owner:** Data Model & Domain Schema Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-data-model-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+BLG-BE-46 forward-fixed new `trade_plans` rows to populate `position_id`, but the 11 historically-affected rows remain permanently unlinked per BLG-BE-52's "no backfill" resolution — a backfill design was never actually scoped, only declined.
+
+**Proposed solution**
+Data Model Owner scopes what a backfill would require (if ever revisited) so the "no backfill" decision is a recorded trade-off, not a gap.
+
+---
+
+### BLG-SPEC-75 — Migration block consolidation review
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Data Model & Domain Schema Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-data-model-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+`data_model.md`'s migration block history has not been reviewed for consistency since before v6.8's schema changes.
+
+**Proposed solution**
+Review all migration blocks in ascending version order for consistency and confirm the footer version matches the highest block.
+
+---
+
+### BLG-GOV-199 — Role charter freshness pass
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Director of HR
+**Source:** Idea intake IW-20260710-01 (IDEA-director-of-hr-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+`claude/agents/*.md` role charters have not been reviewed as a batch to confirm they still reflect current tooling and practice (e.g. `gh` CLI usage, current write-scope conventions).
+
+**Proposed solution**
+Director of HR reviews all agent charters for currency in one pass, flagging any that reference retired tooling or superseded conventions.
+
+---
+
+### BLG-QA-89 — R-multiple calculation regression test
+**Priority:** P2 (Medium)
+**Type:** QA / Backend
+**Owner:** Financial Reporting & Records Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-financial-reporting-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The v6.8 R-multiple FX spec has no automated regression test locking its behaviour against known trade fixtures — a future change could silently alter R-multiple calculations.
+
+**Proposed solution**
+Add an automated test asserting R-multiple output against a small set of known trade fixtures.
+
+---
+
+### BLG-SPEC-76 — Trade tagging taxonomy documentation
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Financial Reporting & Records Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-financial-reporting-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+BLG-FEAT-52 (trade tagging) shipped without a canonical list of allowed tags, risking inconsistent tag usage that would undermine tag-based reporting.
+
+**Proposed solution**
+Document a canonical allowed-tag taxonomy for trade tagging, referenced by both the UI and reporting logic.
+
+---
+
+### BLG-FE-100 — Dark/light theme contrast audit follow-up
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-frontend-specs-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+BLG-FE-87/88/89 fixed the known secondary-text contrast gaps, but no follow-up audit has confirmed no further gaps exist outside that specific defect class.
+
+**Proposed solution**
+Run a targeted follow-up contrast audit scoped to confirm no other secondary-text (or similar) contrast gaps remain.
+
+---
+
+### BLG-SPEC-77 — Gate-status indicator reusable component pattern documentation
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-frontend-specs-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+BLG-FEAT-71's SI-02 gate visibility indicator is a one-off implementation; the pattern is not documented for reuse by future gated features.
+
+**Proposed solution**
+Document the SI-02 indicator as a reusable gate-status component pattern in the relevant frontend spec, for future gated-feature reuse.
+
+---
+
+### BLG-OPS-105 — CI pipeline runtime audit
+**Priority:** P3 (Low)
+**Type:** Operations / QA
+**Owner:** Head of Engineering
+**Source:** Idea intake IW-20260710-01 (IDEA-head-of-engineering-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Full CI suite runtime has been creeping up without a recent audit identifying which test files are slowest.
+
+**Proposed solution**
+Profile CI runtime by file and identify the slowest contributors as candidates for optimisation or parallelisation.
+
+---
+
+### BLG-BE-56 — Backend service-layer boundary review
+**Priority:** P3 (Low)
+**Type:** Backend
+**Owner:** Head of Engineering
+**Source:** Idea intake IW-20260710-01 (IDEA-head-of-engineering-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Recent `BLG-BE-*` items have touched router/service/database layers; no recent review confirms the layering boundary still holds cleanly after these changes.
+
+**Proposed solution**
+Review recent backend changes for layering-boundary drift (e.g. business logic leaking into routers) and correct any found.
+
+---
+
+### BLG-FE-101 — Reports page information hierarchy review
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** Idea intake IW-20260710-01 (IDEA-head-of-ux-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The Reports page gained the SI-02 gate visibility indicator (BLG-FEAT-71) in v6.8; no follow-up review has confirmed the page's information hierarchy still reads cleanly with the addition.
+
+**Proposed solution**
+Head of UX & Design reviews the Reports page for visual clutter or hierarchy issues introduced by the new indicator.
+
+---
+
+### BLG-QA-90 — Watchlist.js post-refactor visual QA
+**Priority:** P3 (Low)
+**Type:** QA / Frontend
+**Owner:** Head of UX & Design
+**Source:** Idea intake IW-20260710-01 (IDEA-head-of-ux-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The v6.8 Watchlist.js ESLint refactor (BLG-OPS-61) was a code-quality change; no explicit visual QA pass has confirmed it introduced no visual regressions.
+
+**Proposed solution**
+Perform a visual QA pass on the Watchlist page to confirm the ESLint refactor did not change rendered behaviour.
+
+---
+
+### BLG-FEAT-72 — Product Value Ratio historical trend chart
+**Priority:** P3 (Low)
+**Type:** Product Feature / Governance Tooling
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-metrics-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+STEP 2.4's U/G/D/P ratio is currently re-read from decision-log prose each rebalance rather than visualised as a trend, making it harder to spot the trajectory at a glance.
+
+**Proposed solution**
+Build a small chart/table visualising the ratio across cycles, sourced from a structured record rather than re-derived prose each time.
+
+---
+
+### BLG-GOV-200 — Skill-Silo rolling-average automation
+**Priority:** P3 (Low)
+**Type:** Governance Tooling
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-metrics-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The STEP 7.1 Skill-Silo rolling-3-cycle average is currently computed manually each rebalance by reading the prior 2 cycles' recorded percentages from decision-log prose.
+
+**Proposed solution**
+Compute the rolling average from a structured source (e.g. a small per-cycle metrics file) instead of manual re-derivation each rebalance.
+
+---
+
+### BLG-QA-91 — Cross-browser Playwright matrix evaluation
+**Priority:** P3 (Low)
+**Type:** QA
+**Owner:** QA Lead
+**Source:** Idea intake IW-20260710-01 (IDEA-qa-lead-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Playwright coverage currently runs Chromium-only; critical-path behaviour on Firefox/WebKit is unverified.
+
+**Proposed solution**
+Evaluate the cost/benefit of adding Firefox/WebKit to the CI matrix for a small set of critical-path specs.
+
+---
+
+### BLG-GOV-201 — QA evidence log template consolidation
+**Priority:** P3 (Low)
+**Type:** Governance / QA Process
+**Owner:** QA Lead
+**Source:** Idea intake IW-20260710-01 (IDEA-qa-lead-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Per-EPIC `qa_evidence_EPIC-*.md` files currently duplicate a substantial amount of boilerplate header/structure across files.
+
+**Proposed solution**
+Consolidate shared boilerplate into a referenced template section, reducing duplication across EPIC evidence files.
+
+---
+
+### BLG-QA-92 — Backend test suite runtime baseline
+**Priority:** P3 (Low)
+**Type:** QA / Backend
+**Owner:** QA & Testing Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-qa-testing-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+No current baseline records pytest suite runtime, making future runtime regressions hard to detect early.
+
+**Proposed solution**
+Record current `backend/.venv/bin/python3 -m pytest` runtime as a baseline for future comparison.
+
+---
+
+### BLG-QA-93 — conftest.py AST-scan coverage confirmation
+**Priority:** P3 (Low)
+**Type:** QA / Backend
+**Owner:** QA & Testing Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-qa-testing-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+BLG-QA-73 replaced the manual `_DB_STUB_FUNCTIONS` list with an AST-scan derivation; no confirmation has been recorded that the scan still covers all `backend/` modules added since v6.8.
+
+**Proposed solution**
+Re-verify the AST scan's module coverage against the current `backend/` tree and record confirmation.
+
+---
+
+### BLG-GOV-202 — Disposition BLG-GOV-105 duplicate-of-BLG-GOV-45 flag
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Product Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-product-owner-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+The 2026-07-10 backlog consistency audit flagged `BLG-GOV-105` as a possible duplicate of already-shipped `BLG-GOV-45` but left it un-dispositioned.
+
+**Proposed solution**
+Product Owner reviews both entries and either closes `BLG-GOV-105` as a confirmed duplicate or records why it is distinct.
+
+---
 
 ---
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*

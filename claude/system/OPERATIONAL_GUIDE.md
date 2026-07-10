@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.88
-**Last Updated:** 2026-07-09
+**Version:** 4.89
+**Last Updated:** 2026-07-10
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v8.5)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v8.6)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.88 |
-| Last Updated | 2026-07-09 |
+| Version | 4.89 |
+| Last Updated | 2026-07-10 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1463,7 +1463,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.11 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v8.5 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v8.6 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.42 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.12 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
@@ -1473,7 +1473,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.1 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.17 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.12 |
+| Shared Standards | `claude/system/shared_standards.md` v3.13 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.9 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.89 | 2026-07-10 | **Roadmap rebalance `2026-07-10__scheduled` — 1 due deferred patch resolved + 1 meta-review patch applied.** §6 source prompt header v8.5→v8.6. §14 Roadmap Engine Source v8.5→v8.6; Shared Standards v3.12→v3.13. §14 Version 4.88→4.89/2026-07-10. Changes: (1) `roadmap_prompt.md` STEP 6 — overwrite-verification instruction added (read-before-write + re-read-after-write check), resolving the deferred patch from `2026-07-08__scheduled` Friction Item 1 (target: "next `run roadmap` invocation"). (2) `shared_standards.md` §9 — new §9.1 version/state header cross-check note added via STEP 11.4 meta-review (3-cycle review, due at this cycle): generalises the recurring Type A Governance Drift pattern (`scored_initiatives.md` accumulation, `OPERATIONAL_GUIDE.md` header-vs-table lag ×4, backlog gate-field-label synonym) into one reusable pre-write check. The companion deferred patch to `CLAUDE.md` §6 (same root pattern, outside this engine's write scope) remains carried forward unchanged — no session with direct `CLAUDE.md` write authorisation has occurred yet. Authority: Head of Specs Team (roadmap rebalance `2026-07-10__scheduled`, STEP 11/11.4). |
 | 4.88 | 2026-07-09 | **PMO Lead / Head of Specs Team direct action — resolved 5 outstanding items from `2026-07-08__release-v6.8` post-ship closure (3 recorded Outstanding Actions + 2 Advisory Summary findings).** §6 source prompt header v8.4→v8.5. §6M source prompts (`ideas_housekeeping_prompt.md`) v1.0→v1.1. §8 source prompt header v3.54→v3.55. §9 source prompt header v3.3→v3.4. §13 Artefact Register Roadmap Rebalance Prompt row v8.4→v8.5. §14 Roadmap Engine Source v8.4→v8.5; Execution Engine Source v3.54→v3.55; Verification Engine Source v3.3→v3.4; Ideas Housekeeping Engine v1.0→v1.1; Shared Standards v3.11→v3.12. §14 Version 4.87→4.88/2026-07-09. Changes: (1) `execution_prompt.md` STEP 4 — new step 3a0 checks out `main` before the 3a/3b state-sync and governance-file commits, which now push to `main` directly instead of the just-merged EPIC branch; closes the LL-v6.8-P3-01 root cause (Phase 3 friction item 2, v6.8). (2) `execution_prompt.md` STEP 3.1.A — new Case E + structured `spec_reference_not_applicable`/`spec_reference_not_applicable_reason` fields (also added to `execution_state_schema.json`), replacing the undocumented `notes: "no prior spec applicable"` convention; `delivery_verification_prompt.md` STEP 1.3 updated to check the structured field first, falling back to the legacy notes-string for pre-existing records (v6.8 Phase 4 friction item). (3) `shared_standards.md` §16.5 — formalised `Promoted-Backlog` as a canonical `ideas_register.md` status (found in continuous multi-cycle use by `roadmap_prompt.md` but absent from the enum); `ideas_housekeeping_prompt.md` §6.1 updated to classify it as archive-eligible; `roadmap_prompt.md` STEP -1.6 exclusion-list prose corrected to match. 40 previously-held-back `Promoted-Backlog` rows in `ideas_register.md` archived as a result. (4) `claude/backlog/backlog.md` — filed `BLG-BE-52` (LP-12: formal disposition for `BLG-BE-46`'s 11 permanently-unlinked historical `trade_plans` rows, which had no tracking item). (5) `claude/ideas/rejected_but_strong.md` — `IDEA-cybersecurity-20260304-01` (System Threat Model) marked Resolved; delivered as `BLG-OPS-71`/ST-17 in v6.8. Authority: PMO Lead + Head of Specs Team (direct action, user-invoked, 2026-07-09). |
 | 4.87 | 2026-07-09 | **v6.8 sprint close (STEP 5.4 lessons learnt, LL-v6.8-P3-01) — execution_prompt.md v3.53→v3.54: orphaned post-merge commit check added to STEP 4.** §8 source prompt header v3.53→v3.54. §14 Execution Engine Source v3.53→v3.54. §14 Version 4.86→4.87/2026-07-09. Change: this sprint's close found that all three EPIC branches (v6.8) received one or more commits after their own PR had already merged into main — these orphaned commits never entered `main` via the merge diff. EPIC-03's orphaned `execution_state.json` merge-state commit had not reached `main` and required manual reconciliation at sprint close; EPIC-01/EPIC-02's orphaned commits (execution_state.json state-persist; two backlog.md filings, BLG-SPEC-71/72) were found to already be present on `main` in equivalent form, but only incidentally (via a later EPIC branch's rebase), not by any designed mechanism. STEP 4's existing LL-v3.9-P3-1 resync only covers `execution_state.json`'s own `merge_gate` fields. Added a new check (LL-v6.8-P3-01) immediately after it: on merge-gate resume, `git fetch origin` then diff `origin/main..origin/exec/<cycle_id>/<epic_id>` for every merged EPIC; reconcile any orphaned governance-file commit onto `main` directly (commit format `[EPIC-xx] Reconcile orphaned post-merge commit <sha> onto main`), recording each check in a new `execution_state.json.process_notes` array that STEP 5.3 rolls up into `sprint_close.md`'s Process Notes section (added a corresponding bullet to STEP 5.3's "Must include" list). Reviewed and confirmed non-duplicative of LL-v3.9-P3-1, LL-v2.0-P3-5, and CLAUDE.md §8 by Head of Specs Team (agent-mediated review, per execution_prompt.md §5.3) before being applied as an action-now patch. **Separate observation filed as a follow-up, not actioned this patch:** STEP 4's own steps 3a/3b instruct committing `execution_state.json`/governance files to the EPIC branch *after* the PR has already merged — this is the root cause generating an orphaned commit on essentially every merge, not an edge case; a future revision should have 3a/3b commit onto `main` directly instead. Authority: Head of Specs Team (agent-mediated sign-off, v6.8 sprint close, 2026-07-09). |
 | 4.86 | 2026-07-09 | **v6.8 ST-16 (BLG-GOV-123, EPIC-03) — execution_prompt.md §14 Playwright Test Authoring Standard extracted to shared_standards.md §18.** §8 source prompt header v3.52→v3.53. §14 Execution Engine Source v3.52→v3.53. §14 Shared Standards v3.10→v3.11. §14 Version 4.85→4.86/2026-07-09. Change: the Playwright Test Authoring Standard (waitFor patterns, mock payload advisory) applies to Playwright tests written by any governed routine, not just sprint execution — moved to the cross-engine shared_standards.md as new §18, with execution_prompt.md §14 replaced by a reference line. Also folds in a new route-ordering advisory discovered during the same sprint's ST-11 (BLG-QA-64): page.route() handlers evaluate in reverse registration order; route.continue() sends to the real network rather than falling through to an earlier-registered handler — use route.fallback() to defer correctly. Authority: Head of Specs Team (v6.8 ST-16, 2026-07-09). |

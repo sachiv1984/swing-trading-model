@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 8.5
-**Last Updated:** 2026-07-09
+**Version:** 8.6
+**Last Updated:** 2026-07-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -507,6 +507,8 @@ Score each surviving item with rationale:
 Scores inform decisions but do not decide them. Proximity score and effort band displayed alongside other scores — they do not contribute to a weighted total.
 
 Write: `claude/scoring/scored_initiatives.md` (create if needed — use bash heredoc if directory does not exist). This file reflects only the current cycle's scoring — it is overwritten each run and does not retain history. Do not create cycle-dated copies (e.g. `scored_initiatives_<date>.md`); any such file found in `claude/scoring/` is an orphan and should be removed.
+
+**Overwrite verification (v8.6, resolves `2026-07-08__scheduled` Friction Item 1):** Before writing, if the file already exists, read it first and confirm the write fully replaces its content rather than appending. After writing, re-read the file and confirm it contains no section dated to a prior cycle — if it does, this is non-compliant drift, not intentional history; overwrite fully rather than append.
 
 ---
 
