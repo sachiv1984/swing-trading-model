@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.9.0
+  version: 3.10.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -1483,6 +1483,56 @@ paths:
                               enum: [pass, warn, fail, skipped]
                             detail:
                               type: string
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /positions/{position_id}/gap-risk:
+    get:
+      tags: [Positions]
+      summary: Overnight/weekend gap risk flag for a position
+      description: |
+        Returns the overnight/weekend gap risk flag for a single open position,
+        combining the DS-04 earnings calendar with historical OHLCV gap statistics.
+        §13 display-only — surfaces a known calendar event and historical statistic,
+        no gap direction/magnitude prediction. (v6.9 ST-02, BLG-FEAT-65)
+      parameters:
+        - in: path
+          name: position_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Position UUID
+      responses:
+        "200":
+          description: Gap risk flag returned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      flagged:
+                        type: boolean
+                      reasons:
+                        type: array
+                        items:
+                          type: string
+                          enum: [earnings, weekend_hold]
+                      avg_gap_pct:
+                        type: number
+                        nullable: true
+                      event_count:
+                        type: integer
+                      insufficient_history:
+                        type: boolean
         "404":
           $ref: "#/components/responses/NotFound"
         "500":

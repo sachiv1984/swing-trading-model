@@ -155,8 +155,9 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /positions/grace-period-alerts", "method": "GET", "url": f"{base_url}/positions/grace-period-alerts", "critical": True},
         {"name": "GET /positions/{id}/stop-trail", "method": "GET", "url": f"{base_url}/positions/00000000-0000-0000-0000-000000000000/stop-trail", "critical": False},
 
-        # On-Demand Compliance Recheck (v6.9 / EPIC-01 ST-01)
+        # On-Demand Compliance Recheck / Gap Risk Flag (v6.9 / EPIC-01 ST-01, EPIC-02 ST-02)
         {"name": "GET /positions/{id}/compliance-recheck", "method": "GET", "url": f"{base_url}/positions/00000000-0000-0000-0000-000000000000/compliance-recheck", "critical": False},
+        {"name": "GET /positions/{id}/gap-risk", "method": "GET", "url": f"{base_url}/positions/00000000-0000-0000-0000-000000000000/gap-risk", "critical": False},
 
         # Portfolio Risk (v3.4 / EPIC-02)
         {"name": "GET /portfolio/drawdown-status", "method": "GET", "url": f"{base_url}/portfolio/drawdown-status", "critical": False},

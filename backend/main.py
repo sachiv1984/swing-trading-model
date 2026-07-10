@@ -91,6 +91,7 @@ from utils.calculations import (
 from services.alerts_service import ensure_alerts_tables
 from services.compliance_service import get_position_compliance
 from services.compliance_recheck_service import get_compliance_recheck
+from services.gap_risk_service import get_gap_risk
 from services.position_lifecycle_service import (
     get_lifecycle_fields_for_position,
     refresh_position_lifecycle,
@@ -1448,6 +1449,39 @@ def get_position_compliance_recheck_endpoint(position_id: str):
         result = get_compliance_recheck(position_id)
         if result is None:
             raise HTTPException(status_code=404, detail="Position not found")
+        return {"status": "ok", "data": result}
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/positions/{position_id}/gap-risk")
+def get_position_gap_risk_endpoint(position_id: str):
+    """
+    GET /positions/{position_id}/gap-risk
+
+    Returns overnight/weekend gap risk flag for a single open position —
+    combines the DS-04 earnings calendar with historical OHLCV gap statistics.
+    Deterministic only: flags a known calendar event or Friday-close weekend
+    hold plus historical gap magnitude — no directional/magnitude prediction (§13, AC-04).
+
+    Fetched per-position (mirrors the existing per-ticker earnings pattern,
+    GET /earnings/{ticker}) rather than embedded in GET /positions: the
+    historical-OHLCV lookup is too slow to run inline for every open position
+    on every list load, and the Alerts column already defines an independent
+    per-cell loading state (positions.md §Gap Risk Badge), so a lazily-fetched
+    per-position endpoint fits the documented UX without slowing the bulk list.
+    Spec: docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id}/gap-risk
+    """
+    try:
+        raw = get_position_by_id(position_id)
+        if not raw:
+            raise HTTPException(status_code=404, detail="Position not found")
+        pos = decimal_to_float(dict(raw))
+        result = get_gap_risk(pos["ticker"], pos["market"])
         return {"status": "ok", "data": result}
     except HTTPException:
         raise

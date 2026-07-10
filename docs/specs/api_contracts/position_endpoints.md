@@ -3,7 +3,7 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.3.0
+**Version:** 2.4.0
 **Last Updated:** 2026-07-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -26,6 +26,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.4.0 | 2026-07-10 | v6.9 ST-02 (BLG-FEAT-65): Added `GET /positions/{position_id}/gap-risk` — overnight/weekend gap risk flag for a single position, combining the DS-04 earnings calendar with historical OHLCV gap statistics. Implemented as a dedicated per-position endpoint rather than a field on `GET /positions` (pre-authorised alternative per the story notes) because the historical-OHLCV lookup is too slow to run inline for every open position on every list load. Display-only; §13 sign-off required (AC-04). |
 | 2.3.0 | 2026-07-10 | v6.9 ST-01 (BLG-FEAT-64): Added `GET /positions/{position_id}/compliance-recheck` — re-applies the 5 SI-01 pre-entry deterministic rule checks against an open position's current state (current regime, current signal conditions, current heat/sizing), not its entry-time snapshot. On-demand only, no automation. Display-only; §13 sign-off required (AC-04). |
 | 2.2.0 | 2026-06-24 | v6.2 ST-01 (BLG-FEAT-46): Added `current_trailing_stop` field to `GET /positions` response. Added `POST /positions/nightly-stop-update` endpoint. v6.2 ST-05 (BLG-FEAT-49): Added `risk_off_exit` field to `GET /positions` response. Added `POST /positions/risk-off-alerts` endpoint. |
 | 2.0.0 | 2026-03-29 | ST-01 (BLG-FEAT-11, v2.3): Added `GET /positions/compliance` — returns ATR-based per-position stop compliance, stop age, and size compliance flags. Display-only; §13.3 constraint enforced. Strategy Rules & System Intent Owner DoQ sign-off required at delivery verification (SPS=4). |
@@ -45,6 +46,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 - [PATCH /positions/{position_id}/tags](#patch-positionsposition_idtags)
 - [GET /positions/tags](#get-positionstags)
 - [GET /positions/{position_id}/compliance-recheck](#get-positionsposition_idcompliance-recheck)
+- [GET /positions/{position_id}/gap-risk](#get-positionsposition_idgap-risk)
 
 ---
 
@@ -904,4 +906,82 @@ Errors use the standard error envelope from **conventions.md**.
 | HTTP Status | Condition |
 |-------------|-----------|
 | `404` | Position not found, or position is not open |
+| `500` | Internal server error |
+
+---
+
+## GET /positions/{position_id}/gap-risk
+
+**Added:** v6.9 (ST-02, BLG-FEAT-65)
+
+**Purpose**
+
+Returns the overnight/weekend gap risk flag for a single open position, combining
+the DS-04 earnings calendar with historical OHLCV gap statistics.
+
+**Scope constraint (§13):** Display-only. Surfaces a known calendar event (earnings
+date) and a historical statistic (average gap magnitude) — does not predict gap
+direction or magnitude for the upcoming event. No automated action is triggered.
+Strategy Rules & System Intent Owner DoQ sign-off required at delivery verification.
+
+**Implementation note:** The story anticipated a `gap_risk` field on the existing
+`GET /positions` response; a dedicated per-position endpoint was used instead
+(pre-authorised alternative per the story notes) because the historical-OHLCV
+lookup is too slow to run inline for every open position on every list load. This
+mirrors the existing per-ticker `GET /earnings/{ticker}` pattern already used by
+the Positions page Earnings column, and the Alerts column already defines an
+independent per-cell loading state, so a lazily-fetched endpoint fits the
+documented UX without slowing the bulk list.
+
+**Method & Path**
+
+- `GET /positions/{position_id}/gap-risk`
+
+**Idempotency**
+
+- Safe to repeat (read-only).
+
+### Request
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `position_id` | string (UUID) | Yes | Position identifier |
+
+### Response (200)
+
+Response uses the standard success envelope from **conventions.md**.
+
+#### `data` schema
+
+```json
+{
+  "flagged": true,
+  "reasons": ["earnings", "weekend_hold"],
+  "avg_gap_pct": 2.3,
+  "event_count": 14,
+  "insufficient_history": false
+}
+```
+
+#### Field notes
+
+| Field | Notes |
+|-------|-------|
+| `flagged` | `boolean`. `true` when either an earnings date falls before the position's next trading session, or it is a weekend-hold position at Friday close. |
+| `reasons` | Array, subset of `["earnings", "weekend_hold"]`, in that order. Empty when `flagged = false`. Both can be present simultaneously (e.g. Friday close + Monday earnings). |
+| `avg_gap_pct` | `float \| null`. Historical average overnight or weekend gap magnitude for the ticker (whichever gap type applies — weekend takes precedence when both reasons apply, per the ux_spec.md §4 combined example). `null` when `insufficient_history = true`. |
+| `event_count` | `integer`. Number of historical gap events used to compute `avg_gap_pct`. |
+| `insufficient_history` | `boolean`. `true` when fewer than the backend-defined minimum event count (currently 10) is available. The flag is still shown when `true` — insufficient history does not suppress the flag, only the numeric average. |
+
+**Determinism note:** Earnings proximity uses a same-day-or-next-day calendar window (`days_until_earnings` in `[0, 1]`) as "before the position's next trading session" — a deterministic calendar check only; no attempt is made to infer before/after-market release timing, which the upstream earnings data source does not reliably expose. Weekend-hold is a pure day-of-week check (Friday), computed server-side; the frontend renders the flag as returned with no client-side day-of-week logic.
+
+### Errors
+
+Errors use the standard error envelope from **conventions.md**.
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `404` | Position not found |
 | `500` | Internal server error |
