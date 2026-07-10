@@ -1,0 +1,20 @@
+[
+  {
+    "id": "ST-01",
+    "title": "On-demand pre-entry rule recheck for open positions",
+    "epic": "EPIC-01",
+    "description": "New GET /positions/{position_id}/compliance-recheck endpoint re-applying SI-01's 5 rule checks against current position state, plus a frontend recheck action reusing PreEntryValidationPanel's visual pattern.",
+    "ac_summary": "AC-01 endpoint returns pass/fail per rule; AC-02 frontend action renders PreEntryValidationPanel-style states; AC-03 on-demand only, no polling; AC-04 §13 sign-off no new automation surface.",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-10__release-v6.9"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Overnight/weekend gap risk flag for open positions",
+    "epic": "EPIC-02",
+    "description": "Backend gap-risk computation from existing earnings calendar + OHLCV history for open positions; frontend risk flag badge on the Positions page.",
+    "ac_summary": "AC-01 flag on upcoming earnings date; AC-02 flag on Friday-close weekend hold; AC-03 shows historical average gap magnitude or insufficient-history state; AC-04 §13 sign-off no directional prediction.",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-10__release-v6.9"],
+    "assignee": null
+  }
+]

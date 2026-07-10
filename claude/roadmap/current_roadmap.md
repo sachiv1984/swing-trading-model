@@ -13,6 +13,16 @@
 **v6.8** — Production Correctness, Value Pull-Forward & Debt Clearance — ✅ Complete — Shipped 2026-07-09 — cycle: 2026-07-08__release-v6.8
 **Next planned release:** v6.9 — scope TBD, deferred to `plan release v6.9` (STEP 8.1 Option (b), roadmap rebalance 2026-07-10__scheduled, DL-063)
 
+<!-- roadmap-annotation-marker: RA:v6.9:2026-07-10__release-v6.9 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-10__release-v6.9
+- Plan published: 2026-07-10
+- Cycle folder: claude/cycles/2026-07-10__release-v6.9/
+- Backlog slice: claude/cycles/2026-07-10__release-v6.9/stage4_backlog_slice.md
+- Status at annotation: Committed
+- Scope: EPIC-01 (`BLG-FEAT-64`), EPIC-02 (`BLG-FEAT-65`) — both named mandatory Product Value Alert pull-forwards
+
 *RA:v6.8 retired — see roadmap_archive.md 2026-07-09 (post-ship closure 2026-07-08__release-v6.8).*
 
 *RA:v6.7 retired — see roadmap_archive.md 2026-07-08 (post-ship closure 2026-07-06__release-v6.7).*
