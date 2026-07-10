@@ -79,7 +79,9 @@
     "design_gate_required": true
   },
 
-  "design_gate_status": "not_started",
+  "design_gate_status": "Passed",
+  "design_gate_completed_utc": "2026-07-10T18:15:00Z",
+  "design_gate_record": "claude/cycles/2026-07-10__release-v6.9/design_gate.md",
   "amended_backlog_slice_path": "",
 
   "artifacts": {

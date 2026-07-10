@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.0
-**Last Updated:** 2026-07-06
+**Version:** 2.1
+**Last Updated:** 2026-07-10
+**Design Source (v6.9 additions):** docs/design/2026-07-10__release-v6.9/on-demand-compliance-recheck/ux_spec.md, docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md
 **Design Source (v2.3 additions):** docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md
 **Design Source (v3.3 additions):** docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md, docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md, docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md
 **Design Source (v3.4 additions):** docs/design/2026-05-14__release-v3.4/drawdown-review-prompt/ux_spec.md, docs/design/2026-05-14__release-v3.4/concentration-limits-warning/ux_spec.md
@@ -20,6 +21,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.1 | 2026-07-10 | v6.9 design gate: (ST-01, BLG-FEAT-64) Compliance Recheck Panel — "Recheck Compliance" action added to Table View Actions column and Grid View card footer for all open positions; opens modal reusing `PreEntryValidationPanel`'s pass/warn/fail visual pattern against the same 5 SI-01 rules, evaluated against current (not entry-time) conditions; session-local override acknowledgement, no persisted state. §13 compliant — re-application of existing deterministic rules, no new automation. (ST-02, BLG-FEAT-65) Gap Risk Badge added to the existing Alerts column — "GAP RISK" badge (amber-600 `#D97706`) when an earnings date falls before the next session or on Friday-close weekend holds; tooltip shows reason(s) plus historical average gap magnitude for the ticker or "insufficient history"; stacks with existing RISK OFF badge in the same cell. §13 compliant — informational only, no gap direction/magnitude prediction. Design sources: v6.9 additions listed above. Head of UX & Design sign-off: 2026-07-10. Product Owner approved: 2026-07-10. Head of Specs Team confirmed. |
 | 2.0 | 2026-07-06 | v6.7 design gate — AI Trade Advisor Widget footer disclaimer light-theme fix (ST-02, BLG-FE-88): `text-slate-400` → `text-slate-600 dark:text-slate-400` (bare class had no light-mode companion; was 2.34–2.56:1 FAIL in light theme). Dark-theme value unchanged — already matches the canonical secondary-text token. Design source: `docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md` §4. Head of UX & Design sign-off: 2026-07-06. Head of Specs Team confirmed. |
 | 1.9 | 2026-07-02 | v6.4 design gate — AI Trade Advisor Widget footer disclaimer contrast fix (ST-10, BLG-UX-02): `text-slate-600` → `text-slate-400` (≈1.9:1 → ≥4.5:1 on `bg-slate-800`, WCAG AA); `data-testid="ai-chat-advisory-footer"` added to footer container to enable Playwright assertion (resolves coverage gap noted in QA assessment). Design source: `docs/specs/qa/ai_disclaimer_visibility_assessment.md` (finding C5, approved 2026-06-29). Head of UX & Design sign-off: 2026-07-02. Head of Specs Team confirmed. |
 | 1.8 | 2026-06-24 | v6.2 design gate: (ST-02) Trail Stop column added to Table View — displays `current_trailing_stop` alongside existing Initial Stop (renamed from "Stop"); breach badge "⚠ BREACH" (orange #EA580C) shown inline when `current_price ≤ current_trailing_stop`; Grid View adds Trail value and ⚠ icon. (ST-05) Alerts column added to Table View — shows "RISK OFF" badge (deep blue #1E40AF) when `risk_off_exit = true`; US/UK market isolation server-enforced. (ST-09) AI Trade Advisor Widget — fixed-position floating chat button (bottom-right); expands to 350×480px panel; display-only advisory; stateless per request; §13 compliant. Design sources: v6.2 additions listed above. Approved: Product Owner 2026-06-24. |
@@ -83,6 +85,7 @@ Displays each open position as a row with:
 - Actions:
   - **Exit** (opens exit modal)
   - **Trail Stop** (opens trail stop modal — see §Trail Stop Action; visible only for PROFITABLE/EXIT ZONE positions)
+  - **Recheck Compliance** *(v6.9 — ST-01; see §Compliance Recheck Panel)*
   - **View Journal** (opens position detail modal)
 
 ---
@@ -161,7 +164,8 @@ Cards show a summarized snapshot of each position including:
 - Stop level
 - Days held
 - Tags
-- Quick links to exit or view notes
+- Alert badges (Trail Stop breach, RISK OFF, Gap Risk — *v6.9 addition, see §Alerts Column*)
+- Quick links to exit, recheck compliance *(v6.9 — ST-01)*, or view notes
 
 Designed for readability and scannability.
 
@@ -290,6 +294,55 @@ On success: modal closes; position row updates; toast: "Stop updated to {atr_tra
 
 ---
 
+## Compliance Recheck Panel (v6.9 — ST-01 BLG-FEAT-64)
+
+**Design source:** docs/design/2026-07-10__release-v6.9/on-demand-compliance-recheck/ux_spec.md
+
+### Recheck Compliance Button
+
+- Placement: Actions column (Table View) / card footer (Grid View), after "Trail Stop", before "View Journal"
+- Label: "Recheck Compliance"
+- Style: secondary (outlined)
+- **Shown** for all open positions in Table View and Grid View
+- **Hidden** in Journal View (read/reflection surface — no live actions)
+- Loading state: inline spinner, button disabled during request
+
+### Compliance Recheck Panel (Modal)
+
+Opened by clicking "Recheck Compliance". Data source: `GET /positions/{id}/compliance-recheck`.
+
+**Modal header:** "Compliance Recheck — {TICKER}" with overall status badge (Pass / Warn / Fail — same palette as `PreEntryValidationPanel`).
+
+**Context line (static):** "Checked against current conditions, not entry-time."
+
+**Check list:** the same 5 SI-01 rules, labels, and pass/warn/fail iconography already canonical in `PreEntryValidationPanel` (`src/pages/TradePlan.js`), evaluated against current regime/signal/heat/sizing state rather than the entry-time snapshot:
+
+| Rule Key | Display Label |
+|----------|---------------|
+| `regime_gate` | Regime Gate |
+| `cash_constraint` | Cash Constraint |
+| `sector_concentration` | Sector Concentration |
+| `earnings_proximity` | Earnings Proximity |
+| `sizing_validity` | Sizing Validity |
+
+**Override acknowledgement:** checkbox "I acknowledge the advisory result" shown only when overall status is Warn or Fail — display-only, session-local, not persisted (no state change on the position).
+
+**States:**
+
+| State | Panel |
+|-------|-------|
+| Loading | Spinner in modal body, header shows ticker only |
+| Success | Full check list |
+| Error | "Recheck unavailable — try again" with retry button |
+
+**Dismiss:** ✕ button, click-outside, or Escape — no persisted state change; this is a point-in-time check only.
+
+**§13 constraint:** Re-application of the existing deterministic SI-01 rule set against current inputs — no new statistical model, scoring, or automated action. Does not replace or duplicate SI-02 (drift detection).
+
+**Accessibility:** Modal is keyboard-navigable with focus trap. Status badge and each check-item carry `aria-label` text equivalents — colour/icon is never the sole differentiator.
+
+---
+
 ## Paper Account Panel (v3.5 — ST-03 IT-06)
 
 **Design source:** docs/ux_specs/paper-trading/ux_spec.md
@@ -392,6 +445,32 @@ No alert: dash ("—").
 **Alert clearing:** When `risk_off_exit = false` (regime recovered), badge absent automatically. No manual dismiss.
 
 **§13 constraint:** Display-only. No automated exit triggered.
+
+### Gap Risk Badge (v6.9 — ST-02)
+
+**Design source:** docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md
+
+**Data source:** `gap_risk` object from `GET /positions` (new field; server-computed from DS-04 earnings calendar + historical OHLCV).
+
+Shown when `gap_risk.flagged = true` — trigger is either an earnings date before the position's next trading session, or a weekend hold flagged at Friday close:
+
+| Element | Spec |
+|---------|------|
+| Label | "GAP RISK" |
+| Background | `#D97706` (amber-600) |
+| Text | White, weight 500, 11px |
+| Shape | Rounded pill |
+| `aria-label` | "Gap risk flag: {reason}, average gap {value or insufficient history}" |
+
+**Stacking:** RISK OFF and GAP RISK badges are independent alert types and stack vertically in the same Alerts cell when both apply to a position — this realises the "future alert types" placeholder already noted in the v6.2 Alerts Column design.
+
+**Tooltip / expanded detail:** Hover or focus reveals earnings date and/or weekend-hold reason plus historical average gap magnitude for the ticker (`gap_risk.avg_gap_pct`, `gap_risk.event_count`), or "insufficient history" when `gap_risk.insufficient_history = true`. Tooltip content is also exposed via `aria-describedby` for keyboard/screen-reader access.
+
+**No alert:** dash ("—"), consistent with existing Alerts column convention.
+
+**Alert clearing:** Fully server-driven (earnings date passes, or Monday session opens for weekend holds). No manual dismiss.
+
+**§13 constraint:** Display-only. Surfaces a known calendar event and historical statistic — no prediction of gap direction or magnitude.
 
 ---
 
