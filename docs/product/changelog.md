@@ -3,9 +3,32 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-09 (post-ship closure 2026-07-08__release-v6.8)
+**Last Updated:** 2026-07-10 (post-ship closure 2026-07-10__release-v6.9)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v6.9 — On-Demand Compliance Recheck & Overnight Gap Risk Flag — 2026-07-10
+Cycle: 2026-07-10__release-v6.9
+Verified: Verified
+Verification report: claude/cycles/2026-07-10__release-v6.9/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | On-demand pre-entry (SI-01) compliance recheck for open positions — `GET /positions/{position_id}/compliance-recheck` re-applies the existing 5 SI-01 rule checks against current position state; `ComplianceRecheckModal.js` on Positions Table View Actions column and Position Card Grid View footer (BLG-FEAT-64, mandatory Product Value Alert pull-forward) | `docs/design/2026-07-10__release-v6.9/on-demand-compliance-recheck/ux_spec.md`; `docs/specs/frontend/pages/positions.md#Compliance Recheck Panel`; `docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id}/compliance-recheck` |
+| EPIC-02 | Overnight/weekend gap risk flag for open positions — `GET /positions/{position_id}/gap-risk` combines the earnings calendar with historical OHLCV gap statistics; new GAP RISK badge in a new Alerts table column (which also now correctly hosts the pre-existing RISK OFF badge, resolving a since-v6.2 documented-but-unbuilt gap) and near the ticker in Grid View (BLG-FEAT-65, mandatory Product Value Alert pull-forward) | `docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md`; `docs/specs/frontend/pages/positions.md#Gap Risk Badge`; `docs/specs/api_contracts/position_endpoints.md#GET /positions/{position_id}/gap-risk` |
+
+### Deviations accepted
+None — no deviations filed this sprint. Two pre-authorised implementation notes (not deviations) are recorded in `verification_report.md §4`: ST-02's dedicated gap-risk endpoint (pre-authorised by story notes) and ST-01's sector-concentration formula adaptation to exclude the rechecked position from its own baseline sum.
+
+### Tech backlog items shipped
+- [ST-01] [U] BLG-FEAT-64: On-demand pre-entry rule recheck for open positions — mandatory Product Value Alert pull-forward
+- [ST-02] [U] BLG-FEAT-65: Overnight/weekend gap risk flag for open positions — mandatory Product Value Alert pull-forward
+
+Sign-off: Product Owner — 2026-07-10
+QA sign-off: Director of Quality — 2026-07-10
 
 ---
 

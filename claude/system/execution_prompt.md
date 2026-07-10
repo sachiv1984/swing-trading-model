@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.55
-**Last Updated:** 2026-07-09
+**Version:** 3.56
+**Last Updated:** 2026-07-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -549,7 +549,7 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 
 3. Commit to the EPIC branch (format: see STEP 3 header schema).
 
-> **API performance baseline advisory (AUD-2026-06-22-006):** If this commit adds a new entry to `docs/reference/openapi.yaml`, also add a corresponding row to `docs/operations/api_performance_baseline.md` in the same commit. This is advisory (not a hard gate) — omission is caught at post-ship STEP 6 and filed as a BLG-OPS item. Applies to any story that adds a `## METHOD /path` heading to a file in `docs/specs/api_contracts/`.
+> **API performance baseline advisory (AUD-2026-06-22-006):** If this commit adds a new entry to `docs/reference/openapi.yaml`, also add a corresponding row to `docs/ops/api_performance_baseline.md` in the same commit. **Note (v6.9 post-ship closure correction):** this is enforced by a hard CI gate — "API Performance Baseline Drift Detection (ST-12)" in `.github/workflows/quality_gate.yml` — not merely an advisory; omission blocks the PR outright rather than being caught at post-ship STEP 6. Applies to any story that adds a `## METHOD /path` heading to a file in `docs/specs/api_contracts/`.
 
 4. Push to `exec/<cycle_id>/EPIC-xx`.
 4a. **Commit SHA record (LL-v4.8-EX-01):** Immediately after push, run `git rev-parse HEAD` to obtain the pushed commit SHA. Write it to `execution_state.json` for this ST item: `epics.<EPIC-xx>.stories.<ST-xx>.commit_sha`. For batch commits covering multiple stories, write the same SHA to all covered story entries. Do not defer this write to sprint close — an unrecorded SHA cannot be recovered if the branch advances before seal.

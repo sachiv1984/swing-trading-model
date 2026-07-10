@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-10 (roadmap rebalance 2026-07-10__scheduled — Last rebalance line updated, STEP 8.1 Option (b) recorded; prior: manage roadmap, post-ship closure 2026-07-08__release-v6.8 — RA:v6.8 retired to archive; leftover RA:v6.7 execution-notes block pruned; prior: v6.8 marked Complete)
+**Last Updated:** 2026-07-10 (manage roadmap, post-ship closure 2026-07-10__release-v6.9 — RA:v6.9 retired to archive; prior: v6.9 marked Complete; prior: roadmap rebalance 2026-07-10__scheduled — Last rebalance line updated, STEP 8.1 Option (b) recorded; prior: manage roadmap, post-ship closure 2026-07-08__release-v6.8 — RA:v6.8 retired to archive; leftover RA:v6.7 execution-notes block pruned; prior: v6.8 marked Complete)
 **Last rebalance:** 2026-07-10 (cycle 2026-07-10__scheduled — Standard-tier, CPS=N/A (0 active initiatives); no horizon movements (Arc 1/Arc 2 Next horizon fully complete; Arc 3–6 remainder items genuinely gated); 🔴 Product Value Alert (ratio=0.18, U=9/G=16/D=24/P=0 of 49, v6.4–v6.8 window — 2nd consecutive alert, worse than prior 0.26); mandatory pull-forward: `BLG-FEAT-64` (On-demand pre-entry rule recheck) named as anchor candidate for `plan release v6.9`, `BLG-FEAT-65` as secondary; Skill-Silo Alert persists (rolling-3-cycle avg=78.2%, single-reading worsening after 2 consecutive improvements); idea intake IW-20260710-01 (44 submissions, 22 agents; 1 idea carried, incremented to Parked-cycle-2): 0 Advancing, 3 Parked, 2 Rejected, 39 Promoted-Backlog; DL-063; Backlog Accessibility Warning remains CLEARED (A=38.8%, 209 active items pre-write); STEP 8.0: 0 fast-track items; STEP 8.1: PO chose Option (b) — Now horizon intentionally empty, v6.9 scoping deferred to `plan release v6.9`; STEP 11.4 meta-review conducted (due at 3 cycles) — `shared_standards.md` §9.1 version/state header cross-check patch applied)
 
 > ⚠️ **Standing Notice:** This document records product intent and prioritisation thinking. All implementation detail (formulas, schemas, endpoint paths) is illustrative and indicative only. Before any feature moves to implementation, the relevant canonical specifications must be authored or updated by the appropriate domain owner. This document must not be cited as canonical intent.
@@ -10,18 +10,10 @@
 
 ## 1. Current Version
 
-**v6.8** — Production Correctness, Value Pull-Forward & Debt Clearance — ✅ Complete — Shipped 2026-07-09 — cycle: 2026-07-08__release-v6.8
-**Next planned release:** v6.9 — scope TBD, deferred to `plan release v6.9` (STEP 8.1 Option (b), roadmap rebalance 2026-07-10__scheduled, DL-063)
+**v6.9** — On-Demand Compliance Recheck & Overnight Gap Risk Flag — ✅ Complete — Shipped 2026-07-10 — cycle: 2026-07-10__release-v6.9
+**Next planned release:** [TBD] — scope not yet determined
 
-<!-- roadmap-annotation-marker: RA:v6.9:2026-07-10__release-v6.9 -->
-
-**Execution notes (added by Release Planning Engine):**
-- Cycle: 2026-07-10__release-v6.9
-- Plan published: 2026-07-10
-- Cycle folder: claude/cycles/2026-07-10__release-v6.9/
-- Backlog slice: claude/cycles/2026-07-10__release-v6.9/stage4_backlog_slice.md
-- Status at annotation: Committed
-- Scope: EPIC-01 (`BLG-FEAT-64`), EPIC-02 (`BLG-FEAT-65`) — both named mandatory Product Value Alert pull-forwards
+*RA:v6.9 retired — see roadmap_archive.md 2026-07-10 (post-ship closure 2026-07-10__release-v6.9).*
 
 *RA:v6.8 retired — see roadmap_archive.md 2026-07-09 (post-ship closure 2026-07-08__release-v6.8).*
 
@@ -508,6 +500,7 @@ When evaluating new features:
 |**v6.6** ✅  |UX & QA Debt Clearance|EPIC-01: systematic app-wide WCAG-AA contrast audit (764 instances, 102 files) — findings-only, Design Not Applicable, 3 follow-up items filed BLG-FE-87 P1/BLG-FE-88 P2/BLG-FE-89 P3 (BLG-FE-82); Red Flag Journal filter state (event type, ticker, since-date) persisted across reload via versioned localStorage envelope with graceful stale-state recovery (BLG-FE-40). EPIC-02: all 10 true backlog-ID collisions renumbered with traceability notes, 0 IDs reused, backlog_management_prompt.md STEP 4.5 scan fixed (BLG-QA-72); _DB_STUB_FUNCTIONS manual-sync list replaced with AST-scan derivation, CLAUDE.md rule retired (BLG-QA-73). 4/4 stories. Verified. Zero deviations. — ✅ Complete — Shipped 2026-07-06 — cycle: 2026-07-04__release-v6.6|
 |**v6.7** ✅  |Contrast Remediation & Governance Hardening|EPIC-01: dark-theme secondary-text contrast fix (226+4 instances, BLG-FE-87); light-theme companion pairing (697 instances, BLG-FE-88); shared secondary-text design token locked into `design_system.md` (BLG-FE-89). EPIC-02: `.claude/skills/` write-scope authority + commit-check patch closing 3-cycle-carried escalation (BLG-GOV-167); structural guard extended to 4 append-only governance logs (BLG-GOV-168); `audit.py` same-session commit SLA (BLG-GOV-169); Delivery Verification STEP 6 status-line documentation (BLG-GOV-170). 7/7 stories. Verified. Zero deviations. — ✅ Complete — Shipped 2026-07-08 — cycle: 2026-07-06__release-v6.7|
 |**v6.8** ✅  |Production Correctness, Value Pull-Forward & Debt Clearance|EPIC-01: `trade_plans.position_id` linkage bug forward-fixed via backend auto-link (BLG-BE-46); SQL column allowlist defense in `database.update_signal()` (BLG-SEC-08); signal anomaly review, PASS (BLG-SEC-07); application `X-API-Key` formally registered (BLG-OPS-99). EPIC-02: trade tagging + tag-based performance filtering (BLG-FEAT-52); SI-02 gate visibility indicator on Reports page (BLG-FEAT-71) — both mandatory Product Value Alert pull-forwards. EPIC-03: 11 spec/QA/governance debt items closed — dashboard hierarchy review, R-multiple FX spec, trailing stop specs, 11 dark Playwright specs fixed (2 production bugs found: unmounted Toaster, Arc5 heading), CI OpenAPI drift gate, Watchlist.js ESLint refactor, system threat model. 17/17 stories. Verified. Zero deviations. — ✅ Complete — Shipped 2026-07-09 — cycle: 2026-07-08__release-v6.8|
+|**v6.9** ✅  |On-Demand Compliance Recheck & Overnight Gap Risk Flag|EPIC-01: `GET /positions/{position_id}/compliance-recheck` re-applies the 5 SI-01 rule checks against current position state; `ComplianceRecheckModal.js` on Positions Table/Grid views (BLG-FEAT-64, mandatory Product Value Alert pull-forward, primary anchor). EPIC-02: `GET /positions/{position_id}/gap-risk` combines earnings calendar + historical OHLCV gap statistics; new Alerts table column hosting a new GAP RISK badge plus the relocated pre-existing RISK OFF badge, resolving a since-v6.2 documented-but-unbuilt gap (BLG-FEAT-65, mandatory Product Value Alert pull-forward, secondary anchor). 2/2 stories. Verified. Zero deviations. — ✅ Complete — Shipped 2026-07-10 — cycle: 2026-07-10__release-v6.9|
 |**v4.0+**    |Arc 4: Post-Trade Intelligence (remainder)                            |PO-02 journal pattern recognition, PO-03 behavioural error taxonomy, PO-04 reflection/outcome correlation — 📋 Planned                    |
 |**v4.0+**    |Arc 5: Strategy Integrity (remainder)                                 |SI-02 behavioural drift detection, SI-04 strategy version comparison, SI-05 weekly digest — 📋 Planned                                    |
 |**v4.0+**    |Arc 6: Performance Science                                            |Edge analysis, regime-conditional performance, Monte Carlo, strategy decay detection — 📋 Horizon                                          |

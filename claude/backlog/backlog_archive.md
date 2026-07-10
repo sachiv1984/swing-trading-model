@@ -1,7 +1,7 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-09 (groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived)
+**Last Updated:** 2026-07-10 (groom backlog post-ship closure 2026-07-10__release-v6.9 — 2 items archived: BLG-FEAT-64, BLG-FEAT-65)
 
 # Backlog Archive — Momentum Trading Assistant
 
@@ -9742,3 +9742,68 @@ No formal threat model exists. The system handles high-sensitivity financial dat
 - The system now has a trustworthy path forward without touching historical data: `BLG-BE-46`'s forward-fix links all newly-created `trade_plans` correctly, and `BLG-FEAT-71`'s SI-02 Gate Status section on the Reports page shows the live, honest gate state (currently 0/20 linked, correctly reflecting that only forward-fixed data counts). That transparency is the more valuable investment than chasing an unreliable historical reconciliation.
 
 No follow-up story required. Item closed.
+
+---
+
+### BLG-FEAT-64 — On-demand pre-entry rule recheck for open positions
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-10
+**Shipped in:** v6.9 (cycle: 2026-07-10__release-v6.9)
+**Evidence:** docs/product/changelog.md#v6.9; claude/cycles/2026-07-10__release-v6.9/verification_report.md
+
+### BLG-FEAT-64 — On-demand pre-entry rule recheck for open positions
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Risk Management
+**Owner:** Head of Engineering; Strategy Rules & System Intent Owner
+**Source:** Product feature brainstorming session — 2026-07-08
+**Effort:** M (~2–3 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-10 — cycle: 2026-07-10__release-v6.9 (ST-01)
+
+**Problem**
+SI-01 (Pre-Entry Rule Validation Gate) validates the 5 strategy checks only at entry time. Once a position is open, there is no way to see whether it would still pass those same checks against current market/regime conditions. SI-02 (Behavioural Drift Detection) would eventually provide an aggregate view, but it has been gate-blocked (20 closed trades required) for multiple consecutive cycles with no resolution in sight. This leaves open positions with no individual-trade drift visibility until SI-02 clears, if it ever does.
+
+**Scope**
+- New endpoint: `GET /positions/{position_id}/compliance-recheck` — re-applies the existing SI-01 rule set (`strategy_rules.md` §4.2, 5 checks) against the position's current state (current regime, current signal conditions, current heat/sizing) rather than the entry-time snapshot
+- Frontend: "Recheck compliance" action on the Positions page / position detail view, rendering pass/fail per rule using the same visual pattern as `PreEntryValidationPanel`
+- Pure re-application of SI-01's existing deterministic rules — no new statistical model or scoring
+- Explicitly does not replace or duplicate SI-02 — this is a manual, on-demand, single-position check; SI-02 remains the aggregate/rolling drift analysis when it eventually ships
+
+**Acceptance Criteria**
+- AC-01: `GET /positions/{position_id}/compliance-recheck` returns pass/fail for each of the 5 SI-01 rules evaluated against current conditions
+- AC-02: Frontend action available on open positions; renders using the same visual pattern as `PreEntryValidationPanel` (pass/fail/override-acknowledged states)
+- AC-03: Recheck is on-demand only (no automatic polling/background job) — user-triggered
+- AC-04: §13 sign-off confirming re-running existing deterministic rules on demand introduces no new automation/prediction surface (expected to be a fast pass given SI-01 precedent)
+
+---
+
+### BLG-FEAT-65 — Overnight/weekend gap risk flag for open positions
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-10
+**Shipped in:** v6.9 (cycle: 2026-07-10__release-v6.9)
+**Evidence:** docs/product/changelog.md#v6.9; claude/cycles/2026-07-10__release-v6.9/verification_report.md
+
+### BLG-FEAT-65 — Overnight/weekend gap risk flag for open positions
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Risk Management
+**Owner:** Head of UX & Design; Head of Engineering
+**Source:** Product feature brainstorming session — 2026-07-08
+**Effort:** M (~2–3 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-10 — cycle: 2026-07-10__release-v6.9 (ST-02)
+
+**Problem**
+Swing positions are held overnight and over weekends, exposed to gap risk from earnings releases or major macro events. The system already has an earnings calendar (DS-04, shipped v3.1) and historical OHLCV data, but nothing surfaces the two together as a proactive risk flag on currently open positions. Users must manually cross-reference the earnings calendar against their open positions to know if they are exposed.
+
+**Scope**
+- Backend: for each open position, check the existing earnings calendar data source for an earnings date falling before the next trading session; compute historical overnight/weekend gap magnitude for that ticker (e.g. average absolute overnight move over the trailing N earnings events, using existing OHLCV history)
+- Frontend: risk flag badge on the Positions page for any position with an upcoming earnings date or a Friday-close weekend hold, showing the historical average gap magnitude as context
+- Deterministic only — flags a known calendar event plus historical statistics; makes no directional prediction about the gap
+
+**Acceptance Criteria**
+- AC-01: Position flagged when an earnings date falls before the next trading session
+- AC-02: Weekend-hold positions flagged at Friday close
+- AC-03: Flag displays historical average overnight/weekend gap magnitude for that ticker (or "insufficient history" if fewer than N historical events)
+- AC-04: No prediction of gap direction or magnitude — informational only, per §13 boundary

@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-09 (43 rows archived total — 3 Promoted-Added at post-ship closure 2026-07-08__release-v6.8; +40 Promoted-Backlog via PMO Lead/Head of Specs Team direct action resolving that cycle's outstanding advisory)
+**Last Updated:** 2026-07-10 (41 rows archived — post-ship closure 2026-07-10__release-v6.9: 39 Promoted-Backlog, 2 Rejected (not strong, confirmed absent from rejected_but_strong.md); prior — 43 rows archived total — 3 Promoted-Added at post-ship closure 2026-07-08__release-v6.8; +40 Promoted-Backlog via PMO Lead/Head of Specs Team direct action resolving that cycle's outstanding advisory)
 
 # Ideas Register Archive — Momentum Trading Assistant
 
@@ -802,3 +802,53 @@ Permanent record of terminal ideas rows retired from `claude/ideas/ideas_registe
 | IDEA-qa-lead-20260708-02 | Add axe-core accessibility scan to CI as a standalone automated check (independent of Arc 5 completion gate) | QA Lead | IW-20260708-01 | 2026-07-08 | Promoted-Backlog | — | — | Backlog (gate-conditional) | — |
 | IDEA-qa-testing-20260708-01 | Publish backend test coverage report to PR comments for regression visibility | QA & Testing Owner | IW-20260708-01 | 2026-07-08 | Promoted-Backlog | — | — | Backlog (gate-conditional) | — |
 | IDEA-qa-testing-20260708-02 | Contract test suite verifying openapi.yaml matches actual route behaviour (schema drift beyond heading-presence check) | QA & Testing Owner | IW-20260708-01 | 2026-07-08 | Promoted-Backlog | — | — | Backlog (gate-conditional) | — |
+
+---
+
+## Archived 2026-07-10 (ideas_housekeeping — post-ship closure 2026-07-10__release-v6.9)
+
+*Terminal classification: Promoted-Backlog (idea lifecycle complete; tracked from here via its backlog item) and Rejected (not strong) — confirmed absent from `rejected_but_strong.md`.*
+
+| Idea ID | Title | Submitter | Window | Submitted At | Status | Park Count | Park Rationale | Step 4 | Step 5 |
+|---------|-------|-----------|--------|--------------|--------|------------|----------------|--------|--------|
+| IDEA-product-owner-20260710-02 | Disposition BLG-GOV-105 duplicate-of-BLG-GOV-45 flag | Product Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-GOV-202 | Backlog (gate-conditional) | — |
+| IDEA-head-of-specs-20260710-01 | Spec debt aging report | Head of Specs Team | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-GOV-191 | Backlog (gate-conditional) | — |
+| IDEA-head-of-specs-20260710-02 | Governance prompt cross-reference sweep cadence | Head of Specs Team | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-GOV-192 | Backlog (gate-conditional) | — |
+| IDEA-pmo-lead-20260710-01 | Escalation SLA breach dry-run test | PMO Lead | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-GOV-193 | Backlog (gate-conditional) | — |
+| IDEA-pmo-lead-20260710-02 | Cycle folder retention policy review | PMO Lead | IW-20260710-01 | 2026-07-10 | Rejected | — | — | Reject | — |
+| IDEA-director-of-quality-20260710-01 | Playwright flake tracking log | Director of Quality | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-QA-87 | Backlog (gate-conditional) | — |
+| IDEA-director-of-quality-20260710-02 | DoQ sign-off template freshness check | Director of Quality | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-QA-88 | Backlog (gate-conditional) | — |
+| IDEA-strategy-owner-20260710-01 | §13 boundary language clarity pass — AI journal summarisation | Strategy Rules & System Intent Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-GOV-194 | Backlog (gate-conditional) | — |
+| IDEA-strategy-owner-20260710-02 | Strategic exclusions review cadence | Strategy Rules & System Intent Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-GOV-195 | Backlog (gate-conditional) | — |
+| IDEA-finops-20260710-02 | Render hosting tier review | FinOps & Resource Architect | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-OPS-101 | Backlog (gate-conditional) | — |
+| IDEA-infra-ops-20260710-01 | Staging smoke-test automation | Infrastructure & Operations Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-OPS-102 | Backlog (gate-conditional) | — |
+| IDEA-infra-ops-20260710-02 | Production database backup/restore drill | Infrastructure & Operations Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-OPS-103 | Backlog (gate-conditional) | — |
+| IDEA-challenger-20260710-01 | Sunset review for Priority 3 — Deferred initiatives | Challenger | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-GOV-196 | Backlog (gate-conditional) | — |
+| IDEA-ai-compliance-20260710-01 | AI journal generation audit trail | AI Compliance & Governance Officer | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-SEC-14 | Backlog (gate-conditional) | — |
+| IDEA-ai-compliance-20260710-02 | Quarterly AI output sampling review | AI Compliance & Governance Officer | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-GOV-197 | Backlog (gate-conditional) | — |
+| IDEA-api-contracts-20260710-01 | OpenAPI response examples for Arc 5 endpoints | API Contracts & Documentation Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-SPEC-74 | Backlog (gate-conditional) | — |
+| IDEA-api-contracts-20260710-02 | Contract drift dashboard | API Contracts & Documentation Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-OPS-104 | Backlog (gate-conditional) | — |
+| IDEA-backend-engineering-20260710-01 | Standardise pagination pattern across list endpoints | Backend Engineering Patterns Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-BE-53 | Backlog (gate-conditional) | — |
+| IDEA-backend-engineering-20260710-02 | Database connection pool tuning review | Backend Engineering Patterns Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-BE-54 | Backlog (gate-conditional) | — |
+| IDEA-base44-frontend-20260710-01 | Reusable empty-state component spec for Base44 prompts | Base44 Frontend Prompt Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-FE-99 | Backlog (gate-conditional) | — |
+| IDEA-base44-frontend-20260710-02 | Base44 prompt versioning convention | Base44 Frontend Prompt Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-GOV-198 | Backlog (gate-conditional) | — |
+| IDEA-cybersecurity-20260710-01 | Recurring dependency vulnerability re-scan cadence | Cybersecurity & Trust Lead | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-SEC-15 | Backlog (gate-conditional) | — |
+| IDEA-cybersecurity-20260710-02 | API key rotation runbook | Cybersecurity & Trust Lead | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-SEC-16 | Backlog (gate-conditional) | — |
+| IDEA-data-model-20260710-01 | trade_plans.position_id historical backfill design | Data Model & Domain Schema Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-BE-55 | Backlog (gate-conditional) | — |
+| IDEA-data-model-20260710-02 | Migration block consolidation review | Data Model & Domain Schema Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-SPEC-75 | Backlog (gate-conditional) | — |
+| IDEA-director-of-hr-20260710-01 | Solo-developer sustainable-pace check | Director of HR | IW-20260710-01 | 2026-07-10 | Rejected | — | — | Reject | — |
+| IDEA-director-of-hr-20260710-02 | Role charter freshness pass | Director of HR | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-GOV-199 | Backlog (gate-conditional) | — |
+| IDEA-financial-reporting-20260710-01 | R-multiple calculation regression test | Financial Reporting & Records Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-QA-89 | Backlog (gate-conditional) | — |
+| IDEA-financial-reporting-20260710-02 | Trade tagging taxonomy documentation | Financial Reporting & Records Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-SPEC-76 | Backlog (gate-conditional) | — |
+| IDEA-frontend-specs-20260710-01 | Dark/light theme contrast audit follow-up | Frontend Specifications & UX Documentation Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-FE-100 | Backlog (gate-conditional) | — |
+| IDEA-frontend-specs-20260710-02 | Gate-status indicator reusable component pattern documentation | Frontend Specifications & UX Documentation Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-SPEC-77 | Backlog (gate-conditional) | — |
+| IDEA-head-of-engineering-20260710-01 | CI pipeline runtime audit | Head of Engineering | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-OPS-105 | Backlog (gate-conditional) | — |
+| IDEA-head-of-engineering-20260710-02 | Backend service-layer boundary review | Head of Engineering | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-BE-56 | Backlog (gate-conditional) | — |
+| IDEA-head-of-ux-20260710-01 | Reports page information hierarchy review | Head of UX & Design | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-FE-101 | Backlog (gate-conditional) | — |
+| IDEA-head-of-ux-20260710-02 | Watchlist.js post-refactor visual QA | Head of UX & Design | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-QA-90 | Backlog (gate-conditional) | — |
+| IDEA-metrics-20260710-01 | Product Value Ratio historical trend chart | Metrics Definitions & Analytics Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-FEAT-72 | Backlog (gate-conditional) | — |
+| IDEA-metrics-20260710-02 | Skill-Silo rolling-average automation | Metrics Definitions & Analytics Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-GOV-200 | Backlog (gate-conditional) | — |
+| IDEA-qa-lead-20260710-01 | Cross-browser Playwright matrix evaluation | QA Lead | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-QA-91 | Backlog (gate-conditional) | — |
+| IDEA-qa-lead-20260710-02 | QA evidence log template consolidation | QA Lead | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-GOV-201 | Backlog (gate-conditional) | — |
+| IDEA-qa-testing-20260710-01 | Backend test suite runtime baseline | QA & Testing Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-QA-92 | Backlog (gate-conditional) | — |
+| IDEA-qa-testing-20260710-02 | conftest.py AST-scan coverage confirmation | QA & Testing Owner | IW-20260710-01 | 2026-07-10 | Promoted-Backlog | — | No gate — ungated, added directly to backlog as BLG-QA-93 | Backlog (gate-conditional) | — |

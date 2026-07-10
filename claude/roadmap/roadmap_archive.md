@@ -1,13 +1,43 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-09 (post-ship closure 2026-07-08__release-v6.8 — RA:v6.8 retired; leftover RA:v6.7 execution-notes block pruned from current_roadmap.md)
+**Last Updated:** 2026-07-10 (post-ship closure 2026-07-10__release-v6.9 — RA:v6.9 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v6.9 — On-Demand Compliance Recheck & Overnight Gap Risk Flag
+
+**Original roadmap location:** §1 Current Version
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-07-10
+**Shipped version:** v6.9
+**Cycle reference:** 2026-07-10__release-v6.9
+**Verification report:** claude/cycles/2026-07-10__release-v6.9/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-07-10
+
+### Original Roadmap Entry
+
+**v6.8** — Production Correctness, Value Pull-Forward & Debt Clearance — ✅ Complete — Shipped 2026-07-09 — cycle: 2026-07-08__release-v6.8
+**Next planned release:** v6.9 — scope TBD, deferred to `plan release v6.9` (STEP 8.1 Option (b), roadmap rebalance 2026-07-10__scheduled, DL-063)
+
+<!-- roadmap-annotation-marker: RA:v6.9:2026-07-10__release-v6.9 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-10__release-v6.9
+- Plan published: 2026-07-10
+- Cycle folder: claude/cycles/2026-07-10__release-v6.9/
+- Backlog slice: claude/cycles/2026-07-10__release-v6.9/stage4_backlog_slice.md
+- Status at annotation: Committed
+- Scope: EPIC-01 (`BLG-FEAT-64`), EPIC-02 (`BLG-FEAT-65`) — both named mandatory Product Value Alert pull-forwards
+
+**Verified:** 2026-07-10 (post-ship closure 2026-07-10__release-v6.9) — verification report: `claude/cycles/2026-07-10__release-v6.9/verification_report.md`. Full v6.9 scope (2 stories, 2 EPICs — on-demand SI-01 compliance recheck + overnight/weekend gap risk flag, both mandatory Product Value Alert pull-forwards) delivered; see `docs/product/changelog.md#v6.9`.
 
 ---
 
