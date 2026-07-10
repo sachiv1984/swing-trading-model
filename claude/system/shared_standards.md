@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.13
+**Version:** 3.14
 **Last Updated:** 2026-07-10
 
 # Shared Standards — All Governed Routines
@@ -905,6 +905,10 @@ This left a gap: a deferred patch to `.claude/skills/commit-check/SKILL.md` (add
 **Compliance rule:** Any commit that edits a file under `.claude/skills/` must be authored or reviewed by the Head of Specs Team (directly, or via delegated sprint-story execution under this provision). No other role may modify `.claude/skills/` content.
 
 This closes the 3-cycle carry-forward escalation `ESC-CLOSE-20260706-01`.
+
+**`CLAUDE.md` write authority (companion provision, added AUD-2026-07-10-001):** No governed routine's declared write scope currently includes `CLAUDE.md` itself — confirmed absent from `roadmap_prompt.md`'s write-scope text. This has left a structurally identical patch (a `CLAUDE.md` §6 Governance File Edit Checklist amendment) carried unresolved across 5 consecutive scheduled-rebalance cycles (2026-07-01 through 2026-07-10) for the same reason `.claude/skills/` was stuck before this section resolved it. The **Head of Specs Team** holds standing write authority over `CLAUDE.md`, independent of any single engine's per-run Write Scope, exercisable directly or via delegated sprint-story execution. This is not a routine invocation and does not require a `[GOVERNANCE]`-prefixed commit on its own, but any such edit must still comply with CLAUDE.md's own §6 Governance File Edit Checklist for any governance file it touches as a consequence, and should be recorded in the relevant cycle's `lessons_learnt` record once applied.
+
+This closes the 5-cycle carry-forward `CLAUDE.md` §6 patch escalation, first raised at `2026-07-01__scheduled`.
 
 ---
 

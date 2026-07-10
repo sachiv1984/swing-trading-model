@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.90
+**Version:** 4.91
 **Last Updated:** 2026-07-10
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -1454,7 +1454,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.90 |
+| Version | 4.91 |
 | Last Updated | 2026-07-10 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
@@ -1473,7 +1473,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.1 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.17 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.13 |
+| Shared Standards | `claude/system/shared_standards.md` v3.14 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.9 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.91 | 2026-07-10 | **Lifecycle audit AUD-2026-07-10, finding AUD-2026-07-10-001 applied — shared_standards.md v3.13→v3.14: new companion `CLAUDE.md` write authority provision added directly after §17.** §14 Shared Standards v3.13→v3.14. §14 Version 4.90→4.91/2026-07-10. Change: no governed routine's write scope included `CLAUDE.md` itself (confirmed absent from `roadmap_prompt.md`'s write-scope text), leaving a `CLAUDE.md` §6 Governance File Edit Checklist amendment carried unresolved across 5 consecutive scheduled-rebalance cycles (2026-07-01 through 2026-07-10) — the same shape as the `.claude/skills/` gap §17 already resolved. `shared_standards.md` §17 now also grants the Head of Specs Team standing write authority over `CLAUDE.md`, independent of any single engine's per-run Write Scope. Closes the 5-cycle carry-forward escalation. Authority: Head of Specs Team (audit AUD-2026-07-10 patch application, 2026-07-10). |
 | 4.90 | 2026-07-10 | **Post-ship closure `2026-07-10__release-v6.9` STEP 8 — execution_prompt.md v3.55→v3.56.** §8 source prompt header v3.55→v3.56; §14 Execution Engine Source v3.55→v3.56. Change: STEP 3.1.A API performance baseline advisory (AUD-2026-06-22-006) path corrected `docs/operations/api_performance_baseline.md` → `docs/ops/api_performance_baseline.md` (the path that actually exists); reclassified from "advisory (not a hard gate)" since `quality_gate.yml`'s "API Performance Baseline Drift Detection (ST-12)" already hard-blocks the PR on this omission — confirmed this cycle when both EPIC-01 and EPIC-02 PRs failed CI on first push for exactly this reason. This entry backfills a row missed when the header was bumped without updating this table (found and corrected by lifecycle audit AUD-2026-07-10, AUD-2026-07-10-002 — §14 self-row and this table's top row were both left at 4.89 despite the header already reading 4.90). Authority: Head of Specs Team (post-ship closure 2026-07-10__release-v6.9, STEP 8; table backfill via AUD-2026-07-10-002). |
 | 4.89 | 2026-07-10 | **Roadmap rebalance `2026-07-10__scheduled` — 1 due deferred patch resolved + 1 meta-review patch applied.** §6 source prompt header v8.5→v8.6. §14 Roadmap Engine Source v8.5→v8.6; Shared Standards v3.12→v3.13. §14 Version 4.88→4.89/2026-07-10. Changes: (1) `roadmap_prompt.md` STEP 6 — overwrite-verification instruction added (read-before-write + re-read-after-write check), resolving the deferred patch from `2026-07-08__scheduled` Friction Item 1 (target: "next `run roadmap` invocation"). (2) `shared_standards.md` §9 — new §9.1 version/state header cross-check note added via STEP 11.4 meta-review (3-cycle review, due at this cycle): generalises the recurring Type A Governance Drift pattern (`scored_initiatives.md` accumulation, `OPERATIONAL_GUIDE.md` header-vs-table lag ×4, backlog gate-field-label synonym) into one reusable pre-write check. The companion deferred patch to `CLAUDE.md` §6 (same root pattern, outside this engine's write scope) remains carried forward unchanged — no session with direct `CLAUDE.md` write authorisation has occurred yet. Authority: Head of Specs Team (roadmap rebalance `2026-07-10__scheduled`, STEP 11/11.4). |
 | 4.88 | 2026-07-09 | **PMO Lead / Head of Specs Team direct action — resolved 5 outstanding items from `2026-07-08__release-v6.8` post-ship closure (3 recorded Outstanding Actions + 2 Advisory Summary findings).** §6 source prompt header v8.4→v8.5. §6M source prompts (`ideas_housekeeping_prompt.md`) v1.0→v1.1. §8 source prompt header v3.54→v3.55. §9 source prompt header v3.3→v3.4. §13 Artefact Register Roadmap Rebalance Prompt row v8.4→v8.5. §14 Roadmap Engine Source v8.4→v8.5; Execution Engine Source v3.54→v3.55; Verification Engine Source v3.3→v3.4; Ideas Housekeeping Engine v1.0→v1.1; Shared Standards v3.11→v3.12. §14 Version 4.87→4.88/2026-07-09. Changes: (1) `execution_prompt.md` STEP 4 — new step 3a0 checks out `main` before the 3a/3b state-sync and governance-file commits, which now push to `main` directly instead of the just-merged EPIC branch; closes the LL-v6.8-P3-01 root cause (Phase 3 friction item 2, v6.8). (2) `execution_prompt.md` STEP 3.1.A — new Case E + structured `spec_reference_not_applicable`/`spec_reference_not_applicable_reason` fields (also added to `execution_state_schema.json`), replacing the undocumented `notes: "no prior spec applicable"` convention; `delivery_verification_prompt.md` STEP 1.3 updated to check the structured field first, falling back to the legacy notes-string for pre-existing records (v6.8 Phase 4 friction item). (3) `shared_standards.md` §16.5 — formalised `Promoted-Backlog` as a canonical `ideas_register.md` status (found in continuous multi-cycle use by `roadmap_prompt.md` but absent from the enum); `ideas_housekeeping_prompt.md` §6.1 updated to classify it as archive-eligible; `roadmap_prompt.md` STEP -1.6 exclusion-list prose corrected to match. 40 previously-held-back `Promoted-Backlog` rows in `ideas_register.md` archived as a result. (4) `claude/backlog/backlog.md` — filed `BLG-BE-52` (LP-12: formal disposition for `BLG-BE-46`'s 11 permanently-unlinked historical `trade_plans` rows, which had no tracking item). (5) `claude/ideas/rejected_but_strong.md` — `IDEA-cybersecurity-20260304-01` (System Threat Model) marked Resolved; delivered as `BLG-OPS-71`/ST-17 in v6.8. Authority: PMO Lead + Head of Specs Team (direct action, user-invoked, 2026-07-09). |
