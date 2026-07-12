@@ -5726,6 +5726,32 @@ Product Owner reviews both entries and either closes `BLG-GOV-105` as a confirme
 
 ---
 
+<!-- release-plan-marker: RP:v7.0:2026-07-12__release-v7.0 -->
+
+## Release Slice v7.0 (in progress)
+
+*Cycle: `2026-07-12__release-v7.0`. Authoritative backlog slice: `claude/cycles/2026-07-12__release-v7.0/stage4_backlog_slice.md`. Ephemeral — removed at next `groom backlog` run after this cycle closes.*
+
+| ST-ID | Backlog Item | EPIC | Status |
+|-------|--------------|------|--------|
+| ST-01 | BLG-SPEC-80 | EPIC-01 | in_scope |
+| ST-02 | BLG-FE-102 | EPIC-01 | in_scope |
+| ST-03 | BLG-FE-97 | EPIC-01 | in_scope |
+| ST-04 | BLG-QA-95 | EPIC-01 | in_scope |
+| ST-05 | BLG-FE-104 | EPIC-01 | in_scope |
+| ST-06 | BLG-SPEC-71 | EPIC-02 | in_scope |
+| ST-07 | BLG-BE-50 | EPIC-02 | in_scope |
+| ST-08 | BLG-FE-95 | EPIC-02 | in_scope |
+| ST-09 | BLG-FE-96 | EPIC-02 | in_scope |
+| ST-10 | BLG-SPEC-73 | EPIC-02 | in_scope |
+| ST-11 | BLG-BE-51 | EPIC-02 | in_scope |
+| ST-12 | BLG-BE-38 | EPIC-02 | in_scope |
+| ST-13 | BLG-FEAT-69 | EPIC-03 | in_scope |
+| ST-14 | BLG-FEAT-70 | EPIC-03 | in_scope |
+| ST-15 | BLG-FEAT-68 | EPIC-03 | in_scope |
+
+---
+
 ## Roadmap Rebalance 2026-07-12__scheduled — New Items (IW-20260712-01 disposition)
 
 *37 items added via idea intake IW-20260712-01 STEP 4 disposition (Backlog/gate-conditional-or-actionable-now). Source ideas and full rationale: `claude/ideas/ideas_register.md` (2026-07-12 rows), `claude/ideas/window_summary_IW-20260712-01.md`. DL-064.*

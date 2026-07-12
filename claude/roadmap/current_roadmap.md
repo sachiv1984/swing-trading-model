@@ -11,7 +11,16 @@
 ## 1. Current Version
 
 **v6.9** — On-Demand Compliance Recheck & Overnight Gap Risk Flag — ✅ Complete — Shipped 2026-07-10 — cycle: 2026-07-10__release-v6.9
-**Next planned release:** [TBD] — scope not yet determined
+**Next planned release:** v7.0 — Positions Grid View Parity, Carryover Fixes & Feature Enhancements — Planning — cycle: 2026-07-12__release-v7.0
+
+<!-- roadmap-annotation-marker: RA:v7.0:2026-07-12__release-v7.0 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-12__release-v7.0
+- Plan published: 2026-07-12
+- Cycle folder: claude/cycles/2026-07-12__release-v7.0/
+- Backlog slice: claude/cycles/2026-07-12__release-v7.0/stage4_backlog_slice.md
+- Status at annotation: Committed
 
 *RA:v6.9 retired — see roadmap_archive.md 2026-07-10 (post-ship closure 2026-07-10__release-v6.9).*
 

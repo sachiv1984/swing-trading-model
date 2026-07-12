@@ -1,0 +1,21 @@
+{
+  "cycle_id": "2026-07-12__release-v7.0",
+  "release": "v7.0",
+  "issues": [
+    {"st_id": "ST-01", "backlog_id": "BLG-SPEC-80", "epic": "EPIC-01", "title": "positions.md Grid View badge placement subsection", "priority": "P2", "effort": "S"},
+    {"st_id": "ST-02", "backlog_id": "BLG-FE-102", "epic": "EPIC-01", "title": "Positions Grid View missing RISK OFF badge", "priority": "P2", "effort": "S"},
+    {"st_id": "ST-03", "backlog_id": "BLG-FE-97", "epic": "EPIC-01", "title": "Positions Grid View missing trailing-stop value and breach indicator", "priority": "P2", "effort": "S"},
+    {"st_id": "ST-04", "backlog_id": "BLG-QA-95", "epic": "EPIC-01", "title": "Positions Grid View badge parity Playwright coverage", "priority": "P2", "effort": "S"},
+    {"st_id": "ST-05", "backlog_id": "BLG-FE-104", "epic": "EPIC-01", "title": "GAP RISK / RISK OFF combined-badge visual differentiation review", "priority": "P2", "effort": "S"},
+    {"st_id": "ST-06", "backlog_id": "BLG-SPEC-71", "epic": "EPIC-02", "title": "Reports.js Tax Year P&L tab spec reconciliation", "priority": "P2", "effort": "S"},
+    {"st_id": "ST-07", "backlog_id": "BLG-BE-50", "epic": "EPIC-02", "title": "Instrument trailing-stop recommendation capture for trailing_stop_action_rate metric", "priority": "P2", "effort": "S"},
+    {"st_id": "ST-08", "backlog_id": "BLG-FE-95", "epic": "EPIC-02", "title": "Dashboard/StrategyBenchmark page-title light-theme contrast gap", "priority": "P3", "effort": "XS"},
+    {"st_id": "ST-09", "backlog_id": "BLG-FE-96", "epic": "EPIC-02", "title": "Positions Table View breach badge does not match approved spec colour/label", "priority": "P3", "effort": "XS"},
+    {"st_id": "ST-10", "backlog_id": "BLG-SPEC-73", "epic": "EPIC-02", "title": "Gate Progress Indicator copy diverges from dashboard.md §6", "priority": "P3", "effort": "XS"},
+    {"st_id": "ST-11", "backlog_id": "BLG-BE-51", "epic": "EPIC-02", "title": "Add endpoint and date-range filters to GET /ai/claude-audit-log", "priority": "P3", "effort": "XS"},
+    {"st_id": "ST-12", "backlog_id": "BLG-BE-38", "epic": "EPIC-02", "title": "Sector Concentration: join ticker_universe for sector data", "priority": "P2", "effort": "XS"},
+    {"st_id": "ST-13", "backlog_id": "BLG-FEAT-69", "epic": "EPIC-03", "title": "Tax-year P&L CSV export", "priority": "P3", "effort": "M"},
+    {"st_id": "ST-14", "backlog_id": "BLG-FEAT-70", "epic": "EPIC-03", "title": "Realized vs. unrealized gain distinction in monthly P&L", "priority": "P3", "effort": "M"},
+    {"st_id": "ST-15", "backlog_id": "BLG-FEAT-68", "epic": "EPIC-03", "title": "Position review cadence nudge", "priority": "P3", "effort": "S"}
+  ]
+}
