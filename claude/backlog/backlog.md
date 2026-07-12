@@ -3,8 +3,8 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-10 (groom backlog post-ship closure 2026-07-10__release-v6.9 — 2 items archived: BLG-FEAT-64, BLG-FEAT-65; ephemeral Release Slice v6.9 section removed; prior — 2 items marked ✅ COMPLETE: BLG-FEAT-64, BLG-FEAT-65; prior — roadmap rebalance 2026-07-10__scheduled — 39 new items added via idea intake IW-20260710-01 disposition: BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72; DL-063; prior — backlog consistency audit — BLG-BE-52 archived to backlog_archive.md (already-resolved item not yet retired); BLG-GOV-105 flagged possible duplicate of shipped BLG-GOV-45, not dispositioned (see new BLG-GOV-202); BLG-GOV-28 flagged overdue §13 gate (PT-04 sealed v6.1, review not run), not dispositioned; prior — 2026-07-09 Product Owner direct action — BLG-BE-52 resolved: no backfill; prior — session — 1 new item(s) added: BLG-BE-52; prior — groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
-**Last rebalance:** 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
+**Last Updated:** 2026-07-12 (roadmap rebalance 2026-07-12__scheduled — 36 new items added via idea intake IW-20260712-01 disposition: BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107; BLG-GOV-105 closed as confirmed duplicate of BLG-GOV-45 (BLG-GOV-202 closed same action); BLG-GOV-28 priority escalated P2→P1; DL-064; prior — session — 5 new item(s) added: BLG-FEAT-73, BLG-FEAT-74, BLG-FEAT-75, BLG-FEAT-76, BLG-FE-102; prior — groom backlog post-ship closure 2026-07-10__release-v6.9 — 2 items archived: BLG-FEAT-64, BLG-FEAT-65; ephemeral Release Slice v6.9 section removed; prior — 2 items marked ✅ COMPLETE: BLG-FEAT-64, BLG-FEAT-65; prior — roadmap rebalance 2026-07-10__scheduled — 39 new items added via idea intake IW-20260710-01 disposition: BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72; DL-063; prior — backlog consistency audit — BLG-BE-52 archived to backlog_archive.md (already-resolved item not yet retired); BLG-GOV-105 flagged possible duplicate of shipped BLG-GOV-45, not dispositioned (see new BLG-GOV-202); BLG-GOV-28 flagged overdue §13 gate (PT-04 sealed v6.1, review not run), not dispositioned; prior — 2026-07-09 Product Owner direct action — BLG-BE-52 resolved: no backfill; prior — session — 1 new item(s) added: BLG-BE-52; prior — groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
 > This backlog records prioritisation and intent only.
@@ -539,6 +539,102 @@ Existing position prompts (Grace Period Decision Support, Drawdown-Triggered Rev
 - AC-02: Positions past the threshold are visually flagged, independent of P&L state
 - AC-03: An explicit "Mark Reviewed" action resets the counter
 - AC-04: Flag does not fire for positions already flagged by Grace Period or Drawdown prompts (avoid duplicate noise)
+
+---
+
+### BLG-FEAT-73 — SI-02 Behavioural Drift Detection — frontend build
+**Priority:** P1 (High)
+**Type:** Product Feature / Frontend, gate-conditional
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** Feature-gap review (current_roadmap.md Arc 5 status table cross-referenced with BLG-GOV-107, BLG-BE-46, BLG-BE-52) — 2026-07-10
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled (gated)
+**Depends on:** BLG-FE-56, BLG-FE-57, BLG-FE-58, BLG-FE-59 (UI extension specs); BLG-BE-27, BLG-BE-29 (perf baseline, index review) — all currently gate-conditional on this item entering sprint planning
+
+**Problem**
+The behavioural drift detection backend service shipped in v4.6 and computes drift scores from `trade_history`/`trade_plans` window functions, but no frontend was ever built to surface it — there is no UI showing drift scores, trend, or explanation anywhere in the app. This is Arc 5's flagship "tell me when I'm deviating from my own rules" feature, and it is currently invisible to the user despite the backend existing and running.
+
+**Scope**
+- Drift score display card(s) in `Arc5ComplianceSection`, per the existing extension-point spec (BLG-FE-59)
+- Historical trend view for drift score over time
+- Plain-language explanatory copy for what a drift score means and what action it implies
+
+**Acceptance Criteria**
+- User can view current drift score(s) in the Arc 5 compliance UI
+- User can see a historical trend of drift score over time
+- Each score is accompanied by plain-language explanation of contributing factors
+- Feature does not enter sprint planning until all 3 BLG-GOV-107 gate conditions are independently reconfirmed met: (1) ≥20 closed trades with **linked** trade_plans (`trade_plans.position_id` populated) — note this gate can only clear via new trade_plans created going forward, since BLG-BE-52 declined to backfill the 11 pre-existing unlinked rows; (2) `GET /analytics/behavioural-drift` p99 < 2s stable over a 7-day window; (3) drift scores show non-trivial variance across trades (not all 0 or 1.0)
+
+---
+
+### BLG-FEAT-74 — PO-05 Lightweight Replay Mode
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Backend + Frontend, gated
+**Owner:** Head of Engineering; Product Owner
+**Source:** Feature-gap review (current_roadmap.md §5 Arc 4, PO-05 — flagged as unbacklogged) — 2026-07-10
+**Effort:** VH (>2 weeks)
+**Provisional-Target:** Unscheduled (gated)
+**Depends on:** IT-06 Alpaca Paper Trading Integration (shipped v3.5) — foundational infrastructure this feature reuses
+
+**Problem**
+The roadmap names this "the highest-value long-term validation feature" in Arc 4, but no backlog item exists for it at all. There is currently no way for the user to test how a candidate strategy-rule change would have performed historically, or to replay a specific past setup/period against the paper-trading infrastructure that already exists and is otherwise unused for this purpose.
+
+**Scope**
+- §13 compliance pre-clearance: confirm the feature is a deterministic replay of the user's own historical data, not a predictive simulation (precedent: PS-03 Monte Carlo's determinism framing; IT-06's four binding conditions as a template for the review)
+- Backend: replay a historical window of the user's own trade/candidate history through the existing paper-trading mechanics under the *current* rule set
+- Frontend: date range or trade-set selector, and a clearly-labelled retrospective/deterministic output view
+- Exact scope (single trade replay vs. full historical window, output format) to be confirmed by canonical spec before implementation, per the roadmap's Standing Notice
+
+**Acceptance Criteria**
+- User can select a historical date range or trade set and run it through paper-trading mechanics under current strategy rules
+- Output is clearly labelled as retrospective/deterministic, not predictive
+- §13 pre-clearance review completed and documented before sprint planning begins
+
+---
+
+### BLG-FEAT-75 — SI-04 Strategy Version Comparison
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Backend + Frontend, gate-conditional
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** Feature-gap review (current_roadmap.md Arc 5 status table — prep-only, no primary build item existed) — 2026-07-10
+**Effort:** H (>5 days)
+**Provisional-Target:** Unscheduled (gated)
+**Depends on:** none blocking; BLG-BE-30 (schema pre-design), BLG-QA-44 (test planning), BLG-GOV-91 (security review), BLG-FE-59 (shared extension spec) currently list SI-04 sprint planning as their own trigger — this item is that trigger
+
+**Problem**
+No primary "build" backlog item existed for SI-04 — only pre-work items reference it as a future dependency. The data foundation (version-tagged trade history, available since Arc 2) already exists and is unused for this purpose, so the feature is buildable but was simply never filed.
+
+**Scope**
+- Compare trading performance across different `strategy_rules.md` versions — win rate, average R, compliance rate before/after a rule change
+- Surface as a new panel in the Arc 5 compliance UI (via BLG-FE-59's shared extension point) and/or a dedicated comparison view
+- Confirm with Product Owner whether a trade-volume gate is warranted (unlike SI-02, no such gate is currently stated in the roadmap for SI-04, since it compares across versions rather than needing an absolute trade count)
+
+**Acceptance Criteria**
+- User can select two `strategy_rules.md` versions and see a side-by-side performance comparison for trades executed under each
+- Comparison includes at minimum win rate, average R, and compliance rate per version
+
+---
+
+### BLG-FEAT-76 — SI-05 Weekly Strategy Integrity Digest — Phase 2 (full digest)
+**Priority:** P3 (Low)
+**Type:** Product Feature / Backend + Frontend, gate-conditional
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** Feature-gap review (current_roadmap.md Arc 5 status table cross-referenced with BLG-FE-69, BLG-FE-71, BLG-GOV-121 — prep-only, no primary Phase 2 item existed) — 2026-07-10
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled (gated)
+**Depends on:** BLG-FEAT-73 (SI-02 frontend) and BLG-FEAT-75 (SI-04) — hard-blocked on both shipping first; BLG-FE-69, BLG-FE-71, BLG-GOV-121 are prep items for this build
+
+**Problem**
+Only Phase 1 shipped (v5.0/v5.1) — a lightweight Telegram-only digest. The full-scope digest, incorporating SI-02 drift scores and SI-04 version comparison data, has prep items filed but no primary "build Phase 2" item ties them together, so this content will not exist even once its dependencies ship unless the digest itself is scoped and built.
+
+**Scope**
+- Extend the existing Telegram digest (or add an in-app channel, pending the Phase 2 channel decision referenced by BLG-FE-69/71) to include SI-02 drift score summaries and SI-04 version comparison highlights
+- Sequenced explicitly last of the 5 items in this batch — must not enter sprint planning before SI-02 and SI-04 ship
+
+**Acceptance Criteria**
+- Weekly digest includes a drift score summary line
+- Weekly digest includes a brief before/after comparison note when a strategy version change occurred in the reporting period
+- Phase 2 channel decision (Telegram-only vs. added in-app view) resolved before frontend work begins
 
 ---
 
@@ -1122,6 +1218,31 @@ Primary page headings on `DashboardHome.js` (`<h1>` "Dashboard") and `StrategyBe
 **Acceptance Criteria**
 - `npx eslint src/components/watchlist/WatchlistModal.js` exits 0 with zero warnings/errors
 - No functional or visual behaviour change
+
+---
+
+### BLG-FE-102 — Positions Grid View missing RISK OFF badge
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** `docs/specs/frontend/pages/positions.md` v1.8/v2.1 cross-referenced against direct read of `src/components/positions/PositionCard.js` — feature-gap review, 2026-07-10
+**Effort:** S (~0.25–0.5 day)
+**Provisional-Target:** Unscheduled
+**Depends on:** none; related to BLG-FE-97 (trailing-stop value/breach indicator parity, same file, filed 2026-07-09) — additive, not a duplicate
+
+**Problem**
+`src/components/positions/PositionCard.js` (Grid View) shows the GAP RISK badge (shipped v6.9, BLG-FEAT-65) but has no RISK OFF badge at all, despite `docs/specs/frontend/pages/positions.md` (v1.8, v6.2 design gate) requiring a "RISK OFF" badge (deep blue `#1E40AF`) when `risk_off_exit = true`, and v2.1 explicitly stating RISK OFF and GAP RISK badges "stack vertically in the same Alerts cell when both apply." Table View already implements RISK OFF (`Positions.js`: `riskOffExit = position.risk_off_exit === true`) — Grid View's `PositionCard.js` never consumes `risk_off_exit` at all, so Grid View users have no visibility into this alert that Table View users already have.
+
+**Scope**
+- Add a RISK OFF badge to `PositionCard.js`, reading `position.risk_off_exit`
+- Style per spec: deep blue `#1E40AF`, "RISK OFF" label
+- Position in the same badge row as the existing GAP RISK badge so both stack/coexist per the spec's stacking rule
+
+**Acceptance Criteria**
+- Grid View position cards show a RISK OFF badge when `risk_off_exit = true`, matching Table View's condition logic
+- Visual treatment matches spec (deep blue `#1E40AF`, "RISK OFF" label)
+- Badge coexists cleanly with the GAP RISK badge when both apply to the same position
+- No change to Table View behaviour
 
 ---
 
@@ -2088,7 +2209,7 @@ Current arcs (Arc 2, Arc 3, Arc 4) have informal dependency tracking (noted in r
 ---
 
 ### BLG-GOV-28 — PT-04 §13 compliance review
-**Priority:** P2 (Medium)
+**Priority:** P1 (High) — escalated 2026-07-12 (roadmap rebalance 2026-07-12__scheduled; was P2)
 **Type:** Governance Process
 **Owner:** Head of Specs Team
 **Source:** IDEA-governance-20260421-03 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
@@ -2110,6 +2231,8 @@ PT-04 (Setup Quality Score) involves a new backend scoring algorithm and a new A
 - Gate condition (PT-04 sprint planning imminent) verified before initiating review
 
 **Gate overdue — flagged 2026-07-10 (backlog consistency audit, not yet dispositioned):** PT-04 (Setup Quality Score) shipped and its sprint planning sealed in v6.1 (2026-06-23) — 2.5+ weeks ago. No evidence found anywhere in the repo (v6.1 `sprint_planning_notes.md`, `release_plan.md`, or elsewhere) that this §13 review was run before that seal, or since. The gate window has closed without the required action being taken or recorded. Not actioned here — this needs Head of Specs Team / Product Owner disposition: either run a retroactive §13 review against PT-04's shipped implementation now, or record an explicit waiver with rationale.
+
+**Priority escalated 2026-07-12 (roadmap rebalance 2026-07-12__scheduled):** still un-actioned 2 cycles after the overdue flag was raised (raised independently again this cycle by `IDEA-head-of-specs-20260712-02`, classified Reject-not-strong — duplicate of this already-tracked item — with this priority escalation as the corrective action instead of a new backlog row). Escalated P2→P1; should be picked up as a priority item at the next `plan release` invocation rather than deferred again.
 
 ---
 
@@ -2493,7 +2616,7 @@ BLG-GOV-89 (staged verification sprint protocol) defines the pattern. After 2+ u
 
 ---
 
-### BLG-GOV-105 — Arc 6 PS-03 Monte Carlo §13 threshold pre-assessment
+### BLG-GOV-105 — Arc 6 PS-03 Monte Carlo §13 threshold pre-assessment — ✅ CLOSED (confirmed duplicate, 2026-07-12)
 **Priority:** P2 (Medium)
 **Type:** Governance / §13 Compliance
 **Owner:** Strategy Rules & System Intent Owner
@@ -2517,6 +2640,8 @@ Arc 6 PS-03 (Monte Carlo simulation) requires a §13 review before sprint planni
 - Strategy Rules & System Intent Owner sign-off
 
 **Possible duplicate — flagged 2026-07-10 (backlog consistency audit, not yet dispositioned):** This item's threshold question — "is Monte Carlo simulation deterministic or predictive, does PS-03 engage the §13 boundary" — appears to already be answered by `BLG-GOV-45` ("Arc 6 Monte Carlo §13 pre-assessment"), which shipped in v4.6 (2026-05-31, ST-18): PASS, 10 binding conditions, decision doc filed at `docs/product/decisions/arc6_ps03_section13_preassessment.md` (confirmed on disk). This item may have been filed without visibility into that prior work. Not closed here — requires Strategy Rules & System Intent Owner confirmation that BLG-GOV-45 fully supersedes this item before disposition as duplicate/pre-met.
+
+**Confirmed and closed 2026-07-12 (roadmap rebalance 2026-07-12__scheduled, Strategy Rules & System Intent Owner):** Verified `docs/product/decisions/arc6_ps03_section13_preassessment.md` directly — it answers this item's exact threshold question (deterministic vs predictive) for the same feature (PS-03), with a full PASS determination and 10 binding conditions, superseding this item's narrower scope entirely. `BLG-GOV-45` fully supersedes this item. Closed as confirmed duplicate/pre-met — resolves `IDEA-head-of-specs-20260712-01` and `BLG-GOV-202` (see below).
 
 ---
 
@@ -5498,7 +5623,7 @@ Re-verify the AST scan's module coverage against the current `backend/` tree and
 
 ---
 
-### BLG-GOV-202 — Disposition BLG-GOV-105 duplicate-of-BLG-GOV-45 flag
+### BLG-GOV-202 — Disposition BLG-GOV-105 duplicate-of-BLG-GOV-45 flag — ✅ COMPLETE (2026-07-12 — see BLG-GOV-105)
 **Priority:** P3 (Low)
 **Type:** Governance / Process
 **Owner:** Product Owner
@@ -5598,3 +5723,228 @@ Product Owner reviews both entries and either closes `BLG-GOV-105` as a confirme
 ---
 
 *Release Slice v6.9 removed — cycle 2026-07-10__release-v6.9 closed 2026-07-10. Archived canonical home: claude/cycles/2026-07-10__release-v6.9/stage4_backlog_slice.md*
+
+---
+
+## Roadmap Rebalance 2026-07-12__scheduled — New Items (IW-20260712-01 disposition)
+
+*37 items added via idea intake IW-20260712-01 STEP 4 disposition (Backlog/gate-conditional-or-actionable-now). Source ideas and full rationale: `claude/ideas/ideas_register.md` (2026-07-12 rows), `claude/ideas/window_summary_IW-20260712-01.md`. DL-064.*
+
+### BLG-GOV-203 — Gemini AI usage audit-trail retention policy
+**Priority:** P3 (Low) | **Type:** Governance / AI Compliance | **Owner:** AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `gemini_audit_log` (v4.0) has no retention/archival policy; unbounded growth complicates compliance review.
+**Scope:** Define a retention window and archival job for the audit log table.
+**Acceptance Criteria:** Retention policy documented; archival mechanism specified; AI Compliance Officer sign-off.
+
+### BLG-GOV-204 — Formal §13 boundary re-attestation cadence
+**Priority:** P3 (Low) | **Type:** Governance / §13 Compliance | **Owner:** AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260712-02 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** Individual features get one-time §13 PASS reviews; no recurring re-attestation exists as the system accretes AI/automation-adjacent features, so cumulative drift risk goes undetected between reviews.
+**Scope:** Propose a semi-annual boundary re-attestation cadence across all shipped AI/automation-adjacent features (IT-06, SI-01, Gemini thesis generation, etc.).
+**Acceptance Criteria:** Cadence proposal documented; first review date set; Strategy Rules & System Intent Owner sign-off.
+
+### BLG-QA-94 — OpenAPI drift gate false-negative sweep
+**Priority:** P3 (Low) | **Type:** QA / Process Tooling | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** The `## METHOD /path` heading-level rule has already caused one silent contract-drift gap (fixed). No periodic audit confirms non-recurrence.
+**Scope:** Add a quarterly 3-way sweep comparing router decorators, contract file headings, and `openapi.yaml` paths.
+**Acceptance Criteria:** Sweep procedure documented; first run scheduled; zero drift confirmed or gaps filed.
+
+### BLG-GOV-205 — Standardise `api_changelog.md` entry template
+**Priority:** P3 (Low) | **Type:** Governance / Documentation | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Inconsistent version-footer formatting across releases makes `CLAUDE.md` §8 cross-EPIC merge-conflict resolution harder than necessary.
+**Scope:** Define one canonical `api_changelog.md` entry template and apply retroactively where low-cost.
+**Acceptance Criteria:** Template documented; existing entries conform or a migration note is filed.
+
+### BLG-BE-57 — Alpaca API rate-limit backoff audit
+**Priority:** P3 (Low) | **Type:** Backend / Reliability | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** DS-05/IT-06 depend on the Alpaca API; no documented backoff/retry audit has been performed since integration shipped (v2.9/v3.5).
+**Scope:** Audit current retry/backoff logic against Alpaca's documented rate limits; document the effective SLA.
+**Acceptance Criteria:** Audit findings documented; any gaps filed as follow-up items.
+
+### BLG-QA-95 — Positions Grid View badge parity Playwright coverage
+**Priority:** P2 (Medium) | **Type:** QA / Frontend | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `qa_evidence_EPIC-02.md` (v6.9) confirms `SC-RO-*` verifies the relocated Alerts-column badges via Table View only; `BLG-FE-102` (Grid View missing RISK OFF badge) shows no Grid View Playwright equivalent exists yet.
+**Scope:** Add Table/Grid parity Playwright scenarios for both RISK OFF and GAP RISK badges, to land alongside the `BLG-FE-102` fix.
+**Acceptance Criteria:** Grid View badge scenarios pass in CI for both badge types; parity with existing `SC-RO-*` Table View coverage confirmed.
+
+### BLG-FE-103 — Shared modal shell for compliance/checklist components
+**Priority:** P3 (Low) | **Type:** Frontend / Refactor | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260712-02 | **Effort:** M | **Provisional-Target:** Unscheduled
+**Problem:** `ComplianceRecheckModal.js` (v6.9) and the PT-05 checklist modal implement a similar pattern divergently, risking UX drift between them over time.
+**Scope:** Extract a shared modal shell component; migrate both consumers.
+**Acceptance Criteria:** Shared component exists; both modals migrated with no visual/behavioural regression (Playwright coverage confirms).
+
+### BLG-GOV-207 — Same-day scheduled-rebalance cycle_id collision handling
+**Priority:** P2 (Medium) | **Type:** Governance / Process Integrity | **Owner:** Head of Specs Team | **Source:** IDEA-challenger-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `run roadmap --reason "scheduled"` invoked twice on the same calendar date produces an identical `cycle_id` (`YYYY-MM-DD__scheduled`), risking a silent overwrite of a completed Class 3 record. Confirmed in practice this cycle (`2026-07-10__scheduled` ran twice in one session as the sandbox clock advanced from 07-10 to 07-12 mid-session; resolved ad hoc via user-confirmed date resolution rather than a built-in rule).
+**Scope:** Add an explicit STEP 0 rule to `roadmap_prompt.md` — detect an existing cycle folder for the computed `cycle_id` and auto-suffix (`-2`, `-3`, …) rather than requiring ad hoc user escalation.
+**Acceptance Criteria:** STEP 0 rule added and versioned per `CLAUDE.md` §6; a second same-day scheduled invocation no longer requires manual disambiguation.
+
+### BLG-QA-96 — Red Flag Journal auth regression test
+**Priority:** P2 (Medium) | **Type:** QA / Security | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `GET /portfolio/red-flag-journal` had a security review at v4.0 shipping, but no regression test confirms auth stays enforced after later, unrelated endpoint changes.
+**Scope:** Add an auth-required regression test (401/403 on missing/invalid `X-API-Key`) to the backend test suite.
+**Acceptance Criteria:** Test added to `backend/routers/test.py`; passes in CI; fails if auth check is removed (verified by temporarily removing it locally).
+
+### BLG-SEC-17 — Gemini API key rotation runbook
+**Priority:** P3 (Low) | **Type:** Security / Operations | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Gemini Flash thesis-generation wiring shipped v4.0 with no documented key-rotation runbook.
+**Scope:** Document rotation steps and a recommended cadence in the security register.
+**Acceptance Criteria:** Runbook added to `docs/security/api_key_security_register.md`.
+
+### BLG-SPEC-78 — `strategy_version_at_entry` field on trade/trade_plan
+**Priority:** P2 (Medium) | **Type:** Data Model / Pre-work | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-data-model-20260712-01 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** SI-04 (Strategy Version Comparison) requires version-tagged trade history, but no schema field currently captures `strategy_rules.md` version at entry time.
+**Scope:** Add a `strategy_version_at_entry` field to the trade/trade_plan schema (forward-only, no backfill) ahead of SI-04 sprint planning, avoiding a later painful migration.
+**Acceptance Criteria:** Migration added; field populated on new trade plans at entry; `data_model.md` updated.
+
+### BLG-BE-58 — Position lifecycle state-transition history table
+**Priority:** P3 (Low) | **Type:** Data Model / Pre-work | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-data-model-20260712-02 | **Effort:** M | **Provisional-Target:** Unscheduled
+**Problem:** `position_lifecycle_service` tracks current state only; no historical transition log exists for post-hoc analysis.
+**Scope:** Add an append-only `position_state_history` table, written on each lifecycle transition, to support future PS-04 (Strategy Decay Detection) state-conditional analysis.
+**Acceptance Criteria:** Table + migration added; transitions logged; no behavioural change to current lifecycle logic.
+
+### BLG-GOV-208 — Minimum-interval guideline between scheduled rebalances
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Director of HR | **Source:** IDEA-director-of-hr-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** 55+ completed cycles at high governance intensity, including a same-day double-run this cycle, risk operator fatigue even in a solo-plus-AI-delegation context.
+**Scope:** Propose a policy guideline against same-day double scheduled-rebalance runs absent explicit cause (complements `BLG-GOV-207`'s technical fix).
+**Acceptance Criteria:** Guideline documented in `claude/charter/team_charter.md` or `CLAUDE.md` §5; Director of HR + Head of Specs Team sign-off.
+
+### BLG-GOV-209 — Frame Skill-Silo Alert as workload-composition, not just product-mix
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Director of HR | **Source:** IDEA-director-of-hr-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `roadmap_prompt.md` STEP 7.1's >40% governance ceiling is treated purely as a product-value problem; it is equally an HR/workload-composition signal for the one human operator.
+**Scope:** Add an HR-perspective note to STEP 7.1's output alongside the existing PO pull-forward mechanism.
+**Acceptance Criteria:** `roadmap_prompt.md` STEP 7.1 patched (versioned per `CLAUDE.md` §6); Director of HR sign-off.
+
+### BLG-QA-97 — Retroactive `route.fallback()` adoption audit
+**Priority:** P2 (Medium) | **Type:** QA / Process Tooling | **Owner:** Director of Quality | **Source:** IDEA-director-of-quality-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `shared_standards.md` §18 (v6.8) documents the `route.fallback()` vs `route.continue()` ordering fix for new Playwright tests only; existing pre-v6.8 suites were never retroactively audited for the same latent pattern.
+**Scope:** One-time grep-and-fix sweep of all existing spec files for generic catch-all handlers using `route.continue()` ahead of a more specific handler.
+**Acceptance Criteria:** Sweep complete; any found instances fixed; zero remaining instances confirmed via grep in CI or a one-time report.
+
+### BLG-QA-98 — DoQ sign-off staleness pre-merge lint
+**Priority:** P3 (Low) | **Type:** QA / Process Tooling | **Owner:** Director of Quality | **Source:** IDEA-director-of-quality-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Parallel-EPIC merges (per `CLAUDE.md` §8) can leave a `qa_evidence_EPIC-*.md` sign-off block at "Pending" post-merge with nothing flagging it.
+**Scope:** Add a pre-merge lint/CI check that fails on residual "Pending" rows in a merged `qa_evidence_EPIC-*.md`.
+**Acceptance Criteria:** Lint check added to `quality_gate.yml`; fails on a synthetic Pending-row test case.
+
+### BLG-OPS-106 — AI cost-threshold alert value review
+**Priority:** P3 (Low) | **Type:** Operations / FinOps | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `POST /ai/check-daily-cost` (v4.0) alerts on a fixed cost threshold; no review has confirmed it's still appropriate given growing SI-04-adjacent AI usage.
+**Scope:** Review 90 days of actual AI spend against the current threshold; adjust if warranted.
+**Acceptance Criteria:** Review documented; threshold confirmed or adjusted with rationale.
+
+### BLG-SPEC-79 — FX handling review post-DS-05 US market source change
+**Priority:** P2 (Medium) | **Type:** Spec Debt | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `strategy_rules.md` §4.1.5 currency/FX canonical rules predate DS-05's switch to Alpaca for US-market OHLCV data; no confirmation FX handling was revisited when the US data source changed.
+**Scope:** Spec review confirming no silent position-sizing miscalculation for GBP-denominated accounts trading US tickers under the current data pipeline.
+**Acceptance Criteria:** Review documented; §4.1.5 confirmed accurate or an amendment filed.
+
+### BLG-GOV-210 — Governance-cycle wall-clock cost logging
+**Priority:** P3 (Low) | **Type:** Governance / FinOps | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** No estimate exists of session/compute time consumed per scheduled rebalance cycle, relevant given the recent same-day double-run.
+**Scope:** Log start/end timestamp and step count per cycle in `run_manifest.md` (partially already present); roll up into `velocity_metrics.md`.
+**Acceptance Criteria:** Logging convention documented; applied from the next cycle onward.
+
+### BLG-GOV-211 — Effort-band accuracy retrospective
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `scored_initiatives.md` assigns S/M/L/XS effort bands at promotion time but nothing checks these against actual sprint-planning delivered effort afterward.
+**Scope:** Quarterly retrospective comparing assigned effort band vs actual sprint capacity consumed for shipped initiatives.
+**Acceptance Criteria:** First retrospective produced; process documented for repeat.
+
+### BLG-SPEC-80 — `positions.md` Grid View badge placement subsection
+**Priority:** P2 (Medium) | **Type:** Spec Debt | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** IDEA-frontend-specs-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `positions.md` documents the Alerts column as canonical for Table View; Grid View badge placement was never separately specified — the root cause behind `BLG-FE-102` (Grid View missing RISK OFF badge).
+**Scope:** Add an explicit Grid View badge-placement subsection to `positions.md`, to land alongside or ahead of the `BLG-FE-102` fix.
+**Acceptance Criteria:** `positions.md` updated; `BLG-FE-102` implementation can cite the spec directly.
+
+### BLG-SPEC-81 — Research view `signal_type` filter spec
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** IDEA-frontend-specs-20260712-02 | **Effort:** S | **Provisional-Target:** Unscheduled
+**Gate criteria:** ≥5 distinct `signal_type` values observed in practice (currently fewer; re-check at next backlog grooming).
+**Problem:** v4.1 added `signal_type` (Setup Type) to the research view with no filter/sort spec as the field accumulates distinct values.
+**Scope:** Spec a filter control once the gate condition is met.
+**Acceptance Criteria:** Filter spec written; gate condition re-verified before implementation.
+
+### BLG-GOV-212 — Dry-run the cross-EPIC merge conflict runbook
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Head of Engineering | **Source:** IDEA-head-of-engineering-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `CLAUDE.md` §8's conflict-resolution convention has not been exercised in a real parallel-branch sprint in recent cycle history reviewed this session — an untested runbook risk.
+**Scope:** Intentionally sequence one real 2-EPIC-parallel sprint to validate the runbook before it's needed under time pressure.
+**Acceptance Criteria:** One sprint executed with genuinely parallel EPIC branches; runbook followed; gaps found are filed as follow-ups.
+
+### BLG-QA-99 — `_DB_STUB_FUNCTIONS` AST-scan glob coverage check
+**Priority:** P3 (Low) | **Type:** QA / Process Tooling | **Owner:** Head of Engineering | **Source:** IDEA-head-of-engineering-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Confirm `BLG-QA-73`'s AST scan (retired manual sync, v6.6) still covers every current `backend/` subpackage after recent additions.
+**Scope:** Audit the scan's glob/traversal logic against the current `backend/` tree; extend if a subpackage was missed.
+**Acceptance Criteria:** Audit documented; scan confirmed complete or patched.
+
+### BLG-FE-104 — GAP RISK / RISK OFF combined-badge visual differentiation review
+**Priority:** P2 (Medium) | **Type:** UX / Design Review | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** v6.9 added a second badge type (GAP RISK) into the same Alerts column as the pre-existing RISK OFF badge; no design review confirmed the two remain visually distinguishable when both fire simultaneously — a safety-relevant read, not cosmetic.
+**Scope:** Design gate review of the combined-badge state (screenshot both firing together); adjust styling if indistinguishable.
+**Acceptance Criteria:** Combined-badge state reviewed and confirmed distinguishable, or a fix is specified and implemented.
+
+### BLG-FE-105 — Compliance Recheck Modal all-pass empty-state design
+**Priority:** P3 (Low) | **Type:** UX / Design | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `ComplianceRecheckModal.js` (v6.9) has a documented happy-path and override-acknowledgement path per QA evidence, but no confirmed design for the all-rules-pass case.
+**Scope:** Confirm/spec the all-pass empty state explicitly.
+**Acceptance Criteria:** Empty-state design confirmed or specified; implemented if a gap is found.
+
+### BLG-OPS-107 — Staging auto-deploy health smoke-test cadence
+**Priority:** P3 (Low) | **Type:** Operations / Infrastructure | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** CI/CD staging auto-deploy shipped v4.0 (2026-05-25); no periodic confirmation staging health/freshness still holds 7+ weeks on.
+**Scope:** Add a scheduled staging smoke-test.
+**Acceptance Criteria:** Smoke-test scheduled and passing; alert on failure.
+
+### BLG-GOV-213 — `velocity_metrics.md` row-count audit against cycle folder count
+**Priority:** P2 (Medium) | **Type:** Governance / Process Integrity | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** With the recent same-day/multi-cycle cadence, confirm `velocity_metrics.md`'s update cadence hasn't fallen behind the actual `claude/cycles/` count, which would silently corrupt STEP 1.1's rolling average.
+**Scope:** One-time audit comparing `velocity_metrics.md` row count against completed release cycles in `claude/cycles/`.
+**Acceptance Criteria:** Audit confirms parity or missing rows are backfilled.
+
+### BLG-GOV-214 — Confirm Arc 5 composite formula accounts for v6.9 recheck events
+**Priority:** P2 (Medium) | **Type:** Governance / Metrics | **Owner:** Metrics Definitions & Analytics Canonical Owner | **Source:** IDEA-metrics-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `metrics_definitions.md` v1.11's Arc 5 composite compliance formula predates v6.9's on-demand compliance-recheck event type; unclear whether recheck outcomes feed `override_rate`/`validation_pass_rate` or are invisible to them.
+**Scope:** Review the v1.11 formula against v6.9's new event type; update if a gap exists.
+**Acceptance Criteria:** Review documented; formula updated or confirmed already correct; Metrics Owner sign-off.
+
+### BLG-GOV-215 — Product Value Ratio historical trend row in `velocity_metrics.md`
+**Priority:** P3 (Low) | **Type:** Governance / Metrics | **Owner:** Metrics Definitions & Analytics Canonical Owner | **Source:** IDEA-metrics-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** STEP 2.4's Product Value Ratio is recomputed from scratch each cycle (0.26 → 0.18 → 0.21) with no first-class trend record, making the multi-cycle alert pattern harder to see at a glance.
+**Scope:** Add a Product Value Ratio row to `velocity_metrics.md`, appended each time STEP 2.4 runs.
+**Acceptance Criteria:** Row added retroactively for the last 3 readings; convention documented for future cycles.
+
+### BLG-GOV-216 — Recent-rebalance recency advisory at roadmap STEP -1
+**Priority:** P2 (Medium) | **Type:** Governance / Process Integrity | **Owner:** PMO Lead | **Source:** IDEA-pmo-lead-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** STEP -1.5 doesn't check inter-run recency; an accidental double-invocation of `run roadmap --reason scheduled` isn't caught until cycle-folder creation (as happened this cycle — complements `BLG-GOV-207`'s auto-suffix fix with an earlier, cheaper warning).
+**Scope:** Surface a confirmation advisory at STEP -1 if `last_scheduled_rebalance_utc` is <24h old.
+**Acceptance Criteria:** `roadmap_prompt.md` patched (versioned per `CLAUDE.md` §6); advisory fires correctly on a same-day re-invocation.
+
+### BLG-GOV-217 — Surface meta-review countdown in every `run_manifest.md`
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** PMO Lead | **Source:** IDEA-pmo-lead-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** STEP 11.4's meta-review triggers every 3rd cycle but nothing surfaces the countdown until it fires; PMO currently computes it manually each time.
+**Scope:** Surface `rebalance_cycles_since_meta_review` in every cycle's run manifest header, regardless of due status.
+**Acceptance Criteria:** `roadmap_prompt.md` STEP 1.1 patched (versioned per `CLAUDE.md` §6) to include the field.
+
+### BLG-QA-101 — `networkidle` usage audit in pre-v6.8 Playwright suites
+**Priority:** P3 (Low) | **Type:** QA / Process Tooling | **Owner:** QA Lead | **Source:** IDEA-qa-lead-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `shared_standards.md` §18 bans `waitForLoadState('networkidle')` in new tests but doesn't confirm no pre-existing suite still uses it.
+**Scope:** Grep all existing spec files for `networkidle` usage; replace any found with an element-specific wait.
+**Acceptance Criteria:** Zero remaining `networkidle` usages confirmed via grep; any found instances fixed.
+
+### BLG-QA-102 — Automate the endpoint-count drift check (CLAUDE.md §2)
+**Priority:** P2 (Medium) | **Type:** QA / Process Tooling | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260712-01 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** The `backend/routers/test.py` + `SystemStatus.js` fallback count + `SC-SS-01b` sync (`CLAUDE.md` §2) is currently manual discipline only — a recurring process-deviation risk each time a new route is added.
+**Scope:** Add a CI lint step counting `@router` decorators across `backend/routers/` vs. the hardcoded fallback constant in `SystemStatus.js`; fail the gate on mismatch.
+**Acceptance Criteria:** Lint step added to `quality_gate.yml`; fails on a synthetic mismatch test case; passes on current state.
+
+### BLG-QA-103 — pip-audit trend log across sprint-planning runs
+**Priority:** P3 (Low) | **Type:** QA / Security | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `sprint_planning_notes.md`'s Pre-Sprint Vulnerability Scan runs `pip-audit` each sprint but results aren't tracked over time to see whether the same finding recurs or is repeatedly deferred.
+**Scope:** Append a running pip-audit summary log (date, findings count, resolution status) alongside `sprint_planning_notes.md`.
+**Acceptance Criteria:** Log convention documented and applied from the next sprint planning onward.
+
+### BLG-SPEC-82 — Explicit §13 continuity note for v6.9 on-demand recheck
+**Priority:** P2 (Medium) | **Type:** Spec Debt / §13 Compliance | **Owner:** Strategy Rules & System Intent Owner | **Source:** IDEA-strategy-owner-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** v6.9's on-demand compliance recheck (`BLG-FEAT-64`) re-applies SI-01's 5 rule checks on demand but has no explicit §13 PASS record of its own (unlike SI-01's original v3.8 gate) — it inherits cleared status implicitly rather than by explicit record.
+**Scope:** Add a short explicit §13 continuity note confirming the on-demand recheck doesn't introduce new automation/prediction surface beyond SI-01's existing gate.
+**Acceptance Criteria:** Continuity note added to `strategy_rules.md` or a linked decision doc; Strategy Rules & System Intent Owner sign-off.
+
+---

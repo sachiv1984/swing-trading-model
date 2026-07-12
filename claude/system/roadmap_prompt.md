@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 8.6
-**Last Updated:** 2026-07-10
+**Version:** 8.7
+**Last Updated:** 2026-07-12
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -103,6 +103,8 @@ Create-if-missing:
 **Scheduled:** `--reason "scheduled"` — no completion event required; record "Scheduled run — no completion event."
 `cycle_id = YYYY-MM-DD__scheduled`
 
+**Same-day collision check (v8.7, 2026-07-12 — closes a confirmed same-day overwrite risk):** Before creating `claude/cycles/<cycle_id>/`, check whether that path already exists. If it does (a prior scheduled or completion-triggered run already used this exact `cycle_id` today): do not write into it. Append `-2`, `-3`, … (lowest unused integer) to form the new `cycle_id`, and record the collision and the resolved `cycle_id` in `run_manifest.md`. This is a non-blocking, automatic resolution — it does not require user confirmation. (Confirmed live at `2026-07-12__scheduled`: a second scheduled run on what was, at the time the collision was first discovered, believed to be the same calendar date as an already-`Filed` `2026-07-10__scheduled` cycle — resolved ad hoc via user confirmation before this rule existed.)
+
 No execution steps begin until this precondition is satisfied.
 
 ---
@@ -148,6 +150,7 @@ Any unresolved action with no carry-forward path → halt.
 **Prompt patch confirmation:** Load deferred patches from prior `lessons_learnt.md`. For each:
 - Present in target file → record "applied" in run manifest.
 - Absent and **second consecutive cycle** carrying this patch → classify OVERDUE; escalate to Head of Specs Team immediately. Run may not proceed past -1.5 with any OVERDUE patch.
+- **Out-of-scope OVERDUE resolution (v8.7, 2026-07-12):** If an OVERDUE patch's target file is outside this engine's Write Scope §4 (e.g. `CLAUDE.md`), "outside scope" is not itself a valid carry-forward reason once a named authority holds a standing out-of-band write privilege for that file (e.g. `shared_standards.md` §17). In that case the escalation to Head of Specs Team must include an explicit instruction to apply the patch directly under that standing authority this session, rather than carrying it forward again. This closes a gap where a `CLAUDE.md` §6 patch was carried unresolved across 6 consecutive scheduled-rebalance cycles (2026-07-01 → 2026-07-10 first run) despite each cycle correctly identifying it as OVERDUE, because "outside this engine's write scope" was treated as a sufficient reason to re-carry even after §17 authority existed.
 - **Stale release target check:** If a deferred patch's target event is a named release (`plan release vX.Y`), verify whether that release has already shipped by checking the release summary table in `current_roadmap.md`. If shipped → classify the patch as OVERDUE immediately; do not wait for the second-consecutive-cycle rule to fire. Record outcome in run manifest.
 
 Record all outcomes under "Prior Cycle Outstanding Actions" in run manifest.
