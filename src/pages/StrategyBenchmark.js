@@ -494,7 +494,7 @@ export default function StrategyBenchmark() {
         <div className="flex items-center gap-3">
           <BarChart2 className="w-5 h-5 text-slate-400" />
           <div>
-            <h1 className="text-lg font-semibold text-white">Strategy Benchmark</h1>
+            <h1 className="text-lg font-semibold text-slate-900 dark:text-white">Strategy Benchmark</h1>
             <p className="text-xs text-slate-600 dark:text-slate-400">Compare live trades against production backtest results</p>
           </div>
         </div>
