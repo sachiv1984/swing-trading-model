@@ -370,7 +370,7 @@ def generate_momentum_signals(
     for signal_data in signals_sorted:
         signal_data['portfolio_id'] = portfolio_id
         signal_data['signal_date'] = signal_date_str
-        create_signal(portfolio_id, signal_data)
+        create_signal(portfolio_id, decimal_to_float(signal_data))
     
     print(f"✓ Saved {len(signals_sorted)} signals\n")
     print("="*70 + "\n")
