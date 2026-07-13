@@ -176,20 +176,20 @@ test('SC-TS-03: Breach badge present when current_price ≤ current_trailing_sto
   const pos = makePosition({ current_price: 120.00, current_trailing_stop: 125.00 });
   await gotoPositionsTable(page, [pos]);
 
-  const badge = page.locator('span[title="Stop breach: current price at or below trailing stop"]');
+  const badge = page.locator('[data-testid="breach-badge"]');
   await expect(badge).toBeVisible({ timeout: 5000 });
-  await expect(badge).toContainText('Breach');
+  await expect(badge).toContainText('BREACH');
 });
 
-test('SC-TS-04: Breach badge has rose styling — distinct from risk-off amber', async ({ page }) => {
+test('SC-TS-04: Breach badge has spec orange styling — distinct from risk-off amber (ST-09, BLG-FE-96)', async ({ page }) => {
   const pos = makePosition({ current_price: 120.00, current_trailing_stop: 125.00 });
   await gotoPositionsTable(page, [pos]);
 
-  const badge = page.locator('span[title="Stop breach: current price at or below trailing stop"]');
+  const badge = page.locator('[data-testid="breach-badge"]');
   await expect(badge).toBeVisible({ timeout: 5000 });
-  // rose classes applied — ST-02/AC-03
-  await expect(badge).toHaveClass(/text-rose-200/);
-  await expect(badge).toHaveClass(/bg-rose-800/);
+  // orange classes applied — ST-09/BLG-FE-96, matches positions.md §Trailing Stop Column (#EA580C)
+  await expect(badge).toHaveClass(/bg-orange-600/);
+  await expect(badge).toHaveClass(/text-white/);
   // must NOT have amber classes (those belong to risk-off badge only)
   await expect(badge).not.toHaveClass(/text-amber/);
   await expect(badge).not.toHaveClass(/bg-amber/);
@@ -200,7 +200,7 @@ test('SC-TS-05: No breach badge when current_price > current_trailing_stop', asy
   const pos = makePosition({ current_price: 135.00, current_trailing_stop: 115.00 });
   await gotoPositionsTable(page, [pos]);
 
-  const badge = page.locator('span[title="Stop breach: current price at or below trailing stop"]');
+  const badge = page.locator('[data-testid="breach-badge"]');
   await expect(badge).not.toBeVisible({ timeout: 5000 });
 });
 
@@ -209,7 +209,7 @@ test('SC-TS-06: No breach badge when current_trailing_stop is zero', async ({ pa
   const pos = makePosition({ current_price: 120.00, current_trailing_stop: 0 });
   await gotoPositionsTable(page, [pos]);
 
-  const badge = page.locator('span[title="Stop breach: current price at or below trailing stop"]');
+  const badge = page.locator('[data-testid="breach-badge"]');
   await expect(badge).not.toBeVisible({ timeout: 5000 });
 });
 
@@ -295,7 +295,7 @@ test('SC-TS-RO-01: Breach and risk-off badges both present when both conditions 
   await gotoPositionsTable(page, [pos]);
 
   await expect(
-    page.locator('span[title="Stop breach: current price at or below trailing stop"]')
+    page.locator('[data-testid="breach-badge"]')
   ).toBeVisible({ timeout: 5000 });
   await expect(
     page.locator('span[title="Risk-off regime: index below MA200 — consider exit"]')
