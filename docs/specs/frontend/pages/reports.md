@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.7
-**Last Updated:** 2026-07-12
+**Version:** 0.8
+**Last Updated:** 2026-07-13
 **Design Source (v0.7 CSV export + monthly realised/unrealised split):** docs/design/2026-07-12__release-v7.0/tax-year-csv-export/ux_spec.md, docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md
 **Design Source (v0.6 SI-02 gate status):** docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -139,6 +139,8 @@ Displayed below the trades table, clearly separated from the realised section.
 
 ### Arc 5 Compliance Summary
 
+> **Design Only — Implementation Pending (v0.8, ST-06 reconciliation):** This section is specified but **not currently rendered** in `Reports.js`'s Tax Year P&L view. The v4.1 changelog entry below was worded as a shipped feature but ST-08 (BLG-FEAT-42)'s actual delivered scope was spec-authoring only — confirmed via `git log -S` across all history (commit `5c7d8587` touched only `metrics_definitions.md`/`reports.md`/`execution_state.json`, no `src/` files). See `BLG-SPEC-71` for full root-cause investigation. The field mappings and rendering rules below remain locked and ready to implement if/when the Product Owner schedules this as a new `BLG-FEAT` item — re-implementation effort is low since the design is already fully specified and previously signed off.
+
 Displayed below the Unrealised P&L Card. This section is collapsible and **collapsed by default**.
 
 **Data source:** `GET /analytics/arc5-compliance`
@@ -208,7 +210,7 @@ Displayed below "Arc 5 Compliance Summary" and above "Gross vs Net Comparison". 
 
 ### Gross vs Net Comparison (v6.0 — ST-03)
 
-**Design source:** `docs/design/2026-06-19__release-v6.0/net-of-costs-tracking/ux_spec.md`
+> **Design Only — Implementation Pending (v0.8, ST-06 reconciliation):** This section is specified but **not currently rendered** in `Reports.js`'s Tax Year P&L Summary Bar. Confirmed via `git log -S` — the v6.0 design gate commit `b8e9df34` touched only spec files, no `src/` files. ST-03 (BLG-FEAT-20, Net-of-costs)'s actual delivered scope was a "Net R column" on the **Trade History** page (`TradeHistoryTable.js`) — a real, shipped, differently-scoped feature — while this Reports-page summary row was written into the spec but never built. See `BLG-SPEC-71` for full root-cause investigation. The field mappings and rendering rules below remain locked and ready to implement if/when the Product Owner schedules this as a new `BLG-FEAT` item.
 
 A gross vs net comparison row is shown in the Summary Bar **only when** the selected tax year's trade set contains at least one trade with cost data (`commission_gbp` or `spread_cost_gbp` non-null and non-zero).
 
@@ -338,6 +340,7 @@ Follows the Arc 5 Compliance Summary design language from the tax-year report (�
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.8 | 2026-07-13 | v7.0 sprint execution (ST-06, BLG-SPEC-71): Reconciled §Arc 5 Compliance Summary and §Gross vs Net Comparison to explicitly state "Design Only — Implementation Pending" — both were specified with changelog entries worded as shipped features, but neither is actually rendered in `Reports.js`'s Tax Year P&L view (confirmed via `git log -S`: both design gate commits touched only spec files, no `src/` files). Root cause: spec-authoring stories' changelog entries were indistinguishable from shipped-feature entries, letting this drift persist undetected for 8+ release cycles (v4.1/v6.0 → v6.8). No code change — documentation reconciliation only. Re-implementation remains available as a Product Owner scheduling decision (new `BLG-FEAT` items), not a default reconciliation path. |
 | 0.7 | 2026-07-12 | v7.0 design gate: (ST-13, BLG-FEAT-69) Tax-year CSV export — "Download CSV" header button added alongside "Download PDF" (idle/generating/success/error states, same pattern); supersedes the stale v2.1 "no button, URL-parameter only" API Reference note (never implemented, inconsistent with PDF button). (ST-14, BLG-FEAT-70) Monthly P&L Report — Unrealised P&L Card added below the Monthly Financial Table, reusing the Tax Year tab's approved card pattern (`estimated_unrealised_pnl`, `unrealised_note`); Combined Total line added (client-side sum, no new endpoint). Design sources: v0.7 additions listed above. Head of UX & Design sign-off: 2026-07-12. Product Owner approved: 2026-07-12. Head of Specs Team confirmed. |
 | 0.6 | 2026-07-08 | v6.8 design gate — SI-02 Gate Status section added (ST-06, BLG-FEAT-71): collapsible, collapsed by default, below Arc 5 Compliance Summary and above Gross vs Net Comparison. Shows total closed trades vs. trade-plan-linked closed trades as two distinct numbers, plus MET/NOT MET badges for 3 SI-02 gate conditions. Sourced from existing `GET /trades`, `GET /trade-plans`, `GET /analytics/arc5-compliance` — no new backend work. Reflects ST-01 (BLG-BE-46) finding live, as-is. Distinct from Dashboard's single-metric Gate Progress strip (dashboard.md §6). Design source: si02-gate-visibility-indicator/ux_spec.md. Approved: Product Owner 2026-07-08. Head of Specs Team confirmed. |
 | 0.5 | 2026-06-19 | v6.0 design gate — Gross vs Net Comparison section added to Summary Bar (ST-03): conditional row showing average gross vs net R-multiple when ≥1 trade in selected year has brokerage cost data; footnote showing trade count with cost data; absent when no cost data. Design source: net-of-costs-tracking/ux_spec.md. Approved: Product Owner 2026-06-19. Head of Specs Team confirmed. |

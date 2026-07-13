@@ -35,6 +35,32 @@ def _get_settings_value(key: str, default):
     return default
 
 
+def _get_ticker_sector_map(conn) -> dict:
+    """Ticker -> sector lookup from ticker_universe. Pure DB read — no yfinance
+    live-call added to the hot path (ST-12/AC-04). Positions never carry their
+    own `sector` column; sector data only lives in `ticker_universe`.
+    """
+    with conn.cursor() as cur:
+        cur.execute("SELECT ticker, sector FROM ticker_universe WHERE sector IS NOT NULL")
+        rows = cur.fetchall()
+    return {row["ticker"]: row["sector"] for row in rows}
+
+
+def _lookup_sector(ticker_sector_map: dict, ticker: str, market: str):
+    """Resolve a position's sector via ticker_universe, matching the .L suffix
+    convention UK tickers use there (same mapping as watchlist_service.py's join).
+    Returns None if the ticker has no sector recorded in ticker_universe.
+    """
+    if not ticker:
+        return None
+    ticker = ticker.upper()
+    if market == "UK" and not ticker.endswith(".L"):
+        key = f"{ticker}.L"
+    else:
+        key = ticker
+    return ticker_sector_map.get(key) or ticker_sector_map.get(ticker)
+
+
 def _get_portfolio_heat_and_positions():
     """Return (total_value, portfolio_heat_pct, positions_list, portfolio_id, live_fx_rate)."""
     from utils.pricing import get_live_fx_rate
@@ -47,6 +73,7 @@ def _get_portfolio_heat_and_positions():
         portfolio_id = str(portfolio["id"])
         cash = float(portfolio["cash"])
         positions = get_positions(portfolio_id, status="open", conn=conn)
+        ticker_sector_map = _get_ticker_sector_map(conn)
 
     total_positions_value = 0.0
     position_risks = []
@@ -59,7 +86,7 @@ def _get_portfolio_heat_and_positions():
         market = pos.get("market", "UK")
         fx_rate = float(pos.get("fx_rate") or 1.27)
         initial_stop = pos.get("initial_stop")
-        sector = pos.get("sector")
+        sector = _lookup_sector(ticker_sector_map, pos.get("ticker"), market)
 
         if market == "US":
             # fill_price is USD native; entry_price is GBP-converted
@@ -291,6 +318,7 @@ def get_sector_weights():
                 return {"status": "ok", "data": {"sectors": [], "total_positions": 0, "concentration_alert": False}}
             portfolio_id = str(portfolio["id"])
             raw_positions = get_positions(portfolio_id, status="open", conn=conn)
+            ticker_sector_map = _get_ticker_sector_map(conn)
 
         sector_values: dict = {}
         sector_counts: dict = {}
@@ -300,7 +328,7 @@ def get_sector_weights():
             pos = decimal_to_float(dict(pos))
             shares = float(pos.get("shares", 0))
             market = pos.get("market", "UK")
-            sector = pos.get("sector") or "Unclassified"
+            sector = _lookup_sector(ticker_sector_map, pos.get("ticker"), market) or "Unclassified"
             entry_price = float(pos.get("entry_price", 0))
             fx_rate = float(pos.get("fx_rate") or 1.27)
 
