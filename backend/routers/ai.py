@@ -216,13 +216,22 @@ def ai_chat_endpoint(body: ChatRequest, request: Request):
 
 
 @router.get("/claude-audit-log")
-def get_claude_audit_log(limit: int = Query(default=50, ge=1, le=200)):
+def get_claude_audit_log(
+    limit: int = Query(default=50, ge=1, le=200),
+    endpoint: str = Query(default=None, description="Filter to an exact endpoint value, e.g. 'POST /ai/daily-briefing'"),
+    date_from: str = Query(default=None, description="Inclusive lower bound, YYYY-MM-DD, applied to generated_at"),
+    date_to: str = Query(default=None, description="Inclusive upper bound, YYYY-MM-DD, applied to generated_at"),
+):
     """
     Query the Claude API audit trail (claude_audit_log table).
     Returns the most recent Claude API call records, newest first.
     Intended for cost review and compliance monitoring.
     AI-generated content is NOT included — audit metadata only.
+
+    ST-11 (BLG-BE-51, v7.0): optional `endpoint` and `date_from`/`date_to`
+    filters — independently or combined with each other and with `limit`.
+    Omitting all three preserves the original unfiltered behaviour.
     """
     from database import query_claude_audit_log
-    records = query_claude_audit_log(limit=limit)
+    records = query_claude_audit_log(limit=limit, endpoint=endpoint, date_from=date_from, date_to=date_to)
     return {"ok": True, "data": {"records": records, "count": len(records)}}

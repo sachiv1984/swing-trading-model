@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.5
-**Last Updated:** 2026-06-29
+**Version:** 1.6
+**Last Updated:** 2026-07-13
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -372,6 +372,9 @@ Returns the most recent entries from the `claude_audit_log` table — the immuta
 
 ```
 GET /ai/claude-audit-log?limit=50
+GET /ai/claude-audit-log?endpoint=POST%20/ai/daily-briefing
+GET /ai/claude-audit-log?date_from=2026-07-01&date_to=2026-07-13
+GET /ai/claude-audit-log?endpoint=POST%20/ai/daily-briefing&date_from=2026-07-01&date_to=2026-07-13
 ```
 
 #### Query parameters
@@ -379,6 +382,11 @@ GET /ai/claude-audit-log?limit=50
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `limit` | integer | Optional | 50 | Maximum number of records to return. Range: 1–200. |
+| `endpoint` | string | Optional | none | v7.0 — ST-11, BLG-BE-51. Exact-match filter on the `endpoint` field (e.g. `POST /ai/daily-briefing`). Combines with `date_from`/`date_to` (AND). |
+| `date_from` | string (`YYYY-MM-DD`) | Optional | none | v7.0 — ST-11, BLG-BE-51. Inclusive lower bound applied to `generated_at`. Combines with `date_to` and `endpoint` (AND). |
+| `date_to` | string (`YYYY-MM-DD`) | Optional | none | v7.0 — ST-11, BLG-BE-51. Inclusive upper bound applied to `generated_at` (records through the end of the given day). Combines with `date_from` and `endpoint` (AND). |
+
+Omitting `endpoint`, `date_from`, and `date_to` preserves the original unfiltered behaviour (all records, most recent `limit` rows).
 
 ### Response — 200 OK
 
@@ -502,6 +510,7 @@ None at v1.5.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.6 | 2026-07-13 | v7.0 EPIC-02 ST-11 (BLG-BE-51): Added optional `endpoint` (exact match) and `date_from`/`date_to` (inclusive, `YYYY-MM-DD`, applied to `generated_at`) query filters to `GET /ai/claude-audit-log` — independently or combined, and combinable with `limit`. No new endpoint; existing unfiltered behaviour unchanged when all three are omitted. `openapi.yaml` updated in the same commit. |
 | 1.5 | 2026-06-29 | v6.3 EPIC-01 ST-03: Added per-endpoint rate limiting to `POST /ai/daily-briefing` (10 req/min/IP) and `POST /ai/chat` (30 req/min/IP). 429 + `Retry-After` documented. In-memory sliding-window implementation (`backend/services/rate_limiter.py`). AC-05: rate limit scenario tests added to `backend/routers/test.py`. |
 | 1.4 | 2026-06-25 | v6.2 EPIC-02 ST-06/ST-08: Added `POST /ai/daily-briefing` (daily portfolio briefing + action list) and `POST /ai/chat` (stateless conversational advisor). Both endpoints use `claude-sonnet-4-6`, log to `claude_audit_log`, return `advisory: true`. §13 PASS per 2026-06-24 review. Head of Engineering sign-off. |
 | 1.3 | 2026-06-09 | v5.3 ST-04 (BLG-SPEC-49, EPIC-01): Added `GET /ai/journal-summary/history` — AI journal summary audit log query endpoint. API Contracts & Documentation Owner sign-off. |
