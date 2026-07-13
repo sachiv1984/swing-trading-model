@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.92
-**Last Updated:** 2026-07-12
+**Version:** 4.93
+**Last Updated:** 2026-07-13
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v8.7)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v8.8)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1272,7 +1272,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v8.7) | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v8.8) | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.91 |
-| Last Updated | 2026-07-10 |
+| Version | 4.93 |
+| Last Updated | 2026-07-13 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1463,7 +1463,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.11 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v8.7 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v8.8 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.42 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.12 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.93 | 2026-07-13 | **Roadmap rebalance `2026-07-13__scheduled` STEP 11 — roadmap_prompt.md v8.7→v8.8 — plus a live §14 table drift correction found this cycle.** §6 source prompt header v8.7→v8.8. §13 Artefact Register Roadmap Rebalance Prompt row v8.7→v8.8. §14 Roadmap Engine Source v8.7→v8.8. §14 **Version/Last Updated table row corrected from a stale 4.91/2026-07-10 to 4.93/2026-07-13** — the 4.92/2026-07-12 entry below had bumped the top document header and this Change Log but never actually updated the §14 table's own `Version`/`Last Updated` value rows, a 5th recurrence of the exact header-drift pattern this section's own drift-prevention note (added v4.85) exists to catch; caught this cycle by direct comparison against the top header rather than trusting the table row in isolation. Change: `roadmap_prompt.md` STEP -1.5 — "condition-gated defer exemption" clause added, exempting recurrence-conditioned deferred patches (Target = a condition, not a date/cycle_id) from the cycle-count OVERDUE mechanism; introduces a 6+-consecutive-carry "Stale Condition-Gated Defer" advisory instead. Closes an ambiguity that had been implicitly treated as an exemption across 3 prior scheduled cycles without ever being codified. Authority: Head of Specs Team (roadmap rebalance `2026-07-13__scheduled`, STEP 11). |
 | 4.92 | 2026-07-12 | **Roadmap rebalance `2026-07-12__scheduled` STEP 11 — roadmap_prompt.md v8.6→v8.7.** §6 source prompt header v8.6→v8.7. §13 Artefact Register Roadmap Rebalance Prompt row v8.5→v8.7 (also corrects a pre-existing drift found this cycle: this table's row read v8.5 while §14's own row already read v8.6). §14 Roadmap Engine Source v8.6→v8.7. §14 Version 4.91→4.92/2026-07-12. Changes: (1) `roadmap_prompt.md` §6 — same-day `cycle_id` collision auto-suffix rule added, closing a confirmed live overwrite risk (a second same-day scheduled rebalance collided with the morning's already-`Filed` cycle folder; resolved ad hoc via user confirmation before this rule existed). (2) `roadmap_prompt.md` STEP -1.5 — "out-of-scope OVERDUE resolution" clause added: once a named authority holds a standing out-of-band write privilege for an OVERDUE patch's target file (`shared_standards.md` §17), that is no longer a valid reason to keep re-carrying the patch — the escalation must instruct direct application under that authority. Closes the gap where the `CLAUDE.md` §6 patch was correctly flagged OVERDUE for 6 consecutive cycles but never actually applied. Authority: Head of Specs Team (roadmap rebalance `2026-07-12__scheduled`, STEP 11). |
 | 4.91 | 2026-07-10 | **Lifecycle audit AUD-2026-07-10, finding AUD-2026-07-10-001 applied — shared_standards.md v3.13→v3.14: new companion `CLAUDE.md` write authority provision added directly after §17.** §14 Shared Standards v3.13→v3.14. §14 Version 4.90→4.91/2026-07-10. Change: no governed routine's write scope included `CLAUDE.md` itself (confirmed absent from `roadmap_prompt.md`'s write-scope text), leaving a `CLAUDE.md` §6 Governance File Edit Checklist amendment carried unresolved across 5 consecutive scheduled-rebalance cycles (2026-07-01 through 2026-07-10) — the same shape as the `.claude/skills/` gap §17 already resolved. `shared_standards.md` §17 now also grants the Head of Specs Team standing write authority over `CLAUDE.md`, independent of any single engine's per-run Write Scope. Closes the 5-cycle carry-forward escalation. Authority: Head of Specs Team (audit AUD-2026-07-10 patch application, 2026-07-10). |
 | 4.90 | 2026-07-10 | **Post-ship closure `2026-07-10__release-v6.9` STEP 8 — execution_prompt.md v3.55→v3.56.** §8 source prompt header v3.55→v3.56; §14 Execution Engine Source v3.55→v3.56. Change: STEP 3.1.A API performance baseline advisory (AUD-2026-06-22-006) path corrected `docs/operations/api_performance_baseline.md` → `docs/ops/api_performance_baseline.md` (the path that actually exists); reclassified from "advisory (not a hard gate)" since `quality_gate.yml`'s "API Performance Baseline Drift Detection (ST-12)" already hard-blocks the PR on this omission — confirmed this cycle when both EPIC-01 and EPIC-02 PRs failed CI on first push for exactly this reason. This entry backfills a row missed when the header was bumped without updating this table (found and corrected by lifecycle audit AUD-2026-07-10, AUD-2026-07-10-002 — §14 self-row and this table's top row were both left at 4.89 despite the header already reading 4.90). Authority: Head of Specs Team (post-ship closure 2026-07-10__release-v6.9, STEP 8; table backfill via AUD-2026-07-10-002). |

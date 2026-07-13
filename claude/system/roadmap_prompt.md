@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 8.7
-**Last Updated:** 2026-07-12
+**Version:** 8.8
+**Last Updated:** 2026-07-13
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -151,6 +151,7 @@ Any unresolved action with no carry-forward path → halt.
 - Present in target file → record "applied" in run manifest.
 - Absent and **second consecutive cycle** carrying this patch → classify OVERDUE; escalate to Head of Specs Team immediately. Run may not proceed past -1.5 with any OVERDUE patch.
 - **Out-of-scope OVERDUE resolution (v8.7, 2026-07-12):** If an OVERDUE patch's target file is outside this engine's Write Scope §4 (e.g. `CLAUDE.md`), "outside scope" is not itself a valid carry-forward reason once a named authority holds a standing out-of-band write privilege for that file (e.g. `shared_standards.md` §17). In that case the escalation to Head of Specs Team must include an explicit instruction to apply the patch directly under that standing authority this session, rather than carrying it forward again. This closes a gap where a `CLAUDE.md` §6 patch was carried unresolved across 6 consecutive scheduled-rebalance cycles (2026-07-01 → 2026-07-10 first run) despite each cycle correctly identifying it as OVERDUE, because "outside this engine's write scope" was treated as a sufficient reason to re-carry even after §17 authority existed.
+- **Condition-gated defer exemption (v8.8, 2026-07-13):** A deferred patch whose Target field names a recurrence condition (e.g. "next scheduled rebalance where '0 active initiatives + no backlog/register change since prior scheduled run' recurs") rather than a cycle_id or absolute date is **not** subject to the "second consecutive cycle → OVERDUE" rule on a cycle-count basis — that rule's intent is to catch patches that should already have been applied and weren't, not conditions that genuinely have not yet recurred. Instead, apply a **Stale Condition-Gated Defer** advisory (non-blocking) once such a defer has been carried for **6 or more consecutive cycles** without its condition recurring: escalate to Head of Specs Team to assess whether the condition itself is realistic, and consider rewriting it as an unconditional action-now patch or retiring it. This closes an ambiguity that had, left uncodified, already been implicitly (and correctly) treated as an exemption across three prior scheduled cycles (2026-07-08 through 2026-07-13) — confirmed live this cycle when the STEP 0.C abbreviated-manifest exception reached its 4th consecutive carry without ever triggering an OVERDUE halt.
 - **Stale release target check:** If a deferred patch's target event is a named release (`plan release vX.Y`), verify whether that release has already shipped by checking the release summary table in `current_roadmap.md`. If shipped → classify the patch as OVERDUE immediately; do not wait for the second-consecutive-cycle rule to fire. Record outcome in run manifest.
 
 Record all outcomes under "Prior Cycle Outstanding Actions" in run manifest.
