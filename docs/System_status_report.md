@@ -2070,7 +2070,7 @@ None — both named mandatory Product Value Alert pull-forwards were delivered w
 
 ## Sprint: 2026-07-12__release-v7.0
 **Date:** 2026-07-13
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified_with_deviations — 2026-07-13
 
 ### Capabilities now live (merged this sprint)
 
