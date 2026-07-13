@@ -1609,6 +1609,61 @@ def log_pre_entry_validation_results(
         pass  # fire-and-forget — never block the validation response
 
 
+def ensure_trailing_stop_recommendation_log_table() -> None:
+    """Create trailing_stop_recommendation_log table (ST-07, BLG-BE-50, v7.0).
+
+    Captures every ATR-based trail-stop recommendation shown to the user
+    (GET /positions/{id}/stop-trail), so trailing_stop_action_rate
+    (docs/specs/metrics_definitions.md #Trailing Stop Action Rate) is
+    computable — numerator/denominator joins each row here to the earliest
+    subsequent PATCH /positions/{id} that set positions.stop_price >=
+    recommended_stop within the capture window (24h, Product Owner-confirmed
+    at sprint planning), using positions.updated_at as the PATCH timestamp.
+    Same pattern as pre_entry_validation_log above.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS trailing_stop_recommendation_log (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    position_id UUID NOT NULL REFERENCES positions(id),
+                    current_stop_at_recommendation DECIMAL(10,4),
+                    recommended_stop DECIMAL(10,4) NOT NULL,
+                    recommended_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+                )
+            """)
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_tsrl_position_id ON trailing_stop_recommendation_log (position_id)"
+            )
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_tsrl_recommended_at ON trailing_stop_recommendation_log (recommended_at DESC)"
+            )
+        conn.commit()
+
+
+def log_trailing_stop_recommendation(
+    position_id: str, current_stop_at_recommendation, recommended_stop: float
+) -> None:
+    """Log one trail-stop recommendation event (fire-and-forget, ST-07/BLG-BE-50).
+
+    Called once per GET /positions/{id}/stop-trail response — never blocks or
+    fails the recommendation response itself.
+    """
+    try:
+        ensure_trailing_stop_recommendation_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """INSERT INTO trailing_stop_recommendation_log
+                       (position_id, current_stop_at_recommendation, recommended_stop)
+                       VALUES (%s, %s, %s)""",
+                    (position_id, current_stop_at_recommendation, recommended_stop),
+                )
+            conn.commit()
+    except Exception:
+        pass  # fire-and-forget — never block the recommendation response
+
+
 def create_red_flag_event(
     event_type: str,
     ticker: str,

@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.14.0
-**Last Updated:** 2026-07-09
+**Version:** 1.15.0
+**Last Updated:** 2026-07-13
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1076,11 +1076,9 @@ trailing_stop_action_rate = COUNT(recommendations where the recommended stop was
 - **Denominator:** total trail-stop recommendations generated (`GET /positions/{id}/stop-trail` calls, one per modal open).
 - **Returns:** `null` if the denominator is 0 (no recommendations generated yet).
 
-### Data Capture Requirement (gap — not yet instrumented)
+### Data Capture Requirement (instrumented — ST-07, BLG-BE-50, v7.0)
 
-Neither side of this ratio is currently captured. `GET /positions/{id}/stop-trail` is stateless (computes and returns; no log write) and `PATCH /positions/{id}` is a generic position-update endpoint used for many purposes unrelated to trail-stop confirmation — there is no existing linkage between a shown recommendation and a later stop change, unlike the AI thesis flow (§above) which already has `gemini_audit_log.plan_id`.
-
-Computing this metric requires new instrumentation, following the existing `pre_entry_validation_log` pattern (`backend/database.py:1566`, a lightweight append-only capture table for system-recommendation events):
+Both sides of this ratio are now capturable. `trailing_stop_recommendation_log` is written on every `GET /positions/{id}/stop-trail` call (`backend/main.py`'s `get_stop_trail_endpoint`, fire-and-forget via `database.log_trailing_stop_recommendation()`), following the existing `pre_entry_validation_log` pattern (`backend/database.py`):
 
 ```sql
 CREATE TABLE trailing_stop_recommendation_log (
@@ -1092,9 +1090,9 @@ CREATE TABLE trailing_stop_recommendation_log (
 );
 ```
 
-Written once per `GET /positions/{id}/stop-trail` call (fire-and-forget, matching `log_pre_entry_validation_results()`'s pattern). The action-rate query then joins each log row to the earliest `PATCH /positions/{id}` that set `stop_price >= recommended_stop` within the capture window (proposed: 24 hours from `recommended_at`, matching the daily trading cadence — Product Owner to confirm before implementation).
+The action-rate query joins each log row to the earliest `PATCH /positions/{id}` that set `stop_price >= recommended_stop` within the capture window — **24 hours from `recommended_at`, Product Owner-confirmed at v7.0 sprint planning (delegated authority, consistent with the `2026-07-10__release-v6.9` sign-off precedent)**. No separate PATCH-side capture table was needed: `positions.stop_price` (the current value) and `positions.updated_at` (set on every `update_position()` call) already provide the join target — `stop_price >= recommended_stop AND updated_at BETWEEN recommended_at AND recommended_at + INTERVAL '24 hours'`.
 
-**This instrumentation is not built as part of ST-10** — ST-10's scope (per `stage4_backlog_slice.md#ST-10`) is metric definition only. Implementing `trailing_stop_recommendation_log` and wiring it into the `GET /positions/{id}/stop-trail` and `PATCH /positions/{id}` handlers is follow-up backend work, filed as BLG-BE-50.
+**Still open (not part of ST-07's scope — capture only):** no dedicated `GET /analytics/...` endpoint computes and returns `trailing_stop_action_rate` yet; the join above is documented and computable ad hoc against the two tables, but exposing it as a first-class metric endpoint is separate follow-up work.
 
 ### Tooling Assessment (AC-02)
 
@@ -1167,6 +1165,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 | 2026-03-02 | 1.6.0 | EPIC-03 (v1.7): Add Portfolio Risk Metrics section — canonical Position Risk formula (GBP-adjusted, FX handling for US positions, pence conversion for UK), Portfolio Heat formula (sum of position risks / portfolio value × 100), and explicit display threshold bands (Low <10%, Moderate 10–20%, High 20–30%, Extreme ≥30%) with canonical hex colour codes. TASK-06 through TASK-10 complete. Head of Specs Team lifecycle sign-off granted 2026-03-02 (Delegated Authority). v1.8 pre-alignment gate cleared. | Metrics Definitions & Analytics Owner + Head of Specs Team |
 | 2026-03-11 | 1.7.0 | EPIC-01/02 (v1.9): Add Discipline & Compliance Metrics section (ST-01) — Journal Completion Rate, Stop-Based Exit Rate, Average Position Size % formulas for GET /analytics/compliance-metrics. Add Cohort Analysis Metrics section (ST-03 batch) — period grouping, per-cohort field definitions, minimum data threshold. Add R-Multiple Distribution (Backend) section (ST-04 batch) — canonical server-side R-multiple formula, 8 fixed buckets, summary statistics. Appendix B updated to list all three new endpoints. Metrics Definitions & Analytics Owner + Head of Engineering sign-off granted 2026-03-11 (EPIC-01 ST-01 delivery). | Metrics Definitions & Analytics Owner + Head of Engineering |
 | 2026-04-06 | 1.9.0 | ST-09 (EPIC-03, v2.5): Add Fee Drag section — canonical formula (`exit_fees / gross_proceeds × 100`), portfolio average (`avg_fee_drag_pct`), qualifying conditions, sign convention, data source (existing columns, no schema change), display spec. Head of Specs Team co-authorship confirmed (ST-09 design gate cleared). | Metrics Definitions & Analytics Owner + Head of Specs Team |
+| 2026-07-13 | 1.15.0 | ST-07 (EPIC-02, v7.0, BLG-BE-50): Trailing Stop Action Rate — instrumented the capture side. `trailing_stop_recommendation_log` table created and populated on every `GET /positions/{id}/stop-trail` call (`database.log_trailing_stop_recommendation()`, fire-and-forget). Capture window (24h) Product Owner-confirmed at planning. No PATCH-side schema change needed — `positions.stop_price`/`updated_at` already support the action-rate join. Metric-computation endpoint remains separate follow-up work. |
 | 2026-07-03 | 1.12.0 | ST-08 (EPIC-03, v6.5, BLG-FEAT-41): Add Thesis Adoption Rate section — definition (adopted / generated), query approach joining `trade_plans.setup_thesis` to `gemini_audit_log.plan_id` (corrects the sprint scope's literal `claude_audit_log` reference, which has no `plan_id` column — see section's Query Approach note), data source, no schema/endpoint change required. Metrics Definitions & Analytics Owner + Financial Reporting & Records Owner + Product Owner sign-off. | Metrics Definitions & Analytics Owner |
 
 ---
