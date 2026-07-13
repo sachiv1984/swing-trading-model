@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.8
-**Last Updated:** 2026-07-12
+**Version:** 2.9
+**Last Updated:** 2026-07-13
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v6.4
 **EPIC:** EPIC-03
@@ -319,27 +319,18 @@ A compact full-width strip placed below the 5 session-summary cards. Does not re
 
 | State | Format |
 |-------|--------|
-| Gate not met | `{closed_trades}/20 trades` + `(PT-04/SI-02 gate)` muted sub-label + amber progress bar |
-| Gate met | `Gate cleared ✓` in green + `(PT-04/SI-02 gate)` muted sub-label + full green progress bar |
+| Gate not met | `{closed_trades}/{threshold} closed trades · {remaining} more to unlock quality insights` muted sub-label + progress percentage + blue progress bar |
+| Gate met | `Quality insights unlocked ✓` in green + `{closed_trades} closed trades` muted sub-label |
 | Loading | Single-line skeleton placeholder |
 | Error | Strip hidden silently — gate-metrics failure must not affect Dashboard primary content |
 
-**Progress bar:** 4px height, full content width. Fill proportional to `closed_trades / gate_threshold`. Amber while in progress; green when `gate_met = true`.
+**Progress bar:** 4px height (`h-1.5`), full content width. Fill proportional to `closed_trades / gate_threshold`. Blue while in progress; strip switches to a green-tinted container once `gate_met = true` (no progress bar shown in the met state).
 
-**Threshold:** sourced from `gate_threshold` field in API response — not hardcoded client-side.
+**Threshold:** sourced from `gate_threshold` field in API response — not hardcoded client-side (client-side `GATE_THRESHOLD = 20` constant used only as a fallback default if the field is absent).
 
 **Interaction:** Display-only. No click, no navigation. Refreshes on page load (no polling).
 
-### Known Deviations
-
-**BLG-SPEC-73 (identified 2026-07-09, ST-11 EPIC-03 v6.8):** The shipped `GateProgressStrip.js` component uses different copy than this section specifies:
-
-| Field | Spec says | Actual shipped copy |
-|-------|-----------|---------------------|
-| Gate not met | `{closed_trades}/20 trades` + `(PT-04/SI-02 gate)` sub-label | `{closed}/{threshold} closed trades · {remaining} more to unlock quality insights` — no "PT-04/SI-02" code shown |
-| Gate met | `Gate cleared ✓` | `Quality insights unlocked ✓` |
-
-The shipped copy avoids surfacing internal story/gate code names (`PT-04`/`SI-02`) to end users in favour of a benefit-oriented "quality insights" framing — likely a deliberate later refinement that was never back-ported to this spec. Playwright coverage (`tests/e2e/gate-progress.spec.js`) has been updated to assert the shipped copy as of BLG-QA-64 (v6.8). This spec's Display table (above) is retained as historical record pending a decision on which framing is canonical going forward — do not treat the table above as current ground truth for new work touching this component.
+**Wording rationale (ST-10, BLG-SPEC-73 resolution):** The copy intentionally avoids surfacing internal story/gate code names (`PT-04`/`SI-02`) to end users, using a benefit-oriented "quality insights" framing instead. This table now documents the shipped copy verbatim as canonical — see Change Log v2.9.
 
 ---
 
@@ -374,6 +365,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.9 | 2026-07-13 | v7.0 sprint execution (ST-10, BLG-SPEC-73): Resolved the §6 Gate Progress Indicator copy divergence flagged at v2.7 — updated the Display table to document the shipped `GateProgressStrip.js` copy verbatim as canonical (`{closed}/{threshold} closed trades · {remaining} more to unlock quality insights`, `Quality insights unlocked ✓`) instead of the original, never-implemented `PT-04/SI-02`-coded wording. Removed the §6 Known Deviations note (superseded — no longer a deviation now that spec matches shipped code). No code change; `GateProgressStrip.js` and `tests/e2e/gate-progress.spec.js` were already correct. Wording-only change — FI-P3-02 exception applies (CLAUDE.md), code review of static JSX/text substitutes for staging sign-off. |
 | 2.8 | 2026-07-12 | v7.0 design gate — Page-title light-theme contrast fix (ST-08, BLG-FE-95): `text-white` → `text-slate-900 dark:text-white` on the "Dashboard" `<h1>` (light-mode value was missing entirely; ~1.1:1 fail). Same defect class as BLG-FE-87/88, now extended to primary heading text (no prior token existed for this class). No layout change. Design source: `docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md`. Head of UX & Design sign-off: 2026-07-12. Head of Specs Team confirmed. |
 | 2.7 | 2026-07-09 | ST-11 (BLG-QA-64, EPIC-03, v6.8) — Known Deviations added to §6 Gate Progress Indicator: shipped `GateProgressStrip.js` copy ("closed trades... quality insights", "Quality insights unlocked ✓") diverges from this section's specified copy ("{N}/20 trades (PT-04/SI-02 gate)", "Gate cleared ✓"). Filed as BLG-SPEC-73. No layout/behaviour change — text-only finding surfaced while fixing dark Playwright spec `gate-progress.spec.js`. |
 | 2.6 | 2026-07-06 | v6.7 design gate — Advisory Label disclaimer light-theme fix (ST-02, BLG-FE-88): added `dark:` companion — `text-slate-700 dark:text-slate-300` (light-mode value was missing entirely; dark-theme value unchanged, already passing since v2.5/BLG-UX-01). No layout or badge change. Design source: `docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md` §4. Head of UX & Design sign-off: 2026-07-06. Head of Specs Team confirmed. |

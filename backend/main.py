@@ -1618,6 +1618,11 @@ def get_stop_trail_endpoint(position_id: str):
             "Trail stop is below current stop — no action required"
         )
 
+        # ST-07 (BLG-BE-50, v7.0): capture every recommendation for
+        # trailing_stop_action_rate — fire-and-forget, never blocks the response.
+        from database import log_trailing_stop_recommendation
+        log_trailing_stop_recommendation(position_id, current_stop, atr_trail_stop)
+
         return {
             "status": "ok",
             "data": {

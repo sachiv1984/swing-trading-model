@@ -920,14 +920,15 @@ export default function Positions() {
                         <span>
                           {trailStop > 0 ? `${currencySymbol}${trailStop.toFixed(2)}` : (displayStopPrice != null ? `${currencySymbol}${Number(displayStopPrice).toFixed(2)}` : "—")}
                         </span>
-                        {/* ST-01 AC-02: breach badge — visible when price ≤ trailing stop */}
+                        {/* ST-09 (v7.0, BLG-FE-96): breach badge — visible when price <= trailing stop, spec colour/label */}
                         {trailBreached && (
                           <span
-                            className="inline-flex items-center gap-0.5 text-xs px-1.5 py-0.5 rounded bg-rose-800/80 text-rose-200 border border-rose-600/60 font-semibold"
-                            title="Stop breach: current price at or below trailing stop"
+                            className="inline-flex items-center gap-0.5 text-xs px-1.5 py-0.5 rounded-full bg-orange-600 text-white font-medium"
+                            title="Trailing stop breach: current price is at or below trailing stop level"
+                            aria-label="Trailing stop breach: current price is at or below trailing stop level"
+                            data-testid="breach-badge"
                           >
-                            <AlertTriangle className="w-3 h-3" />
-                            Breach
+                            ⚠ BREACH
                           </span>
                         )}
                       </div>

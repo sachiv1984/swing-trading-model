@@ -2623,7 +2623,7 @@ paths:
         Returns the most recent entries from the claude_audit_log table — the immutable
         audit trail of all Claude API calls made by the application. Intended for
         compliance monitoring and cost review.
-        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.2 §GET /ai/claude-audit-log
+        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.6 §GET /ai/claude-audit-log
       parameters:
         - name: limit
           in: query
@@ -2634,6 +2634,26 @@ paths:
             maximum: 200
             default: 50
           description: Maximum number of records to return (newest first).
+        - name: endpoint
+          in: query
+          required: false
+          schema:
+            type: string
+          description: v7.0 ST-11 (BLG-BE-51) — exact-match filter on the endpoint field (e.g. "POST /ai/daily-briefing"). Combines with date_from/date_to.
+        - name: date_from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: v7.0 ST-11 (BLG-BE-51) — inclusive lower bound (YYYY-MM-DD) applied to generated_at. Combines with date_to/endpoint.
+        - name: date_to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: v7.0 ST-11 (BLG-BE-51) — inclusive upper bound (YYYY-MM-DD) applied to generated_at. Combines with date_from/endpoint.
       responses:
         "200":
           description: Claude API audit log records
