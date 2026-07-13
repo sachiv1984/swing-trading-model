@@ -18,6 +18,8 @@ import {
   ArrowUpDown,
   ShieldAlert,
   Zap,
+  Clock,
+  Check,
 } from "lucide-react";
 
 import DataState from "../components/ui/DataState";
@@ -520,6 +522,82 @@ function AlertsCell({ position }) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// ST-15 (v7.0, BLG-FEAT-68) — Position review cadence nudge
+// ---------------------------------------------------------------------------
+
+const REVIEW_STALE_THRESHOLD_DAYS = 14;
+const GRACE_SUPPRESSION_DAYS_IN_STATE = 8;
+
+// AC-04: suppress the flagged/amber state when the position is already
+// surfaced by the Grace Period Alert Zone or the portfolio-level Drawdown
+// Review Prompt. The drawdown prompt has no per-position breakdown (only
+// aggregate positions_by_state counts) — while it is active, treat every
+// open position as already surfaced by it, per the design intent that this
+// is a portfolio-wide review nudge (ux_spec.md §5 rationale: "both existing
+// prompts already ask the user to review... for the same position" reads as
+// position-scoped for Grace, portfolio-scoped for Drawdown).
+function getReviewCadenceState(position, drawdownActive) {
+  const lastReviewedAt = position.last_reviewed_at;
+  const referenceDate = lastReviewedAt ? new Date(lastReviewedAt) : new Date(position.entry_date);
+  const daysSinceReview = differenceInDays(new Date(), referenceDate);
+
+  const state = position.lifecycle_state || position.position_state;
+  const isGraceSuppressed = state === "GRACE" && (position.days_in_state ?? 0) >= GRACE_SUPPRESSION_DAYS_IN_STATE;
+  const suppressed = isGraceSuppressed || drawdownActive;
+
+  const flagged = !suppressed && daysSinceReview >= REVIEW_STALE_THRESHOLD_DAYS;
+  const label = lastReviewedAt ? `Reviewed ${daysSinceReview}d ago` : "Not yet reviewed";
+  const ariaLabel = flagged
+    ? `Position not reviewed in ${daysSinceReview} days — consider reviewing`
+    : `Last reviewed ${daysSinceReview} days ago`;
+
+  return { label, flagged, ariaLabel, daysSinceReview };
+}
+
+function useMarkReviewedMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (positionId) =>
+      apiFetch(`${API_BASE}/positions/${positionId}/mark-reviewed`, { method: "PATCH" }).then((r) => r.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["positions"] });
+    },
+    onError: () => {
+      toast.error("Failed to mark position as reviewed. Please try again.");
+    },
+  });
+}
+
+function LastReviewedCell({ position, drawdownActive }) {
+  const { label, flagged, ariaLabel } = getReviewCadenceState(position, drawdownActive);
+  const markReviewed = useMarkReviewedMutation();
+
+  return (
+    <TableCell>
+      <div className="flex items-center gap-1.5" data-testid="last-reviewed-cell">
+        {flagged && <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400 flex-shrink-0" aria-hidden="true" />}
+        <span
+          className={cn("text-xs", flagged ? "text-amber-600 dark:text-amber-400" : "text-slate-500 dark:text-slate-400")}
+          aria-label={ariaLabel}
+        >
+          {label}
+        </span>
+        <button
+          onClick={() => markReviewed.mutate(position.id)}
+          disabled={markReviewed.isPending}
+          title="Mark Reviewed"
+          aria-label={`Mark ${position.ticker} as reviewed`}
+          data-testid="mark-reviewed-button"
+          className="text-slate-600 hover:text-emerald-400 disabled:opacity-40 flex-shrink-0"
+        >
+          <Check className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </TableCell>
+  );
+}
+
 export default function Positions() {
   const [viewMode, setViewMode] = useState("grid");
   const [editingPosition, setEditingPosition] = useState(null);
@@ -530,6 +608,19 @@ export default function Positions() {
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  // ST-15 (v7.0, BLG-FEAT-68): shares the queryKey with DrawdownReviewPrompt's
+  // own useQuery — react-query dedupes identical keys, no extra network cost.
+  const { data: drawdownStatus } = useQuery({
+    queryKey: ["drawdown-status"],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE}/portfolio/drawdown-status`);
+      const json = await res.json();
+      return json?.data || {};
+    },
+    staleTime: 2 * 60 * 1000,
+  });
+  const drawdownActive = drawdownStatus?.threshold_breached === true;
 
   const { data: positions, isLoading, isError, refetch } = useQuery({
     queryKey: ["positions"],
@@ -745,6 +836,7 @@ export default function Positions() {
               onEdit={setEditingPosition}
               onExit={setExitingPosition}
               onRecheck={setRecheckingPosition}
+              drawdownActive={drawdownActive}
             />
           ))}
         </div>
@@ -765,6 +857,8 @@ export default function Positions() {
             <TableHead title="Days until next earnings">Earnings</TableHead>
             {/* ST-05 (v6.2) / ST-02 (v6.9): Alerts column — Risk-Off + Gap Risk badges, stacked */}
             <TableHead>Alerts</TableHead>
+            {/* ST-15 (v7.0, BLG-FEAT-68): Last Reviewed — position review cadence nudge */}
+            <TableHead>Last Reviewed</TableHead>
             <TableHead>Actions</TableHead>
           </TableHeader>
 
@@ -902,6 +996,8 @@ export default function Positions() {
                   <TableCell>
                     <AlertsCell position={position} />
                   </TableCell>
+
+                  <LastReviewedCell position={position} drawdownActive={drawdownActive} />
 
                   <TableCell>
                     <div className="flex items-center gap-2">

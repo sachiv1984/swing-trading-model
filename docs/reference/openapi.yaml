@@ -1433,6 +1433,44 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /positions/{position_id}/mark-reviewed:
+    patch:
+      tags: [Positions]
+      summary: Mark a position as reviewed
+      description: |
+        Sets last_reviewed_at = NOW() for the given position — the confirm
+        action for the position review cadence nudge (v7.0, ST-15, BLG-FEAT-68).
+        Display-only; no automated action beyond the explicit user-triggered
+        timestamp update. No request body.
+        Canonical contract: docs/specs/api_contracts/position_endpoints.md v2.5.0
+      parameters:
+        - in: path
+          name: position_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Position marked as reviewed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      id: { type: string, format: uuid }
+                      last_reviewed_at: { type: string, format: date-time, nullable: true }
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /positions/tags:
     get:
       tags: [Positions]
@@ -3546,6 +3584,11 @@ components:
             tags:
               type: array
               items: { type: string }
+            last_reviewed_at:
+              type: string
+              format: date-time
+              nullable: true
+              description: v7.0 ST-15 (BLG-FEAT-68) — null means never marked reviewed. Set by PATCH /positions/{id}/mark-reviewed.
 
     PortfolioSnapshot:
       type: object

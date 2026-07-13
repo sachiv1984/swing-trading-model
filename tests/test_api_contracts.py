@@ -252,6 +252,19 @@ class TestPositionEndpoints(unittest.TestCase):
         r = CLIENT.get("/positions/compliance")
         assert r.status_code == 200
 
+    @patch("database.mark_position_reviewed", return_value={"id": "pos-1", "last_reviewed_at": None})
+    def test_mark_position_reviewed_returns_ok(self, _):
+        # ST-15 (BLG-FEAT-68, v7.0) — patch at definition site: main.py's
+        # endpoint does `from database import mark_position_reviewed` inline
+        # (function-local import, re-evaluated on every call).
+        body = _ok(CLIENT.patch("/positions/pos-1/mark-reviewed"))
+        assert body["data"]["id"] == "pos-1"
+
+    @patch("database.mark_position_reviewed", return_value=None)
+    def test_mark_position_reviewed_404_when_not_found(self, _):
+        r = CLIENT.patch("/positions/nonexistent-id/mark-reviewed")
+        assert r.status_code == 404
+
 
 # ---------------------------------------------------------------------------
 # 5. Trades  (main.py uses main.get_trade_history_with_stats)

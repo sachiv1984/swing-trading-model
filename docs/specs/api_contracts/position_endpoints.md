@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.4.0
-**Last Updated:** 2026-07-10
+**Version:** 2.5.0
+**Last Updated:** 2026-07-13
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -26,6 +26,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.5.0 | 2026-07-13 | v7.0 ST-15 (BLG-FEAT-68): Added `last_reviewed_at` field to `GET /positions` response (ISO timestamp \| null — position review cadence nudge). Added `PATCH /positions/{position_id}/mark-reviewed` — sets `last_reviewed_at = NOW()`. Display-only; no automated action beyond the explicit user-triggered timestamp update. |
 | 2.4.0 | 2026-07-10 | v6.9 ST-02 (BLG-FEAT-65): Added `GET /positions/{position_id}/gap-risk` — overnight/weekend gap risk flag for a single position, combining the DS-04 earnings calendar with historical OHLCV gap statistics. Implemented as a dedicated per-position endpoint rather than a field on `GET /positions` (pre-authorised alternative per the story notes) because the historical-OHLCV lookup is too slow to run inline for every open position on every list load. Display-only; §13 sign-off required (AC-04). |
 | 2.3.0 | 2026-07-10 | v6.9 ST-01 (BLG-FEAT-64): Added `GET /positions/{position_id}/compliance-recheck` — re-applies the 5 SI-01 pre-entry deterministic rule checks against an open position's current state (current regime, current signal conditions, current heat/sizing), not its entry-time snapshot. On-demand only, no automation. Display-only; §13 sign-off required (AC-04). |
 | 2.2.0 | 2026-06-24 | v6.2 ST-01 (BLG-FEAT-46): Added `current_trailing_stop` field to `GET /positions` response. Added `POST /positions/nightly-stop-update` endpoint. v6.2 ST-05 (BLG-FEAT-49): Added `risk_off_exit` field to `GET /positions` response. Added `POST /positions/risk-off-alerts` endpoint. |
@@ -102,7 +103,8 @@ Response uses the standard success envelope from **conventions.md**.
     "risk_off_exit": false,
     "entry_note": "Breakout above $800 resistance",
     "exit_note": null,
-    "tags": ["momentum", "breakout"]
+    "tags": ["momentum", "breakout"],
+    "last_reviewed_at": "2026-07-01T09:00:00+00:00"
   }
 ]
 ```
@@ -125,6 +127,7 @@ Response uses the standard success envelope from **conventions.md**.
 | `risk_off_exit` | `boolean`. `true` when the position's market index (SPY for US, FTSE for UK) is below its 200-day MA. Cleared to `false` when the index recovers. Set nightly by `POST /positions/risk-off-alerts`. (v6.2 ST-05 BLG-FEAT-49) |
 | `pnl_percent` | Percentage P&L relative to entry cost. Same value as would be seen in `pnl_pct` in trade records. Both field names exist in the system for compatibility; `pnl_percent` is the canonical name in position responses |
 | `grace_days_remaining` | `integer` when `grace_period = true`; `null` when `grace_period = false`. Derived server-side as `max(0, 10 - holding_days)` during the grace period. Represents the number of days remaining in the grace window. On day 10, `grace_period` becomes `false` and this field returns `null` — not `0`. Intended display format: `"Day {holding_days + 1} of 10"`. Always present in the response object. |
+| `last_reviewed_at` | ISO-8601 timestamp \| `null`. `null` means the position has never been marked reviewed. Set by `PATCH /positions/{id}/mark-reviewed`. (v7.0 ST-15 BLG-FEAT-68) |
 
 > **Note:** For a summary view of open positions alongside portfolio totals, use `GET /portfolio`. This endpoint returns the full enriched position object including native prices, stop context, and journal fields; `GET /portfolio` returns a lighter position shape.
 
@@ -976,6 +979,62 @@ Response uses the standard success envelope from **conventions.md**.
 | `insufficient_history` | `boolean`. `true` when fewer than the backend-defined minimum event count (currently 10) is available. The flag is still shown when `true` — insufficient history does not suppress the flag, only the numeric average. |
 
 **Determinism note:** Earnings proximity uses a same-day-or-next-day calendar window (`days_until_earnings` in `[0, 1]`) as "before the position's next trading session" — a deterministic calendar check only; no attempt is made to infer before/after-market release timing, which the upstream earnings data source does not reliably expose. Weekend-hold is a pure day-of-week check (Friday), computed server-side; the frontend renders the flag as returned with no client-side day-of-week logic.
+
+### Errors
+
+Errors use the standard error envelope from **conventions.md**.
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `404` | Position not found |
+| `500` | Internal server error |
+
+---
+
+## PATCH /positions/{position_id}/mark-reviewed
+
+**Added:** v7.0 (ST-15, BLG-FEAT-68)
+
+**Purpose**
+
+Sets `last_reviewed_at = NOW()` for the given position — the confirm action for the
+position review cadence nudge (§Last Reviewed Column, `positions.md`).
+
+**Scope constraint (§13):** Display-only. No automated action beyond the explicit
+user-triggered timestamp update. No recommendation, no directional signal.
+
+**Method & Path**
+
+- `PATCH /positions/{position_id}/mark-reviewed`
+
+**Idempotency**
+
+- Mutating, but idempotent in effect — repeat calls simply reset `last_reviewed_at`
+  to a later `NOW()`. No confirmation modal on the frontend; low-stakes, reversible
+  in spirit (the flag re-fires again after the threshold naturally re-elapses).
+
+### Request
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `position_id` | string (UUID) | Yes | Position identifier |
+
+No body.
+
+### Response (200)
+
+Response uses the standard success envelope from **conventions.md**.
+
+#### `data` schema
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "last_reviewed_at": "2026-07-13T10:00:00+00:00"
+}
+```
 
 ### Errors
 

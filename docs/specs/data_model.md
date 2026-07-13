@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.11
-**Last Updated:** 2026-07-03
+**Version:** 2.12
+**Last Updated:** 2026-07-13
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1244,6 +1244,27 @@ ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS planned_stop_price NUMERIC(20, 
 
 ---
 
-**Document Version:** 2.11
+### Migration from v2.11 to v2.12
+
+ST-15 (BLG-FEAT-68, EPIC-03, v7.0) — position review cadence nudge.
+
+```sql
+BEGIN;
+ALTER TABLE positions ADD COLUMN IF NOT EXISTS last_reviewed_at TIMESTAMP WITH TIME ZONE;
+COMMIT;
+```
+
+| Field | Type | Description |
+|-------|------|--------------|
+| `last_reviewed_at` | timestamptz \| null | Nullable; null means the position has never been marked reviewed. Set to `NOW()` by `PATCH /positions/{id}/mark-reviewed`. Drives the "Last Reviewed" column/card-footer nudge (`positions.md` §Last Reviewed Column) — flagged amber when `days_since_review >= 14`, suppressed while the position is already surfaced by the Grace Period Alert Zone or the portfolio-level Drawdown Review Prompt. |
+
+Reversible: `ALTER TABLE positions DROP COLUMN IF EXISTS last_reviewed_at;`
+
+**Sign-off:**
+- Data Model Domain & Schema Owner: Accepted — 2026-07-13 (agent-mediated, single nullable column addition, no backfill required)
+
+---
+
+**Document Version:** 2.12
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-07-03
+**Last Review:** 2026-07-13
