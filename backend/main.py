@@ -277,6 +277,12 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_signals_watchlisted_status FAILED at startup: %s", _e)
     try:
+        from database import ensure_last_reviewed_at_column
+        ensure_last_reviewed_at_column()
+        _log.info("ensure_last_reviewed_at_column: OK")
+    except Exception as _e:
+        _log.error("ensure_last_reviewed_at_column FAILED at startup: %s", _e)
+    try:
         from database import ensure_signals_allocation_insufficient_status
         ensure_signals_allocation_insufficient_status()
         _log.info("ensure_signals_allocation_insufficient_status: OK")
@@ -757,13 +763,21 @@ def get_monthly_pnl_endpoint():
     GET /reports/monthly-pnl
 
     Returns month-by-month realised P&L for the current and prior calendar year,
-    plus a compliance_summary (30d Arc 5 compliance metrics).
-    Spec: reports_endpoints.md §GET /reports/monthly-pnl (v0.6, ST-03 v4.7)
+    plus a compliance_summary (30d Arc 5 compliance metrics) and (v7.0, ST-14,
+    BLG-FEAT-70) a current-snapshot estimated_unrealised_pnl/unrealised_note pair
+    — same field/computation as the Tax Year tab, top-level siblings of `data`.
+    Spec: reports_endpoints.md §GET /reports/monthly-pnl (v0.6, ST-03 v4.7; v0.7, ST-14 v7.0)
     """
     try:
-        data = get_monthly_pnl_report()
+        report = get_monthly_pnl_report()
         compliance_summary = get_arc5_compliance_summary(period_days=30)
-        return {"status": "ok", "data": data, "compliance_summary": compliance_summary}
+        return {
+            "status": "ok",
+            "data": report["months"],
+            "estimated_unrealised_pnl": report["estimated_unrealised_pnl"],
+            "unrealised_note": report["unrealised_note"],
+            "compliance_summary": compliance_summary,
+        }
     except Exception as e:
         return JSONResponse(status_code=500,
             content={"status": "error", "message": str(e)})
@@ -1132,6 +1146,36 @@ def update_position_tags_endpoint(position_id: str, request: UpdateTagsRequest):
         return {"status": "ok", "data": result}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.patch("/positions/{position_id}/mark-reviewed")
+def mark_position_reviewed_endpoint(position_id: str):
+    """
+    PATCH /positions/{position_id}/mark-reviewed
+
+    Sets last_reviewed_at = NOW() for the given position (ST-15, BLG-FEAT-68, v7.0).
+    §13 display-only: no automated action beyond the explicit user-triggered timestamp
+    update — this is the confirm action for the position review cadence nudge.
+    Spec: docs/design/2026-07-12__release-v7.0/position-review-cadence-nudge/ux_spec.md
+    """
+    from database import mark_position_reviewed
+    try:
+        result = mark_position_reviewed(position_id)
+        if result is None:
+            raise HTTPException(status_code=404, detail=f"Position {position_id} not found")
+        return {
+            "status": "ok",
+            "data": {
+                "id": str(result["id"]),
+                "last_reviewed_at": result["last_reviewed_at"].isoformat() if result["last_reviewed_at"] else None,
+            },
+        }
+    except HTTPException:
+        raise
     except Exception as e:
         import traceback
         traceback.print_exc()

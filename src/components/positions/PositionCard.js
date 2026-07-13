@@ -1,11 +1,16 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, TrendingDown, Edit2, LogOut, Zap, AlertTriangle } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { TrendingUp, TrendingDown, Edit2, LogOut, Zap, AlertTriangle, Clock, Check } from "lucide-react";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { cn } from "../../lib/utils";
 import { differenceInDays } from "date-fns";
 import { useGapRisk } from "../../hooks/useGapRisk";
+import { apiFetch } from "../../api/base44Client";
+import { toast } from "sonner";
+
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
 const GAP_RISK_REASON_LABELS = {
   earnings: "Earnings before next session",
@@ -70,7 +75,75 @@ function PositionCardAlertsRow({ position }) {
   );
 }
 
-export default function PositionCard({ position, onEdit, onExit, onRecheck }) {
+// ST-15 (v7.0, BLG-FEAT-68) — Position review cadence nudge.
+// Same computation/suppression rule as Positions.js's Table View — duplicated
+// per this codebase's existing card-vs-page convention (e.g. GAP_RISK_REASON_LABELS
+// above), not factored into a shared module.
+const REVIEW_STALE_THRESHOLD_DAYS = 14;
+const GRACE_SUPPRESSION_DAYS_IN_STATE = 8;
+
+function getReviewCadenceState(position, drawdownActive) {
+  const lastReviewedAt = position.last_reviewed_at;
+  const referenceDate = lastReviewedAt ? new Date(lastReviewedAt) : new Date(position.entry_date);
+  const daysSinceReview = differenceInDays(new Date(), referenceDate);
+
+  const state = position.lifecycle_state || position.position_state;
+  const isGraceSuppressed = state === "GRACE" && (position.days_in_state ?? 0) >= GRACE_SUPPRESSION_DAYS_IN_STATE;
+  const suppressed = isGraceSuppressed || drawdownActive;
+
+  const flagged = !suppressed && daysSinceReview >= REVIEW_STALE_THRESHOLD_DAYS;
+  const label = lastReviewedAt ? `Reviewed ${daysSinceReview}d ago` : "Not yet reviewed";
+  const ariaLabel = flagged
+    ? `Position not reviewed in ${daysSinceReview} days — consider reviewing`
+    : `Last reviewed ${daysSinceReview} days ago`;
+
+  return { label, flagged, ariaLabel };
+}
+
+function useMarkReviewedMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (positionId) =>
+      apiFetch(`${API_BASE}/positions/${positionId}/mark-reviewed`, { method: "PATCH" }).then((r) => r.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["positions"] });
+    },
+    onError: () => {
+      toast.error("Failed to mark position as reviewed. Please try again.");
+    },
+  });
+}
+
+function LastReviewedRow({ position, drawdownActive }) {
+  const { label, flagged, ariaLabel } = getReviewCadenceState(position, drawdownActive);
+  const markReviewed = useMarkReviewedMutation();
+
+  return (
+    <div className="flex items-center justify-between gap-2 pb-3 mb-1" data-testid="last-reviewed-row">
+      <div className="flex items-center gap-1.5">
+        {flagged && <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400 flex-shrink-0" aria-hidden="true" />}
+        <span
+          className={cn("text-xs", flagged ? "text-amber-600 dark:text-amber-400" : "text-slate-500 dark:text-slate-400")}
+          aria-label={ariaLabel}
+        >
+          {label}
+        </span>
+      </div>
+      <button
+        onClick={() => markReviewed.mutate(position.id)}
+        disabled={markReviewed.isPending}
+        title="Mark Reviewed"
+        aria-label={`Mark ${position.ticker} as reviewed`}
+        data-testid="mark-reviewed-button"
+        className="text-slate-600 hover:text-emerald-400 disabled:opacity-40"
+      >
+        <Check className="w-3.5 h-3.5" />
+      </button>
+    </div>
+  );
+}
+
+export default function PositionCard({ position, onEdit, onExit, onRecheck, drawdownActive }) {
   const [showNoteModal, setShowNoteModal] = useState(false);
   const pnl = position.pnl || 0;
   const pnlPercent = position.pnl_percent || 0;
@@ -195,7 +268,12 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck }) {
         </div>
       )}
 
-      <div className="flex items-center gap-2 pt-4 border-t border-slate-700/50">
+      {/* ST-15 (v7.0, BLG-FEAT-68): card footer, after the alert-icon row, before Actions */}
+      <div className="pt-4 border-t border-slate-700/50">
+        <LastReviewedRow position={position} drawdownActive={drawdownActive} />
+      </div>
+
+      <div className="flex items-center gap-2">
         <Button
           variant="ghost"
           size="sm"

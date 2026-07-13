@@ -195,6 +195,10 @@ def get_positions_with_prices() -> List[Dict]:
         # risk_off_exit — per-position alert flag, set by nightly risk-off job (ST-05)
         risk_off_exit = bool(pos.get('risk_off_exit', False))
 
+        # last_reviewed_at — position review cadence nudge (ST-15, BLG-FEAT-68, v7.0)
+        last_reviewed_at = pos.get('last_reviewed_at')
+        last_reviewed_at = last_reviewed_at.isoformat() if last_reviewed_at else None
+
         # Build position dict
         positions_list.append({
             "id": str(pos['id']),
@@ -228,6 +232,7 @@ def get_positions_with_prices() -> List[Dict]:
             "tags": pos.get('tags', []),
             "sector": sector,
             "industry": industry,
+            "last_reviewed_at": last_reviewed_at,
         })
     
     print(f"✓ Returned {len(positions_list)} positions with live prices\n")

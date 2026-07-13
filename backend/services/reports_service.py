@@ -142,6 +142,17 @@ UNREALISED_NOTE = (
 )
 
 
+def get_estimated_unrealised_pnl(portfolio_id: str) -> float:
+    """Sum of `pnl` across all currently open positions.
+
+    Shared by the Tax Year and Monthly P&L reports (ST-14, BLG-FEAT-70, v7.0) —
+    same field/computation, reused rather than duplicated per the locked
+    design decision (docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md).
+    """
+    open_positions = get_positions(portfolio_id, status='open')
+    return round(sum(float(p.get('pnl', 0) or 0) for p in open_positions), 2)
+
+
 def get_tax_year_report(year: int) -> Dict:
     """
     Build a UK tax-year P&L report for the given start year.
@@ -209,10 +220,7 @@ def get_tax_year_report(year: int) -> Dict:
     win_rate = round(win_count / total_count * 100, 1) if total_count else 0.0
 
     # --- Estimated unrealised P&L from currently open positions ---
-    open_positions = get_positions(portfolio_id, status='open')
-    estimated_unrealised_pnl = round(
-        sum(float(p.get('pnl', 0) or 0) for p in open_positions), 2
-    )
+    estimated_unrealised_pnl = get_estimated_unrealised_pnl(portfolio_id)
 
     return {
         "tax_year_start": str(tax_year_start),
@@ -234,19 +242,25 @@ def get_tax_year_report(year: int) -> Dict:
     }
 
 
-def get_monthly_pnl_report() -> list:
+def get_monthly_pnl_report() -> dict:
     """
-    Return month-by-month realised P&L for the current and prior calendar year.
+    Return month-by-month realised P&L for the current and prior calendar year,
+    plus a current-snapshot estimated unrealised P&L figure (ST-14, BLG-FEAT-70, v7.0).
 
     Returns:
-        List of dicts matching reports_endpoints.md §GET /reports/monthly-pnl.
+        {
+          "months": list of dicts matching reports_endpoints.md §GET /reports/monthly-pnl
+                    (unchanged per-row shape — year, month, realised_pnl_gbp, trade_count),
+          "estimated_unrealised_pnl": float | None — None when there is no portfolio yet,
+          "unrealised_note": str,
+        }
     """
     portfolio = get_portfolio()
     if not portfolio:
-        return []
+        return {"months": [], "estimated_unrealised_pnl": None, "unrealised_note": UNREALISED_NOTE}
     portfolio_id = str(portfolio['id'])
     rows = get_monthly_pnl(portfolio_id)
-    return [
+    months = [
         {
             "year": int(r["year"]),
             "month": int(r["month"]),
@@ -255,6 +269,11 @@ def get_monthly_pnl_report() -> list:
         }
         for r in rows
     ]
+    return {
+        "months": months,
+        "estimated_unrealised_pnl": get_estimated_unrealised_pnl(portfolio_id),
+        "unrealised_note": UNREALISED_NOTE,
+    }
 
 
 _DISCLAIMER = (

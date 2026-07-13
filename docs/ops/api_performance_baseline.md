@@ -2,9 +2,9 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.12
-**Date:** 2026-07-10
-**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration
+**Version:** 2.13
+**Date:** 2026-07-13
+**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 ---
@@ -1122,10 +1122,53 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, autonomous class)
 
 ---
 
+## 25. v7.0 Write Endpoint Registration — PATCH /positions/{id}/mark-reviewed (ST-15, EPIC-03, BLG-FEAT-68)
+
+**Date:** 2026-07-13
+**Story:** ST-15 (EPIC-03, v7.0) — BLG-FEAT-68
+**Environment:** N/A — write endpoint excluded from live timing run per §18.2/§20 methodology (write ops risk production data mutation and are not eligible for repeated sampling).
+**Method:** Estimated p50/p95 derived from endpoint characteristics, same approach as §20 (PATCH /trades/{id}/costs).
+
+### 25.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| PATCH /positions/{id}/mark-reviewed | v7.0 | Write — excluded from live timing run | ~250ms (est.) | ~500ms (est.) | — (write op, estimated values) |
+
+**Measurement date:** 2026-07-13 (estimated; live timing run deferred per write-op exclusion policy)
+
+**Endpoint characteristics:**
+- Query: Single `UPDATE` on the `positions` table to set `last_reviewed_at = NOW()`
+- Path parameter required (`{id}` = position UUID)
+- No request body, no external API calls
+- Expected p50: ~250ms — consistent with other single-write Supavisor endpoints (cf. §10, §20)
+- Expected p95: ~500ms — tail jitter pattern consistent across all Supavisor endpoints at p95
+
+**Why excluded from live timing run:**
+PATCH /positions/{id}/mark-reviewed mutates `last_reviewed_at` on real position records. Repeated sampling against production or staging would mark real open positions as reviewed. Per §18.2/§20 methodology, write endpoints that risk data mutation are registered with estimated performance characteristics rather than live measurements.
+
+### 25.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed Registration Sign-Off
+
+AC-01: Entry added with estimated p50 (~250ms) and p95 (~500ms) and measurement date
+       (2026-07-13 — estimated; write-op exclusion applied). ✅ PASS
+AC-02: Estimation methodology documented — derived from endpoint characteristics
+       (single Supavisor UPDATE, no external API). Consistent with §10/§20 baseline
+       range. Write-op exclusion per §18.2/§20 applied. ✅ PASS (write-op clause)
+AC-03: Entry format consistent with existing baseline rows (§20/§24 pattern). ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, autonomous class) — 2026-07-13
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.13 | 2026-07-13 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-15 (v7.0 EPIC-03, BLG-FEAT-68): §25 added — PATCH /positions/{id}/mark-reviewed registered as write-op exclusion (mutates real position records). Estimated p50=~250ms, p95=~500ms (single Supavisor UPDATE, consistent with §20 PATCH /trades/{id}/costs pattern). Live timing deferred per §18.2/§20 write-op policy. |
 | 2.10 | 2026-07-03 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-04 (v6.5 EPIC-02, BLG-OPS-83): §24 added — GET /strategy/benchmark/open-positions (v6.4, BLG-FEAT-54) registered. Staging returned 404 (endpoint not yet deployed there, same pattern as §23); measured on production instead (5 warm samples): p50=524.5ms, p95=600.0ms. Regression threshold documented per §22.2/§22.3/§23.2 dynamic-2x pattern: p95>1,200.0ms. Resolves ESC-EXEC-20260703-01 (credential gap — resolved once the correct app X-API-Key value was identified). BLG-OPS-83 closed. |
 | 2.9 | 2026-07-02 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-11 (v6.4 EPIC-03, BLG-OPS-82): §23 added — GET /strategy/benchmark/summary, GET /strategy/benchmark/trades, GET /health/scheduler registered. Staging returned 404 (v6.3 not yet deployed there); measured on production instead (5 warm samples each): summary p50=970.1ms p95=972.7ms; trades p50=1,198.1ms p95=1,240.3ms; health/scheduler p50=76.2ms p95=161.8ms. Regression thresholds documented per §22.2/§22.3 dynamic-2x pattern (not §19.2, which sets no threshold). Staging-404 handling departs from §4.2's deferral precedent — deliberate one-off substitution, not a new standing rule (see §23.3). Also corrects a pre-existing header/Document-History version desync (header was still 2.7; last logged change was already 2.8). BLG-OPS-82 closed. |
 | 2.8 | 2026-06-29 | Sprint Execution Engine | ST-14 (v6.3 EPIC-03, BLG-OPS-78): §22.3 added — production timing run complete. POST /ai/daily-briefing p50=10,296ms p95=11,152ms; POST /ai/chat p50=6,258ms p95=7,035ms. 7 warm production samples each. Regression thresholds: daily-briefing p95 > 22,304ms; chat p95 > 14,070ms. BLG-OPS-78 closed. |

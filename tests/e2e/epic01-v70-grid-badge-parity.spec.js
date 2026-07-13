@@ -198,7 +198,10 @@ test('SC-GVP-09: Table View breach indicator unchanged — still a pill, not an 
   await tableBtn.click();
   await page.waitForSelector('table', { timeout: 5000 });
 
-  const badge = page.locator('span[title="Stop breach: current price at or below trailing stop"]');
+  // ST-09 (EPIC-02, v7.0, BLG-FE-96, merged post-EPIC-01): breach badge colour/label/testid
+  // updated to match spec (#EA580C, "⚠ BREACH") — selector updated during EPIC-03's post-merge
+  // rebase reconciliation (flagged in EPIC-02's execution_state.json process_notes).
+  const badge = page.locator('[data-testid="breach-badge"]');
   await expect(badge).toBeVisible({ timeout: 5000 });
-  await expect(badge).toContainText('Breach');
+  await expect(badge).toContainText('BREACH');
 });

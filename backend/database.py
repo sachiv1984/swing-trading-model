@@ -1226,6 +1226,38 @@ def ensure_lifecycle_columns():
         conn.commit()
 
 
+def ensure_last_reviewed_at_column():
+    """Add last_reviewed_at column to positions (idempotent).
+
+    ST-15 (BLG-FEAT-68, EPIC-03, v7.0) — position review cadence nudge.
+    Nullable TIMESTAMP WITH TIME ZONE; null means "never reviewed".
+    Reversible: DROP COLUMN IF EXISTS last_reviewed_at.
+    Spec: docs/design/2026-07-12__release-v7.0/position-review-cadence-nudge/ux_spec.md
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE positions ADD COLUMN IF NOT EXISTS last_reviewed_at TIMESTAMP WITH TIME ZONE"
+            )
+        conn.commit()
+
+
+def mark_position_reviewed(position_id: str) -> dict:
+    """Set last_reviewed_at = NOW() for the given position (ST-15, BLG-FEAT-68).
+
+    Returns the updated position row, or None if the position does not exist.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "UPDATE positions SET last_reviewed_at = NOW() WHERE id = %s RETURNING id, last_reviewed_at",
+                (position_id,),
+            )
+            row = cur.fetchone()
+        conn.commit()
+    return dict(row) if row else None
+
+
 def ensure_plan_vs_reality_columns():
     """Add plan_vs_reality JSONB to trade_history and planned_stop_price to trade_plans (idempotent).
 

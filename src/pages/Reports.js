@@ -192,24 +192,6 @@ function TaxYearReport() {
         </div>
         <div className="flex items-center gap-2">
           <Button
-            onClick={handleCsvDownload}
-            disabled={csvGenerating}
-            variant="outline"
-            className="border-slate-600 text-slate-300 hover:text-white hover:border-slate-500 h-9"
-          >
-            {csvGenerating ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Generating…
-              </>
-            ) : (
-              <>
-                <FileDown className="w-4 h-4 mr-2" />
-                Download CSV
-              </>
-            )}
-          </Button>
-          <Button
             onClick={handlePdfDownload}
             disabled={pdfGenerating}
             variant="outline"
@@ -224,6 +206,25 @@ function TaxYearReport() {
               <>
                 <FileDown className="w-4 h-4 mr-2" />
                 Download PDF
+              </>
+            )}
+          </Button>
+          {/* ST-13 (BLG-FEAT-69, v7.0): placed right of PDF per tax-year-csv-export/ux_spec.md §2 */}
+          <Button
+            onClick={handleCsvDownload}
+            disabled={csvGenerating}
+            variant="outline"
+            className="border-slate-600 text-slate-300 hover:text-white hover:border-slate-500 h-9"
+          >
+            {csvGenerating ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Generating…
+              </>
+            ) : (
+              <>
+                <FileDown className="w-4 h-4 mr-2" />
+                Download CSV
               </>
             )}
           </Button>
@@ -536,6 +537,10 @@ function MonthlyPnlTable() {
 
   const rows = response?.data ?? [];
   const compliance = response?.compliance_summary ?? null;
+  const estimatedUnrealisedPnl = response?.estimated_unrealised_pnl;
+  const unrealisedNote = response?.unrealised_note;
+  const totalRealisedPnl = rows.reduce((sum, row) => sum + (row.realised_pnl_gbp ?? 0), 0);
+  const combinedTotal = totalRealisedPnl + (estimatedUnrealisedPnl ?? 0);
 
   return (
     <div className="space-y-4">
@@ -575,6 +580,25 @@ function MonthlyPnlTable() {
           </table>
         )}
       </div>
+
+      {/* ST-14 (BLG-FEAT-70, v7.0): Unrealised P&L Card — reuses the Tax Year tab's approved pattern verbatim */}
+      {estimatedUnrealisedPnl != null && (
+        <div data-testid="monthly-unrealised-pnl-card" className="rounded-xl border border-slate-600/50 bg-slate-800/30 p-5">
+          <h3 className="text-sm font-semibold text-slate-300 mb-3">
+            Indicative Unrealised P&L (current positions)
+          </h3>
+          <p className={`text-2xl font-bold mb-3 ${(estimatedUnrealisedPnl ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+            {formatGBP(estimatedUnrealisedPnl)}
+          </p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            {unrealisedNote}
+          </p>
+          {/* Combined Total line (satisfies AC-02 regression check) */}
+          <p data-testid="monthly-combined-total" className="text-sm font-semibold text-white mt-4 pt-3 border-t border-slate-700/50">
+            Total (Realised + Unrealised): {formatGBP(combinedTotal)}
+          </p>
+        </div>
+      )}
 
       {/* Strategy Compliance — ST-18 (Arc 5, v4.3) */}
       <div data-testid="strategy-compliance-section" className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">

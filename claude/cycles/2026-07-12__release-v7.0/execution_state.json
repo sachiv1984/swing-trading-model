@@ -8,10 +8,10 @@
   "last_updated_utc": "2026-07-13T09:57:23Z",
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-12__release-v7.0/EPIC-01",
       "pr_number": 968,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-12__release-v7.0/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -142,10 +142,10 @@
       ]
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-12__release-v7.0/EPIC-02",
       "pr_number": 969,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-12__release-v7.0/qa_evidence_EPIC-02.md",
       "test_scenarios": [
@@ -428,16 +428,18 @@
   ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": [
+    "epics_merged": [
       "EPIC-01",
-      "EPIC-02",
+      "EPIC-02"
+    ],
+    "epics_pending": [
       "EPIC-03"
     ],
     "all_merged": false
   },
   "process_notes": [
-    "ST-09 (EPIC-02) changed Positions.js breach badge title text and added data-testid=\"breach-badge\", replacing the fragile title-text selector used by tests/e2e/epic01-v62-stops-alerts.spec.js (fixed in same commit 479c005a) AND by tests/e2e/epic01-v70-grid-badge-parity.spec.js SC-GVP-09 (EPIC-01, PR #968, not yet merged to main -- could not be fixed from the EPIC-02 branch since that file doesn't exist there yet). MUST fix SC-GVP-09's selector to use [data-testid=\"breach-badge\"] as part of EPIC-02's rebase-onto-main reconciliation after EPIC-01 merges, before EPIC-02's own PR is finalised -- same pattern as the already-planned EPIC-03 rebase for positions.md/PositionCard.js."
+    "ST-09 (EPIC-02) changed Positions.js breach badge title text and added data-testid=\"breach-badge\", replacing the fragile title-text selector used by tests/e2e/epic01-v62-stops-alerts.spec.js (fixed in same commit 479c005a) AND by tests/e2e/epic01-v70-grid-badge-parity.spec.js SC-GVP-09 (EPIC-01, PR #968, not yet merged to main -- could not be fixed from the EPIC-02 branch since that file doesn't exist there yet). MUST fix SC-GVP-09's selector to use [data-testid=\"breach-badge\"] as part of EPIC-02's rebase-onto-main reconciliation after EPIC-01 merges, before EPIC-02's own PR is finalised -- same pattern as the already-planned EPIC-03 rebase for positions.md/PositionCard.js.",
+    "EPIC-01 (PR #968) merged 2026-07-13T11:55:32Z, EPIC-02 (PR #969) merged 2026-07-13T12:01:00Z. EPIC-03 branch rebased onto post-merge main; single real conflict in src/components/positions/PositionCard.js (EPIC-01's RiskOffCardBadge/PositionCardAlertsRow vs EPIC-03's getReviewCadenceState/LastReviewedRow) resolved by keeping both feature sets \u2014 verified via syntax check and presence-check of all merged functions. All other files (backend/database.py, backend/main.py, docs/reference/openapi.yaml, positions.md, src/pages/Positions.js) auto-merged cleanly with no manual intervention needed. SC-GVP-09 fix (tests/e2e/epic01-v70-grid-badge-parity.spec.js breach-badge selector, flagged in EPIC-02's process_notes) was NOT auto-resolved by the merge (still referenced the pre-ST-09 title text/label) - fixed manually during this rebase (data-testid=\"breach-badge\" + \"BREACH\" text), verified passing."
   ],
   "sealed": false,
   "sealed_utc": null
