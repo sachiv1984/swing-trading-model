@@ -1,14 +1,15 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.2
-**Last Updated:** 2026-07-02
+**Version:** 0.3
+**Last Updated:** 2026-07-12
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v6.4
 **EPIC:** EPIC-03
 **Design Source (v0.1):** docs/design/2026-06-26__release-v6.3/strategy-benchmark-page/ux_spec.md
 **Design Source (v0.2 additions):** docs/design/2026-07-02__release-v6.4/open-positions-panel/ux_spec.md
-**Confirmed by:** Head of Specs Team — 2026-07-02
+**Design Source (v0.3 additions):** docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md (BLG-FE-95 remediation)
+**Confirmed by:** Head of Specs Team — 2026-07-12
 
 ---
 
@@ -38,6 +39,8 @@ Users should be able to:
 | Description | "Compare live trading vs backtest" |
 | Component | `PageHeader` |
 | Last updated line | `"Benchmark data as of DD Mon YYYY"` — muted, small; sourced from most recent import; absent when no data |
+
+**Implementation note (v0.3 — ST-08, BLG-FE-95):** shipped implementation (`StrategyBenchmark.js`) uses a bare, hand-rolled header (icon + `<h1>` + `<p>`), not the shared `PageHeader` component named above — a pre-existing spec/implementation deviation, out of scope for this contrast-only fix (candidate follow-up: consolidate onto `PageHeader`, filed separately). Title colour fixed this cycle: `text-white` → `text-slate-900 dark:text-white` (light-mode value was missing entirely; ~1.1:1 fail on `bg-slate-100`). Light: `text-slate-900` ≈17.9:1 (AAA). Dark: unchanged, no regression. Sizing/weight (`text-lg font-semibold`) unchanged. Design source: `docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md`.
 
 ---
 
@@ -276,5 +279,6 @@ All endpoints must be documented in `docs/reference/openapi.yaml` and `docs/spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3 | 2026-07-12 | v7.0 design gate — Page-title light-theme contrast fix (ST-08, BLG-FE-95): `text-white` → `text-slate-900 dark:text-white` on the "Strategy Benchmark" `<h1>` (light-mode value was missing entirely; ~1.1:1 fail). Same defect class as BLG-FE-87/88, extended to primary heading text. Noted (not resolved, out of scope): shipped header is a hand-rolled `<h1>`, not the `PageHeader` component named in §2 — pre-existing spec/implementation deviation, candidate follow-up. No layout change. Design source: `docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md`. Head of UX & Design sign-off: 2026-07-12. Head of Specs Team confirmed. |
 | 0.2 | 2026-07-02 | v6.4 EPIC-03 ST-08 (BLG-FEAT-54). Added §4.5 Panel 0 — Open Positions (header/summary, table columns, Market-only filter interaction, realized-metric isolation hard rule, states, `backtest_open_positions` replace-on-import data source). §3 filter bar note updated with Panel 0 Year-filter exception. §9 API Endpoints: added `GET /strategy/benchmark/open-positions`. Design source: open-positions-panel/ux_spec.md. Design Gate cleared: Head of UX & Design, Product Owner — 2026-07-02. Head of Specs Team confirmed. |
 | 0.1 | 2026-06-26 | Initial spec — v6.3 EPIC-03 ST-11. Covers full page layout: sticky filter bar, empty state, Panel 1 (stat cards + PnL bar chart), Panel 2 (yearly breakdown table), Panel 3 (trade log with 3 toggle modes and exit reason badges). Design source: strategy-benchmark-page/ux_spec.md. Approved: Product Owner 2026-06-26. Head of Specs Team confirmed. |

@@ -3,11 +3,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.7
-**Last Updated:** 2026-07-09
+**Version:** 2.8
+**Last Updated:** 2026-07-12
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v6.4
 **EPIC:** EPIC-03
+**Design Source (v2.8):** docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md (BLG-FE-95 remediation)
 **Design Source (v2.6):** docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md (BLG-FE-88 remediation)
 **Design Source (v2.5):** docs/specs/qa/ai_disclaimer_visibility_assessment.md (BLG-UX-01 remediation)
 **Design Source (v2.4):** docs/design/2026-06-26__release-v6.3/morning-briefing-progressive-disclosure/ux_spec.md
@@ -109,6 +110,10 @@ Row 2: [ Signal Status                    ] [ Recent Activity              ]
 ### Mobile (<768px)
 
 All 5 cards stack vertically in order: Open Positions → Portfolio Heat → In Grace Today → Signal Status → Recent Activity.
+
+### Page Title (v7.0 — ST-08)
+
+`<h1>` "Dashboard" — `text-slate-900 dark:text-white` (was bare `text-white`, invisible on light theme, ~1.1:1 contrast). Reuses the app's existing primary-text pairing (`Layout.js`, dark-mode toggle), no new colour token introduced. Light: `text-slate-900` on `bg-slate-100` ≈17.9:1 (AAA). Dark: `text-white` unchanged, no regression. Sizing/weight unchanged. Design source: `docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md`.
 
 ---
 
@@ -369,6 +374,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.8 | 2026-07-12 | v7.0 design gate — Page-title light-theme contrast fix (ST-08, BLG-FE-95): `text-white` → `text-slate-900 dark:text-white` on the "Dashboard" `<h1>` (light-mode value was missing entirely; ~1.1:1 fail). Same defect class as BLG-FE-87/88, now extended to primary heading text (no prior token existed for this class). No layout change. Design source: `docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md`. Head of UX & Design sign-off: 2026-07-12. Head of Specs Team confirmed. |
 | 2.7 | 2026-07-09 | ST-11 (BLG-QA-64, EPIC-03, v6.8) — Known Deviations added to §6 Gate Progress Indicator: shipped `GateProgressStrip.js` copy ("closed trades... quality insights", "Quality insights unlocked ✓") diverges from this section's specified copy ("{N}/20 trades (PT-04/SI-02 gate)", "Gate cleared ✓"). Filed as BLG-SPEC-73. No layout/behaviour change — text-only finding surfaced while fixing dark Playwright spec `gate-progress.spec.js`. |
 | 2.6 | 2026-07-06 | v6.7 design gate — Advisory Label disclaimer light-theme fix (ST-02, BLG-FE-88): added `dark:` companion — `text-slate-700 dark:text-slate-300` (light-mode value was missing entirely; dark-theme value unchanged, already passing since v2.5/BLG-UX-01). No layout or badge change. Design source: `docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md` §4. Head of UX & Design sign-off: 2026-07-06. Head of Specs Team confirmed. |
 | 2.5 | 2026-07-02 | v6.4 design gate — Advisory Label disclaimer text contrast fix (ST-09, BLG-UX-01): `text-slate-500` → `text-slate-300` (≈2.7:1 → ≥4.5:1 on `bg-slate-800`, WCAG AA). No layout or badge change. Design source: `docs/specs/qa/ai_disclaimer_visibility_assessment.md` (finding C5, approved 2026-06-29). Head of UX & Design sign-off: 2026-07-02. Head of Specs Team confirmed. |

@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.1
-**Last Updated:** 2026-07-10
+**Version:** 2.2
+**Last Updated:** 2026-07-12
+**Design Source (v7.0 additions):** docs/design/2026-07-12__release-v7.0/combined-badge-differentiation/decision_record.md, docs/design/2026-07-12__release-v7.0/position-review-cadence-nudge/ux_spec.md
 **Design Source (v6.9 additions):** docs/design/2026-07-10__release-v6.9/on-demand-compliance-recheck/ux_spec.md, docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md
 **Design Source (v2.3 additions):** docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md
 **Design Source (v3.3 additions):** docs/design/2026-05-09__release-v3.3/position-lifecycle-display/ux_spec.md, docs/design/2026-05-09__release-v3.3/grace-period-alert/ux_spec.md, docs/design/2026-05-09__release-v3.3/stop-management-workflow/ux_spec.md
@@ -21,6 +22,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.2 | 2026-07-12 | v7.0 design gate: (ST-05, BLG-FE-104) Combined GAP RISK / RISK OFF badge differentiation review — confirmed existing hue (blue-800 vs amber-600) + mandatory text label already satisfy distinguishability; added stacking spacing rule (4px min gap, RISK OFF above GAP RISK, no truncation) for the previously-unreviewed combined/stacked state, Table and Grid View. (ST-15, BLG-FEAT-68) Last Reviewed column added — Table View (after Alerts, before Actions) and Grid View card footer; `last_reviewed_at` field; amber flag + clock icon at ≥14 days, suppressed when position already flagged by Grace Period or Drawdown prompts; inline "Mark Reviewed" icon-button calls `PATCH /positions/{id}/mark-reviewed`. §13 compliant — display-only, no automated action beyond explicit user-triggered timestamp update. Design sources: v7.0 additions listed above. Head of UX & Design sign-off: 2026-07-12. Product Owner approved: 2026-07-12. Head of Specs Team confirmed. |
 | 2.1 | 2026-07-10 | v6.9 design gate: (ST-01, BLG-FEAT-64) Compliance Recheck Panel — "Recheck Compliance" action added to Table View Actions column and Grid View card footer for all open positions; opens modal reusing `PreEntryValidationPanel`'s pass/warn/fail visual pattern against the same 5 SI-01 rules, evaluated against current (not entry-time) conditions; session-local override acknowledgement, no persisted state. §13 compliant — re-application of existing deterministic rules, no new automation. (ST-02, BLG-FEAT-65) Gap Risk Badge added to the existing Alerts column — "GAP RISK" badge (amber-600 `#D97706`) when an earnings date falls before the next session or on Friday-close weekend holds; tooltip shows reason(s) plus historical average gap magnitude for the ticker or "insufficient history"; stacks with existing RISK OFF badge in the same cell. §13 compliant — informational only, no gap direction/magnitude prediction. Design sources: v6.9 additions listed above. Head of UX & Design sign-off: 2026-07-10. Product Owner approved: 2026-07-10. Head of Specs Team confirmed. |
 | 2.0 | 2026-07-06 | v6.7 design gate — AI Trade Advisor Widget footer disclaimer light-theme fix (ST-02, BLG-FE-88): `text-slate-400` → `text-slate-600 dark:text-slate-400` (bare class had no light-mode companion; was 2.34–2.56:1 FAIL in light theme). Dark-theme value unchanged — already matches the canonical secondary-text token. Design source: `docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md` §4. Head of UX & Design sign-off: 2026-07-06. Head of Specs Team confirmed. |
 | 1.9 | 2026-07-02 | v6.4 design gate — AI Trade Advisor Widget footer disclaimer contrast fix (ST-10, BLG-UX-02): `text-slate-600` → `text-slate-400` (≈1.9:1 → ≥4.5:1 on `bg-slate-800`, WCAG AA); `data-testid="ai-chat-advisory-footer"` added to footer container to enable Playwright assertion (resolves coverage gap noted in QA assessment). Design source: `docs/specs/qa/ai_disclaimer_visibility_assessment.md` (finding C5, approved 2026-06-29). Head of UX & Design sign-off: 2026-07-02. Head of Specs Team confirmed. |
@@ -165,6 +167,7 @@ Cards show a summarized snapshot of each position including:
 - Days held
 - Tags
 - Alert badges (Trail Stop breach, RISK OFF, Gap Risk — *v6.9 addition, see §Alerts Column*)
+- Last Reviewed indicator *(v7.0 addition, see §Last Reviewed Column)*
 - Quick links to exit, recheck compliance *(v6.9 — ST-01)*, or view notes
 
 Designed for readability and scannability.
@@ -464,6 +467,8 @@ Shown when `gap_risk.flagged = true` — trigger is either an earnings date befo
 
 **Stacking:** RISK OFF and GAP RISK badges are independent alert types and stack vertically in the same Alerts cell when both apply to a position — this realises the "future alert types" placeholder already noted in the v6.2 Alerts Column design.
 
+**Stacked-state spacing (v7.0 — ST-05):** Minimum `4px` vertical gap between stacked badges (prevents visual merging). Stack order: RISK OFF above GAP RISK. Neither label may truncate — if horizontal space is insufficient (Grid View narrow card), badges wrap to full width individually rather than sharing a row. Reviewed and confirmed distinguishable per existing hue (blue-800 vs amber-600) + mandatory text label; no colour/label change required. Design source: `docs/design/2026-07-12__release-v7.0/combined-badge-differentiation/decision_record.md`.
+
 **Tooltip / expanded detail:** Hover or focus reveals earnings date and/or weekend-hold reason plus historical average gap magnitude for the ticker (`gap_risk.avg_gap_pct`, `gap_risk.event_count`), or "insufficient history" when `gap_risk.insufficient_history = true`. Tooltip content is also exposed via `aria-describedby` for keyboard/screen-reader access.
 
 **No alert:** dash ("—"), consistent with existing Alerts column convention.
@@ -471,6 +476,32 @@ Shown when `gap_risk.flagged = true` — trigger is either an earnings date befo
 **Alert clearing:** Fully server-driven (earnings date passes, or Monday session opens for weekend holds). No manual dismiss.
 
 **§13 constraint:** Display-only. Surfaces a known calendar event and historical statistic — no prediction of gap direction or magnitude.
+
+---
+
+## Last Reviewed Column (v7.0 — ST-15)
+
+**Design source:** docs/design/2026-07-12__release-v7.0/position-review-cadence-nudge/ux_spec.md
+
+**Purpose:** Existing prompts (Grace Period Alert Zone, Drawdown Review Prompt) only fire on price/performance triggers — a quietly-performing position can go unreviewed indefinitely. This is a low-priority, ongoing informational nudge, not a new Alert Zone banner.
+
+**Placement:** Table View — new "Last Reviewed" column, after "Alerts", before "Actions". Grid View — card footer, after the alert-icon row, before the Actions row.
+
+**Data source:** `last_reviewed_at` (ISO timestamp, nullable) — new field on `GET /positions`.
+
+| Element | Spec |
+|---------|------|
+| Display (not flagged) | "Reviewed {N}d ago" — `text-slate-500 dark:text-slate-400` (existing secondary-text token, BLG-FE-89) |
+| Display (never reviewed) | "Not yet reviewed" — same styling |
+| Flag threshold | `days_since_review ≥ 14` (default; server-configurable constant, not user-editable this cycle) |
+| Flagged display | Text switches to `text-amber-600 dark:text-amber-400` + small clock icon prefix; label unchanged. Icon + colour only — no separate badge/pill, keeps it visually subordinate to the Alerts column's pill badges |
+| `aria-label` | "Position not reviewed in {N} days — consider reviewing" (flagged) / "Last reviewed {N} days ago" (not flagged) |
+
+**Mark Reviewed action:** Small inline checkmark icon-button next to the text (not a full Actions-column button). Click → `PATCH /positions/{id}/mark-reviewed` (sets `last_reviewed_at = now()` server-side) → text resets to "Reviewed 0d ago", flagged state clears immediately (optimistic update). No confirmation modal.
+
+**Suppression rule (AC-04):** The flagged/amber state does not fire when the position is already surfaced by the Grace Period Alert Zone (`position_state = 'GRACE'` AND `days_in_state ≥ 8`) or the Drawdown Review Prompt (position included in the portfolio-level drawdown banner's position count). The "Last Reviewed" text still renders in both cases (informational); only the amber/flagged styling is suppressed. `days_since_review` continues counting underneath — if the position later exits GRACE/drawdown scope while still stale, the flag can fire on the next refresh.
+
+**§13 constraint:** Display-only. No automated action beyond timestamp update on explicit user click.
 
 ---
 
@@ -559,6 +590,8 @@ For Journal View empty states, see the Journal View section above.
 | `PUT /positions/{id}` | *(v3.3 — ST-07)* Updates stop price after user confirms trail stop action. |
 | `GET /portfolio/paper-positions` | *(v3.5 — ST-03)* Paper Account Panel data source. Returns Alpaca paper positions with P&L. Returns `{"paper_tracking_enabled": false}` when ALPACA_PAPER_API_KEY absent. |
 | `GET /positions` (extended) | *(v6.2 — ST-02/ST-05)* Now returns two new fields per position: `current_trailing_stop` (number \| null) for Trail Stop column; `risk_off_exit` (boolean) for Alerts column. |
+| `GET /positions` (extended, v7.0 — ST-15) | Now also returns `last_reviewed_at` (ISO timestamp \| null) for Last Reviewed column. |
+| `PATCH /positions/{id}/mark-reviewed` (v7.0 — ST-15) | New endpoint — sets `last_reviewed_at = now()` for the given position. |
 | `POST /ai/chat` | *(v6.2 — ST-09)* AI Trade Advisor widget. Accepts `{ question: string, context?: { ticker?, position_id? } }`. Returns AI response grounded in live portfolio state. |
 
 > For full dependency behaviour rules, see `patterns/api_dependencies.md`.

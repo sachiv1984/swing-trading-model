@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.6
-**Last Updated:** 2026-07-08
+**Version:** 0.7
+**Last Updated:** 2026-07-12
+**Design Source (v0.7 CSV export + monthly realised/unrealised split):** docs/design/2026-07-12__release-v7.0/tax-year-csv-export/ux_spec.md, docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md
 **Design Source (v0.6 SI-02 gate status):** docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.1 PDF export):** docs/design/2026-03-18__release-v2.1/pdf-export/ux_spec.md
@@ -30,14 +31,15 @@ Users should be able to:
 
 ### Page Header Controls
 
-The page header contains two controls, right-aligned:
+The page header contains three controls, right-aligned:
 
 1. **Year Selector** (left) — dropdown for selecting the UK tax year (see Year Selector section below)
-2. **"Download PDF"** button (right) — secondary button style; triggers server-side PDF generation
+2. **"Download PDF"** button — secondary button style; triggers server-side PDF generation
+3. **"Download CSV"** button (right, v7.0 — ST-13) — secondary button style, same visual weight as PDF; triggers server-side CSV generation
 
-Layout (left to right): `[Year Selector ▼]  [Download PDF]`
+Layout (left to right): `[Year Selector ▼]  [Download PDF]  [Download CSV]`
 
-On narrow screens: stacked vertically — year selector above, Download PDF button below (full width).
+On narrow screens: stacked vertically in the same order — year selector, then PDF, then CSV (each full width).
 
 #### Download PDF Button States
 
@@ -49,6 +51,17 @@ On narrow screens: stacked vertically — year selector above, Download PDF butt
 | Error | Returns to Idle | Toast notification: `"PDF generation failed. Please try again."` (auto-dismiss 5s) |
 
 The PDF is valid for empty years (zero closed trades). The button is always enabled once the page loads.
+
+#### Download CSV Button States (v7.0 — ST-13, BLG-FEAT-69)
+
+| State | Label | Behaviour |
+|-------|-------|-----------|
+| Idle | **"Download CSV"** (with download icon) | Enabled when page loaded successfully |
+| Generating | **"Generating…"** (spinner replaces icon) | Button disabled; fires `GET /reports/tax-year?format=csv&year=YYYY` |
+| Success | Returns to Idle | Browser file download begins; no success toast required |
+| Error | Returns to Idle | Toast notification: `"CSV generation failed. Please try again."` (auto-dismiss 5s) |
+
+Valid for empty years (zero closed trades) — same rule as PDF. Button always enabled once the page loads. Exported figures must match the on-screen summary bar and monthly table exactly — no client-side recalculation. Design source: `docs/design/2026-07-12__release-v7.0/tax-year-csv-export/ux_spec.md`.
 
 ---
 
@@ -235,7 +248,7 @@ A note at the bottom of the page:
 
 - **Endpoint:** `GET /reports/tax-year?year=YYYY` — page data
 - **PDF export:** `GET /reports/tax-year?format=pdf&year=YYYY` — server-side PDF download (`Content-Disposition: attachment`)
-- **CSV export:** `GET /reports/tax-year?format=csv&year=YYYY` — CSV download (ST-13; no UI control beyond API — URL parameter only; no button on this page)
+- **CSV export:** `GET /reports/tax-year?format=csv&year=YYYY` — CSV download, triggered by the "Download CSV" header button (v7.0 — ST-13, BLG-FEAT-69; supersedes the v2.1 "no button, URL-parameter only" note — that variant was never implemented and was inconsistent with the PDF button on the same page)
 - **SI-02 Gate Status section (v0.6 — ST-06):** `GET /trades`, `GET /trade-plans`, `GET /analytics/arc5-compliance` — existing endpoints, no new backend work
 - **Canonical contract:** `docs/specs/api_contracts/reports_endpoints.md`
 
@@ -265,6 +278,24 @@ One row per calendar month (descending order). Sourced from `GET /reports/monthl
 | Trades | `trade_count` | Integer count of closed trades |
 
 Empty state (no closed trades in scope): "No monthly P&L data available yet."
+
+---
+
+### Unrealised P&L Card (v7.0 — ST-14, BLG-FEAT-70)
+
+Displayed directly below the Monthly Financial Table. Reuses the Tax Year tab's approved §Unrealised P&L Card pattern verbatim (same field, same disclaimer, same visual-separation rule) rather than a new one — `realised_pnl_gbp` in the monthly table remains per-row/per-month; unrealised P&L is a current-snapshot figure with no month attribution, so it is shown once, not per row.
+
+- Shows `estimated_unrealised_pnl` (GBP) — same field/computation as the Tax Year tab (sum of `pnl` across all currently open positions)
+- Displays the `unrealised_note` disclaimer text verbatim (same API field)
+- Card header: **"Indicative Unrealised P&L (current positions)"**
+- Colour: profit `text-emerald-400`, loss `text-rose-400` (matches Open Positions Panel convention, `open-positions-panel/ux_spec.md` v6.4)
+- Must be visually distinct from the monthly table — users must not mistake this figure for a period-scoped value
+
+#### Combined Total Line (satisfies AC-02 regression check)
+
+Below the Unrealised P&L Card: **"Total (Realised + Unrealised): £X,XXX.XX"**, computed client-side as `sum(displayed monthly rows' realised_pnl_gbp) + estimated_unrealised_pnl` — display-only arithmetic on already-fetched values; no new endpoint, no server-side recalculation of either source figure (consistent with the page's "must not recalculate P&L" rule).
+
+Design source: `docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md`.
 
 ---
 
@@ -307,6 +338,7 @@ Follows the Arc 5 Compliance Summary design language from the tax-year report (�
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.7 | 2026-07-12 | v7.0 design gate: (ST-13, BLG-FEAT-69) Tax-year CSV export — "Download CSV" header button added alongside "Download PDF" (idle/generating/success/error states, same pattern); supersedes the stale v2.1 "no button, URL-parameter only" API Reference note (never implemented, inconsistent with PDF button). (ST-14, BLG-FEAT-70) Monthly P&L Report — Unrealised P&L Card added below the Monthly Financial Table, reusing the Tax Year tab's approved card pattern (`estimated_unrealised_pnl`, `unrealised_note`); Combined Total line added (client-side sum, no new endpoint). Design sources: v0.7 additions listed above. Head of UX & Design sign-off: 2026-07-12. Product Owner approved: 2026-07-12. Head of Specs Team confirmed. |
 | 0.6 | 2026-07-08 | v6.8 design gate — SI-02 Gate Status section added (ST-06, BLG-FEAT-71): collapsible, collapsed by default, below Arc 5 Compliance Summary and above Gross vs Net Comparison. Shows total closed trades vs. trade-plan-linked closed trades as two distinct numbers, plus MET/NOT MET badges for 3 SI-02 gate conditions. Sourced from existing `GET /trades`, `GET /trade-plans`, `GET /analytics/arc5-compliance` — no new backend work. Reflects ST-01 (BLG-BE-46) finding live, as-is. Distinct from Dashboard's single-metric Gate Progress strip (dashboard.md §6). Design source: si02-gate-visibility-indicator/ux_spec.md. Approved: Product Owner 2026-07-08. Head of Specs Team confirmed. |
 | 0.5 | 2026-06-19 | v6.0 design gate — Gross vs Net Comparison section added to Summary Bar (ST-03): conditional row showing average gross vs net R-multiple when ≥1 trade in selected year has brokerage cost data; footnote showing trade count with cost data; absent when no cost data. Design source: net-of-costs-tracking/ux_spec.md. Approved: Product Owner 2026-06-19. Head of Specs Team confirmed. |
 | 0.4 | 2026-05-29 | v4.3 Monthly P&L Strategy Compliance section (ST-18, BLG-FE-38): Monthly P&L Report section added — financial table spec and Strategy Compliance section (validation pass rate, override rate, red flag events/week, most frequent rule breach from GET /analytics/arc5-compliance). AC field mapping resolved (override_count→override_rate, red_flag_events_count→events_per_week). Design artefact: Arc 5 Compliance Summary v4.1 pattern. Design gate: 2026-05-29__release-v4.3. Head of UX & Design + Product Owner sign-off. |
