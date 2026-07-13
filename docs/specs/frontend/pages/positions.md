@@ -665,6 +665,15 @@ Backend must provide compliance flags per position (new endpoint or extension to
 
 ## Known Deviations
 
+### DEV-EPIC01-ST05-01 — Positions Table View: RISK OFF badge colour/label diverges from spec
+
+- **Description:** §Alerts Column specifies the RISK OFF badge as Label "RISK OFF", Background `#1E40AF` (blue-800). The shipped Table View implementation (`src/pages/Positions.js`, `AlertsCell` component) instead renders `bg-amber-900/60 text-amber-300` (amber, not blue), label "Risk-Off" (not "RISK OFF"), plus a `ShieldAlert` icon not mentioned in spec. Pre-existing since v6.2 — confirmed by the existing passing test `SC-RO-02` (`tests/e2e/epic01-v62-stops-alerts.spec.js`), which encodes the amber colour as expected. Discovered 2026-07-13 while building the v7.0 Grid View RISK OFF badge (ST-02), which correctly uses the spec's blue `#1E40AF` — Table View and Grid View are now visually inconsistent for the same badge. This also means the v7.0 combined-badge differentiation decision record's "hue separation" rationale (blue-800 vs amber-600) does not hold for Table View as shipped — both RISK OFF and GAP RISK render in the amber family there.
+- **Canonical requirement:** §Alerts Column — Risk-Off Badge: Label "RISK OFF", Background `#1E40AF` (blue-800).
+- **Priority:** P2
+- **Target resolution release:** v7.1
+- **Owner:** Frontend Specifications & UX Documentation Owner
+- **Backlog reference:** BLG-FE-107 (filed sprint execution 2026-07-13, cycle 2026-07-12__release-v7.0, ST-05)
+
 ### DEV-EPIC02-ST05-03 — Positions Table View: P&L (GBP) column absent
 
 - **Description:** The v2.3 implementation of the Positions Table View renders "P&L %" (percentage uplift) in green for positive positions but does not display the "P&L (GBP)" absolute value column. Only % is visible; the absolute £ value is absent.
