@@ -192,24 +192,6 @@ function TaxYearReport() {
         </div>
         <div className="flex items-center gap-2">
           <Button
-            onClick={handleCsvDownload}
-            disabled={csvGenerating}
-            variant="outline"
-            className="border-slate-600 text-slate-300 hover:text-white hover:border-slate-500 h-9"
-          >
-            {csvGenerating ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Generating…
-              </>
-            ) : (
-              <>
-                <FileDown className="w-4 h-4 mr-2" />
-                Download CSV
-              </>
-            )}
-          </Button>
-          <Button
             onClick={handlePdfDownload}
             disabled={pdfGenerating}
             variant="outline"
@@ -224,6 +206,25 @@ function TaxYearReport() {
               <>
                 <FileDown className="w-4 h-4 mr-2" />
                 Download PDF
+              </>
+            )}
+          </Button>
+          {/* ST-13 (BLG-FEAT-69, v7.0): placed right of PDF per tax-year-csv-export/ux_spec.md §2 */}
+          <Button
+            onClick={handleCsvDownload}
+            disabled={csvGenerating}
+            variant="outline"
+            className="border-slate-600 text-slate-300 hover:text-white hover:border-slate-500 h-9"
+          >
+            {csvGenerating ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Generating…
+              </>
+            ) : (
+              <>
+                <FileDown className="w-4 h-4 mr-2" />
+                Download CSV
               </>
             )}
           </Button>
