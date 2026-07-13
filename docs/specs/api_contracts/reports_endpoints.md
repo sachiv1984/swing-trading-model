@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.6
-**Last Updated:** 2026-05-31
+**Version:** 0.7
+**Last Updated:** 2026-07-13
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -457,6 +457,25 @@ Object containing Arc 5 pre-entry discipline metrics for the last 30 days. `null
 
 Source: `pre_entry_validation_log` and `red_flag_events` tables. See `arc5_compliance_analytics.md` for rule type definitions.
 
+#### `estimated_unrealised_pnl` / `unrealised_note` (v0.7, ST-14 — BLG-FEAT-70)
+
+Top-level siblings of `data`, same field/computation as `GET /reports/tax-year`'s `summary.estimated_unrealised_pnl` — a current-snapshot sum of `pnl` across all currently open positions. Not attributed to any month; shown once, alongside the monthly table, not per row.
+
+```json
+{
+  "status": "ok",
+  "data": [ ... ],
+  "estimated_unrealised_pnl": 340.50,
+  "unrealised_note": "Reflects current open positions at time of report generation, not positions open during the specified tax year. Indicative only — not a tax liability.",
+  "compliance_summary": { ... }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `estimated_unrealised_pnl` | float \| null | Sum of `pnl` across all currently open positions. `null` when there is no portfolio yet. |
+| `unrealised_note` | string | Static disclaimer text — same value as the Tax Year report's `unrealised_note`. |
+
 ---
 
 ### Error Responses
@@ -479,6 +498,7 @@ GET /reports/monthly-pnl
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.7 | 2026-07-13 | Add `estimated_unrealised_pnl`/`unrealised_note` top-level fields to GET /reports/monthly-pnl response — current-snapshot unrealised P&L, same field/computation as GET /reports/tax-year's `summary.estimated_unrealised_pnl`. `data` array shape unchanged. ST-14 (BLG-FEAT-70) — v7.0 cycle 2026-07-12__release-v7.0. |
 | 0.6 | 2026-05-31 | Rename strategy_compliance → compliance_summary in GET /reports/monthly-pnl response (field rename; same schema, canonical name alignment). ST-03 — v4.7 cycle 2026-05-31__release-v4.7. |
 | 0.5 | 2026-05-29 | Add strategy_compliance field to GET /reports/monthly-pnl response: 30d Arc 5 compliance metrics. ST-18 — v4.3 cycle 2026-05-29__release-v4.3. |
 | 0.4 | 2026-04-30 | Add GET /reports/monthly-pnl endpoint: month-by-month realised P&L for current and prior year. ST-11 — v3.1 release planning cycle 2026-04-29__release-v3.1. |

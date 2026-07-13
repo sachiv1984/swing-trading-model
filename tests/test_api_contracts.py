@@ -467,13 +467,17 @@ class TestReportsEndpoints(unittest.TestCase):
     def test_get_tax_year_missing_param_returns_400(self, *_):
         assert CLIENT.get("/reports/tax-year").status_code == 400
 
-    @patch("main.get_monthly_pnl_report", return_value=[])
+    @patch("main.get_monthly_pnl_report", return_value={"months": [], "estimated_unrealised_pnl": None, "unrealised_note": "note"})
     @patch("main.get_arc5_compliance_summary", return_value=None)
     def test_get_monthly_pnl_returns_ok(self, *_):
         body = _ok(CLIENT.get("/reports/monthly-pnl"))
         assert "data" in body
 
-    @patch("main.get_monthly_pnl_report", return_value=[{"year": 2026, "month": 5, "realised_pnl_gbp": 100.0, "trade_count": 2}])
+    @patch("main.get_monthly_pnl_report", return_value={
+        "months": [{"year": 2026, "month": 5, "realised_pnl_gbp": 100.0, "trade_count": 2}],
+        "estimated_unrealised_pnl": 340.0,
+        "unrealised_note": "note",
+    })
     @patch("main.get_arc5_compliance_summary", return_value={
         "period_days": 30,
         "validation_pass_rate": 0.85,
@@ -491,12 +495,25 @@ class TestReportsEndpoints(unittest.TestCase):
         assert cs["red_flag_events_count"] == 3
         assert cs["most_frequent_rule_breach"] == "sector_concentration"
 
-    @patch("main.get_monthly_pnl_report", return_value=[])
+    @patch("main.get_monthly_pnl_report", return_value={"months": [], "estimated_unrealised_pnl": None, "unrealised_note": "note"})
     @patch("main.get_arc5_compliance_summary", return_value=None)
     def test_monthly_pnl_compliance_summary_absent_when_data_unavailable(self, *_):
         # AC-04: compliance_summary null when Arc 5 data unavailable (ST-03, v4.7)
         body = _ok(CLIENT.get("/reports/monthly-pnl"))
         assert body.get("compliance_summary") is None
+
+    @patch("main.get_monthly_pnl_report", return_value={
+        "months": [{"year": 2026, "month": 5, "realised_pnl_gbp": 100.0, "trade_count": 2}],
+        "estimated_unrealised_pnl": 340.0,
+        "unrealised_note": "Reflects current open positions at time of report generation.",
+    })
+    @patch("main.get_arc5_compliance_summary", return_value=None)
+    def test_monthly_pnl_estimated_unrealised_pnl_present(self, *_):
+        # ST-14 (BLG-FEAT-70, v7.0): estimated_unrealised_pnl/unrealised_note top-level, data unchanged
+        body = _ok(CLIENT.get("/reports/monthly-pnl"))
+        assert body["estimated_unrealised_pnl"] == 340.0
+        assert "unrealised_note" in body
+        assert body["data"] == [{"year": 2026, "month": 5, "realised_pnl_gbp": 100.0, "trade_count": 2}]
 
 
 # ---------------------------------------------------------------------------

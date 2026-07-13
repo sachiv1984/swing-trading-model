@@ -757,13 +757,21 @@ def get_monthly_pnl_endpoint():
     GET /reports/monthly-pnl
 
     Returns month-by-month realised P&L for the current and prior calendar year,
-    plus a compliance_summary (30d Arc 5 compliance metrics).
-    Spec: reports_endpoints.md §GET /reports/monthly-pnl (v0.6, ST-03 v4.7)
+    plus a compliance_summary (30d Arc 5 compliance metrics) and (v7.0, ST-14,
+    BLG-FEAT-70) a current-snapshot estimated_unrealised_pnl/unrealised_note pair
+    — same field/computation as the Tax Year tab, top-level siblings of `data`.
+    Spec: reports_endpoints.md §GET /reports/monthly-pnl (v0.6, ST-03 v4.7; v0.7, ST-14 v7.0)
     """
     try:
-        data = get_monthly_pnl_report()
+        report = get_monthly_pnl_report()
         compliance_summary = get_arc5_compliance_summary(period_days=30)
-        return {"status": "ok", "data": data, "compliance_summary": compliance_summary}
+        return {
+            "status": "ok",
+            "data": report["months"],
+            "estimated_unrealised_pnl": report["estimated_unrealised_pnl"],
+            "unrealised_note": report["unrealised_note"],
+            "compliance_summary": compliance_summary,
+        }
     except Exception as e:
         return JSONResponse(status_code=500,
             content={"status": "error", "message": str(e)})

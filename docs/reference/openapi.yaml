@@ -688,7 +688,9 @@ paths:
         Returns month-by-month realised P&L for the current and prior calendar year.
         Only months with closed trades are included. Sorted descending by year then month.
         Includes optional compliance_summary (30d Arc 5 metrics) when data is available.
-        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.6. ST-03 (v4.7).
+        Includes estimated_unrealised_pnl/unrealised_note (v7.0, ST-14) — current-snapshot
+        unrealised P&L, same field/computation as GET /reports/tax-year's summary field.
+        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.7. ST-03 (v4.7), ST-14 (v7.0).
       responses:
         "200":
           description: Monthly P&L summary array with optional compliance summary
@@ -717,6 +719,14 @@ paths:
                         trade_count:
                           type: integer
                           example: 3
+                  estimated_unrealised_pnl:
+                    type: number
+                    nullable: true
+                    description: v7.0 ST-14 (BLG-FEAT-70) — sum of pnl across currently open positions. null if no portfolio yet.
+                    example: 340.50
+                  unrealised_note:
+                    type: string
+                    description: v7.0 ST-14 (BLG-FEAT-70) — static disclaimer text, same value as GET /reports/tax-year's unrealised_note.
                   compliance_summary:
                     type: object
                     nullable: true
