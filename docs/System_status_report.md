@@ -2067,3 +2067,25 @@ None — both named mandatory Product Value Alert pull-forwards were delivered w
 - QA evidence logs: qa_evidence_EPIC-01.md (agent-mediated: Strategy Rules & System Intent Owner §13 AC-04, Director of Quality EPIC consolidation, 2026-07-10), qa_evidence_EPIC-02.md (agent-mediated: Strategy Rules & System Intent Owner §13 AC-04, Director of Quality EPIC consolidation, 2026-07-10)
 - Deviations filed: None
 - Test scenarios referenced: tests/test_compliance_recheck.py; tests/e2e/compliance-recheck.spec.js SC-CR-01–08; tests/test_gap_risk.py; tests/e2e/gap-risk-flag.spec.js SC-GR-01–08
+
+## Sprint: 2026-07-12__release-v7.0
+**Date:** 2026-07-13
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Positions Grid View/Table View badge parity: RISK OFF badge added to Grid View cards (deep blue #1E40AF), trailing-stop value + breach indicator (icon-only) added to Grid View, combined GAP RISK/RISK OFF stacking confirmed distinguishable in both views (ST-01–ST-05, BLG-SPEC-80/BLG-FE-102/BLG-FE-97/BLG-QA-95/BLG-FE-104) | `docs/specs/frontend/pages/positions.md#Alerts Column`; `docs/specs/frontend/pages/positions.md#Trailing Stop Column`; `docs/design/2026-07-12__release-v7.0/combined-badge-differentiation/decision_record.md` | DEV-EPIC01-ST05-01 (P2 — Table View RISK OFF badge colour/label pre-existing spec deviation, unrelated to this sprint; BLG-FE-107, target v7.1) |
+| EPIC-02 | v6.9 carryover reconciliation and fixes: Tax Year P&L tab spec reconciled to shipped behaviour, Table View breach badge brought into spec colour/label compliance, Gate Progress Indicator copy reconciled, Dashboard/StrategyBenchmark light-theme heading contrast fixed, `trailing_stop_action_rate` metric capture instrumented, `GET /ai/claude-audit-log` gained endpoint/date-range filters, Sector Concentration heat map now joins `ticker_universe` for real sector data instead of stale/missing values (ST-06–ST-12) | `docs/specs/frontend/pages/reports.md`; `docs/specs/metrics_definitions.md#Trailing Stop Action Rate`; `docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md`; `docs/specs/frontend/pages/positions.md#Trailing Stop Column`; `docs/specs/frontend/pages/dashboard.md#6`; `docs/specs/api_contracts/ai_endpoints.md`; `docs/specs/frontend/pages/risk_dashboard.md#8a. Component: Sector Concentration Heat Map` | None |
+| EPIC-03 | New reporting and position-review features: tax-year P&L CSV export (button order fixed to match spec, Playwright coverage added), realized vs. unrealized gain split in Monthly P&L view, position review-cadence nudge (`last_reviewed_at` tracking + `PATCH /positions/{id}/mark-reviewed`) (ST-13–ST-15, BLG-FEAT-69/BLG-FEAT-70/BLG-FEAT-68) | `docs/design/2026-07-12__release-v7.0/tax-year-csv-export/ux_spec.md`; `docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md`; `docs/design/2026-07-12__release-v7.0/position-review-cadence-nudge/ux_spec.md`; `docs/specs/frontend/pages/reports.md`; `docs/specs/frontend/pages/positions.md#Last Reviewed Column` | None |
+
+### Capabilities deferred or returned
+
+None — all 15 sealed backlog-slice items were delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (Director of Quality, 2026-07-13), qa_evidence_EPIC-02.md (Director of Quality, 2026-07-13), qa_evidence_EPIC-03.md (Director of Quality, 2026-07-13)
+- Deviations filed: DEV-EPIC01-ST05-01 (P2, BLG-FE-107, target v7.1)
+- Test scenarios referenced: tests/e2e/epic01-v70-grid-badge-parity.spec.js SC-GVP-01–09; tests/e2e/heading-light-theme-contrast.spec.js; tests/test_portfolio_risk_sector.py; tests/test_claude_audit_log_filters.py; tests/test_trailing_stop_recommendation_log.py; tests/e2e/tax-year-csv-export.spec.js; tests/e2e/monthly-pnl-realized-unrealized.spec.js; tests/e2e/position-review-cadence-nudge.spec.js; tests/test_mark_position_reviewed.py
