@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-07-09 (post-ship closure 2026-07-08__release-v6.8; §36 v6.8 test coverage gap section added — 1 open item TSG-v6.8-01/BLG-QA-86; §6.5–6.7 new spec gaps added — BLG-SPEC-71/72/73; no pre-v6.8 TSG items to reconcile)
+**Last Updated:** 2026-07-13 (post-ship closure 2026-07-12__release-v7.0; §6.5 (BLG-SPEC-71) and §6.7 (BLG-SPEC-73) resolved — reports.md and dashboard.md reconciled to shipped behaviour; §6.6 (BLG-SPEC-72) remains OPEN, not in this cycle's scope; no new spec gaps identified this cycle per verification_report.md §6; TSG-v6.8-01/BLG-QA-86 remains OPEN, not in this cycle's scope)
 
 ---
 
@@ -302,11 +302,12 @@ Each contract must include `## METHOD /path` heading, request/response schema, e
 ### 6.5 Reports.js Tax Year P&L tab — two spec-authored sections never implemented (BLG-SPEC-71)
 
 **Identified:** 2026-07-09 (v6.8 EPIC-02 ST-06 implementation session)
-**Status:** OPEN
-**Backlog item:** BLG-SPEC-71
+**Status:** RESOLVED — 2026-07-13 (v7.0 EPIC-02 ST-06, cycle 2026-07-12__release-v7.0)
+**Backlog item:** BLG-SPEC-71 — COMPLETE
 **Owner:** Head of Specs Team / Frontend Specifications & UX Documentation Owner
+**Resolution:** ST-06 reconciled `docs/specs/frontend/pages/reports.md` §Arc 5 Compliance Summary and §Gross vs Net Comparison — both sections marked "Design Only — Implementation Pending", matching `Reports.js`'s actual shipped behaviour. No deviation — documentation now matches code.
 
-`docs/specs/frontend/pages/reports.md` §Arc 5 Compliance Summary (v4.1) and §Gross vs Net Comparison (v6.0) both carry changelog entries and sign-off records claiming these sections were added to the Tax Year P&L tab, but neither is actually rendered in `src/pages/Reports.js`. Root cause confirmed via `git log -S`: both were spec-authoring-only stories whose changelog wording was indistinguishable from a shipped-feature entry. Resolution: correct `reports.md` to state clearly these are specified but not yet implemented, and/or file net-new `BLG-FEAT` items if the Product Owner wants them built.
+~~`docs/specs/frontend/pages/reports.md` §Arc 5 Compliance Summary (v4.1) and §Gross vs Net Comparison (v6.0) both carry changelog entries and sign-off records claiming these sections were added to the Tax Year P&L tab, but neither is actually rendered in `src/pages/Reports.js`. Root cause confirmed via `git log -S`: both were spec-authoring-only stories whose changelog wording was indistinguishable from a shipped-feature entry.~~
 
 ---
 
@@ -324,11 +325,12 @@ The locked `si02-gate-visibility-indicator/ux_spec.md` left Gate Condition 2 unl
 ### 6.7 Gate Progress Indicator copy diverges from dashboard.md §6 (BLG-SPEC-73)
 
 **Identified:** 2026-07-09 (v6.8 EPIC-03 ST-11, dark Playwright spec fix)
-**Status:** OPEN
-**Backlog item:** BLG-SPEC-73
+**Status:** RESOLVED — 2026-07-13 (v7.0 EPIC-02 ST-10, cycle 2026-07-12__release-v7.0)
+**Backlog item:** BLG-SPEC-73 — COMPLETE
 **Owner:** Head of UX & Design / Head of Specs Team
+**Resolution:** ST-10 updated `dashboard.md` §6 Display table to document the shipped `GateProgressStrip.js` copy verbatim; the Known Deviations note was removed. Wording-only change — FI-P3-02 code-review exception applies.
 
-`dashboard.md` §6 specifies Gate Progress Indicator copy as `{N}/20 trades (PT-04/SI-02 gate)` / `Gate cleared ✓`; the shipped `GateProgressStrip.js` instead renders `{N}/{threshold} closed trades · {M} more to unlock quality insights` / `Quality insights unlocked ✓`. Both sides are internally consistent but disagree with each other. Documented as a Known Deviation in `dashboard.md` §6 (v2.7). Resolution: Head of UX & Design confirms canonical wording; update whichever side is wrong.
+~~`dashboard.md` §6 specifies Gate Progress Indicator copy as `{N}/20 trades (PT-04/SI-02 gate)` / `Gate cleared ✓`; the shipped `GateProgressStrip.js` instead renders `{N}/{threshold} closed trades · {M} more to unlock quality insights` / `Quality insights unlocked ✓`. Both sides are internally consistent but disagree with each other.~~
 
 ---
 

@@ -3,9 +3,48 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-10 (post-ship closure 2026-07-10__release-v6.9)
+**Last Updated:** 2026-07-13 (post-ship closure 2026-07-12__release-v7.0)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v7.0 — Positions Grid View Parity, Carryover Fixes & Feature Enhancements — 2026-07-13
+Cycle: 2026-07-12__release-v7.0
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-07-12__release-v7.0/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Positions Grid View Parity: RISK OFF badge and trailing-stop value + breach indicator brought to parity with Table View in `PositionCard.js`; GAP RISK/RISK OFF combined-badge stacking confirmed visually distinguishable; dedicated Grid View badge-parity Playwright coverage (9 scenarios); Grid View badge-placement subsection added to canonical spec | `docs/specs/frontend/pages/positions.md#Alerts Column`; `docs/specs/frontend/pages/positions.md#Trailing Stop Column`; `docs/design/2026-07-12__release-v7.0/combined-badge-differentiation/decision_record.md`; `tests/e2e/epic01-v70-grid-badge-parity.spec.js` |
+| EPIC-02 | v6.9 Carryover Fixes & Reconciliation: Reports.js Tax Year P&L tab spec reconciled to actual behaviour; `trailing_stop_action_rate` metric instrumentation wired into `GET /positions/{id}/stop-trail`; Dashboard/StrategyBenchmark light-theme heading contrast fixed; Positions Table View breach badge brought into spec colour/label compliance; Gate Progress Indicator copy divergence resolved; `GET /ai/claude-audit-log` endpoint/date-range filters added; Sector Concentration heat map now joins `ticker_universe` instead of showing positions as "Unclassified" | `docs/specs/frontend/pages/reports.md`; `docs/specs/metrics_definitions.md#Trailing Stop Action Rate`; `docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md`; `docs/specs/frontend/pages/positions.md#Trailing Stop Column`; `docs/specs/frontend/pages/dashboard.md#6`; `docs/specs/api_contracts/ai_endpoints.md`; `docs/specs/frontend/pages/risk_dashboard.md#8a. Component: Sector Concentration Heat Map` |
+| EPIC-03 | User-Facing Feature Enhancements: tax-year P&L CSV export (fixed pre-existing button-order spec deviation in the process); realized vs. unrealized gain distinction in Monthly P&L view; position review-cadence nudge (`last_reviewed_at` tracking + `PATCH /positions/{id}/mark-reviewed`) | `docs/design/2026-07-12__release-v7.0/tax-year-csv-export/ux_spec.md`; `docs/specs/frontend/pages/reports.md`; `docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md`; `docs/design/2026-07-12__release-v7.0/position-review-cadence-nudge/ux_spec.md`; `docs/specs/frontend/pages/positions.md#Last Reviewed Column` |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| DEV-EPIC01-ST05-01 | P2 | Positions Table View RISK OFF badge colour/label diverges from canonical spec (`#1E40AF`/"RISK OFF" specified; amber/"Risk-Off" shipped) — pre-existing since v6.2, unrelated to this sprint's changes. Target resolution: v7.1 (BLG-FE-107). | PO + DoQ |
+
+### Tech backlog items shipped
+- [ST-01] [D] BLG-SPEC-80: `positions.md` Grid View badge placement subsection
+- [ST-02] [U] BLG-FE-102: Positions Grid View missing RISK OFF badge
+- [ST-03] [U] BLG-FE-97: Positions Grid View missing trailing-stop value and breach indicator
+- [ST-04] [D] BLG-QA-95: Positions Grid View badge parity Playwright coverage
+- [ST-05] [D] BLG-FE-104: GAP RISK / RISK OFF combined-badge visual differentiation review
+- [ST-06] [D] BLG-SPEC-71: Reports.js Tax Year P&L tab spec reconciliation
+- [ST-07] [D] BLG-BE-50: Instrument trailing-stop recommendation capture for `trailing_stop_action_rate` metric
+- [ST-08] [U] BLG-FE-95: Dashboard/StrategyBenchmark page-title light-theme contrast gap
+- [ST-09] [U] BLG-FE-96: Positions Table View breach badge does not match approved spec colour/label
+- [ST-10] [D] BLG-SPEC-73: Gate Progress Indicator copy divergence
+- [ST-11] [D] BLG-BE-51: Add endpoint and date-range filters to `GET /ai/claude-audit-log`
+- [ST-12] [U] BLG-BE-38: Sector Concentration: join `ticker_universe` for sector data
+- [ST-13] [U] BLG-FEAT-69: Tax-year P&L CSV export
+- [ST-14] [U] BLG-FEAT-70: Realized vs. unrealized gain distinction in monthly P&L
+- [ST-15] [U] BLG-FEAT-68: Position review cadence nudge
+
+Sign-off: Product Owner — 2026-07-13
+QA sign-off: Director of Quality — 2026-07-13
 
 ---
 

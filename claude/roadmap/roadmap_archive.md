@@ -1,13 +1,43 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-10 (post-ship closure 2026-07-10__release-v6.9 — RA:v6.9 retired)
+**Last Updated:** 2026-07-13 (post-ship closure 2026-07-12__release-v7.0 — RA:v7.0 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v7.0 — Positions Grid View Parity, Carryover Fixes & Feature Enhancements
+
+**Original roadmap location:** §1 Current Version
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-07-13
+**Shipped version:** v7.0
+**Cycle reference:** 2026-07-12__release-v7.0
+**Verification report:** claude/cycles/2026-07-12__release-v7.0/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-07-13
+
+### Original Roadmap Entry
+
+**v6.9** — On-Demand Compliance Recheck & Overnight Gap Risk Flag — ✅ Complete — Shipped 2026-07-10 — cycle: 2026-07-10__release-v6.9
+**Next planned release:** v7.0 — Positions Grid View Parity, Carryover Fixes & Feature Enhancements — Planning — cycle: 2026-07-12__release-v7.0
+
+<!-- roadmap-annotation-marker: RA:v7.0:2026-07-12__release-v7.0 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-12__release-v7.0
+- Plan published: 2026-07-12
+- Cycle folder: claude/cycles/2026-07-12__release-v7.0/
+- Backlog slice: claude/cycles/2026-07-12__release-v7.0/stage4_backlog_slice.md
+- Status at annotation: Committed
+- Scope: EPIC-01 (Positions Grid View Parity), EPIC-02 (v6.9 Carryover Fixes & Reconciliation), EPIC-03 (User-Facing Feature Enhancements) — 15 stories, both named mandatory Product Value Alert pull-forwards (`BLG-FE-102`, `BLG-FE-97`) included
+
+**Verified:** 2026-07-13 (post-ship closure 2026-07-12__release-v7.0) — verification report: `claude/cycles/2026-07-12__release-v7.0/verification_report.md`. Full v7.0 scope (15 stories, 3 EPICs) delivered; 1 P2 deviation accepted (DEV-EPIC01-ST05-01, BLG-FE-107, target v7.1); see `docs/product/changelog.md#v7.0`.
 
 ---
 

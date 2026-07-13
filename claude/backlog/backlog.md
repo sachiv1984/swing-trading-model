@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-13 (session — 5 new item(s) added: BLG-BE-59, BLG-BE-60, BLG-OPS-108, BLG-QA-104, BLG-QA-105); prior — session — 1 new item(s) added: BLG-FE-107; prior — session — 1 new item(s) added: BLG-FE-106; prior — roadmap rebalance 2026-07-12__scheduled — 36 new items added via idea intake IW-20260712-01 disposition: BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107; BLG-GOV-105 closed as confirmed duplicate of BLG-GOV-45 (BLG-GOV-202 closed same action); BLG-GOV-28 priority escalated P2→P1; DL-064; prior — session — 5 new item(s) added: BLG-FEAT-73, BLG-FEAT-74, BLG-FEAT-75, BLG-FEAT-76, BLG-FE-102; prior — groom backlog post-ship closure 2026-07-10__release-v6.9 — 2 items archived: BLG-FEAT-64, BLG-FEAT-65; ephemeral Release Slice v6.9 section removed; prior — 2 items marked ✅ COMPLETE: BLG-FEAT-64, BLG-FEAT-65; prior — roadmap rebalance 2026-07-10__scheduled — 39 new items added via idea intake IW-20260710-01 disposition: BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72; DL-063; prior — backlog consistency audit — BLG-BE-52 archived to backlog_archive.md (already-resolved item not yet retired); BLG-GOV-105 flagged possible duplicate of shipped BLG-GOV-45, not dispositioned (see new BLG-GOV-202); BLG-GOV-28 flagged overdue §13 gate (PT-04 sealed v6.1, review not run), not dispositioned; prior — 2026-07-09 Product Owner direct action — BLG-BE-52 resolved: no backfill; prior — session — 1 new item(s) added: BLG-BE-52; prior — groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived to backlog_archive.md; ephemeral Release Slice v7.0 section removed; Gate Field Normalisation: 0 in backlog.md; ID uniqueness: PASS; 0 orphans, 0 stale blockers, 0 promotion candidates flagged this run; prior — post-ship closure 2026-07-12__release-v7.0 — 15 items marked ✅ COMPLETE: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68; no stale parked items; no Phase 4 additions required (already confirmed present per verification_report.md §5)); prior — session — 5 new item(s) added: BLG-BE-59, BLG-BE-60, BLG-OPS-108, BLG-QA-104, BLG-QA-105); prior — session — 1 new item(s) added: BLG-FE-107; prior — session — 1 new item(s) added: BLG-FE-106; prior — roadmap rebalance 2026-07-12__scheduled — 36 new items added via idea intake IW-20260712-01 disposition: BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107; BLG-GOV-105 closed as confirmed duplicate of BLG-GOV-45 (BLG-GOV-202 closed same action); BLG-GOV-28 priority escalated P2→P1; DL-064; prior — session — 5 new item(s) added: BLG-FEAT-73, BLG-FEAT-74, BLG-FEAT-75, BLG-FEAT-76, BLG-FE-102; prior — groom backlog post-ship closure 2026-07-10__release-v6.9 — 2 items archived: BLG-FEAT-64, BLG-FEAT-65; ephemeral Release Slice v6.9 section removed; prior — 2 items marked ✅ COMPLETE: BLG-FEAT-64, BLG-FEAT-65; prior — roadmap rebalance 2026-07-10__scheduled — 39 new items added via idea intake IW-20260710-01 disposition: BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72; DL-063; prior — backlog consistency audit — BLG-BE-52 archived to backlog_archive.md (already-resolved item not yet retired); BLG-GOV-105 flagged possible duplicate of shipped BLG-GOV-45, not dispositioned (see new BLG-GOV-202); BLG-GOV-28 flagged overdue §13 gate (PT-04 sealed v6.1, review not run), not dispositioned; prior — 2026-07-09 Product Owner direct action — BLG-BE-52 resolved: no backfill; prior — session — 1 new item(s) added: BLG-BE-52; prior — groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -518,29 +518,6 @@ DS-07 (Watchlist Promotion Flow, shipped v3.0) provides a one-click path from sc
 
 ---
 
-### BLG-FEAT-68 — Position review cadence nudge
-**Priority:** P3 (Low)
-**Type:** Product Feature / Workflow
-**Owner:** Head of UX & Design; Product Owner
-**Source:** Product feature brainstorming session — 2026-07-08
-**Effort:** S (~1 day)
-**Provisional-Target:** Unscheduled
-
-**Problem**
-Existing position prompts (Grace Period Decision Support, Drawdown-Triggered Review Prompt) only fire on price/performance triggers. A position that is neither in grace period nor drawdown can go unreviewed indefinitely — there is no cadence-based nudge independent of P&L performance.
-
-**Scope**
-- Track days-since-last-reviewed per position (introduce an explicit "Mark Reviewed" action as the reset trigger)
-- Frontend: a "N days since last review" indicator on positions exceeding a configurable threshold (default 14 days), independent of any price-triggered alert
-- Not a substitute for Grace Period / Drawdown prompts — this catches quietly-performing positions those triggers don't cover
-
-**Acceptance Criteria**
-- AC-01: Positions display days-since-last-review
-- AC-02: Positions past the threshold are visually flagged, independent of P&L state
-- AC-03: An explicit "Mark Reviewed" action resets the counter
-- AC-04: Flag does not fire for positions already flagged by Grace Period or Drawdown prompts (avoid duplicate noise)
-
----
 
 ### BLG-FEAT-73 — SI-02 Behavioural Drift Detection — frontend build
 **Priority:** P1 (High)
@@ -1136,68 +1113,6 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 
 ---
 
-### BLG-FE-95 — Dashboard/StrategyBenchmark page-title light-theme contrast gap
-**Priority:** P3 (Low)
-**Type:** Frontend / UX
-**Owner:** Head of UX & Design; Head of Engineering
-**Source:** ST-07 (BLG-SPEC-58), EPIC-03, v6.8 dashboard visual hierarchy review — 2026-07-09
-**Effort:** XS (<1h)
-**Provisional-Target:** v6.9
-
-**Problem**
-Primary page headings on `DashboardHome.js` (`<h1>` "Dashboard") and `StrategyBenchmark.js` (`<h1>` "Strategy Benchmark") use a bare `text-white` class with no light-theme value, unlike correctly-graded nearby text (e.g. the Dashboard subtitle's `text-slate-600 dark:text-slate-400`). On light theme this renders the page's primary heading with insufficient contrast against the light background. Same defect class as BLG-FE-87/BLG-FE-88 (fixed v6.7).
-
-**Scope**
-- Add a light-theme-safe value (`dark:` companion pattern) to the `text-white` heading classes on `DashboardHome.js:36` and `StrategyBenchmark.js:497`
-- Grep for the same bare `text-white` heading pattern elsewhere (e.g. stat values on `Signals.js`, `SystemStatus.js`) and assess whether they warrant the same fix in the same pass
-
-**Acceptance Criteria**
-- Both named headings pass WCAG AA contrast (≥4.5:1) against both light and dark backgrounds
-- No visual change on dark theme (colour value on dark theme unchanged)
-
----
-
-### BLG-FE-96 — Positions Table View breach badge does not match approved spec colour/label
-**Priority:** P3 (Low)
-**Type:** Frontend / UX
-**Owner:** Head of Engineering
-**Source:** ST-09 (BLG-SPEC-60), EPIC-03, v6.8 trailing stop visual indicator reconciliation — 2026-07-09
-**Effort:** XS (<1h)
-**Provisional-Target:** v6.9
-
-**Problem**
-`docs/specs/frontend/pages/positions.md` §Trailing Stop Column specifies the breach badge as orange `#EA580C` background with label "⚠ BREACH", chosen specifically to be visually distinct from the page's existing rose/red loss colouring. The shipped implementation (`src/pages/Positions.js:769-775`) instead uses `bg-rose-800/80 text-rose-200` with an `AlertTriangle` icon and label "Breach" — the same hue family already used for P&L loss and stop-price text elsewhere on the page, undermining the spec's stated rationale for a distinct colour.
-
-**Scope**
-- Update the breach badge styling in `Positions.js` to match the approved spec: orange `#EA580C` background, "⚠ BREACH" label
-
-**Acceptance Criteria**
-- Breach badge renders with `#EA580C` background and "⚠ BREACH" label, matching `positions.md` §Trailing Stop Column
-- No other Table View styling changed
-
----
-
-### BLG-FE-97 — Positions Grid View missing trailing-stop value and breach indicator
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX
-**Owner:** Head of Engineering
-**Source:** ST-09 (BLG-SPEC-60), EPIC-03, v6.8 trailing stop visual indicator reconciliation — 2026-07-09
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v6.9
-
-**Problem**
-`docs/specs/frontend/pages/positions.md` §Trailing Stop Column requires Grid View to show the trailing stop value alongside Initial Stop, with an icon-only (no pill) breach indicator. `src/components/positions/PositionCard.js` shows only a single generic "Stop" value (`stop_price_native`) and has no `current_trailing_stop` display or breach indicator at all — Grid View users have no trailing-stop visibility that Table View users already have.
-
-**Scope**
-- Add `current_trailing_stop` display to `PositionCard.js`, alongside the existing Initial Stop value
-- Add icon-only breach indicator (no pill, per spec) when `current_price <= current_trailing_stop`
-
-**Acceptance Criteria**
-- Grid View position cards show both Initial Stop and current trailing stop values
-- Breach state shown via icon only (not a full badge/pill), matching Table View's breach condition logic
-- No change to Table View behaviour
-
----
 
 ### BLG-FE-98 — WatchlistModal.js fails ESLint (24 problems) — same patterns fixed in Watchlist.js
 **Priority:** P3 (Low)
@@ -1221,30 +1136,6 @@ Primary page headings on `DashboardHome.js` (`<h1>` "Dashboard") and `StrategyBe
 
 ---
 
-### BLG-FE-102 — Positions Grid View missing RISK OFF badge
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX
-**Owner:** Head of Engineering
-**Source:** `docs/specs/frontend/pages/positions.md` v1.8/v2.1 cross-referenced against direct read of `src/components/positions/PositionCard.js` — feature-gap review, 2026-07-10
-**Effort:** S (~0.25–0.5 day)
-**Provisional-Target:** Unscheduled
-**Depends on:** none; related to BLG-FE-97 (trailing-stop value/breach indicator parity, same file, filed 2026-07-09) — additive, not a duplicate
-
-**Problem**
-`src/components/positions/PositionCard.js` (Grid View) shows the GAP RISK badge (shipped v6.9, BLG-FEAT-65) but has no RISK OFF badge at all, despite `docs/specs/frontend/pages/positions.md` (v1.8, v6.2 design gate) requiring a "RISK OFF" badge (deep blue `#1E40AF`) when `risk_off_exit = true`, and v2.1 explicitly stating RISK OFF and GAP RISK badges "stack vertically in the same Alerts cell when both apply." Table View already implements RISK OFF (`Positions.js`: `riskOffExit = position.risk_off_exit === true`) — Grid View's `PositionCard.js` never consumes `risk_off_exit` at all, so Grid View users have no visibility into this alert that Table View users already have.
-
-**Scope**
-- Add a RISK OFF badge to `PositionCard.js`, reading `position.risk_off_exit`
-- Style per spec: deep blue `#1E40AF`, "RISK OFF" label
-- Position in the same badge row as the existing GAP RISK badge so both stack/coexist per the spec's stacking rule
-
-**Acceptance Criteria**
-- Grid View position cards show a RISK OFF badge when `risk_off_exit = true`, matching Table View's condition logic
-- Visual treatment matches spec (deep blue `#1E40AF`, "RISK OFF" label)
-- Badge coexists cleanly with the GAP RISK badge when both apply to the same position
-- No change to Table View behaviour
-
----
 
 ### BLG-FE-106 — Consolidate StrategyBenchmark.js page header onto shared PageHeader component
 **Priority:** P3 (Low)
@@ -1744,51 +1635,6 @@ No per-request trace ID propagation exists across routers/services. No incident 
 
 ---
 
-### BLG-BE-50 — Instrument trailing-stop recommendation capture for trailing_stop_action_rate metric
-**Priority:** P2 (Medium)
-**Type:** Backend / Observability
-**Owner:** Backend Engineering Patterns Owner
-**Source:** ST-10 (BLG-SPEC-61), EPIC-03, v6.8 trailing stop effectiveness metric definition — 2026-07-09
-**Effort:** S (~1 day)
-**Provisional-Target:** v6.9
-
-**Problem**
-`docs/specs/metrics_definitions.md` §Trailing Stop Action Rate defines `trailing_stop_action_rate = recommendations applied / recommendations generated`, using `GET /positions/{id}/stop-trail` (the manual ATR trail-stop recommendation, distinct from the automatic nightly ratchet) as the numerator/denominator source. Neither side is currently captured: the GET endpoint is stateless (no log write) and the subsequent `PATCH /positions/{id}` that may apply the recommendation is a generic position-update endpoint with no linkage back to the recommendation that prompted it. The metric cannot be computed until this instrumentation exists.
-
-**Scope**
-- Add `trailing_stop_recommendation_log` table (schema proposed in `metrics_definitions.md` §Trailing Stop Action Rate) — `position_id`, `current_stop_at_recommendation`, `recommended_stop`, `recommended_at`
-- Write one row per `GET /positions/{id}/stop-trail` call (fire-and-forget, matching `log_pre_entry_validation_results()`'s pattern in `backend/database.py`)
-- Confirm the proposed 24-hour capture window (recommendation → matching `PATCH` with `stop_price >= recommended_stop`) with Product Owner before implementing the join query
-
-**Acceptance Criteria**
-- `trailing_stop_recommendation_log` table created and populated on every `GET /positions/{id}/stop-trail` call
-- `trailing_stop_action_rate` computable via the query approach documented in `metrics_definitions.md`
-- Capture window confirmed by Product Owner
-
----
-
-### BLG-BE-51 — Add endpoint and date-range filters to GET /ai/claude-audit-log
-**Priority:** P3 (Low)
-**Type:** Backend / Observability
-**Owner:** Backend Engineering Patterns Owner
-**Source:** ST-13 (BLG-OPS-74), EPIC-03, v6.8 Anthropic API token/cost logging verification — 2026-07-09
-**Effort:** XS (<1h)
-**Provisional-Target:** v6.9
-
-**Problem**
-`GET /ai/claude-audit-log` (`backend/routers/ai.py`) queries the `claude_audit_log` table, which stores an `endpoint` column per row (e.g. `POST /ai/daily-briefing`, `POST /trade-plans/generate-plan`), but the endpoint only accepts a `limit` query parameter (max 200) — no server-side filter by `endpoint` or by date range. A caller doing cost-trend analysis for one specific Claude-calling flow (e.g. isolating morning-briefing costs from chat/thesis-generation costs) must over-fetch up to 200 rows and filter client-side, which may not even cover the desired date range as call volume grows.
-
-**Scope**
-- Add optional `endpoint` query parameter to `GET /ai/claude-audit-log` (exact match against the stored `endpoint` column)
-- Add optional `date_from`/`date_to` query parameters (filtering on `generated_at`)
-- Update `docs/specs/api_contracts/ai_endpoints.md` and `docs/reference/openapi.yaml` in the same commit
-
-**Acceptance Criteria**
-- `GET /ai/claude-audit-log?endpoint=POST%20/ai/daily-briefing` returns only matching rows
-- `date_from`/`date_to` filters work independently and combined with `endpoint`
-- Existing unfiltered behaviour (no params) unchanged
-
----
 
 ## 6. Operations & Infrastructure Backlog
 
@@ -2941,30 +2787,6 @@ Arc 4 (PO-02/03/04) will introduce cross-table queries joining trade_plans, red_
 - Index audit document produced covering Arc 4 query patterns
 - Any missing indexes produce separate BLG items before sign-off
 - Reviewed by Infrastructure & Operations Owner
-
----
-
-### BLG-BE-38 — Sector Concentration: join ticker_universe for sector data
-**Priority:** P2 (Medium)
-**Type:** Backend Engineering / Bug
-**Owner:** Head of Backend Engineering
-**Source:** User-reported 2026-06-23 — Sector Concentration panel shows all positions as "Unclassified"
-**Effort:** XS (~2 hours)
-**Provisional-Target:** Next available sprint
-
-**Problem**
-`GET /portfolio/sector-weights` fetches raw `positions` rows and reads `pos.get("sector")`, falling back to `"Unclassified"` when the field is absent. The `positions` table has no `sector` column — sector data lives in `ticker_universe` (columns `sector`, `industry`), which is populated at ticker-add time via yfinance. Because no join is made, every position shows as "Unclassified" regardless of what is stored in `ticker_universe`.
-
-**Scope**
-- In `backend/routers/portfolio_risk.py` `get_sector_weights()`: after fetching `raw_positions`, resolve each position's sector by looking up `(ticker, market)` in `ticker_universe`. Fall back to `"Unclassified"` only when the ticker is genuinely absent from the universe or has a NULL sector.
-- Same fix should be applied to the concentration-status endpoint (`GET /portfolio/concentration-status`) which has the same `pos.get("sector")` pattern at line 240.
-- No schema change required — `ticker_universe.sector` already exists.
-
-**Acceptance Criteria**
-- AC-01: Sector Concentration panel on Risk Dashboard shows correct sector tiles for open positions whose tickers exist in `ticker_universe` with a non-null sector
-- AC-02: Positions whose ticker has no sector in `ticker_universe` still render as "Unclassified" (graceful fallback preserved)
-- AC-03: `GET /portfolio/concentration-status` sector breach calculation also reflects correct sectors
-- AC-04: No yfinance live-call added to the hot path — sector is read from `ticker_universe` only
 
 ---
 
@@ -4447,47 +4269,6 @@ No visual regression baseline exists for the components remediated in v6.6/v6.7'
 
 ---
 
-### BLG-FEAT-69 — Tax-year P&L CSV export
-**Priority:** P3 (Low)
-**Type:** Product Feature / User Value
-**Owner:** Financial Reporting & Records Owner
-**Source:** IDEA-financial-reporting-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
-**Effort:** M (~2 days)
-**Provisional-Target:** Unscheduled
-**Gate criteria:** None
-
-**Problem**
-The monthly P&L report has no export mechanism — a user wanting to hand tax-year figures to an accountant must manually transcribe them.
-
-**Scope**
-- CSV export of the tax-year P&L view (existing report data, new export button/endpoint)
-
-**Acceptance Criteria**
-- User can export a tax-year P&L as CSV
-- Exported figures match the on-screen report
-
----
-
-### BLG-FEAT-70 — Realized vs. unrealized gain distinction in monthly P&L
-**Priority:** P3 (Low)
-**Type:** Product Feature / User Value
-**Owner:** Financial Reporting & Records Owner
-**Source:** IDEA-financial-reporting-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
-**Effort:** M (~2 days)
-**Provisional-Target:** Unscheduled
-**Gate criteria:** None
-
-**Problem**
-The monthly P&L report currently shows a single combined figure — a user cannot distinguish realized gains (closed positions) from unrealized (open positions), which matters for both trading decisions and tax planning.
-
-**Scope**
-- Split the monthly P&L view into realized/unrealized sections using existing position-status data
-
-**Acceptance Criteria**
-- Report shows realized and unrealized gain figures separately
-- Figures sum to the existing combined total (regression check)
-
----
 
 ### BLG-OPS-95 — Render hosting cost trend dashboard
 **Priority:** P3 (Low)
@@ -4952,34 +4733,6 @@ The Product Value Ratio and Skill-Silo alerts both measure governance overhead i
 
 ---
 
-### BLG-SPEC-71 — Reports.js Tax Year P&L tab missing Arc 5 Compliance Summary and Gross vs Net Comparison sections claimed shipped in reports.md
-**Priority:** P2 (Medium)
-**Type:** Spec Debt
-**Owner:** Head of Specs Team / Frontend Specifications & UX Documentation Owner
-**Source:** ST-06 (BLG-FEAT-71, EPIC-02, v6.8) implementation session — 2026-07-09; root cause investigated by Head of Specs Team review — 2026-07-09
-**Effort:** S (~0.5 day — reconciliation only, investigation complete)
-**Provisional-Target:** v6.9
-
-**Problem**
-`docs/specs/frontend/pages/reports.md` §Arc 5 Compliance Summary (v4.1, ST-08 BLG-FEAT-42) and §Gross vs Net Comparison (v6.0, ST-03) both carry changelog entries and agent-mediated sign-off records claiming these collapsible sections were added to the Tax Year P&L tab. Neither section is actually rendered in `src/pages/Reports.js`'s Tax Year P&L view (`TaxYearPnLView` component) — confirmed by direct code inspection during ST-06 implementation.
-
-**Root cause (confirmed via `git log -S` across all history — never implemented, not removed):**
-- **Arc 5 Compliance Summary (v4.1):** commit `5c7d8587` ("ST-08: Arc 5 compliance composite score formula + P&L report compliance section") touched only `metrics_definitions.md`, `reports.md`, and `execution_state.json` — zero `src/` files. The v4.1 `qa_evidence_EPIC-03.md` confirms ST-08's actual acceptance criteria were entirely spec-authoring ("AC-03: Arc 5 compliance section in **reports.md**" — the document, not the page). This was a legitimate spec-only story; the changelog wording ("section added") reads as if the page changed, but only the spec defining a future section was written. No follow-up implementation story was ever separately tracked or scheduled.
-- **Gross vs Net Comparison (v6.0):** design gate commit `b8e9df34` touched only `reports.md`/`dashboard.md`/etc., no `src/` files. The v6.0 `qa_evidence_EPIC-02.md` shows ST-03 (BLG-FEAT-20, Net-of-costs) actually shipped a "Net R column" on the **Trade History** page (`TradeHistoryTable.js`) — a real, delivered, differently-scoped feature — while the broader net-of-costs design's Reports-page summary row was written into the spec but never built.
-- **Systemic pattern worth Head of Specs Team attention beyond this one item:** in both cases, a design/spec-authoring story's changelog entry was worded identically to a shipped-feature entry, with no textual marker distinguishing "specified" from "implemented." This let two Reports-page sections sit undetected as spec/code drift for 8+ release cycles (v4.1 → v6.8). Worth considering a lightweight convention (e.g. a "Design Only — Implementation Pending" changelog tag) for future spec-authoring stories that describe UI not yet built, so this class of drift is machine-greppable rather than requiring an implementation story to stumble into it as a placement anchor, as happened here.
-
-**Scope**
-- Correct `reports.md` §Arc 5 Compliance Summary and §Gross vs Net Comparison to state clearly that these are specified but not yet implemented in `Reports.js` (option (b) from the original investigation — re-implementing 1–2-year-old, never-prioritized design intent is a Product Owner scheduling call, not a default reconciliation path)
-- File the two sections as net-new `BLG-FEAT` backlog items if Product Owner still wants them built, referencing the existing locked spec text (already has full field mappings and sign-off records, so re-implementation effort is low if/when scheduled)
-- Apply the CLAUDE.md §6 governance file edit checklist to `reports.md`'s version/changelog correction
-
-**Acceptance Criteria**
-- AC-01: `reports.md`'s description of the Tax Year P&L tab matches what `Reports.js` actually renders
-- AC-02: If sections are subsequently implemented (as new BLG-FEAT items), Playwright coverage added per the CLAUDE.md frontend-visible-change rule
-- AC-03: Root cause documented — done above (spec-authoring stories' changelog entries indistinguishable from shipped-feature entries; no follow-up implementation tracking)
-
----
-
 ### BLG-SPEC-72 — Revisit SI-02 Gate Status Condition 2/3 threshold definitions once real adherence data exists
 **Priority:** P2 (Medium)
 **Type:** Spec Debt
@@ -5002,26 +4755,6 @@ The locked ux_spec (`docs/design/2026-07-08__release-v6.8/si02-gate-visibility-i
 - AC-02: If thresholds change, `src/pages/Reports.js`'s `SI02GateStatusSection` is updated to match, with Playwright coverage for the new thresholds
 
 ---
-
-### BLG-SPEC-73 — Gate Progress Indicator copy diverges from dashboard.md §6 (choose canonical wording)
-**Priority:** P3 (Low)
-**Type:** Spec Debt
-**Owner:** Head of UX & Design / Head of Specs Team
-**Source:** ST-11 (BLG-QA-64), EPIC-03, v6.8 — fixing dark Playwright spec `gate-progress.spec.js` — 2026-07-09
-**Effort:** XS (<1h — copy decision, then sync spec + component if needed)
-**Provisional-Target:** v6.9
-
-**Problem**
-`docs/specs/frontend/pages/dashboard.md` §6 specifies Gate Progress Indicator copy as `{N}/20 trades (PT-04/SI-02 gate)` (not met) and `Gate cleared ✓` (met). The shipped `src/components/dashboard/home/GateProgressStrip.js` instead renders `{N}/{threshold} closed trades · {M} more to unlock quality insights` and `Quality insights unlocked ✓` — omitting the internal `PT-04`/`SI-02` code names entirely. Both are internally consistent (component matches itself; spec matches itself) but they disagree with each other, and it's unclear which is the intended canonical wording going forward.
-
-**Scope**
-- Head of UX & Design confirms whether the "quality insights" framing (current shipped copy) is the deliberate intended direction, or whether it was an undocumented ad-hoc change that should be reverted to match the spec
-- Update whichever side is wrong (spec §6 Display table, or the component) so both agree
-- Playwright coverage (`tests/e2e/gate-progress.spec.js`) already asserts the shipped copy as an interim measure — update if the component changes
-
-**Acceptance Criteria**
-- `dashboard.md` §6 and `GateProgressStrip.js` use identical copy
-- Known Deviations note in `dashboard.md` §6 (added v2.7) removed once resolved
 
 ### BLG-GOV-191 — Spec debt aging report
 **Priority:** P3 (Low)
@@ -5858,29 +5591,7 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 
 ---
 
-<!-- release-plan-marker: RP:v7.0:2026-07-12__release-v7.0 -->
-
-## Release Slice v7.0 (in progress)
-
-*Cycle: `2026-07-12__release-v7.0`. Authoritative backlog slice: `claude/cycles/2026-07-12__release-v7.0/stage4_backlog_slice.md`. Ephemeral — removed at next `groom backlog` run after this cycle closes.*
-
-| ST-ID | Backlog Item | EPIC | Status |
-|-------|--------------|------|--------|
-| ST-01 | BLG-SPEC-80 | EPIC-01 | in_scope |
-| ST-02 | BLG-FE-102 | EPIC-01 | in_scope |
-| ST-03 | BLG-FE-97 | EPIC-01 | in_scope |
-| ST-04 | BLG-QA-95 | EPIC-01 | in_scope |
-| ST-05 | BLG-FE-104 | EPIC-01 | in_scope |
-| ST-06 | BLG-SPEC-71 | EPIC-02 | in_scope |
-| ST-07 | BLG-BE-50 | EPIC-02 | in_scope |
-| ST-08 | BLG-FE-95 | EPIC-02 | in_scope |
-| ST-09 | BLG-FE-96 | EPIC-02 | in_scope |
-| ST-10 | BLG-SPEC-73 | EPIC-02 | in_scope |
-| ST-11 | BLG-BE-51 | EPIC-02 | in_scope |
-| ST-12 | BLG-BE-38 | EPIC-02 | in_scope |
-| ST-13 | BLG-FEAT-69 | EPIC-03 | in_scope |
-| ST-14 | BLG-FEAT-70 | EPIC-03 | in_scope |
-| ST-15 | BLG-FEAT-68 | EPIC-03 | in_scope |
+*Release Slice v7.0 removed — cycle 2026-07-12__release-v7.0 closed 2026-07-13. Archived canonical home: claude/cycles/2026-07-12__release-v7.0/stage4_backlog_slice.md*
 
 ---
 
@@ -5917,12 +5628,6 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 **Problem:** DS-05/IT-06 depend on the Alpaca API; no documented backoff/retry audit has been performed since integration shipped (v2.9/v3.5).
 **Scope:** Audit current retry/backoff logic against Alpaca's documented rate limits; document the effective SLA.
 **Acceptance Criteria:** Audit findings documented; any gaps filed as follow-up items.
-
-### BLG-QA-95 — Positions Grid View badge parity Playwright coverage
-**Priority:** P2 (Medium) | **Type:** QA / Frontend | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** `qa_evidence_EPIC-02.md` (v6.9) confirms `SC-RO-*` verifies the relocated Alerts-column badges via Table View only; `BLG-FE-102` (Grid View missing RISK OFF badge) shows no Grid View Playwright equivalent exists yet.
-**Scope:** Add Table/Grid parity Playwright scenarios for both RISK OFF and GAP RISK badges, to land alongside the `BLG-FE-102` fix.
-**Acceptance Criteria:** Grid View badge scenarios pass in CI for both badge types; parity with existing `SC-RO-*` Table View coverage confirmed.
 
 ### BLG-FE-103 — Shared modal shell for compliance/checklist components
 **Priority:** P3 (Low) | **Type:** Frontend / Refactor | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260712-02 | **Effort:** M | **Provisional-Target:** Unscheduled
@@ -6008,12 +5713,6 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 **Scope:** Quarterly retrospective comparing assigned effort band vs actual sprint capacity consumed for shipped initiatives.
 **Acceptance Criteria:** First retrospective produced; process documented for repeat.
 
-### BLG-SPEC-80 — `positions.md` Grid View badge placement subsection
-**Priority:** P2 (Medium) | **Type:** Spec Debt | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** IDEA-frontend-specs-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** `positions.md` documents the Alerts column as canonical for Table View; Grid View badge placement was never separately specified — the root cause behind `BLG-FE-102` (Grid View missing RISK OFF badge).
-**Scope:** Add an explicit Grid View badge-placement subsection to `positions.md`, to land alongside or ahead of the `BLG-FE-102` fix.
-**Acceptance Criteria:** `positions.md` updated; `BLG-FE-102` implementation can cite the spec directly.
-
 ### BLG-SPEC-81 — Research view `signal_type` filter spec
 **Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** IDEA-frontend-specs-20260712-02 | **Effort:** S | **Provisional-Target:** Unscheduled
 **Gate criteria:** ≥5 distinct `signal_type` values observed in practice (currently fewer; re-check at next backlog grooming).
@@ -6032,12 +5731,6 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 **Problem:** Confirm `BLG-QA-73`'s AST scan (retired manual sync, v6.6) still covers every current `backend/` subpackage after recent additions.
 **Scope:** Audit the scan's glob/traversal logic against the current `backend/` tree; extend if a subpackage was missed.
 **Acceptance Criteria:** Audit documented; scan confirmed complete or patched.
-
-### BLG-FE-104 — GAP RISK / RISK OFF combined-badge visual differentiation review
-**Priority:** P2 (Medium) | **Type:** UX / Design Review | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
-**Problem:** v6.9 added a second badge type (GAP RISK) into the same Alerts column as the pre-existing RISK OFF badge; no design review confirmed the two remain visually distinguishable when both fire simultaneously — a safety-relevant read, not cosmetic.
-**Scope:** Design gate review of the combined-badge state (screenshot both firing together); adjust styling if indistinguishable.
-**Acceptance Criteria:** Combined-badge state reviewed and confirmed distinguishable, or a fix is specified and implemented.
 
 ### BLG-FE-105 — Compliance Recheck Modal all-pass empty-state design
 **Priority:** P3 (Low) | **Type:** UX / Design | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260712-02 | **Effort:** S | **Provisional-Target:** TBD

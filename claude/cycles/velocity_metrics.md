@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-07-10 (post-ship closure 2026-07-10__release-v6.9)
+**Last Updated:** 2026-07-13 (post-ship closure 2026-07-12__release-v7.0)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -77,8 +77,9 @@
 | v6.7  | 7       | 7         | 1.00     | All 7 stories done; zero deviations; full delivery of both EPICs (EPIC-01: dark-theme secondary-text contrast fix BLG-FE-87 (226+4 instances), light-theme companion pairing BLG-FE-88 (697 instances), shared secondary-text design token BLG-FE-89 locked into design_system.md; EPIC-02: full AUD-2026-07-06 governance-hardening bundle — .claude/skills/ write-scope authority BLG-GOV-167 (closes 3-cycle-carried escalation ESC-CLOSE-20260706-01), append-only log structural guard BLG-GOV-168, audit.py same-session commit SLA BLG-GOV-169, Delivery Verification STEP 6 documentation BLG-GOV-170); 0 delegations; 0 returns; Verified |
 | v6.8  | 17      | 17        | 1.00     | All 17 stories done; zero deviations; full delivery of all 3 EPICs (EPIC-01: production correctness fix BLG-BE-46 (trade_plans.position_id linkage, backend auto-link), SQL column allowlist BLG-SEC-08, signal anomaly review BLG-SEC-07 (PASS), X-API-Key registered BLG-OPS-99; EPIC-02: both mandatory Product Value Alert pull-forwards — trade tagging BLG-FEAT-52, SI-02 gate visibility indicator BLG-FEAT-71; EPIC-03: 11 spec/QA/governance debt items — dashboard hierarchy review, R-multiple FX spec, trailing stop specs, 11 dark Playwright specs fixed (2 production bugs found), CI OpenAPI drift gate, Watchlist.js ESLint refactor, Playwright standard extraction, system threat model); 0 delegations outstanding (2 delegated_frontend items unblocked and delivered); 0 returns; largest single-sprint story count since v5.3; Verified |
 | v6.9  | 2       | 2         | 1.00     | Both stories done; zero deviations; both named mandatory Product Value Alert pull-forwards delivered (EPIC-01: on-demand SI-01 compliance recheck BLG-FEAT-64; EPIC-02: overnight/weekend gap risk flag BLG-FEAT-65, incidentally completed the since-v6.2 documented-but-unbuilt Alerts table column); 0 delegations; 0 returns; Verified |
+| v7.0  | 15      | 15        | 1.00     | All 15 stories done; 1 P2 deviation (DEV-EPIC01-ST05-01, pre-existing since v6.2, accepted, BLG-FE-107 target v7.1); both named mandatory Product Value Alert pull-forwards delivered (BLG-FE-102, BLG-FE-97); 0 delegations; 0 returns; scope-maximisation directive fully utilised (~9.5-10 estimated days across 3 EPICs); Verified_with_deviations |
 
-**Rolling 6-cycle average (v6.4–v6.9):** 1.00
+**Rolling 6-cycle average (v6.5–v7.0):** 1.00
 
 ---
 

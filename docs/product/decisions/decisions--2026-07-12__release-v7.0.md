@@ -1,9 +1,13 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v7.0
 Cycle: 2026-07-12__release-v7.0
-Last Updated: 2026-07-12
+Last Updated: 2026-07-13
+
+Superseded by: v7.0 ship — 2026-07-13
+Changelog: docs/product/changelog.md#v7.0
+Cycle: 2026-07-12__release-v7.0
 
 ## Planning Decisions — v7.0 Positions Grid View Parity, Carryover Fixes & Feature Enhancements
 
