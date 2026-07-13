@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, TrendingDown, Edit2, LogOut, Zap } from "lucide-react";
+import { TrendingUp, TrendingDown, Edit2, LogOut, Zap, AlertTriangle } from "lucide-react";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { cn } from "../../lib/utils";
@@ -12,11 +12,8 @@ const GAP_RISK_REASON_LABELS = {
   weekend_hold: "Weekend hold (flagged at Friday close)",
 };
 
-// ST-02 (v6.9, BLG-FEAT-65) — Gap Risk badge, same row as other alert icons on the card
-function GapRiskCardBadge({ positionId, ticker }) {
-  const { data: gapRisk, loading } = useGapRisk(positionId);
-  if (loading || !gapRisk?.flagged) return null;
-
+// ST-02 (v6.9, BLG-FEAT-65) — Gap Risk badge
+function GapRiskCardBadge({ gapRisk, ticker, positionId }) {
   const reasonText = (gapRisk.reasons || []).map((r) => GAP_RISK_REASON_LABELS[r] || r).join(" + ");
   const statText = gapRisk.insufficient_history
     ? "insufficient history"
@@ -30,13 +27,46 @@ function GapRiskCardBadge({ positionId, ticker }) {
       title={tooltipText}
       aria-describedby={descId}
       aria-label={`Gap risk flag: ${reasonText}, average gap ${statText}`}
-      className="inline-flex items-center text-xs px-2 py-0.5 rounded-full font-medium text-white"
+      className="inline-flex items-center w-fit text-xs px-2 py-0.5 rounded-full font-medium text-white"
       style={{ backgroundColor: "#D97706" }}
       data-testid="gap-risk-badge"
     >
       GAP RISK
       <span id={descId} className="sr-only">{tooltipText}</span>
     </span>
+  );
+}
+
+// ST-02 (v7.0, BLG-FE-102) — RISK OFF badge, Grid View parity with Table View
+function RiskOffCardBadge() {
+  return (
+    <span
+      className="inline-flex items-center w-fit text-xs px-2 py-0.5 rounded-full font-medium text-white"
+      style={{ backgroundColor: "#1E40AF" }}
+      title="Risk-off regime: index below MA200 — consider exit"
+      aria-label="Risk-off exit alert: regime signal indicates exit this position"
+      data-testid="risk-off-badge"
+    >
+      RISK OFF
+    </span>
+  );
+}
+
+// ST-01/ST-02/ST-05 (v7.0) — dedicated alert row: below header, above stat tiles.
+// Stacks RISK OFF above GAP RISK per positions.md §Alerts Column "Stacked-state spacing"
+// (4px min gap, RISK OFF above GAP RISK) — same rule Table View's AlertsCell already applies.
+function PositionCardAlertsRow({ position }) {
+  const { data: gapRisk, loading: gapRiskLoading } = useGapRisk(position.id);
+  const riskOffExit = position.risk_off_exit === true;
+  const showGap = !gapRiskLoading && gapRisk?.flagged;
+
+  if (!riskOffExit && !showGap) return null;
+
+  return (
+    <div className="flex flex-col gap-1 mb-3" data-testid="grid-alerts-row">
+      {riskOffExit && <RiskOffCardBadge />}
+      {showGap && <GapRiskCardBadge gapRisk={gapRisk} ticker={position.ticker} positionId={position.id} />}
+    </div>
   );
 }
 
@@ -47,10 +77,15 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck }) {
   const isProfit = pnl >= 0;
   const daysHeld = differenceInDays(new Date(), new Date(position.entry_date));
   const currencySymbol = position.market === "UK" ? "£" : "$";
-  
+
   // Use native prices for display
   const displayCurrentPrice = position.current_price_native || position.current_price;
-  const displayStopPrice = position.stop_price_native || position.stop_price;
+
+  // ST-03 (BLG-FE-97): trailing stop value + breach indicator — same condition logic as Table View
+  const trailStop = position.current_trailing_stop;
+  const currentPriceGbp = position.current_price;
+  const trailBreached = trailStop > 0 && currentPriceGbp > 0 && currentPriceGbp <= trailStop;
+  const displayTrailStop = trailStop > 0 ? trailStop : (position.stop_price_native || position.stop_price);
 
   return (
     <motion.div
@@ -69,8 +104,6 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck }) {
             <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
               {position.market}
             </span>
-            {/* ST-02 (v6.9, BLG-FEAT-65): Gap Risk badge — same row as other alert icons */}
-            <GapRiskCardBadge positionId={position.id} ticker={position.ticker} />
           </div>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
             {daysHeld} days held • {position.shares} shares
@@ -94,6 +127,9 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck }) {
         </div>
       </div>
 
+      {/* ST-01/ST-02/ST-05 (v7.0): dedicated alert row — RISK OFF stacked above GAP RISK when both apply */}
+      <PositionCardAlertsRow position={position} />
+
       <div className="grid grid-cols-3 gap-4 mb-4">
         <div className="p-3 rounded-xl bg-slate-800/50">
           <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Entry</p>
@@ -107,10 +143,21 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck }) {
             {currencySymbol}{displayCurrentPrice?.toFixed(2) || "—"}
           </p>
         </div>
+        {/* ST-03 (BLG-FE-97): Trail Stop tile — Initial Stop subtext + trailing stop value + breach icon */}
         <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
-          <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Stop</p>
-          <p className="text-sm font-semibold text-rose-400">
-            {currencySymbol}{displayStopPrice?.toFixed(2) || "—"}
+          <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">
+            Init: {position.initial_stop != null ? `${currencySymbol}${Number(position.initial_stop).toFixed(2)}` : "—"}
+          </p>
+          <p className="text-sm font-semibold text-rose-400 flex items-center gap-1">
+            {displayTrailStop != null ? `${currencySymbol}${Number(displayTrailStop).toFixed(2)}` : "—"}
+            {trailBreached && (
+              <AlertTriangle
+                className="w-3.5 h-3.5 flex-shrink-0"
+                style={{ color: "#EA580C" }}
+                aria-label="Trailing stop breach: current price is at or below trailing stop level"
+                data-testid="trail-stop-breach-icon"
+              />
+            )}
           </p>
         </div>
       </div>
