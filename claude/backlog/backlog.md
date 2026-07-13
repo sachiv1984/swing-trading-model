@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-13 (session — 1 new item(s) added: BLG-FE-107); prior — session — 1 new item(s) added: BLG-FE-106; prior — roadmap rebalance 2026-07-12__scheduled — 36 new items added via idea intake IW-20260712-01 disposition: BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107; BLG-GOV-105 closed as confirmed duplicate of BLG-GOV-45 (BLG-GOV-202 closed same action); BLG-GOV-28 priority escalated P2→P1; DL-064; prior — session — 5 new item(s) added: BLG-FEAT-73, BLG-FEAT-74, BLG-FEAT-75, BLG-FEAT-76, BLG-FE-102; prior — groom backlog post-ship closure 2026-07-10__release-v6.9 — 2 items archived: BLG-FEAT-64, BLG-FEAT-65; ephemeral Release Slice v6.9 section removed; prior — 2 items marked ✅ COMPLETE: BLG-FEAT-64, BLG-FEAT-65; prior — roadmap rebalance 2026-07-10__scheduled — 39 new items added via idea intake IW-20260710-01 disposition: BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72; DL-063; prior — backlog consistency audit — BLG-BE-52 archived to backlog_archive.md (already-resolved item not yet retired); BLG-GOV-105 flagged possible duplicate of shipped BLG-GOV-45, not dispositioned (see new BLG-GOV-202); BLG-GOV-28 flagged overdue §13 gate (PT-04 sealed v6.1, review not run), not dispositioned; prior — 2026-07-09 Product Owner direct action — BLG-BE-52 resolved: no backfill; prior — session — 1 new item(s) added: BLG-BE-52; prior — groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-13 (session — 5 new item(s) added: BLG-BE-59, BLG-BE-60, BLG-OPS-108, BLG-QA-104, BLG-QA-105); prior — session — 1 new item(s) added: BLG-FE-107; prior — session — 1 new item(s) added: BLG-FE-106; prior — roadmap rebalance 2026-07-12__scheduled — 36 new items added via idea intake IW-20260712-01 disposition: BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107; BLG-GOV-105 closed as confirmed duplicate of BLG-GOV-45 (BLG-GOV-202 closed same action); BLG-GOV-28 priority escalated P2→P1; DL-064; prior — session — 5 new item(s) added: BLG-FEAT-73, BLG-FEAT-74, BLG-FEAT-75, BLG-FEAT-76, BLG-FE-102; prior — groom backlog post-ship closure 2026-07-10__release-v6.9 — 2 items archived: BLG-FEAT-64, BLG-FEAT-65; ephemeral Release Slice v6.9 section removed; prior — 2 items marked ✅ COMPLETE: BLG-FEAT-64, BLG-FEAT-65; prior — roadmap rebalance 2026-07-10__scheduled — 39 new items added via idea intake IW-20260710-01 disposition: BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72; DL-063; prior — backlog consistency audit — BLG-BE-52 archived to backlog_archive.md (already-resolved item not yet retired); BLG-GOV-105 flagged possible duplicate of shipped BLG-GOV-45, not dispositioned (see new BLG-GOV-202); BLG-GOV-28 flagged overdue §13 gate (PT-04 sealed v6.1, review not run), not dispositioned; prior — 2026-07-09 Product Owner direct action — BLG-BE-52 resolved: no backfill; prior — session — 1 new item(s) added: BLG-BE-52; prior — groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -5683,6 +5683,92 @@ The 2026-07-10 backlog consistency audit flagged `BLG-GOV-105` as a possible dup
 
 **Proposed solution**
 Product Owner reviews both entries and either closes `BLG-GOV-105` as a confirmed duplicate or records why it is distinct.
+
+---
+
+### BLG-BE-59 — Gate nightly backtest ticker eligibility on ticker_universe.created_at (point-in-time integrity)
+**Priority:** P1 (High)
+**Type:** Backend
+**Owner:** Backend Engineering Patterns Owner
+**Source:** Session investigation into nightly backtest data integrity — 2026-07-13
+**Effort:** M (~1-2 days)
+**Provisional-Target:** v7.1
+**Gate criteria:** None
+
+**Problem**
+`production_strategy.py`'s `_load_tickers()` pulls whatever is *currently* `active=TRUE` in `ticker_universe`, and `compute_signals()` (production_strategy.py:199-204) ranks momentum across all of those tickers on every historical date back to 2018 in one DataFrame-wide computation. There is no concept of "this ticker wasn't tracked yet as of this date" — adding a ticker today retroactively injects its momentum score into the ranking competition for the entire 2018-present window, which can change which trades were selected, when they exited, and (via the compounding fully-invested cash simulation) the dollar size of every subsequent trade, even trades that closed months or years ago. `ticker_universe` already has an unused `created_at` column (backend/services/ticker_universe_service.py:100) recording exactly when each ticker was added. This is also a likely contributor to some of the "No longer qualifies" exit-reason frequency observed in recent runs, since a later-added competitor's momentum can retroactively bump a held position out of top-5 on a historical rebalance date it wouldn't have lost on in reality.
+
+**Proposed solution**
+Gate each ticker's eligibility in the momentum/trend signal computation on its own `created_at` date (mask `signals` to False for a ticker before its `created_at`), so adding a new ticker only ever affects selections from today forward and closed historical trades become genuinely immutable between runs.
+
+---
+
+### BLG-BE-60 — Nightly backtest total_pnl_gbp is not reproducible night-to-night with zero exits
+**Priority:** P1 (High)
+**Type:** Backend
+**Owner:** Backend Engineering Patterns Owner
+**Source:** Session investigation into nightly backtest data integrity — 2026-07-13
+**Effort:** L (~3-5 days)
+**Provisional-Target:** v7.1
+**Gate criteria:** None
+**Depends on:** Related to BLG-BE-59 (that item covers universe changes; this one reproduces with a completely unchanged ticker universe) — no hard dependency, but likely shares a fix vehicle if backtest state persistence is redesigned.
+
+**Problem**
+Confirmed via GH Actions logs across 2026-07-09 through 2026-07-13: `trades_imported`/`open_positions_imported` stayed flat at 587/5 (zero exits), yet `total_pnl_gbp` swung by tens of thousands of GBP night to night (-£19,959.14, then +£14,217.99, then -£46,027.71). Diffing actual trade rows between two consecutive runs showed every trade (winners/losers, US/UK, various dates) shifted PnL(£) by the identical ratio (×1.02701) while PnL% and dates stayed byte-identical — the signature of a single global rescaling of the compounding cash trajectory, most likely from yfinance's `auto_adjust=True` retroactively revising a historical adjusted close somewhere in the 2018-present window on the nightly full re-download-and-re-simulate. Because position sizing is fully-invested and compounding (shares = cash × weight / price, carried forward day to day), any tiny historical price revision rescales every subsequent trade's dollar PnL, even trades that "closed" long ago. `import_backtest.py` already prints a "Total P&L drift check" comparing the new total to the previous import, but nothing monitors or alerts on it — it is unread CI log text.
+
+**Proposed solution**
+(a) Persist/cache historical price data and only extend forward rather than re-downloading and re-simulating the full 8-year window every night, or (b) make the trade ledger genuinely append-only (write only newly-closed trades instead of deleting and reinserting all 587 every run); at minimum (c) wire the existing drift-check output into an actual alert/threshold so an unexpected swing is flagged rather than silently logged.
+
+---
+
+### BLG-OPS-108 — Add response validation to daily-snapshot.yml curl calls (CI masks endpoint failures)
+**Priority:** P1 (High)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** Session investigation into signal-generation data integrity — 2026-07-13
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** v7.1
+**Gate criteria:** None
+
+**Problem**
+`.github/workflows/daily-snapshot.yml`'s curl calls (Run Position Analysis, Create Portfolio Snapshot, Generate Signals) have no `--fail` flag and never inspect the response body. A 200 response carrying an error JSON payload (or any non-2xx) still exits 0, so GitHub Actions reports the job green regardless of whether the endpoint actually succeeded. This is exactly how the numpy/signals crash (fixed in PR #971) went undetected for three weeks — `/signals/generate` failed on every single scheduled run from 2026-06-23 to 2026-07-13 while the workflow showed success every day.
+
+**Proposed solution**
+Add `--fail` (or explicit status/body validation) to all three curl invocations in daily-snapshot.yml so a broken write path surfaces as a failed CI run. Audit other workflows that POST to business endpoints for the same gap (backtest.yml's import step already validates status codes in Python, so likely fine — confirm as part of this item).
+
+---
+
+### BLG-QA-104 — Add numpy-scalar regression coverage for create_rebalance_exit_signal
+**Priority:** P2 (Medium)
+**Type:** QA / Backend
+**Owner:** QA & Testing Owner
+**Source:** Session investigation into signal-generation data integrity (numpy/psycopg2 crash, PR #971) — 2026-07-13
+**Effort:** XS (<1 day)
+**Provisional-Target:** v7.1
+**Gate criteria:** None
+
+**Problem**
+PR #971 fixed a bug where numpy.float64/int64 scalars reaching a raw psycopg2 INSERT crashed `/signals/generate` for three weeks (NumPy≥2.0 changed scalar `repr()` to `np.float64(x)`, which Postgres parsed as a schema-qualified function call and rejected with `schema "np" does not exist`). `create_rebalance_exit_signal` (backend/database.py:2354) was manually traced during that investigation and appears safe today — its inputs already pass through `decimal_to_float()` upstream in `generate_rebalance_exit_signals()` — but this was confirmed by inspection only, with no automated test guarding it.
+
+**Proposed solution**
+Add a regression test asserting `create_rebalance_exit_signal`'s parameters are always native float/int (never numpy scalars) even if upstream callers change, so the same bug class cannot silently recur on this path.
+
+---
+
+### BLG-QA-105 — Fix unrestored sys.modules stubbing in test_alerts_service.py (cross-file test pollution)
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Session investigation into signal-generation data integrity — 2026-07-13
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** v7.1
+**Gate criteria:** None
+
+**Problem**
+`tests/test_alerts_service.py` (~line 89-100) unconditionally overwrites `sys.modules["utils.formatting"]`, `sys.modules["utils.pricing"]`, `sys.modules["utils.calculations"]`, and `sys.modules["config"]` with stub modules/MagicMocks at import time, with no teardown. Because `sys.modules` is process-global, every test file collected afterward in the same pytest session that imports `utils.formatting` (etc.) silently receives the fake passthrough stub instead of the real module. Confirmed directly: a new regression test (tests/test_formatting.py, added in PR #971) passed in isolation but failed under the full suite until rewritten to load the real module from its file path, bypassing the pollution. This is a plausible reason the numpy/psycopg2 signal-write bug (PR #971) was never caught by any test exercising `signal_service.py` — its `decimal_to_float` import could have been silently neutered the same way. `tests/test_trade_service.py` has an equivalent stub but already guards it (`if not hasattr(...)`) so it doesn't clobber a real module; `test_alerts_service.py` does not.
+
+**Proposed solution**
+Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a pytest fixture restoring the prior `sys.modules` entries after that file's tests complete), matching the safer guarded pattern already used in test_trade_service.py.
 
 ---
 
