@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.2
-**Last Updated:** 2026-07-12
+**Version:** 2.3
+**Last Updated:** 2026-07-13
 **Design Source (v7.0 additions):** docs/design/2026-07-12__release-v7.0/combined-badge-differentiation/decision_record.md, docs/design/2026-07-12__release-v7.0/position-review-cadence-nudge/ux_spec.md
 **Design Source (v6.9 additions):** docs/design/2026-07-10__release-v6.9/on-demand-compliance-recheck/ux_spec.md, docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md
 **Design Source (v2.3 additions):** docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md
@@ -22,6 +22,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.3 | 2026-07-13 | v7.0 sprint execution: (ST-01, BLG-SPEC-80) Added explicit Grid View badge-placement subsection to §Alerts Column — documents the dedicated alert row (below header, above stat tiles) where RISK OFF/GAP RISK badges render in Grid View, closing the gap that was the root cause of `BLG-FE-102` (Grid View never had separately-specified badge placement, only Table View's Alerts column was documented in this much detail). No visual/behavioural change — documentation only, confirms placement ST-02 implements. |
 | 2.2 | 2026-07-12 | v7.0 design gate: (ST-05, BLG-FE-104) Combined GAP RISK / RISK OFF badge differentiation review — confirmed existing hue (blue-800 vs amber-600) + mandatory text label already satisfy distinguishability; added stacking spacing rule (4px min gap, RISK OFF above GAP RISK, no truncation) for the previously-unreviewed combined/stacked state, Table and Grid View. (ST-15, BLG-FEAT-68) Last Reviewed column added — Table View (after Alerts, before Actions) and Grid View card footer; `last_reviewed_at` field; amber flag + clock icon at ≥14 days, suppressed when position already flagged by Grace Period or Drawdown prompts; inline "Mark Reviewed" icon-button calls `PATCH /positions/{id}/mark-reviewed`. §13 compliant — display-only, no automated action beyond explicit user-triggered timestamp update. Design sources: v7.0 additions listed above. Head of UX & Design sign-off: 2026-07-12. Product Owner approved: 2026-07-12. Head of Specs Team confirmed. |
 | 2.1 | 2026-07-10 | v6.9 design gate: (ST-01, BLG-FEAT-64) Compliance Recheck Panel — "Recheck Compliance" action added to Table View Actions column and Grid View card footer for all open positions; opens modal reusing `PreEntryValidationPanel`'s pass/warn/fail visual pattern against the same 5 SI-01 rules, evaluated against current (not entry-time) conditions; session-local override acknowledgement, no persisted state. §13 compliant — re-application of existing deterministic rules, no new automation. (ST-02, BLG-FEAT-65) Gap Risk Badge added to the existing Alerts column — "GAP RISK" badge (amber-600 `#D97706`) when an earnings date falls before the next session or on Friday-close weekend holds; tooltip shows reason(s) plus historical average gap magnitude for the ticker or "insufficient history"; stacks with existing RISK OFF badge in the same cell. §13 compliant — informational only, no gap direction/magnitude prediction. Design sources: v6.9 additions listed above. Head of UX & Design sign-off: 2026-07-10. Product Owner approved: 2026-07-10. Head of Specs Team confirmed. |
 | 2.0 | 2026-07-06 | v6.7 design gate — AI Trade Advisor Widget footer disclaimer light-theme fix (ST-02, BLG-FE-88): `text-slate-400` → `text-slate-600 dark:text-slate-400` (bare class had no light-mode companion; was 2.34–2.56:1 FAIL in light theme). Dark-theme value unchanged — already matches the canonical secondary-text token. Design source: `docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md` §4. Head of UX & Design sign-off: 2026-07-06. Head of Specs Team confirmed. |
@@ -469,6 +470,8 @@ Shown when `gap_risk.flagged = true` — trigger is either an earnings date befo
 
 **Stacked-state spacing (v7.0 — ST-05):** Minimum `4px` vertical gap between stacked badges (prevents visual merging). Stack order: RISK OFF above GAP RISK. Neither label may truncate — if horizontal space is insufficient (Grid View narrow card), badges wrap to full width individually rather than sharing a row. Reviewed and confirmed distinguishable per existing hue (blue-800 vs amber-600) + mandatory text label; no colour/label change required. Design source: `docs/design/2026-07-12__release-v7.0/combined-badge-differentiation/decision_record.md`.
 
+**Grid View badge placement (v7.0 — ST-01):** RISK OFF and GAP RISK badges render in a dedicated alert row within the position card — below the ticker/market header, above the Entry/Current/Trail Stop stat tiles. This is the "alert-icon row" referenced elsewhere in this document (see §Grid View and §Last Reviewed Column). When both badges apply to the same position, they stack vertically in this row per the Stacked-state spacing rule above (RISK OFF above GAP RISK, `4px` minimum gap, full-width wrap rather than truncation). When neither applies, the alert row is omitted entirely (no reserved space, no dash placeholder — unlike the Table View's Alerts column, which always renders a dash when empty). Same visual treatment (colour, label, pill shape) as Table View — no Grid-View-specific styling variant.
+
 **Tooltip / expanded detail:** Hover or focus reveals earnings date and/or weekend-hold reason plus historical average gap magnitude for the ticker (`gap_risk.avg_gap_pct`, `gap_risk.event_count`), or "insufficient history" when `gap_risk.insufficient_history = true`. Tooltip content is also exposed via `aria-describedby` for keyboard/screen-reader access.
 
 **No alert:** dash ("—"), consistent with existing Alerts column convention.
@@ -661,6 +664,15 @@ Backend must provide compliance flags per position (new endpoint or extension to
 ---
 
 ## Known Deviations
+
+### DEV-EPIC01-ST05-01 — Positions Table View: RISK OFF badge colour/label diverges from spec
+
+- **Description:** §Alerts Column specifies the RISK OFF badge as Label "RISK OFF", Background `#1E40AF` (blue-800). The shipped Table View implementation (`src/pages/Positions.js`, `AlertsCell` component) instead renders `bg-amber-900/60 text-amber-300` (amber, not blue), label "Risk-Off" (not "RISK OFF"), plus a `ShieldAlert` icon not mentioned in spec. Pre-existing since v6.2 — confirmed by the existing passing test `SC-RO-02` (`tests/e2e/epic01-v62-stops-alerts.spec.js`), which encodes the amber colour as expected. Discovered 2026-07-13 while building the v7.0 Grid View RISK OFF badge (ST-02), which correctly uses the spec's blue `#1E40AF` — Table View and Grid View are now visually inconsistent for the same badge. This also means the v7.0 combined-badge differentiation decision record's "hue separation" rationale (blue-800 vs amber-600) does not hold for Table View as shipped — both RISK OFF and GAP RISK render in the amber family there.
+- **Canonical requirement:** §Alerts Column — Risk-Off Badge: Label "RISK OFF", Background `#1E40AF` (blue-800).
+- **Priority:** P2
+- **Target resolution release:** v7.1
+- **Owner:** Frontend Specifications & UX Documentation Owner
+- **Backlog reference:** BLG-FE-107 (filed sprint execution 2026-07-13, cycle 2026-07-12__release-v7.0, ST-05)
 
 ### DEV-EPIC02-ST05-03 — Positions Table View: P&L (GBP) column absent
 

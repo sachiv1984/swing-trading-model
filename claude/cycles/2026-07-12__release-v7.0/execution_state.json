@@ -1,0 +1,444 @@
+{
+  "cycle_id": "2026-07-12__release-v7.0",
+  "sprint_goal": "Close the Grid View/Table View position-risk badge and trailing-stop parity gap, resolve the v6.9-carried spec-reconciliation and data-correctness debt, and ship three new reporting and position-review features (tax-year P&L CSV export, realized/unrealized P&L split, and position review-cadence nudge) \u2014 fully utilising this cycle's ~12\u201314 day capacity per the Product Owner's scope-maximisation directive.",
+  "backlog_slice_source": "claude/cycles/2026-07-12__release-v7.0/stage4_backlog_slice.md",
+  "invoked_utc": "2026-07-13T09:57:23Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-07-13T09:57:23Z",
+  "epics": {
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-07-12__release-v7.0/EPIC-01",
+      "pr_number": 968,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-07-12__release-v7.0/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "tests/e2e/epic01-v70-grid-badge-parity.spec.js"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "positions.md Grid View badge placement subsection (BLG-SPEC-80)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 953,
+          "branch": "exec/2026-07-12__release-v7.0/EPIC-01",
+          "commit_sha": "f5c0962c",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-13T10:05:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Alerts Column"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Spec-only. Grid View badge-placement subsection added to positions.md Alerts Column (v2.2->v2.3). No deviation - matches decision intent."
+        },
+        "ST-02": {
+          "title": "Positions Grid View missing RISK OFF badge (BLG-FE-102)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 954,
+          "branch": "exec/2026-07-12__release-v7.0/EPIC-01",
+          "commit_sha": "2d4eaa57",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-13T10:05:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Alerts Column"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "RISK OFF badge added to PositionCard.js, deep blue #1E40AF, coexists with GAP RISK badge in new alerts row. Table View behaviour unchanged. No deviation."
+        },
+        "ST-03": {
+          "title": "Positions Grid View missing trailing-stop value and breach indicator (BLG-FE-97)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 955,
+          "branch": "exec/2026-07-12__release-v7.0/EPIC-01",
+          "commit_sha": "2d4eaa57",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-13T10:05:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Trailing Stop Column"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Initial Stop + trailing stop value shown in Trail Stop tile; breach shown via icon only (AlertTriangle, #EA580C), matching Table View's breach condition (current_price <= current_trailing_stop). No deviation."
+        },
+        "ST-04": {
+          "title": "Positions Grid View badge parity Playwright coverage (BLG-QA-95)",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 956,
+          "branch": "exec/2026-07-12__release-v7.0/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        },
+        "ST-05": {
+          "title": "GAP RISK / RISK OFF combined-badge visual differentiation review (BLG-FE-104)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 957,
+          "branch": "exec/2026-07-12__release-v7.0/EPIC-01",
+          "commit_sha": "4242fecb",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-13T10:40:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-07-12__release-v7.0/combined-badge-differentiation/decision_record.md",
+            "docs/specs/frontend/pages/positions.md#Alerts Column"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Stacking/order/spacing confirmed distinguishable in both Grid and Table View. Deviation DEV-EPIC01-ST05-01 filed (Table View RISK OFF badge colour/label diverges from spec, pre-existing since v6.2, unrelated to stacking) - BLG-FE-107 filed for follow-up, target v7.1."
+        }
+      },
+      "completed_items": [
+        "ST-01",
+        "ST-02",
+        "ST-03",
+        "ST-04",
+        "ST-05"
+      ]
+    },
+    "EPIC-02": {
+      "status": "done",
+      "branch": "exec/2026-07-12__release-v7.0/EPIC-02",
+      "pr_number": 969,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-07-12__release-v7.0/qa_evidence_EPIC-02.md",
+      "test_scenarios": [
+        "tests/e2e/heading-light-theme-contrast.spec.js",
+        "tests/test_portfolio_risk_sector.py",
+        "tests/test_claude_audit_log_filters.py",
+        "tests/test_trailing_stop_recommendation_log.py"
+      ],
+      "stories": {
+        "ST-06": {
+          "title": "Reports.js Tax Year P&L tab spec reconciliation (BLG-SPEC-71)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 958,
+          "branch": "exec/2026-07-12__release-v7.0/EPIC-02",
+          "commit_sha": "7f414052",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-13T12:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/reports.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Spec-only reconciliation. Arc 5 Compliance Summary and Gross vs Net Comparison marked Design Only \u2014 Implementation Pending, matching Reports.js actual behaviour. No deviation - documentation now matches code."
+        },
+        "ST-07": {
+          "title": "Instrument trailing-stop recommendation capture for trailing_stop_action_rate metric (BLG-BE-50)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 959,
+          "branch": "exec/2026-07-12__release-v7.0/EPIC-02",
+          "commit_sha": "9683319c",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-13T12:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Trailing Stop Action Rate"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "trailing_stop_recommendation_log table + log_trailing_stop_recommendation() wired into GET /positions/{id}/stop-trail, fire-and-forget. Capture window 24h confirmed by PO at planning. No deviation."
+        },
+        "ST-08": {
+          "title": "Dashboard/StrategyBenchmark page-title light-theme contrast gap (BLG-FE-95)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 960,
+          "branch": "exec/2026-07-12__release-v7.0/EPIC-02",
+          "commit_sha": "62e2721f",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-13T12:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "text-slate-900 dark:text-white applied to DashboardHome.js and StrategyBenchmark.js headings per locked decision record. Playwright coverage added (4 scenarios). No deviation."
+        },
+        "ST-09": {
+          "title": "Positions Table View breach badge does not match approved spec colour/label (BLG-FE-96)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 961,
+          "branch": "exec/2026-07-12__release-v7.0/EPIC-02",
+          "commit_sha": "479c005a",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-13T12:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Trailing Stop Column"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Positions.js Table View breach badge now #EA580C/orange-600, white text, rounded-full, label changed to spec's '\u26a0 BREACH'. data-testid added for selector robustness; existing tests updated in same commit (cross-spec selector check). No deviation."
+        },
+        "ST-10": {
+          "title": "Gate Progress Indicator copy divergence (BLG-SPEC-73)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 962,
+          "branch": "exec/2026-07-12__release-v7.0/EPIC-02",
+          "commit_sha": "cd97af1d",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-13T12:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/dashboard.md#6"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "dashboard.md \u00a76 Display table updated to document shipped GateProgressStrip.js copy verbatim; Known Deviations note removed (resolved). Wording-only, FI-P3-02 code-review exception applies. No deviation."
+        },
+        "ST-11": {
+          "title": "Add endpoint and date-range filters to GET /ai/claude-audit-log (BLG-BE-51)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 963,
+          "branch": "exec/2026-07-12__release-v7.0/EPIC-02",
+          "commit_sha": "95c2a0e4",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-13T12:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/ai_endpoints.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "endpoint/date_from/date_to filters added to query_claude_audit_log + router; ai_endpoints.md and openapi.yaml updated same commit. No deviation."
+        },
+        "ST-12": {
+          "title": "Sector Concentration: join ticker_universe for sector data (BLG-BE-38)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 964,
+          "branch": "exec/2026-07-12__release-v7.0/EPIC-02",
+          "commit_sha": "e5ae2802",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-13T12:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/risk_dashboard.md#8a. Component: Sector Concentration Heat Map"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "_get_ticker_sector_map/_lookup_sector added, wired into both _get_portfolio_heat_and_positions (concentration-status) and get_sector_weights. Pure DB read, no yfinance call (AC-04). No deviation."
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "done",
+      "branch": "exec/2026-07-12__release-v7.0/EPIC-03",
+      "pr_number": 970,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-07-12__release-v7.0/qa_evidence_EPIC-03.md",
+      "test_scenarios": [
+        "tests/e2e/tax-year-csv-export.spec.js",
+        "tests/e2e/monthly-pnl-realized-unrealized.spec.js",
+        "tests/e2e/position-review-cadence-nudge.spec.js",
+        "tests/test_mark_position_reviewed.py"
+      ],
+      "stories": {
+        "ST-13": {
+          "title": "Tax-year P&L CSV export (BLG-FEAT-69)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 965,
+          "branch": "exec/2026-07-12__release-v7.0/EPIC-03",
+          "commit_sha": "3b364084",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-13T14:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-07-12__release-v7.0/tax-year-csv-export/ux_spec.md",
+            "docs/specs/frontend/pages/reports.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Backend CSV export (build_tax_year_csv) already existed pre-sprint (confirmed via git log, unrelated commit c8a4ff3d from 2026-05-29) - pre-met feature, ux_spec's 'superseded' claim was inaccurate (backend was in main.py inline endpoints, not backend/routers/). Fixed button order (CSV was left of PDF, spec requires right) and added zero-to-9-scenario Playwright coverage. No deviation - button order fix brings into spec compliance."
+        },
+        "ST-14": {
+          "title": "Realized vs. unrealized gain distinction in monthly P&L (BLG-FEAT-70)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 966,
+          "branch": "exec/2026-07-12__release-v7.0/EPIC-03",
+          "commit_sha": "ca04901e",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-13T14:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md",
+            "docs/specs/frontend/pages/reports.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Refactored get_monthly_pnl_report() to return {months, estimated_unrealised_pnl, unrealised_note} dict (was bare list) - data field in HTTP response unchanged (still plain array), backward compatible. Added Unrealised P&L Card + Combined Total line to Monthly P&L view, reusing Tax Year tab's card pattern verbatim. No deviation."
+        },
+        "ST-15": {
+          "title": "Position review cadence nudge (BLG-FEAT-68)",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 967,
+          "branch": "exec/2026-07-12__release-v7.0/EPIC-03",
+          "commit_sha": "633fad41",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-13T14:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-07-12__release-v7.0/position-review-cadence-nudge/ux_spec.md",
+            "docs/specs/frontend/pages/positions.md#Last Reviewed Column"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Added last_reviewed_at column + PATCH /positions/{id}/mark-reviewed endpoint + Table View column + Grid View card footer row. Suppression rule (AC-04) interpreted as: Grace suppresses per-position (position_state=GRACE, days_in_state>=8, individually determinable); Drawdown suppresses portfolio-wide while threshold_breached=true (only data shape available - no per-position drawdown flag exists). Documented as explicit interpretation, not silent guess. No deviation."
+        }
+      }
+    }
+  },
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [
+    "ST-01",
+    "ST-02",
+    "ST-03",
+    "ST-04",
+    "ST-05",
+    "ST-06",
+    "ST-07",
+    "ST-08",
+    "ST-09",
+    "ST-10",
+    "ST-11",
+    "ST-12",
+    "ST-13",
+    "ST-14",
+    "ST-15"
+  ],
+  "open_escalations": [],
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": [
+      "EPIC-01",
+      "EPIC-02",
+      "EPIC-03"
+    ],
+    "all_merged": false
+  },
+  "process_notes": [
+    "ST-09 (EPIC-02) changed Positions.js breach badge title text and added data-testid=\"breach-badge\", replacing the fragile title-text selector used by tests/e2e/epic01-v62-stops-alerts.spec.js (fixed in same commit 479c005a) AND by tests/e2e/epic01-v70-grid-badge-parity.spec.js SC-GVP-09 (EPIC-01, PR #968, not yet merged to main -- could not be fixed from the EPIC-02 branch since that file doesn't exist there yet). MUST fix SC-GVP-09's selector to use [data-testid=\"breach-badge\"] as part of EPIC-02's rebase-onto-main reconciliation after EPIC-01 merges, before EPIC-02's own PR is finalised -- same pattern as the already-planned EPIC-03 rebase for positions.md/PositionCard.js."
+  ],
+  "sealed": false,
+  "sealed_utc": null
+}
