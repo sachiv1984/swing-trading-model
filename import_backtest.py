@@ -24,6 +24,50 @@ import argparse
 import requests
 import csv
 from pathlib import Path
+from typing import Optional
+
+
+# BLG-BE-60 / RISK-01 (v7.1 ST-02) — fix vehicle selected at execution kickoff
+# by the Backend Engineering Patterns Owner: option (c), "wire the existing
+# drift-check output into an actual alert/threshold". Options (a) persistent
+# historical-price caching (only extend forward, never re-download/re-simulate
+# the full 8-year window) and (b) an append-only trade ledger both fix the
+# root cause more completely but require substantially more infrastructure
+# (a price cache store, or ledger diffing against what's already in the DB);
+# both remain open follow-on work. Option (c) is the scoped, testable minimum:
+# a total_pnl_gbp swing this large with zero new closed trades in the same
+# run is not explainable by genuine trading activity, so it is surfaced
+# loudly (distinct process exit code + a fixed, greppable log line) instead
+# of being silently logged as before. See qa_evidence_EPIC-01.md for the
+# fuller fix-vehicle rationale.
+DRIFT_ALERT_THRESHOLD_GBP = 50.0
+
+
+def check_drift_alert(
+    trades_imported: int,
+    trades_deleted: int,
+    delta: Optional[float],
+    threshold_gbp: float = DRIFT_ALERT_THRESHOLD_GBP,
+) -> Optional[str]:
+    """Return an alert message if an unexplained total_pnl_gbp swing is
+    detected on a run with zero new closed trades, else None.
+
+    Pure function — no I/O — so it is directly unit-testable without mocking
+    the HTTP import round-trip (tests/test_nightly_computations.py).
+    """
+    if delta is None:
+        return None
+    zero_new_exits = trades_imported == trades_deleted
+    if zero_new_exits and abs(delta) > threshold_gbp:
+        return (
+            f"BACKTEST_DRIFT_ALERT: total_pnl_gbp shifted by £{delta:,.2f} with "
+            f"zero new closed trades this run (trades_imported={trades_imported} "
+            f"== trades_deleted={trades_deleted}). Threshold: £{threshold_gbp:,.2f}. "
+            "Likely cause: a historical price revision (e.g. yfinance auto_adjust) "
+            "globally rescaled the compounding cash trajectory. See BLG-BE-60 / "
+            "RISK-01 for the known root cause and fix-vehicle options."
+        )
+    return None
 
 
 def find_latest_csv(directory: Path, pattern: str) -> Path | None:
@@ -231,6 +275,14 @@ def main():
               f"{'£' + format(prev_unrealized, ',.2f') if prev_unrealized is not None else 'n/a'}")
         print("  (delta should track previous unrealized P&L, less any exit fees, "
               "if only positions closed — a larger swing warrants a closer look)")
+
+        alert = check_drift_alert(result["trades_imported"], result["trades_deleted"], delta)
+        if alert:
+            print(f"\n{alert}", file=sys.stderr)
+            # Distinct from exit code 1 (hard failure, nothing was imported):
+            # the import already succeeded and committed, this exit code only
+            # flags that the imported totals warrant a closer look.
+            sys.exit(2)
 
 
 if __name__ == "__main__":
