@@ -32,6 +32,7 @@ from .position_service import (
     exit_position,
     update_note,
     update_tags,
+    mark_position_reviewed,
     get_available_tags,
     filter_by_tags,
     run_nightly_trailing_stop_update,
@@ -106,6 +107,7 @@ __all__ = [
     'exit_position',
     'update_note',
     'update_tags',
+    'mark_position_reviewed',
     'get_available_tags',
     'filter_by_tags',
     # Portfolio service

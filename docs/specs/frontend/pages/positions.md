@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.3
-**Last Updated:** 2026-07-13
+**Version:** 2.4
+**Last Updated:** 2026-07-14
 **Design Source (v7.0 additions):** docs/design/2026-07-12__release-v7.0/combined-badge-differentiation/decision_record.md, docs/design/2026-07-12__release-v7.0/position-review-cadence-nudge/ux_spec.md
 **Design Source (v6.9 additions):** docs/design/2026-07-10__release-v6.9/on-demand-compliance-recheck/ux_spec.md, docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md
 **Design Source (v2.3 additions):** docs/design/2026-03-24__release-v2.3/compliance-panel/ux_spec.md
@@ -22,6 +22,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.4 | 2026-07-14 | v7.1 sprint execution: (ST-04, BLG-BE-61) §Last Reviewed Column — documented `NULL`/backfill semantics for `last_reviewed_at` (falls back to `entry_date`, verified against production data). §Position Lifecycle State Badge — added explicit confirmation that review-cadence is a metadata annotation, not a 5th lifecycle state (4 states unchanged). No visual/behavioural change — documentation only. |
 | 2.3 | 2026-07-13 | v7.0 sprint execution: (ST-01, BLG-SPEC-80) Added explicit Grid View badge-placement subsection to §Alerts Column — documents the dedicated alert row (below header, above stat tiles) where RISK OFF/GAP RISK badges render in Grid View, closing the gap that was the root cause of `BLG-FE-102` (Grid View never had separately-specified badge placement, only Table View's Alerts column was documented in this much detail). No visual/behavioural change — documentation only, confirms placement ST-02 implements. |
 | 2.2 | 2026-07-12 | v7.0 design gate: (ST-05, BLG-FE-104) Combined GAP RISK / RISK OFF badge differentiation review — confirmed existing hue (blue-800 vs amber-600) + mandatory text label already satisfy distinguishability; added stacking spacing rule (4px min gap, RISK OFF above GAP RISK, no truncation) for the previously-unreviewed combined/stacked state, Table and Grid View. (ST-15, BLG-FEAT-68) Last Reviewed column added — Table View (after Alerts, before Actions) and Grid View card footer; `last_reviewed_at` field; amber flag + clock icon at ≥14 days, suppressed when position already flagged by Grace Period or Drawdown prompts; inline "Mark Reviewed" icon-button calls `PATCH /positions/{id}/mark-reviewed`. §13 compliant — display-only, no automated action beyond explicit user-triggered timestamp update. Design sources: v7.0 additions listed above. Head of UX & Design sign-off: 2026-07-12. Product Owner approved: 2026-07-12. Head of Specs Team confirmed. |
 | 2.1 | 2026-07-10 | v6.9 design gate: (ST-01, BLG-FEAT-64) Compliance Recheck Panel — "Recheck Compliance" action added to Table View Actions column and Grid View card footer for all open positions; opens modal reusing `PreEntryValidationPanel`'s pass/warn/fail visual pattern against the same 5 SI-01 rules, evaluated against current (not entry-time) conditions; session-local override acknowledgement, no persisted state. §13 compliant — re-application of existing deterministic rules, no new automation. (ST-02, BLG-FEAT-65) Gap Risk Badge added to the existing Alerts column — "GAP RISK" badge (amber-600 `#D97706`) when an earnings date falls before the next session or on Friday-close weekend holds; tooltip shows reason(s) plus historical average gap magnitude for the ticker or "insufficient history"; stacks with existing RISK OFF badge in the same cell. §13 compliant — informational only, no gap direction/magnitude prediction. Design sources: v6.9 additions listed above. Head of UX & Design sign-off: 2026-07-10. Product Owner approved: 2026-07-10. Head of Specs Team confirmed. |
@@ -130,6 +131,8 @@ Displays each open position as a row with:
 **§13 constraint:** Display-only. No automated recommendation generated from state display.
 
 **Accessibility:** Badge has `aria-label="Position state: {STATE}, {N} days in state"`. Colour is never the sole differentiator — state label text is always present.
+
+**Review-cadence is not a lifecycle state (v7.1 — ST-04, BLG-BE-61):** The position review-cadence nudge (`last_reviewed_at`, §Last Reviewed Column) is a metadata annotation only — a display flag tracking when a human last looked at a position — and does not participate in this state machine. The lifecycle state machine remains exactly the 4 states above (GRACE → LOSING → PROFITABLE → EXIT ZONE, with UNKNOWN as a display fallback for null/pending back-fill, not a 5th reachable state). A stale/flagged review status has no bearing on `position_state` or `days_in_state`, does not gate any transition between the 4 states, and is computed and stored entirely independently (`last_reviewed_at` on the `positions` row vs. `position_state`/`days_in_state` derived from price/stop logic).
 
 ---
 
@@ -491,6 +494,8 @@ Shown when `gap_risk.flagged = true` — trigger is either an earnings date befo
 **Placement:** Table View — new "Last Reviewed" column, after "Alerts", before "Actions". Grid View — card footer, after the alert-icon row, before the Actions row.
 
 **Data source:** `last_reviewed_at` (ISO timestamp, nullable) — new field on `GET /positions`.
+
+**NULL / backfill semantics (v7.1 — ST-04, BLG-BE-61):** The column was added via `ALTER TABLE ... ADD COLUMN IF NOT EXISTS last_reviewed_at` with no default, so every position that existed before this feature shipped (v7.0) has `last_reviewed_at = NULL` and stays that way until explicitly marked reviewed — there is no retroactive backfill migration. `days_since_review` for a `NULL` value is computed against `entry_date`, not treated as `0` (which would hide a genuinely stale position) or as "infinite"/pre-flagged (which would mass-flag every pre-existing position the instant this feature shipped, regardless of how recently it was actually opened). This means a pre-existing position that was opened recently is correctly not flagged, while one opened long ago is correctly flagged immediately — the same rule a freshly-created position would get. Verified against production data 2026-07-14: 1 open position (`INTC`, entered 2026-07-02), `last_reviewed_at = NULL`, `days_since_review` = 12 (< 14 threshold) → correctly not flagged.
 
 | Element | Spec |
 |---------|------|

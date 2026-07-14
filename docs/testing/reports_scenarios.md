@@ -1,8 +1,8 @@
 **Owner:** QA & Testing Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-03-18
+**Version:** 1.1
+**Last Updated:** 2026-07-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Derived from:** `docs/specs/frontend/pages/reports.md` v0.2; `docs/specs/api_contracts/reports_endpoints.md` v0.1
 **Sprint:** 2026-03-18__release-v2.1 — ST-18 (closes TEST-GAP-TAX-01)
@@ -140,6 +140,6 @@ This is a backend rule enforced in the API. The frontend must display the result
 ## 4. Out of Scope
 
 - PDF export rendering — covered by ST-12 QA evidence (Director of Quality sign-off against staging).
-- CSV export correctness — covered by ST-13 Head of Engineering sign-off.
+- CSV export correctness — covered by `docs/testing/tax_year_csv_export_scenarios.md` (v7.1, ST-07, BLG-SPEC-84) and `tests/test_reports_integration.py::TestTaxYearCsvExport`. (Corrected 2026-07-14 — the prior "ST-13 Head of Engineering sign-off" reference had no corresponding written scenario document; this was the gap ST-07/AC-06 closed.)
 - Backend tax year boundary logic — covered by `tests/test_reports_integration.py` (29 existing tests).
 - Multi-user or multi-portfolio attribution — out of scope for v2.1 (single-user deployment).

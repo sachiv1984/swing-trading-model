@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.15.0
-**Last Updated:** 2026-07-13
+**Version:** 1.16.0
+**Last Updated:** 2026-07-14
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1106,6 +1106,52 @@ Applying the question as literally asked to this metric's documentation: `metric
 
 ---
 
+## Realized / Unrealized P&L Split
+
+**Added:** v1.16.0 — ST-06 (EPIC-03, v7.1, BLG-SPEC-83)
+
+Formalises the realized-vs-unrealized P&L split shipped in v7.0 (EPIC-03 ST-14, `BLG-FEAT-70`, Tax Year and Monthly P&L reports) — no prior entry existed in this document for it.
+
+### Definitions
+
+- **Realized P&L (`realised_pnl_gbp`):** the GBP profit/loss of a **closed** trade — `exit_proceeds_gbp − total_cost_gbp` (fees already netted into both legs at their respective transaction time). One value per closed trade; summed across trades for a period total.
+- **Unrealized P&L (`estimated_unrealised_pnl`):** the GBP profit/loss of currently **open** positions, marked to a reference price. A current-snapshot figure with no period/year attribution.
+
+### Ownership Decision (stored vs. computed-on-read)
+
+- **Realized:** stored. `trade_history.pnl` is written once, at exit time (`exit_position()`, `backend/services/position_service.py`), and never recomputed afterward. Reports sum this stored, immutable value — a closed trade's realized P&L cannot drift after the fact.
+- **Unrealized:** **not** uniformly computed-on-read across the app — this is the one genuine ownership ambiguity this hardening pass surfaced (see reports.md `DEV-REPORTS-ST06-01`, `BLG-SPEC-87`):
+  - The Positions page (`GET /positions` → `get_positions_with_prices()`) computes `pnl` **live**, against the current market price, on every request.
+  - The Reports page's `estimated_unrealised_pnl` (`get_estimated_unrealised_pnl()`, `backend/services/reports_service.py`) sums the **stored** `positions.pnl` column, which is refreshed only once per night by the automatic trailing-stop ratchet (`run_nightly_trailing_stop_update()`) — a snapshot, not a live read, despite reading from the same underlying column name.
+  - **This document's canonical position:** the Reports figure is a nightly snapshot by current implementation, not by documented design intent — `BLG-SPEC-87` tracks resolving this (either make it live, or explicitly label it as a snapshot). Until resolved, do not assume the two pages' unrealized figures agree at any given moment.
+
+### Currency & Rounding Rules (Base44 frontend prompt)
+
+- **Currency:** GBP only, for both realized and unrealized. US-market trades/positions are converted to GBP server-side (via the stored or live FX rate, per the ownership rule above) before the `pnl`/`realised_pnl_gbp` field is populated — the frontend never performs currency conversion for these fields.
+- **Rounding:** `round(value, 2)` (2 decimal places) is applied server-side at computation time for every realized and unrealized figure returned by `/reports/*` and `/positions` (confirmed in `reports_service.py` and `position_service.py`). The frontend must display the value as received — no client-side re-rounding, which would risk producing a different-looking value than what a re-fetch of the same underlying row would show.
+- **Sign convention:** positive = profit, negative = loss, matching every other P&L figure in the app (no separate sign convention for this feature).
+
+### Reconciliation Rule
+
+`realised_pnl_gbp` (summed over a period, or lifetime) plus `estimated_unrealised_pnl` (current snapshot) is an **approximate**, not exact, tie-back to the portfolio-level `total_pnl` field (`GET /portfolio`, balance-sheet method: `total_value − net_cash_flow`) — the two are independently derived and can diverge by the live-vs-snapshot valuation gap described above, plus minor FX-timing and rounding effects. See `docs/specs/frontend/pages/reports.md` §Combined Total Line for the full reconciliation rule text and a verified production example (2026-07-14: realised £1,100.46 + unrealised −£126.25 = £974.21 vs `total_pnl` £988.19, diff £13.98/≈1.4%).
+
+### Visual Treatment
+
+Profit `text-emerald-400`, loss `text-rose-400` — aligned with (not distinct from) the pre-existing Open Positions Panel P&L colour convention, so the same figure reads consistently wherever it appears. See `positions.md` and `reports.md` §Unrealised P&L Card for the full visual spec (closed this cycle via direct design gate edit to `reports.md` v0.9).
+
+### Data Sources (API)
+
+- `GET /reports/tax-year` — `summary.total_realised_pnl`, per-trade `trades[].realised_pnl_gbp`, `estimated_unrealised_pnl`
+- `GET /reports/monthly-pnl` — per-month `data[].realised_pnl_gbp`, `estimated_unrealised_pnl`
+- `GET /positions` — per-position live `pnl` (open positions only)
+- `GET /portfolio` — `total_pnl` (lifetime, balance-sheet method — see Reconciliation Rule)
+
+### Sign-off
+
+- **Metrics Definitions & Analytics Owner:** agent-mediated sign-off cleared 2026-07-14 (ST-06, EPIC-03, v7.1)
+
+---
+
 ## Appendix A: Data Lineage (Referential)
 
 This Metrics Definitions document is the canonical source for **metric semantics and formulas**.
@@ -1153,6 +1199,7 @@ Validation is performed by `POST /validate/calculations` comparing computed metr
 ## Appendix D — Change Log
 | Date | Version | Change | Author |
 |---|---|---|---|
+| 2026-07-14 | 1.16.0 | ST-06 (EPIC-03, v7.1, BLG-SPEC-83): Add Realized/Unrealized P&L Split section — formalises the v7.0 feature (no prior entry existed). Documents stored-vs-computed-on-read ownership decision (realized: stored at exit, immutable; unrealized: live on Positions page vs nightly-snapshot on Reports page — a genuine ambiguity surfaced this cycle, tracked as `BLG-SPEC-87`), currency/rounding rules (GBP, 2dp server-side, no client re-rounding), reconciliation rule (approximate tie-back to portfolio `total_pnl`, verified against production data), and visual treatment (aligned with Open Positions Panel convention). Metrics Definitions & Analytics Owner sign-off cleared 2026-07-14. | Metrics Definitions & Analytics Owner |
 | 2026-02-16 | 1.5.0 | Initial comprehensive spec | Analytics Team |
 | 2026-02-17 | 1.5.1 | FIX-MD-01: Add missing system metrics | Analytics Team |
 | 2026-02-17 | 1.5.2 | FIX-MD-02: Add Risk/Reward Ratio and Expectancy | Analytics Team |

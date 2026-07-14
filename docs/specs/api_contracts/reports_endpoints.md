@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.7
-**Last Updated:** 2026-07-13
+**Version:** 0.8
+**Last Updated:** 2026-07-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -191,8 +191,10 @@ When `format=csv` is supplied, the endpoint returns a CSV file instead of the st
 
 | Header | Value |
 |--------|-------|
-| `Content-Type` | `text/csv` |
+| `Content-Type` | `text/csv; charset=utf-8` — see Charset note below |
 | `Content-Disposition` | `attachment; filename="tax-year-{year}-pnl.csv"` |
+
+**Charset (v0.8 — ST-07, BLG-SPEC-84, AC-01; corrected same-day, see Changelog):** the route handler sets `media_type="text/csv"` with no explicit charset, but the actual response header is `text/csv; charset=utf-8` — Starlette's `Response` class auto-appends `; charset=utf-8` to any `text/*` media type unless charset is explicitly suppressed. Confirmed by direct assertion against the live `TestClient` response (`tests/test_reports_integration.py::TestTaxYearCsvExport::test_ac01_content_type_header`), not inferred from source reading alone — an earlier version of this note claimed no charset was present, which was wrong (source-only inference; the framework's implicit behaviour wasn't accounted for). The body itself is also explicitly UTF-8-encoded (`build_tax_year_csv()`'s output `.encode("utf-8")`), so header and body charset agree.
 
 **CSV structure:**
 
@@ -277,6 +279,10 @@ US trade P&L is converted to GBP at the time of trade close using `exit_fx_rate`
 
 **Empty tax year**
 If no trades have `exit_date` within the specified tax year: `total_closed_trades = 0`, all summary numeric fields are `0.0`, and `trades = []`.
+
+**Authentication (v0.8 — ST-07, BLG-SPEC-84, AC-02):** All response formats of this endpoint (JSON, PDF, CSV) require the same `X-API-Key` header as every other endpoint. Enforcement is global — `api_key_middleware` in `backend/main.py` validates the header for every request before route dispatch, with the sole exceptions of `OPTIONS` (CORS preflight) and `GET /health`. There is no separate or weaker auth path for the export formats; a request without a valid key receives `401` before `format=csv`/`format=pdf` handling ever executes, identical to the JSON path. Confirmed by direct code read of `api_key_middleware` — no per-route bypass exists for this or any other financial endpoint.
+
+**Record classification (v0.8 — ST-07, BLG-SPEC-84, AC-03):** The CSV/PDF exports are classified as an **analytics/convenience export**, not a financial record of authority. The canonical, authoritative record of every trade remains `trade_history` in the database — the export is a point-in-time, server-rendered *view* of that data for the user's own reference (see the page-level disclaimer: "This report is provided for user reference only... not a substitute for qualified tax advice"). Consequences of this classification: (a) no retention/archival requirement beyond the underlying `trade_history` rows themselves — the CSV/PDF files are not persisted server-side, only generated on request; (b) no immutability guarantee on the export format — the CSV column set may be extended in a future version without a breaking-change version bump, since it is a read view, not a stored contract; (c) versioning approach: this contract document's own `**Version:**` header is the sole version marker for the CSV/PDF shape (no separate `format_version` field in the response), consistent with how `format=pdf` has always been treated — a schema-breaking column reorder or removal (not an addition) would require a version bump here and a corresponding entry in `Appendix B` of `metrics_definitions.md` style API schema coverage if the fields feed any metric, though none currently do.
 
 ---
 
@@ -498,6 +504,7 @@ GET /reports/monthly-pnl
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.8 | 2026-07-14 | v7.1 sprint execution (ST-07, BLG-SPEC-84): CSV export hardening pass — documented and test-verified `Content-Type` charset (AC-01: actual header is `text/csv; charset=utf-8`, Starlette auto-appends charset for `text/*`; corrected in the same edit after a test assertion caught the initial documentation claiming no charset was present), authentication parity confirmation (AC-02, global `api_key_middleware`, no per-route bypass, test-verified with `API_KEY` configured), and financial-record-vs-analytics-export classification with versioning approach (AC-03, export is a read view of `trade_history`, not a stored contract). No response schema/behaviour change. |
 | 0.7 | 2026-07-13 | Add `estimated_unrealised_pnl`/`unrealised_note` top-level fields to GET /reports/monthly-pnl response — current-snapshot unrealised P&L, same field/computation as GET /reports/tax-year's `summary.estimated_unrealised_pnl`. `data` array shape unchanged. ST-14 (BLG-FEAT-70) — v7.0 cycle 2026-07-12__release-v7.0. |
 | 0.6 | 2026-05-31 | Rename strategy_compliance → compliance_summary in GET /reports/monthly-pnl response (field rename; same schema, canonical name alignment). ST-03 — v4.7 cycle 2026-05-31__release-v4.7. |
 | 0.5 | 2026-05-29 | Add strategy_compliance field to GET /reports/monthly-pnl response: 30d Arc 5 compliance metrics. ST-18 — v4.3 cycle 2026-05-29__release-v4.3. |

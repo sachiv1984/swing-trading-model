@@ -108,6 +108,7 @@ from services import (
     exit_position,
     update_note,
     update_tags,
+    mark_position_reviewed,
     get_available_tags,
     filter_by_tags,
     # Portfolio service
@@ -1161,12 +1162,13 @@ def mark_position_reviewed_endpoint(position_id: str):
     §13 display-only: no automated action beyond the explicit user-triggered timestamp
     update — this is the confirm action for the position review cadence nudge.
     Spec: docs/design/2026-07-12__release-v7.0/position-review-cadence-nudge/ux_spec.md
+
+    Routes through position_service.mark_position_reviewed() (ST-04, BLG-BE-61,
+    v7.1), which performs the same portfolio-ownership check (get_position())
+    as note/tags — the prior direct database call had no ownership check.
     """
-    from database import mark_position_reviewed
     try:
         result = mark_position_reviewed(position_id)
-        if result is None:
-            raise HTTPException(status_code=404, detail=f"Position {position_id} not found")
         return {
             "status": "ok",
             "data": {
@@ -1174,8 +1176,8 @@ def mark_position_reviewed_endpoint(position_id: str):
                 "last_reviewed_at": result["last_reviewed_at"].isoformat() if result["last_reviewed_at"] else None,
             },
         }
-    except HTTPException:
-        raise
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         import traceback
         traceback.print_exc()

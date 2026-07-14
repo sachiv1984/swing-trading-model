@@ -34,6 +34,7 @@ from database import (
     update_trade_plan,
     get_signals,
     ensure_planned_entry_price_column,
+    mark_position_reviewed as db_mark_position_reviewed,
 )
 
 from utils.pricing import (
@@ -1181,6 +1182,36 @@ def update_note(position_id: str, entry_note: str) -> Dict:
     # Update note in database
     result = update_position_note(position_id, entry_note)
     
+    return result
+
+
+def mark_position_reviewed(position_id: str) -> Dict:
+    """
+    Set last_reviewed_at = NOW() for the given position (ST-15, BLG-FEAT-68, v7.0).
+
+    Portfolio-ownership check (ST-04, BLG-BE-61, v7.1): routes through
+    get_position() first, matching update_note()/update_tags() above — the
+    prior direct database.mark_position_reviewed(position_id) call had no
+    ownership check at all (raw UPDATE ... WHERE id = %s, no portfolio_id
+    filter), unlike every other position-mutating endpoint in this file.
+
+    Args:
+        position_id: UUID of position
+
+    Returns:
+        Updated position dict with id and last_reviewed_at
+    """
+    if not position_id:
+        raise ValueError("Position ID is required")
+
+    # Validate position exists and belongs to the active portfolio
+    position = get_position(position_id)
+    if not position:
+        raise ValueError(f"Position {position_id} not found")
+
+    result = db_mark_position_reviewed(position_id)
+    if result is None:
+        raise ValueError(f"Position {position_id} not found")
     return result
 
 
