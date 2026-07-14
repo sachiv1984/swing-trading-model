@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.8
-**Last Updated:** 2026-07-13
+**Version:** 0.9
+**Last Updated:** 2026-07-14
 **Design Source (v0.7 CSV export + monthly realised/unrealised split):** docs/design/2026-07-12__release-v7.0/tax-year-csv-export/ux_spec.md, docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md
 **Design Source (v0.6 SI-02 gate status):** docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -134,6 +134,7 @@ Displayed below the trades table, clearly separated from the realised section.
 - Displays the full `unrealised_note` text from the API response verbatim
 - Card header: **"Indicative Unrealised P&L (current positions)"**
 - Must be visually distinct from the realised summary bar — users must not mistake this figure for a tax-year-scoped value
+- **Colour (v0.9 — ST-06, BLG-SPEC-83):** profit `text-emerald-400`, loss `text-rose-400` — matches the Open Positions Panel P&L convention (`open-positions-panel/ux_spec.md`, v6.4), explicitly aligned rather than distinct, so the same figure reads consistently wherever it appears in the app. Design source: `docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md`.
 
 ---
 
@@ -297,6 +298,8 @@ Displayed directly below the Monthly Financial Table. Reuses the Tax Year tab's 
 
 Below the Unrealised P&L Card: **"Total (Realised + Unrealised): £X,XXX.XX"**, computed client-side as `sum(displayed monthly rows' realised_pnl_gbp) + estimated_unrealised_pnl` — display-only arithmetic on already-fetched values; no new endpoint, no server-side recalculation of either source figure (consistent with the page's "must not recalculate P&L" rule).
 
+**Colour (v0.9 — ST-06, BLG-SPEC-83):** same convention as the Tax Year tab's Unrealised P&L Card above — profit `text-emerald-400`, loss `text-rose-400`, aligned with the Open Positions Panel P&L convention (`open-positions-panel/ux_spec.md`, v6.4).
+
 Design source: `docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md`.
 
 ---
@@ -340,6 +343,7 @@ Follows the Arc 5 Compliance Summary design language from the tax-year report (�
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.9 | 2026-07-14 | v7.1 design gate (ST-06, BLG-SPEC-83): Explicit colour convention added to both Unrealised P&L Card sections (Tax Year tab and Monthly P&L Report) — profit `text-emerald-400`, loss `text-rose-400`, aligned with the Open Positions Panel P&L convention. Closes ST-06 AC-04 (visual treatment confirmation) — the v7.0 `realized-unrealized-split` design artefact already specified this colour; it had not yet been written into this canonical spec's text. Existing artefact reviewed and confirmed current — no new design work required. Head of UX & Design sign-off: 2026-07-14. Product Owner approved: 2026-07-14. Head of Specs Team confirmed. |
 | 0.8 | 2026-07-13 | v7.0 sprint execution (ST-06, BLG-SPEC-71): Reconciled §Arc 5 Compliance Summary and §Gross vs Net Comparison to explicitly state "Design Only — Implementation Pending" — both were specified with changelog entries worded as shipped features, but neither is actually rendered in `Reports.js`'s Tax Year P&L view (confirmed via `git log -S`: both design gate commits touched only spec files, no `src/` files). Root cause: spec-authoring stories' changelog entries were indistinguishable from shipped-feature entries, letting this drift persist undetected for 8+ release cycles (v4.1/v6.0 → v6.8). No code change — documentation reconciliation only. Re-implementation remains available as a Product Owner scheduling decision (new `BLG-FEAT` items), not a default reconciliation path. |
 | 0.7 | 2026-07-12 | v7.0 design gate: (ST-13, BLG-FEAT-69) Tax-year CSV export — "Download CSV" header button added alongside "Download PDF" (idle/generating/success/error states, same pattern); supersedes the stale v2.1 "no button, URL-parameter only" API Reference note (never implemented, inconsistent with PDF button). (ST-14, BLG-FEAT-70) Monthly P&L Report — Unrealised P&L Card added below the Monthly Financial Table, reusing the Tax Year tab's approved card pattern (`estimated_unrealised_pnl`, `unrealised_note`); Combined Total line added (client-side sum, no new endpoint). Design sources: v0.7 additions listed above. Head of UX & Design sign-off: 2026-07-12. Product Owner approved: 2026-07-12. Head of Specs Team confirmed. |
 | 0.6 | 2026-07-08 | v6.8 design gate — SI-02 Gate Status section added (ST-06, BLG-FEAT-71): collapsible, collapsed by default, below Arc 5 Compliance Summary and above Gross vs Net Comparison. Shows total closed trades vs. trade-plan-linked closed trades as two distinct numbers, plus MET/NOT MET badges for 3 SI-02 gate conditions. Sourced from existing `GET /trades`, `GET /trade-plans`, `GET /analytics/arc5-compliance` — no new backend work. Reflects ST-01 (BLG-BE-46) finding live, as-is. Distinct from Dashboard's single-metric Gate Progress strip (dashboard.md §6). Design source: si02-gate-visibility-indicator/ux_spec.md. Approved: Product Owner 2026-07-08. Head of Specs Team confirmed. |
