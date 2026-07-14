@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.12
-**Last Updated:** 2026-07-02
+**Version:** 3.13
+**Last Updated:** 2026-07-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -233,6 +233,8 @@ Produce a load summary confirming:
 
 **Capacity WARN acknowledgement (IMP-41):** If the capacity check outcome is `warn`, surface this to the Product Owner before proceeding. The Product Owner must explicitly acknowledge the over-capacity risk before scope selection begins. Record their acknowledgement in `sprint_planning_notes.md` and set `capacity_warn_acknowledged = true` in the STEP 7 state write. Do not silently proceed past a WARN — unacknowledged capacity risk compounds at execution.
 
+**Phasing Recommendation as a live option (LP-14 — closes `2026-07-14__release-v7.1` post-ship closure Outstanding Action #2):** If `release_plan.md ## Capacity Check` includes a `### Phasing Recommendation` subsection (per `release_planning_prompt.md` STEP 4.5), present it to the Product Owner as an actual decision point alongside the WARN acknowledgement — not a document that was merely produced and can be waved through. The Product Owner's acknowledgement must explicitly state one of: (a) **Adopt** — scope is phased per the recommendation, sprint backlog reflects only the Phase 1 subset; (b) **Decline** — full scope proceeds in a single sprint, with rationale recorded for why the phasing was not needed despite the WARN. Record the choice and rationale in `sprint_planning_notes.md`. A capacity WARN with an unread Phasing Recommendation is not a valid acknowledgement.
+
 ---
 
 ## STEP 1 — Capacity Baseline
@@ -453,6 +455,8 @@ This ensures delivery verification STEP 1 can account for all slice items withou
 From `release_plan.md ## Execution Plan` (schema v2) or `stage3_execution_plan.md` (pre-v2.11) risk register: confirm which risk IDs are associated with `include` items. For each:
 - Confirm the risk mitigation approach is still valid
 - Flag any risk that has materialised since release planning (if known) as an escalation item
+
+**Multi-vehicle fix-choice risk check (LP-14 — closes `2026-07-14__release-v7.1` post-ship closure Outstanding Action #2):** For any risk register item whose mitigation names two or more genuinely alternative fix vehicles (e.g. "(a) approach X, (b) approach Y, (c) approach Z — pick one") rather than an additive scope checklist, and whose mitigation defers the choice to execution kickoff: do not let this pass silently. Confirm at planning time whether the candidate approaches carry materially different effort estimates. If they do, and a `### Phasing Recommendation` (§ above) exists for this cycle, cross-reference it — the pessimistic-case fix vehicle may push total sprint effort past the recommendation's Phase 1 boundary. Record this cross-reference in `sprint_planning_notes.md` even if the final decision remains "resolve at kickoff" — the point is to surface the risk to capacity at planning time, not defer the sizing uncertainty invisibly to execution.
 
 ### Sprint Planning Notes Structure
 

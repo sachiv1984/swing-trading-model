@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.94
+**Version:** 4.95
 **Last Updated:** 2026-07-14
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -763,7 +763,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.12)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.13)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -1465,7 +1465,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v8.9 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.42 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.12 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.13 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.56 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.6 |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.95 | 2026-07-14 | **PMO Lead direct action — resolved outstanding action #2 from `2026-07-14__release-v7.1` post-ship closure (Release Planning Carry-Forward #2: capacity check landed at top of band with zero buffer, and a genuine either/or risk fix-vehicle choice was deferred to execution kickoff).** §7 source prompt header v3.12→v3.13. §14 Sprint Planning Engine v3.12→v3.13. §14 Version 4.94→4.95/2026-07-14. Changes: `sprint_planning_prompt.md` STEP 0 — new "Phasing Recommendation as a live option" (LP-14) requiring the Product Owner's capacity-WARN acknowledgement to explicitly Adopt or Decline any `### Phasing Recommendation` present in `release_plan.md`, not merely acknowledge the WARN in the abstract. STEP 5.3 Risk Flags — new "Multi-vehicle fix-choice risk check" (LP-14) requiring Sprint Planning to identify risk-register items whose mitigation names multiple genuinely alternative fix vehicles with differing effort, and cross-reference them against the Phasing Recommendation at planning time rather than silently deferring the sizing uncertainty to execution. Closes outstanding action #2 from `claude/cycles/2026-07-14__release-v7.1/closure_record.md` §6. Authority: PMO Lead (direct action, user-invoked, 2026-07-14). |
 | 4.94 | 2026-07-14 | **Head of Specs Team direct action — resolved escalated decision from `2026-07-14__release-v7.1` post-ship closure (Release Planning Friction Item 1: bare-letter backlog effort bands forcing capacity-check inference by analogy).** §6 source prompt header v8.8→v8.9. §6M source prompts updated (backlog_management_prompt.md v1.11→v1.12). §13 Artefact Register Roadmap Rebalance Prompt row v8.8→v8.9. §14 Roadmap Engine Source v8.8→v8.9; Backlog Management Engine v1.11→v1.12; Shared Standards v3.14→v3.15. §14 Version 4.93→4.94/2026-07-14. Decision: **Yes** — root-caused to `roadmap_prompt.md` STEP 4.2's `📋 Backlog (gate-conditional)` disposition path, which bypasses STEP 6 (Scoring Matrix Overlay) — the only place the existing S/M/L day-range convention (§16.7) was documented — so items filed via STEP 4.2 routinely landed with a bare letter and no range. Changes: (1) `shared_standards.md` new §16.12 — canonical day-range requirement for the backlog item `**Effort:**` field, required whenever `Provisional-Target` names a specific release. (2) `roadmap_prompt.md` STEP 4.2 and STEP 9 — day-range now required at write time when disposing/promoting an item with a specific `Provisional-Target`. (3) `backlog_management_prompt.md` STEP 1 — new §1.2 Effort Day-Range Validation pre-scan, flagging (not auto-backfilling) existing non-compliant items at grooming time. Closes outstanding action #1 from `claude/cycles/2026-07-14__release-v7.1/closure_record.md` §6. Authority: Head of Specs Team (direct action, user-invoked, 2026-07-14). |
 | 4.93 | 2026-07-13 | **Roadmap rebalance `2026-07-13__scheduled` STEP 11 — roadmap_prompt.md v8.7→v8.8 — plus a live §14 table drift correction found this cycle.** §6 source prompt header v8.7→v8.8. §13 Artefact Register Roadmap Rebalance Prompt row v8.7→v8.8. §14 Roadmap Engine Source v8.7→v8.8. §14 **Version/Last Updated table row corrected from a stale 4.91/2026-07-10 to 4.93/2026-07-13** — the 4.92/2026-07-12 entry below had bumped the top document header and this Change Log but never actually updated the §14 table's own `Version`/`Last Updated` value rows, a 5th recurrence of the exact header-drift pattern this section's own drift-prevention note (added v4.85) exists to catch; caught this cycle by direct comparison against the top header rather than trusting the table row in isolation. Change: `roadmap_prompt.md` STEP -1.5 — "condition-gated defer exemption" clause added, exempting recurrence-conditioned deferred patches (Target = a condition, not a date/cycle_id) from the cycle-count OVERDUE mechanism; introduces a 6+-consecutive-carry "Stale Condition-Gated Defer" advisory instead. Closes an ambiguity that had been implicitly treated as an exemption across 3 prior scheduled cycles without ever being codified. Authority: Head of Specs Team (roadmap rebalance `2026-07-13__scheduled`, STEP 11). |
 | 4.92 | 2026-07-12 | **Roadmap rebalance `2026-07-12__scheduled` STEP 11 — roadmap_prompt.md v8.6→v8.7.** §6 source prompt header v8.6→v8.7. §13 Artefact Register Roadmap Rebalance Prompt row v8.5→v8.7 (also corrects a pre-existing drift found this cycle: this table's row read v8.5 while §14's own row already read v8.6). §14 Roadmap Engine Source v8.6→v8.7. §14 Version 4.91→4.92/2026-07-12. Changes: (1) `roadmap_prompt.md` §6 — same-day `cycle_id` collision auto-suffix rule added, closing a confirmed live overwrite risk (a second same-day scheduled rebalance collided with the morning's already-`Filed` cycle folder; resolved ad hoc via user confirmation before this rule existed). (2) `roadmap_prompt.md` STEP -1.5 — "out-of-scope OVERDUE resolution" clause added: once a named authority holds a standing out-of-band write privilege for an OVERDUE patch's target file (`shared_standards.md` §17), that is no longer a valid reason to keep re-carrying the patch — the escalation must instruct direct application under that authority. Closes the gap where the `CLAUDE.md` §6 patch was correctly flagged OVERDUE for 6 consecutive cycles but never actually applied. Authority: Head of Specs Team (roadmap rebalance `2026-07-12__scheduled`, STEP 11). |
