@@ -2092,7 +2092,7 @@ None — all 15 sealed backlog-slice items were delivered within the sprint.
 
 ## Sprint: 2026-07-14__release-v7.1
 **Date:** 2026-07-14
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified_with_deviations — 2026-07-14
 
 ### Capabilities now live (merged this sprint)
 
