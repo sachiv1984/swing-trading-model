@@ -3,7 +3,7 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.9
+**Version:** 0.10
 **Last Updated:** 2026-07-14
 **Design Source (v0.7 CSV export + monthly realised/unrealised split):** docs/design/2026-07-12__release-v7.0/tax-year-csv-export/ux_spec.md, docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md
 **Design Source (v0.6 SI-02 gate status):** docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md
@@ -135,6 +135,7 @@ Displayed below the trades table, clearly separated from the realised section.
 - Card header: **"Indicative Unrealised P&L (current positions)"**
 - Must be visually distinct from the realised summary bar — users must not mistake this figure for a tax-year-scoped value
 - **Colour (v0.9 — ST-06, BLG-SPEC-83):** profit `text-emerald-400`, loss `text-rose-400` — matches the Open Positions Panel P&L convention (`open-positions-panel/ux_spec.md`, v6.4), explicitly aligned rather than distinct, so the same figure reads consistently wherever it appears in the app. Design source: `docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md`.
+- **Data freshness (v0.10 — ST-06, BLG-SPEC-83):** `estimated_unrealised_pnl` reads `positions.pnl`, which is written once per night by the automatic trailing-stop ratchet (`run_nightly_trailing_stop_update()`), **not** recomputed live on each request. This is a different data path from the Positions page's Table/Grid View figures, which call `get_positions_with_prices()` and compute `pnl` fresh against the current live price on every request. The two can legitimately show different unrealised totals for the same position at the same moment — see `DEV-REPORTS-ST06-01` below.
 
 ---
 
@@ -302,6 +303,8 @@ Below the Unrealised P&L Card: **"Total (Realised + Unrealised): £X,XXX.XX"**, 
 
 Design source: `docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md`.
 
+**Reconciliation rule (v0.10 — ST-06, BLG-SPEC-83, AC-03):** The Combined Total is an **approximate**, not exact, tie-back to `GET /portfolio`'s `total_pnl` field (the portfolio's lifetime "true P&L" — `total_value − net_cash_flow`, a balance-sheet-style calculation independent of the trade-ledger sum used here). The two are expected to differ by a small amount because they are derived through entirely separate computation paths: `total_pnl` uses the portfolio's current live valuation, while realised is a lifetime sum of `trade_history.pnl` (fixed at each trade's own exit-time FX/price) and unrealised is the last nightly-job snapshot (see Data Freshness note above) — not the same live basis `total_pnl` uses. **Verified against production data, 2026-07-14:** realised (lifetime, all 20 closed trades) = £1,100.46; unrealised (`estimated_unrealised_pnl`) = −£126.25; combined = £974.21. `GET /portfolio`'s `total_pnl` at the same moment = £988.19 (diff £13.98, ≈1.4%) — consistent in direction and rough magnitude with one open US position's live-vs-nightly-snapshot valuation gap, not an unexplained divergence. Do not treat the Combined Total as a substitute for `total_pnl`; it is a period-scoped, ledger-based approximation for tax-reference reading, not the authoritative portfolio P&L figure.
+
 ---
 
 ### Strategy Compliance Section
@@ -339,10 +342,24 @@ Follows the Arc 5 Compliance Summary design language from the tax-year report (�
 
 ---
 
+## Known Deviations
+
+### DEV-REPORTS-ST06-01 — Unrealised P&L differs between Reports and Positions page (data freshness)
+
+- **Description:** `GET /reports/monthly-pnl` and `GET /reports/tax-year`'s `estimated_unrealised_pnl` field (`get_estimated_unrealised_pnl()`, `backend/services/reports_service.py`) sums `positions.pnl` via a raw `database.get_positions()` read — a column written once per night by `run_nightly_trailing_stop_update()` (`backend/services/position_service.py`), not recomputed live. The Positions page (`GET /positions` → `get_positions_with_prices()`) computes `pnl` fresh against the current live price on every request. The two pages can therefore show different unrealised P&L figures for the same position at the same moment, with no in-app indication that one is a snapshot. Discovered during ST-06's AC-03 reconciliation verification (2026-07-14): production showed Reports' `estimated_unrealised_pnl` = −£126.25 vs the Positions page's live figure = −£115.06 for the same single open position at the same time (£11.19 gap).
+- **Canonical requirement:** §Unrealised P&L Card states the figure is "the sum of `pnl` across all currently open positions" with no staleness caveat — a user could reasonably read this as reflecting current market price, matching the Positions page.
+- **Priority:** P3 (informational figure only, clearly labelled "Indicative" with an existing not-a-tax-liability disclaimer; not a financial-record-integrity issue — no money moves based on this number)
+- **Target resolution release:** TBD — not yet scheduled
+- **Owner:** Frontend Specifications & UX Documentation Owner
+- **Backlog reference:** BLG-SPEC-87 (filed sprint execution 2026-07-14, cycle 2026-07-14__release-v7.1, ST-06) — candidate fix directions: (a) switch `get_estimated_unrealised_pnl()` to live-compute via `get_positions_with_prices()` instead of the raw nightly-snapshot read, or (b) keep the snapshot for performance/cost reasons but add an explicit "as of last nightly update" caveat to `unrealised_note`. Not decided here — ST-06's scope is documentation/verification, not a fix.
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.10 | 2026-07-14 | v7.1 sprint execution (ST-06, BLG-SPEC-83): §Unrealised P&L Card (both tabs) — added Data Freshness note (nightly-snapshot vs live-computed distinction) and Reconciliation Rule (AC-03, verified against production data: realised £1,100.46 + unrealised −£126.25 = £974.21 vs `GET /portfolio.total_pnl` £988.19, diff £13.98/≈1.4%, explained by the snapshot-vs-live valuation gap — approximate tie-back, not exact). Added §Known Deviations, filed `DEV-REPORTS-ST06-01` (P3, BLG-SPEC-87) for the underlying Reports-vs-Positions unrealised P&L data-freshness gap discovered during this verification. |
 | 0.9 | 2026-07-14 | v7.1 design gate (ST-06, BLG-SPEC-83): Explicit colour convention added to both Unrealised P&L Card sections (Tax Year tab and Monthly P&L Report) — profit `text-emerald-400`, loss `text-rose-400`, aligned with the Open Positions Panel P&L convention. Closes ST-06 AC-04 (visual treatment confirmation) — the v7.0 `realized-unrealized-split` design artefact already specified this colour; it had not yet been written into this canonical spec's text. Existing artefact reviewed and confirmed current — no new design work required. Head of UX & Design sign-off: 2026-07-14. Product Owner approved: 2026-07-14. Head of Specs Team confirmed. |
 | 0.8 | 2026-07-13 | v7.0 sprint execution (ST-06, BLG-SPEC-71): Reconciled §Arc 5 Compliance Summary and §Gross vs Net Comparison to explicitly state "Design Only — Implementation Pending" — both were specified with changelog entries worded as shipped features, but neither is actually rendered in `Reports.js`'s Tax Year P&L view (confirmed via `git log -S`: both design gate commits touched only spec files, no `src/` files). Root cause: spec-authoring stories' changelog entries were indistinguishable from shipped-feature entries, letting this drift persist undetected for 8+ release cycles (v4.1/v6.0 → v6.8). No code change — documentation reconciliation only. Re-implementation remains available as a Product Owner scheduling decision (new `BLG-FEAT` items), not a default reconciliation path. |
 | 0.7 | 2026-07-12 | v7.0 design gate: (ST-13, BLG-FEAT-69) Tax-year CSV export — "Download CSV" header button added alongside "Download PDF" (idle/generating/success/error states, same pattern); supersedes the stale v2.1 "no button, URL-parameter only" API Reference note (never implemented, inconsistent with PDF button). (ST-14, BLG-FEAT-70) Monthly P&L Report — Unrealised P&L Card added below the Monthly Financial Table, reusing the Tax Year tab's approved card pattern (`estimated_unrealised_pnl`, `unrealised_note`); Combined Total line added (client-side sum, no new endpoint). Design sources: v0.7 additions listed above. Head of UX & Design sign-off: 2026-07-12. Product Owner approved: 2026-07-12. Head of Specs Team confirmed. |

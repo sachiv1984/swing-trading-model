@@ -95,102 +95,123 @@
             "findings_applied": [],
             "cleared_utc": "2026-07-14T00:00:00Z"
           },
-          "notes": "Design gate resolution: option (a) — bring Table View into spec compliance. AlertsCell now renders #1E40AF, label \"RISK OFF\", no icon (ShieldAlert import removed as now-unused). SC-RO-02 updated in same commit to assert spec-correct values. DEV-EPIC01-ST05-01 closed in positions.md#Known Deviations (v2.3->v2.4). Verified: 16/16 tests/e2e/epic01-v62-stops-alerts.spec.js pass, 9/9 epic01-v70-grid-badge-parity.spec.js pass, 8/8 gap-risk-flag.spec.js pass (33 total, all green, no regressions)."
+          "notes": "Design gate resolution: option (a) — bring Table View into spec compliance. AlertsCell now renders #1E40AF, label \"RISK OFF\", no icon (ShieldAlert import removed as now-unused). SC-RO-02 updated in same commit to assert spec-correct values. DEV-EPIC01-ST05-01 closed in positions.md#Known Deviations (v2.3->v2.4). Verified: 16/16 tests/e2e/epic01-v62-stops-alerts.spec.js pass, 9/9 epic01-v70-grid-badge-parity.spec.js pass, 8/8 gap-risk-flag.spec.js pass (33 total, all green, no regressions). PR #981 opened, agent-mediated DoQ sign-off (§5.3) Approved. Product Owner acceptance recorded via user direction — PR #981 merged 2026-07-14T16:44:14Z (commit eefbac73)."
         }
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-14__release-v7.1/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 982,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-14__release-v7.1/qa_evidence_EPIC-03.md",
-      "test_scenarios": ["tests/test_mark_position_reviewed.py", "tests/e2e/position-review-cadence-nudge.spec.js", "tests/e2e/monthly-pnl-realized-unrealized.spec.js", "tests/e2e/positions-pnl-columns.spec.js", "tests/e2e/tax-year-csv-export.spec.js", "tests/test_tax_year_pnl_boundary.py"],
+      "test_scenarios": ["tests/test_mark_position_reviewed.py", "tests/e2e/position-review-cadence-nudge.spec.js", "tests/e2e/monthly-pnl-realized-unrealized.spec.js", "tests/e2e/positions-pnl-columns.spec.js", "tests/test_reports_integration.py", "tests/e2e/gap-risk-flag.spec.js"],
       "stories": {
         "ST-04": {
           "title": "Position review-cadence nudge: backend/data-integrity hardening pass",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 976,
           "branch": "exec/2026-07-14__release-v7.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "8c35728525648a7d61810994ddeab4f39ea5117c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/specs/strategy_rules.md#9", "docs/specs/frontend/pages/positions.md", "docs/specs/api_contracts/"],
+          "completed_utc": "2026-07-14T13:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Last Reviewed Column",
+            "docs/specs/frontend/pages/positions.md#Position Lifecycle State Badge",
+            "backend/services/position_service.py#mark_position_reviewed()",
+            "tests/test_mark_position_reviewed.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC-01 (IDOR): PATCH /positions/{id}/mark-reviewed bypassed the portfolio-ownership check every other position-mutating endpoint (update_note/update_tags) performs via get_position(). Fixed: new position_service.mark_position_reviewed() routes through get_position() first. Verified pass via 4 new unit tests (TestMarkPositionReviewedOwnershipCheck) proving db_mark_position_reviewed is never called for an unowned position_id. AC-02 (NULL/backfill): verified against live production data 2026-07-14 (1 open position, last_reviewed_at=NULL, entry_date 2026-07-02, days_since_review=12 <14 threshold, correctly not flagged) and documented in positions.md v2.4. AC-03: explicit confirmation added to positions.md#Position Lifecycle State Badge that review-cadence is metadata only, not a 5th lifecycle state. No deviation filed against a canonical spec (this was a bug fix); positions.md updated directly."
         },
         "ST-05": {
           "title": "Position review-cadence nudge: frontend/QA polish pass",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 977,
           "branch": "exec/2026-07-14__release-v7.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "8c35728525648a7d61810994ddeab4f39ea5117c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/specs/frontend/pages/positions.md"],
+          "completed_utc": "2026-07-14T13:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/positions.md#Last Reviewed Column",
+            "src/pages/Positions.js#LastReviewedCell",
+            "src/components/positions/PositionCard.js#LastReviewedRow",
+            "tests/e2e/position-review-cadence-nudge.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "PRE-MET (per execution_prompt.md §Pre-met path, LL-v2.4-P4-02) — all 5 ACs already satisfied by prior v7.0 work (commit 633fad41, [EPIC-03][ST-15]), confirmed still current by this cycle's design gate review (design_gate.md: 'reviewed this cycle, confirmed still current... no new design work required'). AC-01: data-testid confirmed present (last-reviewed-cell, last-reviewed-row, mark-reviewed-button). AC-02: suppression/ordering rule already documented in positions.md §Last Reviewed Column 'Suppression rule (AC-04)' paragraph (Grace/Drawdown coexistence). AC-03: UX consistency confirmed via design gate (existing v7.0 ux_spec reviewed, still current). AC-04: traced to positions.md §Last Reviewed Column. AC-05: 7 dedicated Playwright scenarios (SC-RCN-01..07) already exist and re-verified passing this session. No code changes made for this story."
         },
         "ST-06": {
           "title": "Realized/unrealized P&L split: spec & metrics hardening pass",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 978,
           "branch": "exec/2026-07-14__release-v7.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "8c35728525648a7d61810994ddeab4f39ea5117c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/reference/openapi.yaml", "claude/system/metrics_definitions.md"],
+          "completed_utc": "2026-07-14T14:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/metrics_definitions.md#Realized / Unrealized P&L Split",
+            "docs/specs/frontend/pages/reports.md#Unrealised P&L Card",
+            "docs/specs/frontend/pages/reports.md#Known Deviations",
+            "docs/reference/openapi.yaml",
+            "tests/e2e/monthly-pnl-realized-unrealized.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC-01/AC-02/AC-03: ownership decision, currency/rounding rules, and reconciliation rule all documented in new metrics_definitions.md v1.16.0 §Realized/Unrealized P&L Split and reports.md v0.10. AC-03 reconciliation verified against live production data 2026-07-14: realised £1,100.46 + unrealised (reports figure) -£126.25 = £974.21 vs GET /portfolio.total_pnl £988.19 (diff £13.98/~1.4%) - approximate, not exact, tie-back documented with root-cause explanation. AC-04: already closed by this cycle's design gate direct edit to reports.md v0.9 (colour convention). AC-05: metrics_definitions.md entry added. AC-06: openapi.yaml examples added/fixed for estimated_unrealised_pnl and unrealised_note on both /reports/tax-year and /reports/monthly-pnl (tax-year endpoint was missing them entirely). AC-07: 5 existing Playwright scenarios (SC-MRU-01..05) re-verified passing. Deviation filed: DEV-REPORTS-ST06-01 (P3, BLG-SPEC-87) - discovered during AC-03 verification that Reports' estimated_unrealised_pnl reads a nightly-job snapshot of positions.pnl while the Positions page computes live, causing the two pages to show different unrealised figures at the same moment (verified: -£126.25 vs -£115.06, £11.19 gap). Filed as a new backlog item, not fixed in this story (scope was documentation/verification per the story's own title)."
         },
         "ST-07": {
           "title": "Tax-year P&L CSV export: spec & test hardening pass",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 979,
           "branch": "exec/2026-07-14__release-v7.1/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "8c35728525648a7d61810994ddeab4f39ea5117c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["backend/backend_engineering_patterns.md", "docs/reference/openapi.yaml"],
+          "completed_utc": "2026-07-14T14:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/reports_endpoints.md#Response (200 — CSV, format=csv)",
+            "docs/specs/api_contracts/backend_engineering_patterns.md#CSV/export response-body pattern",
+            "docs/testing/tax_year_csv_export_scenarios.md",
+            "tests/test_reports_integration.py#TestTaxYearCsvExport"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "AC-01: Content-Type/charset/filename documented in reports_endpoints.md v0.8 - test-verified actual header is 'text/csv; charset=utf-8' (Starlette auto-appends charset for text/*); initial documentation drafted this session incorrectly claimed no charset was present (source-only inference), caught by the new test assertion and corrected in the same commit before landing. AC-02: auth parity confirmed - global api_key_middleware, no per-route bypass; test-verified with API_KEY configured (401 without key, 200 with valid key). AC-03: financial-record-vs-analytics-export classification documented (export is a read view of trade_history, not a stored contract) with versioning approach. AC-04: smoke test added (TestTaxYearCsvExport::test_ac04_smoke_endpoint_reachable_returns_200). AC-05: 11 new content-asserting tests added (TestTaxYearCsvExport) - metadata rows, 17-column header, UK/US trade row values, FX rates, tag joining, empty-year structure - not just download-fired assertions. AC-06: new docs/testing/tax_year_csv_export_scenarios.md authored, closing the gap left by reports_scenarios.md's stale 'covered by ST-13 sign-off' reference (no scenario doc had ever existed). AC-07: canonical CSV/export pattern entry added to backend_engineering_patterns.md v1.2 (first Changelog section added to that file). No deviation filed against a canonical spec for this story itself (hardening/documentation pass); this story's own verification work surfaced and corrected a documentation drafting error (charset) within the same session, recorded transparently in the changelog rather than left silent."
         }
       }
     }
@@ -209,7 +230,10 @@
   "process_notes": [
     "2026-07-14 session resume (LL-v3.9-P3-1): local main was 5 commits behind origin/main at invocation (PR #980 merged 2026-07-14T16:17:58Z by a prior session, execution_state.json never synced). Fast-forward-pulled origin/main, ran gh pr view 980 -> confirmed MERGED, synced EPIC-01 status/pr_status to merged and moved it from epics_pending to epics_merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-07-14__release-v7.1/EPIC-01 returned empty -- no orphaned commits on the EPIC-01 branch. Separately discovered EPIC-02 (ST-03) and EPIC-03 (ST-04..07) were also fully implemented and pushed to their exec branches by the same prior session, but neither had a PR opened -- resuming from there per the EPIC-01->EPIC-02->EPIC-03 merge order.",
     "2026-07-14: EPIC-02 branch merged main in (CLAUDE.md §8 conflict resolution) to pick up the EPIC-01 sync before opening its PR, per LL-v2.0-P3-5 rebase-before-PR rule.",
-    "2026-07-14: EPIC-02 PR #981 opened after agent-mediated DoQ sign-off (§5.3, Approved). Product Owner acceptance recorded via user direction in this session (acting as Product Owner role per explicit instruction) -- PR #981 merged 2026-07-14T16:44:14Z (commit eefbac73). Per STEP 4 hard gate, halting here -- EPIC-03 not opened in this invocation."
+    "2026-07-14: EPIC-02 PR #981 opened after agent-mediated DoQ sign-off (§5.3, Approved). Product Owner acceptance recorded via user direction in this session (acting as Product Owner role per explicit instruction) -- PR #981 merged 2026-07-14T16:44:14Z (commit eefbac73). Per STEP 4 hard gate, halted after that merge -- EPIC-03 not opened in that invocation.",
+    "2026-07-14: EPIC-03 branch merged main in (CLAUDE.md §8 conflict resolution) to pick up the EPIC-01 sync before opening its PR. EPIC-02 had not merged to main yet (PR #981 still open) but its true current state (done, signed off, PR #981) was carried forward into this branch's copy of execution_state.json rather than reverting to main's stale not_started view -- this is the same underlying JSON content EPIC-02's own branch held, so no information was lost or contradicted.",
+    "2026-07-14: EPIC-03 branch re-merged main (now post-EPIC-02-merge) per CLAUDE.md §8 to pick up the EPIC-02 merged/merged sync before opening its PR. Resolved 3-way conflict in execution_state.json (EPIC-02 status/pr_status -> merged/merged taken from main as the more-current state; ST-03 notes combined to retain both the PR/sign-off narrative and the final merge commit reference), qa_evidence_EPIC-02.md (add/add -- EPIC-03 branch's copy was a stale carried-forward duplicate of EPIC-02's own file; took main's authoritative version), and docs/specs/frontend/pages/positions.md (both EPIC-02's Known Deviations closure and EPIC-03's Last Reviewed Column / Position Lifecycle State Badge sections retained -- no section overlap; combined both stories' entries into a single v2.4 changelog row since both landed same-day, avoiding a duplicate/colliding version number).",
+    "2026-07-14: EPIC-03 PR #982 opened (autonomous class DoQ sign-off, BLG-GOV-19 -- qa_evidence_EPIC-03.md confirms all 4 qualifying criteria met). gh pr view: mergeable=MERGEABLE, mergeStateStatus=BLOCKED (CI/required checks pending at time of check) -- awaiting quality_gate.yml completion, then Product Owner acceptance."
   ],
 
   "sealed": false,

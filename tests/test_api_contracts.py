@@ -252,15 +252,16 @@ class TestPositionEndpoints(unittest.TestCase):
         r = CLIENT.get("/positions/compliance")
         assert r.status_code == 200
 
-    @patch("database.mark_position_reviewed", return_value={"id": "pos-1", "last_reviewed_at": None})
+    @patch("main.mark_position_reviewed", return_value={"id": "pos-1", "last_reviewed_at": None})
     def test_mark_position_reviewed_returns_ok(self, _):
-        # ST-15 (BLG-FEAT-68, v7.0) — patch at definition site: main.py's
-        # endpoint does `from database import mark_position_reviewed` inline
-        # (function-local import, re-evaluated on every call).
+        # ST-04 (BLG-BE-61, v7.1) — endpoint now calls services.position_service
+        # .mark_position_reviewed() (module-level import into main.py's
+        # namespace), not database.mark_position_reviewed directly, so it
+        # performs the same portfolio-ownership check as note/tags.
         body = _ok(CLIENT.patch("/positions/pos-1/mark-reviewed"))
         assert body["data"]["id"] == "pos-1"
 
-    @patch("database.mark_position_reviewed", return_value=None)
+    @patch("main.mark_position_reviewed", side_effect=ValueError("Position nonexistent-id not found"))
     def test_mark_position_reviewed_404_when_not_found(self, _):
         r = CLIENT.patch("/positions/nonexistent-id/mark-reviewed")
         assert r.status_code == 404

@@ -656,8 +656,12 @@ paths:
                           type: object
                       estimated_unrealised_pnl:
                         type: number
+                        description: v7.0 ST-14 (BLG-FEAT-70) — sum of pnl across currently open positions, computed on-read at request time (not stored). Same field/computation as GET /reports/monthly-pnl's value.
+                        example: 340.50
                       unrealised_note:
                         type: string
+                        description: v7.0 ST-14 (BLG-FEAT-70) — static disclaimer text, same value as GET /reports/monthly-pnl's unrealised_note.
+                        example: "Reflects current open positions at time of report generation, not positions open during the specified tax year. Indicative only — not a tax liability."
             application/pdf:
               schema:
                 type: string
@@ -727,6 +731,7 @@ paths:
                   unrealised_note:
                     type: string
                     description: v7.0 ST-14 (BLG-FEAT-70) — static disclaimer text, same value as GET /reports/tax-year's unrealised_note.
+                    example: "Reflects current open positions at time of report generation, not positions open during the specified tax year. Indicative only — not a tax liability."
                   compliance_summary:
                     type: object
                     nullable: true

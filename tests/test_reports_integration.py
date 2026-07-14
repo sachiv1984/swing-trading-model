@@ -8,6 +8,7 @@ CI-safe: all database calls are mocked via unittest.mock.patch.
 No live DB or network connections are made.
 """
 
+import os
 import unittest
 from datetime import date
 from unittest.mock import patch
@@ -337,6 +338,111 @@ class TestTaxYearLabel(unittest.TestCase):
         # future year → 400, no label
         resp = CLIENT.get("/reports/tax-year?year=2099")
         self.assertEqual(resp.status_code, 400)
+
+
+# ---------------------------------------------------------------------------
+# 7. Tax-year CSV export — content-asserting + smoke coverage
+#    ST-07 (EPIC-03, v7.1, BLG-SPEC-84) — AC-04 (reachability), AC-05 (content)
+# ---------------------------------------------------------------------------
+
+class TestTaxYearCsvExport(unittest.TestCase):
+    """AC-05: asserts the actual returned CSV body content, not just that a
+    request fired — a download that fires with wrong/truncated content is a
+    silent data-integrity bug an integration-only test cannot catch.
+    """
+
+    def _call(self, year=2025, trades=None, positions=None):
+        with patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO), \
+             patch(PATCH_GET_POSITIONS, return_value=positions if positions is not None else []), \
+             patch(PATCH_GET_TAX_TRADES, return_value=trades if trades is not None else []):
+            return CLIENT.get(f"/reports/tax-year?year={year}&format=csv")
+
+    def test_ac04_smoke_endpoint_reachable_returns_200(self):
+        """AC-04: minimal smoke/health-check style assertion — the export
+        endpoint is reachable and returns success for a normal request."""
+        resp = self._call(trades=[_trade()])
+        self.assertEqual(resp.status_code, 200)
+
+    def test_ac01_content_type_header(self):
+        resp = self._call(trades=[_trade()])
+        self.assertEqual(resp.headers["content-type"], "text/csv; charset=utf-8")
+
+    def test_ac01_content_disposition_filename(self):
+        resp = self._call(year=2025, trades=[_trade()])
+        self.assertIn('attachment; filename="tax-year-2025-pnl.csv"', resp.headers["content-disposition"])
+
+    def test_ac05_metadata_rows_present_with_correct_values(self):
+        resp = self._call(year=2025, trades=[_trade()])
+        rows = resp.text.splitlines()
+        self.assertEqual(rows[0], "Tax Year,2025/26")
+        self.assertTrue(rows[1].startswith("Generated At,"))
+        self.assertEqual(rows[2], "Total Realised P&L (GBP),100.0")
+        self.assertEqual(rows[3], "Total Closed Trades,1")
+        self.assertEqual(rows[4], "Win Rate (%),100.0")
+        self.assertEqual(rows[5], "")  # blank separator row
+
+    def test_ac05_header_row_has_17_columns(self):
+        resp = self._call(trades=[_trade()])
+        header_row = resp.text.splitlines()[6]
+        columns = header_row.split(",")
+        self.assertEqual(len(columns), 17)
+        self.assertEqual(columns[0], "Trade ID")
+        self.assertEqual(columns[13], "Realised P&L (GBP)")
+
+    def test_ac05_uk_trade_data_row_values(self):
+        resp = self._call(trades=[_trade(id="trade-uk-1")])
+        data_row = resp.text.splitlines()[7]
+        self.assertIn("trade-uk-1", data_row)
+        self.assertIn("VOD", data_row)
+        self.assertIn("UK", data_row)
+        self.assertIn("100.0", data_row)   # realised P&L
+        self.assertIn("GBP", data_row)     # currency
+
+    def test_ac05_us_trade_row_includes_fx_rates(self):
+        resp = self._call(trades=[_us_trade()])
+        data_row = resp.text.splitlines()[7]
+        self.assertIn("NVDA", data_row)
+        self.assertIn("US", data_row)
+        self.assertIn("1.27", data_row)   # entry_fx_rate
+        self.assertIn("1.25", data_row)   # exit_fx_rate
+        self.assertIn("USD", data_row)
+
+    def test_ac05_tags_joined_with_semicolon(self):
+        resp = self._call(trades=[_us_trade(tags=["momentum", "breakout"])])
+        data_row = resp.text.splitlines()[7]
+        self.assertIn("momentum; breakout", data_row)
+
+    def test_ac05_empty_tax_year_still_has_valid_structure(self):
+        """Empty year (zero closed trades) — CSV structure must remain valid
+        (metadata block + header row), not just an empty/error body."""
+        resp = self._call(trades=[])
+        rows = resp.text.splitlines()
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(rows[2], "Total Realised P&L (GBP),0")
+        self.assertEqual(rows[3], "Total Closed Trades,0")
+        # Header row still present even with zero trade rows following it
+        self.assertEqual(len(rows[6].split(",")), 17)
+        self.assertEqual(len(rows), 7)  # metadata(5) + blank(1) + header(1), no trade rows
+
+    def test_ac02_csv_format_returns_401_without_api_key_when_configured(self):
+        """AC-02: with API_KEY configured (production-like), format=csv must
+        be rejected pre-route exactly like every other financial endpoint —
+        confirms no per-format auth bypass exists in the route handler."""
+        with patch.dict(os.environ, {"API_KEY": "test-secret"}):
+            resp = CLIENT.get("/reports/tax-year?year=2025&format=csv")
+        self.assertEqual(resp.status_code, 401)
+
+    def test_ac02_csv_format_returns_200_with_valid_api_key(self):
+        """AC-02: the same request succeeds with a valid key — proving the
+        401 above is genuinely the auth gate, not an unrelated failure, and
+        that format=csv works normally once authenticated."""
+        with patch.dict(os.environ, {"API_KEY": "test-secret"}), \
+             patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO), \
+             patch(PATCH_GET_POSITIONS, return_value=[]), \
+             patch(PATCH_GET_TAX_TRADES, return_value=[]):
+            resp = CLIENT.get("/reports/tax-year?year=2025&format=csv", headers={"X-API-Key": "test-secret"})
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.headers["content-type"], "text/csv; charset=utf-8")
 
 
 if __name__ == "__main__":

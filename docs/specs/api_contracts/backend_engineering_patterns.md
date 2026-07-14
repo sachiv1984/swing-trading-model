@@ -1,8 +1,8 @@
 **Owner:** Backend Engineering Patterns Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-06-16
+**Version:** 1.2
+**Last Updated:** 2026-07-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -94,6 +94,64 @@ def _invalidate_after_run():
 ```python
     from backend.routers.research import invalidate_research_cache  # lazy import — avoids circular dep; see backend_engineering_patterns.md
 ```
+
+---
+
+### CSV/export response-body pattern
+
+**Added:** v1.2 — ST-07 (EPIC-03, v7.1, BLG-SPEC-84)
+
+Canonical pattern for any endpoint that returns a downloadable file (CSV, and by extension the sibling PDF pattern) instead of a JSON envelope. Extracted from `GET /reports/tax-year?format=csv` (`backend/main.py`, `backend/services/reports_service.py`), the first and — as of this writing — only export endpoint in the codebase; use this as the template for future export endpoints rather than inventing a new shape.
+
+**Pattern:**
+
+```python
+# 1. Build the file content as a pure, independently-testable function —
+#    no request/response objects, no I/O. Takes the already-fetched data
+#    dict, returns a string (CSV) or bytes (PDF).
+def build_x_csv(data: dict) -> str:
+    output = io.StringIO()
+    writer = csv.writer(output, lineterminator="\n")
+    writer.writerow([...])   # metadata / header rows
+    for row in data["items"]:
+        writer.writerow([...])
+    return output.getvalue()
+
+# 2. In the route handler, branch on a `format` query param (not a
+#    separate endpoint/path) — the JSON, CSV, and PDF forms of the same
+#    resource share one URL and one `format` parameter with a validated,
+#    small enum ("pdf", "csv"); an unrecognised value returns 400, not a
+#    fallback to JSON.
+@app.get("/resource")
+def get_resource_endpoint(format: Optional[str] = None):
+    if format is not None and format not in ("pdf", "csv"):
+        return JSONResponse(status_code=400, content={"status": "error", "message": "format must be one of: pdf, csv"})
+    data = get_resource_data()
+    if format == "csv":
+        csv_text = build_x_csv(data)
+        return Response(
+            content=csv_text.encode("utf-8"),
+            media_type="text/csv",
+            headers={"Content-Disposition": f'attachment; filename="{resource}-{id}.csv"'},
+        )
+    return {"status": "ok", "data": data}
+```
+
+**Key constraints for implementers:**
+- **Auth is automatic, do not special-case it.** `api_key_middleware` (`backend/main.py`) validates `X-API-Key` globally, before any route handler runs — export formats need no additional auth code and must not add a bypass.
+- **Charset:** encode the body explicitly as UTF-8 (`.encode("utf-8")`). The response header ends up as `text/csv; charset=utf-8` even though the handler only sets `media_type="text/csv"` — Starlette's `Response` class auto-appends `charset=utf-8` for any `text/*` media type. Don't assume the header matches exactly what you pass to `media_type`; verify with a direct `TestClient` assertion (see `docs/specs/api_contracts/reports_endpoints.md` §Charset note, corrected after an initial source-only-inference documentation error).
+- **Filename convention:** `Content-Disposition: attachment; filename="{resource}-{identifying-params}.{ext}"` — human-readable, includes the disambiguating query param(s) (e.g. the tax year) so a user downloading multiple exports doesn't get silently-overwritten same-named files.
+- **Classification:** a CSV/PDF export is an analytics/convenience *view*, not the system of record — the database table it reads from remains authoritative. Do not persist the generated file server-side; generate on every request.
+- **Testing:** the builder function (`build_x_csv`) must have a dedicated content-asserting test (parses/greps the actual returned string for expected rows/values), not only an integration test that checks the response fired — a download that fires with wrong/truncated content is a silent data-integrity bug a "did it download" test cannot catch. See `tests/test_reports_integration.py::TestTaxYearCsvExport` for the reference pattern.
+
+---
+
+## Changelog
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.2 | 2026-07-14 | ST-07 (EPIC-03, v7.1, BLG-SPEC-84): Add §CSV/export response-body pattern — canonical pattern for downloadable-file endpoints, extracted from `GET /reports/tax-year?format=csv` (the first export endpoint in the codebase). Documents the pure-builder-function pattern, format-param branching, auth (automatic via global middleware), charset convention, filename convention, classification, and testing requirement (content-asserting, not download-fired-only). No prior Changelog section existed in this file — added here for consistency with sibling canonical specs. |
+| 1.1 | 2026-06-16 | (prior history not retroactively reconstructed — this changelog starts at v1.2; see git history for earlier changes.) |
 
 ---
 
