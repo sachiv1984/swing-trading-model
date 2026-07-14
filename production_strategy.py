@@ -9,7 +9,6 @@
 import pandas as pd
 import numpy as np
 import yfinance as yf
-import matplotlib.pyplot as plt
 import os
 from datetime import datetime
 
@@ -64,13 +63,15 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # DATA LOADING
 # =====================================================================
 
-print("=" * 70)
-print("PRODUCTION MOMENTUM STRATEGY - BACKTEST")
-print("=" * 70)
-
-def _load_tickers() -> list:
-    """Load active tickers from the DB ticker_universe table.
-    Falls back to the CSV if DATABASE_URL is not set (local runs without DB).
+def _load_tickers() -> tuple:
+    """Load active tickers from the DB ticker_universe table, along with each
+    ticker's `created_at` date (used to gate its eligibility in compute_signals —
+    BLG-BE-59 — so a ticker added today can't retroactively join the momentum/
+    trend ranking competition for the entire historical window).
+    Falls back to the CSV if DATABASE_URL is not set (local runs without DB);
+    the CSV has no created_at column, so those tickers are returned with a
+    created_at of None (no eligibility gating applied — preserves prior
+    behaviour for local runs without a DB).
     """
     db_url = os.getenv("DATABASE_URL")
     if db_url:
@@ -85,12 +86,13 @@ def _load_tickers() -> list:
             clean_url = urlunparse(parsed._replace(query=urlencode(qs, doseq=True)))
             conn = psycopg2.connect(clean_url)
             with conn.cursor() as cur:
-                cur.execute("SELECT ticker FROM ticker_universe WHERE active = TRUE ORDER BY ticker")
+                cur.execute("SELECT ticker, created_at FROM ticker_universe WHERE active = TRUE ORDER BY ticker")
                 rows = cur.fetchall()
             conn.close()
             tickers = [r[0] for r in rows]
+            created_at = {r[0]: (pd.Timestamp(r[1]).normalize() if r[1] is not None else None) for r in rows}
             print(f"Loaded {len(tickers)} tickers from DB ticker_universe")
-            return tickers
+            return tickers, created_at
         except Exception as e:
             print(f"Warning: DB load failed ({e}), falling back to CSV")
 
@@ -98,10 +100,7 @@ def _load_tickers() -> list:
     df = pd.read_csv(os.path.join(_SCRIPT_DIR, "backend", "tickers_full_list.csv"))
     tickers = df["Ticker"].dropna().unique().tolist()
     print(f"Loaded {len(tickers)} tickers from CSV fallback")
-    return tickers
-
-tickers = _load_tickers()
-print(f"\nUniverse size: {len(tickers)}")
+    return tickers, {t: None for t in tickers}
 
 def download_in_chunks(tickers, calendar_index, start="2018-01-01", chunk_size=50):
     chunks = []
@@ -127,36 +126,6 @@ def download_in_chunks(tickers, calendar_index, start="2018-01-01", chunk_size=5
     # that previously produced fake same-day round-trip trades.
     prices = prices.reindex(calendar_index)
     return prices.ffill().bfill()
-
-# Regime indicators, downloaded first so the reference US trading calendar
-# (SPY's own index) is available to constrain the price universe below.
-spy = yf.download("SPY", start="2018-01-01", auto_adjust=True, progress=False)["Close"].squeeze()
-ftse = yf.download("^FTSE", start="2018-01-01", auto_adjust=True, progress=False)["Close"].squeeze()
-
-# Never trust "today" (run time) as a completed trading day. Liquid
-# instruments like SPY get live pre-market quotes stamped with today's date
-# well before the session actually opens/closes, regardless of which
-# instrument sources them — anchoring the calendar to SPY's own index isn't
-# enough if SPY itself carries that incomplete snapshot. Truncating here
-# drops it from the shared calendar before anything else is built from it.
-_today = pd.Timestamp.now().normalize()
-spy = spy[spy.index < _today]
-ftse = ftse[ftse.index < _today]
-
-print("Downloading price data...")
-prices = download_in_chunks(tickers, calendar_index=spy.index)
-prices = prices.dropna(axis=1, thresh=252 * 3)
-print(f"Tickers after cleaning: {prices.shape[1]}")
-print(f"Date range: {prices.index.min().date()} to {prices.index.max().date()}")
-
-spy_ma200 = spy.rolling(200).mean()
-# Reindex then forward-fill (not fill_value=False): a date missing from
-# spy/ftse's own data (e.g. a market holiday for one side) should carry
-# forward the last known regime state, not be silently treated as risk-off.
-spy_risk_on = (spy > spy_ma200).reindex(prices.index).ffill().fillna(False).astype(bool)
-
-ftse_ma200 = ftse.rolling(200).mean()
-ftse_risk_on = (ftse > ftse_ma200).reindex(prices.index).ffill().fillna(False).astype(bool)
 
 def is_risk_on(ticker, date, mode="single"):
     spy_on = bool(spy_risk_on.at[date])
@@ -193,15 +162,32 @@ def compute_atr(prices):
     atr = tr.rolling(14).mean()
     return atr
 
-print("Computing ATR...")
-atr = compute_atr(prices)
-
-def compute_signals(prices, lookback, top_n, ma_period=200):
+def compute_signals(prices, lookback, top_n, ma_period=200, created_at=None):
     momentum = prices.pct_change(lookback)
+    if created_at:
+        # Mask each ticker's momentum to NaN before its own created_at date so
+        # it cannot participate in the cross-sectional rank computation for
+        # any other ticker on those historical dates (na_option="bottom" below
+        # excludes NaNs from influencing the relative ranks of real values).
+        # This is what makes a ticker addition today retroactively inert for
+        # the entire pre-existing historical window (AC-01/AC-02/AC-03,
+        # BLG-BE-59) — masking only the final signal (below) is not enough,
+        # since the ticker's raw momentum score would still shift the ranks
+        # of every other ticker on dates before it was ever tracked.
+        for ticker in momentum.columns:
+            cutoff = created_at.get(ticker)
+            if cutoff is not None and not pd.isna(cutoff):
+                momentum.loc[momentum.index < cutoff, ticker] = np.nan
     ranks = momentum.rank(axis=1, ascending=False, na_option="bottom", method="first")
     trend = prices > prices.rolling(ma_period).mean()
     signals = (trend) & (ranks <= top_n)
-    return signals.fillna(False).astype(bool)
+    signals = signals.fillna(False).astype(bool)
+    if created_at:
+        for ticker in signals.columns:
+            cutoff = created_at.get(ticker)
+            if cutoff is not None and not pd.isna(cutoff):
+                signals.loc[signals.index < cutoff, ticker] = False
+    return signals
 
 # =====================================================================
 # BACKTEST ENGINE
@@ -481,181 +467,235 @@ def perf_stats(returns, name, initial_capital=INITIAL_CAPITAL):
         "Final Value (£)": round(equity.iloc[-1] * initial_capital, 0)
     }
 
-# =====================================================================
-# RUN BACKTEST
-# =====================================================================
+def main():
+    # `global` — is_risk_on() (module-level function) reads these as free
+    # variables resolved against module scope; without this declaration they
+    # would be local to main() and invisible to is_risk_on() when it's called
+    # from inside backtest() below (LEGB scoping — is_risk_on is not nested
+    # inside main(), so its non-local names resolve to the module, not to
+    # main()'s locals). This is the only module-global state any function
+    # defined above main() depends on.
+    global spy_risk_on, ftse_risk_on
 
-print("\n" + "=" * 70)
-print("RUNNING PRODUCTION BACKTEST")
-print("=" * 70)
+    print("=" * 70)
+    print("PRODUCTION MOMENTUM STRATEGY - BACKTEST")
+    print("=" * 70)
 
-params = OPTIMAL_PARAMS
-print(f"\nParameters:")
-for k, v in params.items():
-    print(f"  {k}: {v}")
+    tickers, ticker_created_at = _load_tickers()
+    print(f"\nUniverse size: {len(tickers)}")
 
-# Full period backtest
-signals_full = compute_signals(prices, params['lookback'], params['top_n'])
-volatility_full = prices.pct_change().rolling(60).std()
+    # Regime indicators, downloaded first so the reference US trading calendar
+    # (SPY's own index) is available to constrain the price universe below.
+    spy = yf.download("SPY", start="2018-01-01", auto_adjust=True, progress=False)["Close"].squeeze()
+    ftse = yf.download("^FTSE", start="2018-01-01", auto_adjust=True, progress=False)["Close"].squeeze()
 
-pv_full, returns_full, trades_full = backtest(
-    signals_full, prices, volatility_full, atr,
-    rebalance_freq=params['rebalance_freq'],
-    atr_mult=params['atr_mult'],
-    min_position_pct=params['min_position_pct'],
-    max_position_pct=params['max_position_pct'],
-    min_hold_days=params['min_hold_days'],
-    risk_off_mode=params['risk_off_mode'],
-    stop_loss_mode=params['stop_loss_mode'],
-    initial_atr_mult=params['initial_atr_mult'],
-    profit_atr_mult=params['profit_atr_mult']
-)
+    # Never trust "today" (run time) as a completed trading day. Liquid
+    # instruments like SPY get live pre-market quotes stamped with today's date
+    # well before the session actually opens/closes, regardless of which
+    # instrument sources them — anchoring the calendar to SPY's own index isn't
+    # enough if SPY itself carries that incomplete snapshot. Truncating here
+    # drops it from the shared calendar before anything else is built from it.
+    _today = pd.Timestamp.now().normalize()
+    spy = spy[spy.index < _today]
+    ftse = ftse[ftse.index < _today]
 
-# In-sample backtest (training period)
-prices_train = prices.loc[:TRAIN_END]
-signals_train = compute_signals(prices_train, params['lookback'], params['top_n'])
-volatility_train = prices_train.pct_change().rolling(60).std()
-atr_train = compute_atr(prices_train)
+    print("Downloading price data...")
+    prices = download_in_chunks(tickers, calendar_index=spy.index)
+    prices = prices.dropna(axis=1, thresh=252 * 3)
+    print(f"Tickers after cleaning: {prices.shape[1]}")
+    print(f"Date range: {prices.index.min().date()} to {prices.index.max().date()}")
 
-pv_train, returns_train, trades_train = backtest(
-    signals_train, prices_train, volatility_train, atr_train,
-    rebalance_freq=params['rebalance_freq'],
-    atr_mult=params['atr_mult'],
-    min_position_pct=params['min_position_pct'],
-    max_position_pct=params['max_position_pct'],
-    min_hold_days=params['min_hold_days'],
-    risk_off_mode=params['risk_off_mode'],
-    stop_loss_mode=params['stop_loss_mode'],
-    initial_atr_mult=params['initial_atr_mult'],
-    profit_atr_mult=params['profit_atr_mult']
-)
+    spy_ma200 = spy.rolling(200).mean()
+    # Reindex then forward-fill (not fill_value=False): a date missing from
+    # spy/ftse's own data (e.g. a market holiday for one side) should carry
+    # forward the last known regime state, not be silently treated as risk-off.
+    spy_risk_on = (spy > spy_ma200).reindex(prices.index).ffill().fillna(False).astype(bool)
 
-# Out-of-sample backtest (validation period)
-prices_test = prices.loc[TEST_START:]
-signals_test = compute_signals(prices_test, params['lookback'], params['top_n'])
-volatility_test = prices_test.pct_change().rolling(60).std()
-atr_test = compute_atr(prices_test)
+    ftse_ma200 = ftse.rolling(200).mean()
+    ftse_risk_on = (ftse > ftse_ma200).reindex(prices.index).ffill().fillna(False).astype(bool)
 
-pv_test, returns_test, trades_test = backtest(
-    signals_test, prices_test, volatility_test, atr_test,
-    rebalance_freq=params['rebalance_freq'],
-    atr_mult=params['atr_mult'],
-    min_position_pct=params['min_position_pct'],
-    max_position_pct=params['max_position_pct'],
-    min_hold_days=params['min_hold_days'],
-    risk_off_mode=params['risk_off_mode'],
-    stop_loss_mode=params['stop_loss_mode'],
-    initial_atr_mult=params['initial_atr_mult'],
-    profit_atr_mult=params['profit_atr_mult']
-)
+    print("Computing ATR...")
+    atr = compute_atr(prices)
 
-# =====================================================================
-# RESULTS & ANALYSIS
-# =====================================================================
+    # =====================================================================
+    # RUN BACKTEST
+    # =====================================================================
 
-print("\n" + "=" * 70)
-print("PERFORMANCE SUMMARY")
-print("=" * 70)
+    print("\n" + "=" * 70)
+    print("RUNNING PRODUCTION BACKTEST")
+    print("=" * 70)
 
-stats_full = perf_stats(returns_full, "Full Period (2018-2026)")
-stats_train = perf_stats(returns_train, "In-Sample (2018-2022)")
-stats_test = perf_stats(returns_test, "Out-of-Sample (2023-2026)")
+    params = OPTIMAL_PARAMS
+    print(f"\nParameters:")
+    for k, v in params.items():
+        print(f"  {k}: {v}")
 
-comparison_df = pd.DataFrame([stats_full, stats_train, stats_test]).set_index("Strategy")
-print("\n", comparison_df)
+    # Full period backtest
+    signals_full = compute_signals(prices, params['lookback'], params['top_n'], created_at=ticker_created_at)
+    volatility_full = prices.pct_change().rolling(60).std()
+    
+    pv_full, returns_full, trades_full = backtest(
+        signals_full, prices, volatility_full, atr,
+        rebalance_freq=params['rebalance_freq'],
+        atr_mult=params['atr_mult'],
+        min_position_pct=params['min_position_pct'],
+        max_position_pct=params['max_position_pct'],
+        min_hold_days=params['min_hold_days'],
+        risk_off_mode=params['risk_off_mode'],
+        stop_loss_mode=params['stop_loss_mode'],
+        initial_atr_mult=params['initial_atr_mult'],
+        profit_atr_mult=params['profit_atr_mult']
+    )
+    
+    # In-sample backtest (training period)
+    prices_train = prices.loc[:TRAIN_END]
+    signals_train = compute_signals(prices_train, params['lookback'], params['top_n'], created_at=ticker_created_at)
+    volatility_train = prices_train.pct_change().rolling(60).std()
+    atr_train = compute_atr(prices_train)
+    
+    pv_train, returns_train, trades_train = backtest(
+        signals_train, prices_train, volatility_train, atr_train,
+        rebalance_freq=params['rebalance_freq'],
+        atr_mult=params['atr_mult'],
+        min_position_pct=params['min_position_pct'],
+        max_position_pct=params['max_position_pct'],
+        min_hold_days=params['min_hold_days'],
+        risk_off_mode=params['risk_off_mode'],
+        stop_loss_mode=params['stop_loss_mode'],
+        initial_atr_mult=params['initial_atr_mult'],
+        profit_atr_mult=params['profit_atr_mult']
+    )
+    
+    # Out-of-sample backtest (validation period)
+    prices_test = prices.loc[TEST_START:]
+    signals_test = compute_signals(prices_test, params['lookback'], params['top_n'], created_at=ticker_created_at)
+    volatility_test = prices_test.pct_change().rolling(60).std()
+    atr_test = compute_atr(prices_test)
+    
+    pv_test, returns_test, trades_test = backtest(
+        signals_test, prices_test, volatility_test, atr_test,
+        rebalance_freq=params['rebalance_freq'],
+        atr_mult=params['atr_mult'],
+        min_position_pct=params['min_position_pct'],
+        max_position_pct=params['max_position_pct'],
+        min_hold_days=params['min_hold_days'],
+        risk_off_mode=params['risk_off_mode'],
+        stop_loss_mode=params['stop_loss_mode'],
+        initial_atr_mult=params['initial_atr_mult'],
+        profit_atr_mult=params['profit_atr_mult']
+    )
+    
+    # =====================================================================
+    # RESULTS & ANALYSIS
+    # =====================================================================
+    
+    print("\n" + "=" * 70)
+    print("PERFORMANCE SUMMARY")
+    print("=" * 70)
+    
+    stats_full = perf_stats(returns_full, "Full Period (2018-2026)")
+    stats_train = perf_stats(returns_train, "In-Sample (2018-2022)")
+    stats_test = perf_stats(returns_test, "Out-of-Sample (2023-2026)")
+    
+    comparison_df = pd.DataFrame([stats_full, stats_train, stats_test]).set_index("Strategy")
+    print("\n", comparison_df)
+    
+    # Trade statistics
+    print("\n" + "=" * 70)
+    print("TRADE STATISTICS - FULL PERIOD")
+    print("=" * 70)
+    
+    # Realized (closed) vs still-open positions — win rate, avg win/loss, and grace-period
+    # stats describe completed round trips, so mixing in unrealized marks would conflate
+    # the two. Open positions are reported separately below instead.
+    closed_trades = trades_full[trades_full["Exit Reason"] != "Open (Unrealized)"].copy()
+    open_trades = trades_full[trades_full["Exit Reason"] == "Open (Unrealized)"].copy()
+    
+    win_trades = closed_trades[closed_trades["PnL (£)"] > 0]
+    loss_trades = closed_trades[closed_trades["PnL (£)"] <= 0]
+    
+    print(f"\nTotal closed trades: {len(closed_trades)}")
+    print(f"Win rate: {len(win_trades)/len(closed_trades)*100:.2f}%")
+    print(f"Average win: £{win_trades['PnL (£)'].mean():.2f}")
+    print(f"Average loss: £{loss_trades['PnL (£)'].mean():.2f}")
+    print(f"Win/Loss ratio: {abs(win_trades['PnL (£)'].mean() / loss_trades['PnL (£)'].mean()):.2f}")
+    print(f"Average holding period: {closed_trades['Holding Days'].mean():.1f} days")
+    print(f"Largest win: £{win_trades['PnL (£)'].max():.2f}")
+    print(f"Largest loss: £{loss_trades['PnL (£)'].min():.2f}")
+    
+    # Exit reason breakdown
+    print("\n--- Exit Reason Breakdown ---")
+    print(closed_trades["Exit Reason"].value_counts())
+    
+    # Grace period analysis
+    early_exits = closed_trades[closed_trades["Holding Days"] <= params['min_hold_days']]
+    print(f"\nTrades exiting at/before {params['min_hold_days']}-day grace period: {len(early_exits)} ({len(early_exits)/len(closed_trades)*100:.1f}%)")
+    
+    # Profitable vs unprofitable stops
+    stop_trades = closed_trades[closed_trades["Exit Reason"] == "Stop"]
+    profitable_stops = stop_trades[stop_trades["Was Profitable"]]
+    losing_stops = stop_trades[~stop_trades["Was Profitable"]]
+    
+    print(f"\n--- Stop Loss Analysis ---")
+    print(f"Total stops: {len(stop_trades)}")
+    print(f"Profitable stops (tight 2x ATR): {len(profitable_stops)} ({len(profitable_stops)/len(stop_trades)*100:.1f}%)")
+    print(f"Losing stops (wide 5x ATR): {len(losing_stops)} ({len(losing_stops)/len(stop_trades)*100:.1f}%)")
+    
+    # Still-open positions (never hit an exit condition before the price data ended)
+    if len(open_trades) > 0:
+        print(f"\n--- Open Positions (unrealized, as of {prices.index[-1].date()}) ---")
+        print(open_trades[["Ticker", "Entry Date", "Entry", "Exit", "PnL (£)", "PnL %"]].to_string(index=False))
+    
+    # Yearly breakdown
+    print("\n" + "=" * 70)
+    print("YEARLY PERFORMANCE")
+    print("=" * 70)
+    
+    trades_full['Entry Year'] = trades_full['Entry Date'].dt.year
+    
+    # Yearly aggregates feed backtest_yearly_performance on the Strategy Benchmark page,
+    # which (like Panel 1) assumes closed trades — computed on closed_trades to stay
+    # consistent with the win-rate/PnL stats above and with import_backtest.py's filtering.
+    closed_trades['Entry Year'] = closed_trades['Entry Date'].dt.year
+    yearly_stats = closed_trades.groupby('Entry Year').agg({
+        'PnL (£)': ['count', 'mean', 'sum'],
+        'Holding Days': 'mean',
+        'Was Profitable': lambda x: x.sum() / len(x) * 100
+    })
+    yearly_stats.columns = ['Num Trades', 'Avg PnL (£)', 'Total PnL (£)', 'Avg Hold Days', 'Win Rate %']
+    print("\n", yearly_stats)
+    
+    # Top winners and losers
+    print("\n" + "=" * 70)
+    print("TOP 10 WINNERS")
+    print("=" * 70)
+    print(trades_full.nlargest(10, 'PnL (£)')[['Ticker', 'Entry Date', 'Exit Date', 'Holding Days', 'Entry', 'Exit', 'PnL (£)', 'PnL %', 'Exit Reason']])
+    
+    print("\n" + "=" * 70)
+    print("TOP 10 LOSERS")
+    print("=" * 70)
+    print(trades_full.nsmallest(10, 'PnL (£)')[['Ticker', 'Entry Date', 'Exit Date', 'Holding Days', 'Entry', 'Exit', 'PnL (£)', 'PnL %', 'Exit Reason']])
+    
+    # =====================================================================
+    # SAVE RESULTS
+    # =====================================================================
+    
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    comparison_df.to_csv(os.path.join(OUTPUT_DIR, f"performance_summary_{timestamp}.csv"))
+    trades_full.to_csv(os.path.join(OUTPUT_DIR, f"all_trades_{timestamp}.csv"), index=False)
+    yearly_stats.to_csv(os.path.join(OUTPUT_DIR, f"yearly_performance_{timestamp}.csv"))
+    
+    print("\n" + "=" * 70)
+    print("FILES SAVED")
+    print("=" * 70)
+    print(f"Performance summary: production_results/performance_summary_{timestamp}.csv")
+    print(f"All trades: production_results/all_trades_{timestamp}.csv")
+    print(f"Yearly performance: production_results/yearly_performance_{timestamp}.csv")
+    
+    print("\n" + "=" * 70)
+    print("BACKTEST COMPLETE")
+    print("=" * 70)
 
-# Trade statistics
-print("\n" + "=" * 70)
-print("TRADE STATISTICS - FULL PERIOD")
-print("=" * 70)
 
-# Realized (closed) vs still-open positions — win rate, avg win/loss, and grace-period
-# stats describe completed round trips, so mixing in unrealized marks would conflate
-# the two. Open positions are reported separately below instead.
-closed_trades = trades_full[trades_full["Exit Reason"] != "Open (Unrealized)"].copy()
-open_trades = trades_full[trades_full["Exit Reason"] == "Open (Unrealized)"].copy()
-
-win_trades = closed_trades[closed_trades["PnL (£)"] > 0]
-loss_trades = closed_trades[closed_trades["PnL (£)"] <= 0]
-
-print(f"\nTotal closed trades: {len(closed_trades)}")
-print(f"Win rate: {len(win_trades)/len(closed_trades)*100:.2f}%")
-print(f"Average win: £{win_trades['PnL (£)'].mean():.2f}")
-print(f"Average loss: £{loss_trades['PnL (£)'].mean():.2f}")
-print(f"Win/Loss ratio: {abs(win_trades['PnL (£)'].mean() / loss_trades['PnL (£)'].mean()):.2f}")
-print(f"Average holding period: {closed_trades['Holding Days'].mean():.1f} days")
-print(f"Largest win: £{win_trades['PnL (£)'].max():.2f}")
-print(f"Largest loss: £{loss_trades['PnL (£)'].min():.2f}")
-
-# Exit reason breakdown
-print("\n--- Exit Reason Breakdown ---")
-print(closed_trades["Exit Reason"].value_counts())
-
-# Grace period analysis
-early_exits = closed_trades[closed_trades["Holding Days"] <= params['min_hold_days']]
-print(f"\nTrades exiting at/before {params['min_hold_days']}-day grace period: {len(early_exits)} ({len(early_exits)/len(closed_trades)*100:.1f}%)")
-
-# Profitable vs unprofitable stops
-stop_trades = closed_trades[closed_trades["Exit Reason"] == "Stop"]
-profitable_stops = stop_trades[stop_trades["Was Profitable"]]
-losing_stops = stop_trades[~stop_trades["Was Profitable"]]
-
-print(f"\n--- Stop Loss Analysis ---")
-print(f"Total stops: {len(stop_trades)}")
-print(f"Profitable stops (tight 2x ATR): {len(profitable_stops)} ({len(profitable_stops)/len(stop_trades)*100:.1f}%)")
-print(f"Losing stops (wide 5x ATR): {len(losing_stops)} ({len(losing_stops)/len(stop_trades)*100:.1f}%)")
-
-# Still-open positions (never hit an exit condition before the price data ended)
-if len(open_trades) > 0:
-    print(f"\n--- Open Positions (unrealized, as of {prices.index[-1].date()}) ---")
-    print(open_trades[["Ticker", "Entry Date", "Entry", "Exit", "PnL (£)", "PnL %"]].to_string(index=False))
-
-# Yearly breakdown
-print("\n" + "=" * 70)
-print("YEARLY PERFORMANCE")
-print("=" * 70)
-
-trades_full['Entry Year'] = trades_full['Entry Date'].dt.year
-
-# Yearly aggregates feed backtest_yearly_performance on the Strategy Benchmark page,
-# which (like Panel 1) assumes closed trades — computed on closed_trades to stay
-# consistent with the win-rate/PnL stats above and with import_backtest.py's filtering.
-closed_trades['Entry Year'] = closed_trades['Entry Date'].dt.year
-yearly_stats = closed_trades.groupby('Entry Year').agg({
-    'PnL (£)': ['count', 'mean', 'sum'],
-    'Holding Days': 'mean',
-    'Was Profitable': lambda x: x.sum() / len(x) * 100
-})
-yearly_stats.columns = ['Num Trades', 'Avg PnL (£)', 'Total PnL (£)', 'Avg Hold Days', 'Win Rate %']
-print("\n", yearly_stats)
-
-# Top winners and losers
-print("\n" + "=" * 70)
-print("TOP 10 WINNERS")
-print("=" * 70)
-print(trades_full.nlargest(10, 'PnL (£)')[['Ticker', 'Entry Date', 'Exit Date', 'Holding Days', 'Entry', 'Exit', 'PnL (£)', 'PnL %', 'Exit Reason']])
-
-print("\n" + "=" * 70)
-print("TOP 10 LOSERS")
-print("=" * 70)
-print(trades_full.nsmallest(10, 'PnL (£)')[['Ticker', 'Entry Date', 'Exit Date', 'Holding Days', 'Entry', 'Exit', 'PnL (£)', 'PnL %', 'Exit Reason']])
-
-# =====================================================================
-# SAVE RESULTS
-# =====================================================================
-
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-comparison_df.to_csv(os.path.join(OUTPUT_DIR, f"performance_summary_{timestamp}.csv"))
-trades_full.to_csv(os.path.join(OUTPUT_DIR, f"all_trades_{timestamp}.csv"), index=False)
-yearly_stats.to_csv(os.path.join(OUTPUT_DIR, f"yearly_performance_{timestamp}.csv"))
-
-print("\n" + "=" * 70)
-print("FILES SAVED")
-print("=" * 70)
-print(f"Performance summary: production_results/performance_summary_{timestamp}.csv")
-print(f"All trades: production_results/all_trades_{timestamp}.csv")
-print(f"Yearly performance: production_results/yearly_performance_{timestamp}.csv")
-
-print("\n" + "=" * 70)
-print("BACKTEST COMPLETE")
-print("=" * 70)
+if __name__ == "__main__":
+    main()
