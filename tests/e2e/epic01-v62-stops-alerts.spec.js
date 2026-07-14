@@ -6,12 +6,12 @@
  *   SC-TS-01  Trailing stop value shown in Stop column (ST-02/AC-01)
  *   SC-TS-02  "Init: £X.XX" label present in Stop column (ST-02/AC-01)
  *   SC-TS-03  Breach badge present when current_price ≤ current_trailing_stop (ST-02/AC-02)
- *   SC-TS-04  Breach badge has rose styling — distinct from risk-off amber (ST-02/AC-03)
+ *   SC-TS-04  Breach badge has rose styling — distinct from risk-off blue (ST-02/AC-03)
  *   SC-TS-05  No breach badge when current_price > current_trailing_stop (ST-02/AC-04)
  *   SC-TS-06  No breach badge when current_trailing_stop is zero (ST-02/AC-04)
  *
- *   SC-RO-01  ShieldAlert "Risk-Off" badge present when risk_off_exit=true (ST-05/AC-02)
- *   SC-RO-02  Risk-off badge has amber styling — distinct from breach rose (ST-05/AC-02)
+ *   SC-RO-01  "RISK OFF" badge present when risk_off_exit=true (ST-05/AC-02)
+ *   SC-RO-02  Risk-off badge uses spec colour #1E40AF — distinct from breach rose (ST-03/BLG-FE-107, v7.1)
  *   SC-RO-03  No risk-off badge when risk_off_exit=false (ST-05/AC-02)
  *   SC-RO-04  US position risk_off_exit=true shows badge (ST-05/AC-04)
  *   SC-RO-05  UK position risk_off_exit=true shows badge (ST-05/AC-04)
@@ -181,7 +181,7 @@ test('SC-TS-03: Breach badge present when current_price ≤ current_trailing_sto
   await expect(badge).toContainText('BREACH');
 });
 
-test('SC-TS-04: Breach badge has spec orange styling — distinct from risk-off amber (ST-09, BLG-FE-96)', async ({ page }) => {
+test('SC-TS-04: Breach badge has spec orange styling — distinct from risk-off blue and GAP RISK amber (ST-09, BLG-FE-96)', async ({ page }) => {
   const pos = makePosition({ current_price: 120.00, current_trailing_stop: 125.00 });
   await gotoPositionsTable(page, [pos]);
 
@@ -190,7 +190,7 @@ test('SC-TS-04: Breach badge has spec orange styling — distinct from risk-off 
   // orange classes applied — ST-09/BLG-FE-96, matches positions.md §Trailing Stop Column (#EA580C)
   await expect(badge).toHaveClass(/bg-orange-600/);
   await expect(badge).toHaveClass(/text-white/);
-  // must NOT have amber classes (those belong to risk-off badge only)
+  // must NOT have amber classes (those belong to GAP RISK badge only)
   await expect(badge).not.toHaveClass(/text-amber/);
   await expect(badge).not.toHaveClass(/bg-amber/);
 });
@@ -217,25 +217,26 @@ test('SC-TS-06: No breach badge when current_trailing_stop is zero', async ({ pa
 // ST-05 — Risk-off exit alerts (Positions table)
 // ---------------------------------------------------------------------------
 
-test('SC-RO-01: ShieldAlert "Risk-Off" badge present when risk_off_exit=true', async ({ page }) => {
+test('SC-RO-01: "RISK OFF" badge present when risk_off_exit=true', async ({ page }) => {
   const pos = makePosition({ risk_off_exit: true });
   await gotoPositionsTable(page, [pos]);
 
   const badge = page.locator('span[title="Risk-off regime: index below MA200 — consider exit"]');
   await expect(badge).toBeVisible({ timeout: 5000 });
-  await expect(badge).toContainText('Risk-Off');
+  await expect(badge).toContainText('RISK OFF');
 });
 
-test('SC-RO-02: Risk-off badge has amber styling — distinct from breach rose', async ({ page }) => {
+test('SC-RO-02: Risk-off badge uses spec colour #1E40AF — distinct from breach rose and GAP RISK amber (ST-03, BLG-FE-107)', async ({ page }) => {
   const pos = makePosition({ risk_off_exit: true });
   await gotoPositionsTable(page, [pos]);
 
   const badge = page.locator('span[title="Risk-off regime: index below MA200 — consider exit"]');
   await expect(badge).toBeVisible({ timeout: 5000 });
-  // amber classes applied — ST-05/AC-02
-  await expect(badge).toHaveClass(/text-amber-300/);
-  await expect(badge).toHaveClass(/bg-amber-900/);
-  // must NOT have rose classes (those belong to breach badge only)
+  // positions.md §Alerts Column spec colour — blue-800 #1E40AF, matching Grid View parity (SC-GVP-02)
+  await expect(badge).toHaveCSS('background-color', 'rgb(30, 64, 175)'); // #1E40AF
+  // must NOT have amber/rose classes (those belong to GAP RISK / breach badges only)
+  await expect(badge).not.toHaveClass(/text-amber/);
+  await expect(badge).not.toHaveClass(/bg-amber/);
   await expect(badge).not.toHaveClass(/text-rose/);
   await expect(badge).not.toHaveClass(/bg-rose/);
 });

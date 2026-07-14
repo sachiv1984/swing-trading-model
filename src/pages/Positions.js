@@ -16,7 +16,6 @@ import {
   AlertTriangle,
   X,
   ArrowUpDown,
-  ShieldAlert,
   Zap,
   Clock,
   Check,
@@ -493,14 +492,24 @@ function AlertsCell({ position }) {
   const { data: gapRisk, loading: gapRiskLoading } = useGapRisk(position.id);
   const riskOffExit = position.risk_off_exit === true;
 
+  // ST-03 (v7.1, BLG-FE-107): spec compliance fix — Table View had drifted to
+  // an amber treatment since v6.2 (encoded as expected by the then-passing
+  // SC-RO-02); positions.md §Alerts Column always specified blue-800
+  // #1E40AF / "RISK OFF", which the v7.0 Grid View badge (PositionCard.js)
+  // already correctly uses. Bringing Table View into compliance here
+  // restores the hue-separation rationale (RISK OFF blue vs GAP RISK amber)
+  // the v7.0 combined-badge differentiation decision record assumed for
+  // both views. The unspecified ShieldAlert icon is dropped per the design
+  // gate resolution (docs/design/2026-07-14__release-v7.1/table-view-badge-compliance/decision_record.md).
   const riskOffBadge = riskOffExit ? (
     <span
-      className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-amber-900/60 text-amber-300 border border-amber-700/60 font-medium w-fit"
+      className="inline-flex items-center w-fit text-xs px-2 py-0.5 rounded-full font-medium text-white"
+      style={{ backgroundColor: "#1E40AF" }}
       title="Risk-off regime: index below MA200 — consider exit"
       aria-label="Risk-off exit alert: regime signal indicates exit this position"
+      data-testid="risk-off-badge"
     >
-      <ShieldAlert className="w-3 h-3" />
-      Risk-Off
+      RISK OFF
     </span>
   ) : null;
 
