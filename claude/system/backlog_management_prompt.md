@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.11
-**Last Updated:** 2026-07-08
+**Version:** 1.12
+**Last Updated:** 2026-07-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -161,6 +161,15 @@ Load `docs/product/changelog.md` if present (to cross-check completed items).
 ### 1.1 Gate Field Label Normalization (Mandatory Pre-Scan)
 
 Before classifying, grep `backlog.md` and `backlog_archive.md` for any `**Gate:**` field label (non-canonical synonym). The canonical label is `**Gate criteria:**` — items using `**Gate:**` are silently miscounted as ungated (Actionable) by the roadmap engine's STEP 3.1 automated scan, which searches only for the literal string `**Gate criteria:**`. Normalise every `**Gate:**` occurrence found to `**Gate criteria:**` (label only — do not alter the condition text). Record the count normalised in the health summary under a `Gate Field Normalisation` line. (Added v1.11 — closes the deferred patch from `2026-07-06__scheduled` roadmap rebalance lessons learnt, Friction Item 1: `BLG-FEAT-52` was found using the non-canonical label and silently excluded from the D-gated count.)
+
+### 1.2 Effort Day-Range Validation (Mandatory Pre-Scan, §16.12)
+
+Before classifying, scan `backlog.md` for items whose `**Provisional-Target:**` names a specific release (`v<X.Y>`, not `TBD`/`Unscheduled`) but whose `**Effort:**` field carries a bare letter (`S`/`M`/`L`/`XS`) with no day range in parentheses. For each such item found:
+- Flag it in the health summary under a **Missing Effort Day-Range** subsection.
+- Do **not** backfill the day range yourself — estimating it requires domain judgment from the item's owner, not mechanical inference.
+- Note: this is a validation/flagging check only, distinct from §1.1's Gate Field Label Normalization, which does auto-correct (a pure label synonym, not a judgment call).
+
+If no items found: note "Effort Day-Range Validation: PASS — 0 items missing a required day range" in the health summary. (Added v1.12 — closes the escalated decision from `2026-07-14__release-v7.1` post-ship closure, Release Planning Friction Item 1: bare-letter effort bands on items with a specific `Provisional-Target` forced Release Planning STEP 4.5 to infer day ranges by analogy, right when that cycle's capacity check landed at a WARN threshold with zero buffer.)
 
 For every item in `backlog.md`, apply the classification rules in §6.
 

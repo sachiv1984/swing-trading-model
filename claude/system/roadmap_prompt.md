@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 8.8
-**Last Updated:** 2026-07-13
+**Version:** 8.9
+**Last Updated:** 2026-07-14
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -389,7 +389,7 @@ Any idea with `[FIELD REQUIRED]` flags on required template fields is ineligible
 |----------------|---------------------|
 | ✅ Advance | Status → Advancing |
 | 🅿 Park (any) | Status → Parked-cycle-<n>; set/increment Park Count; update Park Rationale with PO's rationale |
-| 📋 Backlog (gate-conditional) | Status → Promoted-Backlog; add item to `backlog.md` with gate criteria block; record the gate condition in the register row's Park Rationale field |
+| 📋 Backlog (gate-conditional) | Status → Promoted-Backlog; add item to `backlog.md` with gate criteria block; record the gate condition in the register row's Park Rationale field. If the item's `Provisional-Target` names a specific release, its `**Effort:**` field must include a day range per `shared_standards.md §16.12` — do not write a bare letter alone. |
 | ❌ Reject — strong | Status → Rejected; append to `claude/ideas/rejected_but_strong.md` |
 | ❌ Reject — not strong | Status → Rejected |
 
@@ -686,6 +686,7 @@ Rules:
 - Reflect STEP 8 decisions exactly.
 - Decision log: append-only per Section 7 invariant.
 - When adding a newly promoted item to `backlog.md`: include `**Provisional-Target:**` field derived from horizon placement per `shared_standards.md §16.6`. Write `TBD` if mapping is ambiguous.
+- **Effort day-range requirement (§16.12):** if the item's `Provisional-Target` names a specific release (not `TBD`/`Unscheduled`), the `**Effort:**` field must include a day range in parentheses (e.g. `M (~2-3 days)`), not a bare letter alone. Applies here and at STEP 4.2.
 - **Hard gate marking:** any gate marked "complete" in `current_roadmap.md` must reference the PoG/evidence artefact that cleared it. No artefact → gate stays "pending."
 - **Header formatting:** all Class 4 headers written/updated in STEP 9 use bold labels: `**Owner:**`, `**Status:**`, `**Class:**`, `**Last Updated:**`.
 

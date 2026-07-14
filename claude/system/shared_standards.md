@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.14
-**Last Updated:** 2026-07-10
+**Version:** 3.15
+**Last Updated:** 2026-07-14
 
 # Shared Standards — All Governed Routines
 
@@ -889,6 +889,31 @@ Original / Amended — <file path used>
 ```
 
 **Status transition:** `Active` → `Sealed` when sign-off gate (STEP 6.2) passes. `sprint_sealed = true` in `.claude_current_state.json` must be set concurrently. Phase 3 may not invoke while status is `Active`.
+
+---
+
+## §16.12 Backlog Item Effort Field — Day-Range Requirement
+
+**Used by:** Roadmap Engine (write at STEP 4.2 and STEP 9), Backlog Management Engine (validate at STEP 1), Release Planning Engine (read at STEP 4.5 Capacity Feasibility Sense Check)
+
+**Origin:** `2026-07-14__release-v7.1` Release Planning Friction Item 1, escalated to Head of Specs Team at that cycle's post-ship closure and resolved 2026-07-14. Root cause: items filed to `backlog.md` via `roadmap_prompt.md` STEP 4.2's `📋 Backlog (gate-conditional)` disposition path bypass STEP 6 (Scoring Matrix Overlay), which is the only place the existing `S (≤ 1 day) / M (2–5 days) / L (> 5 days)` day-range convention (§16.7) was ever documented — so STEP 4.2 items routinely landed with a bare letter and no range, forcing Release Planning's capacity check to infer ranges by analogy to unrelated items.
+
+### Field syntax
+
+```
+**Effort:** S | M | L | XS [(<day range>)]
+```
+
+### Rule
+
+- The day range in parentheses is **required** whenever the item's `**Provisional-Target:**` (§16.6) names a specific release (`v<X.Y>`) — this is exactly the case where a precise capacity estimate is needed.
+- The day range is optional when `Provisional-Target` is `TBD` or `Unscheduled` — no near-term capacity decision depends on the estimate yet.
+- Day-range bands are indicative, not binding: `XS` (<1 day), `S` (~0.5–2 days), `M` (~1–5 days), `L` (~3+ days) — authors should state their own best-fit range within or near these bands rather than treating them as hard boundaries.
+
+### Enforcement points
+
+- **`roadmap_prompt.md` STEP 4.2** (📋 Backlog gate-conditional disposition) and **STEP 9** (Now/Next horizon promotion): when writing a new `backlog.md` item with a `Provisional-Target` naming a specific release, the `**Effort:**` field must include a day range at time of write. Do not defer this to a later grooming pass.
+- **`backlog_management_prompt.md` STEP 1**: flag (do not silently backfill) any existing item whose `Provisional-Target` names a specific release but whose `Effort` field carries a bare letter with no day range — day-range estimation requires domain judgment from the item's owner, not mechanical inference.
 
 ---
 

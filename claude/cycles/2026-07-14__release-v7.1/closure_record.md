@@ -60,7 +60,7 @@ Full detail: `claude/cycles/2026-07-14__release-v7.1/lessons_learnt_closure.md`.
 
 | # | Description | Owner | Deadline | Escalation path | Resolution |
 |---|-------------|-------|----------|-----------------|------------|
-| 1 | Decide whether `backlog_management_prompt.md`/`idea_intake_prompt.md` should require an explicit day-range estimate alongside the letter effort band (S/M/L/XS) for any backlog item carrying a `Provisional-Target` value. | Head of Specs Team | 2026-07-17 | Escalation per `lessons_learnt_prompt.md` §5 decision_required handling — raise at next governance session if undecided by deadline | *(complete when resolved)* |
+| 1 | Decide whether `backlog_management_prompt.md`/`idea_intake_prompt.md` should require an explicit day-range estimate alongside the letter effort band (S/M/L/XS) for any backlog item carrying a `Provisional-Target` value. | Head of Specs Team | 2026-07-17 | Escalation per `lessons_learnt_prompt.md` §5 decision_required handling — raise at next governance session if undecided by deadline | **Resolved 2026-07-14 — Decision: Yes.** Root-caused to `roadmap_prompt.md` STEP 4.2's `📋 Backlog (gate-conditional)` disposition path bypassing STEP 6's existing day-range convention (§16.7). Applied: `shared_standards.md` v3.14→v3.15 (new §16.12 canonical schema); `roadmap_prompt.md` v8.8→v8.9 (STEP 4.2 + STEP 9 write-time requirement); `backlog_management_prompt.md` v1.11→v1.12 (STEP 1.2 grooming-time flag, non-mechanical). `idea_intake_prompt.md` was not the correct enforcement point (its Effort Estimate field is a coarser Small/Medium/Large/Unknown scale set before an item has a `Provisional-Target` at all) — not modified. OPERATIONAL_GUIDE.md v4.93→v4.94; prompt_change_log.md updated (4 entries). |
 | 2 | Treat `release_plan.md §Capacity Check` Phasing Recommendation as a live option at Sprint Planning; confirm early in Sprint 1 whether any RISK-tagged fix-vehicle choice is trending toward the pessimistic estimate before committing to single-sprint delivery of all items. | Sprint Planning Engine / PMO Lead | Before next `plan sprint` seals | Standard Sprint Planning STEP review | *(complete when resolved)* |
 
 ## §7 — Closure Confirmation
@@ -71,5 +71,10 @@ Release: v7.1 — Nightly Backtest Data Integrity
 Verification status: Verified_with_deviations
 Lessons learnt applied: 0 immediate | 1 deferred | 1 escalated
 Outstanding actions carried forward: 2 (see §6)
+```
+
+**Update — 2026-07-14 (Head of Specs Team direct action):** Outstanding action #1 resolved (see §6 Resolution column). Outstanding action #2 remains open — owned by Sprint Planning Engine / PMO Lead, not Head of Specs Team; not actioned in this session per the role-ownership verification rule (CLAUDE.md §2). 1 of 2 outstanding actions now carried forward.
+
+```
 Next cycle may now open.
 ```
