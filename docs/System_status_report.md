@@ -2089,3 +2089,25 @@ None — all 15 sealed backlog-slice items were delivered within the sprint.
 - QA evidence logs: qa_evidence_EPIC-01.md (Director of Quality, 2026-07-13), qa_evidence_EPIC-02.md (Director of Quality, 2026-07-13), qa_evidence_EPIC-03.md (Director of Quality, 2026-07-13)
 - Deviations filed: DEV-EPIC01-ST05-01 (P2, BLG-FE-107, target v7.1)
 - Test scenarios referenced: tests/e2e/epic01-v70-grid-badge-parity.spec.js SC-GVP-01–09; tests/e2e/heading-light-theme-contrast.spec.js; tests/test_portfolio_risk_sector.py; tests/test_claude_audit_log_filters.py; tests/test_trailing_stop_recommendation_log.py; tests/e2e/tax-year-csv-export.spec.js; tests/e2e/monthly-pnl-realized-unrealized.spec.js; tests/e2e/position-review-cadence-nudge.spec.js; tests/test_mark_position_reviewed.py
+
+## Sprint: 2026-07-14__release-v7.1
+**Date:** 2026-07-14
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Nightly backtest data-integrity fixes: ticker eligibility now gated on `ticker_universe.created_at` closing a look-ahead-bias bug (ST-01, BLG-BE-59); `total_pnl_gbp` non-reproducibility root-caused to external yfinance historical-price revisions, guarded via a new drift-check alert (`import_backtest.check_drift_alert`, £50 threshold, distinct exit code, greppable log line) rather than eliminated at the source (ST-02, BLG-BE-60) | spec_reference_not_applicable — bug fixes, no prior canonical spec; verified via `tests/test_production_strategy.py` (`TestComputeSignalsCreatedAtGating`, `TestBacktestDeterminism`, `TestDriftAlert`) | None |
+| EPIC-02 | Table View RISK OFF badge brought into spec compliance: `#1E40AF` colour, "RISK OFF" label, no icon — matches Grid View, closing a v7.0 carryover deviation (ST-03, BLG-FE-107) | `docs/specs/frontend/pages/positions.md#Alerts Column`; `#Known Deviations` | None — closed DEV-EPIC01-ST05-01 (v2.3→v2.4) |
+| EPIC-03 | v7.0 post-ship hardening pass across 4 features: position review-cadence nudge IDOR fix (PATCH /positions/{id}/mark-reviewed now routes through ownership check) plus NULL/backfill and lifecycle-state confirmation (ST-04); review-cadence frontend re-verified pre-met, no code changes (ST-05); realized/unrealized P&L split ownership/rounding/reconciliation rules documented and production-verified, surfacing a new P3 data-freshness deviation (ST-06, DEV-REPORTS-ST06-01, BLG-SPEC-87); tax-year CSV export Content-Type/auth/versioning documented with 11 new content-asserting tests and a new scenario doc (ST-07) | `backend/services/position_service.py#mark_position_reviewed()`; `docs/specs/frontend/pages/positions.md#Last Reviewed Column`, `#Position Lifecycle State Badge`; `docs/specs/metrics_definitions.md#Realized / Unrealized P&L Split`; `docs/specs/frontend/pages/reports.md#Unrealised P&L Card`, `#Known Deviations`; `docs/reference/openapi.yaml`; `docs/specs/api_contracts/reports_endpoints.md#Response (200 — CSV, format=csv)`; `docs/specs/api_contracts/backend_engineering_patterns.md#CSV/export response-body pattern`; `docs/testing/tax_year_csv_export_scenarios.md` | DEV-REPORTS-ST06-01 (P3, BLG-SPEC-87, target TBD) |
+
+### Capabilities deferred or returned
+
+None — all 7 sealed backlog-slice items were delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (agent-mediated, 2026-07-14), qa_evidence_EPIC-02.md (agent-mediated, 2026-07-14), qa_evidence_EPIC-03.md (autonomous class, BLG-GOV-19, 2026-07-14)
+- Deviations filed: DEV-REPORTS-ST06-01 (P3, BLG-SPEC-87) — new; DEV-EPIC01-ST05-01 (P2, BLG-FE-107) — closed this sprint
+- Test scenarios referenced: tests/test_production_strategy.py; tests/e2e/epic01-v62-stops-alerts.spec.js SC-RO-02; tests/e2e/epic01-v70-grid-badge-parity.spec.js SC-GVP-02; tests/e2e/gap-risk-flag.spec.js; tests/test_mark_position_reviewed.py; tests/e2e/position-review-cadence-nudge.spec.js SC-RCN-01–07; tests/e2e/monthly-pnl-realized-unrealized.spec.js; tests/test_reports_integration.py::TestTaxYearCsvExport
