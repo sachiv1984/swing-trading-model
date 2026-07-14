@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.15
+**Version:** 3.16
 **Last Updated:** 2026-07-14
 
 # Shared Standards — All Governed Routines
@@ -280,7 +280,10 @@ Every governed artefact must have a complete header. Minimum required fields by 
 
 A document without a complete header is non-compliant and must not be relied upon. Non-compliant documents discovered during a routine: apply header remediation (headers only) and continue.
 
-**§9.1 Version/state header cross-check (meta-review pattern, `2026-07-10__scheduled` — Type A Governance Drift recurring 3+ times across 2 cycles: `scored_initiatives.md` unbounded accumulation, `OPERATIONAL_GUIDE.md` header lagging its own Change Log table on 4 occasions, a backlog gate-field-label synonym silently excluded from an automated scan):** Before any edit that bumps a document's own `**Version:**`/`**Last Updated:**` header field, or before any step that is documented as "overwrite" rather than "append," first read the document's current on-disk state (its own Change Log table's top row, or its full existing body) to confirm the header/content is not already ahead of — or behind — what the edit assumes. Do not trust a header field or an instruction's label ("overwritten each run") in isolation; cross-check against the document's own recorded state before writing.
+**§9.1 Version/state header cross-check (meta-review pattern, `2026-07-10__scheduled` — Type A Governance Drift recurring 3+ times across 2 cycles: `scored_initiatives.md` unbounded accumulation, `OPERATIONAL_GUIDE.md` header lagging its own Change Log table on 4 occasions, a backlog gate-field-label synonym silently excluded from an automated scan; recurred a further time at AUD-2026-07-14 despite this note, root-caused to the note covering the Change Log top row but not the §14 field-table's own summary row):** Before any edit that bumps a document's own `**Version:**`/`**Last Updated:**` header field, or before any step that is documented as "overwrite" rather than "append," apply this checklist:
+1. Read the document's Change Log table's top row (or full existing body) — confirm the header field is not already ahead of, or behind, what the edit assumes.
+2. If the document carries its own internal self-referential summary table (e.g. `OPERATIONAL_GUIDE.md` §14's `Version` / `Last Updated` field rows) **distinct from the Change Log**, read and update that table's own `Version`/`Last Updated` row explicitly — do not assume updating the Change Log or the top header alone also updates this row; it is a separate write.
+3. Do not trust a header field, a Change Log row, or an instruction's label ("overwritten each run") in isolation — cross-check all three locations (header, self-referential summary row if one exists, Change Log top row) against each other before writing, and correct any that disagree.
 
 ---
 
