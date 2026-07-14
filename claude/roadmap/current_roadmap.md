@@ -287,6 +287,15 @@ Named via **STEP 8.0 Production Correctness Fast-Track** — the first fast-trac
 
 This resolves the STEP 8.1 Empty Now Horizon Gate via **Option (a)** — see `run_manifest.md` STEP 8.1 for full rationale. Full item detail: `claude/backlog/backlog.md`. Scope will be formalised at the next `plan release` invocation.
 
+<!-- roadmap-annotation-marker: RA:v7.1:2026-07-14__release-v7.1 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-14__release-v7.1
+- Plan published: 2026-07-14
+- Cycle folder: claude/cycles/2026-07-14__release-v7.1/
+- Backlog slice: claude/cycles/2026-07-14__release-v7.1/stage4_backlog_slice.md
+- Status at annotation: Committed
+
 -----
 
 *RA:v5.2 retired — see roadmap_archive.md 2026-06-08 (post-ship closure 2026-06-08__release-v5.2).*

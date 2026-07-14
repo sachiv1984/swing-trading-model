@@ -1,0 +1,65 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Gate nightly backtest ticker eligibility on ticker_universe.created_at",
+    "epic": "EPIC-01",
+    "description": "Mask signal computation to False for a ticker before its created_at date so retroactive ticker additions don't change historical backtest results.",
+    "ac_summary": "Signals gated on created_at; new ticker additions only affect selections from today forward; no change to trades before a new ticker's created_at.",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-14__release-v7.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Fix nightly backtest total_pnl_gbp non-reproducibility",
+    "epic": "EPIC-01",
+    "description": "Eliminate night-to-night total_pnl_gbp swings with zero exits, rooted in full re-download/re-simulation of the 8-year compounding cash trajectory.",
+    "ac_summary": "Fix vehicle selected and implemented (persist/cache prices, append-only ledger, or wired drift-check alert); two consecutive zero-exit nightly runs produce reproducible total_pnl_gbp.",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-14__release-v7.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Table View RISK OFF badge colour/label spec compliance",
+    "epic": "EPIC-02",
+    "description": "Resolve Table View vs Grid View RISK OFF badge inconsistency via design gate (spec-compliance fix or formal amber acceptance).",
+    "ac_summary": "Design gate resolves treatment; Table/Grid View badges consistent; SC-RO-02/SC-GVP-02 updated; combined-badge hue-separation rationale re-verified.",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-14__release-v7.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Position review-cadence nudge: backend/data-integrity hardening pass",
+    "epic": "EPIC-03",
+    "description": "IDOR regression check, NULL/backfill semantics, and position-state-machine confirmation for the v7.0 review-cadence nudge.",
+    "ac_summary": "IDOR check documented pass/fail; NULL/backfill behaviour documented+verified; written confirmation §9 4-state model unchanged.",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-14__release-v7.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Position review-cadence nudge: frontend/QA polish pass",
+    "epic": "EPIC-03",
+    "description": "data-testid confirmation, ordering rule, UX consistency review, AC traceability, and dedicated Playwright coverage for the v7.0 review-cadence nudge.",
+    "ac_summary": "data-testid present; ordering rule documented; UX review sign-off recorded; AC-to-spec traceability confirmed; >=1 dedicated Playwright scenario passing.",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-14__release-v7.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Realized/unrealized P&L split: spec & metrics hardening pass",
+    "epic": "EPIC-03",
+    "description": "Ownership decision, rounding rules, reconciliation rule, visual treatment, metrics_definitions.md entry, and openapi.yaml examples for the v7.0 P&L split.",
+    "ac_summary": "All 6 sub-items documented/verified; reconciliation rule confirmed against a real portfolio; >=1 dedicated Playwright scenario passing.",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-14__release-v7.1"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Tax-year P&L CSV export: spec & test hardening pass",
+    "epic": "EPIC-03",
+    "description": "Header convention, auth parity, record classification, smoke-test coverage, content-asserting test, test scenario doc, and canonical pattern entry for the v7.0 CSV export.",
+    "ac_summary": "All 7 sub-items completed/documented; content-asserting test passing in CI; smoke-test confirms reachability.",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-14__release-v7.1"],
+    "assignee": null
+  }
+]
