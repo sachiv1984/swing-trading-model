@@ -239,7 +239,12 @@
       "EPIC-02",
       "EPIC-03"
     ],
-    "all_merged": false
+    "all_merged": false,
+    "blocking_conditions": {
+      "EPIC-01": "PR #980 open, CI green (21/21 checks pass), autonomous DoQ sign-off posted (qa_signed_off=true). Blocked solely on Product Owner acceptance (comment on PR or in sprint_backlog.md) — always-human gate per execution_prompt.md §5.3, not agent-mediated.",
+      "EPIC-02": "Implementation complete, committed, pushed. PR not yet opened — per Merge Order note (LL-v2.0-P3-5) and sprint_backlog.md's stated EPIC-01->EPIC-02->EPIC-03 sequence, later branches rebase onto main after the prior EPIC merges, before opening their PR. qa_evidence_EPIC-02.md uses the Standard Sign-Off Block (BLG-GOV-19 autonomous class does NOT apply — ST-03 modifies src/pages/Positions.js). Blocked on: (1) EPIC-01 merging first, (2) Director of Quality sign-off (Date field currently blank, always-human per §5.3), (3) Product Owner acceptance.",
+      "EPIC-03": "Implementation complete, committed, pushed. PR not yet opened — same sequencing rule, waits for EPIC-01 and EPIC-02 to merge first. Autonomous DoQ sign-off already posted in qa_evidence_EPIC-03.md (qa_signed_off=true, no frontend files touched). Blocked on: (1) EPIC-01/EPIC-02 merging first, (2) Product Owner acceptance."
+    }
   },
   "sealed": false,
   "sealed_utc": null
