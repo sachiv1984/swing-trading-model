@@ -102,8 +102,8 @@
     "EPIC-03": {
       "status": "done",
       "branch": "exec/2026-07-14__release-v7.1/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 982,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-14__release-v7.1/qa_evidence_EPIC-03.md",
       "test_scenarios": ["tests/test_mark_position_reviewed.py", "tests/e2e/position-review-cadence-nudge.spec.js", "tests/e2e/monthly-pnl-realized-unrealized.spec.js", "tests/e2e/positions-pnl-columns.spec.js", "tests/test_reports_integration.py", "tests/e2e/gap-risk-flag.spec.js"],
@@ -232,7 +232,8 @@
     "2026-07-14: EPIC-02 branch merged main in (CLAUDE.md §8 conflict resolution) to pick up the EPIC-01 sync before opening its PR, per LL-v2.0-P3-5 rebase-before-PR rule.",
     "2026-07-14: EPIC-02 PR #981 opened after agent-mediated DoQ sign-off (§5.3, Approved). Product Owner acceptance recorded via user direction in this session (acting as Product Owner role per explicit instruction) -- PR #981 merged 2026-07-14T16:44:14Z (commit eefbac73). Per STEP 4 hard gate, halted after that merge -- EPIC-03 not opened in that invocation.",
     "2026-07-14: EPIC-03 branch merged main in (CLAUDE.md §8 conflict resolution) to pick up the EPIC-01 sync before opening its PR. EPIC-02 had not merged to main yet (PR #981 still open) but its true current state (done, signed off, PR #981) was carried forward into this branch's copy of execution_state.json rather than reverting to main's stale not_started view -- this is the same underlying JSON content EPIC-02's own branch held, so no information was lost or contradicted.",
-    "2026-07-14: EPIC-03 branch re-merged main (now post-EPIC-02-merge) per CLAUDE.md §8 to pick up the EPIC-02 merged/merged sync before opening its PR. Resolved 3-way conflict in execution_state.json (EPIC-02 status/pr_status -> merged/merged taken from main as the more-current state; ST-03 notes combined to retain both the PR/sign-off narrative and the final merge commit reference), qa_evidence_EPIC-02.md (add/add -- EPIC-03 branch's copy was a stale carried-forward duplicate of EPIC-02's own file; took main's authoritative version), and docs/specs/frontend/pages/positions.md (both EPIC-02's Known Deviations closure and EPIC-03's Last Reviewed Column / Position Lifecycle State Badge sections retained -- no section overlap)."
+    "2026-07-14: EPIC-03 branch re-merged main (now post-EPIC-02-merge) per CLAUDE.md §8 to pick up the EPIC-02 merged/merged sync before opening its PR. Resolved 3-way conflict in execution_state.json (EPIC-02 status/pr_status -> merged/merged taken from main as the more-current state; ST-03 notes combined to retain both the PR/sign-off narrative and the final merge commit reference), qa_evidence_EPIC-02.md (add/add -- EPIC-03 branch's copy was a stale carried-forward duplicate of EPIC-02's own file; took main's authoritative version), and docs/specs/frontend/pages/positions.md (both EPIC-02's Known Deviations closure and EPIC-03's Last Reviewed Column / Position Lifecycle State Badge sections retained -- no section overlap; combined both stories' entries into a single v2.4 changelog row since both landed same-day, avoiding a duplicate/colliding version number).",
+    "2026-07-14: EPIC-03 PR #982 opened (autonomous class DoQ sign-off, BLG-GOV-19 -- qa_evidence_EPIC-03.md confirms all 4 qualifying criteria met). gh pr view: mergeable=MERGEABLE, mergeStateStatus=BLOCKED (CI/required checks pending at time of check) -- awaiting quality_gate.yml completion, then Product Owner acceptance."
   ],
 
   "sealed": false,
