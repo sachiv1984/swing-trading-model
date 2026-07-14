@@ -27,7 +27,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install pandas numpy yfinance matplotlib requests psycopg2-binary
+        run: pip install pandas numpy yfinance requests psycopg2-binary
 
       - name: Run backtest
         env:
