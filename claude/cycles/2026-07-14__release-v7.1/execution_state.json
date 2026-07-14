@@ -9,10 +9,10 @@
 
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-14__release-v7.1/EPIC-01",
       "pr_number": 980,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-14__release-v7.1/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/test_production_strategy.py"],
@@ -196,10 +196,14 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03"],
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-02", "EPIC-03"],
     "all_merged": false
   },
+  "process_notes": [
+    "2026-07-14 session resume (LL-v3.9-P3-1): local main was 5 commits behind origin/main at invocation (PR #980 merged 2026-07-14T16:17:58Z by a prior session, execution_state.json never synced). Fast-forward-pulled origin/main, ran gh pr view 980 -> confirmed MERGED, synced EPIC-01 status/pr_status to merged and moved it from epics_pending to epics_merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-07-14__release-v7.1/EPIC-01 returned empty -- no orphaned commits on the EPIC-01 branch. Separately discovered EPIC-02 (ST-03) and EPIC-03 (ST-04..07) were also fully implemented and pushed to their exec branches by the same prior session, but neither had a PR opened -- resuming from there per the EPIC-01->EPIC-02->EPIC-03 merge order.",
+    "2026-07-14: EPIC-02 branch merged main in (CLAUDE.md §8 conflict resolution) to pick up the EPIC-01 sync before opening its PR, per LL-v2.0-P3-5 rebase-before-PR rule."
+  ],
 
   "sealed": false,
   "sealed_utc": null
