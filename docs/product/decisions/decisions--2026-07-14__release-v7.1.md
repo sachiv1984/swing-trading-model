@@ -1,9 +1,13 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v7.1
 Cycle: 2026-07-14__release-v7.1
 Last Updated: 2026-07-14
+
+Superseded by: v7.1 ship — 2026-07-14
+Changelog: docs/product/changelog.md#v7-1--nightly-backtest-data-integrity--2026-07-14
+Cycle: 2026-07-14__release-v7.1
 
 ## Planning Decisions — v7.1 Nightly Backtest Data Integrity
 

@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-14 (session — 1 new item(s) added: BLG-SPEC-87); prior — 2026-07-13 (roadmap rebalance 2026-07-13__scheduled — 25 new items added via idea intake IW-20260713-01 disposition + STEP 8.0 fast-track: BLG-BE-61/62, BLG-QA-106/108, BLG-SPEC-83–86, BLG-FEAT-77, BLG-FE-108, BLG-OPS-109, BLG-GOV-219–233; STEP 8.0 Production Correctness Fast-Track promoted BLG-BE-59/BLG-BE-60 (both P1, filed same session) to the new v7.1 Now-horizon section — first fast-track promotion in this engine's history; DL-065; prior — session — 1 new item(s) added: BLG-GOV-218); prior — groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived to backlog_archive.md; ephemeral Release Slice v7.0 section removed; Gate Field Normalisation: 0 in backlog.md; ID uniqueness: PASS; 0 orphans, 0 stale blockers, 0 promotion candidates flagged this run; prior — post-ship closure 2026-07-12__release-v7.0 — 15 items marked ✅ COMPLETE: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68; no stale parked items; no Phase 4 additions required (already confirmed present per verification_report.md §5)); prior — session — 5 new item(s) added: BLG-BE-59, BLG-BE-60, BLG-OPS-108, BLG-QA-104, BLG-QA-105); prior — session — 1 new item(s) added: BLG-FE-107; prior — session — 1 new item(s) added: BLG-FE-106; prior — roadmap rebalance 2026-07-12__scheduled — 36 new items added via idea intake IW-20260712-01 disposition: BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107; BLG-GOV-105 closed as confirmed duplicate of BLG-GOV-45 (BLG-GOV-202 closed same action); BLG-GOV-28 priority escalated P2→P1; DL-064; prior — session — 5 new item(s) added: BLG-FEAT-73, BLG-FEAT-74, BLG-FEAT-75, BLG-FEAT-76, BLG-FE-102; prior — groom backlog post-ship closure 2026-07-10__release-v6.9 — 2 items archived: BLG-FEAT-64, BLG-FEAT-65; ephemeral Release Slice v6.9 section removed; prior — 2 items marked ✅ COMPLETE: BLG-FEAT-64, BLG-FEAT-65; prior — roadmap rebalance 2026-07-10__scheduled — 39 new items added via idea intake IW-20260710-01 disposition: BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72; DL-063; prior — backlog consistency audit — BLG-BE-52 archived to backlog_archive.md (already-resolved item not yet retired); BLG-GOV-105 flagged possible duplicate of shipped BLG-GOV-45, not dispositioned (see new BLG-GOV-202); BLG-GOV-28 flagged overdue §13 gate (PT-04 sealed v6.1, review not run), not dispositioned; prior — 2026-07-09 Product Owner direct action — BLG-BE-52 resolved: no backfill; prior — session — 1 new item(s) added: BLG-BE-52; prior — groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived to backlog_archive.md: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84 [shipped v7.1], BLG-GOV-202 [pre-existing completed item found during STEP 6.2 post-write verification, missed by v7.0's grooming pass]; ephemeral Release Slice v7.1 section removed; Gate Field Normalisation: 0; ID uniqueness: 5 known pre-existing duplicate IDs (BLG-OPS-37, BLG-OPS-31, BLG-OPS-28, BLG-FEAT-38, BLG-FE-49 — same items archived twice under two historical conventions, already flagged as a follow-up dedup item per v6.6 BLG-QA-72 audit; no new duplicates introduced this cycle); 0 orphans, 0 stale blockers, 0 promotion candidates flagged this run; report: claude/backlog/backlog_health_20260714.md); prior — post-ship closure 2026-07-14__release-v7.1 — 7 items marked ✅ COMPLETE: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84; no stale parked items; no Phase 4 additions required (BLG-SPEC-87 already present from sprint execution)); prior — session — 1 new item(s) added: BLG-SPEC-87); prior — 2026-07-13 (roadmap rebalance 2026-07-13__scheduled — 25 new items added via idea intake IW-20260713-01 disposition + STEP 8.0 fast-track: BLG-BE-61/62, BLG-QA-106/108, BLG-SPEC-83–86, BLG-FEAT-77, BLG-FE-108, BLG-OPS-109, BLG-GOV-219–233; STEP 8.0 Production Correctness Fast-Track promoted BLG-BE-59/BLG-BE-60 (both P1, filed same session) to the new v7.1 Now-horizon section — first fast-track promotion in this engine's history; DL-065; prior — session — 1 new item(s) added: BLG-GOV-218); prior — groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived to backlog_archive.md; ephemeral Release Slice v7.0 section removed; Gate Field Normalisation: 0 in backlog.md; ID uniqueness: PASS; 0 orphans, 0 stale blockers, 0 promotion candidates flagged this run; prior — post-ship closure 2026-07-12__release-v7.0 — 15 items marked ✅ COMPLETE: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68; no stale parked items; no Phase 4 additions required (already confirmed present per verification_report.md §5)); prior — session — 5 new item(s) added: BLG-BE-59, BLG-BE-60, BLG-OPS-108, BLG-QA-104, BLG-QA-105); prior — session — 1 new item(s) added: BLG-FE-107; prior — session — 1 new item(s) added: BLG-FE-106; prior — roadmap rebalance 2026-07-12__scheduled — 36 new items added via idea intake IW-20260712-01 disposition: BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107; BLG-GOV-105 closed as confirmed duplicate of BLG-GOV-45 (BLG-GOV-202 closed same action); BLG-GOV-28 priority escalated P2→P1; DL-064; prior — session — 5 new item(s) added: BLG-FEAT-73, BLG-FEAT-74, BLG-FEAT-75, BLG-FEAT-76, BLG-FE-102; prior — groom backlog post-ship closure 2026-07-10__release-v6.9 — 2 items archived: BLG-FEAT-64, BLG-FEAT-65; ephemeral Release Slice v6.9 section removed; prior — 2 items marked ✅ COMPLETE: BLG-FEAT-64, BLG-FEAT-65; prior — roadmap rebalance 2026-07-10__scheduled — 39 new items added via idea intake IW-20260710-01 disposition: BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72; DL-063; prior — backlog consistency audit — BLG-BE-52 archived to backlog_archive.md (already-resolved item not yet retired); BLG-GOV-105 flagged possible duplicate of shipped BLG-GOV-45, not dispositioned (see new BLG-GOV-202); BLG-GOV-28 flagged overdue §13 gate (PT-04 sealed v6.1, review not run), not dispositioned; prior — 2026-07-09 Product Owner direct action — BLG-BE-52 resolved: no backfill; prior — session — 1 new item(s) added: BLG-BE-52; prior — groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -17,24 +17,6 @@
 > **Ephemeral sections** (Release Slice tables, Test Scenario Gap sections, and "Returned to Backlog" sections appended by governance engines) are temporary. They must be removed during the next `groom backlog` run after the cycle closes. Any still-open items within them must be promoted to the appropriate §1–§8 type section before the ephemeral section is removed.
 
 *Completed and killed items are recorded in `claude/backlog/backlog_archive.md`.*
-
----
-
-<!-- release-plan-marker: RP:v7.1:2026-07-14__release-v7.1 -->
-
-## Release Slice v7.1 (in progress)
-
-*Cycle: `2026-07-14__release-v7.1`. Authoritative backlog slice: `claude/cycles/2026-07-14__release-v7.1/stage4_backlog_slice.md`. Ephemeral — removed at next `groom backlog` run after this cycle closes.*
-
-| ST-ID | Backlog Item | EPIC | Status |
-|-------|--------------|------|--------|
-| ST-01 | BLG-BE-59 | EPIC-01 | in_scope |
-| ST-02 | BLG-BE-60 | EPIC-01 | in_scope |
-| ST-03 | BLG-FE-107 | EPIC-02 | in_scope |
-| ST-04 | BLG-BE-61 | EPIC-03 | in_scope |
-| ST-05 | BLG-QA-106 | EPIC-03 | in_scope |
-| ST-06 | BLG-SPEC-83 | EPIC-03 | in_scope |
-| ST-07 | BLG-SPEC-84 | EPIC-03 | in_scope |
 
 ---
 
@@ -1176,28 +1158,6 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 - Page title displays correctly in both light and dark themes (PageHeader's existing gradient treatment applies)
 - `BarChart2` icon and last-updated line remain present and correctly placed
 - No other page layout/behaviour changes
-
----
-
-### BLG-FE-107 — Table View RISK OFF badge colour/label diverges from canonical spec (#1E40AF blue-800 vs shipped amber)
-**Priority:** P2 (Medium)
-**Type:** Frontend / UX
-**Owner:** Head of Engineering
-**Source:** 2026-07-12__release-v7.0 EPIC-01 ST-05 (BLG-FE-104) combined-badge differentiation review — deviation DEV-EPIC01-ST05-01 filed 2026-07-13
-**Effort:** S (~0.5 day)
-**Provisional-Target:** v7.1
-
-**Problem**
-`docs/specs/frontend/pages/positions.md` §Alerts Column specifies the RISK OFF badge as Label "RISK OFF", Background `#1E40AF` (blue-800). The shipped Table View implementation (`src/pages/Positions.js`, `AlertsCell` component) instead renders `bg-amber-900/60 text-amber-300`, label "Risk-Off", plus a `ShieldAlert` icon not in spec — pre-existing since v6.2, confirmed by the existing passing test `SC-RO-02` (`tests/e2e/epic01-v62-stops-alerts.spec.js`) which encodes the amber colour as expected. This was discovered while building the v7.0 Grid View RISK OFF badge (ST-02), which correctly uses the spec's blue `#1E40AF` — so Table View and Grid View are now visually inconsistent for the same badge. It also undermines the v7.0 combined-badge differentiation decision record's "hue separation" rationale (blue-800 vs amber-600) for Table View specifically, since both RISK OFF and GAP RISK render in the amber family there.
-
-**Scope**
-- Either (a) bring Table View's RISK OFF badge into spec compliance (`#1E40AF`, "RISK OFF" label) and update `SC-RO-02`'s amber assertion accordingly, or (b) run a fresh design-gate decision to formally accept amber as the canonical Table View treatment and update `positions.md` + the combined-badge decision record to match reality
-- Needs its own design-gate scoping — not a same-sprint fix
-
-**Acceptance Criteria**
-- Table View and Grid View RISK OFF badges use a single, consistent, spec-documented colour/label
-- `SC-RO-02` and the v7.0 Grid View parity tests (`SC-GVP-02`) remain internally consistent with whichever treatment is chosen
-- Combined-badge differentiation decision record's hue-separation rationale is verified true for both views
 
 ---
 
@@ -5420,58 +5380,6 @@ Re-verify the AST scan's module coverage against the current `backend/` tree and
 
 ---
 
-### BLG-GOV-202 — Disposition BLG-GOV-105 duplicate-of-BLG-GOV-45 flag — ✅ COMPLETE (2026-07-12 — see BLG-GOV-105)
-**Priority:** P3 (Low)
-**Type:** Governance / Process
-**Owner:** Product Owner
-**Source:** Idea intake IW-20260710-01 (IDEA-product-owner-20260710-02), roadmap rebalance 2026-07-10__scheduled
-**Effort:** S (~0.5-2 days)
-**Provisional-Target:** Unscheduled
-**Gate criteria:** None
-
-**Problem**
-The 2026-07-10 backlog consistency audit flagged `BLG-GOV-105` as a possible duplicate of already-shipped `BLG-GOV-45` but left it un-dispositioned.
-
-**Proposed solution**
-Product Owner reviews both entries and either closes `BLG-GOV-105` as a confirmed duplicate or records why it is distinct.
-
----
-
-### BLG-BE-59 — Gate nightly backtest ticker eligibility on ticker_universe.created_at (point-in-time integrity)
-**Priority:** P1 (High)
-**Type:** Backend
-**Owner:** Backend Engineering Patterns Owner
-**Source:** Session investigation into nightly backtest data integrity — 2026-07-13
-**Effort:** M (~1-2 days)
-**Provisional-Target:** v7.1
-**Gate criteria:** None
-
-**Problem**
-`production_strategy.py`'s `_load_tickers()` pulls whatever is *currently* `active=TRUE` in `ticker_universe`, and `compute_signals()` (production_strategy.py:199-204) ranks momentum across all of those tickers on every historical date back to 2018 in one DataFrame-wide computation. There is no concept of "this ticker wasn't tracked yet as of this date" — adding a ticker today retroactively injects its momentum score into the ranking competition for the entire 2018-present window, which can change which trades were selected, when they exited, and (via the compounding fully-invested cash simulation) the dollar size of every subsequent trade, even trades that closed months or years ago. `ticker_universe` already has an unused `created_at` column (backend/services/ticker_universe_service.py:100) recording exactly when each ticker was added. This is also a likely contributor to some of the "No longer qualifies" exit-reason frequency observed in recent runs, since a later-added competitor's momentum can retroactively bump a held position out of top-5 on a historical rebalance date it wouldn't have lost on in reality.
-
-**Proposed solution**
-Gate each ticker's eligibility in the momentum/trend signal computation on its own `created_at` date (mask `signals` to False for a ticker before its `created_at`), so adding a new ticker only ever affects selections from today forward and closed historical trades become genuinely immutable between runs.
-
----
-
-### BLG-BE-60 — Nightly backtest total_pnl_gbp is not reproducible night-to-night with zero exits
-**Priority:** P1 (High)
-**Type:** Backend
-**Owner:** Backend Engineering Patterns Owner
-**Source:** Session investigation into nightly backtest data integrity — 2026-07-13
-**Effort:** L (~3-5 days)
-**Provisional-Target:** v7.1
-**Gate criteria:** None
-**Depends on:** Related to BLG-BE-59 (that item covers universe changes; this one reproduces with a completely unchanged ticker universe) — no hard dependency, but likely shares a fix vehicle if backtest state persistence is redesigned.
-
-**Problem**
-Confirmed via GH Actions logs across 2026-07-09 through 2026-07-13: `trades_imported`/`open_positions_imported` stayed flat at 587/5 (zero exits), yet `total_pnl_gbp` swung by tens of thousands of GBP night to night (-£19,959.14, then +£14,217.99, then -£46,027.71). Diffing actual trade rows between two consecutive runs showed every trade (winners/losers, US/UK, various dates) shifted PnL(£) by the identical ratio (×1.02701) while PnL% and dates stayed byte-identical — the signature of a single global rescaling of the compounding cash trajectory, most likely from yfinance's `auto_adjust=True` retroactively revising a historical adjusted close somewhere in the 2018-present window on the nightly full re-download-and-re-simulate. Because position sizing is fully-invested and compounding (shares = cash × weight / price, carried forward day to day), any tiny historical price revision rescales every subsequent trade's dollar PnL, even trades that "closed" long ago. `import_backtest.py` already prints a "Total P&L drift check" comparing the new total to the previous import, but nothing monitors or alerts on it — it is unread CI log text.
-
-**Proposed solution**
-(a) Persist/cache historical price data and only extend forward rather than re-downloading and re-simulating the full 8-year window every night, or (b) make the trade ledger genuinely append-only (write only newly-closed trades instead of deleting and reinserting all 587 every run); at minimum (c) wire the existing drift-check output into an actual alert/threshold so an unexpected swing is flagged rather than silently logged.
-
----
-
 ### BLG-OPS-108 — Add response validation to daily-snapshot.yml curl calls (CI masks endpoint failures)
 **Priority:** P1 (High)
 **Type:** Operations / Infrastructure
@@ -5831,41 +5739,17 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 
 ---
 
-### BLG-BE-61 — Position review-cadence nudge: backend/data-integrity hardening pass
-**Priority:** P2 (Medium) | **Type:** Backend / Security / Data Model | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-cybersecurity-20260713-02, IDEA-data-model-20260713-02, IDEA-strategy-owner-20260713-02 | **Effort:** M | **Provisional-Target:** v7.1
-**Problem:** v7.0 shipped `last_reviewed_at` tracking + `PATCH /positions/{id}/mark-reviewed` (EPIC-03 ST-15, `BLG-FEAT-68`) without a dedicated post-ship hardening pass. Three distinct gaps identified this cycle: (1) no confirmed IDOR regression check on the `position_id` write path for this new endpoint; (2) NULL/backfill semantics for `last_reviewed_at` on pre-existing positions are undefined; (3) risk that the review-cadence concept could be read as an implicit new position state outside the existing `§9` position state machine (GRACE → LOSING → PROFITABLE → EXIT ZONE) rather than a metadata field on top of it.
-**Scope:** (a) Run an IDOR regression check confirming `PATCH /positions/{id}/mark-reviewed` enforces the same portfolio-ownership check as other position-mutating endpoints; (b) define and document NULL/backfill semantics for `last_reviewed_at` on positions that existed pre-v7.0; (c) confirm in `strategy_rules.md §9` or `positions.md` that review-cadence is explicitly a metadata annotation, not a 5th lifecycle state.
-**Acceptance Criteria:** IDOR check documented with pass/fail result; NULL/backfill behaviour documented and verified against production data; explicit written confirmation that §9's 4-state model is unchanged.
-
 ### BLG-BE-62 — Idempotent nightly batch-job pattern audit
 **Priority:** P2 (Medium) | **Type:** Backend / Reliability | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260713-02 | **Effort:** M | **Provisional-Target:** TBD
 **Problem:** This cycle's STEP 8.0 fast-track surfaced two P1 data-integrity bugs in the nightly backtest job (`BLG-BE-59`, `BLG-BE-60`) both rooted in the job re-deriving its full result set from scratch every run rather than persisting/extending state idempotently. Other nightly jobs (trailing-stop refresh, portfolio snapshot rebalance) have not been audited for the same class of non-idempotency risk.
 **Scope:** Audit `daily-snapshot.yml`'s three jobs (position analysis, portfolio snapshot, signal generation) plus the nightly backtest import for idempotency — does re-running produce identical output given identical input state, or does it silently accumulate drift.
 **Acceptance Criteria:** Audit findings documented per job; any additional non-idempotency risks found are filed as follow-up items; explicitly cross-references `BLG-BE-59`/`BLG-BE-60` as the confirmed instance of this pattern.
 
-### BLG-QA-106 — Position review-cadence nudge: frontend/QA polish pass
-**Priority:** P3 (Low) | **Type:** QA / Frontend | **Owner:** QA & Testing Owner | **Source:** IDEA-base44-frontend-20260713-01, IDEA-frontend-specs-20260713-01, IDEA-head-of-ux-20260713-01, IDEA-qa-testing-20260713-02, IDEA-qa-lead-20260713-01 | **Effort:** M | **Provisional-Target:** v7.1
-**Problem:** v7.0's position review-cadence nudge (`BLG-FEAT-68`) shipped without: a confirmed explicit `data-testid` (per the standing FI-P3-01 advisory), a documented interaction/ordering rule against existing Arc 3 structured prompts (grace period alert, drawdown review, etc.), a visual-language consistency check against those same prompt precedents, confirmation that its acceptance criteria were derived from a canonical spec section rather than ad hoc, and dedicated (not bundled-generic) Playwright coverage.
-**Scope:** (a) confirm/add explicit `data-testid`; (b) document how the nudge orders/coexists with other structured position prompts when multiple fire simultaneously; (c) UX consistency review against Arc 3 prompt visual precedents; (d) confirm ACs trace to `positions.md`; (e) add dedicated Playwright scenario(s) for the nudge specifically.
-**Acceptance Criteria:** `data-testid` confirmed present; ordering rule documented in `positions.md`; UX review sign-off recorded; AC-to-spec traceability confirmed; ≥1 dedicated Playwright scenario passing in CI.
-
 ### BLG-QA-108 — Spot-check Tier 1/Tier 2 DoQ severity-labeling consistency
 **Priority:** P3 (Low) | **Type:** QA / Process | **Owner:** Director of Quality | **Source:** IDEA-director-of-quality-20260713-02 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** DoQ severity tiering (Tier 1/Tier 2) is applied per verification report without a periodic cross-report consistency check — risk of drift in how similar findings are labelled across cycles.
 **Scope:** Sample the last 5 `verification_report.md` files; confirm comparable findings received comparable tier labels; document any drift found.
 **Acceptance Criteria:** Spot-check completed and documented; any labelling drift found is either corrected going forward or explicitly justified.
-
-### BLG-SPEC-83 — Realized/unrealized P&L split: spec & metrics hardening pass
-**Priority:** P2 (Medium) | **Type:** Spec Debt / Data Model | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-api-contracts-20260713-02, IDEA-base44-frontend-20260713-02, IDEA-data-model-20260713-01, IDEA-financial-reporting-20260713-02, IDEA-frontend-specs-20260713-02, IDEA-metrics-20260713-01, IDEA-qa-lead-20260713-01 | **Effort:** M | **Provisional-Target:** v7.1
-**Problem:** v7.0's realized vs. unrealized P&L split (EPIC-03 ST-14, `BLG-FEAT-70`) shipped without: a documented stored-vs-computed-on-read ownership decision for the two values, an explicit currency/rounding rule for the Base44 frontend prompt, a reconciliation rule confirming `realized + unrealized` ties back to the existing net P&L figure, a visual treatment distinct from the pre-existing P&L colour convention, a formal `metrics_definitions.md` entry, and confirmation that `openapi.yaml` examples were updated in the same commit as the contract (per `CLAUDE.md`'s standing rule).
-**Scope:** (a) document stored-vs-computed column ownership; (b) state exact currency/rounding rules; (c) define and verify the reconciliation rule against net P&L; (d) confirm/adjust visual treatment; (e) add `metrics_definitions.md` entry; (f) confirm `openapi.yaml` examples reflect the split; (g) dedicated Playwright coverage for the split (companion to `BLG-QA-106`'s nudge coverage — same submitter concern, different feature).
-**Acceptance Criteria:** All 6 sub-items documented/verified; reconciliation rule confirmed against at least one real portfolio's figures; ≥1 dedicated Playwright scenario passing in CI.
-
-### BLG-SPEC-84 — Tax-year P&L CSV export: spec & test hardening pass
-**Priority:** P2 (Medium) | **Type:** Spec Debt / QA / Ops | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260713-01, IDEA-backend-engineering-20260713-01, IDEA-cybersecurity-20260713-01, IDEA-financial-reporting-20260713-01, IDEA-infra-ops-20260713-01, IDEA-qa-lead-20260713-02, IDEA-qa-testing-20260713-01 | **Effort:** M | **Provisional-Target:** v7.1
-**Problem:** v7.0's tax-year P&L CSV export (EPIC-03 ST-13, `BLG-FEAT-69`) shipped without: documented response `Content-Type`/charset/filename convention, confirmed `X-API-Key` auth enforcement parity with other financial endpoints, a financial-record-vs-analytics-export classification (with a versioning decision), smoke-test/health-check harness coverage, a test asserting actual file contents (not just that a download was triggered), a written test scenario document, and a canonical CSV/export response-body pattern entry in `backend_engineering_patterns.md` for future export endpoints to follow.
-**Scope:** (a) document response header convention; (b) confirm auth enforcement; (c) classify record type + versioning approach; (d) add smoke-test coverage; (e) add a content-asserting test; (f) author test scenario doc; (g) add canonical pattern entry to `backend_engineering_patterns.md`.
-**Acceptance Criteria:** All 7 sub-items completed/documented; content-asserting test passing in CI; smoke-test harness confirms endpoint reachability.
 
 ### BLG-SPEC-85 — `trailing_stop_action_rate` spec entry with validation tolerances
 **Priority:** P3 (Low) | **Type:** Spec Debt / Metrics | **Owner:** Metrics Definitions & Analytics Canonical Owner | **Source:** IDEA-metrics-20260713-02 | **Effort:** S | **Provisional-Target:** TBD

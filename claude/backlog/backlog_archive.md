@@ -1,11 +1,135 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
+**Last Updated:** 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-BE-59 — Gate nightly backtest ticker eligibility on ticker_universe.created_at (point-in-time integrity)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-07-14
+**Shipped in:** v7.1 (cycle: 2026-07-14__release-v7.1, ST-01)
+**Evidence:** docs/product/changelog.md#v7.1; claude/cycles/2026-07-14__release-v7.1/verification_report.md
+
+### BLG-BE-59 — Gate nightly backtest ticker eligibility on ticker_universe.created_at (point-in-time integrity)
+**Priority:** P1 (High) | **Type:** Backend | **Owner:** Backend Engineering Patterns Owner | **Source:** Session investigation into nightly backtest data integrity — 2026-07-13 | **Effort:** M (~1-2 days) | **Provisional-Target:** ✅ COMPLETE — 2026-07-14 — cycle: 2026-07-14__release-v7.1 (ST-01) | **Gate criteria:** None
+**Problem:** `production_strategy.py`'s `_load_tickers()` pulls whatever is *currently* `active=TRUE` in `ticker_universe`, and `compute_signals()` (production_strategy.py:199-204) ranks momentum across all of those tickers on every historical date back to 2018 in one DataFrame-wide computation. There is no concept of "this ticker wasn't tracked yet as of this date" — adding a ticker today retroactively injects its momentum score into the ranking competition for the entire 2018-present window, which can change which trades were selected, when they exited, and (via the compounding fully-invested cash simulation) the dollar size of every subsequent trade, even trades that closed months or years ago. `ticker_universe` already has an unused `created_at` column (backend/services/ticker_universe_service.py:100) recording exactly when each ticker was added. This is also a likely contributor to some of the "No longer qualifies" exit-reason frequency observed in recent runs, since a later-added competitor's momentum can retroactively bump a held position out of top-5 on a historical rebalance date it wouldn't have lost on in reality.
+**Proposed solution:** Gate each ticker's eligibility in the momentum/trend signal computation on its own `created_at` date (mask `signals` to False for a ticker before its `created_at`), so adding a new ticker only ever affects selections from today forward and closed historical trades become genuinely immutable between runs.
+
+---
+
+### BLG-BE-60 — Nightly backtest total_pnl_gbp is not reproducible night-to-night with zero exits
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-07-14
+**Shipped in:** v7.1 (cycle: 2026-07-14__release-v7.1, ST-02)
+**Evidence:** docs/product/changelog.md#v7.1; claude/cycles/2026-07-14__release-v7.1/verification_report.md
+
+### BLG-BE-60 — Nightly backtest total_pnl_gbp is not reproducible night-to-night with zero exits
+**Priority:** P1 (High) | **Type:** Backend | **Owner:** Backend Engineering Patterns Owner | **Source:** Session investigation into nightly backtest data integrity — 2026-07-13 | **Effort:** L (~3-5 days) | **Provisional-Target:** ✅ COMPLETE — 2026-07-14 — cycle: 2026-07-14__release-v7.1 (ST-02) | **Gate criteria:** None | **Depends on:** Related to BLG-BE-59 (that item covers universe changes; this one reproduces with a completely unchanged ticker universe) — no hard dependency, but likely shares a fix vehicle if backtest state persistence is redesigned.
+**Problem:** Confirmed via GH Actions logs across 2026-07-09 through 2026-07-13: `trades_imported`/`open_positions_imported` stayed flat at 587/5 (zero exits), yet `total_pnl_gbp` swung by tens of thousands of GBP night to night (-£19,959.14, then +£14,217.99, then -£46,027.71). Diffing actual trade rows between two consecutive runs showed every trade (winners/losers, US/UK, various dates) shifted PnL(£) by the identical ratio (×1.02701) while PnL% and dates stayed byte-identical — the signature of a single global rescaling of the compounding cash trajectory, most likely from yfinance's `auto_adjust=True` retroactively revising a historical adjusted close somewhere in the 2018-present window on the nightly full re-download-and-re-simulate. Because position sizing is fully-invested and compounding (shares = cash × weight / price, carried forward day to day), any tiny historical price revision rescales every subsequent trade's dollar PnL, even trades that "closed" long ago. `import_backtest.py` already prints a "Total P&L drift check" comparing the new total to the previous import, but nothing monitors or alerts on it — it is unread CI log text.
+**Proposed solution:** (a) Persist/cache historical price data and only extend forward rather than re-downloading and re-simulating the full 8-year window every night, or (b) make the trade ledger genuinely append-only (write only newly-closed trades instead of deleting and reinserting all 587 every run); at minimum (c) wire the existing drift-check output into an actual alert/threshold so an unexpected swing is flagged rather than silently logged.
+
+---
+
+### BLG-FE-107 — Table View RISK OFF badge colour/label diverges from canonical spec (#1E40AF blue-800 vs shipped amber)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-14
+**Shipped in:** v7.1 (cycle: 2026-07-14__release-v7.1, ST-03)
+**Evidence:** docs/product/changelog.md#v7.1; claude/cycles/2026-07-14__release-v7.1/verification_report.md; docs/specs/frontend/pages/positions.md#Known Deviations (DEV-EPIC01-ST05-01 closed)
+
+### BLG-FE-107 — Table View RISK OFF badge colour/label diverges from canonical spec (#1E40AF blue-800 vs shipped amber)
+**Priority:** P2 (Medium) | **Type:** Frontend / UX | **Owner:** Head of Engineering | **Source:** 2026-07-12__release-v7.0 EPIC-01 ST-05 (BLG-FE-104) combined-badge differentiation review — deviation DEV-EPIC01-ST05-01 filed 2026-07-13 | **Effort:** S (~0.5 day) | **Provisional-Target:** ✅ COMPLETE — 2026-07-14 — cycle: 2026-07-14__release-v7.1 (ST-03)
+**Problem:** `docs/specs/frontend/pages/positions.md` §Alerts Column specifies the RISK OFF badge as Label "RISK OFF", Background `#1E40AF` (blue-800). The shipped Table View implementation (`src/pages/Positions.js`, `AlertsCell` component) instead renders `bg-amber-900/60 text-amber-300`, label "Risk-Off", plus a `ShieldAlert` icon not in spec — pre-existing since v6.2, confirmed by the existing passing test `SC-RO-02` (`tests/e2e/epic01-v62-stops-alerts.spec.js`) which encodes the amber colour as expected. This was discovered while building the v7.0 Grid View RISK OFF badge (ST-02), which correctly uses the spec's blue `#1E40AF` — so Table View and Grid View are now visually inconsistent for the same badge. It also undermines the v7.0 combined-badge differentiation decision record's "hue separation" rationale (blue-800 vs amber-600) for Table View specifically, since both RISK OFF and GAP RISK render in the amber family there.
+**Scope:** Either (a) bring Table View's RISK OFF badge into spec compliance (`#1E40AF`, "RISK OFF" label) and update `SC-RO-02`'s amber assertion accordingly, or (b) run a fresh design-gate decision to formally accept amber as the canonical Table View treatment and update `positions.md` + the combined-badge decision record to match reality. Needs its own design-gate scoping — not a same-sprint fix.
+
+---
+
+### BLG-BE-61 — Position review-cadence nudge: backend/data-integrity hardening pass
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-14
+**Shipped in:** v7.1 (cycle: 2026-07-14__release-v7.1, ST-04)
+**Evidence:** docs/product/changelog.md#v7.1; claude/cycles/2026-07-14__release-v7.1/verification_report.md
+
+### BLG-BE-61 — Position review-cadence nudge: backend/data-integrity hardening pass
+**Priority:** P2 (Medium) | **Type:** Backend / Security / Data Model | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-cybersecurity-20260713-02, IDEA-data-model-20260713-02, IDEA-strategy-owner-20260713-02 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-14 — cycle: 2026-07-14__release-v7.1 (ST-04)
+**Problem:** v7.0 shipped `last_reviewed_at` tracking + `PATCH /positions/{id}/mark-reviewed` (EPIC-03 ST-15, `BLG-FEAT-68`) without a dedicated post-ship hardening pass. Three distinct gaps identified this cycle: (1) no confirmed IDOR regression check on the `position_id` write path for this new endpoint; (2) NULL/backfill semantics for `last_reviewed_at` on pre-existing positions are undefined; (3) risk that the review-cadence concept could be read as an implicit new position state outside the existing `§9` position state machine (GRACE → LOSING → PROFITABLE → EXIT ZONE) rather than a metadata field on top of it.
+**Scope:** (a) Run an IDOR regression check confirming `PATCH /positions/{id}/mark-reviewed` enforces the same portfolio-ownership check as other position-mutating endpoints; (b) define and document NULL/backfill semantics for `last_reviewed_at` on positions that existed pre-v7.0; (c) confirm in `strategy_rules.md §9` or `positions.md` that review-cadence is explicitly a metadata annotation, not a 5th lifecycle state.
+**Acceptance Criteria:** IDOR check documented with pass/fail result; NULL/backfill behaviour documented and verified against production data; explicit written confirmation that §9's 4-state model is unchanged.
+
+---
+
+### BLG-QA-106 — Position review-cadence nudge: frontend/QA polish pass
+
+**Status at retirement:** ✅ Complete (pre-met — no code changes required)
+**Priority at retirement:** P3
+**Retired:** 2026-07-14
+**Shipped in:** v7.1 (cycle: 2026-07-14__release-v7.1, ST-05)
+**Evidence:** docs/product/changelog.md#v7.1; claude/cycles/2026-07-14__release-v7.1/verification_report.md
+
+### BLG-QA-106 — Position review-cadence nudge: frontend/QA polish pass
+**Priority:** P3 (Low) | **Type:** QA / Frontend | **Owner:** QA & Testing Owner | **Source:** IDEA-base44-frontend-20260713-01, IDEA-frontend-specs-20260713-01, IDEA-head-of-ux-20260713-01, IDEA-qa-testing-20260713-02, IDEA-qa-lead-20260713-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-14 — cycle: 2026-07-14__release-v7.1 (ST-05, pre-met)
+**Problem:** v7.0's position review-cadence nudge (`BLG-FEAT-68`) shipped without: a confirmed explicit `data-testid` (per the standing FI-P3-01 advisory), a documented interaction/ordering rule against existing Arc 3 structured prompts (grace period alert, drawdown review, etc.), a visual-language consistency check against those same prompt precedents, confirmation that its acceptance criteria were derived from a canonical spec section rather than ad hoc, and dedicated (not bundled-generic) Playwright coverage.
+**Scope:** (a) confirm/add explicit `data-testid`; (b) document how the nudge orders/coexists with other structured position prompts when multiple fire simultaneously; (c) UX consistency review against Arc 3 prompt visual precedents; (d) confirm ACs trace to `positions.md`; (e) add dedicated Playwright scenario(s) for the nudge specifically.
+**Acceptance Criteria:** `data-testid` confirmed present; ordering rule documented in `positions.md`; UX review sign-off recorded; AC-to-spec traceability confirmed; ≥1 dedicated Playwright scenario passing in CI.
+
+---
+
+### BLG-SPEC-83 — Realized/unrealized P&L split: spec & metrics hardening pass
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-14
+**Shipped in:** v7.1 (cycle: 2026-07-14__release-v7.1, ST-06)
+**Evidence:** docs/product/changelog.md#v7.1; claude/cycles/2026-07-14__release-v7.1/verification_report.md
+
+### BLG-SPEC-83 — Realized/unrealized P&L split: spec & metrics hardening pass
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Data Model | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-api-contracts-20260713-02, IDEA-base44-frontend-20260713-02, IDEA-data-model-20260713-01, IDEA-financial-reporting-20260713-02, IDEA-frontend-specs-20260713-02, IDEA-metrics-20260713-01, IDEA-qa-lead-20260713-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-14 — cycle: 2026-07-14__release-v7.1 (ST-06)
+**Problem:** v7.0's realized vs. unrealized P&L split (EPIC-03 ST-14, `BLG-FEAT-70`) shipped without: a documented stored-vs-computed-on-read ownership decision for the two values, an explicit currency/rounding rule for the Base44 frontend prompt, a reconciliation rule confirming `realized + unrealized` ties back to the existing net P&L figure, a visual treatment distinct from the pre-existing P&L colour convention, a formal `metrics_definitions.md` entry, and confirmation that `openapi.yaml` examples were updated in the same commit as the contract (per `CLAUDE.md`'s standing rule).
+**Scope:** (a) document stored-vs-computed column ownership; (b) state exact currency/rounding rules; (c) define and verify the reconciliation rule against net P&L; (d) confirm/adjust visual treatment; (e) add `metrics_definitions.md` entry; (f) confirm `openapi.yaml` examples reflect the split; (g) dedicated Playwright coverage for the split (companion to `BLG-QA-106`'s nudge coverage — same submitter concern, different feature).
+**Acceptance Criteria:** All 6 sub-items documented/verified; reconciliation rule confirmed against at least one real portfolio's figures; ≥1 dedicated Playwright scenario passing in CI.
+
+---
+
+### BLG-SPEC-84 — Tax-year P&L CSV export: spec & test hardening pass
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-14
+**Shipped in:** v7.1 (cycle: 2026-07-14__release-v7.1, ST-07)
+**Evidence:** docs/product/changelog.md#v7.1; claude/cycles/2026-07-14__release-v7.1/verification_report.md
+
+### BLG-SPEC-84 — Tax-year P&L CSV export: spec & test hardening pass
+**Priority:** P2 (Medium) | **Type:** Spec Debt / QA / Ops | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260713-01, IDEA-backend-engineering-20260713-01, IDEA-cybersecurity-20260713-01, IDEA-financial-reporting-20260713-01, IDEA-infra-ops-20260713-01, IDEA-qa-lead-20260713-02, IDEA-qa-testing-20260713-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-14 — cycle: 2026-07-14__release-v7.1 (ST-07)
+**Problem:** v7.0's tax-year P&L CSV export (EPIC-03 ST-13, `BLG-FEAT-69`) shipped without: documented response `Content-Type`/charset/filename convention, confirmed `X-API-Key` auth enforcement parity with other financial endpoints, a financial-record-vs-analytics-export classification (with a versioning decision), smoke-test/health-check harness coverage, a test asserting actual file contents (not just that a download was triggered), a written test scenario document, and a canonical CSV/export response-body pattern entry in `backend_engineering_patterns.md` for future export endpoints to follow.
+**Scope:** (a) document response header convention; (b) confirm auth enforcement; (c) classify record type + versioning approach; (d) add smoke-test coverage; (e) add a content-asserting test; (f) author test scenario doc; (g) add canonical pattern entry to `backend_engineering_patterns.md`.
+**Acceptance Criteria:** All 7 sub-items completed/documented; content-asserting test passing in CI; smoke-test harness confirms endpoint reachability.
+
+---
+
+### BLG-GOV-202 — Disposition BLG-GOV-105 duplicate-of-BLG-GOV-45 flag
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-07-14
+**Shipped in:** N/A — process/disposition item, resolved 2026-07-12 (see BLG-GOV-105); found still open in active backlog during this cycle's `groom backlog` STEP 6.2 post-write verification (missed by v7.0's grooming pass)
+**Evidence:** Item's own heading marked "✅ COMPLETE (2026-07-12 — see BLG-GOV-105)"
+
+### BLG-GOV-202 — Disposition BLG-GOV-105 duplicate-of-BLG-GOV-45 flag — ✅ COMPLETE (2026-07-12 — see BLG-GOV-105)
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Product Owner | **Source:** Idea intake IW-20260710-01 (IDEA-product-owner-20260710-02), roadmap rebalance 2026-07-10__scheduled | **Effort:** S (~0.5-2 days) | **Provisional-Target:** Unscheduled | **Gate criteria:** None
+**Problem:** The 2026-07-10 backlog consistency audit flagged `BLG-GOV-105` as a possible duplicate of already-shipped `BLG-GOV-45` but left it un-dispositioned.
+**Proposed solution:** Product Owner reviews both entries and either closes `BLG-GOV-105` as a confirmed duplicate or records why it is distinct.
 
 ---
 

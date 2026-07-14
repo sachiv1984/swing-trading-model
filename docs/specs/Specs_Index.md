@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-07-13 (post-ship closure 2026-07-12__release-v7.0; §6.5 (BLG-SPEC-71) and §6.7 (BLG-SPEC-73) resolved — reports.md and dashboard.md reconciled to shipped behaviour; §6.6 (BLG-SPEC-72) remains OPEN, not in this cycle's scope; no new spec gaps identified this cycle per verification_report.md §6; TSG-v6.8-01/BLG-QA-86 remains OPEN, not in this cycle's scope)
+**Last Updated:** 2026-07-14 (post-ship closure 2026-07-14__release-v7.1; no §6/§7 items resolved this cycle — §6.6 (BLG-SPEC-72) remains OPEN, not in this cycle's scope; no new spec gaps identified this cycle per verification_report.md §6; TSG-v6.8-01/BLG-QA-86 remains OPEN, not in this cycle's scope; new deviation DEV-REPORTS-ST06-01 (P3, BLG-SPEC-87) recorded directly in reports.md §Known Deviations, not duplicated here per §6/§7 scope (structural/document-level gaps, not per-deviation registry) — consistent with v7.0 precedent for DEV-EPIC01-ST05-01); prior — 2026-07-13 (post-ship closure 2026-07-12__release-v7.0; §6.5 (BLG-SPEC-71) and §6.7 (BLG-SPEC-73) resolved — reports.md and dashboard.md reconciled to shipped behaviour; §6.6 (BLG-SPEC-72) remains OPEN, not in this cycle's scope; no new spec gaps identified this cycle per verification_report.md §6; TSG-v6.8-01/BLG-QA-86 remains OPEN, not in this cycle's scope)
 
 ---
 

@@ -1,13 +1,51 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-13 (post-ship closure 2026-07-12__release-v7.0 — RA:v7.0 retired)
+**Last Updated:** 2026-07-14 (post-ship closure 2026-07-14__release-v7.1 — RA:v7.1 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v7.1 — Nightly Backtest Data Integrity
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete
+**Retired from active roadmap:** 2026-07-14
+**Shipped version:** v7.1
+**Cycle reference:** 2026-07-14__release-v7.1
+**Verification report:** claude/cycles/2026-07-14__release-v7.1/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-07-14
+
+### Original Roadmap Entry
+
+### v7.1 — Nightly Backtest Data Integrity (scoping opened 2026-07-13, roadmap rebalance 2026-07-13__scheduled) — ✅ Complete — Shipped 2026-07-14 — cycle: 2026-07-14__release-v7.1
+
+Named via **STEP 8.0 Production Correctness Fast-Track** — the first fast-track promotion recorded in this engine's run history. Two fresh P1 correctness bugs were found feeding the user-visible Strategy Benchmark page's backtest-vs-actual comparison (`docs/specs/frontend/pages/strategy_benchmark.md`), and per the hard rule ("must appear in the Now horizon for the next release before any governance, pre-planning, or debt items") are named directly rather than left to `plan release` to discover:
+
+| ID | Title | Priority | Status |
+|----|-------|----------|--------|
+| `BLG-BE-59` | Gate nightly backtest ticker eligibility on `ticker_universe.created_at` (point-in-time integrity) | P1 | ✅ Complete — Mandatory anchor, Production Correctness Fast-Track — shipped v7.1 (ST-01) |
+| `BLG-BE-60` | Nightly backtest `total_pnl_gbp` not reproducible night-to-night with zero exits | P1 | ✅ Complete — Mandatory anchor, Production Correctness Fast-Track — shipped v7.1 (ST-02) |
+| `BLG-FE-107` | Table View RISK OFF badge colour/label diverges from canonical spec | P2 | ✅ Complete — shipped v7.1 (ST-03), closes DEV-EPIC01-ST05-01 |
+
+This resolves the STEP 8.1 Empty Now Horizon Gate via **Option (a)** — see `run_manifest.md` STEP 8.1 for full rationale. Full item detail: `claude/backlog/backlog.md`. Scope will be formalised at the next `plan release` invocation.
+
+<!-- roadmap-annotation-marker: RA:v7.1:2026-07-14__release-v7.1 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-14__release-v7.1
+- Plan published: 2026-07-14
+- Cycle folder: claude/cycles/2026-07-14__release-v7.1/
+- Backlog slice: claude/cycles/2026-07-14__release-v7.1/stage4_backlog_slice.md
+- Status at annotation: Committed
+
+**Verified:** 2026-07-14 (post-ship closure 2026-07-14__release-v7.1) — verification report: `claude/cycles/2026-07-14__release-v7.1/verification_report.md`. Full v7.1 scope (7 stories, 3 EPICs) delivered; 1 P2 deviation closed (DEV-EPIC01-ST05-01, resolved by ST-03); 1 new P3 deviation accepted (DEV-REPORTS-ST06-01, BLG-SPEC-87, target TBD); see `docs/product/changelog.md#v7.1`.
 
 ---
 

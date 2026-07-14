@@ -3,9 +3,42 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-13 (post-ship closure 2026-07-12__release-v7.0)
+**Last Updated:** 2026-07-14 (post-ship closure 2026-07-14__release-v7.1)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v7.1 — Nightly Backtest Data Integrity — 2026-07-14
+Cycle: 2026-07-14__release-v7.1
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-07-14__release-v7.1/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Nightly backtest data-integrity fixes: ticker eligibility now gated on `ticker_universe.created_at` (point-in-time integrity — a newly-added ticker can no longer retroactively change historical trade selection/sizing); `total_pnl_gbp` night-to-night non-reproducibility addressed by wiring the existing drift-check output into an actual alert (threshold £50, distinct exit code, greppable log line) | `production_strategy.py`; `import_backtest.py`; `tests/test_production_strategy.py` (spec_reference_not_applicable — bug fixes, no prior canonical spec) |
+| EPIC-02 | Table View RISK OFF badge brought into spec compliance (`#1E40AF`, "RISK OFF" label, icon removed), closing a v7.0 carryover deviation | `docs/specs/frontend/pages/positions.md#Alerts Column`; `#Known Deviations` |
+| EPIC-03 | v7.0 post-ship hardening pass: position review-cadence nudge IDOR fix + NULL/backfill verification (backend), frontend/QA polish confirmed pre-met; realized/unrealized P&L split spec, metrics, and reconciliation hardening; tax-year P&L CSV export spec and test hardening | `docs/specs/frontend/pages/positions.md#Last Reviewed Column`; `#Position Lifecycle State Badge`; `docs/specs/metrics_definitions.md#Realized / Unrealized P&L Split`; `docs/specs/frontend/pages/reports.md#Unrealised P&L Card`; `#Known Deviations`; `docs/reference/openapi.yaml`; `docs/specs/api_contracts/reports_endpoints.md#Response (200 — CSV, format=csv)`; `docs/specs/api_contracts/backend_engineering_patterns.md#CSV/export response-body pattern`; `docs/testing/tax_year_csv_export_scenarios.md` |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| DEV-REPORTS-ST06-01 | P3 | Reports' `estimated_unrealised_pnl` reads a nightly-job snapshot of `positions.pnl` while the Positions page computes live, causing the two pages to show different unrealised figures at the same moment (verified: −£126.25 vs −£115.06, £11.19 gap). Documentation/verification scope only; not fixed in this story. Target resolution: TBD (BLG-SPEC-87). | PO |
+
+*(1 P2 deviation, DEV-EPIC01-ST05-01, carried from v7.0 was resolved and closed this sprint by ST-03 — not a fresh acceptance.)*
+
+### Tech backlog items shipped
+- [ST-01] [D] BLG-BE-59: Gate nightly backtest ticker eligibility on `ticker_universe.created_at`
+- [ST-02] [D] BLG-BE-60: Fix nightly backtest `total_pnl_gbp` non-reproducibility
+- [ST-03] [U] BLG-FE-107: Table View RISK OFF badge colour/label spec compliance
+- [ST-04] [D] BLG-BE-61: Position review-cadence nudge — backend/data-integrity hardening pass
+- [ST-05] [D] BLG-QA-106: Position review-cadence nudge — frontend/QA polish pass (pre-met)
+- [ST-06] [D] BLG-SPEC-83: Realized/unrealized P&L split — spec & metrics hardening pass
+- [ST-07] [D] BLG-SPEC-84: Tax-year P&L CSV export — spec & test hardening pass
+
+Sign-off: Product Owner — 2026-07-14
+QA sign-off: Director of Quality — 2026-07-14
 
 ---
 
