@@ -62,10 +62,10 @@
       }
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-14__release-v7.1/EPIC-02",
       "pr_number": 981,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-14__release-v7.1/qa_evidence_EPIC-02.md",
       "test_scenarios": ["tests/e2e/epic01-v62-stops-alerts.spec.js", "tests/e2e/epic01-v70-grid-badge-parity.spec.js", "tests/e2e/gap-risk-flag.spec.js"],
@@ -95,7 +95,7 @@
             "findings_applied": [],
             "cleared_utc": "2026-07-14T00:00:00Z"
           },
-          "notes": "Design gate resolution: option (a) — bring Table View into spec compliance. AlertsCell now renders #1E40AF, label \"RISK OFF\", no icon (ShieldAlert import removed as now-unused). SC-RO-02 updated in same commit to assert spec-correct values. DEV-EPIC01-ST05-01 closed in positions.md#Known Deviations (v2.3->v2.4). Verified: 16/16 tests/e2e/epic01-v62-stops-alerts.spec.js pass, 9/9 epic01-v70-grid-badge-parity.spec.js pass, 8/8 gap-risk-flag.spec.js pass (33 total, all green, no regressions). PR #981 opened, agent-mediated DoQ sign-off (§5.3) Approved. Awaiting Product Owner acceptance."
+          "notes": "Design gate resolution: option (a) — bring Table View into spec compliance. AlertsCell now renders #1E40AF, label \"RISK OFF\", no icon (ShieldAlert import removed as now-unused). SC-RO-02 updated in same commit to assert spec-correct values. DEV-EPIC01-ST05-01 closed in positions.md#Known Deviations (v2.3->v2.4). Verified: 16/16 tests/e2e/epic01-v62-stops-alerts.spec.js pass, 9/9 epic01-v70-grid-badge-parity.spec.js pass, 8/8 gap-risk-flag.spec.js pass (33 total, all green, no regressions). PR #981 opened, agent-mediated DoQ sign-off (§5.3) Approved. Product Owner acceptance recorded via user direction — PR #981 merged 2026-07-14T16:44:14Z (commit eefbac73)."
         }
       }
     },
@@ -223,15 +223,16 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01"],
-    "epics_pending": ["EPIC-02", "EPIC-03"],
+    "epics_merged": ["EPIC-01", "EPIC-02"],
+    "epics_pending": ["EPIC-03"],
     "all_merged": false
   },
   "process_notes": [
     "2026-07-14 session resume (LL-v3.9-P3-1): local main was 5 commits behind origin/main at invocation (PR #980 merged 2026-07-14T16:17:58Z by a prior session, execution_state.json never synced). Fast-forward-pulled origin/main, ran gh pr view 980 -> confirmed MERGED, synced EPIC-01 status/pr_status to merged and moved it from epics_pending to epics_merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-07-14__release-v7.1/EPIC-01 returned empty -- no orphaned commits on the EPIC-01 branch. Separately discovered EPIC-02 (ST-03) and EPIC-03 (ST-04..07) were also fully implemented and pushed to their exec branches by the same prior session, but neither had a PR opened -- resuming from there per the EPIC-01->EPIC-02->EPIC-03 merge order.",
     "2026-07-14: EPIC-02 branch merged main in (CLAUDE.md §8 conflict resolution) to pick up the EPIC-01 sync before opening its PR, per LL-v2.0-P3-5 rebase-before-PR rule.",
-    "2026-07-14: EPIC-02 PR #981 opened after agent-mediated DoQ sign-off (§5.3, Approved). Awaiting Product Owner acceptance -- always-human gate, not agent-mediated.",
-    "2026-07-14: EPIC-03 branch merged main in (CLAUDE.md §8 conflict resolution) to pick up the EPIC-01 sync before opening its PR. EPIC-02 has not merged to main yet (PR #981 still open) but its true current state (done, signed off, PR #981) was carried forward into this branch's copy of execution_state.json rather than reverting to main's stale not_started view -- this is the same underlying JSON content EPIC-02's own branch holds, so no information is lost or contradicted; it will reconcile trivially (no-op) once EPIC-02 actually merges."
+    "2026-07-14: EPIC-02 PR #981 opened after agent-mediated DoQ sign-off (§5.3, Approved). Product Owner acceptance recorded via user direction in this session (acting as Product Owner role per explicit instruction) -- PR #981 merged 2026-07-14T16:44:14Z (commit eefbac73). Per STEP 4 hard gate, halted after that merge -- EPIC-03 not opened in that invocation.",
+    "2026-07-14: EPIC-03 branch merged main in (CLAUDE.md §8 conflict resolution) to pick up the EPIC-01 sync before opening its PR. EPIC-02 had not merged to main yet (PR #981 still open) but its true current state (done, signed off, PR #981) was carried forward into this branch's copy of execution_state.json rather than reverting to main's stale not_started view -- this is the same underlying JSON content EPIC-02's own branch held, so no information was lost or contradicted.",
+    "2026-07-14: EPIC-03 branch re-merged main (now post-EPIC-02-merge) per CLAUDE.md §8 to pick up the EPIC-02 merged/merged sync before opening its PR. Resolved 3-way conflict in execution_state.json (EPIC-02 status/pr_status -> merged/merged taken from main as the more-current state; ST-03 notes combined to retain both the PR/sign-off narrative and the final merge commit reference), qa_evidence_EPIC-02.md (add/add -- EPIC-03 branch's copy was a stale carried-forward duplicate of EPIC-02's own file; took main's authoritative version), and docs/specs/frontend/pages/positions.md (both EPIC-02's Known Deviations closure and EPIC-03's Last Reviewed Column / Position Lifecycle State Badge sections retained -- no section overlap)."
   ],
 
   "sealed": false,
