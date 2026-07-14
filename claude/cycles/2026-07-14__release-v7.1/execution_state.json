@@ -9,11 +9,11 @@
 
   "epics": {
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-07-14__release-v7.1/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-14__release-v7.1/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/test_production_strategy.py"],
       "stories": {
@@ -24,7 +24,7 @@
           "assigned_to": "engine",
           "github_issue": 973,
           "branch": "exec/2026-07-14__release-v7.1/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "ede83d2b8bc6d35ca97e3b462831efa12323bd52",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -45,7 +45,7 @@
           "assigned_to": "engine",
           "github_issue": 974,
           "branch": "exec/2026-07-14__release-v7.1/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "ede83d2b8bc6d35ca97e3b462831efa12323bd52",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
