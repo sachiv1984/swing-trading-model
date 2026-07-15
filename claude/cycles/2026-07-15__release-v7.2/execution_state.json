@@ -130,11 +130,11 @@
       }
     },
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-07-15__release-v7.2/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-15__release-v7.2/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
@@ -145,7 +145,7 @@
           "assigned_to": "engine",
           "github_issue": 986,
           "branch": "exec/2026-07-15__release-v7.2/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "9eb2f56156706d8a4c1b18415580edbee6a0a123",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
