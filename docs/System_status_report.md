@@ -2111,3 +2111,29 @@ None — all 7 sealed backlog-slice items were delivered within the sprint.
 - QA evidence logs: qa_evidence_EPIC-01.md (agent-mediated, 2026-07-14), qa_evidence_EPIC-02.md (agent-mediated, 2026-07-14), qa_evidence_EPIC-03.md (autonomous class, BLG-GOV-19, 2026-07-14)
 - Deviations filed: DEV-REPORTS-ST06-01 (P3, BLG-SPEC-87) — new; DEV-EPIC01-ST05-01 (P2, BLG-FE-107) — closed this sprint
 - Test scenarios referenced: tests/test_production_strategy.py; tests/e2e/epic01-v62-stops-alerts.spec.js SC-RO-02; tests/e2e/epic01-v70-grid-badge-parity.spec.js SC-GVP-02; tests/e2e/gap-risk-flag.spec.js; tests/test_mark_position_reviewed.py; tests/e2e/position-review-cadence-nudge.spec.js SC-RCN-01–07; tests/e2e/monthly-pnl-realized-unrealized.spec.js; tests/test_reports_integration.py::TestTaxYearCsvExport
+
+## Sprint: 2026-07-15__release-v7.2
+**Date:** 2026-07-15
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Mobile responsiveness baseline assessment across positions/screener/trade plan form/trade entry/Red Flag Journal (ST-01); Arc 5 gate confirmed not-met, proceeding on recorded PO priority override | docs/specs/frontend/mobile_responsiveness_baseline_assessment_v7.2.md | None |
+| EPIC-02 | Trade-plan-linkage pre-implementation readiness pass (ST-02, BLG-FE-109) — schema gap, contract pre-stage, prefill pattern, auth/S13 boundary, regression risk, and SI-02 scope all confirmed ahead of ST-03 implementation | docs/specs/blg_fe_109_pre_implementation_readiness_pass.md | None |
+| EPIC-03 | Dashboard-UX readiness/spec & instrumentation pass (ST-04, BLG-FE-110/111) — design_system.md v1.0→v1.1 and new base44_prompt_template_library.md formalise the event/instrumentation contract ahead of ST-05/ST-06 implementation | docs/specs/blg_fe_110_111_pre_implementation_spec_instrumentation_pass.md; docs/specs/frontend/design_system.md; docs/specs/frontend/base44_prompt_template_library.md | None |
+| EPIC-04 | Notification/digest surface consolidation review (ST-07) — 4 findings documented (duplicate nav entries, disconnected nav grouping, no digest/alert cross-link, two disconnected "digest" concepts); consolidation recommendation deferred to next groom-backlog pass | docs/specs/frontend/notification_surface_consolidation_review_v7.2.md | None |
+| EPIC-05 | Combined design-review + shared-Playwright-suite plan (ST-08) — confirms design_gate.md's combined pass and names the shared spec file (tests/e2e/v7.2-dashboard-tradeplan-ux-hardening.spec.js) for ST-03/ST-05/ST-06 | docs/specs/frontend/blg_qa_111_combined_design_review_shared_playwright_plan.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-03, ST-05, ST-06 | Implementation stories gated on this sprint's readiness passes (ST-02/ST-04) — now unblocked, ready for next sprint planning | n/a — carried in stage4_backlog_slice.md sequencing constraint, not a backlog return |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md, qa_evidence_EPIC-05.md (all autonomous class, BLG-GOV-19, 2026-07-15)
+- Deviations filed: None
+- Test scenarios referenced: None — all five deliverables are readiness/audit/planning documentation artefacts; no runnable test files added this sprint
