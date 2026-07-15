@@ -3,11 +3,13 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.9
-**Last Updated:** 2026-07-13
+**Version:** 3.1
+**Last Updated:** 2026-07-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Release:** v6.4
+**Release:** v7.2
 **EPIC:** EPIC-03
+**Design Source (v3.1):** docs/design/2026-07-15__release-v7.2/dashboard-briefing-hierarchy/ux_spec.md (BLG-FE-111)
+**Design Source (v3.0):** docs/design/2026-07-15__release-v7.2/dashboard-empty-states/ux_spec.md (BLG-FE-110)
 **Design Source (v2.8):** docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md (BLG-FE-95 remediation)
 **Design Source (v2.6):** docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md (BLG-FE-88 remediation)
 **Design Source (v2.5):** docs/specs/qa/ai_disclaimer_visibility_assessment.md (BLG-UX-01 remediation)
@@ -41,9 +43,13 @@ Users should immediately see:
 
 A new section at the top of `DashboardHome.js`, placed **above** the existing five session-summary cards. It provides start-of-day intelligence across five focused cards. The section is always visible and not collapsible.
 
-### Section Header
+### Section Container & Header (v7.2 — ST-06)
 
-Label: **"Trader's Morning Briefing"** — left-aligned, secondary text weight. Not a prominent heading.
+The section is wrapped in an enclosing panel to visually separate it from the session-summary card grid below: `rounded-2xl border border-slate-300/60 dark:border-slate-800 bg-slate-100/60 dark:bg-slate-900/40 p-4` (explicit light/dark pair — see design source for rationale re: prior bare-dark-token contrast defects).
+
+Label: **"Trader's Morning Briefing"** — preceded by a `Sunrise` icon (`text-amber-500 dark:text-amber-400`), `text-sm font-semibold text-slate-700 dark:text-slate-300` (upgraded from plain caption weight to establish a shared "intelligence section" visual language with the AI Daily Briefing Card, §5).
+
+Design source: `docs/design/2026-07-15__release-v7.2/dashboard-briefing-hierarchy/ux_spec.md`.
 
 ### Layout
 
@@ -175,6 +181,26 @@ If no recent activity: show “No recent trade activity”
 
 ---
 
+## 4A. Card Empty States (v7.2 — ST-05)
+
+**Design source:** `docs/design/2026-07-15__release-v7.2/dashboard-empty-states/ux_spec.md`
+
+`DataState` (`src/components/ui/DataState.js`) gains an optional `compact` prop (default `false`, non-breaking) that reduces the `empty` branch's padding/icon/heading size for use inside fixed-height card grids (`py-4`/`w-6 h-6` icon/`text-xs` heading vs the default `py-16`/`w-10 h-10`/`text-sm`). `loading`/`error` branches are unaffected by `compact`.
+
+Applied with `compact` to the following cards' own content (inside `DashboardCard`, below the always-visible title label; `DashboardCard`'s own loading/error short-circuit is untouched):
+
+| Card | Empty condition | Icon | Heading | Body | CTA |
+|------|-----------------|------|---------|------|-----|
+| Open Positions | 0 open positions | `Inbox` | "No open positions" | "Positions you open will appear here." | None |
+| In Grace Today | 0 positions in grace | `ShieldCheck` | "No positions in grace" | "You'll be notified as positions approach review." | None |
+| Recent Activity | 0 recent trade events | `Activity` | "No recent activity" | "Trade opens, closes, and stop updates will show up here." | None |
+
+No CTA on any of the three — the existing whole-card click-through (§8 Navigation Targets) already provides the next step; a second CTA would compete with it.
+
+**Explicitly out of scope** (not missing data, so no empty state applies): Portfolio Heat (0% is a meaningful value, not absence of data), Signal Status (0 signals today is a valid count). Morning Briefing's five sub-cards and the AI Daily Briefing Card's existing "No briefing yet" state already have appropriately-scaled empty copy for their contexts and are unchanged by this story.
+
+---
+
 ## 5. AI Daily Briefing Card (v6.2 — ST-07)
 
 **Design source:** `docs/design/2026-06-24__release-v6.2/ai-daily-briefing-card/ux_spec.md`
@@ -190,9 +216,12 @@ Full-width card spanning the content area. Does not replace or modify any existi
 
 | Element | Position | Spec |
 |---------|----------|------|
+| Icon (v7.2 — ST-06) | Left, before Title | `Sparkles` (`text-violet-500 dark:text-violet-400`) — same icon used for the "AI draft" badge convention (`trade_plan.md` §5b), establishing a shared "intelligence section" visual language with the Morning Briefing panel (§1A) |
 | Title | Left | "Today's Briefing" |
 | Timestamp | Centre-right | "Generated HH:MM" (muted, 12px) |
 | Regenerate button | Right | Secondary/outlined style; disabled during load |
+
+Design source (icon addition): `docs/design/2026-07-15__release-v7.2/dashboard-briefing-hierarchy/ux_spec.md`. No other change to this card's container, states, or behaviour.
 
 ### Advisory Label
 
@@ -365,6 +394,8 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.1 | 2026-07-15 | v7.2 design gate — §1A Morning Briefing Section (ST-06, BLG-FE-111): enclosing panel added around the section (`bg-slate-100/60 dark:bg-slate-900/40`, explicit light/dark pair) to visually separate it from the session-summary grid; section label upgraded to `Sunrise` icon + `text-sm font-semibold` (from plain caption weight). §5 AI Daily Briefing Card: `Sparkles` icon added to the header, matching the "AI draft" badge convention, to share the same "intelligence section" visual language as the Morning Briefing panel. No change to any card's data, queries, or the `dashboard-retry-root` retry behaviour. Design source: dashboard-briefing-hierarchy/ux_spec.md. Approved: Product Owner 2026-07-15. Head of Specs Team confirmed. |
+| 3.0 | 2026-07-15 | v7.2 design gate — §4A Card Empty States added (ST-05, BLG-FE-110): `DataState` gains a `compact` prop (non-breaking); applied to Open Positions, In Grace Today, and Recent Activity cards' zero-count states (icon + heading + body, no CTA), replacing bare muted text/raw-zero rendering. Portfolio Heat and Signal Status explicitly out of scope (0 is a meaningful value for both, not missing data). Morning Briefing sub-cards and AI Daily Briefing's existing empty state unchanged. Loading/error states unaffected. Design source: dashboard-empty-states/ux_spec.md. Approved: Product Owner 2026-07-15. Head of Specs Team confirmed. |
 | 2.9 | 2026-07-13 | v7.0 sprint execution (ST-10, BLG-SPEC-73): Resolved the §6 Gate Progress Indicator copy divergence flagged at v2.7 — updated the Display table to document the shipped `GateProgressStrip.js` copy verbatim as canonical (`{closed}/{threshold} closed trades · {remaining} more to unlock quality insights`, `Quality insights unlocked ✓`) instead of the original, never-implemented `PT-04/SI-02`-coded wording. Removed the §6 Known Deviations note (superseded — no longer a deviation now that spec matches shipped code). No code change; `GateProgressStrip.js` and `tests/e2e/gate-progress.spec.js` were already correct. Wording-only change — FI-P3-02 exception applies (CLAUDE.md), code review of static JSX/text substitutes for staging sign-off. |
 | 2.8 | 2026-07-12 | v7.0 design gate — Page-title light-theme contrast fix (ST-08, BLG-FE-95): `text-white` → `text-slate-900 dark:text-white` on the "Dashboard" `<h1>` (light-mode value was missing entirely; ~1.1:1 fail). Same defect class as BLG-FE-87/88, now extended to primary heading text (no prior token existed for this class). No layout change. Design source: `docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md`. Head of UX & Design sign-off: 2026-07-12. Head of Specs Team confirmed. |
 | 2.7 | 2026-07-09 | ST-11 (BLG-QA-64, EPIC-03, v6.8) — Known Deviations added to §6 Gate Progress Indicator: shipped `GateProgressStrip.js` copy ("closed trades... quality insights", "Quality insights unlocked ✓") diverges from this section's specified copy ("{N}/20 trades (PT-04/SI-02 gate)", "Gate cleared ✓"). Filed as BLG-SPEC-73. No layout/behaviour change — text-only finding surfaced while fixing dark Playwright spec `gate-progress.spec.js`. |

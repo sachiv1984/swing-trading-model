@@ -1,9 +1,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.9
-**Last Updated:** 2026-07-08
+**Version:** 1.0
+**Last Updated:** 2026-07-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Design Source (v1.0 Start Trade from Plan):** docs/design/2026-07-15__release-v7.2/start-trade-from-plan/ux_spec.md (BLG-FE-109)
 **Design Source (v0.1):** docs/design/2026-04-29__release-v3.1/trade-plan/ux_spec.md (v3.1 — artefact reference only; file not present in repo)
 **Design Source (v0.2 checklist):** docs/design/2026-05-05__release-v3.2/pre-trade-entry-checklist/ux_spec.md
 **Design Source (v0.3 abandonment + badges):** docs/design/2026-05-09__release-v3.3/trade-plan-quick-wins/ux_spec.md §A, §B
@@ -375,6 +376,42 @@ All badges: filled pill, white text. Contrast ≥ 4.5:1 (WCAG AA) for all combin
 
 ---
 
+## 10. Start Trade from Plan (v7.2 — ST-03 BLG-FE-109)
+
+**Design source:** docs/design/2026-07-15__release-v7.2/start-trade-from-plan/ux_spec.md
+**Depends on:** ST-02 pre-implementation readiness pass (BLG-SPEC-89)
+
+> **§13 Compliance:** Display-only linkage convenience. The trader confirms or edits every field before submitting a trade via the existing manual entry form; no automated trade execution or recommendation is introduced.
+
+### 10.1 Entry Points
+
+A **"Start Trade"** action is added:
+
+- **Detail view:** primary button in the `PageHeader` actions row (left of "Abandon Plan"/"Edit"/"Back"), icon `TrendingUp`, label "Start Trade".
+- **List view:** ghost icon button in the Actions column (`h-7 w-7`, matches existing Edit/Delete icon-button pattern), icon `TrendingUp`, positioned first.
+
+**Visibility:** shown only when `status` is `draft`, `research_pending`, `research_complete`, or `entry_conditions_set`. Hidden when `status` is `active` (a position already exists for this plan), `closed`, or `abandoned` — extends the same logic already used to hide the "Abandon" action (§8.1).
+
+### 10.2 Hand-off to Trade Entry
+
+Clicking "Start Trade" navigates to `/TradeEntry` passing `location.state.trade_plan_prefill` — a sibling pattern to the existing `watchlist_prefill` mechanism:
+
+```js
+{ trade_plan_id: plan.id, ticker: plan.ticker, market: plan.market, stop_price: plan.stop_level ?? "" }
+```
+
+`ticker`, `market`, and `stop_price` pre-populate the entry form (editable); `entry_price`, `shares`, `fill_price`, `fx_rate`, and `atr_value` are not pre-filled — the trader enters live fill terms at execution time, unchanged from the manual flow. `trade_plan_id` is carried in component state (not a visible/editable field) and included automatically in the trade-creation payload on submit — no additional user action required. A non-editable "Linked to trade plan" indicator pill renders below the ticker field for confirmation.
+
+### 10.3 Manual Entry — Optional Linking
+
+Trades started by direct navigation to `/TradeEntry` (no `trade_plan_prefill` state) are unaffected — no indicator, no `trade_plan_id` in the payload. Once a ticker is entered manually, an optional **"Link to trade plan (optional)"** select appears, populated from `GET /trade-plans?ticker={ticker}` filtered to the same non-terminal, non-active statuses as §10.1. The field does not render at all when no eligible plan exists for the ticker (same "hidden entirely when absent" convention as the Signal Context panel, §5a). Selecting a plan sets `trade_plan_id` and shows the same indicator; ticker/market remain read-only in this path since they drove the query.
+
+### 10.4 Regression Risk
+
+No existing `TradeEntry.js` required-field validation (`ticker`, `shares`, `entry_price`) changes — `trade_plan_id` and the optional link selector are additive, outside the existing validity check. The Signal Context panel (§5a, keyed to a linked *signal*) is unrelated and unaffected; both panels may render simultaneously if applicable.
+
+---
+
 ## Known Deviations
 
 | ID | Description | Canonical requirement | Priority | Target resolution | Owner | Backlog reference |
@@ -388,6 +425,7 @@ All badges: filled pill, white text. Contrast ≥ 4.5:1 (WCAG AA) for all combin
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.0 | 2026-07-15 | v7.2 design gate — added §10 Start Trade from Plan (ST-03, BLG-FE-109): "Start Trade" action on detail view (primary button) and list view (icon button), visible only for non-active/non-terminal plans; hands off to `/TradeEntry` via a new `trade_plan_prefill` navigation-state object (sibling to existing `watchlist_prefill`) pre-filling ticker/market/stop; `trade_plan_id` carried automatically, non-editable "Linked to trade plan" indicator shown; manual entry gains an optional "Link to trade plan" selector when an eligible plan exists for the entered ticker. No change to existing required-field validation. Depends on ST-02 readiness pass (BLG-SPEC-89). Design source: start-trade-from-plan/ux_spec.md. Approved: Product Owner 2026-07-15. Head of Specs Team confirmed. |
 | 0.9 | 2026-07-08 | v6.8 design gate — added §5c Trade Plan Tags (ST-05, BLG-FEAT-52): new independent `trade_tags` field on `trade_plans` (data-independent from existing position/journal tags), Tag Editor on edit form, Tag List (read-only) on detail view, new `GET /trade-plans/tags` autocomplete endpoint. Reuses `journal_components.md` §4 Tag Editor and §1-equivalent pill display for visual consistency only. §5.1 form fields table and §7 detail view updated. Design source: trade-tagging/ux_spec.md. Approved: Product Owner 2026-07-08. Head of Specs Team confirmed. |
 | 0.8 | 2026-07-02 | v6.5 design gate — added §5b Claude Thesis Generation & Feedback (ST-07, BLG-FE-46): documents the previously-unspecified "Improve with AI" button (Claude Haiku 4.5, `POST /trade-plans/generate-plan`) and a new 👍/👎 feedback control on generated drafts, single-shot per generation, feeding `thesis_adoption_rate` (ST-08). Notes a spec correction: the shared `isAiDraft` flag conflates the local template button and the Claude-backed button — implementation must gate the feedback control on a Claude-specific signal. Design source: thesis-feedback-mechanism/ux_spec.md. Approved: Product Owner 2026-07-02. Head of Specs Team confirmed. |
 | 0.7 | 2026-05-21 | v3.9 design gate — updated §7a Setup Quality Score (ST-14, conditional EPIC-05): endpoint changed to ticker-based `GET /trade-plans/setup-quality-score?ticker={plan.ticker}`; qualitative labels added (Excellent/Good/Fair/Low); expandable detail panel (matching_trades, win_rate, average_R); gate_not_met message replaces "N/A" text. Added §7b: score panel in creation form (shown after ticker entered, debounced refetch). Design source: setup-quality-score-v2/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |
