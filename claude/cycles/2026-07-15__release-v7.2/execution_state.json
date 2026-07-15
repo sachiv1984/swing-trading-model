@@ -44,10 +44,10 @@
       }
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-15__release-v7.2/EPIC-02",
       "pr_number": 989,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-15__release-v7.2/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
@@ -55,7 +55,7 @@
         "ST-02": {
           "title": "BLG-FE-109 pre-implementation readiness pass",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 984,
           "branch": "exec/2026-07-15__release-v7.2/EPIC-02",
@@ -202,10 +202,9 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01"],
-    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
+    "epics_merged": ["EPIC-01", "EPIC-02"],
+    "epics_pending": ["EPIC-03", "EPIC-04", "EPIC-05"],
     "all_merged": false,
-    "epic_02_awaiting": ["Product Owner acceptance (comment on PR #989 or sprint_backlog.md) — always-human gate per execution_prompt.md §5.3, not agent-mediated"],
     "epic_03_awaiting": ["Product Owner acceptance (comment on PR #990 or sprint_backlog.md) — always-human gate per execution_prompt.md §5.3, not agent-mediated"],
     "epic_04_awaiting": ["Product Owner acceptance (comment on PR #991 or sprint_backlog.md) — always-human gate per execution_prompt.md §5.3, not agent-mediated"],
     "epic_05_awaiting": ["Product Owner acceptance (comment on PR #992 or sprint_backlog.md) — always-human gate per execution_prompt.md §5.3, not agent-mediated"]
