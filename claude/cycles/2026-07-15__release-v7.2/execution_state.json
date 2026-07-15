@@ -165,8 +165,8 @@
     "EPIC-05": {
       "status": "done",
       "branch": "exec/2026-07-15__release-v7.2/EPIC-05",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 992,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-15__release-v7.2/qa_evidence_EPIC-05.md",
       "test_scenarios": [],
@@ -209,7 +209,8 @@
     "epic_01_awaiting": ["CI checks (quality_gate.yml) completion", "Product Owner acceptance (comment on PR #988 or sprint_backlog.md)"],
     "epic_02_awaiting": ["CI checks (quality_gate.yml) completion", "Product Owner acceptance (comment on PR #989 or sprint_backlog.md)"],
     "epic_03_awaiting": ["CI checks (quality_gate.yml) completion", "Product Owner acceptance (comment on PR #990 or sprint_backlog.md)"],
-    "epic_04_awaiting": ["CI checks (quality_gate.yml) completion", "Product Owner acceptance (comment on PR #991 or sprint_backlog.md)"]
+    "epic_04_awaiting": ["CI checks (quality_gate.yml) completion", "Product Owner acceptance (comment on PR #991 or sprint_backlog.md)"],
+    "epic_05_awaiting": ["CI checks (quality_gate.yml) completion", "Product Owner acceptance (comment on PR #992 or sprint_backlog.md)"]
   },
 
   "process_notes": [],
