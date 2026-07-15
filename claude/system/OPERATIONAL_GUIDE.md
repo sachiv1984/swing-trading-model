@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.97
+**Version:** 4.98
 **Last Updated:** 2026-07-15
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.56)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.57)
 
 ### 8.1 Invocation
 
@@ -1454,7 +1454,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.97 |
+| Version | 4.98 |
 | Last Updated | 2026-07-15 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
@@ -1467,7 +1467,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.42 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.13 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.56 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.57 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.6 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.4 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.1 |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.98 | 2026-07-15 | **Post-ship closure `2026-07-15__release-v7.2` STEP 8 — execution_prompt.md v3.56→v3.57 (LL-v7.2-P3-01, Phase 3 Friction Log deferred patch, action-now).** §8 source prompt header v3.56→v3.57. §14 Execution Engine Source v3.56→v3.57. Change: new "Session-start divergence check" added at the very top of STEP -1 (before the existing "First action" read), plus a companion step 0 in §10 Resumability — `git fetch origin` + local-vs-`origin/main` comparison must run before any local state file (`.claude_current_state.json`, `execution_state.json`) is trusted, generalising the existing LL-v3.9-P3-1 resume-sync pattern (previously scoped only to STEP 4's merge-gate) to the start of the routine. Root cause: this cycle's own first `run sprint` invocation read stale local state as if only the EPIC-01 planning stub existed, when 4 EPICs' worth of engine-autonomous work already existed on `origin/main` from an earlier unsynced session — causing a duplicate `execution_state.json` re-initialisation and 5 duplicate GitHub issues (#993–#997) before the mismatch was caught mid-session and reconciled. Closes the Phase 3 deferred patch recorded in `claude/cycles/2026-07-15__release-v7.2/lessons_learnt_cycle.md`. Authority: Head of Specs Team (post-ship closure `2026-07-15__release-v7.2`, STEP 8 — immediate lessons-learnt action rule). |
 | 4.97 | 2026-07-15 | **Roadmap rebalance `2026-07-15__scheduled` STEP 11 — roadmap_prompt.md v8.9→v9.0: STEP 4.2 Idea Consolidation convention codified (action-now, no longer deferred).** §6 source prompt header v8.9→v9.0. §13 Artefact Register Roadmap Rebalance Prompt row v8.9→v9.0. §14 Roadmap Engine Source v8.9→v9.0. §14 Version 4.96→4.97/2026-07-15. Change: `roadmap_prompt.md` STEP 4.2 — the ad hoc "Idea Consolidation" convention used at `2026-07-13__scheduled` (invented without a governing rule, deferred pending a 2nd confirming clustering instance) is now formalised: when N idea submissions converge on the same feature/problem area, the Facilitator may file one consolidated backlog item (Source field lists every contributing Idea ID; each register row's Step 5 column names the consolidated item explicitly). Confirmed generalisable after a 2nd independent clustering event this cycle (22 of 44 `IW-20260715-01` submissions on 5 ad-hoc-added items, consolidated into 4 backlog items). Closes the deferred patch from `2026-07-13__scheduled` lessons learnt (STEP 4.2 Idea Consolidation). Authority: Head of Specs Team (roadmap rebalance `2026-07-15__scheduled`, STEP 11). |
 | 4.96 | 2026-07-14 | **Lifecycle audit AUD-2026-07-14, finding AUD-2026-07-14-001 applied — §14 self-metadata desync fixed (recurrence) + shared_standards.md v3.15→v3.16.** §14 Version/Last Updated table row corrected from a stale 4.93/2026-07-13 to 4.96/2026-07-14 — the 4.94/4.95 entries below had bumped the top document header and Change Log but never updated the §14 table's own `Version`/`Last Updated` value row, a further recurrence of the exact header-drift pattern this section's own drift-prevention note (added v4.85) exists to catch, and which the `shared_standards.md` §9.1 guard (added 2026-07-10 specifically to prevent it) failed to stop since that note covered the Change Log top row but not the §14 field-table's own summary row. §14 Shared Standards v3.15→v3.16. Change: `shared_standards.md` §9.1 rewritten from a single prose paragraph into an explicit 3-step Before/After checklist, adding a distinct required check-point for a document's own self-referential summary table (e.g. this file's §14) separate from its Change Log top row — modelled on the §7.1 Structural Append-Verification Procedure. Closes AUD-2026-07-14-001. Authority: Head of Specs Team (audit AUD-2026-07-14 patch application, 2026-07-14). |
 | 4.95 | 2026-07-14 | **PMO Lead direct action — resolved outstanding action #2 from `2026-07-14__release-v7.1` post-ship closure (Release Planning Carry-Forward #2: capacity check landed at top of band with zero buffer, and a genuine either/or risk fix-vehicle choice was deferred to execution kickoff).** §7 source prompt header v3.12→v3.13. §14 Sprint Planning Engine v3.12→v3.13. §14 Version 4.94→4.95/2026-07-14. Changes: `sprint_planning_prompt.md` STEP 0 — new "Phasing Recommendation as a live option" (LP-14) requiring the Product Owner's capacity-WARN acknowledgement to explicitly Adopt or Decline any `### Phasing Recommendation` present in `release_plan.md`, not merely acknowledge the WARN in the abstract. STEP 5.3 Risk Flags — new "Multi-vehicle fix-choice risk check" (LP-14) requiring Sprint Planning to identify risk-register items whose mitigation names multiple genuinely alternative fix vehicles with differing effort, and cross-reference them against the Phasing Recommendation at planning time rather than silently deferring the sizing uncertainty to execution. Closes outstanding action #2 from `claude/cycles/2026-07-14__release-v7.1/closure_record.md` §6. Authority: PMO Lead (direct action, user-invoked, 2026-07-14). |

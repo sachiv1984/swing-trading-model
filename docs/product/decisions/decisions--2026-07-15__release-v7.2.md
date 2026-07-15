@@ -1,6 +1,6 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v7.2
 Cycle: 2026-07-15__release-v7.2
 Last Updated: 2026-07-15
@@ -24,8 +24,6 @@ Last Updated: 2026-07-15
 None — no Accepted Risk escalations raised this cycle. All 5 risk-register entries (see `release_plan.md §Execution Plan → Risk Register Summary`) are mitigated in-plan (Medium/Low priority, or High priority with an explicit in-scope mitigation item), with no `escalation_ref`.
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
-
-Superseded by: [TBD]
-Changelog: [TBD]
+Superseded by: v7.2 ship — 2026-07-15
+Changelog: docs/product/changelog.md#v7.2
 Cycle: 2026-07-15__release-v7.2

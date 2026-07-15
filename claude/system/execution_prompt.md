@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.56
-**Last Updated:** 2026-07-10
+**Version:** 3.57
+**Last Updated:** 2026-07-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -315,6 +315,7 @@ If the state file cannot be updated: halt.
 This routine is fully resumable across sessions.
 
 On invocation:
+0. **(LL-v7.2-P3-01)** Run `git fetch origin` and compare local `main` to `origin/main` before trusting any local state file — see STEP -1's Session-start divergence check. Do not wait for STEP 4's merge-gate resume-sync (LL-v3.9-P3-1) to catch a session that starts behind origin.
 1. Load `.claude_current_state.json` to identify `active_cycle`.
 2. Check for `claude/cycles/<cycle_id>/execution_state.json`.
 3. If it exists: resume from the first item whose status is `not_started`, `in_progress`, or `blocked_*` (after re-evaluating whether blocks are cleared).
@@ -354,6 +355,8 @@ Schema: per `claude/system/shared_standards.md §16.3` (header format, delegatio
 ## Mandatory End-to-End Process
 
 ## STEP -1 — Preflight Gate (Hard Gate)
+
+**Session-start divergence check (required, generalises LL-v3.9-P3-1 — LL-v7.2-P3-01):** Before reading or trusting any local state file, run `git fetch origin` then compare local `main` to `origin/main` (e.g. `git rev-list --left-right --count main...origin/main`). If local `main` is behind `origin/main`, run `git checkout main && git pull` (only if currently on `main` with no uncommitted changes) before proceeding. A session that starts significantly behind origin risks re-deriving `execution_state.json` state and GitHub issues that already exist upstream (duplicate STEP 0 re-initialisation, duplicate issue creation) — this check must run before the "First action" read below, not only at STEP 4's merge-gate resume-sync, which fires too late to prevent the duplication.
 
 **First action:** Read `claude/cycles/<cycle_id>/execution_state.json` if it exists.
 If it exists and `status` is not `not_started`: you are resuming — see Resumability Protocol in `claude/system/shared_standards.md` §8.

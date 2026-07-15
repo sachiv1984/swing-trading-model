@@ -3,9 +3,38 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-14 (post-ship closure 2026-07-14__release-v7.1)
+**Last Updated:** 2026-07-15 (post-ship closure 2026-07-15__release-v7.2)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v7.2 — Dashboard & Trade-Plan UX Hardening — 2026-07-15
+Cycle: 2026-07-15__release-v7.2
+Verified: Verified
+Verification report: claude/cycles/2026-07-15__release-v7.2/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Mobile responsiveness baseline assessment — severity-ranked findings report covering positions, screener, trade plan form, trade entry, and Red Flag Journal; Arc 5 gate explicitly noted as not-yet-met, proceeding on recorded Product Owner priority override | `docs/specs/frontend/mobile_responsiveness_baseline_assessment_v7.2.md` |
+| EPIC-02 | `BLG-FE-109` ("Start Trade from Plan") pre-implementation readiness pass — contract pre-stage, data model, auth boundary, §13 boundary, `TradeEntry.js` validation-risk, and SI-02 metric review, clearing the way for `BLG-FE-109` to enter sprint planning | `docs/specs/blg_fe_109_pre_implementation_readiness_pass.md` |
+| EPIC-03 | `BLG-FE-110`/`BLG-FE-111` pre-implementation spec & instrumentation pass — `DataState` empty-state pattern and dashboard card-hierarchy treatment formalised in `design_system.md`, new Base44 prompt template library added | `docs/specs/blg_fe_110_111_pre_implementation_spec_instrumentation_pass.md`; `docs/specs/frontend/design_system.md` (v1.0→v1.1); `docs/specs/frontend/base44_prompt_template_library.md` (new) |
+| EPIC-04 | Notification/digest surface consolidation review — audit of `Notifications.js`, `NotificationsHistory.js`, `NotificationPreferences.js`, `WeeklyDigest.js` navigation/content overlap; consolidation recommended, implementation scoped as a follow-up | `docs/specs/frontend/notification_surface_consolidation_review_v7.2.md` |
+| EPIC-05 | Combined design review + shared Playwright suite plan for `BLG-FE-109/110/111/112` — one design review session and one shared spec file (`tests/e2e/v7.2-dashboard-tradeplan-ux-hardening.spec.js`, named not yet populated) instead of four independent passes | `docs/specs/frontend/blg_qa_111_combined_design_review_shared_playwright_plan.md` |
+
+### Deviations accepted
+None.
+
+### Tech backlog items shipped
+- [ST-01] [D] BLG-FE-55: Mobile responsiveness baseline assessment
+- [ST-02] [P] BLG-SPEC-89: `BLG-FE-109` pre-implementation readiness pass
+- [ST-04] [P] BLG-SPEC-90: `BLG-FE-110`/`BLG-FE-111` pre-implementation spec & instrumentation pass
+- [ST-07] [D] BLG-FE-112: Notification/digest surface consolidation review
+- [ST-08] [P] BLG-QA-111: Combined design review + shared Playwright suite plan
+
+Sign-off: Product Owner — 2026-07-15
+QA sign-off: Director of Quality — 2026-07-15
 
 ---
 

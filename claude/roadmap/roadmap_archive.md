@@ -1,13 +1,54 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-14 (post-ship closure 2026-07-14__release-v7.1 — RA:v7.1 retired)
+**Last Updated:** 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — RA:v7.2 retired, partial: 5/8 items; 3 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-14 (post-ship closure 2026-07-14__release-v7.1 — RA:v7.1 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v7.2 — Dashboard & Trade-Plan UX Hardening (partial — 5/8 items shipped; 3 carried forward as a fresh Now-horizon entry)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete (for the 5 items shipped this cycle — `BLG-FE-55`, `BLG-SPEC-89`, `BLG-SPEC-90`, `BLG-FE-112`, `BLG-QA-111`)
+**Retired from active roadmap:** 2026-07-15
+**Shipped version:** v7.2
+**Cycle reference:** 2026-07-15__release-v7.2
+**Verification report:** claude/cycles/2026-07-15__release-v7.2/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-07-15
+
+**Note on partial retirement (first occurrence of this pattern):** 3 of the 8 items originally anchored to this Now-horizon section (`BLG-FE-109`, `BLG-FE-110`, `BLG-FE-111`) were sequencing-gated on the 2 `BLG-SPEC-*` readiness passes below and did not enter this cycle's sprint execution scope (`deferred_at_planning`, per `sprint_backlog.md`). Both gate conditions closed this cycle, so all three are now unblocked. Rather than retiring them into this historical record as if they shipped, they have been re-added to `current_roadmap.md §3` as a fresh, un-versioned Now-horizon carry-forward entry — ready for the next `plan release` to scope them into a release. This archive entry preserves the original 8-item section verbatim as the historical record of what this cycle's Now-horizon anchor contained and what it delivered.
+
+### Original Roadmap Entry
+
+### v7.2 — Dashboard & Trade-Plan UX Hardening — ✅ Complete — Shipped 2026-07-15 — cycle: 2026-07-15__release-v7.2
+
+Added at roadmap rebalance `2026-07-15__scheduled` (STEP 8.1, Option (a)), anchored by 5 P1 items added ad hoc in the session immediately preceding this cycle plus 4 supporting readiness-pass items filed this cycle. Recommended sequencing: `BLG-FE-55` first (mobile responsiveness assessment — findings may affect all four UX items below), per accepted STEP 8 advisory.
+
+Sprint execution cleared the 5 pre-implementation/readiness items this cycle (`BLG-FE-55`, `BLG-SPEC-89`, `BLG-SPEC-90`, `BLG-FE-112`, `BLG-QA-111`). The 3 UX implementation items (`BLG-FE-109`, `BLG-FE-110`, `BLG-FE-111`) were sequencing-gated on those readiness passes; both gate conditions are now satisfied and all three are unblocked and carried forward, ready for the next release planning cycle.
+
+| Feature | ID | Effort | Notes |
+|---|---|---|---|
+| Mobile responsiveness baseline assessment | BLG-FE-55 | M (~1–2 days) | ✅ Complete — shipped 2026-07-15 (ST-01) |
+| Trade-plan-to-execution linkage UX ("Start Trade from Plan") | BLG-FE-109 | M (~1–2 days) | P1; unblocked (BLG-SPEC-89 readiness pass complete) — carried to next release planning |
+| Dashboard empty/first-run state coverage | BLG-FE-110 | S–M (~0.5–1 day) | P1; unblocked (BLG-SPEC-90 readiness pass complete) — carried to next release planning |
+| Dashboard briefing visual hierarchy | BLG-FE-111 | S (~0.5 day) | P1; unblocked (BLG-SPEC-90 readiness pass complete) — carried to next release planning |
+| Notification/digest surface consolidation review | BLG-FE-112 | M (~1–2 days, audit only) | ✅ Complete — shipped 2026-07-15 (ST-07); consolidation recommended, implementation to be scoped as a follow-up |
+| BLG-FE-109 pre-implementation readiness pass | BLG-SPEC-89 | M (~2-3 days) | ✅ Complete — shipped 2026-07-15 (ST-02) |
+| BLG-FE-110/111 pre-implementation spec & instrumentation pass | BLG-SPEC-90 | S-M (~1-2 days) | ✅ Complete — shipped 2026-07-15 (ST-04) |
+| Combined design review + shared Playwright suite plan | BLG-QA-111 | S (~0.5-1 day) | ✅ Complete — shipped 2026-07-15 (ST-08) |
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-15__release-v7.2
+- Plan published: 2026-07-15
+- Cycle folder: claude/cycles/2026-07-15__release-v7.2/
+- Backlog slice: claude/cycles/2026-07-15__release-v7.2/stage4_backlog_slice.md
+- Status at annotation: Committed
 
 ---
 

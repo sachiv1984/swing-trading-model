@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-07-14 (post-ship closure 2026-07-14__release-v7.1)
+**Last Updated:** 2026-07-15 (post-ship closure 2026-07-15__release-v7.2)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -79,8 +79,9 @@
 | v6.9  | 2       | 2         | 1.00     | Both stories done; zero deviations; both named mandatory Product Value Alert pull-forwards delivered (EPIC-01: on-demand SI-01 compliance recheck BLG-FEAT-64; EPIC-02: overnight/weekend gap risk flag BLG-FEAT-65, incidentally completed the since-v6.2 documented-but-unbuilt Alerts table column); 0 delegations; 0 returns; Verified |
 | v7.0  | 15      | 15        | 1.00     | All 15 stories done; 1 P2 deviation (DEV-EPIC01-ST05-01, pre-existing since v6.2, accepted, BLG-FE-107 target v7.1); both named mandatory Product Value Alert pull-forwards delivered (BLG-FE-102, BLG-FE-97); 0 delegations; 0 returns; scope-maximisation directive fully utilised (~9.5-10 estimated days across 3 EPICs); Verified_with_deviations |
 | v7.1  | 7       | 7         | 1.00     | All 7 stories done; both P1 Production Correctness Fast-Track mandatory anchors delivered (BLG-BE-59, BLG-BE-60); 1 P2 deviation closed (DEV-EPIC01-ST05-01, resolved by ST-03); 1 new P3 deviation filed (DEV-REPORTS-ST06-01, BLG-SPEC-87); ST-05 pre-met (no code changes, confirmed still current by design gate); 0 delegations; 0 returns; Verified_with_deviations |
+| v7.2  | 5       | 5         | 1.00     | 5/5 sprint-sealed stories done (ST-01/02/04/07/08 — mobile responsiveness baseline, BLG-FE-109 readiness pass, BLG-FE-110/111 readiness pass, notification consolidation review, combined design-review/Playwright plan); ST-03/05/06 deferred_at_planning (sequencing gate, not sprint scope — now unblocked, carried to next release planning); zero deviations; all 5 EPICs autonomous class sign-off (BLG-GOV-19); 0 delegations; 0 returns; Verified |
 
-**Rolling 6-cycle average (v6.6–v7.1):** 1.00
+**Rolling 6-cycle average (v6.7–v7.2):** 1.00
 
 ---
 

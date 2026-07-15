@@ -1,11 +1,122 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
+**Last Updated:** 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-FE-55 — Mobile responsiveness baseline assessment
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (escalated from P3, gate override 2026-07-15)
+**Retired:** 2026-07-15
+**Shipped in:** v7.2 (cycle: 2026-07-15__release-v7.2, ST-01)
+**Evidence:** docs/product/changelog.md#v7.2; claude/cycles/2026-07-15__release-v7.2/verification_report.md
+
+### BLG-FE-55 — Mobile responsiveness baseline assessment
+**Priority:** P1 (High) — escalated from P3, gate explicitly overridden by Product Owner, 2026-07-15 (see note below)
+**Type:** Frontend / UX Quality
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20260522-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035, 3-cycle cap); priority escalation source: Ad-hoc UX advisory review — session 2026-07-15
+**Effort:** M (~1–2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-15 — cycle: 2026-07-15__release-v7.2 (ST-01)
+
+**Gate criteria:** Originally gated on Arc 5 fully complete (feature set stabilised — SI-02, SI-04, SI-05 all shipped). **Override note (2026-07-15):** Product Owner explicitly instructed this item be raised to P1 in this session ahead of the gate clearing. Arc 5 is not yet complete (SI-02 remains NOT MET as of 2026-07-14 live re-check — 0/11 linked trade plans); this is a deliberate priority override, not a gate resolution. Flagging so a future rebalance doesn't silently revert the priority without addressing the override.
+
+**Problem**
+No formal mobile responsiveness testing has been performed. The most frequently used views (positions, screener, trade plan form, Red Flag Journal) have been built for desktop-first usage. This is a trading app users may reasonably want to check intraday from a phone — Dashboard, Positions, Watchlist, and Signals in particular have no confirmed mobile-usable layout. Assessing mobile responsiveness after Arc 5 closes the feature set was the original plan to provide a stable baseline before any mobile polish work, but the Product Owner has elected to pull this forward given the standing gap.
+
+**Scope**
+- Identify most-used views from user behaviour observation
+- Assess mobile responsiveness for each identified view
+- Produce assessment report with severity-ranked findings
+
+**Acceptance Criteria**
+- Mobile responsiveness assessment report produced
+- Views assessed: at minimum positions, screener, trade plan form, Red Flag Journal
+
+---
+
+### BLG-FE-112 — Notification/digest surface consolidation review
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-07-15
+**Shipped in:** v7.2 (cycle: 2026-07-15__release-v7.2, ST-07)
+**Evidence:** docs/product/changelog.md#v7.2; claude/cycles/2026-07-15__release-v7.2/verification_report.md
+
+### BLG-FE-112 — Notification/digest surface consolidation review
+**Priority:** P1 (High)
+**Type:** Frontend / UX Research
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-15
+**Effort:** M (~1–2 days, audit only — implementation scoped separately pending findings)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-15 — cycle: 2026-07-15__release-v7.2 (ST-07)
+
+**Problem**
+The app has four separate surfaces for system communications — `Notifications.js`, `NotificationsHistory.js`, `NotificationPreferences.js`, and `WeeklyDigest.js` — with no confirmed evidence that users navigate between all four coherently, or that four distinct surfaces are the right shape for this workflow. Fragmented notification surfaces risk users missing information that landed on a surface they don't habitually check.
+
+**Scope**
+- Audit current navigation entry points, usage patterns, and content overlap across the four surfaces
+- Produce a findings report identifying redundancy, gaps, and a recommendation on whether/how to consolidate (e.g. a single unified inbox/history view)
+- Implementation of any consolidation is out of scope for this item — to be scoped as a follow-up if the audit recommends it
+
+**Acceptance Criteria**
+- Audit report produced covering all four surfaces: entry points, content overlap, and usage observations
+- Explicit recommendation given: consolidate (with proposed shape) or keep separate (with rationale)
+- Findings reviewed and accepted by Head of UX & Design before any follow-up implementation item is filed
+
+---
+
+### BLG-SPEC-89 — BLG-FE-109 pre-implementation readiness pass (contract, data model, auth, §13, validation-risk, metric review)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-15
+**Shipped in:** v7.2 (cycle: 2026-07-15__release-v7.2, ST-02)
+**Evidence:** docs/product/changelog.md#v7.2; claude/cycles/2026-07-15__release-v7.2/verification_report.md
+
+### BLG-SPEC-89 — BLG-FE-109 pre-implementation readiness pass (contract, data model, auth, §13, validation-risk, metric review)
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Cross-Functional | **Owner:** Head of Specs Team | **Source:** IDEA-backend-engineering-20260715-02, IDEA-api-contracts-20260715-02, IDEA-data-model-20260715-01, IDEA-head-of-engineering-20260715-02, IDEA-cybersecurity-20260715-01, IDEA-strategy-owner-20260715-01, IDEA-qa-lead-20260715-02, IDEA-challenger-20260715-01, IDEA-metrics-20260715-01, IDEA-qa-testing-20260715-01 (10-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** M (~2-3 days) | **Provisional-Target:** ✅ COMPLETE — 2026-07-15 — cycle: 2026-07-15__release-v7.2 (ST-02)
+**Problem:** `BLG-FE-109` ("Start Trade from Plan" trade-plan-to-execution linkage) touches backend auto-link logic, the API contract, the data model, authorization boundaries, the §13 human-in-the-loop boundary, `TradeEntry.js` validation, the SI-02 metric definition, and `test.py` endpoint sync — 10 separate submissions this window flagged distinct facets of the same pre-implementation readiness question rather than a genuinely 10-way-separable set of items.
+**Scope:** Before `BLG-FE-109` implementation begins: (1) confirm `trade_plan_id` auto-link consistency for the new path; (2) pre-stage the `docs/specs/api_contracts/` entry; (3) document the field in `data_model.md`; (4) confirm/scope the `TradeEntry.js` pre-fill API surface; (5) confirm authorization boundaries hold for the new action; (6) confirm the action does not cross the §13 automated-execution boundary; (7) flag `TradeEntry.js` validation as a specific regression-risk AC; (8) review the SI-02 trade-count metric definition; (9) confirm `test.py` will need a corresponding entry once the backend route lands.
+**Acceptance Criteria:** All 9 scope points addressed (as documentation, confirmed-no-gap, or a filed follow-up) before `BLG-FE-109` sprint planning; `BLG-FE-109`'s own AC updated to reference this readiness pass.
+
+---
+
+### BLG-SPEC-90 — BLG-FE-110/111 pre-implementation spec & instrumentation pass
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-15
+**Shipped in:** v7.2 (cycle: 2026-07-15__release-v7.2, ST-04)
+**Evidence:** docs/product/changelog.md#v7.2; claude/cycles/2026-07-15__release-v7.2/verification_report.md
+
+### BLG-SPEC-90 — BLG-FE-110/111 pre-implementation spec & instrumentation pass
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Cross-Functional | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** IDEA-base44-frontend-20260715-01, IDEA-base44-frontend-20260715-02, IDEA-frontend-specs-20260715-01, IDEA-frontend-specs-20260715-02, IDEA-metrics-20260715-02, IDEA-qa-testing-20260715-02 (6-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** S-M (~1-2 days) | **Provisional-Target:** ✅ COMPLETE — 2026-07-15 — cycle: 2026-07-15__release-v7.2 (ST-04)
+**Problem:** `BLG-FE-110` (dashboard empty-state coverage) and `BLG-FE-111` (dashboard briefing visual hierarchy) both need canonical spec grounding before implementation — the `DataState` empty-state pattern and card-hierarchy treatment are not yet formalised in `design_system.md`/`frontend_specs`, and neither item's AC currently calls out dual-theme verification or before/after instrumentation explicitly.
+**Scope:** (1) Formalise the `DataState` empty-state pattern in `design_system.md` and the Base44 prompt template library; (2) define primary vs secondary dashboard card treatment in frontend_specs; (3) add basic view/interaction instrumentation to `DashboardHome.js` cards; (4) confirm Base44 prompt drafts and Playwright coverage for both items explicitly call out dual-theme (light/dark) verification.
+**Acceptance Criteria:** `design_system.md`/frontend_specs updates merged before `BLG-FE-110`/`BLG-FE-111` sprint planning; both items' AC cross-reference this pass.
+
+---
+
+### BLG-QA-111 — Combined design review + shared Playwright suite plan for BLG-FE-109/110/111/112
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-15
+**Shipped in:** v7.2 (cycle: 2026-07-15__release-v7.2, ST-08)
+**Evidence:** docs/product/changelog.md#v7.2; claude/cycles/2026-07-15__release-v7.2/verification_report.md
+
+### BLG-QA-111 — Combined design review + shared Playwright suite plan for BLG-FE-109/110/111/112
+**Priority:** P2 (Medium) | **Type:** QA / UX Process | **Owner:** Head of UX & Design; QA Lead | **Source:** IDEA-director-of-quality-20260715-01, IDEA-qa-lead-20260715-01, IDEA-head-of-ux-20260715-02 (3-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** S (~0.5-1 day) | **Provisional-Target:** ✅ COMPLETE — 2026-07-15 — cycle: 2026-07-15__release-v7.2 (ST-08)
+**Problem:** `BLG-FE-109/110/111/112` all touch `DashboardHome.js` and/or the trade-plan/trade-entry flow; three independent submissions this window each recommended treating them as one combined design review and one shared Playwright test file rather than four independent passes.
+**Scope:** Scope one combined design review session covering all four items; scope one shared Playwright spec file rather than four separate ones, consistent with CLAUDE.md's frontend Playwright coverage requirement.
+**Acceptance Criteria:** Combined design review scheduled ahead of sprint planning for whichever release scopes these items; shared Playwright spec file named in each item's sprint-backlog entry.
 
 ---
 
