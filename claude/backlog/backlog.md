@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived to backlog_archive.md: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84 [shipped v7.1], BLG-GOV-202 [pre-existing completed item found during STEP 6.2 post-write verification, missed by v7.0's grooming pass]; ephemeral Release Slice v7.1 section removed; Gate Field Normalisation: 0; ID uniqueness: 5 known pre-existing duplicate IDs (BLG-OPS-37, BLG-OPS-31, BLG-OPS-28, BLG-FEAT-38, BLG-FE-49 — same items archived twice under two historical conventions, already flagged as a follow-up dedup item per v6.6 BLG-QA-72 audit; no new duplicates introduced this cycle); 0 orphans, 0 stale blockers, 0 promotion candidates flagged this run; report: claude/backlog/backlog_health_20260714.md); prior — post-ship closure 2026-07-14__release-v7.1 — 7 items marked ✅ COMPLETE: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84; no stale parked items; no Phase 4 additions required (BLG-SPEC-87 already present from sprint execution)); prior — session — 1 new item(s) added: BLG-SPEC-87); prior — 2026-07-13 (roadmap rebalance 2026-07-13__scheduled — 25 new items added via idea intake IW-20260713-01 disposition + STEP 8.0 fast-track: BLG-BE-61/62, BLG-QA-106/108, BLG-SPEC-83–86, BLG-FEAT-77, BLG-FE-108, BLG-OPS-109, BLG-GOV-219–233; STEP 8.0 Production Correctness Fast-Track promoted BLG-BE-59/BLG-BE-60 (both P1, filed same session) to the new v7.1 Now-horizon section — first fast-track promotion in this engine's history; DL-065; prior — session — 1 new item(s) added: BLG-GOV-218); prior — groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived to backlog_archive.md; ephemeral Release Slice v7.0 section removed; Gate Field Normalisation: 0 in backlog.md; ID uniqueness: PASS; 0 orphans, 0 stale blockers, 0 promotion candidates flagged this run; prior — post-ship closure 2026-07-12__release-v7.0 — 15 items marked ✅ COMPLETE: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68; no stale parked items; no Phase 4 additions required (already confirmed present per verification_report.md §5)); prior — session — 5 new item(s) added: BLG-BE-59, BLG-BE-60, BLG-OPS-108, BLG-QA-104, BLG-QA-105); prior — session — 1 new item(s) added: BLG-FE-107; prior — session — 1 new item(s) added: BLG-FE-106; prior — roadmap rebalance 2026-07-12__scheduled — 36 new items added via idea intake IW-20260712-01 disposition: BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107; BLG-GOV-105 closed as confirmed duplicate of BLG-GOV-45 (BLG-GOV-202 closed same action); BLG-GOV-28 priority escalated P2→P1; DL-064; prior — session — 5 new item(s) added: BLG-FEAT-73, BLG-FEAT-74, BLG-FEAT-75, BLG-FEAT-76, BLG-FE-102; prior — groom backlog post-ship closure 2026-07-10__release-v6.9 — 2 items archived: BLG-FEAT-64, BLG-FEAT-65; ephemeral Release Slice v6.9 section removed; prior — 2 items marked ✅ COMPLETE: BLG-FEAT-64, BLG-FEAT-65; prior — roadmap rebalance 2026-07-10__scheduled — 39 new items added via idea intake IW-20260710-01 disposition: BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72; DL-063; prior — backlog consistency audit — BLG-BE-52 archived to backlog_archive.md (already-resolved item not yet retired); BLG-GOV-105 flagged possible duplicate of shipped BLG-GOV-45, not dispositioned (see new BLG-GOV-202); BLG-GOV-28 flagged overdue §13 gate (PT-04 sealed v6.1, review not run), not dispositioned; prior — 2026-07-09 Product Owner direct action — BLG-BE-52 resolved: no backfill; prior — session — 1 new item(s) added: BLG-BE-52; prior — groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-15 (roadmap rebalance 2026-07-15__scheduled — 13 new items added via idea intake IW-20260715-01 disposition: BLG-GOV-234/235/236/237/238, BLG-SPEC-88/89/90, BLG-BE-63, BLG-QA-109/110/111, BLG-OPS-110 (9 standalone + 4 consolidated per the newly-codified Idea Consolidation convention); STEP 8.1 Option (a) — v7.2 Now-horizon section added, anchoring BLG-FE-109/110/111/112/55; DL-066; prior — session — 4 new item(s) added: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-FE-112; 1 item priority-escalated P3→P1: BLG-FE-55 [gate override, Product Owner instruction]); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived to backlog_archive.md: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84 [shipped v7.1], BLG-GOV-202 [pre-existing completed item found during STEP 6.2 post-write verification, missed by v7.0's grooming pass]; ephemeral Release Slice v7.1 section removed; Gate Field Normalisation: 0; ID uniqueness: 5 known pre-existing duplicate IDs (BLG-OPS-37, BLG-OPS-31, BLG-OPS-28, BLG-FEAT-38, BLG-FE-49 — same items archived twice under two historical conventions, already flagged as a follow-up dedup item per v6.6 BLG-QA-72 audit; no new duplicates introduced this cycle); 0 orphans, 0 stale blockers, 0 promotion candidates flagged this run; report: claude/backlog/backlog_health_20260714.md); prior — post-ship closure 2026-07-14__release-v7.1 — 7 items marked ✅ COMPLETE: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84; no stale parked items; no Phase 4 additions required (BLG-SPEC-87 already present from sprint execution)); prior — session — 1 new item(s) added: BLG-SPEC-87); prior — 2026-07-13 (roadmap rebalance 2026-07-13__scheduled — 25 new items added via idea intake IW-20260713-01 disposition + STEP 8.0 fast-track: BLG-BE-61/62, BLG-QA-106/108, BLG-SPEC-83–86, BLG-FEAT-77, BLG-FE-108, BLG-OPS-109, BLG-GOV-219–233; STEP 8.0 Production Correctness Fast-Track promoted BLG-BE-59/BLG-BE-60 (both P1, filed same session) to the new v7.1 Now-horizon section — first fast-track promotion in this engine's history; DL-065; prior — session — 1 new item(s) added: BLG-GOV-218); prior — groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived to backlog_archive.md; ephemeral Release Slice v7.0 section removed; Gate Field Normalisation: 0 in backlog.md; ID uniqueness: PASS; 0 orphans, 0 stale blockers, 0 promotion candidates flagged this run; prior — post-ship closure 2026-07-12__release-v7.0 — 15 items marked ✅ COMPLETE: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68; no stale parked items; no Phase 4 additions required (already confirmed present per verification_report.md §5)); prior — session — 5 new item(s) added: BLG-BE-59, BLG-BE-60, BLG-OPS-108, BLG-QA-104, BLG-QA-105); prior — session — 1 new item(s) added: BLG-FE-107; prior — session — 1 new item(s) added: BLG-FE-106; prior — roadmap rebalance 2026-07-12__scheduled — 36 new items added via idea intake IW-20260712-01 disposition: BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107; BLG-GOV-105 closed as confirmed duplicate of BLG-GOV-45 (BLG-GOV-202 closed same action); BLG-GOV-28 priority escalated P2→P1; DL-064; prior — session — 5 new item(s) added: BLG-FEAT-73, BLG-FEAT-74, BLG-FEAT-75, BLG-FEAT-76, BLG-FE-102; prior — groom backlog post-ship closure 2026-07-10__release-v6.9 — 2 items archived: BLG-FEAT-64, BLG-FEAT-65; ephemeral Release Slice v6.9 section removed; prior — 2 items marked ✅ COMPLETE: BLG-FEAT-64, BLG-FEAT-65; prior — roadmap rebalance 2026-07-10__scheduled — 39 new items added via idea intake IW-20260710-01 disposition: BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72; DL-063; prior — backlog consistency audit — BLG-BE-52 archived to backlog_archive.md (already-resolved item not yet retired); BLG-GOV-105 flagged possible duplicate of shipped BLG-GOV-45, not dispositioned (see new BLG-GOV-202); BLG-GOV-28 flagged overdue §13 gate (PT-04 sealed v6.1, review not run), not dispositioned; prior — 2026-07-09 Product Owner direct action — BLG-BE-52 resolved: no backfill; prior — session — 1 new item(s) added: BLG-BE-52; prior — groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -745,17 +745,17 @@ SI-01 (pre-entry validation panel) and PT-05 (entry checklist) are separate view
 ---
 
 ### BLG-FE-55 — Mobile responsiveness baseline assessment
-**Priority:** P3 (Low)
+**Priority:** P1 (High) — escalated from P3, gate explicitly overridden by Product Owner, 2026-07-15 (see note below)
 **Type:** Frontend / UX Quality
 **Owner:** Head of UX & Design
-**Source:** IDEA-head-of-ux-20260522-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035, 3-cycle cap)
+**Source:** IDEA-head-of-ux-20260522-02 — Promoted-Backlog cycle 2026-05-27__scheduled (DL-035, 3-cycle cap); priority escalation source: Ad-hoc UX advisory review — session 2026-07-15
 **Effort:** M (~1–2 days)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v7.2
 
-**Gate criteria:** Arc 5 fully complete (feature set stabilised — SI-02, SI-04, SI-05 all shipped).
+**Gate criteria:** Originally gated on Arc 5 fully complete (feature set stabilised — SI-02, SI-04, SI-05 all shipped). **Override note (2026-07-15):** Product Owner explicitly instructed this item be raised to P1 in this session ahead of the gate clearing. Arc 5 is not yet complete (SI-02 remains NOT MET as of 2026-07-14 live re-check — 0/11 linked trade plans); this is a deliberate priority override, not a gate resolution. Flagging so a future rebalance doesn't silently revert the priority without addressing the override.
 
 **Problem**
-No formal mobile responsiveness testing has been performed. The most frequently used views (positions, screener, trade plan form, Red Flag Journal) have been built for desktop-first usage. Assessing mobile responsiveness after Arc 5 closes the feature set provides a stable baseline before any mobile polish work.
+No formal mobile responsiveness testing has been performed. The most frequently used views (positions, screener, trade plan form, Red Flag Journal) have been built for desktop-first usage. This is a trading app users may reasonably want to check intraday from a phone — Dashboard, Positions, Watchlist, and Signals in particular have no confirmed mobile-usable layout. Assessing mobile responsiveness after Arc 5 closes the feature set was the original plan to provide a stable baseline before any mobile polish work, but the Product Owner has elected to pull this forward given the standing gap.
 
 **Scope**
 - Identify most-used views from user behaviour observation
@@ -1158,6 +1158,98 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 - Page title displays correctly in both light and dark themes (PageHeader's existing gradient treatment applies)
 - `BarChart2` icon and last-updated line remain present and correctly placed
 - No other page layout/behaviour changes
+
+---
+
+### BLG-FE-109 — Trade-plan-to-execution linkage UX
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Base44 Frontend Prompt Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-15
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v7.2
+
+**Problem**
+SI-02's trade gate has been stuck at 0/11 linked trade plans across multiple rebalance cycles (live re-checked and unchanged 2026-07-13 and 2026-07-14 per `.claude_current_state.json`), leaving its behavioural-drift analysis permanently `insufficient_data`. Users are creating trade plans (`TradePlan.js`/`TradePlans.js`) and separately executing trades (`TradeEntry.js`), but the two flows are disconnected — linkage requires a manual step nobody is taking. This isn't a data problem, it's a UX friction problem: the gate can never clear if the product never makes linkage the path of least resistance.
+
+**Scope**
+- Add a "Start Trade from Plan" action on `TradePlan.js` and `TradePlans.js` that opens `TradeEntry.js` pre-filled with the plan's ticker, entry, stop, and target
+- Auto-set the `trade_plan_id` linkage field on trades created via this path — no separate manual linking step required
+- Preserve the existing manual trade-entry path (with optional plan selector) for trades not originating from a saved plan
+
+**Acceptance Criteria**
+- A "Start Trade from Plan" action is visible and functional on both `TradePlan.js` (detail view) and `TradePlans.js` (list view)
+- Trades created via this action have `trade_plan_id` populated with no additional user action
+- Manually-entered trades (no plan origin) are unaffected and can still optionally select a plan to link
+- No regression to existing `TradeEntry.js` validation or submission behaviour
+
+---
+
+### BLG-FE-110 — Dashboard empty/first-run state coverage
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Base44 Frontend Prompt Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-15
+**Effort:** S–M (~0.5–1 day)
+**Provisional-Target:** v7.2
+
+**Problem**
+`DashboardHome.js` renders six-plus cards (`OpenPositionsCard`, `PortfolioHeatCard`, `GracePeriodCard`, `SignalStatusCard`, `RecentActivityCard`, `MorningBriefing`, `AiDailyBriefing`) with no confirmed empty-state handling for new or zero-data users. `Watchlist.js` already solves this cleanly via the shared `DataState` component (loading/error/empty states with icon, heading, body, and CTA) — the dashboard home cards do not appear to follow the same pattern, risking a blank or broken-looking first-run experience for new users with no positions, signals, or activity yet.
+
+**Scope**
+- Audit each `DashboardHome.js` card component for current empty-data behaviour
+- Apply the shared `DataState` empty-state pattern (icon, heading, body, CTA where applicable) to any card found lacking one
+- Ensure the existing `dashboard-retry-root` all-endpoints-failed retry path is unaffected
+
+**Acceptance Criteria**
+- Every card on `DashboardHome.js` renders a clear, on-brand empty state (not a blank card or raw zero/null value) when its underlying data is empty
+- Empty states use the shared `DataState` component consistent with `Watchlist.js`
+- Loading and error states for each card are unaffected by this change
+
+---
+
+### BLG-FE-111 — Dashboard briefing visual hierarchy
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** Ad-hoc UX advisory review — session 2026-07-15
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v7.2
+
+**Problem**
+`MorningBriefing` and `AiDailyBriefing` are the dashboard's intended "what should I do today" entry point, but on `DashboardHome.js` they are currently stacked among six other cards (open positions, portfolio heat, grace period, signal status, recent activity) with no visual distinction from status/data cards. A user scanning the page has no cue that these two cards carry different weight — they're recommendation surfaces, not status readouts.
+
+**Scope**
+- Redesign the `DashboardHome.js` layout to give `MorningBriefing` and `AiDailyBriefing` primary visual weight (e.g. pinned above the fold, distinct card treatment) separate from the positions/heat/signal status grid
+- Preserve all existing card content and functionality — layout/hierarchy change only, no data or logic changes
+
+**Acceptance Criteria**
+- `MorningBriefing` and `AiDailyBriefing` are visually distinguishable from the status-card grid on page load, without scrolling past other cards first
+- No change to underlying card data, queries, or the existing `dashboard-retry-root` retry behaviour
+- Layout change verified in both light and dark themes
+
+---
+
+### BLG-FE-112 — Notification/digest surface consolidation review
+**Priority:** P1 (High)
+**Type:** Frontend / UX Research
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-15
+**Effort:** M (~1–2 days, audit only — implementation scoped separately pending findings)
+**Provisional-Target:** v7.2
+
+**Problem**
+The app has four separate surfaces for system communications — `Notifications.js`, `NotificationsHistory.js`, `NotificationPreferences.js`, and `WeeklyDigest.js` — with no confirmed evidence that users navigate between all four coherently, or that four distinct surfaces are the right shape for this workflow. Fragmented notification surfaces risk users missing information that landed on a surface they don't habitually check.
+
+**Scope**
+- Audit current navigation entry points, usage patterns, and content overlap across the four surfaces
+- Produce a findings report identifying redundancy, gaps, and a recommendation on whether/how to consolidate (e.g. a single unified inbox/history view)
+- Implementation of any consolidation is out of scope for this item — to be scoped as a follow-up if the audit recommends it
+
+**Acceptance Criteria**
+- Audit report produced covering all four surfaces: entry points, content overlap, and usage observations
+- Explicit recommendation given: consolidate (with proposed shape) or keep separate (with rationale)
+- Findings reviewed and accepted by Head of UX & Design before any follow-up implementation item is filed
 
 ---
 
@@ -5880,5 +5972,86 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 **Problem:** No per-cycle cost/effort tracking exists for scheduled roadmap rebalances specifically (as distinct from completion-triggered runs), despite this being the highest-frequency governed routine.
 **Scope:** Record a lightweight cost/effort note (e.g. tool-call count, session duration if available) at the close of each scheduled rebalance for 3 consecutive cycles, then assess whether a permanent tracking mechanism is warranted.
 **Acceptance Criteria:** 3 consecutive scheduled cycles' data recorded; a written yes/no decision on permanent tracking follows.
+
+---
+
+### BLG-GOV-234 — AI governance operational checks: disclaimer consistency cadence + kill-switch drill
+**Priority:** P3 (Low) | **Type:** Governance / AI Compliance | **Owner:** AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260715-01, IDEA-ai-compliance-20260715-02 | **Effort:** S (~1 day) | **Provisional-Target:** TBD
+**Problem:** No periodic re-check exists that (a) Gemini/Claude disclaimer language stays consistent across all AI surfaces (thesis, chat, briefing) or (b) the AI feature global kill-switch still fully suppresses all AI calls app-wide.
+**Scope:** Add both checks as a combined periodic review item — disclaimer audit + kill-switch drill.
+**Acceptance Criteria:** Both checks performed at least once; findings documented; any gap filed as a follow-up.
+
+### BLG-SPEC-88 — OpenAPI response-example drift spot-check
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260715-01 | **Effort:** S (~0.5-1 day) | **Provisional-Target:** TBD
+**Problem:** The CI OpenAPI Drift Detection gate checks structural presence of endpoints but not whether documented example payloads in `openapi.yaml` still match live response shapes.
+**Scope:** Spot-check a sample of documented examples against live responses; file individual `BLG-SPEC-*` items for any drift found.
+**Acceptance Criteria:** Sample check performed and documented; drift (if any) filed as follow-up items.
+
+### BLG-BE-63 — Nightly backtest job idempotency check
+**Priority:** P2 (Medium) | **Type:** Backend / Data Integrity | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260715-01 | **Effort:** S (~1 day) | **Provisional-Target:** TBD
+**Problem:** `BLG-BE-59`/`BLG-BE-60` (v7.1) fixed nightly backtest data-integrity bugs but no explicit check confirms the job is safe against a double-run or retry scenario.
+**Scope:** Verify nightly backtest job idempotency — a retry or manual re-trigger must not produce duplicate or divergent results.
+**Acceptance Criteria:** Idempotency confirmed by test or code review; any gap filed as a P1/P2 correctness item per its severity.
+
+### BLG-GOV-235 — Idea-intake minimum-submission flex condition
+**Priority:** P3 (Low) | **Type:** Governance | **Owner:** Head of Specs Team | **Source:** IDEA-director-of-hr-20260715-01 | **Effort:** S | **Provisional-Target:** TBD
+**Gate criteria:** Recurs at 3+ consecutive scheduled cycles where the Now horizon is already populated with 3+ ad-hoc (non-governed-cycle) P1 items at window-open — not yet met (this is the 1st such occurrence).
+**Problem:** `idea_intake_prompt.md`'s standing 2-net-new-ideas-per-agent minimum does not flex when the Now horizon is already saturated with ad-hoc additions, potentially generating submissions redundant with just-added scope.
+**Scope:** If the gate condition recurs, evaluate whether the minimum should reduce or the window should skip agents whose domain is already covered by the ad-hoc additions.
+**Acceptance Criteria:** Gate re-checked each scheduled cycle; a written decision follows once met.
+
+### BLG-GOV-236 — Periodic role charter freshness check
+**Priority:** P3 (Low) | **Type:** Governance | **Owner:** Director of HR | **Source:** IDEA-director-of-hr-20260715-02 | **Effort:** S (~0.5 day) | **Provisional-Target:** TBD
+**Problem:** All 21 non-Facilitator role charters in `claude/agents/` are used as preflight evidence at every governed routine invocation, but no periodic check confirms they remain accurate/non-stale.
+**Scope:** Spot-check charter content against current role usage/responsibilities at a low cadence (e.g. every 10 cycles).
+**Acceptance Criteria:** First spot-check performed; any staleness found filed as a follow-up.
+
+### BLG-QA-109 — DoQ sign-off template alignment check (FI-P3-02 wording-only exception)
+**Priority:** P3 (Low) | **Type:** QA / Governance | **Owner:** Director of Quality | **Source:** IDEA-director-of-quality-20260715-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** No recent confirmation that the DoQ sign-off block template still correctly reflects CLAUDE.md's FI-P3-02 wording-only exception (code review may substitute for staging sign-off only for non-visual, wording-only ACs).
+**Scope:** Compare current DoQ sign-off block template/practice against the CLAUDE.md FI-P3-02 clause; correct if drifted.
+**Acceptance Criteria:** Comparison performed; template confirmed current or corrected.
+
+### BLG-QA-110 — Recurring CSV export content regression check
+**Priority:** P3 (Low) | **Type:** QA | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260715-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `BLG-SPEC-84`/`BLG-QA-106` (v7.1) hardened CSV export content validation, but no recurring check exists to catch regressions as new fields are added to the export over time.
+**Scope:** Add a lightweight recurring (e.g. quarterly) regression check that CSV export content stays correct.
+**Acceptance Criteria:** Recurring check scoped and scheduled; first instance run clean or findings filed.
+
+### BLG-OPS-110 — Nightly backtest job monitoring/alerting
+**Priority:** P2 (Medium) | **Type:** Operations | **Owner:** Infrastructure & Operations Owner; Head of Engineering | **Source:** IDEA-infra-ops-20260715-01, IDEA-head-of-engineering-20260715-01 | **Effort:** M (~1-2 days) | **Provisional-Target:** TBD
+**Problem:** `BLG-BE-59`/`BLG-BE-60` (v7.1) fixed a nightly backtest data-integrity bug found by manual review; no automated alerting exists if backtest output drifts again.
+**Scope:** Add monitoring/alerting for nightly backtest job failures or output anomalies.
+**Acceptance Criteria:** Alerting mechanism added and confirmed to fire on a simulated failure/anomaly.
+
+### BLG-GOV-237 — SI-02 trade-count gate threshold calibration review
+**Priority:** P3 (Low) | **Type:** Governance / Strategy | **Owner:** Strategy Rules & System Intent Owner | **Source:** IDEA-strategy-owner-20260715-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** SI-02's 11-linked-trade-plan gate threshold has sat at 0/11 for a near-full quarter (unchanged 2026-07-06 through 2026-07-15 across 5 live re-checks); no review has confirmed the threshold itself is still the right calibration point versus the linkage-UX root cause `BLG-FE-109` now targets.
+**Scope:** Review whether the 11-trade-plan threshold remains appropriate once `BLG-FE-109` ships and linkage friction is removed, or whether the threshold should be reconsidered independently.
+**Acceptance Criteria:** Review performed after `BLG-FE-109` ships (or at next scheduled rebalance if not shipped within 2 cycles); written conclusion recorded.
+
+### BLG-SPEC-89 — BLG-FE-109 pre-implementation readiness pass (contract, data model, auth, §13, validation-risk, metric review)
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Cross-Functional | **Owner:** Head of Specs Team | **Source:** IDEA-backend-engineering-20260715-02, IDEA-api-contracts-20260715-02, IDEA-data-model-20260715-01, IDEA-head-of-engineering-20260715-02, IDEA-cybersecurity-20260715-01, IDEA-strategy-owner-20260715-01, IDEA-qa-lead-20260715-02, IDEA-challenger-20260715-01, IDEA-metrics-20260715-01, IDEA-qa-testing-20260715-01 (10-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** M (~2-3 days) | **Provisional-Target:** v7.2
+**Problem:** `BLG-FE-109` ("Start Trade from Plan" trade-plan-to-execution linkage) touches backend auto-link logic, the API contract, the data model, authorization boundaries, the §13 human-in-the-loop boundary, `TradeEntry.js` validation, the SI-02 metric definition, and `test.py` endpoint sync — 10 separate submissions this window flagged distinct facets of the same pre-implementation readiness question rather than a genuinely 10-way-separable set of items.
+**Scope:** Before `BLG-FE-109` implementation begins: (1) confirm `trade_plan_id` auto-link consistency for the new path; (2) pre-stage the `docs/specs/api_contracts/` entry; (3) document the field in `data_model.md`; (4) confirm/scope the `TradeEntry.js` pre-fill API surface; (5) confirm authorization boundaries hold for the new action; (6) confirm the action does not cross the §13 automated-execution boundary; (7) flag `TradeEntry.js` validation as a specific regression-risk AC; (8) review the SI-02 trade-count metric definition; (9) confirm `test.py` will need a corresponding entry once the backend route lands.
+**Acceptance Criteria:** All 9 scope points addressed (as documentation, confirmed-no-gap, or a filed follow-up) before `BLG-FE-109` sprint planning; `BLG-FE-109`'s own AC updated to reference this readiness pass.
+
+### BLG-SPEC-90 — BLG-FE-110/111 pre-implementation spec & instrumentation pass
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Cross-Functional | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** IDEA-base44-frontend-20260715-01, IDEA-base44-frontend-20260715-02, IDEA-frontend-specs-20260715-01, IDEA-frontend-specs-20260715-02, IDEA-metrics-20260715-02, IDEA-qa-testing-20260715-02 (6-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** S-M (~1-2 days) | **Provisional-Target:** v7.2
+**Problem:** `BLG-FE-110` (dashboard empty-state coverage) and `BLG-FE-111` (dashboard briefing visual hierarchy) both need canonical spec grounding before implementation — the `DataState` empty-state pattern and card-hierarchy treatment are not yet formalised in `design_system.md`/`frontend_specs`, and neither item's AC currently calls out dual-theme verification or before/after instrumentation explicitly.
+**Scope:** (1) Formalise the `DataState` empty-state pattern in `design_system.md` and the Base44 prompt template library; (2) define primary vs secondary dashboard card treatment in frontend_specs; (3) add basic view/interaction instrumentation to `DashboardHome.js` cards; (4) confirm Base44 prompt drafts and Playwright coverage for both items explicitly call out dual-theme (light/dark) verification.
+**Acceptance Criteria:** `design_system.md`/frontend_specs updates merged before `BLG-FE-110`/`BLG-FE-111` sprint planning; both items' AC cross-reference this pass.
+
+### BLG-QA-111 — Combined design review + shared Playwright suite plan for BLG-FE-109/110/111/112
+**Priority:** P2 (Medium) | **Type:** QA / UX Process | **Owner:** Head of UX & Design; QA Lead | **Source:** IDEA-director-of-quality-20260715-01, IDEA-qa-lead-20260715-01, IDEA-head-of-ux-20260715-02 (3-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** S (~0.5-1 day) | **Provisional-Target:** v7.2
+**Problem:** `BLG-FE-109/110/111/112` all touch `DashboardHome.js` and/or the trade-plan/trade-entry flow; three independent submissions this window each recommended treating them as one combined design review and one shared Playwright test file rather than four independent passes.
+**Scope:** Scope one combined design review session covering all four items; scope one shared Playwright spec file rather than four separate ones, consistent with CLAUDE.md's frontend Playwright coverage requirement.
+**Acceptance Criteria:** Combined design review scheduled ahead of sprint planning for whichever release scopes these items; shared Playwright spec file named in each item's sprint-backlog entry.
+
+### BLG-GOV-238 — Governed-vs-ad-hoc backlog scope visibility
+**Priority:** P3 (Low) | **Type:** Governance / FinOps | **Owner:** PMO Lead; FinOps & Resource Architect | **Source:** IDEA-challenger-20260715-02, IDEA-pmo-lead-20260715-01, IDEA-finops-20260715-02 (3-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Three independent submissions this window flagged the same underlying pattern from different angles: 5 P1 items were added to `backlog.md` outside a governed cycle in the session immediately preceding this rebalance (a 2nd occurrence of ad-hoc additions bypassing governed release scoping, per the Challenger's framing), with no lightweight tracking of governed-cycle-added vs. ad-hoc session-added items per release, nor visibility into whether ad-hoc additions are displacing gated/scored capacity.
+**Scope:** Add a lightweight running tally (e.g. a count/tag in each cycle's `run_manifest.md` or `cycle_summary.md`) distinguishing governed-cycle additions from ad-hoc session additions per release, to give FinOps/PMO Lead visibility into the trend.
+**Acceptance Criteria:** Tally mechanism scoped; first data point recorded retroactively for v7.1/this cycle where determinable.
 
 ---

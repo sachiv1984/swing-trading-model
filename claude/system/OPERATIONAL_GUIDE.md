@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.96
-**Last Updated:** 2026-07-14
+**Version:** 4.97
+**Last Updated:** 2026-07-15
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v8.9)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.0)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1272,7 +1272,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v8.9) | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v9.0) | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.96 |
-| Last Updated | 2026-07-14 |
+| Version | 4.97 |
+| Last Updated | 2026-07-15 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1463,7 +1463,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.12 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v8.9 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.0 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.42 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.13 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.97 | 2026-07-15 | **Roadmap rebalance `2026-07-15__scheduled` STEP 11 — roadmap_prompt.md v8.9→v9.0: STEP 4.2 Idea Consolidation convention codified (action-now, no longer deferred).** §6 source prompt header v8.9→v9.0. §13 Artefact Register Roadmap Rebalance Prompt row v8.9→v9.0. §14 Roadmap Engine Source v8.9→v9.0. §14 Version 4.96→4.97/2026-07-15. Change: `roadmap_prompt.md` STEP 4.2 — the ad hoc "Idea Consolidation" convention used at `2026-07-13__scheduled` (invented without a governing rule, deferred pending a 2nd confirming clustering instance) is now formalised: when N idea submissions converge on the same feature/problem area, the Facilitator may file one consolidated backlog item (Source field lists every contributing Idea ID; each register row's Step 5 column names the consolidated item explicitly). Confirmed generalisable after a 2nd independent clustering event this cycle (22 of 44 `IW-20260715-01` submissions on 5 ad-hoc-added items, consolidated into 4 backlog items). Closes the deferred patch from `2026-07-13__scheduled` lessons learnt (STEP 4.2 Idea Consolidation). Authority: Head of Specs Team (roadmap rebalance `2026-07-15__scheduled`, STEP 11). |
 | 4.96 | 2026-07-14 | **Lifecycle audit AUD-2026-07-14, finding AUD-2026-07-14-001 applied — §14 self-metadata desync fixed (recurrence) + shared_standards.md v3.15→v3.16.** §14 Version/Last Updated table row corrected from a stale 4.93/2026-07-13 to 4.96/2026-07-14 — the 4.94/4.95 entries below had bumped the top document header and Change Log but never updated the §14 table's own `Version`/`Last Updated` value row, a further recurrence of the exact header-drift pattern this section's own drift-prevention note (added v4.85) exists to catch, and which the `shared_standards.md` §9.1 guard (added 2026-07-10 specifically to prevent it) failed to stop since that note covered the Change Log top row but not the §14 field-table's own summary row. §14 Shared Standards v3.15→v3.16. Change: `shared_standards.md` §9.1 rewritten from a single prose paragraph into an explicit 3-step Before/After checklist, adding a distinct required check-point for a document's own self-referential summary table (e.g. this file's §14) separate from its Change Log top row — modelled on the §7.1 Structural Append-Verification Procedure. Closes AUD-2026-07-14-001. Authority: Head of Specs Team (audit AUD-2026-07-14 patch application, 2026-07-14). |
 | 4.95 | 2026-07-14 | **PMO Lead direct action — resolved outstanding action #2 from `2026-07-14__release-v7.1` post-ship closure (Release Planning Carry-Forward #2: capacity check landed at top of band with zero buffer, and a genuine either/or risk fix-vehicle choice was deferred to execution kickoff).** §7 source prompt header v3.12→v3.13. §14 Sprint Planning Engine v3.12→v3.13. §14 Version 4.94→4.95/2026-07-14. Changes: `sprint_planning_prompt.md` STEP 0 — new "Phasing Recommendation as a live option" (LP-14) requiring the Product Owner's capacity-WARN acknowledgement to explicitly Adopt or Decline any `### Phasing Recommendation` present in `release_plan.md`, not merely acknowledge the WARN in the abstract. STEP 5.3 Risk Flags — new "Multi-vehicle fix-choice risk check" (LP-14) requiring Sprint Planning to identify risk-register items whose mitigation names multiple genuinely alternative fix vehicles with differing effort, and cross-reference them against the Phasing Recommendation at planning time rather than silently deferring the sizing uncertainty to execution. Closes outstanding action #2 from `claude/cycles/2026-07-14__release-v7.1/closure_record.md` §6. Authority: PMO Lead (direct action, user-invoked, 2026-07-14). |
 | 4.94 | 2026-07-14 | **Head of Specs Team direct action — resolved escalated decision from `2026-07-14__release-v7.1` post-ship closure (Release Planning Friction Item 1: bare-letter backlog effort bands forcing capacity-check inference by analogy).** §6 source prompt header v8.8→v8.9. §6M source prompts updated (backlog_management_prompt.md v1.11→v1.12). §13 Artefact Register Roadmap Rebalance Prompt row v8.8→v8.9. §14 Roadmap Engine Source v8.8→v8.9; Backlog Management Engine v1.11→v1.12; Shared Standards v3.14→v3.15. §14 Version 4.93→4.94/2026-07-14. Decision: **Yes** — root-caused to `roadmap_prompt.md` STEP 4.2's `📋 Backlog (gate-conditional)` disposition path, which bypasses STEP 6 (Scoring Matrix Overlay) — the only place the existing S/M/L day-range convention (§16.7) was documented — so items filed via STEP 4.2 routinely landed with a bare letter and no range. Changes: (1) `shared_standards.md` new §16.12 — canonical day-range requirement for the backlog item `**Effort:**` field, required whenever `Provisional-Target` names a specific release. (2) `roadmap_prompt.md` STEP 4.2 and STEP 9 — day-range now required at write time when disposing/promoting an item with a specific `Provisional-Target`. (3) `backlog_management_prompt.md` STEP 1 — new §1.2 Effort Day-Range Validation pre-scan, flagging (not auto-backfilling) existing non-compliant items at grooming time. Closes outstanding action #1 from `claude/cycles/2026-07-14__release-v7.1/closure_record.md` §6. Authority: Head of Specs Team (direct action, user-invoked, 2026-07-14). |

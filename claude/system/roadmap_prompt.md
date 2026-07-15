@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 8.9
-**Last Updated:** 2026-07-14
+**Version:** 9.0
+**Last Updated:** 2026-07-15
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -394,6 +394,12 @@ Any idea with `[FIELD REQUIRED]` flags on required template fields is ineligible
 | ❌ Reject — not strong | Status → Rejected |
 
 Rejected rows are not deleted. A park without a recorded rationale is treated as Reject — not strong.
+
+**Idea Consolidation convention (v9.0, 2026-07-15):** When N submissions from the current window converge on the same feature/problem area (e.g. flagged by the window summary's own overlap notes, or self-evident from shared target BLG-IDs), the Facilitator may file one consolidated backlog item rather than N separate ones. Confirmed as a generalisable pattern across two independent clustering events (`2026-07-13__scheduled` — 19 of 44 submissions on 3 shipped features; `2026-07-15__scheduled` — 22 of 44 submissions on 5 ad-hoc-added items) — no longer deferred pending confirmation. Requirements:
+- The consolidated item's `**Source:**` field must list every contributing Idea ID.
+- Each contributing idea's register row `Step 5` column must name the consolidated item explicitly (not just "Advance"/"Backlog").
+- A consolidation is only valid where the submissions share genuine scope overlap (same initiative, same problem statement, or same target BLG-ID) — do not consolidate merely-adjacent ideas to reduce backlog item count.
+- Typical size: 3–10 ideas per consolidated item, based on the two confirming instances; consolidations outside this range should be double-checked for genuine overlap before filing.
 
 #### 4.3 Idea Participation Check
 
