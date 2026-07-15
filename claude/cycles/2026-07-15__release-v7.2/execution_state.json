@@ -6,16 +6,15 @@
   "invoked_utc": "2026-07-15T23:50:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-16T00:20:00Z",
+  "last_updated_utc": "2026-07-16T01:30:00Z",
   "generated_utc": "2026-07-15T23:40:00Z",
-  "process_notes_branch": "exec/2026-07-15__release-v7.2/EPIC-02 — branched from main before EPIC-01 merged, per LL-v2.0-P3-5 (no shared-file conflict expected per sprint_backlog.md Merge Order note, but execution_state.json will diverge from EPIC-01 branch until reconciled at merge per CLAUDE.md §8).",
 
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-15__release-v7.2/EPIC-01",
       "pr_number": 988,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-15__release-v7.2/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -23,7 +22,7 @@
         "ST-01": {
           "title": "Mobile responsiveness baseline assessment",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 983,
           "branch": "exec/2026-07-15__release-v7.2/EPIC-01",
@@ -83,34 +82,39 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
-      "branch": null,
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "status": "done",
+      "branch": "exec/2026-07-15__release-v7.2/EPIC-03",
+      "pr_number": 990,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-15__release-v7.2/qa_evidence_EPIC-03.md",
       "test_scenarios": [],
       "stories": {
         "ST-04": {
           "title": "BLG-FE-110/111 pre-implementation spec & instrumentation pass",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 985,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-07-15__release-v7.2/EPIC-03",
+          "commit_sha": "494455721dc6c3bfd5a2b76901addb5c82f6441b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-07-16T00:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/blg_fe_110_111_pre_implementation_spec_instrumentation_pass.md",
+            "docs/specs/frontend/design_system.md",
+            "docs/specs/frontend/base44_prompt_template_library.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "delivery_note": "docs/specs/blg_fe_110_111_pre_implementation_spec_instrumentation_pass.md",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Case B (SC-03). AC-01/AC-02 formalised in design_system.md v1.0->v1.1 (Class 1 Canonical, version-incremented per document_lifecycle_guide.md — meaning-altering change) + new base44_prompt_template_library.md (Class 2 Supporting, added to docs/specs/frontend/README.md index). AC-03 scoped as a specification (event table) rather than implemented in DashboardHome.js — implementing it here would touch src/pages/** and disqualify EPIC-03's autonomous DoQ class per BLG-GOV-135, inconsistent with sprint_backlog.md's recorded 'no UI to verify visually' framing for this story; deferred to ST-05/ST-06 implementation. AC-04 found already satisfied by both approved ux_spec.md design artefacts (dual-theme call-out present in both). AC-05 confirmed as a forward process requirement (ST-05/ST-06 still out of scope this sprint)."
         },
         "ST-05": {
           "status": "deferred_at_planning",
@@ -125,66 +129,68 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
-      "branch": null,
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "status": "done",
+      "branch": "exec/2026-07-15__release-v7.2/EPIC-04",
+      "pr_number": 991,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-15__release-v7.2/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
         "ST-07": {
           "title": "Notification/digest surface consolidation review",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 986,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-07-15__release-v7.2/EPIC-04",
+          "commit_sha": "9eb2f56156706d8a4c1b18415580edbee6a0a123",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-07-16T01:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/specs/frontend/notification_surface_consolidation_review_v7.2.md"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "delivery_note": "docs/specs/frontend/notification_surface_consolidation_review_v7.2.md",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Case B (SC-03). AC-01/AC-02 met (4 findings documented: duplicate nav entries, disconnected nav grouping, no cross-link between digest aggregate and alert feed, two disconnected 'digest' concepts). AC-03: audit recommends consolidation, but this routine's write scope (execution_prompt.md §7) restricts backlog.md writes to the STEP 5.2 returned_to_backlog note only — new BLG item filing deferred to next groom backlog pass / Product Owner / out-of-execution /backlog-add invocation, per report §7. Report itself is the durable record satisfying AC-02's 'findings report produced' requirement regardless of filing timing."
         }
       }
     },
     "EPIC-05": {
-      "status": "not_started",
-      "branch": null,
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "status": "done",
+      "branch": "exec/2026-07-15__release-v7.2/EPIC-05",
+      "pr_number": 992,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-15__release-v7.2/qa_evidence_EPIC-05.md",
       "test_scenarios": [],
       "stories": {
         "ST-08": {
           "title": "Combined design review + shared Playwright suite plan",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 987,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-07-15__release-v7.2/EPIC-05",
+          "commit_sha": "d979492cb47a64184055a39c3938a11dce879b3d",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-07-16T01:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/specs/frontend/blg_qa_111_combined_design_review_shared_playwright_plan.md"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "delivery_note": "docs/specs/frontend/blg_qa_111_combined_design_review_shared_playwright_plan.md",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Case B (SC-03). AC-01/AC-03 confirmed already satisfied by design_gate.md's combined pass. AC-02: shared Playwright spec file named (tests/e2e/v7.2-dashboard-tradeplan-ux-hardening.spec.js), not yet populated (ST-03/ST-05/ST-06 not executing this sprint — nothing to test yet). AC-04: backfill into ST-03/ST-05/ST-06 sprint-backlog entries confirmed not closable this sprint per sprint_backlog.md's own Outstanding Actions (Blocker: No) — sprint_backlog.md is sealed and not modified by this routine."
         }
       }
     }
@@ -192,17 +198,22 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02"],
+  "completed_items": ["ST-01", "ST-02", "ST-04", "ST-07", "ST-08"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
     "all_merged": false,
-    "epic_01_awaiting": ["CI checks (quality_gate.yml) completion", "Product Owner acceptance (comment on PR #988 or sprint_backlog.md)"]
+    "epic_02_awaiting": ["Product Owner acceptance (comment on PR #989 or sprint_backlog.md) — always-human gate per execution_prompt.md §5.3, not agent-mediated"],
+    "epic_03_awaiting": ["Product Owner acceptance (comment on PR #990 or sprint_backlog.md) — always-human gate per execution_prompt.md §5.3, not agent-mediated"],
+    "epic_04_awaiting": ["Product Owner acceptance (comment on PR #991 or sprint_backlog.md) — always-human gate per execution_prompt.md §5.3, not agent-mediated"],
+    "epic_05_awaiting": ["Product Owner acceptance (comment on PR #992 or sprint_backlog.md) — always-human gate per execution_prompt.md §5.3, not agent-mediated"]
   },
 
-  "process_notes": [],
+  "process_notes": [
+    "2026-07-16T01:30:00Z — Session resume found origin/main and 4 open PRs (#989-#992) already carrying complete engine-autonomous work for EPIC-02/03/04/05 that was not reflected in this file or in .claude_current_state.json at session start (both read as if only EPIC-01/ST-01 planning stubs existed). Reconciled per STEP 4 resume sync + CLAUDE.md §8: verified via gh pr view/gh issue view/git log against origin that EPIC-01 (PR #988) is merged, and EPIC-02/03/04/05 each have a done story, autonomous-class QA sign-off with non-blank Date, and an open PR awaiting only Product Owner acceptance. A duplicate, stale local execution_state.json STEP-0 reinitialisation (this session's own, written before discovering the origin state) was stashed and discarded rather than pushed. Five duplicate GitHub issues (#993-#997) created by this session before the origin state was discovered were closed as duplicates of the pre-existing #983-#987 (all five originals were already CLOSED by governance_sync.yml on push, which is why the STEP 1 open-issue search did not find them)."
+  ],
 
   "sealed": false,
   "sealed_utc": null
