@@ -54,6 +54,7 @@ Each file is focused, readable in isolation, and avoids unnecessary implementati
 
 ### Design System
 - ./design_system.md
+- ./base44_prompt_template_library.md
 
 ### Pages
 - ./pages/dashboard.md

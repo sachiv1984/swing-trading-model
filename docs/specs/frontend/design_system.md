@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-07-06
+**Version:** 1.1
+**Last Updated:** 2026-07-15
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.1 (ST-04, EPIC-03, v7.2, BLG-SPEC-90):** formalised the `DataState` compact empty-state variant (§Shared UI Components → Cards → Data States) and defined primary vs secondary dashboard card treatment (§Shared UI Components → Cards → Card Hierarchy). Both generalise decisions already approved for `DashboardHome.js` in `docs/design/2026-07-15__release-v7.2/dashboard-empty-states/ux_spec.md` (ST-05) and `dashboard-briefing-hierarchy/ux_spec.md` (ST-06) so future cards/pages can reuse the same pattern without re-deriving it.
 
 ## Overview
 The Design System defines the shared visual language, interaction patterns, and reusable UI elements for the Position Manager Web App. Its purpose is to ensure consistency, clarity, and accessibility across all pages and components.
@@ -125,6 +126,31 @@ Cards support:
 - Metrics (P&L, dates)  
 - Tag display  
 - Expand/collapse interactions  
+
+### Data States
+
+The shared `DataState` component (`src/components/ui/DataState.js`) is the canonical wrapper for API-backed content: `loading` → `error` → `empty` → children, evaluated in that priority order. Full-page and table contexts use the default sizing (`py-16` outer padding, `w-10 h-10` icon).
+
+**Compact variant** — for content living inside a small grid card (e.g. a dashboard status card sharing a row with 2–3 siblings), pass `compact` to shrink the `empty` branch only; `loading` and `error` are unaffected by `compact`:
+
+| Element | Default (`compact=false`) | `compact=true` |
+|---------|---------------------------|-----------------|
+| Outer padding | `py-16` | `py-4` |
+| Icon size | `w-10 h-10` | `w-6 h-6` |
+| Gap | `gap-3` | `gap-2` |
+| Heading | `text-sm font-semibold` | `text-xs font-semibold` |
+| Body | `text-xs` (unchanged) | `text-xs` (unchanged) |
+
+A genuinely empty card (e.g. "no open positions") must render `DataState`'s `empty` branch (icon + heading + body) rather than a bare muted zero/blank line — this applies wherever the underlying value's absence is meaningful (contrast with a card whose zero is itself a valid data point, e.g. "0% portfolio heat", which is not an empty state and should render normally). Card-level `emptyAction` CTAs are optional and should generally be omitted when the card already has a click-through destination (e.g. the whole card links to `/Positions`) — a second CTA competes with that existing affordance. See `docs/design/2026-07-15__release-v7.2/dashboard-empty-states/ux_spec.md` for the worked example this pattern was generalised from.
+
+### Card Hierarchy
+
+Not all cards on a given page carry equal weight. Two treatment tiers apply:
+
+- **Primary / intelligence-section cards** — cards presenting start-of-day or advisory intelligence rather than live position/portfolio status (e.g. a "briefing" section). These should be visually distinguished from the surrounding grid: an enclosing panel with an explicit (light+dark paired) background/border tint, a section label at `text-sm font-semibold` with a leading icon establishing a shared "intelligence section" visual language, distinct from the plain card shell below it. Related sections of this kind should share the same icon-and-label visual language even if their container treatment differs (e.g. one section already has strong inherent contrast via its own background), so a user recognises both as the same category of content at a glance.
+- **Secondary / status cards** — cards presenting live, glanceable position/portfolio state (open positions count, heat level, grace period, signal status, recent activity). These use the plain shared card shell (`bg-slate-800/50 border border-slate-700/50`, no enclosing panel, no elevated label treatment) — the neutral default.
+
+Any new background/border/label token introduced for a primary-tier treatment must ship as an explicit light+dark pair from the start, never a bare dark-only class — this project has twice shipped a dark-only-token-on-light-theme contrast defect (`BLG-FE-87/88`, `BLG-FE-95`). See `docs/design/2026-07-15__release-v7.2/dashboard-briefing-hierarchy/ux_spec.md` for the worked example this pattern was generalised from.
 
 ### Inputs & Form Controls
 Common input types used across multiple pages:
