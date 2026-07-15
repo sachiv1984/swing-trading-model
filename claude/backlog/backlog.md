@@ -20,6 +20,25 @@
 
 ---
 
+<!-- release-plan-marker: RP:v7.2:2026-07-15__release-v7.2 -->
+
+## Release Slice v7.2 (in progress)
+
+*Cycle: `2026-07-15__release-v7.2`. Authoritative backlog slice: `claude/cycles/2026-07-15__release-v7.2/stage4_backlog_slice.md`. Ephemeral — removed at next `groom backlog` run after this cycle closes.*
+
+| ST-ID | Backlog Item | EPIC | Status |
+|-------|--------------|------|--------|
+| ST-01 | BLG-FE-55 | EPIC-01 | in_scope |
+| ST-02 | BLG-SPEC-89 | EPIC-02 | in_scope |
+| ST-03 | BLG-FE-109 | EPIC-02 | in_scope |
+| ST-04 | BLG-SPEC-90 | EPIC-03 | in_scope |
+| ST-05 | BLG-FE-110 | EPIC-03 | in_scope |
+| ST-06 | BLG-FE-111 | EPIC-03 | in_scope |
+| ST-07 | BLG-FE-112 | EPIC-04 | in_scope |
+| ST-08 | BLG-QA-111 | EPIC-05 | in_scope |
+
+---
+
 ## Priority Definitions
 
 - **P0 — Critical**: Blocks correctness, trust, or release safety

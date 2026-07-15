@@ -1,0 +1,74 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Mobile responsiveness baseline assessment",
+    "epic": "EPIC-01",
+    "description": "Assess mobile responsiveness of most-used views (positions, screener, trade plan form, Red Flag Journal) and produce a severity-ranked findings report.",
+    "ac_summary": "Assessment report produced covering at minimum positions/screener/trade-plan-form/Red Flag Journal; gate-override verified before commencing.",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-15__release-v7.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "BLG-FE-109 pre-implementation readiness pass",
+    "epic": "EPIC-02",
+    "description": "Confirm contract, data-model, auth, §13 boundary, validation-risk, and metric readiness before Start-Trade-from-Plan implementation.",
+    "ac_summary": "All 9 scope points addressed before ST-03 sprint planning; ST-03 AC updated to reference this pass.",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-15__release-v7.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Trade-plan-to-execution linkage UX (\"Start Trade from Plan\")",
+    "epic": "EPIC-02",
+    "description": "Add a Start-Trade-from-Plan action on TradePlan.js/TradePlans.js that pre-fills and auto-links TradeEntry.js.",
+    "ac_summary": "Action visible/functional on both views; trade_plan_id auto-populated with no manual step; manual trade entry unaffected; no TradeEntry.js regression.",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-15__release-v7.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "BLG-FE-110/111 pre-implementation spec & instrumentation pass",
+    "epic": "EPIC-03",
+    "description": "Formalise DataState empty-state pattern and card-hierarchy treatment in design_system.md; add instrumentation to DashboardHome.js cards.",
+    "ac_summary": "design_system.md/frontend_specs updated; dual-theme verification called out; merged before ST-05/ST-06 sprint planning.",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-15__release-v7.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Dashboard empty/first-run state coverage",
+    "epic": "EPIC-03",
+    "description": "Apply the shared DataState empty-state pattern to all DashboardHome.js cards lacking one.",
+    "ac_summary": "Every card renders a clear on-brand empty state using DataState; loading/error states unaffected.",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-15__release-v7.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Dashboard briefing visual hierarchy",
+    "epic": "EPIC-03",
+    "description": "Give MorningBriefing and AiDailyBriefing primary visual weight, distinct from the status-card grid.",
+    "ac_summary": "Both cards visually distinguishable on load without scrolling; no data/logic change; verified in light and dark themes.",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-15__release-v7.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Notification/digest surface consolidation review",
+    "epic": "EPIC-04",
+    "description": "Audit Notifications.js/NotificationsHistory.js/NotificationPreferences.js/WeeklyDigest.js and produce a consolidation findings report.",
+    "ac_summary": "Navigation/usage/overlap audited; findings report with recommendation produced; implementation explicitly out of scope.",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-07-15__release-v7.2"],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "Combined design review + shared Playwright suite plan",
+    "epic": "EPIC-05",
+    "description": "Scope one combined design review and one shared Playwright spec file covering ST-03/ST-05/ST-06/ST-07.",
+    "ac_summary": "Combined review and shared spec file scoped and scheduled ahead of sprint planning; referenced in each covered item's sprint-backlog entry.",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-07-15__release-v7.2"],
+    "assignee": null
+  }
+]

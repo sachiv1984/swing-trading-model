@@ -290,6 +290,15 @@ Added at roadmap rebalance `2026-07-15__scheduled` (STEP 8.1, Option (a)), ancho
 | BLG-FE-110/111 pre-implementation spec & instrumentation pass | BLG-SPEC-90 | S-M (~1-2 days) | Supports BLG-FE-110/111 |
 | Combined design review + shared Playwright suite plan | BLG-QA-111 | S (~0.5-1 day) | Cross-cutting for all 4 UX items |
 
+<!-- roadmap-annotation-marker: RA:v7.2:2026-07-15__release-v7.2 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-15__release-v7.2
+- Plan published: 2026-07-15
+- Cycle folder: claude/cycles/2026-07-15__release-v7.2/
+- Backlog slice: claude/cycles/2026-07-15__release-v7.2/stage4_backlog_slice.md
+- Status at annotation: Committed
+
 *RA:v7.1 retired — see roadmap_archive.md 2026-07-14 (post-ship closure 2026-07-14__release-v7.1).*
 
 -----
