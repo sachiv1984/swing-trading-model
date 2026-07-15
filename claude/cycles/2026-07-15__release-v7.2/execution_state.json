@@ -11,26 +11,26 @@
 
   "epics": {
     "EPIC-01": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-07-15__release-v7.2/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-15__release-v7.2/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
       "stories": {
         "ST-01": {
           "title": "Mobile responsiveness baseline assessment",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 983,
           "branch": "exec/2026-07-15__release-v7.2/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "d97fb936e922b664dd143a096539d3894a313e28",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-07-16T00:05:00Z",
           "acceptance_verified": true,
           "spec_references": ["docs/specs/frontend/mobile_responsiveness_baseline_assessment_v7.2.md"],
           "spec_reference_not_applicable": false,
