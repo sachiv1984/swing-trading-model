@@ -69,3 +69,60 @@ Items: 1
 | # | Observation | Implication | Engine |
 |---|-------------|-------------|--------|
 | 1 | Session start trusted local `.claude_current_state.json`/`execution_state.json` without first comparing against `origin/main`, causing duplicate GitHub issues and a duplicate state-file init before the actual (much further along) origin state was discovered mid-session. | Run `git fetch origin` and compare local `main` to `origin/main` as the literal first action of any `run sprint` invocation, before reading or trusting any local state file — do not wait for STEP 4's merge-gate resume-sync to catch this. | Sprint Execution |
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-07-15__release-v7.2
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-07-15
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-07-14__release-v7.1 (`lessons_learnt_cycle.md` `## Phase 4`) — no friction items and no outstanding actions found; nothing to check for recurrence.
+
+### What went well
+
+- `git fetch origin` + local-vs-origin-main comparison was run as the literal first action of this session (per the Phase 3 carry-forward item above and prior-session guidance), confirming local `main` already matched `origin/main` before any state file was trusted — no stale-state risk this run.
+- `sprint_close.md`'s Verification Readiness Statement was fully `Yes` across all three fields on first read — no STEP -1.2 halt.
+- All five `qa_evidence_EPIC-xx.md` sign-off blocks used the compliant autonomous class (BLG-GOV-19) format on first check, all four qualifying criteria explicitly confirmed in each — no Tier 2 counter-sign requirement triggered on any of the five.
+- Zero deviations to adjudicate — all five spec artefacts' own Known Deviations sections confirmed "None", consistent with each being a net-new readiness/audit/planning artefact with no prior canonical spec to diverge from.
+- Test scenario coverage short-circuited cleanly to `not_applicable` across all five EPICs (empty `test_scenarios`, no frontend-visible change confirmed independently in each QA evidence log's Criterion 3) — no feedback record blocks or `TEST-GAP` backlog items needed.
+- `state.json.deferred_execution_blockers` was empty and the backlog slice contained zero `parked` items — STEP 4.2/4.3 both resolved to "nothing to disposition" with no ambiguity.
+
+### Friction Log
+
+No friction items identified this run — all required artefacts (execution_state.json, sprint_close.md, five qa_evidence logs, stage4_backlog_slice.md, sprint_backlog.md, state.json, System_status_report.md) were complete, internally consistent, and correctly cross-referenced on first read. The one notable structural feature — three ST items (ST-03/05/06) carrying a `deferred_at_planning` status not among STEP 1's three enumerated outcome values — was fully explained and traceable via `sprint_backlog.md`'s own Deferred Items table and Product Owner sign-off, so it did not rise to a process gap.
+
+**Recurrence Notes:** None.
+
+---
+
+## Recurrence Escalations
+
+None.
+
+## Process improvements actioned this run
+
+None applied this run.
+
+## New files created this run
+
+None (beyond the standard verification artefacts: `verification_report.md`, this Phase 4 append, and the `docs/System_status_report.md` status-line update).
+
+## Outstanding deferred patches
+
+None new this run. The Phase 3 deferred patch above (git-fetch-first check generalised into `execution_prompt.md` STEP -1 / §10) remains open — owner Head of Specs Team, target next `run sprint` invocation.
+
+## Escalations
+
+None.
+
+## Carry-Forward
+
+Items: 0
+
+| # | Observation | Implication | Engine |
+|---|-------------|-------------|--------|
+
+None — the one live carry-forward item from this cycle (git-fetch-first) is already recorded against Sprint Execution under Phase 3 above; no new Phase 4-specific carry-forward identified.
