@@ -16,7 +16,7 @@
       "timebox": "",
       "capacity": ""
     },
-    "state_snapshot_hash": "<set to publish commit SHA after commit>"
+    "state_snapshot_hash": "9e6a83c995faac2be6e360f2db44fb6e4435f684"
   },
 
   "mutation_seq": 0,
