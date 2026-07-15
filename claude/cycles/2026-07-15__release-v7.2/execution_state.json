@@ -129,10 +129,10 @@
       }
     },
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-15__release-v7.2/EPIC-04",
       "pr_number": 991,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-15__release-v7.2/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
@@ -202,17 +202,17 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03"],
-    "epics_pending": ["EPIC-04", "EPIC-05"],
+    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04"],
+    "epics_pending": ["EPIC-05"],
     "all_merged": false,
-    "epic_04_awaiting": ["Product Owner acceptance (comment on PR #991 or sprint_backlog.md) — always-human gate per execution_prompt.md §5.3, not agent-mediated"],
     "epic_05_awaiting": ["Product Owner acceptance (comment on PR #992 or sprint_backlog.md) — always-human gate per execution_prompt.md §5.3, not agent-mediated"]
   },
 
   "process_notes": [
     "2026-07-16T01:30:00Z — Session resume found origin/main and 4 open PRs (#989-#992) already carrying complete engine-autonomous work for EPIC-02/03/04/05 that was not reflected in this file or in .claude_current_state.json at session start (both read as if only EPIC-01/ST-01 planning stubs existed). Reconciled per STEP 4 resume sync + CLAUDE.md §8: verified via gh pr view/gh issue view/git log against origin that EPIC-01 (PR #988) is merged, and EPIC-02/03/04/05 each have a done story, autonomous-class QA sign-off with non-blank Date, and an open PR awaiting only Product Owner acceptance. A duplicate, stale local execution_state.json STEP-0 reinitialisation (this session's own, written before discovering the origin state) was stashed and discarded rather than pushed. Five duplicate GitHub issues (#993-#997) created by this session before the origin state was discovered were closed as duplicates of the pre-existing #983-#987 (all five originals were already CLOSED by governance_sync.yml on push, which is why the STEP 1 open-issue search did not find them).",
     "2026-07-16T01:40:00Z — Per CLAUDE.md §8 steps 1-5 (conflict resolution only, no merge action): merged origin/main into each of exec/EPIC-02, exec/EPIC-03, exec/EPIC-04, exec/EPIC-05 to resolve the execution_state.json conflict each had against main's now-reconciled copy (each branch's own copy still showed EPIC-01/prior EPICs as not_started). Took main's reconciled file as authoritative on each branch (superset of all EPICs' true state). Commits: EPIC-02 725aa4ac, EPIC-03 1d3265d5, EPIC-04 58378ddb, EPIC-05 afcca92a. All 4 PRs now show mergeable=MERGEABLE (CI re-running fresh on the new commit; was previously CONFLICTING for PR #989 and UNKNOWN for #990-#992). No PR was merged — Product Owner acceptance remains outstanding and unresolved for all four (always-human gate, execution_prompt.md §5.3).",
-    "2026-07-16T02:00:00Z — Session resume (fresh session): git fetch + gh pr view sync (LL-v3.9-P3-1) found PR #990 (EPIC-03) already MERGED on GitHub by sachiv1984 (Product Owner) between sessions — a valid human merge action satisfying the always-human gate, performed outside this engine. Local main was 5 commits behind origin (fast-forwarded cleanly). Orphaned post-merge commit check (LL-v6.8-P3-01) against exec/EPIC-03 found nothing stranded. Synced EPIC-03 to merged/merged in this write. PRs #991 (EPIC-04) and #992 (EPIC-05) remain OPEN with no Product Owner acceptance comment found on either — merge gate blocked on that condition alone for both; all other conditions (QA sign-off, spec_references, deviations_filed) already satisfied per prior session's work."
+    "2026-07-16T02:00:00Z — Session resume (fresh session): git fetch + gh pr view sync (LL-v3.9-P3-1) found PR #990 (EPIC-03) already MERGED on GitHub by sachiv1984 (Product Owner) between sessions — a valid human merge action satisfying the always-human gate, performed outside this engine. Local main was 5 commits behind origin (fast-forwarded cleanly). Orphaned post-merge commit check (LL-v6.8-P3-01) against exec/EPIC-03 found nothing stranded. Synced EPIC-03 to merged/merged in this write. PRs #991 (EPIC-04) and #992 (EPIC-05) remain OPEN with no Product Owner acceptance comment found on either — merge gate blocked on that condition alone for both; all other conditions (QA sign-off, spec_references, deviations_filed) already satisfied per prior session's work.",
+    "2026-07-16T02:10:00Z — Re-invocation sync: PR #991 (EPIC-04) found MERGED on GitHub by sachiv1984 (Product Owner) since last check. Orphaned post-merge commit check (LL-v6.8-P3-01) against exec/EPIC-04 found nothing stranded. Synced EPIC-04 to merged/merged. PR #992 (EPIC-05) remains OPEN, no Product Owner acceptance comment found — sole remaining blocker."
   ],
 
   "sealed": false,
