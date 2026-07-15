@@ -6,16 +6,15 @@
   "invoked_utc": "2026-07-15T23:50:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-16T01:15:00Z",
+  "last_updated_utc": "2026-07-16T01:30:00Z",
   "generated_utc": "2026-07-15T23:40:00Z",
-  "process_notes_branch": "Branches EPIC-02/EPIC-03/EPIC-04/EPIC-05 branched from main before EPIC-01 merged, per LL-v2.0-P3-5 (no shared-file conflict expected per sprint_backlog.md Merge Order note, but execution_state.json will diverge across branches until reconciled at merge per CLAUDE.md §8 — take union of completed_items, never revert done->blocked). All 5 EPICs now complete this session — remaining work is merge-gate (CI + Product Owner acceptance on PRs #988-#992) not further story execution.",
 
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-15__release-v7.2/EPIC-01",
       "pr_number": 988,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-15__release-v7.2/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -23,7 +22,7 @@
         "ST-01": {
           "title": "Mobile responsiveness baseline assessment",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 983,
           "branch": "exec/2026-07-15__release-v7.2/EPIC-01",
@@ -40,7 +39,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": "Case B (SC-03) — deliverable IS the governing artefact."
+          "notes": "Case B (SC-03) — deliverable IS the governing artefact. AC-01/AC-02 met (report produced, covers positions/screener/trade plan form/trade entry/Red Flag Journal). AC-03 met (Arc 5 gate explicitly verified not-met per run_manifest.md, documented in report §2, proceeding on recorded PO priority override)."
         }
       }
     },
@@ -73,7 +72,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": "Case B (SC-03) — deliverable IS the governing artefact."
+          "notes": "Case B (SC-03) — deliverable IS the governing artefact. All 9 scope points (AC-01-AC-09) addressed: AC-01/AC-03 schema gap documented (positions.trade_plan_id does not exist, resolution scoped for ST-03); AC-02 contract pre-stage scoped without adding a premature ## heading (avoids false-positive OpenAPI Drift gate); AC-04 confirmed reusable location.state prefill pattern (watchlist_prefill precedent); AC-05/AC-06 confirmed no gap (no new auth surface, no S13 boundary crossing — human still confirms submit); AC-07 regression risk scoped precisely (payload field addition point identified); AC-08 confirmed no SI-02 metric redefinition needed; AC-09 conditional test.py requirement scoped (applies only if ST-03 adds a custom router route)."
         },
         "ST-03": {
           "status": "deferred_at_planning",
@@ -115,7 +114,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": "Case B (SC-03). AC-03 scoped as spec, not code (BLG-GOV-135 autonomous-class preservation)."
+          "notes": "Case B (SC-03). AC-01/AC-02 formalised in design_system.md v1.0->v1.1 (Class 1 Canonical, version-incremented per document_lifecycle_guide.md — meaning-altering change) + new base44_prompt_template_library.md (Class 2 Supporting, added to docs/specs/frontend/README.md index). AC-03 scoped as a specification (event table) rather than implemented in DashboardHome.js — implementing it here would touch src/pages/** and disqualify EPIC-03's autonomous DoQ class per BLG-GOV-135, inconsistent with sprint_backlog.md's recorded 'no UI to verify visually' framing for this story; deferred to ST-05/ST-06 implementation. AC-04 found already satisfied by both approved ux_spec.md design artefacts (dual-theme call-out present in both). AC-05 confirmed as a forward process requirement (ST-05/ST-06 still out of scope this sprint)."
         },
         "ST-05": {
           "status": "deferred_at_planning",
@@ -158,7 +157,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.deviation_check",
           "sign_off_record": null,
-          "notes": "Case B (SC-03). AC-03 backlog filing deferred outside routine write scope — see report §7."
+          "notes": "Case B (SC-03). AC-01/AC-02 met (4 findings documented: duplicate nav entries, disconnected nav grouping, no cross-link between digest aggregate and alert feed, two disconnected 'digest' concepts). AC-03: audit recommends consolidation, but this routine's write scope (execution_prompt.md §7) restricts backlog.md writes to the STEP 5.2 returned_to_backlog note only — new BLG item filing deferred to next groom backlog pass / Product Owner / out-of-execution /backlog-add invocation, per report §7. Report itself is the durable record satisfying AC-02's 'findings report produced' requirement regardless of filing timing."
         }
       }
     },
@@ -203,17 +202,18 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
     "all_merged": false,
-    "epic_01_awaiting": ["CI checks (quality_gate.yml) completion", "Product Owner acceptance (comment on PR #988 or sprint_backlog.md)"],
-    "epic_02_awaiting": ["CI checks (quality_gate.yml) completion", "Product Owner acceptance (comment on PR #989 or sprint_backlog.md)"],
-    "epic_03_awaiting": ["CI checks (quality_gate.yml) completion", "Product Owner acceptance (comment on PR #990 or sprint_backlog.md)"],
-    "epic_04_awaiting": ["CI checks (quality_gate.yml) completion", "Product Owner acceptance (comment on PR #991 or sprint_backlog.md)"],
-    "epic_05_awaiting": ["CI checks (quality_gate.yml) completion", "Product Owner acceptance (comment on PR #992 or sprint_backlog.md)"]
+    "epic_02_awaiting": ["Product Owner acceptance (comment on PR #989 or sprint_backlog.md) — always-human gate per execution_prompt.md §5.3, not agent-mediated"],
+    "epic_03_awaiting": ["Product Owner acceptance (comment on PR #990 or sprint_backlog.md) — always-human gate per execution_prompt.md §5.3, not agent-mediated"],
+    "epic_04_awaiting": ["Product Owner acceptance (comment on PR #991 or sprint_backlog.md) — always-human gate per execution_prompt.md §5.3, not agent-mediated"],
+    "epic_05_awaiting": ["Product Owner acceptance (comment on PR #992 or sprint_backlog.md) — always-human gate per execution_prompt.md §5.3, not agent-mediated"]
   },
 
-  "process_notes": [],
+  "process_notes": [
+    "2026-07-16T01:30:00Z — Session resume found origin/main and 4 open PRs (#989-#992) already carrying complete engine-autonomous work for EPIC-02/03/04/05 that was not reflected in this file or in .claude_current_state.json at session start (both read as if only EPIC-01/ST-01 planning stubs existed). Reconciled per STEP 4 resume sync + CLAUDE.md §8: verified via gh pr view/gh issue view/git log against origin that EPIC-01 (PR #988) is merged, and EPIC-02/03/04/05 each have a done story, autonomous-class QA sign-off with non-blank Date, and an open PR awaiting only Product Owner acceptance. A duplicate, stale local execution_state.json STEP-0 reinitialisation (this session's own, written before discovering the origin state) was stashed and discarded rather than pushed. Five duplicate GitHub issues (#993-#997) created by this session before the origin state was discovered were closed as duplicates of the pre-existing #983-#987 (all five originals were already CLOSED by governance_sync.yml on push, which is why the STEP 1 open-issue search did not find them)."
+  ],
 
   "sealed": false,
   "sealed_utc": null

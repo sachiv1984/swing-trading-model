@@ -1,9 +1,9 @@
 {
   "active_cycle": "2026-07-15__release-v7.2",
   "cycle_name": "v7.2 — Dashboard & Trade-Plan UX Hardening",
-  "status": "Sprint_Planning_Complete",
-  "prior_status": "Published",
-  "engine": "sprint_planning",
+  "status": "Executing",
+  "prior_status": "Sprint_Planning_Complete",
+  "engine": "sprint_execution",
   "execution_state_path": "claude/cycles/2026-07-15__release-v7.2/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-07-15__release-v7.2/stage4_backlog_slice.md",
   "sprint_sealed": true,
