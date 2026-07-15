@@ -1,0 +1,27 @@
+{
+  "cycle_id": "2026-07-15__release-v7.2",
+  "owner_epic": "EPIC-01",
+  "generated_utc": "2026-07-15T23:40:00Z",
+  "epics": {
+    "EPIC-02": {
+      "stories": {
+        "ST-03": {
+          "status": "deferred_at_planning",
+          "gate_condition": "ST-02 (BLG-SPEC-89) must complete execution before ST-03 enters sprint planning — stage4_backlog_slice.md EPIC-02 sequencing constraint"
+        }
+      }
+    },
+    "EPIC-03": {
+      "stories": {
+        "ST-05": {
+          "status": "deferred_at_planning",
+          "gate_condition": "ST-04 (BLG-SPEC-90) must complete execution before ST-05 enters sprint planning — stage4_backlog_slice.md EPIC-03 sequencing constraint"
+        },
+        "ST-06": {
+          "status": "deferred_at_planning",
+          "gate_condition": "ST-04 (BLG-SPEC-90) must complete execution before ST-06 enters sprint planning — stage4_backlog_slice.md EPIC-03 sequencing constraint"
+        }
+      }
+    }
+  }
+}
