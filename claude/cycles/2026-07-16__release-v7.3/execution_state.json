@@ -9,10 +9,10 @@
 
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-16__release-v7.3/EPIC-01",
       "pr_number": 1005,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-16__release-v7.3/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/e2e/v7.2-dashboard-tradeplan-ux-hardening.spec.js", "tests/test_position_trade_plan_link.py"],
@@ -20,7 +20,7 @@
         "ST-01": {
           "title": "Trade-plan-to-execution linkage UX (\"Start Trade from Plan\")",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 998,
           "branch": "exec/2026-07-16__release-v7.3/EPIC-01",
@@ -41,7 +41,7 @@
         "ST-02": {
           "title": "Dashboard empty/first-run state coverage",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 999,
           "branch": "exec/2026-07-16__release-v7.3/EPIC-01",
@@ -62,7 +62,7 @@
         "ST-03": {
           "title": "Dashboard briefing visual hierarchy",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1000,
           "branch": "exec/2026-07-16__release-v7.3/EPIC-01",
@@ -218,8 +218,8 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05"],
     "all_merged": false
   },
 
