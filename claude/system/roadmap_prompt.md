@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.0
-**Last Updated:** 2026-07-15
+**Version:** 9.1
+**Last Updated:** 2026-07-16
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -341,6 +341,13 @@ Categorise every active backlog item as one of:
 - **T** — Time-gated (will clear within 3 months based on the stated condition date)
 - **D** — Data-density-gated (depends on trade count, journal volume, or screener history; estimate clearance date from current rate — state the estimate explicitly)
 - **L** — Long-horizon-gated (condition clears > 3 months away, or gate owner is external / uncontrollable)
+
+**Scale-appropriate methodology (v9.1, 2026-07-16 — closes the deferred patch from `2026-07-15__scheduled` Friction Item 2, confirmed on its 2nd occurrence at `2026-07-16__scheduled`):** A full manual per-item read is the default method while the active backlog is below ~150 items. At or above ~150 active items, apply this structural heuristic instead:
+1. **A vs. gated split:** grep for the `**Gate criteria:**` field. Items without it are **A**. Items with it are gated (T/D/L, differentiated in step 2).
+2. **T/D/L differentiation of gated items:** scan each `**Gate criteria:**` line's text for a keyword pattern: a date or "≥ N days"/"live for N days" phrase → **T**; a trade-count, closed-trade, or journal-volume phrase (e.g. "closed trades", "trade history") → **D**; anything else (external dependency, no stated timeframe) → **L**.
+3. Record which method was used (manual or structural-heuristic) in `run_manifest.md` alongside the counts, so cross-cycle comparisons note a methodology change rather than treating the two series as directly comparable.
+
+This does not change the reporting requirements below — only how the per-item classification is derived at scale.
 
 Report in `run_manifest.md` under `## Actionable Backlog Assessment`:
 - Count per category (A / T / D / L)

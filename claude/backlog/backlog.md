@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived to backlog_archive.md: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111; ephemeral Release Slice v7.2 section removed (first partial-completion case — 3 rows re-homed to current_roadmap.md, not extracted here since each already has its own live entry); Gate Field Normalisation: 0; Effort Day-Range Validation: PASS; ID uniqueness: 5 known pre-existing duplicates unchanged, no new; 0 orphans, 0 stale blockers, 0 promotion candidates; report: claude/backlog/backlog_health_20260715.md); prior — 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — 1 new item added: BLG-OPS-111 (STEP 6 endpoint coverage drift advisory, 21 endpoints missing from api_performance_baseline.md, cross-references stale BLG-OPS-13)); prior — 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — 5 items marked ✅ COMPLETE: BLG-FE-55 (ST-01), BLG-SPEC-89 (ST-02), BLG-SPEC-90 (ST-04), BLG-FE-112 (ST-07), BLG-QA-111 (ST-08); no stale parked items (zero parked items in authoritative backlog slice); no Phase 4 additions required (verification_report.md §2 flag counts: 0 backlog entries added this run)); prior — 2026-07-15 (session — 1 new item(s) added: BLG-FE-114); prior — 2026-07-15 (session — 1 new item(s) added: BLG-FE-113); prior — 2026-07-15 (roadmap rebalance 2026-07-15__scheduled — 13 new items added via idea intake IW-20260715-01 disposition: BLG-GOV-234/235/236/237/238, BLG-SPEC-88/89/90, BLG-BE-63, BLG-QA-109/110/111, BLG-OPS-110 (9 standalone + 4 consolidated per the newly-codified Idea Consolidation convention); STEP 8.1 Option (a) — v7.2 Now-horizon section added, anchoring BLG-FE-109/110/111/112/55; DL-066; prior — session — 4 new item(s) added: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-FE-112; 1 item priority-escalated P3→P1: BLG-FE-55 [gate override, Product Owner instruction]); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived to backlog_archive.md: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84 [shipped v7.1], BLG-GOV-202 [pre-existing completed item found during STEP 6.2 post-write verification, missed by v7.0's grooming pass]; ephemeral Release Slice v7.1 section removed; Gate Field Normalisation: 0; ID uniqueness: 5 known pre-existing duplicate IDs (BLG-OPS-37, BLG-OPS-31, BLG-OPS-28, BLG-FEAT-38, BLG-FE-49 — same items archived twice under two historical conventions, already flagged as a follow-up dedup item per v6.6 BLG-QA-72 audit; no new duplicates introduced this cycle); 0 orphans, 0 stale blockers, 0 promotion candidates flagged this run; report: claude/backlog/backlog_health_20260714.md); prior — post-ship closure 2026-07-14__release-v7.1 — 7 items marked ✅ COMPLETE: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84; no stale parked items; no Phase 4 additions required (BLG-SPEC-87 already present from sprint execution)); prior — session — 1 new item(s) added: BLG-SPEC-87); prior — 2026-07-13 (roadmap rebalance 2026-07-13__scheduled — 25 new items added via idea intake IW-20260713-01 disposition + STEP 8.0 fast-track: BLG-BE-61/62, BLG-QA-106/108, BLG-SPEC-83–86, BLG-FEAT-77, BLG-FE-108, BLG-OPS-109, BLG-GOV-219–233; STEP 8.0 Production Correctness Fast-Track promoted BLG-BE-59/BLG-BE-60 (both P1, filed same session) to the new v7.1 Now-horizon section — first fast-track promotion in this engine's history; DL-065; prior — session — 1 new item(s) added: BLG-GOV-218); prior — groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived to backlog_archive.md; ephemeral Release Slice v7.0 section removed; Gate Field Normalisation: 0 in backlog.md; ID uniqueness: PASS; 0 orphans, 0 stale blockers, 0 promotion candidates flagged this run; prior — post-ship closure 2026-07-12__release-v7.0 — 15 items marked ✅ COMPLETE: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68; no stale parked items; no Phase 4 additions required (already confirmed present per verification_report.md §5)); prior — session — 5 new item(s) added: BLG-BE-59, BLG-BE-60, BLG-OPS-108, BLG-QA-104, BLG-QA-105); prior — session — 1 new item(s) added: BLG-FE-107; prior — session — 1 new item(s) added: BLG-FE-106; prior — roadmap rebalance 2026-07-12__scheduled — 36 new items added via idea intake IW-20260712-01 disposition: BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107; BLG-GOV-105 closed as confirmed duplicate of BLG-GOV-45 (BLG-GOV-202 closed same action); BLG-GOV-28 priority escalated P2→P1; DL-064; prior — session — 5 new item(s) added: BLG-FEAT-73, BLG-FEAT-74, BLG-FEAT-75, BLG-FEAT-76, BLG-FE-102; prior — groom backlog post-ship closure 2026-07-10__release-v6.9 — 2 items archived: BLG-FEAT-64, BLG-FEAT-65; ephemeral Release Slice v6.9 section removed; prior — 2 items marked ✅ COMPLETE: BLG-FEAT-64, BLG-FEAT-65; prior — roadmap rebalance 2026-07-10__scheduled — 39 new items added via idea intake IW-20260710-01 disposition: BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72; DL-063; prior — backlog consistency audit — BLG-BE-52 archived to backlog_archive.md (already-resolved item not yet retired); BLG-GOV-105 flagged possible duplicate of shipped BLG-GOV-45, not dispositioned (see new BLG-GOV-202); BLG-GOV-28 flagged overdue §13 gate (PT-04 sealed v6.1, review not run), not dispositioned; prior — 2026-07-09 Product Owner direct action — BLG-BE-52 resolved: no backfill; prior — session — 1 new item(s) added: BLG-BE-52; prior — groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
+**Last Updated:** 2026-07-16 (roadmap rebalance 2026-07-16__scheduled — 8 new items added via idea intake IW-20260716-01 disposition: BLG-SPEC-91/92/93/94 (4 consolidated pre-implementation readiness passes for BLG-FE-115/116/117/118), BLG-OPS-112, BLG-GOV-239, BLG-FEAT-78, BLG-QA-112 (4 standalone, 2 gate-conditional); DL-067; STEP 8.1 not triggered (Now horizon non-empty); STEP 8.0 fast-track 0 qualifying items; PO named BLG-FE-109/110/111/115/116/117/118 as the next `plan release` anchor scope (advisory, no formal Add)); prior — 2026-07-16 (session — 5 new item(s) added: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118, BLG-FE-119); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived to backlog_archive.md: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111; ephemeral Release Slice v7.2 section removed (first partial-completion case — 3 rows re-homed to current_roadmap.md, not extracted here since each already has its own live entry); Gate Field Normalisation: 0; Effort Day-Range Validation: PASS; ID uniqueness: 5 known pre-existing duplicates unchanged, no new; 0 orphans, 0 stale blockers, 0 promotion candidates; report: claude/backlog/backlog_health_20260715.md); prior — 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — 1 new item added: BLG-OPS-111 (STEP 6 endpoint coverage drift advisory, 21 endpoints missing from api_performance_baseline.md, cross-references stale BLG-OPS-13)); prior — 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — 5 items marked ✅ COMPLETE: BLG-FE-55 (ST-01), BLG-SPEC-89 (ST-02), BLG-SPEC-90 (ST-04), BLG-FE-112 (ST-07), BLG-QA-111 (ST-08); no stale parked items (zero parked items in authoritative backlog slice); no Phase 4 additions required (verification_report.md §2 flag counts: 0 backlog entries added this run)); prior — 2026-07-15 (session — 1 new item(s) added: BLG-FE-114); prior — 2026-07-15 (session — 1 new item(s) added: BLG-FE-113); prior — 2026-07-15 (roadmap rebalance 2026-07-15__scheduled — 13 new items added via idea intake IW-20260715-01 disposition: BLG-GOV-234/235/236/237/238, BLG-SPEC-88/89/90, BLG-BE-63, BLG-QA-109/110/111, BLG-OPS-110 (9 standalone + 4 consolidated per the newly-codified Idea Consolidation convention); STEP 8.1 Option (a) — v7.2 Now-horizon section added, anchoring BLG-FE-109/110/111/112/55; DL-066; prior — session — 4 new item(s) added: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-FE-112; 1 item priority-escalated P3→P1: BLG-FE-55 [gate override, Product Owner instruction]); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived to backlog_archive.md: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84 [shipped v7.1], BLG-GOV-202 [pre-existing completed item found during STEP 6.2 post-write verification, missed by v7.0's grooming pass]; ephemeral Release Slice v7.1 section removed; Gate Field Normalisation: 0; ID uniqueness: 5 known pre-existing duplicate IDs (BLG-OPS-37, BLG-OPS-31, BLG-OPS-28, BLG-FEAT-38, BLG-FE-49 — same items archived twice under two historical conventions, already flagged as a follow-up dedup item per v6.6 BLG-QA-72 audit; no new duplicates introduced this cycle); 0 orphans, 0 stale blockers, 0 promotion candidates flagged this run; report: claude/backlog/backlog_health_20260714.md); prior — post-ship closure 2026-07-14__release-v7.1 — 7 items marked ✅ COMPLETE: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84; no stale parked items; no Phase 4 additions required (BLG-SPEC-87 already present from sprint execution)); prior — session — 1 new item(s) added: BLG-SPEC-87); prior — 2026-07-13 (roadmap rebalance 2026-07-13__scheduled — 25 new items added via idea intake IW-20260713-01 disposition + STEP 8.0 fast-track: BLG-BE-61/62, BLG-QA-106/108, BLG-SPEC-83–86, BLG-FEAT-77, BLG-FE-108, BLG-OPS-109, BLG-GOV-219–233; STEP 8.0 Production Correctness Fast-Track promoted BLG-BE-59/BLG-BE-60 (both P1, filed same session) to the new v7.1 Now-horizon section — first fast-track promotion in this engine's history; DL-065; prior — session — 1 new item(s) added: BLG-GOV-218); prior — groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived to backlog_archive.md; ephemeral Release Slice v7.0 section removed; Gate Field Normalisation: 0 in backlog.md; ID uniqueness: PASS; 0 orphans, 0 stale blockers, 0 promotion candidates flagged this run; prior — post-ship closure 2026-07-12__release-v7.0 — 15 items marked ✅ COMPLETE: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68; no stale parked items; no Phase 4 additions required (already confirmed present per verification_report.md §5)); prior — session — 5 new item(s) added: BLG-BE-59, BLG-BE-60, BLG-OPS-108, BLG-QA-104, BLG-QA-105); prior — session — 1 new item(s) added: BLG-FE-107; prior — session — 1 new item(s) added: BLG-FE-106; prior — roadmap rebalance 2026-07-12__scheduled — 36 new items added via idea intake IW-20260712-01 disposition: BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107; BLG-GOV-105 closed as confirmed duplicate of BLG-GOV-45 (BLG-GOV-202 closed same action); BLG-GOV-28 priority escalated P2→P1; DL-064; prior — session — 5 new item(s) added: BLG-FEAT-73, BLG-FEAT-74, BLG-FEAT-75, BLG-FEAT-76, BLG-FE-102; prior — groom backlog post-ship closure 2026-07-10__release-v6.9 — 2 items archived: BLG-FEAT-64, BLG-FEAT-65; ephemeral Release Slice v6.9 section removed; prior — 2 items marked ✅ COMPLETE: BLG-FEAT-64, BLG-FEAT-65; prior — roadmap rebalance 2026-07-10__scheduled — 39 new items added via idea intake IW-20260710-01 disposition: BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72; DL-063; prior — backlog consistency audit — BLG-BE-52 archived to backlog_archive.md (already-resolved item not yet retired); BLG-GOV-105 flagged possible duplicate of shipped BLG-GOV-45, not dispositioned (see new BLG-GOV-202); BLG-GOV-28 flagged overdue §13 gate (PT-04 sealed v6.1, review not run), not dispositioned; prior — 2026-07-09 Product Owner direct action — BLG-BE-52 resolved: no backfill; prior — session — 1 new item(s) added: BLG-BE-52; prior — groom backlog post-ship closure 2026-07-08__release-v6.8 — 17 items archived to backlog_archive.md; ephemeral Release Slice v6.8 section removed; prior — 17 items marked ✅ COMPLETE: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 1 new item(s) added: BLG-QA-86; prior session — 2 new item(s) added: BLG-SEC-12, BLG-SEC-13; prior session — 1 new item(s) added: BLG-FE-98; prior session — 1 new item(s) added: BLG-SPEC-73; prior session — 1 new item(s) added: BLG-BE-51; prior session — 1 new item(s) added: BLG-BE-50; prior session — 2 new item(s) added: BLG-FE-96, BLG-FE-97; prior session — 1 new item(s) added: BLG-FE-95; prior session — 1 new item(s) added: BLG-SPEC-72; prior session — 1 new item(s) added: BLG-SPEC-71; prior session — 1 new item(s) added: BLG-GOV-190; prior — release planning 2026-07-08__release-v6.8 — Release Slice v6.8 added, 17 items: BLG-BE-46, BLG-SEC-08, BLG-SEC-07, BLG-OPS-99, BLG-FEAT-52, BLG-FEAT-71, BLG-SPEC-58/59/60/61, BLG-QA-64, BLG-GOV-134, BLG-OPS-74, BLG-FE-77, BLG-OPS-61, BLG-GOV-123, BLG-OPS-71; prior session — 5 new item(s) added: BLG-FEAT-64, BLG-FEAT-65, BLG-FEAT-66, BLG-FEAT-67, BLG-FEAT-68)
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -1250,6 +1250,116 @@ The `ST-07` consolidation audit found four concrete redundancies across the noti
 - Weekly Digest is discoverable from the same nav grouping/tab bar as Alerts/Notifications
 - Weekly Digest's alert-count values link to the corresponding filtered notification history view
 - The relationship (or distinction) between "Daily Portfolio Summary" and "Weekly Digest" is unambiguous to a user configuring notification preferences
+
+---
+
+### BLG-FE-115 — Global command palette / cross-page search
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-16
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v7.3
+
+**Problem**
+`src/components/ui/command.js` (shadcn Command primitive) exists in the codebase but is never wired up anywhere — no `CommandDialog` usage found repo-wide. Users must navigate via the sidebar to reach any ticker, page, or action, with no cross-page search or keyboard-driven navigation.
+
+**Scope**
+- Wire a global Cmd/Ctrl-K command palette accessible from any page
+- Search across Watchlist/Positions/TradePlans tickers with navigation on select
+- Include page navigation and common actions (e.g. add ticker, new trade plan) as palette entries
+
+**Acceptance Criteria**
+- Cmd/Ctrl-K opens the palette from any page in the app
+- Typing a ticker surfaces matches across Watchlist/Positions/TradePlans and navigates to the selected result
+- Typing a page name navigates to that page
+
+---
+
+### BLG-FE-116 — User-defined custom price alerts
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner; Backend Engineering Patterns Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-16
+**Effort:** L (~3–5 days)
+**Provisional-Target:** v7.3
+
+**Problem**
+`NotificationPreferences.js` currently supports only 4 hardcoded system-generated alert types (`stop_loss_approach`, `grace_period_warning`, `market_regime_change`, `daily_portfolio_summary`). There is no way for the user to define an arbitrary alert such as "notify me when TICKER crosses $X" — a baseline expectation in trading tools.
+
+**Scope**
+- Add a user-created price-alert data model (ticker, condition, threshold, active flag)
+- Add UI to create, view, edit, and delete these alerts
+- Feed triggered alerts into the existing notification delivery pipeline
+
+**Acceptance Criteria**
+- User can create a ticker/condition/threshold alert from the UI
+- Alert fires via the existing notification delivery channel when its condition is met
+- User can view, edit, and delete active alerts
+
+---
+
+### BLG-FE-117 — Bulk actions on list/table views
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-16
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v7.3
+
+**Problem**
+Watchlist, Positions, and TradePlans tables only support per-row actions (e.g. `WatchlistRowActions.js`). No multi-select exists to tag, archive, or remove multiple items at once, forcing repetitive one-at-a-time interactions for routine list maintenance.
+
+**Scope**
+- Add row multi-select checkboxes to Watchlist and TradePlans tables
+- Add a bulk-action toolbar (tag, archive, remove) that appears when rows are selected
+
+**Acceptance Criteria**
+- Rows in Watchlist and TradePlans tables are multi-selectable
+- A bulk-action toolbar appears once one or more rows are selected
+- Bulk tag/archive/remove operations apply to all selected rows in a single action
+
+---
+
+### BLG-FE-118 — Saved filter views and calendar view
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-16
+**Effort:** L (~3–5 days)
+**Provisional-Target:** v7.3
+
+**Problem**
+Screener/TradeHistory/Watchlist filter state resets every session with no way to save a named filter combination for reuse. Separately, there is no calendar-based view of trade plan dates, earnings dates, or expirations, despite a `calendar.js` UI primitive already existing in `src/components/ui` (currently only used inside date pickers).
+
+**Scope**
+- Add named, saved filter presets per list view (Screener, TradeHistory, Watchlist)
+- Add a calendar page/widget surfacing trade plan dates and other key dates
+
+**Acceptance Criteria**
+- User can save a filter combination by name and reapply it in a later session
+- A calendar view renders trade plan dates and key dates, navigable by month
+
+---
+
+### BLG-FE-119 — PDF / print-friendly export
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-16
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v7.3
+
+**Problem**
+CSV export already exists and is well-tested (tax-year export, P&L split — `BLG-SPEC-84`/`BLG-QA-106`/`BLG-QA-110`), but there is no print-friendly or PDF output for surfaces like the weekly digest or an individual trade plan that a user might want to print or share outside the app.
+
+**Scope**
+- Add a print stylesheet or PDF-export action for `WeeklyDigest.js`
+- Add a print stylesheet or PDF-export action for `TradePlan.js`
+
+**Acceptance Criteria**
+- A "Print / Export PDF" action is available on both `WeeklyDigest.js` and `TradePlan.js`
+- Output is legible and correctly formatted without app chrome (nav/sidebar)
 
 ---
 
@@ -6041,5 +6151,71 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 **Problem:** `docs/reference/openapi.yaml` has 100 registered path+method combinations; `docs/ops/api_performance_baseline.md` has measurement rows for 91 (after normalising path-param name differences), leaving 21 endpoints with no recorded p50/p95 baseline: `GET /analytics/market-correlation`, `GET /analytics/metrics`, `GET /analytics/strategy-version-comparison`, `GET /analytics/tag-performance`, `GET /portfolio/pre-entry-validation`, `GET /positions/analyze`, `GET /positions/grace-period-alerts`, `GET /positions/tags`, `GET /positions/{id}`, `GET /positions/{id}/stop-trail`, `GET /trade-plans/tags`, `GET /v1beta1/news`, `GET /v2/stocks/{symbol}/bars`, `POST /ai/check-daily-cost`, `POST /positions/nightly-stop-update`, `POST /positions/risk-off-alerts`, `POST /positions/{id}/refresh-state`, `POST /signals/rebalance-exit`, `POST /strategy/benchmark/import`, `POST /test/endpoints`, `POST /trade-plans/generate-plan`. None of these were introduced by v7.2 (zero backend routes shipped this cycle — all 5 deliverables were doc/spec artefacts) — this is accumulated drift from prior cycles. `BLG-OPS-13` is a pre-existing rolling tracking item for this same pattern but its own scope list (v2.8–v4.6 endpoints) is stale against the current gap — several of its listed endpoints are now present in the baseline while the 21 above are not yet reflected in it.
 **Scope:** Run each of the 21 endpoints against staging/production to obtain p50/p95 latencies and add to `docs/ops/api_performance_baseline.md`; reconcile/supersede `BLG-OPS-13`'s stale endpoint list in the same pass rather than maintaining two parallel tracking items.
 **Acceptance Criteria:** All 21 endpoints have p50/p95 latency entries in the baseline document, consistent with existing measurement methodology; `BLG-OPS-13` disposition (close as superseded, or merge remaining-still-missing items from its list into this one) recorded.
+
+---
+
+### BLG-SPEC-91 — Command Palette (BLG-FE-115) pre-implementation spec, prompt template & discoverability/adoption pass
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Frontend Pre-Work | **Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design | **Source:** IDEA-base44-frontend-20260716-01, IDEA-frontend-specs-20260716-01, IDEA-head-of-ux-20260716-02, IDEA-metrics-20260716-01, IDEA-qa-testing-20260716-02, IDEA-head-of-ux-20260716-01, IDEA-api-contracts-20260716-02 (7-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** M (~2-3 days) | **Provisional-Target:** TBD
+**Problem:** `BLG-FE-115` (global command palette) has no canonical spec, no Base44 prompt template, no defined adoption metric, and no UX discoverability plan — building it directly would repeat the pattern `BLG-SPEC-89`/`BLG-SPEC-90` were filed to prevent for the v7.2 UX items.
+**Scope:** Author a formal spec (searchable entity index scope, keyboard interaction contract); a Base44 prompt template for the Cmd/Ctrl-K pattern; a discoverability/onboarding plan (desktop power-user pattern with no in-app precedent); an adoption metric definition (invocations/session, search-to-navigation success rate); pre-stage the API contract entry; confirm reuse of the `design_system.md` v1.1 `DataState` empty-state pattern for the palette's no-results state.
+**Acceptance Criteria:** Spec authored and reviewed; Base44 prompt template added to the prompt template library; discoverability plan documented; adoption metric defined; API contract stub pre-staged; `DataState` reuse confirmed in the spec.
+
+---
+
+### BLG-SPEC-92 — Custom Price Alerts (BLG-FE-116) pre-implementation readiness pass
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Backend + Data Pre-Work | **Owner:** Data Model & Domain Schema Owner; Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260716-01, IDEA-data-model-20260716-01, IDEA-cybersecurity-20260716-01, IDEA-finops-20260716-01, IDEA-infra-ops-20260716-01, IDEA-metrics-20260716-02, IDEA-strategy-owner-20260716-01, IDEA-qa-testing-20260716-01, IDEA-head-of-engineering-20260716-01, IDEA-head-of-ux-20260716-01, IDEA-api-contracts-20260716-02 (11-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** L (~3-4 days) | **Provisional-Target:** TBD
+**Problem:** `BLG-FE-116` (user-defined price alerts) touches data model, backend scheduling, security, cost, and §13 boundary concerns simultaneously — none of which are pre-designed, creating high risk of a rushed design-under-sprint-pressure outcome if it enters planning undesigned.
+**Scope:** Pre-design the data model (ticker/condition/threshold/active flag); design a reusable background alert-evaluation service pattern extending existing nightly-job infrastructure, with health-check surfacing on `GET /health/scheduler`; auth/rate-limit review for the new evaluation path; cost-impact pre-assessment (Render compute trend); §13 pre-check confirming the feature remains user-defined-threshold-plus-passive-notification, not automated execution; trigger-accuracy/false-positive metric definition; mock-payload strategy for Playwright tests; pre-stage the API contract entry; confirm `DataState` empty-state reuse for "no alerts configured."
+**Acceptance Criteria:** Data schema documented; background evaluation pattern documented and confirmed to extend (not duplicate) existing scheduler infrastructure; security/cost/§13 pre-checks each recorded with a PASS or named follow-up; metric defined; API contract stub pre-staged.
+
+---
+
+### BLG-SPEC-93 — Bulk Actions (BLG-FE-117) pre-implementation readiness pass
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Backend + QA Pre-Work | **Owner:** Backend Engineering Patterns Owner; Director of Quality | **Source:** IDEA-backend-engineering-20260716-02, IDEA-base44-frontend-20260716-02, IDEA-director-of-quality-20260716-01, IDEA-strategy-owner-20260716-02, IDEA-head-of-engineering-20260716-02, IDEA-head-of-ux-20260716-01, IDEA-api-contracts-20260716-02 (7-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** M (~2 days) | **Provisional-Target:** TBD
+**Problem:** `BLG-FE-117` (bulk actions on Watchlist/TradePlans tables) has no backend batch-mutation pattern, no Base44 prompt template, and no Playwright coverage plan — building the multi-select/toolbar UI first without the batch endpoint pattern risks N sequential per-row calls rather than one batch call.
+**Scope:** Design a single-call batch-mutation endpoint pattern (tag/archive/remove); Base44 prompt template for the multi-select + bulk-action-toolbar pattern; §13 pre-check confirming bulk operations remain human-initiated batch actions on existing rows, not automated decision-making; Playwright coverage plan drafted ahead of implementation; confirm `DataState`/design-system consistency for the toolbar's empty/zero-selected state.
+**Acceptance Criteria:** Batch endpoint pattern documented; Base44 prompt template added; §13 pre-check recorded PASS; Playwright coverage plan drafted (scenario list, not yet implemented).
+
+---
+
+### BLG-SPEC-94 — Saved Filters & Calendar View (BLG-FE-118) pre-implementation spec pass
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Data + Frontend Pre-Work | **Owner:** Data Model & Domain Schema Owner; Frontend Specs & UX Documentation Owner | **Source:** IDEA-data-model-20260716-02, IDEA-frontend-specs-20260716-02, IDEA-financial-reporting-20260716-02, IDEA-director-of-quality-20260716-02, IDEA-head-of-ux-20260716-01, IDEA-api-contracts-20260716-02 (6-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** M (~2-3 days) | **Provisional-Target:** TBD
+**Problem:** `BLG-FE-118` bundles two related but distinct sub-features (saved filter presets; calendar view of trade plan/earnings/expiry dates) with no schema decision, no formal spec, and no QA persistence template, despite a directly reusable pattern (`BLG-FE-40`'s versioned-localStorage-envelope) already existing in the codebase.
+**Scope:** Decide JSON-column-on-settings vs. dedicated table for saved filter presets; author a formal spec for the calendar view (date sourcing, navigation model); assess feeding the realized/unrealized P&L split into the calendar view for date-anchored P&L context; QA acceptance-criteria template reusing the `BLG-FE-40` localStorage-envelope pattern for cross-reload filter persistence; pre-stage the API contract entry; confirm `DataState` reuse for the calendar's no-events state.
+**Acceptance Criteria:** Schema decision recorded with rationale; calendar view spec authored; P&L-feed feasibility assessed; QA persistence template drafted; API contract stub pre-staged.
+
+---
+
+### BLG-OPS-112 — AI endpoint (daily-briefing/chat) cost & latency drift monitoring
+**Priority:** P3 (Low) | **Type:** Operations / AI Governance | **Owner:** AI Compliance & Governance Officer; Infrastructure & Operations Owner | **Source:** IDEA-ai-compliance-20260716-01 | **Effort:** S (~1 day) | **Provisional-Target:** TBD
+**Problem:** `POST /ai/daily-briefing` and `POST /ai/chat` have per-call cost tracking (`gemini_audit_log`/Anthropic usage logging) but no rolling anomaly check — a latency or cost regression would only surface via manual review, not an alert.
+**Scope:** Extend existing cost-tracking infrastructure with a rolling anomaly check (e.g. week-over-week cost/latency delta threshold) for the two AI endpoints.
+**Acceptance Criteria:** Anomaly check scoped and added; confirmed to fire on a simulated cost/latency spike.
+
+---
+
+### BLG-GOV-239 — Formal AI model deprecation calendar tied to Anthropic lifecycle
+**Priority:** P3 (Low) | **Type:** Governance / AI Compliance | **Owner:** AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260716-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** The system pins a specific Claude model version (per the existing model-pinning policy, `BLG-GOV-64`) but has no forward-looking deprecation calendar — a model deprecation announcement from Anthropic would be discovered reactively rather than tracked proactively.
+**Scope:** Add a lightweight deprecation-calendar tracking document cross-referencing the pinned model version against Anthropic's published lifecycle/deprecation schedule, reviewed at a defined cadence.
+**Acceptance Criteria:** Tracking document created; first review cycle scheduled.
+
+---
+
+### BLG-FEAT-78 — Trade-tag/trigger-source column on tax-year P&L CSV export
+**Priority:** P3 (Low) | **Type:** Product Feature / Reporting, gate-conditional | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260716-01 | **Effort:** S (~1 day) | **Provisional-Target:** TBD
+**Gate criteria:** `BLG-FE-116` (custom price alerts) ships — no trigger-source data exists to export until an alert-triggered trade path exists.
+**Problem:** The tax-year P&L CSV export (shipped v7.0, hardened v7.1) has no column distinguishing trades opened via a system-surfaced trigger (e.g. a future price alert) from manually-initiated trades, which will become a reporting gap once `BLG-FE-116` ships.
+**Scope:** Add a trigger-source column to the CSV export once alert-triggered trades exist to populate it.
+**Acceptance Criteria:** CSV export includes a trigger-source column; column populated correctly for both alert-triggered and manual trades.
+
+---
+
+### BLG-QA-112 — Regression suite baseline update for BLG-FE-115-119
+**Priority:** P3 (Low) | **Type:** QA, gate-conditional | **Owner:** QA Lead | **Source:** IDEA-qa-lead-20260716-02 | **Effort:** S (~1 day) | **Provisional-Target:** TBD
+**Gate criteria:** Any of `BLG-FE-115`–`BLG-FE-119` enters a release scope (each introduces a new interaction surface — keyboard nav, background alerts, multi-select, persisted filters, PDF export — not yet reflected in the regression baseline).
+**Problem:** `docs/testing`/regression-suite baseline documentation was last comprehensively updated for the v5.5-era feature set (`BLG-QA-50`); none of the command-palette, price-alert, bulk-action, or saved-filter interaction surfaces are represented.
+**Scope:** Update the regression suite baseline document once any of `BLG-FE-115-119` is scoped into a release, adding scenario coverage for the new interaction surface(s).
+**Acceptance Criteria:** Regression baseline document updated with new scenario entries for the shipped item(s); cross-referenced against the corresponding Playwright spec file(s).
 
 ---
