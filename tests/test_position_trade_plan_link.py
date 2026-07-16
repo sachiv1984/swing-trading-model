@@ -200,3 +200,19 @@ class TestAddPositionExplicitTradePlanLink:
 
         assert result["position_id"] == "new-position-id"
         mock_update.assert_not_called()
+
+    def test_explicit_plan_not_found_skips_update_cleanly(self):
+        """Plan ID not found (or belongs to another portfolio) — get_trade_plan_by_id
+        returns None rather than raising. Distinct from the exception-path test above."""
+        self._install_common_mocks()
+        self._patch("get_trade_plan_by_id", return_value=None)
+        mock_update = self._patch("update_trade_plan")
+
+        result = position_service.add_position(
+            ticker="AAPL", market="US", entry_date="2026-07-16",
+            shares=10, entry_price=100.0, fx_rate=1.27,
+            trade_plan_id="plan-nonexistent",
+        )
+
+        assert result["position_id"] == "new-position-id"
+        mock_update.assert_not_called()

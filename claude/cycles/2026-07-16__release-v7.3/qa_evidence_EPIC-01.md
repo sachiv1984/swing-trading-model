@@ -83,5 +83,8 @@ Last Updated: 2026-07-16
 - [x] Regression areas checked
 - [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, no new direct URL construction introduced
 - Signed off by: Director of Quality
-- Date: <awaiting Director of Quality sign-off — EPIC-01 introduces frontend-visible changes (src/pages/**, src/components/**), so per execution_prompt.md §3.2.A BLG-GOV-135 detection rule the autonomous DoQ sign-off class is unavailable, and per §5.3 the merge-gate QA sign-off is always human, never agent-mediated>
-- Comments:
+- Date: 2026-07-16
+- Comments: Independent review performed against `stage4_backlog_slice.md` AC text (not just this file's own drafting) plus direct inspection of `add_position()`'s new `trade_plan_id` guard logic. Findings:
+  (1) `get_trade_plan_by_id` returning `None` for a not-found/wrong-portfolio plan id was reachable but untested — closed during this review by adding `test_explicit_plan_not_found_skips_update_cleanly` (8/8 pass in `tests/test_position_trade_plan_link.py`).
+  (2) ST-02's empty-state colour/iconography AC nominally calls for dual-theme verification per `base44_prompt_template_library.md` §4, but `OpenPositionsCard`/`GracePeriodCard`/`RecentActivityCard` render inside `DashboardCard`, which uses a fixed dark-slate background regardless of the page-level theme toggle (no `dark:` prefix on its container classes) — there is no actual colour delta between themes for these tiles to verify, so single-theme DOM-presence coverage (`SC-DES-*`) is sufficient; the briefing-section wrapper (ST-03), which does have theme-conditional classes, is correctly covered by an explicit dual-theme test (`SC-DBH-02`). No action needed.
+  Neither finding is a P0/P1 blocker. No deviation from canonical spec found. Recommend approval.

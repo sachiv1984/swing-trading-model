@@ -13,7 +13,7 @@
       "branch": "exec/2026-07-16__release-v7.3/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-16__release-v7.3/qa_evidence_EPIC-01.md",
       "test_scenarios": ["tests/e2e/v7.2-dashboard-tradeplan-ux-hardening.spec.js", "tests/test_position_trade_plan_link.py"],
       "stories": {
