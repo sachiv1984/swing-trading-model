@@ -2137,3 +2137,29 @@ None — all 7 sealed backlog-slice items were delivered within the sprint.
 - QA evidence logs: qa_evidence_EPIC-01.md, qa_evidence_EPIC-02.md, qa_evidence_EPIC-03.md, qa_evidence_EPIC-04.md, qa_evidence_EPIC-05.md (all autonomous class, BLG-GOV-19, 2026-07-15)
 - Deviations filed: None
 - Test scenarios referenced: None — all five deliverables are readiness/audit/planning documentation artefacts; no runnable test files added this sprint
+
+## Sprint: 2026-07-16__release-v7.3
+**Date:** 2026-07-16
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Trade-plan-to-execution linkage UX "Start Trade from Plan" (ST-01, BLG-FE-109); dashboard empty/first-run state coverage (ST-02); dashboard briefing visual hierarchy (ST-03) — all three carried forward from v7.2 | src/pages/TradePlan.js, src/pages/TradePlans.js, src/pages/TradeEntry.js, src/pages/DashboardHome.js, src/pages/Watchlist.js | None |
+| EPIC-02 | Command Palette (BLG-FE-115) pre-implementation readiness pass (ST-04) — searchable entity index scope, keyboard interaction contract, Base44 prompt template, discoverability plan, adoption metrics, and confirmed no new API surface; flagged `cmdk` package missing from `package.json` as an implementation-time blocker | docs/specs/blg_fe_115_pre_implementation_readiness_pass.md; docs/specs/frontend/base44_prompt_template_library.md | None |
+| EPIC-03 | Custom Price Alerts (BLG-FE-116) pre-implementation readiness pass (ST-05) — new `price_alerts` schema designed (existing `alert_rules` is singleton-per-type, cannot represent per-ticker alerts); evaluation extension to existing `POST /alerts/evaluate` cron and `GET /health/scheduler` designed; **§13 pre-check PASSED** (RISK-03 cleared) | docs/specs/blg_fe_116_pre_implementation_readiness_pass.md | None |
+| EPIC-04 | Bulk Actions (BLG-FE-117) pre-implementation readiness pass (ST-06) — per-entity batch-mutation endpoint pattern designed with explicit partial-failure response shape (no prior batch-write pattern existed); Base44 prompt template added; **§13 pre-check PASSED** (RISK-04 cleared) | docs/specs/blg_fe_117_pre_implementation_readiness_pass.md; docs/specs/frontend/base44_prompt_template_library.md | None |
+| EPIC-05 | Saved Filters & Calendar View (BLG-FE-118) pre-implementation spec pass (ST-07) — dedicated `saved_filters` table decided over JSON-column-on-settings (RISK-05 schema decision recorded with rationale); calendar view spec authored reusing `GET /reports/monthly-pnl`'s date-grouping logic; flagged `react-day-picker` package missing from `package.json` | docs/specs/blg_fe_118_pre_implementation_readiness_pass.md | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| `BLG-FE-115/116/117/118` | Implementation of the four readiness-passed features themselves remains out of this sprint's scope — now unblocked for v7.4 release planning per the PO anchor-scope decision (`2026-07-16__scheduled`, DL-067) | n/a — carried in stage4_backlog_slice.md#Deferred-Items sequencing constraint, not a backlog return |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md through qa_evidence_EPIC-05.md (EPIC-02 through EPIC-05 all autonomous class, BLG-GOV-19, 2026-07-16)
+- Deviations filed: None
+- Test scenarios referenced: None — all five deliverables this sprint are UI implementation (EPIC-01, carried from v7.2 with its own Playwright coverage) or readiness/spec documentation artefacts (EPIC-02 through EPIC-05); no new runnable test files added by EPIC-02–05
