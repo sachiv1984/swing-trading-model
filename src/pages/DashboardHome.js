@@ -37,7 +37,13 @@ export default function DashboardHome() {
         <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">Session summary — live data</p>
       </div>
 
-      <MorningBriefing />
+      {/* ST-03 (EPIC-01, v7.3): briefing section — visually distinguished from the
+          status-card grid below via an accent border/tint, and placed first so
+          it is visible on page load without scrolling past other cards. */}
+      <div className="rounded-2xl border border-indigo-500/30 bg-indigo-500/5 dark:bg-indigo-500/10 p-4 md:p-6 space-y-4">
+        <MorningBriefing />
+        <AiDailyBriefing />
+      </div>
 
       {/* Top row: Open Positions, Portfolio Heat, In Grace Today */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -51,9 +57,6 @@ export default function DashboardHome() {
         <SignalStatusCard />
         <RecentActivityCard />
       </div>
-
-      {/* ST-07 (EPIC-02, v6.2): AI Daily Briefing card — display-only advisory */}
-      <AiDailyBriefing />
 
       {/* Trade gate proximity strip — hidden silently on error */}
       <GateProgressStrip />

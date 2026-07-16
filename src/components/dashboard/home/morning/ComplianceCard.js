@@ -34,8 +34,6 @@ export default function ComplianceCard() {
     else if (score < score30 - 1) trend = "down";
   }
 
-  const display = score != null ? `${score}%` : "—";
-
   const TrendIcon =
     trend === "up" ? TrendingUp :
     trend === "down" ? TrendingDown :
@@ -47,9 +45,18 @@ export default function ComplianceCard() {
     "text-slate-600 dark:text-slate-400";
 
   return (
-    <DashboardCard title="Signal Compliance" to="/PerformanceAnalytics" isLoading={loading7d || loading30d} error={error7d}>
+    <DashboardCard
+      title="Signal Compliance"
+      to="/PerformanceAnalytics"
+      isLoading={loading7d || loading30d}
+      error={error7d}
+      empty={score == null}
+      emptyIcon={<Minus className="w-8 h-8 text-slate-600" />}
+      emptyHeading="No compliance data yet"
+      emptyBody="Your score will show here once available."
+    >
       <div className="flex items-end gap-2 mb-2">
-        <p className="text-4xl font-bold text-emerald-400">{display}</p>
+        <p className="text-4xl font-bold text-emerald-400">{score != null ? `${score}%` : ""}</p>
         <TrendIcon className={`w-5 h-5 mb-1 ${trendColor}`} />
       </div>
       <p className="text-sm text-slate-600 dark:text-slate-400">7-day compliance score</p>
