@@ -2,9 +2,9 @@
 **Class:** Class 2 — Supporting
 **Status:** Supporting
 **Canonical Source:** docs/specs/frontend/design_system.md
-**Version:** 1.1
+**Version:** 1.2
 **Last Updated:** 2026-07-16
-**Story:** ST-04 (BLG-SPEC-90, EPIC-03, v7.2); ST-04 (BLG-SPEC-91, EPIC-02, v7.3)
+**Story:** ST-04 (BLG-SPEC-90, EPIC-03, v7.2); ST-04 (BLG-SPEC-91, EPIC-02, v7.3); ST-06 (BLG-SPEC-93, EPIC-04, v7.3)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -98,11 +98,36 @@ This story's Playwright coverage (or human staging sign-off) must explicitly ver
 Cmd/Ctrl-K opens a searchable palette listing pages and in-scope entities; Escape/click-away closes it; Enter/click navigates; empty search state renders the DataState pattern; a visible nav-bar affordance provides mouse-accessible discovery; both light and dark theme render correctly.
 ```
 
-## 6. Maintenance
+## 6. Template: Bulk-Action Toolbar (Multi-Select + Bulk-Action Pattern)
+
+**Use when:** delegating `BLG-FE-117` (bulk actions) or any future story adding row-level multi-select with a bulk-action toolbar.
+
+**Source pattern:** `docs/specs/blg_fe_117_pre_implementation_readiness_pass.md` (ST-06, EPIC-04, v7.3) — genuinely new pattern, no prior in-app precedent (existing checkbox usages are single-checkbox confirmation controls, not row-multi-select).
+
+**Reusable fragment — Behaviour Rules section:**
+```
+- Row-level checkbox selection; bulk-action toolbar renders only when 1+ rows are selected (no zero-selected empty state to design).
+- Toolbar shows a live selected-count and the available bulk actions for the current entity (tag / archive / remove).
+- Destructive bulk actions (delete/archive) require an explicit confirmation step before the API call fires — no existing precedent for a confirm-free destructive bulk action in this codebase.
+- Partial failures must be surfaced per-row (not a single opaque "some failed" toast) — read succeeded/failed arrays from the response and reflect the failed subset back to the user with per-item reasons.
+```
+
+**Reusable fragment — Non-Functional Rules section:**
+```
+- Any new toolbar background/border/badge token must ship as an explicit light+dark Tailwind pair (BLG-FE-87/88/95 precedent).
+- Batch endpoint calls must be capped (recommend 100 IDs/call) — do not fire one API call per selected row from the client.
+```
+
+**Reusable fragment — Expected Outcome section:**
+```
+Selecting 1+ rows reveals a bulk-action toolbar with an accurate selected-count; bulk tag/archive/remove actions succeed or partially-fail with per-row feedback; destructive actions require confirmation; toolbar disappears at zero-selected; both light and dark theme render correctly.
+```
+
+## 7. Maintenance
 
 New entries are added to this library when a pattern is formalised in `design_system.md` and applied to two or more concrete stories (the same threshold `roadmap_prompt.md`'s STEP 4.2 idea-consolidation convention uses for "recurring" — a single application does not yet justify a library entry). Entries here must be kept consistent with `design_system.md`; if a `design_system.md` edit changes a pattern documented here, update this file in the same commit.
 
-## 7. Known Deviations
+## 8. Known Deviations
 
 None. This is a net-new artefact — no prior canonical spec governed this work.
 
@@ -112,5 +137,6 @@ None. This is a net-new artefact — no prior canonical spec governed this work.
 
 | Date | Version | Summary |
 |---|---|---|
+| 2026-07-16 | 1.2 | Added Bulk-Action Toolbar (multi-select) template (ST-06, EPIC-04, v7.3, BLG-SPEC-93) |
 | 2026-07-16 | 1.1 | Added Global Command Palette (Cmd/Ctrl-K) template (ST-04, EPIC-02, v7.3, BLG-SPEC-91) |
 | 2026-07-15 | 1.0 | Initial library — DataState compact empty-state, primary/secondary card hierarchy, dual-theme call-out (ST-04, EPIC-03, v7.2) |
