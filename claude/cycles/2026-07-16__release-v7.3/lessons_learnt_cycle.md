@@ -75,4 +75,58 @@ Items: 1
 
 ## Phase 4
 
-*(To be appended by Delivery Verification at Phase 4 invocation.)*
+**Phase:** Delivery Verification
+**Cycle:** 2026-07-16__release-v7.3
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-07-16
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-07-15__release-v7.2 (`lessons_learnt_cycle.md` `## Phase 4`) — no friction items and no outstanding actions found; nothing to check for recurrence.
+
+### What went well
+
+- `sprint_close.md`'s Verification Readiness Statement was fully `Yes` across all three fields on first read — no STEP -1.2 halt.
+- All 4 spec-only EPICs' (EPIC-02–05) `qa_evidence_EPIC-xx.md` sign-off blocks used the compliant autonomous class (BLG-GOV-19) format on first check, all four qualifying criteria explicitly confirmed in each — no Tier 2 counter-sign requirement triggered. EPIC-01's direct Director of Quality sign-off (carried frontend-visible work) was also clean on first check.
+- Zero deviations to adjudicate — `sprint_close.md` and all 5 `qa_evidence_EPIC-xx.md` logs independently confirmed "None", consistent with each `execution_state.json` story note.
+- Test scenario coverage short-circuited cleanly to `not_applicable` across EPIC-02 through EPIC-05 (empty `test_scenarios`, no frontend-visible change confirmed independently in each QA evidence log's Criterion 3 diff check); EPIC-01's full Playwright/backend suite was confirmed run and passing, with no coverage gap.
+- `state.json.deferred_execution_blockers` was empty and the backlog slice contained zero `parked` items — STEP 4.2/4.3 both resolved to "nothing to disposition" with no ambiguity.
+- `docs/System_status_report.md`'s v7.3 section was fully accurate on first read (capabilities-now-live, capabilities-deferred, and verification-inputs-ready tables all matched `execution_state.json`/qa evidence) — only the routine STEP 6 status-line update was needed.
+
+### Friction Log
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| `qa_evidence_EPIC-01.md` ST-02's evidence table tabulated AC-01/AC-02 only and silently dropped AC-03 ("Loading and error states for each card are unaffected") rather than consolidating it with an explicit "Covers AC-03" note, as the existing `qa_evidence_template.md` Consolidation Block advisory (OA-3/ST-03) recommends. The AC was functionally addressed (confirmed via the "What was built" narrative and the "Regression areas checked" line) and did not rise to a scope-reduction deviation, but the omission was silent rather than explicit — this run's STEP 2.2 cross-reference against `stage4_backlog_slice.md` caught it only because delivery verification re-derives the AC list independently. | Phase 4 | A — Governance Drift (a documented advisory was not fully followed: AC dropped rather than consolidated-with-note) | defer | Strengthen `claude/system/templates/qa_evidence_template.md` Consolidation Block advisory (OA-3/ST-03, currently line 38) from advisory to a hard requirement: every AC in the backlog slice must appear either as its own table row or be explicitly named in a consolidated row (e.g. "Covers AC-01, AC-02, AC-03") — no AC may be silently absent from the table. Delivery verification's own write scope (`delivery_verification_prompt.md §5`) does not include `claude/system/templates/`, so this cannot be applied in this run. | Head of Specs Team | next `run sprint` invocation (any cycle) |
+
+**Recurrence Notes:** Not a recurrence — the prior cycle's Phase 4 record (v7.2) found zero friction items, so there is no matching prior entry to check against. This is a first occurrence of this specific pattern in the Phase 4 record; flagged as Type A on the existing OA-3/ST-03 advisory rather than a wholly new item since the underlying rule already exists and simply needs strengthening from advisory to hard requirement.
+
+---
+
+## Recurrence Escalations
+
+None.
+
+## Process improvements actioned this run
+
+None applied this run — the friction item above is deferred (requires a template file outside this routine's write scope) rather than actioned in-session.
+
+## New files created this run
+
+None beyond the standard verification artefacts (`verification_report.md`, this Phase 4 append, and the `docs/System_status_report.md` status-line update).
+
+## Outstanding deferred patches
+
+| File | Section | Change required | Owner | Target |
+|------|---------|----------------|-------|--------|
+| `claude/system/templates/qa_evidence_template.md` | Consolidation Block advisory (OA-3/ST-03) | Strengthen from advisory to hard requirement — no AC may be silently absent from the evidence table; must appear as its own row or be named in a consolidated row | Head of Specs Team | next `run sprint` invocation (any cycle) |
+
+## Escalations
+
+None.
+
+## Carry-Forward
+
+Items: 1
+
+| # | Observation | Implication | Engine |
+|---|-------------|-------------|--------|
+| 1 | QA evidence consolidation rows can silently omit an AC (rather than explicitly consolidating it with a "Covers AC-xx" note) without tripping any hard gate, since the OA-3/ST-03 rule is currently advisory only. | Until the template patch above lands, Delivery Verification's own STEP 2.2 independent AC cross-reference against `stage4_backlog_slice.md` remains the only backstop catching this — continue performing that cross-reference explicitly rather than trusting the evidence table's row count alone. | Delivery Verification |
