@@ -1,13 +1,46 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — RA:v7.2 retired, partial: 5/8 items; 3 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-14 (post-ship closure 2026-07-14__release-v7.1 — RA:v7.1 retired)
+**Last Updated:** 2026-07-16 (post-ship closure 2026-07-16__release-v7.3 — RA:v7.3 retired, partial: 3/7 items; 4 unblocked readiness-passed items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — RA:v7.2 retired, partial: 5/8 items; 3 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-14 (post-ship closure 2026-07-14__release-v7.1 — RA:v7.1 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v7.3 — Dashboard/Trade-Plan/Navigation UX Continuation (partial — 3/7 items shipped as features; 4 shipped as readiness passes only, carried forward as a fresh Now-horizon entry)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete (for the 3 items shipped as features this cycle — `BLG-FE-109`, `BLG-FE-110`, `BLG-FE-111`)
+**Retired from active roadmap:** 2026-07-16
+**Shipped version:** v7.3
+**Cycle reference:** 2026-07-16__release-v7.3
+**Verification report:** claude/cycles/2026-07-16__release-v7.3/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-07-16
+
+**Note on partial retirement (second occurrence of this pattern, after RA:v7.2):** 4 of the 7 items in this Now-horizon section (`BLG-FE-115`, `BLG-FE-116`, `BLG-FE-117`, `BLG-FE-118`) are still unbuilt — only their pre-implementation readiness passes (`BLG-SPEC-91/92/93/94`, tracked as separate backlog items) shipped this cycle, clearing each item's own blocking gate (including two §13 pre-checks, both PASS: RISK-03 for `BLG-FE-116`, RISK-04 for `BLG-FE-117`). Rather than retiring them into this historical record as if the features themselves shipped, they have been re-added to `current_roadmap.md §3` as a fresh, un-versioned Now-horizon carry-forward entry — ready for the next `plan release` to scope them into v7.4. This archive entry preserves the full 7-item section verbatim as the historical record of what this cycle's Now-horizon anchor contained and what it delivered. This is the same structural pattern as `RA:v7.2` (BLG-GOV-240, not yet resolved).
+
+### Original Roadmap Entry
+
+### v7.3 — Dashboard/Trade-Plan/Navigation UX continuation — ✅ Complete (partial — see note above) — Shipped 2026-07-16 — cycle: 2026-07-16__release-v7.3
+
+Anchored `2026-07-16` — formalizes the PO scope-naming decision recorded at roadmap rebalance `2026-07-16__scheduled` (see `decision_log.md` DL-068). This section completes that decision's write step out-of-band: `roadmap_prompt.md` STEP 8.1 (Empty Now Horizon Gate) did not fire that cycle because condition 1 (empty Now horizon) was false — 3 items were already carried, unversioned, from v7.2's partial retirement — so the engine's own Option (a)/(b) mechanism had no path to formally version-label them. Flagged as a governance-gap backlog item (`BLG-GOV-240`) for a future process fix.
+
+The first 3 items were originally anchored at roadmap rebalance `2026-07-15__scheduled` (STEP 8.1, Option (a)) as part of an 8-item v7.2 Now-horizon section; 5 of the 8 (pre-implementation readiness/audit passes) shipped in cycle `2026-07-15__release-v7.2` and were retired (see `roadmap_archive.md` RA:v7.2). These 3 UX implementation items were sequencing-gated on those readiness passes; both gate conditions closed 2026-07-15, so all three were unblocked and carried forward, un-versioned, until this section named them under v7.3. The remaining 4 items are newly-filed P1 build-and-ship-shaped U-items named by the PO at `2026-07-16__scheduled` as part of the same anchor scope (STEP 2.4 Product Value Alert / STEP 7.1 Skill-Silo Alert response).
+
+| Feature | ID | Effort | Notes |
+|---|---|---|---|
+| Trade-plan-to-execution linkage UX ("Start Trade from Plan") | BLG-FE-109 | M (~1–2 days) | ✅ Complete — shipped 2026-07-16, cycle 2026-07-16__release-v7.3 (ST-01) |
+| Dashboard empty/first-run state coverage | BLG-FE-110 | S–M (~0.5–1 day) | ✅ Complete — shipped 2026-07-16, cycle 2026-07-16__release-v7.3 (ST-02) |
+| Dashboard briefing visual hierarchy | BLG-FE-111 | S (~0.5 day) | ✅ Complete — shipped 2026-07-16, cycle 2026-07-16__release-v7.3 (ST-03) |
+| Command palette | BLG-FE-115 | — | P1; readiness pass BLG-SPEC-91 shipped 2026-07-16 (v7.3) — `cmdk` flagged missing from `package.json` as an implementation-time blocker; carried to next release planning |
+| Custom price alerts | BLG-FE-116 | — | P1; readiness pass BLG-SPEC-92 shipped 2026-07-16 (v7.3) — §13 pre-check PASSED (RISK-03 cleared); carried to next release planning |
+| Bulk actions | BLG-FE-117 | — | P1; readiness pass BLG-SPEC-93 shipped 2026-07-16 (v7.3) — §13 pre-check PASSED (RISK-04 cleared); carried to next release planning |
+| Saved filters / calendar view | BLG-FE-118 | — | P1; readiness pass BLG-SPEC-94 shipped 2026-07-16 (v7.3) — `react-day-picker` flagged missing from `package.json`; carried to next release planning |
 
 ---
 

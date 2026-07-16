@@ -1,6 +1,6 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v7.3
 Cycle: 2026-07-16__release-v7.3
 Last Updated: 2026-07-16
@@ -25,8 +25,7 @@ Last Updated: 2026-07-16
 | None | — | 0 escalations raised this cycle | — | — |
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
+Superseded by: v7.3 ship — 2026-07-16
+Changelog: docs/product/changelog.md#v7.3
 Cycle: 2026-07-16__release-v7.3

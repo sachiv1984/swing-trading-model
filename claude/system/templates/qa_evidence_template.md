@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.6
-**Last Updated:** 2026-06-09
+**Version:** 1.7
+**Last Updated:** 2026-07-16
 
 # QA Evidence Template
 
@@ -35,7 +35,7 @@ Last Updated: <date>
 
 *(Reconcile any partial per-item entries from STEP 3.1.C into this table. Do not duplicate — one row per ST item.)*
 
-> **Advisory (OA-3/ST-03):** Evidence table rows should map 1:1 to backlog slice ACs. When consolidating multiple ACs into one row, note which AC IDs are covered in the Evidence column (e.g. "Covers AC-01, AC-02"). This makes traceability explicit and reduces friction at delivery verification.
+> **Requirement (OA-3/ST-03, elevated from advisory to hard requirement v1.7 — post-ship closure `2026-07-16__release-v7.3` STEP 8, Phase 4 lessons learnt):** Every AC in the backlog slice must appear in the evidence table — either as its own row, or explicitly named in a consolidated row's Evidence column (e.g. "Covers AC-01, AC-02, AC-03"). No AC may be silently absent from the table, even when it is functionally addressed elsewhere in the log (e.g. "What was built" narrative or "Regression areas checked"). This closes the gap found at `2026-07-16__release-v7.3` delivery verification, where an AC was addressed in prose but never listed in the evidence table itself.
 
 **QA test coverage:**
 - Scenarios run: <list scenario file names, or "manual acceptance review">

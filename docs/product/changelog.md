@@ -3,9 +3,40 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-15 (post-ship closure 2026-07-15__release-v7.2)
+**Last Updated:** 2026-07-16 (post-ship closure 2026-07-16__release-v7.3)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v7.3 — Dashboard/Trade-Plan/Navigation UX Continuation — 2026-07-16
+Cycle: 2026-07-16__release-v7.3
+Verified: Verified
+Verification report: claude/cycles/2026-07-16__release-v7.3/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Trade-plan-to-execution linkage UX ("Start Trade from Plan"); dashboard empty/first-run state coverage; dashboard briefing visual hierarchy — all three carried forward from v7.2 | `src/pages/TradePlan.js`, `src/pages/TradePlans.js`, `src/pages/TradeEntry.js`, `src/pages/DashboardHome.js`, `src/pages/Watchlist.js` |
+| EPIC-02 | Command Palette (`BLG-FE-115`) pre-implementation spec, prompt template & discoverability/adoption pass — searchable entity index scope, keyboard interaction contract, Base44 prompt template, discoverability plan, adoption metrics; flagged `cmdk` missing from `package.json` | `docs/specs/blg_fe_115_pre_implementation_readiness_pass.md`; `docs/specs/frontend/base44_prompt_template_library.md` |
+| EPIC-03 | Custom Price Alerts (`BLG-FE-116`) pre-implementation readiness pass — new `price_alerts` schema designed; evaluation extension to existing alert-evaluation cron; **§13 pre-check PASSED** (RISK-03 cleared) | `docs/specs/blg_fe_116_pre_implementation_readiness_pass.md` |
+| EPIC-04 | Bulk Actions (`BLG-FE-117`) pre-implementation readiness pass — per-entity batch-mutation endpoint pattern designed with explicit partial-failure response shape; Base44 prompt template added; **§13 pre-check PASSED** (RISK-04 cleared) | `docs/specs/blg_fe_117_pre_implementation_readiness_pass.md`; `docs/specs/frontend/base44_prompt_template_library.md` |
+| EPIC-05 | Saved Filters & Calendar View (`BLG-FE-118`) pre-implementation spec pass — dedicated `saved_filters` table decided over JSON-column-on-settings; calendar view spec authored reusing `GET /reports/monthly-pnl`'s date-grouping logic; flagged `react-day-picker` missing from `package.json` | `docs/specs/blg_fe_118_pre_implementation_readiness_pass.md` |
+
+### Deviations accepted
+None.
+
+### Tech backlog items shipped
+- [ST-01] [U] BLG-FE-109: Trade-plan-to-execution linkage UX ("Start Trade from Plan")
+- [ST-02] [U] BLG-FE-110: Dashboard empty/first-run state coverage
+- [ST-03] [U] BLG-FE-111: Dashboard briefing visual hierarchy
+- [ST-04] [P] BLG-SPEC-91: Command Palette (`BLG-FE-115`) pre-implementation readiness pass
+- [ST-05] [P] BLG-SPEC-92: Custom Price Alerts (`BLG-FE-116`) pre-implementation readiness pass
+- [ST-06] [P] BLG-SPEC-93: Bulk Actions (`BLG-FE-117`) pre-implementation readiness pass
+- [ST-07] [P] BLG-SPEC-94: Saved Filters & Calendar View (`BLG-FE-118`) pre-implementation spec pass
+
+Sign-off: Product Owner — 2026-07-16
+QA sign-off: Director of Quality — 2026-07-16
 
 ---
 

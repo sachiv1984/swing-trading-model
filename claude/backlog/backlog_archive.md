@@ -1,11 +1,175 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
+**Last Updated:** 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-FE-109 — Trade-plan-to-execution linkage UX
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-07-16
+**Shipped in:** v7.3 (cycle: 2026-07-16__release-v7.3, ST-01)
+**Evidence:** docs/product/changelog.md#v7.3; claude/cycles/2026-07-16__release-v7.3/verification_report.md
+
+### BLG-FE-109 — Trade-plan-to-execution linkage UX
+✅ COMPLETE — 2026-07-16 (post-ship closure, cycle 2026-07-16__release-v7.3, ST-01)
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Base44 Frontend Prompt Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-15
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v7.2
+
+**Problem**
+SI-02's trade gate has been stuck at 0/11 linked trade plans across multiple rebalance cycles (live re-checked and unchanged 2026-07-13 and 2026-07-14 per `.claude_current_state.json`), leaving its behavioural-drift analysis permanently `insufficient_data`. Users are creating trade plans (`TradePlan.js`/`TradePlans.js`) and separately executing trades (`TradeEntry.js`), but the two flows are disconnected — linkage requires a manual step nobody is taking. This isn't a data problem, it's a UX friction problem: the gate can never clear if the product never makes linkage the path of least resistance.
+
+**Scope**
+- Add a "Start Trade from Plan" action on `TradePlan.js` and `TradePlans.js` that opens `TradeEntry.js` pre-filled with the plan's ticker, entry, stop, and target
+- Auto-set the `trade_plan_id` linkage field on trades created via this path — no separate manual linking step required
+- Preserve the existing manual trade-entry path (with optional plan selector) for trades not originating from a saved plan
+
+**Acceptance Criteria**
+- A "Start Trade from Plan" action is visible and functional on both `TradePlan.js` (detail view) and `TradePlans.js` (list view)
+- Trades created via this action have `trade_plan_id` populated with no additional user action
+- Manually-entered trades (no plan origin) are unaffected and can still optionally select a plan to link
+- No regression to existing `TradeEntry.js` validation or submission behaviour
+
+---
+
+### BLG-FE-110 — Dashboard empty/first-run state coverage
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-07-16
+**Shipped in:** v7.3 (cycle: 2026-07-16__release-v7.3, ST-02)
+**Evidence:** docs/product/changelog.md#v7.3; claude/cycles/2026-07-16__release-v7.3/verification_report.md
+
+### BLG-FE-110 — Dashboard empty/first-run state coverage
+✅ COMPLETE — 2026-07-16 (post-ship closure, cycle 2026-07-16__release-v7.3, ST-02)
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Base44 Frontend Prompt Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-15
+**Effort:** S–M (~0.5–1 day)
+**Provisional-Target:** v7.2
+
+**Problem**
+`DashboardHome.js` renders six-plus cards (`OpenPositionsCard`, `PortfolioHeatCard`, `GracePeriodCard`, `SignalStatusCard`, `RecentActivityCard`, `MorningBriefing`, `AiDailyBriefing`) with no confirmed empty-state handling for new or zero-data users. `Watchlist.js` already solves this cleanly via the shared `DataState` component (loading/error/empty states with icon, heading, body, and CTA) — the dashboard home cards do not appear to follow the same pattern, risking a blank or broken-looking first-run experience for new users with no positions, signals, or activity yet.
+
+**Scope**
+- Audit each `DashboardHome.js` card component for current empty-data behaviour
+- Apply the shared `DataState` empty-state pattern (icon, heading, body, CTA where applicable) to any card found lacking one
+- Ensure the existing `dashboard-retry-root` all-endpoints-failed retry path is unaffected
+
+**Acceptance Criteria**
+- Every card on `DashboardHome.js` renders a clear, on-brand empty state (not a blank card or raw zero/null value) when its underlying data is empty
+- Empty states use the shared `DataState` component consistent with `Watchlist.js`
+- Loading and error states for each card are unaffected by this change
+
+---
+
+### BLG-FE-111 — Dashboard briefing visual hierarchy
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-07-16
+**Shipped in:** v7.3 (cycle: 2026-07-16__release-v7.3, ST-03)
+**Evidence:** docs/product/changelog.md#v7.3; claude/cycles/2026-07-16__release-v7.3/verification_report.md
+
+### BLG-FE-111 — Dashboard briefing visual hierarchy
+✅ COMPLETE — 2026-07-16 (post-ship closure, cycle 2026-07-16__release-v7.3, ST-03)
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** Ad-hoc UX advisory review — session 2026-07-15
+**Effort:** S (~0.5 day)
+**Provisional-Target:** v7.2
+
+**Problem**
+`MorningBriefing` and `AiDailyBriefing` are the dashboard's intended "what should I do today" entry point, but on `DashboardHome.js` they are currently stacked among six other cards (open positions, portfolio heat, grace period, signal status, recent activity) with no visual distinction from status/data cards. A user scanning the page has no cue that these two cards carry different weight — they're recommendation surfaces, not status readouts.
+
+**Scope**
+- Redesign the `DashboardHome.js` layout to give `MorningBriefing` and `AiDailyBriefing` primary visual weight (e.g. pinned above the fold, distinct card treatment) separate from the positions/heat/signal status grid
+- Preserve all existing card content and functionality — layout/hierarchy change only, no data or logic changes
+
+**Acceptance Criteria**
+- `MorningBriefing` and `AiDailyBriefing` are visually distinguishable from the status-card grid on page load, without scrolling past other cards first
+- No change to underlying card data, queries, or the existing `dashboard-retry-root` retry behaviour
+- Layout change verified in both light and dark themes
+
+---
+
+### BLG-SPEC-91 — Command Palette (BLG-FE-115) pre-implementation spec, prompt template & discoverability/adoption pass
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-16
+**Shipped in:** v7.3 (cycle: 2026-07-16__release-v7.3, ST-04)
+**Evidence:** docs/product/changelog.md#v7.3; claude/cycles/2026-07-16__release-v7.3/verification_report.md
+
+### BLG-SPEC-91 — Command Palette (BLG-FE-115) pre-implementation spec, prompt template & discoverability/adoption pass
+✅ COMPLETE — 2026-07-16 (post-ship closure, cycle 2026-07-16__release-v7.3, ST-04)
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Frontend Pre-Work | **Owner:** Frontend Specs & UX Documentation Owner; Head of UX & Design | **Source:** IDEA-base44-frontend-20260716-01, IDEA-frontend-specs-20260716-01, IDEA-head-of-ux-20260716-02, IDEA-metrics-20260716-01, IDEA-qa-testing-20260716-02, IDEA-head-of-ux-20260716-01, IDEA-api-contracts-20260716-02 (7-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** M (~2-3 days) | **Provisional-Target:** TBD
+**Problem:** `BLG-FE-115` (global command palette) has no canonical spec, no Base44 prompt template, no defined adoption metric, and no UX discoverability plan — building it directly would repeat the pattern `BLG-SPEC-89`/`BLG-SPEC-90` were filed to prevent for the v7.2 UX items.
+**Scope:** Author a formal spec (searchable entity index scope, keyboard interaction contract); a Base44 prompt template for the Cmd/Ctrl-K pattern; a discoverability/onboarding plan (desktop power-user pattern with no in-app precedent); an adoption metric definition (invocations/session, search-to-navigation success rate); pre-stage the API contract entry; confirm reuse of the `design_system.md` v1.1 `DataState` empty-state pattern for the palette's no-results state.
+**Acceptance Criteria:** Spec authored and reviewed; Base44 prompt template added to the prompt template library; discoverability plan documented; adoption metric defined; API contract stub pre-staged; `DataState` reuse confirmed in the spec.
+
+---
+
+### BLG-SPEC-92 — Custom Price Alerts (BLG-FE-116) pre-implementation readiness pass
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-16
+**Shipped in:** v7.3 (cycle: 2026-07-16__release-v7.3, ST-05 — §13 pre-check PASS)
+**Evidence:** docs/product/changelog.md#v7.3; claude/cycles/2026-07-16__release-v7.3/verification_report.md
+
+### BLG-SPEC-92 — Custom Price Alerts (BLG-FE-116) pre-implementation readiness pass
+✅ COMPLETE — 2026-07-16 (post-ship closure, cycle 2026-07-16__release-v7.3, ST-05 — §13 pre-check PASS)
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Backend + Data Pre-Work | **Owner:** Data Model & Domain Schema Owner; Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260716-01, IDEA-data-model-20260716-01, IDEA-cybersecurity-20260716-01, IDEA-finops-20260716-01, IDEA-infra-ops-20260716-01, IDEA-metrics-20260716-02, IDEA-strategy-owner-20260716-01, IDEA-qa-testing-20260716-01, IDEA-head-of-engineering-20260716-01, IDEA-head-of-ux-20260716-01, IDEA-api-contracts-20260716-02 (11-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** L (~3-4 days) | **Provisional-Target:** TBD
+**Problem:** `BLG-FE-116` (user-defined price alerts) touches data model, backend scheduling, security, cost, and §13 boundary concerns simultaneously — none of which are pre-designed, creating high risk of a rushed design-under-sprint-pressure outcome if it enters planning undesigned.
+**Scope:** Pre-design the data model (ticker/condition/threshold/active flag); design a reusable background alert-evaluation service pattern extending existing nightly-job infrastructure, with health-check surfacing on `GET /health/scheduler`; auth/rate-limit review for the new evaluation path; cost-impact pre-assessment (Render compute trend); §13 pre-check confirming the feature remains user-defined-threshold-plus-passive-notification, not automated execution; trigger-accuracy/false-positive metric definition; mock-payload strategy for Playwright tests; pre-stage the API contract entry; confirm `DataState` empty-state reuse for "no alerts configured."
+**Acceptance Criteria:** Data schema documented; background evaluation pattern documented and confirmed to extend (not duplicate) existing scheduler infrastructure; security/cost/§13 pre-checks each recorded with a PASS or named follow-up; metric defined; API contract stub pre-staged.
+
+---
+
+### BLG-SPEC-93 — Bulk Actions (BLG-FE-117) pre-implementation readiness pass
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-16
+**Shipped in:** v7.3 (cycle: 2026-07-16__release-v7.3, ST-06 — §13 pre-check PASS)
+**Evidence:** docs/product/changelog.md#v7.3; claude/cycles/2026-07-16__release-v7.3/verification_report.md
+
+### BLG-SPEC-93 — Bulk Actions (BLG-FE-117) pre-implementation readiness pass
+✅ COMPLETE — 2026-07-16 (post-ship closure, cycle 2026-07-16__release-v7.3, ST-06 — §13 pre-check PASS)
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Backend + QA Pre-Work | **Owner:** Backend Engineering Patterns Owner; Director of Quality | **Source:** IDEA-backend-engineering-20260716-02, IDEA-base44-frontend-20260716-02, IDEA-director-of-quality-20260716-01, IDEA-strategy-owner-20260716-02, IDEA-head-of-engineering-20260716-02, IDEA-head-of-ux-20260716-01, IDEA-api-contracts-20260716-02 (7-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** M (~2 days) | **Provisional-Target:** TBD
+**Problem:** `BLG-FE-117` (bulk actions on Watchlist/TradePlans tables) has no backend batch-mutation pattern, no Base44 prompt template, and no Playwright coverage plan — building the multi-select/toolbar UI first without the batch endpoint pattern risks N sequential per-row calls rather than one batch call.
+**Scope:** Design a single-call batch-mutation endpoint pattern (tag/archive/remove); Base44 prompt template for the multi-select + bulk-action-toolbar pattern; §13 pre-check confirming bulk operations remain human-initiated batch actions on existing rows, not automated decision-making; Playwright coverage plan drafted ahead of implementation; confirm `DataState`/design-system consistency for the toolbar's empty/zero-selected state.
+**Acceptance Criteria:** Batch endpoint pattern documented; Base44 prompt template added; §13 pre-check recorded PASS; Playwright coverage plan drafted (scenario list, not yet implemented).
+
+---
+
+### BLG-SPEC-94 — Saved Filters & Calendar View (BLG-FE-118) pre-implementation spec pass
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-16
+**Shipped in:** v7.3 (cycle: 2026-07-16__release-v7.3, ST-07)
+**Evidence:** docs/product/changelog.md#v7.3; claude/cycles/2026-07-16__release-v7.3/verification_report.md
+
+### BLG-SPEC-94 — Saved Filters & Calendar View (BLG-FE-118) pre-implementation spec pass
+✅ COMPLETE — 2026-07-16 (post-ship closure, cycle 2026-07-16__release-v7.3, ST-07)
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Data + Frontend Pre-Work | **Owner:** Data Model & Domain Schema Owner; Frontend Specs & UX Documentation Owner | **Source:** IDEA-data-model-20260716-02, IDEA-frontend-specs-20260716-02, IDEA-financial-reporting-20260716-02, IDEA-director-of-quality-20260716-02, IDEA-head-of-ux-20260716-01, IDEA-api-contracts-20260716-02 (6-idea consolidation per STEP 4.2 Idea Consolidation convention) | **Effort:** M (~2-3 days) | **Provisional-Target:** TBD
+**Problem:** `BLG-FE-118` bundles two related but distinct sub-features (saved filter presets; calendar view of trade plan/earnings/expiry dates) with no schema decision, no formal spec, and no QA persistence template, despite a directly reusable pattern (`BLG-FE-40`'s versioned-localStorage-envelope) already existing in the codebase.
+**Scope:** Decide JSON-column-on-settings vs. dedicated table for saved filter presets; author a formal spec for the calendar view (date sourcing, navigation model); assess feeding the realized/unrealized P&L split into the calendar view for date-anchored P&L context; QA acceptance-criteria template reusing the `BLG-FE-40` localStorage-envelope pattern for cross-reload filter persistence; pre-stage the API contract entry; confirm `DataState` reuse for the calendar's no-events state.
+**Acceptance Criteria:** Schema decision recorded with rationale; calendar view spec authored; P&L-feed feasibility assessed; QA persistence template drafted; API contract stub pre-staged.
 
 ---
 

@@ -412,7 +412,7 @@ Identified during delivery verification (verification_report.md §6 — TSG-v22-
 ### 10.1 TSG-v22-01 — EPIC-01: no scenario for API key authentication
 
 **Identified:** 2026-03-24 (delivery verification 2026-03-21__release-v2.2)
-**Status:** Open — backlog item BLG-QA-01 Phase 4
+**Status:** RESOLVED — 2026-07-16 (post-ship closure 2026-07-16__release-v7.3, STEP 7.3 TSG reconciliation; BLG-QA-01 confirmed COMPLETE in `backlog_archive.md`, retired 2026-03-16, cycle 2026-03-15__release-v1.10)
 **Owner:** QA & Testing Owner + Infrastructure & Operations Owner
 **Gap:** No automated test scenario covers X-API-Key authentication (401 path, frontend header injection, exempt endpoints). Core security control; zero scenario coverage. Manual acceptance only at ship.
 **Required action:** Add API auth integration tests (401 path, valid key, exempt endpoints) to CI as part of BLG-QA-01 Phase 4.
@@ -462,7 +462,7 @@ Identified during delivery verification (verification_report.md §6 — TSG-V25-
 ### 11.2 TSG-V25-02 — Fee drag Playwright spec not authored for v2.5 Trade History
 
 **Identified:** 2026-04-10 (delivery verification 2026-04-05__release-v2.5)
-**Status:** Open — backlog item BLG-QA-07
+**Status:** RESOLVED — 2026-07-16 (post-ship closure 2026-07-16__release-v7.3, STEP 7.3 TSG reconciliation; BLG-QA-07 confirmed COMPLETE in `backlog_archive.md` — ST-06, PR #219/39efe64, SC-FEE-01–04 pass, shipped v2.6)
 **Owner:** QA & Testing Owner
 **Gap:** ST-09 delivered the fee drag metric (column + StatsCard) on Trade History. No Playwright spec exists for SC-FEE-01 through SC-FEE-04 (`docs/testing/fee-drag-scenarios.md`). Trade History has `slippage-tracking.spec.js` as a model.
 **Required action:** Author `tests/e2e/fee-drag-trade-history.spec.js` covering SC-FEE-01–SC-FEE-04. See BLG-QA-07 for scope.
@@ -681,7 +681,7 @@ Identified during delivery verification (verification_report.md §6 — TSG-v40-
 ### 23.2 TSG-v40-03 — EPIC-03: Gemini "Improve with AI" button staging-only ACs not covered
 
 **Identified:** 2026-05-25 (delivery verification 2026-05-22__release-v4.0)
-**Status:** Open — BLG-QA-29 filed
+**Status:** RESOLVED — 2026-07-16 (post-ship closure 2026-07-16__release-v7.3, STEP 7.3 TSG reconciliation; BLG-QA-29 confirmed COMPLETE in `backlog_archive.md`, retired 2026-05-29, shipped v4.3)
 **Owner:** QA & Testing Owner
 **Gap:** ST-12 introduced "Improve with AI" button on TradePlan edit page and POST /trade-plans/{plan_id}/generate-thesis. Observable ACs (button visibility in edit mode, endpoint call, setup_thesis population) require live GEMINI_API_KEY and are not testable in CI. Code review only per CLAUDE.md §2; BLG-QA-29 filed before PR opened.
 **Backlog item:** BLG-QA-29 — Staging verification for Gemini thesis generation (covers live key and frontend button staging verification)
