@@ -23,6 +23,10 @@ import { Button } from "./button";
  *   >
  *     {children}
  *   </DataState>
+ *
+ * Pass `compact` for smaller contexts (e.g. a dashboard grid tile) where the
+ * default py-16 empty-state padding would exaggerate tile height — reduces
+ * padding/icon size while keeping the same state logic and visual language.
  */
 export default function DataState({
   loading,
@@ -35,19 +39,20 @@ export default function DataState({
   emptyAction,
   children,
   className = "",
+  compact = false,
 }) {
   if (loading) {
     return (
-      <div className={`flex items-center justify-center py-16 ${className}`}>
-        <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
+      <div className={`flex items-center justify-center ${compact ? "py-4" : "py-16"} ${className}`}>
+        <Loader2 className={`${compact ? "w-5 h-5" : "w-8 h-8"} animate-spin text-slate-500`} />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className={`flex flex-col items-center justify-center py-16 gap-4 text-center px-6 ${className}`}>
-        <AlertCircle className="w-10 h-10 text-rose-400" />
+      <div className={`flex flex-col items-center justify-center ${compact ? "py-4 gap-2" : "py-16 gap-4"} text-center px-6 ${className}`}>
+        <AlertCircle className={`${compact ? "w-6 h-6" : "w-10 h-10"} text-rose-400`} />
         <div>
           <p className="text-sm font-semibold text-white mb-1">Something went wrong</p>
           <p className="text-xs text-slate-600 dark:text-slate-400">
@@ -70,7 +75,7 @@ export default function DataState({
 
   if (empty) {
     return (
-      <div className={`flex flex-col items-center justify-center py-16 gap-3 text-center px-6 ${className}`}>
+      <div className={`flex flex-col items-center justify-center ${compact ? "py-4 gap-2" : "py-16 gap-3"} text-center px-6 ${className}`}>
         {emptyIcon && <div className="mb-1">{emptyIcon}</div>}
         {emptyHeading && (
           <p className="text-sm font-semibold text-white">{emptyHeading}</p>

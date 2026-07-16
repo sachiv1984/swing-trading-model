@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
+import { Activity } from "lucide-react";
 import { api } from "../../../api/base44Client";
 import DashboardCard from "./DashboardCard";
 
@@ -31,25 +32,30 @@ export default function RecentActivityCard() {
     .slice(0, 5);
 
   return (
-    <DashboardCard title="Recent Activity" to="/TradeHistory" isLoading={isLoading} error={error}>
-      {recent.length === 0 ? (
-        <p className="text-sm text-slate-600 dark:text-slate-400">No recent trade activity</p>
-      ) : (
-        <ul className="space-y-2">
-          {recent.map((t, i) => {
-            const { label, detail, date } = activityLabel(t);
-            const ago = date ? formatDistanceToNow(new Date(date), { addSuffix: true }) : "";
-            return (
-              <li key={t.id ?? i} className="flex items-start justify-between gap-2">
-                <span className="text-sm text-slate-200 truncate">
-                  {label} <span className="text-slate-600 dark:text-slate-400">{detail}</span>
-                </span>
-                <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap shrink-0">{ago}</span>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+    <DashboardCard
+      title="Recent Activity"
+      to="/TradeHistory"
+      isLoading={isLoading}
+      error={error}
+      empty={recent.length === 0}
+      emptyIcon={<Activity className="w-8 h-8 text-slate-600" />}
+      emptyHeading="No recent activity"
+      emptyBody="Trades and stop updates will appear here."
+    >
+      <ul className="space-y-2">
+        {recent.map((t, i) => {
+          const { label, detail, date } = activityLabel(t);
+          const ago = date ? formatDistanceToNow(new Date(date), { addSuffix: true }) : "";
+          return (
+            <li key={t.id ?? i} className="flex items-start justify-between gap-2">
+              <span className="text-sm text-slate-200 truncate">
+                {label} <span className="text-slate-600 dark:text-slate-400">{detail}</span>
+              </span>
+              <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap shrink-0">{ago}</span>
+            </li>
+          );
+        })}
+      </ul>
     </DashboardCard>
   );
 }

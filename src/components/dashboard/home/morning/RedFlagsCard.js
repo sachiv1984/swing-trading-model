@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { ShieldCheck } from "lucide-react";
 import { api } from "../../../../api/base44Client";
 import DashboardCard from "../DashboardCard";
 
@@ -19,10 +20,19 @@ export default function RedFlagsCard() {
   const total = data?.total ?? 0;
 
   return (
-    <DashboardCard title="Red Flags" to="/RedFlagJournal" isLoading={isLoading} error={error}>
+    <DashboardCard
+      title="Red Flags"
+      to="/RedFlagJournal"
+      isLoading={isLoading}
+      error={error}
+      empty={total === 0}
+      emptyIcon={<ShieldCheck className="w-8 h-8 text-slate-600" />}
+      emptyHeading="No red flags this week"
+      emptyBody="Journal entries flagged for review will show here."
+    >
       <p className="text-4xl font-bold text-rose-400 mb-2">{total}</p>
       <p className="text-sm text-slate-600 dark:text-slate-400">
-        {total === 0 ? "No red flags this week" : `event${total !== 1 ? "s" : ""} in last 7 days`}
+        event{total !== 1 ? "s" : ""} in last 7 days
       </p>
     </DashboardCard>
   );

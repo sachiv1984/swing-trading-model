@@ -1,4 +1,5 @@
 import { useQuery, useQueries } from "@tanstack/react-query";
+import { Calendar } from "lucide-react";
 import { api, apiFetch } from "../../../../api/base44Client";
 import DashboardCard from "../DashboardCard";
 
@@ -35,15 +36,19 @@ export default function EarningsAlertCard() {
   const tickers = earningsInWindow.map(q => q.data.ticker).slice(0, 2);
   const earningsLoading = posArr.length > 0 && earningsQueries.some(q => q.isLoading);
 
-  let subtext;
-  if (count === 0) {
-    subtext = "No earnings in 7 days";
-  } else {
-    subtext = tickers.join(", ") + (earningsInWindow.length > 2 ? ` +${earningsInWindow.length - 2} more` : "");
-  }
+  const subtext = tickers.join(", ") + (earningsInWindow.length > 2 ? ` +${earningsInWindow.length - 2} more` : "");
 
   return (
-    <DashboardCard title="Earnings" to="/Positions" isLoading={posLoading || earningsLoading} error={posError}>
+    <DashboardCard
+      title="Earnings"
+      to="/Positions"
+      isLoading={posLoading || earningsLoading}
+      error={posError}
+      empty={count === 0}
+      emptyIcon={<Calendar className="w-8 h-8 text-slate-600" />}
+      emptyHeading="No earnings in 7 days"
+      emptyBody="Upcoming earnings will show here."
+    >
       <p className="text-4xl font-bold text-yellow-400 mb-2">{count}</p>
       <p className="text-sm text-slate-600 dark:text-slate-400">{subtext}</p>
     </DashboardCard>

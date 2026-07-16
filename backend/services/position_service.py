@@ -31,6 +31,7 @@ from database import (
     search_positions_by_tags,
     get_trade_plans_by_position,
     get_unlinked_trade_plan_for_entry,
+    get_trade_plan_by_id,
     update_trade_plan,
     get_signals,
     ensure_planned_entry_price_column,
@@ -697,7 +698,8 @@ def add_position(
     stop_price: Optional[float] = None,
     entry_note: Optional[str] = None,
     tags: Optional[List[str]] = None,
-    fill_price: Optional[float] = None
+    fill_price: Optional[float] = None,
+    trade_plan_id: Optional[str] = None
 ) -> Dict:
     """
     Add a new position to the portfolio with automatic fee calculation
@@ -856,14 +858,23 @@ def add_position(
     # separate pages with no explicit hand-off between them, which left
     # trade_plans.position_id permanently NULL in production. Best-effort —
     # a lookup/link failure must not block position creation.
+    #
+    # ST-01 (EPIC-01, v7.3): when the caller passes an explicit trade_plan_id
+    # (the "Start Trade from Plan" action), link that exact plan instead of the
+    # ticker/market best-effort match — deterministic, no reliance on there
+    # being exactly one unlinked plan per ticker.
     try:
-        unlinked_plan = get_unlinked_trade_plan_for_entry(portfolio_id, ticker, market)
-        if unlinked_plan:
-            update_trade_plan(str(unlinked_plan["id"]), portfolio_id, {
+        plan_to_link = (
+            get_trade_plan_by_id(trade_plan_id, portfolio_id)
+            if trade_plan_id
+            else get_unlinked_trade_plan_for_entry(portfolio_id, ticker, market)
+        )
+        if plan_to_link and not plan_to_link.get("position_id"):
+            update_trade_plan(str(plan_to_link["id"]), portfolio_id, {
                 "position_id": str(new_position["id"]),
                 "status": "active",
             })
-            print(f"   ✓ Linked trade plan {unlinked_plan['id']} to new position")
+            print(f"   ✓ Linked trade plan {plan_to_link['id']} to new position")
     except Exception as e:
         print(f"   ⚠️  Trade plan auto-link skipped: {e}")
 

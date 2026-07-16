@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { api } from '../../../api/base44Client';
-import { RefreshCw, ChevronDown, ChevronRight, Send } from 'lucide-react';
+import { RefreshCw, ChevronDown, ChevronRight, Send, MessageSquare } from 'lucide-react';
+import DataState from '../../ui/DataState';
 
 const STORAGE_KEY = 'ai-briefing-collapsed-sections-v1';
 
@@ -159,9 +160,15 @@ export default function AiDailyBriefing() {
       )}
 
       {!loading && !error && !briefing && (
-        <p className="text-sm text-slate-600 dark:text-slate-400" data-testid="briefing-empty">
-          No briefing for today. Click Regenerate to generate your daily summary.
-        </p>
+        <div data-testid="briefing-empty">
+          <DataState
+            compact
+            empty
+            emptyIcon={<MessageSquare className="w-8 h-8 text-slate-600" />}
+            emptyHeading="No briefing for today"
+            emptyBody="Click Regenerate to generate your daily summary."
+          />
+        </div>
       )}
 
       {!loading && !error && briefing && (

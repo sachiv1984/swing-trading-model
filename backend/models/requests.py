@@ -25,6 +25,7 @@ class AddPositionRequest(BaseModel):
     status: Optional[str] = "open"
     entry_note: Optional[str] = None
     tags: Optional[List[str]] = None
+    trade_plan_id: Optional[str] = None  # ST-01 (EPIC-01, v7.3): explicit "Start Trade from Plan" link
 
 
 class SettingsRequest(BaseModel):
