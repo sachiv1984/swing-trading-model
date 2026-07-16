@@ -177,6 +177,7 @@ Create a new position based on user-entered broker execution details. Supports f
 - `stop_price` (number; calculated as `entry_price − (5 × ATR)` if not provided)
 - `entry_note` (string, max 500; empty string treated as `null`)
 - `tags` (array; max 10; each max 20 characters; lowercase, numbers, hyphens only)
+- `trade_plan_id` (string, UUID; ST-01 v7.3 — explicit link from the "Start Trade from Plan" action. When provided, this exact trade plan is linked (`position_id` set, `status` set to `active`) in place of the ticker/market best-effort auto-link (BLG-BE-46). Silently ignored if the plan does not exist, belongs to another portfolio, or is already linked to a position — position creation is never blocked by a link failure.)
 
 ### Response (200)
 

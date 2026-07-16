@@ -5,7 +5,7 @@ import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
-import { Plus, FileText, Edit2, Trash2, AlertTriangle } from "lucide-react";
+import { Plus, FileText, Edit2, Trash2, AlertTriangle, Rocket } from "lucide-react";
 import { cn } from "../lib/utils";
 import { formatDistanceToNow } from "date-fns";
 
@@ -20,6 +20,13 @@ const STATUS_CONFIG = {
   closed:                { label: "Closed",             bg: "bg-slate-500",   text: "text-white" },
   abandoned:             { label: "Abandoned",          bg: "bg-red-600",     text: "text-white" },
 };
+
+// ST-01 (EPIC-01, v7.3): a plan is eligible for "Start Trade from Plan" only
+// while it has no position linked yet and isn't already terminal/active.
+const NOT_STARTABLE_STATUSES = ["active", "closed", "abandoned"];
+export function isStartTradeEligible(plan) {
+  return !plan.position_id && !NOT_STARTABLE_STATUSES.includes(plan.status);
+}
 
 export function TradePlanStatusBadge({ status }) {
   const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.draft;
@@ -56,6 +63,21 @@ export default function TradePlans() {
   const sorted = [...plans].sort(
     (a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0)
   );
+
+  const handleStartTrade = (plan) => {
+    navigate("/TradeEntry", {
+      state: {
+        trade_plan_prefill: {
+          id: plan.id,
+          ticker: plan.ticker,
+          market: plan.market || "US",
+          entry_price: plan.planned_entry_price,
+          stop_price: plan.planned_stop_price,
+          quantity: plan.planned_quantity,
+        },
+      },
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -136,6 +158,18 @@ export default function TradePlans() {
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2">
+                        {isStartTradeEligible(plan) && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            data-testid={`start-trade-from-plan-${plan.id}`}
+                            className="h-7 border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
+                            onClick={() => handleStartTrade(plan)}
+                          >
+                            <Rocket className="w-3.5 h-3.5 mr-1.5" />
+                            Start Trade
+                          </Button>
+                        )}
                         {plan.status !== "abandoned" && (
                           <Button
                             variant="ghost"

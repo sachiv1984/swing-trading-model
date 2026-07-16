@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { base44 } from "../api/base44Client";
+import { base44, apiFetch } from "../api/base44Client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
@@ -10,10 +10,11 @@ import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
-import { ArrowLeft, Calculator, Loader2, CheckCircle2, X } from "lucide-react";
+import { ArrowLeft, Calculator, Loader2, CheckCircle2, X, Rocket } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "../lib/utils";
 import PositionSizingWidget from '../components/trades/PositionSizingWidget';
+import { isStartTradeEligible } from "./TradePlans";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -24,19 +25,37 @@ export default function TradeEntry() {
 
   // Pre-populate from watchlist "Add to Position" if state was passed
   const prefill = location.state?.watchlist_prefill || null;
+  // ST-01 (EPIC-01, v7.3): pre-population + trade_plan_id link from "Start Trade from Plan"
+  const planPrefill = location.state?.trade_plan_prefill || null;
+  const prefillMarket = planPrefill?.market || prefill?.market || "UK";
 
   const [formData, setFormData] = useState({
-    ticker: prefill?.ticker || "",
-    market: prefill?.market || "UK",
+    ticker: planPrefill?.ticker || prefill?.ticker || "",
+    market: prefillMarket,
     entry_date: new Date().toISOString().split("T")[0],
-    shares: "",
-    entry_price: prefill?.entry_price || "",
+    shares: planPrefill?.quantity != null ? String(planPrefill.quantity) : "",
+    entry_price: planPrefill?.entry_price != null ? String(planPrefill.entry_price) : (prefill?.entry_price || ""),
     fill_price: "",
-    stop_price: prefill?.stop_price || "",
-    fx_rate: prefill?.market === "US" ? "1.27" : "1",
+    stop_price: planPrefill?.stop_price != null ? String(planPrefill.stop_price) : (prefill?.stop_price || ""),
+    fx_rate: prefillMarket === "US" ? "1.27" : "1",
     atr_value: "",
     entry_note: "",
     tags: [],
+  });
+
+  // AC-03: manually-entered trades (no plan origin) can still optionally link
+  // an existing, not-yet-started trade plan. Locked to planPrefill.id when
+  // arriving via "Start Trade from Plan" — that link is automatic (AC-02).
+  const [linkedPlanId, setLinkedPlanId] = useState(planPrefill?.id || null);
+
+  const { data: linkablePlans = [] } = useQuery({
+    queryKey: ["trade-plans-linkable"],
+    queryFn: async () => {
+      const res = await apiFetch(`${API_BASE_URL}/trade-plans`);
+      const json = await res.json();
+      return (json.data || []).filter(isStartTradeEligible);
+    },
+    enabled: !planPrefill,
   });
 
   const [tagInput, setTagInput] = useState("");
@@ -212,6 +231,7 @@ export default function TradeEntry() {
       status: "open",
       entry_note: formData.entry_note || null,
       tags: formData.tags.length > 0 ? formData.tags : null,
+      trade_plan_id: linkedPlanId || null,
     });
   };
 
@@ -230,12 +250,44 @@ export default function TradeEntry() {
         }
       />
 
+      {planPrefill && (
+        <div
+          data-testid="trade-plan-linked-banner"
+          className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 px-4 py-3 text-sm text-emerald-300 flex items-center gap-2"
+        >
+          <Rocket className="w-4 h-4 shrink-0" />
+          Linked to trade plan for {planPrefill.ticker} — saving this trade will mark that plan Active.
+        </div>
+      )}
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6"
       >
         <div className="space-y-6">
+          {!planPrefill && linkablePlans.length > 0 && (
+            <div className="space-y-2">
+              <Label className="text-slate-600 dark:text-slate-400">Link to Trade Plan (optional)</Label>
+              <Select
+                value={linkedPlanId || "none"}
+                onValueChange={(value) => setLinkedPlanId(value === "none" ? null : value)}
+              >
+                <SelectTrigger data-testid="link-trade-plan-select" className="bg-slate-800/50 border-slate-700 text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-800 border-slate-700">
+                  <SelectItem value="none">No plan — manual entry</SelectItem>
+                  {linkablePlans.map((plan) => (
+                    <SelectItem key={plan.id} value={plan.id}>
+                      {plan.ticker} ({plan.market || "US"}) — {plan.status}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           {/* Ticker & Market */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">

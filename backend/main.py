@@ -501,7 +501,8 @@ def add_position_endpoint(request: AddPositionRequest):
             atr_value=request.atr_value,
             stop_price=request.stop_price,
             entry_note=request.entry_note,
-            tags=request.tags
+            tags=request.tags,
+            trade_plan_id=request.trade_plan_id
         )
 
         if request.market == "US":

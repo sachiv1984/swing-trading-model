@@ -8,8 +8,8 @@ import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
 import SignalContextPanel, { buildSignalPrePopulation } from "../components/trades/SignalContextPanel";
 import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
-import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon, ShieldCheck, ThumbsUp, ThumbsDown, Tag as TagIcon } from "lucide-react";
-import { TradePlanStatusBadge } from "./TradePlans";
+import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon, ShieldCheck, ThumbsUp, ThumbsDown, Tag as TagIcon, Rocket } from "lucide-react";
+import { TradePlanStatusBadge, isStartTradeEligible } from "./TradePlans";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -583,6 +583,31 @@ export default function TradePlan() {
         }
         actions={
           <div className="flex items-center gap-2">
+            {editId && existingPlan && isStartTradeEligible(existingPlan) && (
+              <Button
+                variant="outline"
+                size="sm"
+                data-testid="start-trade-from-plan-btn"
+                onClick={() =>
+                  navigate("/TradeEntry", {
+                    state: {
+                      trade_plan_prefill: {
+                        id: existingPlan.id,
+                        ticker: existingPlan.ticker,
+                        market: existingPlan.market || "US",
+                        entry_price: existingPlan.planned_entry_price,
+                        stop_price: existingPlan.planned_stop_price,
+                        quantity: existingPlan.planned_quantity,
+                      },
+                    },
+                  })
+                }
+                className="border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
+              >
+                <Rocket className="w-4 h-4 mr-1" />
+                Start Trade from Plan
+              </Button>
+            )}
             {editId && !isAbandoned && (
               <Button
                 variant="outline"

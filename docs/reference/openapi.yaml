@@ -3647,6 +3647,7 @@ components:
             type: string
             maxLength: 20
             pattern: "^[a-z0-9-]+$"
+        trade_plan_id: { type: string, format: uuid, nullable: true }
 
     AddPositionResponse:
       type: object
