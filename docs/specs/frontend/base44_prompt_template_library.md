@@ -2,9 +2,9 @@
 **Class:** Class 2 — Supporting
 **Status:** Supporting
 **Canonical Source:** docs/specs/frontend/design_system.md
-**Version:** 1.0
-**Last Updated:** 2026-07-15
-**Story:** ST-04 (BLG-SPEC-90, EPIC-03, v7.2)
+**Version:** 1.1
+**Last Updated:** 2026-07-16
+**Story:** ST-04 (BLG-SPEC-90, EPIC-03, v7.2); ST-04 (BLG-SPEC-91, EPIC-02, v7.3)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -71,11 +71,38 @@ Card renders a compact icon+heading+body empty state (not a blank card or raw ze
 This story's Playwright coverage (or human staging sign-off) must explicitly verify both light and dark theme rendering — do not verify dark mode only. Any new colour/background/border token must be checked as an explicit light+dark pair.
 ```
 
-## 5. Maintenance
+## 5. Template: Global Command Palette (Cmd/Ctrl-K Pattern)
+
+**Use when:** delegating `BLG-FE-115` (global command palette) or any future story adding a keyboard-invoked, searchable navigation/action overlay.
+
+**Source pattern:** `docs/specs/blg_fe_115_pre_implementation_readiness_pass.md` (ST-04, EPIC-02, v7.3); primitives already scaffolded at `src/components/ui/command.js` (shadcn/`cmdk` wrapper — `cmdk` package itself is **not yet installed**, see readiness pass §2).
+
+**Reusable fragment — Behaviour Rules section:**
+```
+- Global keyboard invocation: Cmd+K (macOS) / Ctrl+K (Windows/Linux) — must not fire when a text input/textarea already intercepts the combination (none currently do; re-verify at implementation time).
+- Escape closes the palette; arrow keys navigate the filtered list; Enter navigates via react-router-dom's useNavigate.
+- Index is two-tier: static page index from src/pages.config.js PAGES (all routes), dynamic entity index limited to tickers already present in the user's loaded data (open positions, watchlist, trade plans) — do not add a new backend search query for v1.
+- Empty/no-results state must use the design_system.md DataState pattern (or a documented compact-list variant addendum) — not a bare CommandEmpty text string.
+- Persistent, mouse-accessible affordance in the nav bar showing the shortcut hint — keyboard invocation must not be the only discovery path.
+```
+
+**Reusable fragment — Non-Functional Rules section:**
+```
+- First commit must add `cmdk` to package.json dependencies (pinned to a React-19-compatible version) — command.js already imports it but it is not currently installed.
+- No new backend endpoint for v1 — index sources are client-side only (pages.config.js + already-fetched entity data).
+- Any new background/border/label token on the palette dialog must ship as an explicit light+dark Tailwind pair, consistent with the project-wide rule (BLG-FE-87/88/95 precedent).
+```
+
+**Reusable fragment — Expected Outcome section:**
+```
+Cmd/Ctrl-K opens a searchable palette listing pages and in-scope entities; Escape/click-away closes it; Enter/click navigates; empty search state renders the DataState pattern; a visible nav-bar affordance provides mouse-accessible discovery; both light and dark theme render correctly.
+```
+
+## 6. Maintenance
 
 New entries are added to this library when a pattern is formalised in `design_system.md` and applied to two or more concrete stories (the same threshold `roadmap_prompt.md`'s STEP 4.2 idea-consolidation convention uses for "recurring" — a single application does not yet justify a library entry). Entries here must be kept consistent with `design_system.md`; if a `design_system.md` edit changes a pattern documented here, update this file in the same commit.
 
-## 6. Known Deviations
+## 7. Known Deviations
 
 None. This is a net-new artefact — no prior canonical spec governed this work.
 
@@ -85,4 +112,5 @@ None. This is a net-new artefact — no prior canonical spec governed this work.
 
 | Date | Version | Summary |
 |---|---|---|
+| 2026-07-16 | 1.1 | Added Global Command Palette (Cmd/Ctrl-K) template (ST-04, EPIC-02, v7.3, BLG-SPEC-91) |
 | 2026-07-15 | 1.0 | Initial library — DataState compact empty-state, primary/secondary card hierarchy, dual-theme call-out (ST-04, EPIC-03, v7.2) |
