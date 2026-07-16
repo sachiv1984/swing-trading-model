@@ -293,6 +293,16 @@ The first 3 items were originally anchored at roadmap rebalance `2026-07-15__sch
 | Bulk actions | BLG-FE-117 | — | P1; named as anchor scope 2026-07-16 |
 | Saved filters / calendar view | BLG-FE-118 | — | P1; named as anchor scope 2026-07-16 |
 
+<!-- roadmap-annotation-marker: RA:v7.3:2026-07-16__release-v7.3 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-16__release-v7.3
+- Plan published: 2026-07-16
+- Cycle folder: claude/cycles/2026-07-16__release-v7.3/
+- Backlog slice: claude/cycles/2026-07-16__release-v7.3/stage4_backlog_slice.md
+- Status at annotation: Validated
+- Scope: 7 items (BLG-FE-109/110/111, BLG-SPEC-91/92/93/94). BLG-FE-115/116/117/118 deferred to v7.4 (each blocked on its own readiness pass in this scope).
+
 *RA:v7.2 retired — see roadmap_archive.md 2026-07-15 (post-ship closure 2026-07-15__release-v7.2; partial retirement, 5/8 items — 3 unblocked items re-added above).*
 
 *RA:v7.1 retired — see roadmap_archive.md 2026-07-14 (post-ship closure 2026-07-14__release-v7.1).*

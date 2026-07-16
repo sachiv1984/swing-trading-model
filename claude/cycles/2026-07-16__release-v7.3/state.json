@@ -1,0 +1,105 @@
+{
+  "cycle_id": "2026-07-16__release-v7.3",
+  "release": "v7.3",
+  "date": "2026-07-16",
+  "mode": "standard",
+  "issues_mode": "none",
+  "auto_escalate": true,
+  "prompt_schema_version": "v2",
+  "status": "Published",
+  "publish_eligible": true,
+  "last_transition_utc": "2026-07-16T15:30:00Z",
+
+  "sealed": {
+    "sealed_utc": "2026-07-16T15:30:00Z",
+    "sealed_assumptions": {
+      "timebox": "",
+      "capacity": ""
+    },
+    "state_snapshot_hash": "PENDING_COMMIT_SHA"
+  },
+
+  "mutation_seq": 0,
+  "assumptions": {
+    "timebox": "",
+    "capacity": ""
+  },
+
+  "locks": {
+    "backlog_lock": {
+      "required": true,
+      "lock_file": "claude/backlog/.lock",
+      "owned": false,
+      "owner_cycle_id": "2026-07-16__release-v7.3",
+      "owner_release": "v7.3",
+      "acquired_utc": "2026-07-16T15:00:00Z",
+      "txn_file": "claude/cycles/2026-07-16__release-v7.3/backlog_txn.json",
+      "txn_id": "BLTX-20260716-01",
+      "txn_state": "committed",
+      "marker": "RP:v7.3:2026-07-16__release-v7.3",
+      "status": "released"
+    },
+    "roadmap_lock": {
+      "required": false,
+      "lock_file": "claude/roadmap/.lock",
+      "owned": false,
+      "owner_cycle_id": "2026-07-16__release-v7.3",
+      "owner_release": "v7.3",
+      "acquired_utc": "2026-07-16T15:10:00Z",
+      "txn_file": "claude/cycles/2026-07-16__release-v7.3/roadmap_txn.json",
+      "txn_id": "RATX-20260716-01",
+      "txn_state": "committed",
+      "marker": "RA:v7.3:2026-07-16__release-v7.3",
+      "status": "released"
+    }
+  },
+
+  "mutations": [],
+  "invalidated_steps": [],
+
+  "open_escalations": [],
+  "deferred_escalations": [],
+  "deferred_execution_blockers": [],
+  "accepted_risk_escalations": [],
+
+  "attributes": {
+    "plan_structured": true,
+    "plan_executable": true,
+    "backlog_committed": true,
+    "capacity_feasible": "pass",
+    "cross_stage_integrity": "pass",
+    "decisions_validated": "not_applicable",
+    "design_gate_required": true,
+    "design_gate_status": "not_started"
+  },
+
+  "design_gate_status": "not_started",
+  "design_gate_completed_utc": "",
+  "design_gate_record": "",
+  "sprint_planning_pre_condition": "design_gate_status == Passed",
+  "amended_backlog_slice_path": "",
+
+  "artifacts": {
+    "run_manifest": "present",
+    "backlog_lock": "released",
+    "backlog_txn": "committed",
+    "roadmap_lock": "released",
+    "roadmap_txn": "committed",
+
+    "stage1_readiness": "pass",
+    "stage2_scope_extraction": "pass",
+    "stage2_scope_document": "present",
+    "stage3_execution_plan": "pass",
+    "stage3_decisions_record": "present",
+    "stage3_5_model_integrity": "pass",
+    "stage4_backlog_slice": "pass",
+    "stage4_issue_manifest": "pass",
+    "stage4_5_capacity_check": "pass",
+    "stage5_5_cross_stage_integrity": "pass",
+    "stage5_7_decision_record_integrity": "not_applicable",
+
+    "cycle_summary": "present",
+    "lessons_learnt": "present",
+    "escalations": "not_started"
+  }
+}

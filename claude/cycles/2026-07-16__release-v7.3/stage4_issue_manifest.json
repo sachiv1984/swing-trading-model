@@ -1,0 +1,65 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Trade-plan-to-execution linkage UX (\"Start Trade from Plan\")",
+    "epic": "EPIC-01",
+    "description": "Add a Start-Trade-from-Plan action on TradePlan.js/TradePlans.js that pre-fills and auto-links TradeEntry.js.",
+    "ac_summary": "Action visible/functional on both views; trade_plan_id auto-populated with no manual step; manual trade entry unaffected; no TradeEntry.js regression.",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-16__release-v7.3"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Dashboard empty/first-run state coverage",
+    "epic": "EPIC-01",
+    "description": "Apply the shared DataState empty-state pattern to any DashboardHome.js card lacking one.",
+    "ac_summary": "Every card renders a clear on-brand empty state using DataState, consistent with Watchlist.js; loading/error states unaffected.",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-16__release-v7.3"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Dashboard briefing visual hierarchy",
+    "epic": "EPIC-01",
+    "description": "Give MorningBriefing and AiDailyBriefing primary visual weight, distinct from the status-card grid.",
+    "ac_summary": "Both cards visually distinguishable on page load without scrolling; no data/logic change; verified in light and dark themes.",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-16__release-v7.3"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Command Palette (BLG-FE-115) pre-implementation spec, prompt template & discoverability/adoption pass",
+    "epic": "EPIC-02",
+    "description": "Author spec, Base44 prompt template, discoverability plan, adoption metric, and API contract stub for the global command palette.",
+    "ac_summary": "Spec, prompt template, discoverability plan, adoption metric, and API contract stub all produced; DataState reuse confirmed.",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-16__release-v7.3"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Custom Price Alerts (BLG-FE-116) pre-implementation readiness pass",
+    "epic": "EPIC-03",
+    "description": "Pre-design data model, background evaluation service pattern, and complete security/cost/§13 pre-checks for user-defined price alerts.",
+    "ac_summary": "Schema, background evaluation pattern, security/cost/§13 pre-checks, metric, and API contract stub all documented/recorded.",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-16__release-v7.3"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Bulk Actions (BLG-FE-117) pre-implementation readiness pass",
+    "epic": "EPIC-04",
+    "description": "Design a batch-mutation endpoint pattern and Playwright coverage plan for multi-select bulk actions on Watchlist/TradePlans.",
+    "ac_summary": "Batch endpoint pattern documented, Base44 prompt template added, §13 pre-check PASS, Playwright coverage plan drafted.",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-07-16__release-v7.3"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Saved Filters & Calendar View (BLG-FE-118) pre-implementation spec pass",
+    "epic": "EPIC-05",
+    "description": "Decide saved-filter persistence schema and author a formal spec for the trade-plan/key-date calendar view.",
+    "ac_summary": "Schema decision recorded with rationale; calendar view spec authored; P&L-feed feasibility assessed; QA persistence template drafted.",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-07-16__release-v7.3"],
+    "assignee": null
+  }
+]
