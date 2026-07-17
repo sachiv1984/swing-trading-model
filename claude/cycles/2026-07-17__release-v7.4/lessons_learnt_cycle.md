@@ -46,3 +46,55 @@ None — first occurrence of this specific sequencing conflict (readiness-pass-g
 
 **Recurrence Notes:**
 None carried forward. v7.2's Phase 3 friction item (LL-v7.2-P3-01, stale local state at session start) was resolved via its own action-now patch during v7.2's post-ship closure and did not recur this cycle — see "What went well" above.
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-07-17__release-v7.4
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-07-17
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-07-16__release-v7.3 (`lessons_learnt_cycle.md` `## Phase 4`) — one deferred patch found (`qa_evidence_template.md` OA-3/ST-03 Consolidation Block advisory → hard requirement); confirmed already applied and logged at v7.3's own post-ship closure (`prompt_change_log.md` 2026-07-16, `qa_evidence_template.md` v1.6→v1.7) — not carried forward, no recurrence.
+
+### What went well
+
+- Single-EPIC, single-story cycle (ST-01, EPIC-01, autonomous) — traceability, QA evidence, and deviation review all resolved cleanly on first read with zero gaps.
+- `qa_evidence_template.md` v1.7's hard requirement (every AC must appear in the evidence table, no silent omission) worked as intended: all 7 AC bullets were individually itemised in `qa_evidence_EPIC-01.md`'s single consolidated row — the exact gap pattern that prompted the v1.7 patch at v7.3 did not recur here.
+- `docs/System_status_report.md`'s v7.4 section was fully accurate on first read (capabilities-now-live, capabilities-deferred-with-backlog-refs, and verification-inputs-ready tables all matched `execution_state.json`/QA evidence/`sprint_close.md`) — only the routine STEP 6 status-line update was needed.
+- Test scenario coverage short-circuited cleanly to `not_applicable` (EPIC-01 has no frontend-visible change, independently confirmed via the QA evidence log's Frontend Testing Gate Check and via `git show --stat` on the story's commit) — no coverage-gap feedback record or TSG backlog item required.
+- The one out-of-scope finding surfaced during execution (`BLG-FE-122`, react-day-picker v8→v9 API break in `calendar.js`) was correctly filed as a backlog item rather than a spec deviation at sprint close, and remained correctly classified at this verification pass — confirmed present in `backlog.md` and consistent with the governing spec document's own "Known Deviations: None" section.
+
+### Friction Log
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| Clean verification pass — 1/1 ST item traced with 0 gaps; 1/1 QA evidence Pass; 0 deviations; 0 outstanding items; 0 deferred execution blockers; 0 parked items; 0 test coverage gaps. No process friction identified this cycle. | Phase 4 | A | monitor | Continue pattern — no action required. | PMO Lead | — |
+
+**Recurrence Notes:**
+None. The only deferred item from the prior cycle's Phase 4 record was already resolved before this cycle began (see "Prior cycle checked" above) — nothing outstanding to escalate.
+
+---
+
+## Recurrence Escalations
+
+None.
+
+## Process improvements actioned this run
+
+None required — no friction items rose to `action-now` classification this run.
+
+## New files created this run
+
+`claude/cycles/2026-07-17__release-v7.4/verification_report.md` (this Phase 4 append and the `docs/System_status_report.md` status-line update are the only other artefacts touched).
+
+## Outstanding deferred patches
+
+None.
+
+## Escalations
+
+None.
+
+## Carry-Forward
+
+Items: 0

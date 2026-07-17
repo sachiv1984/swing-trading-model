@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.9
-**Last Updated:** 2026-07-10
+**Version:** 4.10
+**Last Updated:** 2026-07-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -2166,7 +2166,7 @@ None — all 7 sealed backlog-slice items were delivered within the sprint.
 
 ## Sprint: 2026-07-17__release-v7.4
 **Date:** 2026-07-17
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified — 2026-07-17
 
 ### Capabilities now live (merged this sprint)
 
