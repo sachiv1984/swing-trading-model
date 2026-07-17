@@ -1,0 +1,19 @@
+{
+  "amendment_id": "AMD-20260717-01",
+  "original_cycle_id": "2026-07-17__release-v7.4",
+  "release": "v7.4",
+  "reason": "hard-blocker",
+  "status": "Sealed",
+  "ratification_status": "Ratified",
+  "ratified_by": ["Product Owner", "Head of Specs Team"],
+  "ratified_at": ["2026-07-17", "2026-07-17"],
+  "changes": [
+    {"type": "Remove", "item": "ST-02", "epic": "EPIC-02", "backlog_ref": "BLG-FE-115"},
+    {"type": "Remove", "item": "ST-03", "epic": "EPIC-03", "backlog_ref": "BLG-FE-116"},
+    {"type": "Remove", "item": "ST-04", "epic": "EPIC-04", "backlog_ref": "BLG-FE-117"},
+    {"type": "Remove", "item": "ST-05", "epic": "EPIC-05", "backlog_ref": "BLG-FE-118"}
+  ],
+  "backlog_lock_status": "released_after_commit",
+  "sealed_utc": "2026-07-17T13:20:00Z",
+  "last_updated_utc": "2026-07-17T13:20:00Z"
+}
