@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-07-15
+**Version:** 1.2
+**Last Updated:** 2026-07-17
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.2 (ST-01, EPIC-01, v7.5, BLG-FE-115):** formalised the `DataState` `inline` empty-state variant (§Shared UI Components → Cards → Data States) for compact-list contexts (e.g. the global command palette results list) where even the `compact` icon+heading+body stack is too tall. Generalises the decision approved for the command palette in `docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md` §2.5 (AC-06, per `docs/specs/blg_fe_115_pre_implementation_readiness_pass.md` §7).
 **v1.1 (ST-04, EPIC-03, v7.2, BLG-SPEC-90):** formalised the `DataState` compact empty-state variant (§Shared UI Components → Cards → Data States) and defined primary vs secondary dashboard card treatment (§Shared UI Components → Cards → Card Hierarchy). Both generalise decisions already approved for `DashboardHome.js` in `docs/design/2026-07-15__release-v7.2/dashboard-empty-states/ux_spec.md` (ST-05) and `dashboard-briefing-hierarchy/ux_spec.md` (ST-06) so future cards/pages can reuse the same pattern without re-deriving it.
 
 ## Overview
@@ -142,6 +143,8 @@ The shared `DataState` component (`src/components/ui/DataState.js`) is the canon
 | Body | `text-xs` (unchanged) | `text-xs` (unchanged) |
 
 A genuinely empty card (e.g. "no open positions") must render `DataState`'s `empty` branch (icon + heading + body) rather than a bare muted zero/blank line — this applies wherever the underlying value's absence is meaningful (contrast with a card whose zero is itself a valid data point, e.g. "0% portfolio heat", which is not an empty state and should render normally). Card-level `emptyAction` CTAs are optional and should generally be omitted when the card already has a click-through destination (e.g. the whole card links to `/Positions`) — a second CTA competes with that existing affordance. See `docs/design/2026-07-15__release-v7.2/dashboard-empty-states/ux_spec.md` for the worked example this pattern was generalised from.
+
+**Inline variant** — for a compact-list context (e.g. the global command palette's results list, or any other single-line result row list) where even `compact`'s icon+heading+body stack is too tall for the surrounding component, pass `inline` to render `emptyHeading` (or `emptyBody` if no heading is given) alone as a single centered text line, no icon, no gap stack: `text-sm text-slate-600 dark:text-slate-400 text-center py-6`. `loading` and `error` are unaffected by `inline`. First used by the command palette's "No results for '{query}'." state (`src/components/CommandPalette.js`, via `cmdk`'s `CommandEmpty` — see `docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md` §2.5).
 
 ### Card Hierarchy
 

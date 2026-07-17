@@ -26,10 +26,13 @@ import {
   Globe,
   Flag,
   BarChart2,
+  Search,
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
 import { apiFetch } from "./api/base44Client";
+import CommandPalette, { OPEN_COMMAND_PALETTE_EVENT } from "./components/CommandPalette";
+import { toast } from "sonner";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
@@ -133,6 +136,12 @@ export default function Layout({ children, currentPageName }) {
     localStorage.setItem("theme", newTheme);
   };
 
+  // ST-01 (EPIC-01, BLG-FE-115): mouse fallback for the global command palette
+  const openCommandPalette = () => {
+    window.dispatchEvent(new CustomEvent(OPEN_COMMAND_PALETTE_EVENT));
+  };
+  const isMac = typeof navigator !== "undefined" && /Mac/i.test(navigator.platform || "");
+
   const isActive = (pageName) =>
     pageName === "notifications"
       ? NOTIFICATIONS_PAGES.includes(currentPageName)
@@ -226,6 +235,29 @@ export default function Layout({ children, currentPageName }) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
+
+  // ST-01 (EPIC-01, BLG-FE-115): first-session-only dismissible tooltip
+  // pointing at the command palette affordance — per ux_spec.md §5.
+  useEffect(() => {
+    let seen;
+    try {
+      seen = localStorage.getItem("command-palette-tooltip-seen");
+    } catch {
+      seen = "true"; // no storage access — don't surface the hint
+    }
+    if (seen) return;
+    const markSeen = () => {
+      try { localStorage.setItem("command-palette-tooltip-seen", "true"); } catch {}
+    };
+    const timer = setTimeout(() => {
+      toast.info("Press ⌘K (or Ctrl K) to search pages, tickers, and trade plans.", {
+        duration: 8000,
+        onDismiss: markSeen,
+        onAutoClose: markSeen,
+      });
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, []);
 
   const renderNavGroups = (onItemClick) => (
     <div className="space-y-1">
@@ -385,6 +417,21 @@ export default function Layout({ children, currentPageName }) {
             <Button
               variant="ghost"
               size="icon"
+              onClick={openCommandPalette}
+              aria-label="Open command palette"
+              data-testid="command-palette-trigger-mobile"
+              className={cn(
+                "h-9 w-9",
+                isDark
+                  ? "text-slate-400 hover:text-white hover:bg-slate-800"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-200"
+              )}
+            >
+              <Search className="w-5 h-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={toggleTheme}
               className={cn(
                 "h-9 w-9",
@@ -511,6 +558,35 @@ export default function Layout({ children, currentPageName }) {
           </span>
         </div>
 
+        {/* ST-01 (EPIC-01, BLG-FE-115): command palette search affordance */}
+        <div className="px-4 pt-4">
+          <button
+            type="button"
+            onClick={openCommandPalette}
+            aria-label="Open command palette"
+            data-testid="command-palette-trigger-desktop"
+            className={cn(
+              "w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all border",
+              isDark
+                ? "bg-slate-800/40 border-slate-800/60 text-slate-400 hover:text-white hover:bg-slate-800/70"
+                : "bg-slate-100/80 border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-200/70"
+            )}
+          >
+            <Search className="w-4 h-4 shrink-0" />
+            <span className="flex-1 text-left">Search…</span>
+            <kbd
+              className={cn(
+                "inline-flex items-center justify-center px-1.5 h-5 rounded text-[10px] font-mono font-semibold border shrink-0",
+                isDark
+                  ? "bg-slate-900/60 border-slate-700 text-slate-500"
+                  : "bg-white border-slate-300 text-slate-500"
+              )}
+            >
+              {isMac ? "⌘K" : "Ctrl K"}
+            </kbd>
+          </button>
+        </div>
+
         {/* Navigation — scrollable */}
         <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
           {/* Dashboard — ungrouped home link */}
@@ -627,6 +703,9 @@ export default function Layout({ children, currentPageName }) {
       >
         <div className="p-4 lg:p-8 max-w-7xl mx-auto">{children}</div>
       </main>
+
+      {/* ST-01 (EPIC-01, BLG-FE-115): global command palette — mounted once, present on every page */}
+      <CommandPalette />
     </div>
   );
 }

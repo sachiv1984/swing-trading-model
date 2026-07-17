@@ -27,6 +27,11 @@ import { Button } from "./button";
  * Pass `compact` for smaller contexts (e.g. a dashboard grid tile) where the
  * default py-16 empty-state padding would exaggerate tile height — reduces
  * padding/icon size while keeping the same state logic and visual language.
+ *
+ * Pass `inline` for a compact-list context (e.g. inside a command palette or
+ * other single-line result list) where even `compact`'s icon+heading+body
+ * stack is too tall — renders `emptyHeading` (or `emptyBody`) alone as a
+ * single centered text line, no icon. `loading`/`error` are unaffected.
  */
 export default function DataState({
   loading,
@@ -40,6 +45,7 @@ export default function DataState({
   children,
   className = "",
   compact = false,
+  inline = false,
 }) {
   if (loading) {
     return (
@@ -74,6 +80,13 @@ export default function DataState({
   }
 
   if (empty) {
+    if (inline) {
+      return (
+        <p className={`text-sm text-slate-600 dark:text-slate-400 text-center py-6 ${className}`}>
+          {emptyHeading || emptyBody}
+        </p>
+      );
+    }
     return (
       <div className={`flex flex-col items-center justify-center ${compact ? "py-4 gap-2" : "py-16 gap-3"} text-center px-6 ${className}`}>
         {emptyIcon && <div className="mb-1">{emptyIcon}</div>}
