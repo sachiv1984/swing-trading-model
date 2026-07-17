@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-07-17__release-v7.5",
   "cycle_name": "v7.5 — UI Feature Expansion Continuation (Command Palette, Alerts, Bulk Actions, Saved Filters)",
-  "status": "Sprint_Planning_Complete",
+  "status": "Executing",
   "prior_status": "Published",
   "engine": "sprint_planning",
   "design_gate_required": true,
