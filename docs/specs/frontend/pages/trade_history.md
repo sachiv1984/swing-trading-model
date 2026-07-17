@@ -3,13 +3,14 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.10
-**Last Updated:** 2026-06-19
+**Version:** 1.11
+**Last Updated:** 2026-07-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v2.8 AI Journal Summary):** docs/design/2026-04-17__release-v2.8/ai-journal-summary/ux_spec.md
 **Design Source (v2.6 UX polish):** docs/design/2026-04-11__release-v2.6/trade-history-ux/ux_spec.md
 **Design Source (v2.1 slippage):** docs/design/2026-03-18__release-v2.1/slippage-tracking/ux_spec.md
 **Design Source (v3.5 additions):** docs/ux_specs/plan-vs-reality/ux_spec.md
+**Design Source (v1.11 saved filters & calendar view):** docs/design/2026-07-17__release-v7.5/saved-filters-calendar-view/ux_spec.md
 
 ## Purpose & User Goals
 The Trade History page provides a complete record of all **closed trades**, allowing users to review past performance, analyze decisions, and learn from journal entries.
@@ -403,6 +404,39 @@ When no cost data: column behaves identically to current spec.
 
 ---
 
+## Saved Filter Presets & Calendar View (v7.5 — ST-04 BLG-FE-118)
+
+**Design source:** `docs/design/2026-07-17__release-v7.5/saved-filters-calendar-view/ux_spec.md`
+**Depends on:** `docs/specs/blg_fe_118_pre_implementation_readiness_pass.md` (`saved_filters` schema, day-bucketed realised-P&L date sourcing, realised/unrealised split constraint)
+
+**Placement decision:** Trade History was chosen as the single home for both features — it has the richest existing filter set of any page (§Filters: date range, win/loss, market, exit reason, tags) and the calendar's date sourcing is built on `trade_history.exit_date`, the same field already driving the Exit Date column and default sort.
+
+### Saved Filter Presets
+
+Below the existing §Filters row:
+
+- **"Save current filters as…"** — visible whenever 1+ filters are active. Opens an inline name input (max 100 chars); submits `POST /saved-filters` with `{ name, filter_state }`. Duplicate name (`400`, `UNIQUE (portfolio_id, name)`) shows inline error: `"A preset named '{name}' already exists."`
+- **"Saved filters"** dropdown lists all `GET /saved-filters` rows by name; selecting one applies its `filter_state` to the active filter controls (overwrites current selection; does not auto-resave).
+- Each preset has a delete (×) affordance with inline confirmation: `"Delete preset '{name}'?"` — calls `DELETE /saved-filters/{id}`. Deleting a preset does not affect the currently-active filter selection.
+
+**Persistence distinction:** the currently-active filter selection remains the existing ephemeral, versioned-localStorage-envelope pattern (reusing the `BLG-FE-40` pattern already implemented for `RedFlagJournal.js`) — independent of saved presets, which are server-side `saved_filters` rows persisting across devices/sessions.
+
+### Calendar View
+
+A **Table** / **Calendar** view toggle at the top of the page, alongside the filter row. Table remains the default and unchanged; Filters, Saved Filters, and Summary Stats remain visible and functional in both views.
+
+Calendar view renders a standard month-grid (`react-day-picker`, single-month mode, prev/next navigation). Each day cell with 1+ trade exits (`exit_date`) shows a compact realised-P&L indicator (green/red dot); hovering shows `"+£240.50 (3 trades)"` style detail. Clicking a day with exits switches to Table view with the date range filter set to that single day (reuses the existing Date range filter — no new detail view). Empty days are not clickable.
+
+**Unrealised P&L:** never shown per-day (not date-attributable — no historical daily mark-to-market source exists). Shown once, in a summary banner above the grid: `"Unrealised P&L (as of today): {value}"` — reuses the exact wording/treatment already used on the Monthly P&L and Tax Year reports.
+
+**Empty state:** a month with zero exits still renders the grid (no indicators). If the account has no closed trades at all, the standard full-page `DataState` empty state is shown above the grid instead: `"No closed trades yet."` / `"Your trading calendar will populate as you close trades."`
+
+### §13 Compliance
+
+Both features are read-only presentation/filtering conveniences over existing trade history data or user-authored filter names. No automated decision-making or recommendation logic.
+
+---
+
 ## Key Components Used
 - Trade summary cards  
 - Filters and tag selector  
@@ -468,6 +502,7 @@ Displays:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.11 | 2026-07-17 | v7.5 design gate — added §Saved Filter Presets & Calendar View (ST-04, BLG-FE-118): named saved filter presets (new `saved_filters` table, server-side, distinct from the existing ephemeral localStorage active-filter state), Table/Calendar view toggle, month-grid with day-level realised-P&L indicators sourced from `exit_date`, day-click navigates to Table view filtered to that date, unrealised P&L shown once as a summary banner (never per-day). Design source: saved-filters-calendar-view/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
 | 1.10 | 2026-06-19 | v6.0 design gate — Brokerage Cost Capture section added: two new optional trade edit form fields (commission_gbp, spread_cost_gbp) in "Brokerage Costs" subsection. Net-of-Costs R-Multiple Display section added: Net R shown below Gross R in table and expanded row when cost data present; absent when no cost data (backward-compatible). Design source: net-of-costs-tracking/ux_spec.md. Approved: Product Owner 2026-06-19. Head of Specs Team confirmed. |
 | 1.9 | 2026-05-16 | v3.6 design gate (ST-02, EPIC-01): Entry Delta row added to Plan vs Reality comparison table — displays `entry_delta_pct` as signed percentage (+X.XX%/−X.XX%) with green/red colouring; null state shows "Entry delta: data not available for historical trades" in muted style. API source: `GET /trades/{id}/plan-vs-reality` `entry_delta_pct` field (added in ST-01). Head of UX & Design confirmed 2026-05-16. |
 | 1.8 | 2026-05-15 | v3.5 design gate: (ST-06 PO-01) Plan vs Reality section added to Expandable Journal Row — 4th section, conditionally rendered for closed trades with a trade plan; displays entry timing accuracy, R achieved vs R target (colour-coded), exit alignment badge, lifecycle state at exit badge; lazy-loaded on row expand via `GET /trades/{id}/plan-vs-reality`; hidden entirely when 404 (no plan). Design source: docs/ux_specs/plan-vs-reality/ux_spec.md. Approved: Product Owner 2026-05-15. |

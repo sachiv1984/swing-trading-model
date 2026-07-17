@@ -1,11 +1,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.3
-**Last Updated:** 2026-05-09
+**Version:** 0.4
+**Last Updated:** 2026-07-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/watchlist/ux_spec.md
 **Design Source (v0.3 research indicator):** docs/design/2026-05-09__release-v3.3/trade-plan-quick-wins/ux_spec.md §F
+**Design Source (v0.4 bulk actions):** docs/design/2026-07-17__release-v7.5/bulk-actions-toolbar/ux_spec.md
 
 ---
 
@@ -204,10 +205,42 @@ Each ticker entry in the watchlist table has a **"Research"** action (text link 
 
 ---
 
+## Bulk Actions (v7.5 — ST-03 BLG-FE-117)
+
+**Design source:** docs/design/2026-07-17__release-v7.5/bulk-actions-toolbar/ux_spec.md
+**Depends on:** docs/specs/blg_fe_117_pre_implementation_readiness_pass.md (batch-mutation endpoint pattern, §13 pre-check PASS)
+
+### Row Selection
+
+A checkbox is added as the first column of the Watchlist table (left of Ticker). The header row gains a header checkbox: checked selects all rows currently visible under the active state (no filters exist on this page today, so this selects the full table). Selected rows render with a subtle persistent background tint.
+
+### Bulk-Action Toolbar
+
+Renders above the table only when 1+ rows are selected (no "0 selected" state is designed — the toolbar's presence is itself the indicator). Contains: selected count (`"{N} selected"`), available actions (**Bulk Tag**, **Bulk Remove**), and a **"Clear"** text button that deselects all rows.
+
+### Bulk Tag
+
+Opens an inline expand with the existing Tag Editor autocomplete component (`journal_components.md` §4 / `trade_plan.md` §5c pattern), reusing the same tag validation rules. Tags are added to (not replacing) each selected row's existing tag set. Submits `POST /positions/bulk-tag` with `{ ids, tags }`.
+
+### Bulk Remove
+
+Destructive — shows a confirmation dialog: `"Remove {N} selected watchlist entries?"` — "Remove" calls `DELETE /watchlist/bulk` with `{ ids }`; "Cancel" dismisses (selection retained).
+
+### Partial-Failure Feedback
+
+The batch response returns `{ succeeded: [...], failed: [{id, reason}] }`. All-succeeded: toast `"{N} entries updated."`, rows updated/removed, selection cleared. Partial failure: toast `"{N} succeeded, {M} failed."` with an expandable per-row detail listing failed IDs and reasons — never a single opaque "some failed" message.
+
+### §13 Compliance
+
+User-initiated batch of the same manual mutations already available one row at a time (tag, remove). No new automated decision-making.
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.4 | 2026-07-17 | v7.5 design gate — added §Bulk Actions (ST-03, BLG-FE-117): row checkboxes, bulk-action toolbar (renders only when 1+ selected), Bulk Tag (reuses existing Tag Editor), Bulk Remove (destructive, confirmation required), per-row partial-failure feedback. New `POST /positions/bulk-tag` and `DELETE /watchlist/bulk` endpoints. Design source: bulk-actions-toolbar/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
 | 0.3 | 2026-05-09 | v3.3 design gate — added Research Status Indicator section (BLG-FE-29: binary has_research icon per row); added "Research" column to table. Design source: trade-plan-quick-wins/ux_spec.md §F. Approved: Product Owner 2026-05-09. |
 | 0.2 | 2026-05-05 | v3.2 design gate — added Research Navigation section (ST-04); updated Actions column. Design source: screener-to-research-navigation/ux_spec.md. |
 | 0.1 | 2026-03-18 | Initial spec. ST-10 — EPIC-03 (Watchlists & Screening). Design gate: 2026-03-18__release-v2.1. Design source: UX spec approved by Product Owner 2026-03-18. |

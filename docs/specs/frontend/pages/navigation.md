@@ -1,10 +1,11 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-05-21
+**Version:** 1.3
+**Last Updated:** 2026-07-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-24__release-v2.3/sidebar-nav-groups/ux_spec.md
+**Design Source (v1.3 command palette):** docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md
 **Confirmed by:** Head of Specs Team — 2026-03-24
 **Release:** v2.3 — ST-13 (BLG-UX-01)
 
@@ -82,10 +83,50 @@ Global keyboard shortcuts are available on applicable pages. Shortcuts fire on d
 
 ---
 
+## Global Command Palette (v7.5 — ST-01 BLG-FE-115)
+
+**Design source:** docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md
+**Depends on:** docs/specs/blg_fe_115_pre_implementation_readiness_pass.md (index scope, keyboard contract, `cmdk` dependency gap)
+
+A global cross-page search palette, invoked from any page.
+
+### Invocation
+
+- **Keyboard:** `Cmd+K` (macOS) / `Ctrl+K` (Windows/Linux) — global, suppressed while focus is inside a text input/textarea/select.
+- **Mouse fallback:** a search-icon button in the top nav header region, showing a muted `⌘K` / `Ctrl K` badge hint.
+
+### Content
+
+Centred modal overlay (shared `Dialog` component) with a single search input and a results list grouped into:
+
+| Group | Source |
+|-------|--------|
+| Pages | Static index — `pages.config.js` `PAGES` |
+| Your Data | Dynamic index — tickers/positions/trade plans already loaded client-side (open positions, watchlist, trade plans) |
+
+Empty input shows recent/frequent pages only (no "Your Data" group). Typing filters both groups live via fuzzy match.
+
+### Selection & Navigation
+
+- Page result → navigates to that route.
+- Ticker/plan result → navigates to the most relevant surface (open position → `/positions`; watchlist ticker → `/watchlist`; trade plan → `/trade-plans/{id}` detail view directly).
+- Arrow Up/Down highlights; `Enter` selects; `Escape` closes without navigating.
+
+### No Results
+
+Compact `DataState` empty-state variant (new — not the existing `py-16` default card variant, which is oversized for the palette's compact list): `"No results for '{query}'."`
+
+### Discoverability
+
+First-session-only dismissible tooltip on the nav-bar search affordance. No modal product tour.
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-07-17 | v7.5 design gate — added §Global Command Palette (ST-01, BLG-FE-115): Cmd/Ctrl-K invocation, nav-bar mouse fallback, Pages/Your Data result groups, selection/navigation rules, new compact-list `DataState` empty-state variant, discoverability tooltip. Design source: command-palette/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
 | 1.2 | 2026-05-21 | v3.9 design gate — added Red Flag Journal to Trading group (ST-08, EPIC-03: new page at `/red-flag-journal`, nav item after Trade Reflection). Design source: docs/design/2026-05-21__release-v3.9/red-flag-journal/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |
 | 1.1 | 2026-04-25 | ST-11 (BLG-FE-19, v3.0): §Keyboard Shortcuts added — global shortcuts (n/w/r), suppression rule for text inputs, sidebar footer hint design. Design source: docs/design/2026-04-25__release-v3.0/keyboard-shortcuts/ux_spec.md. Head of UX & Design + Product Owner approved. Design gate: 2026-04-25__release-v3.0. Head of Specs Team confirmed. |
 | 1.0 | 2026-03-24 | Initial version. ST-13 (BLG-UX-01, v2.3): collapsible section groups with 4 groups (Trading, Analytics, Tools, System). Product Owner design decision 2026-03-24. Design source: docs/design/2026-03-24__release-v2.3/sidebar-nav-groups/ux_spec.md. Design gate: 2026-03-24__release-v2.3. |

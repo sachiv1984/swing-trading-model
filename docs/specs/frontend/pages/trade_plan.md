@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-07-15
+**Version:** 1.1
+**Last Updated:** 2026-07-17
+**Design Source (v1.1 bulk actions):** docs/design/2026-07-17__release-v7.5/bulk-actions-toolbar/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v1.0 Start Trade from Plan):** docs/design/2026-07-15__release-v7.2/start-trade-from-plan/ux_spec.md (BLG-FE-109)
 **Design Source (v0.1):** docs/design/2026-04-29__release-v3.1/trade-plan/ux_spec.md (v3.1 — artefact reference only; file not present in repo)
@@ -412,6 +413,39 @@ No existing `TradeEntry.js` required-field validation (`ticker`, `shares`, `entr
 
 ---
 
+## 11. Bulk Actions (v7.5 — ST-03 BLG-FE-117)
+
+**Design source:** docs/design/2026-07-17__release-v7.5/bulk-actions-toolbar/ux_spec.md
+**Depends on:** docs/specs/blg_fe_117_pre_implementation_readiness_pass.md (batch-mutation endpoint pattern, §13 pre-check PASS)
+
+### Row Selection
+
+A checkbox is added as the first column of the Trade Plan List (§4). The header row gains a header checkbox: checked selects all rows in the current filtered/visible view. Selected rows render with a subtle persistent background tint.
+
+### Bulk-Action Toolbar
+
+Renders above the list only when 1+ rows are selected (no "0 selected" state — toolbar presence is the indicator). Actions: **Bulk Tag**, **Bulk Archive**, **Bulk Delete**.
+
+**Bulk Archive** maps to the existing Abandonment transition (§8) applied to each selected plan — reuses existing single-plan abandonment semantics, not a new status. Any selected plan with `status = 'active'` is excluded from the archive action (mirrors §8.1's single-item hide rule); the toolbar shows `"{N} active plan(s) excluded — cannot be archived."` and archives only the eligible subset.
+
+### Bulk Tag
+
+Inline expand with the existing Tag Editor (§5c), reusing its validation rules. Tags are added to (not replacing) each selected plan's existing `trade_tags`. Submits to the trade-plan bulk-tag endpoint with `{ ids, tags }`.
+
+### Bulk Delete / Bulk Archive — Confirmation
+
+Both destructive. Confirmation dialog: `"{Delete / Archive} {N} selected trade plan(s)?"` — primary destructive button confirms and fires `DELETE /trade-plans/bulk` (`{ ids }`) or the bulk-archive equivalent; "Cancel" dismisses (selection retained).
+
+### Partial-Failure Feedback
+
+Batch response returns `{ succeeded: [...], failed: [{id, reason}] }`. All-succeeded: toast `"{N} plans updated."`, rows updated/removed, selection cleared. Partial failure: toast `"{N} succeeded, {M} failed."` with expandable per-row detail (IDs + reasons) — never a single opaque message.
+
+### §13 Compliance
+
+User-initiated batch of the same manual mutations already available one plan at a time (tag, abandon, delete). No new automated decision-making.
+
+---
+
 ## Known Deviations
 
 | ID | Description | Canonical requirement | Priority | Target resolution | Owner | Backlog reference |
@@ -425,6 +459,7 @@ No existing `TradeEntry.js` required-field validation (`ticker`, `shares`, `entr
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-07-17 | v7.5 design gate — added §11 Bulk Actions (ST-03, BLG-FE-117): row checkboxes on the list, bulk-action toolbar (renders only when 1+ selected), Bulk Tag (reuses §5c Tag Editor), Bulk Archive (reuses §8 Abandonment, active plans excluded), Bulk Delete (destructive, confirmation required), per-row partial-failure feedback. New bulk-mutation endpoints. Design source: bulk-actions-toolbar/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
 | 1.0 | 2026-07-15 | v7.2 design gate — added §10 Start Trade from Plan (ST-03, BLG-FE-109): "Start Trade" action on detail view (primary button) and list view (icon button), visible only for non-active/non-terminal plans; hands off to `/TradeEntry` via a new `trade_plan_prefill` navigation-state object (sibling to existing `watchlist_prefill`) pre-filling ticker/market/stop; `trade_plan_id` carried automatically, non-editable "Linked to trade plan" indicator shown; manual entry gains an optional "Link to trade plan" selector when an eligible plan exists for the entered ticker. No change to existing required-field validation. Depends on ST-02 readiness pass (BLG-SPEC-89). Design source: start-trade-from-plan/ux_spec.md. Approved: Product Owner 2026-07-15. Head of Specs Team confirmed. |
 | 0.9 | 2026-07-08 | v6.8 design gate — added §5c Trade Plan Tags (ST-05, BLG-FEAT-52): new independent `trade_tags` field on `trade_plans` (data-independent from existing position/journal tags), Tag Editor on edit form, Tag List (read-only) on detail view, new `GET /trade-plans/tags` autocomplete endpoint. Reuses `journal_components.md` §4 Tag Editor and §1-equivalent pill display for visual consistency only. §5.1 form fields table and §7 detail view updated. Design source: trade-tagging/ux_spec.md. Approved: Product Owner 2026-07-08. Head of Specs Team confirmed. |
 | 0.8 | 2026-07-02 | v6.5 design gate — added §5b Claude Thesis Generation & Feedback (ST-07, BLG-FE-46): documents the previously-unspecified "Improve with AI" button (Claude Haiku 4.5, `POST /trade-plans/generate-plan`) and a new 👍/👎 feedback control on generated drafts, single-shot per generation, feeding `thesis_adoption_rate` (ST-08). Notes a spec correction: the shared `isAiDraft` flag conflates the local template button and the Claude-backed button — implementation must gate the feedback control on a Claude-specific signal. Design source: thesis-feedback-mechanism/ux_spec.md. Approved: Product Owner 2026-07-02. Head of Specs Team confirmed. |

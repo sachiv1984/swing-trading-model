@@ -1,10 +1,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.3
-**Last Updated:** 2026-03-24
+**Version:** 0.4
+**Last Updated:** 2026-07-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md | docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md
+**Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md | docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md | docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md
 
 ---
 
@@ -209,6 +209,62 @@ Errors displayed inline below the threshold input. Form does not submit while er
 
 ---
 
+## Section 3: Custom Price Alerts (v7.5 — ST-02 BLG-FE-116)
+
+**Design source:** docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md
+**Depends on:** docs/specs/blg_fe_116_pre_implementation_readiness_pass.md (`price_alerts` schema, evaluation-pipeline integration, §13 pre-check PASS)
+
+A new section on `/notifications/preferences`, below the existing "Alert Thresholds" section (Section 2, unchanged — governs only the four fixed types). Unlike those four singleton types, a user may define an arbitrary number of ticker/condition/threshold alerts, backed by the new `price_alerts` table.
+
+### API Reference
+
+- **List:** `GET /price-alerts`
+- **Create:** `POST /price-alerts` — body `{ ticker, condition, threshold_price }`
+- **Delete:** `DELETE /price-alerts/{id}`
+
+### Section Header
+
+"Custom Price Alerts" — with **"Add price alert"** button always visible (header row, not only in the empty state).
+
+### Alert List
+
+| Element | Source | Format |
+|---------|--------|--------|
+| Ticker | `ticker` | Uppercase |
+| Condition | `condition` + `threshold_price` | `"Above $150.00"` / `"Below £42.10"` |
+| Status | `active` / `triggered_at` | "Active" (green) / "Triggered" (grey) |
+| Actions | — | "Delete" icon, right-aligned |
+
+**Sort:** newest first (`created_at` descending). A triggered alert remains listed (not auto-removed) until the user deletes it.
+
+**Empty state:** icon (bell with plus, shared with the Alert Rules empty state), heading **"No custom price alerts."**, body `"Create an alert to be notified when a ticker crosses a price you choose."`, CTA **"Add price alert"**.
+
+### Create Alert Form
+
+Inline expand triggered by "Add price alert":
+
+| Field | Type | Required | Validation |
+|-------|------|----------|------------|
+| Ticker symbol | Text | Yes | Alphanumeric, 1–10 chars, uppercase-enforced |
+| Condition | Radio: Above / Below | Yes | — |
+| Threshold price | Numeric | Yes | Positive decimal, > 0 |
+
+Submits `POST /price-alerts`. On success: form collapses, new row appears at top. On error: inline `"Failed to create price alert. Please try again."` On per-portfolio cap exceeded (`400`): inline `"You've reached the maximum number of active price alerts."`
+
+### Delete
+
+Inline confirmation (not a modal): `"Delete price alert for {TICKER}?"` — "Delete" calls `DELETE /price-alerts/{id}`; "Cancel" dismisses.
+
+### Notification Feed Integration
+
+A triggered custom alert produces a Notification Feed row (`alert_type: 'custom_price_alert'`) using the existing feed row layout — no new feed-row variant. Title format: `"Price Alert — {TICKER} {above/below} {threshold}"`.
+
+### §13 Compliance
+
+Notification-only — identical in kind to the existing Stop Loss Approach / Grace Period Warning types. No order placement, position mutation, or automated execution.
+
+---
+
 ## Page 3: Alert History (v2.2)
 
 ### API Reference
@@ -355,6 +411,7 @@ When the Tools nav group is collapsed, the badge count propagates to the group h
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.4 | 2026-07-17 | v7.5 design gate — added Section 3: Custom Price Alerts (ST-02, BLG-FE-116): user-created ticker/condition/threshold alerts, backed by new `price_alerts` table; create/list/delete UI on `/notifications/preferences` below Alert Thresholds; triggered alerts surface via existing Notification Feed. Design source: custom-price-alerts/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
 | 0.3 | 2026-03-24 | ST-10 (BLG-FE-05, v2.3): §Nav Alert Badge — unacknowledged alert count badge on Alerts nav item; clears on Alerts page navigation; badge visible on collapsed Tools group header. Design source: docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md. Approved: Product Owner 2026-03-24. Design gate: 2026-03-24__release-v2.3. |
 | 0.2 | 2026-03-22 | v2.2 additions: Section 2 (Alert Rule Thresholds — ST-04) and Page 3 (Alert History — ST-05). Sub-nav extended with "History" tab. Purpose & Goals, routes, and constraints updated. Design sources: `docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md` and `docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md`. Approved by Product Owner 2026-03-22. Confirmed compliant by Head of Specs Team. |
 | 0.1 | 2026-03-18 | Initial spec. ST-05 (notification preferences page) + ST-06 (in-app notification feed). Design gate: 2026-03-18__release-v2.1. Design source: UX specs approved by Product Owner 2026-03-18. |
