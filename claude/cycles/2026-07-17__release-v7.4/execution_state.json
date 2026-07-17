@@ -36,7 +36,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.issue_closed_verified",
           "sign_off_record": null,
-          "notes": "Case B (documentation-creation): the consolidated readiness pass IS the governing spec_references artefact. All 7 AC bullets (informal AC-01..AC-07 per sprint_planning_notes.md) addressed in the document. New finding during AC-01 (react-day-picker v8->v9 API break in calendar.js) filed as BLG-FE-122."
+          "notes": "Case B (documentation-creation): the consolidated readiness pass IS the governing spec_references artefact. All 7 AC bullets (informal AC-01..AC-07 per sprint_planning_notes.md) addressed in the document. New finding during AC-01 (react-day-picker v8->v9 API break in calendar.js) filed as BLG-FE-122. PR #1011 open; all CI checks pass; autonomous-class DoQ sign-off recorded. Merge gate blocked pending required GitHub PR review approval + Product Owner acceptance (engine may not self-approve, execution_prompt.md STEP 4)."
         }
       }
     }
