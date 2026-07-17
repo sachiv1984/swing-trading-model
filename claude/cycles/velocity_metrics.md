@@ -81,8 +81,9 @@
 | v7.1  | 7       | 7         | 1.00     | All 7 stories done; both P1 Production Correctness Fast-Track mandatory anchors delivered (BLG-BE-59, BLG-BE-60); 1 P2 deviation closed (DEV-EPIC01-ST05-01, resolved by ST-03); 1 new P3 deviation filed (DEV-REPORTS-ST06-01, BLG-SPEC-87); ST-05 pre-met (no code changes, confirmed still current by design gate); 0 delegations; 0 returns; Verified_with_deviations |
 | v7.2  | 5       | 5         | 1.00     | 5/5 sprint-sealed stories done (ST-01/02/04/07/08 — mobile responsiveness baseline, BLG-FE-109 readiness pass, BLG-FE-110/111 readiness pass, notification consolidation review, combined design-review/Playwright plan); ST-03/05/06 deferred_at_planning (sequencing gate, not sprint scope — now unblocked, carried to next release planning); zero deviations; all 5 EPICs autonomous class sign-off (BLG-GOV-19); 0 delegations; 0 returns; Verified |
 | v7.3  | 7       | 7         | 1.00     | All 7 stories done across 5 EPICs; 3 carried-forward v7.2 UI implementation stories shipped (BLG-FE-109/110/111 — ST-01/02/03) plus 4 new v7.4-candidate pre-implementation readiness passes (BLG-SPEC-91/92/93/94 — ST-04/05/06/07), including 2 §13 pre-checks both PASS (RISK-03 custom price alerts, RISK-04 bulk actions); zero deviations; EPIC-01 direct DoQ sign-off, EPIC-02–05 autonomous class sign-off (BLG-GOV-19); 0 delegations; 0 returns; Verified |
+| v7.4  | 1       | 1         | 1.00     | 1/1 story done (ST-01, EPIC-01, autonomous) — sprint scope reduced from 5 stories to 1 by `AMD-20260717-01` pre-seal (Design Gate blocked ST-02/03/04/05, no approved design artefact existed or could exist in time); consolidated v7.4 UI-heavy readiness bundle (BLG-SPEC-95) delivered — dependency pre-flight (`cmdk`/`react-day-picker`), 2 UX specs, design review, Playwright baseline scope, analytics event schema, CI tagging scheme; zero deviations (1 forward-looking backlog item filed, BLG-FE-122); 0 delegations; 0 returns mid-sprint; Verified |
 
-**Rolling 6-cycle average (v6.8–v7.3):** 1.00
+**Rolling 6-cycle average (v6.9–v7.4):** 1.00
 
 ---
 

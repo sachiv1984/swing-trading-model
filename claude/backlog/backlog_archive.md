@@ -1,11 +1,75 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
+**Last Updated:** 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-SPEC-95 — v7.4 UI-heavy release readiness bundle (dependencies, UX specs, QA/analytics coverage)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-07-17
+**Shipped in:** v7.4 (cycle: 2026-07-17__release-v7.4, ST-01)
+**Evidence:** docs/product/changelog.md#v7.4; claude/cycles/2026-07-17__release-v7.4/verification_report.md
+
+### BLG-SPEC-95 — v7.4 UI-heavy release readiness bundle (dependencies, UX specs, QA/analytics coverage)
+**Priority:** P1 (High) | **Type:** Spec / Pre-Implementation Readiness, consolidated | **Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design; Director of Quality | **Source:** IDEA-base44-frontend-20260717-01, IDEA-head-of-engineering-20260717-01, IDEA-frontend-specs-20260717-01, IDEA-frontend-specs-20260717-02, IDEA-head-of-ux-20260717-01, IDEA-head-of-ux-20260717-02, IDEA-director-of-quality-20260717-01, IDEA-metrics-20260717-02, IDEA-qa-lead-20260717-02 | **Effort:** L (~5-7 days) | **Provisional-Target:** v7.4
+**Problem:** All 4 unblocked carry-forward items (`BLG-FE-115` command palette, `BLG-FE-116` custom price alerts, `BLG-FE-117` bulk actions, `BLG-FE-118` saved filters/calendar) are entering v7.4 scoping together, but several cross-cutting readiness gaps remain open: `cmdk` and `react-day-picker` are both flagged missing from `package.json`; `BLG-FE-118` has no UX spec for its empty state; `BLG-FE-117` has no confirmed confirmation-modal/undo-window spec; command-palette keyboard-navigation affordance has not had a design review pass; none of the 4 items have Playwright visual-regression baselines, analytics event schemas, or regression-suite CI tags yet.
+**Scope:** A single consolidated pre-implementation pass (following the `BLG-SPEC-91–94` pattern from v7.3) covering: (1) dependency pre-flight for `cmdk`/`react-day-picker`; (2) UX specs for saved-filters empty state and bulk-actions confirmation modal; (3) design review of command-palette keyboard navigation; (4) Playwright visual-regression baseline scope for all 4 surfaces; (5) analytics event schema for command-palette usage; (6) regression-suite CI tagging scheme so v7.4 stories can run a scoped subset.
+**Acceptance Criteria:** One readiness-pass document produced covering all 6 scope items above; both missing npm dependencies added to `package.json` in the same pass; document referenced by all 4 items' eventual implementation stories.
+
+---
+
+### BLG-GOV-248 — Cost/benefit review: bundle BLG-FE-115/116/117/118 into one v7.4 EPIC vs. split
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-17
+**Shipped in:** v7.4 (cycle: 2026-07-17__release-v7.4 — resolved directly by the release planning engine at STEP 3, not via a pre-produced note as originally specified; see `lessons_learnt.md` Friction Item 1)
+**Evidence:** docs/product/decisions/decisions--2026-07-17__release-v7.4.md (Sequencing Decisions — "Split into 5 EPICs" row)
+
+### BLG-GOV-248 — Cost/benefit review: bundle BLG-FE-115/116/117/118 into one v7.4 EPIC vs. split
+**Priority:** P2 (Medium) | **Type:** Governance / Release Planning Input | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260717-02 | **Effort:** S (~1 day) | **Provisional-Target:** v7.4
+**Problem:** All 4 unblocked carry-forward items (`BLG-FE-115/116/117/118`) are independent P1 features sharing no data-model dependency; release planning will need a bundling recommendation (1 EPIC vs. up to 4) before sprint sequencing.
+**Scope:** A short cost/benefit note comparing single-EPIC bundling (lower governance overhead, per `roadmap_prompt.md §7.1`) against a split (parallel execution, smaller PR surface per item) for `release_planning_prompt.md` STEP 4 to consume.
+**Acceptance Criteria:** Note produced ahead of the next `plan release v7.4` invocation; explicit recommendation stated.
+
+---
+
+### BLG-GOV-249 — Confirm DL-069 sprint capacity baseline is reflected in the next sprint_capacity.md
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-17
+**Shipped in:** v7.4 (cycle: 2026-07-17__release-v7.4)
+**Evidence:** claude/cycles/2026-07-17__release-v7.4/sprint_capacity.md line 22 ("Forward-flag verification (BLG-GOV-249): Confirmed this capacity read matches the DL-069 baseline value... Match confirmed: ~24–28 days.")
+
+### BLG-GOV-249 — Confirm DL-069 sprint capacity baseline is reflected in the next sprint_capacity.md
+**Priority:** P2 (Medium) | **Type:** Governance / Process Verification | **Owner:** PMO Lead | **Source:** IDEA-pmo-lead-20260717-01 | **Effort:** S | **Provisional-Target:** v7.4
+**Problem:** `DL-069` ("Raise sprint capacity baseline and formalize cadence") was committed 2026-07-16 but has not yet been exercised by a live `plan sprint` invocation — there is a risk the new baseline is documented but not actually picked up by the next sprint planning run.
+**Scope:** A one-line verification check at the next `plan sprint` invocation confirming the capacity baseline read matches `DL-069`'s stated value.
+**Acceptance Criteria:** Verification performed at next sprint planning; discrepancy (if any) recorded.
+
+---
+
+### BLG-GOV-250 — Re-affirm §13 boundary review cadence given 4 P1 items entering v7.4 scoping
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-17
+**Shipped in:** v7.4 (cycle: 2026-07-17__release-v7.4 — resolved via Design Gate as RISK-05)
+**Evidence:** claude/cycles/2026-07-17__release-v7.4/design_gate.md ("BLG-FE-115: PASS"; "BLG-FE-118: PASS")
+
+### BLG-GOV-250 — Re-affirm §13 boundary review cadence given 4 P1 items entering v7.4 scoping
+**Priority:** P2 (Medium) | **Type:** Governance / Strategy | **Owner:** Strategy Rules & System Intent Owner | **Source:** IDEA-strategy-owner-20260717-01 | **Effort:** S | **Provisional-Target:** v7.4
+**Problem:** `BLG-FE-116` and `BLG-FE-117` already completed §13 pre-checks (RISK-03/RISK-04, both PASS) at the readiness-pass stage; `BLG-FE-115` and `BLG-FE-118` have no recorded §13 pre-check yet, and all 4 are entering v7.4 sprint scoping together.
+**Scope:** Confirm at the next design gate (`run design-gate --cycle v7.4`) whether `BLG-FE-115`/`BLG-FE-118` require their own §13 pre-checks before implementation, consistent with the pattern set by `BLG-FE-116`/`BLG-FE-117`.
+**Acceptance Criteria:** §13 applicability explicitly confirmed or ruled out for all 4 items before v7.4 sprint planning seals.
 
 ---
 

@@ -1,13 +1,30 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-16 (post-ship closure 2026-07-16__release-v7.3 — RA:v7.3 retired, partial: 3/7 items; 4 unblocked readiness-passed items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — RA:v7.2 retired, partial: 5/8 items; 3 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-14 (post-ship closure 2026-07-14__release-v7.1 — RA:v7.1 retired)
+**Last Updated:** 2026-07-17 (post-ship closure 2026-07-17__release-v7.4 — RA:v7.4 retired, partial: 1/1 amended-scope item; 4 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-16 (post-ship closure 2026-07-16__release-v7.3 — RA:v7.3 retired, partial: 3/7 items; 4 unblocked readiness-passed items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — RA:v7.2 retired, partial: 5/8 items; 3 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-14 (post-ship closure 2026-07-14__release-v7.1 — RA:v7.1 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v7.4 — UI Feature Expansion Readiness Pass (partial — 1/1 amended-scope item; 4 implementation items remain unblocked and are carried forward, not retired)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete (for the readiness-bundle item shipped this cycle — `BLG-SPEC-95`)
+**Retired from active roadmap:** 2026-07-17
+**Shipped version:** v7.4
+**Cycle reference:** 2026-07-17__release-v7.4
+**Verification report:** claude/cycles/2026-07-17__release-v7.4/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-07-17
+
+### Original Roadmap Entry
+
+v7.4 — UI Feature Expansion (Command Palette, Alerts, Bulk Actions, Saved Filters). Formally version-labelled 2026-07-17 (roadmap rebalance `2026-07-17__scheduled`, STEP 8.1 Option (a)). `AMD-20260717-01` removed ST-02/03/04/05 (`BLG-FE-115/116/117/118`) from sprint scope pre-seal — Design Gate blocked, no approved design artefact existed or could exist in time, since the release plan had sequenced their own design work as in-sprint output of ST-01. Only EPIC-01/ST-01 (`BLG-SPEC-95` — v7.4 UI-heavy release readiness bundle: dependency pre-flight for `cmdk`/`react-day-picker`, UX specs for saved-filters empty state and bulk-actions confirmation/undo-window modal, command-palette keyboard-navigation design review, Playwright visual-regression baseline scope, command-palette analytics event schema, regression-suite CI tagging scheme) was in scope for execution and shipped. 1/1 amended-scope story shipped, zero deviations (1 forward-looking backlog item filed, `BLG-FE-122`). `BLG-FE-115/116/117/118` remain unblocked (readiness passes complete, §13 pre-checks PASS where applicable — RISK-05 confirmed PASS for `BLG-FE-115`/`BLG-FE-118` at v7.4 Design Gate) and are carried forward as active roadmap scope for a future release, subject to a fresh Design Gate pass once real design artefacts exist.
 
 ---
 

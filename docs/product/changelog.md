@@ -3,9 +3,30 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-16 (post-ship closure 2026-07-16__release-v7.3)
+**Last Updated:** 2026-07-17 (post-ship closure 2026-07-17__release-v7.4)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v7.4 — UI Feature Expansion Readiness Pass — 2026-07-17
+Cycle: 2026-07-17__release-v7.4
+Verified: Verified
+Verification report: claude/cycles/2026-07-17__release-v7.4/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Consolidated v7.4 UI-feature readiness pass — dependency pre-flight (`cmdk`, `react-day-picker` added to `package.json`), UX specs for the saved-filters empty state and bulk-actions confirmation/undo-window modal, command-palette keyboard-navigation design review, Playwright visual-regression baseline scope, command-palette analytics event schema, regression-suite CI tagging scheme. Readiness pass only — no shippable UI this release. | `docs/specs/blg_spec_95_v7_4_ui_readiness_pass.md` |
+
+### Deviations accepted
+None.
+
+### Tech backlog items shipped
+- [ST-01] [P] BLG-SPEC-95: v7.4 UI-heavy release readiness bundle (dependency pre-flight, UX specs, design review, Playwright/analytics/regression-tag coverage for BLG-FE-115/116/117/118)
+
+Sign-off: Product Owner — 2026-07-17
+QA sign-off: Director of Quality — 2026-07-17
 
 ---
 
