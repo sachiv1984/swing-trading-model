@@ -1,0 +1,12 @@
+{
+  "cycle_id": "2026-07-17__release-v7.4",
+  "generated_utc": "2026-07-17T13:40:00Z",
+  "epics": {
+    "EPIC-01": {
+      "st_items": ["ST-01"],
+      "backlog_slice_refs": [
+        "amendments/AMD-20260717-01/amended_backlog_slice.md#ST-01"
+      ]
+    }
+  }
+}
