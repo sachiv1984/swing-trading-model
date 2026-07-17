@@ -1,0 +1,9 @@
+{
+  "cycle_id": "2026-07-17__release-v7.5",
+  "release": "v7.5",
+  "state": "committed",
+  "prepared_utc": "2026-07-17T18:30:00Z",
+  "committed_utc": "2026-07-17T18:32:00Z",
+  "marker": "RA:v7.5:2026-07-17__release-v7.5",
+  "target_file": "claude/roadmap/current_roadmap.md"
+}

@@ -290,6 +290,16 @@ Re-added here 2026-07-17 (post-ship closure `2026-07-17__release-v7.4`, STEP 11 
 | Bulk actions | BLG-FE-117 | — | P1; readiness pass `BLG-SPEC-93` shipped v7.3 — §13 pre-check PASSED (RISK-04 cleared); confirmation-modal/undo-window spec delivered in `BLG-SPEC-95` (v7.4) |
 | Saved filters / calendar view | BLG-FE-118 | — | P1; readiness pass `BLG-SPEC-94` shipped v7.3; §13 pre-check PASS (RISK-05); dependency (`react-day-picker`) and empty-state UX spec delivered in `BLG-SPEC-95` (v7.4) |
 
+<!-- roadmap-annotation-marker: RA:v7.5:2026-07-17__release-v7.5 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-17__release-v7.5
+- Plan published: 2026-07-17
+- Cycle folder: claude/cycles/2026-07-17__release-v7.5/
+- Backlog slice: claude/cycles/2026-07-17__release-v7.5/stage4_backlog_slice.md
+- Status at annotation: Committed
+- All 4 items conditional pending Design Gate (RISK-01) — `run design-gate --cycle 2026-07-17__release-v7.5` required before Sprint Planning seals.
+
 *RA:v7.4 retired — see roadmap_archive.md 2026-07-17 (post-ship closure 2026-07-17__release-v7.4; partial retirement, 1/1 amended-scope item — 4 unblocked items re-added above).*
 
 <!-- roadmap-annotation-marker: RA:v7.4:2026-07-17__release-v7.4 -->
