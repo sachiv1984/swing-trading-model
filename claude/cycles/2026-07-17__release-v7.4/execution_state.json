@@ -4,8 +4,8 @@
   "backlog_slice_source": "claude/cycles/2026-07-17__release-v7.4/amendments/AMD-20260717-01/amended_backlog_slice.md",
   "invoked_utc": "2026-07-17T14:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-07-17T14:00:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-07-17T15:30:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -53,6 +53,6 @@
     "all_merged": true
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-07-17T15:30:00Z"
 }

@@ -2163,3 +2163,28 @@ None — all 7 sealed backlog-slice items were delivered within the sprint.
 - QA evidence logs: qa_evidence_EPIC-01.md through qa_evidence_EPIC-05.md (EPIC-02 through EPIC-05 all autonomous class, BLG-GOV-19, 2026-07-16)
 - Deviations filed: None
 - Test scenarios referenced: None — all five deliverables this sprint are UI implementation (EPIC-01, carried from v7.2 with its own Playwright coverage) or readiness/spec documentation artefacts (EPIC-02 through EPIC-05); no new runnable test files added by EPIC-02–05
+
+## Sprint: 2026-07-17__release-v7.4
+**Date:** 2026-07-17
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Consolidated v7.4 UI-feature readiness pass (ST-01) — dependency pre-flight (`cmdk`, `react-day-picker` added to `package.json`), UX specs for saved-filters empty state and bulk-actions confirmation/undo-window modal, command-palette keyboard-navigation design review, Playwright visual-regression baseline scope, command-palette analytics event schema, regression-suite CI tagging scheme. Readiness pass only — no shippable UI. | `docs/specs/blg_spec_95_v7_4_ui_readiness_pass.md` | None |
+
+### Capabilities deferred or returned
+
+| ST Item | Reason | Backlog reference |
+|---------|--------|-------------------|
+| ST-02 (BLG-FE-115, command palette) | Removed from scope by `AMD-20260717-01` — Design Gate BLOCKED, no approved design-review artefact | backlog.md |
+| ST-03 (BLG-FE-116, price alerts) | Removed from scope by `AMD-20260717-01` — Design Gate BLOCKED, no design artefact scheduled anywhere in v7.4 plan | backlog.md |
+| ST-04 (BLG-FE-117, bulk actions) | Removed from scope by `AMD-20260717-01` — Design Gate BLOCKED, no UX spec for confirmation/undo-window modal | backlog.md |
+| ST-05 (BLG-FE-118, saved filters/calendar) | Removed from scope by `AMD-20260717-01` — Design Gate BLOCKED, no UX spec for empty state / no calendar-view design review | backlog.md |
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (autonomous class, BLG-GOV-19, 2026-07-17)
+- Deviations filed: None (one forward-looking backlog item filed: BLG-FE-122 — react-day-picker v8→v9 API break in `calendar.js`, pre-implementation finding for future EPIC-05)
+- Test scenarios referenced: None — sole deliverable is a readiness/spec documentation artefact; no runnable test files added this sprint
