@@ -16,5 +16,5 @@ Last Updated: 2026-07-17
 - **Unblock criteria:** Either (a) approved design artefacts + updated frontend specs are produced for all four items and design gate is re-run, or (b) the release plan is amended (via `amend cycle`) to descope EPIC-02/03/04/05 from this Sprint Planning pass — e.g. a phased plan scoping Sprint 1 to EPIC-01 only, with EPIC-02–05 gated behind a follow-up `run design-gate` pass once ST-01 ships.
 - **SLA due-by:** 2026-07-18T13:00:00Z (24 hours — Lifecycle/Process Integrity)
 - **Blocks execution:** Yes
-- **Disposition:** Open
-- **Resolution summary:** —
+- **Disposition:** Resolved
+- **Resolution summary:** Resolved via `AMD-20260717-01` (hard-blocker amendment, ratified by Product Owner + Head of Specs Team, sealed 2026-07-17T13:20:00Z) — removed ST-02/03/04/05 from this cycle's Sprint Planning scope rather than fabricating design artefacts outside Head of UX & Design's authority. Design Gate re-run against the amended scope (`claude/cycles/2026-07-17__release-v7.4/design_gate.md`, second pass) — Gate Status: PASSED for the remaining item (ST-01). Evidence: `claude/cycles/2026-07-17__release-v7.4/amendments/AMD-20260717-01/`.
