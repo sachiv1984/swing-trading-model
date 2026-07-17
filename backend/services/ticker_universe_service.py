@@ -69,6 +69,60 @@ def _load_company_names() -> Dict[str, str]:
     return mapping
 
 
+def _load_csv_tickers() -> set:
+    """Return the set of tickers in tickers_full_list.csv — the pre-DB
+    tracked universe, in place long before ticker_universe existed."""
+    tickers = set()
+    try:
+        with open(_CSV_PATH, newline="", encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                t = (row.get("Ticker") or "").strip().upper()
+                if t:
+                    tickers.add(t)
+    except FileNotFoundError:
+        pass
+    return tickers
+
+
+# BLG-BE-59 fallout: the one-time migration that first populated
+# ticker_universe (sync_from_tickers_table(), run 2026-04-27/28) stamped
+# every row's created_at with the insertion timestamp, not the date each
+# ticker was actually added to the tracked universe. compute_signals()'s
+# eligibility gate (production_strategy.py, added 2026-07-14) reads
+# created_at as "date this ticker became eligible" and masks all signal
+# history before it — so 599 legacy tickers (already in
+# tickers_full_list.csv pre-migration) lost virtually their entire
+# 2018-2026 backtest history. This sentinel predates the backtest's own
+# price-download start date (2018-01-01), so tickers stamped with it are
+# always-eligible, matching pre-migration behaviour.
+LEGACY_TICKER_CREATED_AT_SENTINEL = "2018-01-01 00:00:00"
+
+
+def backfill_legacy_ticker_created_at() -> int:
+    """Reset created_at to the legacy sentinel for every ticker_universe row
+    whose ticker also appears in tickers_full_list.csv (i.e. predates the DB
+    table). Idempotent — only touches rows still later than the sentinel, so
+    re-running after the first successful pass is a no-op. Returns the
+    number of rows updated.
+    """
+    legacy_tickers = _load_csv_tickers()
+    if not legacy_tickers:
+        return 0
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE ticker_universe
+                SET created_at = %s
+                WHERE ticker = ANY(%s) AND created_at > %s
+                """,
+                (LEGACY_TICKER_CREATED_AT_SENTINEL, list(legacy_tickers), LEGACY_TICKER_CREATED_AT_SENTINEL),
+            )
+            updated = cur.rowcount
+        conn.commit()
+    return updated
+
+
 VALID_MARKETS = {"UK", "US"}
 
 DEFAULT_TICKERS = [
@@ -204,6 +258,7 @@ def sync_from_tickers_table() -> int:
     Returns count of rows inserted/updated.
     """
     names = _load_company_names()
+    legacy_tickers = _load_csv_tickers()
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT ticker, exchange FROM tickers")
@@ -221,15 +276,30 @@ def sync_from_tickers_table() -> int:
                     market = "US"
                     ticker = raw_ticker
                 company_name = names.get(ticker)
-                cur.execute(
-                    """
-                    INSERT INTO ticker_universe (ticker, market, active, company_name)
-                    VALUES (%s, %s, TRUE, %s)
-                    ON CONFLICT (ticker) DO UPDATE SET active = TRUE, market = EXCLUDED.market,
-                        company_name = COALESCE(EXCLUDED.company_name, ticker_universe.company_name)
-                    """,
-                    (ticker, market, company_name),
-                )
+                if ticker in legacy_tickers:
+                    # Already part of the pre-DB tracked universe (BLG-BE-59
+                    # fallout) — stamp with the legacy sentinel, not NOW(),
+                    # so a (re-)sync never re-triggers the created_at gate
+                    # bug for tickers that aren't actually new.
+                    cur.execute(
+                        """
+                        INSERT INTO ticker_universe (ticker, market, active, company_name, created_at)
+                        VALUES (%s, %s, TRUE, %s, %s)
+                        ON CONFLICT (ticker) DO UPDATE SET active = TRUE, market = EXCLUDED.market,
+                            company_name = COALESCE(EXCLUDED.company_name, ticker_universe.company_name)
+                        """,
+                        (ticker, market, company_name, LEGACY_TICKER_CREATED_AT_SENTINEL),
+                    )
+                else:
+                    cur.execute(
+                        """
+                        INSERT INTO ticker_universe (ticker, market, active, company_name)
+                        VALUES (%s, %s, TRUE, %s)
+                        ON CONFLICT (ticker) DO UPDATE SET active = TRUE, market = EXCLUDED.market,
+                            company_name = COALESCE(EXCLUDED.company_name, ticker_universe.company_name)
+                        """,
+                        (ticker, market, company_name),
+                    )
                 count += cur.rowcount
         conn.commit()
     return count

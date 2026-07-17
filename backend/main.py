@@ -31,7 +31,7 @@ from routers import red_flag_journal as red_flag_journal_router
 from routers import strategy_benchmark as strategy_benchmark_router
 from services.watchlist_service import ensure_watchlist_table
 from services.ai_audit_service import ensure_ai_audit_table
-from services.ticker_universe_service import ensure_ticker_universe_table, ensure_company_name_column, seed_default_tickers, deactivate_invalid_tickers, backfill_company_names
+from services.ticker_universe_service import ensure_ticker_universe_table, ensure_company_name_column, seed_default_tickers, deactivate_invalid_tickers, backfill_company_names, backfill_legacy_ticker_created_at
 from services.screener_batch_service import ensure_screener_results_table
 
 
@@ -234,6 +234,9 @@ def on_startup():
         filled = backfill_company_names()
         if filled:
             _log.info("backfill_company_names: updated %d ticker(s) with missing company names", filled)
+        legacy_fixed = backfill_legacy_ticker_created_at()
+        if legacy_fixed:
+            _log.info("backfill_legacy_ticker_created_at: reset created_at for %d legacy ticker(s) (BLG-BE-59 fallout)", legacy_fixed)
     except Exception as _e:
         _log.error("ensure_ticker_universe_table FAILED at startup: %s", _e)
     try:

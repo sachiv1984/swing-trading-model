@@ -27,6 +27,16 @@ def _make_row(ticker="AAPL", market="US", active=True, sector=None, industry=Non
     return mock
 
 
+def _make_row_generic(fields: dict):
+    """Like _make_row but for arbitrary column sets (e.g. the `tickers` table)."""
+    mock = MagicMock()
+    mock.__iter__ = lambda s: iter(fields.items())
+    mock.keys = lambda: fields.keys()
+    mock.__getitem__ = lambda s, k: fields[k]
+    mock._row = fields
+    return mock
+
+
 def _patch_db(rows=None, rowcount=1):
     """Return a context-manager mock for get_db()."""
     cur = MagicMock()
@@ -152,3 +162,59 @@ def test_soft_delete_normalises_to_uppercase():
         soft_delete_ticker("aapl")
     params = cur.execute.call_args[0][1]
     assert params[0] == "AAPL"
+
+
+# ---------------------------------------------------------------------------
+# backfill_legacy_ticker_created_at (BLG-BE-59 fallout fix)
+# ---------------------------------------------------------------------------
+
+def test_backfill_legacy_created_at_updates_matching_rows():
+    conn, cur = _patch_db(rowcount=599)
+    with patch("services.ticker_universe_service._load_csv_tickers", return_value={"AAPL", "MSFT"}), \
+         patch("services.ticker_universe_service.get_db", return_value=conn):
+        from services.ticker_universe_service import backfill_legacy_ticker_created_at, LEGACY_TICKER_CREATED_AT_SENTINEL
+        updated = backfill_legacy_ticker_created_at()
+    assert updated == 599
+    sql = cur.execute.call_args[0][0]
+    params = cur.execute.call_args[0][1]
+    assert "UPDATE ticker_universe" in sql
+    assert "created_at" in sql
+    assert params[0] == LEGACY_TICKER_CREATED_AT_SENTINEL
+    assert set(params[1]) == {"AAPL", "MSFT"}
+
+
+def test_backfill_legacy_created_at_short_circuits_when_csv_empty():
+    with patch("services.ticker_universe_service._load_csv_tickers", return_value=set()), \
+         patch("services.ticker_universe_service.get_db") as mock_get_db:
+        from services.ticker_universe_service import backfill_legacy_ticker_created_at
+        updated = backfill_legacy_ticker_created_at()
+    assert updated == 0
+    mock_get_db.assert_not_called()
+
+
+def test_sync_from_tickers_table_stamps_legacy_tickers_with_sentinel():
+    tickers_row = _make_row_generic({"ticker": "AAPL", "exchange": "NASDAQ"})
+    conn, cur = _patch_db(rows=[tickers_row], rowcount=1)
+    with patch("services.ticker_universe_service._load_csv_tickers", return_value={"AAPL"}), \
+         patch("services.ticker_universe_service._load_company_names", return_value={}), \
+         patch("services.ticker_universe_service.get_db", return_value=conn):
+        from services.ticker_universe_service import sync_from_tickers_table, LEGACY_TICKER_CREATED_AT_SENTINEL
+        sync_from_tickers_table()
+    insert_call = [c for c in cur.execute.call_args_list if "INSERT INTO ticker_universe" in c[0][0]][0]
+    sql, params = insert_call[0]
+    assert "created_at" in sql
+    assert params[-1] == LEGACY_TICKER_CREATED_AT_SENTINEL
+
+
+def test_sync_from_tickers_table_uses_default_created_at_for_new_tickers():
+    tickers_row = _make_row_generic({"ticker": "NEWCO", "exchange": "NASDAQ"})
+    conn, cur = _patch_db(rows=[tickers_row], rowcount=1)
+    with patch("services.ticker_universe_service._load_csv_tickers", return_value=set()), \
+         patch("services.ticker_universe_service._load_company_names", return_value={}), \
+         patch("services.ticker_universe_service.get_db", return_value=conn):
+        from services.ticker_universe_service import sync_from_tickers_table
+        sync_from_tickers_table()
+    insert_call = [c for c in cur.execute.call_args_list if "INSERT INTO ticker_universe" in c[0][0]][0]
+    sql, params = insert_call[0]
+    assert "created_at" not in sql
+    assert "NEWCO" in params
