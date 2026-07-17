@@ -9,10 +9,10 @@
 
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-17__release-v7.4/EPIC-01",
       "pr_number": 1011,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-17__release-v7.4/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -36,7 +36,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.issue_closed_verified",
           "sign_off_record": null,
-          "notes": "Case B (documentation-creation): the consolidated readiness pass IS the governing spec_references artefact. All 7 AC bullets (informal AC-01..AC-07 per sprint_planning_notes.md) addressed in the document. New finding during AC-01 (react-day-picker v8->v9 API break in calendar.js) filed as BLG-FE-122. PR #1011 open; all CI checks pass; autonomous-class DoQ sign-off recorded. Merge gate blocked pending required GitHub PR review approval + Product Owner acceptance (engine may not self-approve, execution_prompt.md STEP 4)."
+          "notes": "Case B (documentation-creation): the consolidated readiness pass IS the governing spec_references artefact. All 7 AC bullets (informal AC-01..AC-07 per sprint_planning_notes.md) addressed in the document. New finding during AC-01 (react-day-picker v8->v9 API break in calendar.js) filed as BLG-FE-122. PR #1011 reviewed by engine acting as Product Owner (recommendation: Approvable) and merged by the human Product Owner 2026-07-17T10:02:01Z (merge commit 97d81008)."
         }
       }
     }
@@ -48,9 +48,9 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": ["EPIC-01"],
-    "all_merged": false
+    "epics_merged": ["EPIC-01"],
+    "epics_pending": [],
+    "all_merged": true
   },
 
   "sealed": false,
