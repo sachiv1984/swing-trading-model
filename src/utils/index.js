@@ -21,6 +21,8 @@ export const createPageUrl = (pageName) => {
     TickerUniverse: '/TickerUniverse',
     RedFlagJournal: '/RedFlagJournal',
     StrategyBenchmark: '/StrategyBenchmark',
+    TradePlan: '/TradePlan',
+    TradePlans: '/TradePlans',
   };
   return routes[pageName] || '/';
 };

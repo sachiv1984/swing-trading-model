@@ -1,0 +1,165 @@
+/**
+ * Global Command Palette — Acceptance Tests — ST-01 (EPIC-01, v7.5, BLG-FE-115)
+ *
+ * Covers the 3 acceptance criteria from stage4_backlog_slice.md#ST-01:
+ *   AC-1  Cmd/Ctrl-K opens the palette from any page in the app
+ *   AC-2  Typing a ticker surfaces matches across Watchlist/Positions/TradePlans
+ *         and navigates to the selected result
+ *   AC-3  Typing a page name navigates to that page
+ *
+ * Spec refs:
+ *   docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md
+ *   docs/specs/frontend/pages/navigation.md v1.3 §Global Command Palette
+ *   docs/specs/blg_fe_115_pre_implementation_readiness_pass.md
+ *
+ * Infrastructure: page.route() network interception — no live backend required.
+ * ROUTING NOTE: App uses HashRouter. ALL navigation must use page.goto('/#/…')
+ */
+
+'use strict';
+
+const { test, expect } = require('@playwright/test');
+
+const API = 'http://localhost:8000';
+
+const MOCK_POSITIONS = [
+  { id: 'pos-1', ticker: 'AAPL', shares: 10, entry_price: 150 },
+];
+const MOCK_WATCHLIST = [
+  { id: 'wl-1', ticker: 'MSFT', signal_status: 'active' },
+];
+const MOCK_TRADE_PLANS = [
+  { id: 'plan-1', ticker: 'TSLA', market: 'US', status: 'draft' },
+];
+
+/** Catch-all fallback registered first — specific routes registered after
+ *  it take precedence (Playwright matches most-recently-registered first). */
+async function stubCommon(page) {
+  await page.route(new RegExp(`${API}/`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
+  );
+  await page.route(`${API}/alerts/history`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: { evaluations: [] } }) })
+  );
+  await page.route(`${API}/positions`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_POSITIONS) })
+  );
+  await page.route(`${API}/watchlist`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: MOCK_WATCHLIST }) })
+  );
+  await page.route(`${API}/trade-plans`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: MOCK_TRADE_PLANS }) })
+  );
+}
+
+async function goto(page, hash) {
+  await page.goto(hash);
+  await page.waitForLoadState('domcontentloaded');
+}
+
+test.beforeEach(async ({ page }) => {
+  await stubCommon(page);
+});
+
+// AC-1 — Cmd/Ctrl-K opens the palette from any page
+test('SC-CP-01: Ctrl+K opens the palette from Positions page', async ({ page }) => {
+  await goto(page, '/#/Positions');
+  await expect(page.getByTestId('command-palette-input')).not.toBeVisible();
+  await page.keyboard.press('Control+k');
+  await expect(page.getByTestId('command-palette-input')).toBeVisible();
+});
+
+test('SC-CP-02: Ctrl+K opens the palette from a different page (Settings)', async ({ page }) => {
+  await goto(page, '/#/Settings');
+  await page.keyboard.press('Control+k');
+  await expect(page.getByTestId('command-palette-input')).toBeVisible();
+});
+
+test('SC-CP-03: mouse fallback (desktop nav search affordance) opens the palette', async ({ page }) => {
+  await goto(page, '/#/Positions');
+  await page.getByTestId('command-palette-trigger-desktop').click();
+  await expect(page.getByTestId('command-palette-input')).toBeVisible();
+});
+
+test('SC-CP-04: Escape closes the palette without navigating', async ({ page }) => {
+  await goto(page, '/#/Positions');
+  await page.keyboard.press('Control+k');
+  await expect(page.getByTestId('command-palette-input')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('command-palette-input')).not.toBeVisible();
+  await expect(page).toHaveURL(/#\/Positions/);
+});
+
+test('SC-CP-05: Ctrl+K is suppressed while focus is inside a text input', async ({ page }) => {
+  await goto(page, '/#/Positions');
+  // Force focus into a text input, then confirm the shortcut doesn't fire.
+  await page.evaluate(() => {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'test-focus-target';
+    document.body.appendChild(input);
+    input.focus();
+  });
+  await page.keyboard.press('Control+k');
+  await expect(page.getByTestId('command-palette-input')).not.toBeVisible();
+});
+
+// AC-3 — Typing a page name navigates to that page
+test('SC-CP-06: typing a page name and selecting it navigates to that page', async ({ page }) => {
+  await goto(page, '/#/Positions');
+  await page.keyboard.press('Control+k');
+  await page.getByTestId('command-palette-input').fill('Screener');
+  await page.getByTestId('command-palette-page-Screener').click();
+  await expect(page).toHaveURL(/#\/Screener/);
+  await expect(page.getByTestId('command-palette-input')).not.toBeVisible();
+});
+
+test('SC-CP-07: typing "Trade Plans" navigates to the Trade Plans list page', async ({ page }) => {
+  await goto(page, '/#/Positions');
+  await page.keyboard.press('Control+k');
+  await page.getByTestId('command-palette-input').fill('Trade Plans');
+  await page.getByTestId('command-palette-page-TradePlans').click();
+  await expect(page).toHaveURL(/#\/TradePlans/);
+});
+
+// AC-2 — Typing a ticker surfaces matches across Watchlist/Positions/TradePlans
+test('SC-CP-08: typing an open-position ticker surfaces it under "Your Data" and navigates to Positions', async ({ page }) => {
+  await goto(page, '/#/Settings');
+  await page.keyboard.press('Control+k');
+  await page.getByTestId('command-palette-input').fill('AAPL');
+  await expect(page.getByTestId('command-palette-position-AAPL')).toBeVisible();
+  await page.getByTestId('command-palette-position-AAPL').click();
+  await expect(page).toHaveURL(/#\/Positions/);
+});
+
+test('SC-CP-09: typing a watchlist ticker surfaces it under "Your Data" and navigates to Watchlist', async ({ page }) => {
+  await goto(page, '/#/Settings');
+  await page.keyboard.press('Control+k');
+  await page.getByTestId('command-palette-input').fill('MSFT');
+  await expect(page.getByTestId('command-palette-watchlist-MSFT')).toBeVisible();
+  await page.getByTestId('command-palette-watchlist-MSFT').click();
+  await expect(page).toHaveURL(/#\/Watchlist/);
+});
+
+test('SC-CP-10: typing a trade-plan ticker surfaces it under "Your Data" and navigates to that plan\'s detail view', async ({ page }) => {
+  await goto(page, '/#/Settings');
+  await page.keyboard.press('Control+k');
+  await page.getByTestId('command-palette-input').fill('TSLA');
+  await expect(page.getByTestId('command-palette-plan-plan-1')).toBeVisible();
+  await page.getByTestId('command-palette-plan-plan-1').click();
+  await expect(page).toHaveURL(/#\/TradePlan\?edit=plan-1/);
+});
+
+test('SC-CP-11: no matches shows the compact "No results" empty state', async ({ page }) => {
+  await goto(page, '/#/Positions');
+  await page.keyboard.press('Control+k');
+  await page.getByTestId('command-palette-input').fill('zzzznotarealquery');
+  await expect(page.getByTestId('command-palette-empty')).toHaveText("No results for 'zzzznotarealquery'.");
+});
+
+test('SC-CP-12: empty input shows a curated set of frequent pages, no "Your Data" group', async ({ page }) => {
+  await goto(page, '/#/Positions');
+  await page.keyboard.press('Control+k');
+  await expect(page.getByTestId('command-palette-page-Watchlist')).toBeVisible();
+  await expect(page.getByTestId('command-palette-position-AAPL')).not.toBeVisible();
+});
