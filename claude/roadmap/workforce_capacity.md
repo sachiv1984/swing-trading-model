@@ -526,3 +526,30 @@ Both approved candidates (`BLG-FEAT-52` ungated/descoped, new `BLG-FEAT-71`) are
 **v7.3+ capacity outlook:** Now horizon unchanged (3 items). The 4 new pre-implementation readiness passes (`BLG-SPEC-91-94`) should be considered as fast, low-effort precursors to the next `plan release` rather than release-scope items themselves — consistent with how `BLG-SPEC-89/90` served the same function for `BLG-FE-109/110/111` ahead of v7.2.
 
 **Workforce constraints:** None new.
+
+---
+
+## Rebalance 2026-07-17__scheduled
+
+25 new backlog items (24 standalone + 1 consolidated, `BLG-SPEC-95`, covering 9 of 44 idea submissions) — all S/M/L(/XS) effort, single-developer-context, no scarce-skill contention.
+
+| Item | Effort | Skill Category | Notes |
+|------|--------|-----------------|-------|
+| BLG-SPEC-95 | L (~5-7 days) | Frontend / UX / QA Spec, consolidated | v7.4 UI-heavy release readiness bundle — dependencies, UX specs, design review, Playwright/analytics/regression-tag coverage for all 4 anchor items |
+| BLG-GOV-241–250 | S–M | Governance / Process | 10 standalone governance/process items (AI compliance, API contract tooling, Skill-Silo mitigation, §13 cadence, DL-069 capacity verification) |
+| BLG-FEAT-79/80 | M | Product Feature | Financial reconciliation, SI-02 acceleration investigation |
+| BLG-FE-120/121 | M/S | Frontend | Shared notification primitive, shared confirmation-modal component |
+| BLG-BE-64–67 | S–M | Backend / Data Model | Pagination helper, error envelope, index review, position_state enum registry |
+| BLG-SEC-18/19 | M/S | Security | Rate-limit audit, dependency CVE sweep cadence |
+| BLG-QA-113/114 | S/M | QA / Process | Endpoint coverage audit, mock fixture standardisation |
+| BLG-OPS-113/114 | S/M | Operations | window_summary archival, Render health-check alerting |
+
+**Governance load %:** N/A — no roadmap-initiative-level capacity consumed this cycle (backlog-level pre-work only; `BLG-SPEC-95` is v7.4 pre-implementation scope, not sprint-committed).
+
+**Skill-Silo advisory (STEP 7.1):** Rolling 3-cycle average (v7.1 6/7=85.7%, v7.2 5/5=100%, v7.3 4/7=57.1%) = **80.9%**, above the 40% ceiling — Alert persists, **2nd consecutive worsening reading** (66.7%→80.9%). Not yet the 3-reading mandatory-≥2-U-items threshold, but the trend is adverse for a 2nd straight cycle. PO response this cycle: commit all 4 `BLG-FE-115/116/117/118` build-and-ship-shaped U-items to v7.4 (pre-emptively exceeds the ≥2-item guidance) rather than wait for the mandatory trigger to fire.
+
+**Key finding this cycle:** The v7.4 anchor scope (4 P1 U-shaped features) is now formally version-labelled (STEP 8.1 Option (a), closing `BLG-GOV-240`), giving the next `plan release v7.4` invocation a clean, already-committed U-heavy scope to draw from — the structural fix most likely to break the 2-cycle Skill-Silo worsening trend before it reaches the mandatory threshold.
+
+**v7.4+ capacity outlook:** Now horizon = v7.4 (4 anchor items + `BLG-SPEC-95` pre-work). `BLG-SPEC-95` should be sequenced first (or in parallel) at sprint planning, consistent with the `BLG-SPEC-91-94`/`BLG-SPEC-89/90` precedent of fast, low-effort precursors ahead of the substantive feature stories.
+
+**Workforce constraints:** None new.

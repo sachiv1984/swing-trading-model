@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.100
-**Last Updated:** 2026-07-16
+**Version:** 4.102
+**Last Updated:** 2026-07-17
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -1272,7 +1272,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v9.1) | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v9.2) | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.100 |
-| Last Updated | 2026-07-16 |
+| Version | 4.102 |
+| Last Updated | 2026-07-17 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1463,7 +1463,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.12 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.1 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.2 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.42 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.13 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
@@ -1473,7 +1473,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.1 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.17 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.16 |
+| Shared Standards | `claude/system/shared_standards.md` v3.17 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.9 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1496,6 +1496,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.102 | 2026-07-17 | **Roadmap rebalance `2026-07-17__scheduled` STEP 11 Friction Item 1 — shared_standards.md v3.16→v3.17: new "Companion per-file changelog rule" added to §11.** §14 Shared Standards v3.16→v3.17. §14 Version 4.101→4.102/2026-07-17. Change: each Class 6 prompt's standalone `claude/system/changelogs/<prompt>_changelog.md` file must now be updated in the same commit as any version bump, alongside `prompt_change_log.md` — closes the gap where `changelogs/roadmap_prompt_changelog.md` fell 3 versions behind (missing 8.9, 9.0, 9.1) because no rule named it as a required companion write, even though `prompt_change_log.md` and `OPERATIONAL_GUIDE.md` §14 stayed correctly in sync throughout. Authority: Head of Specs Team (roadmap rebalance `2026-07-17__scheduled`, STEP 11). |
+| 4.101 | 2026-07-17 | **Roadmap rebalance `2026-07-17__scheduled` STEP 11 — roadmap_prompt.md v9.1→v9.2: STEP 8.1 Empty Now Horizon Gate condition 1 extended to close BLG-GOV-240 (action-now).** §6 source prompt header v9.1→v9.2. §13 Artefact Register Roadmap Rebalance Prompt row v9.1→v9.2. §14 Roadmap Engine Source v9.1→v9.2. §14 Version 4.100→4.101/2026-07-17. Change: STEP 8.1 condition 1 now also fires when the Now horizon contains committed (non-shipped) items that sit only under an un-versioned carry-forward heading, not just when the horizon is fully empty — closing the gap where a non-empty-but-unversioned Now horizon (as left by `2026-07-15__release-v7.2` and `2026-07-16__release-v7.3` post-ship closures) had no governed write path to receive a formal version label. Carried forward from `2026-07-16__release-v7.3` `lessons_learnt_closure.md` Carry-Forward #1 (BLG-GOV-240), actioned at its named trigger point (next roadmap STEP 11 invocation). Authority: Head of Specs Team (roadmap rebalance `2026-07-17__scheduled`, STEP 11). |
 | 4.100 | 2026-07-16 | **Post-ship closure `2026-07-16__release-v7.3` STEP 8 immediate action — qa_evidence_template.md v1.6→v1.7: OA-3/ST-03 Consolidation Block advisory elevated to a hard requirement.** §14 QA Evidence Template v1.6→v1.7. §14 Version 4.99→4.100/2026-07-16 (also corrects a found header-drift: the document's top `**Version:**`/`**Last Updated:**` fields were still at 4.98/2026-07-15 despite the 4.99 Change Log entry below and the §14 field-table already reading 4.99/2026-07-16 — that correction was never applied to the top header fields; both the missed 4.99 bump and this cycle's own change are reflected in this single 4.100 update). Change: every AC in the backlog slice must now appear in the QA evidence table — as its own row, or named explicitly in a consolidated row's Evidence column — with no AC permitted to be silently absent even when functionally addressed elsewhere in the log. Resolves the Phase 4 deferred patch recorded in `claude/cycles/2026-07-16__release-v7.3/lessons_learnt_cycle.md` (qa_evidence_EPIC-01.md ST-02's evidence table silently dropped AC-03), applied now per post-ship closure's non-deferrable immediate-action rule rather than deferred. Authority: Head of Specs Team (post-ship closure `2026-07-16__release-v7.3`, STEP 8 — immediate lessons-learnt action rule). |
 | 4.99 | 2026-07-16 | **Roadmap rebalance `2026-07-16__scheduled` STEP 11 — roadmap_prompt.md v9.0→v9.1: STEP 3.1 Actionable Backlog Assessment scale-appropriate methodology codified (action-now, no longer deferred).** §6 source prompt header v9.0→v9.1. §13 Artefact Register Roadmap Rebalance Prompt row v9.0→v9.1. §14 Roadmap Engine Source v9.0→v9.1. §14 Version 4.98→4.99/2026-07-16. Change: `roadmap_prompt.md` STEP 3.1 — a grep-based structural heuristic (presence/absence of the `**Gate criteria:**` field for the A/gated split; keyword-pattern scan of gate-criteria text for the T/D/L split) is now the codified method once the active backlog reaches ~150 items, replacing the manual per-item read used below that scale; the run manifest must record which method was used so cross-cycle A% figures aren't compared across a silent methodology change. Confirmed on a 2nd consecutive occurrence at this cycle (319-item backlog) after the deferred patch from `2026-07-15__scheduled` Friction Item 2 named a 2nd occurrence as the trigger to codify rather than re-defer. Closes that deferred patch. Authority: Head of Specs Team (roadmap rebalance `2026-07-16__scheduled`, STEP 11). |
 | 4.98 | 2026-07-15 | **Post-ship closure `2026-07-15__release-v7.2` STEP 8 — execution_prompt.md v3.56→v3.57 (LL-v7.2-P3-01, Phase 3 Friction Log deferred patch, action-now).** §8 source prompt header v3.56→v3.57. §14 Execution Engine Source v3.56→v3.57. Change: new "Session-start divergence check" added at the very top of STEP -1 (before the existing "First action" read), plus a companion step 0 in §10 Resumability — `git fetch origin` + local-vs-`origin/main` comparison must run before any local state file (`.claude_current_state.json`, `execution_state.json`) is trusted, generalising the existing LL-v3.9-P3-1 resume-sync pattern (previously scoped only to STEP 4's merge-gate) to the start of the routine. Root cause: this cycle's own first `run sprint` invocation read stale local state as if only the EPIC-01 planning stub existed, when 4 EPICs' worth of engine-autonomous work already existed on `origin/main` from an earlier unsynced session — causing a duplicate `execution_state.json` re-initialisation and 5 duplicate GitHub issues (#993–#997) before the mismatch was caught mid-session and reconciled. Closes the Phase 3 deferred patch recorded in `claude/cycles/2026-07-15__release-v7.2/lessons_learnt_cycle.md`. Authority: Head of Specs Team (post-ship closure `2026-07-15__release-v7.2`, STEP 8 — immediate lessons-learnt action rule). |

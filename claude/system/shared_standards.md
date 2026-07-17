@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.16
-**Last Updated:** 2026-07-14
+**Version:** 3.17
+**Last Updated:** 2026-07-17
 
 # Shared Standards — All Governed Routines
 
@@ -364,6 +364,8 @@ Any increment to a governance prompt version **must** be accompanied by an entry
 **Simultaneity rule:** A `prompt_change_log.md` entry must be created in the **same commit** as the prompt version increment it records. An entry created after the fact (in a separate commit) is non-compliant. When applying prompt patches, stage both the modified prompt file and the updated `prompt_change_log.md` in the same `git add` + `git commit` sequence.
 
 **Enforcement:** STEP -1 of Release Planning (advisory, not hard gate) verifies the current version of each prompt appears in `prompt_change_log.md`. Missing entries are flagged as advisory warnings; the release planning engine may proceed but must record the gap as an outstanding action.
+
+**Companion per-file changelog rule (v3.17, `2026-07-17__scheduled` Friction Item 1):** Each Class 6 prompt's standalone `claude/system/changelogs/<prompt>_changelog.md` file exists to hold "full history" for that prompt (per each such file's own stated purpose) and must be updated in the **same commit** as any version bump, alongside `prompt_change_log.md`. It is not a substitute for `prompt_change_log.md` (the canonical, cross-prompt log) but a derived per-file view — both must stay in sync. Found this cycle: `roadmap_prompt.md` had advanced to v9.1 with correct `prompt_change_log.md` and `OPERATIONAL_GUIDE.md` §14 entries, but `changelogs/roadmap_prompt_changelog.md` had fallen 3 versions behind (missing 8.9, 9.0, 9.1) because no rule named it as a required companion write. Engines applying an action-now prompt patch must update both files in the same commit going forward.
 
 ---
 

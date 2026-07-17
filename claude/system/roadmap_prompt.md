@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.1
-**Last Updated:** 2026-07-16
+**Version:** 9.2
+**Last Updated:** 2026-07-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -591,11 +591,13 @@ This is **not advisory** — presenting complete items to the PO wastes debate t
 
 ### STEP 8.1 — Empty Now Horizon Gate (Soft Gate — Any Rebalance)
 
-**Condition — ALL must be true:**
-1. `## 3. Delivery Plan — Horizon: Now` in `current_roadmap.md` contains no committed (non-shipped) items
-2. No next-release section exists in `current_roadmap.md` for the next anticipated release
+**Condition — ANY of the following makes condition 1 true (v9.2, BLG-GOV-240):**
+1a. `## 3. Delivery Plan — Horizon: Now` in `current_roadmap.md` contains no committed (non-shipped) items, OR
+1b. It contains committed (non-shipped) items, but none of them sit under a version-labeled (`## vX.Y ...` or equivalent) Now-horizon heading — i.e. the items exist only under an un-versioned carry-forward heading (e.g. "Unblocked carry-forward items (un-versioned — pending next `plan release`)").
 
-**Soft gate — requires documented PO choice:** When both conditions are true, the rebalance may not conclude without one of the following decisions explicitly recorded in `run_manifest.md` and the cycle summary:
+**Condition 2 (unchanged):** No next-release section exists in `current_roadmap.md` for the next anticipated release.
+
+**Soft gate — requires documented PO choice:** When condition 1 (1a or 1b) AND condition 2 are true, the rebalance may not conclude without one of the following decisions explicitly recorded in `run_manifest.md` and the cycle summary:
 
 **Option (a) — Add next-release section now:**
 Record: `PO decision (STEP 8.1): Option (a) — next-release section added to current_roadmap.md. Section: [release name]. Rationale: [brief rationale].`
