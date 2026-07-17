@@ -289,6 +289,17 @@ Formally version-labelled 2026-07-17 (roadmap rebalance `2026-07-17__scheduled`,
 
 *RA:v7.3 retired — see roadmap_archive.md 2026-07-16 (post-ship closure 2026-07-16__release-v7.3; partial retirement, 3/7 items — 4 unblocked items re-added above, now formally v7.4).*
 
+<!-- roadmap-annotation-marker: RA:v7.4:2026-07-17__release-v7.4 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-17__release-v7.4
+- Plan published: 2026-07-17
+- Cycle folder: claude/cycles/2026-07-17__release-v7.4/
+- Backlog slice: claude/cycles/2026-07-17__release-v7.4/stage4_backlog_slice.md
+- Status at annotation: Committed
+- EPIC structure: 5 EPICs (1 per item) — resolves BLG-GOV-248, see decisions--2026-07-17__release-v7.4.md
+- Design Gate Required: true — run `run design-gate --cycle 2026-07-17__release-v7.4` before `plan sprint`
+
 *RA:v7.2 retired — see roadmap_archive.md 2026-07-15 (post-ship closure 2026-07-15__release-v7.2; partial retirement, 5/8 items — 3 unblocked items re-added above).*
 
 *RA:v7.1 retired — see roadmap_archive.md 2026-07-14 (post-ship closure 2026-07-14__release-v7.1).*

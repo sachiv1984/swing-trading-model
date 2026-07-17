@@ -1,0 +1,41 @@
+{
+  "cycle_id": "2026-07-17__release-v7.4",
+  "release": "v7.4",
+  "issues": [
+    {
+      "st_id": "ST-01",
+      "epic_id": "EPIC-01",
+      "backlog_item": "BLG-SPEC-95",
+      "title": "Produce v7.4 readiness pass (dependencies, UX specs, design review, QA/analytics coverage)",
+      "labels": ["v7.4", "EPIC-01", "cycle:2026-07-17__release-v7.4"]
+    },
+    {
+      "st_id": "ST-02",
+      "epic_id": "EPIC-02",
+      "backlog_item": "BLG-FE-115",
+      "title": "Wire global Cmd/Ctrl-K command palette",
+      "labels": ["v7.4", "EPIC-02", "cycle:2026-07-17__release-v7.4"]
+    },
+    {
+      "st_id": "ST-03",
+      "epic_id": "EPIC-03",
+      "backlog_item": "BLG-FE-116",
+      "title": "Add user-created price-alert data model, UI, and delivery integration",
+      "labels": ["v7.4", "EPIC-03", "cycle:2026-07-17__release-v7.4"]
+    },
+    {
+      "st_id": "ST-04",
+      "epic_id": "EPIC-04",
+      "backlog_item": "BLG-FE-117",
+      "title": "Add multi-select and bulk-action toolbar to Watchlist/TradePlans",
+      "labels": ["v7.4", "EPIC-04", "cycle:2026-07-17__release-v7.4"]
+    },
+    {
+      "st_id": "ST-05",
+      "epic_id": "EPIC-05",
+      "backlog_item": "BLG-FE-118",
+      "title": "Add named saved filter presets and a calendar view",
+      "labels": ["v7.4", "EPIC-05", "cycle:2026-07-17__release-v7.4"]
+    }
+  ]
+}
