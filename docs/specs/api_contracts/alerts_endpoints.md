@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.4
-**Last Updated:** 2026-04-01
+**Version:** 0.5
+**Last Updated:** 2026-07-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **ADR Reference:** `docs/adr/ADR-003-notification-delivery-architecture.md` — FastAPI BackgroundTasks delivery architecture
 **Design Gate:** `claude/cycles/2026-03-18__release-v2.1/` — EPIC-02
@@ -17,12 +17,13 @@
 
 This document defines the **Alerts & Notifications** domain endpoints for EPIC-02 (v2.1).
 
-The domain covers four concerns:
+The domain covers five concerns:
 
 1. **Alert rule configuration** — per-type enable/disable and threshold settings (`/alerts/rules`)
 2. **Alert evaluation** — trigger evaluation of all active rules against current portfolio state (`/alerts/evaluate`)
 3. **Notification feed** — the log of triggered alert instances, with read/unread state (`/notifications`)
 4. **Notification preferences** — per-type email delivery configuration (`/notifications/preferences`)
+5. **Custom price alerts** — user-defined, per-ticker threshold alerts, unconstrained by open positions (`/price-alerts`, v7.5 / ST-02 / BLG-FE-116)
 
 ### Architecture mode
 
@@ -72,6 +73,12 @@ Global response envelopes, error shape, and conventions are defined in **convent
 
 - [GET /notifications/preferences](#get-notificationspreferences)
 - [PATCH /notifications/preferences](#patch-notificationspreferences)
+
+### Custom Price Alerts
+
+- [GET /price-alerts](#get-price-alerts)
+- [POST /price-alerts](#post-price-alerts)
+- [DELETE /price-alerts/{id}](#delete-price-alertsid)
 
 ---
 
@@ -299,6 +306,180 @@ Uses the standard DELETE envelope from **conventions.md §12**:
 |-------------|-----------|
 | `404` | `rule_id` not found |
 | `500` | Internal server error |
+
+---
+
+## Custom Price Alerts
+
+User-defined, per-ticker threshold alerts (ST-02, BLG-FE-116, EPIC-02, v7.5). Unlike `/alerts/rules` (singleton-per-type, `alert_rules` table), a portfolio may have an arbitrary number of `price_alerts` rows, each scoped to any ticker (not limited to open positions or the watchlist). Evaluated as a step inside `POST /alerts/evaluate` — no separate trigger endpoint. Readiness baseline: `docs/specs/blg_fe_116_pre_implementation_readiness_pass.md`.
+
+## GET /price-alerts
+
+**Purpose**
+
+Return all custom price alerts for the portfolio, most recently created first.
+
+**Method & Path**
+
+- `GET /price-alerts`
+
+**Idempotency**
+
+- Safe to refresh (read-only).
+
+#### Request
+
+No parameters.
+
+#### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": [
+    {
+      "id": "770e8400-e29b-41d4-a716-446655440002",
+      "ticker": "AAPL",
+      "condition": "above",
+      "threshold_price": 150.0,
+      "active": true,
+      "triggered_at": null,
+      "created_at": "2026-07-17T10:00:00Z",
+      "updated_at": "2026-07-17T10:00:00Z"
+    }
+  ]
+}
+```
+
+##### Field definitions
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| `id` | UUID | No | Price alert identifier |
+| `ticker` | string | No | Any ticker accepted by the pricing utility — not constrained to open positions or watchlist |
+| `condition` | string | No | `above` or `below` |
+| `threshold_price` | float | No | Trigger price, `> 0` |
+| `active` | boolean | No | `true` until triggered (single-fire) or explicitly deactivated |
+| `triggered_at` | string (ISO 8601) | Yes | `null` until fired |
+| `created_at` | string (ISO 8601) | No | Alert creation timestamp |
+| `updated_at` | string (ISO 8601) | No | Last update timestamp |
+
+#### Error Responses
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `500` | Internal server error |
+
+---
+
+## POST /price-alerts
+
+**Purpose**
+
+Create a custom price alert.
+
+**Method & Path**
+
+- `POST /price-alerts`
+
+#### Request Body
+
+```json
+{
+  "ticker": "AAPL",
+  "condition": "above",
+  "threshold_price": 150.0
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `ticker` | string | Yes | 1–10 alphanumeric characters (uppercased server-side); same validation as the Watchlist "Add Ticker" field |
+| `condition` | string | Yes | Must be `above` or `below` |
+| `threshold_price` | float | Yes | Must be `> 0` |
+
+#### Validation rules
+
+- `ticker` must match `^[A-Z0-9.]{1,10}$` (case-insensitive on input, uppercased before storage)
+- `condition` must be `above` or `below`
+- `threshold_price` must be `> 0`
+- The portfolio must have fewer than 50 active (`active = true`) price alerts — this cap bounds both abuse and the nightly evaluation job's runtime (readiness pass AC-03/AC-04)
+
+#### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "id": "770e8400-e29b-41d4-a716-446655440002",
+    "ticker": "AAPL",
+    "condition": "above",
+    "threshold_price": 150.0,
+    "active": true,
+    "triggered_at": null,
+    "created_at": "2026-07-17T10:00:00Z",
+    "updated_at": "2026-07-17T10:00:00Z"
+  }
+}
+```
+
+#### Error Responses
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `400` | `ticker` missing or invalid format |
+| `400` | `condition` missing or not one of `above`/`below` |
+| `400` | `threshold_price` missing or not `> 0` |
+| `400` | Active-alert cap (50) exceeded — message: `"You've reached the maximum number of active price alerts."` |
+| `500` | Internal server error |
+
+---
+
+## DELETE /price-alerts/{id}
+
+**Purpose**
+
+Delete a custom price alert (active or already-triggered).
+
+**Method & Path**
+
+- `DELETE /price-alerts/{id}`
+
+#### Path Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | UUID | Price alert identifier |
+
+#### Response (200)
+
+Uses the standard DELETE envelope from **conventions.md §12**:
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "deleted": true,
+    "id": "770e8400-e29b-41d4-a716-446655440002"
+  }
+}
+```
+
+#### Error Responses
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `404` | `id` not found |
+| `500` | Internal server error |
+
+---
+
+### Evaluation & Notification Feed Integration
+
+- `POST /alerts/evaluate` evaluates all `active = true` price alerts as an additional step (reuses the existing scheduled trigger — no second cron). For each: fetch current price via `utils.pricing.get_current_price(ticker)`, compare against `threshold_price` per `condition`; on trigger, write a `notifications` row (`alert_type: 'custom_price_alert'`), set `active = false`, `triggered_at = now()`.
+- Triggered custom price alerts appear in `GET /notifications` using the existing feed row shape — no new feed-row variant. Title format: `"Price Alert — {TICKER} {above/below} {threshold}"`.
+- `GET /health/scheduler` surfaces evaluation status under the `custom_price_alerts` job key (`trigger_endpoints.custom_price_alerts = "co-invoked by POST /alerts/evaluate"`).
+- §13 pre-check: **PASS** (readiness pass AC-05) — notification-only, no order placement or position mutation, advisory only.
 
 ---
 
@@ -724,6 +905,7 @@ All tables defined below are specified in full in `docs/specs/data_model.md §8`
 | `notifications` | Triggered alert instances with delivery tracking |
 | `notification_preferences` | Per-type email delivery preferences |
 | `alert_evaluations` | Audit log of every rule evaluation (v0.3) |
+| `price_alerts` | User-defined, per-ticker threshold alerts (v0.5, ST-02/BLG-FE-116) |
 
 Delivery tracking columns on `notifications` (`delivered`, `delivery_attempted_at`, `delivery_attempts`, `delivery_error`) implement the retry model specified in ADR-003.
 
@@ -747,6 +929,7 @@ Delivery tracking columns on `notifications` (`delivered`, `delivery_attempted_a
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.5 | 2026-07-17 | ST-02 (v7.5, EPIC-02, BLG-FE-116): Added `## Custom Price Alerts` domain — `GET/POST /price-alerts`, `DELETE /price-alerts/{id}`. New `price_alerts` table (many-rows-per-portfolio, distinct from singleton `alert_rules`). Evaluation folded into the existing `POST /alerts/evaluate` step (no new cron). `GET /health/scheduler` surfaces a `custom_price_alerts` job key. Readiness baseline: `docs/specs/blg_fe_116_pre_implementation_readiness_pass.md`. |
 | 0.4 | 2026-04-01 | ST-02 (v2.4): Trigger evaluation rules table updated — deduplication behaviour documented for all four alert types. `stop_loss_approach` and `grace_period_warning` dedup logging added (log and skip on second evaluation same UTC day). Calendar-day dedup key: (portfolio, type, ticker, date). |
 | 0.3 | 2026-03-23 | ST-05 (v2.2): Added `## GET /alerts/history` endpoint. Added `alert_evaluations` table to Data Model Cross-Reference. `POST /alerts/evaluate` now persists one evaluation record per rule/position evaluated (calendar-day dedup applied to stop_loss_approach and grace_period_warning). |
 | 0.2 | 2026-03-21 | Post-ship closure: Known Deviations section added. DEV-ST04-01 (Telegram delivery) filed per post_ship_closure STEP 5 — deviation compliance. |

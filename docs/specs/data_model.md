@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.12
-**Last Updated:** 2026-07-13
+**Version:** 2.13
+**Last Updated:** 2026-07-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -542,6 +542,46 @@ CREATE INDEX idx_notification_preferences_portfolio ON notification_preferences(
 ### Channel scope (v2.1)
 
 Email is the only delivery channel in v2.1. SMS is not implemented. The schema supports future channel columns (e.g. `sms_enabled`) without migration impact.
+
+---
+
+## 11. Price Alerts Table
+
+User-created ticker/condition/threshold alerts. Many rows per portfolio, unconstrained by open positions. Evaluated as a step inside `POST /alerts/evaluate`. Introduced ST-02 (BLG-FE-116, EPIC-02, v7.5); schema pre-designed in `docs/specs/blg_fe_116_pre_implementation_readiness_pass.md` AC-01.
+
+```sql
+CREATE TABLE price_alerts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+    ticker VARCHAR(10) NOT NULL,
+    condition VARCHAR(10) NOT NULL CHECK (condition IN ('above', 'below')),
+    threshold_price NUMERIC(10, 4) NOT NULL CHECK (threshold_price > 0),
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    triggered_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_price_alerts_portfolio_active ON price_alerts(portfolio_id, active);
+```
+
+### Fields
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| id | UUID | NO | Primary key |
+| portfolio_id | UUID | NO | FK to portfolios |
+| ticker | VARCHAR(10) | NO | Not constrained to open positions or watchlist — any ticker accepted by `utils.pricing.get_current_price(ticker)`. |
+| condition | VARCHAR(10) | NO | `above` or `below` — direction of the threshold crossing. |
+| threshold_price | NUMERIC(10,4) | NO | Same precision as `positions.current_price`. Must be `> 0`. |
+| active | BOOLEAN | NO | `true` until triggered (single-fire, not repeating) or explicitly deactivated by the user. |
+| triggered_at | TIMESTAMPTZ | YES | `null` until fired. |
+| created_at | TIMESTAMPTZ | NO | Alert creation timestamp |
+| updated_at | TIMESTAMPTZ | NO | Last update timestamp |
+
+### Constraints
+
+- Per-portfolio active-alert cap of 50 enforced at the API layer (not the DB) — see `docs/specs/api_contracts/alerts_endpoints.md §POST /price-alerts`.
 
 ---
 
@@ -1265,6 +1305,58 @@ Reversible: `ALTER TABLE positions DROP COLUMN IF EXISTS last_reviewed_at;`
 
 ---
 
-**Document Version:** 2.12
+### Migration from v2.12 to v2.13
+
+ST-02 (BLG-FE-116, EPIC-02, v7.5) — custom price alerts (`price_alerts` table + `notifications.alert_type` CHECK extension per readiness pass AC-01).
+
+```sql
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS price_alerts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+    ticker VARCHAR(10) NOT NULL,
+    condition VARCHAR(10) NOT NULL CHECK (condition IN ('above', 'below')),
+    threshold_price NUMERIC(10, 4) NOT NULL CHECK (threshold_price > 0),
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    triggered_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_price_alerts_portfolio_active ON price_alerts(portfolio_id, active);
+
+ALTER TABLE notifications DROP CONSTRAINT IF EXISTS notifications_alert_type_check;
+ALTER TABLE notifications ADD CONSTRAINT notifications_alert_type_check CHECK (alert_type IN (
+    'stop_loss_approach',
+    'grace_period_warning',
+    'market_regime_change',
+    'daily_portfolio_summary',
+    'custom_price_alert'
+));
+
+COMMIT;
+```
+
+Reversible:
+```sql
+BEGIN;
+ALTER TABLE notifications DROP CONSTRAINT IF EXISTS notifications_alert_type_check;
+ALTER TABLE notifications ADD CONSTRAINT notifications_alert_type_check CHECK (alert_type IN (
+    'stop_loss_approach',
+    'grace_period_warning',
+    'market_regime_change',
+    'daily_portfolio_summary'
+));
+DROP TABLE IF EXISTS price_alerts;
+COMMIT;
+```
+
+**Sign-off:**
+- Data Model Domain & Schema Owner: Accepted — 2026-07-17 (agent-mediated, schema pre-designed and PASS-reviewed in readiness pass `blg_fe_116_pre_implementation_readiness_pass.md` AC-01/§13, no deviation from pre-scoped shape)
+
+---
+
+**Document Version:** 2.13
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-07-13
+**Last Review:** 2026-07-17
