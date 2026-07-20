@@ -1,13 +1,13 @@
 {
-  "active_cycle": "2026-07-17__release-v7.5",
-  "cycle_name": "v7.5 — UI Feature Expansion Continuation (Command Palette, Alerts, Bulk Actions, Saved Filters)",
-  "status": "Closed",
-  "prior_status": "Verified",
-  "engine": "sprint_execution",
+  "active_cycle": "2026-07-20__release-v7.6",
+  "cycle_name": "v7.6 — PDF / Print-Friendly Export",
+  "status": "Published",
+  "prior_status": "Validated",
+  "engine": "release_planning",
   "design_gate_required": true,
   "design_gate_status": "not_started",
   "execution_state_path": "claude/cycles/2026-07-17__release-v7.4/execution_state.json",
-  "backlog_slice_path": "claude/cycles/2026-07-17__release-v7.5/stage4_backlog_slice.md",
+  "backlog_slice_path": "claude/cycles/2026-07-20__release-v7.6/stage4_backlog_slice.md",
   "sprint_sealed": true,
   "sprint_goal_path": "claude/cycles/2026-07-17__release-v7.5/sprint_goal.md",
   "sprint_backlog_path": "claude/cycles/2026-07-17__release-v7.5/sprint_backlog.md",
@@ -38,7 +38,7 @@
   "sprint2_gate_confirmed_utc": "",
   "sprint2_close_utc": "",
   "verification_utc": "2026-07-17T10:32:02Z",
-  "last_sync_utc": "2026-07-20T15:05:00Z",
+  "last_sync_utc": "2026-07-20T16:55:00Z",
   "release_complete": true,
   "last_audit_id": "AUD-2026-07-14",
   "last_audit_utc": "2026-07-14T22:00:00Z",
@@ -75,27 +75,25 @@
     }
   },
   "release_plan": {
-    "release_plan_path": "claude/cycles/2026-07-17__release-v7.5/release_plan.md",
-    "cycle_id": "2026-07-17__release-v7.5",
-    "published_utc": "2026-07-17T18:45:00Z",
+    "release_plan_path": "claude/cycles/2026-07-20__release-v7.6/release_plan.md",
+    "cycle_id": "2026-07-20__release-v7.6",
+    "published_utc": "2026-07-20T16:55:00Z",
     "epics": [
       "EPIC-01",
-      "EPIC-02",
-      "EPIC-03",
-      "EPIC-04"
+      "EPIC-02"
     ],
-    "story_items": 4,
+    "story_items": 2,
     "story_items_firm": 0,
-    "story_items_conditional": 4,
-    "scope_items": 4,
+    "story_items_conditional": 2,
+    "scope_items": 2,
     "capacity_check": "pass",
     "design_gate_required": true,
-    "state_json": "claude/cycles/2026-07-17__release-v7.5/state.json",
-    "scope_doc": "docs/product/scope/scope--2026-07-17__release-v7.5-ui-feature-expansion-continuation.md"
+    "state_json": "claude/cycles/2026-07-20__release-v7.6/state.json",
+    "scope_doc": "docs/product/scope/scope--2026-07-20__release-v7.6-pdf-print-friendly-export.md"
   },
   "prior_release_plan": {
-    "release_plan_path": "claude/cycles/2026-07-17__release-v7.4/release_plan.md",
-    "cycle_id": "2026-07-17__release-v7.4",
-    "published_utc": "2026-07-17T12:40:00Z"
+    "release_plan_path": "claude/cycles/2026-07-17__release-v7.5/release_plan.md",
+    "cycle_id": "2026-07-17__release-v7.5",
+    "published_utc": "2026-07-17T18:45:00Z"
   }
 }

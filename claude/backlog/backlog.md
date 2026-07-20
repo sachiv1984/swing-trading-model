@@ -6233,10 +6233,28 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 ---
 
 ### BLG-QA-112 — Regression suite baseline update for BLG-FE-115-119
-**Priority:** P3 (Low) | **Type:** QA, gate-conditional | **Owner:** QA Lead | **Source:** IDEA-qa-lead-20260716-02 | **Effort:** S (~1 day) | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** QA, gate-conditional | **Owner:** QA Lead | **Source:** IDEA-qa-lead-20260716-02 | **Effort:** S (~1 day) | **Provisional-Target:** v7.6
+
+> Gate fired 2026-07-20 (release planning `2026-07-20__release-v7.6`): `BLG-FE-119` entered v7.6 scope. Named as v7.6 companion scope (EPIC-02).
+
 **Gate criteria:** Any of `BLG-FE-115`–`BLG-FE-119` enters a release scope (each introduces a new interaction surface — keyboard nav, background alerts, multi-select, persisted filters, PDF export — not yet reflected in the regression baseline).
 **Problem:** `docs/testing`/regression-suite baseline documentation was last comprehensively updated for the v5.5-era feature set (`BLG-QA-50`); none of the command-palette, price-alert, bulk-action, or saved-filter interaction surfaces are represented.
 **Scope:** Update the regression suite baseline document once any of `BLG-FE-115-119` is scoped into a release, adding scenario coverage for the new interaction surface(s).
 **Acceptance Criteria:** Regression baseline document updated with new scenario entries for the shipped item(s); cross-referenced against the corresponding Playwright spec file(s).
+
+---
+
+## Release Slice v7.6
+
+<!-- release-plan-marker: RP:v7.6:2026-07-20__release-v7.6 -->
+
+Added 2026-07-20 (release planning `2026-07-20__release-v7.6`). 2 items, both conditional pending Design Gate (RISK-01).
+
+| ST-ID | EPIC | Backlog source | Title |
+|-------|------|-----------------|-------|
+| ST-01 | EPIC-01 | `BLG-FE-119` | Add print/PDF export action to WeeklyDigest and TradePlan |
+| ST-02 | EPIC-02 | `BLG-QA-112` | Regression suite baseline update for BLG-FE-115-119 |
+
+Canonical source: `claude/cycles/2026-07-20__release-v7.6/stage4_backlog_slice.md`
 
 ---

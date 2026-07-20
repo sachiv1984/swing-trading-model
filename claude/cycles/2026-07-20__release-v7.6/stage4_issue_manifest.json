@@ -1,0 +1,20 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Add print/PDF export action to WeeklyDigest and TradePlan",
+    "epic": "EPIC-01",
+    "description": "PDF / print-friendly export action for WeeklyDigest.js and TradePlan.js",
+    "ac_summary": "Print/Export PDF action available on both WeeklyDigest.js and TradePlan.js; output legible and correctly formatted without app chrome",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-20__release-v7.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Update regression suite baseline for BLG-FE-115-119 interaction surfaces",
+    "epic": "EPIC-02",
+    "description": "Regression suite baseline update triggered by BLG-FE-119 entering release scope",
+    "ac_summary": "Regression baseline document updated with new scenario entries for BLG-FE-115-119; cross-referenced against corresponding Playwright spec file(s)",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-20__release-v7.6"],
+    "assignee": null
+  }
+]

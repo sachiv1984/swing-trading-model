@@ -284,6 +284,16 @@ Anchored 2026-07-20 — formalizes the `plan release --version "v7.6"` scope-nam
 | Feature | ID | Effort | Notes |
 |---|---|---|---|
 | PDF / print-friendly export | BLG-FE-119 | M | Print stylesheet / PDF-export action for `WeeklyDigest.js` and `TradePlan.js`. P1, standalone, no dependencies. Stale-targeted twice previously (v7.3, v7.4) without being named in anchor scope — named here. |
+| Regression suite baseline update | BLG-QA-112 | S | Gate-triggered companion (gate: any of BLG-FE-115–119 enters release scope, fired by BLG-FE-119 above). Documentation-only, no Design Gate dependency. |
+
+<!-- roadmap-annotation-marker: RA:v7.6:2026-07-20__release-v7.6 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-20__release-v7.6
+- Plan published: 2026-07-20
+- Cycle folder: claude/cycles/2026-07-20__release-v7.6/
+- Backlog slice: claude/cycles/2026-07-20__release-v7.6/stage4_backlog_slice.md
+- Status at annotation: Committed
 
 *Now horizon was empty as of 2026-07-20 (post-ship closure 2026-07-17__release-v7.5 — RA:v7.5 retired in full, 4/4 items shipped as implementations; no carry-forward items remained) prior to this formalization write.*
 
