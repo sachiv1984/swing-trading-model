@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
 import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
+import { Checkbox } from "../components/ui/checkbox";
+import BulkActionToolbar from "../components/shared/BulkActionToolbar";
 import { Plus, FileText, Edit2, Trash2, AlertTriangle, Rocket } from "lucide-react";
 import { cn } from "../lib/utils";
 import { formatDistanceToNow } from "date-fns";
@@ -41,6 +43,8 @@ export default function TradePlans() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [tagOptions, setTagOptions] = useState([]);
 
   const { data: plans = [], isLoading, isError, refetch } = useQuery({
     queryKey: ["tradePlans"],
@@ -50,6 +54,13 @@ export default function TradePlans() {
       return json.data || [];
     },
   });
+
+  useEffect(() => {
+    apiFetch(`${API_BASE}/trade-plans/tags`)
+      .then((r) => (r.ok ? r.json() : { data: [] }))
+      .then((json) => setTagOptions(json.data || []))
+      .catch(() => {});
+  }, []);
 
   const deleteMutation = useMutation({
     mutationFn: (id) =>
@@ -63,6 +74,33 @@ export default function TradePlans() {
   const sorted = [...plans].sort(
     (a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0)
   );
+
+  const toggleRow = (id) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleAll = () => {
+    setSelectedIds((prev) =>
+      prev.size === sorted.length ? new Set() : new Set(sorted.map((p) => p.id))
+    );
+  };
+
+  const selectedActiveCount = sorted.filter(
+    (p) => selectedIds.has(p.id) && p.status === "active"
+  ).length;
+
+  const handleBulkResult = async (result) => {
+    if (result.failed.length === 0) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(result.failed.map((f) => f.id)));
+    }
+    await queryClient.invalidateQueries({ queryKey: ["tradePlans"] });
+  };
 
   const handleStartTrade = (plan) => {
     navigate("/TradeEntry", {
@@ -95,6 +133,60 @@ export default function TradePlans() {
         }
       />
 
+      <BulkActionToolbar
+        selectedCount={selectedIds.size}
+        onClear={() => setSelectedIds(new Set())}
+        itemLabel="plans"
+        excludedNote={
+          selectedActiveCount > 0
+            ? `${selectedActiveCount} active plan(s) excluded — cannot be archived.`
+            : null
+        }
+        tagAction={{
+          tagOptions,
+          onSubmit: async (tags) => {
+            const res = await apiFetch(`${API_BASE}/trade-plans/bulk-tag`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ ids: Array.from(selectedIds), tags }),
+            });
+            const json = await res.json();
+            return json.data;
+          },
+        }}
+        destructiveActions={[
+          {
+            key: "archive",
+            label: "Bulk Archive",
+            confirmText: `Archive ${selectedIds.size} selected trade plan(s)?`,
+            onConfirm: async () => {
+              const res = await apiFetch(`${API_BASE}/trade-plans/bulk-archive`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ids: Array.from(selectedIds) }),
+              });
+              const json = await res.json();
+              return json.data;
+            },
+          },
+          {
+            key: "delete",
+            label: "Bulk Delete",
+            confirmText: `Delete ${selectedIds.size} selected trade plan(s)?`,
+            onConfirm: async () => {
+              const res = await apiFetch(`${API_BASE}/trade-plans/bulk`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ids: Array.from(selectedIds) }),
+              });
+              const json = await res.json();
+              return json.data;
+            },
+          },
+        ]}
+        onResult={handleBulkResult}
+      />
+
       <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 overflow-hidden">
         <DataState
           loading={isLoading}
@@ -118,6 +210,13 @@ export default function TradePlans() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-slate-700/50">
+                  <th className="px-5 py-3.5 text-left w-8">
+                    <Checkbox
+                      checked={sorted.length > 0 && selectedIds.size === sorted.length}
+                      onCheckedChange={toggleAll}
+                      aria-label="Select all"
+                    />
+                  </th>
                   {["Ticker", "Status", "R Target", "Notes", "Updated", "Actions"].map((h) => (
                     <th
                       key={h}
@@ -132,8 +231,19 @@ export default function TradePlans() {
                 {sorted.map((plan) => (
                   <tr
                     key={plan.id}
-                    className={cn("transition-colors", plan.status === "abandoned" && "opacity-70")}
+                    className={cn(
+                      "transition-colors",
+                      plan.status === "abandoned" && "opacity-70",
+                      selectedIds.has(plan.id) && "bg-cyan-500/5"
+                    )}
                   >
+                    <td className="px-5 py-4">
+                      <Checkbox
+                        checked={selectedIds.has(plan.id)}
+                        onCheckedChange={() => toggleRow(plan.id)}
+                        aria-label={`Select ${plan.ticker}`}
+                      />
+                    </td>
                     <td className="px-5 py-4">
                       <span className="font-semibold text-white text-sm">{plan.ticker}</span>
                       {plan.market && (

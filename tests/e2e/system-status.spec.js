@@ -170,12 +170,14 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     await expect(page.getByRole('button', { name: /run tests/i })).toBeVisible({ timeout: 8000 });
   });
 
-  test('SC-SS-01b: Pre-run state shows "84 endpoints" placeholder', async ({ page }) => {
-    // Before running tests, the page shows: "Tests 84 endpoints"
-    // (totalTests || '84' → '84' before any test run; corrected to match backend/routers/test.py
-    // test_cases count of 84 after v6.9 EPIC-01 ST-01 added GET /positions/{id}/compliance-recheck
-    // and EPIC-02 ST-02 added GET /positions/{id}/gap-risk)
-    await expect(page.getByText(/tests 84 endpoints/i)).toBeVisible({ timeout: 8000 });
+  test('SC-SS-01b: Pre-run state shows "95 endpoints" placeholder', async ({ page }) => {
+    // Before running tests, the page shows: "Tests 95 endpoints"
+    // (totalTests || '95' → '95' before any test run; corrected to match backend/routers/test.py
+    // test_cases count of 95 after v7.5 EPIC-03 ST-03 added the 6 bulk-actions-toolbar
+    // endpoints (BLG-FE-117): GET /watchlist/tags, POST /watchlist/bulk-tag,
+    // DELETE /watchlist/bulk, POST /trade-plans/bulk-tag, PUT /trade-plans/bulk-archive,
+    // DELETE /trade-plans/bulk)
+    await expect(page.getByText(/tests 95 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-01c: Pre-run state shows prompt to click Run Tests', async ({ page }) => {

@@ -1,9 +1,9 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.6
-**Last Updated:** 2026-07-09
-**Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05)
+**Version:** 0.7
+**Last Updated:** 2026-07-17
+**Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03)
 
 ---
 
@@ -332,6 +332,98 @@ Returns all unique tags used across `trade_plans.trade_tags` for the portfolio. 
 
 ---
 
+## POST /trade-plans/bulk-tag
+
+Add tags to each selected trade plan's existing `trade_tags` (union, not replace). New in v0.7 (ST-03, BLG-FE-117, EPIC-03, v7.5) — see `docs/specs/blg_fe_117_pre_implementation_readiness_pass.md` AC-01 for the batch-mutation pattern.
+
+### Request Body
+
+```json
+{ "ids": ["plan-001", "plan-002"], "tags": ["momentum", "breakout"] }
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `ids` | array of string (UUID) | Yes | Trade plan IDs to tag. Max 100 per call. |
+| `tags` | array of string | Yes | Tags to add — same validation as `POST /trade-plans` (`_validate_trade_tags`: lowercase, alphanumeric+hyphen, max 20 chars, max 10 tags). Invalid tags are silently filtered, not rejected. |
+
+### Response (200)
+
+```json
+{ "status": "ok", "data": { "succeeded": ["plan-001", "plan-002"], "failed": [] } }
+```
+
+On partial failure, `failed` contains `{id, reason}` objects (e.g. `reason: "not_found"`).
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 400 | `ids` empty or exceeds the 100-item cap |
+| 500 | Database error |
+
+---
+
+## PUT /trade-plans/bulk-archive
+
+Abandon (archive) each selected trade plan — reuses the existing single-plan abandonment transition (§8), not a new status. New in v0.7 (ST-03, BLG-FE-117, EPIC-03, v7.5).
+
+Plans with `status = 'active'` are excluded (mirrors §8.1's single-item hide rule) and reported in `failed` with `reason: "active_status_excluded"`. The abandonment reason is a fixed system string (`"Bulk archived via Trade Plans bulk-action toolbar"`) — the bulk confirmation dialog does not collect a per-plan reason (`bulk-actions-toolbar/ux_spec.md` §2.5 defines no reason field for this flow, unlike the single-item Abandon modal's required reason textarea, §8.2).
+
+### Request Body
+
+```json
+{ "ids": ["plan-001", "plan-002"] }
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `ids` | array of string (UUID) | Yes | Trade plan IDs to archive. Max 100 per call. |
+
+### Response (200)
+
+```json
+{ "status": "ok", "data": { "succeeded": ["plan-001"], "failed": [{"id": "plan-002", "reason": "active_status_excluded"}] } }
+```
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 400 | `ids` empty or exceeds the 100-item cap |
+| 500 | Database error |
+
+---
+
+## DELETE /trade-plans/bulk
+
+Delete each selected trade plan in a single call. New in v0.7 (ST-03, BLG-FE-117, EPIC-03, v7.5).
+
+### Request Body
+
+```json
+{ "ids": ["plan-001", "plan-002"] }
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `ids` | array of string (UUID) | Yes | Trade plan IDs to delete. Max 100 per call. |
+
+### Response (200)
+
+```json
+{ "status": "ok", "data": { "succeeded": ["plan-001", "plan-002"], "failed": [] } }
+```
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 400 | `ids` empty or exceeds the 100-item cap |
+| 500 | Database error |
+
+---
+
 ## GET /trade-plans/setup-quality-score
 
 Returns a 0–100 setup quality score derived from closed trade history for a given ticker.
@@ -399,6 +491,7 @@ score = clamp(round(win_rate × 0.6 + max(average_pnl_pct, 0) × 0.4), 0, 100)
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.7 | 2026-07-17 | ST-03 (BLG-FE-117, EPIC-03, v7.5): Add POST /trade-plans/bulk-tag, PUT /trade-plans/bulk-archive, DELETE /trade-plans/bulk — bulk-actions toolbar. `succeeded`/`failed` per-row response shape per readiness pass AC-01. Bulk-archive excludes `status='active'` plans (mirrors §8.1 single-item hide rule) and applies a fixed system abandonment reason (no per-plan reason field in the bulk confirmation flow). |
 | 0.6 | 2026-07-09 | ST-05 (EPIC-02, v6.8, BLG-FEAT-52): Add GET /trade-plans/tags (tag autocomplete source); add `trade_tags` field to POST/PUT /trade-plans request schema. Data-independent from trade_annotations/PO-02 and from the existing position/journal tags. |
 | 0.5 | 2026-06-23 | ST-08 (EPIC-04, v6.1): Add GET /trade-plans/setup-quality-score — 0–100 score from closed trade history, gate_not_met response when <20 trades. |
 | 0.4 | 2026-05-26 | Switch generate-thesis from Gemini Flash to Claude Haiku 4.5; replace GEMINI_API_KEY with ANTHROPIC_API_KEY; update model_version in examples; add POST /trade-plans/generate-plan endpoint |

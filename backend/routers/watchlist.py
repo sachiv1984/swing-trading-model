@@ -10,12 +10,16 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 
+from typing import List
 from database import get_portfolio
 from services.watchlist_service import (
     get_watchlist,
     create_watchlist_entry,
     update_watchlist_entry,
     delete_watchlist_entry,
+    get_all_watchlist_tags,
+    bulk_tag_watchlist,
+    bulk_delete_watchlist,
 )
 
 router = APIRouter(tags=["Watchlist"])
@@ -48,6 +52,15 @@ class UpdateWatchlistRequest(BaseModel):
     target_entry_price: Optional[float] = None
     initial_stop_price: Optional[float] = None
     current_stop_price: Optional[float] = None
+
+
+class BulkTagRequest(BaseModel):
+    ids: List[str]
+    tags: List[str]
+
+
+class BulkIdsRequest(BaseModel):
+    ids: List[str]
 
 
 # ---------------------------------------------------------------------------
@@ -86,6 +99,68 @@ def create_watchlist_endpoint(request: CreateWatchlistRequest):
         raise
     except LookupError as e:
         raise HTTPException(status_code=409, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/watchlist/tags")
+def get_watchlist_tags_endpoint():
+    """
+    GET /watchlist/tags — unique tags across all watchlist entries, for autocomplete.
+    Contract: watchlist_endpoints.md §GET /watchlist/tags
+    ST-03 (BLG-FE-117, EPIC-03, v7.5).
+    """
+    try:
+        portfolio_id = _get_portfolio_id()
+        tags = get_all_watchlist_tags(portfolio_id)
+        return {"status": "ok", "data": tags}
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# IMPORTANT — router ordering: bulk-tag/bulk MUST be declared before
+# PATCH/DELETE /watchlist/{entry_id} below, or FastAPI routes them to the
+# wildcard handler with entry_id="bulk-tag"/"bulk" (same constraint as
+# alerts.py's /notifications/mark-all-read note).
+@router.post("/watchlist/bulk-tag")
+def bulk_tag_watchlist_endpoint(request: BulkTagRequest):
+    """
+    POST /watchlist/bulk-tag — add tags to each selected watchlist entry (union, not replace).
+    Contract: watchlist_endpoints.md §POST /watchlist/bulk-tag
+    ST-03 (BLG-FE-117, EPIC-03, v7.5).
+    """
+    try:
+        portfolio_id = _get_portfolio_id()
+        result = bulk_tag_watchlist(portfolio_id, request.ids, request.tags)
+        return {"status": "ok", "data": result}
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/watchlist/bulk")
+def bulk_delete_watchlist_endpoint(request: BulkIdsRequest):
+    """
+    DELETE /watchlist/bulk — remove each selected watchlist entry.
+    Contract: watchlist_endpoints.md §DELETE /watchlist/bulk
+    ST-03 (BLG-FE-117, EPIC-03, v7.5).
+    """
+    try:
+        portfolio_id = _get_portfolio_id()
+        result = bulk_delete_watchlist(portfolio_id, request.ids)
+        return {"status": "ok", "data": result}
+    except HTTPException:
+        raise
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:

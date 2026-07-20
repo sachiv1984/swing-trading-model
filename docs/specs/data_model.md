@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.12
-**Last Updated:** 2026-07-13
+**Version:** 2.13
+**Last Updated:** 2026-07-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1265,6 +1265,27 @@ Reversible: `ALTER TABLE positions DROP COLUMN IF EXISTS last_reviewed_at;`
 
 ---
 
-**Document Version:** 2.12
+### Migration from v2.12 to v2.13
+
+ST-03 (BLG-FE-117, EPIC-03, v7.5) — bulk actions toolbar: adds a `tags` column to `watchlist` for the new Bulk Tag action (`bulk-actions-toolbar/ux_spec.md` §2.4). No single-item tag UI is introduced — bulk-tag only. **Note:** the `watchlist` table itself predates a canonical schema section in this document (created via `watchlist_service.py`'s idempotent bootstrap, migration v2.0→v2.1 per that service's module docstring); this entry documents only the incremental `tags` column addition, not a full backfill of the missing canonical section (tracked as spec debt, out of scope for ST-03).
+
+```sql
+BEGIN;
+ALTER TABLE watchlist ADD COLUMN IF NOT EXISTS tags TEXT[] NOT NULL DEFAULT '{}';
+COMMIT;
+```
+
+| Field | Type | Description |
+|-------|------|--------------|
+| `tags` | text[] | Not null, defaults to `{}`. Populated only via `POST /watchlist/bulk-tag` (union with existing tags, not replace) — no single-item create/edit UI sets this field. |
+
+Reversible: `ALTER TABLE watchlist DROP COLUMN IF EXISTS tags;`
+
+**Sign-off:**
+- Data Model Domain & Schema Owner: Accepted — 2026-07-17 (agent-mediated, single nullable-equivalent array column with a safe default, no backfill required, no existing data affected)
+
+---
+
+**Document Version:** 2.13
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-07-13
+**Last Review:** 2026-07-17
