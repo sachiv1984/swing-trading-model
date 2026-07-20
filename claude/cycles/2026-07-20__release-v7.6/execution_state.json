@@ -114,34 +114,40 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
-      "branch": null,
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "status": "done",
+      "branch": "exec/2026-07-20__release-v7.6/EPIC-04",
+      "pr_number": 1029,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-20__release-v7.6/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
         "ST-04": {
           "title": "Standardise error-response envelope across all routers",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
-          "branch": null,
-          "commit_sha": null,
+          "github_issue": 1023,
+          "branch": "exec/2026-07-20__release-v7.6/EPIC-04",
+          "commit_sha": "37fdadfd7ea09a818ef8fd3dc23a241a92b2c775",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/specs/api_contracts/backend_engineering_patterns.md"],
+          "completed_utc": "2026-07-20T19:35:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/specs/api_contracts/backend_engineering_patterns.md#Error-response envelope conformance"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Shared-file canonical owner for backend/routers/*.py this sprint — later EPICs touching router files must rebase after this merges (sprint_backlog.md Merge Order)."
+          "deviations_filed": true,
+          "last_completed_substep": "3.2.A.qa_evidence_signed",
+          "sign_off_record": {
+            "required_by": "Director of Quality",
+            "method": "autonomous_class",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-07-20T19:40:00Z"
+          },
+          "notes": "Audit of all 23 backend/routers/*.py files (79 endpoints) against canonical envelope in conventions.md §13. Findings documented in backend_engineering_patterns.md v1.2->v1.3 (§Error-response envelope conformance): dominant non-conformance is default FastAPI {detail} shape vs canonical {status, message}; most severe finding is portfolio_risk.py masking internal errors as HTTP 200 successes (violates §13.3). Non-conforming endpoints filed as follow-up backlog items BLG-BE-68 (P2) and BLG-BE-69 (P3) per AC — no router code changed, audit/documentation scope only. No deviation from canonical spec — spec_references IS the created/updated artefact per Case B (Documentation-creation). Shared-file canonical owner for backend/routers/*.py this sprint — later EPICs touching router files must rebase after this merges (sprint_backlog.md Merge Order)."
         }
       }
     },
@@ -277,7 +283,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01"],
+  "completed_items": ["ST-01", "ST-04"],
   "open_escalations": [],
 
   "merge_gate": {
