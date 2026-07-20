@@ -97,3 +97,32 @@
     @apply bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent;
   }
 }
+
+/* ------------------------------------------------------------------------
+   Global Print Stylesheet (v7.6 — ST-01, BLG-FE-119)
+   Design source: docs/design/2026-07-20__release-v7.6/print-pdf-export/ux_spec.md
+   Shared across all pages using window.print() — not scoped to any one page.
+   ------------------------------------------------------------------------ */
+@media print {
+  /* Nav/sidebar chrome and PageHeader actions (Print button, Refresh, etc.)
+     — none of these are meaningful on paper. */
+  .print-hide {
+    display: none !important;
+  }
+
+  /* Dark theme surfaces are illegible and waste ink when printed — force a
+     white background / near-black text regardless of the active theme. */
+  * {
+    background: white !important;
+    background-image: none !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Dark-theme table borders/dividers are invisible on white — switch to a
+     light-grey print-visible border. */
+  table, th, td, tr {
+    border-color: #cbd5e1 !important;
+  }
+}

@@ -16,7 +16,7 @@ export default function PageHeader({ title, description, actions }) {
         )}
       </div>
       {actions && (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 print-hide">
           {actions}
         </div>
       )}

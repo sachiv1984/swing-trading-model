@@ -7,7 +7,7 @@
  * Spec: docs/specs/api_contracts/digest_endpoints.md v0.1
  */
 import { useQuery } from "@tanstack/react-query";
-import { CalendarDays, RefreshCw } from "lucide-react";
+import { CalendarDays, RefreshCw, Printer } from "lucide-react";
 import { apiFetch } from "../api/base44Client";
 import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
@@ -71,15 +71,29 @@ export default function WeeklyDigest() {
         title="Weekly Digest"
         description="7-day trading summary"
         actions={
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => refetch()}
-            className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
-          >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh
-          </Button>
+          <div className="flex items-center gap-2">
+            {!isLoading && !isError && (
+              <Button
+                variant="outline"
+                size="sm"
+                data-testid="print-export-pdf-btn"
+                onClick={() => window.print()}
+                className="border-slate-700 text-slate-300 hover:bg-slate-800"
+              >
+                <Printer className="w-4 h-4 mr-2" />
+                Print / Export PDF
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => refetch()}
+              className="text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-800"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Refresh
+            </Button>
+          </div>
         }
       />
 
