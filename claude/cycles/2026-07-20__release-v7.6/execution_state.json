@@ -50,34 +50,40 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
-      "branch": null,
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "status": "done",
+      "branch": "exec/2026-07-20__release-v7.6/EPIC-02",
+      "pr_number": 1030,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-20__release-v7.6/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
       "stories": {
         "ST-02": {
           "title": "Update regression suite baseline for BLG-FE-115-119 interaction surfaces",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1021,
-          "branch": null,
-          "commit_sha": null,
+          "branch": "exec/2026-07-20__release-v7.6/EPIC-02",
+          "commit_sha": "a5837f78b54282915381f48538699c99c6c27e11",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/qa/regression_test_suite_baseline.md"],
+          "completed_utc": "2026-07-20T19:55:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/qa/regression_test_suite_baseline.md#Part 2 — Playwright End-to-End Test Suite"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Dependency: ST-01 (needs ST-01's Playwright spec file to cross-reference). ST-01 done this session — ready to start next EPIC turn."
+          "deviations_filed": true,
+          "last_completed_substep": "3.2.A.qa_evidence_signed",
+          "sign_off_record": {
+            "required_by": "Director of Quality",
+            "method": "autonomous_class",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-07-20T19:58:00Z"
+          },
+          "notes": "Added 5 entries (BLG-FE-115 through BLG-FE-119) to regression_test_suite_baseline.md Part 2, cross-referenced against tests/e2e/ spec files (file existence + scenario counts verified directly, not inferred): command-palette.spec.js (12), custom-price-alerts.spec.js (11), bulk-actions-toolbar.spec.js (12), saved-filters-calendar-view.spec.js (9), print-export-pdf.spec.js (6). Updated Part 3 Arc mapping and Part 4 totals. No deviation from canonical spec — spec_references IS the updated artefact per Case B. Flagged (not fixed, out of scope) broader v6.0-v7.3 cataloguing gap; filed as BLG-QA-116."
         }
       }
     },
@@ -283,7 +289,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-04"],
+  "completed_items": ["ST-01", "ST-02", "ST-04"],
   "open_escalations": [],
 
   "merge_gate": {
