@@ -3,6 +3,7 @@ import PageHeader from "../components/ui/PageHeader";
 import NotificationTabBar from "../components/notifications/NotificationTabBar";
 import PreferenceRow from "../components/notifications/PreferenceRow";
 import AlertThresholdsSection from "../components/notifications/AlertThresholdsSection";
+import CustomPriceAlertsSection from "../components/notifications/CustomPriceAlertsSection";
 import { apiFetch } from "../api/base44Client";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
@@ -131,6 +132,8 @@ export default function NotificationPreferences() {
       </div>
 
       <AlertThresholdsSection />
+
+      <CustomPriceAlertsSection />
     </div>
   );
 }

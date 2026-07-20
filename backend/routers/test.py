@@ -222,6 +222,11 @@ async def test_all_endpoints(request: Request):
         # AI rate limit 429 scenario verification (v6.3 / EPIC-01 ST-03)
         {"name": "POST /test/rate-limit-scenarios", "method": "POST", "url": f"{base_url}/test/rate-limit-scenarios", "critical": False},
 
+        # Custom Price Alerts (v7.5 / EPIC-02 ST-02, BLG-FE-116)
+        {"name": "GET /price-alerts", "method": "GET", "url": f"{base_url}/price-alerts", "critical": False},
+        {"name": "POST /price-alerts", "method": "POST", "url": f"{base_url}/price-alerts", "body": {"ticker": "AAPL", "condition": "above", "threshold_price": 1.0}, "critical": False},
+        {"name": "DELETE /price-alerts/00000000-0000-0000-0000-000000000000", "method": "DELETE", "url": f"{base_url}/price-alerts/00000000-0000-0000-0000-000000000000", "critical": False},
+
         # Bulk Actions Toolbar — Watchlist (v7.5 / EPIC-03 ST-03, BLG-FE-117)
         {"name": "GET /watchlist/tags", "method": "GET", "url": f"{base_url}/watchlist/tags", "critical": False},
         {"name": "POST /watchlist/bulk-tag", "method": "POST", "url": f"{base_url}/watchlist/bulk-tag", "body": {"ids": [], "tags": ["momentum"]}, "critical": False},

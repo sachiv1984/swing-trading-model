@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.13
-**Last Updated:** 2026-07-17
+**Version:** 2.14
+**Last Updated:** 2026-07-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -542,6 +542,46 @@ CREATE INDEX idx_notification_preferences_portfolio ON notification_preferences(
 ### Channel scope (v2.1)
 
 Email is the only delivery channel in v2.1. SMS is not implemented. The schema supports future channel columns (e.g. `sms_enabled`) without migration impact.
+
+---
+
+## 11. Price Alerts Table
+
+User-created ticker/condition/threshold alerts. Many rows per portfolio, unconstrained by open positions. Evaluated as a step inside `POST /alerts/evaluate`. Introduced ST-02 (BLG-FE-116, EPIC-02, v7.5); schema pre-designed in `docs/specs/blg_fe_116_pre_implementation_readiness_pass.md` AC-01.
+
+```sql
+CREATE TABLE price_alerts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+    ticker VARCHAR(10) NOT NULL,
+    condition VARCHAR(10) NOT NULL CHECK (condition IN ('above', 'below')),
+    threshold_price NUMERIC(10, 4) NOT NULL CHECK (threshold_price > 0),
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    triggered_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_price_alerts_portfolio_active ON price_alerts(portfolio_id, active);
+```
+
+### Fields
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| id | UUID | NO | Primary key |
+| portfolio_id | UUID | NO | FK to portfolios |
+| ticker | VARCHAR(10) | NO | Not constrained to open positions or watchlist — any ticker accepted by `utils.pricing.get_current_price(ticker)`. |
+| condition | VARCHAR(10) | NO | `above` or `below` — direction of the threshold crossing. |
+| threshold_price | NUMERIC(10,4) | NO | Same precision as `positions.current_price`. Must be `> 0`. |
+| active | BOOLEAN | NO | `true` until triggered (single-fire, not repeating) or explicitly deactivated by the user. |
+| triggered_at | TIMESTAMPTZ | YES | `null` until fired. |
+| created_at | TIMESTAMPTZ | NO | Alert creation timestamp |
+| updated_at | TIMESTAMPTZ | NO | Last update timestamp |
+
+### Constraints
+
+- Per-portfolio active-alert cap of 50 enforced at the API layer (not the DB) — see `docs/specs/api_contracts/alerts_endpoints.md §POST /price-alerts`.
 
 ---
 
@@ -1267,7 +1307,59 @@ Reversible: `ALTER TABLE positions DROP COLUMN IF EXISTS last_reviewed_at;`
 
 ### Migration from v2.12 to v2.13
 
-ST-03 (BLG-FE-117, EPIC-03, v7.5) — bulk actions toolbar: adds a `tags` column to `watchlist` for the new Bulk Tag action (`bulk-actions-toolbar/ux_spec.md` §2.4). No single-item tag UI is introduced — bulk-tag only. **Note:** the `watchlist` table itself predates a canonical schema section in this document (created via `watchlist_service.py`'s idempotent bootstrap, migration v2.0→v2.1 per that service's module docstring); this entry documents only the incremental `tags` column addition, not a full backfill of the missing canonical section (tracked as spec debt, out of scope for ST-03).
+ST-02 (BLG-FE-116, EPIC-02, v7.5) — custom price alerts (`price_alerts` table + `notifications.alert_type` CHECK extension per readiness pass AC-01).
+
+```sql
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS price_alerts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+    ticker VARCHAR(10) NOT NULL,
+    condition VARCHAR(10) NOT NULL CHECK (condition IN ('above', 'below')),
+    threshold_price NUMERIC(10, 4) NOT NULL CHECK (threshold_price > 0),
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    triggered_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_price_alerts_portfolio_active ON price_alerts(portfolio_id, active);
+
+ALTER TABLE notifications DROP CONSTRAINT IF EXISTS notifications_alert_type_check;
+ALTER TABLE notifications ADD CONSTRAINT notifications_alert_type_check CHECK (alert_type IN (
+    'stop_loss_approach',
+    'grace_period_warning',
+    'market_regime_change',
+    'daily_portfolio_summary',
+    'custom_price_alert'
+));
+
+COMMIT;
+```
+
+Reversible:
+```sql
+BEGIN;
+ALTER TABLE notifications DROP CONSTRAINT IF EXISTS notifications_alert_type_check;
+ALTER TABLE notifications ADD CONSTRAINT notifications_alert_type_check CHECK (alert_type IN (
+    'stop_loss_approach',
+    'grace_period_warning',
+    'market_regime_change',
+    'daily_portfolio_summary'
+));
+DROP TABLE IF EXISTS price_alerts;
+COMMIT;
+```
+
+**Sign-off:**
+- Data Model Domain & Schema Owner: Accepted — 2026-07-17 (agent-mediated, schema pre-designed and PASS-reviewed in readiness pass `blg_fe_116_pre_implementation_readiness_pass.md` AC-01/§13, no deviation from pre-scoped shape)
+
+---
+
+### Migration from v2.13 to v2.14
+
+ST-03 (BLG-FE-117, EPIC-03, v7.5) — bulk actions toolbar: adds a `tags` column to `watchlist` for the new Bulk Tag action (`bulk-actions-toolbar/ux_spec.md` §2.4). No single-item tag UI is introduced — bulk-tag only. **Note:** the `watchlist` table itself predates a canonical schema section in this document (created via `watchlist_service.py`'s idempotent bootstrap, migration v2.0→v2.1 per that service's module docstring); this entry documents only the incremental `tags` column addition, not a full backfill of the missing canonical section (tracked as spec debt, out of scope for ST-03). **Renumbered during cross-EPIC merge conflict resolution (CLAUDE.md §8):** originally authored as "v2.12→v2.13" on the EPIC-03 branch in parallel with EPIC-02's own v2.12→v2.13 migration; since EPIC-02 merged first, this entry is renumbered v2.13→v2.14 to keep migration numbering sequential — no schema content change.
 
 ```sql
 BEGIN;
@@ -1286,6 +1378,6 @@ Reversible: `ALTER TABLE watchlist DROP COLUMN IF EXISTS tags;`
 
 ---
 
-**Document Version:** 2.13
+**Document Version:** 2.14
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-07-17
+**Last Review:** 2026-07-20

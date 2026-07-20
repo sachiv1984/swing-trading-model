@@ -17,13 +17,14 @@ Contract: docs/specs/api_contracts/alerts_endpoints.md v0.1
 """
 
 import logging
+import re
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from uuid import uuid4
 
 from config import DEFAULT_MIN_HOLD_DAYS, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 from database import get_db, get_portfolio, get_positions, get_settings
-from utils.pricing import check_market_regime
+from utils.pricing import check_market_regime, get_current_price
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +34,12 @@ ALERT_TYPES = [
     "market_regime_change",
     "daily_portfolio_summary",
 ]
+
+# Custom price alerts (ST-02, BLG-FE-116, EPIC-02, v7.5) — separate, many-rows-per-portfolio
+# table, distinct from the singleton-per-type alert_rules above. See
+# docs/specs/blg_fe_116_pre_implementation_readiness_pass.md AC-01/AC-03.
+PRICE_ALERT_TICKER_RE = re.compile(r'^[A-Z0-9.]{1,10}$')
+PRICE_ALERT_CAP = 50
 
 DEFAULT_RULES = [
     {"type": "stop_loss_approach",      "enabled": True,  "threshold_percent": 5.0},
@@ -128,6 +135,46 @@ def ensure_alerts_tables():
                 CREATE INDEX IF NOT EXISTS idx_notification_preferences_portfolio
                     ON notification_preferences(portfolio_id)
             """)
+
+            # Custom price alerts (ST-02, BLG-FE-116, EPIC-02, v7.5)
+            # Down migration: DROP TABLE IF EXISTS price_alerts;
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS price_alerts (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+                    ticker VARCHAR(10) NOT NULL,
+                    condition VARCHAR(10) NOT NULL CHECK (condition IN ('above', 'below')),
+                    threshold_price NUMERIC(10, 4) NOT NULL CHECK (threshold_price > 0),
+                    active BOOLEAN NOT NULL DEFAULT TRUE,
+                    triggered_at TIMESTAMPTZ,
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_price_alerts_portfolio_active
+                    ON price_alerts(portfolio_id, active)
+            """)
+
+            # Extend notifications.alert_type CHECK to permit 'custom_price_alert'
+            # (idempotent — only alters if not already extended; data_model.md v2.12->v2.13).
+            cur.execute("""
+                SELECT pg_get_constraintdef(oid) AS def
+                FROM pg_constraint
+                WHERE conrelid = 'notifications'::regclass
+                  AND contype = 'c'
+                  AND conname = 'notifications_alert_type_check'
+            """)
+            existing_check = cur.fetchone()
+            if existing_check is None or 'custom_price_alert' not in existing_check["def"]:
+                cur.execute("ALTER TABLE notifications DROP CONSTRAINT IF EXISTS notifications_alert_type_check")
+                cur.execute("""
+                    ALTER TABLE notifications ADD CONSTRAINT notifications_alert_type_check CHECK (alert_type IN (
+                        'stop_loss_approach', 'grace_period_warning',
+                        'market_regime_change', 'daily_portfolio_summary',
+                        'custom_price_alert'
+                    ))
+                """)
 
             # Down migration: DROP TABLE IF EXISTS alert_evaluations;
             cur.execute("""
@@ -261,6 +308,159 @@ def delete_alert_rule(portfolio_id: str, rule_id: str) -> Dict:
             if not row:
                 raise LookupError(f"Rule {rule_id} not found")
             return {"deleted": True, "id": str(row["id"])}
+
+
+# ---------------------------------------------------------------------------
+# Custom Price Alerts (ST-02, BLG-FE-116, EPIC-02, v7.5)
+# ---------------------------------------------------------------------------
+
+def get_price_alerts(portfolio_id: str) -> List[Dict]:
+    """Return all price alerts for the portfolio, most recently created first."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT * FROM price_alerts
+                WHERE portfolio_id = %s
+                ORDER BY created_at DESC
+            """, (portfolio_id,))
+            return [_price_alert_row(r) for r in cur.fetchall()]
+
+
+def create_price_alert(portfolio_id: str, data: Dict) -> Dict:
+    """
+    Create a price alert. Raises ValueError (-> 400) on invalid input or when the
+    per-portfolio active-alert cap is exceeded (readiness pass AC-03).
+    """
+    ticker = (data.get("ticker") or "").strip().upper()
+    condition = data.get("condition")
+    threshold_price = data.get("threshold_price")
+
+    if not ticker or not PRICE_ALERT_TICKER_RE.match(ticker):
+        raise ValueError("ticker must be 1-10 alphanumeric characters")
+    if condition not in ("above", "below"):
+        raise ValueError("condition must be 'above' or 'below'")
+    if threshold_price is None or float(threshold_price) <= 0:
+        raise ValueError("threshold_price must be a positive number")
+
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT COUNT(*) AS cnt FROM price_alerts WHERE portfolio_id = %s AND active = TRUE",
+                (portfolio_id,)
+            )
+            if cur.fetchone()["cnt"] >= PRICE_ALERT_CAP:
+                raise ValueError("You've reached the maximum number of active price alerts.")
+
+            cur.execute("""
+                INSERT INTO price_alerts (portfolio_id, ticker, condition, threshold_price)
+                VALUES (%s, %s, %s, %s)
+                RETURNING *
+            """, (portfolio_id, ticker, condition, float(threshold_price)))
+            return _price_alert_row(cur.fetchone())
+
+
+def delete_price_alert(portfolio_id: str, alert_id: str) -> Dict:
+    """Delete a price alert."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "DELETE FROM price_alerts WHERE id = %s AND portfolio_id = %s RETURNING id",
+                (alert_id, portfolio_id)
+            )
+            row = cur.fetchone()
+            if not row:
+                raise LookupError(f"Price alert {alert_id} not found")
+            return {"deleted": True, "id": str(row["id"])}
+
+
+def _evaluate_price_alerts(cur, portfolio_id: str, enqueue_delivery) -> Dict:
+    """
+    Evaluate all active custom price alerts for the portfolio (readiness pass AC-02).
+    Runs as a step inside evaluate_alerts() — reuses the already-scheduled
+    POST /alerts/evaluate cron trigger rather than a second scheduler.
+    """
+    cur.execute("""
+        SELECT id, ticker, condition, threshold_price
+        FROM price_alerts
+        WHERE portfolio_id = %s AND active = TRUE
+    """, (portfolio_id,))
+    rows = cur.fetchall()
+
+    triggered_count = 0
+    error_count = 0
+    notifications_created = 0
+    delivery_tasks_enqueued = 0
+
+    for pa in rows:
+        ticker = pa["ticker"]
+        try:
+            current_price = get_current_price(ticker)
+        except Exception as e:
+            logger.warning("custom_price_alert: price fetch failed for %s: %s", ticker, e)
+            error_count += 1
+            continue
+        if current_price is None:
+            error_count += 1
+            continue
+
+        threshold = float(pa["threshold_price"])
+        condition = pa["condition"]
+        condition_met = (
+            (condition == "above" and current_price > threshold) or
+            (condition == "below" and current_price < threshold)
+        )
+        if not condition_met:
+            continue
+
+        title = f"Price Alert — {ticker} {condition} {threshold:.2f}"
+        message = (
+            f"{ticker} crossed {condition} your threshold of {threshold:.2f} "
+            f"(current: {current_price:.2f})."
+        )
+        context = {
+            "ticker": ticker,
+            "condition": condition,
+            "threshold_price": threshold,
+            "current_price": current_price,
+        }
+        notif_id = _insert_notification(cur, portfolio_id, "custom_price_alert", title, message, context)
+        notifications_created += 1
+        enqueue_delivery(str(notif_id))
+        delivery_tasks_enqueued += 1
+
+        cur.execute("""
+            UPDATE price_alerts SET active = FALSE, triggered_at = NOW(), updated_at = NOW()
+            WHERE id = %s
+        """, (pa["id"],))
+        triggered_count += 1
+
+    from services.health_service import record_nightly_job
+    record_nightly_job(
+        "custom_price_alerts",
+        "ok" if error_count == 0 else "degraded",
+        detail={"evaluated": len(rows), "triggered": triggered_count, "errors": error_count},
+    )
+
+    return {
+        "evaluated": len(rows),
+        "triggered": triggered_count,
+        "errors": error_count,
+        "notifications_created": notifications_created,
+        "delivery_tasks_enqueued": delivery_tasks_enqueued,
+    }
+
+
+def _price_alert_row(r) -> Dict:
+    return {
+        "id": str(r["id"]),
+        "ticker": r["ticker"],
+        "condition": r["condition"],
+        "threshold_price": float(r["threshold_price"]),
+        "active": r["active"],
+        "triggered_at": r["triggered_at"].isoformat() if hasattr(r["triggered_at"], "isoformat") else r["triggered_at"],
+        "created_at": r["created_at"].isoformat() if hasattr(r["created_at"], "isoformat") else str(r["created_at"]),
+        "updated_at": r["updated_at"].isoformat() if hasattr(r["updated_at"], "isoformat") else str(r["updated_at"]),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -485,6 +685,11 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
                                    None, triggered, notification_sent, summary_values)
                 evaluations_persisted += 1
 
+            # --- custom_price_alerts (ST-02, BLG-FE-116, EPIC-02, v7.5) ---
+            price_alert_summary = _evaluate_price_alerts(cur, portfolio_id, enqueue_delivery)
+            notifications_created += price_alert_summary["notifications_created"]
+            delivery_tasks_enqueued += price_alert_summary["delivery_tasks_enqueued"]
+
             # --- Re-delivery for failed prior notifications ---
             redelivery_tasks_enqueued = 0
             cur.execute("""
@@ -506,6 +711,7 @@ def evaluate_alerts(portfolio_id: str, enqueue_delivery) -> Dict:
                 "delivery_tasks_enqueued": delivery_tasks_enqueued,
                 "redelivery_tasks_enqueued": redelivery_tasks_enqueued,
                 "evaluations_persisted": evaluations_persisted,
+                "custom_price_alerts": price_alert_summary,
             }
 
 

@@ -884,6 +884,97 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /price-alerts:
+    get:
+      tags: [Alerts]
+      summary: List custom price alerts
+      description: >
+        Return all custom price alerts for the portfolio, most recently created first.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.5.
+      responses:
+        "200":
+          description: Custom price alerts list
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/PriceAlert"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags: [Alerts]
+      summary: Create custom price alert
+      description: >
+        Create a user-defined ticker/condition/threshold price alert. Returns 400 if the
+        per-portfolio active-alert cap (50) is exceeded. Canonical contract:
+        docs/specs/api_contracts/alerts_endpoints.md v0.5.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePriceAlertRequest"
+      responses:
+        "200":
+          description: Price alert created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/PriceAlert"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /price-alerts/{id}:
+    delete:
+      tags: [Alerts]
+      summary: Delete custom price alert
+      description: >
+        Delete a custom price alert (active or already-triggered).
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.5.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Price alert deleted
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          deleted:
+                            type: boolean
+                            example: true
+                          id:
+                            type: string
+                            format: uuid
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /alerts/evaluate:
     post:
       tags: [Alerts]
@@ -3470,6 +3561,46 @@ components:
           nullable: true
           description: Only applicable for stop_loss_approach. Must be > 0 and <= 100.
 
+    PriceAlert:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ticker:
+          type: string
+        condition:
+          type: string
+          enum: [above, below]
+        threshold_price:
+          type: number
+        active:
+          type: boolean
+        triggered_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreatePriceAlertRequest:
+      type: object
+      required: [ticker, condition, threshold_price]
+      properties:
+        ticker:
+          type: string
+          description: 1-10 alphanumeric characters, uppercased server-side.
+        condition:
+          type: string
+          enum: [above, below]
+        threshold_price:
+          type: number
+          description: Must be > 0.
+
     AlertEvaluationResult:
       type: object
       properties:
@@ -3483,6 +3614,20 @@ components:
           type: integer
         evaluations_persisted:
           type: integer
+        custom_price_alerts:
+          type: object
+          description: Summary of the custom price alert evaluation step (ST-02, BLG-FE-116, v7.5).
+          properties:
+            evaluated:
+              type: integer
+            triggered:
+              type: integer
+            errors:
+              type: integer
+            notifications_created:
+              type: integer
+            delivery_tasks_enqueued:
+              type: integer
 
     AlertEvaluationRecord:
       type: object
