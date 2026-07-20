@@ -5,11 +5,12 @@ POST /ai/journal-summary      — Summarise trade journal notes via external LLM
 POST /ai/daily-briefing       — Plain-English portfolio briefing + ordered action list.
 POST /ai/chat                 — Stateless per-request AI trade advisor.
 GET  /ai/claude-audit-log     — Query the immutable Claude API call audit trail.
+GET  /ai/monthly-cost         — Current calendar month's Claude API spend total.
 
 AI output is display-only and must NOT feed into any signal, scoring,
 or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 
-Contract: docs/specs/api_contracts/ai_endpoints.md v1.4
+Contract: docs/specs/api_contracts/ai_endpoints.md v1.7
 """
 
 from fastapi import APIRouter, HTTPException, Query, Request
@@ -235,3 +236,21 @@ def get_claude_audit_log(
     from database import query_claude_audit_log
     records = query_claude_audit_log(limit=limit, endpoint=endpoint, date_from=date_from, date_to=date_to)
     return {"ok": True, "data": {"records": records, "count": len(records)}}
+
+
+@router.get("/monthly-cost")
+def get_monthly_cost():
+    """
+    Return the current calendar month's Claude API spend total.
+
+    Read-only, no side effects (unlike POST /ai/check-daily-cost, which sends
+    a Telegram alert as a side effect and is not suitable for a page-load
+    fetch). Source: claude_audit_log, the immutable Claude API call audit
+    trail. Claude is the only AI provider integrated in this codebase.
+
+    ST-07 (EPIC-07, v7.6, BLG-FEAT-77 — reframed per ESC-EXEC-20260720-01).
+    Contract: docs/specs/api_contracts/ai_endpoints.md#GET /ai/monthly-cost
+    """
+    from database import get_monthly_claude_cost
+    result = get_monthly_claude_cost()
+    return {"status": "ok", "data": result}

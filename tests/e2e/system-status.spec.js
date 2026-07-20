@@ -170,17 +170,13 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     await expect(page.getByRole('button', { name: /run tests/i })).toBeVisible({ timeout: 8000 });
   });
 
-  test('SC-SS-01b: Pre-run state shows "102 endpoints" placeholder', async ({ page }) => {
-    // Before running tests, the page shows: "Tests 102 endpoints"
-    // (totalTests || '102' → '102' before any test run; corrected to match backend/routers/test.py
-    // test_cases count of 102 after v7.5 EPIC-02 ST-02 added GET/POST /price-alerts and
-    // DELETE /price-alerts/{id} (BLG-FE-116), EPIC-03 ST-03 added the 6 bulk-actions-toolbar
-    // endpoints (BLG-FE-117): GET /watchlist/tags, POST /watchlist/bulk-tag,
-    // DELETE /watchlist/bulk, POST /trade-plans/bulk-tag, PUT /trade-plans/bulk-archive,
-    // DELETE /trade-plans/bulk, and EPIC-04 ST-04 added the 4 saved-filters/daily-pnl
-    // endpoints (BLG-FE-118): GET /reports/daily-pnl, GET/POST /saved-filters,
-    // DELETE /saved-filters/{id})
-    await expect(page.getByText(/tests 102 endpoints/i)).toBeVisible({ timeout: 8000 });
+  test('SC-SS-01b: Pre-run state shows "103 endpoints" placeholder', async ({ page }) => {
+    // Before running tests, the page shows: "Tests 103 endpoints"
+    // (totalTests || '103' → '103' before any test run; corrected to match backend/routers/test.py
+    // test_cases count of 103 after v7.6 EPIC-07 ST-07 added GET /ai/monthly-cost (BLG-FEAT-77).
+    // Prior count of 102 was set at v7.5 EPIC-02 ST-02 (price-alerts), EPIC-03 ST-03
+    // (bulk-actions-toolbar), and EPIC-04 ST-04 (saved-filters/daily-pnl).
+    await expect(page.getByText(/tests 103 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-01c: Pre-run state shows prompt to click Run Tests', async ({ page }) => {

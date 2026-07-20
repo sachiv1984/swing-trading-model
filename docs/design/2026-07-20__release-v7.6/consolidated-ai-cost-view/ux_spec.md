@@ -1,10 +1,10 @@
 **Owner:** Head of UX & Design
 **Class:** Design Artefact (Class 5)
 **Status:** Approved
-**Version:** 1.0
+**Version:** 1.1
 **Last Updated:** 2026-07-20
-**Approved by:** Product Owner — 2026-07-20
-**Story:** ST-07 — Add consolidated Gemini + Claude monthly cost summary (EPIC-07, BLG-FEAT-77)
+**Approved by:** Product Owner — 2026-07-20 (v1.0); reframe approved by Product Owner in-session — 2026-07-20 (v1.1, resolving ESC-EXEC-20260720-01)
+**Story:** ST-07 — Add Claude API monthly cost summary (EPIC-07, BLG-FEAT-77) — reframed from "consolidated Gemini + Claude" per v1.1 addendum below
 **Cycle:** 2026-07-20__release-v7.6
 
 ---
@@ -70,7 +70,35 @@ Display-only monitoring figure. No automated decision-making, no trade or positi
 | Loaded | Gemini row, Claude row, Combined Total row (bold, separated) |
 | Error | "AI cost data unavailable" message; rest of Settings page unaffected |
 
+---
+
+## 7. v1.1 Addendum — Single-Provider Reframe (resolves ESC-EXEC-20260720-01)
+
+**Trigger:** During sprint execution, tracing `backend/services/gemini_service.py`'s actual implementation found it calls only the Anthropic Claude API (`_call_claude()`, `MODEL_VERSION = "claude-haiku-4-5"`, `import anthropic`) — there is no Gemini API integration anywhere in this codebase (confirmed: no `GEMINI_API_KEY`, no `google-generativeai` package, no `genai` import). Every thesis-generation call writes to **both** `gemini_audit_log` and `claude_audit_log` for the *same* spend event, not two providers' independent costs. This is independently confirmed by `docs/ops/gemini_cost_tracking.md`'s own H1 heading ("Claude API Cost Tracking") and `docs/ops/claude_cost_review_2026-05.md §1` ("`gemini_audit_log` is the authoritative source for pre-v4.2 Claude API calls"). Implementing §3 as originally specified would have double-counted one real cost stream as two providers' spend in the "Combined Total" — filed as `ESC-EXEC-20260720-01` (Quality trigger) rather than shipped silently.
+
+**Resolution:** Product Owner selected option (a) — single-provider reframe — in-session, 2026-07-20.
+
+**Revised §3.1 Section Card:**
+
+| Element | Content |
+|---------|---------|
+| Icon | `DollarSign` (unchanged) |
+| Title | **"Claude API Usage & Costs"** (was "AI Usage & Costs") |
+| Subtitle/helper text | **"Claude API spend for the current calendar month"** (was "Combined AI provider spend...") |
+
+**Revised §3.2 Fields (read-only, no form controls):**
+
+| Row | Source | Format |
+|-----|--------|--------|
+| Claude API spend (current month) | `GET /ai/monthly-cost` (new endpoint — see below) | `$X.XX`, bold |
+
+The Gemini row and the Combined Total row are removed — there is only one real cost figure to show.
+
+**New endpoint required (supersedes v1.0's "no new endpoint" decision):** v1.0 assumed both provider figures were already exposed by existing endpoints, so no new endpoint was needed for the combine. With only one provider, `POST /ai/check-daily-cost` (daily granularity, side-effecting Telegram alert) is not suitable for a page-load read. `GET /ai/monthly-cost` was added — read-only, no side effects, aggregates `claude_audit_log.cost_usd` for the current calendar month. Contract: `docs/specs/api_contracts/ai_endpoints.md` v1.7 §GET /ai/monthly-cost.
+
+**§4, §3.3, §3.4, §5 (loading/error states, no-save behaviour, data-loading independence, §13 compliance):** unchanged in substance — apply to the single remaining row exactly as they applied to the two-row version.
+
 ## 6. Sign-off
 
-- **Head of UX & Design:** Confirmed — 2026-07-20
-- **Product Owner:** Approved — 2026-07-20
+- **Head of UX & Design:** Confirmed — 2026-07-20 (v1.0); v1.1 reframe confirmed — 2026-07-20
+- **Product Owner:** Approved — 2026-07-20 (v1.0); v1.1 reframe approved — 2026-07-20 (resolves `ESC-EXEC-20260720-01`)
