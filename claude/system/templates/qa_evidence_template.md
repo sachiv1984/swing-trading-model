@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.7
-**Last Updated:** 2026-07-16
+**Version:** 1.8
+**Last Updated:** 2026-07-20
 
 # QA Evidence Template
 
@@ -49,6 +49,7 @@ Last Updated: <date>
 > **Authoring note:** When completing the sign-off block, update all AC table rows from "Pending"/"Awaiting QA" to "Pass" or "Pass with notes" in the same edit. Sign-off block and AC table must be consistent.
 > **Date field requirement:** The `Date:` field must be non-blank before the PR can be opened and before the merge gate runs. Fill in the date when signing off, not at sprint close.
 > **Signer format requirement (v6.3 Phase 4 LL, applied v6.4 post-ship closure):** The `Signed off by:` value must be exactly one of: `Director of Quality`, `Sprint Execution Engine (autonomous class)`, or `Sprint Execution Engine (agent-mediated, <Role Name> role — §X.Y)` (or one of the two delegated-QA aggregate formats below). No other format is compliant — Tier 2 sign-off format flags at Delivery Verification STEP -1.3 are triggered by deviation from these exact strings.
+> **Agent-mediated provenance requirement (v7.5 Phase 4 LL, applied v7.5 post-ship closure):** When Director of Quality sign-off is performed by the engine acting in the Director of Quality role under explicit user direction (rather than by a human), the `Signed off by:` field **must** use `Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)` — not the literal `Director of Quality` string. This makes true signer provenance visible directly in the sign-off field itself rather than relying on cross-referencing `sprint_close.md` prose. The literal `Director of Quality` string is reserved for an actual human sign-off.
 
 - [x] All acceptance criteria verified against canonical spec
 - [x] No unresolved P0 or P1 deviations

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.4
-**Last Updated:** 2026-07-09
+**Version:** 3.5
+**Last Updated:** 2026-07-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -255,7 +255,8 @@ For each merged EPIC, read `qa_evidence_EPIC-xx.md`:
 ### 2.1 Per-Item Review
 
 For each ST item row in the evidence table:
-- `Result` must be `Pass` or `Pass with notes`.
+- `Result` must be `Pass`, `Pass with notes`, or `Staging-deferred (per CLAUDE.md §2 / shared_standards.md §16.11)`.
+- `Staging-deferred (per CLAUDE.md §2 / shared_standards.md §16.11)` is valid only when a backlog item for the deferred staging sign-off was filed pre-PR (confirm the backlog reference is present and traceable). It is not a blocking `Fail` when that condition holds.
 - If `Result = Fail`: verification blocker — record in open items. In `strict` mode: halt immediately. In `standard` mode: continue reviewing remaining EPICs; verification status cannot be `Verified` or `Verified_with_deviations` until resolved.
 
 ### 2.2 Acceptance Criteria Check

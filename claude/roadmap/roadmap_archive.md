@@ -1,13 +1,51 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-17 (post-ship closure 2026-07-17__release-v7.4 — RA:v7.4 retired, partial: 1/1 amended-scope item; 4 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-16 (post-ship closure 2026-07-16__release-v7.3 — RA:v7.3 retired, partial: 3/7 items; 4 unblocked readiness-passed items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — RA:v7.2 retired, partial: 5/8 items; 3 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-14 (post-ship closure 2026-07-14__release-v7.1 — RA:v7.1 retired)
+**Last Updated:** 2026-07-20 (post-ship closure 2026-07-17__release-v7.5 — RA:v7.5 retired, full: 4/4 items shipped as implementations, first full (non-partial) retirement of this Now-horizon lineage since RA:v7.1; §3 Now horizon empty following retirement); prior — 2026-07-17 (post-ship closure 2026-07-17__release-v7.4 — RA:v7.4 retired, partial: 1/1 amended-scope item; 4 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-16 (post-ship closure 2026-07-16__release-v7.3 — RA:v7.3 retired, partial: 3/7 items; 4 unblocked readiness-passed items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — RA:v7.2 retired, partial: 5/8 items; 3 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-14 (post-ship closure 2026-07-14__release-v7.1 — RA:v7.1 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v7.5 — UI Feature Expansion Continuation (full — 4/4 items shipped as implementations)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete (all 4 items shipped this cycle — `BLG-FE-115`, `BLG-FE-116`, `BLG-FE-117`, `BLG-FE-118`)
+**Retired from active roadmap:** 2026-07-20
+**Shipped version:** v7.5
+**Cycle reference:** 2026-07-17__release-v7.5
+**Verification report:** claude/cycles/2026-07-17__release-v7.5/verification_report.md
+**Decision log reference:** N/A
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-07-20
+
+**Note (first full retirement in this lineage since RA:v7.1):** Unlike RA:v7.2/v7.3/v7.4 (each a partial retirement with unblocked-but-unshipped items re-added as a fresh carry-forward entry), all 4 items named in this Now-horizon section shipped as complete implementations this cycle — Design Gate PASSed for all four (closing RISK-01), and the v7.4 structural fix (design-artefact production sequenced as a precursor step, not in-sprint work) held. §3 Now horizon is empty following this retirement; no carry-forward re-add.
+
+### Original Roadmap Entry
+
+### v7.5 — UI Feature Expansion continuation — ✅ Complete (full — see note above) — Shipped 2026-07-20 — cycle: 2026-07-17__release-v7.5
+
+Anchored `2026-07-17` — formalizes the `plan release --version "v7.5"` scope-naming step out-of-band, per the established direct-write pattern (see `decision_log.md` DL-068, DL-071). Unlike the DL-068 precedent, a compliant path now exists (`roadmap_prompt.md` v9.2 STEP 8.1 condition 1b fires on a non-empty-but-unversioned Now horizon via `run roadmap`, closing `BLG-GOV-240`) — this write bypasses that path by explicit PO/session direction, not because no path exists.
+
+Re-added here 2026-07-17 (post-ship closure `2026-07-17__release-v7.4`, STEP 11 `manage roadmap`) after `RA:v7.4`'s partial retirement of the v7.4 label (the readiness-bundle item, `BLG-SPEC-95`, shipped and was retired to archive; these 4 implementation items did not ship and remain active). All 4 items' pre-implementation readiness passes (`BLG-SPEC-91/92/93/94`, v7.3) and the consolidated v7.4 readiness bundle (`BLG-SPEC-95`) are complete — `cmdk`/`react-day-picker` added to `package.json`, both §13 pre-checks PASS (RISK-03 `BLG-FE-116`, RISK-04 `BLG-FE-117`; RISK-05 `BLG-FE-115`/`BLG-FE-118` confirmed PASS at v7.4 Design Gate). No implementation shipped in v7.4 — `AMD-20260717-01` removed all 4 from that cycle's sprint scope pre-seal (Design Gate blocked, no approved design artefact existed or could exist in time). Named as v7.5 anchor scope; firmness and effort to be confirmed at `plan release --version "v7.5"`, subject to a fresh Design Gate pass once real design artefacts exist.
+
+| Feature | ID | Effort | Notes |
+|---|---|---|---|
+| Command palette | BLG-FE-115 | — | ✅ Complete — shipped v7.5, EPIC-01/ST-01, cycle 2026-07-17__release-v7.5 |
+| Custom price alerts | BLG-FE-116 | — | ✅ Complete — shipped v7.5, EPIC-02/ST-02, cycle 2026-07-17__release-v7.5 |
+| Bulk actions | BLG-FE-117 | — | ✅ Complete — shipped v7.5, EPIC-03/ST-03, cycle 2026-07-17__release-v7.5 |
+| Saved filters / calendar view | BLG-FE-118 | — | ✅ Complete — shipped v7.5, EPIC-04/ST-04, cycle 2026-07-17__release-v7.5 |
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-17__release-v7.5
+- Plan published: 2026-07-17
+- Cycle folder: claude/cycles/2026-07-17__release-v7.5/
+- Backlog slice: claude/cycles/2026-07-17__release-v7.5/stage4_backlog_slice.md
+- Status at annotation: Committed
+- All 4 items conditional pending Design Gate (RISK-01) — `run design-gate --cycle 2026-07-17__release-v7.5` required before Sprint Planning seals. (Design Gate subsequently PASSed for all four; see `design_gate.md`.)
 
 ---
 

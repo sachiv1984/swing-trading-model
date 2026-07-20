@@ -1,11 +1,140 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
+**Last Updated:** 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-FE-115 — Global command palette / cross-page search
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-07-20
+**Shipped in:** v7.5
+**Evidence:** claude/cycles/2026-07-17__release-v7.5/verification_report.md (EPIC-01/ST-01); docs/product/changelog.md#v7-5-ui-feature-expansion-continuation-2026-07-20
+
+### BLG-FE-115 — Global command palette / cross-page search
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-16
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v7.5
+
+> ℹ️ **Provisional-Target updated (release planning 2026-07-17, cycle `2026-07-17__release-v7.5`):** v7.4→v7.5. Scoped into v7.5 as conditional (not firm) pending a fresh Design Gate pass — see `release_plan.md` RISK-01. Prior stale-target notice resolved.
+
+**Problem**
+`src/components/ui/command.js` (shadcn Command primitive) exists in the codebase but is never wired up anywhere — no `CommandDialog` usage found repo-wide. Users must navigate via the sidebar to reach any ticker, page, or action, with no cross-page search or keyboard-driven navigation.
+
+**Scope**
+- Wire a global Cmd/Ctrl-K command palette accessible from any page
+- Search across Watchlist/Positions/TradePlans tickers with navigation on select
+- Include page navigation and common actions (e.g. add ticker, new trade plan) as palette entries
+
+**Acceptance Criteria**
+- Cmd/Ctrl-K opens the palette from any page in the app
+- Typing a ticker surfaces matches across Watchlist/Positions/TradePlans and navigates to the selected result
+- Typing a page name navigates to that page
+
+---
+
+### BLG-FE-116 — User-defined custom price alerts
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-07-20
+**Shipped in:** v7.5
+**Evidence:** claude/cycles/2026-07-17__release-v7.5/verification_report.md (EPIC-02/ST-02); docs/product/changelog.md#v7-5-ui-feature-expansion-continuation-2026-07-20
+
+### BLG-FE-116 — User-defined custom price alerts
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner; Backend Engineering Patterns Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-16
+**Effort:** L (~3–5 days)
+**Provisional-Target:** v7.5
+
+> ℹ️ **Provisional-Target updated (release planning 2026-07-17, cycle `2026-07-17__release-v7.5`):** v7.4→v7.5. Scoped into v7.5 as conditional (not firm) pending a fresh Design Gate pass, with design-artefact production sequenced as a precursor step outside sprint-execution scope this time — see `release_plan.md` RISK-01/RISK-03. Prior stale-target notice resolved.
+
+**Problem**
+`NotificationPreferences.js` currently supports only 4 hardcoded system-generated alert types (`stop_loss_approach`, `grace_period_warning`, `market_regime_change`, `daily_portfolio_summary`). There is no way for the user to define an arbitrary alert such as "notify me when TICKER crosses $X" — a baseline expectation in trading tools.
+
+**Scope**
+- Add a user-created price-alert data model (ticker, condition, threshold, active flag)
+- Add UI to create, view, edit, and delete these alerts
+- Feed triggered alerts into the existing notification delivery pipeline
+
+**Acceptance Criteria**
+- User can create a ticker/condition/threshold alert from the UI
+- Alert fires via the existing notification delivery channel when its condition is met
+- User can view, edit, and delete active alerts
+
+---
+
+### BLG-FE-117 — Bulk actions on list/table views
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-07-20
+**Shipped in:** v7.5
+**Evidence:** claude/cycles/2026-07-17__release-v7.5/verification_report.md (EPIC-03/ST-03); docs/product/changelog.md#v7-5-ui-feature-expansion-continuation-2026-07-20
+
+### BLG-FE-117 — Bulk actions on list/table views
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-16
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v7.5
+
+> ℹ️ **Provisional-Target updated (release planning 2026-07-17, cycle `2026-07-17__release-v7.5`):** v7.4→v7.5. Scoped into v7.5 as conditional (not firm) pending a fresh Design Gate pass — see `release_plan.md` RISK-01. Prior stale-target notice resolved.
+
+**Problem**
+Watchlist, Positions, and TradePlans tables only support per-row actions (e.g. `WatchlistRowActions.js`). No multi-select exists to tag, archive, or remove multiple items at once, forcing repetitive one-at-a-time interactions for routine list maintenance.
+
+**Scope**
+- Add row multi-select checkboxes to Watchlist and TradePlans tables
+- Add a bulk-action toolbar (tag, archive, remove) that appears when rows are selected
+
+**Acceptance Criteria**
+- Rows in Watchlist and TradePlans tables are multi-selectable
+- A bulk-action toolbar appears once one or more rows are selected
+- Bulk tag/archive/remove operations apply to all selected rows in a single action
+
+---
+
+### BLG-FE-118 — Saved filter views and calendar view
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-07-20
+**Shipped in:** v7.5
+**Evidence:** claude/cycles/2026-07-17__release-v7.5/verification_report.md (EPIC-04/ST-04); docs/product/changelog.md#v7-5-ui-feature-expansion-continuation-2026-07-20
+
+### BLG-FE-118 — Saved filter views and calendar view
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-16
+**Effort:** L (~3–5 days)
+**Provisional-Target:** v7.5
+
+> ℹ️ **Provisional-Target updated (release planning 2026-07-17, cycle `2026-07-17__release-v7.5`):** v7.4→v7.5. Scoped into v7.5 as conditional (not firm) pending a fresh Design Gate pass — see `release_plan.md` RISK-01. Prior stale-target notice resolved.
+
+**Problem**
+Screener/TradeHistory/Watchlist filter state resets every session with no way to save a named filter combination for reuse. Separately, there is no calendar-based view of trade plan dates, earnings dates, or expirations, despite a `calendar.js` UI primitive already existing in `src/components/ui` (currently only used inside date pickers).
+
+**Scope**
+- Add named, saved filter presets per list view (Screener, TradeHistory, Watchlist)
+- Add a calendar page/widget surfacing trade plan dates and other key dates
+
+**Acceptance Criteria**
+- User can save a filter combination by name and reapply it in a later session
+- A calendar view renders trade plan dates and key dates, navigable by month
 
 ---
 

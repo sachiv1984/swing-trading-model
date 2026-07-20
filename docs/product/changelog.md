@@ -3,9 +3,36 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-17 (post-ship closure 2026-07-17__release-v7.4)
+**Last Updated:** 2026-07-20 (post-ship closure 2026-07-17__release-v7.5)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v7.5 — UI Feature Expansion Continuation — 2026-07-20
+Cycle: 2026-07-17__release-v7.5
+Verified: Verified
+Verification report: claude/cycles/2026-07-17__release-v7.5/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Global Cmd/Ctrl-K command palette — cross-page ticker/entity search and page navigation, wired to the existing shadcn `Command` primitive | `docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md`; `docs/specs/frontend/pages/navigation.md` |
+| EPIC-02 | User-defined custom price alerts — data model, UI, and delivery integration via the existing notification channel | `docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md`; `docs/specs/frontend/pages/notifications.md`; `docs/specs/api_contracts/alerts_endpoints.md`; `docs/specs/data_model.md` |
+| EPIC-03 | Bulk actions toolbar — multi-select and bulk tag/archive/remove on Watchlist and Trade Plans | `docs/design/2026-07-17__release-v7.5/bulk-actions-toolbar/ux_spec.md`; `docs/specs/frontend/pages/watchlist.md`; `docs/specs/frontend/pages/trade_plan.md`; `docs/specs/api_contracts/watchlist_endpoints.md`; `docs/specs/api_contracts/trade_plan_endpoints.md` |
+| EPIC-04 | Named saved filter presets and a calendar view on Trade History | `docs/design/2026-07-17__release-v7.5/saved-filters-calendar-view/ux_spec.md`; `docs/specs/frontend/pages/trade_history.md`; `docs/specs/api_contracts/saved_filters_endpoints.md`; `docs/specs/api_contracts/reports_endpoints.md` |
+
+### Deviations accepted
+None.
+
+### Tech backlog items shipped
+- [ST-01] [U] BLG-FE-115: Global command palette / cross-page search
+- [ST-02] [U] BLG-FE-116: User-defined custom price alerts
+- [ST-03] [U] BLG-FE-117: Bulk actions on list/table views
+- [ST-04] [U] BLG-FE-118: Saved filter views and calendar view
+
+Sign-off: Product Owner — 2026-07-20
+QA sign-off: Director of Quality — 2026-07-20
 
 ---
 

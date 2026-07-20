@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v7.5
 Cycle: 2026-07-17__release-v7.5
-Last Updated: 2026-07-17
+Last Updated: 2026-07-20
+
+Superseded by: v7.5 ship — 2026-07-20
+Changelog: docs/product/changelog.md#v7-5-ui-feature-expansion-continuation-2026-07-20
+Verification report: claude/cycles/2026-07-17__release-v7.5/verification_report.md
+Cycle: 2026-07-17__release-v7.5
 
 ## Release Scope — v7.5 UI Feature Expansion Continuation
 
