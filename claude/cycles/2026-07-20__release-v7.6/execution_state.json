@@ -242,34 +242,40 @@
       }
     },
     "EPIC-08": {
-      "status": "not_started",
-      "branch": null,
+      "status": "done",
+      "branch": "exec/2026-07-20__release-v7.6/EPIC-08",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-20__release-v7.6/qa_evidence_EPIC-08.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/test_ticker_market_sanitization_regression.py", "tests/test_signal_write_sanitization.py", "tests/test_ai_chat_schema.py"],
       "stories": {
         "ST-08": {
           "title": "Add standing regression suite for ticker/market input sanitisation",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
-          "branch": null,
-          "commit_sha": null,
+          "github_issue": 1027,
+          "branch": "exec/2026-07-20__release-v7.6/EPIC-08",
+          "commit_sha": "b097a1ba97b8e2d67799b9b9dd4923a4fcdcef33",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-07-20T21:20:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["tests/test_ticker_market_sanitization_regression.py"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Sole deliverable is a new pytest suite (Case C) — spec_references will be set to the created test file path at execution. Director of Quality sign-off named explicitly in AC."
+          "deviations_filed": true,
+          "last_completed_substep": "3.2.A.qa_evidence_signed",
+          "sign_off_record": {
+            "required_by": "Director of Quality",
+            "method": "autonomous_class",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-07-20T21:25:00Z"
+          },
+          "notes": "Found both underlying fixes (BLG-SEC-01/02) already have thorough dedicated test coverage (test_signal_write_sanitization.py, test_ai_chat_schema.py) that already runs on every PR unconditionally (ci-tests.yml Phase B: pytest tests/, no path filter -- confirmed by reading the workflow, not assumed). Consolidated all 4 paths into one dedicated, discoverable regression-suite file (Case C) per AC's 'consolidating' wording, without duplicating the existing exhaustive coverage. 7/7 tests pass locally. No CI config change needed -- AC's CI-trigger requirement already satisfied by the existing unconditional Phase B run, which is a superset of 'every PR touching signal_service.py/database.py/ai_service.py'. No deviation from canonical spec (this item's own new test file) -- spec_references IS the created artefact per Case C."
         }
       }
     }
@@ -277,7 +283,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01"],
+  "completed_items": ["ST-01", "ST-08"],
   "open_escalations": [],
 
   "merge_gate": {
