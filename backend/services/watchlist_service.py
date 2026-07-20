@@ -19,12 +19,33 @@ Data model: docs/specs/data_model.md §11 (watchlist table, migration v2.0→v2.
 """
 
 import logging
+import re
 from typing import Dict, List, Optional
 import yfinance as yf
 
 from database import get_db, get_portfolio
 
 logger = logging.getLogger(__name__)
+
+# Tag rules — journal_components.md §3/§4 pattern, reused for watchlist.tags
+# (ST-03, BLG-FE-117, EPIC-03, v7.5). Watchlist entries have no pre-existing
+# tags concept; this bulk-tag feature introduces the column.
+_TAG_MAX_LENGTH = 20
+_TAG_MAX_COUNT = 10
+_TAG_PATTERN = re.compile(r"^[a-z0-9-]+$")
+_BULK_MAX_IDS = 100
+
+
+def _validate_tags(tags: Optional[List[str]]) -> List[str]:
+    """Lowercase, alphanumeric+hyphen, max 20 chars, max 10 tags, deduped."""
+    if not tags:
+        return []
+    validated: List[str] = []
+    for tag in tags:
+        clean = (tag or "").strip().lower()
+        if clean and len(clean) <= _TAG_MAX_LENGTH and _TAG_PATTERN.match(clean) and clean not in validated:
+            validated.append(clean)
+    return validated[:_TAG_MAX_COUNT]
 
 
 def _fetch_and_store_company_name(ticker: str, market: str) -> None:
@@ -82,6 +103,12 @@ def ensure_watchlist_table() -> None:
                 CREATE INDEX IF NOT EXISTS idx_watchlist_ticker
                     ON watchlist (ticker)
             """)
+            # ST-03 (BLG-FE-117, v7.5): tags column for the new Bulk Tag action
+            # (data_model.md v2.13->v2.14). No single-item tag UI is added —
+            # only bulk-tag, per the locked bulk-actions-toolbar/ux_spec.md.
+            cur.execute("""
+                ALTER TABLE watchlist ADD COLUMN IF NOT EXISTS tags TEXT[] NOT NULL DEFAULT '{}'
+            """)
 
 
 # ---------------------------------------------------------------------------
@@ -99,6 +126,7 @@ def _row_to_dict(row) -> Dict:
         "market": row["market"],
         "company_name": row.get("company_name") or None,
         "signal_status": row["signal_status"],
+        "tags": list(row["tags"]) if row.get("tags") is not None else [],
         "target_entry_price": float(row["target_entry_price"]) if row["target_entry_price"] is not None else None,
         "initial_stop_price": float(row["initial_stop_price"]) if row["initial_stop_price"] is not None else None,
         "current_stop_price": float(row["current_stop_price"]) if row["current_stop_price"] is not None else None,
@@ -128,6 +156,7 @@ def get_watchlist(portfolio_id: str) -> List[Dict]:
                     w.target_entry_price,
                     w.initial_stop_price,
                     w.current_stop_price,
+                    w.tags,
                     w.created_at,
                     w.updated_at,
                     tu.company_name,
@@ -279,3 +308,79 @@ def delete_watchlist_entry(portfolio_id: str, entry_id: str) -> Dict:
                 raise LookupError(f"Watchlist entry '{entry_id}' not found")
 
     return {"id": entry_id, "deleted": True}
+
+
+# ---------------------------------------------------------------------------
+# Bulk actions (ST-03, BLG-FE-117, EPIC-03, v7.5)
+# ---------------------------------------------------------------------------
+
+def get_all_watchlist_tags(portfolio_id: str) -> List[str]:
+    """Unique tags across all watchlist entries, for autocomplete (mirrors GET /trade-plans/tags)."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT DISTINCT unnest(tags) AS tag FROM watchlist WHERE portfolio_id = %s ORDER BY tag",
+                (portfolio_id,),
+            )
+            return [r["tag"] for r in cur.fetchall()]
+
+
+def bulk_tag_watchlist(portfolio_id: str, ids: List[str], tags: List[str]) -> Dict:
+    """
+    Add tags to each selected watchlist entry's existing tag set (union, not replace).
+    Returns {succeeded: [ids], failed: [{id, reason}]} per readiness-pass AC-01 shape.
+    """
+    if not ids:
+        raise ValueError("ids must be a non-empty array")
+    if len(ids) > _BULK_MAX_IDS:
+        raise ValueError(f"ids exceeds the maximum batch size ({_BULK_MAX_IDS})")
+    validated_tags = _validate_tags(tags)
+
+    succeeded, failed = [], []
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            for entry_id in ids:
+                cur.execute(
+                    "SELECT tags FROM watchlist WHERE id = %s AND portfolio_id = %s",
+                    (entry_id, portfolio_id),
+                )
+                row = cur.fetchone()
+                if not row:
+                    failed.append({"id": entry_id, "reason": "not_found"})
+                    continue
+                existing = list(row["tags"]) if row.get("tags") else []
+                merged = existing[:]
+                for t in validated_tags:
+                    if t not in merged:
+                        merged.append(t)
+                merged = merged[:_TAG_MAX_COUNT]
+                cur.execute(
+                    "UPDATE watchlist SET tags = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s AND portfolio_id = %s",
+                    (merged, entry_id, portfolio_id),
+                )
+                succeeded.append(entry_id)
+
+    return {"succeeded": succeeded, "failed": failed}
+
+
+def bulk_delete_watchlist(portfolio_id: str, ids: List[str]) -> Dict:
+    """Remove each selected watchlist entry. Returns {succeeded, failed} per-row."""
+    if not ids:
+        raise ValueError("ids must be a non-empty array")
+    if len(ids) > _BULK_MAX_IDS:
+        raise ValueError(f"ids exceeds the maximum batch size ({_BULK_MAX_IDS})")
+
+    succeeded, failed = [], []
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            for entry_id in ids:
+                cur.execute(
+                    "DELETE FROM watchlist WHERE id = %s AND portfolio_id = %s RETURNING id",
+                    (entry_id, portfolio_id),
+                )
+                if cur.fetchone() is None:
+                    failed.append({"id": entry_id, "reason": "not_found"})
+                else:
+                    succeeded.append(entry_id)
+
+    return {"succeeded": succeeded, "failed": failed}

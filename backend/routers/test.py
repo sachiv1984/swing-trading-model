@@ -222,6 +222,21 @@ async def test_all_endpoints(request: Request):
         # AI rate limit 429 scenario verification (v6.3 / EPIC-01 ST-03)
         {"name": "POST /test/rate-limit-scenarios", "method": "POST", "url": f"{base_url}/test/rate-limit-scenarios", "critical": False},
 
+        # Custom Price Alerts (v7.5 / EPIC-02 ST-02, BLG-FE-116)
+        {"name": "GET /price-alerts", "method": "GET", "url": f"{base_url}/price-alerts", "critical": False},
+        {"name": "POST /price-alerts", "method": "POST", "url": f"{base_url}/price-alerts", "body": {"ticker": "AAPL", "condition": "above", "threshold_price": 1.0}, "critical": False},
+        {"name": "DELETE /price-alerts/00000000-0000-0000-0000-000000000000", "method": "DELETE", "url": f"{base_url}/price-alerts/00000000-0000-0000-0000-000000000000", "critical": False},
+
+        # Bulk Actions Toolbar — Watchlist (v7.5 / EPIC-03 ST-03, BLG-FE-117)
+        {"name": "GET /watchlist/tags", "method": "GET", "url": f"{base_url}/watchlist/tags", "critical": False},
+        {"name": "POST /watchlist/bulk-tag", "method": "POST", "url": f"{base_url}/watchlist/bulk-tag", "body": {"ids": [], "tags": ["momentum"]}, "critical": False},
+        {"name": "DELETE /watchlist/bulk", "method": "DELETE", "url": f"{base_url}/watchlist/bulk", "body": {"ids": []}, "critical": False},
+
+        # Bulk Actions Toolbar — Trade Plans (v7.5 / EPIC-03 ST-03, BLG-FE-117)
+        {"name": "POST /trade-plans/bulk-tag", "method": "POST", "url": f"{base_url}/trade-plans/bulk-tag", "body": {"ids": [], "tags": ["momentum"]}, "critical": False},
+        {"name": "PUT /trade-plans/bulk-archive", "method": "PUT", "url": f"{base_url}/trade-plans/bulk-archive", "body": {"ids": []}, "critical": False},
+        {"name": "DELETE /trade-plans/bulk", "method": "DELETE", "url": f"{base_url}/trade-plans/bulk", "body": {"ids": []}, "critical": False},
+
         # Saved Filters & Daily P&L — Calendar View (v7.5 / EPIC-04 ST-04, BLG-FE-118)
         {"name": "GET /reports/daily-pnl", "method": "GET", "url": f"{base_url}/reports/daily-pnl?year=2026&month=7", "critical": False},
         {"name": "GET /saved-filters", "method": "GET", "url": f"{base_url}/saved-filters", "critical": False},
@@ -257,8 +272,14 @@ async def test_all_endpoints(request: Request):
                     response = await client.get(test["url"], headers=forward_headers)
                 elif test["method"] == "POST":
                     response = await client.post(test["url"], json=test.get("body", {}), headers=forward_headers)
+                elif test["method"] == "PUT":
+                    response = await client.put(test["url"], json=test.get("body", {}), headers=forward_headers)
+                elif test["method"] == "PATCH":
+                    response = await client.patch(test["url"], json=test.get("body", {}), headers=forward_headers)
                 elif test["method"] == "DELETE":
-                    response = await client.delete(test["url"], headers=forward_headers)
+                    response = await client.request(
+                        "DELETE", test["url"], json=test.get("body", {}), headers=forward_headers
+                    )
                 else:
                     raise ValueError(f"Unsupported method: {test['method']}")
                 

@@ -56,7 +56,7 @@ _last_db_size_alert_utc: Optional[datetime] = None
 # Nightly job last-run status (ST-13, BLG-OPS-79).
 # Updated by each nightly computation endpoint on completion.
 # Resets on process restart (Render spins up a fresh process on each deploy).
-_NIGHTLY_JOB_NAMES = ("trailing_stop", "rebalance_exit", "inv_vol_sizing")
+_NIGHTLY_JOB_NAMES = ("trailing_stop", "rebalance_exit", "inv_vol_sizing", "custom_price_alerts")
 _nightly_job_status: Dict = {
     job: {
         "last_run_utc": None,
@@ -459,7 +459,8 @@ def get_scheduler_health() -> Dict:
     Trigger mechanism: GitHub Actions external cron (not an in-process scheduler).
     Jobs: trailing_stop (POST /positions/nightly-stop-update),
           rebalance_exit (POST /signals/rebalance-exit),
-          inv_vol_sizing (co-invoked by rebalance-exit or manual trigger).
+          inv_vol_sizing (co-invoked by rebalance-exit or manual trigger),
+          custom_price_alerts (co-invoked by POST /alerts/evaluate, ST-02/BLG-FE-116).
     Status resets on process restart — Render spins up a fresh process on each deploy.
     """
     jobs = {}
@@ -477,6 +478,7 @@ def get_scheduler_health() -> Dict:
             "trailing_stop": "POST /positions/nightly-stop-update",
             "rebalance_exit": "POST /signals/rebalance-exit",
             "inv_vol_sizing": "co-invoked by rebalance-exit",
+            "custom_price_alerts": "co-invoked by POST /alerts/evaluate",
         },
         "overall_status": "ok" if all_ok else "degraded",
         "jobs": jobs,

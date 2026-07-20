@@ -4,6 +4,7 @@ import { cn } from "../../lib/utils";
 import { SignalBadge, MarketBadge, priceDisplay, WatchlistEarningsBadge } from "./WatchlistBadges";
 import WatchlistRowActions from "./WatchlistRowActions";
 import WatchlistNewsRow from "./WatchlistNewsRow";
+import { Checkbox } from "../ui/checkbox";
 
 function NewsToggleCell({ entry, isExpanded, onToggle }) {
   if (entry.market !== "US") return <span className="text-slate-600 text-xs">—</span>;
@@ -25,12 +26,19 @@ NewsToggleCell.propTypes = {
 };
 
 export default function WatchlistRow({
-  entry, isRemoving, hasResearch, isNewsExpanded, newsState,
+  entry, isRemoving, hasResearch, isNewsExpanded, newsState, isSelected, onToggleSelect,
   onEdit, onToggleNews, onCloseNews, onResearch, onAddToPosition, onDeleteConfirm,
 }) {
   return (
     <>
-      <tr className={cn("transition-all duration-200", isRemoving ? "opacity-0" : "opacity-100")}>
+      <tr className={cn(
+        "transition-all duration-200",
+        isRemoving ? "opacity-0" : "opacity-100",
+        isSelected && "bg-cyan-500/5"
+      )}>
+        <td className="px-5 py-4">
+          <Checkbox checked={isSelected} onCheckedChange={onToggleSelect} aria-label={`Select ${entry.ticker}`} />
+        </td>
         <td className="px-5 py-4">
           <button onClick={onEdit} className="text-left group">
             <span className="block text-cyan-400 group-hover:text-cyan-300 font-semibold text-sm transition-colors">
@@ -82,6 +90,8 @@ WatchlistRow.propTypes = {
   hasResearch: PropTypes.bool,
   isNewsExpanded: PropTypes.bool,
   newsState: PropTypes.shape({ loading: PropTypes.bool, headlines: PropTypes.array }),
+  isSelected: PropTypes.bool,
+  onToggleSelect: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
   onToggleNews: PropTypes.func.isRequired,
   onCloseNews: PropTypes.func.isRequired,

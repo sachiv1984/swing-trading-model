@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 export default function WatchlistNewsRow({ ticker, newsState, onClose }) {
   return (
     <tr className="bg-slate-800/40">
-      <td colSpan={9} className="px-6 py-3">
+      <td colSpan={10} className="px-6 py-3">
         {newsState?.loading ? (
           <p className="text-slate-600 dark:text-slate-400 text-xs animate-pulse">Loading headlines…</p>
         ) : newsState?.headlines?.length > 0 ? (

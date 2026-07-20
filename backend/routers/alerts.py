@@ -28,6 +28,9 @@ from services.alerts_service import (
     get_preferences,
     update_preferences,
     deliver_notification,
+    get_price_alerts,
+    create_price_alert,
+    delete_price_alert,
     ALERT_TYPES,
 )
 
@@ -78,6 +81,19 @@ class UpdateAlertRuleRequest(BaseModel):
     def validate_threshold(cls, v):
         if v is not None and not (0 < v <= 100):
             raise ValueError("threshold_percent must be > 0 and <= 100")
+        return v
+
+
+class CreatePriceAlertRequest(BaseModel):
+    ticker: str
+    condition: str
+    threshold_price: float
+
+    @field_validator("condition")
+    @classmethod
+    def validate_condition(cls, v):
+        if v not in ("above", "below"):
+            raise ValueError("condition must be 'above' or 'below'")
         return v
 
 
@@ -154,6 +170,67 @@ def delete_alert_rule_endpoint(rule_id: str):
     try:
         portfolio_id = _get_portfolio_id()
         result = delete_alert_rule(portfolio_id, rule_id)
+        return {"status": "ok", "data": result}
+    except HTTPException:
+        raise
+    except LookupError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ---------------------------------------------------------------------------
+# Custom Price Alerts (ST-02, BLG-FE-116, EPIC-02, v7.5)
+# Contract: docs/specs/api_contracts/alerts_endpoints.md §Custom Price Alerts
+# ---------------------------------------------------------------------------
+
+@router.get("/price-alerts")
+def get_price_alerts_endpoint():
+    """
+    Return all custom price alerts for the portfolio, most recently created first.
+    Contract: alerts_endpoints.md §GET /price-alerts
+    """
+    try:
+        portfolio_id = _get_portfolio_id()
+        data = get_price_alerts(portfolio_id)
+        return {"status": "ok", "data": data}
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/price-alerts")
+def create_price_alert_endpoint(request: CreatePriceAlertRequest):
+    """
+    Create a custom price alert. Returns 400 for invalid input or when the
+    per-portfolio active-alert cap (50) is exceeded.
+    Contract: alerts_endpoints.md §POST /price-alerts
+    """
+    try:
+        portfolio_id = _get_portfolio_id()
+        alert = create_price_alert(portfolio_id, request.model_dump())
+        return {"status": "ok", "data": alert}
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/price-alerts/{alert_id}")
+def delete_price_alert_endpoint(alert_id: str):
+    """
+    Delete a custom price alert.
+    Contract: alerts_endpoints.md §DELETE /price-alerts/{id}
+    """
+    try:
+        portfolio_id = _get_portfolio_id()
+        result = delete_price_alert(portfolio_id, alert_id)
         return {"status": "ok", "data": result}
     except HTTPException:
         raise

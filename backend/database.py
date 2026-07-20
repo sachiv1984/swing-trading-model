@@ -1166,6 +1166,111 @@ def get_trade_plans_by_position(position_id: str, portfolio_id: str) -> list:
             return [dict(r) for r in cur.fetchall()]
 
 
+_TRADE_PLAN_BULK_MAX_IDS = 100
+
+
+def bulk_tag_trade_plans(portfolio_id: str, ids: list, tags: list) -> dict:
+    """
+    Add tags to each selected trade plan's existing trade_tags (union, not replace).
+    Returns {succeeded: [ids], failed: [{id, reason}]} (ST-03, BLG-FE-117, EPIC-03, v7.5).
+    Caller (router) is responsible for validating/cleaning `tags` via _validate_trade_tags.
+    """
+    if not ids:
+        raise ValueError("ids must be a non-empty array")
+    if len(ids) > _TRADE_PLAN_BULK_MAX_IDS:
+        raise ValueError(f"ids exceeds the maximum batch size ({_TRADE_PLAN_BULK_MAX_IDS})")
+
+    succeeded, failed = [], []
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            for plan_id in ids:
+                cur.execute(
+                    "SELECT trade_tags FROM trade_plans WHERE id = %s AND portfolio_id = %s",
+                    (plan_id, portfolio_id),
+                )
+                row = cur.fetchone()
+                if not row:
+                    failed.append({"id": plan_id, "reason": "not_found"})
+                    continue
+                existing = list(row["trade_tags"]) if row.get("trade_tags") else []
+                merged = existing[:]
+                for t in tags:
+                    if t not in merged:
+                        merged.append(t)
+                merged = merged[:10]
+                cur.execute(
+                    "UPDATE trade_plans SET trade_tags = %s, updated_at = NOW() WHERE id = %s AND portfolio_id = %s",
+                    (merged, plan_id, portfolio_id),
+                )
+                succeeded.append(plan_id)
+        conn.commit()
+
+    return {"succeeded": succeeded, "failed": failed}
+
+
+def bulk_archive_trade_plans(portfolio_id: str, ids: list, abandonment_reason: str) -> dict:
+    """
+    Archive (abandon) each selected trade plan. Plans with status='active' are
+    excluded (mirrors the single-item Abandon button's hide rule, trade_plan.md
+    §8.1) and reported in `failed` with reason 'active_status_excluded'.
+    Returns {succeeded: [ids], failed: [{id, reason}]}.
+    """
+    if not ids:
+        raise ValueError("ids must be a non-empty array")
+    if len(ids) > _TRADE_PLAN_BULK_MAX_IDS:
+        raise ValueError(f"ids exceeds the maximum batch size ({_TRADE_PLAN_BULK_MAX_IDS})")
+
+    succeeded, failed = [], []
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            for plan_id in ids:
+                cur.execute(
+                    "SELECT status FROM trade_plans WHERE id = %s AND portfolio_id = %s",
+                    (plan_id, portfolio_id),
+                )
+                row = cur.fetchone()
+                if not row:
+                    failed.append({"id": plan_id, "reason": "not_found"})
+                    continue
+                if row["status"] == "active":
+                    failed.append({"id": plan_id, "reason": "active_status_excluded"})
+                    continue
+                cur.execute(
+                    """UPDATE trade_plans
+                       SET status = 'abandoned', abandonment_reason = %s, updated_at = NOW()
+                       WHERE id = %s AND portfolio_id = %s""",
+                    (abandonment_reason, plan_id, portfolio_id),
+                )
+                succeeded.append(plan_id)
+        conn.commit()
+
+    return {"succeeded": succeeded, "failed": failed}
+
+
+def bulk_delete_trade_plans(portfolio_id: str, ids: list) -> dict:
+    """Delete each selected trade plan. Returns {succeeded, failed} per-row."""
+    if not ids:
+        raise ValueError("ids must be a non-empty array")
+    if len(ids) > _TRADE_PLAN_BULK_MAX_IDS:
+        raise ValueError(f"ids exceeds the maximum batch size ({_TRADE_PLAN_BULK_MAX_IDS})")
+
+    succeeded, failed = [], []
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            for plan_id in ids:
+                cur.execute(
+                    "DELETE FROM trade_plans WHERE id = %s AND portfolio_id = %s RETURNING id",
+                    (plan_id, portfolio_id),
+                )
+                if cur.fetchone() is None:
+                    failed.append({"id": plan_id, "reason": "not_found"})
+                else:
+                    succeeded.append(plan_id)
+        conn.commit()
+
+    return {"succeeded": succeeded, "failed": failed}
+
+
 def get_unlinked_trade_plan_for_entry(portfolio_id: str, ticker: str, market: str) -> Optional[Dict]:
     """Find the most recent not-yet-linked trade plan for a ticker/market (BLG-BE-46).
 

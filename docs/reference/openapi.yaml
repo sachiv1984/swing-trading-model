@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.11.0
+  version: 3.12.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -1003,6 +1003,97 @@ paths:
       responses:
         "200":
           description: Alert rule deleted
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          deleted:
+                            type: boolean
+                            example: true
+                          id:
+                            type: string
+                            format: uuid
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /price-alerts:
+    get:
+      tags: [Alerts]
+      summary: List custom price alerts
+      description: >
+        Return all custom price alerts for the portfolio, most recently created first.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.5.
+      responses:
+        "200":
+          description: Custom price alerts list
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/PriceAlert"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags: [Alerts]
+      summary: Create custom price alert
+      description: >
+        Create a user-defined ticker/condition/threshold price alert. Returns 400 if the
+        per-portfolio active-alert cap (50) is exceeded. Canonical contract:
+        docs/specs/api_contracts/alerts_endpoints.md v0.5.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePriceAlertRequest"
+      responses:
+        "200":
+          description: Price alert created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/PriceAlert"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /price-alerts/{id}:
+    delete:
+      tags: [Alerts]
+      summary: Delete custom price alert
+      description: >
+        Delete a custom price alert (active or already-triggered).
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.5.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Price alert deleted
           content:
             application/json:
               schema:
@@ -3370,6 +3461,87 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /watchlist/tags:
+    get:
+      tags: [Watchlist]
+      summary: List unique watchlist tags (autocomplete)
+      description: |
+        Returns unique tags across all watchlist entries, for the Bulk Tag autocomplete.
+        Canonical contract: docs/specs/api_contracts/watchlist_endpoints.md v1.1 §GET /watchlist/tags
+      responses:
+        "200":
+          description: Unique tags list
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data: { type: array, items: { type: string } }
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /watchlist/bulk-tag:
+    post:
+      tags: [Watchlist]
+      summary: Bulk-tag watchlist entries
+      description: |
+        Adds tags to each selected watchlist entry's existing tag set (union, not replace).
+        Canonical contract: docs/specs/api_contracts/watchlist_endpoints.md v1.1 §POST /watchlist/bulk-tag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkTagRequest"
+      responses:
+        "200":
+          description: Bulk-tag result
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/BulkActionResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /watchlist/bulk:
+    delete:
+      tags: [Watchlist]
+      summary: Bulk-delete watchlist entries
+      description: |
+        Removes each selected watchlist entry in a single call.
+        Canonical contract: docs/specs/api_contracts/watchlist_endpoints.md v1.1 §DELETE /watchlist/bulk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkIdsRequest"
+      responses:
+        "200":
+          description: Bulk-delete result
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/BulkActionResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /watchlist/{entry_id}:
     delete:
       tags: [Watchlist]
@@ -3444,6 +3616,42 @@ components:
         data:
           description: Payload varies by endpoint.
           type: object
+
+    BulkTagRequest:
+      type: object
+      description: Shared shape for bulk-tag endpoints (ST-03, BLG-FE-117, EPIC-03, v7.5). Max 100 ids per call.
+      required: [ids, tags]
+      properties:
+        ids:
+          type: array
+          items: { type: string, format: uuid }
+        tags:
+          type: array
+          items: { type: string }
+
+    BulkIdsRequest:
+      type: object
+      description: Shared shape for bulk-delete/bulk-archive endpoints (ST-03, BLG-FE-117, EPIC-03, v7.5). Max 100 ids per call.
+      required: [ids]
+      properties:
+        ids:
+          type: array
+          items: { type: string, format: uuid }
+
+    BulkActionResult:
+      type: object
+      description: Per-readiness-pass AC-01 shape — every batch mutation returns this, never a single opaque error.
+      properties:
+        succeeded:
+          type: array
+          items: { type: string, format: uuid }
+        failed:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string, format: uuid }
+              reason: { type: string, example: not_found }
 
     SavedFilter:
       type: object
@@ -3521,6 +3729,46 @@ components:
           nullable: true
           description: Only applicable for stop_loss_approach. Must be > 0 and <= 100.
 
+    PriceAlert:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ticker:
+          type: string
+        condition:
+          type: string
+          enum: [above, below]
+        threshold_price:
+          type: number
+        active:
+          type: boolean
+        triggered_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreatePriceAlertRequest:
+      type: object
+      required: [ticker, condition, threshold_price]
+      properties:
+        ticker:
+          type: string
+          description: 1-10 alphanumeric characters, uppercased server-side.
+        condition:
+          type: string
+          enum: [above, below]
+        threshold_price:
+          type: number
+          description: Must be > 0.
+
     AlertEvaluationResult:
       type: object
       properties:
@@ -3534,6 +3782,20 @@ components:
           type: integer
         evaluations_persisted:
           type: integer
+        custom_price_alerts:
+          type: object
+          description: Summary of the custom price alert evaluation step (ST-02, BLG-FE-116, v7.5).
+          properties:
+            evaluated:
+              type: integer
+            triggered:
+              type: integer
+            errors:
+              type: integer
+            notifications_created:
+              type: integer
+            delivery_tasks_enqueued:
+              type: integer
 
     AlertEvaluationRecord:
       type: object
@@ -5137,6 +5399,98 @@ components:
                     type: array
                     items:
                       type: string
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /trade-plans/bulk-tag:
+    post:
+      tags: [Trade Plans]
+      summary: Bulk-tag trade plans
+      description: |
+        Adds tags to each selected trade plan's existing trade_tags (union, not replace).
+        Canonical contract: docs/specs/api_contracts/trade_plan_endpoints.md v0.7 §POST /trade-plans/bulk-tag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkTagRequest"
+      responses:
+        "200":
+          description: Bulk-tag result
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/BulkActionResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /trade-plans/bulk-archive:
+    put:
+      tags: [Trade Plans]
+      summary: Bulk-archive (abandon) trade plans
+      description: |
+        Abandons each selected trade plan, reusing the existing single-plan abandonment
+        transition (§8). Plans with status='active' are excluded and reported in `failed`
+        with reason 'active_status_excluded'.
+        Canonical contract: docs/specs/api_contracts/trade_plan_endpoints.md v0.7 §PUT /trade-plans/bulk-archive
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkIdsRequest"
+      responses:
+        "200":
+          description: Bulk-archive result
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/BulkActionResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /trade-plans/bulk:
+    delete:
+      tags: [Trade Plans]
+      summary: Bulk-delete trade plans
+      description: |
+        Deletes each selected trade plan in a single call.
+        Canonical contract: docs/specs/api_contracts/trade_plan_endpoints.md v0.7 §DELETE /trade-plans/bulk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkIdsRequest"
+      responses:
+        "200":
+          description: Bulk-delete result
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/BulkActionResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/InternalError"
 
