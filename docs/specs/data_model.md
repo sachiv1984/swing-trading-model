@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.12
-**Last Updated:** 2026-07-13
+**Version:** 2.13
+**Last Updated:** 2026-07-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1265,6 +1265,70 @@ Reversible: `ALTER TABLE positions DROP COLUMN IF EXISTS last_reviewed_at;`
 
 ---
 
-**Document Version:** 2.12
+## Saved Filters Table
+
+Named, server-side Trade History filter presets (ST-04, BLG-FE-118, EPIC-04, v7.5). A user may create an arbitrary number of presets — a many-rows-per-portfolio table, structurally distinct from the singleton `settings` row (per readiness pass AC-01, same rationale already applied to `alert_rules`/`price_alerts` and `saved_filters`'s own readiness pass). Distinct from the page's ephemeral, device-local active-filter state (BLG-FE-40 localStorage-envelope pattern) — these rows persist across devices/sessions until explicitly deleted.
+
+```sql
+CREATE TABLE saved_filters (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+    name VARCHAR(100) NOT NULL,
+    filter_state JSONB NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_saved_filters_portfolio_name UNIQUE (portfolio_id, name)
+);
+
+CREATE INDEX idx_saved_filters_portfolio ON saved_filters(portfolio_id);
+```
+
+### Fields
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| id | UUID | NO | Primary key |
+| portfolio_id | UUID | NO | FK to portfolios |
+| name | VARCHAR(100) | NO | Preset name, unique per portfolio |
+| filter_state | JSONB | NO | Serialised filter selection (market, result, date range, tags) — shape owned by the frontend, opaque to the backend |
+| created_at | TIMESTAMPTZ | NO | Preset creation timestamp |
+| updated_at | TIMESTAMPTZ | NO | Last update timestamp |
+
+### Constraints
+
+- `UNIQUE (portfolio_id, name)` — one preset per name per portfolio; `POST /saved-filters` returns `400` on collision.
+
+---
+
+### Migration from v2.12 to v2.13
+
+ST-04 (BLG-FE-118, EPIC-04, v7.5) — saved filter presets (`saved_filters` table, per readiness pass AC-01).
+
+```sql
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS saved_filters (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+    name VARCHAR(100) NOT NULL,
+    filter_state JSONB NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_saved_filters_portfolio_name UNIQUE (portfolio_id, name)
+);
+
+CREATE INDEX IF NOT EXISTS idx_saved_filters_portfolio ON saved_filters(portfolio_id);
+
+COMMIT;
+```
+
+Reversible: `DROP TABLE IF EXISTS saved_filters;`
+
+**Sign-off:**
+- Data Model Domain & Schema Owner: Accepted — 2026-07-20 (agent-mediated, schema pre-designed and reasoned in readiness pass `blg_fe_118_pre_implementation_readiness_pass.md` AC-01, no deviation from pre-scoped shape)
+
+---
+
+**Document Version:** 2.13
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-07-13
+**Last Review:** 2026-07-20

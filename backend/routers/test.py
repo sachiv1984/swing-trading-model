@@ -221,6 +221,12 @@ async def test_all_endpoints(request: Request):
 
         # AI rate limit 429 scenario verification (v6.3 / EPIC-01 ST-03)
         {"name": "POST /test/rate-limit-scenarios", "method": "POST", "url": f"{base_url}/test/rate-limit-scenarios", "critical": False},
+
+        # Saved Filters & Daily P&L — Calendar View (v7.5 / EPIC-04 ST-04, BLG-FE-118)
+        {"name": "GET /reports/daily-pnl", "method": "GET", "url": f"{base_url}/reports/daily-pnl?year=2026&month=7", "critical": False},
+        {"name": "GET /saved-filters", "method": "GET", "url": f"{base_url}/saved-filters", "critical": False},
+        {"name": "POST /saved-filters", "method": "POST", "url": f"{base_url}/saved-filters", "body": {"name": "__test__", "filter_state": {}}, "critical": False},
+        {"name": "DELETE /saved-filters/00000000-0000-0000-0000-000000000000", "method": "DELETE", "url": f"{base_url}/saved-filters/00000000-0000-0000-0000-000000000000", "critical": False},
     ]
     
     results = []

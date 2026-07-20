@@ -92,7 +92,7 @@ from .analytics_service import AnalyticsService
 from .validation_service import ValidationService
 
 from services.drawdown_service import get_drawdown_fields
-from services.reports_service import get_tax_year_report, build_tax_year_pdf, build_tax_year_csv, get_monthly_pnl_report, get_arc5_compliance_summary
+from services.reports_service import get_tax_year_report, build_tax_year_pdf, build_tax_year_csv, get_monthly_pnl_report, get_daily_pnl_report, get_arc5_compliance_summary
 from services.grace_service import compute_grace_days_remaining
 from services.trade_csv_service import build_trade_history_csv
 

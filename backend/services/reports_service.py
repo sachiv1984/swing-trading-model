@@ -28,6 +28,7 @@ from database import (
     get_positions,
     get_trade_history_by_tax_year,
     get_monthly_pnl,
+    get_daily_pnl,
 )
 from utils.formatting import decimal_to_float
 
@@ -271,6 +272,41 @@ def get_monthly_pnl_report() -> dict:
     ]
     return {
         "months": months,
+        "estimated_unrealised_pnl": get_estimated_unrealised_pnl(portfolio_id),
+        "unrealised_note": UNREALISED_NOTE,
+    }
+
+
+def get_daily_pnl_report(year: int, month: int) -> dict:
+    """
+    Return day-by-day realised P&L for a single calendar month, plus a
+    current-snapshot estimated unrealised P&L figure (ST-04, BLG-FE-118, v7.5).
+    Day-granularity sibling of get_monthly_pnl_report — same
+    estimated_unrealised_pnl/unrealised_note pattern (never per-day, per
+    readiness pass AC-03 — no historical daily mark-to-market source exists).
+
+    Returns:
+        {
+          "days": list of dicts — day (1-31), realised_pnl_gbp, trade_count,
+          "estimated_unrealised_pnl": float | None — None when there is no portfolio yet,
+          "unrealised_note": str,
+        }
+    """
+    portfolio = get_portfolio()
+    if not portfolio:
+        return {"days": [], "estimated_unrealised_pnl": None, "unrealised_note": UNREALISED_NOTE}
+    portfolio_id = str(portfolio['id'])
+    rows = get_daily_pnl(portfolio_id, year, month)
+    days = [
+        {
+            "day": int(r["day"]),
+            "realised_pnl_gbp": round(float(r["realised_pnl_gbp"]), 2),
+            "trade_count": int(r["trade_count"]),
+        }
+        for r in rows
+    ]
+    return {
+        "days": days,
         "estimated_unrealised_pnl": get_estimated_unrealised_pnl(portfolio_id),
         "unrealised_note": UNREALISED_NOTE,
     }

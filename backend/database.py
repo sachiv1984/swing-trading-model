@@ -243,6 +243,32 @@ def get_monthly_pnl(portfolio_id: str) -> List[Dict]:
             return cur.fetchall()
 
 
+def get_daily_pnl(portfolio_id: str, year: int, month: int) -> List[Dict]:
+    """Aggregate realised P&L by calendar day for a single given month (ST-04, BLG-FE-118, v7.5).
+
+    Day-granularity sibling of get_monthly_pnl — identical grouping logic,
+    narrower window and finer bucket, per readiness pass AC-02.
+    Used by GET /reports/daily-pnl.
+    Spec: docs/specs/api_contracts/reports_endpoints.md §GET /reports/daily-pnl
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT
+                   EXTRACT(DAY FROM exit_date)::int AS day,
+                   COALESCE(SUM(pnl), 0)::float AS realised_pnl_gbp,
+                   COUNT(*)::int AS trade_count
+                   FROM trade_history
+                   WHERE portfolio_id = %s
+                   AND EXTRACT(YEAR FROM exit_date)::int = %s
+                   AND EXTRACT(MONTH FROM exit_date)::int = %s
+                   GROUP BY day
+                   ORDER BY day ASC""",
+                (portfolio_id, year, month)
+            )
+            return cur.fetchall()
+
+
 def create_trade_history(portfolio_id: str, trade_data: Dict) -> Dict:
     """Add a trade to history"""
     with get_db() as conn:

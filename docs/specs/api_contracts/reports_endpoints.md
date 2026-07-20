@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.8
-**Last Updated:** 2026-07-14
+**Version:** 0.9
+**Last Updated:** 2026-07-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -13,6 +13,7 @@ This document defines **Reports** domain endpoints.
 
 - Tax-year P&L statement: a structured, server-side generated financial record of all realised gains and losses within a specified UK tax year.
 - Monthly P&L summary: month-by-month breakdown of realised P&L for the current and prior calendar year.
+- Daily P&L summary: day-by-day breakdown of realised P&L for a single calendar month (Trade History Calendar View, v7.5).
 
 Global response envelopes, error shape, and conventions are defined in **conventions.md** and apply unless explicitly stated otherwise.
 
@@ -26,6 +27,7 @@ Global response envelopes, error shape, and conventions are defined in **convent
 
 - [GET /reports/tax-year](#get-reportstax-year)
 - [GET /reports/monthly-pnl](#get-reportsmonthly-pnl)
+- [GET /reports/daily-pnl](#get-reportsdaily-pnl)
 
 ---
 
@@ -500,10 +502,73 @@ GET /reports/monthly-pnl
 
 ---
 
+## GET /reports/daily-pnl
+
+**Purpose**
+
+Day-granularity sibling of `GET /reports/monthly-pnl` — returns day-by-day realised P&L for a single calendar month, for the Trade History Calendar View (ST-04, BLG-FE-118, v7.5). Same grouping logic as the monthly report, narrower window and finer bucket (readiness pass AC-02).
+
+**Method & Path**
+
+- `GET /reports/daily-pnl?year={year}&month={month}`
+
+**Idempotency**
+
+- Safe to refresh (read-only).
+
+### Request
+
+| Query Parameter | Type | Required | Description |
+|------------------|------|----------|-------------|
+| `year` | integer | Yes | Calendar year (e.g. `2026`) |
+| `month` | integer | Yes | Calendar month, `1`–`12` |
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": [
+    { "day": 3, "realised_pnl_gbp": 240.50, "trade_count": 3 },
+    { "day": 17, "realised_pnl_gbp": -85.00, "trade_count": 1 }
+  ],
+  "estimated_unrealised_pnl": 340.50,
+  "unrealised_note": "Reflects current open positions at time of report generation, not positions open during the specified tax year. Indicative only — not a tax liability."
+}
+```
+
+#### Field definitions
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data[].day` | integer | Day of month (1–31) |
+| `data[].realised_pnl_gbp` | float | Sum of `pnl` for closed trades with `exit_date` on this day. GBP. Negative if net loss. |
+| `data[].trade_count` | integer | Count of closed trades exiting this day |
+| `estimated_unrealised_pnl` | float \| null | Same field/computation as `GET /reports/monthly-pnl` — current-snapshot only, never attributed to any individual day (readiness pass AC-03). `null` when there is no portfolio yet. |
+| `unrealised_note` | string | Same static disclaimer text as `GET /reports/monthly-pnl` / `GET /reports/tax-year`. |
+
+**Scope:** Only days with 1+ closed-trade exits are included in `data`. Empty array if no closed trades in the given month.
+
+### Error Responses
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `400` | `month` not in range 1–12 |
+| `500` | Internal server error |
+
+### Example Request
+
+```
+GET /reports/daily-pnl?year=2026&month=7
+```
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.9 | 2026-07-20 | ST-04 (v7.5, EPIC-04, BLG-FE-118): Added `## GET /reports/daily-pnl` — day-granularity sibling of `GET /reports/monthly-pnl` for the Trade History Calendar View. Same `estimated_unrealised_pnl`/`unrealised_note` pattern (current-snapshot only, never per-day). |
 | 0.8 | 2026-07-14 | v7.1 sprint execution (ST-07, BLG-SPEC-84): CSV export hardening pass — documented and test-verified `Content-Type` charset (AC-01: actual header is `text/csv; charset=utf-8`, Starlette auto-appends charset for `text/*`; corrected in the same edit after a test assertion caught the initial documentation claiming no charset was present), authentication parity confirmation (AC-02, global `api_key_middleware`, no per-route bypass, test-verified with `API_KEY` configured), and financial-record-vs-analytics-export classification with versioning approach (AC-03, export is a read view of `trade_history`, not a stored contract). No response schema/behaviour change. |
 | 0.7 | 2026-07-13 | Add `estimated_unrealised_pnl`/`unrealised_note` top-level fields to GET /reports/monthly-pnl response — current-snapshot unrealised P&L, same field/computation as GET /reports/tax-year's `summary.estimated_unrealised_pnl`. `data` array shape unchanged. ST-14 (BLG-FEAT-70) — v7.0 cycle 2026-07-12__release-v7.0. |
 | 0.6 | 2026-05-31 | Rename strategy_compliance → compliance_summary in GET /reports/monthly-pnl response (field rename; same schema, canonical name alignment). ST-03 — v4.7 cycle 2026-05-31__release-v4.7. |

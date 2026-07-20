@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.10.0
+  version: 3.11.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -754,6 +754,146 @@ paths:
                         type: string
                         nullable: true
                         example: sector_concentration
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /reports/daily-pnl:
+    get:
+      tags: [Reports]
+      summary: Get day-by-day realised P&L for a single month
+      description: >
+        Day-granularity sibling of GET /reports/monthly-pnl for the Trade History
+        Calendar View (ST-04, BLG-FE-118, v7.5). Only days with 1+ closed-trade
+        exits are included. Same estimated_unrealised_pnl/unrealised_note pattern
+        (current-snapshot only, never per-day).
+        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.9.
+      parameters:
+        - name: year
+          in: query
+          required: true
+          schema: { type: integer }
+        - name: month
+          in: query
+          required: true
+          schema: { type: integer, minimum: 1, maximum: 12 }
+      responses:
+        "200":
+          description: Daily P&L summary array
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        day:
+                          type: integer
+                          example: 3
+                        realised_pnl_gbp:
+                          type: number
+                          example: 240.50
+                        trade_count:
+                          type: integer
+                          example: 3
+                  estimated_unrealised_pnl:
+                    type: number
+                    nullable: true
+                    example: 340.50
+                  unrealised_note:
+                    type: string
+                    example: "Reflects current open positions at time of report generation, not positions open during the specified tax year. Indicative only — not a tax liability."
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /saved-filters:
+    get:
+      tags: [Saved Filters]
+      summary: List saved filter presets
+      description: >
+        Returns all saved filter presets for the portfolio.
+        Canonical contract: docs/specs/api_contracts/saved_filters_endpoints.md v1.0.
+      responses:
+        "200":
+          description: Saved filter presets list
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/SavedFilter"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags: [Saved Filters]
+      summary: Create a named filter preset
+      description: >
+        Creates a named filter preset. Returns 400 on a duplicate name for this portfolio.
+        Canonical contract: docs/specs/api_contracts/saved_filters_endpoints.md v1.0.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSavedFilterRequest"
+      responses:
+        "200":
+          description: Saved filter preset created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/SavedFilter"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /saved-filters/{id}:
+    delete:
+      tags: [Saved Filters]
+      summary: Delete a saved filter preset
+      description: >
+        Deletes a saved filter preset. Does not affect the currently-active filter selection.
+        Canonical contract: docs/specs/api_contracts/saved_filters_endpoints.md v1.0.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Saved filter preset deleted
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          deleted: { type: boolean, example: true }
+                          id: { type: string, format: uuid }
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -3303,6 +3443,34 @@ components:
           enum: [ok]
         data:
           description: Payload varies by endpoint.
+          type: object
+
+    SavedFilter:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        filter_state:
+          type: object
+          description: Serialised filter selection, opaque to the backend.
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreateSavedFilterRequest:
+      type: object
+      required: [name, filter_state]
+      properties:
+        name:
+          type: string
+          description: Max 100 characters.
+        filter_state:
           type: object
 
     AlertRule:
