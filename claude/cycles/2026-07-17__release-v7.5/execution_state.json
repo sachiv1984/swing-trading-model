@@ -5,7 +5,7 @@
   "invoked_utc": "2026-07-17T20:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-17T20:00:00Z",
+  "last_updated_utc": "2026-07-17T22:10:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -51,38 +51,46 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-17__release-v7.5/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1017,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-17__release-v7.5/qa_evidence_EPIC-02.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/e2e/custom-price-alerts.spec.js", "tests/test_price_alerts_service.py"],
       "stories": {
         "ST-02": {
           "title": "Add user-created price-alert data model, UI, and delivery integration",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1013,
           "branch": "exec/2026-07-17__release-v7.5/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "661d67f576713d0f7f3c1b3c0acc1754750d4882",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-07-17T22:10:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md",
             "docs/specs/frontend/pages/notifications.md",
-            "docs/specs/blg_fe_116_pre_implementation_readiness_pass.md"
+            "docs/specs/blg_fe_116_pre_implementation_readiness_pass.md",
+            "docs/specs/api_contracts/alerts_endpoints.md",
+            "docs/specs/data_model.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Reclassified from sprint_backlog.md's placeholder delegated_frontend to autonomous per LL-v2.3-CL-01 — backend data model, evaluation-pipeline extension, and health-check surfacing are pre-scoped and locked (readiness pass, §13 PASS 2026-07-16), so engine can implement both frontend CRUD and backend integration directly. Staging-only AC (alert fires via live delivery channel) requires human staging sign-off or a filed backlog item before PR opens per CLAUDE.md §2 — tracked at STEP 3.2.A."
+          "deviations_filed": true,
+          "last_completed_substep": "3.2.A.qa_signoff",
+          "sign_off_record": {
+            "required_by": "Director of Quality",
+            "method": "human",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-07-20T11:00:00Z"
+          },
+          "notes": "Reclassified from sprint_backlog.md's placeholder delegated_frontend to autonomous per LL-v2.3-CL-01 — backend data model, evaluation-pipeline extension, and health-check surfacing are pre-scoped and locked (readiness pass, §13 PASS 2026-07-16), so engine can implement both frontend CRUD and backend integration directly. All 3 ACs implemented: price_alerts table (data_model.md v2.12->v2.13), GET/POST /price-alerts + DELETE /price-alerts/{id} (alerts_endpoints.md v0.4->v0.5, openapi.yaml v3.10.0->v3.11.0, api_performance_baseline.md v2.13->v2.14), evaluation folded into POST /alerts/evaluate (_evaluate_price_alerts) with GET /health/scheduler custom_price_alerts job key, and CustomPriceAlertsSection.js mounted on NotificationPreferences.js. 11/11 new Playwright scenarios (tests/e2e/custom-price-alerts.spec.js) + 21/21 new backend unit scenarios (tests/test_price_alerts_service.py) pass; full regression clean (system-status/alert-thresholds-empty-state/notifications e2e specs 38/38; full backend pytest suite 694 passed, 2 pre-existing skips, 0 failed). test.py registered (89->92 endpoints); SystemStatus.js fallback and system-status.spec.js SC-SS-01b updated to 92 in the same commit (also corrected a pre-existing stale '84' placeholder that had drifted out of sync with test.py's actual count independently of this story). Deviation check: implementation intent matches spec throughout — no filed deviations. Staging-only AC (alert fires via live delivery channel) tracked via backlog item BLG-QA-115 (filed before PR opens per CLAUDE.md §2), not a spec deviation. Frontend-visible EPIC (CustomPriceAlertsSection.js, NotificationPreferences.js, SystemStatus.js) — BLG-GOV-19 autonomous class sign-off unavailable (Criterion 3 unmet per BLG-GOV-135); qa_evidence_EPIC-02.md written with full AC table and Standard Sign-Off Block, Date left blank pending Director of Quality (always-human gate per §5.3) — halting here, not an escalation."
         }
       }
     },
@@ -161,7 +169,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["EPIC-01/ST-01"],
+  "completed_items": ["EPIC-01/ST-01", "EPIC-02/ST-02"],
   "open_escalations": [],
 
   "merge_gate": {
@@ -175,7 +183,11 @@
     "EPIC-01: resolved 2026-07-17T21:40:00Z — user directed Claude to act as Director of Quality (per claude/agents/director_of_quality.md, Owner field matches) and perform the sign-off directly. Independent re-verification performed against the committed branch state (not a rubber-stamp): fresh checkout, dev server from commit 26df3a6d, full re-run (32/34 pass, 2 pre-existing unrelated skips) plus 2 ad hoc edge-case checks beyond original coverage (case-insensitive search, rapid reopen dedup) — both pass. Sign-off committed 6b5b3bdf, qa_signed_off=true set in this same execution_state.json write. EPIC-01 unblocked for PR (STEP 3.2.B).",
     "EPIC-01: PR #1016 all CI checks green (23/23 pass, including the full Playwright E2E Acceptance Tests suite at 13m5s). gh pr view reports mergeStateStatus=BLOCKED, reviewDecision=REVIEW_REQUIRED — the remaining blocker is Product Owner acceptance (GitHub branch protection review requirement), an always-human gate per execution_prompt.md §5.3/§13. No one has authorised the engine to act as Product Owner (unlike the explicit DoQ direction earlier) — engine halts here, does not self-approve. Awaiting human PR review/approval on https://github.com/sachiv1984/swing-trading-model/pull/1016.",
     "EPIC-01: Product Owner acceptance recorded 2026-07-17 — user directed Claude to act as Product Owner and review (per claude/agents/product_owner.md); comment posted at https://github.com/sachiv1984/swing-trading-model/pull/1016#issuecomment-5004532091 confirming product-intent, scope, and outcome alignment against sprint_goal.md and the cleared design gate. Per user instruction, the user will perform the actual merge themselves — engine does not merge.",
-    "EPIC-01: PR #1016 merged by user 2026-07-17T14:53:43Z (merge commit 9f067f36). All STEP 4 merge-gate conditions satisfied (all ST items done, spec_references populated, qa_evidence complete, qa_signed_off=true, Product Owner acceptance recorded, CI green, no open escalations, no unresolved P0/P1 deviations). merge_gate.epics_merged updated. Per the STEP 4 hard gate, the engine halts here and does not auto-advance to EPIC-02 — resumes only on explicit re-invocation of run sprint."
+    "EPIC-01: PR #1016 merged by user 2026-07-17T14:53:43Z (merge commit 9f067f36). All STEP 4 merge-gate conditions satisfied (all ST items done, spec_references populated, qa_evidence complete, qa_signed_off=true, Product Owner acceptance recorded, CI green, no open escalations, no unresolved P0/P1 deviations). merge_gate.epics_merged updated. Per the STEP 4 hard gate, the engine halts here and does not auto-advance to EPIC-02 — resumes only on explicit re-invocation of run sprint.",
+    "EPIC-02: resumed on explicit run sprint re-invocation. ST-02 implemented and pushed (commit 661d67f5, branch exec/2026-07-17__release-v7.5/EPIC-02). qa_evidence_EPIC-02.md created with AC table complete (11/11 Playwright + 21/21 backend unit scenarios passing, full regression suite clean) but Director of Quality sign-off Date is blank — per execution_prompt.md §3.2.B (BLG-GOV-18) the PR may not be opened until this is non-blank. QA sign-off is an always-human gate (§5.3) and this EPIC has frontend-visible changes so BLG-GOV-19 autonomous class sign-off is unavailable (Criterion 3 unmet) — engine halted pending human review, not an escalation/blocker requiring authority decision. Staging-only AC (live delivery firing) tracked via backlog item BLG-QA-115, filed before this halt per CLAUDE.md §2.",
+    "EPIC-02: resolved 2026-07-20T11:00:00Z — user directed Claude to act as Director of Quality (per claude/agents/director_of_quality.md, Owner field matches) and perform the sign-off directly. Independent re-verification performed against the committed branch state (not a rubber-stamp): fresh checkout (git checkout + pull) from commit 8bad72a0, full re-run: backend pytest 694 passed/2 pre-existing skips/0 failed; full e2e suite 590 passed/3 pre-existing skips/0 failed. Reviewed git diff main..HEAD --stat (17 files, all within documented scope, no unrelated changes). Spot-checked the cap-exceeded error string in the committed alerts_service.py against the spec's exact required text — matches verbatim. Sign-off committed, qa_signed_off=true set in this same execution_state.json write. EPIC-02 unblocked for PR (STEP 3.2.B).",
+    "EPIC-02: PR #1017 opened (https://github.com/sachiv1984/swing-trading-model/pull/1017). Awaiting CI + Product Owner acceptance.",
+    "EPIC-02: PR #1017 all CI checks green (23/23). Product Owner acceptance recorded 2026-07-20 — user directed Claude to act as Product Owner and review (per claude/agents/product_owner.md); comment posted at https://github.com/sachiv1984/swing-trading-model/pull/1017#issuecomment-5021003565 confirming product-intent, scope, and outcome alignment against sprint_goal.md and the cleared design gate. Per user instruction, the user will perform the actual merge themselves — engine does not merge."
   ],
 
   "sealed": false,
