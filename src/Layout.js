@@ -398,7 +398,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Mobile Header */}
       <header
         className={cn(
-          "lg:hidden fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-xl",
+          "lg:hidden fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-xl print-hide",
           isDark
             ? "border-slate-800/50 bg-slate-950/80"
             : "border-slate-200 bg-white/80"
@@ -476,7 +476,7 @@ export default function Layout({ children, currentPageName }) {
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               className={cn(
-                "lg:hidden fixed top-0 right-0 bottom-0 z-50 w-72 border-l",
+                "lg:hidden fixed top-0 right-0 bottom-0 z-50 w-72 border-l print-hide",
                 isDark
                   ? "bg-slate-900 border-slate-800"
                   : "bg-white border-slate-200"
@@ -537,7 +537,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Desktop Sidebar */}
       <aside
         className={cn(
-          "hidden lg:flex flex-col fixed top-0 left-0 bottom-0 w-64 backdrop-blur-xl border-r z-40",
+          "hidden lg:flex flex-col fixed top-0 left-0 bottom-0 w-64 backdrop-blur-xl border-r z-40 print-hide",
           isDark
             ? "bg-slate-900/50 border-slate-800/50"
             : "bg-white/70 border-slate-200"

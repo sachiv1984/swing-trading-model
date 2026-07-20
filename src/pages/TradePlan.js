@@ -8,7 +8,7 @@ import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
 import SignalContextPanel, { buildSignalPrePopulation } from "../components/trades/SignalContextPanel";
 import SetupQualityScorePanel from "../components/trades/SetupQualityScorePanel";
-import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon, ShieldCheck, ThumbsUp, ThumbsDown, Tag as TagIcon, Rocket } from "lucide-react";
+import { BookOpen, Save, ArrowLeft, AlertTriangle, ChevronDown, ChevronUp, Newspaper, Sparkles, X as XIcon, ShieldCheck, ThumbsUp, ThumbsDown, Tag as TagIcon, Rocket, Printer } from "lucide-react";
 import { TradePlanStatusBadge, isStartTradeEligible } from "./TradePlans";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -617,6 +617,18 @@ export default function TradePlan() {
               >
                 <AlertTriangle className="w-4 h-4 mr-1" />
                 Abandon Plan
+              </Button>
+            )}
+            {editId && existingPlan && (
+              <Button
+                variant="outline"
+                size="sm"
+                data-testid="print-export-pdf-btn"
+                onClick={() => window.print()}
+                className="border-slate-700 text-slate-300 hover:bg-slate-800"
+              >
+                <Printer className="w-4 h-4 mr-1" />
+                Print / Export PDF
               </Button>
             )}
             <Button
