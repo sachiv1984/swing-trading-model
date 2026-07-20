@@ -1,20 +1,25 @@
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import WatchlistRow from "./WatchlistRow";
+import { Checkbox } from "../ui/checkbox";
 
 const TABLE_HEADERS = [
   "Ticker", "Market", "Entry Signal", "Target Entry", "Stop (Initial)",
   "Stop (Current)", "Earnings", "Research", "News", "Actions",
 ];
 
-export default function WatchlistTable({ entries, screenerTickers, newsHook, modalHook }) {
+export default function WatchlistTable({ entries, screenerTickers, newsHook, modalHook, selectedIds, onToggleRow, onToggleAll }) {
   const navigate = useNavigate();
+  const allSelected = entries.length > 0 && selectedIds.size === entries.length;
 
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead>
           <tr className="border-b border-slate-700/50">
+            <th className="px-5 py-3.5 text-left w-8">
+              <Checkbox checked={allSelected} onCheckedChange={onToggleAll} aria-label="Select all" />
+            </th>
             {TABLE_HEADERS.map((h) => (
               <th key={h} className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">
                 {h}
@@ -31,6 +36,8 @@ export default function WatchlistTable({ entries, screenerTickers, newsHook, mod
               hasResearch={screenerTickers.has(entry.ticker?.toUpperCase())}
               isNewsExpanded={!!newsHook.expandedNews[entry.ticker]}
               newsState={newsHook.newsCache[entry.ticker]}
+              isSelected={selectedIds.has(entry.id)}
+              onToggleSelect={() => onToggleRow(entry.id)}
               onEdit={() => modalHook.setModal({ mode: "edit", entry })}
               onToggleNews={() => newsHook.toggleNews(entry)}
               onCloseNews={() => newsHook.setExpandedNews((prev) => ({ ...prev, [entry.ticker]: false }))}
@@ -59,4 +66,7 @@ WatchlistTable.propTypes = {
     setModal: PropTypes.func.isRequired,
     handleAddToPosition: PropTypes.func.isRequired,
   }).isRequired,
+  selectedIds: PropTypes.instanceOf(Set).isRequired,
+  onToggleRow: PropTypes.func.isRequired,
+  onToggleAll: PropTypes.func.isRequired,
 };

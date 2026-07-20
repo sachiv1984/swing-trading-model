@@ -2,9 +2,9 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.14
-**Date:** 2026-07-17
-**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration
+**Version:** 2.15
+**Date:** 2026-07-20
+**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 ---
@@ -1206,10 +1206,57 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, autonomous class)
 
 ---
 
+## 27. v7.5 Endpoint Registration — Bulk Actions Toolbar (ST-03, EPIC-03, BLG-FE-117)
+
+**Date:** 2026-07-17
+**Story:** ST-03 (EPIC-03, v7.5) — BLG-FE-117, bulk actions toolbar
+**Environment:** N/A — see per-endpoint notes below.
+**Method:** GET registered pending live measurement per §13 pattern; POST/PUT/DELETE registered as write-op exclusions per §20/§25/§26 methodology (estimated values, no live sampling against production data).
+
+### 27.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /watchlist/tags | v7.5 | Read — pending live timing run | 200–350ms (est.) | 400–600ms (est.) | Pending next BLG-OPS-13-style re-run |
+| POST /watchlist/bulk-tag | v7.5 | Write — excluded from live timing run | ~250ms (est., per-row loop, N≤100) | ~600ms (est.) | — (write op, estimated values) |
+| DELETE /watchlist/bulk | v7.5 | Write — excluded from live timing run | ~230ms (est., per-row loop, N≤100) | ~550ms (est.) | — (write op, estimated values) |
+| POST /trade-plans/bulk-tag | v7.5 | Write — excluded from live timing run | ~250ms (est., per-row loop, N≤100) | ~600ms (est.) | — (write op, estimated values) |
+| PUT /trade-plans/bulk-archive | v7.5 | Write — excluded from live timing run | ~250ms (est., per-row loop, N≤100) | ~600ms (est.) | — (write op, estimated values) |
+| DELETE /trade-plans/bulk | v7.5 | Write — excluded from live timing run | ~230ms (est., per-row loop, N≤100) | ~550ms (est.) | — (write op, estimated values) |
+
+**Endpoint characteristics:**
+- `GET /watchlist/tags`: single `SELECT DISTINCT unnest(tags)` on `watchlist` — no path parameters, consistent with `GET /trade-plans/tags` (§ existing pattern).
+- The five bulk write endpoints each loop one `SELECT` + one `UPDATE`/`DELETE` per selected ID within a single DB connection (capped at 100 IDs/call per readiness pass AC-01 recommendation) — p50/p95 estimates assume a typical small selection (2–10 rows); the readiness pass's 100-ID cap bounds worst-case runtime, not typical-case latency.
+
+**Why the write endpoints are excluded from live timing run:**
+All five mutate real `watchlist`/`trade_plans` rows (tag, delete, archive). Repeated sampling against staging or production would pollute portfolio data. Per §18.2/§20/§25/§26 methodology, write endpoints that risk data mutation are registered with estimated performance characteristics rather than live measurements.
+
+**GET /watchlist/tags — flagged for the next baseline re-run** alongside other pending-measurement endpoints (§13 pattern).
+
+### 27.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-03 (v7.5 EPIC-03, BLG-FE-117) — Bulk Actions Toolbar Endpoint Registration Sign-Off
+
+AC-01: All six endpoints added with estimated p50/p95 and measurement date
+       (2026-07-17 — estimated; write-op exclusion applied to the five mutating
+       endpoints). ✅ PASS
+AC-02: Estimation methodology documented — derived from query shape (single
+       SELECT for the tags endpoint, per-row SELECT+UPDATE/DELETE loop capped
+       at 100 IDs for the five bulk endpoints), consistent with §13/§20/§25/§26
+       baseline ranges. Write-op exclusion per §18.2/§20/§25/§26 applied. ✅ PASS
+AC-03: Entry format consistent with existing baseline rows (§20/§25/§26 pattern). ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, autonomous class) — 2026-07-17
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.15 | 2026-07-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-03 (v7.5 EPIC-03, BLG-FE-117): §27 added — GET /watchlist/tags, POST /watchlist/bulk-tag, DELETE /watchlist/bulk, POST /trade-plans/bulk-tag, PUT /trade-plans/bulk-archive, DELETE /trade-plans/bulk registered. GET flagged pending live timing run (§13 pattern); the five write endpoints registered as write-op exclusions (estimated p50/p95, consistent with §20/§25/§26 pattern — mutate real `watchlist`/`trade_plans` rows). Cross-EPIC merge conflict resolution (CLAUDE.md §8): renumbered from an independently-authored v2.14 to v2.15 to sit after EPIC-02's already-merged v2.14 entry. |
 | 2.14 | 2026-07-17 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-02 (v7.5 EPIC-02, BLG-FE-116): §26 added — GET/POST /price-alerts and DELETE /price-alerts/{id} registered. GET flagged pending live timing run (§13 pattern); POST/DELETE registered as write-op exclusions (estimated p50/p95, consistent with §20/§25 pattern — mutate real `price_alerts` rows). |
 | 2.13 | 2026-07-13 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-15 (v7.0 EPIC-03, BLG-FEAT-68): §25 added — PATCH /positions/{id}/mark-reviewed registered as write-op exclusion (mutates real position records). Estimated p50=~250ms, p95=~500ms (single Supavisor UPDATE, consistent with §20 PATCH /trades/{id}/costs pattern). Live timing deferred per §18.2/§20 write-op policy. |
 | 2.10 | 2026-07-03 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-04 (v6.5 EPIC-02, BLG-OPS-83): §24 added — GET /strategy/benchmark/open-positions (v6.4, BLG-FEAT-54) registered. Staging returned 404 (endpoint not yet deployed there, same pattern as §23); measured on production instead (5 warm samples): p50=524.5ms, p95=600.0ms. Regression threshold documented per §22.2/§22.3/§23.2 dynamic-2x pattern: p95>1,200.0ms. Resolves ESC-EXEC-20260703-01 (credential gap — resolved once the correct app X-API-Key value was identified). BLG-OPS-83 closed. |

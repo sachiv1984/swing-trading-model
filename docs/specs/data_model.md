@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.13
-**Last Updated:** 2026-07-17
+**Version:** 2.14
+**Last Updated:** 2026-07-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1357,6 +1357,27 @@ COMMIT;
 
 ---
 
-**Document Version:** 2.13
+### Migration from v2.13 to v2.14
+
+ST-03 (BLG-FE-117, EPIC-03, v7.5) — bulk actions toolbar: adds a `tags` column to `watchlist` for the new Bulk Tag action (`bulk-actions-toolbar/ux_spec.md` §2.4). No single-item tag UI is introduced — bulk-tag only. **Note:** the `watchlist` table itself predates a canonical schema section in this document (created via `watchlist_service.py`'s idempotent bootstrap, migration v2.0→v2.1 per that service's module docstring); this entry documents only the incremental `tags` column addition, not a full backfill of the missing canonical section (tracked as spec debt, out of scope for ST-03). **Renumbered during cross-EPIC merge conflict resolution (CLAUDE.md §8):** originally authored as "v2.12→v2.13" on the EPIC-03 branch in parallel with EPIC-02's own v2.12→v2.13 migration; since EPIC-02 merged first, this entry is renumbered v2.13→v2.14 to keep migration numbering sequential — no schema content change.
+
+```sql
+BEGIN;
+ALTER TABLE watchlist ADD COLUMN IF NOT EXISTS tags TEXT[] NOT NULL DEFAULT '{}';
+COMMIT;
+```
+
+| Field | Type | Description |
+|-------|------|--------------|
+| `tags` | text[] | Not null, defaults to `{}`. Populated only via `POST /watchlist/bulk-tag` (union with existing tags, not replace) — no single-item create/edit UI sets this field. |
+
+Reversible: `ALTER TABLE watchlist DROP COLUMN IF EXISTS tags;`
+
+**Sign-off:**
+- Data Model Domain & Schema Owner: Accepted — 2026-07-17 (agent-mediated, single nullable-equivalent array column with a safe default, no backfill required, no existing data affected)
+
+---
+
+**Document Version:** 2.14
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-07-17
+**Last Review:** 2026-07-20

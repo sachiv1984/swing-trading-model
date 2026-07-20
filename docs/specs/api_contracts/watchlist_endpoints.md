@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.0
-**Last Updated:** 2026-06-09
+**Version:** 1.1
+**Last Updated:** 2026-07-17
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint:** 2026-06-08__release-v5.3 — ST-07 (BLG-SPEC-52, EPIC-01)
 **Signed off by:** API Contracts & Documentation Owner; Head of Specs Team
@@ -63,6 +63,7 @@ No parameters.
 | `data[].initial_stop_price` | float or null | Initial stop loss price (optional) |
 | `data[].current_stop_price` | float or null | Current (trailed) stop price (optional) |
 | `data[].signal_status` | string or null | Signal list status for this ticker (`active`, `watchlisted`, or `null`) |
+| `data[].tags` | array of string | Watchlist tags (v1.1, ST-03/BLG-FE-117) — populated only via `POST /watchlist/bulk-tag`; empty array if none |
 | `data[].created_at` | string (ISO 8601) | Entry creation timestamp |
 
 ---
@@ -163,6 +164,121 @@ Remove a watchlist entry by ID. Not idempotent — a second call returns 404.
 
 ---
 
+## GET /watchlist/tags
+
+**Purpose**
+
+Return unique tags across all watchlist entries, for the Bulk Tag autocomplete (v1.1, ST-03/BLG-FE-117). Mirrors `GET /trade-plans/tags`.
+
+**Method & Path**
+
+- `GET /watchlist/tags`
+
+**Response (200)**
+
+```json
+{
+  "status": "ok",
+  "data": ["breakout", "momentum"]
+}
+```
+
+**Error responses**
+
+| Status | Condition |
+|--------|-----------|
+| 500 | Database error |
+
+---
+
+## POST /watchlist/bulk-tag
+
+**Purpose**
+
+Add tags to each selected watchlist entry's existing tag set (union, not replace). New in v1.1 (ST-03, BLG-FE-117, EPIC-03, v7.5) — see `docs/specs/blg_fe_117_pre_implementation_readiness_pass.md` AC-01 for the batch-mutation pattern.
+
+**Method & Path**
+
+- `POST /watchlist/bulk-tag`
+
+**Request Body**
+
+```json
+{
+  "ids": ["wl-001", "wl-002"],
+  "tags": ["momentum", "breakout"]
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `ids` | array of string (UUID) | Yes | Watchlist entry IDs to tag. Max 100 per call. |
+| `tags` | array of string | Yes | Tags to add — lowercase, alphanumeric+hyphen, max 20 chars, max 10 tags per entry (same rules as `trade_plans.trade_tags`). Invalid tags are silently filtered, not rejected. |
+
+**Response (200)**
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "succeeded": ["wl-001", "wl-002"],
+    "failed": []
+  }
+}
+```
+
+On partial failure, `failed` contains `{id, reason}` objects (e.g. `reason: "not_found"`) — never a single opaque error for the whole batch.
+
+**Error responses**
+
+| Status | Condition |
+|--------|-----------|
+| 400 | `ids` empty or exceeds the 100-item cap |
+| 500 | Database error |
+
+---
+
+## DELETE /watchlist/bulk
+
+**Purpose**
+
+Remove each selected watchlist entry in a single call. New in v1.1 (ST-03, BLG-FE-117, EPIC-03, v7.5).
+
+**Method & Path**
+
+- `DELETE /watchlist/bulk`
+
+**Request Body**
+
+```json
+{ "ids": ["wl-001", "wl-002"] }
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `ids` | array of string (UUID) | Yes | Watchlist entry IDs to remove. Max 100 per call. |
+
+**Response (200)**
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "succeeded": ["wl-001", "wl-002"],
+    "failed": []
+  }
+}
+```
+
+**Error responses**
+
+| Status | Condition |
+|--------|-----------|
+| 400 | `ids` empty or exceeds the 100-item cap |
+| 500 | Database error |
+
+---
+
 ## PATCH /watchlist/{entry_id}
 
 **Purpose**
@@ -212,4 +328,5 @@ Update price fields on an existing watchlist entry. `ticker` and `market` are re
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-07-17 | ST-03 (BLG-FE-117, EPIC-03, v7.5): Added `## GET /watchlist/tags`, `## POST /watchlist/bulk-tag`, `## DELETE /watchlist/bulk`. New `tags` column on `watchlist` (data_model.md v2.12→v2.13), populated only via bulk-tag. `GET /watchlist` response schema updated with `data[].tags`. Router ordering note: bulk routes declared before `PATCH/DELETE /watchlist/{entry_id}` to avoid wildcard capture. |
 | 1.0 | 2026-06-09 | v5.3 ST-07 (BLG-SPEC-52, EPIC-01): Initial contract for GET /watchlist, POST /watchlist, DELETE /watchlist/{entry_id}, PATCH /watchlist/{entry_id}. Endpoints shipped in prior cycle; contract gap resolved. test.py entries added for GET, POST, DELETE. API Contracts & Documentation Owner and Head of Specs Team sign-off. |

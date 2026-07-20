@@ -26,7 +26,12 @@ from database import (
     get_settings,
     get_trade_history,
     get_all_trade_plan_tags,
+    bulk_tag_trade_plans,
+    bulk_archive_trade_plans,
+    bulk_delete_trade_plans,
 )
+
+_DEFAULT_BULK_ARCHIVE_REASON = "Bulk archived via Trade Plans bulk-action toolbar"
 
 # Tag Rules — journal_components.md §3/§4 (reused for trade_tags, ST-05 BLG-FEAT-52)
 _TAG_MAX_LENGTH = 20
@@ -106,6 +111,15 @@ class TradePlanUpdate(BaseModel):
     planned_entry_price: Optional[float] = None
     planned_stop_price: Optional[float] = None
     trade_tags: Optional[List[str]] = None
+
+
+class BulkTagRequest(BaseModel):
+    ids: List[str]
+    tags: List[str]
+
+
+class BulkIdsRequest(BaseModel):
+    ids: List[str]
 
 
 def _get_portfolio_id():
@@ -303,6 +317,74 @@ def get_trade_plan_tags_endpoint():
         return {"status": "ok", "data": tags}
     except HTTPException:
         raise
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+
+# IMPORTANT — router ordering: bulk-tag/bulk-archive/bulk MUST be declared
+# before GET/PUT/DELETE /{plan_id} below, or FastAPI routes them to the
+# wildcard handler with plan_id="bulk-tag"/"bulk-archive"/"bulk" (same
+# constraint as alerts.py's /notifications/mark-all-read note).
+@router.post("/bulk-tag")
+def bulk_tag_plans_endpoint(request: BulkTagRequest):
+    """
+    POST /trade-plans/bulk-tag — add tags to each selected plan's trade_tags (union, not replace).
+    Contract: trade_plan_endpoints.md §POST /trade-plans/bulk-tag
+    ST-03 (BLG-FE-117, EPIC-03, v7.5).
+    """
+    try:
+        ensure_trade_plans_table()
+        portfolio_id = _get_portfolio_id()
+        validated_tags = _validate_trade_tags(request.tags)
+        result = bulk_tag_trade_plans(portfolio_id, request.ids, validated_tags)
+        return {"status": "ok", "data": result}
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+
+@router.put("/bulk-archive")
+def bulk_archive_plans_endpoint(request: BulkIdsRequest):
+    """
+    PUT /trade-plans/bulk-archive — abandon each selected plan (reuses the existing
+    single-plan abandonment transition, trade_plan.md §8). Plans with status='active'
+    are excluded (mirrors §8.1's single-item hide rule) and reported in `failed`
+    with reason 'active_status_excluded'.
+    Contract: trade_plan_endpoints.md §PUT /trade-plans/bulk-archive
+    ST-03 (BLG-FE-117, EPIC-03, v7.5).
+    """
+    try:
+        ensure_trade_plans_table()
+        portfolio_id = _get_portfolio_id()
+        result = bulk_archive_trade_plans(portfolio_id, request.ids, _DEFAULT_BULK_ARCHIVE_REASON)
+        return {"status": "ok", "data": result}
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+
+@router.delete("/bulk")
+def bulk_delete_plans_endpoint(request: BulkIdsRequest):
+    """
+    DELETE /trade-plans/bulk — delete each selected trade plan.
+    Contract: trade_plan_endpoints.md §DELETE /trade-plans/bulk
+    ST-03 (BLG-FE-117, EPIC-03, v7.5).
+    """
+    try:
+        ensure_trade_plans_table()
+        portfolio_id = _get_portfolio_id()
+        result = bulk_delete_trade_plans(portfolio_id, request.ids)
+        return {"status": "ok", "data": result}
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
