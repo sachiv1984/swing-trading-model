@@ -1,0 +1,291 @@
+{
+  "cycle_id": "2026-07-20__release-v7.6",
+  "sprint_goal": "Ship print/PDF export for WeeklyDigest and TradePlan (BLG-FE-119) and clear six ready backend/QA/documentation items to fully utilise this sprint's confirmed capacity.",
+  "backlog_slice_source": "claude/cycles/2026-07-20__release-v7.6/stage4_backlog_slice.md",
+  "invoked_utc": "2026-07-20T19:10:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-07-20T19:10:00Z",
+
+  "epics": {
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-07-20__release-v7.6/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-07-20__release-v7.6/qa_evidence_EPIC-01.md",
+      "test_scenarios": ["tests/e2e/print-export-pdf.spec.js"],
+      "stories": {
+        "ST-01": {
+          "title": "Add print/PDF export action to WeeklyDigest and TradePlan",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1020,
+          "branch": "exec/2026-07-20__release-v7.6/EPIC-01",
+          "commit_sha": "a973bcdcfb90ad89f0dae28d24498552796d402b",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-20T19:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/pages/weekly_digest.md#4. Print / Export PDF (v7.6 — ST-01, BLG-FE-119)",
+            "docs/specs/frontend/pages/trade_plan.md#7c. Print / Export PDF (v7.6 — ST-01, BLG-FE-119)"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "required_by": "Director of Quality",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [],
+            "cleared_utc": "2026-07-20T19:14:00Z"
+          },
+          "notes": "Implemented as client-side window.print() + global print stylesheet (.print-hide utility class + @media print colour override) per Design Gate ux_spec.md. Playwright coverage (tests/e2e/print-export-pdf.spec.js, 6 scenarios) passing locally; regression run of weekly-digest.spec.js and trade-plan.spec.js (38 tests) also passing — no stale selectors from print-hide class additions. No deviation from canonical spec found. DoQ agent-mediated sign-off Approved, recorded in qa_evidence_EPIC-01.md."
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "not_started",
+      "branch": null,
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-20__release-v7.6/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-02": {
+          "title": "Update regression suite baseline for BLG-FE-115-119 interaction surfaces",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1021,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["docs/qa/regression_test_suite_baseline.md"],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Dependency: ST-01 (needs ST-01's Playwright spec file to cross-reference). ST-01 done this session — ready to start next EPIC turn."
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "not_started",
+      "branch": null,
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-20__release-v7.6/qa_evidence_EPIC-03.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-03": {
+          "title": "Reconcile realised P&L export against trade_plan closes",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Has staging-only AC (AC-02, production-data reconciliation run) per sprint_backlog.md. spec_references to be populated at execution (STEP 3.1.A) once reconciliation logic's home file is determined."
+        }
+      }
+    },
+    "EPIC-04": {
+      "status": "not_started",
+      "branch": null,
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-20__release-v7.6/qa_evidence_EPIC-04.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-04": {
+          "title": "Standardise error-response envelope across all routers",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["docs/specs/api_contracts/backend_engineering_patterns.md"],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Shared-file canonical owner for backend/routers/*.py this sprint — later EPICs touching router files must rebase after this merges (sprint_backlog.md Merge Order)."
+        }
+      }
+    },
+    "EPIC-05": {
+      "status": "not_started",
+      "branch": null,
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-20__release-v7.6/qa_evidence_EPIC-05.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-05": {
+          "title": "Build shared mock payload fixture library from openapi.yaml",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Test tooling/infrastructure item. spec_references will be set to the created fixture file path at execution (Case D)."
+        }
+      }
+    },
+    "EPIC-06": {
+      "status": "not_started",
+      "branch": null,
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-20__release-v7.6/qa_evidence_EPIC-06.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-06": {
+          "title": "Audit nightly batch jobs for idempotency risk",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Audit/documentation deliverable — spec_references will be set to the created findings doc path at execution (Case B)."
+        }
+      }
+    },
+    "EPIC-07": {
+      "status": "not_started",
+      "branch": null,
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-20__release-v7.6/qa_evidence_EPIC-07.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-07": {
+          "title": "Add consolidated Gemini + Claude monthly cost summary",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": ["docs/specs/frontend/pages/settings.md#6. AI Usage & Costs (v7.6 — ST-07, BLG-FEAT-77)"],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Design Gate resolved the backend-endpoint question: client-side sum of two existing sources, no new endpoint required (settings.md §6 'no new endpoint'). Sequenced after EPIC-04 per Merge Order."
+        }
+      }
+    },
+    "EPIC-08": {
+      "status": "not_started",
+      "branch": null,
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-20__release-v7.6/qa_evidence_EPIC-08.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-08": {
+          "title": "Add standing regression suite for ticker/market input sanitisation",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": null,
+          "branch": null,
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Sole deliverable is a new pytest suite (Case C) — spec_references will be set to the created test file path at execution. Director of Quality sign-off named explicitly in AC."
+        }
+      }
+    }
+  },
+
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [],
+  "open_escalations": [],
+
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": ["EPIC-01", "EPIC-04", "EPIC-02", "EPIC-03", "EPIC-05", "EPIC-06", "EPIC-07", "EPIC-08"],
+    "all_merged": false
+  },
+
+  "sealed": false,
+  "sealed_utc": null
+}
