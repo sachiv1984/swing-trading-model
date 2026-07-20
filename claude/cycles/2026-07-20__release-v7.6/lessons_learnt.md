@@ -37,6 +37,22 @@ Last Updated: 2026-07-20
 
 ---
 
+### Friction Item 2
+
+**Classification:** Type A — Governed-Process Gap (structural, first occurrence)
+
+**Recurrence:** No — first time a user has requested scope expansion on an already-Published release plan within the same session, with zero downstream consumption.
+
+**What happened:** After this cycle published (2 EPICs), the user asked to add more scope to push sprint capacity. No governed engine accepted the request: the Amendment Cycle Engine's `--reason` values (`emergency-fix`/`hard-blocker`) explicitly exclude "more capacity is wanted" (`amendment_cycle_prompt.md` §11: "routine scope changes... do not qualify"), and its own lifecycle guard additionally didn't match the current state (`sprint_sealed` was still `true`, stale from v7.5; `status` was `Published`, not `Sprint_Planning_Complete` — v7.6 Sprint Planning had not run). Re-invoking `plan release --version "v7.6"` is unconditionally blocked by Release Planning's RESUME PRECHECK Terminal State Guard on any `Published` cycle, regardless of how recently it published or whether anything downstream has consumed it. Sprint Planning's STEP 3.1 also has no mechanism to pull items beyond the release-planning-confirmed slice. The only way to fulfil the request was a manually-executed, explicitly-flagged PO-directed bypass (DL-073) reopening the Published cycle's own artefacts directly.
+
+**Where in the routine:** Post-STEP 9 (Global State Synchronization) — i.e., entirely outside any governed engine's normal operating window.
+
+**Root cause:** No governed engine's design accounts for the "I just published this and immediately want to change it, before anything downstream has touched it" case. The Amendment Cycle Engine is deliberately narrow (emergency-only) by design; Release Planning's Published-immutability guard is deliberately unconditional (no "grace window" or "nothing has consumed this yet" exception). This is very likely intentional governance design (immutability should not have a timing loophole), but it means routine same-session scope-sizing corrections have no governed path at all — the user must either accept the original scope, wait for the next release cycle, or invoke a PO-authority bypass.
+
+**Suggested fix:** Consider whether `release_planning_prompt.md`'s RESUME PRECHECK Terminal State Guard should distinguish "Published with zero downstream artefacts" (no `design_gate.md`, no `sprint_goal.md`/`sprint_backlog.md` for this cycle) from "Published and consumed" — the former could plausibly permit a bounded, PO-ratified reopen through a governed step rather than requiring an ad hoc bypass every time. Alternatively, extend the Amendment Cycle Engine's `--reason` enum with a narrowly-scoped `scope-expansion` option restricted to cycles with zero downstream consumption, distinct from its emergency-only design intent.
+
+**Target:** Advisory — no backlog item filed this session (the user directed the bypass rather than asking for a prompt change). Head of Specs Team to consider filing a `BLG-GOV` item if this pattern recurs.
+
 ## Monitoring Carried Forward
 
 - Design Gate required for ST-01 (EPIC-01, `BLG-FE-119`) — run `run design-gate --cycle 2026-07-20__release-v7.6` before `plan sprint`. ST-02 (EPIC-02, `BLG-QA-112`) has no Design Gate dependency (documentation-only).
@@ -50,7 +66,8 @@ Last Updated: 2026-07-20
   "cycle_id": "2026-07-20__release-v7.6",
   "phase": "Release",
   "filed_utc": "2026-07-20T16:50:00Z",
-  "friction_item_count": 1,
+  "amended_utc": "2026-07-20T17:25:00Z",
+  "friction_item_count": 2,
   "action_now_count": 0,
   "deferred_count": 0,
   "escalation_count": 0,

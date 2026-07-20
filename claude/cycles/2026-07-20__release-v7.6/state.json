@@ -8,7 +8,16 @@
   "prompt_schema_version": "v2",
   "status": "Published",
   "publish_eligible": true,
-  "last_transition_utc": "2026-07-20T16:55:00Z",
+  "last_transition_utc": "2026-07-20T17:20:00Z",
+
+  "po_directed_reopen": {
+    "occurred": true,
+    "occurred_utc": "2026-07-20T17:20:00Z",
+    "decision_log_ref": "DL-073",
+    "reason": "Product Owner requested additional sprint scope beyond the original 2-EPIC plan; Amendment Cycle Engine did not qualify (reason category + lifecycle state), Release Planning re-invocation blocked by Published terminal-state guard, Sprint Planning cannot pull extra items. PO directed a same-session bypass reopening this Published cycle's artefacts before any downstream consumption (no Design Gate run, no Sprint Planning run).",
+    "epics_added": ["EPIC-03", "EPIC-04", "EPIC-05", "EPIC-06", "EPIC-07", "EPIC-08"],
+    "note": "This field and the re-opened status/artifacts are themselves evidence of a deliberate, transparently-recorded engine-rule bypass, not a standard resume. The engine's own RESUME PRECHECK Terminal State Guard normally prohibits this."
+  },
 
   "sealed": {
     "sealed_utc": "",

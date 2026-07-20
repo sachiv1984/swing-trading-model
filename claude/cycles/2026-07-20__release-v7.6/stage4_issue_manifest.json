@@ -16,5 +16,59 @@
     "ac_summary": "Regression baseline document updated with new scenario entries for BLG-FE-115-119; cross-referenced against corresponding Playwright spec file(s)",
     "labels": ["sprint", "EPIC-02", "cycle:2026-07-20__release-v7.6"],
     "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Reconcile realised P&L export against trade_plan closes",
+    "epic": "EPIC-03",
+    "description": "Audit trail reconciliation between trade_history realised P&L and trade_plans closure data",
+    "ac_summary": "Reconciliation logic specified; run once against production data; results recorded",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-20__release-v7.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Standardise error-response envelope across all routers",
+    "epic": "EPIC-04",
+    "description": "Audit and document canonical error-response envelope for backend/routers/",
+    "ac_summary": "Audit complete; canonical envelope documented in backend_engineering_patterns.md; non-conforming endpoints filed as follow-up",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-07-20__release-v7.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Build shared mock payload fixture library from openapi.yaml",
+    "epic": "EPIC-05",
+    "description": "Playwright fixture library deriving mock payload shapes from docs/reference/openapi.yaml",
+    "ac_summary": "Fixture library exists for BLG-SPEC-95 scope endpoints; documented as preferred pattern for new Playwright tests",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-07-20__release-v7.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Audit nightly batch jobs for idempotency risk",
+    "epic": "EPIC-06",
+    "description": "Idempotency audit of daily-snapshot.yml jobs and nightly backtest import",
+    "ac_summary": "Audit findings documented per job; additional risks filed as follow-up; cross-references BLG-BE-59/BLG-BE-60",
+    "labels": ["sprint", "EPIC-06", "cycle:2026-07-20__release-v7.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Add consolidated Gemini + Claude monthly cost summary",
+    "epic": "EPIC-07",
+    "description": "Consolidated monthly AI cost view combining Gemini and Claude cost tracking",
+    "ac_summary": "Consolidated view shows both providers' costs and combined total; matches sum of existing per-provider sources",
+    "labels": ["sprint", "EPIC-07", "cycle:2026-07-20__release-v7.6"],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "Add standing regression suite for ticker/market input sanitisation",
+    "epic": "EPIC-08",
+    "description": "Consolidate BLG-SEC-01/02 test cases into a standing pytest regression suite",
+    "ac_summary": "Suite covers all 4 previously-vulnerable paths; runs in CI on relevant PRs; DoQ sign-off",
+    "labels": ["sprint", "EPIC-08", "cycle:2026-07-20__release-v7.6"],
+    "assignee": null
   }
 ]

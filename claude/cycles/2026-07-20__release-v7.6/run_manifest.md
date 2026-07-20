@@ -37,4 +37,8 @@ Both are single-EPIC-scale non-issues for this cycle (1 backlog item, no new bac
 
 ## Scope Summary
 
-Single-EPIC release. Anchor item: `BLG-FE-119` — PDF / print-friendly export (P1, Effort M, no dependencies).
+Single-EPIC release. Anchor item: `BLG-FE-119` — PDF / print-friendly export (P1, Effort M, no dependencies). Expanded to 2 EPICs before initial publish (EPIC-02, `BLG-QA-112`, gate-triggered companion).
+
+## Post-Publish Addendum (2026-07-20T17:20:00Z)
+
+After initial publish, the user requested more sprint scope. Amendment Cycle Engine did not qualify (reason category + lifecycle state); Release Planning re-invocation blocked by Published terminal-state guard; Sprint Planning has no capacity-fill mechanism. PO directed a same-session bypass reopening this cycle's artefacts (zero downstream consumption at the time). 6 items added: EPIC-03 (`BLG-FEAT-79`), EPIC-04 (`BLG-BE-65`), EPIC-05 (`BLG-QA-114`), EPIC-06 (`BLG-BE-62`), EPIC-07 (`BLG-FEAT-77`), EPIC-08 (`BLG-QA-69`). Full rationale: `claude/roadmap/decision_log.md` DL-073. Full detail: `release_plan.md`'s "PO-Directed Post-Publish Scope Expansion" section; `lessons_learnt.md` Friction Item 2.
