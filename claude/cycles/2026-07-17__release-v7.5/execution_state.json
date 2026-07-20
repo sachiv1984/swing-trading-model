@@ -4,8 +4,8 @@
   "backlog_slice_source": "claude/cycles/2026-07-17__release-v7.5/stage4_backlog_slice.md",
   "invoked_utc": "2026-07-17T20:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-07-20T11:40:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-07-20T11:45:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -222,6 +222,6 @@
     "EPIC-03: PR #1018 merged by user 2026-07-20 (cross-EPIC merge conflict resolution per CLAUDE.md §8 then applied to reconcile EPIC-04 against the updated main, which now includes both EPIC-02 and EPIC-03)."
   ],
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-07-20T11:45:00Z"
 }

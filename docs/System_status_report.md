@@ -1,9 +1,34 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.10
-**Last Updated:** 2026-07-17
+**Version:** 4.11
+**Last Updated:** 2026-07-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-07-17__release-v7.5
+**Date:** 2026-07-20
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Global Cmd/Ctrl-K command palette wired to the existing shadcn Command primitive, navigable to every page including query-param-based TradePlan detail routes (BLG-FE-115) | `docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md`; `docs/specs/frontend/pages/navigation.md` | None |
+| EPIC-02 | User-defined custom price alerts — `price_alerts` table, GET/POST /price-alerts, DELETE /price-alerts/{id}, evaluation folded into the alert delivery pipeline, health-check surfacing (BLG-FE-116) | `docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md`; `docs/specs/frontend/pages/notifications.md`; `docs/specs/api_contracts/alerts_endpoints.md`; `docs/specs/data_model.md`#Price Alerts Table | None |
+| EPIC-03 | Bulk actions toolbar (checkbox selection, inline Bulk Tag, destructive confirmation, partial-failure toast) on Watchlist and Trade Plans, 6 new batch endpoints (BLG-FE-117) | `docs/design/2026-07-17__release-v7.5/bulk-actions-toolbar/ux_spec.md`; `docs/specs/frontend/pages/watchlist.md`; `docs/specs/frontend/pages/trade_plan.md`; `docs/specs/api_contracts/watchlist_endpoints.md`; `docs/specs/api_contracts/trade_plan_endpoints.md` | None |
+| EPIC-04 | Named saved filter presets and a Table/Calendar toggle view on Trade History (realised-P&L day indicators, unrealised-P&L banner, day-click date filter), plus a localStorage envelope for previously-unpersisted active-filter state (BLG-FE-118) | `docs/design/2026-07-17__release-v7.5/saved-filters-calendar-view/ux_spec.md`; `docs/specs/frontend/pages/trade_history.md`; `docs/specs/api_contracts/saved_filters_endpoints.md`; `docs/specs/api_contracts/reports_endpoints.md`; `docs/specs/data_model.md`#Saved Filters Table | None |
+
+### Capabilities deferred or returned
+
+None — all 4 stories (ST-01 through ST-04) delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md (agent-mediated Director of Quality, 2026-07-17), qa_evidence_EPIC-02.md (agent-mediated Director of Quality, 2026-07-20), qa_evidence_EPIC-03.md (agent-mediated Director of Quality, 2026-07-20), qa_evidence_EPIC-04.md (agent-mediated Director of Quality, 2026-07-20)
+- Deviations filed: None
+- Test scenarios referenced: tests/e2e/command-palette.spec.js (SC-CP-01..12); tests/e2e/custom-price-alerts.spec.js; tests/e2e/bulk-actions-toolbar.spec.js; tests/e2e/saved-filters-calendar-view.spec.js
 
 ---
 
