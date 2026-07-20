@@ -1,8 +1,8 @@
 **Owner:** Backend Engineering Patterns Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-07-14
+**Version:** 1.3
+**Last Updated:** 2026-07-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -146,10 +146,37 @@ def get_resource_endpoint(format: Optional[str] = None):
 
 ---
 
+### Error-response envelope conformance
+
+**Added:** v1.3 — ST-04 (EPIC-04, v7.6, BLG-BE-65)
+
+**Canonical envelope:** The single canonical error-response shape for this codebase is defined in `docs/specs/api_contracts/conventions.md` §13 (Error Response Standard): `{"status": "error", "message": "<human-readable>"}`, returned with the correct non-200 HTTP status code per §13.2 (400/404/500). This document does not redefine that shape — it records this sprint's audit of conformance against it, and the resulting follow-up scope.
+
+**Audit method:** Every file in `backend/routers/` (23 files, 79 `@router.` endpoints) was scanned for `HTTPException`, `JSONResponse`, and bare-dict error-path returns. `backend/main.py` was checked only to confirm no global `@app.exception_handler` exists that would translate `HTTPException`'s default body — none does.
+
+**Findings — three non-conformance patterns identified:**
+
+1. **Default FastAPI envelope (`{"detail": "..."}`) instead of canonical (`{"status": "error", "message": "..."}`).** The dominant pattern: `raise HTTPException(status_code=X, detail=...)` with no global handler to translate it. Affects the large majority of error paths across: `alerts.py`, `analytics.py`, `digest.py` (401 case), `ai.py` (422 case), `paper_trading.py`, `plan_vs_reality.py`, `portfolio_size.py`, `red_flag_journal.py`, `saved_filters.py`, `screener.py` (400/404/409 cases), `strategy_benchmark.py`, `ticker_universe.py`, `trade_plans.py` (404 case), `trades_export.py`, `validation.py` (500 case), `watchlist.py`. `earnings.py` and `news.py` have no explicit error handling at all and fall through to this same default shape on any uncaught exception.
+2. **Errors masked as HTTP 200 success — most severe finding.** `portfolio_risk.py`'s four endpoints (`/drawdown-status`, `/concentration-status`, `/sector-weights`, `/gate-metrics`) catch all exceptions and return `{"status": "ok", "data": {..., "error": str(e)}}` (first three) or `{"status": "error", "error": str(e)}` (last one) as a bare dict — implicit HTTP 200 in all four cases. This directly violates conventions.md §13.3 ("error responses must not use HTTP 200 with an error body"): a frontend caller checking only `response.status === "ok"` would treat a backend failure as success for the first three endpoints.
+3. **Correct shape, wrong status code.** `digest.py`'s `GET /weekly` catch-all returns the canonical `{"status": "error", "message": ...}` body but as a bare dict (implicit HTTP 200), not via `JSONResponse(status_code=500, ...)`.
+
+**Conforming reference implementations:** `research.py` (`get_research`, 503/404/500 cases) and most of `trade_plans.py`'s catch-all blocks correctly use `JSONResponse(status_code=..., content={"status": "error", "message": ...})` — use these as the template for remediation rather than inventing a new shape.
+
+**Exempt endpoints:** `/health`, `/health/detailed`, `/test/endpoints` (conventions.md §13.3) — `test.py` was audited and confirmed exempt, not flagged.
+
+**Observation (not in this item's scope):** `news.py` and part of `screener.py` also diverge on the *success* envelope (`{"ok": true, "data": ...}` instead of `{"status": "ok", "data": ...}`). Noted for awareness; BLG-BE-65's acceptance criteria scope this audit to error-response shapes only, so no follow-up item is filed for it here.
+
+**Out of audit scope:** `backend/main.py` exhibits the same default-envelope pattern (44 `HTTPException(detail=str(e))` call sites) but is not a file under `backend/routers/`; already tracked separately as an internal-detail-leakage concern (distinct from envelope shape).
+
+**Disposition:** Per BLG-BE-65's acceptance criteria, non-conforming endpoints are not fixed in this item. Follow-up backlog items: `BLG-BE-67` (fix HTTP-200-masked errors in `portfolio_risk.py`, P2) and `BLG-BE-68` (conform remaining routers to the canonical `{status, message}` envelope + correct status codes, P3).
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-07-20 | ST-04 (EPIC-04, v7.6, BLG-BE-65): Add §Error-response envelope conformance — full audit of `backend/routers/` (23 files, 79 endpoints) against the canonical envelope in `conventions.md` §13. Three non-conformance patterns found (default FastAPI `{detail}` shape; errors masked as HTTP 200 in `portfolio_risk.py`; correct shape but wrong status code in `digest.py`). Non-conforming endpoints filed as follow-up items (`BLG-BE-67`, `BLG-BE-68`) per this item's acceptance criteria — no router code changed in this item. |
 | 1.2 | 2026-07-14 | ST-07 (EPIC-03, v7.1, BLG-SPEC-84): Add §CSV/export response-body pattern — canonical pattern for downloadable-file endpoints, extracted from `GET /reports/tax-year?format=csv` (the first export endpoint in the codebase). Documents the pure-builder-function pattern, format-param branching, auth (automatic via global middleware), charset convention, filename convention, classification, and testing requirement (content-asserting, not download-fired-only). No prior Changelog section existed in this file — added here for consistency with sibling canonical specs. |
 | 1.1 | 2026-06-16 | (prior history not retroactively reconstructed — this changelog starts at v1.2; see git history for earlier changes.) |
 

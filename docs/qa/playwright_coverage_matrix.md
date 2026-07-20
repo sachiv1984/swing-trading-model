@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-06-09
+**Version:** 1.3
+**Last Updated:** 2026-07-20
 **Cycle:** 2026-06-01__release-v4.8 (ST-06 — BLG-QA-39)
 
 ---
@@ -143,6 +143,20 @@ This matrix maps delivered features and stories (v3.7–v4.2) to their Playwrigh
 
 ---
 
+## 3A. Shared Mock Fixture Pattern (ST-05, EPIC-05, v7.6, BLG-QA-114)
+
+**Preferred pattern for new Playwright tests:** `tests/e2e/fixtures/api-mocks.js` — a shared, OpenAPI-derived mock payload factory library. Before hand-rolling an inline mock JSON literal in a new spec file, check whether the endpoint is already covered here.
+
+Rationale: prior to this item, every spec file inlined its own ad hoc mock objects per endpoint (e.g. `custom-price-alerts.spec.js`, `bulk-actions-toolbar.spec.js`, `saved-filters-calendar-view.spec.js` each independently defined `PriceAlert`/`SavedFilter`/bulk-result shapes). A contract change in `openapi.yaml` then required hunting down every spec's inline copy rather than updating one factory. Per `shared_standards.md §18`'s mock-payload advisory (mocks must match the canonical response shape; nested objects must not be flattened), fixture shapes here are derived directly from `docs/reference/openapi.yaml` component schemas (`SavedFilter`, `PriceAlert`, `BulkActionResult`).
+
+**Current coverage:** the endpoints touched by `BLG-SPEC-95`'s v7.4 UI-heavy release readiness bundle — `GET/POST /saved-filters`, `DELETE /saved-filters/{id}`, `GET/POST /price-alerts`, `DELETE /price-alerts/{id}`, `POST /watchlist/bulk-tag`, `DELETE /watchlist/bulk`, `POST /trade-plans/bulk-tag`, `PUT /trade-plans/bulk-archive`, `DELETE /trade-plans/bulk`. Command palette (`BLG-FE-115`) has no fixtures here — v1 introduces no backend endpoint (client-side only, confirmed by that feature's own readiness pass).
+
+**Working example:** `custom-price-alerts.spec.js` was refactored to consume `priceAlertsListOk()`/`priceAlert()` from the shared library in place of its previous inline `EMPTY_PRICE_ALERTS`/`POPULATED_PRICE_ALERTS` literals (byte-identical output verified; all 11 scenarios still pass). Other pre-existing specs (`bulk-actions-toolbar.spec.js`, `saved-filters-calendar-view.spec.js`) were not migrated in this item — migrating a passing spec is optional cleanup, not required; the library is additive and new specs should use it going forward.
+
+**Extending the library:** when a new endpoint needs mocking in a future spec, add a factory function here following the same pattern (defaults matching the OpenAPI example/schema, `...overrides` for scenario-specific fields) rather than inlining another ad hoc object.
+
+---
+
 ## 4. Features with Zero Automated Coverage
 
 | Feature | Release | Reason | Recommendation |
@@ -218,6 +232,7 @@ Signed: Sprint Execution Engine (autonomous class) — 2026-06-09
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 1.3 | 2026-07-20 | Sprint Execution Engine | ST-05 (EPIC-05, v7.6, BLG-QA-114): Added §3A documenting `tests/e2e/fixtures/api-mocks.js`, the new shared OpenAPI-derived mock fixture library, as the preferred pattern for new Playwright tests. Covers the 9 endpoints touched by `BLG-SPEC-95`'s v7.4 UI-heavy release readiness bundle. `custom-price-alerts.spec.js` refactored as the working example (byte-identical mock output verified, all 11 scenarios still passing). |
 | 1.2 | 2026-06-09 | Sprint Execution Engine | v5.3 ST-20 (BLG-QA-54): v5.2+v5.3 coverage sections added. SI-05 digest delivery spec (ST-19, 4 scenarios) + tax year P&L unit tests (ST-18, 6 scenarios) + system-status SC-SS-01b updated ('62'→'65'). Total: 41 spec files. Coverage gaps identified. Director of Quality sign-off. |
 | 1.1 | 2026-06-01 | Sprint Execution Engine | v4.8 ST-06 (BLG-QA-39): Added v4.3–v4.7 feature coverage sections. Added compliance_summary field (v4.7 ST-03, SC-REP-05 reference). Confirmed GET /reports/monthly-pnl v0.6 contract present in reports_endpoints.md. No contract gaps found. |
 | 1.0 | 2026-05-29 | Sprint Execution Engine | Initial coverage matrix (ST-12, v4.3 EPIC-02, BLG-QA-32). 39 spec files, v3.7–v4.2 features. |

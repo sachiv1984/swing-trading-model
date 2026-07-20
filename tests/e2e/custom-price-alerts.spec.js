@@ -20,6 +20,10 @@
 'use strict';
 
 const { test, expect } = require('@playwright/test');
+// Shared OpenAPI-derived mock fixture library — ST-05 (EPIC-05, v7.6, BLG-QA-114).
+// Working example per that item's Quality AC: consumes the shared factories
+// instead of hand-rolled inline JSON for the /price-alerts fixtures below.
+const { priceAlertsListOk, priceAlert } = require('./fixtures/api-mocks');
 
 const EMPTY_FEED = { status: 'ok', data: { notifications: [], has_more: false } };
 const EMPTY_PREFS = {
@@ -34,24 +38,21 @@ const EMPTY_PREFS = {
   },
 };
 const EMPTY_RULES = { status: 'ok', data: [] };
-const EMPTY_PRICE_ALERTS = { status: 'ok', data: [] };
+const EMPTY_PRICE_ALERTS = priceAlertsListOk();
 
 // Fixture rows spanning both active=true/false and both condition values (AC-07).
-const POPULATED_PRICE_ALERTS = {
-  status: 'ok',
-  data: [
-    {
-      id: 'pa-1', ticker: 'AAPL', condition: 'above', threshold_price: 150.0,
-      active: true, triggered_at: null,
-      created_at: '2026-07-17T12:00:00Z', updated_at: '2026-07-17T12:00:00Z',
-    },
-    {
-      id: 'pa-2', ticker: 'VOD.L', condition: 'below', threshold_price: 42.1,
-      active: false, triggered_at: '2026-07-16T09:00:00Z',
-      created_at: '2026-07-16T08:00:00Z', updated_at: '2026-07-16T09:00:00Z',
-    },
-  ],
-};
+const POPULATED_PRICE_ALERTS = priceAlertsListOk([
+  priceAlert({
+    id: 'pa-1', ticker: 'AAPL', condition: 'above', threshold_price: 150.0,
+    active: true, triggered_at: null,
+    created_at: '2026-07-17T12:00:00Z', updated_at: '2026-07-17T12:00:00Z',
+  }),
+  priceAlert({
+    id: 'pa-2', ticker: 'VOD.L', condition: 'below', threshold_price: 42.1,
+    active: false, triggered_at: '2026-07-16T09:00:00Z',
+    created_at: '2026-07-16T08:00:00Z', updated_at: '2026-07-16T09:00:00Z',
+  }),
+]);
 
 async function mockCommon(page) {
   await page.route(/\/notifications\?page=/, (route) =>
