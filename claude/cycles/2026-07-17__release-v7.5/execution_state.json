@@ -125,8 +125,8 @@
     "EPIC-04": {
       "status": "done",
       "branch": "exec/2026-07-17__release-v7.5/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1019,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-17__release-v7.5/qa_evidence_EPIC-04.md",
       "test_scenarios": ["tests/e2e/saved-filters-calendar-view.spec.js", "tests/test_saved_filters_and_daily_pnl.py"],
@@ -188,7 +188,8 @@
     "This branch (exec/2026-07-17__release-v7.5/EPIC-04) was cut from main before EPIC-02/EPIC-03's branches merged — its copy of this file does not yet reflect their state. Per CLAUDE.md §8, reconcile at merge time (union completed_items, take each branch's own state for its own entry, do not revert any story from done).",
     "EPIC-04: engine worked through all four EPICs sequentially without stalling on EPIC-02's/EPIC-03's Director of Quality sign-off (both always-human gates, per execution_prompt.md §1 Purpose — 'do not block the entire sprint on one item'). All four EPICs (EPIC-01 merged; EPIC-02, EPIC-03, EPIC-04 implemented, tested, and pushed) are now accounted for in this sprint.",
     "EPIC-04: ST-04 implemented and pushed (commit e0d7a933, branch exec/2026-07-17__release-v7.5/EPIC-04). qa_evidence_EPIC-04.md created with AC table complete (9/9 Playwright + 13/13 backend unit scenarios passing, full regression suite clean, including a real regression caught and fixed during verification — see execution_state.json ST-04 notes) but Director of Quality sign-off Date is blank — per execution_prompt.md §3.2.B (BLG-GOV-18) the PR may not be opened until this is non-blank. This EPIC has frontend-visible changes so BLG-GOV-19 autonomous class sign-off is unavailable (Criterion 3 unmet) — engine halted pending human review, not an escalation/blocker requiring authority decision. All four sprint EPICs are now at the same state: implemented, tested, pushed, and awaiting either Director of Quality sign-off (EPIC-02/03/04) or already merged (EPIC-01).",
-    "EPIC-04: resolved 2026-07-20T11:40:00Z — user directed Claude to act as Director of Quality (per claude/agents/director_of_quality.md, Owner field matches) and perform the sign-off directly. Independent re-verification performed against the committed branch state (not a rubber-stamp): fresh checkout (git checkout + pull) from commit 6f7b5e10, full re-run: backend pytest 686 passed/2 pre-existing skips/0 failed; full e2e suite 588 passed/3 pre-existing skips/0 failed. Reviewed git diff main..HEAD --stat (22 files, all within documented scope, no unrelated changes). Re-confirmed the Array.isArray(json.data) crash-fix guards are present in the actual committed SavedFiltersControl.js/CalendarView.js (not just staged locally) via direct grep against the checked-out commit. Sign-off committed, qa_signed_off=true set in this same execution_state.json write. EPIC-04 unblocked for PR (STEP 3.2.B)."
+    "EPIC-04: resolved 2026-07-20T11:40:00Z — user directed Claude to act as Director of Quality (per claude/agents/director_of_quality.md, Owner field matches) and perform the sign-off directly. Independent re-verification performed against the committed branch state (not a rubber-stamp): fresh checkout (git checkout + pull) from commit 6f7b5e10, full re-run: backend pytest 686 passed/2 pre-existing skips/0 failed; full e2e suite 588 passed/3 pre-existing skips/0 failed. Reviewed git diff main..HEAD --stat (22 files, all within documented scope, no unrelated changes). Re-confirmed the Array.isArray(json.data) crash-fix guards are present in the actual committed SavedFiltersControl.js/CalendarView.js (not just staged locally) via direct grep against the checked-out commit. Sign-off committed, qa_signed_off=true set in this same execution_state.json write. EPIC-04 unblocked for PR (STEP 3.2.B).",
+    "EPIC-04: PR #1019 opened (https://github.com/sachiv1984/swing-trading-model/pull/1019). Awaiting CI + Product Owner acceptance. All three pending EPICs (EPIC-02 PR #1017, EPIC-03 PR #1018, EPIC-04 PR #1019) are now open with Director of Quality sign-off cleared."
   ],
 
   "sealed": false,
