@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-07-17
+**Version:** 1.2
+**Last Updated:** 2026-07-20
+**Design Source (v1.2 print/export PDF):** docs/design/2026-07-20__release-v7.6/print-pdf-export/ux_spec.md
 **Design Source (v1.1 bulk actions):** docs/design/2026-07-17__release-v7.5/bulk-actions-toolbar/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source (v1.0 Start Trade from Plan):** docs/design/2026-07-15__release-v7.2/start-trade-from-plan/ux_spec.md (BLG-FE-109)
@@ -269,7 +270,7 @@ Checklist state stored as `checklist` array on the trade plan record. Submitted 
 - Tags shown as pill list below core fields, above Pre-Trade Checklist (§5c)
 - Pre-trade checklist shown in read-only state (§6.4)
 - Setup Quality Score shown (§7a) if EPIC-02 (PT-04) is in scope
-- Action buttons: **"Edit"** (primary) + **"Abandon"** (amber outlined — see §8) + **"Delete"** (destructive, with confirmation)
+- Action buttons: **"Edit"** (primary) + **"Abandon"** (amber outlined — see §8) + **"Delete"** (destructive, with confirmation) + **"Print / Export PDF"** (see §7c)
 - **"Review research"** link present if ticker is set
 - When `status = 'abandoned'`: "Abandon" and "Edit" buttons hidden; abandonment reason shown (see §8.3)
 
@@ -311,6 +312,16 @@ Shown in the Trade Plan creation form (`/trade-plans/new`) as a read-only panel:
 - Displayed after ticker is entered; refetches on ticker change (debounced 500ms)
 - Same badge layout and expandable detail as §7a
 - Endpoint: `GET /trade-plans/setup-quality-score?ticker={formTicker}`
+
+---
+
+## 7c. Print / Export PDF (v7.6 — ST-01, BLG-FE-119)
+
+**Design source:** docs/design/2026-07-20__release-v7.6/print-pdf-export/ux_spec.md
+
+A **"Print / Export PDF"** action (outline button, `Printer` icon) is shown in the `PageHeader` actions, alongside "Start Trade from Plan" / "Abandon Plan" / "Back", only in the detail view of an existing, loaded plan (`editId && existingPlan`) — not shown on the creation form.
+
+`onClick` calls `window.print()`. No new backend endpoint — output is produced by a shared global print stylesheet (`@media print`), not server-side PDF rendering. The print stylesheet hides the app nav/sidebar and the `PageHeader` actions themselves (none of the action buttons are meaningful on paper), and forces a white background / dark text regardless of the active theme. Printed output shows: page title/description (ticker, market, status badge) and all read-only detail-view content — core fields, tags (§5c), pre-trade checklist read-only state (§6.4), Setup Quality Score if present (§7a).
 
 ---
 
@@ -459,6 +470,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-07-20 | v7.6 design gate — added §7c Print / Export PDF (ST-01, BLG-FE-119): "Print / Export PDF" outline button in the detail-view PageHeader actions, `window.print()`-based (shared global print stylesheet, no new backend endpoint); §7 action buttons row updated. Design source: print-pdf-export/ux_spec.md. Approved: Product Owner 2026-07-20. Design gate: 2026-07-20__release-v7.6. Head of Specs Team confirmed. |
 | 1.1 | 2026-07-17 | v7.5 design gate — added §11 Bulk Actions (ST-03, BLG-FE-117): row checkboxes on the list, bulk-action toolbar (renders only when 1+ selected), Bulk Tag (reuses §5c Tag Editor), Bulk Archive (reuses §8 Abandonment, active plans excluded), Bulk Delete (destructive, confirmation required), per-row partial-failure feedback. New bulk-mutation endpoints. Design source: bulk-actions-toolbar/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
 | 1.0 | 2026-07-15 | v7.2 design gate — added §10 Start Trade from Plan (ST-03, BLG-FE-109): "Start Trade" action on detail view (primary button) and list view (icon button), visible only for non-active/non-terminal plans; hands off to `/TradeEntry` via a new `trade_plan_prefill` navigation-state object (sibling to existing `watchlist_prefill`) pre-filling ticker/market/stop; `trade_plan_id` carried automatically, non-editable "Linked to trade plan" indicator shown; manual entry gains an optional "Link to trade plan" selector when an eligible plan exists for the entered ticker. No change to existing required-field validation. Depends on ST-02 readiness pass (BLG-SPEC-89). Design source: start-trade-from-plan/ux_spec.md. Approved: Product Owner 2026-07-15. Head of Specs Team confirmed. |
 | 0.9 | 2026-07-08 | v6.8 design gate — added §5c Trade Plan Tags (ST-05, BLG-FEAT-52): new independent `trade_tags` field on `trade_plans` (data-independent from existing position/journal tags), Tag Editor on edit form, Tag List (read-only) on detail view, new `GET /trade-plans/tags` autocomplete endpoint. Reuses `journal_components.md` §4 Tag Editor and §1-equivalent pill display for visual consistency only. §5.1 form fields table and §7 detail view updated. Design source: trade-tagging/ux_spec.md. Approved: Product Owner 2026-07-08. Head of Specs Team confirmed. |

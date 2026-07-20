@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.3
-**Last Updated:** 2026-06-03
+**Version:** 1.4
+**Last Updated:** 2026-07-20
+**Design Source (v1.4 AI Usage & Costs):** docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose & User Goals
@@ -18,6 +19,7 @@ Users should be able to:
 - Define the minimum number of trades required before analytics are displayed.
 - Configure concentration alert thresholds for position and sector risk limits.
 - Save settings with clear, immediate feedback that changes have been applied.
+- View combined monthly AI provider (Gemini + Claude) spend at a glance (read-only, v7.6).
 
 ---
 
@@ -44,7 +46,9 @@ Sections:
 1. **Strategy Parameters**
 2. **Commission & Fees**
 3. **Preferences** (theme)
-4. **Analytics** (minimum trades for analytics)
+4. **Risk Limits** (concentration alert thresholds)
+5. **Analytics** (minimum trades for analytics)
+6. **AI Usage & Costs** (read-only, v7.6 — see §6 below)
 
 ---
 
@@ -191,6 +195,25 @@ Analytics views show only once this threshold is met, avoiding misleading statis
 
 ---
 
+### 6. AI Usage & Costs (v7.6 — ST-07, BLG-FEAT-77)
+
+**Design source:** docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md
+
+A **read-only** section showing combined AI provider spend for the current calendar month. Unlike sections 1–5, this section has no form fields and does not participate in the `Save Settings` mutation — it loads via its own independent query and is excluded from the Save button's scope.
+
+**Fields (read-only):**
+
+| Row | Source | Format |
+|-----|--------|--------|
+| Gemini (thesis generation) | `gemini_audit_log`, current-month sum | `$X.XX` |
+| Claude (trade plan / chat) | `POST /ai/check-daily-cost` equivalent monthly aggregate | `$X.XX` |
+| Combined Total | Client-side sum of the two rows above (no new endpoint) | `$X.XX`, bold, top-border separated from the two provider rows |
+
+**Loading:** inline skeleton within the card only — does not block the rest of the Settings page.
+**Error:** card shows "AI cost data unavailable" — no numeric fallback is rendered (never shown as `$0.00` or `—`); rest of the page is unaffected.
+
+---
+
 ## Data Behavior
 
 ### Loading Existing Settings
@@ -244,5 +267,14 @@ Analytics views show only once this threshold is met, avoiding misleading statis
 - Defaults match the canonical strategy parameters. Users can adopt them without changes.
 - Helper text clarifies how each parameter is used (ATR multipliers, stamp duty, FX fee, analytics threshold, risk percent default).
 - The `default_risk_percent` field helper text makes clear it is a convenience default, not a hard limit — users retain full control per trade.
-- Grouping into Strategy Parameters, Commission & Fees, Preferences, Risk Limits, and Analytics mirrors the domain model.
+- Grouping into Strategy Parameters, Commission & Fees, Preferences, Risk Limits, Analytics, and (v7.6) AI Usage & Costs mirrors the domain model.
 - Save feedback (button state + toast) confirms changes are persisted and applied.
+- AI Usage & Costs (§6) is read-only monitoring, not configuration — deliberately placed last and excluded from Save, so its presence doesn't imply the figures are editable.
+
+---
+
+## Changelog
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.4 | 2026-07-20 | v7.6 design gate — added §6 AI Usage & Costs (ST-07, BLG-FEAT-77): read-only SectionCard showing Gemini + Claude current-month spend and a client-side-summed Combined Total; independent query, excluded from Save Settings scope. Sections list corrected to include the pre-existing Risk Limits section (previously missing from the top-of-file summary). Design source: consolidated-ai-cost-view/ux_spec.md. Approved: Product Owner 2026-07-20. Design gate: 2026-07-20__release-v7.6. Head of Specs Team confirmed. |
