@@ -210,8 +210,8 @@
       }
     },
     "EPIC-07": {
-      "status": "not_started",
-      "branch": null,
+      "status": "blocked",
+      "branch": "exec/2026-07-20__release-v7.6/EPIC-07",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
@@ -220,24 +220,24 @@
       "stories": {
         "ST-07": {
           "title": "Add consolidated Gemini + Claude monthly cost summary",
-          "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": null,
-          "branch": null,
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
+          "assigned_to": "FinOps & Resource Architect; Product Owner",
+          "github_issue": 1026,
+          "branch": "exec/2026-07-20__release-v7.6/EPIC-07",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-07-20T21:00:00Z",
+          "unblock_criteria": "ESC-EXEC-20260720-01 resolved with a disposition of (a) single-provider reframe, (b) defer to future cycle, or (c) explicit accept-as-specified from Product Owner",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": ["docs/specs/frontend/pages/settings.md#6. AI Usage & Costs (v7.6 — ST-07, BLG-FEAT-77)"],
+          "spec_references": ["docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Design Gate resolved the backend-endpoint question: client-side sum of two existing sources, no new endpoint required (settings.md §6 'no new endpoint'). Sequenced after EPIC-04 per Merge Order."
+          "notes": "Reclassified autonomous -> delegated_decision mid-sprint (LL-v2.3-EX-02 pattern, in reverse). Original classification assumed Gemini and Claude are two genuinely separate cost-generating AI providers per the PO-approved UX spec's premise. Tracing gemini_service.py's actual implementation found it exclusively calls the Anthropic Claude API (_call_claude(), MODEL_VERSION='claude-haiku-4-5') -- no Gemini API integration exists anywhere in the codebase (verified: no GEMINI_API_KEY, no google-generativeai package, no genai import). Every Claude call dual-writes to gemini_audit_log AND claude_audit_log for the same spend event -- confirmed independently by docs/ops/gemini_cost_tracking.md's own H1 heading ('Claude API Cost Tracking') and docs/ops/claude_cost_review_2026-05.md §1. Implementing the story literally would double-count one real cost stream as two providers' spend -- a correctness/quality defect, not a UI question the engine can resolve alone. Escalated as ESC-EXEC-20260720-01 (Quality trigger, execution_escalations.md) with 3 proposed resolution options. Does not block other EPICs -- continuing to EPIC-08."
         }
       }
     },
@@ -275,10 +275,10 @@
     }
   },
 
-  "blocked_items": [],
+  "blocked_items": ["ST-07"],
   "delegated_items": [],
   "completed_items": ["ST-01"],
-  "open_escalations": [],
+  "open_escalations": ["ESC-EXEC-20260720-01"],
 
   "merge_gate": {
     "epics_merged": ["EPIC-01"],
