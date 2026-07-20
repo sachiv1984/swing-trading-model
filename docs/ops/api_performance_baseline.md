@@ -2,9 +2,9 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.15
+**Version:** 2.16
 **Date:** 2026-07-20
-**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration
+**Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 ---
@@ -1252,10 +1252,56 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, autonomous class)
 
 ---
 
+## 28. v7.5 Endpoint Registration — Saved Filters & Daily P&L (ST-04, EPIC-04, BLG-FE-118)
+
+**Date:** 2026-07-20
+**Story:** ST-04 (EPIC-04, v7.5) — BLG-FE-118, saved filter presets & calendar view
+**Environment:** N/A — see per-endpoint notes below.
+**Method:** GET endpoints registered pending live measurement per §13 pattern; POST/DELETE registered as write-op exclusions per §20/§25/§26/§27 methodology (estimated values, no live sampling against production data).
+
+### 28.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /reports/daily-pnl | v7.5 | Read — pending live timing run | 250–400ms (est.) | 500–700ms (est.) | Pending next BLG-OPS-13-style re-run |
+| GET /saved-filters | v7.5 | Read — pending live timing run | 200–350ms (est.) | 400–600ms (est.) | Pending next BLG-OPS-13-style re-run |
+| POST /saved-filters | v7.5 | Write — excluded from live timing run | ~250ms (est.) | ~500ms (est.) | — (write op, estimated values) |
+| DELETE /saved-filters/{id} | v7.5 | Write — excluded from live timing run | ~230ms (est.) | ~480ms (est.) | — (write op, estimated values) |
+
+**Endpoint characteristics:**
+- `GET /reports/daily-pnl`: single `GROUP BY EXTRACT(DAY FROM exit_date)` aggregation query on `trade_history`, narrowed to one calendar month (year+month `WHERE` filter) — same query shape as the existing `GET /reports/monthly-pnl` (§ baseline), narrower window so expected latency is comparable or lower.
+- `GET /saved-filters`: single `SELECT ... WHERE portfolio_id = %s ORDER BY created_at DESC` — no path parameters, consistent with other list endpoints (cf. §17 range).
+- `POST /saved-filters`: one `SELECT` (duplicate-name check) + one `INSERT ... RETURNING *` — two round-trips, consistent with §20's single-write estimate band.
+- `DELETE /saved-filters/{id}`: single `DELETE ... RETURNING id` — consistent with §25's single-write estimate band.
+
+**Why POST/DELETE are excluded from live timing run:**
+Both mutate real `saved_filters` rows (create/delete). Repeated sampling against staging or production would pollute portfolio preset state. Per §18.2/§20/§25/§26/§27 methodology, write endpoints that risk data mutation are registered with estimated performance characteristics rather than live measurements.
+
+**GET endpoints flagged for the next baseline re-run** alongside other pending-measurement endpoints (§13 pattern).
+
+### 28.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-04 (v7.5 EPIC-04, BLG-FE-118) — Saved Filters & Daily P&L Endpoint Registration Sign-Off
+
+AC-01: All four endpoints added with estimated p50/p95 and measurement date
+       (2026-07-20 — estimated; write-op exclusion applied to POST/DELETE). ✅ PASS
+AC-02: Estimation methodology documented — derived from query shape (GROUP BY
+       aggregation for daily-pnl, single SELECT for saved-filters list,
+       select+insert for create, single DELETE), consistent with §13/§17/§20/§25/§26/§27
+       baseline ranges. Write-op exclusion per §18.2/§20/§25/§26/§27 applied. ✅ PASS
+AC-03: Entry format consistent with existing baseline rows (§20/§25/§26/§27 pattern). ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, autonomous class) — 2026-07-20
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.16 | 2026-07-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-04 (v7.5 EPIC-04, BLG-FE-118): §28 added — GET /reports/daily-pnl, GET/POST /saved-filters, DELETE /saved-filters/{id} registered. GET endpoints flagged pending live timing run (§13 pattern); POST/DELETE registered as write-op exclusions (estimated p50/p95, consistent with §20/§25/§26/§27 pattern — mutate real `saved_filters` rows). Cross-EPIC merge conflict resolution (CLAUDE.md §8): renumbered from an independently-authored §26/v2.14 to §28/v2.16 to sit after EPIC-02's and EPIC-03's already-merged §26/§27 entries. |
 | 2.15 | 2026-07-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-03 (v7.5 EPIC-03, BLG-FE-117): §27 added — GET /watchlist/tags, POST /watchlist/bulk-tag, DELETE /watchlist/bulk, POST /trade-plans/bulk-tag, PUT /trade-plans/bulk-archive, DELETE /trade-plans/bulk registered. GET flagged pending live timing run (§13 pattern); the five write endpoints registered as write-op exclusions (estimated p50/p95, consistent with §20/§25/§26 pattern — mutate real `watchlist`/`trade_plans` rows). Cross-EPIC merge conflict resolution (CLAUDE.md §8): renumbered from an independently-authored v2.14 to v2.15 to sit after EPIC-02's already-merged v2.14 entry. |
 | 2.14 | 2026-07-17 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-02 (v7.5 EPIC-02, BLG-FE-116): §26 added — GET/POST /price-alerts and DELETE /price-alerts/{id} registered. GET flagged pending live timing run (§13 pattern); POST/DELETE registered as write-op exclusions (estimated p50/p95, consistent with §20/§25 pattern — mutate real `price_alerts` rows). |
 | 2.13 | 2026-07-13 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-15 (v7.0 EPIC-03, BLG-FEAT-68): §25 added — PATCH /positions/{id}/mark-reviewed registered as write-op exclusion (mutates real position records). Estimated p50=~250ms, p95=~500ms (single Supavisor UPDATE, consistent with §20 PATCH /trades/{id}/costs pattern). Live timing deferred per §18.2/§20 write-op policy. |

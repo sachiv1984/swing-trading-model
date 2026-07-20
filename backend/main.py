@@ -29,7 +29,9 @@ from routers import paper_trading as paper_trading_router
 from routers import pre_entry_validation as pre_entry_validation_router
 from routers import red_flag_journal as red_flag_journal_router
 from routers import strategy_benchmark as strategy_benchmark_router
+from routers import saved_filters as saved_filters_router
 from services.watchlist_service import ensure_watchlist_table
+from services.saved_filters_service import ensure_saved_filters_table
 from services.ai_audit_service import ensure_ai_audit_table
 from services.ticker_universe_service import ensure_ticker_universe_table, ensure_company_name_column, seed_default_tickers, deactivate_invalid_tickers, backfill_company_names, backfill_legacy_ticker_created_at
 from services.screener_batch_service import ensure_screener_results_table
@@ -147,6 +149,7 @@ from services import (
     build_tax_year_pdf,
     build_tax_year_csv,
     get_monthly_pnl_report,
+    get_daily_pnl_report,
     get_arc5_compliance_summary,
 )
 app = FastAPI(title=API_TITLE)
@@ -203,6 +206,7 @@ app.include_router(plan_vs_reality_router.router)
 app.include_router(paper_trading_router.router)
 app.include_router(red_flag_journal_router.router)
 app.include_router(strategy_benchmark_router.router)
+app.include_router(saved_filters_router.router)
 
 
 @app.on_event("startup")
@@ -220,6 +224,11 @@ def on_startup():
         _log.info("ensure_watchlist_table: OK")
     except Exception as _e:
         _log.error("ensure_watchlist_table FAILED at startup: %s", _e)
+    try:
+        ensure_saved_filters_table()
+        _log.info("ensure_saved_filters_table: OK")
+    except Exception as _e:
+        _log.error("ensure_saved_filters_table FAILED at startup: %s", _e)
     try:
         ensure_ai_audit_table()
         _log.info("ensure_ai_audit_table: OK")
@@ -760,6 +769,34 @@ def get_tax_year_report_endpoint(year: Optional[int] = None, format: Optional[st
             content={"status": "error", "message": msg})
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
+
+@app.get("/reports/daily-pnl")
+def get_daily_pnl_endpoint(year: int, month: int):
+    """
+    GET /reports/daily-pnl?year=YYYY&month=MM
+
+    Day-granularity sibling of GET /reports/monthly-pnl for the Trade History
+    Calendar View (ST-04, BLG-FE-118, v7.5) — day-bucketed realised P&L for a
+    single calendar month, plus the same current-snapshot
+    estimated_unrealised_pnl/unrealised_note pair (never shown per-day).
+    Spec: reports_endpoints.md §GET /reports/daily-pnl
+    """
+    try:
+        if not (1 <= month <= 12):
+            raise HTTPException(status_code=400, detail="month must be between 1 and 12")
+        report = get_daily_pnl_report(year, month)
+        return {
+            "status": "ok",
+            "data": report["days"],
+            "estimated_unrealised_pnl": report["estimated_unrealised_pnl"],
+            "unrealised_note": report["unrealised_note"],
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        return JSONResponse(status_code=500,
+            content={"status": "error", "message": str(e)})
 
 
 @app.get("/reports/monthly-pnl")

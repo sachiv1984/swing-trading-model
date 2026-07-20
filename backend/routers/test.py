@@ -236,6 +236,12 @@ async def test_all_endpoints(request: Request):
         {"name": "POST /trade-plans/bulk-tag", "method": "POST", "url": f"{base_url}/trade-plans/bulk-tag", "body": {"ids": [], "tags": ["momentum"]}, "critical": False},
         {"name": "PUT /trade-plans/bulk-archive", "method": "PUT", "url": f"{base_url}/trade-plans/bulk-archive", "body": {"ids": []}, "critical": False},
         {"name": "DELETE /trade-plans/bulk", "method": "DELETE", "url": f"{base_url}/trade-plans/bulk", "body": {"ids": []}, "critical": False},
+
+        # Saved Filters & Daily P&L — Calendar View (v7.5 / EPIC-04 ST-04, BLG-FE-118)
+        {"name": "GET /reports/daily-pnl", "method": "GET", "url": f"{base_url}/reports/daily-pnl?year=2026&month=7", "critical": False},
+        {"name": "GET /saved-filters", "method": "GET", "url": f"{base_url}/saved-filters", "critical": False},
+        {"name": "POST /saved-filters", "method": "POST", "url": f"{base_url}/saved-filters", "body": {"name": "__test__", "filter_state": {}}, "critical": False},
+        {"name": "DELETE /saved-filters/00000000-0000-0000-0000-000000000000", "method": "DELETE", "url": f"{base_url}/saved-filters/00000000-0000-0000-0000-000000000000", "critical": False},
     ]
     
     results = []

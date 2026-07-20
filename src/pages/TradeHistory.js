@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api, apiFetch } from "../api/base44Client";
 import { Loader2, Filter, TrendingUp, TrendingDown, Calendar, Tag, X, Download, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
@@ -9,16 +9,44 @@ import { cn } from "../lib/utils";
 import PageHeader from "../components/ui/PageHeader";
 import StatsCard from "../components/ui/StatsCard";
 import TradeHistoryTable from "../components/trades/TradeHistoryTable";
+import SavedFiltersControl from "../components/trades/SavedFiltersControl";
+import CalendarView from "../components/trades/CalendarView";
 import { motion } from "framer-motion";
 
+// ST-04 (BLG-FE-118, EPIC-04, v7.5): ephemeral, device-local active-filter
+// persistence — reuses the BLG-FE-40 versioned-localStorage-envelope pattern
+// already implemented for RedFlagJournal.js. Distinct from named saved
+// presets (server-side saved_filters rows, SavedFiltersControl.js).
+const FILTER_STORAGE_KEY = "tradeHistory.filters";
+const FILTER_STORAGE_VERSION = 1;
+
+function loadStoredFilters() {
+  try {
+    const raw = localStorage.getItem(FILTER_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || parsed.version !== FILTER_STORAGE_VERSION || !parsed.data) {
+      localStorage.removeItem(FILTER_STORAGE_KEY);
+      return null;
+    }
+    return parsed.data;
+  } catch {
+    try {
+      localStorage.removeItem(FILTER_STORAGE_KEY);
+    } catch {
+      // ignore — localStorage unavailable (e.g. private browsing)
+    }
+    return null;
+  }
+}
+
 export default function TradeHistory() {
-  const [filters, setFilters] = useState({
-    market: "all",
-    result: "all",
-    dateFrom: "",
-    dateTo: "",
-  });
-  const [selectedTags, setSelectedTags] = useState([]);
+  const [filters, setFilters] = useState(
+    () => loadStoredFilters()?.filters ?? { market: "all", result: "all", dateFrom: "", dateTo: "" }
+  );
+  const [selectedTags, setSelectedTags] = useState(
+    () => loadStoredFilters()?.selectedTags ?? []
+  );
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [csvExporting, setCsvExporting] = useState(false);
   const [aiSummaryOpen, setAiSummaryOpen] = useState(false);
@@ -26,6 +54,18 @@ export default function TradeHistory() {
   const [aiMessage, setAiMessage] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiGenerated, setAiGenerated] = useState(false);
+  const [view, setView] = useState("table");
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        FILTER_STORAGE_KEY,
+        JSON.stringify({ version: FILTER_STORAGE_VERSION, data: { filters, selectedTags } })
+      );
+    } catch {
+      // ignore — localStorage unavailable (e.g. private browsing)
+    }
+  }, [filters, selectedTags]);
 
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -275,9 +315,32 @@ export default function TradeHistory() {
             animate={{ opacity: 1, y: 0 }}
             className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 space-y-4"
           >
-            <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-              <Filter className="w-4 h-4" />
-              <span className="text-sm font-medium">Filters</span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+                <Filter className="w-4 h-4" />
+                <span className="text-sm font-medium">Filters</span>
+              </div>
+              {/* ST-04 (BLG-FE-118, EPIC-04, v7.5): Table / Calendar view toggle */}
+              <div className="flex gap-1 rounded-lg bg-slate-900/50 p-1">
+                <button
+                  onClick={() => setView("table")}
+                  className={cn(
+                    "px-3 py-1 rounded-md text-xs font-medium transition-colors",
+                    view === "table" ? "bg-cyan-500/20 text-cyan-400" : "text-slate-600 dark:text-slate-400 hover:text-white"
+                  )}
+                >
+                  Table
+                </button>
+                <button
+                  onClick={() => setView("calendar")}
+                  className={cn(
+                    "px-3 py-1 rounded-md text-xs font-medium transition-colors",
+                    view === "calendar" ? "bg-cyan-500/20 text-cyan-400" : "text-slate-600 dark:text-slate-400 hover:text-white"
+                  )}
+                >
+                  Calendar
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -386,6 +449,27 @@ export default function TradeHistory() {
             )}
           </motion.div>
 
+          {/* Saved Filter Presets — ST-04 (BLG-FE-118, EPIC-04, v7.5) — directly below Filters */}
+          <SavedFiltersControl
+            hasActiveFilters={
+              filters.market !== "all" ||
+              filters.result !== "all" ||
+              !!filters.dateFrom ||
+              !!filters.dateTo ||
+              selectedTags.length > 0
+            }
+            currentFilterState={{ ...filters, tags: selectedTags }}
+            onApply={(filterState) => {
+              setFilters({
+                market: filterState.market ?? "all",
+                result: filterState.result ?? "all",
+                dateFrom: filterState.dateFrom ?? "",
+                dateTo: filterState.dateTo ?? "",
+              });
+              setSelectedTags(filterState.tags ?? []);
+            }}
+          />
+
           {/* AI Journal Summary — ST-08 (EPIC-04). Display-only per SRB-v1.7. */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -452,13 +536,27 @@ export default function TradeHistory() {
             )}
           </motion.div>
 
-          {/* Trade table — BLG-FEAT-02: tradesForCharts passed for R-multiple join */}
-          <TradeHistoryTable trades={filteredTrades} tradesForCharts={tradesForCharts} />
+          {/* ST-04 (BLG-FE-118, EPIC-04, v7.5): Table / Calendar view content */}
+          {view === "calendar" ? (
+            <CalendarView
+              hasAnyClosedTrades={trades.length > 0}
+              onDaySelect={(date) => {
+                const dateStr = date.toISOString().slice(0, 10);
+                setFilters({ ...filters, dateFrom: dateStr, dateTo: dateStr });
+                setView("table");
+              }}
+            />
+          ) : (
+            <>
+              {/* Trade table — BLG-FEAT-02: tradesForCharts passed for R-multiple join */}
+              <TradeHistoryTable trades={filteredTrades} tradesForCharts={tradesForCharts} />
 
-          {filteredTrades.length > 0 && (
-            <p className="text-center text-sm text-slate-600 dark:text-slate-400">
-              Showing {filteredTrades.length} of {trades.length} trades
-            </p>
+              {filteredTrades.length > 0 && (
+                <p className="text-center text-sm text-slate-600 dark:text-slate-400">
+                  Showing {filteredTrades.length} of {trades.length} trades
+                </p>
+              )}
+            </>
           )}
         </>
       )}
