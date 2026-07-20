@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.103
+**Version:** 4.104
 **Last Updated:** 2026-07-20
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.57)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.58)
 
 ### 8.1 Invocation
 
@@ -1467,7 +1467,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.42 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.13 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.57 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.58 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.8 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.5 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.1 |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 |---------|------|----------------|
+| 4.104 | 2026-07-20 | **Sprint execution `2026-07-20__release-v7.6` Phase 3 friction, action-now — execution_prompt.md v3.57→v3.58: API performance baseline pre-PR check added to STEP 3.2.B.** §8 source prompt header v3.57→v3.58. §14 Execution Engine Source v3.57→v3.58. §14 Version 4.103→4.104/2026-07-20. Change: new "API performance baseline pre-PR check (LL-v7.6-P3-01)" added alongside the existing qa_evidence commit advisory — if an EPIC's commits added a new `openapi.yaml` path, the engine must `grep` `docs/ops/api_performance_baseline.md` for that exact endpoint string before running `gh pr create`, registering it now (following the most recent `## N. vX.Y Endpoint Registration` section's pattern) rather than relying on the "API Performance Baseline Drift Detection (ST-12)" CI gate to catch the omission after the PR is already open. Root cause: the existing STEP 3.1.A advisory (AUD-2026-06-22-006) was insufficient under multi-file endpoint-addition load — `v7.6` ST-07 (EPIC-07) added a new `GET /ai/monthly-cost` endpoint across 8 files, missed the baseline doc specifically, and the omission was caught only by CI after PR #1035 was opened, requiring a follow-up commit before merge. Authority: PMO Lead (sprint execution `2026-07-20__release-v7.6`, STEP 5.4 Phase 3 lessons-learnt action-now rule). |
 | 4.103 | 2026-07-20 | **Post-ship closure `2026-07-17__release-v7.5` STEP 8 immediate action — delivery_verification_prompt.md v3.4→v3.5 and qa_evidence_template.md v1.7→v1.8: staging-deferred Result value + agent-mediated DoQ signer provenance.** §9 source prompt header v3.4→v3.5. §14 Verification Engine Source v3.4→v3.5; QA Evidence Template v1.7→v1.8. §14 Version 4.102→4.103/2026-07-20. Changes: (1) `delivery_verification_prompt.md` STEP 2.1 — `Staging-deferred (per CLAUDE.md §2 / shared_standards.md §16.11)` added as an explicitly accepted `Result` value alongside `Pass`/`Pass with notes`/`Fail`, conditioned on a confirmed pre-PR backlog item; resolves ambiguity where the verifying pass had to reason by cross-reference that this recognised disposition was not equivalent to a blocking `Fail`. (2) `qa_evidence_template.md` Standard Sign-Off Block — new agent-mediated provenance requirement: when DoQ sign-off is performed by the engine acting in the Director of Quality role under explicit user direction, `Signed off by:` must use `Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)`, not the literal `Director of Quality` string, so true signer provenance is visible in the field itself rather than requiring cross-reference to `sprint_close.md` prose. Resolves both v7.5 Phase 4 friction items, applied now per post-ship closure's non-deferrable immediate-action rule rather than deferred. Authority: Head of Specs Team (post-ship closure `2026-07-17__release-v7.5`, STEP 8 — immediate lessons-learnt action rule). |
 | 4.102 | 2026-07-17 | **Roadmap rebalance `2026-07-17__scheduled` STEP 11 Friction Item 1 — shared_standards.md v3.16→v3.17: new "Companion per-file changelog rule" added to §11.** §14 Shared Standards v3.16→v3.17. §14 Version 4.101→4.102/2026-07-17. Change: each Class 6 prompt's standalone `claude/system/changelogs/<prompt>_changelog.md` file must now be updated in the same commit as any version bump, alongside `prompt_change_log.md` — closes the gap where `changelogs/roadmap_prompt_changelog.md` fell 3 versions behind (missing 8.9, 9.0, 9.1) because no rule named it as a required companion write, even though `prompt_change_log.md` and `OPERATIONAL_GUIDE.md` §14 stayed correctly in sync throughout. Authority: Head of Specs Team (roadmap rebalance `2026-07-17__scheduled`, STEP 11). |
 | 4.101 | 2026-07-17 | **Roadmap rebalance `2026-07-17__scheduled` STEP 11 — roadmap_prompt.md v9.1→v9.2: STEP 8.1 Empty Now Horizon Gate condition 1 extended to close BLG-GOV-240 (action-now).** §6 source prompt header v9.1→v9.2. §13 Artefact Register Roadmap Rebalance Prompt row v9.1→v9.2. §14 Roadmap Engine Source v9.1→v9.2. §14 Version 4.100→4.101/2026-07-17. Change: STEP 8.1 condition 1 now also fires when the Now horizon contains committed (non-shipped) items that sit only under an un-versioned carry-forward heading, not just when the horizon is fully empty — closing the gap where a non-empty-but-unversioned Now horizon (as left by `2026-07-15__release-v7.2` and `2026-07-16__release-v7.3` post-ship closures) had no governed write path to receive a formal version label. Carried forward from `2026-07-16__release-v7.3` `lessons_learnt_closure.md` Carry-Forward #1 (BLG-GOV-240), actioned at its named trigger point (next roadmap STEP 11 invocation). Authority: Head of Specs Team (roadmap rebalance `2026-07-17__scheduled`, STEP 11). |

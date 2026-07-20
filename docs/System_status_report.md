@@ -7,6 +7,37 @@
 
 ---
 
+## Sprint: 2026-07-20__release-v7.6
+**Date:** 2026-07-20
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Print/PDF export action on WeeklyDigest and TradePlan — client-side `window.print()` + print stylesheet (BLG-FE-119) | `docs/specs/frontend/pages/weekly_digest.md`#4; `docs/specs/frontend/pages/trade_plan.md`#7c | None |
+| EPIC-04 | Backend error-response envelope audit across all 23 `backend/routers/*.py` files (79 endpoints) against `conventions.md` §13; canonical envelope conformance documented (BLG-BE-65) | `docs/specs/api_contracts/backend_engineering_patterns.md`#Error-response envelope conformance | None — audit/documentation, non-conforming endpoints filed as follow-up (BLG-BE-68, BLG-BE-69) |
+| EPIC-02 | Regression suite baseline updated with 5 entries for `BLG-FE-115`–`BLG-FE-119` interaction surfaces, cross-referenced against Playwright spec files (BLG-QA-112) | `docs/qa/regression_test_suite_baseline.md`#Part 2 | None — broader v6.0–v7.3 cataloguing gap flagged, filed as follow-up (BLG-QA-116) |
+| EPIC-03 | P&L export ↔ trade plan closure reconciliation — structural closure-state check between `trade_history` and `trade_plans.status` (BLG-FEAT-79) | `docs/specs/pnl_export_reconciliation.md` | None — production run: 0 mismatches (20 trade_history rows, 11 trade_plans) |
+| EPIC-05 | Shared OpenAPI-derived Playwright mock fixture library, covering the 9 endpoints touched by `BLG-SPEC-95`'s scope (BLG-QA-114) | `tests/e2e/fixtures/api-mocks.js`; documented in `docs/qa/playwright_coverage_matrix.md`#3A | None |
+| EPIC-06 | Nightly batch-job idempotency audit — all 4 scoped jobs (position analysis, portfolio snapshot, signal generation, backtest import) confirmed idempotent via direct SQL inspection (BLG-BE-62) | `docs/specs/nightly_batch_idempotency_audit.md` | None found |
+| EPIC-08 | Standing regression suite consolidating BLG-SEC-01/BLG-SEC-02 coverage across all 4 previously-vulnerable ticker/market input paths (BLG-QA-69) | `tests/test_ticker_market_sanitization_regression.py` | None |
+| EPIC-07 | Claude API monthly cost summary on Settings §6 — reframed from "consolidated Gemini + Claude" after discovering no Gemini integration exists in this codebase (BLG-FEAT-77) | `docs/specs/frontend/pages/settings.md`#6; `docs/specs/api_contracts/ai_endpoints.md`#GET /ai/monthly-cost | Design-artefact deviation — original UX spec premise (two AI providers) was factually incorrect; escalated (`ESC-EXEC-20260720-01`), resolved by Product Owner as a single-provider reframe, documented as `ux_spec.md` v1.1 §7 addendum |
+
+### Capabilities deferred or returned
+
+None — all 8 stories (ST-01 through ST-08) delivered within the sprint. ST-07 was mid-sprint reclassified `autonomous` → `delegated_decision` → `autonomous` after its escalation resolved; no item was returned to the backlog.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md through qa_evidence_EPIC-08.md (all 8 present, all DoQ sign-off blocks non-blank — 6 autonomous-class engine sign-off, 2 agent-mediated Director of Quality role sign-off for the frontend-visible EPICs, EPIC-01 and EPIC-07)
+- Deviations filed: None (code-vs-spec sense) — EPIC-07's design-artefact deviation is documented in its own UX spec addendum, not a `/dev-file` DEV-* record, per `document_lifecycle_guide.md` §9 treatment of design-artefact corrections
+- Follow-up backlog items filed this sprint (not deviations — audit findings about pre-existing conditions): BLG-BE-68, BLG-BE-69 (EPIC-04 audit), BLG-QA-116 (EPIC-02 cataloguing gap)
+- Escalations: ESC-EXEC-20260720-01 (EPIC-07, Quality trigger) — raised and resolved within this sprint, Disposition: Resolved
+- Test scenarios referenced: tests/e2e/print-export-pdf.spec.js; tests/e2e/fixtures/api-mocks.js; tests/e2e/ai-usage-costs.spec.js; tests/test_pnl_reconciliation_service.py; tests/test_ticker_market_sanitization_regression.py; tests/test_monthly_ai_cost.py
+
+---
+
 ## Sprint: 2026-07-17__release-v7.5
 **Date:** 2026-07-20
 **Status:** Verified — 2026-07-20

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.57
-**Last Updated:** 2026-07-15
+**Version:** 3.58
+**Last Updated:** 2026-07-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -710,6 +710,8 @@ If any criterion is not met, the autonomous class does not apply — the sign-of
 **Pre-condition (BLG-GOV-18):** Do not open the PR until the DoQ sign-off block in `qa_evidence_EPIC-xx.md` has a non-blank `Date:` field. A blank Date means sign-off is incomplete. The merge gate (STEP 4) also enforces this, but checking here prevents opening a PR that will immediately be blocked — which creates unnecessary review noise. If the Date field is blank: complete the sign-off first, then proceed.
 
 **qa_evidence commit advisory (BLG-GOV-118):** Before running `gh pr create`, verify that `qa_evidence_EPIC-xx.md` is committed to the EPIC branch. Run `git status --short` and confirm the file is not listed as untracked or modified. An uncommitted `qa_evidence_EPIC-xx.md` is invisible to reviewers and CI, and will not satisfy the merge gate evidence requirement. Commit it now if it exists only as an untracked or modified file.
+
+**API performance baseline pre-PR check (LL-v7.6-P3-01):** If this EPIC's commits added any new `## METHOD /path` entry to `docs/reference/openapi.yaml`, run `grep -c "METHOD /path" docs/ops/api_performance_baseline.md` (substituting the actual method and path, e.g. `"GET /ai/monthly-cost"`) for each new path before running `gh pr create`. If the count is 0: add a registration entry now, following the most recent `## N. vX.Y Endpoint Registration` section's pattern (read one for the exact format — endpoint profile table, characteristics, Infrastructure & Operations Owner sign-off block) rather than waiting for the "API Performance Baseline Drift Detection (ST-12)" CI gate to catch it after the PR is already open. This advisory already existed in §3.1.A's step 3 note (AUD-2026-06-22-006); this checkpoint converts it into an active pre-PR gate alongside the other STEP 3.2.B checks, since the advisory alone was insufficient to prevent the omission recurring under multi-file endpoint-addition load (v7.6 ST-07, EPIC-07 — caught only by CI, after PR open, requiring a follow-up commit).
 
 1. Open a pull request: `exec/<cycle_id>/EPIC-xx` → `main`
 2. PR title: `[EPIC-xx] <epic description>`
