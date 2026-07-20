@@ -140,10 +140,10 @@
       }
     },
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-17__release-v7.5/EPIC-04",
       "pr_number": 1019,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-17__release-v7.5/qa_evidence_EPIC-04.md",
       "test_scenarios": ["tests/e2e/saved-filters-calendar-view.spec.js", "tests/test_saved_filters_and_daily_pnl.py"],
@@ -191,9 +191,9 @@
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03"],
-    "epics_pending": ["EPIC-04"],
-    "all_merged": false
+    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04"],
+    "epics_pending": [],
+    "all_merged": true
   },
 
   "process_notes": [
