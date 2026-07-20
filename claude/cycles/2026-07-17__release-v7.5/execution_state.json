@@ -5,7 +5,7 @@
   "invoked_utc": "2026-07-17T20:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-17T20:00:00Z",
+  "last_updated_utc": "2026-07-20T10:15:00Z",
 
   "epics": {
     "EPIC-01": {
@@ -123,37 +123,46 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-17__release-v7.5/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-07-17__release-v7.5/qa_evidence_EPIC-04.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/e2e/saved-filters-calendar-view.spec.js", "tests/test_saved_filters_and_daily_pnl.py"],
       "stories": {
         "ST-04": {
           "title": "Add named saved filter presets and a calendar view",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1015,
           "branch": "exec/2026-07-17__release-v7.5/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "e0d7a933a4585c39fd2fe203a876e0e73b99009b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-07-20T10:15:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/design/2026-07-17__release-v7.5/saved-filters-calendar-view/ux_spec.md",
-            "docs/specs/frontend/pages/trade_history.md"
+            "docs/specs/frontend/pages/trade_history.md",
+            "docs/specs/api_contracts/saved_filters_endpoints.md",
+            "docs/specs/api_contracts/reports_endpoints.md",
+            "docs/specs/data_model.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Reclassified from sprint_backlog.md's placeholder delegated_frontend to autonomous per LL-v2.3-CL-01 — placement decision (Trade History only) grounded in design gate; persistence testable via integration test, calendar via Playwright against seeded data."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.qa_evidence_pending_signoff",
+          "sign_off_record": {
+            "required_by": "Director of Quality",
+            "method": "human",
+            "status": "pending",
+            "findings_applied": [],
+            "cleared_utc": null
+          },
+          "notes": "Reclassified from sprint_backlog.md's placeholder delegated_frontend to autonomous per LL-v2.3-CL-01 — placement decision (Trade History only) grounded in design gate; persistence testable via integration test, calendar via Playwright against seeded data. Both ACs implemented: new saved_filters table (data_model.md v2.12->v2.13), GET/POST /saved-filters + DELETE /saved-filters/{id} (new saved_filters_endpoints.md v1.0), GET /reports/daily-pnl (reports_endpoints.md v0.8->v0.9, day-granularity sibling of monthly-pnl), openapi.yaml v3.10.0->v3.11.0, api_performance_baseline.md v2.13->v2.14. Trade History gained a Table/Calendar toggle (react-day-picker month grid, realised-P&L day indicators + tooltip, unrealised-P&L banner, day-click sets date filter + switches to Table) and SavedFiltersControl (save/apply/delete named presets). Also added a BLG-FE-40 localStorage envelope for Trade History's previously-unpersisted active-filter state, per the locked design's Persistence Distinction section. 9/9 new Playwright scenarios + 13/13 new backend unit scenarios pass; full regression clean (trade-history-ai-journal-summary/tax-year-csv-export/slippage-tracking/trade-plan-tag-filter/net-r-trade-history/system-status/smoke-critical-paths e2e specs; full backend pytest 686 passed, 2 pre-existing skips). test.py registered (89->93 endpoints); SystemStatus.js fallback and system-status.spec.js SC-SS-01b updated to 93. Real regression caught and fixed during verification: pre-existing tests/e2e/net-r-trade-history.spec.js (5 scenarios) crashed because its generic catch-all mock returns {data:{}} (object, not array) for any unmocked endpoint, and the newly-mounted SavedFiltersControl/CalendarView called .map() on that non-array data — fixed both fetches with Array.isArray(json.data) guards instead of the weaker `json.data || []`; full e2e suite (588 passed, 3 pre-existing skips) re-run clean after the fix. Two implementation notes (not filed deviations, intent matches spec per LL-v3.4-P3-03): (1) react-day-picker v10 was already installed (readiness pass's flagged dependency gap was already resolved before this story) but the pre-existing calendar.js UI wrapper targets an older v8/v9 API — built a purpose-specific CalendarView.js directly against v10's real API instead of reconciling the mismatched wrapper; discovered DayPicker only renders a custom DayButton when interactive (mode or onDayClick set) — added a no-op onDayClick to force this. (2) No staging-only ACs -- frontend testing gate satisfied via Playwright alone. Frontend-visible EPIC -- BLG-GOV-19 autonomous class sign-off unavailable (Criterion 3 unmet); qa_evidence_EPIC-04.md written with full AC table and Standard Sign-Off Block, Date left blank pending Director of Quality (always-human gate per §5.3) -- halting here, not an escalation."
         }
       }
     }
@@ -161,7 +170,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["EPIC-01/ST-01"],
+  "completed_items": ["EPIC-01/ST-01", "EPIC-04/ST-04"],
   "open_escalations": [],
 
   "merge_gate": {
@@ -175,7 +184,10 @@
     "EPIC-01: resolved 2026-07-17T21:40:00Z — user directed Claude to act as Director of Quality (per claude/agents/director_of_quality.md, Owner field matches) and perform the sign-off directly. Independent re-verification performed against the committed branch state (not a rubber-stamp): fresh checkout, dev server from commit 26df3a6d, full re-run (32/34 pass, 2 pre-existing unrelated skips) plus 2 ad hoc edge-case checks beyond original coverage (case-insensitive search, rapid reopen dedup) — both pass. Sign-off committed 6b5b3bdf, qa_signed_off=true set in this same execution_state.json write. EPIC-01 unblocked for PR (STEP 3.2.B).",
     "EPIC-01: PR #1016 all CI checks green (23/23 pass, including the full Playwright E2E Acceptance Tests suite at 13m5s). gh pr view reports mergeStateStatus=BLOCKED, reviewDecision=REVIEW_REQUIRED — the remaining blocker is Product Owner acceptance (GitHub branch protection review requirement), an always-human gate per execution_prompt.md §5.3/§13. No one has authorised the engine to act as Product Owner (unlike the explicit DoQ direction earlier) — engine halts here, does not self-approve. Awaiting human PR review/approval on https://github.com/sachiv1984/swing-trading-model/pull/1016.",
     "EPIC-01: Product Owner acceptance recorded 2026-07-17 — user directed Claude to act as Product Owner and review (per claude/agents/product_owner.md); comment posted at https://github.com/sachiv1984/swing-trading-model/pull/1016#issuecomment-5004532091 confirming product-intent, scope, and outcome alignment against sprint_goal.md and the cleared design gate. Per user instruction, the user will perform the actual merge themselves — engine does not merge.",
-    "EPIC-01: PR #1016 merged by user 2026-07-17T14:53:43Z (merge commit 9f067f36). All STEP 4 merge-gate conditions satisfied (all ST items done, spec_references populated, qa_evidence complete, qa_signed_off=true, Product Owner acceptance recorded, CI green, no open escalations, no unresolved P0/P1 deviations). merge_gate.epics_merged updated. Per the STEP 4 hard gate, the engine halts here and does not auto-advance to EPIC-02 — resumes only on explicit re-invocation of run sprint."
+    "EPIC-01: PR #1016 merged by user 2026-07-17T14:53:43Z (merge commit 9f067f36). All STEP 4 merge-gate conditions satisfied (all ST items done, spec_references populated, qa_evidence complete, qa_signed_off=true, Product Owner acceptance recorded, CI green, no open escalations, no unresolved P0/P1 deviations). merge_gate.epics_merged updated. Per the STEP 4 hard gate, the engine halts here and does not auto-advance to EPIC-02 — resumes only on explicit re-invocation of run sprint.",
+    "This branch (exec/2026-07-17__release-v7.5/EPIC-04) was cut from main before EPIC-02/EPIC-03's branches merged — its copy of this file does not yet reflect their state. Per CLAUDE.md §8, reconcile at merge time (union completed_items, take each branch's own state for its own entry, do not revert any story from done).",
+    "EPIC-04: engine worked through all four EPICs sequentially without stalling on EPIC-02's/EPIC-03's Director of Quality sign-off (both always-human gates, per execution_prompt.md §1 Purpose — 'do not block the entire sprint on one item'). All four EPICs (EPIC-01 merged; EPIC-02, EPIC-03, EPIC-04 implemented, tested, and pushed) are now accounted for in this sprint.",
+    "EPIC-04: ST-04 implemented and pushed (commit e0d7a933, branch exec/2026-07-17__release-v7.5/EPIC-04). qa_evidence_EPIC-04.md created with AC table complete (9/9 Playwright + 13/13 backend unit scenarios passing, full regression suite clean, including a real regression caught and fixed during verification — see execution_state.json ST-04 notes) but Director of Quality sign-off Date is blank — per execution_prompt.md §3.2.B (BLG-GOV-18) the PR may not be opened until this is non-blank. This EPIC has frontend-visible changes so BLG-GOV-19 autonomous class sign-off is unavailable (Criterion 3 unmet) — engine halted pending human review, not an escalation/blocker requiring authority decision. All four sprint EPICs are now at the same state: implemented, tested, pushed, and awaiting either Director of Quality sign-off (EPIC-02/03/04) or already merged (EPIC-01)."
   ],
 
   "sealed": false,
