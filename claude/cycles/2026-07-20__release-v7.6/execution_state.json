@@ -244,8 +244,8 @@
     "EPIC-08": {
       "status": "done",
       "branch": "exec/2026-07-20__release-v7.6/EPIC-08",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1034,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-20__release-v7.6/qa_evidence_EPIC-08.md",
       "test_scenarios": ["tests/test_ticker_market_sanitization_regression.py", "tests/test_signal_write_sanitization.py", "tests/test_ai_chat_schema.py"],
