@@ -1,11 +1,189 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
+**Last Updated:** 2026-07-20 (groom backlog post-ship closure 2026-07-20__release-v7.6 — 8 items archived: BLG-FE-119, BLG-QA-112, BLG-FEAT-79, BLG-BE-65, BLG-QA-114, BLG-BE-62, BLG-FEAT-77, BLG-QA-69; ephemeral Release Slice v7.6 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-FE-119 — PDF / print-friendly export
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-07-20
+**Shipped in:** v7.6
+**Evidence:** claude/cycles/2026-07-20__release-v7.6/verification_report.md (EPIC-01/ST-01); docs/product/changelog.md#v7-6-pdf-print-friendly-export-2026-07-20
+
+### BLG-FE-119 — PDF / print-friendly export
+**Priority:** P1 (High)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** Ad-hoc UX advisory review — session 2026-07-16
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v7.6
+
+> Resolved 2026-07-20 (v7.6 roadmap section formalization, DL-072): named as v7.6 anchor scope in `current_roadmap.md` §3. Prior stale-target notice (v7.3/v7.4, never scoped into either release) superseded.
+
+**Problem**
+CSV export already exists and is well-tested (tax-year export, P&L split — `BLG-SPEC-84`/`BLG-QA-106`/`BLG-QA-110`), but there is no print-friendly or PDF output for surfaces like the weekly digest or an individual trade plan that a user might want to print or share outside the app.
+
+**Scope**
+- Add a print stylesheet or PDF-export action for `WeeklyDigest.js`
+- Add a print stylesheet or PDF-export action for `TradePlan.js`
+
+**Acceptance Criteria**
+- A "Print / Export PDF" action is available on both `WeeklyDigest.js` and `TradePlan.js`
+- Output is legible and correctly formatted without app chrome (nav/sidebar)
+
+---
+
+### BLG-QA-112 — Regression suite baseline update for BLG-FE-115-119
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3
+**Retired:** 2026-07-20
+**Shipped in:** v7.6
+**Evidence:** claude/cycles/2026-07-20__release-v7.6/verification_report.md (EPIC-02/ST-02); docs/product/changelog.md#v7-6-pdf-print-friendly-export-2026-07-20
+
+### BLG-QA-112 — Regression suite baseline update for BLG-FE-115-119
+**Priority:** P3 (Low) | **Type:** QA, gate-conditional | **Owner:** QA Lead | **Source:** IDEA-qa-lead-20260716-02 | **Effort:** S (~1 day) | **Provisional-Target:** v7.6
+
+> Gate fired 2026-07-20 (release planning `2026-07-20__release-v7.6`): `BLG-FE-119` entered v7.6 scope. Named as v7.6 companion scope (EPIC-02).
+
+**Gate criteria:** Any of `BLG-FE-115`–`BLG-FE-119` enters a release scope (each introduces a new interaction surface — keyboard nav, background alerts, multi-select, persisted filters, PDF export — not yet reflected in the regression baseline).
+**Problem:** `docs/testing`/regression-suite baseline documentation was last comprehensively updated for the v5.5-era feature set (`BLG-QA-50`); none of the command-palette, price-alert, bulk-action, or saved-filter interaction surfaces are represented.
+**Scope:** Update the regression suite baseline document once any of `BLG-FE-115-119` is scoped into a release, adding scenario coverage for the new interaction surface(s).
+**Acceptance Criteria:** Regression baseline document updated with new scenario entries for the shipped item(s); cross-referenced against the corresponding Playwright spec file(s).
+
+---
+
+### BLG-FEAT-79 — Reconcile realised P&L export against trade_plan closes for audit trail completeness
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-20
+**Shipped in:** v7.6
+**Evidence:** claude/cycles/2026-07-20__release-v7.6/verification_report.md (EPIC-03/ST-03); docs/product/changelog.md#v7-6-pdf-print-friendly-export-2026-07-20
+
+### BLG-FEAT-79 — Reconcile realised P&L export against trade_plan closes for audit trail completeness
+**Priority:** P2 (Medium) | **Type:** Product Feature / Reporting | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260717-01 | **Effort:** M | **Provisional-Target:** v7.6
+
+> Named as v7.6 companion scope 2026-07-20 (PO-directed capacity-fill reopen, DL-073) — see `current_roadmap.md` §3.
+
+**Problem:** The tax-year P&L CSV export (shipped v7.0, hardened v7.1) is sourced from `trade_history`, not cross-checked against `trade_plans` closure records — an audit trail gap if a trade's plan and its realised P&L record ever diverge (e.g. a partial fill, a manual correction).
+**Scope:** A reconciliation pass comparing `trade_history` realised P&L rows against corresponding `trade_plans` closure data, flagging any mismatch.
+**Acceptance Criteria:** Reconciliation logic specified; run once against production data with results recorded (pass, or specific mismatches filed as follow-up items).
+
+---
+
+### BLG-BE-65 — Standardise error-response envelope across all routers
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-20
+**Shipped in:** v7.6
+**Evidence:** claude/cycles/2026-07-20__release-v7.6/verification_report.md (EPIC-04/ST-04); docs/product/changelog.md#v7-6-pdf-print-friendly-export-2026-07-20
+
+### BLG-BE-65 — Standardise error-response envelope across all routers
+**Priority:** P2 (Medium) | **Type:** Backend / API Consistency | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260717-02 | **Effort:** M | **Provisional-Target:** v7.6
+
+> Named as v7.6 companion scope 2026-07-20 (PO-directed capacity-fill reopen, DL-073) — see `current_roadmap.md` §3.
+
+**Problem:** Error responses across `backend/routers/` are not confirmed to follow one consistent shape (status/message/detail fields), which complicates frontend error-handling consistency.
+**Scope:** Audit current error-response shapes across all routers; document and enforce one canonical envelope in `backend_engineering_patterns.md`.
+**Acceptance Criteria:** Audit complete; canonical envelope documented; any non-conforming endpoints filed as follow-up items (not fixed in this item's scope unless trivial).
+
+---
+
+### BLG-QA-114 — Standardise mock payload fixtures against openapi.yaml schema
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-20
+**Shipped in:** v7.6
+**Evidence:** claude/cycles/2026-07-20__release-v7.6/verification_report.md (EPIC-05/ST-05); docs/product/changelog.md#v7-6-pdf-print-friendly-export-2026-07-20
+
+### BLG-QA-114 — Standardise mock payload fixtures against openapi.yaml schema
+**Priority:** P2 (Medium) | **Type:** QA / Playwright | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260717-02 | **Effort:** M | **Provisional-Target:** v7.6
+
+> Named as v7.6 companion scope 2026-07-20 (PO-directed capacity-fill reopen, DL-073) — see `current_roadmap.md` §3.
+
+**Problem:** `shared_standards.md §18`'s mock payload advisory (match canonical API spec response shape, don't flatten nested objects) is documented but not currently enforced by any shared fixture library — each Playwright spec file hand-writes its own mocks, risking drift.
+**Scope:** Build a shared fixture library deriving mock payload shapes from `docs/reference/openapi.yaml`, for use by new and existing Playwright specs.
+**Acceptance Criteria:** Fixture library exists for at least the endpoints touched by `BLG-SPEC-95`'s scope; documented as the preferred pattern for new Playwright tests.
+
+---
+
+### BLG-BE-62 — Idempotent nightly batch-job pattern audit
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-20
+**Shipped in:** v7.6
+**Evidence:** claude/cycles/2026-07-20__release-v7.6/verification_report.md (EPIC-06/ST-06); docs/product/changelog.md#v7-6-pdf-print-friendly-export-2026-07-20
+
+### BLG-BE-62 — Idempotent nightly batch-job pattern audit
+**Priority:** P2 (Medium) | **Type:** Backend / Reliability | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260713-02 | **Effort:** M | **Provisional-Target:** v7.6
+
+> Named as v7.6 companion scope 2026-07-20 (PO-directed capacity-fill reopen, DL-073) — see `current_roadmap.md` §3.
+
+**Problem:** This cycle's STEP 8.0 fast-track surfaced two P1 data-integrity bugs in the nightly backtest job (`BLG-BE-59`, `BLG-BE-60`) both rooted in the job re-deriving its full result set from scratch every run rather than persisting/extending state idempotently. Other nightly jobs (trailing-stop refresh, portfolio snapshot rebalance) have not been audited for the same class of non-idempotency risk.
+**Scope:** Audit `daily-snapshot.yml`'s three jobs (position analysis, portfolio snapshot, signal generation) plus the nightly backtest import for idempotency — does re-running produce identical output given identical input state, or does it silently accumulate drift.
+**Acceptance Criteria:** Audit findings documented per job; any additional non-idempotency risks found are filed as follow-up items; explicitly cross-references `BLG-BE-59`/`BLG-BE-60` as the confirmed instance of this pattern.
+
+---
+
+### BLG-FEAT-77 — Consolidated monthly AI cost view (Gemini + Claude)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-20
+**Shipped in:** v7.6
+**Evidence:** claude/cycles/2026-07-20__release-v7.6/verification_report.md (EPIC-07/ST-07); docs/product/changelog.md#v7-6-pdf-print-friendly-export-2026-07-20 — reframed to single-provider during execution, see ESC-EXEC-20260720-01
+
+### BLG-FEAT-77 — Consolidated monthly AI cost view (Gemini + Claude)
+**Priority:** P2 (Medium) | **Type:** Feature / FinOps | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260713-01 | **Effort:** M | **Provisional-Target:** v7.6
+
+> Named as v7.6 companion scope 2026-07-20 (PO-directed capacity-fill reopen, DL-073) — see `current_roadmap.md` §3.
+
+**Problem:** Gemini thesis-generation cost tracking (`gemini_audit_log`) and Claude API cost tracking (`POST /ai/check-daily-cost`) exist as two separate cost-monitoring surfaces with no consolidated view — the user cannot see total monthly AI spend across both providers in one place.
+**Scope:** Add a consolidated monthly cost summary (both providers, combined total) to an existing settings/reports surface.
+**Acceptance Criteria:** Consolidated view shows both providers' costs and a combined total for the current month; matches the sum of the two existing per-provider sources.
+
+---
+
+### BLG-QA-69 — Ticker/market input sanitisation regression suite
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-20
+**Shipped in:** v7.6
+**Evidence:** claude/cycles/2026-07-20__release-v7.6/verification_report.md (EPIC-08/ST-08); docs/product/changelog.md#v7-6-pdf-print-friendly-export-2026-07-20
+
+### BLG-QA-69 — Ticker/market input sanitisation regression suite
+**Priority:** P2 (Medium)
+**Type:** QA / Security Regression
+**Owner:** Director of Quality; Backend Engineering Patterns Owner
+**Source:** IDEA-backend-engineering-20260702-01 (IW-20260702-01) — Promoted-Backlog; merges IDEA-qa-lead-20260702-01; rebalance 2026-07-02__scheduled
+**Provisional-Target:** v7.6
+**Effort:** M (~1–2 days)
+
+> Named as v7.6 companion scope 2026-07-20 (PO-directed capacity-fill reopen, DL-073) — see `current_roadmap.md` §3.
+
+**Problem**
+BLG-SEC-01 and BLG-SEC-02 (both v6.4) fixed ticker/market injection and validation gaps at 3 signal write paths and the AI chat context path. These fixes currently rely on the sign-off manual review rather than a standing regression suite, risking silent regression on a future refactor.
+
+**Scope**
+- Consolidate BLG-SEC-01/02 test cases (injection strings, trailing-newline bypass, invalid ticker/market values) into a standing pytest regression suite
+- Cover all 4 fixed paths: `create_signal`, `create_rebalance_exit_signal`, `update_signal`, AI chat `context_opts.ticker`
+
+**Acceptance Criteria**
+- Regression suite covers all 4 previously-vulnerable paths
+- Suite runs in CI on every PR touching `backend/services/signal_service.py`, `database.py`, or `ai_service.py`
+- Director of Quality sign-off
 
 ---
 

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.17
-**Last Updated:** 2026-07-03
+**Version:** 2.18
+**Last Updated:** 2026-07-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -622,6 +622,8 @@ Update `.claude_current_state.json`:
 **`completed_cycle_count` rule:** Read the current value from `.claude_current_state.json`. If absent, treat as `0`. Write the value incremented by 1. This counter tracks the total number of fully closed cycles for meta-review cadence tracking (Phase 1 STEP 11 triggers meta-review every third completed cycle).
 
 **`last_audit_cycle_count` rule (BLG-GOV-82):** After writing `completed_cycle_count`, check whether `run audit` was completed during this cycle (indicator: `last_audit_utc` is later than the cycle's sprint_start date, or `last_audit_id` references an audit from this cycle). If an audit ran this cycle: write `last_audit_cycle_count = new_completed_cycle_count` (the incremented value just written). If no audit ran this cycle: leave the existing `last_audit_cycle_count` value unchanged. This field is used by STEP 0 Audit Cadence Check to detect cycles where the modulo advisory was suppressed or skipped.
+
+**Amendment field reset rule (LL-v7.6-P4-01):** Check `active_amendment` in `.claude_current_state.json`. If non-empty, determine the cycle_id the amendment originated in (the cycle segment of `amended_backlog_slice_path`, e.g. `claude/cycles/<origin_cycle_id>/amendments/...`). If that origin cycle is not the cycle currently being closed by this run, read that origin cycle's own `closure_state.json` (or its `closure_record.md`, if present) to confirm it already reached `Closed` or `Closed_with_actions`. If confirmed closed: clear `amended_backlog_slice_path`, `amendment_sealed_utc`, `active_amendment`, and `amendment_status` to empty string/null in this same STEP 10 write. If the origin cycle is not yet closed, or cannot be confirmed closed, leave the fields unchanged and note the deferral in the closure record §6 Outstanding Actions. This prevents a stale cross-cycle amendment pointer from requiring manual dismissal at a later cycle's STEP 0 backlog-slice resolution (as happened at `2026-07-20__release-v7.6` delivery verification, where `amended_backlog_slice_path` still pointed to the already-closed `2026-07-17__release-v7.4`/`AMD-20260717-01`).
 
 Surface §7 Closure Confirmation to the user for communication to the Product Owner and Head of Specs Team.
 

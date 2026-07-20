@@ -3,9 +3,44 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-20 (post-ship closure 2026-07-17__release-v7.5)
+**Last Updated:** 2026-07-20 (post-ship closure 2026-07-20__release-v7.6)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v7.6 — PDF / Print-Friendly Export — 2026-07-20
+Cycle: 2026-07-20__release-v7.6
+Verified: Verified
+Verification report: claude/cycles/2026-07-20__release-v7.6/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Print/PDF export action for WeeklyDigest and TradePlan — client-side `window.print()` + global print stylesheet | `docs/specs/frontend/pages/weekly_digest.md`#4; `docs/specs/frontend/pages/trade_plan.md`#7c |
+| EPIC-02 | Regression suite baseline update for BLG-FE-115–119 interaction surfaces | `docs/qa/regression_test_suite_baseline.md`#Part 2 |
+| EPIC-03 | Reconcile realised P&L export against trade_plan closes — structural closure-state reconciliation | `docs/specs/pnl_export_reconciliation.md` |
+| EPIC-04 | Standardise error-response envelope across all routers — audit of 79 endpoints, non-conformance findings filed | `docs/specs/api_contracts/backend_engineering_patterns.md`#Error-response envelope conformance |
+| EPIC-05 | Shared mock payload fixture library derived from `openapi.yaml` | `tests/e2e/fixtures/api-mocks.js` |
+| EPIC-06 | Audit nightly batch jobs for idempotency risk — 4 jobs confirmed idempotent | `docs/specs/nightly_batch_idempotency_audit.md` |
+| EPIC-07 | Claude API monthly cost summary — reframed from a two-provider (Gemini + Claude) premise to single-provider after the original premise was found factually incorrect | `docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md`#7; `docs/specs/frontend/pages/settings.md`#6; `docs/specs/api_contracts/ai_endpoints.md`#GET /ai/monthly-cost |
+| EPIC-08 | Standing regression suite for ticker/market input sanitisation, consolidating BLG-SEC-01/02 coverage | `tests/test_ticker_market_sanitization_regression.py` |
+
+### Deviations accepted
+None. (EPIC-07's UX spec premise correction is documented as a design-artefact addendum, not a code-vs-spec deviation — see `docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md` v1.1 §7.)
+
+### Tech backlog items shipped
+- [ST-01] [U] BLG-FE-119: Print/PDF export action for WeeklyDigest and TradePlan
+- [ST-02] [D] BLG-QA-112: Regression suite baseline update for BLG-FE-115–119 interaction surfaces
+- [ST-03] [D] BLG-FEAT-79: Reconcile realised P&L export against trade_plan closes
+- [ST-04] [D] BLG-BE-65: Standardise error-response envelope across all routers
+- [ST-05] [D] BLG-QA-114: Shared mock payload fixture library from openapi.yaml
+- [ST-06] [D] BLG-BE-62: Audit nightly batch jobs for idempotency risk
+- [ST-07] [U] BLG-FEAT-77: Claude API monthly cost summary (single-provider reframe)
+- [ST-08] [D] BLG-QA-69: Standing regression suite for ticker/market input sanitisation
+
+Sign-off: Product Owner — 2026-07-20
+QA sign-off: Director of Quality — 2026-07-20
 
 ---
 

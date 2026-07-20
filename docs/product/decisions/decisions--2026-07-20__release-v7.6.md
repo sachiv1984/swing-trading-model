@@ -1,9 +1,13 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v7.6
 Cycle: 2026-07-20__release-v7.6
 Last Updated: 2026-07-20
+
+Superseded by: v7.6 ship — 2026-07-20
+Changelog: docs/product/changelog.md#v7-6-pdf-print-friendly-export-2026-07-20
+Cycle: 2026-07-20__release-v7.6
 
 ## Planning Decisions — v7.6 PDF / Print-Friendly Export
 

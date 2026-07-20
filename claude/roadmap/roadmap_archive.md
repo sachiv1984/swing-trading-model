@@ -1,13 +1,54 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-20 (post-ship closure 2026-07-17__release-v7.5 — RA:v7.5 retired, full: 4/4 items shipped as implementations, first full (non-partial) retirement of this Now-horizon lineage since RA:v7.1; §3 Now horizon empty following retirement); prior — 2026-07-17 (post-ship closure 2026-07-17__release-v7.4 — RA:v7.4 retired, partial: 1/1 amended-scope item; 4 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-16 (post-ship closure 2026-07-16__release-v7.3 — RA:v7.3 retired, partial: 3/7 items; 4 unblocked readiness-passed items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — RA:v7.2 retired, partial: 5/8 items; 3 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-14 (post-ship closure 2026-07-14__release-v7.1 — RA:v7.1 retired)
+**Last Updated:** 2026-07-20 (post-ship closure 2026-07-20__release-v7.6 — RA:v7.6 retired, full: 8/8 items shipped; §3 Now horizon empty following retirement); prior — 2026-07-20 (post-ship closure 2026-07-17__release-v7.5 — RA:v7.5 retired, full: 4/4 items shipped as implementations, first full (non-partial) retirement of this Now-horizon lineage since RA:v7.1; §3 Now horizon empty following retirement); prior — 2026-07-17 (post-ship closure 2026-07-17__release-v7.4 — RA:v7.4 retired, partial: 1/1 amended-scope item; 4 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-16 (post-ship closure 2026-07-16__release-v7.3 — RA:v7.3 retired, partial: 3/7 items; 4 unblocked readiness-passed items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — RA:v7.2 retired, partial: 5/8 items; 3 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-14 (post-ship closure 2026-07-14__release-v7.1 — RA:v7.1 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v7.6 — PDF / Print-Friendly Export (full — 8/8 items shipped)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete (all 8 items shipped this cycle — `BLG-FE-119`, `BLG-QA-112`, `BLG-FEAT-79`, `BLG-BE-65`, `BLG-QA-114`, `BLG-BE-62`, `BLG-FEAT-77`, `BLG-QA-69`)
+**Retired from active roadmap:** 2026-07-20
+**Shipped version:** v7.6
+**Cycle reference:** 2026-07-20__release-v7.6
+**Verification report:** claude/cycles/2026-07-20__release-v7.6/verification_report.md
+**Decision log reference:** DL-072 (roadmap formalization), DL-073 (PO-directed capacity-fill expansion)
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-07-20
+
+**Note (first full retirement of an out-of-band-formalized, single-anchor-then-expanded lineage):** Unlike RA:v7.5 (4 items scoped from the outset), this section began as a single-item anchor (`BLG-FE-119` alone) at formalization, then expanded to 8 items same-day via the DL-073 PO-directed capacity-fill bypass after the release plan had already published. All 8 shipped within the cycle — no items returned to backlog. §3 Now horizon is empty following this retirement; no carry-forward re-add.
+
+### Original Roadmap Entry
+
+### v7.6 — PDF / print-friendly export
+
+<!-- roadmap-annotation-marker: RA:v7.6:2026-07-20__formalization -->
+
+Anchored 2026-07-20 — formalizes the `plan release --version "v7.6"` scope-naming step out-of-band, per the established direct-write pattern (see `decision_log.md` DL-068, DL-071, DL-072). Unlike those precedents, the Now horizon was empty pre-write (RA:v7.5 retired in full 2026-07-20, 4/4 items shipped, no carry-forward) — this write selects a new anchor item from the backlog rather than relabelling an existing carried-forward set. A fully compliant `run roadmap --reason "scheduled"` path exists for this exact scenario and was recommended first; bypassed by explicit PO/session direction.
+
+| Feature | ID | Effort | Notes |
+|---|---|---|---|
+| PDF / print-friendly export | BLG-FE-119 | M | ✅ Complete — shipped v7.6, EPIC-01/ST-01, cycle 2026-07-20__release-v7.6 |
+| Regression suite baseline update | BLG-QA-112 | S | ✅ Complete — shipped v7.6, EPIC-02/ST-02, cycle 2026-07-20__release-v7.6 |
+| P&L export reconciliation | BLG-FEAT-79 | M | ✅ Complete — shipped v7.6, EPIC-03/ST-03, cycle 2026-07-20__release-v7.6 |
+| Error-response envelope standardisation | BLG-BE-65 | M | ✅ Complete — shipped v7.6, EPIC-04/ST-04, cycle 2026-07-20__release-v7.6 |
+| OpenAPI-derived fixture library | BLG-QA-114 | M | ✅ Complete — shipped v7.6, EPIC-05/ST-05, cycle 2026-07-20__release-v7.6 |
+| Idempotent batch-job pattern audit | BLG-BE-62 | M | ✅ Complete — shipped v7.6, EPIC-06/ST-06, cycle 2026-07-20__release-v7.6 |
+| Consolidated monthly AI cost view | BLG-FEAT-77 | M | ✅ Complete — shipped v7.6, EPIC-07/ST-07, cycle 2026-07-20__release-v7.6 |
+| Ticker/market input sanitisation regression suite | BLG-QA-69 | M | ✅ Complete — shipped v7.6, EPIC-08/ST-08, cycle 2026-07-20__release-v7.6 |
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-20__release-v7.6
+- Plan published: 2026-07-20
+- Cycle folder: claude/cycles/2026-07-20__release-v7.6/
+- Backlog slice: claude/cycles/2026-07-20__release-v7.6/stage4_backlog_slice.md
+- Status at annotation: Committed
 
 ---
 

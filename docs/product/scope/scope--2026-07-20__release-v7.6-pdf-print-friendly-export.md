@@ -1,10 +1,15 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v7.6
 Cycle: 2026-07-20__release-v7.6
 Last Updated: 2026-07-20
 Amendment note: Extended same-day 2026-07-20 (PO-directed capacity-fill reopen, DL-073). S2-03 through S2-08 added post-publish.
+
+Superseded by: v7.6 ship — 2026-07-20
+Changelog: docs/product/changelog.md#v7-6-pdf-print-friendly-export-2026-07-20
+Verification report: claude/cycles/2026-07-20__release-v7.6/verification_report.md
+Cycle: 2026-07-20__release-v7.6
 
 ## Release Scope — v7.6 PDF / Print-Friendly Export
 

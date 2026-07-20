@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.104
+**Version:** 4.105
 **Last Updated:** 2026-07-20
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.17)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.18)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1471,7 +1471,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.8 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.5 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.1 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.17 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.18 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.17 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1495,6 +1495,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.105 | 2026-07-20 | **Post-ship closure `2026-07-20__release-v7.6` Phase 4 friction, immediate action — post_ship_closure.md v2.17→v2.18: amendment field reset rule (LL-v7.6-P4-01) added to STEP 10.** §10 source prompt header v2.17→v2.18. §14 Post-Ship Closure Engine v2.17→v2.18. §14 Version 4.104→4.105/2026-07-20. Change: STEP 10 (Global State Update) now checks whether `active_amendment` is non-empty and, if its originating cycle has already reached `Closed`/`Closed_with_actions`, clears `amended_backlog_slice_path`, `amendment_sealed_utc`, `active_amendment`, and `amendment_status` in the same write. Root cause: `.claude_current_state.json`'s `amended_backlog_slice_path` still pointed to the already-closed `2026-07-17__release-v7.4`/`AMD-20260717-01` amendment when this cycle's own delivery verification ran, requiring manual cross-referencing (checking for an `amendments/` folder under the current cycle, comparing against `execution_state.json.backlog_slice_source`) to correctly dismiss it as inapplicable — flagged as a Phase 4 friction item (`lessons_learnt_cycle.md` `2026-07-20__release-v7.6` §Phase 4) and applied now per the non-deferrable immediate-action rule rather than deferred a second time. Authority: Head of Specs Team (post-ship closure `2026-07-20__release-v7.6`, STEP 8 — immediate lessons-learnt action rule). |
 |---------|------|----------------|
 | 4.104 | 2026-07-20 | **Sprint execution `2026-07-20__release-v7.6` Phase 3 friction, action-now — execution_prompt.md v3.57→v3.58: API performance baseline pre-PR check added to STEP 3.2.B.** §8 source prompt header v3.57→v3.58. §14 Execution Engine Source v3.57→v3.58. §14 Version 4.103→4.104/2026-07-20. Change: new "API performance baseline pre-PR check (LL-v7.6-P3-01)" added alongside the existing qa_evidence commit advisory — if an EPIC's commits added a new `openapi.yaml` path, the engine must `grep` `docs/ops/api_performance_baseline.md` for that exact endpoint string before running `gh pr create`, registering it now (following the most recent `## N. vX.Y Endpoint Registration` section's pattern) rather than relying on the "API Performance Baseline Drift Detection (ST-12)" CI gate to catch the omission after the PR is already open. Root cause: the existing STEP 3.1.A advisory (AUD-2026-06-22-006) was insufficient under multi-file endpoint-addition load — `v7.6` ST-07 (EPIC-07) added a new `GET /ai/monthly-cost` endpoint across 8 files, missed the baseline doc specifically, and the omission was caught only by CI after PR #1035 was opened, requiring a follow-up commit before merge. Authority: PMO Lead (sprint execution `2026-07-20__release-v7.6`, STEP 5.4 Phase 3 lessons-learnt action-now rule). |
 | 4.103 | 2026-07-20 | **Post-ship closure `2026-07-17__release-v7.5` STEP 8 immediate action — delivery_verification_prompt.md v3.4→v3.5 and qa_evidence_template.md v1.7→v1.8: staging-deferred Result value + agent-mediated DoQ signer provenance.** §9 source prompt header v3.4→v3.5. §14 Verification Engine Source v3.4→v3.5; QA Evidence Template v1.7→v1.8. §14 Version 4.102→4.103/2026-07-20. Changes: (1) `delivery_verification_prompt.md` STEP 2.1 — `Staging-deferred (per CLAUDE.md §2 / shared_standards.md §16.11)` added as an explicitly accepted `Result` value alongside `Pass`/`Pass with notes`/`Fail`, conditioned on a confirmed pre-PR backlog item; resolves ambiguity where the verifying pass had to reason by cross-reference that this recognised disposition was not equivalent to a blocking `Fail`. (2) `qa_evidence_template.md` Standard Sign-Off Block — new agent-mediated provenance requirement: when DoQ sign-off is performed by the engine acting in the Director of Quality role under explicit user direction, `Signed off by:` must use `Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)`, not the literal `Director of Quality` string, so true signer provenance is visible in the field itself rather than requiring cross-reference to `sprint_close.md` prose. Resolves both v7.5 Phase 4 friction items, applied now per post-ship closure's non-deferrable immediate-action rule rather than deferred. Authority: Head of Specs Team (post-ship closure `2026-07-17__release-v7.5`, STEP 8 — immediate lessons-learnt action rule). |
