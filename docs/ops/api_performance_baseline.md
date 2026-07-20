@@ -2,7 +2,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.16
+**Version:** 2.17
 **Date:** 2026-07-20
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
@@ -1297,10 +1297,48 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, autonomous class)
 
 ---
 
+## 29. v7.6 Endpoint Registration — GET /ai/monthly-cost (ST-07, EPIC-07, BLG-FEAT-77)
+
+**Date:** 2026-07-20
+**Story:** ST-07 (EPIC-07, v7.6) — BLG-FEAT-77, Claude API monthly cost summary (reframed per `ESC-EXEC-20260720-01` — see `qa_evidence_EPIC-07.md`)
+**Environment:** N/A — see endpoint notes below.
+**Method:** Registered pending live measurement per §13 pattern (read-only aggregate query, no live sampling against production data).
+
+### 29.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /ai/monthly-cost | v7.6 | Read — pending live timing run | 200–350ms (est.) | 400–600ms (est.) | Pending next BLG-OPS-13-style re-run |
+
+**Endpoint characteristics:**
+- `GET /ai/monthly-cost`: single `SELECT SUM(cost_usd), COUNT(*) ... WHERE generated_at >= date_trunc('month', NOW())` on `claude_audit_log` — no path parameters, single aggregation query, comparable in shape to `GET /reports/monthly-pnl` and the daily-cost aggregation already sampled for `GET /ai/claude-audit-log` (§16). Estimated range follows the §17 list-endpoint band rather than §16's higher observed figure, since this query has no `ORDER BY`/pagination and returns a single row.
+
+**Read-only, no write-op exclusion needed** — this endpoint has no mutation counterpart to exclude.
+
+**Flagged for the next baseline re-run** alongside other pending-measurement endpoints (§13 pattern).
+
+### 29.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-07 (v7.6 EPIC-07, BLG-FEAT-77) — Claude API Monthly Cost Endpoint Registration Sign-Off
+
+AC-01: Endpoint added with estimated p50/p95 and measurement date
+       (2026-07-20 — estimated). ✅ PASS
+AC-02: Estimation methodology documented — derived from query shape (single
+       aggregation SELECT, no pagination), consistent with §13/§17 baseline
+       ranges. ✅ PASS
+AC-03: Entry format consistent with existing baseline rows (§26/§27/§28 pattern). ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, autonomous class) — 2026-07-20
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.17 | 2026-07-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-07 (v7.6 EPIC-07, BLG-FEAT-77): §29 added — GET /ai/monthly-cost registered pending live timing run (§13 pattern). Read-only aggregation query, no write-op counterpart. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/ai/monthly-cost` path in the same PR. |
 | 2.16 | 2026-07-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-04 (v7.5 EPIC-04, BLG-FE-118): §28 added — GET /reports/daily-pnl, GET/POST /saved-filters, DELETE /saved-filters/{id} registered. GET endpoints flagged pending live timing run (§13 pattern); POST/DELETE registered as write-op exclusions (estimated p50/p95, consistent with §20/§25/§26/§27 pattern — mutate real `saved_filters` rows). Cross-EPIC merge conflict resolution (CLAUDE.md §8): renumbered from an independently-authored §26/v2.14 to §28/v2.16 to sit after EPIC-02's and EPIC-03's already-merged §26/§27 entries. |
 | 2.15 | 2026-07-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-03 (v7.5 EPIC-03, BLG-FE-117): §27 added — GET /watchlist/tags, POST /watchlist/bulk-tag, DELETE /watchlist/bulk, POST /trade-plans/bulk-tag, PUT /trade-plans/bulk-archive, DELETE /trade-plans/bulk registered. GET flagged pending live timing run (§13 pattern); the five write endpoints registered as write-op exclusions (estimated p50/p95, consistent with §20/§25/§26 pattern — mutate real `watchlist`/`trade_plans` rows). Cross-EPIC merge conflict resolution (CLAUDE.md §8): renumbered from an independently-authored v2.14 to v2.15 to sit after EPIC-02's already-merged v2.14 entry. |
 | 2.14 | 2026-07-17 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-02 (v7.5 EPIC-02, BLG-FE-116): §26 added — GET/POST /price-alerts and DELETE /price-alerts/{id} registered. GET flagged pending live timing run (§13 pattern); POST/DELETE registered as write-op exclusions (estimated p50/p95, consistent with §20/§25 pattern — mutate real `price_alerts` rows). |

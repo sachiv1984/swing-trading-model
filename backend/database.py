@@ -2106,6 +2106,36 @@ def query_claude_audit_log(
         return []
 
 
+def get_monthly_claude_cost() -> dict:
+    """Return the current calendar month's Claude API spend total from claude_audit_log.
+
+    ST-07 (EPIC-07, v7.6, BLG-FEAT-77 — reframed per ESC-EXEC-20260720-01):
+    Claude is the only AI provider integrated in this codebase (see
+    docs/specs/pnl_export_reconciliation.md-adjacent finding — no
+    google-generativeai package, no GEMINI_API_KEY, gemini_service.py calls
+    only the Anthropic API). claude_audit_log is the immutable audit trail
+    and the authoritative cost source going forward.
+    """
+    try:
+        ensure_claude_audit_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT
+                        COALESCE(SUM(cost_usd), 0.0) AS total_cost,
+                        COUNT(*) AS request_count
+                    FROM claude_audit_log
+                    WHERE generated_at >= date_trunc('month', NOW())
+                """)
+                row = cur.fetchone()
+                return {
+                    "total_cost_usd": float(row["total_cost"]),
+                    "request_count": int(row["request_count"]),
+                }
+    except Exception:
+        return {"total_cost_usd": 0.0, "request_count": 0}
+
+
 # ============================================================================
 # DS-07 — SI-02 SCHEMA ADDITIONS (v4.6 ST-01)
 # ============================================================================

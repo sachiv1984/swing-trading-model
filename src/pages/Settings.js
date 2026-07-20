@@ -7,7 +7,8 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import PageHeader from "../components/ui/PageHeader";
-import { Save, Loader2, CheckCircle2, Sliders, CreditCard, Palette, TrendingUp, ShieldAlert } from "lucide-react";
+import { Save, Loader2, CheckCircle2, Sliders, CreditCard, Palette, TrendingUp, ShieldAlert, DollarSign } from "lucide-react";
+import { api } from "../api/base44Client";
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
 
@@ -20,6 +21,13 @@ export default function Settings() {
   const { data: settings, isLoading } = useQuery({
     queryKey: ["settings"],
     queryFn: () => base44.entities.Settings.list(),
+  });
+
+  // ST-07 (EPIC-07, v7.6, BLG-FEAT-77): independent query so a slow/failed
+  // cost fetch never blocks the rest of the Settings page from being usable.
+  const { data: monthlyCostData, isLoading: monthlyCostLoading, isError: monthlyCostError } = useQuery({
+    queryKey: ["ai-monthly-cost"],
+    queryFn: () => api.ai.monthlyCost(),
   });
 
   const defaults = {
@@ -399,6 +407,25 @@ export default function Settings() {
           />
           <p className="text-xs text-slate-600 dark:text-slate-400">Minimum number of closed trades required to display analytics</p>
         </div>
+      </SectionCard>
+
+      {/* AI Usage & Costs — ST-07 (EPIC-07, v7.6, BLG-FEAT-77). Read-only,
+          does not participate in the Save Settings mutation. */}
+      <SectionCard
+        icon={DollarSign}
+        title="Claude API Usage & Costs"
+        iconColor="bg-amber-500/20 text-amber-400"
+      >
+        <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">Claude API spend for the current calendar month</p>
+        {monthlyCostLoading ? (
+          <div className="h-6 w-24 rounded bg-slate-800/50 animate-pulse" />
+        ) : monthlyCostError ? (
+          <p className="text-sm text-slate-600 dark:text-slate-400">AI cost data unavailable</p>
+        ) : (
+          <p className="text-lg font-semibold text-white">
+            ${(monthlyCostData?.total_cost_usd ?? 0).toFixed(2)}
+          </p>
+        )}
       </SectionCard>
     </div>
   );

@@ -515,6 +515,8 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ question, ...(context ? { context } : {}) }),
       }),
+    // ST-07 (EPIC-07, v7.6, BLG-FEAT-77): Settings §6 AI Usage & Costs
+    monthlyCost: async () => doFetch('/ai/monthly-cost'),
   },
 
   // ST-11 (v6.3 EPIC-03): Strategy Benchmark — backtest vs live comparison

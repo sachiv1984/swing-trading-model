@@ -3,9 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.4
+**Version:** 1.5
 **Last Updated:** 2026-07-20
-**Design Source (v1.4 AI Usage & Costs):** docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md
+**Design Source (§6 AI Usage & Costs):** docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md (v1.1 addendum)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Purpose & User Goals
@@ -19,7 +19,7 @@ Users should be able to:
 - Define the minimum number of trades required before analytics are displayed.
 - Configure concentration alert thresholds for position and sector risk limits.
 - Save settings with clear, immediate feedback that changes have been applied.
-- View combined monthly AI provider (Gemini + Claude) spend at a glance (read-only, v7.6).
+- View Claude API spend for the current month at a glance (read-only, v7.6).
 
 ---
 
@@ -195,19 +195,19 @@ Analytics views show only once this threshold is met, avoiding misleading statis
 
 ---
 
-### 6. AI Usage & Costs (v7.6 — ST-07, BLG-FEAT-77)
+### 6. Claude API Usage & Costs (v7.6 — ST-07, BLG-FEAT-77)
 
-**Design source:** docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md
+**Design source:** docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md (v1.1 addendum)
 
-A **read-only** section showing combined AI provider spend for the current calendar month. Unlike sections 1–5, this section has no form fields and does not participate in the `Save Settings` mutation — it loads via its own independent query and is excluded from the Save button's scope.
+**Reframed per `ESC-EXEC-20260720-01`:** the original design assumed Gemini and Claude were two separate cost-generating providers, sourced from `gemini_audit_log` and a Claude equivalent respectively, summed into a "Combined Total." Tracing the actual implementation during sprint execution found this codebase integrates only the Anthropic Claude API — `gemini_service.py` (despite its filename) calls only `anthropic`, and no `google-generativeai` package or `GEMINI_API_KEY` exists anywhere in the codebase. `gemini_audit_log` and `claude_audit_log` both log the *same* Claude spend event per call, not two providers' independent costs. The original design would have double-counted one real cost stream as two. This section now shows a single Claude API total.
+
+A **read-only** section showing Claude API spend for the current calendar month. Unlike sections 1–5, this section has no form fields and does not participate in the `Save Settings` mutation — it loads via its own independent query and is excluded from the Save button's scope.
 
 **Fields (read-only):**
 
 | Row | Source | Format |
 |-----|--------|--------|
-| Gemini (thesis generation) | `gemini_audit_log`, current-month sum | `$X.XX` |
-| Claude (trade plan / chat) | `POST /ai/check-daily-cost` equivalent monthly aggregate | `$X.XX` |
-| Combined Total | Client-side sum of the two rows above (no new endpoint) | `$X.XX`, bold, top-border separated from the two provider rows |
+| Claude API spend (current month) | `GET /ai/monthly-cost` — aggregates `claude_audit_log.cost_usd` for the current calendar month | `$X.XX`, bold |
 
 **Loading:** inline skeleton within the card only — does not block the rest of the Settings page.
 **Error:** card shows "AI cost data unavailable" — no numeric fallback is rendered (never shown as `$0.00` or `—`); rest of the page is unaffected.
@@ -277,4 +277,5 @@ A **read-only** section showing combined AI provider spend for the current calen
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-07-20 | v7.6 sprint execution (ST-07, EPIC-07, BLG-FEAT-77) — reframed §6 per `ESC-EXEC-20260720-01`: title changed from "AI Usage & Costs" to "Claude API Usage & Costs"; removed the Gemini row and client-side Combined Total (both premised on a Gemini provider that does not exist in this codebase — `gemini_service.py` calls only the Anthropic Claude API); now shows a single `GET /ai/monthly-cost` figure. Sprint Execution Engine, agent-mediated Director of Quality sign-off. |
 | 1.4 | 2026-07-20 | v7.6 design gate — added §6 AI Usage & Costs (ST-07, BLG-FEAT-77): read-only SectionCard showing Gemini + Claude current-month spend and a client-side-summed Combined Total; independent query, excluded from Save Settings scope. Sections list corrected to include the pre-existing Risk Limits section (previously missing from the top-of-file summary). Design source: consolidated-ai-cost-view/ux_spec.md. Approved: Product Owner 2026-07-20. Design gate: 2026-07-20__release-v7.6. Head of Specs Team confirmed. |

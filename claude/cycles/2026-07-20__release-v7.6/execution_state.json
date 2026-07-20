@@ -240,34 +240,47 @@
       }
     },
     "EPIC-07": {
-      "status": "not_started",
-      "branch": null,
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "status": "done",
+      "branch": "exec/2026-07-20__release-v7.6/EPIC-07",
+      "pr_number": 1035,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-20__release-v7.6/qa_evidence_EPIC-07.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/e2e/ai-usage-costs.spec.js", "tests/test_monthly_ai_cost.py"],
       "stories": {
         "ST-07": {
-          "title": "Add consolidated Gemini + Claude monthly cost summary",
+          "title": "Add Claude API monthly cost summary (reframed from \"consolidated Gemini + Claude\")",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
-          "branch": null,
-          "commit_sha": null,
+          "github_issue": 1026,
+          "branch": "exec/2026-07-20__release-v7.6/EPIC-07",
+          "commit_sha": "c74a0d08c20751f555d7b410f253f64f57d74c88",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["docs/specs/frontend/pages/settings.md#6. AI Usage & Costs (v7.6 — ST-07, BLG-FEAT-77)"],
+          "completed_utc": "2026-07-20T21:40:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md#7. v1.1 Addendum — Single-Provider Reframe",
+            "docs/specs/frontend/pages/settings.md#6. Claude API Usage & Costs (v7.6 — ST-07, BLG-FEAT-77)",
+            "docs/specs/api_contracts/ai_endpoints.md#GET /ai/monthly-cost"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Design Gate resolved the backend-endpoint question: client-side sum of two existing sources, no new endpoint required (settings.md §6 'no new endpoint'). Sequenced after EPIC-04 per Merge Order."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off_cleared",
+          "sign_off_record": {
+            "required_by": "Director of Quality",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "findings_applied": [
+              "Merged main into EPIC-07 branch to restore tests/e2e/fixtures/api-mocks.js (Playwright spec could not load without it) — CLAUDE.md §8",
+              "Fixed stale 'Gemini + Claude' bullet in settings.md §Purpose & User Goals that survived the §6 reframe edit"
+            ],
+            "cleared_utc": "2026-07-20T21:42:00Z"
+          },
+          "notes": "Reclassified delegated_decision -> autonomous after ESC-EXEC-20260720-01 resolved (Product Owner option (a), 2026-07-20). Reframed §6 to a single Claude API cost figure: new GET /ai/monthly-cost endpoint (backend/database.py::get_monthly_claude_cost, sourced from claude_audit_log), new SectionCard in Settings.js (independent query, no Gemini row, no Combined Total), full CLAUDE.md §2 same-commit compliance (openapi.yaml, ai_endpoints.md v1.7, test.py registration, SystemStatus.js/system-status.spec.js fallback 102->103). Playwright coverage (5 scenarios incl. explicit no-Gemini/no-Combined-Total regression guard) + backend unit tests (4 scenarios). Agent-mediated DoQ review (§5.3) found and required fixing 2 issues before clearing: a missing shared fixture file (branch hadn't merged main since EPIC-05 landed it) and one stale spec bullet — both fixed in the same commit, then cleared. No P0/P1 deviation — original UX spec's premise (two AI providers) was itself the defect; documented as a design-artefact deviation via the v1.1 addendum, not a code deviation from spec."
         }
       }
     },
@@ -313,7 +326,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-08"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08"],
   "open_escalations": [],
 
   "merge_gate": {

@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.6
-**Last Updated:** 2026-07-13
+**Version:** 1.7
+**Last Updated:** 2026-07-20
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -22,6 +22,7 @@ All AI output is **display-only** and must NOT be used as input to any signal, s
 - [POST /ai/chat](#post-aichat)
 - [POST /ai/check-daily-cost](#post-aicheck-daily-cost)
 - [GET /ai/claude-audit-log](#get-aiclaude-audit-log)
+- [GET /ai/monthly-cost](#get-aimonthly-cost)
 
 ---
 
@@ -500,9 +501,57 @@ Query the AI journal summary audit log. Returns metadata records for past `POST 
 
 ---
 
+## GET /ai/monthly-cost
+
+Returns the current calendar month's Claude API spend total, aggregated from `claude_audit_log`. Read-only — no side effects, unlike `POST /ai/check-daily-cost`, which sends a Telegram alert as a side effect and is not suitable for a page-load fetch.
+
+Added for ST-07 (EPIC-07, v7.6, BLG-FEAT-77), reframed per `ESC-EXEC-20260720-01`: the story's original AC assumed Gemini and Claude were two separate cost-generating providers; tracing the implementation found this codebase integrates only the Anthropic Claude API (no `google-generativeai` package, no `GEMINI_API_KEY`, `gemini_service.py` calls only `anthropic`). `claude_audit_log` is the immutable audit trail and is the authoritative single-provider cost source.
+
+**§13 Status:** N/A — read-only cost aggregate; no AI output generated.
+
+### Request
+
+```
+GET /ai/monthly-cost
+```
+
+No parameters.
+
+### Response — 200 OK
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "total_cost_usd": 0.0074,
+    "request_count": 6
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `total_cost_usd` | float | Sum of `cost_usd` across all `claude_audit_log` rows with `generated_at` in the current calendar month (UTC). `0.0` if no calls this month. |
+| `request_count` | integer | Count of Claude API calls logged this month. |
+
+### Error responses
+
+| Status | Condition |
+|--------|-----------|
+| 401 | Missing or invalid API key. |
+| 500 | Internal failure — returns `{"total_cost_usd": 0.0, "request_count": 0}` rather than propagating the error (matches `get_daily_ai_cost`'s existing fail-safe convention), so this endpoint does not return a 500 body under normal operation. |
+
+### Implementation constraints
+
+- Read-only endpoint: no writes to any table.
+- Uses `date_trunc('month', NOW())` (UTC) as the month boundary — not user-timezone-aware.
+- Does not send any alert or notification (contrast with `POST /ai/check-daily-cost`).
+
+---
+
 ## Known Deviations
 
-None at v1.5.
+None at v1.7.
 
 ---
 
@@ -510,6 +559,7 @@ None at v1.5.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.7 | 2026-07-20 | ST-07 (EPIC-07, v7.6, BLG-FEAT-77): Added `GET /ai/monthly-cost` — current calendar month's Claude API spend total, sourced from `claude_audit_log`. Reframed per `ESC-EXEC-20260720-01`: original AC assumed a separate Gemini provider; no such integration exists in this codebase (confirmed: no `google-generativeai`, no `GEMINI_API_KEY`, `gemini_service.py` calls only the Anthropic API). `openapi.yaml` updated in the same commit. |
 | 1.6 | 2026-07-13 | v7.0 EPIC-02 ST-11 (BLG-BE-51): Added optional `endpoint` (exact match) and `date_from`/`date_to` (inclusive, `YYYY-MM-DD`, applied to `generated_at`) query filters to `GET /ai/claude-audit-log` — independently or combined, and combinable with `limit`. No new endpoint; existing unfiltered behaviour unchanged when all three are omitted. `openapi.yaml` updated in the same commit. |
 | 1.5 | 2026-06-29 | v6.3 EPIC-01 ST-03: Added per-endpoint rate limiting to `POST /ai/daily-briefing` (10 req/min/IP) and `POST /ai/chat` (30 req/min/IP). 429 + `Retry-After` documented. In-memory sliding-window implementation (`backend/services/rate_limiter.py`). AC-05: rate limit scenario tests added to `backend/routers/test.py`. |
 | 1.4 | 2026-06-25 | v6.2 EPIC-02 ST-06/ST-08: Added `POST /ai/daily-briefing` (daily portfolio briefing + action list) and `POST /ai/chat` (stateless conversational advisor). Both endpoints use `claude-sonnet-4-6`, log to `claude_audit_log`, return `advisory: true`. §13 PASS per 2026-06-24 review. Head of Engineering sign-off. |
