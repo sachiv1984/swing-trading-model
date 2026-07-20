@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-07-20__release-v7.6",
   "cycle_name": "v7.6 — PDF / Print-Friendly Export",
-  "status": "Sprint_Planning_Complete",
+  "status": "Sprint_Complete",
   "prior_status": "Published",
   "engine": "sprint_planning",
   "execution_state_path": "claude/cycles/2026-07-17__release-v7.4/execution_state.json",
@@ -36,7 +36,7 @@
   "sprint2_gate_confirmed_utc": "",
   "sprint2_close_utc": "",
   "verification_utc": "2026-07-17T10:32:02Z",
-  "last_sync_utc": "2026-07-20T19:00:00Z",
+  "last_sync_utc": "2026-07-20T20:20:00Z",
   "release_complete": true,
   "last_audit_id": "AUD-2026-07-14",
   "last_audit_utc": "2026-07-14T22:00:00Z",
