@@ -291,6 +291,16 @@ Anchored 2026-07-21 — formalizes a `plan release --version "v7.7"`-style scope
 | Shared toast/notification primitive for alert-style UI | BLG-FE-120 | P2 | M | No gate. Previously stale-targeted at v7.4 (shipped 2026-07-17 without it) — resolved here. Enabler for BLG-FE-116's standing-alert pattern. |
 | Investigate a UX nudge to accelerate the SI-02 trade-count gate | BLG-FEAT-80 | P2 | M | Gate condition ("once BLG-FE-109 has been in production for a full sprint cycle") satisfied by elapsed time — BLG-FE-109 shipped v7.3 (2026-07-16); v7.4/v7.5/v7.6 have since shipped. Investigation-shaped (AC = review + recommendation, not a shipped build) — classifies as pre-work/debt, not a user-facing `U` story, at ship. |
 
+<!-- roadmap-annotation-marker: RA:v7.7:2026-07-21__release-v7.7 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-21__release-v7.7
+- Plan published: 2026-07-21
+- Cycle folder: claude/cycles/2026-07-21__release-v7.7/
+- Backlog slice: claude/cycles/2026-07-21__release-v7.7/stage4_backlog_slice.md
+- Status at annotation: Committed
+- Firm scope: 11 items (BLG-FEAT-75, BLG-FE-114, BLG-FE-113, BLG-FE-120, BLG-FEAT-80 + 6 capacity-fill items: BLG-OPS-108, BLG-GOV-28, BLG-QA-104, BLG-BE-63, BLG-OPS-110, BLG-QA-102). BLG-FEAT-73/BLG-FEAT-74 excluded this cycle (gate NOT MET / no §13 review — see decisions record).
+
 *Now horizon was empty as of 2026-07-20 (post-ship closure 2026-07-20__release-v7.6 — RA:v7.6 retired in full, 8/8 items shipped; no carry-forward items remained) prior to this formalization write.*
 
 *RA:v7.6 retired — see roadmap_archive.md 2026-07-20 (post-ship closure 2026-07-20__release-v7.6; full retirement, 8/8 items).*

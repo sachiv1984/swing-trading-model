@@ -1,0 +1,101 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Build SI-04 strategy-version performance comparison view",
+    "epic": "EPIC-01",
+    "description": "Compare trading performance across strategy_rules.md versions — win rate, average R, compliance rate",
+    "ac_summary": "Side-by-side version comparison view; win rate/avg R/compliance rate per version; no trade-volume gate",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-21__release-v7.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Remove nav duplication and unify digest/notification concepts",
+    "epic": "EPIC-02",
+    "description": "Consolidate duplicate nav entries and cross-link Weekly Digest to notification history",
+    "ac_summary": "No duplicate unlabelled nav routes; Weekly Digest co-located with Alerts/Notifications; alert-counts link to filtered history",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-21__release-v7.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Staging check and fix AiDailyBriefing light-theme contrast",
+    "epic": "EPIC-03",
+    "description": "Confirm and fix bare dark-only Tailwind tokens in AiDailyBriefing.js light theme",
+    "ac_summary": "Staging check recorded pass/fail; fix shipped and verified in both themes if broken",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-21__release-v7.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Build shared standing-alert component distinct from transient toast",
+    "epic": "EPIC-04",
+    "description": "Define and build a shared standing-alert primitive in design_system.md",
+    "ac_summary": "Component built and documented; integration point identified for BLG-FE-116",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-07-21__release-v7.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Review nudge feasibility for SI-02 gate acceleration",
+    "epic": "EPIC-05",
+    "description": "Assess whether an in-app nudge would accelerate SI-02 trade-count gate clearance",
+    "ac_summary": "Review completed; recommendation recorded (nudge proposed or time-gated-only conclusion)",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-07-21__release-v7.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Add response validation to daily-snapshot.yml curl calls",
+    "epic": "EPIC-06",
+    "description": "Add --fail/status validation to the 3 curl invocations in daily-snapshot.yml",
+    "ac_summary": "Broken write path surfaces as failed CI run; other business-endpoint workflows audited",
+    "labels": ["sprint", "EPIC-06", "cycle:2026-07-21__release-v7.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Run retroactive §13 compliance review against shipped PT-04",
+    "epic": "EPIC-07",
+    "description": "Run §13 checklist against PT-04's shipped Setup Quality Score implementation",
+    "ac_summary": "PASS/FAIL documented with binding conditions; Head of Specs Team sign-off recorded",
+    "labels": ["sprint", "EPIC-07", "cycle:2026-07-21__release-v7.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "Add automated regression test for numpy-scalar handling",
+    "epic": "EPIC-08",
+    "description": "Test coverage for create_rebalance_exit_signal numpy-scalar safety",
+    "ac_summary": "Automated test guards against PR #971 defect class recurrence",
+    "labels": ["sprint", "EPIC-08", "cycle:2026-07-21__release-v7.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-09",
+    "title": "Verify nightly backtest job is safe against double-run/retry",
+    "epic": "EPIC-09",
+    "description": "Confirm idempotency of the nightly backtest job",
+    "ac_summary": "Idempotency confirmed by test or review; gaps filed as P1/P2 correctness items",
+    "labels": ["sprint", "EPIC-09", "cycle:2026-07-21__release-v7.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-10",
+    "title": "Add monitoring/alerting for nightly backtest failures or anomalies",
+    "epic": "EPIC-10",
+    "description": "Monitoring/alerting mechanism for the nightly backtest job",
+    "ac_summary": "Mechanism added and confirmed to fire on simulated failure/anomaly",
+    "labels": ["sprint", "EPIC-10", "cycle:2026-07-21__release-v7.7"],
+    "assignee": null
+  },
+  {
+    "id": "ST-11",
+    "title": "Add CI lint step for router-decorator vs. SystemStatus.js fallback count",
+    "epic": "EPIC-11",
+    "description": "Automate the CLAUDE.md §2 endpoint-count drift check in quality_gate.yml",
+    "ac_summary": "Lint step fails on synthetic mismatch; passes on current state",
+    "labels": ["sprint", "EPIC-11", "cycle:2026-07-21__release-v7.7"],
+    "assignee": null
+  }
+]
