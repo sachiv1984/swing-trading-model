@@ -1,5 +1,11 @@
 # Strategy Rules & System Intent Owner
 **Role:** Strategy Rules & System Intent Owner
+**Reports to:** Head of Specs Team
+**Governance alignment:** Head of Specs Team (documentation lifecycle, document classes, headers, naming conventions)
+**Scope:** Strategy Rules for the Momentum Trading Assistant (`claude/strategy/strategy_rules.md`)
+**Status:** Canonical
+**Version:** 1.0
+**Last Updated:** 2026-07-21
 
 This document defines the **skills, responsibilities, and operating standards** for the role responsible for owning, maintaining, and evolving the **Strategy Rules** for the Momentum Trading Assistant.
 

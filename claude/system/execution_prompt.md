@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.58
-**Last Updated:** 2026-07-20
+**Version:** 3.59
+**Last Updated:** 2026-07-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -154,19 +154,7 @@ When an ST item's seal condition or acceptance criteria require sign-off from a 
 - Architecture sign-offs where the ADR is already written and the review is against documented criteria
 - Any named authority with an agent file where the decision is reviewable against criteria in the role charter
 
-**Sign-off record schema** (added to `execution_state.json` per-story):
-
-```json
-"sign_off_record": {
-  "required_by": "Head of Specs Team",
-  "method": "agent_mediated",
-  "status": "cleared",
-  "findings_applied": ["list of findings addressed"],
-  "cleared_utc": "ISO-8601"
-}
-```
-
-`method` is `"agent_mediated"` when this protocol ran, or `"human"` when surfaced to and resolved by the user.
+**Sign-off record schema** (added to `execution_state.json` per-story) — see `shared_standards.md` §16.13 (canonical definition, moved out of this file at AUD-2026-07-20-004; not duplicated here).
 
 ---
 
@@ -774,6 +762,8 @@ If any condition fails: do not merge. Record which condition is unmet. If QA or 
 > **Session-close advisory (AUD-2026-06-10-002, superseded by step 3b for governance files):** Step 3b above now enforces a mandatory pre-halt commit of governance files (backlog.md, qa_evidence). This advisory remains active for any non-governance working-tree changes not covered by step 3b (e.g. source code edits left open). If `git status --short` shows any remaining changes after step 3b: commit or stash before closing. (Root cause: v5.3 + v5.4 + v5.5 + v6.0 recurrence of stash-at-branch-switch pattern — AUD-2026-06-22-002.)
 
 > **Merge order note (LL-v2.0-P3-5):** If more than one EPIC branch modifies a shared governance file (e.g. `execution_state.json`, `.claude_current_state.json`, `backlog.md`, `delegation_log.md`), establish a merge order at the start of STEP 3. Later EPIC branches **must rebase onto `main`** after the first EPIC merges — before running their final QA review and opening a PR. This prevents merge conflicts at the merge gate and avoids the need to rebase mid-merge-sequence.
+>
+> **Async-merge sibling notification (v7.3 Phase 3 friction, applied AUD-2026-07-20-003, closes a 3-cycle-overdue deferred patch):** When all sibling EPIC PRs in a cycle are opened before any of them has merged, the engine cannot proactively rebase at PR-open time — the "first EPIC merges" precondition above hasn't happened yet. `.github/workflows/sprint_close_reminder.yml` now posts a "rebase recommended" comment on every other open sibling PR in the same cycle when one EPIC PR merges, giving a concrete signal to act on at the next `run sprint` invocation instead of waiting for a failed merge attempt.
 
 ---
 

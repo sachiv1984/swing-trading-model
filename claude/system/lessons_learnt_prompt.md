@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.9
-**Last Updated:** 2026-05-09
+**Version:** 1.10
+**Last Updated:** 2026-07-21
 
 ---
 
@@ -233,7 +233,7 @@ Each phase append uses this structure:
 - `friction_item`: brief description (one line); enough to identify the friction without the full prose record
 - `phase`: `Phase 3`, `Phase 4`, or `Amendment — <AMD-id>`
 - `type`: exactly one of A–E (Type A through Type E per §5 classification)
-- `classification`: `action-now` (applied this run), `defer` (target owner/cycle required), or `decision` (named authority required)
+- `classification`: `action-now` (applied this run), `defer` (target owner/cycle required), or `decision` (named authority required). A cycle with zero friction items must not file a placeholder row using any other value (e.g. "monitor") — write "No friction items identified this run" as prose in the Friction Log section instead, per the existing v7.2 Phase 4 precedent. (AUD-2026-07-20-005)
 - `action`: the specific change made or required — file and section where possible
 - `owner`: role name (required; no owner = escalation to Head of Specs Team)
 - `target_date`: date or cycle ID (required for `defer` and `decision`; `—` for `action-now` already applied)

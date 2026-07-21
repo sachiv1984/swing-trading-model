@@ -1,5 +1,11 @@
 # Metrics Definitions & Analytics Owner
 **Role:** Metrics Definitions & Analytics Owner
+**Reports to:** Head of Specs Team
+**Governance alignment:** Head of Specs Team (documentation lifecycle, document classes, headers, naming conventions)
+**Scope:** Metrics Definitions – Canonical Specification
+**Status:** Canonical
+**Version:** 1.0
+**Last Updated:** 2026-07-21
 
 This document defines the **skills, responsibilities, and operating standards** for the role responsible for owning, maintaining, and evolving the **Metrics Definitions – Canonical Specification**.
 

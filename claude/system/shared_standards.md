@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.17
-**Last Updated:** 2026-07-17
+**Version:** 3.18
+**Last Updated:** 2026-07-21
 
 # Shared Standards — All Governed Routines
 
@@ -284,6 +284,8 @@ A document without a complete header is non-compliant and must not be relied upo
 1. Read the document's Change Log table's top row (or full existing body) — confirm the header field is not already ahead of, or behind, what the edit assumes.
 2. If the document carries its own internal self-referential summary table (e.g. `OPERATIONAL_GUIDE.md` §14's `Version` / `Last Updated` field rows) **distinct from the Change Log**, read and update that table's own `Version`/`Last Updated` row explicitly — do not assume updating the Change Log or the top header alone also updates this row; it is a separate write.
 3. Do not trust a header field, a Change Log row, or an instruction's label ("overwritten each run") in isolation — cross-check all three locations (header, self-referential summary row if one exists, Change Log top row) against each other before writing, and correct any that disagree.
+
+**Mechanical enforcement note (added v3.18, AUD-2026-07-20-001 — 3rd recurrence of this exact pattern despite the v3.10 and v3.16 prose strengthenings above):** This checklist has now failed under real load twice since it was written (`OPERATIONAL_GUIDE.md` §14's self-row drifted 3 versions behind between the v3.16 fix and AUD-2026-07-20). Any governance commit that bumps `OPERATIONAL_GUIDE.md`'s header `**Version:**` must additionally pass a mechanical check — via the repo's `commit-check` skill — comparing that value against the §14 field-table's own `| Version | X |` row before the commit lands. Do not rely on this checklist alone a fourth time.
 
 ---
 
@@ -919,6 +921,28 @@ Original / Amended — <file path used>
 
 - **`roadmap_prompt.md` STEP 4.2** (📋 Backlog gate-conditional disposition) and **STEP 9** (Now/Next horizon promotion): when writing a new `backlog.md` item with a `Provisional-Target` naming a specific release, the `**Effort:**` field must include a day range at time of write. Do not defer this to a later grooming pass.
 - **`backlog_management_prompt.md` STEP 1**: flag (do not silently backfill) any existing item whose `Provisional-Target` names a specific release but whose `Effort` field carries a bare letter with no day range — day-range estimation requires domain judgment from the item's owner, not mechanical inference.
+
+---
+
+## §16.13 Sign-Off Record Schema
+
+**Used by:** Sprint Execution Engine (written at STEP 5.2 agent-mediated sign-off protocol)
+
+**Origin:** Moved from `execution_prompt.md` §5.1 (AUD-2026-07-20-004) — canonicalised here alongside the other governed JSON schemas rather than kept inline, per §16's own stated purpose.
+
+**Schema** (added to `execution_state.json` per-story):
+
+```json
+"sign_off_record": {
+  "required_by": "Head of Specs Team",
+  "method": "agent_mediated",
+  "status": "cleared",
+  "findings_applied": ["list of findings addressed"],
+  "cleared_utc": "ISO-8601"
+}
+```
+
+`method` is `"agent_mediated"` when the agent-mediated sign-off protocol ran, or `"human"` when surfaced to and resolved by the user.
 
 ---
 

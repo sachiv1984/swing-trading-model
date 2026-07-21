@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.105
-**Last Updated:** 2026-07-20
+**Version:** 4.106
+**Last Updated:** 2026-07-21
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.58)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.59)
 
 ### 8.1 Invocation
 
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.102 |
-| Last Updated | 2026-07-17 |
+| Version | 4.106 |
+| Last Updated | 2026-07-21 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1467,15 +1467,15 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.42 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.13 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.58 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.59 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.8 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.5 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.1 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.18 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.17 |
+| Shared Standards | `claude/system/shared_standards.md` v3.18 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
-| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.9 |
+| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.10 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
 | GitHub Issue Template | `claude/system/gh_issue_template.md` v1.0 |
 | PR DoQ Enforcement Template | `.github/pull_request_template.md` v1.2 |
@@ -1495,6 +1495,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.106 | 2026-07-21 | **Lifecycle audit AUD-2026-07-20, findings AUD-2026-07-20-001/003/004/005 applied — §14 self-metadata desync fixed (3rd recurrence) + shared_standards.md v3.17→v3.18 + execution_prompt.md v3.58→v3.59 + lessons_learnt_prompt.md v1.9→v1.10.** §14 Version/Last Updated table row corrected from a stale 4.102/2026-07-17 to 4.106/2026-07-21 (3 further version bumps — 4.103, 4.104, 4.105 — had all updated the document header and Change Log but never this row, a 3rd recurrence of the pattern the §9.1 guard exists to catch). §8 source prompt header v3.58→v3.59. §14 Execution Engine Source v3.58→v3.59; Shared Standards v3.17→v3.18; Lessons Learnt Prompt v1.9→v1.10. Changes: (1) `shared_standards.md` §9.1 — mechanical-enforcement note added pointing to the `commit-check` skill, since two successive prose-only strengthenings (v3.10, v3.16) both failed to prevent recurrence (AUD-2026-07-20-001); new §16.13 Sign-Off Record Schema added, canonicalising the block moved out of `execution_prompt.md` (AUD-2026-07-20-004). (2) `execution_prompt.md` §3 merge-order note — async-merge sibling notification added, closing a 3-cycle-OVERDUE deferred patch (AUD-2026-07-20-003); inline sign-off schema replaced with a reference to `shared_standards.md` §16.13 (AUD-2026-07-20-004). (3) `lessons_learnt_prompt.md` — `classification` field rule clarified to exclude undocumented values such as "monitor" (AUD-2026-07-20-005). `.github/workflows/sprint_close_reminder.yml` also extended with a sibling-PR rebase-notification step to make AUD-2026-07-20-003's prompt text true in practice. Authority: Head of Specs Team (audit AUD-2026-07-20 patch application, user-directed, 2026-07-21). |
 | 4.105 | 2026-07-20 | **Post-ship closure `2026-07-20__release-v7.6` Phase 4 friction, immediate action — post_ship_closure.md v2.17→v2.18: amendment field reset rule (LL-v7.6-P4-01) added to STEP 10.** §10 source prompt header v2.17→v2.18. §14 Post-Ship Closure Engine v2.17→v2.18. §14 Version 4.104→4.105/2026-07-20. Change: STEP 10 (Global State Update) now checks whether `active_amendment` is non-empty and, if its originating cycle has already reached `Closed`/`Closed_with_actions`, clears `amended_backlog_slice_path`, `amendment_sealed_utc`, `active_amendment`, and `amendment_status` in the same write. Root cause: `.claude_current_state.json`'s `amended_backlog_slice_path` still pointed to the already-closed `2026-07-17__release-v7.4`/`AMD-20260717-01` amendment when this cycle's own delivery verification ran, requiring manual cross-referencing (checking for an `amendments/` folder under the current cycle, comparing against `execution_state.json.backlog_slice_source`) to correctly dismiss it as inapplicable — flagged as a Phase 4 friction item (`lessons_learnt_cycle.md` `2026-07-20__release-v7.6` §Phase 4) and applied now per the non-deferrable immediate-action rule rather than deferred a second time. Authority: Head of Specs Team (post-ship closure `2026-07-20__release-v7.6`, STEP 8 — immediate lessons-learnt action rule). |
 |---------|------|----------------|
 | 4.104 | 2026-07-20 | **Sprint execution `2026-07-20__release-v7.6` Phase 3 friction, action-now — execution_prompt.md v3.57→v3.58: API performance baseline pre-PR check added to STEP 3.2.B.** §8 source prompt header v3.57→v3.58. §14 Execution Engine Source v3.57→v3.58. §14 Version 4.103→4.104/2026-07-20. Change: new "API performance baseline pre-PR check (LL-v7.6-P3-01)" added alongside the existing qa_evidence commit advisory — if an EPIC's commits added a new `openapi.yaml` path, the engine must `grep` `docs/ops/api_performance_baseline.md` for that exact endpoint string before running `gh pr create`, registering it now (following the most recent `## N. vX.Y Endpoint Registration` section's pattern) rather than relying on the "API Performance Baseline Drift Detection (ST-12)" CI gate to catch the omission after the PR is already open. Root cause: the existing STEP 3.1.A advisory (AUD-2026-06-22-006) was insufficient under multi-file endpoint-addition load — `v7.6` ST-07 (EPIC-07) added a new `GET /ai/monthly-cost` endpoint across 8 files, missed the baseline doc specifically, and the omission was caught only by CI after PR #1035 was opened, requiring a follow-up commit before merge. Authority: PMO Lead (sprint execution `2026-07-20__release-v7.6`, STEP 5.4 Phase 3 lessons-learnt action-now rule). |

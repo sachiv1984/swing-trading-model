@@ -1,5 +1,11 @@
 # Head of Specs Team
 **Role:** Head of Specs Team
+**Reports to:** Product Owner
+**Governance alignment:** Self (Head of Specs Team owns documentation lifecycle, document classes, headers, naming conventions)
+**Scope:** Specs Team leadership — Strategy Rules, Data Model, Metrics Definitions, API Contracts, all Class 6 governance prompts
+**Status:** Canonical
+**Version:** 1.0
+**Last Updated:** 2026-07-21
 
 This document defines the **skills, responsibilities, and operating standards** for the role responsible for leading the **Specs Team**.
 

@@ -1,5 +1,11 @@
 # API Contracts & Documentation Owner
 **Role:** API Contracts & Documentation Owner
+**Reports to:** Head of Specs Team
+**Governance alignment:** Head of Specs Team (documentation lifecycle, document classes, headers, naming conventions)
+**Scope:** API contract documents in `docs/specs/api_contracts/` and `docs/reference/openapi.yaml`
+**Status:** Canonical
+**Version:** 1.0
+**Last Updated:** 2026-07-21
 
 This document describes the **skills, responsibilities, and operating standards** for the role responsible for owning, maintaining, and evolving the API contracts in `docs/specs/api_contracts/`.
 

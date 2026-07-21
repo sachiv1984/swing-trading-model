@@ -24,23 +24,24 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-07-10"
+PRIOR_AUDIT_ID = "AUD-2026-07-20"
 PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-07-10-001", "AUD-2026-07-10-002"
-]  # all recorded OPEN at AUD-2026-07-10 run time — re-classify at next audit once patches are applied
+    "AUD-2026-07-20-001", "AUD-2026-07-20-002", "AUD-2026-07-20-003",
+    "AUD-2026-07-20-004", "AUD-2026-07-20-005", "AUD-2026-07-20-006"
+]  # all recorded OPEN at AUD-2026-07-20 run time — re-classify at next audit once patches are applied
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
-    "token_efficiency":      100,
-    "governance_integrity":  96,
+    "token_efficiency":      95,
+    "governance_integrity":  84,
     "execution_reliability": 53,
-    "friction_load":         78,
-    "document_hygiene":      100,
+    "friction_load":         61,
+    "document_hygiene":      76,
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 55  # updated from 52 to current completed_cycle_count at AUD-2026-07-10
+COMPLETED_CYCLES = 62  # corrected from stale 55 to current completed_cycle_count at AUD-2026-07-20 (2nd consecutive audit finding this constant stale — see AUD-2026-07-20-006)
 
 # -------------------------
 # MISSING FILE RULE
@@ -840,6 +841,14 @@ SLA BLOCK FORMAT (print verbatim at §9)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 PRIOR AUDIT STATE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STALENESS CHECK (mandatory, added AUD-2026-07-20-006 — 2 consecutive audits found this config block un-pasted):
+Before trusting the constants below, locate the most recent filed report at
+claude/cycles/<id>/audit_report_AUD-<date>.md and read its own §11 Config Update block.
+If PRIOR_AUDIT_ID above does not match that report's own AUD-ID, the config was not pasted in
+after that run — note the staleness explicitly in this run's own report preamble (as AUD-2026-07-20
+did) and use the values from that report's §11 block as the actual baseline, not the stale constants
+below.
 
 Prior Audit ID:        {PRIOR_AUDIT_ID or "None — first run"}
 Open items:            {PRIOR_AUDIT_OPEN_ITEMS or "None"}
