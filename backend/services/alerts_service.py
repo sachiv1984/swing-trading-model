@@ -966,7 +966,7 @@ def get_notifications(
     where_clauses = ["portfolio_id = %s"]
     params = [portfolio_id]
     if since_days is not None:
-        where_clauses.append("created_at >= NOW() - (%s || ' days')::interval")
+        where_clauses.append("created_at >= NOW() - (%s * INTERVAL '1 day')")
         params.append(since_days)
     if read is not None:
         where_clauses.append("read = %s")
