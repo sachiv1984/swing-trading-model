@@ -1,11 +1,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-07-17
+**Version:** 1.4
+**Last Updated:** 2026-07-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-24__release-v2.3/sidebar-nav-groups/ux_spec.md
 **Design Source (v1.3 command palette):** docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md
+**Design Source (v1.4 nav dedup):** docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md
 **Confirmed by:** Head of Specs Team — 2026-03-24
 **Release:** v2.3 — ST-13 (BLG-UX-01)
 
@@ -23,10 +24,10 @@ Defines the left sidebar navigation structure, including the collapsible group m
 |-------------|-----------|
 | **Trading** | Positions, Trade History, Trade Reflection, Red Flag Journal |
 | **Analytics** | Analytics, Risk Dashboard, Signals |
-| **Tools** | Watchlist, Alerts |
-| **System** | Settings, System Status, Notifications |
+| **Tools** | Watchlist |
+| **System** | Settings, System Status, Weekly Digest, Notifications |
 
-All existing routes are preserved. No items removed.
+**v1.4 (ST-02, EPIC-02, v7.7, BLG-FE-114):** "Alerts" (formerly Tools group) removed — it routed to the same page as "Notifications" (System group) with no visual indication they were the same destination. "Notifications" is retained as the sole nav path to that page and inherits the removed item's unacknowledged-count badge (§Alert Badge Integration below). "Weekly Digest" moved from Analytics to System, positioned directly above "Notifications" — both are activity-summary surfaces, distinct from Analytics' drill-down surfaces, and this satisfies the requirement that Weekly Digest share a nav grouping with Notifications. One route removed as a distinct nav destination (`Alerts` label); no page routes removed.
 
 ## Collapse Behaviour
 
@@ -45,11 +46,13 @@ All existing routes are preserved. No items removed.
 
 Active nav item retains existing highlight styling (no change from pre-v2.3 behaviour).
 
-## Alert Badge Integration (ST-10 BLG-FE-05)
+## Alert Badge Integration (ST-10 BLG-FE-05; moved to System group v1.4/ST-02/v7.7)
 
-When the **Tools** group is collapsed and unacknowledged alerts exist:
-- The badge count propagates to the Tools group header row (e.g. "Tools [2]" or badge overlay on the group chevron)
-- When Tools is expanded, badge appears on the Alerts item directly
+When the **System** group is collapsed and unacknowledged alerts exist:
+- The badge count propagates to the System group header row (e.g. "System [2]" or badge overlay on the group chevron)
+- When System is expanded, badge appears on the Notifications item directly
+
+**v1.4:** badge moved from the Tools group's "Alerts" item (removed, §Group Structure) to the System group's "Notifications" item. Behaviour unchanged otherwise — same count source (§below), same reset-on-visit rule.
 
 ## Responsive Behaviour
 
@@ -126,6 +129,7 @@ First-session-only dismissible tooltip on the nav-bar search affordance. No moda
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4 | 2026-07-21 | v7.7 design gate — ST-02 (EPIC-02, BLG-FE-114): removed duplicate "Alerts" nav item (Tools group; routed to the same page as "Notifications" with no visual indication of the duplication). "Notifications" (System group) retained as sole nav path, inherits the alert-count badge. "Weekly Digest" moved from Analytics to System group, adjacent to Notifications. §Alert Badge Integration updated (Tools → System propagation). Design source: nav-notification-digest-consolidation/ux_spec.md. Approved: Product Owner 2026-07-21. Design gate: 2026-07-21__release-v7.7. Head of Specs Team confirmed. |
 | 1.3 | 2026-07-17 | v7.5 design gate — added §Global Command Palette (ST-01, BLG-FE-115): Cmd/Ctrl-K invocation, nav-bar mouse fallback, Pages/Your Data result groups, selection/navigation rules, new compact-list `DataState` empty-state variant, discoverability tooltip. Design source: command-palette/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
 | 1.2 | 2026-05-21 | v3.9 design gate — added Red Flag Journal to Trading group (ST-08, EPIC-03: new page at `/red-flag-journal`, nav item after Trade Reflection). Design source: docs/design/2026-05-21__release-v3.9/red-flag-journal/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |
 | 1.1 | 2026-04-25 | ST-11 (BLG-FE-19, v3.0): §Keyboard Shortcuts added — global shortcuts (n/w/r), suppression rule for text inputs, sidebar footer hint design. Design source: docs/design/2026-04-25__release-v3.0/keyboard-shortcuts/ux_spec.md. Head of UX & Design + Product Owner approved. Design gate: 2026-04-25__release-v3.0. Head of Specs Team confirmed. |

@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.1
-**Last Updated:** 2026-07-20
+**Version:** 0.2
+**Last Updated:** 2026-07-21
 **Design Source (v0.1 print/export PDF):** docs/design/2026-07-20__release-v7.6/print-pdf-export/ux_spec.md
+**Design Source (v0.2 nav placement + alert-count links):** docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md
 **API contract:** docs/specs/api_contracts/digest_endpoints.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -38,14 +39,16 @@ Single data table, two columns of labels plus a right-aligned value column:
 |-------|------|-------|
 | Realised P&L (7d) | GBP | `£X.XX` |
 | Unrealised P&L Delta (7d) | GBP | `£X.XX` |
-| Alerts Fired (7d) | count | integer |
-| Alerts Dismissed (7d) | count | integer |
+| Alerts Fired (7d) | count | integer, **linked** (v0.2) |
+| Alerts Dismissed (7d) | count | integer, **linked** (v0.2) |
 | Compliance Score (current) | % | `X.X%` |
 | Compliance Score (7d ago) | % | `X.X%` |
 | Data Staleness | hours | `X.X h` |
 | As of (UTC) | timestamp | raw ISO-8601 string |
 
-Missing/null values render as `—`.
+Missing/null values render as `—` (link is suppressed when the value is `—`).
+
+**Alert-count links (v0.2, ST-02/EPIC-02/v7.7):** `Alerts Fired (7d)` links to `/notifications?since_days=7`; `Alerts Dismissed (7d)` links to `/notifications?since_days=7&read=true` — both values are sourced from the `notifications` table (per `digest_endpoints.md` field definitions), the same table backing the Notification Feed, so both deep-link into the Feed (not Alert History, a separate evaluation-log table). See `docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md` §2 AC3.
 
 ---
 
@@ -75,6 +78,10 @@ A **"Print / Export PDF"** action (outline button, `Printer` icon) is shown in t
 
 ---
 
+## Navigation
+
+**(v0.2, ST-02/EPIC-02/v7.7):** nav item moved from the Analytics group to the System group, positioned directly above "Notifications" — both are activity-summary surfaces. See `navigation.md` v1.4 §Group Structure.
+
 ## Known Deviations
 
 None.
@@ -85,4 +92,5 @@ None.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.2 | 2026-07-21 | v7.7 design gate — ST-02 (EPIC-02, BLG-FE-114): nav item moved from Analytics to System group (adjacent to Notifications); `Alerts Fired (7d)` / `Alerts Dismissed (7d)` values now link to filtered Notification Feed views (`/notifications?since_days=7[&read=true]`). Design source: nav-notification-digest-consolidation/ux_spec.md. Approved: Product Owner 2026-07-21. Design gate: 2026-07-21__release-v7.7. Head of Specs Team confirmed. |
 | 0.1 | 2026-07-20 | v7.6 design gate — initial file creation (gap recovery: `WeeklyDigest.js` shipped v2.4/ST-09/BLG-FEAT-14 without a canonical spec). Documents existing as-built layout, API reference, and states. Adds §4 Print / Export PDF (ST-01, BLG-FE-119). Design source: print-pdf-export/ux_spec.md. Approved: Product Owner 2026-07-20. Design gate: 2026-07-20__release-v7.6. Head of Specs Team confirmed. |

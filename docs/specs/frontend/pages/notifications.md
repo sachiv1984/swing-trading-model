@@ -1,10 +1,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.4
-**Last Updated:** 2026-07-17
+**Version:** 0.5
+**Last Updated:** 2026-07-21
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md | docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md | docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md
+**Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md | docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md | docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md | docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md
 
 ---
 
@@ -59,6 +59,8 @@ All pages share a sub-nav tab bar immediately below the page header:
 - **Mark read (one):** `PATCH /notifications/{id}` — sets `read: true`
 - **Mark read (all):** `POST /notifications/mark-all-read`
 - **Canonical contract:** `docs/specs/api_contracts/alerts_endpoints.md`
+
+**Optional filter query params (v0.5, ST-02/EPIC-02/v7.7):** `since_days` (integer — restrict to notifications created within the last N days) and `read` (boolean — restrict to read-only or unread-only). Both are read from the URL query string on mount, applied before existing pagination; absent when navigating from the sidebar/palette (unfiltered default behaviour unchanged). Added so `weekly_digest.md`'s `Alerts Fired (7d)` / `Alerts Dismissed (7d)` values can deep-link here: `/notifications?since_days=7` and `/notifications?since_days=7&read=true` respectively. Backend param support to be added alongside the frontend change (ST-02 implementation scope, not yet present in `alerts_endpoints.md` as of this design gate — flag for Sprint Execution to update that contract in the same commit per CLAUDE.md §2).
 
 ### Page Header
 - H1: **"Notifications"**
@@ -128,6 +130,8 @@ A list of alert types with per-type email toggle. No Save button — each toggle
 | Grace Period Warning | Notify on days 8–9 of the grace period | On / Off |
 | Market Regime Change | Notify when market regime transitions to risk-off | On / Off |
 | Daily Portfolio Summary | Receive a daily digest of portfolio status | On / Off |
+
+**Daily Portfolio Summary vs. Weekly Digest (v0.5, ST-02/EPIC-02/v7.7):** this row's helper text is extended to: `"Receive a daily digest of portfolio status. This is a daily notification — for a 7-day summary view, see the "` + inline link `"Weekly Digest"` (navigates to the Weekly Digest page) + `" page."` Differentiates the two easily-confused "portfolio summary" concepts (a daily push notification vs. a 7-day on-demand page) via copy and a cross-link, without merging or renaming either. See `docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md` §2 AC4.
 
 **Toggle behaviour:**
 - Optimistic update: toggle flips immediately on click.
@@ -379,27 +383,27 @@ Click again to collapse.
 
 ---
 
-## Nav Alert Badge (v2.3 — ST-10 BLG-FE-05)
+## Nav Alert Badge (v2.3 — ST-10 BLG-FE-05; moved to Notifications item v0.5/ST-02/v7.7)
 
-**Design source:** docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md
+**Design source:** docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md | docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md (v0.5 move)
 
-A badge overlaid on the Alerts sidebar nav item showing unacknowledged alert count.
+A badge overlaid on the sidebar nav item showing unacknowledged alert count. **v0.5:** the separate "Alerts" nav item this badge originally lived on was removed as a duplicate of "Notifications" (both routed to this same page); the badge now overlays the retained "Notifications" item instead.
 
 ### Display
 
 - Red filled circle with white count number, top-right of nav item
-- Count: alerts since last visit to Alerts page
+- Count: alerts since last visit to the Notifications page
 - Max display: "99+" if count > 99
 - Hidden when count = 0
 
 ### Clear behaviour
 
-- Count resets when user navigates to the Alerts page
+- Count resets when user navigates to the Notifications page
 - State managed in frontend (sessionStorage); no backend acknowledged/unacknowledged API required
 
-### Badge visibility with collapsible nav groups (ST-13)
+### Badge visibility with collapsible nav groups (ST-13; System group v0.5/ST-02/v7.7)
 
-When the Tools nav group is collapsed, the badge count propagates to the group header row ("Tools ▶ [2]") so the user can see unacknowledged alerts even without expanding the group.
+When the System nav group is collapsed, the badge count propagates to the group header row ("System ▶ [2]") so the user can see unacknowledged alerts even without expanding the group.
 
 ### Data source
 
@@ -411,6 +415,7 @@ When the Tools nav group is collapsed, the badge count propagates to the group h
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.5 | 2026-07-21 | v7.7 design gate — ST-02 (EPIC-02, BLG-FE-114): added optional `since_days`/`read` filter query params to the Notification Feed (§Page 1) so Weekly Digest's alert-count values can deep-link here; extended the "Daily Portfolio Summary" preference row helper text to differentiate it from the Weekly Digest page, with a cross-link. §Nav Alert Badge integration point now the retained "Notifications" item (see `navigation.md` v1.4) — "Alerts" nav item removed as a duplicate. Design source: nav-notification-digest-consolidation/ux_spec.md. Approved: Product Owner 2026-07-21. Design gate: 2026-07-21__release-v7.7. Head of Specs Team confirmed. |
 | 0.4 | 2026-07-17 | v7.5 design gate — added Section 3: Custom Price Alerts (ST-02, BLG-FE-116): user-created ticker/condition/threshold alerts, backed by new `price_alerts` table; create/list/delete UI on `/notifications/preferences` below Alert Thresholds; triggered alerts surface via existing Notification Feed. Design source: custom-price-alerts/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
 | 0.3 | 2026-03-24 | ST-10 (BLG-FE-05, v2.3): §Nav Alert Badge — unacknowledged alert count badge on Alerts nav item; clears on Alerts page navigation; badge visible on collapsed Tools group header. Design source: docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md. Approved: Product Owner 2026-03-24. Design gate: 2026-03-24__release-v2.3. |
 | 0.2 | 2026-03-22 | v2.2 additions: Section 2 (Alert Rule Thresholds — ST-04) and Page 3 (Alert History — ST-05). Sub-nav extended with "History" tab. Purpose & Goals, routes, and constraints updated. Design sources: `docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md` and `docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md`. Approved by Product Owner 2026-03-22. Confirmed compliant by Head of Specs Team. |
