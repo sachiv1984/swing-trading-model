@@ -1,0 +1,50 @@
+{
+  "cycle_id": "2026-07-21__release-v7.7",
+  "generated_utc": "2026-07-23T00:00:00Z",
+  "epics": {
+    "EPIC-01": {
+      "st_items": ["ST-01"],
+      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-01"]
+    },
+    "EPIC-02": {
+      "st_items": ["ST-02"],
+      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-02"]
+    },
+    "EPIC-03": {
+      "st_items": ["ST-03"],
+      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-03"]
+    },
+    "EPIC-04": {
+      "st_items": ["ST-04"],
+      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-04"]
+    },
+    "EPIC-05": {
+      "st_items": ["ST-05"],
+      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-05"]
+    },
+    "EPIC-06": {
+      "st_items": ["ST-06"],
+      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-06"]
+    },
+    "EPIC-07": {
+      "st_items": ["ST-07"],
+      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-07"]
+    },
+    "EPIC-08": {
+      "st_items": ["ST-08"],
+      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-08"]
+    },
+    "EPIC-09": {
+      "st_items": ["ST-09"],
+      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-09"]
+    },
+    "EPIC-10": {
+      "st_items": ["ST-10"],
+      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-10"]
+    },
+    "EPIC-11": {
+      "st_items": ["ST-11"],
+      "backlog_slice_refs": ["stage4_backlog_slice.md#ST-11"]
+    }
+  }
+}
