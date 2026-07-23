@@ -385,8 +385,8 @@
     "EPIC-10": {
       "status": "done",
       "branch": "exec/2026-07-21__release-v7.7/EPIC-10",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1055,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-21__release-v7.7/qa_evidence_EPIC-10.md",
       "test_scenarios": [],
