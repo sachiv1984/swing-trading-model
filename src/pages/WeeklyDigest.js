@@ -7,8 +7,10 @@
  * Spec: docs/specs/api_contracts/digest_endpoints.md v0.1
  */
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { CalendarDays, RefreshCw, Printer } from "lucide-react";
 import { apiFetch } from "../api/base44Client";
+import { createPageUrl } from "../utils";
 import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
 import { Button } from "../components/ui/button";
@@ -20,6 +22,14 @@ import {
   TableRow,
   TableCell,
 } from "../components/ui/DataTable";
+
+// Alert-count deep-links (v0.2, ST-02/EPIC-02/v7.7) — both source from the
+// `notifications` table (same table backing the Notification Feed), so both
+// deep-link into the Feed with a filter query, not Alert History.
+const ALERT_COUNT_LINKS = {
+  alerts_fired_7d: `${createPageUrl("notifications")}?since_days=7`,
+  alerts_dismissed_7d: `${createPageUrl("notifications")}?since_days=7&read=true`,
+};
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -110,15 +120,30 @@ export default function WeeklyDigest() {
             <TableHead className="text-right">Value</TableHead>
           </TableHeader>
           <TableBody>
-            {FIELD_LABELS.map(({ field, label, unit }) => (
-              <TableRow key={field}>
-                <TableCell className="font-medium text-slate-200">{label}</TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400 text-sm">{unit}</TableCell>
-                <TableCell className="text-right font-mono text-slate-300">
-                  {data ? formatValue(field, data[field]) : "—"}
-                </TableCell>
-              </TableRow>
-            ))}
+            {FIELD_LABELS.map(({ field, label, unit }) => {
+              const value = data ? formatValue(field, data[field]) : "—";
+              const linkTo = ALERT_COUNT_LINKS[field];
+              const isLinkable = linkTo && value !== "—";
+              return (
+                <TableRow key={field}>
+                  <TableCell className="font-medium text-slate-200">{label}</TableCell>
+                  <TableCell className="text-slate-600 dark:text-slate-400 text-sm">{unit}</TableCell>
+                  <TableCell className="text-right font-mono text-slate-300">
+                    {isLinkable ? (
+                      <Link
+                        to={linkTo}
+                        data-testid={`digest-link-${field}`}
+                        className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2"
+                      >
+                        {value}
+                      </Link>
+                    ) : (
+                      value
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </DataTable>
       </DataState>

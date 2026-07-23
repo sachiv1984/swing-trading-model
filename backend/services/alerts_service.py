@@ -948,25 +948,46 @@ def _build_email(notif) -> tuple:
 # Notification feed
 # ---------------------------------------------------------------------------
 
-def get_notifications(portfolio_id: str, page: int = 1) -> Dict:
-    """Return paginated notification feed, newest first."""
+def get_notifications(
+    portfolio_id: str,
+    page: int = 1,
+    since_days: Optional[int] = None,
+    read: Optional[bool] = None,
+) -> Dict:
+    """Return paginated notification feed, newest first.
+
+    Optional filters (v0.6, ST-02/EPIC-02/v7.7): `since_days` restricts to
+    notifications created within the last N days; `read` restricts to
+    read-only (True) or unread-only (False) items. Both applied before
+    pagination. Absent params preserve the prior unfiltered behaviour.
+    """
     per_page = 50
     offset = (page - 1) * per_page
+    where_clauses = ["portfolio_id = %s"]
+    params = [portfolio_id]
+    if since_days is not None:
+        where_clauses.append("created_at >= NOW() - (%s || ' days')::interval")
+        params.append(since_days)
+    if read is not None:
+        where_clauses.append("read = %s")
+        params.append(read)
+    where_sql = " AND ".join(where_clauses)
+
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute(
-                "SELECT COUNT(*) AS cnt FROM notifications WHERE portfolio_id = %s",
-                (portfolio_id,)
+                f"SELECT COUNT(*) AS cnt FROM notifications WHERE {where_sql}",
+                tuple(params)
             )
             total = cur.fetchone()["cnt"]
 
-            cur.execute("""
+            cur.execute(f"""
                 SELECT id, alert_type, title, message, read, created_at
                 FROM notifications
-                WHERE portfolio_id = %s
+                WHERE {where_sql}
                 ORDER BY created_at DESC
                 LIMIT %s OFFSET %s
-            """, (portfolio_id, per_page, offset))
+            """, tuple(params) + (per_page, offset))
             rows = cur.fetchall()
 
     notifications = [_notif_row(r) for r in rows]

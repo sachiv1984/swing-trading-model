@@ -1,23 +1,29 @@
 /**
  * Alert Notification Badge in Nav — Acceptance Tests — ST-10 (BLG-FE-05, v2.3)
+ * Updated v1.4 (ST-02, EPIC-02, v7.7, BLG-FE-114): the "Alerts" nav item (Tools
+ * group) was removed as a duplicate of "Notifications" (System group) — the
+ * badge now lives on the retained "Notifications" item, propagating to the
+ * System group header when that group is collapsed.
  *
  * Covers non-visual AC only. Visual AC (badge colour, position, typography)
  * requires DoQ staging/local-run verification — see
  * docs/testing/alert_nav_badge_scenarios.md SC-ANB-VIS-01 through SC-ANB-VIS-05.
  *
  * Scenarios:
- *   SC-ANB-01  Alerts nav item present in Tools group
+ *   SC-ANB-01  Notifications nav item present in System group
  *   SC-ANB-02  Badge hidden when alert history is empty
- *   SC-ANB-03  Badge shows full history count when no prior Alerts page visit
+ *   SC-ANB-03  Badge shows full history count when no prior Notifications visit (System group header, collapsed)
  *   SC-ANB-04  Badge reflects only evaluations after last-visit timestamp
- *   SC-ANB-05  Badge clears on navigation to Alerts page
- *   SC-ANB-06  Badge persists across non-Alerts page navigation
+ *   SC-ANB-05  Badge clears on navigation to Notifications page
+ *   SC-ANB-06  Badge persists across non-Notifications page navigation
  *   SC-ANB-07  Badge displays "99+" when unacknowledged count exceeds 99
  *   SC-ANB-08  No regression: existing nav items still present after ST-10
  *
  * Spec refs:
- *   docs/specs/frontend/pages/notifications.md §Nav Alert Badge v0.3
+ *   docs/specs/frontend/pages/notifications.md §Nav Alert Badge v0.5
+ *   docs/specs/frontend/pages/navigation.md v1.4 §Alert Badge Integration
  *   docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md
+ *   docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md
  *
  * Infrastructure: Playwright page.route() network interception.
  * No live backend required.
@@ -75,7 +81,7 @@ async function mockWatchlist(page) {
   );
 }
 
-/** Mock GET /notifications feed (required for Alerts page to render). */
+/** Mock GET /notifications feed (required for Notifications page to render). */
 async function mockNotificationsFeed(page) {
   await page.route(/\/notifications\?page=/, (route) =>
     route.fulfill({
@@ -86,54 +92,57 @@ async function mockNotificationsFeed(page) {
   );
 }
 
-/** Navigate to Watchlist page and wait for idle. */
+/** Navigate to Watchlist page (Tools group active — System group collapsed by default). */
 async function gotoWatchlist(page) {
   await page.goto('/#/Watchlist');
   await page.waitForLoadState('domcontentloaded');
 }
 
-/** Navigate to Alerts/Notifications page and wait for idle. */
-async function gotoAlerts(page) {
+/** Navigate to the Notifications page (System group active — expanded). */
+async function gotoNotifications(page) {
   await page.goto('/#/notifications');
   await page.waitForLoadState('domcontentloaded');
 }
 
-/** Locate the Alerts nav link in the Tools group (identified by text "Alerts" in nav). */
-function alertsNavLink(page) {
-  // The Alerts item is a Link with text "Alerts" inside the Tools group nav
-  return page.getByRole('link', { name: 'Alerts' }).first();
+/** Locate the System group header button. */
+function systemGroupHeader(page) {
+  return page.getByRole('button', { name: /^system/i }).first();
 }
 
-/** Locate the red badge inside the Alerts nav link. */
-function alertsNavBadge(page) {
-  return alertsNavLink(page).locator('[class*="bg-red-500"]');
+/** Locate the badge on the System group header row (shown when System is collapsed). */
+function systemGroupHeaderBadge(page) {
+  return systemGroupHeader(page).locator('[class*="bg-red-500"]');
+}
+
+/** Locate the Notifications nav link (only in the DOM when System group is expanded). */
+function notificationsNavLink(page) {
+  return page.getByRole('link', { name: 'Notifications' }).first();
+}
+
+/** Locate the badge inside the Notifications nav link (item-level, System expanded). */
+function notificationsNavBadge(page) {
+  return notificationsNavLink(page).locator('[class*="bg-red-500"]');
 }
 
 // ---------------------------------------------------------------------------
-// SC-ANB-01 — Alerts nav item present in Tools group
+// SC-ANB-01 — Notifications nav item present in System group
 // ---------------------------------------------------------------------------
 
-test('SC-ANB-01: Alerts nav item visible in Tools group', async ({ page }) => {
+test('SC-ANB-01: Notifications nav item visible in System group', async ({ page }) => {
   await mockHistory(page, makeHistoryResponse(0));
   await mockWatchlist(page);
 
   await gotoWatchlist(page);
 
-  // Expand Tools group if collapsed (click the group header)
-  const toolsHeader = page.getByRole('button', { name: /tools/i });
-  if (await toolsHeader.isVisible()) {
-    const collapsed = await toolsHeader.getAttribute('disabled');
-    if (collapsed === null) {
-      // Not disabled (i.e., not active group) — may need to expand
-      const chevron = toolsHeader.locator('svg').first();
-      const isExpanded = await alertsNavLink(page).isVisible().catch(() => false);
-      if (!isExpanded) {
-        await toolsHeader.click();
-      }
-    }
+  // System group is not active here (Tools is) — expand it to reveal Notifications
+  const systemHeader = systemGroupHeader(page);
+  await expect(systemHeader).toBeVisible({ timeout: 5000 });
+  const alreadyExpanded = await notificationsNavLink(page).isVisible().catch(() => false);
+  if (!alreadyExpanded) {
+    await systemHeader.click();
   }
 
-  await expect(alertsNavLink(page)).toBeVisible({ timeout: 5000 });
+  await expect(notificationsNavLink(page)).toBeVisible({ timeout: 5000 });
 });
 
 // ---------------------------------------------------------------------------
@@ -146,15 +155,15 @@ test('SC-ANB-02: Badge hidden when alert history returns 0 evaluations', async (
 
   await gotoWatchlist(page);
 
-  // Badge element must not exist
-  await expect(alertsNavBadge(page)).toHaveCount(0, { timeout: 5000 });
+  // Neither the collapsed-group header badge nor an item-level badge must exist
+  await expect(systemGroupHeaderBadge(page)).toHaveCount(0, { timeout: 5000 });
 });
 
 // ---------------------------------------------------------------------------
-// SC-ANB-03 — Badge shows full history count when no prior Alerts visit
+// SC-ANB-03 — Badge shows full history count when no prior Notifications visit
 // ---------------------------------------------------------------------------
 
-test('SC-ANB-03: Badge shows full count when no prior Alerts page visit (no sessionStorage)', async ({ page }) => {
+test('SC-ANB-03: Badge shows full count when no prior Notifications page visit (no sessionStorage)', async ({ page }) => {
   const evalCount = 5;
   await mockHistory(page, makeHistoryResponse(evalCount));
   await mockWatchlist(page);
@@ -164,8 +173,8 @@ test('SC-ANB-03: Badge shows full count when no prior Alerts page visit (no sess
 
   await gotoWatchlist(page);
 
-  // Badge must show count = 5
-  const badge = alertsNavBadge(page);
+  // Tools is active, System is collapsed by default — badge propagates to the group header
+  const badge = systemGroupHeaderBadge(page);
   await expect(badge).toBeVisible({ timeout: 5000 });
   await expect(badge).toHaveText(String(evalCount));
 });
@@ -206,17 +215,17 @@ test('SC-ANB-04: Badge counts only evaluations after last-visit timestamp', asyn
 
   await gotoWatchlist(page);
 
-  // Badge must show 1 (only the newer eval after lastVisit)
-  const badge = alertsNavBadge(page);
+  // Badge must show 1 (only the newer eval after lastVisit), on the System group header
+  const badge = systemGroupHeaderBadge(page);
   await expect(badge).toBeVisible({ timeout: 5000 });
   await expect(badge).toHaveText('1');
 });
 
 // ---------------------------------------------------------------------------
-// SC-ANB-05 — Badge clears on navigation to Alerts page
+// SC-ANB-05 — Badge clears on navigation to Notifications page
 // ---------------------------------------------------------------------------
 
-test('SC-ANB-05: Badge count resets to 0 after navigating to Alerts page', async ({ page }) => {
+test('SC-ANB-05: Badge count resets to 0 after navigating to Notifications page', async ({ page }) => {
   const evalCount = 3;
   await mockHistory(page, makeHistoryResponse(evalCount));
   await mockWatchlist(page);
@@ -232,21 +241,22 @@ test('SC-ANB-05: Badge count resets to 0 after navigating to Alerts page', async
 
   await gotoWatchlist(page);
 
-  // Assert badge is visible with count 3
-  await expect(alertsNavBadge(page)).toBeVisible({ timeout: 5000 });
+  // Assert header badge is visible with count 3 (System collapsed, Tools active)
+  await expect(systemGroupHeaderBadge(page)).toBeVisible({ timeout: 5000 });
 
-  // Navigate to Alerts (notifications) page
-  await gotoAlerts(page);
+  // Navigate to Notifications page (System becomes active/expanded)
+  await gotoNotifications(page);
 
-  // Badge must be gone
-  await expect(alertsNavBadge(page)).toHaveCount(0, { timeout: 5000 });
+  // Badge must be gone — both the header and item-level forms
+  await expect(systemGroupHeaderBadge(page)).toHaveCount(0, { timeout: 5000 });
+  await expect(notificationsNavBadge(page)).toHaveCount(0, { timeout: 5000 });
 });
 
 // ---------------------------------------------------------------------------
-// SC-ANB-06 — Badge persists across non-Alerts page navigation
+// SC-ANB-06 — Badge persists across non-Notifications page navigation
 // ---------------------------------------------------------------------------
 
-test('SC-ANB-06: Badge count persists when navigating between non-Alerts pages', async ({ page }) => {
+test('SC-ANB-06: Badge count persists when navigating between non-Notifications pages', async ({ page }) => {
   const evalCount = 2;
   await mockHistory(page, makeHistoryResponse(evalCount));
   await mockWatchlist(page);
@@ -262,17 +272,17 @@ test('SC-ANB-06: Badge count persists when navigating between non-Alerts pages',
 
   await gotoWatchlist(page);
 
-  // Badge visible on Watchlist
-  await expect(alertsNavBadge(page)).toBeVisible({ timeout: 5000 });
-  await expect(alertsNavBadge(page)).toHaveText(String(evalCount));
+  // Badge visible on Watchlist (System group header, collapsed)
+  await expect(systemGroupHeaderBadge(page)).toBeVisible({ timeout: 5000 });
+  await expect(systemGroupHeaderBadge(page)).toHaveText(String(evalCount));
 
-  // Navigate to Positions (non-Alerts page)
+  // Navigate to Positions (non-Notifications page — Trading group becomes active)
   await page.goto('/#/Positions');
   await page.waitForLoadState('domcontentloaded');
 
-  // Badge still visible with same count
-  await expect(alertsNavBadge(page)).toBeVisible({ timeout: 5000 });
-  await expect(alertsNavBadge(page)).toHaveText(String(evalCount));
+  // Badge still visible with same count (System group still collapsed)
+  await expect(systemGroupHeaderBadge(page)).toBeVisible({ timeout: 5000 });
+  await expect(systemGroupHeaderBadge(page)).toHaveText(String(evalCount));
 });
 
 // ---------------------------------------------------------------------------
@@ -286,7 +296,7 @@ test('SC-ANB-07: Badge shows "99+" when unacknowledged count > 99', async ({ pag
 
   await gotoWatchlist(page);
 
-  const badge = alertsNavBadge(page);
+  const badge = systemGroupHeaderBadge(page);
   await expect(badge).toBeVisible({ timeout: 5000 });
   await expect(badge).toHaveText('99+');
 });

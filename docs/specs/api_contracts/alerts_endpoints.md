@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.5
-**Last Updated:** 2026-07-17
+**Version:** 0.6
+**Last Updated:** 2026-07-23
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **ADR Reference:** `docs/adr/ADR-003-notification-delivery-architecture.md` — FastAPI BackgroundTasks delivery architecture
 **Design Gate:** `claude/cycles/2026-03-18__release-v2.1/` — EPIC-02
@@ -565,10 +565,13 @@ Return the notification feed for the portfolio, newest first. Supports page-base
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `page` | integer | No | `1` | Page number (1-indexed). |
+| `since_days` | integer | No | none | Restrict to notifications created within the last N days. Applied before pagination. Added (v0.6, ST-02/EPIC-02/v7.7) so `weekly_digest.md`'s `Alerts Fired (7d)` / `Alerts Dismissed (7d)` values can deep-link here (`/notifications?since_days=7`). |
+| `read` | boolean | No | none | Restrict to read-only (`true`) or unread-only (`false`) items. Applied before pagination. Added (v0.6, ST-02/EPIC-02/v7.7) for the `Alerts Dismissed (7d)` deep-link (`/notifications?since_days=7&read=true`). |
 
 #### Validation rules
 
 - `page` must be a positive integer if provided.
+- `since_days` must be a positive integer if provided.
 
 #### Response (200)
 
@@ -620,6 +623,7 @@ Return the notification feed for the portfolio, newest first. Supports page-base
 | HTTP Status | Condition |
 |-------------|-----------|
 | `400` | `page` is not a positive integer |
+| `400` | `since_days` is not a positive integer |
 | `500` | Internal server error |
 
 ---
@@ -929,6 +933,7 @@ Delivery tracking columns on `notifications` (`delivered`, `delivery_attempted_a
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6 | 2026-07-23 | ST-02 (v7.7, EPIC-02, BLG-FE-114): Added optional `since_days` / `read` query params to `GET /notifications` so `weekly_digest.md`'s `Alerts Fired (7d)` / `Alerts Dismissed (7d)` values can deep-link into the filtered Notification Feed. Both applied before pagination; absent params preserve prior unfiltered behaviour. |
 | 0.5 | 2026-07-17 | ST-02 (v7.5, EPIC-02, BLG-FE-116): Added `## Custom Price Alerts` domain — `GET/POST /price-alerts`, `DELETE /price-alerts/{id}`. New `price_alerts` table (many-rows-per-portfolio, distinct from singleton `alert_rules`). Evaluation folded into the existing `POST /alerts/evaluate` step (no new cron). `GET /health/scheduler` surfaces a `custom_price_alerts` job key. Readiness baseline: `docs/specs/blg_fe_116_pre_implementation_readiness_pass.md`. |
 | 0.4 | 2026-04-01 | ST-02 (v2.4): Trigger evaluation rules table updated — deduplication behaviour documented for all four alert types. `stop_loss_approach` and `grace_period_warning` dedup logging added (log and skip on second evaluation same UTC day). Calendar-day dedup key: (portfolio, type, ticker, date). |
 | 0.3 | 2026-03-23 | ST-05 (v2.2): Added `## GET /alerts/history` endpoint. Added `alert_evaluations` table to Data Model Cross-Reference. `POST /alerts/evaluate` now persists one evaluation record per rule/position evaluated (calendar-day dedup applied to stop_loss_approach and grace_period_warning). |

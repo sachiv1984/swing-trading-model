@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import PageHeader from "../components/ui/PageHeader";
 import NotificationTabBar from "../components/notifications/NotificationTabBar";
 import PreferenceRow from "../components/notifications/PreferenceRow";
 import AlertThresholdsSection from "../components/notifications/AlertThresholdsSection";
 import CustomPriceAlertsSection from "../components/notifications/CustomPriceAlertsSection";
 import { apiFetch } from "../api/base44Client";
+import { createPageUrl } from "../utils";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
@@ -23,7 +25,18 @@ const ALERT_META = {
   },
   daily_portfolio_summary: {
     label: "Daily Portfolio Summary",
-    description: "Receive a daily digest of portfolio status",
+    // v0.5, ST-02/EPIC-02/v7.7: differentiates this daily push notification
+    // from the Weekly Digest page (a 7-day on-demand summary) via copy + cross-link.
+    description: (
+      <>
+        Receive a daily digest of portfolio status. This is a daily notification — for a
+        7-day summary view, see the{" "}
+        <Link to={createPageUrl("WeeklyDigest")} className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2">
+          Weekly Digest
+        </Link>{" "}
+        page.
+      </>
+    ),
   },
 };
 
