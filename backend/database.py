@@ -2668,6 +2668,21 @@ def upsert_backtest_data(
     (ST-08, BLG-FEAT-54, AC-03) — a position that has since closed must not
     linger in the table past the next import.
 
+    Idempotency (ST-09, EPIC-09, v7.7): this function is safe against
+    double-run/retry by design. The DELETE+INSERT sequence executes inside
+    a single get_db() transaction (commit only on success, rollback on any
+    exception — see get_db()'s docstring) — a retry after a failed run simply
+    re-runs the full replace against whatever the current DB state is, never
+    partially applying. Concurrent overlapping runs (e.g. a manual
+    workflow_dispatch while the scheduled cron run is still executing) are
+    additionally guarded at the CI level by backtest.yml's `concurrency:`
+    group, which queues rather than runs them in parallel — but even without
+    that guard, Postgres's row-level locking on DELETE would serialize two
+    concurrent transactions here, with the later-committing one's snapshot
+    ending up authoritative (correct "most recent computation wins"
+    semantics for a full-replace design). See
+    docs/product/decisions/decisions--2026-07-21__release-v7.7--nightly-backtest-idempotency-audit.md.
+
     Before the wipe, the about-to-be-replaced aggregate (total_pnl_gbp,
     total_unrealized_pnl_gbp) is snapshotted into backtest_import_history —
     the full-replace pattern above means the prior night's totals would

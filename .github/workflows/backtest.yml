@@ -11,6 +11,16 @@ on:
     - cron: '0 1 * * *'  # 1 AM UTC daily (overnight, after US market close)
   workflow_dispatch:
 
+# ST-09 (EPIC-09, v7.7, BLG-GOV-...): prevent overlapping runs (scheduled +
+# manual re-trigger, or a retry while the prior run is still executing).
+# Defense-in-depth on top of upsert_backtest_data's own DB-transaction
+# serialization (full DELETE+INSERT commits atomically) — this stops two
+# runs from both burning ~90 minutes of compute concurrently for no benefit,
+# since only the later-committing one's data would end up live anyway.
+concurrency:
+  group: nightly-backtest
+  cancel-in-progress: false
+
 jobs:
   run-backtest:
     name: Run backtest and import results
