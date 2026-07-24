@@ -47,7 +47,11 @@ const PAGE_SHORTCUTS = {
 };
 const DEFAULT_SHORTCUTS = [{ key: "r", label: "Refresh" }];
 
-// Nav group structure — per navigation.md v1.0 (ST-13 BLG-UX-01)
+// Nav group structure — per navigation.md v1.4 (ST-02, EPIC-02, v7.7, BLG-FE-114)
+// v1.4: "Alerts" (formerly Tools group) removed — duplicate destination of
+// "Notifications" (System group), which is now the sole nav path and inherits
+// the alert-count badge. "Weekly Digest" moved from Analytics to System,
+// positioned directly above "Notifications" (both are activity-summary surfaces).
 const NAV_GROUPS = [
   {
     label: "Trading",
@@ -69,7 +73,6 @@ const NAV_GROUPS = [
       { name: "Risk Dashboard",      icon: ShieldAlert,  page: "RiskDashboard" },
       { name: "Signals",             icon: Zap,          page: "Signals" },
       { name: "Reports",             icon: FileBarChart,  page: "Reports" },
-      { name: "Weekly Digest",       icon: CalendarDays, page: "WeeklyDigest" },
     ],
   },
   {
@@ -79,7 +82,6 @@ const NAV_GROUPS = [
       { name: "Screener",         icon: ScanSearch, page: "Screener" },
       { name: "Watchlist",        icon: Eye,        page: "Watchlist" },
       { name: "Ticker Universe",  icon: Globe,      page: "TickerUniverse" },
-      { name: "Alerts",           icon: Bell,       page: "notifications", alertBadge: true },
     ],
   },
   {
@@ -88,7 +90,8 @@ const NAV_GROUPS = [
     items: [
       { name: "Settings",      icon: Settings,  page: "Settings" },
       { name: "System Status", icon: Activity,  page: "SystemStatus" },
-      { name: "Notifications", icon: Bell,      page: "notifications" },
+      { name: "Weekly Digest", icon: CalendarDays, page: "WeeklyDigest" },
+      { name: "Notifications", icon: Bell,      page: "notifications", alertBadge: true },
     ],
   },
 ];
@@ -264,7 +267,7 @@ export default function Layout({ children, currentPageName }) {
       {NAV_GROUPS.map((group) => {
         const isCollapsed = groupCollapse[group.key];
         const isActiveGroup = group.key === getActiveGroupKey(currentPageName);
-        const showBadge = group.key === "tools" && isCollapsed && alertCount > 0;
+        const showBadge = group.key === "system" && isCollapsed && alertCount > 0;
 
         return (
           <div key={group.key}>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Bell } from "lucide-react";
 import PageHeader from "../components/ui/PageHeader";
 import NotificationTabBar from "../components/notifications/NotificationTabBar";
@@ -9,7 +10,23 @@ import DataState from "../components/ui/DataState";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
+// Optional deep-link filter params (v0.5, ST-02/EPIC-02/v7.7) — read from the
+// URL on mount so Weekly Digest's alert-count values can deep-link here
+// (/notifications?since_days=7, /notifications?since_days=7&read=true).
+// Applied before pagination; absent when navigating from sidebar/palette
+// (unfiltered default behaviour unchanged).
+function buildFilterQuery(searchParams) {
+  const parts = [];
+  const sinceDays = searchParams.get("since_days");
+  const read = searchParams.get("read");
+  if (sinceDays) parts.push(`since_days=${encodeURIComponent(sinceDays)}`);
+  if (read) parts.push(`read=${encodeURIComponent(read)}`);
+  return parts.length ? `&${parts.join("&")}` : "";
+}
+
 export default function Notifications() {
+  const [searchParams] = useSearchParams();
+  const filterQuery = buildFilterQuery(searchParams);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
@@ -19,7 +36,7 @@ export default function Notifications() {
   const { toast } = useToast();
 
   useEffect(() => {
-    apiFetch(`${API_BASE_URL}/notifications?page=1`)
+    apiFetch(`${API_BASE_URL}/notifications?page=1${filterQuery}`)
       .then((r) => {
         if (!r.ok) throw new Error();
         return r.json();
@@ -34,12 +51,13 @@ export default function Notifications() {
         setLoadError(true);
         setLoading(false);
       });
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterQuery]);
 
   const handleLoadMore = () => {
     const nextPage = page + 1;
     setLoadingMore(true);
-    apiFetch(`${API_BASE_URL}/notifications?page=${nextPage}`)
+    apiFetch(`${API_BASE_URL}/notifications?page=${nextPage}${filterQuery}`)
       .then((r) => {
         if (!r.ok) throw new Error();
         return r.json();
@@ -130,7 +148,7 @@ export default function Notifications() {
           onRetry={() => {
             setLoadError(false);
             setLoading(true);
-            apiFetch(`${API_BASE_URL}/notifications?page=1`)
+            apiFetch(`${API_BASE_URL}/notifications?page=1${filterQuery}`)
               .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
               .then((json) => {
                 setNotifications(json.data.notifications);

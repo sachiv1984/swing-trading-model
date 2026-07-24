@@ -290,16 +290,19 @@ def get_alert_history_endpoint(last_n_days: Optional[int] = None, last_n_records
 # ---------------------------------------------------------------------------
 
 @router.get("/notifications")
-def get_notifications_endpoint(page: int = 1):
+def get_notifications_endpoint(page: int = 1, since_days: Optional[int] = None, read: Optional[bool] = None):
     """
     Return notification feed, newest first, paginated (50/page).
+    Optional `since_days` / `read` filters (v0.6, ST-02/EPIC-02/v7.7).
     Contract: alerts_endpoints.md §GET /notifications
     """
     try:
         if page < 1:
             raise HTTPException(status_code=400, detail="page must be a positive integer")
+        if since_days is not None and since_days < 1:
+            raise HTTPException(status_code=400, detail="since_days must be a positive integer")
         portfolio_id = _get_portfolio_id()
-        data = get_notifications(portfolio_id, page)
+        data = get_notifications(portfolio_id, page, since_days=since_days, read=read)
         return {"status": "ok", "data": data}
     except HTTPException:
         raise

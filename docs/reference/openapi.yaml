@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.12.0
+  version: 3.13.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -1182,7 +1182,7 @@ paths:
       summary: Get notification feed
       description: >
         Return notifications newest first. Page-based pagination, 50 items per page.
-        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.1.
+        Canonical contract: docs/specs/api_contracts/alerts_endpoints.md v0.6.
       parameters:
         - in: query
           name: page
@@ -1192,6 +1192,19 @@ paths:
             minimum: 1
             default: 1
           description: Page number (1-indexed)
+        - in: query
+          name: since_days
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          description: Restrict to notifications created within the last N days. Applied before pagination.
+        - in: query
+          name: read
+          required: false
+          schema:
+            type: boolean
+          description: Restrict to read-only (true) or unread-only (false) items. Applied before pagination.
       responses:
         "200":
           description: Notification feed

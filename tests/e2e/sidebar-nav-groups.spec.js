@@ -290,11 +290,13 @@ test('SC-SNV-08: All nav items present in correct groups; routes resolve', async
   await expect(page.getByRole('link', { name: 'Dashboard' }).first()).toBeVisible({ timeout: 5000 });
 
   // Expand all groups and verify their items
+  // v1.4 (ST-02, EPIC-02, v7.7): "Alerts" removed as a duplicate of "Notifications";
+  // "Weekly Digest" moved from Analytics to System, adjacent to Notifications.
   const groups = {
     Trading:   ['Positions', 'Trade Entry', 'Trade History', 'Reflections'],
     Analytics: ['Analytics', 'Risk Dashboard', 'Signals'],
-    Tools:     ['Screener', 'Watchlist', 'Alerts'],
-    System:    ['Settings', 'System Status', 'Notifications'],
+    Tools:     ['Screener', 'Watchlist'],
+    System:    ['Settings', 'System Status', 'Weekly Digest', 'Notifications'],
   };
 
   for (const [label, items] of Object.entries(groups)) {

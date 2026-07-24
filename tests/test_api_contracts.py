@@ -386,6 +386,21 @@ class TestAlertsEndpoints(unittest.TestCase):
         assert CLIENT.get("/notifications").status_code == 200
 
     @patch("routers.alerts.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.alerts.get_notifications",
+           return_value={"notifications": [], "total": 0})
+    def test_get_notifications_forwards_since_days_and_read(self, mock_get_notifications, *_):
+        # ST-02 (EPIC-02, v7.7, BLG-FE-114): since_days/read filter params
+        resp = CLIENT.get("/notifications?since_days=7&read=true")
+        assert resp.status_code == 200
+        _, kwargs = mock_get_notifications.call_args
+        assert kwargs.get("since_days") == 7
+        assert kwargs.get("read") is True
+
+    @patch("routers.alerts.get_portfolio", return_value=MOCK_PORTFOLIO)
+    def test_get_notifications_rejects_non_positive_since_days(self, *_):
+        assert CLIENT.get("/notifications?since_days=0").status_code == 400
+
+    @patch("routers.alerts.get_portfolio", return_value=MOCK_PORTFOLIO)
     @patch("routers.alerts.get_preferences", return_value={})
     def test_get_notification_preferences_returns_ok(self, *_):
         assert CLIENT.get("/notifications/preferences").status_code == 200
