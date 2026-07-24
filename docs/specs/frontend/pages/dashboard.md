@@ -3,11 +3,12 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 3.1
-**Last Updated:** 2026-07-15
+**Version:** 3.2
+**Last Updated:** 2026-07-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Release:** v7.2
-**EPIC:** EPIC-03
+**Release:** v7.8
+**EPIC:** EPIC-01
+**Design Source (v3.2):** docs/design/2026-07-24__release-v7.8/whats-new-panel/ux_spec.md (BLG-FE-128)
 **Design Source (v3.1):** docs/design/2026-07-15__release-v7.2/dashboard-briefing-hierarchy/ux_spec.md (BLG-FE-111)
 **Design Source (v3.0):** docs/design/2026-07-15__release-v7.2/dashboard-empty-states/ux_spec.md (BLG-FE-110)
 **Design Source (v2.8):** docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md (BLG-FE-95 remediation)
@@ -18,7 +19,7 @@
 **Design Source (v2.2):** docs/design/2026-06-22__release-v6.1/gate-proximity-indicator/ux_spec.md
 **Design Source (v2.1):** docs/design/2026-06-19__release-v6.0/morning-briefing/ux_spec.md
 **Design Source (v2.0):** docs/design/2026-03-06__release-v1.9/dashboard-home/ux_spec.md
-**Confirmed by:** Head of Specs Team — 2026-06-26
+**Confirmed by:** Head of Specs Team — 2026-07-24
 
 ---
 
@@ -363,6 +364,31 @@ A compact full-width strip placed below the 5 session-summary cards. Does not re
 
 ---
 
+## 6A. What's New Panel (v7.8 — ST-01, BLG-FE-128)
+
+**Design source:** `docs/design/2026-07-24__release-v7.8/whats-new-panel/ux_spec.md`
+
+A full-width secondary-tier card placed below the §6 Gate Progress Indicator strip. Shows the most recent release's `### Changes shipped` entries, parsed server-side from `docs/product/changelog.md`'s most recent `## vX.Y` block — not a hardcoded copy, so it requires no manual wiring on future releases.
+
+**Header:** `Sparkles` icon (muted) + **"What's New — v{X.Y}"** (version from the changelog's most recent heading).
+
+**Body:** bullet list of the `Description` column from the most recent `### Changes shipped` table, max 8 bullets shown with a non-interactive "+N more" trailer if the table has more rows.
+
+**States:** follows `DataState` default (non-`compact`) sizing per `design_system.md` §Shared UI Components → Cards → Data States:
+
+| State | Rendering |
+|-------|-----------|
+| Loading | `DataState` `loading` branch |
+| Error | `DataState` `error` branch — "Unable to load release notes" |
+| Empty | `DataState` `empty` branch — "Nothing to show" / "Check back after the next release." |
+| Ready | Title + bullet list per above |
+
+**Interaction:** Display-only. No dismiss/collapse, no click-through, no navigation.
+
+**Backend dependency:** requires a new endpoint to parse and serve the changelog's most recent version block (does not exist yet — implementation detail for sprint execution; contract to be added to `docs/specs/api_contracts/` in the same commit per `CLAUDE.md` §2).
+
+---
+
 ## 7. States
 
 | State | Behaviour |
@@ -372,7 +398,7 @@ A compact full-width strip placed below the 5 session-summary cards. Does not re
 | Individual card error | Card shows error indicator (“Unable to load”); other cards render normally |
 | All endpoints failed | Full page error with “Retry” button |
 
-Individual card failure must not break other cards. Each card fetches its data independently (or receives it from a composite endpoint that returns partial results).
+Individual card failure must not break other cards. Each card fetches its data independently (or receives it from a composite endpoint that returns partial results). The §6A What's New Panel fetches independently and its failure does not affect any other section (per its own Error state above).
 
 ---
 
@@ -386,7 +412,7 @@ Individual card failure must not break other cards. Each card fetches its data i
 | Signal Status | `/signals` |
 | Recent Activity | `/trades` |
 
-Cards are fully clickable (entire card surface is the click target). Visual affordance: subtle hover state (border highlight or shadow lift).
+Cards are fully clickable (entire card surface is the click target). Visual affordance: subtle hover state (border highlight or shadow lift). The §6A What's New Panel is not clickable (display-only, no navigation target).
 
 ---
 
@@ -394,6 +420,7 @@ Cards are fully clickable (entire card surface is the click target). Visual affo
 
 | Version | Date | Change |
 |---------|------|--------|
+| 3.2 | 2026-07-24 | v7.8 design gate — §6A What's New Panel added (ST-01, EPIC-01, BLG-FE-128): new full-width secondary-tier card below the Gate Progress Indicator strip, showing the most recent release's `### Changes shipped` entries parsed server-side from `docs/product/changelog.md` (no hardcoded copy, no manual re-wiring per release). `DataState` default sizing (loading/error/empty per `design_system.md`). Display-only, no dismiss/collapse, no navigation. Backend endpoint to parse the changelog does not exist yet — flagged as a sprint-execution implementation dependency requiring an API contract entry in the same commit. Design source: `docs/design/2026-07-24__release-v7.8/whats-new-panel/ux_spec.md`. Head of UX & Design sign-off: 2026-07-24. Product Owner approved: 2026-07-24. Head of Specs Team confirmed. |
 | 3.1 | 2026-07-15 | v7.2 design gate — §1A Morning Briefing Section (ST-06, BLG-FE-111): enclosing panel added around the section (`bg-slate-100/60 dark:bg-slate-900/40`, explicit light/dark pair) to visually separate it from the session-summary grid; section label upgraded to `Sunrise` icon + `text-sm font-semibold` (from plain caption weight). §5 AI Daily Briefing Card: `Sparkles` icon added to the header, matching the "AI draft" badge convention, to share the same "intelligence section" visual language as the Morning Briefing panel. No change to any card's data, queries, or the `dashboard-retry-root` retry behaviour. Design source: dashboard-briefing-hierarchy/ux_spec.md. Approved: Product Owner 2026-07-15. Head of Specs Team confirmed. |
 | 3.0 | 2026-07-15 | v7.2 design gate — §4A Card Empty States added (ST-05, BLG-FE-110): `DataState` gains a `compact` prop (non-breaking); applied to Open Positions, In Grace Today, and Recent Activity cards' zero-count states (icon + heading + body, no CTA), replacing bare muted text/raw-zero rendering. Portfolio Heat and Signal Status explicitly out of scope (0 is a meaningful value for both, not missing data). Morning Briefing sub-cards and AI Daily Briefing's existing empty state unchanged. Loading/error states unaffected. Design source: dashboard-empty-states/ux_spec.md. Approved: Product Owner 2026-07-15. Head of Specs Team confirmed. |
 | 2.9 | 2026-07-13 | v7.0 sprint execution (ST-10, BLG-SPEC-73): Resolved the §6 Gate Progress Indicator copy divergence flagged at v2.7 — updated the Display table to document the shipped `GateProgressStrip.js` copy verbatim as canonical (`{closed}/{threshold} closed trades · {remaining} more to unlock quality insights`, `Quality insights unlocked ✓`) instead of the original, never-implemented `PT-04/SI-02`-coded wording. Removed the §6 Known Deviations note (superseded — no longer a deviation now that spec matches shipped code). No code change; `GateProgressStrip.js` and `tests/e2e/gate-progress.spec.js` were already correct. Wording-only change — FI-P3-02 exception applies (CLAUDE.md), code review of static JSX/text substitutes for staging sign-off. |

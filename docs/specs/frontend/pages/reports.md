@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.10
-**Last Updated:** 2026-07-14
+**Version:** 0.11
+**Last Updated:** 2026-07-24
+**Design Source (v0.11 monthly CSV export):** docs/design/2026-07-24__release-v7.8/monthly-csv-export/ux_spec.md
 **Design Source (v0.7 CSV export + monthly realised/unrealised split):** docs/design/2026-07-12__release-v7.0/tax-year-csv-export/ux_spec.md, docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md
 **Design Source (v0.6 SI-02 gate status):** docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -254,6 +255,7 @@ A note at the bottom of the page:
 - **PDF export:** `GET /reports/tax-year?format=pdf&year=YYYY` — server-side PDF download (`Content-Disposition: attachment`)
 - **CSV export:** `GET /reports/tax-year?format=csv&year=YYYY` — CSV download, triggered by the "Download CSV" header button (v7.0 — ST-13, BLG-FEAT-69; supersedes the v2.1 "no button, URL-parameter only" note — that variant was never implemented and was inconsistent with the PDF button on the same page)
 - **SI-02 Gate Status section (v0.6 — ST-06):** `GET /trades`, `GET /trade-plans`, `GET /analytics/arc5-compliance` — existing endpoints, no new backend work
+- **Monthly CSV export (v7.8):** `GET /reports/monthly-pnl?format=csv` — CSV download, triggered by the Monthly P&L Report's "Download CSV" button (ST-05, BLG-FEAT-81)
 - **Canonical contract:** `docs/specs/api_contracts/reports_endpoints.md`
 
 All values displayed on this page are sourced from the API response. The frontend must not recalculate P&L, FX conversions, or fee adjustments.
@@ -282,6 +284,27 @@ One row per calendar month (descending order). Sourced from `GET /reports/monthl
 | Trades | `trade_count` | Integer count of closed trades |
 
 Empty state (no closed trades in scope): "No monthly P&L data available yet."
+
+---
+
+### Monthly CSV Export (v7.8 — ST-05, BLG-FEAT-81)
+
+**Design source:** `docs/design/2026-07-24__release-v7.8/monthly-csv-export/ux_spec.md`
+
+A **"Download CSV"** button, right-aligned above the Monthly Financial Table — reuses the Tax Year tab's §Download CSV Button States pattern verbatim (idle/generating/success/error, same visual weight). On narrow screens: drops below the section header, full width.
+
+| State | Label | Behaviour |
+|-------|-------|-----------|
+| Idle | **"Download CSV"** (with download icon) | Enabled once the Monthly P&L Report has loaded successfully |
+| Generating | **"Generating…"** (spinner replaces icon) | Button disabled; fires `GET /reports/monthly-pnl?format=csv` |
+| Success | Returns to Idle | Browser file download begins; no success toast required |
+| Error | Returns to Idle | Toast notification: `"CSV generation failed. Please try again."` (auto-dismiss 5s) |
+
+Exports exactly the rows rendered in the Monthly Financial Table above (`Year`, `Month`, `Realised P&L (GBP)`, `Trades`) for whatever range is already loaded — no separate date-range picker, no client-side recalculation. Valid for empty ranges; button always enabled once the section loads.
+
+**Reconciliation rule:** for any calendar year present in both exports, the sum of that year's rows in this CSV must equal the realised P&L total in the Tax Year tab's CSV for the same year — both derive from the same `trade_history.pnl` ledger, grouped differently (month vs. UK tax year). Verified at QA sign-off, not a UI-visible feature.
+
+Does **not** cover the §Unrealised P&L Card or §Strategy Compliance Section figures below — export scope matches the Tax Year export's scope (realised trades table only).
 
 ---
 
@@ -359,6 +382,7 @@ Follows the Arc 5 Compliance Summary design language from the tax-year report (�
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.11 | 2026-07-24 | v7.8 design gate — ST-05 (EPIC-05, BLG-FEAT-81): Monthly CSV Export added to the Monthly P&L Report view — "Download CSV" button reusing the Tax Year tab's export pattern verbatim (idle/generating/success/error states), new `GET /reports/monthly-pnl?format=csv` endpoint, reconciliation rule against the Tax Year CSV documented. Scope excludes Unrealised P&L Card and Strategy Compliance Section figures (matches Tax Year export's scope). Design source: `docs/design/2026-07-24__release-v7.8/monthly-csv-export/ux_spec.md`. Head of UX & Design sign-off: 2026-07-24. Product Owner approved: 2026-07-24. Head of Specs Team confirmed. |
 | 0.10 | 2026-07-14 | v7.1 sprint execution (ST-06, BLG-SPEC-83): §Unrealised P&L Card (both tabs) — added Data Freshness note (nightly-snapshot vs live-computed distinction) and Reconciliation Rule (AC-03, verified against production data: realised £1,100.46 + unrealised −£126.25 = £974.21 vs `GET /portfolio.total_pnl` £988.19, diff £13.98/≈1.4%, explained by the snapshot-vs-live valuation gap — approximate tie-back, not exact). Added §Known Deviations, filed `DEV-REPORTS-ST06-01` (P3, BLG-SPEC-87) for the underlying Reports-vs-Positions unrealised P&L data-freshness gap discovered during this verification. |
 | 0.9 | 2026-07-14 | v7.1 design gate (ST-06, BLG-SPEC-83): Explicit colour convention added to both Unrealised P&L Card sections (Tax Year tab and Monthly P&L Report) — profit `text-emerald-400`, loss `text-rose-400`, aligned with the Open Positions Panel P&L convention. Closes ST-06 AC-04 (visual treatment confirmation) — the v7.0 `realized-unrealized-split` design artefact already specified this colour; it had not yet been written into this canonical spec's text. Existing artefact reviewed and confirmed current — no new design work required. Head of UX & Design sign-off: 2026-07-14. Product Owner approved: 2026-07-14. Head of Specs Team confirmed. |
 | 0.8 | 2026-07-13 | v7.0 sprint execution (ST-06, BLG-SPEC-71): Reconciled §Arc 5 Compliance Summary and §Gross vs Net Comparison to explicitly state "Design Only — Implementation Pending" — both were specified with changelog entries worded as shipped features, but neither is actually rendered in `Reports.js`'s Tax Year P&L view (confirmed via `git log -S`: both design gate commits touched only spec files, no `src/` files). Root cause: spec-authoring stories' changelog entries were indistinguishable from shipped-feature entries, letting this drift persist undetected for 8+ release cycles (v4.1/v6.0 → v6.8). No code change — documentation reconciliation only. Re-implementation remains available as a Product Owner scheduling decision (new `BLG-FEAT` items), not a default reconciliation path. |

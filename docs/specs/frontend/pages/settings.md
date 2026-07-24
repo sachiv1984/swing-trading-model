@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.5
-**Last Updated:** 2026-07-20
+**Version:** 1.6
+**Last Updated:** 2026-07-24
+**Design Source (§6a AI Spend Trend Chart):** docs/design/2026-07-24__release-v7.8/ai-spend-trend-chart/ux_spec.md
 **Design Source (§6 AI Usage & Costs):** docs/design/2026-07-20__release-v7.6/consolidated-ai-cost-view/ux_spec.md (v1.1 addendum)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -212,6 +213,28 @@ A **read-only** section showing Claude API spend for the current calendar month.
 **Loading:** inline skeleton within the card only — does not block the rest of the Settings page.
 **Error:** card shows "AI cost data unavailable" — no numeric fallback is rendered (never shown as `$0.00` or `—`); rest of the page is unaffected.
 
+#### 6a. AI Spend Trend Chart (v7.8 — ST-06, EPIC-06, BLG-FEAT-82)
+
+**Design source:** docs/design/2026-07-24__release-v7.8/ai-spend-trend-chart/ux_spec.md
+
+Added directly below the current-month figure, inside the same card — not a new top-level section. A bar chart showing Claude API spend for the last 6 release cycles (or fewer if less history exists — no zero-padding), following the same fixed-pattern bar chart convention as `analytics.md` §12 Win Rate by Month.
+
+| Element | Value |
+|---------|-------|
+| X-axis | Release cycle labels (e.g. "v7.3" … "v7.8"), oldest to newest |
+| Y-axis | Spend (USD), auto-scaled to the max value shown (no fixed ceiling) |
+| Bar value | Total Claude API spend for that cycle's date window |
+| Bar colour | Single accent — `bg-blue-500` dark / `bg-blue-600` light (informational-monitoring accent; the emerald/rose profit-loss convention does not apply to a cost-only metric) |
+| Tooltip | On hover/focus per bar: cycle label + exact spend (`$X.XX`) |
+| Reference line | None (spend has no natural target/threshold) |
+
+**Loading:** inline skeleton within the chart area only.
+**Error:** "AI spend trend unavailable" in place of the chart; independent of the current-month figure's own query/error state above.
+
+**Naming note:** the backlog title says "Gemini/Claude" but this codebase integrates only the Claude API (per this section's v1.5 reframing above) — the chart shows Claude spend only, consistent with the single-total figure it extends.
+
+**Backend dependency:** requires a new endpoint/query-param to aggregate `claude_audit_log.cost_usd` by release-cycle window (`GET /ai/monthly-cost` only covers the current calendar month today) — not new data collection, but a new aggregation endpoint. Implementation detail for sprint execution; API contract entry required in `docs/specs/api_contracts/` in the same commit.
+
 ---
 
 ## Data Behavior
@@ -277,5 +300,6 @@ A **read-only** section showing Claude API spend for the current calendar month.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.6 | 2026-07-24 | v7.8 design gate — ST-06 (EPIC-06, BLG-FEAT-82): §6a AI Spend Trend Chart added below the current-month figure, inside the existing §6 card — bar chart of Claude API spend across the last 6 release cycles (or fewer if less history exists), reusing the `analytics.md` §12 Win Rate by Month fixed-axis bar chart pattern. Naming resolved: chart shows Claude spend only (no separate Gemini stream exists, per v1.5 reframing). New spend-by-cycle aggregation endpoint required (not new data collection) — flagged as a sprint-execution implementation dependency requiring an API contract entry in the same commit. Design source: `docs/design/2026-07-24__release-v7.8/ai-spend-trend-chart/ux_spec.md`. Head of UX & Design sign-off: 2026-07-24. Product Owner approved: 2026-07-24. Head of Specs Team confirmed. |
 | 1.5 | 2026-07-20 | v7.6 sprint execution (ST-07, EPIC-07, BLG-FEAT-77) — reframed §6 per `ESC-EXEC-20260720-01`: title changed from "AI Usage & Costs" to "Claude API Usage & Costs"; removed the Gemini row and client-side Combined Total (both premised on a Gemini provider that does not exist in this codebase — `gemini_service.py` calls only the Anthropic Claude API); now shows a single `GET /ai/monthly-cost` figure. Sprint Execution Engine, agent-mediated Director of Quality sign-off. |
 | 1.4 | 2026-07-20 | v7.6 design gate — added §6 AI Usage & Costs (ST-07, BLG-FEAT-77): read-only SectionCard showing Gemini + Claude current-month spend and a client-side-summed Combined Total; independent query, excluded from Save Settings scope. Sections list corrected to include the pre-existing Risk Limits section (previously missing from the top-of-file summary). Design source: consolidated-ai-cost-view/ux_spec.md. Approved: Product Owner 2026-07-20. Design gate: 2026-07-20__release-v7.6. Head of Specs Team confirmed. |

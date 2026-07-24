@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.3
-**Last Updated:** 2026-07-23
+**Version:** 1.4
+**Last Updated:** 2026-07-24
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.4 (ST-03 + ST-04, EPIC-03 + EPIC-04, v7.8, BLG-FE-127 + BLG-FE-125):** added the Focus Indicator contrast standard (§Hover & Focus States — ≥3:1 WCAG 1.4.11 threshold, previously unmeasured) for the EPIC-03 notification accessibility audit; and fixed scope/method for the EPIC-04 consolidated dark-mode contrast audit across all Base44-generated pages (§Accessibility). Both are audit-standard-setting entries — the audits themselves run during v7.8 sprint execution, findings recorded in each story's QA evidence. Design sources: `docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md`, `docs/design/2026-07-24__release-v7.8/base44-dark-mode-contrast-audit/decision_record.md`.
 **v1.3 (ST-04, EPIC-04, v7.7, BLG-FE-120):** added the `StandingAlert` / `StandingAlertStack` shared primitive (§Shared UI Components → Standing Alert) — a manually-dismissed, in-flow banner distinct from transient `sonner` toasts, for conditions requiring sustained user awareness until acknowledged. Enabler for `BLG-FE-116`'s future live custom-price-alert surfacing (integration point identified, not wired this cycle). Design source: `docs/design/2026-07-21__release-v7.7/standing-alert-component/ux_spec.md`.
 **v1.2 (ST-01, EPIC-01, v7.5, BLG-FE-115):** formalised the `DataState` `inline` empty-state variant (§Shared UI Components → Cards → Data States) for compact-list contexts (e.g. the global command palette results list) where even the `compact` icon+heading+body stack is too tall. Generalises the decision approved for the command palette in `docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md` §2.5 (AC-06, per `docs/specs/blg_fe_115_pre_implementation_readiness_pass.md` §7).
 **v1.1 (ST-04, EPIC-03, v7.2, BLG-SPEC-90):** formalised the `DataState` compact empty-state variant (§Shared UI Components → Cards → Data States) and defined primary vs secondary dashboard card treatment (§Shared UI Components → Cards → Card Hierarchy). Both generalise decisions already approved for `DashboardHome.js` in `docs/design/2026-07-15__release-v7.2/dashboard-empty-states/ux_spec.md` (ST-05) and `dashboard-briefing-hierarchy/ux_spec.md` (ST-06) so future cards/pages can reuse the same pattern without re-deriving it.
@@ -208,6 +209,8 @@ All follow shared validation rules defined in the system.
 - Buttons show hover and focus states  
 - Form fields show focus outlines for accessibility  
 
+**Focus indicator contrast (v1.4, ST-03, EPIC-03, v7.8, BLG-FE-127):** any element receiving keyboard focus (buttons, dismiss controls, links, form fields) must render a focus indicator with ≥3:1 contrast against its immediately adjacent colour(s), per WCAG 2.1 SC 1.4.11 (Non-text Contrast), in both light and dark theme. The default browser/Tailwind `focus-visible` ring token satisfies this where the ring colour has not been overridden; any component with a custom focus style must be checked individually against this threshold. Design source: `docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md`.
+
 ### Disabled States
 Used when:
 - Required fields are incomplete (e.g., Exit Price, FX Rate)  
@@ -234,6 +237,7 @@ The application adheres to core accessibility principles:
 - Full keyboard navigation  
 - Screen reader announcements for dynamic content  
 - Color contrast meeting WCAG AA in both dark mode and light mode (v6.7 — secondary/label text now uses an explicit paired `dark:` class per theme; see §Color Usage "Secondary/label text" token)  
+- **Consolidated dark-mode contrast audit (v1.4, ST-04, EPIC-04, v7.8, BLG-FE-125):** a systematic per-page dark-theme contrast pass across all Base44-generated pages runs this cycle, checking for the same dark-only/light-only token pairing defect class previously found twice (`BLG-FE-87/88`, `BLG-FE-95` — see §Card Hierarchy note below). Findings filed as a single consolidated backlog item, or fixed directly if trivial. Standard, scope and method fixed in `docs/design/2026-07-24__release-v7.8/base44-dark-mode-contrast-audit/decision_record.md`; results recorded in ST-04 QA evidence.
 - Focus trapping and restoration in modals  
 - ARIA labels where needed (tables, buttons, inputs)  
 

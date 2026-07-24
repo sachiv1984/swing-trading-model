@@ -1,10 +1,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.5
-**Last Updated:** 2026-07-21
+**Version:** 0.6
+**Last Updated:** 2026-07-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
-**Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md | docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md | docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md | docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md
+**Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md | docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md | docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md | docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md | docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md
 
 ---
 
@@ -366,6 +366,7 @@ Click again to collapse.
 - Alert history is an audit log — users cannot delete evaluation records.
 - Alert history reflects state at page load. No real-time push updates.
 - There is a single user; no multi-user or role-based preference scoping.
+- **Accessibility audit (v0.6, ST-03, EPIC-03, v7.8, BLG-FE-127):** the nav badge/digest consolidation surface (this page) and the `StandingAlert` primitive it builds on (`design_system.md` §Shared UI Components → Standing Alert) are in scope for a contrast/focus-state accessibility pass this cycle, against the standard fixed in `docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md` (WCAG AA text contrast, ≥3:1 focus-indicator contrast per `design_system.md` §Hover & Focus States v1.4). Trivial findings fixed directly and recorded here at execution; non-trivial findings filed as follow-up backlog items — see QA evidence for outcome.
 
 ---
 
@@ -415,6 +416,7 @@ When the System nav group is collapsed, the badge count propagates to the group 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6 | 2026-07-24 | v7.8 design gate — ST-03 (EPIC-03, BLG-FE-127): fixed the accessibility-audit standard and scope for the v7.7 notification/digest consolidation surface (this page's nav badge + digest grouping) and the `StandingAlert` primitive it builds on — WCAG AA text contrast (existing token) plus a new ≥3:1 focus-indicator contrast threshold (`design_system.md` §Hover & Focus States v1.4). Audit itself runs during sprint execution; trivial findings fixed directly, non-trivial findings filed as follow-up backlog items. Design source: `docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md`. Head of UX & Design sign-off: 2026-07-24. Product Owner approved: 2026-07-24. Head of Specs Team confirmed. |
 | 0.5 | 2026-07-21 | v7.7 design gate — ST-02 (EPIC-02, BLG-FE-114): added optional `since_days`/`read` filter query params to the Notification Feed (§Page 1) so Weekly Digest's alert-count values can deep-link here; extended the "Daily Portfolio Summary" preference row helper text to differentiate it from the Weekly Digest page, with a cross-link. §Nav Alert Badge integration point now the retained "Notifications" item (see `navigation.md` v1.4) — "Alerts" nav item removed as a duplicate. Design source: nav-notification-digest-consolidation/ux_spec.md. Approved: Product Owner 2026-07-21. Design gate: 2026-07-21__release-v7.7. Head of Specs Team confirmed. |
 | 0.4 | 2026-07-17 | v7.5 design gate — added Section 3: Custom Price Alerts (ST-02, BLG-FE-116): user-created ticker/condition/threshold alerts, backed by new `price_alerts` table; create/list/delete UI on `/notifications/preferences` below Alert Thresholds; triggered alerts surface via existing Notification Feed. Design source: custom-price-alerts/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
 | 0.3 | 2026-03-24 | ST-10 (BLG-FE-05, v2.3): §Nav Alert Badge — unacknowledged alert count badge on Alerts nav item; clears on Alerts page navigation; badge visible on collapsed Tools group header. Design source: docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md. Approved: Product Owner 2026-03-24. Design gate: 2026-03-24__release-v2.3. |
