@@ -46,6 +46,13 @@ test('SC-SA-01: renders each severity variant with distinct testid', async ({ pa
 
 test('SC-SA-02: manual dismissal removes the alert', async ({ page }) => {
   await gotoHarness(page);
+  // Expand the overflow first: the harness seeds 4 alerts against a cap of 3,
+  // so dismissing one from the capped (3-visible) view leaves 4-1=3 total —
+  // still <= the cap, so the visible count would not change (a bug in this
+  // test caught by CI, not in StandingAlertStack itself — see EPIC-04 PR
+  // discussion). Expanding first makes all 4 visible, so a single dismissal
+  // is observable as a genuine count decrease.
+  await page.getByTestId('standing-alert-overflow').click();
   const before = await page.getByTestId('standing-alert').count();
   await page.getByTestId('standing-alert-dismiss').first().click();
   await expect(page.getByTestId('standing-alert')).toHaveCount(before - 1);
