@@ -26,7 +26,7 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
         run: |
           echo "Running position analysis..."
-          curl --max-time 300 -X GET "${API_URL}/positions/analyze" -H "X-API-Key: ${API_KEY}"
+          curl --fail --show-error --max-time 300 -X GET "${API_URL}/positions/analyze" -H "X-API-Key: ${API_KEY}"
 
       - name: Create Portfolio Snapshot
         env:
@@ -34,7 +34,7 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
         run: |
           echo "Creating portfolio snapshot..."
-          curl --max-time 300 -X POST "${API_URL}/portfolio/snapshot" -H "X-API-Key: ${API_KEY}"
+          curl --fail --show-error --max-time 300 -X POST "${API_URL}/portfolio/snapshot" -H "X-API-Key: ${API_KEY}"
 
       - name: Generate Signals
         env:
@@ -42,4 +42,4 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
         run: |
           echo "Generating Signals..."
-          curl --max-time 300 -X POST "${API_URL}/signals/generate" -H "X-API-Key: ${API_KEY}"
+          curl --fail --show-error --max-time 300 -X POST "${API_URL}/signals/generate" -H "X-API-Key: ${API_KEY}"
