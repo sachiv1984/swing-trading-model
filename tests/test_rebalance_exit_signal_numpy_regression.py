@@ -30,15 +30,15 @@ session already hold a reference to (`from services.signal_service import
 generate_rebalance_exit_signals` binds a function object from whichever
 module object existed at that import time), which broke
 test_nightly_computations.py's RX-02/03/05 when both files ran in the same
-session. Instead, the real create_rebalance_exit_signal and decimal_to_float
-are obtained via a fresh `database` import and a direct file-load of
-utils/formatting.py (mirroring test_formatting.py's own technique) and
-patched onto whatever `services.signal_service` module object is already
-cached — this changes no module identities, only attribute values, and only
-for the duration of each `with` block.
+session. Instead, the real create_rebalance_exit_signal is obtained via a
+fresh `database` import and patched onto whatever `services.signal_service`
+module object is already cached (patch.object, restored after each `with`
+block) — this changes no module identities, only attribute values. The real
+decimal_to_float is guaranteed by evicting sys.modules["utils.formatting"]
+up front instead (see inline comment below), since
+generate_rebalance_exit_signals() re-imports it locally on every call.
 """
 
-import importlib.util
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -49,25 +49,33 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
-# Evict any stub sys.modules["database"] (conftest.py's MagicMock stub lacks
-# the real create_rebalance_exit_signal implementation under test here) — same
-# defensive pattern as test_signal_write_sanitization.py / test_api_contracts.py.
-# services.signal_service is intentionally left untouched (see module docstring).
+# Evict stub modules other test files leave in sys.modules (conftest.py's
+# MagicMock stub covers "database"; test_alerts_service.py / test_formatting.py
+# / test_plan_vs_reality.py / test_trade_service.py replace "utils.formatting"
+# and/or "utils" with stubs) — same defensive pattern as
+# test_signal_write_sanitization.py / test_api_contracts.py.
+#
+# utils.formatting must be evicted (not just loaded separately) because
+# generate_rebalance_exit_signals() does its own LOCAL
+# `from utils.formatting import decimal_to_float` at call time (see
+# services/signal_service.py) — this re-resolves sys.modules["utils.formatting"]
+# on every call regardless of any patch.object() applied to the
+# services.signal_service module's own attribute, so eviction is the only way
+# to guarantee the real implementation is what actually executes. Evicting
+# "utils" (the package) forces backend/utils/__init__.py to re-run too, which
+# itself does `from .pricing import (...)` — so "utils.pricing" must be
+# evicted as well, or that import silently reuses a stale stub left by
+# another test file and breaks with an ImportError.
+# services.signal_service itself is intentionally left untouched (see module
+# docstring) since create_rebalance_exit_signal IS a true module-global lookup
+# there (no local shadowing) and patch.object works correctly for it.
 sys.modules.pop("database", None)
+sys.modules.pop("utils.formatting", None)
+sys.modules.pop("utils.pricing", None)
+sys.modules.pop("utils", None)
 
 import database  # noqa: E402
 import services.signal_service as signal_service  # noqa: E402
-
-# Load the real decimal_to_float directly from file, bypassing sys.modules
-# entirely (utils.pricing/utils.formatting may be stubbed by other test files
-# still cached in this session) — same technique as test_formatting.py.
-_spec = importlib.util.spec_from_file_location(
-    "_formatting_under_test_rx08",
-    Path(__file__).parent.parent / "backend" / "utils" / "formatting.py",
-)
-_formatting = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_formatting)
-real_decimal_to_float = _formatting.decimal_to_float
 
 
 def _mock_conn():
@@ -122,10 +130,15 @@ def test_generate_rebalance_exit_signals_end_to_end_with_numpy_position_data():
     # implementation, utils/pricing.py, which parses a JSON HTTP response —
     # never a pandas/numpy value) — the numpy leak under test is specifically
     # the get_positions()-derived data path, matching the documented PR #971
-    # defect shape. create_rebalance_exit_signal and decimal_to_float are
-    # explicitly pointed at their REAL implementations (not whatever this
-    # session's cached services.signal_service module happens to have bound
-    # them to) so this test exercises the actual production code path.
+    # defect shape. decimal_to_float is NOT patched here — it doesn't need to
+    # be: generate_rebalance_exit_signals() re-imports it locally from
+    # utils.formatting on every call (module docstring above explains why this
+    # file evicts sys.modules["utils.formatting"] up front instead), so the
+    # real implementation is what runs regardless. create_rebalance_exit_signal
+    # IS explicitly pointed at its real implementation (a true module-global
+    # lookup in signal_service.py, not locally re-imported) so this test
+    # exercises the actual production write path rather than whatever this
+    # session's cached services.signal_service module happens to have bound it to.
     with patch.object(signal_service, "get_portfolio", return_value={"id": "portfolio-001"}), \
          patch.object(signal_service, "db_get_signals", return_value=[
              {"ticker": "AAPL", "signal_date": "2026-06-30", "status": "new"},
@@ -139,7 +152,6 @@ def test_generate_rebalance_exit_signals_end_to_end_with_numpy_position_data():
              }
          ]), \
          patch.object(signal_service, "get_live_fx_rate", return_value=1.27), \
-         patch.object(signal_service, "decimal_to_float", real_decimal_to_float), \
          patch.object(signal_service, "create_rebalance_exit_signal", database.create_rebalance_exit_signal), \
          patch.object(database, "get_db", return_value=mock_conn), \
          patch("services.signal_service.datetime") as mock_dt:
