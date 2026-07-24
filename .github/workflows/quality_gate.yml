@@ -163,3 +163,106 @@ jobs:
           print(f"No new baseline drift detected. {len(endpoints)} endpoint(s) "
                 f"checked, {len(KNOWN_GAPS)} pre-existing gap(s) grandfathered.")
           EOF
+
+  endpoint_count_drift:
+    name: Endpoint Count Drift Check (ST-11)
+    runs-on: ubuntu-latest
+
+    # [EPIC-11][ST-11] — Automates the CLAUDE.md §2 rule that
+    # src/pages/SystemStatus.js's hardcoded fallback count
+    # (`Tests {totalTests || 'N'} endpoints`) must be kept in sync with the
+    # actual endpoint total, so the displayed count is never stale before a
+    # live test run completes.
+    #
+    # Design note: the gate compares SystemStatus.js's fallback constant
+    # against len(test_cases) in backend/routers/test.py — parsed via the
+    # `ast` module (not regex) for exactness. A naive regex count of
+    # `"name":` occurrences across the whole file over-counts: it also
+    # matches an unrelated nested `"body": {"name": "__test__", ...}` payload
+    # (line ~246) and two `"name": test["name"]` lines in a different,
+    # smaller `critical_tests` list used by a separate lighter-weight health
+    # endpoint elsewhere in the same file. AST-parsing the `test_cases`
+    # list's element count sidesteps all of that ambiguity.
+    #
+    # This gate's introduction (this story) found the fallback constant was
+    # already stale: it read 103, but the current, AST-verified test_cases
+    # count is 98 — 5 entries had drifted out of sync at some point after
+    # v7.6 with no gate to catch it. Corrected to 98 in the same commit as
+    # this gate (src/pages/SystemStatus.js + tests/e2e/system-status.spec.js
+    # SC-SS-01b), per CLAUDE.md §2 — satisfying "passes on current
+    # repository state" against the now-corrected state.
+    #
+    # Raw `@router.*` decorator counts across backend/routers/*.py are also
+    # logged for visibility, but are informational only, not gating — that
+    # count (81) is meaningfully lower than test_cases' count (98) since
+    # test_cases also exercises several main.py `@app.*`-level routes
+    # alongside router-based ones.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Detect endpoint count drift
+        run: |
+          python3 - <<'EOF'
+          import ast
+          import re
+          import sys
+          from pathlib import Path
+
+          TEST_ROUTER_PATH = Path("backend/routers/test.py")
+          SYSTEM_STATUS_PATH = Path("src/pages/SystemStatus.js")
+          ROUTERS_DIR = Path("backend/routers")
+          TEST_CASES_VAR = "test_cases"
+
+          test_router_text = TEST_ROUTER_PATH.read_text()
+          tree = ast.parse(test_router_text, filename=str(TEST_ROUTER_PATH))
+
+          registry_count = None
+          for node in ast.walk(tree):
+              if isinstance(node, ast.Assign):
+                  for target in node.targets:
+                      if isinstance(target, ast.Name) and target.id == TEST_CASES_VAR:
+                          if isinstance(node.value, ast.List):
+                              registry_count = len(node.value.elts)
+
+          if registry_count is None:
+              print(f"MERGE BLOCKED: could not find a `{TEST_CASES_VAR} = [...]` "
+                    f"list assignment in {TEST_ROUTER_PATH}.")
+              sys.exit(1)
+
+          system_status_text = SYSTEM_STATUS_PATH.read_text()
+          fallback_match = re.search(r"totalTests\s*\|\|\s*'(\d+)'", system_status_text)
+          if not fallback_match:
+              print("MERGE BLOCKED: could not find the totalTests fallback constant "
+                    "(pattern: totalTests || 'N') in src/pages/SystemStatus.js.")
+              sys.exit(1)
+          fallback_count = int(fallback_match.group(1))
+
+          # Informational only — logged for visibility, not gating (see design note above).
+          decorator_count = 0
+          for py_file in sorted(ROUTERS_DIR.glob("*.py")):
+              decorator_count += len(re.findall(
+                  r"@router\.(get|post|put|delete|patch)\(", py_file.read_text()
+              ))
+          print(f"Informational: {decorator_count} @router.* decorator(s) across "
+                f"{ROUTERS_DIR}/*.py (not the gating count — see design note).")
+
+          if registry_count != fallback_count:
+              print("MERGE BLOCKED: endpoint count drift detected.")
+              print(f"  backend/routers/test.py {TEST_CASES_VAR} entries: {registry_count}")
+              print(f"  SystemStatus.js fallback constant:              {fallback_count}")
+              print("")
+              print("Update the `Tests {totalTests || 'N'} endpoints` fallback in "
+                    "src/pages/SystemStatus.js to match the current test_cases "
+                    "count (and update SC-SS-01b in tests/e2e/system-status.spec.js "
+                    "in the same commit, per CLAUDE.md §2).")
+              sys.exit(1)
+
+          print(f"No endpoint count drift detected. test_cases: "
+                f"{registry_count}, SystemStatus.js fallback: {fallback_count}.")
+          EOF
