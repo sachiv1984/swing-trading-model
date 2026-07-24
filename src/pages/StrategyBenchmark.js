@@ -1,6 +1,7 @@
 'use strict';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { api } from '../api/base44Client';
 import { BarChart2, RefreshCw, Upload, ChevronDown } from 'lucide-react';
 
@@ -9,6 +10,10 @@ import { BarChart2, RefreshCw, Upload, ChevronDown } from 'lucide-react';
 // ---------------------------------------------------------------------------
 
 const MARKETS = ['ALL', 'US', 'UK'];
+
+// SI-04 (ST-01, v7.7 EPIC-01): must stay in sync with backend/strategy_version_registry.py,
+// which is itself sourced from claude/strategy/strategy_rules.md's Change Log table.
+const STRATEGY_VERSIONS = ['1.0', '1.1', '1.2', '1.3', '1.4'];
 
 // Exit reason → badge config
 const EXIT_REASON_BADGE = {
@@ -429,10 +434,224 @@ function Panel3({ backtestTrades, actualTrades, toggleMode, onToggleMode }) {
 }
 
 // ---------------------------------------------------------------------------
+// Version Comparison Tab (v0.4 — ST-01, EPIC-01, BLG-FEAT-75, v7.7)
+// ---------------------------------------------------------------------------
+
+function fmtR(val) {
+  if (val == null) return '—';
+  const n = Number(val);
+  return (n >= 0 ? '+' : '') + n.toFixed(2) + 'R';
+}
+
+function fmtDelta(val, suffix = '') {
+  if (val == null) return '—';
+  const n = Number(val);
+  return (n >= 0 ? '+' : '') + n.toFixed(2) + suffix;
+}
+
+function deltaClass(val) {
+  if (val == null) return 'text-slate-600 dark:text-slate-400';
+  return Number(val) >= 0 ? 'text-emerald-400' : 'text-rose-400';
+}
+
+const ASSESSMENT_BADGE = {
+  Improved: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+  Degraded: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
+  'Insufficient data': 'bg-slate-500/20 text-slate-400 border-slate-500/30',
+};
+
+function VersionComparisonTab() {
+  const [versionFrom, setVersionFrom] = useState(STRATEGY_VERSIONS[0]);
+  const [versionTo, setVersionTo] = useState(STRATEGY_VERSIONS[STRATEGY_VERSIONS.length - 1]);
+  const [state, setState] = useState('idle'); // idle | loading | loaded | error
+  const [result, setResult] = useState(null);
+  const [fieldError, setFieldError] = useState(null); // { field: 'from'|'to', message }
+  const [generalError, setGeneralError] = useState(null);
+
+  const handleCompare = useCallback(async () => {
+    setState('loading');
+    setFieldError(null);
+    setGeneralError(null);
+    setResult(null);
+    try {
+      const data = await api.strategyVersionComparison.compare({ versionFrom, versionTo });
+      setResult(data);
+      setState('loaded');
+    } catch (err) {
+      const detail = err?.data?.detail;
+      const code = detail?.code;
+      if (code === 'insufficient_data') {
+        setGeneralError(
+          `Not enough trades to compare — ${detail.version} has ${detail.trade_count} trades (minimum ${detail.min_trades_required} required).`
+        );
+      } else if (code === 'version_not_found') {
+        setFieldError({
+          field: detail.missing_version === versionFrom ? 'from' : 'to',
+          message: 'Version not found.',
+        });
+      } else if (code === 'version_order_error') {
+        setFieldError({ field: 'to', message: "Must be chronologically after the 'From' version." });
+      } else {
+        setGeneralError('Unable to load comparison. Please try again.');
+      }
+      setState('error');
+    }
+  }, [versionFrom, versionTo]);
+
+  return (
+    <section data-testid="version-comparison-tab">
+      {/* Controls row */}
+      <div className="flex flex-wrap items-end gap-3 mb-4">
+        <div className="flex items-center gap-2">
+          <label className="text-xs text-slate-600 dark:text-slate-400 shrink-0">From</label>
+          <select
+            value={versionFrom}
+            onChange={e => setVersionFrom(e.target.value)}
+            className="appearance-none bg-slate-800 border border-slate-600 rounded-md px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-slate-400"
+            data-testid="version-from-select"
+          >
+            {STRATEGY_VERSIONS.map(v => (
+              <option key={v} value={v}>{v}</option>
+            ))}
+          </select>
+          {fieldError?.field === 'from' && (
+            <span className="text-xs text-rose-400" data-testid="version-from-error">{fieldError.message}</span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-xs text-slate-600 dark:text-slate-400 shrink-0">To</label>
+          <select
+            value={versionTo}
+            onChange={e => setVersionTo(e.target.value)}
+            className="appearance-none bg-slate-800 border border-slate-600 rounded-md px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-slate-400"
+            data-testid="version-to-select"
+          >
+            {STRATEGY_VERSIONS.map(v => (
+              <option key={v} value={v}>{v}</option>
+            ))}
+          </select>
+          {fieldError?.field === 'to' && (
+            <span className="text-xs text-rose-400" data-testid="version-to-error">{fieldError.message}</span>
+          )}
+        </div>
+
+        <button
+          onClick={handleCompare}
+          disabled={state === 'loading'}
+          className="text-xs px-3 py-1.5 rounded-md border border-slate-400 bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50"
+          data-testid="version-compare-btn"
+        >
+          Compare
+        </button>
+      </div>
+
+      {/* States */}
+      {state === 'idle' && (
+        <p className="text-sm text-slate-600 dark:text-slate-400 italic" data-testid="version-comparison-idle">
+          Select two strategy versions to compare.
+        </p>
+      )}
+
+      {state === 'loading' && (
+        <div className="space-y-2 animate-pulse" data-testid="version-comparison-loading">
+          {[1, 2, 3, 4].map(i => <div key={i} className="h-8 bg-slate-800 rounded-md" />)}
+        </div>
+      )}
+
+      {state === 'error' && generalError && (
+        <div className="rounded-lg border border-red-800 bg-red-900/20 p-4" data-testid="version-comparison-error">
+          <p className="text-sm text-red-400">{generalError}</p>
+        </div>
+      )}
+
+      {state === 'loaded' && result && (
+        <div data-testid="version-comparison-result">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm" data-testid="version-comparison-table">
+              <thead>
+                <tr className="text-xs text-slate-600 dark:text-slate-400 border-b border-slate-700">
+                  <th scope="col" className="text-left py-2 pr-3">Metric</th>
+                  <th scope="col" className="text-right py-2 pr-3">{result.version_from}</th>
+                  <th scope="col" className="text-right py-2">{result.version_to}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-slate-800">
+                  <td className="py-2 pr-3 text-slate-300">Trades Compared</td>
+                  <td className="py-2 pr-3 text-right text-white">{fmtNum(result.version_from_metrics.trade_count)}</td>
+                  <td className="py-2 text-right text-white">{fmtNum(result.version_to_metrics.trade_count)}</td>
+                </tr>
+                <tr className="border-b border-slate-800">
+                  <td className="py-2 pr-3 text-slate-300">Win Rate</td>
+                  <td className="py-2 pr-3 text-right text-white">{fmtPct(result.version_from_metrics.win_rate * 100)}</td>
+                  <td className="py-2 text-right text-white">{fmtPct(result.version_to_metrics.win_rate * 100)}</td>
+                </tr>
+                <tr className="border-b border-slate-800">
+                  <td className="py-2 pr-3 text-slate-300">Average R</td>
+                  <td className="py-2 pr-3 text-right text-white">{fmtR(result.version_from_metrics.avg_R)}</td>
+                  <td className="py-2 text-right text-white">{fmtR(result.version_to_metrics.avg_R)}</td>
+                </tr>
+                <tr>
+                  <td className="py-2 pr-3 text-slate-300">
+                    Compliance Rate
+                    {(result.version_from_metrics.compliance_rate == null || result.version_to_metrics.compliance_rate == null) && (
+                      <span className="ml-1 text-slate-600 dark:text-slate-400" title="Not yet available">ⓘ</span>
+                    )}
+                  </td>
+                  <td className="py-2 pr-3 text-right text-white">
+                    {result.version_from_metrics.compliance_rate != null
+                      ? fmtPct(result.version_from_metrics.compliance_rate * 100)
+                      : <span title="Not yet available">—</span>}
+                  </td>
+                  <td className="py-2 text-right text-white">
+                    {result.version_to_metrics.compliance_rate != null
+                      ? fmtPct(result.version_to_metrics.compliance_rate * 100)
+                      : <span title="Not yet available">—</span>}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Comparison Summary strip */}
+          <div className="mt-4 flex flex-wrap items-center gap-4 rounded-lg border border-slate-700 bg-slate-800/50 p-3" data-testid="version-comparison-summary">
+            <span className={`text-sm font-medium ${deltaClass(result.comparison_summary.win_rate_delta)}`}>
+              Win Rate {fmtDelta(result.comparison_summary.win_rate_delta * 100, '%')}
+            </span>
+            <span className={`text-sm font-medium ${deltaClass(result.comparison_summary.avg_R_delta)}`}>
+              Avg R {fmtDelta(result.comparison_summary.avg_R_delta, 'R')}
+            </span>
+            <span className="text-sm font-medium text-slate-300">
+              Trades {fmtDelta(result.comparison_summary.trade_count_delta)}
+            </span>
+            <span
+              className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${ASSESSMENT_BADGE[result.comparison_summary.assessment] || ASSESSMENT_BADGE['Insufficient data']}`}
+              data-testid="version-comparison-assessment"
+            >
+              {result.comparison_summary.assessment}
+            </span>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main page
 // ---------------------------------------------------------------------------
 
 export default function StrategyBenchmark() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') === 'version-comparison' ? 'version-comparison' : 'benchmark';
+  const setActiveTab = (tab) => {
+    const next = new URLSearchParams(searchParams);
+    if (tab === 'version-comparison') next.set('tab', 'version-comparison');
+    else next.delete('tab');
+    setSearchParams(next, { replace: true });
+  };
+
   const [year, setYear] = useState(null);
   const [market, setMarket] = useState('ALL');
   const [toggleMode, setToggleMode] = useState('backtest');
@@ -509,6 +728,42 @@ export default function StrategyBenchmark() {
         </button>
       </div>
 
+      {/* Sub-navigation (v0.4 — ST-01, EPIC-01, v7.7) */}
+      <div className="flex gap-1 border-b border-slate-700" role="tablist" data-testid="benchmark-subnav">
+        <button
+          role="tab"
+          aria-selected={activeTab === 'benchmark'}
+          onClick={() => setActiveTab('benchmark')}
+          className={`text-sm px-3 py-2 border-b-2 transition-colors ${
+            activeTab === 'benchmark'
+              ? 'border-slate-400 text-slate-900 dark:text-white font-medium'
+              : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-300'
+          }`}
+          data-testid="benchmark-tab-benchmark"
+        >
+          Benchmark
+        </button>
+        <button
+          role="tab"
+          aria-selected={activeTab === 'version-comparison'}
+          onClick={() => setActiveTab('version-comparison')}
+          className={`text-sm px-3 py-2 border-b-2 transition-colors ${
+            activeTab === 'version-comparison'
+              ? 'border-slate-400 text-slate-900 dark:text-white font-medium'
+              : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-300'
+          }`}
+          data-testid="benchmark-tab-version-comparison"
+        >
+          Version Comparison
+        </button>
+      </div>
+
+      {activeTab === 'version-comparison' ? (
+        <div className="rounded-xl border border-slate-700 bg-slate-900 p-4">
+          <VersionComparisonTab />
+        </div>
+      ) : (
+      <>
       {/* Sticky filters */}
       <div
         className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 flex flex-wrap gap-3 items-center"
@@ -612,6 +867,8 @@ export default function StrategyBenchmark() {
             />
           </div>
         </div>
+      )}
+      </>
       )}
     </div>
   );
