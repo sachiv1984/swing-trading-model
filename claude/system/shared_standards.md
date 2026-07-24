@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.18
-**Last Updated:** 2026-07-21
+**Version:** 3.19
+**Last Updated:** 2026-07-24
 
 # Shared Standards — All Governed Routines
 
@@ -987,6 +987,25 @@ When writing or updating Playwright tests in this project:
 **Mock payload advisory (OA-02/CF-02):** Mock payloads must match the canonical API spec response shape. Before authoring mocks, read the relevant `openapi.yaml` path and use the documented response schema. Nested objects (e.g. `{data: {field: value}}`) must not be flattened in mocks. Mismatch = silent test failure in prod.
 
 **Route ordering advisory (ST-11, v6.8, BLG-QA-64):** When registering multiple `page.route()` handlers for overlapping URL patterns (e.g. a generic catch-all plus a more specific handler for one path), Playwright evaluates handlers in reverse registration order (most-recently-registered first). A handler's `route.continue()` call sends the request onward to the real network — it does **not** fall through to an earlier-registered, more-specific handler. Use `route.fallback()` instead of `route.continue()` when the intent is to defer to a previously-registered handler for the same request. Register generic catch-all mocks **first**, specific mocks **last**, and use `route.fallback()` in any generic handler's non-matching branch.
+
+---
+
+## 19. Array Guard Standard for JSON API Response Fields
+
+**Origin:** Recurrence escalation, first raised `2026-07-17__release-v7.5` closure, carried unresolved across 3 consecutive Post-Ship Closure cycles (v7.5 → v7.6 → v7.7) because its named target ("next roadmap review") did not occur until this cycle (`2026-07-24__scheduled` — no `run roadmap` invocation had run since `2026-07-17__scheduled`; v7.6 and v7.7 both used direct-write bypass patterns instead). Owner: Head of Engineering.
+
+**Standard:** Any frontend code calling `.map()`, `.filter()`, `.forEach()`, or similar array methods directly on a field sourced from a JSON API response must first guard with `Array.isArray(...)` (or an equivalent explicit type check) before iterating. Do not assume an API response field is an array merely because the contract types it as one — a malformed response, a partial/error payload, or a schema drift not yet caught by the OpenAPI Drift Detection gate can deliver `null`, `undefined`, or a non-array value at runtime, and an unguarded `.map()`/`.filter()` call throws and can crash the enclosing component.
+
+**Pattern:**
+```js
+// Wrong — throws if data.items is not an array
+data.items.map(item => ...)
+
+// Right
+Array.isArray(data.items) ? data.items.map(item => ...) : []
+```
+
+**Enforcement:** New Playwright test coverage and code review for any story touching a `.map()`/`.filter()` call site over API response data should confirm this guard is present. Not retroactively enforced against existing code as a blanket requirement — apply at next-touch of the affected call site, or file a targeted backlog item where a specific unguarded call site is identified as high-risk.
 
 ---
 

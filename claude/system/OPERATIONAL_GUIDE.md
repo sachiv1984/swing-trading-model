@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.106
-**Last Updated:** 2026-07-21
+**Version:** 4.109
+**Last Updated:** 2026-07-24
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.1)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.4)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1272,7 +1272,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v9.2) | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v9.4) | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.106 |
-| Last Updated | 2026-07-21 |
+| Version | 4.109 |
+| Last Updated | 2026-07-24 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1463,7 +1463,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.12 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.2 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.4 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.42 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.13 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
@@ -1473,7 +1473,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.1 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.18 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.18 |
+| Shared Standards | `claude/system/shared_standards.md` v3.19 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.10 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1495,6 +1495,9 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.109 | 2026-07-24 | **Roadmap rebalance `2026-07-24__scheduled` STEP 11 (self-discovered same-cycle friction) — roadmap_prompt.md v9.3→v9.4: STEP -1.7 scan widened to also match `## Recurrence Escalations` tables.** §6 source prompt header v9.3→v9.4. §13 Artefact Register Roadmap Rebalance Prompt row v9.3→v9.4. §14 Roadmap Engine Source v9.3→v9.4. §14 Version 4.108→4.109/2026-07-24. Change: the v9.3 due-date scan (added earlier this same cycle) only matched the `^## ESC-`/`SLA due-by` pattern and would have missed the 3 recurrence escalations actually found this cycle via the separate §16.8 Carry-Forward mechanism, which used a `## Recurrence Escalations` table structure instead — widened to check both. Authority: Head of Specs Team (roadmap rebalance `2026-07-24__scheduled`, STEP 11). |
+| 4.108 | 2026-07-24 | **Roadmap rebalance `2026-07-24__scheduled` STEP 0 Carry-Forward review — shared_standards.md v3.18→v3.19: new §19 Array Guard Standard for JSON API Response Fields.** §14 Shared Standards v3.18→v3.19. §14 Version 4.107→4.108/2026-07-24. Change: resolves a recurrence escalation carried across 3 Post-Ship Closure cycles (v7.5→v7.6→v7.7), whose named target ("next roadmap review") had not occurred since `2026-07-17__scheduled` — codifies the `Array.isArray(...)` guard requirement before `.map()`/`.filter()`/`.forEach()` over JSON API response fields. Authority: Head of Specs Team (roadmap rebalance `2026-07-24__scheduled`, STEP 0). |
+| 4.107 | 2026-07-24 | **Roadmap rebalance `2026-07-24__scheduled` STEP -1.5 (resolving 2 deferred patches from `2026-07-17__scheduled`, both due at this cycle) — roadmap_prompt.md v9.2→v9.3: STEP -1.7 Governance Health Score Outstanding Action Count extended to a due-date-aware cross-routine scan.** §6 source prompt header v9.2→v9.3. §13 Artefact Register Roadmap Rebalance Prompt row v9.2→v9.3. §14 Roadmap Engine Source v9.2→v9.3. §14 Version 4.106→4.107/2026-07-24. Changes: (1) `roadmap_prompt.md` STEP -1.7 — Outstanding Action Count now also scans the last 3 completed cycles' `lessons_learnt_closure.md`/`lessons_learnt.md` files across all five routines for escalations whose deadline falls on or before the current cycle's date, regardless of owning routine, closing the gap that let a Release-Planning-filed escalation with a roadmap-window deadline go undetected except by ad hoc manual review (`2026-07-17__scheduled` Friction Item 2). (2) `changelogs/shared_standards_changelog.md` — backfilled missing rows 3.12–3.16 (deferred from `2026-07-17__scheduled` Friction Item 1 as disproportionate for that same-session action-now patch). Authority: Head of Specs Team (roadmap rebalance `2026-07-24__scheduled`, STEP -1.5). |
 | 4.106 | 2026-07-21 | **Lifecycle audit AUD-2026-07-20, findings AUD-2026-07-20-001/003/004/005 applied — §14 self-metadata desync fixed (3rd recurrence) + shared_standards.md v3.17→v3.18 + execution_prompt.md v3.58→v3.59 + lessons_learnt_prompt.md v1.9→v1.10.** §14 Version/Last Updated table row corrected from a stale 4.102/2026-07-17 to 4.106/2026-07-21 (3 further version bumps — 4.103, 4.104, 4.105 — had all updated the document header and Change Log but never this row, a 3rd recurrence of the pattern the §9.1 guard exists to catch). §8 source prompt header v3.58→v3.59. §14 Execution Engine Source v3.58→v3.59; Shared Standards v3.17→v3.18; Lessons Learnt Prompt v1.9→v1.10. Changes: (1) `shared_standards.md` §9.1 — mechanical-enforcement note added pointing to the `commit-check` skill, since two successive prose-only strengthenings (v3.10, v3.16) both failed to prevent recurrence (AUD-2026-07-20-001); new §16.13 Sign-Off Record Schema added, canonicalising the block moved out of `execution_prompt.md` (AUD-2026-07-20-004). (2) `execution_prompt.md` §3 merge-order note — async-merge sibling notification added, closing a 3-cycle-OVERDUE deferred patch (AUD-2026-07-20-003); inline sign-off schema replaced with a reference to `shared_standards.md` §16.13 (AUD-2026-07-20-004). (3) `lessons_learnt_prompt.md` — `classification` field rule clarified to exclude undocumented values such as "monitor" (AUD-2026-07-20-005). `.github/workflows/sprint_close_reminder.yml` also extended with a sibling-PR rebase-notification step to make AUD-2026-07-20-003's prompt text true in practice. Authority: Head of Specs Team (audit AUD-2026-07-20 patch application, user-directed, 2026-07-21). |
 | 4.105 | 2026-07-20 | **Post-ship closure `2026-07-20__release-v7.6` Phase 4 friction, immediate action — post_ship_closure.md v2.17→v2.18: amendment field reset rule (LL-v7.6-P4-01) added to STEP 10.** §10 source prompt header v2.17→v2.18. §14 Post-Ship Closure Engine v2.17→v2.18. §14 Version 4.104→4.105/2026-07-20. Change: STEP 10 (Global State Update) now checks whether `active_amendment` is non-empty and, if its originating cycle has already reached `Closed`/`Closed_with_actions`, clears `amended_backlog_slice_path`, `amendment_sealed_utc`, `active_amendment`, and `amendment_status` in the same write. Root cause: `.claude_current_state.json`'s `amended_backlog_slice_path` still pointed to the already-closed `2026-07-17__release-v7.4`/`AMD-20260717-01` amendment when this cycle's own delivery verification ran, requiring manual cross-referencing (checking for an `amendments/` folder under the current cycle, comparing against `execution_state.json.backlog_slice_source`) to correctly dismiss it as inapplicable — flagged as a Phase 4 friction item (`lessons_learnt_cycle.md` `2026-07-20__release-v7.6` §Phase 4) and applied now per the non-deferrable immediate-action rule rather than deferred a second time. Authority: Head of Specs Team (post-ship closure `2026-07-20__release-v7.6`, STEP 8 — immediate lessons-learnt action rule). |
 |---------|------|----------------|

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.2
-**Last Updated:** 2026-07-17
+**Version:** 9.4
+**Last Updated:** 2026-07-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -177,7 +177,7 @@ Compute per OPERATIONAL_GUIDE.md §15 and record in `run_manifest.md` under `## 
 
 1. **Header Compliance %** — compliant docs ÷ total docs in `claude/cycles/<active_cycle_id>/`
 2. **Deferred Patch Indicator** — Green < 1 cycle / Amber 1–2 cycles / Red > 2 cycles since filed
-3. **Outstanding Action Count** — from `open_escalations` (state file + execution_state.json) + prior `lessons_learnt.md`
+3. **Outstanding Action Count** — from `open_escalations` (state file + execution_state.json) + prior `lessons_learnt.md`, **plus a due-date-aware scan (v9.3, widened v9.4)**: read the last 3 completed cycles' `lessons_learnt_closure.md` / `lessons_learnt.md` files across all five routines (Roadmap, Release Planning, Sprint Planning, Sprint Execution, Delivery Verification, Post-Ship Closure — wherever such a file exists in `claude/cycles/<cycle_id>/`), and surface any escalation whose stated deadline falls on or before the current cycle's date, whether or not it names the Roadmap engine as owner. Check **both** of these structures, not just one: (a) the standard `^## ESC-`/`SLA due-by`/`Disposition: Open` pattern, and (b) any `## Recurrence Escalations` table (per `lessons_learnt_prompt.md §5`) whose rows name a target of "next roadmap review" or an equivalent roadmap-triggered checkpoint — this second structure is a distinct, valid escalation shape that the first pattern alone does not match. Include each such cross-routine escalation in the count and list it by ID (or description, if untitled) and owning routine.
 
 Missing source file → record "N/A — source file absent". Advisory only — do not halt.
 
