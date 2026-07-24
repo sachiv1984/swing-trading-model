@@ -8,6 +8,7 @@ GET /analytics/compliance-metrics — Discipline & compliance scalars (ST-01, v1
 GET /analytics/market-correlation — Per-position Pearson correlation vs benchmark (ST-08, v2.7).
 GET /analytics/arc5-compliance — Arc 5 signal compliance metrics (ST-01, v4.0).
 GET /analytics/behavioural-drift — SI-02 behavioural drift detection (4 metrics, v4.6 ST-04).
+GET /analytics/strategy-version-comparison — SI-04 strategy version performance comparison (ST-01, EPIC-01, v7.7).
 
 BLG-TECH-07 fix: trades_for_charts attempts to source stop_price from
 positions.initial_stop via LEFT JOIN on trade_history.position_id.
@@ -30,6 +31,8 @@ from psycopg2.extras import RealDictCursor
 import numpy as np
 import pandas as pd
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qs
+from typing import Optional
+from strategy_version_registry import resolve_version_window
 
 # Run SI-02 DDL migrations only once per process — calling ensure_* on every
 # /behavioural-drift request adds ~1–2s per DDL statement (BLG-OPS-64).
@@ -1024,3 +1027,318 @@ async def get_behavioural_drift():
                 "error_detail": str(e),
             },
         }
+
+
+# -----------------------------------------------------------------------
+# SI-04 Strategy Version Comparison (ST-01, EPIC-01, v7.7, BLG-FEAT-75)
+# -----------------------------------------------------------------------
+
+def _intersect_range(window_start, window_end, range_start, range_end):
+    """Intersect a version's [start, end) window with an optional date_range filter.
+
+    window_end/range_end of None means open-ended (no upper bound).
+    Returns (effective_start, effective_end_or_None).
+    """
+    effective_start = max(window_start, range_start) if range_start else window_start
+    if window_end is None and range_end is None:
+        effective_end = None
+    elif window_end is None:
+        effective_end = range_end
+    elif range_end is None:
+        effective_end = window_end
+    else:
+        effective_end = min(window_end, range_end)
+    return effective_start, effective_end
+
+
+def _compute_version_trade_metrics(cursor, start_date, end_date):
+    """trade_count, win_rate, avg_R for closed trades with entry_date in [start_date, end_date).
+
+    avg_R uses the canonical per-trade formula (metrics_definitions.md v1.7.0):
+    R = (exit_price - entry_price) / (entry_price - initial_stop_price), via
+    positions.initial_stop LEFT JOIN (same source as GET /analytics/r-multiple-distribution).
+    Trades without a determinable stop are excluded from avg_R but still counted
+    in trade_count and win_rate (win/loss is determinable from pnl alone).
+    """
+    end_clause = "AND th.entry_date < %s" if end_date is not None else ""
+    params = [start_date] + ([end_date] if end_date is not None else [])
+
+    query = f"""
+        SELECT
+            th.entry_price, th.exit_price, th.pnl,
+            CASE WHEN p.initial_stop IS NOT NULL AND p.initial_stop < th.entry_price
+                 THEN p.initial_stop ELSE NULL END AS stop_price
+        FROM trade_history th
+        LEFT JOIN positions p ON th.position_id = p.id
+        WHERE th.exit_date IS NOT NULL
+          AND th.entry_date >= %s
+          {end_clause}
+    """
+    try:
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+    except (psycopg2.errors.UndefinedColumn, psycopg2.errors.UndefinedTable):
+        cursor.connection.rollback()
+        rows = []
+
+    trade_count = len(rows)
+    if trade_count == 0:
+        return {"trade_count": 0, "win_rate": None, "avg_R": None}
+
+    winners = sum(1 for r in rows if (r["pnl"] or 0) > 0)
+    win_rate = round(winners / trade_count, 4)
+
+    r_values = []
+    for r in rows:
+        ep, sp, xp = r["entry_price"], r["stop_price"], r["exit_price"]
+        if sp is None or ep is None or xp is None or ep <= sp:
+            continue
+        r_values.append((float(xp) - float(ep)) / (float(ep) - float(sp)))
+    avg_R = round(sum(r_values) / len(r_values), 4) if r_values else None
+
+    return {"trade_count": trade_count, "win_rate": win_rate, "avg_R": avg_R}
+
+
+def _compute_arc5_composite_for_range(cursor, start_date, end_date):
+    """Arc 5 compliance composite score (metrics_definitions.md 'Arc 5 Compliance
+    Composite Score') computed over an arbitrary [start_date, end_date) range,
+    generalising GET /analytics/arc5-compliance's rolling-7/30-day window to a
+    strategy-version-scoped historical slice (Strategy Rules & System Intent
+    Owner decision, 2026-07-23, v7.7 ST-01 — compliance_rate sources from this
+    composite, not journal_completion_rate, per role charter §6 "same field
+    must mean the same thing everywhere").
+
+    Returns None if any required input is unavailable (mirrors the composite's
+    documented "Composite Score Unavailability" fallback rule) — treats null
+    override_rate / trade_plan_adherence_rate as 0.0 per metrics_definitions.md.
+    """
+    end_clause = "AND created_at < %s::timestamptz" if end_date is not None else ""
+    validated_end_clause = "AND validated_at < %s::timestamptz" if end_date is not None else ""
+    range_params = [start_date] + ([end_date] if end_date is not None else [])
+
+    # override_rate: overrides / validation attempts, over the range
+    override_rate = 0.0
+    try:
+        cursor.execute(f"""
+            SELECT COUNT(*) AS overrides FROM red_flag_events
+            WHERE created_at >= %s::timestamptz {end_clause}
+              AND event_type = 'pre_entry_override'
+        """, range_params)
+        overrides = int(cursor.fetchone()["overrides"] or 0)
+
+        cursor.execute(f"""
+            SELECT COUNT(*) AS attempts FROM pre_entry_validation_log
+            WHERE validated_at >= %s::timestamptz {validated_end_clause}
+        """, range_params)
+        attempts = int(cursor.fetchone()["attempts"] or 0)
+        override_rate = round(overrides / attempts, 4) if attempts > 0 else 0.0
+    except psycopg2.errors.UndefinedTable:
+        cursor.connection.rollback()
+
+    # events_per_week: red_flag_events over the range, normalised to a weekly rate
+    events_per_week = 0.0
+    try:
+        cursor.execute(f"""
+            SELECT COUNT(*) AS cnt FROM red_flag_events
+            WHERE created_at >= %s::timestamptz {end_clause}
+        """, range_params)
+        events_count = int(cursor.fetchone()["cnt"] or 0)
+        range_days = (end_date - start_date).days if end_date else (date.today() - start_date).days
+        range_weeks = max(range_days / 7.0, 1 / 7.0)
+        events_per_week = round(events_count / range_weeks, 2)
+    except psycopg2.errors.UndefinedTable:
+        cursor.connection.rollback()
+
+    # trade_plan_adherence_rate: trades with plan / total closed trades, entry_date in range
+    trade_plan_adherence_rate = 0.0
+    try:
+        end_clause_entry = "AND entry_date < %s" if end_date is not None else ""
+        cursor.execute(f"""
+            SELECT COUNT(*) AS total FROM trade_history
+            WHERE exit_date IS NOT NULL AND entry_date >= %s {end_clause_entry}
+        """, range_params)
+        total_trades = int(cursor.fetchone()["total"] or 0)
+
+        if total_trades > 0:
+            cursor.execute(f"""
+                SELECT COUNT(DISTINCT th.id) AS with_plan
+                FROM trade_history th
+                JOIN trade_plans tp ON tp.position_id = th.position_id
+                WHERE th.exit_date IS NOT NULL AND th.entry_date >= %s {end_clause_entry}
+            """, range_params)
+            with_plan = int(cursor.fetchone()["with_plan"] or 0)
+            trade_plan_adherence_rate = round(with_plan / total_trades, 4)
+    except (psycopg2.errors.UndefinedColumn, psycopg2.errors.UndefinedTable):
+        cursor.connection.rollback()
+
+    # top_rule_breach severity, over the range
+    severity_map = {
+        "regime_gate": 1.0,
+        "sector_concentration": 0.5,
+        "earnings_proximity": 0.5,
+        "cash_constraint": 0.5,
+        "sizing_validity": 0.0,
+    }
+    top_rule_breach_severity_normalized = 0.0
+    try:
+        cursor.execute(f"""
+            SELECT rule_type, COUNT(*) AS fail_count
+            FROM pre_entry_validation_log
+            WHERE validated_at >= %s::timestamptz {validated_end_clause}
+              AND status = 'fail'
+            GROUP BY rule_type
+            ORDER BY fail_count DESC
+            LIMIT 1
+        """, range_params)
+        row = cursor.fetchone()
+        if row:
+            top_rule_breach_severity_normalized = severity_map.get(row["rule_type"], 0.0)
+    except psycopg2.errors.UndefinedTable:
+        cursor.connection.rollback()
+
+    composite_score = (
+        (1 - override_rate) * 0.40
+        + (1 - min(events_per_week / 10, 1)) * 0.30
+        + trade_plan_adherence_rate * 0.20
+        + (1 - top_rule_breach_severity_normalized) * 0.10
+    )
+    return round(composite_score, 4)
+
+
+@router.get("/strategy-version-comparison")
+async def get_strategy_version_comparison(
+    version_from: str = Query(..., description="Baseline strategy version label"),
+    version_to: str = Query(..., description="Comparison strategy version label (must be chronologically after version_from)"),
+    date_range: Optional[str] = Query(None, description="ISO 8601 date range filter: YYYY-MM-DD/YYYY-MM-DD"),
+):
+    """GET /analytics/strategy-version-comparison — SI-04 strategy version performance comparison.
+
+    Trades are attributed to a strategy version by entry_date falling within
+    that version's active window (see backend/strategy_version_registry.py —
+    there is no strategy_version column on trade_history; windows are derived
+    from claude/strategy/strategy_rules.md's own Change Log dates).
+
+    compliance_rate sources from the Arc 5 compliance composite score
+    (metrics_definitions.md), generalised to the version's date window —
+    Strategy Rules & System Intent Owner decision, 2026-07-23 (v7.7 ST-01):
+    journal_completion_rate was rejected as measuring reflection habit, not
+    rule-following discipline; reusing the "compliance_rate" name for a
+    different concept than Arc 5's existing composite would be intent drift
+    (role charter §6).
+
+    §13 binding conditions (6, cleared v4.7): read-only, closed trades only,
+    no strategy/position modification, advisory only, read-only registry access.
+    Contract: docs/specs/api_contracts/strategy_version_comparison_contract.md v0.2.0
+    """
+    window_from = resolve_version_window(version_from)
+    window_to = resolve_version_window(version_to)
+
+    if window_from is None or window_to is None:
+        missing = version_from if window_from is None else version_to
+        raise HTTPException(status_code=404, detail={
+            "status": "error",
+            "code": "version_not_found",
+            "message": f"Strategy version '{missing}' not found in version registry",
+            "missing_version": missing,
+        })
+
+    if window_to[0] <= window_from[0]:
+        raise HTTPException(status_code=400, detail={
+            "status": "error",
+            "code": "version_order_error",
+            "message": "version_to must be chronologically after version_from",
+        })
+
+    range_start, range_end = None, None
+    if date_range:
+        try:
+            start_str, end_str = date_range.split("/")
+            range_start = date.fromisoformat(start_str)
+            range_end = date.fromisoformat(end_str)
+            if range_end < range_start:
+                raise ValueError("date_range end before start")
+        except ValueError:
+            raise HTTPException(status_code=422, detail={
+                "status": "error",
+                "code": "invalid_date_range",
+                "message": "date_range must be formatted YYYY-MM-DD/YYYY-MM-DD with end on or after start",
+            })
+
+    try:
+        database_url = os.getenv("DATABASE_URL")
+        if not database_url:
+            raise Exception("DATABASE_URL not configured")
+
+        conn = psycopg2.connect(_clean_db_url(database_url))
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+
+        try:
+            eff_from_start, eff_from_end = _intersect_range(window_from[0], window_from[1], range_start, range_end)
+            eff_to_start, eff_to_end = _intersect_range(window_to[0], window_to[1], range_start, range_end)
+
+            metrics_from = _compute_version_trade_metrics(cursor, eff_from_start, eff_from_end)
+            if metrics_from["trade_count"] < 10:
+                raise HTTPException(status_code=422, detail={
+                    "status": "error",
+                    "code": "insufficient_data",
+                    "message": f"Version '{version_from}' has only {metrics_from['trade_count']} trades — minimum 10 required for reliable comparison",
+                    "version": version_from,
+                    "trade_count": metrics_from["trade_count"],
+                    "min_trades_required": 10,
+                })
+
+            metrics_to = _compute_version_trade_metrics(cursor, eff_to_start, eff_to_end)
+            if metrics_to["trade_count"] < 10:
+                raise HTTPException(status_code=422, detail={
+                    "status": "error",
+                    "code": "insufficient_data",
+                    "message": f"Version '{version_to}' has only {metrics_to['trade_count']} trades — minimum 10 required for reliable comparison",
+                    "version": version_to,
+                    "trade_count": metrics_to["trade_count"],
+                    "min_trades_required": 10,
+                })
+
+            compliance_from = _compute_arc5_composite_for_range(cursor, eff_from_start, eff_from_end)
+            compliance_to = _compute_arc5_composite_for_range(cursor, eff_to_start, eff_to_end)
+        finally:
+            cursor.close()
+            conn.close()
+
+        performance_delta = round(metrics_to["avg_R"] - metrics_from["avg_R"], 4) if (metrics_to["avg_R"] is not None and metrics_from["avg_R"] is not None) else None
+        win_rate_delta = round(metrics_to["win_rate"] - metrics_from["win_rate"], 4) if (metrics_to["win_rate"] is not None and metrics_from["win_rate"] is not None) else None
+        avg_R_delta = performance_delta
+        trade_count_delta = metrics_to["trade_count"] - metrics_from["trade_count"]
+        assessment = "Improved" if (avg_R_delta is not None and avg_R_delta >= 0) else "Degraded"
+
+        return {
+            "version_from": version_from,
+            "version_to": version_to,
+            "date_range": date_range,
+            "version_from_metrics": {
+                "trade_count": metrics_from["trade_count"],
+                "win_rate": metrics_from["win_rate"],
+                "avg_R": metrics_from["avg_R"],
+                "performance_delta": None,
+                "compliance_rate": compliance_from,
+            },
+            "version_to_metrics": {
+                "trade_count": metrics_to["trade_count"],
+                "win_rate": metrics_to["win_rate"],
+                "avg_R": metrics_to["avg_R"],
+                "performance_delta": performance_delta,
+                "compliance_rate": compliance_to,
+            },
+            "comparison_summary": {
+                "win_rate_delta": win_rate_delta,
+                "avg_R_delta": avg_R_delta,
+                "trade_count_delta": trade_count_delta,
+                "assessment": assessment,
+            },
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Strategy version comparison failed: {str(e)}")
