@@ -1,0 +1,110 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Build in-app \"what's new\" panel sourced from changelog.md",
+    "epic": "EPIC-01",
+    "description": "In-app panel surfacing the most recent release's shipped items, sourced from docs/product/changelog.md.",
+    "ac_summary": "Panel shows most recent ### Changes shipped entries; auto-updates on next release; DataState-pattern empty/loading states.",
+    "labels": ["sprint", "EPIC-01", "cycle:2026-07-24__release-v7.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "Send Telegram digest of shipped items on post-ship closure",
+    "epic": "EPIC-02",
+    "description": "Automated Telegram digest summarising the most recent release's shipped items.",
+    "ac_summary": "Digest sent automatically as part of Post-Ship Closure; content matches changelog Changes shipped entries; non-fatal on send failure.",
+    "labels": ["sprint", "EPIC-02", "cycle:2026-07-24__release-v7.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Contrast/focus-state accessibility pass on v7.7 notification UX",
+    "epic": "EPIC-03",
+    "description": "Accessibility pass on the v7.7 notification/digest consolidation and shared standing-alert component.",
+    "ac_summary": "Contrast/focus-state review performed on BLG-FE-114/BLG-FE-120; findings fixed or filed; result recorded in QA evidence.",
+    "labels": ["sprint", "EPIC-03", "cycle:2026-07-24__release-v7.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Consolidated dark-mode contrast audit across shipped pages",
+    "epic": "EPIC-04",
+    "description": "Dark-mode contrast audit across all shipped Base44-generated pages.",
+    "ac_summary": "Audit run across all shipped pages; findings filed as one consolidated batch or fixed if trivial; method/coverage recorded.",
+    "labels": ["sprint", "EPIC-04", "cycle:2026-07-24__release-v7.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Add monthly CSV export option alongside existing tax-year export",
+    "epic": "EPIC-05",
+    "description": "Monthly realized P&L CSV export, reusing existing tax-year export reconciliation logic.",
+    "ac_summary": "Monthly export available; figures reconcile against tax-year export for same period; follows existing export-control UI patterns.",
+    "labels": ["sprint", "EPIC-05", "cycle:2026-07-24__release-v7.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Add per-cycle AI spend trend chart to AI Usage & Costs view",
+    "epic": "EPIC-06",
+    "description": "Trend chart extending the existing AI Usage & Costs settings view with per-release-cycle spend.",
+    "ac_summary": "Trend chart shows last 6 release cycles' spend; sourced from existing gemini_audit_log/Claude cost tracking; existing chart styling.",
+    "labels": ["sprint", "EPIC-06", "cycle:2026-07-24__release-v7.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Define rotation-and-audit schedule for all external API keys",
+    "epic": "EPIC-07",
+    "description": "Rotation-and-audit cadence covering Yahoo Finance, Alpaca, Gemini, Claude, and Telegram keys.",
+    "ac_summary": "Schedule documented for all 5 key types; first rotation date set per key; Cybersecurity & Trust Lead sign-off.",
+    "labels": ["sprint", "EPIC-07", "cycle:2026-07-24__release-v7.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "Identify and remediate endpoints with no documented rate limit",
+    "epic": "EPIC-08",
+    "description": "Rate-limiting review prioritising endpoints with zero documented limit.",
+    "ac_summary": "List of undocumented-limit endpoints produced; each remediated or explicitly accepted-risk categorised; sign-off recorded.",
+    "labels": ["sprint", "EPIC-08", "cycle:2026-07-24__release-v7.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-09",
+    "title": "Extract shared retry/backoff decorator and migrate highest-traffic call site",
+    "epic": "EPIC-09",
+    "description": "Shared retry/backoff decorator for external data calls (Yahoo Finance, Alpaca), replacing per-call-site duplication.",
+    "ac_summary": "Shared helper added with unit tests; highest-traffic call site migrated as proof of pattern; no full retrofit required.",
+    "labels": ["sprint", "EPIC-09", "cycle:2026-07-24__release-v7.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-10",
+    "title": "Define and apply flaky-test quarantine mechanism",
+    "epic": "EPIC-10",
+    "description": "Quarantine process for intermittently-failing Playwright tests.",
+    "ac_summary": "Quarantine tag/process defined and documented; applied to any currently-known flaky test; Director of Quality sign-off.",
+    "labels": ["sprint", "EPIC-10", "cycle:2026-07-24__release-v7.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-11",
+    "title": "Add pilot contract tests for 3 highest-traffic endpoints",
+    "epic": "EPIC-11",
+    "description": "Lightweight contract-testing pilot between frontend and backend for the 3 highest-traffic endpoints.",
+    "ac_summary": "Contract tests added and passing in CI for 3 pilot endpoints (positions/trades/dashboard, pending Head of Engineering confirmation); extension approach documented.",
+    "labels": ["sprint", "EPIC-11", "cycle:2026-07-24__release-v7.8"],
+    "assignee": null
+  },
+  {
+    "id": "ST-12",
+    "title": "Add CI lint step for API contract heading-level compliance",
+    "epic": "EPIC-12",
+    "description": "CI lint step scanning docs/specs/api_contracts/*.md for ## METHOD /path heading-level compliance ahead of the OpenAPI Drift Detection gate.",
+    "ac_summary": "Lint step added to CI; confirmed to catch a deliberately-miscoded test heading; runs ahead of/alongside drift-detection gate.",
+    "labels": ["sprint", "EPIC-12", "cycle:2026-07-24__release-v7.8"],
+    "assignee": null
+  }
+]

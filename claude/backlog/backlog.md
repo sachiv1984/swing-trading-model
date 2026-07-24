@@ -6353,3 +6353,26 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 
 ---
 
+
+## Release Slice — v7.8
+
+<!-- release-plan-marker: RP:v7.8:2026-07-24__release-v7.8 -->
+
+*Ephemeral section added by the Release Planning Engine (`2026-07-24__release-v7.8`). Canonical home: `claude/cycles/2026-07-24__release-v7.8/stage4_backlog_slice.md`. Removed at backlog grooming once v7.8 ships (per `backlog_management_prompt.md` §Completed Release Slice sections).*
+
+| ST | Backlog item | EPIC | Priority | Effort |
+|----|---------------|------|----------|--------|
+| ST-01 | BLG-FE-128 — In-app "what's new" panel for most recent release | EPIC-01 | P2 | M |
+| ST-02 | BLG-FEAT-84 — Automated Telegram changelog digest after each release | EPIC-02 | P2 | S |
+| ST-03 | BLG-FE-127 — Accessibility pass on v7.7 notification UX components | EPIC-03 | P2 | S |
+| ST-04 | BLG-FE-125 — Dark-mode contrast audit across Base44-generated pages | EPIC-04 | P2 | M |
+| ST-05 | BLG-FEAT-81 — Monthly realized P&L CSV export | EPIC-05 | P2 | S |
+| ST-06 | BLG-FEAT-82 — AI usage spend trend dashboard (Gemini/Claude, per release cycle) | EPIC-06 | P2 | M |
+| ST-07 | BLG-SEC-20 — Scheduled rotation-and-audit cadence for third-party API keys | EPIC-07 | P2 | S |
+| ST-08 | BLG-SEC-21 — Rate-limiting review of public-facing endpoints | EPIC-08 | P2 | M |
+| ST-09 | BLG-BE-71 — Shared retry/backoff decorator for external data calls | EPIC-09 | P2 | M |
+| ST-10 | BLG-QA-117 — Flaky-test quarantine process for the Playwright suite | EPIC-10 | P2 | M |
+| ST-11 | BLG-QA-119 — Contract tests for highest-traffic frontend/backend endpoints | EPIC-11 | P2 | M |
+| ST-12 | BLG-OPS-117 — Automated lint check for API contract `##` heading level | EPIC-12 | P2 | S |
+
+Full acceptance criteria: `claude/cycles/2026-07-24__release-v7.8/stage4_backlog_slice.md`.

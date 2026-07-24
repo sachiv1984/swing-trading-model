@@ -11,7 +11,17 @@
 ## 1. Current Version
 
 **v7.7** — Strategy Intelligence Surfacing & Notification UX — ✅ Complete — Shipped 2026-07-24 — cycle: 2026-07-21__release-v7.7
-**Next planned release:** [TBD]
+**Next planned release:** v7.8 — Release Visibility & Engineering Hardening
+
+<!-- roadmap-annotation-marker: RA:v7.8:2026-07-24__release-v7.8 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-24__release-v7.8
+- Plan published: 2026-07-24
+- Cycle folder: claude/cycles/2026-07-24__release-v7.8/
+- Backlog slice: claude/cycles/2026-07-24__release-v7.8/stage4_backlog_slice.md
+- Status at annotation: Committed
+- No formal `## v7.8` roadmap section created (Release Planning may not alter roadmap scope) — scoped via STEP 8.1 Option (b) decision from `2026-07-24__scheduled` (backlog-driven, 12 ungated items from `IW-20260724-01`); `BLG-FEAT-73`/`BLG-FEAT-74` explicitly removed from the un-versioned Now-horizon carry-forward per PO disposition (perennial-return, see `decisions--2026-07-24__release-v7.8.md`) — `manage roadmap` to action the §3 removal next run.
 
 *RA:v7.0 retired — see roadmap_archive.md 2026-07-13 (post-ship closure 2026-07-12__release-v7.0).*
 
