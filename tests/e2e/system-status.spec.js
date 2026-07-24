@@ -170,13 +170,12 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     await expect(page.getByRole('button', { name: /run tests/i })).toBeVisible({ timeout: 8000 });
   });
 
-  test('SC-SS-01b: Pre-run state shows "103 endpoints" placeholder', async ({ page }) => {
-    // Before running tests, the page shows: "Tests 103 endpoints"
-    // (totalTests || '103' → '103' before any test run; corrected to match backend/routers/test.py
-    // test_cases count of 103 after v7.6 EPIC-07 ST-07 added GET /ai/monthly-cost (BLG-FEAT-77).
-    // Prior count of 102 was set at v7.5 EPIC-02 ST-02 (price-alerts), EPIC-03 ST-03
-    // (bulk-actions-toolbar), and EPIC-04 ST-04 (saved-filters/daily-pnl).
-    await expect(page.getByText(/tests 103 endpoints/i)).toBeVisible({ timeout: 8000 });
+  test('SC-SS-01b: Pre-run state shows "104 endpoints" placeholder', async ({ page }) => {
+    // Before running tests, the page shows: "Tests 104 endpoints"
+    // (totalTests || '104' → '104' before any test run; corrected to match backend/routers/test.py
+    // test_cases count of 104 after v7.7 EPIC-01 ST-01 added GET /analytics/strategy-version-comparison
+    // (BLG-FEAT-75). Prior count of 103 was set at v7.6 EPIC-07 ST-07 (GET /ai/monthly-cost).
+    await expect(page.getByText(/tests 104 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-01c: Pre-run state shows prompt to click Run Tests', async ({ page }) => {
