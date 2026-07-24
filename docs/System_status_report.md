@@ -1,9 +1,42 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.12
-**Last Updated:** 2026-07-20
+**Version:** 4.13
+**Last Updated:** 2026-07-24
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-07-21__release-v7.7
+**Date:** 2026-07-24
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | SI-04 strategy-version performance comparison view — compares strategy performance across `strategy_rules.md` version boundaries via date-range attribution (`backend/strategy_version_registry.py`, no migration needed) (BLG-FEAT-75) | `docs/specs/frontend/pages/strategy_benchmark.md`; `docs/specs/api_contracts/strategy_version_comparison_contract.md` | None |
+| EPIC-02 | Nav duplication removed; Weekly Digest grouped with Notifications; `GET /notifications` gains `since_days`/`read` params for digest deep-links (BLG-FE-114) | `docs/specs/frontend/pages/navigation.md`; `docs/specs/frontend/pages/notifications.md`; `docs/specs/frontend/pages/weekly_digest.md`; `docs/specs/api_contracts/alerts_endpoints.md` | None |
+| EPIC-03 | AiDailyBriefing light-theme contrast defect fixed (dark card on white page) via established light/dark token pairs (BLG-FE-113) | `docs/specs/frontend/pages/dashboard.md` | None |
+| EPIC-04 | Shared `StandingAlert`/`StandingAlertStack` component — persistent, manually-dismissed alert distinct from auto-dismissing toast; documented, not yet wired to a live surface this cycle (BLG-FE-120) | `docs/specs/frontend/design_system.md` | None |
+| EPIC-05 | SI-02 gate-acceleration nudge feasibility investigation — root-caused zero gate movement to discoverability, not a defect; recommendation scoped for a future sprint (no implementation this cycle) | `docs/product/decisions/si02-nudge-feasibility-assessment.md` | None |
+| EPIC-06 | `daily-snapshot.yml` business curl calls gain `--fail`/`--show-error` response validation (3 endpoints); health-check ping correctly kept non-fatal | `.github/workflows/daily-snapshot.yml` | None |
+| EPIC-07 | Retroactive §13 compliance review of shipped PT-04 (Setup Quality Score) — PASS, deterministic/read-only/no write path, first standalone review record for this feature | `docs/product/decisions/decisions--2026-07-21__release-v7.7--PT-04-section13-review.md` | None |
+| EPIC-08 | Automated regression test for numpy-scalar handling in `generate_rebalance_exit_signals` (prevents recurrence of the PR #971 defect class) | `tests/test_rebalance_exit_signal_numpy_regression.py` | None |
+| EPIC-09 | Nightly backtest job double-run/retry safety audit — confirmed already retry-safe (full delete-then-reinsert atomic transaction); added a CI concurrency guard as defense-in-depth | `docs/product/decisions/decisions--2026-07-21__release-v7.7--nightly-backtest-idempotency-audit.md`; `.github/workflows/backtest.yml` | None |
+| EPIC-10 | Monitoring/alerting for nightly backtest failures or drift anomalies — Telegram alert distinguishing hard failure from detected anomaly, degrades gracefully pending secrets configuration | `.github/workflows/backtest.yml` | None — BLG-OPS-115 filed for repo-secrets follow-up |
+| EPIC-11 | CI gate enforcing SystemStatus.js's endpoint-count fallback stays in sync with `backend/routers/test.py`'s AST-parsed `test_cases` count — corrected a live drift found while building the gate (fallback settled at 99 after reconciling with EPIC-01's concurrent endpoint addition) | `.github/workflows/quality_gate.yml` | None |
+
+### Capabilities deferred or returned
+
+None — all 11 stories (ST-01 through ST-11) delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: qa_evidence_EPIC-01.md through qa_evidence_EPIC-11.md (all 11 present, all DoQ sign-off blocks non-blank)
+- Deviations filed: None
+- Follow-up backlog items filed this sprint (not deviations): BLG-OPS-115 (EPIC-10, Telegram repo-secrets configuration)
+- Test scenarios referenced: tests/e2e/si04-version-comparison.spec.js; tests/test_strategy_version_registry.py; tests/e2e/nav-notification-digest-consolidation.spec.js; tests/e2e/alert-nav-badge.spec.js; tests/e2e/sidebar-nav-groups.spec.js; tests/test_api_contracts.py; tests/e2e/standing-alert.spec.js; tests/test_rebalance_exit_signal_numpy_regression.py; tests/e2e/system-status.spec.js
 
 ---
 
