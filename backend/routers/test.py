@@ -117,6 +117,9 @@ async def test_all_endpoints(request: Request):
         # Arc 5 Compliance Metrics (v4.0 / ST-01)
         {"name": "GET /analytics/arc5-compliance", "method": "GET", "url": f"{base_url}/analytics/arc5-compliance", "critical": False},
 
+        # SI-04 Strategy Version Comparison (v7.7 / EPIC-01 ST-01, BLG-FEAT-75)
+        {"name": "GET /analytics/strategy-version-comparison", "method": "GET", "url": f"{base_url}/analytics/strategy-version-comparison?version_from=1.0&version_to=1.4", "critical": False},
+
         # Trade Plan Tag Performance (v6.8 / ST-05, BLG-FEAT-52)
         {"name": "GET /analytics/tag-performance", "method": "GET", "url": f"{base_url}/analytics/tag-performance?tags=momentum", "critical": False},
 

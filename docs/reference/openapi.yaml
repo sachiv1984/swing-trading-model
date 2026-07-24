@@ -5666,14 +5666,16 @@ components:
   /analytics/strategy-version-comparison:
     get:
       tags: [Analytics]
-      summary: "[PLACEHOLDER — SI-04] Get strategy version performance comparison"
+      summary: Get strategy version performance comparison
       description: |
-        PRE-SPRINT PLACEHOLDER — implementation pending SI-04 sprint.
         Compares trade performance metrics across two strategy version labels.
         Requires: version_from, version_to query params; optional date_range filter.
-        Returns: trade_count, win_rate, avg_R, performance_delta per version plus comparison_summary.
+        Returns: trade_count, win_rate, avg_R, compliance_rate, performance_delta per
+        version plus comparison_summary. Trades are attributed to a version by
+        entry_date within that version's date window (see backend/strategy_version_registry.py),
+        not a stored per-trade column.
         §13 binding conditions: 6 conditions cleared v4.7 (read-only, closed trades, no execution feedback).
-        Canonical contract: docs/specs/api_contracts/strategy_version_comparison_contract.md v0.1.0
+        Canonical contract: docs/specs/api_contracts/strategy_version_comparison_contract.md v0.2.0
       parameters:
         - name: version_from
           in: query
@@ -5711,6 +5713,7 @@ components:
                       win_rate: { type: number }
                       avg_R: { type: number }
                       performance_delta: { type: number, nullable: true }
+                      compliance_rate: { type: number, nullable: true }
                   version_to_metrics:
                     type: object
                     properties:
@@ -5718,6 +5721,7 @@ components:
                       win_rate: { type: number }
                       avg_R: { type: number }
                       performance_delta: { type: number }
+                      compliance_rate: { type: number, nullable: true }
                   comparison_summary:
                     type: object
                     properties:
@@ -5736,6 +5740,16 @@ components:
                   code: { type: string, example: version_not_found }
                   message: { type: string }
                   missing_version: { type: string }
+        "400":
+          description: version_to is not chronologically after version_from
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: error }
+                  code: { type: string, example: version_order_error }
+                  message: { type: string }
         "422":
           description: Insufficient data or invalid parameters
           content:
@@ -5744,8 +5758,10 @@ components:
                 type: object
                 properties:
                   status: { type: string, example: error }
-                  code: { type: string, enum: [insufficient_data, invalid_date_range, version_order_error] }
+                  code: { type: string, enum: [insufficient_data, invalid_date_range] }
                   message: { type: string }
+        "500":
+          $ref: "#/components/responses/InternalError"
 
   /strategy/benchmark/import:
     post:
