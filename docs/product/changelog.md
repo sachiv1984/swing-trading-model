@@ -3,9 +3,50 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-20 (post-ship closure 2026-07-20__release-v7.6)
+**Last Updated:** 2026-07-24 (post-ship closure 2026-07-21__release-v7.7)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v7.7 — Strategy Intelligence Surfacing & Notification UX — 2026-07-24
+Cycle: 2026-07-21__release-v7.7
+Verified: Verified
+Verification report: claude/cycles/2026-07-21__release-v7.7/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | SI-04 strategy-version performance comparison view — win rate/average R/compliance rate before vs. after a `strategy_rules.md` version change, date-range attribution via the spec's own Change Log | `docs/specs/frontend/pages/strategy_benchmark.md`; `docs/design/2026-07-21__release-v7.7/si04-strategy-version-comparison/ux_spec.md`; `docs/specs/api_contracts/strategy_version_comparison_contract.md` |
+| EPIC-02 | Remove nav duplication and unify digest/notification concepts — dedup nav entries, Weekly Digest grouping, alert-count deep-links to the alert feed | `docs/specs/frontend/pages/navigation.md`; `docs/specs/frontend/pages/notifications.md`; `docs/specs/frontend/pages/weekly_digest.md`; `docs/specs/api_contracts/alerts_endpoints.md` |
+| EPIC-03 | Staging check and fix AiDailyBriefing light-theme contrast — light-mode class pairs added, re-verified in both themes | `docs/specs/frontend/pages/dashboard.md`; `docs/design/2026-07-21__release-v7.7/ai-daily-briefing-light-theme/ux_spec.md` |
+| EPIC-04 | Shared "standing alert" component distinct from transient toast — enabler for alert-style UI across the app | `docs/design/2026-07-21__release-v7.7/standing-alert-component/ux_spec.md`; `docs/specs/frontend/design_system.md` |
+| EPIC-05 | SI-02 nudge feasibility investigation — reviewed whether an in-app nudge would accelerate the SI-02 trade-count gate; recommendation-only, no shipped UI | `docs/product/decisions/si02-nudge-feasibility-assessment.md` |
+| EPIC-06 | Response validation added to `daily-snapshot.yml` curl calls — `--fail`/`--show-error` scoped to the 3 business curl calls | `.github/workflows/daily-snapshot.yml` |
+| EPIC-07 | Retroactive §13 determinism/automation compliance review against shipped PT-04 (Setup Quality Score) — PASS, deterministic/read-only/display-only confirmed | `docs/product/decisions/decisions--2026-07-21__release-v7.7--PT-04-section13-review.md`; `docs/specs/api_contracts/trade_plan_endpoints.md`; `claude/strategy/strategy_rules.md` |
+| EPIC-08 | Automated regression test for numpy-scalar handling in `create_rebalance_exit_signal` — falsifiability independently confirmed; cross-file pytest test-isolation bug found and fixed during implementation | `tests/test_rebalance_exit_signal_numpy_regression.py` |
+| EPIC-09 | Nightly backtest job double-run/retry idempotency audit — no correctness gap found (full-replace transaction already retry-safe); concurrency guard added to `backtest.yml` as defense-in-depth | `docs/product/decisions/decisions--2026-07-21__release-v7.7--nightly-backtest-idempotency-audit.md`; `.github/workflows/backtest.yml`; `backend/database.py` |
+| EPIC-10 | Monitoring/alerting for nightly backtest failures or anomalies — Telegram alert step with graceful degradation pending repo-secrets configuration | `.github/workflows/backtest.yml` |
+| EPIC-11 | CI lint gate comparing router-decorator count against the `SystemStatus.js` fallback — corrected a pre-existing drift (fallback 103 → AST-verified 99 post-merge) | `.github/workflows/quality_gate.yml` |
+
+### Deviations accepted
+None. Every `done` ST item's deviation check found no divergence between implementation and canonical spec (see `sprint_close.md` "Deviations Filed This Sprint").
+
+### Tech backlog items shipped
+- [ST-01] [U] BLG-FEAT-75: SI-04 strategy-version performance comparison view
+- [ST-02] [U] BLG-FE-114: Consolidate notification/digest surfaces
+- [ST-03] [U] BLG-FE-113: Confirm/fix AiDailyBriefing light-theme rendering
+- [ST-04] [U] BLG-FE-120: Shared toast/notification primitive for alert-style UI
+- [ST-05] [P] BLG-FEAT-80: Investigate a UX nudge to accelerate the SI-02 trade-count gate
+- [ST-06] [D] BLG-OPS-108: Add response validation to daily-snapshot.yml curl calls
+- [ST-07] [D] BLG-GOV-28: PT-04 §13 compliance review (retroactive)
+- [ST-08] [D] BLG-QA-104: numpy-scalar regression coverage for create_rebalance_exit_signal
+- [ST-09] [D] BLG-BE-63: Nightly backtest job idempotency check
+- [ST-10] [D] BLG-OPS-110: Nightly backtest job monitoring/alerting
+- [ST-11] [D] BLG-QA-102: Automate endpoint-count drift check (CLAUDE.md §2)
+
+Sign-off: Product Owner — 2026-07-24
+QA sign-off: Director of Quality — 2026-07-24
 
 ---
 

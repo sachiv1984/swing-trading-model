@@ -1,13 +1,52 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-20 (post-ship closure 2026-07-20__release-v7.6 — RA:v7.6 retired, full: 8/8 items shipped; §3 Now horizon empty following retirement); prior — 2026-07-20 (post-ship closure 2026-07-17__release-v7.5 — RA:v7.5 retired, full: 4/4 items shipped as implementations, first full (non-partial) retirement of this Now-horizon lineage since RA:v7.1; §3 Now horizon empty following retirement); prior — 2026-07-17 (post-ship closure 2026-07-17__release-v7.4 — RA:v7.4 retired, partial: 1/1 amended-scope item; 4 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-16 (post-ship closure 2026-07-16__release-v7.3 — RA:v7.3 retired, partial: 3/7 items; 4 unblocked readiness-passed items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — RA:v7.2 retired, partial: 5/8 items; 3 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-14 (post-ship closure 2026-07-14__release-v7.1 — RA:v7.1 retired)
+**Last Updated:** 2026-07-24 (post-ship closure 2026-07-21__release-v7.7 — RA:v7.7 retired, partial: 5/7 items shipped; 2 unblocked-but-still-gated items (`BLG-FEAT-73`, `BLG-FEAT-74`) re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-20 (post-ship closure 2026-07-20__release-v7.6 — RA:v7.6 retired, full: 8/8 items shipped; §3 Now horizon empty following retirement); prior — 2026-07-20 (post-ship closure 2026-07-17__release-v7.5 — RA:v7.5 retired, full: 4/4 items shipped as implementations, first full (non-partial) retirement of this Now-horizon lineage since RA:v7.1; §3 Now horizon empty following retirement); prior — 2026-07-17 (post-ship closure 2026-07-17__release-v7.4 — RA:v7.4 retired, partial: 1/1 amended-scope item; 4 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-16 (post-ship closure 2026-07-16__release-v7.3 — RA:v7.3 retired, partial: 3/7 items; 4 unblocked readiness-passed items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — RA:v7.2 retired, partial: 5/8 items; 3 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-14 (post-ship closure 2026-07-14__release-v7.1 — RA:v7.1 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:v7.7 — Strategy Intelligence Surfacing & Notification UX (partial — 5/7 named anchor items shipped; 2 remain gated and are carried forward, not retired)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** ✅ Complete (for the 5 items shipped this cycle — `BLG-FEAT-75`, `BLG-FE-114`, `BLG-FE-113`, `BLG-FE-120`, `BLG-FEAT-80`)
+**Retired from active roadmap:** 2026-07-24
+**Shipped version:** v7.7
+**Cycle reference:** 2026-07-21__release-v7.7
+**Verification report:** claude/cycles/2026-07-21__release-v7.7/verification_report.md
+**Decision log reference:** DL-074 (roadmap formalization); `decisions--2026-07-21__release-v7.7.md` (scope exclusion rationale for BLG-FEAT-73/74)
+**Retirement confirmed by:** PMO Lead — manage roadmap STEP 11, post-ship closure 2026-07-24
+
+**Note on partial retirement:** 2 of the 7 items named as v7.7 anchor scope (`BLG-FEAT-73` — SI-02 frontend build, `BLG-FEAT-74` — PO-05 Lightweight Replay Mode) were excluded from this cycle's firm scope at release planning time: `BLG-FEAT-73` remains blocked by the `BLG-GOV-107` SI-02 gate (NOT MET, 9th consecutive identical reading as of 2026-07-21); `BLG-FEAT-74` lacks a §13 determinism pre-clearance review on record. Neither is stale — both were freshly re-evaluated this cycle (see `decisions--2026-07-21__release-v7.7.md`). Rather than retiring them into this historical record as if excluded permanently, they have been re-added to `current_roadmap.md §3` as a fresh, un-versioned Now-horizon carry-forward entry, ready for a future `plan release` once their respective gates clear. This archive entry preserves the full 7-item section verbatim as the historical record of what this cycle's Now-horizon anchor contained and what it delivered. This is the same structural pattern as `RA:v7.2`, `RA:v7.3`, and `RA:v7.4` (BLG-GOV-240 precedent).
+
+### Original Roadmap Entry
+
+### v7.7 — Strategy Intelligence Surfacing & Notification UX
+
+Anchored 2026-07-21 — formalizes a `plan release --version "v7.7"`-style scope-naming step out-of-band, per the established direct-write pattern (see `decision_log.md` DL-068, DL-071, DL-072, DL-073). Now horizon was empty pre-write (RA:v7.6 retired in full 2026-07-20, 8/8 items shipped, no carry-forward). A fully compliant `run roadmap --reason "scheduled"` path exists and was recommended first — bypassed by explicit PO/session direction.
+
+| Feature | ID | Priority | Effort | Notes |
+|---|---|---|---|---|
+| SI-02 Behavioural Drift Detection — frontend build | BLG-FEAT-73 | P1 | M (~2 days) | Not shipped — `BLG-GOV-107` gate remains NOT MET (9th consecutive identical reading, 2026-07-21); carried forward, not retired |
+| SI-04 Strategy Version Comparison | BLG-FEAT-75 | P2 | H (>5 days) | ✅ Complete — shipped v7.7, EPIC-01/ST-01, cycle 2026-07-21__release-v7.7 |
+| PO-05 Lightweight Replay Mode | BLG-FEAT-74 | P2 | VH (>2 weeks) | Not shipped — §13 determinism pre-clearance review still not on record; carried forward, not retired |
+| Consolidate notification/digest surfaces | BLG-FE-114 | P2 | M (~1–2 days) | ✅ Complete — shipped v7.7, EPIC-02/ST-02, cycle 2026-07-21__release-v7.7 |
+| Confirm AiDailyBriefing light-theme rendering | BLG-FE-113 | P2 | XS–S | ✅ Complete — shipped v7.7, EPIC-03/ST-03, cycle 2026-07-21__release-v7.7 |
+| Shared toast/notification primitive for alert-style UI | BLG-FE-120 | P2 | M | ✅ Complete — shipped v7.7, EPIC-04/ST-04, cycle 2026-07-21__release-v7.7 |
+| Investigate a UX nudge to accelerate the SI-02 trade-count gate | BLG-FEAT-80 | P2 | M | ✅ Complete — shipped v7.7, EPIC-05/ST-05, cycle 2026-07-21__release-v7.7 |
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-21__release-v7.7
+- Plan published: 2026-07-21
+- Cycle folder: claude/cycles/2026-07-21__release-v7.7/
+- Backlog slice: claude/cycles/2026-07-21__release-v7.7/stage4_backlog_slice.md
+- Status at annotation: Committed
+- Firm scope: 11 items (BLG-FEAT-75, BLG-FE-114, BLG-FE-113, BLG-FE-120, BLG-FEAT-80 + 6 capacity-fill items: BLG-OPS-108, BLG-GOV-28, BLG-QA-104, BLG-BE-63, BLG-OPS-110, BLG-QA-102). BLG-FEAT-73/BLG-FEAT-74 excluded this cycle (gate NOT MET / no §13 review — see decisions record).
 
 ---
 

@@ -1,13 +1,276 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-20 (groom backlog post-ship closure 2026-07-20__release-v7.6 — 8 items archived: BLG-FE-119, BLG-QA-112, BLG-FEAT-79, BLG-BE-65, BLG-QA-114, BLG-BE-62, BLG-FEAT-77, BLG-QA-69; ephemeral Release Slice v7.6 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
+**Last Updated:** 2026-07-24 (groom backlog post-ship closure 2026-07-21__release-v7.7 — 11 items archived: BLG-FEAT-75, BLG-FE-114, BLG-FE-113, BLG-FE-120, BLG-FEAT-80, BLG-OPS-108, BLG-GOV-28, BLG-QA-104, BLG-BE-63, BLG-OPS-110, BLG-QA-102; ephemeral Release Slice v7.7 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-20__release-v7.6 — 8 items archived: BLG-FE-119, BLG-QA-112, BLG-FEAT-79, BLG-BE-65, BLG-QA-114, BLG-BE-62, BLG-FEAT-77, BLG-QA-69; ephemeral Release Slice v7.6 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
 
 ---
+
+### BLG-FEAT-75 — SI-04 Strategy Version Comparison
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-24
+**Shipped in:** v7.7
+**Evidence:** claude/cycles/2026-07-21__release-v7.7/verification_report.md (EPIC-01/ST-01); docs/product/changelog.md#v7-7-strategy-intelligence-surfacing-notification-ux-2026-07-24
+
+### BLG-FEAT-75 — SI-04 Strategy Version Comparison
+**Priority:** P2 (Medium)
+**Type:** Product Feature / Backend + Frontend, gate-conditional
+**Owner:** Head of Engineering; Head of UX & Design
+**Source:** Feature-gap review (current_roadmap.md Arc 5 status table — prep-only, no primary build item existed) — 2026-07-10
+**Effort:** H (>5 days)
+**Provisional-Target:** v7.7 — named as v7.7 anchor scope 2026-07-21 (DL-074); no blocking gate, ready
+**Depends on:** none blocking; BLG-BE-30 (schema pre-design), BLG-QA-44 (test planning), BLG-GOV-91 (security review), BLG-FE-59 (shared extension spec) currently list SI-04 sprint planning as their own trigger — this item is that trigger
+
+**Problem**
+No primary "build" backlog item existed for SI-04 — only pre-work items reference it as a future dependency. The data foundation (version-tagged trade history, available since Arc 2) already exists and is unused for this purpose, so the feature is buildable but was simply never filed.
+
+**Scope**
+- Compare trading performance across different `strategy_rules.md` versions — win rate, average R, compliance rate before/after a rule change
+- Surface as a new panel in the Arc 5 compliance UI (via BLG-FE-59's shared extension point) and/or a dedicated comparison view
+- Confirm with Product Owner whether a trade-volume gate is warranted (unlike SI-02, no such gate is currently stated in the roadmap for SI-04, since it compares across versions rather than needing an absolute trade count)
+
+**Acceptance Criteria**
+- User can select two `strategy_rules.md` versions and see a side-by-side performance comparison for trades executed under each
+- Comparison includes at minimum win rate, average R, and compliance rate per version
+
+---
+
+### BLG-FEAT-80 — Investigate a UX nudge to accelerate the SI-02 trade-count gate
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-24
+**Shipped in:** v7.7
+**Evidence:** claude/cycles/2026-07-21__release-v7.7/verification_report.md (EPIC-05/ST-05); docs/product/changelog.md#v7-7-strategy-intelligence-surfacing-notification-ux-2026-07-24
+
+### BLG-FEAT-80 — Investigate a UX nudge to accelerate the SI-02 trade-count gate
+**Priority:** P2 (Medium) | **Type:** Product Feature / Growth | **Owner:** Product Owner | **Source:** IDEA-product-owner-20260717-02 | **Effort:** M | **Provisional-Target:** v7.7 — named as v7.7 anchor scope 2026-07-21 (DL-074); gate condition (BLG-FE-109 in production for a full sprint cycle) satisfied by elapsed time
+**Problem:** SI-02's linked-trade-plan condition has read 0/11 for 6 consecutive live re-checks (2026-07-12 through 2026-07-17) despite `BLG-BE-46`'s forward-fix and `BLG-FE-109`'s "Start Trade from Plan" UX (shipped v7.3) — the gate cannot clear until new trades are actually opened and closed via the linked flow, which is a matter of live usage, not code.
+**Scope:** Once `BLG-FE-109` has been in production for a full sprint cycle, review whether a lightweight in-app nudge (e.g. a dashboard prompt encouraging plan-linked trade entry) would meaningfully accelerate gate clearance, or whether this is purely a function of elapsed trading time.
+**Acceptance Criteria:** Review completed after one full cycle of `BLG-FE-109` production usage; recommendation recorded (nudge feature proposed, or explicit "no action — time-gated only" conclusion).
+
+---
+
+### BLG-FE-113 — Confirm AiDailyBriefing light-theme rendering (bare dark-only token review)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-24
+**Shipped in:** v7.7
+**Evidence:** claude/cycles/2026-07-21__release-v7.7/verification_report.md (EPIC-03/ST-03); docs/product/changelog.md#v7-7-strategy-intelligence-surfacing-notification-ux-2026-07-24
+
+### BLG-FE-113 — Confirm AiDailyBriefing light-theme rendering (bare dark-only token review)
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** Design gate follow-up — `claude/cycles/2026-07-15__release-v7.2/design_gate.md` Notes; `docs/design/2026-07-15__release-v7.2/dashboard-briefing-hierarchy/ux_spec.md` §2.3 — 2026-07-15
+**Effort:** XS (<1h) staging check; S (~0.5d) if a fix is needed
+**Provisional-Target:** v7.7 — named as v7.7 anchor scope 2026-07-21 (DL-074); no gate. (Stale target: `v7.3` shipped 2026-07-16 without this item, never named in anchor scope — resolved here.)
+
+**Problem**
+`AiDailyBriefing.js` and its nested `Section` component use bare, non-`dark:`-paired Tailwind classes (`bg-slate-900`, `border-slate-700`) rather than explicit light/dark class pairs. This is the same defect class as three prior shipped light-theme contrast bugs (BLG-FE-87/88/95). Flagged during the v7.2 design gate (ST-06, BLG-FE-111) but not fixed there — out of scope for that story, which only added a header icon.
+
+**Scope**
+- Staging check: load the Dashboard AI Daily Briefing card in light theme and confirm whether `bg-slate-900`/`border-slate-700` render as an unintended dark box against the light page
+- If confirmed broken: add explicit light-mode class pairs (e.g. `bg-white dark:bg-slate-900`, `border-slate-200 dark:border-slate-700`) consistent with the secondary-text-contrast token convention (`design_system.md`)
+
+**Acceptance Criteria**
+- Staging check performed and result recorded (pass/fail)
+- If fail: light-theme fix shipped and verified in both themes
+- If pass: item closed with staging evidence, no code change needed
+
+---
+
+### BLG-FE-114 — Consolidate notification/digest surfaces (nav duplication + digest concept overlap)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-24
+**Shipped in:** v7.7
+**Evidence:** claude/cycles/2026-07-21__release-v7.7/verification_report.md (EPIC-02/ST-02); docs/product/changelog.md#v7-7-strategy-intelligence-surfacing-notification-ux-2026-07-24
+
+### BLG-FE-114 — Consolidate notification/digest surfaces (nav duplication + digest concept overlap)
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design; Frontend Specs & UX Documentation Owner
+**Source:** `docs/specs/frontend/notification_surface_consolidation_review_v7.2.md` (ST-07, EPIC-04, v7.2 notification surface consolidation audit, PR #991) — 2026-07-15
+**Effort:** M (~1–2 days)
+**Provisional-Target:** v7.7 — named as v7.7 anchor scope 2026-07-21 (DL-074); no gate. (Stale target: `v7.3` shipped 2026-07-16 without this item, never named in anchor scope — resolved here.)
+**Depends on:** BLG-FE-112 (Notification/digest surface consolidation review — audit this item's recommendation is based on)
+
+**Problem**
+The `ST-07` consolidation audit found four concrete redundancies across the notification/digest surfaces: (1) duplicate sidebar nav entries ("Alerts" in Tools, "Notifications" in System) both routing to `/notifications` with no indication they're the same destination; (2) "Weekly Digest" sits in the disconnected "Analytics" nav group despite being conceptually related to Alerts/Notifications; (3) `WeeklyDigest.js` surfaces `alerts_fired_7d`/`alerts_dismissed_7d` aggregate counts with no link back to the actual alert feed/history; (4) two independent "digest" concepts exist with no shared design language — `NotificationPreferences.js`'s "Daily Portfolio Summary" (an individual feed notification) vs `WeeklyDigest.js` (a separate dedicated page/endpoint, not configurable via preferences at all).
+
+**Scope**
+- Remove one of the two duplicate nav entries (keep the badged "Alerts" entry, or merge into one entry carrying the badge regardless of nav group)
+- Move "Weekly Digest" into the same nav group/tab bar as Alerts/Notifications
+- Add a cross-link from `WeeklyDigest.js`'s alert-count rows to the filtered notification history for that period
+- Unify or clearly differentiate the "Daily Portfolio Summary" notification-preference concept and the "Weekly Digest" page concept
+
+**Acceptance Criteria**
+- No two nav entries route to the same page without visual indication they're the same
+- Weekly Digest is discoverable from the same nav grouping/tab bar as Alerts/Notifications
+- Weekly Digest's alert-count values link to the corresponding filtered notification history view
+- The relationship (or distinction) between "Daily Portfolio Summary" and "Weekly Digest" is unambiguous to a user configuring notification preferences
+
+---
+
+### BLG-FE-120 — Shared toast/notification primitive for alert-style UI
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-24
+**Shipped in:** v7.7
+**Evidence:** claude/cycles/2026-07-21__release-v7.7/verification_report.md (EPIC-04/ST-04); docs/product/changelog.md#v7-7-strategy-intelligence-surfacing-notification-ux-2026-07-24
+
+### BLG-FE-120 — Shared toast/notification primitive for alert-style UI
+**Priority:** P2 (Medium) | **Type:** Frontend / UX Infrastructure | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260717-02 | **Effort:** M | **Provisional-Target:** v7.7 — named as v7.7 anchor scope 2026-07-21 (DL-074); no gate
+
+> Resolved 2026-07-21 (v7.7 roadmap section formalization, DL-074): named as v7.7 anchor scope in `current_roadmap.md` §3. Prior stale-target notice (v7.4, never named in anchor scope) superseded.
+
+**Problem:** `sonner` Toaster is mounted app-wide (per `BLG-QA-64` fix, v6.8) but there is no shared component pattern for a persistent/actionable alert (as opposed to a transient toast) — `BLG-FE-116` (custom price alerts) will need this distinction between a transient confirmation and a standing alert notification.
+**Scope:** Define and build a shared "standing alert" primitive (distinct from a transient toast) in `design_system.md`, reusable by `BLG-FE-116` and any future alert-style surface.
+**Acceptance Criteria:** Component built and documented in `design_system.md`; at least one integration point identified for `BLG-FE-116`'s v7.4 implementation.
+
+---
+
+### BLG-GOV-28 — PT-04 §13 compliance review
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-07-24
+**Shipped in:** v7.7
+**Evidence:** claude/cycles/2026-07-21__release-v7.7/verification_report.md (EPIC-07/ST-07); docs/product/changelog.md#v7-7-strategy-intelligence-surfacing-notification-ux-2026-07-24
+
+### BLG-GOV-28 — PT-04 §13 compliance review
+**Priority:** P1 (High) — escalated 2026-07-12 (roadmap rebalance 2026-07-12__scheduled; was P2)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** IDEA-governance-20260421-03 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
+**Effort:** S (~0.5 days)
+**Provisional-Target:** v7.7 — named as v7.7 capacity-fill scope 2026-07-21 (release planning `2026-07-21__release-v7.7`), picked up per this item's own overdue-pickup note below
+
+**Gate criteria:** PT-04 sprint planning imminent (sprint planning seals within the next cycle).
+
+**Problem**
+PT-04 (Setup Quality Score) involves a new backend scoring algorithm and a new API endpoint. §13 compliance review (execution_prompt.md §13 — pre-sprint implementation review checklist) must be completed before PT-04 sprint planning seals, per CLAUDE.md §13 gate rules. This item tracks the gate-conditional §13 review so it is not missed when PT-04 is next scheduled.
+
+**Scope**
+- Run §13 checklist against PT-04 story set before sprint planning seals
+- Flag any compliance gaps to Head of Specs Team and Product Owner
+- Sign-off recorded in sprint planning artefact
+
+**Acceptance Criteria**
+- §13 review completed and sign-off recorded
+- Gate condition (PT-04 sprint planning imminent) verified before initiating review
+
+**Gate overdue — flagged 2026-07-10 (backlog consistency audit, not yet dispositioned):** PT-04 (Setup Quality Score) shipped and its sprint planning sealed in v6.1 (2026-06-23) — 2.5+ weeks ago. No evidence found anywhere in the repo (v6.1 `sprint_planning_notes.md`, `release_plan.md`, or elsewhere) that this §13 review was run before that seal, or since. The gate window has closed without the required action being taken or recorded. Not actioned here — this needs Head of Specs Team / Product Owner disposition: either run a retroactive §13 review against PT-04's shipped implementation now, or record an explicit waiver with rationale.
+
+**Priority escalated 2026-07-12 (roadmap rebalance 2026-07-12__scheduled):** still un-actioned 2 cycles after the overdue flag was raised (raised independently again this cycle by `IDEA-head-of-specs-20260712-02`, classified Reject-not-strong — duplicate of this already-tracked item — with this priority escalation as the corrective action instead of a new backlog row). Escalated P2→P1; should be picked up as a priority item at the next `plan release` invocation rather than deferred again.
+
+---
+
+### BLG-OPS-108 — Add response validation to daily-snapshot.yml curl calls (CI masks endpoint failures)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1
+**Retired:** 2026-07-24
+**Shipped in:** v7.7
+**Evidence:** claude/cycles/2026-07-21__release-v7.7/verification_report.md (EPIC-06/ST-06); docs/product/changelog.md#v7-7-strategy-intelligence-surfacing-notification-ux-2026-07-24
+
+### BLG-OPS-108 — Add response validation to daily-snapshot.yml curl calls (CI masks endpoint failures)
+**Priority:** P1 (High)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** Session investigation into signal-generation data integrity — 2026-07-13
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** v7.7 — named as v7.7 capacity-fill scope 2026-07-21 (release planning `2026-07-21__release-v7.7`); no gate. (Stale target: `v7.1` shipped 2026-07-14 without this item, never picked up across 3 subsequent releases — resolved here.)
+**Gate criteria:** None
+
+**Problem**
+`.github/workflows/daily-snapshot.yml`'s curl calls (Run Position Analysis, Create Portfolio Snapshot, Generate Signals) have no `--fail` flag and never inspect the response body. A 200 response carrying an error JSON payload (or any non-2xx) still exits 0, so GitHub Actions reports the job green regardless of whether the endpoint actually succeeded. This is exactly how the numpy/signals crash (fixed in PR #971) went undetected for three weeks — `/signals/generate` failed on every single scheduled run from 2026-06-23 to 2026-07-13 while the workflow showed success every day.
+
+**Proposed solution**
+Add `--fail` (or explicit status/body validation) to all three curl invocations in daily-snapshot.yml so a broken write path surfaces as a failed CI run. Audit other workflows that POST to business endpoints for the same gap (backtest.yml's import step already validates status codes in Python, so likely fine — confirm as part of this item).
+
+---
+
+### BLG-QA-104 — Add numpy-scalar regression coverage for create_rebalance_exit_signal
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-24
+**Shipped in:** v7.7
+**Evidence:** claude/cycles/2026-07-21__release-v7.7/verification_report.md (EPIC-08/ST-08); docs/product/changelog.md#v7-7-strategy-intelligence-surfacing-notification-ux-2026-07-24
+
+### BLG-QA-104 — Add numpy-scalar regression coverage for create_rebalance_exit_signal
+**Priority:** P2 (Medium)
+**Type:** QA / Backend
+**Owner:** QA & Testing Owner
+**Source:** Session investigation into signal-generation data integrity (numpy/psycopg2 crash, PR #971) — 2026-07-13
+**Effort:** XS (<1 day)
+**Provisional-Target:** v7.7 — named as v7.7 capacity-fill scope 2026-07-21 (release planning `2026-07-21__release-v7.7`); no gate. (Stale target: `v7.1` shipped 2026-07-14 without this item, never picked up across 3 subsequent releases — resolved here.)
+**Gate criteria:** None
+
+**Problem**
+PR #971 fixed a bug where numpy.float64/int64 scalars reaching a raw psycopg2 INSERT crashed `/signals/generate` for three weeks (NumPy≥2.0 changed scalar `repr()` to `np.float64(x)`, which Postgres parsed as a schema-qualified function call and rejected with `schema "np" does not exist`). `create_rebalance_exit_signal` (backend/database.py:2354) was manually traced during that investigation and appears safe today — its inputs already pass through `decimal_to_float()` upstream in `generate_rebalance_exit_signals()` — but this was confirmed by inspection only, with no automated test guarding it.
+
+**Proposed solution**
+Add a regression test asserting `create_rebalance_exit_signal`'s parameters are always native float/int (never numpy scalars) even if upstream callers change, so the same bug class cannot silently recur on this path.
+
+---
+
+### BLG-QA-102 — Automate the endpoint-count drift check (CLAUDE.md §2)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-24
+**Shipped in:** v7.7
+**Evidence:** claude/cycles/2026-07-21__release-v7.7/verification_report.md (EPIC-11/ST-11); docs/product/changelog.md#v7-7-strategy-intelligence-surfacing-notification-ux-2026-07-24
+
+### BLG-QA-102 — Automate the endpoint-count drift check (CLAUDE.md §2)
+**Priority:** P2 (Medium) | **Type:** QA / Process Tooling | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260712-01 | **Effort:** M | **Provisional-Target:** v7.7 — named as v7.7 capacity-fill scope 2026-07-21 (release planning `2026-07-21__release-v7.7`); no gate
+**Problem:** The `backend/routers/test.py` + `SystemStatus.js` fallback count + `SC-SS-01b` sync (`CLAUDE.md` §2) is currently manual discipline only — a recurring process-deviation risk each time a new route is added.
+**Scope:** Add a CI lint step counting `@router` decorators across `backend/routers/` vs. the hardcoded fallback constant in `SystemStatus.js`; fail the gate on mismatch.
+**Acceptance Criteria:** Lint step added to `quality_gate.yml`; fails on a synthetic mismatch test case; passes on current state.
+
+---
+
+### BLG-BE-63 — Nightly backtest job idempotency check
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-24
+**Shipped in:** v7.7
+**Evidence:** claude/cycles/2026-07-21__release-v7.7/verification_report.md (EPIC-09/ST-09); docs/product/changelog.md#v7-7-strategy-intelligence-surfacing-notification-ux-2026-07-24
+
+### BLG-BE-63 — Nightly backtest job idempotency check
+**Priority:** P2 (Medium) | **Type:** Backend / Data Integrity | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260715-01 | **Effort:** S (~1 day) | **Provisional-Target:** v7.7 — named as v7.7 capacity-fill scope 2026-07-21 (release planning `2026-07-21__release-v7.7`); no gate
+**Problem:** `BLG-BE-59`/`BLG-BE-60` (v7.1) fixed nightly backtest data-integrity bugs but no explicit check confirms the job is safe against a double-run or retry scenario.
+**Scope:** Verify nightly backtest job idempotency — a retry or manual re-trigger must not produce duplicate or divergent results.
+**Acceptance Criteria:** Idempotency confirmed by test or code review; any gap filed as a P1/P2 correctness item per its severity.
+
+---
+
+### BLG-OPS-110 — Nightly backtest job monitoring/alerting
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-24
+**Shipped in:** v7.7
+**Evidence:** claude/cycles/2026-07-21__release-v7.7/verification_report.md (EPIC-10/ST-10); docs/product/changelog.md#v7-7-strategy-intelligence-surfacing-notification-ux-2026-07-24
+
+### BLG-OPS-110 — Nightly backtest job monitoring/alerting
+**Priority:** P2 (Medium) | **Type:** Operations | **Owner:** Infrastructure & Operations Owner; Head of Engineering | **Source:** IDEA-infra-ops-20260715-01, IDEA-head-of-engineering-20260715-01 | **Effort:** M (~1-2 days) | **Provisional-Target:** v7.7 — named as v7.7 capacity-fill scope 2026-07-21 (release planning `2026-07-21__release-v7.7`); no gate
+**Problem:** `BLG-BE-59`/`BLG-BE-60` (v7.1) fixed a nightly backtest data-integrity bug found by manual review; no automated alerting exists if backtest output drifts again.
+**Scope:** Add monitoring/alerting for nightly backtest job failures or output anomalies.
+**Acceptance Criteria:** Alerting mechanism added and confirmed to fire on a simulated failure/anomaly.
+
 
 ### BLG-FE-119 — PDF / print-friendly export
 
@@ -5266,7 +5529,6 @@ Persistent AI audit log implemented (ai_audit_service.py). Every summary run per
 
 Engine prompt compression was identified as a governance improvement in AUD-2026-03-21. With v2.9 Arc 1 delivery complete and v3.0 Arc 1 remainder on the roadmap, the active backlog should not carry an L-effort low-priority item that has been consistently displaced by higher-value work across 5 cycles.
 
-
 ---
 
 ## Archived — Post-ship Closure v3.2 (2026-05-09)
@@ -5403,8 +5665,6 @@ As cycles accumulate, documents are created in each cycle directory but there is
 - Any maintenance gaps are identified; each either resolved or filed as a follow-up backlog item
 - Reference document or OPERATIONAL_GUIDE section added
 
-
-
 ---
 
 ### BLG-FE-35 — ST-08 AC-02: Human staging sign-off for Research page font conformance
@@ -5460,7 +5720,6 @@ As cycles accumulate, documents are created in each cycle directory but there is
 **Archived:** 2026-05-22
 **Completed in:** v3.9 (EPIC-04, ST-11)
 **Resolution:** --dry-run flag added to release_planning_prompt.md v2.31 and delivery_verification_prompt.md v2.5; two rows added to shared_standards.md §13 dry-run table; all three files version-bumped; prompt_change_log.md entries added.
-
 
 ---
 
@@ -6009,7 +6268,6 @@ STEP 12.1 of governance engines updates .claude_current_state.json regardless of
 *BLG-GOV-23 (scored_initiatives.md Arc 3–6 comprehensive refresh — OA-RP-05 resolved) — ✅ COMPLETE v3.7 — ST-11, cycle: 2026-05-18__release-v3.7*
 *BLG-GOV-25 (Add --dry-run support to plan release and run delivery verification engines) — ✅ COMPLETE v3.9 — ST-11, cycle: 2026-05-21__release-v3.9*
 
-
 ---
 
 ## v4.0 Completions — Archived 2026-05-27 (Post-Ship Cleanup)
@@ -6481,7 +6739,6 @@ docs/specs/api_contracts/ai_thesis_generation.md was authored for the Gemini-bac
 
 ## 8. Governance Backlog
 
-
 ---
 
 ---
@@ -6692,7 +6949,6 @@ v4.1 introduced Claude API integration. It must be confirmed which agent role ow
 
 ---
 
-
 ---
 
 ## v4.2 Additional Completions — BLG-GOV-58 Archived 2026-05-29
@@ -6721,7 +6977,6 @@ execution_prompt.md STEP 5.2 does not explicitly confirm that `returned_to_backl
 - OPERATIONAL_GUIDE.md §14 updated
 
 ---
-
 
 ---
 
@@ -7216,7 +7471,6 @@ SI-02 will surface a drift detection score to the user. The metric definition (f
 - Reviewed by Metrics Definitions & Analytics Canonical Owner and Head of Specs Team
 - Gate condition (SI-02 sprint planning imminent) verified before commencing
 
-
 ---
 
 ## v4.6 Post-Ship Closure — Batch Archive (2026-05-31)
@@ -7307,7 +7561,6 @@ Archived by: Backlog Management Engine STEP 12, post-ship closure 2026-05-30__re
 | BLG-FE-61 ✅ | SignalCard allocation_insufficient badge Playwright E2E coverage | Shipped v5.1 ST-04, EPIC-03 — tests/e2e/signals-allocation-insufficient.spec.js; 5 scenarios covering SC-SIG-AI-01/02/03; all pass in CI; BLG-FE-61 3-cycle recurrence closed |
 | BLG-QA-43 ✅ | compliance_summary field population validation | Shipped v5.1 ST-05, EPIC-03 — code review confirmed all 5 Arc 5 compliance fields present; staging AC-01 deferred to staged verification sprint (I&O Owner sign-off outstanding) |
 | BLG-GOV-89 ✅ | Staged verification sprint protocol document | Shipped v5.1 ST-06, EPIC-03 — docs/operations/staged_verification_sprint_protocol.md v1.0; trigger conditions, batching approach, evidence format, sprint sizing; DoQ + PMO Lead sign-off |
-
 
 ---
 
@@ -7409,7 +7662,6 @@ Archived by: Backlog Management Engine STEP 12, post-ship closure 2026-05-30__re
 | BLG-QA-45 ✅ | Arc 5 QA completion criteria definition | Shipped v5.6 ST-09, EPIC-03, PR #764 — C-01 to C-05 defined; BLG-QA-26 gate condition updated; SI-05 Phase 2/SI-04/SI-02-backend-only excluded; PO + DoQ approved |
 | BLG-QA-49 ✅ | Arc 5 test scenario completeness assessment | Shipped v5.6 ST-10, EPIC-03, PR #764 — arc5_test_coverage_assessment.md produced; 3 P3 Playwright gaps filed (BLG-QA-56/57/58); DoQ approved |
 | BLG-GOV-106 ✅ | PT-04 trade count gate re-verification | Shipped v5.6 ST-08, EPIC-03, PR #764 — 13 closed trades (PO-provided); gate NOT MET (need 20); roadmap + BLG-FEAT-25 updated; trajectory accelerating; PMO Lead + PO sign-off |
-
 
 ---
 
@@ -10222,7 +10474,6 @@ BLG-GOV-74 (first AI feature usage review, v4.4) established the initial Claude 
 
 ---
 
-
 ---
 
 ### BLG-FE-75 — Staging verification: SI-05 digest deep links navigate on mobile Telegram
@@ -10304,7 +10555,6 @@ BLG-GOV-74 (first AI feature usage review, v4.4) established the initial Claude 
 **Source:** ST-07 (EPIC-02, v5.6) — BLG-OPS-22 AC-04/05 staging-deferred
 
 ✅ COMPLETE — 2026-06-17 — cycle: 2026-06-16__release-v5.7 (ST-04; p95=105ms << 2,000ms; cache hit rate ≥90% inferred; cache invalidation mechanism confirmed via v5.6 code review)
-
 
 ---
 

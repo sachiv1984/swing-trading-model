@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-07-20 (post-ship closure 2026-07-20__release-v7.6)
+**Last Updated:** 2026-07-24 (post-ship closure 2026-07-21__release-v7.7)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -84,8 +84,9 @@
 | v7.4  | 1       | 1         | 1.00     | 1/1 story done (ST-01, EPIC-01, autonomous) — sprint scope reduced from 5 stories to 1 by `AMD-20260717-01` pre-seal (Design Gate blocked ST-02/03/04/05, no approved design artefact existed or could exist in time); consolidated v7.4 UI-heavy readiness bundle (BLG-SPEC-95) delivered — dependency pre-flight (`cmdk`/`react-day-picker`), 2 UX specs, design review, Playwright baseline scope, analytics event schema, CI tagging scheme; zero deviations (1 forward-looking backlog item filed, BLG-FE-122); 0 delegations; 0 returns mid-sprint; Verified |
 | v7.5  | 4       | 4         | 1.00     | All 4 stories done across 4 EPICs, all Design Gate PASSed and reclassified `delegated_frontend`→`autonomous` per LL-v2.3-CL-01; global command palette (BLG-FE-115), custom price alerts (BLG-FE-116), bulk actions toolbar (BLG-FE-117), saved filters/calendar view (BLG-FE-118); zero deviations filed (1 P2 staging sign-off item, BLG-QA-115); 0 delegations; 0 returns; Verified |
 | v7.6  | 8       | 8         | 1.00     | All 8 stories done across 8 EPICs (sprint expanded from 1-item anchor to 8 via PO-directed capacity-fill reopen, DL-073); print/PDF export (BLG-FE-119, EPIC-01, agent-mediated DoQ sign-off); regression baseline update (BLG-QA-112); P&L export reconciliation (BLG-FEAT-79); error-response envelope audit (BLG-BE-65); OpenAPI-derived fixture library (BLG-QA-114); nightly batch idempotency audit (BLG-BE-62); Claude API monthly cost summary (BLG-FEAT-77, EPIC-07, agent-mediated DoQ sign-off, mid-sprint premise correction via ESC-EXEC-20260720-01); ticker/market sanitisation regression suite (BLG-QA-69); zero code deviations filed; 0 delegations; 0 returns; Verified |
+| v7.7  | 11      | 11        | 1.00     | All 11 stories done across 11 EPICs; SI-04 strategy-version comparison view (BLG-FEAT-75); notification/digest surface consolidation (BLG-FE-114); AiDailyBriefing light-theme contrast fix (BLG-FE-113); shared standing-alert component (BLG-FE-120); SI-02 nudge feasibility investigation (BLG-FEAT-80); daily-snapshot.yml curl validation (BLG-OPS-108); PT-04 §13 retroactive compliance review (BLG-GOV-28, PASS); numpy-scalar regression test (BLG-QA-104, cross-file test-isolation bug found and fixed); nightly-backtest idempotency audit (BLG-BE-63, no gap found, concurrency guard added); nightly-backtest monitoring/alerting (BLG-OPS-110, BLG-OPS-115 follow-up filed); endpoint-count drift CI gate (BLG-QA-102, pre-existing 103→99 drift corrected); zero deviations filed; 0 delegations; 0 returns; Verified |
 
-**Rolling 6-cycle average (v7.1–v7.6):** 1.00
+**Rolling 6-cycle average (v7.2–v7.7):** 1.00
 
 ---
 

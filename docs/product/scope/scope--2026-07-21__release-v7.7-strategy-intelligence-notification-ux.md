@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v7.7
 Cycle: 2026-07-21__release-v7.7
-Last Updated: 2026-07-21
+Last Updated: 2026-07-24
+
+Superseded by: v7.7 ship — 2026-07-24
+Changelog: docs/product/changelog.md#v7-7-strategy-intelligence-surfacing-notification-ux-2026-07-24
+Verification report: claude/cycles/2026-07-21__release-v7.7/verification_report.md
+Cycle: 2026-07-21__release-v7.7
 
 ## Release Scope — v7.7 Strategy Intelligence Surfacing & Notification UX
 
