@@ -5,13 +5,13 @@
   "invoked_utc": "2026-07-23T12:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-23T22:00:00Z",
+  "last_updated_utc": "2026-07-24T08:10:00Z",
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-21__release-v7.7/EPIC-01",
       "pr_number": 1047,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-21__release-v7.7/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -48,7 +48,7 @@
             "date": "2026-07-23",
             "status": "cleared"
           },
-          "notes": "Discovered at implementation: trade_history has no strategy_version column and no version registry exists (contradicts stale BLG-FEAT-75 backlog claim) \u2014 resolved via date-range attribution from strategy_rules.md's own Change Log (backend/strategy_version_registry.py), no migration needed. compliance_rate sourcing decision made via agent-mediated Strategy Rules & System Intent Owner review (Arc 5 composite over generalised date range)."
+          "notes": "Discovered at implementation: trade_history has no strategy_version column and no version registry exists (contradicts stale BLG-FEAT-75 backlog claim) — resolved via date-range attribution from strategy_rules.md's own Change Log (backend/strategy_version_registry.py), no migration needed. compliance_rate sourcing decision made via agent-mediated Strategy Rules & System Intent Owner review (Arc 5 composite over generalised date range)."
         }
       }
     },
@@ -274,7 +274,7 @@
       "test_scenarios": [],
       "stories": {
         "ST-07": {
-          "title": "Run retroactive \u00a713 compliance review against shipped PT-04",
+          "title": "Run retroactive §13 compliance review against shipped PT-04",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -298,11 +298,11 @@
           "sign_off_record": {
             "role": "Head of Specs Team",
             "method": "agent_mediated",
-            "decision": "PASS \u2014 PT-04 confirmed deterministic, read-only, display-only, no write path, no automated action; independently re-verified against the actual shipped code (no self-attestation)",
+            "decision": "PASS — PT-04 confirmed deterministic, read-only, display-only, no write path, no automated action; independently re-verified against the actual shipped code (no self-attestation)",
             "date": "2026-07-24",
             "status": "cleared"
           },
-          "notes": "spec_references resolved: PT-04's canonical spec is trade_plan_endpoints.md (contract) \u2014 no dedicated frontend/backend spec file exists under that name, confirmed during review. Deviation check: none found (PASS determination, no code changes required)."
+          "notes": "spec_references resolved: PT-04's canonical spec is trade_plan_endpoints.md (contract) — no dedicated frontend/backend spec file exists under that name, confirmed during review. Deviation check: none found (PASS determination, no code changes required)."
         }
       }
     },
@@ -492,9 +492,10 @@
   ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": [],
+    "epics_merged": [
+      "EPIC-01"
+    ],
     "epics_pending": [
-      "EPIC-01",
       "EPIC-02",
       "EPIC-03",
       "EPIC-04",
@@ -509,7 +510,9 @@
     "all_merged": false
   },
   "process_notes": [
-    "2026-07-23: EPIC-03/ST-03 execution_state.json entry backfilled at run sprint resume — work was completed in a prior session (commit d3a399ec, qa_evidence_EPIC-03.md, PR #1048) but never recorded in the canonical execution_state.json (owned by EPIC-01 branch, not present on EPIC-03 branch at the time)."
+    "2026-07-23: EPIC-03/ST-03 execution_state.json entry backfilled at run sprint resume — work was completed in a prior session (commit d3a399ec, qa_evidence_EPIC-03.md, PR #1048) but never recorded in the canonical execution_state.json (owned by EPIC-01 branch, not present on EPIC-03 branch at the time).",
+    "2026-07-24: run sprint resume-sync (LL-v3.9-P3-1) — PR #1047 (EPIC-01) found already MERGED (mergedAt 2026-07-24T07:54:07Z) via gh pr view before any merge-gate evaluation this session. Synced pr_status=merged, status=merged, moved EPIC-01 epics_pending->epics_merged. Orphaned post-merge commit check (LL-v6.8-P3-01): git log origin/main..origin/exec/2026-07-21__release-v7.7/EPIC-01 returned empty — no orphaned commits.",
+    "2026-07-24: EPIC-01's own PR merge commit created a divergent, less-complete execution_state.json on main (frozen at the state when PR #1047 was opened, before EPIC-02..11 completed their work). Resolved per CLAUDE.md §8 cross-EPIC merge conflict rule: reconstructed this file on main taking the fuller/most-current branch data (all EPIC-02..11 done/qa_signed_off/PR-open state) as authoritative, layered with the EPIC-01 merge-gate sync above. No story reverted from done to blocked; no data lost."
   ],
   "sealed": false,
   "sealed_utc": null
