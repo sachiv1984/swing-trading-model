@@ -1,9 +1,9 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.7
-**Last Updated:** 2026-07-17
-**Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03)
+**Version:** 0.8
+**Last Updated:** 2026-07-24
+**Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07)
 
 ---
 
@@ -430,6 +430,8 @@ Returns a 0–100 setup quality score derived from closed trade history for a gi
 
 **Source:** ST-08, EPIC-04, v6.1. Gate: ≥20 closed trades required.
 
+**§13 Compliance:** Retroactively reviewed and confirmed PASS — see `docs/product/decisions/decisions--2026-07-21__release-v7.7--PT-04-section13-review.md` (ST-07, EPIC-07, v7.7). Deterministic, read-only, display-only historical-reference score; no automated action, no write path, no gating power over any trade or position workflow.
+
 ### Query Parameters
 
 | Parameter | Type | Required | Description |
@@ -491,6 +493,7 @@ score = clamp(round(win_rate × 0.6 + max(average_pnl_pct, 0) × 0.4), 0, 100)
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.8 | 2026-07-24 | ST-07 (EPIC-07, v7.7, BLG-GOV-28): Retroactive §13 boundary review of GET /trade-plans/setup-quality-score — PASS. No contract/behaviour change; added §13 Compliance reference to the endpoint section. See `docs/product/decisions/decisions--2026-07-21__release-v7.7--PT-04-section13-review.md`. |
 | 0.7 | 2026-07-17 | ST-03 (BLG-FE-117, EPIC-03, v7.5): Add POST /trade-plans/bulk-tag, PUT /trade-plans/bulk-archive, DELETE /trade-plans/bulk — bulk-actions toolbar. `succeeded`/`failed` per-row response shape per readiness pass AC-01. Bulk-archive excludes `status='active'` plans (mirrors §8.1 single-item hide rule) and applies a fixed system abandonment reason (no per-plan reason field in the bulk confirmation flow). |
 | 0.6 | 2026-07-09 | ST-05 (EPIC-02, v6.8, BLG-FEAT-52): Add GET /trade-plans/tags (tag autocomplete source); add `trade_tags` field to POST/PUT /trade-plans request schema. Data-independent from trade_annotations/PO-02 and from the existing position/journal tags. |
 | 0.5 | 2026-06-23 | ST-08 (EPIC-04, v6.1): Add GET /trade-plans/setup-quality-score — 0–100 score from closed trade history, gate_not_met response when <20 trades. |
