@@ -43,3 +43,7 @@ Last Updated: 2026-07-23
 - Signed off by: Sprint Execution Engine (agent-mediated, Base44 Frontend Prompt Owner role — §5.3)
 - Date: 2026-07-23
 - Comments: No divergences found; no spec updates required.
+
+## Post-Sign-Off CI Finding (2026-07-24)
+
+Real CI (`quality_gate.yml`'s Playwright E2E Acceptance Tests job — this sandbox cannot execute Playwright locally, per the Environment note above) caught a genuine bug in `SC-SA-02`'s own test assertion, not in `StandingAlert.js`/`StandingAlertStack`: the harness seeds 4 alerts against `VISIBLE_CAP = 3`, so dismissing exactly one alert from the capped (3-visible) view leaves 4-1=3 total — still ≤ the cap, so the displayed count does not change as the test assumed (`before - 1`). Fixed by expanding the overflow ("+1 more") before asserting dismissal behaviour, isolating "does dismiss work" from the separately-covered stack-cap behaviour (SC-SA-04/05). Commit `ae6e22ac`. No change to the component itself. This is exactly the kind of gap the Playwright-in-CI requirement (rather than "code review only") exists to catch — flagging here for the record rather than silently amending history.
