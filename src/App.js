@@ -4,6 +4,7 @@ import NotificationPreferences from "./pages/NotificationPreferences"
 import Notifications from "./pages/Notifications"
 import NotificationsHistory from "./pages/NotificationsHistory"
 import Research from "./pages/Research"
+import StandingAlertHarness from "./pages/__StandingAlertHarness"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from './lib/query-client'
 import NavigationTracker from './lib/NavigationTracker'
@@ -88,6 +89,9 @@ const AuthenticatedApp = () => {
           <Research />
         </LayoutWrapper>
       } />
+      {/* Test-only route (ST-04, EPIC-04, v7.7, BLG-FE-120) — see
+          src/pages/__StandingAlertHarness.js header comment. No nav/palette entry. */}
+      <Route path="/__test/standing-alert" element={<StandingAlertHarness />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

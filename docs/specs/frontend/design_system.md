@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.2
-**Last Updated:** 2026-07-17
+**Version:** 1.3
+**Last Updated:** 2026-07-23
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.3 (ST-04, EPIC-04, v7.7, BLG-FE-120):** added the `StandingAlert` / `StandingAlertStack` shared primitive (§Shared UI Components → Standing Alert) — a manually-dismissed, in-flow banner distinct from transient `sonner` toasts, for conditions requiring sustained user awareness until acknowledged. Enabler for `BLG-FE-116`'s future live custom-price-alert surfacing (integration point identified, not wired this cycle). Design source: `docs/design/2026-07-21__release-v7.7/standing-alert-component/ux_spec.md`.
 **v1.2 (ST-01, EPIC-01, v7.5, BLG-FE-115):** formalised the `DataState` `inline` empty-state variant (§Shared UI Components → Cards → Data States) for compact-list contexts (e.g. the global command palette results list) where even the `compact` icon+heading+body stack is too tall. Generalises the decision approved for the command palette in `docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md` §2.5 (AC-06, per `docs/specs/blg_fe_115_pre_implementation_readiness_pass.md` §7).
 **v1.1 (ST-04, EPIC-03, v7.2, BLG-SPEC-90):** formalised the `DataState` compact empty-state variant (§Shared UI Components → Cards → Data States) and defined primary vs secondary dashboard card treatment (§Shared UI Components → Cards → Card Hierarchy). Both generalise decisions already approved for `DashboardHome.js` in `docs/design/2026-07-15__release-v7.2/dashboard-empty-states/ux_spec.md` (ST-05) and `dashboard-briefing-hierarchy/ux_spec.md` (ST-06) so future cards/pages can reuse the same pattern without re-deriving it.
 
@@ -154,6 +155,37 @@ Not all cards on a given page carry equal weight. Two treatment tiers apply:
 - **Secondary / status cards** — cards presenting live, glanceable position/portfolio state (open positions count, heat level, grace period, signal status, recent activity). These use the plain shared card shell (`bg-slate-800/50 border border-slate-700/50`, no enclosing panel, no elevated label treatment) — the neutral default.
 
 Any new background/border/label token introduced for a primary-tier treatment must ship as an explicit light+dark pair from the start, never a bare dark-only class — this project has twice shipped a dark-only-token-on-light-theme contrast defect (`BLG-FE-87/88`, `BLG-FE-95`). See `docs/design/2026-07-15__release-v7.2/dashboard-briefing-hierarchy/ux_spec.md` for the worked example this pattern was generalised from.
+
+### Standing Alert
+
+**Component:** `src/components/ui/StandingAlert.js` — exports `StandingAlert` (single banner) and `StandingAlertStack` (parent-owned array wrapper).
+
+A condition requiring sustained user awareness until acknowledged is a distinct case from a transient toast (`sonner`):
+
+| | Toast (`sonner`) | `StandingAlert` |
+|---|---|---|
+| Dismissal | Auto-dismiss (~4s) | Manual only (explicit ✕), or programmatic clear when the underlying condition resolves |
+| Position | Floating, corner-anchored, overlays content | Inline banner, in document flow (does not overlay content) |
+| Use case | Transient system feedback | Sustained condition requiring acknowledgement |
+| Stacking | Library-managed stack | Parent-owned array; component renders what it's given |
+
+**Layout:** full-width banner at the top of the page content area, below `PageHeader` and above primary content. Left-to-right: severity icon, message, optional action link, dismiss `✕` (right-aligned).
+
+**Severity variants** (explicit light+dark pair, per Card Hierarchy precedent below — no dark-only token):
+
+| Severity | Icon | Classes |
+|----------|------|---------|
+| Info | `Info` | `bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-200` |
+| Warning | `AlertTriangle` | `bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-200` |
+| Critical | `AlertOctagon` | `bg-red-50 border-red-200 text-red-800 dark:bg-red-950 dark:border-red-800 dark:text-red-200` |
+
+**Stacking:** `StandingAlertStack` renders newest-first, vertically, capped at 3 visible; beyond that, a trailing "+N more" row expands the rest inline (no modal).
+
+**Dismissal:** manual (`✕` → `onDismiss(id)`, optimistic removal, no undo) or programmatic (parent clears when the underlying condition resolves, same `onDismiss(id)` path). Not persisted across page reload — an in-session surface, distinct from the persisted Notification Feed row.
+
+**Accessibility:** `role="alert"`, `aria-live="polite"` (Info/Warning) or `"assertive"` (Critical). Dismiss button has `aria-label="Dismiss alert"`.
+
+**Integration point (identified, not wired this cycle):** the Notification Feed page (`/notifications`, top of content area, above the notification list) is the landing zone for `BLG-FE-116`'s future live-evaluation work — when implemented, a triggered custom price alert renders here as a `StandingAlert` in addition to (not instead of) the persisted Feed row.
 
 ### Inputs & Form Controls
 Common input types used across multiple pages:
