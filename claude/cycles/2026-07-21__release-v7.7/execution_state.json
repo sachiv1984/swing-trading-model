@@ -470,7 +470,7 @@
             "date": "2026-07-24",
             "status": "cleared"
           },
-          "notes": "Discovered and fixed a real pre-existing drift bug while building this gate: SystemStatus.js's fallback (103) was stale versus the AST-verified test_cases count (98) — 5 entries had drifted after v7.6 with no CI gate to catch it. Corrected src/pages/SystemStatus.js and tests/e2e/system-status.spec.js SC-SS-01b in the same commit per CLAUDE.md §2. Frontend-visible change (fallback text 103→98) covered by the updated existing Playwright test, satisfying the frontend testing gate."
+          "notes": "Discovered and fixed a real pre-existing drift bug while building this gate: SystemStatus.js's fallback (103) was stale versus the AST-verified test_cases count (98) — 5 entries had drifted after v7.6 with no CI gate to catch it. Corrected src/pages/SystemStatus.js and tests/e2e/system-status.spec.js SC-SS-01b in the same commit per CLAUDE.md §2. Frontend-visible change (fallback text 103→98) covered by the updated existing Playwright test, satisfying the frontend testing gate. Reconciled at EPIC-01 merge-conflict resolution (2026-07-24): EPIC-01 concurrently added GET /analytics/strategy-version-comparison (BLG-FEAT-75) against the pre-correction 103 baseline, bumping it to 104; merging that against this branch's 98 correction produced a genuine conflict. Re-verified via fresh AST scan of the merged backend/routers/test.py: true count is 99 (98 + EPIC-01's 1 new endpoint). Fallback corrected to 99 in both src/pages/SystemStatus.js and tests/e2e/system-status.spec.js SC-SS-01b on this branch before push."
         }
       }
     }
