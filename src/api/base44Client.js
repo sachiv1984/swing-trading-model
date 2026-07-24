@@ -547,6 +547,17 @@ export const api = {
         body: JSON.stringify(payload),
       }),
   },
+
+  // ST-01 (v7.7 EPIC-01, BLG-FEAT-75): SI-04 strategy version performance comparison
+  strategyVersionComparison: {
+    compare: async ({ versionFrom, versionTo, dateRange } = {}) => {
+      const params = new URLSearchParams();
+      params.set('version_from', versionFrom);
+      params.set('version_to', versionTo);
+      if (dateRange) params.set('date_range', dateRange);
+      return doFetch(`/analytics/strategy-version-comparison?${params.toString()}`);
+    },
+  },
 };
 
 export const Signal = base44.entities.Signal;
