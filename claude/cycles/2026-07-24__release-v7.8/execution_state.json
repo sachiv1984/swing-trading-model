@@ -25,7 +25,7 @@
       "status": "done",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-04",
       "pr_number": null,
-      "pr_status": "none",
+      "pr_status": "blocked_on_doq_signoff",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-04.md",
       "test_scenarios": [
@@ -39,7 +39,7 @@
           "assigned_to": "engine",
           "github_issue": 1061,
           "branch": "exec/2026-07-24__release-v7.8/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "95ac48cbe676a4db9354d167135aeffe9a85b1a8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -432,7 +432,9 @@
     "ST-04"
   ],
   "open_escalations": [],
-  "process_notes": [],
+  "process_notes": [
+    "EPIC-04: all ST items done, qa_evidence prepared, but PR not opened per BLG-GOV-18 precondition -- PageHeader.js is frontend-visible (src/components/**), so BLG-GOV-19 autonomous sign-off is unavailable and a human Director of Quality sign-off (with CI-green Playwright confirmation) is required before PR can open."
+  ],
   "merge_gate": {
     "epics_merged": [],
     "epics_pending": [
