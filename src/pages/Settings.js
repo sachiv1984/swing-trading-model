@@ -11,6 +11,7 @@ import { Save, Loader2, CheckCircle2, Sliders, CreditCard, Palette, TrendingUp, 
 import { api } from "../api/base44Client";
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
+import AiSpendTrendChart from "../components/charts/AiSpendTrendChart";
 
 export default function Settings() {
   const queryClient = useQueryClient();
@@ -28,6 +29,14 @@ export default function Settings() {
   const { data: monthlyCostData, isLoading: monthlyCostLoading, isError: monthlyCostError } = useQuery({
     queryKey: ["ai-monthly-cost"],
     queryFn: () => api.ai.monthlyCost(),
+  });
+
+  // ST-06 (EPIC-06, v7.8, BLG-FEAT-82): independent query, same pattern as
+  // monthly cost above — a slow/failed trend fetch doesn't affect the
+  // current-month figure or the rest of Settings (each has its own query).
+  const { data: spendTrendData, isLoading: spendTrendLoading, isError: spendTrendError } = useQuery({
+    queryKey: ["ai-spend-trend"],
+    queryFn: () => api.ai.spendTrend(),
   });
 
   const defaults = {
@@ -425,6 +434,19 @@ export default function Settings() {
           <p className="text-lg font-semibold text-white">
             ${(monthlyCostData?.total_cost_usd ?? 0).toFixed(2)}
           </p>
+        )}
+
+        {/* ST-06 (EPIC-06, v7.8, BLG-FEAT-82): AI spend trend chart — each
+            state (loading/error/ready) is independent of the current-month
+            figure above, per ux_spec.md §5. */}
+        {spendTrendLoading ? (
+          <div className="mt-4 h-[180px] rounded bg-slate-800/50 animate-pulse" data-testid="ai-spend-trend-loading" />
+        ) : spendTrendError ? (
+          <p className="mt-4 text-sm text-slate-600 dark:text-slate-400" data-testid="ai-spend-trend-error">
+            AI spend trend unavailable
+          </p>
+        ) : (
+          <AiSpendTrendChart data={spendTrendData} />
         )}
       </SectionCard>
     </div>

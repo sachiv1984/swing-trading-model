@@ -189,6 +189,7 @@ async def test_all_endpoints(request: Request):
 
         # Claude API Monthly Cost (v7.6 / EPIC-07 ST-07)
         {"name": "GET /ai/monthly-cost", "method": "GET", "url": f"{base_url}/ai/monthly-cost", "critical": False},
+        {"name": "GET /ai/spend-trend", "method": "GET", "url": f"{base_url}/ai/spend-trend", "critical": False},
 
         # SI-02 Behavioural Drift Detection (v4.6 / ST-04)
         {"name": "GET /analytics/behavioural-drift", "method": "GET", "url": f"{base_url}/analytics/behavioural-drift", "critical": False},

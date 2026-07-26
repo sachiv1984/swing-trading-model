@@ -170,19 +170,20 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     await expect(page.getByRole('button', { name: /run tests/i })).toBeVisible({ timeout: 8000 });
   });
 
-  test('SC-SS-01b: Pre-run state shows "99 endpoints" placeholder', async ({ page }) => {
-    // Before running tests, the page shows: "Tests 99 endpoints"
-    // (totalTests || '99' → '99' before any test run). Baseline corrected v7.7
+  test('SC-SS-01b: Pre-run state shows "100 endpoints" placeholder', async ({ page }) => {
+    // Before running tests, the page shows: "Tests 100 endpoints"
+    // (totalTests || '100' → '100' before any test run). Baseline corrected v7.7
     // EPIC-11 ST-11 (BLG-QA-102): an AST-verified count of backend/routers/test.py's
     // test_cases list was 98, not the previously-recorded 103 — 5 entries had
     // drifted out of sync with the fallback constant at some point after
     // v7.6 (no CI gate existed to catch this until this story). See
     // .github/workflows/quality_gate.yml's "Endpoint Count Drift Check (ST-11)"
     // job, which now enforces this count stays in sync going forward.
-    // Further +1 (98 -> 99) from v7.7 EPIC-01 ST-01, which added
+    // +1 (98 -> 99) from v7.7 EPIC-01 ST-01, which added
     // GET /analytics/strategy-version-comparison (BLG-FEAT-75) concurrently
     // with EPIC-11's correction — reconciled at EPIC-11 branch merge.
-    await expect(page.getByText(/tests 99 endpoints/i)).toBeVisible({ timeout: 8000 });
+    // +1 (99 -> 100) from v7.8 EPIC-06 ST-06, which added GET /ai/spend-trend.
+    await expect(page.getByText(/tests 100 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-01c: Pre-run state shows prompt to click Run Tests', async ({ page }) => {

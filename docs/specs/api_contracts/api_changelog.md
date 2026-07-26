@@ -1,11 +1,22 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.6.0
-**Last Updated:** 2026-06-23
+**Version:** 1.7.0
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
+
+## v7.8.0 (2026-07-27 — Release v7.8)
+
+### ai_endpoints.md — v1.8 (UPDATED)
+
+**EPIC:** EPIC-06
+**ST:** ST-06
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /ai/spend-trend | Returns Claude API spend for the last 6 release cycles, oldest to newest, bucketed by date windows parsed from docs/product/changelog.md version headings. Sourced from existing claude_audit_log data. |
 
 ## v6.1.0 (2026-06-23 — Release v6.1)
 

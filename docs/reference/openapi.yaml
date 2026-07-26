@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.13.0
+  version: 3.14.0
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -2984,6 +2984,45 @@ paths:
                             format: float
                           request_count:
                             type: integer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /ai/spend-trend:
+    get:
+      tags: [AI]
+      summary: Claude API spend for the last 6 release cycles (ST-06, EPIC-06, v7.8)
+      description: |
+        Returns Claude API spend bucketed by release-cycle date window, oldest
+        to newest, for the Settings page's AI spend trend chart. Sourced from
+        existing claude_audit_log data (no new data collection) -- cycle
+        boundaries parsed from docs/product/changelog.md's version headings.
+        Returns fewer than 6 entries if fewer release cycles exist; no
+        zero-padding.
+        Canonical contract: docs/specs/api_contracts/ai_endpoints.md v1.8 §GET /ai/spend-trend
+      responses:
+        "200":
+          description: Per-release-cycle Claude API spend array
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            version:
+                              type: string
+                              example: v7.8
+                            spend_usd:
+                              type: number
+                              format: float
+                              example: 1.45
         "401":
           $ref: "#/components/responses/Unauthorized"
         "500":
