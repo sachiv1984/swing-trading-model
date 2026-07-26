@@ -230,7 +230,7 @@
           "assigned_to": "engine",
           "github_issue": 1069,
           "branch": "exec/2026-07-24__release-v7.8/EPIC-12",
-          "commit_sha": null,
+          "commit_sha": "1cd59c2e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
