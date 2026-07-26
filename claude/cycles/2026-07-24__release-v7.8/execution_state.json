@@ -173,8 +173,8 @@
     "EPIC-08": {
       "status": "done",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-08",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1072,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-08.md",
       "test_scenarios": [
