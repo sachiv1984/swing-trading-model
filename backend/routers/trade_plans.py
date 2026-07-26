@@ -5,9 +5,10 @@ CRUD endpoints for pre-trade reasoning documents.
 Spec: docs/specs/api_contracts/trade_plan_endpoints.md v0.1
 """
 import re
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from services.rate_limiter import _ai_limiter
 from typing import Optional, List, Any
 from datetime import timezone, datetime
 from database import (
@@ -475,14 +476,31 @@ class GeneratePlanRequest(BaseModel):
     r_target: Optional[float] = None
 
 
+_GENERATE_PLAN_LIMIT = 10  # ST-08 (EPIC-08, v7.8, BLG-SEC-21) — calls Claude directly, was previously unlimited
+_GENERATE_THESIS_LIMIT = 10  # ST-08 (EPIC-08, v7.8, BLG-SEC-21) — calls Claude directly, was previously unlimited
+
+
 @router.post("/generate-plan")
-def generate_plan(body: GeneratePlanRequest):
+def generate_plan(body: GeneratePlanRequest, http_request: Request):
     """POST /trade-plans/generate-plan — generate all plan fields from ticker + signal.
 
     Does not require a saved plan. Accepts form data and signal data in the request body.
     Returns all fields: setup_thesis, entry_rationale, confirmation_criteria,
     early_exit_conditions, r_target.
+
+    Rate limit: 10 requests/minute/IP (ST-08, EPIC-08, v7.8, BLG-SEC-21) —
+    calls Claude directly via services.gemini_service; was previously unlimited.
     """
+    client_ip = http_request.client.host if http_request.client else "unknown"
+    allowed, retry_after = _ai_limiter.is_allowed(
+        f"generate-plan:{client_ip}", limit=_GENERATE_PLAN_LIMIT
+    )
+    if not allowed:
+        return JSONResponse(
+            status_code=429,
+            content={"detail": "Rate limit exceeded. Try again later."},
+            headers={"Retry-After": str(retry_after)},
+        )
     try:
         from services.gemini_service import generate_full_plan
         result = generate_full_plan(
@@ -501,13 +519,26 @@ def generate_plan(body: GeneratePlanRequest):
 
 
 @router.post("/{plan_id}/generate-thesis")
-def generate_thesis(plan_id: str):
+def generate_thesis(plan_id: str, http_request: Request):
     """POST /trade-plans/{plan_id}/generate-thesis — generate thesis via Claude Haiku.
 
     Returns generated thesis when ANTHROPIC_API_KEY is set.
     Returns graceful error payload (HTTP 200) when key is absent or API call fails.
     Audit trail and cost tracking logged in ST-07/ST-08.
+
+    Rate limit: 10 requests/minute/IP (ST-08, EPIC-08, v7.8, BLG-SEC-21) —
+    calls Claude directly via services.gemini_service; was previously unlimited.
     """
+    client_ip = http_request.client.host if http_request.client else "unknown"
+    allowed, retry_after = _ai_limiter.is_allowed(
+        f"generate-thesis:{client_ip}", limit=_GENERATE_THESIS_LIMIT
+    )
+    if not allowed:
+        return JSONResponse(
+            status_code=429,
+            content={"detail": "Rate limit exceeded. Try again later."},
+            headers={"Retry-After": str(retry_after)},
+        )
     try:
         from services.gemini_service import generate_setup_thesis
         ensure_trade_plans_table()

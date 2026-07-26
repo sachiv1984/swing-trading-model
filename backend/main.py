@@ -1046,14 +1046,32 @@ def delete_signal_endpoint(signal_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+_HEALTH_LIMIT = 60  # requests per minute per IP — ST-08 (EPIC-08, v7.8, BLG-SEC-21)
+
+
 @app.get("/health")
-def health_check():
+def health_check(request: Request):
     """
     Operational health check (v2.2).
 
     Returns DB connectivity, and timestamps of last market status check
     and last alert evaluation. Schema per ST-08 / health_endpoints.md.
+
+    Rate limit: 60 requests/minute/IP (ST-08, EPIC-08, v7.8, BLG-SEC-21) —
+    this is the app's one endpoint exempted from X-API-Key auth (see
+    api_key_middleware above), so it is the only true unauthenticated
+    surface and the one place a request flood can reach the DB-read path
+    without a valid key.
     """
+    from services.rate_limiter import _public_limiter
+    client_ip = request.client.host if request.client else "unknown"
+    allowed, retry_after = _public_limiter.is_allowed(f"health:{client_ip}", limit=_HEALTH_LIMIT)
+    if not allowed:
+        return JSONResponse(
+            status_code=429,
+            content={"detail": "Rate limit exceeded. Try again later."},
+            headers={"Retry-After": str(retry_after)},
+        )
     try:
         return get_operational_health()
     except Exception as e:

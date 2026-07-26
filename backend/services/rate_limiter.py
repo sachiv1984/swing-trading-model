@@ -39,3 +39,10 @@ class RateLimiter:
 
 
 _ai_limiter = RateLimiter()
+
+# ST-08 (EPIC-08, v7.8, BLG-SEC-21) — rate-limiting audit remediation: a
+# separate limiter instance for endpoints that are NOT gated by X-API-Key
+# (currently only GET /health, the app's sole unauthenticated surface).
+# Kept distinct from _ai_limiter so AI-endpoint traffic and public-endpoint
+# traffic never share a sliding window under the same key namespace.
+_public_limiter = RateLimiter()
