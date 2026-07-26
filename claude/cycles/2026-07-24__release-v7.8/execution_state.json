@@ -1,0 +1,461 @@
+{
+  "cycle_id": "2026-07-24__release-v7.8",
+  "sprint_goal": "Ship all 12 v7.8 EPICs \u2014 the release/spend-visibility feature set and the engineering-hardening set \u2014 with every acceptance criterion met and QA sign-off recorded for each EPIC.",
+  "backlog_slice_source": "claude/cycles/2026-07-24__release-v7.8/stage4_backlog_slice.md",
+  "invoked_utc": "2026-07-26T19:17:49Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-07-26T20:05:00Z",
+  "merge_sequence": [
+    "EPIC-04",
+    "EPIC-03",
+    "EPIC-09",
+    "EPIC-07",
+    "EPIC-08",
+    "EPIC-12",
+    "EPIC-10",
+    "EPIC-02",
+    "EPIC-01",
+    "EPIC-05",
+    "EPIC-06",
+    "EPIC-11"
+  ],
+  "epics": {
+    "EPIC-04": {
+      "status": "done",
+      "branch": "exec/2026-07-24__release-v7.8/EPIC-04",
+      "pr_number": null,
+      "pr_status": "blocked_on_doq_signoff",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-04.md",
+      "test_scenarios": [
+        "tests/e2e/page-header-dark-gradient-contrast.spec.js"
+      ],
+      "stories": {
+        "ST-04": {
+          "title": "Consolidated dark-mode contrast audit across shipped pages",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1061,
+          "branch": "exec/2026-07-24__release-v7.8/EPIC-04",
+          "commit_sha": "95ac48cbe676a4db9354d167135aeffe9a85b1a8",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-26T19:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-07-24__release-v7.8/base44-dark-mode-contrast-audit/decision_record.md",
+            "docs/specs/frontend/design_system.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Consolidated dark-theme-only pass across all 23 pages / 146+ component files (delegated to a sub-agent for systematic grep+read verification). 1 finding: src/components/ui/PageHeader.js title gradient had dark:from-/dark:to- overrides but no dark:via- pairing, so the via-stop fell through to the light-mode slate-700 value in dark theme (washed-out segment in page-title heading text, used by 21/23 pages). Classified TRIVIAL per decision_record.md \u00a74 (single class-token swap) and fixed directly \u2014 added dark:via-slate-300. No non-trivial findings, so no consolidated backlog filing required (AC's 'or fixed directly if trivial' branch satisfied). Playwright coverage added (tests/e2e/page-header-dark-gradient-contrast.spec.js, SC-PHDG-01/02) per CLAUDE.md \u00a72 frontend testing gate \u2014 written and reasoned against Tailwind's resolved rgb() computed-style values (verified hex-to-rgb math), but NOT locally executed: this sandbox's OS (ubuntu26.04) is unsupported by the installed Playwright version, blocking local chromium install. Will be confirmed in CI (playwright.yml) at PR open."
+        }
+      }
+    },
+    "EPIC-03": {
+      "status": "done",
+      "branch": "exec/2026-07-24__release-v7.8/EPIC-03",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-03.md",
+      "test_scenarios": [
+        "tests/e2e/notification-badge-contrast.spec.js"
+      ],
+      "stories": {
+        "ST-03": {
+          "title": "Contrast/focus-state accessibility pass on v7.7 notification UX",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1060,
+          "branch": "exec/2026-07-24__release-v7.8/EPIC-03",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-07-26T20:05:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Manual accessibility audit of in-scope v7.7 notification/digest surface (StandingAlert/StandingAlertStack, NotificationTabBar, NotificationRow, nav alert-count badge, Notifications page empty state) against design_system.md's WCAG AA text-contrast token and the new >=3:1 focus-indicator standard. No custom focus-ring overrides exist anywhere in scope -> focus-indicator criterion trivially satisfied (default browser/Tailwind ring applies unmodified). 1 finding: nav alert-count badge (src/Layout.js, both collapsed-group-header and item-level instances) used bg-red-500 with white count text = 3.76:1 contrast, below WCAG AA 4.5:1 (badge text 8-9px, does not qualify for large-text exemption). Classified TRIVIAL per decision_record.md \u00a74 and fixed directly -- bg-red-500 -> bg-red-600 (4.83:1), both instances. Updated stale selectors in tests/e2e/alert-nav-badge.spec.js (cross-spec selector check, LL-v3.2-P3-02) and docs/testing/alert_nav_badge_scenarios.md SC-ANB-VIS-01 in the same commit. Documented in docs/specs/frontend/pages/notifications.md changelog (v0.7). No non-trivial findings -> no consolidated backlog filing required. New Playwright coverage (tests/e2e/notification-badge-contrast.spec.js, SC-BC-01/02) written but not locally executed -- same sandbox OS limitation as EPIC-04 (Playwright chromium install unsupported on this ubuntu26.04 sandbox); will run in CI at PR open. Rebase note: branched from main before EPIC-04 merged -- design_system.md shared-file dependency (ST-03 depends on ST-04 per sprint_backlog.md) needs a rebase once EPIC-04's PR actually merges."
+        }
+      }
+    },
+    "EPIC-09": {
+      "status": "not_started",
+      "branch": "exec/2026-07-24__release-v7.8/EPIC-09",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-09.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-09": {
+          "title": "Extract shared retry/backoff decorator and migrate highest-traffic call site",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1066,
+          "branch": "exec/2026-07-24__release-v7.8/EPIC-09",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "spec_references to be set to the created decorator module path at implementation (Case B \u2014 new artefact is its own governing spec)."
+        }
+      }
+    },
+    "EPIC-07": {
+      "status": "not_started",
+      "branch": "exec/2026-07-24__release-v7.8/EPIC-07",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-07.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-07": {
+          "title": "Define rotation-and-audit schedule for all external API keys",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1064,
+          "branch": "exec/2026-07-24__release-v7.8/EPIC-07",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/ops/alpaca_key_rotation_policy.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "New consolidated schedule doc will also be recorded once created (Case B)."
+        }
+      }
+    },
+    "EPIC-08": {
+      "status": "not_started",
+      "branch": "exec/2026-07-24__release-v7.8/EPIC-08",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-08.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-08": {
+          "title": "Identify and remediate endpoints with no documented rate limit",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1065,
+          "branch": "exec/2026-07-24__release-v7.8/EPIC-08",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Extends BLG-SEC-18 audit; spec_references set to produced audit doc at implementation (Case B)."
+        }
+      }
+    },
+    "EPIC-12": {
+      "status": "not_started",
+      "branch": "exec/2026-07-24__release-v7.8/EPIC-12",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-12.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-12": {
+          "title": "Add CI lint step for API contract heading-level compliance",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1069,
+          "branch": "exec/2026-07-24__release-v7.8/EPIC-12",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Case D \u2014 CI/infra; spec_references set to the new lint script/workflow file at implementation."
+        }
+      }
+    },
+    "EPIC-10": {
+      "status": "not_started",
+      "branch": "exec/2026-07-24__release-v7.8/EPIC-10",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-10.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-10": {
+          "title": "Define and apply flaky-test quarantine mechanism",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1067,
+          "branch": "exec/2026-07-24__release-v7.8/EPIC-10",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Case B \u2014 new process doc under docs/testing/ is its own governing spec; set at implementation."
+        }
+      }
+    },
+    "EPIC-02": {
+      "status": "not_started",
+      "branch": "exec/2026-07-24__release-v7.8/EPIC-02",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-02.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-02": {
+          "title": "Send Telegram digest of shipped items on post-ship closure",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1059,
+          "branch": "exec/2026-07-24__release-v7.8/EPIC-02",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "claude/system/post_ship_closure.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Reuses v2.4 Telegram plumbing."
+        }
+      }
+    },
+    "EPIC-01": {
+      "status": "not_started",
+      "branch": "exec/2026-07-24__release-v7.8/EPIC-01",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-01.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-01": {
+          "title": "Build in-app what's new panel sourced from changelog.md",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1058,
+          "branch": "exec/2026-07-24__release-v7.8/EPIC-01",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/design/2026-07-24__release-v7.8/whats-new-panel/ux_spec.md",
+            "docs/specs/frontend/pages/dashboard.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Owns openapi.yaml/api_contracts/test.py/SystemStatus.js/system-status.spec.js for the EPIC-01/05/06 shared-file cluster this sprint."
+        }
+      }
+    },
+    "EPIC-05": {
+      "status": "not_started",
+      "branch": "exec/2026-07-24__release-v7.8/EPIC-05",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-05.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-05": {
+          "title": "Add monthly CSV export option alongside existing tax-year export",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1062,
+          "branch": "exec/2026-07-24__release-v7.8/EPIC-05",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/design/2026-07-24__release-v7.8/monthly-csv-export/ux_spec.md",
+            "docs/specs/frontend/pages/reports.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Rebase onto main after EPIC-01 merges before touching shared files."
+        }
+      }
+    },
+    "EPIC-06": {
+      "status": "not_started",
+      "branch": "exec/2026-07-24__release-v7.8/EPIC-06",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-06.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-06": {
+          "title": "Add per-cycle AI spend trend chart to AI Usage & Costs view",
+          "classification": "autonomous",
+          "status": "not_started",
+          "assigned_to": "engine",
+          "github_issue": 1063,
+          "branch": "exec/2026-07-24__release-v7.8/EPIC-06",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [
+            "docs/design/2026-07-24__release-v7.8/ai-spend-trend-chart/ux_spec.md",
+            "docs/specs/frontend/pages/settings.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": "Rebase onto main after EPIC-05 merges before touching shared files."
+        }
+      }
+    },
+    "EPIC-11": {
+      "status": "not_started",
+      "branch": "exec/2026-07-24__release-v7.8/EPIC-11",
+      "pr_number": null,
+      "pr_status": "none",
+      "qa_signed_off": false,
+      "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-11.md",
+      "test_scenarios": [],
+      "stories": {
+        "ST-11": {
+          "title": "Add pilot contract tests for 3 highest-traffic endpoints",
+          "classification": "delegated_decision",
+          "status": "not_started",
+          "assigned_to": "Head of Engineering",
+          "github_issue": 1068,
+          "branch": "exec/2026-07-24__release-v7.8/EPIC-11",
+          "commit_sha": null,
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": "Head of Engineering confirms the 3 pilot endpoints (candidates: positions, trades, dashboard) per RISK-03",
+          "completed_utc": null,
+          "acceptance_verified": false,
+          "spec_references": [],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": false,
+          "last_completed_substep": null,
+          "sign_off_record": null,
+          "notes": ""
+        }
+      }
+    }
+  },
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [
+    "ST-04",
+    "ST-03"
+  ],
+  "open_escalations": [],
+  "process_notes": [
+    "EPIC-04: all ST items done, qa_evidence prepared, but PR not opened per BLG-GOV-18 precondition -- PageHeader.js is frontend-visible (src/components/**), so BLG-GOV-19 autonomous sign-off is unavailable and a human Director of Quality sign-off (with CI-green Playwright confirmation) is required before PR can open."
+  ],
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": [
+      "EPIC-04",
+      "EPIC-03",
+      "EPIC-09",
+      "EPIC-07",
+      "EPIC-08",
+      "EPIC-12",
+      "EPIC-10",
+      "EPIC-02",
+      "EPIC-01",
+      "EPIC-05",
+      "EPIC-06",
+      "EPIC-11"
+    ],
+    "all_merged": false
+  },
+  "sealed": false,
+  "sealed_utc": null
+}

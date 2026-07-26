@@ -1,8 +1,8 @@
 **Owner:** QA & Testing Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 0.1
-**Last Updated:** 2026-03-27
+**Version:** 0.2
+**Last Updated:** 2026-07-26
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint Item:** ST-10 — EPIC-04 (v2.3)
 **Spec Ref:** docs/specs/frontend/pages/notifications.md §Nav Alert Badge v0.3
@@ -49,7 +49,7 @@ Test scenarios covering the unacknowledged alert count badge on the Alerts nav i
 3. Observe the Alerts nav item
 
 **Expected:**
-- Red filled circle (`bg-red-500`) overlaid at the top-right corner of the Bell icon
+- Red filled circle (`bg-red-600`, updated v0.2 EPIC-03/ST-03 v7.8 — `bg-red-500` gave white-on-red contrast of 3.76:1, below the WCAG AA 4.5:1 normal-text threshold; `bg-red-600` gives 4.83:1) overlaid at the top-right corner of the Bell icon
 - White count number centred inside the circle
 - Circle is small (~14×14px) and does not obscure the icon or label text
 - Count renders correctly (e.g., "3" for 3 unacknowledged alerts)
@@ -141,3 +141,4 @@ This scenario file addresses the EPIC-04 test scenario gap flagged at sprint pla
 | Version | Date | Change |
 |---------|------|--------|
 | 0.1 | 2026-03-27 | Initial version. ST-10 (BLG-FE-05, v2.3): Playwright scenarios SC-ANB-01–08 and visual scenarios SC-ANB-VIS-01–05. Addresses EPIC-04 test scenario gap from sprint planning 2026-03-24. |
+| 0.2 | 2026-07-26 | ST-03 (EPIC-03, v7.8, BLG-FE-127) notification accessibility audit: badge colour changed `bg-red-500` → `bg-red-600` (white-on-red contrast 3.76:1 → 4.83:1, WCAG AA 4.5:1 threshold). SC-ANB-VIS-01 updated to the new token. `tests/e2e/alert-nav-badge.spec.js` selectors updated in the same commit (cross-spec selector check). |
