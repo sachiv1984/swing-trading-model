@@ -16,6 +16,8 @@ import logging
 import requests
 from typing import Optional, Dict
 
+from utils.retry import retry_with_backoff
+
 logger = logging.getLogger(__name__)
 
 DEFAULT_FX_RATE = 1.27
@@ -31,25 +33,40 @@ def _is_us_ticker(ticker: str) -> bool:
     return not ticker.endswith(".L")
 
 
+@retry_with_backoff(
+    max_attempts=3,
+    base_delay=0.5,
+    retryable_exceptions=(requests.exceptions.RequestException,),
+)
+def _yahoo_fetch_price(ticker: str) -> float:
+    """
+    Fetch current price from Yahoo Finance (internal, not market-routed).
+    Raises on any transient/network failure (retried by the decorator) or a
+    `ValueError` when the response is well-formed but carries no usable price
+    (not retried — retrying won't produce data that isn't there).
+    """
+    time.sleep(0.3)
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
+    params = {"interval": "1d", "range": "1d"}
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'application/json',
+    }
+    response = requests.get(url, params=params, headers=headers, timeout=10)
+    data = response.json()
+    if "chart" in data and "result" in data["chart"] and data["chart"]["result"]:
+        result = data["chart"]["result"][0]
+        if "meta" in result and "regularMarketPrice" in result["meta"]:
+            price = float(result["meta"]["regularMarketPrice"])
+            if price > 0:
+                return price
+    raise ValueError(f"No valid price in Yahoo Finance response for {ticker}")
+
+
 def _yahoo_get_current_price(ticker: str) -> Optional[float]:
-    """Fetch current price from Yahoo Finance (internal, not market-routed)."""
+    """Fetch current price from Yahoo Finance, retrying transient failures (ST-09, ~3 attempts)."""
     try:
-        time.sleep(0.3)
-        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
-        params = {"interval": "1d", "range": "1d"}
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Accept': 'application/json',
-        }
-        response = requests.get(url, params=params, headers=headers, timeout=10)
-        data = response.json()
-        if "chart" in data and "result" in data["chart"] and data["chart"]["result"]:
-            result = data["chart"]["result"][0]
-            if "meta" in result and "regularMarketPrice" in result["meta"]:
-                price = float(result["meta"]["regularMarketPrice"])
-                if price > 0:
-                    return price
-        return None
+        return _yahoo_fetch_price(ticker)
     except Exception as exc:
         logger.warning("Yahoo Finance price fetch failed for %s: %s", ticker, exc)
         return None
