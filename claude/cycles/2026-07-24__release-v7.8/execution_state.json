@@ -62,7 +62,7 @@
       "status": "done",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-03",
       "pr_number": null,
-      "pr_status": "none",
+      "pr_status": "blocked_on_doq_signoff",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -436,7 +436,8 @@
   ],
   "open_escalations": [],
   "process_notes": [
-    "EPIC-04: all ST items done, qa_evidence prepared, but PR not opened per BLG-GOV-18 precondition -- PageHeader.js is frontend-visible (src/components/**), so BLG-GOV-19 autonomous sign-off is unavailable and a human Director of Quality sign-off (with CI-green Playwright confirmation) is required before PR can open."
+    "EPIC-04: all ST items done, qa_evidence prepared, but PR not opened per BLG-GOV-18 precondition -- PageHeader.js is frontend-visible (src/components/**), so BLG-GOV-19 autonomous sign-off is unavailable and a human Director of Quality sign-off (with CI-green Playwright confirmation) is required before PR can open.",
+    "EPIC-03: all ST items done, qa_evidence prepared, but PR not opened per BLG-GOV-18 precondition -- Layout.js is frontend-visible, so BLG-GOV-19 autonomous sign-off is unavailable and a human Director of Quality sign-off is required before PR can open. Also carries a rebase-onto-main dependency on EPIC-04 (shared file design_system.md) that must happen before this PR is finalized for merge."
   ],
   "merge_gate": {
     "epics_merged": [],
