@@ -558,6 +558,11 @@ export const api = {
       return doFetch(`/analytics/strategy-version-comparison?${params.toString()}`);
     },
   },
+
+  // ST-01 (v7.8 EPIC-01, BLG-FE-128): in-app "What's New" panel
+  changelog: {
+    latest: async () => doFetch('/changelog/latest'),
+  },
 };
 
 export const Signal = base44.entities.Signal;

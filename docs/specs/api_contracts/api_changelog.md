@@ -1,11 +1,22 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.6.0
-**Last Updated:** 2026-06-23
+**Version:** 1.7.0
+**Last Updated:** 2026-07-26
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
+
+## v7.8.0 (2026-07-26 — Release v7.8)
+
+### changelog_endpoints.md — v1.0 (NEW)
+
+**EPIC:** EPIC-01
+**ST:** ST-01
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /changelog/latest | Returns the most recent release's version label and changes-shipped descriptions, parsed server-side from docs/product/changelog.md. Backs the in-app "What's New" panel (dashboard.md §6A). `data` is null if no parseable version section exists. |
 
 ## v6.1.0 (2026-06-23 — Release v6.1)
 
