@@ -550,3 +550,30 @@ def build_tax_year_csv(report_data: dict) -> str:
         ])
 
     return output.getvalue()
+
+
+def build_monthly_pnl_csv(months: list) -> str:
+    """
+    Render the monthly P&L report's month rows as a CSV string
+    (ST-05, EPIC-05, v7.8, BLG-FEAT-81).
+
+    Structure per monthly-csv-export/ux_spec.md §3: exports exactly the
+    rows rendered in the on-screen Monthly Financial Table -- no
+    client-side recalculation, no metadata block (unlike the Tax Year
+    export), just a header row + one row per month present in `months`.
+
+    Args:
+        months: The `months` list from get_monthly_pnl_report() -- dicts
+            with year, month, realised_pnl_gbp, trade_count.
+
+    Returns:
+        UTF-8 CSV string.
+    """
+    output = io.StringIO()
+    writer = csv.writer(output, lineterminator="\n")
+
+    writer.writerow(["Year", "Month", "Realised P&L (GBP)", "Trades"])
+    for m in months:
+        writer.writerow([m["year"], m["month"], m["realised_pnl_gbp"], m["trade_count"]])
+
+    return output.getvalue()

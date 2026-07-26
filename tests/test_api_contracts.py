@@ -544,6 +544,23 @@ class TestReportsEndpoints(unittest.TestCase):
         assert "unrealised_note" in body
         assert body["data"] == [{"year": 2026, "month": 5, "realised_pnl_gbp": 100.0, "trade_count": 2}]
 
+    @patch("main.get_monthly_pnl_report", return_value={
+        "months": [{"year": 2026, "month": 5, "realised_pnl_gbp": 100.0, "trade_count": 2}],
+        "estimated_unrealised_pnl": 340.0,
+        "unrealised_note": "note",
+    })
+    def test_monthly_pnl_csv_format_returns_csv_download(self, *_):
+        # ST-05 (EPIC-05, v7.8, BLG-FEAT-81): format=csv returns a CSV file download
+        response = CLIENT.get("/reports/monthly-pnl?format=csv")
+        assert response.status_code == 200
+        assert response.headers["content-type"].startswith("text/csv")
+        assert 'attachment; filename="monthly-pnl.csv"' in response.headers["content-disposition"]
+        assert "Year,Month,Realised P&L (GBP),Trades" in response.text
+        assert "2026,5,100.0,2" in response.text
+
+    def test_monthly_pnl_invalid_format_returns_400(self):
+        assert CLIENT.get("/reports/monthly-pnl?format=xml").status_code == 400
+
 
 # ---------------------------------------------------------------------------
 # 14. Trade Plans  (EPIC-01 — available after EPIC-01 merges into main)

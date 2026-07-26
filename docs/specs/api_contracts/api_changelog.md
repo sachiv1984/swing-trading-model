@@ -1,11 +1,22 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.6.0
-**Last Updated:** 2026-06-23
+**Version:** 1.7.0
+**Last Updated:** 2026-07-26
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
+
+## v7.8.0 (2026-07-26 — Release v7.8)
+
+### reports_endpoints.md — v0.10 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-05
+
+| Change | Details |
+|--------|---------|
+| New query param: GET /reports/monthly-pnl?format=csv | Returns a CSV file download of the month rows (Year, Month, Realised P&L (GBP), Trades) instead of JSON — mirrors the existing GET /reports/tax-year?format=csv handler. Invalid format values return 400. |
 
 ## v6.1.0 (2026-06-23 — Release v6.1)
 
