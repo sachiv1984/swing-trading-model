@@ -146,7 +146,7 @@
           "assigned_to": "engine",
           "github_issue": 1064,
           "branch": "exec/2026-07-24__release-v7.8/EPIC-07",
-          "commit_sha": null,
+          "commit_sha": "7fee996e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
