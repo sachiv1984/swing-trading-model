@@ -254,3 +254,21 @@ def get_monthly_cost():
     from database import get_monthly_claude_cost
     result = get_monthly_claude_cost()
     return {"status": "ok", "data": result}
+
+
+@router.get("/spend-trend")
+def get_spend_trend():
+    """
+    Return Claude API spend for the last 6 release cycles, oldest to
+    newest, for the Settings page's AI spend trend chart.
+
+    Read-only. Source: claude_audit_log (existing data, no new collection),
+    bucketed by release-cycle date windows parsed from
+    docs/product/changelog.md's version headings. Renders whatever cycles
+    exist if fewer than 6 are available -- no zero-padding.
+
+    ST-06 (EPIC-06, v7.8, BLG-FEAT-82).
+    Contract: docs/specs/api_contracts/ai_endpoints.md#GET /ai/spend-trend
+    """
+    from services.ai_spend_trend_service import get_ai_spend_trend
+    return {"status": "ok", "data": get_ai_spend_trend()}

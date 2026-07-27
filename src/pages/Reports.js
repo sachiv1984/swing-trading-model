@@ -521,11 +521,39 @@ const MONTH_NAMES = [
 ];
 
 function MonthlyPnlTable() {
+  const [csvGenerating, setCsvGenerating] = useState(false);
+  const { toast } = useToast();
+
   const { data: response, isLoading } = useQuery({
     queryKey: ["monthlyPnl"],
     queryFn: () =>
       apiFetch(`${base44.baseUrl}/reports/monthly-pnl`).then((r) => r.json()),
   });
+
+  // ST-05 (BLG-FEAT-81, v7.8): reuses the Tax Year tab's Download CSV pattern
+  // verbatim, per monthly-csv-export/ux_spec.md §2/§4.
+  const handleCsvDownload = async () => {
+    setCsvGenerating(true);
+    try {
+      const response = await apiFetch(`${base44.baseUrl}/reports/monthly-pnl?format=csv`);
+      if (!response.ok) throw new Error("CSV generation failed");
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "monthly-pnl.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      toast({
+        description: "CSV generation failed. Please try again.",
+        variant: "destructive",
+        duration: 5000,
+      });
+    } finally {
+      setCsvGenerating(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -544,6 +572,32 @@ function MonthlyPnlTable() {
 
   return (
     <div className="space-y-4">
+      {/* ST-05 (BLG-FEAT-81, v7.8): Download CSV control for the Monthly P&L
+          Report view — verbatim reuse of the Tax Year tab's export button,
+          per monthly-csv-export/ux_spec.md §2. Drops below the section
+          header full-width on narrow screens (flex-wrap). */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-sm font-semibold text-white">Monthly P&L Report</h2>
+        <Button
+          onClick={handleCsvDownload}
+          disabled={csvGenerating}
+          variant="outline"
+          className="border-slate-600 text-slate-300 hover:text-white hover:border-slate-500 h-9"
+        >
+          {csvGenerating ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Generating…
+            </>
+          ) : (
+            <>
+              <FileDown className="w-4 h-4 mr-2" />
+              Download CSV
+            </>
+          )}
+        </Button>
+      </div>
+
       <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-700/50">
           <h3 className="text-sm font-semibold text-white">Monthly Realised P&L</h3>

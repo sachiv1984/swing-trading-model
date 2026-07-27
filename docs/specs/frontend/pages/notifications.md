@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.6
-**Last Updated:** 2026-07-24
+**Version:** 0.7
+**Last Updated:** 2026-07-26
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/notification-feed/ux_spec.md | docs/design/2026-03-18__release-v2.1/notification-preferences/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-threshold-customisation/ux_spec.md | docs/design/2026-03-21__release-v2.2/alert-history-table/ux_spec.md | docs/design/2026-03-24__release-v2.3/alert-nav-badge/ux_spec.md | docs/design/2026-07-17__release-v7.5/custom-price-alerts/ux_spec.md | docs/design/2026-07-21__release-v7.7/nav-notification-digest-consolidation/ux_spec.md | docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md
 
@@ -416,6 +416,7 @@ When the System nav group is collapsed, the badge count propagates to the group 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.7 | 2026-07-26 | ST-03 (EPIC-03, v7.8, BLG-FE-127) accessibility audit execution finding: Nav Alert Badge's `bg-red-500` fill gave white-on-red contrast of 3.76:1, below the WCAG AA 4.5:1 normal-text threshold (badge text is 8-9px, below the "large text" exemption size). Fixed directly (trivial single-token swap) to `bg-red-600` (4.83:1). Applies to both the collapsed-group-header and item-level badge instances (`src/Layout.js`). Test coverage: `tests/e2e/alert-nav-badge.spec.js` selectors updated in the same commit; `docs/testing/alert_nav_badge_scenarios.md` SC-ANB-VIS-01 updated. |
 | 0.6 | 2026-07-24 | v7.8 design gate — ST-03 (EPIC-03, BLG-FE-127): fixed the accessibility-audit standard and scope for the v7.7 notification/digest consolidation surface (this page's nav badge + digest grouping) and the `StandingAlert` primitive it builds on — WCAG AA text contrast (existing token) plus a new ≥3:1 focus-indicator contrast threshold (`design_system.md` §Hover & Focus States v1.4). Audit itself runs during sprint execution; trivial findings fixed directly, non-trivial findings filed as follow-up backlog items. Design source: `docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md`. Head of UX & Design sign-off: 2026-07-24. Product Owner approved: 2026-07-24. Head of Specs Team confirmed. |
 | 0.5 | 2026-07-21 | v7.7 design gate — ST-02 (EPIC-02, BLG-FE-114): added optional `since_days`/`read` filter query params to the Notification Feed (§Page 1) so Weekly Digest's alert-count values can deep-link here; extended the "Daily Portfolio Summary" preference row helper text to differentiate it from the Weekly Digest page, with a cross-link. §Nav Alert Badge integration point now the retained "Notifications" item (see `navigation.md` v1.4) — "Alerts" nav item removed as a duplicate. Design source: nav-notification-digest-consolidation/ux_spec.md. Approved: Product Owner 2026-07-21. Design gate: 2026-07-21__release-v7.7. Head of Specs Team confirmed. |
 | 0.4 | 2026-07-17 | v7.5 design gate — added Section 3: Custom Price Alerts (ST-02, BLG-FE-116): user-created ticker/condition/threshold alerts, backed by new `price_alerts` table; create/list/delete UI on `/notifications/preferences` below Alert Thresholds; triggered alerts surface via existing Notification Feed. Design source: custom-price-alerts/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
