@@ -111,7 +111,7 @@ function systemGroupHeader(page) {
 
 /** Locate the badge on the System group header row (shown when System is collapsed). */
 function systemGroupHeaderBadge(page) {
-  return systemGroupHeader(page).locator('[class*="bg-red-500"]');
+  return systemGroupHeader(page).locator('[class*="bg-red-600"]');
 }
 
 /** Locate the Notifications nav link (only in the DOM when System group is expanded). */
@@ -121,7 +121,7 @@ function notificationsNavLink(page) {
 
 /** Locate the badge inside the Notifications nav link (item-level, System expanded). */
 function notificationsNavBadge(page) {
-  return notificationsNavLink(page).locator('[class*="bg-red-500"]');
+  return notificationsNavLink(page).locator('[class*="bg-red-600"]');
 }
 
 // ---------------------------------------------------------------------------
