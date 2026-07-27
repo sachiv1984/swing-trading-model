@@ -9,6 +9,24 @@
 
 ## v7.8.0 (2026-07-27 — Release v7.8)
 
+### changelog_endpoints.md — v1.0 (NEW)
+
+**EPIC:** EPIC-01
+**ST:** ST-01
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /changelog/latest | Returns the most recent release's version label and changes-shipped descriptions, parsed server-side from docs/product/changelog.md. Backs the in-app "What's New" panel (dashboard.md §6A). `data` is null if no parseable version section exists. |
+
+### reports_endpoints.md — v0.10 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-05
+
+| Change | Details |
+|--------|---------|
+| New query param: GET /reports/monthly-pnl?format=csv | Returns a CSV file download of the month rows (Year, Month, Realised P&L (GBP), Trades) instead of JSON — mirrors the existing GET /reports/tax-year?format=csv handler. Invalid format values return 400. |
+
 ### ai_endpoints.md — v1.8 (UPDATED)
 
 **EPIC:** EPIC-06
