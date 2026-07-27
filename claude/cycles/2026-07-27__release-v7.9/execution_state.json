@@ -427,8 +427,8 @@
     "EPIC-13": {
       "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-13",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1100,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-13.md",
       "test_scenarios": [],
