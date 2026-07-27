@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.116
+**Version:** 4.117
 **Last Updated:** 2026-07-27
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -567,7 +567,7 @@ Keeps `claude/ideas/ideas_register.md` lean and surfaces revival opportunities.
 
 ## 6.5 Phase 1.5 — Design Gate (Required*)
 
-**Source prompt:** `claude/system/design_gate_prompt.md` (v1.4)  
+**Source prompt:** `claude/system/design_gate_prompt.md` (v1.5)  
 **Owner:** Head of UX & Design (artefacts), PMO Lead (gate record)  
 **Pre-condition:** Phase 1B Publish Gate passed; `sprint_sealed = false`  
 **\*Required** unless all sprint items are confirmed Design Not Applicable
@@ -1454,14 +1454,14 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.116 |
+| Version | 4.117 |
 | Last Updated | 2026-07-27 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.12 |
-| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
+| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.5 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.6 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.44 |
@@ -1495,6 +1495,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.117 | 2026-07-27 | **BLG-GOV-190 — design_gate_prompt.md v1.4→v1.5: root state pointer sync gap closed.** §5 Write Scope Restriction: added `.claude_current_state.json`, additive-only, restricted to `design_gate_status`/`design_gate_record`/`design_gate_completed_utc`. STEP 5: added a mirror write of those three fields into `.claude_current_state.json` immediately after the existing cycle-level `state.json` write — no other field (in particular `status`, `design_gate_bypass_authority`, `design_gate_bypass_reason`) is touched. STEP 6: `.claude_current_state.json` added to the commit's `git add` list. §7 Completion Condition updated to reference the mirrored write. §6.5 source prompt header v1.4→v1.5. §14 Design Gate Engine v1.4→v1.5. §14 Version 4.116→4.117/2026-07-27. Root cause: the root pointer's `design_gate_status` field was initialised `not_started` by Release Planning STEP 0 and never subsequently written by any engine, so it reported stale even after a gate genuinely passed (recurred `2026-07-24__release-v7.8` → `2026-07-27__release-v7.9`, each session verifying directly against the cycle-level `state.json` as a workaround rather than a fix). Authority: Head of Specs Team (direct action, user-invoked, 2026-07-27). |
 | 4.116 | 2026-07-27 | **Roadmap rebalance `2026-07-27__scheduled` STEP 11 Friction Item 1 — idea_intake_prompt.md v2.7→v2.8: §2.0 step 5 backlog-scope-overlap check upgraded from prose-advisory to a mandatory act (still non-blocking outcome).** §5 source prompt header v2.7→v2.8. §14 Idea Intake Engine v2.7→v2.8. §14 Version 4.115→4.116/2026-07-27. Change: the pre-v2.8 check existed as advisory prose ("briefly scan... advisory only") but was not actually performed at submission-generation time — confirmed this cycle when a retroactive STEP 4 check found 23 of 44 (52%) of a single window's submissions duplicated existing open backlog items, a saturation-driven cost of skipping the check up front. v2.8 requires the submitting agent to grep-check and explicitly record the result before finalising each topic; a submission restating an existing item with no materially new angle no longer counts toward the agent's minimum. Authority: Head of Specs Team (roadmap rebalance `2026-07-27__scheduled`, STEP 11). |
 | 4.115 | 2026-07-27 | **Roadmap rebalance `2026-07-27__scheduled` STEP -1.5 resolved the one outstanding deferred patch from `2026-07-24__scheduled` (Friction Item 2) — roadmap_prompt.md v9.5→v9.6: STEP 2.3 SI-02 gate read instruction gains explicit credential-fallback guidance.** §6 source prompt header v9.5→v9.6. §14 Roadmap Engine Source v9.5→v9.6. §14 Version 4.114→4.115/2026-07-27. Change: when production API credentials are unavailable or a live check returns an auth failure, the engine must cite the existing structured field unchanged and record in `run_manifest.md` that a live check was attempted and why it did not succeed — never write a "live re-confirmed" claim without an actual successful authenticated response. Authority: Head of Specs Team (roadmap rebalance `2026-07-27__scheduled`, STEP -1.5, target date matched). |
 | 4.114 | 2026-07-27 | **Post-ship closure `2026-07-24__release-v7.8` §6 Outstanding Actions row 1 applied — release_planning_prompt.md v2.43→v2.44 + roadmap_prompt.md v9.4→v9.5: `next_release` field ownership made explicit.** §6B source prompt header v2.43→v2.44. §6 source prompt header v9.4→v9.5. §14 Release Engine Source v2.43→v2.44; §14 Roadmap Engine Source v9.4→v9.5. §14 Version 4.113→4.114/2026-07-27. Change: `.claude_current_state.json.next_release` was found 4 releases stale at the start of the v7.8 Release Planning session because no engine explicitly owned the field. `release_planning_prompt.md` STEP 9 now writes `next_release` unconditionally from its own `--version` argument on every seal — the authoritative source. `roadmap_prompt.md`'s existing STEP 8 advisory pre-fill is retained but its text now explicitly says it is non-authoritative and must yield to the last Release Planning STEP 9 write. Authority: Head of Specs Team (post-ship closure `2026-07-24__release-v7.8` §6 row 1, 2026-07-27). |

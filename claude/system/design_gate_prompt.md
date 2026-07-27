@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-05-15
+**Version:** 1.5
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -67,6 +67,7 @@ During this routine you may write only to:
 - `claude/cycles/<cycle_id>/design_gate.md` (create)
 - `claude/cycles/<cycle_id>/state.json` (additive write only — do not overwrite unrelated fields)
 - `docs/specs/frontend/pages/` (Head of Specs Team and Frontend Specs owner only)
+- `.claude_current_state.json` (additive write only, restricted to `design_gate_status`, `design_gate_record`, `design_gate_completed_utc` — STEP 5 mirror write; no other field in this file may be touched — BLG-GOV-190)
 
 You must **not** modify `claude/cycles/<cycle_id>/stage4_backlog_slice.md`, any roadmap or backlog document, or any canonical spec beyond approved frontend spec updates. Violation → halt.
 
@@ -238,6 +239,18 @@ Update `claude/cycles/<cycle_id>/state.json` — additive write only:
 
 If **Blocked**: do not set `sprint_planning_pre_condition` to true; record blocked items in `claude/cycles/<cycle_id>/escalations.md`.
 
+**Root state pointer mirror (BLG-GOV-190 — additive only):** Immediately after the cycle-level `state.json` write above, mirror the same three values into `.claude_current_state.json`:
+
+```json
+{
+  "design_gate_status": "Passed | Blocked",
+  "design_gate_record": "claude/cycles/<cycle_id>/design_gate.md",
+  "design_gate_completed_utc": "<ISO-8601>"
+}
+```
+
+Do not touch any other field in `.claude_current_state.json` (in particular, do not set `status`, `design_gate_bypass_authority`, or `design_gate_bypass_reason` here — those remain outside this routine's write scope). This closes the drift where the cycle-level gate record showed `Passed` but the root pointer read by CLAUDE.md §0 kept reporting `not_started` indefinitely.
+
 ---
 
 ## STEP 6 — Commit
@@ -247,6 +260,7 @@ If **Blocked**: do not set `sprint_planning_pre_condition` to true; record block
 ```
 git add claude/cycles/<cycle_id>/design_gate.md
 git add claude/cycles/<cycle_id>/state.json
+git add .claude_current_state.json
 git add docs/design/<cycle_id>/
 git add docs/specs/frontend/pages/  (only files updated this run)
 git commit -m "[GOVERNANCE] Design gate: <cycle_id> — <n> items cleared, <n> blocked"
@@ -266,7 +280,7 @@ The run is complete when:
 - All items classified
 - All Design Required items have approved artefacts and updated specs, or recorded as blocked
 - Design gate record written
-- Global state updated (`design_gate_status = Passed | Blocked`)
+- Global state updated (`design_gate_status = Passed | Blocked`) in both the cycle-level `state.json` and, additively, in `.claude_current_state.json` (BLG-GOV-190)
 - Commit complete (or commit manifest produced)
 
 **`--dry-run`:** classification table produced, gap summary output. No files written. Run complete.

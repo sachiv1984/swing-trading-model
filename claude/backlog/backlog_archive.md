@@ -9,6 +9,37 @@ Permanent record of completed and killed backlog items retired from `claude/back
 
 ---
 
+### BLG-GOV-190 — Design gate prompt does not sync design_gate_status to top-level state pointer
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-27
+**Shipped in:** Direct governance fix (not sprint-scoped) — `design_gate_prompt.md` v1.4→v1.5, 2026-07-27
+**Evidence:** `claude/system/prompt_change_log.md` (2026-07-27 row); `claude/system/changelogs/design_gate_changelog.md` v1.5; `claude/system/OPERATIONAL_GUIDE.md` §14 v4.117
+
+### BLG-GOV-190 — Design gate prompt does not sync design_gate_status to top-level state pointer
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Head of Specs Team
+**Source:** Design gate run, cycle 2026-07-08__release-v6.8 (commit 028e7fed) — 2026-07-08
+**Effort:** XS (~1 hour)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`design_gate_prompt.md` §5 Write Scope Restriction lists only `claude/cycles/<cycle_id>/design_gate.md`, the cycle's own `state.json`, and `docs/specs/frontend/pages/` as writable. It does not include `.claude_current_state.json`. But that top-level file also carries a mirrored `design_gate_status` field, initialised to `"not_started"` by the Release Planning Engine's STEP 0. Because STEP 5 (Update Global State) has no write scope to update the top-level mirror, a passed gate is recorded correctly in the cycle-level `state.json` but the top-level pointer keeps reporting `"not_started"` indefinitely. Since CLAUDE.md §0 instructs every session to read `.claude_current_state.json` first and report status from it, a future session could misreport an already-passed design gate as not started. This is the same class of drift already logged against `OPERATIONAL_GUIDE.md` (header vs. table mismatch, 4 prior recurrences).
+
+**Resolution (2026-07-27):** Implemented option (a) from Scope below — `design_gate_prompt.md` §5 write scope now includes `.claude_current_state.json` (additive-only, restricted to `design_gate_status`/`design_gate_record`/`design_gate_completed_utc`); STEP 5 mirrors those three fields there immediately after the cycle-level `state.json` write; STEP 6 commit list and §7 Completion Condition updated. AC-02's constraint (no other write-scope-restricted file touched beyond what STEP 5 already governs) was honoured — the root `status` enum field and `design_gate_bypass_*` fields are explicitly untouched by this fix, so the separate `sprint_planning_prompt.md` STEP -1.3 bypass-audit behaviour (which keys off the root `status` enum, not `design_gate_status`) is unchanged and may still require the same session-level workaround noted in `sprint_planning_notes.md` for `2026-07-24__release-v7.8` and `2026-07-27__release-v7.9` — this is a separate, larger lifecycle-transition question not in this item's scope.
+
+**Scope**
+- Either (a) add `.claude_current_state.json` (additive-only, restricted to the `design_gate_*` fields) to `design_gate_prompt.md` §5's write scope and have STEP 5 mirror `design_gate_status`, `design_gate_completed_utc`, and `design_gate_record` there, or (b) update CLAUDE.md §0's session-start protocol to cross-check the active cycle's own `state.json` for `design_gate_status` rather than relying solely on the top-level pointer
+- Apply the CLAUDE.md §6 governance file edit checklist (version bump, OPERATIONAL_GUIDE §14 sync, prompt_change_log.md entry) to whichever file is changed
+
+**Acceptance Criteria**
+- AC-01: After a design gate passes, `.claude_current_state.json`'s `design_gate_status` (or the session-start protocol's read path) correctly reflects `Passed` without manual correction
+- AC-02: No other write-scope-restricted file is touched by the fix beyond what STEP 5 already governs
+
+---
+
 ### BLG-OPS-100 — Automated staging smoke test on every deploy
 
 **Status at retirement:** ❌ Killed — duplicate, merged into BLG-OPS-25
