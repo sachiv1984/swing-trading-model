@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.7
-**Last Updated:** 2026-06-22
+**Version:** 2.8
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -296,7 +296,10 @@ Before generating new idea submissions, each agent must:
 
 This check prevents duplicate submissions that burden STEP 4 with unnecessary classification work (friction type D, recurring — meta-review patch 2026-06-02, idea_intake_prompt.md v2.4).
 
-5. **Backlog scope advisory (non-blocking):** Before finalising new submission topics, briefly scan active backlog items in `claude/backlog/backlog.md` for scope overlap with planned submissions. If an active BLG-ID item already covers the same initiative, problem statement, or feature area as a planned new idea: note this in the submission's Purpose/Rationale field (e.g. "refines BLG-XX-nn"). A submission that restates an existing backlog item is valid only if it provides materially new scope or rationale not captured by the backlog item. Advisory only — does not block submission.
+5. **Backlog scope overlap check (mandatory act, non-blocking outcome — v2.8, `2026-07-27__scheduled` Friction Item 1):** Before finalising each new submission topic, the submitting agent must grep `claude/backlog/backlog.md` for keyword matches against the planned topic (title nouns, feature/mechanism name). This is a required step, not an optional scan — record the result explicitly:
+   - **No overlap found:** proceed with the submission as planned.
+   - **Overlap found with an active BLG-ID:** either drop the topic and submit a different net-new idea instead, or — only if the idea provides materially new scope or rationale not captured by the existing item — keep it and note the relationship in the submission's Purpose/Rationale field (e.g. "refines BLG-XX-nn, adds <specific new angle>").
+   A submission that restates an existing backlog item with no materially new angle is not a valid net-new submission and does not count toward the agent's minimum. This closes a gap where the check existed as prose (pre-v2.8: "Advisory only... briefly scan") but was not actually performed at submission-generation time across 20+ consecutive idea-intake windows, so overlap was only ever caught later (if at all) by STEP 4's PO classification — by `2026-07-27__scheduled`, backlog saturation had pushed the undetected-overlap rate to 52% of a single window's submissions (23 of 44), a materially higher rejection cost than performing the check up front.
 
 ### 2.1 Per-Agent Process
 

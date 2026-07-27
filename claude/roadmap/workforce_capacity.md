@@ -553,3 +553,29 @@ Both approved candidates (`BLG-FEAT-52` ungated/descoped, new `BLG-FEAT-71`) are
 **v7.4+ capacity outlook:** Now horizon = v7.4 (4 anchor items + `BLG-SPEC-95` pre-work). `BLG-SPEC-95` should be sequenced first (or in parallel) at sprint planning, consistent with the `BLG-SPEC-91-94`/`BLG-SPEC-89/90` precedent of fast, low-effort precursors ahead of the substantive feature stories.
 
 **Workforce constraints:** None new.
+
+---
+
+## Rebalance 2026-07-27__scheduled
+
+21 new backlog items (from 44 `IW-20260727-01` submissions, 23 rejected as duplicates/covered) — all S/M/L effort, single-developer-context, no scarce-skill contention.
+
+| Item | Effort | Skill Category | Notes |
+|------|--------|-----------------|-------|
+| BLG-SPEC-105 | M (~2-3 days) | Data Model / Spec | trade_plan-to-position FK linkage schema documentation |
+| BLG-GOV-258/259/260/261/262/263 | S–L | Governance / Process | displacement debt register, effort-band retrospective, RA-marker retirement, deferred-patch index, §12.2 threshold, cross-EPIC execution_state.json structural fix (L, ~3-5 days) |
+| BLG-FE-129/130/131 | S | Frontend / Spec | dark-mode AC checklist, chart WCAG contrast checklist, motion/timing design-gate checklist |
+| BLG-FEAT-85/86/87 | S–M | Product Feature | P&L tax-lot reconciliation, drift-detection metric, trailing-stop explainer tooltip |
+| BLG-BE-73/74 | M | Backend | manual-override audit trail, nightly backtest data-integrity CI smoke test |
+| BLG-OPS-120/121/122 | S–M | Operations | cost-tag infra spend, staging credential provisioning, CI cache warm-up |
+| BLG-QA-123/124/125/126 | S–M | QA / Process | visual-regression refresh cadence, cross-EPIC smoke tagging, test.py pre-commit hook, SystemStatus.js fallback snapshot test |
+
+**Governance load %:** N/A — no roadmap-initiative-level capacity consumed this cycle (backlog-level additions only, all `Provisional-Target: TBD`).
+
+**Skill-Silo advisory (STEP 7.1):** Rolling 3-cycle average (v7.6 6/8=75%, v7.7 7/11=63.6%, v7.8 7/12=58.3%) = **64.5%**, above the 40% ceiling — Alert persists, **1st worsening reading** in a new streak (56.5%→64.5%), following the v7.5/v7.6/v7.7 reading that had broken the prior 2-consecutive-worsening streak. Not yet the 3-reading mandatory-≥2-U-items threshold. Advisory pull-forward candidates named: `BLG-FEAT-87` (this cycle's new trailing-stop explainer tooltip) and `BLG-FE-128` (carried from the prior cycle, still unshipped).
+
+**Key finding this cycle:** `BLG-GOV-263` (cross-EPIC `execution_state.json` structural fix, L effort) is the highest-effort item filed this cycle and directly addresses a cost that has scaled up across 3 consecutive multi-EPIC sprints (v7.6→v7.8) — worth prioritising ahead of further Skill-Silo-adjacent process items, since it reduces recurring execution-engine overhead rather than adding another one-off governance document.
+
+**v7.9+ capacity outlook:** Now horizon empty (STEP 8.1 Option (b) deferred). No committed scope yet — next `plan release` should draw from this cycle's ungated U-shaped additions (`BLG-FEAT-87`) plus the still-open `BLG-FE-128` to address the Skill-Silo trend before it reaches 3 consecutive worsening readings.
+
+**Workforce constraints:** None new.

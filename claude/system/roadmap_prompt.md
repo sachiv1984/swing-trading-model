@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.5
+**Version:** 9.6
 **Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -300,6 +300,12 @@ Roadmap must use Now / Next / Later structure. If absent: record required update
 For each Later item: case for promoting to Next? For each Next item: promote to Now, stay, or demote to Later? Record outcomes in a `### Horizon Review` subsection within `## STEP 2`. Extended tier: explicit Now→Next promotion check required.
 
 **SI-02 gate read instruction (v8.4, LP-09):** When citing the SI-02 trade-count gate, read the structured `**Last formally confirmed:**` / `**Unverified report:**` sub-fields directly below the SI-02 row in `current_roadmap.md` §5 (Arc 5 Later horizon table) rather than re-deriving the distinction from prose. Cite `**Last formally confirmed:**` as the authoritative value for gate-clearance decisions; note `**Unverified report:**` as context only. Only a governed routine with direct production database/API access may update `**Last formally confirmed:**`.
+
+**Credential-fallback guidance (v9.6, resolves `2026-07-24__scheduled` Friction Item 2):** Before attempting a live re-check, confirm production API credentials are actually available in the executing checkout (e.g. a non-empty `REACT_APP_API_KEY` in `.env`/`.env.staging`/`.env.production`). If credentials are absent or the live call returns an auth failure (e.g. `401 Unauthorized`):
+- Do not write a "live re-confirmed" claim — this would misrepresent whether verification occurred.
+- Cite the existing `**Last formally confirmed:**` structured field unchanged.
+- Record explicitly in `run_manifest.md` that a live check was attempted and why it did not succeed (e.g. "credentials unavailable in this environment" vs. "not attempted") — distinguish this from a session that never attempted the check at all.
+- This is advisory bookkeeping only; it does not change the gate's MET/NOT MET status, which is governed solely by the structured field's own recorded value.
 
 Horizon movements are candidates in STEP 5 only if they represent new commitments — zero-sum displacement rules apply.
 
