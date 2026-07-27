@@ -696,10 +696,19 @@ paths:
         Includes optional compliance_summary (30d Arc 5 metrics) when data is available.
         Includes estimated_unrealised_pnl/unrealised_note (v7.0, ST-14) — current-snapshot
         unrealised P&L, same field/computation as GET /reports/tax-year's summary field.
-        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.7. ST-03 (v4.7), ST-14 (v7.0).
+        Pass format=csv to receive a CSV file download instead of JSON (ST-05, v7.8).
+        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.10. ST-03 (v4.7), ST-14 (v7.0), ST-05 (v7.8).
+      parameters:
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+            enum: [csv]
+          description: Response format. Omit for JSON (default). Pass csv for CSV download.
       responses:
         "200":
-          description: Monthly P&L summary array with optional compliance summary
+          description: Monthly P&L summary array with optional compliance summary (JSON), or CSV download when format=csv
           content:
             application/json:
               schema:
@@ -756,6 +765,8 @@ paths:
                         type: string
                         nullable: true
                         example: sector_concentration
+        "400":
+          description: format query parameter present and not csv
         "500":
           $ref: "#/components/responses/InternalError"
 

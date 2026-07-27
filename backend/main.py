@@ -149,6 +149,7 @@ from services import (
     get_tax_year_report,
     build_tax_year_pdf,
     build_tax_year_csv,
+    build_monthly_pnl_csv,
     get_monthly_pnl_report,
     get_daily_pnl_report,
     get_arc5_compliance_summary,
@@ -802,18 +803,34 @@ def get_daily_pnl_endpoint(year: int, month: int):
 
 
 @app.get("/reports/monthly-pnl")
-def get_monthly_pnl_endpoint():
+def get_monthly_pnl_endpoint(format: Optional[str] = None):
     """
-    GET /reports/monthly-pnl
+    GET /reports/monthly-pnl[?format=csv]
 
     Returns month-by-month realised P&L for the current and prior calendar year,
     plus a compliance_summary (30d Arc 5 compliance metrics) and (v7.0, ST-14,
     BLG-FEAT-70) a current-snapshot estimated_unrealised_pnl/unrealised_note pair
     — same field/computation as the Tax Year tab, top-level siblings of `data`.
-    Spec: reports_endpoints.md §GET /reports/monthly-pnl (v0.6, ST-03 v4.7; v0.7, ST-14 v7.0)
+    When format=csv, returns a CSV file download of the month rows instead of
+    JSON (ST-05, EPIC-05, v7.8, BLG-FEAT-81) -- mirrors GET /reports/tax-year's
+    existing format=csv handler.
+    Spec: reports_endpoints.md §GET /reports/monthly-pnl (v0.6, ST-03 v4.7; v0.7, ST-14 v7.0; v0.8, ST-05 v7.8)
     """
+    from fastapi.responses import Response
+    if format is not None and format != "csv":
+        return JSONResponse(status_code=400,
+            content={"status": "error", "message": "format must be: csv"})
     try:
         report = get_monthly_pnl_report()
+        if format == "csv":
+            csv_text = build_monthly_pnl_csv(report["months"])
+            return Response(
+                content=csv_text.encode("utf-8"),
+                media_type="text/csv",
+                headers={
+                    "Content-Disposition": 'attachment; filename="monthly-pnl.csv"'
+                },
+            )
         compliance_summary = get_arc5_compliance_summary(period_days=30)
         return {
             "status": "ok",
