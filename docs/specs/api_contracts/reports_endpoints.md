@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.9
-**Last Updated:** 2026-07-20
+**Version:** 0.10
+**Last Updated:** 2026-07-26
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -486,11 +486,49 @@ Top-level siblings of `data`, same field/computation as `GET /reports/tax-year`'
 
 ---
 
+### CSV Export (v0.8, ST-05 — BLG-FEAT-81)
+
+`GET /reports/monthly-pnl?format=csv` returns a CSV file download instead of JSON — mirrors `GET /reports/tax-year?format=csv`'s existing handler.
+
+**Request**
+
+```
+GET /reports/monthly-pnl?format=csv
+```
+
+**Response (200)**
+
+`Content-Type: text/csv`, `Content-Disposition: attachment; filename="monthly-pnl.csv"`.
+
+Exports exactly the rows in the `data` array above (no separate metadata block, unlike the Tax Year CSV — per `monthly-csv-export/ux_spec.md` §3, this is a plain header row + one row per month, matching the on-screen Monthly Financial Table exactly):
+
+```csv
+Year,Month,Realised P&L (GBP),Trades
+2026,4,340.5,3
+2026,3,-120.0,1
+2025,12,875.25,5
+```
+
+No client-side recalculation — values are identical to the `data` array's `realised_pnl_gbp`/`trade_count` fields, not re-derived.
+
+**Reconciliation note (QA verification, not a response contract item):** both this endpoint and `GET /reports/tax-year`'s CSV export sum the same `trade_history.pnl` column directly (see `get_monthly_pnl()` and the tax-year trade query in `backend/database.py`) — no separate computation path exists for either, so there is no double-counting or drift between them at the ledger level. A literal numeric match between a calendar-year total in this export and a UK-tax-year total in the Tax Year export is not expected for years where the two windows don't align (calendar Jan–Dec vs UK tax year Apr–Apr) — this is an inherent property of the two different groupings, not a defect.
+
+**Invalid format**
+
+`GET /reports/monthly-pnl?format=xml` (or any value other than `csv`) returns `400`:
+
+```json
+{ "status": "error", "message": "format must be: csv" }
+```
+
+---
+
 ### Error Responses
 
 | HTTP Status | Condition |
 |-------------|-----------|
 | `500` | Internal server error |
+| `400` | `format` query parameter is present and not `csv` |
 
 ---
 
@@ -498,6 +536,7 @@ Top-level siblings of `data`, same field/computation as `GET /reports/tax-year`'
 
 ```
 GET /reports/monthly-pnl
+GET /reports/monthly-pnl?format=csv
 ```
 
 ---
@@ -568,6 +607,7 @@ GET /reports/daily-pnl?year=2026&month=7
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.10 | 2026-07-26 | ST-05 (v7.8, EPIC-05, BLG-FEAT-81): Added `format=csv` to `GET /reports/monthly-pnl`, mirroring the existing `GET /reports/tax-year?format=csv` handler. CSV export is a plain header row + one row per month (no metadata block, unlike the Tax Year CSV) — `Year,Month,Realised P&L (GBP),Trades`. Invalid `format` values return 400. Reconciliation note added: both CSV exports sum the same `trade_history.pnl` column directly, no double-counting risk, though a literal calendar-year-vs-tax-year numeric match isn't expected given the different window boundaries. |
 | 0.9 | 2026-07-20 | ST-04 (v7.5, EPIC-04, BLG-FE-118): Added `## GET /reports/daily-pnl` — day-granularity sibling of `GET /reports/monthly-pnl` for the Trade History Calendar View. Same `estimated_unrealised_pnl`/`unrealised_note` pattern (current-snapshot only, never per-day). |
 | 0.8 | 2026-07-14 | v7.1 sprint execution (ST-07, BLG-SPEC-84): CSV export hardening pass — documented and test-verified `Content-Type` charset (AC-01: actual header is `text/csv; charset=utf-8`, Starlette auto-appends charset for `text/*`; corrected in the same edit after a test assertion caught the initial documentation claiming no charset was present), authentication parity confirmation (AC-02, global `api_key_middleware`, no per-route bypass, test-verified with `API_KEY` configured), and financial-record-vs-analytics-export classification with versioning approach (AC-03, export is a read view of `trade_history`, not a stored contract). No response schema/behaviour change. |
 | 0.7 | 2026-07-13 | Add `estimated_unrealised_pnl`/`unrealised_note` top-level fields to GET /reports/monthly-pnl response — current-snapshot unrealised P&L, same field/computation as GET /reports/tax-year's `summary.estimated_unrealised_pnl`. `data` array shape unchanged. ST-14 (BLG-FEAT-70) — v7.0 cycle 2026-07-12__release-v7.0. |

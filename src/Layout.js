@@ -296,7 +296,7 @@ export default function Layout({ children, currentPageName }) {
                   {group.label}
                 </span>
                 {showBadge && (
-                  <span className="inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[9px] font-bold leading-none">
+                  <span className="inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-red-600 text-white text-[9px] font-bold leading-none">
                     {alertCount > 99 ? "99+" : alertCount}
                   </span>
                 )}
@@ -350,7 +350,7 @@ export default function Layout({ children, currentPageName }) {
                           <span className="relative shrink-0">
                             <Icon className="w-4 h-4" />
                             {showItemBadge && (
-                              <span className="absolute -top-1.5 -right-1.5 min-w-[14px] h-3.5 px-0.5 rounded-full bg-red-500 text-white text-[8px] font-bold leading-[14px] text-center">
+                              <span className="absolute -top-1.5 -right-1.5 min-w-[14px] h-3.5 px-0.5 rounded-full bg-red-600 text-white text-[8px] font-bold leading-[14px] text-center">
                                 {alertCount > 99 ? "99+" : alertCount}
                               </span>
                             )}

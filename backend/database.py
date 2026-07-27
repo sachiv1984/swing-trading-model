@@ -2136,6 +2136,42 @@ def get_monthly_claude_cost() -> dict:
         return {"total_cost_usd": 0.0, "request_count": 0}
 
 
+def get_claude_spend_between(start_date: str, end_date: str | None = None) -> float:
+    """Sum claude_audit_log.cost_usd for [start_date, end_date) -- or
+    [start_date, NOW()) when end_date is None (used for the most recent,
+    still-open window).
+
+    ST-06 (EPIC-06, v7.8, BLG-FEAT-82): backs the AI spend trend chart's
+    per-release-cycle bucketing. start_date/end_date are 'YYYY-MM-DD' strings.
+    """
+    try:
+        ensure_claude_audit_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                if end_date is not None:
+                    cur.execute(
+                        """
+                        SELECT COALESCE(SUM(cost_usd), 0.0) AS total_cost
+                        FROM claude_audit_log
+                        WHERE generated_at >= %s AND generated_at < %s
+                        """,
+                        (start_date, end_date),
+                    )
+                else:
+                    cur.execute(
+                        """
+                        SELECT COALESCE(SUM(cost_usd), 0.0) AS total_cost
+                        FROM claude_audit_log
+                        WHERE generated_at >= %s
+                        """,
+                        (start_date,),
+                    )
+                row = cur.fetchone()
+                return float(row["total_cost"])
+    except Exception:
+        return 0.0
+
+
 # ============================================================================
 # DS-07 — SI-02 SCHEMA ADDITIONS (v4.6 ST-01)
 # ============================================================================
