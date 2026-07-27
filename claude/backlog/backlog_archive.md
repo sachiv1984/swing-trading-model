@@ -1,11 +1,314 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-27 (groom backlog post-ship closure 2026-07-24__release-v7.8 — 12 items archived: BLG-FE-128, BLG-FEAT-84, BLG-FE-127, BLG-FE-125, BLG-FEAT-81, BLG-FEAT-82, BLG-SEC-20, BLG-SEC-21, BLG-BE-71, BLG-QA-117, BLG-QA-119, BLG-OPS-117; ephemeral Release Slice v7.8 section removed); prior — 2026-07-24 (groom backlog post-ship closure 2026-07-21__release-v7.7 — 11 items archived: BLG-FEAT-75, BLG-FE-114, BLG-FE-113, BLG-FE-120, BLG-FEAT-80, BLG-OPS-108, BLG-GOV-28, BLG-QA-104, BLG-BE-63, BLG-OPS-110, BLG-QA-102; ephemeral Release Slice v7.7 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-20__release-v7.6 — 8 items archived: BLG-FE-119, BLG-QA-112, BLG-FEAT-79, BLG-BE-65, BLG-QA-114, BLG-BE-62, BLG-FEAT-77, BLG-QA-69; ephemeral Release Slice v7.6 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
+**Last Updated:** 2026-07-27 (session — duplicate consolidation, ad hoc user-directed backlog cleanup: 13 duplicate items retired as ❌ Killed — duplicate, merged into 5 survivor items (BLG-OPS-25, BLG-BE-47, BLG-FEAT-30, BLG-QA-75, BLG-SEC-15) — see `backlog.md` header for full detail); prior — 2026-07-27 (groom backlog post-ship closure 2026-07-24__release-v7.8 — 12 items archived: BLG-FE-128, BLG-FEAT-84, BLG-FE-127, BLG-FE-125, BLG-FEAT-81, BLG-FEAT-82, BLG-SEC-20, BLG-SEC-21, BLG-BE-71, BLG-QA-117, BLG-QA-119, BLG-OPS-117; ephemeral Release Slice v7.8 section removed); prior — 2026-07-24 (groom backlog post-ship closure 2026-07-21__release-v7.7 — 11 items archived: BLG-FEAT-75, BLG-FE-114, BLG-FE-113, BLG-FE-120, BLG-FEAT-80, BLG-OPS-108, BLG-GOV-28, BLG-QA-104, BLG-BE-63, BLG-OPS-110, BLG-QA-102; ephemeral Release Slice v7.7 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-20__release-v7.6 — 8 items archived: BLG-FE-119, BLG-QA-112, BLG-FEAT-79, BLG-BE-65, BLG-QA-114, BLG-BE-62, BLG-FEAT-77, BLG-QA-69; ephemeral Release Slice v7.6 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-OPS-100 — Automated staging smoke test on every deploy
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-OPS-25
+**Priority at retirement:** P3
+**Retired:** 2026-07-27
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-27; same capability as BLG-OPS-25/-102/-107/-119, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-OPS-100 — Automated staging smoke test on every deploy
+**Priority:** P3 (Low)
+**Type:** Operations / CI
+**Owner:** Infrastructure & Operations Owner
+**Source:** IDEA-infra-ops-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Staging deploys have no automated smoke test — issues are caught manually or not until the next staging verification pass.
+
+**Scope**
+- Add a lightweight automated smoke test (health check + 2–3 critical endpoint checks) triggered on every staging deploy
+
+**Acceptance Criteria**
+- Smoke test runs on next staging deploy and reports pass/fail
+
+---
+
+### BLG-OPS-102 — Staging smoke-test automation
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-OPS-25
+**Priority at retirement:** P3
+**Retired:** 2026-07-27
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-27; same capability as BLG-OPS-25/-100/-107/-119, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-OPS-102 — Staging smoke-test automation
+**Priority:** P3 (Low)
+**Type:** Operations / QA
+**Owner:** Infrastructure & Operations Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-infra-ops-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Manual staging sign-off is required for every observable-UI story without Playwright coverage (per CLAUDE.md's frontend evidence rule), which is a growing manual burden as story count increases.
+
+**Proposed solution**
+Investigate a lightweight automated staging smoke-test (e.g. a small Playwright suite pointed at the staging URL) to reduce — not eliminate — manual sign-off burden for straightforward cases.
+
+---
+
+### BLG-OPS-107 — Staging auto-deploy health smoke-test cadence
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-OPS-25
+**Priority at retirement:** P3
+**Retired:** 2026-07-27
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-27; same capability as BLG-OPS-25/-100/-102/-119, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-OPS-107 — Staging auto-deploy health smoke-test cadence
+**Priority:** P3 (Low) | **Type:** Operations / Infrastructure | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** CI/CD staging auto-deploy shipped v4.0 (2026-05-25); no periodic confirmation staging health/freshness still holds 7+ weeks on.
+**Scope:** Add a scheduled staging smoke-test.
+**Acceptance Criteria:** Smoke-test scheduled and passing; alert on failure.
+
+---
+
+### BLG-OPS-119 — Staging smoke-test job on every merge to main
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-OPS-25
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-27; same capability as BLG-OPS-25/-100/-102/-107, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-OPS-119 — Staging smoke-test job on every merge to main
+**Priority:** P2 (Medium) | **Type:** Operations / CI | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260724-02 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** No automated smoke test runs against staging on merge to main; a staging deploy issue would currently only be caught manually or at the next deliberate check.
+**Scope:** Add a lightweight staging smoke-test job (health check + 2-3 critical-path checks) triggered on merge to main.
+**Acceptance Criteria:** Job added; confirmed to fail correctly on a deliberately-broken staging deploy (dry run).
+
+---
+
+### BLG-BE-64 — Shared pagination helper for list endpoints
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-BE-47
+**Priority at retirement:** P3
+**Retired:** 2026-07-27
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-27; same capability as BLG-BE-47/-53/-72, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-BE-64 — Shared pagination helper for list endpoints
+**Priority:** P3 (Low) | **Type:** Backend / Code Health | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260717-01 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** List-returning endpoints (`GET /trades`, `GET /trade-plans`, `GET /positions`, etc.) each implement pagination/limit handling independently, risking drift in default page size and parameter naming.
+**Scope:** Extract a shared pagination helper/dependency for FastAPI routers, applied incrementally as endpoints are touched (not a forced mass-migration).
+**Acceptance Criteria:** Helper exists and is documented in `docs/specs/api_contracts/backend_engineering_patterns.md`; at least one existing endpoint migrated as a reference example.
+
+---
+
+### BLG-BE-53 — Standardise pagination pattern across list endpoints
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-BE-47
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-27; same capability as BLG-BE-47/-64/-72, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-BE-53 — Standardise pagination pattern across list endpoints
+**Priority:** P2 (Medium)
+**Type:** Backend
+**Owner:** Backend Engineering Patterns Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-backend-engineering-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Trades, signals, and watchlist list endpoints currently use 3 divergent pagination implementations, increasing maintenance cost and inconsistent frontend handling.
+
+**Proposed solution**
+Define one canonical pagination pattern and migrate the 3 endpoints to it.
+
+---
+
+### BLG-BE-72 — Standardise cursor-based pagination across list endpoints
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-BE-47
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-27; same capability as BLG-BE-47/-53/-64, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-BE-72 — Standardise cursor-based pagination across list endpoints
+**Priority:** P2 (Medium) | **Type:** Backend Engineering / Technical Debt | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260724-02 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** List endpoints (trades, journal, red-flag-journal) use per-endpoint ad hoc limit/offset pagination rather than a single documented pattern.
+**Scope:** Define and document a standard cursor-based pagination pattern in `backend_engineering_patterns.md`; apply to new endpoints going forward.
+**Acceptance Criteria:** Pattern documented; not required to retrofit all existing endpoints in one pass.
+
+---
+
+### BLG-FEAT-27 — Candidate quality retrospective (screener-to-trade attribution)
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-FEAT-30
+**Priority at retirement:** P3
+**Retired:** 2026-07-27
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-27; reporting view over the same attribution linkage as BLG-FEAT-30, filed in the same 2026-04-21 idea batch as if independently buildable
+
+### BLG-FEAT-27 — Candidate quality retrospective (screener-to-trade attribution)
+**Priority:** P3 (Low)
+**Type:** Product Feature / Analytics
+**Owner:** Metrics & Analytics Owner
+**Source:** IDEA-metrics-analytics-20260421-02 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
+**Effort:** M (~2–3 days)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Screener live ≥ 60 days AND ≥ 60 closed trades with screener attribution.
+
+**Problem**
+No retrospective analysis links screener-surfaced candidates to eventual trade outcomes. Without attribution, it is impossible to evaluate whether the screener is generating genuinely high-quality candidates or just high-volume noise. This item requires sufficient attributed history (60d + 60 trades) to yield statistically meaningful results.
+
+**Scope**
+- Attribution link: screener candidate → watchlist → trade plan → closed trade
+- Retrospective metric: screener hit rate, win rate of attributed trades vs baseline
+- Filter by screener run date range
+
+**Acceptance Criteria**
+- End-to-end attribution pipeline queryable
+- Screener hit rate and attributed-trade win rate reportable
+- Gate condition verified by Product Owner before sprint planning
+
+---
+
+### BLG-FEAT-28 — Screener hit rate metric
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-FEAT-30
+**Priority at retirement:** P3
+**Retired:** 2026-07-27
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-27; reporting view over the same attribution linkage as BLG-FEAT-30, filed in the same 2026-04-21 idea batch as if independently buildable
+
+### BLG-FEAT-28 — Screener hit rate metric
+**Priority:** P3 (Low)
+**Type:** Product Feature / Analytics
+**Owner:** Metrics & Analytics Owner
+**Source:** IDEA-metrics-analytics-20260421-03 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+
+**Gate criteria:** Screener live ≥ 60 days.
+
+**Problem**
+No aggregate metric tracks how often screener results lead to a trade plan or closed position. The screener hit rate (surfaced candidates that progressed to trade) is a key indicator of screener quality and operator workflow efficiency. This metric requires 60 days of screener history to be meaningful.
+
+**Scope**
+- Aggregate metric: screener_candidates_total, advanced_to_watchlist, advanced_to_trade_plan, advanced_to_closed_trade
+- Displayable in governance/operations reporting view
+
+**Acceptance Criteria**
+- Hit rate metric computed and displayable
+- Gate condition verified by Product Owner before sprint planning
+
+---
+
+### BLG-QA-80 — Flaky Playwright test tracker
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-QA-75
+**Priority at retirement:** P3
+**Retired:** 2026-07-27
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-27; same capability as BLG-QA-75/-87, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-QA-80 — Flaky Playwright test tracker
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** Director of Quality
+**Source:** IDEA-director-of-quality-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Occasionally-flaky Playwright tests are re-run ad hoc with no tracking of which tests flake, how often, or why — no visibility into whether flake rate is worsening.
+
+**Scope**
+- Maintain a quarantine list: test name, first-flagged date, flake count, re-enable criteria
+
+**Acceptance Criteria**
+- Tracker created; any currently-known flaky test logged
+
+---
+
+### BLG-QA-87 — Playwright flake tracking log
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-QA-75
+**Priority at retirement:** P3
+**Retired:** 2026-07-27
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-27; same capability as BLG-QA-75/-80, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-QA-87 — Playwright flake tracking log
+**Priority:** P3 (Low)
+**Type:** QA / Process
+**Owner:** Director of Quality
+**Source:** Idea intake IW-20260710-01 (IDEA-director-of-quality-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Intermittent CI failures are currently indistinguishable from confirmed defects in QA evidence logs — there is no separate flake-tracking mechanism.
+
+**Proposed solution**
+Add a lightweight flake log (e.g. a table in a QA-owned file) capturing test name, failure date, and whether a re-run passed, to separate signal from noise over time.
+
+---
+
+### BLG-OPS-93 — Automate monthly dependency vulnerability re-scan
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-SEC-15
+**Priority at retirement:** P3
+**Retired:** 2026-07-27
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-27; same capability as BLG-SEC-15/-19, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-OPS-93 — Automate monthly dependency vulnerability re-scan
+**Priority:** P3 (Low)
+**Type:** Operations / Security
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+`npm audit`/`pip audit` are run ad hoc rather than on a fixed schedule — vulnerabilities can go undetected for extended periods between manual runs.
+
+**Scope**
+- Add a scheduled CI job (monthly) running both audits and filing a backlog item for any new HIGH/CRITICAL finding
+
+**Acceptance Criteria**
+- Scheduled job runs successfully at least once and reports results
+
+---
+
+### BLG-SEC-19 — Formalise dependency CVE sweep cadence (pip-audit + npm audit)
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-SEC-15
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-27; same capability as BLG-SEC-15/BLG-OPS-93, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-SEC-19 — Formalise dependency CVE sweep cadence (pip-audit + npm audit)
+**Priority:** P2 (Medium) | **Type:** Security / Process | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260717-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `pip-audit` runs at sprint planning (`sprint_planning_notes.md` §Pre-Sprint Vulnerability Scan) but there is no equivalent recurring `npm audit` check for the frontend, and no documented cadence outside sprint planning specifically.
+**Scope:** Add an `npm audit` step alongside the existing `pip-audit` check, and document the combined cadence explicitly (sprint planning + any scheduled interval).
+**Acceptance Criteria:** `npm audit` step added; cadence documented in `sprint_planning_prompt.md` or `shared_standards.md`.
 
 ---
 
