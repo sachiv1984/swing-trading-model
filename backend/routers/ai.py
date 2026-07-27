@@ -27,6 +27,7 @@ from config import AI_DAILY_COST_THRESHOLD
 # Per-endpoint rate limits (requests per minute per IP)
 _DAILY_BRIEFING_LIMIT = 10
 _CHAT_LIMIT = 30
+_JOURNAL_SUMMARY_LIMIT = 10  # ST-08 (EPIC-08, v7.8, BLG-SEC-21) — calls Claude directly, was previously unlimited
 
 router = APIRouter(prefix="/ai", tags=["AI"])
 
@@ -46,13 +47,26 @@ class JournalSummaryResponse(BaseModel):
 
 
 @router.post("/journal-summary", response_model=JournalSummaryResponse)
-def journal_summary(body: JournalSummaryRequest):
+def journal_summary(body: JournalSummaryRequest, request: Request):
     """
     Summarise entry/exit journal notes from closed trades.
     Accepts trade_ids or date_from/date_to range.
     Returns LLM-generated plain-text summary.
     AI output is display-only — not used in any calculation.
+
+    Rate limit: 10 requests/minute/IP (ST-08, EPIC-08, v7.8, BLG-SEC-21) —
+    calls Claude directly via services.ai_service; was previously unlimited.
     """
+    client_ip = request.client.host if request.client else "unknown"
+    allowed, retry_after = _ai_limiter.is_allowed(
+        f"journal-summary:{client_ip}", limit=_JOURNAL_SUMMARY_LIMIT
+    )
+    if not allowed:
+        return JSONResponse(
+            status_code=429,
+            content={"detail": "Rate limit exceeded. Try again later."},
+            headers={"Retry-After": str(retry_after)},
+        )
     if not body.trade_ids and not body.date_from and not body.date_to:
         raise HTTPException(
             status_code=422,
