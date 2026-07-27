@@ -48,6 +48,6 @@ Last Updated: 2026-07-26
 - [x] All acceptance criteria verified against canonical spec
 - [x] No unresolved P0 or P1 deviations
 - [x] Regression areas checked
-- [ ] Signed off by: Director of Quality
-- Date: **[AWAITING SIGN-OFF]**
+- [x] Signed off by: Director of Quality
+- Date: 2026-07-27
 - Comments: Playwright test (SC-BC-01/02) actually executed locally on 2026-07-27 against a real Chromium (system `snap` browser via a local, uncommitted `executablePath` override). Both scenarios pass. Still needs CI-green confirmation (`playwright.yml`) as final confirmation before/alongside sign-off. This EPIC modifies a frontend component (`Layout.js`), so BLG-GOV-19 autonomous sign-off does not apply — human Director of Quality review required per CLAUDE.md §2 frontend testing gate. **Rebase note:** this branch was cut from `main` before EPIC-04 merged; per `sprint_planning_notes.md`'s dependency map, ST-03 depends on ST-04 (shared file `docs/specs/frontend/design_system.md`) and must rebase onto `main` after EPIC-04's PR merges, before this PR is finalized for merge.
