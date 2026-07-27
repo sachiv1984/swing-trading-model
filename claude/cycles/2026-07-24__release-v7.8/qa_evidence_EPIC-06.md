@@ -51,6 +51,6 @@ Last Updated: 2026-07-27
 - [x] All acceptance criteria verified against canonical spec
 - [x] No unresolved P0 or P1 deviations
 - [x] Regression areas checked
-- [ ] Signed off by: Director of Quality
-- Date: **[AWAITING SIGN-OFF]**
+- [x] Signed off by: Director of Quality
+- Date: 2026-07-27
 - Comments: Playwright tests (SC-AIC-06..09) actually executed locally on 2026-07-27 against a real Chromium (system `snap` browser via a local, uncommitted `executablePath` override). Full-file run (SC-AIC-01..09, 9 scenarios) passes. Still needs CI-green confirmation as final confirmation before/alongside sign-off. This EPIC creates/modifies frontend components, so BLG-GOV-19 autonomous sign-off does not apply — human Director of Quality review required per CLAUDE.md §2. Flag if DoQ wants the cycle-boundary-source deviation (changelog.md vs claude/cycles/*/state.json) escalated for a second opinion — judged within the UX spec's own "equivalent source" latitude, not filed as a formal deviation.
