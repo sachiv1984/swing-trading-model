@@ -4,6 +4,44 @@ Status: Active
 Last Updated: 2026-07-27
 Cycle: 2026-07-24__release-v7.8
 
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-07-24__release-v7.8
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-07-27
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-07-21__release-v7.7 (`lessons_learnt_cycle.md` `## Phase 4`) — no friction items identified that run; one prior-prior recurrence (stale amendment-tracking fields, v7.6) was confirmed closed and non-recurring. No open Phase 4 item carried into this cycle.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| 3 documentation-completeness gaps against `position_endpoints.md`/`trade_endpoints.md` (found by ST-11 while authoring pilot contract tests, recorded in `qa_evidence_EPIC-11.md`) had no corresponding `backlog.md` entry at sprint close — the story's own framing ("left to standard backlog grooming") did not, in practice, result in a filed item before delivery verification | Phase 4 | C | action-now | Filed `BLG-SPEC-102`, `BLG-SPEC-103`, `BLG-SPEC-104` to `claude/backlog/backlog.md` at delivery verification STEP 4.1, per the "any flagged gap must have a backlog.md entry before the verification report is sealed" rule (`delivery_verification_prompt.md` §7). See `verification_report.md §5(a)`. | Director of Quality | — |
+
+All other STEP -1 through STEP 7 checks completed cleanly: sprint close readiness statement all `Yes`; all 12 QA evidence logs present with compliant, non-blank sign-offs on first read (no Tier 1/Tier 2 issues); zero deviations filed; zero traceability gaps; zero outstanding/delegated items; `deferred_execution_blockers` empty; zero parked items (stale-parked check skipped); test scenario coverage fully accounted for (11 EPICs with confirmed-run scenarios, 1 correctly dispositioned `not_applicable`, no genuine gaps); `docs/System_status_report.md`'s v7.8 section required only the expected routine status-line update, no content corrections. Status determined as `Verified` with no hard blocks encountered.
+
+**Recurrence Notes:**
+None — this is a fresh (first-occurrence) friction item, not a recurrence of the v7.7 Phase 4 item (which was a stale-state-field issue, unrelated to this cycle's finding).
+
+---
+
+## Recurrence Escalations (Phase 4)
+
+None.
+
+## Process improvements actioned this run (Phase 4)
+
+Filed 3 backlog items (`BLG-SPEC-102`, `BLG-SPEC-103`, `BLG-SPEC-104`) closing the traceability gap identified above — see `action-now` row.
+
+## Outstanding deferred patches (Phase 4)
+
+None.
+
+## Escalations (Phase 4)
+
+None.
+
+---
+
 ## Phase 3
 
 **Phase:** Sprint Execution
