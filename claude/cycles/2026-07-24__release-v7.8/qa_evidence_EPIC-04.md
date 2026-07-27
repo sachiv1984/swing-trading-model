@@ -44,6 +44,6 @@ Last Updated: 2026-07-26
 - [x] All acceptance criteria verified against canonical spec
 - [x] No unresolved P0 or P1 deviations
 - [x] Regression areas checked
-- [ ] Signed off by: Director of Quality
-- Date: **[AWAITING SIGN-OFF]**
+- [x] Signed off by: Director of Quality
+- Date: 2026-07-27
 - Comments: Playwright test (SC-PHDG-01/02) actually executed locally on 2026-07-27 against a real Chromium (system `snap` browser via a local, uncommitted `executablePath` override — this sandbox's bundled-Playwright-browser download is unsupported on its OS). Both scenarios pass. Still needs CI-green confirmation (`playwright.yml`) as final confirmation before/alongside sign-off. This EPIC modifies a frontend component (`PageHeader.js`), so BLG-GOV-19 autonomous sign-off does not apply — human Director of Quality review required per CLAUDE.md §2 frontend testing gate and the "Always-human" merge-gate rule (`execution_prompt.md` §5.3).

@@ -25,8 +25,8 @@
       "status": "done",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-04",
       "pr_number": 1077,
-      "pr_status": "open_awaiting_doq_signoff",
-      "qa_signed_off": false,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-04.md",
       "test_scenarios": [
         "tests/e2e/page-header-dark-gradient-contrast.spec.js"
