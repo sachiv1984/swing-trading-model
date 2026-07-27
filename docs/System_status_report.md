@@ -1,9 +1,42 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.13
-**Last Updated:** 2026-07-24
+**Version:** 4.14
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-07-24__release-v7.8
+**Date:** 2026-07-27
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | In-app "what's new" panel on the dashboard — new `GET /changelog/latest` parses `docs/product/changelog.md` server-side on every request, no hardcoded copy (BLG-FE-128) | `docs/specs/frontend/pages/dashboard.md#6A`; `docs/specs/api_contracts/changelog_endpoints.md` | None |
+| EPIC-02 | Automated Telegram digest of shipped items sent on post-ship closure, reusing existing Telegram POST+JSON+retry infrastructure (BLG-FEAT-84) | `claude/system/post_ship_closure.md#STEP 1.5`; `backend/services/changelog_digest_service.py` | None |
+| EPIC-03 | Notification/digest surface accessibility pass — nav alert-count badge contrast fixed (`bg-red-500`→`bg-red-600`, 3.76:1→4.83:1); focus-indicator standard confirmed trivially met | `docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md` | None |
+| EPIC-04 | Consolidated dark-mode contrast audit across all 23 shipped pages — `PageHeader.js` title gradient missing `dark:via-` stop fixed | `docs/design/2026-07-24__release-v7.8/base44-dark-mode-contrast-audit/decision_record.md`; `docs/specs/frontend/design_system.md` | None |
+| EPIC-05 | Monthly realised P&L CSV export alongside the existing tax-year export — `format=csv` on `GET /reports/monthly-pnl` | `docs/specs/api_contracts/reports_endpoints.md#CSV Export`; `docs/specs/frontend/pages/reports.md` | None |
+| EPIC-06 | Per-cycle AI spend trend chart on the AI Usage & Costs view — new `GET /ai/spend-trend`, bucketed from existing `claude_audit_log` data by release-cycle windows parsed from `changelog.md` | `docs/specs/frontend/pages/settings.md#6a`; `docs/specs/api_contracts/ai_endpoints.md#GET /ai/spend-trend` | None |
+| EPIC-07 | Consolidated rotation-and-audit cadence for all 5 external API key types (Alpaca, Claude, Telegram, Yahoo Finance, Gemini) — new quarterly audit cadence distinct from rotation | `docs/ops/api_key_rotation_and_audit_schedule.md` | None |
+| EPIC-08 | Rate-limiting audit of all 128 live endpoints — `GET /health` (60/min/IP) and 3 previously-unlimited Claude-calling endpoints (10/min/IP each) remediated; remainder explicitly accepted as risk with documented rationale | `docs/security/rate_limit_audit_2026-07-26.md` | None |
+| EPIC-09 | Shared `retry_with_backoff` decorator extracted and applied to the highest-traffic external call site (Yahoo Finance price fetch, previously had zero retry logic) | `backend/utils/retry.py` | None |
+| EPIC-10 | Flaky-test quarantine process defined (`test.fixme` + required `FLAKY-QUARANTINE:`/backlog-reference format), enforced by a new format-compliance test | `docs/testing/flaky_test_quarantine_process.md` | None |
+| EPIC-11 | Pilot contract-schema tests for the 3 highest-traffic endpoints (`GET /positions`, `GET /trades`, `GET /portfolio`, resolved via RISK-03 escalation) — surfaced 3 real doc/reality gaps, none P0/P1 | `docs/testing/pilot_contract_test_approach.md`; `docs/specs/api_contracts/position_endpoints.md`; `docs/specs/api_contracts/trade_endpoints.md`; `docs/specs/api_contracts/portfolio_endpoints.md` | None |
+| EPIC-12 | CI lint step catching the documented "###-level silent-fail" case in API contract heading depth, running ahead of the existing OpenAPI Drift Detection gate | `.github/workflows/openapi-drift.yml`; `scripts/lint_api_contract_headings.py` | None |
+
+### Capabilities deferred or returned
+
+None — all 12 stories (ST-01 through ST-12) delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: `qa_evidence_EPIC-01.md` through `qa_evidence_EPIC-12.md` (all 12 present, all DoQ sign-off blocks non-blank)
+- Deviations filed: None
+- Test scenarios referenced: `tests/e2e/whats-new-panel.spec.js`; `tests/test_changelog_service.py`; `tests/test_changelog_digest_service.py`; `tests/e2e/notification-badge-contrast.spec.js`; `tests/e2e/alert-nav-badge.spec.js`; `tests/e2e/page-header-dark-gradient-contrast.spec.js`; `tests/e2e/monthly-pnl-csv-export.spec.js`; `tests/test_api_contracts.py`; `tests/e2e/ai-usage-costs.spec.js`; `tests/test_ai_spend_trend_service.py`; `tests/test_rate_limit_endpoints.py`; `tests/test_retry_backoff.py`; `tests/test_flaky_quarantine_format.py`; `tests/test_pilot_contract_schemas.py`; `tests/test_lint_api_contract_headings.py`; `tests/e2e/system-status.spec.js`
 
 ---
 
