@@ -1,11 +1,40 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2
 **Status:** Canonical
-**Version:** 1.6.0
-**Last Updated:** 2026-06-23
+**Version:** 1.7.0
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
+
+## v7.8.0 (2026-07-27 — Release v7.8)
+
+### changelog_endpoints.md — v1.0 (NEW)
+
+**EPIC:** EPIC-01
+**ST:** ST-01
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /changelog/latest | Returns the most recent release's version label and changes-shipped descriptions, parsed server-side from docs/product/changelog.md. Backs the in-app "What's New" panel (dashboard.md §6A). `data` is null if no parseable version section exists. |
+
+### reports_endpoints.md — v0.10 (UPDATED)
+
+**EPIC:** EPIC-05
+**ST:** ST-05
+
+| Change | Details |
+|--------|---------|
+| New query param: GET /reports/monthly-pnl?format=csv | Returns a CSV file download of the month rows (Year, Month, Realised P&L (GBP), Trades) instead of JSON — mirrors the existing GET /reports/tax-year?format=csv handler. Invalid format values return 400. |
+
+### ai_endpoints.md — v1.8 (UPDATED)
+
+**EPIC:** EPIC-06
+**ST:** ST-06
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /ai/spend-trend | Returns Claude API spend for the last 6 release cycles, oldest to newest, bucketed by date windows parsed from docs/product/changelog.md version headings. Sourced from existing claude_audit_log data. |
 
 ## v6.1.0 (2026-06-23 — Release v6.1)
 
