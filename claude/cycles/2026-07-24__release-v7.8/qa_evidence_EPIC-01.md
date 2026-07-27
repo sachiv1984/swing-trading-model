@@ -43,6 +43,6 @@ Last Updated: 2026-07-26
 - [x] All acceptance criteria verified against canonical spec
 - [x] No unresolved P0 or P1 deviations
 - [x] Regression areas checked
-- [ ] Signed off by: Director of Quality
-- Date: **[AWAITING SIGN-OFF]**
+- [x] Signed off by: Director of Quality
+- Date: 2026-07-27
 - Comments: Playwright tests (SC-WN-01..05) actually executed locally against a real browser on 2026-07-27 — all 5 pass (see QA test coverage above; this run also caught and led to fixing a real double-unwrap bug in `WhatsNewCard.js`). Still needs CI-green confirmation (`playwright.yml`) as final confirmation before/alongside sign-off. This EPIC creates/modifies frontend components, so BLG-GOV-19 autonomous sign-off does not apply — human Director of Quality review required per CLAUDE.md §2 frontend testing gate. Domain-authority note: `api_performance_baseline.md` §30's Infrastructure & Operations Owner sign-off (agent-mediated, §5.3) is recorded separately above per BLG-GOV-14 — confirmed cleared after one corrective round.
