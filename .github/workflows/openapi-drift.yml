@@ -46,6 +46,17 @@ jobs:
       - name: Install PyYAML
         run: pip install pyyaml -q
 
+      - name: API Contract Heading-Level Compliance Lint (ST-12)
+        # Runs AHEAD OF the drift-detection step below (ST-12, EPIC-12, v7.8,
+        # BLG-OPS-117). Catches the documented "###-level silent-fail" case
+        # from CLAUDE.md §2: the drift regex below only matches literal
+        # `##` headings and silently ignores any other depth, so a
+        # miscoded `### METHOD /path` heading is invisible to it rather
+        # than caught. This step actively scans for ANY endpoint-shaped
+        # heading at the wrong depth and fails fast, before drift detection
+        # even runs.
+        run: python3 scripts/lint_api_contract_headings.py
+
       - name: Detect drift
         id: drift
         run: |
