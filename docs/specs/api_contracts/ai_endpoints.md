@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical (Class 1)
 **Status:** Canonical
-**Version:** 1.7
-**Last Updated:** 2026-07-20
+**Version:** 1.8
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -549,9 +549,64 @@ No parameters.
 
 ---
 
+## GET /ai/spend-trend
+
+Returns Claude API spend for the last 6 release cycles (oldest to newest), for the Settings page's AI spend trend chart (`settings.md` §6, extends the existing current-month spend card).
+
+Added for ST-06 (EPIC-06, v7.8, BLG-FEAT-82). Sourced from existing `claude_audit_log` data (no new data collection) — bucketed by release-cycle date windows parsed from `docs/product/changelog.md`'s version headings (`## vX.Y — <title> — <date>`). This is a documented implementation choice, not the UX spec's literal first-choice suggestion of `claude/cycles/*/state.json`: that governance-tracking directory is an internal engineering-process artefact with no guarantee of being present in the deployed runtime environment, whereas `changelog.md` is product-facing, already deployed, and already carries a version label plus ship date per release — the UX spec itself allows "an equivalent cycle-boundary source."
+
+**§13 Status:** N/A — read-only cost aggregate; no AI output generated.
+
+### Request
+
+```
+GET /ai/spend-trend
+```
+
+No parameters.
+
+### Response — 200 OK
+
+```json
+{
+  "status": "ok",
+  "data": [
+    { "version": "v7.3", "spend_usd": 4.12 },
+    { "version": "v7.4", "spend_usd": 2.87 },
+    { "version": "v7.5", "spend_usd": 5.03 },
+    { "version": "v7.6", "spend_usd": 3.91 },
+    { "version": "v7.7", "spend_usd": 6.20 },
+    { "version": "v7.8", "spend_usd": 1.45 }
+  ]
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data` | array | One entry per release cycle, oldest to newest (left-to-right chart X-axis order). Contains fewer than 6 entries if fewer release cycles exist in `changelog.md` — no zero-padding. Empty array if `changelog.md` is missing or has no parseable version headings. |
+| `data[].version` | string | Bare version number of the release cycle (e.g. `"v7.8"`) — matches the changelog heading's version token. |
+| `data[].spend_usd` | float | Sum of `cost_usd` from `claude_audit_log` for this cycle's date window: `[this cycle's ship date, next cycle's ship date)`, or `[this cycle's ship date, now)` for the most recent (open-ended) cycle. Rounded to 2 d.p. |
+
+**Same-day release note:** when two consecutive releases share a ship date (a real occurrence in this changelog — e.g. v7.5 and v7.6 both shipped 2026-07-20), the changelog's own strictly-newest-first document ordering is used as a secondary sort key so the two resolve in correct chronological order despite the date tie.
+
+### Error responses
+
+| Status | Condition |
+|--------|-----------|
+| 401 | Missing or invalid API key. |
+| 500 | Not expected under normal operation — internal failures in the DB aggregation step return `0.0` per cycle (matches `GET /ai/monthly-cost`'s fail-safe convention) rather than propagating an error. |
+
+### Implementation constraints
+
+- Read-only endpoint: no writes to any table.
+- Cycle boundaries are date-only (`YYYY-MM-DD`, no time-of-day) — matches the granularity available in `changelog.md`.
+- Does not send any alert or notification.
+
+---
+
 ## Known Deviations
 
-None at v1.7.
+None at v1.8.
 
 ---
 
@@ -559,6 +614,7 @@ None at v1.7.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.8 | 2026-07-27 | ST-06 (EPIC-06, v7.8, BLG-FEAT-82): Added `GET /ai/spend-trend` — Claude API spend for the last 6 release cycles, bucketed by date windows parsed from `docs/product/changelog.md` version headings (documented alternative to the UX spec's `claude/cycles/*/state.json` suggestion — see endpoint section for rationale). `openapi.yaml` updated in the same commit. |
 | 1.7 | 2026-07-20 | ST-07 (EPIC-07, v7.6, BLG-FEAT-77): Added `GET /ai/monthly-cost` — current calendar month's Claude API spend total, sourced from `claude_audit_log`. Reframed per `ESC-EXEC-20260720-01`: original AC assumed a separate Gemini provider; no such integration exists in this codebase (confirmed: no `google-generativeai`, no `GEMINI_API_KEY`, `gemini_service.py` calls only the Anthropic API). `openapi.yaml` updated in the same commit. |
 | 1.6 | 2026-07-13 | v7.0 EPIC-02 ST-11 (BLG-BE-51): Added optional `endpoint` (exact match) and `date_from`/`date_to` (inclusive, `YYYY-MM-DD`, applied to `generated_at`) query filters to `GET /ai/claude-audit-log` — independently or combined, and combinable with `limit`. No new endpoint; existing unfiltered behaviour unchanged when all three are omitted. `openapi.yaml` updated in the same commit. |
 | 1.5 | 2026-06-29 | v6.3 EPIC-01 ST-03: Added per-endpoint rate limiting to `POST /ai/daily-briefing` (10 req/min/IP) and `POST /ai/chat` (30 req/min/IP). 429 + `Retry-After` documented. In-memory sliding-window implementation (`backend/services/rate_limiter.py`). AC-05: rate limit scenario tests added to `backend/routers/test.py`. |
