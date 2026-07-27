@@ -32,7 +32,9 @@ Cycle: 2026-07-27__release-v7.9
 
 **Process patch:**
 
-→ Deferred patch (cannot apply this run — outside this engine's write scope, `roadmap_prompt.md` is not in Release Planning's Write Scope list):
+→ Immediate patch applied (user-directed, same session, after initial publish): the erroneous `BLG-FE-128` reference was corrected in place at both source records — `.claude_current_state.json.last_rebalance_outcome` and `current_roadmap.md`'s `**Last rebalance:**` history — via an inline `[CORRECTION ...]` annotation appended immediately after the erroneous text (original text preserved, not overwritten, per the append-only correction convention used elsewhere in this system for historical records). Both now explicitly state the reference was invalid and why.
+
+→ Deferred patch (still outstanding — prevents recurrence, distinct from the instance-level correction above; outside this engine's write scope, `roadmap_prompt.md` is not in Release Planning's Write Scope list):
   - File: `claude/system/roadmap_prompt.md`
   - Section: STEP 8 (or wherever pull-forward candidates are named in the rebalance's own outcome text)
   - Change required: before naming a pull-forward candidate in the cycle's recorded outcome, cross-check that the same session's own `groom backlog`/post-ship-closure actions (if run earlier the same day) have not already archived/shipped it.
@@ -69,7 +71,7 @@ Items: 1
   "phase": "Release",
   "filed_utc": "2026-07-27T16:55:00Z",
   "friction_item_count": 1,
-  "action_now_count": 0,
+  "action_now_count": 1,
   "deferred_count": 1,
   "escalation_count": 0,
   "overdue_patches": 0,
