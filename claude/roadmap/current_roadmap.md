@@ -11,7 +11,17 @@
 ## 1. Current Version
 
 **v7.8** — Release Visibility & Engineering Hardening — ✅ Complete — Shipped 2026-07-27 — cycle: 2026-07-24__release-v7.8
-**Next planned release:** [TBD]
+**Next planned release:** v7.9 — Capacity-Fill & Engineering Hardening — cycle: 2026-07-27__release-v7.9
+
+<!-- roadmap-annotation-marker: RA:v7.9:2026-07-27__release-v7.9 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-27__release-v7.9
+- Plan published: 2026-07-27
+- Cycle folder: claude/cycles/2026-07-27__release-v7.9/
+- Backlog slice: claude/cycles/2026-07-27__release-v7.9/stage4_backlog_slice.md
+- Status at annotation: Committed
+- No formal `## v7.9` roadmap section created (Release Planning may not alter roadmap scope) — scoped via STEP -1.2 Option (b) equivalence from `2026-07-27__scheduled` (backlog-driven, 15 ungated/ready items, sized to the full confirmed ~24-28 day capacity band per explicit user instruction); `BLG-FEAT-73`/`BLG-FEAT-74` remain parked per the prior perennial-return disposition; `BLG-FEAT-56` excluded pending PO confirmation of its usage-validation gate sub-condition.
 
 <!-- roadmap-annotation-marker: RA:v7.8:2026-07-24__release-v7.8 -->
 
