@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.18
-**Last Updated:** 2026-07-20
+**Version:** 2.19
+**Last Updated:** 2026-07-26
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -287,6 +287,24 @@ QA sign-off: Director of Quality — <date>
 **Failure condition:** If `docs/product/changelog.md` does not exist: create it with a standard header (Owner: PMO Lead, Class: Operational Record, Status: Active) and then add the entry. A ship without a changelog entry is not recorded — this is a hard gate.
 
 **Batch checkpoint 1 — update `closure_state.json`:** Set `steps.step_0_context = pass`, `steps.step_1_changelog = pass`, `last_updated_utc = <now>`.
+
+---
+
+## STEP 1.5 — Telegram Changelog Digest (ST-02, EPIC-02, v7.8, BLG-FEAT-84)
+
+After the changelog entry (STEP 1) is written and committed to `docs/product/changelog.md`, send a Telegram digest of the release's `### Changes shipped` entries — reusing the existing Telegram notification infrastructure (POST+JSON with retry, shipped v2.4/v5.1 for the SI-05 weekly digest).
+
+Run:
+
+```bash
+python3 scripts/send_changelog_digest.py --version "v<X.Y>"
+```
+
+substituting the actual version being shipped (e.g. `--version "v7.8"`). The script prints a result dict (`{"sent": true/false, ...}`) and always exits `0`.
+
+**Hard rule — non-blocking:** A failed send (missing `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID`, Telegram API error, network failure) must **NOT** block Post-Ship Closure. `send_changelog_digest()` (`backend/services/changelog_digest_service.py`) never raises — log the printed result and continue to STEP 2 regardless of `sent` value. Do not retry manually beyond the script's own built-in retry (2 retries, 30s/60s backoff, inherited from the SI-05 Telegram send helper) and do not treat a failed send as a reason to halt or re-run this step.
+
+**Batch checkpoint 1.5 — update `closure_state.json`:** Set `steps.step_1_5_changelog_digest = pass` (regardless of whether the send itself succeeded — this step is "attempted", not "delivered"), `last_updated_utc = <now>`.
 
 ---
 

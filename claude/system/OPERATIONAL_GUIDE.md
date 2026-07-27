@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.109
-**Last Updated:** 2026-07-24
+**Version:** 4.110
+**Last Updated:** 2026-07-26
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.18)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.19)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.109 |
-| Last Updated | 2026-07-24 |
+| Version | 4.110 |
+| Last Updated | 2026-07-26 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1471,7 +1471,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.8 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.5 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.1 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.18 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.19 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.19 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1495,6 +1495,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.110 | 2026-07-26 | **v7.8 sprint execution ST-02 (EPIC-02, BLG-FEAT-84) — post_ship_closure.md v2.18→v2.19: new STEP 1.5 Telegram Changelog Digest added.** §10 source prompt header v2.18→v2.19. §14 Post-Ship Closure Engine v2.18→v2.19. §14 Version 4.109→4.110/2026-07-26. Change: new STEP 1.5 (between STEP 1 Changelog Entry and STEP 2 Roadmap Update) invokes `scripts/send_changelog_digest.py`, sending the release's `### Changes shipped` entries via the existing Telegram notification infrastructure (`backend/services/si05_digest_service.py`'s POST+JSON+retry helper, shipped v2.4/v5.1). Hard rule: `backend/services/changelog_digest_service.py`'s `send_changelog_digest()` never raises — a failed send (missing credentials, Telegram API error) is logged and does not block closure; STEP 2 proceeds regardless. New batch checkpoint 1.5 records the step as attempted, not delivery-conditional. Authority: Sprint Execution Engine (v7.8 sprint execution, ST-02, 2026-07-26). |
 | 4.109 | 2026-07-24 | **Roadmap rebalance `2026-07-24__scheduled` STEP 11 (self-discovered same-cycle friction) — roadmap_prompt.md v9.3→v9.4: STEP -1.7 scan widened to also match `## Recurrence Escalations` tables.** §6 source prompt header v9.3→v9.4. §13 Artefact Register Roadmap Rebalance Prompt row v9.3→v9.4. §14 Roadmap Engine Source v9.3→v9.4. §14 Version 4.108→4.109/2026-07-24. Change: the v9.3 due-date scan (added earlier this same cycle) only matched the `^## ESC-`/`SLA due-by` pattern and would have missed the 3 recurrence escalations actually found this cycle via the separate §16.8 Carry-Forward mechanism, which used a `## Recurrence Escalations` table structure instead — widened to check both. Authority: Head of Specs Team (roadmap rebalance `2026-07-24__scheduled`, STEP 11). |
 | 4.108 | 2026-07-24 | **Roadmap rebalance `2026-07-24__scheduled` STEP 0 Carry-Forward review — shared_standards.md v3.18→v3.19: new §19 Array Guard Standard for JSON API Response Fields.** §14 Shared Standards v3.18→v3.19. §14 Version 4.107→4.108/2026-07-24. Change: resolves a recurrence escalation carried across 3 Post-Ship Closure cycles (v7.5→v7.6→v7.7), whose named target ("next roadmap review") had not occurred since `2026-07-17__scheduled` — codifies the `Array.isArray(...)` guard requirement before `.map()`/`.filter()`/`.forEach()` over JSON API response fields. Authority: Head of Specs Team (roadmap rebalance `2026-07-24__scheduled`, STEP 0). |
 | 4.107 | 2026-07-24 | **Roadmap rebalance `2026-07-24__scheduled` STEP -1.5 (resolving 2 deferred patches from `2026-07-17__scheduled`, both due at this cycle) — roadmap_prompt.md v9.2→v9.3: STEP -1.7 Governance Health Score Outstanding Action Count extended to a due-date-aware cross-routine scan.** §6 source prompt header v9.2→v9.3. §13 Artefact Register Roadmap Rebalance Prompt row v9.2→v9.3. §14 Roadmap Engine Source v9.2→v9.3. §14 Version 4.106→4.107/2026-07-24. Changes: (1) `roadmap_prompt.md` STEP -1.7 — Outstanding Action Count now also scans the last 3 completed cycles' `lessons_learnt_closure.md`/`lessons_learnt.md` files across all five routines for escalations whose deadline falls on or before the current cycle's date, regardless of owning routine, closing the gap that let a Release-Planning-filed escalation with a roadmap-window deadline go undetected except by ad hoc manual review (`2026-07-17__scheduled` Friction Item 2). (2) `changelogs/shared_standards_changelog.md` — backfilled missing rows 3.12–3.16 (deferred from `2026-07-17__scheduled` Friction Item 1 as disproportionate for that same-session action-now patch). Authority: Head of Specs Team (roadmap rebalance `2026-07-24__scheduled`, STEP -1.5). |
