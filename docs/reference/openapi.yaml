@@ -58,6 +58,8 @@ tags:
     description: Notification feed and delivery preferences
   - name: Screener
     description: Strategy-rules stock screener (DS-01) and screener results
+  - name: Changelog
+    description: Release changelog summary, backing the in-app "What's New" panel (ST-01, EPIC-01, v7.8)
   - name: External - Alpaca
     description: "External API calls to Alpaca Markets (https://data.alpaca.markets). These are outbound calls FROM this system TO Alpaca — documented here per CLAUDE.md §1 (ST-02, BLG-SPEC-22). Contract: docs/specs/api_contracts/alpaca_integration_contract.md"
 
@@ -3324,6 +3326,38 @@ paths:
           $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/InternalError"
+
+  /changelog/latest:
+    get:
+      tags: [Changelog]
+      summary: Most recent release's changelog summary (ST-01, EPIC-01, v7.8)
+      description: |
+        Returns the most recent release's version label and changes-shipped
+        descriptions, parsed server-side from docs/product/changelog.md.
+        `data` is null if no parseable version section exists.
+      security: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    nullable: true
+                    type: object
+                    properties:
+                      version:
+                        type: string
+                        example: v7.8
+                      changes:
+                        type: array
+                        items:
+                          type: string
 
   /health:
     get:

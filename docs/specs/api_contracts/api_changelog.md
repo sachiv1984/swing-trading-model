@@ -9,6 +9,15 @@
 
 ## v7.8.0 (2026-07-26 — Release v7.8)
 
+### changelog_endpoints.md — v1.0 (NEW)
+
+**EPIC:** EPIC-01
+**ST:** ST-01
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /changelog/latest | Returns the most recent release's version label and changes-shipped descriptions, parsed server-side from docs/product/changelog.md. Backs the in-app "What's New" panel (dashboard.md §6A). `data` is null if no parseable version section exists. |
+
 ### reports_endpoints.md — v0.10 (UPDATED)
 
 **EPIC:** EPIC-05
