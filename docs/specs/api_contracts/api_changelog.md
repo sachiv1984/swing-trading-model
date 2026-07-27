@@ -2,12 +2,12 @@
 **Class:** Class 2
 **Status:** Canonical
 **Version:** 1.7.0
-**Last Updated:** 2026-07-26
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # API Changelog
 
-## v7.8.0 (2026-07-26 — Release v7.8)
+## v7.8.0 (2026-07-27 — Release v7.8)
 
 ### changelog_endpoints.md — v1.0 (NEW)
 
@@ -26,6 +26,15 @@
 | Change | Details |
 |--------|---------|
 | New query param: GET /reports/monthly-pnl?format=csv | Returns a CSV file download of the month rows (Year, Month, Realised P&L (GBP), Trades) instead of JSON — mirrors the existing GET /reports/tax-year?format=csv handler. Invalid format values return 400. |
+
+### ai_endpoints.md — v1.8 (UPDATED)
+
+**EPIC:** EPIC-06
+**ST:** ST-06
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /ai/spend-trend | Returns Claude API spend for the last 6 release cycles, oldest to newest, bucketed by date windows parsed from docs/product/changelog.md version headings. Sourced from existing claude_audit_log data. |
 
 ## v6.1.0 (2026-06-23 — Release v6.1)
 

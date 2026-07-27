@@ -517,6 +517,8 @@ export const api = {
       }),
     // ST-07 (EPIC-07, v7.6, BLG-FEAT-77): Settings §6 AI Usage & Costs
     monthlyCost: async () => doFetch('/ai/monthly-cost'),
+    // ST-06 (v7.8 EPIC-06, BLG-FEAT-82): AI spend trend chart
+    spendTrend: async () => doFetch('/ai/spend-trend'),
   },
 
   // ST-11 (v6.3 EPIC-03): Strategy Benchmark — backtest vs live comparison

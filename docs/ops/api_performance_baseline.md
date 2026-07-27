@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.18
-**Date:** 2026-07-26
+**Version:** 2.19
+**Date:** 2026-07-27
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -1372,10 +1372,49 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-0
 
 ---
 
+## 31. v7.8 Endpoint Registration — GET /ai/spend-trend (ST-06, EPIC-06, BLG-FEAT-82)
+
+**Date:** 2026-07-27
+**Story:** ST-06 (EPIC-06, v7.8) — BLG-FEAT-82, AI spend trend chart backend endpoint
+**Environment:** N/A — see endpoint notes below.
+**Method:** Registered pending live measurement per §13 pattern (up to 6 sequential aggregation queries, no live sampling against production data).
+
+### 31.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /ai/spend-trend | v7.8 | Read — pending live timing run | 900–1,400ms (est.) | 1,600–2,400ms (est.) | Pending next BLG-OPS-13-style re-run |
+
+**Endpoint characteristics:**
+- `GET /ai/spend-trend`: reads and regex-parses `docs/product/changelog.md` (negligible cost, same shape as §30's `GET /changelog/latest`) to find up to 6 release-cycle date windows, then calls `get_claude_spend_between()` once per window — up to 6 sequential `SELECT COALESCE(SUM(cost_usd), 0.0) ... FROM claude_audit_log WHERE generated_at >= %s [AND generated_at < %s]` aggregation queries against `claude_audit_log`. Estimated range is derived directly from §29's single-query `GET /ai/monthly-cost` baseline (200–350ms p50 / 400–600ms p95, same table, same single-aggregation-no-pagination shape) scaled for up to 6 sequential round-trips rather than 1 — not a naive 6x multiplication, since connection reuse within one request amortises per-query overhead, but proportionally higher than any single-query endpoint in this document. Renders whatever cycles exist if fewer than 6 are found (cheaper, not worse-case) — the estimate above is the upper (6-cycle) bound.
+
+**Read-only, no write-op exclusion needed** — this endpoint has no mutation counterpart to exclude.
+
+**Flagged for the next baseline re-run** alongside other pending-measurement endpoints (§13 pattern).
+
+### 31.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-06 (v7.8 EPIC-06, BLG-FEAT-82) — AI Spend Trend Endpoint Registration Sign-Off
+
+AC-01: Endpoint added with estimated p50/p95 and measurement date
+       (2026-07-27 — estimated). ✅ PASS
+AC-02: Estimation methodology documented — derived from §29's single-query
+       GET /ai/monthly-cost baseline (same table, same query shape),
+       scaled for up to 6 sequential aggregation queries per request
+       rather than 1. ✅ PASS
+AC-03: Entry format consistent with existing baseline rows (§29/§30 pattern). ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-07-27
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.19 | 2026-07-27 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-06 (v7.8 EPIC-06, BLG-FEAT-82): §31 added — GET /ai/spend-trend registered pending live timing run (§13 pattern). Up to 6 sequential aggregation queries against `claude_audit_log` (same table/shape as §29's GET /ai/monthly-cost, scaled for up to 6 round-trips per request). Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/ai/spend-trend` path in the same PR — this registration was missed at implementation time and caught by CI on PR #1081, not pre-empted at PR-open per the LL-v7.6-P3-01 advisory. |
 | 2.18 | 2026-07-26 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-01 (v7.8 EPIC-01, BLG-FE-128): §30 added — GET /changelog/latest registered pending live timing run (§13 pattern). Read-only local file read + regex parse, no DB/network I/O — lower-latency by construction than every other registered endpoint. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/changelog/latest` path in the same PR. |
 | 2.17 | 2026-07-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-07 (v7.6 EPIC-07, BLG-FEAT-77): §29 added — GET /ai/monthly-cost registered pending live timing run (§13 pattern). Read-only aggregation query, no write-op counterpart. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/ai/monthly-cost` path in the same PR. |
 | 2.16 | 2026-07-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-04 (v7.5 EPIC-04, BLG-FE-118): §28 added — GET /reports/daily-pnl, GET/POST /saved-filters, DELETE /saved-filters/{id} registered. GET endpoints flagged pending live timing run (§13 pattern); POST/DELETE registered as write-op exclusions (estimated p50/p95, consistent with §20/§25/§26/§27 pattern — mutate real `saved_filters` rows). Cross-EPIC merge conflict resolution (CLAUDE.md §8): renumbered from an independently-authored §26/v2.14 to §28/v2.16 to sit after EPIC-02's and EPIC-03's already-merged §26/§27 entries. |
