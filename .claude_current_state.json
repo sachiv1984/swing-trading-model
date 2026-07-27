@@ -47,16 +47,7 @@
   "prior_cycle": "2026-07-21__release-v7.7",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
-  "open_escalations": {
-    "ESC-EXEC-20260727-01": {
-      "cycle": "2026-07-24__release-v7.8",
-      "summary": "EPIC-11/ST-11 pilot endpoint selection (RISK-03) requires Head of Engineering confirmation",
-      "owning_authority": "Head of Engineering",
-      "blocks_execution": false,
-      "sla_due_by": "2026-07-30T01:15:00Z",
-      "raised_utc": "2026-07-27T01:15:00Z"
-    }
-  },
+  "open_escalations": {},
   "last_rebalance_cycle": "2026-07-24__scheduled",
   "last_rebalance_utc": "2026-07-24T12:30:00Z",
   "last_scheduled_rebalance_utc": "2026-07-24T12:30:00Z",
