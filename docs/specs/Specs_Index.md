@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-07-24 (post-ship closure 2026-07-21__release-v7.7; §37 Test Coverage Gaps — v7.7 added, 5 gap items all dispositioned not_applicable, no backlog items required; §6.6 (BLG-SPEC-72) remains OPEN, not in this cycle's scope; TSG-v6.8-01/BLG-QA-86 remains OPEN, not in this cycle's scope; no new spec gaps identified beyond the TSG register per verification_report.md §6); prior — 2026-07-14 (post-ship closure 2026-07-14__release-v7.1; no §6/§7 items resolved this cycle — §6.6 (BLG-SPEC-72) remains OPEN, not in this cycle's scope; no new spec gaps identified this cycle per verification_report.md §6; TSG-v6.8-01/BLG-QA-86 remains OPEN, not in this cycle's scope; new deviation DEV-REPORTS-ST06-01 (P3, BLG-SPEC-87) recorded directly in reports.md §Known Deviations, not duplicated here per §6/§7 scope (structural/document-level gaps, not per-deviation registry) — consistent with v7.0 precedent for DEV-EPIC01-ST05-01); prior — 2026-07-13 (post-ship closure 2026-07-12__release-v7.0; §6.5 (BLG-SPEC-71) and §6.7 (BLG-SPEC-73) resolved — reports.md and dashboard.md reconciled to shipped behaviour; §6.6 (BLG-SPEC-72) remains OPEN, not in this cycle's scope; no new spec gaps identified this cycle per verification_report.md §6; TSG-v6.8-01/BLG-QA-86 remains OPEN, not in this cycle's scope)
+**Last Updated:** 2026-07-27 (post-ship closure 2026-07-24__release-v7.8; §38 Test Coverage Gaps — v7.8 added, 1 gap item dispositioned not_applicable, no backlog items required; §6.6 (BLG-SPEC-72) remains OPEN, not in this cycle's scope; TSG-v6.8-01/BLG-QA-86 remains OPEN, not in this cycle's scope; §27's sole TSG entry already RESOLVED, no reconciliation action needed; 3 doc-completeness gaps surfaced this cycle filed directly as backlog items (BLG-SPEC-102/103/104), not TSG entries — see §38); prior — 2026-07-24 (post-ship closure 2026-07-21__release-v7.7; §37 Test Coverage Gaps — v7.7 added, 5 gap items all dispositioned not_applicable, no backlog items required; §6.6 (BLG-SPEC-72) remains OPEN, not in this cycle's scope; TSG-v6.8-01/BLG-QA-86 remains OPEN, not in this cycle's scope; no new spec gaps identified beyond the TSG register per verification_report.md §6); prior — 2026-07-14 (post-ship closure 2026-07-14__release-v7.1; no §6/§7 items resolved this cycle — §6.6 (BLG-SPEC-72) remains OPEN, not in this cycle's scope; no new spec gaps identified this cycle per verification_report.md §6; TSG-v6.8-01/BLG-QA-86 remains OPEN, not in this cycle's scope; new deviation DEV-REPORTS-ST06-01 (P3, BLG-SPEC-87) recorded directly in reports.md §Known Deviations, not duplicated here per §6/§7 scope (structural/document-level gaps, not per-deviation registry) — consistent with v7.0 precedent for DEV-EPIC01-ST05-01); prior — 2026-07-13 (post-ship closure 2026-07-12__release-v7.0; §6.5 (BLG-SPEC-71) and §6.7 (BLG-SPEC-73) resolved — reports.md and dashboard.md reconciled to shipped behaviour; §6.6 (BLG-SPEC-72) remains OPEN, not in this cycle's scope; no new spec gaps identified this cycle per verification_report.md §6; TSG-v6.8-01/BLG-QA-86 remains OPEN, not in this cycle's scope)
 
 ---
 
@@ -917,6 +917,24 @@ No open TSG items for v7.7. EPIC-01/02/04/08/11 all have populated `test_scenari
 **TSG backlog reconciliation (§7.3):**
 - TSG-v6.8-01 (`BLG-QA-86`, Watchlist.js baseline Playwright coverage) checked against this cycle's shipped scope — `BLG-QA-86` remains open in `backlog.md` (not touched by any v7.7 story); entry left unchanged.
 - No other open TSG entries existed at cycle start.
+
+---
+
+## 38. Test Coverage Gaps — v7.8 (2026-07-24__release-v7.8)
+
+Identified during delivery verification (verification_report.md §6 — 1 gap item, dispositioned `not_applicable`). No backlog items required.
+
+| gap_id | EPIC | Description | Disposition |
+|--------|------|-------------|-------------|
+| TSG-v7.8-01 | EPIC-07 | `test_scenarios = []` | not_applicable — pure-documentation/process artefact (API key rotation-and-audit schedule), no frontend-visible AC, no code shipped |
+
+No open TSG items for v7.8. EPIC-01/02/03/04/05/06/08/09/10/11/12 all have populated `test_scenarios` confirmed run against the sign-off commit (see verification_report.md §6); EPIC-01/03/04/05/06's Playwright specs were executed locally against a real browser this cycle (system `snap` Chromium, per `sprint_close.md` Process Notes), not merely written-but-unexecuted.
+
+Three documentation-completeness gaps (not test coverage gaps) were also surfaced this cycle during EPIC-11/ST-11 pilot contract-test authoring — filed directly as backlog items rather than TSG entries since they concern existing contract-doc accuracy, not missing test coverage: `BLG-SPEC-102` (`position_endpoints.md` envelope claim vs. live behaviour), `BLG-SPEC-103` (`GET /positions` undocumented lifecycle fields), `BLG-SPEC-104` (`trade_endpoints.md` example omits 3 documented fields). See `claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-11.md` and `verification_report.md §5(a)`.
+
+**TSG backlog reconciliation (§7.3):**
+- TSG-v6.8-01 (`BLG-QA-86`, Watchlist.js baseline Playwright coverage) checked against this cycle's shipped scope — `BLG-QA-86` remains open in `backlog.md` (not touched by any v7.8 story); entry left unchanged.
+- No other open TSG entries existed at cycle start (§27's TSG-v50-01 was already RESOLVED prior to this cycle).
 
 ---
 

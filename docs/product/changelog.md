@@ -3,9 +3,52 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-24 (post-ship closure 2026-07-21__release-v7.7)
+**Last Updated:** 2026-07-27 (post-ship closure 2026-07-24__release-v7.8)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v7.8 — Release Visibility & Engineering Hardening — 2026-07-27
+Cycle: 2026-07-24__release-v7.8
+Verified: Verified
+Verification report: claude/cycles/2026-07-24__release-v7.8/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | In-app "what's new" panel sourced server-side from changelog.md, with truncation/empty/error/loading states | `docs/specs/frontend/pages/dashboard.md#6A`; `docs/specs/api_contracts/changelog_endpoints.md`; `docs/specs/frontend/design_system.md` |
+| EPIC-02 | Telegram digest of shipped changelog entries sent automatically on post-ship closure (STEP 1.5) | `claude/system/post_ship_closure.md#STEP 1.5`; `backend/services/changelog_digest_service.py` |
+| EPIC-03 | Contrast/focus-state accessibility pass on v7.7 notification UX — nav alert-count badge contrast fix | `docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md` |
+| EPIC-04 | Consolidated dark-mode contrast audit across all 23 shipped pages — PageHeader title-gradient via-stop fix | `docs/design/2026-07-24__release-v7.8/base44-dark-mode-contrast-audit/decision_record.md`; `docs/specs/frontend/design_system.md` |
+| EPIC-05 | Monthly realized P&L CSV export alongside existing tax-year export | `docs/specs/api_contracts/reports_endpoints.md#CSV Export`; `docs/specs/frontend/pages/reports.md` |
+| EPIC-06 | Per-cycle AI spend trend chart added to AI Usage & Costs view | `docs/specs/frontend/pages/settings.md#6a`; `docs/specs/api_contracts/ai_endpoints.md#GET /ai/spend-trend` |
+| EPIC-07 | Rotation-and-audit schedule defined for all 5 external API key types | `docs/ops/api_key_rotation_and_audit_schedule.md` |
+| EPIC-08 | Endpoint rate-limit audit across all 128 live endpoints — 4 previously-unlimited endpoints remediated | `docs/security/rate_limit_audit_2026-07-26.md` |
+| EPIC-09 | Shared retry/backoff decorator extracted and migrated to highest-traffic external call site (Yahoo price fetch) | `backend/utils/retry.py` |
+| EPIC-10 | Flaky-test quarantine mechanism defined and CI-enforced | `docs/testing/flaky_test_quarantine_process.md` |
+| EPIC-11 | Pilot contract tests added for 3 highest-traffic endpoints (positions, trades, portfolio) | `docs/testing/pilot_contract_test_approach.md`; `docs/specs/api_contracts/position_endpoints.md`; `docs/specs/api_contracts/trade_endpoints.md`; `docs/specs/api_contracts/portfolio_endpoints.md` |
+| EPIC-12 | CI lint step added for API contract `##` heading-level compliance | `.github/workflows/openapi-drift.yml`; `scripts/lint_api_contract_headings.py` |
+
+### Deviations accepted
+None. Every `done` ST item's deviation check found no divergence between implementation and canonical spec (see `sprint_close.md` "Deviations Filed This Sprint").
+
+### Tech backlog items shipped
+- [ST-01] [U] BLG-FE-128: In-app "what's new" panel for most recent release
+- [ST-02] [G] BLG-FEAT-84: Automated Telegram changelog digest after each release
+- [ST-03] [U] BLG-FE-127: Accessibility pass on v7.7 notification UX components
+- [ST-04] [U] BLG-FE-125: Dark-mode contrast audit across Base44-generated pages
+- [ST-05] [U] BLG-FEAT-81: Monthly realized P&L CSV export
+- [ST-06] [U] BLG-FEAT-82: AI usage spend trend dashboard (Gemini/Claude, per release cycle)
+- [ST-07] [D] BLG-SEC-20: Scheduled rotation-and-audit cadence for third-party API keys
+- [ST-08] [D] BLG-SEC-21: Rate-limiting review of public-facing endpoints
+- [ST-09] [D] BLG-BE-71: Shared retry/backoff decorator for external data calls
+- [ST-10] [D] BLG-QA-117: Flaky-test quarantine process for the Playwright suite
+- [ST-11] [D] BLG-QA-119: Contract tests for highest-traffic frontend/backend endpoints
+- [ST-12] [D] BLG-OPS-117: Automated lint check for API contract `##` heading level
+
+Sign-off: Product Owner — 2026-07-27
+QA sign-off: Director of Quality — 2026-07-27
 
 ---
 

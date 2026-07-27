@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.19
-**Last Updated:** 2026-07-26
+**Version:** 2.20
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -459,12 +459,15 @@ After all PRs for this cycle are merged, compare endpoint coverage between:
 1. **`docs/reference/openapi.yaml`** — count all `path:` entries (each distinct HTTP method + path combination is one endpoint)
 2. **`docs/ops/api_performance_baseline.md`** — count all endpoints listed in the measurement table(s)
 
-If openapi.yaml contains endpoints that are absent from the baseline doc:
+**Path-parameter normalisation (required before diffing):** The two documents do not always use the same placeholder name for the same path parameter (e.g. `openapi.yaml` may use `{position_id}`/`{rule_id}`/`{trade_id}` while `api_performance_baseline.md` uses a generic `{id}`). Normalise both endpoint lists by replacing any `{paramName}` segment with a single generic token (e.g. `{id}`) before comparing — a literal string diff without this step produces false-positive gaps.
 
+If openapi.yaml contains endpoints that are absent from the baseline doc (after normalisation):
+
+- **Check for an existing open tracking item first** — grep `claude/backlog/backlog.md` for an already-open `BLG-OPS-*` item covering the same endpoint-coverage-drift gap class (e.g. a prior cycle's "N endpoints missing from api_performance_baseline.md" item) before filing a new one. If one exists and still covers the current gap: do not file a duplicate — reference the existing item in the closure record instead.
 - Do **not** attempt to fill them in — performance re-runs require a live environment and human coordination
-- Raise a backlog item (`BLG-OPS-xx`) titled "Add <N> new endpoints to api_performance_baseline.md re-run" referencing the missing paths
+- Raise a backlog item (`BLG-OPS-xx`) titled "Add <N> new endpoints to api_performance_baseline.md re-run" referencing the missing paths, only if no existing open item covers the gap
 - Record the gap in the closure record under §6 (Outstanding Actions)
-- Record for the Advisory Summary block: "⚠ Endpoint coverage drift: N new paths not yet in api_performance_baseline.md — BLG-OPS-xx filed."
+- Record for the Advisory Summary block: "⚠ Endpoint coverage drift: N new paths not yet in api_performance_baseline.md — BLG-OPS-xx filed." (or "— already tracked by BLG-OPS-xx" if referencing an existing item)
 
 This check is **advisory-only** — it does not block closure. If no gap exists, note "Endpoint coverage: no drift" in the closure record.
 

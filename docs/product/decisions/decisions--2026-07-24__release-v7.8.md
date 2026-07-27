@@ -1,9 +1,13 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v7.8
 Cycle: 2026-07-24__release-v7.8
-Last Updated: 2026-07-24
+Last Updated: 2026-07-27
+
+Superseded by: v7.8 ship — 2026-07-27
+Changelog: docs/product/changelog.md#v7.8
+Cycle: 2026-07-24__release-v7.8
 
 ## Planning Decisions — v7.8 Release Visibility & Engineering Hardening
 

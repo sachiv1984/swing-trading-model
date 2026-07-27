@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.110
-**Last Updated:** 2026-07-26
+**Version:** 4.112
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -620,7 +620,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.42)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.43)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.19)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.20)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1464,14 +1464,14 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.4 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.42 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.43 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.13 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.59 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.8 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.5 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.1 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.19 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.20 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.19 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1495,6 +1495,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.112 | 2026-07-27 | **Post-ship closure `2026-07-24__release-v7.8` STEP 6 self-discovered friction, immediate action — post_ship_closure.md v2.19→v2.20: Endpoint Coverage Drift Check advisory strengthened with path-parameter normalisation and existing-tracking-item check.** §10 source prompt header v2.19→v2.20. §14 Post-Ship Closure Engine v2.19→v2.20. §14 Version 4.111→4.112/2026-07-27. Change: the STEP 6 advisory's `openapi.yaml`-vs-`api_performance_baseline.md` endpoint diff produced 15 apparent false-positive gaps this run because the two documents use different path-parameter placeholder names for the same parameter (e.g. `{position_id}` vs generic `{id}`) — added an explicit normalisation instruction before diffing. Also added a check for an existing open `BLG-OPS-*` tracking item covering the same gap class before filing a new one, since this cycle's normalised gap turned out to be identical, pre-existing drift already tracked by the still-open `BLG-OPS-111` (filed at `2026-07-15__release-v7.2` post-ship closure). Authority: Head of Specs Team (post-ship closure `2026-07-24__release-v7.8`, STEP 8 — immediate lessons-learnt action rule, self-discovered same-run friction). |
+| 4.111 | 2026-07-27 | **Post-ship closure `2026-07-24__release-v7.8` STEP 8 immediate action (Release Planning lessons_learnt.md Friction Item 1) — release_planning_prompt.md v2.42→v2.43: STEP 9 status-value conflict corrected.** §6B source prompt header v2.42→v2.43. §14 Release Engine Source v2.42→v2.43. §14 Version 4.110→4.111/2026-07-27. Change: STEP 9's terminal `.claude_current_state.json` sync literally instructed writing `status: Published`, a value absent from `lifecycle_schema.json`'s canonical state enum (which names this terminal state `Release_Planning_Complete`) — following the prompt literally would have stranded the cycle at Design Gate's next Lifecycle Guard check (unrecognised status → self-halt to `Blocked`). Corrected to `status: Release_Planning_Complete` per `shared_standards.md` §10.6 (lifecycle_schema.json prevails on conflict); added an explanatory note distinguishing this field from the cycle-level `state.json.status = Published` value (§6B.6 Publish Gate), which is unrelated and unaffected. Authority: Head of Specs Team (post-ship closure `2026-07-24__release-v7.8`, STEP 8 — immediate lessons-learnt action rule). |
 | 4.110 | 2026-07-26 | **v7.8 sprint execution ST-02 (EPIC-02, BLG-FEAT-84) — post_ship_closure.md v2.18→v2.19: new STEP 1.5 Telegram Changelog Digest added.** §10 source prompt header v2.18→v2.19. §14 Post-Ship Closure Engine v2.18→v2.19. §14 Version 4.109→4.110/2026-07-26. Change: new STEP 1.5 (between STEP 1 Changelog Entry and STEP 2 Roadmap Update) invokes `scripts/send_changelog_digest.py`, sending the release's `### Changes shipped` entries via the existing Telegram notification infrastructure (`backend/services/si05_digest_service.py`'s POST+JSON+retry helper, shipped v2.4/v5.1). Hard rule: `backend/services/changelog_digest_service.py`'s `send_changelog_digest()` never raises — a failed send (missing credentials, Telegram API error) is logged and does not block closure; STEP 2 proceeds regardless. New batch checkpoint 1.5 records the step as attempted, not delivery-conditional. Authority: Sprint Execution Engine (v7.8 sprint execution, ST-02, 2026-07-26). |
 | 4.109 | 2026-07-24 | **Roadmap rebalance `2026-07-24__scheduled` STEP 11 (self-discovered same-cycle friction) — roadmap_prompt.md v9.3→v9.4: STEP -1.7 scan widened to also match `## Recurrence Escalations` tables.** §6 source prompt header v9.3→v9.4. §13 Artefact Register Roadmap Rebalance Prompt row v9.3→v9.4. §14 Roadmap Engine Source v9.3→v9.4. §14 Version 4.108→4.109/2026-07-24. Change: the v9.3 due-date scan (added earlier this same cycle) only matched the `^## ESC-`/`SLA due-by` pattern and would have missed the 3 recurrence escalations actually found this cycle via the separate §16.8 Carry-Forward mechanism, which used a `## Recurrence Escalations` table structure instead — widened to check both. Authority: Head of Specs Team (roadmap rebalance `2026-07-24__scheduled`, STEP 11). |
 | 4.108 | 2026-07-24 | **Roadmap rebalance `2026-07-24__scheduled` STEP 0 Carry-Forward review — shared_standards.md v3.18→v3.19: new §19 Array Guard Standard for JSON API Response Fields.** §14 Shared Standards v3.18→v3.19. §14 Version 4.107→4.108/2026-07-24. Change: resolves a recurrence escalation carried across 3 Post-Ship Closure cycles (v7.5→v7.6→v7.7), whose named target ("next roadmap review") had not occurred since `2026-07-17__scheduled` — codifies the `Array.isArray(...)` guard requirement before `.map()`/`.filter()`/`.forEach()` over JSON API response fields. Authority: Head of Specs Team (roadmap rebalance `2026-07-24__scheduled`, STEP 0). |

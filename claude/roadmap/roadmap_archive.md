@@ -1,13 +1,39 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-24 (post-ship closure 2026-07-21__release-v7.7 — RA:v7.7 retired, partial: 5/7 items shipped; 2 unblocked-but-still-gated items (`BLG-FEAT-73`, `BLG-FEAT-74`) re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-20 (post-ship closure 2026-07-20__release-v7.6 — RA:v7.6 retired, full: 8/8 items shipped; §3 Now horizon empty following retirement); prior — 2026-07-20 (post-ship closure 2026-07-17__release-v7.5 — RA:v7.5 retired, full: 4/4 items shipped as implementations, first full (non-partial) retirement of this Now-horizon lineage since RA:v7.1; §3 Now horizon empty following retirement); prior — 2026-07-17 (post-ship closure 2026-07-17__release-v7.4 — RA:v7.4 retired, partial: 1/1 amended-scope item; 4 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-16 (post-ship closure 2026-07-16__release-v7.3 — RA:v7.3 retired, partial: 3/7 items; 4 unblocked readiness-passed items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — RA:v7.2 retired, partial: 5/8 items; 3 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-14 (post-ship closure 2026-07-14__release-v7.1 — RA:v7.1 retired)
+**Last Updated:** 2026-07-27 (post-ship closure 2026-07-24__release-v7.8, manage roadmap STEP 11 — RA:Gated-carry-forward-2026-07-27 retired: BLG-FEAT-73/BLG-FEAT-74 removed from current_roadmap.md §3 per PO perennial-return disposition, Option (b); not shipped, not killed, remain open in backlog.md); prior — 2026-07-24 (post-ship closure 2026-07-21__release-v7.7 — RA:v7.7 retired, partial: 5/7 items shipped; 2 unblocked-but-still-gated items (`BLG-FEAT-73`, `BLG-FEAT-74`) re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-20 (post-ship closure 2026-07-20__release-v7.6 — RA:v7.6 retired, full: 8/8 items shipped; §3 Now horizon empty following retirement); prior — 2026-07-20 (post-ship closure 2026-07-17__release-v7.5 — RA:v7.5 retired, full: 4/4 items shipped as implementations, first full (non-partial) retirement of this Now-horizon lineage since RA:v7.1; §3 Now horizon empty following retirement); prior — 2026-07-17 (post-ship closure 2026-07-17__release-v7.4 — RA:v7.4 retired, partial: 1/1 amended-scope item; 4 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-16 (post-ship closure 2026-07-16__release-v7.3 — RA:v7.3 retired, partial: 3/7 items; 4 unblocked readiness-passed items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-15 (post-ship closure 2026-07-15__release-v7.2 — RA:v7.2 retired, partial: 5/8 items; 3 unblocked items re-added to current_roadmap.md §3 as a fresh carry-forward entry); prior — 2026-07-14 (post-ship closure 2026-07-14__release-v7.1 — RA:v7.1 retired)
 
 # Roadmap Archive — Momentum Trading Assistant
 
 This document is the permanent record of completed and killed roadmap items retired from `claude/roadmap/current_roadmap.md`. Items are listed in retirement order, most recent first.
 
 Entries are append-only. Do not edit existing entries.
+
+---
+
+## RA:Gated-carry-forward-2026-07-27 — SI-02 frontend & PO-05 Replay Mode (removed from Now horizon — not shipped, not killed; PO perennial-return disposition)
+
+**Original roadmap location:** §3 Delivery Plan — Horizon: Now
+**Status at retirement:** Removed from active Now-horizon carry-forward (neither ✅ Complete nor ❌ Killed — both items remain open, un-scheduled items in `claude/backlog/backlog.md`)
+**Retired from active roadmap:** 2026-07-27
+**Shipped version:** N/A — not shipped
+**Cycle reference:** 2026-07-24__release-v7.8 (disposition made at Release Planning STEP 1.4a Perennial-Return Check; actioned here per that cycle's own `current_roadmap.md` execution note directing `manage roadmap` to action the §3 removal)
+**Verification report:** N/A
+**Decision log reference:** `docs/product/decisions/decisions--2026-07-24__release-v7.8.md` (Product Owner, 2026-07-24) — "`BLG-FEAT-73` and `BLG-FEAT-74` excluded from v7.8 scope; PO disposition Option (b) — remove from horizon (per STEP 1.4a Perennial-Return Check, 2nd consecutive return for both)."
+**Retirement confirmed by:** Product Owner (via `decisions--2026-07-24__release-v7.8.md`) — actioned by PMO Lead, manage roadmap STEP 11, post-ship closure 2026-07-27
+
+**Note on this retirement class:** Neither item shipped nor was formally killed — both were named as an un-versioned Now-horizon carry-forward entry across two consecutive release-planning cycles (`2026-07-21__release-v7.7`, `2026-07-24__release-v7.8`) with no change in gate status (`BLG-FEAT-73`'s `BLG-GOV-107` SI-02 gate still NOT MET; `BLG-FEAT-74` still lacking §13 determinism pre-clearance). STEP 1.4a's Perennial-Return Check forced an explicit PO disposition at the 2nd consecutive return rather than allowing silent re-entry a 3rd time with no new facts — PO chose Option (b), remove from horizon. This is distinct from `RA:v7.7`'s partial retirement immediately above/below: that entry recorded 5 shipped items plus a decision to *re-add* these same 2 gated items as fresh carry-forward; this entry records the subsequent decision to stop re-adding them. Both items remain live, ordinary backlog items — nothing about their priority, effort, or content has changed. Either may return to a future Now-horizon section once its gate clears, via a normal `plan release` or `run roadmap` scoping decision.
+
+### Original Roadmap Entry
+
+### Gated carry-forward — SI-02 frontend & PO-05 Replay Mode
+
+Re-added here 2026-07-24 (post-ship closure `2026-07-21__release-v7.7`, STEP 11 `manage roadmap`) after `RA:v7.7`'s partial retirement of the v7.7 label (5 of 7 named anchor items shipped and were retired to archive; these 2 items did not ship and remain active, un-versioned, pending their own gates).
+
+| Feature | ID | Priority | Effort | Notes |
+|---|---|---|---|---|
+| SI-02 Behavioural Drift Detection — frontend build | BLG-FEAT-73 | P1 | M (~2 days) | Arc 5 flagship "tell me when I'm deviating from my own rules" feature — backend has shipped since v4.6, no UI exists. `[gate status unverified/unmet — release planning to confirm before accepting into scope]`: BLG-GOV-107's 3 gate conditions last confirmed NOT MET at `2026-07-21__release-v7.7` release planning (9th consecutive identical reading). Named as forward intent per `roadmap_prompt.md` LP-05; may not enter sprint planning until independently reconfirmed met. |
+| PO-05 Lightweight Replay Mode | BLG-FEAT-74 | P2 | VH (>2 weeks) | Roadmap's "highest-value long-term validation feature" in Arc 4. `[gate status unverified/unmet — release planning to confirm before accepting into scope]`: requires a §13 determinism pre-clearance review (not yet run) before sprint planning begins. Effort (VH) exceeds this Now horizon's typical single-cycle sizing — Release Planning to confirm phasing or conditional/stretch scope. |
 
 ---
 

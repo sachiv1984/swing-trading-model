@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.42
-**Last Updated:** 2026-07-06
+**Version:** 2.43
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -1054,7 +1054,9 @@ The lessons learnt file must end with an `// ARTEFACT_STATUS` JSON terminal bloc
 
 ## STEP 9 — Global State Synchronization (Hard Requirement — Terminal)
 
-Purpose: Final update of the root-level state pointer to reflect that this cycle is Published and sealed. This is the only step that sets `status = Published` in `.claude_current_state.json`. STEP 7's intermediate sync must have run first.
+Purpose: Final update of the root-level state pointer to reflect that this cycle's release plan is published and sealed. This is the only step that sets `status = Release_Planning_Complete` in `.claude_current_state.json`. STEP 7's intermediate sync must have run first.
+
+Note: "Published" is the release plan's own cycle-level `state.json.status` value (see §6B.6 Publish Gate) — it is distinct from the root-level `.claude_current_state.json.status` field written here, which must use the canonical `lifecycle_schema.json` state-enum value `Release_Planning_Complete`, not `Published` or `Validated`. Per `shared_standards.md` §10.6, `lifecycle_schema.json` prevails on any conflict between the two vocabularies.
 
 Execution Rules:
 1. Verify STEP 7 intermediate sync has completed (backlog_slice_path and active_cycle are already set).
@@ -1062,9 +1064,9 @@ Execution Rules:
 3. Terminal state update:
 
 ```yaml
-# .claude_current_state.json terminal update (STEP 9 — sets Published):
+# .claude_current_state.json terminal update (STEP 9 — sets Release_Planning_Complete):
 active_cycle: <cycle_id>            # confirm — already set at STEP 7
-status: Published
+status: Release_Planning_Complete
 backlog_slice_path: claude/cycles/<cycle_id>/stage4_backlog_slice.md   # confirm
 last_sync_utc: <ISO-8601 UTC now>
 ```

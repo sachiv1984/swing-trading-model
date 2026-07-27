@@ -1,11 +1,203 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-24 (groom backlog post-ship closure 2026-07-21__release-v7.7 — 11 items archived: BLG-FEAT-75, BLG-FE-114, BLG-FE-113, BLG-FE-120, BLG-FEAT-80, BLG-OPS-108, BLG-GOV-28, BLG-QA-104, BLG-BE-63, BLG-OPS-110, BLG-QA-102; ephemeral Release Slice v7.7 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-20__release-v7.6 — 8 items archived: BLG-FE-119, BLG-QA-112, BLG-FEAT-79, BLG-BE-65, BLG-QA-114, BLG-BE-62, BLG-FEAT-77, BLG-QA-69; ephemeral Release Slice v7.6 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
+**Last Updated:** 2026-07-27 (groom backlog post-ship closure 2026-07-24__release-v7.8 — 12 items archived: BLG-FE-128, BLG-FEAT-84, BLG-FE-127, BLG-FE-125, BLG-FEAT-81, BLG-FEAT-82, BLG-SEC-20, BLG-SEC-21, BLG-BE-71, BLG-QA-117, BLG-QA-119, BLG-OPS-117; ephemeral Release Slice v7.8 section removed); prior — 2026-07-24 (groom backlog post-ship closure 2026-07-21__release-v7.7 — 11 items archived: BLG-FEAT-75, BLG-FE-114, BLG-FE-113, BLG-FE-120, BLG-FEAT-80, BLG-OPS-108, BLG-GOV-28, BLG-QA-104, BLG-BE-63, BLG-OPS-110, BLG-QA-102; ephemeral Release Slice v7.7 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-20__release-v7.6 — 8 items archived: BLG-FE-119, BLG-QA-112, BLG-FEAT-79, BLG-BE-65, BLG-QA-114, BLG-BE-62, BLG-FEAT-77, BLG-QA-69; ephemeral Release Slice v7.6 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-FE-128 — In-app "what's new" panel for most recent release
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** v7.8
+**Evidence:** claude/cycles/2026-07-24__release-v7.8/verification_report.md (EPIC-01/ST-01); docs/product/changelog.md#v7-8-release-visibility-engineering-hardening-2026-07-27
+
+### BLG-FE-128 — In-app "what's new" panel for most recent release
+**Priority:** P2 (Medium) | **Type:** Product Feature | **Owner:** Product Owner | **Source:** IDEA-product-owner-20260724-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-27 — cycle: 2026-07-24__release-v7.8 (ST-01)
+**Problem:** The only record of what shipped in the most recent release is `docs/product/changelog.md`, a raw markdown file not surfaced in-app.
+**Scope:** Add an in-app panel (e.g. on Dashboard or a dedicated "What's New" entry) surfacing the most recent release's shipped items, sourced from `changelog.md`.
+**Acceptance Criteria:** Panel shows the most recent release's `### Changes shipped` entries; updates automatically on next release without manual wiring.
+
+---
+
+### BLG-FEAT-84 — Automated Telegram changelog digest after each release
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** v7.8
+**Evidence:** claude/cycles/2026-07-24__release-v7.8/verification_report.md (EPIC-02/ST-02); docs/product/changelog.md#v7-8-release-visibility-engineering-hardening-2026-07-27
+
+### BLG-FEAT-84 — Automated Telegram changelog digest after each release
+**Priority:** P2 (Medium) | **Type:** Product Feature / Notifications | **Owner:** Product Owner | **Source:** IDEA-product-owner-20260724-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-27 — cycle: 2026-07-24__release-v7.8 (ST-02)
+**Problem:** Release changelog content is not proactively surfaced — the user must remember to check `changelog.md` after a release ships.
+**Scope:** Send a Telegram digest summarising the most recent release's shipped items, reusing the existing Telegram notification infrastructure (shipped v2.4).
+**Acceptance Criteria:** Digest sent automatically as part of post-ship closure; content matches the release's `### Changes shipped` entries.
+
+---
+
+### BLG-FE-127 — Accessibility pass on v7.7 notification UX components
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** v7.8
+**Evidence:** claude/cycles/2026-07-24__release-v7.8/verification_report.md (EPIC-03/ST-03); docs/product/changelog.md#v7-8-release-visibility-engineering-hardening-2026-07-27
+
+### BLG-FE-127 — Accessibility pass on v7.7 notification UX components
+**Priority:** P2 (Medium) | **Type:** Frontend / Accessibility | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260724-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-27 — cycle: 2026-07-24__release-v7.8 (ST-03)
+**Problem:** The v7.7 notification/digest surface consolidation (`BLG-FE-114`) and shared standing-alert component (`BLG-FE-120`) shipped without a dedicated accessibility (contrast/focus-state) pass.
+**Scope:** Run a contrast/focus-state accessibility pass specifically on the newly-shipped v7.7 notification UX components.
+**Acceptance Criteria:** Pass complete; any findings fixed directly (if trivial) or filed as follow-up items.
+
+---
+
+### BLG-FE-125 — Dark-mode contrast audit across Base44-generated pages
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** v7.8
+**Evidence:** claude/cycles/2026-07-24__release-v7.8/verification_report.md (EPIC-04/ST-04); docs/product/changelog.md#v7-8-release-visibility-engineering-hardening-2026-07-27
+
+### BLG-FE-125 — Dark-mode contrast audit across Base44-generated pages
+**Priority:** P2 (Medium) | **Type:** Frontend / Accessibility | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260724-02 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-27 — cycle: 2026-07-24__release-v7.8 (ST-04)
+**Problem:** No consolidated contrast audit has been run against dark mode across existing Base44-generated pages; individual gaps have only been caught reactively (e.g. BLG-FE-113, v7.7).
+**Scope:** Audit all shipped pages in dark mode for contrast issues; file one consolidated remediation item per finding batch rather than per-page ad hoc.
+**Acceptance Criteria:** Audit complete; findings filed as follow-up items or fixed directly if trivial.
+
+---
+
+### BLG-FEAT-81 — Monthly realized P&L CSV export
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** v7.8
+**Evidence:** claude/cycles/2026-07-24__release-v7.8/verification_report.md (EPIC-05/ST-05); docs/product/changelog.md#v7-8-release-visibility-engineering-hardening-2026-07-27
+
+### BLG-FEAT-81 — Monthly realized P&L CSV export
+**Priority:** P2 (Medium) | **Type:** Product Feature / Reporting | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260724-01 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-27 — cycle: 2026-07-24__release-v7.8 (ST-05)
+**Problem:** The existing tax-year P&L CSV export (v7.0) is annual-only; a monthly cadence would better support ongoing personal record-keeping.
+**Scope:** Add a monthly export option alongside the existing tax-year export, reusing the same underlying reconciliation logic (v7.6, `BLG-FEAT-79`).
+**Acceptance Criteria:** Monthly CSV export available; figures reconcile against the existing tax-year export for the same period.
+
+---
+
+### BLG-FEAT-82 — AI usage spend trend dashboard (Gemini/Claude, per release cycle)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** v7.8
+**Evidence:** claude/cycles/2026-07-24__release-v7.8/verification_report.md (EPIC-06/ST-06); docs/product/changelog.md#v7-8-release-visibility-engineering-hardening-2026-07-27
+
+### BLG-FEAT-82 — AI usage spend trend dashboard (Gemini/Claude, per release cycle)
+**Priority:** P2 (Medium) | **Type:** Product Feature / FinOps | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260724-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-27 — cycle: 2026-07-24__release-v7.8 (ST-06)
+**Problem:** The v7.6 AI Usage & Costs settings view (`BLG-FEAT-77`) shows current-month spend only; no trend view exists across releases.
+**Scope:** Extend the existing AI Usage & Costs view with a per-cycle spend trend chart, reusing `gemini_audit_log`/Claude cost tracking data.
+**Acceptance Criteria:** Trend view shows at least the last 6 release cycles' spend.
+
+---
+
+### BLG-SEC-20 — Scheduled rotation-and-audit cadence for third-party API keys
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** v7.8
+**Evidence:** claude/cycles/2026-07-24__release-v7.8/verification_report.md (EPIC-07/ST-07); docs/product/changelog.md#v7-8-release-visibility-engineering-hardening-2026-07-27
+
+### BLG-SEC-20 — Scheduled rotation-and-audit cadence for third-party API keys
+**Priority:** P2 (Medium) | **Type:** Security / Process | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260724-01 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-27 — cycle: 2026-07-24__release-v7.8 (ST-07)
+**Problem:** Third-party API keys (Yahoo Finance, Alpaca, Gemini, Claude, Telegram) have no documented rotation cadence beyond ad hoc rotation on suspected compromise.
+**Scope:** Define a rotation-and-audit schedule covering all external keys, building on the existing `alpaca_key_rotation_policy.md` pattern.
+**Acceptance Criteria:** Schedule documented for all 5 key types; first rotation date set per key.
+
+---
+
+### BLG-SEC-21 — Rate-limiting review of public-facing endpoints
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** v7.8
+**Evidence:** claude/cycles/2026-07-24__release-v7.8/verification_report.md (EPIC-08/ST-08); docs/product/changelog.md#v7-8-release-visibility-engineering-hardening-2026-07-27
+
+### BLG-SEC-21 — Rate-limiting review of public-facing endpoints
+**Priority:** P2 (Medium) | **Type:** Security | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260724-02 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-27 — cycle: 2026-07-24__release-v7.8 (ST-08)
+**Problem:** Overlaps with and extends `BLG-SEC-18`'s general rate-limit audit — this item specifically prioritises endpoints with no documented limit at all, rather than a full-surface audit.
+**Scope:** Identify endpoints with zero documented rate limit; prioritise remediation for those over already-limited endpoints.
+**Acceptance Criteria:** List of undocumented-limit endpoints produced; each either given a documented limit or explicitly accepted as low-risk.
+
+---
+
+### BLG-BE-71 — Shared retry/backoff decorator for external data calls
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** v7.8
+**Evidence:** claude/cycles/2026-07-24__release-v7.8/verification_report.md (EPIC-09/ST-09); docs/product/changelog.md#v7-8-release-visibility-engineering-hardening-2026-07-27
+
+### BLG-BE-71 — Shared retry/backoff decorator for external data calls
+**Priority:** P2 (Medium) | **Type:** Backend Engineering / Technical Debt | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260724-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-27 — cycle: 2026-07-24__release-v7.8 (ST-09)
+**Problem:** Retry/backoff logic for external data calls (Yahoo Finance, Alpaca) is currently duplicated ad hoc per call site rather than sharing one implementation.
+**Scope:** Extract a shared retry/backoff decorator or helper; migrate existing call sites incrementally.
+**Acceptance Criteria:** Shared helper added with unit tests; at least the highest-traffic call site migrated as proof of pattern.
+
+---
+
+### BLG-QA-117 — Flaky-test quarantine process for the Playwright suite
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** v7.8
+**Evidence:** claude/cycles/2026-07-24__release-v7.8/verification_report.md (EPIC-10/ST-10); docs/product/changelog.md#v7-8-release-visibility-engineering-hardening-2026-07-27
+
+### BLG-QA-117 — Flaky-test quarantine process for the Playwright suite
+**Priority:** P2 (Medium) | **Type:** QA / Process | **Owner:** Director of Quality | **Source:** IDEA-director-of-quality-20260724-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-27 — cycle: 2026-07-24__release-v7.8 (ST-10)
+**Problem:** No quarantine mechanism exists for intermittently-failing Playwright tests; a flaky test can currently block unrelated PRs.
+**Scope:** Define a quarantine tag/process (e.g. `test.fixme` with a tracked follow-up item) and document it.
+**Acceptance Criteria:** Process documented; applied to any currently-known flaky test if one exists.
+
+---
+
+### BLG-QA-119 — Contract tests for highest-traffic frontend/backend endpoints
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** v7.8
+**Evidence:** claude/cycles/2026-07-24__release-v7.8/verification_report.md (EPIC-11/ST-11); docs/product/changelog.md#v7-8-release-visibility-engineering-hardening-2026-07-27
+
+### BLG-QA-119 — Contract tests for highest-traffic frontend/backend endpoints
+**Priority:** P2 (Medium) | **Type:** QA / Backend Engineering | **Owner:** Head of Engineering | **Source:** IDEA-head-of-engineering-20260724-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-27 — cycle: 2026-07-24__release-v7.8 (ST-11)
+**Problem:** No contract-testing layer exists between frontend and backend; a silent shape mismatch on a high-traffic endpoint (positions, trades, dashboard) would currently only surface as a runtime failure.
+**Scope:** Add lightweight contract tests for the 3 highest-traffic endpoints as a pilot.
+**Acceptance Criteria:** Contract tests added and passing in CI for the 3 pilot endpoints.
+
+---
+
+### BLG-OPS-117 — Automated lint check for API contract `##` heading level
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2
+**Retired:** 2026-07-27
+**Shipped in:** v7.8
+**Evidence:** claude/cycles/2026-07-24__release-v7.8/verification_report.md (EPIC-12/ST-12); docs/product/changelog.md#v7-8-release-visibility-engineering-hardening-2026-07-27
+
+### BLG-OPS-117 — Automated lint check for API contract `##` heading level
+**Priority:** P2 (Medium) | **Type:** Operations / CI Tooling | **Owner:** Head of Specs Team | **Source:** IDEA-head-of-specs-20260724-01 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-27 — cycle: 2026-07-24__release-v7.8 (ST-12)
+**Problem:** CLAUDE.md §2 already documents that a `###`-level (not `##`) API contract heading silently fails the OpenAPI Drift Detection gate — this has happened at least once historically. No lint check catches the mistake before the drift gate does.
+**Scope:** Add a lightweight CI lint step scanning `docs/specs/api_contracts/*.md` for `## METHOD /path` heading-level compliance ahead of the drift-detection gate.
+**Acceptance Criteria:** Lint step added to CI; confirmed to catch a deliberately-miscoded test heading.
 
 ---
 
