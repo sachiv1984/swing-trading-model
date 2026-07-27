@@ -1,12 +1,13 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1.9
-**Last Updated:** 2026-06-22
+**Version:** 0.1.10
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Design Source (v0.1.10):** docs/design/2026-07-27__release-v7.9/sector-regime-exposure-trend/ux_spec.md
 **Design Source (v0.1.9):** docs/design/2026-06-22__release-v6.1/sector-heatmap/ux_spec.md
 **Design Source (v0.1.0):** docs/design/2026-03-04__release-v1.8/risk-dashboard/ux_spec.md
-**Confirmed by:** Head of Specs Team — 2026-06-22
+**Confirmed by:** Head of Specs Team — 2026-07-27
 
 ---
 
@@ -264,6 +265,47 @@ When `concentration_alert: false`: no alert bar.
 
 ---
 
+## 8b. Component: Sector & Regime Exposure Trend (v7.9 — ST-02, BLG-FEAT-67)
+
+**Design source:** `docs/design/2026-07-27__release-v7.9/sector-regime-exposure-trend/ux_spec.md`
+
+**Placement note:** the backlog item that scoped this feature stated it would sit "alongside the existing `SectorHeatMap` ... on the Positions or Reports page" — that is incorrect against the shipped codebase; `SectorHeatMap` renders on this page (§8a), not Positions or Reports. Placement was corrected to the Risk Dashboard at this design gate; see the design source §2 for the full rationale. No AC substance changed by the correction.
+
+**Section heading:** "Sector & Regime Exposure Trend" — placed directly below §8a's Section-Level Alert row, above §7 Prospective Heat Indicator.
+
+### 8b.1 Data
+
+- **Source:** `GET /portfolio/sector-regime-trend?weeks={N}` (new endpoint; default 12 weeks) — aggregates existing `portfolio_history` plus the same sector-weight data as §8a and the same regime data as the Dashboard's Signal Status (`dashboard.md`) into weekly buckets. No new inputs — purely a historical view of already-captured data.
+- **Key fields:** `weeks[].week_start`, `weeks[].sectors[].sector_name`, `weeks[].sectors[].exposure_pct`, `weeks[].regime_us`, `weeks[].regime_uk`
+
+### 8b.2 Layout
+
+Two stacked charts, full width:
+
+1. **Sector concentration trend** — stacked area / multi-line chart, one series per sector (top 5 by current exposure; remainder grouped as "Other"). X-axis: week. Y-axis: exposure %. Legend below chart, wraps on narrow screens.
+2. **Regime status trend** — dual-row timeline strip (US row, UK row) beneath the sector chart, same week-aligned X-axis. Green fill = regime on, amber fill = regime off (same colour convention as Dashboard's Signal Status regime badges).
+
+### 8b.3 Insufficient-History State
+
+When fewer than 8 weeks of `portfolio_history` data exist: render a single inline notice in place of both charts — "Not enough history yet to show a trend (8 weeks of data required; N available)." No partial/truncated chart shown.
+
+### 8b.4 States
+
+| State | Behaviour |
+|-------|-----------|
+| Loading | Skeleton chart placeholder (matches §8a's skeleton tile grid convention) |
+| Loaded, ≥8 weeks | Both charts render (§8b.2) |
+| Loaded, <8 weeks | Insufficient-history notice (§8b.3) |
+| Error | "Unable to load exposure trend." + Retry — does not affect other Risk Dashboard panels |
+
+### 8b.5 Constraints
+
+- Display-only. No new computation, prediction, or recommendation — historical view of data already shown elsewhere (§8a current snapshot, Dashboard current regime).
+- `§13 compliance`: informational display only.
+- `GET /portfolio/sector-regime-trend` must be documented in `docs/specs/api_contracts/` and added to `docs/reference/openapi.yaml` in the same commit as implementation (CLAUDE.md non-negotiable).
+
+---
+
 ## 7. Component: Prospective Heat Indicator
 
 ### 7.1 Purpose
@@ -378,6 +420,7 @@ The following deviations were identified at v1.8 sprint execution and accepted f
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.10 | 2026-07-27 | v7.9 design gate — §8b Sector & Regime Exposure Trend added (ST-02, BLG-FEAT-67): new full-width panel inserted between §8a Sector Concentration Heat Map and §7 Prospective Heat Indicator; sector concentration trend chart (weekly buckets, top 5 sectors + Other) and US/UK regime status timeline strip; new `GET /portfolio/sector-regime-trend` endpoint; insufficient-history state (<8 weeks); display-only. Corrects the backlog item's stated placement ("Positions or Reports page") to this page, where `SectorHeatMap` actually renders — see §8b placement note. Design source: sector-regime-exposure-trend/ux_spec.md. Approved: Product Owner 2026-07-27. Head of Specs Team confirmed. |
 | 0.1.9 | 2026-06-22 | v6.1 design gate — §8a Sector Concentration Heat Map added (ST-06, BLG-FE-76): new full-width panel inserted between §6 Position Risk and §7 Prospective Heat; tile grid by sector, exposure % + position count per tile, amber colour-coding ≥ 40% concentration threshold, alert bar when concentration_alert: true; uses new GET /portfolio/sector-weights endpoint; display-only MVP. §2 Layout updated to four full-width rows. Design source: sector-heatmap/ux_spec.md. Approved: Product Owner 2026-06-22. Head of Specs Team confirmed. |
 | 0.1.8 | 2026-03-09 | v1.9 Sprint 1 post-ship closure: §11 deviations DEV-ST03-01 through DEV-ST03-07, DEV-ST03-09, DEV-ST03-11, DEV-ST03-12 all marked RESOLVED with resolution detail (EPIC-04 commits b31536f, 20e688f). QA-OBS-ST07-01 noted. Table header updated from "Resolution Target" to "Resolution". |
 | 0.1.7 | 2026-03-06 | ST-06 / DEV-ST03-08 resolution: §4.1 updated to split-source data model — `current_drawdown_percent` from `GET /portfolio`, `days_underwater` from `GET /analytics/metrics`. DEV-ST03-08 marked resolved in §11. Head of Specs Team decision 2026-03-06. |

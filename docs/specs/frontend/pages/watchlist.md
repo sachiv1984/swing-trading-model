@@ -1,12 +1,13 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.4
-**Last Updated:** 2026-07-17
+**Version:** 0.5
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/watchlist/ux_spec.md
 **Design Source (v0.3 research indicator):** docs/design/2026-05-09__release-v3.3/trade-plan-quick-wins/ux_spec.md §F
 **Design Source (v0.4 bulk actions):** docs/design/2026-07-17__release-v7.5/bulk-actions-toolbar/ux_spec.md
+**Design Source (v0.5 staleness indicator):** docs/design/2026-07-27__release-v7.9/watchlist-staleness-review/ux_spec.md
 
 ---
 
@@ -61,6 +62,7 @@ One row per watchlist entry. Default sort: entry signal status (Active first, th
 | Market | `market` | Badge pill: "UK" / "US" |
 | Entry Signal | `signal_status` | See Signal Status Values below. |
 | Research | `has_research` | *(v3.3 — BLG-FE-29)* Binary indicator — see §Research Status Indicator |
+| Added | `added_at` | *(v7.9 — ST-01, BLG-FEAT-66)* Days on watchlist — see §Staleness Indicator |
 | Target Entry | `target_entry_price` | Native currency (GBP for UK, USD for US). Display `—` if null. |
 | Stop (Initial) | `initial_stop_price` | Native currency. Display `—` if null. |
 | Stop (Current) | `current_stop_price` | Native currency. Display `—` if null. |
@@ -188,6 +190,38 @@ On removal (via Remove or Add to Position): row slides out or fades out before t
 
 ---
 
+## Staleness Indicator (v7.9 — ST-01, BLG-FEAT-66)
+
+**Design source:** docs/design/2026-07-27__release-v7.9/watchlist-staleness-review/ux_spec.md
+
+**Column label:** "Added" — placed after "Research", before "Target Entry".
+
+**Data source:** `added_at` (existing field, captured at add time — no backend schema change). `days_on_watchlist` is server-computed, not client-derived.
+
+**Staleness threshold:** 30 days (default, server-configurable constant, not user-editable this cycle).
+
+| Condition | Display | Style |
+|-----------|---------|-------|
+| Not stale (`days_on_watchlist < 30`) | `"{N}d"` | `text-slate-500 dark:text-slate-400` (existing secondary-text token) |
+| Stale (`days_on_watchlist ≥ 30`) | `"{N}d, no action"` + clock icon prefix | `text-amber-600 dark:text-amber-400` |
+
+`aria-label`: `"On watchlist {N} days with no action — consider Keep or Remove"` (stale) / `"Added {N} days ago"` (not stale).
+
+**Legacy rows:** entries with no `added_at` (pre-dating this feature) are treated as added today on first read — never mass-flagged as stale on ship day.
+
+### Stale-Row Actions (AC-03, AC-04)
+
+For stale rows only, the Actions column gains a **"Keep"** button (secondary, outlined), placed before the existing "Research" / "Add to Position" / "Remove" actions:
+
+- **"Keep"** — calls `PATCH /watchlist/{id}` with `{ added_at: now() }`, resetting the staleness clock. No confirmation modal. Toast: `"{TICKER} kept on watchlist."` Row updates optimistically.
+- **"Remove"** — existing action, unchanged (§Edit Modal / §Remove Confirmation Prompt).
+
+**No automatic removal (AC-04):** there is no scheduled sweep or silent expiry. The stale badge is advisory only; a human decision (Keep or Remove) is required in all cases.
+
+**Accessibility:** clock icon has no independent meaning — colour + icon + label text together carry the state; label text alone is sufficient (colour is never the sole differentiator).
+
+---
+
 ## Research Navigation (v3.2 — ST-04)
 
 Each ticker entry in the watchlist table has a **"Research"** action (text link or secondary button) in the Actions column, adjacent to "Add to Position".
@@ -240,6 +274,7 @@ User-initiated batch of the same manual mutations already available one row at a
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.5 | 2026-07-27 | v7.9 design gate — added §Staleness Indicator (ST-01, BLG-FEAT-66): new "Added" column showing days-on-watchlist (`added_at`, existing field); staleness threshold 30 days (fixed, server-side); stale rows get amber "{N}d, no action" text + clock icon and a new "Keep" action (resets clock, `PATCH /watchlist/{id}`); no automatic removal — Keep/Remove remain the only paths off the list. Design source: watchlist-staleness-review/ux_spec.md. Approved: Product Owner 2026-07-27. Design gate: 2026-07-27__release-v7.9. Head of Specs Team confirmed. |
 | 0.4 | 2026-07-17 | v7.5 design gate — added §Bulk Actions (ST-03, BLG-FE-117): row checkboxes, bulk-action toolbar (renders only when 1+ selected), Bulk Tag (reuses existing Tag Editor), Bulk Remove (destructive, confirmation required), per-row partial-failure feedback. New `POST /positions/bulk-tag` and `DELETE /watchlist/bulk` endpoints. Design source: bulk-actions-toolbar/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
 | 0.3 | 2026-05-09 | v3.3 design gate — added Research Status Indicator section (BLG-FE-29: binary has_research icon per row); added "Research" column to table. Design source: trade-plan-quick-wins/ux_spec.md §F. Approved: Product Owner 2026-05-09. |
 | 0.2 | 2026-05-05 | v3.2 design gate — added Research Navigation section (ST-04); updated Actions column. Design source: screener-to-research-navigation/ux_spec.md. |
