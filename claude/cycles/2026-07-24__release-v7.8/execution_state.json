@@ -22,10 +22,10 @@
   ],
   "epics": {
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-04",
       "pr_number": 1077,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-04.md",
       "test_scenarios": [
@@ -59,10 +59,10 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-03",
       "pr_number": 1078,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -95,10 +95,10 @@
       }
     },
     "EPIC-09": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-09",
       "pr_number": 1070,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-09.md",
       "test_scenarios": [
@@ -131,10 +131,10 @@
       }
     },
     "EPIC-07": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-07",
       "pr_number": 1071,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-07.md",
       "test_scenarios": [],
@@ -171,10 +171,10 @@
       }
     },
     "EPIC-08": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-08",
       "pr_number": 1072,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-08.md",
       "test_scenarios": [
@@ -213,10 +213,10 @@
       }
     },
     "EPIC-12": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-12",
       "pr_number": 1073,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-12.md",
       "test_scenarios": [
@@ -250,10 +250,10 @@
       }
     },
     "EPIC-10": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-10",
       "pr_number": 1074,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-10.md",
       "test_scenarios": [
@@ -286,10 +286,10 @@
       }
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-02",
       "pr_number": 1075,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-02.md",
       "test_scenarios": [
@@ -323,10 +323,10 @@
       }
     },
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-01",
       "pr_number": 1079,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -362,10 +362,10 @@
       }
     },
     "EPIC-05": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-05",
       "pr_number": 1080,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-05.md",
       "test_scenarios": [
@@ -400,10 +400,10 @@
       }
     },
     "EPIC-06": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-06",
       "pr_number": 1081,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-06.md",
       "test_scenarios": [
@@ -438,10 +438,10 @@
       }
     },
     "EPIC-11": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-24__release-v7.8/EPIC-11",
       "pr_number": 1076,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-24__release-v7.8/qa_evidence_EPIC-11.md",
       "test_scenarios": [
@@ -509,8 +509,7 @@
     "EPIC-11: ESC-EXEC-20260727-01 resolved 2026-07-27 via agent-mediated Head of Engineering review -- pilot endpoints confirmed as GET /positions, GET /trades, GET /portfolio (see execution_escalations.md for full evidence). ST-11 reclassified delegated_decision -> autonomous and implemented same day -- tests/test_pilot_contract_schemas.py (5 tests, all pass) + docs/testing/pilot_contract_test_approach.md. Autonomous-class QA sign-off applies (no frontend-visible change); story-level Head of Engineering sign-off recorded separately in execution_escalations.md per BLG-GOV-14."
   ],
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": [
+    "epics_merged": [
       "EPIC-04",
       "EPIC-03",
       "EPIC-09",
@@ -524,7 +523,8 @@
       "EPIC-06",
       "EPIC-11"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
   "sealed": false,
   "sealed_utc": null
