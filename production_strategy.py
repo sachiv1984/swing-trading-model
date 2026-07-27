@@ -127,6 +127,24 @@ def download_in_chunks(tickers, calendar_index, start="2018-01-01", chunk_size=5
     prices = prices.reindex(calendar_index)
     return prices.ffill().bfill()
 
+def compute_risk_on(price, ma_period=200):
+    """True where price is above its own ma_period-day moving average.
+
+    Forward-fills the raw price series *before* computing the moving average
+    and the comparison — not after. A malformed/incomplete daily bar from the
+    data provider (e.g. SPY's Close coming back NaN while Volume is populated,
+    seen 2026-07-24) would otherwise poison both sides: the rolling mean drops
+    below min_periods and returns NaN, and `NaN > NaN` evaluates to a real
+    `False`, not a NaN — so a downstream `.ffill()` on the comparison result
+    can't recover it, and the day gets silently recorded as risk-off even
+    though the last known close was solidly risk-on. Forward-filling the
+    price itself first means one missing bar just carries the prior day's
+    price forward into both calculations, as intended.
+    """
+    price_filled = price.ffill()
+    ma = price_filled.rolling(ma_period).mean()
+    return price_filled > ma
+
 def is_risk_on(ticker, date, mode="single"):
     spy_on = bool(spy_risk_on.at[date])
     ftse_on = bool(ftse_risk_on.at[date])
@@ -505,14 +523,11 @@ def main():
     print(f"Tickers after cleaning: {prices.shape[1]}")
     print(f"Date range: {prices.index.min().date()} to {prices.index.max().date()}")
 
-    spy_ma200 = spy.rolling(200).mean()
     # Reindex then forward-fill (not fill_value=False): a date missing from
     # spy/ftse's own data (e.g. a market holiday for one side) should carry
     # forward the last known regime state, not be silently treated as risk-off.
-    spy_risk_on = (spy > spy_ma200).reindex(prices.index).ffill().fillna(False).astype(bool)
-
-    ftse_ma200 = ftse.rolling(200).mean()
-    ftse_risk_on = (ftse > ftse_ma200).reindex(prices.index).ffill().fillna(False).astype(bool)
+    spy_risk_on = compute_risk_on(spy).reindex(prices.index).ffill().fillna(False).astype(bool)
+    ftse_risk_on = compute_risk_on(ftse).reindex(prices.index).ffill().fillna(False).astype(bool)
 
     print("Computing ATR...")
     atr = compute_atr(prices)
