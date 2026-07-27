@@ -88,7 +88,7 @@ If any of the staged files are in `claude/system/`, `claude/charter/`, or `claud
 
 Confirm all four §6 steps are complete in this commit:
 - [ ] Version bumped in the file's own header (`**Version:**`)
-- [ ] `docs/ops/OPERATIONAL_GUIDE.md` §14 governance table updated to the new version
+- [ ] `claude/system/OPERATIONAL_GUIDE.md` §14 governance table updated to the new version — **actually read both the edited file's new header `**Version:**` value and the §14 table's `| Version | X |` row for that file, and FAIL this check if they do not match exactly.** Do not mark this PASS from memory of having edited both; re-read both values fresh.
 - [ ] Corresponding phase section in OPERATIONAL_GUIDE.md (§5–§10) source prompt header updated
 - [ ] Entry appended to `claude/system/prompt_change_log.md`
 

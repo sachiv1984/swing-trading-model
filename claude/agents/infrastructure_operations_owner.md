@@ -5,6 +5,8 @@
 **Governance alignment:** Head of Specs Team (documentation lifecycle, document classes, headers, naming conventions)  
 **Scope:** Infrastructure and operational documentation  
 **Status:** Canonical
+**Version:** 1.0
+**Last Updated:** 2026-07-27
 
 ---
 

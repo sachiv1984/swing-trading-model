@@ -3,6 +3,8 @@
 **Reports to:** Executive Leadership
 **Scope:** People strategy, organizational health, capability development, and compliance
 **Status:** Canonical
+**Version:** 1.0
+**Last Updated:** 2026-07-27
 
 * * * * *
 

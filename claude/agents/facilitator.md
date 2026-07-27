@@ -5,6 +5,8 @@
 **Direct reports:** None  
 **Scope:** Process enforcement, orchestration, and compliance  
 **Status:** Canonical  
+**Version:** 1.0  
+**Last Updated:** 2026-07-27  
 
 ---
 

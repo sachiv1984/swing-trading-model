@@ -24,24 +24,24 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-07-20"
+PRIOR_AUDIT_ID = "AUD-2026-07-27"
 PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-07-20-001", "AUD-2026-07-20-002", "AUD-2026-07-20-003",
-    "AUD-2026-07-20-004", "AUD-2026-07-20-005", "AUD-2026-07-20-006"
-]  # all recorded OPEN at AUD-2026-07-20 run time — re-classify at next audit once patches are applied
+    "AUD-2026-07-20-001",  # PARTIAL — mechanical fix still not delivered; superseded/tracked as AUD-2026-07-27-002
+    "AUD-2026-07-27-001", "AUD-2026-07-27-002", "AUD-2026-07-27-003", "AUD-2026-07-27-004"
+]  # all recorded OPEN at AUD-2026-07-27 run time — re-classify at next audit once patches are applied
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
-    "token_efficiency":      95,
-    "governance_integrity":  84,
-    "execution_reliability": 53,
-    "friction_load":         61,
-    "document_hygiene":      76,
+    "token_efficiency":      100,
+    "governance_integrity":  80,
+    "execution_reliability": 58,
+    "friction_load":         56,
+    "document_hygiene":      63,
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 62  # corrected from stale 55 to current completed_cycle_count at AUD-2026-07-20 (2nd consecutive audit finding this constant stale — see AUD-2026-07-20-006)
+COMPLETED_CYCLES = 64  # current completed_cycle_count at AUD-2026-07-27
 
 # -------------------------
 # MISSING FILE RULE
@@ -515,6 +515,12 @@ STAGE_CHECKLIST = [
             "| SST3 — JSON schemas in shared_standards §16? | PASS/FAIL | N inline | ~tokens | files |\n"
             "| SST4 — workforce_capacity.md has single declared write owner | PASS/FAIL | — | — | file+section |\n"
             "| SST5 — scored_initiatives uses cycle-scoped naming | PASS/FAIL | — | — | file |\n"
+            "\n"
+            "(Note for future audit runs: as of AUD-2026-07-27, `scored_initiatives.md` is a deliberate\n"
+            "single rolling file, not cycle-scoped-named — but `roadmap_prompt.md` STEP 6 v8.6 enforces\n"
+            "read-before-write + re-read-after-write overwrite verification as a compensating control.\n"
+            "Report FAIL on the literal naming check but do not treat as a fresh finding unless the\n"
+            "compensating control itself is found broken.)\n"
             "\n"
             "No prose."
         ),

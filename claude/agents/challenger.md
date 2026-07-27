@@ -5,6 +5,8 @@
 **Direct reports:** None  
 **Scope:** Structured challenge, assumption testing, and trade-off exposure  
 **Status:** Canonical  
+**Version:** 1.0  
+**Last Updated:** 2026-07-27  
 
 ---
 

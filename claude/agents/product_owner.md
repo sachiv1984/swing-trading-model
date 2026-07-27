@@ -5,6 +5,8 @@
 **Direct reports:** Head of Engineering, Head of Specs Team, Head of UX & Design  
 **Scope:** Product intent, prioritization, and outcome accountability  
 **Status:** Canonical  
+**Version:** 1.0  
+**Last Updated:** 2026-07-27  
 
 ---
 

@@ -4,6 +4,8 @@
 **Governance alignment:** Head of Specs Team (documentation lifecycle, canonical boundaries)\
 **Scope:** Security posture, trust controls, threat governance, and security-by-design enforcement\
 **Status:** Canonical
+**Version:** 1.0
+**Last Updated:** 2026-07-27
 
 * * * * *
 

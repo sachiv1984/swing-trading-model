@@ -4,6 +4,8 @@
 **Governance alignment:** Head of Specs Team (documentation lifecycle, canonical boundaries)\
 **Scope:** Financial records, tax‑relevant reporting, formal statements, and record integrity\
 **Status:** Canonical
+**Version:** 1.0
+**Last Updated:** 2026-07-27
 
 * * * * *
 

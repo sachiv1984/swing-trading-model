@@ -4,6 +4,8 @@
 **Reports to:** Director of Quality  
 **Scope:** Test execution leadership, automation oversight, and operational quality delivery  
 **Status:** Canonical  
+**Version:** 1.0  
+**Last Updated:** 2026-07-27  
 
 ---
 

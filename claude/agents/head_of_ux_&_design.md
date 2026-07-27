@@ -5,6 +5,8 @@
 **Direct reports:** UX Designers, UI Designers, Research Specialists, Interaction Designers  
 **Scope:** User experience strategy, design execution, and alignment to product intent  
 **Status:** Canonical  
+**Version:** 1.0  
+**Last Updated:** 2026-07-27  
 
 ---
 

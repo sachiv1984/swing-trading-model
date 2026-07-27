@@ -4,6 +4,8 @@
 **Governance alignment:** Head of Specs Team (canonical truth and documentation lifecycle)\
 **Scope:** AI usage governance, compliance, ethical constraints, and risk management\
 **Status:** Canonical
+**Version:** 1.0
+**Last Updated:** 2026-07-27
 
 * * * * *
 
