@@ -107,6 +107,46 @@ class TestComputeSignalsCreatedAtGating:
 
 
 # ---------------------------------------------------------------------------
+# Hotfix — compute_risk_on() must not treat a malformed NaN price bar as
+# risk-off (2026-07-27: SPY's Close came back NaN with Volume populated,
+# spuriously force-closing every open US position).
+# ---------------------------------------------------------------------------
+
+class TestComputeRiskOnNanHandling:
+    def test_isolated_nan_bar_carries_forward_prior_state(self):
+        idx = pd.bdate_range("2024-01-02", periods=210)
+        price = pd.Series(150.0, index=idx)
+        price.iloc[:20] = 50.0  # low tail still inside the trailing 200MA window,
+        # so the window average (145) sits below the flat 150 plateau
+
+        # Malform the last bar only — mirrors SPY's 2026-07-24 Close=NaN report.
+        nan_price = price.copy()
+        nan_price.iloc[-1] = np.nan
+
+        clean = ps.compute_risk_on(price)
+        with_gap = ps.compute_risk_on(nan_price)
+
+        assert clean.iloc[-1] == True
+        assert with_gap.iloc[-1] == True, (
+            "a single malformed NaN bar must carry forward the prior day's "
+            "risk-on state, not silently flip to risk-off"
+        )
+
+    def test_ma_window_touching_the_nan_bar_is_not_poisoned(self):
+        idx = pd.bdate_range("2024-01-02", periods=205)
+        price = pd.Series(150.0, index=idx)
+        price.iloc[:5] = 50.0
+        nan_price = price.copy()
+        nan_price.iloc[100] = np.nan  # gap in the middle of a later MA window
+
+        result = ps.compute_risk_on(nan_price)
+        assert not result.iloc[100:200].isna().any(), (
+            "an old NaN bar should not propagate NaN through every rolling "
+            "window that includes it"
+        )
+
+
+# ---------------------------------------------------------------------------
 # ST-02 (BLG-BE-60) — backtest() determinism given fixed inputs
 # ---------------------------------------------------------------------------
 
