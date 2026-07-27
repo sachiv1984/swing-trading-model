@@ -22,7 +22,10 @@ export default function WhatsNewCard() {
     retry: 1,
   });
 
-  const entry = data?.data;
+  // api.changelog.latest() -> doFetch() already unwraps the {status, data}
+  // envelope, so `data` here IS the {version, changes} payload directly
+  // (or null) -- not a further-nested `data.data`.
+  const entry = data;
   const changes = entry?.changes || [];
   const visible = changes.slice(0, MAX_BULLETS);
   const overflowCount = changes.length - MAX_BULLETS;
