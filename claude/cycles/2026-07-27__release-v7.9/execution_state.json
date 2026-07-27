@@ -353,8 +353,8 @@
     "EPIC-11": {
       "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-11",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1099,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-11.md",
       "test_scenarios": [],
