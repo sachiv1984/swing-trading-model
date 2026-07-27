@@ -16,12 +16,25 @@ Post-Ship Closure (per the story's own AC). Check the printed result dict
 for {"sent": true/false, ...}.
 """
 import argparse
+import importlib.util
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
-
-from services.changelog_digest_service import send_changelog_digest  # noqa: E402
+# Load changelog_digest_service directly from its file path rather than via
+# `from services.changelog_digest_service import ...` (OA-3, post-ship
+# closure 2026-07-24__release-v7.8). A dotted import through the `services`
+# package forces Python to execute backend/services/__init__.py first, which
+# eagerly imports position_service and friends — those require a live
+# DATABASE_URL at import time. changelog_digest_service (and the
+# si05_digest_service helpers it loads the same way) has no such
+# requirement, so loading it standalone lets this CLI run in a DB-less
+# sandbox.
+_MODULE_PATH = Path(__file__).parent.parent / "backend" / "services" / "changelog_digest_service.py"
+_spec = importlib.util.spec_from_file_location("changelog_digest_service", _MODULE_PATH)
+_module = importlib.util.module_from_spec(_spec)
+sys.modules["changelog_digest_service"] = _module
+_spec.loader.exec_module(_module)
+send_changelog_digest = _module.send_changelog_digest
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)

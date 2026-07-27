@@ -101,68 +101,12 @@ jobs:
         run: pip install pyyaml -q
 
       - name: Detect baseline drift
-        run: |
-          python3 - <<'EOF'
-          import re
-          import sys
-          from pathlib import Path
-
-          import yaml
-
-          OPENAPI_PATH  = Path("docs/reference/openapi.yaml")
-          BASELINE_PATH = Path("docs/ops/api_performance_baseline.md")
-          HTTP_METHODS  = {"get", "post", "put", "patch", "delete"}
-
-          # Pre-existing gaps as of v6.8 (ST-12) — grandfathered, not to be
-          # added to going forward. Tracked for closure under BLG-OPS-61.
-          KNOWN_GAPS = {
-              "DELETE /watchlist/{id}",
-              "GET /analytics/market-correlation",
-              "GET /analytics/metrics",
-              "GET /analytics/tag-performance",
-              "GET /news/{id}",
-              "GET /positions/analyze",
-              "GET /positions/grace-period-alerts",
-              "GET /positions/tags",
-              "GET /positions/{id}",
-              "GET /positions/{id}/stop-trail",
-              "PATCH /watchlist/{id}",
-              "POST /alerts/rules",
-              "POST /positions/nightly-stop-update",
-              "POST /positions/risk-off-alerts",
-              "POST /positions/{id}/refresh-state",
-              "POST /settings",
-              "POST /signals/rebalance-exit",
-          }
-
-          spec = yaml.safe_load(OPENAPI_PATH.read_text())
-          paths = spec.get("paths", {}) or {}
-
-          endpoints = set()
-          for path, methods in paths.items():
-              norm_path = re.sub(r"\{[^}]+\}", "{id}", path)
-              for method in methods or {}:
-                  if method.lower() in HTTP_METHODS:
-                      endpoints.add(f"{method.upper()} {norm_path}")
-
-          baseline_text = BASELINE_PATH.read_text()
-          missing = sorted(e for e in endpoints if e not in baseline_text and e not in KNOWN_GAPS)
-
-          if missing:
-              print("MERGE BLOCKED: endpoint(s) in openapi.yaml not reflected in "
-                    "docs/ops/api_performance_baseline.md:")
-              for m in missing:
-                  print(f"  - {m}")
-              print("")
-              print("Add a baseline measurement row (or an 'Endpoints Not "
-                    "Measured' / 'Pending Baseline Measurement' entry) for each "
-                    "endpoint above, per CLAUDE.md's API performance baseline "
-                    "advisory (AUD-2026-06-22-006).")
-              sys.exit(1)
-
-          print(f"No new baseline drift detected. {len(endpoints)} endpoint(s) "
-                f"checked, {len(KNOWN_GAPS)} pre-existing gap(s) grandfathered.")
-          EOF
+        # Delegates to scripts/check_api_performance_baseline_drift.py — the
+        # same script execution_prompt.md §3.2.B now runs as a mandatory
+        # pre-PR-open step (OA-2, post-ship closure 2026-07-24__release-v7.8),
+        # so CI and the pre-PR check can never drift out of sync with each
+        # other.
+        run: python3 scripts/check_api_performance_baseline_drift.py
 
   endpoint_count_drift:
     name: Endpoint Count Drift Check (ST-11)

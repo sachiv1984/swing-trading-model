@@ -12,15 +12,38 @@ raise out of send_changelog_digest — Post-Ship Closure must not be
 blocked by a Telegram outage, per this story's own acceptance criteria.
 """
 
+import importlib.util
 import logging
 import os
 import re
+import sys
 from pathlib import Path
 from typing import Optional
 
-from services.si05_digest_service import _send_telegram_request, MAX_MESSAGE_LENGTH
-
 logger = logging.getLogger(__name__)
+
+# Load si05_digest_service directly from its file path rather than via
+# `from services.si05_digest_service import ...` (OA-3, post-ship closure
+# 2026-07-24__release-v7.8). A dotted import through the `services` package
+# forces Python to execute services/__init__.py first, which eagerly imports
+# position_service and friends — those require a live DATABASE_URL at import
+# time. si05_digest_service itself has no such requirement (it reads
+# DATABASE_URL lazily inside its own functions), so loading it standalone
+# lets this module — and the send_changelog_digest.py CLI script that
+# imports it — run in a DB-less sandbox.
+_SI05_PATH = Path(__file__).resolve().parent / "si05_digest_service.py"
+_SI05_MODULE_NAME = "_changelog_digest_service_si05_standalone"
+
+if _SI05_MODULE_NAME in sys.modules:
+    _si05 = sys.modules[_SI05_MODULE_NAME]
+else:
+    _si05_spec = importlib.util.spec_from_file_location(_SI05_MODULE_NAME, _SI05_PATH)
+    _si05 = importlib.util.module_from_spec(_si05_spec)
+    sys.modules[_SI05_MODULE_NAME] = _si05
+    _si05_spec.loader.exec_module(_si05)
+
+_send_telegram_request = _si05._send_telegram_request
+MAX_MESSAGE_LENGTH = _si05.MAX_MESSAGE_LENGTH
 
 CHANGELOG_PATH = Path(__file__).resolve().parent.parent.parent / "docs" / "product" / "changelog.md"
 

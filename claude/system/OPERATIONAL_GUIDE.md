@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.112
+**Version:** 4.114
 **Last Updated:** 2026-07-27
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.4)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.5)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -620,7 +620,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.43)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.44)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.59)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.60)
 
 ### 8.1 Invocation
 
@@ -1272,7 +1272,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v9.4) | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v9.5) | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.110 |
-| Last Updated | 2026-07-26 |
+| Version | 4.114 |
+| Last Updated | 2026-07-27 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.7 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1463,11 +1463,11 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.12 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.4 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.4 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.43 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.5 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.44 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.13 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.59 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.60 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.8 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.5 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.1 |
@@ -1495,6 +1495,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.114 | 2026-07-27 | **Post-ship closure `2026-07-24__release-v7.8` §6 Outstanding Actions row 1 applied — release_planning_prompt.md v2.43→v2.44 + roadmap_prompt.md v9.4→v9.5: `next_release` field ownership made explicit.** §6B source prompt header v2.43→v2.44. §6 source prompt header v9.4→v9.5. §14 Release Engine Source v2.43→v2.44; §14 Roadmap Engine Source v9.4→v9.5. §14 Version 4.113→4.114/2026-07-27. Change: `.claude_current_state.json.next_release` was found 4 releases stale at the start of the v7.8 Release Planning session because no engine explicitly owned the field. `release_planning_prompt.md` STEP 9 now writes `next_release` unconditionally from its own `--version` argument on every seal — the authoritative source. `roadmap_prompt.md`'s existing STEP 8 advisory pre-fill is retained but its text now explicitly says it is non-authoritative and must yield to the last Release Planning STEP 9 write. Authority: Head of Specs Team (post-ship closure `2026-07-24__release-v7.8` §6 row 1, 2026-07-27). |
+| 4.113 | 2026-07-27 | **Post-ship closure `2026-07-24__release-v7.8` §6 Outstanding Actions rows 2, 4, 5, 6 applied — execution_prompt.md v3.59→v3.60 (header drift also corrected: this row's own Version/Last Updated had lagged the table's actual latest entry, 4.112/2026-07-27, per the standing header-drift-prevention note below).** §8 source prompt header v3.59→v3.60. §14 Execution Engine Source v3.59→v3.60. §14 Version 4.112→4.113/2026-07-27. Four independent fixes bundled in one execution_prompt.md edit pass: (OA-2) §3.2.B API performance baseline pre-PR check converted from a prose `grep` advisory to an enforced script step (`scripts/check_api_performance_baseline_drift.py`, also now the single implementation `quality_gate.yml`'s CI job delegates to) — the prose form failed to prevent the same class of miss twice (v7.6/EPIC-07, v7.8/EPIC-06). (OA-4) STEP 4 — new step 3c added: after each EPIC merge, proactively sync `execution_state.json` from `main` onto every still-pending sibling branch immediately (per CLAUDE.md §8 conflict rules), instead of letting every pending branch accumulate an independently-diverging copy until its own eventual merge gate; recurred 2 consecutive cycles with cost scaling up each time (10/11 branches v7.7, 11/12 v7.8). (OA-5) §3.1.A step 3 — new advisory: any commit hardcoding a count/total also derivable via script/AST scan must be re-derived fresh immediately before commit and again before PR-open if `main` has moved, since a stale-but-matching literal is invisible to `git merge` (recurred identically v7.7 and v7.8 EPIC-01/EPIC-06). (OA-6) §5.1 — agent-mediated PR review comment labeling convention codified: permitted when reviewing on behalf of a named role (e.g. Product Owner, Director of Quality), but never labeled as if authored by the human role itself, and never itself satisfying the always-human merge-gate conditions; formalises the ad hoc convention already used successfully this cycle, closing a ruling carried unruled from v7.7. Authority: Head of Specs Team + Head of Engineering (post-ship closure `2026-07-24__release-v7.8` §6 rows 2/4/5/6, 72h-deadline decisions, 2026-07-27). |
 | 4.112 | 2026-07-27 | **Post-ship closure `2026-07-24__release-v7.8` STEP 6 self-discovered friction, immediate action — post_ship_closure.md v2.19→v2.20: Endpoint Coverage Drift Check advisory strengthened with path-parameter normalisation and existing-tracking-item check.** §10 source prompt header v2.19→v2.20. §14 Post-Ship Closure Engine v2.19→v2.20. §14 Version 4.111→4.112/2026-07-27. Change: the STEP 6 advisory's `openapi.yaml`-vs-`api_performance_baseline.md` endpoint diff produced 15 apparent false-positive gaps this run because the two documents use different path-parameter placeholder names for the same parameter (e.g. `{position_id}` vs generic `{id}`) — added an explicit normalisation instruction before diffing. Also added a check for an existing open `BLG-OPS-*` tracking item covering the same gap class before filing a new one, since this cycle's normalised gap turned out to be identical, pre-existing drift already tracked by the still-open `BLG-OPS-111` (filed at `2026-07-15__release-v7.2` post-ship closure). Authority: Head of Specs Team (post-ship closure `2026-07-24__release-v7.8`, STEP 8 — immediate lessons-learnt action rule, self-discovered same-run friction). |
 | 4.111 | 2026-07-27 | **Post-ship closure `2026-07-24__release-v7.8` STEP 8 immediate action (Release Planning lessons_learnt.md Friction Item 1) — release_planning_prompt.md v2.42→v2.43: STEP 9 status-value conflict corrected.** §6B source prompt header v2.42→v2.43. §14 Release Engine Source v2.42→v2.43. §14 Version 4.110→4.111/2026-07-27. Change: STEP 9's terminal `.claude_current_state.json` sync literally instructed writing `status: Published`, a value absent from `lifecycle_schema.json`'s canonical state enum (which names this terminal state `Release_Planning_Complete`) — following the prompt literally would have stranded the cycle at Design Gate's next Lifecycle Guard check (unrecognised status → self-halt to `Blocked`). Corrected to `status: Release_Planning_Complete` per `shared_standards.md` §10.6 (lifecycle_schema.json prevails on conflict); added an explanatory note distinguishing this field from the cycle-level `state.json.status = Published` value (§6B.6 Publish Gate), which is unrelated and unaffected. Authority: Head of Specs Team (post-ship closure `2026-07-24__release-v7.8`, STEP 8 — immediate lessons-learnt action rule). |
 | 4.110 | 2026-07-26 | **v7.8 sprint execution ST-02 (EPIC-02, BLG-FEAT-84) — post_ship_closure.md v2.18→v2.19: new STEP 1.5 Telegram Changelog Digest added.** §10 source prompt header v2.18→v2.19. §14 Post-Ship Closure Engine v2.18→v2.19. §14 Version 4.109→4.110/2026-07-26. Change: new STEP 1.5 (between STEP 1 Changelog Entry and STEP 2 Roadmap Update) invokes `scripts/send_changelog_digest.py`, sending the release's `### Changes shipped` entries via the existing Telegram notification infrastructure (`backend/services/si05_digest_service.py`'s POST+JSON+retry helper, shipped v2.4/v5.1). Hard rule: `backend/services/changelog_digest_service.py`'s `send_changelog_digest()` never raises — a failed send (missing credentials, Telegram API error) is logged and does not block closure; STEP 2 proceeds regardless. New batch checkpoint 1.5 records the step as attempted, not delivery-conditional. Authority: Sprint Execution Engine (v7.8 sprint execution, ST-02, 2026-07-26). |

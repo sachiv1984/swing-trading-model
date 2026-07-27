@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.59
-**Last Updated:** 2026-07-21
+**Version:** 3.60
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -153,6 +153,13 @@ When an ST item's seal condition or acceptance criteria require sign-off from a 
 - Spec sign-offs: Head of Specs Team, API Contracts & Documentation Owner, Data Model & Domain Schema Owner
 - Architecture sign-offs where the ADR is already written and the review is against documented criteria
 - Any named authority with an agent file where the decision is reviewable against criteria in the role charter
+
+**Agent-mediated PR review comment labeling convention (OA-6 ruling, post-ship closure 2026-07-24__release-v7.8 — carried unruled from v7.7):** An agent may draft and post PR review comments evaluating a PR against a named role's quality bar — including Product Owner or Director of Quality — since this is permitted, not disallowed: it surfaces the same findings a human reviewer would otherwise have to derive from scratch, and does not by itself satisfy either always-human gate above. The following are mandatory whenever this is done:
+- The comment must **never** be labeled as if authored by the human role itself (e.g. never `Product Owner: Approved` or `Director of Quality: Confirmed` verbatim) — that phrasing is indistinguishable from an actual human sign-off to a future reader, CI script, or another agent.
+- The comment must be explicitly labeled as agent-mediated and reviewing *on behalf of* the named role, e.g. `**[Agent-mediated review — on behalf of Product Owner, pending human confirmation]**`.
+- Any sign-off field the comment references (in `qa_evidence_EPIC-xx.md`, `sign_off_record`, or the PR merge-gate checklist) must remain blank until the actual human authority completes it. An agent-mediated PR review comment never itself satisfies the "QA sign-off" or "Product Owner acceptance" merge-gate conditions (Section 13 / CLAUDE.md §2) — those remain always-human regardless of any agent-drafted commentary.
+
+This codifies, as a standing rule, the ad hoc labeling convention already used successfully in the v7.8 cycle (agent-mediated, blank sign-off fields left for human completion) rather than leaving it a per-cycle judgment call carried unruled between cycles.
 
 **Sign-off record schema** (added to `execution_state.json` per-story) — see `shared_standards.md` §16.13 (canonical definition, moved out of this file at AUD-2026-07-20-004; not duplicated here).
 
@@ -542,6 +549,8 @@ Work through EPICs in dependency order. Within each EPIC, work through ST items 
 
 > **API performance baseline advisory (AUD-2026-06-22-006):** If this commit adds a new entry to `docs/reference/openapi.yaml`, also add a corresponding row to `docs/ops/api_performance_baseline.md` in the same commit. **Note (v6.9 post-ship closure correction):** this is enforced by a hard CI gate — "API Performance Baseline Drift Detection (ST-12)" in `.github/workflows/quality_gate.yml` — not merely an advisory; omission blocks the PR outright rather than being caught at post-ship STEP 6. Applies to any story that adds a `## METHOD /path` heading to a file in `docs/specs/api_contracts/`.
 
+> **AST-derivable hardcoded constant re-derivation check (structural fix, OA-5 post-ship closure 2026-07-24__release-v7.8):** If this commit hardcodes a literal count/total/constant that mirrors a value also mechanically derivable from a script or AST scan of the codebase (e.g. `src/pages/SystemStatus.js`'s `Tests {totalTests || 'N'} endpoints` fallback count per CLAUDE.md §2, or any similar count-of-X literal kept in sync with a source of truth it summarises), do not assume the value carried over from this branch's cut-from-main baseline is still correct — re-derive it fresh (re-run the script/count against the current codebase) immediately before this commit, and again immediately before opening the PR if `main` has moved since. This class of constant produced an undetected `git merge` collision in two consecutive cycles (v7.7, and v7.8 EPIC-01/EPIC-06 — identical shape) because two independently-cut branches each hardcoded the same wrong value against different baselines: the literal text matched, so `git merge` saw no conflict even though the value was wrong on both branches relative to the post-merge state. A stale-but-matching literal is invisible to `git merge`; only re-derivation catches it.
+
 4. Push to `exec/<cycle_id>/EPIC-xx`.
 4a. **Commit SHA record (LL-v4.8-EX-01):** Immediately after push, run `git rev-parse HEAD` to obtain the pushed commit SHA. Write it to `execution_state.json` for this ST item: `epics.<EPIC-xx>.stories.<ST-xx>.commit_sha`. For batch commits covering multiple stories, write the same SHA to all covered story entries. Do not defer this write to sprint close — an unrecorded SHA cannot be recovered if the branch advances before seal.
 5. `governance_sync.yml` closes the GitHub issue automatically on push.
@@ -699,7 +708,7 @@ If any criterion is not met, the autonomous class does not apply — the sign-of
 
 **qa_evidence commit advisory (BLG-GOV-118):** Before running `gh pr create`, verify that `qa_evidence_EPIC-xx.md` is committed to the EPIC branch. Run `git status --short` and confirm the file is not listed as untracked or modified. An uncommitted `qa_evidence_EPIC-xx.md` is invisible to reviewers and CI, and will not satisfy the merge gate evidence requirement. Commit it now if it exists only as an untracked or modified file.
 
-**API performance baseline pre-PR check (LL-v7.6-P3-01):** If this EPIC's commits added any new `## METHOD /path` entry to `docs/reference/openapi.yaml`, run `grep -c "METHOD /path" docs/ops/api_performance_baseline.md` (substituting the actual method and path, e.g. `"GET /ai/monthly-cost"`) for each new path before running `gh pr create`. If the count is 0: add a registration entry now, following the most recent `## N. vX.Y Endpoint Registration` section's pattern (read one for the exact format — endpoint profile table, characteristics, Infrastructure & Operations Owner sign-off block) rather than waiting for the "API Performance Baseline Drift Detection (ST-12)" CI gate to catch it after the PR is already open. This advisory already existed in §3.1.A's step 3 note (AUD-2026-06-22-006); this checkpoint converts it into an active pre-PR gate alongside the other STEP 3.2.B checks, since the advisory alone was insufficient to prevent the omission recurring under multi-file endpoint-addition load (v7.6 ST-07, EPIC-07 — caught only by CI, after PR open, requiring a follow-up commit).
+**API performance baseline pre-PR check (LL-v7.6-P3-01, enforced as script step OA-2 v3.60):** Before running `gh pr create`, run `python3 scripts/check_api_performance_baseline_drift.py` (the same check `quality_gate.yml`'s "API Performance Baseline Drift Detection (ST-12)" CI job runs). This is a hard pre-PR gate, not an advisory — if the script exits non-zero, add a registration entry for each endpoint it lists now, following the most recent `## N. vX.Y Endpoint Registration` section's pattern (read one for the exact format — endpoint profile table, characteristics, Infrastructure & Operations Owner sign-off block), then re-run the script until it exits 0, before opening the PR. Do not run an ad hoc `grep` instead of the script — the prose-advisory form of this check (a per-path manual grep) failed to prevent the same class of miss twice (v7.6/EPIC-07, v7.8/EPIC-06) because it relied on the agent remembering to run it correctly on every new path under multi-file endpoint-addition load; the script removes that judgment call by checking every `openapi.yaml` endpoint in one deterministic pass with a hard exit code.
 
 1. Open a pull request: `exec/<cycle_id>/EPIC-xx` → `main`
 2. PR title: `[EPIC-xx] <epic description>`
@@ -748,6 +757,15 @@ git commit -m "[EPIC-xx] Commit governance file updates before merge halt"
 git push origin main
 ```
 Do not leave governance files unstaged. An unstaged backlog.md or qa_evidence file at session close requires `git stash` on next resume and risks stash-pop conflicts. This step fires after step 3a (execution_state.json persist) and before the halt output.
+
+3c. **Proactive sibling-branch `execution_state.json` sync (structural fix, OA-4 post-ship closure 2026-07-24__release-v7.8):** For every EPIC branch still in `merge_gate.epics_pending` after this merge, propagate this merge's `execution_state.json` change to that branch now, instead of letting every pending branch accumulate an independently-diverging copy until its own eventual merge gate:
+```
+git checkout exec/<cycle_id>/<epic_id>
+git merge main --no-commit --no-edit
+```
+If `execution_state.json` conflicts, resolve per CLAUDE.md §8's rules (accept story completion data from the branch; never revert `done` → `blocked`; take the union of completed items across both sides; take the branch's blocked/delegated lists). Commit as `[EPIC-xx] Sync execution_state.json from main post-merge` and push, then `git checkout main` before continuing. This runs once per remaining pending branch, per merge event.
+
+This step exists because a per-branch resolve deferred to each branch's own merge gate compounds: the conflict recurred 2 consecutive cycles with cost scaling up each time (10/11 branches at v7.7, 11/12 at v7.8) rather than down, because the prior cycle's identical deferred fix (v7.7 lessons learnt) was never applied. Resolving the shared-file drift incrementally, right after each merge, keeps each individual resolve small instead of letting it compound into a full-cycle scramble across every remaining branch at once.
 
 4. **[HARD GATE — HALT after every EPIC merge (OA-01, v4.1 ST-01)]** Output the block below and **stop immediately**. Do not proceed to the next EPIC, do not continue the execution loop, do not execute STEP 5 in this invocation. The engine resumes only when the user explicitly re-invokes `run sprint`:
 

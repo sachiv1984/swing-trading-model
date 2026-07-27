@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.4
-**Last Updated:** 2026-07-24
+**Version:** 9.5
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -811,7 +811,7 @@ Update `.claude_current_state.json` (rebalance keys only — do not overwrite `a
 }
 ```
 
-**Advisory — next_release after DL decision (OA-02/ST-22, v4.6):** After the DL decision at STEP 8 sets the next planned release label, update `next_release` in `.claude_current_state.json` to the projected version label (e.g., `v4.7`) if determinable. This reduces the "version not on roadmap" annotation requirement at the next release planning invocation. This is advisory only — no hard gate. If the next release label is not determinable from the DL decision (e.g., no-change rebalance with no new release horizon), leave `next_release` unchanged.
+**Advisory — next_release after DL decision (OA-02/ST-22, v4.6; ownership clarified OA-1, post-ship closure `2026-07-24__release-v7.8`):** After the DL decision at STEP 8 sets the next planned release label, update `next_release` in `.claude_current_state.json` to the projected version label (e.g., `v4.7`) if determinable. This reduces the "version not on roadmap" annotation requirement at the next release planning invocation. This is advisory only — no hard gate — and is **not** this field's authoritative source: `release_planning_prompt.md` STEP 9 owns `next_release` and overwrites it unconditionally, from the sealed cycle's own `--version` argument, every time Release Planning seals. This advisory exists only to give the field a reasonable best-guess value in the window between a roadmap rebalance and the next Release Planning invocation; it must never be treated as authoritative if it disagrees with the last Release Planning STEP 9 write. If the next release label is not determinable from the DL decision (e.g., no-change rebalance with no new release horizon), leave `next_release` unchanged.
 
 If `.claude_current_state.json` does not exist: create it with rebalance keys only.
 

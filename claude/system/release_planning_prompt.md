@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.43
+**Version:** 2.44
 **Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -1058,6 +1058,8 @@ Purpose: Final update of the root-level state pointer to reflect that this cycle
 
 Note: "Published" is the release plan's own cycle-level `state.json.status` value (see §6B.6 Publish Gate) — it is distinct from the root-level `.claude_current_state.json.status` field written here, which must use the canonical `lifecycle_schema.json` state-enum value `Release_Planning_Complete`, not `Published` or `Validated`. Per `shared_standards.md` §10.6, `lifecycle_schema.json` prevails on any conflict between the two vocabularies.
 
+**`next_release` ownership (OA-1, post-ship closure `2026-07-24__release-v7.8`):** This step is the sole authoritative writer of `.claude_current_state.json.next_release`. It was found 4 releases stale (stamped from a prior cycle) at the start of the v7.8 Release Planning session because no engine explicitly owned the field's upkeep — `roadmap_prompt.md` STEP 8 only ever writes it advisorily (best-effort pre-fill, skipped entirely on a no-change rebalance with no determinable next release label), and nothing else in the observed chain (`plan release`, post-ship closure) wrote it at all. STEP 9 below now writes it unconditionally, from this invocation's own `--version` argument, every time Release Planning seals — this is the authoritative source, not `roadmap_prompt.md`'s advisory pre-fill, which remains useful only as an early best-guess signal before this step next runs.
+
 Execution Rules:
 1. Verify STEP 7 intermediate sync has completed (backlog_slice_path and active_cycle are already set).
 2. If `.claude_current_state.json` does not exist, create it using the standard schema.
@@ -1068,6 +1070,7 @@ Execution Rules:
 active_cycle: <cycle_id>            # confirm — already set at STEP 7
 status: Release_Planning_Complete
 backlog_slice_path: claude/cycles/<cycle_id>/stage4_backlog_slice.md   # confirm
+next_release: <--version argument, e.g. v7.8>   # authoritative write — this step owns this field (OA-1)
 last_sync_utc: <ISO-8601 UTC now>
 ```
 
