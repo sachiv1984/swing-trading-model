@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.5
+**Version:** 1.6
 **Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -67,7 +67,7 @@ During this routine you may write only to:
 - `claude/cycles/<cycle_id>/design_gate.md` (create)
 - `claude/cycles/<cycle_id>/state.json` (additive write only — do not overwrite unrelated fields)
 - `docs/specs/frontend/pages/` (Head of Specs Team and Frontend Specs owner only)
-- `.claude_current_state.json` (additive write only, restricted to `design_gate_status`, `design_gate_record`, `design_gate_completed_utc` — STEP 5 mirror write; no other field in this file may be touched — BLG-GOV-190)
+- `.claude_current_state.json` (additive write only, restricted to `design_gate_status`, `design_gate_record`, `design_gate_completed_utc`, and — only when `design_gate_status = Passed` — `status` set to exactly `"Design_Gate_Passed"` — STEP 5 mirror + schema-defined transition write; no other field in this file may be touched — BLG-GOV-190)
 
 You must **not** modify `claude/cycles/<cycle_id>/stage4_backlog_slice.md`, any roadmap or backlog document, or any canonical spec beyond approved frontend spec updates. Violation → halt.
 
@@ -249,7 +249,16 @@ If **Blocked**: do not set `sprint_planning_pre_condition` to true; record block
 }
 ```
 
-Do not touch any other field in `.claude_current_state.json` (in particular, do not set `status`, `design_gate_bypass_authority`, or `design_gate_bypass_reason` here — those remain outside this routine's write scope). This closes the drift where the cycle-level gate record showed `Passed` but the root pointer read by CLAUDE.md §0 kept reporting `not_started` indefinitely.
+Do not touch `design_gate_bypass_authority` or `design_gate_bypass_reason` here — those remain outside this routine's write scope.
+
+**Root state pointer transition (lifecycle_schema.json — completion signal):** `lifecycle_schema.json` defines the transition `Release_Planning_Complete → Design_Gate_Passed`, owned by this engine (`run design-gate`), with completion signal `design_gate_status = Passed AND design_gate.md present`. This is the only permitted `status` write in this routine's scope:
+
+- **If `design_gate_status = Passed`:** also set `.claude_current_state.json` `status: "Design_Gate_Passed"`.
+- **If `design_gate_status = Blocked`:** do **not** write `status` — the schema defines no transition out of `Release_Planning_Complete` for a blocked gate, so the root pointer correctly stays at `Release_Planning_Complete` until the gate is cleared and re-run.
+
+Before writing `status`, confirm the value in `.claude_current_state.json` has not changed since STEP -1 (per `shared_standards.md` §10.3) — if it has, halt with an `ESC-YYYYMMDD-nn` (Lifecycle trigger) rather than overwriting.
+
+This closes the root cause of the drift: previously the cycle-level gate record showed `Passed` but the root pointer never advanced past `Release_Planning_Complete`, which caused `sprint_planning_prompt.md` STEP -1.3's bypass audit to treat every design-gate-required cycle as if the gate had been skipped, even when it had genuinely passed. With this transition correctly written, entry from `Release_Planning_Complete` at Sprint Planning now unambiguously means the gate was not run or not passed — the bypass audit's existing logic requires no change.
 
 ---
 
@@ -280,7 +289,7 @@ The run is complete when:
 - All items classified
 - All Design Required items have approved artefacts and updated specs, or recorded as blocked
 - Design gate record written
-- Global state updated (`design_gate_status = Passed | Blocked`) in both the cycle-level `state.json` and, additively, in `.claude_current_state.json` (BLG-GOV-190)
+- Global state updated (`design_gate_status = Passed | Blocked`) in both the cycle-level `state.json` and, additively, in `.claude_current_state.json` (BLG-GOV-190); when `Passed`, `.claude_current_state.json` `status` also advanced to `Design_Gate_Passed` per `lifecycle_schema.json`'s defined transition
 - Commit complete (or commit manifest produced)
 
 **`--dry-run`:** classification table produced, gap summary output. No files written. Run complete.
