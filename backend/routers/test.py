@@ -55,6 +55,9 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /health/detailed", "method": "GET", "url": f"{base_url}/health/detailed", "critical": True},
         {"name": "GET /health/scheduler", "method": "GET", "url": f"{base_url}/health/scheduler", "critical": False},
 
+        # Changelog (ST-01, EPIC-01, v7.8)
+        {"name": "GET /changelog/latest", "method": "GET", "url": f"{base_url}/changelog/latest", "critical": False},
+
         # Settings & Configuration
         {"name": "GET /settings", "method": "GET", "url": f"{base_url}/settings", "critical": True},
 

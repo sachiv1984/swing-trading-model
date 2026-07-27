@@ -32,6 +32,12 @@ import { Button } from "./button";
  * other single-line result list) where even `compact`'s icon+heading+body
  * stack is too tall — renders `emptyHeading` (or `emptyBody`) alone as a
  * single centered text line, no icon. `loading`/`error` are unaffected.
+ *
+ * Pass `errorHeading`/`errorBody` to override the default "Something went
+ * wrong" / "Unable to load data. Please try again." copy for a context where
+ * a more specific message is warranted (e.g. "Unable to load release notes",
+ * ST-01/EPIC-01/v7.8). Both default to the original strings, so existing
+ * call sites are unaffected.
  */
 export default function DataState({
   loading,
@@ -46,6 +52,8 @@ export default function DataState({
   className = "",
   compact = false,
   inline = false,
+  errorHeading = "Something went wrong",
+  errorBody = "Unable to load data. Please try again.",
 }) {
   if (loading) {
     return (
@@ -60,9 +68,9 @@ export default function DataState({
       <div className={`flex flex-col items-center justify-center ${compact ? "py-4 gap-2" : "py-16 gap-4"} text-center px-6 ${className}`}>
         <AlertCircle className={`${compact ? "w-6 h-6" : "w-10 h-10"} text-rose-400`} />
         <div>
-          <p className="text-sm font-semibold text-white mb-1">Something went wrong</p>
+          <p className="text-sm font-semibold text-white mb-1">{errorHeading}</p>
           <p className="text-xs text-slate-600 dark:text-slate-400">
-            Unable to load data. Please try again.
+            {errorBody}
           </p>
         </div>
         {onRetry && (

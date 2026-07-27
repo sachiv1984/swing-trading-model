@@ -7,6 +7,7 @@ import RecentActivityCard from "../components/dashboard/home/RecentActivityCard"
 import MorningBriefing from "../components/dashboard/home/MorningBriefing";
 import GateProgressStrip from "../components/dashboard/home/GateProgressStrip";
 import AiDailyBriefing from "../components/dashboard/home/AiDailyBriefing";
+import WhatsNewCard from "../components/dashboard/home/WhatsNewCard";
 
 const DASHBOARD_QUERY_KEYS = [
   "home-open-positions",
@@ -21,6 +22,7 @@ const DASHBOARD_QUERY_KEYS = [
   "morning-red-flags",
   "morning-compliance-7d",
   "morning-compliance-30d",
+  "home-whats-new",
 ];
 
 export default function DashboardHome() {
@@ -60,6 +62,9 @@ export default function DashboardHome() {
 
       {/* Trade gate proximity strip — hidden silently on error */}
       <GateProgressStrip />
+
+      {/* ST-01 (EPIC-01, v7.8, BLG-FE-128): in-app "What's New" panel — dashboard.md §6A */}
+      <WhatsNewCard />
 
       {/* All-endpoints-failed retry (spec §5) — hidden by default, shown via retry button */}
       <div className="hidden" id="dashboard-retry-root">

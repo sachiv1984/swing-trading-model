@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.17
-**Date:** 2026-07-20
+**Version:** 2.18
+**Date:** 2026-07-26
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -1334,10 +1334,49 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, autonomous class)
 
 ---
 
+## 30. v7.8 Endpoint Registration — GET /changelog/latest (ST-01, EPIC-01, BLG-FE-128)
+
+**Date:** 2026-07-26
+**Story:** ST-01 (EPIC-01, v7.8) — BLG-FE-128, in-app "What's New" panel backend endpoint
+**Environment:** N/A — see endpoint notes below.
+**Method:** Registered pending live measurement per §13 pattern (local file read + regex parse, no DB/network call).
+
+### 30.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /changelog/latest | v7.8 | Read — pending live timing run | 5–20ms (est.) | 20–50ms (est.) | Pending next BLG-OPS-13-style re-run |
+
+**Endpoint characteristics:**
+- `GET /changelog/latest`: reads `docs/product/changelog.md` from local disk and applies 3 regex passes (version heading, changes-shipped table, table rows) — no database query, no external API call, no network I/O of any kind. Estimated range is lower than any other registered endpoint in this baseline (all of which involve at least one DB round-trip) since the only cost is a local file read plus in-process regex matching on a file of a few hundred lines.
+
+**Read-only, no write-op exclusion needed** — this endpoint has no mutation counterpart to exclude.
+
+**Flagged for the next baseline re-run** alongside other pending-measurement endpoints (§13 pattern).
+
+### 30.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-01 (v7.8 EPIC-01, BLG-FE-128) — Changelog Latest Endpoint Registration Sign-Off
+
+AC-01: Endpoint added with estimated p50/p95 and measurement date
+       (2026-07-26 — estimated). ✅ PASS
+AC-02: Estimation methodology documented — derived from operation shape
+       (local file read + regex parse, no DB/network I/O), consistent with
+       §13 baseline conventions and lower than any DB-backed endpoint in
+       this document by construction. ✅ PASS
+AC-03: Entry format consistent with existing baseline rows (§28/§29 pattern). ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-07-26
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.18 | 2026-07-26 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-01 (v7.8 EPIC-01, BLG-FE-128): §30 added — GET /changelog/latest registered pending live timing run (§13 pattern). Read-only local file read + regex parse, no DB/network I/O — lower-latency by construction than every other registered endpoint. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/changelog/latest` path in the same PR. |
 | 2.17 | 2026-07-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-07 (v7.6 EPIC-07, BLG-FEAT-77): §29 added — GET /ai/monthly-cost registered pending live timing run (§13 pattern). Read-only aggregation query, no write-op counterpart. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/ai/monthly-cost` path in the same PR. |
 | 2.16 | 2026-07-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-04 (v7.5 EPIC-04, BLG-FE-118): §28 added — GET /reports/daily-pnl, GET/POST /saved-filters, DELETE /saved-filters/{id} registered. GET endpoints flagged pending live timing run (§13 pattern); POST/DELETE registered as write-op exclusions (estimated p50/p95, consistent with §20/§25/§26/§27 pattern — mutate real `saved_filters` rows). Cross-EPIC merge conflict resolution (CLAUDE.md §8): renumbered from an independently-authored §26/v2.14 to §28/v2.16 to sit after EPIC-02's and EPIC-03's already-merged §26/§27 entries. |
 | 2.15 | 2026-07-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-03 (v7.5 EPIC-03, BLG-FE-117): §27 added — GET /watchlist/tags, POST /watchlist/bulk-tag, DELETE /watchlist/bulk, POST /trade-plans/bulk-tag, PUT /trade-plans/bulk-archive, DELETE /trade-plans/bulk registered. GET flagged pending live timing run (§13 pattern); the five write endpoints registered as write-op exclusions (estimated p50/p95, consistent with §20/§25/§26 pattern — mutate real `watchlist`/`trade_plans` rows). Cross-EPIC merge conflict resolution (CLAUDE.md §8): renumbered from an independently-authored v2.14 to v2.15 to sit after EPIC-02's already-merged v2.14 entry. |
