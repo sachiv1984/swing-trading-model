@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.15
-**Last Updated:** 2026-07-20
+**Version:** 2.17
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -986,6 +986,37 @@ COMMIT;
 
 ---
 
+## Trade Plan to Position Linkage
+
+No schema change — this section formalises the `trade_plans.position_id` → `positions.id` relationship already in production, referenced by SI-02's linked-trade-plan gate condition (`current_roadmap.md`). Behaviour below reflects `BLG-BE-46` (v6.8) and `BLG-FE-109` (v7.3); see `docs/specs/data_model.md` change history for those migrations' schema entries.
+
+### Relationship
+
+- `trade_plans.position_id` is a nullable foreign key to `positions.id` (`ON DELETE SET NULL` — see Trade Plan Object above).
+- Cardinality is one trade plan to zero-or-one positions. The FK has no database-level uniqueness constraint, but application logic (`position_service.add_position()`) only ever assigns a currently-unlinked plan (`position_id IS NULL`) to a new position, and never re-parents a plan that is already linked.
+- `positions` carries no reverse `trade_plan_id` column. The reverse lookup (position → its plan) is a query against `trade_plans` filtered by `position_id` (`get_trade_plans_by_position()`).
+- `trade_history` (closed-trade rows) links to `positions` via its own `position_id` FK — not directly to `trade_plans`. A closed trade's linked plan, if any, is therefore reached via a two-hop join: `trade_history.position_id = positions.id` AND `trade_plans.position_id = positions.id`.
+
+### When the link is set
+
+`position_service.add_position()` sets `trade_plans.position_id` at position-creation time, via one of two paths:
+1. **Explicit** — the caller passes `trade_plan_id` (the "Start Trade from Plan" flow, `BLG-FE-109`/v7.3): the named plan is looked up directly via `get_trade_plan_by_id()`.
+2. **Best-effort match** — no `trade_plan_id` supplied: `get_unlinked_trade_plan_for_entry()` looks for the most recent plan with `position_id IS NULL` matching the new position's ticker and market (`BLG-BE-46`/v6.8 forward-fix).
+
+In both cases the link is written only if a matching plan is found and its `position_id` is still `NULL` — this makes the write idempotent and prevents re-parenting an already-linked plan.
+
+### Nullability and backfill posture
+
+- `position_id` is nullable by design: a plan can be drafted before any position exists (`status = 'draft'`), and plans never tied to an actual trade (abandoned, exploratory) are expected to remain unlinked indefinitely.
+- The 11 `trade_plans` rows created before the `BLG-BE-46` fix (v6.8) have `position_id = NULL` and were **not backfilled** — a ticker/date-proximity match against `trade_history` was assessed at the time and judged unreliable (decision recorded in `claude/cycles/2026-07-08__release-v6.8/qa_evidence_EPIC-01.md` and `lessons_learnt_closure.md` LP-12). These rows remain permanently unlinked; only trade plans created after the v6.8 fix accrue toward SI-02's linked-trade-plan count.
+
+### Known deviation — roadmap gate query
+
+`current_roadmap.md`'s SI-02 gate condition (1) documents the linked-trade-plan check as `SELECT COUNT(*) FROM trade_history th JOIN trade_plans tp ON th.id = tp.position_id WHERE th.pnl IS NOT NULL`. Per the relationship above, `trade_plans.position_id` references `positions.id`, not `trade_history.id` — the correct join is a two-hop join through `positions` (`trade_history.position_id = positions.id AND trade_plans.position_id = positions.id`), not a direct `trade_history.id = trade_plans.position_id` comparison. This is a pre-existing inaccuracy in the roadmap note's ad hoc SQL, not a schema issue introduced here. Correcting `current_roadmap.md` is outside this routine's write scope (`claude/roadmap/*` — execution_prompt.md §7); flagged here for the Roadmap Rebalance Engine or Head of Specs Team to correct at the next roadmap touch, citing this section as the canonical reference.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-07-27 (agent-mediated; documentation-only, no schema change, behaviour verified against `backend/services/position_service.py` and `tests/test_position_trade_plan_link.py`)
+
 ---
 
 ## DS-05 — Position Lifecycle State Fields (v2.6, 2026-05-10)
@@ -1442,6 +1473,48 @@ Reversible: `DROP TABLE IF EXISTS saved_filters;`
 
 ---
 
-**Document Version:** 2.15
+### Migration from v2.16 to v2.17
+
+ST-06 (BLG-BE-73, EPIC-06, v7.9) — audit trail for manual position overrides. Financial Reporting & Records Owner scope decision (recorded in `execution_state.json` for this story): "manual position overrides" covers the three genuinely user-initiated, manual PATCH endpoints that sit outside the automated trade lifecycle — note edit, tag edit, mark-reviewed — not a new core-trade-field override feature (no such endpoint exists in this product). Distinct from `BLG-SEC-14`'s AI-journal-generation audit trail (a different write path). No "who" column — single-user product, same precedent as `claude_audit_log` (§ above), which also carries no per-user identity field.
+
+```sql
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS position_audit_log (
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    position_id  UUID NOT NULL,
+    source       TEXT NOT NULL,
+    field        TEXT NOT NULL,
+    before_value TEXT,
+    after_value  TEXT,
+    changed_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_position_audit_log_position_id ON position_audit_log(position_id);
+
+COMMIT;
+```
+
+### Field Reference
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| `id` | UUID | NO | Primary key |
+| `position_id` | UUID | NO | The position edited. No FK constraint (audit rows must survive a position's own lifecycle; matches `trade_history.position_id`'s pattern of not cascading) |
+| `source` | TEXT | NO | Which manual action triggered the entry: `note`, `tags`, or `mark-reviewed` |
+| `field` | TEXT | NO | The specific field changed (`entry_note`, `tags`, `last_reviewed_at`) |
+| `before_value` | TEXT | YES | Value before the edit, stringified |
+| `after_value` | TEXT | YES | Value after the edit, stringified |
+| `changed_at` | TIMESTAMPTZ | NO | When the edit was recorded |
+
+Reversible: `DROP TABLE IF EXISTS position_audit_log;`
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-07-27 (agent-mediated; single new append-only table, no existing schema touched, no backfill applicable — table did not previously exist)
+- Financial Reporting & Records Owner: Accepted — 2026-07-27 (agent-mediated; scope decision recorded above)
+
+---
+
+**Document Version:** 2.17
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-07-20
+**Last Review:** 2026-07-27

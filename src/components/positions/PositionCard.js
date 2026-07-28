@@ -9,6 +9,7 @@ import { differenceInDays } from "date-fns";
 import { useGapRisk } from "../../hooks/useGapRisk";
 import { apiFetch } from "../../api/base44Client";
 import { toast } from "sonner";
+import TrailingStopExplainerIcon from "./TrailingStopExplainerIcon";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -218,8 +219,9 @@ export default function PositionCard({ position, onEdit, onExit, onRecheck, draw
         </div>
         {/* ST-03 (BLG-FE-97): Trail Stop tile — Initial Stop subtext + trailing stop value + breach icon */}
         <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
-          <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">
-            Init: {position.initial_stop != null ? `${currencySymbol}${Number(position.initial_stop).toFixed(2)}` : "—"}
+          <p className="text-xs text-slate-600 dark:text-slate-400 mb-1 flex items-center gap-1">
+            <span>Init: {position.initial_stop != null ? `${currencySymbol}${Number(position.initial_stop).toFixed(2)}` : "—"}</span>
+            <TrailingStopExplainerIcon />
           </p>
           <p className="text-sm font-semibold text-rose-400 flex items-center gap-1">
             {displayTrailStop != null ? `${currencySymbol}${Number(displayTrailStop).toFixed(2)}` : "—"}
