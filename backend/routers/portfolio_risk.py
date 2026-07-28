@@ -503,4 +503,4 @@ def get_sector_regime_trend(weeks: int = 12):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "ok", "data": {"insufficient_history": True, "weeks_available": 0, "error": str(e)}}
+        return {"status": "error", "error": str(e)}

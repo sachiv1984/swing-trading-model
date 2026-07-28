@@ -21,7 +21,7 @@ from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
-from routers.portfolio_risk import compute_sector_exposure, bucket_sector_regime_weekly
+from routers.portfolio_risk import compute_sector_exposure, bucket_sector_regime_weekly, get_sector_regime_trend
 
 
 def _position(ticker="AAPL", market="US", shares=10, current_price=100.0, entry_price=90.0, fx_rate=1.27):
@@ -138,6 +138,26 @@ class TestBucketSectorRegimeWeekly(unittest.TestCase):
         result = bucket_sector_regime_weekly(rows, weeks=12)
         self.assertFalse(result["weeks"][0]["regime_us"])
         self.assertTrue(result["weeks"][0]["regime_uk"])
+
+
+class TestGetSectorRegimeTrendEndpoint(unittest.TestCase):
+    """A genuine failure (DB error, etc.) must surface as status: error, not
+    be folded into the same insufficient_history: true shape the legitimate
+    day-one accumulation state uses -- those two conditions must stay
+    distinguishable to the frontend (SectorRegimeTrend.js's isError branch
+    vs. its insufficient_history branch)."""
+
+    def test_exception_returns_error_status_not_insufficient_history(self):
+        with patch("routers.portfolio_risk.get_portfolio", side_effect=Exception("db unavailable")):
+            result = get_sector_regime_trend(weeks=12)
+        self.assertEqual(result["status"], "error")
+        self.assertNotIn("data", result)
+
+    def test_no_portfolio_is_insufficient_history_not_error(self):
+        with patch("routers.portfolio_risk.get_portfolio", return_value=None):
+            result = get_sector_regime_trend(weeks=12)
+        self.assertEqual(result["status"], "ok")
+        self.assertTrue(result["data"]["insufficient_history"])
 
 
 class TestSectorRegimeHistoryDatabaseFunctions(unittest.TestCase):
