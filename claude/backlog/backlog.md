@@ -64,7 +64,7 @@
 ---
 
 ### BLG-GOV-243 — OpenAPI contract linter in CI for heading-level drift
-**Priority:** P2 (Medium) | **Type:** Governance / Process Tooling | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260717-01 | **Effort:** M | **Provisional-Target:** TBD
+**Priority:** P2 (Medium) | **Type:** Governance / Process Tooling | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260717-01 | **Effort:** M | **Provisional-Target:** v7.10
 **Problem:** `CLAUDE.md §2` requires API contract endpoint headings to be exactly `##` (not `###`+) or the OpenAPI Drift Detection gate silently misses them — this is currently caught only by the gate failing after the fact, not by a lint step naming the specific violation clearly.
 **Scope:** Extend the existing OpenAPI Drift Detection CI job to emit a specific, actionable error message when a `docs/specs/api_contracts/` heading is found at the wrong level, rather than a generic "endpoint missing from contract" failure.
 **Acceptance Criteria:** CI job produces a distinct, correctly-worded error for the heading-level case versus the missing-entry case; confirmed via a test PR with a deliberately mis-leveled heading.
@@ -109,7 +109,7 @@
 **Owner:** Head of Specs Team
 **Source:** `plan sprint 2026-07-24__release-v7.8` session — 2026-07-26
 **Effort:** S (~0.5-1 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v7.10
 
 **Problem**
 `design_gate_prompt.md` v1.4's write scope (§5) only permits writes to `claude/cycles/<cycle_id>/design_gate.md` and the cycle-level `state.json` — it never touches `.claude_current_state.json`. When the design gate passes, the cycle-level `state.json` correctly records `design_gate_status = Passed`, but the root pointer file's `status` field stays at `Release_Planning_Complete` and its `design_gate_status`/`design_gate_record`/`design_gate_completed_utc` fields stay stale (`not_started`/empty). This causes `sprint_planning_prompt.md`'s STEP -1.3 bypass audit (IMP-04) to fire on every cycle with a required design gate, mechanically treating a genuinely-passed gate as "skipped entirely" since it only reads the literal `.claude_current_state.json` status string. Discovered and worked around (treated as a documented process deviation rather than an actual bypass, per Product Owner decision) during `plan sprint` for `2026-07-24__release-v7.8` — see `claude/cycles/2026-07-24__release-v7.8/sprint_planning_notes.md` "Design Gate / Lifecycle Note".
@@ -1121,7 +1121,7 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 **Owner:** Head of Engineering
 **Source:** 2026-07-12__release-v7.0 design gate (ST-08, BLG-FE-95) — spec/implementation deviation observed while reviewing strategy_benchmark.md §2 Page Header — 2026-07-12
 **Effort:** XS (<1h)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v7.10
 
 **Problem**
 `strategy_benchmark.md` §2 Page Header specifies the shared `PageHeader` component (`src/components/ui/PageHeader.js`) for the "Strategy Benchmark" page title, but the shipped `src/pages/StrategyBenchmark.js:497` hand-rolls its own header (icon + bare `<h1>` + `<p>`) instead. This is a pre-existing spec/implementation deviation, out of scope for the ST-08 light-theme contrast fix applied directly to the current markup this cycle. Left unresolved, this header will keep diverging from the shared component (e.g. future PageHeader-wide styling changes won't propagate here) and continues to violate the documented spec.
@@ -1151,7 +1151,7 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 ---
 
 ### BLG-FE-122 — Rewrite calendar.js against the react-day-picker v9+ API before EPIC-05 implementation
-**Priority:** P2 (Medium) | **Type:** Frontend / Technical Debt | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** v7.4 readiness pass, `docs/specs/blg_spec_95_v7_4_ui_readiness_pass.md` §2 (AC-01), ST-01/BLG-SPEC-95 — 2026-07-17 | **Effort:** S | **Provisional-Target:** TBD (ahead of whichever release re-introduces `BLG-FE-118`)
+**Priority:** P2 (Medium) | **Type:** Frontend / Technical Debt | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** v7.4 readiness pass, `docs/specs/blg_spec_95_v7_4_ui_readiness_pass.md` §2 (AC-01), ST-01/BLG-SPEC-95 — 2026-07-17 | **Effort:** S | **Provisional-Target:** v7.10 (ahead of whichever release re-introduces `BLG-FE-118`)
 **Depends on:** BLG-FE-118 (saved filter views and calendar view — parent feature)
 **Problem:** `src/components/ui/calendar.js` wraps `react-day-picker` using the legacy v8 API (`classNames` keys `nav_button_previous`/`day_range_start`/`day_outside`/`day_range_middle`, plus a `components={{ IconLeft, IconRight }}` override). `package.json` now declares `react-day-picker ^10.0.1` (v9+ line), which replaced that entire API surface (`Chevron` replaces `IconLeft`/`IconRight`; `classNames` keys renamed, e.g. `range_start`/`outside`/`selected`/`today`/`disabled`/`hidden`). `calendar.js` has zero current consumers (dead code, pre-staged for EPIC-05), so nothing breaks today — but none of its style overrides will match once a page renders it, since the prop names it passes no longer correspond to anything the installed version reads.
 **Scope:** Rewrite `calendar.js`'s `classNames` map and icon override against the `react-day-picker` v9+ API, preserving the existing visual output (component is otherwise a thin styling wrapper, no behavioural logic to change).
@@ -1160,7 +1160,7 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 ---
 
 ### BLG-FE-123 — `SystemStatus.js` `categorizeEndpoint()` missing `/price-alerts`, `/saved-filters`, and `/changelog` branches
-**Priority:** P3 (Low) | **Type:** Frontend / Technical Debt | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** Recurrence escalation, `2026-07-17__release-v7.5` closure, carried across 3 Post-Ship Closure cycles (v7.5→v7.6→v7.7) pending "next roadmap review"; filed as a backlog item by roadmap rebalance `2026-07-24__scheduled` STEP 0 since the fix is application source code outside the Roadmap Engine's write scope; extended at post-ship closure `2026-07-24__release-v7.8` STEP 6 (a new `/changelog` top-level prefix was introduced this cycle by `GET /changelog/latest`, BLG-FE-128, and is not handled by any existing `includes()` branch either) | **Effort:** XS | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** Frontend / Technical Debt | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** Recurrence escalation, `2026-07-17__release-v7.5` closure, carried across 3 Post-Ship Closure cycles (v7.5→v7.6→v7.7) pending "next roadmap review"; filed as a backlog item by roadmap rebalance `2026-07-24__scheduled` STEP 0 since the fix is application source code outside the Roadmap Engine's write scope; extended at post-ship closure `2026-07-24__release-v7.8` STEP 6 (a new `/changelog` top-level prefix was introduced this cycle by `GET /changelog/latest`, BLG-FE-128, and is not handled by any existing `includes()` branch either) | **Effort:** XS | **Provisional-Target:** v7.10
 
 **Problem**
 `src/pages/SystemStatus.js`'s `categorizeEndpoint()` function has no `includes()` branch for the `/price-alerts`, `/saved-filters`, or `/changelog` endpoint paths (shipped v7.5, v7.4, and v7.8 respectively). All three currently degrade gracefully to the `'Other'` category rather than their correct functional grouping — not a correctness bug (no wrong data shown, nothing broken), but a categorisation gap that has now persisted across 4 releases and grown by one more prefix.
@@ -1560,7 +1560,7 @@ SI-04 (strategy version comparison) requires test coverage across: unit tests (v
 **Type:** Backend Engineering / Data Integrity
 **Owner:** Head of Backend Engineering
 **Source:** IDEA-backend-engineering-20260702-02 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
-**Provisional-Target:** TBD
+**Provisional-Target:** v7.10
 **Effort:** S (~1 day)
 
 **Problem**
@@ -1618,7 +1618,7 @@ No per-request trace ID propagation exists across routers/services. No incident 
 ---
 
 ### BLG-BE-68 — Fix errors masked as HTTP 200 in portfolio_risk.py
-**Priority:** P2 (Medium) | **Type:** Backend / API Consistency | **Owner:** Backend Engineering Patterns Owner | **Source:** BLG-BE-65 audit (ST-04, EPIC-04, v7.6) | **Effort:** S (~0.5d) | **Provisional-Target:** v7.7
+**Priority:** P2 (Medium) | **Type:** Backend / API Consistency | **Owner:** Backend Engineering Patterns Owner | **Source:** BLG-BE-65 audit (ST-04, EPIC-04, v7.6) | **Effort:** S (~0.5d) | **Provisional-Target:** v7.10
 
 **Problem**
 `portfolio_risk.py`'s four endpoints (`/drawdown-status`, `/concentration-status`, `/sector-weights`, `/gate-metrics`) catch all exceptions and return `{"status": "ok", "data": {..., "error": str(e)}}` (first three) or `{"status": "error", "error": str(e)}` (last one) as a bare dict — implicit HTTP 200 in all four cases. This violates `conventions.md` §13.3 ("error responses must not use HTTP 200 with an error body") and is a correctness/observability issue, not just cosmetic inconsistency: a frontend caller checking only `response.status === "ok"` would treat these backend failures as success. Identified during the `docs/specs/api_contracts/backend_engineering_patterns.md` §Error-response envelope conformance audit (v1.3).
@@ -1692,7 +1692,7 @@ Across `alerts.py`, `analytics.py`, `digest.py` (401 case + `/weekly` wrong-stat
 **Owner:** QA Lead
 **Source:** User-directed CI runtime review (acting as QA & Testing Owner / QA Lead / Director of Quality) — 2026-07-28
 **Effort:** M (~1-2 days)
-**Provisional-Target:** TBD
+**Provisional-Target:** v7.10
 
 **Problem**
 The `playwright-e2e` CI job boots the app via `npm start` (`react-scripts` dev server, unminified, webpack dev-middleware) rather than a production build. All 382 `page.goto()` navigations across the 677-test suite pay dev-server compile/serve overhead on every run. This was identified alongside REC-CI-01 (workers/shard parallelization, actioned 2026-07-28 — see `docs/ops/ci_pipeline_baseline.md` v1.1) but deferred: it requires adding a new dependency (`serve` or `http-server`, neither currently installed) and restructuring how `REACT_APP_API_URL` / `REACT_APP_DEV_FAKE_AUTH` / `REACT_APP_ANTHROPIC_API_KEY` are injected, since CRA bakes `REACT_APP_*` vars into the bundle at build time, not serve time — the current workflow sets them as runtime env vars against the dev server.
@@ -3276,7 +3276,7 @@ No test data fixtures or state-reset mechanism exists between Playwright runs. N
 **Type:** Security / Verification
 **Owner:** Cybersecurity & Trust Lead
 **Source:** IDEA-cybersecurity-20260702-02 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
-**Provisional-Target:** TBD
+**Provisional-Target:** v7.10
 **Effort:** S (~1 day)
 
 **Problem**
@@ -4145,7 +4145,7 @@ The API key rotation runbook has never been exercised end-to-end — its first r
 **Owner:** Head of Engineering
 **Source:** ST-17 (BLG-OPS-71), EPIC-03, v6.8 system threat model review — 2026-07-09
 **Effort:** M (~1-2 days — touches 44 call sites in backend/main.py)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v7.10
 
 **Problem**
 44 call sites in `backend/main.py` construct `HTTPException` responses with `detail=str(e)`, returning the raw Python exception message directly to the API caller. This risks incidental disclosure of internal file paths, database schema hints, or library version details to anyone holding the API key. Impact is bounded (the API is already key-gated and this is a single-user system), but it is a defense-in-depth gap — if the key is ever compromised, verbose errors give an attacker more reconnaissance than a generic message would.
@@ -5327,8 +5327,46 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 
 ---
 
+## Release Slice v7.10
+
+<!-- release-plan-marker: RP:v7.10:2026-07-28__release-v7.10 -->
+
+**Ephemeral section — removed at next `groom backlog` run after this cycle closes.** Canonical home: `claude/cycles/2026-07-28__release-v7.10/stage4_backlog_slice.md`.
+
+23 items across 6 grouped EPICs, sized to the full confirmed ~24-28 day capacity band (~26.15 days midpoint), per explicit user "use full capacity" instruction:
+
+| Item | Epic | Story |
+|------|------|-------|
+| BLG-BE-68 | EPIC-01 | ST-01 |
+| BLG-BE-75 | EPIC-01 | ST-02 |
+| BLG-BE-76 | EPIC-01 | ST-03 |
+| BLG-BE-41 | EPIC-01 | ST-04 |
+| BLG-SEC-22 | EPIC-02 | ST-05 |
+| BLG-SEC-09 | EPIC-02 | ST-06 |
+| BLG-SEC-18 | EPIC-02 | ST-07 |
+| BLG-SEC-13 | EPIC-02 | ST-08 |
+| BLG-QA-127 | EPIC-03 | ST-09 |
+| BLG-QA-96 | EPIC-03 | ST-10 |
+| BLG-QA-133 | EPIC-03 | ST-11 |
+| BLG-QA-128 | EPIC-03 | ST-12 |
+| BLG-SPEC-102 | EPIC-04 | ST-13 |
+| BLG-SPEC-103 | EPIC-04 | ST-14 |
+| BLG-SPEC-104 | EPIC-04 | ST-15 |
+| BLG-GOV-243 | EPIC-04 | ST-16 |
+| BLG-FE-122 | EPIC-05 | ST-17 |
+| BLG-FE-123 | EPIC-05 | ST-18 |
+| BLG-FE-106 | EPIC-05 | ST-19 |
+| BLG-FE-134 | EPIC-05 | ST-20 |
+| BLG-GOV-256 | EPIC-06 | ST-21 |
+| BLG-GOV-216 | EPIC-06 | ST-22 |
+| BLG-GOV-207 | EPIC-06 | ST-23 |
+
+`Provisional-Target` updated `TBD`/`Unscheduled`/stale `v7.7` → `v7.10` on all 23 items (see each item's own entry above). `BLG-FEAT-73`/`BLG-FEAT-74` and the Arc 5 pre-entry/compliance-gateway UX cluster (12 items) + `BLG-SPEC-35` excluded — all carry unmet gate criteria, consistent with the standing PO perennial-return disposition. See `decisions--2026-07-28__release-v7.10.md`.
+
+---
+
 ### BLG-SEC-18 — Rate-limit audit on public-facing endpoints ahead of any future auth changes
-**Priority:** P2 (Medium) | **Type:** Security | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260717-01 | **Effort:** M | **Provisional-Target:** TBD
+**Priority:** P2 (Medium) | **Type:** Security | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260717-01 | **Effort:** M | **Provisional-Target:** v7.10
 **Problem:** No confirmed rate-limiting audit has been performed against the current `X-API-Key`-gated endpoint set (registered `BLG-OPS-99`) — a gap that becomes more consequential once/if any auth model change is considered.
 **Scope:** Audit current rate-limiting posture (Render platform-level and application-level) against all public-facing endpoints; document findings.
 **Acceptance Criteria:** Audit complete; any gaps filed as follow-up `BLG-SEC-*` items; no implementation required unless a P0/P1 gap is found.
@@ -5408,13 +5446,13 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 **Acceptance Criteria:** Shared component exists; both modals migrated with no visual/behavioural regression (Playwright coverage confirms).
 
 ### BLG-GOV-207 — Same-day scheduled-rebalance cycle_id collision handling
-**Priority:** P2 (Medium) | **Type:** Governance / Process Integrity | **Owner:** Head of Specs Team | **Source:** IDEA-challenger-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Priority:** P2 (Medium) | **Type:** Governance / Process Integrity | **Owner:** Head of Specs Team | **Source:** IDEA-challenger-20260712-01 | **Effort:** S | **Provisional-Target:** v7.10
 **Problem:** `run roadmap --reason "scheduled"` invoked twice on the same calendar date produces an identical `cycle_id` (`YYYY-MM-DD__scheduled`), risking a silent overwrite of a completed Class 3 record. Confirmed in practice this cycle (`2026-07-10__scheduled` ran twice in one session as the sandbox clock advanced from 07-10 to 07-12 mid-session; resolved ad hoc via user-confirmed date resolution rather than a built-in rule).
 **Scope:** Add an explicit STEP 0 rule to `roadmap_prompt.md` — detect an existing cycle folder for the computed `cycle_id` and auto-suffix (`-2`, `-3`, …) rather than requiring ad hoc user escalation.
 **Acceptance Criteria:** STEP 0 rule added and versioned per `CLAUDE.md` §6; a second same-day scheduled invocation no longer requires manual disambiguation.
 
 ### BLG-QA-96 — Red Flag Journal auth regression test
-**Priority:** P2 (Medium) | **Type:** QA / Security | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Priority:** P2 (Medium) | **Type:** QA / Security | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260712-01 | **Effort:** S | **Provisional-Target:** v7.10
 **Problem:** `GET /portfolio/red-flag-journal` had a security review at v4.0 shipping, but no regression test confirms auth stays enforced after later, unrelated endpoint changes.
 **Scope:** Add an auth-required regression test (401/403 on missing/invalid `X-API-Key`) to the backend test suite.
 **Acceptance Criteria:** Test added to `backend/routers/test.py`; passes in CI; fails if auth check is removed (verified by temporarily removing it locally).
@@ -5524,7 +5562,7 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 **Acceptance Criteria:** Row added retroactively for the last 3 readings; convention documented for future cycles.
 
 ### BLG-GOV-216 — Recent-rebalance recency advisory at roadmap STEP -1
-**Priority:** P2 (Medium) | **Type:** Governance / Process Integrity | **Owner:** PMO Lead | **Source:** IDEA-pmo-lead-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Priority:** P2 (Medium) | **Type:** Governance / Process Integrity | **Owner:** PMO Lead | **Source:** IDEA-pmo-lead-20260712-01 | **Effort:** S | **Provisional-Target:** v7.10
 **Problem:** STEP -1.5 doesn't check inter-run recency; an accidental double-invocation of `run roadmap --reason scheduled` isn't caught until cycle-folder creation (as happened this cycle — complements `BLG-GOV-207`'s auto-suffix fix with an earlier, cheaper warning).
 **Scope:** Surface a confirmation advisory at STEP -1 if `last_scheduled_rebalance_utc` is <24h old.
 **Acceptance Criteria:** `roadmap_prompt.md` patched (versioned per `CLAUDE.md` §6); advisory fires correctly on a same-day re-invocation.
@@ -5922,7 +5960,7 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 *Doc-completeness findings surfaced while authoring `tests/test_pilot_contract_schemas.py` (EPIC-11/ST-11), recorded but not fixed in that story per its own scope boundary (adding contract tests, not auditing existing contract docs) — see `qa_evidence_EPIC-11.md`. None are P0/P1; no caller-relied-upon field is missing from any real response.*
 
 ### BLG-SPEC-102 — `position_endpoints.md` envelope claim doesn't match live `GET /positions` behaviour
-**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** `2026-07-24__release-v7.8` EPIC-11 ST-11 pilot contract test authoring (`qa_evidence_EPIC-11.md`) | **Effort:** XS | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** `2026-07-24__release-v7.8` EPIC-11 ST-11 pilot contract test authoring (`qa_evidence_EPIC-11.md`) | **Effort:** XS | **Provisional-Target:** v7.10
 **Problem:** `docs/specs/api_contracts/position_endpoints.md` documents `GET /positions` as returning the standard `{status, data}` envelope, but the live endpoint returns a raw list (confirmed via `tests/test_api_contracts.py::test_get_positions_returns_ok`'s own comment and re-confirmed by `tests/test_pilot_contract_schemas.py`). Doc/reality mismatch only — the pilot contract test asserts the real (unenveloped) behaviour, not the doc's claim.
 **Scope:** Update `position_endpoints.md` to document the actual (unenveloped) response shape for `GET /positions`.
 **Acceptance Criteria:** `position_endpoints.md` corrected to match live behaviour; API Contracts & Documentation Owner sign-off; no functional change.
@@ -5930,7 +5968,7 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 ---
 
 ### BLG-SPEC-103 — `GET /positions` undocumented lifecycle fields (`position_state`, `state_entered_at`, `days_in_state`)
-**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** `2026-07-24__release-v7.8` EPIC-11 ST-11 pilot contract test authoring (`qa_evidence_EPIC-11.md`) | **Effort:** XS | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** `2026-07-24__release-v7.8` EPIC-11 ST-11 pilot contract test authoring (`qa_evidence_EPIC-11.md`) | **Effort:** XS | **Provisional-Target:** v7.10
 **Problem:** `GET /positions` merges in 3 fields via `get_lifecycle_fields_for_position()` (`position_state`, `state_entered_at`, `days_in_state`) that are absent from `docs/specs/api_contracts/position_endpoints.md`'s documented response shape.
 **Scope:** Add the 3 fields to `position_endpoints.md`'s response schema with type/description.
 **Acceptance Criteria:** All 3 fields documented; API Contracts & Documentation Owner sign-off; no functional change.
@@ -5938,7 +5976,7 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 ---
 
 ### BLG-SPEC-104 — `trade_endpoints.md` JSON example omits documented fields (`commission_gbp`, `spread_cost_gbp`, `net_r_multiple`)
-**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** `2026-07-24__release-v7.8` EPIC-11 ST-11 pilot contract test authoring (`qa_evidence_EPIC-11.md`) | **Effort:** XS | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** `2026-07-24__release-v7.8` EPIC-11 ST-11 pilot contract test authoring (`qa_evidence_EPIC-11.md`) | **Effort:** XS | **Provisional-Target:** v7.10
 **Problem:** `docs/specs/api_contracts/trade_endpoints.md`'s JSON example for `GET /trades` omits `commission_gbp`, `spread_cost_gbp`, `net_r_multiple` — fields documented in the same file's Field notes table and always returned by the live service. Example-completeness gap only, not a schema gap.
 **Scope:** Update the JSON example to include all 3 fields.
 **Acceptance Criteria:** Example updated to include all 3 fields; API Contracts & Documentation Owner sign-off; no functional change.
@@ -6062,7 +6100,7 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 ---
 
 ### BLG-QA-128 — Consumer-driven contract check: frontend API calls vs documented contracts
-**Priority:** P2 (Medium) | **Type:** QA / Contract Testing | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260728-02 | **Effort:** M | **Provisional-Target:** TBD
+**Priority:** P2 (Medium) | **Type:** QA / Contract Testing | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260728-02 | **Effort:** M | **Provisional-Target:** v7.10
 **Problem:** `openapi.yaml` and `docs/specs/api_contracts/` describe the backend's own contract, but nothing checks that frontend call sites actually match the documented request/response shape they depend on.
 **Scope:** Add a lightweight consumer-driven contract check comparing frontend API call sites against the documented contract fields they consume.
 **Acceptance Criteria:** Check implemented (CI or scripted); first run's findings triaged; API Contracts & Documentation Owner sign-off.
@@ -6070,7 +6108,7 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 ---
 
 ### BLG-BE-75 — Extend Alpaca backoff audit (BLG-BE-57) to Yahoo Finance, Gemini, and Claude call sites
-**Priority:** P2 (Medium) | **Type:** Backend / Resilience | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260728-01 (relationship note: extends `BLG-BE-57`'s Alpaca-only scope to 3 additional providers) | **Effort:** M | **Provisional-Target:** TBD
+**Priority:** P2 (Medium) | **Type:** Backend / Resilience | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260728-01 (relationship note: extends `BLG-BE-57`'s Alpaca-only scope to 3 additional providers) | **Effort:** M | **Provisional-Target:** v7.10
 **Problem:** `BLG-BE-57` audited retry/backoff behaviour for Alpaca call sites only; Yahoo Finance, Gemini, and Claude external calls have not had the same review, despite being equally capable of rate-limiting or transient failure.
 **Scope:** Apply the same retry/backoff audit methodology from `BLG-BE-57` to the three remaining external providers.
 **Acceptance Criteria:** All 4 providers' call sites confirmed to use the shared retry/backoff decorator (`BLG-BE-71`) or have a documented exception; Backend Engineering Patterns Owner sign-off.
@@ -6078,7 +6116,7 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 ---
 
 ### BLG-BE-76 — Idempotency key pattern for state-mutating POST endpoints
-**Priority:** P2 (Medium) | **Type:** Backend / Correctness | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260728-02 | **Effort:** M | **Provisional-Target:** TBD
+**Priority:** P2 (Medium) | **Type:** Backend / Correctness | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260728-02 | **Effort:** M | **Provisional-Target:** v7.10
 **Problem:** State-mutating POST endpoints (trade entry, trade plan creation, alert rules) have no idempotency-key mechanism, so a retried request (e.g. after a timeout) risks creating a duplicate record.
 **Scope:** Define and apply an idempotency-key pattern (client-supplied key + short-lived server-side dedup check) for the highest-risk state-mutating endpoints.
 **Acceptance Criteria:** Pattern documented in `backend_engineering_patterns.md`; applied to at least the trade-entry and trade-plan-creation endpoints; Backend Engineering Patterns Owner sign-off.
@@ -6118,7 +6156,7 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 ---
 
 ### BLG-SEC-22 — Secrets-scanning pre-commit/CI gate (gitleaks/trufflehog)
-**Priority:** P2 (Medium) | **Type:** Security / CI | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Priority:** P2 (Medium) | **Type:** Security / CI | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260728-01 | **Effort:** S | **Provisional-Target:** v7.10
 **Problem:** CI has a secret-scanning gate at the pipeline level (per `v5.3`'s `BLG-OPS-58`), but no pre-commit local check exists, so a secret can be committed locally before CI ever runs.
 **Scope:** Add a local pre-commit hook running a secrets scanner (gitleaks or trufflehog), complementing the existing CI-level gate.
 **Acceptance Criteria:** Hook added to `.githooks/pre-commit`; confirmed to catch a deliberately-planted test secret; Cybersecurity & Trust Lead sign-off.
@@ -6270,7 +6308,7 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 ---
 
 ### BLG-FE-134 — Keyboard navigation & focus-order audit (distinct from colour-contrast a11y work)
-**Priority:** P2 (Medium) | **Type:** Frontend / Accessibility | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260728-02 | **Effort:** M | **Provisional-Target:** TBD
+**Priority:** P2 (Medium) | **Type:** Frontend / Accessibility | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260728-02 | **Effort:** M | **Provisional-Target:** v7.10
 **Problem:** Accessibility work to date (`BLG-FE-82`, `BLG-FE-87/88/89`, dark-mode contrast audits) has focused on colour/contrast; keyboard navigation and focus order have not had an equivalent dedicated audit.
 **Scope:** Audit keyboard navigation and focus order across the app's primary flows (trade entry, trade plan, command palette).
 **Acceptance Criteria:** Audit complete; findings filed as follow-up items where gaps are found; Head of UX & Design sign-off.
@@ -6342,7 +6380,7 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 ---
 
 ### BLG-QA-133 — Endpoint test suite coverage audit against all backend/routers/ files
-**Priority:** P2 (Medium) | **Type:** QA / Backend | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260728-01 | **Effort:** M | **Provisional-Target:** TBD
+**Priority:** P2 (Medium) | **Type:** QA / Backend | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260728-01 | **Effort:** M | **Provisional-Target:** v7.10
 **Problem:** `CLAUDE.md` §2 requires every new route to be registered in `backend/routers/test.py`, but no periodic audit confirms all *existing* routes across every router file are actually covered, only that new ones are added going forward.
 **Scope:** Audit `backend/routers/test.py` coverage against every `@router.*` decorator across all router files.
 **Acceptance Criteria:** Audit complete; any coverage gap found is filed or fixed; QA & Testing Owner sign-off.

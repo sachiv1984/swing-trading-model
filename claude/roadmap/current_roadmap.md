@@ -11,7 +11,17 @@
 ## 1. Current Version
 
 **v7.9** — Capacity-Fill & Engineering Hardening — ✅ Complete — Shipped 2026-07-28 — cycle: 2026-07-27__release-v7.9
-**Next planned release:** [TBD]
+**Next planned release:** v7.10 — Reliability, Security & Contract Hardening — Committed — cycle: 2026-07-28__release-v7.10
+
+<!-- roadmap-annotation-marker: RA:v7.10:2026-07-28__release-v7.10 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-07-28__release-v7.10
+- Plan published: 2026-07-28
+- Cycle folder: claude/cycles/2026-07-28__release-v7.10/
+- Backlog slice: claude/cycles/2026-07-28__release-v7.10/stage4_backlog_slice.md
+- Status at annotation: Committed
+- No formal `## v7.10` roadmap section created (Release Planning may not alter roadmap scope) — scoped via STEP -1.2 Option (b) equivalence from `2026-07-28__scheduled` (backlog-driven, 23 ungated/ready items across 6 grouped EPICs, sized to the full confirmed ~24-28 day capacity band per explicit user instruction); `BLG-FEAT-73`/`BLG-FEAT-74` and the Arc 5 pre-entry/compliance-gateway UX cluster (12 items, escalated P3→P1 as a value judgment only) remain excluded per the standing PO perennial-return / unmet-gate disposition.
 
 <!-- roadmap-annotation-marker: RA:v7.9:2026-07-27__release-v7.9 -->
 
