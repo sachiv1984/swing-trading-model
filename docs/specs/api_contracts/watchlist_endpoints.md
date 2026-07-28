@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.1
-**Last Updated:** 2026-07-17
+**Version:** 1.2
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint:** 2026-06-08__release-v5.3 — ST-07 (BLG-SPEC-52, EPIC-01)
 **Signed off by:** API Contracts & Documentation Owner; Head of Specs Team
@@ -65,6 +65,9 @@ No parameters.
 | `data[].signal_status` | string or null | Signal list status for this ticker (`active`, `watchlisted`, or `null`) |
 | `data[].tags` | array of string | Watchlist tags (v1.1, ST-03/BLG-FE-117) — populated only via `POST /watchlist/bulk-tag`; empty array if none |
 | `data[].created_at` | string (ISO 8601) | Entry creation timestamp |
+| `data[].added_at` | string (ISO 8601) or null | (v1.2, ST-01/BLG-FEAT-66) API-level alias for `created_at` — no separate column; exposed under this name to match the Staleness Indicator's naming in `watchlist.md`. |
+| `data[].days_on_watchlist` | integer | (v1.2, ST-01/BLG-FEAT-66) Server-computed days since `added_at`. Legacy rows with no `added_at` are treated as added today (`0`). |
+| `data[].is_stale` | boolean | (v1.2, ST-01/BLG-FEAT-66) `true` when `days_on_watchlist >= 30` (fixed server-side threshold this cycle, not user-configurable). |
 
 ---
 
@@ -283,7 +286,7 @@ Remove each selected watchlist entry in a single call. New in v1.1 (ST-03, BLG-F
 
 **Purpose**
 
-Update price fields on an existing watchlist entry. `ticker` and `market` are read-only after creation.
+Update price fields on an existing watchlist entry, or reset its staleness clock via `added_at` (the "Keep" action — ST-01, EPIC-01, v7.9, BLG-FEAT-66). `ticker` and `market` are read-only after creation.
 
 **Method & Path**
 
@@ -295,9 +298,12 @@ Update price fields on an existing watchlist entry. `ticker` and `market` are re
 {
   "target_entry_price": 460.0,
   "initial_stop_price": 425.0,
-  "current_stop_price": 440.0
+  "current_stop_price": 440.0,
+  "added_at": true
 }
 ```
+
+**`added_at` semantics (v1.2):** treated as a reset *trigger*, not a client-supplied timestamp. Any non-null value resets the entry's underlying `created_at` column to the server's current timestamp — the server never accepts a client-supplied date/time for this field, so a client can never backdate or postdate its own staleness clock.
 
 **Response (200)**
 
@@ -328,5 +334,6 @@ Update price fields on an existing watchlist entry. `ticker` and `market` are re
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2 | 2026-07-27 | ST-01 (BLG-FEAT-66, EPIC-01, v7.9): `GET /watchlist` response gains `added_at` (API-level alias for `created_at`), `days_on_watchlist`, `is_stale`. `PATCH /watchlist/{entry_id}` request body gains `added_at` (reset trigger, not a client-supplied timestamp — server-authoritative CURRENT_TIMESTAMP write) for the "Keep" staleness-review action. No `data_model.md` change — no new column, per ux_spec.md's "no backend schema change required" premise, held by exposing the existing `created_at` column under the spec's field name at the serialisation boundary. |
 | 1.1 | 2026-07-17 | ST-03 (BLG-FE-117, EPIC-03, v7.5): Added `## GET /watchlist/tags`, `## POST /watchlist/bulk-tag`, `## DELETE /watchlist/bulk`. New `tags` column on `watchlist` (data_model.md v2.12→v2.13), populated only via bulk-tag. `GET /watchlist` response schema updated with `data[].tags`. Router ordering note: bulk routes declared before `PATCH/DELETE /watchlist/{entry_id}` to avoid wildcard capture. |
 | 1.0 | 2026-06-09 | v5.3 ST-07 (BLG-SPEC-52, EPIC-01): Initial contract for GET /watchlist, POST /watchlist, DELETE /watchlist/{entry_id}, PATCH /watchlist/{entry_id}. Endpoints shipped in prior cycle; contract gap resolved. test.py entries added for GET, POST, DELETE. API Contracts & Documentation Owner and Head of Specs Team sign-off. |

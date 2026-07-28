@@ -20,6 +20,7 @@ Data model: docs/specs/data_model.md §11 (watchlist table, migration v2.0→v2.
 
 import logging
 import re
+from datetime import date
 from typing import Dict, List, Optional
 import yfinance as yf
 
@@ -118,8 +119,28 @@ def ensure_watchlist_table() -> None:
 _SIGNAL_STATUS_SORT = {"active": 1, "watch": 2, "no_signal": 3}
 
 
+def _compute_days_on_watchlist(added_at) -> int:
+    """Days between `added_at` (the watchlist table's `created_at` column --
+    see STALENESS_THRESHOLD_DAYS docstring below) and today.
+
+    Legacy rows with no added_at (pre-dating this feature) are treated as
+    added today (ux_spec.md §5) -- never mass-flagged as stale on ship day.
+    """
+    if added_at is None:
+        return 0
+    added_date = added_at.date() if hasattr(added_at, "date") else added_at
+    return max((date.today() - added_date).days, 0)
+
+
+# Staleness threshold (ST-01, EPIC-01, v7.9, BLG-FEAT-66): fixed, server-side
+# constant this cycle -- not user-editable, per ux_spec.md §2/§7.
+STALENESS_THRESHOLD_DAYS = 30
+
+
 def _row_to_dict(row) -> Dict:
     """Convert a DB row to a JSON-serialisable dict."""
+    added_at = row["created_at"]
+    days_on_watchlist = _compute_days_on_watchlist(added_at)
     return {
         "id": str(row["id"]),
         "ticker": row["ticker"],
@@ -132,6 +153,14 @@ def _row_to_dict(row) -> Dict:
         "current_stop_price": float(row["current_stop_price"]) if row["current_stop_price"] is not None else None,
         "created_at": row["created_at"].isoformat() if row["created_at"] else None,
         "updated_at": row["updated_at"].isoformat() if row["updated_at"] else None,
+        # ST-01 (EPIC-01, v7.9, BLG-FEAT-66): `added_at` is an API-level alias
+        # for the existing `created_at` column -- the ux_spec.md's "no backend
+        # schema change required" premise holds once the field is exposed
+        # under its spec'd name at the serialisation boundary rather than
+        # requiring an actual new `added_at` column.
+        "added_at": row["created_at"].isoformat() if row["created_at"] else None,
+        "days_on_watchlist": days_on_watchlist,
+        "is_stale": days_on_watchlist >= STALENESS_THRESHOLD_DAYS,
     }
 
 
@@ -250,32 +279,48 @@ def create_watchlist_entry(portfolio_id: str, data: Dict) -> Dict:
 
 def update_watchlist_entry(portfolio_id: str, entry_id: str, data: Dict) -> Dict:
     """
-    Update price fields on an existing watchlist entry.
+    Update price fields on an existing watchlist entry, or reset its
+    staleness clock via `added_at` (ST-01, EPIC-01, v7.9, BLG-FEAT-66 --
+    the "Keep" action).
+
     ticker and market are not updatable.
 
     Raises:
         LookupError: entry not found.
         ValueError: no updatable fields, or non-positive price value.
-    """
-    updatable = {"target_entry_price", "initial_stop_price", "current_stop_price"}
-    fields = {k: v for k, v in data.items() if k in updatable}
 
-    if not fields:
-        raise ValueError("At least one of target_entry_price, initial_stop_price, current_stop_price must be supplied")
+    Security/integrity note: `added_at` is treated as a reset *trigger*,
+    not a client-supplied timestamp -- presence of the key (any value)
+    resets the underlying `created_at` column to the server's CURRENT_TIMESTAMP.
+    A client can never backdate or postdate its own staleness clock; this
+    matches the server-authoritative pattern already used by
+    mark_position_reviewed() elsewhere in this app.
+    """
+    price_fields = {"target_entry_price", "initial_stop_price", "current_stop_price"}
+    fields = {k: v for k, v in data.items() if k in price_fields}
+    reset_added_at = "added_at" in data and data["added_at"] is not None
+
+    if not fields and not reset_added_at:
+        raise ValueError(
+            "At least one of target_entry_price, initial_stop_price, current_stop_price, or added_at must be supplied"
+        )
 
     for key, val in fields.items():
         if val is not None and val <= 0:
             raise ValueError(f"{key} must be a positive decimal")
 
-    set_clauses = ", ".join(f"{k} = %s" for k in fields)
+    set_clauses = [f"{k} = %s" for k in fields]
     values = list(fields.values())
+    if reset_added_at:
+        set_clauses.append("created_at = CURRENT_TIMESTAMP")
+    set_sql = ", ".join(set_clauses)
 
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 f"""
                 UPDATE watchlist
-                SET {set_clauses}, updated_at = CURRENT_TIMESTAMP
+                SET {set_sql}, updated_at = CURRENT_TIMESTAMP
                 WHERE id = %s AND portfolio_id = %s
                 RETURNING id
                 """,

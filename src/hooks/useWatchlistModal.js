@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { apiFetch, API_BASE_URL } from "../api/base44Client";
 import { sortEntries } from "./useWatchlistData";
 
 const FADE_OUT_DURATION_MS = 200;
@@ -15,6 +17,22 @@ function buildWatchlistPrefillState(entry) {
       stop_price: entry.initial_stop_price != null ? String(entry.initial_stop_price) : "",
     },
   };
+}
+
+async function keepWatchlistEntry(entry, onUpdated) {
+  try {
+    const res = await apiFetch(`${API_BASE_URL}/watchlist/${entry.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ added_at: true }),
+    });
+    if (!res.ok) throw new Error();
+    const json = await res.json();
+    onUpdated(json.data);
+    toast.success(`${entry.ticker} kept on watchlist.`);
+  } catch {
+    toast.error(`Failed to keep ${entry.ticker}. Please try again.`);
+  }
 }
 
 export function useWatchlistModal(setEntries) {
@@ -58,5 +76,7 @@ export function useWatchlistModal(setEntries) {
     }, NAVIGATE_DELAY_MS);
   };
 
-  return { modal, setModal, removing, handleAdded, handleUpdated, handleDeleted, handleAddToPosition };
+  const handleKeep = (entry) => keepWatchlistEntry(entry, handleUpdated);
+
+  return { modal, setModal, removing, handleAdded, handleUpdated, handleDeleted, handleAddToPosition, handleKeep };
 }

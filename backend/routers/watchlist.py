@@ -52,6 +52,10 @@ class UpdateWatchlistRequest(BaseModel):
     target_entry_price: Optional[float] = None
     initial_stop_price: Optional[float] = None
     current_stop_price: Optional[float] = None
+    # ST-01 (EPIC-01, v7.9, BLG-FEAT-66): "Keep" action -- resets the
+    # staleness clock. Treated as a reset trigger (any non-null value),
+    # not a client-supplied timestamp -- see watchlist_service.update_watchlist_entry.
+    added_at: Optional[bool] = None
 
 
 class BulkTagRequest(BaseModel):
@@ -171,7 +175,9 @@ def bulk_delete_watchlist_endpoint(request: BulkIdsRequest):
 @router.patch("/watchlist/{entry_id}")
 def update_watchlist_endpoint(entry_id: str, request: UpdateWatchlistRequest):
     """
-    Update price fields on a watchlist entry. ticker and market are read-only.
+    Update price fields on a watchlist entry, or reset its staleness clock
+    via `added_at: true` (the "Keep" action, ST-01 EPIC-01 v7.9). ticker
+    and market are read-only.
     Contract: watchlist_endpoints.md §PATCH /watchlist/{id}
     """
     try:

@@ -14,7 +14,7 @@ Coverage:
 
 import sys
 import unittest
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from unittest.mock import MagicMock, patch, call
 from contextlib import contextmanager
@@ -288,6 +288,122 @@ class TestDeleteWatchlistEntry(unittest.TestCase):
         with patch.object(watchlist_service, "get_db", ctx):
             with self.assertRaises(LookupError):
                 watchlist_service.delete_watchlist_entry("portfolio-1", "missing-id")
+
+
+# ---------------------------------------------------------------------------
+# Staleness Indicator (ST-01, EPIC-01, v7.9, BLG-FEAT-66)
+# ---------------------------------------------------------------------------
+
+class TestComputeDaysOnWatchlist(unittest.TestCase):
+
+    def test_returns_zero_for_none_added_at(self):
+        """Legacy rows with no added_at are treated as added today (ux_spec.md §5)."""
+        self.assertEqual(watchlist_service._compute_days_on_watchlist(None), 0)
+
+    def test_computes_days_since_added(self):
+        with patch.object(watchlist_service, "date") as mock_date:
+            mock_date.today.return_value = date(2026, 7, 28)
+            added_at = datetime(2026, 7, 1, 10, 0, 0)
+            self.assertEqual(watchlist_service._compute_days_on_watchlist(added_at), 27)
+
+    def test_zero_days_for_added_today(self):
+        with patch.object(watchlist_service, "date") as mock_date:
+            mock_date.today.return_value = date(2026, 7, 28)
+            added_at = datetime(2026, 7, 28, 9, 0, 0)
+            self.assertEqual(watchlist_service._compute_days_on_watchlist(added_at), 0)
+
+
+class TestRowToDictStaleness(unittest.TestCase):
+
+    def test_not_stale_below_threshold(self):
+        with patch.object(watchlist_service, "date") as mock_date:
+            mock_date.today.return_value = date(2026, 7, 28)
+            row = _make_row()
+            row["created_at"] = datetime(2026, 7, 10, 10, 0, 0)  # 18 days
+            result = watchlist_service._row_to_dict(row)
+        self.assertEqual(result["days_on_watchlist"], 18)
+        self.assertFalse(result["is_stale"])
+        self.assertEqual(result["added_at"], row["created_at"].isoformat())
+
+    def test_stale_at_exactly_threshold(self):
+        with patch.object(watchlist_service, "date") as mock_date:
+            mock_date.today.return_value = date(2026, 7, 28)
+            row = _make_row()
+            row["created_at"] = datetime(2026, 6, 28, 10, 0, 0)  # exactly 30 days
+            result = watchlist_service._row_to_dict(row)
+        self.assertEqual(result["days_on_watchlist"], 30)
+        self.assertTrue(result["is_stale"])
+
+    def test_stale_past_threshold(self):
+        with patch.object(watchlist_service, "date") as mock_date:
+            mock_date.today.return_value = date(2026, 7, 28)
+            row = _make_row()
+            row["created_at"] = datetime(2026, 5, 1, 10, 0, 0)  # well past 30 days
+            result = watchlist_service._row_to_dict(row)
+        self.assertTrue(result["is_stale"])
+
+    def test_legacy_row_with_no_added_at_is_not_stale(self):
+        row = _make_row()
+        row["created_at"] = None
+        result = watchlist_service._row_to_dict(row)
+        self.assertEqual(result["days_on_watchlist"], 0)
+        self.assertFalse(result["is_stale"])
+        self.assertIsNone(result["added_at"])
+
+
+class TestKeepAction(unittest.TestCase):
+    """update_watchlist_entry's added_at reset trigger (the "Keep" action)."""
+
+    def test_added_at_true_resets_created_at_server_side(self):
+        ctx, cur = _make_db()
+        cur.fetchone.return_value = {"id": "entry-1"}
+        updated_row = _make_row(entry_id="entry-1")
+
+        with patch.object(watchlist_service, "get_db", ctx), \
+             patch.object(watchlist_service, "get_watchlist", return_value=[updated_row]):
+            watchlist_service.update_watchlist_entry(
+                "portfolio-1", "entry-1",
+                {"target_entry_price": None, "initial_stop_price": None, "current_stop_price": None, "added_at": True}
+            )
+
+        executed_sql = cur.execute.call_args[0][0]
+        self.assertIn("created_at = CURRENT_TIMESTAMP", executed_sql)
+
+    def test_empty_dict_still_raises_value_error(self):
+        """Confirms adding added_at as an option didn't relax the
+        "no updatable fields at all" guard for a genuinely empty dict."""
+        with self.assertRaises(ValueError):
+            watchlist_service.update_watchlist_entry("portfolio-1", "entry-1", {})
+
+    def test_added_at_none_does_not_add_reset_clause(self):
+        ctx, cur = _make_db()
+        cur.fetchone.return_value = {"id": "entry-1"}
+        updated_row = _make_row(entry_id="entry-1", target=190.0)
+
+        with patch.object(watchlist_service, "get_db", ctx), \
+             patch.object(watchlist_service, "get_watchlist", return_value=[updated_row]):
+            watchlist_service.update_watchlist_entry(
+                "portfolio-1", "entry-1",
+                {"target_entry_price": 190.0, "initial_stop_price": None, "current_stop_price": None, "added_at": None}
+            )
+
+        executed_sql = cur.execute.call_args[0][0]
+        self.assertNotIn("created_at = CURRENT_TIMESTAMP", executed_sql)
+
+    def test_keep_alone_is_a_valid_update_with_no_price_fields(self):
+        """Keep (added_at only, no price change) must not raise
+        "no updatable fields" -- added_at counts as an updatable field."""
+        ctx, cur = _make_db()
+        cur.fetchone.return_value = {"id": "entry-1"}
+        updated_row = _make_row(entry_id="entry-1")
+
+        with patch.object(watchlist_service, "get_db", ctx), \
+             patch.object(watchlist_service, "get_watchlist", return_value=[updated_row]):
+            result = watchlist_service.update_watchlist_entry(
+                "portfolio-1", "entry-1",
+                {"target_entry_price": None, "initial_stop_price": None, "current_stop_price": None, "added_at": True}
+            )
+        self.assertEqual(result["id"], "entry-1")
 
 
 if __name__ == "__main__":

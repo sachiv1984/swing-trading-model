@@ -1,7 +1,7 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.5
+**Version:** 0.6
 **Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-18__release-v2.1/watchlist/ux_spec.md
@@ -61,8 +61,7 @@ One row per watchlist entry. Default sort: entry signal status (Active first, th
 | Ticker | `ticker` | Uppercase. Clicking the ticker opens the edit modal. |
 | Market | `market` | Badge pill: "UK" / "US" |
 | Entry Signal | `signal_status` | See Signal Status Values below. |
-| Research | `has_research` | *(v3.3 — BLG-FE-29)* Binary indicator — see §Research Status Indicator |
-| Added | `added_at` | *(v7.9 — ST-01, BLG-FEAT-66)* Days on watchlist — see §Staleness Indicator |
+| Added | `added_at` | *(v7.9 — ST-01, BLG-FEAT-66)* Days on watchlist — see §Staleness Indicator. **Placement correction (v0.6):** the ux_spec.md design placed this "after Research, before Target Entry", but the shipped table's actual column order has Research much later (after Earnings, before News) — that description assumed an order the implementation doesn't have. Placed here instead (after Entry Signal, before Target Entry) to honour the design's own stated rationale: signal/status metadata columns first, then price fields — this is where that metadata group actually ends in the shipped table. |
 | Target Entry | `target_entry_price` | Native currency (GBP for UK, USD for US). Display `—` if null. |
 | Stop (Initial) | `initial_stop_price` | Native currency. Display `—` if null. |
 | Stop (Current) | `current_stop_price` | Native currency. Display `—` if null. |
@@ -196,7 +195,7 @@ On removal (via Remove or Add to Position): row slides out or fades out before t
 
 **Column label:** "Added" — placed after "Research", before "Target Entry".
 
-**Data source:** `added_at` (existing field, captured at add time — no backend schema change). `days_on_watchlist` is server-computed, not client-derived.
+**Data source:** `added_at` — an API-level alias for the existing `created_at` column (captured at add time; no `data_model.md` change — the "no backend schema change" premise holds via exposing `created_at` under this name at the serialisation boundary, rather than a literal new `added_at` column). `days_on_watchlist` is server-computed, not client-derived.
 
 **Staleness threshold:** 30 days (default, server-configurable constant, not user-editable this cycle).
 
@@ -274,6 +273,7 @@ User-initiated batch of the same manual mutations already available one row at a
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6 | 2026-07-27 | ST-01 (BLG-FEAT-66, EPIC-01, v7.9) implementation: corrected the §Watchlist Table "Added" column placement (design said "after Research, before Target Entry"; the shipped table's actual column order has Research much later — placed after Entry Signal instead, honouring the design's stated signal/status-metadata-first rationale). `added_at` is an API-level alias for the existing `created_at` column, not a new column — no `data_model.md` change. `PATCH /watchlist/{id}` `added_at` is a server-authoritative reset trigger, never a client-supplied timestamp. Contract: `watchlist_endpoints.md` v1.2. |
 | 0.5 | 2026-07-27 | v7.9 design gate — added §Staleness Indicator (ST-01, BLG-FEAT-66): new "Added" column showing days-on-watchlist (`added_at`, existing field); staleness threshold 30 days (fixed, server-side); stale rows get amber "{N}d, no action" text + clock icon and a new "Keep" action (resets clock, `PATCH /watchlist/{id}`); no automatic removal — Keep/Remove remain the only paths off the list. Design source: watchlist-staleness-review/ux_spec.md. Approved: Product Owner 2026-07-27. Design gate: 2026-07-27__release-v7.9. Head of Specs Team confirmed. |
 | 0.4 | 2026-07-17 | v7.5 design gate — added §Bulk Actions (ST-03, BLG-FE-117): row checkboxes, bulk-action toolbar (renders only when 1+ selected), Bulk Tag (reuses existing Tag Editor), Bulk Remove (destructive, confirmation required), per-row partial-failure feedback. New `POST /positions/bulk-tag` and `DELETE /watchlist/bulk` endpoints. Design source: bulk-actions-toolbar/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
 | 0.3 | 2026-05-09 | v3.3 design gate — added Research Status Indicator section (BLG-FE-29: binary has_research icon per row); added "Research" column to table. Design source: trade-plan-quick-wins/ux_spec.md §F. Approved: Product Owner 2026-05-09. |
