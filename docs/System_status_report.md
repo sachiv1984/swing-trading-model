@@ -1,9 +1,45 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.15
-**Last Updated:** 2026-07-27 (delivery verification 2026-07-24__release-v7.8 — status line updated to Verified)
+**Version:** 4.16
+**Last Updated:** 2026-07-28 (sprint close 2026-07-27__release-v7.9)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-07-27__release-v7.9
+**Date:** 2026-07-28
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Watchlist staleness tracking — new "stale" indicator plus Keep/Remove review action on watchlist entries | `docs/specs/frontend/pages/watchlist.md#Staleness Indicator`; `docs/specs/api_contracts/watchlist_endpoints.md#PATCH /watchlist/{entry_id}` | None |
+| EPIC-02 | Historical sector/regime exposure trend chart added to the Risk Dashboard — new `GET /portfolio/sector-regime-trend` | `docs/specs/frontend/pages/risk_dashboard.md#8b. Component: Sector & Regime Exposure Trend`; `docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/sector-regime-trend` | None |
+| EPIC-03 | Canonical `trade_plan`↔`position` FK linkage schema documented in `data_model.md` | `docs/specs/data_model.md#Trade Plan to Position Linkage` | None |
+| EPIC-04 | Cost-basis method disclosure/reconciliation column added to the Monthly P&L CSV export | `backend/services/reports_service.py` | None |
+| EPIC-05 | "Why is my stop moving" explainer tooltip added to the trailing-stop column on position/trade views | `docs/specs/frontend/pages/positions.md#Trailing Stop Column` | None |
+| EPIC-06 | Audit-log entries for manual position edits (who, when, before/after) | `backend/database.py`; `backend/services/position_service.py`; `docs/specs/data_model.md#Migration from v2.16 to v2.17` | None |
+| EPIC-07 | Permanent data-integrity smoke test added as a standing gate on the nightly backtest CI job | `scripts/backtest_data_integrity_smoke_test.py`; `.github/workflows/backtest.yml` | None |
+| EPIC-08 | Credential-persistence gap for SI-02 gate re-checks diagnosed and resolved — register entry #6 (`RENDER_API_KEY`) confirmed already provisioned; live gate re-check performed directly against production | `docs/security/api_key_security_register.md#6. Application X-API-Key` | None |
+| EPIC-09 | Shared cross-EPIC smoke-test tag/suite defined for regression coverage on EPIC-branch merges | `tests/e2e/smoke-critical-paths.spec.js` | None |
+| EPIC-10 | Pre-commit hook blocking commits that add new routes without a corresponding `backend/routers/test.py` registration | `scripts/check_router_test_registration.py`; `.githooks/pre-commit` | None |
+| EPIC-11 | Chart-specific WCAG contrast checklist item added to `design_system.md` Accessibility section | `docs/specs/frontend/design_system.md` | None |
+| EPIC-12 | Per-EPIC cloud infrastructure spend summary — documented that Render's Blueprint spec has no native tagging mechanism; git-history-derived attribution table substituted | `docs/ops/cloud_infra_spend_by_epic.md` | None |
+| EPIC-13 | Dark-mode acceptance-criteria checklist item added to the Base44 prompt template library | `docs/specs/frontend/base44_prompt_template_library.md#4. Template: Dual-Theme Verification Call-Out` | None |
+| EPIC-14 | Displacement debt register designed — rolling log of named displacement candidates and their disposition (physical placement tracked via ESC-EXEC-20260727-02, outside this routine's write scope) | `claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-14.md#Displacement Debt Register — Design` | None |
+| EPIC-15 | Refresh cadence defined for Grid View visual-regression baselines | `docs/testing/visual_regression_baseline_cadence.md` | None |
+
+### Capabilities deferred or returned
+
+None — all 15 stories (ST-01 through ST-15) delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: `qa_evidence_EPIC-01.md` through `qa_evidence_EPIC-15.md` (all 15 present, all sign-off blocks non-blank)
+- Deviations filed: None
+- Test scenarios referenced: `tests/test_position_audit_log.py`; `scripts/backtest_data_integrity_smoke_test.py`; `tests/e2e/smoke-critical-paths.spec.js`; `scripts/check_router_test_registration.py`; `tests/e2e/system-status.spec.js` (SC-SS-01b, 102-endpoint baseline)
 
 ---
 
