@@ -62,6 +62,8 @@ This seed content demonstrates the register's value immediately, and shows why t
 
 This mirrors the same resolution already applied twice this cycle (`EPIC-03` AC-03) and once historically (`BLG-BE-46` AC-04) for artefacts that belong in a write-scope-restricted folder.
 
+**Tracked as `ESC-EXEC-20260727-02`** (`execution_escalations.md`, non-blocking) per agent-mediated QA & Testing Owner review of PR #1101 — raised so the two-part handoff (file creation + `roadmap_prompt.md` STEP 8 edit, which must land together) doesn't fall through once this PR merges and this cycle's artefacts stop being actively read.
+
 ---
 
 ## BLG-GOV-19 Autonomous Class Sign-Off Block
