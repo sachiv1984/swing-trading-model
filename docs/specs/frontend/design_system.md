@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.5
-**Last Updated:** 2026-07-26
+**Version:** 1.6
+**Last Updated:** 2026-07-27
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.6 (ST-11, EPIC-11, v7.9, BLG-FE-130):** added a chart colour palette contrast checklist to §Accessibility — the existing WCAG contrast standard (v1.4) covered text and focus indicators but not chart data-ink. Documentation addendum only, no shipped UI change.
 **v1.5 (ST-01, EPIC-01, v7.8, BLG-FE-128):** added optional `errorHeading`/`errorBody` props to `DataState` (§Shared UI Components → Cards → Data States) so a context needing a more specific error message (e.g. the What's New panel's "Unable to load release notes") can override the default "Something went wrong" copy without duplicating the shared error UI. Both default to the original strings — existing call sites unaffected. Design source: `docs/design/2026-07-24__release-v7.8/whats-new-panel/ux_spec.md`.
 **v1.4 (ST-03 + ST-04, EPIC-03 + EPIC-04, v7.8, BLG-FE-127 + BLG-FE-125):** added the Focus Indicator contrast standard (§Hover & Focus States — ≥3:1 WCAG 1.4.11 threshold, previously unmeasured) for the EPIC-03 notification accessibility audit; and fixed scope/method for the EPIC-04 consolidated dark-mode contrast audit across all Base44-generated pages (§Accessibility). Both are audit-standard-setting entries — the audits themselves run during v7.8 sprint execution, findings recorded in each story's QA evidence. Design sources: `docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md`, `docs/design/2026-07-24__release-v7.8/base44-dark-mode-contrast-audit/decision_record.md`.
 **v1.3 (ST-04, EPIC-04, v7.7, BLG-FE-120):** added the `StandingAlert` / `StandingAlertStack` shared primitive (§Shared UI Components → Standing Alert) — a manually-dismissed, in-flow banner distinct from transient `sonner` toasts, for conditions requiring sustained user awareness until acknowledged. Enabler for `BLG-FE-116`'s future live custom-price-alert surfacing (integration point identified, not wired this cycle). Design source: `docs/design/2026-07-21__release-v7.7/standing-alert-component/ux_spec.md`.
@@ -243,6 +244,11 @@ The application adheres to core accessibility principles:
 - **Consolidated dark-mode contrast audit (v1.4, ST-04, EPIC-04, v7.8, BLG-FE-125):** a systematic per-page dark-theme contrast pass across all Base44-generated pages runs this cycle, checking for the same dark-only/light-only token pairing defect class previously found twice (`BLG-FE-87/88`, `BLG-FE-95` — see §Card Hierarchy note below). Findings filed as a single consolidated backlog item, or fixed directly if trivial. Standard, scope and method fixed in `docs/design/2026-07-24__release-v7.8/base44-dark-mode-contrast-audit/decision_record.md`; results recorded in ST-04 QA evidence.
 - Focus trapping and restoration in modals  
 - ARIA labels where needed (tables, buttons, inputs)  
+- **Chart colour palette contrast checklist (v1.6, ST-11, EPIC-11, v7.9, BLG-FE-130):** the WCAG contrast standard above covers text and focus indicators but not chart data-ink. For any new or modified chart (line, bar, area, heatmap, or other data-encoding colour use), confirm all of the following before shipping:
+  - Each series/segment colour meets WCAG AA non-text contrast (≥3:1) against its immediate background, checked independently in both light mode and dark mode — a palette tuned for one theme does not automatically pass in the other (the same defect class as `BLG-FE-87/88/95/125`, but for chart fills/strokes rather than text).
+  - No two adjacent series in the same chart rely on hue alone to be distinguished — pair colour with a second channel (position, pattern/dash style, or a direct label) so the chart remains legible for colour-vision-deficient users.
+  - Any colour that also carries a semantic meaning elsewhere in the app (e.g. red = risk-off / loss, green = risk-on / profit) is used consistently in charts — do not introduce a chart-local palette that contradicts an existing status-colour convention.
+  - Record the check (pass, or findings + fix) in the story's QA evidence log — the same location as other observable-AC staging/Playwright evidence.
 
 ---
 
