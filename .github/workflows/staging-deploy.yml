@@ -23,6 +23,12 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'requirements.txt'
+      # ST-01 (v7.8/v7.9 EPIC-01): the "What's New" panel is parsed server-side
+      # from this file at request time (backend/services/changelog_service.py),
+      # so a docs-only changelog update must still trigger a redeploy or the
+      # live panel serves a stale version until the next code-change deploy.
+      - 'docs/product/changelog.md'
+  workflow_dispatch: {}
 
 jobs:
   deploy-staging:
