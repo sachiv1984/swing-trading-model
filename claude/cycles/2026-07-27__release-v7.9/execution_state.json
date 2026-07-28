@@ -215,7 +215,7 @@
             "date": "2026-07-27",
             "notes": "Both approved independently; verified tooltip copy accuracy and placement correction against actual code."
           },
-          "notes": "Pre-existing v6.2 spec/implementation gap found (no separate Trail Stop column/label exists) - documented correction, not fixed (out of scope). This is the final (15th) EPIC of the sprint."
+          "notes": "Pre-existing v6.2 spec/implementation gap found (no separate Trail Stop column/label exists) - documented correction, not fixed (out of scope). This is the final (15th) EPIC of the sprint. Post-push CI fix (2026-07-28): added missing @radix-ui/react-tooltip dependency (package.json + package-lock.json) -- a pre-existing repo gap (ui/tooltip.js imported it but it was never installed) that this story was the first to actually exercise, which broke the whole Playwright suite's webpack compile, not just this story's own tests."
         }
       }
     },
@@ -587,7 +587,7 @@
             "date": "2026-07-27",
             "notes": "First pass Blocked on a factual error in the CHART-IX seed row (corrected); re-reviewed and Approved."
           },
-          "notes": "AC-01 satisfied via fully-specified design in qa_evidence_EPIC-14.md; physical file creation in claude/roadmap/ handed off (outside write scope), same pattern as EPIC-03 AC-03 and BLG-BE-46 AC-04."
+          "notes": "AC-01 satisfied via fully-specified design in qa_evidence_EPIC-14.md; physical file creation in claude/roadmap/ handed off (outside write scope), same pattern as EPIC-03 AC-03 and BLG-BE-46 AC-04. Tracked as ESC-EXEC-20260727-02 (execution_escalations.md) per agent-mediated QA & Testing Owner review of PR #1101 -- ensures the file-creation + roadmap_prompt.md edit handoff lands together."
         }
       }
     },
@@ -655,7 +655,8 @@
     "EPIC-05/ST-05"
   ],
   "open_escalations": [
-    "ESC-EXEC-20260727-01"
+    "ESC-EXEC-20260727-01",
+    "ESC-EXEC-20260727-02"
   ],
   "merge_gate": {
     "epics_merged": [],
