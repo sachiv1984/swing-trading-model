@@ -30,6 +30,7 @@ import ExitModal from "../components/positions/ExitModal";
 import JournalView from "../components/positions/JournalView";
 import TradeReflectionModal from "../components/trades/TradeReflectionModal";
 import ComplianceRecheckModal from "../components/positions/ComplianceRecheckModal";
+import TrailingStopExplainerIcon from "../components/positions/TrailingStopExplainerIcon";
 import {
   DataTable,
   TableHeader,
@@ -855,7 +856,12 @@ export default function Positions() {
             <TableHead>Ticker</TableHead>
             <TableHead>Entry Price</TableHead>
             <TableHead>Current Price</TableHead>
-            <TableHead title="Initial stop (entry) / Current trailing stop (computed)">Stop</TableHead>
+            <TableHead title="Initial stop (entry) / Current trailing stop (computed)">
+              <span className="inline-flex items-center gap-1">
+                Stop
+                <TrailingStopExplainerIcon />
+              </span>
+            </TableHead>
             <TableHead>Shares</TableHead>
             <TableHead className="text-right">P&amp;L (GBP)</TableHead>
             <TableHead className="text-right">P&amp;L %</TableHead>
