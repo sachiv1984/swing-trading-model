@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Pre-commit hook — ST-10 (EPIC-10, v7.9, BLG-QA-125)
+#
+# Blocks a commit that adds a new backend route without a matching
+# backend/routers/test.py registration. One-time setup per clone:
+#   git config core.hooksPath .githooks
+#
+# No pre-commit framework dependency required — this repo has no other
+# pre-commit hooks yet, so a plain tracked hooks directory is the
+# lightest-weight "or equivalent" per this story's AC-01.
+set -e
+
+python3 scripts/check_router_test_registration.py
