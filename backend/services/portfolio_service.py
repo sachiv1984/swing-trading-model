@@ -19,10 +19,11 @@ from database import (
     get_positions,
     create_portfolio_snapshot,
     get_portfolio_snapshots,
-    get_total_deposits_withdrawals
+    get_total_deposits_withdrawals,
+    create_sector_regime_snapshot,
 )
 
-from utils.pricing import get_current_price, get_live_fx_rate
+from utils.pricing import get_current_price, get_live_fx_rate, check_market_regime
 from services.grace_service import compute_grace_days_remaining
 from utils.formatting import decimal_to_float
 
@@ -312,14 +313,46 @@ def create_daily_snapshot() -> Dict:
     }
     
     snapshot = create_portfolio_snapshot(snapshot_data)
-    
+
+    _snapshot_sector_regime(portfolio_id, snapshot_data['snapshot_date'], positions)
+
     print(f"✓ Snapshot created:")
     print(f"   Date: {snapshot_data['snapshot_date']}")
     print(f"   Total Value: £{snapshot_data['total_value']:,.2f}")
     print(f"   P&L: £{snapshot_data['total_pnl']:+,.2f}")
     print(f"   Positions: {position_count}\n")
-    
+
     return decimal_to_float(snapshot)
+
+
+def _snapshot_sector_regime(portfolio_id: str, snapshot_date, positions: list) -> None:
+    """Best-effort daily capture for the sector/regime exposure trend (ST-02,
+    EPIC-02, v7.9, BLG-FEAT-67). Failure here must never break the main
+    portfolio snapshot it's called from — same fail-open convention as
+    create_position_audit_log_entry / create_claude_audit_entry.
+
+    Layering note: reuses compute_sector_exposure/_get_ticker_sector_map from
+    routers.portfolio_risk (pure functions, no FastAPI dependency) rather than
+    duplicating the sector-computation logic a second time.
+    """
+    try:
+        from routers.portfolio_risk import compute_sector_exposure, _get_ticker_sector_map
+
+        with get_db() as conn:
+            ticker_sector_map = _get_ticker_sector_map(conn)
+        live_fx_rate = get_live_fx_rate()
+        exposure = compute_sector_exposure(positions, ticker_sector_map, live_fx_rate)
+
+        regime = check_market_regime()
+        create_sector_regime_snapshot(
+            portfolio_id,
+            snapshot_date,
+            exposure["sectors"],
+            regime.get("spy_risk_on"),
+            regime.get("ftse_risk_on"),
+        )
+    except Exception as exc:
+        print(f"  Warning: sector/regime snapshot failed ({exc}) — main portfolio snapshot unaffected")
 
 
 def get_performance_history(days: int = 30) -> List[Dict]:

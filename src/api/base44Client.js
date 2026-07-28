@@ -421,6 +421,8 @@ export const api = {
     sectorWeights: async () => doFetch('/portfolio/sector-weights'),
     // ST-07 (v6.1): Trade gate proximity indicator
     gateMetrics: async () => doFetch('/portfolio/gate-metrics'),
+    // ST-02 (EPIC-02, v7.9, BLG-FEAT-67): sector/regime exposure trend
+    sectorRegimeTrend: async (weeks = 12) => doFetch(`/portfolio/sector-regime-trend?weeks=${weeks}`),
   },
 
   positions: {

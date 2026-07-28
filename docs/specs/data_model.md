@@ -3,7 +3,7 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.17
+**Version:** 2.18
 **Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1515,6 +1515,52 @@ Reversible: `DROP TABLE IF EXISTS position_audit_log;`
 
 ---
 
-**Document Version:** 2.17
+### Migration from v2.17 to v2.18
+
+ST-02 (BLG-FEAT-67, EPIC-02, v7.9) — historical sector/regime exposure trend. **Data-dependency correction (Metrics Definitions & Analytics Owner amendment, agent-mediated, 2026-07-27):** the backlog item and its UX spec both stated this feature was "purely a historical view of data already captured" requiring "no new data collection." Investigation found this false — neither `GET /portfolio/sector-weights` nor `GET /market/status` ever persisted their live-computed figures anywhere; `portfolio_history` (§5 above) has no per-sector or per-regime granularity. This table introduces new data collection, **going forward only** — no retroactive backfill was attempted (there is no reliable way to reconstruct past sector allocations or regime status from current live-computed data without fabricating history).
+
+```sql
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS sector_regime_history (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+    snapshot_date DATE NOT NULL,
+    sectors JSONB NOT NULL DEFAULT '[]',
+    regime_us BOOLEAN,
+    regime_uk BOOLEAN,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (portfolio_id, snapshot_date)
+);
+
+CREATE INDEX IF NOT EXISTS idx_sector_regime_history_portfolio_date
+    ON sector_regime_history (portfolio_id, snapshot_date DESC);
+
+COMMIT;
+```
+
+### Field Reference
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| `id` | UUID | NO | Primary key |
+| `portfolio_id` | UUID | NO | FK to `portfolios` |
+| `snapshot_date` | DATE | NO | Date this row was captured. One row per portfolio per day (upsert, same idempotency pattern as `portfolio_history`) |
+| `sectors` | JSONB | NO | Array of `{sector_name, position_count, exposure_pct}` — same shape as `GET /portfolio/sector-weights`'s live response, captured at snapshot time |
+| `regime_us` | BOOLEAN | YES | SPY-based US regime status that day (`true` = risk-on), from `utils.pricing.check_market_regime()` |
+| `regime_uk` | BOOLEAN | YES | FTSE-based UK regime status that day (`true` = risk-on), from the same function |
+| `created_at` | TIMESTAMP | YES | Row creation/update timestamp |
+
+Populated by `portfolio_service.create_daily_snapshot()` (the existing daily job, triggered by `POST /portfolio/snapshot` — same nightly cadence as `portfolio_history`), best-effort/fail-open — a capture failure here never blocks the main portfolio snapshot.
+
+Reversible: `DROP TABLE IF EXISTS sector_regime_history;`
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-07-27 (agent-mediated; single new table, no existing schema touched, no backfill possible or attempted — see data-dependency correction above)
+- Metrics Definitions & Analytics Owner: Accepted — 2026-07-27 (agent-mediated; confirmed going-forward-only capture is the correct approach over fabricating retroactive history — see full decision recorded in `execution_state.json` for this story)
+
+---
+
+**Document Version:** 2.18
 **Maintained By:** Data Model & Domain Schema Owner
 **Last Review:** 2026-07-27

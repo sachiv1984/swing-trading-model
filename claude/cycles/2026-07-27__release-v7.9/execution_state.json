@@ -70,7 +70,7 @@
           "assigned_to": "engine",
           "github_issue": 1084,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-02",
-          "commit_sha": "05d3d14f",
+          "commit_sha": "fe7bdbf1",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -91,7 +91,7 @@
             "date": "2026-07-27",
             "notes": "Scope decision (going-forward-only capture) confirmed; first implementation review Blocked on incomplete wording-correction propagation, fixed, re-verified and Approved."
           },
-          "notes": "Major data-dependency premise correction - no historical sector/regime data ever existed. New sector_regime_history table, going-forward capture only. insufficient_history: true is the correct day-one state. BLG-FEAT-67 backlog text still uncorrected (out of write scope) - flag for groom-backlog."
+          "notes": "Major data-dependency premise correction - no historical sector/regime data ever existed. New sector_regime_history table, going-forward capture only. insufficient_history: true is the correct day-one state. BLG-FEAT-67 backlog text still uncorrected (out of write scope) - flag for groom-backlog. Post-review remediation (2026-07-27): fixed error/insufficient-history conflation bug in the endpoint (now returns status: error on genuine failure, matching router convention); Product Owner (agent-mediated) explicitly accepted the 8-week value-delay window as a product decision."
         }
       }
     },
