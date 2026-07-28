@@ -1,9 +1,9 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-07-09
-**Cycle:** 2026-07-08__release-v6.8 (ST-04 — BLG-OPS-99; ST-17 — BLG-OPS-71, entry #7 added)
+**Version:** 1.5
+**Last Updated:** 2026-07-27
+**Cycle:** 2026-07-08__release-v6.8 (ST-04 — BLG-OPS-99; ST-17 — BLG-OPS-71, entry #7 added); 2026-07-27__release-v7.9 (ST-08 — BLG-OPS-121, entry #6 environment-persistence gap noted)
 
 ---
 
@@ -120,7 +120,7 @@ For rotation procedures, see: `docs/ops/api_key_rotation_policy.md`
 | Rotation procedure | Generate new value → update `API_KEY` in Render production service env vars → update `RENDER_API_KEY` in `~/.api_keys` → verify with `curl -H "X-API-Key: $RENDER_API_KEY" https://trading-assistant-api-c0f9.onrender.com/health` |
 | Last rotation date | Not tracked prior to this register entry (key already provisioned and in use as of 2026-07-06) |
 | Next rotation due | 2026-07-09 + 12 months |
-| Notes | Confirmed working 2026-07-09 (ST-04, BLG-OPS-99, v6.8): `curl -H "X-API-Key: $RENDER_API_KEY" .../signals` → 200, used to directly confirm the SI-02 gate condition (`GET /trades` → `total_trades: 20`; `GET /trade-plans` → 11 plans, 0 with `position_id` set, pre-ST-01-fix baseline) rather than relying on self-report. See `docs/security/signal_anomaly_review_2026-07-09.md` for a second example use (ST-03). |
+| Notes | Confirmed working 2026-07-09 (ST-04, BLG-OPS-99, v6.8): `curl -H "X-API-Key: $RENDER_API_KEY" .../signals` → 200, used to directly confirm the SI-02 gate condition (`GET /trades` → `total_trades: 20`; `GET /trade-plans` → 11 plans, 0 with `position_id` set, pre-ST-01-fix baseline) rather than relying on self-report. See `docs/security/signal_anomaly_review_2026-07-09.md` for a second example use (ST-03). **Environment-persistence gap (v1.5, ST-08, EPIC-08, v7.9, BLG-OPS-121):** the key itself remains provisioned and valid in Render, but its local `~/.api_keys` copy does not persist across the container/session each governed-routine invocation runs in — confirmed absent in the v7.9 sprint execution session, consistent with every recent scheduled roadmap rebalance's "credentials absent" finding (see `current_roadmap.md` rebalance history). This is an environment-persistence gap, not a missing-credential gap; resolving it requires a human to make the value available in whichever environment governed routines execute in (durable env var, secret store, or a session-start step) — tracked as `ESC-EXEC-20260727-01` in `claude/cycles/2026-07-27__release-v7.9/execution_escalations.md`. |
 
 ---
 
