@@ -1,11 +1,294 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-28 (groom backlog post-ship closure 2026-07-27__release-v7.9 — 15 items archived: BLG-FEAT-66, BLG-FEAT-67, BLG-SPEC-105, BLG-FEAT-85, BLG-FEAT-87, BLG-BE-73, BLG-BE-74, BLG-OPS-121, BLG-QA-124, BLG-QA-125, BLG-FE-130, BLG-OPS-120, BLG-FE-129, BLG-GOV-258, BLG-QA-123; ephemeral Release Slice v7.9 section removed); prior — 2026-07-27 (session — duplicate consolidation, ad hoc user-directed backlog cleanup: 13 duplicate items retired as ❌ Killed — duplicate, merged into 5 survivor items (BLG-OPS-25, BLG-BE-47, BLG-FEAT-30, BLG-QA-75, BLG-SEC-15) — see `backlog.md` header for full detail); prior — 2026-07-27 (groom backlog post-ship closure 2026-07-24__release-v7.8 — 12 items archived: BLG-FE-128, BLG-FEAT-84, BLG-FE-127, BLG-FE-125, BLG-FEAT-81, BLG-FEAT-82, BLG-SEC-20, BLG-SEC-21, BLG-BE-71, BLG-QA-117, BLG-QA-119, BLG-OPS-117; ephemeral Release Slice v7.8 section removed); prior — 2026-07-24 (groom backlog post-ship closure 2026-07-21__release-v7.7 — 11 items archived: BLG-FEAT-75, BLG-FE-114, BLG-FE-113, BLG-FE-120, BLG-FEAT-80, BLG-OPS-108, BLG-GOV-28, BLG-QA-104, BLG-BE-63, BLG-OPS-110, BLG-QA-102; ephemeral Release Slice v7.7 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-20__release-v7.6 — 8 items archived: BLG-FE-119, BLG-QA-112, BLG-FEAT-79, BLG-BE-65, BLG-QA-114, BLG-BE-62, BLG-FEAT-77, BLG-QA-69; ephemeral Release Slice v7.6 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
+**Last Updated:** 2026-07-28 (session — duplicate consolidation, ad hoc user-directed backlog cleanup: 13 duplicate items retired as ❌ Killed — duplicate, merged into 9 survivor items (BLG-QA-93, BLG-QA-42, BLG-QA-97, BLG-QA-81, BLG-GOV-144, BLG-GOV-178, BLG-GOV-95, BLG-GOV-221, BLG-GOV-90) — see `backlog.md` header for full detail); prior — 2026-07-28 (groom backlog post-ship closure 2026-07-27__release-v7.9 — 15 items archived: BLG-FEAT-66, BLG-FEAT-67, BLG-SPEC-105, BLG-FEAT-85, BLG-FEAT-87, BLG-BE-73, BLG-BE-74, BLG-OPS-121, BLG-QA-124, BLG-QA-125, BLG-FE-130, BLG-OPS-120, BLG-FE-129, BLG-GOV-258, BLG-QA-123; ephemeral Release Slice v7.9 section removed); prior — 2026-07-27 (session — duplicate consolidation, ad hoc user-directed backlog cleanup: 13 duplicate items retired as ❌ Killed — duplicate, merged into 5 survivor items (BLG-OPS-25, BLG-BE-47, BLG-FEAT-30, BLG-QA-75, BLG-SEC-15) — see `backlog.md` header for full detail); prior — 2026-07-27 (groom backlog post-ship closure 2026-07-24__release-v7.8 — 12 items archived: BLG-FE-128, BLG-FEAT-84, BLG-FE-127, BLG-FE-125, BLG-FEAT-81, BLG-FEAT-82, BLG-SEC-20, BLG-SEC-21, BLG-BE-71, BLG-QA-117, BLG-QA-119, BLG-OPS-117; ephemeral Release Slice v7.8 section removed); prior — 2026-07-24 (groom backlog post-ship closure 2026-07-21__release-v7.7 — 11 items archived: BLG-FEAT-75, BLG-FE-114, BLG-FE-113, BLG-FE-120, BLG-FEAT-80, BLG-OPS-108, BLG-GOV-28, BLG-QA-104, BLG-BE-63, BLG-OPS-110, BLG-QA-102; ephemeral Release Slice v7.7 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-20__release-v7.6 — 8 items archived: BLG-FE-119, BLG-QA-112, BLG-FEAT-79, BLG-BE-65, BLG-QA-114, BLG-BE-62, BLG-FEAT-77, BLG-QA-69; ephemeral Release Slice v7.6 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-QA-99 — `_DB_STUB_FUNCTIONS` AST-scan glob coverage check
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-QA-93
+**Priority at retirement:** P3
+**Retired:** 2026-07-28
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-28; same capability as BLG-QA-93, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-QA-99 — `_DB_STUB_FUNCTIONS` AST-scan glob coverage check
+**Priority:** P3 (Low) | **Type:** QA / Process Tooling | **Owner:** Head of Engineering | **Source:** IDEA-head-of-engineering-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Confirm `BLG-QA-73`'s AST scan (retired manual sync, v6.6) still covers every current `backend/` subpackage after recent additions.
+**Scope:** Audit the scan's glob/traversal logic against the current `backend/` tree; extend if a subpackage was missed.
+**Acceptance Criteria:** Audit documented; scan confirmed complete or patched.
+
+---
+
+### BLG-QA-55 — SI-02 Playwright scaffold readiness assessment (gate-conditional)
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-QA-42
+**Priority at retirement:** P3
+**Retired:** 2026-07-28
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-28; follow-up readiness-assessment step on BLG-QA-42's own scaffold, gated on the same 20+ closed-trades condition
+
+### BLG-QA-55 — SI-02 Playwright scaffold readiness assessment (gate-conditional)
+**Priority:** P3 (Low)
+**Type:** QA / Test Planning
+**Owner:** QA & Testing Owner; Director of Quality
+**Source:** IDEA-qa-testing-20260607-02 — Promoted-Backlog rebalance 2026-06-09__scheduled (DL-041)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** ≥20 closed trades confirmed (same gate as SI-02 frontend activation — BLG-QA-42)
+
+**Problem**
+BLG-QA-42 (SI-02 Playwright scaffold) is gated on 20+ closed trades. When that gate clears and SI-02 frontend enters sprint planning, a readiness assessment of the BLG-QA-42 scaffold design should confirm it still reflects the final drift service implementation (which may have evolved since BLG-QA-42 was authored). This assessment prevents outdated scaffold assumptions from entering sprint planning.
+
+**Scope**
+- Review BLG-QA-42 Playwright pre-design against the final GET /analytics/behavioural-drift response schema
+- Confirm mock strategy is still valid or update scaffold design
+- Produce brief readiness confirmation document
+- Gate: 20+ closed trades must be confirmed before this assessment is commissioned
+
+**Acceptance Criteria**
+- Scaffold design reviewed against current drift endpoint response schema
+- Assessment confirms "proceed with BLG-QA-42 as-is" or produces a revision document
+- Director of Quality sign-off
+- Gate condition verified (≥20 closed trades)
+
+---
+
+### BLG-QA-101 — `networkidle` usage audit in pre-v6.8 Playwright suites
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-QA-97
+**Priority at retirement:** P3
+**Retired:** 2026-07-28
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-28; same "retroactive §18 anti-pattern sweep" mechanism as BLG-QA-97, filed the same rebalance cycle for a second anti-pattern
+
+### BLG-QA-101 — `networkidle` usage audit in pre-v6.8 Playwright suites
+**Priority:** P3 (Low) | **Type:** QA / Process Tooling | **Owner:** QA Lead | **Source:** IDEA-qa-lead-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `shared_standards.md` §18 bans `waitForLoadState('networkidle')` in new tests but doesn't confirm no pre-existing suite still uses it.
+**Scope:** Grep all existing spec files for `networkidle` usage; replace any found with an element-specific wait.
+**Acceptance Criteria:** Zero remaining `networkidle` usages confirmed via grep; any found instances fixed.
+
+---
+
+### BLG-QA-118 — Visual-regression baseline snapshots for chart-heavy components
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-QA-81
+**Priority at retirement:** P2
+**Retired:** 2026-07-28
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-28; same capability (Playwright visual-regression baseline snapshots) as BLG-QA-81, independently re-proposed for a second component class
+
+### BLG-QA-118 — Visual-regression baseline snapshots for chart-heavy components
+**Priority:** P2 (Medium) | **Type:** QA / Test Automation | **Owner:** Director of Quality | **Source:** IDEA-director-of-quality-20260724-02 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** Chart-heavy components (Performance Analytics, Strategy Benchmark) have no visual-regression baseline; layout/rendering regressions are only caught by manual review.
+**Scope:** Capture baseline snapshots for the highest-value chart components using existing Playwright visual-regression tooling.
+**Acceptance Criteria:** Baselines captured; at least one component covered end-to-end as proof of pattern.
+
+---
+
+### BLG-GOV-182 — Annual agent role charter freshness review cadence
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-GOV-144
+**Priority at retirement:** P3
+**Retired:** 2026-07-28
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-28; same capability as BLG-GOV-144/-199/-236, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-GOV-182 — Annual agent role charter freshness review cadence
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Director of HR
+**Source:** IDEA-director-of-hr-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day annually)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+Agent role charters (`claude/agents/*.md`) have no scheduled freshness review — drift between a charter and actual role usage could go unnoticed indefinitely.
+
+**Scope**
+- Define an annual review cadence; first review checks each charter against 12 months of actual role activity
+
+**Acceptance Criteria**
+- Cadence documented; first review scheduled
+
+---
+
+### BLG-GOV-199 — Role charter freshness pass
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-GOV-144
+**Priority at retirement:** P3
+**Retired:** 2026-07-28
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-28; same capability as BLG-GOV-144/-182/-236, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-GOV-199 — Role charter freshness pass
+**Priority:** P3 (Low)
+**Type:** Governance / Process
+**Owner:** Director of HR
+**Source:** Idea intake IW-20260710-01 (IDEA-director-of-hr-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+`claude/agents/*.md` role charters have not been reviewed as a batch to confirm they still reflect current tooling and practice (e.g. `gh` CLI usage, current write-scope conventions).
+
+**Proposed solution**
+Director of HR reviews all agent charters for currency in one pass, flagging any that reference retired tooling or superseded conventions.
+
+---
+
+### BLG-GOV-236 — Periodic role charter freshness check
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-GOV-144
+**Priority at retirement:** P3
+**Retired:** 2026-07-28
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-28; same capability as BLG-GOV-144/-182/-199, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-GOV-236 — Periodic role charter freshness check
+**Priority:** P3 (Low) | **Type:** Governance | **Owner:** Director of HR | **Source:** IDEA-director-of-hr-20260715-02 | **Effort:** S (~0.5 day) | **Provisional-Target:** TBD
+**Problem:** All 21 non-Facilitator role charters in `claude/agents/` are used as preflight evidence at every governed routine invocation, but no periodic check confirms they remain accurate/non-stale.
+**Scope:** Spot-check charter content against current role usage/responsibilities at a low cadence (e.g. every 10 cycles).
+**Acceptance Criteria:** First spot-check performed; any staleness found filed as a follow-up.
+
+---
+
+### BLG-GOV-197 — Quarterly AI output sampling review
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-GOV-178
+**Priority at retirement:** P3
+**Retired:** 2026-07-28
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-28; same capability as BLG-GOV-178/-251, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-GOV-197 — Quarterly AI output sampling review
+**Priority:** P3 (Low)
+**Type:** Governance / Compliance
+**Owner:** AI Compliance & Governance Officer
+**Source:** Idea intake IW-20260710-01 (IDEA-ai-compliance-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** None
+
+**Problem**
+There is no recurring spot-check of AI-generated trade commentary against the `strategy_rules.md` §13 boundary — compliance currently relies on the boundary holding at generation time, with no independent sampling review.
+
+**Proposed solution**
+Establish a lightweight quarterly sampling review of a handful of AI-generated outputs against §13, recording findings.
+
+---
+
+### BLG-GOV-251 — Quarterly §13 determinism-drift review of AI-generated thesis/summary outputs
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-GOV-178
+**Priority at retirement:** P3
+**Retired:** 2026-07-28
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-28; same capability as BLG-GOV-178/-197, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-GOV-251 — Quarterly §13 determinism-drift review of AI-generated thesis/summary outputs
+**Priority:** P3 (Low) | **Type:** Governance / AI Compliance | **Owner:** AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260724-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Gemini/Claude-generated trade thesis and journal-summary text is produced continuously but has no recurring review confirming outputs remain within §13's determinism/no-prediction boundary as prompts and models evolve.
+**Scope:** Add a quarterly sampled-review cadence checking recent AI-generated outputs against §13 wording.
+**Acceptance Criteria:** Review cadence documented; first review scheduled.
+
+---
+
+### BLG-GOV-122 — strategy_rules.md §11 parameter annual review
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-GOV-95
+**Priority at retirement:** P3
+**Retired:** 2026-07-28
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-28; same capability as BLG-GOV-95/-187, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-GOV-122 — strategy_rules.md §11 parameter annual review
+**Priority:** P3 (Low)
+**Type:** Governance / Strategy Review
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260610-01 — Promoted-Backlog rebalance 2026-06-10__scheduled (DL-044)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+strategy_rules.md §11 defines concrete trading parameters (ATR multipliers, grace period days, regime gate thresholds). These were validated at v5.3 (BLG-GOV-104) but an annual review should confirm they still reflect the operator's current strategy intent. With 40+ cycles and real trading data accumulating, parameter drift (operating differently from what §11 states) should be checked.
+
+**Scope**
+- Review §11 parameters against actual trading behaviour over the last 12 months
+- Identify any divergence between documented parameters and actual practice
+- If divergence found: either update strategy_rules.md (version increment) or document intentional deviation
+
+**Acceptance Criteria**
+- Review conducted; findings documented
+- If changes: strategy_rules.md versioned and change rationale filed
+- Strategy Rules & System Intent Owner sign-off
+
+---
+
+### BLG-GOV-187 — Annual §11 production parameter review
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-GOV-95
+**Priority at retirement:** P3
+**Retired:** 2026-07-28
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-28; same capability as BLG-GOV-95/-122, independently re-proposed across separate idea-intake cycles without cross-reference
+
+### BLG-GOV-187 — Annual §11 production parameter review
+**Priority:** P3 (Low)
+**Type:** Governance / Strategy
+**Owner:** Strategy Rules & System Intent Owner
+**Source:** IDEA-strategy-owner-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days annually)
+**Provisional-Target:** Unscheduled
+**Gate criteria:** 12 months of trade outcome data since parameters were last reviewed
+
+**Problem**
+`strategy_rules.md` §11 production parameters (ATR multipliers, etc.) have not been formally reviewed against realised trade outcomes since being set.
+
+**Scope**
+- Once 12 months of data are available, conduct a formal review comparing parameter assumptions to realised outcomes
+
+**Acceptance Criteria**
+- Review conducted once gate clears; findings recorded (parameters validated or a §12.3 change-control process opened)
+
+---
+
+### BLG-GOV-234 — AI governance operational checks: disclaimer consistency cadence + kill-switch drill
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-GOV-221
+**Priority at retirement:** P3
+**Retired:** 2026-07-28
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-28; scope is a superset of BLG-GOV-221's disclaimer-only check, filed 2 days later without cross-reference
+
+### BLG-GOV-234 — AI governance operational checks: disclaimer consistency cadence + kill-switch drill
+**Priority:** P3 (Low) | **Type:** Governance / AI Compliance | **Owner:** AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260715-01, IDEA-ai-compliance-20260715-02 | **Effort:** S (~1 day) | **Provisional-Target:** TBD
+**Problem:** No periodic re-check exists that (a) Gemini/Claude disclaimer language stays consistent across all AI surfaces (thesis, chat, briefing) or (b) the AI feature global kill-switch still fully suppresses all AI calls app-wide.
+**Scope:** Add both checks as a combined periodic review item — disclaimer audit + kill-switch drill.
+**Acceptance Criteria:** Both checks performed at least once; findings documented; any gap filed as a follow-up.
+
+---
+
+### BLG-GOV-239 — Formal AI model deprecation calendar tied to Anthropic lifecycle
+
+**Status at retirement:** ❌ Killed — duplicate, merged into BLG-GOV-90
+**Priority at retirement:** P3
+**Retired:** 2026-07-28
+**Shipped in:** N/A — merged
+**Evidence:** Session duplicate-consolidation cleanup, 2026-07-28; same capability as BLG-GOV-90, independently re-proposed as a standalone calendar without cross-reference
+
+### BLG-GOV-239 — Formal AI model deprecation calendar tied to Anthropic lifecycle
+**Priority:** P3 (Low) | **Type:** Governance / AI Compliance | **Owner:** AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260716-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** The system pins a specific Claude model version (per the existing model-pinning policy, `BLG-GOV-64`) but has no forward-looking deprecation calendar — a model deprecation announcement from Anthropic would be discovered reactively rather than tracked proactively.
+**Scope:** Add a lightweight deprecation-calendar tracking document cross-referencing the pinned model version against Anthropic's published lifecycle/deprecation schedule, reviewed at a defined cadence.
+**Acceptance Criteria:** Tracking document created; first review cycle scheduled.
 
 ---
 
