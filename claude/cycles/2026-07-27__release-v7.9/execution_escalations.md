@@ -16,8 +16,8 @@ Last Updated: 2026-07-27
 - **Unblock criteria:** A human confirms the `RENDER_API_KEY` value is available in the environment governed-routine sessions run in (however it is chosen to persist), and the next scheduled roadmap rebalance is able to perform a genuine live SI-02 re-check without a "credentials absent" finding.
 - **SLA due-by:** Next scheduled roadmap rebalance (Workforce/Capacity-class SLA — Accepted Risk eligible, Product Owner only)
 - **Blocks execution:** No
-- **Disposition:** Open
-- **Resolution summary:** (complete when closing)
+- **Disposition:** Resolved
+- **Resolution summary:** Resolved 2026-07-28 — human supplied the `RENDER_API_KEY` value into this session's `~/.api_keys`. First attempt was Render's platform/management API key (`rnd_...` prefix, valid against `api.render.com` but returned 401 against the trading-assistant application itself) — same category of confusion as the historical `ESC-EXEC-20260703-01` precedent. Corrected to the actual application `API_KEY` value (from the production service's own Environment tab, not a personal Render account key), confirmed via `GET /trades` → 200. Live SI-02 re-check performed directly against production: `GET /trades` → `total_trades: 20`; `GET /trade-plans` → 11 plans, 0 with `position_id` set. No "credentials absent" finding — the unblock criteria's second clause is satisfied. Whether the SI-02 gate itself is MET/NOT MET given these figures is a `current_roadmap.md` determination left to the next `run roadmap` invocation (out of Sprint Execution's write scope) — this escalation closes on the credential/verification problem only, not on re-adjudicating the gate. Note: this fix is confirmed for *this* session only; whether `~/.api_keys` persists into future sessions is still unconfirmed — if a future governed-routine session reports "credentials absent" again, the persistence question (not the credential's validity) is the open item.
 
 **Carried forward from `EPIC-08`'s branch** (unmerged — EPIC-08 has no PR of its own, blocked pending human credential action) via the `EPIC-12` branch's cross-EPIC merge, so this record isn't lost once `EPIC-12` lands on main.
 
