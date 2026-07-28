@@ -1,8 +1,8 @@
 **Owner:** QA Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-29
+**Version:** 1.1
+**Last Updated:** 2026-07-28
 **Cycle:** 2026-05-29__release-v4.3 (ST-11 — BLG-QA-38)
 
 ---
@@ -115,10 +115,10 @@ The 7-minute range is expected for a suite of this size. Optimisation options in
 
 ## 5. Recommendations
 
-| ID | Recommendation | Priority | Backlog ref |
-|----|---------------|----------|-------------|
-| REC-CI-01 | Increase Playwright `workers` in `playwright.config.js` to run spec files in parallel (currently sequential per spec) | P2 | BLG-QA-27 |
-| REC-CI-02 | Consider splitting "Critical-Path Smoke Tests" from full regression suite to keep PR-gate feedback < 3 min | P3 | BLG-QA-27 |
+| ID | Recommendation | Priority | Backlog ref | Status |
+|----|---------------|----------|-------------|--------|
+| REC-CI-01 | Increase Playwright `workers` in `playwright.config.js` to run spec files in parallel (currently sequential per spec) | P2 | BLG-QA-27 | **Actioned 2026-07-28** — `workers` set to 4 in CI (matches ubuntu-latest vCPU count), plus 4-way `--shard` matrix added to `playwright-e2e` in `playwright.yml` (not in scope of the original recommendation, added because the suite had grown to 81 spec files / 677 tests by this date — see §7) |
+| REC-CI-02 | Consider splitting "Critical-Path Smoke Tests" from full regression suite to keep PR-gate feedback < 3 min | P3 | BLG-QA-27 | Not actioned — `smoke-tests.yml` already exists as a separate workflow; re-evaluate scope after REC-CI-01 impact is measured |
 
 ---
 
@@ -142,3 +142,4 @@ Signed: Sprint Execution Engine (autonomous class) — 2026-05-29
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
 | 1.0 | 2026-05-29 | Sprint Execution Engine | Initial CI pipeline baseline (ST-11, v4.3 EPIC-02, BLG-QA-38). p50=444s. BLG-QA-27 gate cleared. |
+| 1.1 | 2026-07-28 | Sprint Execution Engine (acting as QA & Testing Owner / QA Lead / Director of Quality, user-directed review) | REC-CI-01 actioned following a user-requested review of E2E runtime. Since the v1.0 baseline the suite grew from 39 spec files (~150 tests) to 81 spec files (677 tests) while `workers` remained forced to 1 in CI — full serialisation, confirmed against `execution_state.json` history showing individual runs up to 24m54s (v6.9). Changed `playwright.config.js` `workers` to 4 (CI only) and added a 4-way `--shard` matrix to the `playwright-e2e` job in `playwright.yml`; `timeout-minutes` reduced 45→20 per-shard accordingly. `playwright-visual` (single 14-test file) left unsharded. Production-build webServer swap (would have required adding a `serve`/`http-server` dependency and restructuring `REACT_APP_*` build-time env injection) was scoped but deferred pending explicit confirmation — flagged as higher-risk than originally assumed. No spec content changed; re-baseline (§3) recommended after the next CI run using this config to confirm actual speedup. |

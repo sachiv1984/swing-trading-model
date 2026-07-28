@@ -8,7 +8,11 @@ module.exports = defineConfig({
   testDir: './tests/e2e',
   timeout: 30000,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // REC-CI-01 (docs/ops/ci_pipeline_baseline.md): CI previously forced workers to 1,
+  // running all specs serially. Tests are independent (page.route() mocking, no shared
+  // backend/DB state), so they parallelize safely. 4 matches the vCPU count on
+  // GitHub-hosted ubuntu-latest runners for this public repo.
+  workers: process.env.CI ? 4 : undefined,
 
   // All spec files under tests/e2e/ are CI-registered — none excluded.
   // (BLG-QA-64, ST-11 EPIC-03 v6.8: last 12 dark/ignored specs resolved — 11 fixed, 1 deleted.)
