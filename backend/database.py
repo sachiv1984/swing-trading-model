@@ -594,6 +594,82 @@ def get_latest_snapshot(portfolio_id: str) -> Optional[Dict]:
             """, (portfolio_id,))
             return cur.fetchone()
 
+
+# ============================================================================
+# SECTOR/REGIME HISTORY (ST-02, EPIC-02, v7.9, BLG-FEAT-67)
+# ============================================================================
+#
+# No historical sector or regime data existed anywhere before this table —
+# GET /portfolio/sector-weights and GET /market/status both compute their
+# figures live from current data on every call, with no persisted daily/
+# weekly record. This table starts capturing that going forward only; no
+# retroactive backfill is attempted (there is no reliable way to reconstruct
+# past sector allocations or regime status from current live-computed data
+# without fabricating history). See docs/specs/data_model.md's migration
+# entry for this table and the Metrics Definitions & Analytics Owner's
+# scope decision recorded in execution_state.json for this story.
+
+def ensure_sector_regime_history_table() -> None:
+    """Create sector_regime_history table if it does not yet exist (idempotent)."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS sector_regime_history (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    portfolio_id UUID NOT NULL REFERENCES portfolios(id),
+                    snapshot_date DATE NOT NULL,
+                    sectors JSONB NOT NULL DEFAULT '[]',
+                    regime_us BOOLEAN,
+                    regime_uk BOOLEAN,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE (portfolio_id, snapshot_date)
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_sector_regime_history_portfolio_date
+                    ON sector_regime_history (portfolio_id, snapshot_date DESC)
+            """)
+
+
+def create_sector_regime_snapshot(portfolio_id: str, snapshot_date, sectors: list, regime_us, regime_uk) -> Dict:
+    """Create (or upsert, idempotent per day like create_portfolio_snapshot) today's
+    sector/regime snapshot row."""
+    ensure_sector_regime_history_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            _json = __import__("json").dumps
+            cur.execute("""
+                INSERT INTO sector_regime_history
+                    (portfolio_id, snapshot_date, sectors, regime_us, regime_uk)
+                VALUES (%s, %s, %s::jsonb, %s, %s)
+                ON CONFLICT (portfolio_id, snapshot_date)
+                DO UPDATE SET
+                    sectors = EXCLUDED.sectors,
+                    regime_us = EXCLUDED.regime_us,
+                    regime_uk = EXCLUDED.regime_uk,
+                    created_at = CURRENT_TIMESTAMP
+                RETURNING *;
+            """, (portfolio_id, snapshot_date, _json(sectors), regime_us, regime_uk))
+            return cur.fetchone()
+
+
+def get_sector_regime_history(portfolio_id: str, weeks: int = 12) -> List[Dict]:
+    """Return the last `weeks * 7` days of raw snapshot rows, oldest first.
+    Weekly bucketing (one row per ISO week, per §8b.1 design) is applied by
+    the service layer, not here — this returns the raw daily rows only."""
+    ensure_sector_regime_history_table()
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT snapshot_date, sectors, regime_us, regime_uk
+                FROM sector_regime_history
+                WHERE portfolio_id = %s
+                AND snapshot_date >= CURRENT_DATE - (%s || ' days')::interval
+                ORDER BY snapshot_date ASC
+            """, (portfolio_id, weeks * 7))
+            return cur.fetchall()
+
+
 # ============================================================================
 # SIGNALS FUNCTIONS
 # ============================================================================

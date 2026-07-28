@@ -2,7 +2,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.19
+**Version:** 2.20
 **Date:** 2026-07-27
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
@@ -1410,10 +1410,53 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-0
 
 ---
 
+## 32. v7.9 Endpoint Registration — GET /portfolio/sector-regime-trend (ST-02, EPIC-02, BLG-FEAT-67)
+
+**Date:** 2026-07-27
+**Story:** ST-02 (EPIC-02, v7.9) — BLG-FEAT-67, historical sector/regime exposure trend
+**Environment:** N/A — see endpoint notes below.
+**Method:** Registered pending live measurement per §13 pattern (single indexed SELECT against a new table, no live sampling against production data yet since the table is empty at ship time).
+
+### 32.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /portfolio/sector-regime-trend | v7.9 | Read — pending live timing run | 150–300ms (est.) | 300–500ms (est.) | Pending next baseline re-run, once ≥8 weeks of data exist to query against |
+
+**Endpoint characteristics:**
+- `GET /portfolio/sector-regime-trend`: a single `SELECT ... FROM sector_regime_history WHERE portfolio_id = %s AND snapshot_date >= ... ORDER BY snapshot_date ASC` against the new indexed table (`idx_sector_regime_history_portfolio_date`), followed by pure in-process weekly bucketing (no further DB round-trips). Estimated range derived from §21's `GET /portfolio/sector-weights` baseline (287ms p50 / 356ms p95, same router file) as the closest comparable shape, adjusted down since this endpoint reads a small indexed table directly rather than joining/aggregating live position + ticker_universe data on every call.
+- The table is empty immediately after this story ships (no retroactive backfill — see `docs/specs/api_contracts/portfolio_endpoints.md` §GET /portfolio/sector-regime-trend data-dependency note), so a genuine live-timing run against realistic data volume isn't possible yet. Flagged for re-measurement once ≥8 weeks of snapshots have accumulated (the same point at which `insufficient_history` first flips to `false`).
+
+**Read-only, no write-op exclusion needed** — this endpoint has no mutation counterpart to exclude (the write path is the existing `POST /portfolio/snapshot`, already registered).
+
+**Flagged for the next baseline re-run** alongside other pending-measurement endpoints (§13 pattern), specifically once real weekly data exists.
+
+### 32.2 Metrics Definitions & Analytics Owner + Infrastructure & Operations Owner Sign-Off
+
+```
+ST-02 (v7.9 EPIC-02, BLG-FEAT-67) — Sector/Regime Trend Endpoint Registration Sign-Off
+
+AC-01: Endpoint added with estimated p50/p95 and measurement date
+       (2026-07-27 — estimated, table empty at ship time). ✅ PASS
+AC-02: Estimation methodology documented — derived from §21's
+       GET /portfolio/sector-weights baseline (same router file), adjusted
+       down for a single indexed-table read vs. a live position/ticker_universe
+       join+aggregation. ✅ PASS
+AC-03: Entry format consistent with existing baseline rows (§29/§30/§31 pattern). ✅ PASS
+AC-04: Data-dependency premise correction cross-referenced (Metrics Definitions
+       & Analytics Owner amendment — no prior historical data existed). ✅ PASS
+
+Signed: [x] Metrics Definitions & Analytics Owner (agent-mediated, §5.3) — 2026-07-27
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-07-27
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.20 | 2026-07-27 | Sprint Execution Engine (agent-mediated, Metrics Definitions & Analytics Owner + Infrastructure & Operations Owner roles — §5.3) | ST-02 (v7.9 EPIC-02, BLG-FEAT-67): §32 added — GET /portfolio/sector-regime-trend registered pending live timing run (§13 pattern; table empty at ship time, no retroactive data to measure against). Estimated from §21's GET /portfolio/sector-weights baseline, adjusted for a single indexed-table read. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/portfolio/sector-regime-trend` path in the same PR. |
 | 2.19 | 2026-07-27 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-06 (v7.8 EPIC-06, BLG-FEAT-82): §31 added — GET /ai/spend-trend registered pending live timing run (§13 pattern). Up to 6 sequential aggregation queries against `claude_audit_log` (same table/shape as §29's GET /ai/monthly-cost, scaled for up to 6 round-trips per request). Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/ai/spend-trend` path in the same PR — this registration was missed at implementation time and caught by CI on PR #1081, not pre-empted at PR-open per the LL-v7.6-P3-01 advisory. |
 | 2.18 | 2026-07-26 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-01 (v7.8 EPIC-01, BLG-FE-128): §30 added — GET /changelog/latest registered pending live timing run (§13 pattern). Read-only local file read + regex parse, no DB/network I/O — lower-latency by construction than every other registered endpoint. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/changelog/latest` path in the same PR. |
 | 2.17 | 2026-07-20 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-07 (v7.6 EPIC-07, BLG-FEAT-77): §29 added — GET /ai/monthly-cost registered pending live timing run (§13 pattern). Read-only aggregation query, no write-op counterpart. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/ai/monthly-cost` path in the same PR. |

@@ -343,6 +343,61 @@ paths:
                       concentration_alert:
                         type: boolean
 
+  /portfolio/sector-regime-trend:
+    get:
+      tags: [Portfolio]
+      summary: Get weekly-bucketed sector concentration + regime status trend
+      description: >
+        Reads from the sector_regime_history table (new, going-forward-only capture
+        via the daily snapshot job — no prior historical sector/regime data existed).
+        Returns insufficient_history: true (with weeks_available) until 8 distinct
+        weeks of snapshots have accumulated. Contract: ST-02, EPIC-02, v7.9,
+        docs/specs/api_contracts/portfolio_endpoints.md v2.5.0 §GET /portfolio/sector-regime-trend.
+      parameters:
+        - name: weeks
+          in: query
+          required: false
+          schema: { type: integer, default: 12 }
+      responses:
+        "200":
+          description: Sector/regime trend (or insufficient-history state)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      insufficient_history:
+                        type: boolean
+                      weeks_available:
+                        type: integer
+                      weeks:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            week_start:
+                              type: string
+                            sectors:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  sector_name:
+                                    type: string
+                                  exposure_pct:
+                                    type: number
+                            regime_us:
+                              type: boolean
+                              nullable: true
+                            regime_uk:
+                              type: boolean
+                              nullable: true
+
   /portfolio/gate-metrics:
     get:
       tags: [Portfolio]

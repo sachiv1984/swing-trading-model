@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.4.0
-**Last Updated:** 2026-06-23
+**Version:** 2.5.0
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -578,6 +578,7 @@ Errors use the standard error envelope from **conventions.md**.
 | 1.8.2 | 2026-02-25 | BLG-FEAT-01: Added `current_drawdown_percent` and `peak_portfolio_value` fields to GET /portfolio portfolio-level response (QWB pre-alignment D1) |
 | 1.9.0 | 2026-03-02 | S2-07 (EPIC-06/BLG-TECH-08): Spec updated to match live `portfolio_service.py` implementation. Position object example and field notes corrected — removed stale fields (`current_price_native`, `stop_price`, `stop_price_native`, `pnl_percent`); added live fields (`current_value`, `pnl_pct`, `current_stop`, `fx_rate`, `grace_days_remaining`, `live_fx_rate`). Key omissions table corrected (fx_rate/live_fx_rate ARE returned by this endpoint). pnl_pct note corrected. OBS-QWB-R1-01 resolved. TASK-25/26/27 complete. API Contracts owner sign-off granted 2026-03-02 (Delegated Authority). |
 | 2.0.0 | 2026-03-17 | ST-13 (EPIC-04): GET /portfolio/prospective-heat added — calculates portfolio heat including a prospective new position. Response shape, query parameters, calculation rules, and business rule failures defined. |
+| 2.5.0 | 2026-07-27 | ST-02 (EPIC-02, v7.9, BLG-FEAT-67): GET /portfolio/sector-regime-trend added — weekly-bucketed sector concentration + regime status trend, backed by a new sector_regime_history table (data_model.md, going-forward capture only). Documents the corrected data-dependency premise (Metrics Definitions & Analytics Owner amendment) — no prior historical sector/regime data existed to aggregate. |
 
 ---
 
@@ -927,6 +928,82 @@ No parameters required.
 | Code | Condition |
 |------|-----------|
 | 500 | Internal error (silently falls back to empty sectors response) |
+
+---
+
+## GET /portfolio/sector-regime-trend
+
+Weekly-bucketed historical trend of sector concentration and market regime status (ST-02, EPIC-02, v7.9, BLG-FEAT-67).
+
+**Source:** ST-02, EPIC-02, v7.9
+
+**Data dependency note (required correction — Metrics Definitions & Analytics Owner amendment, 2026-07-27):** unlike `GET /portfolio/sector-weights` above (computed live on every call), this endpoint reads from a new `sector_regime_history` table populated once per weekday by the existing daily snapshot job (`POST /portfolio/snapshot` → `portfolio_service.create_daily_snapshot`), starting from this story's ship date. **No historical sector or regime data existed before this table** — neither `GET /portfolio/sector-weights` nor `GET /market/status` ever persisted their live-computed figures anywhere, so there is nothing to retroactively backfill from. This corrects the original backlog item's premise ("purely a historical view of data already captured", "no new data collection required") — that premise did not hold; this endpoint introduces new data collection, going forward only. Immediately after ship, this endpoint returns `insufficient_history: true` (0 weeks available) — this is the expected initial state, not a fallback or degraded mode. `AC-01`/`AC-02` (populated trend charts) become satisfiable once 8 weeks of snapshots have accumulated.
+
+### Request
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|--------------|
+| `weeks` | integer | No | Number of most-recent weeks to return. Default 12. |
+
+### Response (200) — sufficient history (≥8 weeks available)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "insufficient_history": false,
+    "weeks": [
+      {
+        "week_start": "2026-06-01",
+        "sectors": [
+          { "sector_name": "Technology", "exposure_pct": 42.5 },
+          { "sector_name": "Financials", "exposure_pct": 31.0 },
+          { "sector_name": "Other", "exposure_pct": 26.5 }
+        ],
+        "regime_us": true,
+        "regime_uk": false
+      }
+    ]
+  }
+}
+```
+
+### Response (200) — insufficient history (<8 weeks available)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "insufficient_history": true,
+    "weeks_available": 3
+  }
+}
+```
+
+### Response fields — `data`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `insufficient_history` | boolean | `true` when fewer than 8 distinct weeks of snapshots exist yet |
+| `weeks_available` | integer | Present only when `insufficient_history: true` — how many distinct weeks exist so far |
+| `weeks` | array | Present only when `insufficient_history: false`. Oldest week first, most recent last. |
+| `weeks[].week_start` | string (ISO date) | Monday of the ISO week this bucket represents |
+| `weeks[].sectors` | array | Top 5 sectors by the most recent week's exposure, plus an `"Other"` bucket summing the remainder (only present if there is a remainder) — this grouping is held constant across all returned weeks, not re-ranked per week |
+| `weeks[].sectors[].sector_name` | string | Sector label, or `"Other"` |
+| `weeks[].sectors[].exposure_pct` | number | Exposure % for that sector in that week (1 dp) |
+| `weeks[].regime_us` | boolean or null | SPY-based US regime status snapshotted that day (`true` = risk-on) |
+| `weeks[].regime_uk` | boolean or null | FTSE-based UK regime status snapshotted that day (`true` = risk-on) |
+
+### Notes
+
+- Weekly bucketing takes the **last** snapshot within each ISO week (Monday–Sunday) as that week's representative value — not an average.
+- On any error, returns `{"insufficient_history": true, "weeks_available": 0, "error": "<message>"}` — does not propagate exceptions to the UI.
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 500 | Internal error (silently falls back to insufficient-history response) |
 
 ---
 

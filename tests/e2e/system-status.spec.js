@@ -170,9 +170,9 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     await expect(page.getByRole('button', { name: /run tests/i })).toBeVisible({ timeout: 8000 });
   });
 
-  test('SC-SS-01b: Pre-run state shows "101 endpoints" placeholder', async ({ page }) => {
-    // Before running tests, the page shows: "Tests 101 endpoints"
-    // (totalTests || '101' → '101' before any test run). Baseline corrected v7.7
+  test('SC-SS-01b: Pre-run state shows "102 endpoints" placeholder', async ({ page }) => {
+    // Before running tests, the page shows: "Tests 102 endpoints"
+    // (totalTests || '102' → '102' before any test run). Baseline corrected v7.7
     // EPIC-11 ST-11 (BLG-QA-102): an AST-verified count of backend/routers/test.py's
     // test_cases list was 98, not the previously-recorded 103 — 5 entries had
     // drifted out of sync with the fallback constant at some point after
@@ -186,7 +186,9 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     // +1 (100 -> 101) from v7.8 EPIC-06 ST-06, which added GET /ai/spend-trend.
     // Both counted independently on branches cut before either merged --
     // reconciled to 101 at EPIC-06 branch merge (CLAUDE.md §8).
-    await expect(page.getByText(/tests 101 endpoints/i)).toBeVisible({ timeout: 8000 });
+    // +1 (101 -> 102) from v7.9 EPIC-02 ST-02, which added
+    // GET /portfolio/sector-regime-trend (BLG-FEAT-67).
+    await expect(page.getByText(/tests 102 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-01c: Pre-run state shows prompt to click Run Tests', async ({ page }) => {

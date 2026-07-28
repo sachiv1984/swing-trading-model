@@ -22,9 +22,11 @@
 
 ## 3. Data
 
-- **Backend:** aggregate existing `portfolio_history` rows plus the sector-weight data already computed for §8a (`GET /portfolio/sector-weights`) and regime data already computed for the Dashboard's Signal Status (`GET /market/status`) into a rolling time series — weekly buckets, consistent with the existing `portfolio_history` write cadence (nightly job, resampled weekly for the trend view to keep the chart readable over a multi-month window).
-- **New endpoint:** `GET /portfolio/sector-regime-trend?weeks={N}` (default 12 weeks) — returns `{ weeks: [{ week_start, sectors: [{sector_name, exposure_pct}], regime_us, regime_uk }] }`. No new inputs — purely a historical view of data already captured by existing nightly jobs.
-- **API contract:** new entry required in `docs/specs/api_contracts/portfolio_endpoints.md` (or `analytics_endpoints.md`) and `docs/reference/openapi.yaml` in the same commit as implementation (CLAUDE.md non-negotiable).
+**Data-dependency correction (resolved at implementation — Metrics Definitions & Analytics Owner amendment, agent-mediated, 2026-07-27):** this section as originally drafted stated the trend was "purely a historical view of data already captured" requiring "no new data collection." That premise did not hold: neither `GET /portfolio/sector-weights` nor `GET /market/status` ever persisted their live-computed figures anywhere, and `portfolio_history` has no per-sector or per-regime granularity — there was no existing historical sector or regime data to aggregate. Corrected below.
+
+- **Backend:** a new `sector_regime_history` table (`docs/specs/data_model.md` migration v2.17→v2.18) captures sector exposure + regime status once per weekday, going forward only, via the existing daily snapshot job (`POST /portfolio/snapshot` → `portfolio_service.create_daily_snapshot`). **No retroactive backfill was attempted** — there is no reliable way to reconstruct past sector allocations or regime status from current live-computed data without fabricating history.
+- **New endpoint:** `GET /portfolio/sector-regime-trend?weeks={N}` (default 12 weeks) — returns `{ insufficient_history, weeks_available }` until 8 distinct weeks of snapshots exist, then `{ insufficient_history: false, weeks: [{ week_start, sectors: [{sector_name, exposure_pct}], regime_us, regime_uk }] }`. The insufficient-history state (§5) is therefore the **expected day-one state** immediately after this story ships, not a fallback — AC-01/AC-02's populated charts become satisfiable once 8 weeks have accumulated.
+- **API contract:** documented in `docs/specs/api_contracts/portfolio_endpoints.md` v2.5.0 and `docs/reference/openapi.yaml`, same commit as implementation (CLAUDE.md non-negotiable).
 
 ## 4. Layout
 

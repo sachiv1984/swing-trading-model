@@ -1,9 +1,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 0.1.10
+**Version:** 0.1.11
 **Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+**Design Source (v0.1.11 correction):** §8b.1 data-dependency premise corrected at implementation — see Metrics Definitions & Analytics Owner amendment recorded in `execution_state.json` for ST-02, EPIC-02, v7.9.
 **Design Source (v0.1.10):** docs/design/2026-07-27__release-v7.9/sector-regime-exposure-trend/ux_spec.md
 **Design Source (v0.1.9):** docs/design/2026-06-22__release-v6.1/sector-heatmap/ux_spec.md
 **Design Source (v0.1.0):** docs/design/2026-03-04__release-v1.8/risk-dashboard/ux_spec.md
@@ -275,8 +276,11 @@ When `concentration_alert: false`: no alert bar.
 
 ### 8b.1 Data
 
-- **Source:** `GET /portfolio/sector-regime-trend?weeks={N}` (new endpoint; default 12 weeks) — aggregates existing `portfolio_history` plus the same sector-weight data as §8a and the same regime data as the Dashboard's Signal Status (`dashboard.md`) into weekly buckets. No new inputs — purely a historical view of already-captured data.
+**Data-dependency correction (v0.1.11, resolved at implementation — Metrics Definitions & Analytics Owner amendment, agent-mediated, 2026-07-27):** this section originally stated the trend was "purely a historical view of already-captured data," aggregating `portfolio_history` — this premise did not hold. Neither `GET /portfolio/sector-weights` nor `GET /market/status` ever persisted their live-computed figures anywhere, and `portfolio_history` has no per-sector or per-regime granularity. There was no existing historical sector or regime data to aggregate.
+
+- **Source:** `GET /portfolio/sector-regime-trend?weeks={N}` (new endpoint; default 12 weeks) — reads a new `sector_regime_history` table (`docs/specs/data_model.md` v2.17→v2.18) populated once per weekday, **going forward only**, by the existing daily snapshot job (`POST /portfolio/snapshot`). No retroactive backfill was attempted — there is no reliable way to reconstruct past sector allocations or regime status from current live-computed data without fabricating history.
 - **Key fields:** `weeks[].week_start`, `weeks[].sectors[].sector_name`, `weeks[].sectors[].exposure_pct`, `weeks[].regime_us`, `weeks[].regime_uk`
+- **Day-one state:** the table is empty immediately after ship — `GET /portfolio/sector-regime-trend` returns `insufficient_history: true` from day one. This is the **expected** initial state (§8b.3), not a fallback; §8b's charts populate automatically once 8 weeks of snapshots have accumulated.
 
 ### 8b.2 Layout
 
@@ -420,6 +424,7 @@ The following deviations were identified at v1.8 sprint execution and accepted f
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.11 | 2026-07-27 | ST-02 (BLG-FEAT-67, EPIC-02, v7.9) implementation: corrected §8b.1's data-dependency premise (Metrics Definitions & Analytics Owner amendment, agent-mediated) — no historical sector/regime data ever existed to aggregate; `sector_regime_history` is a new table, populated going forward only, no retroactive backfill. `insufficient_history: true` is the expected day-one state, not a fallback. Contract: `portfolio_endpoints.md` v2.5.0. |
 | 0.1.10 | 2026-07-27 | v7.9 design gate — §8b Sector & Regime Exposure Trend added (ST-02, BLG-FEAT-67): new full-width panel inserted between §8a Sector Concentration Heat Map and §7 Prospective Heat Indicator; sector concentration trend chart (weekly buckets, top 5 sectors + Other) and US/UK regime status timeline strip; new `GET /portfolio/sector-regime-trend` endpoint; insufficient-history state (<8 weeks); display-only. Corrects the backlog item's stated placement ("Positions or Reports page") to this page, where `SectorHeatMap` actually renders — see §8b placement note. Design source: sector-regime-exposure-trend/ux_spec.md. Approved: Product Owner 2026-07-27. Head of Specs Team confirmed. |
 | 0.1.9 | 2026-06-22 | v6.1 design gate — §8a Sector Concentration Heat Map added (ST-06, BLG-FE-76): new full-width panel inserted between §6 Position Risk and §7 Prospective Heat; tile grid by sector, exposure % + position count per tile, amber colour-coding ≥ 40% concentration threshold, alert bar when concentration_alert: true; uses new GET /portfolio/sector-weights endpoint; display-only MVP. §2 Layout updated to four full-width rows. Design source: sector-heatmap/ux_spec.md. Approved: Product Owner 2026-06-22. Head of Specs Team confirmed. |
 | 0.1.8 | 2026-03-09 | v1.9 Sprint 1 post-ship closure: §11 deviations DEV-ST03-01 through DEV-ST03-07, DEV-ST03-09, DEV-ST03-11, DEV-ST03-12 all marked RESOLVED with resolution detail (EPIC-04 commits b31536f, 20e688f). QA-OBS-ST07-01 noted. Table header updated from "Resolution Target" to "Resolution". |
