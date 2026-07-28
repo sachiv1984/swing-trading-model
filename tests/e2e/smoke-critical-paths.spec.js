@@ -19,6 +19,19 @@
  * - ROUTING NOTE: App uses HashRouter. ALL navigation must use page.goto('/#/…')
  *   — NOT page.goto('/path'). Path-based navigation loads Dashboard silently.
  * - Run time target: < 2 minutes for the full suite.
+ *
+ * ── Cross-EPIC merge-gate designation (ST-09, EPIC-09, v7.9, BLG-QA-124) ──
+ * This suite is the designated shared smoke-test tag/suite for
+ * shared_standards.md §12 Rule 3 (GOVERNANCE commit after each EPIC-branch
+ * merge). All three tests carry the `@epic-merge-smoke` tag so they can be
+ * filtered explicitly (`npx playwright test --grep @epic-merge-smoke`) as
+ * the one common regression pass every merged EPIC branch gets before the
+ * next EPIC's PR opens. `.github/workflows/smoke-tests.yml` already runs
+ * this file on every push to `main` and `exec/**` (including the Rule 3
+ * GOVERNANCE commit itself, which pushes directly to `main`) — this tag
+ * formalises that existing CI coverage as the specific gate §12 Rule 3
+ * refers to, rather than leaving it an implicit side-effect of the
+ * workflow's branch triggers.
  */
 
 'use strict';
@@ -131,7 +144,7 @@ async function mockNotificationsFeed(page, payload = SMOKE_NOTIFICATIONS) {
 // Visual AC (button gradient, icon colours): DoQ manual review.
 // ---------------------------------------------------------------------------
 
-test('PATH-1: add trade — form submits and POST /portfolio/position fires', async ({ page }) => {
+test('PATH-1: add trade — form submits and POST /portfolio/position fires', { tag: '@epic-merge-smoke' }, async ({ page }) => {
   // Set up mocks before navigation
   await mockSettings(page);
   await mockPositions(page);
@@ -219,7 +232,7 @@ test('PATH-1: add trade — form submits and POST /portfolio/position fires', as
 // Visual AC (P&L colour, badge styling): DoQ manual review.
 // ---------------------------------------------------------------------------
 
-test('PATH-2: view portfolio — open positions render on Positions page', async ({ page }) => {
+test('PATH-2: view portfolio — open positions render on Positions page', { tag: '@epic-merge-smoke' }, async ({ page }) => {
   // Fallback registered FIRST — Playwright routes are LIFO, so specific mocks
   // registered after the fallback take precedence and won't be swallowed by it.
   await mockFallback(page);
@@ -261,7 +274,7 @@ test('PATH-2: view portfolio — open positions render on Positions page', async
 // Visual AC (unread cyan border, icon colours): DoQ manual review.
 // ---------------------------------------------------------------------------
 
-test('PATH-3: view alerts — notification feed renders with unread items', async ({ page }) => {
+test('PATH-3: view alerts — notification feed renders with unread items', { tag: '@epic-merge-smoke' }, async ({ page }) => {
   // Fallback registered FIRST — Playwright routes are LIFO, so mockNotificationsFeed
   // (registered last) takes precedence and the notifications endpoint is not swallowed.
   await mockFallback(page);
