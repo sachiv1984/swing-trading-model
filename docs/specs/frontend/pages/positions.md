@@ -3,7 +3,7 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.5
+**Version:** 2.6
 **Last Updated:** 2026-07-27
 **Design Source (v7.9 additions):** docs/design/2026-07-27__release-v7.9/trailing-stop-explainer-tooltip/ux_spec.md
 **Design Source (v7.0 additions):** docs/design/2026-07-12__release-v7.0/combined-badge-differentiation/decision_record.md, docs/design/2026-07-12__release-v7.0/position-review-cadence-nudge/ux_spec.md
@@ -23,6 +23,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.6 | 2026-07-27 | ST-05 (BLG-FEAT-87, EPIC-05, v7.9) implementation: corrected §Trailing Stop Column's tooltip placement description — the v6.2-described separate "Trail Stop" column/stat label does not exist in the shipped UI (Table View has one combined "Stop" header; Grid View has no standalone label). Placed the explainer icon on the actual anchors instead (combined "Stop" header; inline with the "Init:" subtext line in the Grid tile) — closest faithful placement given the real UI, pre-existing gap noted but not fixed (out of this story's scope). |
 | 2.5 | 2026-07-27 | v7.9 design gate: (ST-03, BLG-FEAT-87) §Trailing Stop Column — added "Why is my stop moving?" explainer tooltip (info icon after the "Trail Stop" column header / Grid View stat label; hover/focus reveals plain-language explanation of §7.2 profit-aware stop logic and §7.3 stop-movement constraint, reviewed against `strategy_rules.md` §7 for accuracy). Static text, no API dependency, no change to the underlying calculation or Trail Stop Modal. Design source: trailing-stop-explainer-tooltip/ux_spec.md. Approved: Product Owner 2026-07-27. Head of Specs Team confirmed. |
 | 2.4 | 2026-07-14 | v7.1 sprint execution: (ST-03, BLG-FE-107) Closed `DEV-EPIC01-ST05-01` — Table View's `AlertsCell` RISK OFF badge brought into spec compliance (`#1E40AF` blue-800, label "RISK OFF", no icon), matching the v7.0 Grid View badge. No spec text change — §Alerts Column was already correct; only §Known Deviations updated to record the resolution. (ST-04, BLG-BE-61) §Last Reviewed Column — documented `NULL`/backfill semantics for `last_reviewed_at` (falls back to `entry_date`, verified against production data). §Position Lifecycle State Badge — added explicit confirmation that review-cadence is a metadata annotation, not a 5th lifecycle state (4 states unchanged). No visual/behavioural change — documentation only. |
 | 2.3 | 2026-07-13 | v7.0 sprint execution: (ST-01, BLG-SPEC-80) Added explicit Grid View badge-placement subsection to §Alerts Column — documents the dedicated alert row (below header, above stat tiles) where RISK OFF/GAP RISK badges render in Grid View, closing the gap that was the root cause of `BLG-FE-102` (Grid View never had separately-specified badge placement, only Table View's Alerts column was documented in this much detail). No visual/behavioural change — documentation only, confirms placement ST-02 implements. |
@@ -425,11 +426,13 @@ Not shown when price is above trailing stop (no reserved space).
 
 **§13 constraint:** Display-only. No automated action.
 
-### "Why Is My Stop Moving" Explainer Tooltip (v7.9 — ST-03, BLG-FEAT-87)
+### "Why Is My Stop Moving" Explainer Tooltip (v7.9 — ST-05, BLG-FEAT-87)
 
 **Design source:** docs/design/2026-07-27__release-v7.9/trailing-stop-explainer-tooltip/ux_spec.md
 
-An info icon (`ⓘ`) is placed immediately after the "Trail Stop" column header (Table View) / stat label (Grid View card summary). Hover or keyboard focus reveals a static tooltip explaining the profit-aware stop logic (§7.2) and the never-loosens stop-movement rule (§7.3), reviewed against `strategy_rules.md` §7 for accuracy. One tooltip on the column header covers all rows — not a per-row/per-position value. Tunable parameters (`InitialATRMultiplier`, `ProfitATRMultiplier`) are not surfaced in the copy; the explainer describes behaviour, not internal constants subject to change control (§12).
+**Placement correction (implementation, agent-mediated Head of UX & Design review):** the section above (v6.2) describes a separate "Trail Stop" column "added after 'Initial Stop' — existing 'Stop' column renamed." The shipped Table View does not have this — `Positions.js` renders a single combined **"Stop"** header (`title="Initial stop (entry) / Current trailing stop (computed)"`), and Grid View's tile (`PositionCard.js`) has no standalone "Trail Stop" label either, only an "Init: {value}" subtext above the trailing-stop value. This is a pre-existing spec/implementation gap from v6.2, not introduced by this story — noted here rather than fixed, since restructuring the Stop column is out of this story's scope (a display-only tooltip addition). The info icon was placed on the actual anchors available: immediately after the combined "Stop" header text (Table View), and inline with the "Init:" subtext line in the tile (Grid View) — closest faithful placement to "next to the Trail Stop element" given what the real UI has.
+
+An info icon (`ⓘ`) hover or keyboard focus reveals a static tooltip explaining the profit-aware stop logic (§7.2) and the never-loosens stop-movement rule (§7.3), reviewed against `strategy_rules.md` §7 for accuracy. One tooltip per view covers all rows — not a per-row/per-position value. Tunable parameters (`InitialATRMultiplier`, `ProfitATRMultiplier`) are not surfaced in the copy; the explainer describes behaviour, not internal constants subject to change control (§12).
 
 No API dependency — static client-side text, no loading/error state.
 

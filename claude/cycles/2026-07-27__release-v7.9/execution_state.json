@@ -8,72 +8,90 @@
   "last_updated_utc": "2026-07-27T21:10:00Z",
   "epics": {
     "EPIC-01": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1109,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_watchlist_service.py",
+        "tests/e2e/watchlist-staleness-review.spec.js"
+      ],
       "stories": {
         "ST-01": {
           "title": "Add staleness tracking and Keep/Remove review action to Watchlist",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1083,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "78145e9e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/design/2026-07-27__release-v7.9/watchlist-staleness-review/ux_spec.md",
-            "docs/specs/frontend/pages/watchlist.md"
+            "docs/specs/frontend/pages/watchlist.md#Staleness Indicator",
+            "docs/specs/api_contracts/watchlist_endpoints.md#PATCH /watchlist/{entry_id}"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "role": "Head of UX & Design",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Approved; verified both ux_spec.md premise corrections against actual code."
+          },
+          "notes": "Playwright spec written (5 tests) but not executed locally - sandbox OS (Ubuntu 26.04) unsupported by Playwright browser installer. Will run via playwright.yml glob auto-discovery on PR."
         }
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1110,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-02.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_sector_regime_trend.py",
+        "tests/e2e/sector-regime-exposure-trend.spec.js"
+      ],
       "stories": {
         "ST-02": {
           "title": "Add sector concentration / regime exposure trend chart to Risk Dashboard",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1084,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "05d3d14f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/design/2026-07-27__release-v7.9/sector-regime-exposure-trend/ux_spec.md",
-            "docs/specs/frontend/pages/risk_dashboard.md"
+            "docs/specs/frontend/pages/risk_dashboard.md#8b. Component: Sector & Regime Exposure Trend",
+            "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/sector-regime-trend"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Owns shared-file cluster this sprint (openapi.yaml, api_contracts, test.py, SystemStatus.js, system-status.spec.js)"
+          "sign_off_record": {
+            "role": "Metrics Definitions & Analytics Owner + Head of UX & Design",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Scope decision (going-forward-only capture) confirmed; first implementation review Blocked on incomplete wording-correction propagation, fixed, re-verified and Approved."
+          },
+          "notes": "Major data-dependency premise correction - no historical sector/regime data ever existed. New sector_regime_history table, going-forward capture only. insufficient_history: true is the correct day-one state. BLG-FEAT-67 backlog text still uncorrected (out of write scope) - flag for groom-backlog."
         }
       }
     },
@@ -160,37 +178,44 @@
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-05",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1111,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-05.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/trailing-stop-explainer-tooltip.spec.js"
+      ],
       "stories": {
         "ST-05": {
           "title": "Add trailing-stop rule explainer tooltip to position/trade view",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1087,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "e045c556",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/design/2026-07-27__release-v7.9/trailing-stop-explainer-tooltip/ux_spec.md",
-            "docs/specs/frontend/pages/positions.md"
+            "docs/specs/frontend/pages/positions.md#Trailing Stop Column"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "role": "Product Owner + Head of UX & Design",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Both approved independently; verified tooltip copy accuracy and placement correction against actual code."
+          },
+          "notes": "Pre-existing v6.2 spec/implementation gap found (no separate Trail Stop column/label exists) - documented correction, not fixed (out of scope). This is the final (15th) EPIC of the sprint. Post-push CI fix (2026-07-28): added missing @radix-ui/react-tooltip dependency (package.json + package-lock.json) -- a pre-existing repo gap (ui/tooltip.js imported it but it was never installed) that this story was the first to actually exercise, which broke the whole Playwright suite's webpack compile, not just this story's own tests."
         }
       }
     },
@@ -624,7 +649,10 @@
     "EPIC-07/ST-07",
     "EPIC-12/ST-12",
     "EPIC-06/ST-06",
-    "EPIC-04/ST-04"
+    "EPIC-04/ST-04",
+    "EPIC-01/ST-01",
+    "EPIC-02/ST-02",
+    "EPIC-05/ST-05"
   ],
   "open_escalations": [
     "ESC-EXEC-20260727-01",
