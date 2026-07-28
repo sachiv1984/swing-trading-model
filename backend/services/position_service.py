@@ -36,6 +36,7 @@ from database import (
     get_signals,
     ensure_planned_entry_price_column,
     mark_position_reviewed as db_mark_position_reviewed,
+    create_position_audit_log_entry,
 )
 
 from utils.pricing import (
@@ -1191,8 +1192,13 @@ def update_note(position_id: str, entry_note: str) -> Dict:
         raise ValueError(f"Position {position_id} not found")
     
     # Update note in database
+    before_note = position.get('entry_note')
     result = update_position_note(position_id, entry_note)
-    
+
+    # Audit trail (ST-06, EPIC-06, v7.9, BLG-BE-73) — manual override outside
+    # the automated trade lifecycle.
+    create_position_audit_log_entry(position_id, "note", "entry_note", before_note, entry_note)
+
     return result
 
 
@@ -1220,9 +1226,18 @@ def mark_position_reviewed(position_id: str) -> Dict:
     if not position:
         raise ValueError(f"Position {position_id} not found")
 
+    before_reviewed_at = position.get('last_reviewed_at')
     result = db_mark_position_reviewed(position_id)
     if result is None:
         raise ValueError(f"Position {position_id} not found")
+
+    # Audit trail (ST-06, EPIC-06, v7.9, BLG-BE-73) — manual override outside
+    # the automated trade lifecycle.
+    create_position_audit_log_entry(
+        position_id, "mark-reviewed", "last_reviewed_at",
+        before_reviewed_at, result.get('last_reviewed_at'),
+    )
+
     return result
 
 
@@ -1253,8 +1268,13 @@ def update_tags(position_id: str, tags: List[str]) -> Dict:
             validated_tags.append(clean_tag)
     
     # Update tags in database
+    before_tags = position.get('tags')
     result = update_position_tags(position_id, validated_tags)
-    
+
+    # Audit trail (ST-06, EPIC-06, v7.9, BLG-BE-73) — manual override outside
+    # the automated trade lifecycle.
+    create_position_audit_log_entry(position_id, "tags", "tags", before_tags, validated_tags)
+
     return result
 
 

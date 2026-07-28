@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.15
-**Last Updated:** 2026-07-20
+**Version:** 2.17
+**Last Updated:** 2026-07-27
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1473,6 +1473,48 @@ Reversible: `DROP TABLE IF EXISTS saved_filters;`
 
 ---
 
-**Document Version:** 2.16
+### Migration from v2.16 to v2.17
+
+ST-06 (BLG-BE-73, EPIC-06, v7.9) — audit trail for manual position overrides. Financial Reporting & Records Owner scope decision (recorded in `execution_state.json` for this story): "manual position overrides" covers the three genuinely user-initiated, manual PATCH endpoints that sit outside the automated trade lifecycle — note edit, tag edit, mark-reviewed — not a new core-trade-field override feature (no such endpoint exists in this product). Distinct from `BLG-SEC-14`'s AI-journal-generation audit trail (a different write path). No "who" column — single-user product, same precedent as `claude_audit_log` (§ above), which also carries no per-user identity field.
+
+```sql
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS position_audit_log (
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    position_id  UUID NOT NULL,
+    source       TEXT NOT NULL,
+    field        TEXT NOT NULL,
+    before_value TEXT,
+    after_value  TEXT,
+    changed_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_position_audit_log_position_id ON position_audit_log(position_id);
+
+COMMIT;
+```
+
+### Field Reference
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| `id` | UUID | NO | Primary key |
+| `position_id` | UUID | NO | The position edited. No FK constraint (audit rows must survive a position's own lifecycle; matches `trade_history.position_id`'s pattern of not cascading) |
+| `source` | TEXT | NO | Which manual action triggered the entry: `note`, `tags`, or `mark-reviewed` |
+| `field` | TEXT | NO | The specific field changed (`entry_note`, `tags`, `last_reviewed_at`) |
+| `before_value` | TEXT | YES | Value before the edit, stringified |
+| `after_value` | TEXT | YES | Value after the edit, stringified |
+| `changed_at` | TIMESTAMPTZ | NO | When the edit was recorded |
+
+Reversible: `DROP TABLE IF EXISTS position_audit_log;`
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-07-27 (agent-mediated; single new append-only table, no existing schema touched, no backfill applicable — table did not previously exist)
+- Financial Reporting & Records Owner: Accepted — 2026-07-27 (agent-mediated; scope decision recorded above)
+
+---
+
+**Document Version:** 2.17
 **Maintained By:** Data Model & Domain Schema Owner
 **Last Review:** 2026-07-27
