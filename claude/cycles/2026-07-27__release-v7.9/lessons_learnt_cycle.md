@@ -49,3 +49,43 @@ None.
 ## Escalations
 
 None raised by this Phase 3 append. (See `execution_escalations.md` for the two execution-time escalations raised during the sprint itself — ESC-EXEC-20260727-01, Resolved; ESC-EXEC-20260727-02, Open/non-blocking, tracked for the next roadmap-engine touch.)
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-07-27__release-v7.9
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-07-28
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-07-24__release-v7.8 (`lessons_learnt_cycle.md` `## Phase 4`) — one friction item (3 doc-completeness gaps found during EPIC-11/ST-11 without a filed backlog entry at sprint close; filed BLG-SPEC-102/103/104 at delivery verification STEP 4.1). No open Phase 4 item carried into this cycle from that record.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| `ESC-EXEC-20260727-02` (EPIC-14 displacement debt register — physical file placement + `roadmap_prompt.md` STEP 8 edit, both outside Sprint Execution's write scope) was Open and carried forward at sprint close per `sprint_close.md`, but had no corresponding `claude/backlog/backlog.md` entry — same recurring pattern as the v7.8 Phase 4 friction item (write-scope handoffs noted in qa_evidence/escalation records don't automatically produce a backlog entry). | Phase 4 | C | action-now | Filed `BLG-GOV-264` to `claude/backlog/backlog.md`, referencing `ESC-EXEC-20260727-02` and both required actions (register file creation + `roadmap_prompt.md` STEP 8 edit). See `verification_report.md §5(a)`. | Director of Quality | — |
+
+All other STEP -1 through STEP 7 checks completed cleanly: sprint close readiness statement all `Yes`; all 15 QA evidence logs present with compliant, non-blank sign-offs on first read (no Tier 1/Tier 2 issues, all autonomous-class and agent-mediated sign-off formats compliant); zero deviations filed; zero traceability gaps; `deferred_execution_blockers` empty; zero parked items (stale-parked check skipped); test scenario coverage fully accounted for (9 EPICs with confirmed-run/CI-covered scenarios, 6 correctly dispositioned `not_applicable`, no genuine gaps); `docs/System_status_report.md`'s v7.9 section required only the expected routine status-line update, no content corrections. Status determined as `Verified` with no hard blocks encountered.
+
+**Recurrence Notes:**
+**Recurrence: Yes** — this is the same friction *type* (Type C, write-scope handoff tracked in a cycle artefact but not propagated to `backlog.md` before delivery verification) as the v7.8 Phase 4 item, though the specific finding (an open escalation vs. three doc-completeness findings) is different content. The v7.8 item's own action-now fix (filing the backlog items at STEP 4.1) was a one-time correction, not a structural prompt change — so this pattern recurring once more is expected, not a signal the v7.8 fix failed. Two occurrences across two consecutive cycles is below the 2-consecutive-cycle-with-open-prior-action escalation threshold in §6.4 (the v7.8 occurrence was itself closed same-run, not left open), so this is recorded as a recurrence note, not escalated to Head of Specs Team. If a third consecutive cycle produces the same pattern, escalate per §6.4 and consider a structural patch (e.g. a `execution_prompt.md` STEP requiring every `Open`-status escalation to include a `backlog_ref` field at raise time).
+
+---
+
+## Recurrence Escalations (Phase 4)
+
+None — two-occurrence pattern (v7.8, v7.9) does not yet meet the 3-consecutive-cycle recurrence escalation threshold; see Recurrence Notes above.
+
+## Process improvements actioned this run (Phase 4)
+
+Filed 1 backlog item (`BLG-GOV-264`) closing the traceability gap identified above — see `action-now` row.
+
+## Outstanding deferred patches (Phase 4)
+
+None.
+
+## Escalations (Phase 4)
+
+None.
+
+---
