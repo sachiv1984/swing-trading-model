@@ -64,6 +64,24 @@ jobs:
           echo "exit_code=$?" >> "$GITHUB_OUTPUT"
           exit 0
 
+      # ST-07 (EPIC-07, v7.9, BLG-BE-74): permanent data-integrity smoke test,
+      # standing replacement for the one-off audits that previously caught
+      # this invariant class (BLG-BE-59 point-in-time eligibility, BLG-BE-60
+      # P&L reproducibility, BLG-BE-63 idempotency). Exit code captured (not
+      # failed immediately) using the same pattern as the import step above,
+      # so a failure here also reaches the alert step below rather than
+      # silently skipping notification — the whole point of a standing gate
+      # is defeated if its own failure doesn't page anyone.
+      - name: Data-integrity smoke test
+        id: integrity_smoke_test
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          set +e
+          python scripts/backtest_data_integrity_smoke_test.py
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+          exit 0
+
       # ST-10 (EPIC-10, v7.7): monitoring/alerting for nightly backtest
       # failures or output anomalies. import_backtest.py exits 1 on a hard
       # failure (non-200 response) and 2 on a detected output anomaly
@@ -71,17 +89,22 @@ jobs:
       # BLG-BE-60/RISK-01) — both are captured above without failing this
       # step immediately so this alert step can distinguish and report them,
       # then the final gate step below still fails the job either way.
+      # ST-07 (EPIC-07, v7.9): also fires on a data-integrity smoke test
+      # failure (BLG-BE-59/63 class), captured the same way above.
       - name: Send failure/anomaly alert
-        if: steps.import.outputs.exit_code != '0'
+        if: steps.import.outputs.exit_code != '0' || steps.integrity_smoke_test.outputs.exit_code != '0'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          CODE="${{ steps.import.outputs.exit_code }}"
-          if [ "$CODE" = "2" ]; then
+          IMPORT_CODE="${{ steps.import.outputs.exit_code }}"
+          SMOKE_CODE="${{ steps.integrity_smoke_test.outputs.exit_code }}"
+          if [ "$SMOKE_CODE" != "0" ]; then
+            KIND="data-integrity smoke test failed (BLG-BE-59/63 class violation — see run log for details)"
+          elif [ "$IMPORT_CODE" = "2" ]; then
             KIND="anomaly detected (BACKTEST_DRIFT_ALERT — see run log for details)"
           else
-            KIND="failed (exit code ${CODE})"
+            KIND="failed (exit code ${IMPORT_CODE})"
           fi
           RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           MESSAGE="Nightly Backtest job ${KIND}. ${RUN_URL}"
@@ -96,4 +119,8 @@ jobs:
 
       - name: Fail job if import step did not succeed
         if: steps.import.outputs.exit_code != '0'
+        run: exit 1
+
+      - name: Fail job if data-integrity smoke test did not pass
+        if: steps.integrity_smoke_test.outputs.exit_code != '0'
         run: exit 1
