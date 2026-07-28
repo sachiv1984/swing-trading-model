@@ -2182,6 +2182,72 @@ def query_claude_audit_log(
         return []
 
 
+# ---------------------------------------------------------------------------
+# position_audit_log — audit trail for manual position overrides (ST-06,
+# EPIC-06, v7.9, BLG-BE-73). Distinct from claude_audit_log (Claude API call
+# accounting) and the AI-journal-generation audit trail (BLG-SEC-14, a
+# different write path) — this table covers the three genuinely manual,
+# user-initiated position edits that sit outside the automated trade
+# lifecycle: note edit, tag edit, and mark-reviewed. Core trade/financial
+# fields (entry_price, shares, stop, etc.) have no manual-override endpoint
+# in this product and are out of scope — see decision record cited in
+# data_model.md's migration entry for this table.
+#
+# No "who" column: this is a single-user product (no per-user identity
+# concept exists anywhere else in this codebase — same precedent as
+# claude_audit_log above, which also carries no user/actor field).
+# ---------------------------------------------------------------------------
+
+def ensure_position_audit_log_table() -> None:
+    """Create position_audit_log table if it does not exist."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS position_audit_log (
+                    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    position_id  UUID NOT NULL,
+                    source       TEXT NOT NULL,
+                    field        TEXT NOT NULL,
+                    before_value TEXT,
+                    after_value  TEXT,
+                    changed_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_position_audit_log_position_id
+                ON position_audit_log(position_id)
+            """)
+        conn.commit()
+
+
+def create_position_audit_log_entry(
+    position_id: str,
+    source: str,
+    field: str,
+    before_value,
+    after_value,
+) -> None:
+    """Insert one row into position_audit_log. Non-blocking on failure —
+    an audit-log write failure must never break the underlying position
+    edit it is recording (same fail-open convention as
+    create_claude_audit_entry above)."""
+    try:
+        ensure_position_audit_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO position_audit_log
+                        (position_id, source, field, before_value, after_value)
+                    VALUES (%s, %s, %s, %s, %s)
+                    """,
+                    (position_id, source, field, str(before_value), str(after_value)),
+                )
+            conn.commit()
+    except Exception:
+        pass
+
+
 def get_monthly_claude_cost() -> dict:
     """Return the current calendar month's Claude API spend total from claude_audit_log.
 

@@ -110,6 +110,7 @@ export default function Watchlist() {
             selectedIds={selectedIds}
             onToggleRow={toggleRow}
             onToggleAll={toggleAll}
+            onKeep={modalHook.handleKeep}
           />
         </DataState>
       </div>
