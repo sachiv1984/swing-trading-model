@@ -1,11 +1,284 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-27 (session — duplicate consolidation, ad hoc user-directed backlog cleanup: 13 duplicate items retired as ❌ Killed — duplicate, merged into 5 survivor items (BLG-OPS-25, BLG-BE-47, BLG-FEAT-30, BLG-QA-75, BLG-SEC-15) — see `backlog.md` header for full detail); prior — 2026-07-27 (groom backlog post-ship closure 2026-07-24__release-v7.8 — 12 items archived: BLG-FE-128, BLG-FEAT-84, BLG-FE-127, BLG-FE-125, BLG-FEAT-81, BLG-FEAT-82, BLG-SEC-20, BLG-SEC-21, BLG-BE-71, BLG-QA-117, BLG-QA-119, BLG-OPS-117; ephemeral Release Slice v7.8 section removed); prior — 2026-07-24 (groom backlog post-ship closure 2026-07-21__release-v7.7 — 11 items archived: BLG-FEAT-75, BLG-FE-114, BLG-FE-113, BLG-FE-120, BLG-FEAT-80, BLG-OPS-108, BLG-GOV-28, BLG-QA-104, BLG-BE-63, BLG-OPS-110, BLG-QA-102; ephemeral Release Slice v7.7 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-20__release-v7.6 — 8 items archived: BLG-FE-119, BLG-QA-112, BLG-FEAT-79, BLG-BE-65, BLG-QA-114, BLG-BE-62, BLG-FEAT-77, BLG-QA-69; ephemeral Release Slice v7.6 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
+**Last Updated:** 2026-07-28 (groom backlog post-ship closure 2026-07-27__release-v7.9 — 15 items archived: BLG-FEAT-66, BLG-FEAT-67, BLG-SPEC-105, BLG-FEAT-85, BLG-FEAT-87, BLG-BE-73, BLG-BE-74, BLG-OPS-121, BLG-QA-124, BLG-QA-125, BLG-FE-130, BLG-OPS-120, BLG-FE-129, BLG-GOV-258, BLG-QA-123; ephemeral Release Slice v7.9 section removed); prior — 2026-07-27 (session — duplicate consolidation, ad hoc user-directed backlog cleanup: 13 duplicate items retired as ❌ Killed — duplicate, merged into 5 survivor items (BLG-OPS-25, BLG-BE-47, BLG-FEAT-30, BLG-QA-75, BLG-SEC-15) — see `backlog.md` header for full detail); prior — 2026-07-27 (groom backlog post-ship closure 2026-07-24__release-v7.8 — 12 items archived: BLG-FE-128, BLG-FEAT-84, BLG-FE-127, BLG-FE-125, BLG-FEAT-81, BLG-FEAT-82, BLG-SEC-20, BLG-SEC-21, BLG-BE-71, BLG-QA-117, BLG-QA-119, BLG-OPS-117; ephemeral Release Slice v7.8 section removed); prior — 2026-07-24 (groom backlog post-ship closure 2026-07-21__release-v7.7 — 11 items archived: BLG-FEAT-75, BLG-FE-114, BLG-FE-113, BLG-FE-120, BLG-FEAT-80, BLG-OPS-108, BLG-GOV-28, BLG-QA-104, BLG-BE-63, BLG-OPS-110, BLG-QA-102; ephemeral Release Slice v7.7 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-20__release-v7.6 — 8 items archived: BLG-FE-119, BLG-QA-112, BLG-FEAT-79, BLG-BE-65, BLG-QA-114, BLG-BE-62, BLG-FEAT-77, BLG-QA-69; ephemeral Release Slice v7.6 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-FEAT-66 — Watchlist staleness and decay review
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-07-28
+**Shipped in:** v7.9
+**Evidence:** claude/cycles/2026-07-27__release-v7.9/verification_report.md (EPIC-01/ST-01); docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+
+### BLG-FEAT-66 — Watchlist staleness and decay review
+**Priority:** P1 (High) — escalated from P3, 2026-07-27, session product review (see note below)
+> ⚠️ **Priority escalation (2026-07-27):** Raised P3→P1 during a session backlog review — ungated, low-effort, closes a real UX gap (no exit path off the watchlist). Escalation reflects value judgment only; no gate criteria exist on this item.
+**Type:** Product Feature / Workflow
+**Owner:** Head of UX & Design; Product Owner
+**Source:** Product feature brainstorming session — 2026-07-08
+**Effort:** S (~1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-28 — cycle: 2026-07-27__release-v7.9 (ST-01)
+
+**Problem**
+DS-07 (Watchlist Promotion Flow, shipped v3.0) provides a one-click path from screener result to watchlist, but there is no corresponding exit path other than promotion to a trade plan. Tickers can accumulate on the watchlist indefinitely with no forcing function to review or remove them, degrading the watchlist's usefulness as a curated shortlist over time.
+
+**Scope**
+- Track days-on-watchlist per entry (`added_at` timestamp already captured at add time)
+- Frontend: staleness indicator (e.g. "45 days, no action") on watchlist entries past a configurable threshold (default 30 days)
+- Explicit user action required: Keep (resets the clock) or Remove — no automatic removal
+
+**Acceptance Criteria**
+- AC-01: Watchlist entries display days-since-added
+- AC-02: Entries past the staleness threshold are visually flagged
+- AC-03: User can explicitly "Keep" (resets staleness clock with a new timestamp) or "Remove" a stale entry
+- AC-04: No automatic removal — user decision required in all cases
+
+---
+
+### BLG-FEAT-67 — Historical sector/regime exposure trend
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-07-28
+**Shipped in:** v7.9
+**Evidence:** claude/cycles/2026-07-27__release-v7.9/verification_report.md (EPIC-02/ST-02); docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+
+### BLG-FEAT-67 — Historical sector/regime exposure trend
+**Priority:** P1 (High) — escalated from P3, 2026-07-27, session product review (see note below)
+> ⚠️ **Priority escalation (2026-07-27):** Raised P3→P1 during a session backlog review — ungated, pure aggregation of existing data, gives new risk-exposure visibility at low cost. Escalation reflects value judgment only; no gate criteria exist on this item.
+**Type:** Product Feature / Analytics
+**Owner:** Metrics Definitions & Analytics Owner; Head of UX & Design
+**Source:** Product feature brainstorming session — 2026-07-08
+**Effort:** M (~2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-28 — cycle: 2026-07-27__release-v7.9 (ST-02)
+
+**Problem**
+`SectorHeatMap` (shipped v6.2) and regime status displays show only the current point-in-time snapshot of sector concentration and regime. There is no way to see whether concentration or regime exposure has been drifting over recent months — a trend view needs only aggregation of data the system already captures (`portfolio_history`, sector classification, regime status at each snapshot), not a new data source.
+
+**Scope**
+- Backend: aggregate existing `portfolio_history` + sector/regime data into a rolling time series (weekly or monthly buckets)
+- Frontend: trend chart (sector concentration % over time, regime status over time) added alongside the existing `SectorHeatMap` on the Positions or Reports page
+- No new inputs — purely a historical view of data already captured
+
+**Acceptance Criteria**
+- AC-01: Sector concentration trend chart renders using existing `portfolio_history` + sector data, no new data collection required
+- AC-02: Regime status trend shown over the same time window
+- AC-03: Chart handles insufficient-history state gracefully (e.g. fewer than 8 weeks of data)
+
+---
+
+### BLG-SPEC-105 — Formalise trade_plan-to-position foreign-key linkage schema
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-28
+**Shipped in:** v7.9
+**Evidence:** claude/cycles/2026-07-27__release-v7.9/verification_report.md (EPIC-03/ST-03); docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+
+### BLG-SPEC-105 — Formalise trade_plan-to-position foreign-key linkage schema
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Data Model | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-data-model-20260727-01 | **Effort:** M (~2-3 days) | **Provisional-Target:** ✅ COMPLETE — 2026-07-28 — cycle: 2026-07-27__release-v7.9 (ST-03)
+**Problem:** SI-02's gate condition (1) depends entirely on `trade_history.position_id` linking to `trade_plans`, but the linkage itself (as a relationship, not a version) is documented only implicitly across `BLG-BE-46`/`BLG-FE-109`'s fix descriptions — there is no single canonical schema statement of the FK relationship, its nullability, or backfill posture. Distinct from `BLG-SPEC-97` (versioning doc) and `BLG-BE-14` (version numbering), which do not cover the relationship itself.
+**Scope:** Document the canonical trade_plan↔position linkage schema (cardinality, nullability, backfill posture) in `data_model.md`.
+**Acceptance Criteria:** Schema section added; Data Model & Domain Schema Owner sign-off; cross-referenced from the SI-02 gate note in `current_roadmap.md`.
+
+---
+
+### BLG-FEAT-85 — Monthly P&L CSV export: tax-lot cost-basis reconciliation
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-28
+**Shipped in:** v7.9
+**Evidence:** claude/cycles/2026-07-27__release-v7.9/verification_report.md (EPIC-04/ST-04); docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+
+### BLG-FEAT-85 — Monthly P&L CSV export: tax-lot cost-basis reconciliation
+**Priority:** P2 (Medium) | **Type:** Feature / Financial Reporting | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260727-01 | **Effort:** M (~2-3 days) | **Provisional-Target:** ✅ COMPLETE — 2026-07-28 — cycle: 2026-07-27__release-v7.9 (ST-04)
+**Problem:** The v7.8 Monthly P&L CSV export (`BLG-FEAT-81`) reports realized P&L but does not reconcile against a stated tax-lot cost-basis method (FIFO/specific-lot), leaving the export's basis assumption implicit.
+**Scope:** Add an explicit cost-basis method disclosure/reconciliation column to the export.
+**Acceptance Criteria:** Export documents its cost-basis method; reconciles against a manually-verified sample; Financial Reporting & Records Owner sign-off.
+
+---
+
+### BLG-FEAT-87 — "Why is my stop moving" explainer tooltip on the trailing-stop UI
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-28
+**Shipped in:** v7.9
+**Evidence:** claude/cycles/2026-07-27__release-v7.9/verification_report.md (EPIC-05/ST-05); docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+
+### BLG-FEAT-87 — "Why is my stop moving" explainer tooltip on the trailing-stop UI
+**Priority:** P2 (Medium) | **Type:** Feature (User-Facing) | **Owner:** Product Owner | **Source:** IDEA-product-owner-20260727-01 | **Effort:** S (~1-2 days) | **Provisional-Target:** ✅ COMPLETE — 2026-07-28 — cycle: 2026-07-27__release-v7.9 (ST-05)
+**Problem:** The trailing-stop framework (`strategy_rules.md` §7) has non-obvious profit-aware logic (§7.2) and a hard stop-movement constraint (§7.3) that are not explained anywhere in the trade UI — users see the stop move but not why.
+**Scope:** Add a short explainer tooltip on the position/trade view surfacing the current trailing-stop rule in plain language.
+**Acceptance Criteria:** Tooltip added; text reviewed against §7 for accuracy; Product Owner sign-off.
+
+---
+
+### BLG-BE-73 — Audit trail for manual position overrides
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-28
+**Shipped in:** v7.9
+**Evidence:** claude/cycles/2026-07-27__release-v7.9/verification_report.md (EPIC-06/ST-06); docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+
+### BLG-BE-73 — Audit trail for manual position overrides
+**Priority:** P2 (Medium) | **Type:** Backend / Financial Reporting | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260727-02 | **Effort:** M (~2-3 days) | **Provisional-Target:** ✅ COMPLETE — 2026-07-28 — cycle: 2026-07-27__release-v7.9 (ST-06)
+**Problem:** Manual position overrides (e.g. correcting a stored trade record) currently leave no audit trail distinguishing a manual edit from a normal lifecycle transition — distinct from `BLG-SEC-14`'s AI-journal-generation audit trail, which covers a different write path.
+**Scope:** Add an audit-log entry (who, when, before/after values) whenever a position record is manually edited outside the normal trade lifecycle.
+**Acceptance Criteria:** Audit entries recorded for manual overrides; Financial Reporting & Records Owner sign-off.
+
+---
+
+### BLG-BE-74 — Nightly backtest data-integrity smoke test as a standing CI gate
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-28
+**Shipped in:** v7.9
+**Evidence:** claude/cycles/2026-07-27__release-v7.9/verification_report.md (EPIC-07/ST-07); docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+
+### BLG-BE-74 — Nightly backtest data-integrity smoke test as a standing CI gate
+**Priority:** P2 (Medium) | **Type:** Backend / Ops | **Owner:** Head of Engineering | **Source:** IDEA-head-of-engineering-20260727-01 | **Effort:** M (~2-3 days) | **Provisional-Target:** ✅ COMPLETE — 2026-07-28 — cycle: 2026-07-27__release-v7.9 (ST-07)
+**Problem:** Nightly-backtest data-integrity issues have been caught by one-off audits three times (`BLG-BE-59`/`60` fast-tracked v7.1, `BLG-BE-63` idempotency audit v7.7) rather than by a standing automated check, so each recurrence has required a fresh manual investigation.
+**Scope:** Add a permanent smoke test to the nightly backtest CI job checking the same class of data-integrity invariant found in the prior three incidents.
+**Acceptance Criteria:** Smoke test added to CI; passes on current data; Head of Engineering sign-off.
+
+---
+
+### BLG-OPS-121 — Provision a staging credential so SI-02 live gate re-checks don't depend on ad hoc session environment
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-28
+**Shipped in:** v7.9
+**Evidence:** claude/cycles/2026-07-27__release-v7.9/verification_report.md (EPIC-08/ST-08); docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+
+### BLG-OPS-121 — Provision a staging credential so SI-02 live gate re-checks don't depend on ad hoc session environment
+**Priority:** P2 (Medium) | **Type:** Ops / Infrastructure | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260727-01 | **Effort:** S (~1-2 days) | **Provisional-Target:** ✅ COMPLETE — 2026-07-28 — cycle: 2026-07-27__release-v7.9 (ST-08)
+**Problem:** Every recent scheduled roadmap rebalance (`2026-07-24__scheduled`, this cycle) has found `REACT_APP_API_KEY` empty in `.env`/`.env.staging`/`.env.production`, meaning the SI-02 gate's "live re-check via direct production API" instruction (`roadmap_prompt.md` STEP 2.3, now with v9.6 credential-fallback guidance) has not actually been exercisable in any session run so far this month — the fallback path is well-governed, but the underlying capability gap remains unaddressed.
+**Scope:** Provision a read-only staging (or scoped production read) credential accessible to governed-routine sessions specifically for gate re-checks.
+**Acceptance Criteria:** Credential provisioned and documented; next scheduled roadmap rebalance can perform a genuine live SI-02 re-check; Infrastructure & Operations Owner sign-off.
+
+---
+
+### BLG-QA-124 — Shared cross-EPIC smoke-test tagging for parallel-branch merges
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-28
+**Shipped in:** v7.9
+**Evidence:** claude/cycles/2026-07-27__release-v7.9/verification_report.md (EPIC-09/ST-09); docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+
+### BLG-QA-124 — Shared cross-EPIC smoke-test tagging for parallel-branch merges
+**Priority:** P2 (Medium) | **Type:** QA Process | **Owner:** QA Lead | **Source:** IDEA-qa-lead-20260727-01 | **Effort:** M (~2-3 days) | **Provisional-Target:** ✅ COMPLETE — 2026-07-28 — cycle: 2026-07-27__release-v7.9 (ST-09)
+**Problem:** `shared_standards.md` §12 governs merge *sequencing* and conflict resolution for parallel EPIC branches, but there is no shared smoke-test tag ensuring each merged branch gets at least one common regression pass before the next EPIC's PR opens — related to, but distinct from, the recurring `execution_state.json` conflict pattern flagged in this cycle's Carry-Forward Advisory.
+**Scope:** Define a smoke-test tag/suite that runs once per EPIC-branch merge as part of the §12 Rule 3 GOVERNANCE-commit step.
+**Acceptance Criteria:** Tag/suite defined; documented in `shared_standards.md` §12; QA Lead sign-off.
+
+---
+
+### BLG-QA-125 — Pre-commit hook automating the `backend/routers/test.py` registration check
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-28
+**Shipped in:** v7.9
+**Evidence:** claude/cycles/2026-07-27__release-v7.9/verification_report.md (EPIC-10/ST-10); docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+
+### BLG-QA-125 — Pre-commit hook automating the `backend/routers/test.py` registration check
+**Priority:** P2 (Medium) | **Type:** QA Process / Tooling | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260727-01 | **Effort:** S (~1-2 days) | **Provisional-Target:** ✅ COMPLETE — 2026-07-28 — cycle: 2026-07-27__release-v7.9 (ST-10)
+**Problem:** `CLAUDE.md` §2 requires every new backend route to be registered in `backend/routers/test.py` in the same commit, enforced today only by manual discipline and CI failure after the fact — no local pre-commit check catches the omission before push.
+**Scope:** Add a pre-commit hook that greps new `@router.*` decorators against `test.py` entries and blocks the commit if one is missing.
+**Acceptance Criteria:** Hook added to `.pre-commit-config` (or equivalent); tested against a deliberately-missing case; QA & Testing Owner sign-off.
+
+---
+
+### BLG-FE-130 — WCAG contrast checklist addendum for chart colour palettes
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-28
+**Shipped in:** v7.9
+**Evidence:** claude/cycles/2026-07-27__release-v7.9/verification_report.md (EPIC-11/ST-11); docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+
+### BLG-FE-130 — WCAG contrast checklist addendum for chart colour palettes
+**Priority:** P2 (Medium) | **Type:** Frontend / Accessibility | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** IDEA-frontend-specs-20260727-02 | **Effort:** S (~1 day) | **Provisional-Target:** ✅ COMPLETE — 2026-07-28 — cycle: 2026-07-27__release-v7.9 (ST-11)
+**Problem:** `design_system.md` v1.4 (this session) added a WCAG contrast standard for text and focus indicators, but chart colour palettes (data-series colours against light/dark backgrounds) are not explicitly covered by that standard.
+**Scope:** Add a chart-specific contrast checklist item to `design_system.md`'s Accessibility section.
+**Acceptance Criteria:** Checklist item added; Frontend Specifications & UX Documentation Owner sign-off.
+
+---
+
+### BLG-OPS-120 — Cost-tag cloud infrastructure spend by EPIC
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-28
+**Shipped in:** v7.9
+**Evidence:** claude/cycles/2026-07-27__release-v7.9/verification_report.md (EPIC-12/ST-12); docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+
+### BLG-OPS-120 — Cost-tag cloud infrastructure spend by EPIC
+**Priority:** P3 (Low) | **Type:** Ops / FinOps | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260727-02 | **Effort:** M (~2-3 days) | **Provisional-Target:** ✅ COMPLETE — 2026-07-28 — cycle: 2026-07-27__release-v7.9 (ST-12)
+**Problem:** Skill-Silo workforce economics (STEP 7.1) reasons about story counts only — no cloud infra cost signal feeds into the same workforce-economics picture.
+**Scope:** Add EPIC-level cost tags to relevant cloud resources and surface a per-EPIC spend summary.
+**Acceptance Criteria:** Cost tags applied; summary report available; FinOps & Resource Architect sign-off.
+
+---
+
+### BLG-FE-129 — Dark-mode acceptance-criteria checklist addendum for Base44 prompt drafts
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-28
+**Shipped in:** v7.9
+**Evidence:** claude/cycles/2026-07-27__release-v7.9/verification_report.md (EPIC-13/ST-13); docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+
+### BLG-FE-129 — Dark-mode acceptance-criteria checklist addendum for Base44 prompt drafts
+**Priority:** P3 (Low) | **Type:** Frontend / Process | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260727-02 | **Effort:** S (~1 day) | **Provisional-Target:** ✅ COMPLETE — 2026-07-28 — cycle: 2026-07-27__release-v7.9 (ST-13)
+**Problem:** The v7.8 dark-mode contrast audit (`BLG-FE-125`) found and fixed issues after the fact; no standing checklist item in the Base44 prompt-drafting process asks for explicit dark-mode acceptance criteria up front.
+**Scope:** Add a short dark-mode AC checklist item to the Base44 prompt template so future drafts specify light/dark contrast intent explicitly.
+**Acceptance Criteria:** Checklist item added; Base44 Frontend Prompt Owner sign-off.
+
+---
+
+### BLG-GOV-258 — Displacement debt register — track unused named displacement candidates
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-28
+**Shipped in:** v7.9
+**Evidence:** claude/cycles/2026-07-27__release-v7.9/verification_report.md (EPIC-14/ST-14); docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+
+### BLG-GOV-258 — Displacement debt register — track unused named displacement candidates
+**Priority:** P3 (Low) | **Type:** Governance Process | **Owner:** Challenger | **Source:** IDEA-challenger-20260727-01 | **Effort:** S (~1 day) | **Provisional-Target:** ✅ COMPLETE — 2026-07-28 — cycle: 2026-07-27__release-v7.9 (ST-14)
+**Problem:** STEP 8's "Displacement candidate flag" is recorded per-cycle in `initiative_register.md`, but there is no cross-cycle view of how many named candidates are ever actually displaced versus repeatedly named and never used.
+**Scope:** Add a lightweight rolling count/log of named displacement candidates and their eventual disposition.
+**Acceptance Criteria:** Log format documented; Head of Specs Team sign-off.
+
+---
+
+### BLG-QA-123 — Defined visual-regression baseline refresh cadence for Grid View components
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-07-28
+**Shipped in:** v7.9
+**Evidence:** claude/cycles/2026-07-27__release-v7.9/verification_report.md (EPIC-15/ST-15); docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+
+### BLG-QA-123 — Defined visual-regression baseline refresh cadence for Grid View components
+**Priority:** P3 (Low) | **Type:** QA Process | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260727-02 | **Effort:** S (~1 day) | **Provisional-Target:** ✅ COMPLETE — 2026-07-28 — cycle: 2026-07-27__release-v7.9 (ST-15)
+**Problem:** `BLG-QA-81` established initial visual-regression baselines for contrast-sensitive components, but no cadence exists for refreshing those baselines as the Grid View evolves — stale baselines risk either false failures or silently accepted drift.
+**Scope:** Define a refresh cadence (e.g. every N releases, or on any Grid View design-gate pass) for visual-regression baselines.
+**Acceptance Criteria:** Cadence documented; Head of UX & Design + Director of Quality sign-off.
 
 ---
 

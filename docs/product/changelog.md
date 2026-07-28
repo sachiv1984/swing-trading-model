@@ -3,9 +3,58 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-27 (post-ship closure 2026-07-24__release-v7.8)
+**Last Updated:** 2026-07-28 (post-ship closure 2026-07-27__release-v7.9)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v7.9 — Capacity-Fill & Engineering Hardening — 2026-07-28
+Cycle: 2026-07-27__release-v7.9
+Verified: Verified
+Verification report: claude/cycles/2026-07-27__release-v7.9/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Staleness tracking and Keep/Remove review action added to Watchlist | `docs/specs/frontend/pages/watchlist.md#Staleness Indicator`; `docs/specs/api_contracts/watchlist_endpoints.md#PATCH /watchlist/{entry_id}` |
+| EPIC-02 | Sector concentration / regime exposure trend chart added to Risk Dashboard | `docs/specs/frontend/pages/risk_dashboard.md#8b. Component: Sector & Regime Exposure Trend`; `docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/sector-regime-trend` |
+| EPIC-03 | Canonical trade_plan↔position linkage schema documented in data_model.md | `docs/specs/data_model.md#Trade Plan to Position Linkage` |
+| EPIC-04 | Cost-basis method disclosure/reconciliation column added to Monthly P&L CSV export | `backend/services/reports_service.py` |
+| EPIC-05 | Trailing-stop rule explainer tooltip added to position/trade view | `docs/specs/frontend/pages/positions.md#Trailing Stop Column` |
+| EPIC-06 | Audit-log entries added for manual position edits (who, when, before/after) | `backend/database.py`; `backend/services/position_service.py`; `docs/specs/data_model.md#Migration from v2.16 to v2.17` |
+| EPIC-07 | Permanent data-integrity smoke test added to the nightly backtest CI job | `scripts/backtest_data_integrity_smoke_test.py`; `.github/workflows/backtest.yml` |
+| EPIC-08 | Read-only staging/scoped-production credential provisioned and documented | `docs/security/api_key_security_register.md#6. Application X-API-Key` |
+| EPIC-09 | Common regression smoke-test tag/suite defined for EPIC-branch merges | `tests/e2e/smoke-critical-paths.spec.js` |
+| EPIC-10 | Pre-commit hook added blocking commits with unregistered new routes | `scripts/check_router_test_registration.py`; `.githooks/pre-commit` |
+| EPIC-11 | Chart-specific contrast checklist item added to design_system.md Accessibility section | `docs/specs/frontend/design_system.md` |
+| EPIC-12 | EPIC-level cost tags added to cloud resources; per-EPIC spend summary produced | `docs/ops/cloud_infra_spend_by_epic.md` |
+| EPIC-13 | Dark-mode AC checklist item added to the Base44 prompt template | `docs/specs/frontend/base44_prompt_template_library.md#4. Template: Dual-Theme Verification Call-Out` |
+| EPIC-14 | Rolling log of named displacement candidates and their disposition defined | `claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-14.md#Displacement Debt Register — Design` |
+| EPIC-15 | Refresh cadence defined for Grid View visual-regression baselines | `docs/testing/visual_regression_baseline_cadence.md` |
+
+### Deviations accepted
+None. Every `done` ST item's deviation check found no divergence between implementation and canonical spec (see `sprint_close.md` "Deviations Filed This Sprint").
+
+### Tech backlog items shipped
+- [ST-01] [U] BLG-FEAT-66: Watchlist staleness/decay review — Keep/Remove action
+- [ST-02] [U] BLG-FEAT-67: Historical sector/regime exposure trend chart on Risk Dashboard
+- [ST-03] [D] BLG-SPEC-105: Canonical trade_plan↔position linkage schema documentation
+- [ST-04] [U] BLG-FEAT-85: Cost-basis method disclosure column on Monthly P&L CSV export
+- [ST-05] [U] BLG-FEAT-87: Trailing-stop rule explainer tooltip
+- [ST-06] [D] BLG-BE-73: Audit-log entries for manual position edits
+- [ST-07] [D] BLG-BE-74: Permanent data-integrity smoke test in nightly backtest CI
+- [ST-08] [D] BLG-OPS-121: Read-only staging/scoped-production credential provisioning
+- [ST-09] [D] BLG-QA-124: Common regression smoke-test tag/suite for EPIC-branch merges
+- [ST-10] [D] BLG-QA-125: Pre-commit hook blocking unregistered new routes
+- [ST-11] [G] BLG-FE-130: Chart-specific contrast checklist item in design_system.md
+- [ST-12] [D] BLG-OPS-120: EPIC-level cost tags and per-EPIC spend summary
+- [ST-13] [G] BLG-FE-129: Dark-mode AC checklist item in Base44 prompt template
+- [ST-14] [G] BLG-GOV-258: Rolling log of displacement candidates and disposition
+- [ST-15] [D] BLG-QA-123: Refresh cadence for Grid View visual-regression baselines
+
+Sign-off: Product Owner — 2026-07-28
+QA sign-off: Director of Quality — 2026-07-28
 
 ---
 

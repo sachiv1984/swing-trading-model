@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.1
-**Last Updated:** 2026-07-27 (post-ship closure 2026-07-24__release-v7.8)
+**Last Updated:** 2026-07-28 (post-ship closure 2026-07-27__release-v7.9)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -86,8 +86,9 @@
 | v7.6  | 8       | 8         | 1.00     | All 8 stories done across 8 EPICs (sprint expanded from 1-item anchor to 8 via PO-directed capacity-fill reopen, DL-073); print/PDF export (BLG-FE-119, EPIC-01, agent-mediated DoQ sign-off); regression baseline update (BLG-QA-112); P&L export reconciliation (BLG-FEAT-79); error-response envelope audit (BLG-BE-65); OpenAPI-derived fixture library (BLG-QA-114); nightly batch idempotency audit (BLG-BE-62); Claude API monthly cost summary (BLG-FEAT-77, EPIC-07, agent-mediated DoQ sign-off, mid-sprint premise correction via ESC-EXEC-20260720-01); ticker/market sanitisation regression suite (BLG-QA-69); zero code deviations filed; 0 delegations; 0 returns; Verified |
 | v7.7  | 11      | 11        | 1.00     | All 11 stories done across 11 EPICs; SI-04 strategy-version comparison view (BLG-FEAT-75); notification/digest surface consolidation (BLG-FE-114); AiDailyBriefing light-theme contrast fix (BLG-FE-113); shared standing-alert component (BLG-FE-120); SI-02 nudge feasibility investigation (BLG-FEAT-80); daily-snapshot.yml curl validation (BLG-OPS-108); PT-04 §13 retroactive compliance review (BLG-GOV-28, PASS); numpy-scalar regression test (BLG-QA-104, cross-file test-isolation bug found and fixed); nightly-backtest idempotency audit (BLG-BE-63, no gap found, concurrency guard added); nightly-backtest monitoring/alerting (BLG-OPS-110, BLG-OPS-115 follow-up filed); endpoint-count drift CI gate (BLG-QA-102, pre-existing 103→99 drift corrected); zero deviations filed; 0 delegations; 0 returns; Verified |
 | v7.8  | 12      | 12        | 1.00     | All 12 stories done across 12 EPICs; in-app "what's new" panel (BLG-FE-128); Telegram changelog digest automation (BLG-FEAT-84); notification UX accessibility pass (BLG-FE-127, nav badge contrast fix); dark-mode contrast audit across all 23 pages (BLG-FE-125, PageHeader via-stop fix); monthly P&L CSV export (BLG-FEAT-81); AI spend trend chart (BLG-FEAT-82); API key rotation-and-audit schedule (BLG-SEC-20); endpoint rate-limit remediation (BLG-SEC-21, 4 endpoints); shared retry/backoff decorator (BLG-BE-71); flaky-test quarantine mechanism (BLG-QA-117); pilot contract tests (BLG-QA-119, 3 spec-debt gaps filed BLG-SPEC-102/103/104); API contract heading-level CI lint (BLG-OPS-117); zero deviations filed; 0 delegations; 0 returns; Verified |
+| v7.9  | 15      | 15        | 1.00     | All 15 stories done across 15 EPICs, both P1 UX anchors shipped; Watchlist staleness/decay Keep-Remove review (BLG-FEAT-66); sector/regime exposure trend chart on Risk Dashboard (BLG-FEAT-67); trade_plan↔position linkage schema documentation (BLG-SPEC-105); cost-basis disclosure column on Monthly P&L CSV export (BLG-FEAT-85); trailing-stop explainer tooltip (BLG-FEAT-87); manual position-edit audit log (BLG-BE-73); nightly backtest data-integrity smoke test (BLG-BE-74); staging/scoped-production credential provisioning (BLG-OPS-121, resolved 2026-07-28 via ESC-EXEC-20260727-01); cross-EPIC regression smoke-test tag/suite (BLG-QA-124); pre-commit route-registration hook (BLG-QA-125); chart contrast checklist addendum (BLG-FE-130); per-EPIC cloud cost tagging (BLG-OPS-120); dark-mode AC checklist addendum for Base44 (BLG-FE-129); displacement debt register design (BLG-GOV-258, physical placement handed off as BLG-GOV-264); Grid View visual-regression baseline refresh cadence (BLG-QA-123); zero deviations filed; 0 delegations outstanding at close; 0 returns; Verified |
 
-**Rolling 6-cycle average (v7.3–v7.8):** 1.00
+**Rolling 6-cycle average (v7.4–v7.9):** 1.00
 
 ---
 

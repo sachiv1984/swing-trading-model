@@ -1,9 +1,13 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v7.9
 Cycle: 2026-07-27__release-v7.9
-Last Updated: 2026-07-27
+Last Updated: 2026-07-28
+
+Superseded by: v7.9 ship — 2026-07-28
+Changelog: docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+Cycle: 2026-07-27__release-v7.9
 
 ## Planning Decisions — v7.9 Capacity-Fill & Engineering Hardening
 

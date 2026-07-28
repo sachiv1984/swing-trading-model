@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v7.9
 Cycle: 2026-07-27__release-v7.9
-Last Updated: 2026-07-27
+Last Updated: 2026-07-28
+
+Superseded by: v7.9 ship — 2026-07-28
+Changelog: docs/product/changelog.md#v7-9-capacity-fill-engineering-hardening-2026-07-28
+Verification report: claude/cycles/2026-07-27__release-v7.9/verification_report.md
+Cycle: 2026-07-27__release-v7.9
 
 ## Release Scope — v7.9 Capacity-Fill & Engineering Hardening
 

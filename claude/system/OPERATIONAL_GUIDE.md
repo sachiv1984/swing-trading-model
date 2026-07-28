@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.118
-**Last Updated:** 2026-07-27
+**Version:** 4.120
+**Last Updated:** 2026-07-28
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.6)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.7)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.20)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.21)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1272,7 +1272,7 @@ All artefacts must be lifecycle-compliant per `claude/charter/document_lifecycle
 | Team Charter | `claude/charter/team_charter.md` | 1 | Head of Specs Team | Governance |
 | Document Lifecycle Guide | `claude/charter/document_lifecycle_guide.md` | 1 | Head of Specs Team | Governance |
 | Strategy Rules | `claude/strategy/strategy_rules.md` | 1 | Strategy Rules Owner | Governance |
-| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v9.6) | Head of Specs Team | Governance |
+| Roadmap Rebalance Prompt | `claude/system/roadmap_prompt.md` | 6 (v9.7) | Head of Specs Team | Governance |
 | Release Planning Prompt | `claude/system/release_planning_prompt.md` | 6 | Head of Specs Team | Governance |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` | 6 (v2.8) | Head of Specs Team | Governance |
 | Idea Template | `claude/system/idea_template.md` | 6 | Head of Specs Team | Governance |
@@ -1463,7 +1463,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.12 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.6 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.6 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.7 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.44 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.13 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
@@ -1471,7 +1471,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.8 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.5 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.1 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.20 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.21 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.19 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1495,6 +1495,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.120 | 2026-07-28 | **Post-ship closure `2026-07-27__release-v7.9` STEP 6 self-discovered friction, immediate action — post_ship_closure.md v2.20→v2.21: Endpoint Coverage Drift Check advisory gains a stale-tracking-item delta note.** §10 source prompt header v2.20→v2.21. §14 Post-Ship Closure Engine v2.20→v2.21. §14 Version 4.119→4.120/2026-07-28. Change: when an existing open `BLG-OPS-*` tracking item is referenced instead of filing a duplicate, and the current normalised gap has grown beyond that item's own recorded list, the routine must not edit the existing item's body (outside backlog write scope) but must record the delta explicitly in the closure record and Advisory Summary so the tracking item's owner can reconcile it. Found this run: `BLG-OPS-111` (filed at v7.2, 21 endpoints) now understates the true gap by 4 (25 endpoints found this run, including 1 new from this cycle's own EPIC-01 `PATCH /watchlist/{entry_id}`). Authority: Head of Specs Team (post-ship closure `2026-07-27__release-v7.9`, STEP 8 — immediate lessons-learnt action rule, self-discovered same-run friction). |
+| 4.119 | 2026-07-28 | **Post-ship closure `2026-07-27__release-v7.9` STEP 8 immediate action (Release Planning lessons_learnt.md Friction Item 1) — roadmap_prompt.md v9.6→v9.7: candidate live-status cross-check added.** §6 source prompt header v9.6→v9.7. §14 Roadmap Engine Source v9.6→v9.7. §14 Version 4.118→4.119/2026-07-28. Change: added a "Candidate live-status cross-check" instruction immediately after the existing LP-05 gate-verification note — before naming any pull-forward candidate, the engine must confirm the item is still open in `backlog.md` (not archived/shipped), including checking any `groom backlog`/post-ship-closure action already taken earlier in the same session. Closes the gap where `2026-07-27__scheduled` named already-archived `BLG-FE-128` as a pull-forward candidate, caught only downstream at `plan release v7.9` via an appended correction. Authority: Head of Specs Team (post-ship closure `2026-07-27__release-v7.9`, STEP 8 — immediate lessons-learnt action rule). |
 | 4.118 | 2026-07-27 | **User-directed follow-up to BLG-GOV-190 — design_gate_prompt.md v1.5→v1.6: root `status` enum transition implemented per `lifecycle_schema.json`.** `lifecycle_schema.json` already defined the transition `Release_Planning_Complete → Design_Gate_Passed` (engine: Design Gate, completion signal: `design_gate_status = Passed AND design_gate.md present`), but no engine ever implemented the write — this is the deeper root cause behind the recurring `sprint_planning_prompt.md` STEP -1.3 bypass-audit false positive (v7.8, v7.9), which is keyed off the root `status` enum, not the `design_gate_status` field that the v1.5 fix mirrored. §5 Write Scope Restriction: `.claude_current_state.json` write now additionally permits `status` set to exactly `"Design_Gate_Passed"`, only when `design_gate_status = Passed` (no transition defined for `Blocked` — root pointer correctly stays at `Release_Planning_Complete` until the gate clears). STEP 5: added the schema-defined transition write, with the pre-write unchanged-value check per `shared_standards.md` §10.3. §7 Completion Condition updated. No change required to `sprint_planning_prompt.md` — its existing bypass-audit logic ("entered from `Release_Planning_Complete` = design gate skipped") becomes correct once this engine actually performs the transition it was always supposed to. §6.5 source prompt header v1.5→v1.6. §14 Design Gate Engine v1.5→v1.6. §14 Version 4.117→4.118/2026-07-27. Authority: Head of Specs Team (direct action, user-invoked, 2026-07-27). |
 | 4.117 | 2026-07-27 | **BLG-GOV-190 — design_gate_prompt.md v1.4→v1.5: root state pointer sync gap closed.** §5 Write Scope Restriction: added `.claude_current_state.json`, additive-only, restricted to `design_gate_status`/`design_gate_record`/`design_gate_completed_utc`. STEP 5: added a mirror write of those three fields into `.claude_current_state.json` immediately after the existing cycle-level `state.json` write — no other field (in particular `status`, `design_gate_bypass_authority`, `design_gate_bypass_reason`) is touched. STEP 6: `.claude_current_state.json` added to the commit's `git add` list. §7 Completion Condition updated to reference the mirrored write. §6.5 source prompt header v1.4→v1.5. §14 Design Gate Engine v1.4→v1.5. §14 Version 4.116→4.117/2026-07-27. Root cause: the root pointer's `design_gate_status` field was initialised `not_started` by Release Planning STEP 0 and never subsequently written by any engine, so it reported stale even after a gate genuinely passed (recurred `2026-07-24__release-v7.8` → `2026-07-27__release-v7.9`, each session verifying directly against the cycle-level `state.json` as a workaround rather than a fix). Authority: Head of Specs Team (direct action, user-invoked, 2026-07-27). |
 | 4.116 | 2026-07-27 | **Roadmap rebalance `2026-07-27__scheduled` STEP 11 Friction Item 1 — idea_intake_prompt.md v2.7→v2.8: §2.0 step 5 backlog-scope-overlap check upgraded from prose-advisory to a mandatory act (still non-blocking outcome).** §5 source prompt header v2.7→v2.8. §14 Idea Intake Engine v2.7→v2.8. §14 Version 4.115→4.116/2026-07-27. Change: the pre-v2.8 check existed as advisory prose ("briefly scan... advisory only") but was not actually performed at submission-generation time — confirmed this cycle when a retroactive STEP 4 check found 23 of 44 (52%) of a single window's submissions duplicated existing open backlog items, a saturation-driven cost of skipping the check up front. v2.8 requires the submitting agent to grep-check and explicitly record the result before finalising each topic; a submission restating an existing item with no materially new angle no longer counts toward the agent's minimum. Authority: Head of Specs Team (roadmap rebalance `2026-07-27__scheduled`, STEP 11). |

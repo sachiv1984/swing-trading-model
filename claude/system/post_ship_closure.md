@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.20
-**Last Updated:** 2026-07-27
+**Version:** 2.21
+**Last Updated:** 2026-07-28
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -463,7 +463,7 @@ After all PRs for this cycle are merged, compare endpoint coverage between:
 
 If openapi.yaml contains endpoints that are absent from the baseline doc (after normalisation):
 
-- **Check for an existing open tracking item first** — grep `claude/backlog/backlog.md` for an already-open `BLG-OPS-*` item covering the same endpoint-coverage-drift gap class (e.g. a prior cycle's "N endpoints missing from api_performance_baseline.md" item) before filing a new one. If one exists and still covers the current gap: do not file a duplicate — reference the existing item in the closure record instead.
+- **Check for an existing open tracking item first** — grep `claude/backlog/backlog.md` for an already-open `BLG-OPS-*` item covering the same endpoint-coverage-drift gap class (e.g. a prior cycle's "N endpoints missing from api_performance_baseline.md" item) before filing a new one. If one exists and still covers the current gap: do not file a duplicate — reference the existing item in the closure record instead. **If the current normalised gap count/list has grown beyond that item's own recorded list** (new endpoints have accumulated since it was filed): do not edit the existing item's body (outside this routine's backlog write scope — mark-shipped-complete and add-missing-Phase-4-items only) — instead, note the delta explicitly in the closure record and Advisory Summary (e.g. "N endpoints missing, up from M at filing — BLG-OPS-xx's own list is stale by <count> items") so the item's owner can reconcile it at their own next review, rather than letting the tracking item silently understate the true gap.
 - Do **not** attempt to fill them in — performance re-runs require a live environment and human coordination
 - Raise a backlog item (`BLG-OPS-xx`) titled "Add <N> new endpoints to api_performance_baseline.md re-run" referencing the missing paths, only if no existing open item covers the gap
 - Record the gap in the closure record under §6 (Outstanding Actions)
