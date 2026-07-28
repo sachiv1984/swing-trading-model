@@ -2,9 +2,19 @@ import PropTypes from "prop-types";
 import { Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 
-export default function WatchlistRowActions({ onResearch, onAddToPosition, onDeleteConfirm }) {
+export default function WatchlistRowActions({ isStale, onResearch, onAddToPosition, onDeleteConfirm, onKeep }) {
   return (
     <div className="flex items-center gap-2">
+      {isStale && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onKeep}
+          className="bg-slate-800/50 border-slate-700 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/30 text-xs h-7 px-2.5"
+        >
+          Keep
+        </Button>
+      )}
       <Button
         variant="outline"
         size="sm"
@@ -34,7 +44,9 @@ export default function WatchlistRowActions({ onResearch, onAddToPosition, onDel
 }
 
 WatchlistRowActions.propTypes = {
+  isStale: PropTypes.bool,
   onResearch: PropTypes.func.isRequired,
   onAddToPosition: PropTypes.func.isRequired,
   onDeleteConfirm: PropTypes.func.isRequired,
+  onKeep: PropTypes.func.isRequired,
 };

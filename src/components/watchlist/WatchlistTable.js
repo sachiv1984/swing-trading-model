@@ -4,11 +4,11 @@ import WatchlistRow from "./WatchlistRow";
 import { Checkbox } from "../ui/checkbox";
 
 const TABLE_HEADERS = [
-  "Ticker", "Market", "Entry Signal", "Target Entry", "Stop (Initial)",
+  "Ticker", "Market", "Entry Signal", "Added", "Target Entry", "Stop (Initial)",
   "Stop (Current)", "Earnings", "Research", "News", "Actions",
 ];
 
-export default function WatchlistTable({ entries, screenerTickers, newsHook, modalHook, selectedIds, onToggleRow, onToggleAll }) {
+export default function WatchlistTable({ entries, screenerTickers, newsHook, modalHook, selectedIds, onToggleRow, onToggleAll, onKeep }) {
   const navigate = useNavigate();
   const allSelected = entries.length > 0 && selectedIds.size === entries.length;
 
@@ -44,6 +44,7 @@ export default function WatchlistTable({ entries, screenerTickers, newsHook, mod
               onResearch={() => navigate(`/research/${entry.ticker}`)}
               onAddToPosition={() => modalHook.handleAddToPosition(entry)}
               onDeleteConfirm={() => modalHook.setModal({ mode: "edit-confirm", entry })}
+              onKeep={() => onKeep(entry)}
             />
           ))}
         </tbody>
@@ -69,4 +70,5 @@ WatchlistTable.propTypes = {
   selectedIds: PropTypes.instanceOf(Set).isRequired,
   onToggleRow: PropTypes.func.isRequired,
   onToggleAll: PropTypes.func.isRequired,
+  onKeep: PropTypes.func.isRequired,
 };

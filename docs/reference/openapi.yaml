@@ -3543,7 +3543,7 @@ paths:
       summary: List all watchlist entries
       description: |
         Returns all watchlist entries for the portfolio with computed signal_status.
-        Canonical contract: docs/specs/api_contracts/watchlist_endpoints.md v1.0 §GET /watchlist
+        Canonical contract: docs/specs/api_contracts/watchlist_endpoints.md v1.2 §GET /watchlist
       responses:
         "200":
           description: Watchlist entries returned
@@ -3701,10 +3701,11 @@ paths:
           $ref: "#/components/responses/InternalError"
     patch:
       tags: [Watchlist]
-      summary: Update watchlist entry price fields
+      summary: Update watchlist entry price fields, or reset its staleness clock
       description: |
-        Updates price fields on a watchlist entry. ticker and market are read-only.
-        Canonical contract: docs/specs/api_contracts/watchlist_endpoints.md v1.0 §PATCH /watchlist/{entry_id}
+        Updates price fields on a watchlist entry, or resets its staleness clock
+        via added_at (the "Keep" action). ticker and market are read-only.
+        Canonical contract: docs/specs/api_contracts/watchlist_endpoints.md v1.2 §PATCH /watchlist/{entry_id}
       parameters:
         - name: entry_id
           in: path
@@ -3720,6 +3721,9 @@ paths:
                 target_entry_price: { type: number }
                 initial_stop_price: { type: number }
                 current_stop_price: { type: number }
+                added_at:
+                  type: boolean
+                  description: Reset trigger, not a client-supplied timestamp — any non-null value resets the server-side staleness clock to now.
       responses:
         "200":
           description: Entry updated
