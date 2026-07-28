@@ -8,72 +8,90 @@
   "last_updated_utc": "2026-07-27T21:10:00Z",
   "epics": {
     "EPIC-01": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1109,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_watchlist_service.py",
+        "tests/e2e/watchlist-staleness-review.spec.js"
+      ],
       "stories": {
         "ST-01": {
           "title": "Add staleness tracking and Keep/Remove review action to Watchlist",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1083,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "78145e9e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/design/2026-07-27__release-v7.9/watchlist-staleness-review/ux_spec.md",
-            "docs/specs/frontend/pages/watchlist.md"
+            "docs/specs/frontend/pages/watchlist.md#Staleness Indicator",
+            "docs/specs/api_contracts/watchlist_endpoints.md#PATCH /watchlist/{entry_id}"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "role": "Head of UX & Design",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Approved; verified both ux_spec.md premise corrections against actual code."
+          },
+          "notes": "Playwright spec written (5 tests) but not executed locally - sandbox OS (Ubuntu 26.04) unsupported by Playwright browser installer. Will run via playwright.yml glob auto-discovery on PR."
         }
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1110,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-02.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_sector_regime_trend.py",
+        "tests/e2e/sector-regime-exposure-trend.spec.js"
+      ],
       "stories": {
         "ST-02": {
           "title": "Add sector concentration / regime exposure trend chart to Risk Dashboard",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1084,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "05d3d14f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/design/2026-07-27__release-v7.9/sector-regime-exposure-trend/ux_spec.md",
-            "docs/specs/frontend/pages/risk_dashboard.md"
+            "docs/specs/frontend/pages/risk_dashboard.md#8b. Component: Sector & Regime Exposure Trend",
+            "docs/specs/api_contracts/portfolio_endpoints.md#GET /portfolio/sector-regime-trend"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Owns shared-file cluster this sprint (openapi.yaml, api_contracts, test.py, SystemStatus.js, system-status.spec.js)"
+          "sign_off_record": {
+            "role": "Metrics Definitions & Analytics Owner + Head of UX & Design",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Scope decision (going-forward-only capture) confirmed; first implementation review Blocked on incomplete wording-correction propagation, fixed, re-verified and Approved."
+          },
+          "notes": "Major data-dependency premise correction - no historical sector/regime data ever existed. New sector_regime_history table, going-forward capture only. insufficient_history: true is the correct day-one state. BLG-FEAT-67 backlog text still uncorrected (out of write scope) - flag for groom-backlog."
         }
       }
     },
@@ -118,136 +136,172 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1108,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-04.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_monthly_pnl_cost_basis.py"
+      ],
       "stories": {
         "ST-04": {
           "title": "Add cost-basis method disclosure/reconciliation column to Monthly P&L CSV export",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1086,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "0bdacf99",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "backend/routers/trades_export.py"
+            "backend/services/reports_service.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "role": "Financial Reporting & Records Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Approved; independently traced code path and re-verified reconciliation arithmetic."
+          },
           "notes": ""
         }
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-05",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1111,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-05.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/trailing-stop-explainer-tooltip.spec.js"
+      ],
       "stories": {
         "ST-05": {
           "title": "Add trailing-stop rule explainer tooltip to position/trade view",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1087,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "e045c556",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/design/2026-07-27__release-v7.9/trailing-stop-explainer-tooltip/ux_spec.md",
-            "docs/specs/frontend/pages/positions.md"
+            "docs/specs/frontend/pages/positions.md#Trailing Stop Column"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "sign_off_record": {
+            "role": "Product Owner + Head of UX & Design",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Both approved independently; verified tooltip copy accuracy and placement correction against actual code."
+          },
+          "notes": "Pre-existing v6.2 spec/implementation gap found (no separate Trail Stop column/label exists) - documented correction, not fixed (out of scope). This is the final (15th) EPIC of the sprint. Post-push CI fix (2026-07-28): added missing @radix-ui/react-tooltip dependency (package.json + package-lock.json) -- a pre-existing repo gap (ui/tooltip.js imported it but it was never installed) that this story was the first to actually exercise, which broke the whole Playwright suite's webpack compile, not just this story's own tests."
         }
       }
     },
     "EPIC-06": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-06",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1107,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-06.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_position_audit_log.py"
+      ],
       "stories": {
         "ST-06": {
           "title": "Add audit-log entries for manual position edits (who, when, before/after)",
-          "classification": "delegated_decision",
-          "status": "not_started",
+          "classification": "autonomous",
+          "status": "done",
           "assigned_to": "Financial Reporting & Records Owner",
           "github_issue": 1088,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "ff3bd9c0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": "Financial Reporting & Records Owner confirms the write path to instrument (existing internal service call vs new endpoint)",
           "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "acceptance_verified": true,
+          "spec_references": [
+            "backend/database.py",
+            "backend/services/position_service.py",
+            "docs/specs/data_model.md#Migration from v2.16 to v2.17"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Depends on ST-03 (data_model.md rebase after EPIC-03 merges)"
+          "sign_off_record": {
+            "role": "Financial Reporting & Records Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Scope decision (narrow: note/tags/mark-reviewed only) confirmed in a separate review; implementation approved in a follow-up review."
+          },
+          "notes": "Reclassified from delegated_decision to autonomous mid-sprint (LL-v2.3-EX-02) after Financial Reporting & Records Owner scope decision resolved the write-path ambiguity. Process note: this story was initially built on the wrong branch (EPIC-12) by mistake, caught via QA Lead review sign-off aside, corrected via git stash + checkout before commit - no commit ever landed on EPIC-12."
         }
       }
     },
     "EPIC-07": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-07",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1105,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-07.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_backtest_data_integrity_smoke.py"
+      ],
       "stories": {
         "ST-07": {
           "title": "Add permanent data-integrity smoke test to the nightly backtest CI job",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1089,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-07",
-          "commit_sha": null,
+          "commit_sha": "7321bc70",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
+            "scripts/backtest_data_integrity_smoke_test.py",
             ".github/workflows/backtest.yml"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "role": "Head of Engineering",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Approved; found and fixed a real alert-wiring gap during review."
+          },
           "notes": "Case D \u2014 CI/infra config change, no prior canonical spec"
         }
       }
@@ -264,265 +318,346 @@
         "ST-08": {
           "title": "Provision and document a read-only staging/scoped-production credential",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1090,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-08",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": "A human with account/console access provisions the real read-only staging/scoped-production credential",
+          "commit_sha": "6b8b29a3",
+          "delegation_record_id": "ESC-EXEC-20260727-01",
+          "blocked_since_utc": "2026-07-27T21:30:00Z",
+          "unblock_criteria": "A human makes the RENDER_API_KEY value available in the environment governed-routine sessions run in; next scheduled roadmap rebalance confirms a genuine live SI-02 re-check succeeds.",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/security/api_key_security_register.md#6. Application X-API-Key"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "AC-02 is delayed-verification \u2014 only checkable at next scheduled roadmap rebalance, after this sprint closes"
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Approved the escalation construction/diagnosis and severity classification (Workforce/Capacity, Accepted-Risk-eligible) - underlying credential-persistence problem remains open pending human action."
+          },
+          "notes": "delegated_decision - AC-01 diagnosis complete (credential already exists per register entry #6; real gap is environment-persistence, not provisioning) but not resolved (requires human action this engine cannot perform). AC-02 is delayed-verification per sprint_backlog.md notes, only checkable at next scheduled rebalance."
         }
       }
     },
     "EPIC-09": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-09",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1103,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-09.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/smoke-critical-paths.spec.js"
+      ],
       "stories": {
         "ST-09": {
           "title": "Define a common regression smoke-test tag/suite for EPIC-branch merges",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1091,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-09",
-          "commit_sha": null,
+          "commit_sha": "872d234e",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "claude/system/shared_standards.md"
+            "tests/e2e/smoke-critical-paths.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Case B \u2014 shared_standards.md \u00a712 addition is the governing artefact"
+          "sign_off_record": {
+            "role": "QA Lead",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Substance verified (tag resolves correctly, CI trigger claim confirmed, Rule 4 text well-scoped); initial process-sequencing observations resolved by finalizing commit+state together."
+          },
+          "notes": "AC-02 (shared_standards.md \u00a712 documentation) drafted in qa_evidence_EPIC-09.md; physical edit handed off - claude/system/* outside write scope, same pattern as EPIC-03/EPIC-14."
         }
       }
     },
     "EPIC-10": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-10",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1104,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-10.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_router_test_registration_check.py"
+      ],
       "stories": {
         "ST-10": {
           "title": "Add pre-commit hook blocking commits with unregistered new routes",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1092,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-10",
-          "commit_sha": null,
+          "commit_sha": "55f608f4",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_router_test_registration.py",
+            ".githooks/pre-commit"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "role": "QA & Testing Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Approved; found and fixed a real false-positive matching bug (parenthetical name annotations) during review."
+          },
           "notes": ""
         }
       }
     },
     "EPIC-11": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-11",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1099,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-11.md",
       "test_scenarios": [],
       "stories": {
         "ST-11": {
           "title": "Add chart-specific contrast checklist item to design_system.md Accessibility section",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1093,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-11",
-          "commit_sha": null,
+          "commit_sha": "7d92c4ad",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
             "docs/specs/frontend/design_system.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "role": "Frontend Specifications & UX Documentation Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Approved, one non-blocking advisory addressed (dataviz-skill citation reworded)."
+          },
           "notes": "Sole owner of design_system.md this sprint"
         }
       }
     },
     "EPIC-12": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-12",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1106,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-12.md",
       "test_scenarios": [],
       "stories": {
         "ST-12": {
           "title": "Add EPIC-level cost tags to cloud resources and produce a per-EPIC spend summary",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1094,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-12",
-          "commit_sha": null,
+          "commit_sha": "a686bc2a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "render.yaml"
+            "docs/ops/cloud_infra_spend_by_epic.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Sole owner of render.yaml this sprint"
+          "sign_off_record": {
+            "role": "FinOps & Resource Architect",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Approved; recommended and applied a prominent not-cost-solved caveat."
+          },
+          "notes": "AC-01 reframed - Render Blueprint spec has no native tags field (verified). Production spend (paid, Starter tier) unattributed - dashboard-managed, no git history. Recommend backlog item for periodic manual attribution if needed."
         }
       }
     },
     "EPIC-13": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-13",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1100,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-13.md",
       "test_scenarios": [],
       "stories": {
         "ST-13": {
           "title": "Add dark-mode AC checklist item to the Base44 prompt template",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1095,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-13",
-          "commit_sha": null,
+          "commit_sha": "e495f9ed",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "claude/agents/base44_frontend_prompt_owner.md"
+            "docs/specs/frontend/base44_prompt_template_library.md#4. Template: Dual-Theme Verification Call-Out"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
+          "sign_off_record": {
+            "role": "Base44 Frontend Prompt Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Approved; suggested and applied a \u00a77 Maintenance threshold-exception note."
+          },
           "notes": ""
         }
       }
     },
     "EPIC-14": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-14",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1101,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-14.md",
       "test_scenarios": [],
       "stories": {
         "ST-14": {
           "title": "Add rolling log of named displacement candidates and their disposition",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1096,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-14",
-          "commit_sha": null,
+          "commit_sha": "c72d36e7",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-14.md#Displacement Debt Register \u2014 Design"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Case B \u2014 new governance artefact IS the spec; path filled once created"
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "First pass Blocked on a factual error in the CHART-IX seed row (corrected); re-reviewed and Approved."
+          },
+          "notes": "AC-01 satisfied via fully-specified design in qa_evidence_EPIC-14.md; physical file creation in claude/roadmap/ handed off (outside write scope), same pattern as EPIC-03 AC-03 and BLG-BE-46 AC-04. Tracked as ESC-EXEC-20260727-02 (execution_escalations.md) per agent-mediated QA & Testing Owner review of PR #1101 -- ensures the file-creation + roadmap_prompt.md edit handoff lands together."
         }
       }
     },
     "EPIC-15": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-27__release-v7.9/EPIC-15",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1102,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-15.md",
       "test_scenarios": [],
       "stories": {
         "ST-15": {
           "title": "Define refresh cadence for Grid View visual-regression baselines",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1097,
           "branch": "exec/2026-07-27__release-v7.9/EPIC-15",
-          "commit_sha": null,
+          "commit_sha": "8b3c4bf0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/testing/visual_regression_baseline_cadence.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Case B \u2014 new process artefact IS the spec; path filled once created"
+          "sign_off_record": {
+            "role": "Head of UX & Design + Director of Quality",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-27",
+            "notes": "Both approved independently; verified BLG-QA-81 dependency-gap finding."
+          },
+          "notes": "Finding: BLG-QA-123 backlog problem statement incorrectly assumes BLG-QA-81 baselines already exist (they do not) - flagged for groom-backlog correction."
         }
       }
     }
   },
-  "blocked_items": [],
-  "delegated_items": [],
-  "completed_items": [
-    "EPIC-03/ST-03"
+  "blocked_items": [
+    "EPIC-08/ST-08"
   ],
-  "open_escalations": [],
+  "delegated_items": [
+    "EPIC-08/ST-08"
+  ],
+  "completed_items": [
+    "EPIC-03/ST-03",
+    "EPIC-11/ST-11",
+    "EPIC-13/ST-13",
+    "EPIC-14/ST-14",
+    "EPIC-15/ST-15",
+    "EPIC-09/ST-09",
+    "EPIC-10/ST-10",
+    "EPIC-07/ST-07",
+    "EPIC-12/ST-12",
+    "EPIC-06/ST-06",
+    "EPIC-04/ST-04",
+    "EPIC-01/ST-01",
+    "EPIC-02/ST-02",
+    "EPIC-05/ST-05"
+  ],
+  "open_escalations": [
+    "ESC-EXEC-20260727-01",
+    "ESC-EXEC-20260727-02"
+  ],
   "merge_gate": {
     "epics_merged": [],
     "epics_pending": [

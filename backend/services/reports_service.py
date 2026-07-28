@@ -552,6 +552,16 @@ def build_tax_year_csv(report_data: dict) -> str:
     return output.getvalue()
 
 
+_COST_BASIS_METHOD_NOTE = (
+    "Specific Identification (per-position lot) -- each closed trade's "
+    "realised P&L uses that position's own entry cost (total_cost), prorated "
+    "by shares exited for a partial exit. Not FIFO: this product never "
+    "commingles multiple purchase lots of the same ticker into a single "
+    "cost pool -- each position row is tracked, and exited, independently "
+    "from creation to close."
+)
+
+
 def build_monthly_pnl_csv(months: list) -> str:
     """
     Render the monthly P&L report's month rows as a CSV string
@@ -561,6 +571,11 @@ def build_monthly_pnl_csv(months: list) -> str:
     rows rendered in the on-screen Monthly Financial Table -- no
     client-side recalculation, no metadata block (unlike the Tax Year
     export), just a header row + one row per month present in `months`.
+
+    Cost-basis method disclosure (ST-04, EPIC-04, v7.9, BLG-FEAT-85): a
+    trailing note is appended after the month table (not a leading
+    metadata block, unlike the Tax Year export) so the on-screen-mirroring
+    main table above is unchanged -- the disclosure is additive only.
 
     Args:
         months: The `months` list from get_monthly_pnl_report() -- dicts
@@ -575,5 +590,8 @@ def build_monthly_pnl_csv(months: list) -> str:
     writer.writerow(["Year", "Month", "Realised P&L (GBP)", "Trades"])
     for m in months:
         writer.writerow([m["year"], m["month"], m["realised_pnl_gbp"], m["trade_count"]])
+
+    writer.writerow([])
+    writer.writerow(["Cost Basis Method", _COST_BASIS_METHOD_NOTE])
 
     return output.getvalue()
