@@ -2,9 +2,9 @@
 **Class:** Class 2 — Supporting
 **Status:** Supporting
 **Canonical Source:** docs/specs/frontend/design_system.md
-**Version:** 1.2
-**Last Updated:** 2026-07-16
-**Story:** ST-04 (BLG-SPEC-90, EPIC-03, v7.2); ST-04 (BLG-SPEC-91, EPIC-02, v7.3); ST-06 (BLG-SPEC-93, EPIC-04, v7.3)
+**Version:** 1.3
+**Last Updated:** 2026-07-27
+**Story:** ST-04 (BLG-SPEC-90, EPIC-03, v7.2); ST-04 (BLG-SPEC-91, EPIC-02, v7.3); ST-06 (BLG-SPEC-93, EPIC-04, v7.3); ST-13 (BLG-FE-129, EPIC-13, v7.9)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -71,6 +71,14 @@ Card renders a compact icon+heading+body empty state (not a blank card or raw ze
 This story's Playwright coverage (or human staging sign-off) must explicitly verify both light and dark theme rendering — do not verify dark mode only. Any new colour/background/border token must be checked as an explicit light+dark pair.
 ```
 
+**Dark-mode acceptance-criteria checklist item (v1.3, ST-13, EPIC-13, v7.9, BLG-FE-129):** the fragment above is a *verification* call-out, applied at test time. The v7.8 dark-mode contrast audit (`BLG-FE-125`) found and fixed several defects only after the fact, because no story stated a dark-mode requirement as its own acceptance criterion up front. Every Base44 prompt draft for a story with observable AC must therefore also include an explicit dark-mode line in its **Acceptance Criteria** — not only in the Playwright/staging verification note:
+
+```
+- Acceptance Criteria: [existing ACs] + "All new or modified colour/background/border tokens render correctly in both light and dark theme — checked as an explicit light+dark pair, not dark-only."
+```
+
+Adding this to the AC list (rather than only the verification call-out) makes dark-mode a stated requirement the delegate designs against from the start, not a defect found during a separate audit pass afterward.
+
 ## 5. Template: Global Command Palette (Cmd/Ctrl-K Pattern)
 
 **Use when:** delegating `BLG-FE-115` (global command palette) or any future story adding a keyboard-invoked, searchable navigation/action overlay.
@@ -127,6 +135,8 @@ Selecting 1+ rows reveals a bulk-action toolbar with an accurate selected-count;
 
 New entries are added to this library when a pattern is formalised in `design_system.md` and applied to two or more concrete stories (the same threshold `roadmap_prompt.md`'s STEP 4.2 idea-consolidation convention uses for "recurring" — a single application does not yet justify a library entry). Entries here must be kept consistent with `design_system.md`; if a `design_system.md` edit changes a pattern documented here, update this file in the same commit.
 
+**Threshold exception (v1.3, ST-13, EPIC-13, v7.9):** the 2+-story threshold above governs adding a *new* template section. The §4 dark-mode AC checklist addition is an addendum to an already-existing, already-approved section, not a new template — and the underlying defect class (light+dark token pair omissions) already has multiple documented precedents (`BLG-FE-87/88/95/125`) even without a literal second application of this specific checklist wording. Recorded here so this doesn't read as an inconsistency on a future audit.
+
 ## 8. Known Deviations
 
 None. This is a net-new artefact — no prior canonical spec governed this work.
@@ -137,6 +147,7 @@ None. This is a net-new artefact — no prior canonical spec governed this work.
 
 | Date | Version | Summary |
 |---|---|---|
+| 2026-07-27 | 1.3 | Added dark-mode acceptance-criteria checklist item to §4 — every Base44 prompt draft with observable AC must state a dark-mode requirement in its Acceptance Criteria, not only in the Playwright/staging verification call-out (ST-13, EPIC-13, v7.9, BLG-FE-129) |
 | 2026-07-16 | 1.2 | Added Bulk-Action Toolbar (multi-select) template (ST-06, EPIC-04, v7.3, BLG-SPEC-93) |
 | 2026-07-16 | 1.1 | Added Global Command Palette (Cmd/Ctrl-K) template (ST-04, EPIC-02, v7.3, BLG-SPEC-91) |
 | 2026-07-15 | 1.0 | Initial library — DataState compact empty-state, primary/secondary card hierarchy, dual-theme call-out (ST-04, EPIC-03, v7.2) |
