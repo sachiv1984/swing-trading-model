@@ -3608,22 +3608,22 @@ The existing cost alert has not misfired since shipping; recalibrating its thres
 ---
 
 ### BLG-OPS-90 — Staging environment drift detector
-**Priority:** P3 (Low)
+**Priority:** P2 (Medium) — escalated from P3, 2026-07-28, roadmap rebalance `2026-07-28__scheduled` (gate cleared, see below)
 **Type:** Operations / Infrastructure
 **Owner:** Infrastructure & Operations Owner
 **Source:** IDEA-infra-ops-20260702-01 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
 **Effort:** M (~2 days)
-**Provisional-Target:** Unscheduled
-**Gate criteria:** A second occurrence of a staging/production configuration drift incident (first occurrence: BLG-OPS-82, a one-off missing-deploy issue).
+**Provisional-Target:** TBD
+**Gate criteria:** ~~A second occurrence of a staging/production configuration drift incident (first occurrence: BLG-OPS-82, a one-off missing-deploy issue).~~ **Gate cleared 2026-07-28** — commit `e9c73f58` ("[GOVERNANCE] Fix stale What's New panel — trigger staging redeploy on changelog.md changes") is a confirmed second occurrence of the same drift class: a runtime-read file changed in the repo without triggering a staging redeploy (Render dashboard-only build-path filter invisible to repo grep), producing stale served content exactly as BLG-OPS-82 did. Identified via `IDEA-infra-ops-20260728-01` (IW-20260728-01); disposition: idea resolved directly by this gate-status update rather than filed as a separate backlog row (register Status → Promoted-Added).
 
 **Problem**
-BLG-OPS-82 was a single one-off incident, not a demonstrated recurring pattern; building detector tooling for a non-recurring issue is premature.
+BLG-OPS-82 was originally treated as a single one-off incident. A second, independently-caused instance of the same underlying pattern (deploy-path filters that are invisible to a repo-level search, so a runtime-read file's change doesn't trigger the redeploy a reviewer would expect) has now occurred, confirming this is a recurring drift class rather than a one-off.
 
 **Scope**
-- Build automated drift detection between staging and production config once a second incident occurs
+- Build automated drift detection between staging and production config/build-path coverage, informed by both incidents (BLG-OPS-82: missing-deploy; this one: dashboard-only path filter)
 
 **Acceptance Criteria**
-- Tooling built only after gate condition (2nd occurrence) confirmed
+- Tooling built and covers both confirmed incident shapes; Infrastructure & Operations Owner sign-off
 
 ---
 
@@ -6030,5 +6030,345 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 **Problem:** ST-14 designed the Displacement Debt Register (format + reconstructed seed content) in full, but `claude/roadmap/*` and `claude/system/roadmap_prompt.md` are outside Sprint Execution's write scope, so the design was handed off rather than applied. Two actions are needed together: (1) create `claude/roadmap/displacement_debt_register.md` using the format/seed content in `claude/cycles/2026-07-27__release-v7.9/qa_evidence_EPIC-14.md#Displacement Debt Register — Design`; (2) edit `roadmap_prompt.md` STEP 8's "Displacement candidate flag" instruction to also update this register going forward. Landing only one half leaves either a stale instruction (no file) or an unmaintained file (no forcing function).
 **Scope:** Both actions above, in the same session, per CLAUDE.md §6 Governance File Edit Checklist for the `roadmap_prompt.md` edit (version bump, `OPERATIONAL_GUIDE.md` §14 table update, `prompt_change_log.md` entry).
 **Acceptance Criteria:** `claude/roadmap/displacement_debt_register.md` created with the seeded content; `roadmap_prompt.md` STEP 8 updated to reference it; `ESC-EXEC-20260727-02` closed.
+
+---
+
+## Roadmap Rebalance 2026-07-28__scheduled — New Items (IW-20260728-01 disposition)
+
+*42 items filed from a 44-submission window (1 idea resolved directly — see BLG-OPS-90 gate-status update above; 2 ideas consolidated into one item — see BLG-GOV-269). All ungated unless a Gate criteria line is present.*
+
+### BLG-GOV-265 — AI vendor Terms-of-Service & data-processing review (Gemini/Claude, financial data handling)
+**Priority:** P2 (Medium) | **Type:** Governance / AI Compliance | **Owner:** AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** No formal review exists confirming Gemini's and Claude's vendor ToS/data-processing terms are compatible with handling this system's financial trade data (retention, training-data use, sub-processor disclosure).
+**Scope:** Review both vendors' current ToS/DPA terms against the system's financial-data handling; document findings and any required mitigations.
+**Acceptance Criteria:** Review documented; any gap flagged with a remediation item; AI Compliance & Governance Officer sign-off.
+
+---
+
+### BLG-GOV-266 — Canonical AI feature touchpoint register with per-feature §13 classification
+**Priority:** P3 (Low) | **Type:** Governance / AI Compliance | **Owner:** AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260728-02 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** AI-touching features (thesis generation, daily briefing, chat advisor, cost alerts) have each had individual §13 reviews over time, but no single register lists every AI touchpoint and its current §13 classification in one place.
+**Scope:** Build a register listing each AI-calling feature, its §13 classification, and a link to its review record.
+**Acceptance Criteria:** Register created and covers all currently-shipped AI touchpoints; AI Compliance & Governance Officer sign-off.
+
+---
+
+### BLG-SPEC-106 — OpenAPI security-scheme & auth-header documentation completeness check
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `openapi.yaml` documents endpoint paths and schemas but has not been audited to confirm every authenticated endpoint's security scheme and required auth header are correctly and completely documented.
+**Scope:** Audit all authenticated endpoints in `openapi.yaml` against actual backend auth enforcement; correct any gaps.
+**Acceptance Criteria:** Audit complete; any documentation gap fixed; API Contracts & Documentation Owner sign-off.
+
+---
+
+### BLG-QA-128 — Consumer-driven contract check: frontend API calls vs documented contracts
+**Priority:** P2 (Medium) | **Type:** QA / Contract Testing | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260728-02 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** `openapi.yaml` and `docs/specs/api_contracts/` describe the backend's own contract, but nothing checks that frontend call sites actually match the documented request/response shape they depend on.
+**Scope:** Add a lightweight consumer-driven contract check comparing frontend API call sites against the documented contract fields they consume.
+**Acceptance Criteria:** Check implemented (CI or scripted); first run's findings triaged; API Contracts & Documentation Owner sign-off.
+
+---
+
+### BLG-BE-75 — Extend Alpaca backoff audit (BLG-BE-57) to Yahoo Finance, Gemini, and Claude call sites
+**Priority:** P2 (Medium) | **Type:** Backend / Resilience | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260728-01 (relationship note: extends `BLG-BE-57`'s Alpaca-only scope to 3 additional providers) | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** `BLG-BE-57` audited retry/backoff behaviour for Alpaca call sites only; Yahoo Finance, Gemini, and Claude external calls have not had the same review, despite being equally capable of rate-limiting or transient failure.
+**Scope:** Apply the same retry/backoff audit methodology from `BLG-BE-57` to the three remaining external providers.
+**Acceptance Criteria:** All 4 providers' call sites confirmed to use the shared retry/backoff decorator (`BLG-BE-71`) or have a documented exception; Backend Engineering Patterns Owner sign-off.
+
+---
+
+### BLG-BE-76 — Idempotency key pattern for state-mutating POST endpoints
+**Priority:** P2 (Medium) | **Type:** Backend / Correctness | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260728-02 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** State-mutating POST endpoints (trade entry, trade plan creation, alert rules) have no idempotency-key mechanism, so a retried request (e.g. after a timeout) risks creating a duplicate record.
+**Scope:** Define and apply an idempotency-key pattern (client-supplied key + short-lived server-side dedup check) for the highest-risk state-mutating endpoints.
+**Acceptance Criteria:** Pattern documented in `backend_engineering_patterns.md`; applied to at least the trade-entry and trade-plan-creation endpoints; Backend Engineering Patterns Owner sign-off.
+
+---
+
+### BLG-GOV-267 — Base44 generation failure-mode log (recurring manual-correction patterns)
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Base44-generated components occasionally need manual correction (e.g. missed dark-mode class pairs, contrast issues) but no log tracks which failure modes recur, so prompt-template improvements are made ad hoc rather than targeting the most frequent gaps.
+**Scope:** Add a lightweight log of Base44 generation failure modes requiring manual correction, reviewed periodically to prioritise prompt-template fixes.
+**Acceptance Criteria:** Log created; at least the known recurring modes (dark-mode class pairs, contrast) backfilled; Base44 Frontend Prompt Owner sign-off.
+
+---
+
+### BLG-FE-132 — Standard Base44 prompt section for dark/light theme compliance
+**Priority:** P3 (Low) | **Type:** Frontend / Process | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260728-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Dark/light theme compliance issues have recurred across multiple Base44-generated components (BLG-FE-113, BLG-FE-125, BLG-FE-129 checklist), suggesting the prompt template itself lacks a standard theme-compliance section rather than each case being caught after the fact.
+**Scope:** Add a standard theme-compliance section to the core Base44 prompt template (distinct from the BLG-FE-129 dark-mode AC checklist, which is a review-time check, not a generation-time prompt instruction).
+**Acceptance Criteria:** Standard section added to `base44_prompt_template_library.md`; Base44 Frontend Prompt Owner sign-off.
+
+---
+
+### BLG-GOV-268 — Escalation path for Product Value Ratio's persistent Advisory tier
+**Priority:** P2 (Medium) | **Type:** Governance / Process | **Owner:** Challenger | **Source:** IDEA-challenger-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** The Product Value Ratio has sat in the 0.30–0.49 Advisory band for numerous consecutive cycles (0.31→0.42→0.39→0.42→0.38 across the last several windows) without ever reaching the ≥0.50 Healthy threshold or dropping into the <0.30 Alert threshold that would force mandatory action — an Advisory reading currently has no equivalent "sustained non-improvement" escalation clause the way Skill-Silo does (STEP 7.1's 3-consecutive-worsening mandatory clause).
+**Scope:** Define a sustained-Advisory escalation clause for STEP 2.4 (e.g. N consecutive cycles in Advisory band without reaching Healthy triggers a strengthened response), mirroring the Skill-Silo precedent.
+**Acceptance Criteria:** Clause drafted and reviewed with Head of Specs Team; if adopted, `roadmap_prompt.md` STEP 2.4 updated per the standard governance file edit checklist.
+
+---
+
+### BLG-GOV-269 — Direct-write / governance-bypass pattern tracker (roadmap & amendment gate bypasses)
+**Priority:** P2 (Medium) | **Type:** Governance / Process | **Owner:** PMO Lead | **Source:** IDEA-challenger-20260728-02, IDEA-pmo-lead-20260728-02 (consolidated — both submissions converge on the same recurring pattern: direct writes to `current_roadmap.md`/`decision_log.md` bypassing a compliant `run roadmap`/amendment-cycle path) | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** `current_roadmap.md`'s own history shows a repeated pattern (v7.4 AMD, v7.5, v7.6 DL-073, v7.7 DL-074, and others) of "out-of-band" direct writes to formalise release sections or add capacity, each time noting that a fully compliant `run roadmap --reason scheduled` path existed but was bypassed by explicit session direction. This was already flagged as a Carry-Forward observation at `2026-07-21__release-v7.7` closure (Item 2) but has no dedicated tracking artefact — each new bypass is only visible by reading roadmap prose history, not a structured log.
+**Scope:** Add a structured, append-only log of every direct-write bypass of a governed routine (date, file, reason given, routine bypassed), so the recurrence pattern is visible without re-deriving it from `current_roadmap.md` prose each time.
+**Acceptance Criteria:** Log created; backfilled with the known historical instances named above; PMO Lead sign-off.
+
+---
+
+### BLG-SEC-22 — Secrets-scanning pre-commit/CI gate (gitleaks/trufflehog)
+**Priority:** P2 (Medium) | **Type:** Security / CI | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** CI has a secret-scanning gate at the pipeline level (per `v5.3`'s `BLG-OPS-58`), but no pre-commit local check exists, so a secret can be committed locally before CI ever runs.
+**Scope:** Add a local pre-commit hook running a secrets scanner (gitleaks or trufflehog), complementing the existing CI-level gate.
+**Acceptance Criteria:** Hook added to `.githooks/pre-commit`; confirmed to catch a deliberately-planted test secret; Cybersecurity & Trust Lead sign-off.
+
+---
+
+### BLG-SEC-23 — Mandatory security review checklist for new AI-calling endpoints
+**Priority:** P2 (Medium) | **Type:** Security / Process | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260728-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** New AI-calling endpoints have each had ad hoc security consideration (rate limiting, cost gating, prompt-injection awareness) but no standard checklist ensures every new one covers the same baseline before shipping.
+**Scope:** Define a short mandatory security review checklist specific to AI-calling endpoints (distinct from the general API security review), referenced at design-gate time.
+**Acceptance Criteria:** Checklist documented; referenced from the design gate process; Cybersecurity & Trust Lead sign-off.
+
+---
+
+### BLG-BE-77 — Mutation/audit-trail log for trade plan edits post-entry
+**Priority:** P3 (Low) | **Type:** Backend / Data Integrity | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-data-model-20260728-01 (distinct from `BLG-BE-73`, shipped v7.9, which covers manual *position* edits — this covers *trade plan* edits after the position is opened) | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** `BLG-BE-73` added an audit trail for manual position edits, but trade plan records can also be edited after entry (e.g. thesis or R-target revision) with no equivalent who/when/before-after log.
+**Scope:** Extend the audit-trail pattern established by `BLG-BE-73` to trade plan mutations post-entry.
+**Acceptance Criteria:** Audit log covers trade plan edits; Data Model & Domain Schema Owner sign-off.
+
+---
+
+### BLG-BE-78 — Auto-generated data dictionary from live schema
+**Priority:** P3 (Low) | **Type:** Backend / Documentation | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-data-model-20260728-02 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** `data_model.md` is hand-maintained; as migrations accumulate (v2.17 and counting) there is growing risk of the documented schema drifting from the live one.
+**Scope:** Add a script generating a data dictionary directly from the live schema, for comparison against `data_model.md` at review time.
+**Acceptance Criteria:** Script added; first run's diff against `data_model.md` triaged; Data Model & Domain Schema Owner sign-off.
+
+---
+
+### BLG-GOV-270 — Cross-role workload balance check (avoid single-role bottleneck across consecutive cycles)
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Director of HR | **Source:** IDEA-director-of-hr-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** No check currently confirms that story/EPIC ownership is balanced across roles over consecutive cycles — a role could be silently overloaded for several cycles running without it being visible in any single cycle's own artefacts.
+**Scope:** Add a lightweight cross-cycle check tallying story ownership per role over a rolling window, surfaced at roadmap rebalance.
+**Acceptance Criteria:** Check defined and documented; Director of HR sign-off.
+
+---
+
+### BLG-GOV-271 — Agent onboarding runbook for adding a new governance role
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Director of HR | **Source:** IDEA-director-of-hr-20260728-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Adding a new agent role (most recently done for several roles across the project's history) has no documented runbook — each addition has been done ad hoc (charter file, idea-intake slug mapping, required-roles lists across multiple prompt files).
+**Scope:** Document the full checklist of files/lists that must be updated when adding a new governance role.
+**Acceptance Criteria:** Runbook created; Director of HR sign-off.
+
+---
+
+### BLG-QA-129 — Cross-EPIC deviation (DEV-*) consolidation review across cycles
+**Priority:** P2 (Medium) | **Type:** QA / Process | **Owner:** Director of Quality | **Source:** IDEA-director-of-quality-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** DEV-* deviation records are filed and resolved per-cycle, but no periodic review looks across cycles for recurring deviation types that might indicate a systemic (not one-off) gap.
+**Scope:** Add a periodic review consolidating DEV-* records across recent cycles to surface recurring patterns.
+**Acceptance Criteria:** First consolidation review performed; Director of Quality sign-off.
+
+---
+
+### BLG-QA-130 — Quality trend index aggregating DEV-* records over time
+**Priority:** P3 (Low) | **Type:** QA / Metrics | **Owner:** Director of Quality | **Source:** IDEA-director-of-quality-20260728-02 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** There is no single trend view of deviation volume/severity over time — each cycle's deviation count is only visible in that cycle's own `sprint_close.md`.
+**Scope:** Build a simple trend index (deviation count/severity per cycle, plotted or tabulated over time).
+**Acceptance Criteria:** Index created and backfilled from available cycle history; Director of Quality sign-off.
+
+---
+
+### BLG-SPEC-107 — FX conversion audit trail completeness check (§4.1.5 effective-rate logging)
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Financial Records | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `data_model.md` §4.1.5 documents effective-rate logging for FX conversions, but no audit has confirmed every conversion path actually writes a complete audit trail entry.
+**Scope:** Audit all FX conversion code paths against the §4.1.5 logging requirement; fix any gap found.
+**Acceptance Criteria:** Audit complete; any gap fixed; Financial Reporting & Records Owner sign-off.
+
+---
+
+### BLG-FEAT-88 — P&L / tax record reconciliation report (system totals vs individual trade export)
+**Priority:** P3 (Low) | **Type:** Product Feature / Financial Reporting | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260728-02 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** The Monthly P&L CSV export and individual trade records are both user-facing, but nothing confirms (or lets the user confirm) that the two reconcile to the same totals — a silent discrepancy would currently go unnoticed.
+**Scope:** Add a reconciliation report/view comparing system-computed P&L totals against a sum of the individual trade export.
+**Acceptance Criteria:** Reconciliation report added; confirmed to match on current data; Financial Reporting & Records Owner sign-off.
+
+---
+
+### BLG-OPS-123 — Database storage growth cost trend tracking (Postgres/Supabase)
+**Priority:** P3 (Low) | **Type:** FinOps / Operations | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Cloud spend is cost-tagged per EPIC (`BLG-OPS-120`), but database storage growth over time has no dedicated trend tracking, despite being a cost driver that scales with trade/journal history volume.
+**Scope:** Add a simple storage-growth trend view (size over time) alongside the existing cost-tag reporting.
+**Acceptance Criteria:** Trend tracking added; FinOps & Resource Architect sign-off.
+
+---
+
+### BLG-OPS-124 — Render dashboard-only build/deploy path filter audit (invisible to repo grep)
+**Priority:** P2 (Medium) | **Type:** Operations / Infrastructure | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260728-02 (submitter recommendation: Now) | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Render's dashboard-configured build/deploy path filters are not represented anywhere in the repo, so a change to a file outside the configured watch paths (e.g. `changelog.md`, per commit `e9c73f58` this same day) can silently fail to trigger a redeploy with no signal visible to a repo-only search. This is now a confirmed second occurrence of the same class as `BLG-OPS-82` (see `BLG-OPS-90` gate-status update, this cycle).
+**Scope:** Audit the full current Render dashboard build/deploy path-filter configuration against the set of files the running app actually reads at runtime; document any other file outside the watched paths.
+**Acceptance Criteria:** Audit complete; configuration documented in-repo (even though the source of truth remains the dashboard) so future searches can find it; FinOps & Resource Architect sign-off.
+
+---
+
+### BLG-SPEC-108 — Canonical form validation error-message pattern spec
+**Priority:** P3 (Low) | **Type:** Frontend Spec | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** IDEA-frontend-specs-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Form validation error messages across the app (trade plan form, alert rules, saved filters) have been built independently without a canonical spec for tone/format, risking inconsistency.
+**Scope:** Define a canonical error-message pattern spec (tone, placement, wording conventions) in `design_system.md`.
+**Acceptance Criteria:** Spec added; Frontend Specifications & UX Documentation Owner sign-off.
+
+---
+
+### BLG-GOV-272 — Recurring spec-debt backlog review cadence
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** IDEA-frontend-specs-20260728-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** BLG-SPEC-* items accumulate over time (105+ so far) with no defined periodic review cadence dedicated specifically to spec debt, distinct from general backlog grooming.
+**Scope:** Define a periodic review cadence specifically for BLG-SPEC-* items.
+**Acceptance Criteria:** Cadence defined and documented in `backlog_management_prompt.md`; Head of Specs Team confirmation.
+
+---
+
+### BLG-GOV-273 — Technical debt registry (consolidated cross-cycle view)
+**Priority:** P2 (Medium) | **Type:** Governance / Process | **Owner:** Head of Engineering | **Source:** IDEA-head-of-engineering-20260728-01 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** Technical debt items are scattered across BLG-BE-*, BLG-FE-*, BLG-OPS-* with no consolidated cross-category view of total outstanding technical debt.
+**Scope:** Build a consolidated registry pulling technical-debt-classified items from across backlog categories into one view.
+**Acceptance Criteria:** Registry created; Head of Engineering sign-off.
+
+---
+
+### BLG-OPS-125 — Automated commit-message format lint (pre-commit hook for [EPIC-xx][ST-xx] convention)
+**Priority:** P2 (Medium) | **Type:** Ops / CI | **Owner:** Head of Engineering | **Source:** IDEA-head-of-engineering-20260728-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `CLAUDE.md` §2's commit format (`[EPIC-xx][ST-xx] <description>`) is enforced only by human/agent discipline and caught after the fact by `governance_sync.yml`, not checked at commit time.
+**Scope:** Add a pre-commit hook (alongside the existing route-registration hook, `BLG-QA-125`) that lints the commit message format on `exec/**` branches.
+**Acceptance Criteria:** Hook added; confirmed to reject a deliberately malformed commit message; Head of Engineering sign-off.
+
+---
+
+### BLG-GOV-274 — Automated Specs_Index.md freshness check against live spec files
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Head of Specs Team | **Source:** IDEA-head-of-specs-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `Specs_Index.md`'s maintenance has previously lapsed silently for 5 consecutive cycles before being caught (per `2026-07-21__release-v7.7` closure Carry-Forward Item 3) — the check for staleness is currently manual.
+**Scope:** Add an automated check comparing `Specs_Index.md` entries against the live `docs/specs/` tree for additions/removals it doesn't yet reflect.
+**Acceptance Criteria:** Check added; Head of Specs Team sign-off.
+
+---
+
+### BLG-GOV-275 — Searchable index of STEP 11.4 meta-review findings across cycles
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Head of Specs Team | **Source:** IDEA-head-of-specs-20260728-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** STEP 11.4 meta-reviews produce `meta_review.md` files per triggering cycle, but there is no searchable cross-cycle index of what patterns each meta-review found or what it changed.
+**Scope:** Add a lightweight index summarising each meta-review's key findings and resulting prompt changes.
+**Acceptance Criteria:** Index created and backfilled from existing `meta_review.md` files; Head of Specs Team sign-off.
+
+---
+
+### BLG-FE-133 — Ad hoc component inventory: candidates for shared design-system extraction
+**Priority:** P3 (Low) | **Type:** Frontend / Design System | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260728-01 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** Several shared-component extractions have happened reactively (e.g. `BLG-FE-120` standing alert, `BLG-FE-121` modal confirmation) after duplication was noticed; no proactive inventory tracks which ad hoc components are current extraction candidates.
+**Scope:** Build an inventory of ad hoc/duplicated component patterns across the app, ranked by duplication count, as a standing extraction candidate list.
+**Acceptance Criteria:** Inventory created; Head of UX & Design sign-off.
+
+---
+
+### BLG-FE-134 — Keyboard navigation & focus-order audit (distinct from colour-contrast a11y work)
+**Priority:** P2 (Medium) | **Type:** Frontend / Accessibility | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260728-02 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** Accessibility work to date (`BLG-FE-82`, `BLG-FE-87/88/89`, dark-mode contrast audits) has focused on colour/contrast; keyboard navigation and focus order have not had an equivalent dedicated audit.
+**Scope:** Audit keyboard navigation and focus order across the app's primary flows (trade entry, trade plan, command palette).
+**Acceptance Criteria:** Audit complete; findings filed as follow-up items where gaps are found; Head of UX & Design sign-off.
+
+---
+
+### BLG-OPS-126 — Backup & disaster recovery runbook for production database
+**Priority:** P2 (Medium) | **Type:** Operations / Infrastructure | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260728-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** No documented runbook exists for production database backup verification or disaster recovery — a real incident would rely on ad hoc knowledge rather than a tested procedure.
+**Scope:** Document backup frequency/retention (as currently configured on the hosting provider) and a step-by-step recovery runbook.
+**Acceptance Criteria:** Runbook documented; recovery steps confirmed against actual hosting provider capability; Infrastructure & Operations Owner sign-off.
+
+---
+
+### BLG-GOV-276 — Formalise Product Value Ratio rolling-window boundary-trade handling in metrics_definitions.md
+**Priority:** P3 (Low) | **Type:** Governance / Metrics | **Owner:** Metrics Definitions & Analytics Canonical Owner | **Source:** IDEA-metrics-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** STEP 2.4's Product Value Ratio is computed over "the last 5 completed cycles," but `metrics_definitions.md` does not formally specify how a cycle at the exact window boundary should be handled (e.g. a cycle completing mid-window), leaving this to ad hoc judgment each time the ratio is computed.
+**Scope:** Add a formal boundary-handling rule to `metrics_definitions.md`.
+**Acceptance Criteria:** Rule documented; Metrics Definitions & Analytics Canonical Owner sign-off.
+
+---
+
+### BLG-GOV-277 — Document exact skill-category taxonomy used for Skill-Silo classification
+**Priority:** P3 (Low) | **Type:** Governance / Metrics | **Owner:** Metrics Definitions & Analytics Canonical Owner | **Source:** IDEA-metrics-20260728-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** STEP 7.1's Skill-Silo classification (Governance-heavy vs Execution-heavy) is applied consistently in practice but the exact taxonomy (which roles/story-shapes fall into which bucket) is not written down in one canonical place — it's reconstructed from precedent each cycle.
+**Scope:** Document the exact classification taxonomy in `metrics_definitions.md`, consistent with how STEP 2.4's U/G/D/P taxonomy is already documented.
+**Acceptance Criteria:** Taxonomy documented; Metrics Definitions & Analytics Canonical Owner sign-off.
+
+---
+
+### BLG-GOV-278 — Idea-intake backlog-overlap check effectiveness retrospective (v2.8, post-N-windows)
+**Priority:** P2 (Medium) | **Type:** Governance / Process | **Owner:** PMO Lead | **Source:** IDEA-pmo-lead-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** The mandatory backlog-overlap check (`idea_intake_prompt.md` v2.8) was added at `2026-07-27__scheduled` in response to a 52% duplicate-submission rate; this window (`IW-20260728-01`) shows the check catching real overlaps (20 of the initial topic-slots dropped/reframed), but there has been no formal retrospective confirming the check is working as intended versus just adding process overhead.
+**Scope:** After a few more windows have run under v2.8, review whether the check materially reduced downstream STEP 4 rejection rates and whether the check's own overhead is proportionate.
+**Acceptance Criteria:** Retrospective performed; recommendation recorded (keep/adjust/retire the check); PMO Lead sign-off.
+
+---
+
+### BLG-GOV-279 — SI-02 production credential provisioning decision (formalise fallback vs acquire)
+**Priority:** P2 (Medium) | **Type:** Governance / Process | **Owner:** Product Owner | **Source:** IDEA-product-owner-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `BLG-OPS-121` provisioned a working credential this cycle, but it was supplied ad hoc into that session's environment and did not persist into this new session's `.env` files (confirmed absent again at this rebalance) — the underlying "credential persistence" gap identified in `2026-07-27__release-v7.9` closure Carry-Forward Item 2 remains open despite the credential itself existing and working.
+**Scope:** Decide and document whether the fix is (a) persisting the credential into checked-in-but-gitignored environment config that governed routines can rely on, or (b) formally accepting the fallback-citation pattern (`roadmap_prompt.md` v9.6 STEP 2.3) as the standing behaviour and stop treating each occurrence as a fresh gap.
+**Acceptance Criteria:** Decision recorded; if (a), implemented; if (b), `roadmap_prompt.md` STEP 2.3 updated to remove the "should attempt genuine live re-check" framing as an open gap; Product Owner sign-off.
+
+---
+
+### BLG-GOV-280 — Formal sunset criteria for perennially-returning gated backlog items
+**Priority:** P2 (Medium) | **Type:** Governance / Process | **Owner:** Product Owner | **Source:** IDEA-product-owner-20260728-02 (submitter recommendation: Now) | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `BLG-FEAT-73`/`BLG-FEAT-74` have now cycled through Now-horizon inclusion and removal multiple times (named as v7.7 anchor scope, then removed at `2026-07-24__release-v7.8` post-ship per a "perennial-return" PO disposition) without a formal, written sunset test for when a perennially-returning gated item should be killed outright versus kept indefinitely parked. Each disposition has been a fresh ad hoc judgment call.
+**Scope:** Define explicit sunset criteria (e.g. N consecutive perennial-return cycles with no gate progress triggers a formal Kill decision, not just another un-scheduled parking) for items that repeatedly enter and exit the Now horizon without shipping.
+**Acceptance Criteria:** Criteria documented in `roadmap_prompt.md` or `shared_standards.md` (per the standing governance file edit checklist if adopted); applied retroactively to assess `BLG-FEAT-73`/`BLG-FEAT-74`'s current status; Product Owner sign-off.
+
+---
+
+### BLG-QA-131 — Post-parallelization Playwright shard balance audit (REC-CI-01 follow-up)
+**Priority:** P2 (Medium) | **Type:** QA / CI | **Owner:** QA Lead | **Source:** IDEA-qa-lead-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `REC-CI-01` parallelized Playwright E2E CI with workers + shard matrix, but no follow-up has confirmed the shards are actually balanced (similar runtime per shard) rather than one shard becoming a new bottleneck.
+**Scope:** Audit shard runtimes post-parallelization; rebalance shard assignment if skewed.
+**Acceptance Criteria:** Audit performed; shard runtimes confirmed balanced or rebalanced; QA Lead sign-off.
+
+---
+
+### BLG-QA-132 — Staging sign-off backlog tracker (FI-P3-02 wording-only AC exceptions)
+**Priority:** P3 (Low) | **Type:** QA / Process | **Owner:** QA Lead | **Source:** IDEA-qa-lead-20260728-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** The `FI-P3-02` exception (wording-only ACs may substitute code review for staging sign-off) is applied per-story with no consolidated tracker of how often it's invoked, making it hard to spot if the exception is being over-relied upon.
+**Scope:** Add a tracker logging each `FI-P3-02` invocation across cycles.
+**Acceptance Criteria:** Tracker created and backfilled where findable; QA Lead sign-off.
+
+---
+
+### BLG-QA-133 — Endpoint test suite coverage audit against all backend/routers/ files
+**Priority:** P2 (Medium) | **Type:** QA / Backend | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260728-01 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** `CLAUDE.md` §2 requires every new route to be registered in `backend/routers/test.py`, but no periodic audit confirms all *existing* routes across every router file are actually covered, only that new ones are added going forward.
+**Scope:** Audit `backend/routers/test.py` coverage against every `@router.*` decorator across all router files.
+**Acceptance Criteria:** Audit complete; any coverage gap found is filed or fixed; QA & Testing Owner sign-off.
+
+---
+
+### BLG-QA-134 — Regression suite runtime budget & reporting
+**Priority:** P3 (Low) | **Type:** QA / CI | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260728-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** The regression suite has grown substantially (baseline updates at `BLG-QA-112`, `BLG-QA-114`) with no defined runtime budget or reporting on whether it's trending toward becoming a CI bottleneck.
+**Scope:** Define a runtime budget and add simple reporting on regression suite duration over time.
+**Acceptance Criteria:** Budget defined; reporting added; QA & Testing Owner sign-off.
+
+---
+
+### BLG-GOV-281 — Mandatory §13 boundary pre-check at design gate for new AI-calling feature proposals
+**Priority:** P2 (Medium) | **Type:** Governance / Strategy | **Owner:** Strategy Rules & System Intent Owner | **Source:** IDEA-strategy-owner-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** §13 reviews for AI-calling features have so far each been requested individually (e.g. retroactive PT-04 review, `BLG-GOV-28`) rather than being a standing, mandatory step at design-gate time for any *new* AI-calling proposal.
+**Scope:** Add a mandatory §13 boundary pre-check step to `design_gate_prompt.md` specifically for proposals that call an AI provider.
+**Acceptance Criteria:** Step added to `design_gate_prompt.md` per the standing governance file edit checklist; Strategy Rules & System Intent Owner sign-off.
+
+---
+
+### BLG-GOV-282 — strategy_rules.md version cross-reference consistency check in dependent docs
+**Priority:** P3 (Low) | **Type:** Governance / Spec Debt | **Owner:** Strategy Rules & System Intent Owner | **Source:** IDEA-strategy-owner-20260728-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Several documents cite a specific `strategy_rules.md` version (e.g. §13 review records, compliance score formulas); when `strategy_rules.md` is incremented, nothing checks whether those cross-references have gone stale.
+**Scope:** Add a check comparing cited `strategy_rules.md` versions in dependent docs against the current version.
+**Acceptance Criteria:** Check added; first run's findings triaged; Strategy Rules & System Intent Owner sign-off.
 
 ---
