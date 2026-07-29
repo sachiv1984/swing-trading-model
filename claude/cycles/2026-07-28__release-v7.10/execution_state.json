@@ -5,7 +5,7 @@
   "invoked_utc": "2026-07-29T07:22:01Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-29T08:41:00Z",
+  "last_updated_utc": "2026-07-29T09:11:00Z",
   "process_notes": [],
   "epics": {
     "EPIC-04": {
@@ -139,7 +139,9 @@
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-07-28__release-v7.10/qa_evidence_EPIC-01.md",
       "test_scenarios": [
-        "tests/test_portfolio_risk_error_handling.py"
+        "tests/test_portfolio_risk_error_handling.py",
+        "tests/test_idempotency_util.py",
+        "tests/test_idempotency_endpoints.py"
       ],
       "stories": {
         "ST-01": {
@@ -198,23 +200,30 @@
         "ST-03": {
           "title": "Idempotency key pattern for state-mutating POST endpoints",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1114,
           "branch": "exec/2026-07-28__release-v7.10/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "8c0e07b2",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-07-29T09:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/backend_engineering_patterns.md#Idempotency-key pattern for state-mutating POST endpoints"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-29",
+            "role": "Backend Engineering Patterns Owner"
+          },
+          "notes": "Case B (documentation-creation): pattern documented in backend_engineering_patterns.md v1.4 \u00a7Idempotency-key pattern. Applied to POST /portfolio/position and POST /trade-plans via a generic utils/idempotency.py::replay_or_create helper + idempotency_keys table. RISK-02 verified: absent-key path unchanged (test_no_idempotency_key_creates_two_distinct_*). openapi.yaml updated with the new optional field on both schemas (minor sign-off finding, addressed same commit). Also fixed a pre-existing test-isolation issue in ST-01's test_sector_weights_returns_500_on_internal_error surfaced while running the full suite. Agent-mediated sign-off obtained on behalf of Backend Engineering Patterns Owner. No deviation."
         },
         "ST-04": {
           "title": "Deprecated table read-path audit",
