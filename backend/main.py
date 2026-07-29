@@ -432,7 +432,9 @@ def create_settings_endpoint(request: SettingsRequest):
             "data": decimal_to_float(new_settings)
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.patch("/settings/{settings_id}")
@@ -446,7 +448,9 @@ def update_settings_endpoint(settings_id: str, request: SettingsRequest):
             "data": decimal_to_float(updated_settings)
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.get("/positions")
@@ -463,7 +467,7 @@ def get_positions_endpoint():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.get("/portfolio")
@@ -546,7 +550,7 @@ def add_position_endpoint(request: AddPositionRequest):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 @app.get("/positions/analyze")
 def analyze_positions_endpoint():
@@ -633,7 +637,7 @@ def create_snapshot_endpoint():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.get("/portfolio/history")
@@ -674,7 +678,7 @@ def create_cash_transaction_endpoint(request: CashTransactionRequest):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.get("/cash/transactions")
@@ -807,8 +811,10 @@ def get_daily_pnl_endpoint(year: int, month: int):
     except HTTPException:
         raise
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return JSONResponse(status_code=500,
-            content={"status": "error", "message": str(e)})
+            content={"status": "error", "message": "Internal server error"})
 
 
 @app.get("/reports/monthly-pnl")
@@ -849,8 +855,10 @@ def get_monthly_pnl_endpoint(format: Optional[str] = None):
             "compliance_summary": compliance_summary,
         }
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return JSONResponse(status_code=500,
-            content={"status": "error", "message": str(e)})
+            content={"status": "error", "message": "Internal server error"})
 
 
 # ---------------------------------------------------------------------------
@@ -886,7 +894,7 @@ def get_trade_reflection_endpoint(trade_id: str):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.post("/trades/{trade_id}/reflection")
@@ -908,7 +916,7 @@ def save_trade_reflection_endpoint(trade_id: str, request: ReflectionRequest):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 class TradeCostsRequest(BaseModel):
@@ -948,7 +956,7 @@ def update_trade_costs_endpoint(trade_id: str, request: TradeCostsRequest):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.post("/signals/generate")
@@ -976,7 +984,7 @@ def generate_signals_endpoint(
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 @app.get("/market/status")
 def get_market_status():
@@ -1036,7 +1044,9 @@ def get_signals_endpoint(status: str = None):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 _ALLOWED_SIGNAL_STATUSES = {"entered", "dismissed", "expired", "watchlisted"}
@@ -1061,7 +1071,9 @@ def update_signal_endpoint(signal_id: str, updates: dict):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 @app.delete("/signals/{signal_id}")
 def delete_signal_endpoint(signal_id: str):
@@ -1072,7 +1084,9 @@ def delete_signal_endpoint(signal_id: str):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 _HEALTH_LIMIT = 60  # requests per minute per IP — ST-08 (EPIC-08, v7.8, BLG-SEC-21)
 
@@ -1212,7 +1226,7 @@ def update_position_note_endpoint(position_id: str, request: UpdateNoteRequest):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 def get_portfolio_id() -> str:
     """Helper to get portfolio ID"""
@@ -1237,7 +1251,7 @@ def update_position_tags_endpoint(position_id: str, request: UpdateTagsRequest):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.patch("/positions/{position_id}/mark-reviewed")
@@ -1268,7 +1282,7 @@ def mark_position_reviewed_endpoint(position_id: str):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.get("/positions/compliance")
@@ -1294,7 +1308,7 @@ def get_positions_compliance_endpoint():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.get("/positions/tags")
@@ -1311,7 +1325,7 @@ def get_available_tags_endpoint():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.get("/positions/search/tags")
@@ -1338,7 +1352,7 @@ def search_positions_by_tags_endpoint(tags: str):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 @app.get("/positions/grace-period-alerts")
 def get_grace_period_alerts_endpoint():
@@ -1439,7 +1453,7 @@ def get_grace_period_alerts_endpoint():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 @app.get("/positions/{position_id}")
 def get_position_by_id_endpoint(position_id: str):
@@ -1530,7 +1544,7 @@ def get_position_by_id_endpoint(position_id: str):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.post("/positions/{position_id}/refresh-state")
@@ -1561,7 +1575,7 @@ def refresh_position_state_endpoint(position_id: str):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 @app.get("/positions/{position_id}/compliance-recheck")
 def get_position_compliance_recheck_endpoint(position_id: str):
@@ -1588,7 +1602,7 @@ def get_position_compliance_recheck_endpoint(position_id: str):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.get("/positions/{position_id}/gap-risk")
@@ -1621,7 +1635,7 @@ def get_position_gap_risk_endpoint(position_id: str):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.get("/positions/{position_id}/stop-trail")
@@ -1731,7 +1745,7 @@ def get_stop_trail_endpoint(position_id: str):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 if __name__ == "__main__":
     import uvicorn
