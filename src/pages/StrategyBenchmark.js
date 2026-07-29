@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../api/base44Client';
 import { BarChart2, RefreshCw, Upload, ChevronDown } from 'lucide-react';
+import PageHeader from '../components/ui/PageHeader';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -708,24 +709,34 @@ export default function StrategyBenchmark() {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto" data-testid="strategy-benchmark-page">
 
-      {/* Page header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <BarChart2 className="w-5 h-5 text-slate-400" />
-          <div>
-            <h1 className="text-lg font-semibold text-slate-900 dark:text-white">Strategy Benchmark</h1>
-            <p className="text-xs text-slate-600 dark:text-slate-400">Compare live trades against production backtest results</p>
-          </div>
+      {/* Page header — ST-19 (EPIC-05, v7.10, BLG-FE-106): consolidated onto the
+          shared PageHeader component (strategy_benchmark.md §2). BarChart2 icon
+          and the "Benchmark data as of" last-updated line are preserved as
+          adjacent elements — PageHeader has no icon/subtitle-line prop. */}
+      <div className="flex items-start gap-3">
+        <BarChart2 className="w-5 h-5 text-slate-400 mt-1.5 shrink-0" data-testid="benchmark-header-icon" />
+        <div className="flex-1">
+          <PageHeader
+            title="Strategy Benchmark"
+            description="Compare live trading vs backtest"
+            actions={
+              <button
+                onClick={fetchData}
+                disabled={loading}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-slate-600 text-slate-300 hover:bg-slate-800 disabled:opacity-50"
+                data-testid="benchmark-refresh-btn"
+              >
+                <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
+                Refresh
+              </button>
+            }
+          />
+          {summary?.last_imported_at && (
+            <p className="text-xs text-slate-600 dark:text-slate-400 -mt-6" data-testid="benchmark-last-imported">
+              Benchmark data as of {fmtDateLong(summary.last_imported_at)}
+            </p>
+          )}
         </div>
-        <button
-          onClick={fetchData}
-          disabled={loading}
-          className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-slate-600 text-slate-300 hover:bg-slate-800 disabled:opacity-50"
-          data-testid="benchmark-refresh-btn"
-        >
-          <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
-          Refresh
-        </button>
       </div>
 
       {/* Sub-navigation (v0.4 — ST-01, EPIC-01, v7.7) */}
