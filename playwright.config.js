@@ -53,10 +53,37 @@ module.exports = defineConfig({
   ],
 
   webServer: {
-    command: 'npm start',
+    // ST-09 (BLG-QA-127, EPIC-03, v7.10): CI serves a production build instead
+    // of the CRA dev server. CRA bakes REACT_APP_* vars into the bundle at
+    // build time (not serve time), so the same `env` block below applies to
+    // both the `npm run build` step and the `serve` step in the CI command —
+    // build reads them via webpack DefinePlugin substitution, serve ignores
+    // them (static assets already built). Local/non-CI dev keeps `npm start`
+    // for live-reload, unaffected.
+    //
+    // Two build-only overrides, both confirmed necessary by a real local
+    // build+serve dry run before this was wired into CI:
+    // - `CI=false` on the build sub-command only: react-scripts treats ESLint
+    //   warnings as build-breaking errors whenever process.env.CI is truthy
+    //   (GitHub Actions sets CI=true on every job) — this repo has many
+    //   pre-existing warnings, unrelated to this story, that would otherwise
+    //   fail every build. The outer CI=true (used by this file's own
+    //   `process.env.CI` checks below, and by retries/workers) is untouched.
+    // - `PUBLIC_URL=/`: package.json's `homepage` field
+    //   (https://sachiv1984.github.io/swing-trading-model) makes an
+    //   unqualified build emit asset URLs under `/swing-trading-model/...`
+    //   (for the real gh-pages deploy) — which 404s when served at the
+    //   webServer's actual root (http://localhost:3000/). PUBLIC_URL=/
+    //   overrides this for the throwaway E2E build only.
+    command: process.env.CI
+      ? 'CI=false PUBLIC_URL=/ npm run build && npx serve -s build -l 3000'
+      : 'npm start',
     port: 3000,
     reuseExistingServer: !process.env.CI,
-    timeout: 120000,
+    // CI needs a longer timeout: a fresh production build (react-scripts build)
+    // takes materially longer to become ready than the dev server's fast-refresh
+    // startup that the 120000ms default was tuned for.
+    timeout: process.env.CI ? 300000 : 120000,
     env: {
       // Ensure deterministic API base URL for route interception
       REACT_APP_API_URL: 'http://localhost:8000',

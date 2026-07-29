@@ -5,14 +5,14 @@
   "invoked_utc": "2026-07-29T07:22:01Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-29T09:45:00Z",
+  "last_updated_utc": "2026-07-29T14:05:00Z",
   "process_notes": [],
   "epics": {
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-07-28__release-v7.10/EPIC-04",
       "pr_number": 1135,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-28__release-v7.10/qa_evidence_EPIC-04.md",
       "test_scenarios": [
@@ -352,97 +352,116 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "merged",
       "branch": "exec/2026-07-28__release-v7.10/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1138,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-28__release-v7.10/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_red_flag_journal.py"
+      ],
       "stories": {
         "ST-09": {
           "title": "Serve production build for Playwright E2E webServer instead of CRA dev server",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1120,
           "branch": "exec/2026-07-28__release-v7.10/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "bd534287",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-07-29T12:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/e2e_production_build_migration_2026-07-29.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Case D (CI/infrastructure): playwright.config.js IS the primary deliverable. Found and fixed 2 build-breaking issues during implementation (CI=true lint-as-error, homepage subpath asset-path mismatch) before pushing. RISK-04 (full suite passes in CI) confirmed via the real playwright.yml CI run triggered by this push: all 4 shards + visual snapshots succeeded. No sign-off role named in AC."
         },
         "ST-10": {
           "title": "Red Flag Journal auth regression test",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1121,
           "branch": "exec/2026-07-28__release-v7.10/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "2aa03619",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-07-29T12:00:00Z",
+          "acceptance_verified": true,
           "spec_references": [],
-          "spec_reference_not_applicable": false,
-          "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "spec_reference_not_applicable": true,
+          "spec_reference_not_applicable_reason": "test/tooling addition, no prior canonical spec \u2014 see notes",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Case E: security/QA regression test, no prior canonical spec. Deviation from BLG-QA-96's literal 'backend/routers/test.py' AC wording -- that file cannot express a missing/invalid-key negative test case (it forwards the caller's own key to every downstream call). Added to tests/test_red_flag_journal.py instead, matching the established TestClient(main.app) + patch.dict pattern in tests/test_reports_integration.py. Verified the test actually fails when auth is removed (temporarily exempted the route locally, confirmed 2 tests failed, reverted -- no diff remained). No sign-off role named in AC."
         },
         "ST-11": {
           "title": "Endpoint test suite coverage audit against all backend/routers/ files",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1122,
           "branch": "exec/2026-07-28__release-v7.10/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "b437cfd3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-07-29T12:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/endpoint_test_coverage_audit_2026-07-29.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Dependency: after ST-10"
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-29",
+            "role": "QA & Testing Owner"
+          },
+          "notes": "Case B (documentation-creation): audit doc IS the deliverable, plus 7 test_cases entries added to backend/routers/test.py after individually confirming each is read-only or side-effect-safe. 2 further gaps deliberately excluded with documented rationale. Fallback count (SystemStatus.js/system-status.spec.js) kept in sync per the existing drift-detection CI gate convention. Agent-mediated sign-off obtained."
         },
         "ST-12": {
           "title": "Consumer-driven contract check: frontend API calls vs documented contracts",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1123,
           "branch": "exec/2026-07-28__release-v7.10/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "612c9644",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-07-29T12:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/consumer_contract_check_2026-07-29.md",
+            "scripts/check_consumer_contract_drift.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Dependency: after EPIC-04 (ST-13,14,15)"
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-29",
+            "role": "API Contracts & Documentation Owner"
+          },
+          "notes": "Case B (documentation-creation)/D (tooling): script + audit doc are the deliverables. First run's 14 findings individually triaged (not bulk-dismissed): 1 genuine gap found and fixed (GET /portfolio missing 2 documented fields), 13 confirmed false positives from disclosed script limitations. Agent-mediated sign-off obtained; caught one minor doc-accuracy issue in the limitations list, corrected before finalizing."
         }
       }
     },
@@ -542,76 +561,97 @@
       }
     },
     "EPIC-06": {
-      "status": "not_started",
+      "status": "merged",
       "branch": "exec/2026-07-28__release-v7.10/EPIC-06",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1140,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-28__release-v7.10/qa_evidence_EPIC-06.md",
       "test_scenarios": [],
       "stories": {
         "ST-21": {
           "title": "design_gate_prompt.md does not sync .claude_current_state.json root pointer on gate pass",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-07-28__release-v7.10/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "aaa1ff72 (BLG-GOV-190, prior sprint, v1.4->v1.5); 9b56b83e (same-day follow-up, v1.5->v1.6)",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-07-29T13:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/design_gate_prompt.md#STEP 5 \u2014 Update Global State"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Governance file edit checklist (CLAUDE.md \u00a76) applies"
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.pre_met_verified",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-29",
+            "role": "Head of Specs Team"
+          },
+          "notes": "PRE-MET (STEP 3.1.A pre-met path): BLG-GOV-256's underlying problem was already fully fixed in a prior sprint by BLG-GOV-190 (v1.4->v1.5, 2026-07-27) plus a same-day follow-up (v1.5->v1.6) implementing the actual root `status` transition. Verified live on main: design_gate_prompt.md STEP 5 writes design_gate_status/design_gate_record/design_gate_completed_utc AND status='Design_Gate_Passed' to .claude_current_state.json on gate pass. CLAUDE.md \u00a76 checklist was fully followed at the time for both transitions (confirmed via prompt_change_log.md). Agent-mediated Head of Specs Team verification (independent, not just re-reading my own analysis) confirms the backlog item's problem statement matches the already-implemented fix exactly \u2014 this is a stale/duplicate backlog item carried into sprint planning without being caught by grooming, not a genuine gap. No new code/prompt change required or made. No deviation beyond the pre-met disposition itself."
         },
         "ST-22": {
           "title": "Recent-rebalance recency advisory at roadmap STEP -1",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-07-28__release-v7.10/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "207ea487",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-07-29T13:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/roadmap_prompt.md#STEP -1.5.5 \u2014 Recent-Rebalance Recency Advisory"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Governance file edit checklist (CLAUDE.md \u00a76) applies"
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-29",
+            "role": "Head of Specs Team"
+          },
+          "notes": "Case B (documentation-creation): new STEP -1.5.5 added, non-blocking advisory when a scheduled invocation's last_scheduled_rebalance_utc is <24h old. First sign-off pass (agent-mediated Head of Specs Team) found a genuine correctness gap: the advisory's input field was never written by any step (STEP 12.1 only set last_rebalance_utc). Fixed in the same commit: STEP 12.1 now also writes last_scheduled_rebalance_utc on scheduled runs. Also fixed an unrelated pre-existing 3-way version self-drift in OPERATIONAL_GUIDE.md discovered via the governance-drift skill (\u00a714 self-row stale at v4.118 while header/changelog had moved to v4.120). Re-verified and approved after both fixes. CLAUDE.md \u00a76 checklist complete."
         },
         "ST-23": {
           "title": "Same-day scheduled-rebalance cycle_id collision handling",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": null,
           "branch": "exec/2026-07-28__release-v7.10/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "v8.6->v8.7 transition (prior sprint, 2026-07-12)",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-07-29T13:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/roadmap_prompt.md#6. Completion Event Definition (Run Precondition)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Governance file edit checklist (CLAUDE.md \u00a76) applies"
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.pre_met_verified",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-29",
+            "role": "Head of Specs Team"
+          },
+          "notes": "PRE-MET (STEP 3.1.A pre-met path): BLG-GOV-207's underlying problem was already fully fixed in a prior sprint (roadmap_prompt.md v8.6->v8.7, 2026-07-12), the same day the backlog item was filed. Verified live on main: the 'Same-day collision check' under \u00a76 Completion Event Definition auto-suffixes (-2, -3, ...) with no user confirmation required, gating entry before any STEP begins ('No execution steps begin until this precondition is satisfied') -- satisfies the AC's intent even though it sits under a \u00a76 heading rather than literally inside a heading titled 'STEP 0'. CLAUDE.md \u00a76 checklist was fully followed at the time (confirmed via prompt_change_log.md v8.6->v8.7 entry). Agent-mediated Head of Specs Team verification (independent) confirms this is a stale/duplicate backlog item, not a genuine gap. No new code/prompt change required or made."
         }
       }
     }
@@ -626,14 +666,15 @@
   ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": [
+    "epics_merged": [
       "EPIC-04",
+      "EPIC-06",
+      "EPIC-03"
+    ],
+    "epics_pending": [
       "EPIC-01",
       "EPIC-02",
-      "EPIC-03",
-      "EPIC-05",
-      "EPIC-06"
+      "EPIC-05"
     ],
     "all_merged": false
   },

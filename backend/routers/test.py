@@ -54,6 +54,7 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /health", "method": "GET", "url": f"{base_url}/health", "critical": True},
         {"name": "GET /health/detailed", "method": "GET", "url": f"{base_url}/health/detailed", "critical": True},
         {"name": "GET /health/scheduler", "method": "GET", "url": f"{base_url}/health/scheduler", "critical": False},
+        {"name": "GET /health/database", "method": "GET", "url": f"{base_url}/health/database", "critical": False},
 
         # Changelog (ST-01, EPIC-01, v7.8)
         {"name": "GET /changelog/latest", "method": "GET", "url": f"{base_url}/changelog/latest", "critical": False},
@@ -253,7 +254,37 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /saved-filters", "method": "GET", "url": f"{base_url}/saved-filters", "critical": False},
         {"name": "POST /saved-filters", "method": "POST", "url": f"{base_url}/saved-filters", "body": {"name": "__test__", "filter_state": {}}, "critical": False},
         {"name": "DELETE /saved-filters/00000000-0000-0000-0000-000000000000", "method": "DELETE", "url": f"{base_url}/saved-filters/00000000-0000-0000-0000-000000000000", "critical": False},
+
+        # ST-11 (BLG-QA-133, EPIC-03, v7.10): coverage audit additions — all
+        # confirmed read-only / no-side-effect (or side effects already
+        # accepted for a sibling endpoint) before being added here.
+        {"name": "GET /portfolio/prospective-heat", "method": "GET", "url": f"{base_url}/portfolio/prospective-heat?ticker=AAPL&shares=10&entry_price=100&stop_price=90", "critical": False},
+        {"name": "GET /positions/search/tags", "method": "GET", "url": f"{base_url}/positions/search/tags?tags=momentum", "critical": False},
+        {"name": "GET /reports/tax-year", "method": "GET", "url": f"{base_url}/reports/tax-year?year=2025", "critical": False},
+        {"name": "GET /trades/export/csv", "method": "GET", "url": f"{base_url}/trades/export/csv", "critical": False},
+        {"name": "POST /portfolio/size", "method": "POST", "url": f"{base_url}/portfolio/size", "body": {"entry_price": 100.0, "stop_price": 90.0, "risk_percent": 1.0, "market": "US"}, "critical": False},
+        {"name": "POST /trade-plans/generate-plan", "method": "POST", "url": f"{base_url}/trade-plans/generate-plan", "body": {"ticker": "AAPL", "market": "US"}, "critical": False},
     ]
+
+    # ST-11 (BLG-QA-133) coverage-audit disposition — endpoints deliberately
+    # NOT added above, with rationale (see docs/ops/endpoint_test_coverage_audit_2026-07-29.md
+    # for the full audit):
+    #   - Real-data-mutating endpoints (POST /cash/transaction, POST /portfolio/position,
+    #     POST /portfolio/snapshot, POST/PATCH/DELETE /alerts/rules, POST /alerts/evaluate,
+    #     POST/PATCH /settings, POST /signals/generate, POST /notifications/mark-all-read,
+    #     PATCH /notifications/{id}, POST /positions/{id}/exit, PATCH /positions/{id}/mark-reviewed,
+    #     PATCH /positions/{id}/note, PATCH /positions/{id}/tags, PATCH /watchlist/{id},
+    #     DELETE /signals/{id}): would mutate the live single-portfolio production system's
+    #     real financial/trading state every time this smoke test is run — correctly excluded,
+    #     not an oversight.
+    #   - GET /positions/analyze: despite the GET verb, updates trailing stops and position
+    #     data in the database (see services/position_service.py::analyze_positions docstring)
+    #     — same mutation-risk exclusion as above.
+    #   - GET /trades/{trade_id}/reflection: always returns 404 for any placeholder trade_id
+    #     (no reflection exists until explicitly saved) — unsuitable for this harness's
+    #     2xx-only pass criterion; not a coverage gap in the sense of "never exercised",
+    #     just not expressible in this test shape.
+    #   - POST /test/endpoints: this endpoint itself — recursive self-call excluded.
     
     results = []
     passed = 0
