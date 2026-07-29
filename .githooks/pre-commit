@@ -1,13 +1,24 @@
 #!/usr/bin/env bash
-# Pre-commit hook — ST-10 (EPIC-10, v7.9, BLG-QA-125)
+# Pre-commit hook — ST-10 (EPIC-10, v7.9, BLG-QA-125); extended ST-05 (EPIC-02, v7.10, BLG-SEC-22)
 #
 # Blocks a commit that adds a new backend route without a matching
 # backend/routers/test.py registration. One-time setup per clone:
 #   git config core.hooksPath .githooks
 #
-# No pre-commit framework dependency required — this repo has no other
-# pre-commit hooks yet, so a plain tracked hooks directory is the
-# lightest-weight "or equivalent" per this story's AC-01.
+# No pre-commit framework dependency required — a plain tracked hooks
+# directory is the lightest-weight "or equivalent" per ST-10's AC-01.
 set -e
 
 python3 scripts/check_router_test_registration.py
+
+# ST-05 (BLG-SEC-22): local secrets-scanning gate, complementing the CI-level
+# gitleaks gate (BLG-OPS-58, .github/workflows/secret-scanning.yml). Scans
+# only staged changes (fast) using the same .gitleaks.toml config as CI, so a
+# planted secret is caught before it ever leaves the local machine rather than
+# waiting for the CI push-time gate.
+if command -v gitleaks >/dev/null 2>&1; then
+    gitleaks protect --staged --source . --config .gitleaks.toml --redact
+else
+    echo "⚠️  gitleaks not installed locally — skipping local secrets scan." >&2
+    echo "    The CI-level gate (secret-scanning.yml) will still catch a leaked secret on push, but install gitleaks locally for a faster feedback loop: https://github.com/gitleaks/gitleaks#installing" >&2
+fi
