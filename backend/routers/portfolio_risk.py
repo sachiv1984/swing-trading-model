@@ -10,6 +10,7 @@ Contracts: docs/specs/api_contracts/portfolio_endpoints.md
 """
 
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 from database import get_db, get_portfolio, get_positions, get_portfolio_snapshots, get_gate_metrics, get_sector_regime_history
 from utils.formatting import decimal_to_float
 
@@ -223,7 +224,7 @@ def get_drawdown_status():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "ok", "data": {"threshold_breached": False, "error": str(e)}}
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
 
 @router.get("/concentration-status")
@@ -294,7 +295,7 @@ def get_concentration_status():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "ok", "data": {"any_breach": False, "error": str(e)}}
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
 
 # ST-06, EPIC-03, v6.1
@@ -376,7 +377,7 @@ def get_sector_weights():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "ok", "data": {"sectors": [], "total_positions": 0, "concentration_alert": False, "error": str(e)}}
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
 
 # ST-04, EPIC-02, v5.5
@@ -407,7 +408,7 @@ def get_gate_metrics_endpoint():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "error", "error": str(e)}
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
 
 _INSUFFICIENT_HISTORY_WEEKS = 8
