@@ -22,6 +22,18 @@ regexes = [
 ]
 
 [[allowlists]]
+description = "Secrets-scanning hook regression test — deliberately-planted fake PAT (ST-05, EPIC-02, v7.10)"
+paths = [
+  "tests/test_secrets_scanning_hook\\.py",
+]
+regexes = [
+  # Format-valid but synthetic GitHub PAT, written into a scratch file at test
+  # runtime to prove the pre-commit hook actually rejects a real-looking secret.
+  # Never used as a live credential.
+  '''ghp_16C7e42F292c6912E7710c838347Ae178B4a''',
+]
+
+[[allowlists]]
 description = "Alpaca test stubs — short placeholder values in integration tests"
 paths = [
   "tests/test_alpaca_integration\\.py",
