@@ -5,7 +5,7 @@
   "invoked_utc": "2026-07-29T07:22:01Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-07-29T09:56:00Z",
+  "last_updated_utc": "2026-07-29T10:21:00Z",
   "process_notes": [],
   "epics": {
     "EPIC-04": {
@@ -234,7 +234,8 @@
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-07-28__release-v7.10/qa_evidence_EPIC-02.md",
       "test_scenarios": [
-        "tests/test_secrets_scanning_hook.py"
+        "tests/test_secrets_scanning_hook.py",
+        "tests/test_ai_rate_limit_bypass.py"
       ],
       "stories": {
         "ST-05": {
@@ -269,23 +270,30 @@
         "ST-06": {
           "title": "AI rate-limit bypass test",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1117,
           "branch": "exec/2026-07-28__release-v7.10/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "73436db4",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-07-29T10:20:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/ai_rate_limit_bypass_audit_2026-07-29.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-29",
+            "role": "Cybersecurity & Trust Lead"
+          },
+          "notes": "Case B (documentation-creation): audit doc IS the deliverable. Tested XFF spoofing and IP rotation against both endpoints; neither is a confirmed code-level bypass. Filed BLG-SEC-24 (P1) for an adjacent, more significant deployment-configuration finding (Render proxy IP collapse risk). Agent-mediated sign-off obtained. No deviation."
         },
         "ST-07": {
           "title": "Rate-limit audit on public-facing endpoints ahead of any future auth changes",
