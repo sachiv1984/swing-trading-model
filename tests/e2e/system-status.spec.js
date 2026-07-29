@@ -9,7 +9,9 @@
  *   SC-SS-04: Notifications category section visible after tests run
  *   SC-SS-05: Digest category section visible after tests run
  *   SC-SS-06: Total endpoint count ≥ 26 shown after tests run
- *   SC-SS-07: Alerts/Notifications/Digest endpoints do NOT appear under "Other"
+ *   SC-SS-07: Alerts/Notifications/Digest/price-alerts/saved-filters/changelog
+ *             endpoints do NOT appear under "Other" (ST-18, EPIC-05, v7.10,
+ *             BLG-FE-123 added the last 3)
  *
  * Infrastructure:
  * - Playwright page.route() network interception. No live backend required.
@@ -47,23 +49,25 @@ const HEALTH_RESPONSE = {
  */
 const TEST_RESULTS_RESPONSE = {
   summary: {
-    total: 28,
-    passed: 28,
+    total: 31,
+    passed: 31,
     failed: 0,
     errors: 0,
     success_rate: 100.0,
   },
   results: [
-    // Core (2)
+    // Core (3) — includes GET /changelog/latest (ST-18, EPIC-05, v7.10, BLG-FE-123)
     { endpoint: 'GET /',                          status: 'pass', status_code: 200, response_time_ms: 3.1 },
     { endpoint: 'GET /health/detailed',           status: 'pass', status_code: 200, response_time_ms: 4.8 },
+    { endpoint: 'GET /changelog/latest',          status: 'pass', status_code: 200, response_time_ms: 4.2 },
     // Analytics (2)
     { endpoint: 'GET /analytics/metrics',         status: 'pass', status_code: 200, response_time_ms: 12.3 },
     { endpoint: 'GET /analytics/summary',         status: 'pass', status_code: 200, response_time_ms: 9.7 },
-    // Alerts (3)
+    // Alerts (4) — includes GET /price-alerts (ST-18, EPIC-05, v7.10, BLG-FE-123)
     { endpoint: 'GET /alerts/rules',              status: 'pass', status_code: 200, response_time_ms: 7.2 },
     { endpoint: 'POST /alerts/rules',             status: 'pass', status_code: 201, response_time_ms: 8.5 },
     { endpoint: 'DELETE /alerts/rules/1',         status: 'pass', status_code: 200, response_time_ms: 6.1 },
+    { endpoint: 'GET /price-alerts',              status: 'pass', status_code: 200, response_time_ms: 6.9 },
     // Notifications (3)
     { endpoint: 'GET /notifications',             status: 'pass', status_code: 200, response_time_ms: 5.9 },
     { endpoint: 'POST /notifications',            status: 'pass', status_code: 201, response_time_ms: 7.4 },
@@ -76,10 +80,11 @@ const TEST_RESULTS_RESPONSE = {
     { endpoint: 'GET /positions',                 status: 'pass', status_code: 200, response_time_ms: 8.1 },
     { endpoint: 'POST /positions',                status: 'pass', status_code: 201, response_time_ms: 9.6 },
     { endpoint: 'DELETE /positions/1',            status: 'pass', status_code: 200, response_time_ms: 7.3 },
-    // Trading (3)
+    // Trading (4) — includes GET /saved-filters (ST-18, EPIC-05, v7.10, BLG-FE-123)
     { endpoint: 'GET /trades',                    status: 'pass', status_code: 200, response_time_ms: 6.5 },
     { endpoint: 'POST /trades',                   status: 'pass', status_code: 201, response_time_ms: 8.9 },
     { endpoint: 'PUT /trades/1',                  status: 'pass', status_code: 200, response_time_ms: 7.8 },
+    { endpoint: 'GET /saved-filters',             status: 'pass', status_code: 200, response_time_ms: 7.1 },
     // Cash Management (3)
     { endpoint: 'GET /cash/summary',              status: 'pass', status_code: 200, response_time_ms: 5.4 },
     { endpoint: 'POST /cash/deposit',             status: 'pass', status_code: 201, response_time_ms: 6.2 },
@@ -270,7 +275,7 @@ test.describe('Post-run state — SC-SS-03 through SC-SS-07', () => {
   });
 
   test('SC-SS-06b: Endpoint count in sub-header updates to actual count after tests run', async ({ page }) => {
-    await expect(page.getByText(/testing 28 endpoints/i)).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText(/testing 31 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   // SC-SS-07 — Targeted endpoints absent from "Other" category
@@ -290,5 +295,24 @@ test.describe('Post-run state — SC-SS-03 through SC-SS-07', () => {
 
   test('SC-SS-07d: /digest/weekly endpoint appears under Digest, not Other', async ({ page }) => {
     await expect(page.getByText('GET /digest/weekly')).toBeVisible({ timeout: 8000 });
+  });
+
+  // ST-18 (EPIC-05, v7.10, BLG-FE-123): SystemStatus.js's categorizeEndpoint()
+  // gained /price-alerts, /saved-filters, and /changelog branches — confirm
+  // each renders under its assigned category, not "Other".
+  test('SC-SS-07e: /price-alerts endpoint appears under Alerts, not Other', async ({ page }) => {
+    await expect(page.getByText('GET /price-alerts')).toBeVisible({ timeout: 8000 });
+  });
+
+  test('SC-SS-07f: /saved-filters endpoint appears under Trading, not Other', async ({ page }) => {
+    const tradingBtn = page.getByRole('button', { name: /^trading/i });
+    await expect(tradingBtn).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText('GET /saved-filters')).toBeVisible({ timeout: 8000 });
+  });
+
+  test('SC-SS-07g: /changelog/latest endpoint appears under Core, not Other', async ({ page }) => {
+    const coreBtn = page.getByRole('button', { name: /^core/i });
+    await expect(coreBtn).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText('GET /changelog/latest')).toBeVisible({ timeout: 8000 });
   });
 });
