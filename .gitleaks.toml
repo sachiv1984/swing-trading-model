@@ -21,6 +21,41 @@ regexes = [
   '''postgresql://test:test@localhost:5432/test_stub''',
 ]
 
+# NOTE: gitleaks' schema only permits array-of-tables allowlists ([[rules.allowlists]])
+# nested under a specific [[rules]] block, or a single global [allowlist] (singular,
+# not an array). A bare top-level [[allowlists]] (plural, unnested) as used elsewhere
+# in this file is not a recognised key in gitleaks v8.21 and is silently ignored — see
+# BLG-SEC-26. This entry uses the correct rule-scoped form, verified locally against
+# gitleaks v8.21.2 to actually suppress the finding (both rules that fire on this
+# secret: github-pat and generic-api-key).
+[[rules]]
+id = "github-pat"
+
+  [[rules.allowlists]]
+  description = "Secrets-scanning hook regression test — deliberately-planted fake PAT (ST-05, EPIC-02, v7.10)"
+  condition = "AND"
+  regexTarget = "match"
+  paths = [
+    "tests/test_secrets_scanning_hook\\.py",
+  ]
+  regexes = [
+    '''ghp_16C7e42F292c6912E7710c838347Ae178B4a''',
+  ]
+
+[[rules]]
+id = "generic-api-key"
+
+  [[rules.allowlists]]
+  description = "Secrets-scanning hook regression test — deliberately-planted fake PAT (ST-05, EPIC-02, v7.10)"
+  condition = "AND"
+  regexTarget = "match"
+  paths = [
+    "tests/test_secrets_scanning_hook\\.py",
+  ]
+  regexes = [
+    '''ghp_16C7e42F292c6912E7710c838347Ae178B4a''',
+  ]
+
 [[allowlists]]
 description = "Alpaca test stubs — short placeholder values in integration tests"
 paths = [

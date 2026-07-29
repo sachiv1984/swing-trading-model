@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.18
-**Last Updated:** 2026-07-27
+**Version:** 2.19
+**Last Updated:** 2026-07-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -728,6 +728,20 @@ ALTER TABLE positions ADD COLUMN user_fill_price DECIMAL(10, 4);
 ALTER TABLE trade_history ADD COLUMN fill_price DECIMAL(10, 4);
 COMMIT;
 ```
+
+---
+
+## Deprecated Tables
+
+**Documentation backfill — no new migration applied.** Added retroactively (v2.19, ST-04, EPIC-01, v7.10, BLG-BE-41 deprecated-table read-path audit) — this table's deprecation predates this section's existence and was previously undocumented here, discoverable only via `claude/backlog/backlog_archive.md`'s `BLG-BE-40` record. Recorded now so future deprecated-table audits (per `BLG-BE-41`'s own acceptance criteria — "cross-check against `data_model.md` migration history for tables marked deprecated") have a canonical entry to check against instead of re-deriving it from backlog history each time.
+
+### `tickers` — superseded by `ticker_universe`
+
+**Deprecated:** 2026-07-02 (v6.4, `BLG-BE-40`). **Superseded by:** `ticker_universe` (created via `services/ticker_universe_service.py::ensure_ticker_universe_table()`, not tracked as a numbered migration in this document since it is created idempotently at call time rather than via a one-off `ALTER`/`CREATE` migration script, consistent with this codebase's `ensure_*` convention).
+
+`signal_service.py` read `tickers` directly until v6.4, when it was switched to `services.ticker_universe_service.get_all_tickers(active_only=True)` (`BLG-BE-40`, P1 production-correctness fix). A second, unused read of `tickers` was found in `database.py::get_all_tickers()` during this audit (`BLG-BE-41`) — confirmed to have zero callers anywhere in the codebase (dead code, not a live correctness bug) and removed in the same commit as this note.
+
+Do not add new reads of `tickers`. All ticker-universe lookups must go through `services.ticker_universe_service`.
 
 ---
 
@@ -1561,6 +1575,6 @@ Reversible: `DROP TABLE IF EXISTS sector_regime_history;`
 
 ---
 
-**Document Version:** 2.18
+**Document Version:** 2.19
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-07-27
+**Last Review:** 2026-07-29

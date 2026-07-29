@@ -175,9 +175,9 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     await expect(page.getByRole('button', { name: /run tests/i })).toBeVisible({ timeout: 8000 });
   });
 
-  test('SC-SS-01b: Pre-run state shows "102 endpoints" placeholder', async ({ page }) => {
-    // Before running tests, the page shows: "Tests 102 endpoints"
-    // (totalTests || '102' → '102' before any test run). Baseline corrected v7.7
+  test('SC-SS-01b: Pre-run state shows "109 endpoints" placeholder', async ({ page }) => {
+    // Before running tests, the page shows: "Tests 109 endpoints"
+    // (totalTests || '109' → '109' before any test run). Baseline corrected v7.7
     // EPIC-11 ST-11 (BLG-QA-102): an AST-verified count of backend/routers/test.py's
     // test_cases list was 98, not the previously-recorded 103 — 5 entries had
     // drifted out of sync with the fallback constant at some point after
@@ -193,7 +193,14 @@ test.describe('SC-SS-01 — Pre-run state', () => {
     // reconciled to 101 at EPIC-06 branch merge (CLAUDE.md §8).
     // +1 (101 -> 102) from v7.9 EPIC-02 ST-02, which added
     // GET /portfolio/sector-regime-trend (BLG-FEAT-67).
-    await expect(page.getByText(/tests 102 endpoints/i)).toBeVisible({ timeout: 8000 });
+    // +7 (102 -> 109) from v7.10 EPIC-03 ST-11 (BLG-QA-133) endpoint test
+    // suite coverage audit — added GET /health/database, GET
+    // /portfolio/prospective-heat, GET /positions/search/tags, GET
+    // /reports/tax-year, GET /trades/export/csv, POST /portfolio/size, POST
+    // /trade-plans/generate-plan (all confirmed read-only or side-effect-safe;
+    // see docs/ops/endpoint_test_coverage_audit_2026-07-29.md for the full
+    // audit and the endpoints deliberately excluded as unsafe to add).
+    await expect(page.getByText(/tests 109 endpoints/i)).toBeVisible({ timeout: 8000 });
   });
 
   test('SC-SS-01c: Pre-run state shows prompt to click Run Tests', async ({ page }) => {

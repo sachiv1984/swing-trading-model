@@ -26,6 +26,7 @@ class AddPositionRequest(BaseModel):
     entry_note: Optional[str] = None
     tags: Optional[List[str]] = None
     trade_plan_id: Optional[str] = None  # ST-01 (EPIC-01, v7.3): explicit "Start Trade from Plan" link
+    idempotency_key: Optional[str] = None  # ST-03 (EPIC-01, v7.10): opt-in dedup key, see utils/idempotency.py
 
 
 class SettingsRequest(BaseModel):

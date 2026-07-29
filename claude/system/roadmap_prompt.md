@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.7
-**Last Updated:** 2026-07-28
+**Version:** 9.8
+**Last Updated:** 2026-07-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -155,6 +155,20 @@ Any unresolved action with no carry-forward path → halt.
 - **Stale release target check:** If a deferred patch's target event is a named release (`plan release vX.Y`), verify whether that release has already shipped by checking the release summary table in `current_roadmap.md`. If shipped → classify the patch as OVERDUE immediately; do not wait for the second-consecutive-cycle rule to fire. Record outcome in run manifest.
 
 Record all outcomes under "Prior Cycle Outstanding Actions" in run manifest.
+
+---
+
+#### -1.5.5 Recent-Rebalance Recency Advisory (Non-Blocking — v9.8, BLG-GOV-216)
+
+Read `.claude_current_state.json`'s `last_scheduled_rebalance_utc`. If this run's `--reason` is `"scheduled"` and `last_scheduled_rebalance_utc` is less than 24 hours before the current run's start time:
+
+```
+[ADVISORY] A scheduled roadmap rebalance already ran <N>h<M>m ago (last_scheduled_rebalance_utc: <ISO-8601>). Confirm you intend to run a second scheduled rebalance today before proceeding.
+```
+
+This is an **advisory, not a hard gate** — it does not halt the run. Record the advisory (fired or not, and the elapsed time if fired) under "Recent-Rebalance Recency Advisory" in the run manifest. This surfaces the same same-day-collision scenario `BLG-GOV-207`'s STEP 0 auto-suffix rule resolves mechanically for the `cycle_id` — this advisory instead gives the invoking user/PO an explicit chance to confirm intent *before* STEP 0 runs, rather than only discovering the collision after a second `cycle_id` has already been auto-suffixed.
+
+Does not apply to item-completion-triggered rebalances (`--item-id`) — only `--reason "scheduled"` invocations key off `last_scheduled_rebalance_utc`.
 
 ---
 
@@ -822,6 +836,8 @@ Update `.claude_current_state.json` (rebalance keys only — do not overwrite `a
 **Advisory — next_release after DL decision (OA-02/ST-22, v4.6; ownership clarified OA-1, post-ship closure `2026-07-24__release-v7.8`):** After the DL decision at STEP 8 sets the next planned release label, update `next_release` in `.claude_current_state.json` to the projected version label (e.g., `v4.7`) if determinable. This reduces the "version not on roadmap" annotation requirement at the next release planning invocation. This is advisory only — no hard gate — and is **not** this field's authoritative source: `release_planning_prompt.md` STEP 9 owns `next_release` and overwrites it unconditionally, from the sealed cycle's own `--version` argument, every time Release Planning seals. This advisory exists only to give the field a reasonable best-guess value in the window between a roadmap rebalance and the next Release Planning invocation; it must never be treated as authoritative if it disagrees with the last Release Planning STEP 9 write. If the next release label is not determinable from the DL decision (e.g., no-change rebalance with no new release horizon), leave `next_release` unchanged.
 
 If `.claude_current_state.json` does not exist: create it with rebalance keys only.
+
+**Scheduled-run recency marker (v9.8, BLG-GOV-216):** If this run's `--reason` is `"scheduled"`, also set `last_scheduled_rebalance_utc` = this run's `last_rebalance_utc` value in the same write. This field is read by STEP -1.5.5's recency advisory and by the Extended-tier "> 90 days since `last_scheduled_rebalance_utc`" check (§2.4) — without this write, both checks would read a stale or never-set value. Do not set this field for `--item-id` completion-triggered runs (it is scoped to scheduled invocations only).
 
 #### 12.2 Commit
 
