@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.5.0
-**Last Updated:** 2026-07-13
+**Version:** 2.5.1
+**Last Updated:** 2026-07-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -26,6 +26,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.5.1 | 2026-07-29 | v7.10 ST-13 (BLG-SPEC-102) + ST-14 (BLG-SPEC-103): Corrected `GET /positions` response documentation to match live behaviour — the endpoint returns the raw `data` array directly, not the standard `{ status, data }` envelope. Added undocumented lifecycle fields `position_state`, `state_entered_at`, `days_in_state` to the response schema and field notes. No functional change. |
 | 2.5.0 | 2026-07-13 | v7.0 ST-15 (BLG-FEAT-68): Added `last_reviewed_at` field to `GET /positions` response (ISO timestamp \| null — position review cadence nudge). Added `PATCH /positions/{position_id}/mark-reviewed` — sets `last_reviewed_at = NOW()`. Display-only; no automated action beyond the explicit user-triggered timestamp update. |
 | 2.4.0 | 2026-07-10 | v6.9 ST-02 (BLG-FEAT-65): Added `GET /positions/{position_id}/gap-risk` — overnight/weekend gap risk flag for a single position, combining the DS-04 earnings calendar with historical OHLCV gap statistics. Implemented as a dedicated per-position endpoint rather than a field on `GET /positions` (pre-authorised alternative per the story notes) because the historical-OHLCV lookup is too slow to run inline for every open position on every list load. Display-only; §13 sign-off required (AC-04). |
 | 2.3.0 | 2026-07-10 | v6.9 ST-01 (BLG-FEAT-64): Added `GET /positions/{position_id}/compliance-recheck` — re-applies the 5 SI-01 pre-entry deterministic rule checks against an open position's current state (current regime, current signal conditions, current heat/sizing), not its entry-time snapshot. On-demand only, no automation. Display-only; §13 sign-off required (AC-04). |
@@ -71,9 +72,9 @@ No parameters.
 
 ### Response (200)
 
-Response uses the standard success envelope from **conventions.md**.
+This endpoint does **not** use the standard `{ status, data }` response envelope (see conventions.md §2.2). The response body is the raw array of open positions directly.
 
-#### `data` schema (array)
+#### Response schema (array)
 
 ```json
 [
@@ -104,7 +105,10 @@ Response uses the standard success envelope from **conventions.md**.
     "entry_note": "Breakout above $800 resistance",
     "exit_note": null,
     "tags": ["momentum", "breakout"],
-    "last_reviewed_at": "2026-07-01T09:00:00+00:00"
+    "last_reviewed_at": "2026-07-01T09:00:00+00:00",
+    "position_state": "PROFITABLE",
+    "state_entered_at": "2026-07-01T09:00:00+00:00",
+    "days_in_state": 14
   }
 ]
 ```
@@ -128,6 +132,9 @@ Response uses the standard success envelope from **conventions.md**.
 | `pnl_percent` | Percentage P&L relative to entry cost. Same value as would be seen in `pnl_pct` in trade records. Both field names exist in the system for compatibility; `pnl_percent` is the canonical name in position responses |
 | `grace_days_remaining` | `integer` when `grace_period = true`; `null` when `grace_period = false`. Derived server-side as `max(0, 10 - holding_days)` during the grace period. Represents the number of days remaining in the grace window. On day 10, `grace_period` becomes `false` and this field returns `null` — not `0`. Intended display format: `"Day {holding_days + 1} of 10"`. Always present in the response object. |
 | `last_reviewed_at` | ISO-8601 timestamp \| `null`. `null` means the position has never been marked reviewed. Set by `PATCH /positions/{id}/mark-reviewed`. (v7.0 ST-15 BLG-FEAT-68) |
+| `position_state` | `string`. One of `"GRACE"`, `"PROFITABLE"`, `"LOSING"`, `"EXIT ZONE"`, `"UNKNOWN"`. Server-computed lifecycle state, distinct from `display_status` — recalculated and persisted (with transition history) on each `GET /positions` call. `"UNKNOWN"` when required inputs (entry price, current price, ATR, entry date) are unavailable. (v7.10 ST-14 BLG-SPEC-103) |
+| `state_entered_at` | ISO-8601 timestamp \| `null`. Timestamp of the most recent transition into the current `position_state`. `null` only in the `position_state = "UNKNOWN"` fallback case. (v7.10 ST-14 BLG-SPEC-103) |
+| `days_in_state` | `integer`. Whole days elapsed since `state_entered_at`. `0` on the day of transition or when `state_entered_at` is `null`. (v7.10 ST-14 BLG-SPEC-103) |
 
 > **Note:** For a summary view of open positions alongside portfolio totals, use `GET /portfolio`. This endpoint returns the full enriched position object including native prices, stop context, and journal fields; `GET /portfolio` returns a lighter position shape.
 
