@@ -245,8 +245,9 @@ test.describe('Post-run state — SC-SS-03 through SC-SS-07', () => {
   });
 
   test('SC-SS-03b: Alerts section shows the correct endpoint count badge', async ({ page }) => {
-    // TEST_RESULTS_RESPONSE has 3 /alerts endpoints — badge shows "3/3"
-    await expect(page.getByRole('button', { name: /^alerts.*3\/3/i })).toBeVisible({ timeout: 8000 });
+    // TEST_RESULTS_RESPONSE has 4 /alerts endpoints (incl. GET /price-alerts,
+    // ST-18, EPIC-05, v7.10) — badge shows "4/4"
+    await expect(page.getByRole('button', { name: /^alerts.*4\/4/i })).toBeVisible({ timeout: 8000 });
   });
 
   // SC-SS-04 — Notifications category
@@ -268,10 +269,10 @@ test.describe('Post-run state — SC-SS-03 through SC-SS-07', () => {
   });
 
   // SC-SS-06 — Total endpoint count display
-  test('SC-SS-06a: Total count of 28 is shown in the summary bar after tests run', async ({ page }) => {
+  test('SC-SS-06a: Total count of 31 is shown in the summary bar after tests run', async ({ page }) => {
     const totalLabel = page.locator('span').filter({ hasText: /^total:$/i });
     await expect(totalLabel).toBeVisible({ timeout: 8000 });
-    await expect(totalLabel.locator('xpath=following-sibling::span[1]')).toHaveText('28', { timeout: 8000 });
+    await expect(totalLabel.locator('xpath=following-sibling::span[1]')).toHaveText('31', { timeout: 8000 });
   });
 
   test('SC-SS-06b: Endpoint count in sub-header updates to actual count after tests run', async ({ page }) => {
@@ -305,7 +306,10 @@ test.describe('Post-run state — SC-SS-03 through SC-SS-07', () => {
   });
 
   test('SC-SS-07f: /saved-filters endpoint appears under Trading, not Other', async ({ page }) => {
-    const tradingBtn = page.getByRole('button', { name: /^trading/i });
+    // Anchored with the count badge (4/4) — a plain /^trading/i match also
+    // resolves to an unrelated page-nav button literally named "Trading",
+    // causing a Playwright strict-mode violation (2 elements).
+    const tradingBtn = page.getByRole('button', { name: /^trading.*4\/4/i });
     await expect(tradingBtn).toBeVisible({ timeout: 8000 });
     await expect(page.getByText('GET /saved-filters')).toBeVisible({ timeout: 8000 });
   });
