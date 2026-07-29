@@ -509,32 +509,41 @@ def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
 def add_position_endpoint(request: AddPositionRequest):
     """Add a new position to the portfolio"""
     try:
-        result = add_position(
-            ticker=request.ticker,
-            market=request.market,
-            entry_date=request.entry_date,
-            shares=request.shares,
-            entry_price=request.entry_price,
-            fill_price=request.fill_price,
-            fx_rate=request.fx_rate,
-            atr_value=request.atr_value,
-            stop_price=request.stop_price,
-            entry_note=request.entry_note,
-            tags=request.tags,
-            trade_plan_id=request.trade_plan_id
-        )
+        def _create():
+            result = add_position(
+                ticker=request.ticker,
+                market=request.market,
+                entry_date=request.entry_date,
+                shares=request.shares,
+                entry_price=request.entry_price,
+                fill_price=request.fill_price,
+                fx_rate=request.fx_rate,
+                atr_value=request.atr_value,
+                stop_price=request.stop_price,
+                entry_note=request.entry_note,
+                tags=request.tags,
+                trade_plan_id=request.trade_plan_id
+            )
 
-        if request.market == "US":
-            try:
-                from services.alpaca_paper_sync_service import sync_open_paper_position
-                sync_open_paper_position(request.ticker, request.shares)
-            except Exception:
-                pass  # best-effort sync; primary operation already succeeded
+            if request.market == "US":
+                try:
+                    from services.alpaca_paper_sync_service import sync_open_paper_position
+                    sync_open_paper_position(request.ticker, request.shares)
+                except Exception:
+                    pass  # best-effort sync; primary operation already succeeded
 
-        return {
-            "status": "ok",
-            "data": result
-        }
+            return {
+                "status": "ok",
+                "data": result
+            }
+
+        if request.idempotency_key:
+            portfolio = get_portfolio()
+            portfolio_id = str(portfolio["id"]) if portfolio else None
+            if portfolio_id:
+                from utils.idempotency import replay_or_create
+                return replay_or_create(portfolio_id, "POST /portfolio/position", request.idempotency_key, _create)
+        return _create()
 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

@@ -174,3 +174,53 @@ class TestSI01OverrideEventWrite:
         call_kwargs = mock_write.call_args
         assert call_kwargs.kwargs.get("event_type") == "pre_entry_override" or \
                call_kwargs.args[0] == "pre_entry_override"
+
+
+class TestRedFlagJournalAuthRequired:
+    """ST-10 (BLG-QA-96, EPIC-03, v7.10): auth regression test for
+    GET /portfolio/red-flag-journal.
+
+    The fixtures above mount `routers.red_flag_journal.router` on a bare
+    FastAPI app with no middleware, so they cannot exercise the global
+    `X-API-Key` auth gate (`backend/main.py::api_key_middleware`) — that
+    check only exists at the app level. This test uses the real `main.app`
+    (via a module-level TestClient, matching the established pattern in
+    `tests/test_reports_integration.py`) specifically to confirm the auth
+    gate itself stays wired up for this endpoint.
+    """
+
+    def _client(self):
+        import sys
+        from pathlib import Path
+        sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
+        from main import app
+        from fastapi.testclient import TestClient
+        return TestClient(app, raise_server_exceptions=False)
+
+    def test_returns_401_without_api_key_when_configured(self):
+        import os
+        with patch.dict(os.environ, {"API_KEY": "test-secret"}):
+            resp = self._client().get("/portfolio/red-flag-journal")
+        assert resp.status_code == 401
+
+    def test_returns_401_with_invalid_api_key_when_configured(self):
+        import os
+        with patch.dict(os.environ, {"API_KEY": "test-secret"}):
+            resp = self._client().get(
+                "/portfolio/red-flag-journal", headers={"X-API-Key": "wrong-key"}
+            )
+        assert resp.status_code == 401
+
+    def test_returns_200_with_valid_api_key(self):
+        """Confirms the 401 above is genuinely the auth gate, not an
+        unrelated failure — the same request succeeds once authenticated."""
+        import os
+        import routers.red_flag_journal as rfj_mod
+        with patch.dict(os.environ, {"API_KEY": "test-secret"}), \
+             patch.object(rfj_mod, "ensure_red_flag_events_table"), \
+             patch.object(rfj_mod, "ensure_red_flag_events_severity_column"), \
+             patch.object(rfj_mod, "get_red_flag_events", return_value=_empty_result()):
+            resp = self._client().get(
+                "/portfolio/red-flag-journal", headers={"X-API-Key": "test-secret"}
+            )
+        assert resp.status_code == 200

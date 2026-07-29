@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.5.0
-**Last Updated:** 2026-07-27
+**Version:** 2.5.1
+**Last Updated:** 2026-07-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -71,6 +71,10 @@ Response uses the standard success envelope from **conventions.md**.
   "last_updated": "2026-02-17T10:30:00Z",
   "current_drawdown_percent": -8.20,
   "peak_portfolio_value": 16340.00,
+  "portfolio_heat_percent": 4.75,
+  "position_risks": [
+    { "ticker": "NVDA", "position_risk_gbp": 87.50 }
+  ],
   "positions": [
     {
       "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -107,6 +111,8 @@ Response uses the standard success envelope from **conventions.md**.
 - `positions` is an array of open positions; returns `[]` if none.
 - `current_drawdown_percent` is the percentage decline of the current portfolio value from the all-time peak value in `portfolio_history`. Calculated as `(total_value - peak_portfolio_value) / peak_portfolio_value × 100`. Result is ≤ 0.0; zero means the portfolio is at its all-time high. Defaults to `0.0` when no `portfolio_history` exists. See `metrics_definitions.md` §Current Drawdown for the canonical definition.
 - `peak_portfolio_value` is the all-time high of `portfolio_history.total_value` across all recorded snapshots (not period-scoped). Expressed in GBP. Defaults to `0.0` when no `portfolio_history` exists.
+- `portfolio_heat_percent` is total open-position risk (sum of `position_risks[].position_risk_gbp`) as a percentage of `total_value`. Rounded to 2 d.p. `0.0` when `total_value` is `0` or no open positions carry risk (no `initial_stop`). **Documentation backfill (ST-12, EPIC-03, v7.10, BLG-QA-128)** — this field has always been returned by `services/portfolio_service.py::get_portfolio_summary()` and is consumed by `src/pages/RiskDashboard.js`; it was simply never added to this contract's response schema until now, surfaced by a consumer-driven contract check.
+- `position_risks` is an array of `{ticker, position_risk_gbp}` — GBP risk (entry price minus stop, converted to GBP) per open position with a set `initial_stop`; positions without one are excluded. Same documentation-backfill note as `portfolio_heat_percent` above — consumed by `src/pages/RiskDashboard.js` for the risk-per-position breakdown.
 
 #### Field notes (position summary object)
 
@@ -579,6 +585,7 @@ Errors use the standard error envelope from **conventions.md**.
 | 1.9.0 | 2026-03-02 | S2-07 (EPIC-06/BLG-TECH-08): Spec updated to match live `portfolio_service.py` implementation. Position object example and field notes corrected — removed stale fields (`current_price_native`, `stop_price`, `stop_price_native`, `pnl_percent`); added live fields (`current_value`, `pnl_pct`, `current_stop`, `fx_rate`, `grace_days_remaining`, `live_fx_rate`). Key omissions table corrected (fx_rate/live_fx_rate ARE returned by this endpoint). pnl_pct note corrected. OBS-QWB-R1-01 resolved. TASK-25/26/27 complete. API Contracts owner sign-off granted 2026-03-02 (Delegated Authority). |
 | 2.0.0 | 2026-03-17 | ST-13 (EPIC-04): GET /portfolio/prospective-heat added — calculates portfolio heat including a prospective new position. Response shape, query parameters, calculation rules, and business rule failures defined. |
 | 2.5.0 | 2026-07-27 | ST-02 (EPIC-02, v7.9, BLG-FEAT-67): GET /portfolio/sector-regime-trend added — weekly-bucketed sector concentration + regime status trend, backed by a new sector_regime_history table (data_model.md, going-forward capture only). Documents the corrected data-dependency premise (Metrics Definitions & Analytics Owner amendment) — no prior historical sector/regime data existed to aggregate. |
+| 2.5.1 | 2026-07-29 | ST-12 (EPIC-03, v7.10, BLG-QA-128): documentation backfill — `portfolio_heat_percent` and `position_risks` added to GET /portfolio's response schema and field notes. Both fields have always been returned by the live implementation and are consumed by `src/pages/RiskDashboard.js`; they were simply never documented here. Surfaced by a consumer-driven contract check (`scripts/check_consumer_contract_drift.js`). No behaviour change. |
 
 ---
 
