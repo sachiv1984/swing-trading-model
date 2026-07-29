@@ -1,8 +1,8 @@
 **Owner:** Backend Engineering Patterns Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-07-20
+**Version:** 1.4
+**Last Updated:** 2026-07-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -172,10 +172,35 @@ def get_resource_endpoint(format: Optional[str] = None):
 
 ---
 
+### Idempotency-key pattern for state-mutating POST endpoints
+
+**Added:** v1.4 — ST-03 (EPIC-01, v7.10, BLG-BE-76)
+
+**Purpose:** Let a client safely retry a state-mutating POST (e.g. after a timeout or dropped connection) without risking a duplicate resource, without changing any existing behaviour for callers that don't opt in.
+
+**Additive, opt-in only (RISK-02 — non-negotiable):** The pattern activates only when the caller supplies a non-empty `idempotency_key` field in the request body. When it is absent, the endpoint's behaviour is byte-for-byte identical to before this pattern existed — zero extra database access, zero change to the response. Do not make `idempotency_key` required, and do not add any always-on check (e.g. a lookup keyed by request-body hash) — the dedup mechanism must be invisible unless explicitly requested.
+
+**Implementation:**
+1. Add `idempotency_key: Optional[str] = None` to the endpoint's Pydantic request model.
+2. Wrap the existing create logic in a closure with no signature change: `def _create(): ...` (unchanged body).
+3. At the top of the route handler, branch: if `idempotency_key` is falsy, call `_create()` directly (existing code path, unchanged). If present, call `utils/idempotency.py::replay_or_create(portfolio_id, "<METHOD> <path>", idempotency_key, _create)`.
+4. `replay_or_create` is generic and reusable — it does not know or care what `_create()` builds. It checks the `idempotency_keys` table (`portfolio_id`, `endpoint`, `idempotency_key`) for a prior response; if found, returns it verbatim instead of re-running `_create()`; otherwise runs `_create()` once and stores the result.
+
+**Current scope (v7.10):** Applied to `POST /portfolio/position` (trade entry, `backend/main.py`) and `POST /trade-plans` (trade-plan creation, `backend/routers/trade_plans.py`). Extending to additional state-mutating POST endpoints is a mechanical repeat of the same 3 steps above — no changes to `utils/idempotency.py` or the `idempotency_keys` table are needed.
+
+**Storage:** A single generic `idempotency_keys` table (`database.py::ensure_idempotency_keys_table`) — not a per-endpoint column — keyed by `(portfolio_id, endpoint, idempotency_key)` with a `UNIQUE` constraint, storing the full JSON response body. Concurrent duplicate inserts are resolved via `ON CONFLICT DO NOTHING` (the race loser doesn't overwrite the winner's cached response).
+
+**Known limitation, accepted for v7.10 scope:** the replayed response reflects the JSON-serialized form of what was originally sent to the client (via `json.dumps(..., default=str)`) — equivalent to what the original caller already received over the wire, not a live re-fetch of current resource state.
+
+**Not applied to:** external, non-idempotent mutating calls this codebase makes to third parties (e.g. Alpaca paper-order sync) — that is a distinct problem (the *client-supplied* key pattern here protects *our* API surface from client retries; protecting an *outbound* call to Alpaca from network retries needs Alpaca's own `client_order_id` mechanism, tracked separately as `BLG-BE-80`).
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4 | 2026-07-29 | ST-03 (EPIC-01, v7.10, BLG-BE-76): Add §Idempotency-key pattern for state-mutating POST endpoints — additive, opt-in-only (client-supplied key) dedup pattern via a generic `idempotency_keys` table and `utils/idempotency.py::replay_or_create`. Applied to `POST /portfolio/position` and `POST /trade-plans`; no change to behaviour when the key is absent (RISK-02). |
 | 1.3 | 2026-07-20 | ST-04 (EPIC-04, v7.6, BLG-BE-65): Add §Error-response envelope conformance — full audit of `backend/routers/` (23 files, 79 endpoints) against the canonical envelope in `conventions.md` §13. Three non-conformance patterns found (default FastAPI `{detail}` shape; errors masked as HTTP 200 in `portfolio_risk.py`; correct shape but wrong status code in `digest.py`). Non-conforming endpoints filed as follow-up items (`BLG-BE-67`, `BLG-BE-68`) per this item's acceptance criteria — no router code changed in this item. |
 | 1.2 | 2026-07-14 | ST-07 (EPIC-03, v7.1, BLG-SPEC-84): Add §CSV/export response-body pattern — canonical pattern for downloadable-file endpoints, extracted from `GET /reports/tax-year?format=csv` (the first export endpoint in the codebase). Documents the pure-builder-function pattern, format-param branching, auth (automatic via global middleware), charset convention, filename convention, classification, and testing requirement (content-asserting, not download-fired-only). No prior Changelog section existed in this file — added here for consistency with sibling canonical specs. |
 | 1.1 | 2026-06-16 | (prior history not retroactively reconstructed — this changelog starts at v1.2; see git history for earlier changes.) |
