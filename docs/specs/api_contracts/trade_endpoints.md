@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.3.0
-**Last Updated:** 2026-05-15
+**Version:** 2.4.1
+**Last Updated:** 2026-07-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -81,7 +81,10 @@ Response uses the standard success envelope from **conventions.md**.
       "exit_reason": "Target Reached",
       "entry_note": "Breakout above $800",
       "exit_note": "Hit target",
-      "tags": ["momentum", "winner"]
+      "tags": ["momentum", "winner"],
+      "commission_gbp": 12.50,
+      "spread_cost_gbp": 3.20,
+      "net_r_multiple": 2.145
     }
   ]
 }
@@ -398,3 +401,4 @@ Record or update commission and spread costs (in GBP) for a closed trade. Both f
 | 2.3.0 | 2026-05-15 | ST-05 (EPIC-02, v3.5): Add GET /trades/{trade_id}/plan-vs-reality — PO-01 Plan vs Reality comparison endpoint. New JSONB column `plan_vs_reality` on `trade_history`; new `planned_stop_price` column on `trade_plans`. Migration: ensure_plan_vs_reality_columns(). |
 | 2.2.0 | 2026-04-06 | ST-09 (EPIC-03, v2.5): Add `fee_drag_pct` (float\|null) per trade (`exit_fees / gross_proceeds * 100`); add `avg_fee_drag_pct` (float\|null) to top-level summary. No schema change — uses existing `exit_fees` and `gross_proceeds` columns. Head of Specs Team co-authorship confirmed. |
 | 2.4.0 | 2026-06-19 | ST-03 (EPIC-02, v6.0): Add `PATCH /trades/{trade_id}/costs` endpoint; add `commission_gbp`, `spread_cost_gbp`, `net_r_multiple` to `GET /trades` per-trade response. Schema migration: data_model.md DS-08 (v2.9). |
+| 2.4.1 | 2026-07-29 | v7.10 ST-15 (BLG-SPEC-104): `GET /trades` JSON example updated to include `commission_gbp`, `spread_cost_gbp`, `net_r_multiple` — these fields were documented in the field notes table since 2.4.0 but omitted from the example object. Also corrected header `**Version:**` from 2.3.0 to reflect the already-published 2.4.0 changelog row (per shared_standards.md §9.1). No functional change. |
