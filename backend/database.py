@@ -815,15 +815,6 @@ def delete_signal(signal_id: str):
         with conn.cursor() as cur:
             cur.execute("DELETE FROM signals WHERE id = %s", (signal_id,))
 
-def get_all_tickers() -> List[str]:
-    """Get list of all tickers in universe"""
-    with get_db() as conn:
-        with conn.cursor() as cur:
-            cur.execute("SELECT ticker FROM tickers ORDER BY ticker")
-            results = cur.fetchall()
-            return [row['ticker'] for row in results]
-
-
 def update_position_note(position_id: str, entry_note: str) -> Dict:
     """Update entry note for a position"""
     with get_db() as conn:
