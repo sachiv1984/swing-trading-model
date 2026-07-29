@@ -4268,6 +4268,7 @@ components:
             maxLength: 20
             pattern: "^[a-z0-9-]+$"
         trade_plan_id: { type: string, format: uuid, nullable: true }
+        idempotency_key: { type: string, maxLength: 200, nullable: true }
 
     AddPositionResponse:
       type: object
@@ -5390,6 +5391,7 @@ components:
                 checklist_items: { type: array, items: { type: object } }
                 status: { type: string, enum: [draft, active, closed], default: draft }
                 pre_entry_override_acknowledged: { type: boolean, nullable: true }
+                idempotency_key: { type: string, maxLength: 200, nullable: true }
       responses:
         "201":
           description: Trade plan created

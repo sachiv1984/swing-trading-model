@@ -51,10 +51,12 @@ class TestPortfolioRiskErrorEnvelope(unittest.TestCase):
         self._assert_500_envelope(response, "boom-concentration")
 
     def test_sector_weights_returns_500_on_internal_error(self):
-        with patch.object(
-            portfolio_risk, "get_portfolio",
-            side_effect=RuntimeError("boom-sector-weights"),
-        ):
+        # get_sector_weights calls utils.pricing.get_live_fx_rate() before any
+        # DB access — patching it here keeps this test hermetic regardless of
+        # whether tests/conftest.py's session-scoped database stub has been
+        # evicted by another test module earlier in the run (test_api_contracts.py
+        # intentionally evicts it to load the real database.py; see conftest.py).
+        with patch("utils.pricing.get_live_fx_rate", side_effect=RuntimeError("boom-sector-weights")):
             response = portfolio_risk.get_sector_weights()
         self._assert_500_envelope(response, "boom-sector-weights")
 

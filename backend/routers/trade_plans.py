@@ -91,6 +91,7 @@ class TradePlanCreate(BaseModel):
     risk_percent_used: Optional[float] = None
     pre_entry_validation_snapshot: Optional[Any] = None
     trade_tags: Optional[List[str]] = None
+    idempotency_key: Optional[str] = None  # ST-03 (EPIC-01, v7.10): opt-in dedup key, see utils/idempotency.py
 
 
 class TradePlanUpdate(BaseModel):
@@ -173,37 +174,43 @@ def create_plan(body: TradePlanCreate):
         ensure_si02_trade_plans_columns()
         portfolio_id = _get_portfolio_id()
 
-        plan_data = body.dict()
-        plan_data["trade_tags"] = _validate_trade_tags(plan_data.get("trade_tags"))
+        def _create():
+            plan_data = body.dict()
+            plan_data["trade_tags"] = _validate_trade_tags(plan_data.get("trade_tags"))
 
-        # Capture portfolio_value_at_entry from latest snapshot
-        try:
-            snapshot = get_latest_snapshot(portfolio_id)
-            plan_data["portfolio_value_at_entry"] = float(snapshot["total_value"]) if snapshot and snapshot.get("total_value") is not None else None
-        except Exception:
-            plan_data["portfolio_value_at_entry"] = None
+            # Capture portfolio_value_at_entry from latest snapshot
+            try:
+                snapshot = get_latest_snapshot(portfolio_id)
+                plan_data["portfolio_value_at_entry"] = float(snapshot["total_value"]) if snapshot and snapshot.get("total_value") is not None else None
+            except Exception:
+                plan_data["portfolio_value_at_entry"] = None
 
-        # Capture effective_settings_snapshot from current settings
-        try:
-            settings_list = get_settings()
-            if settings_list:
-                s = settings_list[0]
-                plan_data["effective_settings_snapshot"] = {
-                    "default_risk_percent": float(s["default_risk_percent"]) if s.get("default_risk_percent") is not None else None,
-                    "atr_multiplier_initial": float(s["atr_multiplier_initial"]) if s.get("atr_multiplier_initial") is not None else None,
-                    "atr_multiplier_trailing": float(s["atr_multiplier_trailing"]) if s.get("atr_multiplier_trailing") is not None else None,
-                    "min_hold_days": int(s["min_hold_days"]) if s.get("min_hold_days") is not None else None,
-                    "captured_at": datetime.now(timezone.utc).isoformat(),
-                }
-            else:
+            # Capture effective_settings_snapshot from current settings
+            try:
+                settings_list = get_settings()
+                if settings_list:
+                    s = settings_list[0]
+                    plan_data["effective_settings_snapshot"] = {
+                        "default_risk_percent": float(s["default_risk_percent"]) if s.get("default_risk_percent") is not None else None,
+                        "atr_multiplier_initial": float(s["atr_multiplier_initial"]) if s.get("atr_multiplier_initial") is not None else None,
+                        "atr_multiplier_trailing": float(s["atr_multiplier_trailing"]) if s.get("atr_multiplier_trailing") is not None else None,
+                        "min_hold_days": int(s["min_hold_days"]) if s.get("min_hold_days") is not None else None,
+                        "captured_at": datetime.now(timezone.utc).isoformat(),
+                    }
+                else:
+                    plan_data["effective_settings_snapshot"] = None
+            except Exception:
                 plan_data["effective_settings_snapshot"] = None
-        except Exception:
-            plan_data["effective_settings_snapshot"] = None
 
-        plan = create_trade_plan(portfolio_id, plan_data)
-        if body.pre_entry_override_acknowledged:
-            _maybe_write_override_event(body.ticker, body.position_id)
-        return {"status": "ok", "data": _serialize(plan)}
+            plan = create_trade_plan(portfolio_id, plan_data)
+            if body.pre_entry_override_acknowledged:
+                _maybe_write_override_event(body.ticker, body.position_id)
+            return {"status": "ok", "data": _serialize(plan)}
+
+        if body.idempotency_key:
+            from utils.idempotency import replay_or_create
+            return replay_or_create(portfolio_id, "POST /trade-plans", body.idempotency_key, _create)
+        return _create()
     except HTTPException:
         raise
     except Exception as e:

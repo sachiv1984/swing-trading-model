@@ -3194,3 +3194,70 @@ def get_actual_stats_for_benchmark(
                 return None
             return dict(row)
         conn.commit()
+
+
+# ============================================================================
+# IDEMPOTENCY KEYS (ST-03, EPIC-01, v7.10, BLG-BE-76)
+# ============================================================================
+
+def ensure_idempotency_keys_table() -> None:
+    """Create idempotency_keys table if it does not exist (idempotent).
+
+    Generic, additive, opt-in store for state-mutating POST endpoints. Only
+    touched when a caller supplies an idempotency_key (see
+    utils/idempotency.py::replay_or_create) — endpoints that never receive
+    one never call this function, so behaviour is unchanged when the key is
+    absent (RISK-02).
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS idempotency_keys (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    portfolio_id UUID NOT NULL,
+                    endpoint VARCHAR(100) NOT NULL,
+                    idempotency_key VARCHAR(200) NOT NULL,
+                    response_body JSONB NOT NULL,
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    UNIQUE (portfolio_id, endpoint, idempotency_key)
+                )
+            """)
+        conn.commit()
+
+
+def get_idempotency_record(portfolio_id: str, endpoint: str, idempotency_key: str) -> Optional[Dict]:
+    """Pure read — returns the cached response body dict, or None if no record exists."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT response_body FROM idempotency_keys
+                   WHERE portfolio_id = %s AND endpoint = %s AND idempotency_key = %s""",
+                (portfolio_id, endpoint, idempotency_key),
+            )
+            row = cur.fetchone()
+            if row is None:
+                return None
+            body = row["response_body"]
+            if isinstance(body, str):
+                import json
+                return json.loads(body)
+            return body
+
+
+def create_idempotency_record(portfolio_id: str, endpoint: str, idempotency_key: str, response_body: Dict) -> None:
+    """Store a response body keyed by (portfolio_id, endpoint, idempotency_key).
+
+    Concurrent duplicate inserts are safely absorbed via ON CONFLICT DO
+    NOTHING — the loser of a race simply doesn't overwrite the winner's
+    already-cached response.
+    """
+    import json
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """INSERT INTO idempotency_keys (portfolio_id, endpoint, idempotency_key, response_body)
+                   VALUES (%s, %s, %s, %s::jsonb)
+                   ON CONFLICT (portfolio_id, endpoint, idempotency_key) DO NOTHING""",
+                (portfolio_id, endpoint, idempotency_key, json.dumps(response_body, default=str)),
+            )
+        conn.commit()
