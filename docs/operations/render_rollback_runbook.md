@@ -1,9 +1,9 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-06-29
-**Story:** ST-15 (BLG-OPS-80, EPIC-03, v6.3)
+**Version:** 1.1
+**Last Updated:** 2026-07-31
+**Story:** ST-15 (BLG-OPS-80, EPIC-03, v6.3); ST-15 (BLG-OPS-109, EPIC-04, v8.0)
 
 ---
 
@@ -121,6 +121,24 @@ After rollback is verified:
 3. **Create a hotfix branch** (`hotfix/<description>`) to prepare the fix that can be deployed safely
 4. **Re-test the fix** on staging before re-deploying to production
 5. **Check `GET /health/scheduler`** — if nightly jobs ran during the incident window, confirm their status is not degraded before the next scheduled run
+
+---
+
+## Execution History (ST-15, BLG-OPS-109, EPIC-04, v8.0)
+
+This section tracks whether the procedure above has actually been exercised — against a real incident or a deliberate drill — as distinct from having been authored and reviewed.
+
+**Finding as of 2026-07-31:** No real production rollback has ever been executed using this runbook, and no deliberate drill has been run against a staging/non-production deploy either. Confirmed by:
+- `git log --all --oneline | grep -i rollback` returns only the commit that *authored* this runbook (`2d2c290c`), not a commit reverting a deploy.
+- No `lessons_learnt_cycle.md` or `post_ship*.md` file across any cycle mentions a rollback event.
+- `claude/backlog/backlog_archive.md` (BLG-OPS-91, "Deploy rollback runbook dry-run") explicitly states: *"The rollback runbook (BLG-OPS-80) is authored but has not yet been exercised against a real production deploy."*
+- `claude/backlog/backlog.md` (BLG-OPS-109, the item this section resolves) states the same: *"only ever been dry-run, never executed against a real incident — its actual reliability under a live rollback is unverified."* Note: even a dry-run record could not be located as of this finding — the honest status is that neither a live incident rollback nor a documented drill has occurred yet.
+
+**Disposition:** Per this story's AC ("historical execution evidence... OR a deliberate rollback drill... outcome documented either way"), the outcome is: **no historical evidence exists**. A deliberate drill against a non-production/staging deploy is the remaining path to close this gap, and requires Render dashboard access (Owner/Admin role on the relevant staging service) — delegated to the Infrastructure & Operations Owner (see `delegation_log.md` DEL-20260731-03). This runbook's step-by-step procedure remains the governing document once a drill is run; this section will be updated with the drill's outcome (date, what was tested, any procedure corrections found) when complete.
+
+| Date | Event | Outcome | Recorded by |
+|------|-------|---------|-------------|
+| 2026-07-31 | Execution-history audit (no rollback/drill performed) | No real rollback or drill found; procedure remains unexercised | Sprint Execution Engine (ST-15) |
 
 ---
 
