@@ -322,7 +322,7 @@
         "ST-13": {
           "title": "Render service health-check alerting to Telegram on 5xx spike",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1153,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-04",
@@ -330,22 +330,22 @@
           "delegation_record_id": "DEL-20260731-01",
           "blocked_since_utc": "2026-07-31T01:15:00Z",
           "unblock_criteria": "Dry-run or simulated-spike result recorded in qa_evidence_EPIC-04.md with Infrastructure & Operations Owner sign-off",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-07-30T19:43:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             ".github/workflows/health-check-alert.yml"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.pending_commit",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
           "sign_off_record": null,
-          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend' per sprint_backlog.md. Wrote .github/workflows/health-check-alert.yml: scheduled (every 15 min) poll of production GET /health, 3 attempts 20s apart within one run, alerts Telegram only if all 3 return 5xx (sustained, not a transient blip) - reuses backtest.yml's curl+Telegram+::warning:: fallback pattern. Verified the bash poll/count logic locally against mock HTTP servers (a 503-always server correctly counts 3/3 fail; a 200-always server correctly counts 0/3, no alert). This delivers AC-1 (the alerting mechanism) autonomously. AC-2 (confirmed to fire on a simulated 5xx spike / documented dry-run) and full E2E confirmation (which also depends on ST-14's secrets) require a live trigger against staging or production - delegating that verification step only, not the whole story."
+          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend' per sprint_backlog.md. Wrote .github/workflows/health-check-alert.yml: scheduled (every 15 min) poll of production GET /health, 3 attempts 20s apart within one run, alerts Telegram only if all 3 return 5xx (sustained, not a transient blip) - reuses backtest.yml's curl+Telegram+::warning:: fallback pattern. AC-1 delivered autonomously; AC-2 required a live trigger, delegated. RESOLVED 2026-07-30: user merged early-scope PR #1163 (main-only merge of the workflow file, since GitHub only exposes workflow_dispatch for workflows on the default branch) after confirming TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID were added to repo secrets (ST-14). Engine triggered workflow_dispatch (GH Actions run 30575941928) with test_url=https://httpbin.org/status/500 (safe public test endpoint, not real infrastructure) per user-approved plan. Result: 3/3 polls returned HTTP 500 as expected; alert step took the real-send branch (not the ::warning:: fallback) since secrets were present; Telegram API confirmed delivery with {\"ok\":true,\"result\":{\"message_id\":298,...}} - a real message landed in the configured chat. Full run log: https://github.com/sachiv1984/swing-trading-model/actions/runs/30575941928. AC-1 and AC-2 both now satisfied end-to-end."
         },
         "ST-14": {
           "title": "Configure TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID as GitHub Actions repo secrets",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1154,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-04",
@@ -353,17 +353,17 @@
           "delegation_record_id": "DEL-20260731-02",
           "blocked_since_utc": "2026-07-31T01:15:00Z",
           "unblock_criteria": "A workflow_dispatch run log showing actual Telegram delivery, linked in qa_evidence_EPIC-04.md with Infrastructure & Operations Owner sign-off",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-07-30T19:43:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "claude/cycles/2026-07-30__release-v8.0/stage4_backlog_slice.md#ST-14"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
           "sign_off_record": null,
-          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend' - pure GitHub repo-secret configuration, no code for the engine to write. Requires repo admin access and the actual secret values, which the engine does not hold. Delegated via DEL-20260731-02. UPDATE 2026-07-31: user confirmed TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID added to repo Settings -> Secrets and variables -> Actions; verified present via `gh secret list` (names only, added 2026-07-30T19:25 UTC per GitHub's own timestamp - values not readable by the engine, as expected). AC-1 of this story is now satisfied. AC-2 (workflow_dispatch re-run against a deliberately-broken endpoint confirms a real Telegram message is received) still outstanding - remains blocked_backend pending that live test."
+          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend' - pure GitHub repo-secret configuration, no code for the engine to write. User (Infrastructure & Operations Owner capacity) added TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID to repo Settings -> Secrets and variables -> Actions, confirmed via `gh secret list` (names only, added 2026-07-30T19:25 UTC). AC-2 (workflow_dispatch re-run against a deliberately-broken endpoint confirms a real Telegram message is received) confirmed via GH Actions run 30575941928 (test_url=https://httpbin.org/status/500): 3/3 polls returned 500, Telegram API responded {\"ok\":true,\"result\":{\"message_id\":298,...}} - real delivery confirmed, not just the ::warning:: fallback. Run log: https://github.com/sachiv1984/swing-trading-model/actions/runs/30575941928. Both ACs now satisfied."
         },
         "ST-15": {
           "title": "Confirm Render rollback runbook has real execution history",
@@ -502,8 +502,6 @@
     }
   },
   "blocked_items": [
-    "ST-13",
-    "ST-14",
     "ST-15",
     "ST-16",
     "ST-17"
@@ -518,7 +516,9 @@
   "completed_items": [
     "ST-01",
     "ST-02",
-    "ST-03"
+    "ST-03",
+    "ST-13",
+    "ST-14"
   ],
   "open_escalations": [],
   "merge_gate": {

@@ -18,7 +18,8 @@ Last Updated: 2026-07-31
 - **Spec reference:** `.github/workflows/health-check-alert.yml`
 - **Unblock criteria:** A dry-run or simulated-spike result is recorded (fired correctly / did not fire — document either way) in `qa_evidence_EPIC-04.md`, with Infrastructure & Operations Owner sign-off.
 - **Commit format required:** `[EPIC-04][ST-13] <description>` pushed to `exec/2026-07-30__release-v8.0/EPIC-04`
-- **Status:** Pending
+- **Status:** Unblocked
+- **Resolution (2026-07-30):** User merged early-scope PR #1163 (workflow file only, to `main`, since `workflow_dispatch` requires the workflow to exist on the default branch). Engine triggered `workflow_dispatch` (run 30575941928, `test_url=https://httpbin.org/status/500`, a safe public test endpoint). Result: 3/3 polls returned HTTP 500; Telegram API confirmed real delivery (`{"ok":true,"result":{"message_id":298,...}}`). Both AC-1 and AC-2 satisfied. Run log: https://github.com/sachiv1984/swing-trading-model/actions/runs/30575941928
 
 ## DEL-20260731-02
 
@@ -35,7 +36,8 @@ Last Updated: 2026-07-31
 - **Spec reference:** `claude/cycles/2026-07-30__release-v8.0/stage4_backlog_slice.md#ST-14`
 - **Unblock criteria:** Secrets present in repo settings (cannot be verified by the engine — no read access to secret values) + a `workflow_dispatch` run log showing an actual Telegram delivery (not the `::warning::` branch) is linked in `qa_evidence_EPIC-04.md`, with Infrastructure & Operations Owner sign-off.
 - **Commit format required:** N/A (this item is pure GitHub Settings configuration, not a code commit) — however, if a follow-up commit records the confirmation (e.g. linking the successful workflow run), use `[EPIC-04][ST-14] <description>` pushed to `exec/2026-07-30__release-v8.0/EPIC-04`.
-- **Status:** Pending
+- **Status:** Unblocked
+- **Resolution (2026-07-30):** User added `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` to repo Settings → Secrets and variables → Actions (confirmed present via `gh secret list`, engine cannot read values). Live delivery confirmed via `workflow_dispatch` run 30575941928 (`test_url=https://httpbin.org/status/500`): Telegram API responded `{"ok":true,"result":{"message_id":298,...}}` — real message received, not the `::warning::` fallback. Both ACs satisfied. Run log: https://github.com/sachiv1984/swing-trading-model/actions/runs/30575941928
 
 ## DEL-20260731-03
 
