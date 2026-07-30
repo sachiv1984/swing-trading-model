@@ -243,7 +243,9 @@
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-07-30__release-v8.0/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_synthetic_trade_history_generator.py"
+      ],
       "stories": {
         "ST-10": {
           "title": "Retroactive Playwright \u00a718 anti-pattern sweep (consolidated)",
@@ -271,30 +273,30 @@
         "ST-11": {
           "title": "Test-tagging convention (smoke/regression/critical) for selective CI runs",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1151,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "5102de828ba9983ebfd5f04f1ef37c96b01acd67",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-07-30T20:35:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/team_skills/quality/playwright_patterns.md#6. Test Tagging Convention (smoke / regression / critical) (v1.1)"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.pending_commit",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
           "notes": "Added §6 Test Tagging Convention to docs/team_skills/quality/playwright_patterns.md (smoke/critical/regression tiers via Playwright's { tag } option; @smoke = must-pass-every-push subset, @critical = business-critical flows beyond smoke, @regression = default/remainder tier). Applied @smoke tag to the 3 tests in tests/e2e/smoke-critical-paths.spec.js (alongside existing @epic-merge-smoke). Wired selective-run into CI: .github/workflows/smoke-tests.yml now runs `npx playwright test --grep @smoke` instead of a hardcoded file path — verified via `--list` that this resolves to exactly the same 3 tests. Retroactive @critical/@regression tagging of the rest of the suite is not required per the doc's incremental-adoption note (apply at next-touch, matching the Array Guard Standard pattern)."
         },
         "ST-12": {
           "title": "Synthetic trade-history data generator for gated-feature testing",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
           "github_issue": 1152,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-03",
@@ -304,13 +306,16 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "backend/test_data/generate_synthetic_trade_history.py",
+            "tests/test_synthetic_trade_history_generator.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.pending_commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "New generator backend/test_data/generate_synthetic_trade_history.py (pure-Python generate_synthetic_trades() function, no network access, deterministic via seed) produces 25 synthetic closed trades by default — above both the SI-02 (docs/qa/si02_playwright_predesign.md, minimum_required=20) and Setup Quality Score/PT-04 (docs/specs/data_model/trade_plan_schema_audit_v4.6.md §5.2, gate not met at <20 closed trades) gate thresholds. Every record's entry_note/exit_note carries a '[SYNTHETIC TEST DATA]' tag. CLI mode (for staging/PR-preview HTTP seeding via POST /portfolio/position + POST /positions/{id}/exit, mirroring backend/test_data/seed_chart_test_data.py) refuses to run against any URL matching the same production heuristic as scripts/reset_staging_db.sh ('production' or '/prod' substring) — verified this abort path manually. 9 regression tests added and passing (tests/test_synthetic_trade_history_generator.py) covering: gate-threshold satisfaction, synthetic labelling, determinism, API-shape contract, long-only stop/entry ordering, win/loss mix, count validation, and the production-URL guard."
         }
       }
     },
