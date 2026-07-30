@@ -534,6 +534,9 @@
     ],
     "all_merged": false
   },
+  "process_notes": [
+    "Commit 8d5411b2fdd39b7ee3f99a63982a948e14a8a965 (message '[EPIC-04][ST-15][ST-16][ST-17] ...') also modified ST-13 and ST-14's execution_state.json fields (delegation_record_id, status transition in_progress/not_started -> blocked_backend) without including ST-13/ST-14 in the commit message, violating CLAUDE.md's commit-format rule (all story IDs touched by a commit must appear in the message). Self-caught after push; not amended (commit already pushed - amending a pushed commit is avoided per repo convention). No functional impact: neither ST-13 nor ST-14 reached a 'done'/closed-issue state in this commit, so governance_sync.yml's auto-close behavior was not affected. Recorded here for QA evidence log completeness at EPIC-04 close."
+  ],
   "sealed": false,
   "sealed_utc": null
 }
