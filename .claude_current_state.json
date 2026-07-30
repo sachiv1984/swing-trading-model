@@ -1,7 +1,7 @@
 {
   "active_cycle": "2026-07-30__release-v8.0",
   "cycle_name": "v8.0 — Data Integrity, Security Follow-Through & Operational Hardening",
-  "status": "Sprint_Planning_Complete",
+  "status": "Executing",
   "prior_status": "Verified",
   "engine": "sprint_execution",
   "execution_state_path": "claude/cycles/2026-07-28__release-v7.10/execution_state.json",
