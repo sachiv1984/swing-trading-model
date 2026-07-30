@@ -1,8 +1,8 @@
 **Owner:** QA & Testing Owner
 **Class:** Team Skills Reference (Class 4)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-04-16
+**Version:** 1.1
+**Last Updated:** 2026-07-30
 **Created by:** Post-ship closure 2026-04-13__release-v2.7 — ST-06 fix codified (Phase 3 lessons learnt, Obs 4)
 
 ---
@@ -107,6 +107,48 @@ await page.getByRole('cell', { name: 'AAPL' }).click(); // FAILS if multiple row
 // Fix: use .first() or more specific context
 await page.getByRole('row').filter({ hasText: 'AAPL' }).getByRole('cell', { name: 'AAPL' }).click();
 ```
+
+---
+
+## 6. Test Tagging Convention (smoke / regression / critical)
+
+**Origin:** ST-11 (BLG-QA-120, EPIC-03, v8.0) — introduced to enable selective CI runs instead of always executing the full suite.
+
+Every Playwright test should carry exactly one tier tag, passed as the second argument to `test()`:
+
+```js
+test('PATH-1: add trade — form submits and POST /portfolio/position fires', { tag: '@smoke' }, async ({ page }) => {
+  // ...
+});
+```
+
+Multiple tags are allowed where a test also serves another designated purpose (e.g. the existing `@epic-merge-smoke` designation from `shared_standards.md §12` Rule 3):
+
+```js
+test('...', { tag: ['@epic-merge-smoke', '@smoke'] }, async ({ page }) => { ... });
+```
+
+### Tiers
+
+| Tag | Meaning | When it runs |
+|-----|---------|---------------|
+| `@smoke` | Minimal, fast, critical-path subset — must stay green on every push. Currently `tests/e2e/smoke-critical-paths.spec.js`'s 3 tests. | Every push to `main`/`exec/**` (`.github/workflows/smoke-tests.yml`) |
+| `@critical` | Business-critical flows beyond the smoke tier (e.g. compliance gating, risk checks) that should never regress silently. | Every PR to `main` |
+| `@regression` | The remainder of the suite — full behavioural coverage. Untagged tests are treated as this tier by default. | Every PR to `main` (`.github/workflows/playwright.yml`, sharded) |
+
+### Selective run
+
+Filter by tag with Playwright's built-in `--grep`:
+
+```bash
+npx playwright test --grep @smoke
+npx playwright test --grep @critical
+npx playwright test --grep "@smoke|@critical"
+```
+
+`.github/workflows/smoke-tests.yml` runs `--grep @smoke` rather than a hardcoded spec path, so any spec file that adds a `@smoke`-tagged test is picked up automatically without a workflow edit.
+
+**Retroactive tagging is not required.** Apply `@critical`/`@regression` tags at next-touch of a spec file, following the same incremental-adoption pattern as the Array Guard Standard (`shared_standards.md §19`) — this is not retroactively enforced as a blanket requirement across the existing suite.
 
 ---
 
