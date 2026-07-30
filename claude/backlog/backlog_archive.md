@@ -1,13 +1,441 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-28 (session — duplicate consolidation, ad hoc user-directed backlog cleanup: 13 duplicate items retired as ❌ Killed — duplicate, merged into 9 survivor items (BLG-QA-93, BLG-QA-42, BLG-QA-97, BLG-QA-81, BLG-GOV-144, BLG-GOV-178, BLG-GOV-95, BLG-GOV-221, BLG-GOV-90) — see `backlog.md` header for full detail); prior — 2026-07-28 (groom backlog post-ship closure 2026-07-27__release-v7.9 — 15 items archived: BLG-FEAT-66, BLG-FEAT-67, BLG-SPEC-105, BLG-FEAT-85, BLG-FEAT-87, BLG-BE-73, BLG-BE-74, BLG-OPS-121, BLG-QA-124, BLG-QA-125, BLG-FE-130, BLG-OPS-120, BLG-FE-129, BLG-GOV-258, BLG-QA-123; ephemeral Release Slice v7.9 section removed); prior — 2026-07-27 (session — duplicate consolidation, ad hoc user-directed backlog cleanup: 13 duplicate items retired as ❌ Killed — duplicate, merged into 5 survivor items (BLG-OPS-25, BLG-BE-47, BLG-FEAT-30, BLG-QA-75, BLG-SEC-15) — see `backlog.md` header for full detail); prior — 2026-07-27 (groom backlog post-ship closure 2026-07-24__release-v7.8 — 12 items archived: BLG-FE-128, BLG-FEAT-84, BLG-FE-127, BLG-FE-125, BLG-FEAT-81, BLG-FEAT-82, BLG-SEC-20, BLG-SEC-21, BLG-BE-71, BLG-QA-117, BLG-QA-119, BLG-OPS-117; ephemeral Release Slice v7.8 section removed); prior — 2026-07-24 (groom backlog post-ship closure 2026-07-21__release-v7.7 — 11 items archived: BLG-FEAT-75, BLG-FE-114, BLG-FE-113, BLG-FE-120, BLG-FEAT-80, BLG-OPS-108, BLG-GOV-28, BLG-QA-104, BLG-BE-63, BLG-OPS-110, BLG-QA-102; ephemeral Release Slice v7.7 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-20__release-v7.6 — 8 items archived: BLG-FE-119, BLG-QA-112, BLG-FEAT-79, BLG-BE-65, BLG-QA-114, BLG-BE-62, BLG-FEAT-77, BLG-QA-69; ephemeral Release Slice v7.6 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
+**Last Updated:** 2026-07-30 (groom backlog post-ship closure 2026-07-28__release-v7.10 — 23 items archived: BLG-BE-68, BLG-BE-75, BLG-BE-76, BLG-BE-41, BLG-SEC-22, BLG-SEC-09, BLG-SEC-18, BLG-SEC-13, BLG-QA-127, BLG-QA-96, BLG-QA-133, BLG-QA-128, BLG-SPEC-102, BLG-SPEC-103, BLG-SPEC-104, BLG-GOV-243, BLG-FE-122, BLG-FE-123, BLG-FE-106, BLG-FE-134, BLG-GOV-256, BLG-GOV-216, BLG-GOV-207; ephemeral Release Slice v7.10 section removed); prior — 2026-07-28 (session — duplicate consolidation, ad hoc user-directed backlog cleanup: 13 duplicate items retired as ❌ Killed — duplicate, merged into 9 survivor items (BLG-QA-93, BLG-QA-42, BLG-QA-97, BLG-QA-81, BLG-GOV-144, BLG-GOV-178, BLG-GOV-95, BLG-GOV-221, BLG-GOV-90) — see `backlog.md` header for full detail); prior — 2026-07-28 (groom backlog post-ship closure 2026-07-27__release-v7.9 — 15 items archived: BLG-FEAT-66, BLG-FEAT-67, BLG-SPEC-105, BLG-FEAT-85, BLG-FEAT-87, BLG-BE-73, BLG-BE-74, BLG-OPS-121, BLG-QA-124, BLG-QA-125, BLG-FE-130, BLG-OPS-120, BLG-FE-129, BLG-GOV-258, BLG-QA-123; ephemeral Release Slice v7.9 section removed); prior — 2026-07-27 (session — duplicate consolidation, ad hoc user-directed backlog cleanup: 13 duplicate items retired as ❌ Killed — duplicate, merged into 5 survivor items (BLG-OPS-25, BLG-BE-47, BLG-FEAT-30, BLG-QA-75, BLG-SEC-15) — see `backlog.md` header for full detail); prior — 2026-07-27 (groom backlog post-ship closure 2026-07-24__release-v7.8 — 12 items archived: BLG-FE-128, BLG-FEAT-84, BLG-FE-127, BLG-FE-125, BLG-FEAT-81, BLG-FEAT-82, BLG-SEC-20, BLG-SEC-21, BLG-BE-71, BLG-QA-117, BLG-QA-119, BLG-OPS-117; ephemeral Release Slice v7.8 section removed); prior — 2026-07-24 (groom backlog post-ship closure 2026-07-21__release-v7.7 — 11 items archived: BLG-FEAT-75, BLG-FE-114, BLG-FE-113, BLG-FE-120, BLG-FEAT-80, BLG-OPS-108, BLG-GOV-28, BLG-QA-104, BLG-BE-63, BLG-OPS-110, BLG-QA-102; ephemeral Release Slice v7.7 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-20__release-v7.6 — 8 items archived: BLG-FE-119, BLG-QA-112, BLG-FEAT-79, BLG-BE-65, BLG-QA-114, BLG-BE-62, BLG-FEAT-77, BLG-QA-69; ephemeral Release Slice v7.6 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
 
 ---
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-BE-68 — Fix errors masked as HTTP 200 in portfolio_risk.py
+**Priority:** P2 (Medium) | **Type:** Backend / API Consistency | **Owner:** Backend Engineering Patterns Owner | **Source:** BLG-BE-65 audit (ST-04, EPIC-04, v7.6) | **Effort:** S (~0.5d) | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-01)
+
+**Problem**
+`portfolio_risk.py`'s four endpoints (`/drawdown-status`, `/concentration-status`, `/sector-weights`, `/gate-metrics`) catch all exceptions and return `{"status": "ok", "data": {..., "error": str(e)}}` (first three) or `{"status": "error", "error": str(e)}` (last one) as a bare dict — implicit HTTP 200 in all four cases. This violates `conventions.md` §13.3 ("error responses must not use HTTP 200 with an error body") and is a correctness/observability issue, not just cosmetic inconsistency: a frontend caller checking only `response.status === "ok"` would treat these backend failures as success. Identified during the `docs/specs/api_contracts/backend_engineering_patterns.md` §Error-response envelope conformance audit (v1.3).
+
+**Scope**
+- Convert all four catch blocks to return `JSONResponse(status_code=500, content={"status": "error", "message": str(e)})` per the canonical envelope (`conventions.md` §13), matching the `research.py` reference pattern.
+
+**Acceptance Criteria**
+- All four endpoints return HTTP 500 with the canonical `{status, message}` envelope on internal error
+- Existing 200-path success shapes unchanged
+- Regression test confirms the error path no longer returns HTTP 200
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-BE-75 — Extend Alpaca backoff audit (BLG-BE-57) to Yahoo Finance, Gemini, and Claude call sites
+**Priority:** P2 (Medium) | **Type:** Backend / Resilience | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260728-01 (relationship note: extends `BLG-BE-57`'s Alpaca-only scope to 3 additional providers) | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-02)
+**Problem:** `BLG-BE-57` audited retry/backoff behaviour for Alpaca call sites only; Yahoo Finance, Gemini, and Claude external calls have not had the same review, despite being equally capable of rate-limiting or transient failure.
+**Scope:** Apply the same retry/backoff audit methodology from `BLG-BE-57` to the three remaining external providers.
+**Acceptance Criteria:** All 4 providers' call sites confirmed to use the shared retry/backoff decorator (`BLG-BE-71`) or have a documented exception; Backend Engineering Patterns Owner sign-off.
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-BE-76 — Idempotency key pattern for state-mutating POST endpoints
+**Priority:** P2 (Medium) | **Type:** Backend / Correctness | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260728-02 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-03)
+**Problem:** State-mutating POST endpoints (trade entry, trade plan creation, alert rules) have no idempotency-key mechanism, so a retried request (e.g. after a timeout) risks creating a duplicate record.
+**Scope:** Define and apply an idempotency-key pattern (client-supplied key + short-lived server-side dedup check) for the highest-risk state-mutating endpoints.
+**Acceptance Criteria:** Pattern documented in `backend_engineering_patterns.md`; applied to at least the trade-entry and trade-plan-creation endpoints; Backend Engineering Patterns Owner sign-off.
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-BE-41 — Deprecated table read-path audit
+**Priority:** P2 (Medium)
+**Type:** Backend Engineering / Data Integrity
+**Owner:** Head of Backend Engineering
+**Source:** IDEA-backend-engineering-20260702-02 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
+**Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-04)
+**Effort:** S (~1 day)
+
+**Problem**
+BLG-BE-40 (v6.4) fixed a P1 correctness bug where signal generation read the deprecated `tickers` table instead of `ticker_universe`. No systematic check has been done to confirm this was the only deprecated-table read remaining in the codebase.
+
+**Scope**
+- Grep/audit all `database.py` read functions for references to tables superseded by a documented migration
+- Cross-check against `data_model.md` migration history for tables marked deprecated
+- File follow-up correctness items for any additional instances found
+
+**Acceptance Criteria**
+- Audit completed across all `database.py` read functions
+- Findings documented; any additional deprecated-table reads filed as P0/P1 correctness items per severity
+- Head of Backend Engineering sign-off
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-SEC-22 — Secrets-scanning pre-commit/CI gate (gitleaks/trufflehog)
+**Priority:** P2 (Medium) | **Type:** Security / CI | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260728-01 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-05)
+**Problem:** CI has a secret-scanning gate at the pipeline level (per `v5.3`'s `BLG-OPS-58`), but no pre-commit local check exists, so a secret can be committed locally before CI ever runs.
+**Scope:** Add a local pre-commit hook running a secrets scanner (gitleaks or trufflehog), complementing the existing CI-level gate.
+**Acceptance Criteria:** Hook added to `.githooks/pre-commit`; confirmed to catch a deliberately-planted test secret; Cybersecurity & Trust Lead sign-off.
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-SEC-09 — AI rate-limit bypass test
+**Priority:** P2 (Medium)
+**Type:** Security / Verification
+**Owner:** Cybersecurity & Trust Lead
+**Source:** IDEA-cybersecurity-20260702-02 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
+**Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-06)
+**Effort:** S (~1 day)
+
+**Problem**
+BLG-OPS-81 (v6.3) added per-endpoint AI rate limiting (10 req/min/IP daily-briefing; 30 req/min/IP chat). No verification has been done that these limits cannot be bypassed via IP rotation or header spoofing in the current deployment.
+
+**Scope**
+- Test rate-limit enforcement against IP-rotation and X-Forwarded-For header spoofing attempts
+- Document findings; file a security fix item if a bypass is confirmed
+
+**Acceptance Criteria**
+- Bypass test performed against both rate-limited AI endpoints
+- Findings documented; any confirmed bypass filed as a P1/P0 security item
+- Cybersecurity & Trust Lead sign-off
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-SEC-18 — Rate-limit audit on public-facing endpoints ahead of any future auth changes
+**Priority:** P2 (Medium) | **Type:** Security | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260717-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-07)
+**Problem:** No confirmed rate-limiting audit has been performed against the current `X-API-Key`-gated endpoint set (registered `BLG-OPS-99`) — a gap that becomes more consequential once/if any auth model change is considered.
+**Scope:** Audit current rate-limiting posture (Render platform-level and application-level) against all public-facing endpoints; document findings.
+**Acceptance Criteria:** Audit complete; any gaps filed as follow-up `BLG-SEC-*` items; no implementation required unless a P0/P1 gap is found.
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-SEC-13 — Raw exception text returned in API error responses
+**Priority:** P3 (Low)
+**Type:** Security / Backend
+**Owner:** Head of Engineering
+**Source:** ST-17 (BLG-OPS-71), EPIC-03, v6.8 system threat model review — 2026-07-09
+**Effort:** M (~1-2 days — touches 44 call sites in backend/main.py)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-08)
+
+**Problem**
+44 call sites in `backend/main.py` construct `HTTPException` responses with `detail=str(e)`, returning the raw Python exception message directly to the API caller. This risks incidental disclosure of internal file paths, database schema hints, or library version details to anyone holding the API key. Impact is bounded (the API is already key-gated and this is a single-user system), but it is a defense-in-depth gap — if the key is ever compromised, verbose errors give an attacker more reconnaissance than a generic message would.
+
+**Scope**
+- Replace `detail=str(e)` with a generic client-facing message for 500-class errors; log the full exception server-side (already partially done via `traceback.print_exc()` at some sites)
+- Preserve specific, safe detail messages for expected 4xx errors (e.g. validation failures) where the detail is not derived from a raw exception object
+
+**Acceptance Criteria**
+- 500-class error responses no longer include raw exception text in the client-facing `detail` field
+- Full exception detail still logged server-side for debugging
+- No change to intentional, safe 4xx error messages
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-QA-127 — Serve production build for Playwright E2E webServer instead of CRA dev server
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA Lead
+**Source:** User-directed CI runtime review (acting as QA & Testing Owner / QA Lead / Director of Quality) — 2026-07-28
+**Effort:** M (~1-2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-09)
+
+**Problem**
+The `playwright-e2e` CI job boots the app via `npm start` (`react-scripts` dev server, unminified, webpack dev-middleware) rather than a production build. All 382 `page.goto()` navigations across the 677-test suite pay dev-server compile/serve overhead on every run. This was identified alongside REC-CI-01 (workers/shard parallelization, actioned 2026-07-28 — see `docs/ops/ci_pipeline_baseline.md` v1.1) but deferred: it requires adding a new dependency (`serve` or `http-server`, neither currently installed) and restructuring how `REACT_APP_API_URL` / `REACT_APP_DEV_FAKE_AUTH` / `REACT_APP_ANTHROPIC_API_KEY` are injected, since CRA bakes `REACT_APP_*` vars into the bundle at build time, not serve time — the current workflow sets them as runtime env vars against the dev server.
+
+**Scope**
+- Add a build step (`npm run build`) before Playwright runs in CI, with `REACT_APP_*` vars present at build time
+- Add and pin a static-serve dependency (`serve` or `http-server`) to serve the build output on port 3000
+- Update `playwright.config.js` `webServer.command` to be CI-conditional (production serve in CI, `npm start` for local dev/live-reload)
+
+**Acceptance Criteria**
+- CI E2E job builds and serves a production bundle instead of the dev server
+- All existing `REACT_APP_*`-gated behaviour (dev fake auth, API base URL, "Improve with AI" button gate) still functions correctly under the production build
+- Local `npx playwright test` (non-CI) continues to use `npm start` / live reload, unaffected
+- Re-measured CI runtime shows improvement over the workers+shard baseline (REC-CI-01) alone
+- QA Lead sign-off recorded
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-QA-96 — Red Flag Journal auth regression test
+**Priority:** P2 (Medium) | **Type:** QA / Security | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260712-01 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-10)
+**Problem:** `GET /portfolio/red-flag-journal` had a security review at v4.0 shipping, but no regression test confirms auth stays enforced after later, unrelated endpoint changes.
+**Scope:** Add an auth-required regression test (401/403 on missing/invalid `X-API-Key`) to the backend test suite.
+**Acceptance Criteria:** Test added to `backend/routers/test.py`; passes in CI; fails if auth check is removed (verified by temporarily removing it locally).
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-QA-133 — Endpoint test suite coverage audit against all backend/routers/ files
+**Priority:** P2 (Medium) | **Type:** QA / Backend | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260728-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-11)
+**Problem:** `CLAUDE.md` §2 requires every new route to be registered in `backend/routers/test.py`, but no periodic audit confirms all *existing* routes across every router file are actually covered, only that new ones are added going forward.
+**Scope:** Audit `backend/routers/test.py` coverage against every `@router.*` decorator across all router files.
+**Acceptance Criteria:** Audit complete; any coverage gap found is filed or fixed; QA & Testing Owner sign-off.
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-QA-128 — Consumer-driven contract check: frontend API calls vs documented contracts
+**Priority:** P2 (Medium) | **Type:** QA / Contract Testing | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260728-02 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-12)
+**Problem:** `openapi.yaml` and `docs/specs/api_contracts/` describe the backend's own contract, but nothing checks that frontend call sites actually match the documented request/response shape they depend on.
+**Scope:** Add a lightweight consumer-driven contract check comparing frontend API call sites against the documented contract fields they consume.
+**Acceptance Criteria:** Check implemented (CI or scripted); first run's findings triaged; API Contracts & Documentation Owner sign-off.
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-SPEC-102 — `position_endpoints.md` envelope claim doesn't match live `GET /positions` behaviour
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** `2026-07-24__release-v7.8` EPIC-11 ST-11 pilot contract test authoring (`qa_evidence_EPIC-11.md`) | **Effort:** XS | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-13)
+**Problem:** `docs/specs/api_contracts/position_endpoints.md` documents `GET /positions` as returning the standard `{status, data}` envelope, but the live endpoint returns a raw list (confirmed via `tests/test_api_contracts.py::test_get_positions_returns_ok`'s own comment and re-confirmed by `tests/test_pilot_contract_schemas.py`). Doc/reality mismatch only — the pilot contract test asserts the real (unenveloped) behaviour, not the doc's claim.
+**Scope:** Update `position_endpoints.md` to document the actual (unenveloped) response shape for `GET /positions`.
+**Acceptance Criteria:** `position_endpoints.md` corrected to match live behaviour; API Contracts & Documentation Owner sign-off; no functional change.
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-SPEC-103 — `GET /positions` undocumented lifecycle fields (`position_state`, `state_entered_at`, `days_in_state`)
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** `2026-07-24__release-v7.8` EPIC-11 ST-11 pilot contract test authoring (`qa_evidence_EPIC-11.md`) | **Effort:** XS | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-14)
+**Problem:** `GET /positions` merges in 3 fields via `get_lifecycle_fields_for_position()` (`position_state`, `state_entered_at`, `days_in_state`) that are absent from `docs/specs/api_contracts/position_endpoints.md`'s documented response shape.
+**Scope:** Add the 3 fields to `position_endpoints.md`'s response schema with type/description.
+**Acceptance Criteria:** All 3 fields documented; API Contracts & Documentation Owner sign-off; no functional change.
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-SPEC-104 — `trade_endpoints.md` JSON example omits documented fields (`commission_gbp`, `spread_cost_gbp`, `net_r_multiple`)
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** `2026-07-24__release-v7.8` EPIC-11 ST-11 pilot contract test authoring (`qa_evidence_EPIC-11.md`) | **Effort:** XS | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-15)
+**Problem:** `docs/specs/api_contracts/trade_endpoints.md`'s JSON example for `GET /trades` omits `commission_gbp`, `spread_cost_gbp`, `net_r_multiple` — fields documented in the same file's Field notes table and always returned by the live service. Example-completeness gap only, not a schema gap.
+**Scope:** Update the JSON example to include all 3 fields.
+**Acceptance Criteria:** Example updated to include all 3 fields; API Contracts & Documentation Owner sign-off; no functional change.
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-GOV-243 — OpenAPI contract linter in CI for heading-level drift
+**Priority:** P2 (Medium) | **Type:** Governance / Process Tooling | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260717-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-16)
+**Problem:** `CLAUDE.md §2` requires API contract endpoint headings to be exactly `##` (not `###`+) or the OpenAPI Drift Detection gate silently misses them — this is currently caught only by the gate failing after the fact, not by a lint step naming the specific violation clearly.
+**Scope:** Extend the existing OpenAPI Drift Detection CI job to emit a specific, actionable error message when a `docs/specs/api_contracts/` heading is found at the wrong level, rather than a generic "endpoint missing from contract" failure.
+**Acceptance Criteria:** CI job produces a distinct, correctly-worded error for the heading-level case versus the missing-entry case; confirmed via a test PR with a deliberately mis-leveled heading.
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-FE-122 — Rewrite calendar.js against the react-day-picker v9+ API before EPIC-05 implementation
+**Priority:** P2 (Medium) | **Type:** Frontend / Technical Debt | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** v7.4 readiness pass, `docs/specs/blg_spec_95_v7_4_ui_readiness_pass.md` §2 (AC-01), ST-01/BLG-SPEC-95 — 2026-07-17 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-17)
+**Depends on:** BLG-FE-118 (saved filter views and calendar view — parent feature)
+**Problem:** `src/components/ui/calendar.js` wraps `react-day-picker` using the legacy v8 API (`classNames` keys `nav_button_previous`/`day_range_start`/`day_outside`/`day_range_middle`, plus a `components={{ IconLeft, IconRight }}` override). `package.json` now declares `react-day-picker ^10.0.1` (v9+ line), which replaced that entire API surface (`Chevron` replaces `IconLeft`/`IconRight`; `classNames` keys renamed, e.g. `range_start`/`outside`/`selected`/`today`/`disabled`/`hidden`). `calendar.js` has zero current consumers (dead code, pre-staged for EPIC-05), so nothing breaks today — but none of its style overrides will match once a page renders it, since the prop names it passes no longer correspond to anything the installed version reads.
+**Scope:** Rewrite `calendar.js`'s `classNames` map and icon override against the `react-day-picker` v9+ API, preserving the existing visual output (component is otherwise a thin styling wrapper, no behavioural logic to change).
+**Acceptance Criteria:** `calendar.js` renders correctly (spot-checked or covered by the `saved-filters-calendar.spec.js` Playwright baseline scoped in `blg_spec_95_v7_4_ui_readiness_pass.md` §5 AC-04) against the `react-day-picker` version pinned in `package.json` at the time EPIC-05 begins implementation; no `day_`-prefixed or `IconLeft`/`IconRight` v8-era keys remain in the file.
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-FE-123 — `SystemStatus.js` `categorizeEndpoint()` missing `/price-alerts`, `/saved-filters`, and `/changelog` branches
+**Priority:** P3 (Low) | **Type:** Frontend / Technical Debt | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** Recurrence escalation, `2026-07-17__release-v7.5` closure, carried across 3 Post-Ship Closure cycles (v7.5→v7.6→v7.7) pending "next roadmap review"; filed as a backlog item by roadmap rebalance `2026-07-24__scheduled` STEP 0 since the fix is application source code outside the Roadmap Engine's write scope; extended at post-ship closure `2026-07-24__release-v7.8` STEP 6 (a new `/changelog` top-level prefix was introduced this cycle by `GET /changelog/latest`, BLG-FE-128, and is not handled by any existing `includes()` branch either) | **Effort:** XS | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-18)
+
+**Problem**
+`src/pages/SystemStatus.js`'s `categorizeEndpoint()` function has no `includes()` branch for the `/price-alerts`, `/saved-filters`, or `/changelog` endpoint paths (shipped v7.5, v7.4, and v7.8 respectively). All three currently degrade gracefully to the `'Other'` category rather than their correct functional grouping — not a correctness bug (no wrong data shown, nothing broken), but a categorisation gap that has now persisted across 4 releases and grown by one more prefix.
+
+**Scope**
+Add `/price-alerts`, `/saved-filters`, and `/changelog` `includes()` branches to `categorizeEndpoint()`, grouping each under the appropriate existing category (or a new one if none fits) consistent with the function's existing pattern.
+
+**Acceptance Criteria:**
+- `categorizeEndpoint('/price-alerts')`, `categorizeEndpoint('/saved-filters')`, and `categorizeEndpoint('/changelog')` (and their sub-paths) each return a category other than `'Other'`
+- No regression to existing endpoint categorisation
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-FE-106 — Consolidate StrategyBenchmark.js page header onto shared PageHeader component
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of Engineering
+**Source:** 2026-07-12__release-v7.0 design gate (ST-08, BLG-FE-95) — spec/implementation deviation observed while reviewing strategy_benchmark.md §2 Page Header — 2026-07-12
+**Effort:** XS (<1h)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-19)
+
+**Problem**
+`strategy_benchmark.md` §2 Page Header specifies the shared `PageHeader` component (`src/components/ui/PageHeader.js`) for the "Strategy Benchmark" page title, but the shipped `src/pages/StrategyBenchmark.js:497` hand-rolls its own header (icon + bare `<h1>` + `<p>`) instead. This is a pre-existing spec/implementation deviation, out of scope for the ST-08 light-theme contrast fix applied directly to the current markup this cycle. Left unresolved, this header will keep diverging from the shared component (e.g. future PageHeader-wide styling changes won't propagate here) and continues to violate the documented spec.
+
+**Scope**
+- Replace the hand-rolled header block in `StrategyBenchmark.js` (icon + h1 + p) with the shared `PageHeader` component (`title="Strategy Benchmark"`, `description="Compare live trading vs backtest"`)
+- Preserve the `BarChart2` icon and "Benchmark data as of DD Mon YYYY" last-updated line via `PageHeader`'s available props or an adjacent element
+- No visual regression beyond the intended consolidation
+
+**Acceptance Criteria**
+- `StrategyBenchmark.js` page header renders via the shared `PageHeader` component, matching `strategy_benchmark.md` §2
+- Page title displays correctly in both light and dark themes (PageHeader's existing gradient treatment applies)
+- `BarChart2` icon and last-updated line remain present and correctly placed
+- No other page layout/behaviour changes
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-FE-134 — Keyboard navigation & focus-order audit (distinct from colour-contrast a11y work)
+**Priority:** P2 (Medium) | **Type:** Frontend / Accessibility | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260728-02 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-20)
+**Problem:** Accessibility work to date (`BLG-FE-82`, `BLG-FE-87/88/89`, dark-mode contrast audits) has focused on colour/contrast; keyboard navigation and focus order have not had an equivalent dedicated audit.
+**Scope:** Audit keyboard navigation and focus order across the app's primary flows (trade entry, trade plan, command palette).
+**Acceptance Criteria:** Audit complete; findings filed as follow-up items where gaps are found; Head of UX & Design sign-off.
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-GOV-256 — design_gate_prompt.md does not sync .claude_current_state.json root pointer on gate pass
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** `plan sprint 2026-07-24__release-v7.8` session — 2026-07-26
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-21)
+
+**Problem**
+`design_gate_prompt.md` v1.4's write scope (§5) only permits writes to `claude/cycles/<cycle_id>/design_gate.md` and the cycle-level `state.json` — it never touches `.claude_current_state.json`. When the design gate passes, the cycle-level `state.json` correctly records `design_gate_status = Passed`, but the root pointer file's `status` field stays at `Release_Planning_Complete` and its `design_gate_status`/`design_gate_record`/`design_gate_completed_utc` fields stay stale (`not_started`/empty). This causes `sprint_planning_prompt.md`'s STEP -1.3 bypass audit (IMP-04) to fire on every cycle with a required design gate, mechanically treating a genuinely-passed gate as "skipped entirely" since it only reads the literal `.claude_current_state.json` status string. Discovered and worked around (treated as a documented process deviation rather than an actual bypass, per Product Owner decision) during `plan sprint` for `2026-07-24__release-v7.8` — see `claude/cycles/2026-07-24__release-v7.8/sprint_planning_notes.md` "Design Gate / Lifecycle Note".
+
+**Scope**
+- Add a step to `design_gate_prompt.md` STEP 5 that also writes `status = Design_Gate_Passed` (and `design_gate_status`/`design_gate_record`/`design_gate_completed_utc`) to `.claude_current_state.json` atomically with the existing cycle-level `state.json` write
+- Update `sprint_planning_prompt.md` STEP -1.3's bypass-audit condition to check the cycle-level `state.json`'s `design_gate_status` directly as a first-class pass condition, not only the root status enum
+
+**Acceptance Criteria**
+- `run design-gate` updates `.claude_current_state.json` to `Design_Gate_Passed` (or equivalent) in the same run as a Passed gate, with no separate manual sync step required
+- `plan sprint`'s bypass audit no longer fires for a cycle where the cycle-level `state.json` already shows `design_gate_status = Passed`
+- Governance file edit checklist (CLAUDE.md §6) applied in full for both prompt edits
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-GOV-216 — Recent-rebalance recency advisory at roadmap STEP -1
+**Priority:** P2 (Medium) | **Type:** Governance / Process Integrity | **Owner:** PMO Lead | **Source:** IDEA-pmo-lead-20260712-01 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-22)
+**Problem:** STEP -1.5 doesn't check inter-run recency; an accidental double-invocation of `run roadmap --reason scheduled` isn't caught until cycle-folder creation (as happened this cycle — complements `BLG-GOV-207`'s auto-suffix fix with an earlier, cheaper warning).
+**Scope:** Surface a confirmation advisory at STEP -1 if `last_scheduled_rebalance_utc` is <24h old.
+**Acceptance Criteria:** `roadmap_prompt.md` patched (versioned per `CLAUDE.md` §6); advisory fires correctly on a same-day re-invocation.
+
+---
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** (see item body below)
+**Retired:** 2026-07-30
+**Shipped in:** v7.10
+**Evidence:** docs/product/changelog.md#v7.10; claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### BLG-GOV-207 — Same-day scheduled-rebalance cycle_id collision handling
+**Priority:** P2 (Medium) | **Type:** Governance / Process Integrity | **Owner:** Head of Specs Team | **Source:** IDEA-challenger-20260712-01 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-30 — cycle: 2026-07-28__release-v7.10 (ST-23)
+**Problem:** `run roadmap --reason "scheduled"` invoked twice on the same calendar date produces an identical `cycle_id` (`YYYY-MM-DD__scheduled`), risking a silent overwrite of a completed Class 3 record. Confirmed in practice this cycle (`2026-07-10__scheduled` ran twice in one session as the sandbox clock advanced from 07-10 to 07-12 mid-session; resolved ad hoc via user-confirmed date resolution rather than a built-in rule).
+**Scope:** Add an explicit STEP 0 rule to `roadmap_prompt.md` — detect an existing cycle folder for the computed `cycle_id` and auto-suffix (`-2`, `-3`, …) rather than requiring ad hoc user escalation.
+**Acceptance Criteria:** STEP 0 rule added and versioned per `CLAUDE.md` §6; a second same-day scheduled invocation no longer requires manual disambiguation.
 
 ### BLG-QA-99 — `_DB_STUB_FUNCTIONS` AST-scan glob coverage check
 

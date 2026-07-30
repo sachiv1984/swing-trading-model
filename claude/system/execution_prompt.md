@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.60
-**Last Updated:** 2026-07-27
+**Version:** 3.61
+**Last Updated:** 2026-07-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -1004,6 +1004,9 @@ If `release_complete: true`: surface to Product Owner — release ready for Phas
 ## STEP 7 — Seal Execution Record (Hard Gate)
 
 Once sprint close and global state update are complete:
+
+**Pre-seal check — `completed_items` cross-EPIC union (LL-v7.10-P4-01):**
+Before writing `sealed: true`, verify the top-level `completed_items` array in `execution_state.json` is the union of every `done`/`merged` story ID across **all** EPICs in `epics_merged` — not just the first-merged EPIC's items (matching the union rule in `shared_standards.md §12` Rule 2 / `CLAUDE.md §8`). If the array is missing any `done`/`merged` story from a merged EPIC, correct it now before sealing. This does not gate the seal (the per-story `epics.<EPIC-xx>.stories.<ST-xx>.status` fields remain the traceability source of truth), but an incomplete summary array must not be sealed uncorrected.
 
 **Pre-seal check — delegation_log.md integrity (LL-v2.3-CL-02):**
 Before sealing, verify `delegation_log.md` line count is consistent with delegation activity:

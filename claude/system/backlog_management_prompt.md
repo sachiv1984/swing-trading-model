@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.12
-**Last Updated:** 2026-07-14
+**Version:** 1.13
+**Last Updated:** 2026-07-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -170,6 +170,12 @@ Before classifying, scan `backlog.md` for items whose `**Provisional-Target:**` 
 - Note: this is a validation/flagging check only, distinct from §1.1's Gate Field Label Normalization, which does auto-correct (a pure label synonym, not a judgment call).
 
 If no items found: note "Effort Day-Range Validation: PASS — 0 items missing a required day range" in the health summary. (Added v1.12 — closes the escalated decision from `2026-07-14__release-v7.1` post-ship closure, Release Planning Friction Item 1: bare-letter effort bands on items with a specific `Provisional-Target` forced Release Planning STEP 4.5 to infer day ranges by analogy, right when that cycle's capacity check landed at a WARN threshold with zero buffer.)
+
+### 1.3 Governance Prompt Duplicate Cross-Check (LL-v7.10-P3-01)
+
+Before confirming any open `BLG-GOV-*` backlog item as still-open, grep `claude/system/prompt_change_log.md` for entries against the same prompt file the item names, filed **after** the item's own `**Source:**` filing date. If a matching version-transition entry exists whose change description already covers the item's stated problem, flag the item as a **probable-duplicate candidate** in the health summary under a `Governance Prompt Duplicate Candidates` line, for the item's named owner to confirm disposition (close as pre-met, or leave open if the fix only partially covers the item). Do not close the item automatically — this is a flag for owner review, not an auto-resolution.
+
+If no candidates found: note "Governance Prompt Duplicate Cross-Check: PASS — 0 candidates found" in the health summary. (Added v1.13 — closes the deferred patch from post-ship closure `2026-07-28__release-v7.10` Phase 3 lessons learnt: 3 of 23 stories that cycle — `ST-16`/EPIC-04, `ST-21`/EPIC-06, `ST-23`/EPIC-06, 13% of scope — reached sprint execution already fully resolved by a prior-sprint governance fix, requiring the STEP 3.1.A pre-met verification path instead of fresh delivery, because none were caught as stale/duplicate by backlog grooming before being pulled into sprint scope.)
 
 For every item in `backlog.md`, apply the classification rules in §6.
 

@@ -3,9 +3,57 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-28 (post-ship closure 2026-07-27__release-v7.9)
+**Last Updated:** 2026-07-30 (post-ship closure 2026-07-28__release-v7.10)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v7.10 — Reliability, Security & Contract Hardening — 2026-07-30
+Cycle: 2026-07-28__release-v7.10
+Verified: Verified
+Verification report: claude/cycles/2026-07-28__release-v7.10/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Fixed silent HTTP-200 error masking in `portfolio_risk.py`; extended retry/backoff audit to Yahoo Finance, Gemini, and Claude call sites; established and applied an idempotency-key pattern to state-mutating POST endpoints; audited deprecated-table read paths and removed dead code | `docs/specs/api_contracts/backend_engineering_patterns.md#Idempotency-key pattern for state-mutating POST endpoints`; `docs/specs/data_model.md#Deprecated Tables`; `docs/ops/backoff_audit_2026-07-29.md`; `docs/ops/deprecated_table_read_audit_2026-07-29.md` |
+| EPIC-02 | Added a local secrets-scanning pre-commit gate (gitleaks); audited AI rate-limit bypass and public-endpoint rate-limiting posture; removed raw exception text from 27 API error responses | `.githooks/pre-commit`; `.gitleaks.toml`; `docs/ops/ai_rate_limit_bypass_audit_2026-07-29.md`; `docs/security/rate_limit_audit_2026-07-29.md` |
+| EPIC-03 | Migrated Playwright E2E `webServer` to a production build; added Red Flag Journal auth regression coverage; audited endpoint test-suite coverage against all `backend/routers/` files; added consumer-driven contract-drift check tooling | `docs/ops/e2e_production_build_migration_2026-07-29.md`; `docs/ops/endpoint_test_coverage_audit_2026-07-29.md`; `docs/ops/consumer_contract_check_2026-07-29.md` |
+| EPIC-04 | Corrected three API contract drift issues (`GET /positions` envelope claim, undocumented lifecycle fields; `GET /trades` JSON example completeness); confirmed the OpenAPI heading-drift CI linter already live from v7.8 | `docs/specs/api_contracts/position_endpoints.md#GET /positions`; `docs/specs/api_contracts/trade_endpoints.md#GET /trades` |
+| EPIC-05 | Rewrote `calendar.js` against the current `react-day-picker` v9+ API; fixed a `SystemStatus.js` endpoint-categorization branch gap; consolidated `StrategyBenchmark.js`'s page header onto the shared `PageHeader` component; completed a keyboard-navigation and focus-order audit | `docs/specs/frontend/pages/strategy_benchmark.md#2. Page Header`; `docs/ops/keyboard_navigation_audit_2026-07-29.md` |
+| EPIC-06 | Confirmed two governance process fixes (design-gate state-pointer sync; same-day rebalance collision handling) already live from prior-sprint work; added a recent-rebalance recency advisory to the roadmap engine | `claude/system/design_gate_prompt.md#STEP 5 — Update Global State`; `claude/system/roadmap_prompt.md#STEP -1.5.5 — Recent-Rebalance Recency Advisory` |
+
+### Deviations accepted
+None. Every `done` ST item's deviation check (STEP 3.1.A.10) resulted in "no deviation" (see `sprint_close.md` "Deviations Filed This Sprint").
+
+### Tech backlog items shipped
+- [ST-01] [D] BLG-BE-68: Fixed errors masked as HTTP 200 in `portfolio_risk.py`
+- [ST-02] [D] BLG-BE-75: Extended Alpaca backoff audit to Yahoo Finance, Gemini, and Claude call sites
+- [ST-03] [D] BLG-BE-76: Idempotency-key pattern for state-mutating POST endpoints
+- [ST-04] [D] BLG-BE-41: Deprecated table read-path audit
+- [ST-05] [D] BLG-SEC-22: Secrets-scanning pre-commit/CI gate (gitleaks)
+- [ST-06] [D] BLG-SEC-09: AI rate-limit bypass test
+- [ST-07] [D] BLG-SEC-18: Rate-limit audit on public-facing endpoints
+- [ST-08] [D] BLG-SEC-13: Raw exception text removed from API error responses
+- [ST-09] [D] BLG-QA-127: Playwright E2E now serves a production build instead of the CRA dev server
+- [ST-10] [D] BLG-QA-96: Red Flag Journal auth regression test
+- [ST-11] [D] BLG-QA-133: Endpoint test suite coverage audit against all backend/routers/ files
+- [ST-12] [D] BLG-QA-128: Consumer-driven contract check — frontend API calls vs documented contracts
+- [ST-13] [D] BLG-SPEC-102: position_endpoints.md envelope claim corrected to match live GET /positions behaviour
+- [ST-14] [D] BLG-SPEC-103: GET /positions undocumented lifecycle fields added to spec
+- [ST-15] [D] BLG-SPEC-104: trade_endpoints.md JSON example completed with omitted fields
+- [ST-16] [G] BLG-GOV-243: OpenAPI contract linter in CI for heading-level drift (pre-met, confirmed live from v7.8)
+- [ST-17] [P] BLG-FE-122: Rewrote calendar.js against the react-day-picker v9+ API ahead of its future EPIC-05 consumer
+- [ST-18] [D] BLG-FE-123: SystemStatus.js categorizeEndpoint() missing branches fixed
+- [ST-19] [U] BLG-FE-106: Consolidated StrategyBenchmark.js page header onto shared PageHeader component
+- [ST-20] [D] BLG-FE-134: Keyboard navigation & focus-order audit
+- [ST-21] [G] BLG-GOV-256: design_gate_prompt.md state-pointer sync (pre-met, confirmed live from prior sprint)
+- [ST-22] [G] BLG-GOV-216: Recent-rebalance recency advisory at roadmap STEP -1
+- [ST-23] [G] BLG-GOV-207: Same-day scheduled-rebalance cycle_id collision handling (pre-met, confirmed live from prior sprint)
+
+Sign-off: Product Owner — 2026-07-30
+QA sign-off: Director of Quality — 2026-07-30
 
 ---
 

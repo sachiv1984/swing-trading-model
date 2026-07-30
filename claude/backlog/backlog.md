@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-07-29 (session — 1 new item(s) added: BLG-FE-139); prior — 2026-07-29 (session — 4 new item(s) added: BLG-FE-135, BLG-FE-136, BLG-FE-137, BLG-FE-138); prior — 2026-07-29 (session — 1 new item(s) added: BLG-SEC-26 — `.gitleaks.toml` global allowlist schema bug found while fixing ST-05's own CI failure); prior — 2026-07-29 (session — 1 new item(s) added: BLG-SEC-25, corrected to 16 sites during sign-off review); prior — 2026-07-29 (session — 1 new item(s) added: BLG-SEC-24); prior — 2026-07-29 (session — 1 new item(s) added: BLG-SPEC-109); prior — 2026-07-29 (session — 2 new item(s) added: BLG-BE-79, BLG-BE-80); prior — 2026-07-28 (roadmap rebalance 2026-07-28__scheduled — DL-077: 42 new items filed from IW-20260728-01, BLG-OPS-90 gate status updated to cleared, BLG-GOV-283 filed documenting the Last-Updated header-retention convention applied to current_roadmap.md/workforce_capacity.md/initiative_register.md this session); prior — 2026-07-28 (session — user-directed priority escalation + duplicate consolidation: 11 items priority-escalated P3→P1 [Arc 5 pre-entry/compliance-gateway UX cluster: BLG-FEAT-44, BLG-FE-45, BLG-FE-54, BLG-FE-58, BLG-FE-59, BLG-FE-62, BLG-FE-63, BLG-FE-68, BLG-FE-69, BLG-FE-70, BLG-FE-71] — rationale: this cluster is the shared UX surface that already-P1 SI-02/SI-05 frontend work (BLG-FEAT-73, BLG-FE-43) depends on (BLG-FE-59 is explicitly scoped as an "extension spec for SI-02/SI-04"; BLG-FE-68/69/70/71 are the SI-05 digest/compliance-score surfacing widgets), so leaving it at P3 was blocking already-committed P1 scope; escalation is a value-judgment override, not a gate-clearance — each item's own gate criteria (where present) are unchanged and still govern sprint entry; + 9 duplicate-consolidation merges (ad hoc, not a formal `groom backlog` run — that engine's own charter forbids content/scope changes), 13 items closed as ❌ Killed — duplicate and archived to `backlog_archive.md`: BLG-QA-93 absorbed BLG-QA-99 (conftest.py AST-scan glob coverage confirmation, re-proposed without cross-reference); BLG-QA-42 absorbed BLG-QA-55 (SI-02 Playwright scaffold + its own readiness-assessment follow-up, same gate); BLG-QA-97 absorbed BLG-QA-101 (retroactive Playwright §18 anti-pattern sweep — route.fallback() ordering + networkidle usage, same mechanism); BLG-QA-81 absorbed BLG-QA-118 (visual-regression baseline snapshots — contrast-sensitive + chart-heavy components, same Playwright tooling; priority raised P3→P2 to match cluster max); BLG-GOV-144 absorbed BLG-GOV-182, BLG-GOV-199, BLG-GOV-236 (agent role charter freshness review, re-proposed 3x across separate idea-intake cycles without cross-reference); BLG-GOV-178 absorbed BLG-GOV-197, BLG-GOV-251 (quarterly AI output §13 sampling review, re-proposed 2x); BLG-GOV-95 absorbed BLG-GOV-122, BLG-GOV-187 (strategy_rules.md §11 annual parameter review, re-proposed 2x; merged gate condition now "whichever comes first" across all three original triggers — 30 ATR-stop trades, 12 months elapsed, or annual cadence — so no single absorbed item's condition was silently dropped); BLG-GOV-221 absorbed BLG-GOV-234 (cross-provider AI disclaimer consistency check — GOV-234's scope was a strict superset, adding a kill-switch drill); BLG-GOV-90 absorbed BLG-GOV-239 (Claude model deprecation monitoring/calendar); deliberately NOT merged on closer full-text review: BLG-QA-63/BLG-QA-83 (backlog's own text already documents these as an intentional gated/ungated phased pair) and BLG-QA-77/BLG-QA-92 (Playwright vs backend runtime-baseline tracking — differing gate posture, gated vs ungated, made this a real distinction rather than a duplicate; left unmerged despite being flagged as a candidate in the initial session review)); prior — 2026-07-28 (session — 1 new item(s) added: BLG-QA-127); prior — 2026-07-28 (groom backlog post-ship closure 2026-07-27__release-v7.9 — 15 items archived: BLG-FEAT-66, BLG-FEAT-67, BLG-SPEC-105, BLG-FEAT-85, BLG-FEAT-87, BLG-BE-73, BLG-BE-74, BLG-OPS-121, BLG-QA-124, BLG-QA-125, BLG-FE-130, BLG-OPS-120, BLG-FE-129, BLG-GOV-258, BLG-QA-123; ephemeral Release Slice v7.9 section removed; Gate Field Normalisation: 0 in backlog.md (2 pre-existing archive occurrences out of scope); Effort Day-Range Validation: 1 pre-existing flag (BLG-QA-115), 0 new; ID uniqueness PASS (5 known legacy duplicates unchanged, no new); 0 orphans, 0 stale blockers, 0 promotion candidates; health=PASS; report: claude/backlog/backlog_health_20260728.md); prior — 2026-07-28 (post-ship closure 2026-07-27__release-v7.9 — 15 items marked ✅ COMPLETE: BLG-FEAT-66 (ST-01), BLG-FEAT-67 (ST-02), BLG-SPEC-105 (ST-03), BLG-FEAT-85 (ST-04), BLG-FEAT-87 (ST-05), BLG-BE-73 (ST-06), BLG-BE-74 (ST-07), BLG-OPS-121 (ST-08), BLG-QA-124 (ST-09), BLG-QA-125 (ST-10), BLG-FE-130 (ST-11), BLG-OPS-120 (ST-12), BLG-FE-129 (ST-13), BLG-GOV-258 (ST-14), BLG-QA-123 (ST-15); no stale parked items (zero parked-status items in `backlog.md`, matches authoritative backlog slice); no Phase 4 additions required — BLG-GOV-264 already present pre-closure per `verification_report.md §5(a)`, 0 test scenario gaps or returned items per §5/§6); prior — 2026-07-27 (session — direct governance fix, user-directed: BLG-GOV-190 resolved and archived to `backlog_archive.md` — `design_gate_prompt.md` v1.4→v1.5, root state pointer sync gap closed per option (a); see `prompt_change_log.md` and `changelogs/design_gate_changelog.md` for full detail); prior — 2026-07-27 (release planning 2026-07-27__release-v7.9 — Release Slice v7.9 added, 15 items: BLG-FEAT-66, BLG-FEAT-67 (2 ready P1 anchors) + BLG-SPEC-105, BLG-FEAT-85, BLG-FEAT-87, BLG-BE-73, BLG-BE-74, BLG-OPS-121, BLG-QA-124, BLG-QA-125, BLG-FE-130 (9 P2 capacity-fill items) + BLG-OPS-120, BLG-FE-129, BLG-GOV-258, BLG-QA-123 (4 P3 capacity-fill items) — `Provisional-Target` updated TBD/Unscheduled → v7.9 on all 15, per explicit user instruction to use the full confirmed ~24-28 day capacity band (~26.5 days midpoint, ~95-110% utilisation); `BLG-FEAT-56` excluded (gate date sub-condition elapsed but usage-validation sub-condition unconfirmable this session); `BLG-FEAT-73`/`BLG-FEAT-74` excluded (SI-02 NOT MET / §13 pre-clearance not run, consistent with the already-executed PO perennial-return disposition); EPIC-01/02/05 (3 items) conditional pending Design Gate PASS (observable UI ACs); see `decisions--2026-07-27__release-v7.9.md`); prior — 2026-07-27 (roadmap rebalance 2026-07-27__scheduled — 21 new items added via idea intake IW-20260727-01 disposition: BLG-FE-129/130/131, BLG-GOV-258/259/260/261/262, BLG-SPEC-105, BLG-FEAT-85/86/87, BLG-BE-73/74, BLG-OPS-120/121/122, BLG-QA-123/124/125/126 (21 standalone; 23 Rejected — not strong, the large majority duplicates of existing open backlog items surfaced by the STEP 4.0/§2.0.5 overlap check, 0 Advance, 0 Parked); STEP 8.1 fired (condition 1a — Now horizon fully empty) — Option (b): defer, PO rationale: no newly-cleared gate or fast-track anchor this cycle, next `plan release` is the natural scoping moment; STEP 8.0 fast-track 0 qualifying P0/P1 items; Product Value Ratio 0.42 (U=15/G=1/D=18/P=2 of 36, v7.4–v7.8 window) — Advisory; DL-076; STEP -1.5: 1 deferred patch from `2026-07-24__scheduled` resolved (roadmap_prompt.md v9.5→v9.6 STEP 2.3 SI-02 credential-fallback guidance); STEP -1.7 cross-routine scan found and filed 1 previously-missed outstanding action (BLG-GOV-263, cross-EPIC execution_state.json structural fix, first surfaced `2026-07-17__release-v7.5` closure); Backlog Accessibility Warning not triggered (A≈40.8% of 341 items pre-addition, structural heuristic)); prior — 2026-07-27 (session — priority escalation, user-directed: 5 items raised to P1 following a session top-5 user-facing feature review (BLG-FEAT-74 P2→P1, BLG-FE-43 P2→P1, BLG-FEAT-66 P3→P1, BLG-FEAT-67 P3→P1, BLG-FEAT-56 P3→P1; BLG-FEAT-73 already P1, unchanged); escalation is a value-judgment override, not a gate-clearance — each item's own gate criteria (where present) are unchanged and still govern sprint entry; not a formal `groom backlog` priority-revalidation pass); prior — 2026-07-27 (session — duplicate consolidation, ad hoc user-directed backlog cleanup (not a formal `groom backlog` run): 5 near-duplicate clusters merged into their most-complete survivor item, 13 duplicate items closed as ❌ Killed — duplicate and archived to `backlog_archive.md`; BLG-OPS-25 absorbed BLG-OPS-100/102/107/119 (staging smoke test on deploy/merge/cadence — gate cleared, BLG-OPS-27 shipped v4.0); BLG-BE-47 absorbed BLG-BE-53/64/72 (canonical list-endpoint pagination pattern, priority raised P3→P2 to match cluster max); BLG-FEAT-30 absorbed BLG-FEAT-27/28 (screener-to-trade attribution pipeline + its retrospective/hit-rate reporting views); BLG-QA-75 absorbed BLG-QA-80/87 (Playwright flake tracking — quarantine-list scope ungated, CI-pipeline-integration scope kept gated per original BLG-QA-75 rationale); BLG-SEC-15 absorbed BLG-OPS-93/BLG-SEC-19 (recurring dependency CVE re-scan cadence); no other backlog content changed); prior — 2026-07-27 (groom backlog post-ship closure 2026-07-24__release-v7.8 — 12 items archived: BLG-FE-128, BLG-FEAT-84, BLG-FE-127, BLG-FE-125, BLG-FEAT-81, BLG-FEAT-82, BLG-SEC-20, BLG-SEC-21, BLG-BE-71, BLG-QA-117, BLG-QA-119, BLG-OPS-117; ephemeral Release Slice v7.8 section removed; Gate Field Normalisation: 0 in backlog.md (2 pre-existing archive occurrences out of scope); Effort Day-Range Validation: 1 pre-existing flag (BLG-QA-115), 0 new; ID uniqueness PASS (5 known legacy duplicates unchanged, no new); 0 orphans, 0 stale blockers, 0 promotion candidates; health=PASS; report: claude/backlog/backlog_health_20260727.md); prior — 2026-07-27 (post-ship closure 2026-07-24__release-v7.8 — 12 items marked ✅ COMPLETE: BLG-FE-128 (ST-01), BLG-FEAT-84 (ST-02), BLG-FE-127 (ST-03), BLG-FE-125 (ST-04), BLG-FEAT-81 (ST-05), BLG-FEAT-82 (ST-06), BLG-SEC-20 (ST-07), BLG-SEC-21 (ST-08), BLG-BE-71 (ST-09), BLG-QA-117 (ST-10), BLG-QA-119 (ST-11), BLG-OPS-117 (ST-12); no stale parked items (zero parked-status items in `backlog.md`, matches authoritative backlog slice); no Phase 4 additions required — BLG-SPEC-102/103/104 already present pre-closure per `verification_report.md §2`, 0 test scenario gaps or returned items per §5/§6); prior — 2026-07-27 (delivery verification `2026-07-24__release-v7.8` — 3 new item(s) added: BLG-SPEC-102, BLG-SPEC-103, BLG-SPEC-104 — doc-completeness gaps surfaced during EPIC-11/ST-11 pilot contract test authoring, per `verification_report.md §6`); prior — 2026-07-26 (session — 2 new item(s) added: BLG-GOV-256, BLG-GOV-257); prior history retained — see prior entries in version control (last full entry retained here: 2026-07-26 session note; chain truncated 2026-07-28 per BLG-GOV-283, header-history retention convention).
+**Last Updated:** 2026-07-30 (groom backlog post-ship closure 2026-07-28__release-v7.10 — 23 items archived: BLG-BE-68, BLG-BE-75, BLG-BE-76, BLG-BE-41, BLG-SEC-22, BLG-SEC-09, BLG-SEC-18, BLG-SEC-13, BLG-QA-127, BLG-QA-96, BLG-QA-133, BLG-QA-128, BLG-SPEC-102, BLG-SPEC-103, BLG-SPEC-104, BLG-GOV-243, BLG-FE-122, BLG-FE-123, BLG-FE-106, BLG-FE-134, BLG-GOV-256, BLG-GOV-216, BLG-GOV-207; ephemeral Release Slice v7.10 section removed; Gate Field Normalisation: 0 in backlog.md; Effort Day-Range Validation: 1 pre-existing flag (BLG-QA-115), 0 new; Governance Prompt Duplicate Cross-Check (new §1.3, first run): 27 open BLG-GOV-* items reference a prompt file also touched after their filing date, but semantic spot-check against each entry's actual change description found 0 genuine duplicates this run (roadmap_prompt.md's high revision cadence produces superficial file-level matches with no topical overlap); ID uniqueness PASS (367 headings, 0 duplicates); health=PASS; report: claude/backlog/backlog_health_20260730.md); prior — 2026-07-30 (post-ship closure 2026-07-28__release-v7.10 — 23 items marked ✅ COMPLETE: BLG-BE-68 (ST-01), BLG-BE-75 (ST-02), BLG-BE-76 (ST-03), BLG-BE-41 (ST-04), BLG-SEC-22 (ST-05), BLG-SEC-09 (ST-06), BLG-SEC-18 (ST-07), BLG-SEC-13 (ST-08), BLG-QA-127 (ST-09), BLG-QA-96 (ST-10), BLG-QA-133 (ST-11), BLG-QA-128 (ST-12), BLG-SPEC-102 (ST-13), BLG-SPEC-103 (ST-14), BLG-SPEC-104 (ST-15), BLG-GOV-243 (ST-16), BLG-FE-122 (ST-17), BLG-FE-123 (ST-18), BLG-FE-106 (ST-19), BLG-FE-134 (ST-20), BLG-GOV-256 (ST-21), BLG-GOV-216 (ST-22), BLG-GOV-207 (ST-23); no stale parked items (zero parked-status items in `backlog.md`, matches authoritative backlog slice); no Phase 4 additions required — all 11 adjacent follow-up items (BLG-BE-79, BLG-BE-80, BLG-SEC-24, BLG-SEC-25, BLG-SEC-26, BLG-SPEC-109, BLG-FE-135, BLG-FE-136, BLG-FE-137, BLG-FE-138, BLG-FE-139) already present pre-closure per `verification_report.md §4`, 0 test scenario gaps or returned items per §5/§6); prior — 2026-07-29 (session — 1 new item(s) added: BLG-FE-139); prior — 2026-07-29 (session — 4 new item(s) added: BLG-FE-135, BLG-FE-136, BLG-FE-137, BLG-FE-138); prior — 2026-07-29 (session — 1 new item(s) added: BLG-SEC-26 — `.gitleaks.toml` global allowlist schema bug found while fixing ST-05's own CI failure); prior — 2026-07-29 (session — 1 new item(s) added: BLG-SEC-25, corrected to 16 sites during sign-off review); prior — 2026-07-29 (session — 1 new item(s) added: BLG-SEC-24); prior — 2026-07-29 (session — 1 new item(s) added: BLG-SPEC-109); prior — 2026-07-29 (session — 2 new item(s) added: BLG-BE-79, BLG-BE-80); prior — 2026-07-28 (roadmap rebalance 2026-07-28__scheduled — DL-077: 42 new items filed from IW-20260728-01, BLG-OPS-90 gate status updated to cleared, BLG-GOV-283 filed documenting the Last-Updated header-retention convention applied to current_roadmap.md/workforce_capacity.md/initiative_register.md this session); prior — 2026-07-28 (session — user-directed priority escalation + duplicate consolidation: 11 items priority-escalated P3→P1 [Arc 5 pre-entry/compliance-gateway UX cluster: BLG-FEAT-44, BLG-FE-45, BLG-FE-54, BLG-FE-58, BLG-FE-59, BLG-FE-62, BLG-FE-63, BLG-FE-68, BLG-FE-69, BLG-FE-70, BLG-FE-71] — rationale: this cluster is the shared UX surface that already-P1 SI-02/SI-05 frontend work (BLG-FEAT-73, BLG-FE-43) depends on (BLG-FE-59 is explicitly scoped as an "extension spec for SI-02/SI-04"; BLG-FE-68/69/70/71 are the SI-05 digest/compliance-score surfacing widgets), so leaving it at P3 was blocking already-committed P1 scope; escalation is a value-judgment override, not a gate-clearance — each item's own gate criteria (where present) are unchanged and still govern sprint entry; + 9 duplicate-consolidation merges (ad hoc, not a formal `groom backlog` run — that engine's own charter forbids content/scope changes), 13 items closed as ❌ Killed — duplicate and archived to `backlog_archive.md`: BLG-QA-93 absorbed BLG-QA-99 (conftest.py AST-scan glob coverage confirmation, re-proposed without cross-reference); BLG-QA-42 absorbed BLG-QA-55 (SI-02 Playwright scaffold + its own readiness-assessment follow-up, same gate); BLG-QA-97 absorbed BLG-QA-101 (retroactive Playwright §18 anti-pattern sweep — route.fallback() ordering + networkidle usage, same mechanism); BLG-QA-81 absorbed BLG-QA-118 (visual-regression baseline snapshots — contrast-sensitive + chart-heavy components, same Playwright tooling; priority raised P3→P2 to match cluster max); BLG-GOV-144 absorbed BLG-GOV-182, BLG-GOV-199, BLG-GOV-236 (agent role charter freshness review, re-proposed 3x across separate idea-intake cycles without cross-reference); BLG-GOV-178 absorbed BLG-GOV-197, BLG-GOV-251 (quarterly AI output §13 sampling review, re-proposed 2x); BLG-GOV-95 absorbed BLG-GOV-122, BLG-GOV-187 (strategy_rules.md §11 annual parameter review, re-proposed 2x; merged gate condition now "whichever comes first" across all three original triggers — 30 ATR-stop trades, 12 months elapsed, or annual cadence — so no single absorbed item's condition was silently dropped); BLG-GOV-221 absorbed BLG-GOV-234 (cross-provider AI disclaimer consistency check — GOV-234's scope was a strict superset, adding a kill-switch drill); BLG-GOV-90 absorbed BLG-GOV-239 (Claude model deprecation monitoring/calendar); deliberately NOT merged on closer full-text review: BLG-QA-63/BLG-QA-83 (backlog's own text already documents these as an intentional gated/ungated phased pair) and BLG-QA-77/BLG-QA-92 (Playwright vs backend runtime-baseline tracking — differing gate posture, gated vs ungated, made this a real distinction rather than a duplicate; left unmerged despite being flagged as a candidate in the initial session review)); prior — 2026-07-28 (session — 1 new item(s) added: BLG-QA-127); prior — 2026-07-28 (groom backlog post-ship closure 2026-07-27__release-v7.9 — 15 items archived: BLG-FEAT-66, BLG-FEAT-67, BLG-SPEC-105, BLG-FEAT-85, BLG-FEAT-87, BLG-BE-73, BLG-BE-74, BLG-OPS-121, BLG-QA-124, BLG-QA-125, BLG-FE-130, BLG-OPS-120, BLG-FE-129, BLG-GOV-258, BLG-QA-123; ephemeral Release Slice v7.9 section removed; Gate Field Normalisation: 0 in backlog.md (2 pre-existing archive occurrences out of scope); Effort Day-Range Validation: 1 pre-existing flag (BLG-QA-115), 0 new; ID uniqueness PASS (5 known legacy duplicates unchanged, no new); 0 orphans, 0 stale blockers, 0 promotion candidates; health=PASS; report: claude/backlog/backlog_health_20260728.md); prior — 2026-07-28 (post-ship closure 2026-07-27__release-v7.9 — 15 items marked ✅ COMPLETE: BLG-FEAT-66 (ST-01), BLG-FEAT-67 (ST-02), BLG-SPEC-105 (ST-03), BLG-FEAT-85 (ST-04), BLG-FEAT-87 (ST-05), BLG-BE-73 (ST-06), BLG-BE-74 (ST-07), BLG-OPS-121 (ST-08), BLG-QA-124 (ST-09), BLG-QA-125 (ST-10), BLG-FE-130 (ST-11), BLG-OPS-120 (ST-12), BLG-FE-129 (ST-13), BLG-GOV-258 (ST-14), BLG-QA-123 (ST-15); no stale parked items (zero parked-status items in `backlog.md`, matches authoritative backlog slice); no Phase 4 additions required — BLG-GOV-264 already present pre-closure per `verification_report.md §5(a)`, 0 test scenario gaps or returned items per §5/§6); prior — 2026-07-27 (session — direct governance fix, user-directed: BLG-GOV-190 resolved and archived to `backlog_archive.md` — `design_gate_prompt.md` v1.4→v1.5, root state pointer sync gap closed per option (a); see `prompt_change_log.md` and `changelogs/design_gate_changelog.md` for full detail); prior — 2026-07-27 (release planning 2026-07-27__release-v7.9 — Release Slice v7.9 added, 15 items: BLG-FEAT-66, BLG-FEAT-67 (2 ready P1 anchors) + BLG-SPEC-105, BLG-FEAT-85, BLG-FEAT-87, BLG-BE-73, BLG-BE-74, BLG-OPS-121, BLG-QA-124, BLG-QA-125, BLG-FE-130 (9 P2 capacity-fill items) + BLG-OPS-120, BLG-FE-129, BLG-GOV-258, BLG-QA-123 (4 P3 capacity-fill items) — `Provisional-Target` updated TBD/Unscheduled → v7.9 on all 15, per explicit user instruction to use the full confirmed ~24-28 day capacity band (~26.5 days midpoint, ~95-110% utilisation); `BLG-FEAT-56` excluded (gate date sub-condition elapsed but usage-validation sub-condition unconfirmable this session); `BLG-FEAT-73`/`BLG-FEAT-74` excluded (SI-02 NOT MET / §13 pre-clearance not run, consistent with the already-executed PO perennial-return disposition); EPIC-01/02/05 (3 items) conditional pending Design Gate PASS (observable UI ACs); see `decisions--2026-07-27__release-v7.9.md`); prior — 2026-07-27 (roadmap rebalance 2026-07-27__scheduled — 21 new items added via idea intake IW-20260727-01 disposition: BLG-FE-129/130/131, BLG-GOV-258/259/260/261/262, BLG-SPEC-105, BLG-FEAT-85/86/87, BLG-BE-73/74, BLG-OPS-120/121/122, BLG-QA-123/124/125/126 (21 standalone; 23 Rejected — not strong, the large majority duplicates of existing open backlog items surfaced by the STEP 4.0/§2.0.5 overlap check, 0 Advance, 0 Parked); STEP 8.1 fired (condition 1a — Now horizon fully empty) — Option (b): defer, PO rationale: no newly-cleared gate or fast-track anchor this cycle, next `plan release` is the natural scoping moment; STEP 8.0 fast-track 0 qualifying P0/P1 items; Product Value Ratio 0.42 (U=15/G=1/D=18/P=2 of 36, v7.4–v7.8 window) — Advisory; DL-076; STEP -1.5: 1 deferred patch from `2026-07-24__scheduled` resolved (roadmap_prompt.md v9.5→v9.6 STEP 2.3 SI-02 credential-fallback guidance); STEP -1.7 cross-routine scan found and filed 1 previously-missed outstanding action (BLG-GOV-263, cross-EPIC execution_state.json structural fix, first surfaced `2026-07-17__release-v7.5` closure); Backlog Accessibility Warning not triggered (A≈40.8% of 341 items pre-addition, structural heuristic)); prior — 2026-07-27 (session — priority escalation, user-directed: 5 items raised to P1 following a session top-5 user-facing feature review (BLG-FEAT-74 P2→P1, BLG-FE-43 P2→P1, BLG-FEAT-66 P3→P1, BLG-FEAT-67 P3→P1, BLG-FEAT-56 P3→P1; BLG-FEAT-73 already P1, unchanged); escalation is a value-judgment override, not a gate-clearance — each item's own gate criteria (where present) are unchanged and still govern sprint entry; not a formal `groom backlog` priority-revalidation pass); prior — 2026-07-27 (session — duplicate consolidation, ad hoc user-directed backlog cleanup (not a formal `groom backlog` run): 5 near-duplicate clusters merged into their most-complete survivor item, 13 duplicate items closed as ❌ Killed — duplicate and archived to `backlog_archive.md`; BLG-OPS-25 absorbed BLG-OPS-100/102/107/119 (staging smoke test on deploy/merge/cadence — gate cleared, BLG-OPS-27 shipped v4.0); BLG-BE-47 absorbed BLG-BE-53/64/72 (canonical list-endpoint pagination pattern, priority raised P3→P2 to match cluster max); BLG-FEAT-30 absorbed BLG-FEAT-27/28 (screener-to-trade attribution pipeline + its retrospective/hit-rate reporting views); BLG-QA-75 absorbed BLG-QA-80/87 (Playwright flake tracking — quarantine-list scope ungated, CI-pipeline-integration scope kept gated per original BLG-QA-75 rationale); BLG-SEC-15 absorbed BLG-OPS-93/BLG-SEC-19 (recurring dependency CVE re-scan cadence); no other backlog content changed); prior — 2026-07-27 (groom backlog post-ship closure 2026-07-24__release-v7.8 — 12 items archived: BLG-FE-128, BLG-FEAT-84, BLG-FE-127, BLG-FE-125, BLG-FEAT-81, BLG-FEAT-82, BLG-SEC-20, BLG-SEC-21, BLG-BE-71, BLG-QA-117, BLG-QA-119, BLG-OPS-117; ephemeral Release Slice v7.8 section removed; Gate Field Normalisation: 0 in backlog.md (2 pre-existing archive occurrences out of scope); Effort Day-Range Validation: 1 pre-existing flag (BLG-QA-115), 0 new; ID uniqueness PASS (5 known legacy duplicates unchanged, no new); 0 orphans, 0 stale blockers, 0 promotion candidates; health=PASS; report: claude/backlog/backlog_health_20260727.md); prior — 2026-07-27 (post-ship closure 2026-07-24__release-v7.8 — 12 items marked ✅ COMPLETE: BLG-FE-128 (ST-01), BLG-FEAT-84 (ST-02), BLG-FE-127 (ST-03), BLG-FE-125 (ST-04), BLG-FEAT-81 (ST-05), BLG-FEAT-82 (ST-06), BLG-SEC-20 (ST-07), BLG-SEC-21 (ST-08), BLG-BE-71 (ST-09), BLG-QA-117 (ST-10), BLG-QA-119 (ST-11), BLG-OPS-117 (ST-12); no stale parked items (zero parked-status items in `backlog.md`, matches authoritative backlog slice); no Phase 4 additions required — BLG-SPEC-102/103/104 already present pre-closure per `verification_report.md §2`, 0 test scenario gaps or returned items per §5/§6); prior — 2026-07-27 (delivery verification `2026-07-24__release-v7.8` — 3 new item(s) added: BLG-SPEC-102, BLG-SPEC-103, BLG-SPEC-104 — doc-completeness gaps surfaced during EPIC-11/ST-11 pilot contract test authoring, per `verification_report.md §6`); prior — 2026-07-26 (session — 2 new item(s) added: BLG-GOV-256, BLG-GOV-257); prior history retained — see prior entries in version control (last full entry retained here: 2026-07-26 session note; chain truncated 2026-07-28 per BLG-GOV-283, header-history retention convention).
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -63,14 +63,6 @@
 
 ---
 
-### BLG-GOV-243 — OpenAPI contract linter in CI for heading-level drift
-**Priority:** P2 (Medium) | **Type:** Governance / Process Tooling | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260717-01 | **Effort:** M | **Provisional-Target:** v7.10
-**Problem:** `CLAUDE.md §2` requires API contract endpoint headings to be exactly `##` (not `###`+) or the OpenAPI Drift Detection gate silently misses them — this is currently caught only by the gate failing after the fact, not by a lint step naming the specific violation clearly.
-**Scope:** Extend the existing OpenAPI Drift Detection CI job to emit a specific, actionable error message when a `docs/specs/api_contracts/` heading is found at the wrong level, rather than a generic "endpoint missing from contract" failure.
-**Acceptance Criteria:** CI job produces a distinct, correctly-worded error for the heading-level case versus the missing-entry case; confirmed via a test PR with a deliberately mis-leveled heading.
-
----
-
 ### BLG-GOV-244 — Deprecation header convention for retiring API endpoints
 **Priority:** P3 (Low) | **Type:** Governance / API Process | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260717-02 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** The system has never formally retired a shipped API endpoint, so there is no documented convention for how a deprecation should be communicated in `openapi.yaml`/contract docs before removal.
@@ -100,28 +92,6 @@
 **Problem:** `roadmap_prompt.md` STEP 0.C's Lightweight-tier workforce economics condensing rule ("Condensed if no new FTE required") has never actually fired in this backlog-driven, solo-developer context (0 active initiatives, no FTE concept in practice) — the criterion may not be a meaningful discriminator here.
 **Scope:** Review whether STEP 0.C's condensed-tier language should be reworded for a solo-developer/story-count context, analogous to how `roadmap_prompt.md §7.1` already substitutes story-count for FTE-hours.
 **Acceptance Criteria:** Review completed; either a specific prompt change proposed, or an explicit decision recorded that the existing language is fine as-is.
-
----
-
-### BLG-GOV-256 — design_gate_prompt.md does not sync .claude_current_state.json root pointer on gate pass
-**Priority:** P2 (Medium)
-**Type:** Governance Process
-**Owner:** Head of Specs Team
-**Source:** `plan sprint 2026-07-24__release-v7.8` session — 2026-07-26
-**Effort:** S (~0.5-1 day)
-**Provisional-Target:** v7.10
-
-**Problem**
-`design_gate_prompt.md` v1.4's write scope (§5) only permits writes to `claude/cycles/<cycle_id>/design_gate.md` and the cycle-level `state.json` — it never touches `.claude_current_state.json`. When the design gate passes, the cycle-level `state.json` correctly records `design_gate_status = Passed`, but the root pointer file's `status` field stays at `Release_Planning_Complete` and its `design_gate_status`/`design_gate_record`/`design_gate_completed_utc` fields stay stale (`not_started`/empty). This causes `sprint_planning_prompt.md`'s STEP -1.3 bypass audit (IMP-04) to fire on every cycle with a required design gate, mechanically treating a genuinely-passed gate as "skipped entirely" since it only reads the literal `.claude_current_state.json` status string. Discovered and worked around (treated as a documented process deviation rather than an actual bypass, per Product Owner decision) during `plan sprint` for `2026-07-24__release-v7.8` — see `claude/cycles/2026-07-24__release-v7.8/sprint_planning_notes.md` "Design Gate / Lifecycle Note".
-
-**Scope**
-- Add a step to `design_gate_prompt.md` STEP 5 that also writes `status = Design_Gate_Passed` (and `design_gate_status`/`design_gate_record`/`design_gate_completed_utc`) to `.claude_current_state.json` atomically with the existing cycle-level `state.json` write
-- Update `sprint_planning_prompt.md` STEP -1.3's bypass-audit condition to check the cycle-level `state.json`'s `design_gate_status` directly as a first-class pass condition, not only the root status enum
-
-**Acceptance Criteria**
-- `run design-gate` updates `.claude_current_state.json` to `Design_Gate_Passed` (or equivalent) in the same run as a Passed gate, with no separate manual sync step required
-- `plan sprint`'s bypass audit no longer fires for a cycle where the cycle-level `state.json` already shows `design_gate_status = Passed`
-- Governance file edit checklist (CLAUDE.md §6) applied in full for both prompt edits
 
 ---
 
@@ -348,8 +318,6 @@ No metric tracks whether entries were executed within the planned entry zone. `e
 
 ---
 
----
-
 ### BLG-FEAT-44 — Arc 5 compliance score utility advisory at low trade volume
 **Priority:** P1 (High) — escalated from P3, 2026-07-28, session product review (see note below)
 **Type:** Product Feature / UX Advisory
@@ -398,8 +366,6 @@ Monthly P&L shipped 2026-05-05 with a fixed column/section layout. After 3 month
 - Recommendations document produced (or "no change" decision recorded)
 - Any format changes flow into the next appropriate sprint as separate stories
 - Gate condition verified: ≥ 2026-08-05
-
----
 
 ---
 
@@ -536,8 +502,6 @@ No metric tracks AI chat engagement (sessions per week, questions per session, r
 **Acceptance Criteria**
 - Metric set defined and documented
 - Gate condition (AI adoption window) verified before sprint planning
-
----
 
 ---
 
@@ -717,8 +681,6 @@ Arc5ComplianceSection.js (shipped v4.0) displays 5 compliance metrics. Arc 6 wil
 **Acceptance Criteria**
 - Design note produced and reviewed by Product Owner
 - Gate condition verified before sprint planning
-
----
 
 ---
 
@@ -1115,62 +1077,11 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 ---
 
 
-### BLG-FE-106 — Consolidate StrategyBenchmark.js page header onto shared PageHeader component
-**Priority:** P3 (Low)
-**Type:** Frontend / UX
-**Owner:** Head of Engineering
-**Source:** 2026-07-12__release-v7.0 design gate (ST-08, BLG-FE-95) — spec/implementation deviation observed while reviewing strategy_benchmark.md §2 Page Header — 2026-07-12
-**Effort:** XS (<1h)
-**Provisional-Target:** v7.10
-
-**Problem**
-`strategy_benchmark.md` §2 Page Header specifies the shared `PageHeader` component (`src/components/ui/PageHeader.js`) for the "Strategy Benchmark" page title, but the shipped `src/pages/StrategyBenchmark.js:497` hand-rolls its own header (icon + bare `<h1>` + `<p>`) instead. This is a pre-existing spec/implementation deviation, out of scope for the ST-08 light-theme contrast fix applied directly to the current markup this cycle. Left unresolved, this header will keep diverging from the shared component (e.g. future PageHeader-wide styling changes won't propagate here) and continues to violate the documented spec.
-
-**Scope**
-- Replace the hand-rolled header block in `StrategyBenchmark.js` (icon + h1 + p) with the shared `PageHeader` component (`title="Strategy Benchmark"`, `description="Compare live trading vs backtest"`)
-- Preserve the `BarChart2` icon and "Benchmark data as of DD Mon YYYY" last-updated line via `PageHeader`'s available props or an adjacent element
-- No visual regression beyond the intended consolidation
-
-**Acceptance Criteria**
-- `StrategyBenchmark.js` page header renders via the shared `PageHeader` component, matching `strategy_benchmark.md` §2
-- Page title displays correctly in both light and dark themes (PageHeader's existing gradient treatment applies)
-- `BarChart2` icon and last-updated line remain present and correctly placed
-- No other page layout/behaviour changes
-
----
-
-
-
-
 ### BLG-FE-121 — Extract a shared modal-confirmation component to de-dupe bulk-actions/alerts patterns
 **Priority:** P3 (Low) | **Type:** Frontend / Code Health | **Owner:** Head of Engineering | **Source:** IDEA-head-of-engineering-20260717-02 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** `BLG-FE-117` (bulk actions) will need a confirmation-modal pattern with an undo window; a similar pattern will likely recur for `BLG-FE-116` (custom price alerts, deletion/edit confirmation) — risk of two near-duplicate modal implementations shipping in the same release.
 **Scope:** Extract a single reusable confirmation-modal component (configurable message, optional undo-window countdown) ahead of `BLG-FE-116`/`BLG-FE-117` implementation.
 **Acceptance Criteria:** Shared component exists and is referenced by both items' Base44 prompt templates before their sprint execution begins.
-
----
-
-### BLG-FE-122 — Rewrite calendar.js against the react-day-picker v9+ API before EPIC-05 implementation
-**Priority:** P2 (Medium) | **Type:** Frontend / Technical Debt | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** v7.4 readiness pass, `docs/specs/blg_spec_95_v7_4_ui_readiness_pass.md` §2 (AC-01), ST-01/BLG-SPEC-95 — 2026-07-17 | **Effort:** S | **Provisional-Target:** v7.10 (ahead of whichever release re-introduces `BLG-FE-118`)
-**Depends on:** BLG-FE-118 (saved filter views and calendar view — parent feature)
-**Problem:** `src/components/ui/calendar.js` wraps `react-day-picker` using the legacy v8 API (`classNames` keys `nav_button_previous`/`day_range_start`/`day_outside`/`day_range_middle`, plus a `components={{ IconLeft, IconRight }}` override). `package.json` now declares `react-day-picker ^10.0.1` (v9+ line), which replaced that entire API surface (`Chevron` replaces `IconLeft`/`IconRight`; `classNames` keys renamed, e.g. `range_start`/`outside`/`selected`/`today`/`disabled`/`hidden`). `calendar.js` has zero current consumers (dead code, pre-staged for EPIC-05), so nothing breaks today — but none of its style overrides will match once a page renders it, since the prop names it passes no longer correspond to anything the installed version reads.
-**Scope:** Rewrite `calendar.js`'s `classNames` map and icon override against the `react-day-picker` v9+ API, preserving the existing visual output (component is otherwise a thin styling wrapper, no behavioural logic to change).
-**Acceptance Criteria:** `calendar.js` renders correctly (spot-checked or covered by the `saved-filters-calendar.spec.js` Playwright baseline scoped in `blg_spec_95_v7_4_ui_readiness_pass.md` §5 AC-04) against the `react-day-picker` version pinned in `package.json` at the time EPIC-05 begins implementation; no `day_`-prefixed or `IconLeft`/`IconRight` v8-era keys remain in the file.
-
----
-
-### BLG-FE-123 — `SystemStatus.js` `categorizeEndpoint()` missing `/price-alerts`, `/saved-filters`, and `/changelog` branches
-**Priority:** P3 (Low) | **Type:** Frontend / Technical Debt | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** Recurrence escalation, `2026-07-17__release-v7.5` closure, carried across 3 Post-Ship Closure cycles (v7.5→v7.6→v7.7) pending "next roadmap review"; filed as a backlog item by roadmap rebalance `2026-07-24__scheduled` STEP 0 since the fix is application source code outside the Roadmap Engine's write scope; extended at post-ship closure `2026-07-24__release-v7.8` STEP 6 (a new `/changelog` top-level prefix was introduced this cycle by `GET /changelog/latest`, BLG-FE-128, and is not handled by any existing `includes()` branch either) | **Effort:** XS | **Provisional-Target:** v7.10
-
-**Problem**
-`src/pages/SystemStatus.js`'s `categorizeEndpoint()` function has no `includes()` branch for the `/price-alerts`, `/saved-filters`, or `/changelog` endpoint paths (shipped v7.5, v7.4, and v7.8 respectively). All three currently degrade gracefully to the `'Other'` category rather than their correct functional grouping — not a correctness bug (no wrong data shown, nothing broken), but a categorisation gap that has now persisted across 4 releases and grown by one more prefix.
-
-**Scope**
-Add `/price-alerts`, `/saved-filters`, and `/changelog` `includes()` branches to `categorizeEndpoint()`, grouping each under the appropriate existing category (or a new one if none fits) consistent with the function's existing pattern.
-
-**Acceptance Criteria:**
-- `categorizeEndpoint('/price-alerts')`, `categorizeEndpoint('/saved-filters')`, and `categorizeEndpoint('/changelog')` (and their sub-paths) each return a category other than `'Other'`
-- No regression to existing endpoint categorisation
 
 ---
 
@@ -1555,29 +1466,6 @@ SI-04 (strategy version comparison) requires test coverage across: unit tests (v
 
 ---
 
-### BLG-BE-41 — Deprecated table read-path audit
-**Priority:** P2 (Medium)
-**Type:** Backend Engineering / Data Integrity
-**Owner:** Head of Backend Engineering
-**Source:** IDEA-backend-engineering-20260702-02 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
-**Provisional-Target:** v7.10
-**Effort:** S (~1 day)
-
-**Problem**
-BLG-BE-40 (v6.4) fixed a P1 correctness bug where signal generation read the deprecated `tickers` table instead of `ticker_universe`. No systematic check has been done to confirm this was the only deprecated-table read remaining in the codebase.
-
-**Scope**
-- Grep/audit all `database.py` read functions for references to tables superseded by a documented migration
-- Cross-check against `data_model.md` migration history for tables marked deprecated
-- File follow-up correctness items for any additional instances found
-
-**Acceptance Criteria**
-- Audit completed across all `database.py` read functions
-- Findings documented; any additional deprecated-table reads filed as P0/P1 correctness items per severity
-- Head of Backend Engineering sign-off
-
----
-
 ### BLG-BE-42 — Backend request tracing
 **Priority:** P3 (Low)
 **Type:** Backend Engineering / Observability
@@ -1614,22 +1502,6 @@ No per-request trace ID propagation exists across routers/services. No incident 
 **Problem:** Position lifecycle states (per `strategy_rules.md §9`) are referenced independently in backend enums and frontend badge-rendering logic, with no single canonical source confirmed for the value list.
 **Scope:** Consolidate position-state values into one canonical registry (e.g. a shared constants file or OpenAPI enum) referenced by both layers.
 **Acceptance Criteria:** Canonical registry exists; both backend and frontend confirmed to derive from it (or a documented reconciliation shows they were already consistent).
-
----
-
-### BLG-BE-68 — Fix errors masked as HTTP 200 in portfolio_risk.py
-**Priority:** P2 (Medium) | **Type:** Backend / API Consistency | **Owner:** Backend Engineering Patterns Owner | **Source:** BLG-BE-65 audit (ST-04, EPIC-04, v7.6) | **Effort:** S (~0.5d) | **Provisional-Target:** v7.10
-
-**Problem**
-`portfolio_risk.py`'s four endpoints (`/drawdown-status`, `/concentration-status`, `/sector-weights`, `/gate-metrics`) catch all exceptions and return `{"status": "ok", "data": {..., "error": str(e)}}` (first three) or `{"status": "error", "error": str(e)}` (last one) as a bare dict — implicit HTTP 200 in all four cases. This violates `conventions.md` §13.3 ("error responses must not use HTTP 200 with an error body") and is a correctness/observability issue, not just cosmetic inconsistency: a frontend caller checking only `response.status === "ok"` would treat these backend failures as success. Identified during the `docs/specs/api_contracts/backend_engineering_patterns.md` §Error-response envelope conformance audit (v1.3).
-
-**Scope**
-- Convert all four catch blocks to return `JSONResponse(status_code=500, content={"status": "error", "message": str(e)})` per the canonical envelope (`conventions.md` §13), matching the `research.py` reference pattern.
-
-**Acceptance Criteria**
-- All four endpoints return HTTP 500 with the canonical `{status, message}` envelope on internal error
-- Existing 200-path success shapes unchanged
-- Regression test confirms the error path no longer returns HTTP 200
 
 ---
 
@@ -1683,31 +1555,6 @@ Across `alerts.py`, `analytics.py`, `digest.py` (401 case + `/weekly` wrong-stat
 - Total spec files / Total scenarios counts match the table exactly
 - Part 3 Arc coverage table references every newly-added file
 - Director of Quality sign-off recorded
-
----
-
-### BLG-QA-127 — Serve production build for Playwright E2E webServer instead of CRA dev server
-**Priority:** P2 (Medium)
-**Type:** QA / Test Automation
-**Owner:** QA Lead
-**Source:** User-directed CI runtime review (acting as QA & Testing Owner / QA Lead / Director of Quality) — 2026-07-28
-**Effort:** M (~1-2 days)
-**Provisional-Target:** v7.10
-
-**Problem**
-The `playwright-e2e` CI job boots the app via `npm start` (`react-scripts` dev server, unminified, webpack dev-middleware) rather than a production build. All 382 `page.goto()` navigations across the 677-test suite pay dev-server compile/serve overhead on every run. This was identified alongside REC-CI-01 (workers/shard parallelization, actioned 2026-07-28 — see `docs/ops/ci_pipeline_baseline.md` v1.1) but deferred: it requires adding a new dependency (`serve` or `http-server`, neither currently installed) and restructuring how `REACT_APP_API_URL` / `REACT_APP_DEV_FAKE_AUTH` / `REACT_APP_ANTHROPIC_API_KEY` are injected, since CRA bakes `REACT_APP_*` vars into the bundle at build time, not serve time — the current workflow sets them as runtime env vars against the dev server.
-
-**Scope**
-- Add a build step (`npm run build`) before Playwright runs in CI, with `REACT_APP_*` vars present at build time
-- Add and pin a static-serve dependency (`serve` or `http-server`) to serve the build output on port 3000
-- Update `playwright.config.js` `webServer.command` to be CI-conditional (production serve in CI, `npm start` for local dev/live-reload)
-
-**Acceptance Criteria**
-- CI E2E job builds and serves a production bundle instead of the dev server
-- All existing `REACT_APP_*`-gated behaviour (dev fake auth, API base URL, "Improve with AI" button gate) still functions correctly under the production build
-- Local `npx playwright test` (non-CI) continues to use `npm start` / live reload, unaffected
-- Re-measured CI runtime shows improvement over the workers+shard baseline (REC-CI-01) alone
-- QA Lead sign-off recorded
 
 ---
 
@@ -2728,10 +2575,6 @@ PO-02 (Journal Pattern Recognition) requires displaying cross-entry AI analysis 
 
 ---
 
----
-
----
-
 ### BLG-SPEC-56 — Arc 4 API contract pre-authoring (PO-02/03/04)
 **Priority:** P3 (Low)
 **Type:** Spec / Pre-authoring
@@ -2778,14 +2621,6 @@ Arc 4 journal intelligence (PO-02/03/04) will require data model changes. Pre-de
 
 ---
 
----
-
----
-
----
-
----
-
 ### BLG-QA-59 — Arc 4 E2E test strategy pre-design (PO-02/03/04)
 **Priority:** P3 (Low)
 **Type:** Quality Assurance / Pre-design
@@ -2806,8 +2641,6 @@ Arc 4 AI-driven features (PO-02/03/04) introduce Playwright test challenges not 
 - Arc 4 E2E test strategy document produced
 - Mocking approach for PO-02/03/04 AI calls defined and consistent with existing BLG-QA-37 Playwright mock strategy
 - Reviewed by Director of Quality
-
----
 
 ---
 
@@ -2856,8 +2689,6 @@ Arc 4 (PO-02/03/04) will introduce cross-table queries joining trade_plans, red_
 - Index audit document produced covering Arc 4 query patterns
 - Any missing indexes produce separate BLG items before sign-off
 - Reviewed by Infrastructure & Operations Owner
-
----
 
 ---
 
@@ -3112,10 +2943,6 @@ POST /ai/daily-briefing makes an Anthropic API call on every request. If the sam
 
 ---
 
----
-
----
-
 ### BLG-QA-63 — Automated accessibility testing (axe-core) in Playwright CI
 **Priority:** P3 (Low)
 **Type:** QA / Accessibility
@@ -3137,10 +2964,6 @@ The Playwright E2E suite provides functional coverage but no accessibility valid
 - AC-01: axe-core runs on all major pages in CI (advisory, non-blocking)
 - AC-02: Zero critical (level A) violations on any page at time of implementation
 - AC-03: Violation report surfaced as CI annotation on PRs
-
----
-
----
 
 ---
 
@@ -3190,12 +3013,6 @@ All market data (OHLCV, signals, news) is sourced exclusively from Alpaca and Ya
 - AC-01: data_provider_risk_assessment.md produced covering all active external data providers
 - AC-02: Failure modes and impact documented per provider
 - AC-03: Accepted risk statement signed off by Infrastructure & Operations Owner and FinOps & Resource Architect
-
----
-
----
-
----
 
 ---
 
@@ -3311,28 +3128,6 @@ No test data fixtures or state-reset mechanism exists between Playwright runs. N
 **Acceptance Criteria**
 - Fixture isolation tooling implemented once gate condition met
 - Gate condition (demonstrated failure) verified before commencing
-
----
-
-### BLG-SEC-09 — AI rate-limit bypass test
-**Priority:** P2 (Medium)
-**Type:** Security / Verification
-**Owner:** Cybersecurity & Trust Lead
-**Source:** IDEA-cybersecurity-20260702-02 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
-**Provisional-Target:** v7.10
-**Effort:** S (~1 day)
-
-**Problem**
-BLG-OPS-81 (v6.3) added per-endpoint AI rate limiting (10 req/min/IP daily-briefing; 30 req/min/IP chat). No verification has been done that these limits cannot be bypassed via IP rotation or header spoofing in the current deployment.
-
-**Scope**
-- Test rate-limit enforcement against IP-rotation and X-Forwarded-For header spoofing attempts
-- Document findings; file a security fix item if a bypass is confirmed
-
-**Acceptance Criteria**
-- Bypass test performed against both rate-limited AI endpoints
-- Findings documented; any confirmed bypass filed as a P1/P0 security item
-- Cybersecurity & Trust Lead sign-off
 
 ---
 
@@ -3970,8 +3765,6 @@ No test failures have been attributed to stale fixtures since v6.4's signal/secu
 
 ---
 
----
-
 ### BLG-BE-47 — Standardise pagination pattern across list endpoints (consolidated)
 **Priority:** P2 (Medium)
 **Type:** Backend / Code Quality
@@ -4179,28 +3972,6 @@ The API key rotation runbook has never been exercised end-to-end — its first r
 **Acceptance Criteria**
 - CSP no longer includes a blanket `'unsafe-inline'` for `script-src`; `style-src` narrowed or justified explicitly if any exception remains
 - No functional regression (app loads and renders correctly under the tightened CSP)
-
----
-
-### BLG-SEC-13 — Raw exception text returned in API error responses
-**Priority:** P3 (Low)
-**Type:** Security / Backend
-**Owner:** Head of Engineering
-**Source:** ST-17 (BLG-OPS-71), EPIC-03, v6.8 system threat model review — 2026-07-09
-**Effort:** M (~1-2 days — touches 44 call sites in backend/main.py)
-**Provisional-Target:** v7.10
-
-**Problem**
-44 call sites in `backend/main.py` construct `HTTPException` responses with `detail=str(e)`, returning the raw Python exception message directly to the API caller. This risks incidental disclosure of internal file paths, database schema hints, or library version details to anyone holding the API key. Impact is bounded (the API is already key-gated and this is a single-user system), but it is a defense-in-depth gap — if the key is ever compromised, verbose errors give an attacker more reconnaissance than a generic message would.
-
-**Scope**
-- Replace `detail=str(e)` with a generic client-facing message for 500-class errors; log the full exception server-side (already partially done via `traceback.print_exc()` at some sites)
-- Preserve specific, safe detail messages for expected 4xx errors (e.g. validation failures) where the detail is not derived from a raw exception object
-
-**Acceptance Criteria**
-- 500-class error responses no longer include raw exception text in the client-facing `detail` field
-- Full exception detail still logged server-side for debugging
-- No change to intentional, safe 4xx error messages
 
 ---
 
@@ -4465,8 +4236,6 @@ PerformanceAnalytics is one of the densest pages (multiple charts, tables) and h
 
 **Acceptance Criteria**
 - Audit conducted; critical issues (if any) fixed or filed
-
----
 
 ---
 
@@ -5279,8 +5048,6 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a pytest fixture restoring the prior `sys.modules` entries after that file's tests complete), matching the safer guarded pattern already used in test_trade_service.py.
 
 ---
-
----
 *Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*
 
 ---
@@ -5319,8 +5086,6 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 *Release Slice v5.8 removed — cycle 2026-06-17__release-v5.8 closed 2026-06-17. Archived canonical home: claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md*
 
 *Release Slice v5.7 removed — cycle 2026-06-16__release-v5.7 closed 2026-06-17. Archived canonical home: claude/cycles/2026-06-16__release-v5.7/stage4_backlog_slice.md*
-
----
 
 ---
 
@@ -5367,52 +5132,6 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 ---
 
 *Release Slice v7.0 removed — cycle 2026-07-12__release-v7.0 closed 2026-07-13. Archived canonical home: claude/cycles/2026-07-12__release-v7.0/stage4_backlog_slice.md*
-
----
-
-## Release Slice v7.10
-
-<!-- release-plan-marker: RP:v7.10:2026-07-28__release-v7.10 -->
-
-**Ephemeral section — removed at next `groom backlog` run after this cycle closes.** Canonical home: `claude/cycles/2026-07-28__release-v7.10/stage4_backlog_slice.md`.
-
-23 items across 6 grouped EPICs, sized to the full confirmed ~24-28 day capacity band (~26.15 days midpoint), per explicit user "use full capacity" instruction:
-
-| Item | Epic | Story |
-|------|------|-------|
-| BLG-BE-68 | EPIC-01 | ST-01 |
-| BLG-BE-75 | EPIC-01 | ST-02 |
-| BLG-BE-76 | EPIC-01 | ST-03 |
-| BLG-BE-41 | EPIC-01 | ST-04 |
-| BLG-SEC-22 | EPIC-02 | ST-05 |
-| BLG-SEC-09 | EPIC-02 | ST-06 |
-| BLG-SEC-18 | EPIC-02 | ST-07 |
-| BLG-SEC-13 | EPIC-02 | ST-08 |
-| BLG-QA-127 | EPIC-03 | ST-09 |
-| BLG-QA-96 | EPIC-03 | ST-10 |
-| BLG-QA-133 | EPIC-03 | ST-11 |
-| BLG-QA-128 | EPIC-03 | ST-12 |
-| BLG-SPEC-102 | EPIC-04 | ST-13 |
-| BLG-SPEC-103 | EPIC-04 | ST-14 |
-| BLG-SPEC-104 | EPIC-04 | ST-15 |
-| BLG-GOV-243 | EPIC-04 | ST-16 |
-| BLG-FE-122 | EPIC-05 | ST-17 |
-| BLG-FE-123 | EPIC-05 | ST-18 |
-| BLG-FE-106 | EPIC-05 | ST-19 |
-| BLG-FE-134 | EPIC-05 | ST-20 |
-| BLG-GOV-256 | EPIC-06 | ST-21 |
-| BLG-GOV-216 | EPIC-06 | ST-22 |
-| BLG-GOV-207 | EPIC-06 | ST-23 |
-
-`Provisional-Target` updated `TBD`/`Unscheduled`/stale `v7.7` → `v7.10` on all 23 items (see each item's own entry above). `BLG-FEAT-73`/`BLG-FEAT-74` and the Arc 5 pre-entry/compliance-gateway UX cluster (12 items) + `BLG-SPEC-35` excluded — all carry unmet gate criteria, consistent with the standing PO perennial-return disposition. See `decisions--2026-07-28__release-v7.10.md`.
-
----
-
-### BLG-SEC-18 — Rate-limit audit on public-facing endpoints ahead of any future auth changes
-**Priority:** P2 (Medium) | **Type:** Security | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260717-01 | **Effort:** M | **Provisional-Target:** v7.10
-**Problem:** No confirmed rate-limiting audit has been performed against the current `X-API-Key`-gated endpoint set (registered `BLG-OPS-99`) — a gap that becomes more consequential once/if any auth model change is considered.
-**Scope:** Audit current rate-limiting posture (Render platform-level and application-level) against all public-facing endpoints; document findings.
-**Acceptance Criteria:** Audit complete; any gaps filed as follow-up `BLG-SEC-*` items; no implementation required unless a P0/P1 gap is found.
 
 ---
 
@@ -5487,18 +5206,6 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 **Problem:** `ComplianceRecheckModal.js` (v6.9) and the PT-05 checklist modal implement a similar pattern divergently, risking UX drift between them over time.
 **Scope:** Extract a shared modal shell component; migrate both consumers.
 **Acceptance Criteria:** Shared component exists; both modals migrated with no visual/behavioural regression (Playwright coverage confirms).
-
-### BLG-GOV-207 — Same-day scheduled-rebalance cycle_id collision handling
-**Priority:** P2 (Medium) | **Type:** Governance / Process Integrity | **Owner:** Head of Specs Team | **Source:** IDEA-challenger-20260712-01 | **Effort:** S | **Provisional-Target:** v7.10
-**Problem:** `run roadmap --reason "scheduled"` invoked twice on the same calendar date produces an identical `cycle_id` (`YYYY-MM-DD__scheduled`), risking a silent overwrite of a completed Class 3 record. Confirmed in practice this cycle (`2026-07-10__scheduled` ran twice in one session as the sandbox clock advanced from 07-10 to 07-12 mid-session; resolved ad hoc via user-confirmed date resolution rather than a built-in rule).
-**Scope:** Add an explicit STEP 0 rule to `roadmap_prompt.md` — detect an existing cycle folder for the computed `cycle_id` and auto-suffix (`-2`, `-3`, …) rather than requiring ad hoc user escalation.
-**Acceptance Criteria:** STEP 0 rule added and versioned per `CLAUDE.md` §6; a second same-day scheduled invocation no longer requires manual disambiguation.
-
-### BLG-QA-96 — Red Flag Journal auth regression test
-**Priority:** P2 (Medium) | **Type:** QA / Security | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260712-01 | **Effort:** S | **Provisional-Target:** v7.10
-**Problem:** `GET /portfolio/red-flag-journal` had a security review at v4.0 shipping, but no regression test confirms auth stays enforced after later, unrelated endpoint changes.
-**Scope:** Add an auth-required regression test (401/403 on missing/invalid `X-API-Key`) to the backend test suite.
-**Acceptance Criteria:** Test added to `backend/routers/test.py`; passes in CI; fails if auth check is removed (verified by temporarily removing it locally).
 
 ### BLG-SEC-17 — Gemini API key rotation runbook
 **Priority:** P3 (Low) | **Type:** Security / Operations | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
@@ -5603,12 +5310,6 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 **Problem:** STEP 2.4's Product Value Ratio is recomputed from scratch each cycle (0.26 → 0.18 → 0.21) with no first-class trend record, making the multi-cycle alert pattern harder to see at a glance.
 **Scope:** Add a Product Value Ratio row to `velocity_metrics.md`, appended each time STEP 2.4 runs.
 **Acceptance Criteria:** Row added retroactively for the last 3 readings; convention documented for future cycles.
-
-### BLG-GOV-216 — Recent-rebalance recency advisory at roadmap STEP -1
-**Priority:** P2 (Medium) | **Type:** Governance / Process Integrity | **Owner:** PMO Lead | **Source:** IDEA-pmo-lead-20260712-01 | **Effort:** S | **Provisional-Target:** v7.10
-**Problem:** STEP -1.5 doesn't check inter-run recency; an accidental double-invocation of `run roadmap --reason scheduled` isn't caught until cycle-folder creation (as happened this cycle — complements `BLG-GOV-207`'s auto-suffix fix with an earlier, cheaper warning).
-**Scope:** Surface a confirmation advisory at STEP -1 if `last_scheduled_rebalance_utc` is <24h old.
-**Acceptance Criteria:** `roadmap_prompt.md` patched (versioned per `CLAUDE.md` §6); advisory fires correctly on a same-day re-invocation.
 
 ### BLG-GOV-217 — Surface meta-review countdown in every `run_manifest.md`
 **Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** PMO Lead | **Source:** IDEA-pmo-lead-20260712-02 | **Effort:** S | **Provisional-Target:** TBD
@@ -5996,35 +5697,9 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 
 ---
 
----
-
 ## Delivery Verification 2026-07-24__release-v7.8 — New Items
 
 *Doc-completeness findings surfaced while authoring `tests/test_pilot_contract_schemas.py` (EPIC-11/ST-11), recorded but not fixed in that story per its own scope boundary (adding contract tests, not auditing existing contract docs) — see `qa_evidence_EPIC-11.md`. None are P0/P1; no caller-relied-upon field is missing from any real response.*
-
-### BLG-SPEC-102 — `position_endpoints.md` envelope claim doesn't match live `GET /positions` behaviour
-**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** `2026-07-24__release-v7.8` EPIC-11 ST-11 pilot contract test authoring (`qa_evidence_EPIC-11.md`) | **Effort:** XS | **Provisional-Target:** v7.10
-**Problem:** `docs/specs/api_contracts/position_endpoints.md` documents `GET /positions` as returning the standard `{status, data}` envelope, but the live endpoint returns a raw list (confirmed via `tests/test_api_contracts.py::test_get_positions_returns_ok`'s own comment and re-confirmed by `tests/test_pilot_contract_schemas.py`). Doc/reality mismatch only — the pilot contract test asserts the real (unenveloped) behaviour, not the doc's claim.
-**Scope:** Update `position_endpoints.md` to document the actual (unenveloped) response shape for `GET /positions`.
-**Acceptance Criteria:** `position_endpoints.md` corrected to match live behaviour; API Contracts & Documentation Owner sign-off; no functional change.
-
----
-
-### BLG-SPEC-103 — `GET /positions` undocumented lifecycle fields (`position_state`, `state_entered_at`, `days_in_state`)
-**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** `2026-07-24__release-v7.8` EPIC-11 ST-11 pilot contract test authoring (`qa_evidence_EPIC-11.md`) | **Effort:** XS | **Provisional-Target:** v7.10
-**Problem:** `GET /positions` merges in 3 fields via `get_lifecycle_fields_for_position()` (`position_state`, `state_entered_at`, `days_in_state`) that are absent from `docs/specs/api_contracts/position_endpoints.md`'s documented response shape.
-**Scope:** Add the 3 fields to `position_endpoints.md`'s response schema with type/description.
-**Acceptance Criteria:** All 3 fields documented; API Contracts & Documentation Owner sign-off; no functional change.
-
----
-
-### BLG-SPEC-104 — `trade_endpoints.md` JSON example omits documented fields (`commission_gbp`, `spread_cost_gbp`, `net_r_multiple`)
-**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** `2026-07-24__release-v7.8` EPIC-11 ST-11 pilot contract test authoring (`qa_evidence_EPIC-11.md`) | **Effort:** XS | **Provisional-Target:** v7.10
-**Problem:** `docs/specs/api_contracts/trade_endpoints.md`'s JSON example for `GET /trades` omits `commission_gbp`, `spread_cost_gbp`, `net_r_multiple` — fields documented in the same file's Field notes table and always returned by the live service. Example-completeness gap only, not a schema gap.
-**Scope:** Update the JSON example to include all 3 fields.
-**Acceptance Criteria:** Example updated to include all 3 fields; API Contracts & Documentation Owner sign-off; no functional change.
-
----
 
 ## Roadmap Rebalance 2026-07-27__scheduled — New Items (IW-20260727-01 disposition)
 
@@ -6142,30 +5817,6 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 
 ---
 
-### BLG-QA-128 — Consumer-driven contract check: frontend API calls vs documented contracts
-**Priority:** P2 (Medium) | **Type:** QA / Contract Testing | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260728-02 | **Effort:** M | **Provisional-Target:** v7.10
-**Problem:** `openapi.yaml` and `docs/specs/api_contracts/` describe the backend's own contract, but nothing checks that frontend call sites actually match the documented request/response shape they depend on.
-**Scope:** Add a lightweight consumer-driven contract check comparing frontend API call sites against the documented contract fields they consume.
-**Acceptance Criteria:** Check implemented (CI or scripted); first run's findings triaged; API Contracts & Documentation Owner sign-off.
-
----
-
-### BLG-BE-75 — Extend Alpaca backoff audit (BLG-BE-57) to Yahoo Finance, Gemini, and Claude call sites
-**Priority:** P2 (Medium) | **Type:** Backend / Resilience | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260728-01 (relationship note: extends `BLG-BE-57`'s Alpaca-only scope to 3 additional providers) | **Effort:** M | **Provisional-Target:** v7.10
-**Problem:** `BLG-BE-57` audited retry/backoff behaviour for Alpaca call sites only; Yahoo Finance, Gemini, and Claude external calls have not had the same review, despite being equally capable of rate-limiting or transient failure.
-**Scope:** Apply the same retry/backoff audit methodology from `BLG-BE-57` to the three remaining external providers.
-**Acceptance Criteria:** All 4 providers' call sites confirmed to use the shared retry/backoff decorator (`BLG-BE-71`) or have a documented exception; Backend Engineering Patterns Owner sign-off.
-
----
-
-### BLG-BE-76 — Idempotency key pattern for state-mutating POST endpoints
-**Priority:** P2 (Medium) | **Type:** Backend / Correctness | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260728-02 | **Effort:** M | **Provisional-Target:** v7.10
-**Problem:** State-mutating POST endpoints (trade entry, trade plan creation, alert rules) have no idempotency-key mechanism, so a retried request (e.g. after a timeout) risks creating a duplicate record.
-**Scope:** Define and apply an idempotency-key pattern (client-supplied key + short-lived server-side dedup check) for the highest-risk state-mutating endpoints.
-**Acceptance Criteria:** Pattern documented in `backend_engineering_patterns.md`; applied to at least the trade-entry and trade-plan-creation endpoints; Backend Engineering Patterns Owner sign-off.
-
----
-
 ### BLG-GOV-267 — Base44 generation failure-mode log (recurring manual-correction patterns)
 **Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** Base44-generated components occasionally need manual correction (e.g. missed dark-mode class pairs, contrast issues) but no log tracks which failure modes recur, so prompt-template improvements are made ad hoc rather than targeting the most frequent gaps.
@@ -6195,14 +5846,6 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 **Problem:** `current_roadmap.md`'s own history shows a repeated pattern (v7.4 AMD, v7.5, v7.6 DL-073, v7.7 DL-074, and others) of "out-of-band" direct writes to formalise release sections or add capacity, each time noting that a fully compliant `run roadmap --reason scheduled` path existed but was bypassed by explicit session direction. This was already flagged as a Carry-Forward observation at `2026-07-21__release-v7.7` closure (Item 2) but has no dedicated tracking artefact — each new bypass is only visible by reading roadmap prose history, not a structured log.
 **Scope:** Add a structured, append-only log of every direct-write bypass of a governed routine (date, file, reason given, routine bypassed), so the recurrence pattern is visible without re-deriving it from `current_roadmap.md` prose each time.
 **Acceptance Criteria:** Log created; backfilled with the known historical instances named above; PMO Lead sign-off.
-
----
-
-### BLG-SEC-22 — Secrets-scanning pre-commit/CI gate (gitleaks/trufflehog)
-**Priority:** P2 (Medium) | **Type:** Security / CI | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260728-01 | **Effort:** S | **Provisional-Target:** v7.10
-**Problem:** CI has a secret-scanning gate at the pipeline level (per `v5.3`'s `BLG-OPS-58`), but no pre-commit local check exists, so a secret can be committed locally before CI ever runs.
-**Scope:** Add a local pre-commit hook running a secrets scanner (gitleaks or trufflehog), complementing the existing CI-level gate.
-**Acceptance Criteria:** Hook added to `.githooks/pre-commit`; confirmed to catch a deliberately-planted test secret; Cybersecurity & Trust Lead sign-off.
 
 ---
 
@@ -6350,14 +5993,6 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 
 ---
 
-### BLG-FE-134 — Keyboard navigation & focus-order audit (distinct from colour-contrast a11y work)
-**Priority:** P2 (Medium) | **Type:** Frontend / Accessibility | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260728-02 | **Effort:** M | **Provisional-Target:** v7.10
-**Problem:** Accessibility work to date (`BLG-FE-82`, `BLG-FE-87/88/89`, dark-mode contrast audits) has focused on colour/contrast; keyboard navigation and focus order have not had an equivalent dedicated audit.
-**Scope:** Audit keyboard navigation and focus order across the app's primary flows (trade entry, trade plan, command palette).
-**Acceptance Criteria:** Audit complete; findings filed as follow-up items where gaps are found; Head of UX & Design sign-off.
-
----
-
 ### BLG-OPS-126 — Backup & disaster recovery runbook for production database
 **Priority:** P2 (Medium) | **Type:** Operations / Infrastructure | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260728-02 | **Effort:** S | **Provisional-Target:** TBD
 **Problem:** No documented runbook exists for production database backup verification or disaster recovery — a real incident would rely on ad hoc knowledge rather than a tested procedure.
@@ -6419,14 +6054,6 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 **Problem:** The `FI-P3-02` exception (wording-only ACs may substitute code review for staging sign-off) is applied per-story with no consolidated tracker of how often it's invoked, making it hard to spot if the exception is being over-relied upon.
 **Scope:** Add a tracker logging each `FI-P3-02` invocation across cycles.
 **Acceptance Criteria:** Tracker created and backfilled where findable; QA Lead sign-off.
-
----
-
-### BLG-QA-133 — Endpoint test suite coverage audit against all backend/routers/ files
-**Priority:** P2 (Medium) | **Type:** QA / Backend | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260728-01 | **Effort:** M | **Provisional-Target:** v7.10
-**Problem:** `CLAUDE.md` §2 requires every new route to be registered in `backend/routers/test.py`, but no periodic audit confirms all *existing* routes across every router file are actually covered, only that new ones are added going forward.
-**Scope:** Audit `backend/routers/test.py` coverage against every `@router.*` decorator across all router files.
-**Acceptance Criteria:** Audit complete; any coverage gap found is filed or fixed; QA & Testing Owner sign-off.
 
 ---
 
