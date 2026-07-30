@@ -18,6 +18,15 @@ on:
   schedule:
     - cron: '*/15 * * * *'  # every 15 minutes
   workflow_dispatch:
+    inputs:
+      test_url:
+        description: >-
+          ST-13/ST-14 live-fire test only: override the polled URL directly
+          (e.g. https://httpstat.us/500 to simulate a sustained 5xx spike
+          without touching real infrastructure). Leave blank for normal use —
+          normal runs always poll the real production API's /health endpoint.
+        required: false
+        type: string
 
 concurrency:
   group: production-health-check
@@ -34,11 +43,14 @@ jobs:
         id: poll
         env:
           API_URL: ${{ secrets.API_URL }}
+          TEST_URL: ${{ inputs.test_url }}
         run: |
           set +e
           fail_count=0
+          TARGET="${TEST_URL:-${API_URL}/health}"
+          echo "Polling target: ${TARGET}"
           for i in 1 2 3; do
-            code=$(curl --max-time 15 -s -o /dev/null -w "%{http_code}" -X GET "${API_URL}/health")
+            code=$(curl --max-time 15 -s -o /dev/null -w "%{http_code}" -X GET "${TARGET}")
             echo "Attempt ${i}: HTTP ${code}"
             if [ "$code" -ge 500 ]; then
               fail_count=$((fail_count + 1))
