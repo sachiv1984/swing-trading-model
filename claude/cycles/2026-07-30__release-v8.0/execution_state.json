@@ -469,36 +469,44 @@
       "stories": {
         "ST-19": {
           "title": "Structural fix for recurring cross-EPIC execution_state.json merge-conflict pattern",
-          "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": null,
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
+          "assigned_to": "Head of Engineering",
+          "github_issue": 1159,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-06",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "delegation_record_id": "ESC-EXEC-20260731-01",
+          "blocked_since_utc": "2026-07-31T02:15:00Z",
+          "unblock_criteria": "Head of Engineering design/technical-approach session concludes, selects an approach, and signs off before any new mechanism is implemented; shared_standards.md §12 updated to reference the decision in the same change per the story's own notes",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "claude/cycles/2026-07-30__release-v8.0/execution_escalations.md#ESC-EXEC-20260731-01"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Classification corrected from stale 'autonomous' to 'delegated_decision' per sprint_backlog.md - this item explicitly requires a HoST/Head of Engineering design/technical-approach session and sign-off BEFORE any new mechanism is implemented and used live (its own gate condition). The engine cannot unilaterally design and ship a new cross-cutting governance mechanism without violating that same gate. Escalated via ESC-EXEC-20260731-01 with a 3-option proposal drafted as input (not a decision) informed by this session's own direct, repeated experience of the exact cross-branch execution_state.json staleness pattern across all 6 EPIC branches worked this sprint. Non-blocking per sprint planning's own classification of the outstanding action; existing reactive mechanism (shared_standards.md §12) remains the fallback."
         }
       }
     }
   },
-  "blocked_items": [],
-  "delegated_items": [],
+  "blocked_items": [
+    "ST-19"
+  ],
+  "delegated_items": [
+    "ST-19"
+  ],
   "completed_items": [
     "ST-01",
     "ST-02",
     "ST-03"
   ],
-  "open_escalations": [],
+  "open_escalations": [
+    "ESC-EXEC-20260731-01"
+  ],
   "merge_gate": {
     "epics_merged": [
       "EPIC-01"
