@@ -1,15 +1,15 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.17
-**Last Updated:** 2026-07-30 (sprint close 2026-07-28__release-v7.10)
+**Version:** 4.18
+**Last Updated:** 2026-07-30 (delivery verification 2026-07-28__release-v7.10)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
 
 ## Sprint: 2026-07-28__release-v7.10
 **Date:** 2026-07-30
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified — 2026-07-30
 
 ### Capabilities now live (merged this sprint)
 

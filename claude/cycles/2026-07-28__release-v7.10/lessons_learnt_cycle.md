@@ -63,3 +63,43 @@ None applied this run.
 ## Escalations
 
 None.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-07-28__release-v7.10
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-07-30
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-07-27__release-v7.9 (`lessons_learnt_cycle.md` `## Phase 4`) — one friction item (`ESC-EXEC-20260727-02` carried forward at sprint close with no corresponding `backlog.md` entry; filed `BLG-GOV-264` at delivery verification). Not a match for the friction item identified below — no recurrence (this cycle had zero open escalations carried forward; `execution_state.json.open_escalations = []`, `sprint_close.md` confirms "Open Escalations: None").
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| The sealed `execution_state.json` top-level `completed_items` summary array lists only 4 of the 23 done stories this cycle (`ST-13`–`ST-16`, EPIC-04 — the first EPIC in merge order), rather than the full union across all 6 merged EPICs. The prior cycle (v7.9) correctly unioned all 15 stories from all EPICs into this same field, so this is a first occurrence, not a standing defect in the mechanism. Did not affect verification status — the per-story `epics.<EPIC-xx>.stories.<ST-xx>.status` fields (the actual traceability source of truth) were all correctly `done`. | Phase 4 | A | defer | Add a reconciliation check to `execution_prompt.md`'s Sprint Close / seal step: before writing `sealed: true`, verify the top-level `completed_items` array is the union of all `done`/`merged` story IDs across every EPIC in `epics_merged` (matching the union rule in `shared_standards.md §12` Rule 2 / `CLAUDE.md §8`), not just the first-merged EPIC's items. File: `claude/system/execution_prompt.md`. Section: STEP 5 — Sprint Close (seal step). Delivery Verification's write scope does not include `execution_prompt.md` or the sealed `execution_state.json`, so this cannot be applied in this run. | Head of Specs Team | next `run sprint` invocation |
+
+All other STEP -1 through STEP 7 checks completed cleanly: sprint close readiness statement all `Yes`; all 6 QA evidence logs present with compliant, non-blank sign-offs on first read (no Tier 1/Tier 2 issues; all autonomous-class and named-role agent-mediated sign-off formats compliant); zero deviations filed; zero traceability gaps (once cross-checked at the per-story level); `deferred_execution_blockers` empty; zero parked items (stale-parked check skipped); test scenario coverage fully accounted for (5 EPICs with confirmed-run scenarios, 1 correctly dispositioned `not_applicable`, no genuine gaps); `docs/System_status_report.md`'s v7.10 section required only the expected routine status-line update, no content corrections. Status determined as `Verified` with no hard blocks encountered.
+
+**Recurrence Notes:**
+Not a recurrence — this is the first occurrence of this specific `completed_items` staleness pattern; the prior cycle's equivalent field was correctly populated. Distinct from v7.9's Phase 4 friction item (an open-escalation-to-backlog traceability gap), which also did not recur here.
+
+---
+
+## Recurrence Escalations (Phase 4)
+
+None — first occurrence of this friction item; no open prior-cycle action left unresolved.
+
+## Process improvements actioned this run (Phase 4)
+
+None applied this run (the identified friction item's fix targets `execution_prompt.md`, which is outside Delivery Verification's write scope — recorded as a deferred patch above).
+
+## Outstanding deferred patches (Phase 4)
+
+| File | Section | Change required | Owner | Target |
+|------|---------|----------------|-------|--------|
+| `claude/system/execution_prompt.md` | STEP 5 — Sprint Close (seal step) | Verify `completed_items` is the full cross-EPIC union of done/merged story IDs (per `shared_standards.md §12` Rule 2) before writing `sealed: true`. | Head of Specs Team | next `run sprint` invocation |
+
+## Escalations (Phase 4)
+
+None.
