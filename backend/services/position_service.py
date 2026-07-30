@@ -38,6 +38,7 @@ from database import (
     mark_position_reviewed as db_mark_position_reviewed,
     create_position_audit_log_entry,
 )
+from strategy_version_registry import get_current_strategy_version
 
 from utils.pricing import (
     get_current_price,
@@ -844,8 +845,11 @@ def add_position(
         'entry_note': entry_note,
         'tags': tags,
         'user_fill_price': fill_price,
+        # ST-01 (EPIC-01, v8.0): stamp the active strategy version at entry,
+        # forward-only — no backfill of existing rows.
+        'strategy_version_at_entry': get_current_strategy_version(),
     }
-    
+
     # Create position in database
     new_position = create_position(portfolio_id, position_data)
 
@@ -892,7 +896,11 @@ def add_position(
         "entry_price": round(entry_price_native, 2),
         "initial_stop": round(initial_stop_native, 2),
         "remaining_cash": round(new_cash, 2),
-        "position_id": str(new_position['id'])
+        "position_id": str(new_position['id']),
+        # ST-03 (EPIC-01, v8.0): §4.1.5 requires the FX rate used be returned
+        # for auditability — was already persisted to positions.fx_rate but
+        # never surfaced in this response.
+        "fx_rate_used": round(fx_rate_to_use, 4),
     }
 
 

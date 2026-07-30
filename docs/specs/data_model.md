@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.19
-**Last Updated:** 2026-07-29
+**Version:** 2.20
+**Last Updated:** 2026-07-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1575,6 +1575,55 @@ Reversible: `DROP TABLE IF EXISTS sector_regime_history;`
 
 ---
 
-**Document Version:** 2.19
+## DS-11 — Add strategy_version_at_entry to trade_plans and positions (v2.20, 2026-07-30)
+
+**Story:** ST-01 (EPIC-01, v8.0) — BLG-SPEC-78
+
+Adds one nullable column to each of `trade_plans` and `positions`, stamped at row-creation time with the currently active strategy version label (`backend/strategy_version_registry.py::get_current_strategy_version()`, which returns the last entry of `STRATEGY_VERSION_REGISTRY` — maintained in the same commit as any new `strategy_rules.md` Change Log row). This is a direct, unambiguous version tag on newly created rows, distinct from the derived-window attribution approach `strategy_version_registry.resolve_version_window()` provides for historical `trade_history` rows that predate this field (SI-04, v7.7 ST-01) — that derivation remains the only attribution mechanism for pre-v8.0 rows.
+
+### Up Migration (v2.19 → v2.20)
+
+```sql
+BEGIN;
+ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS strategy_version_at_entry VARCHAR(10);
+ALTER TABLE positions ADD COLUMN IF NOT EXISTS strategy_version_at_entry VARCHAR(10);
+COMMIT;
+```
+
+### Verification
+
+```sql
+SELECT table_name, column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name IN ('trade_plans', 'positions') AND column_name = 'strategy_version_at_entry';
+-- Expected: 2 rows, data_type=character varying, is_nullable=YES
+```
+
+### Down Migration (v2.20 → v2.19)
+
+```sql
+BEGIN;
+ALTER TABLE trade_plans DROP COLUMN IF EXISTS strategy_version_at_entry;
+ALTER TABLE positions DROP COLUMN IF EXISTS strategy_version_at_entry;
+COMMIT;
+```
+
+### Field Reference
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| `strategy_version_at_entry` | VARCHAR(10) | YES | Strategy version label (e.g. `"1.4"`) active at the moment this `trade_plans` / `positions` row was created. Populated forward-only — existing rows created before this migration remain `NULL`, and no backfill was attempted (their attribution, where needed, still goes through `resolve_version_window()`'s derived-window approach against `entry_date`). |
+
+**Population points:** `backend/routers/trade_plans.py::create_plan()` (trade_plans) and `backend/services/position_service.py::add_position()` (positions), both via `get_current_strategy_version()` immediately before the row is written — mirrors the existing `portfolio_value_at_entry` / `effective_settings_snapshot` "capture-at-creation" pattern already used on `trade_plans` (DS-07/SI-02).
+
+Reversible: see Down Migration above.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-07-30 (agent-mediated; two nullable columns, no existing schema touched, no backfill attempted — forward-only by design per AC)
+- Financial Reporting & Records Owner: Accepted — 2026-07-30 (agent-mediated; no impact to existing P&L/reporting computations, additive field only)
+
+---
+
+**Document Version:** 2.20
 **Maintained By:** Data Model & Domain Schema Owner
 **Last Review:** 2026-07-29

@@ -80,5 +80,8 @@ def prospective_heat_endpoint(
             "prospective_risk_gbp": prospective_risk_gbp,
             "portfolio_value_gbp": round(portfolio_value_gbp, 2),
             "ticker": ticker,
+            # ST-03 (EPIC-01, v8.0): §4.1.5 requires the FX rate used be
+            # returned for auditability — was computed but never surfaced.
+            "fx_rate_used": round(fx_rate_used, 4),
         },
     }

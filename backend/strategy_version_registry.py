@@ -41,6 +41,17 @@ STRATEGY_VERSION_REGISTRY = [
 ]
 
 
+def get_current_strategy_version() -> str:
+    """Return the version label of the currently active (latest) strategy version.
+
+    ST-01 (EPIC-01, v8.0, BLG-SPEC-78): used to stamp `strategy_version_at_entry`
+    on trade_plans/positions at row-creation time — the registry's last entry is
+    always the current version since it is maintained in the same commit as any
+    new strategy_rules.md Change Log row (see module docstring).
+    """
+    return STRATEGY_VERSION_REGISTRY[-1]["version"]
+
+
 def resolve_version_window(version_label: str):
     """Return (start_date, end_date_or_None) for a version label, or None if not found.
 

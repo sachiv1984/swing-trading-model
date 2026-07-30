@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.5.1
-**Last Updated:** 2026-07-29
+**Version:** 2.6.0
+**Last Updated:** 2026-07-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -199,9 +199,16 @@ Response uses the standard success envelope from **conventions.md**.
   "entry_price": 850.00,
   "initial_stop": 780.00,
   "remaining_cash": 4075.00,
-  "position_id": "550e8400-e29b-41d4-a716-446655440000"
+  "position_id": "550e8400-e29b-41d4-a716-446655440000",
+  "fx_rate_used": 1.3642
 }
 ```
+
+#### Response fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `fx_rate_used` | number | ST-03 (EPIC-01, v8.0): the effective GBP/USD rate applied to this entry (user-provided `fx_rate` if supplied, else the live rate at entry time). `1.0` for UK tickers. Same value persisted to `positions.fx_rate`. Per `strategy_rules.md §4.1.5`'s auditability requirement — previously computed and persisted but not returned in this response. |
 
 ### Validation rules & constraints
 
@@ -518,7 +525,8 @@ Response uses the standard success envelope from **conventions.md**.
     "incremental_heat_percent": 1.7,
     "prospective_risk_gbp": 85.00,
     "portfolio_value_gbp": 5000.00,
-    "ticker": "AAPL"
+    "ticker": "AAPL",
+    "fx_rate_used": 1.3642
   }
 }
 ```
@@ -534,6 +542,7 @@ Response uses the standard success envelope from **conventions.md**.
 | `prospective_risk_gbp` | number | GBP risk of the prospective position: `(entry_price − stop_price) × shares / fx_rate_used` |
 | `portfolio_value_gbp` | number | Current portfolio value used as the denominator (from `GET /portfolio`) |
 | `ticker` | string | Echo of the `ticker` query parameter |
+| `fx_rate_used` | number | ST-03 (EPIC-01, v8.0): the effective GBP/USD rate applied (user-provided `fx_rate` if supplied, else the live rate). `1.0` for UK tickers. Per `strategy_rules.md §4.1.5`'s auditability requirement — previously computed but not returned. |
 
 ### Response (200) — Invalid inputs
 
@@ -586,6 +595,7 @@ Errors use the standard error envelope from **conventions.md**.
 | 2.0.0 | 2026-03-17 | ST-13 (EPIC-04): GET /portfolio/prospective-heat added — calculates portfolio heat including a prospective new position. Response shape, query parameters, calculation rules, and business rule failures defined. |
 | 2.5.0 | 2026-07-27 | ST-02 (EPIC-02, v7.9, BLG-FEAT-67): GET /portfolio/sector-regime-trend added — weekly-bucketed sector concentration + regime status trend, backed by a new sector_regime_history table (data_model.md, going-forward capture only). Documents the corrected data-dependency premise (Metrics Definitions & Analytics Owner amendment) — no prior historical sector/regime data existed to aggregate. |
 | 2.5.1 | 2026-07-29 | ST-12 (EPIC-03, v7.10, BLG-QA-128): documentation backfill — `portfolio_heat_percent` and `position_risks` added to GET /portfolio's response schema and field notes. Both fields have always been returned by the live implementation and are consumed by `src/pages/RiskDashboard.js`; they were simply never documented here. Surfaced by a consumer-driven contract check (`scripts/check_consumer_contract_drift.js`). No behaviour change. |
+| 2.6.0 | 2026-07-30 | ST-03 (EPIC-01, v8.0, BLG-SPEC-107): FX conversion audit trail completeness check against `strategy_rules.md §4.1.5`'s "FX rate used must be returned ... for auditability" requirement. Found and fixed 3 gaps where an FX-derived GBP amount was computed but the rate used was never returned: `POST /portfolio/position` (`fx_rate_used` added — was already persisted to `positions.fx_rate` but never surfaced in this response), `GET /portfolio/prospective-heat` (`fx_rate_used` added), and `GET /portfolio/pre-entry-validation`'s `cash_constraint` check (`fx_rate_used` added). `POST /portfolio/size` was already compliant (`fx_rate_used` already returned). |
 
 ---
 
@@ -747,7 +757,8 @@ Returns an advisory pre-entry validation result for a proposed position. All che
         "detail": "Estimated cost £2,150.00 within available cash £5,000.00",
         "severity": "fail",
         "estimated_cost_gbp": 2150.0,
-        "available_cash_gbp": 5000.0
+        "available_cash_gbp": 5000.0,
+        "fx_rate_used": 1.3642
       },
       {
         "rule": "sector_concentration",
@@ -796,6 +807,7 @@ Returns an advisory pre-entry validation result for a proposed position. All che
 | status | string | `pass` \| `warn` \| `fail` \| `skipped` |
 | detail | string | Human-readable explanation |
 | severity | string | Worst-case severity of this check: `fail` or `warn` |
+| fx_rate_used | number | `cash_constraint` only (ST-03, EPIC-01, v8.0): GBP/USD rate used to convert the US-ticker live price to GBP for `estimated_cost_gbp`. `1.0` for UK tickers (no conversion applied). Per `strategy_rules.md §4.1.5`'s auditability requirement. |
 
 Additional fields per rule type when available: `estimated_cost_gbp`, `available_cash_gbp`, `sector`, `projected_sector_pct`, `threshold_pct`, `earnings_date`, `days_until_earnings`, `stop_distance`.
 
