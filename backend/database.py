@@ -100,11 +100,11 @@ def create_position(portfolio_id: str, position_data: Dict) -> Dict:
                     fill_price, fill_currency, fx_rate, shares, total_cost,
                     fees_paid, fee_type, initial_stop, current_stop, current_price,
                     atr, holding_days, pnl, pnl_pct, status,
-                    entry_note, tags, user_fill_price
+                    entry_note, tags, user_fill_price, strategy_version_at_entry
                 ) VALUES (
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                    %s, %s, %s
+                    %s, %s, %s, %s
                 )
                 RETURNING *
             """, (
@@ -130,7 +130,8 @@ def create_position(portfolio_id: str, position_data: Dict) -> Dict:
                 position_data.get('status', 'open'),
                 position_data.get('entry_note'),
                 position_data.get('tags'),
-                position_data.get('user_fill_price')
+                position_data.get('user_fill_price'),
+                position_data.get('strategy_version_at_entry'),
             ))
             return cur.fetchone()
 
@@ -1113,8 +1114,9 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                     thesis_feedback,
                     planned_quantity, planned_entry_price, planned_stop_price,
                     signal_id, risk_percent_used, portfolio_value_at_entry,
-                    pre_entry_validation_snapshot, effective_settings_snapshot, trade_tags)
-                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s)
+                    pre_entry_validation_snapshot, effective_settings_snapshot, trade_tags,
+                    strategy_version_at_entry)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s,%s)
                    RETURNING *""",
                 (
                     portfolio_id,
@@ -1142,6 +1144,7 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                     _json(data["pre_entry_validation_snapshot"]) if data.get("pre_entry_validation_snapshot") is not None else None,
                     _json(data["effective_settings_snapshot"]) if data.get("effective_settings_snapshot") is not None else None,
                     data.get("trade_tags") or [],
+                    data.get("strategy_version_at_entry"),
                 ),
             )
             row = cur.fetchone()
@@ -2340,6 +2343,27 @@ def ensure_si02_trade_plans_columns():
             cur.execute(
                 "CREATE INDEX IF NOT EXISTS idx_trade_plans_signal "
                 "ON trade_plans(signal_id) WHERE signal_id IS NOT NULL"
+            )
+        conn.commit()
+
+
+def ensure_strategy_version_at_entry_columns():
+    """Add strategy_version_at_entry VARCHAR(10) to trade_plans and positions (idempotent).
+
+    DS-11 migration — v8.0 ST-01 (EPIC-01, BLG-SPEC-78). Forward-only: populated by
+    the caller at row-creation time from strategy_version_registry.get_current_strategy_version().
+    No backfill of existing rows — historical attribution for trade_history remains the
+    derived-window approach in strategy_version_registry.py (SI-04, v7.7 ST-01); this field
+    is a direct, unambiguous stamp for rows created from v8.0 onward only.
+    Spec: docs/specs/data_model.md DS-11.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS strategy_version_at_entry VARCHAR(10)"
+            )
+            cur.execute(
+                "ALTER TABLE positions ADD COLUMN IF NOT EXISTS strategy_version_at_entry VARCHAR(10)"
             )
         conn.commit()
 

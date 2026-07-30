@@ -353,6 +353,12 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_trade_plan_pre_entry_columns FAILED at startup: %s", _e)
     try:
+        from database import ensure_strategy_version_at_entry_columns
+        ensure_strategy_version_at_entry_columns()
+        _log.info("ensure_strategy_version_at_entry_columns: OK")
+    except Exception as _e:
+        _log.error("ensure_strategy_version_at_entry_columns FAILED at startup: %s", _e)
+    try:
         from database import ensure_settings_concentration_columns
         ensure_settings_concentration_columns()
         _log.info("ensure_settings_concentration_columns: OK")

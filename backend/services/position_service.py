@@ -38,6 +38,7 @@ from database import (
     mark_position_reviewed as db_mark_position_reviewed,
     create_position_audit_log_entry,
 )
+from strategy_version_registry import get_current_strategy_version
 
 from utils.pricing import (
     get_current_price,
@@ -844,8 +845,11 @@ def add_position(
         'entry_note': entry_note,
         'tags': tags,
         'user_fill_price': fill_price,
+        # ST-01 (EPIC-01, v8.0): stamp the active strategy version at entry,
+        # forward-only — no backfill of existing rows.
+        'strategy_version_at_entry': get_current_strategy_version(),
     }
-    
+
     # Create position in database
     new_position = create_position(portfolio_id, position_data)
 

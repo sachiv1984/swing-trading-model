@@ -21,6 +21,7 @@ from database import (
     get_trade_plans_by_position,
     ensure_trade_plans_table,
     ensure_si02_trade_plans_columns,
+    ensure_strategy_version_at_entry_columns,
     create_red_flag_event,
     ensure_red_flag_events_table,
     get_latest_snapshot,
@@ -31,6 +32,7 @@ from database import (
     bulk_archive_trade_plans,
     bulk_delete_trade_plans,
 )
+from strategy_version_registry import get_current_strategy_version
 
 _DEFAULT_BULK_ARCHIVE_REASON = "Bulk archived via Trade Plans bulk-action toolbar"
 
@@ -172,11 +174,15 @@ def create_plan(body: TradePlanCreate):
     try:
         ensure_trade_plans_table()
         ensure_si02_trade_plans_columns()
+        ensure_strategy_version_at_entry_columns()
         portfolio_id = _get_portfolio_id()
 
         def _create():
             plan_data = body.dict()
             plan_data["trade_tags"] = _validate_trade_tags(plan_data.get("trade_tags"))
+            # ST-01 (EPIC-01, v8.0): stamp the active strategy version at creation time,
+            # forward-only — no backfill of existing rows.
+            plan_data["strategy_version_at_entry"] = get_current_strategy_version()
 
             # Capture portfolio_value_at_entry from latest snapshot
             try:
