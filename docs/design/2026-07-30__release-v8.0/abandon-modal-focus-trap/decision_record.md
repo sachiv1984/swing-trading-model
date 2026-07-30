@@ -32,7 +32,7 @@ WAI-ARIA Dialog (Modal) pattern, delivered via the existing `Dialog` primitive's
 | Input / Event | Behaviour |
 |----------------|-----------|
 | Open (click "Abandon") | Focus moves into modal, onto the abandonment-reason textarea (first focusable field) |
-| Tab / Shift+Tab | Cycles among textarea → "Abandon Plan" → "Cancel" → (wraps back to textarea); never exits to background content |
+| Tab / Shift+Tab | Cycles among textarea → "Cancel" → "Abandon Plan" → dialog close (X) → (wraps back to textarea); never exits to background content. Order corrected post-implementation (2026-07-30) to match the modal's actual, deliberately-unchanged button DOM/visual order (Cancel rendered before the submit action) — reordering to the originally-drafted "Abandon Plan → Cancel" sequence would have required flipping the visual left/right button positions, contradicting this record's own "visual design unaffected" constraint (§1). The Dialog primitive's default corner close (X) button is also part of the cycle, consistent with every other Dialog-based modal in the app. |
 | Escape | Closes modal, no change; focus returns to "Abandon" button |
 | Cancel click | Closes modal, no change; focus returns to "Abandon" button |
 | Backdrop click | Closes modal, no change; focus returns to "Abandon" button (standard `Dialog` primitive behaviour) |

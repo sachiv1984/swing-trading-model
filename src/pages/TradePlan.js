@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../api/base44Client";
 import { Button } from "../components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "../components/ui/dialog";
 import PageHeader from "../components/ui/PageHeader";
 import DataState from "../components/ui/DataState";
 import EntryChecklist, { DEFAULT_CHECKLIST_ITEMS } from "../components/trades/EntryChecklist";
@@ -354,6 +355,7 @@ export default function TradePlan() {
   const [showAbandonModal, setShowAbandonModal] = useState(false);
   const [abandonReason, setAbandonReason] = useState("");
   const [abandonReasonTouched, setAbandonReasonTouched] = useState(false);
+  const abandonTriggerRef = useRef(null);
 
   const { data: healthData } = useQuery({
     queryKey: ["market-status"],
@@ -610,6 +612,7 @@ export default function TradePlan() {
             )}
             {editId && !isAbandoned && (
               <Button
+                ref={abandonTriggerRef}
                 variant="outline"
                 size="sm"
                 onClick={() => setShowAbandonModal(true)}
@@ -1047,54 +1050,71 @@ export default function TradePlan() {
         )}
       </div>
 
-      {/* Abandon modal */}
-      {showAbandonModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 p-6 space-y-4 mx-4">
-            <div className="flex items-center gap-3">
-              <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0" />
-              <h2 className="text-lg font-semibold text-white">
-                Abandon trade plan for {form.ticker}?
-              </h2>
-            </div>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              This plan will be marked as abandoned. You will not be prompted to enter this position again based on this plan.
-            </p>
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
-                Reason for abandoning <span className="text-rose-400">*</span>
-              </label>
-              <textarea
-                rows={3}
-                className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 resize-none"
-                placeholder="Describe why you're abandoning this plan (min 10 characters)"
-                value={abandonReason}
-                onChange={(e) => setAbandonReason(e.target.value)}
-                onBlur={() => setAbandonReasonTouched(true)}
-              />
-              {abandonReasonTouched && !abandonReasonValid && (
-                <p className="text-xs text-rose-400">Reason must be at least 10 characters.</p>
-              )}
-            </div>
-            <div className="flex gap-3 justify-end">
-              <Button
-                variant="ghost"
-                onClick={() => { setShowAbandonModal(false); setAbandonReason(""); setAbandonReasonTouched(false); }}
-                className="text-slate-600 dark:text-slate-400"
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={!abandonReasonValid || abandonMutation.isPending}
-                onClick={() => abandonMutation.mutate({ id: editId, reason: abandonReason.trim() })}
-                className="bg-amber-600 hover:bg-amber-500 text-white border-0"
-              >
-                {abandonMutation.isPending ? "Abandoning…" : "Abandon Plan"}
-              </Button>
-            </div>
+      {/* Abandon modal — Radix Dialog primitive for focus trap/restoration (ST-07, BLG-FE-136, EPIC-02, v8.0) */}
+      <Dialog
+        open={showAbandonModal}
+        onOpenChange={(open) => {
+          if (!open && !abandonMutation.isPending) {
+            setShowAbandonModal(false);
+            setAbandonReason("");
+            setAbandonReasonTouched(false);
+          }
+        }}
+      >
+        <DialogContent
+          className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 p-6 space-y-4 mx-4"
+          onCloseAutoFocus={(e) => {
+            // Radix's default onCloseAutoFocus focuses context.triggerRef, which is only
+            // populated by <DialogTrigger> — this modal is opened via a plain Button (not
+            // DialogTrigger) so that ref is never set. Focus the actual trigger button
+            // directly instead, per the decision record's focus-restoration requirement.
+            e.preventDefault();
+            abandonTriggerRef.current?.focus();
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0" />
+            <DialogTitle className="text-lg font-semibold text-white">
+              Abandon trade plan for {form.ticker}?
+            </DialogTitle>
           </div>
-        </div>
-      )}
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            This plan will be marked as abandoned. You will not be prompted to enter this position again based on this plan.
+          </p>
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+              Reason for abandoning <span className="text-rose-400">*</span>
+            </label>
+            <textarea
+              rows={3}
+              className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 resize-none"
+              placeholder="Describe why you're abandoning this plan (min 10 characters)"
+              value={abandonReason}
+              onChange={(e) => setAbandonReason(e.target.value)}
+              onBlur={() => setAbandonReasonTouched(true)}
+            />
+            {abandonReasonTouched && !abandonReasonValid && (
+              <p className="text-xs text-rose-400">Reason must be at least 10 characters.</p>
+            )}
+          </div>
+          <div className="flex gap-3 justify-end">
+            <Button
+              variant="ghost"
+              onClick={() => { setShowAbandonModal(false); setAbandonReason(""); setAbandonReasonTouched(false); }}
+              className="text-slate-600 dark:text-slate-400"
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={!abandonReasonValid || abandonMutation.isPending}
+              onClick={() => abandonMutation.mutate({ id: editId, reason: abandonReason.trim() })}
+              className="bg-amber-600 hover:bg-amber-500 text-white border-0"
+            >
+              {abandonMutation.isPending ? "Abandoning…" : "Abandon Plan"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
