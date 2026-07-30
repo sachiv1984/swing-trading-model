@@ -23,6 +23,7 @@ Last Updated: 2026-07-30
 - Poll results: `Attempt 1: HTTP 500`, `Attempt 2: HTTP 500`, `Attempt 3: HTTP 500` → `fail_count=3`
 - Alert step took the real Telegram-send branch (both secrets present) — Telegram API response: `{"ok":true,"result":{"message_id":298,"from":{"username":"Trading_Assistant_Alert_bot"},"chat":{"first_name":"Sachiv","last_name":"Patel","type":"private"},...}}`
 - This confirms: (a) the poll/count/alert logic works correctly against a real HTTP 500 response, and (b) a real Telegram message was actually delivered to the configured chat — not merely the `::warning::` graceful-degradation path.
+- **Human confirmation:** Infrastructure & Operations Owner confirmed direct receipt of the alert message in their own Telegram client, independently corroborating the API response above.
 
 **Process note:** Because GitHub only exposes `workflow_dispatch` for workflows present on the default branch, `.github/workflows/health-check-alert.yml` was merged to `main` early via a separate, scoped PR (#1163, `[GOVERNANCE]` title to avoid triggering the full-EPIC QA-evidence gate prematurely) rather than waiting for the rest of EPIC-04's stories to unblock. This is documented as a deliberate, user-approved deviation from strict "whole EPIC merges together" sequencing — see `execution_state.json` process_notes and `delegation_log.md` DEL-20260731-01/02 resolution notes for full detail.
 
@@ -42,6 +43,6 @@ Not applicable yet — this EPIC contains `delegated_backend` stories (ST-13 thr
 - [x] AC verified for ST-13 and ST-14 against the canonical spec (`stage4_backlog_slice.md`)
 - [x] No unresolved P0 or P1 deviations
 - [x] Regression areas checked (N/A — new workflow only)
-- Signed off by: *(pending — Infrastructure & Operations Owner to confirm)*
-- Date: *(pending)*
-- Comments: Live-fire test evidence above is objective and reproducible (run log linked); requesting Infrastructure & Operations Owner confirmation to finalize this partial sign-off.
+- Signed off by: Infrastructure & Operations Owner (user, sachiv.patel@hotmail.co.uk)
+- Date: 2026-07-30
+- Comments: Live-fire test evidence above is objective and reproducible (run log linked). Infrastructure & Operations Owner independently confirmed direct receipt of the Telegram alert message in their own Telegram client, corroborating the Telegram API's `{"ok":true,"result":{"message_id":298,...}}` response with first-hand delivery confirmation. Partial sign-off for ST-13/ST-14 is finalized; full EPIC-04 sign-off remains pending ST-15/16/17.
