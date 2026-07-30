@@ -1,9 +1,36 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.16
-**Last Updated:** 2026-07-28 (sprint close 2026-07-27__release-v7.9)
+**Version:** 4.17
+**Last Updated:** 2026-07-30 (sprint close 2026-07-28__release-v7.10)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-07-28__release-v7.10
+**Date:** 2026-07-30
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Silent HTTP-200 error masking fixed in `portfolio_risk.py`; external-provider backoff audit extended (Yahoo Finance, Gemini, Claude); idempotency-key pattern established for state-mutating POST endpoints; deprecated table read-path audited and dead code removed | `docs/ops/backoff_audit_2026-07-29.md`; `docs/specs/api_contracts/backend_engineering_patterns.md#Idempotency-key pattern for state-mutating POST endpoints`; `docs/ops/deprecated_table_read_audit_2026-07-29.md`; `docs/specs/data_model.md#Deprecated Tables` | None |
+| EPIC-02 | Secrets-scanning pre-commit/CI gate added (gitleaks); AI rate-limit bypass and public-endpoint rate-limit audits completed; raw exception text removed from 27 API error responses | `.githooks/pre-commit`; `.gitleaks.toml`; `docs/ops/ai_rate_limit_bypass_audit_2026-07-29.md`; `docs/security/rate_limit_audit_2026-07-29.md` | None |
+| EPIC-03 | Playwright E2E now serves a production build instead of the CRA dev server; Red Flag Journal auth regression coverage added; endpoint test-suite coverage audit (7 new registrations); consumer-driven contract-drift check tooling added | `docs/ops/e2e_production_build_migration_2026-07-29.md`; `docs/ops/endpoint_test_coverage_audit_2026-07-29.md`; `docs/ops/consumer_contract_check_2026-07-29.md`; `scripts/check_consumer_contract_drift.js` | None |
+| EPIC-04 | Corrected `position_endpoints.md` response-envelope claim and undocumented lifecycle fields; corrected `trade_endpoints.md` JSON example; confirmed OpenAPI heading-drift CI linter already live | `docs/specs/api_contracts/position_endpoints.md#GET /positions`; `docs/specs/api_contracts/trade_endpoints.md#GET /trades`; `scripts/lint_api_contract_headings.py` | None |
+| EPIC-05 | `calendar.js` rewritten against current react-day-picker API; `SystemStatus.js` categorizeEndpoint() branch-coverage bug fixed; `StrategyBenchmark.js` header consolidated onto shared `PageHeader`; keyboard-navigation & focus-order audit completed | `docs/specs/frontend/pages/strategy_benchmark.md#2. Page Header`; `docs/ops/keyboard_navigation_audit_2026-07-29.md` | None |
+| EPIC-06 | Recent-rebalance recency advisory added to roadmap engine STEP -1; 2 backlog items (design-gate state-sync, same-day rebalance collision handling) confirmed pre-met from prior-sprint fixes | `claude/system/roadmap_prompt.md#STEP -1.5.5 — Recent-Rebalance Recency Advisory`; `claude/system/design_gate_prompt.md#STEP 5 — Update Global State`; `claude/system/roadmap_prompt.md#6. Completion Event Definition (Run Precondition)` | None |
+
+### Capabilities deferred or returned
+
+None — all 23 stories (ST-01 through ST-23) delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: `qa_evidence_EPIC-01.md` through `qa_evidence_EPIC-06.md` (all 6 present, all sign-off blocks non-blank)
+- Deviations filed: None
+- Test scenarios referenced: `tests/test_portfolio_risk_error_handling.py`; `tests/test_idempotency_util.py`; `tests/test_idempotency_endpoints.py`; `tests/test_secrets_scanning_hook.py`; `tests/test_ai_rate_limit_bypass.py`; `tests/test_main_500_no_raw_exception_text.py`; `tests/test_red_flag_journal.py`; `tests/e2e/system-status.spec.js`; `tests/e2e/strategy-benchmark.spec.js`; `tests/e2e/heading-light-theme-contrast.spec.js`
 
 ---
 
