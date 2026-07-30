@@ -66,6 +66,7 @@ def _check_cash_constraint(ticker: str, market: str, quantity: float) -> dict:
             fx = get_live_fx_rate()
             price_gbp = live_price / fx if fx and fx > 0 else live_price
         else:
+            fx = 1.0
             price_gbp = live_price
 
         estimated_cost_gbp = round(quantity * price_gbp, 2)
@@ -82,6 +83,9 @@ def _check_cash_constraint(ticker: str, market: str, quantity: float) -> dict:
             "severity": "fail",
             "estimated_cost_gbp": estimated_cost_gbp,
             "available_cash_gbp": available_cash_gbp,
+            # ST-03 (EPIC-01, v8.0): §4.1.5 requires the FX rate used be
+            # returned for auditability wherever a GBP amount is FX-derived.
+            "fx_rate_used": round(fx, 4),
         }
     except Exception as exc:
         return {"rule": "cash_constraint", "status": "skipped", "detail": f"Cash check error: {exc}", "severity": "fail"}

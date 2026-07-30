@@ -896,7 +896,11 @@ def add_position(
         "entry_price": round(entry_price_native, 2),
         "initial_stop": round(initial_stop_native, 2),
         "remaining_cash": round(new_cash, 2),
-        "position_id": str(new_position['id'])
+        "position_id": str(new_position['id']),
+        # ST-03 (EPIC-01, v8.0): §4.1.5 requires the FX rate used be returned
+        # for auditability — was already persisted to positions.fx_rate but
+        # never surfaced in this response.
+        "fx_rate_used": round(fx_rate_to_use, 4),
     }
 
 
