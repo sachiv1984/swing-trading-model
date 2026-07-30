@@ -1,8 +1,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-07-20
+**Version:** 1.3
+**Last Updated:** 2026-07-30
+**Design Source (v1.3 checklist keyboard accessibility):** docs/design/2026-07-30__release-v8.0/entry-checklist-keyboard-accessibility/decision_record.md
+**Design Source (v1.3 abandon modal focus trap):** docs/design/2026-07-30__release-v8.0/abandon-modal-focus-trap/decision_record.md
 **Design Source (v1.2 print/export PDF):** docs/design/2026-07-20__release-v7.6/print-pdf-export/ux_spec.md
 **Design Source (v1.1 bulk actions):** docs/design/2026-07-17__release-v7.5/bulk-actions-toolbar/ux_spec.md
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -245,6 +247,8 @@ The checklist is embedded as a grouped section within the Trade Plan creation an
 
 **Test scenario cross-reference:** `tests/e2e/entry-checklist.spec.js` (SC-CL-01 through SC-CL-05) covers pre-population behaviour. Any change to pre-population fields must be reflected in those scenarios.
 
+**Keyboard accessibility (v1.3 — ST-06, BLG-FE-135):** Each `CheckItem` is a real `<button role="checkbox" aria-checked={item.checked}>` (or equivalent `tabIndex`/`role`/`aria-checked`/`onKeyDown` handling) — reachable via Tab in list order, toggleable via Space or Enter, `aria-checked` reflects state. Visual appearance and pre-population behaviour unchanged. Design source: `docs/design/2026-07-30__release-v8.0/entry-checklist-keyboard-accessibility/decision_record.md`.
+
 ### 6.3 "Review Research" Link
 
 - Label: "Review research →"
@@ -358,6 +362,8 @@ A **"Print / Export PDF"** action (outline button, `Printer` icon) is shown in t
 - "Abandon Plan" (primary, amber) — submits `PUT /trade-plans/{id}` with `{status: 'abandoned', abandonment_reason: <text>}`
 - "Cancel" (secondary) — closes modal; no change
 
+**Focus management (v1.3 — ST-07, BLG-FE-136):** Implemented via the existing Radix-based `src/components/ui/dialog.js` `Dialog` primitive (replacing the prior hand-rolled overlay), giving this modal the same focus-trap behaviour as every other dialog in the app: focus moves into the modal on open, Tab/Shift+Tab cycle only among elements inside it, Escape closes without saving, and focus returns to the triggering "Abandon" button on close. Title, body copy, validation, and actions unchanged. Design source: `docs/design/2026-07-30__release-v8.0/abandon-modal-focus-trap/decision_record.md`.
+
 ### 8.3 Abandoned Plan Display
 
 In the detail view when `status = 'abandoned'`:
@@ -470,6 +476,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-07-30 | v8.0 design gate — accessibility/interaction fixes to two existing components, visual design unchanged: §6.2 Pre-Trade Entry Checklist `CheckItem` gains real keyboard semantics (`role="checkbox"`, `aria-checked`, Tab-reachable, Space/Enter toggle — ST-06, BLG-FE-135); §8.2 Abandonment Modal migrated to the existing Radix `Dialog` primitive for focus-trap/restoration (ST-07, BLG-FE-136). Design sources: entry-checklist-keyboard-accessibility/decision_record.md, abandon-modal-focus-trap/decision_record.md. Approved: Product Owner 2026-07-30. Design gate: 2026-07-30__release-v8.0. Head of Specs Team confirmed. |
 | 1.2 | 2026-07-20 | v7.6 design gate — added §7c Print / Export PDF (ST-01, BLG-FE-119): "Print / Export PDF" outline button in the detail-view PageHeader actions, `window.print()`-based (shared global print stylesheet, no new backend endpoint); §7 action buttons row updated. Design source: print-pdf-export/ux_spec.md. Approved: Product Owner 2026-07-20. Design gate: 2026-07-20__release-v7.6. Head of Specs Team confirmed. |
 | 1.1 | 2026-07-17 | v7.5 design gate — added §11 Bulk Actions (ST-03, BLG-FE-117): row checkboxes on the list, bulk-action toolbar (renders only when 1+ selected), Bulk Tag (reuses §5c Tag Editor), Bulk Archive (reuses §8 Abandonment, active plans excluded), Bulk Delete (destructive, confirmation required), per-row partial-failure feedback. New bulk-mutation endpoints. Design source: bulk-actions-toolbar/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
 | 1.0 | 2026-07-15 | v7.2 design gate — added §10 Start Trade from Plan (ST-03, BLG-FE-109): "Start Trade" action on detail view (primary button) and list view (icon button), visible only for non-active/non-terminal plans; hands off to `/TradeEntry` via a new `trade_plan_prefill` navigation-state object (sibling to existing `watchlist_prefill`) pre-filling ticker/market/stop; `trade_plan_id` carried automatically, non-editable "Linked to trade plan" indicator shown; manual entry gains an optional "Link to trade plan" selector when an eligible plan exists for the entered ticker. No change to existing required-field validation. Depends on ST-02 readiness pass (BLG-SPEC-89). Design source: start-trade-from-plan/ux_spec.md. Approved: Product Owner 2026-07-15. Head of Specs Team confirmed. |
