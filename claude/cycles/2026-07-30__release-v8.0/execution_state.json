@@ -321,10 +321,10 @@
       "stories": {
         "ST-13": {
           "title": "Render service health-check alerting to Telegram on 5xx spike",
-          "classification": "autonomous",
-          "status": "not_started",
+          "classification": "delegated_backend",
+          "status": "in_progress",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1153,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-04",
           "commit_sha": null,
           "delegation_record_id": null,
@@ -332,13 +332,15 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            ".github/workflows/health-check-alert.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.pending_commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend' per sprint_backlog.md. Wrote .github/workflows/health-check-alert.yml: scheduled (every 15 min) poll of production GET /health, 3 attempts 20s apart within one run, alerts Telegram only if all 3 return 5xx (sustained, not a transient blip) - reuses backtest.yml's curl+Telegram+::warning:: fallback pattern. Verified the bash poll/count logic locally against mock HTTP servers (a 503-always server correctly counts 3/3 fail; a 200-always server correctly counts 0/3, no alert). This delivers AC-1 (the alerting mechanism) autonomously. AC-2 (confirmed to fire on a simulated 5xx spike / documented dry-run) and full E2E confirmation (which also depends on ST-14's secrets) require a live trigger against staging or production - delegating that verification step only, not the whole story."
         },
         "ST-14": {
           "title": "Configure TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID as GitHub Actions repo secrets",
