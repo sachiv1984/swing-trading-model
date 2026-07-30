@@ -390,3 +390,58 @@ test.describe('SC-SB-07 — Panel 0 API-error state', () => {
     await expect(page.getByTestId('benchmark-stat-cards')).toBeVisible();
   });
 });
+
+// ---------------------------------------------------------------------------
+// SC-SB-08 — Page header consolidated onto shared PageHeader (ST-19, EPIC-05,
+// v7.10, BLG-FE-106)
+// ---------------------------------------------------------------------------
+
+test.describe('SC-SB-08 — Page header consolidated onto PageHeader', () => {
+  test('SC-SB-08a: title and description render via PageHeader, matching strategy_benchmark.md §2', async ({ page }) => {
+    await mockBaseEndpoints(page);
+    await page.goto('/#/StrategyBenchmark');
+
+    const heading = page.locator('h1', { hasText: 'Strategy Benchmark' });
+    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Compare live trading vs backtest')).toBeVisible();
+  });
+
+  test('SC-SB-08b: BarChart2 icon is preserved alongside the consolidated header', async ({ page }) => {
+    await mockBaseEndpoints(page);
+    await page.goto('/#/StrategyBenchmark');
+
+    await expect(page.getByTestId('benchmark-header-icon')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('SC-SB-08c: "Benchmark data as of DD Mon YYYY" last-updated line is preserved, sourced from last_imported_at', async ({ page }) => {
+    await mockBaseEndpoints(page); // SUMMARY_WITH_ACTUAL.last_imported_at = '2026-06-30T10:15:00Z'
+    await page.goto('/#/StrategyBenchmark');
+
+    await expect(page.getByTestId('benchmark-last-imported')).toHaveText('Benchmark data as of 30 Jun 2026', { timeout: 10000 });
+  });
+
+  test('SC-SB-08d: last-updated line is absent when no import data exists', async ({ page }) => {
+    await mockBaseEndpoints(page, { summary: { ...SUMMARY_WITH_ACTUAL, last_imported_at: null } });
+    await page.goto('/#/StrategyBenchmark');
+
+    const heading = page.locator('h1', { hasText: 'Strategy Benchmark' });
+    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('benchmark-last-imported')).toHaveCount(0);
+  });
+
+  test('SC-SB-08e: Refresh button still functions after consolidation (no regression)', async ({ page }) => {
+    await mockBaseEndpoints(page);
+    await page.goto('/#/StrategyBenchmark');
+
+    const refreshBtn = page.getByTestId('benchmark-refresh-btn');
+    await expect(refreshBtn).toBeVisible({ timeout: 10000 });
+
+    let refetched = false;
+    await page.route(/\/strategy\/benchmark\/summary/, (route) => {
+      refetched = true;
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(SUMMARY_WITH_ACTUAL) });
+    });
+    await refreshBtn.click();
+    await expect.poll(() => refetched).toBe(true);
+  });
+});

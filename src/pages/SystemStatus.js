@@ -48,17 +48,17 @@ export default function SystemStatus() {
     // Check more specific patterns first
     if (endpointName.includes('/analytics')) return 'Analytics';
     if (endpointName.includes('/validate')) return 'Validation';
-    if (endpointName.includes('/alerts')) return 'Alerts';
+    if (endpointName.includes('/alerts') || endpointName.includes('/price-alerts')) return 'Alerts';
     if (endpointName.includes('/notifications')) return 'Notifications';
     if (endpointName.includes('/digest')) return 'Digest';
     if (endpointName.includes('/position') || endpointName.includes('/portfolio')) return 'Portfolio';
-    if (endpointName.includes('/trades')) return 'Trading';
+    if (endpointName.includes('/trades') || endpointName.includes('/saved-filters')) return 'Trading';
     if (endpointName.includes('/cash')) return 'Cash Management';
     if (endpointName.includes('/signals') || endpointName.includes('/market')) return 'Market Data';
     if (endpointName.includes('/settings')) return 'Configuration';
     if (endpointName.includes('/ai')) return 'AI';
     // Check for core LAST (most general)
-    if (endpointName.includes('/health') || endpointName === 'GET /') return 'Core';
+    if (endpointName.includes('/health') || endpointName === 'GET /' || endpointName.includes('/changelog')) return 'Core';
     return 'Other';
   };
 

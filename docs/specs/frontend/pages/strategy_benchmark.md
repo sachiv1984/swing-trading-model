@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.4
-**Last Updated:** 2026-07-21
+**Version:** 0.5
+**Last Updated:** 2026-07-29
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Release:** v7.7
 **EPIC:** EPIC-01
@@ -41,7 +41,9 @@ Users should be able to:
 | Component | `PageHeader` |
 | Last updated line | `"Benchmark data as of DD Mon YYYY"` — muted, small; sourced from most recent import; absent when no data |
 
-**Implementation note (v0.3 — ST-08, BLG-FE-95):** shipped implementation (`StrategyBenchmark.js`) uses a bare, hand-rolled header (icon + `<h1>` + `<p>`), not the shared `PageHeader` component named above — a pre-existing spec/implementation deviation, out of scope for this contrast-only fix (candidate follow-up: consolidate onto `PageHeader`, filed separately). Title colour fixed this cycle: `text-white` → `text-slate-900 dark:text-white` (light-mode value was missing entirely; ~1.1:1 fail on `bg-slate-100`). Light: `text-slate-900` ≈17.9:1 (AAA). Dark: unchanged, no regression. Sizing/weight (`text-lg font-semibold`) unchanged. Design source: `docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md`.
+**Implementation note (v0.3 — ST-08, BLG-FE-95, historical):** at the time of this fix, the shipped implementation (`StrategyBenchmark.js`) used a bare, hand-rolled header (icon + `<h1>` + `<p>`), not the shared `PageHeader` component named above — a pre-existing spec/implementation deviation, out of scope for that contrast-only fix. Title colour fixed that cycle: `text-white` → `text-slate-900 dark:text-white` (light-mode value was missing entirely; ~1.1:1 fail on `bg-slate-100`). Light: `text-slate-900` ≈17.9:1 (AAA). Dark: unchanged, no regression. Sizing/weight (`text-lg font-semibold`) unchanged. Design source: `docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md`.
+
+**Consolidation (v0.5 — ST-19, EPIC-05, v7.10, BLG-FE-106):** the deviation noted above is resolved — `StrategyBenchmark.js` now renders its title/description via the shared `PageHeader` component, matching this section exactly. The `BarChart2` icon and the "Benchmark data as of" last-updated line (sourced from `summary.last_imported_at`) are preserved as elements adjacent to `PageHeader` (`PageHeader` itself has no icon or subtitle-line prop). This changes the title's visual style to `PageHeader`'s standard gradient-clipped text (`text-2xl font-bold`, `bg-clip-text`) rather than the previous solid-colour `text-lg font-semibold` — an intended consequence of the consolidation, not a regression. `tests/e2e/heading-light-theme-contrast.spec.js`'s SC-HTC-03/04 were updated accordingly (gradient `background-image` stops checked instead of solid `color`, matching the technique already established in `page-header-dark-gradient-contrast.spec.js` for other `PageHeader`-consuming pages).
 
 **Sub-navigation (v0.4 — ST-01, EPIC-01, v7.7):** a two-tab bar sits immediately below the page header: **"Benchmark"** (default active — existing §3–§7 content, unchanged) and **"Version Comparison"** (new, §7.5). Client-side tab state via `?tab=version-comparison` query param, no new top-level route.
 
@@ -326,6 +328,7 @@ All endpoints must be documented in `docs/reference/openapi.yaml` and `docs/spec
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.5 | 2026-07-29 | ST-19 (EPIC-05, v7.10, BLG-FE-106): §2 Page Header consolidation resolved — `StrategyBenchmark.js` now renders via the shared `PageHeader` component (was a hand-rolled header, noted as a deviation since v0.3). `BarChart2` icon and last-updated line preserved as adjacent elements. `tests/e2e/heading-light-theme-contrast.spec.js` SC-HTC-03/04 rewritten for the new gradient-clipped title (technique already established for other `PageHeader` pages). New Playwright coverage: `tests/e2e/strategy-benchmark.spec.js` SC-SB-08a–e. |
 | 0.4 | 2026-07-21 | v7.7 design gate — ST-01 (EPIC-01, BLG-FEAT-75): added §7.5 Version Comparison tab (SI-04) — two-tab sub-nav ("Benchmark" / "Version Comparison"), version-select controls, comparison table + summary strip against `GET /analytics/strategy-version-comparison`, all states. §9 API Endpoints updated. Placement chosen over `Arc5ComplianceSection` embed to avoid an unscheduled dependency on `BLG-FE-59` (see design source §2). Flagged (not blocking): pre-authored contract v0.1.0 lacks a `compliance_rate` field required by the AC — Sprint Execution follow-up. Design source: si04-strategy-version-comparison/ux_spec.md. Approved: Product Owner 2026-07-21. Design gate: 2026-07-21__release-v7.7. Head of Specs Team confirmed. |
 | 0.3 | 2026-07-12 | v7.0 design gate — Page-title light-theme contrast fix (ST-08, BLG-FE-95): `text-white` → `text-slate-900 dark:text-white` on the "Strategy Benchmark" `<h1>` (light-mode value was missing entirely; ~1.1:1 fail). Same defect class as BLG-FE-87/88, extended to primary heading text. Noted (not resolved, out of scope): shipped header is a hand-rolled `<h1>`, not the `PageHeader` component named in §2 — pre-existing spec/implementation deviation, candidate follow-up. No layout change. Design source: `docs/design/2026-07-12__release-v7.0/heading-light-theme-contrast/decision_record.md`. Head of UX & Design sign-off: 2026-07-12. Head of Specs Team confirmed. |
 | 0.2 | 2026-07-02 | v6.4 EPIC-03 ST-08 (BLG-FEAT-54). Added §4.5 Panel 0 — Open Positions (header/summary, table columns, Market-only filter interaction, realized-metric isolation hard rule, states, `backtest_open_positions` replace-on-import data source). §3 filter bar note updated with Panel 0 Year-filter exception. §9 API Endpoints: added `GET /strategy/benchmark/open-positions`. Design source: open-positions-panel/ux_spec.md. Design Gate cleared: Head of UX & Design, Product Owner — 2026-07-02. Head of Specs Team confirmed. |
