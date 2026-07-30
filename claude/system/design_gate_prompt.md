@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.6
-**Last Updated:** 2026-07-27
+**Version:** 1.7
+**Last Updated:** 2026-07-30
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -154,6 +154,7 @@ Head of UX & Design produces:
 Constraints:
 - Must not contradict `strategy_rules.md §13`
 - Analytics/metrics features must align with canonical metric definitions
+- **Any item introducing a new AI-calling endpoint (backend or frontend) must complete the mandatory security review checklist at `docs/specs/security/ai_endpoint_security_checklist.md` (rate limiting, cost gating, prompt-injection awareness) before its design artefact is approved (ST-05, BLG-SEC-23, EPIC-02, v8.0).**
 - These artefacts become authoritative for STEP 3 spec updates
 
 ### 2.3 Product Owner approval

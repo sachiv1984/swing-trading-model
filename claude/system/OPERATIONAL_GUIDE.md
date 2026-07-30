@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.123
+**Version:** 4.124
 **Last Updated:** 2026-07-30
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -567,7 +567,7 @@ Keeps `claude/ideas/ideas_register.md` lean and surfaces revival opportunities.
 
 ## 6.5 Phase 1.5 — Design Gate (Required*)
 
-**Source prompt:** `claude/system/design_gate_prompt.md` (v1.6)  
+**Source prompt:** `claude/system/design_gate_prompt.md` (v1.7)  
 **Owner:** Head of UX & Design (artefacts), PMO Lead (gate record)  
 **Pre-condition:** Phase 1B Publish Gate passed; `sprint_sealed = false`  
 **\*Required** unless all sprint items are confirmed Design Not Applicable
@@ -1454,14 +1454,14 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.123 |
+| Version | 4.124 |
 | Last Updated | 2026-07-30 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.13 |
-| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.6 |
+| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.7 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.8 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.44 |
@@ -1495,6 +1495,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.124 | 2026-07-30 | **ST-05 (BLG-SEC-23, EPIC-02, v8.0) — design_gate_prompt.md v1.6→v1.7: mandatory AI-endpoint security checklist reference added.** §6.5 source prompt header v1.6→v1.7. §14 Design Gate Engine v1.6→v1.7. §14 Version 4.123→4.124/2026-07-30. Change: STEP 2.2 (Design Required Items: Artefact Review, constraints list) gains a new constraint — any item introducing a new AI-calling endpoint must complete the mandatory security review checklist at the new `docs/specs/security/ai_endpoint_security_checklist.md` (rate limiting, cost gating, prompt-injection awareness) before its design artefact is approved. This new checklist is distinct from `docs/specs/api_contracts/ai_advisory_contract_checklist.md`'s contract-completeness checklist (documentation completeness, not security posture) — both are now required. Authority: Head of Specs Team (Sprint Execution Engine, ST-05, agent-mediated, 2026-07-30). |
 | 4.123 | 2026-07-30 | **Post-ship closure `2026-07-28__release-v7.10` Phase 3 lessons learnt (LL-v7.10-P3-01), action-now — backlog_management_prompt.md v1.12→v1.13: Governance Prompt Duplicate Cross-Check added.** §6M source prompts updated (backlog_management_prompt.md v1.12→v1.13). §14 Backlog Management Engine v1.12→v1.13. §14 Version 4.122→4.123/2026-07-30. Change: STEP 1 gains a new §1.3 — before confirming any open `BLG-GOV-*` item as still-open, grep `claude/system/prompt_change_log.md` for entries against the same prompt file filed after the item's own filing date; flag a probable-duplicate candidate for owner review if a matching version-transition entry already covers the item's stated problem (does not auto-close). Root cause: v7.10 sprint execution pulled 3 of 23 stories (13% of scope) into scope that were already fully resolved by prior-sprint governance fixes, requiring the STEP 3.1.A pre-met path instead of fresh delivery — none were caught as stale/duplicate by backlog grooming beforehand. Authority: Head of Specs Team (post-ship closure `2026-07-28__release-v7.10`, Phase 3 lessons-learnt action-now rule). |
 | 4.122 | 2026-07-30 | **Post-ship closure `2026-07-28__release-v7.10` Phase 4 lessons learnt (LL-v7.10-P4-01), action-now — execution_prompt.md v3.60→v3.61: pre-seal `completed_items` cross-EPIC union check added.** §8 source prompt header v3.60→v3.61. §14 Execution Engine Source v3.60→v3.61. §14 Version 4.121→4.122/2026-07-30. Change: STEP 7 (Seal Execution Record) gains a new pre-seal check, immediately before the existing delegation_log.md integrity check — before writing `sealed: true`, verify the top-level `completed_items` array is the full cross-EPIC union of `done`/`merged` story IDs (per `shared_standards.md §12` Rule 2 / `CLAUDE.md §8`), not just the first-merged EPIC's items. Root cause: v7.10's own sealed `execution_state.json` shipped with `completed_items` containing only EPIC-04's 4 stories instead of the full 23 — did not affect verification (per-story status fields were all correctly `done`), but the summary array was materially incomplete. Delivery Verification's write scope does not include `execution_prompt.md`, so the fix was deferred to Post-Ship Closure, which does. Authority: Head of Specs Team (post-ship closure `2026-07-28__release-v7.10`, Phase 4 lessons-learnt action-now rule). |
 | 4.121 | 2026-07-29 | **ST-22 (EPIC-06, v7.10, BLG-GOV-216) — roadmap_prompt.md v9.7→v9.8: recent-rebalance recency advisory added.** §6 source prompt header v9.7→v9.8. §13 Artefact Register Roadmap Rebalance Prompt row v9.7→v9.8. §14 Roadmap Engine Source v9.7→v9.8. §14 Version 4.120→4.121/2026-07-29. Change: new STEP -1.5.5 — when a `--reason "scheduled"` invocation's `last_scheduled_rebalance_utc` is less than 24h old, surface a non-blocking confirmation advisory before proceeding, giving the invoking user/PO an explicit chance to confirm intent ahead of a same-day re-run, rather than only discovering the collision after `BLG-GOV-207`'s STEP 0 auto-suffix has already resolved the `cycle_id` mechanically. **Sign-off review (Head of Specs Team, agent-mediated) caught that no step actually wrote `last_scheduled_rebalance_utc`** — STEP 12.1's global-state write block never set this key (only `last_rebalance_utc`), so the new advisory (and the pre-existing Extended-tier ">90 days" check at §2.4) would have read a stale/never-set value. Fixed in the same commit: STEP 12.1 now sets `last_scheduled_rebalance_utc` = this run's `last_rebalance_utc` whenever `--reason` is `"scheduled"`. Authority: Head of Specs Team (Sprint Execution Engine, ST-22, 2026-07-29). |
