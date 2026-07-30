@@ -1,0 +1,80 @@
+# .github/workflows/health-check-alert.yml
+name: Production Health Check Alert
+
+# ST-13 (BLG-OPS-114, EPIC-04, v8.0): lightweight scheduled poll of the
+# production /health endpoint. Alerts to Telegram on a SUSTAINED 5xx spike
+# (3 consecutive failed polls within one run, not a single transient blip).
+#
+# Pattern reused from backtest.yml's alert step (curl + Telegram +
+# ::warning:: graceful fallback when secrets aren't configured yet).
+#
+# Depends on ST-14 (BLG-OPS-115) for TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID to
+# be present as GitHub Actions repo secrets for full end-to-end delivery —
+# until then this workflow still runs and logs the would-be alert via
+# ::warning:: (see the "Send alert" step below), satisfying this story's
+# AC-1 (the alerting mechanism itself) independently of that dependency.
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # every 15 minutes
+  workflow_dispatch:
+    inputs:
+      test_url:
+        description: >-
+          ST-13/ST-14 live-fire test only: override the polled URL directly
+          (e.g. https://httpstat.us/500 to simulate a sustained 5xx spike
+          without touching real infrastructure). Leave blank for normal use —
+          normal runs always poll the real production API's /health endpoint.
+        required: false
+        type: string
+
+concurrency:
+  group: production-health-check
+  cancel-in-progress: true
+
+jobs:
+  health-check:
+    name: Poll /health and alert on sustained 5xx
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Poll /health (3 attempts, 20s apart)
+        id: poll
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          TEST_URL: ${{ inputs.test_url }}
+        run: |
+          set +e
+          fail_count=0
+          TARGET="${TEST_URL:-${API_URL}/health}"
+          echo "Polling target: ${TARGET}"
+          for i in 1 2 3; do
+            code=$(curl --max-time 15 -s -o /dev/null -w "%{http_code}" -X GET "${TARGET}")
+            echo "Attempt ${i}: HTTP ${code}"
+            if [ "$code" -ge 500 ]; then
+              fail_count=$((fail_count + 1))
+            fi
+            if [ "$i" -lt 3 ]; then
+              sleep 20
+            fi
+          done
+          echo "fail_count=${fail_count}" >> "$GITHUB_OUTPUT"
+          echo "last_code=${code}" >> "$GITHUB_OUTPUT"
+
+      - name: Send alert on sustained 5xx (all 3 attempts failed)
+        if: steps.poll.outputs.fail_count == '3'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          MESSAGE="Production health check: sustained 5xx (HTTP ${{ steps.poll.outputs.last_code }}) on 3/3 consecutive polls of /health. ${RUN_URL}"
+          echo "$MESSAGE"
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -sS --max-time 30 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+              --data-urlencode "text=${MESSAGE}"
+          else
+            echo "::warning::TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not configured as repo secrets (ST-14, BLG-OPS-115) — alert not sent. Message would have been: ${MESSAGE}"
+          fi
