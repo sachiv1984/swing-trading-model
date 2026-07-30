@@ -438,9 +438,9 @@
         "ST-18": {
           "title": "Reusable Base44 prompt fragment library for common layouts",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1158,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
@@ -448,13 +448,15 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/specs/frontend/base44_prompt_template_library.md (v1.4)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.pending_commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Extracted 3 new reusable fragments (AC-2) from already-implemented, already-recurring loading-skeleton precedent (src/pages/Research.js label+value grid, src/pages/Screener.js + src/pages/NotificationsHistory.js table-row skeletons, Research.js inline partial-value skeleton) into base44_prompt_template_library.md §7/§8/§9 (v1.3 -> v1.4). AC-1 (extraction) satisfied via these three sections. AC-3 ('referenced by at least one new story going forward') cannot be satisfied within this same story — no story in this sprint delegates a card/loading-skeleton UI change to cite it against; documented as forward-reference tracking in the library's new §10, following the same retrospectively-confirmable-AC precedent already used by this sprint's own ST-19 AC-2. No UI shipped by this item itself (authoring-tooling library only, per Design Gate classification in sprint_backlog.md)."
         }
       }
     },
