@@ -352,7 +352,7 @@
           "commit_sha": null,
           "delegation_record_id": "DEL-20260731-02",
           "blocked_since_utc": "2026-07-31T01:15:00Z",
-          "unblock_criteria": "Secrets present in repo Settings + a workflow_dispatch run log showing actual Telegram delivery, linked in qa_evidence_EPIC-04.md with Infrastructure & Operations Owner sign-off",
+          "unblock_criteria": "A workflow_dispatch run log showing actual Telegram delivery, linked in qa_evidence_EPIC-04.md with Infrastructure & Operations Owner sign-off",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -363,7 +363,7 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend' - pure GitHub repo-secret configuration, no code for the engine to write. Requires repo admin access and the actual secret values, which the engine does not hold. Delegated via DEL-20260731-02."
+          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend' - pure GitHub repo-secret configuration, no code for the engine to write. Requires repo admin access and the actual secret values, which the engine does not hold. Delegated via DEL-20260731-02. UPDATE 2026-07-31: user confirmed TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID added to repo Settings -> Secrets and variables -> Actions; verified present via `gh secret list` (names only, added 2026-07-30T19:25 UTC per GitHub's own timestamp - values not readable by the engine, as expected). AC-1 of this story is now satisfied. AC-2 (workflow_dispatch re-run against a deliberately-broken endpoint confirms a real Telegram message is received) still outstanding - remains blocked_backend pending that live test."
         },
         "ST-15": {
           "title": "Confirm Render rollback runbook has real execution history",
