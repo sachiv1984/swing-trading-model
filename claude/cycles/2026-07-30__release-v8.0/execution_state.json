@@ -248,9 +248,9 @@
         "ST-10": {
           "title": "Retroactive Playwright \u00a718 anti-pattern sweep (consolidated)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "in_progress",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1150,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-03",
           "commit_sha": null,
           "delegation_record_id": null,
@@ -258,20 +258,22 @@
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "claude/system/shared_standards.md#18. Playwright Test Authoring Standard"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "3.1.A.pending_commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Grep sweep of tests/e2e/: 3 networkidle instances fixed in red-flag-journal-filter-persistence.spec.js (replaced with element-specific waits). 1 route-ordering anti-pattern fixed in trade-plan-signal-context.spec.js (generic /trade-plans/** catch-all was registered after the more specific /trade-plans/by-position/** handler and used route.continue() in its non-GET branch; reordered registration and switched to route.fallback()). 27 files use route.continue() total; the other 26 were confirmed to have no overlapping generic/specific route conflict (single-handler or non-overlapping patterns) so were not anti-patterns. Local Playwright execution unavailable in this sandbox (chromium_headless_shell not installable on this OS per playwright install output) \u2014 fixes verified via grep (zero remaining networkidle instances) and node --check syntax validation; full behavioural confirmation deferred to CI run on push."
         },
         "ST-11": {
           "title": "Test-tagging convention (smoke/regression/critical) for selective CI runs",
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1151,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-03",
           "commit_sha": null,
           "delegation_record_id": null,
@@ -292,7 +294,7 @@
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1152,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-03",
           "commit_sha": null,
           "delegation_record_id": null,
