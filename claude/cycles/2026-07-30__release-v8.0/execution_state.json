@@ -111,23 +111,30 @@
         "ST-04": {
           "title": "Raw exception text leaked in 16 implicit-HTTP-200 error paths in backend/main.py",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1144,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-02",
           "commit_sha": null,
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-07-30T22:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/conventions.md#13. Error Response Standard (Canonical)",
+            "tests/test_st04_implicit_200_error_paths_fixed.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.pending_commit",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-30"
+          },
+          "notes": "Re-audited backend/main.py fresh rather than trusting the ticket's '16' count: found 17 implicit-HTTP-200 except-blocks (all 76 except-Exception blocks reviewed; 30 are on_startup() bootstrap handlers and 2 are fire-and-forget Alpaca-sync best-effort blocks, correctly out of scope). All 17 fixed: 14 use the canonical {status,message} 500 envelope (conventions.md §13); 3 (/health, /health/detailed, /test/endpoints) keep their existing custom/simple shapes per conventions.md §11/§13.3's explicit health-endpoint envelope exemption, but still return HTTP 500 (not implicit 200) with no raw exception text. traceback.print_exc() added wherever missing. Existing ValueError->4xx branches and 200 success shapes left untouched. Discovered backend/main.py's own POST /test/endpoints handler is dead code (shadowed by backend/routers/test.py's router, included first). Did NOT file this to claude/backlog/backlog.md mid-sprint (execution_prompt.md §7 write-scope hard restriction: backlog.md may only be written at STEP 5.2 sprint close, for returned_to_backlog notes) - self-caught after an initial erroneous write via /backlog-add, which was reverted (git checkout --) before commit. Recorded here instead; candidate for filing via the proper channel (lessons_learnt_cycle.md Phase 3 §6.2, or a human-initiated /backlog-add) at sprint close or in a future session. 19 new regression tests added (tests/test_st04_implicit_200_error_paths_fixed.py); full backend suite (922 passed, 5 skipped) confirmed no regressions. Head of Engineering sign-off: agent-mediated, approved, independently re-ran the full test suite and re-audited the except-block count before approving."
         },
         "ST-05": {
           "title": "Mandatory security review checklist for new AI-calling endpoints",

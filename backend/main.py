@@ -424,7 +424,9 @@ def get_settings_endpoint():
             "data": settings_list
         }
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 
 @app.post("/settings")
@@ -490,7 +492,7 @@ def get_portfolio_endpoint():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "error", "message": str(e)}
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 @app.post("/positions/{position_id}/exit")
 def exit_position_endpoint(position_id: str, request: ExitPositionRequest):
@@ -573,7 +575,7 @@ def analyze_positions_endpoint():
         print(f"\n❌ ANALYSIS FAILED: {str(e)}")
         import traceback
         traceback.print_exc()
-        return {"status": "error", "message": str(e)}
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 
 @app.post("/positions/nightly-stop-update")
@@ -591,7 +593,9 @@ def nightly_stop_update_endpoint():
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         record_nightly_job("trailing_stop", "error", error=str(e))
-        return {"status": "error", "message": str(e)}
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 
 @app.post("/positions/risk-off-alerts")
@@ -606,7 +610,9 @@ def risk_off_alerts_endpoint():
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 
 @app.post("/signals/rebalance-exit")
@@ -626,7 +632,9 @@ def rebalance_exit_signals_endpoint():
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         record_nightly_job("rebalance_exit", "error", error=str(e))
-        return {"status": "error", "message": str(e)}
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 
 @app.post("/portfolio/snapshot")
@@ -660,7 +668,7 @@ def get_history_endpoint(days: int = 30):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "error", "message": str(e)}
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 
 @app.post("/cash/transaction")
@@ -701,7 +709,7 @@ def get_cash_transactions_endpoint(order: str = "DESC"):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "error", "message": str(e)}
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 
 @app.get("/cash/summary")
@@ -718,8 +726,8 @@ def get_cash_summary_endpoint():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "error", "message": str(e)}
-        
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
+
 @app.get("/trades")
 def get_trades_endpoint():
     """Get trade history with statistics"""
@@ -732,7 +740,9 @@ def get_trades_endpoint():
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 
 # ---------------------------------------------------------------------------
@@ -790,7 +800,9 @@ def get_tax_year_report_endpoint(year: Optional[int] = None, format: Optional[st
         return JSONResponse(status_code=404,
             content={"status": "error", "message": msg})
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 
 @app.get("/reports/daily-pnl")
@@ -1035,10 +1047,7 @@ def get_market_status():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {
-            "status": "error",
-            "message": f"Failed to fetch market status: {str(e)}"
-        }
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 
 @app.get("/signals")
@@ -1125,7 +1134,10 @@ def health_check(request: Request):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "error", "db": "error", "last_market_status_check": None, "last_alert_evaluation": None}
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "db": "error", "last_market_status_check": None, "last_alert_evaluation": None},
+        )
 
 
 @app.get("/health/detailed")
@@ -1145,7 +1157,7 @@ def detailed_health_check():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "error", "message": str(e)}
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 @app.get("/health/database")
 def database_size_check():
@@ -1165,7 +1177,7 @@ def database_size_check():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "error", "message": str(e)}
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 
 @app.get("/health/scheduler")
@@ -1186,7 +1198,7 @@ def scheduler_health():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "error", "message": str(e)}
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 
 @app.post("/test/endpoints")
@@ -1213,7 +1225,7 @@ def test_endpoints(request: Request):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "error", "message": str(e)}
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 class UpdateNoteRequest(BaseModel):
     entry_note: str
