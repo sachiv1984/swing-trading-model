@@ -68,7 +68,8 @@ Last Updated: 2026-07-31
 - **Spec reference:** `docs/ops/render_build_deploy_path_filter_audit.md`
 - **Unblock criteria:** Production filter configuration recorded in the document, with FinOps & Resource Architect sign-off completed in the same document's Sign-Off block.
 - **Commit format required:** `[EPIC-04][ST-16] <description>` pushed to `exec/2026-07-30__release-v8.0/EPIC-04`
-- **Status:** Pending
+- **Status:** Pending (reopened)
+- **Progress (2026-07-31):** User read production's Build Filters config live: Root Directory `backend`, Included Paths `docs/product/changelog.md` (only entry). Initial hypothesis of a possible gap (bare Included Paths acting as an exhaustive allow-list, silently blocking all `backend/**` auto-deploys) was tested against one deploy observation (commit `95b2e6bf`, backend-only, deployed live) and initially read as disproving the gap — but FinOps & Resource Architect agent-mediated review BLOCKED this: a single deploy event cannot distinguish an automatic push-triggered deploy from a manual dashboard click, and Render's own documentation gave inconsistent framings across two pages checked. **Remaining unblock action:** check the `95b2e6bf` deploy's trigger-source label in the Render deploy detail view, or run a trivial backend-only live-fire push test (same rigor as ST-13/14) to confirm autodeploy fires with zero manual dashboard interaction. See `render_build_deploy_path_filter_audit.md` §Disposition for full detail.
 
 ## DEL-20260731-05
 

@@ -402,7 +402,7 @@
           "commit_sha": null,
           "delegation_record_id": "DEL-20260731-04",
           "blocked_since_utc": "2026-07-31T01:45:00Z",
-          "unblock_criteria": "Production filter configuration recorded in docs/ops/render_build_deploy_path_filter_audit.md with FinOps & Resource Architect sign-off",
+          "unblock_criteria": "Production filter configuration recorded in docs/ops/render_build_deploy_path_filter_audit.md with FinOps & Resource Architect sign-off, PLUS the 95b2e6bf deploy's trigger-source confirmed (push-triggered auto-deploy vs. manual dashboard click) via the Render deploy detail view, or a trivial backend-only live-fire push test confirming autodeploy fires without manual intervention",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -413,7 +413,7 @@
           "deviations_filed": false,
           "last_completed_substep": "3.1.A.pending_commit",
           "sign_off_record": null,
-          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend'. Built the full in-repo half of the audit autonomously: new docs/ops/render_build_deploy_path_filter_audit.md inventories every non-code file the running app reads at runtime (docs/product/changelog.md - 3 independent readers: changelog_service.py, ai_spend_trend_service.py, changelog_digest_service.py; backend/tickers_full_list.csv; feature_flags.json - not yet present but flagged as an uncovered future gap since it's repo-root and outside every current path filter), confirmed against staging-deploy.yml's existing paths: filter (already correctly covers everything except the not-yet-existing feature_flags.json), and confirmed docs/reference/openapi.yaml and docs/System_status_report.md are NOT runtime-read (comment-only references). Corrected an initial assumption: changelog.md is at docs/product/changelog.md and read server-side by the backend, not repo-root/frontend-direct as the story title's phrasing might suggest - verified this directly by reading the actual service files. Spot-checked every factual claim (file existence, exact backend readers, staging-deploy.yml paths) before writing the doc. Production dashboard filter itself cannot be read from the repo - delegated to FinOps & Resource Architect."
+          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend'. Built the full in-repo half of the audit autonomously (see docs/ops/render_build_deploy_path_filter_audit.md). Production dashboard filter read live by the user: Root Directory backend, Included Paths docs/product/changelog.md (only entry). Initial hypothesis (bare Included Paths acts as an exhaustive allow-list, silently blocking all backend/** auto-deploys) was tested against commit 95b2e6bf's deploy - it's live for a backend-only commit with no changelog.md change. However, FinOps & Resource Architect agent-mediated review (2026-07-31) BLOCKED this as insufficient: that single observation cannot distinguish an automatic push-triggered deploy from a manual 'Deploy latest commit' dashboard click, and two Render official doc pages checked independently gave inconsistent framings of the Root-Directory/Included-Paths interaction. Reviewer identified a cheap conclusive test: check the 95b2e6bf deploy's trigger-source label in the Render deploy detail view (Render labels deploys as push-triggered vs manual), or run a trivial backend-only live-fire push and confirm autodeploy with zero manual dashboard interaction. Re-delegated pending that check - not closing this story on an unverified inference given the failure mode (silent non-deployment of all future backend changes) is severe."
         },
         "ST-17": {
           "title": "Backup & disaster recovery runbook for production database",
@@ -506,8 +506,8 @@
     }
   },
   "blocked_items": [
-    "ST-16",
-    "ST-17"
+    "ST-17",
+    "ST-16"
   ],
   "delegated_items": [
     "ST-13",

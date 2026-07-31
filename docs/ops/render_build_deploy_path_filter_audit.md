@@ -1,7 +1,7 @@
 **Owner:** FinOps & Resource Architect
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.0
+**Version:** 1.1
 **Last Updated:** 2026-07-31
 **Story:** ST-16 (BLG-OPS-124, EPIC-04, v8.0)
 
@@ -53,11 +53,34 @@ Every non-code file (markdown, CSV, JSON, config) that the running application a
 ## Disposition
 
 - **Staging filter (repo-visible):** Audited above — currently correctly covers every runtime-read file except the not-yet-existing `feature_flags.json` (flagged, no action needed until that file is actually added).
-- **Production filter (dashboard-only):** Cannot be audited from the repo. **Delegated** to FinOps & Resource Architect: read the production service's Build Filters configuration directly from `dashboard.render.com` and confirm it covers the same runtime-read file set in the table above (particularly `docs/product/changelog.md`, given this exact file already caused a staging drift once). Record the production filter's current configuration in this document (§Production Filter Configuration, below) once confirmed.
+- **Production filter (dashboard-only):** Configuration read live 2026-07-31 (see §Production Filter Configuration below). **Status: provisionally under review, not yet cleared** — see FinOps & Resource Architect finding below. An initial hypothesis about how this configuration behaves was tested against one data point and found consistent with "no gap," but that single data point cannot rule out an equally plausible alternative explanation. A cheap, conclusive follow-up check is identified and pending.
 
 ### Production Filter Configuration
 
-*Pending — to be completed by FinOps & Resource Architect with live Render dashboard access (see `delegation_log.md` DEL-20260731-04).*
+Read live via Render dashboard (Settings → Build & Deploy, production API service), 2026-07-31:
+
+- **Root Directory:** `backend`
+- **Build Command:** `pip install -r requirements.txt`
+- **Build Filters → Included Paths:** `docs/product/changelog.md` (no other entries)
+
+**Initial hypothesis and its test:** the concern was that a bare Included Paths list acts as an exhaustive allow-list — i.e. that setting it to just `docs/product/changelog.md` would mean *only* changelog-only commits auto-deploy, and all `backend/**` changes would be silently ignored (a severe, easily-missed production risk). This was checked against real deploy history: the production service's most recent deploy is live for commit `95b2e6bf` (`[EPIC-01] Data Model & Spec Integrity`), which touched only `backend/database.py`, `backend/main.py`, `backend/routers/*.py`, `backend/services/position_service.py`, `backend/strategy_version_registry.py` — zero changes to `docs/product/changelog.md`. It deployed anyway.
+
+**FinOps & Resource Architect review finding (2026-07-31): this single observation is NOT conclusive.** It cannot distinguish between two possibilities that would produce the identical "most recent deploy is live for 95b2e6bf" observation:
+1. Render's push-triggered auto-deploy fired automatically, under a model where Root Directory contents (`backend/**`) form an implicit default trigger scope and Included Paths only adds extra paths outside it (which would mean the current config is correct).
+2. A human manually clicked "Deploy latest commit" in the Render dashboard after merging PR #1160 — an entirely ordinary post-merge action — which would say nothing about whether push-triggered auto-deploy actually respects `backend/**` changes, and the severe-risk hypothesis (Included Paths as an exhaustive allow-list, silently blocking all future backend auto-deploys) would remain live.
+
+Two official Render documentation pages, checked independently during the review, gave framings that are not obviously consistent with each other on this exact interaction (Root Directory set *and* Included Paths simultaneously non-empty, pointing outside it) — so this cannot be resolved by re-reading documentation either.
+
+**Required follow-up (identified by the reviewer, cheap and conclusive):**
+- Open the `95b2e6bf` deploy's detail view in the Render dashboard and check its trigger-source label (Render typically labels each deploy as e.g. "Deploy triggered by push to main" vs. "Manual deploy"). This directly resolves the ambiguity with no further inference.
+- If that label is unavailable or ambiguous: push a trivial, harmless backend-only commit (e.g. a comment, not touching `changelog.md`) and confirm autodeploy fires with zero manual dashboard interaction — the same live-fire rigor already applied to ST-13/ST-14 this cycle.
+
+**Coverage check against the Runtime File-Read Inventory (above) — repo-side claims independently re-verified, both hold:**
+- `docs/product/changelog.md` reads confirmed in all 3 named services (`changelog_service.py`, `ai_spend_trend_service.py`, `changelog_digest_service.py`).
+- `feature_flags.json` confirmed absent from the repo (`ls feature_flags.json` → no such file).
+- Whether the *filter mechanism* itself actually covers `backend/tickers_full_list.csv` and `docs/product/changelog.md` in production remains the open question above — the file-existence/reader facts are solid, the deploy-trigger mechanism is not yet proven.
+
+**Result: not yet resolved — do not close on the current evidence.** Proceeding to sign off "no gap found" on a single ambiguous data point would risk exactly the kind of silent, undetected drift this audit exists to catch, given the failure mode (all future backend changes silently failing to auto-deploy) is severe.
 
 ---
 
@@ -65,4 +88,4 @@ Every non-code file (markdown, CSV, JSON, config) that the running application a
 
 | Role | Decision | Date |
 |------|----------|------|
-| FinOps & Resource Architect | *Pending — production filter confirmation required before sign-off* | — |
+| FinOps & Resource Architect | **BLOCKED** — the "no gap found" conclusion rested on one deploy event that cannot distinguish an automatic push-triggered deploy from a manual dashboard click, and Render's own documentation is not clearly consistent with the proposed Root-Directory-as-default-scope mechanism. Given the failure mode is silent non-deployment of all future backend changes, sign-off must wait on the cheap, conclusive check identified above (deploy trigger-source label, or a trivial backend-only live-fire push test). | 2026-07-31 |
