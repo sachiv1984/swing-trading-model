@@ -46,8 +46,10 @@ jobs:
         # continue-on-error: true — flaky failures are advisory and MUST NOT block the PR.
         # See ST-05 AC: "Flaky test failures must not block the PR or human review — failures are advisory."
         # DoQ must review the uploaded report artifact even when this step is green.
+        # ST-11 (BLG-QA-120): filters by the @smoke tag (docs/team_skills/quality/playwright_patterns.md §6)
+        # rather than a hardcoded spec path, so any spec adding a @smoke-tagged test is picked up automatically.
         continue-on-error: true
-        run: npx playwright test tests/e2e/smoke-critical-paths.spec.js
+        run: npx playwright test --grep @smoke
         env:
           CI: true
           REACT_APP_API_URL: http://localhost:8000
