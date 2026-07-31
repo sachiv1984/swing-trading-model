@@ -2,9 +2,9 @@
 **Class:** Class 2 — Supporting
 **Status:** Supporting
 **Canonical Source:** docs/specs/frontend/design_system.md
-**Version:** 1.3
-**Last Updated:** 2026-07-27
-**Story:** ST-04 (BLG-SPEC-90, EPIC-03, v7.2); ST-04 (BLG-SPEC-91, EPIC-02, v7.3); ST-06 (BLG-SPEC-93, EPIC-04, v7.3); ST-13 (BLG-FE-129, EPIC-13, v7.9)
+**Version:** 1.4
+**Last Updated:** 2026-07-30
+**Story:** ST-04 (BLG-SPEC-90, EPIC-03, v7.2); ST-04 (BLG-SPEC-91, EPIC-02, v7.3); ST-06 (BLG-SPEC-93, EPIC-04, v7.3); ST-13 (BLG-FE-129, EPIC-13, v7.9); ST-18 (BLG-FE-124, EPIC-03, v8.0)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -131,13 +131,90 @@ Cmd/Ctrl-K opens a searchable palette listing pages and in-scope entities; Escap
 Selecting 1+ rows reveals a bulk-action toolbar with an accurate selected-count; bulk tag/archive/remove actions succeed or partially-fail with per-row feedback; destructive actions require confirmation; toolbar disappears at zero-selected; both light and dark theme render correctly.
 ```
 
-## 7. Maintenance
+## 7. Template: Label+Value Skeleton Pair (Stat/Metric Card Grid)
+
+**Use when:** delegating a story that adds or modifies a small grid of stat/metric values (e.g. a 2x4 or 4-column grid of label+value pairs) where each value loads asynchronously.
+
+**Source pattern:** already-implemented precedent `src/pages/Research.js` (label+value skeleton pairs in a `grid-cols-2 md:grid-cols-4` layout) and `src/components/trades/SetupQualityScorePanel.js` (single label+value pair). Genuinely recurring — 2+ concrete precedents (ST-18, BLG-FE-124, EPIC-03, v8.0).
+
+**Reusable fragment — Behaviour Rules section:**
+```
+- Loading state renders one `<Skeleton>` pair (label-width skeleton above a value-width skeleton) per grid cell, matching the exact grid layout the loaded content will use — this prevents layout shift when data arrives.
+- Use the shared `Skeleton` primitive (`src/components/ui/skeleton.js`, `animate-pulse` + `bg-primary/10` or the page-local `bg-slate-700/50` variant already in use) — do not introduce a new skeleton implementation.
+- Skeleton dimensions should approximate the real content's width (e.g. `w-16 h-3` for a label, `w-24 h-6` for a value) — do not use a single uniform skeleton size for both label and value.
+- Do not render skeletons for cells whose data is already available from a prior fetch — only cells whose specific query is still loading show a skeleton (partial-loading grids are expected, not an all-or-nothing loading state).
+```
+
+**Reusable fragment — Non-Functional Rules section:**
+```
+- Any new skeleton background token must resolve correctly in both light and dark theme (BLG-FE-87/88/95 precedent) — the shared `Skeleton` primitive already handles this; do not override with a theme-specific class.
+```
+
+**Reusable fragment — Expected Outcome section:**
+```
+Grid renders one label+value skeleton pair per cell while its data is in flight, at the same dimensions as the final content (no layout shift on data arrival); cells with already-available data render immediately without waiting on sibling cells.
+```
+
+## 8. Template: Table/List Row Skeleton (Variable-Width Shimmer Placeholder)
+
+**Use when:** delegating a story that adds or modifies a table or list whose rows load asynchronously (as opposed to a single spinner for the whole table).
+
+**Source pattern:** already-implemented precedent `src/pages/Screener.js` (`SkeletonRow`, 8 rows) and `src/pages/NotificationsHistory.js` (`SkeletonRows`, 5 rows) — both render a fixed count of placeholder `<tr>` rows with per-cell shimmer bars of varied width. Genuinely recurring — 2+ concrete precedents (ST-18, BLG-FE-124, EPIC-03, v8.0).
+
+**Reusable fragment — Behaviour Rules section:**
+```
+- Render a fixed, realistic number of skeleton rows while loading (5-8, matching the typical/expected page size for this table) — not a single row, and not an arbitrarily large count.
+- Each cell's shimmer bar uses a varied width per column (e.g. `${50 + (i * 13) % 40}%`) rather than a uniform width for every cell — an all-identical-width grid of bars reads as a placeholder grid rather than a plausible loading table.
+- Use `animate-pulse` on each bar (matching the shared `Skeleton` primitive's animation), rendered inside the same `<td>`/row structure the real rows use, so column alignment does not shift when data arrives.
+```
+
+**Reusable fragment — Non-Functional Rules section:**
+```
+- Skeleton row/cell background tokens must resolve correctly in both light and dark theme (BLG-FE-87/88/95 precedent).
+- Do not fetch or reference the eventual row data inside the skeleton component — it renders unconditionally while the loading flag is true, with no data dependency.
+```
+
+**Reusable fragment — Expected Outcome section:**
+```
+Table shows a fixed set of shimmering placeholder rows (varied bar widths per column) while loading; column widths and row structure match the loaded state exactly, so no layout shift occurs when real data replaces the skeleton.
+```
+
+## 9. Template: Inline Partial-Value Skeleton (Async Sub-Value Within an Already-Rendered Shell)
+
+**Use when:** delegating a story where only one or two values inside an already-visible card/section load asynchronously (e.g. a secondary metric that depends on a slower endpoint), while the rest of the card's labels and shell render immediately — as distinct from the whole-card or whole-grid skeleton patterns above.
+
+**Source pattern:** already-implemented precedent `src/pages/Research.js` (`heatLoading` gating a single inline `<Skeleton>` in place of one value, while the card's label and surrounding shell render unconditionally). Genuinely recurring — 2+ concrete precedents (ST-18, BLG-FE-124, EPIC-03, v8.0).
+
+**Reusable fragment — Behaviour Rules section:**
+```
+- The card's static label/shell content renders immediately and unconditionally — only the specific value that depends on the slower query is replaced with a single `<Skeleton>` while its own `isLoading` flag is true.
+- Do not gate the whole card (or a whole grid of cards) behind this one value's loading state — a partial-card skeleton is the correct pattern precisely because the rest of the card's content does not depend on the slow query.
+- Once the value resolves, render its real formatted content (or an explicit error/fallback state, e.g. `HeatValue value={null} isError={true}`) in place of the skeleton — never leave the skeleton rendered after the query settles, whether it succeeded or failed.
+```
+
+**Reusable fragment — Non-Functional Rules section:**
+```
+- Skeleton background token must resolve correctly in both light and dark theme (BLG-FE-87/88/95 precedent).
+```
+
+**Reusable fragment — Expected Outcome section:**
+```
+Card shell and static labels render immediately; only the specific async value shows a skeleton while its own query is in flight; on resolution the skeleton is replaced with the real value or an explicit error state — the rest of the card is never blocked on this one value's load time.
+```
+
+## 10. Forward-Reference Tracking (ST-18 AC-3)
+
+ST-18's third acceptance criterion — "Referenced by at least one new story going forward" — cannot be satisfied within the same story that authors the library entries; no story in this sprint (`2026-07-30__release-v8.0`) delegates a card/loading-skeleton/empty-state UI change to cite them against. This mirrors the same "retrospectively confirmable" AC pattern already used elsewhere in this sprint's backlog (see `sprint_backlog.md` ST-19 AC-2). Track at the next story that delegates or implements a card-grid, table-row, or partial-value loading skeleton: confirm it cites the applicable §7/§8/§9 entry, and record that confirmation in this file's Change Log.
+
+## 11. Maintenance
 
 New entries are added to this library when a pattern is formalised in `design_system.md` and applied to two or more concrete stories (the same threshold `roadmap_prompt.md`'s STEP 4.2 idea-consolidation convention uses for "recurring" — a single application does not yet justify a library entry). Entries here must be kept consistent with `design_system.md`; if a `design_system.md` edit changes a pattern documented here, update this file in the same commit.
 
 **Threshold exception (v1.3, ST-13, EPIC-13, v7.9):** the 2+-story threshold above governs adding a *new* template section. The §4 dark-mode AC checklist addition is an addendum to an already-existing, already-approved section, not a new template — and the underlying defect class (light+dark token pair omissions) already has multiple documented precedents (`BLG-FE-87/88/95/125`) even without a literal second application of this specific checklist wording. Recorded here so this doesn't read as an inconsistency on a future audit.
 
-## 8. Known Deviations
+**§7/§8/§9 provenance note (v1.4, ST-18, EPIC-03, v8.0):** unlike prior entries, which were extracted from a `design_system.md`/`ux_spec.md` source pattern, these three entries were extracted directly from already-implemented, already-recurring component code (`src/pages/Research.js`, `src/pages/Screener.js`, `src/pages/NotificationsHistory.js`, `src/components/trades/SetupQualityScorePanel.js`) — no `ux_spec.md` or `design_system.md` section documents the loading-skeleton pattern yet. This is consistent with the "genuinely recurring" threshold in the paragraph above (2+ concrete precedents per entry), just sourced from implementation rather than a prior design spec. If `design_system.md` is later updated with a formal loading-skeleton section, reconcile these entries against it and update this file in the same commit per the rule above.
+
+## 12. Known Deviations
 
 None. This is a net-new artefact — no prior canonical spec governed this work.
 
@@ -147,6 +224,7 @@ None. This is a net-new artefact — no prior canonical spec governed this work.
 
 | Date | Version | Summary |
 |---|---|---|
+| 2026-07-30 | 1.4 | Added 3 loading-skeleton templates — §7 Label+Value Skeleton Pair (stat/metric card grid), §8 Table/List Row Skeleton (variable-width shimmer), §9 Inline Partial-Value Skeleton (async sub-value within an already-rendered shell) — extracted from already-recurring component precedent (`Research.js`, `Screener.js`, `NotificationsHistory.js`, `SetupQualityScorePanel.js`); §10 tracks the forward-reference AC (ST-18, EPIC-03, v8.0, BLG-FE-124) |
 | 2026-07-27 | 1.3 | Added dark-mode acceptance-criteria checklist item to §4 — every Base44 prompt draft with observable AC must state a dark-mode requirement in its Acceptance Criteria, not only in the Playwright/staging verification call-out (ST-13, EPIC-13, v7.9, BLG-FE-129) |
 | 2026-07-16 | 1.2 | Added Bulk-Action Toolbar (multi-select) template (ST-06, EPIC-04, v7.3, BLG-SPEC-93) |
 | 2026-07-16 | 1.1 | Added Global Command Palette (Cmd/Ctrl-K) template (ST-04, EPIC-02, v7.3, BLG-SPEC-91) |
