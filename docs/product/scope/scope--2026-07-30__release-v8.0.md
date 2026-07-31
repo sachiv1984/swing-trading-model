@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v8.0
 Cycle: 2026-07-30__release-v8.0
-Last Updated: 2026-07-30
+Last Updated: 2026-07-31
+
+Superseded by: v8.0 ship — 2026-07-31
+Changelog: docs/product/changelog.md#v8.0
+Verification report: claude/cycles/2026-07-30__release-v8.0/verification_report.md
+Cycle: 2026-07-30__release-v8.0
 
 ## Release Scope — v8.0 Data Integrity, Security Follow-Through & Operational Hardening
 

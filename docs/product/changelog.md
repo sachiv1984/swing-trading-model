@@ -3,9 +3,55 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-30 (post-ship closure 2026-07-28__release-v7.10)
+**Last Updated:** 2026-07-31 (post-ship closure 2026-07-30__release-v8.0)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v8.0 — Data Integrity, Security Follow-Through & Operational Hardening — 2026-07-31
+Cycle: 2026-07-30__release-v8.0
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Added `strategy_version_at_entry` to `trade_plans`/`positions`; reviewed FX handling post-DS-05 US market source change (no amendment needed); audited and closed 3 FX conversion audit-trail gaps (`fx_rate_used` missing from `POST /portfolio/position`, `GET /portfolio/prospective-heat`, and pre-entry cash-constraint validation) | `docs/specs/data_model.md#DS-11`; `docs/product/decisions/ds05-fx-handling-review--2026-07-30.md`; `docs/product/decisions/fx-audit-trail-completeness-check--2026-07-30.md`; `docs/specs/api_contracts/portfolio_endpoints.md#POST /portfolio/position` |
+| EPIC-02 | Fixed 17 implicit-HTTP-200 error paths in `backend/main.py` (raw exception text no longer leaked); added a mandatory AI-endpoint security review checklist to the design gate; fixed keyboard reachability on the Trade Plan pre-entry checklist; fixed the Abandon modal's missing focus trap/restoration; verified `request.client.host` is not collapsed behind Render's proxy (no code change needed); fixed an invalid `.gitleaks.toml` global `[[allowlists]]` schema (3 real false-positive findings suppressed) | `docs/specs/api_contracts/conventions.md#13. Error Response Standard (Canonical)`; `docs/specs/security/ai_endpoint_security_checklist.md`; `claude/system/design_gate_prompt.md#2.2`; `docs/design/2026-07-30__release-v8.0/entry-checklist-keyboard-accessibility/decision_record.md`; `docs/design/2026-07-30__release-v8.0/abandon-modal-focus-trap/decision_record.md`; `claude/cycles/2026-07-30__release-v8.0/release_plan.md#RISK-02`; `.gitleaks.toml` |
+| EPIC-03 | Swept `tests/e2e/` for §18 anti-patterns (3 `networkidle` instances, 1 route-ordering bug fixed); established a smoke/critical/regression Playwright test-tagging convention and wired `@smoke` into CI; built a synthetic trade-history generator for gated-feature testing | `claude/system/shared_standards.md#18. Playwright Test Authoring Standard`; `docs/team_skills/quality/playwright_patterns.md#6. Test Tagging Convention (v1.1)`; `backend/test_data/generate_synthetic_trade_history.py` |
+| EPIC-04 | Built and live-fire verified Render health-check-to-Telegram alerting on sustained 5xx spikes; configured Telegram repo secrets; executed a real staging rollback drill (one runbook procedure correction applied); audited the production Render dashboard-only build/deploy path filter (no gap found); drafted a database backup/DR runbook and confirmed production Supabase tier (Free — no automated backups/PITR, gap flagged) | `.github/workflows/health-check-alert.yml`; `docs/operations/render_rollback_runbook.md#Execution History`; `docs/ops/render_build_deploy_path_filter_audit.md`; `docs/ops/database_backup_disaster_recovery_runbook.md` |
+| EPIC-05 | Extracted 3 new reusable Base44 prompt fragments from existing loading-skeleton precedent | `docs/specs/frontend/base44_prompt_template_library.md (v1.4)` |
+| EPIC-06 | Designed and signed off a structural fix for the recurring cross-EPIC `execution_state.json` merge-conflict pattern (per-EPIC state files, Option 1) — implementation deliberately deferred to a clean cycle boundary | `claude/cycles/2026-07-30__release-v8.0/execution_escalations.md#ESC-EXEC-20260731-01` |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|--------------|-------------|
+| DEV-VER-2026-07-31-01 | P2 | ST-19's AC required the cross-EPIC `execution_state.json` merge-conflict structural fix to be designed AND implemented this sprint; only the design decision was completed, implementation deliberately deferred to a follow-up story (`BLG-GOV-284`) per Head of Specs Team guidance on clean cycle boundaries | PO + DoQ |
+
+### Tech backlog items shipped
+- [ST-01] [D] BLG-SPEC-78: `strategy_version_at_entry` field on `trade_plans`/`positions`
+- [ST-02] [D] BLG-SPEC-79: FX handling review post-DS-05 US market source change
+- [ST-03] [D] BLG-SPEC-107: FX conversion audit trail completeness check (§4.1.5 effective-rate logging)
+- [ST-04] [D] BLG-SEC-25: Raw exception text leaked in implicit-HTTP-200 error paths in `backend/main.py`
+- [ST-05] [G] BLG-SEC-23: Mandatory security review checklist for new AI-calling endpoints
+- [ST-06] [U] BLG-FE-135: Trade Plan pre-entry checklist items unreachable by keyboard
+- [ST-07] [U] BLG-FE-136: Trade Plan "Abandon" modal has no focus trap or restoration
+- [ST-08] [D] BLG-SEC-24: Verify `request.client.host` reflects true client IP behind Render's proxy
+- [ST-09] [D] BLG-SEC-26: `.gitleaks.toml`'s global `[[allowlists]]` blocks use an invalid schema
+- [ST-10] [D] BLG-QA-97: Retroactive Playwright §18 anti-pattern sweep (consolidated)
+- [ST-11] [D] BLG-QA-120: Test-tagging convention (smoke/regression/critical) for selective CI runs
+- [ST-12] [D] BLG-QA-121: Synthetic trade-history data generator for gated-feature testing
+- [ST-13] [D] BLG-OPS-114: Render service health-check alerting to Telegram on 5xx spike
+- [ST-14] [D] BLG-OPS-115: Configure `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` as GitHub Actions repo secrets
+- [ST-15] [D] BLG-OPS-109: Confirm Render rollback runbook has real execution history
+- [ST-16] [D] BLG-OPS-124: Render dashboard-only build/deploy path filter audit
+- [ST-17] [D] BLG-OPS-126: Backup & disaster recovery runbook for production database
+- [ST-18] [P] BLG-FE-124: Reusable Base44 prompt fragment library for common layouts
+- [ST-19] [G] BLG-GOV-263: Structural fix for recurring cross-EPIC `execution_state.json` merge-conflict pattern (design only — implementation follow-up: `BLG-GOV-284`)
+
+Sign-off: Product Owner — 2026-07-31
+QA sign-off: Director of Quality — 2026-07-31
 
 ---
 

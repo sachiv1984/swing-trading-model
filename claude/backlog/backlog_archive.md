@@ -12755,3 +12755,346 @@ Swing positions are held overnight and over weekends, exposed to gap risk from e
 - AC-02: Weekend-hold positions flagged at Friday close
 - AC-03: Flag displays historical average overnight/weekend gap magnitude for that ticker (or "insufficient history" if fewer than N historical events)
 - AC-04: No prediction of gap direction or magnitude — informational only, per §13 boundary
+---
+
+### BLG-SPEC-78 — `strategy_version_at_entry` field on trade/trade_plan
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-01); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-SPEC-78 — `strategy_version_at_entry` field on trade/trade_plan
+**Priority:** P2 (Medium) | **Type:** Data Model / Pre-work | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-data-model-20260712-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-01)
+**Problem:** SI-04 (Strategy Version Comparison) requires version-tagged trade history, but no schema field currently captures `strategy_rules.md` version at entry time.
+**Scope:** Add a `strategy_version_at_entry` field to the trade/trade_plan schema (forward-only, no backfill) ahead of SI-04 sprint planning, avoiding a later painful migration.
+**Acceptance Criteria:** Migration added; field populated on new trade plans at entry; `data_model.md` updated.
+
+---
+
+### BLG-SPEC-79 — FX handling review post-DS-05 US market source change
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-02); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-SPEC-79 — FX handling review post-DS-05 US market source change
+**Priority:** P2 (Medium) | **Type:** Spec Debt | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260712-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-02)
+**Problem:** `strategy_rules.md` §4.1.5 currency/FX canonical rules predate DS-05's switch to Alpaca for US-market OHLCV data; no confirmation FX handling was revisited when the US data source changed.
+**Scope:** Spec review confirming no silent position-sizing miscalculation for GBP-denominated accounts trading US tickers under the current data pipeline.
+**Acceptance Criteria:** Review documented; §4.1.5 confirmed accurate or an amendment filed.
+
+---
+
+### BLG-SPEC-107 — FX conversion audit trail completeness check (§4.1.5 effective-rate logging)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-03); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-SPEC-107 — FX conversion audit trail completeness check (§4.1.5 effective-rate logging)
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Financial Records | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260728-01 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-03)
+**Problem:** `data_model.md` §4.1.5 documents effective-rate logging for FX conversions, but no audit has confirmed every conversion path actually writes a complete audit trail entry.
+**Scope:** Audit all FX conversion code paths against the §4.1.5 logging requirement; fix any gap found.
+**Acceptance Criteria:** Audit complete; any gap fixed; Financial Reporting & Records Owner sign-off.
+
+---
+
+---
+
+### BLG-SEC-25 — Raw exception text leaked in 16 implicit-HTTP-200 error paths in backend/main.py
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-04); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-SEC-25 — Raw exception text leaked in 16 implicit-HTTP-200 error paths in backend/main.py
+**Priority:** P2 (Medium) | **Type:** Security / Backend | **Owner:** Head of Engineering | **Source:** BLG-SEC-13 raw-exception-text remediation finding (ST-08, EPIC-02, v7.10) — 2026-07-29 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-04)
+**Problem:** ST-08 (BLG-SEC-13) fixed all 27 explicit 500-class `HTTPException`/`JSONResponse` call sites in `backend/main.py` that leaked raw exception text via `detail=str(e)`. During that work, 16 additional call sites were found returning a bare `{"status": "error", "message": ...}` dict with **no explicit status code** — FastAPI serialises this as an implicit HTTP 200, so these are simultaneously an instance of the "errors masked as HTTP 200" bug class (`BLG-BE-68`'s pattern, fixed for `portfolio_risk.py` in this same cycle) AND a raw-exception-text leak, in the same 16 places (15 direct `str(e)` interpolations plus 1 f-string variant, `f"Failed to fetch market status: {str(e)}"`). Out of scope for ST-08 (whose AC is explicitly scoped to "500-class error responses") and out of scope for `BLG-BE-68` (scoped to `portfolio_risk.py` only) — neither existing item covers `main.py`'s own 16 instances of this combined bug. Note: some of these 16 sites already log server-side (`traceback.print_exc()`) pre-existing this cycle's work; others do not — logging coverage is itself inconsistent across the 16 and should be normalised as part of the fix, not just the client-facing message.
+**Scope:** For each of the 16 call sites: (a) correct the status code to 500 with the canonical `{status, message}` envelope (matching the `BLG-BE-68`/ST-01 remediation pattern), and (b) substitute a generic message for the raw exception text, ensuring full exception detail is logged server-side (adding `traceback.print_exc()` wherever it's currently missing).
+**Acceptance Criteria:** All 16 call sites return HTTP 500 (not implicit 200) with a generic client-facing message; full exception detail logged server-side on every one of the 16 (not just those that already had it); existing 200-path success shapes unchanged; regression test added; Head of Engineering sign-off.
+
+---
+
+---
+
+### BLG-SEC-23 — Mandatory security review checklist for new AI-calling endpoints
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-05); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-SEC-23 — Mandatory security review checklist for new AI-calling endpoints
+**Priority:** P2 (Medium) | **Type:** Security / Process | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260728-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-05)
+**Problem:** New AI-calling endpoints have each had ad hoc security consideration (rate limiting, cost gating, prompt-injection awareness) but no standard checklist ensures every new one covers the same baseline before shipping.
+**Scope:** Define a short mandatory security review checklist specific to AI-calling endpoints (distinct from the general API security review), referenced at design-gate time.
+**Acceptance Criteria:** Checklist documented; referenced from the design gate process; Cybersecurity & Trust Lead sign-off.
+
+---
+
+---
+
+### BLG-FE-135 — Trade Plan pre-entry checklist items unreachable by keyboard
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-06); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-FE-135 — Trade Plan pre-entry checklist items unreachable by keyboard
+**Priority:** P1 (High) | **Type:** Frontend / Accessibility | **Owner:** Head of UX & Design | **Source:** BLG-FE-134 keyboard navigation audit finding (ST-20, EPIC-05, v7.10) — 2026-07-29 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-06)
+**Problem:** `src/components/trades/EntryChecklist.js`'s `CheckItem` renders each checklist row as a `<div onClick={...}>` with no `onKeyDown`, `role="checkbox"`, or `tabIndex` — a keyboard-only user cannot reach or toggle any Pre-Entry Checklist item at all. This is a core interaction of the Trade Plan flow (`src/pages/TradePlan.js`), not a peripheral one.
+**Scope:** Convert `CheckItem` to a real `<button role="checkbox" aria-checked={item.checked}>` (or add `tabIndex={0}`, `role="checkbox"`, `aria-checked`, and an `onKeyDown` handler for Space/Enter) so it is keyboard-operable and screen-reader-announced as a checkbox.
+**Acceptance Criteria:** Checklist item is reachable via Tab and toggleable via Space/Enter; `aria-checked` reflects state; Playwright coverage or recorded staging sign-off confirms the fix (per CLAUDE.md §2 frontend testing gate); Head of UX & Design sign-off.
+
+---
+
+---
+
+### BLG-FE-136 — Trade Plan "Abandon" modal has no focus trap or restoration
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-07); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-FE-136 — Trade Plan "Abandon" modal has no focus trap or restoration
+**Priority:** P1 (High) | **Type:** Frontend / Accessibility | **Owner:** Head of UX & Design | **Source:** BLG-FE-134 keyboard navigation audit finding (ST-20, EPIC-05, v7.10) — 2026-07-29 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-07)
+**Problem:** `src/pages/TradePlan.js`'s Abandon Plan modal (~line 1051) is a hand-rolled `fixed inset-0` overlay, not a Radix `Dialog` (unlike other modals in this codebase). It has no focus trap (Tab moves focus into background content behind the overlay), no initial focus placed on open, no `Escape`-to-close handler, and no focus restoration to the triggering "Abandon Plan" button on close.
+**Scope:** Replace the hand-rolled overlay with the existing `src/components/ui/dialog.js` Radix-based `Dialog` primitive (already used elsewhere in this codebase and confirmed to handle focus trap/restore/Escape correctly), or add equivalent focus-management logic if a Radix `Dialog` cannot be used here.
+**Acceptance Criteria:** Tab cannot move focus outside the modal while open; Escape closes it; focus returns to the triggering button on close; Playwright coverage or recorded staging sign-off confirms the fix; Head of UX & Design sign-off.
+
+---
+
+---
+
+### BLG-SEC-24 — Verify request.client.host reflects true client IP behind Render's proxy; configure trusted-proxy headers if not
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-08); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-SEC-24 — Verify request.client.host reflects true client IP behind Render's proxy; configure trusted-proxy headers if not
+**Priority:** P1 (High) | **Type:** Security / Infrastructure | **Owner:** Cybersecurity & Trust Lead | **Source:** BLG-SEC-09 AI rate-limit bypass audit finding (ST-06, EPIC-02, v7.10) — 2026-07-29 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-08)
+**Problem:** `backend/routers/ai.py`'s per-IP AI rate limiter (`_ai_limiter`) keys purely on `request.client.host`. `render.yaml`'s start command (`uvicorn main:app --host 0.0.0.0 --port $PORT`) has no `--proxy-headers`/`--forwarded-allow-ips` flag. Render terminates connections at its own edge/proxy layer, so without trusting a specific forwarded-IP header from that known upstream, `request.client.host` at the ASGI layer likely reflects Render's internal proxy connection, not the real client IP, for every request in production. If confirmed, every user's traffic collapses onto the same rate-limit key — the documented "10/min/IP" and "30/min/IP" limits would actually be a single shared global budget, meaning one user (malicious or not) could exhaust the entire app's AI quota and deny service to everyone else with as few as 10 rapid requests. This undermines the cost/DoS control the limiter was built for (`BLG-SEC-21`/v7.8).
+**Scope:** Verify against the live Render deployment whether `request.client.host` reflects the real client IP or Render's proxy IP (e.g. log it for a live request from a known external IP). If confirmed to be the proxy IP: configure uvicorn to trust Render's forwarding (`--proxy-headers --forwarded-allow-ips=...` scoped correctly, not a blanket wildcard, per Render's documented `X-Forwarded-For` behaviour) so the limiter keys on the true client IP.
+**Acceptance Criteria:** Live verification documented; if the proxy-IP collapse is confirmed, uvicorn configured to trust the correct forwarded-IP header from Render's known edge; re-verified live that distinct real clients now get independent rate-limit buckets; Cybersecurity & Trust Lead sign-off.
+
+---
+
+---
+
+### BLG-SEC-26 — `.gitleaks.toml`'s global `[[allowlists]]` blocks use an invalid schema and have never actually suppressed anything
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-09); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-SEC-26 — `.gitleaks.toml`'s global `[[allowlists]]` blocks use an invalid schema and have never actually suppressed anything
+**Priority:** P1 (High) | **Type:** Security / CI Tooling | **Owner:** Cybersecurity & Trust Lead | **Source:** ST-05 (EPIC-02, v7.10) CI failure investigation — 2026-07-29 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-09)
+**Problem:** `.gitleaks.toml` defines 3 pre-existing top-level `[[allowlists]]` blocks (Telegram/API-key test stubs, Alpaca test stubs, localStorage key strings) plus a 4th added this cycle for ST-05's own test fixture. Per gitleaks v8.21's actual config schema (confirmed via the bundled README and verified locally against the real `gitleaks` v8.21.2 binary), a **global** allowlist must be a single non-array `[allowlist]` table; the plural array-of-tables form `[[allowlists]]` is only valid **nested inside a specific `[[rules]]` block** (as `[[rules.allowlists]]`). A bare top-level `[[allowlists]]` is not a recognised key at all and is silently ignored — confirmed by reproducing locally: all 4 blocks currently produce zero suppression effect. This means every "allowlisted" false positive these blocks were meant to cover (Telegram/API-key test stubs, Alpaca test stubs, localStorage keys) has, in practice, been relying on something else (or nothing) to keep CI green — worth checking whether `secret-scanning.yml`'s CI runs have actually been passing by coincidence (e.g. those specific patterns never actually appearing in current file content) rather than by the allowlist doing its job, which is a latent risk if any of those patterns' underlying files change.
+**Scope:** Rewrite the 3 pre-existing blocks using the correct `[[rules]] id = "<rule-id>" / [[rules.allowlists]]` nested form (each scoped to whichever specific default rule ID(s) actually fire on that pattern — may be more than one rule per block, as ST-05's fix required for both `github-pat` and `generic-api-key`), with `condition = "AND"` and `regexTarget = "match"` set explicitly to avoid the default OR-across-criteria and default secret-only match target producing over- or under-suppression. Verify each rewritten block actually suppresses its intended finding by running the real `gitleaks` binary locally against the specific file, not just visual config review.
+**Acceptance Criteria:** All allowlist blocks in `.gitleaks.toml` use schema-valid syntax; each block's suppression verified by an actual local `gitleaks detect` run against its target file (not just TOML syntax validity); CI secret-scanning.yml still passes on a clean branch; Cybersecurity & Trust Lead sign-off.
+
+---
+
+---
+
+### BLG-QA-97 — Retroactive Playwright §18 anti-pattern sweep (route.fallback() ordering + networkidle usage) (consolidated)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-10); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-QA-97 — Retroactive Playwright §18 anti-pattern sweep (route.fallback() ordering + networkidle usage) (consolidated)
+**Priority:** P2 (Medium) | **Type:** QA / Process Tooling | **Owner:** Director of Quality; QA Lead | **Source:** IDEA-director-of-quality-20260712-01 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-10)
+**Consolidates:** BLG-QA-101 — same "retroactively sweep pre-existing Playwright specs for a shared_standards.md §18 anti-pattern never audited before it was codified" mechanism, filed for a second §18 anti-pattern the same rebalance cycle (2026-07-12__scheduled) — merged 2026-07-28, session duplicate-consolidation cleanup
+**Problem:** `shared_standards.md` §18 (v6.8) documents two Playwright anti-pattern fixes for new tests only — `route.fallback()` vs `route.continue()` ordering, and a ban on `waitForLoadState('networkidle')` — but existing pre-v6.8 suites were never retroactively audited for either latent pattern.
+**Scope:** One-time grep-and-fix sweep of all existing spec files for (a) generic catch-all handlers using `route.continue()` ahead of a more specific handler, and (b) any remaining `networkidle` usage, replacing with an element-specific wait.
+**Acceptance Criteria:** Sweep complete for both patterns; any found instances fixed; zero remaining instances of either confirmed via grep in CI or a one-time report.
+
+---
+
+### BLG-QA-120 — Test-tagging convention (smoke/regression/critical) for selective CI runs
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-11); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-QA-120 — Test-tagging convention (smoke/regression/critical) for selective CI runs
+**Priority:** P2 (Medium) | **Type:** QA / Process | **Owner:** QA Lead | **Source:** IDEA-qa-lead-20260724-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-11)
+**Problem:** The Playwright suite always runs in full; no tagging convention exists to allow selective (e.g. smoke-only) runs for faster feedback on lower-risk changes.
+**Scope:** Define and apply a tagging convention (smoke/regression/critical) to the existing suite; wire selective-run capability into CI where useful.
+**Acceptance Criteria:** Tagging convention documented; applied to at least the smoke-tier subset.
+
+---
+
+---
+
+### BLG-QA-121 — Synthetic trade-history data generator for gated-feature testing
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-12); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-QA-121 — Synthetic trade-history data generator for gated-feature testing
+**Priority:** P2 (Medium) | **Type:** QA / Test Tooling | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260724-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-12)
+**Problem:** Gated features (Setup Quality Score, SI-02 frontend) can only be tested end-to-end once real trade volume clears their gates, slowing test development for features that are otherwise implementation-ready.
+**Scope:** Build a synthetic trade-history generator producing realistic (non-production) data satisfying gate thresholds, for use in test environments only.
+**Acceptance Criteria:** Generator produces data satisfying at least the SI-02 and Setup Quality Score gate thresholds; clearly scoped/labelled as test-only, never usable against production.
+
+---
+
+---
+
+### BLG-OPS-114 — Render service health-check alerting to Telegram on 5xx spike
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-13); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-OPS-114 — Render service health-check alerting to Telegram on 5xx spike
+**Priority:** P2 (Medium) | **Type:** Operations / Reliability | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260717-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-13)
+**Problem:** The existing Telegram integration (weekly digest, per `strategy_rules.md §` digest references) has no wiring to Render service health — a sustained 5xx spike on the production backend would currently only be discovered manually.
+**Scope:** Add a lightweight health-check poll (or Render webhook, if available on current plan tier) that posts a Telegram alert on a sustained 5xx spike.
+**Acceptance Criteria:** Alert wired and confirmed to fire on a simulated 5xx spike (staging) or a documented dry-run test.
+
+---
+
+---
+
+### BLG-OPS-115 — Configure TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID as GitHub Actions repo secrets for nightly backtest job alerting
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-14); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-OPS-115 — Configure TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID as GitHub Actions repo secrets for nightly backtest job alerting
+**Priority:** P2 (Medium) | **Type:** Operations / Reliability | **Owner:** Infrastructure & Operations Owner | **Source:** ST-10 (EPIC-10, v7.7) execution | **Effort:** XS | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-14)
+**Problem:** `backtest.yml`'s new failure/anomaly alert step (ST-10, EPIC-10, v7.7) POSTs to Telegram via `secrets.TELEGRAM_BOT_TOKEN`/`secrets.TELEGRAM_CHAT_ID`, but these are currently only configured as Render backend env vars (`backend/config.py`), not as GitHub Actions repo secrets. Until added, the alert step degrades gracefully (logs a `::warning::` annotation instead of sending) rather than failing the job — but the alert will not actually reach anyone until configured.
+**Scope:** Add `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` as GitHub Actions repo secrets (same values as the existing Render env vars) under repo Settings → Secrets and variables → Actions.
+**Acceptance Criteria:** Secrets present in repo Actions settings; a manual `workflow_dispatch` re-run against a deliberately-broken endpoint confirms a Telegram message is actually received (not just the `::warning::` fallback).
+
+---
+
+## Roadmap Rebalance 2026-07-12__scheduled — New Items (IW-20260712-01 disposition)
+
+*37 items added via idea intake IW-20260712-01 STEP 4 disposition (Backlog/gate-conditional-or-actionable-now). Source ideas and full rationale: `claude/ideas/ideas_register.md` (2026-07-12 rows), `claude/ideas/window_summary_IW-20260712-01.md`. DL-064.*
+
+---
+
+### BLG-OPS-109 — Confirm Render rollback runbook has real execution history
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-15); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-OPS-109 — Confirm Render rollback runbook has real execution history
+**Priority:** P2 (Medium) | **Type:** Operations / Infrastructure | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260713-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-15)
+**Problem:** The deploy-rollback runbook has (per available records) only ever been dry-run, never executed against a real incident — its actual reliability under a live rollback is unverified. Distinct from `BLG-GOV-212` (cross-EPIC merge runbook dry-run), which covers a different artefact.
+**Scope:** Either confirm a real prior rollback execution exists in history, or schedule a deliberate rollback drill against a non-production/staging deploy to validate the runbook end-to-end.
+**Acceptance Criteria:** Either historical execution evidence is found and documented, or a drill is run and its outcome documented.
+
+---
+
+### BLG-OPS-124 — Render dashboard-only build/deploy path filter audit (invisible to repo grep)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-16); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-OPS-124 — Render dashboard-only build/deploy path filter audit (invisible to repo grep)
+**Priority:** P2 (Medium) | **Type:** Operations / Infrastructure | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260728-02 (submitter recommendation: Now) | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-16)
+**Problem:** Render's dashboard-configured build/deploy path filters are not represented anywhere in the repo, so a change to a file outside the configured watch paths (e.g. `changelog.md`, per commit `e9c73f58` this same day) can silently fail to trigger a redeploy with no signal visible to a repo-only search. This is now a confirmed second occurrence of the same class as `BLG-OPS-82` (see `BLG-OPS-90` gate-status update, this cycle).
+**Scope:** Audit the full current Render dashboard build/deploy path-filter configuration against the set of files the running app actually reads at runtime; document any other file outside the watched paths.
+**Acceptance Criteria:** Audit complete; configuration documented in-repo (even though the source of truth remains the dashboard) so future searches can find it; FinOps & Resource Architect sign-off.
+
+---
+
+---
+
+### BLG-OPS-126 — Backup & disaster recovery runbook for production database
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-17); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-OPS-126 — Backup & disaster recovery runbook for production database
+**Priority:** P2 (Medium) | **Type:** Operations / Infrastructure | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260728-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-17)
+**Problem:** No documented runbook exists for production database backup verification or disaster recovery — a real incident would rely on ad hoc knowledge rather than a tested procedure.
+**Scope:** Document backup frequency/retention (as currently configured on the hosting provider) and a step-by-step recovery runbook.
+**Acceptance Criteria:** Runbook documented; recovery steps confirmed against actual hosting provider capability; Infrastructure & Operations Owner sign-off.
+
+---
+
+---
+
+### BLG-FE-124 — Reusable Base44 prompt fragment library for common layouts
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-18); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-FE-124 — Reusable Base44 prompt fragment library for common layouts
+**Priority:** P2 (Medium) | **Type:** Frontend / Technical Debt | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260724-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-18)
+**Problem:** Common card/empty-state/loading-skeleton layout prompts are re-authored per page rather than drawing from a shared fragment library, contributing to visual drift across pages.
+**Scope:** Extract the most-repeated layout prompt fragments into `base44_prompt_template_library.md`.
+**Acceptance Criteria:** Library extended with at least 3 new reusable fragments; referenced by at least one new story going forward.
+
+---
+
+---
+
+### BLG-GOV-263 — Structural fix for recurring cross-EPIC `execution_state.json` merge-conflict pattern
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-07-31
+**Shipped in:** v8.0
+**Evidence:** docs/product/changelog.md#v8.0 (ST-19); claude/cycles/2026-07-30__release-v8.0/verification_report.md
+
+### BLG-GOV-263 — Structural fix for recurring cross-EPIC `execution_state.json` merge-conflict pattern
+**Priority:** P2 (Medium) | **Type:** Governance / Engineering | **Owner:** Head of Engineering | **Source:** STEP -1.7 Governance Health Score cross-routine scan, roadmap rebalance `2026-07-27__scheduled` (item first surfaced `2026-07-17__release-v7.5` closure, escalated again at `2026-07-20__release-v7.6` and `2026-07-21__release-v7.7` closures, target "next roadmap review" missed at `2026-07-24__scheduled` due to the Carry-Forward mechanism's single-cycle lookback — see `lessons_learnt.md` for the full detection-gap account) | **Effort:** L (~3-5 days) | **Provisional-Target:** ✅ COMPLETE — 2026-07-31 — cycle: 2026-07-30__release-v8.0 (ST-19)
+**Problem:** Every EPIC branch cut before sprint execution progresses on `main` accumulates an independently-diverging copy of `execution_state.json`, requiring a manual per-branch conflict resolve at merge time. The existing mitigation (`shared_standards.md` §12, merge sequencing + reactive conflict resolution) does not prevent the conflict, only resolves it after the fact — and the cost has scaled up across 3 consecutive multi-EPIC cycles (v7.6, v7.7, v7.8; 10/11 branches affected at v7.7, 11/12 at v7.8) rather than down.
+**Scope:** A structural fix removing the recurring merge-conflict surface itself — e.g. per-EPIC append-only manifest files aggregated at build/CI time instead of every branch writing to the same shared state file independently.
+**Acceptance Criteria:** Structural fix designed and implemented; next multi-EPIC sprint shows a measured reduction in per-branch `execution_state.json` conflicts; Head of Engineering sign-off; `shared_standards.md` §12 updated to reference the new mechanism.
+
+---
+
+## Delivery Verification 2026-07-27__release-v7.9 — New Items
+
+*Open escalation carried forward at sprint close with no prior backlog.md tracking entry — filed per `delivery_verification_prompt.md` STEP 4.1.*
+

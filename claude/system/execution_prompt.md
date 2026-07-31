@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.61
-**Last Updated:** 2026-07-30
+**Version:** 3.62
+**Last Updated:** 2026-07-31
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -114,6 +114,7 @@ Every ST item must be classified on load:
 - Items requiring QA verification of behavioural conformance: `delegated_qa` (after any `delegated_backend` or `delegated_frontend` work completes)
 - Items with unresolved authority or scope questions: `delegated_decision`
 - **Autonomous candidate pattern (LL-v1.10-P3-3):** If the item description is "refactor component X to call backend endpoint Y" with no UX change, and the API method already exists client-side (e.g. in `api.js`), classify as `autonomous` — this is a pure data-fetching swap with no delegation risk. Confirm with Product Owner if scope ambiguity exists.
+- **Infra/ops verification pattern (LL-v8.0-P3-01):** Infrastructure/operations verification or configuration task requiring live external dashboard/production access the engine cannot perform (e.g. Render/Supabase dashboard reads, GitHub repo secret configuration) → `delegated_backend`, regardless of whether any code is written. This sub-pattern was missing at `2026-07-30__release-v8.0`, causing 6 of 19 stories (32% of scope) to be initially recorded as stale `autonomous` at STEP 0, requiring mid-execution correction.
 
 **§13 gate story pattern (LL-v3.5-SP-01):** When an arc feature requires a strategy or compliance review gate (referenced as a "§13 review" in the OPERATIONAL_GUIDE), scope the review as a Sprint 1 story with `classification: delegated_decision`, gating all implementation stories (backend, frontend) to Sprint 2. The Sprint 1 gate story must reach `status: done` before Sprint 2 implementation stories begin execution. If the gate story is not resolved by end of Sprint 1: surface as an escalation and defer implementation stories to the next cycle. This pattern was validated in v3.5 ST-01 (IT-06 Arc 3 integration — §13 gate cleared before Arc 3 backend implementation).
 
