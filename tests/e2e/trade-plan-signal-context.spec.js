@@ -68,16 +68,20 @@ async function setupCommonRoutes(page) {
     await route.fulfill({ json: { status: 'ok', data: MARKET_STATUS } });
   });
 
-  await page.route(`${API}/trade-plans/by-position/**`, async (route) => {
-    await route.fulfill({ json: { status: 'ok', data: [] } });
-  });
-
+  // Generic catch-all registered first so the more specific by-position
+  // handler below (registered later, evaluated first) can take precedence.
+  // route.fallback() defers to that earlier-registered handler instead of
+  // sending the request onward to the real network (shared_standards.md §18).
   await page.route(`${API}/trade-plans/**`, async (route) => {
     if (route.request().method() === 'GET') {
       await route.fulfill({ json: { status: 'ok', data: MOCK_TRADE_PLAN } });
     } else {
-      await route.continue();
+      await route.fallback();
     }
+  });
+
+  await page.route(`${API}/trade-plans/by-position/**`, async (route) => {
+    await route.fulfill({ json: { status: 'ok', data: [] } });
   });
 }
 

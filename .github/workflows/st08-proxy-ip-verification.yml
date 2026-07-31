@@ -1,0 +1,64 @@
+name: ST-08 Proxy IP Verification
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  burst-from-runner-a:
+    runs-on: ubuntu-latest
+    outputs:
+      got_429: ${{ steps.burst.outputs.got_429 }}
+      runner_ip: ${{ steps.whoami.outputs.ip }}
+    steps:
+      - name: Record this runner's public IP
+        id: whoami
+        run: |
+          ip=$(curl -s --max-time 10 https://api.ipify.org || echo "unknown")
+          echo "Runner A public IP: ${ip}"
+          echo "ip=${ip}" >> "$GITHUB_OUTPUT"
+      - name: Burst /health until rate-limited (max 70 attempts)
+        id: burst
+        env:
+          API_URL: ${{ secrets.API_URL }}
+        run: |
+          got_429=false
+          for i in $(seq 1 70); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "${API_URL}/health")
+            if [ "$code" = "429" ]; then
+              echo "Rate-limited on attempt ${i}"
+              got_429=true
+              break
+            fi
+          done
+          echo "got_429=${got_429}" >> "$GITHUB_OUTPUT"
+          if [ "$got_429" != "true" ]; then
+            echo "::warning::Never hit 429 after 70 attempts — limit may be higher than expected, or burst too slow relative to the 60/min window."
+          fi
+
+  probe-from-runner-b:
+    needs: burst-from-runner-a
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record this runner's public IP
+        id: whoami
+        run: |
+          ip=$(curl -s --max-time 10 https://api.ipify.org || echo "unknown")
+          echo "Runner B public IP: ${ip}"
+          echo "Runner A public IP was: ${{ needs.burst-from-runner-a.outputs.runner_ip }}"
+      - name: Single probe request immediately after Runner A's burst
+        env:
+          API_URL: ${{ secrets.API_URL }}
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "${API_URL}/health")
+          echo "Runner B /health response: HTTP ${code}"
+          echo "Runner A got rate-limited: ${{ needs.burst-from-runner-a.outputs.got_429 }}"
+          if [ "${{ needs.burst-from-runner-a.outputs.got_429 }}" != "true" ]; then
+            echo "::warning::Runner A never triggered a 429 — this run is inconclusive, re-run or increase burst count."
+            exit 0
+          fi
+          if [ "$code" = "429" ]; then
+            echo "::error::PROXY IP COLLAPSE CONFIRMED — Runner B (different IP) was rate-limited immediately after Runner A's burst. request.client.host is not distinguishing real clients behind Render's proxy."
+            exit 1
+          else
+            echo "No collapse detected — Runner B (different IP) got its own independent rate-limit bucket (HTTP ${code}, not 429)."
+          fi
