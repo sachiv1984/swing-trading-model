@@ -33,7 +33,7 @@
           "completed_utc": "2026-07-30T18:40:00Z",
           "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/data_model.md#DS-11 \u2014 Add strategy_version_at_entry to trade_plans and positions (v2.20)"
+            "docs/specs/data_model.md#DS-11 — Add strategy_version_at_entry to trade_plans and positions (v2.20)"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
@@ -67,10 +67,10 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Review found FX rate path (get_live_fx_rate, Yahoo Finance) fully decoupled from DS-05's Alpaca OHLCV/ATR routing. strategy_rules.md \u00a74.1.5 confirmed accurate; no amendment filed."
+          "notes": "Review found FX rate path (get_live_fx_rate, Yahoo Finance) fully decoupled from DS-05's Alpaca OHLCV/ATR routing. strategy_rules.md §4.1.5 confirmed accurate; no amendment filed."
         },
         "ST-03": {
-          "title": "FX conversion audit trail completeness check (\u00a74.1.5 effective-rate logging)",
+          "title": "FX conversion audit trail completeness check (§4.1.5 effective-rate logging)",
           "classification": "autonomous",
           "status": "done",
           "assigned_to": "engine",
@@ -95,7 +95,7 @@
             "method": "agent_mediated",
             "date": "2026-07-30"
           },
-          "notes": "Audited all FX conversion code paths; found and fixed 3 gaps (fx_rate_used missing from POST /portfolio/position, GET /portfolio/prospective-heat, and pre-entry-validation's cash_constraint check). 8 regression tests added (tests/test_fx_audit_trail_completeness.py). Financial Reporting & Records Owner sign-off (agent-mediated, \u00a75.3)."
+          "notes": "Audited all FX conversion code paths; found and fixed 3 gaps (fx_rate_used missing from POST /portfolio/position, GET /portfolio/prospective-heat, and pre-entry-validation's cash_constraint check). 8 regression tests added (tests/test_fx_audit_trail_completeness.py). Financial Reporting & Records Owner sign-off (agent-mediated, §5.3)."
         }
       }
     },
@@ -246,7 +246,7 @@
       "test_scenarios": [],
       "stories": {
         "ST-10": {
-          "title": "Retroactive Playwright \u00a718 anti-pattern sweep (consolidated)",
+          "title": "Retroactive Playwright §18 anti-pattern sweep (consolidated)",
           "classification": "autonomous",
           "status": "not_started",
           "assigned_to": "engine",
@@ -368,7 +368,7 @@
         "ST-15": {
           "title": "Confirm Render rollback runbook has real execution history",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1155,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-04",
@@ -376,17 +376,21 @@
           "delegation_record_id": "DEL-20260731-03",
           "blocked_since_utc": "2026-07-31T01:30:00Z",
           "unblock_criteria": "A staging rollback drill actually performed and outcome recorded in docs/operations/render_rollback_runbook.md's Execution History table, with Infrastructure & Operations Owner sign-off",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-07-31T08:10:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/operations/render_rollback_runbook.md#Execution History (v1.1)"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.pending_commit",
-          "sign_off_record": null,
-          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend'. Autonomous investigation complete: confirmed via git log --all (only the runbook-authoring commit 2d2c290c, no rollback commit), backlog.md/backlog_archive.md (BLG-OPS-91, BLG-OPS-109 both explicitly state the runbook has never been exercised, not even a dry-run), and cycle lessons_learnt/post_ship files (no mention) that NO real rollback or drill has ever occurred. Added a new 'Execution History' section (v1.0->v1.1) to docs/operations/render_rollback_runbook.md documenting this finding with citations. AC requires either historical evidence (doesn't exist) OR an actually-performed drill (not merely documented as pending) - delegating the live drill execution, which needs Render dashboard access."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "human",
+            "date": "2026-07-31"
+          },
+          "notes": "User (Infrastructure & Operations Owner) executed a deliberate rollback drill against the non-production staging service (trading-assistant-api-staging, per render.yaml). Deploy transitioned cleanly to Live (green) in the Render dashboard. Post-rollback GET /health returned {\"status\":\"ok\",\"db\":\"connected\",...}, matching the runbook's Step 4 expected outcome. Procedure finding: no log entries were visible in the Render Logs tab during/after the rollback despite success - Step 3 of render_rollback_runbook.md (v1.1->v1.2) corrected with a note that an empty Logs tab is not a failure signal; Deploy status (green/Live) plus /health are the authoritative checks. Recorded in the runbook's Execution History table, qa_evidence_EPIC-04.md partial sign-off (now covering ST-13/14/15), and delegation_log.md DEL-20260731-03 resolution. This is a genuine human-performed infrastructure action, not agent-mediated - sign_off_record.method set to 'human' accordingly."
         },
         "ST-16": {
           "title": "Render dashboard-only build/deploy path filter audit",
@@ -502,7 +506,6 @@
     }
   },
   "blocked_items": [
-    "ST-15",
     "ST-16",
     "ST-17"
   ],
@@ -518,7 +521,8 @@
     "ST-02",
     "ST-03",
     "ST-13",
-    "ST-14"
+    "ST-14",
+    "ST-15"
   ],
   "open_escalations": [],
   "merge_gate": {

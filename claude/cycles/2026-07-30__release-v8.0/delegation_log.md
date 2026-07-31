@@ -52,7 +52,8 @@ Last Updated: 2026-07-31
 - **Spec reference:** `docs/operations/render_rollback_runbook.md` (the procedure to exercise) and its new §Execution History section
 - **Unblock criteria:** A staging rollback drill is actually performed and its outcome (date, what was tested, any procedure corrections found) is recorded in `docs/operations/render_rollback_runbook.md`'s Execution History table, with Infrastructure & Operations Owner sign-off in `qa_evidence_EPIC-04.md`.
 - **Commit format required:** `[EPIC-04][ST-15] <description>` pushed to `exec/2026-07-30__release-v8.0/EPIC-04`
-- **Status:** Pending
+- **Status:** Unblocked
+- **Resolution (2026-07-31):** User (Infrastructure & Operations Owner) executed a deliberate rollback drill against the non-production staging service (`trading-assistant-api-staging`, per `render.yaml`). Deploy transitioned cleanly to Live (green) in the Render dashboard. Post-rollback `GET /health` returned `{"status":"ok","db":"connected",...}`, confirming the service functions correctly post-rollback. One procedure finding: no log entries were visible in the Render Logs tab during/after the rollback — Step 3 of `render_rollback_runbook.md` (v1.1→v1.2) corrected to note that an empty Logs tab is not a failure signal; Deploy status + `/health` are authoritative. Recorded in the runbook's Execution History table and `qa_evidence_EPIC-04.md`.
 
 ## DEL-20260731-04
 

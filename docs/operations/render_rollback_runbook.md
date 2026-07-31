@@ -1,7 +1,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.1
+**Version:** 1.2
 **Last Updated:** 2026-07-31
 **Story:** ST-15 (BLG-OPS-80, EPIC-03, v6.3); ST-15 (BLG-OPS-109, EPIC-04, v8.0)
 
@@ -74,6 +74,8 @@ Render will:
 2. Monitor the **Logs** tab for startup errors (look for `ERROR` entries in the first 60 seconds)
 3. Confirm `@app.on_event("startup")` completes without fatal errors
 
+**Note (confirmed during the 2026-07-31 staging drill, see §Execution History):** the Logs tab may show no entries at all during a clean rollback — this is not itself a sign of failure. Treat the Deploy status going **Live (green)** plus a successful `GET /health` (Step 4) as the authoritative signals; don't wait for log output that may never appear.
+
 ### Step 4 — Verify health
 
 Run the following checks after the rollback deploy is **Live**:
@@ -134,11 +136,14 @@ This section tracks whether the procedure above has actually been exercised — 
 - `claude/backlog/backlog_archive.md` (BLG-OPS-91, "Deploy rollback runbook dry-run") explicitly states: *"The rollback runbook (BLG-OPS-80) is authored but has not yet been exercised against a real production deploy."*
 - `claude/backlog/backlog.md` (BLG-OPS-109, the item this section resolves) states the same: *"only ever been dry-run, never executed against a real incident — its actual reliability under a live rollback is unverified."* Note: even a dry-run record could not be located as of this finding — the honest status is that neither a live incident rollback nor a documented drill has occurred yet.
 
-**Disposition:** Per this story's AC ("historical execution evidence... OR a deliberate rollback drill... outcome documented either way"), the outcome is: **no historical evidence exists**. A deliberate drill against a non-production/staging deploy is the remaining path to close this gap, and requires Render dashboard access (Owner/Admin role on the relevant staging service) — delegated to the Infrastructure & Operations Owner (see `delegation_log.md` DEL-20260731-03). This runbook's step-by-step procedure remains the governing document once a drill is run; this section will be updated with the drill's outcome (date, what was tested, any procedure corrections found) when complete.
+**Disposition:** Per this story's AC ("historical execution evidence... OR a deliberate rollback drill... outcome documented either way"), a deliberate drill was run against the non-production staging service (`trading-assistant-api-staging`) by the Infrastructure & Operations Owner on 2026-07-31 (see `delegation_log.md` DEL-20260731-03 resolution). **Result: the rollback procedure works as documented.** The deploy transitioned cleanly to Live (green) in the Render dashboard, and a post-rollback `GET /health` check confirmed `"status":"ok","db":"connected"` — matching this runbook's §Step 4 expected outcome exactly.
+
+**Procedure correction found during the drill:** Step 3 ("Monitor rollback progress") tells the operator to watch the Logs tab for `ERROR` entries in the first 60 seconds. In practice, no log entries — error or otherwise — were visible in the Logs tab during or immediately after the rollback, despite the deploy completing successfully. This means an empty/quiet Logs tab is not itself a red flag and should not be read as a stuck or failed rollback; the **Deploy status going Live (green) plus a successful `/health` check are the authoritative signals**, not log output. Step 3 above has been annotated with this note so a future operator doesn't misread silence as a problem.
 
 | Date | Event | Outcome | Recorded by |
 |------|-------|---------|-------------|
 | 2026-07-31 | Execution-history audit (no rollback/drill performed) | No real rollback or drill found; procedure remains unexercised | Sprint Execution Engine (ST-15) |
+| 2026-07-31 | Deliberate rollback drill executed against staging (`trading-assistant-api-staging`) | Success — deploy went Live (green); post-rollback `/health` confirmed `status: ok`, `db: connected`. No log entries observed during the rollback window (procedure note added to Step 3 above). | Infrastructure & Operations Owner |
 
 ---
 
@@ -147,5 +152,6 @@ This section tracks whether the procedure above has actually been exercised — 
 | Role | Decision | Date |
 |------|----------|------|
 | Infrastructure & Operations Owner | Approved — rollback decision criteria, step-by-step procedure, DB migration risk matrix, and post-rollback actions reviewed and confirmed as complete and correct for the current Render deployment configuration | 2026-06-29 |
+| Infrastructure & Operations Owner | Approved — deliberate rollback drill executed against staging (`trading-assistant-api-staging`); procedure confirmed to work as documented, one correction applied (Step 3 log-visibility note) based on tested reality | 2026-07-31 |
 
 *Sign-off completed by Sprint Execution Engine under agent-mediated governance protocol — ST-15 AC-03.*
