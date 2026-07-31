@@ -32,6 +32,14 @@
  * formalises that existing CI coverage as the specific gate §12 Rule 3
  * refers to, rather than leaving it an implicit side-effect of the
  * workflow's branch triggers.
+ *
+ * ── Test-tagging convention (ST-11, EPIC-03, v8.0, BLG-QA-120) ────────────
+ * All three tests also carry the `@smoke` tier tag (see
+ * `docs/team_skills/quality/playwright_patterns.md §6`) — the general
+ * smoke/regression/critical convention that `@epic-merge-smoke` predates.
+ * `.github/workflows/smoke-tests.yml` filters on `@smoke` rather than this
+ * file's path, so any spec adding a `@smoke`-tagged test joins this run
+ * automatically.
  */
 
 'use strict';
@@ -144,7 +152,7 @@ async function mockNotificationsFeed(page, payload = SMOKE_NOTIFICATIONS) {
 // Visual AC (button gradient, icon colours): DoQ manual review.
 // ---------------------------------------------------------------------------
 
-test('PATH-1: add trade — form submits and POST /portfolio/position fires', { tag: '@epic-merge-smoke' }, async ({ page }) => {
+test('PATH-1: add trade — form submits and POST /portfolio/position fires', { tag: ['@epic-merge-smoke', '@smoke'] }, async ({ page }) => {
   // Set up mocks before navigation
   await mockSettings(page);
   await mockPositions(page);
@@ -232,7 +240,7 @@ test('PATH-1: add trade — form submits and POST /portfolio/position fires', { 
 // Visual AC (P&L colour, badge styling): DoQ manual review.
 // ---------------------------------------------------------------------------
 
-test('PATH-2: view portfolio — open positions render on Positions page', { tag: '@epic-merge-smoke' }, async ({ page }) => {
+test('PATH-2: view portfolio — open positions render on Positions page', { tag: ['@epic-merge-smoke', '@smoke'] }, async ({ page }) => {
   // Fallback registered FIRST — Playwright routes are LIFO, so specific mocks
   // registered after the fallback take precedence and won't be swallowed by it.
   await mockFallback(page);
@@ -274,7 +282,7 @@ test('PATH-2: view portfolio — open positions render on Positions page', { tag
 // Visual AC (unread cyan border, icon colours): DoQ manual review.
 // ---------------------------------------------------------------------------
 
-test('PATH-3: view alerts — notification feed renders with unread items', { tag: '@epic-merge-smoke' }, async ({ page }) => {
+test('PATH-3: view alerts — notification feed renders with unread items', { tag: ['@epic-merge-smoke', '@smoke'] }, async ({ page }) => {
   // Fallback registered FIRST — Playwright routes are LIFO, so mockNotificationsFeed
   // (registered last) takes precedence and the notifications endpoint is not swallowed.
   await mockFallback(page);
