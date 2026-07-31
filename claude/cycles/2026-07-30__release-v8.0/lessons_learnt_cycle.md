@@ -74,5 +74,46 @@ Items: 2
 
 | # | Observation | Implication | Engine |
 |---|-------------|-------------|--------|
-| 1 | ST-19's design decision selected per-EPIC state files (one `execution_state/EPIC-xx.json` per branch) as the structural fix for the recurring cross-EPIC `execution_state.json` merge-conflict pattern, with implementation deferred to a follow-up story citing `ESC-EXEC-20260731-01` directly. | File the follow-up implementation story at next sprint planning exactly per the two Head of Specs Team scoping modifications recorded in the escalation (regenerate-on-read summary view; `shared_standards.md` §12 Rule 2 retirement only in the same commit as implementation) — do not re-litigate the option analysis. | Sprint Planning |
-| 2 | Production Supabase project confirmed on Free tier (no automated backups, no PITR) via ST-17 — a real, currently-open operational risk, not a documentation gap. | Recommend filing a P1 backlog item for a recurring manual `pg_dump` schedule at next sprint planning, per the runbook's own §3.4 flag. | Sprint Planning |
+| 1 | ST-19's design decision selected per-EPIC state files (one `execution_state/EPIC-xx.json` per branch) as the structural fix for the recurring cross-EPIC `execution_state.json` merge-conflict pattern, with implementation deferred to a follow-up story citing `ESC-EXEC-20260731-01` directly. | File the follow-up implementation story at next sprint planning exactly per the two Head of Specs Team scoping modifications recorded in the escalation (regenerate-on-read summary view; `shared_standards.md` §12 Rule 2 retirement only in the same commit as implementation) — do not re-litigate the option analysis. Filed as `BLG-GOV-284` at delivery verification. | Sprint Planning |
+| 2 | Production Supabase project confirmed on Free tier (no automated backups, no PITR) via ST-17 — a real, currently-open operational risk, not a documentation gap. | Recommend filing a P1 backlog item for a recurring manual `pg_dump` schedule at next sprint planning, per the runbook's own §3.4 flag. Filed as `BLG-OPS-127` (P1) at delivery verification. | Sprint Planning |
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-07-30__release-v8.0
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-07-31
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-07-28__release-v7.10 (`lessons_learnt_cycle.md` `## Phase 4`) — one friction item (sealed `execution_state.json`'s top-level `completed_items` array missing 19 of 23 done stories, a first-occurrence staleness pattern; deferred fix targeted `execution_prompt.md`'s Sprint Close seal step). Confirmed applied within this cycle's own execution, ahead of the deferred prompt fix landing: `execution_state.json.process_notes[2]` records the same STEP 7 pre-seal union check catching and correcting an equivalent gap (`completed_items` missing 5 of 19 stories) before sealing, per the `LL-v7.10-P4-01` rule. Not a recurrence requiring escalation — the prior cycle's own deferred patch (add a reconciliation check to `execution_prompt.md`) has not yet landed in the prompt itself, but its intent is being manually honoured at seal time two cycles running. This is itself worth noting: the deferred patch should still land in `execution_prompt.md` so the check isn't dependent on the engine remembering it each time.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| Two of six `qa_evidence_EPIC-xx.md` files (EPIC-04, EPIC-06) recorded their EPIC-level `Signed off by:` field using a named domain/operational authority role (`Infrastructure & Operations Owner (user, ...)`; `Head of Engineering (agent-mediated), with Head of Specs Team concurrence (agent-mediated)`) rather than one of `delivery_verification_prompt.md` STEP -1.3's three recognised literal formats (`Director of Quality`; `Sprint Execution Engine (autonomous class)`; `Sprint Execution Engine (agent-mediated, <Role> — §5.3)`). Both EPICs' underlying evidence was substantively sound — these are exactly the EPICs (`delegated_backend`/`delegated_decision` heavy) where the named role, not Director of Quality, is the correct domain authority — but the literal signer-format check still flagged a Tier 2 mismatch requiring a Director of Quality counter-sign note added at verification before STEP 1 could proceed. | Phase 4 | B | defer | `execution_prompt.md`'s EPIC-level sign-off consolidation step and `delivery_verification_prompt.md` STEP -1.3's recognised-format list disagree on what a compliant EPIC-level signer string looks like for `delegated_backend`/`delegated_decision`-heavy EPICs. Two remediation paths, either requiring Head of Specs Team selection: (a) extend STEP -1.3's recognised-format list with a fourth pattern for named domain-authority EPIC-level sign-off (`<Role> (human, <email>)` or `<Role> (agent-mediated)`, applicable only when the EPIC contains no `autonomous`-class stories requiring the DoQ/engine-signer paths), or (b) require `execution_prompt.md`'s EPIC consolidation step to always additionally record a literal `Director of Quality` line (even when the substantive review was performed by a named domain role) so the two documents' expectations agree without changing the check itself. Counter-sign notes were added to both files this run as the one-time remediation (`qa_evidence_EPIC-04.md`, `qa_evidence_EPIC-06.md`); the underlying disagreement between the two prompts remains open. File: `claude/system/delivery_verification_prompt.md` §STEP -1.3 and/or `claude/system/execution_prompt.md` (EPIC sign-off consolidation step). | Head of Specs Team | next governance prompt review |
+
+All other STEP -1 through STEP 7 checks completed cleanly: sprint close readiness statement all `Yes`; PR numbers present for all 6 EPICs (no recovery needed); zero traceability gaps (19/19 stories `done` with non-empty spec references); zero QA `Fail` results; `deferred_execution_blockers` empty; zero parked items (stale-parked check skipped); test scenario coverage fully accounted for (3 EPICs with confirmed-run scenarios, 3 correctly dispositioned `not_applicable` per the frontend/backend-touch short-circuit, no genuine gaps); `docs/System_status_report.md`'s v8.0 section content was already accurate, requiring only the expected routine status-line update. One P2-equivalent deviation identified independently by this engine (ST-19's AC required design **and** implementation; only design completed) — not pre-flagged as a filed deviation in `sprint_close.md` (which characterised it as a sequencing decision, not a spec deviation) but assessed under `delivery_verification_prompt.md` §7's own severity definitions and accepted with documented rationale (Head of Engineering + Head of Specs Team sign-off already on record; Director of Quality counter-signed at verification) plus a confirmed backlog item (`BLG-GOV-284`). This is the determining factor for the `Verified_with_deviations` status rather than plain `Verified`.
+
+**Recurrence Notes:**
+Not a recurrence of the v7.10 Phase 4 friction item (unrelated mechanism — signer-format disagreement vs. summary-array staleness). First occurrence of this specific sign-off-format friction in a Phase 4 record.
+
+---
+
+## Recurrence Escalations (Phase 4)
+
+None — first occurrence of this friction item; no open prior-cycle action left unresolved.
+
+## Process improvements actioned this run (Phase 4)
+
+None applied to governance prompts this run (the identified friction item's fix targets `delivery_verification_prompt.md` and/or `execution_prompt.md`, both outside Delivery Verification's write scope — recorded as a deferred patch above). The one-time instance was remediated directly: Director of Quality counter-sign notes added to `qa_evidence_EPIC-04.md` and `qa_evidence_EPIC-06.md`; three flagged gaps surfaced in sprint narrative (ST-19 implementation follow-up, ST-17 backup schedule gap, ST-04 dead-code cleanup) filed to `claude/backlog/backlog.md` as `BLG-GOV-284`, `BLG-OPS-127`, `BLG-BE-81`.
+
+## Outstanding deferred patches (Phase 4)
+
+| File | Section | Change required | Owner | Target |
+|------|---------|----------------|-------|--------|
+| `claude/system/delivery_verification_prompt.md` and/or `claude/system/execution_prompt.md` | STEP -1.3 recognised-format list / EPIC sign-off consolidation step | Reconcile the two documents' expectations for a compliant EPIC-level `Signed off by:` string on `delegated_backend`/`delegated_decision`-heavy EPICs — either extend the recognised-format list (Option a) or standardise the consolidation step's literal signer string (Option b). Head of Specs Team to select. | Head of Specs Team | next governance prompt review |
+| `claude/system/execution_prompt.md` | STEP 5 — Sprint Close (seal step) | Carried forward from v7.10 Phase 4 (still not landed in the prompt itself): add the `completed_items` cross-EPIC union reconciliation check formally, rather than relying on the STEP 7 pre-seal check being manually re-applied each cycle. | Head of Specs Team | next `run sprint` invocation |
+
+## Escalations (Phase 4)
+
+None.

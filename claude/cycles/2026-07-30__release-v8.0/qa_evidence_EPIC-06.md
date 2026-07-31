@@ -43,3 +43,11 @@ Not applicable — ST-19 is `delegated_decision`, not `autonomous`.
 - Signed off by: Head of Engineering (agent-mediated), with Head of Specs Team concurrence (agent-mediated)
 - Date: 2026-07-31
 - Comments: This EPIC's single story reached a genuine, reasoned decision — not a rubber-stamped one. Two candidate approaches were rejected with concrete technical reasoning; the selected approach resolves an existing canonical-truth problem (six independently-diverging "shared" `execution_state.json` copies across this very sprint's branches) rather than introducing a new one. Implementation is correctly scoped as separate follow-up work, per explicit Head of Specs Team guidance on structural changes and cycle boundaries. EPIC-06 is ready for PR.
+
+## Director of Quality Counter-sign (delivery_verification_prompt.md STEP -1.3, Tier 2)
+
+The EPIC-level sign-off above is recorded under the Head of Engineering / Head of Specs Team decision-authority roles (the correct owners for this design decision per the story's own gate condition), not under the literal "Director of Quality" or an engine-mediated signer format. Reviewed at delivery verification and accepted as sufficient authority — ST-19 is a delegated_decision item where the named roles, not QA, are the substantively correct sign-off authority; the design decision and its deliberate AC-scope deviation (implementation deferred) are both transparently recorded.
+
+Signed off by: Director of Quality
+Date: 2026-07-31
+Comments: Counter-sign accepted per delivery verification STEP -1.3 Tier 2 procedure. No re-review of the underlying decision required.

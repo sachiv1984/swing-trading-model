@@ -2,14 +2,14 @@
 **Class:** Living Document (Class 3)
 **Status:** Active
 **Version:** 4.19
-**Last Updated:** 2026-07-31 (sprint close 2026-07-30__release-v8.0)
+**Last Updated:** 2026-07-31 (delivery verification 2026-07-30__release-v8.0 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-07-31 (sprint close 2026-07-30__release-v8.0)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
 
 ## Sprint: 2026-07-30__release-v8.0
 **Date:** 2026-07-31
-**Status:** Sprint_Complete — pending verification
+**Status:** Verified_with_deviations — 2026-07-31
 
 ### Capabilities now live (merged this sprint)
 
