@@ -1,7 +1,7 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Runbook (Class 5)
-**Status:** Active — pending live confirmation (see §3)
-**Version:** 1.0
+**Status:** Active
+**Version:** 1.1
 **Last Updated:** 2026-07-31
 **Story:** ST-17 (BLG-OPS-126, EPIC-04, v8.0)
 
@@ -29,7 +29,7 @@ Production database: Supabase (Postgres), per `docs/infrastructure/staging_setup
 
 **Action required (Infrastructure & Operations Owner):** Confirm the actual plan tier and backup configuration for the production Supabase project (`trading-assistant-staging`'s sibling production project — see `docs/infrastructure/staging_setup.md` line 19 for the production/staging project split) via the Supabase dashboard → Project Settings → Database → Backups, and record it here:
 
-> **Confirmed configuration:** *pending — record plan tier, backup frequency, retention window, and whether PITR is enabled, with the date confirmed.*
+> **Confirmed configuration (2026-07-31):** **Free plan.** Confirmed via Project Settings → Billing/Subscription. Consistent with the absence of a Database → Backups management page in the dashboard (Supabase does not expose backup management UI on the Free tier — its absence is corroborating evidence, not just the plan label). **No automated daily backups. No Point-in-Time Recovery (PITR).** The only backup mechanism available is a manual `pg_dump`, and per §3.4 below, no recurring manual backup schedule currently exists for the production database.
 
 ---
 
@@ -57,7 +57,7 @@ Production database: Supabase (Postgres), per `docs/infrastructure/staging_setup
 
 ### 3.4 Restore from a manual `pg_dump` snapshot (Free tier, or as a supplementary backup regardless of tier)
 
-If no automated backup/PITR is available (confirmed Free tier per §2), the only recovery path is a manual dump taken *before* the incident. This runbook does not currently have evidence that a recurring manual `pg_dump` schedule exists for the production database — **if the confirmed tier in §2 is Free, establishing a recurring manual backup schedule (e.g. a scheduled GitHub Actions job running `pg_dump` against `DATABASE_URL` and storing the output somewhere durable) is a prerequisite gap, not a "confirmed against actual hosting provider capability" pass** — file as a follow-up item if so.
+**Confirmed applicable (2026-07-31): production is on the Free tier — this is the only available recovery path today.** No automated backup/PITR exists. The only recovery path is a manual dump taken *before* the incident, and no recurring manual `pg_dump` schedule currently exists for the production database — establishing one (e.g. a scheduled GitHub Actions job running `pg_dump` against `DATABASE_URL` and storing the output somewhere durable) is a confirmed, real prerequisite gap, not a hypothetical. This is a genuine current-state risk: **if a data-loss incident occurred today, before any manual backup schedule is established, there is no recovery path at all** — restoring from "the most recent manual dump" assumes one exists, and none currently does. Recommend filing this as a P1 backlog item for the next sprint (write-scope restrictions prevent filing to `claude/backlog/backlog.md` mid-sprint per `execution_prompt.md` §7).
 
 If a manual dump exists:
 ```bash
@@ -84,4 +84,4 @@ psql "$NEW_DATABASE_URL" -f <dump_file>.sql
 
 | Role | Decision | Date |
 |------|----------|------|
-| Infrastructure & Operations Owner | *Pending — §2 live confirmation of actual backup/retention configuration required before sign-off* | — |
+| Infrastructure & Operations Owner | Approved — §2 live-confirmed as Free plan (no automated backups, no PITR). Recovery procedure (§3) is accurate for this tier. The absent recurring manual `pg_dump` schedule (§3.4) is acknowledged as a genuine, currently-unmitigated production risk — recommended for a P1 backlog item at next sprint planning, not silently accepted. | 2026-07-31 |

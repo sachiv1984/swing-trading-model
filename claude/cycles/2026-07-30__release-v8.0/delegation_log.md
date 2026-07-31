@@ -84,6 +84,7 @@ Last Updated: 2026-07-31
 - **Spec reference:** `docs/ops/database_backup_disaster_recovery_runbook.md`
 - **Unblock criteria:** §2 "Confirmed configuration" filled in with actual plan tier/backup frequency/retention/PITR status and confirmation date; Infrastructure & Operations Owner sign-off completed in the document's Sign-Off block.
 - **Commit format required:** `[EPIC-04][ST-17] <description>` pushed to `exec/2026-07-30__release-v8.0/EPIC-04`
-- **Status:** Pending
+- **Status:** Unblocked
+- **Resolution (2026-07-31):** User confirmed production Supabase project's plan tier via Project Settings → Billing/Subscription: **Free plan.** Corroborated by the absence of a Database → Backups management page (Supabase does not expose backup management UI on Free tier). Result: no automated daily backups, no PITR. Per this story's own AC, the resulting gap (no recurring manual `pg_dump` schedule) was flagged rather than silently accepted — recorded in `database_backup_disaster_recovery_runbook.md` §2/§3.4 (v1.0→v1.1) and recommended as a P1 backlog item at next sprint planning. Infrastructure & Operations Owner sign-off completed in the runbook's Sign-Off block.
 
 **Why this is delegated, not autonomous:** Adding repo secrets requires GitHub repo admin access and the actual secret values, which the engine does not hold and cannot supply. Running a real rollback drill requires Render dashboard access the engine does not have. Reading the production Build Filters configuration requires Render dashboard access the engine does not have. Confirming the production Supabase project's actual backup/retention configuration requires Supabase dashboard access the engine does not have.
