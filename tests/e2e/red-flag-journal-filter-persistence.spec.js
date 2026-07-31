@@ -74,7 +74,7 @@ async function setup(page, journalResponse) {
   await mockFallback(page);
   await mockJournal(page, journalResponse);
   await page.goto(PAGE_URL);
-  await page.waitForLoadState('networkidle');
+  await expect(page.getByTestId('event-type-filter')).toBeVisible({ timeout: 8000 });
 }
 
 test.describe('Red Flag Journal — filter state persistence', () => {
@@ -89,7 +89,7 @@ test.describe('Red Flag Journal — filter state persistence', () => {
 
     // Reload the page — same mocks still apply
     await page.reload();
-    await page.waitForLoadState('networkidle');
+    await expect(page.getByTestId('event-type-filter')).toBeVisible({ timeout: 8000 });
 
     // Filter controls restored from localStorage
     await expect(page.getByTestId('event-type-filter')).toHaveValue('checklist_skipped');
@@ -112,7 +112,6 @@ test.describe('Red Flag Journal — filter state persistence', () => {
     page.on('pageerror', (err) => errors.push(err));
 
     await page.goto(PAGE_URL);
-    await page.waitForLoadState('networkidle');
 
     // No JS error surfaced, page renders normally with default (cleared) filters
     await expect(page.getByRole('heading', { name: 'Red Flag Journal' })).toBeVisible({ timeout: 8000 });
