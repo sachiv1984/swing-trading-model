@@ -9,6 +9,10 @@
  *   SC-CL-05  Pre-population: research_reviewed pre-checked when r_target is set
  *   SC-CL-06  "Review research →" link navigates to /research/{ticker}
  *   SC-CL-07  Read-only checklist renders in Research view trade plan panel
+ *   SC-CL-08  Checklist item has role="checkbox", aria-checked, tabindex="0"; reachable via Tab (ST-06, BLG-FE-135, EPIC-02, v8.0)
+ *   SC-CL-09  Space key toggles the focused item; aria-checked updates (ST-06)
+ *   SC-CL-10  Enter key toggles the focused item; aria-checked updates (ST-06)
+ *   SC-CL-11  Read-only checklist items are not Tab-reachable (tabindex="-1") (ST-06)
  *
  * Note (SC-CL-04/05): Pre-population checks match the current implementation in
  * TradePlan.js (buildPrePopulatedItems): stop_defined ← early_exit_conditions presence;
@@ -388,4 +392,131 @@ test('SC-CL-07: Read-only checklist renders in Research view when active plan ha
     await strategyLabel.isVisible().catch(() => false);
 
   expect(isChecklistVisible).toBe(true);
+});
+
+// ---------------------------------------------------------------------------
+// SC-CL-08 through SC-CL-11 — Keyboard accessibility (ST-06, BLG-FE-135, EPIC-02, v8.0)
+//
+// Design source: docs/design/2026-07-30__release-v8.0/entry-checklist-keyboard-accessibility/decision_record.md
+// CheckItem is rendered as a WAI-ARIA checkbox (role="checkbox", aria-checked,
+// tabIndex) — not a native <input type="checkbox">, so these tests target the
+// data-testid added for this story rather than an input element.
+// ---------------------------------------------------------------------------
+
+test('SC-CL-08: Checklist items are real checkboxes, reachable via Tab in list order (Tab and Shift+Tab)', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await mockTradePlansListEmpty(page);
+  await gotoNewTradePlan(page);
+
+  const signalItem = page.getByTestId('entry-checklist-item-signal_confirmed');
+  const heatItem = page.getByTestId('entry-checklist-item-heat_limit_checked');
+  await expect(signalItem).toBeVisible({ timeout: 5000 });
+  await expect(signalItem).toHaveAttribute('role', 'checkbox');
+  await expect(signalItem).toHaveAttribute('aria-checked', 'false');
+  await expect(signalItem).toHaveAttribute('tabindex', '0');
+
+  // Real keyboard Tab traversal — focus the field immediately preceding the
+  // checklist in the form ("Early Exit Conditions"), then Tab into the first
+  // checklist item, Tab again to reach the second item (list order), then
+  // Shift+Tab back to confirm reverse order.
+  await page.getByPlaceholder(/Under what conditions would you exit/i).focus();
+  await page.keyboard.press('Tab');
+  await expect(signalItem).toBeFocused();
+
+  await page.keyboard.press('Tab');
+  await expect(heatItem).toBeFocused();
+
+  await page.keyboard.press('Shift+Tab');
+  await expect(signalItem).toBeFocused();
+});
+
+test('SC-CL-09: Space key toggles the focused checklist item and aria-checked updates', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await mockTradePlansListEmpty(page);
+  await gotoNewTradePlan(page);
+
+  const signalItem = page.getByTestId('entry-checklist-item-signal_confirmed');
+  const counter = page.getByText(/^\d+ \/ \d+ complete$/);
+  await expect(counter).toHaveText('0 / 4 complete');
+
+  await page.getByPlaceholder(/Under what conditions would you exit/i).focus();
+  await page.keyboard.press('Tab');
+  await expect(signalItem).toBeFocused();
+
+  await page.keyboard.press('Space');
+  await expect(signalItem).toHaveAttribute('aria-checked', 'true');
+  await expect(counter).toHaveText('1 / 4 complete');
+
+  await page.keyboard.press('Space');
+  await expect(signalItem).toHaveAttribute('aria-checked', 'false');
+  await expect(counter).toHaveText('0 / 4 complete');
+});
+
+test('SC-CL-10: Enter key toggles the focused checklist item and aria-checked updates', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await mockTradePlansListEmpty(page);
+  await gotoNewTradePlan(page);
+
+  const signalItem = page.getByTestId('entry-checklist-item-signal_confirmed');
+  const stopItem = page.getByTestId('entry-checklist-item-stop_defined');
+  const counter = page.getByText(/^\d+ \/ \d+ complete$/);
+  await expect(counter).toHaveText('0 / 4 complete');
+
+  // Tab through the full list order to reach the 3rd item (stop_defined),
+  // proving list-order traversal rather than jumping straight to the target.
+  await page.getByPlaceholder(/Under what conditions would you exit/i).focus();
+  await page.keyboard.press('Tab'); // -> signal_confirmed
+  await expect(signalItem).toBeFocused();
+  await page.keyboard.press('Tab'); // -> heat_limit_checked
+  await page.keyboard.press('Tab'); // -> stop_defined
+  await expect(stopItem).toBeFocused();
+
+  await page.keyboard.press('Enter');
+  await expect(stopItem).toHaveAttribute('aria-checked', 'true');
+  await expect(counter).toHaveText('1 / 4 complete');
+});
+
+test('SC-CL-11: Read-only checklist items are skipped by Tab traversal (not focusable)', async ({ page }) => {
+  await mockFallback(page);
+
+  await page.route(new RegExp(`${API}/research/`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(RESEARCH_WITH_PLAN) })
+  );
+  await page.route(new RegExp(`${API}/trade-plans`), (route) => {
+    if (route.request().method() === 'GET') {
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(TRADE_PLANS_WITH_ACTIVE) });
+    } else {
+      route.continue();
+    }
+  });
+  await page.route(new RegExp(`${API}/portfolio/prospective-heat`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: null }) })
+  );
+
+  await gotoResearch(page);
+
+  const readOnlyItem = page.getByTestId('entry-checklist-item-signal_confirmed');
+  await expect(readOnlyItem).toBeVisible({ timeout: 5000 });
+  await expect(readOnlyItem).toHaveAttribute('tabindex', '-1');
+
+  // Real keyboard Tab traversal across the whole page — confirm the read-only
+  // checklist item's data-testid is never the focused element at any Tab stop,
+  // while also confirming Tab is genuinely moving focus (not a page-wide no-op).
+  await page.locator('body').click({ position: { x: 0, y: 0 } });
+  const seenTestIds = new Set();
+  let focusMoved = false;
+  for (let i = 0; i < 40; i++) {
+    await page.keyboard.press('Tab');
+    const focusedTestId = await page.evaluate(() => document.activeElement?.getAttribute('data-testid') || null);
+    if (focusedTestId) seenTestIds.add(focusedTestId);
+    const focusedIsBody = await page.evaluate(() => document.activeElement === document.body);
+    if (!focusedIsBody) focusMoved = true;
+    if (focusedTestId === 'entry-checklist-item-signal_confirmed') {
+      throw new Error('Read-only checklist item received keyboard focus via Tab — should be skipped (tabindex=-1)');
+    }
+  }
+  expect(focusMoved).toBe(true);
 });
