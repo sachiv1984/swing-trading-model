@@ -362,118 +362,140 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-07-30__release-v8.0/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1166,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-30__release-v8.0/qa_evidence_EPIC-04.md",
       "test_scenarios": [],
       "stories": {
         "ST-13": {
           "title": "Render service health-check alerting to Telegram on 5xx spike",
-          "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": null,
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "Infrastructure & Operations Owner",
+          "github_issue": 1153,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-04",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "commit_sha": "7e4806bc915c369abdfb71594ad7a72d6094b836",
+          "delegation_record_id": "DEL-20260731-01",
+          "blocked_since_utc": "2026-07-31T01:15:00Z",
+          "unblock_criteria": "Dry-run or simulated-spike result recorded in qa_evidence_EPIC-04.md with Infrastructure & Operations Owner sign-off",
+          "completed_utc": "2026-07-30T19:43:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/health-check-alert.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend' per sprint_backlog.md. Wrote .github/workflows/health-check-alert.yml: scheduled (every 15 min) poll of production GET /health, 3 attempts 20s apart within one run, alerts Telegram only if all 3 return 5xx (sustained, not a transient blip) - reuses backtest.yml's curl+Telegram+::warning:: fallback pattern. AC-1 delivered autonomously; AC-2 required a live trigger, delegated. RESOLVED 2026-07-30: user merged early-scope PR #1163 (main-only merge of the workflow file, since GitHub only exposes workflow_dispatch for workflows on the default branch) after confirming TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID were added to repo secrets (ST-14). Engine triggered workflow_dispatch (GH Actions run 30575941928) with test_url=https://httpbin.org/status/500 (safe public test endpoint, not real infrastructure) per user-approved plan. Result: 3/3 polls returned HTTP 500 as expected; alert step took the real-send branch (not the ::warning:: fallback) since secrets were present; Telegram API confirmed delivery with {\"ok\":true,\"result\":{\"message_id\":298,...}} - a real message landed in the configured chat. Full run log: https://github.com/sachiv1984/swing-trading-model/actions/runs/30575941928. AC-1 and AC-2 both now satisfied end-to-end."
         },
         "ST-14": {
           "title": "Configure TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID as GitHub Actions repo secrets",
-          "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": null,
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "Infrastructure & Operations Owner",
+          "github_issue": 1154,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "delegation_record_id": "DEL-20260731-02",
+          "blocked_since_utc": "2026-07-31T01:15:00Z",
+          "unblock_criteria": "A workflow_dispatch run log showing actual Telegram delivery, linked in qa_evidence_EPIC-04.md with Infrastructure & Operations Owner sign-off",
+          "completed_utc": "2026-07-30T19:43:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-07-30__release-v8.0/stage4_backlog_slice.md#ST-14"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend' - pure GitHub repo-secret configuration, no code for the engine to write. User (Infrastructure & Operations Owner capacity) added TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID to repo Settings -> Secrets and variables -> Actions, confirmed via `gh secret list` (names only, added 2026-07-30T19:25 UTC). AC-2 (workflow_dispatch re-run against a deliberately-broken endpoint confirms a real Telegram message is received) confirmed via GH Actions run 30575941928 (test_url=https://httpbin.org/status/500): 3/3 polls returned 500, Telegram API responded {\"ok\":true,\"result\":{\"message_id\":298,...}} - real delivery confirmed, not just the ::warning:: fallback. Run log: https://github.com/sachiv1984/swing-trading-model/actions/runs/30575941928. Both ACs now satisfied."
         },
         "ST-15": {
           "title": "Confirm Render rollback runbook has real execution history",
-          "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": null,
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "Infrastructure & Operations Owner",
+          "github_issue": 1155,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "delegation_record_id": "DEL-20260731-03",
+          "blocked_since_utc": "2026-07-31T01:30:00Z",
+          "unblock_criteria": "A staging rollback drill actually performed and outcome recorded in docs/operations/render_rollback_runbook.md's Execution History table, with Infrastructure & Operations Owner sign-off",
+          "completed_utc": "2026-07-31T08:10:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/operations/render_rollback_runbook.md#Execution History (v1.1)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "human",
+            "date": "2026-07-31"
+          },
+          "notes": "User (Infrastructure & Operations Owner) executed a deliberate rollback drill against the non-production staging service (trading-assistant-api-staging, per render.yaml). Deploy transitioned cleanly to Live (green) in the Render dashboard. Post-rollback GET /health returned {\"status\":\"ok\",\"db\":\"connected\",...}, matching the runbook's Step 4 expected outcome. Procedure finding: no log entries were visible in the Render Logs tab during/after the rollback despite success - Step 3 of render_rollback_runbook.md (v1.1->v1.2) corrected with a note that an empty Logs tab is not a failure signal; Deploy status (green/Live) plus /health are the authoritative checks. Recorded in the runbook's Execution History table, qa_evidence_EPIC-04.md partial sign-off (now covering ST-13/14/15), and delegation_log.md DEL-20260731-03 resolution. This is a genuine human-performed infrastructure action, not agent-mediated - sign_off_record.method set to 'human' accordingly."
         },
         "ST-16": {
           "title": "Render dashboard-only build/deploy path filter audit",
-          "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": null,
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "FinOps & Resource Architect",
+          "github_issue": 1156,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "delegation_record_id": "DEL-20260731-04",
+          "blocked_since_utc": "2026-07-31T01:45:00Z",
+          "unblock_criteria": "Production filter configuration recorded in docs/ops/render_build_deploy_path_filter_audit.md with FinOps & Resource Architect sign-off, PLUS the 95b2e6bf deploy's trigger-source confirmed (push-triggered auto-deploy vs. manual dashboard click) via the Render deploy detail view, or a trivial backend-only live-fire push test confirming autodeploy fires without manual intervention -- SATISFIED: deploy detail confirmed \"New commit via Auto-Deploy\"",
+          "completed_utc": "2026-07-31T09:45:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/render_build_deploy_path_filter_audit.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-31"
+          },
+          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend'. Built the full in-repo half of the audit autonomously (see docs/ops/render_build_deploy_path_filter_audit.md). Production dashboard filter read live by the user: Root Directory backend, Included Paths docs/product/changelog.md (only entry). Initial hypothesis (bare Included Paths acts as an exhaustive allow-list, silently blocking all backend/** auto-deploys) was tested against commit 95b2e6bf's deploy - it's live for a backend-only commit with no changelog.md change. However, FinOps & Resource Architect agent-mediated review (2026-07-31) BLOCKED this as insufficient: that single observation cannot distinguish an automatic push-triggered deploy from a manual 'Deploy latest commit' dashboard click, and two Render official doc pages checked independently gave inconsistent framings of the Root-Directory/Included-Paths interaction. Reviewer identified a cheap conclusive test: check the 95b2e6bf deploy's trigger-source label in the Render deploy detail view (Render labels deploys as push-triggered vs manual), or run a trivial backend-only live-fire push and confirm autodeploy with zero manual dashboard interaction. Re-delegated pending that check - not closing this story on an unverified inference given the failure mode (silent non-deployment of all future backend changes) is severe. RESOLVED: user checked the 95b2e6bf deploy's detail view directly - labeled 'New commit via Auto-Deploy', conclusively confirming a genuine automatic push-triggered deploy, not a manual dashboard click. This resolves the ambiguity the FinOps & Resource Architect review correctly flagged: Root Directory (backend) forms the implicit default trigger scope, Included Paths (changelog.md) correctly supplements it for the one runtime-read file outside it. No gap found; no dashboard change needed. Re-reviewed and approved (agent-mediated, FinOps & Resource Architect)."
         },
         "ST-17": {
           "title": "Backup & disaster recovery runbook for production database",
-          "classification": "autonomous",
-          "status": "not_started",
-          "assigned_to": "engine",
-          "github_issue": null,
+          "classification": "delegated_backend",
+          "status": "done",
+          "assigned_to": "Infrastructure & Operations Owner",
+          "github_issue": 1157,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-04",
           "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "delegation_record_id": "DEL-20260731-05",
+          "blocked_since_utc": "2026-07-31T02:00:00Z",
+          "unblock_criteria": "§2 Confirmed configuration filled in with actual Supabase plan tier/backup frequency/retention/PITR status, Infrastructure & Operations Owner sign-off completed",
+          "completed_utc": "2026-07-31T10:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/database_backup_disaster_recovery_runbook.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "human",
+            "date": "2026-07-31"
+          },
+          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend'. Drafted full docs/ops/database_backup_disaster_recovery_runbook.md autonomously: covers all 3 Supabase plan-tier scenarios (Free/Pro/Team+PITR) since this repo has no record of production's actual tier (only found 'Supabase (existing tier)' vague mentions in docs/ops/arc5_hosting_cost_projection.md - not specific enough); step-by-step recovery procedure cross-referenced against docs/operations/render_rollback_runbook.md's verification steps for consistency; flagged that IF the confirmed tier turns out to be Free (no automated backups), a recurring manual pg_dump schedule gap would need separate follow-up. What remains requires live Supabase dashboard access: confirming actual plan tier/backup frequency/retention/PITR status. RESOLVED: user confirmed production Supabase project's plan tier via Project Settings -> Billing/Subscription: Free plan. Corroborated by the absence of a Database -> Backups management page (Supabase does not expose backup management UI on Free tier). Result: no automated daily backups, no PITR. The resulting gap (no recurring manual pg_dump schedule) was flagged rather than silently accepted - recorded in database_backup_disaster_recovery_runbook.md SS2/SS3.4 (v1.0->v1.1) and recommended as a P1 backlog item at next sprint planning (cannot file to backlog.md mid-sprint per write-scope restriction). Infrastructure & Operations Owner sign-off completed directly by the user (method: human, not agent-mediated - this is their own live dashboard finding)."
         }
       }
     },
@@ -546,7 +568,12 @@
   },
   "blocked_items": [],
   "delegated_items": [
-    "ST-08"
+    "ST-08",
+    "ST-13",
+    "ST-14",
+    "ST-15",
+    "ST-16",
+    "ST-17"
   ],
   "completed_items": [
     "ST-01",
@@ -556,6 +583,11 @@
     "ST-10",
     "ST-11",
     "ST-12",
+    "ST-13",
+    "ST-14",
+    "ST-15",
+    "ST-16",
+    "ST-17",
     "ST-18"
   ],
   "open_escalations": [],
@@ -572,6 +604,11 @@
     ],
     "all_merged": false
   },
+  "process_notes": [
+    "Commit 8d5411b2fdd39b7ee3f99a63982a948e14a8a965 (message '[EPIC-04][ST-15][ST-16][ST-17] ...') also modified ST-13 and ST-14's execution_state.json fields (delegation_record_id, status transition in_progress/not_started -> blocked_backend) without including ST-13/ST-14 in the commit message, violating CLAUDE.md's commit-format rule (all story IDs touched by a commit must appear in the message). Self-caught after push; not amended (commit already pushed - amending a pushed commit is avoided per repo convention). No functional impact: neither ST-13 nor ST-14 reached a 'done'/closed-issue state in this commit, so governance_sync.yml's auto-close behavior was not affected. Recorded here for QA evidence log completeness at EPIC-04 close.",
+    "Structural gotcha discovered this EPIC (candidate lessons-learnt item): governance_sync.yml auto-closes a GitHub issue whenever a commit message contains that story's [ST-xx] ID prefix, regardless of whether the story is actually complete. This is correct for normal autonomous/done stories, but for delegated_backend items where autonomous groundwork is committed with the required [EPIC-xx][ST-xx] prefix (per CLAUDE.md's non-negotiable commit format) while the story itself remains blocked_backend, the issue gets auto-closed prematurely. Issues #1153, #1155, #1156, #1157 were auto-closed this way and had to be manually reopened with a clarifying comment. No clean fix exists within the commit-format rule as written (the ID must appear in the message); the mitigation applied was: always check issue state after any commit that includes a delegated/blocked story's ID, and reopen with a clarifying comment if auto-closed. Worth raising at Phase 3 lessons learnt / post-ship closure as a possible refinement to governance_sync.yml (e.g. only auto-close if the commit message also contains a 'done'/'complete' marker, or if execution_state.json's status for that story is not blocked_*).",
+    "User confirmed TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID added to repo secrets (2026-07-31). Discovered GitHub only exposes workflow_dispatch for workflows present on the DEFAULT branch (main) - .github/workflows/health-check-alert.yml only existed on exec/2026-07-30__release-v8.0/EPIC-04, so it could not be dispatched to run the ST-13/ST-14 live-fire test. With user approval, opened a scoped early PR (#1163, branch exec/2026-07-30__release-v8.0/EPIC-04-ST-13-early, containing ONLY .github/workflows/health-check-alert.yml, cherry-picked from the EPIC-04 branch) rather than waiting for the other 4 unrelated EPIC-04 stories to unblock. Added a workflow_dispatch test_url input so the live-fire test can target a safe public test endpoint (https://httpbin.org/status/500, verified locally to return 500) instead of touching production. Awaiting user to merge PR #1163 before the workflow_dispatch test can run."
+  ],
   "sealed": false,
   "sealed_utc": null
 }

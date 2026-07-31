@@ -26,3 +26,87 @@ Last Updated: 2026-07-31
 - **Resolution (2026-07-31):** Live verification automated instead of requiring the user to test from a second real network: built `.github/workflows/st08-proxy-ip-verification.yml`, a two-job `workflow_dispatch` (Job A bursts `/health` from one GitHub-hosted runner until rate-limited; Job B, a separate runner with a genuinely different public IP, immediately probes `/health` and checks whether it's also blocked). Required an early scoped merge to `main` first (PR #1164, `[GOVERNANCE]` title) since `workflow_dispatch` only triggers for workflows on the default branch — same constraint as ST-13. Run 30611215629: Job A (IP `135.232.227.144`) hit HTTP 429 on attempt 61, matching `_HEALTH_LIMIT=60` exactly; Job B (IP `172.182.243.52`) probed ~6s later and got HTTP 200. **No proxy-IP collapse** — `request.client.host` correctly reflects real per-client IPs in production; no uvicorn `--proxy-headers`/`--forwarded-allow-ips` change needed. Documented as new Part 3 in `docs/security/rate_limit_audit_2026-07-29.md` (v1.0→v1.1), closing `BLG-SEC-24` as "no code change required." Cybersecurity & Trust Lead sign-off (agent-mediated): approved after independently re-pulling the raw GitHub Actions job logs and confirming the timing/window-safety math and cross-call-site generalization; also caught and fixed a stale Sign-off block in the audit doc during review. Run log: https://github.com/sachiv1984/swing-trading-model/actions/runs/30611215629
 
 **Why this is delegated, not autonomous:** This item's acceptance criteria require observing the actual `request.client.host` value seen by the deployed production API behind Render's real edge/proxy infrastructure — this cannot be determined by reading code or running local/CI tests, since the proxy behavior only manifests against the live deployment. The engine has no credentials or access path to the production Render service.
+
+## DEL-20260731-01
+
+- **ST Item:** ST-13 — Render service health-check alerting to Telegram on 5xx spike
+- **EPIC:** EPIC-04
+- **Classification:** delegated_backend
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #1153
+- **Branch:** exec/2026-07-30__release-v8.0/EPIC-04
+- **Delegated at:** 2026-07-31T01:15:00Z
+- **What is needed:** The alerting mechanism itself (`.github/workflows/health-check-alert.yml`, commit `7e4806bc915c369abdfb71594ad7a72d6094b836`) is already written and its poll/count logic verified locally against mock servers. What remains: confirm the alert actually fires against the real production endpoint on a simulated 5xx spike (staging) or record a documented dry-run (e.g. `workflow_dispatch` re-run against a deliberately-broken staging endpoint, or temporarily stopping the staging service). Full end-to-end Telegram delivery confirmation also depends on ST-14 (DEL-20260731-02)'s secrets being configured first.
+- **Spec reference:** `.github/workflows/health-check-alert.yml`
+- **Unblock criteria:** A dry-run or simulated-spike result is recorded (fired correctly / did not fire — document either way) in `qa_evidence_EPIC-04.md`, with Infrastructure & Operations Owner sign-off.
+- **Commit format required:** `[EPIC-04][ST-13] <description>` pushed to `exec/2026-07-30__release-v8.0/EPIC-04`
+- **Status:** Unblocked
+- **Resolution (2026-07-30):** User merged early-scope PR #1163 (workflow file only, to `main`, since `workflow_dispatch` requires the workflow to exist on the default branch). Engine triggered `workflow_dispatch` (run 30575941928, `test_url=https://httpbin.org/status/500`, a safe public test endpoint). Result: 3/3 polls returned HTTP 500; Telegram API confirmed real delivery (`{"ok":true,"result":{"message_id":298,...}}`). Both AC-1 and AC-2 satisfied. Run log: https://github.com/sachiv1984/swing-trading-model/actions/runs/30575941928
+
+## DEL-20260731-02
+
+- **ST Item:** ST-14 — Configure TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID as GitHub Actions repo secrets for nightly backtest job alerting
+- **EPIC:** EPIC-04
+- **Classification:** delegated_backend
+- **Assigned to:** Infrastructure & Operations Owner (repo admin access required)
+- **GitHub Issue:** #1154
+- **Branch:** exec/2026-07-30__release-v8.0/EPIC-04
+- **Delegated at:** 2026-07-31T01:15:00Z
+- **What is needed:**
+  1. Add `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` to GitHub repo Settings → Secrets and variables → Actions, using the same values already configured as Render env vars for the production API service.
+  2. Manually re-run (`workflow_dispatch`) either `.github/workflows/backtest.yml` or the new `.github/workflows/health-check-alert.yml` (ST-13) against a deliberately-broken endpoint/scenario, and confirm a real Telegram message is received (not just the `::warning::` fallback log line).
+- **Spec reference:** `claude/cycles/2026-07-30__release-v8.0/stage4_backlog_slice.md#ST-14`
+- **Unblock criteria:** Secrets present in repo settings (cannot be verified by the engine — no read access to secret values) + a `workflow_dispatch` run log showing an actual Telegram delivery (not the `::warning::` branch) is linked in `qa_evidence_EPIC-04.md`, with Infrastructure & Operations Owner sign-off.
+- **Commit format required:** N/A (this item is pure GitHub Settings configuration, not a code commit) — however, if a follow-up commit records the confirmation (e.g. linking the successful workflow run), use `[EPIC-04][ST-14] <description>` pushed to `exec/2026-07-30__release-v8.0/EPIC-04`.
+- **Status:** Unblocked
+- **Resolution (2026-07-30):** User added `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` to repo Settings → Secrets and variables → Actions (confirmed present via `gh secret list`, engine cannot read values). Live delivery confirmed via `workflow_dispatch` run 30575941928 (`test_url=https://httpbin.org/status/500`): Telegram API responded `{"ok":true,"result":{"message_id":298,...}}` — real message received, not the `::warning::` fallback. Both ACs satisfied. Run log: https://github.com/sachiv1984/swing-trading-model/actions/runs/30575941928
+
+## DEL-20260731-03
+
+- **ST Item:** ST-15 — Confirm Render rollback runbook has real execution history
+- **EPIC:** EPIC-04
+- **Classification:** delegated_backend
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #1155
+- **Branch:** exec/2026-07-30__release-v8.0/EPIC-04
+- **Delegated at:** 2026-07-31T01:30:00Z
+- **What is needed:** The execution-history audit is complete and documented (`docs/operations/render_rollback_runbook.md` §Execution History, commit — see next push): no real production rollback or staging drill has ever been performed. Per this story's AC, since no historical evidence exists, a deliberate rollback drill must actually be RUN against a non-production/staging Render deploy (not merely documented as pending) to satisfy the AC. This requires Render dashboard Owner/Admin access.
+- **Spec reference:** `docs/operations/render_rollback_runbook.md` (the procedure to exercise) and its new §Execution History section
+- **Unblock criteria:** A staging rollback drill is actually performed and its outcome (date, what was tested, any procedure corrections found) is recorded in `docs/operations/render_rollback_runbook.md`'s Execution History table, with Infrastructure & Operations Owner sign-off in `qa_evidence_EPIC-04.md`.
+- **Commit format required:** `[EPIC-04][ST-15] <description>` pushed to `exec/2026-07-30__release-v8.0/EPIC-04`
+- **Status:** Unblocked
+- **Resolution (2026-07-31):** User (Infrastructure & Operations Owner) executed a deliberate rollback drill against the non-production staging service (`trading-assistant-api-staging`, per `render.yaml`). Deploy transitioned cleanly to Live (green) in the Render dashboard. Post-rollback `GET /health` returned `{"status":"ok","db":"connected",...}`, confirming the service functions correctly post-rollback. One procedure finding: no log entries were visible in the Render Logs tab during/after the rollback — Step 3 of `render_rollback_runbook.md` (v1.1→v1.2) corrected to note that an empty Logs tab is not a failure signal; Deploy status + `/health` are authoritative. Recorded in the runbook's Execution History table and `qa_evidence_EPIC-04.md`.
+
+## DEL-20260731-04
+
+- **ST Item:** ST-16 — Render dashboard-only build/deploy path filter audit (invisible to repo grep)
+- **EPIC:** EPIC-04
+- **Classification:** delegated_backend
+- **Assigned to:** FinOps & Resource Architect
+- **GitHub Issue:** #1156
+- **Branch:** exec/2026-07-30__release-v8.0/EPIC-04
+- **Delegated at:** 2026-07-31T01:45:00Z
+- **What is needed:** `docs/ops/render_build_deploy_path_filter_audit.md` (commit — see next push) is complete on the in-repo side: a full inventory of every non-code file the running app reads at runtime, plus confirmation the staging deploy filter (`staging-deploy.yml`) covers all of them. What remains: read the PRODUCTION service's Build Filters configuration directly from `dashboard.render.com` (Settings → Build & Deploy → Build Filters), confirm it covers the same runtime-read file set (particularly `docs/product/changelog.md`, given this exact file already caused a staging drift once per `BLG-OPS-82`/commit `e9c73f58`), and record the production filter's actual configuration in the document's "Production Filter Configuration" section.
+- **Spec reference:** `docs/ops/render_build_deploy_path_filter_audit.md`
+- **Unblock criteria:** Production filter configuration recorded in the document, with FinOps & Resource Architect sign-off completed in the same document's Sign-Off block.
+- **Commit format required:** `[EPIC-04][ST-16] <description>` pushed to `exec/2026-07-30__release-v8.0/EPIC-04`
+- **Status:** Unblocked
+- **Resolution (2026-07-31):** User read production's Build Filters config live: Root Directory `backend`, Included Paths `docs/product/changelog.md` (only entry). Initial hypothesis of a possible gap (bare Included Paths acting as an exhaustive allow-list, silently blocking all `backend/**` auto-deploys) was tested against one deploy observation (commit `95b2e6bf`, backend-only, deployed live) — FinOps & Resource Architect agent-mediated review correctly BLOCKED this first pass as inconclusive (a single deploy event can't distinguish auto- from manual-trigger). User then checked the `95b2e6bf` deploy's detail view directly: labeled **"New commit via Auto-Deploy"** — conclusively confirming a genuine automatic push-triggered deploy, not manual. This resolves the ambiguity: Root Directory (`backend`) forms the implicit default trigger scope, Included Paths (`changelog.md`) correctly supplements it for the one runtime-read file outside it. No gap found; no dashboard change needed. Re-reviewed and approved. See `render_build_deploy_path_filter_audit.md` §Disposition/Sign-Off for full detail.
+
+## DEL-20260731-05
+
+- **ST Item:** ST-17 — Backup & disaster recovery runbook for production database
+- **EPIC:** EPIC-04
+- **Classification:** delegated_backend
+- **Assigned to:** Infrastructure & Operations Owner
+- **GitHub Issue:** #1157
+- **Branch:** exec/2026-07-30__release-v8.0/EPIC-04
+- **Delegated at:** 2026-07-31T02:00:00Z
+- **What is needed:** `docs/ops/database_backup_disaster_recovery_runbook.md` (commit — see next push) drafts the full step-by-step recovery procedure, covering all 3 Supabase plan-tier scenarios (Free/Pro/Team+PITR) since this repo does not record which tier production is on. What remains: (1) confirm the actual Supabase plan tier and backup/retention configuration for the production project via the live Supabase dashboard (Project Settings → Database → Backups) and record it in §2; (2) if the confirmed tier is Free (no automated backups), flag the missing recurring manual-backup-schedule gap per §3.4.
+- **Spec reference:** `docs/ops/database_backup_disaster_recovery_runbook.md`
+- **Unblock criteria:** §2 "Confirmed configuration" filled in with actual plan tier/backup frequency/retention/PITR status and confirmation date; Infrastructure & Operations Owner sign-off completed in the document's Sign-Off block.
+- **Commit format required:** `[EPIC-04][ST-17] <description>` pushed to `exec/2026-07-30__release-v8.0/EPIC-04`
+- **Status:** Unblocked
+- **Resolution (2026-07-31):** User confirmed production Supabase project's plan tier via Project Settings → Billing/Subscription: **Free plan.** Corroborated by the absence of a Database → Backups management page (Supabase does not expose backup management UI on Free tier). Result: no automated daily backups, no PITR. Per this story's own AC, the resulting gap (no recurring manual `pg_dump` schedule) was flagged rather than silently accepted — recorded in `database_backup_disaster_recovery_runbook.md` §2/§3.4 (v1.0→v1.1) and recommended as a P1 backlog item at next sprint planning. Infrastructure & Operations Owner sign-off completed in the runbook's Sign-Off block.
+
+**Why DEL-20260731-01 through 05 are delegated, not autonomous:** Adding repo secrets requires GitHub repo admin access and the actual secret values, which the engine does not hold and cannot supply. Running a real rollback drill requires Render dashboard access the engine does not have. Reading the production Build Filters configuration requires Render dashboard access the engine does not have. Confirming the production Supabase project's actual backup/retention configuration requires Supabase dashboard access the engine does not have.
