@@ -461,8 +461,8 @@
     "EPIC-06": {
       "status": "done",
       "branch": "exec/2026-07-30__release-v8.0/EPIC-06",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1167,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-30__release-v8.0/qa_evidence_EPIC-06.md",
       "test_scenarios": [],
