@@ -439,7 +439,7 @@
       "status": "done",
       "branch": "exec/2026-07-30__release-v8.0/EPIC-05",
       "pr_number": 1162,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-07-30__release-v8.0/qa_evidence_EPIC-05.md",
       "test_scenarios": [],
@@ -517,10 +517,10 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
-      "EPIC-03"
+      "EPIC-03",
+      "EPIC-05"
     ],
     "epics_pending": [
-      "EPIC-05",
       "EPIC-02",
       "EPIC-04",
       "EPIC-06"
