@@ -10,13 +10,27 @@ export const DEFAULT_CHECKLIST_ITEMS = [
 ];
 
 function CheckItem({ item, onToggle, readOnly }) {
+  const handleKeyDown = (e) => {
+    if (readOnly) return;
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      onToggle();
+    }
+  };
+
   return (
     <div
+      role="checkbox"
+      aria-checked={item.checked}
+      tabIndex={readOnly ? -1 : 0}
+      data-testid={`entry-checklist-item-${item.id}`}
       className={cn(
         "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         !readOnly && "hover:bg-slate-700/30 cursor-pointer"
       )}
       onClick={!readOnly ? onToggle : undefined}
+      onKeyDown={handleKeyDown}
     >
       <div
         className={cn(

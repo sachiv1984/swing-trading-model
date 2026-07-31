@@ -8,26 +8,22 @@ title = "swing-trading-model gitleaks config"
 # Use the default gitleaks ruleset as the base
 useDefault = true
 
-[[allowlists]]
-description = "Test fixture synthetic credentials — obvious test stubs, not real secrets"
-paths = [
-  "tests/.*\\.py",
-  "tests/conftest\\.py",
-]
-regexes = [
-  # Generic short test token stubs used in unit tests: "tok", "test-token", "test-secret"
-  '''(TELEGRAM_BOT_TOKEN|TELEGRAM_CHAT_ID|API_KEY)['":\s]+['"](tok|test-token|test-secret|test-chat|123|key|secret)['"]\s''',
-  # Synthetic DB URL used in conftest.py stub
-  '''postgresql://test:test@localhost:5432/test_stub''',
-]
+# NOTE (BLG-SEC-26, ST-09, EPIC-02, v8.0): gitleaks' schema only recognises two
+# allowlist forms: (1) [[rules.allowlists]] nested under a specific [[rules]]
+# block (scopes the allowlist to one named rule ID), or (2) a single global
+# [allowlist] table (singular, not an array — applies regardless of which rule
+# fires). A bare top-level [[allowlists]] (plural, unnested), as this file used
+# for 4 blocks prior to this fix, is not a recognised key in gitleaks v8.21 and
+# is silently ignored — confirmed via `gitleaks detect` against this exact repo:
+# with the pre-fix config, `generic-api-key` fired unsuppressed on 3 real
+# STORAGE_KEY occurrences (claude/cycles/2026-06-26__release-v6.3/qa_evidence_EPIC-03.md,
+# docs/frontend/prompts/ai-briefing-progressive-disclosure-v1.md,
+# src/components/dashboard/home/AiDailyBriefing.js) despite an allowlist
+# ostensibly covering the first two paths. All 4 blocks below now use one of
+# the two schema-valid forms; each was re-verified with a local
+# `gitleaks detect --source . --config .gitleaks.toml --no-git` run (gitleaks
+# v8.21.2) to confirm the previously-unsuppressed findings are now clean.
 
-# NOTE: gitleaks' schema only permits array-of-tables allowlists ([[rules.allowlists]])
-# nested under a specific [[rules]] block, or a single global [allowlist] (singular,
-# not an array). A bare top-level [[allowlists]] (plural, unnested) as used elsewhere
-# in this file is not a recognised key in gitleaks v8.21 and is silently ignored — see
-# BLG-SEC-26. This entry uses the correct rule-scoped form, verified locally against
-# gitleaks v8.21.2 to actually suppress the finding (both rules that fire on this
-# secret: github-pat and generic-api-key).
 [[rules]]
 id = "github-pat"
 
@@ -56,26 +52,40 @@ id = "generic-api-key"
     '''ghp_16C7e42F292c6912E7710c838347Ae178B4a''',
   ]
 
-[[allowlists]]
-description = "Alpaca test stubs — short placeholder values in integration tests"
+  [[rules.allowlists]]
+  description = "localStorage versioned key strings — UI state identifiers, not credentials (ST-09, BLG-SEC-26). The variable name STORAGE_KEY triggers generic-api-key on entropy alone; paths cover the source constant plus governance docs/QA evidence that quote it."
+  condition = "AND"
+  regexTarget = "match"
+  paths = [
+    "src/.*\\.js",
+    "claude/cycles/.*\\.md",
+    "docs/.*\\.md",
+  ]
+  regexes = [
+    '''STORAGE_KEY\s*=\s*['"][a-z][a-z0-9-]+-v\d+['"]''',
+    # Same versioned key value quoted in markdown prose (e.g. "- Key: `ai-briefing-collapsed-sections-v1` ..."),
+    # not as a `STORAGE_KEY = ` assignment — backtick-anchored so this stays narrowly scoped to that one value shape.
+    '''`[a-z][a-z0-9-]+-v\d+`''',
+  ]
+
+# Global allowlist (singular table — not rule-scoped): covers short, obviously-synthetic
+# test fixture values that are not tied to one specific gitleaks rule ID. Neither of these
+# two source patterns currently triggers any rule in the default v8.21 ruleset (confirmed
+# via local `gitleaks detect` against tests/conftest.py and tests/test_alpaca_integration.py
+# with no config — zero findings either way), so this block is defensive/forward-looking
+# rather than suppressing an active finding; kept schema-valid regardless.
+[allowlist]
+description = "Test fixture and Alpaca-stub synthetic credentials — obvious short placeholder values, not real secrets (ST-09, BLG-SEC-26)"
 paths = [
+  "tests/conftest\\.py",
   "tests/test_alpaca_integration\\.py",
 ]
 regexes = [
-  # "key" and "secret" are obviously synthetic test values
+  # Generic short test token stubs used in unit tests: "tok", "test-token", "test-secret"
+  '''(TELEGRAM_BOT_TOKEN|TELEGRAM_CHAT_ID|API_KEY)['":\s]+['"](tok|test-token|test-secret|test-chat|123|key|secret)['"]\s''',
+  # Synthetic DB URL used in conftest.py stub
+  '''postgresql://test:test@localhost:5432/test_stub''',
+  # "key" and "secret" are obviously synthetic Alpaca test stub values
   '''"key"''',
   '''"secret"''',
-]
-
-[[allowlists]]
-description = "localStorage key strings in governance docs — not secrets, UI state keys"
-paths = [
-  "claude/cycles/.*\\.md",
-  "docs/.*\\.md",
-]
-regexes = [
-  # localStorage versioned keys such as 'ai-briefing-collapsed-sections-v1' are
-  # UI state identifiers, not credentials. The variable name STORAGE_KEY triggers
-  # the generic-api-key rule on entropy alone.
-  '''STORAGE_KEY\s*=\s*['"][a-z][a-z0-9-]+-v\d+['"]''',
 ]

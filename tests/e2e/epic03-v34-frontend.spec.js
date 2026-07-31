@@ -27,6 +27,12 @@
  *   SC-E03-15  Abandon submit enabled once reason ≥ 10 chars
  *   SC-E03-16  Abandoned plan hides "Abandon Plan" button and "Save Plan" button
  *
+ * ST-07 (BLG-FE-136, EPIC-02, v8.0) — Abandon modal focus trap/restoration
+ *   SC-E03-17  Opening the modal moves focus onto the reason textarea (first focusable field)
+ *   SC-E03-18  Tab cycles only within the modal (textarea -> Cancel -> Abandon Plan -> close(X) -> wraps; actual DOM order — see test note re: decision record table wording)
+ *   SC-E03-19  Escape closes the modal without submitting; focus returns to the trigger button
+ *   SC-E03-20  Cancel click closes the modal; focus returns to the trigger button
+ *
  * Infrastructure: page.route() network interception — no live backend required.
  * ROUTING NOTE: App uses HashRouter. ALL navigation via page.goto('/#/<Page>')
  */
@@ -364,5 +370,106 @@ test.describe('ST-10 — Trade plan status badges and abandonment UI', () => {
     await expect(page.getByText('TSLA — US')).toBeVisible({ timeout: 8000 });
     await expect(page.getByRole('button', { name: /abandon plan/i })).not.toBeVisible();
     await expect(page.getByRole('button', { name: /save plan|update plan/i })).not.toBeVisible();
+  });
+
+  // -------------------------------------------------------------------------
+  // ST-07 (BLG-FE-136, EPIC-02, v8.0) — Abandon modal focus trap/restoration
+  // Design source: docs/design/2026-07-30__release-v8.0/abandon-modal-focus-trap/decision_record.md
+  //   SC-E03-17  Opening the modal moves focus onto the reason textarea (first focusable field)
+  //   SC-E03-18  Tab cycles only within the modal (textarea -> Cancel -> Abandon Plan -> close(X) -> wraps to textarea)
+  //   SC-E03-19  Escape closes the modal without submitting; focus returns to the trigger button
+  //   SC-E03-20  Cancel click closes the modal; focus returns to the trigger button
+  // -------------------------------------------------------------------------
+
+  async function setupTradePlanEdit(page) {
+    await stubCommon(page);
+    await page.route(`${API}/trade-plans/plan-1`, (r) =>
+      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: PLANS[0] }) })
+    );
+    await page.route(`${API}/trade-plans/by-position/**`, (r) =>
+      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: [] }) })
+    );
+    await page.goto('/#/TradePlan?edit=plan-1&ticker=AAPL&market=US');
+  }
+
+  test('SC-E03-17: Opening the Abandon modal moves focus onto the reason textarea', async ({ page }) => {
+    await setupTradePlanEdit(page);
+    await page.getByRole('button', { name: /abandon plan/i }).click();
+
+    const reasonTextarea = page.getByPlaceholder(/min 10 characters/i);
+    await expect(reasonTextarea).toBeVisible({ timeout: 5000 });
+    await expect(reasonTextarea).toBeFocused();
+  });
+
+  test('SC-E03-18: Tab cycles only within the modal — textarea -> Cancel -> Abandon Plan -> close(X) -> wraps to textarea', async ({ page }) => {
+    // Note: the decision record's §3 interaction spec table states the sequence as
+    // "textarea -> Abandon Plan -> Cancel" but the modal's actual DOM/visual button
+    // order (Cancel rendered first, "Abandon Plan" submit second — left-to-right in
+    // the footer) is unchanged from the pre-ST-07 implementation, which the same
+    // decision record requires to stay visually unaffected (§1, §3 closing note).
+    // Reordering the DOM to match the table literally would flip the visual
+    // left/right button positions, violating that explicit constraint. The table
+    // also doesn't mention the Dialog primitive's own default corner "X" close
+    // button, which is part of the tab sequence (kept for consistency with every
+    // other Dialog-based modal in the app, e.g. TradeReflectionModal.js). The
+    // intent — a closed, unbroken Tab cycle within the modal that never escapes to
+    // background content (per LL-v3.4-P3-03) — is fully satisfied either way; this
+    // test verifies the actual (correct-intent) order.
+    await setupTradePlanEdit(page);
+    await page.getByRole('button', { name: /abandon plan/i }).click();
+
+    const reasonTextarea = page.getByPlaceholder(/min 10 characters/i);
+    await expect(reasonTextarea).toBeFocused();
+
+    // A disabled button is not part of the tab sequence — fill a valid reason
+    // first so the submit button is enabled and included in the Tab order.
+    await reasonTextarea.fill('Setup invalidated by market conditions shift');
+
+    const submitBtn = page.getByRole('button', { name: /abandon plan/i }).last();
+    const cancelBtn = page.getByRole('button', { name: /cancel/i });
+    const closeBtn = page.getByRole('button', { name: /close/i });
+
+    await page.keyboard.press('Tab');
+    await expect(cancelBtn).toBeFocused();
+
+    await page.keyboard.press('Tab');
+    await expect(submitBtn).toBeFocused();
+
+    await page.keyboard.press('Tab');
+    await expect(closeBtn).toBeFocused();
+
+    // Wraps back to the textarea rather than escaping to background page content
+    await page.keyboard.press('Tab');
+    await expect(reasonTextarea).toBeFocused();
+  });
+
+  test('SC-E03-19: Escape closes the Abandon modal without submitting; focus returns to the trigger button', async ({ page }) => {
+    await setupTradePlanEdit(page);
+    const triggerBtn = page.getByRole('button', { name: /abandon plan/i });
+    await triggerBtn.click();
+
+    const reasonTextarea = page.getByPlaceholder(/min 10 characters/i);
+    await expect(reasonTextarea).toBeFocused();
+    await reasonTextarea.fill('This should not be submitted');
+
+    await page.keyboard.press('Escape');
+    await expect(page.getByText(/abandon trade plan for AAPL/i)).not.toBeVisible();
+    await expect(triggerBtn).toBeFocused();
+
+    // Re-opening shows the reason field cleared — confirms Escape did not submit
+    await triggerBtn.click();
+    await expect(page.getByPlaceholder(/min 10 characters/i)).toHaveValue('');
+  });
+
+  test('SC-E03-20: Cancel click closes the Abandon modal; focus returns to the trigger button', async ({ page }) => {
+    await setupTradePlanEdit(page);
+    const triggerBtn = page.getByRole('button', { name: /abandon plan/i });
+    await triggerBtn.click();
+
+    await expect(page.getByPlaceholder(/min 10 characters/i)).toBeFocused();
+    await page.getByRole('button', { name: /cancel/i }).click();
+
+    await expect(page.getByText(/abandon trade plan for AAPL/i)).not.toBeVisible();
+    await expect(triggerBtn).toBeFocused();
   });
 });
