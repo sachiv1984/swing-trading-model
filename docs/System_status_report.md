@@ -1,9 +1,36 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.18
-**Last Updated:** 2026-07-30 (delivery verification 2026-07-28__release-v7.10)
+**Version:** 4.19
+**Last Updated:** 2026-07-31 (sprint close 2026-07-30__release-v8.0)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-07-30__release-v8.0
+**Date:** 2026-07-31
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | `strategy_version_at_entry` field on trade_plans/positions; FX handling reviewed post-DS-05 (no amendment needed); 3 FX conversion audit-trail gaps found and fixed (`fx_rate_used` missing from `POST /portfolio/position`, `GET /portfolio/prospective-heat`, pre-entry-validation cash-constraint check) | `docs/specs/data_model.md#DS-11`; `docs/product/decisions/ds05-fx-handling-review--2026-07-30.md`; `docs/product/decisions/fx-audit-trail-completeness-check--2026-07-30.md`; `docs/specs/api_contracts/portfolio_endpoints.md#POST /portfolio/position (v2.6.0)` | None |
+| EPIC-02 | 17 implicit-HTTP-200 raw-exception-text error paths fixed in `backend/main.py`; new AI-endpoint security review checklist wired into the design gate; Trade Plan pre-entry checklist keyboard-reachability fix; Abandon modal focus-trap/restoration fix; production `request.client.host` proxy behaviour verified (no collapse); `.gitleaks.toml` allowlist schema bug fixed | `docs/specs/api_contracts/conventions.md#13`; `docs/specs/security/ai_endpoint_security_checklist.md`; `docs/design/2026-07-30__release-v8.0/entry-checklist-keyboard-accessibility/decision_record.md`; `docs/design/2026-07-30__release-v8.0/abandon-modal-focus-trap/decision_record.md`; `docs/security/rate_limit_audit_2026-07-29.md` v1.1; `.gitleaks.toml` | None |
+| EPIC-03 | Playwright §18 anti-pattern sweep (networkidle/route-ordering fixes); smoke/critical/regression test-tagging convention wired into CI; synthetic trade-history data generator for gated-feature testing | `claude/system/shared_standards.md#18`; `docs/team_skills/quality/playwright_patterns.md#6 (v1.1)`; `backend/test_data/generate_synthetic_trade_history.py` | None |
+| EPIC-04 | Render health-check Telegram alerting on sustained 5xx spikes (live-fire verified); repo secrets configured; real staging rollback drill executed; production Build Filters audited (no gap found); database backup/DR runbook drafted, production Supabase tier confirmed (Free — backup gap flagged) | `.github/workflows/health-check-alert.yml`; `docs/operations/render_rollback_runbook.md#Execution History (v1.2)`; `docs/ops/render_build_deploy_path_filter_audit.md`; `docs/ops/database_backup_disaster_recovery_runbook.md` | None |
+| EPIC-05 | 3 new reusable Base44 prompt fragments (loading-skeleton patterns) extracted into the template library | `docs/specs/frontend/base44_prompt_template_library.md (v1.4)` | None |
+| EPIC-06 | Cross-EPIC `execution_state.json` merge-conflict structural fix designed and signed off (per-EPIC state files, Option 1) — implementation deferred to a follow-up story at next sprint planning | `claude/cycles/2026-07-30__release-v8.0/execution_escalations.md#ESC-EXEC-20260731-01` | None (design decision + sign-off complete; implementation intentionally sequenced to next cycle boundary per Head of Specs Team guidance) |
+
+### Capabilities deferred or returned
+
+None — all 19 stories (ST-01 through ST-19) delivered within the sprint. ST-19's implementation (per-EPIC state files mechanism) is deferred to a new follow-up story at next sprint planning per the design decision recorded in `ESC-EXEC-20260731-01`; this is a sequencing decision, not a returned item.
+
+### Verification inputs ready
+
+- QA evidence logs: `qa_evidence_EPIC-01.md` through `qa_evidence_EPIC-06.md` (all 6 present, all sign-off blocks non-blank)
+- Deviations filed: None
+- Test scenarios referenced: `tests/test_strategy_version_at_entry.py`; `tests/test_fx_audit_trail_completeness.py`; `tests/test_st04_implicit_200_error_paths_fixed.py`; `tests/e2e/entry-checklist.spec.js`; `tests/e2e/epic03-v34-frontend.spec.js`; `tests/test_synthetic_trade_history_generator.py`
 
 ---
 

@@ -4,8 +4,8 @@
   "backlog_slice_source": "claude/cycles/2026-07-30__release-v8.0/stage4_backlog_slice.md",
   "invoked_utc": "2026-07-30T18:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-07-30T20:00:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-07-31T12:30:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -586,7 +586,12 @@
     "ST-01",
     "ST-02",
     "ST-03",
+    "ST-04",
+    "ST-05",
+    "ST-06",
+    "ST-07",
     "ST-08",
+    "ST-09",
     "ST-10",
     "ST-11",
     "ST-12",
@@ -614,8 +619,9 @@
   "process_notes": [
     "Commit 8d5411b2fdd39b7ee3f99a63982a948e14a8a965 (message '[EPIC-04][ST-15][ST-16][ST-17] ...') also modified ST-13 and ST-14's execution_state.json fields (delegation_record_id, status transition in_progress/not_started -> blocked_backend) without including ST-13/ST-14 in the commit message, violating CLAUDE.md's commit-format rule (all story IDs touched by a commit must appear in the message). Self-caught after push; not amended (commit already pushed - amending a pushed commit is avoided per repo convention). No functional impact: neither ST-13 nor ST-14 reached a 'done'/closed-issue state in this commit, so governance_sync.yml's auto-close behavior was not affected. Recorded here for QA evidence log completeness at EPIC-04 close.",
     "Structural gotcha discovered this EPIC (candidate lessons-learnt item): governance_sync.yml auto-closes a GitHub issue whenever a commit message contains that story's [ST-xx] ID prefix, regardless of whether the story is actually complete. This is correct for normal autonomous/done stories, but for delegated_backend items where autonomous groundwork is committed with the required [EPIC-xx][ST-xx] prefix (per CLAUDE.md's non-negotiable commit format) while the story itself remains blocked_backend, the issue gets auto-closed prematurely. Issues #1153, #1155, #1156, #1157 were auto-closed this way and had to be manually reopened with a clarifying comment. No clean fix exists within the commit-format rule as written (the ID must appear in the message); the mitigation applied was: always check issue state after any commit that includes a delegated/blocked story's ID, and reopen with a clarifying comment if auto-closed. Worth raising at Phase 3 lessons learnt / post-ship closure as a possible refinement to governance_sync.yml (e.g. only auto-close if the commit message also contains a 'done'/'complete' marker, or if execution_state.json's status for that story is not blocked_*).",
-    "User confirmed TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID added to repo secrets (2026-07-31). Discovered GitHub only exposes workflow_dispatch for workflows present on the DEFAULT branch (main) - .github/workflows/health-check-alert.yml only existed on exec/2026-07-30__release-v8.0/EPIC-04, so it could not be dispatched to run the ST-13/ST-14 live-fire test. With user approval, opened a scoped early PR (#1163, branch exec/2026-07-30__release-v8.0/EPIC-04-ST-13-early, containing ONLY .github/workflows/health-check-alert.yml, cherry-picked from the EPIC-04 branch) rather than waiting for the other 4 unrelated EPIC-04 stories to unblock. Added a workflow_dispatch test_url input so the live-fire test can target a safe public test endpoint (https://httpbin.org/status/500, verified locally to return 500) instead of touching production. Awaiting user to merge PR #1163 before the workflow_dispatch test can run."
+    "User confirmed TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID added to repo secrets (2026-07-31). Discovered GitHub only exposes workflow_dispatch for workflows present on the DEFAULT branch (main) - .github/workflows/health-check-alert.yml only existed on exec/2026-07-30__release-v8.0/EPIC-04, so it could not be dispatched to run the ST-13/ST-14 live-fire test. With user approval, opened a scoped early PR (#1163, branch exec/2026-07-30__release-v8.0/EPIC-04-ST-13-early, containing ONLY .github/workflows/health-check-alert.yml, cherry-picked from the EPIC-04 branch) rather than waiting for the other 4 unrelated EPIC-04 stories to unblock. Added a workflow_dispatch test_url input so the live-fire test can target a safe public test endpoint (https://httpbin.org/status/500, verified locally to return 500) instead of touching production. Awaiting user to merge PR #1163 before the workflow_dispatch test can run.",
+    "STEP 7 pre-seal check (LL-v7.10-P4-01 union rule): top-level completed_items array was missing ST-04, ST-05, ST-06, ST-07, ST-09 (all EPIC-02 stories besides ST-08), despite each showing status: done and acceptance_verified: true at the per-story level. Corrected to the full 19-story union (ST-01 through ST-19) before sealing. No functional impact — the per-story status fields (source of truth) were always correct; only the top-level summary array was incomplete."
   ],
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-07-31T12:30:00Z"
 }
