@@ -395,25 +395,29 @@
         "ST-16": {
           "title": "Render dashboard-only build/deploy path filter audit",
           "classification": "delegated_backend",
-          "status": "blocked_backend",
+          "status": "done",
           "assigned_to": "FinOps & Resource Architect",
           "github_issue": 1156,
           "branch": "exec/2026-07-30__release-v8.0/EPIC-04",
           "commit_sha": null,
           "delegation_record_id": "DEL-20260731-04",
           "blocked_since_utc": "2026-07-31T01:45:00Z",
-          "unblock_criteria": "Production filter configuration recorded in docs/ops/render_build_deploy_path_filter_audit.md with FinOps & Resource Architect sign-off, PLUS the 95b2e6bf deploy's trigger-source confirmed (push-triggered auto-deploy vs. manual dashboard click) via the Render deploy detail view, or a trivial backend-only live-fire push test confirming autodeploy fires without manual intervention",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "unblock_criteria": "Production filter configuration recorded in docs/ops/render_build_deploy_path_filter_audit.md with FinOps & Resource Architect sign-off, PLUS the 95b2e6bf deploy's trigger-source confirmed (push-triggered auto-deploy vs. manual dashboard click) via the Render deploy detail view, or a trivial backend-only live-fire push test confirming autodeploy fires without manual intervention -- SATISFIED: deploy detail confirmed \"New commit via Auto-Deploy\"",
+          "completed_utc": "2026-07-31T09:45:00Z",
+          "acceptance_verified": true,
           "spec_references": [
             "docs/ops/render_build_deploy_path_filter_audit.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": "3.1.A.pending_commit",
-          "sign_off_record": null,
-          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend'. Built the full in-repo half of the audit autonomously (see docs/ops/render_build_deploy_path_filter_audit.md). Production dashboard filter read live by the user: Root Directory backend, Included Paths docs/product/changelog.md (only entry). Initial hypothesis (bare Included Paths acts as an exhaustive allow-list, silently blocking all backend/** auto-deploys) was tested against commit 95b2e6bf's deploy - it's live for a backend-only commit with no changelog.md change. However, FinOps & Resource Architect agent-mediated review (2026-07-31) BLOCKED this as insufficient: that single observation cannot distinguish an automatic push-triggered deploy from a manual 'Deploy latest commit' dashboard click, and two Render official doc pages checked independently gave inconsistent framings of the Root-Directory/Included-Paths interaction. Reviewer identified a cheap conclusive test: check the 95b2e6bf deploy's trigger-source label in the Render deploy detail view (Render labels deploys as push-triggered vs manual), or run a trivial backend-only live-fire push and confirm autodeploy with zero manual dashboard interaction. Re-delegated pending that check - not closing this story on an unverified inference given the failure mode (silent non-deployment of all future backend changes) is severe."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblocked",
+          "sign_off_record": {
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-07-31"
+          },
+          "notes": "Classification corrected from stale 'autonomous' to 'delegated_backend'. Built the full in-repo half of the audit autonomously (see docs/ops/render_build_deploy_path_filter_audit.md). Production dashboard filter read live by the user: Root Directory backend, Included Paths docs/product/changelog.md (only entry). Initial hypothesis (bare Included Paths acts as an exhaustive allow-list, silently blocking all backend/** auto-deploys) was tested against commit 95b2e6bf's deploy - it's live for a backend-only commit with no changelog.md change. However, FinOps & Resource Architect agent-mediated review (2026-07-31) BLOCKED this as insufficient: that single observation cannot distinguish an automatic push-triggered deploy from a manual 'Deploy latest commit' dashboard click, and two Render official doc pages checked independently gave inconsistent framings of the Root-Directory/Included-Paths interaction. Reviewer identified a cheap conclusive test: check the 95b2e6bf deploy's trigger-source label in the Render deploy detail view (Render labels deploys as push-triggered vs manual), or run a trivial backend-only live-fire push and confirm autodeploy with zero manual dashboard interaction. Re-delegated pending that check - not closing this story on an unverified inference given the failure mode (silent non-deployment of all future backend changes) is severe. RESOLVED: user checked the 95b2e6bf deploy's detail view directly - labeled 'New commit via Auto-Deploy', conclusively confirming a genuine automatic push-triggered deploy, not a manual dashboard click. This resolves the ambiguity the FinOps & Resource Architect review correctly flagged: Root Directory (backend) forms the implicit default trigger scope, Included Paths (changelog.md) correctly supplements it for the one runtime-read file outside it. No gap found; no dashboard change needed. Re-reviewed and approved (agent-mediated, FinOps & Resource Architect)."
         },
         "ST-17": {
           "title": "Backup & disaster recovery runbook for production database",
@@ -506,8 +510,7 @@
     }
   },
   "blocked_items": [
-    "ST-17",
-    "ST-16"
+    "ST-17"
   ],
   "delegated_items": [
     "ST-13",
@@ -522,7 +525,8 @@
     "ST-03",
     "ST-13",
     "ST-14",
-    "ST-15"
+    "ST-15",
+    "ST-16"
   ],
   "open_escalations": [],
   "merge_gate": {
