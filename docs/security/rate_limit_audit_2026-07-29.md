@@ -1,9 +1,9 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-07-29
-**Cycle:** 2026-07-28__release-v7.10 (ST-07 — BLG-SEC-18)
+**Version:** 1.1
+**Last Updated:** 2026-07-31
+**Cycle:** 2026-07-28__release-v7.10 (ST-07 — BLG-SEC-18); 2026-07-30__release-v8.0 (ST-08 — BLG-SEC-24 resolution)
 
 ---
 
@@ -36,12 +36,26 @@ The 2026-07-26 audit's method section explicitly scoped to application-level che
 
 **Directly relevant cross-reference (BLG-SEC-24, filed during ST-06 this same cycle):** the application-level per-IP limiters (`_ai_limiter`, `services/rate_limiter.py`) key on `request.client.host`, and `render.yaml`'s uvicorn command has no `--proxy-headers` flag — meaning `request.client.host` may reflect Render's own proxy connection rather than the true client IP in production. This is the single most consequential finding for this story's "Render platform-level and application-level" framing: if confirmed, it means the platform-level proxy layer and the application-level limiter interact in a way that defeats the latter's per-IP intent entirely (collapsing to one shared bucket), independent of whatever Render's own edge-level protections may or may not provide. This is not re-filed here — `BLG-SEC-24` already covers it and names the exact remediation (verify live, configure `--proxy-headers`/`--forwarded-allow-ips` if confirmed).
 
+## Part 3 — BLG-SEC-24 live verification result (ST-08, EPIC-02, v8.0)
+
+Part 2 above (2026-07-29) flagged as unverified whether `request.client.host` reflects the true client IP behind Render's proxy, or collapses all callers to Render's own edge IP (which would defeat per-IP rate limiting entirely). This was resolved via a live production test, automated via a two-job GitHub Actions `workflow_dispatch` (`.github/workflows/st08-proxy-ip-verification.yml`), run `30611215629`:
+
+- **Job A** (runner public IP `135.232.227.144`) burst `GET /health` and was rate-limited on attempt 61 — consistent with the documented 60/min limit (`backend/main.py:1097`), confirming the limiter itself works correctly for a single real client.
+- **Job B** (a separate GitHub-hosted runner, genuinely different public IP `172.182.243.52`) made a single probe request immediately after Job A's block and received `HTTP 200` — **not** rate-limited.
+
+**Result: no proxy-IP collapse.** `request.client.host` correctly distinguishes real per-client IPs in production; two genuinely distinct clients get genuinely independent rate-limit buckets. No `uvicorn --proxy-headers`/`--forwarded-allow-ips` configuration change is needed — the theoretical risk named in Part 2 and filed as `BLG-SEC-24` did not materialize in practice, most likely because Render's edge for this service type passes through the real peer connection rather than terminating and re-proxying it internally in a way that would substitute its own address as `request.client.host`.
+
+`BLG-SEC-24` is resolved as **no code change required**; the finding above (confirmed-correct behavior, with reproducible run evidence) is the closing action per the story's acceptance criteria ("confirmed accurate, no change needed" outcome).
+
 ## Disposition
 
 - Part 1 (application-level refresh): no new P0/P1 gap. 3 new endpoints since 2026-07-26 confirmed to fall into the existing accepted-risk bucket (C3).
 - Part 2 (Render platform-level): no platform-level rate-limit configuration exists in this repo to audit directly; the one confirmed, actionable cross-cutting risk (proxy-header/`request.client.host` reliability) is already filed as `BLG-SEC-24` (P1) — not duplicated here.
-- No new backlog item filed by this story specifically; `BLG-SEC-24` (filed under ST-06) is the operative follow-up for both stories' overlapping finding.
+- Part 3 (BLG-SEC-24 resolution): live-verified 2026-07-31 — no proxy-IP collapse, no config change needed. See run `30611215629` above.
+- No new backlog item filed by this story specifically; `BLG-SEC-24` (filed under ST-06) is the operative follow-up for both stories' overlapping finding, now resolved.
 
 ## Sign-off
 
 **Cybersecurity & Trust Lead:** Confirmed — application-level audit refreshed against all 131 current endpoints (3 new since 2026-07-26, no new gap); Render platform-level posture documented to the extent verifiable from this repository, with the one cross-cutting actionable risk correctly cross-referenced to `BLG-SEC-24` rather than duplicated. 2026-07-29.
+
+**Cybersecurity & Trust Lead (Part 3 addendum):** Confirmed — `BLG-SEC-24` live-verification methodology and evidence reviewed (GitHub Actions run `30611215629`, job logs independently inspected). Job ordering was `needs`-gated and the observed gap between Job A's HTTP 429 (06:58:11.57 UTC) and Job B's probe (06:58:17.14–17.80 UTC) was ~6 seconds — comfortably inside the 60s sliding window, ruling out a window-expiry false negative. Job A's block on attempt 61 matches the configured `_HEALTH_LIMIT = 60` exactly. `request.client.host` extraction is identical (transport-layer property, not per-route) across all four rate-limited call sites (`main.py` `/health`, `ai.py` journal-summary/daily-briefing/chat, `trade_plans.py` generate-plan/generate-thesis), so this single verification of the underlying primitive generalizes to all of them. `BLG-SEC-24` is resolved: no proxy-IP collapse, no code change required. 2026-07-31.
