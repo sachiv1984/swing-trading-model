@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.9
+**Version:** 9.10
 **Last Updated:** 2026-08-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -632,6 +632,8 @@ Record: `PO decision (STEP 8.1): Option (b) — defer. Now horizon intentionally
 This is **non-blocking** — either choice clears the gate. The gate prevents silent omission; it does not mandate adding a release section. If no PO decision is recorded, the gate re-fires at the next invocation of the Release Planning Engine (STEP -1.2) until resolved.
 
 If this gate fires on consecutive scheduled rebalances without a recorded decision, escalate to Product Owner as a recurring advisory in `run_manifest.md`.
+
+**Version-labeling a resolved condition-1b carry-forward (v9.10 — ST-09, BLG-GOV-240):** Once condition 1b's un-versioned carry-forward heading has been adopted into a firm release by Release Planning, it no longer needs a full `run roadmap` invocation just to relabel the heading with the confirmed version. `shared_standards.md` §17 grants the Head of Specs Team standing authority to apply that narrow relabeling edit directly in `current_roadmap.md`, outside a full rebalance cycle. See §17 for the exact scope of this authority (heading label + adjacent metadata only — item content changes still require `run roadmap`/`plan release`).
 
 ---
 
