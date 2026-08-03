@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.19
-**Last Updated:** 2026-07-24
+**Version:** 3.20
+**Last Updated:** 2026-08-03
 
 # Shared Standards — All Governed Routines
 
@@ -375,17 +375,25 @@ Any increment to a governance prompt version **must** be accompanied by an entry
 
 ## 12. Parallel EPIC Branch Merge Sequencing
 
-When multiple EPIC branches are active simultaneously in the same sprint, `execution_state.json` merge conflicts are structurally inevitable — both branches modify the same governance file independently. Apply the following convention to prevent cascading conflict rounds.
+When multiple EPIC branches are active simultaneously in the same sprint, per-EPIC state writes must not collide. Apply the following convention.
 
 **Rule 1 — Merge sequence:** When multiple EPIC branches are ready for merge, merge them in dependency order (logical dependencies first; alphabetical by EPIC ID if no dependencies exist). Do not merge multiple EPIC branches to main simultaneously.
 
-**Rule 2 — Conflict resolution rule:** On a merge conflict in `execution_state.json`, keep the version from the more recently-merged EPIC branch (the EPIC with the later completion timestamp). The earlier EPIC's state additions are preserved in its QA evidence file and `sprint_close.md` and do not need to be in the merged state file.
+**Rule 2 — Retired (ST-19, BLG-GOV-284, cycle `2026-08-03__release-v8.1`):** The prior hand-merge conflict-resolution rule ("on a merge conflict in `execution_state.json`, keep the version from the more recently-merged EPIC branch") is retired. It is structurally obsolete under the per-EPIC mechanism below — there is no longer a shared file for two branches to conflict on. Superseded by **§12.1 Per-EPIC Execution State Mechanism**.
 
-**Rule 3 — GOVERNANCE commit after each merge:** After each EPIC branch merges to main, update `execution_state.json` on main directly via a GOVERNANCE commit before the next EPIC branch opens a PR. This prevents the next EPIC's PR from showing a conflict on `execution_state.json` at open time.
+**Rule 3 — GOVERNANCE commit after each merge:** After each EPIC branch merges to main, regenerate `execution_state.json` on main via `python3 claude/system/scripts/generate_execution_summary.py <cycle_id>` and commit the result directly as a GOVERNANCE commit, before the next EPIC branch opens a PR. This prevents the next EPIC's PR from showing a conflict on `execution_state.json` at open time — the file is regenerated fresh each time rather than hand-reconciled, so there is nothing to merge-conflict over.
 
-**Why this matters:** Without this convention, a 4-EPIC sprint with parallel branches requires 3 conflict resolution rounds, each triggering a CI re-run (~3–5 minutes each). Cumulative latency: 30–60 minutes per sprint close. With this convention, conflict rounds are eliminated.
+**Why this matters:** Without this convention, a 4-EPIC sprint with parallel branches requires several conflict resolution rounds, each triggering a CI re-run (~3–5 minutes each). Cumulative latency: 30–60 minutes per sprint close. With this convention, conflict rounds are eliminated.
 
 *Trigger: Friction Item 1, lessons_learnt_execution.md — cycle 2026-03-06__release-v1.9 Sprint 1. Confirmed by Head of Specs Team.*
+
+### 12.1 Per-EPIC Execution State Mechanism (added ST-19, BLG-GOV-284, cycle `2026-08-03__release-v8.1`)
+
+Each EPIC branch owns exactly one file, `claude/cycles/<cycle_id>/execution_state/EPIC-xx.json`, and writes only to it — never to any other EPIC's file, and never directly to the cycle-level `execution_state.json`. Schema: `claude/system/schemas/execution_state_epic_schema.json`. Cycle-level fields (`sprint_goal`, `backlog_slice_source`, `invoked_utc`, `mode`, `open_escalations`, `process_notes`, `sealed`, `sealed_utc`) live in `claude/cycles/<cycle_id>/execution_state/_cycle_meta.json`, owned by whichever EPIC is designated the structural-transition owner for that sprint (or the first EPIC to open, absent a designation).
+
+`claude/cycles/<cycle_id>/execution_state.json` is a **computed, regenerate-on-read summary** — never hand-edited, never hand-merged. It is produced by `claude/system/scripts/generate_execution_summary.py <cycle_id>`, which reads `_cycle_meta.json` plus every `EPIC-*.json` present and unions them into the same shape the legacy shared file used, so Delivery Verification and Post-Ship Closure continue reading it unchanged. Regenerate it (Rule 3) after every EPIC merge. A git conflict on the generated file is resolved by re-running the generator on the merged `main`, not by manual reconciliation — the file has no independent authority of its own to merge.
+
+**Adoption note:** A sprint may run a mixed transition — EPICs already executing under the legacy shared-file mechanism when this mechanism lands may complete under it; EPICs opening afterward adopt the per-EPIC mechanism. See the sprint's own `sprint_planning_notes.md §Multi-EPIC Execution Notes` for the designated cutover point, if any.
 
 ---
 

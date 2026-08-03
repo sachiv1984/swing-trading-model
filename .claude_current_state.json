@@ -1,10 +1,10 @@
 {
   "active_cycle": "2026-08-03__release-v8.1",
   "cycle_name": "v8.0 — Data Integrity, Security Follow-Through & Operational Hardening",
-  "status": "Sprint_Planning_Complete",
-  "prior_status": "Sprint_Complete",
+  "status": "Executing",
+  "prior_status": "Sprint_Planning_Complete",
   "engine": "sprint_execution",
-  "execution_state_path": "claude/cycles/2026-07-28__release-v7.10/execution_state.json",
+  "execution_state_path": "claude/cycles/2026-08-03__release-v8.1/execution_state.json",
   "backlog_slice_path": "claude/cycles/2026-08-03__release-v8.1/stage4_backlog_slice.md",
   "design_gate_required": true,
   "sprint_sealed": true,

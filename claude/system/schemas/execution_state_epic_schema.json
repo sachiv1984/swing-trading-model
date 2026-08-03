@@ -1,0 +1,39 @@
+{
+  "_doc": "Schema for claude/cycles/<cycle_id>/execution_state/EPIC-xx.json — the per-EPIC execution state mechanism (Option 1), replacing the legacy single shared execution_state.json write surface. Each EPIC branch owns exactly one file under this path and never writes any other EPIC's file. Introduced by ST-19 (BLG-GOV-284, cycle 2026-08-03__release-v8.1). See claude/system/shared_standards.md §12 for the merge-sequencing convention this mechanism replaces (Rule 2 retired).",
+  "_regeneration_note": "The cycle-level claude/cycles/<cycle_id>/execution_state.json file is now a COMPUTED SUMMARY, regenerated on demand by claude/system/scripts/generate_execution_summary.py from all execution_state/EPIC-*.json files present in the cycle folder. It is never hand-edited and never hand-merged — a git conflict on it is resolved by re-running the generator, not by manual reconciliation. Downstream consumers (Delivery Verification, Post-Ship Closure) continue reading claude/cycles/<cycle_id>/execution_state.json unchanged.",
+
+  "cycle_id": "<cycle_id>",
+  "epic_id": "EPIC-xx",
+  "status": "not_started|in_progress|blocked|done|merged",
+  "branch": "exec/<cycle_id>/EPIC-xx",
+  "pr_number": null,
+  "pr_status": "none|open|approved|merged",
+  "qa_signed_off": false,
+  "qa_evidence_log": "claude/cycles/<cycle_id>/qa_evidence_EPIC-xx.md",
+  "test_scenarios": [],
+  "stories": {
+    "ST-xx": {
+      "title": "<text>",
+      "classification": "autonomous|delegated_backend|delegated_frontend|delegated_qa|delegated_decision",
+      "status": "not_started|in_progress|blocked_backend|blocked_frontend|blocked_qa|blocked_decision|done|merged",
+      "assigned_to": "engine|human|qa|<role>",
+      "github_issue": null,
+      "branch": "exec/<cycle_id>/EPIC-xx",
+      "commit_sha": null,
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": null,
+      "acceptance_verified": false,
+      "spec_references": [],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": false,
+      "last_completed_substep": null,
+      "sign_off_record": null,
+      "notes": ""
+    }
+  },
+
+  "last_updated_utc": "<ISO-8601>"
+}

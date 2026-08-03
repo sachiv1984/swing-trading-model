@@ -1,0 +1,12 @@
+{
+  "cycle_id": "2026-08-03__release-v8.1",
+  "sprint_goal": "Ship v8.1's operational-safety, governance-process, QA-debt, spec-debt, and backend-hardening scope — including the cross-EPIC execution-state structural fix and the release's one ready user-facing accessibility fix.",
+  "backlog_slice_source": "claude/cycles/2026-08-03__release-v8.1/stage4_backlog_slice.md",
+  "invoked_utc": "2026-08-03T08:49:01Z",
+  "mode": "standard",
+  "status": "Running",
+  "open_escalations": [],
+  "process_notes": [],
+  "sealed": false,
+  "sealed_utc": null
+}
