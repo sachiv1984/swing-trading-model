@@ -1,8 +1,8 @@
 **Owner:** QA Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-07-28
+**Version:** 1.2
+**Last Updated:** 2026-08-03
 **Cycle:** 2026-05-29__release-v4.3 (ST-11 — BLG-QA-38)
 
 ---
@@ -117,7 +117,7 @@ The 7-minute range is expected for a suite of this size. Optimisation options in
 
 | ID | Recommendation | Priority | Backlog ref | Status |
 |----|---------------|----------|-------------|--------|
-| REC-CI-01 | Increase Playwright `workers` in `playwright.config.js` to run spec files in parallel (currently sequential per spec) | P2 | BLG-QA-27 | **Actioned 2026-07-28** — `workers` set to 4 in CI (matches ubuntu-latest vCPU count), plus 4-way `--shard` matrix added to `playwright-e2e` in `playwright.yml` (not in scope of the original recommendation, added because the suite had grown to 81 spec files / 677 tests by this date — see §7) |
+| REC-CI-01 | Increase Playwright `workers` in `playwright.config.js` to run spec files in parallel (currently sequential per spec) | P2 | BLG-QA-27 | **Actioned 2026-07-28** — `workers` set to 4 in CI (matches ubuntu-latest vCPU count), plus 4-way `--shard` matrix added to `playwright-e2e` in `playwright.yml` (not in scope of the original recommendation, added because the suite had grown to 81 spec files / 677 tests by this date — see §8 Document History v1.1). Post-parallelization shard balance follow-up performed 2026-08-03 — see §7, confirmed balanced. |
 | REC-CI-02 | Consider splitting "Critical-Path Smoke Tests" from full regression suite to keep PR-gate feedback < 3 min | P3 | BLG-QA-27 | Not actioned — `smoke-tests.yml` already exists as a separate workflow; re-evaluate scope after REC-CI-01 impact is measured |
 
 ---
@@ -137,9 +137,46 @@ Signed: Sprint Execution Engine (autonomous class) — 2026-05-29
 
 ---
 
-## 7. Document History
+## 7. Post-Parallelization Shard Balance Audit (ST-13, EPIC-04, v8.1, BLG-QA-131 — REC-CI-01 follow-up)
+
+**Objective:** REC-CI-01 (§5) added a 4-way `--shard` matrix to `playwright-e2e` on 2026-07-28, but no follow-up had confirmed the 4 shards actually run in comparable time (rather than one shard becoming the new bottleneck the parallelization was meant to remove). Playwright's default `--shard=N/4` splits discovered spec files across shards by file order/count, not by measured runtime — an unbalanced split is a real risk if slower spec files happen to cluster in one shard.
+
+**Method:** Pulled per-shard job start/end timestamps from the 5 most recent completed `playwright.yml` CI runs (`gh run view <id> --json jobs`) and computed wall-clock duration per shard per run.
+
+**Measurements (seconds, 5 most recent runs):**
+
+| Run | Shard 1 | Shard 2 | Shard 3 | Shard 4 |
+|-----|---------|---------|---------|---------|
+| 30802396702 | 213 | 208 | 195 | 227 |
+| 30802357176 | 221 | 200 | 202 | 199 |
+| 30802182318 | 216 | 200 | 190 | 205 |
+| 30629505582 | 229 | 217 | 183 | 207 |
+| 30629469714 | 211 | 192 | 182 | 193 |
+| **Average** | **218.0** | **203.4** | **190.4** | **206.2** |
+
+Overall mean across all shards: 204.5s. Shard 1 runs ~6.6% above the mean (slowest); Shard 3 runs ~6.9% below the mean (fastest). Peak-to-peak spread: 27.6s (~13.5% of the mean).
+
+**Disposition: Confirmed balanced — no rebalancing needed.** A ~13% peak-to-peak spread across shards, with no single shard consistently and substantially slower across all 5 samples (rank order actually varies somewhat run-to-run — e.g. Shard 4 was slowest in run 30802396702 but fastest in run 30802357176), does not indicate a structural imbalance worth intervening on. Rebalancing (e.g. via Playwright's `--shard` combined with explicit per-shard file grouping, or `testDir`-level `fullyParallel` tuning) would add configuration complexity for a marginal gain here. Re-run this audit if the suite grows substantially again (same trigger condition that prompted REC-CI-01 itself) or if a specific shard is observed timing out or running close to the 20-minute `timeout-minutes` ceiling.
+
+**Sign-off:**
+```
+QA Lead
+Date: 2026-08-03
+
+Post-parallelization shard balance audit complete (5-run sample, current 4-way shard
+matrix). Shards are balanced within ~13% peak-to-peak spread with no consistent
+per-shard bottleneck across samples. No rebalancing required. REC-CI-01 follow-up
+closed — BLG-QA-131.
+
+Signed: Sprint Execution Engine (agent-mediated, QA Lead role — §5.3) — 2026-08-03
+```
+
+---
+
+## 8. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
 | 1.0 | 2026-05-29 | Sprint Execution Engine | Initial CI pipeline baseline (ST-11, v4.3 EPIC-02, BLG-QA-38). p50=444s. BLG-QA-27 gate cleared. |
+| 1.2 | 2026-08-03 | Sprint Execution Engine (agent-mediated, QA Lead role — §5.3) | ST-13 (EPIC-04, v8.1, BLG-QA-131) — REC-CI-01 follow-up: new §7 Post-Parallelization Shard Balance Audit. Measured per-shard wall-clock duration across the 5 most recent `playwright.yml` CI runs; shards balanced within ~13% peak-to-peak spread, no consistent per-shard bottleneck across samples. No rebalancing required. |
 | 1.1 | 2026-07-28 | Sprint Execution Engine (acting as QA & Testing Owner / QA Lead / Director of Quality, user-directed review) | REC-CI-01 actioned following a user-requested review of E2E runtime. Since the v1.0 baseline the suite grew from 39 spec files (~150 tests) to 81 spec files (677 tests) while `workers` remained forced to 1 in CI — full serialisation, confirmed against `execution_state.json` history showing individual runs up to 24m54s (v6.9). Changed `playwright.config.js` `workers` to 4 (CI only) and added a 4-way `--shard` matrix to the `playwright-e2e` job in `playwright.yml`; `timeout-minutes` reduced 45→20 per-shard accordingly. `playwright-visual` (single 14-test file) left unsharded. Production-build webServer swap (would have required adding a `serve`/`http-server` dependency and restructuring `REACT_APP_*` build-time env injection) was scoped but deferred pending explicit confirmation — flagged as higher-risk than originally assumed. No spec content changed; re-baseline (§3) recommended after the next CI run using this config to confirm actual speedup. |
