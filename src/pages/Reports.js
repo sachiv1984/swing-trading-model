@@ -445,7 +445,10 @@ function SI02GateStatusSection() {
         linkedClosedTrades,
         gateCondition1Met: totalClosedTrades >= 20,
         gateCondition2Met: linkedClosedTrades >= 20,
-        gateCondition3Met: tradePlanAdherenceRate != null && tradePlanAdherenceRate > 0,
+        // Product-reviewed threshold (ST-14, BLG-SPEC-72, 2026-08-03): a majority
+        // of closed trades must show trade-plan discipline. See
+        // reports.md §SI-02 Gate Status for the decision rationale.
+        gateCondition3Met: tradePlanAdherenceRate != null && tradePlanAdherenceRate >= 0.50,
       };
     },
     retry: 1,

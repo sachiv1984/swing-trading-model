@@ -2,8 +2,8 @@
 
 **Owner:** Strategy Rules & System Intent Owner  
 **Status:** Canonical  
-**Version:** 1.4
-**Last Updated:** 2026-05-20
+**Version:** 1.5
+**Last Updated:** 2026-08-03
 **Applies to:** Production backtests, live system, and documentation  
 
 ---
@@ -12,6 +12,7 @@
 
 | Version | Date | Summary |
 |---|---|---|
+| 1.5 | 3 August 2026 | Added §13.4 continuity note (ST-15, EPIC-05, v8.1, BLG-SPEC-82) — explicit confirmation that the on-demand compliance recheck (BLG-FEAT-64, v6.9) re-applies SI-01's existing deterministic rule set and introduces no new automation/prediction surface beyond it, distinct from and non-duplicative of SI-02's separately-gated drift detection. No behavioural rules changed. |
 | 1.4 | 20 May 2026 | Added §4.2 Pre-Entry Advisory Checks — formalises regime gate, sector concentration, earnings proximity, cash constraint, and sizing validity as advisory pre-entry conditions. No change to stop-loss, trailing logic, exit conditions, or position sizing calculation rules. §13 gate: SI-01 PASS recorded in docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md. |
 | 1.3 | 19 February 2026 | Revised §4.1.7 — replaced toggle activation model with always-visible widget model per pre-alignment decision record for roadmap item 3.2 (Decision 3). No changes to calculation rules, validity rules, FX handling, or cash constraint behaviour in §4.1.1–§4.1.6. |
 | 1.2 | 18 February 2026 | Added canonical rules for the Position Sizing Calculator (Section 4.1). No changes to stop-loss, trailing logic, or exit conditions. |
@@ -454,6 +455,10 @@ Human-in-the-loop execution is a design principle, not a limitation.
 Gap risk monitoring is excluded by design because the system operates on a daily decision cadence and cannot act on gaps at the moment they occur. Exposing a gap risk metric would increase noise without enabling a decision.
 
 The strategy is fixed and explicit. A strategy builder, adaptive rules engine, or machine learning-based signal generation would change the nature of the system and is outside the design intent.
+
+### 13.4 §13 continuity note — On-demand compliance recheck (BLG-FEAT-64, v6.9)
+
+The on-demand "Recheck Compliance" action added in `2026-07-10__release-v6.9` (ST-01, `docs/design/2026-07-10__release-v6.9/on-demand-compliance-recheck/ux_spec.md`) re-applies SI-01's existing, already-approved deterministic rule set against current position/market state, on user request, for a single open position. It introduces no new automation or prediction surface beyond SI-01's existing gate: no new rule logic, no scheduling/background execution, no persisted recommendation or flag (the result is point-in-time and dismissed on modal close, per the design spec §3 step 5), and no interaction with SI-02's drift-detection gate (which remains separately gated per §13.2/§14 and the `BLG-GOV-107` conditions). This is confirmed consistent with §13.1 (deterministic, human-in-the-loop) and §13.2 (not adaptive, not ML-driven) — the feature is a manual re-run of an existing check, not a new decision surface.
 
 ---
 
