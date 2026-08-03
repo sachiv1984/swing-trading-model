@@ -1,0 +1,163 @@
+name: Production Database Backup
+
+# [EPIC-02][ST-02] Recurring manual pg_dump backup schedule for production
+# Supabase (BLG-OPS-127). Production is on the Supabase Free tier — no
+# automated daily backups, no PITR (confirmed live 2026-07-31, see
+# docs/ops/database_backup_disaster_recovery_runbook.md §2). This workflow
+# is the only backup mechanism for the production database.
+#
+# Stores the dump as a GitHub Actions artifact (no new cloud infrastructure
+# required). Artifacts require repo-authenticated access to download, even
+# on a public repo, but the dump contains real trading/portfolio data —
+# treat access to this workflow's artifacts as sensitive.
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # daily, 3 AM UTC
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install PostgreSQL 17 client
+        # ubuntu-latest's default `postgresql-client` package tracks whatever
+        # Ubuntu ships (currently v16), which is older than the Supabase
+        # production server (Postgres 17.x) — pg_dump refuses to dump from a
+        # newer server than itself. Install the matching version via the
+        # official PGDG apt repo instead of the distro default.
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y postgresql-client-17
+
+      - name: Dump production database
+        env:
+          PROD_DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${PROD_DATABASE_URL:-}" ]; then
+            echo "::error::PROD_DATABASE_URL secret is not set"
+            exit 1
+          fi
+
+          # Call the versioned binary directly rather than relying on PATH —
+          # the runner's pre-installed postgresql-client-16 does not go
+          # through update-alternatives the way a fresh apt install expects,
+          # so a bare `pg_dump` on PATH still resolved to v16 even after
+          # postgresql-client-17 was installed (confirmed via live test run).
+          PG_DUMP=/usr/lib/postgresql/17/bin/pg_dump
+
+          DUMP_FILE="backup-$(date -u +%F).sql"
+          "$PG_DUMP" "$PROD_DATABASE_URL" --no-owner --no-acl -f "$DUMP_FILE"
+
+          # Fail loudly on a suspiciously small/empty dump rather than
+          # silently uploading a broken backup as if it succeeded.
+          SIZE=$(stat -c%s "$DUMP_FILE")
+          if [ "$SIZE" -lt 1024 ]; then
+            echo "::error::Backup file is suspiciously small (${SIZE} bytes) — dump may have failed silently"
+            exit 1
+          fi
+
+          echo "Backup complete: $(du -h "$DUMP_FILE")"
+          echo "DUMP_FILE=$DUMP_FILE" >> "$GITHUB_ENV"
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ github.run_id }}
+          path: ${{ env.DUMP_FILE }}
+          retention-days: 90
+
+  restore_dry_run:
+    name: Restore Dry-Run (verify backup is actually restorable)
+    runs-on: ubuntu-latest
+    needs: backup
+    # Disposable Postgres 17 service container — never restores into
+    # staging or production. Verifies the dump this run just produced can
+    # actually be restored, not just that pg_dump exited 0.
+    services:
+      scratch_db:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: scratch_dry_run_password
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Install PostgreSQL 17 client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y postgresql-client-17
+
+      - name: Download backup artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: db-backup-${{ github.run_id }}
+
+      - name: Restore into scratch database
+        run: |
+          set -euo pipefail
+          PSQL=/usr/lib/postgresql/17/bin/psql
+          SCRATCH_URL="postgresql://postgres:scratch_dry_run_password@localhost:5432/postgres"
+          DUMP_FILE=$(ls backup-*.sql)
+
+          # Strip everything specific to extensions that exist only inside
+          # Supabase's own hosted Postgres image (confirmed live:
+          # "supabase_vault" is not available on a vanilla postgres:17
+          # container). These are Supabase-managed internals, not something
+          # our application data depends on, so their absence here doesn't
+          # indicate a real restore problem — a genuine recovery restores
+          # into another Supabase project, which already has these.
+          # Extensions bundled with vanilla Postgres (pgcrypto, uuid-ossp,
+          # pg_stat_statements) are NOT filtered — those succeed here and
+          # should keep being verified.
+          #
+          # Two things need stripping, not just one (confirmed live, in
+          # order): (a) the CREATE EXTENSION / COMMENT ON EXTENSION
+          # statements themselves, and (b) whole COPY ... FROM stdin ... \.
+          # data blocks Supabase marks for backup inside these extensions'
+          # own schemas (e.g. vault.secrets) — the extension never gets
+          # created here, so a lone COPY into its table fails with
+          # "relation does not exist". A single-line sed can't safely skip
+          # a multi-line COPY block, so this uses awk to track schema-scoped
+          # COPY blocks by name and skip through to their `\.` terminator.
+          FILTERED_DUMP="filtered-${DUMP_FILE}"
+          awk '
+            BEGIN { skip = 0 }
+            /^COPY (vault|cron|graphql|net|pgsodium)\./ { skip = 1; next }
+            skip && /^\\\.$/ { skip = 0; next }
+            skip { next }
+            /CREATE EXTENSION IF NOT EXISTS "?(supabase_vault|pg_graphql|pgjwt|pgsodium|pg_net|pg_cron)"?/ { next }
+            /COMMENT ON EXTENSION "?(supabase_vault|pg_graphql|pgjwt|pgsodium|pg_net|pg_cron)"?/ { next }
+            { print }
+          ' "$DUMP_FILE" > "$FILTERED_DUMP"
+
+          # ON_ERROR_STOP=1 is required — psql's default behaviour is to
+          # continue past a failed statement and still exit 0, which would
+          # let a genuinely broken dump "pass" this dry-run silently.
+          "$PSQL" "$SCRATCH_URL" -v ON_ERROR_STOP=1 -f "$FILTERED_DUMP"
+
+      - name: Verify restored data
+        run: |
+          set -euo pipefail
+          PSQL=/usr/lib/postgresql/17/bin/psql
+          SCRATCH_URL="postgresql://postgres:scratch_dry_run_password@localhost:5432/postgres"
+
+          COUNT=$("$PSQL" "$SCRATCH_URL" -t -A -c "SELECT COUNT(*) FROM portfolios;")
+          echo "Restored portfolios row count: $COUNT"
+          if [ "$COUNT" -lt 1 ]; then
+            echo "::error::Restore verification failed — portfolios table is empty after restore"
+            exit 1
+          fi
+          echo "Restore dry-run verified: portfolios table has $COUNT row(s) after restore."

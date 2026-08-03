@@ -778,7 +778,7 @@ export default function TradePlan() {
                         <button
                           type="button"
                           key={t}
-                          onMouseDown={() => handleAddTradeTag(t)}
+                          onClick={() => handleAddTradeTag(t)}
                           className="block w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-slate-700"
                         >
                           {t}
