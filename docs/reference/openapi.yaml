@@ -5403,9 +5403,19 @@ components:
           in: query
           required: false
           schema: { type: string, enum: [draft, active, closed] }
+        - name: cursor
+          in: query
+          required: false
+          description: Opaque pagination cursor from a prior response's next_cursor. Additive/opt-in — omit for unpaginated behaviour (backend_engineering_patterns.md §Cursor-based pagination pattern).
+          schema: { type: string, nullable: true }
+        - name: limit
+          in: query
+          required: false
+          description: Page size. When provided, response includes next_cursor (null when no further page).
+          schema: { type: integer, minimum: 1, maximum: 200 }
       responses:
         "200":
-          description: List of trade plans
+          description: List of trade plans. When `limit` is supplied, includes `next_cursor` (string | null).
 
   /trade-plans/{id}:
     get:

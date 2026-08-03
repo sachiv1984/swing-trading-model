@@ -1,8 +1,8 @@
 **Owner:** Backend Engineering Patterns Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-07-29
+**Version:** 1.5
+**Last Updated:** 2026-08-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -196,10 +196,37 @@ def get_resource_endpoint(format: Optional[str] = None):
 
 ---
 
+### Cursor-based pagination pattern for list endpoints
+
+**Added:** v1.5 — ST-17 (EPIC-06, v8.1, BLG-BE-47)
+
+**Purpose:** A canonical, reusable pattern for list endpoints returning an unbounded result set, so pagination isn't reinvented ad hoc per endpoint. Keyset (cursor) pagination, not offset — offset pagination degrades on large tables (the database still has to scan and discard the skipped rows) and is unstable under concurrent inserts (a row inserted ahead of the cursor position shifts every subsequent page). Keyset pagination has neither problem: it resumes from an explicit `(created_at, id)` position via a single indexable comparison.
+
+**Additive, opt-in only (mirrors the idempotency-key pattern's RISK-02 discipline):** An endpoint using this pattern behaves byte-for-byte as before when the caller supplies neither `cursor` nor `limit` — no `LIMIT` clause, full result set, unchanged response shape. Pagination only activates when the caller opts in with `limit`.
+
+**Shared helper:** `backend/utils/pagination.py`
+- `encode_cursor(created_at, row_id) -> str` / `decode_cursor(cursor) -> (created_at, row_id)` — opaque, base64-encoded cursor. `decode_cursor` raises on a malformed cursor; route handlers must catch this and return 400, not let it propagate to a 500.
+- `cursor_where_clause(cursor, created_field="created_at", id_field="id") -> (sql_fragment, params)` — returns `("", [])` when `cursor` is `None` (the no-op case that preserves the additive guarantee); otherwise `"(created_field, id_field) < (%s, %s)"` for Postgres row-value comparison, AND this onto the query's existing WHERE clause.
+- `paginate_results(rows, limit, created_field="created_at", id_field="id") -> (page, next_cursor)` — the caller fetches `limit + 1` rows (ordered by `(created_field DESC, id_field DESC)`, with `cursor_where_clause`'s fragment applied); this function trims to `limit` and computes `next_cursor` from the last item, or returns `None` when there is no further page. Over-fetching by one row avoids a separate `COUNT` query to determine `has_more`.
+
+**Implementation (3 steps, mirrors the idempotency pattern's mechanical-repeat framing):**
+1. Add optional `cursor: str = None, limit: int = None` parameters to the database-layer list function. Branch on `limit is not None` to apply `cursor_where_clause` and `LIMIT %s` (`limit + 1`) — when `limit` is `None`, the original query (including its original `ORDER BY`, without the `id` tiebreaker) runs unchanged.
+2. In the route handler, add `cursor: Optional[str] = Query(default=None), limit: Optional[int] = Query(default=None, ge=1, le=200)`. When `limit` is provided, call `paginate_results` on the fetched rows and include `next_cursor` in the response envelope (`{"status": "ok", "data": [...], "next_cursor": "..." | null}`); catch `ValueError` from a malformed cursor and return 400.
+3. Add the `next_cursor` field to the endpoint's `docs/reference/openapi.yaml` response schema (same commit as any contract change).
+
+**Reference implementation:** `GET /trade-plans` (`backend/database.py::get_trade_plans`, `backend/routers/trade_plans.py::list_plans`) — the first and, as of this writing, only migrated endpoint. Use it as the template rather than inventing a new shape. Tested via `tests/test_pagination.py` (pure-function coverage of the shared helper — `encode_cursor`/`decode_cursor` round-trip, `cursor_where_clause` no-op and populated cases, `paginate_results` has-more/no-more/empty cases).
+
+**Current scope (v8.1):** Migrating all existing list endpoints in one pass is explicitly out of scope for `ST-17` — this establishes the pattern and one reference migration. The next 2 new or modified list endpoints (in a future story) are expected to follow this pattern rather than inventing ad hoc offset pagination or no pagination at all.
+
+**Ordering tiebreaker:** `created_at` alone is not guaranteed unique (e.g. bulk/batch inserts sharing a timestamp) — always order by `(created_at DESC, id DESC)` when paginating, not `created_at` alone, or two rows with the same `created_at` can be silently skipped or duplicated across a page boundary.
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-08-03 | ST-17 (EPIC-06, v8.1, BLG-BE-47): Add §Cursor-based pagination pattern for list endpoints — additive, opt-in-only keyset pagination via `backend/utils/pagination.py` (`encode_cursor`/`decode_cursor`/`cursor_where_clause`/`paginate_results`). Reference migration: `GET /trade-plans`. Tested via `tests/test_pagination.py` (pure-function coverage). Not required to retrofit all existing list endpoints in this item — the next 2 new/modified list endpoints are expected to follow this pattern. |
 | 1.4 | 2026-07-29 | ST-03 (EPIC-01, v7.10, BLG-BE-76): Add §Idempotency-key pattern for state-mutating POST endpoints — additive, opt-in-only (client-supplied key) dedup pattern via a generic `idempotency_keys` table and `utils/idempotency.py::replay_or_create`. Applied to `POST /portfolio/position` and `POST /trade-plans`; no change to behaviour when the key is absent (RISK-02). |
 | 1.3 | 2026-07-20 | ST-04 (EPIC-04, v7.6, BLG-BE-65): Add §Error-response envelope conformance — full audit of `backend/routers/` (23 files, 79 endpoints) against the canonical envelope in `conventions.md` §13. Three non-conformance patterns found (default FastAPI `{detail}` shape; errors masked as HTTP 200 in `portfolio_risk.py`; correct shape but wrong status code in `digest.py`). Non-conforming endpoints filed as follow-up items (`BLG-BE-67`, `BLG-BE-68`) per this item's acceptance criteria — no router code changed in this item. |
 | 1.2 | 2026-07-14 | ST-07 (EPIC-03, v7.1, BLG-SPEC-84): Add §CSV/export response-body pattern — canonical pattern for downloadable-file endpoints, extracted from `GET /reports/tax-year?format=csv` (the first export endpoint in the codebase). Documents the pure-builder-function pattern, format-param branching, auth (automatic via global middleware), charset convention, filename convention, classification, and testing requirement (content-asserting, not download-fired-only). No prior Changelog section existed in this file — added here for consistency with sibling canonical specs. |

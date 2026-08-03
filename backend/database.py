@@ -1152,7 +1152,19 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
         return dict(row)
 
 
-def get_trade_plans(portfolio_id: str, status: str = None, ticker: str = None) -> list:
+def get_trade_plans(
+    portfolio_id: str, status: str = None, ticker: str = None,
+    cursor: str = None, limit: int = None,
+) -> list:
+    """cursor/limit are additive and opt-in (ST-17, BLG-BE-47 — canonical
+    cursor pagination pattern, backend_engineering_patterns.md). When both
+    are None (the default), behaviour is byte-for-byte identical to before
+    this pattern existed: no LIMIT clause, full result set, unchanged query
+    shape. When limit is provided, fetches limit + 1 rows so the caller
+    (via utils/pagination.py::paginate_results) can determine whether a
+    next page exists without a separate COUNT query."""
+    from utils.pagination import cursor_where_clause
+
     with get_db() as conn:
         with conn.cursor() as cur:
             clauses = ["portfolio_id=%s"]
@@ -1163,11 +1175,18 @@ def get_trade_plans(portfolio_id: str, status: str = None, ticker: str = None) -
             if ticker:
                 clauses.append("UPPER(ticker)=%s")
                 params.append(ticker.upper())
+            if limit is not None:
+                cursor_clause, cursor_params = cursor_where_clause(cursor)
+                if cursor_clause:
+                    clauses.append(cursor_clause)
+                    params.extend(cursor_params)
             where = " AND ".join(clauses)
-            cur.execute(
-                f"SELECT * FROM trade_plans WHERE {where} ORDER BY created_at DESC",
-                params,
-            )
+            order_by = "created_at DESC, id DESC" if limit is not None else "created_at DESC"
+            query = f"SELECT * FROM trade_plans WHERE {where} ORDER BY {order_by}"
+            if limit is not None:
+                query += " LIMIT %s"
+                params.append(limit + 1)
+            cur.execute(query, params)
             return [dict(r) for r in cur.fetchall()]
 
 
