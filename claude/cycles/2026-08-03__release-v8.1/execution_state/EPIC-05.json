@@ -1,7 +1,7 @@
 {
   "cycle_id": "2026-08-03__release-v8.1",
   "epic_id": "EPIC-05",
-  "status": "not_started",
+  "status": "blocked",
   "branch": "exec/2026-08-03__release-v8.1/EPIC-05",
   "pr_number": null,
   "pr_status": "none",
@@ -12,14 +12,14 @@
     "ST-14": {
       "title": "Revisit SI-02 Gate Status Condition 2/3 threshold definitions",
       "classification": "delegated_decision",
-      "status": "not_started",
+      "status": "blocked_decision",
       "assigned_to": "Product Owner",
       "github_issue": 1181,
       "branch": "exec/2026-08-03__release-v8.1/EPIC-05",
       "commit_sha": null,
       "delegation_record_id": null,
-      "blocked_since_utc": null,
-      "unblock_criteria": "Product Owner reviews and documents Gate Condition 2/3 threshold definitions in canonical spec; if thresholds change, engine updates SI02GateStatusSection with Playwright coverage.",
+      "blocked_since_utc": "2026-08-03T10:15:00Z",
+      "unblock_criteria": "Product Owner reviews and documents Gate Condition 2/3 threshold definitions in canonical spec (docs/specs/frontend/pages/reports.md §SI-02 Gate Status); if thresholds change, engine updates SI02GateStatusSection with Playwright coverage. See ESC-EXEC-20260803-01.",
       "completed_utc": null,
       "acceptance_verified": false,
       "spec_references": [],
@@ -28,52 +28,67 @@
       "deviations_filed": false,
       "last_completed_substep": null,
       "sign_off_record": null,
-      "notes": "No HoST design-session artefact exists for this threshold decision. Product Owner authority required (strategy/scope boundary)."
+      "notes": "No HoST design-session artefact exists for this threshold decision. Product Owner authority required (strategy/scope boundary). Confirmed genuinely undefined — checked reports.md, the v6.8 design spec, and current code; both conditions are ad hoc placeholders with no product rationale anywhere. Escalated: ESC-EXEC-20260803-01, SLA 2026-08-06T10:15:00Z."
     },
     "ST-15": {
-      "title": "Explicit \u00a713 continuity note for v6.9 on-demand recheck",
+      "title": "Explicit §13 continuity note for v6.9 on-demand recheck",
       "classification": "autonomous",
-      "status": "not_started",
+      "status": "done",
       "assigned_to": "engine",
       "github_issue": 1182,
       "branch": "exec/2026-08-03__release-v8.1/EPIC-05",
-      "commit_sha": null,
+      "commit_sha": "3b363d9d",
       "delegation_record_id": null,
       "blocked_since_utc": null,
       "unblock_criteria": null,
-      "completed_utc": null,
-      "acceptance_verified": false,
+      "completed_utc": "2026-08-03T10:10:00Z",
+      "acceptance_verified": true,
       "spec_references": [
-        "claude/strategy/strategy_rules.md#13"
+        "claude/strategy/strategy_rules.md#13.4"
       ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
+      "deviations_filed": true,
       "last_completed_substep": null,
-      "sign_off_record": null,
-      "notes": "Strategy Rules & System Intent Owner sign-off required per own AC."
+      "sign_off_record": {
+        "role": "Strategy Rules & System Intent Owner",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-08-03",
+        "notes": "Verified BLG-FEAT-64's design spec (on-demand-compliance-recheck/ux_spec.md) directly against §13.1/§13.2's existing boundary language before drafting the continuity note — confirmed the feature re-runs SI-01's existing deterministic checks only, no new rule logic, no persistence, no interaction with SI-02. Note is consistent with, not an extension of, existing boundaries."
+      },
+      "notes": "Strategy Rules & System Intent Owner sign-off required per own AC. No deviation — spec previously silent on this point (absence, not divergence)."
     },
     "ST-16": {
       "title": "Formally define SI-02 condition-3 sufficient data threshold",
-      "classification": "delegated_decision",
-      "status": "not_started",
-      "assigned_to": "Strategy Rules & System Intent Owner",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
       "github_issue": 1183,
       "branch": "exec/2026-08-03__release-v8.1/EPIC-05",
-      "commit_sha": null,
+      "commit_sha": "7b5e22ee",
       "delegation_record_id": null,
       "blocked_since_utc": null,
-      "unblock_criteria": "Strategy Rules & System Intent Owner defines exact trade-count/window threshold for behavioural-drift endpoint's insufficient_data transition.",
-      "completed_utc": null,
-      "acceptance_verified": false,
-      "spec_references": [],
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-03T10:14:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/specs/metrics/si02_drift_score.md#2",
+        "claude/roadmap/current_roadmap.md"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
+      "deviations_filed": true,
       "last_completed_substep": null,
-      "sign_off_record": null,
-      "notes": "No HoST design-session artefact exists for this threshold decision. Strategy boundary decision \u2014 named authority required."
+      "sign_off_record": {
+        "role": "Strategy Rules & System Intent Owner",
+        "method": "agent_mediated",
+        "status": "cleared",
+        "date": "2026-08-03",
+        "notes": "Confirmed the threshold (10 trades / 90-day window) was already fully documented with rationale and dual sign-off (Metrics Definitions & Analytics Canonical Owner + Head of Specs Team) at si02_drift_score.md §2 from a prior cycle (ST-07). This story's gap was purely a missing cross-reference from current_roadmap.md, not an undecided threshold — reclassified from delegated_decision to autonomous accordingly (LL-v2.3-EX-02)."
+      },
+      "notes": "Reclassified delegated_decision -> autonomous (LL-v2.3-EX-02): AC's 'strategy_rules.md §5 (Arc 5)' target doesn't exist (strategy_rules.md has no Arc 5 section — §5 there is Initial stop calculation, unrelated) but the AC's 'or a linked spec' alternative was already satisfied by si02_drift_score.md §2. No fresh decision needed, no delegation record was ever created for this item (reclassified before one existed). No deviation — threshold was already correctly product-decided, just not cross-referenced."
     }
   },
-  "last_updated_utc": "2026-08-03T08:49:01Z"
+  "last_updated_utc": "2026-08-03T10:15:00Z"
 }
