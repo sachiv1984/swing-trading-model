@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.44
-**Last Updated:** 2026-07-27
+**Version:** 2.46
+**Last Updated:** 2026-08-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -583,6 +583,20 @@ Before finalising the scope candidate list, check each conditional or gate-block
 
 This check is advisory-only — it does not halt execution. It prevents backlog churn on items that recurrently fail to execute due to unchanged gate conditions.
 
+### 1.4a.1 Sunset Criteria (Mandatory — supersedes indefinite Option (a) re-parking)
+
+The Perennial-Return Check above is advisory at every threshold: the PO may choose Option (a) "keep conditional" indefinitely, cycle after cycle, with no upper bound. This subsection adds a hard ceiling so a perennially-returning item cannot occupy conditional/gated status forever without ever forcing a real disposition.
+
+1. **Sunset trigger:** When an item has received Option (a) "keep as conditional" **4 consecutive times** (i.e., the Perennial-Return Check has fired and the PO chose (a) on 4 consecutive cycles, counting from the cycle the check first fired — not from the item's original filing), the disposition escalates from advisory to **mandatory**.
+2. **Mandatory choice at the sunset trigger:** The PO must choose Option (b) "Remove from horizon — park until gate permanently cleared" (a formal Kill-from-active-consideration, not silent continuation), **unless** the PO documents a *materially new* gate-clearance path that did not exist at any prior disposition. "Materially new" means: a concrete, named forthcoming event or change (not "more data will accrue naturally" restated) together with a specific date or trigger by which it is expected to resolve the gate.
+3. **Recording:** Record the sunset-trigger disposition (forced (b), or the materially-new path accepted in lieu) in `run_manifest.md`, same as any Perennial-Return Check disposition.
+4. **Rationale:** 4 was chosen as double the 2-cycle advisory trigger — giving the PO two additional full cycles of visibility past the first advisory flag before a forced disposition, while still guaranteeing the item cannot coast on option (a) indefinitely. This closes the gap where a P1-priority item can sit "conditional" at zero delivery cost release after release without ever crossing a threshold that forces a genuine kill-or-fix decision.
+
+**Retroactive assessment (2026-08-03, ST-03, BLG-GOV-280):** Applied against `BLG-FEAT-73` and `BLG-FEAT-74`, the two items the Perennial-Return Check has actively flagged. Counting from the cycle the check first fired for each item:
+- `BLG-FEAT-73` (SI-02 frontend build): flagged at `2026-07-30__release-v8.0` (1st) and `2026-08-03__release-v8.1` (2nd, current) — Option (a) both times. **2 of 4** consecutive (a) dispositions elapsed. Below the sunset trigger; no forced (b) required yet.
+- `BLG-FEAT-74` (PO-05 Lightweight Replay Mode): same two flagged cycles, same count — **2 of 4** elapsed. Below the sunset trigger.
+- Neither item is currently subject to a forced Option (b). Both remain correctly on Option (a) under existing PO dispositions. This assessment is a status check, not a new disposition — the PO's existing conditional-keep dispositions for both items stand unchanged. If either item receives a 3rd and 4th consecutive Option (a) at the next two rebalances with no materially new gate-clearance path, the sunset trigger becomes mandatory at that point.
+
 ---
 
 ### 1.4b Within-Sprint Date Gate Classification (Mandatory)
@@ -668,6 +682,8 @@ Required table format for each EPIC:
 ```
 
 If an EPIC has significant sequencing rationale or dependency notes that cannot fit in the table, append a brief note (2–3 lines maximum) below the table row, prefixed with the EPIC-ID. Full dependency maps belong in `sprint_planning_notes.md`.
+
+**Skill-Silo mitigation — execution-heavy assignment rotation (advisory, added v2.46 — ST-07, BLG-GOV-246):** `roadmap_prompt.md` §7.1's Skill-Silo Alert fires when the rolling 3-cycle governance/debt story share exceeds 40%, and its "Mandatory pull-forward on sustained failure" clause forces at least 2 build-and-ship U-items once the alert has worsened or held for 3+ consecutive readings. This guideline adds a lighter-weight, earlier-acting companion at the *scoping* stage rather than waiting for the 3-reading mandatory trigger: as a soft target, aim for **at least 1 in every 3 release cycles** to lead its `## Execution Plan` EPIC table with execution-heavy (build-and-ship U-shaped) scope by default, rather than governance/debt-heavy scope. This is a rotation heuristic, not a hard gate — it does not block STEP 3 from passing. **Trigger condition:** this guideline is explicitly tied to the same STEP 7.1 Skill-Silo Alert reading — when the most recent rebalance reported the alert as fired (>40%) or worsening, weight the next release's EPIC table selection toward execution-heavy scope as this cycle's "1 in 3" rotation slot, rather than treating rotation as an independent unscheduled preference. Owner: Director of HR (rotation-pattern fairness across the release cadence is an HR-domain concern, distinct from PMO Lead's capacity-sequencing ownership of the table itself).
 
 **Risk register format (required alongside EPIC table):**
 
