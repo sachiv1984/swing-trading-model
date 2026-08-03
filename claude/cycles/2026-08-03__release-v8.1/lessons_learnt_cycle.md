@@ -21,3 +21,40 @@ Cycle: 2026-08-03__release-v8.1
 
 **Recurrence Notes:**
 The `governance_sync.yml` false-positive is now a confirmed 3rd-plus recurrence across this cycle alone (2 fires) on top of prior-cycle occurrences implied by its own backlog filing — this crosses the threshold where a workaround-only response (reopen + comment) is no longer proportionate; `BLG-GOV-285` should be prioritized accordingly rather than left as routine backlog debt.
+
+---
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-08-03__release-v8.1
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-08-03
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-07-30__release-v8.0 (`lessons_learnt_cycle.md` `## Phase 4`) — one open friction item (sign-off format disagreement between `execution_prompt.md`'s EPIC consolidation step and `delivery_verification_prompt.md` STEP -1.3's recognised-format list, for `delegated_backend`/`delegated_decision`-heavy EPICs), plus one carried-forward deferred patch from v7.10 (`completed_items` cross-EPIC union reconciliation check not yet formally landed in `execution_prompt.md`). **Both checked this run:** the sign-off format friction item is confirmed resolved — the current `delivery_verification_prompt.md` (v3.6) already includes the named domain-authority class exception (`ESC-CLOSE-20260731-01`), which cleared EPIC-02's `Infrastructure & Operations Owner` signer directly with no counter-sign required this run. The `completed_items` reconciliation item was not directly testable (outside this routine's scope to confirm the prompt text), but `execution_state.json.completed_items` for this cycle correctly lists all 19/19 done stories with no staleness — consistent with, but not proof of, the formal fix having landed.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| EPIC-07's `qa_evidence_EPIC-07.md` flagged (via Head of Engineering agent-mediated review) that `delivery_verification_prompt.md` STEP -1.3A hand-writes a recovered `pr_number` directly into `execution_state.json` on PR-recovery, but under the new per-EPIC `execution_state/EPIC-xx.json` mechanism (ST-19, this cycle) that consolidated file is disposable/regenerate-on-read — such a write would be silently lost on the next regeneration. Not triggered this run (all 7 EPICs already had non-null `pr_number`), but will fire the next time PR recovery is needed against a per-EPIC-mechanism cycle. | Phase 4 | B | defer | Redirect STEP -1.3A's recovered-`pr_number` write to the owning `execution_state/EPIC-xx.json` file instead of the regenerate-on-read summary. File: `claude/system/delivery_verification_prompt.md` §STEP -1.3A. | Head of Specs Team | next `delivery_verification_prompt.md` revision, before PR recovery is next exercised |
+
+**Recurrence Notes:**
+Not a recurrence — first occurrence of this specific friction item. It is a direct, foreseeable consequence of this cycle's own ST-19 (per-EPIC execution state mechanism), surfaced proactively by the EPIC's own agent-mediated reviewer rather than discovered the hard way at a future verification run.
+
+## Recurrence Escalations (Phase 4)
+
+None — the one open prior-cycle friction item (sign-off format disagreement) is confirmed resolved, not escalated further.
+
+## Process improvements actioned this run (Phase 4)
+
+None applied to governance prompts this run — the one new friction item identified (STEP -1.3A write-target staleness) targets `delivery_verification_prompt.md`, outside this routine's write scope, and is not yet exercised in practice (no PR recovery was needed this run). Recorded as a deferred patch below rather than actioned now.
+
+## Outstanding deferred patches (Phase 4)
+
+| File | Section | Change required | Owner | Target |
+|------|---------|----------------|-------|--------|
+| `claude/system/delivery_verification_prompt.md` | STEP -1.3A — PR Number Recovery | Redirect the recovered `pr_number` write from the shared `execution_state.json` (now disposable/regenerate-on-read post-ST-19) to the owning `execution_state/EPIC-xx.json` file. | Head of Specs Team | before PR recovery is next exercised |
+| `claude/system/execution_prompt.md` | STEP 5 — Sprint Close (seal step) | Carried forward from v7.10/v8.0 Phase 4 (still not confirmed landed in the prompt itself): add the `completed_items` cross-EPIC union reconciliation check formally, rather than relying on it being manually re-applied each cycle. | Head of Specs Team | next `run sprint` invocation |
+
+## Escalations (Phase 4)
+
+None.
