@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.129
+**Version:** 4.131
 **Last Updated:** 2026-08-03
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -763,7 +763,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.14)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.15)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.22)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.23)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1466,13 +1466,13 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.10 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.46 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.14 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.15 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.62 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.8 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.6 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.1 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.22 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.23 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.21 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1496,6 +1496,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.131 | 2026-08-03 | **Sprint execution `2026-08-03__release-v8.1` EPIC-04/ST-12 (BLG-QA-129) — post_ship_closure.md v2.22→v2.23: cross-cycle deviation consolidation review.** §10 source prompt header v2.22→v2.23 (line 1062). §14 Post-Ship Closure Engine v2.22→v2.23. §14 Version 4.130→4.131/2026-08-03. Change: new STEP 5.1 — periodic (every 3rd invocation) consolidation of `DEV-*` deviation records across recent cycles, Director of Quality sign-off required, produces `docs/governance/deviation_consolidation_review_<date>.md`. First run catalogued 9 records, found and fixed a resolution-status drift between `docs/testing/slippage_scenarios.md` and `docs/specs/frontend/pages/trade_history.md`'s sibling `DEV-ST14-01` entries. Authority: Director of Quality (Sprint Execution Engine, agent-mediated, ST-12, 2026-08-03). |
+| 4.130 | 2026-08-03 | **Sprint execution `2026-08-03__release-v8.1` EPIC-04/ST-11 (BLG-QA-113) — sprint_planning_prompt.md v3.14→v3.15: recurring endpoint test coverage audit.** §7 source prompt header v3.14→v3.15 (line 766). §14 Sprint Planning Engine v3.14→v3.15. §14 Version 4.129→4.130/2026-08-03. Change: STEP -1 Advisory Checks gains item 8 — runs new `scripts/audit_endpoint_test_coverage.py` (full-repo backstop audit vs. the existing pre-commit diff-only check) before sprint scope work; first run: 78 routes scanned, 8 documented `KNOWN_GAPS` exclusions, 0 undocumented gaps. **Merge-order reconciliation:** this bump was made on `exec/2026-08-03__release-v8.1/EPIC-04`, cut before EPIC-03/ST-05's own `sprint_planning_prompt.md` v3.13→v3.14 bump merged to `main` — both branches independently landed on `3.14`; renumbered to `3.15` (and this row to `4.130`, was `4.129`) at EPIC-04's merge time, per the standing multi-EPIC shared-file merge-order convention (`CLAUDE.md` §8). Authority: Head of Specs Team (Sprint Execution Engine, ST-11, 2026-08-03). |
 | 4.129 | 2026-08-03 | **Sprint execution `2026-08-03__release-v8.1` EPIC-03/ST-03/ST-04/ST-05/ST-07/ST-09 — four source prompt version bumps.** §6 source prompt headers: `roadmap_prompt.md` v9.8→v9.10 (line 399), `release_planning_prompt.md` v2.44→v2.46 (line 623), `sprint_planning_prompt.md` v3.13→v3.14 (line 766). §13 Artefact Register Roadmap Rebalance Prompt row v9.8→v9.10. §14 Roadmap Engine Source v9.8→v9.10, Release Engine Source v2.44→v2.46, Sprint Planning Engine v3.13→v3.14, Shared Standards v3.20→v3.21. §14 Version 4.128→4.129/2026-08-03. Changes: (ST-03, BLG-GOV-280) `release_planning_prompt.md` new §1.4a.1 Sunset Criteria for the Perennial-Return Check, applied retroactively to `BLG-FEAT-73`/`BLG-FEAT-74` (2 of 4, below trigger); (ST-07, BLG-GOV-246) same file's STEP 3 gains a Skill-Silo-tied execution-heavy rotation advisory (Director of HR); (ST-04, BLG-GOV-268) `roadmap_prompt.md` STEP 2.4 gains a mandatory-pull-forward clause for sustained Product Value Ratio Advisory-tier readings, mirroring §7.1's Skill-Silo clause; (ST-09, BLG-GOV-240) `shared_standards.md` §17 gains a companion provision — Head of Specs Team standing authority to relabel a resolved un-versioned Now-horizon carry-forward heading with its confirmed version without a full `run roadmap` invocation, cross-referenced from `roadmap_prompt.md` STEP 8.1; (ST-05, BLG-GOV-254) `sprint_planning_prompt.md` new §1.5 Minimum Capacity Buffer Floor (95% advisory target, FinOps & Resource Architect + PMO Lead). Authority: Head of Specs Team / Product Owner (Sprint Execution Engine, agent-mediated per §5.3 for each named authority, 2026-08-03). |
 | 4.128 | 2026-08-03 | **Sprint execution `2026-08-03__release-v8.1` EPIC-07/ST-19 (BLG-GOV-284) — shared_standards.md v3.19→v3.20: §12 Rule 2 retired, new §12.1 Per-EPIC Execution State Mechanism added.** §14 Shared Standards v3.19→v3.20. §14 Version/Last Updated table row corrected from a stale 4.125/2026-07-31 to 4.128/2026-08-03 (the table's own top row had already reached 4.127/2026-08-03 — header-drift pattern per the standing v4.85 note, caught here). Change: each EPIC branch now owns `claude/cycles/<cycle_id>/execution_state/EPIC-xx.json` exclusively (schema: `claude/system/schemas/execution_state_epic_schema.json`); cycle-level fields live in `_cycle_meta.json`; the cycle-level `execution_state.json` is regenerated on demand by `claude/system/scripts/generate_execution_summary.py` rather than hand-merged, eliminating the structural merge-conflict source Rule 2 existed to resolve. Authority: Head of Engineering (agent-mediated sign-off per execution_prompt.md §5.3, RISK-02 mitigation), Sprint Execution Engine, 2026-08-03. |
 | 4.127 | 2026-08-03 | **Lifecycle audit AUD-2026-08-03 improvements 003/005 — post_ship_closure.md v2.21→v2.22 + §13 Artefact Register.** §10 source prompt header v2.21→v2.22. §14 Post-Ship Closure Engine v2.21→v2.22. §13 Artefact Register — new "Escalations (Closure)" row for `claude/cycles/<id>/closure_escalations.md` (was missing despite being a real, actively-used Class 4 artefact with siblings for Release/Execution/Verification already registered). §14 Version 4.126→4.127/2026-08-03. Change (post_ship_closure v2.22): STEP 6 Endpoint Coverage Drift Check gains a "Script-derived tracking-item handoff" rule — when the existing stale-tracking-item delta rule fires, also emit the fully re-derived current-gap endpoint list into the closure record's Advisory Summary in copy-paste-ready form, so the next engine applies it verbatim rather than re-deriving the diff each cycle; closes the 3-cycle recurring `BLG-OPS-111` drift pattern (v7.9→v7.10→v8.0), which is itself retired as superseded by this fix. Authority: Head of Specs Team (lifecycle audit AUD-2026-08-03, resolved 2026-08-03). |
