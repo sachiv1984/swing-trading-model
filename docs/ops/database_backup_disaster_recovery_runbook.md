@@ -1,9 +1,9 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Runbook (Class 5)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-07-31
-**Story:** ST-17 (BLG-OPS-126, EPIC-04, v8.0)
+**Version:** 1.2
+**Last Updated:** 2026-08-03
+**Story:** ST-17 (BLG-OPS-126, EPIC-04, v8.0); ST-02 (BLG-OPS-127, EPIC-02, v8.1)
 
 ---
 
@@ -57,9 +57,15 @@ Production database: Supabase (Postgres), per `docs/infrastructure/staging_setup
 
 ### 3.4 Restore from a manual `pg_dump` snapshot (Free tier, or as a supplementary backup regardless of tier)
 
-**Confirmed applicable (2026-07-31): production is on the Free tier — this is the only available recovery path today.** No automated backup/PITR exists. The only recovery path is a manual dump taken *before* the incident, and no recurring manual `pg_dump` schedule currently exists for the production database — establishing one (e.g. a scheduled GitHub Actions job running `pg_dump` against `DATABASE_URL` and storing the output somewhere durable) is a confirmed, real prerequisite gap, not a hypothetical. This is a genuine current-state risk: **if a data-loss incident occurred today, before any manual backup schedule is established, there is no recovery path at all** — restoring from "the most recent manual dump" assumes one exists, and none currently does. Recommend filing this as a P1 backlog item for the next sprint (write-scope restrictions prevent filing to `claude/backlog/backlog.md` mid-sprint per `execution_prompt.md` §7).
+**Confirmed applicable: production is on the Free tier — this is the only available recovery path.** No automated backup/PITR exists.
 
-If a manual dump exists:
+**Gap closed (2026-08-03, ST-02, BLG-OPS-127):** A recurring manual `pg_dump` schedule now exists — `.github/workflows/production-db-backup.yml`, daily at 3 AM UTC (`workflow_dispatch` also available for on-demand runs). Confirmed live via manual trigger: produces a ~1.2M `.sql` dump, uploaded as a GitHub Actions artifact with 90-day retention. The prior gap ("no recovery path exists if an incident occurred today") is closed.
+
+**Restore procedure has been dry-run tested, not just documented.** The same workflow includes a second job, `restore_dry_run`, which runs automatically after every backup: restores the just-produced dump into a disposable `postgres:17` service container (never staging, never production) and verifies application data landed correctly (`portfolios` table row count check). Confirmed live (2026-08-03): both jobs succeeded — hundreds of rows across `portfolios`/`positions`/`trade_history`/etc. restored correctly, `portfolios` table showed 1 row post-restore as expected for this single-portfolio system.
+
+**Known, deliberate exclusion from the dry-run verification:** the dry-run filters out `CREATE EXTENSION`/`COMMENT ON EXTENSION` statements and `COPY` data blocks for Supabase-managed internals (`supabase_vault`, `pg_graphql`, `pgjwt`, `pgsodium`, `pg_net`, `pg_cron` — schemas `vault`/`cron`/`graphql`/`net`/`pgsodium`) before restoring into the vanilla Postgres container, since those extensions/schemas don't exist outside Supabase's own hosted image. This is not a gap in the *real* backup — the actual dump artifact still contains this data unmodified; only the disposable verification container skips it, since a genuine recovery restores into another Supabase project, which already has these extensions.
+
+To restore an existing dump (production incident, or the artifact from the workflow above):
 ```bash
 psql "$NEW_DATABASE_URL" -f <dump_file>.sql
 ```
@@ -85,3 +91,4 @@ psql "$NEW_DATABASE_URL" -f <dump_file>.sql
 | Role | Decision | Date |
 |------|----------|------|
 | Infrastructure & Operations Owner | Approved — §2 live-confirmed as Free plan (no automated backups, no PITR). Recovery procedure (§3) is accurate for this tier. The absent recurring manual `pg_dump` schedule (§3.4) is acknowledged as a genuine, currently-unmitigated production risk — recommended for a P1 backlog item at next sprint planning, not silently accepted. | 2026-07-31 |
+| Infrastructure & Operations Owner | Approved — §3.4 gap closed (ST-02, BLG-OPS-127). Recurring `pg_dump` schedule (`production-db-backup.yml`) confirmed live, producing a real ~1.2M dump. Restore procedure dry-run tested via an automated `restore_dry_run` job restoring into a disposable Postgres container — confirmed live, application data (portfolios/positions/trade_history/etc.) restores correctly. No production or staging data was touched during testing. | 2026-08-03 |
