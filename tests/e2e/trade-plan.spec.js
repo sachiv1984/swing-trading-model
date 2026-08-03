@@ -816,3 +816,22 @@ test('SC-TP-27: trade_tags is included in the save payload', async ({ page }) =>
 
   expect(savedPayload.trade_tags).toEqual(['earnings-play']);
 });
+
+test('SC-TP-28: Tag suggestion is selectable via keyboard (Tab + Enter), not just mouse (EPIC-01, ST-01)', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await mockTradePlanTags(page, ['momentum', 'breakout']);
+  await gotoTradePlan(page, { ticker: 'AAPL', market: 'US' });
+
+  const tagInput = page.getByTestId('trade-plan-tag-input');
+  await tagInput.fill('mom');
+
+  const suggestion = page.getByRole('button', { name: 'momentum', exact: true });
+  await expect(suggestion).toBeVisible();
+
+  await suggestion.focus();
+  await page.keyboard.press('Enter');
+
+  await expect(page.getByTestId('trade-plan-tags')).toContainText('momentum');
+  await expect(page.getByTestId('trade-plan-tag-remove-momentum')).toBeVisible();
+});
