@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.20
+**Version:** 3.21
 **Last Updated:** 2026-08-03
 
 # Shared Standards — All Governed Routines
@@ -971,6 +971,8 @@ This closes the 3-cycle carry-forward escalation `ESC-CLOSE-20260706-01`.
 **`CLAUDE.md` write authority (companion provision, added AUD-2026-07-10-001):** No governed routine's declared write scope currently includes `CLAUDE.md` itself — confirmed absent from `roadmap_prompt.md`'s write-scope text. This has left a structurally identical patch (a `CLAUDE.md` §6 Governance File Edit Checklist amendment) carried unresolved across 5 consecutive scheduled-rebalance cycles (2026-07-01 through 2026-07-10) for the same reason `.claude/skills/` was stuck before this section resolved it. The **Head of Specs Team** holds standing write authority over `CLAUDE.md`, independent of any single engine's per-run Write Scope, exercisable directly or via delegated sprint-story execution. This is not a routine invocation and does not require a `[GOVERNANCE]`-prefixed commit on its own, but any such edit must still comply with CLAUDE.md's own §6 Governance File Edit Checklist for any governance file it touches as a consequence, and should be recorded in the relevant cycle's `lessons_learnt` record once applied.
 
 This closes the 5-cycle carry-forward `CLAUDE.md` §6 patch escalation, first raised at `2026-07-01__scheduled`.
+
+**Now-horizon carry-forward version-label write (companion provision, added ST-09/BLG-GOV-240):** `roadmap_prompt.md` STEP 8.1 condition 1b treats a non-empty, un-versioned Now-horizon carry-forward heading in `current_roadmap.md` (e.g. "Unblocked carry-forward items (un-versioned — pending next `plan release`)") the same as an empty Now horizon, requiring a PO decision at the next rebalance. But relabeling that heading with a formal version label once Release Planning has actually adopted the carry-forward scope into a firm release previously required either waiting for a full `run roadmap` invocation, or an unauthorised out-of-band hand-edit — the same structural gap `.claude/skills/` and `CLAUDE.md` had before this section existed. The **Head of Specs Team** holds standing write authority to apply this specific, narrow edit directly — relabeling an existing un-versioned Now-horizon carry-forward heading in `current_roadmap.md` with the version label Release Planning has just confirmed for that scope — without opening a full `run roadmap` rebalance cycle. This authority extends **only** to the heading label itself and its directly adjacent version/date metadata; it does not extend to adding, removing, or reprioritising items within the section, which remains reserved to `run roadmap` / `plan release`. Record any such edit in the receiving release's `run_manifest.md` or `decisions--<cycle_id>.md` for traceability. This closes `BLG-GOV-240`.
 
 ---
 

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.13
-**Last Updated:** 2026-07-14
+**Version:** 3.14
+**Last Updated:** 2026-08-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -282,6 +282,18 @@ Status: Active
 Last Updated: <date>
 Cycle: <cycle_id>
 ```
+
+### 1.5 Minimum Capacity Buffer Floor (Advisory — added v4.x, ST-05, BLG-GOV-254)
+
+**Recommendation:** Target scope selection at or below **95% of confirmed capacity**, leaving a standing ~5% buffer for in-sprint slippage (mid-sprint escalations, delegation round-trips, unplanned rework). This is a recommendation for STEP 3.2's Capacity Gate to reference, not a new hard gate — the existing over-allocation rule in §8 (halt in `strict`, PO-acceptance-required flag in `standard`) is unchanged and still governs actual sprint sealing.
+
+**Rationale:** Recent cycles have run scope at up to ~110% of confirmed capacity (`workforce_capacity.md`, v7.9) with no formal floor recommendation to weigh against — each cycle's capacity discussion starts from zero rather than from an explicit "this is the buffer we're giving up" baseline. A named floor gives the Product Owner and FinOps & Resource Architect a concrete number to accept or explicitly override, rather than an open-ended "how much over is too much" judgment call each time.
+
+**How to apply:** At STEP 3.2 (Capacity Gate), after confirming scope is within confirmed capacity, additionally compute `scope_effort ÷ confirmed_capacity`. If this ratio exceeds 0.95:
+- Record the ratio in `sprint_capacity.md` alongside the effort table.
+- Surface to the Product Owner as an explicit "buffer floor exceeded" note (distinct from the existing over-100%-of-capacity WARN, which is a harder breach). This is advisory — it does not block sealing, but the ratio and the PO's acknowledgement (proceed / trim scope) must be recorded.
+
+**Sign-off:** FinOps & Resource Architect + PMO Lead (agent-mediated, §5.3) reviewed and approved this recommendation as an advisory reference for STEP 3.2, 2026-08-03.
 
 ---
 

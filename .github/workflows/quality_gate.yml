@@ -108,6 +108,31 @@ jobs:
         # other.
         run: python3 scripts/check_api_performance_baseline_drift.py
 
+  pii_field_pattern_scan:
+    name: PII Field-Name Pattern Scan (ST-08)
+    runs-on: ubuntu-latest
+
+    # [EPIC-03][ST-08] — Lightweight, name-pattern-only scan of lines added
+    # to docs/reference/openapi.yaml for common PII field-name patterns
+    # (email, phone, SSN, date of birth, address, full name, payment card,
+    # government ID, etc.). Flags for manual review — see
+    # scripts/check_pii_field_patterns.py for the pattern list and rationale.
+    # This is not a data-classification review; it is a cheap first pass so
+    # an obviously PII-shaped new response field does not go unnoticed.
+    steps:
+      - name: Checkout (full history for base-ref diff)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Scan for PII-shaped field names
+        run: python3 scripts/check_pii_field_patterns.py --base-ref origin/main
+
   endpoint_count_drift:
     name: Endpoint Count Drift Check (ST-11)
     runs-on: ubuntu-latest
