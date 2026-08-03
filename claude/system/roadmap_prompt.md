@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.8
-**Last Updated:** 2026-07-29
+**Version:** 9.9
+**Last Updated:** 2026-08-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -346,6 +346,8 @@ Compute: `user_value_ratio = U stories ÷ total stories` across the 5 cycles (on
 | < 0.30 | **Product Value Alert** | Challenger must treat this as equivalent weight to a §13 concern — requires explicit PO written response before STEP 8 concludes; pull-forward of a user-facing backlog item is mandatory unless PO provides written rationale |
 
 Record the classification table and computed ratio in `run_manifest.md` under `## Product Value Ratio Diagnostic`.
+
+**Mandatory pull-forward on sustained Advisory tier (added v9.9 — ST-04, BLG-GOV-268, mirrors the Skill-Silo sustained-failure clause in §7.1):** If the ratio has remained in the **Advisory band (0.30–0.49)** for **3 or more consecutive readings** — i.e. it has neither reached Healthy (≥0.50) nor dropped into the Product Value Alert band (<0.30, which already has its own mandatory response above) — the "Facilitator surfaces in STEP 8" action is no longer sufficient on its own: it becomes a **mandatory scope requirement**. The Product Owner must commit **at least 1 build-and-ship-shaped U-item** at the next release, using the same content-based build-and-ship test defined in §7.1 (acceptance criteria require a shipped, user-visible change; an audit/investigation-shaped story does not count even if nominally labelled user-facing). This mirrors the Skill-Silo clause's rationale: a metric that sits in its middle "Advisory" tier indefinitely without ever crossing into either Healthy or Alert can be surfaced every cycle without ever forcing a correction, since only the Alert-tier threshold carried a mandatory response before this addition.
 
 ---
 
