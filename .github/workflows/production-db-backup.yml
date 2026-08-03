@@ -43,8 +43,15 @@ jobs:
             exit 1
           fi
 
+          # Call the versioned binary directly rather than relying on PATH —
+          # the runner's pre-installed postgresql-client-16 does not go
+          # through update-alternatives the way a fresh apt install expects,
+          # so a bare `pg_dump` on PATH still resolved to v16 even after
+          # postgresql-client-17 was installed (confirmed via live test run).
+          PG_DUMP=/usr/lib/postgresql/17/bin/pg_dump
+
           DUMP_FILE="backup-$(date -u +%F).sql"
-          pg_dump "$PROD_DATABASE_URL" --no-owner --no-acl -f "$DUMP_FILE"
+          "$PG_DUMP" "$PROD_DATABASE_URL" --no-owner --no-acl -f "$DUMP_FILE"
 
           # Fail loudly on a suspiciously small/empty dump rather than
           # silently uploading a broken backup as if it succeeded.
