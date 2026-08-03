@@ -112,23 +112,36 @@ jobs:
           SCRATCH_URL="postgresql://postgres:scratch_dry_run_password@localhost:5432/postgres"
           DUMP_FILE=$(ls backup-*.sql)
 
-          # Strip CREATE EXTENSION / COMMENT ON EXTENSION statements for
-          # extensions that exist only inside Supabase's own hosted Postgres
-          # image (confirmed live: "supabase_vault" is not available on a
-          # vanilla postgres:17 container). These are Supabase-managed
-          # internals, not something our application data depends on, so
-          # their absence here doesn't indicate a real restore problem —
-          # only that this scratch container isn't a full Supabase image.
-          # A genuine recovery restores into another Supabase project,
-          # which already has these. Extensions bundled with vanilla
-          # Postgres (pgcrypto, uuid-ossp, pg_stat_statements) are NOT
-          # filtered — those succeed here and should keep being verified.
-          SUPABASE_ONLY_EXTENSIONS="supabase_vault pg_graphql pgjwt pgsodium pg_net pg_cron"
+          # Strip everything specific to extensions that exist only inside
+          # Supabase's own hosted Postgres image (confirmed live:
+          # "supabase_vault" is not available on a vanilla postgres:17
+          # container). These are Supabase-managed internals, not something
+          # our application data depends on, so their absence here doesn't
+          # indicate a real restore problem — a genuine recovery restores
+          # into another Supabase project, which already has these.
+          # Extensions bundled with vanilla Postgres (pgcrypto, uuid-ossp,
+          # pg_stat_statements) are NOT filtered — those succeed here and
+          # should keep being verified.
+          #
+          # Two things need stripping, not just one (confirmed live, in
+          # order): (a) the CREATE EXTENSION / COMMENT ON EXTENSION
+          # statements themselves, and (b) whole COPY ... FROM stdin ... \.
+          # data blocks Supabase marks for backup inside these extensions'
+          # own schemas (e.g. vault.secrets) — the extension never gets
+          # created here, so a lone COPY into its table fails with
+          # "relation does not exist". A single-line sed can't safely skip
+          # a multi-line COPY block, so this uses awk to track schema-scoped
+          # COPY blocks by name and skip through to their `\.` terminator.
           FILTERED_DUMP="filtered-${DUMP_FILE}"
-          cp "$DUMP_FILE" "$FILTERED_DUMP"
-          for ext in $SUPABASE_ONLY_EXTENSIONS; do
-            sed -i "/CREATE EXTENSION IF NOT EXISTS \"\{0,1\}${ext}\"\{0,1\}/d; /COMMENT ON EXTENSION \"\{0,1\}${ext}\"\{0,1\}/d" "$FILTERED_DUMP"
-          done
+          awk '
+            BEGIN { skip = 0 }
+            /^COPY (vault|cron|graphql|net|pgsodium)\./ { skip = 1; next }
+            skip && /^\\\.$/ { skip = 0; next }
+            skip { next }
+            /CREATE EXTENSION IF NOT EXISTS "?(supabase_vault|pg_graphql|pgjwt|pgsodium|pg_net|pg_cron)"?/ { next }
+            /COMMENT ON EXTENSION "?(supabase_vault|pg_graphql|pgjwt|pgsodium|pg_net|pg_cron)"?/ { next }
+            { print }
+          ' "$DUMP_FILE" > "$FILTERED_DUMP"
 
           # ON_ERROR_STOP=1 is required — psql's default behaviour is to
           # continue past a failed statement and still exit 0, which would
