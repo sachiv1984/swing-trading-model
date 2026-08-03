@@ -11,7 +11,17 @@
 ## 1. Current Version
 
 **v8.0** — Data Integrity, Security Follow-Through & Operational Hardening — ✅ Complete — Shipped 2026-07-31 — cycle: 2026-07-30__release-v8.0
-**Next planned release:** [TBD]
+**Next planned release:** v8.1 (in planning — cycle: 2026-08-03__release-v8.1)
+
+<!-- roadmap-annotation-marker: RA:v8.1:2026-08-03__release-v8.1 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-08-03__release-v8.1
+- Plan published: 2026-08-03
+- Cycle folder: claude/cycles/2026-08-03__release-v8.1/
+- Backlog slice: claude/cycles/2026-08-03__release-v8.1/stage4_backlog_slice.md
+- Status at annotation: Committed
+- No formal `## v8.1` roadmap section created (Release Planning may not alter roadmap scope) — scoped via STEP -1.2 Option (b) equivalence from `2026-07-28__scheduled` (same Option (b) decision already relied on by `2026-07-30__release-v8.0`). Backlog-driven, 19 ungated/ready items across 7 grouped EPICs, sized to the top of the confirmed ~24-28 day capacity band per explicit user instruction ("full capacity"). Per explicit user instruction to focus on user features where possible: exactly 1 ready ungated user-facing item was found (`BLG-FE-137`) — every other `BLG-FEAT-*`/`BLG-FE-*` candidate remains gate-blocked on inspection of its substantive Problem statement. `BLG-FEAT-73`/`BLG-FEAT-74` and the Arc 5 UX-prep cluster remain excluded for a 2nd consecutive cycle (STEP 1.4a Perennial-Return Check, Option (a) with updated evidence); `BLG-FEAT-45` excluded despite its 2026-08-05 gate date (STEP 1.4b within-sprint date gate rule).
 
 <!-- roadmap-annotation-marker: RA:v8.0:2026-07-30__release-v8.0 -->
 
