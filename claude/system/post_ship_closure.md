@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.22
+**Version:** 2.23
 **Last Updated:** 2026-08-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -437,6 +437,21 @@ For each deviation listed in `sprint_close.md` "Deviations filed this sprint":
 **Failure condition (hard gate):** Any deviation entry in a canonical spec missing required fields after this step. Non-compliant deviation notes render the spec non-compliant.
 
 **Batch checkpoint 2 — update `closure_state.json`:** Set `steps.step_2_roadmap = pass`, `steps.step_3_backlog = pass`, `steps.step_4_scope_decisions = pass | not_applicable`, `steps.step_5_deviation_compliance = pass`, `last_updated_utc = <now>`.
+
+### STEP 5.1 — Cross-Cycle Deviation Consolidation Review (Recurring, added v2.23 — ST-12, BLG-QA-129)
+
+Unlike STEP 5 above (which only checks *this cycle's* newly-filed deviations for field completeness), this sub-step periodically consolidates `DEV-*` deviation records **across recent cycles** to surface recurring patterns a single-cycle view would miss.
+
+**Cadence:** Run this sub-step every 3rd Post-Ship Closure invocation (tracked via `.claude_current_state.json` — add a `last_deviation_consolidation_review_utc` / `deviation_consolidation_review_cycle_count` pair analogous to the existing `run audit` 3-cycle cadence tracking). On cycles where it does not fire, log "Deviation consolidation review: not due (N of 3 cycles since last run)."
+
+**When due:**
+1. Scan canonical spec files, QA evidence logs, and verification reports for `## DEV-*` / `### DEV-*` headings (the `Known Deviations` section convention).
+2. Build a consolidated register: DEV ID, spec file, priority, status, target/resolved release.
+3. Check for recurring patterns: same spec file/component deviating repeatedly, same root-cause category, stale target-release dates (named target release more than 2 releases behind current), and resolution-status drift between a spec's own Known Deviations entry and any QA/test-scenario doc that separately tracked the same deviation to resolution.
+4. Produce `docs/governance/deviation_consolidation_review_<date>.md` per the template in `docs/governance/deviation_consolidation_review_2026-08-03.md` (first run, ST-12).
+5. Director of Quality sign-off required on the produced review.
+
+This closes the gap the first run (2026-08-03) found directly: a deviation resolved via a QA/test-scenario doc does not automatically propagate its resolved status back to the canonical spec's own entry, because no existing step re-visits a spec's pre-existing DEV-* entries once filed.
 
 ---
 

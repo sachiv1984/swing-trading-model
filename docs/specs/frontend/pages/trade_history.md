@@ -486,15 +486,17 @@ Displays:
 
 ## Known Deviations
 
-### DEV-ST14-01 — Avg Slippage StatsCard renders without gradient (cosmetic)
+### DEV-ST14-01 — Avg Slippage StatsCard renders without gradient (cosmetic) — Resolved
 
-- **Description:** `TradeHistory.js` passes `color="cyan"` to the Avg Slippage `StatsCard`. The `StatsCard` gradient map has no `"cyan"` key — the card renders without the expected gradient background. All non-null slippage states (negative/emerald, positive/rose) use colour-coded values at cell level, so this is a cosmetic regression on the summary card only.
+- **Description:** `TradeHistory.js` passed `color="cyan"` to the Avg Slippage `StatsCard`. The `StatsCard` gradient map has no `"cyan"` key — the card rendered without the expected gradient background. All non-null slippage states (negative/emerald, positive/rose) use colour-coded values at cell level, so this was a cosmetic regression on the summary card only.
 - **Canonical requirement:** Avg Slippage `StatsCard` renders with a gradient background consistent with other stat cards on the page.
 - **Priority:** P3
-- **Target resolution release:** v2.5 *(originally v2.2; not resolved in v2.2, v2.3, or v2.4 — carried forward as delegated_frontend styling constraint per v2.4 sprint execution)*
+- **Status:** ✅ Resolved — v2.5 (2026-04-06)
+- **Resolution:** Fixed in two stages: commit `8650223` ([EPIC-03][ST-07]) changed to `gradient="violet"`; commit `67d7285` ([EPIC-05][ST-12]) updated to conditional `gradient={avg_slippage_pct <= 0 ? "emerald" : "rose"}` for the data-present state. Current code uses valid gradient keys for all states (emerald/rose when data present, violet when null). Full detail: `docs/testing/slippage_scenarios.md#DEV-ST14-01`.
 - **Owner:** Frontend Specifications & UX Documentation Owner
 - **Backlog reference:** BLG-FE-08 — Fix Avg Slippage StatsCard gradient rendering *(supersedes BLG-FE-01, archived)*
-- **Acceptance record:** Director of Quality 2026-03-20 — P3 cosmetic only; slippage logic, values, and sorting correct. Reconfirmed v2.4 delivery verification 2026-04-03 (verification_report.md §4).
+- **Acceptance record:** Director of Quality 2026-03-20 (original finding); Director of Quality 2026-04-06 (resolution confirmed).
+- **Consolidation note (ST-12, EPIC-04, v8.1, 2026-08-03):** This entry was found still marked unresolved here despite `docs/testing/slippage_scenarios.md`'s sibling entry recording resolution since 2026-04-06 — a spec/QA-doc resolution-status drift, corrected by this update. See `docs/governance/deviation_consolidation_review_2026-08-03.md` Finding 3.
 
 ---
 
