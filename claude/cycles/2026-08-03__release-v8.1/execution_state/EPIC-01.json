@@ -1,13 +1,15 @@
 {
   "cycle_id": "2026-08-03__release-v8.1",
   "epic_id": "EPIC-01",
-  "status": "done",
+  "status": "merged",
   "branch": "exec/2026-08-03__release-v8.1/EPIC-01",
   "pr_number": 1188,
-  "pr_status": "open",
+  "pr_status": "merged",
   "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-03__release-v8.1/qa_evidence_EPIC-01.md",
-  "test_scenarios": ["tests/e2e/trade-plan.spec.js"],
+  "test_scenarios": [
+    "tests/e2e/trade-plan.spec.js"
+  ],
   "stories": {
     "ST-01": {
       "title": "Trade Plan tag-suggestion buttons use onMouseDown, not keyboard-operable",
@@ -30,7 +32,7 @@
       "deviations_filed": true,
       "last_completed_substep": null,
       "sign_off_record": null,
-      "notes": "Design Gate PASSED (Design Pre-Approved). TradeEntry.js models correct onClick pattern. Fix: onMouseDown -> onClick, matching TradeEntry.js's established blur-delay pattern. No deviation — spec §4 'Suggestion list is keyboard navigable' now met. Playwright coverage added: SC-TP-28 (tests/e2e/trade-plan.spec.js). Playwright browser install unavailable in this sandbox (unsupported OS) — test verified via `playwright test --list` (syntactically valid, discovered); execution occurs in CI (Critical-Path Smoke Tests / quality_gate.yml)."
+      "notes": "Design Gate PASSED (Design Pre-Approved). TradeEntry.js models correct onClick pattern. Fix: onMouseDown -> onClick, matching TradeEntry.js's established blur-delay pattern. No deviation \u2014 spec \u00a74 'Suggestion list is keyboard navigable' now met. Playwright coverage added: SC-TP-28 (tests/e2e/trade-plan.spec.js). Playwright browser install unavailable in this sandbox (unsupported OS) \u2014 test verified via `playwright test --list` (syntactically valid, discovered); execution occurs in CI (Critical-Path Smoke Tests / quality_gate.yml)."
     }
   },
   "last_updated_utc": "2026-08-03T09:37:00Z"

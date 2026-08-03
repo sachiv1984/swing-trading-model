@@ -1,10 +1,10 @@
 {
   "cycle_id": "2026-08-03__release-v8.1",
   "epic_id": "EPIC-03",
-  "status": "done",
+  "status": "merged",
   "branch": "exec/2026-08-03__release-v8.1/EPIC-03",
   "pr_number": 1189,
-  "pr_status": "open",
+  "pr_status": "merged",
   "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-03__release-v8.1/qa_evidence_EPIC-03.md",
   "test_scenarios": [],
@@ -34,9 +34,9 @@
         "method": "agent_mediated",
         "status": "cleared",
         "date": "2026-08-03",
-        "notes": "Reviewed new §1.4a.1 Sunset Criteria and its retroactive assessment against BLG-FEAT-73/74 (both 2 of 4 consecutive Option-(a) dispositions — below the sunset trigger, no forced disposition). Criteria are proportionate (mirrors existing Skill-Silo clause structure) and do not disturb either item's current PO disposition."
+        "notes": "Reviewed new \u00a71.4a.1 Sunset Criteria and its retroactive assessment against BLG-FEAT-73/74 (both 2 of 4 consecutive Option-(a) dispositions \u2014 below the sunset trigger, no forced disposition). Criteria are proportionate (mirrors existing Skill-Silo clause structure) and do not disturb either item's current PO disposition."
       },
-      "notes": "Product Owner sign-off required per own AC. No deviation — spec did not previously define sunset criteria at all (absence, not divergence)."
+      "notes": "Product Owner sign-off required per own AC. No deviation \u2014 spec did not previously define sunset criteria at all (absence, not divergence)."
     },
     "ST-04": {
       "title": "Escalation path for Product Value Ratio's persistent Advisory tier",
@@ -63,9 +63,9 @@
         "method": "agent_mediated",
         "status": "cleared",
         "date": "2026-08-03",
-        "notes": "Reviewed the new sustained-Advisory-tier clause against §7.1's Skill-Silo precedent it mirrors — structurally consistent (same 3-consecutive-reading trigger, same build-and-ship-shaped test), correctly scoped as a mandatory-once-triggered clause rather than a new hard gate at every Advisory reading."
+        "notes": "Reviewed the new sustained-Advisory-tier clause against \u00a77.1's Skill-Silo precedent it mirrors \u2014 structurally consistent (same 3-consecutive-reading trigger, same build-and-ship-shaped test), correctly scoped as a mandatory-once-triggered clause rather than a new hard gate at every Advisory reading."
       },
-      "notes": "Head of Specs Team review required per own AC. No deviation — pure addition, no prior conflicting text."
+      "notes": "Head of Specs Team review required per own AC. No deviation \u2014 pure addition, no prior conflicting text."
     },
     "ST-05": {
       "title": "Minimum capacity buffer floor recommendation for sprint planning",
@@ -92,9 +92,9 @@
         "method": "agent_mediated",
         "status": "cleared",
         "date": "2026-08-03",
-        "notes": "Reviewed the 95%-of-capacity advisory floor against recent utilisation history (v7.9 ran ~95-110%). Correctly scoped as advisory-only, referenced by STEP 3.2 without altering the existing hard over-allocation rule in §8."
+        "notes": "Reviewed the 95%-of-capacity advisory floor against recent utilisation history (v7.9 ran ~95-110%). Correctly scoped as advisory-only, referenced by STEP 3.2 without altering the existing hard over-allocation rule in \u00a78."
       },
-      "notes": "FinOps & Resource Architect + PMO Lead sign-off required per own AC. AC named 'STEP 4.5' but no such step existed in sprint_planning_prompt.md — placed as new §1.5 in the Capacity Baseline section (STEP 1), the closest existing home, and cross-referenced from STEP 3.2's Capacity Gate. No deviation from AC intent."
+      "notes": "FinOps & Resource Architect + PMO Lead sign-off required per own AC. AC named 'STEP 4.5' but no such step existed in sprint_planning_prompt.md \u2014 placed as new \u00a71.5 in the Capacity Baseline section (STEP 1), the closest existing home, and cross-referenced from STEP 3.2's Capacity Gate. No deviation from AC intent."
     },
     "ST-06": {
       "title": "Technical debt registry (consolidated cross-cycle view)",
@@ -123,7 +123,7 @@
         "date": "2026-08-03",
         "notes": "Reviewed inclusion rule (literal Type-field match, excludes Spec Debt's own dedicated lifecycle) and the resulting 2-item population (BLG-FE-98, BLG-OPS-116) against backlog.md directly. Rule is mechanically re-derivable, not a one-time hand curation."
       },
-      "notes": "Head of Engineering sign-off required per own AC. Case B (documentation-creation) spec_reference — the registry file itself is the governing artefact."
+      "notes": "Head of Engineering sign-off required per own AC. Case B (documentation-creation) spec_reference \u2014 the registry file itself is the governing artefact."
     },
     "ST-07": {
       "title": "Skill-Silo mitigation: rotate execution-heavy story assignment pattern",
@@ -176,7 +176,7 @@
       "deviations_filed": true,
       "last_completed_substep": null,
       "sign_off_record": null,
-      "notes": "AI Compliance & Governance Officer owner. Self-verifiable by engine per own AC (fire test) — confirmed locally: deliberately-injected 'ssn: string' field triggered exit 1 with the field named in output; clean baseline confirmed exit 0. File restored, no diff left. Case D (CI/infrastructure) spec_reference."
+      "notes": "AI Compliance & Governance Officer owner. Self-verifiable by engine per own AC (fire test) \u2014 confirmed locally: deliberately-injected 'ssn: string' field triggered exit 1 with the field named in output; clean baseline confirmed exit 0. File restored, no diff left. Case D (CI/infrastructure) spec_reference."
     },
     "ST-09": {
       "title": "Governed write path for a non-empty, unversioned Now-horizon carry-forward",
@@ -203,7 +203,7 @@
         "method": "agent_mediated",
         "status": "cleared",
         "date": "2026-08-03",
-        "notes": "Two-vehicle choice (shared_standards.md §17 extension vs. roadmap_prompt.md STEP 8.1 amendment) resolved per sprint_backlog.md note: implemented as a §17 companion provision (narrow standing authority, scoped to heading-label-only edits) cross-referenced from STEP 8.1, rather than a broader STEP 8.1 process amendment. Governance file edit checklist completed for all of ST-03/04/05/07/09 in this story's commit after being missed in the individual story commits — process gap self-caught and closed same session."
+        "notes": "Two-vehicle choice (shared_standards.md \u00a717 extension vs. roadmap_prompt.md STEP 8.1 amendment) resolved per sprint_backlog.md note: implemented as a \u00a717 companion provision (narrow standing authority, scoped to heading-label-only edits) cross-referenced from STEP 8.1, rather than a broader STEP 8.1 process amendment. Governance file edit checklist completed for all of ST-03/04/05/07/09 in this story's commit after being missed in the individual story commits \u2014 process gap self-caught and closed same session."
       },
       "notes": "Two-vehicle remediation choice resolved at execution kickoff per sprint_backlog.md note. Rebased onto main (post-EPIC-07 merge) before editing shared_standards.md, per Merge Order note."
     }

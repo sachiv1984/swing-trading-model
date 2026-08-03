@@ -1,13 +1,15 @@
 {
   "cycle_id": "2026-08-03__release-v8.1",
   "epic_id": "EPIC-06",
-  "status": "done",
+  "status": "merged",
   "branch": "exec/2026-08-03__release-v8.1/EPIC-06",
   "pr_number": 1190,
-  "pr_status": "open",
+  "pr_status": "merged",
   "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-03__release-v8.1/qa_evidence_EPIC-06.md",
-  "test_scenarios": ["tests/test_pagination.py"],
+  "test_scenarios": [
+    "tests/test_pagination.py"
+  ],
   "stories": {
     "ST-17": {
       "title": "Standardise pagination pattern across list endpoints (consolidated)",
@@ -63,9 +65,9 @@
         "method": "agent_mediated",
         "status": "cleared",
         "date": "2026-08-03",
-        "notes": "Verified the proposed fuzzy-match approach against trade_plans'/trade_history's actual schema (data_model.md) before signing — confirmed no exact-match field exists on trade_plans, correctly ruling out anything but ticker+temporal fuzzy matching with mandatory human review. Does not reopen BLG-BE-52's decision."
+        "notes": "Verified the proposed fuzzy-match approach against trade_plans'/trade_history's actual schema (data_model.md) before signing \u2014 confirmed no exact-match field exists on trade_plans, correctly ruling out anything but ticker+temporal fuzzy matching with mandatory human review. Does not reopen BLG-BE-52's decision."
       },
-      "notes": "Data Model & Domain Schema Owner sign-off. Scoping document only, not implementation — no code change, BLG-BE-52's 'no backfill' decision unchanged."
+      "notes": "Data Model & Domain Schema Owner sign-off. Scoping document only, not implementation \u2014 no code change, BLG-BE-52's 'no backfill' decision unchanged."
     }
   },
   "last_updated_utc": "2026-08-03T10:38:00Z"

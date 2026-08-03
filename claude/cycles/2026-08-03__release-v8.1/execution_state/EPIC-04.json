@@ -1,10 +1,10 @@
 {
   "cycle_id": "2026-08-03__release-v8.1",
   "epic_id": "EPIC-04",
-  "status": "done",
+  "status": "merged",
   "branch": "exec/2026-08-03__release-v8.1/EPIC-04",
   "pr_number": 1198,
-  "pr_status": "open",
+  "pr_status": "merged",
   "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-03__release-v8.1/qa_evidence_EPIC-04.md",
   "test_scenarios": [],
@@ -24,7 +24,7 @@
       "acceptance_verified": true,
       "spec_references": [],
       "spec_reference_not_applicable": true,
-      "spec_reference_not_applicable_reason": "staging-only verification task, no CI-reproducible equivalent — BLG-QA-115",
+      "spec_reference_not_applicable_reason": "staging-only verification task, no CI-reproducible equivalent \u2014 BLG-QA-115",
       "deviations_filed": true,
       "last_completed_substep": null,
       "sign_off_record": {
