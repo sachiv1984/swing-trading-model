@@ -172,6 +172,37 @@ test('SC-SI02-06: An active (not closed) plan with position_id set is not counte
   await expect(page.getByText('1 linked to a trade plan')).toBeVisible();
 });
 
+test('SC-SI02-07: Condition 3 (trade plan adherence) is NOT MET just below the 50% threshold (ST-14, BLG-SPEC-72)', async ({ page }) => {
+  await mockFallback(page);
+  await mockTaxYearReport(page);
+  await mockTrades(page, 20);
+  const linkedPlans = Array.from({ length: 20 }, (_, i) => ({ id: `p${i}`, ticker: 'AAPL', status: 'closed', position_id: `pos-${i}` }));
+  await mockTradePlans(page, linkedPlans);
+  await mockArc5Compliance(page, 0.49);
+  await gotoTaxYearTab(page);
+  await page.getByTestId('si02-gate-status-toggle').click();
+
+  await expect(page.getByText('20 total closed trades')).toBeVisible({ timeout: 5000 });
+  // Conditions 1 and 2 both MET (20 total, 20 linked); condition 3 NOT MET (0.49 < 0.50)
+  await expect(page.getByText('MET', { exact: true })).toHaveCount(2);
+  await expect(page.getByText('NOT MET')).toHaveCount(1);
+});
+
+test('SC-SI02-08: Condition 3 (trade plan adherence) is MET at exactly the 50% threshold (ST-14, BLG-SPEC-72)', async ({ page }) => {
+  await mockFallback(page);
+  await mockTaxYearReport(page);
+  await mockTrades(page, 20);
+  const linkedPlans = Array.from({ length: 20 }, (_, i) => ({ id: `p${i}`, ticker: 'AAPL', status: 'closed', position_id: `pos-${i}` }));
+  await mockTradePlans(page, linkedPlans);
+  await mockArc5Compliance(page, 0.50);
+  await gotoTaxYearTab(page);
+  await page.getByTestId('si02-gate-status-toggle').click();
+
+  await expect(page.getByText('20 total closed trades')).toBeVisible({ timeout: 5000 });
+  // All 3 conditions MET (0.50 >= 0.50, inclusive threshold)
+  await expect(page.getByText('MET', { exact: true })).toHaveCount(3);
+});
+
 test('SC-SI02-05: Error state shown without blocking rest of Reports page', async ({ page }) => {
   await mockFallback(page);
   await mockTaxYearReport(page);

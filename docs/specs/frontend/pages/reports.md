@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.11
-**Last Updated:** 2026-07-24
+**Version:** 0.12
+**Last Updated:** 2026-08-03
 **Design Source (v0.11 monthly CSV export):** docs/design/2026-07-24__release-v7.8/monthly-csv-export/ux_spec.md
 **Design Source (v0.7 CSV export + monthly realised/unrealised split):** docs/design/2026-07-12__release-v7.0/tax-year-csv-export/ux_spec.md, docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md
 **Design Source (v0.6 SI-02 gate status):** docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md
@@ -191,9 +191,9 @@ Displayed below "Arc 5 Compliance Summary" and above "Gross vs Net Comparison". 
 |-------|--------|-------|-------|
 | Total closed trades | `GET /trades` count | "{N} total closed trades" | |
 | Linked closed trades | `GET /trade-plans` closed, `position_id` non-null count | "{N} linked to a trade plan" | Reflects ST-01 (BLG-BE-46) finding as-is, live — not suppressed or approximated if 0 |
-| Gate Condition 1 (20-trade threshold) | derived | MET / NOT MET badge | |
-| Gate Condition 2 | derived | MET / NOT MET badge | |
-| Gate Condition 3 (trade plan adherence) | `trade_plan_adherence_rate` | MET / NOT MET badge | |
+| Gate Condition 1 (20-trade threshold) | `total closed trades >= 20` | MET / NOT MET badge | |
+| Gate Condition 2 (20-linked-trade threshold) | `linked closed trades >= 20` | MET / NOT MET badge | Product-reviewed 2026-08-03 (ST-14, BLG-SPEC-72) — formalises the value the implementing engine had already used, consistent with the same 20-trade sufficiency bar used by Condition 1 and by the separate SI-02 backend readiness gate (`BLG-GOV-107`) |
+| Gate Condition 3 (trade plan adherence) | `trade_plan_adherence_rate >= 0.50` | MET / NOT MET badge | Product-reviewed 2026-08-03 (ST-14, BLG-SPEC-72) — a majority of the user's closed trades must show trade-plan discipline. No prior threshold existed anywhere in the spec (`arc5_compliance_section.md` documents this metric as §13-compliant display-only, no automated threshold); 50% chosen as a meaningful "more disciplined trades than not" bar rather than the previous placeholder (`> 0`, which passed at any non-zero rate including 1%) |
 
 **Badge style:** green "MET" pill / amber "NOT MET" pill — consistent with Dashboard gate colour treatment (`dashboard.md` §6).
 
@@ -382,6 +382,7 @@ Follows the Arc 5 Compliance Summary design language from the tax-year report (�
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.12 | 2026-08-03 | ST-14 (EPIC-05, v8.1, BLG-SPEC-72): §SI-02 Gate Status Condition 2 and Condition 3 thresholds product-reviewed and formally documented, closing the `Specs_Index.md`-tracked "engine-filled gap" (never previously product-reviewed). Condition 2 confirmed at the existing `linked closed trades >= 20` (consistent with Condition 1's own 20-trade bar and the separate `BLG-GOV-107` backend gate). Condition 3 changed from the placeholder `trade_plan_adherence_rate > 0` to `>= 0.50` — a majority-discipline bar; no prior threshold existed for this metric anywhere in the spec. `src/pages/Reports.js`'s `SI02GateStatusSection` updated to match, with new Playwright coverage for the changed threshold. Product Owner decision (agent-mediated, §5.3, explicit user direction). |
 | 0.11 | 2026-07-24 | v7.8 design gate — ST-05 (EPIC-05, BLG-FEAT-81): Monthly CSV Export added to the Monthly P&L Report view — "Download CSV" button reusing the Tax Year tab's export pattern verbatim (idle/generating/success/error states), new `GET /reports/monthly-pnl?format=csv` endpoint, reconciliation rule against the Tax Year CSV documented. Scope excludes Unrealised P&L Card and Strategy Compliance Section figures (matches Tax Year export's scope). Design source: `docs/design/2026-07-24__release-v7.8/monthly-csv-export/ux_spec.md`. Head of UX & Design sign-off: 2026-07-24. Product Owner approved: 2026-07-24. Head of Specs Team confirmed. |
 | 0.10 | 2026-07-14 | v7.1 sprint execution (ST-06, BLG-SPEC-83): §Unrealised P&L Card (both tabs) — added Data Freshness note (nightly-snapshot vs live-computed distinction) and Reconciliation Rule (AC-03, verified against production data: realised £1,100.46 + unrealised −£126.25 = £974.21 vs `GET /portfolio.total_pnl` £988.19, diff £13.98/≈1.4%, explained by the snapshot-vs-live valuation gap — approximate tie-back, not exact). Added §Known Deviations, filed `DEV-REPORTS-ST06-01` (P3, BLG-SPEC-87) for the underlying Reports-vs-Positions unrealised P&L data-freshness gap discovered during this verification. |
 | 0.9 | 2026-07-14 | v7.1 design gate (ST-06, BLG-SPEC-83): Explicit colour convention added to both Unrealised P&L Card sections (Tax Year tab and Monthly P&L Report) — profit `text-emerald-400`, loss `text-rose-400`, aligned with the Open Positions Panel P&L convention. Closes ST-06 AC-04 (visual treatment confirmation) — the v7.0 `realized-unrealized-split` design artefact already specified this colour; it had not yet been written into this canonical spec's text. Existing artefact reviewed and confirmed current — no new design work required. Head of UX & Design sign-off: 2026-07-14. Product Owner approved: 2026-07-14. Head of Specs Team confirmed. |
