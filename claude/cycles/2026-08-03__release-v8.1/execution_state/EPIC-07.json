@@ -1,10 +1,10 @@
 {
   "cycle_id": "2026-08-03__release-v8.1",
   "epic_id": "EPIC-07",
-  "status": "done",
+  "status": "merged",
   "branch": "exec/2026-08-03__release-v8.1/EPIC-07",
   "pr_number": 1187,
-  "pr_status": "open",
+  "pr_status": "merged",
   "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-03__release-v8.1/qa_evidence_EPIC-07.md",
   "test_scenarios": [],
