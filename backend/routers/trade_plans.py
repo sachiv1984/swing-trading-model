@@ -224,11 +224,31 @@ def create_plan(body: TradePlanCreate):
 
 
 @router.get("")
-def list_plans(status: Optional[str] = Query(default=None), ticker: Optional[str] = Query(default=None)):
-    """GET /trade-plans — list all trade plans, optionally filtered by status and/or ticker."""
+def list_plans(
+    status: Optional[str] = Query(default=None),
+    ticker: Optional[str] = Query(default=None),
+    cursor: Optional[str] = Query(default=None),
+    limit: Optional[int] = Query(default=None, ge=1, le=200),
+):
+    """GET /trade-plans — list all trade plans, optionally filtered by status
+    and/or ticker.
+
+    cursor/limit (ST-17, BLG-BE-47 — canonical cursor pagination pattern):
+    additive and opt-in. Omit both for the original unpaginated behaviour
+    (full result set, unchanged response shape). Pass `limit` to paginate;
+    the response then includes `next_cursor` (null when no further page) —
+    pass it back as `cursor` to fetch the next page."""
     try:
         ensure_trade_plans_table()
         portfolio_id = _get_portfolio_id()
+        if limit is not None:
+            from utils.pagination import paginate_results
+            try:
+                rows = get_trade_plans(portfolio_id, status, ticker, cursor=cursor, limit=limit)
+            except ValueError:
+                return JSONResponse(status_code=400, content={"status": "error", "message": "invalid cursor"})
+            page, next_cursor = paginate_results(rows, limit)
+            return {"status": "ok", "data": [_serialize(p) for p in page], "next_cursor": next_cursor}
         plans = get_trade_plans(portfolio_id, status, ticker)
         return {"status": "ok", "data": [_serialize(p) for p in plans]}
     except HTTPException:
