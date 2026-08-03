@@ -112,10 +112,28 @@ jobs:
           SCRATCH_URL="postgresql://postgres:scratch_dry_run_password@localhost:5432/postgres"
           DUMP_FILE=$(ls backup-*.sql)
 
+          # Strip CREATE EXTENSION / COMMENT ON EXTENSION statements for
+          # extensions that exist only inside Supabase's own hosted Postgres
+          # image (confirmed live: "supabase_vault" is not available on a
+          # vanilla postgres:17 container). These are Supabase-managed
+          # internals, not something our application data depends on, so
+          # their absence here doesn't indicate a real restore problem —
+          # only that this scratch container isn't a full Supabase image.
+          # A genuine recovery restores into another Supabase project,
+          # which already has these. Extensions bundled with vanilla
+          # Postgres (pgcrypto, uuid-ossp, pg_stat_statements) are NOT
+          # filtered — those succeed here and should keep being verified.
+          SUPABASE_ONLY_EXTENSIONS="supabase_vault pg_graphql pgjwt pgsodium pg_net pg_cron"
+          FILTERED_DUMP="filtered-${DUMP_FILE}"
+          cp "$DUMP_FILE" "$FILTERED_DUMP"
+          for ext in $SUPABASE_ONLY_EXTENSIONS; do
+            sed -i "/CREATE EXTENSION IF NOT EXISTS \"\{0,1\}${ext}\"\{0,1\}/d; /COMMENT ON EXTENSION \"\{0,1\}${ext}\"\{0,1\}/d" "$FILTERED_DUMP"
+          done
+
           # ON_ERROR_STOP=1 is required — psql's default behaviour is to
           # continue past a failed statement and still exit 0, which would
           # let a genuinely broken dump "pass" this dry-run silently.
-          "$PSQL" "$SCRATCH_URL" -v ON_ERROR_STOP=1 -f "$DUMP_FILE"
+          "$PSQL" "$SCRATCH_URL" -v ON_ERROR_STOP=1 -f "$FILTERED_DUMP"
 
       - name: Verify restored data
         run: |
