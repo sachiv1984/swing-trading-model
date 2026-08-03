@@ -973,7 +973,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.5)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.6)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1454,8 +1454,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.125 |
-| Last Updated | 2026-07-31 |
+| Version | 4.126 |
+| Last Updated | 2026-08-03 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1469,7 +1469,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.62 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.8 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.5 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.6 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.1 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.21 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1495,6 +1495,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.126 | 2026-08-03 | **ESC-CLOSE-20260731-01 (Option a) — delivery_verification_prompt.md v3.5→v3.6: named domain-authority sign-off class added to STEP -1.3 Tier 2.** §9 source prompt header v3.5→v3.6. §14 Verification Engine Source v3.5→v3.6. §14 Version 4.125→4.126/2026-08-03. Change: STEP -1.3 Tier 2 gains a fourth recognised sign-off format — a signer naming a specific human or agent-mediated domain-authority role (e.g. `Infrastructure & Operations Owner`, `Head of Engineering`, compound `<Role A> ... with <Role B> concurrence` forms, or execution_prompt.md §5.3's Infrastructure co-sign format) is accepted as compliant provided the EPIC contains no `autonomous`-class story. Closes the gap where execution_prompt.md's Infrastructure co-sign class claimed acceptance by this gate that the gate did not actually implement — surfaced when EPIC-04 and EPIC-06 both required one-off DoQ counter-signs at `2026-07-30__release-v8.0` delivery verification despite using legitimate domain-authority signers. Authority: Head of Specs Team (post-ship closure `2026-07-30__release-v8.0` escalation ESC-CLOSE-20260731-01, resolved 2026-08-03). |
 | 4.125 | 2026-07-31 | **Post-ship closure `2026-07-30__release-v8.0` Phase 3 lessons learnt, action-now — execution_prompt.md v3.61→v3.62: infra/ops verification delegation sub-pattern added.** §8 source prompt header v3.61→v3.62. §14 Execution Engine Source v3.61→v3.62. §14 Version 4.124→4.125/2026-07-31. Change: §5.1 Delegation Classification "Classification rules" list gains a new bullet — an infrastructure/operations verification or configuration task requiring live external dashboard/production access the engine cannot perform (e.g. Render/Supabase dashboard reads, GitHub repo secret configuration) classifies as `delegated_backend`, regardless of whether any code is written. Root cause: v8.0 sprint execution recorded 6 of 19 stories (32% of scope — ST-13/14/15/16/17 in EPIC-04, ST-19 in EPIC-06) as stale `autonomous` at STEP 0, requiring mid-execution correction, because §5.1's existing `delegated_backend` pattern ("new router, service, or database function") had no explicit coverage for dashboard-access-only verification tasks. Authority: Head of Specs Team (post-ship closure `2026-07-30__release-v8.0`, STEP 8 — immediate lessons-learnt action rule). |
 | 4.124 | 2026-07-30 | **ST-05 (BLG-SEC-23, EPIC-02, v8.0) — design_gate_prompt.md v1.6→v1.7: mandatory AI-endpoint security checklist reference added.** §6.5 source prompt header v1.6→v1.7. §14 Design Gate Engine v1.6→v1.7. §14 Version 4.123→4.124/2026-07-30. Change: STEP 2.2 (Design Required Items: Artefact Review, constraints list) gains a new constraint — any item introducing a new AI-calling endpoint must complete the mandatory security review checklist at the new `docs/specs/security/ai_endpoint_security_checklist.md` (rate limiting, cost gating, prompt-injection awareness) before its design artefact is approved. This new checklist is distinct from `docs/specs/api_contracts/ai_advisory_contract_checklist.md`'s contract-completeness checklist (documentation completeness, not security posture) — both are now required. Authority: Head of Specs Team (Sprint Execution Engine, ST-05, agent-mediated, 2026-07-30). |
 | 4.123 | 2026-07-30 | **Post-ship closure `2026-07-28__release-v7.10` Phase 3 lessons learnt (LL-v7.10-P3-01), action-now — backlog_management_prompt.md v1.12→v1.13: Governance Prompt Duplicate Cross-Check added.** §6M source prompts updated (backlog_management_prompt.md v1.12→v1.13). §14 Backlog Management Engine v1.12→v1.13. §14 Version 4.122→4.123/2026-07-30. Change: STEP 1 gains a new §1.3 — before confirming any open `BLG-GOV-*` item as still-open, grep `claude/system/prompt_change_log.md` for entries against the same prompt file filed after the item's own filing date; flag a probable-duplicate candidate for owner review if a matching version-transition entry already covers the item's stated problem (does not auto-close). Root cause: v7.10 sprint execution pulled 3 of 23 stories (13% of scope) into scope that were already fully resolved by prior-sprint governance fixes, requiring the STEP 3.1.A pre-met path instead of fresh delivery — none were caught as stale/duplicate by backlog grooming beforehand. Authority: Head of Specs Team (post-ship closure `2026-07-28__release-v7.10`, Phase 3 lessons-learnt action-now rule). |
