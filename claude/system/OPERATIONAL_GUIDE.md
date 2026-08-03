@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.128
+**Version:** 4.129
 **Last Updated:** 2026-08-03
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -763,7 +763,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.13)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.14)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -1466,7 +1466,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.8 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.44 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.13 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.14 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.62 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.8 |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.129 | 2026-08-03 | **Sprint execution `2026-08-03__release-v8.1` EPIC-04/ST-11 (BLG-QA-113) — sprint_planning_prompt.md v3.13→v3.14: recurring endpoint test coverage audit.** §7 source prompt header v3.13→v3.14 (line 766). §14 Sprint Planning Engine v3.13→v3.14. §14 Version 4.128→4.129/2026-08-03. Change: STEP -1 Advisory Checks gains item 8 — runs new `scripts/audit_endpoint_test_coverage.py` (full-repo backstop audit vs. the existing pre-commit diff-only check) before sprint scope work; first run: 78 routes scanned, 8 documented `KNOWN_GAPS` exclusions, 0 undocumented gaps. Note: this bump was made on `exec/2026-08-03__release-v8.1/EPIC-04`, branched before EPIC-03's own `sprint_planning_prompt.md` v3.13→v3.14 bump (ST-05) merged to main — the two branches will need version renumbering (one to v3.15) at whichever merges second, per the standing multi-EPIC shared-file merge-order convention. Authority: Head of Specs Team (Sprint Execution Engine, ST-11, 2026-08-03). |
 | 4.128 | 2026-08-03 | **Sprint execution `2026-08-03__release-v8.1` EPIC-07/ST-19 (BLG-GOV-284) — shared_standards.md v3.19→v3.20: §12 Rule 2 retired, new §12.1 Per-EPIC Execution State Mechanism added.** §14 Shared Standards v3.19→v3.20. §14 Version/Last Updated table row corrected from a stale 4.125/2026-07-31 to 4.128/2026-08-03 (the table's own top row had already reached 4.127/2026-08-03 — header-drift pattern per the standing v4.85 note, caught here). Change: each EPIC branch now owns `claude/cycles/<cycle_id>/execution_state/EPIC-xx.json` exclusively (schema: `claude/system/schemas/execution_state_epic_schema.json`); cycle-level fields live in `_cycle_meta.json`; the cycle-level `execution_state.json` is regenerated on demand by `claude/system/scripts/generate_execution_summary.py` rather than hand-merged, eliminating the structural merge-conflict source Rule 2 existed to resolve. Authority: Head of Engineering (agent-mediated sign-off per execution_prompt.md §5.3, RISK-02 mitigation), Sprint Execution Engine, 2026-08-03. |
 | 4.127 | 2026-08-03 | **Lifecycle audit AUD-2026-08-03 improvements 003/005 — post_ship_closure.md v2.21→v2.22 + §13 Artefact Register.** §10 source prompt header v2.21→v2.22. §14 Post-Ship Closure Engine v2.21→v2.22. §13 Artefact Register — new "Escalations (Closure)" row for `claude/cycles/<id>/closure_escalations.md` (was missing despite being a real, actively-used Class 4 artefact with siblings for Release/Execution/Verification already registered). §14 Version 4.126→4.127/2026-08-03. Change (post_ship_closure v2.22): STEP 6 Endpoint Coverage Drift Check gains a "Script-derived tracking-item handoff" rule — when the existing stale-tracking-item delta rule fires, also emit the fully re-derived current-gap endpoint list into the closure record's Advisory Summary in copy-paste-ready form, so the next engine applies it verbatim rather than re-deriving the diff each cycle; closes the 3-cycle recurring `BLG-OPS-111` drift pattern (v7.9→v7.10→v8.0), which is itself retired as superseded by this fix. Authority: Head of Specs Team (lifecycle audit AUD-2026-08-03, resolved 2026-08-03). |
 | 4.126 | 2026-08-03 | **ESC-CLOSE-20260731-01 (Option a) — delivery_verification_prompt.md v3.5→v3.6: named domain-authority sign-off class added to STEP -1.3 Tier 2.** §9 source prompt header v3.5→v3.6. §14 Verification Engine Source v3.5→v3.6. §14 Version 4.125→4.126/2026-08-03. Change: STEP -1.3 Tier 2 gains a fourth recognised sign-off format — a signer naming a specific human or agent-mediated domain-authority role (e.g. `Infrastructure & Operations Owner`, `Head of Engineering`, compound `<Role A> ... with <Role B> concurrence` forms, or execution_prompt.md §5.3's Infrastructure co-sign format) is accepted as compliant provided the EPIC contains no `autonomous`-class story. Closes the gap where execution_prompt.md's Infrastructure co-sign class claimed acceptance by this gate that the gate did not actually implement — surfaced when EPIC-04 and EPIC-06 both required one-off DoQ counter-signs at `2026-07-30__release-v8.0` delivery verification despite using legitimate domain-authority signers. Authority: Head of Specs Team (post-ship closure `2026-07-30__release-v8.0` escalation ESC-CLOSE-20260731-01, resolved 2026-08-03). |

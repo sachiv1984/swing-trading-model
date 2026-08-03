@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.13
-**Last Updated:** 2026-07-14
+**Version:** 3.14
+**Last Updated:** 2026-08-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -196,6 +196,10 @@ Design gate hard gate (fires when `design_gate_required = true`):
 **7. Hygiene advisories** (both advisory only — no halt):
 - **Prompt change log gaps:** for each Class 6 prompt file, run `grep "<filename>" claude/system/prompt_change_log.md | head -1` to find the most recent logged transition (the file is **prepended newest-first** — `head -1` gives the latest entry; do NOT use `tail` or `grep | tail`). Extract the target version (the `v<X.Y>` after `→` in the version column). If the current `**Version:**` in the file exceeds that version: surface as "⚠ Prompt change log gap: `<filename>` current v<X.Y> — last log v<A.B>. Add a prepended row per CLAUDE.md §6." Record in `sprint_planning_notes.md`.
 - **"Before Sprint Planning" backlog items:** scan `claude/backlog/backlog.md` for items with `Provisional-Target: Before v<X.Y> sprint planning` where X.Y = current release. For each found: surface advisory and record under `## Pre-Sprint Backlog Advisory` in `sprint_planning_notes.md` with item IDs and titles.
+
+**8. Recurring endpoint test coverage audit (added v3.14 — ST-11, BLG-QA-113):** Run `python3 scripts/audit_endpoint_test_coverage.py` — a full-repo backstop audit comparing every `@router.get/post/put/delete` decorator in `backend/routers/*.py` against `backend/routers/test.py`'s registered entries, complementing the pre-commit diff-only check (`scripts/check_router_test_registration.py`). Record the result in `sprint_planning_notes.md`:
+- Exit 0 (clean, or all gaps are documented `KNOWN_GAPS` exclusions): record "pre-sprint endpoint coverage audit: clean."
+- Exit 1 (undocumented gap found): surface as advisory, list the missing route(s); recommend filing a backlog item or adding the route to `test.py` before sprint scope is finalised. Advisory only — does not block sprint planning.
 
 ---
 
