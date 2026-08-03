@@ -1,9 +1,13 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v8.1
 Cycle: 2026-08-03__release-v8.1
 Last Updated: 2026-08-03
+
+Superseded by: v8.1 ship — 2026-08-03
+Changelog: docs/product/changelog.md#v8.1
+Cycle: 2026-08-03__release-v8.1
 
 ## Planning Decisions — v8.1 User-Feature Push & Governance Debt Clearance
 

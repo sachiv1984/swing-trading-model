@@ -3,9 +3,54 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-07-31 (post-ship closure 2026-07-30__release-v8.0)
+**Last Updated:** 2026-08-03 (post-ship closure 2026-08-03__release-v8.1)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v8.1 — User-Feature Push & Governance Debt Clearance — 2026-08-03
+Cycle: 2026-08-03__release-v8.1
+Verified: Verified
+Verification report: claude/cycles/2026-08-03__release-v8.1/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Fixed Trade Plan tag-suggestion buttons to be keyboard-operable (`onMouseDown` → `onClick`) | `docs/specs/frontend/components/journal_components.md#4` |
+| EPIC-02 | Established a recurring manual `pg_dump` backup schedule for production Supabase, with dry-run restore verification | `docs/ops/database_backup_disaster_recovery_runbook.md#3.4` |
+| EPIC-03 | Formal sunset criteria for perennially-returning gated backlog items; escalation path for Product Value Ratio's persistent Advisory tier; minimum capacity buffer floor recommendation for sprint planning; consolidated technical debt registry; skill-silo mitigation via execution-heavy story rotation; automated PII scan gate for new backend endpoints; governed write path for unversioned Now-horizon carry-forward headings | `claude/system/release_planning_prompt.md#1.4a.1`; `claude/system/roadmap_prompt.md#2.4`; `claude/system/sprint_planning_prompt.md#1.5`; `claude/backlog/technical_debt_registry.md`; `claude/system/release_planning_prompt.md#STEP 3`; `scripts/check_pii_field_patterns.py`; `.github/workflows/quality_gate.yml`; `claude/system/shared_standards.md#17` |
+| EPIC-04 | Staging-verified custom price alert live delivery; recurring pre-sprint-planning endpoint test coverage audit; cross-EPIC deviation (DEV-*) consolidation review across cycles; post-parallelization Playwright shard balance audit | `scripts/audit_endpoint_test_coverage.py`; `claude/system/sprint_planning_prompt.md#STEP -1`; `docs/governance/deviation_consolidation_review_2026-08-03.md`; `claude/system/post_ship_closure.md#STEP 5.1`; `docs/ops/ci_pipeline_baseline.md#7` |
+| EPIC-05 | Revisited and formally defined SI-02 Gate Status condition-2/3 thresholds (including sufficient-data threshold); added explicit §13 continuity note for v6.9 on-demand recheck | `docs/specs/frontend/pages/reports.md#SI-02 Gate Status`; `claude/strategy/strategy_rules.md#13.4`; `docs/specs/metrics/si02_drift_score.md#2`; `claude/roadmap/current_roadmap.md` |
+| EPIC-06 | Standardised cursor-based pagination pattern across list endpoints (consolidated); scoped `trade_plans.position_id` historical backfill design | `docs/specs/api_contracts/backend_engineering_patterns.md#Cursor-based pagination pattern for list endpoints`; `docs/specs/trade_plans_position_id_backfill_scoping.md` |
+| EPIC-07 | Implemented per-EPIC `execution_state.json` files (Option 1), resolving the recurring cross-EPIC merge-conflict pattern designed in v8.0 | `claude/system/shared_standards.md#12` |
+
+### Deviations accepted
+None.
+
+### Tech backlog items shipped
+- [ST-01] [U] Trade Plan tag-suggestion buttons use `onMouseDown`, not keyboard-operable — fixed to `onClick`, keyboard-navigable per spec
+- [ST-02] [D] Recurring manual `pg_dump` backup schedule for production Supabase
+- [ST-03] [G] Formal sunset criteria for perennially-returning gated backlog items
+- [ST-04] [G] Escalation path for Product Value Ratio's persistent Advisory tier
+- [ST-05] [G] Minimum capacity buffer floor recommendation for sprint planning
+- [ST-06] [G] Technical debt registry (consolidated cross-cycle view)
+- [ST-07] [G] Skill-Silo mitigation: rotate execution-heavy story assignment pattern
+- [ST-08] [D] Automated PII scan gate for new backend endpoints
+- [ST-09] [G] Governed write path for a non-empty, unversioned Now-horizon carry-forward
+- [ST-10] [D] Staging sign-off: custom price alert live delivery firing
+- [ST-11] [D] Recurring pre-sprint-planning endpoint test coverage audit
+- [ST-12] [G] Cross-EPIC deviation (DEV-*) consolidation review across cycles
+- [ST-13] [D] Post-parallelization Playwright shard balance audit
+- [ST-14] [D] Revisit SI-02 Gate Status Condition 2/3 threshold definitions
+- [ST-15] [D] Explicit §13 continuity note for v6.9 on-demand recheck
+- [ST-16] [D] Formally define SI-02 condition-3 sufficient data threshold
+- [ST-17] [D] Standardise pagination pattern across list endpoints (consolidated)
+- [ST-18] [P] `trade_plans.position_id` historical backfill design
+- [ST-19] [G] Implement per-EPIC `execution_state.json` files (Option 1)
+
+Sign-off: Product Owner — 2026-08-03
+QA sign-off: Director of Quality — 2026-08-03
 
 ---
 

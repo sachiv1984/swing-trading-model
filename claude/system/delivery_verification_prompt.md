@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.6
+**Version:** 3.7
 **Last Updated:** 2026-08-03
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -209,7 +209,7 @@ If any merged EPIC is missing its qa_evidence log entirely: halt (Tier 1 applies
 Before proceeding, verify that every EPIC in `execution_state.json.merge_gate.epics_merged` has a non-null `pr_number`. If any EPIC has `pr_number = null` or `pr_number = 0`:
 
 1. Recover via: `gh pr view exec/<cycle_id>/EPIC-xx --json number,state,mergedAt`
-2. If a merged PR is found: record the `number` in `execution_state.json` for that EPIC — set `pr_number = <recovered_number>` and confirm `pr_status = "merged"` if `mergedAt` is non-null.
+2. If a merged PR is found: record the `number` for that EPIC — set `pr_number = <recovered_number>` and confirm `pr_status = "merged"` if `mergedAt` is non-null. **Write target (LL-v8.1-P4-01):** under the per-EPIC execution state mechanism (`shared_standards.md §12.1`), `execution_state.json` is a computed, regenerate-on-read summary — do not hand-write into it. Write the recovered fields into the owning `claude/cycles/<cycle_id>/execution_state/EPIC-xx.json` file instead, then regenerate `execution_state.json` via `claude/system/scripts/generate_execution_summary.py <cycle_id>` before continuing. If the cycle predates the per-EPIC mechanism (no `execution_state/` directory present — legacy shared-file cycle), write directly into `execution_state.json` as before.
 3. If no PR is found for an EPIC branch: flag as a process gap (sprint close executed without a PR) — record in `verification_report.md §8` and continue.
 
 **Why this step exists:** During v4.0 delivery verification, `pr_number = null` in `execution_state.json` caused downstream steps to fail when attempting `gh pr view <pr_number>`. This guard recovers the PR number from GitHub before any PR-dependent check proceeds (OA-04, v4.1 ST-03).
