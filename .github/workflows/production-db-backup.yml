@@ -70,3 +70,63 @@ jobs:
           name: db-backup-${{ github.run_id }}
           path: ${{ env.DUMP_FILE }}
           retention-days: 90
+
+  restore_dry_run:
+    name: Restore Dry-Run (verify backup is actually restorable)
+    runs-on: ubuntu-latest
+    needs: backup
+    # Disposable Postgres 17 service container — never restores into
+    # staging or production. Verifies the dump this run just produced can
+    # actually be restored, not just that pg_dump exited 0.
+    services:
+      scratch_db:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: scratch_dry_run_password
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Install PostgreSQL 17 client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y postgresql-client-17
+
+      - name: Download backup artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: db-backup-${{ github.run_id }}
+
+      - name: Restore into scratch database
+        run: |
+          set -euo pipefail
+          PSQL=/usr/lib/postgresql/17/bin/psql
+          SCRATCH_URL="postgresql://postgres:scratch_dry_run_password@localhost:5432/postgres"
+          DUMP_FILE=$(ls backup-*.sql)
+
+          # ON_ERROR_STOP=1 is required — psql's default behaviour is to
+          # continue past a failed statement and still exit 0, which would
+          # let a genuinely broken dump "pass" this dry-run silently.
+          "$PSQL" "$SCRATCH_URL" -v ON_ERROR_STOP=1 -f "$DUMP_FILE"
+
+      - name: Verify restored data
+        run: |
+          set -euo pipefail
+          PSQL=/usr/lib/postgresql/17/bin/psql
+          SCRATCH_URL="postgresql://postgres:scratch_dry_run_password@localhost:5432/postgres"
+
+          COUNT=$("$PSQL" "$SCRATCH_URL" -t -A -c "SELECT COUNT(*) FROM portfolios;")
+          echo "Restored portfolios row count: $COUNT"
+          if [ "$COUNT" -lt 1 ]; then
+            echo "::error::Restore verification failed — portfolios table is empty after restore"
+            exit 1
+          fi
+          echo "Restore dry-run verified: portfolios table has $COUNT row(s) after restore."
