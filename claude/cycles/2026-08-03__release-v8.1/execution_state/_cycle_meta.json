@@ -4,9 +4,15 @@
   "backlog_slice_source": "claude/cycles/2026-08-03__release-v8.1/stage4_backlog_slice.md",
   "invoked_utc": "2026-08-03T08:49:01Z",
   "mode": "standard",
-  "status": "Running",
+  "status": "Sealed",
+  "sealed": true,
+  "sealed_utc": "2026-08-03T19:59:00Z",
   "open_escalations": [],
-  "process_notes": [],
-  "sealed": false,
-  "sealed_utc": null
+  "process_notes": [
+    {
+      "check": "orphaned_post_merge_commit_scan",
+      "utc": "2026-08-03T19:55:00Z",
+      "result": "No orphaned commits found on any of the 7 EPIC branches (git log origin/main..origin/exec/2026-08-03__release-v8.1/EPIC-xx --oneline empty for all)."
+    }
+  ]
 }

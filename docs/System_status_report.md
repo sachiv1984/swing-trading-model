@@ -1,9 +1,37 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.19
-**Last Updated:** 2026-07-31 (delivery verification 2026-07-30__release-v8.0 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-07-31 (sprint close 2026-07-30__release-v8.0)
+**Version:** 4.20
+**Last Updated:** 2026-08-03 (sprint close 2026-08-03__release-v8.1); prior — 2026-07-31 (delivery verification 2026-07-30__release-v8.0 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-07-31 (sprint close 2026-07-30__release-v8.0)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-08-03__release-v8.1
+**Date:** 2026-08-03
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Trade Plan tag-suggestion buttons switched from `onMouseDown` to `onClick` — keyboard-operable | `docs/specs/frontend/components/journal_components.md#4` | None |
+| EPIC-02 | Recurring production Supabase `pg_dump` backup (`.github/workflows/production-db-backup.yml`, daily) with automated restore-dry-run verification job into a disposable Postgres container | `docs/ops/database_backup_disaster_recovery_runbook.md#3.4` | None |
+| EPIC-03 | Governance hardening bundle: perennial gated-item sunset criteria; Product Value Ratio escalation path; minimum capacity buffer floor advisory; technical debt registry; skill-silo mitigation rotation; automated PII-field scan gate for new endpoints; governed carry-forward write path | `claude/system/release_planning_prompt.md#1.4a.1, #STEP 3`; `claude/system/roadmap_prompt.md#2.4`; `claude/system/sprint_planning_prompt.md#1.5`; `claude/backlog/technical_debt_registry.md`; `scripts/check_pii_field_patterns.py`; `claude/system/shared_standards.md#17` | None |
+| EPIC-04 | Custom price alert staging delivery confirmed live (Telegram); recurring endpoint test coverage audit script; cross-cycle DEV-* deviation consolidation review; Playwright shard balance audit | staging-only (BLG-QA-115); `scripts/audit_endpoint_test_coverage.py`; `claude/system/sprint_planning_prompt.md#STEP -1`; `docs/governance/deviation_consolidation_review_2026-08-03.md`; `claude/system/post_ship_closure.md#STEP 5.1`; `docs/ops/ci_pipeline_baseline.md#7` | None |
+| EPIC-05 | SI-02 Gate Status Condition 2/3 thresholds formally decided and codified (Condition 2 unchanged ≥20 linked trades; Condition 3 changed to ≥0.50 adherence rate); §13 continuity note for v6.9 on-demand recheck; SI-02 condition-3 sufficient-data threshold cross-referenced to its existing definition | `docs/specs/frontend/pages/reports.md#SI-02 Gate Status`; `docs/specs/Specs_Index.md#6.6`; `claude/strategy/strategy_rules.md#13.4`; `docs/specs/metrics/si02_drift_score.md#2` | None |
+| EPIC-06 | Cursor-based (keyset) pagination pattern added as shared backend utility, adopted opt-in on `GET /trade-plans`; `trade_plans.position_id` historical backfill scoping document | `docs/specs/api_contracts/backend_engineering_patterns.md#Cursor-based pagination pattern for list endpoints`; `docs/specs/trade_plans_position_id_backfill_scoping.md` | None |
+| EPIC-07 | Per-EPIC `execution_state.json` files (Option 1) — each EPIC branch now owns its own state file exclusively, eliminating the cross-EPIC merge-conflict structural issue; cycle-level summary regenerated via `generate_execution_summary.py` | `claude/system/shared_standards.md#12` | None |
+
+### Capabilities deferred or returned
+
+None — all 19 stories (ST-01 through ST-19) delivered within the sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: `qa_evidence_EPIC-01.md` through `qa_evidence_EPIC-07.md` (all 7 present, all sign-off blocks non-blank, dated 2026-08-03)
+- Deviations filed: None
+- Test scenarios referenced: `tests/e2e/reports-si02-gate-status.spec.js` (SC-SI02-07, SC-SI02-08 added); `tests/test_pagination.py`; `scripts/audit_endpoint_test_coverage.py`
 
 ---
 
