@@ -1,9 +1,9 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-07-09
-**Cycle:** 2026-07-08__release-v6.8 (ST-04 — BLG-OPS-99; ST-17 — BLG-OPS-71, entry #7 added)
+**Version:** 1.5
+**Last Updated:** 2026-08-04
+**Cycle:** 2026-08-04__release-v8.2 (ST-06 — BLG-SEC-27, entry #6 updated: staging/production key rotation to distinct values)
 
 ---
 
@@ -111,16 +111,16 @@ For rotation procedures, see: `docs/ops/api_key_rotation_policy.md`
 | Field | Value |
 |-------|-------|
 | Key name | Application X-API-Key |
-| Env var (backend/Render) | `API_KEY` |
-| Local storage variable name | `RENDER_API_KEY` in `~/.api_keys` — **note the naming mismatch**: despite the local variable being named `RENDER_API_KEY`, its value is the app-level `X-API-Key`, not a Render platform/service API key. Prior sessions incorrectly concluded no application key existed because they searched for a differently-named variable — this entry exists to prevent that recurrence (LP-08, v6.7 closure carry-forward). |
+| Env var (backend/Render) | `API_KEY` — **as of 2026-08-04 (ST-06, BLG-SEC-27, EPIC-02, v8.2), staging and production hold two distinct, independently-revocable values.** Prior to this rotation, both services shared one value (a latent risk: a compromise or accidental log-leak of the staging key would also grant production access). Frontend build-time equivalent: `REACT_APP_API_KEY` (baked into the static bundle at build time — GH Pages for production via `.github/workflows/deploy.yml`, Render static site for staging). |
+| Local storage variable name | `RENDER_API_KEY` in `~/.api_keys` (production value) — **note the naming mismatch**: despite the local variable being named `RENDER_API_KEY`, its value is the app-level `X-API-Key`, not a Render platform/service API key. Prior sessions incorrectly concluded no application key existed because they searched for a differently-named variable — this entry exists to prevent that recurrence (LP-08, v6.7 closure carry-forward). A separate, genuinely-distinct Render *platform management* API key (used for ST-06/ST-07 rotation and deploy diagnostics) is stored as `RENDER_PLATFORM_API_KEY` in the same file — do not confuse the two. |
 | Purpose | Authenticates governed routines (roadmap, release planning, sprint execution) against the production API so gate conditions (e.g. SI-02 trade/trade-plan counts) can be confirmed directly via `GET` endpoints instead of relying on self-report |
 | Scope | Full API access, subject to `api_key_middleware` (`backend/main.py`) — required on every request via `X-API-Key` header except `OPTIONS` and `GET /health`. Read-only in practice: governed routines only ever issue `GET` requests with this key. |
-| Storage location | Render environment variable `API_KEY` (production service `srv-d5r98jm3jp1c73figm1g`); local copy in `~/.api_keys` as `RENDER_API_KEY` for use by governed-routine sessions |
+| Storage location | Render environment variable `API_KEY` on each service independently (production `srv-d5r98jm3jp1c73figm1g`; staging backend `srv-d6rtdg94tr6s73ce2j6g`; staging frontend `srv-d6rtdg94tr6s73ce2j60` as both `API_KEY` and `REACT_APP_API_KEY`); GitHub Actions repo secrets `API_KEY` and `REACT_APP_API_KEY` carry the production value (consumed by `alert-evaluation.yml`, `daily-snapshot.yml`, `backtest.yml`, `deploy.yml`); local copy of the production value in `~/.api_keys` as `RENDER_API_KEY` for use by governed-routine sessions |
 | Rotation cadence | Annual minimum (12 months), aligned with other keys in this register |
-| Rotation procedure | Generate new value → update `API_KEY` in Render production service env vars → update `RENDER_API_KEY` in `~/.api_keys` → verify with `curl -H "X-API-Key: $RENDER_API_KEY" https://trading-assistant-api-c0f9.onrender.com/health` |
-| Last rotation date | Not tracked prior to this register entry (key already provisioned and in use as of 2026-07-06) |
-| Next rotation due | 2026-07-09 + 12 months |
-| Notes | Confirmed working 2026-07-09 (ST-04, BLG-OPS-99, v6.8): `curl -H "X-API-Key: $RENDER_API_KEY" .../signals` → 200, used to directly confirm the SI-02 gate condition (`GET /trades` → `total_trades: 20`; `GET /trade-plans` → 11 plans, 0 with `position_id` set, pre-ST-01-fix baseline) rather than relying on self-report. See `docs/security/signal_anomaly_review_2026-07-09.md` for a second example use (ST-03). |
+| Rotation procedure | Generate two new distinct values (staging, production) → update `API_KEY` on each Render service independently (and `REACT_APP_API_KEY` on the staging frontend) → trigger a redeploy on each service (env var changes made via the Render API do not auto-restart the running process) → update the `API_KEY`/`REACT_APP_API_KEY` GitHub Actions secrets to the new production value → trigger `deploy.yml` (`gh workflow run deploy.yml`) to rebuild the production frontend bundle with the new key before the old one is revoked, since the already-deployed GH Pages bundle has the old value baked in and would start failing auth otherwise → update `RENDER_API_KEY` in `~/.api_keys` → verify live: new values succeed, old shared value now returns 401 against production, and each new value fails against the *other* service (confirms genuine distinctness, not just a synchronized rotation) |
+| Last rotation date | 2026-08-04 (ST-06, BLG-SEC-27, EPIC-02, v8.2) — first rotation since the key was originally provisioned; also the first time staging and production diverged to distinct values |
+| Next rotation due | 2026-08-04 + 12 months |
+| Notes | Confirmed working 2026-07-09 (ST-04, BLG-OPS-99, v6.8): `curl -H "X-API-Key: $RENDER_API_KEY" .../signals` → 200, used to directly confirm the SI-02 gate condition (`GET /trades` → `total_trades: 20`; `GET /trade-plans` → 11 plans, 0 with `position_id` set, pre-ST-01-fix baseline) rather than relying on self-report. See `docs/security/signal_anomaly_review_2026-07-09.md` for a second example use (ST-03). **2026-08-04 rotation:** live-verified via 6 direct checks — old shared key fails against production (401) and against staging (401); new production key succeeds against production (200) but fails against staging (401); new staging key succeeds against staging (200) but fails against production (401). Production's GH Pages frontend was rebuilt and redeployed (`gh workflow run deploy.yml`, run `30950208420`) immediately after the secret update to avoid a window where the live frontend's already-baked-in old key would have started failing auth against the rotated backend. |
 
 ---
 
