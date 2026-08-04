@@ -6,6 +6,7 @@
  *   SC-RFJ-01: Page renders with mocked events list (event type label, ticker, date visible)
  *   SC-RFJ-02: Empty state renders when API returns 0 events
  *   SC-RFJ-03: Filter by event_type narrows results in mocked response
+ *   SC-RFJ-05: Event type colour palette (ST-03, EPIC-01, v8.2, BLG-FE-67)
  *
  * Infrastructure:
  * - Playwright page.route() network interception — no live backend required.
@@ -207,6 +208,32 @@ test.describe('Red Flag Journal', () => {
     // Wait for filtered results
     await expect(page.getByTestId('event-row')).toHaveCount(1, { timeout: 6000 });
     await expect(page.getByTestId('event-row').first()).toContainText('Pre-Entry Override');
+  });
+
+  test('SC-RFJ-05: Event type colour palette (ST-03, EPIC-01, v8.2, BLG-FE-67)', async ({ page }) => {
+    const events = [
+      { ...MOCK_EVENTS[0], id: 'e1', event_type: 'pre_entry_override', ticker: 'AAPL' },
+      { ...MOCK_EVENTS[0], id: 'e2', event_type: 'checklist_skipped', ticker: 'NVDA' },
+      { ...MOCK_EVENTS[0], id: 'e3', event_type: 'stop_prompt_dismissed', ticker: 'MSFT' },
+      { ...MOCK_EVENTS[0], id: 'e4', event_type: 'drawdown_prompt_dismissed', ticker: 'TSLA' },
+    ];
+    await setup(page, makeJournalResponse(events));
+
+    const labels = page.getByTestId('event-type-label');
+    await expect(labels).toHaveCount(4, { timeout: 8000 });
+
+    // pre_entry_override retains amber-400
+    await expect(labels.nth(0)).toHaveClass(/text-amber-400/);
+    // checklist_skipped moves from orange-400 to sky-400 — administrative
+    // miss, not a risk event, per the v6.0 RFJ design review §3.
+    await expect(labels.nth(1)).toHaveClass(/text-sky-400/);
+    await expect(labels.nth(1)).not.toHaveClass(/text-orange-400/);
+    // stop_prompt_dismissed retains red-400
+    await expect(labels.nth(2)).toHaveClass(/text-red-400/);
+    // drawdown_prompt_dismissed deepens from rose-400 to red-500 — distinct
+    // from stop_prompt_dismissed's red-400 under the light-daltonized theme.
+    await expect(labels.nth(3)).toHaveClass(/text-red-500/);
+    await expect(labels.nth(3)).not.toHaveClass(/text-rose-400/);
   });
 
 });

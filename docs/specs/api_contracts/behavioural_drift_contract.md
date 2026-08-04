@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 2)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-30
+**Version:** 1.1
+**Last Updated:** 2026-08-04
 **Shipped:** v4.6 — ST-04, EPIC-01, cycle 2026-05-30__release-v4.6
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **§13 gate:** PASS — `docs/product/decisions/decisions--2026-05-30__release-v4.5--SI-02-section13-review.md`
@@ -39,7 +39,7 @@ Returns the SI-02 Behavioural Drift Detection analysis for the authenticated por
 
 **Parameters:** None
 
-**Minimum data:** 10 closed trades in the analysis window. If below threshold, returns `status: "insufficient_data"` with no metric values.
+**Minimum data:** 10 closed trades in the analysis window. If below threshold, returns `status: "insufficient_data"` with no metric values, plus the insufficient_data streak fields (v1.1, ST-05, EPIC-01, BLG-FEAT-86).
 
 ### Response Shape (200 OK)
 
@@ -97,6 +97,34 @@ Returns the SI-02 Behavioural Drift Detection analysis for the authenticated por
 }
 ```
 
+### Insufficient-Data Response Shape (v1.1 — ST-05, EPIC-01, BLG-FEAT-86)
+
+When `status` is `"insufficient_data"`, the response additionally carries streak fields, so the frontend can surface a streak-length indicator alongside the existing SI-02 gate note without a separate endpoint call:
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "status": "insufficient_data",
+    "analysis_window_days": 90,
+    "trade_count_in_window": 4,
+    "metrics": [],
+    "computed_at": "2026-08-04T12:00:00Z",
+    "insufficient_data_streak_days": 11,
+    "streak_capped": false,
+    "trade_count_trend": "flat"
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|--------------|
+| `insufficient_data_streak_days` | integer | Consecutive days (ending today, walking backward) for which the rolling 90-day trailing window held fewer than 10 closed trades. `0` if the window currently holds ≥10 (not applicable — only computed when `status == "insufficient_data"`). |
+| `streak_capped` | boolean | `true` if the backward walk hit the 180-day lookback cap before finding a day the window held ≥10 trades — the streak is *at least* `insufficient_data_streak_days`, not necessarily exact. |
+| `trade_count_trend` | string | `"increasing"`, `"decreasing"`, or `"flat"` — compares today's `trade_count_in_window` against the same rolling-window count 30 days ago. |
+
+These three fields are omitted (not present) when `status` is not `"insufficient_data"` — the streak computation only runs in that branch to avoid an extra query on every request. Definitions: `docs/specs/metrics/si02_drift_score.md` §3.
+
 ### Top-Level Status
 
 | Status | Condition |
@@ -140,6 +168,12 @@ The endpoint returns 200 with `data.status = "error"` and an `error_detail` fiel
 
 ---
 
+## Changelog
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.1 | 2026-08-04 | ST-05 (v8.2, EPIC-01, BLG-FEAT-86): Added `insufficient_data_streak_days`, `streak_capped`, `trade_count_trend` fields to the response, present only when `status == "insufficient_data"`. See §Insufficient-Data Response Shape. |
+
 ## Known Deviations
 
-None at v1.0.
+None at v1.1.

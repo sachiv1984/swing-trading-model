@@ -2836,6 +2836,16 @@ paths:
                       computed_at:
                         type: string
                         format: date-time
+                      insufficient_data_streak_days:
+                        type: integer
+                        description: Present only when status is insufficient_data (v1.1, ST-05, BLG-FEAT-86).
+                      streak_capped:
+                        type: boolean
+                        description: Present only when status is insufficient_data.
+                      trade_count_trend:
+                        type: string
+                        enum: [increasing, decreasing, flat]
+                        description: Present only when status is insufficient_data.
         "401":
           $ref: "#/components/responses/Unauthorized"
 

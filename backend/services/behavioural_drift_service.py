@@ -11,13 +11,22 @@ Spec: docs/specs/metrics/si02_drift_score.md §2–§4
 §13 PASS: display-only output; no automated recommendations; no ML inference.
 """
 
-from datetime import datetime, timezone
+import bisect
+from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 
 _WINDOW_DAYS = 90
 _MIN_TRADES = 10
 _MIN_POST_LOSS_TRADES = 3
+_STREAK_MAX_LOOKBACK_DAYS = 180
+_STREAK_TREND_COMPARISON_DAYS = 30
+
+# Public: how many days of entry_date history the caller (router) must fetch
+# to feed compute_insufficient_data_streak() — covers the full backward walk
+# (_STREAK_MAX_LOOKBACK_DAYS) plus one full trailing window (_WINDOW_DAYS) at
+# the earliest day walked, so the earliest day's window count is accurate.
+STREAK_LOOKBACK_DAYS = _WINDOW_DAYS + _STREAK_MAX_LOOKBACK_DAYS
 
 # Metric direction types
 _LTE = "lte"  # measured value should be ≤ threshold (lower is better)
@@ -245,6 +254,74 @@ def _overall_status(metrics: list) -> str:
     if any(s in ("approaching", "breached") for s in statuses):
         return "drift_detected"
     return "no_drift"
+
+
+def _trade_count_as_of(sorted_entry_dates: list, as_of, window_days: int) -> int:
+    """Count trades with entry_date in [as_of - (window_days - 1), as_of], inclusive."""
+    window_start = as_of - timedelta(days=window_days - 1)
+    lo = bisect.bisect_left(sorted_entry_dates, window_start)
+    hi = bisect.bisect_right(sorted_entry_dates, as_of)
+    return max(0, hi - lo)
+
+
+def compute_insufficient_data_streak(entry_dates: list, as_of=None) -> dict:
+    """Compute the insufficient_data streak-length metric (ST-05, EPIC-01, v8.2, BLG-FEAT-86).
+
+    Walks backward day-by-day from `as_of` (default: today), re-evaluating what
+    trade_count_in_window would have been on each day using the same rolling
+    _WINDOW_DAYS window and _MIN_TRADES threshold compute_drift() uses, until a
+    day is found where the window held >= _MIN_TRADES trades (streak ends) or
+    the _STREAK_MAX_LOOKBACK_DAYS cap is reached (streak is capped, not exact).
+
+    Args:
+        entry_dates: list of trade entry_date values (any order) — trades whose
+            entry_date falls within the streak's lookback horizon.
+        as_of: date to measure the streak from (defaults to UTC today).
+
+    Returns:
+        {
+          "insufficient_data_streak_days": int,
+          "streak_capped": bool,   # True if the cap was hit before the streak ended
+          "trade_count_trend": "increasing" | "decreasing" | "flat",
+        }
+
+    Spec: docs/specs/metrics/si02_drift_score.md §3 (insufficient_data_streak_days).
+    §13 PASS: display-only derived count; no automated recommendation.
+    """
+    if as_of is None:
+        as_of = datetime.now(timezone.utc).date()
+
+    sorted_dates = sorted(entry_dates)
+
+    streak_days = 0
+    capped = False
+    day = as_of
+    while True:
+        count = _trade_count_as_of(sorted_dates, day, _WINDOW_DAYS)
+        if count >= _MIN_TRADES:
+            break
+        streak_days += 1
+        if streak_days >= _STREAK_MAX_LOOKBACK_DAYS:
+            capped = True
+            break
+        day = day - timedelta(days=1)
+
+    count_today = _trade_count_as_of(sorted_dates, as_of, _WINDOW_DAYS)
+    count_prior = _trade_count_as_of(
+        sorted_dates, as_of - timedelta(days=_STREAK_TREND_COMPARISON_DAYS), _WINDOW_DAYS
+    )
+    if count_today > count_prior:
+        trend = "increasing"
+    elif count_today < count_prior:
+        trend = "decreasing"
+    else:
+        trend = "flat"
+
+    return {
+        "insufficient_data_streak_days": streak_days,
+        "streak_capped": capped,
+        "trade_count_trend": trend,
+    }
 
 
 def compute_drift(portfolio_data: dict) -> dict:

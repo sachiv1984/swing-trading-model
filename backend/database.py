@@ -2635,6 +2635,34 @@ def get_behavioural_drift_data(portfolio_id: str, window_days: int = 90) -> dict
     return result
 
 
+def get_closed_trade_entry_dates(portfolio_id: str, since_days: int) -> List:
+    """Return closed trade entry_dates (ascending) within the last `since_days` days.
+
+    Used by the SI-02 insufficient_data streak metric (ST-05, EPIC-01, v8.2,
+    BLG-FEAT-86) to walk backward day-by-day and determine how long the
+    rolling 90-day window has held fewer than the minimum trade count —
+    a wider lookback than get_behavioural_drift_data's own 90-day window,
+    since the streak computation needs to look further back in time.
+    Filters by entry_date (not exit_date) to match get_behavioural_drift_data's
+    own windowing field, so the streak reflects the same trade_count_in_window
+    definition compute_drift() uses.
+    Spec: docs/specs/metrics/si02_drift_score.md §3 (insufficient_data_streak_days).
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT p.entry_date
+                   FROM trade_history th
+                   JOIN positions p ON p.id = th.position_id
+                   WHERE p.portfolio_id = %s
+                     AND th.pnl IS NOT NULL
+                     AND p.entry_date >= NOW() - INTERVAL '%s days'
+                   ORDER BY p.entry_date ASC""",
+                (portfolio_id, since_days)
+            )
+            return [row["entry_date"] for row in cur.fetchall()]
+
+
 # ---------------------------------------------------------------------------
 # Gate Metrics (ST-04, EPIC-02, v5.5)
 # ---------------------------------------------------------------------------

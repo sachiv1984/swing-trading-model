@@ -428,10 +428,11 @@ function SI02GateStatusSection() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["si02-gate-status"],
     queryFn: async () => {
-      const [tradesRes, plansRes, arc5] = await Promise.all([
+      const [tradesRes, plansRes, arc5, drift] = await Promise.all([
         api.trades.list(),
         apiFetch(`${base44.baseUrl}/trade-plans`).then((r) => r.json()),
         api.analytics.arc5Compliance("7d"),
+        api.analytics.behaviouralDrift().catch(() => null),
       ]);
       const totalClosedTrades = tradesRes?.total_trades ?? 0;
       const plans = Array.isArray(plansRes?.data) ? plansRes.data : [];
@@ -449,6 +450,13 @@ function SI02GateStatusSection() {
         // of closed trades must show trade-plan discipline. See
         // reports.md §SI-02 Gate Status for the decision rationale.
         gateCondition3Met: tradePlanAdherenceRate != null && tradePlanAdherenceRate >= 0.50,
+        // ST-05 (v8.2, EPIC-01, BLG-FEAT-86): insufficient_data streak metric,
+        // surfaced alongside this existing SI-02 gate note. Only present when
+        // the drift endpoint itself is in the insufficient_data state.
+        driftInsufficientData: drift?.status === "insufficient_data",
+        driftStreakDays: drift?.insufficient_data_streak_days ?? null,
+        driftStreakCapped: drift?.streak_capped ?? false,
+        driftTrend: drift?.trade_count_trend ?? null,
       };
     },
     retry: 1,
@@ -508,6 +516,26 @@ function SI02GateStatusSection() {
                   <GateBadge met={data.gateCondition3Met} />
                 </div>
               </div>
+
+              {data.driftInsufficientData && (
+                <div
+                  data-testid="si02-insufficient-data-streak"
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-700/50"
+                >
+                  <div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Insufficient-Data Streak</p>
+                    <p className="text-lg font-semibold text-white" data-testid="si02-streak-days">
+                      {data.driftStreakDays}{data.driftStreakCapped ? "+" : ""} days
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Trade Count Trend</p>
+                    <p className="text-lg font-semibold text-white capitalize" data-testid="si02-trend">
+                      {data.driftTrend ?? "—"}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

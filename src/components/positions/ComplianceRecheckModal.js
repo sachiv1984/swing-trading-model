@@ -67,6 +67,7 @@ export default function ComplianceRecheckModal({ position, onClose }) {
   const overallStatus = data?.overall_status;
   const checks = data?.checks || [];
   const hasWarnOrFail = overallStatus === "warn" || overallStatus === "fail";
+  const allPassed = overallStatus === "pass";
 
   return (
     <div
@@ -156,6 +157,15 @@ export default function ComplianceRecheckModal({ position, onClose }) {
               />
               <span className="text-xs text-amber-400">I acknowledge the advisory result</span>
             </label>
+          )}
+
+          {!isLoading && !isError && allPassed && (
+            <p
+              data-testid="compliance-recheck-all-pass-note"
+              className="mt-4 pt-3 border-t border-slate-700/50 text-xs text-emerald-400"
+            >
+              All 5 checks passed — no action needed.
+            </p>
           )}
         </div>
       </div>

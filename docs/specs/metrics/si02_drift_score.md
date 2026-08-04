@@ -1,8 +1,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner; Head of Specs Team
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-05-30
+**Version:** 1.1
+**Last Updated:** 2026-08-04
 **Cycle:** 2026-05-30__release-v4.5 (EPIC-03, ST-07, BLG-SPEC-41)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **§13 gate:** PASS — `docs/product/decisions/decisions--2026-05-30__release-v4.5--SI-02-section13-review.md`
@@ -248,6 +248,35 @@ WHERE p.entry_date >= NOW() - INTERVAL '90 days'
 
 ---
 
+### 3.5 Insufficient-Data Streak (v1.1 — ST-05, EPIC-01, v8.2, BLG-FEAT-86)
+
+**Field:** `insufficient_data_streak_days` (+ `streak_capped`, `trade_count_trend`)
+**Not a drift metric** — this is a data-availability indicator surfaced alongside the existing SI-02 gate note (`claude/roadmap/current_roadmap.md` §5), not one of the 4 drift metrics in §3.1–§3.4. Only computed and present in the response when the top-level `status` is `insufficient_data`.
+
+**What it measures:** How long the rolling 90-day trailing window has held fewer than the minimum 10 closed trades — i.e. how long the four drift metrics above have been unavailable, and whether trade activity is trending toward or away from clearing the threshold.
+
+**Formula (`insufficient_data_streak_days`):**
+
+Walking backward day-by-day from today, re-evaluate what `trade_count_in_window` would have been on each day using the same rolling 90-day window and the entry-date filter §2.1 uses. The streak is the number of consecutive days (ending today) for which that recomputed count was below 10. The walk is capped at 180 days (`streak_capped: true` if the cap is hit before a sufficient day is found — the true streak may be longer).
+
+```
+for day in [today, today-1, today-2, ...]:
+    window_count = COUNT(closed trades with entry_date in [day-89, day])
+    if window_count >= 10: streak ends
+    else: streak_days += 1
+cap at 180 days walked
+```
+
+**Formula (`trade_count_trend`):** Compares today's `trade_count_in_window` against the same rolling-window count computed as of 30 days ago. `"increasing"` if higher, `"decreasing"` if lower, `"flat"` if equal.
+
+**Measured unit:** days (streak); enum (trend)
+
+**§13 compliance:** Display-only derived count — no automated recommendation, no inference beyond deterministic arithmetic on already-fetched trade dates.
+
+**SI-05 integration:** Not currently included in the weekly digest (out of scope for this story — the digest already cites `insufficient_data` state manually; this field is additive detail for the Reports page UI only). May be added to the digest in a future story.
+
+---
+
 ## 4. Overall Endpoint Status Logic
 
 The top-level `status` field in the API response is determined as follows:
@@ -312,3 +341,5 @@ All thresholds are deterministic and documented. No configurable thresholds in S
 **Metrics Definitions & Analytics Canonical Owner sign-off notes:** All four metrics are deterministic aggregations against stored trade data. Formulas reference explicit strategy rules (§4.2.1 regime gate, §7 risk framework, §10 risk management summary). Threshold values are calibrated for a solo swing trader operating on a daily cadence with 10–30 trades per 90-day window. The approaching band (20% of threshold) provides actionable early warning without generating excessive amber states during normal operation.
 
 **Head of Specs Team sign-off notes:** AC-01–04 from `stage4_backlog_slice.md#ST-07` are met: (AC-01) user-facing format (Option B — percentage deviation display, per `si02_fe_component_predesign.md §5`), rolling window (90 days), threshold bands (green/amber/red per §2.2), and warning state triggers defined; (AC-02) SI-05 integration points documented in §5; (AC-03) both owners signed; (AC-04) document filed at canonical path `docs/specs/metrics/si02_drift_score.md`.
+
+**v1.1 addendum (2026-08-04, ST-05, EPIC-01, v8.2, BLG-FEAT-86):** §3.5 Insufficient-Data Streak added — a data-availability indicator (not a 5th drift metric), computed only when `status == "insufficient_data"`. Metrics Definitions & Analytics Canonical Owner sign-off: formula is deterministic (backward-walk recount against the same §2.1 window/threshold definitions already governing the 4 metrics above), bounded (180-day cap), and §13-compliant (display-only, no inference). Approved — 2026-08-04.

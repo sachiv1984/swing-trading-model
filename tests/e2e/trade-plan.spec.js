@@ -10,6 +10,7 @@
  *   SC-TP-06  Success banner shown after saving
  *   SC-TP-07  No regression — Positions and Watchlist pages still render
  *   SC-TP-08  Edit mode: form pre-populated from GET /trade-plans/{id} (RQ v5 useEffect fix)
+ *   SC-TP-29  Native form fields use the shared focus-visible:ring pattern (ST-04, EPIC-01, v8.2, BLG-FE-138)
  *
  * Spec refs: GitHub Issue #311 (ST-03 AC), GitHub Issue #394 (ST-09 AC)
  * Infrastructure: Playwright page.route() network interception.
@@ -172,6 +173,26 @@ test('SC-TP-01: Trade Plan form renders all required fields', async ({ page }) =
 
   // Save button present
   await expect(page.getByRole('button', { name: /save plan/i })).toBeVisible();
+});
+
+// ---------------------------------------------------------------------------
+// SC-TP-29 — Native form fields use the shared focus-visible ring pattern
+// (ST-04, EPIC-01, v8.2, BLG-FE-138)
+// ---------------------------------------------------------------------------
+
+test('SC-TP-29: Native form fields use the shared focus-visible:ring pattern, not the old focus:border-cyan-500', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await gotoTradePlan(page, { ticker: 'AAPL', market: 'US' });
+
+  const setupThesis = page.getByPlaceholder(/describe the setup/i);
+  await expect(setupThesis).toHaveClass(/focus-visible:ring-1/);
+  await expect(setupThesis).toHaveClass(/focus-visible:ring-ring/);
+  await expect(setupThesis).not.toHaveClass(/focus:border-cyan-500/);
+
+  const marketSelect = page.locator('select').filter({ has: page.locator('option[value="US"]') });
+  await expect(marketSelect).toHaveClass(/focus-visible:ring-1/);
+  await expect(marketSelect).not.toHaveClass(/focus:border-cyan-500/);
 });
 
 // ---------------------------------------------------------------------------
