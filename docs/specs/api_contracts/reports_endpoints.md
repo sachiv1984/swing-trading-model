@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.10
-**Last Updated:** 2026-07-26
+**Version:** 0.11
+**Last Updated:** 2026-08-04
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -28,6 +28,7 @@ Global response envelopes, error shape, and conventions are defined in **convent
 - [GET /reports/tax-year](#get-reportstax-year)
 - [GET /reports/monthly-pnl](#get-reportsmonthly-pnl)
 - [GET /reports/daily-pnl](#get-reportsdaily-pnl)
+- [GET /reports/reconciliation](#get-reportsreconciliation)
 
 ---
 
@@ -603,10 +604,74 @@ GET /reports/daily-pnl?year=2026&month=7
 
 ---
 
+## GET /reports/reconciliation
+
+**Purpose**
+
+P&L / tax record reconciliation report (ST-01, EPIC-01, v8.2, BLG-FEAT-88): compares the Tax Year report's system-computed realised P&L total against an independently re-derived export-side sum for the same tax year, and surfaces a pass/fail match indicator to the user. Design source: `docs/design/2026-08-04__release-v8.2/pnl-reconciliation-report/decision_record.md`.
+
+**Method & Path**
+
+- `GET /reports/reconciliation?year={year}`
+
+**Idempotency**
+
+- Safe to refresh (read-only).
+
+### Request
+
+| Query Parameter | Type | Required | Description |
+|------------------|------|----------|-------------|
+| `year` | integer | Yes | The start year of the UK tax year (e.g. `2025` for 2025/26) |
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "tax_year_label": "2025/26",
+    "total_closed_trades": 12,
+    "system_total_pnl_gbp": 1500.00,
+    "export_total_pnl_gbp": 1500.00,
+    "matched": true
+  }
+}
+```
+
+#### Field definitions
+
+| Field | Type | Description |
+|-------|------|--------------|
+| `tax_year_label` | string | e.g. `"2025/26"` — same format as `GET /reports/tax-year` |
+| `total_closed_trades` | integer | Count of closed trades in the tax year — `0` means the empty state applies |
+| `system_total_pnl_gbp` | float | Existing Tax Year summary `total_realised_pnl` for the year — unchanged computation |
+| `export_total_pnl_gbp` | float | Independently re-derived sum of `trade_history.pnl` for the year, via a separate server-side query path from the one powering the Tax Year report/CSV export, so a divergence is meaningful rather than definitionally impossible |
+| `matched` | boolean | `true` when `system_total_pnl_gbp` and `export_total_pnl_gbp` are equal within £0.01 rounding tolerance |
+
+**Scope:** Reconciles realised P&L / trade export only. Unrealised P&L and portfolio `total_pnl` are out of scope (already covered by existing approximate-tie-back notes elsewhere on the Reports page).
+
+### Error Responses
+
+| HTTP Status | Condition |
+|-------------|-----------|
+| `400` | `year` missing, not a valid four-digit integer, or tax year has not started yet |
+| `404` | No portfolio found |
+| `500` | Internal server error |
+
+### Example Request
+
+```
+GET /reports/reconciliation?year=2025
+```
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.11 | 2026-08-04 | ST-01 (v8.2, EPIC-01, BLG-FEAT-88): Added `## GET /reports/reconciliation` — P&L / tax record reconciliation report comparing the Tax Year report's system total against an independently re-derived export-side sum. Reuses `get_tax_year_report`'s `total_realised_pnl` for the system side; new `get_trade_history_pnl_sum_by_tax_year` DB function (server-side SQL SUM) for the export side, per the design gate's requirement for a genuinely separate query path. |
 | 0.10 | 2026-07-26 | ST-05 (v7.8, EPIC-05, BLG-FEAT-81): Added `format=csv` to `GET /reports/monthly-pnl`, mirroring the existing `GET /reports/tax-year?format=csv` handler. CSV export is a plain header row + one row per month (no metadata block, unlike the Tax Year CSV) — `Year,Month,Realised P&L (GBP),Trades`. Invalid `format` values return 400. Reconciliation note added: both CSV exports sum the same `trade_history.pnl` column directly, no double-counting risk, though a literal calendar-year-vs-tax-year numeric match isn't expected given the different window boundaries. |
 | 0.9 | 2026-07-20 | ST-04 (v7.5, EPIC-04, BLG-FE-118): Added `## GET /reports/daily-pnl` — day-granularity sibling of `GET /reports/monthly-pnl` for the Trade History Calendar View. Same `estimated_unrealised_pnl`/`unrealised_note` pattern (current-snapshot only, never per-day). |
 | 0.8 | 2026-07-14 | v7.1 sprint execution (ST-07, BLG-SPEC-84): CSV export hardening pass — documented and test-verified `Content-Type` charset (AC-01: actual header is `text/csv; charset=utf-8`, Starlette auto-appends charset for `text/*`; corrected in the same edit after a test assertion caught the initial documentation claiming no charset was present), authentication parity confirmation (AC-02, global `api_key_middleware`, no per-route bypass, test-verified with `API_KEY` configured), and financial-record-vs-analytics-export classification with versioning approach (AC-03, export is a read view of `trade_history`, not a stored contract). No response schema/behaviour change. |

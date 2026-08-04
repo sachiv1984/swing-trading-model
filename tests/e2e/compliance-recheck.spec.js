@@ -16,6 +16,8 @@
  *   SC-CR-06  API failure — "Recheck unavailable — try again" + retry button shown
  *   SC-CR-07  Close (✕) button dismisses the modal
  *   SC-CR-08  Grid View — "Recheck" action also present on the position card footer
+ *   SC-CR-09  Pass result shows the all-pass affirmation line (ST-02, EPIC-01, v8.2, BLG-FE-105)
+ *   SC-CR-10  Warn/Fail results do not show the all-pass affirmation line
  *
  * Spec refs:
  *   docs/design/2026-07-10__release-v6.9/on-demand-compliance-recheck/ux_spec.md
@@ -173,6 +175,28 @@ test('SC-CR-03: Pass result shows "Pass" badge, all 5 rule rows, no override che
     await expect(page.locator(`[data-testid="compliance-check-${key}"]`)).toBeVisible();
   }
   await expect(page.locator('[data-testid="compliance-recheck-override-checkbox"]')).not.toBeVisible();
+});
+
+test('SC-CR-09: Pass result shows the all-pass affirmation line (ST-02, EPIC-01, v8.2, BLG-FE-105)', async ({ page }) => {
+  const pos = makePosition();
+  await mockRecheck(page, pos.id, PASS_RESULT);
+  await gotoPositionsTable(page, [pos]);
+
+  await page.locator('[data-testid="recheck-compliance-button"]').first().click();
+  const note = page.locator('[data-testid="compliance-recheck-all-pass-note"]');
+  await expect(note).toBeVisible({ timeout: 5000 });
+  await expect(note).toHaveText('All 5 checks passed — no action needed.');
+  await expect(note).toHaveClass(/text-emerald-400/);
+});
+
+test('SC-CR-10: Warn/Fail results do not show the all-pass affirmation line', async ({ page }) => {
+  const pos = makePosition();
+  await mockRecheck(page, pos.id, WARN_RESULT);
+  await gotoPositionsTable(page, [pos]);
+
+  await page.locator('[data-testid="recheck-compliance-button"]').first().click();
+  await expect(page.locator('[data-testid="compliance-recheck-override-checkbox"]')).toBeVisible({ timeout: 5000 });
+  await expect(page.locator('[data-testid="compliance-recheck-all-pass-note"]')).not.toBeVisible();
 });
 
 test('SC-CR-04: Warn result shows "Warn" badge and override checkbox', async ({ page }) => {

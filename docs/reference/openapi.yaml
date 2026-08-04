@@ -881,6 +881,56 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /reports/reconciliation:
+    get:
+      tags: [Reports]
+      summary: P&L / tax record reconciliation report
+      description: >
+        Compares the Tax Year report's system-computed realised P&L total
+        against an independently re-derived export-side sum for the same
+        tax year (ST-01, EPIC-01, v8.2, BLG-FEAT-88).
+        Canonical contract: docs/specs/api_contracts/reports_endpoints.md v0.11.
+      parameters:
+        - name: year
+          in: query
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Reconciliation report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      tax_year_label:
+                        type: string
+                        example: "2025/26"
+                      total_closed_trades:
+                        type: integer
+                        example: 12
+                      system_total_pnl_gbp:
+                        type: number
+                        example: 1500.00
+                      export_total_pnl_gbp:
+                        type: number
+                        example: 1500.00
+                      matched:
+                        type: boolean
+                        example: true
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /saved-filters:
     get:
       tags: [Saved Filters]
@@ -2786,6 +2836,16 @@ paths:
                       computed_at:
                         type: string
                         format: date-time
+                      insufficient_data_streak_days:
+                        type: integer
+                        description: Present only when status is insufficient_data (v1.1, ST-05, BLG-FEAT-86).
+                      streak_capped:
+                        type: boolean
+                        description: Present only when status is insufficient_data.
+                      trade_count_trend:
+                        type: string
+                        enum: [increasing, decreasing, flat]
+                        description: Present only when status is insufficient_data.
         "401":
           $ref: "#/components/responses/Unauthorized"
 

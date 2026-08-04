@@ -10,6 +10,9 @@
  *   SC-SI02-03  3 gate condition badges render MET/NOT MET per live data
  *   SC-SI02-04  Values sourced live — not hardcoded (reflects ST-01/BLG-BE-46 finding as-is)
  *   SC-SI02-05  Error state does not block rest of Reports page
+ *   SC-SI02-09  Insufficient-data streak stat cards shown when applicable (ST-05, EPIC-01, v8.2, BLG-FEAT-86)
+ *   SC-SI02-10  Streak stat cards omitted when not applicable
+ *   SC-SI02-11  Streak displays "+" suffix when capped
  *
  * Infrastructure: Playwright page.route() network interception. No live backend required.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Reports'), then click
@@ -84,6 +87,12 @@ async function mockArc5Compliance(page, tradePlanAdherenceRate) {
         },
       }),
     })
+  );
+}
+
+async function mockBehaviouralDrift(page, data) {
+  await page.route(new RegExp(`${API}/analytics/behavioural-drift`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data }) })
   );
 }
 
@@ -215,4 +224,70 @@ test('SC-SI02-05: Error state shown without blocking rest of Reports page', asyn
   await expect(page.getByText(/unable to load gate status/i)).toBeVisible({ timeout: 5000 });
   // Rest of the page (Scope Note) still renders
   await expect(page.getByText(/UK tax year only/i)).toBeVisible();
+});
+
+test('SC-SI02-09: Insufficient-data streak stat cards shown when behavioural-drift status is insufficient_data (ST-05, EPIC-01, v8.2, BLG-FEAT-86)', async ({ page }) => {
+  await mockFallback(page);
+  await mockTaxYearReport(page);
+  await mockTrades(page, 4);
+  await mockTradePlans(page, []);
+  await mockArc5Compliance(page, 0);
+  await mockBehaviouralDrift(page, {
+    status: 'insufficient_data',
+    analysis_window_days: 90,
+    trade_count_in_window: 4,
+    metrics: [],
+    computed_at: '2026-08-04T12:00:00Z',
+    insufficient_data_streak_days: 11,
+    streak_capped: false,
+    trade_count_trend: 'flat',
+  });
+  await gotoTaxYearTab(page);
+  await page.getByTestId('si02-gate-status-toggle').click();
+
+  await expect(page.getByTestId('si02-insufficient-data-streak')).toBeVisible({ timeout: 5000 });
+  await expect(page.getByTestId('si02-streak-days')).toHaveText('11 days');
+  await expect(page.getByTestId('si02-trend')).toHaveText('flat');
+});
+
+test('SC-SI02-10: Streak stat cards omitted when behavioural-drift status is not insufficient_data', async ({ page }) => {
+  await mockFallback(page);
+  await mockTaxYearReport(page);
+  await mockTrades(page, 20);
+  await mockTradePlans(page, []);
+  await mockArc5Compliance(page, 0.5);
+  await mockBehaviouralDrift(page, {
+    status: 'no_drift',
+    analysis_window_days: 90,
+    trade_count_in_window: 20,
+    metrics: [],
+    computed_at: '2026-08-04T12:00:00Z',
+  });
+  await gotoTaxYearTab(page);
+  await page.getByTestId('si02-gate-status-toggle').click();
+
+  await expect(page.getByText('20 total closed trades')).toBeVisible({ timeout: 5000 });
+  await expect(page.getByTestId('si02-insufficient-data-streak')).not.toBeVisible();
+});
+
+test('SC-SI02-11: Streak displays "+" suffix when capped', async ({ page }) => {
+  await mockFallback(page);
+  await mockTaxYearReport(page);
+  await mockTrades(page, 0);
+  await mockTradePlans(page, []);
+  await mockArc5Compliance(page, 0);
+  await mockBehaviouralDrift(page, {
+    status: 'insufficient_data',
+    analysis_window_days: 90,
+    trade_count_in_window: 0,
+    metrics: [],
+    computed_at: '2026-08-04T12:00:00Z',
+    insufficient_data_streak_days: 180,
+    streak_capped: true,
+    trade_count_trend: 'flat',
+  });
+  await gotoTaxYearTab(page);
+  await page.getByTestId('si02-gate-status-toggle').click();
+
+  await expect(page.getByTestId('si02-streak-days')).toHaveText('180+ days');
 });

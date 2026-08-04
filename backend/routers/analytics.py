@@ -981,8 +981,8 @@ async def get_behavioural_drift():
     Spec: docs/specs/metrics/si02_drift_score.md §2–§4
     """
     global _si02_schema_ensured
-    from database import get_portfolio, get_behavioural_drift_data, ensure_si02_trade_plans_columns, ensure_si02_trade_history_indexes
-    from services.behavioural_drift_service import compute_drift
+    from database import get_portfolio, get_behavioural_drift_data, get_closed_trade_entry_dates, ensure_si02_trade_plans_columns, ensure_si02_trade_history_indexes
+    from services.behavioural_drift_service import compute_drift, compute_insufficient_data_streak, STREAK_LOOKBACK_DAYS
 
     try:
         portfolio = get_portfolio()
@@ -1006,6 +1006,15 @@ async def get_behavioural_drift():
 
         drift_data = get_behavioural_drift_data(portfolio_id)
         result = compute_drift(drift_data)
+
+        # ST-05 (EPIC-01, v8.2, BLG-FEAT-86): insufficient_data streak metric,
+        # surfaced alongside the existing SI-02 gate note. Only computed when
+        # relevant (status == insufficient_data) to avoid the extra query on
+        # every request.
+        if result.get("status") == "insufficient_data":
+            entry_dates = get_closed_trade_entry_dates(portfolio_id, STREAK_LOOKBACK_DAYS)
+            result.update(compute_insufficient_data_streak(entry_dates))
+
         _drift_cache["result"] = result
         _drift_cache["portfolio_id"] = portfolio_id
         _drift_cache["expires_at"] = now + _DRIFT_CACHE_TTL_SECONDS

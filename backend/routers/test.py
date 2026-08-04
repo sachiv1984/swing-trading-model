@@ -261,6 +261,7 @@ async def test_all_endpoints(request: Request):
         {"name": "GET /portfolio/prospective-heat", "method": "GET", "url": f"{base_url}/portfolio/prospective-heat?ticker=AAPL&shares=10&entry_price=100&stop_price=90", "critical": False},
         {"name": "GET /positions/search/tags", "method": "GET", "url": f"{base_url}/positions/search/tags?tags=momentum", "critical": False},
         {"name": "GET /reports/tax-year", "method": "GET", "url": f"{base_url}/reports/tax-year?year=2025", "critical": False},
+        {"name": "GET /reports/reconciliation", "method": "GET", "url": f"{base_url}/reports/reconciliation?year=2025", "critical": False},
         {"name": "GET /trades/export/csv", "method": "GET", "url": f"{base_url}/trades/export/csv", "critical": False},
         {"name": "POST /portfolio/size", "method": "POST", "url": f"{base_url}/portfolio/size", "body": {"entry_price": 100.0, "stop_price": 90.0, "risk_percent": 1.0, "market": "US"}, "critical": False},
         {"name": "POST /trade-plans/generate-plan", "method": "POST", "url": f"{base_url}/trade-plans/generate-plan", "body": {"ticker": "AAPL", "market": "US"}, "critical": False},

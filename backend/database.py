@@ -220,6 +220,32 @@ def get_trade_history_by_tax_year(portfolio_id: str, year_start, year_end) -> Li
             return cur.fetchall()
 
 
+def get_trade_history_pnl_sum_by_tax_year(portfolio_id: str, year_start, year_end) -> Dict:
+    """Independently re-derive the realised P&L total for a tax year via a
+    server-side SUM, as a separate query path from get_trade_history_by_tax_year
+    (which fetches full rows for the Tax Year report/CSV export).
+
+    Returns {"total": float, "trade_count": int}.
+
+    Used by GET /reports/reconciliation (ST-01, EPIC-01, v8.2, BLG-FEAT-88) so a
+    divergence between the system total and the export total is meaningful
+    rather than definitionally impossible (docs/design/2026-08-04__release-v8.2/
+    pnl-reconciliation-report/decision_record.md §4).
+    Spec: docs/specs/api_contracts/reports_endpoints.md §GET /reports/reconciliation.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT COALESCE(SUM(pnl), 0)::float AS total, COUNT(*)::int AS trade_count
+                   FROM trade_history
+                   WHERE portfolio_id = %s
+                   AND exit_date BETWEEN %s AND %s""",
+                (portfolio_id, year_start, year_end)
+            )
+            row = cur.fetchone()
+            return row
+
+
 def get_monthly_pnl(portfolio_id: str) -> List[Dict]:
     """Aggregate realised P&L by calendar month for the current and prior year.
 
@@ -2607,6 +2633,34 @@ def get_behavioural_drift_data(portfolio_id: str, window_days: int = 90) -> dict
             row = cur.fetchone()
             result["settings"] = dict(row) if row else None
     return result
+
+
+def get_closed_trade_entry_dates(portfolio_id: str, since_days: int) -> List:
+    """Return closed trade entry_dates (ascending) within the last `since_days` days.
+
+    Used by the SI-02 insufficient_data streak metric (ST-05, EPIC-01, v8.2,
+    BLG-FEAT-86) to walk backward day-by-day and determine how long the
+    rolling 90-day window has held fewer than the minimum trade count —
+    a wider lookback than get_behavioural_drift_data's own 90-day window,
+    since the streak computation needs to look further back in time.
+    Filters by entry_date (not exit_date) to match get_behavioural_drift_data's
+    own windowing field, so the streak reflects the same trade_count_in_window
+    definition compute_drift() uses.
+    Spec: docs/specs/metrics/si02_drift_score.md §3 (insufficient_data_streak_days).
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT p.entry_date
+                   FROM trade_history th
+                   JOIN positions p ON p.id = th.position_id
+                   WHERE p.portfolio_id = %s
+                     AND th.pnl IS NOT NULL
+                     AND p.entry_date >= NOW() - INTERVAL '%s days'
+                   ORDER BY p.entry_date ASC""",
+                (portfolio_id, since_days)
+            )
+            return [row["entry_date"] for row in cur.fetchall()]
 
 
 # ---------------------------------------------------------------------------

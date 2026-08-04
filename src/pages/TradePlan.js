@@ -304,7 +304,7 @@ function Field({ label, children }) {
 function TextArea({ value, onChange, placeholder, rows = 3 }) {
   return (
     <textarea
-      className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 resize-none"
+      className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
       rows={rows}
       value={value}
       onChange={onChange}
@@ -317,7 +317,7 @@ function TextInput({ value, onChange, placeholder, type = "text", ...rest }) {
   return (
     <input
       type={type}
-      className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+      className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
       value={value}
       onChange={onChange}
       placeholder={placeholder}
@@ -682,7 +682,7 @@ export default function TradePlan() {
           </Field>
           <Field label="Market">
             <select
-              className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+              className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               value={form.market}
               onChange={set("market")}
             >
@@ -692,7 +692,7 @@ export default function TradePlan() {
           </Field>
           <Field label="Status">
             <select
-              className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-cyan-500 disabled:opacity-50"
+              className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
               value={form.status}
               onChange={set("status")}
               disabled={isAbandoned}
@@ -767,7 +767,7 @@ export default function TradePlan() {
                     onBlur={() => setTimeout(() => setShowTagSuggestions(false), 200)}
                     onKeyDown={handleTradeTagInputKeyDown}
                     placeholder="Type to add tags…"
-                    className="w-full pl-9 pr-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                    className="w-full pl-9 pr-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   />
                 </div>
                 {showTagSuggestions && (
@@ -796,7 +796,7 @@ export default function TradePlan() {
         <Field label="Setup Type">
           <select
             data-testid="setup-type-select"
-            className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+            className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             value={form.setup_type || ""}
             onChange={(e) => setForm((prev) => ({ ...prev, setup_type: e.target.value || null }))}
           >
@@ -989,7 +989,7 @@ export default function TradePlan() {
           )}
           <textarea
             data-testid="setup-thesis-textarea"
-            className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 resize-none"
+            className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
             rows={3}
             value={form.setup_thesis}
             onChange={(e) => {
@@ -1087,7 +1087,7 @@ export default function TradePlan() {
             </label>
             <textarea
               rows={3}
-              className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 resize-none"
+              className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
               placeholder="Describe why you're abandoning this plan (min 10 characters)"
               value={abandonReason}
               onChange={(e) => setAbandonReason(e.target.value)}

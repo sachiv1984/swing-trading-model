@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.20
-**Date:** 2026-07-27
+**Version:** 2.21
+**Date:** 2026-08-04
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -1452,10 +1452,48 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-0
 
 ---
 
+## 33. v8.2 Endpoint Registration — GET /reports/reconciliation (ST-01, EPIC-01, BLG-FEAT-88)
+
+**Date:** 2026-08-04
+**Story:** ST-01 (EPIC-01, v8.2) — BLG-FEAT-88, P&L / tax record reconciliation report
+**Environment:** N/A — see endpoint notes below.
+**Method:** Registered pending live measurement per §13 pattern.
+
+### 33.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /reports/reconciliation | v8.2 | Read — pending live timing run | 300–450ms (est.) | 550–800ms (est.) | Pending next BLG-OPS-13-style re-run |
+
+**Endpoint characteristics:**
+- `GET /reports/reconciliation`: internally calls the existing `get_tax_year_report()` (full-row fetch of the tax year's closed trades, same cost as `GET /reports/tax-year`) plus one additional server-side `SELECT COALESCE(SUM(pnl), 0), COUNT(*) FROM trade_history WHERE ...` aggregate query (the independently re-derived export-side total). Two sequential round-trips against `trade_history` for the same tax-year window — estimated range set above `GET /reports/daily-pnl`'s single-aggregation baseline (§28, 250–400ms/500–700ms) to account for the second query.
+
+**Read-only, no write-op exclusion needed** — this endpoint has no mutation counterpart to exclude.
+
+**Flagged for the next baseline re-run** alongside other pending-measurement endpoints (§13 pattern).
+
+### 33.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-01 (v8.2 EPIC-01, BLG-FEAT-88) — Reconciliation Endpoint Registration Sign-Off
+
+AC-01: Endpoint added with estimated p50/p95 and measurement date
+       (2026-08-04 — estimated, two sequential trade_history queries). ✅ PASS
+AC-02: Estimation methodology documented — derived from §28's GET /reports/daily-pnl
+       single-aggregation baseline, adjusted up for the second sequential query
+       (get_tax_year_report's full-row fetch + the new independent SUM query). ✅ PASS
+AC-03: Entry format consistent with existing baseline rows (§29/§30/§31/§32 pattern). ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-08-04
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.21 | 2026-08-04 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-01 (v8.2 EPIC-01, BLG-FEAT-88): §33 added — GET /reports/reconciliation registered pending live timing run (§13 pattern). Two sequential trade_history queries (existing get_tax_year_report full-row fetch + new independent SUM aggregate). Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/reports/reconciliation` path in the same PR. |
 | 2.20 | 2026-07-27 | Sprint Execution Engine (agent-mediated, Metrics Definitions & Analytics Owner + Infrastructure & Operations Owner roles — §5.3) | ST-02 (v7.9 EPIC-02, BLG-FEAT-67): §32 added — GET /portfolio/sector-regime-trend registered pending live timing run (§13 pattern; table empty at ship time, no retroactive data to measure against). Estimated from §21's GET /portfolio/sector-weights baseline, adjusted for a single indexed-table read. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/portfolio/sector-regime-trend` path in the same PR. |
 | 2.19 | 2026-07-27 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-06 (v7.8 EPIC-06, BLG-FEAT-82): §31 added — GET /ai/spend-trend registered pending live timing run (§13 pattern). Up to 6 sequential aggregation queries against `claude_audit_log` (same table/shape as §29's GET /ai/monthly-cost, scaled for up to 6 round-trips per request). Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/ai/spend-trend` path in the same PR — this registration was missed at implementation time and caught by CI on PR #1081, not pre-empted at PR-open per the LL-v7.6-P3-01 advisory. |
 | 2.18 | 2026-07-26 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-01 (v7.8 EPIC-01, BLG-FE-128): §30 added — GET /changelog/latest registered pending live timing run (§13 pattern). Read-only local file read + regex parse, no DB/network I/O — lower-latency by construction than every other registered endpoint. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/changelog/latest` path in the same PR. |

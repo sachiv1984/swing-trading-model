@@ -27,6 +27,7 @@ from database import (
     get_portfolio,
     get_positions,
     get_trade_history_by_tax_year,
+    get_trade_history_pnl_sum_by_tax_year,
     get_monthly_pnl,
     get_daily_pnl,
 )
@@ -240,6 +241,53 @@ def get_tax_year_report(year: int) -> Dict:
             "unrealised_note": UNREALISED_NOTE,
         },
         "trades": trades_out,
+    }
+
+
+def get_reconciliation_report(year: int) -> Dict:
+    """
+    Compare the Tax Year report's system-computed realised P&L total against
+    an independently re-derived export-side sum, for the P&L / tax record
+    reconciliation report (ST-01, EPIC-01, v8.2, BLG-FEAT-88).
+
+    Args:
+        year: The start year of the UK tax year (e.g. 2025 for 2025/26).
+
+    Returns:
+        Dict matching the data schema in reports_endpoints.md §GET /reports/reconciliation.
+
+    Raises:
+        ValueError: "tax year has not started yet" if year is in the future.
+        ValueError: "Portfolio not found" if no portfolio exists.
+    """
+    tax_year_start = date(year, 4, 6)
+    if tax_year_start > date.today():
+        raise ValueError("tax year has not started yet")
+    tax_year_end = date(year + 1, 4, 5)
+
+    portfolio = get_portfolio()
+    if not portfolio:
+        raise ValueError("Portfolio not found")
+    portfolio_id = str(portfolio['id'])
+
+    # System total: existing Tax Year summary realised total, unchanged computation.
+    system_report = get_tax_year_report(year)
+    system_total = system_report["summary"]["total_realised_pnl"]
+    total_closed_trades = system_report["summary"]["total_closed_trades"]
+
+    # Export total: independently re-derived via a separate query path
+    # (server-side SUM, not a re-sum of the rows already fetched above).
+    export_row = get_trade_history_pnl_sum_by_tax_year(portfolio_id, tax_year_start, tax_year_end)
+    export_total = round(float(export_row["total"]), 2)
+
+    matched = abs(round(system_total - export_total, 2)) <= 0.01
+
+    return {
+        "tax_year_label": system_report["tax_year_label"],
+        "total_closed_trades": total_closed_trades,
+        "system_total_pnl_gbp": system_total,
+        "export_total_pnl_gbp": export_total,
+        "matched": matched,
     }
 
 

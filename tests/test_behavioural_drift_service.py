@@ -13,6 +13,7 @@ from unittest.mock import MagicMock
 
 from services.behavioural_drift_service import (
     compute_drift,
+    compute_insufficient_data_streak,
     _compute_entry_timing_drift,
     _compute_sizing_adherence,
     _compute_consecutive_loss_sizing,
@@ -339,3 +340,54 @@ def test_deviation_pct_none():
 
 def test_deviation_pct_zero_threshold():
     assert _deviation_pct(1.0, 0.0) is None
+
+
+# ---------------------------------------------------------------------------
+# ST-05 (EPIC-01, v8.2, BLG-FEAT-86): compute_insufficient_data_streak
+# ---------------------------------------------------------------------------
+
+def test_streak_zero_when_window_already_sufficient():
+    """10 entry_dates all within the last 90 days -> no streak (0 days)."""
+    as_of = date(2026, 8, 4)
+    entry_dates = [date(2026, 7, 1)] * 10
+    result = compute_insufficient_data_streak(entry_dates, as_of=as_of)
+    assert result["insufficient_data_streak_days"] == 0
+    assert result["streak_capped"] is False
+
+
+def test_streak_positive_when_no_trades_at_all():
+    """No trades anywhere -> streak grows until the max-lookback cap, capped=True."""
+    as_of = date(2026, 8, 4)
+    result = compute_insufficient_data_streak([], as_of=as_of)
+    assert result["insufficient_data_streak_days"] == 180
+    assert result["streak_capped"] is True
+
+
+def test_streak_ends_on_the_day_the_window_first_cleared_the_threshold():
+    """10 trades all entered on the same day D. The 90-day trailing window
+    contains all 10 exactly when the as-of day falls in [D, D+89]. With
+    D = 2026-04-26 and as_of = 2026-08-04 (D+100), the window first clears
+    the _MIN_TRADES threshold walking backward at day = D+89 = 2026-07-24 —
+    an 11-day streak (2026-07-25 .. 2026-08-04 inclusive, both insufficient)."""
+    as_of = date(2026, 8, 4)
+    entry_dates = [date(2026, 4, 26)] * 10
+    result = compute_insufficient_data_streak(entry_dates, as_of=as_of)
+    assert result["insufficient_data_streak_days"] == 11
+    assert result["streak_capped"] is False
+
+
+def test_streak_trend_increasing_when_recent_trades_added():
+    as_of = date(2026, 8, 4)
+    # 3 trades entered in the last few days: inside today's window [May 7, Aug 4],
+    # but outside the 30-days-prior window [Apr 7, Jul 5] entirely -> count goes
+    # from 0 (prior) to 3 (today) -> increasing.
+    recent = [date(2026, 8, 1), date(2026, 8, 2), date(2026, 8, 3)]
+    result = compute_insufficient_data_streak(recent, as_of=as_of)
+    assert result["trade_count_trend"] == "increasing"
+
+
+def test_streak_trend_flat_when_no_change():
+    as_of = date(2026, 8, 4)
+    entry_dates = [date(2026, 1, 1)] * 5
+    result = compute_insufficient_data_streak(entry_dates, as_of=as_of)
+    assert result["trade_count_trend"] == "flat"

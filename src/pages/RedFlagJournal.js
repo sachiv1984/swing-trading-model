@@ -25,7 +25,7 @@ const EVENT_TYPE_CONFIG = {
   checklist_skipped: {
     label: "Checklist Skipped",
     icon: CheckSquare,
-    className: "text-orange-400",
+    className: "text-sky-400",
   },
   stop_prompt_dismissed: {
     label: "Stop Prompt Dismissed",
@@ -35,7 +35,7 @@ const EVENT_TYPE_CONFIG = {
   drawdown_prompt_dismissed: {
     label: "Drawdown Prompt Dismissed",
     icon: TrendingDown,
-    className: "text-rose-400",
+    className: "text-red-500",
   },
 };
 
@@ -125,7 +125,7 @@ function EventRow({ event }) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className={cn("text-sm font-medium", config.className)}>
+          <span data-testid="event-type-label" className={cn("text-sm font-medium", config.className)}>
             {config.label}
           </span>
           <span

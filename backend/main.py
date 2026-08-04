@@ -153,6 +153,7 @@ from services import (
     get_monthly_pnl_report,
     get_daily_pnl_report,
     get_arc5_compliance_summary,
+    get_reconciliation_report,
 )
 app = FastAPI(title=API_TITLE)
 
@@ -791,6 +792,38 @@ def get_tax_year_report_endpoint(year: Optional[int] = None, format: Optional[st
                     "Content-Disposition": f'attachment; filename="tax-year-{year}-pnl.csv"'
                 },
             )
+        return {"status": "ok", "data": data}
+    except ValueError as e:
+        msg = str(e)
+        if "not started yet" in msg:
+            return JSONResponse(status_code=400,
+                content={"status": "error", "message": "tax year has not started yet"})
+        return JSONResponse(status_code=404,
+            content={"status": "error", "message": msg})
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
+
+
+@app.get("/reports/reconciliation")
+def get_reconciliation_report_endpoint(year: Optional[int] = None):
+    """
+    GET /reports/reconciliation?year=YYYY
+
+    P&L / tax record reconciliation report (ST-01, EPIC-01, v8.2, BLG-FEAT-88):
+    compares the Tax Year report's system-computed realised P&L total against
+    an independently re-derived export-side sum for the same tax year.
+    Spec: reports_endpoints.md §GET /reports/reconciliation
+    """
+    if year is None:
+        return JSONResponse(status_code=400,
+            content={"status": "error", "message": "year parameter is required"})
+    if year < 1000 or year > 9999:
+        return JSONResponse(status_code=400,
+            content={"status": "error", "message": "year must be a valid four-digit integer"})
+    try:
+        data = get_reconciliation_report(year)
         return {"status": "ok", "data": data}
     except ValueError as e:
         msg = str(e)

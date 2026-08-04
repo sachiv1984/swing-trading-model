@@ -445,5 +445,63 @@ class TestTaxYearCsvExport(unittest.TestCase):
         self.assertEqual(resp.headers["content-type"], "text/csv; charset=utf-8")
 
 
+
+# ---------------------------------------------------------------------------
+# 8. GET /reports/reconciliation — ST-01, EPIC-01, v8.2, BLG-FEAT-88
+# ---------------------------------------------------------------------------
+
+PATCH_GET_EXPORT_SUM = "services.reports_service.get_trade_history_pnl_sum_by_tax_year"
+
+
+class TestReconciliation(unittest.TestCase):
+
+    def _call(self, year=2025, trades=None, export_total=100.00, export_count=1):
+        trades = trades if trades is not None else [_trade()]
+        with patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO), \
+             patch(PATCH_GET_POSITIONS, return_value=[]), \
+             patch(PATCH_GET_TAX_TRADES, return_value=trades), \
+             patch(PATCH_GET_EXPORT_SUM, return_value={"total": export_total, "trade_count": export_count}):
+            return CLIENT.get(f"/reports/reconciliation?year={year}")
+
+    def test_missing_year_returns_400(self):
+        resp = CLIENT.get("/reports/reconciliation")
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn("required", resp.json()["message"])
+
+    def test_future_year_returns_400(self):
+        with patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO):
+            resp = CLIENT.get("/reports/reconciliation?year=2099")
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn("not started yet", resp.json()["message"])
+
+    def test_matched_when_totals_equal(self):
+        resp = self._call(trades=[_trade(pnl=100.00)], export_total=100.00)
+        data = resp.json()["data"]
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(data["matched"])
+        self.assertEqual(data["system_total_pnl_gbp"], 100.00)
+        self.assertEqual(data["export_total_pnl_gbp"], 100.00)
+
+    def test_matched_within_rounding_tolerance(self):
+        resp = self._call(trades=[_trade(pnl=100.004)], export_total=100.00)
+        self.assertTrue(resp.json()["data"]["matched"])
+
+    def test_not_matched_when_totals_diverge(self):
+        resp = self._call(trades=[_trade(pnl=100.00)], export_total=95.00)
+        data = resp.json()["data"]
+        self.assertFalse(data["matched"])
+        self.assertEqual(data["export_total_pnl_gbp"], 95.00)
+
+    def test_empty_year_zero_trades_matched_true(self):
+        resp = self._call(trades=[], export_total=0.0, export_count=0)
+        data = resp.json()["data"]
+        self.assertEqual(data["total_closed_trades"], 0)
+        self.assertTrue(data["matched"])
+
+    def test_tax_year_label_present(self):
+        resp = self._call(year=2025)
+        self.assertEqual(resp.json()["data"]["tax_year_label"], "2025/26")
+
+
 if __name__ == "__main__":
     unittest.main()

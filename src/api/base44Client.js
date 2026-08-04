@@ -462,6 +462,9 @@ export const api = {
       doFetch('/analytics/market-correlation'),
     arc5Compliance: async (period = '7d') =>
       doFetch(`/analytics/arc5-compliance?period=${encodeURIComponent(period)}`),
+    // ST-05 (v8.2, EPIC-01, BLG-FEAT-86): SI-02 insufficient_data streak metric
+    behaviouralDrift: async () =>
+      doFetch('/analytics/behavioural-drift'),
     // ST-05 (v6.8, BLG-FEAT-52): trade-plan tag performance comparison
     tagPerformance: async (tags) =>
       doFetch(`/analytics/tag-performance?tags=${encodeURIComponent(tags.join(','))}`),
