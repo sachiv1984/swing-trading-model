@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.137
+**Version:** 4.138
 **Last Updated:** 2026-08-04
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -567,7 +567,7 @@ Keeps `claude/ideas/ideas_register.md` lean and surfaces revival opportunities.
 
 ## 6.5 Phase 1.5 — Design Gate (Required*)
 
-**Source prompt:** `claude/system/design_gate_prompt.md` (v1.8)  
+**Source prompt:** `claude/system/design_gate_prompt.md` (v1.9)  
 **Owner:** Head of UX & Design (artefacts), PMO Lead (gate record)  
 **Pre-condition:** Phase 1B Publish Gate passed; `sprint_sealed = false`  
 **\*Required** unless all sprint items are confirmed Design Not Applicable
@@ -1455,14 +1455,14 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.137 |
+| Version | 4.138 |
 | Last Updated | 2026-08-04 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.13 |
-| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.8 |
+| Design Gate Engine | `claude/system/design_gate_prompt.md` v1.9 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.12 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.46 |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.138 | 2026-08-04 | **Sprint execution `2026-08-04__release-v8.2` EPIC-05/ST-25 (BLG-FE-131) — design_gate_prompt.md v1.8→v1.9: motion/timing-sensitive interaction classification note.** §6.5 source prompt header v1.8→v1.9 (line 570). §14 Design Gate Engine v1.8→v1.9. §14 Version 4.137→4.138/2026-08-04. Change: §6 Design Requirement Classification gains an explicit note that chart transition animations, tooltip delay timing, loading-state debounce/throttle windows, and other motion/timing parameter changes are always Design Required, even absent a new component or layout change — closes the gap where such changes fell through the cracks between the "visual rendering" and "interaction flow" criteria. Authority: Head of UX & Design (Sprint Execution Engine, agent-mediated, ST-25, 2026-08-04). |
 | 4.137 | 2026-08-04 | **Sprint execution `2026-08-04__release-v8.2` EPIC-03/ST-18 (BLG-GOV-285) — shared_standards.md v3.22→v3.23: delegation-record auto-close false-positive fix documented.** §14 Shared Standards v3.22→v3.23. §14 Version 4.136→4.137/2026-08-04. Change: `.github/workflows/governance_sync.yml` now cross-checks a story's actual `execution_state` status (per-EPIC files or legacy single file) before auto-closing its GitHub issue, rather than trusting the presence of `[ST-xx]` in a commit message alone — fixes a false-positive that recurred twice (v8.0 EPIC-02/ST-08 issue #1148, v8.1 EPIC-02/ST-02 issue #1169). Documented in `shared_standards.md` §6. Authority: Head of Engineering (Sprint Execution Engine, agent-mediated, ST-18, 2026-08-04). |
 | 4.136 | 2026-08-04 | **Sprint execution `2026-08-04__release-v8.2` EPIC-03/ST-15 (BLG-GOV-279) — roadmap_prompt.md v9.11→v9.12: SI-02 production credential provisioning decision.** §6 source prompt header v9.11→v9.12 (line 399). §14 Roadmap Engine Source v9.11→v9.12. §14 Version 4.135→4.136/2026-08-04. Change: STEP 2.3 Credential-fallback guidance gains a Standing-behaviour decision — Product Owner formally accepted the fallback-citation pattern as permanent, intended behaviour (option (b) of the two named in the backlog item), closing the recurring "next rebalance should attempt a genuine live re-check" carry-forward pattern that had appeared in 3+ consecutive cycles' lessons-learnt/carry-forward notes without resolution (no production credential was ever persisted into the gitignored `.env.production`/`.env.staging` files — confirmed empty again this session). Authority: Product Owner (Sprint Execution Engine, agent-mediated, ST-15, 2026-08-04). |
 | 4.135 | 2026-08-04 | **Sprint execution `2026-08-04__release-v8.2` EPIC-03/ST-17 (BLG-GOV-283) — three source prompt version bumps.** §6 source prompt header `roadmap_prompt.md` v9.10→v9.11 (line 399). §6M `ideas_housekeeping_prompt.md` v1.1→v1.2 (line 478). §14: Roadmap Engine Source v9.10→v9.11, Ideas Housekeeping Engine v1.1→v1.2, Shared Standards v3.21→v3.22. §14 Version 4.134→4.135/2026-08-04. Change: new `shared_standards.md` §16.14 Last Updated Header-History Retention Convention (retain current + 2 prior entries, 3 total, in chained `**Last Updated:**` fields), applied at `roadmap_prompt.md` STEP 9 and `ideas_housekeeping_prompt.md` §1.4 (the actual write site for `ideas_register.md`'s header — the sprint backlog's AC named `idea_intake_prompt.md` but that file has no chained-header write step; verified by grep before assigning the fix to the correct file). Rule applied retroactively to `ideas_register.md`'s own header, truncated from 5 chained entries to 3. **Also backfilled two pre-existing drifts found during this edit's own pre-check:** `design_gate_changelog.md` missing v1.7 row (ST-16, same session) and `ideas_housekeeping_changelog.md` missing v1.1 row. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-17, 2026-08-04). |

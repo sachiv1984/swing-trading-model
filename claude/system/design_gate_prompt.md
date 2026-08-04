@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.8
+**Version:** 1.9
 **Last Updated:** 2026-08-04
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -82,6 +82,8 @@ You must **not** modify `claude/cycles/<cycle_id>/stage4_backlog_slice.md`, any 
 | **Design Required** | User-facing UI change (new component, modified layout, new page, changed interaction flow, new data displayed) |
 | **Design Pre-Approved** | Purely backend/infrastructure/spec debt with no UI change; or frontend spec already updated in a prior cycle and confirmed unchanged |
 | **Design Not Applicable** | Purely technical (CI/CD, database migration, logging, observability) with no user-visible effect |
+
+**Motion/timing-sensitive interactions (BLG-FE-131, ST-25, EPIC-05, v8.2):** Chart transition animations, tooltip delay timing, loading-state debounce/throttle windows, and other motion- or timing-sensitive interaction behaviour are always **Design Required**, even when no new component or layout change is involved. These previously fell through the cracks between "visual rendering" (covered by Design Required's layout criteria) and "interaction flow" (also nominally covered, but easy to wave through as a pure-code timing tweak with no design artefact). Treat any change to an existing motion/timing parameter (easing curve, animation duration, debounce/throttle interval, delay-before-show threshold) the same as a new interaction flow for classification purposes — it is not eligible for Design Pre-Approved on the basis of "no layout change" alone.
 
 **Default:** When in doubt, classify as Design Required. Head of UX & Design may downgrade with explicit confirmation.
 

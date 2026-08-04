@@ -140,7 +140,6 @@ from services import (
     get_detailed_health,
     get_operational_health,
     record_market_status_check,
-    test_all_endpoints,
     get_db_size_info,
     send_db_size_alert_if_needed,
     record_nightly_job,
@@ -1233,32 +1232,6 @@ def scheduler_health():
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
-
-@app.post("/test/endpoints")
-def test_endpoints(request: Request):
-    """
-    Test all API endpoints
-
-    Returns:
-        Test results for all endpoints
-
-    Note:
-        - Can take 10-30 seconds to complete
-        - Tests all GET endpoints
-        - Returns pass/fail status and response times
-    """
-    try:
-        # Get the base URL from the request
-        # This works for both localhost and production
-        base_url = str(request.base_url).rstrip('/')
-        
-        # Pass the actual server URL to the test function
-        result = test_all_endpoints(base_url)
-        return result
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return JSONResponse(status_code=500, content={"status": "error", "message": "Internal server error"})
 
 class UpdateNoteRequest(BaseModel):
     entry_note: str

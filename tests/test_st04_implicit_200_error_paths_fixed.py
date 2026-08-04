@@ -14,26 +14,28 @@ already returning explicit 500s but leaking raw exception text in the
 message. This story's bug is the missing status code itself (implicit 200),
 not the message content of an already-explicit 500.
 
-Three endpoints (`/health`, `/health/detailed`, `/test/endpoints`) are exempt
-from the canonical `{status, message}` error envelope per
+Two endpoints (`/health`, `/health/detailed`) are exempt from the canonical
+`{status, message}` error envelope per
 `docs/specs/api_contracts/conventions.md` §11/§13.3 — they still must return
 HTTP 500 (not implicit 200) and must not leak raw exception text, but their
-response shape may differ from the standard envelope.
+response shape may differ from the standard envelope. `/test/endpoints` was
+originally covered here too, but that coverage exercised a dead-code
+duplicate handler in `main.py` that was shadowed by (and behaviourally
+identical in intent to) `backend/routers/test.py`'s own route; the duplicate
+was removed in ST-24 (BLG-BE-81, EPIC-05, v8.2) and this test removed with it.
 
 CI-safe: no live DB or network connections — TestClient(app) with the
 session-scoped database stub; underlying service functions are mocked to
 raise directly.
 """
 
-import json
 import sys
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 sys.modules.pop("database", None)
 
-from fastapi.responses import JSONResponse  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 
 from main import app  # noqa: E402
@@ -163,9 +165,9 @@ class TestCanonicalEnvelopeErrorPaths:
 
 class TestHealthExemptEnvelopeErrorPaths:
     """
-    /health, /health/detailed, /test/endpoints are exempt from the standard
-    {status, message} envelope (conventions.md §11/§13.3), but must still
-    return HTTP 500 (not implicit 200) with no raw exception text leaked.
+    /health, /health/detailed are exempt from the standard {status, message}
+    envelope (conventions.md §11/§13.3), but must still return HTTP 500
+    (not implicit 200) with no raw exception text leaked.
     """
 
     def test_health_500_returns_custom_shape_no_leak(self):
@@ -186,27 +188,6 @@ class TestHealthExemptEnvelopeErrorPaths:
             resp = CLIENT.get("/health/detailed")
         assert resp.status_code == 500
         body = resp.json()
-        assert _SENSITIVE_DETAIL not in str(body)
-        assert body == {"status": "error", "message": "Internal server error"}
-
-    def test_test_endpoints_500_returns_generic_message(self):
-        # Route note: `backend/routers/test.py` registers its own POST /test/endpoints
-        # (included via app.include_router(test.router) at main.py:191, before
-        # main.py's own @app.post("/test/endpoints") at main.py:1204) — Starlette
-        # matches the first-registered route for a given path+method, so
-        # main.py's own handler is unreachable via the live app/TestClient.
-        # Call it directly to verify this story's fix to that function's except
-        # block (still correct and worth fixing per this ticket's main.py scope,
-        # even though the route itself is currently shadowed — see BLG-BE-xx
-        # follow-up filed for the duplicate-route cleanup).
-        import main
-        mock_request = MagicMock()
-        mock_request.base_url = "http://testserver/"
-        with patch("main.test_all_endpoints", side_effect=RuntimeError(_SENSITIVE_DETAIL)):
-            result = main.test_endpoints(request=mock_request)
-        assert isinstance(result, JSONResponse)
-        assert result.status_code == 500
-        body = json.loads(result.body)
         assert _SENSITIVE_DETAIL not in str(body)
         assert body == {"status": "error", "message": "Internal server error"}
 
