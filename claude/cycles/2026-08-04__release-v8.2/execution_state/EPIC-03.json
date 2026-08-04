@@ -95,11 +95,11 @@
       "assigned_to": "engine",
       "github_issue": 1210,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
-      "commit_sha": null,
+      "commit_sha": "319e6cb7c58188d4fd9aaba1d41a00822fd70aeb",
       "delegation_record_id": null,
       "blocked_since_utc": null,
       "unblock_criteria": null,
-      "completed_utc": null,
+      "completed_utc": "2026-08-04T15:00:00Z",
       "acceptance_verified": true,
       "spec_references": [
         "claude/system/post_ship_closure.md#Rebalance Cadence Check"
@@ -124,11 +124,11 @@
       "assigned_to": "engine",
       "github_issue": 1211,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
-      "commit_sha": null,
+      "commit_sha": "319e6cb7c58188d4fd9aaba1d41a00822fd70aeb",
       "delegation_record_id": null,
       "blocked_since_utc": null,
       "unblock_criteria": null,
-      "completed_utc": null,
+      "completed_utc": "2026-08-04T15:00:00Z",
       "acceptance_verified": true,
       "spec_references": [
         "docs/specs/security/ai_vendor_tos_dpa_review.md"
@@ -216,11 +216,11 @@
       "assigned_to": "engine",
       "github_issue": 1215,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
-      "commit_sha": null,
+      "commit_sha": "319e6cb7c58188d4fd9aaba1d41a00822fd70aeb",
       "delegation_record_id": null,
       "blocked_since_utc": null,
       "unblock_criteria": null,
-      "completed_utc": null,
+      "completed_utc": "2026-08-04T15:00:00Z",
       "acceptance_verified": true,
       "spec_references": [
         "claude/system/design_gate_prompt.md#STEP 1 \u2014 Classify Each Item"
@@ -245,11 +245,11 @@
       "assigned_to": "engine",
       "github_issue": 1216,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
-      "commit_sha": null,
+      "commit_sha": "319e6cb7c58188d4fd9aaba1d41a00822fd70aeb",
       "delegation_record_id": null,
       "blocked_since_utc": null,
       "unblock_criteria": null,
-      "completed_utc": null,
+      "completed_utc": "2026-08-04T15:00:00Z",
       "acceptance_verified": true,
       "spec_references": [
         "claude/system/shared_standards.md#\u00a716.14 Last Updated Header-History Retention Convention"
