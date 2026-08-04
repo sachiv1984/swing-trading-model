@@ -2,8 +2,8 @@
 **Owner:** PMO Lead
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-08-03 (post-ship closure 2026-08-03__release-v8.1); prior — 2026-07-31 (post-ship closure 2026-07-30__release-v8.0)
+**Version:** 1.2
+**Last Updated:** 2026-08-04 (ST-09, EPIC-03, v8.2, BLG-GOV-213 — row-count audit and backfill); prior — 2026-08-03 (post-ship closure 2026-08-03__release-v8.1); prior — 2026-07-31 (post-ship closure 2026-07-30__release-v8.0)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---
@@ -26,8 +26,11 @@
 
 | Cycle | Planned | Completed | Velocity | Notes |
 |-------|---------|-----------|----------|-------|
+| v1.7  | 34      | 34        | 1.00     | Backfilled ST-09 (v8.2, BLG-GOV-213) — no delegated items outstanding at close; no deviations filed across any of the 5 EPICs |
+| v1.8  | 12      | 12        | 1.00     | Backfilled ST-09 (v8.2, BLG-GOV-213) — 12 deviations filed (DEV-ST03-01–12, all P2/P3, accepted by Product Owner with backlog items filed); net outcome "Achieved with deviations" |
 | v1.9  | 14      | 14        | 1.00     | No delegated items outstanding at close |
 | v1.10 | 13      | 13        | 1.00     | OA-01–OA-05 deferred post-ship; counted as out-of-scope |
+| v2.0  | 13      | 13        | 1.00     | Backfilled ST-09 (v8.2, BLG-GOV-213) — net outcome MET IN FULL; all 3 core deliverables (portfolio response fix, tax-year P&L report, signal exposure controls) plus both stretch items shipped |
 | v2.1  | 15      | 15        | 1.00     | All stories closed; 5 deferred actions not counted |
 | v2.2  | 15      | 15        | 1.00     | LL-RP-v22-01 deferred patch not counted (governance, not ST story) |
 | v2.3  | 17      | 16        | 0.94     | 1 story (ST-11 BLG-FEAT-05) remained delegated_backend at close |
@@ -107,4 +110,18 @@ Append a row after each post-ship closure. Values come from the cycle's `executi
 ## Usage
 
 Referenced by `claude/system/roadmap_prompt.md` v4.7 STEP 1.1 Run Manifest — Cycle Velocity field.
+
+---
+
+## Row-Count Audit (ST-09, EPIC-03, v8.2, BLG-GOV-213)
+
+**Date:** 2026-08-04
+
+**Method:** Compared the set of `vX.Y` labels in the Velocity History table above against the set of `release-vX.Y` cycle folders under `claude/cycles/` (excluding the active, not-yet-closed cycle).
+
+**Result:** 3 gaps found — `v1.7`, `v1.8`, `v2.0` had completed sprint executions (`execution_state.json`, `sprint_close.md`, `closure_record.md` all present) but no corresponding row. Backfilled using each cycle's `execution_state.json` story counts and `sprint_close.md` net-outcome/deviation summary — see the 3 new rows above.
+
+**Post-backfill parity:** 67 table rows == 67 closed `release-vX.Y` cycle folders (68 total folders minus the active `2026-08-04__release-v8.2` cycle, not yet closed). Confirmed via automated set-diff, not manual inspection.
+
+**Root cause (not remediated by this audit — informational only):** No CI or governance gate currently enforces that a velocity row is appended at every post-ship closure; the "Update Rule" above is a manual instruction to the Post-Ship Closure Engine, and 3 early cycles (predating the engine's own STEP that appends this row) were missed. Not scoped for a gate addition in this story — audit and backfill only, per AC.
 Do not re-derive velocity from cycle artefacts directly — always read this file.

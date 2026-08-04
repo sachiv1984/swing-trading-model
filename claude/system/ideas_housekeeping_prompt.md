@@ -1,7 +1,7 @@
 **Owner:** PMO Lead
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-07-09
+**Version:** 1.2
+**Last Updated:** 2026-08-04
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -167,6 +167,8 @@ Update the `**Last Updated:**` field in `claude/ideas/ideas_register.md` to toda
 ```
 **Last Updated:** 2026-05-16 (ideas_housekeeping — N rows archived)
 ```
+
+**Last Updated header-history retention (ST-17, EPIC-03, v8.2, BLG-GOV-283):** before chaining the new entry onto any existing `prior — <date> (<reason>)` entries, apply `shared_standards.md §16.14`'s retention rule — retain the current entry plus at most 2 prior entries (3 total); drop older entries and close the chain with `prior history retained — see prior entries in version control` if the new entry would exceed this depth.
 
 ### 1.5 Output
 

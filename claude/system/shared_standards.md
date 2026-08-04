@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.21
-**Last Updated:** 2026-08-03
+**Version:** 3.23
+**Last Updated:** 2026-08-04
 
 # Shared Standards — All Governed Routines
 
@@ -179,6 +179,8 @@ gh issue list --search "[ST-xx]" --json number,title,state
 - `{{OBJECTIVE_TEXT}}`, `{{AC_1}}` etc. → from acceptance criteria in `sprint_backlog.md`
 
 **Do not manually close issues** that will be closed by `governance_sync.yml` on push. Issues are auto-closed by CI when a commit with `[EPIC-xx][ST-xx]` format is pushed to an `exec/**` branch.
+
+**Delegation-record commits do not auto-close (ST-18, EPIC-03, v8.2, BLG-GOV-285):** A commit that only records a delegation (e.g. a `delegation_log.md` update) still carries the mandatory `[EPIC-xx][ST-xx]` tag per the commit-format rule, but is not a completion commit. `governance_sync.yml` cross-checks the story's actual status in `execution_state` (per-EPIC files per §12.1, or the legacy single `execution_state.json` for older cycles) before closing — an issue is only auto-closed when the story's recorded status is `done` or `merged`. If the story's status cannot be determined (no `execution_state` found for the active cycle — e.g. a commit unrelated to sprint execution, or a cycle predating this check), the workflow falls back to closing unconditionally, preserving prior behaviour. This closes a false-positive that recurred twice before the fix (`v8.0` EPIC-02/ST-08, issue #1148; `v8.1` EPIC-02/ST-02, issue #1169 — both required a manual reopen). No new commit-message marker convention was introduced — the fix reads ground truth from `execution_state` rather than relying on commit authors to remember a new tag.
 
 ### PR operations
 
@@ -951,6 +953,20 @@ Original / Amended — <file path used>
 ```
 
 `method` is `"agent_mediated"` when the agent-mediated sign-off protocol ran, or `"human"` when surfaced to and resolved by the user.
+
+---
+
+## §16.14 Last Updated Header-History Retention Convention (ST-17, EPIC-03, v8.2, BLG-GOV-283)
+
+**Problem:** Some Class 4 documents (e.g. `claude/ideas/ideas_register.md`) chain every prior revision into the `**Last Updated:**` header field as `<date> (<reason>); prior — <date> (<reason>); prior — <date> (<reason>); ...`, with no depth or age limit. Left unbounded, this field grows every time the document is touched, eventually dwarfing the document's actual content — `ideas_register.md`'s header alone reached 5 chained entries before this convention was written.
+
+**Rule:** A `**Last Updated:**` header chain must retain **at most the current entry plus 2 prior entries (3 total)**. When writing a new entry would make the chain exceed 3, drop all entries older than the 2 most recent prior ones, and terminate the chain with the closing note `prior history retained — see prior entries in version control` in place of the dropped entries.
+
+**Depth threshold:** 3 (current + 2 prior). This is a fixed depth, not an age-based threshold — a document touched rarely keeps its last 3 revisions regardless of how old they are; a document touched frequently truncates aggressively. Full history remains recoverable via `git log -p -- <file>` regardless of what the header retains — the header is a quick-glance summary, not the historical record of truth.
+
+**Applies to:** Any Class 4 (Planning Document) file using the chained `**Last Updated:**` pattern. Currently: `claude/ideas/ideas_register.md` (written by `idea_intake_prompt.md`), `claude/roadmap/current_roadmap.md` and other roadmap documents written by `roadmap_prompt.md` STEP 9. Does not apply to Class 1/6 canonical/governance documents, which use a dedicated `## Changelog` table or companion `claude/system/changelogs/*.md` file instead (per §11's `prompt_change_log.md` convention and the 2026-05-09 modular prompt refactor) — those already have unbounded, structured history storage and are not at risk of header bloat.
+
+**Enforcement:** Applied automatically by the writing engine at the point of header update — not a separate cleanup pass. See `roadmap_prompt.md` STEP 9 and `idea_intake_prompt.md`'s equivalent write step for the applied instruction.
 
 ---
 

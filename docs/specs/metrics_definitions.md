@@ -2,8 +2,8 @@
 **Owner:** Metrics Definitions & Analytics Canonical Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.16.0
-**Last Updated:** 2026-07-14
+**Version:** 1.16.1
+**Last Updated:** 2026-08-04
 **Review Cycle:** Monthly
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1324,7 +1324,14 @@ composite_score = (1 - override_rate) * 0.40 +
 
 When any required input field is unavailable from the API (e.g. null `override_rate` with no data), the composite score is not computed. Individual metric components are displayed instead (per FEAT-42 §AC-05 fallback).
 
+### v6.9 On-Demand Compliance Recheck — Confirmed No Formula Gap (ST-10, EPIC-03, v8.2, BLG-GOV-214)
+
+**Question:** Does the v6.9 on-demand compliance recheck feature (`GET /positions/{position_id}/compliance-recheck`, `docs/design/2026-07-10__release-v6.9/on-demand-compliance-recheck/ux_spec.md`) affect any input to the Arc 5 composite formula above?
+
+**Finding: No gap — confirmed already correct.** The on-demand recheck is session-local and non-persisted by design (its own service module states "no persisted state, no automation — §13"). It does not write to `pre_entry_validation_log` (source of `validation_pass_rate_by_rule`, `override_rate`, `top_rule_breach`) or `red_flag_events` (source of `events_per_week`) — verified by inspecting `backend/services/compliance_recheck_service.py` for writes to either table (none found) and confirming `compliance_recheck` is not among `red_flag_events`' `_VALID_EVENT_TYPES` enum (`pre_entry_override`, `checklist_skipped`, `stop_prompt_dismissed`, `drawdown_prompt_dismissed` only). The composite formula's four inputs are therefore entirely sourced from tables the recheck feature never touches — no formula update required.
+
 ### Sign-off
 
 - **Metrics Definitions & Analytics Owner:** agent-mediated sign-off cleared 2026-05-27 (ST-08, EPIC-03, v4.1)
 - **Product Owner:** agent-mediated sign-off cleared 2026-05-27 (ST-08, EPIC-03, v4.1)
+- **Metrics Definitions & Analytics Canonical Owner (v6.9 no-gap confirmation):** agent-mediated sign-off cleared 2026-08-04 (ST-10, EPIC-03, v8.2, BLG-GOV-214)
