@@ -2,11 +2,13 @@
 # Pre-commit hook — ST-10 (EPIC-10, v7.9, BLG-QA-125); extended ST-05 (EPIC-02, v7.10, BLG-SEC-22)
 #
 # Blocks a commit that adds a new backend route without a matching
-# backend/routers/test.py registration. One-time setup per clone:
-#   git config core.hooksPath .githooks
+# backend/routers/test.py registration. Setup: `git config core.hooksPath .githooks`
+# (automatic on `npm install` since ST-21, EPIC-04, v8.2 — package.json's
+# "prepare" script; previously a manual one-time step per clone).
 #
 # No pre-commit framework dependency required — a plain tracked hooks
 # directory is the lightest-weight "or equivalent" per ST-10's AC-01.
+# See .githooks/commit-msg (ST-21) for the sibling commit-message-format hook.
 set -e
 
 python3 scripts/check_router_test_registration.py

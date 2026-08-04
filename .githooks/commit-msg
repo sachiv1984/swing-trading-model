@@ -7,8 +7,13 @@
 #   [GOVERNANCE] <description>              (governance-only commits)
 #
 # Only enforced on exec/** branches — main and other branches are unrestricted.
-# Installed via `git config core.hooksPath scripts/git-hooks` (see
-# package.json's "prepare" script, which sets this automatically on `npm install`).
+# Lives alongside the existing `.githooks/pre-commit` hook (router-registration
+# check + local gitleaks scan, EPIC-02/ST-05 + EPIC-10/ST-10) — both share the
+# same `core.hooksPath .githooks` setting; git dispatches by filename
+# (pre-commit vs commit-msg), so the two hooks do not conflict.
+# Installed via `git config core.hooksPath .githooks` (see package.json's
+# "prepare" script, which now sets this automatically on `npm install` —
+# previously a manual one-time step per clone, per `pre-commit`'s own header).
 
 set -euo pipefail
 

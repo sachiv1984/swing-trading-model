@@ -55,7 +55,7 @@
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "prepare": "git config core.hooksPath scripts/git-hooks || true"
+    "prepare": "git config core.hooksPath .githooks || true"
   },
   "eslintConfig": {
     "extends": [
