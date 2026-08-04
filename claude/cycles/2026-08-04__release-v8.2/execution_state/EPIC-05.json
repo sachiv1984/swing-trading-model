@@ -1,13 +1,15 @@
 {
   "cycle_id": "2026-08-04__release-v8.2",
   "epic_id": "EPIC-05",
-  "status": "implementation_complete",
+  "status": "done",
   "branch": "exec/2026-08-04__release-v8.2/EPIC-05",
   "pr_number": null,
   "pr_status": "none",
-  "qa_signed_off": false,
+  "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-04__release-v8.2/qa_evidence_EPIC-05.md",
-  "test_scenarios": [],
+  "test_scenarios": [
+    "tests/test_system_status_endpoint_count.py"
+  ],
   "stories": {
     "ST-22": {
       "title": "Snapshot test for SystemStatus.js hardcoded fallback counts",
@@ -102,5 +104,5 @@
       "notes": ""
     }
   },
-  "last_updated_utc": "2026-08-04T20:35:00Z"
+  "last_updated_utc": "2026-08-04T20:50:00Z"
 }
