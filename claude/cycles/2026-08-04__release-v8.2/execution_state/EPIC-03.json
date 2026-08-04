@@ -37,11 +37,11 @@
       "assigned_to": "engine",
       "github_issue": 1208,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
-      "commit_sha": null,
+      "commit_sha": "46eeb90f15b1b5677cf78254bccbed32d3387a8c",
       "delegation_record_id": null,
       "blocked_since_utc": null,
       "unblock_criteria": null,
-      "completed_utc": null,
+      "completed_utc": "2026-08-04T14:00:00Z",
       "acceptance_verified": true,
       "spec_references": [
         "claude/cycles/velocity_metrics.md#Row-Count Audit"
@@ -66,11 +66,11 @@
       "assigned_to": "engine",
       "github_issue": 1209,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
-      "commit_sha": null,
+      "commit_sha": "46eeb90f15b1b5677cf78254bccbed32d3387a8c",
       "delegation_record_id": null,
       "blocked_since_utc": null,
       "unblock_criteria": null,
-      "completed_utc": null,
+      "completed_utc": "2026-08-04T14:00:00Z",
       "acceptance_verified": true,
       "spec_references": [
         "docs/specs/metrics_definitions.md#v6.9 On-Demand Compliance Recheck \u2014 Confirmed No Formula Gap"
