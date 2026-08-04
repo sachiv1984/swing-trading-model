@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-04T12:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-04T10:04:57Z",
+  "last_updated_utc": "2026-08-04T10:05:39Z",
   "epics": {
     "EPIC-01": {
       "status": "in_progress",
@@ -22,15 +22,15 @@
         "ST-01": {
           "title": "P&L / tax record reconciliation report (system totals vs individual trade export)",
           "classification": "autonomous",
-          "status": "in_progress",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1200,
           "branch": "exec/2026-08-04__release-v8.2/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "9c2a21e3a20f2968c9be6f1e9df7b3eb5efedfc1",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
+          "completed_utc": "2026-08-04T13:00:00Z",
           "acceptance_verified": true,
           "spec_references": [
             "docs/specs/api_contracts/reports_endpoints.md#GET /reports/reconciliation",
@@ -605,7 +605,9 @@
     "EPIC-02/ST-06",
     "EPIC-02/ST-07"
   ],
-  "completed_items": [],
+  "completed_items": [
+    "EPIC-01/ST-01"
+  ],
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": [],
