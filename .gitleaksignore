@@ -5,3 +5,13 @@
 8680d28f48803d8ec7402552d4789365a0eff8d3:claude/cycles/2026-06-26__release-v6.3/qa_evidence_EPIC-03.md:generic-api-key:49
 8680d28f48803d8ec7402552d4789365a0eff8d3:docs/frontend/prompts/ai-briefing-progressive-disclosure-v1.md:generic-api-key:70
 5438ac65842638c132fbe0c25ac15ce5013f7916:.gitleaksignore:generic-api-key:3
+
+# False positive — Render service IDs (`srv-...`), not credentials. These are
+# public resource identifiers used to address a service via the Render API
+# (equivalent to a database primary key), not secret values; they carry no
+# authentication capability on their own. Same class of finding as
+# docs/security/api_key_security_register.md's own long-standing plaintext
+# service ID references (e.g. srv-d5r98jm3jp1c73figm1g for production),
+# which predate this scan's commit range. ST-07 (BLG-OPS-128, EPIC-02, v8.2).
+# Authority: Cybersecurity & Trust Lead
+0cc86d708c08c17881ee555f1f9645f172778ea6:scripts/check_staging_deploy_drift.py:generic-api-key:40
