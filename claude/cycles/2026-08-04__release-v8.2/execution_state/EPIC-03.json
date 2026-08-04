@@ -153,11 +153,11 @@
       "assigned_to": "engine",
       "github_issue": 1212,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
-      "commit_sha": null,
+      "commit_sha": "fbd6fa92189568db31243d1f490e961bf7868f4f",
       "delegation_record_id": null,
       "blocked_since_utc": null,
       "unblock_criteria": null,
-      "completed_utc": null,
+      "completed_utc": "2026-08-04T17:00:00Z",
       "acceptance_verified": true,
       "spec_references": [
         "claude/roadmap/governance_bypass_log.md"
@@ -182,11 +182,11 @@
       "assigned_to": "engine",
       "github_issue": 1213,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
-      "commit_sha": null,
+      "commit_sha": "fbd6fa92189568db31243d1f490e961bf7868f4f",
       "delegation_record_id": null,
       "blocked_since_utc": null,
       "unblock_criteria": null,
-      "completed_utc": null,
+      "completed_utc": "2026-08-04T17:00:00Z",
       "acceptance_verified": true,
       "spec_references": [
         "docs/governance/idea_intake_overlap_check_retrospective_2026-08-04.md"
@@ -211,11 +211,11 @@
       "assigned_to": "engine",
       "github_issue": 1214,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
-      "commit_sha": null,
+      "commit_sha": "fbd6fa92189568db31243d1f490e961bf7868f4f",
       "delegation_record_id": null,
       "blocked_since_utc": null,
       "unblock_criteria": null,
-      "completed_utc": null,
+      "completed_utc": "2026-08-04T17:00:00Z",
       "acceptance_verified": true,
       "spec_references": [
         "claude/system/roadmap_prompt.md#STEP 2.3 \u2014 Standing-behaviour decision"
@@ -298,11 +298,11 @@
       "assigned_to": "engine",
       "github_issue": 1217,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
-      "commit_sha": null,
+      "commit_sha": "fbd6fa92189568db31243d1f490e961bf7868f4f",
       "delegation_record_id": null,
       "blocked_since_utc": null,
       "unblock_criteria": null,
-      "completed_utc": null,
+      "completed_utc": "2026-08-04T17:00:00Z",
       "acceptance_verified": true,
       "spec_references": [
         ".github/workflows/governance_sync.yml",
