@@ -1,11 +1,11 @@
 {
-  "active_cycle": "2026-08-03__release-v8.1",
+  "active_cycle": "2026-08-04__release-v8.2",
   "cycle_name": "v8.1 — User-Feature Push & Governance Debt Clearance",
-  "status": "Closed",
+  "status": "Release_Planning_Complete",
   "prior_status": "Sprint_Complete",
   "engine": "sprint_execution",
   "execution_state_path": "claude/cycles/2026-08-03__release-v8.1/execution_state.json",
-  "backlog_slice_path": "claude/cycles/2026-08-03__release-v8.1/stage4_backlog_slice.md",
+  "backlog_slice_path": "claude/cycles/2026-08-04__release-v8.2/stage4_backlog_slice.md",
   "design_gate_required": true,
   "sprint_sealed": true,
   "sprint_goal_path": "claude/cycles/2026-08-03__release-v8.1/sprint_goal.md",
@@ -13,7 +13,7 @@
   "sprint_capacity_path": "claude/cycles/2026-08-03__release-v8.1/sprint_capacity.md",
   "sprint_goal_status": "confirmed",
   "capacity_warn_acknowledged": false,
-  "design_gate_status": "Passed",
+  "design_gate_status": "not_started",
   "design_gate_record": "claude/cycles/2026-08-03__release-v8.1/design_gate.md",
   "design_gate_bypass_authority": "",
   "design_gate_bypass_reason": "",
@@ -36,7 +36,7 @@
   "sprint2_gate_confirmed_utc": "",
   "sprint2_close_utc": "",
   "verification_utc": "2026-08-03T20:15:00Z",
-  "last_sync_utc": "2026-08-03T21:45:00Z",
+  "last_sync_utc": "2026-08-04T08:45:00Z",
   "last_deviation_consolidation_review_utc": "2026-08-03T21:00:00Z",
   "deviation_consolidation_review_cycle_count": 0,
   "release_complete": true,
@@ -46,7 +46,7 @@
   "last_audit_overall_score": 74,
   "last_audit_open_items": 6,
   "last_audit_cycle_count": 62,
-  "next_release": "v8.1",
+  "next_release": "v8.2",
   "prior_cycle": "2026-07-21__release-v7.7",
   "lifecycle_schema": "claude/system/lifecycle_schema.json",
   "schema_version": "1.0",
@@ -76,30 +76,28 @@
     }
   },
   "release_plan": {
-    "release_plan_path": "claude/cycles/2026-08-03__release-v8.1/release_plan.md",
-    "cycle_id": "2026-08-03__release-v8.1",
-    "published_utc": "2026-08-03T00:45:00Z",
+    "release_plan_path": "claude/cycles/2026-08-04__release-v8.2/release_plan.md",
+    "cycle_id": "2026-08-04__release-v8.2",
+    "published_utc": "2026-08-04T08:45:00Z",
     "epics": [
       "EPIC-01",
       "EPIC-02",
       "EPIC-03",
       "EPIC-04",
-      "EPIC-05",
-      "EPIC-06",
-      "EPIC-07"
+      "EPIC-05"
     ],
-    "story_items": 19,
-    "story_items_firm": 19,
+    "story_items": 25,
+    "story_items_firm": 25,
     "story_items_conditional": 0,
-    "scope_items": 19,
+    "scope_items": 25,
     "capacity_check": "pass",
     "design_gate_required": true,
-    "state_json": "claude/cycles/2026-08-03__release-v8.1/state.json",
-    "scope_doc": "docs/product/scope/scope--2026-08-03__release-v8.1.md"
+    "state_json": "claude/cycles/2026-08-04__release-v8.2/state.json",
+    "scope_doc": "docs/product/scope/scope--2026-08-04__release-v8.2.md"
   },
   "prior_release_plan": {
-    "release_plan_path": "claude/cycles/2026-07-30__release-v8.0/release_plan.md",
-    "cycle_id": "2026-07-30__release-v8.0",
-    "published_utc": "2026-07-30T15:00:00Z"
+    "release_plan_path": "claude/cycles/2026-08-03__release-v8.1/release_plan.md",
+    "cycle_id": "2026-08-03__release-v8.1",
+    "published_utc": "2026-08-03T00:45:00Z"
   }
 }

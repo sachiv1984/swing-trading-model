@@ -11,7 +11,17 @@
 ## 1. Current Version
 
 **v8.1** — User-Feature Push & Governance Debt Clearance — ✅ Complete — Shipped 2026-08-03 — cycle: 2026-08-03__release-v8.1
-**Next planned release:** [TBD]
+**Next planned release:** v8.2 — User-Feature Push (continued) & Full-Capacity Debt Clearance — Planning — cycle: 2026-08-04__release-v8.2
+
+<!-- roadmap-annotation-marker: RA:v8.2:2026-08-04__release-v8.2 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-08-04__release-v8.2
+- Plan published: 2026-08-04
+- Cycle folder: claude/cycles/2026-08-04__release-v8.2/
+- Backlog slice: claude/cycles/2026-08-04__release-v8.2/stage4_backlog_slice.md
+- Status at annotation: Committed
+- No formal `## v8.2` roadmap section created (Release Planning may not alter roadmap scope) — scoped via STEP -1.2 Option (b) equivalence from `2026-07-28__scheduled` (same Option (b) decision already relied on by `2026-07-30__release-v8.0` and `2026-08-03__release-v8.1`). Backlog-driven, 25 ungated/ready items across 5 grouped EPICs, sized to the top of the confirmed ~24-28 day capacity band per explicit user instruction ("full sprint capacity"). Per explicit user instruction to focus on user features first: 5 ready ungated user-facing/user-adjacent items were found (`BLG-FEAT-88`, `BLG-FE-105`, `BLG-FE-67`, `BLG-FE-138`, `BLG-FEAT-86`) — a materially larger pool than the single item found at each of the last two cycles. `BLG-FEAT-73`/`BLG-FEAT-74` and the Arc 5 UX-prep cluster remain excluded for a 3rd consecutive cycle (STEP 1.4a Perennial-Return Check, Option (a) — one cycle short of the STEP 1.4a.1 mandatory sunset trigger); `BLG-FEAT-45` excluded despite its 2026-08-05 gate date (STEP 1.4b within-sprint date gate rule); `BLG-OPS-48` self-caught and excluded (real gate date 2026-11-01, missed by the initial scan).
 
 <!-- roadmap-annotation-marker: RA:v8.1:2026-08-03__release-v8.1 -->
 
