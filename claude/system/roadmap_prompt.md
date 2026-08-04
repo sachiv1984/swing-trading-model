@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.10
-**Last Updated:** 2026-08-03
+**Version:** 9.11
+**Last Updated:** 2026-08-04
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -730,6 +730,7 @@ Rules:
 - **Effort day-range requirement (§16.12):** if the item's `Provisional-Target` names a specific release (not `TBD`/`Unscheduled`), the `**Effort:**` field must include a day range in parentheses (e.g. `M (~2-3 days)`), not a bare letter alone. Applies here and at STEP 4.2.
 - **Hard gate marking:** any gate marked "complete" in `current_roadmap.md` must reference the PoG/evidence artefact that cleared it. No artefact → gate stays "pending."
 - **Header formatting:** all Class 4 headers written/updated in STEP 9 use bold labels: `**Owner:**`, `**Status:**`, `**Class:**`, `**Last Updated:**`.
+- **Last Updated header-history retention (ST-17, EPIC-03, v8.2, BLG-GOV-283):** when appending a new entry to a chained `**Last Updated:**` field (e.g. `current_roadmap.md`), apply `shared_standards.md §16.14`'s retention rule — retain the current entry plus at most 2 prior entries (3 total); if the new entry would exceed this depth, drop older entries and close the chain with `prior history retained — see prior entries in version control`.
 
 **Decision log append-only enforcement (structural):**
 - Before writing: count existing entries (N). After writing: re-read; confirm count = N + entries added this run. Count decreased → halt. Any existing entry text changed → halt. Both checks must pass before STEP 9 commit.

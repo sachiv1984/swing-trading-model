@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.23
-**Last Updated:** 2026-08-03
+**Version:** 2.24
+**Last Updated:** 2026-08-04
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -230,10 +230,14 @@ If `last_audit_cycle_count` is null: evaluate only the modulo condition; the gap
 This check is non-blocking — post-ship closure proceeds regardless.
 
 **Rebalance Cadence Check (advisory — non-blocking):**
-Read `completed_cycle_count` from `.claude_current_state.json` (already loaded above).
+Read `completed_cycle_count` and `next_release` from `.claude_current_state.json` (already loaded above).
 If `completed_cycle_count % 2 == 0` (i.e., even): record for the Advisory Summary block — "⚠ REBALANCE DUE — completed_cycle_count = N (even). Run `run roadmap --reason scheduled` before next `plan release`."
-If `completed_cycle_count % 2 == 1` (i.e., odd): record for the Advisory Summary block — "✅ REBALANCE SKIP — completed_cycle_count = N (odd). Proceed directly to `plan release v<next_release>` — no rebalance required this cycle."
-Rationale: rebalances run every 2nd cycle to reduce governance overhead and increase throughput. The PO may override and run a rebalance on any cycle — this advisory is guidance, not a gate.
+If `completed_cycle_count % 2 == 1` (i.e., odd):
+  Read `claude/roadmap/current_roadmap.md` §1's "Next planned release" line — parse its version and Status field.
+  - **If `next_release` is `[TBD]` or empty** (no version decided yet): the skip advisory's "proceed directly to `plan release v<next_release>`" instruction is not actionable — a scoping decision is still needed. Record instead: "⚠ REBALANCE SKIP WITHHELD — completed_cycle_count = N (odd), but `next_release` is `[TBD]`/unscoped. A rebalance or scoping decision is needed before `plan release` can proceed — recommend `run roadmap --reason scheduled` despite the odd cadence."
+  - **If `current_roadmap.md` §1's "Next planned release" version matches `next_release` AND its Status is not `[TBD]`** (e.g. already `Planning`, `Committed`, or `✅ Complete` — meaning `plan release` has already run, or is already running, for that version): the next release is already-consumed, not a genuinely fresh scoping opportunity. Record instead: "⚠ REBALANCE SKIP WITHHELD — completed_cycle_count = N (odd), but v<next_release> is already scoped (current_roadmap.md §1 Status: <Status>) — the unconditional skip advisory is stale for an already-planned release. Verify scope is still current before proceeding; no rebalance action needed if release planning already completed for this version."
+  - **Otherwise** (a genuinely fresh, unconsumed `next_release` with no existing Option(a)/Option(b) scoping decision yet): record the standard advisory unchanged — "✅ REBALANCE SKIP — completed_cycle_count = N (odd). Proceed directly to `plan release v<next_release>` — no rebalance required this cycle."
+Rationale: rebalances run every 2nd cycle to reduce governance overhead and increase throughput. The PO may override and run a rebalance on any cycle — this advisory is guidance, not a gate. The `[TBD]`/already-consumed checks (v8.2, ST-11, EPIC-03, BLG-GOV-218) prevent the advisory from recommending an already-completed or not-yet-possible next action.
 
 **If `--dry-run` is active:** After completing context load, produce the full closure plan (listing every step, every write that would be made, every flag) and end the routine. Do not proceed to STEP 1.
 

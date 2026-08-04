@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.7
-**Last Updated:** 2026-07-30
+**Version:** 1.8
+**Last Updated:** 2026-08-04
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -132,7 +132,12 @@ For disagreements between Product Owner and Head of UX & Design: default to **De
 
 For items classified **Design Pre-Approved**: record the current spec version in the Frontend Spec column — Sprint Planning uses this as the locked spec reference. No further step required for these items.
 
-**`--dry-run` exit:** output the classification table and any identified gaps (items with no existing artefact, likely blockers). Stop here.
+**Mandatory §13 boundary pre-check for AI-calling proposals (ST-16, EPIC-03, v8.2, BLG-GOV-281):** For every item — regardless of Design Required/Pre-Approved classification — that introduces or extends a call to an AI provider (Gemini, Claude API, or any other LLM/inference service), check whether a §13 review decision record already exists and covers this proposal (`docs/product/decisions/decisions--*--*-section13-review.md`, or a named pre-assessment such as `docs/product/decisions/arc6_ps03_section13_preassessment.md`).
+- **If a covering §13 review already exists and PASSed:** record its path in the classification table's Rationale column. No further action required at this gate.
+- **If no covering §13 review exists:** the item cannot proceed past this gate as Design Pre-Approved or Design Required with design work starting immediately. Record `Gate Status: §13 PRE-CHECK REQUIRED` in the classification table and flag to Strategy Rules & System Intent Owner and Product Owner. Per `execution_prompt.md` §5.1's §13 gate story pattern (LL-v3.5-SP-01), the §13 review itself should be scoped as a `delegated_decision` gate story ahead of any implementation stories for this item — this design gate does not perform the §13 review itself, it only detects that one is required and blocks silent design/implementation start without one.
+- Rationale: catches the AI-boundary question at design-gate time (before design or implementation effort is spent) rather than only being caught later at sprint execution kickoff, which was the gap this story closes.
+
+**`--dry-run` exit:** output the classification table (including any §13 pre-check flags) and any identified gaps (items with no existing artefact, likely blockers). Stop here.
 
 ---
 

@@ -91,7 +91,7 @@
     "ST-11": {
       "title": "Rebalance-skip advisory should verify next release is actually scoped",
       "classification": "autonomous",
-      "status": "not_started",
+      "status": "done",
       "assigned_to": "engine",
       "github_issue": 1210,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -100,19 +100,27 @@
       "blocked_since_utc": null,
       "unblock_criteria": null,
       "completed_utc": null,
-      "acceptance_verified": false,
-      "spec_references": [],
+      "acceptance_verified": true,
+      "spec_references": [
+        "claude/system/post_ship_closure.md#Rebalance Cadence Check"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
-      "last_completed_substep": null,
-      "sign_off_record": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Head of Specs Team",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-04",
+        "notes": "Initial review found the corrected-skip logic itself sound but flagged a blocking finding: OPERATIONAL_GUIDE.md's own document header (line 5) had not been bumped alongside its \u00a714 table, reproducing the file's own documented header-drift pattern. Fixed immediately (header set to 4.135/2026-08-04, matching \u00a714). Cleared on verification of the fix."
+      },
       "notes": ""
     },
     "ST-12": {
       "title": "AI vendor Terms-of-Service & data-processing review (Gemini/Claude, financial data handling)",
       "classification": "autonomous",
-      "status": "not_started",
+      "status": "done",
       "assigned_to": "engine",
       "github_issue": 1211,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -121,13 +129,21 @@
       "blocked_since_utc": null,
       "unblock_criteria": null,
       "completed_utc": null,
-      "acceptance_verified": false,
-      "spec_references": [],
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/specs/security/ai_vendor_tos_dpa_review.md"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
-      "last_completed_substep": null,
-      "sign_off_record": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "AI Compliance & Governance Officer",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-04",
+        "notes": "Scope-corrected review: Gemini has no live integration (verified via requirements.txt, env var grep, gemini_service.py's actual Anthropic client usage, and an existing in-repo finding in database.py). Anthropic Commercial API terms reviewed (no training on Customer Content by default, 7-day log retention, DPA auto-incorporated) \u2014 no gaps found."
+      },
       "notes": ""
     },
     "ST-13": {
@@ -196,7 +212,7 @@
     "ST-16": {
       "title": "Mandatory \u00a713 boundary pre-check at design gate for new AI-calling feature proposals",
       "classification": "autonomous",
-      "status": "not_started",
+      "status": "done",
       "assigned_to": "engine",
       "github_issue": 1215,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -205,19 +221,27 @@
       "blocked_since_utc": null,
       "unblock_criteria": null,
       "completed_utc": null,
-      "acceptance_verified": false,
-      "spec_references": [],
+      "acceptance_verified": true,
+      "spec_references": [
+        "claude/system/design_gate_prompt.md#STEP 1 \u2014 Classify Each Item"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
-      "last_completed_substep": null,
-      "sign_off_record": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Strategy Rules & System Intent Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-04",
+        "notes": "Approved. Pre-check correctly scoped to detection only (not performing the review itself); correctly cross-references execution_prompt.md \u00a75.1's existing gate story pattern; confirmed real gap (no prior \u00a713-specific design-gate check existed, only the unrelated v1.7 security checklist)."
+      },
       "notes": ""
     },
     "ST-17": {
       "title": "Codify a Last Updated header-history retention convention",
       "classification": "autonomous",
-      "status": "not_started",
+      "status": "done",
       "assigned_to": "engine",
       "github_issue": 1216,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -226,13 +250,21 @@
       "blocked_since_utc": null,
       "unblock_criteria": null,
       "completed_utc": null,
-      "acceptance_verified": false,
-      "spec_references": [],
+      "acceptance_verified": true,
+      "spec_references": [
+        "claude/system/shared_standards.md#\u00a716.14 Last Updated Header-History Retention Convention"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
-      "last_completed_substep": null,
-      "sign_off_record": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Head of Specs Team",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-04",
+        "notes": "Rule and both application sites (roadmap_prompt.md STEP 9, ideas_housekeeping_prompt.md \u00a71.4 \u2014 correct write-site, not idea_intake_prompt.md as the AC loosely named) verified correct; ideas_register.md truncation verified lossless (git-recoverable). Same OPERATIONAL_GUIDE.md header-drift finding as ST-11, fixed in the same corrective commit."
+      },
       "notes": ""
     },
     "ST-18": {
