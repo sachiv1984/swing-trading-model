@@ -5,13 +5,13 @@
   "invoked_utc": "2026-08-04T12:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-04T10:31:44Z",
+  "last_updated_utc": "2026-08-04T11:08:37Z",
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-04__release-v8.2/EPIC-01",
       "pr_number": 1225,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-04__release-v8.2/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -27,7 +27,7 @@
         "ST-01": {
           "title": "P&L / tax record reconciliation report (system totals vs individual trade export)",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1200,
           "branch": "exec/2026-08-04__release-v8.2/EPIC-01",
@@ -57,7 +57,7 @@
         "ST-02": {
           "title": "Compliance Recheck Modal all-pass empty-state design",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1201,
           "branch": "exec/2026-08-04__release-v8.2/EPIC-01",
@@ -87,7 +87,7 @@
         "ST-03": {
           "title": "RFJ event type colour palette refinement",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1202,
           "branch": "exec/2026-08-04__release-v8.2/EPIC-01",
@@ -116,7 +116,7 @@
         "ST-04": {
           "title": "Trade Plan native form fields use a weaker focus indicator than the rest of the codebase",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1203,
           "branch": "exec/2026-08-04__release-v8.2/EPIC-01",
@@ -145,7 +145,7 @@
         "ST-05": {
           "title": "Drift-detection metric for the behavioural-drift endpoint's insufficient_data streak",
           "classification": "autonomous",
-          "status": "done",
+          "status": "merged",
           "assigned_to": "engine",
           "github_issue": 1204,
           "branch": "exec/2026-08-04__release-v8.2/EPIC-01",
@@ -653,9 +653,10 @@
   ],
   "open_escalations": [],
   "merge_gate": {
-    "epics_merged": [],
+    "epics_merged": [
+      "EPIC-01"
+    ],
     "epics_pending": [
-      "EPIC-01",
       "EPIC-02",
       "EPIC-03",
       "EPIC-04",

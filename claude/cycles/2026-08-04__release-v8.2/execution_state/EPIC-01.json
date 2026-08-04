@@ -1,10 +1,10 @@
 {
   "cycle_id": "2026-08-04__release-v8.2",
   "epic_id": "EPIC-01",
-  "status": "done",
+  "status": "merged",
   "branch": "exec/2026-08-04__release-v8.2/EPIC-01",
   "pr_number": 1225,
-  "pr_status": "open",
+  "pr_status": "merged",
   "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-04__release-v8.2/qa_evidence_EPIC-01.md",
   "test_scenarios": [
@@ -20,7 +20,7 @@
     "ST-01": {
       "title": "P&L / tax record reconciliation report (system totals vs individual trade export)",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1200,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-01",
@@ -30,7 +30,10 @@
       "unblock_criteria": null,
       "completed_utc": "2026-08-04T13:00:00Z",
       "acceptance_verified": true,
-      "spec_references": ["docs/specs/api_contracts/reports_endpoints.md#GET /reports/reconciliation", "docs/specs/frontend/pages/reports.md#Reconciliation Report"],
+      "spec_references": [
+        "docs/specs/api_contracts/reports_endpoints.md#GET /reports/reconciliation",
+        "docs/specs/frontend/pages/reports.md#Reconciliation Report"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
       "deviations_filed": true,
@@ -40,14 +43,14 @@
         "status": "cleared",
         "method": "agent_mediated",
         "date": "2026-08-04",
-        "notes": "Approved. System total reuses existing get_tax_year_report computation unchanged; export total independently re-derived via a separate server-side SUM query path. £0.01 tolerance documented and matches implementation. One process finding (endpoint-count fallback sync in SystemStatus.js/SC-SS-01b) raised and fixed in the same story before commit."
+        "notes": "Approved. System total reuses existing get_tax_year_report computation unchanged; export total independently re-derived via a separate server-side SUM query path. \u00a30.01 tolerance documented and matches implementation. One process finding (endpoint-count fallback sync in SystemStatus.js/SC-SS-01b) raised and fixed in the same story before commit."
       },
       "notes": ""
     },
     "ST-02": {
       "title": "Compliance Recheck Modal all-pass empty-state design",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1201,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-01",
@@ -57,7 +60,10 @@
       "unblock_criteria": null,
       "completed_utc": "2026-08-04T13:30:00Z",
       "acceptance_verified": true,
-      "spec_references": ["docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md", "docs/specs/frontend/pages/positions.md#Compliance Recheck Panel (Modal)"],
+      "spec_references": [
+        "docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md",
+        "docs/specs/frontend/pages/positions.md#Compliance Recheck Panel (Modal)"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
       "deviations_filed": true,
@@ -74,7 +80,7 @@
     "ST-03": {
       "title": "RFJ event type colour palette refinement",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1202,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-01",
@@ -84,7 +90,9 @@
       "unblock_criteria": null,
       "completed_utc": "2026-08-04T13:30:00Z",
       "acceptance_verified": true,
-      "spec_references": ["docs/design/2026-06-19__release-v6.0/rfj-design-review/review.md#3"],
+      "spec_references": [
+        "docs/design/2026-06-19__release-v6.0/rfj-design-review/review.md#3"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
       "deviations_filed": true,
@@ -94,14 +102,14 @@
         "status": "cleared",
         "method": "agent_mediated",
         "date": "2026-08-04",
-        "notes": "Approved. Colour mapping matches the v6.0 RFJ design review §3 table exactly; no other colours touched."
+        "notes": "Approved. Colour mapping matches the v6.0 RFJ design review \u00a73 table exactly; no other colours touched."
       },
       "notes": ""
     },
     "ST-04": {
       "title": "Trade Plan native form fields use a weaker focus indicator than the rest of the codebase",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1203,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-01",
@@ -111,7 +119,9 @@
       "unblock_criteria": null,
       "completed_utc": "2026-08-04T13:30:00Z",
       "acceptance_verified": true,
-      "spec_references": ["docs/specs/frontend/design_system.md#Focus indicator contrast"],
+      "spec_references": [
+        "docs/specs/frontend/design_system.md#Focus indicator contrast"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
       "deviations_filed": true,
@@ -128,7 +138,7 @@
     "ST-05": {
       "title": "Drift-detection metric for the behavioural-drift endpoint's insufficient_data streak",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1204,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-01",
@@ -138,7 +148,10 @@
       "unblock_criteria": null,
       "completed_utc": "2026-08-04T13:30:00Z",
       "acceptance_verified": true,
-      "spec_references": ["docs/specs/metrics/si02_drift_score.md#3.5 Insufficient-Data Streak", "docs/specs/api_contracts/behavioural_drift_contract.md#Insufficient-Data Response Shape"],
+      "spec_references": [
+        "docs/specs/metrics/si02_drift_score.md#3.5 Insufficient-Data Streak",
+        "docs/specs/api_contracts/behavioural_drift_contract.md#Insufficient-Data Response Shape"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
       "deviations_filed": true,
