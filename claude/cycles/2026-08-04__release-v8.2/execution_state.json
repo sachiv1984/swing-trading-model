@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-04T12:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-04T16:35:57Z",
+  "last_updated_utc": "2026-08-04T20:01:49Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -560,75 +560,97 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-08-04__release-v8.2/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-04__release-v8.2/qa_evidence_EPIC-04.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        ".githooks/test_commit_msg.sh"
+      ],
       "stories": {
         "ST-19": {
           "title": "Quarterly dependency-upgrade cadence for backend/requirements.txt",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1218,
           "branch": "exec/2026-08-04__release-v8.2/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "cc5de6bc4643ae66cadf51a66f772eab12d5615a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-04T20:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/dependency_upgrade_cadence.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off",
           "sign_off_record": null,
           "notes": ""
         },
         "ST-20": {
           "title": "CI cache tuning to reduce Playwright suite runtime",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1219,
           "branch": "exec/2026-08-04__release-v8.2/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "cc5de6bc4643ae66cadf51a66f772eab12d5615a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-04T20:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/playwright.yml",
+            ".github/workflows/smoke-tests.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off",
+          "sign_off_record": {
+            "role": "Head of Engineering",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-04",
+            "notes": "Approved. Cache key correctly derived from package-lock.json (1.58.2), invalidates cleanly on version bump. Conditional install logic verified correct (no missing-browser path). 'playwright install-deps chromium' confirmed as a real CLI command. Applied to all 3 jobs that install Playwright browsers. Post-approval, real before/after CI measurement obtained: cache-miss vs cache-hit rerun of the same job (shard 1/4) showed the browser-install step dropping 19s->12s (37% faster for that step), but total job duration effectively unchanged (~220s vs ~219s) since npm ci and the test run itself dominate on GitHub-hosted runners that already install Chromium quickly. Documented honestly in the workflow comment rather than overstating the win. No test reliability regression: all 4 shards passed on both the cache-miss and cache-hit runs."
+          },
           "notes": ""
         },
         "ST-21": {
           "title": "Automated commit-message format lint (pre-commit hook)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1220,
           "branch": "exec/2026-08-04__release-v8.2/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "cc5de6bc4643ae66cadf51a66f772eab12d5615a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-04T20:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/git-hooks/commit-msg",
+            "scripts/git-hooks/test_commit_msg.sh"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off",
+          "sign_off_record": {
+            "role": "Head of Engineering",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-04",
+            "notes": "Initial review BLOCKED: creating a new scripts/git-hooks/ core.hooksPath would have silently overwritten the pre-existing .githooks/ setup (router-registration check with no CI equivalent + gitleaks scan). Fixed by consolidating both hooks into .githooks/. Re-verified: prepare script correct, pre-commit hook logic byte-identical, test suite 6/6 passing from new location, router-registration script still exits 0, no stale duplicate directory. Cleared."
+          },
           "notes": ""
         }
       }
@@ -750,7 +772,10 @@
     "EPIC-03/ST-15",
     "EPIC-03/ST-16",
     "EPIC-03/ST-17",
-    "EPIC-03/ST-18"
+    "EPIC-03/ST-18",
+    "EPIC-04/ST-19",
+    "EPIC-04/ST-20",
+    "EPIC-04/ST-21"
   ],
   "open_escalations": [],
   "merge_gate": {

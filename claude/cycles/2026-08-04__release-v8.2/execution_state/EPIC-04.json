@@ -1,13 +1,15 @@
 {
   "cycle_id": "2026-08-04__release-v8.2",
   "epic_id": "EPIC-04",
-  "status": "not_started",
+  "status": "done",
   "branch": "exec/2026-08-04__release-v8.2/EPIC-04",
   "pr_number": null,
   "pr_status": "none",
-  "qa_signed_off": false,
+  "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-04__release-v8.2/qa_evidence_EPIC-04.md",
-  "test_scenarios": [],
+  "test_scenarios": [
+    ".githooks/test_commit_msg.sh"
+  ],
   "stories": {
     "ST-19": {
       "title": "Quarterly dependency-upgrade cadence for backend/requirements.txt",
