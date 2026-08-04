@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.12
-**Last Updated:** 2026-08-03
+**Version:** 0.13
+**Last Updated:** 2026-08-04
 **Design Source (v0.11 monthly CSV export):** docs/design/2026-07-24__release-v7.8/monthly-csv-export/ux_spec.md
 **Design Source (v0.7 CSV export + monthly realised/unrealised split):** docs/design/2026-07-12__release-v7.0/tax-year-csv-export/ux_spec.md, docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md
 **Design Source (v0.6 SI-02 gate status):** docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md
@@ -256,6 +256,7 @@ A note at the bottom of the page:
 - **CSV export:** `GET /reports/tax-year?format=csv&year=YYYY` — CSV download, triggered by the "Download CSV" header button (v7.0 — ST-13, BLG-FEAT-69; supersedes the v2.1 "no button, URL-parameter only" note — that variant was never implemented and was inconsistent with the PDF button on the same page)
 - **SI-02 Gate Status section (v0.6 — ST-06):** `GET /trades`, `GET /trade-plans`, `GET /analytics/arc5-compliance` — existing endpoints, no new backend work
 - **Monthly CSV export (v7.8):** `GET /reports/monthly-pnl?format=csv` — CSV download, triggered by the Monthly P&L Report's "Download CSV" button (ST-05, BLG-FEAT-81)
+- **Reconciliation Report (v0.13):** `GET /reports/reconciliation?year=YYYY` — new endpoint, contract specified in §Reconciliation Report below (ST-01, BLG-FEAT-88; implementation and contract filing are sprint-execution scope)
 - **Canonical contract:** `docs/specs/api_contracts/reports_endpoints.md`
 
 All values displayed on this page are sourced from the API response. The frontend must not recalculate P&L, FX conversions, or fee adjustments.
@@ -365,6 +366,54 @@ Follows the Arc 5 Compliance Summary design language from the tax-year report (�
 
 ---
 
+## Reconciliation Report (v0.13 — ST-01, BLG-FEAT-88)
+
+**Design source:** `docs/design/2026-08-04__release-v8.2/pnl-reconciliation-report/decision_record.md`
+
+A new **"Reconciliation"** tab (4th tab in the page's tab navigation, alongside Performance / Tax Year / Monthly). Gives the user a single confirming view that the system-computed realised P&L total for a tax year and an independently re-derived sum of that year's individual trade export rows agree — surfacing user-visibly what the Monthly CSV export's and Combined Total's existing reconciliation rules (§Monthly CSV Export, §Unrealised P&L Card) only state in prose.
+
+**Scope:** realised P&L vs. trade export only — does not cover unrealised P&L (already caveated by the Combined Total note) or portfolio `total_pnl` (already covered by the existing approximate-tie-back rule).
+
+### Layout
+
+| Element | Content |
+|---------|---------|
+| Year selector | Reuses the page's existing shared §Year Selector |
+| System Total card | Label "System-Computed Total", value `system_total_pnl_gbp`, page's standard profit/loss colour convention (`text-emerald-400` / `text-rose-400`) |
+| Export Total card | Label "Trade Export Total", value `export_total_pnl_gbp`, same colour convention |
+| Match indicator | Badge — "✓ Reconciled" (reuses the SI-02 Gate Status `MET` badge style verbatim) when `matched: true`; "⚠ Discrepancy — £X.XX difference" (reuses the `NOT MET` badge style) when `matched: false` |
+| Sign-off note | Static text: "Reviewed and confirmed matching by the Financial Reporting & Records Owner on \<date\>" |
+
+### States
+
+| State | Content |
+|-------|---------|
+| Loading | Skeleton placeholder, matches existing page loading pattern |
+| Error | "Unable to load reconciliation data" |
+| Empty (no trades in selected year) | "No trade data available for {year} — reconciliation not applicable" |
+
+### API Contract (shape only)
+
+`GET /reports/reconciliation?year=YYYY` →
+
+```
+{
+  "system_total_pnl_gbp": number,
+  "export_total_pnl_gbp": number,
+  "matched": boolean
+}
+```
+
+`export_total_pnl_gbp` must be computed via a query path independent of the one powering the existing CSV export, so a divergence is meaningful rather than definitionally impossible. Endpoint implementation, the `## GET /reports/reconciliation` entry in `docs/specs/api_contracts/reports_endpoints.md`, and the `docs/reference/openapi.yaml` entry (same-commit, per `CLAUDE.md` §2) are sprint-execution scope — this design gate specifies the contract shape only.
+
+### Sign-off
+
+- **Head of UX & Design:** Approved — 2026-08-04 (reuses existing badge/card visual language verbatim; no new visual pattern introduced)
+- **Financial Reporting & Records Owner:** Scope confirmed as matching BLG-FEAT-88's acceptance criteria — 2026-08-04
+- **Product Owner:** Approved — 2026-08-04
+
+---
+
 ## Known Deviations
 
 ### DEV-REPORTS-ST06-01 — Unrealised P&L differs between Reports and Positions page (data freshness)
@@ -382,6 +431,7 @@ Follows the Arc 5 Compliance Summary design language from the tax-year report (�
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.13 | 2026-08-04 | v8.2 design gate — ST-01 (EPIC-01, BLG-FEAT-88): §Reconciliation Report added — new "Reconciliation" tab comparing the system-computed realised P&L total against an independently re-derived sum of the individual trade export, for a selected year, with a match/discrepancy badge (reuses SI-02 Gate Status's MET/NOT MET badge style verbatim). New endpoint `GET /reports/reconciliation?year=YYYY` contract specified (shape only — implementation, `reports_endpoints.md` entry, and `openapi.yaml` entry are sprint-execution scope, same-commit per CLAUDE.md §2). Design source: `docs/design/2026-08-04__release-v8.2/pnl-reconciliation-report/decision_record.md`. Head of UX & Design sign-off: 2026-08-04. Financial Reporting & Records Owner scope confirmation: 2026-08-04. Product Owner approved: 2026-08-04. Head of Specs Team confirmed. |
 | 0.12 | 2026-08-03 | ST-14 (EPIC-05, v8.1, BLG-SPEC-72): §SI-02 Gate Status Condition 2 and Condition 3 thresholds product-reviewed and formally documented, closing the `Specs_Index.md`-tracked "engine-filled gap" (never previously product-reviewed). Condition 2 confirmed at the existing `linked closed trades >= 20` (consistent with Condition 1's own 20-trade bar and the separate `BLG-GOV-107` backend gate). Condition 3 changed from the placeholder `trade_plan_adherence_rate > 0` to `>= 0.50` — a majority-discipline bar; no prior threshold existed for this metric anywhere in the spec. `src/pages/Reports.js`'s `SI02GateStatusSection` updated to match, with new Playwright coverage for the changed threshold. Product Owner decision (agent-mediated, §5.3, explicit user direction). |
 | 0.11 | 2026-07-24 | v7.8 design gate — ST-05 (EPIC-05, BLG-FEAT-81): Monthly CSV Export added to the Monthly P&L Report view — "Download CSV" button reusing the Tax Year tab's export pattern verbatim (idle/generating/success/error states), new `GET /reports/monthly-pnl?format=csv` endpoint, reconciliation rule against the Tax Year CSV documented. Scope excludes Unrealised P&L Card and Strategy Compliance Section figures (matches Tax Year export's scope). Design source: `docs/design/2026-07-24__release-v7.8/monthly-csv-export/ux_spec.md`. Head of UX & Design sign-off: 2026-07-24. Product Owner approved: 2026-07-24. Head of Specs Team confirmed. |
 | 0.10 | 2026-07-14 | v7.1 sprint execution (ST-06, BLG-SPEC-83): §Unrealised P&L Card (both tabs) — added Data Freshness note (nightly-snapshot vs live-computed distinction) and Reconciliation Rule (AC-03, verified against production data: realised £1,100.46 + unrealised −£126.25 = £974.21 vs `GET /portfolio.total_pnl` £988.19, diff £13.98/≈1.4%, explained by the snapshot-vs-live valuation gap — approximate tie-back, not exact). Added §Known Deviations, filed `DEV-REPORTS-ST06-01` (P3, BLG-SPEC-87) for the underlying Reports-vs-Positions unrealised P&L data-freshness gap discovered during this verification. |

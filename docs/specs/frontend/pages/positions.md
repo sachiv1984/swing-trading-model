@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.6
-**Last Updated:** 2026-07-27
+**Version:** 2.7
+**Last Updated:** 2026-08-04
+**Design Source (v8.2 additions):** docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md
 **Design Source (v7.9 additions):** docs/design/2026-07-27__release-v7.9/trailing-stop-explainer-tooltip/ux_spec.md
 **Design Source (v7.0 additions):** docs/design/2026-07-12__release-v7.0/combined-badge-differentiation/decision_record.md, docs/design/2026-07-12__release-v7.0/position-review-cadence-nudge/ux_spec.md
 **Design Source (v6.9 additions):** docs/design/2026-07-10__release-v6.9/on-demand-compliance-recheck/ux_spec.md, docs/design/2026-07-10__release-v6.9/gap-risk-flag/ux_spec.md
@@ -23,6 +24,7 @@
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.7 | 2026-08-04 | v8.2 design gate — ST-02 (EPIC-01, BLG-FE-105): §Compliance Recheck Panel (Modal) — all-rules-pass state specified explicitly. Adds an affirmation line ("All 5 checks passed — no action needed.", `text-emerald-400`, existing pass colour token) in the same layout slot as the warn/fail acknowledgement block, shown only when `overall_status === "pass"`. Closes the previously-undesigned asymmetry between the warn/fail path (explicit acknowledgement block) and the pass path (nothing). No new colour or interactive element introduced. Design source: `docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md`. Head of UX & Design sign-off: 2026-08-04. Product Owner approved: 2026-08-04. Head of Specs Team confirmed. |
 | 2.6 | 2026-07-27 | ST-05 (BLG-FEAT-87, EPIC-05, v7.9) implementation: corrected §Trailing Stop Column's tooltip placement description — the v6.2-described separate "Trail Stop" column/stat label does not exist in the shipped UI (Table View has one combined "Stop" header; Grid View has no standalone label). Placed the explainer icon on the actual anchors instead (combined "Stop" header; inline with the "Init:" subtext line in the Grid tile) — closest faithful placement given the real UI, pre-existing gap noted but not fixed (out of this story's scope). |
 | 2.5 | 2026-07-27 | v7.9 design gate: (ST-03, BLG-FEAT-87) §Trailing Stop Column — added "Why is my stop moving?" explainer tooltip (info icon after the "Trail Stop" column header / Grid View stat label; hover/focus reveals plain-language explanation of §7.2 profit-aware stop logic and §7.3 stop-movement constraint, reviewed against `strategy_rules.md` §7 for accuracy). Static text, no API dependency, no change to the underlying calculation or Trail Stop Modal. Design source: trailing-stop-explainer-tooltip/ux_spec.md. Approved: Product Owner 2026-07-27. Head of Specs Team confirmed. |
 | 2.4 | 2026-07-14 | v7.1 sprint execution: (ST-03, BLG-FE-107) Closed `DEV-EPIC01-ST05-01` — Table View's `AlertsCell` RISK OFF badge brought into spec compliance (`#1E40AF` blue-800, label "RISK OFF", no icon), matching the v7.0 Grid View badge. No spec text change — §Alerts Column was already correct; only §Known Deviations updated to record the resolution. (ST-04, BLG-BE-61) §Last Reviewed Column — documented `NULL`/backfill semantics for `last_reviewed_at` (falls back to `entry_date`, verified against production data). §Position Lifecycle State Badge — added explicit confirmation that review-cadence is a metadata annotation, not a 5th lifecycle state (4 states unchanged). No visual/behavioural change — documentation only. |
@@ -336,6 +338,8 @@ Opened by clicking "Recheck Compliance". Data source: `GET /positions/{id}/compl
 | `sizing_validity` | Sizing Validity |
 
 **Override acknowledgement:** checkbox "I acknowledge the advisory result" shown only when overall status is Warn or Fail — display-only, session-local, not persisted (no state change on the position).
+
+**All-pass affirmation (v2.7 — ST-02, BLG-FE-105):** when `overall_status === "pass"`, an affirmation line is shown in the same layout slot the acknowledgement block occupies for Warn/Fail — text **"All 5 checks passed — no action needed."**, `text-emerald-400` (existing pass colour token, no new colour introduced), plain text with no interactive element. Design source: `docs/design/2026-08-04__release-v8.2/compliance-recheck-all-pass-state/decision_record.md`.
 
 **States:**
 
