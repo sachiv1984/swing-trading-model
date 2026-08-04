@@ -1,0 +1,12 @@
+{
+  "cycle_id": "2026-08-04__release-v8.2",
+  "sprint_goal": "Ship v8.2's curated full-capacity scope — five ready user-facing/UX improvements leading the release, staging/production security hardening, an 11-item governance-process integrity cluster, CI/operations hardening, and QA/spec debt cleanup — advancing the release's explicit \"user features first\" priority within the confirmed capacity band.",
+  "backlog_slice_source": "claude/cycles/2026-08-04__release-v8.2/stage4_backlog_slice.md",
+  "invoked_utc": "2026-08-04T12:00:00Z",
+  "mode": "standard",
+  "status": "Running",
+  "open_escalations": [],
+  "process_notes": [],
+  "sealed": false,
+  "sealed_utc": null
+}
