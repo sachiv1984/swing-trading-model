@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.11
+**Version:** 9.12
 **Last Updated:** 2026-08-04
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -320,6 +320,8 @@ For each Later item: case for promoting to Next? For each Next item: promote to 
 - Cite the existing `**Last formally confirmed:**` structured field unchanged.
 - Record explicitly in `run_manifest.md` that a live check was attempted and why it did not succeed (e.g. "credentials unavailable in this environment" vs. "not attempted") — distinguish this from a session that never attempted the check at all.
 - This is advisory bookkeeping only; it does not change the gate's MET/NOT MET status, which is governed solely by the structured field's own recorded value.
+
+**Standing-behaviour decision (ST-15, EPIC-03, v8.2, BLG-GOV-279 — closes the recurring "should attempt genuine live re-check" carry-forward pattern):** Product Owner formally decided (2026-08-04) to accept the fallback-citation pattern above as **permanent, intended behaviour** — not an open gap awaiting a future credential-provisioning fix. Rationale: a production API key was never persisted into the gitignored `.env.production`/`.env.staging` files across every session checked from `2026-07-17__scheduled` through this decision (confirmed empty again at `2026-08-04`, 3+ consecutive months); repeated per-cycle carry-forward notes asking "the next rebalance should attempt a genuine live re-check" have not changed this, since no governed routine has write access to provision a real secret into version control by design (secrets are correctly excluded from git). The fallback-citation pattern itself is not a degraded workaround — it is fully transparent (distinguishes `**Last formally confirmed:**` from `**Unverified report:**`, never misrepresents an unattempted check as a confirmed one) and has already proven reliable across 6+ consecutive cycles. **Future rebalance/release-planning sessions must not file a new carry-forward item asking for "a genuine live re-check next cycle"** — that framing is retired. A live re-check remains welcome opportunistically (e.g. if a human supplies credentials mid-session, as occurred once at `2026-07-27__release-v7.9` EPIC-08/ST-08), but is no longer tracked as outstanding governance debt.
 
 Horizon movements are candidates in STEP 5 only if they represent new commitments — zero-sum displacement rules apply.
 

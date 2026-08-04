@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.135
+**Version:** 4.137
 **Last Updated:** 2026-08-04
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.11)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.12)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1455,7 +1455,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.135 |
+| Version | 4.137 |
 | Last Updated | 2026-08-04 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
@@ -1464,7 +1464,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.13 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.8 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.11 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.12 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.46 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.15 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
@@ -1474,7 +1474,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.24 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.22 |
+| Shared Standards | `claude/system/shared_standards.md` v3.23 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.10 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1496,6 +1496,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.137 | 2026-08-04 | **Sprint execution `2026-08-04__release-v8.2` EPIC-03/ST-18 (BLG-GOV-285) — shared_standards.md v3.22→v3.23: delegation-record auto-close false-positive fix documented.** §14 Shared Standards v3.22→v3.23. §14 Version 4.136→4.137/2026-08-04. Change: `.github/workflows/governance_sync.yml` now cross-checks a story's actual `execution_state` status (per-EPIC files or legacy single file) before auto-closing its GitHub issue, rather than trusting the presence of `[ST-xx]` in a commit message alone — fixes a false-positive that recurred twice (v8.0 EPIC-02/ST-08 issue #1148, v8.1 EPIC-02/ST-02 issue #1169). Documented in `shared_standards.md` §6. Authority: Head of Engineering (Sprint Execution Engine, agent-mediated, ST-18, 2026-08-04). |
+| 4.136 | 2026-08-04 | **Sprint execution `2026-08-04__release-v8.2` EPIC-03/ST-15 (BLG-GOV-279) — roadmap_prompt.md v9.11→v9.12: SI-02 production credential provisioning decision.** §6 source prompt header v9.11→v9.12 (line 399). §14 Roadmap Engine Source v9.11→v9.12. §14 Version 4.135→4.136/2026-08-04. Change: STEP 2.3 Credential-fallback guidance gains a Standing-behaviour decision — Product Owner formally accepted the fallback-citation pattern as permanent, intended behaviour (option (b) of the two named in the backlog item), closing the recurring "next rebalance should attempt a genuine live re-check" carry-forward pattern that had appeared in 3+ consecutive cycles' lessons-learnt/carry-forward notes without resolution (no production credential was ever persisted into the gitignored `.env.production`/`.env.staging` files — confirmed empty again this session). Authority: Product Owner (Sprint Execution Engine, agent-mediated, ST-15, 2026-08-04). |
 | 4.135 | 2026-08-04 | **Sprint execution `2026-08-04__release-v8.2` EPIC-03/ST-17 (BLG-GOV-283) — three source prompt version bumps.** §6 source prompt header `roadmap_prompt.md` v9.10→v9.11 (line 399). §6M `ideas_housekeeping_prompt.md` v1.1→v1.2 (line 478). §14: Roadmap Engine Source v9.10→v9.11, Ideas Housekeeping Engine v1.1→v1.2, Shared Standards v3.21→v3.22. §14 Version 4.134→4.135/2026-08-04. Change: new `shared_standards.md` §16.14 Last Updated Header-History Retention Convention (retain current + 2 prior entries, 3 total, in chained `**Last Updated:**` fields), applied at `roadmap_prompt.md` STEP 9 and `ideas_housekeeping_prompt.md` §1.4 (the actual write site for `ideas_register.md`'s header — the sprint backlog's AC named `idea_intake_prompt.md` but that file has no chained-header write step; verified by grep before assigning the fix to the correct file). Rule applied retroactively to `ideas_register.md`'s own header, truncated from 5 chained entries to 3. **Also backfilled two pre-existing drifts found during this edit's own pre-check:** `design_gate_changelog.md` missing v1.7 row (ST-16, same session) and `ideas_housekeeping_changelog.md` missing v1.1 row. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-17, 2026-08-04). |
 | 4.134 | 2026-08-04 | **Sprint execution `2026-08-04__release-v8.2` EPIC-03/ST-16 (BLG-GOV-281) — design_gate_prompt.md v1.7→v1.8: mandatory §13 boundary pre-check for AI-calling proposals.** §6.5 source prompt header v1.7→v1.8 (line 570). §14 Design Gate Engine v1.7→v1.8. §14 Version 4.133→4.134/2026-08-04. Change: STEP 1 (Classify Each Item) gains a mandatory §13 boundary pre-check for any item — Design Required or Design Pre-Approved — introducing/extending an AI provider call. Flags `§13 PRE-CHECK REQUIRED` when no covering §13 review decision record exists, gating design/implementation start until a `delegated_decision` §13 gate story clears it (per `execution_prompt.md` §5.1's existing pattern). **Also backfilled a pre-existing drift found during this edit's own pre-check:** `design_gate_changelog.md` was missing its v1.7 row despite the header already carrying v1.7 since v8.0/ST-05 (2026-07-30) — restored per `CLAUDE.md` §6. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-16, 2026-08-04). |
 | 4.133 | 2026-08-04 | **Sprint execution `2026-08-04__release-v8.2` EPIC-03/ST-11 (BLG-GOV-218) — post_ship_closure.md v2.23→v2.24: Rebalance Cadence Check corrected-skip logic.** §10 source prompt header v2.23→v2.24 (line 1062). §14 Post-Ship Closure Engine v2.23→v2.24. §14 Version 4.132→4.133/2026-08-04. Change: STEP 0's Rebalance Cadence Check now reads `current_roadmap.md` §1 before emitting the unconditional odd-cycle "REBALANCE SKIP" advisory — if `next_release` is `[TBD]`/unscoped, or already carries a non-`[TBD]` roadmap Status (already scoped/committed), a corrected "REBALANCE SKIP WITHHELD" advisory fires instead, since "proceed directly to `plan release`" would be stale or not-yet-actionable. A genuinely fresh, unconsumed `next_release` still gets the standard advisory (no regression). Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-11, 2026-08-04). |

@@ -149,7 +149,7 @@
     "ST-13": {
       "title": "Direct-write / governance-bypass pattern tracker (roadmap & amendment gate bypasses)",
       "classification": "autonomous",
-      "status": "not_started",
+      "status": "done",
       "assigned_to": "engine",
       "github_issue": 1212,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -158,19 +158,27 @@
       "blocked_since_utc": null,
       "unblock_criteria": null,
       "completed_utc": null,
-      "acceptance_verified": false,
-      "spec_references": [],
+      "acceptance_verified": true,
+      "spec_references": [
+        "claude/roadmap/governance_bypass_log.md"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
-      "last_completed_substep": null,
-      "sign_off_record": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "PMO Lead",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-04",
+        "notes": "Approved. 4 of 8 rows spot-checked against source records (AMD-20260523-01, AMD-20260717-01, DL-069, DL-073) \u2014 all accurate. DL-070 exclusion verified as a genuine normal rebalance. No missed bypass instances found in a fresh scan of decision_log.md."
+      },
       "notes": ""
     },
     "ST-14": {
       "title": "Idea-intake backlog-overlap check effectiveness retrospective (v2.8, post-N-windows)",
       "classification": "autonomous",
-      "status": "not_started",
+      "status": "done",
       "assigned_to": "engine",
       "github_issue": 1213,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -179,19 +187,27 @@
       "blocked_since_utc": null,
       "unblock_criteria": null,
       "completed_utc": null,
-      "acceptance_verified": false,
-      "spec_references": [],
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/governance/idea_intake_overlap_check_retrospective_2026-08-04.md"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
-      "last_completed_substep": null,
-      "sign_off_record": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "PMO Lead",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-04",
+        "notes": "Initial draft blocked: \u00a75's third bullet incorrectly cited a non-existent 'DL-078' as independent second-source confirmation, double-counting the single DL-077 data point. Fixed by removing the erroneous bullet and adding a correction note. Core data (DL-076/DL-077 rates) and \u00a74's honest single-data-point caveat were already accurate. Cleared on the corrected version."
+      },
       "notes": ""
     },
     "ST-15": {
       "title": "SI-02 production credential provisioning decision (formalise fallback vs acquire)",
       "classification": "autonomous",
-      "status": "not_started",
+      "status": "done",
       "assigned_to": "engine",
       "github_issue": 1214,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -200,13 +216,21 @@
       "blocked_since_utc": null,
       "unblock_criteria": null,
       "completed_utc": null,
-      "acceptance_verified": false,
-      "spec_references": [],
+      "acceptance_verified": true,
+      "spec_references": [
+        "claude/system/roadmap_prompt.md#STEP 2.3 \u2014 Standing-behaviour decision"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
-      "last_completed_substep": null,
-      "sign_off_record": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Product Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-04",
+        "notes": "Decision: Option (b) \u2014 formally accept the fallback-citation pattern as standing behaviour. Option (a) (persist credential) not implementable \u2014 no real production secret is available to the engine; confirmed .env.staging/.env.production both empty in this session, consistent with every prior session checked since 2026-07-17."
+      },
       "notes": ""
     },
     "ST-16": {
@@ -270,7 +294,7 @@
     "ST-18": {
       "title": "governance_sync.yml auto-close regex cannot distinguish delegation-record commits from completion commits",
       "classification": "autonomous",
-      "status": "not_started",
+      "status": "done",
       "assigned_to": "engine",
       "github_issue": 1217,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -279,13 +303,22 @@
       "blocked_since_utc": null,
       "unblock_criteria": null,
       "completed_utc": null,
-      "acceptance_verified": false,
-      "spec_references": [],
+      "acceptance_verified": true,
+      "spec_references": [
+        ".github/workflows/governance_sync.yml",
+        "claude/system/shared_standards.md#GitHub CLI Commands"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
-      "last_completed_substep": null,
-      "sign_off_record": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Head of Engineering",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-04",
+        "notes": "Approved. jq logic verified correct against both real schema shapes (per-EPIC and legacy). Reviewer flagged one edge case: a malformed legacy execution_state.json missing .epics would abort the whole close step under GH Actions' set -e/pipefail shell, worse than the old unconditional-close fallback. Fixed immediately with a (.epics // {}) null-guard, verified locally (exit 0 on a file with no .epics key)."
+      },
       "notes": ""
     }
   },

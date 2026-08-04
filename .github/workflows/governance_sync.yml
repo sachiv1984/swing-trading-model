@@ -45,8 +45,59 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # ST-18 (BLG-GOV-285, EPIC-03, v8.2): a commit referencing [ST-xx] in its
+          # message is not necessarily a completion commit — a delegation-record-only
+          # commit (delegation_log.md update) also carries the same [EPIC-xx][ST-xx]
+          # tag per the mandatory commit-format rule (CLAUDE.md), and was previously
+          # auto-closing the issue prematurely (recurred v8.0 EPIC-02/ST-08, issue
+          # #1148; v8.1 EPIC-02/ST-02, issue #1169 — both required a manual reopen).
+          #
+          # Fix: before closing, cross-check the story's actual status in
+          # execution_state — the ground truth of whether it is genuinely done —
+          # rather than trusting the commit message alone. Tries the current
+          # per-EPIC mechanism (shared_standards.md §12.1) first, falls back to the
+          # legacy single execution_state.json for cycles that predate it.
+          ACTIVE_CYCLE=$(jq -r '.active_cycle // empty' .claude_current_state.json 2>/dev/null || echo "")
+
+          is_story_done() {
+            local st_id="$1"
+            if [ -z "$ACTIVE_CYCLE" ]; then
+              echo "unknown"; return
+            fi
+            local state_dir="claude/cycles/${ACTIVE_CYCLE}/execution_state"
+            local status=""
+            if [ -d "$state_dir" ]; then
+              for epic_file in "$state_dir"/EPIC-*.json; do
+                [ -f "$epic_file" ] || continue
+                status=$(jq -r --arg st "$st_id" '.stories[$st].status // empty' "$epic_file" 2>/dev/null)
+                [ -n "$status" ] && break
+              done
+            fi
+            if [ -z "$status" ]; then
+              local legacy_file="claude/cycles/${ACTIVE_CYCLE}/execution_state.json"
+              if [ -f "$legacy_file" ]; then
+                status=$(jq -r --arg st "$st_id" '(.epics // {}) | to_entries[] | .value.stories[$st].status? // empty' "$legacy_file" 2>/dev/null | head -1)
+              fi
+            fi
+            if [ -z "$status" ]; then
+              echo "unknown"
+            elif [ "$status" = "done" ] || [ "$status" = "merged" ]; then
+              echo "yes"
+            else
+              echo "no"
+            fi
+          }
+
           # Close all issues referenced in the push range (handles batch pushes)
           for ST_ID in ${{ steps.parse.outputs.st_ids }}; do
+            DONE=$(is_story_done "$ST_ID")
+            if [ "$DONE" = "no" ]; then
+              echo "Skipping close for ${ST_ID} — execution_state status is not done/merged (likely a delegation-record-only commit)"
+              continue
+            fi
+            # DONE = "yes" (confirmed complete) or "unknown" (no execution_state found —
+            # e.g. pre-per-EPIC-mechanism cycles, or a non-sprint-execution ST reference;
+            # preserves the pre-fix behaviour of closing unconditionally in that case).
             # Use exact title prefix match to prevent fuzzy search returning wrong issues
             # (e.g. a second [ST-14] commit must not close [ST-10] when [ST-14] is already closed)
             ISSUE_NUMBER=$(gh issue list --search "[${ST_ID}] in:title" --state open --json number,title \

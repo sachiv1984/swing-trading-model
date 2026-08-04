@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.22
+**Version:** 3.23
 **Last Updated:** 2026-08-04
 
 # Shared Standards — All Governed Routines
@@ -179,6 +179,8 @@ gh issue list --search "[ST-xx]" --json number,title,state
 - `{{OBJECTIVE_TEXT}}`, `{{AC_1}}` etc. → from acceptance criteria in `sprint_backlog.md`
 
 **Do not manually close issues** that will be closed by `governance_sync.yml` on push. Issues are auto-closed by CI when a commit with `[EPIC-xx][ST-xx]` format is pushed to an `exec/**` branch.
+
+**Delegation-record commits do not auto-close (ST-18, EPIC-03, v8.2, BLG-GOV-285):** A commit that only records a delegation (e.g. a `delegation_log.md` update) still carries the mandatory `[EPIC-xx][ST-xx]` tag per the commit-format rule, but is not a completion commit. `governance_sync.yml` cross-checks the story's actual status in `execution_state` (per-EPIC files per §12.1, or the legacy single `execution_state.json` for older cycles) before closing — an issue is only auto-closed when the story's recorded status is `done` or `merged`. If the story's status cannot be determined (no `execution_state` found for the active cycle — e.g. a commit unrelated to sprint execution, or a cycle predating this check), the workflow falls back to closing unconditionally, preserving prior behaviour. This closes a false-positive that recurred twice before the fix (`v8.0` EPIC-02/ST-08, issue #1148; `v8.1` EPIC-02/ST-02, issue #1169 — both required a manual reopen). No new commit-message marker convention was introduced — the fix reads ground truth from `execution_state` rather than relying on commit authors to remember a new tag.
 
 ### PR operations
 
