@@ -220,6 +220,32 @@ def get_trade_history_by_tax_year(portfolio_id: str, year_start, year_end) -> Li
             return cur.fetchall()
 
 
+def get_trade_history_pnl_sum_by_tax_year(portfolio_id: str, year_start, year_end) -> Dict:
+    """Independently re-derive the realised P&L total for a tax year via a
+    server-side SUM, as a separate query path from get_trade_history_by_tax_year
+    (which fetches full rows for the Tax Year report/CSV export).
+
+    Returns {"total": float, "trade_count": int}.
+
+    Used by GET /reports/reconciliation (ST-01, EPIC-01, v8.2, BLG-FEAT-88) so a
+    divergence between the system total and the export total is meaningful
+    rather than definitionally impossible (docs/design/2026-08-04__release-v8.2/
+    pnl-reconciliation-report/decision_record.md §4).
+    Spec: docs/specs/api_contracts/reports_endpoints.md §GET /reports/reconciliation.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT COALESCE(SUM(pnl), 0)::float AS total, COUNT(*)::int AS trade_count
+                   FROM trade_history
+                   WHERE portfolio_id = %s
+                   AND exit_date BETWEEN %s AND %s""",
+                (portfolio_id, year_start, year_end)
+            )
+            row = cur.fetchone()
+            return row
+
+
 def get_monthly_pnl(portfolio_id: str) -> List[Dict]:
     """Aggregate realised P&L by calendar month for the current and prior year.
 

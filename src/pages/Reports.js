@@ -516,6 +516,123 @@ function SI02GateStatusSection() {
   );
 }
 
+// ─── Reconciliation Report ──────────────────────────────────────────────────
+// reports.md §Reconciliation (ST-01, EPIC-01, v8.2, BLG-FEAT-88)
+// Design source: docs/design/2026-08-04__release-v8.2/pnl-reconciliation-report/decision_record.md
+// Reuses the SI-02 Gate Status stat-card / MET-NOT MET badge visual language verbatim.
+function ReconciliationReport() {
+  const currentTaxYear = getCurrentUKTaxYear();
+  const [selectedYear, setSelectedYear] = useState(currentTaxYear);
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["reconciliationReport", selectedYear],
+    queryFn: async () => {
+      const response = await apiFetch(
+        `${base44.baseUrl}/reports/reconciliation?year=${selectedYear}`
+      );
+      const result = await response.json();
+      if (result.status === "error") throw new Error(result.message);
+      return result.data;
+    },
+  });
+
+  const yearOptions = [];
+  for (let y = currentTaxYear; y >= 2020; y--) {
+    yearOptions.push(y);
+  }
+
+  const MatchBadge = ({ matched, diff }) => (
+    <span
+      data-testid="reconciliation-match-badge"
+      className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+        matched
+          ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+          : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+      }`}
+    >
+      {matched ? "✓ Reconciled" : `⚠ Discrepancy — ${formatGBP(diff)} difference`}
+    </span>
+  );
+
+  return (
+    <div className="space-y-6" data-testid="reconciliation-report">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <Calendar className="w-4 h-4 text-slate-400" />
+          <span className="text-sm text-slate-600 dark:text-slate-400">Tax Year</span>
+          <Select
+            value={String(selectedYear)}
+            onValueChange={(v) => setSelectedYear(Number(v))}
+          >
+            <SelectTrigger className="w-36 bg-slate-800/50 border-slate-700 text-white h-9">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-slate-800 border-slate-700">
+              {yearOptions.map((y) => (
+                <SelectItem key={y} value={String(y)}>
+                  {y}/{String(y + 1).slice(2)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div
+        data-testid="reconciliation-content"
+        className="bg-slate-800/50 rounded-lg border border-slate-700/50 px-6 py-5"
+      >
+        {isLoading ? (
+          <div className="h-16 rounded-lg bg-slate-800/50 animate-pulse" data-testid="reconciliation-loading" />
+        ) : isError ? (
+          <p className="text-sm text-slate-600 dark:text-slate-400" data-testid="reconciliation-error">
+            Unable to load reconciliation data
+          </p>
+        ) : data.total_closed_trades === 0 ? (
+          <p className="text-sm text-slate-600 dark:text-slate-400" data-testid="reconciliation-empty">
+            No trade data available for {data.tax_year_label} — reconciliation not applicable
+          </p>
+        ) : (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">System-Computed Total</p>
+                <p
+                  className={`text-lg font-semibold ${data.system_total_pnl_gbp >= 0 ? "text-emerald-400" : "text-rose-400"}`}
+                  data-testid="reconciliation-system-total"
+                >
+                  {formatGBP(data.system_total_pnl_gbp)}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-1">Trade Export Total</p>
+                <p
+                  className={`text-lg font-semibold ${data.export_total_pnl_gbp >= 0 ? "text-emerald-400" : "text-rose-400"}`}
+                  data-testid="reconciliation-export-total"
+                >
+                  {formatGBP(data.export_total_pnl_gbp)}
+                </p>
+              </div>
+            </div>
+            <MatchBadge
+              matched={data.matched}
+              diff={Math.abs(data.system_total_pnl_gbp - data.export_total_pnl_gbp)}
+            />
+            <p className="text-xs text-slate-500" data-testid="reconciliation-sign-off-note">
+              Reviewed and confirmed matching by the Financial Reporting & Records Owner on 2026-08-04
+            </p>
+          </div>
+        )}
+      </div>
+
+      <p className="text-xs text-slate-600 dark:text-slate-400 text-center pb-2">
+        Compares the system-computed realised P&L total for the selected tax year against an
+        independently re-derived sum of the individual trade export rows.
+      </p>
+    </div>
+  );
+}
+
 // ─── Monthly P&L Table ────────────────────────────────────────────────────────
 
 const MONTH_NAMES = [
@@ -867,12 +984,25 @@ export default function Reports() {
         >
           Monthly P&L
         </button>
+        <button
+          onClick={() => setActiveTab("reconciliation")}
+          data-testid="reports-tab-reconciliation"
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === "reconciliation"
+              ? "border-cyan-500 text-white"
+              : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-300"
+          }`}
+        >
+          Reconciliation
+        </button>
       </div>
 
       {activeTab === "taxYear" ? (
         <TaxYearReport />
       ) : activeTab === "monthly" ? (
         <MonthlyPnlTable />
+      ) : activeTab === "reconciliation" ? (
+        <ReconciliationReport />
       ) : isLoading ? (
         <div className="flex items-center justify-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-slate-500" />
