@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# ST-21 (BLG-OPS-125, EPIC-04, v8.2): commit-message format lint.
+#
+# Enforces CLAUDE.md's non-negotiable commit format on exec/** branches:
+#   [EPIC-xx][ST-xx] <imperative description>
+#   [EPIC-xx][ST-xx][ST-yy] <description>   (two stories in one commit)
+#   [GOVERNANCE] <description>              (governance-only commits)
+#
+# Only enforced on exec/** branches — main and other branches are unrestricted.
+# Lives alongside the existing `.githooks/pre-commit` hook (router-registration
+# check + local gitleaks scan, EPIC-02/ST-05 + EPIC-10/ST-10) — both share the
+# same `core.hooksPath .githooks` setting; git dispatches by filename
+# (pre-commit vs commit-msg), so the two hooks do not conflict.
+# Installed via `git config core.hooksPath .githooks` (see package.json's
+# "prepare" script, which now sets this automatically on `npm install` —
+# previously a manual one-time step per clone, per `pre-commit`'s own header).
+
+set -euo pipefail
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG_FIRST_LINE=$(head -n 1 "$COMMIT_MSG_FILE")
+# Fail open (allow the commit) if the branch can't be determined at all —
+# e.g. a repo's very first commit, before HEAD exists. Blocking every commit
+# in that edge case would be worse than skipping the lint once.
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+if [ -z "$BRANCH" ]; then
+  exit 0
+fi
+
+# Only enforce on exec/** branches.
+case "$BRANCH" in
+  exec/*) ;;
+  *) exit 0 ;;
+esac
+
+# Pattern: one or more [EPIC-xx] / [ST-xx] tags, or a single [GOVERNANCE] tag,
+# followed by a non-empty description.
+PATTERN='^(\[EPIC-[0-9]+\](\[ST-[0-9]+\])+|\[GOVERNANCE\]) .+'
+
+if ! echo "$COMMIT_MSG_FIRST_LINE" | grep -qE "$PATTERN"; then
+  echo "ERROR: Commit message does not match the required format for exec/** branches." >&2
+  echo "" >&2
+  echo "  Got:      $COMMIT_MSG_FIRST_LINE" >&2
+  echo "  Expected: [EPIC-xx][ST-xx] <description>" >&2
+  echo "            [EPIC-xx][ST-xx][ST-yy] <description>  (multiple stories)" >&2
+  echo "            [GOVERNANCE] <description>" >&2
+  echo "" >&2
+  echo "See CLAUDE.md \"Commit format is non-negotiable\"." >&2
+  exit 1
+fi
+
+exit 0
