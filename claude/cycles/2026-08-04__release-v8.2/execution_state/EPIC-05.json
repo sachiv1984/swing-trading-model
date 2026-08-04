@@ -3,8 +3,8 @@
   "epic_id": "EPIC-05",
   "status": "done",
   "branch": "exec/2026-08-04__release-v8.2/EPIC-05",
-  "pr_number": null,
-  "pr_status": "none",
+  "pr_number": 1228,
+  "pr_status": "open",
   "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-04__release-v8.2/qa_evidence_EPIC-05.md",
   "test_scenarios": [
@@ -104,5 +104,5 @@
       "notes": ""
     }
   },
-  "last_updated_utc": "2026-08-04T20:50:00Z"
+  "last_updated_utc": "2026-08-04T20:55:00Z"
 }
