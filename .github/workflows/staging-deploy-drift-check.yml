@@ -45,13 +45,23 @@ jobs:
 
       - name: Run drift check
         id: check
+        shell: bash
         env:
           RENDER_PLATFORM_API_KEY: ${{ secrets.RENDER_PLATFORM_API_KEY }}
         run: |
+          set -o pipefail
           if [ -z "$RENDER_PLATFORM_API_KEY" ]; then
             echo "::warning::RENDER_PLATFORM_API_KEY not configured as a repo secret — drift check skipped."
             exit 0
           fi
+          # NOTE (ST-07 fix, caught by Infrastructure & Operations Owner
+          # agent-mediated review): `run:` steps use `bash -e {0}` by
+          # default with NO pipefail unless `shell: bash` is explicitly
+          # declared on the step. Without it, `python3 ... | tee file;
+          # echo $?` captures tee's exit status (always 0), not the
+          # script's — so this alert would silently never fire on real
+          # drift. `shell: bash` + `set -o pipefail` above makes `$?`
+          # after the pipe reflect the Python script's actual exit code.
           set +e
           python3 scripts/check_staging_deploy_drift.py | tee drift_output.txt
           echo "exit_code=$?" >> "$GITHUB_OUTPUT"
