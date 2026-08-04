@@ -1,10 +1,10 @@
 {
   "cycle_id": "2026-08-04__release-v8.2",
   "epic_id": "EPIC-04",
-  "status": "done",
+  "status": "merged",
   "branch": "exec/2026-08-04__release-v8.2/EPIC-04",
   "pr_number": 1227,
-  "pr_status": "open",
+  "pr_status": "merged",
   "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-04__release-v8.2/qa_evidence_EPIC-04.md",
   "test_scenarios": [
@@ -14,7 +14,7 @@
     "ST-19": {
       "title": "Quarterly dependency-upgrade cadence for backend/requirements.txt",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1218,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-04",
@@ -37,7 +37,7 @@
     "ST-20": {
       "title": "CI cache tuning to reduce Playwright suite runtime",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1219,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-04",
@@ -67,7 +67,7 @@
     "ST-21": {
       "title": "Automated commit-message format lint (pre-commit hook)",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1220,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-04",
