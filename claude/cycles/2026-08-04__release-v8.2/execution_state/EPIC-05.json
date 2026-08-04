@@ -1,10 +1,10 @@
 {
   "cycle_id": "2026-08-04__release-v8.2",
   "epic_id": "EPIC-05",
-  "status": "done",
+  "status": "merged",
   "branch": "exec/2026-08-04__release-v8.2/EPIC-05",
   "pr_number": 1228,
-  "pr_status": "open",
+  "pr_status": "merged",
   "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-04__release-v8.2/qa_evidence_EPIC-05.md",
   "test_scenarios": [
@@ -14,7 +14,7 @@
     "ST-22": {
       "title": "Snapshot test for SystemStatus.js hardcoded fallback counts",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1221,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-05",
@@ -37,7 +37,7 @@
     "ST-23": {
       "title": "Reconstruct 13 undocumented versions in sprint_planning_changelog.md (v3.1-v3.13)",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1222,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-05",
@@ -60,7 +60,7 @@
     "ST-24": {
       "title": "Remove dead-code duplicate POST /test/endpoints handler in backend/main.py",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1223,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-05",
@@ -83,7 +83,7 @@
     "ST-25": {
       "title": "Design-gate checklist addendum for motion/timing-sensitive chart interactions",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1224,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-05",
@@ -104,5 +104,5 @@
       "notes": ""
     }
   },
-  "last_updated_utc": "2026-08-04T20:55:00Z"
+  "last_updated_utc": "2026-08-04T20:28:00Z"
 }

@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-04T12:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-04T20:08:29Z",
+  "last_updated_utc": "2026-08-04T20:27:58Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -656,95 +656,105 @@
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "merged",
       "branch": "exec/2026-08-04__release-v8.2/EPIC-05",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1228,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-04__release-v8.2/qa_evidence_EPIC-05.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_system_status_endpoint_count.py"
+      ],
       "stories": {
         "ST-22": {
           "title": "Snapshot test for SystemStatus.js hardcoded fallback counts",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "merged",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1221,
           "branch": "exec/2026-08-04__release-v8.2/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "49949b34",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-04T20:35:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-08-04__release-v8.2/stage4_backlog_slice.md#ST-22"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "implementation_complete",
           "sign_off_record": null,
           "notes": ""
         },
         "ST-23": {
           "title": "Reconstruct 13 undocumented versions in sprint_planning_changelog.md (v3.1-v3.13)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "merged",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1222,
           "branch": "exec/2026-08-04__release-v8.2/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "95d85e09",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-04T20:35:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-08-04__release-v8.2/stage4_backlog_slice.md#ST-23"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "implementation_complete",
           "sign_off_record": null,
           "notes": ""
         },
         "ST-24": {
           "title": "Remove dead-code duplicate POST /test/endpoints handler in backend/main.py",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "merged",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1223,
           "branch": "exec/2026-08-04__release-v8.2/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "3cf18e81",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-04T20:35:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-08-04__release-v8.2/stage4_backlog_slice.md#ST-24"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "implementation_complete",
           "sign_off_record": null,
           "notes": ""
         },
         "ST-25": {
           "title": "Design-gate checklist addendum for motion/timing-sensitive chart interactions",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "merged",
           "assigned_to": "engine",
-          "github_issue": null,
+          "github_issue": 1224,
           "branch": "exec/2026-08-04__release-v8.2/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "ab9e3258",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-04T20:35:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-08-04__release-v8.2/stage4_backlog_slice.md#ST-25"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "implementation_complete",
           "sign_off_record": null,
           "notes": ""
         }
@@ -775,18 +785,22 @@
     "EPIC-03/ST-18",
     "EPIC-04/ST-19",
     "EPIC-04/ST-20",
-    "EPIC-04/ST-21"
+    "EPIC-04/ST-21",
+    "EPIC-05/ST-22",
+    "EPIC-05/ST-23",
+    "EPIC-05/ST-24",
+    "EPIC-05/ST-25"
   ],
   "open_escalations": [],
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
       "EPIC-03",
-      "EPIC-04"
+      "EPIC-04",
+      "EPIC-05"
     ],
     "epics_pending": [
-      "EPIC-02",
-      "EPIC-05"
+      "EPIC-02"
     ],
     "all_merged": false
   },
