@@ -33,7 +33,7 @@
     "ST-09": {
       "title": "velocity_metrics.md row-count audit against cycle folder count",
       "classification": "autonomous",
-      "status": "not_started",
+      "status": "done",
       "assigned_to": "engine",
       "github_issue": 1208,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -42,19 +42,27 @@
       "blocked_since_utc": null,
       "unblock_criteria": null,
       "completed_utc": null,
-      "acceptance_verified": false,
-      "spec_references": [],
+      "acceptance_verified": true,
+      "spec_references": [
+        "claude/cycles/velocity_metrics.md#Row-Count Audit"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
-      "last_completed_substep": null,
-      "sign_off_record": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "PMO Lead",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-04",
+        "notes": "Approved. Independently re-ran audit: 67 folders == 67 rows, zero discrepancies. Spot-checked v1.7/v1.8/v2.0 backfilled counts against execution_state.json \u2014 all match."
+      },
       "notes": ""
     },
     "ST-10": {
       "title": "Confirm Arc 5 composite formula accounts for v6.9 recheck events",
       "classification": "autonomous",
-      "status": "not_started",
+      "status": "done",
       "assigned_to": "engine",
       "github_issue": 1209,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -63,13 +71,21 @@
       "blocked_since_utc": null,
       "unblock_criteria": null,
       "completed_utc": null,
-      "acceptance_verified": false,
-      "spec_references": [],
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/specs/metrics_definitions.md#v6.9 On-Demand Compliance Recheck \u2014 Confirmed No Formula Gap"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
-      "last_completed_substep": null,
-      "sign_off_record": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Metrics Definitions & Analytics Canonical Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-04",
+        "notes": "Approved. Traced full write path for pre_entry_validation_log and red_flag_events; confirmed compliance_recheck_service.py has no persistence; confirmed compliance_recheck not in _VALID_EVENT_TYPES. No formula gap."
+      },
       "notes": ""
     },
     "ST-11": {
