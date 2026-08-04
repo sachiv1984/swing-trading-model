@@ -12,7 +12,7 @@
     "ST-19": {
       "title": "Quarterly dependency-upgrade cadence for backend/requirements.txt",
       "classification": "autonomous",
-      "status": "not_started",
+      "status": "done",
       "assigned_to": "engine",
       "github_issue": 1218,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-04",
@@ -21,19 +21,21 @@
       "blocked_since_utc": null,
       "unblock_criteria": null,
       "completed_utc": null,
-      "acceptance_verified": false,
-      "spec_references": [],
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/ops/dependency_upgrade_cadence.md"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
-      "last_completed_substep": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
       "sign_off_record": null,
       "notes": ""
     },
     "ST-20": {
       "title": "CI cache tuning to reduce Playwright suite runtime",
       "classification": "autonomous",
-      "status": "not_started",
+      "status": "in_progress",
       "assigned_to": "engine",
       "github_issue": 1219,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-04",
@@ -43,18 +45,21 @@
       "unblock_criteria": null,
       "completed_utc": null,
       "acceptance_verified": false,
-      "spec_references": [],
+      "spec_references": [
+        ".github/workflows/playwright.yml",
+        ".github/workflows/smoke-tests.yml"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
       "deviations_filed": false,
-      "last_completed_substep": null,
+      "last_completed_substep": "3.1.A.sign_off_pending",
       "sign_off_record": null,
       "notes": ""
     },
     "ST-21": {
       "title": "Automated commit-message format lint (pre-commit hook)",
       "classification": "autonomous",
-      "status": "not_started",
+      "status": "in_progress",
       "assigned_to": "engine",
       "github_issue": 1220,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-04",
@@ -64,11 +69,14 @@
       "unblock_criteria": null,
       "completed_utc": null,
       "acceptance_verified": false,
-      "spec_references": [],
+      "spec_references": [
+        "scripts/git-hooks/commit-msg",
+        "scripts/git-hooks/test_commit_msg.sh"
+      ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
       "deviations_filed": false,
-      "last_completed_substep": null,
+      "last_completed_substep": "3.1.A.sign_off_pending",
       "sign_off_record": null,
       "notes": ""
     }

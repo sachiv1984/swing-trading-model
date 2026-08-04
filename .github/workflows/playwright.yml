@@ -71,8 +71,30 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Install Playwright browsers
+      # ST-20 (BLG-OPS-118, EPIC-04, v8.2): cache Playwright browser binaries
+      # across runs, keyed on the resolved @playwright/test version from
+      # package-lock.json. Before this, every job independently re-downloaded
+      # Chromium (~150-200MB) on every run. OS-level apt dependencies
+      # (--with-deps) are not part of this cache and are re-installed every
+      # run regardless — they are a fast apt-get operation, not the slow part.
+      - name: Get installed Playwright version
+        id: playwright-version
+        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').packages['node_modules/@playwright/test'].version)")" >> $GITHUB_ENV
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+
+      - name: Install Playwright browsers (cache miss — full install)
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright OS dependencies only (cache hit — browsers already present)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
 
       - name: Run E2E acceptance tests (shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
         run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
@@ -108,8 +130,30 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Install Playwright browsers
+      # ST-20 (BLG-OPS-118, EPIC-04, v8.2): cache Playwright browser binaries
+      # across runs, keyed on the resolved @playwright/test version from
+      # package-lock.json. Before this, every job independently re-downloaded
+      # Chromium (~150-200MB) on every run. OS-level apt dependencies
+      # (--with-deps) are not part of this cache and are re-installed every
+      # run regardless — they are a fast apt-get operation, not the slow part.
+      - name: Get installed Playwright version
+        id: playwright-version
+        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').packages['node_modules/@playwright/test'].version)")" >> $GITHUB_ENV
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+
+      - name: Install Playwright browsers (cache miss — full install)
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright OS dependencies only (cache hit — browsers already present)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
 
       - name: Run visual snapshot tests
         run: npx playwright test tests/e2e/visual-snapshots.spec.js
