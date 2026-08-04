@@ -41,7 +41,9 @@ jobs:
 
       # ST-20 (BLG-OPS-118, EPIC-04, v8.2): cache Playwright browser binaries —
       # this workflow runs on every push with no path filter, same rationale
-      # as playwright.yml's identical caching addition.
+      # and same measured result as playwright.yml's identical caching
+      # addition (see that file for the measured before/after numbers —
+      # modest but real per-job saving, not a dramatic one).
       - name: Get installed Playwright version
         id: playwright-version
         run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').packages['node_modules/@playwright/test'].version)")" >> $GITHUB_ENV
