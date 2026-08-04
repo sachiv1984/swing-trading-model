@@ -1,7 +1,7 @@
 {
   "cycle_id": "2026-08-04__release-v8.2",
   "epic_id": "EPIC-02",
-  "status": "not_started",
+  "status": "in_progress",
   "branch": "exec/2026-08-04__release-v8.2/EPIC-02",
   "pr_number": null,
   "pr_status": "none",
@@ -14,7 +14,7 @@
       "classification": "delegated_backend",
       "status": "not_started",
       "assigned_to": "Cybersecurity & Trust Lead",
-      "github_issue": null,
+      "github_issue": 1205,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-02",
       "commit_sha": null,
       "delegation_record_id": null,
@@ -35,7 +35,7 @@
       "classification": "delegated_backend",
       "status": "not_started",
       "assigned_to": "Infrastructure & Operations Owner",
-      "github_issue": null,
+      "github_issue": 1206,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-02",
       "commit_sha": null,
       "delegation_record_id": null,
@@ -52,5 +52,5 @@
       "notes": ""
     }
   },
-  "last_updated_utc": "2026-08-04T12:00:00Z"
+  "last_updated_utc": "2026-08-04T21:00:00Z"
 }
