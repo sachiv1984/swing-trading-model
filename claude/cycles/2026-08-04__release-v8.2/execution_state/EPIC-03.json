@@ -1,10 +1,10 @@
 {
   "cycle_id": "2026-08-04__release-v8.2",
   "epic_id": "EPIC-03",
-  "status": "done",
+  "status": "merged",
   "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
   "pr_number": 1226,
-  "pr_status": "open",
+  "pr_status": "merged",
   "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-04__release-v8.2/qa_evidence_EPIC-03.md",
   "test_scenarios": [],
@@ -12,7 +12,7 @@
     "ST-08": {
       "title": "File SI-05 Phase 1 30-day effectiveness review record",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1207,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -42,7 +42,7 @@
     "ST-09": {
       "title": "velocity_metrics.md row-count audit against cycle folder count",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1208,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -71,7 +71,7 @@
     "ST-10": {
       "title": "Confirm Arc 5 composite formula accounts for v6.9 recheck events",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1209,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -100,7 +100,7 @@
     "ST-11": {
       "title": "Rebalance-skip advisory should verify next release is actually scoped",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1210,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -129,7 +129,7 @@
     "ST-12": {
       "title": "AI vendor Terms-of-Service & data-processing review (Gemini/Claude, financial data handling)",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1211,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -158,7 +158,7 @@
     "ST-13": {
       "title": "Direct-write / governance-bypass pattern tracker (roadmap & amendment gate bypasses)",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1212,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -187,7 +187,7 @@
     "ST-14": {
       "title": "Idea-intake backlog-overlap check effectiveness retrospective (v2.8, post-N-windows)",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1213,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -216,7 +216,7 @@
     "ST-15": {
       "title": "SI-02 production credential provisioning decision (formalise fallback vs acquire)",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1214,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -245,7 +245,7 @@
     "ST-16": {
       "title": "Mandatory \u00a713 boundary pre-check at design gate for new AI-calling feature proposals",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1215,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -274,7 +274,7 @@
     "ST-17": {
       "title": "Codify a Last Updated header-history retention convention",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1216,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
@@ -303,7 +303,7 @@
     "ST-18": {
       "title": "governance_sync.yml auto-close regex cannot distinguish delegation-record commits from completion commits",
       "classification": "autonomous",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "engine",
       "github_issue": 1217,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-03",
