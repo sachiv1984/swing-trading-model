@@ -1,0 +1,32 @@
+# .github/workflows/si05-weekly-digest.yml
+# Weekly SI-05 strategy integrity digest — Telegram delivery.
+# Root cause (BLG-OPS-129, ST-01 EPIC-01 v8.3): POST /digest/si05/send has existed
+# since v5.1 as a callable endpoint but no automated trigger mechanism was ever
+# committed to call it. Deliveries recorded in the 2026-06-22 cadence review were
+# ad hoc/manual invocations made during development; once manual triggering
+# stopped, no further digests were sent. This workflow is the first automated
+# trigger for this endpoint, following the same GitHub Actions schedule pattern
+# already used for alert-evaluation.yml (Render cron requires a paid tier —
+# see render.yaml — so GitHub Actions' free-tier schedule is used instead).
+# Full investigation: docs/ops/si05_digest_delivery_root_cause_2026-08-05.md
+name: SI-05 Weekly Digest
+
+on:
+  schedule:
+    - cron: '0 19 * * 0'  # 19:00 UTC Sunday (~evening in Europe/London per the confirmed cadence)
+  workflow_dispatch:         # Allow manual trigger for testing
+
+jobs:
+  send-si05-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger SI-05 digest send
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          echo "Triggering SI-05 weekly digest at $(date -u)..."
+          curl -f --max-time 120 -X POST "${API_URL}/digest/si05/send" \
+            -H "X-API-Key: ${API_KEY}" \
+            -H "Content-Type: application/json"
+          echo "SI-05 digest trigger complete."
