@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.6
-**Last Updated:** 2026-07-27
+**Version:** 1.7
+**Last Updated:** 2026-08-05
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.7 (ST-12 + ST-13 + ST-21, EPIC-03 + EPIC-04, v8.3, BLG-FE-121 + BLG-FE-126 + BLG-SPEC-108):** added three new patterns, all genuinely new (no prior artefact existed for any of them): the `ConfirmationModal` shared component with an optional undo-window variant (§Shared UI Components → Confirmation Modal), a `Skeleton` loading-placeholder primitive and `DataState` `loadingVariant="skeleton"` prop (§Shared UI Components → Data States), and the canonical form-validation error-message pattern — trigger timing, placement, wording, and a corrected light-theme colour token closing a dark-only-token contrast gap found in two shipped instances (§Interaction States → Error States). Design sources: `docs/design/2026-08-05__release-v8.3/shared-confirmation-modal-undo-window/decision_record.md`, `docs/design/2026-08-05__release-v8.3/loading-skeleton-pattern/decision_record.md`, `docs/design/2026-08-05__release-v8.3/form-validation-error-message-pattern/decision_record.md`.
 **v1.6 (ST-11, EPIC-11, v7.9, BLG-FE-130):** added a chart colour palette contrast checklist to §Accessibility — the existing WCAG contrast standard (v1.4) covered text and focus indicators but not chart data-ink. Documentation addendum only, no shipped UI change.
 **v1.5 (ST-01, EPIC-01, v7.8, BLG-FE-128):** added optional `errorHeading`/`errorBody` props to `DataState` (§Shared UI Components → Cards → Data States) so a context needing a more specific error message (e.g. the What's New panel's "Unable to load release notes") can override the default "Something went wrong" copy without duplicating the shared error UI. Both default to the original strings — existing call sites unaffected. Design source: `docs/design/2026-07-24__release-v7.8/whats-new-panel/ux_spec.md`.
 **v1.4 (ST-03 + ST-04, EPIC-03 + EPIC-04, v7.8, BLG-FE-127 + BLG-FE-125):** added the Focus Indicator contrast standard (§Hover & Focus States — ≥3:1 WCAG 1.4.11 threshold, previously unmeasured) for the EPIC-03 notification accessibility audit; and fixed scope/method for the EPIC-04 consolidated dark-mode contrast audit across all Base44-generated pages (§Accessibility). Both are audit-standard-setting entries — the audits themselves run during v7.8 sprint execution, findings recorded in each story's QA evidence. Design sources: `docs/design/2026-07-24__release-v7.8/notification-accessibility-audit/decision_record.md`, `docs/design/2026-07-24__release-v7.8/base44-dark-mode-contrast-audit/decision_record.md`.
@@ -152,6 +153,8 @@ A genuinely empty card (e.g. "no open positions") must render `DataState`'s `emp
 
 **Custom error copy (v1.5, ST-01, EPIC-01, v7.8, BLG-FE-128)** — pass `errorHeading`/`errorBody` to override the default "Something went wrong" / "Unable to load data. Please try again." text for a context where a more specific message is warranted. Both default to the original strings, so existing call sites render unchanged. First used by the What's New panel's "Unable to load release notes" error state (`src/components/dashboard/home/WhatsNewCard.js`).
 
+**Skeleton loading variant (v1.7, ST-13, EPIC-03, v8.3, BLG-FE-126)** — pass `loadingVariant="skeleton"` (default remains `"spinner"`, unchanged) plus a `loadingSkeleton` node to render a content-shaped placeholder instead of the centered spinner for card-shaped async regions. Backing primitive: `src/components/ui/Skeleton.js` — a single rounded-rectangle `<div>` with `animate-pulse` (Tailwind default: `2s` ease, infinite), coloured `bg-slate-300/60 dark:bg-slate-700/60` (explicit light+dark pair — no dark-only token). Default card composition: 3 stacked bars (`h-4 w-3/5` title, `h-3 w-full` and `h-3 w-4/5` body lines, `gap-2`) — a starting point, not a mandate; a consumer may compose its own bar arrangement from the `Skeleton` primitive. Not retrofitted to any existing card this cycle — adoption is per-consumer. Design source: `docs/design/2026-08-05__release-v8.3/loading-skeleton-pattern/decision_record.md`.
+
 ### Card Hierarchy
 
 Not all cards on a given page carry equal weight. Two treatment tiers apply:
@@ -160,6 +163,17 @@ Not all cards on a given page carry equal weight. Two treatment tiers apply:
 - **Secondary / status cards** — cards presenting live, glanceable position/portfolio state (open positions count, heat level, grace period, signal status, recent activity). These use the plain shared card shell (`bg-slate-800/50 border border-slate-700/50`, no enclosing panel, no elevated label treatment) — the neutral default.
 
 Any new background/border/label token introduced for a primary-tier treatment must ship as an explicit light+dark pair from the start, never a bare dark-only class — this project has twice shipped a dark-only-token-on-light-theme contrast defect (`BLG-FE-87/88`, `BLG-FE-95`). See `docs/design/2026-07-15__release-v7.2/dashboard-briefing-hierarchy/ux_spec.md` for the worked example this pattern was generalised from.
+
+### Confirmation Modal (with optional undo window)
+
+**Component:** `src/components/ui/ConfirmationModal.js` (v1.7, ST-12, EPIC-03, v8.3, BLG-FE-121) — shared reusable confirmation-modal component, extracted ahead of `BLG-FE-116`/`BLG-FE-117` to avoid near-duplicate implementations.
+
+Props: `message` (required), `confirmLabel`/`cancelLabel` (default `"Confirm"`/`"Cancel"`), `destructive` (bool), `undoWindow` (`{ enabled, durationSeconds }`, default `{ enabled: false }`).
+
+- **Standard variant** (`undoWindow.enabled = false`): Confirm executes on click, modal closes; Cancel dismisses without action. Formalises the existing shipped pattern (`positions.md` §Exit action, `watchlist.md` §Remove Confirmation Prompt) as the component default — no behaviour change for existing consumers migrating onto it.
+- **Undo-window variant** (`undoWindow.enabled = true`): Confirm closes the modal and executes the action optimistically immediately (same optimistic-update precedent as "Mark Reviewed"/watchlist "Keep"); a `sonner` toast then shows the action's past-tense confirmation text plus an **"Undo (Ns)"** button whose label carries the countdown as text (never colour/shape alone). Default `durationSeconds = 5` — an explicit override of `sonner`'s ~4s auto-dismiss default, since this toast is actionable, not purely informational. Undo before expiry reverses the action and shows a brief `"Undone."` toast (default `sonner` duration); no click before expiry finalises the action silently.
+
+Modal accessibility: focus trap + restoration (existing `Dialog` primitive convention), Escape = Cancel. Design source: `docs/design/2026-08-05__release-v8.3/shared-confirmation-modal-undo-window/decision_record.md`.
 
 ### Standing Alert
 
@@ -230,6 +244,14 @@ Errors appear consistently as:
 - **Global error banner** for major API failures  
 - **Inline field errors** for form-specific issues  
 - Contextual messages (e.g., “Insufficient funds”, “FX rate required”)
+
+**Canonical form-validation error-message pattern (v1.7, ST-21, EPIC-04, v8.3, BLG-SPEC-108)** — generalises two previously-divergent shipped instances (`WatchlistModal.js` submit-triggered, `TradePlan.js` blur-triggered) into one rule:
+- **Trigger:** show a field's inline error when (a) the field has been blurred at least once and is currently invalid, **or** (b) a submit attempt has occurred, regardless of touched state. Clears immediately on the next input change that satisfies the rule.
+- **Placement:** directly below the field, above any helper/example text, full field width, no icon.
+- **Wording:** sentence case, ends with a period, plain language stating the violated rule (no backend/technical vocabulary); one message per field at a time.
+- **Colour (v1.7):** `text-xs text-rose-700 dark:text-rose-400` — closes a dark-only-token gap present in both checked shipped instances (bare `text-rose-400`, no light-mode pair; same defect class as `BLG-FE-87/88/95`). `rose-700` measured 5.74:1 on `bg-slate-100` (light); `rose-600` measured 4.29:1, below the 4.5:1 AA threshold, so `rose-700` is used instead. `rose-400` on `bg-slate-800` (dark) measured 5.43:1, unchanged.
+
+Design source: `docs/design/2026-08-05__release-v8.3/form-validation-error-message-pattern/decision_record.md`.
 
 ---
 
