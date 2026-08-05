@@ -3,9 +3,58 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-03 (post-ship closure 2026-08-03__release-v8.1)
+**Last Updated:** 2026-08-05 (post-ship closure 2026-08-04__release-v8.2)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v8.2 — User-Feature Push (continued) & Full-Capacity Debt Clearance — 2026-08-05
+Cycle: 2026-08-04__release-v8.2
+Verified: Verified
+Verification report: claude/cycles/2026-08-04__release-v8.2/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Added a P&L/tax record reconciliation report (system totals vs individual trade export); confirmed/specified the Compliance Recheck Modal's all-rules-pass empty state; refined RFJ event-type colour palette so `checklist_skipped`/`drawdown_prompt_dismissed`/`stop_prompt_dismissed` are perceptually distinct including under `light-daltonized`; migrated Trade Plan native form fields to the shared `focus-visible:ring-*` pattern; added a streak-length metric for the behavioural-drift endpoint's `insufficient_data` readings | `docs/specs/api_contracts/reports_endpoints.md#GET /reports/reconciliation`; `docs/specs/frontend/pages/reports.md#Reconciliation Report`; `docs/specs/frontend/pages/positions.md#Compliance Recheck Panel (Modal)`; `docs/design/2026-06-19__release-v6.0/rfj-design-review/review.md#3`; `docs/specs/frontend/design_system.md#Focus indicator contrast`; `docs/specs/metrics/si02_drift_score.md#3.5 Insufficient-Data Streak`; `docs/specs/api_contracts/behavioural_drift_contract.md#Insufficient-Data Response Shape` |
+| EPIC-02 | Provisioned a distinct, independently-revocable API key for staging (live-rotated, old shared key confirmed no longer valid against production); diagnosed the silent GitHub↔Render auto-deploy webhook staleness pattern and fixed the actively-broken stale-branch config on the staging frontend, with a recurring deploy-drift detection check added | `docs/security/api_key_security_register.md#6. Application X-API-Key`; `claude/backlog/backlog.md#BLG-OPS-128` |
+| EPIC-03 | 11-item governance-process integrity cluster: SI-05 Phase 1 30-day effectiveness review (PAUSE, re-evaluate 2026-10-03); `velocity_metrics.md` row-count audit (parity confirmed); Arc 5 composite formula confirmed to already account for v6.9 recheck events; rebalance-skip advisory now verifies the next release is actually scoped before recommending skip; AI vendor (Gemini/Anthropic) ToS & DPA review; direct-write/governance-bypass pattern tracker; idea-intake backlog-overlap check effectiveness retrospective; SI-02 production credential provisioning standing-behaviour decision; mandatory §13 boundary pre-check at design gate for AI-calling proposals; `Last Updated` header-history retention convention codified; `governance_sync.yml` auto-close regex no longer closes issues on delegation-record-only commits | `claude/cycles/2026-06-08__release-v5.2/si05_effectiveness_criteria.md#30-Day Review — 2026-08-04`; `claude/cycles/velocity_metrics.md#Row-Count Audit`; `docs/specs/metrics_definitions.md#v6.9 On-Demand Compliance Recheck — Confirmed No Formula Gap`; `claude/system/post_ship_closure.md#Rebalance Cadence Check`; `docs/specs/security/ai_vendor_tos_dpa_review.md`; `claude/roadmap/governance_bypass_log.md`; `docs/governance/idea_intake_overlap_check_retrospective_2026-08-04.md`; `claude/system/roadmap_prompt.md#STEP 2.3`; `claude/system/design_gate_prompt.md#STEP 1`; `claude/system/shared_standards.md#§16.14`; `.github/workflows/governance_sync.yml` |
+| EPIC-04 | Documented a quarterly dependency-upgrade cadence for `backend/requirements.txt`; tuned CI caching (dependency install, browser binaries) for the Playwright job; added an automated pre-commit hook linting the `[EPIC-xx][ST-xx]` commit-message format | `docs/ops/dependency_upgrade_cadence.md`; `.github/workflows/playwright.yml`; `.github/workflows/smoke-tests.yml`; `.githooks/commit-msg`; `.githooks/test_commit_msg.sh` |
+| EPIC-05 | Added a snapshot test asserting `SystemStatus.js`'s hardcoded fallback counts against an AST-derived endpoint-test count; reconstructed 13 undocumented `sprint_planning_changelog.md` versions (v3.1–v3.13); removed a dead-code duplicate `POST /test/endpoints` handler in `backend/main.py`; added a motion/timing-sensitive chart-interaction checklist item to the design gate | `claude/cycles/2026-08-04__release-v8.2/stage4_backlog_slice.md#ST-22`; `claude/cycles/2026-08-04__release-v8.2/stage4_backlog_slice.md#ST-23`; `claude/cycles/2026-08-04__release-v8.2/stage4_backlog_slice.md#ST-24`; `claude/system/design_gate_prompt.md#STEP 1 — Classify Each Item` |
+
+### Deviations accepted
+None.
+
+### Tech backlog items shipped
+- [ST-01] [U] BLG-FEAT-88: P&L / tax record reconciliation report (system totals vs individual trade export)
+- [ST-02] [U] BLG-FE-105: Compliance Recheck Modal all-pass empty-state design
+- [ST-03] [U] BLG-FE-67: RFJ event type colour palette refinement
+- [ST-04] [U] BLG-FE-138: Trade Plan native form fields focus indicator fix
+- [ST-05] [U] BLG-FEAT-86: Drift-detection metric for the behavioural-drift endpoint's `insufficient_data` streak
+- [ST-06] [D] BLG-SEC-27: Distinct API key for the staging environment
+- [ST-07] [D] BLG-OPS-128: Detect silent staging deploy staleness
+- [ST-08] [G] BLG-GOV-160: File SI-05 Phase 1 30-day effectiveness review record
+- [ST-09] [G] BLG-GOV-213: `velocity_metrics.md` row-count audit
+- [ST-10] [G] BLG-GOV-214: Confirm Arc 5 composite formula accounts for v6.9 recheck events
+- [ST-11] [G] BLG-GOV-218: Rebalance-skip advisory verifies next release is actually scoped
+- [ST-12] [G] BLG-GOV-265: AI vendor Terms-of-Service & data-processing review
+- [ST-13] [G] BLG-GOV-269: Direct-write / governance-bypass pattern tracker
+- [ST-14] [G] BLG-GOV-278: Idea-intake backlog-overlap check effectiveness retrospective
+- [ST-15] [G] BLG-GOV-279: SI-02 production credential provisioning decision
+- [ST-16] [G] BLG-GOV-281: Mandatory §13 boundary pre-check at design gate
+- [ST-17] [G] BLG-GOV-283: `Last Updated` header-history retention convention
+- [ST-18] [G] BLG-GOV-285: `governance_sync.yml` delegation-commit auto-close fix
+- [ST-19] [D] BLG-OPS-116: Quarterly dependency-upgrade cadence
+- [ST-20] [D] BLG-OPS-118: CI cache tuning to reduce Playwright suite runtime
+- [ST-21] [D] BLG-OPS-125: Automated commit-message format lint
+- [ST-22] [D] BLG-QA-126: Snapshot test for `SystemStatus.js` hardcoded fallback counts
+- [ST-23] [D] BLG-SPEC-110: Reconstruct 13 undocumented versions in `sprint_planning_changelog.md`
+- [ST-24] [D] BLG-BE-81: Remove dead-code duplicate `POST /test/endpoints` handler
+- [ST-25] [G] BLG-FE-131: Design-gate checklist addendum for motion/timing-sensitive chart interactions
+
+Sign-off: Product Owner — 2026-08-05
+QA sign-off: Director of Quality — 2026-08-05
 
 ---
 
