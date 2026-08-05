@@ -1,9 +1,34 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.21
-**Last Updated:** 2026-08-03 (delivery verification 2026-08-03__release-v8.1 — status line updated Sprint_Complete → Verified); prior — 2026-08-03 (sprint close 2026-08-03__release-v8.1); prior — 2026-07-31 (delivery verification 2026-07-30__release-v8.0 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-07-31 (sprint close 2026-07-30__release-v8.0)
+**Version:** 4.22
+**Last Updated:** 2026-08-05 (sprint close 2026-08-04__release-v8.2); prior — 2026-08-03 (delivery verification 2026-08-03__release-v8.1 — status line updated Sprint_Complete → Verified); prior — 2026-08-03 (sprint close 2026-08-03__release-v8.1); prior — 2026-07-31 (delivery verification 2026-07-30__release-v8.0 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-07-31 (sprint close 2026-07-30__release-v8.0)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-08-04__release-v8.2
+**Date:** 2026-08-05
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | P&L/tax reconciliation report; Compliance Recheck Modal all-pass state; RFJ event colour palette refinement; Trade Plan focus indicator contrast fix; behavioural-drift insufficient_data streak metric | `docs/specs/api_contracts/reports_endpoints.md#GET /reports/reconciliation`; `docs/specs/frontend/pages/reports.md#Reconciliation Report`; `docs/specs/frontend/pages/positions.md#Compliance Recheck Panel (Modal)`; `docs/specs/frontend/design_system.md#Focus indicator contrast`; `docs/specs/metrics/si02_drift_score.md#3.5 Insufficient-Data Streak` | None |
+| EPIC-02 | Staging and production rotated to distinct, independently-revocable API keys (live-verified); staging frontend's stale Render branch config fixed (was silently redeploying a 7-week-old frozen commit); staging backend's ~7-week silent auto-deploy webhook failure diagnosed (self-recovered, root mechanism documented as unresolvable beyond the observed pattern); recurring hourly staging-deploy-drift-check.yml added and live-verified post-merge | `docs/security/api_key_security_register.md#6. Application X-API-Key`; `scripts/check_staging_deploy_drift.py`; `.github/workflows/staging-deploy-drift-check.yml` | None |
+| EPIC-03 | 11-item governance-process integrity cluster: SI-05 effectiveness review (PAUSE decision — digest delivery gap since 2026-06-17, confirmed by Product Owner attestation); velocity metrics audit; Arc 5 formula gap-check; rebalance-skip advisory fix; AI vendor ToS/DPA review; governance-bypass tracker; idea-intake retrospective; SI-02 credential-fallback standing decision; §13 boundary pre-check at design gate; header-history retention convention; governance_sync.yml delegation-commit fix | `claude/cycles/2026-06-08__release-v5.2/si05_effectiveness_criteria.md#30-Day Review — 2026-08-04`; `claude/system/post_ship_closure.md#Rebalance Cadence Check`; `claude/system/design_gate_prompt.md#STEP 1`; `claude/system/shared_standards.md#§16.14` | None |
+| EPIC-04 | Quarterly dependency-upgrade cadence documented; Playwright CI browser-binary caching (measured, modest real improvement); automated commit-message format lint pre-commit hook | `docs/ops/dependency_upgrade_cadence.md`; `.github/workflows/playwright.yml`; `.githooks/commit-msg` | None |
+| EPIC-05 | AST-derived drift test for SystemStatus.js endpoint-count fallback; 13 missing sprint-planning changelog versions reconstructed from git history; dead-code duplicate route removed from backend/main.py; motion/timing-sensitive interaction classification added to the design gate | `claude/cycles/2026-08-04__release-v8.2/stage4_backlog_slice.md#ST-22..ST-25`; `claude/system/design_gate_prompt.md#§6` | None |
+
+### Capabilities deferred or returned
+
+None — all 25 items in the authoritative backlog slice shipped this sprint.
+
+### Verification inputs ready
+- QA evidence logs: `qa_evidence_EPIC-01.md`, `qa_evidence_EPIC-02.md`, `qa_evidence_EPIC-03.md`, `qa_evidence_EPIC-04.md`, `qa_evidence_EPIC-05.md`
+- Deviations filed: None
+- Test scenarios referenced: `tests/test_reports_integration.py`; `tests/test_behavioural_drift_service.py`; `tests/e2e/reports-reconciliation.spec.js`; `tests/e2e/compliance-recheck.spec.js`; `tests/e2e/red-flag-journal.spec.js`; `tests/e2e/trade-plan.spec.js`; `tests/e2e/reports-si02-gate-status.spec.js`; `tests/e2e/system-status.spec.js`; `tests/test_staging_deploy_drift.py`; `tests/test_system_status_endpoint_count.py`; `.githooks/test_commit_msg.sh`
 
 ---
 

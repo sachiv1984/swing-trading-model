@@ -4,9 +4,9 @@
   "backlog_slice_source": "claude/cycles/2026-08-04__release-v8.2/stage4_backlog_slice.md",
   "invoked_utc": "2026-08-04T12:00:00Z",
   "mode": "standard",
-  "status": "Running",
+  "status": "Sealed",
   "open_escalations": [],
   "process_notes": [],
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-08-05T07:40:00Z"
 }

@@ -29,10 +29,10 @@
       ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
+      "deviations_filed": true,
       "last_completed_substep": "implementation_complete",
       "sign_off_record": null,
-      "notes": ""
+      "notes": "No spec deviation found \u2014 deviations_filed corrected at sprint close"
     },
     "ST-23": {
       "title": "Reconstruct 13 undocumented versions in sprint_planning_changelog.md (v3.1-v3.13)",
@@ -52,10 +52,10 @@
       ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
+      "deviations_filed": true,
       "last_completed_substep": "implementation_complete",
       "sign_off_record": null,
-      "notes": ""
+      "notes": "No spec deviation found \u2014 deviations_filed corrected at sprint close"
     },
     "ST-24": {
       "title": "Remove dead-code duplicate POST /test/endpoints handler in backend/main.py",
@@ -75,10 +75,10 @@
       ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
+      "deviations_filed": true,
       "last_completed_substep": "implementation_complete",
       "sign_off_record": null,
-      "notes": ""
+      "notes": "No spec deviation found \u2014 deviations_filed corrected at sprint close"
     },
     "ST-25": {
       "title": "Design-gate checklist addendum for motion/timing-sensitive chart interactions",
@@ -98,11 +98,11 @@
       ],
       "spec_reference_not_applicable": false,
       "spec_reference_not_applicable_reason": null,
-      "deviations_filed": false,
+      "deviations_filed": true,
       "last_completed_substep": "implementation_complete",
       "sign_off_record": null,
-      "notes": ""
+      "notes": "No spec deviation found \u2014 deviations_filed corrected at sprint close"
     }
   },
-  "last_updated_utc": "2026-08-04T20:28:00Z"
+  "last_updated_utc": "2026-08-05T07:30:00Z"
 }
