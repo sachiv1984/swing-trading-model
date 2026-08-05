@@ -11,7 +11,17 @@
 ## 1. Current Version
 
 **v8.2** — User-Feature Push (continued) & Full-Capacity Debt Clearance — ✅ Complete — Shipped 2026-08-05 — cycle: 2026-08-04__release-v8.2
-**Next planned release:** [TBD]
+**Next planned release:** v8.3 (in planning)
+
+<!-- roadmap-annotation-marker: RA:v8.3:2026-08-05__release-v8.3 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-08-05__release-v8.3
+- Plan published: 2026-08-05
+- Cycle folder: claude/cycles/2026-08-05__release-v8.3/
+- Backlog slice: claude/cycles/2026-08-05__release-v8.3/stage4_backlog_slice.md
+- Status at annotation: Committed
+- No formal `## v8.3` roadmap section created (Release Planning may not alter roadmap scope) — scoped via STEP -1.2 Option (b) equivalence from `2026-07-28__scheduled` (same Option (b) decision already relied on by `2026-07-30__release-v8.0`, `2026-08-03__release-v8.1`, and `2026-08-04__release-v8.2`). Backlog-driven, 27 ungated/ready items across 6 grouped EPICs, sized to ~25.25 days midpoint (~90-105% utilisation) against the confirmed ~24-28 day capacity band — no explicit user scope-priority instruction this session, scope selected under Product Owner delegated authority. `BLG-FEAT-73`/`BLG-FEAT-74` and the dependent Arc 5 UX-prep cluster formally **parked** this cycle (STEP 1.4a.1 mandatory sunset trigger fired — 4th consecutive Option (a) would otherwise have applied; Product Owner disposition Option (b)); `BLG-FEAT-45` promoted conditional→firm (STEP 1.4b, date gate cleared today); `BLG-GOV-74` self-caught and excluded (gate date 2026-08-29, outside this cycle's window).
 
 <!-- roadmap-annotation-marker: RA:v8.2:2026-08-04__release-v8.2 -->
 

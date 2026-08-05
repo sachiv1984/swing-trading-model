@@ -1,0 +1,10 @@
+{
+  "cycle_id": "2026-08-05__release-v8.3",
+  "release": "v8.3",
+  "txn_id": "BLTX-20260805-01",
+  "state": "committed",
+  "prepared_utc": "2026-08-05T09:40:00Z",
+  "committed_utc": "2026-08-05T09:42:00Z",
+  "marker": "RP:v8.3:2026-08-05__release-v8.3",
+  "target_file": "claude/backlog/backlog.md"
+}
