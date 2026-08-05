@@ -1,0 +1,85 @@
+# .github/workflows/staging-deploy-drift-check.yml
+name: Staging Deploy Drift Check
+
+# ST-07 (BLG-OPS-128, EPIC-02, v8.2): recurring check that staging's
+# deployed commit actually matches origin/main. Exists because two silent
+# staleness bugs were found live during this story with no CI failure, no
+# log entry, and no alert anywhere: the staging frontend's Render `branch`
+# config was pointed at a stale, long-merged exec branch (every deploy hook
+# call silently redeployed the same frozen commit for weeks); separately,
+# the staging backend's GitHub<->Render auto-deploy integration silently
+# stopped delivering new-commit triggers for ~7 weeks. Both were only
+# discovered by chance. This workflow makes that class of drift visible on
+# a recurring schedule instead of only at the next scheduled effectiveness
+# review or manual spot-check.
+#
+# Alert pattern reused from health-check-alert.yml (ST-13/ST-14, EPIC-04,
+# v8.0): curl + Telegram + ::warning:: graceful fallback when secrets
+# aren't configured.
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # hourly
+  workflow_dispatch: {}
+
+concurrency:
+  group: staging-deploy-drift-check
+  cancel-in-progress: true
+
+jobs:
+  drift-check:
+    name: Compare staging deployed commit vs origin/main HEAD
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run drift check
+        id: check
+        shell: bash
+        env:
+          RENDER_PLATFORM_API_KEY: ${{ secrets.RENDER_PLATFORM_API_KEY }}
+        run: |
+          set -o pipefail
+          if [ -z "$RENDER_PLATFORM_API_KEY" ]; then
+            echo "::warning::RENDER_PLATFORM_API_KEY not configured as a repo secret — drift check skipped."
+            exit 0
+          fi
+          # NOTE (ST-07 fix, caught by Infrastructure & Operations Owner
+          # agent-mediated review): `run:` steps use `bash -e {0}` by
+          # default with NO pipefail unless `shell: bash` is explicitly
+          # declared on the step. Without it, `python3 ... | tee file;
+          # echo $?` captures tee's exit status (always 0), not the
+          # script's — so this alert would silently never fire on real
+          # drift. `shell: bash` + `set -o pipefail` above makes `$?`
+          # after the pipe reflect the Python script's actual exit code.
+          set +e
+          python3 scripts/check_staging_deploy_drift.py | tee drift_output.txt
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Send alert on drift
+        if: steps.check.outputs.exit_code == '1'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          DRIFT_LINES=$(grep '^\[DRIFT\]' drift_output.txt || true)
+          MESSAGE="Staging deploy drift detected: ${DRIFT_LINES} ${RUN_URL}"
+          echo "$MESSAGE"
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -sS --max-time 30 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+              --data-urlencode "text=${MESSAGE}"
+          else
+            echo "::warning::TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not configured as repo secrets — alert not sent. Message would have been: ${MESSAGE}"
+          fi
