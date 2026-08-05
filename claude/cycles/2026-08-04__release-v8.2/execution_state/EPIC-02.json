@@ -1,10 +1,10 @@
 {
   "cycle_id": "2026-08-04__release-v8.2",
   "epic_id": "EPIC-02",
-  "status": "done",
+  "status": "merged",
   "branch": "exec/2026-08-04__release-v8.2/EPIC-02",
   "pr_number": 1229,
-  "pr_status": "open",
+  "pr_status": "merged",
   "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-04__release-v8.2/qa_evidence_EPIC-02.md",
   "test_scenarios": [
@@ -14,7 +14,7 @@
     "ST-06": {
       "title": "Provision a distinct API key for the staging environment",
       "classification": "delegated_backend",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "Cybersecurity & Trust Lead",
       "github_issue": 1205,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-02",
@@ -38,7 +38,7 @@
     "ST-07": {
       "title": "Detect silent staging deploy staleness (GitHub<->Render auto-deploy webhook can fail silently)",
       "classification": "delegated_backend",
-      "status": "done",
+      "status": "merged",
       "assigned_to": "Infrastructure & Operations Owner",
       "github_issue": 1206,
       "branch": "exec/2026-08-04__release-v8.2/EPIC-02",
@@ -59,5 +59,5 @@
       "notes": "Root cause of GitHub<->Render webhook silent failure documented as unresolvable beyond observed pattern (GitHub Apps installation API inaccessible with session token scope) per AC allowance; the separate, actively-broken stale-branch config on the staging frontend was fully fixed and verified live."
     }
   },
-  "last_updated_utc": "2026-08-04T21:25:00Z"
+  "last_updated_utc": "2026-08-05T07:20:00Z"
 }

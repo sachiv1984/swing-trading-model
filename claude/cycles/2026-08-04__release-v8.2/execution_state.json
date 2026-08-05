@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-04T12:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-04T20:27:58Z",
+  "last_updated_utc": "2026-08-05T07:19:01Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -175,55 +175,62 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "merged",
       "branch": "exec/2026-08-04__release-v8.2/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1229,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-04__release-v8.2/qa_evidence_EPIC-02.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_staging_deploy_drift.py"
+      ],
       "stories": {
         "ST-06": {
           "title": "Provision a distinct API key for the staging environment",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "merged",
           "assigned_to": "Cybersecurity & Trust Lead",
-          "github_issue": null,
+          "github_issue": 1205,
           "branch": "exec/2026-08-04__release-v8.2/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "df9e8cc9",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-04T20:59:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-08-04__release-v8.2/stage4_backlog_slice.md#ST-06",
+            "docs/security/api_key_security_register.md#6. Application X-API-Key"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "implementation_complete",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Performed directly by engine with user-supplied Render platform API key (user selected: give me Render access/credentials now), not via human delegation-log park/wait, since the credential was made available in-session."
         },
         "ST-07": {
           "title": "Detect silent staging deploy staleness (GitHub<->Render auto-deploy webhook can fail silently)",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "merged",
           "assigned_to": "Infrastructure & Operations Owner",
-          "github_issue": null,
+          "github_issue": 1206,
           "branch": "exec/2026-08-04__release-v8.2/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "0cc86d70",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-04T21:05:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-08-04__release-v8.2/stage4_backlog_slice.md#ST-07"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
-          "last_completed_substep": null,
+          "last_completed_substep": "implementation_complete",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Root cause of GitHub<->Render webhook silent failure documented as unresolvable beyond observed pattern (GitHub Apps installation API inaccessible with session token scope) per AC allowance; the separate, actively-broken stale-branch config on the staging frontend was fully fixed and verified live."
         }
       }
     },
@@ -772,6 +779,8 @@
     "EPIC-01/ST-03",
     "EPIC-01/ST-04",
     "EPIC-01/ST-05",
+    "EPIC-02/ST-06",
+    "EPIC-02/ST-07",
     "EPIC-03/ST-08",
     "EPIC-03/ST-09",
     "EPIC-03/ST-10",
@@ -795,14 +804,13 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
+      "EPIC-02",
       "EPIC-03",
       "EPIC-04",
       "EPIC-05"
     ],
-    "epics_pending": [
-      "EPIC-02"
-    ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
   "process_notes": [],
   "sealed": false,
