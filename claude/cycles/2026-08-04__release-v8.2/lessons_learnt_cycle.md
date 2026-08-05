@@ -21,3 +21,32 @@ Cycle: 2026-08-04__release-v8.2
 | Sprint execution filed 3 new backlog items mid-sprint (`BLG-OPS-129`, `BLG-OPS-130` during EPIC-03/ST-08; `BLG-OPS-131` during EPIC-02/ST-06) when genuine findings surfaced outside the current sprint's scope. `execution_prompt.md`'s write-scope formally restricts `backlog.md` edits to STEP 5.2 (returned-to-backlog notes only), but this exact pattern recurs across many prior cycles per `backlog.md`'s own header history — an established, tolerated precedent rather than a documented, sanctioned write path | Phase 3 | C | defer | Followed the established precedent this cycle, as in every prior cycle observed. Not corrected in-session — this is a standing tension across many cycles, not unique to this one | Head of Specs Team | next `execution_prompt.md` §7 (Write Scope Restriction) revision — consider formally sanctioning mid-sprint backlog additions for genuinely out-of-scope discoveries, rather than relying on informal precedent each cycle |
 
 **Recurrence Notes:** None of this cycle's friction items recur from `2026-08-03__release-v8.1`'s Phase 3 record — all 4 of that cycle's items were either resolved this cycle (governance_sync.yml fix) or did not recur (no cross-EPIC merge conflicts, no uncommitted-regeneration-output incidents, no nonexistent-spec-location ACs this cycle). The backlog write-scope tension (row 4 above) is itself a multi-cycle recurring pattern per `backlog.md`'s own header history, though it did not appear as a named friction item in the immediately prior cycle's Phase 3 record specifically — flagging it here as a standing cross-cycle pattern worth tracking even though it does not meet this file's own narrow definition of a same-cycle-pair recurrence.
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-08-04__release-v8.2
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-08-05
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-08-03__release-v8.1 (`lessons_learnt_cycle.md` `## Phase 4`) — one open deferred patch: redirect STEP -1.3A's recovered-`pr_number` write from the disposable `execution_state.json` to the owning `execution_state/EPIC-xx.json` file (Head of Specs Team, target "before PR recovery is next exercised"); one carried-forward deferred patch from v7.10/v8.0: formalise the `completed_items` cross-EPIC union reconciliation check in `execution_prompt.md` STEP 5 (Head of Specs Team, target "next `run sprint` invocation"). **Both checked this run:** the STEP -1.3A patch is confirmed landed — `delivery_verification_prompt.md` STEP -1.3A now reads "Write target (LL-v8.1-P4-01): ... write the recovered fields into the owning `claude/cycles/<cycle_id>/execution_state/EPIC-xx.json` file instead"; not exercised this run (all 5 EPICs already had non-null `pr_number` — no recovery needed), but the fix is in place for the next cycle that needs it. The `completed_items` reconciliation patch is confirmed landed — `execution_prompt.md` line 1009 carries the pre-seal check tagged `LL-v7.10-P4-01`, and this cycle's `execution_state.json.completed_items` correctly lists all 25/25 done stories with no staleness. **Both prior deferred patches are now resolved — no recurrence escalation required.**
+
+No friction items identified this run. Traceability, QA evidence sign-off (agent-mediated named-role for EPIC-01/02, autonomous class for EPIC-03/04/05), deviation register (empty), test scenario coverage, and system status reconciliation all completed cleanly with no gate friction, no ambiguous sign-off format, and no coordination delay between Director of Quality and Product Owner roles.
+
+**Recurrence Notes:** None — both open items from the prior cycle's Phase 4 record are confirmed resolved this run (see above), and no new friction items were identified.
+
+## Recurrence Escalations (Phase 4)
+
+None.
+
+## Process improvements actioned this run (Phase 4)
+
+None applied — no friction items identified this run requiring a prompt or template patch.
+
+## Outstanding deferred patches (Phase 4)
+
+None — both patches carried from the prior cycle's Phase 4 record are confirmed resolved this run (see Prior cycle checked note above).
+
+## Escalations (Phase 4)
+
+None.
