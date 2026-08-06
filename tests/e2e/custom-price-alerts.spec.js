@@ -241,7 +241,7 @@ test('SC-CPA-07: cap-exceeded (400) shows the specific max-alerts message', asyn
     } else if (method === 'POST') {
       route.fulfill({
         status: 400, contentType: 'application/json',
-        body: JSON.stringify({ detail: "You've reached the maximum number of active price alerts." }),
+        body: JSON.stringify({ status: 'error', message: "You've reached the maximum number of active price alerts." }),
       });
     } else {
       route.continue();

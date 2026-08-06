@@ -106,11 +106,9 @@ test.describe('SI-04 Strategy Version Comparison', () => {
         status: 422,
         contentType: 'application/json',
         body: JSON.stringify({
-          detail: {
-            status: 'error', code: 'insufficient_data',
-            message: "Version '1.1' has only 3 trades — minimum 10 required for reliable comparison",
-            version: '1.1', trade_count: 3, min_trades_required: 10,
-          },
+          status: 'error', code: 'insufficient_data',
+          message: "Version '1.1' has only 3 trades — minimum 10 required for reliable comparison",
+          version: '1.1', trade_count: 3, min_trades_required: 10,
         }),
       })
     );
@@ -128,11 +126,9 @@ test.describe('SI-04 Strategy Version Comparison', () => {
         status: 404,
         contentType: 'application/json',
         body: JSON.stringify({
-          detail: {
-            status: 'error', code: 'version_not_found',
-            message: "Strategy version '1.4' not found in version registry",
-            missing_version: '1.4',
-          },
+          status: 'error', code: 'version_not_found',
+          message: "Strategy version '1.4' not found in version registry",
+          missing_version: '1.4',
         }),
       })
     );
@@ -149,10 +145,8 @@ test.describe('SI-04 Strategy Version Comparison', () => {
         status: 400,
         contentType: 'application/json',
         body: JSON.stringify({
-          detail: {
-            status: 'error', code: 'version_order_error',
-            message: 'version_to must be chronologically after version_from',
-          },
+          status: 'error', code: 'version_order_error',
+          message: 'version_to must be chronologically after version_from',
         }),
       })
     );

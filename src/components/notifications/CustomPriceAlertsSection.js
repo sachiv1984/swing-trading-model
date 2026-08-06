@@ -108,7 +108,8 @@ function CreateForm({ onSave, onCancel }) {
       });
       if (res.status === 400) {
         const json = await res.json().catch(() => ({}));
-        const detail = json.detail || "";
+        // ST-08 (EPIC-02, v8.3, BLG-BE-69): canonical error envelope uses "message", not "detail".
+        const detail = json.message || "";
         if (detail.toLowerCase().includes("maximum number")) {
           setSaveError("You've reached the maximum number of active price alerts.");
         } else {

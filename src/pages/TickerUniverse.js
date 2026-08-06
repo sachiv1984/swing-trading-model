@@ -60,7 +60,8 @@ function AddTickerForm({ onAdded, onCancel }) {
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.detail || `HTTP ${res.status}`);
+        // ST-08 (EPIC-02, v8.3, BLG-BE-69): canonical error envelope uses "message", not "detail".
+        throw new Error(body.message || `HTTP ${res.status}`);
       }
       return res.json();
     },

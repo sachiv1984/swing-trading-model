@@ -479,7 +479,10 @@ function VersionComparisonTab() {
       setResult(data);
       setState('loaded');
     } catch (err) {
-      const detail = err?.data?.detail;
+      // ST-08 (EPIC-02, v8.3, BLG-BE-69): backend error body is now the canonical
+      // flat {status, code, message, ...} envelope at the top level of err.data —
+      // no longer nested under a "detail" key (FastAPI's old default envelope).
+      const detail = err?.data;
       const code = detail?.code;
       if (code === 'insufficient_data') {
         setGeneralError(
