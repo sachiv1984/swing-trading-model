@@ -12,6 +12,7 @@ from config import API_TITLE
 from config import ALLOWED_ORIGINS
 from utils.calculations import calculate_initial_stop
 from utils.formatting import decimal_to_float
+from utils.position_lifecycle_states import GRACE
 from pydantic import BaseModel
 from routers import validation, analytics, test, portfolio_size, trades_export, prospective_heat, alerts
 from routers import watchlist as watchlist_router
@@ -1415,10 +1416,10 @@ def get_grace_period_alerts_endpoint():
                     FROM positions p
                     LEFT JOIN trade_plans tp ON tp.position_id = p.id
                     WHERE p.portfolio_id = %s AND p.status = 'open'
-                      AND p.position_state = 'GRACE'
+                      AND p.position_state = %s
                     ORDER BY p.entry_date ASC
                     """,
-                    (portfolio_id,),
+                    (portfolio_id, GRACE),
                 )
                 rows = cur.fetchall()
 

@@ -24,6 +24,7 @@ from database import (
     update_position_lifecycle_state,
 )
 from utils.formatting import decimal_to_float
+from utils.position_lifecycle_states import EXIT_ZONE, PROFITABLE, LOSING, GRACE, UNKNOWN
 
 
 def _count_trading_days(entry_date_str: str) -> int:
@@ -65,13 +66,13 @@ def compute_position_state(position: dict) -> str:
     entry_date_str = position.get("entry_date")
 
     if not all([entry_price, current_price, entry_date_str]):
-        return "UNKNOWN"
+        return UNKNOWN
 
     entry_price = float(entry_price)
     current_price = float(current_price)
 
     if not atr:
-        return "UNKNOWN"
+        return UNKNOWN
 
     atr = float(atr)
     trading_days = _count_trading_days(str(entry_date_str))
@@ -81,22 +82,22 @@ def compute_position_state(position: dict) -> str:
         initial_stop = float(initial_stop)
         r_value = entry_price - initial_stop
         if r_value > 0 and current_price >= entry_price + 2 * r_value:
-            return "EXIT ZONE"
+            return EXIT_ZONE
 
     # PROFITABLE: moved up by more than 0.5 ATR
     if current_price > entry_price + 0.5 * atr:
-        return "PROFITABLE"
+        return PROFITABLE
 
     # LOSING: moved down by more than 0.5 ATR
     if current_price < entry_price - 0.5 * atr:
-        return "LOSING"
+        return LOSING
 
     # Within ±0.5 ATR of entry
     if trading_days <= 10:
-        return "GRACE"
+        return GRACE
 
     # After grace, price still in entry zone — insufficient data for direction
-    return "UNKNOWN"
+    return UNKNOWN
 
 
 def compute_days_in_state(state_entered_at) -> int:
@@ -180,7 +181,7 @@ def get_lifecycle_fields_for_position(position: dict) -> dict:
     """
     position_id = str(position.get("id") or "")
     if not position_id:
-        return {"position_state": "UNKNOWN", "state_entered_at": None, "days_in_state": 0}
+        return {"position_state": UNKNOWN, "state_entered_at": None, "days_in_state": 0}
 
     try:
         updated = refresh_position_lifecycle(position_id)
@@ -188,7 +189,7 @@ def get_lifecycle_fields_for_position(position: dict) -> dict:
             updated = decimal_to_float(dict(updated))
             state_entered_at = updated.get("state_entered_at")
             return {
-                "position_state": updated.get("position_state", "UNKNOWN"),
+                "position_state": updated.get("position_state", UNKNOWN),
                 "state_entered_at": state_entered_at.isoformat() if hasattr(state_entered_at, "isoformat") else str(state_entered_at) if state_entered_at else None,
                 "days_in_state": compute_days_in_state(state_entered_at),
             }
