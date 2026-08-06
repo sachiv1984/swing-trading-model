@@ -1,0 +1,169 @@
+{
+  "cycle_id": "2026-08-05__release-v8.3",
+  "epic_id": "EPIC-03",
+  "status": "done",
+  "branch": "exec/2026-08-05__release-v8.3/EPIC-03",
+  "pr_number": 1259,
+  "pr_status": "open",
+  "qa_signed_off": true,
+  "qa_evidence_log": "claude/cycles/2026-08-05__release-v8.3/qa_evidence_EPIC-03.md",
+  "test_scenarios": [
+    "tests/e2e/compliance-recheck.spec.js",
+    "tests/e2e/epic02-v62-ai-briefing-chat.spec.js"
+  ],
+  "stories": {
+    "ST-11": {
+      "title": "Migrate ComplianceRecheckModal.js onto the shared Dialog primitive",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1250,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-03",
+      "commit_sha": "cae2730b6ae484b0c06e8996cf0930a74b570c67",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/specs/frontend/design_system.md#Confirmation Modal (with optional undo window)",
+        "src/components/ui/dialog.js",
+        "tests/e2e/compliance-recheck.spec.js"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Base44 Frontend Prompt Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "First pass BLOCKED: DialogContent's className override (p-0 gap-0) silently lost to the primitive's own base p-6/gap-4 because this project's cn() (src/lib/utils.js) is plain clsx with no tailwind-merge — confirmed by compiling tailwind.config.js directly (p-6 emits after p-0 in the stylesheet, so p-6 wins). Also flagged a missing DialogTitle (raw <h2> used instead). Both fixed in commit cae2730b (!p-0 !gap-0 important-modifier prefix; DialogTitle with !-prefixed size/tracking/leading overrides). Re-verified second pass: APPROVED — fix confirmed structurally correct via a fresh compiled-CSS check, no regressions found (Radix aria-labelledby auto-wiring confirmed intact after removing the now-redundant manual aria-label)."
+      },
+      "notes": "Design gate re-classified Design Pre-Approved after ESC-20260805-01 corrected BLG-FE-103's scope to a single-file migration (the originally-named second consumer, 'the PT-05 checklist modal', does not exist in source). No explicit onCloseAutoFocus trigger-ref override — this modal has 2 call sites (Positions.js button + a position-card callback), unlike TradePlan.js's single-trigger Abandon modal, so it relies on Radix's default previously-focused-element restoration. Positions.js changed from conditional-mount to always-mounted open={!!position}, matching ExitModal/EditPositionModal convention."
+    },
+    "ST-12": {
+      "title": "Extract a shared modal-confirmation component",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1247,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-03",
+      "commit_sha": "cae2730b6ae484b0c06e8996cf0930a74b570c67",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/design/2026-08-05__release-v8.3/shared-confirmation-modal-undo-window/decision_record.md",
+        "docs/specs/frontend/design_system.md#Confirmation Modal (with optional undo window)",
+        "docs/specs/frontend/base44_prompt_template_library.md#10. Template: Shared Modal-Confirmation Component (with optional undo-window)"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Base44 Frontend Prompt Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. Props (message, confirmLabel/cancelLabel, destructive, undoWindow{enabled,durationSeconds}) match design_system.md v1.7 and the decision record exactly; undo-toast behaviour (optimistic execute, live countdown, Undo reverses + 'Undone.' toast, silent expiry) matches decision record §4 step-by-step. Second-pass review also caught and fixed the same DialogTitle override defect class found in ST-11 (text-base losing to base text-lg) — !text-base applied, verified via compiled CSS."
+      },
+      "notes": "No consumer wired this sprint — BLG-FE-116/BLG-FE-117 are not in scope. base44_prompt_template_library.md §10 is the forward-reference point for both (AC-2), with §6 (Bulk-Action Toolbar) updated to cite it explicitly."
+    },
+    "ST-13": {
+      "title": "Unified loading-skeleton pattern for async-loading cards",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1248,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-03",
+      "commit_sha": "3b3aafd8473de39aa74139400d2ec61c07c8e6c4",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/design/2026-08-05__release-v8.3/loading-skeleton-pattern/decision_record.md",
+        "docs/specs/frontend/design_system.md#Data States",
+        "src/components/ui/DataState.js"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Base44 Frontend Prompt Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. loadingVariant='skeleton'/loadingSkeleton props match design_system.md's documented default 3-bar composition and explicit bg-slate-300/60 dark:bg-slate-700/60 pair exactly; reuses the existing src/components/ui/skeleton.js primitive rather than duplicating it (design_system.md names it 'Skeleton.js' — same file, casing reconciled to what's actually on disk, documented as an implementation note not a deviation). Confirmed the shared primitive's own bg-primary/10 default is inert in this project (no 'primary' color defined in tailwind.config.js, verified via compiled CSS — 0 bg-primary rules emitted), so no override-collision risk here unlike the DialogTitle/DialogContent cases in ST-11/ST-12. Not retrofitted to any existing card, per AC."
+      },
+      "notes": "design_system.md v1.7 documentation for this pattern was already written at Design Gate time (2026-08-05); this story's engine work is the DataState.js prop implementation making the documented pattern actually usable, plus verifying the documentation matches."
+    },
+    "ST-14": {
+      "title": "Standard Base44 prompt section for dark/light theme compliance",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1253,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-03",
+      "commit_sha": "3b3aafd8473de39aa74139400d2ec61c07c8e6c4",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/specs/frontend/base44_prompt_template_library.md#11. Template: Standard Theme-Compliance Section (Generation-Time)"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Base44 Frontend Prompt Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. §11 is genuinely distinct from the existing §4 review-time checklist — it is a generation-time prompt fragment instructing the delegate on the rule to build against before code is written, addressing the recurring BLG-FE-87/88/95/125/129 defect class at prompt-draft time rather than catching it after generation. Version bump 1.4->1.6 (two sequential story bumps in one commit, ST-12 then ST-14), Change Log entries accurate, section renumbering consistent throughout the file."
+      },
+      "notes": "Documentation-only story (base44_prompt_template_library.md), no runtime code."
+    },
+    "ST-15": {
+      "title": "AI disclaimer component extraction",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1254,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-03",
+      "commit_sha": "51cb2e51d5ac09e6927ef68c136fa20870e91e42",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "claude/backlog/backlog.md#BLG-FE-81",
+        "src/components/shared/AiDisclaimer.js"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Base44 Frontend Prompt Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. Diffed clean: exact Tailwind classes and text preserved byte-for-byte for both badge (AiDailyBriefing) and footer (AiChatWidget) variants. Import paths verified correct from both consumers' actual filesystem locations. data-testid='ai-chat-advisory-footer' preserved exactly, matching existing Playwright assertions (epic02-v62-ai-briefing-chat.spec.js SC-AC-06) with no update needed. Filename/export casing matches (AiDisclaimer.js / AiDisclaimer)."
+      },
+      "notes": "Design Pre-Approved — both consumer instances' contrast fixes verified still shipped at their approved values (dashboard.md v3.2, positions.md v2.7) before extraction."
+    }
+  },
+  "last_updated_utc": "2026-08-06T00:00:00Z"
+}
