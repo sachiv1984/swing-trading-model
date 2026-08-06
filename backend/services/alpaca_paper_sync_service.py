@@ -15,6 +15,8 @@ import requests
 from datetime import date
 from typing import Dict, List, Optional
 
+from utils.retry import retry_with_backoff
+
 logger = logging.getLogger(__name__)
 
 ALPACA_PAPER_BASE_URL = "https://paper-api.alpaca.markets"
@@ -37,14 +39,23 @@ def _paper_headers() -> Dict[str, str]:
     }
 
 
-def sync_open_paper_position(ticker: str, shares: float) -> None:
-    """
-    Mirror a US position open to the Alpaca paper account via a market order.
-    Best-effort — any error is logged and silently swallowed.
-    """
-    if not _credentials_configured():
-        return
+def _client_order_id_for_open(position_id: str) -> str:
+    """Derive a deterministic Alpaca client_order_id from the internal position id
+    (ST-10, BLG-BE-80). A retried open call for the same position always submits
+    the same client_order_id, so Alpaca rejects the duplicate as a no-op instead
+    of creating a second paper order."""
+    return f"paper-open-{position_id}"
 
+
+@retry_with_backoff(
+    max_attempts=3,
+    base_delay=0.5,
+    retryable_exceptions=(requests.exceptions.RequestException,),
+)
+def _sync_open_paper_position_raw(ticker: str, shares: float, client_order_id: str) -> None:
+    """POST the paper open order (internal). Raises on network failure (retried by
+    the decorator) or a non-2xx response that isn't the expected duplicate-order
+    outcome for a retried client_order_id (not retried — see caller)."""
     url = f"{ALPACA_PAPER_BASE_URL}/v2/orders"
     payload = {
         "symbol": ticker,
@@ -52,16 +63,40 @@ def sync_open_paper_position(ticker: str, shares: float) -> None:
         "side": "buy",
         "type": "market",
         "time_in_force": "day",
+        "client_order_id": client_order_id,
     }
+    resp = requests.post(url, json=payload, headers=_paper_headers(), timeout=10)
+    if resp.status_code in (200, 201):
+        logger.info("Paper sync: opened position for %s (%.4f shares)", ticker, shares)
+        return
+    if resp.status_code == 422 and "client_order_id" in resp.text:
+        # Alpaca rejects a re-submitted client_order_id as a duplicate — this is
+        # the expected, safe outcome of a retry, not a failure.
+        logger.info(
+            "Paper sync: open order for %s already submitted (client_order_id=%s) — no duplicate created",
+            ticker, client_order_id,
+        )
+        return
+    logger.warning(
+        "Paper sync: open order failed for %s — HTTP %d: %s",
+        ticker, resp.status_code, resp.text[:200],
+    )
+    raise requests.exceptions.RequestException(f"Alpaca open order HTTP {resp.status_code}")
+
+
+def sync_open_paper_position(ticker: str, shares: float, position_id: str) -> None:
+    """
+    Mirror a US position open to the Alpaca paper account via a market order.
+    Retries transient failures (ST-09-pattern, ~3 attempts) using a deterministic
+    client_order_id derived from position_id, so a retried call cannot create a
+    duplicate order. Best-effort — any error is logged and silently swallowed.
+    """
+    if not _credentials_configured():
+        return
+
+    client_order_id = _client_order_id_for_open(position_id)
     try:
-        resp = requests.post(url, json=payload, headers=_paper_headers(), timeout=10)
-        if resp.status_code in (200, 201):
-            logger.info("Paper sync: opened position for %s (%.4f shares)", ticker, shares)
-        else:
-            logger.warning(
-                "Paper sync: open order failed for %s — HTTP %d: %s",
-                ticker, resp.status_code, resp.text[:200],
-            )
+        _sync_open_paper_position_raw(ticker, shares, client_order_id)
     except Exception as exc:
         logger.warning("Paper sync: open order exception for %s — %s", ticker, exc)
 

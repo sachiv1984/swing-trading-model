@@ -536,7 +536,7 @@ def add_position_endpoint(request: AddPositionRequest):
             if request.market == "US":
                 try:
                     from services.alpaca_paper_sync_service import sync_open_paper_position
-                    sync_open_paper_position(request.ticker, request.shares)
+                    sync_open_paper_position(request.ticker, request.shares, result["position_id"])
                 except Exception:
                     pass  # best-effort sync; primary operation already succeeded
 
