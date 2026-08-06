@@ -13,7 +13,7 @@ or recommendation pipeline. SRB-v1.7 CONDITIONALLY COMPLIANT.
 Contract: docs/specs/api_contracts/ai_endpoints.md v1.7
 """
 
-from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi import APIRouter, Query, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional, List, Any
@@ -64,13 +64,13 @@ def journal_summary(body: JournalSummaryRequest, request: Request):
     if not allowed:
         return JSONResponse(
             status_code=429,
-            content={"detail": "Rate limit exceeded. Try again later."},
+            content={"status": "error", "message": "Rate limit exceeded. Try again later."},
             headers={"Retry-After": str(retry_after)},
         )
     if not body.trade_ids and not body.date_from and not body.date_to:
-        raise HTTPException(
+        return JSONResponse(
             status_code=422,
-            detail="Provide trade_ids or at least one of date_from / date_to.",
+            content={"status": "error", "message": "Provide trade_ids or at least one of date_from / date_to."},
         )
 
     with get_db() as conn:

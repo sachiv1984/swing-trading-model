@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 from services.alpaca_paper_sync_service import get_paper_positions
 
 router = APIRouter(tags=["Portfolio"])
@@ -17,4 +18,4 @@ def get_paper_positions_endpoint():
             return result
         return {"status": "ok", **result}
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(exc)})
