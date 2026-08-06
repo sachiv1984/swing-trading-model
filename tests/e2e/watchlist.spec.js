@@ -1,0 +1,136 @@
+/**
+ * Watchlist — Baseline Acceptance Tests
+ * ST-16 (BLG-QA-86, EPIC-04, v8.3)
+ *
+ * BLG-QA-86's problem statement: Watchlist.js had no baseline Playwright
+ * coverage at all. This file establishes it — entry rendering, the news
+ * toggle, and the Add Ticker modal open — per the story's own AC.
+ *
+ * Spec ref: docs/specs/frontend/pages/watchlist.md
+ *
+ *   SC-WL-01  Watchlist entry renders (ticker, market badge, added-days)
+ *   SC-WL-02  News toggle expands a headlines row for a US entry; toggle again collapses it
+ *   SC-WL-03  Non-US entry has no news toggle (shows a dash instead)
+ *   SC-WL-04  "Add Ticker" opens the modal in add mode
+ *
+ * Infrastructure: Playwright page.route() network interception. No live backend required.
+ * ROUTING NOTE: App uses HashRouter — all navigation via page.goto('/#/…').
+ */
+
+'use strict';
+
+const { test, expect } = require('@playwright/test');
+
+const API = 'http://localhost:8000';
+
+const US_ENTRY = {
+  id: 'wl-us-001',
+  ticker: 'AAPL',
+  market: 'US',
+  company_name: 'Apple Inc.',
+  signal_status: 'no_signal',
+  tags: [],
+  target_entry_price: null,
+  initial_stop_price: null,
+  current_stop_price: null,
+  created_at: '2026-07-20T10:00:00Z',
+  updated_at: '2026-07-20T10:00:00Z',
+  added_at: '2026-07-20T10:00:00Z',
+  days_on_watchlist: 5,
+  is_stale: false,
+};
+
+const UK_ENTRY = {
+  id: 'wl-uk-001',
+  ticker: 'VOD.L',
+  market: 'UK',
+  company_name: 'Vodafone Group',
+  signal_status: 'no_signal',
+  tags: [],
+  target_entry_price: null,
+  initial_stop_price: null,
+  current_stop_price: null,
+  created_at: '2026-07-18T10:00:00Z',
+  updated_at: '2026-07-18T10:00:00Z',
+  added_at: '2026-07-18T10:00:00Z',
+  days_on_watchlist: 7,
+  is_stale: false,
+};
+
+async function mockFallback(page) {
+  await page.route(new RegExp(`${API}/`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
+  );
+}
+
+async function mockWatchlist(page, entries) {
+  await page.route(`${API}/watchlist`, (route) => {
+    if (route.request().method() === 'GET') {
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: entries }) });
+    }
+    return route.continue();
+  });
+  await page.route(`${API}/watchlist/tags`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) })
+  );
+  await page.route(`${API}/screener/results`, (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: [] }) })
+  );
+}
+
+test.beforeEach(async ({ page }) => {
+  await mockFallback(page);
+});
+
+test('SC-WL-01: watchlist entry renders ticker, market, and added-days', async ({ page }) => {
+  await mockWatchlist(page, [US_ENTRY]);
+  await page.goto('/#/Watchlist');
+
+  await expect(page.getByText('AAPL', { exact: true })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByText('Apple Inc.')).toBeVisible();
+  await expect(page.getByText('5d', { exact: true })).toBeVisible();
+});
+
+test('SC-WL-02: news toggle expands headlines for a US entry, then collapses on second click', async ({ page }) => {
+  await mockWatchlist(page, [US_ENTRY]);
+  await page.route(`${API}/news/AAPL*`, (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'ok',
+        data: { headlines: [{ headline: 'Apple announces new product', source: 'Reuters', published_at: '2026-08-01T09:00:00Z', url: 'https://example.com/a' }] },
+      }),
+    })
+  );
+  await page.goto('/#/Watchlist');
+  await expect(page.getByText('AAPL', { exact: true })).toBeVisible({ timeout: 10000 });
+
+  const newsToggle = page.locator('button[title="Show news headlines"]');
+  await expect(newsToggle).toBeVisible();
+  await newsToggle.click();
+
+  await expect(page.getByText('Apple announces new product')).toBeVisible({ timeout: 5000 });
+
+  await newsToggle.click();
+  await expect(page.getByText('Apple announces new product')).not.toBeVisible({ timeout: 3000 });
+});
+
+test('SC-WL-03: non-US entry shows no news toggle', async ({ page }) => {
+  await mockWatchlist(page, [UK_ENTRY]);
+  await page.goto('/#/Watchlist');
+
+  await expect(page.getByText('VOD.L', { exact: true })).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('button[title="Show news headlines"]')).toHaveCount(0);
+});
+
+test('SC-WL-04: "Add Ticker" opens the modal in add mode', async ({ page }) => {
+  await mockWatchlist(page, []);
+  await page.goto('/#/Watchlist');
+  await expect(page.getByText('Your watchlist is empty')).toBeVisible({ timeout: 10000 });
+
+  await page.getByRole('button', { name: 'Add Ticker' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Add Ticker to Watchlist' })).toBeVisible({ timeout: 5000 });
+  await expect(page.getByPlaceholder('e.g. AAPL')).toBeVisible();
+});
