@@ -12,15 +12,24 @@
  *
  * Migrated onto the shared Dialog primitive (ST-11, BLG-FE-103, EPIC-03, v8.3) —
  * was a bespoke fixed-overlay div; now uses Radix Dialog/DialogContent for its
- * built-in focus trap, Escape-to-close and (on unmount) focus restoration to the
- * previously-focused element, matching the ExitModal / TradePlan.js Abandon modal
- * convention (`open` + `onClose` controlled from the parent, content guarded on
- * `!position`). No explicit trigger ref is wired here — unlike TradePlan.js's
- * single-trigger Abandon modal, this modal is opened from more than one call site
- * (`Positions.js`'s own recheck button and a position-card callback), so it relies
- * on Radix's default previously-focused-element restoration rather than an
- * explicit `onCloseAutoFocus` override — same restoration objective, no single
- * trigger element to target.
+ * built-in focus trap and Escape-to-close, matching the ExitModal / TradePlan.js
+ * Abandon modal convention (`open` + `onClose` controlled from the parent,
+ * content guarded on `!position`).
+ *
+ * Focus restoration (fixed post-merge-review, real-CI Playwright failure on
+ * SC-CR-11): Radix's Dialog.Content does NOT restore focus to the previously
+ * focused element by default when the dialog wasn't opened via `<DialogTrigger>`
+ * — its default `onCloseAutoFocus` tries `context.triggerRef.current?.focus()`,
+ * and that ref is only ever populated by an actual `<DialogTrigger>` (same root
+ * cause TradePlan.js's Abandon modal already documented for its own single
+ * trigger). An earlier revision of this file assumed Radix would fall back to
+ * restoring `document.activeElement` on its own — it doesn't, confirmed by a
+ * failing `SC-CR-11` run in CI (focus state read "inactive" after Escape, not
+ * the trigger button). Since this modal is opened from more than one call site
+ * (`Positions.js`'s own recheck button and a position-card callback), a single
+ * fixed trigger ref (TradePlan.js's approach) doesn't fit — instead, whatever
+ * element was actually focused right before the dialog opened is captured in
+ * `previouslyFocusedRef` and restored explicitly via `onCloseAutoFocus` below.
  *
  * Padding/gap note: `DialogContent`'s own base className hardcodes `p-6 gap-4`
  * (`src/components/ui/dialog.js`) and this project's `cn()` (`src/lib/utils.js`)
@@ -31,7 +40,7 @@
  * bespoke layout) actually takes effect.
  */
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Zap, RotateCw } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
@@ -63,6 +72,13 @@ const OVERALL_LABEL = { pass: "Pass", warn: "Warn", fail: "Fail" };
 
 export default function ComplianceRecheckModal({ position, open, onClose }) {
   const [overrideAcknowledged, setOverrideAcknowledged] = useState(false);
+  const previouslyFocusedRef = useRef(null);
+
+  useEffect(() => {
+    if (open) {
+      previouslyFocusedRef.current = document.activeElement;
+    }
+  }, [open]);
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["compliance-recheck", position?.id],
@@ -85,6 +101,10 @@ export default function ComplianceRecheckModal({ position, open, onClose }) {
       <DialogContent
         className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 !p-0 !gap-0"
         data-testid="compliance-recheck-modal"
+        onCloseAutoFocus={(e) => {
+          e.preventDefault();
+          previouslyFocusedRef.current?.focus();
+        }}
       >
         {!position ? null : (
           <>
