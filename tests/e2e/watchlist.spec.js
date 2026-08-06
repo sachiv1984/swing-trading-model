@@ -12,6 +12,8 @@
  *   SC-WL-02  News toggle expands a headlines row for a US entry; toggle again collapses it
  *   SC-WL-03  Non-US entry has no news toggle (shows a dash instead)
  *   SC-WL-04  "Add Ticker" opens the modal in add mode
+ *   SC-WL-05  Invalid ticker format shows the canonical validation error text and colour
+ *             token (ST-21, EPIC-04, v8.3, BLG-SPEC-108)
  *
  * Infrastructure: Playwright page.route() network interception. No live backend required.
  * ROUTING NOTE: App uses HashRouter — all navigation via page.goto('/#/…').
@@ -129,8 +131,29 @@ test('SC-WL-04: "Add Ticker" opens the modal in add mode', async ({ page }) => {
   await page.goto('/#/Watchlist');
   await expect(page.getByText('Your watchlist is empty')).toBeVisible({ timeout: 10000 });
 
-  await page.getByRole('button', { name: 'Add Ticker' }).click();
+  // Two "Add Ticker" buttons render simultaneously on the empty state (the
+  // persistent PageHeader action + DataState's emptyAction CTA) — both are a
+  // deliberate, valid UX pattern (always-available header action + a
+  // contextual empty-state CTA), not a defect. .first() picks the PageHeader
+  // one (earlier in DOM order) to avoid a Playwright strict-mode collision.
+  await page.getByRole('button', { name: 'Add Ticker' }).first().click();
 
   await expect(page.getByRole('heading', { name: 'Add Ticker to Watchlist' })).toBeVisible({ timeout: 5000 });
   await expect(page.getByPlaceholder('e.g. AAPL')).toBeVisible();
+});
+
+test('SC-WL-05: invalid ticker format shows the canonical validation error text and colour token (ST-21, EPIC-04, v8.3, BLG-SPEC-108)', async ({ page }) => {
+  await mockWatchlist(page, []);
+  await page.goto('/#/Watchlist');
+  await expect(page.getByText('Your watchlist is empty')).toBeVisible({ timeout: 10000 });
+
+  await page.getByRole('button', { name: 'Add Ticker' }).first().click();
+  await expect(page.getByRole('heading', { name: 'Add Ticker to Watchlist' })).toBeVisible({ timeout: 5000 });
+
+  await page.getByPlaceholder('e.g. AAPL').fill('!!!invalid!!!');
+
+  const error = page.getByText('Invalid format. Use 1–10 alphanumeric characters.');
+  await expect(error).toBeVisible({ timeout: 5000 });
+  await expect(error).toHaveClass(/text-rose-700/);
+  await expect(error).toHaveClass(/dark:text-rose-400/);
 });

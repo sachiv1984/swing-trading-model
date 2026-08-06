@@ -36,7 +36,7 @@ For each sampled endpoint: read the actual response-construction code (the route
 
 **`GET /health`** (`BLG-SPEC-114`): `health_service.py::get_operational_health()` returns `external_apis` and `ai_journal` nested objects in addition to the 4 documented top-level fields.
 
-**`GET /watchlist`** (`BLG-SPEC-115`, raised to P2): `watchlist_service.py::_row_to_dict()` returns `company_name`, `tags`, `updated_at`, `added_at`, `days_on_watchlist`, `is_stale` — none in the documented example — and the documented example includes `portfolio_id`, which the actual SQL query does not select. Notably, `is_stale`/`days_on_watchlist` back a whole shipped feature (`BLG-FEAT-66`, ST-01, EPIC-01, v7.9) that is entirely undocumented in the contract — the largest and highest-priority gap in this sample.
+**`GET /watchlist`** (`BLG-SPEC-115`): `watchlist_service.py::_row_to_dict()` returns `company_name`, `tags`, `updated_at`, `added_at`, `days_on_watchlist`, `is_stale` — none in the illustrative JSON example — and the example includes `portfolio_id`, which the actual SQL query does not select. **Correction (post agent-mediated sign-off review, 2026-08-06):** `is_stale`/`days_on_watchlist` are, on closer reading, correctly documented in the contract's own field table and version history (just not in the stale JSON example) — the item was originally filed claiming they were "entirely absent from the contract" and raised to P2 on that basis; corrected to P3, the narrower and accurate severity. Still the largest example-completeness gap in this sample (6 fields), just not the mis-stated "whole feature undocumented" severity.
 
 ## Disposition
 
@@ -44,7 +44,7 @@ For each sampled endpoint: read the actual response-construction code (the route
 - `BLG-SPEC-112` (settings — XS)
 - `BLG-SPEC-113` (positions — S)
 - `BLG-SPEC-114` (health — S)
-- `BLG-SPEC-115` (watchlist — S, P2)
+- `BLG-SPEC-115` (watchlist — S, P3, corrected from an initially-overstated P2 — see finding detail above)
 
 No fixes applied in this story — per the AC's own scope ("spot-check... file individual BLG-SPEC-* items for any drift found"), this is a detection pass, not a remediation pass. Each filed item scopes its own fix.
 
