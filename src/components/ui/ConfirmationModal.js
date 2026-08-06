@@ -27,6 +27,15 @@
  * `undoWindow.enabled`/`durationSeconds`) — they exist to realise §4's
  * described interaction and may be refined once a real consumer
  * (BLG-FE-116/BLG-FE-117) lands; no consumer references this component yet.
+ *
+ * Title styling note: `DialogTitle`'s own base className hardcodes
+ * `text-lg ... tracking-tight` (`src/components/ui/dialog.js`) and this
+ * project's `cn()` (`src/lib/utils.js`) is plain `clsx` — no
+ * `tailwind-merge` de-duplication — so a same-property override class does
+ * not reliably beat the base class in the compiled stylesheet (verified:
+ * `text-base` is emitted before `text-lg`, so `text-lg` wins unless the
+ * override carries Tailwind's `!` important-modifier prefix). `!text-base`
+ * below is intentional, not a typo.
  */
 
 import { useEffect, useState } from "react";
@@ -74,7 +83,7 @@ export default function ConfirmationModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-full max-w-sm bg-slate-900 border-slate-700 text-white">
         <DialogHeader>
-          <DialogTitle className="text-base font-semibold text-white" data-testid="confirmation-modal-message">
+          <DialogTitle className="!text-base font-semibold text-white" data-testid="confirmation-modal-message">
             {message}
           </DialogTitle>
         </DialogHeader>

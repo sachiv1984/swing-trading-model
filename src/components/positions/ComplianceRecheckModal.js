@@ -21,12 +21,20 @@
  * on Radix's default previously-focused-element restoration rather than an
  * explicit `onCloseAutoFocus` override — same restoration objective, no single
  * trigger element to target.
+ *
+ * Padding/gap note: `DialogContent`'s own base className hardcodes `p-6 gap-4`
+ * (`src/components/ui/dialog.js`) and this project's `cn()` (`src/lib/utils.js`)
+ * is plain `clsx` with no `tailwind-merge` — a later override class does not
+ * reliably beat an earlier base class in the compiled stylesheet. `!p-0 !gap-0`
+ * (Tailwind's important-modifier prefix) is used instead of a bare `p-0 gap-0`
+ * override so this component's own per-section padding (matching the original
+ * bespoke layout) actually takes effect.
  */
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Zap, RotateCw } from "lucide-react";
-import { Dialog, DialogContent } from "../ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { apiFetch } from "../../api/base44Client";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -75,8 +83,7 @@ export default function ComplianceRecheckModal({ position, open, onClose }) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
-        className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 p-0 gap-0"
-        aria-label={position ? `Compliance recheck for ${position.ticker}` : "Compliance recheck"}
+        className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 !p-0 !gap-0"
         data-testid="compliance-recheck-modal"
       >
         {!position ? null : (
@@ -84,9 +91,9 @@ export default function ComplianceRecheckModal({ position, open, onClose }) {
             {/* Header */}
             <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-700/50">
               <Zap className="w-4 h-4 text-cyan-400" />
-              <h2 className="text-sm font-semibold text-white tracking-wide uppercase">
+              <DialogTitle className="!text-sm font-semibold text-white !leading-normal !tracking-wide uppercase">
                 Compliance Recheck — {position.ticker}
-              </h2>
+              </DialogTitle>
               {overallStatus && (
                 <span
                   data-testid="compliance-recheck-overall-badge"
