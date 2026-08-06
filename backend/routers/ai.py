@@ -190,7 +190,7 @@ def daily_briefing(request: Request):
     if not allowed:
         return JSONResponse(
             status_code=429,
-            content={"detail": "Rate limit exceeded. Try again later."},
+            content={"status": "error", "message": "Rate limit exceeded. Try again later."},
             headers={"Retry-After": str(retry_after)},
         )
     from services.ai_service import generate_daily_briefing
@@ -223,7 +223,7 @@ def ai_chat_endpoint(body: ChatRequest, request: Request):
     if not allowed:
         return JSONResponse(
             status_code=429,
-            content={"detail": "Rate limit exceeded. Try again later."},
+            content={"status": "error", "message": "Rate limit exceeded. Try again later."},
             headers={"Retry-After": str(retry_after)},
         )
     from services.ai_service import ai_chat
