@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.138
-**Last Updated:** 2026-08-04
+**Version:** 4.139
+**Last Updated:** 2026-08-06
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -763,7 +763,7 @@ amend cycle --cycle "<original_cycle_id>" --reason "<emergency-fix|hard-blocker>
 
 ## 7. Phase 2 — Sprint Planning
 
-**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.15)
+**Source prompt:** `claude/system/sprint_planning_prompt.md` (v3.16)
 **Owner:** PMO Lead  
 **Trigger:** Phase 1B complete — `.claude_current_state.json` status = `Published` (or `Validated` / `Committed`)
 
@@ -1466,7 +1466,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.12 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.46 |
-| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.15 |
+| Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.16 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.62 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.8 |
@@ -1474,7 +1474,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.24 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.23 |
+| Shared Standards | `claude/system/shared_standards.md` v3.24 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.10 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.139 | 2026-08-06 | **Sprint execution `2026-08-05__release-v8.3` EPIC-05/ST-25 (BLG-GOV-257) — sprint_planning_prompt.md v3.15→v3.16 + shared_standards.md v3.23→v3.24: prompt change log gap detection fixed from file-position to date-scan.** §7 source prompt header v3.15→v3.16 (line 766). §14 Sprint Planning Engine v3.15→v3.16, Shared Standards v3.23→v3.24. §14 Version 4.138→4.139/2026-08-06. Change: STEP -1 Hygiene advisories — "Prompt change log gaps" check rewritten from `grep \| head -1` to a date-scan method (collect every matching row, parse each row's Date column, select the latest date) — `prompt_change_log.md` is not uniformly ordered (a prepend-newest-first block sits above an older ascending-chronological historical backfill), so file position does not correlate with recency across the whole file. New `shared_standards.md` §11.1 documents the method for reuse by any future equivalent check. Root cause: confirmed false-positive during `plan sprint 2026-07-24__release-v7.8` (`sprint_planning_prompt.md` v3.13 already logged further down the file, `head -1` returned a stale v3.12 row). Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-25, 2026-08-06). |
 | 4.138 | 2026-08-04 | **Sprint execution `2026-08-04__release-v8.2` EPIC-05/ST-25 (BLG-FE-131) — design_gate_prompt.md v1.8→v1.9: motion/timing-sensitive interaction classification note.** §6.5 source prompt header v1.8→v1.9 (line 570). §14 Design Gate Engine v1.8→v1.9. §14 Version 4.137→4.138/2026-08-04. Change: §6 Design Requirement Classification gains an explicit note that chart transition animations, tooltip delay timing, loading-state debounce/throttle windows, and other motion/timing parameter changes are always Design Required, even absent a new component or layout change — closes the gap where such changes fell through the cracks between the "visual rendering" and "interaction flow" criteria. Authority: Head of UX & Design (Sprint Execution Engine, agent-mediated, ST-25, 2026-08-04). |
 | 4.137 | 2026-08-04 | **Sprint execution `2026-08-04__release-v8.2` EPIC-03/ST-18 (BLG-GOV-285) — shared_standards.md v3.22→v3.23: delegation-record auto-close false-positive fix documented.** §14 Shared Standards v3.22→v3.23. §14 Version 4.136→4.137/2026-08-04. Change: `.github/workflows/governance_sync.yml` now cross-checks a story's actual `execution_state` status (per-EPIC files or legacy single file) before auto-closing its GitHub issue, rather than trusting the presence of `[ST-xx]` in a commit message alone — fixes a false-positive that recurred twice (v8.0 EPIC-02/ST-08 issue #1148, v8.1 EPIC-02/ST-02 issue #1169). Documented in `shared_standards.md` §6. Authority: Head of Engineering (Sprint Execution Engine, agent-mediated, ST-18, 2026-08-04). |
 | 4.136 | 2026-08-04 | **Sprint execution `2026-08-04__release-v8.2` EPIC-03/ST-15 (BLG-GOV-279) — roadmap_prompt.md v9.11→v9.12: SI-02 production credential provisioning decision.** §6 source prompt header v9.11→v9.12 (line 399). §14 Roadmap Engine Source v9.11→v9.12. §14 Version 4.135→4.136/2026-08-04. Change: STEP 2.3 Credential-fallback guidance gains a Standing-behaviour decision — Product Owner formally accepted the fallback-citation pattern as permanent, intended behaviour (option (b) of the two named in the backlog item), closing the recurring "next rebalance should attempt a genuine live re-check" carry-forward pattern that had appeared in 3+ consecutive cycles' lessons-learnt/carry-forward notes without resolution (no production credential was ever persisted into the gitignored `.env.production`/`.env.staging` files — confirmed empty again this session). Authority: Product Owner (Sprint Execution Engine, agent-mediated, ST-15, 2026-08-04). |
