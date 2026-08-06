@@ -1,0 +1,198 @@
+{
+  "cycle_id": "2026-08-05__release-v8.3",
+  "epic_id": "EPIC-04",
+  "status": "done",
+  "branch": "exec/2026-08-05__release-v8.3/EPIC-04",
+  "pr_number": null,
+  "pr_status": "none",
+  "qa_signed_off": true,
+  "qa_evidence_log": "claude/cycles/2026-08-05__release-v8.3/qa_evidence_EPIC-04.md",
+  "test_scenarios": [
+    "tests/e2e/watchlist.spec.js",
+    "tests/e2e/epic03-v34-frontend.spec.js",
+    "tests/test_doq_signoff_staleness_check.py"
+  ],
+  "stories": {
+    "ST-16": {
+      "title": "Add baseline Playwright coverage for Watchlist.js",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1251,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-04",
+      "commit_sha": "a35115597eb2eeed9be8b1c66c85f9430ec84c3b",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "tests/e2e/watchlist.spec.js"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Base44 Frontend Prompt Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "First pass BLOCKED: SC-WL-04 hit a Playwright strict-mode violation ('Add Ticker' resolves to 2 buttons on the empty state — PageHeader's always-present action + DataState's emptyAction CTA, both deliberate, not a defect). Fixed with .first() (commit a3511559), re-verified by actually running the full 5-test suite against the real dev server with a real Chromium binary — all 5 pass (SC-WL-01 through SC-WL-05), no regressions."
+      },
+      "notes": "Design Gate: Design Not Applicable (test infrastructure only, no UI change)."
+    },
+    "ST-17": {
+      "title": "OpenAPI drift gate false-negative sweep",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1252,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-04",
+      "commit_sha": "2d5299b471927dfc42d15414a0ceacea7b339a6d",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "scripts/openapi_3way_drift_sweep.py",
+        "docs/ops/openapi_3way_sweep_log.md"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "API Contracts & Documentation Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. Re-ran the sweep script independently — output matches the sweep log exactly (131/130/130 endpoints, same 4 findings). Spot-checked 3 KNOWN_GAPS categories against real source (main.py root route, Alpaca third-party contract paths, notification_id/id naming-convention exemption in alerts.py) — all genuinely justified. BLG-SPEC-111 correctly filed for the one real gap."
+      },
+      "notes": "Quarterly sweep, next scheduled run 2026-11-06 (per docs/ops/openapi_3way_sweep_log.md)."
+    },
+    "ST-18": {
+      "title": "DoQ sign-off staleness pre-merge lint",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1255,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-04",
+      "commit_sha": "2a9db482562775db9ebae34ca55d55f1ceeb235c",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "scripts/check_doq_signoff_staleness.py",
+        "tests/test_doq_signoff_staleness_check.py",
+        ".github/workflows/quality_gate.yml"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Director of Quality",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. Ran the 5-test suite (all pass), validated quality_gate.yml YAML, re-ran the check script against the active cycle (clean). Verified the active-cycle-only scoping decision empirically — an unscoped scan finds exactly the 6 historical placeholders across 4 already-closed cycles claimed in the commit message."
+      },
+      "notes": "An unscoped first draft would have permanently blocked every future PR (6 legitimate historical placeholders in sealed cycles v1.10/v2.0/v2.9/v3.7) — scoped to active cycle only, same source .claude_current_state.json's active_cycle already used by the existing per-EPIC QA evidence check."
+    },
+    "ST-19": {
+      "title": "OpenAPI response-example drift spot-check",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1256,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-04",
+      "commit_sha": "a35115597eb2eeed9be8b1c66c85f9430ec84c3b",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/ops/openapi_response_example_spot_check_2026-08-06.md"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "API Contracts & Documentation Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "First pass found BLG-SPEC-115's problem statement overstated (claimed is_stale/days_on_watchlist were 'entirely absent from the contract' when they're documented in the field table, just missing from the illustrative JSON example). Corrected P2->P3 in the same-session follow-up commit, re-verified: field table content confirmed accurate at watchlist_endpoints.md lines 69-70/337, P2->P3 correction consistent across backlog.md and the spot-check doc. BLG-SPEC-112/113/114 (settings/positions/health) independently spot-checked against real source and confirmed accurate on first pass."
+      },
+      "notes": "6-endpoint sample; 4 genuine drift findings filed (BLG-SPEC-112 through 115)."
+    },
+    "ST-20": {
+      "title": "API endpoint deprecation-window policy",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1246,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-04",
+      "commit_sha": "fb57b1f3f558f80d6ffa493eb9b50475764bce33",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/specs/api_contracts/conventions.md#14. API Endpoint Deprecation-Window Policy"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Head of Specs Team",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. Genuinely new policy confirmed (no prior 'deprecat*' content anywhere in api_changelog.md or openapi.yaml). Self-consistent (notice windows, marking convention, changelog requirement, removal process, exception sign-off). Version bump 1.2->1.3 and Change Log entry correct; only Change Log section in the file, no duplication."
+      },
+      "notes": "Documentation-only story, no runtime code."
+    },
+    "ST-21": {
+      "title": "Canonical form validation error-message pattern spec",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1245,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-04",
+      "commit_sha": "a35115597eb2eeed9be8b1c66c85f9430ec84c3b",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/specs/frontend/design_system.md#Error States",
+        "docs/design/2026-08-05__release-v8.3/form-validation-error-message-pattern/decision_record.md",
+        "tests/e2e/watchlist.spec.js",
+        "tests/e2e/epic03-v34-frontend.spec.js"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Frontend Specifications & UX Documentation Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "First pass BLOCKED (hard gate): ships a frontend-visible colour change (WatchlistModal.js, TradePlan.js) with no Playwright coverage, staging sign-off, or filed backlog item — required per CLAUDE.md. Fixed: added SC-WL-05 (watchlist.spec.js) and SC-E03-15b (epic03-v34-frontend.spec.js), both actually run against a real Chromium binary and passing, asserting the exact text-rose-700/dark:text-rose-400 classes on the real rendered elements. Re-verified clean on second pass. Secondary finding (6 more files with the same unaddressed defect class, outside this story's own decision-record scope) filed as BLG-FE-140."
+      },
+      "notes": "Design_system.md v1.7 §Error States already fully documents this pattern (written at Design Gate). AC covers spec (pre-existing) + the 2 shipped instances' dark-only-token gap the design gate's own clearing rationale flagged. Trigger-timing reconciliation (submit- vs blur-triggered) intentionally out of scope — see commit message."
+    }
+  },
+  "last_updated_utc": "2026-08-06T00:00:00Z"
+}
