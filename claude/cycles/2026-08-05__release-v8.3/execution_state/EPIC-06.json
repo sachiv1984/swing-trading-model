@@ -1,0 +1,43 @@
+{
+  "cycle_id": "2026-08-05__release-v8.3",
+  "epic_id": "EPIC-06",
+  "status": "done",
+  "branch": "exec/2026-08-05__release-v8.3/EPIC-06",
+  "pr_number": null,
+  "pr_status": "none",
+  "qa_signed_off": true,
+  "qa_evidence_log": "claude/cycles/2026-08-05__release-v8.3/qa_evidence_EPIC-06.md",
+  "test_scenarios": [],
+  "stories": {
+    "ST-27": {
+      "title": "Monthly P&L report format review — 3-month usage retrospective",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1239,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-06",
+      "commit_sha": "bc724cb11e487b402ec3dce7cf25f4a6519f0da9",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/product/decisions/monthly_pnl_format_review_2026-08-06.md"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Financial Reporting & Records Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved, with one flagged non-blocking wording finding: the Product Owner sign-off line initially read 'Confirmed' rather than the required OA-6 'pending human confirmation' phrasing. Fixed in commit bc724cb1 (sign-off field left blank for actual human PO confirmation). All factual claims in the review document independently verified against src/pages/Reports.js, reports_endpoints.md, ExitReasonTable.js/TagPerformance.js (Avg P&L precedent), and MonthlyHeatmap.js/PerformanceAnalytics.js (Win Rate computed client-side from raw trades, not the monthly-pnl endpoint) — all accurate. BLG-FE-141 confirmed well-formed, no ID collision."
+      },
+      "notes": "No usage telemetry exists in this product — assessment performed via direct implementation review + comparison against sibling reporting surfaces, per the review document's own method note."
+    }
+  },
+  "last_updated_utc": "2026-08-06T00:00:00Z"
+}
