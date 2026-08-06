@@ -1,0 +1,74 @@
+# .github/workflows/api-key-cross-environment-check.yml
+name: API Key Cross-Environment Check
+
+# ST-03 (BLG-OPS-131, EPIC-01, v8.3): recurring check that staging's and
+# production's Application X-API-Key remain distinct. ST-06 (BLG-SEC-27,
+# v8.2) rotated the two to distinct values and confirmed this live via a
+# one-time manual check at rotation time -- there was no ongoing signal if
+# a future rotation accidentally re-syncs them. This workflow makes that
+# recurring, following the same pattern as staging-deploy-drift-check.yml
+# (BLG-OPS-128, v8.2).
+#
+# The deliberately-cross-wired-test AC for this story is satisfied by
+# tests/test_api_key_cross_environment.py (CI-reproducible pure-logic unit
+# tests), not by this workflow -- this workflow is the live wiring.
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # daily 06:00 UTC
+  workflow_dispatch: {}
+
+concurrency:
+  group: api-key-cross-environment-check
+  cancel-in-progress: true
+
+jobs:
+  cross-environment-check:
+    name: Confirm staging/production API keys remain distinct
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run cross-environment check
+        id: check
+        shell: bash
+        env:
+          PROD_API_URL: ${{ secrets.API_URL }}
+          PROD_API_KEY: ${{ secrets.API_KEY }}
+          STAGING_API_URL: https://trading-assistant-api-staging.onrender.com
+          STAGING_API_KEY: ${{ secrets.STAGING_API_KEY }}
+        run: |
+          set -o pipefail
+          if [ -z "$PROD_API_URL" ] || [ -z "$PROD_API_KEY" ] || [ -z "$STAGING_API_KEY" ]; then
+            echo "::warning::One or more of API_URL / API_KEY / STAGING_API_KEY not configured as repo secrets — cross-environment check skipped."
+            exit 0
+          fi
+          set +e
+          python3 scripts/check_api_key_cross_environment.py | tee cross_env_output.txt
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Send alert on cross-wired keys
+        if: steps.check.outputs.exit_code == '1'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          FINDINGS=$(grep '^\[CROSS-WIRED\]' cross_env_output.txt || true)
+          MESSAGE="API key cross-environment check FAILED: ${FINDINGS} ${RUN_URL}"
+          echo "$MESSAGE"
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -sS --max-time 30 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+              --data-urlencode "text=${MESSAGE}"
+          else
+            echo "::warning::TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not configured as repo secrets — alert not sent. Message would have been: ${MESSAGE}"
+          fi

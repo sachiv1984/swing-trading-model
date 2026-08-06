@@ -1,0 +1,168 @@
+{
+  "cycle_id": "2026-08-05__release-v8.3",
+  "sprint_goal": "Restore and harden the SI-05 weekly digest pipeline (fix plus delivery-failure alerting) while clearing a curated slate of backend resilience, frontend design-system, QA/spec, and governance-process debt \u2014 leaving no ungated P1 operational gap open and no item below its stated acceptance bar.",
+  "backlog_slice_source": "claude/cycles/2026-08-05__release-v8.3/stage4_backlog_slice.md",
+  "invoked_utc": "2026-08-05T18:41:13Z",
+  "mode": "standard",
+  "status": "Running",
+  "last_updated_utc": "2026-08-05T18:46:13Z",
+  "epics": {
+    "EPIC-01": {
+      "status": "done",
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-01",
+      "pr_number": 1257,
+      "pr_status": "open",
+      "qa_signed_off": true,
+      "qa_evidence_log": "claude/cycles/2026-08-05__release-v8.3/qa_evidence_EPIC-01.md",
+      "test_scenarios": [
+        "tests/test_si05_digest_staleness.py",
+        "tests/test_api_key_cross_environment.py",
+        "tests/test_si05_digest_service.py"
+      ],
+      "stories": {
+        "ST-01": {
+          "title": "Investigate and fix the SI-05 weekly Telegram digest delivery pipeline",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1234,
+          "branch": "exec/2026-08-05__release-v8.3/EPIC-01",
+          "commit_sha": "356eef75c4f29f6f968464f7f69f481970713731",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-05T18:41:13Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/si05_digest_delivery_root_cause_2026-08-05.md",
+            ".github/workflows/si05-weekly-digest.yml",
+            "docs/specs/api_contracts/digest_endpoints.md#POST /digest/si05/send"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off",
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-05",
+            "notes": "Approved (conditional). Root cause confirmed: no automated trigger mechanism was ever committed for POST /digest/si05/send; fix adds si05-weekly-digest.yml following the proven alert-evaluation.yml pattern. AC 'SI-05 digest delivery confirmed working again' is a disclosed staging-only deferral, tracked via BLG-OPS-132 (filed pre-PR per CLAUDE.md \u00a72) \u2014 Infrastructure & Operations Owner to trigger workflow_dispatch promptly post-merge rather than waiting for the next Sunday cron."
+          },
+          "notes": "Root cause: missing automated trigger, not a code defect. See docs/ops/si05_digest_delivery_root_cause_2026-08-05.md."
+        },
+        "ST-02": {
+          "title": "Add delivery-failure alerting for the SI-05 weekly digest",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1236,
+          "branch": "exec/2026-08-05__release-v8.3/EPIC-01",
+          "commit_sha": "5cbadf1e35deb57093148a9a918245c719a2aa0e",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-05T18:41:13Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_si05_digest_staleness.py",
+            "tests/test_si05_digest_staleness.py",
+            ".github/workflows/si05-digest-staleness-check.yml"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off",
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-05",
+            "notes": "Approved. Pure-logic staleness check (is_digest_overdue) with deliberately-stale unit test coverage (6 tests, mirrors check_staging_deploy_drift.py pattern); Telegram alerting wired with graceful fallback. No charter conflicts."
+          },
+          "notes": ""
+        },
+        "ST-03": {
+          "title": "Recurring check confirming staging/production API keys remain distinct",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1235,
+          "branch": "exec/2026-08-05__release-v8.3/EPIC-01",
+          "commit_sha": "740ac98d7a450f598706718eef94d285bb849a32",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-05T18:41:13Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "scripts/check_api_key_cross_environment.py",
+            "tests/test_api_key_cross_environment.py",
+            ".github/workflows/api-key-cross-environment-check.yml"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off",
+          "sign_off_record": {
+            "role": "Cybersecurity & Trust Lead",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-05",
+            "notes": "Approved. evaluate_environment() correctly distinguishes own-key-failure from cross-wiring from unexpected status; verified against actual api_key_middleware behaviour (/health/detailed requires X-API-Key, only GET /health exempt). Live alerting inert until STAGING_API_KEY GitHub secret is added \u2014 disclosed as human action required in api_key_security_register.md entry #6, tracked to the Infrastructure & Operations Owner."
+          },
+          "notes": "New GitHub Actions secret STAGING_API_KEY required for the live workflow to alert; documented in docs/security/api_key_security_register.md entry #6. Deliberately-cross-wired AC met via tests/test_api_key_cross_environment.py (CI-reproducible)."
+        },
+        "ST-04": {
+          "title": "Gemini API key rotation runbook",
+          "classification": "autonomous",
+          "status": "done",
+          "assigned_to": "engine",
+          "github_issue": 1231,
+          "branch": "exec/2026-08-05__release-v8.3/EPIC-01",
+          "commit_sha": "8a6bf3354ca21987e0d0fdcee169c283c4c062aa",
+          "delegation_record_id": null,
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
+          "completed_utc": "2026-08-05T18:41:13Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/security/api_key_security_register.md#3. Anthropic API Key"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off",
+          "sign_off_record": {
+            "role": "Cybersecurity & Trust Lead",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-05",
+            "notes": "Approved. Runbook (numbered steps + annual cadence + emergency-rotation cross-reference) added to register entry #3. 'Gemini' naming correctly and transparently resolved as legacy terminology for the Anthropic key \u2014 confirmed by inspection of gemini_service.py, no separate Gemini credential exists in this codebase."
+          },
+          "notes": "Backlog item title says 'Gemini API key' \u2014 this is the Anthropic API key (gemini_service.py is a legacy filename only); resolved inline in the register entry, not a separate credential."
+        }
+      }
+    }
+  },
+  "blocked_items": [],
+  "delegated_items": [],
+  "completed_items": [
+    "EPIC-01/ST-01",
+    "EPIC-01/ST-02",
+    "EPIC-01/ST-03",
+    "EPIC-01/ST-04"
+  ],
+  "open_escalations": [],
+  "merge_gate": {
+    "epics_merged": [],
+    "epics_pending": [
+      "EPIC-01"
+    ],
+    "all_merged": false
+  },
+  "process_notes": [],
+  "sealed": false,
+  "sealed_utc": null,
+  "_generated_by": "claude/system/scripts/generate_execution_summary.py \u2014 do not hand-edit"
+}
