@@ -171,7 +171,7 @@ No body required. No query parameters.
 
 **Response (401 — unauthenticated)**
 ```json
-{"detail": "Unauthorized"}
+{"status": "error", "message": "Unauthorized"}
 ```
 
 This endpoint is intended for internal cron/scheduled invocation only. The scheduler must supply `X-API-Key: <API_KEY>` in its request headers.

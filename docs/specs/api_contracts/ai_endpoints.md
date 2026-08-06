@@ -180,7 +180,8 @@ Content-Type: application/json
 
 ```json
 {
-  "detail": "Rate limit exceeded. Try again later."
+  "status": "error",
+  "message": "Rate limit exceeded. Try again later."
 }
 ```
 
@@ -283,7 +284,8 @@ Content-Type: application/json
 
 ```json
 {
-  "detail": "Rate limit exceeded. Try again later."
+  "status": "error",
+  "message": "Rate limit exceeded. Try again later."
 }
 ```
 
