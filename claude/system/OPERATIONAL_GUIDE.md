@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.140
+**Version:** 4.141
 **Last Updated:** 2026-08-06
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.12)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.13)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -1464,7 +1464,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.13 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.9 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.12 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.13 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.47 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.16 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.141 | 2026-08-06 | **Sprint execution `2026-08-05__release-v8.3` EPIC-05/ST-26 (BLG-GOV-270) — roadmap_prompt.md v9.12→v9.13: new §7.2 Cross-Role Workload Balance Check.** §6 source prompt header v9.12→v9.13 (line 399). §14 Roadmap Engine Source v9.12→v9.13. §14 Version 4.140→4.141/2026-08-06. Change: new advisory check, distinct from §7.1's Skill-Silo Alert (which classifies story *shape*, governance-heavy vs execution-heavy) — tallies story *ownership by named role* (`sprint_backlog.md`'s `**Owner:**` field) over the same rolling 3-cycle window, flagging >40% single-role concentration (mirrors §7.1's ceiling for consistency). Advisory only, no mandatory-pull-forward escalation (role concentration can legitimately reflect a release's genuine thematic focus, not always a bottleneck). Authority: Director of HR (Sprint Execution Engine, agent-mediated, ST-26, 2026-08-06). |
 | 4.140 | 2026-08-06 | **Sprint execution `2026-08-05__release-v8.3` EPIC-05/ST-22 (BLG-GOV-124) — release_planning_prompt.md v2.46→v2.47: RESUME PRECHECK mutation-detection block removed.** §6B source prompt header v2.46→v2.47 (line 623). §14 Release Engine Source v2.46→v2.47. §14 Version 4.139→4.140/2026-08-06. Change: removed the ~65-line mutation-detection/invalidation-map/efficiency-policy machinery (Purpose/Tracked items/Detection/Invalidation map/Safety policy/Efficiency policy subsections) — this path was never exercised in any recorded v4.x–v5.x cycle; the existing lightweight `state.json` not_started/fail/blocked resume rule provides sufficient resumability for the observed failure mode. The Terminal State Guard ("Published Is Immutable") and State File Immutability Rule hard gates were extracted intact into their own top-level `## Terminal State Guard` section (both continue to apply on every resume, unaffected by the removal — per the sign-off constraint from GCA-2026-06-17 SC-02). Two stale cross-references to the removed block's STEP 4.5 "safety policy" rerun rule and the RESUME PRECHECK heading name were also removed/relabelled. Dry-run validation pass: swept the full file for remaining `RESUME PRECHECK`/`invalidation`/`mutation_seq` references post-edit — none found outside the explanatory extraction note; `state.sealed.sealed_assumptions` (written by `publish_gate.md` at STEP 8, an unrelated seal-for-the-record step) and the `release_state_schema.json` template fields were confirmed to serve a purpose independent of the removed detection logic and were left unchanged. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-22, 2026-08-06). |
 | 4.139 | 2026-08-06 | **Sprint execution `2026-08-05__release-v8.3` EPIC-05/ST-25 (BLG-GOV-257) — sprint_planning_prompt.md v3.15→v3.16 + shared_standards.md v3.23→v3.24: prompt change log gap detection fixed from file-position to date-scan.** §7 source prompt header v3.15→v3.16 (line 766). §14 Sprint Planning Engine v3.15→v3.16, Shared Standards v3.23→v3.24. §14 Version 4.138→4.139/2026-08-06. Change: STEP -1 Hygiene advisories — "Prompt change log gaps" check rewritten from `grep \| head -1` to a date-scan method (collect every matching row, parse each row's Date column, select the latest date) — `prompt_change_log.md` is not uniformly ordered (a prepend-newest-first block sits above an older ascending-chronological historical backfill), so file position does not correlate with recency across the whole file. New `shared_standards.md` §11.1 documents the method for reuse by any future equivalent check. Root cause: confirmed false-positive during `plan sprint 2026-07-24__release-v7.8` (`sprint_planning_prompt.md` v3.13 already logged further down the file, `head -1` returned a stale v3.12 row). Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-25, 2026-08-06). |
 | 4.138 | 2026-08-04 | **Sprint execution `2026-08-04__release-v8.2` EPIC-05/ST-25 (BLG-FE-131) — design_gate_prompt.md v1.8→v1.9: motion/timing-sensitive interaction classification note.** §6.5 source prompt header v1.8→v1.9 (line 570). §14 Design Gate Engine v1.8→v1.9. §14 Version 4.137→4.138/2026-08-04. Change: §6 Design Requirement Classification gains an explicit note that chart transition animations, tooltip delay timing, loading-state debounce/throttle windows, and other motion/timing parameter changes are always Design Required, even absent a new component or layout change — closes the gap where such changes fell through the cracks between the "visual rendering" and "interaction flow" criteria. Authority: Head of UX & Design (Sprint Execution Engine, agent-mediated, ST-25, 2026-08-04). |
