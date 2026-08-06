@@ -1,10 +1,10 @@
 {
   "cycle_id": "2026-08-05__release-v8.3",
   "epic_id": "EPIC-01",
-  "status": "done",
+  "status": "merged",
   "branch": "exec/2026-08-05__release-v8.3/EPIC-01",
   "pr_number": 1257,
-  "pr_status": "open",
+  "pr_status": "merged",
   "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-05__release-v8.3/qa_evidence_EPIC-01.md",
   "test_scenarios": [
@@ -136,5 +136,5 @@
       "notes": "Backlog item title says 'Gemini API key' — this is the Anthropic API key (gemini_service.py is a legacy filename only); resolved inline in the register entry, not a separate credential."
     }
   },
-  "last_updated_utc": "2026-08-05T18:41:13Z"
+  "last_updated_utc": "2026-08-06T07:15:58Z"
 }
