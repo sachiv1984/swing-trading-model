@@ -1077,7 +1077,9 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 **Owner:** Financial Reporting & Records Owner
 **Source:** ST-27 (BLG-FEAT-45, EPIC-06) 3-month Monthly P&L format retrospective, sprint execution `2026-08-05__release-v8.3` — 2026-08-06
 **Effort:** XS (<1h)
-**Provisional-Target:** TBD
+**Provisional-Target:** v8.4
+
+**Product Owner decision (2026-08-06, agent-mediated, delegated authority per execution_prompt.md §5.3 — not the PR #1262 merge-gate acceptance, which remains separately pending real human confirmation):** Accepted. XS effort, zero backend change, clear existing precedent (`ExitReasonTable.js`/`TagPerformance.js`), and directly closes a real usability gap the retrospective validated (a month's total P&L currently doesn't distinguish "1 big win" from "5 small wins"). Set `Provisional-Target: v8.4` as a non-committed placeholder for the next release planning cycle to confirm or re-time — this decision approves the item for backlog prioritisation, it does not commit sprint capacity.
 
 **Problem**
 The Monthly P&L Report table (`src/pages/Reports.js`'s `MonthlyPnlTable`) shows Month, Realised P&L, and Trade count — but not average P&L per trade, so a month with 1 large win and a month with 5 small wins can show the same total, indistinguishable at a glance. `ExitReasonTable.js`/`TagPerformance.js` already establish "Avg P&L" as a standard column pattern elsewhere in the app's analytics views.

@@ -48,6 +48,8 @@ Format is fundamentally sound and consistent with the app's established reportin
 
 **Product Owner sign-off (human):** _(pending)_
 
+**Recommendation decision (2026-08-06, agent-mediated, delegated authority — not a substitute for the human sign-off line above):** `BLG-FE-141` (the Avg P&L/Trade column) accepted for backlog prioritisation, `Provisional-Target: v8.4` set as a non-committed placeholder. See `claude/backlog/backlog.md#BLG-FE-141` for full rationale. This records disposition of the review's own recommendation; it does not close out the "Product Owner sign-off" AC line above, which remains a distinct, still-open human confirmation of the review and this PR as a whole.
+
 ## Known Deviations
 
 None. This is a net-new artefact — no prior canonical spec governed this work.
@@ -58,4 +60,5 @@ None. This is a net-new artefact — no prior canonical spec governed this work.
 
 | Date | Version | Summary |
 |---|---|---|
+| 2026-08-06 | 1.1 | PR #1262 two-agent review follow-up: `BLG-FE-141` recommendation decision recorded (accepted, agent-mediated delegated authority) — see Written conclusion section. `Product Owner sign-off` line itself remains open/pending, unaffected by this decision. |
 | 2026-08-06 | 1.0 | Initial 3-month retrospective (ST-27, EPIC-06, v8.3, BLG-FEAT-45) |
