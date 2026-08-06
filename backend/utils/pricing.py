@@ -171,10 +171,61 @@ def get_live_fx_rate() -> float:  # noqa: C901
         return DEFAULT_FX_RATE
 
 
+@retry_with_backoff(
+    max_attempts=3,
+    base_delay=0.5,
+    retryable_exceptions=(requests.exceptions.RequestException,),
+)
+def _yahoo_fetch_ma200_pair(ticker: str):
+    """
+    Fetch current price and 200-day MA for a ticker from Yahoo Finance (internal).
+    Raises on any transient/network failure (retried by the decorator, ST-09) or a
+    `ValueError` when the response is well-formed but carries no usable chart data
+    (not retried — retrying won't produce data that isn't there).
+    """
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
+    params = {
+        "interval": "1d",
+        "range": "1y"
+    }
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'application/json',
+    }
+
+    response = requests.get(url, params=params, headers=headers, timeout=15)
+    data = response.json()
+
+    if not ("chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0):
+        raise ValueError(f"No chart result in Yahoo Finance response for {ticker}")
+
+    result = data["chart"]["result"][0]
+
+    # Get current price
+    current = None
+    if "meta" in result and "regularMarketPrice" in result["meta"]:
+        current = float(result["meta"]["regularMarketPrice"])
+
+    # Get historical closes for MA200
+    ma200 = None
+    if "indicators" in result and "quote" in result["indicators"]:
+        quotes = result["indicators"]["quote"]
+        if len(quotes) > 0 and "close" in quotes[0]:
+            closes = [c for c in quotes[0]["close"] if c is not None]
+            if len(closes) >= 200:
+                # Calculate 200-day moving average
+                ma200 = sum(closes[-200:]) / 200
+            elif len(closes) > 0:
+                # Use available data if less than 200 days
+                ma200 = sum(closes) / len(closes)
+
+    return current, ma200
+
+
 def check_market_regime() -> Dict[str, any]:
     """
     Check SPY and FTSE for risk on/off using 200-day moving average
-    
+
     Returns:
         Dictionary with:
             - spy_risk_on: bool (SPY > 200-day MA)
@@ -183,59 +234,24 @@ def check_market_regime() -> Dict[str, any]:
             - spy_ma200: float
             - ftse_price: float
             - ftse_ma200: float
-            
+
     Notes:
         - Defaults to risk-on if data unavailable
         - Includes 300ms delay to avoid rate limiting
+        - Retries transient network failures before falling back (ST-09, ~3 attempts)
         - Used to determine if positions should be exited
     """
     try:
         time.sleep(0.3)
-        
+
         def get_ma200(ticker: str):
-            """Get current price and 200-day MA for a ticker"""
+            """Get current price and 200-day MA for a ticker, retrying transient failures."""
             try:
-                url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
-                params = {
-                    "interval": "1d",
-                    "range": "1y"
-                }
-                headers = {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                    'Accept': 'application/json',
-                }
-                
-                response = requests.get(url, params=params, headers=headers, timeout=15)
-                data = response.json()
-                
-                if "chart" in data and "result" in data["chart"] and len(data["chart"]["result"]) > 0:
-                    result = data["chart"]["result"][0]
-                    
-                    # Get current price
-                    current = None
-                    if "meta" in result and "regularMarketPrice" in result["meta"]:
-                        current = float(result["meta"]["regularMarketPrice"])
-                    
-                    # Get historical closes for MA200
-                    ma200 = None
-                    if "indicators" in result and "quote" in result["indicators"]:
-                        quotes = result["indicators"]["quote"]
-                        if len(quotes) > 0 and "close" in quotes[0]:
-                            closes = [c for c in quotes[0]["close"] if c is not None]
-                            if len(closes) >= 200:
-                                # Calculate 200-day moving average
-                                ma200 = sum(closes[-200:]) / 200
-                            elif len(closes) > 0:
-                                # Use available data if less than 200 days
-                                ma200 = sum(closes) / len(closes)
-                    
-                    return current, ma200
-                
-                return None, None
+                return _yahoo_fetch_ma200_pair(ticker)
             except Exception as e:
                 print(f"Error getting MA200 for {ticker}: {e}")
                 return None, None
-        
+
         # Get SPY data
         spy_price, spy_ma200 = get_ma200("SPY")
         

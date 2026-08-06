@@ -23,6 +23,7 @@ from database import get_db
 from services.ticker_universe_service import get_all_tickers
 from services.screener_data_service import fetch_ohlcv
 from services.screener_engine import compute_screener_result
+from utils.retry import retry_with_backoff
 
 YF_MAX_CONCURRENT = int(os.environ.get("YF_MAX_CONCURRENT", "5"))
 
@@ -109,35 +110,51 @@ def ensure_screener_results_table() -> None:
 # Regime helpers
 # ---------------------------------------------------------------------------
 
+@retry_with_backoff(
+    max_attempts=3,
+    base_delay=0.5,
+    retryable_exceptions=(requests.exceptions.RequestException,),
+)
+def _fetch_index_regime_raw(index_ticker: str) -> Dict:
+    """
+    Fetch current price and 200-day MA for a market index via Yahoo Finance (internal).
+    Raises on any transient/network failure (retried by the decorator, ST-09) or a
+    `ValueError` when the response is well-formed but carries no usable MA200 data
+    (not retried — retrying won't produce data that isn't there).
+    """
+    resp = requests.get(
+        _YAHOO_URL.format(ticker=index_ticker),
+        params={"interval": "1d", "range": "1y"},
+        headers=_YAHOO_HEADERS,
+        timeout=15,
+    )
+    if resp.status_code != 200:
+        raise ValueError(f"Yahoo Finance returned HTTP {resp.status_code} for {index_ticker}")
+    data = resp.json()
+    result = data["chart"]["result"][0]
+    price = float(result["meta"]["regularMarketPrice"])
+    closes = [c for c in result["indicators"]["quote"][0]["close"] if c is not None]
+    ma200 = sum(closes[-200:]) / min(len(closes), 200) if closes else None
+    if ma200 is None:
+        raise ValueError(f"No MA200 data available for {index_ticker}")
+    regime_status = "risk_on" if price > ma200 else "risk_off"
+    return {
+        "regime_status": regime_status,
+        "regime_index": index_ticker,
+        "regime_index_price": price,
+        "regime_index_ma200": ma200,
+    }
+
+
 def _fetch_index_regime(index_ticker: str) -> Optional[Dict]:
     """
-    Fetch current price and 200-day MA for a market index via Yahoo Finance.
+    Fetch current price and 200-day MA for a market index via Yahoo Finance,
+    retrying transient failures (ST-09, ~3 attempts).
     Returns {regime_status, regime_index, regime_index_price, regime_index_ma200}
     or None on failure (defaults to risk_off to be conservative).
     """
     try:
-        resp = requests.get(
-            _YAHOO_URL.format(ticker=index_ticker),
-            params={"interval": "1d", "range": "1y"},
-            headers=_YAHOO_HEADERS,
-            timeout=15,
-        )
-        if resp.status_code != 200:
-            return None
-        data = resp.json()
-        result = data["chart"]["result"][0]
-        price = float(result["meta"]["regularMarketPrice"])
-        closes = [c for c in result["indicators"]["quote"][0]["close"] if c is not None]
-        ma200 = sum(closes[-200:]) / min(len(closes), 200) if closes else None
-        if ma200 is None:
-            return None
-        regime_status = "risk_on" if price > ma200 else "risk_off"
-        return {
-            "regime_status": regime_status,
-            "regime_index": index_ticker,
-            "regime_index_price": price,
-            "regime_index_ma200": ma200,
-        }
+        return _fetch_index_regime_raw(index_ticker)
     except Exception as exc:
         logger.warning("Regime fetch failed for %s: %s", index_ticker, exc)
         return None
