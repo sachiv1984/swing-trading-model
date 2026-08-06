@@ -10,7 +10,8 @@ Endpoints:
   GET  /strategy/benchmark/open-positions  — Panel 0 unrealized open positions
 """
 
-from fastapi import APIRouter, Request, HTTPException, Query
+from fastapi import APIRouter, Request, Query
+from fastapi.responses import JSONResponse
 from typing import List, Optional
 from pydantic import BaseModel
 import database
@@ -73,25 +74,28 @@ async def import_backtest(request: Request, body: BacktestImportRequest):
     Called by import_backtest.py after parsing production_strategy.py CSV outputs.
     Returns the count of records imported and the import timestamp.
     """
-    database.ensure_backtest_tables()
-    result = database.upsert_backtest_data(
-        trades=[t.dict() for t in body.trades],
-        yearly_performance=[y.dict() for y in body.yearly_performance],
-        open_positions=[p.dict() for p in body.open_positions],
-    )
-    return {
-        "status": "ok",
-        "trades_imported": result["trades_imported"],
-        "years_imported": result["years_imported"],
-        "open_positions_imported": result["open_positions_imported"],
-        "trades_deleted": result["trades_deleted"],
-        "years_deleted": result["years_deleted"],
-        "open_positions_deleted": result["open_positions_deleted"],
-        "imported_at": result["imported_at"],
-        "previous_total_pnl_gbp": result["previous_total_pnl_gbp"],
-        "total_pnl_gbp_delta": result["total_pnl_gbp_delta"],
-        "previous_total_unrealized_pnl_gbp": result["previous_total_unrealized_pnl_gbp"],
-    }
+    try:
+        database.ensure_backtest_tables()
+        result = database.upsert_backtest_data(
+            trades=[t.dict() for t in body.trades],
+            yearly_performance=[y.dict() for y in body.yearly_performance],
+            open_positions=[p.dict() for p in body.open_positions],
+        )
+        return {
+            "status": "ok",
+            "trades_imported": result["trades_imported"],
+            "years_imported": result["years_imported"],
+            "open_positions_imported": result["open_positions_imported"],
+            "trades_deleted": result["trades_deleted"],
+            "years_deleted": result["years_deleted"],
+            "open_positions_deleted": result["open_positions_deleted"],
+            "imported_at": result["imported_at"],
+            "previous_total_pnl_gbp": result["previous_total_pnl_gbp"],
+            "total_pnl_gbp_delta": result["total_pnl_gbp_delta"],
+            "previous_total_unrealized_pnl_gbp": result["previous_total_unrealized_pnl_gbp"],
+        }
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
 
 # ---------------------------------------------------------------------------
@@ -112,31 +116,34 @@ async def get_benchmark_summary(
     available_years: distinct years present in backtest data (for year filter dropdown).
     last_imported_at: timestamp of most recent import run.
     """
-    database.ensure_backtest_tables()
+    try:
+        database.ensure_backtest_tables()
 
-    portfolio = database.get_portfolio()
-    portfolio_id = portfolio["id"] if portfolio else None
+        portfolio = database.get_portfolio()
+        portfolio_id = portfolio["id"] if portfolio else None
 
-    summary = database.get_backtest_summary(
-        year_filter=year,
-        market_filter=market,
-    )
-    actual_stats = None
-    if portfolio_id:
-        actual_stats = database.get_actual_stats_for_benchmark(
-            portfolio_id=portfolio_id,
+        summary = database.get_backtest_summary(
             year_filter=year,
             market_filter=market,
         )
+        actual_stats = None
+        if portfolio_id:
+            actual_stats = database.get_actual_stats_for_benchmark(
+                portfolio_id=portfolio_id,
+                year_filter=year,
+                market_filter=market,
+            )
 
-    return {
-        "filters": {"year": year, "market": market or "ALL"},
-        "last_imported_at": summary["last_imported_at"],
-        "available_years": summary["available_years"],
-        "backtest_stats": summary["backtest_stats"],
-        "actual_stats": actual_stats,
-        "yearly_breakdown": summary["yearly_breakdown"],
-    }
+        return {
+            "filters": {"year": year, "market": market or "ALL"},
+            "last_imported_at": summary["last_imported_at"],
+            "available_years": summary["available_years"],
+            "backtest_stats": summary["backtest_stats"],
+            "actual_stats": actual_stats,
+            "yearly_breakdown": summary["yearly_breakdown"],
+        }
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
 
 # ---------------------------------------------------------------------------
@@ -157,54 +164,57 @@ async def get_benchmark_trades(
       - actual only: render actual_trades
       - side-by-side: render both lists together
     """
-    database.ensure_backtest_tables()
+    try:
+        database.ensure_backtest_tables()
 
-    backtest_trades = database.get_backtest_trades(
-        year_filter=year,
-        market_filter=market,
-    )
+        backtest_trades = database.get_backtest_trades(
+            year_filter=year,
+            market_filter=market,
+        )
 
-    portfolio = database.get_portfolio()
-    portfolio_id = portfolio["id"] if portfolio else None
-    actual_trades: list = []
-    if portfolio_id:
-        from database import get_trade_history
-        raw = get_trade_history(portfolio_id)
-        for t in raw:
-            entry_year = None
-            if t.get("entry_date"):
-                try:
-                    entry_year = int(str(t["entry_date"])[:4])
-                except (ValueError, TypeError):
-                    pass
-            if year is not None and entry_year != year:
-                continue
-            if market and market.upper() != "ALL":
-                if (t.get("market") or "").upper() != market.upper():
+        portfolio = database.get_portfolio()
+        portfolio_id = portfolio["id"] if portfolio else None
+        actual_trades: list = []
+        if portfolio_id:
+            from database import get_trade_history
+            raw = get_trade_history(portfolio_id)
+            for t in raw:
+                entry_year = None
+                if t.get("entry_date"):
+                    try:
+                        entry_year = int(str(t["entry_date"])[:4])
+                    except (ValueError, TypeError):
+                        pass
+                if year is not None and entry_year != year:
                     continue
-            actual_trades.append({
-                "ticker": t.get("ticker"),
-                "entry_date": str(t["entry_date"]) if t.get("entry_date") else None,
-                "exit_date": str(t["exit_date"]) if t.get("exit_date") else None,
-                "holding_days": t.get("holding_days"),
-                "entry_price": float(t["entry_price"]) if t.get("entry_price") else None,
-                "exit_price": float(t["exit_price"]) if t.get("exit_price") else None,
-                "pnl_gbp": float(t["pnl"]) if t.get("pnl") else None,
-                "pnl_pct": float(t["pnl_pct"]) if t.get("pnl_pct") else None,
-                "market": t.get("market", "US"),
-                "exit_reason": t.get("exit_reason"),
-                "was_profitable": (float(t["pnl"]) > 0) if t.get("pnl") else None,
-                "entry_year": entry_year,
-            })
+                if market and market.upper() != "ALL":
+                    if (t.get("market") or "").upper() != market.upper():
+                        continue
+                actual_trades.append({
+                    "ticker": t.get("ticker"),
+                    "entry_date": str(t["entry_date"]) if t.get("entry_date") else None,
+                    "exit_date": str(t["exit_date"]) if t.get("exit_date") else None,
+                    "holding_days": t.get("holding_days"),
+                    "entry_price": float(t["entry_price"]) if t.get("entry_price") else None,
+                    "exit_price": float(t["exit_price"]) if t.get("exit_price") else None,
+                    "pnl_gbp": float(t["pnl"]) if t.get("pnl") else None,
+                    "pnl_pct": float(t["pnl_pct"]) if t.get("pnl_pct") else None,
+                    "market": t.get("market", "US"),
+                    "exit_reason": t.get("exit_reason"),
+                    "was_profitable": (float(t["pnl"]) > 0) if t.get("pnl") else None,
+                    "entry_year": entry_year,
+                })
 
-    return {
-        "filters": {"year": year, "market": market or "ALL"},
-        "backtest_trades": [
-            {**t, "entry_date": str(t["entry_date"]), "exit_date": str(t["exit_date"])}
-            for t in backtest_trades
-        ],
-        "actual_trades": actual_trades,
-    }
+        return {
+            "filters": {"year": year, "market": market or "ALL"},
+            "backtest_trades": [
+                {**t, "entry_date": str(t["entry_date"]), "exit_date": str(t["exit_date"])}
+                for t in backtest_trades
+            ],
+            "actual_trades": actual_trades,
+        }
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
 
 # ---------------------------------------------------------------------------
@@ -221,15 +231,18 @@ async def get_benchmark_open_positions(
     ST-08 (BLG-FEAT-54, EPIC-03, v6.4). No year parameter — open positions are
     current-state, not historical-per-year data (ux_spec.md "Filter Interaction").
     """
-    database.ensure_backtest_tables()
+    try:
+        database.ensure_backtest_tables()
 
-    result = database.get_backtest_open_positions(market_filter=market)
+        result = database.get_backtest_open_positions(market_filter=market)
 
-    return {
-        "filters": {"market": market or "ALL"},
-        "open_positions": [
-            {**p, "entry_date": str(p["entry_date"]), "days_held": int(p["days_held"])}
-            for p in result["open_positions"]
-        ],
-        "summary": result["summary"],
-    }
+        return {
+            "filters": {"market": market or "ALL"},
+            "open_positions": [
+                {**p, "entry_date": str(p["entry_date"]), "days_held": int(p["days_held"])}
+                for p in result["open_positions"]
+            ],
+            "summary": result["summary"],
+        }
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
