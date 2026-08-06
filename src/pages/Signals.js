@@ -125,7 +125,8 @@ export default function SignalsPage() {
         toast.info("Already on your watchlist");
       } else if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || "Failed to add to watchlist");
+        // ST-08 (EPIC-02, v8.3, BLG-BE-69): canonical error envelope uses "message", not "detail".
+        throw new Error(err.message || "Failed to add to watchlist");
       }
     } catch (e) {
       toast.error(e.message || "Failed to add to watchlist");

@@ -7,6 +7,7 @@ Contract: docs/specs/api_contracts/watchlist_endpoints.md v0.1
 """
 
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional
 
@@ -81,11 +82,17 @@ def get_watchlist_endpoint():
         portfolio_id = _get_portfolio_id()
         entries = get_watchlist(portfolio_id)
         return {"status": "ok", "data": entries}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.post("/watchlist", status_code=201)
@@ -99,15 +106,27 @@ def create_watchlist_endpoint(request: CreateWatchlistRequest):
         portfolio_id = _get_portfolio_id()
         entry = create_watchlist_entry(portfolio_id, request.model_dump())
         return {"status": "ok", "data": entry}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except LookupError as e:
-        raise HTTPException(status_code=409, detail=str(e))
+        return JSONResponse(
+            status_code=409,
+            content={"status": "error", "message": str(e)},
+        )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.get("/watchlist/tags")
@@ -121,11 +140,17 @@ def get_watchlist_tags_endpoint():
         portfolio_id = _get_portfolio_id()
         tags = get_all_watchlist_tags(portfolio_id)
         return {"status": "ok", "data": tags}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 # IMPORTANT — router ordering: bulk-tag/bulk MUST be declared before
@@ -143,13 +168,22 @@ def bulk_tag_watchlist_endpoint(request: BulkTagRequest):
         portfolio_id = _get_portfolio_id()
         result = bulk_tag_watchlist(portfolio_id, request.ids, request.tags)
         return {"status": "ok", "data": result}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.delete("/watchlist/bulk")
@@ -163,13 +197,22 @@ def bulk_delete_watchlist_endpoint(request: BulkIdsRequest):
         portfolio_id = _get_portfolio_id()
         result = bulk_delete_watchlist(portfolio_id, request.ids)
         return {"status": "ok", "data": result}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.patch("/watchlist/{entry_id}")
@@ -187,15 +230,27 @@ def update_watchlist_endpoint(entry_id: str, request: UpdateWatchlistRequest):
             request.model_dump()  # includes None values so service can detect empties
         )
         return {"status": "ok", "data": entry}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except LookupError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        return JSONResponse(
+            status_code=404,
+            content={"status": "error", "message": str(e)},
+        )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.delete("/watchlist/{entry_id}")
@@ -208,10 +263,19 @@ def delete_watchlist_endpoint(entry_id: str):
         portfolio_id = _get_portfolio_id()
         result = delete_watchlist_entry(portfolio_id, entry_id)
         return {"status": "ok", "data": result}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except LookupError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        return JSONResponse(
+            status_code=404,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )

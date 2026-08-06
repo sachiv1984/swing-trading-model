@@ -15,6 +15,7 @@ from datetime import datetime
 from decimal import Decimal
 from services.grace_service import compute_grace_days_remaining
 from services.sector_service import get_sector_and_industry
+from utils.position_lifecycle_states import GRACE, PROFITABLE, LOSING
 
 
 from database import (
@@ -169,11 +170,11 @@ def get_positions_with_prices() -> List[Dict]:
         
         # Determine status
         if grace_period:
-            display_status = "GRACE"
+            display_status = GRACE
         elif pnl_gbp > 0:
-            display_status = "PROFITABLE"
+            display_status = PROFITABLE
         else:
-            display_status = "LOSING"
+            display_status = LOSING
 
         grace_period = holding_days < 10
         grace_days_remaining = compute_grace_days_remaining(

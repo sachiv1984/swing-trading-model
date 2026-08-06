@@ -11,6 +11,7 @@ Contract: docs/specs/api_contracts/alerts_endpoints.md v0.1
 """
 
 from fastapi import APIRouter, BackgroundTasks, Body, HTTPException
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, field_validator
 from typing import Any, Dict, Optional
 from database import get_portfolio
@@ -112,11 +113,17 @@ def get_alert_rules_endpoint():
         portfolio_id = _get_portfolio_id()
         rules = get_alert_rules(portfolio_id)
         return {"status": "ok", "data": rules}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.post("/alerts/rules")
@@ -131,13 +138,22 @@ def create_alert_rule_endpoint(request: CreateAlertRuleRequest):
             raise HTTPException(status_code=400, detail="threshold_percent is required for stop_loss_approach")
         rule = create_alert_rule(portfolio_id, request.model_dump())
         return {"status": "ok", "data": rule}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.patch("/alerts/rules/{rule_id}")
@@ -150,15 +166,27 @@ def update_alert_rule_endpoint(rule_id: str, request: UpdateAlertRuleRequest):
         portfolio_id = _get_portfolio_id()
         rule = update_alert_rule(portfolio_id, rule_id, request.model_dump(exclude_none=True))
         return {"status": "ok", "data": rule}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except LookupError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        return JSONResponse(
+            status_code=404,
+            content={"status": "error", "message": str(e)},
+        )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.delete("/alerts/rules/{rule_id}")
@@ -171,13 +199,22 @@ def delete_alert_rule_endpoint(rule_id: str):
         portfolio_id = _get_portfolio_id()
         result = delete_alert_rule(portfolio_id, rule_id)
         return {"status": "ok", "data": result}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except LookupError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        return JSONResponse(
+            status_code=404,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -195,11 +232,17 @@ def get_price_alerts_endpoint():
         portfolio_id = _get_portfolio_id()
         data = get_price_alerts(portfolio_id)
         return {"status": "ok", "data": data}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.post("/price-alerts")
@@ -213,13 +256,22 @@ def create_price_alert_endpoint(request: CreatePriceAlertRequest):
         portfolio_id = _get_portfolio_id()
         alert = create_price_alert(portfolio_id, request.model_dump())
         return {"status": "ok", "data": alert}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.delete("/price-alerts/{alert_id}")
@@ -232,13 +284,22 @@ def delete_price_alert_endpoint(alert_id: str):
         portfolio_id = _get_portfolio_id()
         result = delete_price_alert(portfolio_id, alert_id)
         return {"status": "ok", "data": result}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except LookupError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        return JSONResponse(
+            status_code=404,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -260,11 +321,17 @@ def evaluate_alerts_endpoint(background_tasks: BackgroundTasks):
         result = evaluate_alerts(portfolio_id, enqueue)
         record_alert_evaluation()
         return {"status": "ok", "data": result}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.get("/alerts/history")
@@ -277,11 +344,17 @@ def get_alert_history_endpoint(last_n_days: Optional[int] = None, last_n_records
         portfolio_id = _get_portfolio_id()
         data = get_alert_history(portfolio_id, last_n_days=last_n_days, last_n_records=last_n_records)
         return {"status": "ok", "data": data}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -304,11 +377,17 @@ def get_notifications_endpoint(page: int = 1, since_days: Optional[int] = None, 
         portfolio_id = _get_portfolio_id()
         data = get_notifications(portfolio_id, page, since_days=since_days, read=read)
         return {"status": "ok", "data": data}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.post("/notifications/mark-all-read")
@@ -322,11 +401,17 @@ def mark_all_read_endpoint():
         portfolio_id = _get_portfolio_id()
         result = mark_all_notifications_read(portfolio_id)
         return {"status": "ok", "data": result}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -346,11 +431,17 @@ def get_preferences_endpoint():
         portfolio_id = _get_portfolio_id()
         data = get_preferences(portfolio_id)
         return {"status": "ok", "data": data}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.patch("/notifications/preferences")
@@ -367,13 +458,22 @@ def update_preferences_endpoint(request: Dict[str, Any] = Body(...)):
             raise HTTPException(status_code=400, detail="No alert type keys provided")
         data = update_preferences(portfolio_id, request)
         return {"status": "ok", "data": data}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.patch("/notifications/{notification_id}")
@@ -386,10 +486,19 @@ def mark_notification_read_endpoint(notification_id: str):
         portfolio_id = _get_portfolio_id()
         notif = mark_notification_read(portfolio_id, notification_id)
         return {"status": "ok", "data": notif}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except LookupError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        return JSONResponse(
+            status_code=404,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )

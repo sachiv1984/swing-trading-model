@@ -217,8 +217,11 @@ def create_plan(body: TradePlanCreate):
             from utils.idempotency import replay_or_create
             return replay_or_create(portfolio_id, "POST /trade-plans", body.idempotency_key, _create)
         return _create()
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
@@ -251,8 +254,11 @@ def list_plans(
             return {"status": "ok", "data": [_serialize(p) for p in page], "next_cursor": next_cursor}
         plans = get_trade_plans(portfolio_id, status, ticker)
         return {"status": "ok", "data": [_serialize(p) for p in plans]}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
@@ -265,8 +271,11 @@ def list_plans_by_position(position_id: str):
         portfolio_id = _get_portfolio_id()
         plans = get_trade_plans_by_position(position_id, portfolio_id)
         return {"status": "ok", "data": [_serialize(p) for p in plans]}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
@@ -349,8 +358,11 @@ def get_trade_plan_tags_endpoint():
         portfolio_id = _get_portfolio_id()
         tags = get_all_trade_plan_tags(portfolio_id)
         return {"status": "ok", "data": tags}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
@@ -372,10 +384,16 @@ def bulk_tag_plans_endpoint(request: BulkTagRequest):
         validated_tags = _validate_trade_tags(request.tags)
         result = bulk_tag_trade_plans(portfolio_id, request.ids, validated_tags)
         return {"status": "ok", "data": result}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
@@ -395,10 +413,16 @@ def bulk_archive_plans_endpoint(request: BulkIdsRequest):
         portfolio_id = _get_portfolio_id()
         result = bulk_archive_trade_plans(portfolio_id, request.ids, _DEFAULT_BULK_ARCHIVE_REASON)
         return {"status": "ok", "data": result}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
@@ -415,10 +439,16 @@ def bulk_delete_plans_endpoint(request: BulkIdsRequest):
         portfolio_id = _get_portfolio_id()
         result = bulk_delete_trade_plans(portfolio_id, request.ids)
         return {"status": "ok", "data": result}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
@@ -433,8 +463,11 @@ def get_plan(plan_id: str):
         if not plan:
             raise HTTPException(status_code=404, detail="Trade plan not found")
         return {"status": "ok", "data": _serialize(plan)}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
@@ -476,8 +509,11 @@ def update_plan(plan_id: str, body: TradePlanUpdate):
         if body.pre_entry_override_acknowledged:
             _maybe_write_override_event(plan.get("ticker", ""), plan.get("position_id"))
         return {"status": "ok", "data": _serialize(plan)}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
@@ -492,8 +528,11 @@ def delete_plan(plan_id: str):
         if not deleted:
             raise HTTPException(status_code=404, detail="Trade plan not found")
         return {"status": "ok", "message": "Trade plan deleted"}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
@@ -531,7 +570,7 @@ def generate_plan(body: GeneratePlanRequest, http_request: Request):
     if not allowed:
         return JSONResponse(
             status_code=429,
-            content={"detail": "Rate limit exceeded. Try again later."},
+            content={"status": "error", "message": "Rate limit exceeded. Try again later."},
             headers={"Retry-After": str(retry_after)},
         )
     try:
@@ -569,7 +608,7 @@ def generate_thesis(plan_id: str, http_request: Request):
     if not allowed:
         return JSONResponse(
             status_code=429,
-            content={"detail": "Rate limit exceeded. Try again later."},
+            content={"status": "error", "message": "Rate limit exceeded. Try again later."},
             headers={"Retry-After": str(retry_after)},
         )
     try:
@@ -591,7 +630,10 @@ def generate_thesis(plan_id: str, http_request: Request):
             plan_id=plan_id,
         )
         return {"status": "ok", "data": result}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})

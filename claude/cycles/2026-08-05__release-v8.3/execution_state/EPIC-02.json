@@ -1,0 +1,198 @@
+{
+  "cycle_id": "2026-08-05__release-v8.3",
+  "epic_id": "EPIC-02",
+  "status": "done",
+  "branch": "exec/2026-08-05__release-v8.3/EPIC-02",
+  "pr_number": 1258,
+  "pr_status": "open",
+  "qa_signed_off": true,
+  "qa_evidence_log": "claude/cycles/2026-08-05__release-v8.3/qa_evidence_EPIC-02.md",
+  "test_scenarios": [
+    "tests/test_regime_retry_backoff.py",
+    "tests/test_alpaca_paper_sync_idempotent_retry.py",
+    "tests/test_position_lifecycle_states_registry.py",
+    "tests/test_router_error_envelope_conformance.py"
+  ],
+  "stories": {
+    "ST-05": {
+      "title": "Database index audit for Arc 4 cross-table queries",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1230,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-02",
+      "commit_sha": "a06875fb4bad5f6e6ea524cf15736c8d038f9f5d",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/ops/db_index_audit_arc4_2026-08-06.md"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Infrastructure & Operations Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. Table-name reconciliation (arc5_compliance_scores -> pre_entry_validation_log; ai_journal_summaries -> ai_journal_entries) transparently documented. 1 real gap found (trade_plans missing functional UPPER(ticker) index) and correctly filed as BLG-BE-82 rather than fixed inline, per AC. No other gap across the 4 resolved tables' actual read-query shapes."
+      },
+      "notes": "AC name reconciliation: 'arc5_compliance_scores' and 'ai_journal_summaries' do not exist verbatim in the schema; resolved to pre_entry_validation_log and ai_journal_entries respectively. See docs/ops/db_index_audit_arc4_2026-08-06.md Table Name Reconciliation section."
+    },
+    "ST-06": {
+      "title": "Alpaca API rate-limit backoff audit",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1233,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-02",
+      "commit_sha": "bee0e745cf7029b44419202bf105e71a70dac1f8",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/ops/alpaca_backoff_audit_2026-08-06.md"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Backend Engineering Patterns Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. 1 real gap (Alpaca paper-sync close/positions endpoints have no 429/backoff handling) correctly filed as BLG-BE-83 rather than fixed inline, per AC, and correctly scoped to exclude the open-path call site ST-10 fixes this same sprint (no duplicate filing). 2 compliant call sites confirmed by reading actual retry-loop code, not docstrings."
+      },
+      "notes": "1 minor under-provisioning noted for awareness only (news_service.py: 3 vs documented 5 max attempts) — best-effort/display-only path, no follow-up filed."
+    },
+    "ST-07": {
+      "title": "Canonical enum registry for position_state values shared frontend/backend",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1232,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-02",
+      "commit_sha": "0db789279d7a1483cfa7fdafcc82a28bd9853909",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/specs/position_lifecycle_states_registry.md",
+        "backend/utils/position_lifecycle_states.py"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Data Model & Domain Schema Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. Canonical registry created (backend/utils/position_lifecycle_states.py); all 5 backend call sites that previously hardcoded the literal state strings independently (position_lifecycle_service.py, position_service.py, portfolio_service.py, portfolio_risk.py, main.py) now import from it, including main.py's raw-SQL filter converted from an inline literal to a proper %s parameter bound to the constant. Frontend reconciliation documented (docs/specs/position_lifecycle_states_registry.md) rather than refactored, per AC's explicit 'or' clause -- all 5 values confirmed identical across 3 frontend files, no drift found, and the design-gate note for this story explicitly frames it as reconciliation-or-refactor with rendering unchanged either way. Full backend test suite (984 tests) passes; new registry+cross-check tests added."
+      },
+      "notes": "Frontend not refactored to import a shared JS module (rendering-metadata-coupled files, UI regression risk for no behavioural benefit) -- documented reconciliation used instead, satisfying the AC's OR clause."
+    },
+    "ST-08": {
+      "title": "Conform remaining routers to canonical error envelope + status codes",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1238,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-02",
+      "commit_sha": "a5a2ebd12f4abe7d33dafe28dc67733569bfc77f",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/specs/api_contracts/conventions.md#13. Error Response Standard (Canonical)",
+        "docs/specs/api_contracts/backend_engineering_patterns.md#Error-response envelope conformance",
+        "tests/test_router_error_envelope_conformance.py"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Backend Engineering Patterns Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. All 17 listed routers conform: HTTPException raises now translated to the canonical {status,message} JSONResponse at the router boundary (helper-function raises left intact, propagate to the calling endpoint's own translation clause -- verified per-function, not just per-file); 2 bare-200-with-error-body bugs fixed (digest.py /weekly); 5 additional 429-rate-limit 'detail'-key non-conformances found and fixed beyond the audit's original enumeration (ai.py x3, trade_plans.py x2); earnings.py/news.py/strategy_benchmark.py (0 pre-existing HTTPException raises, no error handling at all) given try/except wrapping per their explicit AC listing. Applied across 7 incremental commits per RISK-01, full 984+18-test backend suite green after every batch. Success-path shapes verified unchanged throughout (including screener.py/news.py's pre-existing {ok:true} divergence, correctly left untouched -- out of this story's scope per backend_engineering_patterns.md v1.3). 3rd AC ('no change to frontend error-handling behaviour without a corresponding frontend check') required a real frontend check: found 4 live dependencies on the old `.detail` field (TickerUniverse.js, Signals.js, CustomPriceAlertsSection.js, StrategyBenchmark.js -- the latter reading a nested detail.code/detail.version structure for /analytics/strategy-version-comparison) and fixed all 4 to read the new flat `.message`/top-level fields, plus updated the 2 Playwright spec files (custom-price-alerts.spec.js, si04-version-comparison.spec.js) whose route mocks asserted the old shape. This is the frontend check the AC requires."
+      },
+      "notes": "Frontend-visible-change disclosure (BLG-GOV-135): this story touched src/pages/StrategyBenchmark.js, src/pages/TickerUniverse.js, src/pages/Signals.js, src/components/notifications/CustomPriceAlertsSection.js -- text/data-source-only (which JSON field feeds an already-existing error message; no rendered text, layout, or colour changes) -- disqualifies EPIC-02 from the autonomous DoQ sign-off class per BLG-GOV-135 criterion 3, full DoQ sign-off applies at EPIC level. Frontend testing gate (LL-v3.1-EX-01): the 2 updated Playwright specs (custom-price-alerts.spec.js SC-CPA-07, si04-version-comparison.spec.js SC-SI04-03/04/05) were verified by code review (exact data-flow trace, doFetch/apiFetch response shape confirmed) rather than executed -- this environment's Playwright browser binary is not installable here (ubuntu26.04-x64 unsupported by the pinned Chromium build), a platform limitation, not a skipped step; CI will execute them for real on push. Per CLAUDE.md FI-P3-02, a source-field-only fix with zero rendered-output change qualifies for code-review disposition. Stale error-response doc examples also corrected in digest_endpoints.md and ai_endpoints.md (3 sites)."
+    },
+    "ST-09": {
+      "title": "Retry/backoff for Yahoo Finance regime-check call sites",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1237,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-02",
+      "commit_sha": "7695a048747106a54ce8ca20fbd1071cb2492b53",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "backend/utils/retry.py",
+        "tests/test_regime_retry_backoff.py"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Head of Engineering",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. Both call sites migrated to the established retry_with_backoff pattern (same shape as _yahoo_get_current_price/BLG-BE-71): network call isolated into a decorated raw function that raises on transient failure (retried) or ValueError on unusable data (not retried), outer function preserves the exact prior fallback contract. 7 regression tests (tests/test_regime_retry_backoff.py) confirm retry attempts occur before fallback for both sites and that non-retryable failure modes (HTTP error, no chart data) still fail fast as before. Full pricing/regime/screener_batch test slice (57 tests) passes."
+      },
+      "notes": "Both call sites (pricing.py::check_market_regime/get_ma200 via new _yahoo_fetch_ma200_pair, screener_batch_service.py::_fetch_index_regime via new _fetch_index_regime_raw) refactored to the established retry_with_backoff pattern (same shape as _yahoo_fetch_price/BLG-BE-71). Existing fallback behaviour on exhausted retries verified unchanged (spy_risk_on/ftse_risk_on default True; _fetch_index_regime returns None)."
+    },
+    "ST-10": {
+      "title": "Idempotent retry for Alpaca paper-trading order sync",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1249,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-02",
+      "commit_sha": "0e6f5e2e8fbf275ddc91eeef1a936ab92683b2f7",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "backend/services/alpaca_paper_sync_service.py",
+        "tests/test_alpaca_paper_sync_idempotent_retry.py"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Head of Engineering",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. client_order_id derived deterministically from position_id (f'paper-open-{position_id}'); retry_with_backoff applied via a raise-on-failure raw function, same shape as ST-09. Handles both real-world retry outcomes: a clean retry (identical client_order_id resubmitted, Alpaca's own idempotency prevents a second order) and Alpaca's explicit 422 duplicate-client_order_id rejection (recognised as success, not an error). 6 regression tests confirm no duplicate order across a simulated retry. Best-effort/never-raises contract to the caller preserved; main.py call site updated to pass position_id from add_position()'s return value. 108-test position/paper-trading slice passes."
+      },
+      "notes": "AC scoped sync_open_paper_position only (per backlog item). sync_close_paper_position/get_paper_positions 429-handling gap filed separately as BLG-BE-83 (ST-06 audit)."
+    }
+  },
+  "last_updated_utc": "2026-08-06T00:00:00Z"
+}

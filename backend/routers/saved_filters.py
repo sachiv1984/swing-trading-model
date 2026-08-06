@@ -8,6 +8,7 @@ Contract: docs/specs/api_contracts/saved_filters_endpoints.md v1.0
 """
 
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Any, Dict
 
@@ -43,11 +44,17 @@ def get_saved_filters_endpoint():
         portfolio_id = _get_portfolio_id()
         data = get_saved_filters(portfolio_id)
         return {"status": "ok", "data": data}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.post("/saved-filters")
@@ -60,13 +67,22 @@ def create_saved_filter_endpoint(request: CreateSavedFilterRequest):
         portfolio_id = _get_portfolio_id()
         preset = create_saved_filter(portfolio_id, request.model_dump())
         return {"status": "ok", "data": preset}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.delete("/saved-filters/{filter_id}")
@@ -79,10 +95,19 @@ def delete_saved_filter_endpoint(filter_id: str):
         portfolio_id = _get_portfolio_id()
         result = delete_saved_filter(portfolio_id, filter_id)
         return {"status": "ok", "data": result}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except LookupError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        return JSONResponse(
+            status_code=404,
+            content={"status": "error", "message": str(e)},
+        )
     except Exception as e:
         import traceback; traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )

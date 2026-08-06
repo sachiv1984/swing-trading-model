@@ -7,6 +7,7 @@ import os
 
 import yfinance as yf
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional
 from services.ticker_universe_service import get_all_tickers, add_ticker, soft_delete_ticker
@@ -57,7 +58,7 @@ def list_tickers(market: Optional[str] = None, active_only: bool = True):
     Filtered by market (UK|US) and/or active status.
     """
     if market is not None and market not in ("UK", "US"):
-        raise HTTPException(status_code=400, detail="market must be UK or US")
+        return JSONResponse(status_code=400, content={"status": "error", "message": "market must be UK or US"})
     tickers = get_all_tickers(market=market, active_only=active_only)
     return {"status": "ok", "data": tickers}
 
@@ -86,10 +87,16 @@ def create_ticker(request: AddTickerRequest):
             industry=request.industry,
         )
         return {"status": "ok", "data": row}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": str(e)},
+        )
 
 
 @router.delete("/{ticker}")
@@ -102,5 +109,5 @@ def delete_ticker(ticker: str):
     """
     removed = soft_delete_ticker(ticker)
     if not removed:
-        raise HTTPException(status_code=404, detail=f"Ticker '{ticker.upper()}' not found or already inactive")
+        return JSONResponse(status_code=404, content={"status": "error", "message": f"Ticker '{ticker.upper()}' not found or already inactive"})
     return {"status": "ok"}

@@ -13,6 +13,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from database import get_db, get_portfolio, get_positions, get_portfolio_snapshots, get_gate_metrics, get_sector_regime_history
 from utils.formatting import decimal_to_float
+from utils.position_lifecycle_states import EXIT_ZONE, PROFITABLE, LOSING, GRACE, UNKNOWN
 
 router = APIRouter(prefix="/portfolio", tags=["Portfolio"])
 
@@ -156,7 +157,7 @@ def _get_regime_label() -> str:
 
 def _get_lifecycle_state_counts(portfolio_id: str) -> dict:
     """Return counts of open positions by position_state."""
-    counts = {"GRACE": 0, "PROFITABLE": 0, "LOSING": 0, "EXIT ZONE": 0, "UNKNOWN": 0}
+    counts = {GRACE: 0, PROFITABLE: 0, LOSING: 0, EXIT_ZONE: 0, UNKNOWN: 0}
     try:
         with get_db() as conn:
             with conn.cursor() as cur:
@@ -171,7 +172,7 @@ def _get_lifecycle_state_counts(portfolio_id: str) -> dict:
                 )
                 rows = cur.fetchall()
                 for row in rows:
-                    state = row["position_state"] or "UNKNOWN"
+                    state = row["position_state"] or UNKNOWN
                     counts[state] = counts.get(state, 0) + int(row["cnt"])
     except Exception:
         pass

@@ -3,7 +3,8 @@ Red Flag Journal router (SI-03 / ST-07, EPIC-03, v3.9)
 
 §13 compliance: display-only audit log; no automated decisions.
 """
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query
+from fastapi.responses import JSONResponse
 from typing import Optional
 from database import ensure_red_flag_events_table, ensure_red_flag_events_severity_column, get_red_flag_events
 
@@ -61,4 +62,4 @@ def get_red_flag_journal(
         result["items"] = [_serialize_event(e) for e in result["items"]]
         return {"status": "ok", "data": result}
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(exc)})

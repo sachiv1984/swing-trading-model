@@ -89,15 +89,45 @@ _calcs_stub.calculate_portfolio_pnl = MagicMock()
 _formatting_stub = types.ModuleType("utils.formatting")
 _formatting_stub.decimal_to_float = MagicMock(side_effect=lambda x: x)
 
+# utils.position_lifecycle_states (ST-07, BLG-BE-67) and utils.retry (BLG-BE-71)
+# have no backend-internal dependencies of their own, so they're loaded
+# directly from their real files rather than hand-duplicated as MagicMock
+# stubs like the modules above — this keeps the stub correct even if either
+# real module changes, with zero drift risk. Both are needed here: this
+# stubbed "utils" sys.modules entry persists for the rest of the pytest
+# session (module-level code, not a fixture) and later-collected test files
+# (test_api_contracts.py -> main.py -> routers/screener.py ->
+# services/screener_batch_service.py) reach utils.retry transitively even
+# though this file itself never touches it.
+import importlib.util as _ilu_extra
+
+
+def _load_real_utils_submodule(name: str) -> types.ModuleType:
+    spec = _ilu_extra.spec_from_file_location(
+        f"utils.{name}",
+        Path(__file__).parent.parent / "backend" / "utils" / f"{name}.py",
+    )
+    module = _ilu_extra.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+_position_lifecycle_states_stub = _load_real_utils_submodule("position_lifecycle_states")
+_retry_stub = _load_real_utils_submodule("retry")
+
 # Register utils as a package and its submodules
 _utils_stub = types.ModuleType("utils")
 _utils_stub.pricing = _pricing_stub
 _utils_stub.calculations = _calcs_stub
 _utils_stub.formatting = _formatting_stub
+_utils_stub.position_lifecycle_states = _position_lifecycle_states_stub
+_utils_stub.retry = _retry_stub
 sys.modules.setdefault("utils", _utils_stub)
 sys.modules["utils.pricing"] = _pricing_stub
 sys.modules["utils.calculations"] = _calcs_stub
 sys.modules["utils.formatting"] = _formatting_stub
+sys.modules["utils.position_lifecycle_states"] = _position_lifecycle_states_stub
+sys.modules["utils.retry"] = _retry_stub
 
 # Import alerts_service directly (bypasses services/__init__.py and its DB chain)
 import importlib.util as _ilu

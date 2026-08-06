@@ -22,6 +22,7 @@ Contract: docs/specs/api_contracts/analytics_endpoints.md v2.2.0
 """
 
 from fastapi import APIRouter, Query, HTTPException
+from fastapi.responses import JSONResponse
 from services.analytics_service import AnalyticsService
 from datetime import date, timedelta, datetime, timezone
 import os
@@ -343,9 +344,9 @@ async def get_analytics_metrics(
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(
+        return JSONResponse(
             status_code=500,
-            detail=f"Analytics calculation failed: {str(e)}"
+            content={"status": "error", "message": f"Analytics calculation failed: {str(e)}"},
         )
 
 
@@ -387,9 +388,9 @@ async def get_cohort_analysis(
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(
+        return JSONResponse(
             status_code=500,
-            detail=f"Cohort analysis failed: {str(e)}"
+            content={"status": "error", "message": f"Cohort analysis failed: {str(e)}"},
         )
 
 
@@ -426,9 +427,9 @@ async def get_r_multiple_distribution():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(
+        return JSONResponse(
             status_code=500,
-            detail=f"R-multiple distribution failed: {str(e)}"
+            content={"status": "error", "message": f"R-multiple distribution failed: {str(e)}"},
         )
 
 
@@ -531,9 +532,9 @@ async def get_compliance_metrics():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(
+        return JSONResponse(
             status_code=500,
-            detail=f"Compliance metrics calculation failed: {str(e)}"
+            content={"status": "error", "message": f"Compliance metrics calculation failed: {str(e)}"},
         )
 
 
@@ -654,10 +655,16 @@ async def get_market_correlation(
             cursor.close()
             conn.close()
 
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"DB error fetching positions: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": f"DB error fetching positions: {str(e)}"},
+        )
 
     if not open_positions:
         result = {
@@ -935,9 +942,9 @@ async def get_arc5_compliance(
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(
+        return JSONResponse(
             status_code=500,
-            detail=f"Arc 5 compliance metrics failed: {str(e)}"
+            content={"status": "error", "message": f"Arc 5 compliance metrics failed: {str(e)}"},
         )
 
 
@@ -962,12 +969,18 @@ def get_tag_performance_endpoint(tags: str = Query(..., description="Comma-separ
 
         result = get_tag_performance(str(portfolio["id"]), tag_list)
         return {"status": "ok", "data": result}
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Tag performance failed: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": f"Tag performance failed: {str(e)}"},
+        )
 
 
 @router.get("/behavioural-drift")
@@ -1020,8 +1033,11 @@ async def get_behavioural_drift():
         _drift_cache["expires_at"] = now + _DRIFT_CACHE_TTL_SECONDS
         return {"status": "ok", "data": result}
 
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         import traceback
         traceback.print_exc()
@@ -1244,7 +1260,7 @@ async def get_strategy_version_comparison(
 
     if window_from is None or window_to is None:
         missing = version_from if window_from is None else version_to
-        raise HTTPException(status_code=404, detail={
+        return JSONResponse(status_code=404, content={
             "status": "error",
             "code": "version_not_found",
             "message": f"Strategy version '{missing}' not found in version registry",
@@ -1252,7 +1268,7 @@ async def get_strategy_version_comparison(
         })
 
     if window_to[0] <= window_from[0]:
-        raise HTTPException(status_code=400, detail={
+        return JSONResponse(status_code=400, content={
             "status": "error",
             "code": "version_order_error",
             "message": "version_to must be chronologically after version_from",
@@ -1267,7 +1283,7 @@ async def get_strategy_version_comparison(
             if range_end < range_start:
                 raise ValueError("date_range end before start")
         except ValueError:
-            raise HTTPException(status_code=422, detail={
+            return JSONResponse(status_code=422, content={
                 "status": "error",
                 "code": "invalid_date_range",
                 "message": "date_range must be formatted YYYY-MM-DD/YYYY-MM-DD with end on or after start",
@@ -1345,9 +1361,15 @@ async def get_strategy_version_comparison(
             },
         }
 
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Strategy version comparison failed: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": f"Strategy version comparison failed: {str(e)}"},
+        )

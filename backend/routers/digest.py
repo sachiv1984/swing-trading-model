@@ -19,18 +19,26 @@ from urllib.parse import urlparse, urlencode, urlunparse, parse_qs
 
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends, Header
+from fastapi.responses import JSONResponse
 
 
-def _verify_api_key(x_api_key: str = Header(default=None)):
+def _verify_api_key(x_api_key: str = Header(default=None)) -> bool:
     """
     Require X-API-Key header matching API_KEY env var.
     When API_KEY is not set the dependency is a no-op (local dev parity with
     the global middleware in main.py).
+
+    Returns True when authorised, False otherwise — the caller endpoint
+    returns the canonical error envelope itself (ST-08, BLG-BE-69) rather
+    than this dependency raising HTTPException directly, since a FastAPI
+    Depends() callable cannot itself produce a JSONResponse body: an
+    exception raised here propagates straight to FastAPI's default handler
+    (the {"detail": ...} shape this story exists to eliminate), bypassing any
+    try/except the endpoint function might otherwise use to translate it.
     """
     expected = os.environ.get("API_KEY")
-    if expected and x_api_key != expected:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+    return not (expected and x_api_key != expected)
 
 
 def _clean_db_url(url: str) -> str:
@@ -71,7 +79,7 @@ def get_weekly_digest():
     """
     database_url = os.getenv("DATABASE_URL")
     if not database_url:
-        return {"status": "error", "message": "DATABASE_URL not configured"}
+        return JSONResponse(status_code=500, content={"status": "error", "message": "DATABASE_URL not configured"})
 
     try:
         conn = psycopg2.connect(_clean_db_url(database_url))
@@ -233,11 +241,11 @@ def get_weekly_digest():
 
     except Exception as e:
         logger.error("Weekly digest endpoint error: %s", e)
-        return {"status": "error", "message": "Failed to compute weekly digest"}
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Failed to compute weekly digest"})
 
 
 @router.post("/si05/send")
-def send_si05_digest_endpoint(_: None = Depends(_verify_api_key)):
+def send_si05_digest_endpoint(authorized: bool = Depends(_verify_api_key)):
     """
     POST /digest/si05/send
 
@@ -251,6 +259,8 @@ def send_si05_digest_endpoint(_: None = Depends(_verify_api_key)):
     Spec: docs/specs/api_contracts/digest_endpoints.md v0.2
     ST-01 (SI-05 Phase 1, EPIC-01, v5.1)
     """
+    if not authorized:
+        return JSONResponse(status_code=401, content={"status": "error", "message": "Unauthorized"})
     result = send_si05_digest()
     if result["sent"]:
         return {"status": "ok", **result}

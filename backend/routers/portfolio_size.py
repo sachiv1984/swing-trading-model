@@ -13,7 +13,8 @@ distance, missing snapshot, etc.) return HTTP 200 with valid: false — this
 is intentional per the API contract.
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 from models.requests import SizePositionRequest
 from services.sizing_service import size_position
 
@@ -44,9 +45,15 @@ def size_position_endpoint(request: SizePositionRequest):
 
     except ValueError as e:
         # Pydantic validators raise ValueError for bad market/fx_rate values
-        raise HTTPException(status_code=400, detail=str(e))
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": str(e)},
+        )
 
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Sizing calculation failed: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": f"Sizing calculation failed: {str(e)}"},
+        )

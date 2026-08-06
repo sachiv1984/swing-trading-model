@@ -7,7 +7,7 @@ Contract: docs/specs/api_contracts/trade_endpoints.md v1.8.4
 """
 
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import Response
+from fastapi.responses import Response, JSONResponse
 from database import get_portfolio
 from services.trade_service import build_trade_history_csv
 
@@ -37,10 +37,16 @@ def export_trades_csv():
             },
         )
 
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
 
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": str(e)},
+        )

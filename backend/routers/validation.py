@@ -8,7 +8,8 @@ BLG-TECH-03: Router is now thin — HTTP handling only.
 Canonical spec: analytics_endpoints.md v1.8.1
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 from services.validation_service import ValidationService
 
 router = APIRouter(prefix="/validate", tags=["Validation"])
@@ -33,7 +34,7 @@ async def validate_calculations():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(
+        return JSONResponse(
             status_code=500,
-            detail=f"Validation failed: {str(e)}",
+            content={"status": "error", "message": f"Validation failed: {str(e)}"},
         )

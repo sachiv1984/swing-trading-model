@@ -5,7 +5,8 @@ GET /trades/{trade_id}/plan-vs-reality
 Spec: docs/specs/api_contracts/trades_endpoints.md#GET /trades/{id}/plan-vs-reality
 ST-05, EPIC-02, v3.5
 """
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 from services.plan_vs_reality_service import get_plan_vs_reality_for_trade
 
 router = APIRouter(tags=["Trades"])
@@ -26,7 +27,7 @@ def get_plan_vs_reality(trade_id: str):
     except ValueError as exc:
         msg = str(exc)
         if "No trade plan found" in msg:
-            raise HTTPException(status_code=404, detail="No trade plan found for this trade")
-        raise HTTPException(status_code=404, detail=msg)
+            return JSONResponse(status_code=404, content={"status": "error", "message": "No trade plan found for this trade"})
+        return JSONResponse(status_code=404, content={"status": "error", "message": msg})
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(exc)})
