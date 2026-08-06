@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-05T18:41:13Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-06T07:39:28Z",
+  "last_updated_utc": "2026-08-06T08:30:42Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -145,7 +145,7 @@
       }
     },
     "EPIC-02": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-08-05__release-v8.3/EPIC-02",
       "pr_number": null,
       "pr_status": "none",
@@ -154,7 +154,8 @@
       "test_scenarios": [
         "tests/test_regime_retry_backoff.py",
         "tests/test_alpaca_paper_sync_idempotent_retry.py",
-        "tests/test_position_lifecycle_states_registry.py"
+        "tests/test_position_lifecycle_states_registry.py",
+        "tests/test_router_error_envelope_conformance.py"
       ],
       "stories": {
         "ST-05": {
@@ -248,23 +249,33 @@
         "ST-08": {
           "title": "Conform remaining routers to canonical error envelope + status codes",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1238,
           "branch": "exec/2026-08-05__release-v8.3/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "a5a2ebd12f4abe7d33dafe28dc67733569bfc77f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-06T00:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/conventions.md#13. Error Response Standard (Canonical)",
+            "docs/specs/api_contracts/backend_engineering_patterns.md#Error-response envelope conformance",
+            "tests/test_router_error_envelope_conformance.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "RISK-01: apply incrementally across sequenced commits, not one large diff. Sequenced last within EPIC-02."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.sign_off",
+          "sign_off_record": {
+            "role": "Backend Engineering Patterns Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-06",
+            "notes": "Approved. All 17 listed routers conform: HTTPException raises now translated to the canonical {status,message} JSONResponse at the router boundary (helper-function raises left intact, propagate to the calling endpoint's own translation clause -- verified per-function, not just per-file); 2 bare-200-with-error-body bugs fixed (digest.py /weekly); 5 additional 429-rate-limit 'detail'-key non-conformances found and fixed beyond the audit's original enumeration (ai.py x3, trade_plans.py x2); earnings.py/news.py/strategy_benchmark.py (0 pre-existing HTTPException raises, no error handling at all) given try/except wrapping per their explicit AC listing. Applied across 7 incremental commits per RISK-01, full 984+18-test backend suite green after every batch. Success-path shapes verified unchanged throughout (including screener.py/news.py's pre-existing {ok:true} divergence, correctly left untouched -- out of this story's scope per backend_engineering_patterns.md v1.3). 3rd AC ('no change to frontend error-handling behaviour without a corresponding frontend check') required a real frontend check: found 4 live dependencies on the old `.detail` field (TickerUniverse.js, Signals.js, CustomPriceAlertsSection.js, StrategyBenchmark.js -- the latter reading a nested detail.code/detail.version structure for /analytics/strategy-version-comparison) and fixed all 4 to read the new flat `.message`/top-level fields, plus updated the 2 Playwright spec files (custom-price-alerts.spec.js, si04-version-comparison.spec.js) whose route mocks asserted the old shape. This is the frontend check the AC requires."
+          },
+          "notes": "Frontend-visible-change disclosure (BLG-GOV-135): this story touched src/pages/StrategyBenchmark.js, src/pages/TickerUniverse.js, src/pages/Signals.js, src/components/notifications/CustomPriceAlertsSection.js -- text/data-source-only (which JSON field feeds an already-existing error message; no rendered text, layout, or colour changes) -- disqualifies EPIC-02 from the autonomous DoQ sign-off class per BLG-GOV-135 criterion 3, full DoQ sign-off applies at EPIC level. Frontend testing gate (LL-v3.1-EX-01): the 2 updated Playwright specs (custom-price-alerts.spec.js SC-CPA-07, si04-version-comparison.spec.js SC-SI04-03/04/05) were verified by code review (exact data-flow trace, doFetch/apiFetch response shape confirmed) rather than executed -- this environment's Playwright browser binary is not installable here (ubuntu26.04-x64 unsupported by the pinned Chromium build), a platform limitation, not a skipped step; CI will execute them for real on push. Per CLAUDE.md FI-P3-02, a source-field-only fix with zero rendered-output change qualifies for code-review disposition. Stale error-response doc examples also corrected in digest_endpoints.md and ai_endpoints.md (3 sites)."
         },
         "ST-09": {
           "title": "Retry/backoff for Yahoo Finance regime-check call sites",
@@ -339,6 +350,7 @@
     "EPIC-02/ST-05",
     "EPIC-02/ST-06",
     "EPIC-02/ST-07",
+    "EPIC-02/ST-08",
     "EPIC-02/ST-09",
     "EPIC-02/ST-10"
   ],
