@@ -108,6 +108,32 @@ jobs:
         # other.
         run: python3 scripts/check_api_performance_baseline_drift.py
 
+  doq_signoff_staleness:
+    name: DoQ Sign-off Staleness Lint (ST-18)
+    runs-on: ubuntu-latest
+
+    # [EPIC-04][ST-18] — Fails if any qa_evidence_EPIC-*.md file in the
+    # ACTIVE cycle still carries a "Pending DoQ"/"Awaiting QA" placeholder
+    # in its acceptance-criteria table. Catches the case a per-EPIC PR's own
+    # "Verify QA Evidence" step above cannot: a cross-EPIC merge conflict
+    # resolution (CLAUDE.md §8) touching a DIFFERENT EPIC's qa_evidence file
+    # without that EPIC's own PR re-running its per-EPIC check. Scoped to
+    # the active cycle only (not repo history) — see
+    # scripts/check_doq_signoff_staleness.py's own docstring for why an
+    # unscoped scan is not viable (finds legitimate, sealed, historical
+    # placeholders in already-closed cycles).
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check DoQ sign-off staleness
+        run: python3 scripts/check_doq_signoff_staleness.py
+
   pii_field_pattern_scan:
     name: PII Field-Name Pattern Scan (ST-08)
     runs-on: ubuntu-latest
