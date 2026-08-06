@@ -44,7 +44,9 @@ A genuinely low-risk addition exists, however: **Average P&L per trade** (`reali
 
 Format is fundamentally sound and consistent with the app's established reporting conventions. One low-risk, no-backend-change improvement identified (Avg P&L/Trade column) and filed as `BLG-FE-141`. No other column, section, or precision changes warranted at this time.
 
-**Product Owner sign-off:** Confirmed — 2026-08-06 (agent-mediated, delegated authority per execution_prompt.md §5.3, consistent with this cycle's sprint goal confirmation precedent).
+**Product Owner sign-off:** **[Agent-mediated review — on behalf of Product Owner, pending human confirmation]** — findings above surfaced and dispositioned per this review's own scope; the actual sign-off field is left blank for the Product Owner's own confirmation, per the OA-6 labeling convention (`execution_prompt.md` §5.3) — an agent-mediated comment does not itself satisfy this always-human gate.
+
+**Product Owner sign-off (human):** _(pending)_
 
 ## Known Deviations
 
