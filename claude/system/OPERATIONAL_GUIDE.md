@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.142
+**Version:** 4.144
 **Last Updated:** 2026-08-07
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.63)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.65)
 
 ### 8.1 Invocation
 
@@ -1455,7 +1455,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.142 |
+| Version | 4.144 |
 | Last Updated | 2026-08-07 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
@@ -1468,13 +1468,13 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.47 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.16 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.63 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.65 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.8 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.7 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.24 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
-| Shared Standards | `claude/system/shared_standards.md` v3.24 |
+| Shared Standards | `claude/system/shared_standards.md` v3.25 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
 | Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.10 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
@@ -1496,6 +1496,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.144 | 2026-08-07 | **Lessons-learnt deferred patch resolution (Head of Specs Team acting as Base44 Frontend Prompt Owner + Head of Engineering, reviewing `2026-08-05__release-v8.3` lessons_learnt_closure.md) — execution_prompt.md v3.64→v3.65 + shared_standards.md v3.24→v3.25: environment-parity sub-clause + CI failure diagnosis/workflow-authoring guidance.** §8 source prompt header v3.64→v3.65 (line 887). §14 Execution Engine Source v3.64→v3.65; Shared Standards v3.24→v3.25. §14 Version 4.143→4.144/2026-08-07. Changes: (1, Base44 Frontend Prompt Owner) `execution_prompt.md` §5.1 Frontend testing gate gains an environment-parity sub-clause — for focus-restoration/interaction-timing ACs, DoQ sign-off must record a real GitHub Actions CI pass (not sandboxed-review-only), per the `SC-CR-11` real-CI catch at ST-11. (2, Head of Engineering) `shared_standards.md` new §6.1 — documents `scripts/check_ci_infra_outage.py` (classifies a failed run/job as infra-outage vs real via known signature strings; detects the "stuck rerun" symptom; recommends an empty retrigger commit rather than fighting a stuck run) and the `pipefail`/`tee` exit-code capture gap in GitHub Actions `run:` steps (declare `shell: bash` or capture via `${PIPESTATUS[0]}`) — both rooted in the 2026-08-06 GitHub Actions outage (PR #1259/#1260). Authority: Head of Specs Team (2026-08-07). |
+| 4.143 | 2026-08-07 | **Lessons-learnt deferred patch resolution (Head of Specs Team, reviewing `2026-08-05__release-v8.3` lessons_learnt_closure.md, carried from `2026-08-04__release-v8.2` closure LL-v8.2-P3-04) — execution_prompt.md v3.63→v3.64: §3.1.B in-session credential/action provisioning sub-path.** §8 source prompt header v3.63→v3.64 (line 887). §14 Execution Engine Source v3.63→v3.64. §14 Version 4.142→4.143/2026-08-07. Change: distinguishes the standard cross-session park-and-wait delegation flow from the case where a human supplies the blocking credential/action directly within the current session — the delegation log entry is still created at the moment the need is identified (not retroactively at sprint close), and unblock detection re-runs immediately rather than waiting for a future resume, with an explicit `"Unblocked in-session — ..."` log note. Also `CLAUDE.md` §8 (no version field) gains new step 2a — identical-text-masks-differing-semantics check for cross-EPIC merges of shared governance prompts, logged in `prompt_change_log.md` per the established no-version-field convention for this file. Authority: Head of Specs Team (2026-08-07). |
 | 4.142 | 2026-08-07 | **Post-ship closure `2026-08-05__release-v8.3` Recurrence Escalation resolution (Head of Specs Team, acting on the closure's §6 Outstanding Action, 72h deadline 2026-08-10, resolved same-day) — execution_prompt.md v3.62→v3.63: §7 Write Scope Restriction gains a narrow, explicit exception for `claude/backlog/backlog.md`.** §8 source prompt header v3.62→v3.63 (line 887). §14 Execution Engine Source v3.62→v3.63. §14 Version 4.141→4.142/2026-08-07. Change: after 3 consecutive cycles (`v8.1`→`v8.2`→`v8.3`) of mid-sprint `backlog.md` additions operating on informal precedent against the documented "must not modify" rule, formally sanctioned (not reaffirmed-and-closed) a narrow exception — new-item addition only, for genuinely out-of-scope findings surfaced mid-sprint, with a mandatory `**Source:**` attribution; editing existing items, scope/priority decisions, and the Release Slice/capacity tables remain off-limits. Authority: Head of Specs Team (post-ship closure `2026-08-05__release-v8.3` escalation, `lessons_learnt_prompt.md` §6.4 recurrence path, resolved 2026-08-07). |
 | 4.141 | 2026-08-06 | **Sprint execution `2026-08-05__release-v8.3` EPIC-05/ST-26 (BLG-GOV-270) — roadmap_prompt.md v9.12→v9.13: new §7.2 Cross-Role Workload Balance Check.** §6 source prompt header v9.12→v9.13 (line 399). §14 Roadmap Engine Source v9.12→v9.13. §14 Version 4.140→4.141/2026-08-06. Change: new advisory check, distinct from §7.1's Skill-Silo Alert (which classifies story *shape*, governance-heavy vs execution-heavy) — tallies story *ownership by named role* (`sprint_backlog.md`'s `**Owner:**` field) over the same rolling 3-cycle window, flagging >40% single-role concentration (mirrors §7.1's ceiling for consistency). Advisory only, no mandatory-pull-forward escalation (role concentration can legitimately reflect a release's genuine thematic focus, not always a bottleneck). Authority: Director of HR (Sprint Execution Engine, agent-mediated, ST-26, 2026-08-06). |
 | 4.140 | 2026-08-06 | **Sprint execution `2026-08-05__release-v8.3` EPIC-05/ST-22 (BLG-GOV-124) — release_planning_prompt.md v2.46→v2.47: RESUME PRECHECK mutation-detection block removed.** §6B source prompt header v2.46→v2.47 (line 623). §14 Release Engine Source v2.46→v2.47. §14 Version 4.139→4.140/2026-08-06. Change: removed the ~65-line mutation-detection/invalidation-map/efficiency-policy machinery (Purpose/Tracked items/Detection/Invalidation map/Safety policy/Efficiency policy subsections) — this path was never exercised in any recorded v4.x–v5.x cycle; the existing lightweight `state.json` not_started/fail/blocked resume rule provides sufficient resumability for the observed failure mode. The Terminal State Guard ("Published Is Immutable") and State File Immutability Rule hard gates were extracted intact into their own top-level `## Terminal State Guard` section (both continue to apply on every resume, unaffected by the removal — per the sign-off constraint from GCA-2026-06-17 SC-02). Two stale cross-references to the removed block's STEP 4.5 "safety policy" rerun rule and the RESUME PRECHECK heading name were also removed/relabelled. Dry-run validation pass: swept the full file for remaining `RESUME PRECHECK`/`invalidation`/`mutation_seq` references post-edit — none found outside the explanatory extraction note; `state.sealed.sealed_assumptions` (written by `publish_gate.md` at STEP 8, an unrelated seal-for-the-record step) and the `release_state_schema.json` template fields were confirmed to serve a purpose independent of the removed detection logic and were left unchanged. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-22, 2026-08-06). |

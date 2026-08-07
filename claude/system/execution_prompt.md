@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.63
+**Version:** 3.65
 **Last Updated:** 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
@@ -605,6 +605,12 @@ epics.<EPIC-xx>.stories.<ST-xx>:
    - The issue number
 6. **Continue to the next ST item.** Do not stall.
 
+**In-session credential/action provisioning (LL-v8.2-P3-04):** Steps 1–6 above describe the standard park-and-wait flow, where a human completes the blocking action in a *separate* session and the engine detects it on resume. A distinct sub-path applies when the human instead supplies the missing credential, dashboard action, or other blocking input **directly within the current session** (e.g. the user pastes a rotated API key, confirms a Render/Supabase dashboard change was made live, or grants a one-off access token mid-conversation):
+- Create the `delegation_log.md` entry **at the moment the need is identified** (step 2 above), even though it may be unblocked seconds later — do not wait to see whether the human responds in-session before writing it, and do not write it retroactively at sprint close. An entry created after the fact cannot be trusted to capture the actual blocking window.
+- The moment the human provides the input in-session: immediately re-run the **Unblock detection** logic below rather than treating step 6's "continue to the next ST item" as a multi-session parking instruction — there is no need to move on and re-check later if the unblock condition is already satisfied in this same turn.
+- Record the delegation log entry's terminal `Unblocked` state with an explicit note: `"Unblocked in-session — <what was supplied>, <who supplied it>, same session as delegation"` — this distinguishes it from a genuine cross-session delegation for anyone reading the log later.
+- All other requirements (spec_references, deviation check, sign-off gate) still apply once the item is unblocked — in-session provisioning shortens the *wait*, not the *verification*.
+
 **Unblock detection (on resume):**
 - Check whether a commit matching `[EPIC-xx][ST-xx]` has been pushed to the branch since delegation.
 - If yes: transition item to `done`, verify acceptance criteria, update state.
@@ -685,6 +691,8 @@ Before signing off any EPIC that introduces frontend-visible changes, verify for
 3. **If neither:** The AC must be noted in the sign-off comments as "code review only — backlog item required". File a backlog item (via `/backlog-add`) for the Playwright test before opening the PR. This is a **hard gate**: the PR may not be opened with observable AC marked "code review only" unless the backlog item reference is recorded in the sign-off comments.
 
 The autonomous class sign-off (BLG-GOV-19) is unavailable for any EPIC with frontend-visible changes — criterion 3 (no frontend-visible change) will not be met.
+
+**Environment-parity sub-clause for focus/interaction-timing ACs (LL-v8.3-P3-02):** A sandboxed or local pre-merge review pass is not a fully reliable predictor of real-CI Playwright outcomes for focus-restoration, focus-trap, and other interaction-timing behaviour specifically — confirmed at `2026-08-05__release-v8.3` ST-11, where a `Dialog.Content` focus-restoration assumption (Radix does not fall back to restoring `document.activeElement` without an explicit `onCloseAutoFocus` handler) passed sandboxed review but failed real GitHub Actions CI. For any AC in this sub-class (focus moves on open/close, keyboard-trap boundaries, debounce/throttle-gated interactions, animation-completion-gated state changes): step 1's "Check Playwright coverage" is not satisfied by a locally-authored-and-reviewed test alone — record in the DoQ sign-off comments that the specific scenario was **observed passing in a real GitHub Actions CI run** (not merely "coverage exists"), citing the run URL or commit SHA. If the PR has not yet had a real CI run at sign-off time, note this explicitly as a pending confirmation and re-check before merge — do not treat sandboxed-pass as sufficient for this AC sub-class specifically.
 
 **Autonomous DoQ sign-off class (BLG-GOV-19):**
 

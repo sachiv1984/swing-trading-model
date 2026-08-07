@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.24
-**Last Updated:** 2026-08-06
+**Version:** 3.25
+**Last Updated:** 2026-08-07
 
 # Shared Standards — All Governed Routines
 
@@ -210,6 +210,14 @@ git push -u origin exec/<cycle_id>/EPIC-xx
 # Check if branch exists remotely
 git ls-remote --heads origin exec/<cycle_id>/EPIC-xx
 ```
+
+### 6.1 CI Failure Diagnosis and Workflow-Authoring Guidance (lessons-learnt deferred patches, `2026-08-05__release-v8.3` Phase 3 friction items 3–4, resolved 2026-08-07)
+
+**Infra-outage vs real-failure classification:** Before treating a red CI check as a code regression, run `python3 scripts/check_ci_infra_outage.py --run <run-id>` (or `--pr <pr-number>` to list runs first). It scans job logs for known GitHub-side infrastructure-failure signature strings (`"Failed to resolve action download info"`, `"Error: Service Unavailable"` at the action-setup phase, and cancelled-with-no-`startedAt` queue-timeout patterns) and reports a classification per job — `infra_outage`, `real_failure_candidate`, or `inconclusive`. It also detects the "stuck rerun" symptom: `gh run rerun` returning `"workflow file may be broken"` while the run itself is still `queued`/`in_progress` is an outage symptom, not a real workflow-syntax problem — do not edit the workflow file in response to that message alone. This is a read-only diagnostic; it never retries or reruns anything itself. Extend `INFRA_SIGNATURES` in the script only when a new pattern is confirmed against a real, `githubstatus.com`-documented incident — do not add speculative signatures.
+
+**Safe retry when a rerun attempt is stuck:** If `gh run rerun` on an already-attempted run reports the stuck-rerun symptom above, do not keep retrying the same run. Push an empty retrigger commit on the affected branch (`git commit --allow-empty -m "[EPIC-xx] Retrigger CI after GitHub Actions outage"`) to obtain a clean run on a fresh SHA instead of continuing to fight the stuck run-side state.
+
+**`pipefail`/`tee` exit-code capture:** GitHub Actions `run:` steps default to `bash -e {0}` (errexit only) unless `shell: bash` is explicitly declared on the step or job — this silently defeats the common `cmd | tee output.log; echo $?` pattern for capturing a piped command's real exit code, since without `pipefail` the pipeline's exit status is that of the *last* command (`tee`, which almost always succeeds) rather than `cmd`. Any new workflow step that pipes a command through `tee`, `grep`, or similar for log capture while still needing the original command's exit code must either: (a) declare `shell: bash` on the step so `set -o pipefail` conventions apply consistently, or (b) capture the exit code explicitly via `${PIPESTATUS[0]}` (bash) immediately after the pipeline, not via a bare trailing `echo $?`. Check this whenever authoring or reviewing a new `.github/workflows/*.yml` step that pipes command output.
 
 ---
 
