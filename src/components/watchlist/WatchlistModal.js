@@ -167,7 +167,7 @@ export default function WatchlistModal({ mode, entry, onClose, onAdded, onUpdate
                   )}
                 />
                 {tickerError && (
-                  <p className="text-xs text-rose-400">{tickerError}</p>
+                  <p className="text-xs text-rose-700 dark:text-rose-400">{tickerError}</p>
                 )}
               </div>
 

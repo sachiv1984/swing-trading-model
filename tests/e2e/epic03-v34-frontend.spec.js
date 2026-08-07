@@ -358,6 +358,26 @@ test.describe('ST-10 — Trade plan status badges and abandonment UI', () => {
     await expect(submitBtn).toBeEnabled();
   });
 
+  test('SC-E03-15b: Reason under 10 characters shows the canonical validation error text and colour token (ST-21, EPIC-04, v8.3, BLG-SPEC-108)', async ({ page }) => {
+    await stubCommon(page);
+    await page.route(`${API}/trade-plans/plan-1`, (r) =>
+      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: PLANS[0] }) })
+    );
+    await page.route(`${API}/trade-plans/by-position/**`, (r) =>
+      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: [] }) })
+    );
+    await page.goto('/#/TradePlan?edit=plan-1&ticker=AAPL&market=US');
+    await page.getByRole('button', { name: /abandon plan/i }).click();
+    const reasonField = page.getByPlaceholder(/min 10 characters/i);
+    await reasonField.fill('short');
+    await reasonField.blur();
+
+    const error = page.getByText('Reason must be at least 10 characters.');
+    await expect(error).toBeVisible({ timeout: 5000 });
+    await expect(error).toHaveClass(/text-rose-700/);
+    await expect(error).toHaveClass(/dark:text-rose-400/);
+  });
+
   test('SC-E03-16: Abandoned plan hides Abandon and Save buttons', async ({ page }) => {
     await stubCommon(page);
     await page.route(`${API}/trade-plans/plan-2`, (r) =>
