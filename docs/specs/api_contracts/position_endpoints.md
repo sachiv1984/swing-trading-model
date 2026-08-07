@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.5.1
-**Last Updated:** 2026-07-29
+**Version:** 2.5.2
+**Last Updated:** 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -26,6 +26,7 @@ Global response envelopes, error shape, defaults, and multi-currency/stop rules 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.5.2 | 2026-08-07 | ST-04 (BLG-SPEC-113, EPIC-02, v8.4): `GET /positions` example was missing 5 live fields returned by `position_service.py`'s `positions_list.append({...})` — `total_cost`, `sector`, `industry`, `exit_reason`, `stop_reason`. Added to example and field notes, cross-checked against the live dict. No functional change. |
 | 2.5.1 | 2026-07-29 | v7.10 ST-13 (BLG-SPEC-102) + ST-14 (BLG-SPEC-103): Corrected `GET /positions` response documentation to match live behaviour — the endpoint returns the raw `data` array directly, not the standard `{ status, data }` envelope. Added undocumented lifecycle fields `position_state`, `state_entered_at`, `days_in_state` to the response schema and field notes. No functional change. |
 | 2.5.0 | 2026-07-13 | v7.0 ST-15 (BLG-FEAT-68): Added `last_reviewed_at` field to `GET /positions` response (ISO timestamp \| null — position review cadence nudge). Added `PATCH /positions/{position_id}/mark-reviewed` — sets `last_reviewed_at = NOW()`. Display-only; no automated action beyond the explicit user-triggered timestamp update. |
 | 2.4.0 | 2026-07-10 | v6.9 ST-02 (BLG-FEAT-65): Added `GET /positions/{position_id}/gap-risk` — overnight/weekend gap risk flag for a single position, combining the DS-04 earnings calendar with historical OHLCV gap statistics. Implemented as a dedicated per-position endpoint rather than a field on `GET /positions` (pre-authorised alternative per the story notes) because the historical-OHLCV lookup is too slow to run inline for every open position on every list load. Display-only; §13 sign-off required (AC-04). |
@@ -104,6 +105,11 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
     "risk_off_exit": false,
     "entry_note": "Breakout above $800 resistance",
     "exit_note": null,
+    "exit_reason": null,
+    "stop_reason": "Active",
+    "total_cost": 6531.00,
+    "sector": "Technology",
+    "industry": "Semiconductors",
     "tags": ["momentum", "breakout"],
     "last_reviewed_at": "2026-07-01T09:00:00+00:00",
     "position_state": "PROFITABLE",
@@ -126,6 +132,11 @@ This endpoint does **not** use the standard `{ status, data }` response envelope
 | `fx_rate` | The GBP/USD rate at time of entry (stored) |
 | `live_fx_rate` | The current GBP/USD rate (fetched live) |
 | `exit_note` | Always `null` for open positions. Present for schema consistency with closed trade records |
+| `exit_reason` | Always `null` for open positions. Present for schema consistency with closed trade records — populated on close |
+| `stop_reason` | Human-readable stop status string, e.g. `"Grace period ({holding_days}/10 days)"` during the grace window, `"Active"` otherwise |
+| `total_cost` | float (GBP). `entry_price × shares` at entry, rounded. Used for position sizing / concentration calculations |
+| `sector` | string \| `null`. GICS-style sector classification for the ticker, used by `GET /portfolio/sector-weights` and `GET /portfolio/concentration-status` |
+| `industry` | string \| `null`. Finer-grained classification than `sector` |
 | `tags` | Array of tag strings. Empty array if no tags set |
 | `current_trailing_stop` | The computed trailing stop in GBP (profit-lock logic: profit → `price − 2×ATR`, else `entry − 5×ATR`, ratcheted). Always present and non-zero after the first nightly update. `0` if no stop has been computed yet. Unlike `stop_price`, this field is always non-zero — it is informational even during the grace period. (v6.2 ST-01 BLG-FEAT-46) |
 | `risk_off_exit` | `boolean`. `true` when the position's market index (SPY for US, FTSE for UK) is below its 200-day MA. Cleared to `false` when the index recovers. Set nightly by `POST /positions/risk-off-alerts`. (v6.2 ST-05 BLG-FEAT-49) |
