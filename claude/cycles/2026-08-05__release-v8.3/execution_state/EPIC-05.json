@@ -1,0 +1,160 @@
+{
+  "cycle_id": "2026-08-05__release-v8.3",
+  "epic_id": "EPIC-05",
+  "status": "done",
+  "branch": "exec/2026-08-05__release-v8.3/EPIC-05",
+  "pr_number": 1261,
+  "pr_status": "open",
+  "qa_signed_off": true,
+  "qa_evidence_log": "claude/cycles/2026-08-05__release-v8.3/qa_evidence_EPIC-05.md",
+  "test_scenarios": [],
+  "stories": {
+    "ST-22": {
+      "title": "SC-02: Remove RESUME PRECHECK mutation detection block from release_planning_prompt.md",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1244,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-05",
+      "commit_sha": "06b2a778da4b233a69765b2da23117cd4b100773",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "claude/system/release_planning_prompt.md#Terminal State Guard \u2014 Published Is Immutable (Hard Gate)"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Head of Specs Team",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. Diffed the actual removal: Terminal State Guard and State File Immutability Rule extracted intact into their own top-level section, unchanged in substantive content. Zero remaining references to invalidated_steps/mutation_seq/Invalidation map anywhere in the file; no dangling dependency on the removed safety-policy rerun rule. Minor non-blocking observation: the 'Do NOT run invalidation.' bullet was dropped during extraction (defensible \u2014 the concept it referenced no longer exists) \u2014 noted, not a deviation, since the gate's operative do-not-modify/do-not-rerun rules are fully intact."
+      },
+      "notes": "Dependency: sequenced after ST-25 (prompt_change_log.md append format fix), correctly honoured in commit order."
+    },
+    "ST-23": {
+      "title": "Formal \u00a713 boundary re-attestation cadence",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1243,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-05",
+      "commit_sha": "04dcd3aed735df644d6f90ae849589732fb51c44",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "claude/strategy/strategy_rules.md#13.5 Semi-Annual Boundary Re-Attestation Cadence"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Strategy Rules & System Intent Owner",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. Spot-checked all 8 cited review-record paths (IT-06, SI-01, SI-02, SI-04, BLG-FEAT-50/51, PT-04, on-demand compliance recheck \u00a713.4, Gemini thesis contract) \u2014 all exist and are accurately cited. First review date 2027-02-06 confirmed exactly 6 months from proposal date."
+      },
+      "notes": "Starting roster of 8 features, not a closed set \u2014 Maintenance rule requires new \u00a713-cleared features to add a row in the same commit as their own clearance."
+    },
+    "ST-24": {
+      "title": "SI-02 trade-count gate threshold calibration review",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1242,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-05",
+      "commit_sha": "058c8eca5cd13caa42c5e750392d2b79db4b1d1d",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "docs/product/decisions/si02_trade_count_gate_calibration_review_2026-08-06.md"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "AI Compliance & Governance Officer",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. Cross-checked against current_roadmap.md's live SI-02 structured gate field (read-only) \u2014 the '20 threshold, not 11' correction is accurate; BLG-FE-109 ship date (v7.3, 2026-07-16) correctly cited."
+      },
+      "notes": "Does not modify current_roadmap.md directly (outside this routine's write scope) \u2014 flags a forward pointer for the next roadmap rebalance to link this review."
+    },
+    "ST-25": {
+      "title": "prompt_change_log.md mixed prepend/append ordering breaks gap detection",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1241,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-05",
+      "commit_sha": "2cb14b046762ecbc296bcf6e850609140060711b",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "claude/system/sprint_planning_prompt.md#7. Hygiene advisories",
+        "claude/system/shared_standards.md#11.1 STEP -1.7-Class Prompt Change Log Gap Detection"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Head of Specs Team",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. Date-scan method correctly replaces the file-position head -1 shortcut and would have caught the described v3.13/v3.12 false positive. Full CLAUDE.md \u00a76 checklist verified: both prompt version headers bumped, OPERATIONAL_GUIDE.md \u00a77/\u00a714 updated, both companion changelogs updated, prompt_change_log.md appended with exactly 2 new rows."
+      },
+      "notes": "Option (b) chosen per the backlog item's own guidance \u2014 more robust, does not require rewriting the large append-only prompt_change_log.md record."
+    },
+    "ST-26": {
+      "title": "Cross-role workload balance check",
+      "classification": "autonomous",
+      "status": "done",
+      "assigned_to": "engine",
+      "github_issue": 1240,
+      "branch": "exec/2026-08-05__release-v8.3/EPIC-05",
+      "commit_sha": "d7afae76b4ce461c968a75c1a0d6e1e7109c049c",
+      "delegation_record_id": null,
+      "blocked_since_utc": null,
+      "unblock_criteria": null,
+      "completed_utc": "2026-08-06T00:00:00Z",
+      "acceptance_verified": true,
+      "spec_references": [
+        "claude/system/roadmap_prompt.md#7.2 Cross-Role Workload Balance Check"
+      ],
+      "spec_reference_not_applicable": false,
+      "spec_reference_not_applicable_reason": null,
+      "deviations_filed": true,
+      "last_completed_substep": "3.1.A.sign_off",
+      "sign_off_record": {
+        "role": "Director of HR",
+        "status": "cleared",
+        "method": "agent_mediated",
+        "date": "2026-08-06",
+        "notes": "Approved. Confirmed genuinely distinct from \u00a77.1 (story shape vs role ownership). Same rolling 3-cycle window and >40% advisory ceiling for consistency; 'Write:' target matches \u00a77.1's own target exactly."
+      },
+      "notes": "Advisory only, no mandatory-pull-forward escalation \u2014 role concentration can legitimately reflect a release's genuine thematic focus."
+    }
+  },
+  "last_updated_utc": "2026-08-06T00:00:00Z"
+}

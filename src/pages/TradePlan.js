@@ -1094,7 +1094,7 @@ export default function TradePlan() {
               onBlur={() => setAbandonReasonTouched(true)}
             />
             {abandonReasonTouched && !abandonReasonValid && (
-              <p className="text-xs text-rose-400">Reason must be at least 10 characters.</p>
+              <p className="text-xs text-rose-700 dark:text-rose-400">Reason must be at least 10 characters.</p>
             )}
           </div>
           <div className="flex gap-3 justify-end">

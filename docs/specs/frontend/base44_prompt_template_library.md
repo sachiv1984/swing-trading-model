@@ -2,9 +2,9 @@
 **Class:** Class 2 — Supporting
 **Status:** Supporting
 **Canonical Source:** docs/specs/frontend/design_system.md
-**Version:** 1.4
-**Last Updated:** 2026-07-30
-**Story:** ST-04 (BLG-SPEC-90, EPIC-03, v7.2); ST-04 (BLG-SPEC-91, EPIC-02, v7.3); ST-06 (BLG-SPEC-93, EPIC-04, v7.3); ST-13 (BLG-FE-129, EPIC-13, v7.9); ST-18 (BLG-FE-124, EPIC-03, v8.0)
+**Version:** 1.6
+**Last Updated:** 2026-08-06
+**Story:** ST-04 (BLG-SPEC-90, EPIC-03, v7.2); ST-04 (BLG-SPEC-91, EPIC-02, v7.3); ST-06 (BLG-SPEC-93, EPIC-04, v7.3); ST-13 (BLG-FE-129, EPIC-13, v7.9); ST-18 (BLG-FE-124, EPIC-03, v8.0); ST-12 (BLG-FE-121, EPIC-03, v8.3); ST-14 (BLG-FE-132, EPIC-03, v8.3)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -116,7 +116,7 @@ Cmd/Ctrl-K opens a searchable palette listing pages and in-scope entities; Escap
 ```
 - Row-level checkbox selection; bulk-action toolbar renders only when 1+ rows are selected (no zero-selected empty state to design).
 - Toolbar shows a live selected-count and the available bulk actions for the current entity (tag / archive / remove).
-- Destructive bulk actions (delete/archive) require an explicit confirmation step before the API call fires — no existing precedent for a confirm-free destructive bulk action in this codebase.
+- Destructive bulk actions (delete/archive) require an explicit confirmation step before the API call fires — no existing precedent for a confirm-free destructive bulk action in this codebase. Use the shared `ConfirmationModal` component (§10) for this step; a bulk-remove action is the kind of case §10's undo-window variant exists for (optimistic execution + a few seconds to reverse, rather than a blocking pre-action confirm).
 - Partial failures must be surfaced per-row (not a single opaque "some failed" toast) — read succeeded/failed arrays from the response and reflect the failed subset back to the user with per-item reasons.
 ```
 
@@ -202,11 +202,64 @@ Table shows a fixed set of shimmering placeholder rows (varied bar widths per co
 Card shell and static labels render immediately; only the specific async value shows a skeleton while its own query is in flight; on resolution the skeleton is replaced with the real value or an explicit error state — the rest of the card is never blocked on this one value's load time.
 ```
 
-## 10. Forward-Reference Tracking (ST-18 AC-3)
+## 10. Template: Shared Modal-Confirmation Component (with optional undo-window)
+
+**Use when:** delegating `BLG-FE-116` (custom price alerts — delete/deactivate action), `BLG-FE-117` (bulk actions — destructive bulk action confirm step, see §6), or any future story needing a confirm-before-acting or confirm-with-undo interaction.
+
+**Source pattern:** `docs/design/2026-08-05__release-v8.3/shared-confirmation-modal-undo-window/decision_record.md` (ST-12, EPIC-03, v8.3) — genuinely new interaction pattern (undo-window countdown); component: `src/components/ui/ConfirmationModal.js`.
+
+**Reusable fragment — Behaviour Rules section:**
+```
+- Standard variant (undoWindow.enabled = false, the default): modal opens on trigger; Confirm executes the action on click and closes the modal; Cancel dismisses without action. This formalises the existing shipped confirmation-modal precedent (positions.md §Exit action, watchlist.md §Remove Confirmation Prompt) as the component's default — no behaviour change to either existing consumer unless they are explicitly migrated onto it.
+- Undo-window variant (undoWindow.enabled = true, undoWindow.durationSeconds default 5): Confirm closes the modal immediately and executes the action optimistically (same optimistic-update pattern as "Mark Reviewed"/watchlist "Keep"); a toast then shows the action's past-tense confirmation text plus a live "Undo (Ns)" countdown button. Clicking Undo before expiry reverses the action (caller-supplied inverse operation) and replaces the toast with a brief "Undone." confirmation. If the window expires, the toast auto-dismisses and the action is final — no further confirmation shown.
+- The countdown is always visible as text on the Undo button itself, never a bar/ring/colour alone (colour is never the sole differentiator, per design_system.md Accessibility).
+- Modal: focus trap + restoration (existing Dialog primitive convention, TradePlan.js Abandon modal precedent); Escape = Cancel.
+```
+
+**Reusable fragment — Non-Functional Rules section:**
+```
+- Default undo-window duration (5s) intentionally overrides `sonner`'s ~4s auto-dismiss default — the undo toast is actionable, not purely informational, and needs enough time for a deliberate click.
+- Any new modal/toast background/border/token must ship as an explicit light+dark Tailwind pair (BLG-FE-87/88/95 precedent).
+- This component does not prescribe how a consumer reverses an optimistic action on Undo (re-POST, cancel a not-yet-fired request, etc.) — that is each consumer's own data shape.
+```
+
+**Reusable fragment — Expected Outcome section:**
+```
+Standard variant: Confirm/Cancel behave exactly as the existing shipped confirmation-modal precedent. Undo-window variant: Confirm executes optimistically and closes the modal; an actionable toast with a live countdown offers a genuine window to reverse the action; expiry without Undo is silent (no extra confirmation); both light and dark theme render correctly.
+```
+
+**Forward-reference note (ST-12 AC-2):** this entry is the reference point for `BLG-FE-116`/`BLG-FE-117`'s eventual Base44 prompt drafts — see the "Use when" line above and §6's updated destructive-bulk-action bullet. Neither story is in scope this sprint; confirm at each story's own delegation time that its prompt draft cites this section, and record that confirmation in this file's Change Log (same tracking convention as §12).
+
+## 11. Template: Standard Theme-Compliance Section (Generation-Time)
+
+**Use when:** drafting the Behaviour Rules or Non-Functional Rules section of **any** `delegated_frontend` Base44 prompt — unconditionally, not only stories already known to touch colour/background/border tokens. Paste this fragment into every prompt draft from the start.
+
+**Source pattern:** `design_system.md` §Theme & Colors + §Accessibility, and the recurring defect class `BLG-FE-87/88/95/125/129` — four separate shipped dark-mode contrast/token defects, each caught only after generation (by a later audit or the §4 review-time checklist), never prevented at generation time. `BLG-FE-132`'s problem statement: the prompt template itself lacked a standard theme-compliance section, so each case was individually re-derived and caught late rather than instructed up front.
+
+**Distinction from §4:** §4 (Dual-Theme Verification Call-Out) is a **review-time** instruction — it tells the delegate how the work will be *checked* (Playwright/staging must cover both themes) and adds a dark-mode line to the story's stated Acceptance Criteria. This section is a **generation-time** instruction — it tells the delegate the *rule to build against* before any code is written, so a violation is never generated in the first place. Both are required together on any story with observable AC; this section does not replace §4's checklist item.
+
+**Reusable fragment — Behaviour Rules section (paste verbatim):**
+```
+- Every new or modified colour, background, or border Tailwind class must ship as an explicit light+dark pair (e.g. `bg-slate-100 dark:bg-slate-800`) — never a bare class that only resolves correctly in one theme. This is a standing project rule, not a one-off review comment (recurring defect: BLG-FE-87, BLG-FE-88, BLG-FE-95, BLG-FE-125, BLG-FE-129).
+- Prefer an existing token pair already used for the same semantic role elsewhere in the app (see design_system.md §Theme & Colors) over inventing a new one — a new pair is only warranted when no existing token fits the specific UI role.
+- CSS-variable-backed semantic classes (e.g. `bg-primary`, `text-muted-foreground`) are exempt from the explicit-pair requirement — they already resolve per-theme via the underlying CSS custom property, not via a Tailwind `dark:` variant.
+```
+
+**Reusable fragment — Non-Functional Rules section (paste verbatim):**
+```
+- Do not defer theme correctness to a follow-up audit pass — verify both themes render correctly before considering the story complete, not only when a dark-mode audit later flags it.
+```
+
+**Reusable fragment — Expected Outcome section (paste verbatim):**
+```
+Every new or modified colour/background/border token renders correctly in both light and dark theme, using an explicit light+dark Tailwind pair (or an already-theme-aware semantic class) — no bare dark-only or light-only token ships.
+```
+
+## 12. Forward-Reference Tracking (ST-18 AC-3)
 
 ST-18's third acceptance criterion — "Referenced by at least one new story going forward" — cannot be satisfied within the same story that authors the library entries; no story in this sprint (`2026-07-30__release-v8.0`) delegates a card/loading-skeleton/empty-state UI change to cite them against. This mirrors the same "retrospectively confirmable" AC pattern already used elsewhere in this sprint's backlog (see `sprint_backlog.md` ST-19 AC-2). Track at the next story that delegates or implements a card-grid, table-row, or partial-value loading skeleton: confirm it cites the applicable §7/§8/§9 entry, and record that confirmation in this file's Change Log.
 
-## 11. Maintenance
+## 13. Maintenance
 
 New entries are added to this library when a pattern is formalised in `design_system.md` and applied to two or more concrete stories (the same threshold `roadmap_prompt.md`'s STEP 4.2 idea-consolidation convention uses for "recurring" — a single application does not yet justify a library entry). Entries here must be kept consistent with `design_system.md`; if a `design_system.md` edit changes a pattern documented here, update this file in the same commit.
 
@@ -214,7 +267,9 @@ New entries are added to this library when a pattern is formalised in `design_sy
 
 **§7/§8/§9 provenance note (v1.4, ST-18, EPIC-03, v8.0):** unlike prior entries, which were extracted from a `design_system.md`/`ux_spec.md` source pattern, these three entries were extracted directly from already-implemented, already-recurring component code (`src/pages/Research.js`, `src/pages/Screener.js`, `src/pages/NotificationsHistory.js`, `src/components/trades/SetupQualityScorePanel.js`) — no `ux_spec.md` or `design_system.md` section documents the loading-skeleton pattern yet. This is consistent with the "genuinely recurring" threshold in the paragraph above (2+ concrete precedents per entry), just sourced from implementation rather than a prior design spec. If `design_system.md` is later updated with a formal loading-skeleton section, reconcile these entries against it and update this file in the same commit per the rule above.
 
-## 12. Known Deviations
+**§10 provenance note (v1.5, ST-12, EPIC-03, v8.3):** §10 was extracted from a UX decision record (`decision_record.md`, approved by Head of UX & Design), not from implementation code — this is genuinely new interaction design (no prior undo-window precedent in the app), consistent with the same-provenance convention `design_system.md`/`ux_spec.md`-sourced entries (§2/§3/§4/§5/§6) already use.
+
+## 14. Known Deviations
 
 None. This is a net-new artefact — no prior canonical spec governed this work.
 
@@ -224,6 +279,8 @@ None. This is a net-new artefact — no prior canonical spec governed this work.
 
 | Date | Version | Summary |
 |---|---|---|
+| 2026-08-06 | 1.6 | Added §11 Standard Theme-Compliance Section (Generation-Time) — a generation-time prompt fragment distinct from §4's review-time checklist, addressing the recurring dark-mode defect class (`BLG-FE-87/88/95/125/129`) at prompt-draft time instead of catching it after generation; renumbered old §11/§12/§13 → §12/§13/§14 (ST-14, EPIC-03, v8.3, BLG-FE-132) |
+| 2026-08-06 | 1.5 | Added §10 Shared Modal-Confirmation Component (with optional undo-window) — extracted from the `ConfirmationModal` UX decision record, forward-referenced by both `BLG-FE-116` and `BLG-FE-117`'s eventual prompt drafts (§6 updated to cite it); renumbered old §10/§11/§12 → §11/§12/§13 (ST-12, EPIC-03, v8.3, BLG-FE-121) |
 | 2026-07-30 | 1.4 | Added 3 loading-skeleton templates — §7 Label+Value Skeleton Pair (stat/metric card grid), §8 Table/List Row Skeleton (variable-width shimmer), §9 Inline Partial-Value Skeleton (async sub-value within an already-rendered shell) — extracted from already-recurring component precedent (`Research.js`, `Screener.js`, `NotificationsHistory.js`, `SetupQualityScorePanel.js`); §10 tracks the forward-reference AC (ST-18, EPIC-03, v8.0, BLG-FE-124) |
 | 2026-07-27 | 1.3 | Added dark-mode acceptance-criteria checklist item to §4 — every Base44 prompt draft with observable AC must state a dark-mode requirement in its Acceptance Criteria, not only in the Playwright/staging verification call-out (ST-13, EPIC-13, v7.9, BLG-FE-129) |
 | 2026-07-16 | 1.2 | Added Bulk-Action Toolbar (multi-select) template (ST-06, EPIC-04, v7.3, BLG-SPEC-93) |

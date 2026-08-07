@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.15
-**Last Updated:** 2026-08-03
+**Version:** 3.16
+**Last Updated:** 2026-08-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -194,7 +194,7 @@ Design gate hard gate (fires when `design_gate_required = true`):
 - Advisory — does not block sprint planning.
 
 **7. Hygiene advisories** (both advisory only — no halt):
-- **Prompt change log gaps:** for each Class 6 prompt file, run `grep "<filename>" claude/system/prompt_change_log.md | head -1` to find the most recent logged transition (the file is **prepended newest-first** — `head -1` gives the latest entry; do NOT use `tail` or `grep | tail`). Extract the target version (the `v<X.Y>` after `→` in the version column). If the current `**Version:**` in the file exceeds that version: surface as "⚠ Prompt change log gap: `<filename>` current v<X.Y> — last log v<A.B>. Add a prepended row per CLAUDE.md §6." Record in `sprint_planning_notes.md`.
+- **Prompt change log gaps (date-scan method, not file-position — BLG-GOV-257, v3.16):** for each Class 6 prompt file, run `grep "<filename>" claude/system/prompt_change_log.md` to collect **every** row mentioning that filename — do not take only the first match and do not assume the file's ordering (prepend-newest-first does not hold uniformly across the whole file: a contiguous prepend-ordered block sits above an older, ascending-chronological historical backfill, so a filename's true latest row can be either the first grep match or one further down). Parse the `Date` column (leftmost, `YYYY-MM-DD`) of every matched row and select the row with the **latest date** — not `head -1`, not file position. Extract the target version (the `v<X.Y>` after `→` in that row's version column). If the current `**Version:**` in the file exceeds that version: surface as "⚠ Prompt change log gap: `<filename>` current v<X.Y> — last log v<A.B>. Add a prepended row per CLAUDE.md §6." Record in `sprint_planning_notes.md`. Full method: `shared_standards.md §STEP -1.7-Class Prompt Change Log Gap Detection`.
 - **"Before Sprint Planning" backlog items:** scan `claude/backlog/backlog.md` for items with `Provisional-Target: Before v<X.Y> sprint planning` where X.Y = current release. For each found: surface advisory and record under `## Pre-Sprint Backlog Advisory` in `sprint_planning_notes.md` with item IDs and titles.
 
 **8. Recurring endpoint test coverage audit (added v3.15 — ST-11, BLG-QA-113):** Run `python3 scripts/audit_endpoint_test_coverage.py` — a full-repo backstop audit comparing every `@router.get/post/put/delete` decorator in `backend/routers/*.py` against `backend/routers/test.py`'s registered entries, complementing the pre-commit diff-only check (`scripts/check_router_test_registration.py`). Record the result in `sprint_planning_notes.md`:

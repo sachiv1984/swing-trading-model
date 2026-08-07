@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 9.12
-**Last Updated:** 2026-08-04
+**Version:** 9.13
+**Last Updated:** 2026-08-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -575,6 +575,20 @@ Governance story % = (G + D + P stories from STEP 2.4) ÷ total stories delivere
 **< 20% Floor:** Verify PO has sufficient sign-off capacity. If unconfirmable: record governance capacity risk in `## STEP 8`. Does not halt — must appear in lessons learnt.
 
 Write: `claude/roadmap/workforce_capacity.md` and/or `claude/economics/workforce_economics.md`
+
+#### 7.2 Cross-Role Workload Balance Check (ST-26, BLG-GOV-270, EPIC-05, v8.3)
+
+Distinct from §7.1's Skill-Silo Alert, which classifies story *shape* (governance-heavy vs execution-heavy) — this check tallies story *ownership by named role* (the `**Owner:**` field on each ST item in `sprint_backlog.md`), to catch a single role silently carrying a disproportionate share of delivery across consecutive cycles even when the governance/execution shape ratio itself looks healthy.
+
+**Method:**
+1. For each of the last 3 shipped cycles (same rolling window as §7.1, for consistency), read `sprint_backlog.md` and tally the count of ST items per `**Owner:**` role.
+2. Compute each role's share: role's story count ÷ total stories across the 3-cycle window × 100.
+3. **> 40% Ceiling (mirrors §7.1's ceiling):** if any single role's rolling 3-cycle share exceeds 40%, surface as an advisory: "⚠ Cross-role workload balance: `<role>` owned N% of stories across the last 3 cycles (v<X>–v<Z>)." Record in `## STEP 8`, alongside the Skill-Silo Alert output.
+4. This check is **advisory only** — it does not gate release scope and has no mandatory-pull-forward escalation (unlike §7.1's sustained-failure clause). Its purpose is visibility for the Product Owner and Director of HR to consider when scoping future releases (e.g. deliberately routing more stories to underrepresented roles' domains), not a hard rebalancing rule — role-story-count concentration can legitimately reflect the release's actual thematic focus (e.g. a governance-heavy debt-clearance cycle naturally skews toward Head of Specs Team) rather than a genuine bottleneck.
+
+Write: same target as §7.1 (`claude/roadmap/workforce_capacity.md` and/or `claude/economics/workforce_economics.md`).
+
+**Sign-off:** Director of HR (this check's definition, not each individual reading — readings are advisory and self-surfacing at each rebalance).
 
 ---
 

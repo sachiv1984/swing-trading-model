@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.46
-**Last Updated:** 2026-08-03
+**Version:** 2.47
+**Last Updated:** 2026-08-06
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -416,8 +416,8 @@ Update state:
 
 ## RESUME RULE (State-Driven Execution)
 If `state.json` exists:
-- Continue from the first step whose artifact status is `not_started` or `fail` or `blocked`,
-- BUT do not rerun steps marked `pass` unless required by invalidation (see RESUME PRECHECK).
+- Continue from the first step whose artifact status is `not_started` or `fail` or `blocked`.
+- Do not rerun steps marked `pass`.
 
 If status is `Blocked`:
 - Invoke Escalation Handling Subroutine first.
@@ -431,18 +431,19 @@ If `state.json` is missing but artifacts exist:
 
 ---
 
-## RESUME PRECHECK — Mutation Detection & Invalidation (Hard Gate)
-### Terminal State Guard — Published Is Immutable (Hard Gate)
+## Terminal State Guard — Published Is Immutable (Hard Gate)
+
+**(Extracted from the former RESUME PRECHECK block, ST-22, BLG-GOV-124, EPIC-05, v8.3 — the mutation-detection/invalidation-map machinery that block also contained was removed; see `sprint_planning_notes.md`-equivalent rationale in `prompt_change_log.md`. This gate and the State File Immutability Rule below it are unaffected by that removal and continue to apply on every resume, per the RESUME RULE above.)**
+
 If `state.json.status == "Published"`:
 - Treat the cycle folder as **sealed**.
-- Do NOT run invalidation.
 - Do NOT re-run any steps.
 - Do NOT modify any stage artefacts in this cycle.
 - Do NOT append to or modify `escalations.md`.
 - Do NOT change assumptions (timebox/capacity).
 - Do NOT acquire locks (backlog/roadmap) or perform lock/txn steps.
 
-#### State File Immutability Rule (Hard Gate)
+### State File Immutability Rule (Hard Gate)
 If `status == Published`:
 - `state.json` may not be modified.
 - open_escalations must not change
@@ -457,45 +458,6 @@ If drift found: HALT with instruction:
 
 If no drift found: HALT with message:
 - "Cycle is Published and sealed. No further action permitted in this cycle."
-
-### Purpose
-Prevent stale "pass" stamps after any mutation to assumptions or tracked artifacts. Execute:
-- at the start of any run after STEP 0, and
-- immediately after resolving any escalation that changes assumptions or artifacts.
-
-### Tracked items
-- release_plan.md
-- stage4_backlog_slice.md
-- escalations.md
-- assumptions: timebox, capacity
-
-### Detection
-Compare current assumptions in state.json to stored sealed_assumptions. If changed, record a mutation:
-- mutation_seq += 1
-- append to `mutations[]`: timestamp, changed_keys, reason
-- update assumptions in state.json.
-
-### Invalidation map
-If a tracked item changes, invalidate dependent steps by setting their artifact status to `not_started` and recording them in `invalidated_steps[]`.
-
-Rules:
-- If release_plan.md (## Scope section) changed → invalidate: STEP 3, STEP 3.5, STEP 4, STEP 5.5
-- If release_plan.md (## Execution Plan section) changed → invalidate: STEP 3.5, STEP 4, STEP 5.5
-- If stage4_backlog_slice changed → invalidate: STEP 5.5
-- If escalations changed in a way that adds/removes decision records or Accepted Risk → invalidate: STEP 5.7 and Publish Gate evaluation
-
-Safety policy (required):
-- Always re-run STEP 4.5 after any resume where:
-  - timebox changed OR capacity changed OR STEP 4.5 previously failed/blocked, OR
-  - any workforce escalation was opened/resolved in this cycle.
-
-Implementation: set `artifacts.stage4_5_capacity_check = not_started` and `attributes.capacity_feasible = not_started`.
-
-Efficiency policy (required):
-- Re-run STEP 5.5 if Stage 2/3/4 artefacts have changed (check via git status or assumption change).
-
-Resume position:
-- Resume from the earliest invalidated step (lowest numbered step). If no invalidations exist: continue normal resume rule.
 
 ---
 
@@ -938,8 +900,6 @@ artifacts.stage4_5_capacity_check: pass|warn|fail|blocked
 attributes.capacity_feasible: pass|warn|fail|blocked
 ```
 
-*(NOTE: this step is forced to rerun by RESUME PRECHECK per safety policy)*
-
 ---
 
 ## STEP 5 — Roadmap Annotation
@@ -1034,7 +994,7 @@ This checklist is designed to be consumed by the Sprint Planning Engine at its p
 
 **Intermediate global state sync (required before writing cycle_summary.md):**
 
-> **RESUME PRECHECK:** If the session was resumed via context compaction and STEP 7 has completed without the intermediate sync being performed, execute the intermediate sync immediately before proceeding to STEP 8. Do not proceed to STEP 8 with stale `.claude_current_state.json` state from the prior cycle.
+> **Resume check (unrelated to the former RESUME PRECHECK mutation-detection block, removed ST-22/v8.3):** If the session was resumed via context compaction and STEP 7 has completed without the intermediate sync being performed, execute the intermediate sync immediately before proceeding to STEP 8. Do not proceed to STEP 8 with stale `.claude_current_state.json` state from the prior cycle.
 
 Before writing `cycle_summary.md`, update `.claude_current_state.json` to reflect the current in-progress state. This is a pre-publish sync — it does not mark the cycle Published. Its purpose is to ensure the global state pointer reflects the active cycle if the session is interrupted before STEP 9.
 

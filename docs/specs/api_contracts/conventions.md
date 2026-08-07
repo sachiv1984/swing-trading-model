@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.2
-**Last Updated:** 2026-03-23 (v1.2)
+**Version:** 1.3
+**Last Updated:** 2026-08-06 (v1.3)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## 1. Authentication & Authorization
@@ -241,3 +241,47 @@ Successful `DELETE` operations return HTTP 200 with the standard success envelop
 - `deleted: true` confirms the record was removed.
 - `id` echoes the identifier of the deleted record.
 - DELETE endpoints are **non-idempotent**: a second call to the same resource returns `404 Not Found`.
+
+---
+
+## 14. API Endpoint Deprecation-Window Policy
+
+No endpoint in this API has ever been formally deprecated (confirmed: no `deprecat*` occurrence in `api_changelog.md` or `docs/reference/openapi.yaml` as of this policy's authoring) — this section is a genuinely new policy, not a codification of existing practice, written ahead of the first real deprecation so that event doesn't have to invent the process under time pressure.
+
+### 14.1 When to deprecate vs. remove directly
+
+A canonical contract endpoint that is no longer wanted follows this policy only if it has, or may still have, an active consumer (the frontend, an external integration, or a documented third party). An endpoint added and removed within the same release cycle with no shipped consumer may be deleted directly — this policy governs the removal of *live, consumed* surface area.
+
+### 14.2 Minimum notice window
+
+- **30 days minimum** between an endpoint being marked deprecated and its removal, for any endpoint with a known internal (frontend) consumer.
+- **90 days minimum** for any endpoint documented as consumed by an external/third-party integration (see `_external_api_template.md`-pattern contracts).
+- The window starts from the date the deprecation is recorded in `api_changelog.md` (§14.4), not from when the replacement first became available.
+
+### 14.3 Marking an endpoint deprecated
+
+1. In the endpoint's `openapi.yaml` operation object, set `deprecated: true`.
+2. In the endpoint's canonical markdown contract, add a `**Deprecated:** <date> — removal no earlier than <date + notice window>. Replacement: <new endpoint, or "none — feature removed">.` line directly under the `## METHOD /path` heading.
+3. If a replacement endpoint exists, its own contract entry should cross-reference the deprecated one (`**Replaces:** METHOD /old-path`) so a reader arriving at either finds the other.
+
+### 14.4 Recording in `api_changelog.md`
+
+Every deprecation and every completed removal gets its own `api_changelog.md` entry (per `BLG-GOV-205`'s canonical entry template, once that item lands — until then, follow the file's existing entry format), so the deprecation timeline is visible in one place rather than only inside individual contract files.
+
+### 14.5 Removal
+
+- The endpoint may be removed from `backend/routers/`/`backend/main.py`, its contract file, and `openapi.yaml` only after the notice window (§14.2) has elapsed.
+- Removal is a normal contract change: same-commit `openapi.yaml` update, same-sprint contract removal, per `CLAUDE.md`'s standing API-contract rules.
+- If usage telemetry shows the endpoint is still receiving live traffic when the window elapses, extend the window and re-notify rather than removing on schedule — do not remove a still-used endpoint solely because the calendar window has passed.
+
+### 14.6 Sign-off
+
+A deprecation-window policy exception (shorter notice, or removal without a deprecation period) requires Head of Specs Team sign-off, recorded in the removing story's QA evidence log.
+
+---
+
+## Change Log
+
+| Date | Version | Summary |
+|---|---|---|
+| 2026-08-06 | 1.3 | Added §14 API Endpoint Deprecation-Window Policy — genuinely new policy, no endpoint has ever been formally deprecated (ST-20, EPIC-04, v8.3, BLG-SPEC-96) |

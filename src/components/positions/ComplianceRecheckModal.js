@@ -9,11 +9,41 @@
  *
  * Spec: docs/design/2026-07-10__release-v6.9/on-demand-compliance-recheck/ux_spec.md
  *       docs/specs/frontend/pages/positions.md §Compliance Recheck Panel
+ *
+ * Migrated onto the shared Dialog primitive (ST-11, BLG-FE-103, EPIC-03, v8.3) —
+ * was a bespoke fixed-overlay div; now uses Radix Dialog/DialogContent for its
+ * built-in focus trap and Escape-to-close, matching the ExitModal / TradePlan.js
+ * Abandon modal convention (`open` + `onClose` controlled from the parent,
+ * content guarded on `!position`).
+ *
+ * Focus restoration (fixed post-merge-review, real-CI Playwright failure on
+ * SC-CR-11): Radix's Dialog.Content does NOT restore focus to the previously
+ * focused element by default when the dialog wasn't opened via `<DialogTrigger>`
+ * — its default `onCloseAutoFocus` tries `context.triggerRef.current?.focus()`,
+ * and that ref is only ever populated by an actual `<DialogTrigger>` (same root
+ * cause TradePlan.js's Abandon modal already documented for its own single
+ * trigger). An earlier revision of this file assumed Radix would fall back to
+ * restoring `document.activeElement` on its own — it doesn't, confirmed by a
+ * failing `SC-CR-11` run in CI (focus state read "inactive" after Escape, not
+ * the trigger button). Since this modal is opened from more than one call site
+ * (`Positions.js`'s own recheck button and a position-card callback), a single
+ * fixed trigger ref (TradePlan.js's approach) doesn't fit — instead, whatever
+ * element was actually focused right before the dialog opened is captured in
+ * `previouslyFocusedRef` and restored explicitly via `onCloseAutoFocus` below.
+ *
+ * Padding/gap note: `DialogContent`'s own base className hardcodes `p-6 gap-4`
+ * (`src/components/ui/dialog.js`) and this project's `cn()` (`src/lib/utils.js`)
+ * is plain `clsx` with no `tailwind-merge` — a later override class does not
+ * reliably beat an earlier base class in the compiled stylesheet. `!p-0 !gap-0`
+ * (Tailwind's important-modifier prefix) is used instead of a bare `p-0 gap-0`
+ * override so this component's own per-section padding (matching the original
+ * bespoke layout) actually takes effect.
  */
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { X, Zap, RotateCw } from "lucide-react";
+import { Zap, RotateCw } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { apiFetch } from "../../api/base44Client";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -40,8 +70,15 @@ const OVERALL_BADGE = {
 };
 const OVERALL_LABEL = { pass: "Pass", warn: "Warn", fail: "Fail" };
 
-export default function ComplianceRecheckModal({ position, onClose }) {
+export default function ComplianceRecheckModal({ position, open, onClose }) {
   const [overrideAcknowledged, setOverrideAcknowledged] = useState(false);
+  const previouslyFocusedRef = useRef(null);
+
+  useEffect(() => {
+    if (open) {
+      previouslyFocusedRef.current = document.activeElement;
+    }
+  }, [open]);
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["compliance-recheck", position?.id],
@@ -54,121 +91,103 @@ export default function ComplianceRecheckModal({ position, onClose }) {
     enabled: !!position?.id,
   });
 
-  useEffect(() => {
-    const handleEsc = (e) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
-  }, [onClose]);
-
-  if (!position) return null;
-
   const overallStatus = data?.overall_status;
   const checks = data?.checks || [];
   const hasWarnOrFail = overallStatus === "warn" || overallStatus === "fail";
   const allPassed = overallStatus === "pass";
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-      role="dialog"
-      aria-modal="true"
-      aria-label={`Compliance recheck for ${position.ticker}`}
-      onClick={onClose}
-      data-testid="compliance-recheck-modal"
-    >
-      <div
-        className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 mx-4"
-        onClick={(e) => e.stopPropagation()}
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent
+        className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 !p-0 !gap-0"
+        data-testid="compliance-recheck-modal"
+        onCloseAutoFocus={(e) => {
+          e.preventDefault();
+          previouslyFocusedRef.current?.focus();
+        }}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-700/50">
-          <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-cyan-400" />
-            <h2 className="text-sm font-semibold text-white tracking-wide uppercase">
-              Compliance Recheck — {position.ticker}
-            </h2>
-            {overallStatus && (
-              <span
-                data-testid="compliance-recheck-overall-badge"
-                className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${OVERALL_BADGE[overallStatus] || OVERALL_BADGE.warn}`}
-              >
-                {OVERALL_LABEL[overallStatus] || overallStatus}
-              </span>
-            )}
-          </div>
-          <button
-            onClick={onClose}
-            aria-label="Close compliance recheck"
-            className="text-slate-600 dark:text-slate-400 hover:text-white"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Context line */}
-        <p className="px-5 pt-3 text-xs text-slate-600 dark:text-slate-400">
-          Checked against current conditions, not entry-time.
-        </p>
-
-        {/* Body */}
-        <div className="px-5 py-4 space-y-3">
-          {isLoading && (
-            <div className="flex items-center justify-center py-6" data-testid="compliance-recheck-loading">
-              <RotateCw className="w-5 h-5 text-slate-500 animate-spin" />
+        {!position ? null : (
+          <>
+            {/* Header */}
+            <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-700/50">
+              <Zap className="w-4 h-4 text-cyan-400" />
+              <DialogTitle className="!text-sm font-semibold text-white !leading-normal !tracking-wide uppercase">
+                Compliance Recheck — {position.ticker}
+              </DialogTitle>
+              {overallStatus && (
+                <span
+                  data-testid="compliance-recheck-overall-badge"
+                  className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${OVERALL_BADGE[overallStatus] || OVERALL_BADGE.warn}`}
+                >
+                  {OVERALL_LABEL[overallStatus] || overallStatus}
+                </span>
+              )}
             </div>
-          )}
 
-          {!isLoading && isError && (
-            <div className="text-center py-4 space-y-3" data-testid="compliance-recheck-error">
-              <p className="text-sm text-rose-400">Recheck unavailable — try again</p>
-              <button
-                onClick={() => refetch()}
-                className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700"
-              >
-                Retry
-              </button>
-            </div>
-          )}
-
-          {!isLoading && !isError && checks.map((check) => (
-            <div key={check.rule_key} className="flex items-start gap-2 text-sm" data-testid={`compliance-check-${check.rule_key}`}>
-              <span className={`mt-0.5 font-mono w-4 shrink-0 ${STATUS_COLOR[check.status] || "text-slate-600 dark:text-slate-400"}`}>
-                {STATUS_ICON[check.status] || "?"}
-              </span>
-              <div className="flex-1 min-w-0">
-                <span className="text-slate-200">{RULE_LABELS[check.rule_key] || check.rule_key}</span>
-                {check.detail && (
-                  <span className="text-slate-600 dark:text-slate-400"> — {check.detail}</span>
-                )}
-              </div>
-            </div>
-          ))}
-
-          {!isLoading && !isError && hasWarnOrFail && (
-            <label className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-700/50 cursor-pointer">
-              <input
-                type="checkbox"
-                data-testid="compliance-recheck-override-checkbox"
-                checked={overrideAcknowledged}
-                onChange={(e) => setOverrideAcknowledged(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-amber-500 focus:ring-amber-500/30"
-              />
-              <span className="text-xs text-amber-400">I acknowledge the advisory result</span>
-            </label>
-          )}
-
-          {!isLoading && !isError && allPassed && (
-            <p
-              data-testid="compliance-recheck-all-pass-note"
-              className="mt-4 pt-3 border-t border-slate-700/50 text-xs text-emerald-400"
-            >
-              All 5 checks passed — no action needed.
+            {/* Context line */}
+            <p className="px-5 pt-3 text-xs text-slate-600 dark:text-slate-400">
+              Checked against current conditions, not entry-time.
             </p>
-          )}
-        </div>
-      </div>
-    </div>
+
+            {/* Body */}
+            <div className="px-5 py-4 space-y-3">
+              {isLoading && (
+                <div className="flex items-center justify-center py-6" data-testid="compliance-recheck-loading">
+                  <RotateCw className="w-5 h-5 text-slate-500 animate-spin" />
+                </div>
+              )}
+
+              {!isLoading && isError && (
+                <div className="text-center py-4 space-y-3" data-testid="compliance-recheck-error">
+                  <p className="text-sm text-rose-400">Recheck unavailable — try again</p>
+                  <button
+                    onClick={() => refetch()}
+                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700"
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
+
+              {!isLoading && !isError && checks.map((check) => (
+                <div key={check.rule_key} className="flex items-start gap-2 text-sm" data-testid={`compliance-check-${check.rule_key}`}>
+                  <span className={`mt-0.5 font-mono w-4 shrink-0 ${STATUS_COLOR[check.status] || "text-slate-600 dark:text-slate-400"}`}>
+                    {STATUS_ICON[check.status] || "?"}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-slate-200">{RULE_LABELS[check.rule_key] || check.rule_key}</span>
+                    {check.detail && (
+                      <span className="text-slate-600 dark:text-slate-400"> — {check.detail}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {!isLoading && !isError && hasWarnOrFail && (
+                <label className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-700/50 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    data-testid="compliance-recheck-override-checkbox"
+                    checked={overrideAcknowledged}
+                    onChange={(e) => setOverrideAcknowledged(e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-amber-500 focus:ring-amber-500/30"
+                  />
+                  <span className="text-xs text-amber-400">I acknowledge the advisory result</span>
+                </label>
+              )}
+
+              {!isLoading && !isError && allPassed && (
+                <p
+                  data-testid="compliance-recheck-all-pass-note"
+                  className="mt-4 pt-3 border-t border-slate-700/50 text-xs text-emerald-400"
+                >
+                  All 5 checks passed — no action needed.
+                </p>
+              )}
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }

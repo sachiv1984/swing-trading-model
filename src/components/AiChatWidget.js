@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { api } from '../api/base44Client';
+import AiDisclaimer from './shared/AiDisclaimer';
 
 export default function AiChatWidget() {
   const [open, setOpen] = useState(false);
@@ -152,11 +153,7 @@ export default function AiChatWidget() {
           </form>
 
           {/* Advisory footer — non-dismissible */}
-          <div className="px-3 pb-2">
-            <p className="text-xs text-slate-600 dark:text-slate-400 italic text-center" data-testid="ai-chat-advisory-footer">
-              AI responses are advisory only. All trade decisions require human confirmation.
-            </p>
-          </div>
+          <AiDisclaimer variant="footer" testId="ai-chat-advisory-footer" />
         </div>
       ) : (
         /* Collapsed pill button */

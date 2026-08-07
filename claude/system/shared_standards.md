@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.23
-**Last Updated:** 2026-08-04
+**Version:** 3.24
+**Last Updated:** 2026-08-06
 
 # Shared Standards — All Governed Routines
 
@@ -370,6 +370,22 @@ Any increment to a governance prompt version **must** be accompanied by an entry
 **Enforcement:** STEP -1 of Release Planning (advisory, not hard gate) verifies the current version of each prompt appears in `prompt_change_log.md`. Missing entries are flagged as advisory warnings; the release planning engine may proceed but must record the gap as an outstanding action.
 
 **Companion per-file changelog rule (v3.17, `2026-07-17__scheduled` Friction Item 1):** Each Class 6 prompt's standalone `claude/system/changelogs/<prompt>_changelog.md` file exists to hold "full history" for that prompt (per each such file's own stated purpose) and must be updated in the **same commit** as any version bump, alongside `prompt_change_log.md`. It is not a substitute for `prompt_change_log.md` (the canonical, cross-prompt log) but a derived per-file view — both must stay in sync. Found this cycle: `roadmap_prompt.md` had advanced to v9.1 with correct `prompt_change_log.md` and `OPERATIONAL_GUIDE.md` §14 entries, but `changelogs/roadmap_prompt_changelog.md` had fallen 3 versions behind (missing 8.9, 9.0, 9.1) because no rule named it as a required companion write. Engines applying an action-now prompt patch must update both files in the same commit going forward.
+
+### 11.1 STEP -1.7-Class Prompt Change Log Gap Detection (date-scan method, v3.24, BLG-GOV-257)
+
+Any STEP-numbered check across the governance prompts that needs to find "the most recently logged transition for file X" in `prompt_change_log.md` (the pattern used at Sprint Planning STEP -1.7 and equivalent hygiene advisories elsewhere) **must** use the date-scan method below, not a file-position shortcut.
+
+**Why file position is unsafe:** `prompt_change_log.md` is not uniformly ordered. A contiguous block was written prepended-newest-first (per the v3.9→v3.10 `sprint_planning_prompt.md` fix), but it sits above an older historical backfill written in ascending chronological order that runs to the end of the file. A filename's true latest row can therefore be either the first `grep` match or one further down the file — `grep "<filename>" | head -1` silently returns a stale row whenever the true latest entry landed in the older, ascending-ordered tail. This produced a confirmed false-positive "prompt change log gap" advisory for `sprint_planning_prompt.md` during `plan sprint 2026-07-24__release-v7.8` (current v3.13; the check reported last-logged v3.12 when v3.13 was in fact already logged further down the file, at what was then line 572).
+
+**Method:**
+1. `grep "<filename>" claude/system/prompt_change_log.md` — collect **every** matching row, not just the first.
+2. Parse the `Date` column (leftmost, `YYYY-MM-DD`) of each matched row.
+3. Select the row with the **latest date**. If two or more rows share the same latest date, take the one with the highest `vOLD→vNEW` target version (the version after `→`).
+4. Extract that row's target version and compare against the prompt's current `**Version:**` header per the calling check's own gap-reporting logic.
+
+Do not use `head -1`, `tail`, or any other file-position-based selection — position does not correlate with recency across the whole file, only within the single prepend-ordered block at the top.
+
+**Consumers of this method:** `sprint_planning_prompt.md` STEP -1.7 (Hygiene advisories — Prompt change log gaps). Any future STEP that performs an equivalent "most recent logged transition" lookup must cite this section rather than re-deriving its own file-position-based logic.
 
 ---
 
