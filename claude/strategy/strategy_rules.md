@@ -2,8 +2,8 @@
 
 **Owner:** Strategy Rules & System Intent Owner  
 **Status:** Canonical  
-**Version:** 1.5
-**Last Updated:** 2026-08-03
+**Version:** 1.6
+**Last Updated:** 2026-08-06
 **Applies to:** Production backtests, live system, and documentation  
 
 ---
@@ -12,6 +12,7 @@
 
 | Version | Date | Summary |
 |---|---|---|
+| 1.6 | 6 August 2026 | Added §13.5 Semi-Annual Boundary Re-Attestation Cadence (ST-23, EPIC-05, v8.3, BLG-GOV-204) — proposes a rolling 6-month lightweight re-confirmation cadence for every shipped AI/automation-adjacent feature with a recorded §13 clearance (IT-06, SI-01, SI-02, SI-04, BLG-FEAT-50/51, PT-04, on-demand compliance recheck, Gemini thesis generation). First review date set: 2027-02-06. No behavioural rules changed. |
 | 1.5 | 3 August 2026 | Added §13.4 continuity note (ST-15, EPIC-05, v8.1, BLG-SPEC-82) — explicit confirmation that the on-demand compliance recheck (BLG-FEAT-64, v6.9) re-applies SI-01's existing deterministic rule set and introduces no new automation/prediction surface beyond it, distinct from and non-duplicative of SI-02's separately-gated drift detection. No behavioural rules changed. |
 | 1.4 | 20 May 2026 | Added §4.2 Pre-Entry Advisory Checks — formalises regime gate, sector concentration, earnings proximity, cash constraint, and sizing validity as advisory pre-entry conditions. No change to stop-loss, trailing logic, exit conditions, or position sizing calculation rules. §13 gate: SI-01 PASS recorded in docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md. |
 | 1.3 | 19 February 2026 | Revised §4.1.7 — replaced toggle activation model with always-visible widget model per pre-alignment decision record for roadmap item 3.2 (Decision 3). No changes to calculation rules, validity rules, FX handling, or cash constraint behaviour in §4.1.1–§4.1.6. |
@@ -459,6 +460,36 @@ The strategy is fixed and explicit. A strategy builder, adaptive rules engine, o
 ### 13.4 §13 continuity note — On-demand compliance recheck (BLG-FEAT-64, v6.9)
 
 The on-demand "Recheck Compliance" action added in `2026-07-10__release-v6.9` (ST-01, `docs/design/2026-07-10__release-v6.9/on-demand-compliance-recheck/ux_spec.md`) re-applies SI-01's existing, already-approved deterministic rule set against current position/market state, on user request, for a single open position. It introduces no new automation or prediction surface beyond SI-01's existing gate: no new rule logic, no scheduling/background execution, no persisted recommendation or flag (the result is point-in-time and dismissed on modal close, per the design spec §3 step 5), and no interaction with SI-02's drift-detection gate (which remains separately gated per §13.2/§14 and the `BLG-GOV-107` conditions). This is confirmed consistent with §13.1 (deterministic, human-in-the-loop) and §13.2 (not adaptive, not ML-driven) — the feature is a manual re-run of an existing check, not a new decision surface.
+
+### 13.5 Semi-Annual Boundary Re-Attestation Cadence (ST-23, BLG-GOV-204, EPIC-05, v8.3)
+
+Every shipped AI/automation-adjacent feature that previously cleared a §13 boundary review is re-attested on a rolling **semi-annual (6-month)** cadence — a lightweight re-confirmation that the feature still operates within the boundaries in §13.1/§13.2, not a full re-review from first principles. This closes a gap: `strategy_rules.md`'s Change Log shows individual §13 reviews accumulating one feature at a time (below), with no standing mechanism ever proposed for re-checking a previously-cleared feature after later, unrelated system changes.
+
+**In scope — shipped features with a recorded §13 clearance (as of this cadence's proposal, 2026-08-06):**
+
+| Feature | §13 Review Record | Cleared |
+|---------|-------------------|---------|
+| IT-06 (Arc 3 integration) | `docs/product/decisions/decisions--2026-05-15__release-v3.5--IT-06-section13-review.md` | v3.5 |
+| SI-01 (pre-entry advisory checks) | `docs/product/decisions/decisions--2026-05-19__release-v3.8--SI-01-section13-review.md` | v3.8 |
+| SI-02 (drift detection) | `docs/product/decisions/decisions--2026-05-30__release-v4.5--SI-02-section13-review.md` | v4.5 |
+| SI-04 (strategy history / binding conditions) | `docs/product/decisions/decisions--2026-06-03__release-v5.0--SI-04-binding-conditions.md` | v5.0 |
+| BLG-FEAT-50/51 (AI Advisory Layer — daily briefing + chat) | `docs/product/decisions/decisions--2026-06-24__release-v6.2--BLG-FEAT-50-51-section13-review.md` | v6.2 |
+| PT-04 (Setup Quality Score) | `docs/product/decisions/decisions--2026-07-21__release-v7.7--PT-04-section13-review.md` | v7.7 |
+| On-demand compliance recheck (BLG-FEAT-64) | §13.4 above | v6.9 |
+| Gemini thesis generation | `docs/specs/api_contracts/gemini_thesis_generation.md` §13 compliance note | (contract-documented, no standalone review record — added to the cadence for its first formal re-attestation) |
+
+This list is the **starting roster**, not a closed set — any future feature that clears its own §13 review (or pre-assessment, e.g. `arc6_ps03_section13_preassessment.md`, `si04_section13_preassessment.md`) is added to it at that time, per the Maintenance rule below.
+
+**Re-attestation procedure:** For each in-scope feature, confirm:
+1. No behavioural change has been made to the feature since its last clearance (or last re-attestation) that would alter its standing against §13.1/§13.2.
+2. If a change *has* been made: determine whether it is covered by the existing clearance's stated scope, or requires a fresh full §13 review (per each review record's own "re-confirm only if..." language, where present — e.g. §13.4's own note above).
+3. Record the outcome (unchanged / re-reviewed / escalated) in a dated re-attestation log entry — see Maintenance below for where.
+
+**First review date:** 2027-02-06 (6 months from this cadence's proposal date).
+
+**Maintenance:** A future re-attestation pass appends its findings to a new `docs/product/decisions/section13_reattestation_log.md` (create at the first actual re-attestation run, not by this story — no re-attestation has occurred yet as of this proposal). New features entering the roster do so by adding a row to the table above in the same commit that records their own initial §13 clearance.
+
+**Sign-off:** Strategy Rules & System Intent Owner.
 
 ---
 
