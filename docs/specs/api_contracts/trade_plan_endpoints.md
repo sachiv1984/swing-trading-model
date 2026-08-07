@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.8
-**Last Updated:** 2026-07-24
+**Version:** 0.9
+**Last Updated:** 2026-08-07
 **Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07)
 
 ---
@@ -65,6 +65,8 @@ Create a new trade plan.
 | status | string | No | `draft` \| `active` \| `closed` — default: `draft` |
 | pre_entry_override_acknowledged | boolean | No | Whether user acknowledged pre-entry advisory warnings. Default: false. |
 | trade_tags | array of string | No | *(v0.6 — ST-05)* Data-independent tag field on `trade_plans`. Lowercase, alphanumeric+hyphen, max 20 chars per tag, max 10 tags. Invalid entries silently dropped server-side. Default: `[]`. |
+| thesis_model_version | string | No | *(v0.9 — ST-12, BLG-BE-70)* AI compliance/audit provenance field. Frontend-passed and persisted without validation — set only when `setup_thesis`/`entry_rationale`/etc. were saved as-received from a prior `POST /trade-plans/generate-plan` or `POST /trade-plans/{id}/generate-thesis` response (see that response's `model_version` field), not user-edited before save. Null when the plan's narrative fields were typed manually. Nullable. No backfill of existing rows. |
+| thesis_prompt_version | string | No | *(v0.9 — ST-12, BLG-BE-70)* Companion to `thesis_model_version` — the generate-plan/generate-thesis response's `prompt_version` field, saved the same way. Nullable. |
 
 ### Response (201 Created)
 
@@ -493,6 +495,7 @@ score = clamp(round(win_rate × 0.6 + max(average_pnl_pct, 0) × 0.4), 0, 100)
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.9 | 2026-08-07 | ST-12 (EPIC-03, v8.4, BLG-BE-70): Add `thesis_model_version`/`thesis_prompt_version` to POST/PUT /trade-plans request schema — AI compliance provenance fields, frontend-passed, persisted only when the narrative fields were saved as-received from a generate-plan/generate-thesis response. Nullable, no backfill. Authority: AI Compliance & Governance Officer. |
 | 0.8 | 2026-07-24 | ST-07 (EPIC-07, v7.7, BLG-GOV-28): Retroactive §13 boundary review of GET /trade-plans/setup-quality-score — PASS. No contract/behaviour change; added §13 Compliance reference to the endpoint section. See `docs/product/decisions/decisions--2026-07-21__release-v7.7--PT-04-section13-review.md`. |
 | 0.7 | 2026-07-17 | ST-03 (BLG-FE-117, EPIC-03, v7.5): Add POST /trade-plans/bulk-tag, PUT /trade-plans/bulk-archive, DELETE /trade-plans/bulk — bulk-actions toolbar. `succeeded`/`failed` per-row response shape per readiness pass AC-01. Bulk-archive excludes `status='active'` plans (mirrors §8.1 single-item hide rule) and applies a fixed system abandonment reason (no per-plan reason field in the bulk confirmation flow). |
 | 0.6 | 2026-07-09 | ST-05 (EPIC-02, v6.8, BLG-FEAT-52): Add GET /trade-plans/tags (tag autocomplete source); add `trade_tags` field to POST/PUT /trade-plans request schema. Data-independent from trade_annotations/PO-02 and from the existing position/journal tags. |
