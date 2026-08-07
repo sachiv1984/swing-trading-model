@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-08-03 (sprint execution 2026-08-03__release-v8.1, ST-14/EPIC-05: §6.6 (BLG-SPEC-72) RESOLVED — Product Owner reviewed Gate Condition 2/3 thresholds, codified in reports.md v0.11→v0.12); prior — 2026-07-27 (post-ship closure 2026-07-24__release-v7.8; §38 Test Coverage Gaps — v7.8 added, 1 gap item dispositioned not_applicable, no backlog items required; §6.6 (BLG-SPEC-72) remains OPEN, not in this cycle's scope; TSG-v6.8-01/BLG-QA-86 remains OPEN, not in this cycle's scope; §27's sole TSG entry already RESOLVED, no reconciliation action needed; 3 doc-completeness gaps surfaced this cycle filed directly as backlog items (BLG-SPEC-102/103/104), not TSG entries — see §38); prior — 2026-07-24 (post-ship closure 2026-07-21__release-v7.7; §37 Test Coverage Gaps — v7.7 added, 5 gap items all dispositioned not_applicable, no backlog items required; §6.6 (BLG-SPEC-72) remains OPEN, not in this cycle's scope; TSG-v6.8-01/BLG-QA-86 remains OPEN, not in this cycle's scope; no new spec gaps identified beyond the TSG register per verification_report.md §6); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
+**Last Updated:** 2026-08-07 (sprint execution 2026-08-07__release-v8.4, ST-09/EPIC-02: added `schema_versioning_trade_plan_position.md` to §3.2 Canonical Documents); prior — 2026-08-03 (sprint execution 2026-08-03__release-v8.1, ST-14/EPIC-05: §6.6 (BLG-SPEC-72) RESOLVED — Product Owner reviewed Gate Condition 2/3 thresholds, codified in reports.md v0.11→v0.12); prior — 2026-07-27 (post-ship closure 2026-07-24__release-v7.8; §38 Test Coverage Gaps — v7.8 added, 1 gap item dispositioned not_applicable, no backlog items required); prior history retained — see prior entries in version control.
 
 ---
 
@@ -64,6 +64,7 @@ It points to the **single canonical source**.
 **Canonical Documents**
 - `data_model.md`
 - `data_model/settings_model.md` — Class 1 Canonical, v0.1, Active (created 2026-03-08, ST-17): all settings field names, types, validation rules, defaults, and semantics.
+- `schema_versioning_trade_plan_position.md` — Class 1 Canonical, v1.0, Active (created 2026-08-07, ST-09/EPIC-02/v8.4): migration-history index and field-deprecation policy scoped to `trade_plans` and `positions`. `data_model.md` remains authoritative if the two ever disagree.
 
 **Owner**
 - Data Model & Domain Schema Owner
