@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-07T16:03:30Z",
+  "last_updated_utc": "2026-08-07T16:10:15Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -50,26 +50,24 @@
         },
         "ST-31": {
           "title": "Trade-tag/trigger-source column on tax-year P&L CSV export",
-          "classification": "autonomous",
-          "status": "not_started",
+          "classification": "delegated_decision",
+          "status": "blocked_decision",
           "assigned_to": "engine",
           "github_issue": 1264,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-01",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-08-07T16:10:15Z",
+          "unblock_criteria": "Product Owner decision per ESC-EXEC-20260807-01: (a) reinterpret trigger-source as trade_plans.signal_id (momentum signals) and relabel; (b) defer ST-31, file new backlog item for real price-alert-to-trade linkage plumbing; (c) other.",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [
-            "docs/specs/pnl_export_reconciliation.md"
-          ],
+          "spec_references": [],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "CSV content only \u2014 not UI-observable; no Playwright/staging requirement."
+          "notes": "CSV content only \u2014 not UI-observable; no Playwright/staging requirement. ESCALATED (ESC-EXEC-20260807-01): no schema linkage exists between price_alerts (BLG-FE-116) and any trade/position/trade_plan row -- AC cannot be honestly satisfied as literally written without either mislabeling data (signal_id != alert) or building new linkage plumbing beyond this story's S-effort scope. See execution_escalations.md."
         }
       }
     },
@@ -830,8 +828,12 @@
       }
     }
   },
-  "blocked_items": [],
-  "delegated_items": [],
+  "blocked_items": [
+    "ST-31"
+  ],
+  "delegated_items": [
+    "ST-31"
+  ],
   "completed_items": [
     "ST-02",
     "ST-05",
@@ -842,7 +844,9 @@
     "ST-08",
     "ST-09"
   ],
-  "open_escalations": [],
+  "open_escalations": [
+    "ESC-EXEC-20260807-01"
+  ],
   "process_notes": [],
   "merge_gate": {
     "epics_merged": [
