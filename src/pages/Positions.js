@@ -1119,12 +1119,11 @@ export default function Positions() {
       )}
 
       {/* ST-01 (v6.9, BLG-FEAT-64): Compliance Recheck modal */}
-      {recheckingPosition && (
-        <ComplianceRecheckModal
-          position={recheckingPosition}
-          onClose={() => setRecheckingPosition(null)}
-        />
-      )}
+      <ComplianceRecheckModal
+        position={recheckingPosition}
+        open={!!recheckingPosition}
+        onClose={() => setRecheckingPosition(null)}
+      />
 
       {/* ST-09 (EPIC-02, v6.2): AI Trade Advisor — fixed floating widget, display-only advisory */}
       <AiChatWidget />

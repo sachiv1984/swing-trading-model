@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { api } from '../../../api/base44Client';
 import { RefreshCw, ChevronDown, ChevronRight, Send, MessageSquare } from 'lucide-react';
 import DataState from '../../ui/DataState';
+import AiDisclaimer from '../../shared/AiDisclaimer';
 
 const STORAGE_KEY = 'ai-briefing-collapsed-sections-v1';
 
@@ -135,12 +136,7 @@ export default function AiDailyBriefing() {
       </div>
 
       {/* Advisory label — non-dismissible */}
-      <div className="flex items-center gap-2">
-        <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-600 text-white">
-          AI Advisory
-        </span>
-        <span className="text-xs text-slate-700 dark:text-slate-300 italic">All actions require your confirmation</span>
-      </div>
+      <AiDisclaimer variant="badge" />
 
       {/* Body */}
       {loading && (
