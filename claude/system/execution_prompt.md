@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.62
-**Last Updated:** 2026-07-31
+**Version:** 3.63
+**Last Updated:** 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -215,8 +215,9 @@ Phase-specific note: `head_of_specs_team.md` uses `**Role:** Head of Specs Team`
 - Source files required by ST items (within repo, outside governance folders)
 - Canonical spec files (deviation documentation only — §9 Known Deviation Standard; no other spec edits permitted)
 - `.claude_current_state.json` (status updates only)
+- `claude/backlog/backlog.md` — **new-item addition only**, and only for a genuinely out-of-scope finding surfaced mid-sprint (a defect, gap, or follow-up discovered while working an ST item that is not itself in the current sprint's scope). Permitted: appending a new `### BLG-xx` item under its correct §1–§8 type section, per the Placement Rule at the top of `backlog.md`. Not permitted: editing any existing item's content, priority, status, or `Provisional-Target`; touching the Release Slice / capacity tables; anything that amounts to a scope or re-prioritisation decision. Every item added this way must carry a `**Source:**` line naming the discovering ST/EPIC and today's date, so post-ship closure and `groom backlog` can trace it back to this cycle. This exception formalises a practice already in continuous use across `v8.1`–`v8.3` (see `prompt_change_log.md` this entry) — it does not expand what may be *decided*, only where a *finding* may be recorded.
 
-Must not modify: `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed), `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed), `claude/cycles/<cycle_id>/sprint_backlog.md` (sealed), `claude/roadmap/*`, `claude/backlog/backlog.md`, `claude/strategy/strategy_rules.md`, any governance document outside this routine's scope.
+Must not modify: `claude/cycles/<cycle_id>/stage4_backlog_slice.md` (sealed), `claude/cycles/<cycle_id>/amendments/*/amended_backlog_slice.md` (sealed), `claude/cycles/<cycle_id>/sprint_backlog.md` (sealed), `claude/roadmap/*`, `claude/backlog/backlog.md` (beyond the narrow new-item-addition exception above), `claude/strategy/strategy_rules.md`, any governance document outside this routine's scope.
 
 ---
 
