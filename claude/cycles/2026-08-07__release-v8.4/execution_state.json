@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-07T21:00:18Z",
+  "last_updated_utc": "2026-08-07T21:02:23Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -28,24 +28,31 @@
         "ST-01": {
           "title": "Add Avg P&L/Trade column to Monthly P&L Report table",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1263,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "6eade53ace115e7d7aab616d4e1c8ec59889c4fc",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
-            "docs/specs/frontend/pages/reports.md"
+            "docs/specs/frontend/pages/reports.md",
+            "tests/e2e/monthly-pnl-avg-per-trade.spec.js"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "Financial Reporting & Records Owner",
+            "status": "pending",
+            "method": "agent_mediated",
+            "date": null,
+            "notes": "Frontend-visible-change rule applies (new column). Playwright coverage authored: tests/e2e/monthly-pnl-avg-per-trade.spec.js (SC-MAPT-01..05). Could not run locally (sandboxed environment has no supported Playwright browser install target). Sign-off pending confirmation of a real GitHub Actions CI pass per LL-v8.3-P3-02 environment-parity sub-clause -- will confirm once EPIC-01 PR CI runs."
+          },
           "notes": "Frontend-visible-change rule applies \u2014 Playwright coverage or staging sign-off required."
         },
         "ST-31": {
@@ -841,12 +848,13 @@
   "blocked_items": [],
   "delegated_items": [],
   "completed_items": [
+    "ST-01",
     "ST-02",
-    "ST-05",
-    "ST-07",
     "ST-03",
     "ST-04",
+    "ST-05",
     "ST-06",
+    "ST-07",
     "ST-08",
     "ST-09",
     "ST-31"
