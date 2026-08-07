@@ -76,3 +76,18 @@ def test_pass_with_notes_is_not_flagged():
     """'Pass with notes' must not false-positive-match on substring overlap."""
     text = "| ST-09 | spec.md | thing | AC | Pass with notes | None |"
     assert mod.find_stale_placeholders(text) == []
+
+
+def test_prose_quoting_placeholder_strings_is_not_flagged():
+    """A row that merely *describes* the placeholder strings by name (e.g.
+    this script's own ST-18 evidence row) must not be flagged — only a
+    placeholder occupying its own standalone table cell counts. Regression
+    test for the self-referential false positive found on PR #1260 (ST-18's
+    own qa_evidence_EPIC-04.md row quotes 'Pending DoQ'/'Awaiting QA' in its
+    'What was built' prose)."""
+    text = (
+        '| ST-18 | scripts/check_doq_signoff_staleness.py | Pre-merge lint '
+        'catching residual "Pending DoQ"/"Awaiting QA" placeholders in the '
+        'active cycle\'s qa_evidence files | Lint check added | Pass | None |'
+    )
+    assert mod.find_stale_placeholders(text) == []

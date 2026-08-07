@@ -52,8 +52,13 @@ CYCLES_DIR = REPO_ROOT / "claude" / "cycles"
 STATE_PATH = REPO_ROOT / ".claude_current_state.json"
 
 # Case-sensitive, matching the exact placeholder strings documented in
-# qa_evidence_template.md's own authoring note.
-STALE_PLACEHOLDER_RE = re.compile(r"Pending DoQ|Awaiting QA")
+# qa_evidence_template.md's own authoring note. Anchored to `| ... |` so it
+# only matches a placeholder occupying its own table cell (the template's
+# actual documented usage: a standalone Result-column value) — not any
+# occurrence of the phrase, which false-positives on prose that quotes the
+# placeholder strings by name (e.g. this very script's own ST-18 row in
+# qa_evidence_EPIC-04.md, which describes what the check catches).
+STALE_PLACEHOLDER_RE = re.compile(r"\|\s*(?:Pending DoQ|Awaiting QA)\s*\|")
 
 
 def find_stale_placeholders(text):
