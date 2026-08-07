@@ -27,6 +27,8 @@ Last Updated: 2026-08-07
 
 **Version-collision note (CLAUDE.md §8 step 2a):** `data_model.md` was bumped independently on this branch (v2.20→v2.21→v2.22→v2.23 across ST-10/ST-12/ST-13) while EPIC-02 also bumped it to v2.21 for different content (ST-08/ST-09). This branch's version numbers **must be renumbered** at EPIC-03's post-EPIC-02-merge rebase (per the Merge Order note in `sprint_backlog.md`) — flagged in `execution_state.json.process_notes` and in each affected story's own notes field, so the rebase step does not silently accept a colliding version number.
 
+**Resolved at post-EPIC-02-merge rebase (2026-08-07):** ST-10/ST-12/ST-13's migration blocks renumbered v2.21→v2.22, v2.22→v2.23, v2.23→v2.24 respectively (following EPIC-02's now-canonical v2.21 on `main`); final `data_model.md` document version is **2.24**. No SQL content changed — renumbering only (migration statements, field references, and sign-offs are unchanged from the pre-rebase text).
+
 ---
 
 ## Autonomous Class Sign-Off Block (BLG-GOV-19)

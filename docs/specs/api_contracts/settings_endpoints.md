@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.3.0
-**Last Updated:** 2026-06-03
+**Version:** 1.3.1
+**Last Updated:** 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 # settings_endpoints.md
@@ -76,7 +76,9 @@ Response uses the standard success envelope from **conventions.md**.
     "min_trades_for_analytics": 10,
     "default_risk_percent": 1.00,
     "concentration_position_threshold_pct": 15.0,
-    "concentration_sector_threshold_pct": 30.0
+    "concentration_sector_threshold_pct": 30.0,
+    "created_at": "2026-01-05T09:12:41Z",
+    "updated_at": "2026-08-02T14:37:09Z"
   }
 ]
 ```
@@ -101,6 +103,8 @@ Response uses the standard success envelope from **conventions.md**.
 | `default_risk_percent` | float | `1.00` | Default risk percentage pre-populated in the Position Sizing Calculator widget on the Trade Entry page. Represents percentage of portfolio value to risk per position, e.g. `1.00` = 1%. This is a user preference default, not an enforced position limit — users may override it per trade |
 | `concentration_position_threshold_pct` | float | `15.0` | Alert threshold: fires when a single position's heat exceeds this percentage of total portfolio heat. Read by `GET /portfolio/concentration-status` |
 | `concentration_sector_threshold_pct` | float | `30.0` | Alert threshold: fires when a single sector's combined heat exceeds this percentage of total portfolio heat. Read by `GET /portfolio/concentration-status` |
+| `created_at` | string (ISO-8601) | — | Timestamp the settings row was created (single global row, set once) |
+| `updated_at` | string (ISO-8601) | — | Timestamp of the most recent `PATCH /settings/{settings_id}` / `POST /settings` write |
 
 **Strategy parameter context:**
 
@@ -321,6 +325,7 @@ Errors use the standard error envelope from **conventions.md**.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3.1 | 2026-08-07 | ST-03 (BLG-SPEC-112, EPIC-02, v8.4): `GET /settings` example was missing `created_at`/`updated_at`, both of which the live response includes. Added with representative ISO-8601 values, plus field notes rows. Authority: API Contracts & Documentation Owner. |
 | 1.3.0 | 2026-06-03 | Add `concentration_position_threshold_pct` (default 15%) and `concentration_sector_threshold_pct` (default 30%) to all endpoints. DB columns added via `ensure_settings_concentration_columns` migration. Read by `GET /portfolio/concentration-status`. Settings page gains Risk Limits section. |
 | 1.2.0 | 2026-03-18 | (prior update) |
 | 1.1.0 | 2026-03-05 | Replaced `PUT /settings` with `PATCH /settings/{settings_id}` and `POST /settings` to match live implementation. ESC-20260304-01 option (a). Added lifecycle header. |

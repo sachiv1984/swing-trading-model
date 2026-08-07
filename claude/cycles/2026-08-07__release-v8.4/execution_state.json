@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-07T16:30:00Z",
+  "last_updated_utc": "2026-08-07T15:58:01Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -74,10 +74,10 @@
       }
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-07__release-v8.4/EPIC-02",
       "pr_number": 1294,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-07__release-v8.4/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
@@ -351,7 +351,7 @@
             "method": "agent_mediated",
             "date": "2026-08-07"
           },
-          "notes": "Added idx_trade_plans_ticker_upper (functional, UPPER(ticker)) to ensure_trade_plans_table(); data_model.md DS-04 block + new Migration v2.20->v2.21 entry updated to match. VERSION COLLISION NOTE: this branch's data_model.md v2.21 bump is independent of EPIC-02's own v2.21 (different content) -- must renumber at EPIC-03's post-EPIC-02-merge rebase per CLAUDE.md \u00a78 step 2a."
+          "notes": "Added idx_trade_plans_ticker_upper (functional, UPPER(ticker)) to ensure_trade_plans_table(); data_model.md DS-04 block + Migration entry updated to match. VERSION COLLISION RESOLVED at post-EPIC-02-merge rebase (2026-08-07): this story's migration block renumbered v2.20->v2.21 -> v2.21->v2.22 (EPIC-02's v2.21 is now canonical on main); no SQL content changed."
         },
         "ST-11": {
           "title": "Add 429/backoff handling to Alpaca paper-sync close/positions endpoints",
@@ -873,11 +873,11 @@
   "delegated_items": [],
   "completed_items": [
     "ST-02",
-    "ST-05",
-    "ST-07",
     "ST-03",
     "ST-04",
+    "ST-05",
     "ST-06",
+    "ST-07",
     "ST-08",
     "ST-09",
     "ST-10",
@@ -888,12 +888,13 @@
   ],
   "open_escalations": [],
   "process_notes": [
-    "EPIC-03/ST-10: data_model.md v2.21 version collision with EPIC-02's own v2.21 bump (ST-08/ST-09) -- flag for renumbering at EPIC-03's post-EPIC-02-merge rebase per CLAUDE.md \u00a78 step 2a."
+    "EPIC-03/ST-10: data_model.md v2.21 version collision with EPIC-02's own v2.21 bump (ST-08/ST-09) -- RESOLVED at post-EPIC-02-merge rebase (2026-08-07) per CLAUDE.md \u00a78 step 2a: ST-10/ST-12/ST-13 migration blocks renumbered v2.21->v2.22, v2.22->v2.23, v2.23->v2.24; final data_model.md version 2.24."
   ],
   "merge_gate": {
-    "epics_merged": [],
+    "epics_merged": [
+      "EPIC-02"
+    ],
     "epics_pending": [
-      "EPIC-02",
       "EPIC-03",
       "EPIC-01",
       "EPIC-04",

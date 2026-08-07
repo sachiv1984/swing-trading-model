@@ -3,7 +3,7 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.23
+**Version:** 2.24
 **Last Updated:** 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1624,7 +1624,188 @@ Reversible: see Down Migration above.
 
 ---
 
-### Migration from v2.20 to v2.21
+## Backtest Trades Table
+
+Imported backtest results from `production_strategy.py` CSV outputs, used to compare historical backtest performance against live trade history on the Strategy Benchmark page (ST-11, EPIC-03, v6.3, BLG-FEAT-53). Two sibling tables, `backtest_yearly_performance` and `backtest_open_positions`, are created by the same idempotent function and documented alongside it below.
+
+```sql
+CREATE TABLE IF NOT EXISTS backtest_trades (
+    id SERIAL PRIMARY KEY,
+    ticker VARCHAR(20) NOT NULL,
+    entry_date DATE NOT NULL,
+    exit_date DATE NOT NULL,
+    holding_days INTEGER,
+    entry_price NUMERIC(12, 4),
+    exit_price NUMERIC(12, 4),
+    pnl_gbp NUMERIC(12, 2),
+    pnl_pct NUMERIC(8, 4),
+    market VARCHAR(10) NOT NULL DEFAULT 'US',
+    exit_reason VARCHAR(50),
+    was_profitable BOOLEAN,
+    entry_year INTEGER NOT NULL,
+    imported_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (ticker, entry_date, exit_date)
+);
+
+CREATE TABLE IF NOT EXISTS backtest_yearly_performance (
+    id SERIAL PRIMARY KEY,
+    entry_year INTEGER NOT NULL,
+    num_trades INTEGER,
+    avg_pnl_gbp NUMERIC(12, 2),
+    total_pnl_gbp NUMERIC(12, 2),
+    avg_hold_days NUMERIC(8, 2),
+    win_rate_pct NUMERIC(5, 2),
+    imported_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (entry_year)
+);
+
+CREATE TABLE IF NOT EXISTS backtest_open_positions (
+    id SERIAL PRIMARY KEY,
+    ticker VARCHAR(20) NOT NULL,
+    entry_date DATE NOT NULL,
+    entry_price NUMERIC(12, 4),
+    current_price NUMERIC(12, 4),
+    unrealized_pnl_gbp NUMERIC(12, 2),
+    unrealized_pnl_pct NUMERIC(8, 4),
+    market VARCHAR(10) NOT NULL DEFAULT 'US',
+    imported_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (ticker, entry_date)
+);
+```
+
+### Fields — `backtest_trades`
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| id | SERIAL | NO | Primary key |
+| ticker | VARCHAR(20) | NO | Ticker symbol |
+| entry_date | DATE | NO | Backtest entry date |
+| exit_date | DATE | NO | Backtest exit date |
+| holding_days | INTEGER | YES | Days held |
+| entry_price | NUMERIC(12,4) | YES | Entry price (backtest currency) |
+| exit_price | NUMERIC(12,4) | YES | Exit price |
+| pnl_gbp | NUMERIC(12,2) | YES | Realised P&L in GBP |
+| pnl_pct | NUMERIC(8,4) | YES | Realised P&L percentage |
+| market | VARCHAR(10) | NO | `US` or `UK`, default `US` |
+| exit_reason | VARCHAR(50) | YES | Backtest exit trigger label |
+| was_profitable | BOOLEAN | YES | Convenience flag, `pnl_gbp > 0` |
+| entry_year | INTEGER | NO | Entry year, used for yearly rollups |
+| imported_at | TIMESTAMPTZ | NO | Import timestamp, default `NOW()` |
+
+**Constraints:** `UNIQUE (ticker, entry_date, exit_date)` on `backtest_trades`; `UNIQUE (entry_year)` on `backtest_yearly_performance`; `UNIQUE (ticker, entry_date)` on `backtest_open_positions`.
+
+**Purpose:** provides the historical baseline that the Strategy Benchmark page (`strategy_benchmark_endpoints.md`) compares against live trade history — answers "is the live system tracking the backtested strategy's expected performance."
+
+**Populating function:** `backend/database.py::ensure_backtest_tables()` (idempotent DDL) + `upsert_backtest_data()` (writes), invoked from `POST /strategy/benchmark/import` (`backend/routers/strategy_benchmark.py::import_backtest()`). Reads via `get_backtest_trades()`, `get_backtest_open_positions()`, `get_backtest_summary()`.
+
+---
+
+## Idempotency Keys Table
+
+Generic, additive, opt-in cache for state-mutating `POST` endpoints that supply a client-generated idempotency key, preventing duplicate side effects on retry (RISK-02 mitigation).
+
+```sql
+CREATE TABLE IF NOT EXISTS idempotency_keys (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    portfolio_id UUID NOT NULL,
+    endpoint VARCHAR(100) NOT NULL,
+    idempotency_key VARCHAR(200) NOT NULL,
+    response_body JSONB NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (portfolio_id, endpoint, idempotency_key)
+);
+```
+
+### Fields
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| id | UUID | NO | Primary key |
+| portfolio_id | UUID | NO | Portfolio the cached request belongs to |
+| endpoint | VARCHAR(100) | NO | The endpoint path the idempotency key was issued for |
+| idempotency_key | VARCHAR(200) | NO | Caller-supplied key (opaque string) |
+| response_body | JSONB | NO | The cached response returned on replay |
+| created_at | TIMESTAMPTZ | NO | Cache write timestamp, default `NOW()` |
+
+**Constraints:** `UNIQUE (portfolio_id, endpoint, idempotency_key)` — a repeat request with the same key against the same endpoint/portfolio replays the cached `response_body` instead of re-executing.
+
+**Purpose:** only touched when a caller supplies an `idempotency_key` — endpoints that never receive one never call this table's functions, so behaviour is unchanged when the key is absent.
+
+**Populating function:** `backend/database.py::ensure_idempotency_keys_table()` (idempotent DDL) + `get_idempotency_record()` / the write path in `backend/utils/idempotency.py::replay_or_create()`, which callers invoke directly.
+
+---
+
+## Gemini Audit Log Table
+
+AI compliance audit trail (ST-07) recording model/prompt provenance for every AI-generated trade plan thesis — retained under `claude_api_log_hygiene_policy.md`. **Naming note:** the table and function names predate the switch from Gemini to the Anthropic Claude API (see `docs/specs/api_contracts/gemini_thesis_generation.md`'s own disclosed naming note) — the table stores audit records for the current AI provider regardless of the legacy `gemini_` prefix.
+
+```sql
+CREATE TABLE IF NOT EXISTS gemini_audit_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    plan_id UUID,
+    model_version TEXT NOT NULL,
+    prompt_version TEXT NOT NULL,
+    input_hash TEXT NOT NULL,
+    output_hash TEXT NOT NULL,
+    generated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    prompt_tokens INTEGER,
+    completion_tokens INTEGER,
+    total_tokens INTEGER,
+    estimated_cost_usd NUMERIC(12, 8)
+);
+
+CREATE INDEX IF NOT EXISTS idx_gal_generated_at ON gemini_audit_log (generated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_gal_plan_id ON gemini_audit_log (plan_id);
+```
+
+### Fields
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| id | UUID | NO | Primary key |
+| plan_id | UUID | YES | FK-like reference to the `trade_plans` row this generation was for (not a DB-enforced FK) |
+| model_version | TEXT | NO | AI model + version string (ST-12, EPIC-03, v8.4 extends this pattern to thesis/summary text generally) |
+| prompt_version | TEXT | NO | Prompt template version used |
+| input_hash | TEXT | NO | Hash of the prompt input, for reproducibility/audit |
+| output_hash | TEXT | NO | Hash of the generated output |
+| generated_at | TIMESTAMPTZ | NO | Generation timestamp, default `NOW()` |
+| prompt_tokens | INTEGER | YES | Input token count |
+| completion_tokens | INTEGER | YES | Output token count |
+| total_tokens | INTEGER | YES | `prompt_tokens + completion_tokens` |
+| estimated_cost_usd | NUMERIC(12,8) | YES | Estimated cost of this generation call |
+
+**Indexes:** `idx_gal_generated_at` (DESC, for recency queries), `idx_gal_plan_id` (for per-plan lookups).
+
+**Purpose:** AI Compliance & Governance Officer audit trail — every AI-generated thesis/summary logs its model version, prompt version, and content hashes here, independent of where the generated text itself is stored.
+
+**Populating function:** `backend/database.py::ensure_gemini_audit_log_table()` (idempotent DDL) + `create_gemini_audit_entry()`, called from the thesis-generation pipeline (`docs/specs/api_contracts/gemini_thesis_generation.md`).
+
+---
+
+## AI Journal Entries Table
+
+**Externally-provisioned — not created, migrated, or schema-owned by this codebase.** No `CREATE TABLE ai_journal_entries` statement exists anywhere in `backend/`. Every read is preceded by an `information_schema.tables` existence check before querying (`backend/database.py::get_ai_journal_review_status()`), so behaviour degrades gracefully (`ai_journal_entry_count: null`) when the table is absent — consistent with `docs/ops/db_index_audit_arc4_2026-08-06.md` Finding 4, which scoped this table out of its index audit for the same reason.
+
+**Known columns (inferred from the one query this codebase issues against it):**
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| portfolio_id | UUID (assumed) | — | Filter column used in the only query this codebase runs: `SELECT COUNT(*) FROM ai_journal_entries WHERE portfolio_id = %s` |
+
+No other columns are known to this codebase — the full schema is owned by whatever external system provisions this table. If/when this codebase begins writing to `ai_journal_entries` directly (e.g. as part of Arc 4 journal intelligence features, see `ST-24`/`docs/operations/arc4_ai_cost_model.md`), this section must be replaced with a full `CREATE TABLE` schema and populating-function reference at that time.
+
+**Purpose (as consumed here):** `get_ai_journal_review_status()` reports `ai_journal_entry_count` as an optional enrichment field alongside trade/position counts — read-only, best-effort, never blocks on the table's absence.
+
+**Populating function:** none — this codebase never writes to `ai_journal_entries`.
+
+---
+
+**Sign-off (ST-08, EPIC-02, v8.4, BLG-SPEC-109):**
+- Data Model & Domain Schema Owner: Accepted — 2026-08-07 (agent-mediated; documentation backfill only, no schema change; all 4 sections cross-checked against `backend/database.py`'s actual `CREATE TABLE`/`ensure_*` statements; `ai_journal_entries` correctly scoped as externally-provisioned per the standing `db_index_audit_arc4_2026-08-06.md` finding)
+
+---
+
+### Migration from v2.21 to v2.22
 
 ST-10 (BLG-BE-82, EPIC-03, v8.4) — index correction, not a column change. `ensure_trade_plans_table()`'s idempotent create-path never actually created the plain `idx_trade_plans_ticker ON trade_plans(ticker)` this document's DS-04 schema block previously (incorrectly) documented — and even if it had, a plain index is not used by `get_trade_plans()`'s actual `WHERE UPPER(ticker)=%s` predicate. Found by `docs/ops/db_index_audit_arc4_2026-08-06.md` Finding 1. Replaced with a functional index matching the real predicate, following the same pattern already used by the sibling table `red_flag_events` (`idx_rfe_ticker ON red_flag_events (UPPER(ticker))`).
 
@@ -1656,7 +1837,7 @@ COMMIT;
 
 ---
 
-### Migration from v2.21 to v2.22
+### Migration from v2.22 to v2.23
 
 ST-12 (BLG-BE-70, EPIC-03, v8.4) — AI compliance/audit provenance. `gemini_service.py`'s `generate_full_plan()`/`generate_setup_thesis()` already return `model_version`/`prompt_version` to the caller and log them to `gemini_audit_log` keyed by `plan_id`, but the *stored* `trade_plans` row itself carried no provenance field — retroactive audit required a fragile join via `plan_id` (often null at generate-plan time, before a plan exists). Adds two nullable columns, populated only when the frontend saves narrative fields (`setup_thesis`, `entry_rationale`, etc.) as-received from a generate-plan/generate-thesis response, without user edits.
 
@@ -1667,7 +1848,7 @@ ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS thesis_prompt_version VARCHAR(2
 COMMIT;
 ```
 
-### Down Migration (v2.22 → v2.21)
+### Down Migration (v2.23 → v2.22)
 
 ```sql
 BEGIN;
@@ -1691,7 +1872,7 @@ COMMIT;
 
 ---
 
-### Migration from v2.22 to v2.23
+### Migration from v2.23 to v2.24
 
 ST-13 (BLG-BE-77, EPIC-03, v8.4) — audit trail for trade plan edits post-entry, extending the `position_audit_log` pattern (`BLG-BE-73`, §Migration v2.16→v2.17 above) to `trade_plans`. "Post-entry" means the plan is linked to a position (`position_id` set, either before or after the edit) at the time of the edit — pre-entry edits to a still-draft plan are ordinary iterative authoring, not logged. Same schema shape, same no-"who"-column rationale (single-user product), same fail-open non-blocking write convention as `position_audit_log`.
 
@@ -1732,6 +1913,6 @@ Reversible: `DROP TABLE IF EXISTS trade_plan_audit_log;`
 
 ---
 
-**Document Version:** 2.23
+**Document Version:** 2.24
 **Maintained By:** Data Model & Domain Schema Owner
 **Last Review:** 2026-08-07

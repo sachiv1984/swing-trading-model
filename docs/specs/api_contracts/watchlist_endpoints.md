@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.2
-**Last Updated:** 2026-07-27
+**Version:** 1.3
+**Last Updated:** 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Sprint:** 2026-06-08__release-v5.3 — ST-07 (BLG-SPEC-52, EPIC-01)
 **Signed off by:** API Contracts & Documentation Owner; Head of Specs Team
@@ -39,14 +39,19 @@ No parameters.
   "data": [
     {
       "id": "wl-001",
-      "portfolio_id": "port-001",
       "ticker": "NVDA",
       "market": "US",
+      "company_name": "NVIDIA Corporation",
       "target_entry_price": 450.0,
       "initial_stop_price": 420.0,
       "current_stop_price": 435.0,
       "signal_status": "active",
-      "created_at": "2026-06-01T10:00:00Z"
+      "tags": ["momentum"],
+      "created_at": "2026-06-01T10:00:00Z",
+      "updated_at": "2026-06-15T08:30:00Z",
+      "added_at": "2026-06-01T10:00:00Z",
+      "days_on_watchlist": 67,
+      "is_stale": true
     }
   ]
 }
@@ -334,6 +339,7 @@ Update price fields on an existing watchlist entry, or reset its staleness clock
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3 | 2026-08-07 | ST-06 (BLG-SPEC-115, EPIC-02, v8.4): `GET /watchlist` illustrative JSON example was stale relative to the field table (already correct as of v1.2) — example was missing `company_name`, `tags`, `updated_at`, `added_at`, `days_on_watchlist`, `is_stale`, and incorrectly included `portfolio_id`, which is not actually returned by `_row_to_dict()`. Example corrected to match the live response shape; field table and version history left unchanged (already correct per the 2026-08-06 correction note on this item). |
 | 1.2 | 2026-07-27 | ST-01 (BLG-FEAT-66, EPIC-01, v7.9): `GET /watchlist` response gains `added_at` (API-level alias for `created_at`), `days_on_watchlist`, `is_stale`. `PATCH /watchlist/{entry_id}` request body gains `added_at` (reset trigger, not a client-supplied timestamp — server-authoritative CURRENT_TIMESTAMP write) for the "Keep" staleness-review action. No `data_model.md` change — no new column, per ux_spec.md's "no backend schema change required" premise, held by exposing the existing `created_at` column under the spec's field name at the serialisation boundary. |
 | 1.1 | 2026-07-17 | ST-03 (BLG-FE-117, EPIC-03, v7.5): Added `## GET /watchlist/tags`, `## POST /watchlist/bulk-tag`, `## DELETE /watchlist/bulk`. New `tags` column on `watchlist` (data_model.md v2.12→v2.13), populated only via bulk-tag. `GET /watchlist` response schema updated with `data[].tags`. Router ordering note: bulk routes declared before `PATCH/DELETE /watchlist/{entry_id}` to avoid wildcard capture. |
 | 1.0 | 2026-06-09 | v5.3 ST-07 (BLG-SPEC-52, EPIC-01): Initial contract for GET /watchlist, POST /watchlist, DELETE /watchlist/{entry_id}, PATCH /watchlist/{entry_id}. Endpoints shipped in prior cycle; contract gap resolved. test.py entries added for GET, POST, DELETE. API Contracts & Documentation Owner and Head of Specs Team sign-off. |
