@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.13
-**Last Updated:** 2026-08-04
+**Version:** 0.14
+**Last Updated:** 2026-08-07 — v8.4 design gate: Avg P&L/Trade column added to Monthly Financial Table (ST-01); prior — 2026-08-04 (v8.2 §Reconciliation Report added, ST-01); prior — 2026-08-03 (v8.1 SI-02 Gate Status thresholds documented, ST-14); prior history retained — see prior entries in version control
 **Design Source (v0.11 monthly CSV export):** docs/design/2026-07-24__release-v7.8/monthly-csv-export/ux_spec.md
 **Design Source (v0.7 CSV export + monthly realised/unrealised split):** docs/design/2026-07-12__release-v7.0/tax-year-csv-export/ux_spec.md, docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md
 **Design Source (v0.6 SI-02 gate status):** docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md
@@ -271,6 +271,8 @@ Covers the Monthly P&L view (`GET /reports/monthly-pnl`). This view renders a mo
 
 > **Note:** The monthly financial table (year, month, realised_pnl_gbp, trade_count columns) is the core existing view. This section specifies the **Strategy Compliance** section added by ST-18 (v4.3).
 
+**Design source (Avg P&L/Trade column, v0.14):** `docs/design/2026-08-07__release-v8.4/avg-pnl-per-trade-column/decision_record.md`
+
 ---
 
 ### Monthly Financial Table
@@ -283,6 +285,7 @@ One row per calendar month (descending order). Sourced from `GET /reports/monthl
 | Month | `month` | 1=January … 12=December; display as full month name |
 | Realised P&L | `realised_pnl_gbp` | GBP. Colour-coded: green if positive, red if negative or zero |
 | Trades | `trade_count` | Integer count of closed trades |
+| Avg P&L/Trade | *derived* (v0.14 — ST-01, BLG-FE-141) | `realised_pnl_gbp / trade_count`, GBP, 2dp. Same colour rule as Realised P&L (green if positive, red if negative or zero). `trade_count = 0`: display **"—"** (no colour), not `£0.00` — avoids implying a computed zero average. Client-side display arithmetic on already-fetched row values, not a P&L recalculation — same basis as the Combined Total Line below. |
 
 Empty state (no closed trades in scope): "No monthly P&L data available yet."
 
@@ -301,7 +304,7 @@ A **"Download CSV"** button, right-aligned above the Monthly Financial Table —
 | Success | Returns to Idle | Browser file download begins; no success toast required |
 | Error | Returns to Idle | Toast notification: `"CSV generation failed. Please try again."` (auto-dismiss 5s) |
 
-Exports exactly the rows rendered in the Monthly Financial Table above (`Year`, `Month`, `Realised P&L (GBP)`, `Trades`) for whatever range is already loaded — no separate date-range picker, no client-side recalculation. Valid for empty ranges; button always enabled once the section loads.
+Exports exactly the rows rendered in the Monthly Financial Table above (`Year`, `Month`, `Realised P&L (GBP)`, `Trades`) for whatever range is already loaded — no separate date-range picker, no client-side recalculation. Valid for empty ranges; button always enabled once the section loads. **Does not include Avg P&L/Trade (v0.14)** — that column is a display-only derived figure, not part of the exported column set; unaffected by its addition to the on-screen table.
 
 **Reconciliation rule:** for any calendar year present in both exports, the sum of that year's rows in this CSV must equal the realised P&L total in the Tax Year tab's CSV for the same year — both derive from the same `trade_history.pnl` ledger, grouped differently (month vs. UK tax year). Verified at QA sign-off, not a UI-visible feature.
 
@@ -431,6 +434,7 @@ A new **"Reconciliation"** tab (4th tab in the page's tab navigation, alongside 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.14 | 2026-08-07 | v8.4 design gate — ST-01 (EPIC-01, BLG-FE-141): Avg P&L/Trade column added to the Monthly Financial Table — client-side derived (`realised_pnl_gbp / trade_count`), same colour rule as Realised P&L, zero-trade months show "—" rather than a fabricated `£0.00`. Explicitly excluded from the Monthly CSV export's column set (display-only figure). Design source: `docs/design/2026-08-07__release-v8.4/avg-pnl-per-trade-column/decision_record.md`. Head of UX & Design sign-off: 2026-08-07. Product Owner approved: 2026-08-07. Head of Specs Team confirmed. |
 | 0.13 | 2026-08-04 | v8.2 design gate — ST-01 (EPIC-01, BLG-FEAT-88): §Reconciliation Report added — new "Reconciliation" tab comparing the system-computed realised P&L total against an independently re-derived sum of the individual trade export, for a selected year, with a match/discrepancy badge (reuses SI-02 Gate Status's MET/NOT MET badge style verbatim). New endpoint `GET /reports/reconciliation?year=YYYY` contract specified (shape only — implementation, `reports_endpoints.md` entry, and `openapi.yaml` entry are sprint-execution scope, same-commit per CLAUDE.md §2). Design source: `docs/design/2026-08-04__release-v8.2/pnl-reconciliation-report/decision_record.md`. Head of UX & Design sign-off: 2026-08-04. Financial Reporting & Records Owner scope confirmation: 2026-08-04. Product Owner approved: 2026-08-04. Head of Specs Team confirmed. |
 | 0.12 | 2026-08-03 | ST-14 (EPIC-05, v8.1, BLG-SPEC-72): §SI-02 Gate Status Condition 2 and Condition 3 thresholds product-reviewed and formally documented, closing the `Specs_Index.md`-tracked "engine-filled gap" (never previously product-reviewed). Condition 2 confirmed at the existing `linked closed trades >= 20` (consistent with Condition 1's own 20-trade bar and the separate `BLG-GOV-107` backend gate). Condition 3 changed from the placeholder `trade_plan_adherence_rate > 0` to `>= 0.50` — a majority-discipline bar; no prior threshold existed for this metric anywhere in the spec. `src/pages/Reports.js`'s `SI02GateStatusSection` updated to match, with new Playwright coverage for the changed threshold. Product Owner decision (agent-mediated, §5.3, explicit user direction). |
 | 0.11 | 2026-07-24 | v7.8 design gate — ST-05 (EPIC-05, BLG-FEAT-81): Monthly CSV Export added to the Monthly P&L Report view — "Download CSV" button reusing the Tax Year tab's export pattern verbatim (idle/generating/success/error states), new `GET /reports/monthly-pnl?format=csv` endpoint, reconciliation rule against the Tax Year CSV documented. Scope excludes Unrealised P&L Card and Strategy Compliance Section figures (matches Tax Year export's scope). Design source: `docs/design/2026-07-24__release-v7.8/monthly-csv-export/ux_spec.md`. Head of UX & Design sign-off: 2026-07-24. Product Owner approved: 2026-07-24. Head of Specs Team confirmed. |
