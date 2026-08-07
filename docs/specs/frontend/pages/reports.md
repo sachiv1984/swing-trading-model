@@ -3,8 +3,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 0.14
-**Last Updated:** 2026-08-07 — v8.4 design gate: Avg P&L/Trade column added to Monthly Financial Table (ST-01); prior — 2026-08-04 (v8.2 §Reconciliation Report added, ST-01); prior — 2026-08-03 (v8.1 SI-02 Gate Status thresholds documented, ST-14); prior history retained — see prior entries in version control
+**Version:** 0.15
+**Last Updated:** 2026-08-07 — sprint execution: Monthly Financial Table's zero-P&L colour rule corrected to match live behaviour (grey/neutral, not red), cross-table inconsistency vs. Tax Year Trades Table flagged as DEV-REPORTS-ST01-02/BLG-FE-144 (ST-01); prior — 2026-08-07 (v8.4 design gate: Avg P&L/Trade column added to Monthly Financial Table, ST-01); prior — 2026-08-04 (v8.2 §Reconciliation Report added, ST-01); prior history retained — see prior entries in version control
 **Design Source (v0.11 monthly CSV export):** docs/design/2026-07-24__release-v7.8/monthly-csv-export/ux_spec.md
 **Design Source (v0.7 CSV export + monthly realised/unrealised split):** docs/design/2026-07-12__release-v7.0/tax-year-csv-export/ux_spec.md, docs/design/2026-07-12__release-v7.0/realized-unrealized-split/ux_spec.md
 **Design Source (v0.6 SI-02 gate status):** docs/design/2026-07-08__release-v6.8/si02-gate-visibility-indicator/ux_spec.md
@@ -283,9 +283,9 @@ One row per calendar month (descending order). Sourced from `GET /reports/monthl
 |--------|-------|-------|
 | Year | `year` | Calendar year |
 | Month | `month` | 1=January … 12=December; display as full month name |
-| Realised P&L | `realised_pnl_gbp` | GBP. Colour-coded: green if positive, red if negative or zero |
+| Realised P&L | `realised_pnl_gbp` | GBP. Colour-coded: green if positive, red if negative, grey/neutral if exactly zero *(corrected v0.15 — see Known Deviations; this table's own colour rule differs from the Tax Year Trades Table's, which is red-for-zero — a pre-existing cross-table inconsistency, tracked separately, not resolved here)* |
 | Trades | `trade_count` | Integer count of closed trades |
-| Avg P&L/Trade | *derived* (v0.14 — ST-01, BLG-FE-141) | `realised_pnl_gbp / trade_count`, GBP, 2dp. Same colour rule as Realised P&L (green if positive, red if negative or zero). `trade_count = 0`: display **"—"** (no colour), not `£0.00` — avoids implying a computed zero average. Client-side display arithmetic on already-fetched row values, not a P&L recalculation — same basis as the Combined Total Line below. |
+| Avg P&L/Trade | *derived* (v0.14 — ST-01, BLG-FE-141) | `realised_pnl_gbp / trade_count`, GBP, 2dp. Same colour rule as this table's Realised P&L column (green if positive, red if negative, grey/neutral if exactly zero — breakeven is not a loss). `trade_count = 0`: display **"—"** (no colour), not `£0.00` — avoids implying a computed zero average. Client-side display arithmetic on already-fetched row values, not a P&L recalculation — same basis as the Combined Total Line below. |
 
 Empty state (no closed trades in scope): "No monthly P&L data available yet."
 
@@ -428,12 +428,22 @@ A new **"Reconciliation"** tab (4th tab in the page's tab navigation, alongside 
 - **Owner:** Frontend Specifications & UX Documentation Owner
 - **Backlog reference:** BLG-SPEC-87 (filed sprint execution 2026-07-14, cycle 2026-07-14__release-v7.1, ST-06) — candidate fix directions: (a) switch `get_estimated_unrealised_pnl()` to live-compute via `get_positions_with_prices()` instead of the raw nightly-snapshot read, or (b) keep the snapshot for performance/cost reasons but add an explicit "as of last nightly update" caveat to `unrealised_note`. Not decided here — ST-06's scope is documentation/verification, not a fix.
 
+### DEV-REPORTS-ST01-02 — Monthly Financial Table's zero-P&L colour rule differs from the Tax Year Trades Table's
+
+- **Description:** Both tables display `realised_pnl_gbp` and both were documented with identical wording ("green if positive, red if negative or zero"), but the two live components actually disagree at the exact-zero case: the Tax Year tab's Trades Table (`TaxYearReport`, `src/pages/Reports.js`) renders exact-zero as **red** (binary `pnl > 0 ? emerald : rose`, no neutral branch); the Monthly P&L Report's table (`MonthlyPnlTable`) renders exact-zero as **grey/neutral** (three-way ternary with a dedicated zero case). Discovered during ST-01's Avg P&L/Trade column work (2026-08-07) when the new column's colour rule was checked against its cited spec text and found to match the Monthly table's actual code, not the words on this page — which had been silently describing the Tax Year table's behaviour for both all along. This document's Monthly Financial Table rows are corrected (v0.15) to describe the Monthly table's real, grey-for-zero behaviour; the Tax Year Trades Table's row is unchanged (it was already accurate). The cross-table inconsistency itself — should both tables converge on one zero-handling convention? — is not resolved here.
+- **Canonical requirement:** Prior to v0.15, this page stated one colour rule for both tables; the Monthly table never actually implemented it for the exact-zero case.
+- **Priority:** P3 (colour-only, no figure is wrong or missing; exact-zero months/trades are visually rare and the underlying number is always correct regardless of colour)
+- **Target resolution release:** TBD — not yet scheduled
+- **Owner:** Frontend Specifications & UX Documentation Owner
+- **Backlog reference:** BLG-FE-144 (filed sprint execution 2026-08-07, cycle 2026-08-07__release-v8.4, ST-01) — decide whether both tables should converge on grey-for-zero (arguably better UX: breakeven is not a loss) or red-for-zero (current Tax Year table, matches the pre-v0.15 spec text), then align whichever component doesn't already match.
+
 ---
 
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.15 | 2026-08-07 | Sprint execution — ST-01 (EPIC-01, BLG-FE-141) follow-up correction, agent-mediated on behalf of Frontend Specifications & UX Documentation Owner (Product Owner directed): Monthly Financial Table's Realised P&L and Avg P&L/Trade rows corrected from "red if negative or zero" to "red if negative, grey/neutral if exactly zero" — the prior wording never matched `MonthlyPnlTable`'s actual code (only the separate Tax Year Trades Table implements literal red-for-zero). Filed as `DEV-REPORTS-ST01-02`/`BLG-FE-144` rather than silently rewritten, since the two tables' now-documented behaviours still disagree with each other — that convergence decision is not made here. |
 | 0.14 | 2026-08-07 | v8.4 design gate — ST-01 (EPIC-01, BLG-FE-141): Avg P&L/Trade column added to the Monthly Financial Table — client-side derived (`realised_pnl_gbp / trade_count`), same colour rule as Realised P&L, zero-trade months show "—" rather than a fabricated `£0.00`. Explicitly excluded from the Monthly CSV export's column set (display-only figure). Design source: `docs/design/2026-08-07__release-v8.4/avg-pnl-per-trade-column/decision_record.md`. Head of UX & Design sign-off: 2026-08-07. Product Owner approved: 2026-08-07. Head of Specs Team confirmed. |
 | 0.13 | 2026-08-04 | v8.2 design gate — ST-01 (EPIC-01, BLG-FEAT-88): §Reconciliation Report added — new "Reconciliation" tab comparing the system-computed realised P&L total against an independently re-derived sum of the individual trade export, for a selected year, with a match/discrepancy badge (reuses SI-02 Gate Status's MET/NOT MET badge style verbatim). New endpoint `GET /reports/reconciliation?year=YYYY` contract specified (shape only — implementation, `reports_endpoints.md` entry, and `openapi.yaml` entry are sprint-execution scope, same-commit per CLAUDE.md §2). Design source: `docs/design/2026-08-04__release-v8.2/pnl-reconciliation-report/decision_record.md`. Head of UX & Design sign-off: 2026-08-04. Financial Reporting & Records Owner scope confirmation: 2026-08-04. Product Owner approved: 2026-08-04. Head of Specs Team confirmed. |
 | 0.12 | 2026-08-03 | ST-14 (EPIC-05, v8.1, BLG-SPEC-72): §SI-02 Gate Status Condition 2 and Condition 3 thresholds product-reviewed and formally documented, closing the `Specs_Index.md`-tracked "engine-filled gap" (never previously product-reviewed). Condition 2 confirmed at the existing `linked closed trades >= 20` (consistent with Condition 1's own 20-trade bar and the separate `BLG-GOV-107` backend gate). Condition 3 changed from the placeholder `trade_plan_adherence_rate > 0` to `>= 0.50` — a majority-discipline bar; no prior threshold existed for this metric anywhere in the spec. `src/pages/Reports.js`'s `SI02GateStatusSection` updated to match, with new Playwright coverage for the changed threshold. Product Owner decision (agent-mediated, §5.3, explicit user direction). |

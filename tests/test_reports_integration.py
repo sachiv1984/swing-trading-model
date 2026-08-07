@@ -51,6 +51,7 @@ def _trade(**overrides):
         "entry_note": None,
         "exit_note": None,
         "tags": [],
+        "trade_origin": "Manual",
     }
     base.update(overrides)
     return base
@@ -76,6 +77,7 @@ def _us_trade(**overrides):
         "entry_note": None,
         "exit_note": None,
         "tags": ["momentum"],
+        "trade_origin": "Manual",
     }
     base.update(overrides)
     return base
@@ -238,7 +240,7 @@ class TestTaxYearTradeFields(unittest.TestCase):
                       "holding_days", "entry_price_native", "exit_price_native",
                       "entry_fx_rate", "exit_fx_rate", "shares",
                       "total_cost_gbp", "exit_proceeds_gbp", "realised_pnl_gbp",
-                      "pnl_pct", "currency", "tags"):
+                      "pnl_pct", "currency", "tags", "trade_origin"):
             self.assertIn(field, record, f"Missing trade field: {field}")
 
     def test_uk_trade_currency_gbp(self):
@@ -273,6 +275,26 @@ class TestTaxYearTradeFields(unittest.TestCase):
     def test_tags_passed_through(self):
         record = self._trade_record({"tags": ["momentum", "tech"]})
         self.assertEqual(record["tags"], ["momentum", "tech"])
+
+    def test_trade_origin_signal_when_linked_plan_has_signal_id(self):
+        record = self._trade_record({"trade_origin": "Signal"})
+        self.assertEqual(record["trade_origin"], "Signal")
+
+    def test_trade_origin_manual_when_no_linked_signal(self):
+        record = self._trade_record({"trade_origin": "Manual"})
+        self.assertEqual(record["trade_origin"], "Manual")
+
+    def test_trade_origin_defaults_to_manual_when_db_layer_omits_key(self):
+        # Defensive default (service layer) — the live DB query's CASE always
+        # returns 'Signal'/'Manual', but a mock/legacy caller might omit the
+        # key entirely.
+        t = _trade()
+        del t["trade_origin"]
+        with patch(PATCH_GET_PORTFOLIO, return_value=MOCK_PORTFOLIO), \
+             patch(PATCH_GET_POSITIONS, return_value=[]), \
+             patch(PATCH_GET_TAX_TRADES, return_value=[t]):
+            record = CLIENT.get("/reports/tax-year?year=2025").json()["data"]["trades"][0]
+        self.assertEqual(record["trade_origin"], "Manual")
 
 
 # ---------------------------------------------------------------------------
@@ -381,13 +403,14 @@ class TestTaxYearCsvExport(unittest.TestCase):
         self.assertEqual(rows[4], "Win Rate (%),100.0")
         self.assertEqual(rows[5], "")  # blank separator row
 
-    def test_ac05_header_row_has_17_columns(self):
+    def test_ac05_header_row_has_18_columns(self):
         resp = self._call(trades=[_trade()])
         header_row = resp.text.splitlines()[6]
         columns = header_row.split(",")
-        self.assertEqual(len(columns), 17)
+        self.assertEqual(len(columns), 18)
         self.assertEqual(columns[0], "Trade ID")
         self.assertEqual(columns[13], "Realised P&L (GBP)")
+        self.assertEqual(columns[17], "Trade Origin")
 
     def test_ac05_uk_trade_data_row_values(self):
         resp = self._call(trades=[_trade(id="trade-uk-1")])
@@ -412,6 +435,16 @@ class TestTaxYearCsvExport(unittest.TestCase):
         data_row = resp.text.splitlines()[7]
         self.assertIn("momentum; breakout", data_row)
 
+    def test_trade_origin_signal_in_csv_row(self):
+        resp = self._call(trades=[_us_trade(trade_origin="Signal")])
+        data_row = resp.text.splitlines()[7]
+        self.assertTrue(data_row.endswith(",Signal"))
+
+    def test_trade_origin_manual_in_csv_row(self):
+        resp = self._call(trades=[_trade(trade_origin="Manual")])
+        data_row = resp.text.splitlines()[7]
+        self.assertTrue(data_row.endswith(",Manual"))
+
     def test_ac05_empty_tax_year_still_has_valid_structure(self):
         """Empty year (zero closed trades) — CSV structure must remain valid
         (metadata block + header row), not just an empty/error body."""
@@ -421,7 +454,7 @@ class TestTaxYearCsvExport(unittest.TestCase):
         self.assertEqual(rows[2], "Total Realised P&L (GBP),0")
         self.assertEqual(rows[3], "Total Closed Trades,0")
         # Header row still present even with zero trade rows following it
-        self.assertEqual(len(rows[6].split(",")), 17)
+        self.assertEqual(len(rows[6].split(",")), 18)
         self.assertEqual(len(rows), 7)  # metadata(5) + blank(1) + header(1), no trade rows
 
     def test_ac02_csv_format_returns_401_without_api_key_when_configured(self):

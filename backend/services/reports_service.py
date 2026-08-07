@@ -210,6 +210,10 @@ def get_tax_year_report(year: int) -> Dict:
             "pnl_pct": pnl_pct,
             "currency": "USD" if market == "US" else "GBP",
             "tags": t.get('tags') or [],
+            # ST-31 (BLG-FEAT-78, EPIC-01, v8.4): "Signal" or "Manual" — see
+            # get_trade_history_by_tax_year()'s docstring for derivation.
+            # Defaults to "Manual" if the DB layer/mock omits the key.
+            "trade_origin": t.get('trade_origin') or "Manual",
         })
 
     # --- Summary ---
@@ -572,6 +576,11 @@ def build_tax_year_csv(report_data: dict) -> str:
         "Entry FX Rate (GBP/USD)", "Exit FX Rate (GBP/USD)", "Shares",
         "Total Cost (GBP)", "Exit Proceeds (GBP)", "Realised P&L (GBP)",
         "P&L %", "Currency", "Tags",
+        # ST-31 (BLG-FEAT-78, EPIC-01, v8.4): additive column, appended at the
+        # end per reports_endpoints.md's own versioning note — the CSV column
+        # set may be extended without a breaking-change bump (analytics/
+        # convenience export, not a stored contract).
+        "Trade Origin",
     ]
     writer.writerow(headers)
 
@@ -595,6 +604,7 @@ def build_tax_year_csv(report_data: dict) -> str:
             t["pnl_pct"],
             t["currency"],
             tags,
+            t.get("trade_origin") or "Manual",
         ])
 
     return output.getvalue()
