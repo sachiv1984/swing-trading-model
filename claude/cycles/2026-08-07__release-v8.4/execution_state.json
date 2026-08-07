@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-07T16:03:30Z",
+  "last_updated_utc": "2026-08-07T16:10:55Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -842,7 +842,9 @@
     "ST-08",
     "ST-09"
   ],
-  "open_escalations": [],
+  "open_escalations": [
+    "ESC-EXEC-20260807-01"
+  ],
   "process_notes": [],
   "merge_gate": {
     "epics_merged": [
