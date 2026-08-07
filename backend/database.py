@@ -1131,6 +1131,7 @@ def ensure_trade_plans_table():
         conn.commit()
     ensure_regime_context_text_column()
     ensure_trade_plan_tags_column()
+    ensure_thesis_provenance_columns()
 
 
 def create_trade_plan(portfolio_id: str, data: dict) -> dict:
@@ -1146,8 +1147,8 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                     planned_quantity, planned_entry_price, planned_stop_price,
                     signal_id, risk_percent_used, portfolio_value_at_entry,
                     pre_entry_validation_snapshot, effective_settings_snapshot, trade_tags,
-                    strategy_version_at_entry)
-                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s,%s)
+                    strategy_version_at_entry, thesis_model_version, thesis_prompt_version)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s,%s,%s,%s)
                    RETURNING *""",
                 (
                     portfolio_id,
@@ -1176,6 +1177,11 @@ def create_trade_plan(portfolio_id: str, data: dict) -> dict:
                     _json(data["effective_settings_snapshot"]) if data.get("effective_settings_snapshot") is not None else None,
                     data.get("trade_tags") or [],
                     data.get("strategy_version_at_entry"),
+                    # ST-12 (BLG-BE-70, EPIC-03, v8.4): frontend-passed, nullable -- present only
+                    # when setup_thesis/entry_rationale etc. were populated from the
+                    # generate-plan/generate-thesis AI response and saved as-is (not user-edited).
+                    data.get("thesis_model_version"),
+                    data.get("thesis_prompt_version"),
                 ),
             )
             row = cur.fetchone()
@@ -1239,7 +1245,7 @@ def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict
         "checklist_completed", "checklist_items", "status", "abandonment_reason",
         "pre_entry_override_acknowledged", "thesis_feedback",
         "planned_quantity", "planned_entry_price", "planned_stop_price",
-        "trade_tags",
+        "trade_tags", "thesis_model_version", "thesis_prompt_version",
     }
     fields = {k: v for k, v in data.items() if k in allowed}
     if not fields:
@@ -1560,6 +1566,28 @@ def ensure_regime_context_text_column():
         with conn.cursor() as cur:
             cur.execute(
                 "ALTER TABLE trade_plans ALTER COLUMN regime_context_at_entry TYPE TEXT"
+            )
+        conn.commit()
+
+
+def ensure_thesis_provenance_columns():
+    """Add thesis_model_version/thesis_prompt_version to trade_plans (idempotent).
+
+    ST-12 (BLG-BE-70, EPIC-03, v8.4) -- AI Compliance & Governance Officer
+    finding: gemini_service.generate_full_plan()/generate_setup_thesis()
+    already return model_version/prompt_version to the caller and log them
+    to gemini_audit_log keyed by plan_id, but the *stored* trade_plans row
+    itself carried no provenance -- retroactive audit required a fragile
+    join via plan_id (often null at generate-plan time, before a plan
+    exists). Nullable, no backfill -- existing rows unaffected.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS thesis_model_version VARCHAR(50)"
+            )
+            cur.execute(
+                "ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS thesis_prompt_version VARCHAR(20)"
             )
         conn.commit()
 

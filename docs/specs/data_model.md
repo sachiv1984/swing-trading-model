@@ -3,7 +3,7 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.21
+**Version:** 2.22
 **Last Updated:** 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1656,6 +1656,41 @@ COMMIT;
 
 ---
 
-**Document Version:** 2.21
+### Migration from v2.21 to v2.22
+
+ST-12 (BLG-BE-70, EPIC-03, v8.4) — AI compliance/audit provenance. `gemini_service.py`'s `generate_full_plan()`/`generate_setup_thesis()` already return `model_version`/`prompt_version` to the caller and log them to `gemini_audit_log` keyed by `plan_id`, but the *stored* `trade_plans` row itself carried no provenance field — retroactive audit required a fragile join via `plan_id` (often null at generate-plan time, before a plan exists). Adds two nullable columns, populated only when the frontend saves narrative fields (`setup_thesis`, `entry_rationale`, etc.) as-received from a generate-plan/generate-thesis response, without user edits.
+
+```sql
+BEGIN;
+ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS thesis_model_version VARCHAR(50);
+ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS thesis_prompt_version VARCHAR(20);
+COMMIT;
+```
+
+### Down Migration (v2.22 → v2.21)
+
+```sql
+BEGIN;
+ALTER TABLE trade_plans DROP COLUMN IF EXISTS thesis_model_version;
+ALTER TABLE trade_plans DROP COLUMN IF EXISTS thesis_prompt_version;
+COMMIT;
+```
+
+### Field Reference
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|--------------|
+| `thesis_model_version` | VARCHAR(50) | YES | AI model identifier (e.g. `"claude-haiku-4-5"`) that produced this plan's narrative fields, if saved as-received from a generate-plan/generate-thesis response. Null when written/edited manually. Forward-only — no backfill. |
+| `thesis_prompt_version` | VARCHAR(20) | YES | Companion prompt-template version (e.g. `"v3.0"`), saved the same way. |
+
+**Population points:** `backend/routers/trade_plans.py`'s `TradePlanCreate`/`TradePlanUpdate` request models (frontend-passed, persisted without validation — same pattern as `signal_id`/`risk_percent_used`, SI-02 DS-07). Backend does not itself infer AI-origin; the frontend is expected to populate these two fields from the generate-plan/generate-thesis response's own `model_version`/`prompt_version` fields when saving unedited AI output. **Known residual gap:** this cycle (v8.4) delivers the backend storage capability only — actual end-to-end population depends on a frontend change (out of this backend-only story's scope) to pass these values through on save; filed as a follow-up backlog item (see `qa_evidence_EPIC-03.md`).
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-08-07 (agent-mediated; two nullable columns, no existing schema touched, no backfill attempted — forward-only by design)
+- AI Compliance & Governance Officer: Accepted — 2026-08-07 (agent-mediated; closes the BLG-BE-70 retroactive-audit gap for newly-created records once frontend wiring lands; backend capability alone does not yet populate the field end-to-end — tracked as a residual gap, not silently treated as complete)
+
+---
+
+**Document Version:** 2.22
 **Maintained By:** Data Model & Domain Schema Owner
 **Last Review:** 2026-08-07
