@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-07T15:58:01Z",
+  "last_updated_utc": "2026-08-07T20:37:10Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -312,8 +312,8 @@
     "EPIC-03": {
       "status": "done",
       "branch": "exec/2026-08-07__release-v8.4/EPIC-03",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1295,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-07__release-v8.4/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -886,7 +886,9 @@
     "ST-13",
     "ST-14"
   ],
-  "open_escalations": [],
+  "open_escalations": [
+    "ESC-EXEC-20260807-01"
+  ],
   "process_notes": [
     "EPIC-03/ST-10: data_model.md v2.21 version collision with EPIC-02's own v2.21 bump (ST-08/ST-09) -- RESOLVED at post-EPIC-02-merge rebase (2026-08-07) per CLAUDE.md \u00a78 step 2a: ST-10/ST-12/ST-13 migration blocks renumbered v2.21->v2.22, v2.22->v2.23, v2.23->v2.24; final data_model.md version 2.24."
   ],
