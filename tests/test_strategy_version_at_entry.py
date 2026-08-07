@@ -60,6 +60,18 @@ def _mock_conn(returned_row):
     return mock_conn, mock_cursor
 
 
+def _column_index(sql, column):
+    """Locate `column`'s positional index in an `INSERT INTO t (a, b, c) VALUES (...)`
+    statement, so tests assert against the actual param bound to that column rather
+    than an assumed fixed position (e.g. "last") -- a fragile assumption once later
+    stories legitimately append further columns after this one (ST-12, EPIC-03, v8.4:
+    thesis_model_version/thesis_prompt_version added after strategy_version_at_entry
+    on trade_plans, which broke a prior `params[-1]`-based version of this test)."""
+    columns_block = sql.split("(", 1)[1].split(")", 1)[0]
+    columns = [c.strip() for c in columns_block.split(",")]
+    return columns.index(column)
+
+
 def test_create_trade_plan_passes_strategy_version_at_entry_to_insert():
     mock_conn, mock_cursor = _mock_conn({"id": "plan-1", "strategy_version_at_entry": "1.4"})
     data = {
@@ -73,7 +85,7 @@ def test_create_trade_plan_passes_strategy_version_at_entry_to_insert():
     args, _ = mock_cursor.execute.call_args
     sql, params = args
     assert "strategy_version_at_entry" in sql
-    assert params[-1] == "1.4"
+    assert params[_column_index(sql, "strategy_version_at_entry")] == "1.4"
 
 
 def test_create_trade_plan_defaults_to_none_when_absent():
@@ -83,8 +95,8 @@ def test_create_trade_plan_defaults_to_none_when_absent():
         database.create_trade_plan("portfolio-1", data)
 
     args, _ = mock_cursor.execute.call_args
-    _, params = args
-    assert params[-1] is None
+    sql, params = args
+    assert params[_column_index(sql, "strategy_version_at_entry")] is None
 
 
 def test_create_position_passes_strategy_version_at_entry_to_insert():
