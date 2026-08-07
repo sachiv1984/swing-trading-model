@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 0.11
-**Last Updated:** 2026-08-04
+**Version:** 0.12
+**Last Updated:** 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -109,7 +109,8 @@ Response uses the standard success envelope from **conventions.md**.
       "realised_pnl_gbp": 655.35,
       "pnl_pct": 12.69,
       "currency": "USD",
-      "tags": ["momentum", "tech"]
+      "tags": ["momentum", "tech"],
+      "trade_origin": "Manual"
     }
   ]
 }
@@ -159,6 +160,7 @@ Response uses the standard success envelope from **conventions.md**.
 | `pnl_pct` | float | No | `realised_pnl_gbp / total_cost_gbp × 100` |
 | `currency` | string | No | Native currency of the stock (`"GBP"` or `"USD"`) |
 | `tags` | array of string | No | Trade tags. Empty array if none. |
+| `trade_origin` | string | No | *(v0.12 — ST-31, BLG-FEAT-78)* `"Signal"` if the trade's linked trade plan (if any) has a non-null `signal_id` (momentum screener signal, see `data_model.md §Signals Table`), else `"Manual"`. **Not** a price-alert indicator — `price_alerts` (`BLG-FE-116`) has no schema linkage to any trade and cannot currently be distinguished this way; see `ESC-EXEC-20260807-01` (resolved) for the scoping decision. |
 
 ---
 
@@ -178,7 +180,7 @@ When `format=pdf` is supplied, the endpoint returns a PDF document instead of th
 - Report title: `"Tax Year P&L — {tax_year_label}"`
 - Generation timestamp (UTC)
 - Summary bar: `total_realised_pnl`, `total_gross_profit`, `total_gross_loss`, `win_rate`, `total_closed_trades`
-- Trades table: all columns from `trades[]` array (ticker, market, dates, prices, FX rates, shares, cost/proceeds/P&L in GBP, currency, tags)
+- Trades table: all columns from `trades[]` array (ticker, market, dates, prices, FX rates, shares, cost/proceeds/P&L in GBP, currency, tags). **Excludes `trade_origin`** (v0.12 — ST-31) — the PDF table's column set is a fixed, hand-maintained list in `build_tax_year_pdf()`, not a dynamic render of every `trades[]` field; adding `trade_origin` to the PDF is out of ST-31's scope (CSV only per its acceptance criteria).
 - Disclaimer text verbatim (see Overview section)
 - Empty year is valid — PDF renders with summary zeros and no trade rows
 
@@ -240,10 +242,11 @@ Row 6 is blank. Row 7 is the column header row. Rows 8+ are trade data rows.
 | `P&L %` | `pnl_pct` | |
 | `Currency` | `currency` | `GBP` or `USD` |
 | `Tags` | `tags` | semicolon-separated if multiple; empty if none |
+| `Trade Origin` | `trade_origin` | *(v0.12 — ST-31)* `Signal` or `Manual` — see `trades[]` field definition above |
 
 **Rules:**
 - Column order is fixed as listed above.
-- All 17 columns always present regardless of market.
+- All 18 columns always present regardless of market.
 - Null / empty values render as empty string (no quotes, no `null` text).
 - Numeric values are unquoted. String values containing commas are quoted.
 - Tags with multiple values are joined with `; ` (semicolon + space): e.g. `momentum; tech`.
@@ -259,9 +262,9 @@ Total Realised P&L (GBP),3240.50
 Total Closed Trades,2
 Win Rate (%),100.0
 
-Trade ID,Ticker,Market,Entry Date,Exit Date,Holding Days,Entry Price (Native),Exit Price (Native),Entry FX Rate (GBP/USD),Exit FX Rate (GBP/USD),Shares,Total Cost (GBP),Exit Proceeds (GBP),Realised P&L (GBP),P&L %,Currency,Tags
-750e8400-e29b-41d4-a716-446655440000,NVDA,US,2025-05-12,2025-08-03,83,622.00,710.50,1.2650,1.2830,10.5,5162.45,5817.80,655.35,12.69,USD,momentum
-880e8400-e29b-41d4-a716-446655440001,FRES.L,UK,2025-06-01,2025-09-15,106,8.20,9.45,,,,1025.00,1178.75,153.75,15.00,GBP,
+Trade ID,Ticker,Market,Entry Date,Exit Date,Holding Days,Entry Price (Native),Exit Price (Native),Entry FX Rate (GBP/USD),Exit FX Rate (GBP/USD),Shares,Total Cost (GBP),Exit Proceeds (GBP),Realised P&L (GBP),P&L %,Currency,Tags,Trade Origin
+750e8400-e29b-41d4-a716-446655440000,NVDA,US,2025-05-12,2025-08-03,83,622.00,710.50,1.2650,1.2830,10.5,5162.45,5817.80,655.35,12.69,USD,momentum,Signal
+880e8400-e29b-41d4-a716-446655440001,FRES.L,UK,2025-06-01,2025-09-15,106,8.20,9.45,,,,1025.00,1178.75,153.75,15.00,GBP,,Manual
 ```
 
 ---
@@ -667,10 +670,17 @@ GET /reports/reconciliation?year=2025
 
 ---
 
+## Known Deviations
+
+**`trade_origin` scope (ST-31, BLG-FEAT-78, EPIC-01, v8.4, resolved via `ESC-EXEC-20260807-01`):** The originating backlog item described this field as a "trigger-source" column distinguishing alert-triggered trades from manual ones, gated on `BLG-FE-116` (custom price alerts) shipping. On implementation, no schema linkage was found between `price_alerts` and any trade/position/trade_plan row — firing a price alert only writes a notification, it never tags the resulting trade. That distinction therefore cannot be derived from any existing data. With Product Owner approval, the field was reinterpreted to use the one trigger-shaped field that does exist end-to-end — `trade_plans.signal_id` (the momentum-screener `signals` system, unrelated to price alerts) — and labeled accordingly (`"Signal"` / `"Manual"`), rather than shipping a column whose name would misrepresent what the data actually shows. If genuine price-alert-to-trade provenance is wanted in future, it requires new schema/backend work (linking `price_alerts` to the resulting trade) that does not exist yet — this deviation does not add that; it only avoids fabricating it.
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.12 | 2026-08-07 | ST-31 (v8.4, EPIC-01, BLG-FEAT-78): Added `trade_origin` field (`"Signal"` / `"Manual"`) to `GET /reports/tax-year`'s `trades[]` array and its CSV export (`Trade Origin`, 18th/last column — additive, no breaking-change bump per this doc's own analytics/convenience-export versioning note). Derived from `trade_plans.signal_id` via the two-hop `trade_history.position_id = positions.id = trade_plans.position_id` relationship (`data_model.md`). **Scope correction (`ESC-EXEC-20260807-01`, resolved):** the backlog item's original "trigger-source"/alert-triggered framing was found to have no underlying schema linkage — `price_alerts` (`BLG-FE-116`) never tags a resulting trade — so the AC was reinterpreted, with Product Owner approval, to the real, already-wired `signal_id` distinction (momentum-screener signals) rather than shipping a column that would misrepresent trade provenance in a tax-relevant export. Not added to the PDF export (CSV-only per AC). |
 | 0.11 | 2026-08-04 | ST-01 (v8.2, EPIC-01, BLG-FEAT-88): Added `## GET /reports/reconciliation` — P&L / tax record reconciliation report comparing the Tax Year report's system total against an independently re-derived export-side sum. Reuses `get_tax_year_report`'s `total_realised_pnl` for the system side; new `get_trade_history_pnl_sum_by_tax_year` DB function (server-side SQL SUM) for the export side, per the design gate's requirement for a genuinely separate query path. |
 | 0.10 | 2026-07-26 | ST-05 (v7.8, EPIC-05, BLG-FEAT-81): Added `format=csv` to `GET /reports/monthly-pnl`, mirroring the existing `GET /reports/tax-year?format=csv` handler. CSV export is a plain header row + one row per month (no metadata block, unlike the Tax Year CSV) — `Year,Month,Realised P&L (GBP),Trades`. Invalid `format` values return 400. Reconciliation note added: both CSV exports sum the same `trade_history.pnl` column directly, no double-counting risk, though a literal calendar-year-vs-tax-year numeric match isn't expected given the different window boundaries. |
 | 0.9 | 2026-07-20 | ST-04 (v7.5, EPIC-04, BLG-FE-118): Added `## GET /reports/daily-pnl` — day-granularity sibling of `GET /reports/monthly-pnl` for the Trade History Calendar View. Same `estimated_unrealised_pnl`/`unrealised_note` pattern (current-snapshot only, never per-day). |

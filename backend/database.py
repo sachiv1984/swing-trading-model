@@ -207,14 +207,31 @@ def get_trade_history_by_tax_year(portfolio_id: str, year_start, year_end) -> Li
 
     Used by GET /reports/tax-year.
     Spec: docs/specs/api_contracts/reports_endpoints.md §Tax year attribution.
+
+    ST-31 (BLG-FEAT-78, EPIC-01, v8.4): each row also carries a `trade_origin`
+    column — "Signal" if the trade's linked trade_plan (if any) has a non-null
+    signal_id (momentum screener signal), else "Manual". Derived via the
+    documented two-hop relationship trade_history.position_id = positions.id
+    AND trade_plans.position_id = positions.id (data_model.md §Trade Plan to
+    Position Relationship) -- since a trade_plan's position_id and a
+    trade_history row's position_id both reference the same positions.id when
+    linked, trade_plans.position_id = trade_history.position_id is a valid
+    direct equijoin without needing to name positions explicitly. Cardinality
+    is one trade_plan to zero-or-one positions, so this LEFT JOIN cannot
+    duplicate trade_history rows. Trades with no linked plan, or a plan whose
+    signal_id is null, are "Manual" -- there is no separate schema linkage for
+    the unrelated price_alerts (BLG-FE-116) feature (see ESC-EXEC-20260807-01).
     """
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute(
-                """SELECT * FROM trade_history
-                   WHERE portfolio_id = %s
-                   AND exit_date BETWEEN %s AND %s
-                   ORDER BY exit_date ASC""",
+                """SELECT th.*,
+                          CASE WHEN tp.signal_id IS NOT NULL THEN 'Signal' ELSE 'Manual' END AS trade_origin
+                   FROM trade_history th
+                   LEFT JOIN trade_plans tp ON tp.position_id = th.position_id
+                   WHERE th.portfolio_id = %s
+                   AND th.exit_date BETWEEN %s AND %s
+                   ORDER BY th.exit_date ASC""",
                 (portfolio_id, year_start, year_end)
             )
             return cur.fetchall()

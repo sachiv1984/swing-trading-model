@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-07 (design gate 2026-08-07__release-v8.4: 1 new item added, BLG-GOV-288 (Release Planning does not reset root `sprint_sealed` to false on new-cycle publish)); prior — 2026-08-07 (session — user-directed review of Last-Updated header bloat: 1 new item added, BLG-SPEC-117 (Specs_Index.md needs a proper Changelog table instead of a chained header); this file's own header chain truncated 55→3 entries per the newly-broadened `shared_standards.md` §16.14); prior — 2026-08-07 (session — lessons-learnt deferred patch review, `2026-08-05__release-v8.3` closure, acting as Infrastructure & Operations Owner: 1 new item added, BLG-SPEC-116 (structural defect in `docs/reference/openapi.yaml`, found while reconciling BLG-OPS-13); BLG-OPS-13 corrected — 21 of 23 originally-named endpoints confirmed already resolved, 1 dropped as never-shipped (`GET /trade-plans/by-ticker/{ticker}`), 1 genuine residual gap retained (`GET /v1beta1/news`); BLG-OPS-133 annotated with an undercount-risk caveat pending BLG-SPEC-116's fix); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-07 (sprint execution 2026-08-07__release-v8.4, EPIC-01/ST-31: 1 new item added, BLG-BE-84 (link price_alerts to the trade they trigger — real alert-to-trade provenance, tracked separately after ESC-EXEC-20260807-01 found no such linkage exists; ST-31 shipped a different, real distinction instead)); prior — 2026-08-07 (design gate 2026-08-07__release-v8.4: 1 new item added, BLG-GOV-288 (Release Planning does not reset root `sprint_sealed` to false on new-cycle publish)); prior — 2026-08-07 (session — user-directed review of Last-Updated header bloat: 1 new item added, BLG-SPEC-117 (Specs_Index.md needs a proper Changelog table instead of a chained header); this file's own header chain truncated 55→3 entries per the newly-broadened `shared_standards.md` §16.14); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -1547,6 +1547,29 @@ No per-request trace ID propagation exists across routers/services. No incident 
 - Both functions retry on transient/429 failure using the shared `retry_with_backoff` decorator
 - Existing best-effort fallback behaviour (log and continue, never raise to caller) unchanged
 - Regression test confirms retry attempts occur before fallback for both call sites
+
+---
+
+### BLG-BE-84 — Link price_alerts to the trade they trigger (real alert-to-trade provenance)
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Backend Engineering
+**Source:** ST-31 (EPIC-01, 2026-08-07__release-v8.4), self-caught scope gap during `ESC-EXEC-20260807-01`
+**Effort:** M (~2–3 days, schema + backend + frontend trade-creation wiring — not yet fully scoped, estimate advisory only)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`BLG-FEAT-78` originally asked for a tax-year CSV export column distinguishing alert-triggered trades from manually-initiated ones, gated on `price_alerts` (`BLG-FE-116`, shipped v7.5) existing. On implementation (ST-31, v8.4) it was found that `price_alerts` has no schema linkage to any trade/position/trade_plan row at all — `POST /alerts/evaluate` firing an alert only writes a `notifications` row and sets `active=false`/`triggered_at`; it never creates or tags a trade. There is currently no way, anywhere in the data model, to determine "this trade was opened because a price alert fired." ST-31 shipped a *different*, real distinction instead (`trade_plans.signal_id` — the momentum-signals system, relabeled `trade_origin: "Signal"/"Manual"`) — see `docs/specs/api_contracts/reports_endpoints.md`'s Known Deviations section. This item tracks the *original* ask, which remains unbuilt.
+
+**Scope**
+- Design and add a linkage from a fired `price_alerts` row to the trade plan/position a user subsequently opens as a result (e.g. a nullable `triggered_by_price_alert_id` on `trade_plans`, populated when the user creates a plan directly from a triggered-alert notification)
+- Frontend wiring: some UI path from "alert notification" → "create trade plan" that can pass the alert's id through
+- Decide reporting treatment once the linkage exists: could extend `trade_origin` to a third value (e.g. `"Alert"`) or become a separate field — needs its own scoping pass, not assumed here
+
+**Acceptance Criteria**
+- A trade plan created via the alert-notification-to-trade-plan path (once that path exists) records which `price_alerts` row triggered it
+- A trade plan created any other way leaves the field null
+- Reporting treatment (new `trade_origin` value vs. separate field) decided and documented before implementation
 
 ---
 
