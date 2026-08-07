@@ -1,0 +1,31 @@
+{
+  "cycle_id": "2026-08-05__release-v8.3",
+  "release": "v8.3",
+  "status": "In_Progress",
+  "mode": "standard",
+  "dry_run": false,
+  "started_utc": "2026-08-07T00:00:00Z",
+  "last_updated_utc": "2026-08-07T00:00:00Z",
+  "steps": {
+    "preflight": "pass",
+    "step_0_context": "pass",
+    "step_1_changelog": "pass",
+    "step_1_5_changelog_digest": "pass",
+    "step_2_roadmap": "pass",
+    "step_3_backlog": "pass",
+    "step_4_scope_decisions": "pass",
+    "step_5_deviation_compliance": "pass",
+    "step_6_operational_docs": "pass",
+    "step_7_specs_index": "pass",
+    "step_8_lessons_learnt": "pass",
+    "step_8_5_lessons_closure": "pass",
+    "step_9_closure_record": "pass",
+    "step_10_global_state": "pass",
+    "step_11_manage_roadmap": "complete",
+    "step_12_groom_backlog": "complete",
+    "step_12_5_ideas_housekeeping": "complete — 0 rows archived (register already empty, unchanged since 2026-07-30 closure); rejected_but_strong.md revival review: 3 open entries all remain Unmet (2 §13 ATR-review-gated entries — no ATR/strategy parameter changes this cycle; 1 governance-decision-volume-gated entry — this cycle's escalation volume, 1 Recurrence Escalation + 1 design-gate escalation resolved within-cycle, does not constitute 'substantially increased'); pipeline health: 284 active backlog items, well above 5-item threshold, no action required",
+    "step_13_commit": "pass"
+  },
+  "status": "Closed",
+  "closure_status": "Closed_with_actions"
+}

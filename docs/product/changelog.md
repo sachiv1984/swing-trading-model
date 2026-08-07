@@ -3,9 +3,61 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-05 (post-ship closure 2026-08-04__release-v8.2)
+**Last Updated:** 2026-08-07 (post-ship closure 2026-08-05__release-v8.3)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v8.3 — Operational Reliability & Governance Debt Clearance — 2026-08-07
+Cycle: 2026-08-05__release-v8.3
+Verified: Verified
+Verification report: claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Root-caused and fixed the SI-05 weekly Telegram digest delivery pipeline (no automated trigger had ever been committed for `POST /digest/si05/send`) and added delivery-failure alerting; added a recurring check confirming staging/production API keys remain cross-environment-distinct; added a Gemini API key rotation runbook | `docs/specs/api_contracts/digest_endpoints.md#POST /digest/si05/send`; `docs/security/api_key_security_register.md#3. Anthropic API Key` |
+| EPIC-02 | Database index audit for Arc 4 cross-table queries; Alpaca API rate-limit backoff audit; canonical `position_state` enum registry shared frontend/backend; remaining routers conformed to the canonical error envelope + status codes; retry/backoff added for Yahoo Finance regime-check call sites; idempotent retry added for Alpaca paper-trading order sync | `docs/specs/position_lifecycle_states_registry.md`; `docs/specs/api_contracts/conventions.md#13. Error Response Standard (Canonical)`; `docs/specs/api_contracts/backend_engineering_patterns.md#Error-response envelope conformance` |
+| EPIC-03 | Migrated `ComplianceRecheckModal.js` onto the shared Dialog primitive; extracted a shared modal-confirmation component (configurable message, optional undo-window countdown); documented a unified loading-skeleton pattern for async-loading cards; added a standard Base44 prompt section for dark/light theme compliance; extracted a single shared `AiDisclaimer` component | `docs/specs/frontend/design_system.md#Confirmation Modal (with optional undo window)`; `docs/specs/frontend/design_system.md#Data States`; `docs/specs/frontend/base44_prompt_template_library.md#11. Template: Standard Theme-Compliance Section (Generation-Time)` |
+| EPIC-04 | Added baseline Playwright coverage for `Watchlist.js`; documented and ran the first quarterly OpenAPI 3-way drift sweep (zero drift found); added a pre-merge lint catching stale DoQ sign-off Pending rows; performed an OpenAPI response-example drift spot-check; added an API endpoint deprecation-window policy; added a canonical form-validation error-message pattern spec | `docs/specs/api_contracts/conventions.md#14. API Endpoint Deprecation-Window Policy`; `docs/specs/frontend/design_system.md#Error States` |
+| EPIC-05 | Removed the RESUME PRECHECK mutation-detection block from `release_planning_prompt.md` (Terminal State Guard and State File Immutability Rule retained); added a formal semi-annual §13 boundary re-attestation cadence; reviewed the SI-02 11-linked-trade-plan gate threshold (conclusion: still appropriate); fixed `prompt_change_log.md`'s mixed prepend/append ordering that broke gap detection; defined a cross-role workload balance check surfaced at roadmap rebalance | `claude/system/release_planning_prompt.md#Terminal State Guard — Published Is Immutable (Hard Gate)`; `claude/strategy/strategy_rules.md#13.5 Semi-Annual Boundary Re-Attestation Cadence`; `claude/system/shared_standards.md#11.1 STEP -1.7-Class Prompt Change Log Gap Detection`; `claude/system/roadmap_prompt.md#7.2 Cross-Role Workload Balance Check` |
+| EPIC-06 | Monthly P&L report format review — 3-month usage retrospective (gate cleared 2026-08-05); conclusion recorded, no format changes warranted this cycle | `docs/product/decisions/monthly_pnl_format_review_2026-08-06.md` |
+
+### Deviations accepted
+None.
+
+### Tech backlog items shipped
+- [ST-01] [D] BLG-OPS-129: Investigate and fix the SI-05 weekly Telegram digest delivery pipeline
+- [ST-02] [D] BLG-OPS-130: Add delivery-failure alerting for the SI-05 weekly digest
+- [ST-03] [D] BLG-OPS-131: Recurring check confirming staging/production API keys remain distinct
+- [ST-04] [D] BLG-SEC-17: Gemini API key rotation runbook
+- [ST-05] [D] BLG-BE-37: Database index audit for Arc 4 cross-table queries
+- [ST-06] [D] BLG-BE-57: Alpaca API rate-limit backoff audit
+- [ST-07] [D] BLG-BE-67: Canonical enum registry for `position_state` values shared frontend/backend
+- [ST-08] [D] BLG-BE-69: Conform remaining routers to canonical error envelope + status codes
+- [ST-09] [D] BLG-BE-79: Retry/backoff for Yahoo Finance regime-check call sites
+- [ST-10] [D] BLG-BE-80: Idempotent retry for Alpaca paper-trading order sync
+- [ST-11] [D] BLG-FE-103: Migrate `ComplianceRecheckModal.js` onto the shared Dialog primitive
+- [ST-12] [D] BLG-FE-121: Extract a shared modal-confirmation component
+- [ST-13] [D] BLG-FE-126: Unified loading-skeleton pattern for async-loading cards
+- [ST-14] [D] BLG-FE-132: Standard Base44 prompt section for dark/light theme compliance
+- [ST-15] [D] BLG-FE-81: AI disclaimer component extraction
+- [ST-16] [D] BLG-QA-86: Add baseline Playwright coverage for `Watchlist.js`
+- [ST-17] [D] BLG-QA-94: OpenAPI drift gate false-negative sweep
+- [ST-18] [D] BLG-QA-98: DoQ sign-off staleness pre-merge lint
+- [ST-19] [D] BLG-SPEC-88: OpenAPI response-example drift spot-check
+- [ST-20] [D] BLG-SPEC-96: API endpoint deprecation-window policy
+- [ST-21] [D] BLG-SPEC-108: Canonical form validation error-message pattern spec
+- [ST-22] [G] BLG-GOV-124: SC-02 — remove RESUME PRECHECK mutation detection block from `release_planning_prompt.md`
+- [ST-23] [G] BLG-GOV-204: Formal §13 boundary re-attestation cadence
+- [ST-24] [G] BLG-GOV-237: SI-02 trade-count gate threshold calibration review
+- [ST-25] [G] BLG-GOV-257: `prompt_change_log.md` mixed prepend/append ordering gap-detection fix
+- [ST-26] [G] BLG-GOV-270: Cross-role workload balance check
+- [ST-27] [P] BLG-FEAT-45: Monthly P&L report format review — 3-month usage retrospective
+
+Sign-off: Product Owner — 2026-08-07
+QA sign-off: Director of Quality — 2026-08-07
 
 ---
 

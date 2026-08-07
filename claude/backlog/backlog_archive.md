@@ -1,11 +1,614 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-05 (groom backlog post-ship closure 2026-08-04__release-v8.2 — 25 items archived: BLG-GOV-285, BLG-FE-67, BLG-BE-81, BLG-GOV-160, BLG-SEC-27, BLG-OPS-128, BLG-FE-105, BLG-GOV-213, BLG-GOV-214, BLG-GOV-218, BLG-OPS-116, BLG-OPS-118, BLG-FE-131, BLG-FEAT-86, BLG-QA-126, BLG-GOV-265, BLG-GOV-269, BLG-FEAT-88, BLG-OPS-125, BLG-GOV-278, BLG-GOV-279, BLG-GOV-281, BLG-GOV-283, BLG-FE-138, BLG-SPEC-110; ephemeral Release Slice v8.2 section removed [none present]); prior — 2026-08-03 (session — 1 item archived: BLG-OPS-111, closed as ❌ Killed — superseded, per lifecycle audit AUD-2026-08-03 improvement 003 — see `backlog.md` header for full detail); prior — 2026-07-30 (groom backlog post-ship closure 2026-07-28__release-v7.10 — 23 items archived: BLG-BE-68, BLG-BE-75, BLG-BE-76, BLG-BE-41, BLG-SEC-22, BLG-SEC-09, BLG-SEC-18, BLG-SEC-13, BLG-QA-127, BLG-QA-96, BLG-QA-133, BLG-QA-128, BLG-SPEC-102, BLG-SPEC-103, BLG-SPEC-104, BLG-GOV-243, BLG-FE-122, BLG-FE-123, BLG-FE-106, BLG-FE-134, BLG-GOV-256, BLG-GOV-216, BLG-GOV-207; ephemeral Release Slice v7.10 section removed); prior — 2026-07-28 (session — duplicate consolidation, ad hoc user-directed backlog cleanup: 13 duplicate items retired as ❌ Killed — duplicate, merged into 9 survivor items (BLG-QA-93, BLG-QA-42, BLG-QA-97, BLG-QA-81, BLG-GOV-144, BLG-GOV-178, BLG-GOV-95, BLG-GOV-221, BLG-GOV-90) — see `backlog.md` header for full detail); prior — 2026-07-28 (groom backlog post-ship closure 2026-07-27__release-v7.9 — 15 items archived: BLG-FEAT-66, BLG-FEAT-67, BLG-SPEC-105, BLG-FEAT-85, BLG-FEAT-87, BLG-BE-73, BLG-BE-74, BLG-OPS-121, BLG-QA-124, BLG-QA-125, BLG-FE-130, BLG-OPS-120, BLG-FE-129, BLG-GOV-258, BLG-QA-123; ephemeral Release Slice v7.9 section removed); prior — 2026-07-27 (session — duplicate consolidation, ad hoc user-directed backlog cleanup: 13 duplicate items retired as ❌ Killed — duplicate, merged into 5 survivor items (BLG-OPS-25, BLG-BE-47, BLG-FEAT-30, BLG-QA-75, BLG-SEC-15) — see `backlog.md` header for full detail); prior — 2026-07-27 (groom backlog post-ship closure 2026-07-24__release-v7.8 — 12 items archived: BLG-FE-128, BLG-FEAT-84, BLG-FE-127, BLG-FE-125, BLG-FEAT-81, BLG-FEAT-82, BLG-SEC-20, BLG-SEC-21, BLG-BE-71, BLG-QA-117, BLG-QA-119, BLG-OPS-117; ephemeral Release Slice v7.8 section removed); prior — 2026-07-24 (groom backlog post-ship closure 2026-07-21__release-v7.7 — 11 items archived: BLG-FEAT-75, BLG-FE-114, BLG-FE-113, BLG-FE-120, BLG-FEAT-80, BLG-OPS-108, BLG-GOV-28, BLG-QA-104, BLG-BE-63, BLG-OPS-110, BLG-QA-102; ephemeral Release Slice v7.7 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-20__release-v7.6 — 8 items archived: BLG-FE-119, BLG-QA-112, BLG-FEAT-79, BLG-BE-65, BLG-QA-114, BLG-BE-62, BLG-FEAT-77, BLG-QA-69; ephemeral Release Slice v7.6 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
+**Last Updated:** 2026-08-07 (groom backlog post-ship closure 2026-08-05__release-v8.3 — 27 items archived: BLG-OPS-129, BLG-OPS-130, BLG-OPS-131, BLG-SEC-17, BLG-BE-37, BLG-BE-57, BLG-BE-67, BLG-BE-69, BLG-BE-79, BLG-BE-80, BLG-FE-103, BLG-FE-121, BLG-FE-126, BLG-FE-132, BLG-FE-81, BLG-QA-86, BLG-QA-94, BLG-QA-98, BLG-SPEC-88, BLG-SPEC-96, BLG-SPEC-108, BLG-GOV-124, BLG-GOV-204, BLG-GOV-237, BLG-GOV-257, BLG-GOV-270, BLG-FEAT-45; ephemeral Release Slice v8.3 section removed [none present]); prior — 2026-08-05 (groom backlog post-ship closure 2026-08-04__release-v8.2 — 25 items archived: BLG-GOV-285, BLG-FE-67, BLG-BE-81, BLG-GOV-160, BLG-SEC-27, BLG-OPS-128, BLG-FE-105, BLG-GOV-213, BLG-GOV-214, BLG-GOV-218, BLG-OPS-116, BLG-OPS-118, BLG-FE-131, BLG-FEAT-86, BLG-QA-126, BLG-GOV-265, BLG-GOV-269, BLG-FEAT-88, BLG-OPS-125, BLG-GOV-278, BLG-GOV-279, BLG-GOV-281, BLG-GOV-283, BLG-FE-138, BLG-SPEC-110; ephemeral Release Slice v8.2 section removed [none present]); prior — 2026-08-03 (session — 1 item archived: BLG-OPS-111, closed as ❌ Killed — superseded, per lifecycle audit AUD-2026-08-03 improvement 003 — see `backlog.md` header for full detail); prior — 2026-07-30 (groom backlog post-ship closure 2026-07-28__release-v7.10 — 23 items archived: BLG-BE-68, BLG-BE-75, BLG-BE-76, BLG-BE-41, BLG-SEC-22, BLG-SEC-09, BLG-SEC-18, BLG-SEC-13, BLG-QA-127, BLG-QA-96, BLG-QA-133, BLG-QA-128, BLG-SPEC-102, BLG-SPEC-103, BLG-SPEC-104, BLG-GOV-243, BLG-FE-122, BLG-FE-123, BLG-FE-106, BLG-FE-134, BLG-GOV-256, BLG-GOV-216, BLG-GOV-207; ephemeral Release Slice v7.10 section removed); prior — 2026-07-28 (session — duplicate consolidation, ad hoc user-directed backlog cleanup: 13 duplicate items retired as ❌ Killed — duplicate, merged into 9 survivor items (BLG-QA-93, BLG-QA-42, BLG-QA-97, BLG-QA-81, BLG-GOV-144, BLG-GOV-178, BLG-GOV-95, BLG-GOV-221, BLG-GOV-90) — see `backlog.md` header for full detail); prior — 2026-07-28 (groom backlog post-ship closure 2026-07-27__release-v7.9 — 15 items archived: BLG-FEAT-66, BLG-FEAT-67, BLG-SPEC-105, BLG-FEAT-85, BLG-FEAT-87, BLG-BE-73, BLG-BE-74, BLG-OPS-121, BLG-QA-124, BLG-QA-125, BLG-FE-130, BLG-OPS-120, BLG-FE-129, BLG-GOV-258, BLG-QA-123; ephemeral Release Slice v7.9 section removed); prior — 2026-07-27 (session — duplicate consolidation, ad hoc user-directed backlog cleanup: 13 duplicate items retired as ❌ Killed — duplicate, merged into 5 survivor items (BLG-OPS-25, BLG-BE-47, BLG-FEAT-30, BLG-QA-75, BLG-SEC-15) — see `backlog.md` header for full detail); prior — 2026-07-27 (groom backlog post-ship closure 2026-07-24__release-v7.8 — 12 items archived: BLG-FE-128, BLG-FEAT-84, BLG-FE-127, BLG-FE-125, BLG-FEAT-81, BLG-FEAT-82, BLG-SEC-20, BLG-SEC-21, BLG-BE-71, BLG-QA-117, BLG-QA-119, BLG-OPS-117; ephemeral Release Slice v7.8 section removed); prior — 2026-07-24 (groom backlog post-ship closure 2026-07-21__release-v7.7 — 11 items archived: BLG-FEAT-75, BLG-FE-114, BLG-FE-113, BLG-FE-120, BLG-FEAT-80, BLG-OPS-108, BLG-GOV-28, BLG-QA-104, BLG-BE-63, BLG-OPS-110, BLG-QA-102; ephemeral Release Slice v7.7 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-20__release-v7.6 — 8 items archived: BLG-FE-119, BLG-QA-112, BLG-FEAT-79, BLG-BE-65, BLG-QA-114, BLG-BE-62, BLG-FEAT-77, BLG-QA-69; ephemeral Release Slice v7.6 section removed); prior — 2026-07-20 (groom backlog post-ship closure 2026-07-17__release-v7.5 — 4 items archived: BLG-FE-115, BLG-FE-116, BLG-FE-117, BLG-FE-118; ephemeral Release Slice v7.5 section removed); prior — 2026-07-17 (groom backlog post-ship closure 2026-07-17__release-v7.4 — 4 items archived: BLG-SPEC-95, BLG-GOV-248, BLG-GOV-249, BLG-GOV-250; ephemeral Release Slice v7.4 section removed); prior — 2026-07-16 (groom backlog post-ship closure 2026-07-16__release-v7.3 — 7 items archived: BLG-FE-109, BLG-FE-110, BLG-FE-111, BLG-SPEC-91, BLG-SPEC-92, BLG-SPEC-93, BLG-SPEC-94; ephemeral Release Slice v7.3 section removed); prior — 2026-07-15 (groom backlog post-ship closure 2026-07-15__release-v7.2 — 5 items archived: BLG-FE-55, BLG-SPEC-89, BLG-SPEC-90, BLG-FE-112, BLG-QA-111); prior — 2026-07-14 (groom backlog post-ship closure 2026-07-14__release-v7.1 — 8 items archived: BLG-BE-59, BLG-BE-60, BLG-FE-107, BLG-BE-61, BLG-QA-106, BLG-SPEC-83, BLG-SPEC-84, BLG-GOV-202 [pre-existing completed item found still open during STEP 6.2 post-write verification, missed by v7.0's grooming pass]); prior — 2026-07-13 (groom backlog post-ship closure 2026-07-12__release-v7.0 — 15 items archived: BLG-SPEC-80, BLG-FE-102, BLG-FE-97, BLG-QA-95, BLG-FE-104, BLG-SPEC-71, BLG-BE-50, BLG-FE-95, BLG-FE-96, BLG-SPEC-73, BLG-BE-51, BLG-BE-38, BLG-FEAT-69, BLG-FEAT-70, BLG-FEAT-68)
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-OPS-129 — Investigate and fix the SI-05 weekly Telegram digest delivery pipeline
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-01); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-OPS-129 — Investigate and fix the SI-05 weekly Telegram digest delivery pipeline
+**Priority:** P1 (High)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-08 (EPIC-03, v8.2) SI-05 30-day effectiveness review — Product Owner direct attestation — 2026-08-04
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-01)
+
+**Problem**
+The Product Owner attests no SI-05 weekly Telegram digest has been received since 2026-06-17 (~7 weeks), against an expected weekly cadence. Root cause is unknown — candidates per `docs/ops/si05_health_check_procedure.md`'s troubleshooting table include the Render cron/APScheduler job not firing, Telegram credentials having lapsed, or another failure mode. Diagnosis requires Render dashboard access this engine does not have. This silent failure caused the SI-05 Phase 1 30-day effectiveness review (`claude/cycles/2026-06-08__release-v5.2/si05_effectiveness_criteria.md`) to fail all 3 criteria and Phase 2 activation to be PAUSEd; re-evaluation is due 2026-10-03.
+
+**Scope**
+- Check Render dashboard logs/cron configuration for the SI-05 digest job per `docs/ops/si05_health_check_procedure.md` Option B
+- Identify and fix the root cause (credential lapse, cron misconfiguration, or other)
+- Confirm at least one successful digest send after the fix
+
+**Acceptance Criteria**
+- Root cause identified and documented (or, if genuinely unresolvable, documented as such with next steps)
+- SI-05 digest delivery confirmed working again (at least one successful send observed post-fix)
+- Infrastructure & Operations Owner sign-off
+
+---
+
+### BLG-OPS-130 — Add delivery-failure alerting for the SI-05 weekly digest
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-02); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-OPS-130 — Add delivery-failure alerting for the SI-05 weekly digest
+**Priority:** P1 (High)
+**Type:** Operations / Infrastructure
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-08 (EPIC-03, v8.2) SI-05 30-day effectiveness review — 2026-08-04
+**Effort:** S (~0.5-1d)
+**Depends on:** BLG-OPS-129 (SI-05 digest delivery pipeline investigation — alerting design should follow root-cause understanding)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-02)
+
+**Problem**
+The SI-05 weekly digest silently stopped sending for ~7 weeks before anyone noticed — it was only discovered as a side effect of ST-08's 30-day effectiveness review, not through any active monitoring. There is currently no mechanism that would catch a similar silent multi-week delivery gap earlier than the next scheduled effectiveness review (a 30-60+ day cadence).
+
+**Scope**
+- Add a lightweight check (e.g. comparing `si05_digest_log`'s most recent `sent_at` against the expected weekly cadence) that fires an alert if a send is overdue beyond a threshold
+- Wire the alert into the existing Telegram notification infrastructure (already used for other operational alerts in this codebase) or an equivalent channel
+
+**Acceptance Criteria**
+- Alert fires when the digest is overdue beyond the defined threshold
+- Confirmed firing correctly on a deliberately-stale test (consistent with the pattern already used for `BLG-OPS-128`'s staging-deploy-staleness check)
+
+---
+
+### BLG-OPS-131 — Recurring check confirming staging/production API keys remain distinct
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-03); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-OPS-131 — Recurring check confirming staging/production API keys remain distinct
+
+**Priority:** P2 (Medium)
+**Type:** Operations / Infrastructure
+**Owner:** Cybersecurity & Trust Lead
+**Source:** ST-06 (EPIC-02, v8.2) Cybersecurity & Trust Lead agent-mediated review — 2026-08-04
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-03)
+
+**Problem**
+ST-06 (BLG-SEC-27) rotated staging and production to distinct, independently-revocable API keys and confirmed this live via a one-time manual check at rotation time (2026-08-04). There is no ongoing, automated signal if a future rotation accidentally re-syncs the two environments to the same value, or reuses a value across environments — the only way this would currently be caught is by chance, the same way the pre-rotation shared-key state itself was only discovered incidentally during EPIC-04/ST-10 staging verification.
+
+**Scope**
+- Add a recurring automated check confirming each environment's key authenticates only against its own service, not the other — extending the same pattern as ST-07's `scripts/check_staging_deploy_drift.py` / `.github/workflows/staging-deploy-drift-check.yml` (hourly, Render platform API-based)
+- Wire the alert into the existing Telegram notification infrastructure, consistent with the ST-07 pattern
+
+**Acceptance Criteria**
+- Recurring check confirms staging's key is rejected by production and vice versa
+- Alert fires if either key is ever found to authenticate against the wrong environment
+- Confirmed firing correctly on a deliberately-cross-wired test
+
+---
+
+### BLG-SEC-17 — Gemini API key rotation runbook
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-04); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-SEC-17 — Gemini API key rotation runbook
+**Priority:** P3 (Low) | **Type:** Security / Operations | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260712-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-04)
+**Problem:** Gemini Flash thesis-generation wiring shipped v4.0 with no documented key-rotation runbook.
+**Scope:** Document rotation steps and a recommended cadence in the security register.
+**Acceptance Criteria:** Runbook added to `docs/security/api_key_security_register.md`.
+
+---
+
+### BLG-BE-37 — Database index audit for Arc 4 cross-table queries
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-05); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-BE-37 — Database index audit for Arc 4 cross-table queries
+**Priority:** P3 (Low)
+**Type:** Backend Engineering / Performance
+**Owner:** Infrastructure & Operations Owner; Head of Engineering
+**Source:** IDEA-infra-ops-20260619-01 — Promoted-Backlog rebalance 2026-06-19__scheduled (DL-049)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-05)
+
+**Problem**
+Arc 4 (PO-02/03/04) will introduce cross-table queries joining trade_plans, red_flag_events, arc5_compliance_scores, and potentially new journal tables. The current index strategy was designed for Arc 1–3 query patterns. Without an audit, Arc 4 sprint delivery may encounter unexpected latency regressions on production Supabase once real data volumes are involved.
+
+**Scope**
+- Review current index coverage on trade_plans, red_flag_events, arc5_compliance_scores, ai_journal_summaries tables
+- Model likely Arc 4 query patterns based on BLG-SPEC-56 pre-authored contracts
+- Identify missing indexes; file BLG-OPS or BLG-BE items for each gap discovered
+- Document in `docs/operations/` or `docs/data_models/`
+
+**Acceptance Criteria**
+- Index audit document produced covering Arc 4 query patterns
+- Any missing indexes produce separate BLG items before sign-off
+- Reviewed by Infrastructure & Operations Owner
+
+---
+
+### BLG-BE-57 — Alpaca API rate-limit backoff audit
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-06); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-BE-57 — Alpaca API rate-limit backoff audit
+**Priority:** P3 (Low) | **Type:** Backend / Reliability | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260712-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-06)
+**Problem:** DS-05/IT-06 depend on the Alpaca API; no documented backoff/retry audit has been performed since integration shipped (v2.9/v3.5).
+**Scope:** Audit current retry/backoff logic against Alpaca's documented rate limits; document the effective SLA.
+**Acceptance Criteria:** Audit findings documented; any gaps filed as follow-up items.
+
+---
+
+### BLG-BE-67 — Canonical enum registry for position_state values shared frontend/backend
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-07); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-BE-67 — Canonical enum registry for position_state values shared frontend/backend
+**Priority:** P3 (Low) | **Type:** Backend / Data Model | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-data-model-20260717-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-07)
+**Problem:** Position lifecycle states (per `strategy_rules.md §9`) are referenced independently in backend enums and frontend badge-rendering logic, with no single canonical source confirmed for the value list.
+**Scope:** Consolidate position-state values into one canonical registry (e.g. a shared constants file or OpenAPI enum) referenced by both layers.
+**Acceptance Criteria:** Canonical registry exists; both backend and frontend confirmed to derive from it (or a documented reconciliation shows they were already consistent).
+
+---
+
+### BLG-BE-69 — Conform remaining routers to canonical error envelope + status codes
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-08); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-BE-69 — Conform remaining routers to canonical error envelope + status codes
+**Priority:** P3 (Low) | **Type:** Backend / API Consistency | **Owner:** Backend Engineering Patterns Owner | **Source:** BLG-BE-65 audit (ST-04, EPIC-04, v7.6) | **Effort:** M (~1–2d) | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-08)
+
+**Problem**
+Across `alerts.py`, `analytics.py`, `digest.py` (401 case + `/weekly` wrong-status-code case), `ai.py` (422 case), `paper_trading.py`, `plan_vs_reality.py`, `portfolio_size.py`, `red_flag_journal.py`, `saved_filters.py`, `screener.py` (400/404/409 cases), `strategy_benchmark.py`, `ticker_universe.py`, `trade_plans.py` (404 case), `trades_export.py`, `validation.py` (500 case), `watchlist.py`, `earnings.py`, `news.py` — error responses use FastAPI's default `{"detail": "..."}` envelope (via bare `raise HTTPException`, no global exception handler exists) instead of the canonical `{"status": "error", "message": "..."}` envelope from `conventions.md` §13. `digest.py`'s `/weekly` catch-all additionally returns the correct shape but at the wrong HTTP status (200 instead of 500). Identified during the `docs/specs/api_contracts/backend_engineering_patterns.md` §Error-response envelope conformance audit (v1.3).
+
+**Scope**
+- Migrate each listed endpoint's error paths to `JSONResponse(status_code=X, content={"status": "error", "message": ...})` per the `research.py` reference pattern.
+- Large mechanical change across ~17 files — apply incrementally, not as one PR, to keep review scope manageable.
+
+**Acceptance Criteria**
+- All listed router error paths return the canonical `{status, message}` envelope at the correct HTTP status code
+- No change to success-path shapes
+- No change to existing frontend error-handling behaviour without a corresponding frontend check (per BLG-BE-65's original Security AC)
+
+---
+
+### BLG-BE-79 — Retry/backoff for Yahoo Finance regime-check call sites
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-09); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-BE-79 — Retry/backoff for Yahoo Finance regime-check call sites
+**Priority:** P3 (Low)
+**Type:** Backend / Resilience
+**Owner:** Backend Engineering Patterns Owner
+**Source:** BLG-BE-75 audit finding (ST-02, EPIC-01, v7.10) — 2026-07-29
+**Effort:** S (~0.5d)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-09)
+
+**Problem**
+`utils/pricing.py::check_market_regime` (inner `get_ma200`) and `services/screener_batch_service.py::_fetch_index_regime` both call Yahoo Finance directly with no retry — a single transient failure causes an immediate fallback (risk-on default / `None`) rather than a retried attempt, unlike the shared `retry_with_backoff`-decorated price-fetch path (`utils/pricing.py::_yahoo_fetch_price`).
+
+**Scope**
+- Wrap both call sites with the existing shared `retry_with_backoff` decorator (`backend/utils/retry.py`), matching the pattern already used in `utils/pricing.py::_yahoo_fetch_price`
+
+**Acceptance Criteria**
+- Both call sites use `retry_with_backoff`
+- Existing fallback behaviour on exhausted retries unchanged
+- Regression test confirms retry attempts occur before fallback
+
+---
+
+### BLG-BE-80 — Idempotent retry for Alpaca paper-trading order sync
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-10); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-BE-80 — Idempotent retry for Alpaca paper-trading order sync
+**Priority:** P3 (Low)
+**Type:** Backend / Resilience
+**Owner:** Backend Engineering Patterns Owner
+**Source:** BLG-BE-75 audit finding (ST-02, EPIC-01, v7.10) — 2026-07-29
+**Effort:** S (~0.5d)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-10)
+
+**Problem**
+`services/alpaca_paper_sync_service.py`'s `sync_open_paper_position`/`sync_close_paper_position` make a single-attempt POST/DELETE to Alpaca's paper API with no retry. Blind retry is unsafe here — a retried `POST /v2/orders` without an idempotency key risks a duplicate paper order — so this was correctly left unretried, but it means a transient failure permanently drops the paper-sync mirror for that trade with no follow-up attempt.
+
+**Scope**
+- Add Alpaca's `client_order_id` field (deterministic, derived from the internal trade/position id) to the order payload so a retry becomes safe
+- Apply `retry_with_backoff` once the call is idempotent
+
+**Acceptance Criteria**
+- `client_order_id` derived deterministically from the position id
+- `retry_with_backoff` applied to `sync_open_paper_position`
+- Test confirms a retried call with the same `client_order_id` does not create a duplicate order (mocked)
+
+---
+
+### BLG-FE-103 — Migrate ComplianceRecheckModal.js onto the shared Dialog primitive
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-11); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-FE-103 — Migrate ComplianceRecheckModal.js onto the shared Dialog primitive
+**Priority:** P3 (Low) | **Type:** Frontend / Refactor | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260712-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-11)
+**Problem:** `ComplianceRecheckModal.js` (v6.9) hand-rolls its own overlay (`fixed inset-0` backdrop, manual `role="dialog"`/`aria-modal`, manual Escape-key listener) instead of the shared `Dialog`/`DialogContent` primitive (`src/components/ui/dialog.js`) that ~11 other modal consumers already use (`WatchlistModal.js`, `CashManagementModal.js`, `ExitModal.js`, `PositionModal.js`, `PositionEntryModal.js`, `TradeReflectionModal.js`, `ExportModal.js`, `MonitorModal.js`, `WidgetLibrary.js`, `command.js`, and `TradePlan.js`'s Abandon modal) — risking accessibility/UX drift (focus trap, focus restoration, backdrop-click, Escape handling) from the established standard.
+**Correction (2026-08-05, Base44 Frontend Prompt Owner review of design-gate escalation `ESC-20260805-01`):** the item's original problem statement named a second consumer, "the PT-05 checklist modal," that does not exist in source — `EntryChecklist` (`src/components/trades/EntryChecklist.js`) and `PreEntryValidationPanel` (defined locally in `TradePlan.js`) both render inline within `TradePlan.js` §6 and `Research.js`, never inside a `Dialog`/modal. The original "extract a shared modal shell; migrate both consumers" framing is withdrawn — the shared shell already exists (`ui/dialog.js`); scope corrected to the single real consumer. Effort revised M→S to match the narrower, single-file scope.
+**Scope:** Migrate `ComplianceRecheckModal.js`'s markup from its bespoke overlay onto `Dialog`/`DialogContent` (`src/components/ui/dialog.js`), preserving its existing visual content and the pass/warn/fail `PreEntryValidationPanel`-derived pattern it reuses.
+**Acceptance Criteria:** `ComplianceRecheckModal.js` renders via the shared `Dialog`/`DialogContent` primitive (no bespoke overlay markup remaining); focus trap + restoration and Escape-to-close match the existing shared-primitive convention (`TradePlan.js` Abandon modal precedent); no visual/behavioural regression (Playwright coverage confirms).
+
+---
+
+### BLG-FE-121 — Extract a shared modal-confirmation component to de-dupe bulk-actions/alerts patterns
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-12); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-FE-121 — Extract a shared modal-confirmation component to de-dupe bulk-actions/alerts patterns
+**Priority:** P3 (Low) | **Type:** Frontend / Code Health | **Owner:** Head of Engineering | **Source:** IDEA-head-of-engineering-20260717-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-12)
+**Problem:** `BLG-FE-117` (bulk actions) will need a confirmation-modal pattern with an undo window; a similar pattern will likely recur for `BLG-FE-116` (custom price alerts, deletion/edit confirmation) — risk of two near-duplicate modal implementations shipping in the same release.
+**Scope:** Extract a single reusable confirmation-modal component (configurable message, optional undo-window countdown) ahead of `BLG-FE-116`/`BLG-FE-117` implementation.
+**Acceptance Criteria:** Shared component exists and is referenced by both items' Base44 prompt templates before their sprint execution begins.
+
+---
+
+### BLG-FE-126 — Unified loading-skeleton pattern for async-loading cards
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-13); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-FE-126 — Unified loading-skeleton pattern for async-loading cards
+**Priority:** P3 (Low) | **Type:** Frontend / Design System | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260724-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-13)
+**Problem:** Async-loading cards use inconsistent spinner/blank-state treatments across pages rather than one shared loading-skeleton pattern.
+**Scope:** Define a unified loading-skeleton pattern in `design_system.md`; apply to new cards going forward.
+**Acceptance Criteria:** Pattern documented; not required to retrofit all existing cards in one pass.
+
+---
+
+### BLG-FE-132 — Standard Base44 prompt section for dark/light theme compliance
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-14); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-FE-132 — Standard Base44 prompt section for dark/light theme compliance
+**Priority:** P3 (Low) | **Type:** Frontend / Process | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260728-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-14)
+**Problem:** Dark/light theme compliance issues have recurred across multiple Base44-generated components (BLG-FE-113, BLG-FE-125, BLG-FE-129 checklist), suggesting the prompt template itself lacks a standard theme-compliance section rather than each case being caught after the fact.
+**Scope:** Add a standard theme-compliance section to the core Base44 prompt template (distinct from the BLG-FE-129 dark-mode AC checklist, which is a review-time check, not a generation-time prompt instruction).
+**Acceptance Criteria:** Standard section added to `base44_prompt_template_library.md`; Base44 Frontend Prompt Owner sign-off.
+
+---
+
+### BLG-FE-81 — AI disclaimer component extraction
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-15); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-FE-81 — AI disclaimer component extraction
+**Priority:** P3 (Low)
+**Type:** Frontend / Refactor
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** IDEA-base44-frontend-20260702-02 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-15)
+
+**Problem**
+BLG-UX-01 and BLG-UX-02 (both shipped v6.4) independently fixed disclaimer contrast on the AI daily briefing and AI chat widget respectively, each editing its own component's Tailwind classes. Without a shared component, a future third AI surface risks repeating the same contrast mistake.
+
+**Scope**
+- Extract a single `AiDisclaimer` component with the now-corrected WCAG-AA-passing slate values
+- Replace the two existing inline disclaimer implementations with the shared component
+- No visual change — refactor only
+
+**Acceptance Criteria**
+- Single shared disclaimer component used by both AI daily briefing and AI chat widget
+- No visual regression (same rendered contrast as post-v6.4 fix)
+- Playwright: existing disclaimer visibility assertions still pass
+
+---
+
+### BLG-QA-86 — Add baseline Playwright coverage for Watchlist.js
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-16); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-QA-86 — Add baseline Playwright coverage for Watchlist.js
+**Priority:** P3 (Low)
+**Type:** QA / Test Automation
+**Owner:** Director of Quality
+**Source:** ST-14 (BLG-FE-77), EPIC-03, v6.8 — QA evidence consolidation frontend testing gate — 2026-07-09
+**Effort:** S (~0.5-1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-16)
+
+**Problem**
+`src/pages/Watchlist.js` has no pre-existing Playwright spec file (confirmed via repo search during ST-14's refactor to ESLint compliance). ST-14's own AC-02 (no functional/visual behaviour change) was verified via agent-mediated diff review and a manual smoke script rather than an automated spec, since none exists to run as a regression baseline. This is a pre-existing coverage gap on an actively-used page, not something ST-14 introduced.
+
+**Scope**
+- Add `tests/e2e/watchlist.spec.js` covering: entries render with ticker/market/signal data; news-toggle expand/collapse for US-market entries; Add Ticker modal opens; edit/delete flows
+
+**Acceptance Criteria**
+- New spec file passes in CI
+- Covers at minimum: entry rendering, news toggle, Add Ticker modal open
+
+---
+
+### BLG-QA-94 — OpenAPI drift gate false-negative sweep
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-17); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-QA-94 — OpenAPI drift gate false-negative sweep
+**Priority:** P3 (Low) | **Type:** QA / Process Tooling | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260712-01 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-17)
+**Problem:** The `## METHOD /path` heading-level rule has already caused one silent contract-drift gap (fixed). No periodic audit confirms non-recurrence.
+**Scope:** Add a quarterly 3-way sweep comparing router decorators, contract file headings, and `openapi.yaml` paths.
+**Acceptance Criteria:** Sweep procedure documented; first run scheduled; zero drift confirmed or gaps filed.
+
+---
+
+### BLG-QA-98 — DoQ sign-off staleness pre-merge lint
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-18); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-QA-98 — DoQ sign-off staleness pre-merge lint
+**Priority:** P3 (Low) | **Type:** QA / Process Tooling | **Owner:** Director of Quality | **Source:** IDEA-director-of-quality-20260712-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-18)
+**Problem:** Parallel-EPIC merges (per `CLAUDE.md` §8) can leave a `qa_evidence_EPIC-*.md` sign-off block at "Pending" post-merge with nothing flagging it.
+**Scope:** Add a pre-merge lint/CI check that fails on residual "Pending" rows in a merged `qa_evidence_EPIC-*.md`.
+**Acceptance Criteria:** Lint check added to `quality_gate.yml`; fails on a synthetic Pending-row test case.
+
+---
+
+### BLG-SPEC-88 — OpenAPI response-example drift spot-check
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-19); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-SPEC-88 — OpenAPI response-example drift spot-check
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260715-01 | **Effort:** S (~0.5-1 day) | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-19)
+**Problem:** The CI OpenAPI Drift Detection gate checks structural presence of endpoints but not whether documented example payloads in `openapi.yaml` still match live response shapes.
+**Scope:** Spot-check a sample of documented examples against live responses; file individual `BLG-SPEC-*` items for any drift found.
+**Acceptance Criteria:** Sample check performed and documented; drift (if any) filed as follow-up items.
+
+---
+
+### BLG-SPEC-96 — API endpoint deprecation-window policy
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-20); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-SPEC-96 — API endpoint deprecation-window policy
+**Priority:** P3 (Low) | **Type:** Spec Debt / API Governance | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260724-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-20)
+**Problem:** No documented policy exists for how long a deprecated endpoint remains available before removal, leaving each removal decision ad hoc.
+**Scope:** Author a deprecation-window policy section in API contract documentation standards.
+**Acceptance Criteria:** Policy section added; Head of Specs Team sign-off.
+
+---
+
+### BLG-SPEC-108 — Canonical form validation error-message pattern spec
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-21); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-SPEC-108 — Canonical form validation error-message pattern spec
+**Priority:** P3 (Low) | **Type:** Frontend Spec | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** IDEA-frontend-specs-20260728-01 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-21)
+**Problem:** Form validation error messages across the app (trade plan form, alert rules, saved filters) have been built independently without a canonical spec for tone/format, risking inconsistency.
+**Scope:** Define a canonical error-message pattern spec (tone, placement, wording conventions) in `design_system.md`.
+**Acceptance Criteria:** Spec added; Frontend Specifications & UX Documentation Owner sign-off.
+
+---
+
+### BLG-GOV-124 — SC-02: Remove RESUME PRECHECK mutation detection block from release_planning_prompt.md
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-22); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-GOV-124 — SC-02: Remove RESUME PRECHECK mutation detection block from release_planning_prompt.md
+**Priority:** P3 (Low)
+**Type:** Governance / Prompt Simplification
+**Owner:** Head of Specs Team
+**Source:** GCA-2026-06-17 — ST-04 (BLG-GOV-101) simplification candidate SC-02
+**Effort:** S (~0.5 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-22)
+
+**Scope**
+The RESUME PRECHECK mutation detection block in `release_planning_prompt.md` (~80 lines, lines 417–510) handles interrupted multi-session runs and assumption invalidation. This path has never been exercised in 100% of recorded v4.x–v5.x cycles. The lightweight state.json resume rule (7 lines) provides sufficient resumability for the observed failure mode. Remove the invalidation map and efficiency policy block; retain the state.json check. Requires dry-run validation pass.
+
+**Implementation constraint (Head of Specs Team sign-off GCA-2026-06-17):** The Terminal State Guard ("Published Is Immutable") and State File Immutability Rule hard gates within the RESUME PRECHECK block must be extracted and retained outside the block before the mutation detection/invalidation map machinery is removed. The implementing story must explicitly scope the deletion and confirm these two gates survive.
+
+**Acceptance Criteria**
+- RESUME PRECHECK mutation detection/invalidation map block removed (mutation-detection portion only)
+- Terminal State Guard and State File Immutability Rule hard gates extracted and retained in the prompt body
+- State.json resume rule retained
+- Dry-run validation pass confirming no functional regression
+- Version bump + changelog entry
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-204 — Formal §13 boundary re-attestation cadence
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-23); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-GOV-204 — Formal §13 boundary re-attestation cadence
+**Priority:** P3 (Low) | **Type:** Governance / §13 Compliance | **Owner:** AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260712-02 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-23)
+**Problem:** Individual features get one-time §13 PASS reviews; no recurring re-attestation exists as the system accretes AI/automation-adjacent features, so cumulative drift risk goes undetected between reviews.
+**Scope:** Propose a semi-annual boundary re-attestation cadence across all shipped AI/automation-adjacent features (IT-06, SI-01, Gemini thesis generation, etc.).
+**Acceptance Criteria:** Cadence proposal documented; first review date set; Strategy Rules & System Intent Owner sign-off.
+
+---
+
+### BLG-GOV-237 — SI-02 trade-count gate threshold calibration review
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-24); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-GOV-237 — SI-02 trade-count gate threshold calibration review
+**Priority:** P3 (Low) | **Type:** Governance / Strategy | **Owner:** Strategy Rules & System Intent Owner | **Source:** IDEA-strategy-owner-20260715-02 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-24)
+**Problem:** SI-02's 11-linked-trade-plan gate threshold has sat at 0/11 for a near-full quarter (unchanged 2026-07-06 through 2026-07-15 across 5 live re-checks); no review has confirmed the threshold itself is still the right calibration point versus the linkage-UX root cause `BLG-FE-109` now targets.
+**Scope:** Review whether the 11-trade-plan threshold remains appropriate once `BLG-FE-109` ships and linkage friction is removed, or whether the threshold should be reconsidered independently.
+**Acceptance Criteria:** Review performed after `BLG-FE-109` ships (or at next scheduled rebalance if not shipped within 2 cycles); written conclusion recorded.
+
+---
+
+### BLG-GOV-257 — prompt_change_log.md mixed prepend/append ordering breaks grep|head -1 gap detection
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-25); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-GOV-257 — prompt_change_log.md mixed prepend/append ordering breaks grep|head -1 gap detection
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** `plan sprint 2026-07-24__release-v7.8` session — 2026-07-26
+**Effort:** M (~1-2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-25)
+
+**Problem**
+`prompt_change_log.md`'s header states "Append-only," but a contiguous block (~lines 53-213, dated 2026-06-16 through 2026-07-02) was written prepended newest-first per the v3.9→v3.10 `sprint_planning_prompt.md` fix (`c86b02c5`). Below that block sits an older historical backfill in ascending chronological order that runs to the end of the file, and that backfill's last rows (e.g. a `sprint_planning_prompt.md` v3.12→v3.13 row dated 2026-07-14, at line 572) are chronologically newer than every row in the "prepended" block above them. `sprint_planning_prompt.md` STEP -1.7's hygiene check (`grep "<filename>" prompt_change_log.md | head -1`) therefore returns a stale row as "the latest" for any file whose true latest entry landed in the old append-ordered tail rather than the newer prepend-ordered head. Discovered during `plan sprint` for `2026-07-24__release-v7.8` as a false-positive "prompt change log gap" advisory for `sprint_planning_prompt.md` (v3.13 current; check reported last-logged v3.12 when v3.13 was in fact already logged at line 572).
+
+**Scope**
+- Either (a) do a one-time full re-sort of `prompt_change_log.md` into strict newest-first order and keep it that way going forward, or (b) change the STEP -1.7 check in `sprint_planning_prompt.md` (and any equivalent check elsewhere) to scan the full file for the row with the latest Date column per filename rather than relying on file position
+- Option (b) is more robust against any future ordering drift and does not require rewriting a large historical governance record
+
+**Acceptance Criteria**
+- The chosen fix is implemented and the false-positive case above no longer reproduces (re-running the STEP -1.7 check against `sprint_planning_prompt.md` correctly finds the line 572 entry as current)
+- If option (a) is chosen: the full file is verified newest-first top-to-bottom after the resort
+- If option (b) is chosen: the check's new logic is documented in `shared_standards.md` alongside the existing STEP -1.7 description
+
+---
+
+### BLG-GOV-270 — Cross-role workload balance check (avoid single-role bottleneck across consecutive cycles)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-26); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-GOV-270 — Cross-role workload balance check (avoid single-role bottleneck across consecutive cycles)
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Director of HR | **Source:** IDEA-director-of-hr-20260728-01 | **Effort:** S | **Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-26)
+**Problem:** No check currently confirms that story/EPIC ownership is balanced across roles over consecutive cycles — a role could be silently overloaded for several cycles running without it being visible in any single cycle's own artefacts.
+**Scope:** Add a lightweight cross-cycle check tallying story ownership per role over a rolling window, surfaced at roadmap rebalance.
+**Acceptance Criteria:** Check defined and documented; Director of HR sign-off.
+
+---
+
+### BLG-FEAT-45 — Monthly P&L report format review — 3-month usage retrospective
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-07
+**Shipped in:** v8.3
+**Evidence:** docs/product/changelog.md#v8.3 (ST-27); claude/cycles/2026-08-05__release-v8.3/verification_report.md
+
+### BLG-FEAT-45 — Monthly P&L report format review — 3-month usage retrospective
+**Priority:** P3 (Low)
+**Type:** Product Feature / Analytics
+**Owner:** Financial Reporting & Records Owner
+**Source:** IDEA-financial-reporting-20260607-02 — Promoted-Backlog rebalance 2026-06-09__scheduled (DL-041)
+**Effort:** S (~0.5 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-07 — cycle: 2026-08-05__release-v8.3 (ST-27)
+**Gate criteria:** ≥ 2026-08-05 (3+ months since Monthly P&L shipped 2026-05-05)
+
+**Problem**
+Monthly P&L shipped 2026-05-05 with a fixed column/section layout. After 3 months of real usage, the format may benefit from minor adjustments (column order, section grouping, display precision). A lightweight retrospective assessment at 3 months is appropriate before any format changes are considered.
+
+**Scope**
+- Review current Monthly P&L format against 3+ months of usage experience
+- Identify any column, section, or display precision improvements
+- Produce a brief recommendations document; if no changes warranted, record "no change" decision
+- Product Owner sign-off
+
+**Acceptance Criteria**
+- Format review conducted with 3+ months of data available
+- Recommendations document produced (or "no change" decision recorded)
+- Any format changes flow into the next appropriate sprint as separate stories
+- Gate condition verified: ≥ 2026-08-05
 
 ---
 
