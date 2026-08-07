@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-07T15:50:00Z",
+  "last_updated_utc": "2026-08-07T16:05:00Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -319,7 +319,8 @@
       "test_scenarios": [
         "tests/test_trade_plans_ticker_index.py",
         "tests/test_alpaca_paper_sync_close_positions_backoff.py",
-        "tests/test_trade_plan_thesis_provenance.py"
+        "tests/test_trade_plan_thesis_provenance.py",
+        "tests/test_trade_plan_audit_log.py"
       ],
       "stories": {
         "ST-10": {
@@ -415,25 +416,31 @@
         "ST-13": {
           "title": "Mutation/audit-trail log for trade plan edits post-entry",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1276,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "9c4e8975c621e1d104903642ca7d47a635303be8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/trade_plan_endpoints.md"
+            "docs/specs/data_model.md",
+            "tests/test_trade_plan_audit_log.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Extends BLG-BE-73 pattern. Touches shared file data_model.md."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "Data Model & Domain Schema Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-07"
+          },
+          "notes": "New trade_plan_audit_log table, extends position_audit_log (BLG-BE-73) pattern. update_trade_plan() logs post-entry edits (position_id set) only, fail-open. 6 new tests + fixed ST-12's update test (pre-fetch call shifted call_args_list index). 35 trade_plan tests pass, no regression."
         },
         "ST-14": {
           "title": "Auto-generated data dictionary from live schema",
@@ -868,7 +875,8 @@
     "ST-09",
     "ST-10",
     "ST-11",
-    "ST-12"
+    "ST-12",
+    "ST-13"
   ],
   "open_escalations": [],
   "process_notes": [
