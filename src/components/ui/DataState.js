@@ -1,5 +1,6 @@
 import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "./button";
+import { Skeleton } from "./skeleton";
 
 /**
  * DataState — canonical three-state wrapper for API-backed components.
@@ -38,6 +39,17 @@ import { Button } from "./button";
  * a more specific message is warranted (e.g. "Unable to load release notes",
  * ST-01/EPIC-01/v7.8). Both default to the original strings, so existing
  * call sites are unaffected.
+ *
+ * Pass `loadingVariant="skeleton"` (default remains `"spinner"`, unchanged)
+ * plus a `loadingSkeleton` node to render a content-shaped placeholder
+ * instead of the centered spinner for card-shaped async regions (v1.7,
+ * ST-13, EPIC-03, v8.3, BLG-FE-126 — design_system.md §Shared UI Components
+ * → Data States → Skeleton loading variant). If `loadingSkeleton` is
+ * omitted, a default 3-bar composition renders (title + 2 body lines) — a
+ * starting point, not a mandate; compose your own bars from the shared
+ * `Skeleton` primitive (`src/components/ui/skeleton.js`) for a different
+ * shape. Not retrofitted to any existing card this cycle — adoption is
+ * per-consumer, going forward.
  */
 export default function DataState({
   loading,
@@ -54,8 +66,23 @@ export default function DataState({
   inline = false,
   errorHeading = "Something went wrong",
   errorBody = "Unable to load data. Please try again.",
+  loadingVariant = "spinner",
+  loadingSkeleton = null,
 }) {
   if (loading) {
+    if (loadingVariant === "skeleton") {
+      return (
+        <div className={`${compact ? "py-4" : "py-6"} ${className}`} data-testid="data-state-skeleton">
+          {loadingSkeleton || (
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-3/5 bg-slate-300/60 dark:bg-slate-700/60" />
+              <Skeleton className="h-3 w-full bg-slate-300/60 dark:bg-slate-700/60" />
+              <Skeleton className="h-3 w-4/5 bg-slate-300/60 dark:bg-slate-700/60" />
+            </div>
+          )}
+        </div>
+      );
+    }
     return (
       <div className={`flex items-center justify-center ${compact ? "py-4" : "py-16"} ${className}`}>
         <Loader2 className={`${compact ? "w-5 h-5" : "w-8 h-8"} animate-spin text-slate-500`} />

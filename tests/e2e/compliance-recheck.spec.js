@@ -18,6 +18,8 @@
  *   SC-CR-08  Grid View — "Recheck" action also present on the position card footer
  *   SC-CR-09  Pass result shows the all-pass affirmation line (ST-02, EPIC-01, v8.2, BLG-FE-105)
  *   SC-CR-10  Warn/Fail results do not show the all-pass affirmation line
+ *   SC-CR-11  Escape closes the modal; focus returns to the trigger button (ST-11, EPIC-03, v8.3, BLG-FE-103 —
+ *             Dialog primitive migration, matching the TradePlan.js Abandon modal precedent)
  *
  * Spec refs:
  *   docs/design/2026-07-10__release-v6.9/on-demand-compliance-recheck/ux_spec.md
@@ -247,8 +249,25 @@ test('SC-CR-07: Close (✕) button dismisses the modal', async ({ page }) => {
   await page.locator('[data-testid="recheck-compliance-button"]').first().click();
   await expect(page.locator('[data-testid="compliance-recheck-modal"]')).toBeVisible({ timeout: 5000 });
 
-  await page.getByLabel('Close compliance recheck').click();
+  // ST-11 (BLG-FE-103, EPIC-03, v8.3): migrated onto the shared Dialog primitive —
+  // the close control is now Radix's built-in DialogClose (sr-only accessible name "Close"),
+  // not the modal's own bespoke aria-label="Close compliance recheck" button.
+  await page.locator('[data-testid="compliance-recheck-modal"]').getByRole('button', { name: 'Close' }).click();
   await expect(page.locator('[data-testid="compliance-recheck-modal"]')).not.toBeVisible({ timeout: 3000 });
+});
+
+test('SC-CR-11: Escape closes the modal; focus returns to the trigger button', async ({ page }) => {
+  const pos = makePosition();
+  await mockRecheck(page, pos.id, PASS_RESULT);
+  await gotoPositionsTable(page, [pos]);
+
+  const triggerBtn = page.locator('[data-testid="recheck-compliance-button"]').first();
+  await triggerBtn.click();
+  await expect(page.locator('[data-testid="compliance-recheck-modal"]')).toBeVisible({ timeout: 5000 });
+
+  await page.keyboard.press('Escape');
+  await expect(page.locator('[data-testid="compliance-recheck-modal"]')).not.toBeVisible({ timeout: 3000 });
+  await expect(triggerBtn).toBeFocused();
 });
 
 test('SC-CR-08: Grid View — "Recheck" action present on the position card footer', async ({ page }) => {
