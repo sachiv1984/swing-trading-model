@@ -1250,6 +1250,13 @@ def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict
     fields = {k: v for k, v in data.items() if k in allowed}
     if not fields:
         return get_trade_plan_by_id(trade_plan_id, portfolio_id)
+
+    # ST-13 (BLG-BE-77, EPIC-03, v8.4): capture before-state so post-entry
+    # edits can be audit-logged. Cheap single-row lookup; None if the plan
+    # doesn't exist (the UPDATE below then affects 0 rows, unchanged
+    # behaviour from before this story).
+    before_plan = get_trade_plan_by_id(trade_plan_id, portfolio_id)
+
     set_clauses = []
     values = []
     for k, v in fields.items():
@@ -1267,7 +1274,25 @@ def update_trade_plan(trade_plan_id: str, portfolio_id: str, data: dict) -> dict
             cur.execute(sql, values)
             row = cur.fetchone()
         conn.commit()
-        return dict(row) if row else None
+        after_plan = dict(row) if row else None
+
+    # ST-13 (BLG-BE-77, EPIC-03, v8.4): audit-trail pattern extended from
+    # position_audit_log (BLG-BE-73) to trade plan mutations post-entry —
+    # "post-entry" means the plan is linked to a position (position_id set).
+    # Pre-entry edits to a draft plan are ordinary iterative authoring, not
+    # logged. Non-blocking: a logging failure never affects the edit itself.
+    if after_plan and before_plan and (before_plan.get("position_id") or after_plan.get("position_id")):
+        for field_name in fields:
+            if field_name == "checklist_items":
+                continue  # structural field, not a meaningful single-value diff
+            before_val = before_plan.get(field_name)
+            after_val = after_plan.get(field_name)
+            if before_val != after_val:
+                create_trade_plan_audit_log_entry(
+                    trade_plan_id, "post-entry-edit", field_name, before_val, after_val,
+                )
+
+    return after_plan
 
 
 def delete_trade_plan(trade_plan_id: str, portfolio_id: str) -> bool:
@@ -2314,6 +2339,66 @@ def create_position_audit_log_entry(
                     VALUES (%s, %s, %s, %s, %s)
                     """,
                     (position_id, source, field, str(before_value), str(after_value)),
+                )
+            conn.commit()
+    except Exception:
+        pass
+
+
+# ---------------------------------------------------------------------------
+# trade_plan_audit_log — audit trail for trade plan edits post-entry (ST-13,
+# EPIC-03, v8.4, BLG-BE-77). Extends the position_audit_log pattern
+# (BLG-BE-73, above) to trade_plans: "post-entry" means the plan is linked
+# to a position (position_id is set) at the time of the edit — pre-entry
+# edits to a draft plan are ordinary, expected iterative authoring, not an
+# audit-worthy mutation. Same schema shape, same no-"who"-column rationale
+# (single-user product), same fail-open non-blocking write convention.
+# ---------------------------------------------------------------------------
+
+def ensure_trade_plan_audit_log_table() -> None:
+    """Create trade_plan_audit_log table if it does not exist."""
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS trade_plan_audit_log (
+                    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    trade_plan_id UUID NOT NULL,
+                    source        TEXT NOT NULL,
+                    field         TEXT NOT NULL,
+                    before_value  TEXT,
+                    after_value   TEXT,
+                    changed_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_trade_plan_audit_log_trade_plan_id
+                ON trade_plan_audit_log(trade_plan_id)
+            """)
+        conn.commit()
+
+
+def create_trade_plan_audit_log_entry(
+    trade_plan_id: str,
+    source: str,
+    field: str,
+    before_value,
+    after_value,
+) -> None:
+    """Insert one row into trade_plan_audit_log. Non-blocking on failure —
+    an audit-log write failure must never break the underlying trade plan
+    edit it is recording (same fail-open convention as
+    create_position_audit_log_entry above)."""
+    try:
+        ensure_trade_plan_audit_log_table()
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO trade_plan_audit_log
+                        (trade_plan_id, source, field, before_value, after_value)
+                    VALUES (%s, %s, %s, %s, %s)
+                    """,
+                    (trade_plan_id, source, field, str(before_value), str(after_value)),
                 )
             conn.commit()
     except Exception:

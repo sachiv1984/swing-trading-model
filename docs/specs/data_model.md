@@ -3,7 +3,7 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.22
+**Version:** 2.23
 **Last Updated:** 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -1691,6 +1691,47 @@ COMMIT;
 
 ---
 
-**Document Version:** 2.22
+### Migration from v2.22 to v2.23
+
+ST-13 (BLG-BE-77, EPIC-03, v8.4) — audit trail for trade plan edits post-entry, extending the `position_audit_log` pattern (`BLG-BE-73`, §Migration v2.16→v2.17 above) to `trade_plans`. "Post-entry" means the plan is linked to a position (`position_id` set, either before or after the edit) at the time of the edit — pre-entry edits to a still-draft plan are ordinary iterative authoring, not logged. Same schema shape, same no-"who"-column rationale (single-user product), same fail-open non-blocking write convention as `position_audit_log`.
+
+```sql
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS trade_plan_audit_log (
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    trade_plan_id UUID NOT NULL,
+    source        TEXT NOT NULL,
+    field         TEXT NOT NULL,
+    before_value  TEXT,
+    after_value   TEXT,
+    changed_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_trade_plan_audit_log_trade_plan_id ON trade_plan_audit_log(trade_plan_id);
+
+COMMIT;
+```
+
+### Field Reference
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| `id` | UUID | NO | Primary key |
+| `trade_plan_id` | UUID | NO | The trade plan edited. No FK constraint (audit rows must survive the plan's own lifecycle; matches `position_audit_log.position_id`'s pattern of not cascading) |
+| `source` | TEXT | NO | Always `post-entry-edit` in this version — a single source, unlike `position_audit_log`'s 3 (`note`/`tags`/`mark-reviewed`), because `update_trade_plan()` is one generic PUT endpoint covering all editable fields, not 3 separate single-purpose endpoints |
+| `field` | TEXT | NO | The specific field changed (any of `update_trade_plan()`'s allowed fields — `setup_thesis`, `status`, `r_target`, etc.) |
+| `before_value` | TEXT | YES | Value before the edit, stringified |
+| `after_value` | TEXT | YES | Value after the edit, stringified |
+| `changed_at` | TIMESTAMPTZ | NO | When the edit was recorded |
+
+Reversible: `DROP TABLE IF EXISTS trade_plan_audit_log;`
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-08-07 (agent-mediated; single new append-only table, no existing schema touched, no backfill applicable — table did not previously exist; mirrors the already-accepted `position_audit_log` shape)
+
+---
+
+**Document Version:** 2.23
 **Maintained By:** Data Model & Domain Schema Owner
 **Last Review:** 2026-08-07

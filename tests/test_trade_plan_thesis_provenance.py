@@ -90,13 +90,18 @@ def test_create_trade_plan_leaves_thesis_provenance_null_when_absent():
 def test_update_trade_plan_accepts_thesis_provenance_fields():
     fake_row = {"id": "plan-1", "thesis_model_version": "claude-haiku-4-5", "thesis_prompt_version": "v3.0"}
     mock_conn, mock_cursor = _mock_conn(fetchone_row=fake_row)
-    with patch.object(database, "get_db", return_value=mock_conn):
+    # ST-13 (EPIC-03, v8.4) added a before-state pre-fetch via
+    # get_trade_plan_by_id() inside update_trade_plan() for audit-trail
+    # purposes -- stub it so this test only exercises the UPDATE itself.
+    with patch.object(database, "get_db", return_value=mock_conn), \
+         patch.object(database, "get_trade_plan_by_id", return_value=None):
         database.update_trade_plan(
             "plan-1", "portfolio-1",
             {"thesis_model_version": "claude-haiku-4-5", "thesis_prompt_version": "v3.0"},
         )
 
-    call = mock_cursor.execute.call_args_list[0]
-    sql = call.args[0]
+    update_calls = [c for c in mock_cursor.execute.call_args_list if c.args and "UPDATE trade_plans" in c.args[0]]
+    assert len(update_calls) == 1
+    sql = update_calls[0].args[0]
     assert "thesis_model_version" in sql
     assert "thesis_prompt_version" in sql
