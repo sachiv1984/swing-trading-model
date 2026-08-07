@@ -2,7 +2,14 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.14.0
+  version: 3.14.1
+  # v3.14.1 (2026-08-07, ST-02+ST-07, EPIC-02, v8.4): fixed ~23 endpoints
+  # structurally nested inside `components:` instead of `paths:`; added
+  # GET /test/quick-health and POST /test/rate-limit-scenarios (pre-existing
+  # routes, previously undocumented); corrected two security-scheme gaps —
+  # GET /changelog/latest incorrectly marked security:[] (it requires
+  # X-API-Key like every route except GET /health), and GET /health/scheduler
+  # referencing an undefined `ApiKeyAuth` scheme instead of `ApiKey`.
   description: |
     SUPPORTING REFERENCE FILE (MANUALLY MAINTAINED)
 
@@ -3489,7 +3496,6 @@ paths:
         Returns the most recent release's version label and changes-shipped
         descriptions, parsed server-side from docs/product/changelog.md.
         `data` is null if no parseable version section exists.
-      security: []
       responses:
         "200":
           description: OK
@@ -3548,7 +3554,7 @@ paths:
         Status is in-memory and resets on process restart.
         Contract: docs/specs/api_contracts/health_endpoints.md
       security:
-        - ApiKeyAuth: []
+        - ApiKey: []
       responses:
         "200":
           description: Scheduler health status
@@ -3610,6 +3616,62 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/OkEndpointTest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /test/quick-health:
+    get:
+      tags: [Health]
+      summary: Quick health check
+      description: |
+        Tests only critical endpoints (Health, Settings, Portfolio). Faster than
+        the full POST /test/endpoints suite. Canonical contract:
+        docs/specs/api_contracts/health_endpoints.md §GET /test/quick-health
+      responses:
+        "200":
+          description: Quick health check results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, enum: [healthy, degraded] }
+                  checks:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name: { type: string }
+                        healthy: { type: boolean }
+                        response_time_ms: { type: number }
+                        status_code: { type: integer }
+                        error: { type: string }
+
+  /test/rate-limit-scenarios:
+    post:
+      tags: [Health]
+      summary: Verify AI endpoint rate-limiting logic
+      description: |
+        Verifies rate limiting logic for POST /ai/daily-briefing (limit=10) and
+        POST /ai/chat (limit=30) using isolated test keys — does not affect live
+        traffic. Canonical contract:
+        docs/specs/api_contracts/health_endpoints.md §POST /test/rate-limit-scenarios
+      responses:
+        "200":
+          description: Rate-limit scenario results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        endpoint: { type: string }
+                        status: { type: string, enum: [pass, fail] }
+                        error: { type: string }
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -3853,6 +3915,1172 @@ paths:
           description: Entry not found
         "500":
           $ref: "#/components/responses/InternalError"
+
+  # ─── External: Alpaca Markets API (BLG-SPEC-22 / ST-02) ───────────────────────
+  # These paths document outbound calls FROM this system TO Alpaca.
+  # Canonical contract: docs/specs/api_contracts/alpaca_integration_contract.md
+  # Base URL override: https://data.alpaca.markets (not served by this system's backend)
+  /v2/stocks/{symbol}/bars:
+    get:
+      tags:
+        - External - Alpaca
+      summary: Get OHLCV bars for a US ticker (Alpaca Markets API v2)
+      description: |
+        **External API call.** Fetches historical daily OHLCV bars from Alpaca Markets.
+        Used by DS-05 to replace Yahoo Finance for US market tickers.
+        Canonical contract: docs/specs/api_contracts/alpaca_integration_contract.md
+        Base URL: https://data.alpaca.markets (not this system's backend)
+      parameters:
+        - name: symbol
+          in: path
+          required: true
+          schema:
+            type: string
+          description: US ticker symbol (e.g. NVDA, AAPL)
+        - name: timeframe
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: ["1Day"]
+          description: Bar timeframe. Use "1Day" for daily bars.
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 30
+          description: Number of bars to return. 30 recommended for ATR calculation.
+      responses:
+        "200":
+          description: OHLCV bars response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bars:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        t: { type: string, format: date-time, description: "Bar open timestamp (UTC)" }
+                        o: { type: number, description: "Open price (USD)" }
+                        h: { type: number, description: "High price (USD)" }
+                        l: { type: number, description: "Low price (USD)" }
+                        c: { type: number, description: "Close price (USD)" }
+                        v: { type: integer, description: "Volume" }
+                        vw: { type: number, description: "VWAP" }
+                        n: { type: integer, description: "Trade count" }
+                  symbol: { type: string }
+                  next_page_token: { type: string, nullable: true }
+        "403":
+          description: Invalid credentials
+        "404":
+          description: Symbol not found — apply fallback to Yahoo Finance
+        "429":
+          description: Rate limit exceeded — retry with exponential backoff
+
+  /v1beta1/news:
+    get:
+      tags:
+        - External - Alpaca
+      summary: Get news headlines for US tickers (Alpaca News API v1beta1)
+      description: |
+        **External API call.** Fetches recent news headlines from Alpaca News API.
+        Used by DS-06 for display-only ticker-level news panel.
+        §13 COMPLIANT — display-only, no sentiment scoring, no advisory.
+        Canonical contract: docs/specs/api_contracts/alpaca_integration_contract.md
+        Base URL: https://data.alpaca.markets (not this system's backend)
+      parameters:
+        - name: symbols
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Comma-separated ticker symbols (e.g. "NVDA,AAPL")
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+            maximum: 50
+          description: Maximum headlines per symbol
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: ["desc", "asc"]
+            default: "desc"
+          description: Sort order (newest first by default)
+      responses:
+        "200":
+          description: News headlines response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  news:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: integer }
+                        headline: { type: string }
+                        author: { type: string, nullable: true }
+                        created_at: { type: string, format: date-time }
+                        updated_at: { type: string, format: date-time }
+                        summary: { type: string, nullable: true }
+                        url: { type: string, nullable: true }
+                        symbols: { type: array, items: { type: string } }
+                        source: { type: string, nullable: true }
+                  next_page_token: { type: string, nullable: true }
+        "403":
+          description: Invalid credentials
+        "429":
+          description: Rate limit exceeded — serve empty news panel
+
+  # ─── Ticker Universe API (DS-01 / ST-01) ────────────────────────────────────
+  # Manages the set of tickers eligible for screener runs.
+  # Canonical contract: docs/specs/api_contracts/screener_api_contract.md
+  /ticker-universe:
+    get:
+      tags:
+        - Screener
+      summary: List tickers in screener universe
+      description: |
+        Returns tickers eligible for screener runs.
+        Filterable by market (UK|US) and active status.
+      parameters:
+        - name: market
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [UK, US]
+          description: Filter by market
+        - name: active_only
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+          description: Return only active tickers (default true)
+      responses:
+        "200":
+          description: List of tickers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ticker: { type: string }
+                        market: { type: string, enum: [UK, US] }
+                        active: { type: boolean }
+                        sector: { type: string, nullable: true }
+                        industry: { type: string, nullable: true }
+                        company_name: { type: string, nullable: true }
+                        created_at: { type: string, format: date-time }
+        "400":
+          description: Invalid market value
+    post:
+      tags:
+        - Screener
+      summary: Add a ticker to the screener universe
+      description: |
+        Adds a ticker. Re-activates soft-deleted tickers on conflict.
+        Returns 400 if market is not UK or US, or ticker is blank.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ticker, market]
+              properties:
+                ticker: { type: string, maxLength: 20 }
+                market: { type: string, enum: [UK, US] }
+                sector: { type: string, nullable: true }
+                industry: { type: string, nullable: true }
+      responses:
+        "201":
+          description: Ticker added or re-activated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  data:
+                    type: object
+                    properties:
+                      ticker: { type: string }
+                      market: { type: string }
+                      active: { type: boolean }
+                      sector: { type: string, nullable: true }
+                      industry: { type: string, nullable: true }
+                      company_name: { type: string, nullable: true }
+                      created_at: { type: string, format: date-time }
+        "400":
+          description: Invalid ticker or market
+  /ticker-universe/{ticker}:
+    delete:
+      tags:
+        - Screener
+      summary: Remove a ticker from the screener universe
+      description: Soft-deletes a ticker (sets active=FALSE). Returns 404 if not found or already inactive.
+      parameters:
+        - name: ticker
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Ticker symbol (e.g. AAPL, HSBA.L)
+      responses:
+        "200":
+          description: Ticker deactivated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+        "404":
+          description: Ticker not found or already inactive
+
+  # ─── Screener API (BLG-SPEC-23 / ST-03) ────────────────────────────────────
+  # Internal screener endpoints served by this system's backend.
+  # Canonical contract: docs/specs/api_contracts/screener_api_contract.md
+  /screener/results:
+    get:
+      tags:
+        - Screener
+      summary: Get latest screener results
+      description: |
+        Returns the results of the most recent completed screener run.
+        Results are ordered by signal_score descending.
+        Canonical contract: docs/specs/api_contracts/screener_api_contract.md
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+            maximum: 200
+          description: Number of results to return
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+          description: Pagination offset
+        - name: market
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: ["US", "UK", "all"]
+            default: "all"
+          description: Filter by market
+        - name: run_id
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Return results from a specific run (UUID). Omit for latest run.
+      responses:
+        "200":
+          description: Screener results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      results:
+                        type: array
+                        description: Screener result records (see screener_results_schema.md)
+                      run_id: { type: string }
+                      run_timestamp: { type: string, format: date-time }
+                      total: { type: integer }
+                      limit: { type: integer }
+                      offset: { type: integer }
+                      degraded_run: { type: boolean, description: "true when >20% of tickers returned no OHLCV data" }
+                      failure_rate: { type: number, format: float, description: "Fraction of tickers with no OHLCV data (0.0–1.0)" }
+                      tickers_requested: { type: integer, description: "Number of tickers the screener attempted to evaluate" }
+                      tickers_loaded: { type: integer, description: "Number of tickers that successfully returned OHLCV data" }
+                      tickers_failed: { type: array, items: { type: string }, description: "Tickers that failed to load OHLCV data" }
+                      run_quality: { type: string, enum: [FULL, DEGRADED, FAILED], description: "FULL (≤20% failure), DEGRADED (>20%), FAILED (no tickers loaded)" }
+                      last_full_run_utc: { type: string, format: date-time, nullable: true, description: "Timestamp of most recent FULL run. null if no FULL run recorded yet" }
+
+  /screener/run:
+    post:
+      tags:
+        - Screener
+      summary: Trigger a new screener run
+      description: |
+        Triggers a new screener run against the configured ticker universe.
+        Returns the run_id immediately; results available via GET /screener/results?run_id={run_id}.
+        Canonical contract: docs/specs/api_contracts/screener_api_contract.md
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ticker_universe:
+                  type: array
+                  items:
+                    type: string
+                  description: Optional override of ticker universe. If omitted, uses configured default universe.
+      responses:
+        "202":
+          description: Screener run accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      run_id: { type: string, description: "UUID of the initiated run" }
+                      status: { type: string, enum: ["accepted", "running"] }
+        "409":
+          description: A screener run is already in progress
+
+  /trade-plans:
+    post:
+      summary: Create a new trade plan
+      tags: [Trade Plans]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ticker, market]
+              properties:
+                ticker: { type: string }
+                market: { type: string, enum: [US, UK] }
+                position_id: { type: string, format: uuid, nullable: true }
+                setup_type: { type: string, nullable: true, enum: [Breakout, "Pullback to MA", "Momentum Continuation", "Mean Reversion", "Catalyst-driven", Other] }
+                setup_thesis: { type: string, nullable: true }
+                entry_rationale: { type: string, nullable: true }
+                regime_context_at_entry: { type: string, nullable: true }
+                r_target: { type: number, nullable: true }
+                early_exit_conditions: { type: string, nullable: true }
+                confirmation_criteria: { type: string, nullable: true }
+                checklist_completed: { type: boolean, default: false }
+                checklist_items: { type: array, items: { type: object } }
+                status: { type: string, enum: [draft, active, closed], default: draft }
+                pre_entry_override_acknowledged: { type: boolean, nullable: true }
+                idempotency_key: { type: string, maxLength: 200, nullable: true }
+      responses:
+        "201":
+          description: Trade plan created
+    get:
+      summary: List trade plans
+      tags: [Trade Plans]
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema: { type: string, enum: [draft, active, closed] }
+        - name: cursor
+          in: query
+          required: false
+          description: Opaque pagination cursor from a prior response's next_cursor. Additive/opt-in — omit for unpaginated behaviour (backend_engineering_patterns.md §Cursor-based pagination pattern).
+          schema: { type: string, nullable: true }
+        - name: limit
+          in: query
+          required: false
+          description: Page size. When provided, response includes next_cursor (null when no further page).
+          schema: { type: integer, minimum: 1, maximum: 200 }
+      responses:
+        "200":
+          description: List of trade plans. When `limit` is supplied, includes `next_cursor` (string | null).
+
+  /trade-plans/{id}:
+    get:
+      summary: Get trade plan by ID
+      tags: [Trade Plans]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Trade plan
+        "404":
+          description: Not found
+    put:
+      summary: Update trade plan
+      tags: [Trade Plans]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                setup_type: { type: string, nullable: true, enum: [Breakout, "Pullback to MA", "Momentum Continuation", "Mean Reversion", "Catalyst-driven", Other] }
+                setup_thesis: { type: string, nullable: true }
+                entry_rationale: { type: string, nullable: true }
+                status: { type: string, enum: [draft, active, closed] }
+                pre_entry_override_acknowledged: { type: boolean, nullable: true }
+      responses:
+        "200":
+          description: Updated trade plan
+    delete:
+      summary: Delete trade plan
+      tags: [Trade Plans]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Deleted
+
+  /trade-plans/by-position/{position_id}:
+    get:
+      summary: Get trade plans linked to a position
+      tags: [Trade Plans]
+      parameters:
+        - name: position_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Trade plans for position
+
+  /trade-plans/generate-plan:
+    post:
+      summary: Generate a full trade plan via Claude Haiku 4.5
+      description: |
+        Calls Claude Haiku 4.5 to generate all plan fields (setup_thesis, entry_rationale,
+        confirmation_criteria, early_exit_conditions, regime_context_at_entry, r_target)
+        from a ticker and optional signal data. No existing plan record required.
+        Returns available=true with fields on success; available=false with error on
+        graceful degradation (no API key or API failure).
+        Canonical contract: docs/specs/api_contracts/ai_thesis_generation.md v2.1.0
+      tags: [Trade Plans]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ticker]
+              properties:
+                ticker:
+                  type: string
+                  description: Ticker symbol (e.g. AAPL, BARC.L)
+                market:
+                  type: string
+                  enum: [US, UK]
+                  default: US
+                setup_type:
+                  type: string
+                  nullable: true
+                signal_data:
+                  type: object
+                  nullable: true
+                  properties:
+                    signal_type: { type: string }
+                    momentum_percent: { type: number }
+                    atr_multiple: { type: number }
+                    r_target: { type: number }
+                    price_vs_50d_ma: { type: number }
+                    regime: { type: string }
+                    signal_score: { type: number }
+      responses:
+        "200":
+          description: Generated plan fields (available=true) or graceful error (available=false when key absent)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  available: { type: boolean }
+                  fields:
+                    type: object
+                    properties:
+                      setup_thesis: { type: string }
+                      entry_rationale: { type: string }
+                      confirmation_criteria: { type: string }
+                      early_exit_conditions: { type: string }
+                      regime_context_at_entry: { type: string }
+                      r_target: { type: number, nullable: true }
+                  model_version: { type: string }
+                  prompt_version: { type: string }
+                  error: { type: string }
+        "500":
+          description: Unexpected server error
+
+  /trade-plans/{plan_id}/generate-thesis:
+    post:
+      summary: Generate a setup thesis via Claude Haiku 4.5
+      description: |
+        Calls Claude Haiku 4.5 to generate a concise setup thesis for an existing trade plan.
+        Returns available=true with thesis text on success; available=false with error
+        on graceful degradation (no API key or API failure).
+        Canonical contract: docs/specs/api_contracts/ai_thesis_generation.md v2.1.0
+      tags: [Trade Plans]
+      parameters:
+        - name: plan_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Generated thesis (available=true) or graceful error (available=false when key absent)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string }
+                  data:
+                    type: object
+                    properties:
+                      available: { type: boolean }
+                      thesis: { type: string }
+                      model_version: { type: string }
+                      prompt_version: { type: string }
+                      input_hash: { type: string }
+                      output_hash: { type: string }
+                      error: { type: string }
+        "404":
+          description: Trade plan not found
+
+  /trade-plans/tags:
+    get:
+      tags: [Trade Plans]
+      summary: Get all unique trade-plan tags for autocomplete
+      description: |
+        Returns unique tags used across trade_plans.trade_tags for the portfolio.
+        Mirrors GET /positions/tags. Data-independent from the existing
+        position/journal tags. ST-05, BLG-FEAT-52, v6.8.
+      responses:
+        "200":
+          description: List of unique trade-plan tags
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      type: string
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /trade-plans/bulk-tag:
+    post:
+      tags: [Trade Plans]
+      summary: Bulk-tag trade plans
+      description: |
+        Adds tags to each selected trade plan's existing trade_tags (union, not replace).
+        Canonical contract: docs/specs/api_contracts/trade_plan_endpoints.md v0.7 §POST /trade-plans/bulk-tag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkTagRequest"
+      responses:
+        "200":
+          description: Bulk-tag result
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/BulkActionResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /trade-plans/bulk-archive:
+    put:
+      tags: [Trade Plans]
+      summary: Bulk-archive (abandon) trade plans
+      description: |
+        Abandons each selected trade plan, reusing the existing single-plan abandonment
+        transition (§8). Plans with status='active' are excluded and reported in `failed`
+        with reason 'active_status_excluded'.
+        Canonical contract: docs/specs/api_contracts/trade_plan_endpoints.md v0.7 §PUT /trade-plans/bulk-archive
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkIdsRequest"
+      responses:
+        "200":
+          description: Bulk-archive result
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/BulkActionResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /trade-plans/bulk:
+    delete:
+      tags: [Trade Plans]
+      summary: Bulk-delete trade plans
+      description: |
+        Deletes each selected trade plan in a single call.
+        Canonical contract: docs/specs/api_contracts/trade_plan_endpoints.md v0.7 §DELETE /trade-plans/bulk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkIdsRequest"
+      responses:
+        "200":
+          description: Bulk-delete result
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiOk"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/BulkActionResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /trade-plans/setup-quality-score:
+    get:
+      tags: [Trade Plans]
+      summary: Get setup quality score from closed trade history
+      description: >
+        Returns a 0-100 setup quality score derived from closed trade history.
+        Returns gate_not_met=true when fewer than 20 closed trades exist.
+        Score formula: clamp(win_rate*0.6 + max(avg_pnl_pct,0)*0.4, 0, 100).
+        Contract: ST-08, EPIC-04, v6.1.
+      parameters:
+        - name: ticker
+          in: query
+          required: true
+          schema: { type: string }
+          description: Ticker symbol
+      responses:
+        "200":
+          description: Score or gate_not_met response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      gate_not_met:
+                        type: boolean
+                      min_trades_required:
+                        type: integer
+                      current_trades:
+                        type: integer
+                        nullable: true
+                      ticker:
+                        type: string
+                        nullable: true
+                      score:
+                        type: integer
+                        nullable: true
+                      matching_trades:
+                        type: integer
+                        nullable: true
+                      win_rate:
+                        type: number
+                        nullable: true
+                      average_pnl_pct:
+                        type: number
+                        nullable: true
+                      score_explanation:
+                        type: string
+                        nullable: true
+
+  /earnings/{ticker}:
+    get:
+      summary: Get next earnings date for a ticker
+      tags: [Earnings]
+      parameters:
+        - name: ticker
+          in: path
+          required: true
+          schema: { type: string }
+          description: Ticker symbol
+        - name: market
+          in: query
+          required: false
+          schema: { type: string, enum: [US, UK], default: US }
+          description: Market (US or UK)
+      responses:
+        "200":
+          description: Earnings date data (next_earnings_date may be null if unavailable)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticker: { type: string }
+                  next_earnings_date: { type: string, nullable: true, description: "ISO 8601 date or null" }
+                  days_until_earnings: { type: integer, nullable: true }
+                  fiscal_quarter: { type: string, nullable: true }
+                  data_source: { type: string, example: "yahoo_finance" }
+
+  /research/{ticker}:
+    get:
+      summary: Aggregated pre-trade research snapshot
+      tags: [Research]
+      parameters:
+        - name: ticker
+          in: path
+          required: true
+          schema: { type: string }
+          description: Ticker symbol (e.g. AAPL, BARC.L)
+        - name: market
+          in: query
+          required: false
+          schema: { type: string, enum: [US, UK], default: US }
+      responses:
+        "200":
+          description: Research snapshot; sub-source failures return null fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string }
+                  data:
+                    type: object
+                    properties:
+                      ticker: { type: string }
+                      market: { type: string }
+                      signal: { type: object, nullable: true }
+                      regime: { type: object, nullable: true }
+                      sector: { type: object }
+                      screener: { type: object, nullable: true }
+                      earnings: { type: object, nullable: true }
+        "404":
+          description: Ticker not found — Yahoo Finance returned no result for the given ticker symbol
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: error }
+                  message: { type: string, example: "Ticker 'INVALID' not found." }
+        "503":
+          description: Yahoo Finance entirely unavailable — connection error or HTTP error response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: error }
+                  message: { type: string, example: "Market data service is currently unavailable. Please try again later." }
+
+  /analytics/strategy-version-comparison:
+    get:
+      tags: [Analytics]
+      summary: Get strategy version performance comparison
+      description: |
+        Compares trade performance metrics across two strategy version labels.
+        Requires: version_from, version_to query params; optional date_range filter.
+        Returns: trade_count, win_rate, avg_R, compliance_rate, performance_delta per
+        version plus comparison_summary. Trades are attributed to a version by
+        entry_date within that version's date window (see backend/strategy_version_registry.py),
+        not a stored per-trade column.
+        §13 binding conditions: 6 conditions cleared v4.7 (read-only, closed trades, no execution feedback).
+        Canonical contract: docs/specs/api_contracts/strategy_version_comparison_contract.md v0.2.0
+      parameters:
+        - name: version_from
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Baseline strategy version label
+        - name: version_to
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Comparison strategy version label (must be later than version_from)
+        - name: date_range
+          in: query
+          required: false
+          schema:
+            type: string
+          description: "ISO 8601 date range filter: YYYY-MM-DD/YYYY-MM-DD"
+      responses:
+        "200":
+          description: Strategy version comparison metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version_from: { type: string }
+                  version_to: { type: string }
+                  date_range: { type: string, nullable: true }
+                  version_from_metrics:
+                    type: object
+                    properties:
+                      trade_count: { type: integer }
+                      win_rate: { type: number }
+                      avg_R: { type: number }
+                      performance_delta: { type: number, nullable: true }
+                      compliance_rate: { type: number, nullable: true }
+                  version_to_metrics:
+                    type: object
+                    properties:
+                      trade_count: { type: integer }
+                      win_rate: { type: number }
+                      avg_R: { type: number }
+                      performance_delta: { type: number }
+                      compliance_rate: { type: number, nullable: true }
+                  comparison_summary:
+                    type: object
+                    properties:
+                      win_rate_delta: { type: number }
+                      avg_R_delta: { type: number }
+                      trade_count_delta: { type: integer }
+                      assessment: { type: string, enum: [Improved, Degraded, "Insufficient data"] }
+        "404":
+          description: Strategy version not found in version registry
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: error }
+                  code: { type: string, example: version_not_found }
+                  message: { type: string }
+                  missing_version: { type: string }
+        "400":
+          description: version_to is not chronologically after version_from
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: error }
+                  code: { type: string, example: version_order_error }
+                  message: { type: string }
+        "422":
+          description: Insufficient data or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: error }
+                  code: { type: string, enum: [insufficient_data, invalid_date_range] }
+                  message: { type: string }
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /strategy/benchmark/import:
+    post:
+      summary: Import backtest data from production_strategy.py CSV outputs
+      description: |
+        Upserts trade-level and yearly performance records produced by production_strategy.py
+        into backtest_trades and backtest_yearly_performance tables. Called by import_backtest.py.
+        ST-11 (BLG-FEAT-53, EPIC-03, v6.3)
+      tags: [Strategy Benchmark]
+      security:
+        - ApiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [trades, yearly_performance]
+              properties:
+                trades:
+                  type: array
+                  items:
+                    type: object
+                    required: [ticker, entry_date, exit_date, entry_year]
+                    properties:
+                      ticker: { type: string }
+                      entry_date: { type: string, format: date }
+                      exit_date: { type: string, format: date }
+                      holding_days: { type: integer, nullable: true }
+                      entry_price: { type: number, nullable: true }
+                      exit_price: { type: number, nullable: true }
+                      pnl_gbp: { type: number, nullable: true }
+                      pnl_pct: { type: number, nullable: true }
+                      market: { type: string, default: US }
+                      exit_reason: { type: string, nullable: true }
+                      was_profitable: { type: boolean, nullable: true }
+                      entry_year: { type: integer }
+                yearly_performance:
+                  type: array
+                  items:
+                    type: object
+                    required: [entry_year]
+                    properties:
+                      entry_year: { type: integer }
+                      num_trades: { type: integer, nullable: true }
+                      avg_pnl_gbp: { type: number, nullable: true }
+                      total_pnl_gbp: { type: number, nullable: true }
+                      avg_hold_days: { type: number, nullable: true }
+                      win_rate_pct: { type: number, nullable: true }
+      responses:
+        "200":
+          description: Import complete
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  trades_imported: { type: integer }
+                  years_imported: { type: integer }
+                  open_positions_imported: { type: integer }
+                  trades_deleted: { type: integer }
+                  years_deleted: { type: integer }
+                  open_positions_deleted: { type: integer }
+                  imported_at: { type: string, format: date-time }
+                  previous_total_pnl_gbp: { type: number, nullable: true }
+                  total_pnl_gbp_delta: { type: number, nullable: true }
+                  previous_total_unrealized_pnl_gbp: { type: number, nullable: true }
+
+  /strategy/benchmark/summary:
+    get:
+      summary: Panel 1 stats and Panel 2 yearly breakdown for the Strategy Benchmark page
+      description: |
+        Returns backtest stats and actual live trade stats side-by-side for Panel 1,
+        and per-year rows for Panel 2. actual_stats is null if no live trades match
+        the filter (frontend displays '—' per AC-03). ST-11 (BLG-FEAT-53, EPIC-03, v6.3)
+      tags: [Strategy Benchmark]
+      security:
+        - ApiKey: []
+      parameters:
+        - name: year
+          in: query
+          required: false
+          schema: { type: integer }
+          description: Filter to a specific entry year; omit for all years
+        - name: market
+          in: query
+          required: false
+          schema: { type: string, enum: [US, UK, ALL] }
+          description: Filter by market; omit or ALL for all markets
+      responses:
+        "200":
+          description: Benchmark summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  filters:
+                    type: object
+                    properties:
+                      year: { type: integer, nullable: true }
+                      market: { type: string }
+                  last_imported_at: { type: string, format: date-time, nullable: true }
+                  available_years:
+                    type: array
+                    items: { type: integer }
+                  backtest_stats:
+                    nullable: true
+                    type: object
+                    properties:
+                      total_trades: { type: integer }
+                      win_rate_pct: { type: number }
+                      avg_pnl_gbp: { type: number }
+                      total_pnl_gbp: { type: number }
+                      avg_hold_days: { type: number }
+                  actual_stats:
+                    nullable: true
+                    type: object
+                    properties:
+                      total_trades: { type: integer }
+                      win_rate_pct: { type: number }
+                      avg_pnl_gbp: { type: number }
+                      total_pnl_gbp: { type: number }
+                      avg_hold_days: { type: number }
+                  yearly_breakdown:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        entry_year: { type: integer }
+                        num_trades: { type: integer }
+                        avg_pnl_gbp: { type: number }
+                        total_pnl_gbp: { type: number }
+                        avg_hold_days: { type: number }
+                        win_rate_pct: { type: number }
+
+  /strategy/benchmark/trades:
+    get:
+      summary: Panel 3 trade log for the Strategy Benchmark page
+      description: |
+        Returns backtest_trades and actual_trades separately. The frontend renders
+        the appropriate subset based on the selected toggle mode (backtest only /
+        actual only / side-by-side). ST-11 (BLG-FEAT-53, EPIC-03, v6.3)
+      tags: [Strategy Benchmark]
+      security:
+        - ApiKey: []
+      parameters:
+        - name: year
+          in: query
+          required: false
+          schema: { type: integer }
+          description: Filter to a specific entry year
+        - name: market
+          in: query
+          required: false
+          schema: { type: string, enum: [US, UK, ALL] }
+          description: Filter by market
+      responses:
+        "200":
+          description: Trade log data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  filters:
+                    type: object
+                    properties:
+                      year: { type: integer, nullable: true }
+                      market: { type: string }
+                  backtest_trades:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ticker: { type: string }
+                        entry_date: { type: string, format: date }
+                        exit_date: { type: string, format: date }
+                        holding_days: { type: integer, nullable: true }
+                        entry_price: { type: number, nullable: true }
+                        exit_price: { type: number, nullable: true }
+                        pnl_gbp: { type: number, nullable: true }
+                        pnl_pct: { type: number, nullable: true }
+                        market: { type: string }
+                        exit_reason: { type: string, nullable: true }
+                        was_profitable: { type: boolean, nullable: true }
+                        entry_year: { type: integer }
+                  actual_trades:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ticker: { type: string }
+                        entry_date: { type: string, format: date, nullable: true }
+                        exit_date: { type: string, format: date, nullable: true }
+                        holding_days: { type: integer, nullable: true }
+                        pnl_gbp: { type: number, nullable: true }
+                        pnl_pct: { type: number, nullable: true }
+                        market: { type: string }
+                        exit_reason: { type: string, nullable: true }
+                        was_profitable: { type: boolean, nullable: true }
+                        entry_year: { type: integer, nullable: true }
+
+  /strategy/benchmark/open-positions:
+    get:
+      summary: Panel 0 open (unrealized) positions for the Strategy Benchmark page
+      description: |
+        Returns current open positions with unrealized P&L, sourced from
+        backtest_open_positions (fully replaced on each nightly import, same
+        pattern as backtest_trades). No year parameter — open positions are
+        current-state, not historical-per-year data. ST-08 (BLG-FEAT-54, EPIC-03, v6.4)
+      tags: [Strategy Benchmark]
+      security:
+        - ApiKey: []
+      parameters:
+        - name: market
+          in: query
+          required: false
+          schema: { type: string, enum: [US, UK, ALL] }
+          description: Filter by market
+      responses:
+        "200":
+          description: Open positions data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  filters:
+                    type: object
+                    properties:
+                      market: { type: string }
+                  open_positions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ticker: { type: string }
+                        market: { type: string }
+                        entry_date: { type: string, format: date }
+                        entry_price: { type: number, nullable: true }
+                        current_price: { type: number, nullable: true }
+                        unrealized_pnl_gbp: { type: number, nullable: true }
+                        unrealized_pnl_pct: { type: number, nullable: true }
+                        days_held: { type: integer }
+                  summary:
+                    type: object
+                    properties:
+                      count: { type: integer }
+                      total_unrealized_pnl_gbp: { type: number, nullable: true }
 
 components:
   schemas:
@@ -5075,1172 +6303,6 @@ components:
                 properties:
                   data:
                     $ref: "#/components/schemas/EndpointTestResponse"
-
-  # ─── External: Alpaca Markets API (BLG-SPEC-22 / ST-02) ───────────────────────
-  # These paths document outbound calls FROM this system TO Alpaca.
-  # Canonical contract: docs/specs/api_contracts/alpaca_integration_contract.md
-  # Base URL override: https://data.alpaca.markets (not served by this system's backend)
-  /v2/stocks/{symbol}/bars:
-    get:
-      tags:
-        - External - Alpaca
-      summary: Get OHLCV bars for a US ticker (Alpaca Markets API v2)
-      description: |
-        **External API call.** Fetches historical daily OHLCV bars from Alpaca Markets.
-        Used by DS-05 to replace Yahoo Finance for US market tickers.
-        Canonical contract: docs/specs/api_contracts/alpaca_integration_contract.md
-        Base URL: https://data.alpaca.markets (not this system's backend)
-      parameters:
-        - name: symbol
-          in: path
-          required: true
-          schema:
-            type: string
-          description: US ticker symbol (e.g. NVDA, AAPL)
-        - name: timeframe
-          in: query
-          required: true
-          schema:
-            type: string
-            enum: ["1Day"]
-          description: Bar timeframe. Use "1Day" for daily bars.
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            default: 30
-          description: Number of bars to return. 30 recommended for ATR calculation.
-      responses:
-        "200":
-          description: OHLCV bars response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  bars:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        t: { type: string, format: date-time, description: "Bar open timestamp (UTC)" }
-                        o: { type: number, description: "Open price (USD)" }
-                        h: { type: number, description: "High price (USD)" }
-                        l: { type: number, description: "Low price (USD)" }
-                        c: { type: number, description: "Close price (USD)" }
-                        v: { type: integer, description: "Volume" }
-                        vw: { type: number, description: "VWAP" }
-                        n: { type: integer, description: "Trade count" }
-                  symbol: { type: string }
-                  next_page_token: { type: string, nullable: true }
-        "403":
-          description: Invalid credentials
-        "404":
-          description: Symbol not found — apply fallback to Yahoo Finance
-        "429":
-          description: Rate limit exceeded — retry with exponential backoff
-
-  /v1beta1/news:
-    get:
-      tags:
-        - External - Alpaca
-      summary: Get news headlines for US tickers (Alpaca News API v1beta1)
-      description: |
-        **External API call.** Fetches recent news headlines from Alpaca News API.
-        Used by DS-06 for display-only ticker-level news panel.
-        §13 COMPLIANT — display-only, no sentiment scoring, no advisory.
-        Canonical contract: docs/specs/api_contracts/alpaca_integration_contract.md
-        Base URL: https://data.alpaca.markets (not this system's backend)
-      parameters:
-        - name: symbols
-          in: query
-          required: true
-          schema:
-            type: string
-          description: Comma-separated ticker symbols (e.g. "NVDA,AAPL")
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            default: 10
-            maximum: 50
-          description: Maximum headlines per symbol
-        - name: sort
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: ["desc", "asc"]
-            default: "desc"
-          description: Sort order (newest first by default)
-      responses:
-        "200":
-          description: News headlines response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  news:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id: { type: integer }
-                        headline: { type: string }
-                        author: { type: string, nullable: true }
-                        created_at: { type: string, format: date-time }
-                        updated_at: { type: string, format: date-time }
-                        summary: { type: string, nullable: true }
-                        url: { type: string, nullable: true }
-                        symbols: { type: array, items: { type: string } }
-                        source: { type: string, nullable: true }
-                  next_page_token: { type: string, nullable: true }
-        "403":
-          description: Invalid credentials
-        "429":
-          description: Rate limit exceeded — serve empty news panel
-
-  # ─── Ticker Universe API (DS-01 / ST-01) ────────────────────────────────────
-  # Manages the set of tickers eligible for screener runs.
-  # Canonical contract: docs/specs/api_contracts/screener_api_contract.md
-  /ticker-universe:
-    get:
-      tags:
-        - Screener
-      summary: List tickers in screener universe
-      description: |
-        Returns tickers eligible for screener runs.
-        Filterable by market (UK|US) and active status.
-      parameters:
-        - name: market
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: [UK, US]
-          description: Filter by market
-        - name: active_only
-          in: query
-          required: false
-          schema:
-            type: boolean
-            default: true
-          description: Return only active tickers (default true)
-      responses:
-        "200":
-          description: List of tickers
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status: { type: string, example: ok }
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        ticker: { type: string }
-                        market: { type: string, enum: [UK, US] }
-                        active: { type: boolean }
-                        sector: { type: string, nullable: true }
-                        industry: { type: string, nullable: true }
-                        company_name: { type: string, nullable: true }
-                        created_at: { type: string, format: date-time }
-        "400":
-          description: Invalid market value
-    post:
-      tags:
-        - Screener
-      summary: Add a ticker to the screener universe
-      description: |
-        Adds a ticker. Re-activates soft-deleted tickers on conflict.
-        Returns 400 if market is not UK or US, or ticker is blank.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [ticker, market]
-              properties:
-                ticker: { type: string, maxLength: 20 }
-                market: { type: string, enum: [UK, US] }
-                sector: { type: string, nullable: true }
-                industry: { type: string, nullable: true }
-      responses:
-        "201":
-          description: Ticker added or re-activated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status: { type: string, example: ok }
-                  data:
-                    type: object
-                    properties:
-                      ticker: { type: string }
-                      market: { type: string }
-                      active: { type: boolean }
-                      sector: { type: string, nullable: true }
-                      industry: { type: string, nullable: true }
-                      company_name: { type: string, nullable: true }
-                      created_at: { type: string, format: date-time }
-        "400":
-          description: Invalid ticker or market
-  /ticker-universe/{ticker}:
-    delete:
-      tags:
-        - Screener
-      summary: Remove a ticker from the screener universe
-      description: Soft-deletes a ticker (sets active=FALSE). Returns 404 if not found or already inactive.
-      parameters:
-        - name: ticker
-          in: path
-          required: true
-          schema:
-            type: string
-          description: Ticker symbol (e.g. AAPL, HSBA.L)
-      responses:
-        "200":
-          description: Ticker deactivated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status: { type: string, example: ok }
-        "404":
-          description: Ticker not found or already inactive
-
-  # ─── Screener API (BLG-SPEC-23 / ST-03) ────────────────────────────────────
-  # Internal screener endpoints served by this system's backend.
-  # Canonical contract: docs/specs/api_contracts/screener_api_contract.md
-  /screener/results:
-    get:
-      tags:
-        - Screener
-      summary: Get latest screener results
-      description: |
-        Returns the results of the most recent completed screener run.
-        Results are ordered by signal_score descending.
-        Canonical contract: docs/specs/api_contracts/screener_api_contract.md
-      parameters:
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            default: 50
-            maximum: 200
-          description: Number of results to return
-        - name: offset
-          in: query
-          required: false
-          schema:
-            type: integer
-            default: 0
-          description: Pagination offset
-        - name: market
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: ["US", "UK", "all"]
-            default: "all"
-          description: Filter by market
-        - name: run_id
-          in: query
-          required: false
-          schema:
-            type: string
-          description: Return results from a specific run (UUID). Omit for latest run.
-      responses:
-        "200":
-          description: Screener results
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ok: { type: boolean }
-                  data:
-                    type: object
-                    properties:
-                      results:
-                        type: array
-                        description: Screener result records (see screener_results_schema.md)
-                      run_id: { type: string }
-                      run_timestamp: { type: string, format: date-time }
-                      total: { type: integer }
-                      limit: { type: integer }
-                      offset: { type: integer }
-                      degraded_run: { type: boolean, description: "true when >20% of tickers returned no OHLCV data" }
-                      failure_rate: { type: number, format: float, description: "Fraction of tickers with no OHLCV data (0.0–1.0)" }
-                      tickers_requested: { type: integer, description: "Number of tickers the screener attempted to evaluate" }
-                      tickers_loaded: { type: integer, description: "Number of tickers that successfully returned OHLCV data" }
-                      tickers_failed: { type: array, items: { type: string }, description: "Tickers that failed to load OHLCV data" }
-                      run_quality: { type: string, enum: [FULL, DEGRADED, FAILED], description: "FULL (≤20% failure), DEGRADED (>20%), FAILED (no tickers loaded)" }
-                      last_full_run_utc: { type: string, format: date-time, nullable: true, description: "Timestamp of most recent FULL run. null if no FULL run recorded yet" }
-
-  /screener/run:
-    post:
-      tags:
-        - Screener
-      summary: Trigger a new screener run
-      description: |
-        Triggers a new screener run against the configured ticker universe.
-        Returns the run_id immediately; results available via GET /screener/results?run_id={run_id}.
-        Canonical contract: docs/specs/api_contracts/screener_api_contract.md
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                ticker_universe:
-                  type: array
-                  items:
-                    type: string
-                  description: Optional override of ticker universe. If omitted, uses configured default universe.
-      responses:
-        "202":
-          description: Screener run accepted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ok: { type: boolean }
-                  data:
-                    type: object
-                    properties:
-                      run_id: { type: string, description: "UUID of the initiated run" }
-                      status: { type: string, enum: ["accepted", "running"] }
-        "409":
-          description: A screener run is already in progress
-
-  /trade-plans:
-    post:
-      summary: Create a new trade plan
-      tags: [Trade Plans]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [ticker, market]
-              properties:
-                ticker: { type: string }
-                market: { type: string, enum: [US, UK] }
-                position_id: { type: string, format: uuid, nullable: true }
-                setup_type: { type: string, nullable: true, enum: [Breakout, "Pullback to MA", "Momentum Continuation", "Mean Reversion", "Catalyst-driven", Other] }
-                setup_thesis: { type: string, nullable: true }
-                entry_rationale: { type: string, nullable: true }
-                regime_context_at_entry: { type: string, nullable: true }
-                r_target: { type: number, nullable: true }
-                early_exit_conditions: { type: string, nullable: true }
-                confirmation_criteria: { type: string, nullable: true }
-                checklist_completed: { type: boolean, default: false }
-                checklist_items: { type: array, items: { type: object } }
-                status: { type: string, enum: [draft, active, closed], default: draft }
-                pre_entry_override_acknowledged: { type: boolean, nullable: true }
-                idempotency_key: { type: string, maxLength: 200, nullable: true }
-      responses:
-        "201":
-          description: Trade plan created
-    get:
-      summary: List trade plans
-      tags: [Trade Plans]
-      parameters:
-        - name: status
-          in: query
-          required: false
-          schema: { type: string, enum: [draft, active, closed] }
-        - name: cursor
-          in: query
-          required: false
-          description: Opaque pagination cursor from a prior response's next_cursor. Additive/opt-in — omit for unpaginated behaviour (backend_engineering_patterns.md §Cursor-based pagination pattern).
-          schema: { type: string, nullable: true }
-        - name: limit
-          in: query
-          required: false
-          description: Page size. When provided, response includes next_cursor (null when no further page).
-          schema: { type: integer, minimum: 1, maximum: 200 }
-      responses:
-        "200":
-          description: List of trade plans. When `limit` is supplied, includes `next_cursor` (string | null).
-
-  /trade-plans/{id}:
-    get:
-      summary: Get trade plan by ID
-      tags: [Trade Plans]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: string, format: uuid }
-      responses:
-        "200":
-          description: Trade plan
-        "404":
-          description: Not found
-    put:
-      summary: Update trade plan
-      tags: [Trade Plans]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: string, format: uuid }
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                setup_type: { type: string, nullable: true, enum: [Breakout, "Pullback to MA", "Momentum Continuation", "Mean Reversion", "Catalyst-driven", Other] }
-                setup_thesis: { type: string, nullable: true }
-                entry_rationale: { type: string, nullable: true }
-                status: { type: string, enum: [draft, active, closed] }
-                pre_entry_override_acknowledged: { type: boolean, nullable: true }
-      responses:
-        "200":
-          description: Updated trade plan
-    delete:
-      summary: Delete trade plan
-      tags: [Trade Plans]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: string, format: uuid }
-      responses:
-        "200":
-          description: Deleted
-
-  /trade-plans/by-position/{position_id}:
-    get:
-      summary: Get trade plans linked to a position
-      tags: [Trade Plans]
-      parameters:
-        - name: position_id
-          in: path
-          required: true
-          schema: { type: string, format: uuid }
-      responses:
-        "200":
-          description: Trade plans for position
-
-  /trade-plans/generate-plan:
-    post:
-      summary: Generate a full trade plan via Claude Haiku 4.5
-      description: |
-        Calls Claude Haiku 4.5 to generate all plan fields (setup_thesis, entry_rationale,
-        confirmation_criteria, early_exit_conditions, regime_context_at_entry, r_target)
-        from a ticker and optional signal data. No existing plan record required.
-        Returns available=true with fields on success; available=false with error on
-        graceful degradation (no API key or API failure).
-        Canonical contract: docs/specs/api_contracts/ai_thesis_generation.md v2.1.0
-      tags: [Trade Plans]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [ticker]
-              properties:
-                ticker:
-                  type: string
-                  description: Ticker symbol (e.g. AAPL, BARC.L)
-                market:
-                  type: string
-                  enum: [US, UK]
-                  default: US
-                setup_type:
-                  type: string
-                  nullable: true
-                signal_data:
-                  type: object
-                  nullable: true
-                  properties:
-                    signal_type: { type: string }
-                    momentum_percent: { type: number }
-                    atr_multiple: { type: number }
-                    r_target: { type: number }
-                    price_vs_50d_ma: { type: number }
-                    regime: { type: string }
-                    signal_score: { type: number }
-      responses:
-        "200":
-          description: Generated plan fields (available=true) or graceful error (available=false when key absent)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  available: { type: boolean }
-                  fields:
-                    type: object
-                    properties:
-                      setup_thesis: { type: string }
-                      entry_rationale: { type: string }
-                      confirmation_criteria: { type: string }
-                      early_exit_conditions: { type: string }
-                      regime_context_at_entry: { type: string }
-                      r_target: { type: number, nullable: true }
-                  model_version: { type: string }
-                  prompt_version: { type: string }
-                  error: { type: string }
-        "500":
-          description: Unexpected server error
-
-  /trade-plans/{plan_id}/generate-thesis:
-    post:
-      summary: Generate a setup thesis via Claude Haiku 4.5
-      description: |
-        Calls Claude Haiku 4.5 to generate a concise setup thesis for an existing trade plan.
-        Returns available=true with thesis text on success; available=false with error
-        on graceful degradation (no API key or API failure).
-        Canonical contract: docs/specs/api_contracts/ai_thesis_generation.md v2.1.0
-      tags: [Trade Plans]
-      parameters:
-        - name: plan_id
-          in: path
-          required: true
-          schema: { type: string, format: uuid }
-      responses:
-        "200":
-          description: Generated thesis (available=true) or graceful error (available=false when key absent)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status: { type: string }
-                  data:
-                    type: object
-                    properties:
-                      available: { type: boolean }
-                      thesis: { type: string }
-                      model_version: { type: string }
-                      prompt_version: { type: string }
-                      input_hash: { type: string }
-                      output_hash: { type: string }
-                      error: { type: string }
-        "404":
-          description: Trade plan not found
-
-  /trade-plans/tags:
-    get:
-      tags: [Trade Plans]
-      summary: Get all unique trade-plan tags for autocomplete
-      description: |
-        Returns unique tags used across trade_plans.trade_tags for the portfolio.
-        Mirrors GET /positions/tags. Data-independent from the existing
-        position/journal tags. ST-05, BLG-FEAT-52, v6.8.
-      responses:
-        "200":
-          description: List of unique trade-plan tags
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: ok
-                  data:
-                    type: array
-                    items:
-                      type: string
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  /trade-plans/bulk-tag:
-    post:
-      tags: [Trade Plans]
-      summary: Bulk-tag trade plans
-      description: |
-        Adds tags to each selected trade plan's existing trade_tags (union, not replace).
-        Canonical contract: docs/specs/api_contracts/trade_plan_endpoints.md v0.7 §POST /trade-plans/bulk-tag
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BulkTagRequest"
-      responses:
-        "200":
-          description: Bulk-tag result
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiOk"
-                  - type: object
-                    properties:
-                      data:
-                        $ref: "#/components/schemas/BulkActionResult"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  /trade-plans/bulk-archive:
-    put:
-      tags: [Trade Plans]
-      summary: Bulk-archive (abandon) trade plans
-      description: |
-        Abandons each selected trade plan, reusing the existing single-plan abandonment
-        transition (§8). Plans with status='active' are excluded and reported in `failed`
-        with reason 'active_status_excluded'.
-        Canonical contract: docs/specs/api_contracts/trade_plan_endpoints.md v0.7 §PUT /trade-plans/bulk-archive
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BulkIdsRequest"
-      responses:
-        "200":
-          description: Bulk-archive result
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiOk"
-                  - type: object
-                    properties:
-                      data:
-                        $ref: "#/components/schemas/BulkActionResult"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  /trade-plans/bulk:
-    delete:
-      tags: [Trade Plans]
-      summary: Bulk-delete trade plans
-      description: |
-        Deletes each selected trade plan in a single call.
-        Canonical contract: docs/specs/api_contracts/trade_plan_endpoints.md v0.7 §DELETE /trade-plans/bulk
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BulkIdsRequest"
-      responses:
-        "200":
-          description: Bulk-delete result
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiOk"
-                  - type: object
-                    properties:
-                      data:
-                        $ref: "#/components/schemas/BulkActionResult"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  /trade-plans/setup-quality-score:
-    get:
-      tags: [Trade Plans]
-      summary: Get setup quality score from closed trade history
-      description: >
-        Returns a 0-100 setup quality score derived from closed trade history.
-        Returns gate_not_met=true when fewer than 20 closed trades exist.
-        Score formula: clamp(win_rate*0.6 + max(avg_pnl_pct,0)*0.4, 0, 100).
-        Contract: ST-08, EPIC-04, v6.1.
-      parameters:
-        - name: ticker
-          in: query
-          required: true
-          schema: { type: string }
-          description: Ticker symbol
-      responses:
-        "200":
-          description: Score or gate_not_met response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  data:
-                    type: object
-                    properties:
-                      gate_not_met:
-                        type: boolean
-                      min_trades_required:
-                        type: integer
-                      current_trades:
-                        type: integer
-                        nullable: true
-                      ticker:
-                        type: string
-                        nullable: true
-                      score:
-                        type: integer
-                        nullable: true
-                      matching_trades:
-                        type: integer
-                        nullable: true
-                      win_rate:
-                        type: number
-                        nullable: true
-                      average_pnl_pct:
-                        type: number
-                        nullable: true
-                      score_explanation:
-                        type: string
-                        nullable: true
-
-  /earnings/{ticker}:
-    get:
-      summary: Get next earnings date for a ticker
-      tags: [Earnings]
-      parameters:
-        - name: ticker
-          in: path
-          required: true
-          schema: { type: string }
-          description: Ticker symbol
-        - name: market
-          in: query
-          required: false
-          schema: { type: string, enum: [US, UK], default: US }
-          description: Market (US or UK)
-      responses:
-        "200":
-          description: Earnings date data (next_earnings_date may be null if unavailable)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ticker: { type: string }
-                  next_earnings_date: { type: string, nullable: true, description: "ISO 8601 date or null" }
-                  days_until_earnings: { type: integer, nullable: true }
-                  fiscal_quarter: { type: string, nullable: true }
-                  data_source: { type: string, example: "yahoo_finance" }
-
-  /research/{ticker}:
-    get:
-      summary: Aggregated pre-trade research snapshot
-      tags: [Research]
-      parameters:
-        - name: ticker
-          in: path
-          required: true
-          schema: { type: string }
-          description: Ticker symbol (e.g. AAPL, BARC.L)
-        - name: market
-          in: query
-          required: false
-          schema: { type: string, enum: [US, UK], default: US }
-      responses:
-        "200":
-          description: Research snapshot; sub-source failures return null fields
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status: { type: string }
-                  data:
-                    type: object
-                    properties:
-                      ticker: { type: string }
-                      market: { type: string }
-                      signal: { type: object, nullable: true }
-                      regime: { type: object, nullable: true }
-                      sector: { type: object }
-                      screener: { type: object, nullable: true }
-                      earnings: { type: object, nullable: true }
-        "404":
-          description: Ticker not found — Yahoo Finance returned no result for the given ticker symbol
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status: { type: string, example: error }
-                  message: { type: string, example: "Ticker 'INVALID' not found." }
-        "503":
-          description: Yahoo Finance entirely unavailable — connection error or HTTP error response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status: { type: string, example: error }
-                  message: { type: string, example: "Market data service is currently unavailable. Please try again later." }
-
-  /analytics/strategy-version-comparison:
-    get:
-      tags: [Analytics]
-      summary: Get strategy version performance comparison
-      description: |
-        Compares trade performance metrics across two strategy version labels.
-        Requires: version_from, version_to query params; optional date_range filter.
-        Returns: trade_count, win_rate, avg_R, compliance_rate, performance_delta per
-        version plus comparison_summary. Trades are attributed to a version by
-        entry_date within that version's date window (see backend/strategy_version_registry.py),
-        not a stored per-trade column.
-        §13 binding conditions: 6 conditions cleared v4.7 (read-only, closed trades, no execution feedback).
-        Canonical contract: docs/specs/api_contracts/strategy_version_comparison_contract.md v0.2.0
-      parameters:
-        - name: version_from
-          in: query
-          required: true
-          schema:
-            type: string
-          description: Baseline strategy version label
-        - name: version_to
-          in: query
-          required: true
-          schema:
-            type: string
-          description: Comparison strategy version label (must be later than version_from)
-        - name: date_range
-          in: query
-          required: false
-          schema:
-            type: string
-          description: "ISO 8601 date range filter: YYYY-MM-DD/YYYY-MM-DD"
-      responses:
-        "200":
-          description: Strategy version comparison metrics
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  version_from: { type: string }
-                  version_to: { type: string }
-                  date_range: { type: string, nullable: true }
-                  version_from_metrics:
-                    type: object
-                    properties:
-                      trade_count: { type: integer }
-                      win_rate: { type: number }
-                      avg_R: { type: number }
-                      performance_delta: { type: number, nullable: true }
-                      compliance_rate: { type: number, nullable: true }
-                  version_to_metrics:
-                    type: object
-                    properties:
-                      trade_count: { type: integer }
-                      win_rate: { type: number }
-                      avg_R: { type: number }
-                      performance_delta: { type: number }
-                      compliance_rate: { type: number, nullable: true }
-                  comparison_summary:
-                    type: object
-                    properties:
-                      win_rate_delta: { type: number }
-                      avg_R_delta: { type: number }
-                      trade_count_delta: { type: integer }
-                      assessment: { type: string, enum: [Improved, Degraded, "Insufficient data"] }
-        "404":
-          description: Strategy version not found in version registry
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status: { type: string, example: error }
-                  code: { type: string, example: version_not_found }
-                  message: { type: string }
-                  missing_version: { type: string }
-        "400":
-          description: version_to is not chronologically after version_from
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status: { type: string, example: error }
-                  code: { type: string, example: version_order_error }
-                  message: { type: string }
-        "422":
-          description: Insufficient data or invalid parameters
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status: { type: string, example: error }
-                  code: { type: string, enum: [insufficient_data, invalid_date_range] }
-                  message: { type: string }
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  /strategy/benchmark/import:
-    post:
-      summary: Import backtest data from production_strategy.py CSV outputs
-      description: |
-        Upserts trade-level and yearly performance records produced by production_strategy.py
-        into backtest_trades and backtest_yearly_performance tables. Called by import_backtest.py.
-        ST-11 (BLG-FEAT-53, EPIC-03, v6.3)
-      tags: [Strategy Benchmark]
-      security:
-        - ApiKey: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [trades, yearly_performance]
-              properties:
-                trades:
-                  type: array
-                  items:
-                    type: object
-                    required: [ticker, entry_date, exit_date, entry_year]
-                    properties:
-                      ticker: { type: string }
-                      entry_date: { type: string, format: date }
-                      exit_date: { type: string, format: date }
-                      holding_days: { type: integer, nullable: true }
-                      entry_price: { type: number, nullable: true }
-                      exit_price: { type: number, nullable: true }
-                      pnl_gbp: { type: number, nullable: true }
-                      pnl_pct: { type: number, nullable: true }
-                      market: { type: string, default: US }
-                      exit_reason: { type: string, nullable: true }
-                      was_profitable: { type: boolean, nullable: true }
-                      entry_year: { type: integer }
-                yearly_performance:
-                  type: array
-                  items:
-                    type: object
-                    required: [entry_year]
-                    properties:
-                      entry_year: { type: integer }
-                      num_trades: { type: integer, nullable: true }
-                      avg_pnl_gbp: { type: number, nullable: true }
-                      total_pnl_gbp: { type: number, nullable: true }
-                      avg_hold_days: { type: number, nullable: true }
-                      win_rate_pct: { type: number, nullable: true }
-      responses:
-        "200":
-          description: Import complete
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status: { type: string, example: ok }
-                  trades_imported: { type: integer }
-                  years_imported: { type: integer }
-                  open_positions_imported: { type: integer }
-                  trades_deleted: { type: integer }
-                  years_deleted: { type: integer }
-                  open_positions_deleted: { type: integer }
-                  imported_at: { type: string, format: date-time }
-                  previous_total_pnl_gbp: { type: number, nullable: true }
-                  total_pnl_gbp_delta: { type: number, nullable: true }
-                  previous_total_unrealized_pnl_gbp: { type: number, nullable: true }
-
-  /strategy/benchmark/summary:
-    get:
-      summary: Panel 1 stats and Panel 2 yearly breakdown for the Strategy Benchmark page
-      description: |
-        Returns backtest stats and actual live trade stats side-by-side for Panel 1,
-        and per-year rows for Panel 2. actual_stats is null if no live trades match
-        the filter (frontend displays '—' per AC-03). ST-11 (BLG-FEAT-53, EPIC-03, v6.3)
-      tags: [Strategy Benchmark]
-      security:
-        - ApiKey: []
-      parameters:
-        - name: year
-          in: query
-          required: false
-          schema: { type: integer }
-          description: Filter to a specific entry year; omit for all years
-        - name: market
-          in: query
-          required: false
-          schema: { type: string, enum: [US, UK, ALL] }
-          description: Filter by market; omit or ALL for all markets
-      responses:
-        "200":
-          description: Benchmark summary
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  filters:
-                    type: object
-                    properties:
-                      year: { type: integer, nullable: true }
-                      market: { type: string }
-                  last_imported_at: { type: string, format: date-time, nullable: true }
-                  available_years:
-                    type: array
-                    items: { type: integer }
-                  backtest_stats:
-                    nullable: true
-                    type: object
-                    properties:
-                      total_trades: { type: integer }
-                      win_rate_pct: { type: number }
-                      avg_pnl_gbp: { type: number }
-                      total_pnl_gbp: { type: number }
-                      avg_hold_days: { type: number }
-                  actual_stats:
-                    nullable: true
-                    type: object
-                    properties:
-                      total_trades: { type: integer }
-                      win_rate_pct: { type: number }
-                      avg_pnl_gbp: { type: number }
-                      total_pnl_gbp: { type: number }
-                      avg_hold_days: { type: number }
-                  yearly_breakdown:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        entry_year: { type: integer }
-                        num_trades: { type: integer }
-                        avg_pnl_gbp: { type: number }
-                        total_pnl_gbp: { type: number }
-                        avg_hold_days: { type: number }
-                        win_rate_pct: { type: number }
-
-  /strategy/benchmark/trades:
-    get:
-      summary: Panel 3 trade log for the Strategy Benchmark page
-      description: |
-        Returns backtest_trades and actual_trades separately. The frontend renders
-        the appropriate subset based on the selected toggle mode (backtest only /
-        actual only / side-by-side). ST-11 (BLG-FEAT-53, EPIC-03, v6.3)
-      tags: [Strategy Benchmark]
-      security:
-        - ApiKey: []
-      parameters:
-        - name: year
-          in: query
-          required: false
-          schema: { type: integer }
-          description: Filter to a specific entry year
-        - name: market
-          in: query
-          required: false
-          schema: { type: string, enum: [US, UK, ALL] }
-          description: Filter by market
-      responses:
-        "200":
-          description: Trade log data
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  filters:
-                    type: object
-                    properties:
-                      year: { type: integer, nullable: true }
-                      market: { type: string }
-                  backtest_trades:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        ticker: { type: string }
-                        entry_date: { type: string, format: date }
-                        exit_date: { type: string, format: date }
-                        holding_days: { type: integer, nullable: true }
-                        entry_price: { type: number, nullable: true }
-                        exit_price: { type: number, nullable: true }
-                        pnl_gbp: { type: number, nullable: true }
-                        pnl_pct: { type: number, nullable: true }
-                        market: { type: string }
-                        exit_reason: { type: string, nullable: true }
-                        was_profitable: { type: boolean, nullable: true }
-                        entry_year: { type: integer }
-                  actual_trades:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        ticker: { type: string }
-                        entry_date: { type: string, format: date, nullable: true }
-                        exit_date: { type: string, format: date, nullable: true }
-                        holding_days: { type: integer, nullable: true }
-                        pnl_gbp: { type: number, nullable: true }
-                        pnl_pct: { type: number, nullable: true }
-                        market: { type: string }
-                        exit_reason: { type: string, nullable: true }
-                        was_profitable: { type: boolean, nullable: true }
-                        entry_year: { type: integer, nullable: true }
-
-  /strategy/benchmark/open-positions:
-    get:
-      summary: Panel 0 open (unrealized) positions for the Strategy Benchmark page
-      description: |
-        Returns current open positions with unrealized P&L, sourced from
-        backtest_open_positions (fully replaced on each nightly import, same
-        pattern as backtest_trades). No year parameter — open positions are
-        current-state, not historical-per-year data. ST-08 (BLG-FEAT-54, EPIC-03, v6.4)
-      tags: [Strategy Benchmark]
-      security:
-        - ApiKey: []
-      parameters:
-        - name: market
-          in: query
-          required: false
-          schema: { type: string, enum: [US, UK, ALL] }
-          description: Filter by market
-      responses:
-        "200":
-          description: Open positions data
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  filters:
-                    type: object
-                    properties:
-                      market: { type: string }
-                  open_positions:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        ticker: { type: string }
-                        market: { type: string }
-                        entry_date: { type: string, format: date }
-                        entry_price: { type: number, nullable: true }
-                        current_price: { type: number, nullable: true }
-                        unrealized_pnl_gbp: { type: number, nullable: true }
-                        unrealized_pnl_pct: { type: number, nullable: true }
-                        days_held: { type: integer }
-                  summary:
-                    type: object
-                    properties:
-                      count: { type: integer }
-                      total_unrealized_pnl_gbp: { type: number, nullable: true }
 
 security:
   - ApiKey: []

@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 1.3
-**Last Updated:** 2026-03-25
+**Version:** 1.5
+**Last Updated:** 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -27,6 +27,9 @@ These endpoints are used for:
 - [GET /health/detailed](#get-healthdetailed)
 - [GET /health/database](#get-healthdatabase)
 - [POST /test/endpoints](#post-testendpoints)
+- [GET /test/quick-health](#get-testquick-health)
+- [POST /test/rate-limit-scenarios](#post-testrate-limit-scenarios)
+- [GET /health/scheduler](#get-healthscheduler)
 
 ---
 
@@ -61,7 +64,24 @@ No parameters.
   "status": "ok",
   "db": "connected",
   "last_market_status_check": "2026-03-25T09:00:00Z",
-  "last_alert_evaluation": "2026-03-25T09:01:00Z"
+  "last_alert_evaluation": "2026-03-25T09:01:00Z",
+  "external_apis": {
+    "alpaca": {
+      "last_successful_call": "2026-08-07T09:14:02+00:00",
+      "error_rate": 0.0,
+      "p95_latency_ms": 214
+    },
+    "yahoo_finance": {
+      "last_successful_call": "2026-08-07T09:10:47+00:00",
+      "error_rate": 0.02,
+      "p95_latency_ms": 340
+    }
+  },
+  "ai_journal": {
+    "usage_rate": 3.5714,
+    "error_rate": 0.0,
+    "p95_latency_ms": 1820
+  }
 }
 ```
 
@@ -71,6 +91,8 @@ No parameters.
 - `db`: database connectivity — `"connected"` when the database is reachable; `"error"` otherwise.
 - `last_market_status_check`: ISO 8601 timestamp of the most recent market status check, or `null` if none has run since startup.
 - `last_alert_evaluation`: ISO 8601 timestamp of the most recent alert evaluation run, or `null` if none has run since startup.
+- `external_apis`: object keyed by external API name (currently `alpaca`, `yahoo_finance`). Each value is `{ last_successful_call: ISO-8601|null, error_rate: float (0–1, over a rolling window of the last 100 calls), p95_latency_ms: int|null }`. An API with no recorded calls since process start reports `last_successful_call: null`, `error_rate: 0.0`, `p95_latency_ms: null`. (ST-08, BLG-OPS-related)
+- `ai_journal`: `{ usage_rate: float (AI summaries produced per day, 7-day window), error_rate: float (0–1, 24h window), p95_latency_ms: int|null }`. If no AI journal activity has occurred in the last 7 days (usage) or 24 hours (errors), or the underlying query fails, returns `{ "status": "unavailable" }` instead of the three metric fields. (ST-09)
 
 ### Status values
 
@@ -318,6 +340,89 @@ No request body.
 
 ---
 
+## GET /test/quick-health
+
+**Purpose**
+
+Quick health check that tests only critical endpoints (`GET /health`, `GET /settings`, `GET /portfolio`). Faster than `POST /test/endpoints`, intended for lightweight liveness checks.
+
+**Method & Path**
+
+- `GET /test/quick-health`
+
+**Idempotency**
+
+- Read-only.
+
+### Request
+
+No request body.
+
+### Response (200)
+
+```json
+{
+  "status": "healthy",
+  "checks": [
+    { "name": "Health", "healthy": true, "response_time_ms": 12.4, "status_code": 200 },
+    { "name": "Settings", "healthy": true, "response_time_ms": 8.1, "status_code": 200 },
+    { "name": "Portfolio", "healthy": true, "response_time_ms": 45.0, "status_code": 200 }
+  ]
+}
+```
+
+#### Field notes
+
+- `status` is `"healthy"` only if every check in `checks` is healthy, else `"degraded"`.
+- A check that raises an exception (timeout, connection error) is recorded with `healthy: false` and an `error` field instead of `response_time_ms`/`status_code`.
+
+### Notes
+
+- Base URL is auto-detected from the incoming request unless `API_BASE_URL` is explicitly set.
+- Read-only with respect to business data.
+
+---
+
+## POST /test/rate-limit-scenarios
+
+**Purpose**
+
+Verifies rate-limiting logic for `POST /ai/daily-briefing` (limit=10) and `POST /ai/chat` (limit=30) using isolated test keys (`daily-briefing:__test__`, `chat:__test__`), so live traffic and real users are unaffected.
+
+**Method & Path**
+
+- `POST /test/rate-limit-scenarios`
+
+**Idempotency**
+
+- Read-only with respect to business data; resets its own isolated test keys before and after running.
+
+### Request
+
+No request body.
+
+### Response (200)
+
+```json
+{
+  "results": [
+    { "endpoint": "POST /ai/daily-briefing", "status": "pass" },
+    { "endpoint": "POST /ai/chat", "status": "pass" }
+  ]
+}
+```
+
+#### Field notes
+
+- `status` is `"pass"` if the limiter correctly allows exactly `limit` requests then rejects the next one, else `"fail"` with an `error` field.
+
+### Notes
+
+- Uses `services.rate_limiter._ai_limiter` directly — does not consume real user rate-limit budget.
+- Originating AC: AC-05 for ST-03 (BLG-OPS-81, EPIC-01, v6.3).
+
+---
+
 ## Error handling
 
 - Health endpoints do not use the standard error envelope.
@@ -417,6 +522,8 @@ None — all known deviations resolved as of v1.1 (BLG-SPEC-D14, 2026-03-25).
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-08-07 | ST-05 (BLG-SPEC-114, EPIC-02, v8.4): `GET /health` example was missing the `external_apis` and `ai_journal` nested objects that `health_service.get_operational_health()` has returned since ST-08/ST-09. Added both to the example and field notes. Authority: API Contracts & Documentation Owner. |
+| 1.4 | 2026-08-07 | ST-02 (BLG-SPEC-116, EPIC-02, v8.4): Added `GET /test/quick-health` and `POST /test/rate-limit-scenarios` — both routes existed in `backend/routers/test.py` but were undocumented, causing OpenAPI Drift Detection CI gate failures once `openapi.yaml`'s structural defect was fixed. Also added `GET /health/scheduler` to the Endpoints TOC (pre-existing section, TOC omission only). Authority: API Contracts & Documentation Owner. |
 | 1.3 | 2026-06-29 | ST-13 (BLG-OPS-79): Added `GET /health/scheduler` — nightly computation job health monitoring endpoint. Returns last-run status for trailing_stop, rebalance_exit, inv_vol_sizing jobs. Authority: Infrastructure & Operations Owner. |
 | 1.2 | 2026-03-25 | ST-08 (BLG-OPS-09): Added `GET /health/database` — database size monitoring endpoint with configurable alert threshold and Telegram notification. Authority: Head of Engineering + FinOps & Resource Architect. |
 | 1.1 | 2026-03-25 | ST-07 (BLG-SPEC-D14): `GET /health` section updated to document actual v2.2 schema — `status: ok\|error`, `db: connected\|error`, `last_market_status_check`, `last_alert_evaluation`. DEV-HEALTH-001 closed. Authority: API Contracts & Documentation Owner. |
