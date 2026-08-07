@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-07T14:40:00Z",
+  "last_updated_utc": "2026-08-07T14:50:00Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -108,7 +108,7 @@
             "method": "agent_mediated",
             "date": "2026-08-07"
           },
-          "notes": "Fixed ~23 endpoints nested inside components: instead of paths:. yaml.safe_load paths count now matches raw-text scan (118). Also fixed 2 endpoints (GET /test/quick-health, POST /test/rate-limit-scenarios) surfaced as newly-visible drift once parsing was corrected -- documented in health_endpoints.md. Drift Detection script: 0 findings. BLG-OPS-133 endpoint list re-derived (raw scan, 22 gaps) but NOT written to backlog.md -- editing an existing backlog item is outside this engine's write scope (execution_prompt.md \u00a77); authoritative correction deferred to ST-20's live measurement pass."
+          "notes": "Fixed ~23 endpoints nested inside components: instead of paths:. yaml.safe_load paths count now matches raw-text scan (118). Also fixed 2 endpoints (GET /test/quick-health, POST /test/rate-limit-scenarios) surfaced as newly-visible drift once parsing was corrected -- documented in health_endpoints.md. Drift Detection script: 0 findings. BLG-OPS-133 endpoint list re-derived (raw scan, 22 gaps) but NOT written to backlog.md -- editing an existing backlog item is outside this engine's write scope (execution_prompt.md \u00a77); authoritative correction deferred to ST-20's live measurement pass. Follow-on commit dd98e52b registered 11 endpoints (9 newly-visible pre-existing + 2 new test endpoints) in api_performance_baseline.md \u00a734 to satisfy the API Performance Baseline Drift Detection CI gate pre-PR check, per execution_prompt.md \u00a73.2.B."
         },
         "ST-03": {
           "title": "settings_endpoints.md GET /settings example missing created_at/updated_at",
