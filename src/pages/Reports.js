@@ -760,12 +760,19 @@ function MonthlyPnlTable() {
                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Month</th>
                 <th className="px-6 py-3 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Realised P&L</th>
                 <th className="px-6 py-3 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Trades</th>
+                {/* ST-01 (BLG-FE-141, EPIC-01, v8.4): Avg P&L/Trade — client-side derived
+                    display column, per reports.md §Monthly Financial Table (v0.14). */}
+                <th data-testid="monthly-avg-pnl-header" className="px-6 py-3 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Avg P&L/Trade</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-700/30">
               {rows.map((row) => {
                 const pnl = row.realised_pnl_gbp ?? 0;
                 const pnlColor = pnl > 0 ? "text-emerald-400" : pnl < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400";
+                // ST-01: derived from already-fetched row values, not a P&L recalculation.
+                // trade_count = 0 shows "—" (no colour) rather than a fabricated £0.00.
+                const avgPnl = row.trade_count > 0 ? pnl / row.trade_count : null;
+                const avgPnlColor = avgPnl == null ? "text-slate-600 dark:text-slate-400" : avgPnl > 0 ? "text-emerald-400" : avgPnl < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400";
                 return (
                   <tr key={`${row.year}-${row.month}`} className="hover:bg-slate-700/20 transition-colors">
                     <td className="px-6 py-3 text-slate-200">
@@ -775,6 +782,9 @@ function MonthlyPnlTable() {
                       {formatGBP(pnl)}
                     </td>
                     <td className="px-6 py-3 text-right text-slate-600 dark:text-slate-400">{row.trade_count}</td>
+                    <td data-testid="monthly-avg-pnl-cell" className={`px-6 py-3 text-right font-medium ${avgPnlColor}`}>
+                      {formatGBP(avgPnl)}
+                    </td>
                   </tr>
                 );
               })}
