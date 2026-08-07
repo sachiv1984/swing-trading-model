@@ -69,7 +69,7 @@
 **Owner:** Head of Specs Team
 **Source:** Recurrence Escalation 1, `claude/cycles/2026-08-04__release-v8.2/lessons_learnt_closure.md` (post-ship closure `2026-08-04__release-v8.2`, 2026-08-05) — originally surfaced as `lessons_learnt.md` Friction Item 1 at `2026-07-30__release-v8.0` closure, re-deferred at `2026-08-03__release-v8.1` closure ("2nd consecutive"), escalated at this cycle's closure ("3rd consecutive") — filed directly by Head of Specs Team, reviewing the escalation outside a formal `groom backlog`/`run roadmap` session — 2026-08-05
 **Effort:** S (~1 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 
 **Problem**
 `release_planning_prompt.md`'s STEP 1 scope-candidate scan (§1.1–1.4a.1) has no defined, mechanically-reliable procedure for detecting whether a backlog candidate is gate-blocked. The current practice relies on ad hoc reading of each item's fields, and has produced 3 self-caught scan misses across 3 consecutive Release Planning cycles: `v8.0` (gate-field-name variant on `BLG-BE-24`/`BLG-OPS-48`), `v8.1` (scan line-window bounds on the same two items), `v8.2` (`BLG-OPS-48` again — a 3rd, distinct failure mode: gate condition expressed as free text inside a duplicate `**Provisional-Target:**` field rather than a `**Gate criteria:**` field). `BLG-OPS-48`'s own entry has now caused 2 of the 3 recorded misses due to this exact data-quality pattern (its duplicate-field defect was fixed separately as part of this same review — see commit history — but the underlying scan-procedure gap remains).
@@ -975,7 +975,7 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 **Owner:** Head of Engineering
 **Source:** ST-14 (BLG-FE-77), EPIC-03, v6.8 — Head of Engineering sign-off review — 2026-07-09
 **Effort:** M (~1 day)
-**Provisional-Target:** v6.9
+**Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 
 **Problem**
 `src/components/watchlist/WatchlistModal.js` (rendered directly by the just-refactored `Watchlist.js`) fails `npx eslint` with 24 problems (8 errors, 16 warnings): `process` referenced directly instead of importing `API_BASE_URL` from `base44Client.js` (same `no-undef` pattern fixed in Watchlist.js this sprint), the component function is 209 lines (max 50), a magic number (`409`), 5 forbidden-comment violations, and missing PropTypes on most props. Was out of scope for ST-14 (AC-01 was scoped to `Watchlist.js` only) but is the natural next file to bring into compliance given it shares the same defect patterns and is directly coupled to the file just fixed.
@@ -998,7 +998,7 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** ST-21 (BLG-SPEC-108, EPIC-04) canonical form-validation error-message pattern spec, sprint execution `2026-08-05__release-v8.3` — 2026-08-06
 **Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 
 **Problem**
 ST-21 fixed the same-defect-class (`BLG-FE-87/88/95`) dark-only-token gap in the two form-validation error instances its own decision record scoped (`WatchlistModal.js`, `TradePlan.js` Abandon modal) — but a broader search found at least 6 more files with bare `text-rose-400` inline validation-error `<p>` elements, no light-mode pair: `StrategyBenchmark.js`, `AlertThresholdsSection.js`, `PreferenceRow.js`, `CustomPriceAlertsSection.js`, `ProspectiveHeatPanel.js`, `SavedFiltersControl.js`. Not a false claim against ST-21 (its decision record explicitly scoped to only the two checked instances) — this is the wider, still-open tail of the same defect class.
@@ -1037,7 +1037,7 @@ The Monthly P&L Report table (`src/pages/Reports.js`'s `MonthlyPnlTable`) shows 
 **Owner:** Head of Engineering
 **Source:** PR #1259 (EPIC-03) two-agent review (Director of Quality), sprint execution `2026-08-05__release-v8.3` — 2026-08-06
 **Effort:** S (~0.5-1 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 
 **Problem**
 `ComplianceRecheckModal.js` (ST-11, `BLG-FE-103`) shipped with, then fixed, a real defect: `DialogContent`/`DialogTitle`'s hardcoded base classes (`p-6 gap-4`, `text-lg tracking-tight` — `src/components/ui/dialog.js`) are not reliably overridden by a consumer's own className, because this project's `cn()` (`src/lib/utils.js`) is plain `clsx` with no `tailwind-merge` — same-property utility wins are decided by compiled-stylesheet order, not JSX/string order. Verified empirically via direct `tailwindcss` compilation during that story's own review. The fix (`!`-prefixed important-modifier utilities) was applied only at the two call sites ST-11/ST-12 touched (`ComplianceRecheckModal.js`, `ConfirmationModal.js`). `src/components/ui/command.js`'s pre-existing `p-0` override on `DialogContent` was flagged during the same review as already carrying this exact defect, unfixed — and it is very likely not the only other consumer affected, since ~14 files render `DialogContent` in this codebase and any that override a same-property base class (padding, gap, font-size, etc.) without the `!` prefix is silently vulnerable.
@@ -1469,7 +1469,7 @@ No per-request trace ID propagation exists across routers/services. No incident 
 ---
 
 ### BLG-QA-116 — Backfill regression baseline with 24 undocumented Playwright spec files (v6.0-v7.3)
-**Priority:** P3 (Low) | **Type:** QA / Test Automation | **Owner:** Director of Quality | **Source:** ST-02 (EPIC-02, v7.6, BLG-QA-112) sprint execution — 2026-07-20 | **Effort:** M (~1–2d) | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** QA / Test Automation | **Owner:** Director of Quality | **Source:** ST-02 (EPIC-02, v7.6, BLG-QA-112) sprint execution — 2026-07-20 | **Effort:** M (~1–2d) | **Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 
 **Problem**
 `docs/qa/regression_test_suite_baseline.md` Part 2 (Playwright End-to-End Test Suite) was last comprehensively refreshed at v5.9 (2026-06-17) and, prior to this cycle, listed 41 spec files. `tests/e2e/` actually contains 70 spec files as of v7.6 — 24 files added between v6.0 and v7.3 (separate from ST-02's own 5 v7.4–v7.6 additions, which brought the documented total to 46) are not catalogued: no scenario count, feature/area mapping, or Arc coverage entry. This was out of ST-02's scope (which only required entries for `BLG-FE-115` through `BLG-FE-119`) but is a real and growing documentation gap noted during that item's execution.
@@ -1968,7 +1968,7 @@ BLG-SPEC-46 (Arc 4 API surface area) is a gate-conditional spec planning item th
 **Owner:** API Contracts & Documentation Owner
 **Source:** ST-19 (BLG-SPEC-88, EPIC-04) OpenAPI response-example drift spot-check, sprint execution `2026-08-05__release-v8.3` — 2026-08-06
 **Effort:** XS (<1h)
-**Provisional-Target:** TBD
+**Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 
 **Problem**
 `backend/main.py`'s `GET /settings` handler runs `SELECT * FROM settings`, so the live response includes every column of the `settings` table — including `created_at` and `updated_at` (per `docs/specs/data_model.md`'s `CREATE TABLE settings` block). The documented example in `settings_endpoints.md` omits both fields.
@@ -1987,7 +1987,7 @@ BLG-SPEC-46 (Arc 4 API surface area) is a gate-conditional spec planning item th
 **Owner:** API Contracts & Documentation Owner
 **Source:** ST-19 (BLG-SPEC-88, EPIC-04) OpenAPI response-example drift spot-check, sprint execution `2026-08-05__release-v8.3` — 2026-08-06
 **Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 
 **Problem**
 `backend/services/position_service.py::get_positions_with_prices()`'s response dict includes `total_cost`, `sector`, and `industry` — none of which appear anywhere in `position_endpoints.md`. It also includes `exit_reason` and `stop_reason`, which the file documents for other position-related response shapes but not in the `GET /positions` example itself.
@@ -2008,7 +2008,7 @@ BLG-SPEC-46 (Arc 4 API surface area) is a gate-conditional spec planning item th
 **Owner:** API Contracts & Documentation Owner
 **Source:** ST-19 (BLG-SPEC-88, EPIC-04) OpenAPI response-example drift spot-check, sprint execution `2026-08-05__release-v8.3` — 2026-08-06
 **Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 
 **Problem**
 `backend/services/health_service.py::get_operational_health()` (backing `GET /health`) returns `external_apis` and `ai_journal` fields (each presumably a nested health-status object — see `get_external_api_health()`/`get_ai_journal_health()`), neither of which appears in `health_endpoints.md`'s `GET /health` example (`status`/`db`/`last_market_status_check`/`last_alert_evaluation` only).
@@ -2027,7 +2027,7 @@ BLG-SPEC-46 (Arc 4 API surface area) is a gate-conditional spec planning item th
 **Owner:** API Contracts & Documentation Owner
 **Source:** ST-19 (BLG-SPEC-88, EPIC-04) OpenAPI response-example drift spot-check, sprint execution `2026-08-05__release-v8.3` — 2026-08-06; corrected 2026-08-06 per ST-16/ST-18/ST-19/ST-20/ST-21 agent-mediated sign-off review (Base44 Frontend Prompt Owner) — see correction note below
 **Effort:** S (~0.5 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 
 **Problem**
 `backend/services/watchlist_service.py::_row_to_dict()` (backing `GET /watchlist`) returns `company_name`, `tags`, `updated_at`, `added_at`, `days_on_watchlist`, and `is_stale`, none of which appear in `watchlist_endpoints.md`'s illustrative JSON example. The example also includes `portfolio_id`, which the actual SQL query does not select and the live response does not return.
@@ -2273,7 +2273,7 @@ BLG-OPS-31 defined Render log retention. claude_audit_log (shipped v4.0) and Sup
 **Owner:** Infrastructure & Operations Owner; PMO Lead
 **Source:** Post-ship closure 2026-06-21__release-v5.1 — endpoint drift check (STEP 6)
 **Effort:** XS (~1–2 hours)
-**Provisional-Target:** Unscheduled (pending live environment access)
+**Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 **Scope revision (I&O Owner, 2026-06-22):** Standard external HTTP measurement is not viable for this endpoint — it blocks on the Telegram Bot API and timed out at 45s in the §19 baseline run. Revised approach: (1) Render internal log duration (server-side p50/p95), (2) weekly delivery success rate from `si05_digest_log`, (3) Telegram API timeout flag if request duration > 30s. See ST-11 staging evidence (docs/testing/staging_latency_review_ST-11.md).
 
 **Problem**
@@ -2655,7 +2655,7 @@ Arc 4 AI-driven features (PO-02/03/04) introduce Playwright test challenges not 
 **Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner
 **Source:** IDEA-finops-20260619-01 — Promoted-Backlog rebalance 2026-06-19__scheduled (DL-049)
 **Effort:** S (~0.5 day)
-**Provisional-Target:** Unscheduled (before Arc 4 sprint planning)
+**Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 
 **Problem**
 PO-02 (journal pattern recognition) and PO-03/04 will call the Anthropic or Gemini API for AI summarisation and pattern analysis. Current AI cost modelling (BLG-OPS-65, completed v5.6) covers the thesis generation feature only. Arc 4 AI features will process trade journal entries in volume — potentially 1 AI call per journal entry per user per week. Without a cost model, Arc 4 budget impact is unknown and could exceed the current $0.05–$0.15/month baseline significantly.
@@ -3046,7 +3046,7 @@ No versioning exists to track which version of the Base44 generation prompt prod
 **Type:** QA / Data Audit
 **Owner:** Metrics Definitions & Analytics Owner
 **Source:** IDEA-metrics-20260702-01 (IW-20260702-01) — Promoted-Backlog; rebalance 2026-07-02__scheduled
-**Provisional-Target:** TBD
+**Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 **Effort:** S (~0.5–1 day)
 
 **Problem**
@@ -3886,7 +3886,7 @@ The API key rotation runbook has never been exercised end-to-end — its first r
 **Owner:** Head of Engineering; Cybersecurity & Trust Lead
 **Source:** ST-17 (BLG-OPS-71), EPIC-03, v6.8 system threat model review — 2026-07-09
 **Effort:** M (~1-2 days — requires nonce/hash-based CSP migration and testing across all inline scripts/styles)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 
 **Problem**
 `public/index.html`'s Content-Security-Policy permits `'unsafe-inline'` for both `script-src` and `style-src`. This significantly weakens the CSP's XSS mitigation value — an attacker who achieves any injection point (e.g. via a compromised dependency or a future reflected-XSS bug) can execute inline script/style despite the CSP being present, since `'unsafe-inline'` is a blanket allowance.
@@ -4903,7 +4903,7 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 **Owner:** QA & Testing Owner
 **Source:** Observed running the Phase A suite locally during sprint execution `2026-08-05__release-v8.3` EPIC-04 — 2026-08-06
 **Effort:** XS (<1h)
-**Provisional-Target:** TBD
+**Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 
 **Problem**
 `tests/test_api_contracts.py::TestPortfolioEndpoints::test_get_portfolio_history_returns_ok` patches `main.get_portfolio`, but `GET /portfolio/history`'s actual call path is `main.get_history_endpoint` → `portfolio_service.get_performance_history()` → `database.get_portfolio()` directly — the patched name is never on that path. The test attempts a real Postgres connection and fails with `psycopg2.OperationalError: connection refused` in any environment without a live DB reachable at `localhost:5432` (confirmed locally; this file is listed in `ci-tests.yml`'s Phase A "no DB required" job, so the same failure is expected there too unless CI's runner happens to have something listening on 5432). Not caused by, or related to, any EPIC-04 change — confirmed against the unmodified file/backend code already on `main`.
@@ -5029,7 +5029,7 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 **Source:** ST-01 (EPIC-01, v8.3) — BLG-OPS-129 root cause fix, staging-only AC deferral — 2026-08-05
 **Effort:** XS (<0.5d)
 **Depends on:** BLG-OPS-129 (SI-05 digest delivery pipeline investigation and fix)
-**Provisional-Target:** v8.3
+**Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 
 **Problem**
 ST-01's fix for the SI-05 weekly digest (`.github/workflows/si05-weekly-digest.yml`, a new GitHub Actions scheduled trigger for `POST /digest/si05/send`) cannot have its "at least one successful send observed post-fix" acceptance criterion verified in CI — it requires a live Telegram send using production credentials. Per CLAUDE.md §2, this deferred staging-only AC requires a filed backlog item before the PR opens.
@@ -5108,7 +5108,7 @@ ST-01's fix for the SI-05 weekly digest (`.github/workflows/si05-weekly-digest.y
 **Acceptance Criteria:** Filter spec written; gate condition re-verified before implementation.
 
 ### BLG-GOV-212 — Dry-run the cross-EPIC merge conflict runbook
-**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Head of Engineering | **Source:** IDEA-head-of-engineering-20260712-01 | **Effort:** S | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Head of Engineering | **Source:** IDEA-head-of-engineering-20260712-01 | **Effort:** S | **Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 **Problem:** `CLAUDE.md` §8's conflict-resolution convention has not been exercised in a real parallel-branch sprint in recent cycle history reviewed this session — an untested runbook risk.
 **Scope:** Intentionally sequence one real 2-EPIC-parallel sprint to validate the runbook before it's needed under time pressure.
 **Acceptance Criteria:** One sprint executed with genuinely parallel EPIC branches; runbook followed; gaps found are filed as follow-ups.
@@ -5163,7 +5163,7 @@ ST-01's fix for the SI-05 weekly digest (`.github/workflows/si05-weekly-digest.y
 **Acceptance Criteria:** Comparison performed; template confirmed current or corrected.
 
 ### BLG-QA-110 — Recurring CSV export content regression check
-**Priority:** P3 (Low) | **Type:** QA | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260715-01 | **Effort:** S | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** QA | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260715-01 | **Effort:** S | **Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 **Problem:** `BLG-SPEC-84`/`BLG-QA-106` (v7.1) hardened CSV export content validation, but no recurring check exists to catch regressions as new fields are added to the export over time.
 **Scope:** Add a lightweight recurring (e.g. quarterly) regression check that CSV export content stays correct.
 **Acceptance Criteria:** Recurring check scoped and scheduled; first instance run clean or findings filed.
@@ -5183,16 +5183,16 @@ ST-01's fix for the SI-05 weekly digest (`.github/workflows/si05-weekly-digest.y
 ---
 
 ### BLG-FEAT-78 — Trade-tag/trigger-source column on tax-year P&L CSV export
-**Priority:** P3 (Low) | **Type:** Product Feature / Reporting, gate-conditional | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260716-01 | **Effort:** S (~1 day) | **Provisional-Target:** TBD
-**Gate criteria:** `BLG-FE-116` (custom price alerts) ships — no trigger-source data exists to export until an alert-triggered trade path exists.
-**Problem:** The tax-year P&L CSV export (shipped v7.0, hardened v7.1) has no column distinguishing trades opened via a system-surfaced trigger (e.g. a future price alert) from manually-initiated trades, which will become a reporting gap once `BLG-FE-116` ships.
+**Priority:** P3 (Low) | **Type:** Product Feature / Reporting | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260716-01 | **Effort:** S (~1 day) | **Provisional-Target:** v8.4
+**Gate criteria:** ✅ Cleared 2026-08-07 (release planning `2026-08-07__release-v8.4`, self-caught scan finding) — `BLG-FE-116` (custom price alerts) shipped in v7.5 (retired 2026-07-20, confirmed via `backlog_archive.md`); an alert-triggered trade path now exists. Promoted into `v8.4` scope (EPIC-01/ST-31).
+**Problem:** The tax-year P&L CSV export (shipped v7.0, hardened v7.1) has no column distinguishing trades opened via a system-surfaced trigger (e.g. a future price alert) from manually-initiated trades, which became a reporting gap once `BLG-FE-116` shipped.
 **Scope:** Add a trigger-source column to the CSV export once alert-triggered trades exist to populate it.
 **Acceptance Criteria:** CSV export includes a trigger-source column; column populated correctly for both alert-triggered and manual trades.
 
 ---
 
 ### BLG-OPS-133 — Endpoint coverage drift: 19 endpoints missing from api_performance_baseline.md
-**Priority:** P3 (Low) | **Type:** Operations / Performance Baseline | **Owner:** Infrastructure & Operations Owner; API Contracts & Documentation Owner | **Source:** Post-ship closure 2026-08-05__release-v8.3 — endpoint coverage drift advisory (STEP 6), script-derived reconciliation per AUD-2026-08-03-003 (successor to retired BLG-OPS-111) | **Effort:** S (~0.5-1d) | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** Operations / Performance Baseline | **Owner:** Infrastructure & Operations Owner; API Contracts & Documentation Owner | **Source:** Post-ship closure 2026-08-05__release-v8.3 — endpoint coverage drift advisory (STEP 6), script-derived reconciliation per AUD-2026-08-03-003 (successor to retired BLG-OPS-111) | **Effort:** S (~0.5-1d) | **Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 **Problem:** After path-parameter normalisation (`{param}` → `{id}`), 19 method+path combinations present in `docs/reference/openapi.yaml` have no corresponding row in `docs/ops/api_performance_baseline.md`'s measurement table(s). Performance re-runs require a live environment and human coordination, so this item tracks the gap rather than attempting to fill it in.
 **Scope:**
 - Run p50/p95 latency measurement (≥5 staging samples) for each missing endpoint
@@ -5209,7 +5209,7 @@ ST-01's fix for the SI-05 weekly digest (`.github/workflows/si05-weekly-digest.y
 ---
 
 ### BLG-SPEC-116 — docs/reference/openapi.yaml structural defect: ~23 endpoints nested inside `components:` instead of `paths:`
-**Priority:** P1 (High) | **Type:** Spec Debt / API Governance | **Owner:** API Contracts & Documentation Owner; Head of Specs Team | **Source:** Found during Infrastructure & Operations Owner review of `BLG-OPS-13` (endpoint-coverage-drift reconciliation), post-ship closure `2026-08-05__release-v8.3` follow-through | **Effort:** M (~1-2d) | **Provisional-Target:** TBD
+**Priority:** P1 (High) | **Type:** Spec Debt / API Governance | **Owner:** API Contracts & Documentation Owner; Head of Specs Team | **Source:** Found during Infrastructure & Operations Owner review of `BLG-OPS-13` (endpoint-coverage-drift reconciliation), post-ship closure `2026-08-05__release-v8.3` follow-through | **Effort:** M (~1-2d) | **Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 
 **Problem**
 `components:` (opened line 3857) never closes before end-of-file — `schemas:` (line 3858) and `responses:` (line 4715) are its only valid sub-keys, but a further ~23 endpoint definitions (`/v2/stocks/{symbol}/bars`, `/v1beta1/news`, `/ticker-universe`, `/ticker-universe/{ticker}`, `/screener/results`, `/screener/run`, `/trade-plans` and 8 sibling trade-plans routes, `/earnings/{ticker}`, `/research/{ticker}`, `/analytics/strategy-version-comparison`, `/strategy/benchmark/import`, `/strategy/benchmark/summary`, `/strategy/benchmark/trades`, `/strategy/benchmark/open-positions`), starting at the "External: Alpaca Markets API" comment block (line 5079), are indented as if they were additional top-level `components:` sub-keys instead of `paths:` entries. `security:` (line 6245) is the next correctly-top-level key, confirming the entire 5079–6244 span is trapped inside `components:`. A key literally named `/v2/stocks/{symbol}/bars` is not a valid `components` sub-key under the OpenAPI 3.x spec, so the file is not strictly spec-valid, and any tool that parses it with a standard YAML/OpenAPI loader (`yaml.safe_load`, swagger-parser, codegen, the OpenAPI Drift Detection CI gate, and this cycle's own post-ship closure STEP 6 endpoint-coverage-drift check) silently loses these ~23 endpoints from its path count — `spec['paths']` returns 93 keys when the raw file actually contains 116 top-level `/...:` lines matching path-key indentation. This means `BLG-OPS-133` (filed at `2026-08-05__release-v8.3` post-ship closure) was computed from this same undercounted parse and should be re-verified once this fix lands.
@@ -5253,7 +5253,7 @@ ST-01's fix for the SI-05 weekly digest (`.github/workflows/si05-weekly-digest.y
 *34 items added via idea intake IW-20260724-01 STEP 4 disposition (Backlog). Source ideas and full rationale: `claude/ideas/ideas_register.md` (2026-07-24 rows), `claude/ideas/window_summary_IW-20260724-01.md`. DL-075.*
 
 ### BLG-BE-70 — Log AI model+version provenance on stored thesis/summary text
-**Priority:** P3 (Low) | **Type:** Backend / AI Compliance | **Owner:** AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260724-02 | **Effort:** S | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** Backend / AI Compliance | **Owner:** AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260724-02 | **Effort:** S | **Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 **Problem:** Stored AI-generated thesis/summary text has no field recording which model+version produced it, complicating retroactive audit if model behaviour is later questioned.
 **Scope:** Add a model/version provenance field to the relevant storage table(s), populated at write time.
 **Acceptance Criteria:** New field present and populated on all newly-created AI-generated records; existing records unaffected (no backfill required).
@@ -5261,7 +5261,7 @@ ST-01's fix for the SI-05 weekly digest (`.github/workflows/si05-weekly-digest.y
 ---
 
 ### BLG-SPEC-97 — Formal schema-versioning doc for trade_plan/position tables
-**Priority:** P3 (Low) | **Type:** Spec Debt / Data Model | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-data-model-20260724-01 | **Effort:** M | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** Spec Debt / Data Model | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-data-model-20260724-01 | **Effort:** M | **Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 **Problem:** `trade_plan`/`position` table migration history is reconstructable from git history but not documented as a single canonical versioning reference.
 **Scope:** Author a schema-versioning doc covering migration history and field deprecation for these two tables.
 **Acceptance Criteria:** Doc created; Data Model Owner sign-off.
@@ -5367,7 +5367,7 @@ ST-01's fix for the SI-05 weekly digest (`.github/workflows/si05-weekly-digest.y
 ---
 
 ### BLG-OPS-122 — CI runner cache warm-up for `backend/.venv` to cut pytest job time
-**Priority:** P3 (Low) | **Type:** Ops / CI | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260727-02 | **Effort:** S | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** Ops / CI | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260727-02 | **Effort:** S | **Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 **Problem:** CI installs `backend/requirements.txt` fresh into each runner on every workflow invocation (per `CLAUDE.md` §9's own description of current CI behaviour) — no dependency cache is used, adding avoidable install time to every run.
 **Scope:** Add a cache step (keyed on `requirements.txt` hash) for `backend/.venv` in the relevant GitHub Actions workflows.
 **Acceptance Criteria:** Cache step added; measured CI job time reduction; Infrastructure & Operations Owner sign-off.
@@ -5411,7 +5411,7 @@ ST-01's fix for the SI-05 weekly digest (`.github/workflows/si05-weekly-digest.y
 ---
 
 ### BLG-SPEC-106 — OpenAPI security-scheme & auth-header documentation completeness check
-**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260728-01 | **Effort:** S | **Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 **Problem:** `openapi.yaml` documents endpoint paths and schemas but has not been audited to confirm every authenticated endpoint's security scheme and required auth header are correctly and completely documented.
 **Scope:** Audit all authenticated endpoints in `openapi.yaml` against actual backend auth enforcement; correct any gaps.
 **Acceptance Criteria:** Audit complete; any documentation gap fixed; API Contracts & Documentation Owner sign-off.
@@ -5427,7 +5427,7 @@ ST-01's fix for the SI-05 weekly digest (`.github/workflows/si05-weekly-digest.y
 ---
 
 ### BLG-BE-77 — Mutation/audit-trail log for trade plan edits post-entry
-**Priority:** P3 (Low) | **Type:** Backend / Data Integrity | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-data-model-20260728-01 (distinct from `BLG-BE-73`, shipped v7.9, which covers manual *position* edits — this covers *trade plan* edits after the position is opened) | **Effort:** M | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** Backend / Data Integrity | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-data-model-20260728-01 (distinct from `BLG-BE-73`, shipped v7.9, which covers manual *position* edits — this covers *trade plan* edits after the position is opened) | **Effort:** M | **Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 **Problem:** `BLG-BE-73` added an audit trail for manual position edits, but trade plan records can also be edited after entry (e.g. thesis or R-target revision) with no equivalent who/when/before-after log.
 **Scope:** Extend the audit-trail pattern established by `BLG-BE-73` to trade plan mutations post-entry.
 **Acceptance Criteria:** Audit log covers trade plan edits; Data Model & Domain Schema Owner sign-off.
@@ -5435,7 +5435,7 @@ ST-01's fix for the SI-05 weekly digest (`.github/workflows/si05-weekly-digest.y
 ---
 
 ### BLG-BE-78 — Auto-generated data dictionary from live schema
-**Priority:** P3 (Low) | **Type:** Backend / Documentation | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-data-model-20260728-02 | **Effort:** M | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** Backend / Documentation | **Owner:** Data Model & Domain Schema Owner | **Source:** IDEA-data-model-20260728-02 | **Effort:** M | **Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 **Problem:** `data_model.md` is hand-maintained; as migrations accumulate (v2.17 and counting) there is growing risk of the documented schema drifting from the live one.
 **Scope:** Add a script generating a data dictionary directly from the live schema, for comparison against `data_model.md` at review time.
 **Acceptance Criteria:** Script added; first run's diff against `data_model.md` triaged; Data Model & Domain Schema Owner sign-off.
@@ -5459,7 +5459,7 @@ ST-01's fix for the SI-05 weekly digest (`.github/workflows/si05-weekly-digest.y
 ---
 
 ### BLG-OPS-123 — Database storage growth cost trend tracking (Postgres/Supabase)
-**Priority:** P3 (Low) | **Type:** FinOps / Operations | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260728-01 | **Effort:** S | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** FinOps / Operations | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260728-01 | **Effort:** S | **Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 **Problem:** Cloud spend is cost-tagged per EPIC (`BLG-OPS-120`), but database storage growth over time has no dedicated trend tracking, despite being a cost driver that scales with trade/journal history volume.
 **Scope:** Add a simple storage-growth trend view (size over time) alongside the existing cost-tag reporting.
 **Acceptance Criteria:** Trend tracking added; FinOps & Resource Architect sign-off.
@@ -5547,7 +5547,7 @@ ST-01's fix for the SI-05 weekly digest (`.github/workflows/si05-weekly-digest.y
 ---
 
 ### BLG-SPEC-109 — Backfill missing data_model.md sections for 4 undocumented tables
-**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Data Model & Domain Schema Owner | **Source:** BLG-BE-41 deprecated-table read audit finding (ST-04, EPIC-01, v7.10) — 2026-07-29 | **Effort:** S | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Data Model & Domain Schema Owner | **Source:** BLG-BE-41 deprecated-table read audit finding (ST-04, EPIC-01, v7.10) — 2026-07-29 | **Effort:** S | **Provisional-Target:** v8.4 (release planning 2026-08-07__release-v8.4)
 **Problem:** `backend/database.py` reads `backtest_trades`, `idempotency_keys`, `ai_journal_entries`, and `gemini_audit_log`, but none of these tables has a corresponding section in `docs/specs/data_model.md` §1–§11 or the DS-0x migration history — surfaced as a side-finding during the BLG-BE-41 deprecated-table audit while confirming no *other* table reads were undocumented-because-deprecated (they are undocumented, not deprecated — a distinct, pre-existing gap).
 **Scope:** Add a schema section to `data_model.md` for each of the 4 tables (columns, types, nullability, purpose, populating function), following the existing per-table section format used elsewhere in the document.
 **Acceptance Criteria:** All 4 tables have a `data_model.md` section; Data Model & Domain Schema Owner sign-off.
@@ -5591,3 +5591,47 @@ ST-01's fix for the SI-05 weekly digest (`.github/workflows/si05-weekly-digest.y
 | BLG-FEAT-45 | EPIC-06 | ST-27 |
 
 *This is an ephemeral section — removed by `groom backlog` after the cycle closes, per the standing notice at the top of this file. Canonical home after removal: `claude/cycles/2026-08-05__release-v8.3/stage4_backlog_slice.md`.*
+
+---
+
+### v8.4 Release Slice — 2026-08-07__release-v8.4
+
+<!-- release-plan-marker: RP:v8.4:2026-08-07__release-v8.4 -->
+
+31 items committed this cycle across 7 grouped EPICs. Full acceptance criteria: `claude/cycles/2026-08-07__release-v8.4/stage4_backlog_slice.md` (canonical). `Provisional-Target` updated `TBD`/`Unscheduled` → `v8.4` on all 31 below.
+
+| Item | Epic | ST |
+|------|------|-----|
+| BLG-FE-141 | EPIC-01 | ST-01 |
+| BLG-SPEC-116 | EPIC-02 | ST-02 |
+| BLG-SPEC-112 | EPIC-02 | ST-03 |
+| BLG-SPEC-113 | EPIC-02 | ST-04 |
+| BLG-SPEC-114 | EPIC-02 | ST-05 |
+| BLG-SPEC-115 | EPIC-02 | ST-06 |
+| BLG-SPEC-106 | EPIC-02 | ST-07 |
+| BLG-SPEC-109 | EPIC-02 | ST-08 |
+| BLG-SPEC-97 | EPIC-02 | ST-09 |
+| BLG-BE-82 | EPIC-03 | ST-10 |
+| BLG-BE-83 | EPIC-03 | ST-11 |
+| BLG-BE-70 | EPIC-03 | ST-12 |
+| BLG-BE-77 | EPIC-03 | ST-13 |
+| BLG-BE-78 | EPIC-03 | ST-14 |
+| BLG-FE-142 | EPIC-04 | ST-15 |
+| BLG-FE-140 | EPIC-04 | ST-16 |
+| BLG-FE-98 | EPIC-04 | ST-17 |
+| BLG-SEC-12 | EPIC-04 | ST-18 |
+| BLG-OPS-132 | EPIC-05 | ST-19 |
+| BLG-OPS-133 | EPIC-05 | ST-20 |
+| BLG-OPS-54 | EPIC-05 | ST-21 |
+| BLG-OPS-122 | EPIC-05 | ST-22 |
+| BLG-OPS-123 | EPIC-05 | ST-23 |
+| BLG-OPS-72 | EPIC-05 | ST-24 |
+| BLG-QA-135 | EPIC-06 | ST-25 |
+| BLG-QA-116 | EPIC-06 | ST-26 |
+| BLG-QA-110 | EPIC-06 | ST-27 |
+| BLG-QA-70 | EPIC-06 | ST-28 |
+| BLG-GOV-286 | EPIC-07 | ST-29 |
+| BLG-GOV-212 | EPIC-07 | ST-30 |
+| BLG-FEAT-78 | EPIC-01 | ST-31 |
+
+*This is an ephemeral section — removed by `groom backlog` after the cycle closes, per the standing notice at the top of this file. Canonical home after removal: `claude/cycles/2026-08-07__release-v8.4/stage4_backlog_slice.md`.*

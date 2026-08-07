@@ -11,7 +11,17 @@
 ## 1. Current Version
 
 **v8.3** — Operational Reliability & Governance Debt Clearance — ✅ Complete — Shipped 2026-08-07 — cycle: 2026-08-05__release-v8.3
-**Next planned release:** [TBD]
+**Next planned release:** v8.4
+
+<!-- roadmap-annotation-marker: RA:v8.4:2026-08-07__release-v8.4 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-08-07__release-v8.4
+- Plan published: 2026-08-07
+- Cycle folder: claude/cycles/2026-08-07__release-v8.4/
+- Backlog slice: claude/cycles/2026-08-07__release-v8.4/stage4_backlog_slice.md
+- Status at annotation: Committed
+- No formal `## v8.4` roadmap section created (Release Planning may not alter roadmap scope) — scoped via STEP -1.2 Option (b) equivalence from `2026-07-28__scheduled` (same Option (b) decision already relied on by `2026-07-30__release-v8.0` through `2026-08-05__release-v8.3`). Backlog-driven, 31 ungated/ready items across 7 grouped EPICs, sized to ~27.75 days midpoint (~99-115% utilisation, top of band) against the confirmed ~24-28 day capacity band, per explicit user instruction ("full capacity"). Per explicit user instruction to prioritise user features: 2 user-facing items included (`BLG-FE-141`; `BLG-FEAT-78`, promoted via a self-caught stale-gate-field correction — `BLG-FE-116` shipped v7.5 but the gate field was never updated) — the largest ready user-facing pool remains the gated `BLG-FEAT-*` roadmap-flagship set (SI-02 frontend, PO-05 replay mode, etc.), all still gate-blocked. Scope deliberately weighted toward execution/debt scope over governance-process scope (only 2 of 31 items are governance-process-shaped) per the Skill-Silo rotation guideline, given the most recent rebalance's 2nd consecutive worsening reading.
 
 <!-- roadmap-annotation-marker: RA:v8.3:2026-08-05__release-v8.3 -->
 
