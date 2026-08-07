@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-07T15:30:00Z",
+  "last_updated_utc": "2026-08-07T15:50:00Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -318,7 +318,8 @@
       "qa_evidence_log": "claude/cycles/2026-08-07__release-v8.4/qa_evidence_EPIC-03.md",
       "test_scenarios": [
         "tests/test_trade_plans_ticker_index.py",
-        "tests/test_alpaca_paper_sync_close_positions_backoff.py"
+        "tests/test_alpaca_paper_sync_close_positions_backoff.py",
+        "tests/test_trade_plan_thesis_provenance.py"
       ],
       "stories": {
         "ST-10": {
@@ -382,25 +383,34 @@
         "ST-12": {
           "title": "Log AI model+version provenance on stored thesis/summary text",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1275,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "47f2a97f887a0e2d2c73162da812c5a1d3584bae",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/ai_thesis_generation.md"
+            "backend/database.py",
+            "docs/specs/data_model.md",
+            "docs/specs/api_contracts/trade_plan_endpoints.md",
+            "tests/test_trade_plan_thesis_provenance.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "AI Compliance & Governance Officer sign-off required."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "AI Compliance & Governance Officer",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-07",
+            "notes": "Backend capability closes the BLG-BE-70 gap for future records once frontend wiring lands (BLG-FE-143); not yet end-to-end populated this cycle."
+          },
+          "notes": "Added thesis_model_version/thesis_prompt_version (nullable) to trade_plans; wired through create/update_trade_plan and router request models. KNOWN RESIDUAL GAP: backend storage capability only -- frontend does not yet pass values through on save. Filed BLG-FE-143 for frontend follow-up. 4 new tests pass; 22 existing trade_plan tests re-run clean, no regression."
         },
         "ST-13": {
           "title": "Mutation/audit-trail log for trade plan edits post-entry",
@@ -857,7 +867,8 @@
     "ST-08",
     "ST-09",
     "ST-10",
-    "ST-11"
+    "ST-11",
+    "ST-12"
   ],
   "open_escalations": [],
   "process_notes": [
