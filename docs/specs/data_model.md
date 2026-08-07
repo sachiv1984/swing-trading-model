@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.20
-**Last Updated:** 2026-07-30
+**Version:** 2.21
+**Last Updated:** 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -950,7 +950,7 @@ CREATE TABLE IF NOT EXISTS trade_plans (
 
 CREATE INDEX idx_trade_plans_portfolio ON trade_plans(portfolio_id);
 CREATE INDEX idx_trade_plans_position ON trade_plans(position_id) WHERE position_id IS NOT NULL;
-CREATE INDEX idx_trade_plans_ticker ON trade_plans(ticker);
+CREATE INDEX idx_trade_plans_ticker_upper ON trade_plans (UPPER(ticker));
 CREATE INDEX idx_trade_plans_status ON trade_plans(status);
 
 COMMIT;
@@ -1624,6 +1624,38 @@ Reversible: see Down Migration above.
 
 ---
 
-**Document Version:** 2.20
+### Migration from v2.20 to v2.21
+
+ST-10 (BLG-BE-82, EPIC-03, v8.4) — index correction, not a column change. `ensure_trade_plans_table()`'s idempotent create-path never actually created the plain `idx_trade_plans_ticker ON trade_plans(ticker)` this document's DS-04 schema block previously (incorrectly) documented — and even if it had, a plain index is not used by `get_trade_plans()`'s actual `WHERE UPPER(ticker)=%s` predicate. Found by `docs/ops/db_index_audit_arc4_2026-08-06.md` Finding 1. Replaced with a functional index matching the real predicate, following the same pattern already used by the sibling table `red_flag_events` (`idx_rfe_ticker ON red_flag_events (UPPER(ticker))`).
+
+```sql
+BEGIN;
+DROP INDEX IF EXISTS idx_trade_plans_ticker;
+CREATE INDEX IF NOT EXISTS idx_trade_plans_ticker_upper ON trade_plans (UPPER(ticker));
+COMMIT;
+```
+
+**Verification query (run after migration):**
+
+```sql
+EXPLAIN SELECT * FROM trade_plans WHERE portfolio_id = '<uuid>' AND UPPER(ticker) = 'NVDA';
+-- Expected: Bitmap Index Scan (or Index Scan) on idx_trade_plans_ticker_upper appears in the plan
+```
+
+Reversible:
+```sql
+BEGIN;
+DROP INDEX IF EXISTS idx_trade_plans_ticker_upper;
+CREATE INDEX IF NOT EXISTS idx_trade_plans_ticker ON trade_plans(ticker);
+COMMIT;
+```
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-08-07 (agent-mediated; index-only change, no column added/removed, corrects a doc/live-code mismatch found by the Arc 4 index audit)
+- Backend Engineering Patterns Owner: Accepted — 2026-08-07 (agent-mediated; matches the existing `red_flag_events` functional-index precedent)
+
+---
+
+**Document Version:** 2.21
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-07-29
+**Last Review:** 2026-08-07

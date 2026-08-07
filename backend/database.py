@@ -1123,6 +1123,11 @@ def ensure_trade_plans_table():
             cur.execute("CREATE INDEX IF NOT EXISTS idx_trade_plans_portfolio ON trade_plans(portfolio_id)")
             cur.execute("CREATE INDEX IF NOT EXISTS idx_trade_plans_position ON trade_plans(position_id) WHERE position_id IS NOT NULL")
             cur.execute("CREATE INDEX IF NOT EXISTS idx_trade_plans_status ON trade_plans(status)")
+            # ST-10 (BLG-BE-82, EPIC-03, v8.4): functional index matching get_trade_plans()'s
+            # actual WHERE UPPER(ticker)=%s predicate. The plain (non-functional) idx_trade_plans_ticker
+            # documented in data_model.md's canonical schema would not be used by this predicate --
+            # matches the sibling red_flag_events.idx_rfe_ticker pattern (also UPPER(ticker)).
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_trade_plans_ticker_upper ON trade_plans (UPPER(ticker))")
         conn.commit()
     ensure_regime_context_text_column()
     ensure_trade_plan_tags_column()
