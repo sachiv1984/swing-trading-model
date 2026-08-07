@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-07T21:27:16Z",
+  "last_updated_utc": "2026-08-07T21:27:36Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -310,10 +310,10 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-07__release-v8.4/EPIC-03",
       "pr_number": 1295,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-07__release-v8.4/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -894,10 +894,10 @@
   ],
   "merge_gate": {
     "epics_merged": [
-      "EPIC-02"
+      "EPIC-02",
+      "EPIC-03"
     ],
     "epics_pending": [
-      "EPIC-03",
       "EPIC-01",
       "EPIC-04",
       "EPIC-05",
