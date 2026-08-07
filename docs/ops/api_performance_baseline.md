@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.21
-**Date:** 2026-08-04
+**Version:** 2.22
+**Date:** 2026-08-07
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -1489,10 +1489,64 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-0
 
 ---
 
+## 34. v8.4 Endpoint Registration — 11 endpoints newly visible after ST-02's openapi.yaml structural fix (ST-02, EPIC-02, BLG-SPEC-116)
+
+**Date:** 2026-08-07
+**Story:** ST-02 (EPIC-02, v8.4) — BLG-SPEC-116, `openapi.yaml` structural defect fix
+**Environment:** N/A — pending live measurement, per §13 pattern.
+**Method:** Registered pending live measurement per §13 pattern.
+
+### 34.1 Endpoint Profile
+
+Nine of the eleven endpoints below already existed in the live backend but were trapped inside `components:` due to the `openapi.yaml` structural defect this story fixes (see `BLG-SPEC-116`) — `scripts/check_api_performance_baseline_drift.py` could not see them as `openapi.yaml` paths until the fix landed, so they were never previously flagged for baseline registration despite being live endpoints. The remaining two (`GET /test/quick-health`, `POST /test/rate-limit-scenarios`) are also pre-existing routes in `backend/routers/test.py`, newly documented in `health_endpoints.md` in this same PR (ST-02) after the drift gate surfaced them as undocumented.
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| DELETE /ticker-universe/{id} | pre-existing (newly visible) | Write | — | — | Pending live timing run |
+| GET /analytics/strategy-version-comparison | pre-existing (newly visible) | Read — aggregation | 300–500ms (est.) | 600–900ms (est.) | Pending live timing run |
+| GET /earnings/{id} | pre-existing (newly visible) | Read — external (Alpaca/yfinance-backed) | — | — | External-latency-dominated, not eligible for standard timing run |
+| GET /research/{id} | pre-existing (newly visible) | Read — external (AI-backed) | — | — | External-latency-dominated, not eligible for standard timing run |
+| GET /test/quick-health | new in v8.4 (ST-02) | Read — internal HTTP fan-out (3 calls) | 150–300ms (est.) | 300–600ms (est.) | Pending live timing run |
+| GET /v1beta1/news | pre-existing (newly visible) | Read — external (Alpaca News API) | — | — | External-latency-dominated, not eligible for standard timing run |
+| GET /v2/stocks/{id}/bars | pre-existing (newly visible) | Read — external (Alpaca Markets API) | — | — | External-latency-dominated, not eligible for standard timing run |
+| POST /strategy/benchmark/import | pre-existing (newly visible) | Write — bulk import | — | — | Pending live timing run; not eligible for standard read-timing methodology (write-op, variable payload size) |
+| POST /test/rate-limit-scenarios | new in v8.4 (ST-02) | Read-only (drains/resets isolated test rate-limit keys, mutates no business data) | 50–150ms (est.) | 100–250ms (est.) | Pending live timing run |
+| POST /trade-plans/generate-plan | pre-existing (newly visible) | Write — external (Anthropic-backed thesis generation) | — | — | External-latency-dominated, not eligible for standard timing run |
+| POST /trade-plans/{id}/generate-thesis | pre-existing (newly visible) | Write — external (Anthropic-backed thesis generation) | — | — | External-latency-dominated, not eligible for standard timing run; same category as the already-registered `POST /trade-plans/{plan_id}/generate-thesis` entry in §13 — this is the path-normalised duplicate surfaced by the drift script, not a second distinct endpoint |
+
+**Endpoint characteristics:**
+- 5 of the 11 (`GET /earnings/{id}`, `GET /research/{id}`, `GET /v1beta1/news`, `GET /v2/stocks/{id}/bars`, `POST /trade-plans/generate-plan` + `POST /trade-plans/{id}/generate-thesis`) are external-API-backed — latency dominated by Alpaca/Anthropic response time, not this system's own database or compute. Consistent with this document's existing convention (§13, `POST /trade-plans/{plan_id}/generate-thesis`) of excluding external-latency-dominated endpoints from p50/p95 estimation.
+- `GET /test/quick-health`: fans out 3 internal HTTP calls (`GET /health`, `GET /settings`, `GET /portfolio`) via `httpx.AsyncClient`, sequentially. Estimated from the sum of those 3 endpoints' own registered baselines, allowing for some parallelism headroom.
+- `POST /test/rate-limit-scenarios`: pure in-process rate-limiter state manipulation (`services.rate_limiter._ai_limiter`), no DB or external call — expected to be the fastest-responding endpoint in this registration batch.
+- `DELETE /ticker-universe/{id}`, `POST /strategy/benchmark/import`: write operations with no prior baseline entry to extrapolate from; flagged for live measurement with no estimate rather than guessing.
+
+**Flagged for the next baseline re-run** alongside other pending-measurement endpoints (§13 pattern). This registration satisfies the API Performance Baseline Drift Detection CI gate (ST-12) pre-PR check for EPIC-02's PR — it does not satisfy `ST-20`'s (EPIC-05) live-measurement AC, which remains the story responsible for converting these estimates/blanks into real ≥5-sample staging measurements once EPIC-02 has merged.
+
+### 34.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-02 (v8.4 EPIC-02, BLG-SPEC-116) — Endpoint Registration Sign-Off (11 endpoints)
+
+AC-01: All 11 endpoints flagged by scripts/check_api_performance_baseline_drift.py
+       registered with either an estimate + methodology note, or an explicit
+       "pending live timing run" flag where no reasonable estimate exists
+       (write-ops with no comparable prior entry). ✅ PASS
+AC-02: External-API-backed endpoints correctly excluded from p50/p95 estimation,
+       consistent with the existing §13 convention. ✅ PASS
+AC-03: Entry format consistent with existing baseline rows (§29-§33 pattern). ✅ PASS
+AC-04: Live measurement responsibility explicitly deferred to ST-20 (EPIC-05),
+       not silently treated as complete. ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-08-07
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.22 | 2026-08-07 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-02 (v8.4 EPIC-02, BLG-SPEC-116): §34 added — 11 endpoints registered pending live timing run (§13 pattern). 9 were pre-existing endpoints newly visible to the drift script only after ST-02's `openapi.yaml` structural fix (components:/paths: nesting defect); 2 are new-in-v8.4 test-suite endpoints (`GET /test/quick-health`, `POST /test/rate-limit-scenarios`). 6 excluded from p50/p95 estimation as external-API-latency-dominated (Alpaca/Anthropic-backed). Required by the API Performance Baseline Drift Detection CI gate (ST-12) pre-PR check (`scripts/check_api_performance_baseline_drift.py`). Live measurement remains ST-20's (EPIC-05) responsibility. |
 | 2.21 | 2026-08-04 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-01 (v8.2 EPIC-01, BLG-FEAT-88): §33 added — GET /reports/reconciliation registered pending live timing run (§13 pattern). Two sequential trade_history queries (existing get_tax_year_report full-row fetch + new independent SUM aggregate). Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/reports/reconciliation` path in the same PR. |
 | 2.20 | 2026-07-27 | Sprint Execution Engine (agent-mediated, Metrics Definitions & Analytics Owner + Infrastructure & Operations Owner roles — §5.3) | ST-02 (v7.9 EPIC-02, BLG-FEAT-67): §32 added — GET /portfolio/sector-regime-trend registered pending live timing run (§13 pattern; table empty at ship time, no retroactive data to measure against). Estimated from §21's GET /portfolio/sector-weights baseline, adjusted for a single indexed-table read. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/portfolio/sector-regime-trend` path in the same PR. |
 | 2.19 | 2026-07-27 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-06 (v7.8 EPIC-06, BLG-FEAT-82): §31 added — GET /ai/spend-trend registered pending live timing run (§13 pattern). Up to 6 sequential aggregation queries against `claude_audit_log` (same table/shape as §29's GET /ai/monthly-cost, scaled for up to 6 round-trips per request). Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/ai/spend-trend` path in the same PR — this registration was missed at implementation time and caught by CI on PR #1081, not pre-empted at PR-open per the LL-v7.6-P3-01 advisory. |
