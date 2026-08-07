@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-07T15:15:00Z",
+  "last_updated_utc": "2026-08-07T15:30:00Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -317,7 +317,8 @@
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-08-07__release-v8.4/qa_evidence_EPIC-03.md",
       "test_scenarios": [
-        "tests/test_trade_plans_ticker_index.py"
+        "tests/test_trade_plans_ticker_index.py",
+        "tests/test_alpaca_paper_sync_close_positions_backoff.py"
       ],
       "stories": {
         "ST-10": {
@@ -352,25 +353,31 @@
         "ST-11": {
           "title": "Add 429/backoff handling to Alpaca paper-sync close/positions endpoints",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1274,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "2dc681bfdd150210438f8896f6a306cbb926fe73",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/alpaca_integration_contract.md"
+            "backend/services/alpaca_paper_sync_service.py",
+            "tests/test_alpaca_paper_sync_close_positions_backoff.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Depends on BLG-BE-80 retry_with_backoff pattern (shipped v8.3)."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "Backend Engineering Patterns Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-07"
+          },
+          "notes": "Extracted _sync_close_paper_position_raw/_get_paper_positions_raw, both @retry_with_backoff (matches ST-10/BLG-BE-80 pattern). Existing dispositions unchanged: close still best-effort swallow, positions still raises after retries exhausted. 15 tests pass (9 new + 6 pre-existing open tests, no regression)."
         },
         "ST-12": {
           "title": "Log AI model+version provenance on stored thesis/summary text",
@@ -849,7 +856,8 @@
     "ST-06",
     "ST-08",
     "ST-09",
-    "ST-10"
+    "ST-10",
+    "ST-11"
   ],
   "open_escalations": [],
   "process_notes": [
