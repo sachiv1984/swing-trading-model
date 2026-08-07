@@ -1,9 +1,36 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.23
-**Last Updated:** 2026-08-05 (delivery verification 2026-08-04__release-v8.2 — status line updated Sprint_Complete → Verified); prior — 2026-08-05 (sprint close 2026-08-04__release-v8.2); prior — 2026-08-03 (delivery verification 2026-08-03__release-v8.1 — status line updated Sprint_Complete → Verified); prior — 2026-08-03 (sprint close 2026-08-03__release-v8.1); prior — 2026-07-31 (delivery verification 2026-07-30__release-v8.0 — status line updated Sprint_Complete → Verified_with_deviations)
+**Version:** 4.24
+**Last Updated:** 2026-08-07 (sprint close 2026-08-05__release-v8.3); prior — 2026-08-05 (delivery verification 2026-08-04__release-v8.2 — status line updated Sprint_Complete → Verified); prior — 2026-08-05 (sprint close 2026-08-04__release-v8.2); prior — 2026-08-03 (delivery verification 2026-08-03__release-v8.1 — status line updated Sprint_Complete → Verified); prior — 2026-08-03 (sprint close 2026-08-03__release-v8.1); prior — 2026-07-31 (delivery verification 2026-07-30__release-v8.0 — status line updated Sprint_Complete → Verified_with_deviations)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-08-05__release-v8.3
+**Date:** 2026-08-07
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | SI-05 weekly Telegram digest pipeline root-caused and fixed, with new delivery-failure alerting; staging/production API key distinctness check made recurring; Gemini API key rotation runbook | `docs/ops/si05_digest_delivery_root_cause_2026-08-05.md`; `scripts/check_si05_digest_staleness.py`; `scripts/check_api_key_cross_environment.py`; `docs/security/api_key_security_register.md#3. Anthropic API Key` | None |
+| EPIC-02 | Database index audit for Arc 4 cross-table queries; Alpaca API rate-limit backoff audit; canonical `position_state` enum registry shared frontend/backend; remaining routers conformed to the canonical error envelope; Yahoo Finance regime-check retry/backoff; idempotent Alpaca paper-trading order-sync retry | `docs/ops/db_index_audit_arc4_2026-08-06.md`; `docs/ops/alpaca_backoff_audit_2026-08-06.md`; `docs/specs/position_lifecycle_states_registry.md`; `docs/specs/api_contracts/conventions.md#13. Error Response Standard (Canonical)`; `backend/utils/retry.py`; `backend/services/alpaca_paper_sync_service.py` | None |
+| EPIC-03 | `ComplianceRecheckModal.js` migrated onto the shared `Dialog` primitive; new shared `ConfirmationModal.js` (confirm/cancel + optional undo-window variant); unified loading-skeleton pattern (`DataState.js`); standard Base44 theme-compliance prompt section; shared `AiDisclaimer.js` component extraction | `docs/specs/frontend/design_system.md#Confirmation Modal (with optional undo window)`; `docs/design/2026-08-05__release-v8.3/shared-confirmation-modal-undo-window/decision_record.md`; `docs/design/2026-08-05__release-v8.3/loading-skeleton-pattern/decision_record.md`; `docs/specs/frontend/base44_prompt_template_library.md#11`; `claude/backlog/backlog.md#BLG-FE-81` | None — a real-CI focus-restoration defect (`SC-CR-11`) was found and fixed post-PR-open, not shipped; see `sprint_close.md` Process Notes |
+| EPIC-04 | Baseline Playwright coverage for Watchlist.js; OpenAPI 3-way drift gate false-negative sweep; DoQ sign-off staleness pre-merge lint; OpenAPI response-example drift spot-check; API endpoint deprecation-window policy; canonical form-validation error-message pattern spec | `tests/e2e/watchlist.spec.js`; `scripts/openapi_3way_drift_sweep.py`; `scripts/check_doq_signoff_staleness.py`; `docs/ops/openapi_response_example_spot_check_2026-08-06.md`; `docs/specs/api_contracts/conventions.md#14`; `docs/specs/frontend/design_system.md#Error States` | None — a real-CI self-referential lint false positive (ST-18) was found and fixed post-PR-open, not shipped; see `sprint_close.md` Process Notes |
+| EPIC-05 | Terminal-state guard correction in release planning; formal §13 semi-annual boundary re-attestation cadence; SI-02 trade-count gate threshold calibration review; `prompt_change_log.md` ordering fix; cross-role workload balance check | `claude/system/release_planning_prompt.md#Terminal State Guard — Published Is Immutable (Hard Gate)`; `claude/strategy/strategy_rules.md#13.5`; `docs/product/decisions/si02_trade_count_gate_calibration_review_2026-08-06.md`; `claude/system/sprint_planning_prompt.md#7`; `claude/system/roadmap_prompt.md#7.2` | None |
+| EPIC-06 | Monthly P&L Report format review — 3-month usage retrospective; Avg P&L/Trade column recommendation accepted for a future story (`BLG-FE-141`, `v8.4`) | `docs/product/decisions/monthly_pnl_format_review_2026-08-06.md` | None |
+
+### Capabilities deferred or returned
+
+None — all 27 ST items reached `merged` status this sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: `qa_evidence_EPIC-01.md` through `qa_evidence_EPIC-06.md`
+- Deviations filed: None
+- Test scenarios referenced: `tests/e2e/watchlist.spec.js`; `tests/e2e/compliance-recheck.spec.js` (SC-CR-01–11); `tests/e2e/epic03-v34-frontend.spec.js`; `tests/e2e/epic02-v62-ai-briefing-chat.spec.js`; `tests/test_doq_signoff_staleness_check.py`
 
 ---
 

@@ -1,16 +1,16 @@
 {
   "cycle_id": "2026-08-05__release-v8.3",
   "epic_id": "EPIC-06",
-  "status": "done",
+  "status": "merged",
   "branch": "exec/2026-08-05__release-v8.3/EPIC-06",
   "pr_number": 1262,
-  "pr_status": "open",
+  "pr_status": "merged",
   "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-05__release-v8.3/qa_evidence_EPIC-06.md",
   "test_scenarios": [],
   "stories": {
     "ST-27": {
-      "title": "Monthly P&L report format review — 3-month usage retrospective",
+      "title": "Monthly P&L report format review \u2014 3-month usage retrospective",
       "classification": "autonomous",
       "status": "done",
       "assigned_to": "engine",
@@ -34,9 +34,9 @@
         "status": "cleared",
         "method": "agent_mediated",
         "date": "2026-08-06",
-        "notes": "Approved, with one flagged non-blocking wording finding: the Product Owner sign-off line initially read 'Confirmed' rather than the required OA-6 'pending human confirmation' phrasing. Fixed in commit bc724cb1 (sign-off field left blank for actual human PO confirmation). All factual claims in the review document independently verified against src/pages/Reports.js, reports_endpoints.md, ExitReasonTable.js/TagPerformance.js (Avg P&L precedent), and MonthlyHeatmap.js/PerformanceAnalytics.js (Win Rate computed client-side from raw trades, not the monthly-pnl endpoint) — all accurate. BLG-FE-141 confirmed well-formed, no ID collision."
+        "notes": "Approved, with one flagged non-blocking wording finding: the Product Owner sign-off line initially read 'Confirmed' rather than the required OA-6 'pending human confirmation' phrasing. Fixed in commit bc724cb1 (sign-off field left blank for actual human PO confirmation). All factual claims in the review document independently verified against src/pages/Reports.js, reports_endpoints.md, ExitReasonTable.js/TagPerformance.js (Avg P&L precedent), and MonthlyHeatmap.js/PerformanceAnalytics.js (Win Rate computed client-side from raw trades, not the monthly-pnl endpoint) \u2014 all accurate. BLG-FE-141 confirmed well-formed, no ID collision."
       },
-      "notes": "No usage telemetry exists in this product — assessment performed via direct implementation review + comparison against sibling reporting surfaces, per the review document's own method note."
+      "notes": "No usage telemetry exists in this product \u2014 assessment performed via direct implementation review + comparison against sibling reporting surfaces, per the review document's own method note."
     }
   },
   "last_updated_utc": "2026-08-06T00:00:00Z"

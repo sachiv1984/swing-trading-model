@@ -1,12 +1,12 @@
 {
   "cycle_id": "2026-08-05__release-v8.3",
-  "sprint_goal": "Restore and harden the SI-05 weekly digest pipeline (fix plus delivery-failure alerting) while clearing a curated slate of backend resilience, frontend design-system, QA/spec, and governance-process debt — leaving no ungated P1 operational gap open and no item below its stated acceptance bar.",
+  "sprint_goal": "Restore and harden the SI-05 weekly digest pipeline (fix plus delivery-failure alerting) while clearing a curated slate of backend resilience, frontend design-system, QA/spec, and governance-process debt \u2014 leaving no ungated P1 operational gap open and no item below its stated acceptance bar.",
   "backlog_slice_source": "claude/cycles/2026-08-05__release-v8.3/stage4_backlog_slice.md",
   "invoked_utc": "2026-08-05T18:41:13Z",
   "mode": "standard",
-  "status": "Running",
+  "status": "Sealed",
   "open_escalations": [],
   "process_notes": [],
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-08-07T09:07:33Z"
 }

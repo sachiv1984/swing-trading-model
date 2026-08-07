@@ -1,10 +1,10 @@
 {
   "cycle_id": "2026-08-05__release-v8.3",
   "epic_id": "EPIC-04",
-  "status": "done",
+  "status": "merged",
   "branch": "exec/2026-08-05__release-v8.3/EPIC-04",
   "pr_number": 1260,
-  "pr_status": "open",
+  "pr_status": "merged",
   "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-05__release-v8.3/qa_evidence_EPIC-04.md",
   "test_scenarios": [
@@ -38,7 +38,7 @@
         "status": "cleared",
         "method": "agent_mediated",
         "date": "2026-08-06",
-        "notes": "First pass BLOCKED: SC-WL-04 hit a Playwright strict-mode violation ('Add Ticker' resolves to 2 buttons on the empty state — PageHeader's always-present action + DataState's emptyAction CTA, both deliberate, not a defect). Fixed with .first() (commit a3511559), re-verified by actually running the full 5-test suite against the real dev server with a real Chromium binary — all 5 pass (SC-WL-01 through SC-WL-05), no regressions."
+        "notes": "First pass BLOCKED: SC-WL-04 hit a Playwright strict-mode violation ('Add Ticker' resolves to 2 buttons on the empty state \u2014 PageHeader's always-present action + DataState's emptyAction CTA, both deliberate, not a defect). Fixed with .first() (commit a3511559), re-verified by actually running the full 5-test suite against the real dev server with a real Chromium binary \u2014 all 5 pass (SC-WL-01 through SC-WL-05), no regressions."
       },
       "notes": "Design Gate: Design Not Applicable (test infrastructure only, no UI change)."
     },
@@ -68,7 +68,7 @@
         "status": "cleared",
         "method": "agent_mediated",
         "date": "2026-08-06",
-        "notes": "Approved. Re-ran the sweep script independently — output matches the sweep log exactly (131/130/130 endpoints, same 4 findings). Spot-checked 3 KNOWN_GAPS categories against real source (main.py root route, Alpaca third-party contract paths, notification_id/id naming-convention exemption in alerts.py) — all genuinely justified. BLG-SPEC-111 correctly filed for the one real gap."
+        "notes": "Approved. Re-ran the sweep script independently \u2014 output matches the sweep log exactly (131/130/130 endpoints, same 4 findings). Spot-checked 3 KNOWN_GAPS categories against real source (main.py root route, Alpaca third-party contract paths, notification_id/id naming-convention exemption in alerts.py) \u2014 all genuinely justified. BLG-SPEC-111 correctly filed for the one real gap."
       },
       "notes": "Quarterly sweep, next scheduled run 2026-11-06 (per docs/ops/openapi_3way_sweep_log.md)."
     },
@@ -99,9 +99,9 @@
         "status": "cleared",
         "method": "agent_mediated",
         "date": "2026-08-06",
-        "notes": "Approved. Ran the 5-test suite (all pass), validated quality_gate.yml YAML, re-ran the check script against the active cycle (clean). Verified the active-cycle-only scoping decision empirically — an unscoped scan finds exactly the 6 historical placeholders across 4 already-closed cycles claimed in the commit message."
+        "notes": "Approved. Ran the 5-test suite (all pass), validated quality_gate.yml YAML, re-ran the check script against the active cycle (clean). Verified the active-cycle-only scoping decision empirically \u2014 an unscoped scan finds exactly the 6 historical placeholders across 4 already-closed cycles claimed in the commit message."
       },
-      "notes": "An unscoped first draft would have permanently blocked every future PR (6 legitimate historical placeholders in sealed cycles v1.10/v2.0/v2.9/v3.7) — scoped to active cycle only, same source .claude_current_state.json's active_cycle already used by the existing per-EPIC QA evidence check."
+      "notes": "An unscoped first draft would have permanently blocked every future PR (6 legitimate historical placeholders in sealed cycles v1.10/v2.0/v2.9/v3.7) \u2014 scoped to active cycle only, same source .claude_current_state.json's active_cycle already used by the existing per-EPIC QA evidence check."
     },
     "ST-19": {
       "title": "OpenAPI response-example drift spot-check",
@@ -189,9 +189,9 @@
         "status": "cleared",
         "method": "agent_mediated",
         "date": "2026-08-06",
-        "notes": "First pass BLOCKED (hard gate): ships a frontend-visible colour change (WatchlistModal.js, TradePlan.js) with no Playwright coverage, staging sign-off, or filed backlog item — required per CLAUDE.md. Fixed: added SC-WL-05 (watchlist.spec.js) and SC-E03-15b (epic03-v34-frontend.spec.js), both actually run against a real Chromium binary and passing, asserting the exact text-rose-700/dark:text-rose-400 classes on the real rendered elements. Re-verified clean on second pass. Secondary finding (6 more files with the same unaddressed defect class, outside this story's own decision-record scope) filed as BLG-FE-140."
+        "notes": "First pass BLOCKED (hard gate): ships a frontend-visible colour change (WatchlistModal.js, TradePlan.js) with no Playwright coverage, staging sign-off, or filed backlog item \u2014 required per CLAUDE.md. Fixed: added SC-WL-05 (watchlist.spec.js) and SC-E03-15b (epic03-v34-frontend.spec.js), both actually run against a real Chromium binary and passing, asserting the exact text-rose-700/dark:text-rose-400 classes on the real rendered elements. Re-verified clean on second pass. Secondary finding (6 more files with the same unaddressed defect class, outside this story's own decision-record scope) filed as BLG-FE-140."
       },
-      "notes": "Design_system.md v1.7 §Error States already fully documents this pattern (written at Design Gate). AC covers spec (pre-existing) + the 2 shipped instances' dark-only-token gap the design gate's own clearing rationale flagged. Trigger-timing reconciliation (submit- vs blur-triggered) intentionally out of scope — see commit message."
+      "notes": "Design_system.md v1.7 \u00a7Error States already fully documents this pattern (written at Design Gate). AC covers spec (pre-existing) + the 2 shipped instances' dark-only-token gap the design gate's own clearing rationale flagged. Trigger-timing reconciliation (submit- vs blur-triggered) intentionally out of scope \u2014 see commit message."
     }
   },
   "last_updated_utc": "2026-08-06T00:00:00Z"

@@ -1,10 +1,10 @@
 {
   "cycle_id": "2026-08-05__release-v8.3",
   "epic_id": "EPIC-03",
-  "status": "done",
+  "status": "merged",
   "branch": "exec/2026-08-05__release-v8.3/EPIC-03",
   "pr_number": 1259,
-  "pr_status": "open",
+  "pr_status": "merged",
   "qa_signed_off": true,
   "qa_evidence_log": "claude/cycles/2026-08-05__release-v8.3/qa_evidence_EPIC-03.md",
   "test_scenarios": [
@@ -39,9 +39,9 @@
         "status": "cleared",
         "method": "agent_mediated",
         "date": "2026-08-06",
-        "notes": "First pass BLOCKED: DialogContent's className override (p-0 gap-0) silently lost to the primitive's own base p-6/gap-4 because this project's cn() (src/lib/utils.js) is plain clsx with no tailwind-merge — confirmed by compiling tailwind.config.js directly (p-6 emits after p-0 in the stylesheet, so p-6 wins). Also flagged a missing DialogTitle (raw <h2> used instead). Both fixed in commit cae2730b (!p-0 !gap-0 important-modifier prefix; DialogTitle with !-prefixed size/tracking/leading overrides). Re-verified second pass: APPROVED — fix confirmed structurally correct via a fresh compiled-CSS check, no regressions found (Radix aria-labelledby auto-wiring confirmed intact after removing the now-redundant manual aria-label)."
+        "notes": "First pass BLOCKED: DialogContent's className override (p-0 gap-0) silently lost to the primitive's own base p-6/gap-4 because this project's cn() (src/lib/utils.js) is plain clsx with no tailwind-merge \u2014 confirmed by compiling tailwind.config.js directly (p-6 emits after p-0 in the stylesheet, so p-6 wins). Also flagged a missing DialogTitle (raw <h2> used instead). Both fixed in commit cae2730b (!p-0 !gap-0 important-modifier prefix; DialogTitle with !-prefixed size/tracking/leading overrides). Re-verified second pass: APPROVED \u2014 fix confirmed structurally correct via a fresh compiled-CSS check, no regressions found (Radix aria-labelledby auto-wiring confirmed intact after removing the now-redundant manual aria-label)."
       },
-      "notes": "Design gate re-classified Design Pre-Approved after ESC-20260805-01 corrected BLG-FE-103's scope to a single-file migration (the originally-named second consumer, 'the PT-05 checklist modal', does not exist in source). No explicit onCloseAutoFocus trigger-ref override — this modal has 2 call sites (Positions.js button + a position-card callback), unlike TradePlan.js's single-trigger Abandon modal, so it relies on Radix's default previously-focused-element restoration. Positions.js changed from conditional-mount to always-mounted open={!!position}, matching ExitModal/EditPositionModal convention."
+      "notes": "Design gate re-classified Design Pre-Approved after ESC-20260805-01 corrected BLG-FE-103's scope to a single-file migration (the originally-named second consumer, 'the PT-05 checklist modal', does not exist in source). No explicit onCloseAutoFocus trigger-ref override \u2014 this modal has 2 call sites (Positions.js button + a position-card callback), unlike TradePlan.js's single-trigger Abandon modal, so it relies on Radix's default previously-focused-element restoration. Positions.js changed from conditional-mount to always-mounted open={!!position}, matching ExitModal/EditPositionModal convention."
     },
     "ST-12": {
       "title": "Extract a shared modal-confirmation component",
@@ -70,9 +70,9 @@
         "status": "cleared",
         "method": "agent_mediated",
         "date": "2026-08-06",
-        "notes": "Approved. Props (message, confirmLabel/cancelLabel, destructive, undoWindow{enabled,durationSeconds}) match design_system.md v1.7 and the decision record exactly; undo-toast behaviour (optimistic execute, live countdown, Undo reverses + 'Undone.' toast, silent expiry) matches decision record §4 step-by-step. Second-pass review also caught and fixed the same DialogTitle override defect class found in ST-11 (text-base losing to base text-lg) — !text-base applied, verified via compiled CSS."
+        "notes": "Approved. Props (message, confirmLabel/cancelLabel, destructive, undoWindow{enabled,durationSeconds}) match design_system.md v1.7 and the decision record exactly; undo-toast behaviour (optimistic execute, live countdown, Undo reverses + 'Undone.' toast, silent expiry) matches decision record \u00a74 step-by-step. Second-pass review also caught and fixed the same DialogTitle override defect class found in ST-11 (text-base losing to base text-lg) \u2014 !text-base applied, verified via compiled CSS."
       },
-      "notes": "No consumer wired this sprint — BLG-FE-116/BLG-FE-117 are not in scope. base44_prompt_template_library.md §10 is the forward-reference point for both (AC-2), with §6 (Bulk-Action Toolbar) updated to cite it explicitly."
+      "notes": "No consumer wired this sprint \u2014 BLG-FE-116/BLG-FE-117 are not in scope. base44_prompt_template_library.md \u00a710 is the forward-reference point for both (AC-2), with \u00a76 (Bulk-Action Toolbar) updated to cite it explicitly."
     },
     "ST-13": {
       "title": "Unified loading-skeleton pattern for async-loading cards",
@@ -101,7 +101,7 @@
         "status": "cleared",
         "method": "agent_mediated",
         "date": "2026-08-06",
-        "notes": "Approved. loadingVariant='skeleton'/loadingSkeleton props match design_system.md's documented default 3-bar composition and explicit bg-slate-300/60 dark:bg-slate-700/60 pair exactly; reuses the existing src/components/ui/skeleton.js primitive rather than duplicating it (design_system.md names it 'Skeleton.js' — same file, casing reconciled to what's actually on disk, documented as an implementation note not a deviation). Confirmed the shared primitive's own bg-primary/10 default is inert in this project (no 'primary' color defined in tailwind.config.js, verified via compiled CSS — 0 bg-primary rules emitted), so no override-collision risk here unlike the DialogTitle/DialogContent cases in ST-11/ST-12. Not retrofitted to any existing card, per AC."
+        "notes": "Approved. loadingVariant='skeleton'/loadingSkeleton props match design_system.md's documented default 3-bar composition and explicit bg-slate-300/60 dark:bg-slate-700/60 pair exactly; reuses the existing src/components/ui/skeleton.js primitive rather than duplicating it (design_system.md names it 'Skeleton.js' \u2014 same file, casing reconciled to what's actually on disk, documented as an implementation note not a deviation). Confirmed the shared primitive's own bg-primary/10 default is inert in this project (no 'primary' color defined in tailwind.config.js, verified via compiled CSS \u2014 0 bg-primary rules emitted), so no override-collision risk here unlike the DialogTitle/DialogContent cases in ST-11/ST-12. Not retrofitted to any existing card, per AC."
       },
       "notes": "design_system.md v1.7 documentation for this pattern was already written at Design Gate time (2026-08-05); this story's engine work is the DataState.js prop implementation making the documented pattern actually usable, plus verifying the documentation matches."
     },
@@ -130,7 +130,7 @@
         "status": "cleared",
         "method": "agent_mediated",
         "date": "2026-08-06",
-        "notes": "Approved. §11 is genuinely distinct from the existing §4 review-time checklist — it is a generation-time prompt fragment instructing the delegate on the rule to build against before code is written, addressing the recurring BLG-FE-87/88/95/125/129 defect class at prompt-draft time rather than catching it after generation. Version bump 1.4->1.6 (two sequential story bumps in one commit, ST-12 then ST-14), Change Log entries accurate, section renumbering consistent throughout the file."
+        "notes": "Approved. \u00a711 is genuinely distinct from the existing \u00a74 review-time checklist \u2014 it is a generation-time prompt fragment instructing the delegate on the rule to build against before code is written, addressing the recurring BLG-FE-87/88/95/125/129 defect class at prompt-draft time rather than catching it after generation. Version bump 1.4->1.6 (two sequential story bumps in one commit, ST-12 then ST-14), Change Log entries accurate, section renumbering consistent throughout the file."
       },
       "notes": "Documentation-only story (base44_prompt_template_library.md), no runtime code."
     },
@@ -162,7 +162,7 @@
         "date": "2026-08-06",
         "notes": "Approved. Diffed clean: exact Tailwind classes and text preserved byte-for-byte for both badge (AiDailyBriefing) and footer (AiChatWidget) variants. Import paths verified correct from both consumers' actual filesystem locations. data-testid='ai-chat-advisory-footer' preserved exactly, matching existing Playwright assertions (epic02-v62-ai-briefing-chat.spec.js SC-AC-06) with no update needed. Filename/export casing matches (AiDisclaimer.js / AiDisclaimer)."
       },
-      "notes": "Design Pre-Approved — both consumer instances' contrast fixes verified still shipped at their approved values (dashboard.md v3.2, positions.md v2.7) before extraction."
+      "notes": "Design Pre-Approved \u2014 both consumer instances' contrast fixes verified still shipped at their approved values (dashboard.md v3.2, positions.md v2.7) before extraction."
     }
   },
   "last_updated_utc": "2026-08-06T00:00:00Z"
