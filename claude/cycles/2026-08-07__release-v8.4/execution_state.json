@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-07T21:02:23Z",
+  "last_updated_utc": "2026-08-07T21:20:49Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -47,11 +47,11 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.push_verified",
           "sign_off_record": {
-            "role": "Financial Reporting & Records Owner",
+            "role": "Director of Quality",
             "status": "pending",
             "method": "agent_mediated",
             "date": null,
-            "notes": "Frontend-visible-change rule applies (new column). Playwright coverage authored: tests/e2e/monthly-pnl-avg-per-trade.spec.js (SC-MAPT-01..05). Could not run locally (sandboxed environment has no supported Playwright browser install target). Sign-off pending confirmation of a real GitHub Actions CI pass per LL-v8.3-P3-02 environment-parity sub-clause -- will confirm once EPIC-01 PR CI runs."
+            "notes": "Agent-mediated DoQ review performed (on behalf of, pending human confirmation): code/test correctness confirmed, 1018/1018 local suite clean. Found a real spec/implementation colour-rule finding (exact-zero P&L: MonthlyPnlTable renders grey, spec said red-for-zero) -- escalated to Frontend Specifications & UX Documentation Owner (agent-mediated, Product Owner directed): spec corrected to match actual grey-for-zero behaviour (reports.md v0.15), cross-table inconsistency vs Tax Year Trades Table filed separately as DEV-REPORTS-ST01-02/BLG-FE-144, not silently resolved. Still pending: real GitHub Actions CI confirmation of tests/e2e/monthly-pnl-avg-per-trade.spec.js (LL-v8.3-P3-02) and genuine human QA sign-off -- neither agent-mediated review satisfies the merge gate."
           },
           "notes": "Frontend-visible-change rule applies \u2014 Playwright coverage or staging sign-off required."
         },
