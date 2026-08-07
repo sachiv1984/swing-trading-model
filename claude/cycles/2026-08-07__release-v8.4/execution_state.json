@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-07T21:20:49Z",
+  "last_updated_utc": "2026-08-07T21:29:48Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -19,8 +19,8 @@
     "EPIC-01": {
       "status": "not_started",
       "branch": "exec/2026-08-07__release-v8.4/EPIC-01",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1296,
+      "pr_status": "open",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-08-07__release-v8.4/qa_evidence_EPIC-01.md",
       "test_scenarios": [],
@@ -325,128 +325,167 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "merged",
       "branch": "exec/2026-08-07__release-v8.4/EPIC-03",
       "pr_number": 1295,
-      "pr_status": "open",
-      "qa_signed_off": false,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-07__release-v8.4/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_trade_plans_ticker_index.py",
+        "tests/test_alpaca_paper_sync_close_positions_backoff.py",
+        "tests/test_trade_plan_thesis_provenance.py",
+        "tests/test_trade_plan_audit_log.py",
+        "tests/test_generate_data_dictionary.py"
+      ],
       "stories": {
         "ST-10": {
           "title": "Add functional index on trade_plans(UPPER(ticker))",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1273,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "43100201cb7e493f22ecf90c11bd5a5ee6507b8a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/data_model.md"
+            "docs/specs/data_model.md",
+            "tests/test_trade_plans_ticker_index.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Touches shared file data_model.md \u2014 rebase onto main after EPIC-02 merges."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "Backend Engineering Patterns Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-07"
+          },
+          "notes": "Added idx_trade_plans_ticker_upper (functional, UPPER(ticker)) to ensure_trade_plans_table(); data_model.md DS-04 block + Migration entry updated to match. VERSION COLLISION RESOLVED at post-EPIC-02-merge rebase (2026-08-07): this story's migration block renumbered v2.20->v2.21 -> v2.21->v2.22 (EPIC-02's v2.21 is now canonical on main); no SQL content changed."
         },
         "ST-11": {
           "title": "Add 429/backoff handling to Alpaca paper-sync close/positions endpoints",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1274,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "2dc681bfdd150210438f8896f6a306cbb926fe73",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/alpaca_integration_contract.md"
+            "backend/services/alpaca_paper_sync_service.py",
+            "tests/test_alpaca_paper_sync_close_positions_backoff.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Depends on BLG-BE-80 retry_with_backoff pattern (shipped v8.3)."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "Backend Engineering Patterns Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-07"
+          },
+          "notes": "Extracted _sync_close_paper_position_raw/_get_paper_positions_raw, both @retry_with_backoff (matches ST-10/BLG-BE-80 pattern). Existing dispositions unchanged: close still best-effort swallow, positions still raises after retries exhausted. 15 tests pass (9 new + 6 pre-existing open tests, no regression)."
         },
         "ST-12": {
           "title": "Log AI model+version provenance on stored thesis/summary text",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1275,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "47f2a97f887a0e2d2c73162da812c5a1d3584bae",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/ai_thesis_generation.md"
+            "backend/database.py",
+            "docs/specs/data_model.md",
+            "docs/specs/api_contracts/trade_plan_endpoints.md",
+            "tests/test_trade_plan_thesis_provenance.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "AI Compliance & Governance Officer sign-off required."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "AI Compliance & Governance Officer",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-07",
+            "notes": "Backend capability closes the BLG-BE-70 gap for future records once frontend wiring lands (BLG-FE-143); not yet end-to-end populated this cycle."
+          },
+          "notes": "Added thesis_model_version/thesis_prompt_version (nullable) to trade_plans; wired through create/update_trade_plan and router request models. KNOWN RESIDUAL GAP: backend storage capability only -- frontend does not yet pass values through on save. Filed BLG-FE-143 for frontend follow-up. 4 new tests pass; 22 existing trade_plan tests re-run clean, no regression."
         },
         "ST-13": {
           "title": "Mutation/audit-trail log for trade plan edits post-entry",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1276,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "9c4e8975c621e1d104903642ca7d47a635303be8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/api_contracts/trade_plan_endpoints.md"
+            "docs/specs/data_model.md",
+            "tests/test_trade_plan_audit_log.py"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Extends BLG-BE-73 pattern. Touches shared file data_model.md."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "Data Model & Domain Schema Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-07"
+          },
+          "notes": "New trade_plan_audit_log table, extends position_audit_log (BLG-BE-73) pattern. update_trade_plan() logs post-entry edits (position_id set) only, fail-open. 6 new tests + fixed ST-12's update test (pre-fetch call shifted call_args_list index). 35 trade_plan tests pass, no regression."
         },
         "ST-14": {
           "title": "Auto-generated data dictionary from live schema",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1277,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "950791904dba0a2a402d7efc71af0826a5873f1a",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/specs/data_model.md"
+            "scripts/generate_data_dictionary.py",
+            "docs/ops/data_dictionary_diff_triage_2026-08-07.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Script deliverable; diff triage target is data_model.md."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "Data Model & Domain Schema Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-07"
+          },
+          "notes": "Script generates data dictionary from live schema via information_schema; degrades gracefully with no DATABASE_URL (matches backtest_data_integrity_smoke_test.py convention). First run in-session: no live DB reachable, gracefully skipped; manual cross-check substituted, 5 findings all already resolved by ST-08/ST-10/ST-12/ST-13. 6 new tests pass."
         }
       }
     },
@@ -857,16 +896,23 @@
     "ST-07",
     "ST-08",
     "ST-09",
+    "ST-10",
+    "ST-11",
+    "ST-12",
+    "ST-13",
+    "ST-14",
     "ST-31"
   ],
   "open_escalations": [],
-  "process_notes": [],
+  "process_notes": [
+    "EPIC-03/ST-10: data_model.md v2.21 version collision with EPIC-02's own v2.21 bump (ST-08/ST-09) -- RESOLVED at post-EPIC-02-merge rebase (2026-08-07) per CLAUDE.md \u00a78 step 2a: ST-10/ST-12/ST-13 migration blocks renumbered v2.21->v2.22, v2.22->v2.23, v2.23->v2.24; final data_model.md version 2.24."
+  ],
   "merge_gate": {
     "epics_merged": [
-      "EPIC-02"
+      "EPIC-02",
+      "EPIC-03"
     ],
     "epics_pending": [
-      "EPIC-03",
       "EPIC-01",
       "EPIC-04",
       "EPIC-05",

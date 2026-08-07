@@ -101,52 +101,86 @@ def sync_open_paper_position(ticker: str, shares: float, position_id: str) -> No
         logger.warning("Paper sync: open order exception for %s — %s", ticker, exc)
 
 
+@retry_with_backoff(
+    max_attempts=3,
+    base_delay=0.5,
+    retryable_exceptions=(requests.exceptions.RequestException,),
+)
+def _sync_close_paper_position_raw(ticker: str) -> str:
+    """DELETE the paper position (internal). Raises on network failure or a
+    non-(200, 204, 404) response — retried by the decorator (ST-11,
+    BLG-BE-83). Returns a disposition string for the caller to log; 404
+    ("nothing to close") is a legitimate outcome, not a failure."""
+    url = f"{ALPACA_PAPER_BASE_URL}/v2/positions/{ticker}"
+    resp = requests.delete(url, headers=_paper_headers(), timeout=10)
+    if resp.status_code in (200, 204):
+        return "closed"
+    if resp.status_code == 404:
+        return "not_found"
+    logger.warning(
+        "Paper sync: close failed for %s — HTTP %d: %s",
+        ticker, resp.status_code, resp.text[:200],
+    )
+    raise requests.exceptions.RequestException(f"Alpaca close position HTTP {resp.status_code}")
+
+
 def sync_close_paper_position(ticker: str) -> None:
     """
     Close a paper position when the real position exits.
-    Best-effort — any error is logged and silently swallowed.
+    Retries transient/429 failures (ST-11, BLG-BE-83, ~3 attempts) via the
+    shared retry_with_backoff decorator before giving up. Best-effort — any
+    error (including retries exhausted) is logged and silently swallowed;
+    never raises to the caller. Unchanged from the pre-ST-11 behaviour.
     """
     if not _credentials_configured():
         return
 
-    url = f"{ALPACA_PAPER_BASE_URL}/v2/positions/{ticker}"
     try:
-        resp = requests.delete(url, headers=_paper_headers(), timeout=10)
-        if resp.status_code in (200, 204):
+        disposition = _sync_close_paper_position_raw(ticker)
+        if disposition == "closed":
             logger.info("Paper sync: closed position for %s", ticker)
-        elif resp.status_code == 404:
-            logger.info("Paper sync: no paper position found for %s — nothing to close", ticker)
         else:
-            logger.warning(
-                "Paper sync: close failed for %s — HTTP %d: %s",
-                ticker, resp.status_code, resp.text[:200],
-            )
+            logger.info("Paper sync: no paper position found for %s — nothing to close", ticker)
     except Exception as exc:
         logger.warning("Paper sync: close exception for %s — %s", ticker, exc)
+
+
+@retry_with_backoff(
+    max_attempts=3,
+    base_delay=0.5,
+    retryable_exceptions=(requests.exceptions.RequestException,),
+)
+def _get_paper_positions_raw() -> list:
+    """GET current Alpaca paper positions (internal). Raises on network
+    failure or a non-200 response — retried by the decorator (ST-11,
+    BLG-BE-83)."""
+    url = f"{ALPACA_PAPER_BASE_URL}/v2/positions"
+    resp = requests.get(url, headers=_paper_headers(), timeout=10)
+    if resp.status_code != 200:
+        logger.warning("Paper sync: get_positions HTTP %d — %s", resp.status_code, resp.text[:200])
+        resp.raise_for_status()
+    return resp.json()
 
 
 def get_paper_positions() -> Dict:
     """
     Fetch current Alpaca paper account positions with P&L.
 
-    Returns {"paper_tracking_enabled": False} when credentials absent.
-    Returns {"paper_tracking_enabled": True, "positions": [...]} otherwise.
+    Retries transient/429 failures (ST-11, BLG-BE-83, ~3 attempts) via the
+    shared retry_with_backoff decorator before giving up. Returns
+    {"paper_tracking_enabled": False} when credentials absent. Returns
+    {"paper_tracking_enabled": True, "positions": [...]} otherwise. Still
+    raises to the caller if every retry attempt fails — unchanged from the
+    pre-ST-11 behaviour (the router's caller converts this to a 500).
     """
     if not _credentials_configured():
         return {"paper_tracking_enabled": False}
 
-    url = f"{ALPACA_PAPER_BASE_URL}/v2/positions"
     try:
-        resp = requests.get(url, headers=_paper_headers(), timeout=10)
-    except Exception as exc:
-        logger.warning("Paper sync: get_positions network error — %s", exc)
+        raw = _get_paper_positions_raw()
+    except requests.exceptions.RequestException as exc:
+        logger.warning("Paper sync: get_positions failed after retries — %s", exc)
         raise
-
-    if resp.status_code != 200:
-        logger.warning("Paper sync: get_positions HTTP %d — %s", resp.status_code, resp.text[:200])
-        resp.raise_for_status()
-
-    raw = resp.json()
     positions = []
     for pos in raw:
         try:

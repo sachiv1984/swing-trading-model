@@ -3,7 +3,7 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.21
+**Version:** 2.24
 **Last Updated:** 2026-08-07
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
@@ -950,7 +950,7 @@ CREATE TABLE IF NOT EXISTS trade_plans (
 
 CREATE INDEX idx_trade_plans_portfolio ON trade_plans(portfolio_id);
 CREATE INDEX idx_trade_plans_position ON trade_plans(position_id) WHERE position_id IS NOT NULL;
-CREATE INDEX idx_trade_plans_ticker ON trade_plans(ticker);
+CREATE INDEX idx_trade_plans_ticker_upper ON trade_plans (UPPER(ticker));
 CREATE INDEX idx_trade_plans_status ON trade_plans(status);
 
 COMMIT;
@@ -1805,6 +1805,114 @@ No other columns are known to this codebase — the full schema is owned by what
 
 ---
 
-**Document Version:** 2.21
+### Migration from v2.21 to v2.22
+
+ST-10 (BLG-BE-82, EPIC-03, v8.4) — index correction, not a column change. `ensure_trade_plans_table()`'s idempotent create-path never actually created the plain `idx_trade_plans_ticker ON trade_plans(ticker)` this document's DS-04 schema block previously (incorrectly) documented — and even if it had, a plain index is not used by `get_trade_plans()`'s actual `WHERE UPPER(ticker)=%s` predicate. Found by `docs/ops/db_index_audit_arc4_2026-08-06.md` Finding 1. Replaced with a functional index matching the real predicate, following the same pattern already used by the sibling table `red_flag_events` (`idx_rfe_ticker ON red_flag_events (UPPER(ticker))`).
+
+```sql
+BEGIN;
+DROP INDEX IF EXISTS idx_trade_plans_ticker;
+CREATE INDEX IF NOT EXISTS idx_trade_plans_ticker_upper ON trade_plans (UPPER(ticker));
+COMMIT;
+```
+
+**Verification query (run after migration):**
+
+```sql
+EXPLAIN SELECT * FROM trade_plans WHERE portfolio_id = '<uuid>' AND UPPER(ticker) = 'NVDA';
+-- Expected: Bitmap Index Scan (or Index Scan) on idx_trade_plans_ticker_upper appears in the plan
+```
+
+Reversible:
+```sql
+BEGIN;
+DROP INDEX IF EXISTS idx_trade_plans_ticker_upper;
+CREATE INDEX IF NOT EXISTS idx_trade_plans_ticker ON trade_plans(ticker);
+COMMIT;
+```
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-08-07 (agent-mediated; index-only change, no column added/removed, corrects a doc/live-code mismatch found by the Arc 4 index audit)
+- Backend Engineering Patterns Owner: Accepted — 2026-08-07 (agent-mediated; matches the existing `red_flag_events` functional-index precedent)
+
+---
+
+### Migration from v2.22 to v2.23
+
+ST-12 (BLG-BE-70, EPIC-03, v8.4) — AI compliance/audit provenance. `gemini_service.py`'s `generate_full_plan()`/`generate_setup_thesis()` already return `model_version`/`prompt_version` to the caller and log them to `gemini_audit_log` keyed by `plan_id`, but the *stored* `trade_plans` row itself carried no provenance field — retroactive audit required a fragile join via `plan_id` (often null at generate-plan time, before a plan exists). Adds two nullable columns, populated only when the frontend saves narrative fields (`setup_thesis`, `entry_rationale`, etc.) as-received from a generate-plan/generate-thesis response, without user edits.
+
+```sql
+BEGIN;
+ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS thesis_model_version VARCHAR(50);
+ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS thesis_prompt_version VARCHAR(20);
+COMMIT;
+```
+
+### Down Migration (v2.23 → v2.22)
+
+```sql
+BEGIN;
+ALTER TABLE trade_plans DROP COLUMN IF EXISTS thesis_model_version;
+ALTER TABLE trade_plans DROP COLUMN IF EXISTS thesis_prompt_version;
+COMMIT;
+```
+
+### Field Reference
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|--------------|
+| `thesis_model_version` | VARCHAR(50) | YES | AI model identifier (e.g. `"claude-haiku-4-5"`) that produced this plan's narrative fields, if saved as-received from a generate-plan/generate-thesis response. Null when written/edited manually. Forward-only — no backfill. |
+| `thesis_prompt_version` | VARCHAR(20) | YES | Companion prompt-template version (e.g. `"v3.0"`), saved the same way. |
+
+**Population points:** `backend/routers/trade_plans.py`'s `TradePlanCreate`/`TradePlanUpdate` request models (frontend-passed, persisted without validation — same pattern as `signal_id`/`risk_percent_used`, SI-02 DS-07). Backend does not itself infer AI-origin; the frontend is expected to populate these two fields from the generate-plan/generate-thesis response's own `model_version`/`prompt_version` fields when saving unedited AI output. **Known residual gap:** this cycle (v8.4) delivers the backend storage capability only — actual end-to-end population depends on a frontend change (out of this backend-only story's scope) to pass these values through on save; filed as a follow-up backlog item (see `qa_evidence_EPIC-03.md`).
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-08-07 (agent-mediated; two nullable columns, no existing schema touched, no backfill attempted — forward-only by design)
+- AI Compliance & Governance Officer: Accepted — 2026-08-07 (agent-mediated; closes the BLG-BE-70 retroactive-audit gap for newly-created records once frontend wiring lands; backend capability alone does not yet populate the field end-to-end — tracked as a residual gap, not silently treated as complete)
+
+---
+
+### Migration from v2.23 to v2.24
+
+ST-13 (BLG-BE-77, EPIC-03, v8.4) — audit trail for trade plan edits post-entry, extending the `position_audit_log` pattern (`BLG-BE-73`, §Migration v2.16→v2.17 above) to `trade_plans`. "Post-entry" means the plan is linked to a position (`position_id` set, either before or after the edit) at the time of the edit — pre-entry edits to a still-draft plan are ordinary iterative authoring, not logged. Same schema shape, same no-"who"-column rationale (single-user product), same fail-open non-blocking write convention as `position_audit_log`.
+
+```sql
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS trade_plan_audit_log (
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    trade_plan_id UUID NOT NULL,
+    source        TEXT NOT NULL,
+    field         TEXT NOT NULL,
+    before_value  TEXT,
+    after_value   TEXT,
+    changed_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_trade_plan_audit_log_trade_plan_id ON trade_plan_audit_log(trade_plan_id);
+
+COMMIT;
+```
+
+### Field Reference
+
+| Field | Type | Nullable | Description |
+|-------|------|----------|-------------|
+| `id` | UUID | NO | Primary key |
+| `trade_plan_id` | UUID | NO | The trade plan edited. No FK constraint (audit rows must survive the plan's own lifecycle; matches `position_audit_log.position_id`'s pattern of not cascading) |
+| `source` | TEXT | NO | Always `post-entry-edit` in this version — a single source, unlike `position_audit_log`'s 3 (`note`/`tags`/`mark-reviewed`), because `update_trade_plan()` is one generic PUT endpoint covering all editable fields, not 3 separate single-purpose endpoints |
+| `field` | TEXT | NO | The specific field changed (any of `update_trade_plan()`'s allowed fields — `setup_thesis`, `status`, `r_target`, etc.) |
+| `before_value` | TEXT | YES | Value before the edit, stringified |
+| `after_value` | TEXT | YES | Value after the edit, stringified |
+| `changed_at` | TIMESTAMPTZ | NO | When the edit was recorded |
+
+Reversible: `DROP TABLE IF EXISTS trade_plan_audit_log;`
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-08-07 (agent-mediated; single new append-only table, no existing schema touched, no backfill applicable — table did not previously exist; mirrors the already-accepted `position_audit_log` shape)
+
+---
+
+**Document Version:** 2.24
 **Maintained By:** Data Model & Domain Schema Owner
 **Last Review:** 2026-08-07

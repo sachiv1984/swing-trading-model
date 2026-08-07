@@ -94,6 +94,12 @@ class TradePlanCreate(BaseModel):
     pre_entry_validation_snapshot: Optional[Any] = None
     trade_tags: Optional[List[str]] = None
     idempotency_key: Optional[str] = None  # ST-03 (EPIC-01, v7.10): opt-in dedup key, see utils/idempotency.py
+    # ST-12 (EPIC-03, v8.4, BLG-BE-70): frontend-passed, nullable -- set only when
+    # setup_thesis/entry_rationale etc. were saved as-received from a prior
+    # generate-plan/generate-thesis response (see gemini_service.py's returned
+    # model_version/prompt_version), not user-edited before save.
+    thesis_model_version: Optional[str] = None
+    thesis_prompt_version: Optional[str] = None
 
 
 class TradePlanUpdate(BaseModel):
@@ -115,6 +121,8 @@ class TradePlanUpdate(BaseModel):
     planned_entry_price: Optional[float] = None
     planned_stop_price: Optional[float] = None
     trade_tags: Optional[List[str]] = None
+    thesis_model_version: Optional[str] = None
+    thesis_prompt_version: Optional[str] = None
 
 
 class BulkTagRequest(BaseModel):
