@@ -3,7 +3,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.2
-**Last Updated:** 2026-08-05 (post-ship closure 2026-08-04__release-v8.2); prior — 2026-08-04 (ST-09, EPIC-03, v8.2, BLG-GOV-213 — row-count audit and backfill); prior — 2026-08-03 (post-ship closure 2026-08-03__release-v8.1); prior — 2026-07-31 (post-ship closure 2026-07-30__release-v8.0)
+**Last Updated:** 2026-08-05 (post-ship closure 2026-08-04__release-v8.2); prior — 2026-08-04 (ST-09, EPIC-03, v8.2, BLG-GOV-213 — row-count audit and backfill); prior — 2026-08-03 (post-ship closure 2026-08-03__release-v8.1); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-13 (BLG-GOV-09, v2.4)
 ---

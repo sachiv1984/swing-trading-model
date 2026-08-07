@@ -1,6 +1,6 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.25
+**Version:** 3.26
 **Last Updated:** 2026-08-07
 
 # Shared Standards — All Governed Routines
@@ -980,17 +980,17 @@ Original / Amended — <file path used>
 
 ---
 
-## §16.14 Last Updated Header-History Retention Convention (ST-17, EPIC-03, v8.2, BLG-GOV-283)
+## §16.14 Last Updated Header-History Retention Convention (ST-17, EPIC-03, v8.2, BLG-GOV-283; scope broadened 2026-08-07, user-directed session review — CLAUDE.md §2)
 
-**Problem:** Some Class 4 documents (e.g. `claude/ideas/ideas_register.md`) chain every prior revision into the `**Last Updated:**` header field as `<date> (<reason>); prior — <date> (<reason>); prior — <date> (<reason>); ...`, with no depth or age limit. Left unbounded, this field grows every time the document is touched, eventually dwarfing the document's actual content — `ideas_register.md`'s header alone reached 5 chained entries before this convention was written.
+**Problem:** Documents chain every prior revision into the `**Last Updated:**` header field as `<date> (<reason>); prior — <date> (<reason>); prior — <date> (<reason>); ...`, with no depth or age limit. Left unbounded, this field grows every time the document is touched, eventually dwarfing the document's actual content — `ideas_register.md`'s header reached 5 chained entries before this convention was first written (2026-08-04). The original version of this rule scoped enforcement to Class 4 Planning Documents only. A 2026-08-07 session review, prompted directly by the user, found the same unbounded-chain pattern thriving outside that scope: `claude/backlog/backlog.md`'s header chain had reached **56 entries, ~32,000 characters in one field** — despite already having been truncated once, on 2026-07-28, per this same convention (nothing re-applied the cap on subsequent touches, since `backlog.md` was never named in the original "Applies to" list). `docs/System_status_report.md` (Class 3), `docs/specs/Specs_Index.md` (Class 1), `claude/backlog/backlog_archive.md`, `claude/roadmap/roadmap_archive.md`, and `claude/ideas/ideas_register_archive.md` (all Class 4, but likewise unnamed) showed the same unbounded growth. The rule is now universal — see below.
 
 **Rule:** A `**Last Updated:**` header chain must retain **at most the current entry plus 2 prior entries (3 total)**. When writing a new entry would make the chain exceed 3, drop all entries older than the 2 most recent prior ones, and terminate the chain with the closing note `prior history retained — see prior entries in version control` in place of the dropped entries.
 
 **Depth threshold:** 3 (current + 2 prior). This is a fixed depth, not an age-based threshold — a document touched rarely keeps its last 3 revisions regardless of how old they are; a document touched frequently truncates aggressively. Full history remains recoverable via `git log -p -- <file>` regardless of what the header retains — the header is a quick-glance summary, not the historical record of truth.
 
-**Applies to:** Any Class 4 (Planning Document) file using the chained `**Last Updated:**` pattern. Currently: `claude/ideas/ideas_register.md` (written by `idea_intake_prompt.md`), `claude/roadmap/current_roadmap.md` and other roadmap documents written by `roadmap_prompt.md` STEP 9. Does not apply to Class 1/6 canonical/governance documents, which use a dedicated `## Changelog` table or companion `claude/system/changelogs/*.md` file instead (per §11's `prompt_change_log.md` convention and the 2026-05-09 modular prompt refactor) — those already have unbounded, structured history storage and are not at risk of header bloat.
+**Applies to:** Any document, of any Class, that uses the chained `**Last Updated:**` pattern at all — not just Class 4. This is now a CLAUDE.md §2 always-active non-negotiable, not an engine-specific write step, precisely because the prior narrower scoping (naming specific files/engines) is what let the pattern go unenforced everywhere else. A document that instead uses a dedicated `## Changelog` table or companion `claude/system/changelogs/*.md` file (per §11's `prompt_change_log.md` convention and the 2026-05-09 modular prompt refactor) is not exempt because of its Class — it is exempt because that structured, append-only storage is a different field serving a different purpose, and is not at risk of header-field bloat. A document with a bare single-line `**Last Updated:** <date>` field (no chaining) is already compliant and needs no action. `docs/specs/Specs_Index.md` (Class 1, Authoritative) is chaining directly in its header with no Changelog table of its own — this is filed as a structural follow-up (see backlog) rather than fixed in place, since giving it a proper Changelog table is a bigger change than a truncation.
 
-**Enforcement:** Applied automatically by the writing engine at the point of header update — not a separate cleanup pass. See `roadmap_prompt.md` STEP 9 and `idea_intake_prompt.md`'s equivalent write step for the applied instruction.
+**Enforcement:** Applied automatically by the writing engine at the point of header update — not a separate cleanup pass. See `roadmap_prompt.md` STEP 9 and `idea_intake_prompt.md`'s equivalent write step for the applied instruction. Any other engine or ad hoc session touching a chained `**Last Updated:**` field must apply the same cap at time of write, regardless of whether that file appears in this section's examples.
 
 ---
 
