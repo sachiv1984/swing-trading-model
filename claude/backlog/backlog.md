@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-07 (sprint execution 2026-08-07__release-v8.4, EPIC-04/ST-15: 1 new item added, BLG-FE-145 (text-muted-foreground and related -muted classes generate no CSS — not registered in tailwind.config.js's theme.extend.colors, found auditing DialogDescription's base className)); prior — 2026-08-07 (sprint execution 2026-08-07__release-v8.4, EPIC-01/ST-01: 1 new item added, BLG-FE-144 (reconcile Monthly P&L vs Tax Year table's exact-zero P&L colour convention — cross-table inconsistency found correcting reports.md's colour-rule wording)); prior — 2026-08-07 (sprint execution 2026-08-07__release-v8.4, EPIC-01/ST-31: 1 new item added, BLG-BE-84 (link price_alerts to the trade they trigger — real alert-to-trade provenance, tracked separately after ESC-EXEC-20260807-01 found no such linkage exists; ST-31 shipped a different, real distinction instead)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-07/ST-30: 2 new items added, BLG-GOV-289 (CLAUDE.md §8 needs a sibling-vs-sibling union clause for execution_state.json array fields) and BLG-GOV-290 (CLAUDE.md §8 has no rule for shared JSON field schema-shape drift mid-sprint) — both found via a live dry-run merge test between EPIC-05/EPIC-06 branches); prior — 2026-08-07 (sprint execution 2026-08-07__release-v8.4, EPIC-04/ST-15: 1 new item added, BLG-FE-145 (text-muted-foreground and related -muted classes generate no CSS — not registered in tailwind.config.js's theme.extend.colors, found auditing DialogDescription's base className)); prior — 2026-08-07 (sprint execution 2026-08-07__release-v8.4, EPIC-01/ST-01: 1 new item added, BLG-FE-144 (reconcile Monthly P&L vs Tax Year table's exact-zero P&L colour convention — cross-table inconsistency found correcting reports.md's colour-rule wording)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -121,6 +121,38 @@ Observed concretely at the `2026-08-07__release-v8.4` design gate: root `sprint_
 
 **Acceptance Criteria**
 - `release_planning_prompt.md` STEP 0 patched to reset `sprint_sealed: false` on new-cycle publish
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-289 — CLAUDE.md §8 merge conflict rule needs a sibling-vs-sibling union clause for execution_state.json array fields
+**Priority:** P2 (Medium) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** ST-30 (EPIC-07), dry-run of the cross-EPIC merge conflict runbook — 2026-08-08 | **Effort:** XS | **Provisional-Target:** TBD
+
+**Problem**
+`CLAUDE.md` §8 step 3's `execution_state.json` resolution row reads: "take the branch's (not main's) blocked/delegated lists as those reflect the more current state." This phrasing assumes a two-party merge (one EPIC branch vs. `main`, where `main` is the stale side). A live dry-run test merge between `exec/2026-08-07__release-v8.4/EPIC-05` and `EPIC-06` (aborted, not committed — see `docs/ops/cross_epic_merge_runbook_dry_run_2026-08-08.md`) showed the rule does not resolve the sibling-vs-sibling case: both branches had independently diverged from a common ancestor and both added genuinely new, non-overlapping `blocked_items` entries. Neither "take HEAD's list" nor "take the incoming branch's list" is correct here — the right resolution is the union of both, the same treatment §8 already specifies for `completed_items`.
+
+**Scope**
+- Add an explicit clause to `CLAUDE.md` §8 step 3's `execution_state.json` row: when the conflict is between two EPIC branches (neither side is `main`), take the union of `blocked_items`/`delegated_items` across both sides, not either side's list alone
+- Apply the standard governance file edit checklist (version bump, `OPERATIONAL_GUIDE.md` §14 sync, `prompt_change_log.md` entry) per `CLAUDE.md` §6
+
+**Acceptance Criteria**
+- `CLAUDE.md` §8 explicitly covers the sibling-vs-sibling `blocked_items`/`delegated_items` union case
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-290 — CLAUDE.md §8 has no rule for a shared JSON field's schema shape drifting mid-sprint between sibling EPIC branches
+**Priority:** P2 (Medium) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** ST-30 (EPIC-07), dry-run of the cross-EPIC merge conflict runbook — 2026-08-08 | **Effort:** S | **Provisional-Target:** TBD
+
+**Problem**
+The same dry-run (`docs/ops/cross_epic_merge_runbook_dry_run_2026-08-08.md`) found `execution_state.json`'s `open_escalations` field had diverged in *shape*, not just content, between two sibling EPIC branches active in the same sprint — one branch reshaped it from a `list` of strings to a `dict` of `{ESC-ID: status}` mid-session, while the sibling branch (which had already forked from the pre-reshape state) kept the original `list` shape. `git merge` reports this as an ordinary content conflict, but resolving it correctly requires reconciling a schema, not just picking a value — and `CLAUDE.md` §8 has no guidance for this class of conflict at all.
+
+**Scope**
+- Add a rule to `CLAUDE.md` §8 (or `shared_standards.md` §16.13's `execution_state.json` schema note) covering one of: (a) require any mid-sprint schema-shape change to a shared JSON field to be applied uniformly across all sibling EPIC branches active that sprint, not just the branch making the change; or (b) prohibit shape changes to already-initialised shared fields mid-sprint entirely, deferring the shape change to the next cycle's STEP 0
+- Apply the standard governance file edit checklist (version bump, `OPERATIONAL_GUIDE.md` §14 sync, `prompt_change_log.md` entry) per `CLAUDE.md` §6
+
+**Acceptance Criteria**
+- `CLAUDE.md` §8 (or `shared_standards.md` §16.13) covers mid-sprint schema-shape drift on shared JSON fields
 - Head of Specs Team sign-off
 
 ---
