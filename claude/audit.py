@@ -24,24 +24,25 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-07-27"
+PRIOR_AUDIT_ID = "AUD-2026-08-08"
 PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-07-20-001",  # PARTIAL — mechanical fix still not delivered; superseded/tracked as AUD-2026-07-27-002
-    "AUD-2026-07-27-001", "AUD-2026-07-27-002", "AUD-2026-07-27-003", "AUD-2026-07-27-004"
-]  # all recorded OPEN at AUD-2026-07-27 run time — re-classify at next audit once patches are applied
+    "AUD-2026-08-03-001",  # PARTIAL — carried, now tracked as AUD-2026-08-08-003
+    "AUD-2026-08-08-002", "AUD-2026-08-08-003"
+]  # AUD-2026-08-08-001 applied in the same session it was found (this CONFIG block IS that fix) — not carried open.
+  # Remaining 2 recorded OPEN at AUD-2026-08-08 run time — re-classify at next audit once patches are applied
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
     "token_efficiency":      100,
     "governance_integrity":  80,
-    "execution_reliability": 58,
-    "friction_load":         56,
-    "document_hygiene":      63,
+    "execution_reliability": 53,
+    "friction_load":         25,
+    "document_hygiene":      96,
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 64  # current completed_cycle_count at AUD-2026-07-27
+COMPLETED_CYCLES = 71  # current completed_cycle_count at AUD-2026-08-08
 
 # -------------------------
 # MISSING FILE RULE
@@ -843,6 +844,8 @@ SLA BLOCK FORMAT (print verbatim at §9)
 - Overall score < 65 → GOVERNANCE HOLD: no new cycles until resolved
 - Output filed as: claude/cycles/<cycle_id>/audit_report_AUD-<date>.md  (Class 3)
 - The audit report must be committed in the same session it is produced — do not defer the commit to a later session (BLG-GOV-169). An audit report that exists only as an uncommitted working-tree file is not filed.
+- The §11 CONFIG UPDATE block this run produces must be applied to `claude/audit.py`'s own CONFIG constants (`PRIOR_AUDIT_ID`, `PRIOR_AUDIT_OPEN_ITEMS`, `PRIOR_SCORES`, `COMPLETED_CYCLES`) in the same commit as the filed report — not deferred to a future session. This closes the recurring pattern first flagged at AUD-2026-07-20-006 and confirmed recurring a 3rd time at AUD-2026-08-08 (config still showed AUD-2026-07-27 when the true last audit was AUD-2026-08-03).
+- In the same commit, also write `.claude_current_state.json.last_audit_id`, `last_audit_utc`, `last_audit_overall_score`, `last_audit_open_items` (count), and `last_audit_cycle_count` to this run's own values. These fields exist in the state schema and are surfaced at every session start, but no prior version of this file ever instructed writing them — confirmed stale at `AUD-2026-07-20` values (3 audits behind) at the start of the AUD-2026-08-08 run. Added AUD-2026-08-08-004.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 PRIOR AUDIT STATE
