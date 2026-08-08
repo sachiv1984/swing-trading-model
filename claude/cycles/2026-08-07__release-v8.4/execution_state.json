@@ -4,8 +4,8 @@
   "backlog_slice_source": "claude/cycles/2026-08-07__release-v8.4/stage4_backlog_slice.md",
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-08-08T10:55:00Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-08-08T09:54:07Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -620,10 +620,10 @@
       }
     },
     "EPIC-05": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-07__release-v8.4/EPIC-05",
       "pr_number": 1300,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-07__release-v8.4/qa_evidence_EPIC-05.md",
       "test_scenarios": [],
@@ -658,7 +658,7 @@
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1283,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "77e39e4f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -682,7 +682,7 @@
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1284,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "104a7445",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -738,7 +738,7 @@
           "assigned_to": "engine",
           "github_issue": 1286,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "0c8d56d5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -1016,7 +1016,8 @@
   "process_notes": [
     "EPIC-03/ST-10: data_model.md v2.21 version collision with EPIC-02's own v2.21 bump (ST-08/ST-09) -- RESOLVED at post-EPIC-02-merge rebase (2026-08-07) per CLAUDE.md \u00a78 step 2a: ST-10/ST-12/ST-13 migration blocks renumbered v2.21->v2.22, v2.22->v2.23, v2.23->v2.24; final data_model.md version 2.24.",
     "EPIC-01/PR #1296: Product Owner merged directly (2026-08-07T21:35:08Z) before the verify_governance CI check passed (qa_evidence_EPIC-01.md Date field was still blank at merge time -- this was a deliberate, logged sequencing choice, not an oversight; see PR body and qa_evidence commit message). QA evidence sign-off block completed retroactively post-merge with the now-confirmed real-CI Playwright evidence (all 5 SC-MAPT scenarios passed). execution_state.json EPIC-01 top-level status field was also found never updated to done pre-merge (only per-story statuses were) -- corrected directly to merged here.",
-    "EPIC-04/ST-16: a real GitHub Actions CI run (Playwright E2E Acceptance Tests, shard 3/4, commit 8bc208ce push) caught a stale selector in the pre-existing tests/e2e/risk-dashboard.spec.js SC-RD-24 -- ProspectiveHeatPanel.js's apiError element's className change (bare text-rose-400 -> text-rose-700 dark:text-rose-400) broke SC-RD-24's exact-class-match selector, missed by the ST-16 commit's own stale-selector sweep since that test combined tag+class rather than the toHaveClass()-per-token pattern the sweep was scanning for. RESOLVED commit a6d7d65f: updated to the canonical toHaveClass() dual-assertion pattern, verified locally (real headless Chromium) -- SC-RD-24 alone and the full 17-test risk-dashboard.spec.js suite, both passing. No other stale selectors found in a follow-up full-repo sweep."
+    "EPIC-04/ST-16: a real GitHub Actions CI run (Playwright E2E Acceptance Tests, shard 3/4, commit 8bc208ce push) caught a stale selector in the pre-existing tests/e2e/risk-dashboard.spec.js SC-RD-24 -- ProspectiveHeatPanel.js's apiError element's className change (bare text-rose-400 -> text-rose-700 dark:text-rose-400) broke SC-RD-24's exact-class-match selector, missed by the ST-16 commit's own stale-selector sweep since that test combined tag+class rather than the toHaveClass()-per-token pattern the sweep was scanning for. RESOLVED commit a6d7d65f: updated to the canonical toHaveClass() dual-assertion pattern, verified locally (real headless Chromium) -- SC-RD-24 alone and the full 17-test risk-dashboard.spec.js suite, both passing. No other stale selectors found in a follow-up full-repo sweep.",
+    "STEP 5.1 sprint-close correction (this session, 2026-08-08): ST-20/ST-21/ST-23 (EPIC-05) had commit_sha: null despite status: done -- LL-v4.8-EX-01's atomic post-push write was missed for these three delegated_decision/delegated_backend items. Corrected by cross-referencing git log: ST-20 -> 77e39e4f, ST-21 -> 104a7445, ST-23 -> 0c8d56d5. Filed as a Phase 3 lessons-learnt friction item."
   ],
   "merge_gate": {
     "epics_merged": [
@@ -1025,13 +1026,12 @@
       "EPIC-01",
       "EPIC-04",
       "EPIC-07",
-      "EPIC-06"
-    ],
-    "epics_pending": [
+      "EPIC-06",
       "EPIC-05"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-08-08T09:54:07Z"
 }

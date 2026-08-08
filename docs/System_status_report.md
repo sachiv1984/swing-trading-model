@@ -1,9 +1,37 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.24
-**Last Updated:** 2026-08-07 (delivery verification 2026-08-05__release-v8.3 — status line updated Sprint_Complete → Verified); prior — 2026-08-07 (sprint close 2026-08-05__release-v8.3); prior — 2026-08-05 (delivery verification 2026-08-04__release-v8.2 — status line updated Sprint_Complete → Verified); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
+**Version:** 4.25
+**Last Updated:** 2026-08-08 (sprint close 2026-08-07__release-v8.4); prior — 2026-08-07 (delivery verification 2026-08-05__release-v8.3 — status line updated Sprint_Complete → Verified); prior — 2026-08-07 (sprint close 2026-08-05__release-v8.3); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-08-07__release-v8.4
+**Date:** 2026-08-08
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Avg P&L/Trade column added to the Monthly P&L Report table (client-derived, colour-matched to Realised P&L, "—" for zero-trade months); tax-year CSV export gains a `trade_origin` (`Signal`/`Manual`) column derived from `trade_plans.signal_id`, replacing the originally-asked-for but unbuildable price-alert linkage | `docs/specs/frontend/pages/reports.md#Monthly Financial Table`; `docs/specs/api_contracts/reports_endpoints.md#Known Deviations` | `DEV-REPORTS-ST01-02` (P3, `BLG-FE-144`); Known Deviation re: `trade_origin` scope (`BLG-FEAT-78`) |
+| EPIC-02 | `openapi.yaml` structural defect fixed (~23 endpoints moved from `components:` to `paths:`, drift detection now 0 findings); 6 API contract docs corrected for stale/missing example fields; auth-header documentation gaps closed; `data_model.md` backfilled for 4 undocumented tables; new formal schema-versioning doc for trade_plan/position tables | `docs/reference/openapi.yaml`; `docs/specs/api_contracts/{settings,position,health,watchlist}_endpoints.md`; `docs/specs/data_model.md`; `docs/specs/schema_versioning_trade_plan_position.md` | None |
+| EPIC-03 | Functional index on `trade_plans(UPPER(ticker))`; 429/backoff handling added to Alpaca paper-sync close/positions endpoints; AI model+version provenance logging on stored thesis text (backend capability; frontend wiring tracked as `BLG-FE-143`); mutation/audit-trail log for post-entry trade plan edits; auto-generated data dictionary script from live schema | `docs/specs/data_model.md`; `backend/services/alpaca_paper_sync_service.py`; `backend/database.py`; `scripts/generate_data_dictionary.py` | None |
+| EPIC-04 | 8 `cn()`-has-no-tailwind-merge Dialog className-override defects fixed across 6 files; 13 dark-only-token gaps in inline form-validation error text closed; `WatchlistModal.js` ESLint-clean (24→0 problems); CSP `script-src 'unsafe-inline'` removed entirely (content-hash replacement), `style-src 'unsafe-inline'` narrowly retained and justified | `docs/ops/dialog_classname_override_audit_2026-08-07.md`; `docs/ops/csp_unsafe_inline_audit_2026-08-08.md` | None |
+| EPIC-05 | SI-05 weekly digest delivery fix confirmed live in production (Telegram receipt verified); API performance baseline endpoint-coverage drift closed (16 endpoints re-derived and measured); `POST /digest/si05/send` added to the baseline; CI runner cache warm-up cutting pytest job time ~22–51%; database storage-growth cost trend tracking (live-queried baseline snapshot); AI API cost model for Arc 4 journal intelligence features | `docs/ops/si05_digest_delivery_root_cause_2026-08-05.md`; `docs/ops/api_performance_baseline.md`; `docs/ops/cloud_infra_spend_by_epic.md`; `docs/operations/arc4_ai_cost_model.md` | None |
+| EPIC-06 | Fixed wrong patch target in a pre-existing test; regression baseline backfilled with 24 undocumented Playwright spec files (86 files/732 scenarios verified); recurring CSV export content regression check added; signal correctness fix impact measurement completed (zero impact found, 0 of 300 pre-fix signals affected) | `tests/test_api_contracts.py`; `docs/qa/regression_test_suite_baseline.md`; `.github/workflows/csv-export-content-regression-check.yml`; `docs/ops/blg_be_40_impact_measurement_findings_2026-08-08.md` | None |
+| EPIC-07 | Canonical, scripted gate-detection procedure for Release Planning's ungated-candidate scan (replaces prose guidance); cross-EPIC merge conflict runbook dry-run completed | `claude/system/release_planning_prompt.md#1.3a`; `scripts/scan_backlog_gate_conditions.py`; `docs/ops/cross_epic_merge_runbook_dry_run_2026-08-08.md` | None |
+
+### Capabilities deferred or returned
+
+None — all 31 ST items reached `merged` status this sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: `qa_evidence_EPIC-01.md` through `qa_evidence_EPIC-07.md`
+- Deviations filed: `DEV-REPORTS-ST01-02` (P3, `reports.md`, `BLG-FE-144`); Known Deviation re: `trade_origin` scope reinterpretation (`reports_endpoints.md`, `BLG-FEAT-78`)
+- Test scenarios referenced: `tests/e2e/monthly-pnl-avg-per-trade.spec.js`; `tests/test_trade_origin_query.py`; `tests/test_reports_integration.py`; `tests/test_trade_plans_ticker_index.py`; `tests/test_alpaca_paper_sync_close_positions_backoff.py`; `tests/test_trade_plan_thesis_provenance.py`; `tests/test_trade_plan_audit_log.py`; `tests/test_generate_data_dictionary.py`; `tests/e2e/dialog-classname-override-fixes.spec.js`; `tests/e2e/form-validation-error-color-fixes.spec.js`; `tests/e2e/watchlist.spec.js`; `tests/test_api_contracts.py`; `tests/test_reports_integration.py`; `tests/test_monthly_pnl_cost_basis.py`
 
 ---
 
