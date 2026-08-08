@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.145
-**Last Updated:** 2026-08-07
+**Version:** 4.146
+**Last Updated:** 2026-08-08
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -620,7 +620,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.47)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.48)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1455,8 +1455,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.144 |
-| Last Updated | 2026-08-07 |
+| Version | 4.146 |
+| Last Updated | 2026-08-08 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1465,7 +1465,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.9 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.13 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.47 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.48 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.16 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.65 |
@@ -1497,6 +1497,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 
 | Version | Date | Change Summary |
 | 4.145 | 2026-08-07 | **User-directed session review — shared_standards.md v3.25→v3.26: §16.14 Last Updated Header-History Retention Convention broadened from Class-4-only to universal scope.** §14 Shared Standards v3.25→v3.26. §14 Version 4.144→4.145/2026-08-07. Change: the chained `**Last Updated:**` header-bloat pattern (cap: current + 2 prior, 3 total) is no longer scoped to named Class 4 files — it applies to any document, any Class, using the chained pattern. Root cause: `backlog.md`'s header chain reached 56 entries/~32,000 characters despite being truncated once (2026-07-28) under the original narrower rule, because it was never named in that rule's "Applies to" list and nothing re-applied the cap on later touches. Companion `CLAUDE.md` §2 non-negotiable added (no version field, logged here per the established convention). 7 offending files' headers truncated to the 3-entry cap in the same session: `backlog.md`, `backlog_archive.md`, `docs/System_status_report.md`, `docs/specs/Specs_Index.md`, `roadmap_archive.md`, `ideas_register_archive.md`, `claude/cycles/velocity_metrics.md`. Follow-up backlog item filed for `Specs_Index.md` to gain a proper `## Changelog` table. Authority: Head of Specs Team (user-directed, 2026-08-07). |
+| 4.146 | 2026-08-08 | **Sprint execution `2026-08-07__release-v8.4` EPIC-07/ST-29 (BLG-GOV-286) — release_planning_prompt.md v2.47→v2.48: new §1.3a Gate-Detection Procedure (scripted, mandatory).** §6B source prompt header v2.47→v2.48 (line 623). §14 Release Engine Source v2.47→v2.48. §14 Version 4.145→4.146/2026-08-08. Change: replaces ad hoc field-reading for detecting gate-blocked backlog candidates with a canonical script (`scripts/scan_backlog_gate_conditions.py`) run before §1.4a's Perennial-Return Check — fixes 3 self-caught scan misses across `v8.0`/`v8.1`/`v8.2` (gate-field-name variants, scan line-window bounds, `Provisional-Target`-embedded gate condition) plus a 4th failure mode self-caught this cycle (missing `---` separator between adjacent backlog entries, letting one item's body text bleed into the next item's field scan — confirmed live on 20 of 293 items in the current `backlog.md`). The script determines item boundaries by heading only, never `---`, structurally eliminating failure mode 4 rather than merely detecting it; covers `Gate criteria`/`Gate`/`Gate date` field variants; flags embedded-gate-language-with-no-formal-field as a data-quality warning (found 5 live instances on first run: `BLG-FEAT-74`, `BLG-FEAT-76`, `BLG-SPEC-56`, `BLG-SPEC-57`, `BLG-QA-59`). Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-29, 2026-08-08). |
 | 4.144 | 2026-08-07 | **Lessons-learnt deferred patch resolution (Head of Specs Team acting as Base44 Frontend Prompt Owner + Head of Engineering, reviewing `2026-08-05__release-v8.3` lessons_learnt_closure.md) — execution_prompt.md v3.64→v3.65 + shared_standards.md v3.24→v3.25: environment-parity sub-clause + CI failure diagnosis/workflow-authoring guidance.** §8 source prompt header v3.64→v3.65 (line 887). §14 Execution Engine Source v3.64→v3.65; Shared Standards v3.24→v3.25. §14 Version 4.143→4.144/2026-08-07. Changes: (1, Base44 Frontend Prompt Owner) `execution_prompt.md` §5.1 Frontend testing gate gains an environment-parity sub-clause — for focus-restoration/interaction-timing ACs, DoQ sign-off must record a real GitHub Actions CI pass (not sandboxed-review-only), per the `SC-CR-11` real-CI catch at ST-11. (2, Head of Engineering) `shared_standards.md` new §6.1 — documents `scripts/check_ci_infra_outage.py` (classifies a failed run/job as infra-outage vs real via known signature strings; detects the "stuck rerun" symptom; recommends an empty retrigger commit rather than fighting a stuck run) and the `pipefail`/`tee` exit-code capture gap in GitHub Actions `run:` steps (declare `shell: bash` or capture via `${PIPESTATUS[0]}`) — both rooted in the 2026-08-06 GitHub Actions outage (PR #1259/#1260). Authority: Head of Specs Team (2026-08-07). |
 | 4.143 | 2026-08-07 | **Lessons-learnt deferred patch resolution (Head of Specs Team, reviewing `2026-08-05__release-v8.3` lessons_learnt_closure.md, carried from `2026-08-04__release-v8.2` closure LL-v8.2-P3-04) — execution_prompt.md v3.63→v3.64: §3.1.B in-session credential/action provisioning sub-path.** §8 source prompt header v3.63→v3.64 (line 887). §14 Execution Engine Source v3.63→v3.64. §14 Version 4.142→4.143/2026-08-07. Change: distinguishes the standard cross-session park-and-wait delegation flow from the case where a human supplies the blocking credential/action directly within the current session — the delegation log entry is still created at the moment the need is identified (not retroactively at sprint close), and unblock detection re-runs immediately rather than waiting for a future resume, with an explicit `"Unblocked in-session — ..."` log note. Also `CLAUDE.md` §8 (no version field) gains new step 2a — identical-text-masks-differing-semantics check for cross-EPIC merges of shared governance prompts, logged in `prompt_change_log.md` per the established no-version-field convention for this file. Authority: Head of Specs Team (2026-08-07). |
 | 4.142 | 2026-08-07 | **Post-ship closure `2026-08-05__release-v8.3` Recurrence Escalation resolution (Head of Specs Team, acting on the closure's §6 Outstanding Action, 72h deadline 2026-08-10, resolved same-day) — execution_prompt.md v3.62→v3.63: §7 Write Scope Restriction gains a narrow, explicit exception for `claude/backlog/backlog.md`.** §8 source prompt header v3.62→v3.63 (line 887). §14 Execution Engine Source v3.62→v3.63. §14 Version 4.141→4.142/2026-08-07. Change: after 3 consecutive cycles (`v8.1`→`v8.2`→`v8.3`) of mid-sprint `backlog.md` additions operating on informal precedent against the documented "must not modify" rule, formally sanctioned (not reaffirmed-and-closed) a narrow exception — new-item addition only, for genuinely out-of-scope findings surfaced mid-sprint, with a mandatory `**Source:**` attribution; editing existing items, scope/priority decisions, and the Release Slice/capacity tables remain off-limits. Authority: Head of Specs Team (post-ship closure `2026-08-05__release-v8.3` escalation, `lessons_learnt_prompt.md` §6.4 recurrence path, resolved 2026-08-07). |

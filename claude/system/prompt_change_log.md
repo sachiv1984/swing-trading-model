@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-08-07
+**Last Updated:** 2026-08-08
 
 # Prompt Change Log
 
@@ -13,6 +13,8 @@ This file records all changes to governance prompts (Class 6 documents) and rela
 
 | Date | Prompt | Version | Change | Authority |
 |------|--------|---------|--------|-----------|
+| 2026-08-08 | `claude/system/release_planning_prompt.md` | v2.47→v2.48 | Sprint execution `2026-08-07__release-v8.4` EPIC-07/ST-29 (BLG-GOV-286): new §1.3a Gate-Detection Procedure — a canonical, scripted (not ad hoc) gate-condition scan (`scripts/scan_backlog_gate_conditions.py`) run before §1.4a's Perennial-Return Check. Replaces the ad hoc field-reading practice that caused 3 self-caught scan misses across `v8.0`/`v8.1`/`v8.2` (gate-field-name variants, scan line-window bounds, gate condition embedded in `Provisional-Target` free text) plus a 4th failure mode self-caught this cycle (missing `---` separator between adjacent backlog entries, confirmed live on 20 of 293 items in `backlog.md`). The script determines item boundaries by heading only, never `---`; covers `Gate criteria`/`Gate`/`Gate date` field variants; flags `Provisional-Target`-embedded gate language with no formal field as a data-quality warning (5 live instances found on first run). Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-29, 2026-08-08). | Head of Specs Team (2026-08-08) |
+| 2026-08-08 | `claude/system/OPERATIONAL_GUIDE.md` | v4.145→v4.146 | release_planning_prompt.md v2.47→v2.48 (§1.3a Gate-Detection Procedure added): §6B source prompt header v2.47→v2.48 (line 623); §14 Release Engine Source v2.47→v2.48; §14 Version/Last Updated table row 4.145→4.146/2026-08-08; document header Version 4.145→4.146. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-29, 2026-08-08). | Head of Specs Team (2026-08-08) |
 | 2026-08-07 | `CLAUDE.md` | — | User-directed session review of `**Last Updated:**` header bloat across the repo: new §2 non-negotiable — a `**Last Updated:**` header field is a summary of the most recent change, never a chained history; retain at most the current entry plus 2 prior entries (3 total), per `shared_standards.md` §16.14. Prompted by finding `backlog.md`'s header chain at 56 entries/~32,000 characters. | Head of Specs Team (user-directed, 2026-08-07) |
 | 2026-08-07 | `claude/system/shared_standards.md` | v3.25→v3.26 | User-directed session review of `**Last Updated:**` header bloat: §16.14 Last Updated Header-History Retention Convention broadened from Class-4-only to universal scope (any document, any Class, using the chained pattern) — the narrower scope had left `backlog.md` (56 chained entries, ~32,000 characters), `backlog_archive.md`, `docs/System_status_report.md` (Class 3), `docs/specs/Specs_Index.md` (Class 1), `roadmap_archive.md`, and `ideas_register_archive.md` unenforced despite the convention existing since v8.2. Authority: Head of Specs Team (user-directed, 2026-08-07). | Head of Specs Team (user-directed, 2026-08-07) |
 | 2026-08-07 | `claude/system/OPERATIONAL_GUIDE.md` | v4.144→v4.145 | shared_standards.md v3.25→v3.26 (§16.14 scope broadened to universal): §14 Shared Standards v3.25→v3.26; §14 Version/Last Updated table row 4.144→4.145/2026-08-07; document header Version 4.144→4.145. Authority: Head of Specs Team (user-directed, 2026-08-07). | Head of Specs Team (2026-08-07) |
