@@ -19,6 +19,8 @@ This item runs the impact measurement query (`docs/ops/blg_be_40_impact_measurem
 
 Query run directly against production Postgres by the Infrastructure & Operations Owner (user), in-session, 2026-08-08. Cutoff timestamp used: `2026-07-02 08:31:07` (commit `4d56dc42`'s authored timestamp — used as-is; no more precise deploy timestamp was available or flagged as materially different).
 
+**Methodology caveat:** the query compares pre-fix signals against `ticker_universe`'s **current** `active` state, not a historical snapshot of what was active on 2026-07-02. `ticker_universe_service.py` was confirmed to carry no activation-history/audit trail, so this is the best available proxy given the schema — not an authoring gap. This means the query technically answers "how many pre-fix signals are for tickers inactive *today*," which could in principle diverge from "...inactive *at fix time*" if the active universe changed materially between 2026-07-02 and 2026-08-08. Given the result is a clean 0/300 either way, this is very unlikely to change the practical conclusion, but is noted explicitly rather than left implicit.
+
 ## 3. Results
 
 | Query | Result |
