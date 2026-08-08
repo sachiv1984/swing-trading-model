@@ -57,6 +57,21 @@ jobs:
           owner_id = svc.get("ownerId") or svc.get("owner", {}).get("id")
           print(f"ownerId: {owner_id}")
 
+          print("\n--- Step 1b: list all services (find production API service) ---")
+          all_services = get(f"https://api.render.com/v1/services?ownerId={owner_id}&limit=50")
+          for entry in all_services:
+              s = entry.get("service", entry)
+              print(f"  {s.get('id')}  {s.get('name')}  {s.get('type')}")
+          # Production API service is the one whose name matches trading-assistant-api
+          # but is NOT the staging one.
+          prod_candidates = [
+              entry.get("service", entry) for entry in all_services
+              if "trading-assistant-api" in (entry.get("service", entry).get("name") or "")
+              and "staging" not in (entry.get("service", entry).get("name") or "")
+          ]
+          prod_service_id = prod_candidates[0]["id"] if prod_candidates else None
+          print(f"\nProduction API service ID: {prod_service_id}")
+
           end = datetime.now(timezone.utc)
           start = end - timedelta(hours=hours_back)
           start_iso = start.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -81,21 +96,43 @@ jobs:
           except Exception as e:
               print(f"Logs query A failed: {e}")
 
-          print(f"\n--- Step 3: logs query around ST-19's known trigger (2026-08-08T08:11:00Z-08:12:00Z) ---")
-          logs_url_b = (
-              "https://api.render.com/v1/logs"
-              f"?ownerId={owner_id}"
-              f"&resource={service_id}"
-              "&startTime=2026-08-08T08:10:00Z"
-              "&endTime=2026-08-08T08:13:00Z"
-              "&direction=forward"
-              "&limit=50"
-          )
-          try:
-              logs = get(logs_url_b)
-              print("RAW_LOGS_RESPONSE_B_START")
-              print(json.dumps(logs, indent=2)[:8000])
-              print("RAW_LOGS_RESPONSE_B_END")
-          except Exception as e:
-              print(f"Logs query B failed: {e}")
+          if prod_service_id:
+              print(f"\n--- Step 3: PRODUCTION logs around ST-19's known trigger (2026-08-08T08:10:00Z-08:13:00Z) ---")
+              logs_url_b = (
+                  "https://api.render.com/v1/logs"
+                  f"?ownerId={owner_id}"
+                  f"&resource={prod_service_id}"
+                  "&startTime=2026-08-08T08:10:00Z"
+                  "&endTime=2026-08-08T08:13:00Z"
+                  "&direction=forward"
+                  "&limit=50"
+              )
+              try:
+                  logs = get(logs_url_b)
+                  print("RAW_LOGS_RESPONSE_B_START")
+                  print(json.dumps(logs, indent=2)[:10000])
+                  print("RAW_LOGS_RESPONSE_B_END")
+              except Exception as e:
+                  print(f"Logs query B failed: {e}")
+
+              print(f"\n--- Step 4: PRODUCTION logs, last 30 days, text=si05 ---")
+              logs_url_c = (
+                  "https://api.render.com/v1/logs"
+                  f"?ownerId={owner_id}"
+                  f"&resource={prod_service_id}"
+                  f"&startTime={(end - timedelta(days=30)).strftime('%Y-%m-%dT%H:%M:%SZ')}"
+                  f"&endTime={end_iso}"
+                  "&direction=backward"
+                  "&limit=50"
+                  "&text=si05"
+              )
+              try:
+                  logs = get(logs_url_c)
+                  print("RAW_LOGS_RESPONSE_C_START")
+                  print(json.dumps(logs, indent=2)[:10000])
+                  print("RAW_LOGS_RESPONSE_C_END")
+              except Exception as e:
+                  print(f"Logs query C failed: {e}")
+          else:
+              print("\nNo production service found, skipping Step 3/4")
           PYEOF
