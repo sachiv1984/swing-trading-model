@@ -1,0 +1,102 @@
+# .github/workflows/csv-export-content-regression-check.yml
+name: CSV Export Content Regression Check
+
+# ST-27 (BLG-QA-110, EPIC-06, v8.4): lightweight recurring regression check
+# confirming P&L CSV export content (tax-year + monthly) stays correct.
+#
+# CSV content correctness is already covered by three pytest targets on
+# every PR touching those files (tests/test_reports_integration.py::
+# TestTaxYearCsvExport for tax-year CSV content/headers,
+# tests/test_monthly_pnl_cost_basis.py for the monthly CSV builder function
+# in isolation, tests/test_api_contracts.py::TestReportsEndpoints::
+# test_monthly_pnl_csv_format_returns_csv_download for the monthly CSV
+# endpoint's content-disposition + content) — but that coverage only fires
+# on a change to those specific files. This workflow
+# re-runs the same three targets on a quarterly schedule regardless of
+# whether anything touched them directly, so a regression introduced via a
+# shared utility, dependency bump, or formatting-library change elsewhere
+# in the codebase is still caught. Same recurring-check pattern as
+# api-key-cross-environment-check.yml (BLG-OPS-131, v8.3) and
+# staging-deploy-drift-check.yml (BLG-OPS-128, v8.2) — reuse of existing
+# assertions on a calendar cadence, not new test logic.
+#
+# First-instance verification (ST-27 AC): GitHub only exposes
+# workflow_dispatch for a workflow once its file exists on the repository's
+# default branch, so this workflow cannot be manually triggered from this
+# feature branch pre-merge. Equivalent evidence was gathered instead: the
+# exact 3 pytest targets this job runs were executed locally against
+# backend/.venv on 2026-08-08 and passed 18/18 clean (see
+# qa_evidence_EPIC-06.md ST-27 entry). The first live scheduled/dispatched
+# run will occur after this workflow merges to main.
+
+on:
+  schedule:
+    - cron: '0 6 1 1,4,7,10 *'  # 06:00 UTC on the 1st of Jan/Apr/Jul/Oct (quarterly)
+  workflow_dispatch: {}
+
+concurrency:
+  group: csv-export-content-regression-check
+  cancel-in-progress: true
+
+jobs:
+  csv-content-check:
+    name: Re-run CSV export content assertions (tax-year + monthly)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci_stub
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache backend/.venv (ST-22, BLG-OPS-122)
+        id: venv-cache
+        uses: actions/cache@v4
+        with:
+          path: backend/.venv
+          key: ${{ runner.os }}-py3.11-backend-venv-${{ hashFiles('backend/requirements.txt') }}
+
+      - name: Create venv and install backend dependencies (cache miss)
+        if: steps.venv-cache.outputs.cache-hit != 'true'
+        working-directory: backend
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -r requirements.txt
+
+      - name: Add backend/.venv to PATH
+        run: echo "$GITHUB_WORKSPACE/backend/.venv/bin" >> "$GITHUB_PATH"
+
+      - name: Run CSV export content regression targets
+        id: check
+        run: |
+          set -o pipefail
+          python -m pytest \
+            tests/test_reports_integration.py::TestTaxYearCsvExport \
+            tests/test_monthly_pnl_cost_basis.py \
+            "tests/test_api_contracts.py::TestReportsEndpoints::test_monthly_pnl_csv_format_returns_csv_download" \
+            -v --tb=short 2>&1 | tee csv_content_output.txt
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Send alert on regression
+        if: steps.check.outputs.exit_code != '0'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          MESSAGE="CSV export content regression check FAILED — quarterly recurring check found a drift in tax-year or monthly P&L CSV output. ${RUN_URL}"
+          echo "$MESSAGE"
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -sS --max-time 30 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+              --data-urlencode "text=${MESSAGE}"
+          else
+            echo "::warning::TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not configured as repo secrets — alert not sent. Message would have been: ${MESSAGE}"
+          fi
