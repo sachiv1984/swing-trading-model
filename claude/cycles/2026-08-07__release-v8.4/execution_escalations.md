@@ -69,7 +69,8 @@ Last Updated: 2026-08-08
 - **Unblock criteria:** A human pulls `POST /digest/si05/send` invocation timings from Render's internal log stream, adds the row to `api_performance_baseline.md` with a methodology note, and confirms here.
 - **SLA due-by:** Next planning checkpoint
 - **Blocks execution:** No — ST-21 only; other EPIC-05 items proceed independently
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution summary:** Unblocked in-session — direct Render Platform API access (`RENDER_PLATFORM_API_KEY`, already an existing repo secret) was found to be sufficient after all; the engine's original blocking statement ("requires reading Render's dashboard log stream... cannot access") was corrected mid-session once the same auth pattern already used by `scripts/check_staging_deploy_drift.py` was applied. However, querying production directly (the SI-05 cron runs against production, not staging) surfaced a genuine, deeper finding: Render's captured `uvicorn` access logs carry no duration field at all — only one log line exists for this endpoint (from ST-19's trigger), and it has no timing data, confirming this is a real data-availability gap rather than an access problem. Per Product Owner direction (confirmed in-session): documented the gap, filed `BLG-BE-87` (add duration logging to the app itself) for real future measurement, and recorded a single-sample, explicitly-caveated external-timing-proxy value (GitHub Actions step wall-clock from ST-19's trigger) as the interim entry. See `docs/ops/api_performance_baseline.md` §36. `BLG-OPS-54` closed.
 
 ## ESC-EXEC-20260808-04
 

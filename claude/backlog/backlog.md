@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-05/ST-20: 2 new items added, BLG-BE-86 (GET /analytics/tag-performance returns 500 on staging — missing trade_tags column ensure) and BLG-OPS-134 (api-key-cross-environment-check.yml silently no-op'd since v8.3 — STAGING_API_KEY secret was never set) — both found during live endpoint latency measurement); prior — 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-06/EPIC-07 real cross-EPIC merge: 1 new item added, BLG-GOV-291); prior — 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-05/ST-19: 1 new item added, BLG-BE-85); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-05/ST-21: 1 new item added, BLG-BE-87 (add duration logging to POST /digest/si05/send — Render's captured logs currently carry no timing field, found attempting Render-internal-log-based measurement)); prior — 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-05/ST-20: 2 new items added, BLG-BE-86 and BLG-OPS-134); prior — 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-06/EPIC-07 real cross-EPIC merge: 1 new item added, BLG-GOV-291); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -1758,6 +1758,28 @@ No per-request trace ID propagation exists across routers/services. No incident 
 - `GET /analytics/tag-performance` returns 200 (or a real 400/404 for genuinely invalid input) on a database where `trade_tags` was never previously ensured
 - No regression to existing `trade_plans.py` endpoints' own `ensure_trade_plans_table()` calls
 - Root cause note added to `docs/ops/api_performance_baseline.md`'s entry for this endpoint (ST-20) is confirmed resolved and updated once this ships
+
+---
+
+### BLG-BE-87 — Add duration logging around POST /digest/si05/send's Telegram send call
+**Priority:** P3 (Low)
+**Type:** Backend Engineering
+**Owner:** Head of Backend Engineering
+**Source:** ST-21 (EPIC-05, 2026-08-07__release-v8.4), Render-internal-log-based measurement attempt found no duration data exists — 2026-08-08
+**Effort:** XS (<1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`POST /digest/si05/send`'s only captured Render log line is the default `uvicorn` access-log format (`"POST /digest/si05/send HTTP/1.1" 200 OK`) — client IP, method+path, status, no duration. Confirmed via direct Render Platform API query against production (30-day window, only one matching log line exists at all). This blocks any future Render-internal-log-based latency measurement for this endpoint (the methodology `ST-21`'s own AC calls for, since firing live test calls would spam the real Telegram channel) — there is currently no way to derive timing from logs for any invocation, past or future, without this fix.
+
+**Scope**
+- In `si05_digest_service.py::send_si05_digest()`, record a timestamp immediately before the Telegram send call and log elapsed time (e.g. `logger.info("SI-05 digest sent (%d chars, %.0fms)", message_length, elapsed_ms)`) on both the success and failure paths
+- No change to retry/backoff behaviour or the `si05_digest_log` table schema — this is additive log output only
+
+**Acceptance Criteria**
+- A successful or failed `POST /digest/si05/send` invocation's Render log line includes an elapsed-time value
+- Verified against the next real invocation (the following scheduled Sunday 19:00 UTC cron run, or a manual `workflow_dispatch` trigger) — confirm the new field appears in the captured log
+- `docs/ops/api_performance_baseline.md` §36 updated with real log-derived timing once available, superseding the interim single-sample proxy measurement
 
 ---
 
