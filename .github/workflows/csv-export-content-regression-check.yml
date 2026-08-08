@@ -19,6 +19,15 @@ name: CSV Export Content Regression Check
 # api-key-cross-environment-check.yml (BLG-OPS-131, v8.3) and
 # staging-deploy-drift-check.yml (BLG-OPS-128, v8.2) — reuse of existing
 # assertions on a calendar cadence, not new test logic.
+#
+# First-instance verification (ST-27 AC): GitHub only exposes
+# workflow_dispatch for a workflow once its file exists on the repository's
+# default branch, so this workflow cannot be manually triggered from this
+# feature branch pre-merge. Equivalent evidence was gathered instead: the
+# exact 3 pytest targets this job runs were executed locally against
+# backend/.venv on 2026-08-08 and passed 18/18 clean (see
+# qa_evidence_EPIC-06.md ST-27 entry). The first live scheduled/dispatched
+# run will occur after this workflow merges to main.
 
 on:
   schedule:
