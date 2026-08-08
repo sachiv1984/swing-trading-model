@@ -1,9 +1,9 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 1.0
-**Last Updated:** 2026-08-05
-**Cycle:** 2026-08-05__release-v8.3 (ST-01 — BLG-OPS-129)
+**Version:** 1.1
+**Last Updated:** 2026-08-08
+**Cycle:** 2026-08-05__release-v8.3 (ST-01 — BLG-OPS-129); staging verification closed 2026-08-08 (ST-19, EPIC-05, v8.4 — BLG-OPS-132)
 
 ---
 
@@ -37,8 +37,26 @@ This uses the same `API_URL`/`API_KEY` GitHub Actions repo secrets already confi
 
 ## Next Steps
 
-- Infrastructure & Operations Owner to trigger a manual `workflow_dispatch` run (or wait for the next scheduled Sunday run) after this PR merges, and record the outcome against `BLG-OPS-132`.
+- ~~Infrastructure & Operations Owner to trigger a manual `workflow_dispatch` run (or wait for the next scheduled Sunday run) after this PR merges, and record the outcome against `BLG-OPS-132`.~~ **Done — see Staging Verification below.**
 - No further code or spec change identified as necessary — the fix is purely the missing trigger.
+
+## Staging Verification (ST-19, EPIC-05, v8.4 — BLG-OPS-132, 2026-08-08)
+
+`si05-weekly-digest.yml` manually triggered via `workflow_dispatch` (run [31247847064](https://github.com/sachiv1984/swing-trading-model/actions/runs/31247847064)) against the live production API.
+
+**Evidence:**
+1. **Endpoint response** (printed to the Actions run log): `{"status":"ok","sent":true,"message_length":456,"error":null}`
+2. **`si05_digest_log` row** (queried directly by Infrastructure & Operations Owner via production DB access):
+   ```
+   id: 24, sent_at: 2026-08-08 08:11:21.85389+00, status: sent,
+   event_count: 14, telegram_message_id: null, error_message: null
+   ```
+   `sent_at` matches the workflow run timestamp; `status = 'sent'`.
+3. **Live Telegram message** — confirmed received by Infrastructure & Operations Owner (human check, not code-verifiable).
+
+**Result: SI-05 digest delivery confirmed working.** Both AC evidence sources (`si05_digest_log` + live Telegram message) are satisfied. `BLG-OPS-132` closed.
+
+**Follow-up finding (not blocking, filed separately):** `telegram_message_id` is `null` on this confirmed-successful row, and is `None` at *every* call site in `si05_digest_service.py` — `_send_telegram_request()` calls `urllib.request.urlopen()` but never reads the response body, so Telegram's own returned `message_id` (present in a successful API response) is discarded rather than stored. The column exists specifically to hold this value (`BLG-BE-33`) but has never been populated. Filed as a follow-up backlog item — see `prompt_change_log.md`-adjacent backlog entry for this cycle.
 
 ---
 
@@ -47,3 +65,9 @@ This uses the same `API_URL`/`API_KEY` GitHub Actions repo secrets already confi
 - Reviewed by: Infrastructure & Operations Owner
 - Date: 2026-08-05
 - Disposition: Root cause confirmed (missing scheduled trigger, not a code defect). Fix applied (`si05-weekly-digest.yml`). Live-send confirmation deferred to staging per `BLG-OPS-132`.
+
+## Sign-Off — Staging Verification
+
+- Reviewed by: Infrastructure & Operations Owner
+- Date: 2026-08-08
+- Disposition: Live send confirmed successful via endpoint response, `si05_digest_log` row, and direct Telegram receipt confirmation. `BLG-OPS-132` closed. No remaining action on the digest delivery fix itself; `telegram_message_id` population gap filed as a separate, non-blocking follow-up.

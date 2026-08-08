@@ -37,7 +37,8 @@ Last Updated: 2026-08-08
 - **Unblock criteria:** A human confirms (a) the next scheduled SI-05 digest cron run completed, (b) a corresponding row exists in `si05_digest_log`, and (c) the Telegram message was actually received — then records the outcome against this item and updates `docs/ops/si05_digest_delivery_root_cause_2026-08-05.md`.
 - **SLA due-by:** Next planning checkpoint
 - **Blocks execution:** No — ST-19 only; other EPIC-05 items proceed independently
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution summary:** Unblocked in-session — `si05-weekly-digest.yml` triggered via `workflow_dispatch` (run `31247847064`, 2026-08-08T08:11Z) by the Infrastructure & Operations Owner (user), same session as delegation. Endpoint response confirmed success (`{"status":"ok","sent":true,"message_length":456,"error":null}`); `si05_digest_log` row (id 24, `sent_at` matching, `status: 'sent'`, `event_count: 14`) supplied directly by the user via a live production DB query; live Telegram receipt confirmed by the user directly. Both AC evidence sources satisfied. See `docs/ops/si05_digest_delivery_root_cause_2026-08-05.md` §Staging Verification. Follow-up finding (not blocking): `telegram_message_id` logged `null` on this confirmed-successful row — root cause and fix scoped, filed as `BLG-BE-85`.
 
 ## ESC-EXEC-20260808-02
 

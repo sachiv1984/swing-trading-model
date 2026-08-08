@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-08T07:15:00Z",
+  "last_updated_utc": "2026-08-08T08:30:00Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -631,23 +631,25 @@
         "ST-19": {
           "title": "Staging verification required for SI-05 weekly digest fix",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1282,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": "2026-08-08T07:10:00Z",
-          "unblock_criteria": "Human confirms SI-05 digest cron run completed, si05_digest_log row exists, and Telegram message received (ESC-EXEC-20260808-01)",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "spec_reference_not_applicable": true,
-          "spec_reference_not_applicable_reason": "staging evidence gathering task, no prior canonical spec \u2014 see docs/ops/si05_digest_delivery_root_cause_2026-08-05.md",
-          "deviations_filed": false,
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/si05_digest_delivery_root_cause_2026-08-05.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Escalated \u2014 ESC-EXEC-20260808-01 (live staging/Telegram verification, engine cannot perform)"
+          "notes": "Unblocked in-session (2026-08-08) \u2014 user triggered workflow_dispatch run 31247847064, supplied si05_digest_log row and Telegram receipt confirmation directly. ESC-EXEC-20260808-01 resolved. Follow-up BLG-BE-85 filed (telegram_message_id never populated)."
         },
         "ST-20": {
           "title": "Endpoint coverage drift: 19 endpoints missing from api_performance_baseline.md",
@@ -937,7 +939,6 @@
     }
   },
   "blocked_items": [
-    "ST-19",
     "ST-20",
     "ST-21",
     "ST-23"
@@ -962,6 +963,7 @@
     "ST-16",
     "ST-17",
     "ST-18",
+    "ST-19",
     "ST-22",
     "ST-24",
     "ST-31"
