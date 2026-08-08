@@ -635,7 +635,7 @@
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1282,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "b38a537c809bc5485d9ef77c66b515904daed4dd",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
