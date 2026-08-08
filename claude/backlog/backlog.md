@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-06/EPIC-07 real cross-EPIC merge: 1 new item added, BLG-GOV-291 (CLAUDE.md §8's own commit-message template violates the enforced commit-format hook — found live resolving EPIC-06/EPIC-07's genuine conflict)); prior — 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-05/ST-19: 1 new item added, BLG-BE-85 (si05_digest_log.telegram_message_id never populated)); prior — 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-07/ST-30: 2 new items added, BLG-GOV-289 and BLG-GOV-290); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-05/ST-20: 2 new items added, BLG-BE-86 (GET /analytics/tag-performance returns 500 on staging — missing trade_tags column ensure) and BLG-OPS-134 (api-key-cross-environment-check.yml silently no-op'd since v8.3 — STAGING_API_KEY secret was never set) — both found during live endpoint latency measurement); prior — 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-06/EPIC-07 real cross-EPIC merge: 1 new item added, BLG-GOV-291); prior — 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-05/ST-19: 1 new item added, BLG-BE-85); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -1735,6 +1735,29 @@ No per-request trace ID propagation exists across routers/services. No incident 
 - A successful SI-05 digest send populates a real, non-null `telegram_message_id` in `si05_digest_log`
 - Failure-path logging unchanged (still logs `error_message`, `telegram_message_id` remains null on failure)
 - Existing retry/backoff behaviour unaffected
+
+---
+
+### BLG-BE-86 — GET /analytics/tag-performance returns 500 on staging (missing trade_tags column ensure)
+**Priority:** P1 (High)
+**Type:** Backend Engineering
+**Owner:** Head of Backend Engineering
+**Source:** ST-20 (EPIC-05, 2026-08-07__release-v8.4), live endpoint latency measurement — found a real 500, not a timing result — 2026-08-08
+**Effort:** XS (<1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`GET /analytics/tag-performance?tags=momentum` returned HTTP 500 on every one of 7 live staging samples taken during ST-20's latency measurement (real, authenticated calls — not an auth-rejection artifact). Root cause, confirmed by code inspection: `get_tag_performance_endpoint()` (`backend/routers/analytics.py`) queries `tp.trade_tags` directly without ever calling `ensure_trade_plan_tags_column()` (`database.py`) — the idempotent `ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS trade_tags ...` migration added for this exact column (`BLG-FEAT-52`, v6.8). That migration is only ever triggered lazily, from `ensure_trade_plans_table()`, and that function is only called from `backend/routers/trade_plans.py`'s own endpoints (11 call sites) — never from `analytics.py`, and never at app startup (`main.py`'s `@app.on_event("startup")` handler has no call to it either). On any database where no `/trade-plans/*` endpoint has run since the `trade_tags` migration was introduced, the column genuinely does not exist yet, and this endpoint fails with a real Postgres error, masked into a generic `{"status": "error", "message": "Tag performance failed: ..."}` 500 by the handler's broad `except Exception`.
+
+**Scope**
+- Add `ensure_trade_plan_tags_column()` (or the broader `ensure_trade_plans_table()`) call to `get_tag_performance_endpoint()` before querying `trade_tags`, matching the lazy-ensure pattern already used by every `trade_plans.py` endpoint
+- Alternatively (preferred, if scope allows): move `ensure_trade_plans_table()` into `main.py`'s startup sequence alongside the other `ensure_*` calls already there, closing the same class of gap for any other future `trade_plans`-adjacent endpoint added outside `trade_plans.py`
+- Confirm fix against a database that has never had `trade_plans.py` exercised (or manually drop the column in a test DB) — the bug will not reproduce on a database where any trade-plan endpoint has already run once
+
+**Acceptance Criteria**
+- `GET /analytics/tag-performance` returns 200 (or a real 400/404 for genuinely invalid input) on a database where `trade_tags` was never previously ensured
+- No regression to existing `trade_plans.py` endpoints' own `ensure_trade_plans_table()` calls
+- Root cause note added to `docs/ops/api_performance_baseline.md`'s entry for this endpoint (ST-20) is confirmed resolved and updated once this ships
 
 ---
 
@@ -5411,6 +5434,27 @@ ST-01's fix for the SI-05 weekly digest (`.github/workflows/si05-weekly-digest.y
 **Missing endpoint list (method, normalised path):** `GET /analytics/market-correlation`; `GET /analytics/metrics`; `GET /analytics/tag-performance`; `GET /portfolio/pre-entry-validation`; `GET /positions/analyze`; `GET /positions/grace-period-alerts`; `GET /positions/tags`; `GET /positions/{id}`; `GET /positions/{id}/stop-trail`; `PATCH /notifications/preferences`; `PATCH /watchlist/{id}`; `POST /ai/check-daily-cost`; `POST /alerts/rules`; `POST /positions/nightly-stop-update`; `POST /positions/risk-off-alerts`; `POST /positions/{id}/refresh-state`; `POST /settings`; `POST /signals/rebalance-exit`; `POST /test/endpoints`
 
 > ⚠️ **Undercount risk (2026-08-07, BLG-SPEC-116):** this list was derived via `yaml.safe_load(openapi.yaml)['paths']`, which returns 93 keys — `BLG-SPEC-116` found the raw file actually contains 116 top-level path-shaped lines, ~23 of them trapped inside `components:` due to a structural defect and invisible to any standard parser. Re-derive this list after `BLG-SPEC-116` is fixed; the true gap may be larger or differently composed than shown above.
+
+---
+
+### BLG-OPS-134 — api-key-cross-environment-check.yml has been silently no-op'ing since it shipped (STAGING_API_KEY secret was never set)
+**Priority:** P1 (High)
+**Type:** Operations / Security
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-20 (EPIC-05, 2026-08-07__release-v8.4), discovered while dispatching a live staging measurement workflow — 2026-08-08
+**Effort:** XS (<1 day — verification only, the fix itself was applied in-session)
+**Provisional-Target:** TBD
+
+**Problem**
+`api-key-cross-environment-check.yml` (`BLG-OPS-131`, v8.3) runs daily to confirm staging's and production's `X-API-Key` values remain distinct — the whole point of `BLG-SEC-27`'s v8.2 key rotation. Its own script has a guard: if `STAGING_API_KEY` (or `API_URL`/`API_KEY`) isn't configured as a repo secret, it logs a warning and exits 0 (skipped, not failed) — a deliberate design choice to avoid failing the workflow on missing config, but one that means a genuinely missing secret produces the same "green" result as a passing check. `gh secret list` confirmed `STAGING_API_KEY` was never actually set as a repo secret — meaning this daily check has been silently skipping its actual comparison every single day since the workflow shipped, with no failure signal anywhere. The secret was set in-session (2026-08-08, for ST-20's own unrelated live-measurement need) as a side effect, which incidentally un-breaks this workflow too — but the fact that it was missing for this long, undetected, is the actual gap.
+
+**Scope**
+- Confirm `api-key-cross-environment-check.yml`'s next scheduled (or a manually triggered) run actually performs the comparison now that `STAGING_API_KEY` is set (check the run log for the real comparison output, not just a green checkmark)
+- Consider hardening the workflow's own skip-guard: a silent `::warning::` + exit 0 for 5+ months (v8.3 ship to now) is exactly the failure mode this item describes — evaluate whether a missing-secret condition should instead fail loudly (or post to a monitoring channel) rather than degrade silently to "skipped, reported as passed"
+
+**Acceptance Criteria**
+- Confirmed (via a real run's log) that the cross-environment comparison is now executing, not skipping
+- Decision recorded on whether the skip-guard's silent-pass behaviour should be hardened, and if so, implemented
 
 ---
 

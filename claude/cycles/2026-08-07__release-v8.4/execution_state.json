@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-08T10:00:00Z",
+  "last_updated_utc": "2026-08-08T10:15:00Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -654,25 +654,26 @@
         "ST-20": {
           "title": "Endpoint coverage drift: 19 endpoints missing from api_performance_baseline.md",
           "classification": "delegated_decision",
-          "status": "blocked_decision",
+          "status": "done",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1283,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": "2026-08-08T07:10:00Z",
-          "unblock_criteria": "Human or CI job with staging network access measures 19 endpoints (>=5 samples each) and records p50/p95/max (ESC-EXEC-20260808-02)",
+          "blocked_since_utc": null,
+          "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/ops/api_performance_baseline.md"
+            "docs/ops/api_performance_baseline.md",
+            ".github/workflows/api-performance-baseline-measurement.yml"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
+          "deviations_filed": true,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Escalated \u2014 ESC-EXEC-20260808-02 (live staging network access, engine cannot perform)"
+          "notes": "Unblocked in-session (2026-08-08) \u2014 list re-derived against corrected openapi.yaml (16 not 19), 6 measured live, 1 found broken (BLG-BE-86 filed, not fabricated), 9 confirmed-mutating and excluded. Side-effect: STAGING_API_KEY secret set for the first time, also fixed a 5-month silent no-op in api-key-cross-environment-check.yml (BLG-OPS-134 filed). ESC-EXEC-20260808-02 resolved."
         },
         "ST-21": {
           "title": "Add POST /digest/si05/send to api_performance_baseline.md",
@@ -969,7 +970,6 @@
     }
   },
   "blocked_items": [
-    "ST-20",
     "ST-21",
     "ST-23"
   ],
@@ -994,6 +994,7 @@
     "ST-17",
     "ST-18",
     "ST-19",
+    "ST-20",
     "ST-22",
     "ST-24",
     "ST-25",

@@ -53,7 +53,8 @@ Last Updated: 2026-08-08
 - **Unblock criteria:** A human (or a CI job with staging network access) runs ≥5 timed requests per endpoint against the live staging deployment for the 19 endpoints and records p50/p95/max in `api_performance_baseline.md`.
 - **SLA due-by:** Next planning checkpoint
 - **Blocks execution:** No — ST-20 only; other EPIC-05 items proceed independently
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution summary:** Unblocked in-session in two steps: (1) direct staging network access, initially believed unavailable, was confirmed working on retest; (2) `STAGING_API_KEY` was found missing as a GitHub Actions secret entirely (confirmed via `gh secret list`) — the Infrastructure & Operations Owner (user) set it (copied from the existing Render-side `API_KEY` env var on the staging service, per `BLG-SEC-27`'s v8.2 key rotation — no new value created). List re-derived against the corrected `openapi.yaml` first, per this story's own dependency on ST-02: 16 genuinely missing endpoints, not the stale 19. Measured via a dedicated on-demand GitHub Actions workflow (`api-performance-baseline-measurement.yml`, run `31249924340`) — 6 safe GET endpoints measured (real p50/p95/max, ≥5 samples each), 1 found genuinely broken (`GET /analytics/tag-performance` 500, filed `BLG-BE-86`, not fabricated), 9 confirmed-mutating endpoints correctly excluded per handler-code verification. See `docs/ops/api_performance_baseline.md` §35. `BLG-OPS-133` closed. **Side-effect finding:** setting `STAGING_API_KEY` also un-breaks `api-key-cross-environment-check.yml`'s daily cron, which had a silent no-op guard for a missing secret and had never actually run its comparison since that workflow shipped (v8.3) — filed as `BLG-OPS-134` for tracking.
 
 ## ESC-EXEC-20260808-03
 
