@@ -70,12 +70,12 @@
     "cross_stage_integrity": "pass",
     "decisions_validated": "not_applicable",
     "design_gate_required": true,
-    "design_gate_status": "not_started"
+    "design_gate_status": "Passed"
   },
 
-  "design_gate_status": "not_started",
-  "design_gate_completed_utc": "",
-  "design_gate_record": "",
+  "design_gate_status": "Passed",
+  "design_gate_completed_utc": "2026-08-08T19:15:00Z",
+  "design_gate_record": "claude/cycles/2026-08-08__release-v8.5/design_gate.md",
   "sprint_planning_pre_condition": "design_gate_status == Passed",
   "amended_backlog_slice_path": "",
 
