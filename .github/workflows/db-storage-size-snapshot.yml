@@ -1,0 +1,63 @@
+# .github/workflows/db-storage-size-snapshot.yml
+# On-demand (workflow_dispatch only) production database storage size
+# snapshot — ST-23 (BLG-OPS-123, EPIC-05, v8.4). Reuses the
+# PROD_DATABASE_URL secret and PostgreSQL-17-client install pattern
+# already established in production-db-backup.yml (BLG-OPS-127, v8.2) —
+# read-only queries only, no dump/backup behaviour.
+#
+# Kept as a reusable ops tool (not a one-off) — re-running this on a
+# schedule (or manually, periodically) is exactly what turns a single
+# snapshot into the storage-growth trend this story asks for.
+
+name: DB Storage Size Snapshot
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Install PostgreSQL 17 client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y postgresql-client-17
+
+      - name: Query storage size (read-only)
+        env:
+          PROD_DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PROD_DATABASE_URL:-}" ]; then
+            echo "::error::PROD_DATABASE_URL secret is not set"
+            exit 1
+          fi
+          PSQL=/usr/lib/postgresql/17/bin/psql
+
+          echo "SNAPSHOT_START"
+          echo "timestamp_utc: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+          echo ""
+          echo "-- total database size --"
+          "$PSQL" "$PROD_DATABASE_URL" -t -A -F'|' -c \
+            "SELECT pg_size_pretty(pg_database_size(current_database())), pg_database_size(current_database());"
+
+          echo ""
+          echo "-- top 10 largest tables --"
+          "$PSQL" "$PROD_DATABASE_URL" -t -A -F'|' -c \
+            "SELECT relname, pg_size_pretty(pg_total_relation_size(relid)), pg_total_relation_size(relid)
+             FROM pg_catalog.pg_statio_user_tables
+             ORDER BY pg_total_relation_size(relid) DESC
+             LIMIT 10;"
+
+          echo ""
+          echo "-- row counts for the volume-scaling tables named in BLG-OPS-123's problem statement --"
+          "$PSQL" "$PROD_DATABASE_URL" -t -A -F'|' -c \
+            "SELECT 'trade_history', COUNT(*) FROM trade_history
+             UNION ALL SELECT 'signals', COUNT(*) FROM signals
+             UNION ALL SELECT 'trade_plans', COUNT(*) FROM trade_plans;"
+          echo "SNAPSHOT_END"
