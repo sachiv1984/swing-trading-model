@@ -37,4 +37,5 @@ Last Updated: 2026-08-08
 - **Unblock criteria:** A human with production DB access runs `docs/ops/blg_be_40_impact_measurement_query.sql`, records the output (affected signal count, magnitude, materiality), and both named reviewers sign off per the AC. Findings should be filed as a new `docs/ops/` record (informational — no remediation implied unless a material discrepancy is found, per the story's own scope).
 - **SLA due-by:** Next planning checkpoint
 - **Blocks execution:** No — ST-28 only; other EPIC-06 items proceed independently
-- **Disposition:** Open
+- **Disposition:** Resolved
+- **Resolution summary:** Unblocked in-session — Infrastructure & Operations Owner (user) ran `docs/ops/blg_be_40_impact_measurement_query.sql` directly against production, same session as delegation. Result: 0 of 300 pre-fix signals affected (genuine, non-vacuous zero — verified via Step 3's non-zero denominator). Findings documented in `docs/ops/blg_be_40_impact_measurement_findings_2026-08-08.md`. Reviewed by Metrics Definitions & Analytics Owner (agent-mediated, methodology check) and Product Owner (human, confirmed in-session — accepted, no remediation needed). `BLG-QA-70` closed.
