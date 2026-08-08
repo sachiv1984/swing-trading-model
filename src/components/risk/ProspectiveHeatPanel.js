@@ -83,7 +83,7 @@ export default function ProspectiveHeatPanel({ currentHeat }) {
         className={cn("bg-slate-900/50 border-slate-700 text-slate-200 text-sm h-9",
           errors[id] && "border-rose-500/70")}
       />
-      {errors[id] && <p className="text-xs text-rose-400">{errors[id]}</p>}
+      {errors[id] && <p className="text-xs text-rose-700 dark:text-rose-400">{errors[id]}</p>}
     </div>
   );
 
@@ -118,7 +118,7 @@ export default function ProspectiveHeatPanel({ currentHeat }) {
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Calculate"}
               </Button>
 
-              {apiError && <p className="text-sm text-rose-400">{apiError}</p>}
+              {apiError && <p className="text-sm text-rose-700 dark:text-rose-400">{apiError}</p>}
 
               {result && !apiError && (
                 <div className="flex items-center gap-4 text-sm">

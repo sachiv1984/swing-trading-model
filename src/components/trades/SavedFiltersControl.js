@@ -145,7 +145,7 @@ export default function SavedFiltersControl({ hasActiveFilters, currentFilterSta
         </div>
       </div>
 
-      {saveError && <p className="text-xs text-rose-400">{saveError}</p>}
+      {saveError && <p className="text-xs text-rose-700 dark:text-rose-400">{saveError}</p>}
 
       {confirmingDeleteId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">

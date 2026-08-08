@@ -519,7 +519,7 @@ function VersionComparisonTab() {
             ))}
           </select>
           {fieldError?.field === 'from' && (
-            <span className="text-xs text-rose-400" data-testid="version-from-error">{fieldError.message}</span>
+            <span className="text-xs text-rose-700 dark:text-rose-400" data-testid="version-from-error">{fieldError.message}</span>
           )}
         </div>
 
@@ -536,7 +536,7 @@ function VersionComparisonTab() {
             ))}
           </select>
           {fieldError?.field === 'to' && (
-            <span className="text-xs text-rose-400" data-testid="version-to-error">{fieldError.message}</span>
+            <span className="text-xs text-rose-700 dark:text-rose-400" data-testid="version-to-error">{fieldError.message}</span>
           )}
         </div>
 

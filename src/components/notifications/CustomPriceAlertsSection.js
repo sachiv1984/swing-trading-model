@@ -140,7 +140,7 @@ function CreateForm({ onSave, onCancel }) {
             tickerError && "!border-rose-500/60"
           )}
         />
-        {tickerError && <p className="text-xs text-rose-400">{tickerError}</p>}
+        {tickerError && <p className="text-xs text-rose-700 dark:text-rose-400">{tickerError}</p>}
       </div>
 
       <div className="space-y-1">
@@ -177,10 +177,10 @@ function CreateForm({ onSave, onCancel }) {
             thresholdError && "!border-rose-500/60"
           )}
         />
-        {thresholdError && <p className="text-xs text-rose-400">{thresholdError}</p>}
+        {thresholdError && <p className="text-xs text-rose-700 dark:text-rose-400">{thresholdError}</p>}
       </div>
 
-      {saveError && <p className="text-xs text-rose-400">{saveError}</p>}
+      {saveError && <p className="text-xs text-rose-700 dark:text-rose-400">{saveError}</p>}
 
       <div className="flex gap-2">
         <Button

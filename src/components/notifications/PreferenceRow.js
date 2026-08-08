@@ -31,7 +31,7 @@ export default function PreferenceRow({ label, description, enabled, saved, erro
         />
       </div>
       {error && (
-        <p className="mt-2 text-xs text-rose-400">{error}</p>
+        <p className="mt-2 text-xs text-rose-700 dark:text-rose-400">{error}</p>
       )}
     </div>
   );
