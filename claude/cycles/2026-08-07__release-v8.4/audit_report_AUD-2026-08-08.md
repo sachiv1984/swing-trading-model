@@ -22,7 +22,7 @@ Cycle: 2026-08-07__release-v8.4
 | AUD-2026-08-03-004 | BLG-OPS-111 reconcile now | **RESOLVED** (via retirement, not literal edit) | `claude/backlog/backlog_archive.md:542` — successor item created per AUD-2026-08-03-003, `Provisional-Target: ✅ COMPLETE — 2026-08-08 — cycle: 2026-08-07__release-v8.4 (ST-20)`. `BLG-OPS-111` itself is archived/retired, not left with a stale body. |
 | AUD-2026-08-03-005 | closure_escalations §13 row | **RESOLVED** | `OPERATIONAL_GUIDE.md:1348` — `| Escalations (Closure) | claude/cycles/<id>/closure_escalations.md | 4 | PMO Lead | Post-Ship |` confirmed present. |
 
-4 of 5 RESOLVED. 1 PARTIAL (carries forward — see Improvement AUD-2026-08-08-003).
+4 of 5 RESOLVED. 1 PARTIAL — **now RESOLVED within this same session, see Improvement AUD-2026-08-08-003 (applied post-publication, same-day).**
 
 ---
 
@@ -113,7 +113,7 @@ All paths resolve. No broken references.
 **18/18 match — the widest sample checked to date, 0 drift.** But see finding below: this table checks §14's *rows*, not §14's own *self-header* — a distinct drift was found there.
 
 **FINDINGS:**
-- **NEW — OPERATIONAL_GUIDE.md's own §14 header is stale against its own Change Log.** Line 1458: `| Version | 4.146 |`. Line 1499 (Change Log top row): `| 4.147 | 2026-08-08 | ... §14 Version 4.146→4.147/2026-08-08 ...`. The document's own most recent entry explicitly states the header should now read 4.147; it still reads 4.146. This is the exact scenario `shared_standards.md` §9.1's "Mechanical enforcement note" (added v3.18, after a 3rd recurrence) was written to prevent — see Improvement AUD-2026-08-08-002.
+- **OPERATIONAL_GUIDE.md's own §14 header was stale against its own Change Log — FIXED post-publication, same session.** Was: line 1458 `| Version | 4.146 |` vs. line 1499 (Change Log top row) `| 4.147 | 2026-08-08 | ... §14 Version 4.146→4.147/2026-08-08 ...`. This is the exact scenario `shared_standards.md` §9.1's "Mechanical enforcement note" (added v3.18, after a 3rd recurrence) was written to prevent. Corrected to 4.149 (own fix = 4.148, plus the AUD-2026-08-08-003 patch below = 4.149) via Improvement AUD-2026-08-08-002.
 - **NEW — Change Log table is not monotonically ordered.** Row order at the top is 4.147, then 4.145, then 4.146 (line 1499→1500→1501) — the 4.146 row was inserted below 4.145 instead of above it. Same finding, same fix.
 - No broken path in CLAUDE.md command table.
 - No engine in OPERATIONAL_GUIDE §4 missing from README.
@@ -191,7 +191,7 @@ Unchanged from AUD-2026-08-03. 0 non-compliant.
 | `execution_state.json.open_escalations` write | per-cycle | STRUCTURAL — `execution_prompt.md:811` | Sprint Execution |
 | `scored_initiatives.md` overwrite | `claude/scoring/` | STRUCTURAL — read-before-write + re-read-after-write (`roadmap_prompt.md` STEP 6 v8.6) | Roadmap Rebalance |
 
-Unchanged structural gap — same root cause as AUD-2026-08-03's R6-adjacent finding; still not patched (see Improvement AUD-2026-08-08-003).
+Was unchanged since AUD-2026-08-03's R6-adjacent finding — **patched post-publication this session** via Improvement AUD-2026-08-08-003 (`post_ship_closure.md` v2.24→v2.25).
 
 ### Stage 5 — Token Budget Analysis
 
@@ -247,7 +247,7 @@ No CONSUMER READS UNGUARANTEED FIELD / DEAD OUTPUT / SCHEMA VERSION MISMATCH new
 
 **INVOCATION GUARD TABLE:** Unchanged — `lessons_learnt_prompt.md` §1 guard remains STRUCTURAL, `invocation_context` required, called by Release Planning / Sprint Execution / Delivery Verification / Post-Ship Closure.
 
-**§14 VERSION DRIFT CHECK (conditional):** §14's own *rows* — ALIGNED, 18/18 match (Stage 1 Table 3). §14's *own self-header* — **DRIFT CONFIRMED** (4.146 vs. its own Change Log's 4.147, see Stage 1 finding and Improvement AUD-2026-08-08-002). This is a narrower, newly-observed variant of the same class of bug the conditional check exists to catch — reported here rather than added as a persistent per-invocation advisory, per the standing v6 instruction.
+**§14 VERSION DRIFT CHECK (conditional):** §14's own *rows* — ALIGNED, 18/18 match (Stage 1 Table 3). §14's *own self-header* — **DRIFT CONFIRMED, then CORRECTED same session** (was 4.146 vs. its own Change Log's 4.147; now 4.149 — see Stage 1 finding and Improvement AUD-2026-08-08-002). This is a narrower, newly-observed variant of the same class of bug the conditional check exists to catch — fixed directly rather than left as a 4th deferred recommendation.
 
 ### Stage 8 — Amendment Cycle Completeness
 
@@ -351,7 +351,8 @@ No recommended consolidation actions this run.
     "effort": "Low",
     "patches": 2,
     "files": ["claude/system/OPERATIONAL_GUIDE.md"],
-    "depends_on": []
+    "depends_on": [],
+    "status": "APPLIED — post-publication, same session (v4.148 self-header fix + reorder)"
   },
   {
     "id": "AUD-2026-08-08-003",
@@ -360,8 +361,9 @@ No recommended consolidation actions this run.
     "tier": 2,
     "effort": "Medium",
     "patches": 1,
-    "files": ["claude/system/post_ship_closure.md"],
-    "depends_on": []
+    "files": ["claude/system/post_ship_closure.md", "claude/system/OPERATIONAL_GUIDE.md"],
+    "depends_on": [],
+    "status": "APPLIED — post-publication, same session (post_ship_closure.md v2.24→v2.25, OPERATIONAL_GUIDE.md v4.148→v4.149)"
   },
   {
     "id": "AUD-2026-08-08-004",
@@ -403,7 +405,7 @@ PATCH: (applied — shown for the record)
 
 ---
 
-### AUD-2026-08-08-002
+### AUD-2026-08-08-002 — APPLIED THIS SESSION (post-publication)
 **Title:** OPERATIONAL_GUIDE.md's own §14 header is stale against its own Change Log
 **Area:** Document Hygiene | Governance
 **Evidence Classification:** OBSERVED
@@ -416,15 +418,16 @@ PATCH: (applied — shown for the record)
 **Token impact:** Neutral.
 **Implementation effort:** Low
 **Dependencies:** None
+**Status:** Applied post-publication, same session — on reflection, corrected to **4.148** rather than 4.147 as originally patched above: since this fix is itself a new edit to `OPERATIONAL_GUIDE.md` (not a silent backdate to the already-used 4.147), house style (every edit gets its own fresh version number, confirmed by scanning the surrounding Change Log rows) called for a new number with its own Change Log row describing the correction, not reuse of 4.147. Reorder applied as specified (4.146 row now sits directly below 4.147, above 4.145). See `prompt_change_log.md` 2026-08-08 entry and `OPERATIONAL_GUIDE.md` Change Log row 4.148 for the record. (`OPERATIONAL_GUIDE.md` was bumped once more, to 4.149, by Improvement 003 below — final state 4.149.)
 
-PATCH:
+PATCH: (superseded by the applied fix — shown for the record; the version used was 4.148, not 4.147)
   operation: REPLACE
   file: claude/system/OPERATIONAL_GUIDE.md
   anchor: "| Version | 4.146 |"
   content: |
-    | Version | 4.147 |
+    | Version | 4.148 |
 
-PATCH 2:
+PATCH 2: (applied as specified)
   operation: REPLACE
   file: claude/system/OPERATIONAL_GUIDE.md
   anchor: "| 4.147 | 2026-08-08 | **Post-ship closure `2026-08-07__release-v8.4` STEP 8, two immediate lessons-learnt actions"
@@ -433,7 +436,7 @@ PATCH 2:
 
 ---
 
-### AUD-2026-08-08-003
+### AUD-2026-08-08-003 — APPLIED THIS SESSION (post-publication)
 **Title:** Apply the still-open state-pointer sync for .claude_current_state.json.open_escalations
 **Area:** Governance | State
 **Evidence Classification:** OBSERVED (2nd consecutive audit confirming this open)
@@ -446,8 +449,9 @@ PATCH 2:
 **Token impact:** Neutral.
 **Implementation effort:** Medium
 **Dependencies:** None
+**Status:** Applied post-publication, same session — PATCH below applied verbatim to `post_ship_closure.md` (v2.24→v2.25); `OPERATIONAL_GUIDE.md` §10 source-prompt header, §14 table row, and self-header (→4.149) updated in the same pass per the standing edit checklist; `post_ship_closure_changelog.md` and `prompt_change_log.md` both appended. See `prompt_change_log.md` 2026-08-08 entries for the full record.
 
-PATCH:
+PATCH: (applied verbatim)
   operation: INSERT_AFTER
   file: claude/system/post_ship_closure.md
   anchor: "- `claude/cycles/<cycle_id>/closure_escalations.md` (create if escalations raised during closure — format per `shared_standards.md §4`; ID prefix `ESC-CLOSE-YYYYMMDD-nn`)"
@@ -482,17 +486,15 @@ PATCH: (applied — shown for the record)
 
 ## 6. Cross-Improvement Map
 
-No dependencies between the 4 improvements — all independent, no conflicts. AUD-2026-08-08-001 and AUD-2026-08-08-004 (both APPLIED this session) share the same root-cause class — a governance/audit engine producing a copy-paste artefact with no enforced apply-back step — but touch different target fields (`audit.py` CONFIG constants vs. `.claude_current_state.json` `last_audit_*` fields) and were fixed together in one edit pass. AUD-2026-08-08-002 and AUD-2026-08-08-003 remain independent, unapplied, documented with PATCH blocks for Head of Specs Team application.
+No dependencies between the 4 improvements — all independent, no conflicts. **All 4 are now APPLIED** (001 and 004 applied within the original session; 002 and 003 applied in a post-publication follow-up the same day, after the user requested them explicitly). 001/004 share a root-cause class — a governance/audit engine producing a copy-paste artefact with no enforced apply-back step — but touch different target fields (`audit.py` CONFIG constants vs. `.claude_current_state.json` `last_audit_*` fields). 002/003 both touch `OPERATIONAL_GUIDE.md`'s version bookkeeping (002 directly; 003 indirectly via its own required §14/§10 update) and were applied in the same edit pass for that reason, taking `OPERATIONAL_GUIDE.md` from 4.147 (actual, pre-fix) → 4.148 (002) → 4.149 (003).
 
 ## 7. Implementation Tiers
 
-**Tier 1** (Low effort, no dependencies): AUD-2026-08-08-002 — AUD-2026-08-08-004 was Tier 1 but is now APPLIED, not pending
-**Tier 2** (Medium effort, no dependencies): AUD-2026-08-08-003 — AUD-2026-08-08-001 was Tier 2 but is now APPLIED, not pending
-**Tier 3**: None
+All 4 improvements APPLIED this session (001, 004 at publication; 002, 003 post-publication). No pending tier.
 
 ## 8. Audit Summary
 
-4 of 5 AUD-2026-08-03 items resolved (1 PARTIAL, now carried a 2nd audit cycle). Overall health held roughly flat (73→71) — Governance Integrity improved (74→80, closure_escalations register gap fixed) and Document Hygiene held near-ceiling (100→96, one new self-header drift), but Friction Load dropped sharply (36→25) on a genuinely higher confirmed rate (4.75 vs 3.2 items/cycle-record) driven by 3 distinct 2+-cycle recurring patterns this window against 1 last time. The single most systemic finding was procedural, not architectural: two separate audit/state self-update steps (`audit.py`'s own CONFIG block, `.claude_current_state.json`'s `last_audit_*` fields) had gone unwritten for 3 audits running — this run applied both fixes directly rather than leaving a 4th round of deferred recommendations; 2 remaining improvements (OPERATIONAL_GUIDE.md's self-header drift, the `open_escalations` state-pointer sync) are documented with PATCH blocks for Head of Specs Team application.
+4 of 5 AUD-2026-08-03 items resolved at publication (1 PARTIAL); **all 4 of this run's own improvements were subsequently applied the same day**, so as of the end of this session 0 items remain open from either audit. Overall health at publication was **71/100** (see Scorecard Appendix — measured pre-fix, per standard audit methodology of scoring the state found, not the state after same-session remediation) — Governance Integrity improved 74→80, Document Hygiene 100→96 on the (now-fixed) self-header drift, Friction Load dropped sharply 36→25 on a genuinely higher confirmed rate (4.75 vs 3.2 items/cycle-record) driven by 3 distinct 2+-cycle recurring patterns. The next audit's baseline should reflect all 4 fixes as already in place (`open_escalations` writer live, `OPERATIONAL_GUIDE.md` self-consistent at 4.149, `audit.py`/`.claude_current_state.json` self-update steps closed) — expect Document Hygiene and Governance Integrity to score higher accordingly, and the Execution Reliability "advisory-only guard" deduction class to no longer apply to `open_escalations`.
 
 ## 9. SLA
 
@@ -502,7 +504,7 @@ No dependencies between the 4 improvements — all independent, no conflicts. AU
 - Output filed as: `claude/cycles/2026-08-07__release-v8.4/audit_report_AUD-2026-08-08.md` (Class 3)
 - Committed in this same session per BLG-GOV-169.
 
-**Note on time-critical item:** AUD-2026-08-08-003 (`open_escalations` state-pointer sync) is now Blast Radius 4, OBSERVED, and open since AUD-2026-08-03 — 1 full audit cycle. Per this audit's own SLA rule, if still open at the next audit (AUD after this one), it escalates to a mandatory P0 to Head of Specs Team.
+**Time-critical item, resolved:** AUD-2026-08-08-003 (`open_escalations` state-pointer sync) was Blast Radius 4, OBSERVED, open since AUD-2026-08-03 (1 full audit cycle) — applied this same session, before it could reach the 2-audit-cycle P0-escalation threshold.
 
 ---
 
@@ -554,11 +556,10 @@ No dependencies between the 4 improvements — all independent, no conflicts. AU
 ```python
 # === PASTE INTO audit.py CONFIG AFTER THIS RUN ===
 PRIOR_AUDIT_ID = "AUD-2026-08-08"
-PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-08-03-001",  # PARTIAL — carried, now tracked as AUD-2026-08-08-003
-    "AUD-2026-08-08-002", "AUD-2026-08-08-003"
-]  # AUD-2026-08-08-001 applied in the same session it was found — not carried open.
-  # Remaining 2 recorded OPEN at AUD-2026-08-08 run time — re-classify at next audit once patches are applied
+PRIOR_AUDIT_OPEN_ITEMS = []
+  # All 4 of this run's improvements (001-004) applied same-session, post-publication (002/003 applied
+  # after user request following the initial report). AUD-2026-08-03-001 (carried, tracked as 003) closed
+  # with it. 0 items open at session end — next audit should find a clean baseline.
 PRIOR_SCORES = {
     "token_efficiency":      100,
     "governance_integrity":  80,

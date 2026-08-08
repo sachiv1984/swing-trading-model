@@ -25,11 +25,10 @@ AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
 PRIOR_AUDIT_ID = "AUD-2026-08-08"
-PRIOR_AUDIT_OPEN_ITEMS = [
-    "AUD-2026-08-03-001",  # PARTIAL — carried, now tracked as AUD-2026-08-08-003
-    "AUD-2026-08-08-002", "AUD-2026-08-08-003"
-]  # AUD-2026-08-08-001 applied in the same session it was found (this CONFIG block IS that fix) — not carried open.
-  # Remaining 2 recorded OPEN at AUD-2026-08-08 run time — re-classify at next audit once patches are applied
+PRIOR_AUDIT_OPEN_ITEMS = []
+  # All 4 improvements (001-004) applied same-day: 001/004 within the original session, 002/003 in a
+  # post-publication follow-up after explicit user request. AUD-2026-08-03-001 (carried, tracked as 003)
+  # closed with it. 0 items open at session end.
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {

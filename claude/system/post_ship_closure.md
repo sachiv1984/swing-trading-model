@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.24
-**Last Updated:** 2026-08-04
+**Version:** 2.25
+**Last Updated:** 2026-08-08
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -107,6 +107,7 @@ Canonical governance stack: per `claude/system/shared/governance_stack.md`. This
 - Decisions record at `docs/product/decisions/{id}-{slug}.md` (status → Superseded only)
 - Canonical spec files (deviation note compliance fixes only — missing required fields per §3 Known Deviation Standard; no other spec edits permitted; the document owner must be notified of any fields added to their spec by this routine — record in closure record §6)
 - `claude/cycles/<cycle_id>/closure_escalations.md` (create if escalations raised during closure — format per `shared_standards.md §4`; ID prefix `ESC-CLOSE-YYYYMMDD-nn`)
+  - **State-pointer sync (mandatory, closes AUD-2026-08-03-001 / AUD-2026-08-08-003):** Whenever an entry is appended to `closure_escalations.md`, in the same STEP 8 write also set `.claude_current_state.json.open_escalations.<ESC-ID> = {"summary": "<one-line>", "owner": "<role>", "sla_due_utc": "<timestamp>"}`. When that escalation's `Disposition` is later set to `Resolved` (in this file or a future session that resolves it), remove the corresponding key from `open_escalations` in the same write. This is the only path outside Sprint Execution that raises escalations against the global state pointer's gate condition — Release Planning, Sprint Planning, and Roadmap Rebalance all read this field and must see real data.
 - `docs/System_status_report.md` (reconciliation only — correct stale notes)
 - `docs/operations/validation_system.md` (reconciliation only — correct stale notes)
 - `docs/specs/Specs_Index.md` (mark resolved items; add new gaps identified during delivery)
