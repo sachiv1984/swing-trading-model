@@ -32,3 +32,34 @@ Cycle: 2026-08-07__release-v8.4
 ## Escalations (Phase 3)
 
 None this cycle.
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-08-07__release-v8.4
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-08-08
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-08-05__release-v8.3 (`lessons_learnt_cycle.md` `## Phase 4`) — no friction items, no open deferred patches. **Nothing to check forward this run** — the prior cycle's Phase 4 record closed clean with zero outstanding items.
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| EPIC-01's `execution_state.json.test_scenarios` field was left `[]` despite genuine, real-CI-confirmed Playwright/pytest coverage existing and being documented in `qa_evidence_EPIC-01.md` (`tests/e2e/monthly-pnl-avg-per-trade.spec.js`, `tests/test_trade_origin_query.py`, `tests/test_reports_integration.py`) — the field was populated correctly at the per-story `spec_references` level but never rolled up to the EPIC-level `test_scenarios` array. Caught this session at STEP 5 (Test Scenario Coverage Assessment) by independently cross-referencing `qa_evidence_EPIC-01.md`'s own "Test scenarios used" header and confirming the cited files exist on disk — not by trusting the field at face value. Had this gone unnoticed, a future audit or verification run reading `execution_state.json` alone would have logged a false "no scenarios available" coverage read against an EPIC that in fact has full real-browser evidence | Phase 4 | A | defer | Add an explicit cross-reference in `execution_prompt.md` (STEP 3.1.A or its post-push write step) requiring the EPIC-level `execution_state.json.test_scenarios` array to be populated with every runnable test file already listed in that EPIC's stories' own `spec_references`, not left `[]` by default whenever at least one story's spec_references includes a test file | Head of Specs Team | next `execution_prompt.md` revision touching STEP 3.1.A or STEP 5 |
+
+**Recurrence Notes:** None — this is a newly identified friction item; the prior cycle's Phase 4 record had nothing outstanding to recur.
+
+## Recurrence Escalations (Phase 4)
+
+None.
+
+## Process improvements actioned this run (Phase 4)
+
+None applied this run — the friction item above is deferred (execution_state.json is a sealed artefact this routine may not modify; the fix belongs in execution_prompt.md's record-population step, not in this cycle's record).
+
+## Outstanding deferred patches (Phase 4)
+
+- EPIC-level `test_scenarios` roll-up from story-level `spec_references` missing from `execution_prompt.md`'s record-population step — Head of Specs Team, target next `execution_prompt.md` revision touching STEP 3.1.A or STEP 5.
+
+## Escalations (Phase 4)
+
+None this cycle.
