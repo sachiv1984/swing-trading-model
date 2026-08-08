@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-07 (sprint execution 2026-08-07__release-v8.4, EPIC-01/ST-01: 1 new item added, BLG-FE-144 (reconcile Monthly P&L vs Tax Year table's exact-zero P&L colour convention — cross-table inconsistency found correcting reports.md's colour-rule wording)); prior — 2026-08-07 (sprint execution 2026-08-07__release-v8.4, EPIC-01/ST-31: 1 new item added, BLG-BE-84 (link price_alerts to the trade they trigger — real alert-to-trade provenance, tracked separately after ESC-EXEC-20260807-01 found no such linkage exists; ST-31 shipped a different, real distinction instead)); prior — 2026-08-07 (sprint execution 2026-08-07__release-v8.4, EPIC-03/ST-12: 1 new item added, BLG-FE-143 (frontend wiring to populate trade_plans.thesis_model_version/thesis_prompt_version on save — self-caught scope gap, backend capability lands this cycle via BLG-BE-70 but frontend wiring is a follow-up)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-07 (sprint execution 2026-08-07__release-v8.4, EPIC-04/ST-15: 1 new item added, BLG-FE-145 (text-muted-foreground and related -muted classes generate no CSS — not registered in tailwind.config.js's theme.extend.colors, found auditing DialogDescription's base className)); prior — 2026-08-07 (sprint execution 2026-08-07__release-v8.4, EPIC-01/ST-01: 1 new item added, BLG-FE-144 (reconcile Monthly P&L vs Tax Year table's exact-zero P&L colour convention — cross-table inconsistency found correcting reports.md's colour-rule wording)); prior — 2026-08-07 (sprint execution 2026-08-07__release-v8.4, EPIC-01/ST-31: 1 new item added, BLG-BE-84 (link price_alerts to the trade they trigger — real alert-to-trade provenance, tracked separately after ESC-EXEC-20260807-01 found no such linkage exists; ST-31 shipped a different, real distinction instead)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -1115,6 +1115,51 @@ ST-12 (`BLG-BE-70`) added backend storage capability — `trade_plans.thesis_mod
 - Both tables render an exactly-zero realised P&L value with the same colour treatment
 - Spec updated to reflect the single, decided convention with no remaining per-table caveat
 - No visual regression to non-zero P&L colouring in either table (Playwright coverage or staging sign-off per CLAUDE.md's frontend-visible-change rule)
+
+---
+
+### BLG-FE-145 — text-muted-foreground (and likely other text-muted-*/bg-muted-*/border-muted-* classes) generate no CSS — not registered in tailwind.config.js
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-15 (EPIC-04, 2026-08-07__release-v8.4), self-caught scope gap during `docs/ops/dialog_classname_override_audit_2026-08-07.md`
+**Effort:** S (~0.5d — grep + fix + spot-check affected components)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`tailwind.config.js`'s `theme.extend.colors` only registers `background` and `foreground` (plus a placeholder comment "`// (all your Base44 extended colors here)`"). `--muted` and `--muted-foreground` exist as raw CSS custom properties in `src/index.css` (light and dark values both defined) but are never wired into Tailwind's colour scale. Confirmed via a real `tailwindcss` build (v3.4.19, project's actual config) that `text-muted-foreground` compiles to **zero CSS rules** — it is a fully dead class. `src/components/ui/dialog.js`'s `DialogDescription` uses it as its entire base text colour, and it is very likely used elsewhere across the app (not audited here — out of ST-15's scope, which was specifically the `cn()`-has-no-tailwind-merge override-collision defect class on `Dialog*` consumers, not colour-token registration).
+
+**Scope**
+- Grep `src/` for `text-muted-foreground`, `bg-muted`, `bg-muted-foreground`, `border-muted`, and any other `-muted` variants to establish full blast radius
+- Register `muted`/`muted-foreground` (and any other genuinely-referenced-but-unregistered CSS-variable-backed colours found in the same sweep) in `tailwind.config.js`'s `theme.extend.colors`, matching the existing `background`/`foreground` pattern (`hsl(var(--muted))` / `hsl(var(--muted-foreground))`)
+- Spot-check each affected component after the fix to confirm no unintended visual change (most sites likely have a co-located explicit colour override already winning, per the `dialog_classname_override_audit_2026-08-07.md` findings — but this needs verifying site-by-site, not assumed)
+
+**Acceptance Criteria**
+- `text-muted-foreground` (and any other `-muted` classes found in scope) compile to a non-empty CSS rule, verified via a real `tailwindcss` build
+- No visual regression at any confirmed-affected call site (Playwright coverage or staging sign-off per CLAUDE.md's frontend-visible-change rule)
+
+---
+
+### BLG-FE-146 — Rework ChartStyle to drop style-src 'unsafe-inline' dependency, if/when a consumer adopts ChartContainer
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-18 (EPIC-04, 2026-08-07__release-v8.4), self-caught scope gap during `docs/ops/csp_unsafe_inline_audit_2026-08-08.md`
+**Effort:** M (~1-2d — includes adding theme-change reactivity currently provided free by CSS cascade)
+**Provisional-Target:** Unscheduled
+
+**Problem**
+`src/components/ui/chart.js`'s `ChartStyle` renders a `<style dangerouslySetInnerHTML>` block with per-render, per-chart-config CSS custom properties (`--color-<key>`), scoped under `[data-chart=<id>]` and conditionally under `.dark` for theme-reactive colours with zero JS re-render needed on theme toggle. This is the sole reason `public/index.html`'s CSP retains `'unsafe-inline'` for `style-src` (ST-18 removed it entirely for `script-src` via a content hash, since that inline source is static; this one is dynamic per chart config, so neither a hash nor a nonce is viable for a static SPA build). `chart.js` currently has zero call sites anywhere in the app — it is unused shadcn/ui boilerplate — so this was deferred rather than risk-reworked speculatively.
+
+**Scope**
+- If/when a page or component actually adopts `ChartContainer`/`ChartStyle`: rework the colour-variable delivery to use inline `style` attributes directly on `ChartContainer`'s own wrapping `<div data-chart={chartId}>` (React sets these via the CSSOM, `element.style.property = value`, which CSP's `style-src` does not restrict — unlike an actual `<style>` element or `style=""` HTML attribute)
+- Add explicit theme-change reactivity (e.g. a `prefers-color-scheme`/`.dark`-class observer, or reading the current theme at render time) to replace the CSS-cascade-driven light/dark switching the current `<style>`-block approach gets for free
+- Once no other `dangerouslySetInnerHTML` source remains, remove `'unsafe-inline'` from `style-src` in `public/index.html`'s CSP
+
+**Acceptance Criteria**
+- `ChartContainer` consumers render correct, theme-appropriate colours with no `<style>`/`dangerouslySetInnerHTML` in `chart.js`
+- `public/index.html`'s CSP `style-src` no longer includes `'unsafe-inline'`
+- No visual regression to any chart using `ChartContainer` (Playwright coverage or staging sign-off per CLAUDE.md's frontend-visible-change rule)
 
 ---
 

@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Swing Trading Position Manager" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; img-src 'self' data: blob:; font-src 'self' data:;" />
+    <!-- style-src 'unsafe-inline' exception (BLG-SEC-12, ST-18, EPIC-04, v8.4): src/components/ui/chart.js's
+         ChartStyle renders a <style> element via dangerouslySetInnerHTML with per-render, per-chart-config CSS
+         custom properties (--color-<key>), scoped under [data-chart=<id>] and conditionally under .dark for
+         theme-reactive colours. Content is dynamic (varies per chart config), so a static sha256/nonce source
+         is not viable; script-src carries no such exception — see the sha256 hash below, the only inline
+         <script> in this document, content-hashed instead of 'unsafe-inline'. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-5Oi72KUZ3LaSR2N9JWbDZVUqXP38QIpVD1g9wfJx/HA='; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; img-src 'self' data: blob:; font-src 'self' data:;" />
     <title>Position Manager</title>
     <script type="text/javascript">
       (function(l) {
