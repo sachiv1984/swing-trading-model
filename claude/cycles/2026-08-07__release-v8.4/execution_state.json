@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-07T21:37:21Z",
+  "last_updated_utc": "2026-08-08T06:28:00Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -490,97 +490,132 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-08-07__release-v8.4/EPIC-04",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1297,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-07__release-v8.4/qa_evidence_EPIC-04.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/dialog-classname-override-fixes.spec.js",
+        "tests/e2e/form-validation-error-color-fixes.spec.js",
+        "tests/e2e/watchlist.spec.js"
+      ],
       "stories": {
         "ST-15": {
           "title": "Audit Dialog/DialogTitle className-override sites for the cn()-has-no-tailwind-merge defect class",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1278,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "6b33ec290158a3c8187a6dacee5952cadf55c4c6",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-08T06:20:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/dialog_classname_override_audit_2026-08-07.md",
+            "tests/e2e/dialog-classname-override-fixes.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Observable-UI rule applies \u2014 Playwright coverage or staging sign-off required."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "Head of Engineering",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-08",
+            "notes": "8 genuine collisions verified via a real tailwindcss build (not assumed from docs); fixed across 6 files. Playwright coverage (6 scenarios) verified against a real headless Chromium (system chromium-browser, this sandbox's own Playwright browser install unsupported on this OS)."
+          },
+          "notes": "DialogFooter !justify-between fix (WatchlistModal.js) landed in the ST-17 refactor commit 87a76613 (moved into the new WatchlistModalFooter.js) \u2014 cross-referenced here and in that commit's message. BLG-FE-145 filed for an out-of-scope finding (text-muted-foreground generates no CSS)."
         },
         "ST-16": {
           "title": "Close remaining dark-only-token gaps in inline form-validation error text",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1279,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "f33ca6d4a5d1fce8b1958e32a9067257ffc93db5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-08T06:22:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/e2e/form-validation-error-color-fixes.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Observable-UI rule applies; CI-verifiable via Playwright."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "Frontend Specifications & UX Documentation Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-08",
+            "notes": "13 genuine form-validation/inline-save-error instances fixed across the 6 named files, scoped to true field/save errors (excluding P&L colour indicators and load-error banners \u2014 different, out-of-scope colour usage). Fresh full-repo grep found no additional genuine instances. Playwright coverage (6 scenarios, one per file) verified against a real headless Chromium."
+          },
+          "notes": "Scope interpretation: 'genuine form-validation-error instances' read as field/save-error text tied to a specific input or form action, not general status/P&L colouring \u2014 not a deviation from any canonical spec (none exists for this backlog item), recorded here for traceability. Follow-up commit a6d7d65f (real-CI-caught stale selector fix in the pre-existing risk-dashboard.spec.js SC-RD-24) \u2014 see process_notes."
         },
         "ST-17": {
           "title": "WatchlistModal.js fails ESLint (24 problems) \u2014 same patterns fixed in Watchlist.js",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1280,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "87a76613b6539500ee5e173508efe857efcc6ac8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-08-08T06:24:00Z",
+          "acceptance_verified": true,
           "spec_references": [],
           "spec_reference_not_applicable": true,
           "spec_reference_not_applicable_reason": "lint-only fix, no prior canonical spec \u2014 verified via npx eslint exit code",
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "No functional/visual behaviour change."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "Head of Engineering",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-08",
+            "notes": "npx eslint src/components/watchlist/WatchlistModal.js exits 0, zero warnings/errors (was 25 problems, including 1 already introduced this sprint by the ST-15 commit's explanatory comment \u2014 no-comments/disallowComments \u2014 net starting count effectively matched the story's original 24). No functional/visual change \u2014 verified via the full existing watchlist.spec.js suite (5 scenarios) plus dialog-classname-override-fixes.spec.js SC-DCO-07, all passing against a real headless Chromium. Extract-into-hooks-and-sub-components pattern, matching Watchlist.js's own prior ESLint-compliance refactor (ST-14, EPIC-03, v6.8, BLG-FE-77)."
+          },
+          "notes": "Carries ST-15's DialogFooter !justify-between fix, moved verbatim into the new WatchlistModalFooter.js."
         },
         "ST-18": {
           "title": "CSP allows 'unsafe-inline' for script-src and style-src",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1281,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "8bc208cec0d983207321706f649a9e4684f40857",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-08T06:28:00Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/csp_unsafe_inline_audit_2026-08-08.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "RISK-02 Medium \u2014 Cybersecurity & Trust Lead owner."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "Cybersecurity & Trust Lead",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-08",
+            "notes": "script-src 'unsafe-inline' removed entirely (replaced with a content hash for the sole, static inline script, taken from a real browser's own CSP violation report). style-src 'unsafe-inline' retained, narrowly justified (src/components/ui/chart.js's dynamic per-config <style> block; zero current call sites; BLG-FE-146 filed for future rework). Verified zero script-src/style-src violations across 5 representative pages plus 29/30 of the existing regression suite for touched/adjacent areas via a real headless Chromium (1 failure independently confirmed a cold-start dev-server timing flake, unrelated)."
+          },
+          "notes": "RISK-02 Medium \u2014 Cybersecurity & Trust Lead owner. connect-src (pre-existing, untouched) blocks local-dev http:// API calls; confirmed via git diff showing zero change to that directive; no real deployment impact."
         }
       }
     },
@@ -901,12 +936,17 @@
     "ST-12",
     "ST-13",
     "ST-14",
-    "ST-31"
+    "ST-31",
+    "ST-15",
+    "ST-16",
+    "ST-17",
+    "ST-18"
   ],
   "open_escalations": [],
   "process_notes": [
     "EPIC-03/ST-10: data_model.md v2.21 version collision with EPIC-02's own v2.21 bump (ST-08/ST-09) -- RESOLVED at post-EPIC-02-merge rebase (2026-08-07) per CLAUDE.md \u00a78 step 2a: ST-10/ST-12/ST-13 migration blocks renumbered v2.21->v2.22, v2.22->v2.23, v2.23->v2.24; final data_model.md version 2.24.",
-    "EPIC-01/PR #1296: Product Owner merged directly (2026-08-07T21:35:08Z) before the verify_governance CI check passed (qa_evidence_EPIC-01.md Date field was still blank at merge time -- this was a deliberate, logged sequencing choice, not an oversight; see PR body and qa_evidence commit message). QA evidence sign-off block completed retroactively post-merge with the now-confirmed real-CI Playwright evidence (all 5 SC-MAPT scenarios passed). execution_state.json EPIC-01 top-level status field was also found never updated to done pre-merge (only per-story statuses were) -- corrected directly to merged here."
+    "EPIC-01/PR #1296: Product Owner merged directly (2026-08-07T21:35:08Z) before the verify_governance CI check passed (qa_evidence_EPIC-01.md Date field was still blank at merge time -- this was a deliberate, logged sequencing choice, not an oversight; see PR body and qa_evidence commit message). QA evidence sign-off block completed retroactively post-merge with the now-confirmed real-CI Playwright evidence (all 5 SC-MAPT scenarios passed). execution_state.json EPIC-01 top-level status field was also found never updated to done pre-merge (only per-story statuses were) -- corrected directly to merged here.",
+    "EPIC-04/ST-16: a real GitHub Actions CI run (Playwright E2E Acceptance Tests, shard 3/4, commit 8bc208ce push) caught a stale selector in the pre-existing tests/e2e/risk-dashboard.spec.js SC-RD-24 -- ProspectiveHeatPanel.js's apiError element's className change (bare text-rose-400 -> text-rose-700 dark:text-rose-400) broke SC-RD-24's exact-class-match selector, missed by the ST-16 commit's own stale-selector sweep since that test combined tag+class rather than the toHaveClass()-per-token pattern the sweep was scanning for. RESOLVED commit a6d7d65f: updated to the canonical toHaveClass() dual-assertion pattern, verified locally (real headless Chromium) -- SC-RD-24 alone and the full 17-test risk-dashboard.spec.js suite, both passing. No other stale selectors found in a follow-up full-repo sweep."
   ],
   "merge_gate": {
     "epics_merged": [

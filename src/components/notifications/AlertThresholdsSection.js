@@ -125,14 +125,14 @@ function CreateForm({ onSave, onCancel }) {
             )}
           />
           {validationError ? (
-            <p className="text-xs text-rose-400">{validationError}</p>
+            <p className="text-xs text-rose-700 dark:text-rose-400">{validationError}</p>
           ) : (
             <p className="text-xs text-slate-600 dark:text-slate-400">Leave blank to use the default (5%).</p>
           )}
         </div>
       )}
 
-      {saveError && <p className="text-xs text-rose-400">{saveError}</p>}
+      {saveError && <p className="text-xs text-rose-700 dark:text-rose-400">{saveError}</p>}
 
       <div className="flex gap-2">
         <Button
@@ -216,7 +216,7 @@ function EditForm({ rule, onSave, onCancel }) {
             )}
           />
           {validationError ? (
-            <p className="text-xs text-rose-400">{validationError}</p>
+            <p className="text-xs text-rose-700 dark:text-rose-400">{validationError}</p>
           ) : (
             <p className="text-xs text-slate-600 dark:text-slate-400">Leave blank to use the default (5%).</p>
           )}
@@ -224,7 +224,7 @@ function EditForm({ rule, onSave, onCancel }) {
       )}
 
       {saveError && (
-        <p className="text-xs text-rose-400">{saveError}</p>
+        <p className="text-xs text-rose-700 dark:text-rose-400">{saveError}</p>
       )}
 
       <div className="flex gap-2">

@@ -1062,7 +1062,7 @@ export default function TradePlan() {
         }}
       >
         <DialogContent
-          className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 p-6 space-y-4 mx-4"
+          className="w-full max-w-md !rounded-2xl bg-slate-900 border border-slate-700 p-6 space-y-4 mx-4"
           onCloseAutoFocus={(e) => {
             // Radix's default onCloseAutoFocus focuses context.triggerRef, which is only
             // populated by <DialogTrigger> — this modal is opened via a plain Button (not
