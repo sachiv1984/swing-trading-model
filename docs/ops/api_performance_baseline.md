@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.22
-**Date:** 2026-08-07
+**Version:** 2.24
+**Date:** 2026-08-08
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -1542,10 +1542,134 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-0
 
 ---
 
+## 35. v8.4 Endpoint Registration — ST-20 Live Measurement (BLG-OPS-133, EPIC-05)
+
+**Date:** 2026-08-08
+**Story:** ST-20 (EPIC-05, v8.4) — BLG-OPS-133 endpoint coverage drift closure
+**Environment:** Staging — `https://trading-assistant-api-staging.onrender.com` (live, authenticated)
+**Method:** 7 samples per endpoint, `curl` timed round-trip, same methodology as §1.2. Run via a dedicated GitHub Actions workflow (`.github/workflows/api-performance-baseline-measurement.yml`, `workflow_dispatch`) using the `STAGING_API_KEY` repo secret, dispatched by the Infrastructure & Operations Owner (user) in-session.
+
+**List re-derivation note:** `BLG-OPS-133`'s original 19-endpoint list was derived before `BLG-SPEC-116`'s `openapi.yaml` structural fix (ST-02, EPIC-02, same cycle) and was known-stale per that item's own "Undercount risk" note. Re-running the drift scan against the corrected spec yields **16** genuinely missing endpoints, not 19 — 5 of the original 19 (`GET /portfolio/pre-entry-validation`, `GET /positions/{id}`, `PATCH /notifications/preferences`, `POST /ai/check-daily-cost`, `POST /test/endpoints`) are already present in this document or were parsing artifacts; 2 newly-visible ones (`DELETE /watchlist/{id}`, `GET /news/{id}`) were trapped inside `components:` under the old (buggy) parse and are now correctly visible.
+
+### 35.1 Measured (6 of 16 — safe GET-only reads)
+
+Cross-checked against `backend/routers/test.py`'s own smoke-test URL list before running — all 6 reuse byte-identical URLs already exercised in production by that harness, so nothing here is a new risk to staging.
+
+| Endpoint | p50 (ms) | p95 (ms) | max (ms) | HTTP | Flag |
+|----------|----------|----------|----------|------|------|
+| GET /positions/tags | 2,281 | 2,307 | 2,307 | 200 | — |
+| GET /positions/{id}/stop-trail | 2,277 | 2,288 | 2,288 | 404 | Dummy UUID (no such position) — timing still valid, response is a fast not-found, not a slow one |
+| GET /analytics/metrics?period=all_time | 1,436 | 1,445 | 1,445 | 200 | — |
+| GET /news/AAPL | 461 | 706 | 706 | 200 | — |
+| GET /analytics/market-correlation | 111 | 2,426 | 2,426 | 200 | ⚠️ High p50/p95 spread (111ms → 2,426ms across 7 samples) — worth a dedicated re-run to characterise; not flagged as a defect on this single run |
+| GET /positions/grace-period-alerts | 2,274 | 2,302 | 2,302 | 200 | — |
+
+### 35.2 Found broken during measurement (1 of 16)
+
+| Endpoint | HTTP | Finding |
+|----------|------|---------|
+| GET /analytics/tag-performance?tags=momentum | 500 | **Real bug, not a timing artifact** — confirmed via code inspection (not just the HTTP response): `get_tag_performance_endpoint()` never calls `ensure_trade_plan_tags_column()`/`ensure_trade_plans_table()` before querying `trade_tags`, and that ensure-call is currently wired only into `trade_plans.py`'s own endpoints — never at app startup, never from `analytics.py`. On a database where no `/trade-plans/*` endpoint has run since the `trade_tags` migration was added (v6.8), the column genuinely doesn't exist and the query fails. Filed as `BLG-BE-86` (P1). No p50/p95 recorded — a broken endpoint has no valid baseline. |
+
+### 35.3 Not measured — mutating endpoints (9 of 16)
+
+Per this document's established §2.2 convention, no live call was made for endpoints confirmed to mutate real staging state:
+
+| Endpoint | Reason |
+|----------|--------|
+| GET /positions/analyze | Despite the GET verb, recomputes and stores trailing stops/position data (`services/position_service.py::analyze_positions` docstring; also explicitly excluded from `test.py`'s own smoke harness for the same reason) |
+| DELETE /watchlist/{id} | Write — deletes a real watchlist row |
+| PATCH /watchlist/{id} | Write |
+| POST /alerts/rules | Write |
+| POST /settings | Write |
+| POST /positions/nightly-stop-update | Write — recomputes and stores trailing stops for all open positions (confirmed via handler code) |
+| POST /positions/risk-off-alerts | Write — flags open positions with risk_off_exit alerts (confirmed via handler code) |
+| POST /positions/{id}/refresh-state | Write — updates position lifecycle state in the DB (confirmed via handler code) |
+| POST /signals/rebalance-exit | Write — generates new exit_rebalance signals (confirmed via handler code) |
+
+**Endpoint characteristics:** all 9 were independently confirmed mutating either via `backend/routers/test.py`'s own documented smoke-test exclusion list, or by reading each handler's implementation directly (not assumed from naming alone).
+
+### 35.4 Sign-Off
+
+```
+ST-20 (v8.4 EPIC-05, BLG-OPS-133) — Live Measurement Sign-Off (16 endpoints)
+
+AC-01: All 16 re-derived endpoints present in api_performance_baseline.md with
+       p50/p95/max values, OR an explicit "not measured — mutation risk" /
+       "broken, see BLG-xx" disposition. ✅ PASS (6 measured, 1 broken+filed,
+       9 not-measured-by-design)
+AC-02: Measurement conducted with ≥5 staging samples per endpoint. ✅ PASS
+       (7 samples each, matching this document's own §1.2 methodology)
+AC-03: Mutating endpoints correctly excluded from live measurement, consistent
+       with §2.2's existing convention — verified against handler code, not
+       assumed from HTTP method alone. ✅ PASS
+AC-04: A real defect found during measurement (GET /analytics/tag-performance
+       500) is documented and filed as a bug (BLG-BE-86), not silently
+       baselined with fabricated numbers. ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-08-08
+```
+
+---
+
+## 36. POST /digest/si05/send Registration (ST-21, BLG-OPS-54, EPIC-05, v8.4)
+
+**Date:** 2026-08-08
+**Story:** ST-21 (EPIC-05, v8.4) — BLG-OPS-54
+
+### 36.1 Why standard §1.2 methodology does not apply
+
+This endpoint sends a real Telegram message to the live production digest channel on every successful invocation — unlike every other endpoint in this document, firing 5–7 live test calls to build a sample (§1.2's usual methodology) would spam the real channel with duplicate digests. The AC therefore asks for Render-internal-log-based measurement instead, using timings from invocations that already happened for real reasons (the scheduled weekly cron, or a deliberate manual trigger) rather than firing new ones purely to measure.
+
+### 36.2 Finding: Render's captured logs carry no duration field
+
+Queried directly via the Render Platform API (`RENDER_PLATFORM_API_KEY`, same auth pattern as `scripts/check_staging_deploy_drift.py`) against the **production** service (`srv-d5r98jm3jp1c73figm1g` — `trading-assistant-api-c0f9`; the SI-05 cron and this endpoint both run against production, not staging, per `si05-weekly-digest.yml`'s use of the `API_URL`/`API_KEY` secrets). Exactly one log line exists for this endpoint across the full history queryable (30-day window, `text=si05` filter, `hasMore: false`):
+
+```
+"POST /digest/si05/send HTTP/1.1" 200 OK   @ 2026-08-08T08:11:21.917409805Z
+```
+
+This is Python's standard `uvicorn` access-log line format (`backend/main.py` runs `uvicorn main:app` with no custom access-log formatter) — it records client IP, method+path+protocol, and status code, but **no duration/timing field**. There is no second correlated log line (request-start vs. request-end) to derive a delta from either — one line is logged after the response completes, and that is the entirety of what Render captures for this request. This is a genuine data-availability gap, not a query error: the app itself never emits timing information for Render's log pipeline to capture.
+
+**Consequence:** literal Render-internal-log-based duration measurement is not achievable with the current logging configuration. `BLG-BE-87` filed to add explicit duration logging to `si05_digest_service.py` around the Telegram send call, so future invocations (the next scheduled Sunday 19:00 UTC cron run, or any future manual trigger) produce real, log-derivable timing data.
+
+### 36.3 Interim measurement (single sample, external-timing proxy)
+
+Per Product Owner direction (2026-08-08): rather than block this item entirely on `BLG-BE-87` landing, the one real invocation that has occurred (ST-19's manual trigger) is recorded here using the only timing data actually available for it — the GitHub Actions step wall-clock duration for the `workflow_dispatch` run that triggered it (run [31247847064](https://github.com/sachiv1984/swing-trading-model/actions/runs/31247847064)):
+
+| Endpoint | Samples | Duration | Source | Flag |
+|----------|---------|----------|--------|------|
+| POST /digest/si05/send | 1 | ~0–1s (GitHub Actions step timing has only second-level granularity: `started_at` 08:11:20Z, `completed_at` 08:11:21Z) | GitHub Actions step timing (external proxy, not a Render log) | ⚠️ Single sample, not the ≥5-sample standard this document otherwise requires; not literally Render-internal-log-based (see §36.2); consistent with a fast, no-retry successful send (the endpoint's retry/backoff logic only engages on Telegram API failure, per `si05_digest_service.py`) |
+
+This is deliberately **not** presented as a full baseline entry equivalent to the other 500+ measured rows in this document — it is the best available evidence today, explicitly caveated, pending `BLG-BE-87`'s real log-based data from a future invocation.
+
+### 36.4 Sign-Off
+
+```
+ST-21 (v8.4 EPIC-05, BLG-OPS-54) — Sign-Off
+
+AC-01: POST /digest/si05/send present in api_performance_baseline.md. ✅ PASS
+AC-02: Render-internal-log-based measurement attempted; found genuinely
+       unavailable (no duration field in captured logs) rather than
+       assumed unavailable. Root cause documented (§36.2), follow-up
+       filed (BLG-BE-87) rather than silently worked around. ✅ PASS
+       (methodology gap honestly surfaced, per Product Owner direction)
+AC-03: Methodology note added explaining why standard external HTTP
+       timing does not apply (endpoint sends a real Telegram message per
+       call — §36.1). ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-08-08
+Signed: [x] Product Owner (human, confirmed in-session — accepted interim
+        single-sample measurement over blocking on BLG-BE-87) — 2026-08-08
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.24 | 2026-08-08 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-21 (v8.4 EPIC-05, BLG-OPS-54): §36 added — `POST /digest/si05/send` registered. Found, via direct Render Platform API query against production, that Render's captured `uvicorn` access logs carry no duration field at all (genuine data-availability gap, not a query error) — literal Render-log-based measurement is not achievable today. Documented the gap, filed `BLG-BE-87` (add duration logging) for real future data, and recorded a single-sample external-timing-proxy measurement (GitHub Actions step timing from ST-19's trigger) as an explicitly-caveated interim value, per Product Owner direction. `BLG-OPS-54` closed. |
+| 2.23 | 2026-08-08 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-20 (v8.4 EPIC-05, BLG-OPS-133): §35 added — live measurement of BLG-OPS-133's 16 re-derived missing endpoints (not the stale 19). 6 measured (200/404, real p50/p95/max); 1 found genuinely broken (`GET /analytics/tag-performance` 500 — filed `BLG-BE-86`, not silently baselined); 9 excluded as confirmed-mutating, verified against handler code not just HTTP method. Measured via a dedicated on-demand GitHub Actions workflow (`api-performance-baseline-measurement.yml`) using the `STAGING_API_KEY` secret. `BLG-OPS-133` closed. |
 | 2.22 | 2026-08-07 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-02 (v8.4 EPIC-02, BLG-SPEC-116): §34 added — 11 endpoints registered pending live timing run (§13 pattern). 9 were pre-existing endpoints newly visible to the drift script only after ST-02's `openapi.yaml` structural fix (components:/paths: nesting defect); 2 are new-in-v8.4 test-suite endpoints (`GET /test/quick-health`, `POST /test/rate-limit-scenarios`). 6 excluded from p50/p95 estimation as external-API-latency-dominated (Alpaca/Anthropic-backed). Required by the API Performance Baseline Drift Detection CI gate (ST-12) pre-PR check (`scripts/check_api_performance_baseline_drift.py`). Live measurement remains ST-20's (EPIC-05) responsibility. |
 | 2.21 | 2026-08-04 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-01 (v8.2 EPIC-01, BLG-FEAT-88): §33 added — GET /reports/reconciliation registered pending live timing run (§13 pattern). Two sequential trade_history queries (existing get_tax_year_report full-row fetch + new independent SUM aggregate). Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/reports/reconciliation` path in the same PR. |
 | 2.20 | 2026-07-27 | Sprint Execution Engine (agent-mediated, Metrics Definitions & Analytics Owner + Infrastructure & Operations Owner roles — §5.3) | ST-02 (v7.9 EPIC-02, BLG-FEAT-67): §32 added — GET /portfolio/sector-regime-trend registered pending live timing run (§13 pattern; table empty at ship time, no retroactive data to measure against). Estimated from §21's GET /portfolio/sector-weights baseline, adjusted for a single indexed-table read. Required by the API Performance Baseline Drift Detection CI gate (ST-12) after `openapi.yaml` gained the `/portfolio/sector-regime-trend` path in the same PR. |
