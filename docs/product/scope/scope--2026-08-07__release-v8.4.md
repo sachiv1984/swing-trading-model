@@ -1,9 +1,14 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v8.4
 Cycle: 2026-08-07__release-v8.4
-Last Updated: 2026-08-07
+Last Updated: 2026-08-08
+
+Superseded by: v8.4 ship — 2026-08-08
+Changelog: docs/product/changelog.md#v8.4
+Verification report: claude/cycles/2026-08-07__release-v8.4/verification_report.md
+Cycle: 2026-08-07__release-v8.4
 
 ## Release Scope — v8.4 User-Facing Reporting & Full-Capacity Debt Clearance
 

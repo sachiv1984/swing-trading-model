@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.65
-**Last Updated:** 2026-08-07
+**Version:** 3.66
+**Last Updated:** 2026-08-08
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -579,6 +579,7 @@ epics.<EPIC-xx>.stories.<ST-xx>:
 11. **Sign-off gate:** If the item's seal condition in `sprint_backlog.md` names a required sign-off role: invoke agent-mediated sign-off per §5.3. Do not mark `acceptance_verified = true` until `sign_off_record.status = "cleared"`. Record outcome in `sign_off_record` in `execution_state.json`.
 
 12. **Post-story test files check (OA-04 / ST-09):** If this story created any new test files (in `tests/` or `tests/e2e/`), populate `test_scenarios` in `execution_state.json` for the parent EPIC with those file paths **now**, before advancing to the next story. Do not defer this step to STEP 3.2.A. Only include spec files containing scenarios that exercise this EPIC's acceptance criteria — do not add cross-EPIC spec files.
+    - **Roll-up backstop (LL-v8.4-P4-01):** Before sealing the EPIC (STEP 3.2.A), cross-check the EPIC-level `test_scenarios` array against the union of all its stories' own `spec_references` entries that are test files (`tests/` or `tests/e2e/` paths). If any such file is present in a story's `spec_references` but absent from the EPIC-level `test_scenarios` array, add it — do not leave `test_scenarios: []` at the EPIC level when a story's own `spec_references` already lists real, run test files. This catches the case where step 12 above was skipped for an individual story but the file was still correctly recorded at story level (found `2026-08-07__release-v8.4`, EPIC-01 — real Playwright/pytest coverage existed and was cited in `qa_evidence_EPIC-01.md`, but the EPIC-level rollup was never populated).
 
 13. **Cross-spec selector check (LL-v3.2-P3-02, SC-06):** Skip this check for governance-only and backend-only stories — no DOM changes are possible. For stories that **do** modify, replace, remove, or rename a DOM element (e.g. changes a component, removes a checkbox, renames a form field): scan all existing Playwright spec files in `tests/e2e/` for selectors targeting that element (by ID, data-testid, role, or class name). If stale selectors are found, update them in the same commit before pushing. Frontend EPICs retain the full scan requirement with no exceptions.
 
@@ -610,6 +611,7 @@ epics.<EPIC-xx>.stories.<ST-xx>:
 - The moment the human provides the input in-session: immediately re-run the **Unblock detection** logic below rather than treating step 6's "continue to the next ST item" as a multi-session parking instruction — there is no need to move on and re-check later if the unblock condition is already satisfied in this same turn.
 - Record the delegation log entry's terminal `Unblocked` state with an explicit note: `"Unblocked in-session — <what was supplied>, <who supplied it>, same session as delegation"` — this distinguishes it from a genuine cross-session delegation for anyone reading the log later.
 - All other requirements (spec_references, deviation check, sign-off gate) still apply once the item is unblocked — in-session provisioning shortens the *wait*, not the *verification*.
+- **Commit-SHA write reminder (LL-v8.4-P3-01):** Once the item is unblocked and its commit is pushed, step 4a's commit-SHA record (`LL-v4.8-EX-01`) still applies — write `commit_sha` to `execution_state.json` immediately after push, same as the standard flow. This sub-path's own step list ends at "re-run Unblock detection"; it does not itself repeat the SHA-write rule, which made it easy to complete the in-session unblock and mark the item `done` without the SHA ever being recorded (found `2026-08-07__release-v8.4`, 3 items: ST-20/ST-21/ST-23 — all corrected same-session, see `lessons_learnt_cycle.md` Phase 3).
 
 **Unblock detection (on resume):**
 - Check whether a commit matching `[EPIC-xx][ST-xx]` has been pushed to the branch since delegation.

@@ -3,9 +3,69 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-07 (post-ship closure 2026-08-05__release-v8.3)
+**Last Updated:** 2026-08-08 (post-ship closure 2026-08-07__release-v8.4); prior — 2026-08-07 (post-ship closure 2026-08-05__release-v8.3)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v8.4 — User-Facing Reporting & Full-Capacity Debt Clearance — 2026-08-08
+Cycle: 2026-08-07__release-v8.4
+Verified: Verified_with_deviations
+Verification report: claude/cycles/2026-08-07__release-v8.4/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | User-facing reporting enhancements — Avg P&L/Trade column on Monthly P&L Report; trade-tag/trigger-source (`trade_origin`) column on tax-year P&L CSV export | `docs/specs/frontend/pages/reports.md`; `docs/specs/api_contracts/reports_endpoints.md` |
+| EPIC-02 | API contract & spec debt closure — openapi.yaml structural defect (~23 endpoints mis-nested under `components:`), 4 stale contract examples, security-scheme documentation completeness, data model backfill for 4 tables, formal schema-versioning doc | `docs/reference/openapi.yaml`; `docs/specs/api_contracts/settings_endpoints.md`, `position_endpoints.md`, `health_endpoints.md`, `watchlist_endpoints.md`, `conventions.md`; `docs/specs/data_model.md`; `docs/specs/schema_versioning_trade_plan_position.md` |
+| EPIC-03 | Backend engineering hardening — trade_plans ticker functional index, Alpaca paper-sync 429/backoff handling, AI provenance logging, trade plan mutation/audit-trail log, auto-generated data dictionary | `docs/specs/api_contracts/trade_plan_endpoints.md`; `docs/specs/data_model.md` |
+| EPIC-04 | Frontend code health, accessibility & security — Dialog/DialogTitle className-override audit, remaining dark-only-token form-validation colour gaps, WatchlistModal.js ESLint cleanup, CSP `unsafe-inline` removal for script-src/style-src | `docs/ops/dialog_classname_override_audit_2026-08-07.md`; `docs/ops/csp_unsafe_inline_audit_2026-08-08.md` |
+| EPIC-05 | Operational reliability & cost monitoring — SI-05 weekly digest staging verification, api_performance_baseline.md endpoint coverage drift closure (19 endpoints + SI-05 send route), CI runner cache warm-up, DB storage growth cost trend tracking, Arc 4 AI API cost model | `docs/ops/api_performance_baseline.md`; `docs/operations/arc4_ai_cost_model.md`; `docs/ops/cloud_infra_spend_by_epic.md`; `docs/ops/si05_digest_delivery_root_cause_2026-08-05.md` |
+| EPIC-06 | QA & test infrastructure hardening — fixed wrong patch target in portfolio history test, regression baseline backfill (24 undocumented Playwright specs, v6.0–v7.3), recurring CSV export content regression check, signal correctness fix impact measurement | `docs/qa/regression_test_suite_baseline.md`; `docs/ops/blg_be_40_impact_measurement_findings_2026-08-08.md` |
+| EPIC-07 | Governance process integrity — canonical scripted gate-detection procedure for Release Planning's ungated-candidate scan; cross-EPIC merge conflict runbook dry run | `claude/system/release_planning_prompt.md`; `docs/ops/cross_epic_merge_runbook_dry_run_2026-08-08.md` |
+
+### Deviations accepted
+| Ref | Priority | Description | Accepted by |
+|-----|----------|-------------|-------------|
+| `DEV-REPORTS-ST01-02` | P3 | Monthly Financial Table's zero-P&L colour rule (grey/neutral) differs from the Tax Year Trades Table's (red-for-zero) — pre-existing spec-wording inaccuracy surfaced during ST-01's own review, corrected in `reports.md` v0.15; cross-table convergence not decided | PO (recorded; no acceptance action required — P3, backlog item `BLG-FE-144` filed) |
+| — (Known Deviation, no DEV-ID) | Informational (scope reinterpretation, not a defect) | `trade_origin` (`Signal`/`Manual`, derived from `trade_plans.signal_id`) shipped in place of the originally-asked-for alert-triggered/manual distinction on the tax-year CSV export — no schema linkage exists between `price_alerts` and any trade/position row | PO — direct decision via `ESC-EXEC-20260807-01`, Option (a) |
+
+### Tech backlog items shipped
+- [ST-01] [U] Add Avg P&L/Trade column to Monthly P&L Report table
+- [ST-31] [U] Trade-tag/trigger-source column on tax-year P&L CSV export — shipped as `trade_origin` (Signal/Manual)
+- [ST-02] [D] Fix openapi.yaml structural defect (~23 endpoints nested inside `components:`)
+- [ST-03] [D] settings_endpoints.md GET /settings example missing created_at/updated_at
+- [ST-04] [D] position_endpoints.md GET /positions example missing 5 live fields
+- [ST-05] [D] health_endpoints.md GET /health example missing external_apis/ai_journal
+- [ST-06] [D] watchlist_endpoints.md GET /watchlist illustrative example is stale
+- [ST-07] [D] OpenAPI security-scheme & auth-header documentation completeness check
+- [ST-08] [D] Backfill missing data_model.md sections for 4 undocumented tables
+- [ST-09] [D] Formal schema-versioning doc for trade_plan/position tables
+- [ST-10] [D] Add functional index on trade_plans(UPPER(ticker))
+- [ST-11] [D] Add 429/backoff handling to Alpaca paper-sync close/positions endpoints
+- [ST-12] [D] Log AI model+version provenance on stored thesis/summary text
+- [ST-13] [D] Mutation/audit-trail log for trade plan edits post-entry
+- [ST-14] [D] Auto-generated data dictionary from live schema
+- [ST-15] [D] Audit Dialog/DialogTitle className-override sites for the cn()-has-no-tailwind-merge defect class
+- [ST-16] [D] Close remaining dark-only-token gaps in inline form-validation error text
+- [ST-17] [D] WatchlistModal.js fails ESLint (24 problems) — same patterns fixed in Watchlist.js
+- [ST-18] [D] CSP allows 'unsafe-inline' for script-src and style-src
+- [ST-19] [D] Staging verification required for SI-05 weekly digest fix
+- [ST-20] [D] Endpoint coverage drift: 19 endpoints missing from api_performance_baseline.md
+- [ST-21] [D] Add POST /digest/si05/send to api_performance_baseline.md
+- [ST-22] [D] CI runner cache warm-up for backend/.venv to cut pytest job time
+- [ST-23] [D] Database storage growth cost trend tracking (Postgres/Supabase)
+- [ST-24] [D] AI API cost model for Arc 4 journal intelligence features
+- [ST-25] [D] Fix wrong patch target in test_get_portfolio_history_returns_ok
+- [ST-26] [D] Backfill regression baseline with 24 undocumented Playwright spec files (v6.0-v7.3)
+- [ST-27] [D] Recurring CSV export content regression check
+- [ST-28] [D] Signal correctness fix impact measurement
+- [ST-29] [G] Canonical, scripted gate-detection procedure for Release Planning's ungated-candidate scan
+- [ST-30] [G] Dry-run the cross-EPIC merge conflict runbook
+
+Sign-off: Product Owner — 2026-08-08
+QA sign-off: Director of Quality — 2026-08-08
 
 ---
 
