@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-08T10:45:00Z",
+  "last_updated_utc": "2026-08-08T10:50:00Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -624,7 +624,7 @@
       "branch": "exec/2026-08-07__release-v8.4/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-07__release-v8.4/qa_evidence_EPIC-05.md",
       "test_scenarios": [],
       "stories": {
