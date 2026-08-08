@@ -12,9 +12,21 @@
 
 ST-30's AC calls for dry-running `CLAUDE.md` §8 (Cross-EPIC Merge Conflict Resolution) against one sprint with genuinely parallel EPIC branches, and filing any gaps found as follow-ups. This cycle (`2026-08-07__release-v8.4`) has 7 EPIC branches executing in parallel — a live instance to dry-run against.
 
-## 2. Method
+## 1a. Primary evidence — the originally-assigned pair already exercised the runbook for real
 
-`main` had already absorbed EPIC-01/02/03/04 (all merged earlier this cycle). EPIC-05 and EPIC-06 were both still open, in-progress branches, each having independently appended new entries to the two files every EPIC branch in this cycle writes to: `execution_state.json` and `execution_escalations.md`. Rather than wait for both to reach `done` and go through their own PR/merge-gate sequence (which this sprint's remaining live blockers on both EPICs prevent within this session), a direct test merge was run between the two sibling branches to observe conflict shape early:
+ST-30's own dependency note (`sprint_backlog.md`) assigns this dry-run to the EPIC-02/EPIC-03 parallel-branch merge specifically (both share `data_model.md`), with an explicit contingency: *"If the assigned pair does not in practice exercise the runbook meaningfully at merge time, this item may need to carry to a sprint where a clearer parallel opportunity exists — record as a deviation, not a silent scope drop."*
+
+**That pair did exercise it, for real, earlier in this same cycle** — this is the primary evidence for this story, not the §2 synthetic test below. `execution_state.json`'s `process_notes` record it directly:
+
+> *"EPIC-03/ST-10: `data_model.md` v2.21 version collision with EPIC-02's own v2.21 bump (ST-08/ST-09) — RESOLVED at post-EPIC-02-merge rebase (2026-08-07) per `CLAUDE.md` §8 step 2a: ST-10/ST-12/ST-13 migration blocks renumbered v2.21→v2.22, v2.22→v2.23, v2.23→v2.24; final `data_model.md` version 2.24."*
+
+This is a genuine, unforced conflict (both branches independently bumped the same document to the same version number for different changes) resolved by following §8 step 2a's identical-text-masks-differing-semantics renumbering procedure — the exact scenario §8 step 2a exists for. No deviation needed: the originally-assigned pair worked as planned. This closes the story's own contingency clause explicitly rather than leaving it silently unaddressed.
+
+The §2 dry-run below is **supplementary** evidence, run separately to probe a scenario the EPIC-02/EPIC-03 case didn't happen to cover (a sibling-vs-sibling merge with no `main` involved yet, exercising `blocked_items`/`open_escalations` conflict shapes rather than a version-number collision) — not a replacement for the primary evidence above.
+
+## 2. Method (supplementary dry run)
+
+`main` had already absorbed EPIC-01/02/03/04 (all merged earlier this cycle). EPIC-05 and EPIC-06 were both still open, in-progress branches, each having independently appended new entries to the two files every EPIC branch in this cycle writes to: `execution_state.json` and `execution_escalations.md`. Rather than wait for both to reach `done` and go through their own PR/merge-gate sequence (which this sprint's remaining live blockers on both EPICs prevent within this session), a direct test merge was run between the two sibling branches to observe a second, different conflict shape:
 
 ```
 git checkout exec/2026-08-07__release-v8.4/EPIC-06
@@ -51,4 +63,4 @@ Both filed as new backlog items with `**Source:** ST-30 (EPIC-07), 2026-08-08` p
 
 ## 5. Conclusion
 
-The runbook's core mechanism (append-only-file union, `execution_state.json` story-status precedence) held up correctly under a real dry run. The two gaps found are both about fields the runbook's current text doesn't fully specify for a sibling-vs-sibling scenario — narrower than "the runbook doesn't work," and consistent with the AC's framing that gaps found should be filed as follow-ups rather than blocking this story.
+Two independent instances of the runbook running against real (§1a) and simulated-but-realistic (§2) conflicts both confirm it holds up: §1a's real `data_model.md` version collision between the originally-assigned EPIC-02/EPIC-03 pair was resolved cleanly via step 2a's renumbering procedure, closing this story's own contingency clause without a deviation; §2's supplementary sibling-branch test confirmed the append-only-file union and `execution_state.json` story-status precedence mechanisms, while surfacing two narrower gaps in fields the runbook's current text doesn't fully specify for a sibling-vs-sibling scenario. Neither gap amounts to "the runbook doesn't work" — both are filed as follow-ups (§4), consistent with the AC's framing.
