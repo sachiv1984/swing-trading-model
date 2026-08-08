@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-08T07:00:00Z",
+  "last_updated_utc": "2026-08-08T07:50:00Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -765,7 +765,7 @@
       }
     },
     "EPIC-06": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-08-07__release-v8.4/EPIC-06",
       "pr_number": null,
       "pr_status": "none",
@@ -776,88 +776,100 @@
         "ST-25": {
           "title": "Fix wrong patch target in test_get_portfolio_history_returns_ok",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1288,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "49435742",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "spec_reference_not_applicable": true,
-          "spec_reference_not_applicable_reason": "bug fix, no prior canonical spec \u2014 verified via test file's own patch target convention",
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_api_contracts.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Verified locally: test passes with DATABASE_URL unset (no real DB/network reachable), confirming AC. Root cause: patched database.get_portfolio_snapshots/main.get_portfolio (definition/re-export sites) instead of services.portfolio_service (import site), per file own Patch target rule."
         },
         "ST-26": {
           "title": "Backfill regression baseline with 24 undocumented Playwright spec files (v6.0-v7.3)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1289,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "cd9facb3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/testing/regression_test_suite_baseline.md"
+            "docs/qa/regression_test_suite_baseline.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "Director of Quality",
+            "status": "cleared",
+            "method": "autonomous_class",
+            "date": "2026-08-08",
+            "notes": "BLG-GOV-19 autonomous class \u2014 documentation-only, code-review-verifiable, no frontend change. 86/86 files verified programmatically against tests/e2e/ (0 diff either direction); totals (86 files/732 scenarios) verified by summation. See in-document DoQ sign-off block (ST-26, EPIC-06, v8.4)."
+          },
           "notes": "Director of Quality sign-off recorded."
         },
         "ST-27": {
           "title": "Recurring CSV export content regression check",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1290,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "6e09debb",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/csv-export-content-regression-check.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
           "sign_off_record": null,
-          "notes": "First instance run is CI-executable."
+          "notes": "First-instance verification via local pytest run (18/18 passed, 2026-08-08) \u2014 GitHub only exposes workflow_dispatch post-merge to main, so a live dispatched run is not possible pre-merge. First live scheduled/dispatched run occurs after this workflow reaches main."
         },
         "ST-28": {
           "title": "Signal correctness fix impact measurement",
-          "classification": "autonomous",
-          "status": "not_started",
+          "classification": "delegated_backend",
+          "status": "blocked_decision",
           "assigned_to": "engine",
           "github_issue": 1291,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-06",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-08-08T07:45:00Z",
+          "unblock_criteria": "Human with production DB access runs docs/ops/blg_be_40_impact_measurement_query.sql, records findings, Metrics Definitions & Analytics Owner + Product Owner sign off (ESC-EXEC-20260808-05)",
           "completed_utc": null,
           "acceptance_verified": false,
-          "spec_references": [],
+          "spec_references": [
+            "docs/ops/blg_be_40_impact_measurement_query.sql"
+          ],
           "spec_reference_not_applicable": true,
           "spec_reference_not_applicable_reason": "informational historical data-analysis task, no prior canonical spec to cite",
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Reviewed by Metrics Definitions & Analytics Owner and Product Owner."
+          "notes": "Reclassified autonomous -> delegated_backend at STEP 3 (LL-v8.0-P3-01 \u2014 requires live production historical signals data). Query fully authored and committed; execution against production is the delegated step. ESC-EXEC-20260808-05."
         }
       }
     },
@@ -919,7 +931,9 @@
       }
     }
   },
-  "blocked_items": [],
+  "blocked_items": [
+    "ST-28"
+  ],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
@@ -936,13 +950,18 @@
     "ST-12",
     "ST-13",
     "ST-14",
-    "ST-31",
     "ST-15",
     "ST-16",
     "ST-17",
-    "ST-18"
+    "ST-18",
+    "ST-25",
+    "ST-26",
+    "ST-27",
+    "ST-31"
   ],
-  "open_escalations": [],
+  "open_escalations": [
+    "ESC-EXEC-20260808-05 \u2014 Open \u2014 ST-28 blocked_decision"
+  ],
   "process_notes": [
     "EPIC-03/ST-10: data_model.md v2.21 version collision with EPIC-02's own v2.21 bump (ST-08/ST-09) -- RESOLVED at post-EPIC-02-merge rebase (2026-08-07) per CLAUDE.md \u00a78 step 2a: ST-10/ST-12/ST-13 migration blocks renumbered v2.21->v2.22, v2.22->v2.23, v2.23->v2.24; final data_model.md version 2.24.",
     "EPIC-01/PR #1296: Product Owner merged directly (2026-08-07T21:35:08Z) before the verify_governance CI check passed (qa_evidence_EPIC-01.md Date field was still blank at merge time -- this was a deliberate, logged sequencing choice, not an oversight; see PR body and qa_evidence commit message). QA evidence sign-off block completed retroactively post-merge with the now-confirmed real-CI Playwright evidence (all 5 SC-MAPT scenarios passed). execution_state.json EPIC-01 top-level status field was also found never updated to done pre-merge (only per-story statuses were) -- corrected directly to merged here.",
