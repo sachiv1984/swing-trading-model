@@ -25,6 +25,8 @@ Last Updated: 2026-08-08
 
 **Final consolidated verification run** (`dialog-classname-override-fixes.spec.js` + `form-validation-error-color-fixes.spec.js` + `signals-add-to-watchlist.spec.js` + `watchlist.spec.js`, all together): **20/20 passed** (2.7 minutes).
 
+**Real-CI catch (commit a6d7d65f):** a real GitHub Actions run (Playwright E2E Acceptance Tests, shard 3/4, on the ST-18 commit push) caught a stale selector in the pre-existing `tests/e2e/risk-dashboard.spec.js` `SC-RD-24` — ST-16's `ProspectiveHeatPanel.js` className change broke that test's exact-CSS-class-match selector, missed by ST-16's own stale-selector sweep (the sweep scanned for the `toHaveClass()`-per-token pattern; this test combined tag+class in one selector instead). Fixed and re-verified locally (`SC-RD-24` alone, and the full 17-test `risk-dashboard.spec.js` suite — both passing) before this push. This is exactly the scenario execution_prompt.md's Environment-parity sub-clause (LL-v8.3-P3-02) warns about — a sandboxed pre-push pass is not a fully reliable predictor of real-CI outcomes — and this EPIC's evidence now includes the real-CI confirmation that clause asks for, not merely a sandboxed one.
+
 ## Verification Readiness
 
 | Field | Status |
