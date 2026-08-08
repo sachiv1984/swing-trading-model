@@ -15,6 +15,11 @@ name: CI Pytest Suite
 # Deliberate-failure gate: a formula break in position_manager.py must cause
 # this workflow to fail (verified in phase A — test_stop_reconciliation.py
 # catches coefficient divergence).
+#
+# ST-22 (BLG-OPS-122): backend/.venv is cached across runs, keyed on
+# requirements.txt's hash. A cache hit skips the pip install entirely
+# (dependencies restored directly into the venv); a cache miss falls back
+# to a full install and populates the cache for the next run.
 
 on:
   pull_request:
@@ -44,9 +49,22 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install backend dependencies
+      - name: Cache backend/.venv (ST-22, BLG-OPS-122)
+        id: venv-cache
+        uses: actions/cache@v4
+        with:
+          path: backend/.venv
+          key: ${{ runner.os }}-py3.11-backend-venv-${{ hashFiles('backend/requirements.txt') }}
+
+      - name: Create venv and install backend dependencies (cache miss)
+        if: steps.venv-cache.outputs.cache-hit != 'true'
         working-directory: backend
-        run: pip install -r requirements.txt
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -r requirements.txt
+
+      - name: Add backend/.venv to PATH
+        run: echo "$GITHUB_WORKSPACE/backend/.venv/bin" >> "$GITHUB_PATH"
 
       - name: Run Phase A clean tests
         run: |
@@ -104,9 +122,22 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install backend dependencies
+      - name: Cache backend/.venv (ST-22, BLG-OPS-122)
+        id: venv-cache
+        uses: actions/cache@v4
+        with:
+          path: backend/.venv
+          key: ${{ runner.os }}-py3.11-backend-venv-${{ hashFiles('backend/requirements.txt') }}
+
+      - name: Create venv and install backend dependencies (cache miss)
+        if: steps.venv-cache.outputs.cache-hit != 'true'
         working-directory: backend
-        run: pip install -r requirements.txt
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -r requirements.txt
+
+      - name: Add backend/.venv to PATH
+        run: echo "$GITHUB_WORKSPACE/backend/.venv/bin" >> "$GITHUB_PATH"
 
       - name: Run Phase B tests (full suite against real Postgres)
         run: |
