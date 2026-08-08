@@ -201,8 +201,13 @@ class TestPortfolioEndpoints(unittest.TestCase):
         body = _ok(CLIENT.get("/portfolio"))
         assert "data" in body
 
-    @patch("main.get_portfolio", return_value=MOCK_PORTFOLIO)
-    @patch("database.get_portfolio_snapshots", return_value=[])
+    # ST-25 (BLG-QA-135): the endpoint calls services.portfolio_service.get_performance_history(),
+    # which internally calls get_portfolio() and get_portfolio_snapshots() bound in that module's
+    # own namespace (from database import ...) — patching main.get_portfolio / database.get_portfolio_snapshots
+    # (the definition/re-export sites) does not intercept those calls per this file's own "Patch
+    # target rule" above. Fixed to patch at the actual import site.
+    @patch("services.portfolio_service.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("services.portfolio_service.get_portfolio_snapshots", return_value=[])
     def test_get_portfolio_history_returns_ok(self, *_):
         r = CLIENT.get("/portfolio/history?days=30")
         assert r.status_code == 200
