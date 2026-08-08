@@ -62,22 +62,40 @@ jobs:
           start_iso = start.strftime("%Y-%m-%dT%H:%M:%SZ")
           end_iso = end.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-          print(f"\n--- Step 2: logs query ({start_iso} to {end_iso}) ---")
-          logs_url = (
+          print(f"\n--- Step 2: logs query, NO text filter, narrow window (last 30 min) ---")
+          narrow_start = (end - timedelta(minutes=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
+          logs_url_a = (
               "https://api.render.com/v1/logs"
               f"?ownerId={owner_id}"
               f"&resource={service_id}"
-              f"&startTime={start_iso}"
+              f"&startTime={narrow_start}"
               f"&endTime={end_iso}"
               "&direction=backward"
-              "&limit=100"
-              "&text=si05"
+              "&limit=20"
           )
           try:
-              logs = get(logs_url)
-              print("RAW_LOGS_RESPONSE_START")
-              print(json.dumps(logs, indent=2)[:8000])
-              print("RAW_LOGS_RESPONSE_END")
+              logs = get(logs_url_a)
+              print("RAW_LOGS_RESPONSE_A_START")
+              print(json.dumps(logs, indent=2)[:6000])
+              print("RAW_LOGS_RESPONSE_A_END")
           except Exception as e:
-              print(f"Logs query failed: {e}")
+              print(f"Logs query A failed: {e}")
+
+          print(f"\n--- Step 3: logs query around ST-19's known trigger (2026-08-08T08:11:00Z-08:12:00Z) ---")
+          logs_url_b = (
+              "https://api.render.com/v1/logs"
+              f"?ownerId={owner_id}"
+              f"&resource={service_id}"
+              "&startTime=2026-08-08T08:10:00Z"
+              "&endTime=2026-08-08T08:13:00Z"
+              "&direction=forward"
+              "&limit=50"
+          )
+          try:
+              logs = get(logs_url_b)
+              print("RAW_LOGS_RESPONSE_B_START")
+              print(json.dumps(logs, indent=2)[:8000])
+              print("RAW_LOGS_RESPONSE_B_END")
+          except Exception as e:
+              print(f"Logs query B failed: {e}")
           PYEOF
