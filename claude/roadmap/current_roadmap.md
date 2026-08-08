@@ -11,7 +11,17 @@
 ## 1. Current Version
 
 **v8.4** — User-Facing Reporting & Full-Capacity Debt Clearance — ✅ Complete — Shipped 2026-08-08 — cycle: 2026-08-07__release-v8.4
-**Next planned release:** [TBD]
+**Next planned release:** v8.5 — Frontend Correctness, Design Consistency & Security Hardening — cycle: 2026-08-08__release-v8.5
+
+<!-- roadmap-annotation-marker: RA:v8.5:2026-08-08__release-v8.5 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-08-08__release-v8.5
+- Plan published: 2026-08-08
+- Cycle folder: claude/cycles/2026-08-08__release-v8.5/
+- Backlog slice: claude/cycles/2026-08-08__release-v8.5/stage4_backlog_slice.md
+- Status at annotation: Committed
+- No formal `## v8.5` roadmap section created (Release Planning may not alter roadmap scope) — scoped via STEP -1.2 Option (b) equivalence from `2026-07-28__scheduled` (same Option (b) decision already relied on by every release since `v8.0`). Backlog-driven, 25 ungated/ready items across 6 grouped EPICs, sized to ~27.15 days midpoint (top of band) against the confirmed ~24-28 day capacity band, per explicit user instruction ("use fully capacity"). Per explicit user instruction to focus on user features first: the ready backlog pool contains 0 genuinely new user-facing feature-build items this cycle (all `BLG-FEAT-*` roadmap-flagship features remain gate-blocked, `73`/`74` formally parked at `v8.3`) — scope instead led with the full ready `BLG-FE-*`/`BLG-FEAT-*` pool (17 of 25 items, 73% of effort: frontend correctness fixes, design-consistency audits, UX review/documentation) as the closest available honouring of the instruction, ahead of 2 P1 production-correctness bugs and a small P2 security/QA tail.
 
 <!-- roadmap-annotation-marker: RA:v8.4:2026-08-07__release-v8.4 -->
 

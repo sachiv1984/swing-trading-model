@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-08 (ad-hoc Actionable Backlog Assessment re-check — 8 items' `Gate criteria` field corrected from stale to `Gate cleared 2026-08-08` where the stated condition had already been met per changelog/production evidence: BLG-FEAT-29, BLG-BE-13, BLG-OPS-17 (screener ≥60 days, shipped v3.0 2026-04-27); BLG-OPS-20 (PT-02 ≥30 days, shipped v3.2 2026-05-08); BLG-BE-44, BLG-SEC-10 (BLG-SEC-02 ≥30-day no-incident window, shipped v6.4 2026-07-02); BLG-GOV-145 (30-day AI endpoint usage window, v6.2 shipped 2026-06-25); BLG-QA-26 (all named Arc 5 sub-conditions already ✅ as of 2026-06-16 update) — no items added/removed; prior — 2026-08-08 (groom backlog, post-ship closure 2026-08-07__release-v8.4 — 31 shipped items archived to backlog_archive.md (removed from active body); 2 ephemeral Release Slice sections removed (v8.3 — missed at the 2026-08-07 run; v8.4)); prior — 2026-08-08 (post-ship closure 2026-08-07__release-v8.4 — 31 shipped items marked ✅ COMPLETE; 1 new item added, BLG-OPS-135 (endpoint coverage drift advisory, STEP 6 — GET /trade-plans/tags missing from api_performance_baseline.md)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-08 (release planning 2026-08-08__release-v8.5 — 25 items' `Provisional-Target` field updated `TBD`/`Unscheduled` → `v8.5`; `## v8.5 Release Slice` ephemeral section appended); prior — 2026-08-08 (ad-hoc Actionable Backlog Assessment re-check — 8 items' `Gate criteria` field corrected from stale to `Gate cleared 2026-08-08` where the stated condition had already been met per changelog/production evidence: BLG-FEAT-29, BLG-BE-13, BLG-OPS-17, BLG-OPS-20, BLG-BE-44, BLG-SEC-10, BLG-GOV-145, BLG-QA-26 — no items added/removed); prior — 2026-08-08 (groom backlog, post-ship closure 2026-08-07__release-v8.4 — 31 shipped items archived to backlog_archive.md; 2 ephemeral Release Slice sections removed (v8.3, v8.4)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -85,7 +85,7 @@ When a design-gate escalation changes an item's scope/AC/effort after the cycle'
 ---
 
 ### BLG-GOV-288 — Release Planning does not reset root `.claude_current_state.json` `sprint_sealed` to false on new-cycle publish
-**Priority:** P2 (Medium) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** Design gate 2026-08-07__release-v8.4 (STEP -1 preflight observation) | **Effort:** XS | **Provisional-Target:** TBD
+**Priority:** P2 (Medium) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** Design gate 2026-08-07__release-v8.4 (STEP -1 preflight observation) | **Effort:** XS | **Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 
 **Problem**
 `sprint_sealed` in root `.claude_current_state.json` is only ever written by `sprint_planning_prompt.md` (set `true` at seal, or explicitly `false` pre-seal). No engine — including Release Planning's STEP 0 new-cycle publish — resets it to `false` when a new cycle begins. This means the root pointer carries a stale `true` from the prior cycle's sealed sprint into the next cycle, even though the new cycle's own `claude/cycles/<cycle_id>/state.json` correctly has no `sprint_sealed` key (defaults false) until its own Sprint Planning runs.
@@ -103,7 +103,7 @@ Observed concretely at the `2026-08-07__release-v8.4` design gate: root `sprint_
 ---
 
 ### BLG-GOV-289 — CLAUDE.md §8 merge conflict rule needs a sibling-vs-sibling union clause for execution_state.json array fields
-**Priority:** P2 (Medium) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** ST-30 (EPIC-07), dry-run of the cross-EPIC merge conflict runbook — 2026-08-08 | **Effort:** XS | **Provisional-Target:** TBD
+**Priority:** P2 (Medium) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** ST-30 (EPIC-07), dry-run of the cross-EPIC merge conflict runbook — 2026-08-08 | **Effort:** XS | **Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 
 **Problem**
 `CLAUDE.md` §8 step 3's `execution_state.json` resolution row reads: "take the branch's (not main's) blocked/delegated lists as those reflect the more current state." This phrasing assumes a two-party merge (one EPIC branch vs. `main`, where `main` is the stale side). A live dry-run test merge between `exec/2026-08-07__release-v8.4/EPIC-05` and `EPIC-06` (aborted, not committed — see `docs/ops/cross_epic_merge_runbook_dry_run_2026-08-08.md`) showed the rule does not resolve the sibling-vs-sibling case: both branches had independently diverged from a common ancestor and both added genuinely new, non-overlapping `blocked_items` entries. Neither "take HEAD's list" nor "take the incoming branch's list" is correct here — the right resolution is the union of both, the same treatment §8 already specifies for `completed_items`.
@@ -190,7 +190,7 @@ There is no retrospective view of whether ATR-based position sizing (risked R pe
 **Owner:** Metrics & Analytics Owner
 **Source:** IDEA-metrics-analytics-20260421-04 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
 **Effort:** S (~1 day)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 
 **Gate criteria:** ~~Screener live ≥ 60 days.~~ **Gate cleared 2026-08-08** — Screener shipped v3.0 (2026-04-27, 103 days ago); threshold long since passed.
 
@@ -603,7 +603,7 @@ Only Phase 1 shipped (v5.0/v5.1) — a lightweight Telegram-only digest. The ful
 **Owner:** Head of UX & Design
 **Source:** v3.2 delivery verification — user feedback 2026-05-06
 **Effort:** M (~1–2 days design + spec)
-**Provisional-Target:** Arc 3 (design exploration — not urgent; no current blocking workflow)
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 
 **Problem**
 The current nav bar occupies a fixed portion of the visible screen area. As the application grows in Arc 2 and beyond, the navigation structure may benefit from a redesign to reclaim vertical space. Options to evaluate: Sticky/Fixed Header (current pattern, optimised), mega menu (grouped sections), or breadcrumb navigation (context-sensitive, minimal footprint).
@@ -827,7 +827,7 @@ SI-04 (strategy version comparison) and SI-05 (weekly digest display) will intro
 **Owner:** Head of UX & Design
 **Source:** IDEA-head-of-ux-20260607-02 — Promoted-Backlog rebalance 2026-06-07__scheduled (DL-039)
 **Effort:** S (~1 day)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 **Displacement:** BLG-FE-55 (mobile responsiveness baseline, P3, gate-conditional) deprioritised.
 
 **Problem**
@@ -1023,7 +1023,7 @@ No structured protocol exists to study how the AI chat advisor is actually used.
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** ST-12 (EPIC-03, 2026-08-07__release-v8.4), self-caught scope gap
 **Effort:** XS (<1h)
-**Provisional-Target:** v8.5
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 
 **Problem**
 ST-12 (`BLG-BE-70`) added backend storage capability — `trade_plans.thesis_model_version`/`thesis_prompt_version` columns, accepted (frontend-passed, nullable) by `POST`/`PUT /trade-plans` — for AI-generation provenance/audit purposes. The frontend does not yet pass these values through when saving a trade plan whose narrative fields were populated from a `POST /trade-plans/generate-plan` or `POST /trade-plans/{id}/generate-thesis` response (both already return `model_version`/`prompt_version` in their response body). Without this wiring, the new fields remain null even for AI-generated plans, and `BLG-BE-70`'s acceptance criteria ("populated on all newly-created AI-generated records") is not yet fully met end-to-end — the backend capability alone is necessary but not sufficient.
@@ -1044,7 +1044,7 @@ ST-12 (`BLG-BE-70`) added backend storage capability — `trade_plans.thesis_mod
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** ST-01 (EPIC-01, 2026-08-07__release-v8.4), self-caught scope gap — `docs/specs/frontend/pages/reports.md` `DEV-REPORTS-ST01-02`
 **Effort:** XS (~1-2h, decision + one-side implementation once decided)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 
 **Problem**
 `src/pages/Reports.js` renders realised P&L colour differently for an exactly-zero value depending on which table you're looking at: the Tax Year tab's Trades Table (`TaxYearReport`) renders exact-zero **red** (`pnl > 0 ? emerald : rose`, no neutral branch); the Monthly P&L Report's table (`MonthlyPnlTable`) renders exact-zero **grey/neutral** (dedicated third branch). Both were documented with identical spec wording ("red if negative or zero") until ST-01 found the Monthly table never actually matched it — the spec was corrected to describe reality (v0.15), but the two live components still disagree with each other on the same page.
@@ -1067,7 +1067,7 @@ ST-12 (`BLG-BE-70`) added backend storage capability — `trade_plans.thesis_mod
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** ST-15 (EPIC-04, 2026-08-07__release-v8.4), self-caught scope gap during `docs/ops/dialog_classname_override_audit_2026-08-07.md`
 **Effort:** S (~0.5d — grep + fix + spot-check affected components)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 
 **Problem**
 `tailwind.config.js`'s `theme.extend.colors` only registers `background` and `foreground` (plus a placeholder comment "`// (all your Base44 extended colors here)`"). `--muted` and `--muted-foreground` exist as raw CSS custom properties in `src/index.css` (light and dark values both defined) but are never wired into Tailwind's colour scale. Confirmed via a real `tailwindcss` build (v3.4.19, project's actual config) that `text-muted-foreground` compiles to **zero CSS rules** — it is a fully dead class. `src/components/ui/dialog.js`'s `DialogDescription` uses it as its entire base text colour, and it is very likely used elsewhere across the app (not audited here — out of ST-15's scope, which was specifically the `cn()`-has-no-tailwind-merge override-collision defect class on `Dialog*` consumers, not colour-token registration).
@@ -1089,7 +1089,7 @@ ST-12 (`BLG-BE-70`) added backend storage capability — `trade_plans.thesis_mod
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** ST-18 (EPIC-04, 2026-08-07__release-v8.4), self-caught scope gap during `docs/ops/csp_unsafe_inline_audit_2026-08-08.md`
 **Effort:** M (~1-2d — includes adding theme-change reactivity currently provided free by CSS cascade)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 
 **Problem**
 `src/components/ui/chart.js`'s `ChartStyle` renders a `<style dangerouslySetInnerHTML>` block with per-render, per-chart-config CSS custom properties (`--color-<key>`), scoped under `[data-chart=<id>]` and conditionally under `.dark` for theme-reactive colours with zero JS re-render needed on theme toggle. This is the sole reason `public/index.html`'s CSP retains `'unsafe-inline'` for `style-src` (ST-18 removed it entirely for `script-src` via a content hash, since that inline source is static; this one is dynamic per chart config, so neither a hash nor a nonce is viable for a static SPA build). `chart.js` currently has zero call sites anywhere in the app — it is unused shadcn/ui boilerplate — so this was deferred rather than risk-reworked speculatively.
@@ -1570,7 +1570,7 @@ No per-request trace ID propagation exists across routers/services. No incident 
 **Owner:** Head of Backend Engineering
 **Source:** ST-20 (EPIC-05, 2026-08-07__release-v8.4), live endpoint latency measurement — found a real 500, not a timing result — 2026-08-08
 **Effort:** XS (<1 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 
 **Problem**
 `GET /analytics/tag-performance?tags=momentum` returned HTTP 500 on every one of 7 live staging samples taken during ST-20's latency measurement (real, authenticated calls — not an auth-rejection artifact). Root cause, confirmed by code inspection: `get_tag_performance_endpoint()` (`backend/routers/analytics.py`) queries `tp.trade_tags` directly without ever calling `ensure_trade_plan_tags_column()` (`database.py`) — the idempotent `ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS trade_tags ...` migration added for this exact column (`BLG-FEAT-52`, v6.8). That migration is only ever triggered lazily, from `ensure_trade_plans_table()`, and that function is only called from `backend/routers/trade_plans.py`'s own endpoints (11 call sites) — never from `analytics.py`, and never at app startup (`main.py`'s `@app.on_event("startup")` handler has no call to it either). On any database where no `/trade-plans/*` endpoint has run since the `trade_tags` migration was introduced, the column genuinely does not exist yet, and this endpoint fails with a real Postgres error, masked into a generic `{"status": "error", "message": "Tag performance failed: ..."}` 500 by the handler's broad `except Exception`.
@@ -3590,7 +3590,7 @@ BLG-FEAT-54 shipped with Head of UX & Design input already incorporated at desig
 **Owner:** Metrics Definitions & Analytics Owner
 **Source:** IDEA-metrics-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
 **Effort:** S (~1 day)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 **Gate criteria:** ~~A production observation window of ≥30 days post-BLG-SEC-02 ship (shipped v6.4, 2026-07-02; clears ~2026-08-01). Revisit alongside BLG-QA-70.~~ **Gate cleared 2026-08-08** — 37 days in production since v6.4 (2026-07-02) with no incident on record.
 
 **Problem**
@@ -3916,7 +3916,7 @@ Anthropic API cost is tracked in aggregate — no breakdown by feature (thesis g
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** IDEA-frontend-specs-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
 **Effort:** S (~1 day)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 **Gate criteria:** None
 
 **Problem**
@@ -3936,7 +3936,7 @@ Anthropic API cost is tracked in aggregate — no breakdown by feature (thesis g
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** IDEA-frontend-specs-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
 **Effort:** M (~2 days)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 **Gate criteria:** None
 
 **Problem**
@@ -4036,7 +4036,7 @@ A canonical spec document can become orphaned (no backlog item or code reference
 **Owner:** Head of UX & Design
 **Source:** IDEA-head-of-ux-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
 **Effort:** S (~0.5 day)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 **Gate criteria:** None
 
 **Problem**
@@ -4056,7 +4056,7 @@ The dark/light theme toggle is assumed to persist via localStorage, but this has
 **Owner:** Head of UX & Design
 **Source:** IDEA-head-of-ux-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
 **Effort:** M (~2 days)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 **Gate criteria:** None
 
 **Problem**
@@ -4477,7 +4477,7 @@ Measure current concurrent connection usage and compare against the configured p
 **Owner:** Base44 Frontend Prompt Owner
 **Source:** Idea intake IW-20260710-01 (IDEA-base44-frontend-20260710-01), roadmap rebalance 2026-07-10__scheduled
 **Effort:** S (~0.5-2 days)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 **Gate criteria:** None
 
 **Problem**
@@ -4511,7 +4511,7 @@ Adopt a lightweight convention (e.g. a comment header or delegation log field) r
 **Owner:** Cybersecurity & Trust Lead
 **Source:** Idea intake IW-20260710-01 (IDEA-cybersecurity-20260710-01), roadmap rebalance 2026-07-10__scheduled; consolidates BLG-OPS-93 (automate monthly dependency vulnerability re-scan) and BLG-SEC-19 (formalise npm audit + pip-audit sweep cadence) — the same underlying capability was re-proposed across the 2026-07-08 and 2026-07-17 idea-intake cycles without cross-reference to this existing item — merged 2026-07-27, session duplicate-consolidation cleanup
 **Effort:** S (~0.5–2 days)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 **Gate criteria:** None
 
 **Problem**
@@ -4535,7 +4535,7 @@ Adopt a lightweight convention (e.g. a comment header or delegation log field) r
 **Owner:** Cybersecurity & Trust Lead
 **Source:** Idea intake IW-20260710-01 (IDEA-cybersecurity-20260710-02), roadmap rebalance 2026-07-10__scheduled
 **Effort:** S (~0.5-2 days)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 **Gate criteria:** None
 
 **Problem**
@@ -4603,7 +4603,7 @@ Document a canonical allowed-tag taxonomy for trade tagging, referenced by both 
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Source:** Idea intake IW-20260710-01 (IDEA-frontend-specs-20260710-01), roadmap rebalance 2026-07-10__scheduled
 **Effort:** S (~0.5-2 days)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 **Gate criteria:** None
 
 **Problem**
@@ -4671,7 +4671,7 @@ Review recent backend changes for layering-boundary drift (e.g. business logic l
 **Owner:** Head of UX & Design
 **Source:** Idea intake IW-20260710-01 (IDEA-head-of-ux-20260710-01), roadmap rebalance 2026-07-10__scheduled
 **Effort:** S (~0.5-2 days)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 **Gate criteria:** None
 
 **Problem**
@@ -4705,7 +4705,7 @@ Perform a visual QA pass on the Watchlist page to confirm the ESLint refactor di
 **Owner:** Metrics Definitions & Analytics Owner
 **Source:** Idea intake IW-20260710-01 (IDEA-metrics-20260710-01), roadmap rebalance 2026-07-10__scheduled
 **Effort:** S (~0.5-2 days)
-**Provisional-Target:** Unscheduled
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 **Gate criteria:** None
 
 **Problem**
@@ -4807,7 +4807,7 @@ Re-verify the AST scan's module coverage and glob/traversal logic against the cu
 **Owner:** QA & Testing Owner
 **Source:** Session investigation into signal-generation data integrity — 2026-07-13
 **Effort:** S (~0.5-2 days)
-**Provisional-Target:** v7.1
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 **Gate criteria:** None
 
 **Problem**
@@ -5036,7 +5036,7 @@ Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a py
 **Owner:** Infrastructure & Operations Owner
 **Source:** ST-20 (EPIC-05, 2026-08-07__release-v8.4), discovered while dispatching a live staging measurement workflow — 2026-08-08
 **Effort:** XS (<1 day — verification only, the fix itself was applied in-session)
-**Provisional-Target:** TBD
+**Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 
 **Problem**
 `api-key-cross-environment-check.yml` (`BLG-OPS-131`, v8.3) runs daily to confirm staging's and production's `X-API-Key` values remain distinct — the whole point of `BLG-SEC-27`'s v8.2 key rotation. Its own script has a guard: if `STAGING_API_KEY` (or `API_URL`/`API_KEY`) isn't configured as a repo secret, it logs a warning and exits 0 (skipped, not failed) — a deliberate design choice to avoid failing the workflow on missing config, but one that means a genuinely missing secret produces the same "green" result as a passing check. `gh secret list` confirmed `STAGING_API_KEY` was never actually set as a repo secret — meaning this daily check has been silently skipping its actual comparison every single day since the workflow shipped, with no failure signal anywhere. The secret was set in-session (2026-08-08, for ST-20's own unrelated live-measurement need) as a side effect, which incidentally un-breaks this workflow too — but the fact that it was missing for this long, undetected, is the actual gap.
@@ -5276,7 +5276,7 @@ Re-running the endpoint coverage drift check against the now-corrected `openapi.
 ---
 
 ### BLG-FE-133 — Ad hoc component inventory: candidates for shared design-system extraction
-**Priority:** P3 (Low) | **Type:** Frontend / Design System | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260728-01 | **Effort:** M | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** Frontend / Design System | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260728-01 | **Effort:** M | **Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 **Problem:** Several shared-component extractions have happened reactively (e.g. `BLG-FE-120` standing alert, `BLG-FE-121` modal confirmation) after duplication was noticed; no proactive inventory tracks which ad hoc components are current extraction candidates.
 **Scope:** Build an inventory of ad hoc/duplicated component patterns across the app, ranked by duplication count, as a standing extraction candidate list.
 **Acceptance Criteria:** Inventory created; Head of UX & Design sign-off.
@@ -5324,10 +5324,46 @@ Re-running the endpoint coverage drift check against the now-corrected `openapi.
 ---
 
 ### BLG-FE-139 — Playwright/staging visual verification of calendar.js when a real consumer is added
-**Priority:** P3 (Low) | **Type:** Frontend / Accessibility | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** ST-17 deferred staging gate (EPIC-05, v7.10, BLG-FE-122) — 2026-07-29 | **Effort:** XS | **Provisional-Target:** TBD
+**Priority:** P3 (Low) | **Type:** Frontend / Accessibility | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** ST-17 deferred staging gate (EPIC-05, v7.10, BLG-FE-122) — 2026-07-29 | **Effort:** XS | **Provisional-Target:** v8.5 (release planning 2026-08-08__release-v8.5)
 **Problem:** `src/components/ui/calendar.js` was rewritten this cycle against react-day-picker v9+'s API (ST-17/BLG-FE-122), and has zero live consumers in the app today (confirmed: no `import ... from ".../ui/calendar"` anywhere in `src/pages/**` or `src/components/**`) — the previously-planned consumer (`BLG-FE-118`, "Saved filter views and calendar view") shipped in v7.5 using a different, custom-built calendar grid, not this component. With no route rendering it, CLAUDE.md §2's frontend testing gate (Playwright coverage or a recorded human staging run) cannot be satisfied for this story's observable AC in the literal sense — there is no page to visit or screenshot. The rewrite was verified instead via a rigorous Node/react-dom/server SSR smoke test (single/range/today modifier states all confirmed rendering correct classNames, ARIA attributes, and chevron icons against the actual installed v10.0.1 library — see ST-17 commit message for detail), which is strong evidence of correctness but is not literally "Playwright coverage" or "a staging run."
 **Scope:** When a real consumer of `ui/calendar.js` is added to the app (a new or existing page), add Playwright coverage (or perform a recorded staging run) for that consumer's calendar rendering as part of that story's own testing gate — this item exists purely to ensure that verification isn't silently skipped when the day comes, since this story's own gate couldn't be satisfied for a component with no route to visit.
 **Acceptance Criteria:** When a consumer of `ui/calendar.js` ships, its story's PR includes Playwright coverage or a recorded staging sign-off for the calendar's rendering; this item closed at that time referencing that story/PR.
 
 ---
+
+### v8.5 Release Slice — 2026-08-08__release-v8.5
+
+<!-- release-plan-marker: RP:v8.5:2026-08-08__release-v8.5 -->
+
+25 items committed this cycle across 6 grouped EPICs. Full acceptance criteria: `claude/cycles/2026-08-08__release-v8.5/stage4_backlog_slice.md` (canonical). `Provisional-Target` updated `TBD`/`Unscheduled` → `v8.5` on all 25 below.
+
+| Item | Epic | ST |
+|------|------|-----|
+| BLG-BE-86 | EPIC-01 | ST-01 |
+| BLG-OPS-134 | EPIC-01 | ST-02 |
+| BLG-SEC-10 | EPIC-02 | ST-03 |
+| BLG-SEC-15 | EPIC-02 | ST-04 |
+| BLG-SEC-16 | EPIC-02 | ST-05 |
+| BLG-FE-145 | EPIC-03 | ST-06 |
+| BLG-FE-143 | EPIC-03 | ST-07 |
+| BLG-FE-144 | EPIC-03 | ST-08 |
+| BLG-FE-91 | EPIC-04 | ST-09 |
+| BLG-FE-92 | EPIC-04 | ST-10 |
+| BLG-FE-93 | EPIC-04 | ST-11 |
+| BLG-FE-94 | EPIC-04 | ST-12 |
+| BLG-FE-100 | EPIC-04 | ST-13 |
+| BLG-FE-133 | EPIC-04 | ST-14 |
+| BLG-FE-27 | EPIC-05 | ST-15 |
+| BLG-FE-65 | EPIC-05 | ST-16 |
+| BLG-FE-99 | EPIC-05 | ST-17 |
+| BLG-FE-101 | EPIC-05 | ST-18 |
+| BLG-FE-146 | EPIC-05 | ST-19 |
+| BLG-FE-139 | EPIC-05 | ST-20 |
+| BLG-FEAT-29 | EPIC-06 | ST-21 |
+| BLG-FEAT-72 | EPIC-06 | ST-22 |
+| BLG-GOV-288 | EPIC-06 | ST-23 |
+| BLG-GOV-289 | EPIC-06 | ST-24 |
+| BLG-QA-105 | EPIC-06 | ST-25 |
+
+*This is an ephemeral section — removed by `groom backlog` after the cycle closes, per the standing notice at the top of this file. Canonical home after removal: `claude/cycles/2026-08-08__release-v8.5/stage4_backlog_slice.md`.*
 

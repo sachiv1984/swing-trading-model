@@ -1,0 +1,104 @@
+{
+  "cycle_id": "2026-08-08__release-v8.5",
+  "release": "v8.5",
+  "date": "2026-08-08",
+  "mode": "standard",
+  "issues_mode": "none",
+  "auto_escalate": true,
+  "prompt_schema_version": "v2",
+  "status": "Published",
+  "publish_eligible": true,
+  "last_transition_utc": "2026-08-08T18:05:00Z",
+
+  "sealed": {
+    "sealed_utc": "2026-08-08T18:05:00Z",
+    "sealed_assumptions": {
+      "timebox": "",
+      "capacity": "full capacity (~24-28 day band, top of band)"
+    },
+    "state_snapshot_hash": ""
+  },
+
+  "mutation_seq": 0,
+  "assumptions": {
+    "timebox": "",
+    "capacity": "full capacity per explicit user instruction — sized to top of the confirmed ~24-28 day band"
+  },
+
+  "locks": {
+    "backlog_lock": {
+      "required": true,
+      "lock_file": "claude/backlog/.lock",
+      "owned": false,
+      "owner_cycle_id": "2026-08-08__release-v8.5",
+      "owner_release": "v8.5",
+      "acquired_utc": "2026-08-08T18:00:00Z",
+      "txn_file": "claude/cycles/2026-08-08__release-v8.5/backlog_txn.json",
+      "txn_id": "BLTX-20260808-01",
+      "txn_state": "committed",
+      "marker": "RP:v8.5:2026-08-08__release-v8.5",
+      "status": "released"
+    },
+    "roadmap_lock": {
+      "required": false,
+      "lock_file": "claude/roadmap/.lock",
+      "owned": false,
+      "owner_cycle_id": "2026-08-08__release-v8.5",
+      "owner_release": "v8.5",
+      "acquired_utc": "2026-08-08T18:00:00Z",
+      "txn_file": "claude/cycles/2026-08-08__release-v8.5/roadmap_txn.json",
+      "txn_id": "RATX-20260808-01",
+      "txn_state": "committed",
+      "marker": "RA:v8.5:2026-08-08__release-v8.5",
+      "status": "released"
+    }
+  },
+
+  "mutations": [],
+  "invalidated_steps": [],
+
+  "open_escalations": [],
+  "deferred_escalations": [],
+  "deferred_execution_blockers": [],
+  "accepted_risk_escalations": [],
+
+  "attributes": {
+    "plan_structured": true,
+    "plan_executable": true,
+    "backlog_committed": true,
+    "capacity_feasible": "pass",
+    "cross_stage_integrity": "pass",
+    "decisions_validated": "not_applicable",
+    "design_gate_required": true,
+    "design_gate_status": "not_started"
+  },
+
+  "design_gate_status": "not_started",
+  "design_gate_completed_utc": "",
+  "design_gate_record": "",
+  "sprint_planning_pre_condition": "design_gate_status == Passed",
+  "amended_backlog_slice_path": "",
+
+  "artifacts": {
+    "run_manifest": "present",
+    "backlog_lock": "released",
+    "backlog_txn": "committed",
+    "roadmap_lock": "released",
+    "roadmap_txn": "committed",
+
+    "stage1_readiness": "pass",
+    "stage2_scope_extraction": "pass",
+    "stage2_scope_document": "present",
+    "stage3_execution_plan": "pass",
+    "stage3_decisions_record": "present",
+    "stage3_5_model_integrity": "pass",
+    "stage4_backlog_slice": "pass",
+    "stage4_5_capacity_check": "pass",
+    "stage5_5_cross_stage_integrity": "pass",
+    "stage5_7_decision_record_integrity": "not_applicable",
+
+    "cycle_summary": "present",
+    "lessons_learnt": "present",
+    "escalations": "not_started"
+  }
+}
