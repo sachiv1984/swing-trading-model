@@ -402,8 +402,12 @@ test.describe('Group E — API Error States (partial)', () => {
     await page.fill('#stop_price', '14.00');
     await page.locator('button[type="submit"]').click();
 
-    // Inline error displayed (apiError paragraph — className="text-sm text-rose-400")
-    await expect(page.locator('p.text-sm.text-rose-400')).toBeVisible({ timeout: 10000 });
+    // Inline error displayed (apiError paragraph — className="text-sm text-rose-700 dark:text-rose-400"
+    // as of ST-16, EPIC-04, v8.4, BLG-FE-140 — light/dark colour-token pair, was bare text-rose-400)
+    const apiErrorText = page.getByText('Calculation failed');
+    await expect(apiErrorText).toBeVisible({ timeout: 10000 });
+    await expect(apiErrorText).toHaveClass(/text-rose-700/);
+    await expect(apiErrorText).toHaveClass(/dark:text-rose-400/);
     // No projected heat value shown
     await expect(page.locator('text=Projected Heat')).toHaveCount(0);
     // Page has not crashed — heading still visible
