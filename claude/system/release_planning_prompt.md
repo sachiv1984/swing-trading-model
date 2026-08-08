@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.47
-**Last Updated:** 2026-08-06
+**Version:** 2.48
+**Last Updated:** 2026-08-08
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -531,9 +531,28 @@ After writing the Readiness section, scan backlog candidates for this release fo
 
 Scan scope candidates for design-gate language ("design decision required", "pending design", "requires UX decision"). Flag items as "Design dependency detected — surface at Pre-sprint Required Decisions checklist." Non-blocking.
 
+### 1.3a Gate-Detection Procedure (Mandatory, Scripted)
+
+Before running the Perennial-Return Check (§1.4a) or any other step that reasons about "conditional or gate-blocked" candidate items, run the canonical scripted gate-detection procedure:
+
+```
+python3 scripts/scan_backlog_gate_conditions.py
+```
+
+This replaces ad hoc reading of each candidate's fields, which produced 3 self-caught scan misses across 3 consecutive Release Planning cycles (`v8.0`, `v8.1`, `v8.2` — see `BLG-GOV-286`) plus a 4th failure mode self-caught while building this fix (`v8.4`): a missing `---` separator between two adjacent backlog entries let one item's body text bleed into the next item's field scan.
+
+**What the script does (see the script's own docstring for full detail):**
+1. Splits `claude/backlog/backlog.md` into item blocks using the next `### BLG-` (or `### TEST-GAP-`) heading as the boundary — **never** the `---` separator, which is not 100% consistently present (structurally eliminates the missing-separator failure mode rather than merely detecting it).
+2. For each item, checks for a gate condition across every observed field-name variant, in order: `**Gate criteria:**`, `**Gate:**`, `**Gate date:**`.
+3. If none of those fields are present, checks whether `**Provisional-Target:**` contains gate-like free text (e.g. "gated", "no earlier than", "conditional", "pending") with no formal Gate field backing it — this is flagged as a **data-quality warning**, not treated as gated, since the canonical fix is adding a proper Gate field to that item (the `BLG-OPS-48` pattern that caused 2 of the 3 original misses).
+
+**Use the script's output** — the gated-item list and any data-quality warnings — as the input to §1.4a's "check each conditional or gate-blocked candidate item" step, rather than re-deriving the list by eye. Record the gated-item count and any data-quality warnings found in `run_manifest.md`.
+
+**Not a hard gate:** the script always exits 0 — it is a scan/report tool, not a CI gate. A data-quality warning does not block release planning; it is a flag for a future `groom backlog` pass to correct the source item's fields.
+
 ### 1.4a Perennial-Return Check (Advisory — triggers PO active disposition)
 
-Before finalising the scope candidate list, check each conditional or gate-blocked candidate item:
+Before finalising the scope candidate list, check each conditional or gate-blocked candidate item (per §1.3a's scripted scan output):
 
 1. Does this item appear in the prior cycle's `stage4_backlog_slice.md` with status `returned_to_backlog`, `deferred`, or equivalent? If yes, increment a consecutive-return counter.
 2. If returned in **2 or more consecutive prior cycles** (including the current cycle): surface to Product Owner as "⚠ Perennial-Return Item — returned N consecutive cycles."
