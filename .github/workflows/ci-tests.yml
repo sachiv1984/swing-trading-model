@@ -20,6 +20,14 @@ name: CI Pytest Suite
 # requirements.txt's hash. A cache hit skips the pip install entirely
 # (dependencies restored directly into the venv); a cache miss falls back
 # to a full install and populates the cache for the next run.
+#
+# Measured result (this workflow, exec/2026-08-07__release-v8.4/EPIC-05,
+# 2026-08-08, back-to-back pushes — run 31244912027 cache-miss vs run
+# 31245150058 cache-hit): Phase A job total duration dropped 39s -> 19s
+# (~51% reduction); Phase B (real-Postgres) job dropped 79s -> 62s (~22%
+# reduction, smaller because the Postgres service container startup and
+# the fuller test suite dominate that job's duration). Same pattern applied
+# to integration-tests.yml, service-coverage.yml, and golden-outputs.yml.
 
 on:
   pull_request:
