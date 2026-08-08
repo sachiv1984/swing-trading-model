@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-08T07:00:00Z",
+  "last_updated_utc": "2026-08-08T07:15:00Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -620,7 +620,7 @@
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-08-07__release-v8.4/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
@@ -631,14 +631,14 @@
         "ST-19": {
           "title": "Staging verification required for SI-05 weekly digest fix",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1282,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": "Live staging digest send confirmed via si05_digest_log and a live Telegram message.",
+          "blocked_since_utc": "2026-08-08T07:10:00Z",
+          "unblock_criteria": "Human confirms SI-05 digest cron run completed, si05_digest_log row exists, and Telegram message received (ESC-EXEC-20260808-01)",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [],
@@ -647,19 +647,19 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Requires live staging access; CI cannot reproduce. Do not begin until EPIC-05 opens in execution sequence."
+          "notes": "Escalated \u2014 ESC-EXEC-20260808-01 (live staging/Telegram verification, engine cannot perform)"
         },
         "ST-20": {
           "title": "Endpoint coverage drift: 19 endpoints missing from api_performance_baseline.md",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1283,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": "Measurement conducted with >=5 staging samples per endpoint against corrected openapi.yaml (post EPIC-02 merge).",
+          "blocked_since_utc": "2026-08-08T07:10:00Z",
+          "unblock_criteria": "Human or CI job with staging network access measures 19 endpoints (>=5 samples each) and records p50/p95/max (ESC-EXEC-20260808-02)",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -670,19 +670,19 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Depends on EPIC-02/ST-02 merging to main first."
+          "notes": "Escalated \u2014 ESC-EXEC-20260808-02 (live staging network access, engine cannot perform)"
         },
         "ST-21": {
           "title": "Add POST /digest/si05/send to api_performance_baseline.md",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "blocked_decision",
           "assigned_to": "Infrastructure & Operations Owner",
           "github_issue": 1284,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": "Render internal log-based measurements recorded with methodology note.",
+          "blocked_since_utc": "2026-08-08T07:10:00Z",
+          "unblock_criteria": "Human pulls Render internal log timings for POST /digest/si05/send (ESC-EXEC-20260808-03)",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -693,40 +693,51 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "Render internal log-based measurement \u2014 deploy-environment log access."
+          "notes": "Escalated \u2014 ESC-EXEC-20260808-03 (Render dashboard log access, engine cannot perform)"
         },
         "ST-22": {
           "title": "CI runner cache warm-up for backend/.venv to cut pytest job time",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1285,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "ca00545d10082b67cbc83a990df7426d3e618f7b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/ci-tests.yml",
+            ".github/workflows/integration-tests.yml",
+            ".github/workflows/service-coverage.yml",
+            ".github/workflows/golden-outputs.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "CI-verifiable via GitHub Actions run history."
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "Infrastructure & Operations Owner",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-08",
+            "notes": "Approved \u2014 cache correctly keyed/gated/PATH-applied across 4 workflow files (ci-tests.yml x2 jobs, integration-tests.yml, service-coverage.yml, golden-outputs.yml). Measured real-CI result: Phase A 39s->19s (~51%), Phase B 79s->62s (~22%), run 31244912027 (miss) vs 31245150058 (hit)."
+          },
+          "notes": "AC plural workflow coverage gap flagged by sign-off review \u2014 extended to service-coverage.yml/golden-outputs.yml in follow-up commit, same branch."
         },
         "ST-23": {
           "title": "Database storage growth cost trend tracking (Postgres/Supabase)",
-          "classification": "autonomous",
-          "status": "not_started",
+          "classification": "delegated_backend",
+          "status": "blocked_decision",
           "assigned_to": "engine",
           "github_issue": 1286,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-05",
           "commit_sha": null,
           "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
+          "blocked_since_utc": "2026-08-08T07:10:00Z",
+          "unblock_criteria": "Human with Supabase/Render dashboard access (or scheduled job with prod DATABASE_URL) records >=2 storage-size-over-time data points in cloud_infra_spend_by_epic.md (ESC-EXEC-20260808-04)",
           "completed_utc": null,
           "acceptance_verified": false,
           "spec_references": [
@@ -737,29 +748,35 @@
           "deviations_filed": false,
           "last_completed_substep": null,
           "sign_off_record": null,
-          "notes": "FinOps & Resource Architect sign-off required."
+          "notes": "Reclassified autonomous -> delegated_backend at STEP 3 (LL-v8.0-P3-01 infra/ops verification pattern \u2014 live Supabase/Render storage metrics required). ESC-EXEC-20260808-04."
         },
         "ST-24": {
           "title": "AI API cost model for Arc 4 journal intelligence features",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1287,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "ca00545d10082b67cbc83a990df7426d3e618f7b",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
             "docs/operations/arc4_ai_cost_model.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "FinOps & Resource Architect",
+            "status": "cleared",
+            "method": "agent_mediated",
+            "date": "2026-08-08",
+            "notes": "Approved \u2014 traceable cost figures, honest AI vs non-AI scope split, quantified cost controls. Follow-up citation-labeling defect (2,575 total vs avg tokens) corrected in same-branch commit; does not change conclusion (robust even under 6x reading)."
+          },
           "notes": "New artefact (Case B). Reviewed by FinOps & Resource Architect."
         }
       }
@@ -919,7 +936,12 @@
       }
     }
   },
-  "blocked_items": [],
+  "blocked_items": [
+    "ST-19",
+    "ST-20",
+    "ST-21",
+    "ST-23"
+  ],
   "delegated_items": [],
   "completed_items": [
     "ST-01",
@@ -936,11 +958,13 @@
     "ST-12",
     "ST-13",
     "ST-14",
-    "ST-31",
     "ST-15",
     "ST-16",
     "ST-17",
-    "ST-18"
+    "ST-18",
+    "ST-22",
+    "ST-24",
+    "ST-31"
   ],
   "open_escalations": [],
   "process_notes": [
