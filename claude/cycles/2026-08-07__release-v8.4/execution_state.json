@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-08T08:45:00Z",
+  "last_updated_utc": "2026-08-08T08:50:00Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -769,9 +769,13 @@
       "branch": "exec/2026-08-07__release-v8.4/EPIC-06",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-07__release-v8.4/qa_evidence_EPIC-06.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_api_contracts.py",
+        "tests/test_reports_integration.py",
+        "tests/test_monthly_pnl_cost_basis.py"
+      ],
       "stories": {
         "ST-25": {
           "title": "Fix wrong patch target in test_get_portfolio_history_returns_ok",
