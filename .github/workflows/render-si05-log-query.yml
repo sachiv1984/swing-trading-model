@@ -1,0 +1,138 @@
+# .github/workflows/render-si05-log-query.yml
+# On-demand (workflow_dispatch only) Render internal log query for
+# POST /digest/si05/send invocation timings — ST-21 (BLG-OPS-54, EPIC-05,
+# v8.4). Standard external HTTP timing (the §1.2 methodology used
+# elsewhere in api_performance_baseline.md) does not apply to this
+# endpoint: it sends a real Telegram message on every successful
+# invocation, so firing 5-7 live test calls just to measure latency would
+# spam the actual digest channel. Render's own internal request logs
+# (already recorded for every real invocation — scheduled cron + any
+# manual triggers) give durations without firing new sends.
+#
+# Uses the Render Platform API (RENDER_PLATFORM_API_KEY secret) — same
+# auth pattern already established in scripts/check_staging_deploy_drift.py
+# (BLG-OPS-128, v8.2).
+
+name: Render SI-05 Log Query (ST-21, one-off diagnostic)
+
+on:
+  workflow_dispatch:
+    inputs:
+      hours_back:
+        description: 'How many hours of log history to search'
+        required: false
+        default: '168'
+
+jobs:
+  query:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      RENDER_PLATFORM_API_KEY: ${{ secrets.RENDER_PLATFORM_API_KEY }}
+      SERVICE_ID: srv-d6rtdg94tr6s73ce2j6g
+      HOURS_BACK: ${{ inputs.hours_back }}
+
+    steps:
+      - name: Discover ownerId and query logs
+        run: |
+          python3 - <<'PYEOF'
+          import json
+          import os
+          import urllib.request
+          from datetime import datetime, timedelta, timezone
+
+          api_key = os.environ["RENDER_PLATFORM_API_KEY"]
+          service_id = os.environ["SERVICE_ID"]
+          hours_back = int(os.environ.get("HOURS_BACK") or "168")
+          headers = {"Authorization": f"Bearer {api_key}", "Accept": "application/json"}
+
+          def get(url):
+              req = urllib.request.Request(url, headers=headers)
+              with urllib.request.urlopen(req, timeout=30) as resp:
+                  return json.loads(resp.read())
+
+          print("--- Step 1: service details (to get ownerId) ---")
+          svc = get(f"https://api.render.com/v1/services/{service_id}")
+          owner_id = svc.get("ownerId") or svc.get("owner", {}).get("id")
+          print(f"ownerId: {owner_id}")
+
+          print("\n--- Step 1b: list all services (find production API service) ---")
+          all_services = get(f"https://api.render.com/v1/services?ownerId={owner_id}&limit=50")
+          for entry in all_services:
+              s = entry.get("service", entry)
+              print(f"  {s.get('id')}  {s.get('name')}  {s.get('type')}")
+          # Production API service is the one whose name matches trading-assistant-api
+          # but is NOT the staging one.
+          prod_candidates = [
+              entry.get("service", entry) for entry in all_services
+              if "trading-assistant-api" in (entry.get("service", entry).get("name") or "")
+              and "staging" not in (entry.get("service", entry).get("name") or "")
+          ]
+          prod_service_id = prod_candidates[0]["id"] if prod_candidates else None
+          print(f"\nProduction API service ID: {prod_service_id}")
+
+          end = datetime.now(timezone.utc)
+          start = end - timedelta(hours=hours_back)
+          start_iso = start.strftime("%Y-%m-%dT%H:%M:%SZ")
+          end_iso = end.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+          print(f"\n--- Step 2: logs query, NO text filter, narrow window (last 30 min) ---")
+          narrow_start = (end - timedelta(minutes=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
+          logs_url_a = (
+              "https://api.render.com/v1/logs"
+              f"?ownerId={owner_id}"
+              f"&resource={service_id}"
+              f"&startTime={narrow_start}"
+              f"&endTime={end_iso}"
+              "&direction=backward"
+              "&limit=20"
+          )
+          try:
+              logs = get(logs_url_a)
+              print("RAW_LOGS_RESPONSE_A_START")
+              print(json.dumps(logs, indent=2)[:6000])
+              print("RAW_LOGS_RESPONSE_A_END")
+          except Exception as e:
+              print(f"Logs query A failed: {e}")
+
+          if prod_service_id:
+              print(f"\n--- Step 3: PRODUCTION logs around ST-19's known trigger (2026-08-08T08:10:00Z-08:13:00Z) ---")
+              logs_url_b = (
+                  "https://api.render.com/v1/logs"
+                  f"?ownerId={owner_id}"
+                  f"&resource={prod_service_id}"
+                  "&startTime=2026-08-08T08:10:00Z"
+                  "&endTime=2026-08-08T08:13:00Z"
+                  "&direction=forward"
+                  "&limit=50"
+              )
+              try:
+                  logs = get(logs_url_b)
+                  print("RAW_LOGS_RESPONSE_B_START")
+                  print(json.dumps(logs, indent=2)[:10000])
+                  print("RAW_LOGS_RESPONSE_B_END")
+              except Exception as e:
+                  print(f"Logs query B failed: {e}")
+
+              print(f"\n--- Step 4: PRODUCTION logs, last 30 days, text=si05 ---")
+              logs_url_c = (
+                  "https://api.render.com/v1/logs"
+                  f"?ownerId={owner_id}"
+                  f"&resource={prod_service_id}"
+                  f"&startTime={(end - timedelta(days=30)).strftime('%Y-%m-%dT%H:%M:%SZ')}"
+                  f"&endTime={end_iso}"
+                  "&direction=backward"
+                  "&limit=50"
+                  "&text=si05"
+              )
+              try:
+                  logs = get(logs_url_c)
+                  print("RAW_LOGS_RESPONSE_C_START")
+                  print(json.dumps(logs, indent=2)[:10000])
+                  print("RAW_LOGS_RESPONSE_C_END")
+              except Exception as e:
+                  print(f"Logs query C failed: {e}")
+          else:
+              print("\nNo production service found, skipping Step 3/4")
+          PYEOF
