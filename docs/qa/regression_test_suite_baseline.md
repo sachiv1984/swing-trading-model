@@ -1,8 +1,8 @@
 **Owner:** Director of Quality
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Last Updated:** 2026-07-20
-**Source:** BLG-QA-50 — v5.5 ST-09; refreshed v5.9 ST-10; refreshed v7.6 ST-02 (BLG-QA-112)
+**Last Updated:** 2026-08-08
+**Source:** refreshed v8.4 ST-26 (BLG-QA-116, full backfill); refreshed v7.6 ST-02 (BLG-QA-112); refreshed v5.9 ST-10 — prior history retained, see prior entries in version control
 
 ---
 
@@ -95,15 +95,17 @@ Invoked via: `POST /test/endpoints`
 
 ## Part 2 — Playwright End-to-End Test Suite
 
-**Total spec files:** 46 (of 70 actual files in `tests/e2e/` as of this update — see staleness note below)
-**Total scenarios:** 441 (sum of the 46 files listed in this table)
+**Total spec files:** 86 (all files present in `tests/e2e/` at time of this backfill — ST-26, BLG-QA-116)
+**Total scenarios:** 732 (sum of all 86 files listed in this table)
 
-> **Staleness note (ST-02, EPIC-02, v7.6):** This table's baseline predates v6.0; only the 5 files below (command-palette, custom-price-alerts, bulk-actions-toolbar, saved-filters-calendar-view, print-export-pdf) were added by this item, per its acceptance criteria scope (`BLG-FE-115`–`BLG-FE-119` interaction surfaces only). `tests/e2e/` contains 70 spec files today — the remaining 24 (added across v6.0–v7.3) are not yet catalogued here. Filed as `BLG-QA-116` (follow-up, full backfill out of this item's scope).
+> **Backfill note (ST-26, EPIC-06, v8.4):** This table previously catalogued only 46 of the (then) 70 files in `tests/e2e/` (`BLG-QA-116`, filed at v7.6 ST-02). This update adds the 41 files added between v5.9 and v8.4 that were not yet catalogued (more than the 24 originally estimated at filing time, since the gap widened further between v7.6 and v8.4 before this backfill ran), removes 1 entry for a file since deleted (`si05-digest-delivery.spec.js`, removed `BLG-QA-64`/v6.8 — "architecturally incompatible"), and corrects 7 scenario counts on already-catalogued files found stale during this pass (`entry-checklist.spec.js`, `epic03-v34-frontend.spec.js`, `keyboard-shortcuts.spec.js`, `red-flag-journal.spec.js`, `system-status.spec.js`, `trade-plan.spec.js`, `visual-snapshots.spec.js`) — a scenario-count drift check across the full table was necessary to satisfy this item's "Total scenarios counts match the table exactly" AC, since a stale-but-uncorrected row would have broken that arithmetic. **Version attribution methodology:** each new row's "Introduced" version is the release cycle whose `execution_state.json` records the file-adding commit SHA, where a record exists; otherwise (older cycles predating consistent `commit_sha` capture) the nearest release date on or after the commit's calendar date, per `docs/product/changelog.md`. The latter method is approximate at same-day release-boundary collisions — treat pre-v6.0 "Introduced" values on newly-added rows as indicative, not audited to the same standard as rows with a direct `execution_state.json` match.
 
 Source directory: `tests/e2e/`
 
 | Spec File | Scenarios | Feature / Area | Introduced |
 |-----------|-----------|----------------|------------|
+| ai-briefing-progressive-disclosure.spec.js | 7 | AI daily briefing card expand/collapse progressive disclosure | v6.3 |
+| ai-usage-costs.spec.js | 9 | AI cost view (single-provider Claude total) | v7.6 |
 | alert-nav-badge.spec.js | 8 | Alert navigation badge | v2.3 |
 | alert-thresholds-empty-state.spec.js | 13 | Alert thresholds empty state | v2.3 |
 | arc5-compliance-section.spec.js | 5 | Arc 5 compliance UI section | v4.0 |
@@ -111,32 +113,60 @@ Source directory: `tests/e2e/`
 | chart-interactivity.spec.js | 21 | Chart interaction behaviours | v3.0 |
 | command-palette.spec.js | 12 | Global command palette / cross-page search (`BLG-FE-115`) | v7.4 |
 | compliance-panel.spec.js | 7 | Compliance panel | v2.0 |
+| compliance-recheck.spec.js | 11 | On-demand SI-01 compliance recheck for open positions | v6.9 |
 | custom-price-alerts.spec.js | 11 | User-defined custom price alerts (`BLG-FE-116`) | v7.5 |
+| dialog-classname-override-fixes.spec.js | 6 | Dialog className-override collision fixes | v8.4 |
 | earnings-calendar.spec.js | 9 | Earnings calendar UI | v3.1 |
-| entry-checklist.spec.js | 7 | Pre-entry checklist | v3.1 |
+| entry-checklist.spec.js | 11 | Pre-entry checklist | v3.1 |
 | epic01-v34-lifecycle.spec.js | 10 | v3.4 EPIC-01 lifecycle scenarios | v3.4 |
+| epic01-v62-stops-alerts.spec.js | 16 | SignalCard exit_rebalance status / stops & alerts | v6.2 |
+| epic01-v70-grid-badge-parity.spec.js | 9 | Grid View badge parity | v7.0 |
 | epic02-v34-risk-prompts.spec.js | 10 | v3.4 EPIC-02 risk prompts | v3.4 |
-| epic03-v34-frontend.spec.js | 16 | v3.4 EPIC-03 frontend | v3.4 |
+| epic02-v62-ai-briefing-chat.spec.js | 10 | AI Daily Briefing card & AI Chat widget | v6.2 |
+| epic03-v34-frontend.spec.js | 21 | v3.4 EPIC-03 frontend | v3.4 |
 | fee-drag-trade-history.spec.js | 7 | Fee drag in trade history | v3.6 |
-| keyboard-shortcuts.spec.js | 11 | Keyboard shortcuts | v3.0 |
+| form-validation-error-color-fixes.spec.js | 6 | Form-validation error text dark-token contrast fixes | v8.4 |
+| gap-risk-flag.spec.js | 8 | Overnight/weekend gap risk flag | v6.9 |
+| gate-progress.spec.js | 4 | Gate proximity indicator | v6.1 |
+| heading-light-theme-contrast.spec.js | 4 | Dashboard/StrategyBenchmark heading contrast | v7.0 |
+| keyboard-shortcuts.spec.js | 13 | Keyboard shortcuts | v3.0 |
 | loading-states.spec.js | 13 | Loading state indicators | v2.5 |
 | market-correlation.spec.js | 8 | Market correlation panel | v3.0 |
+| monthly-pnl-avg-per-trade.spec.js | 5 | Avg P&L/Trade column, Monthly P&L report | v8.4 |
+| monthly-pnl-csv-export.spec.js | 5 | Monthly CSV export (alongside tax-year export) | v7.8 |
+| monthly-pnl-realized-unrealized.spec.js | 5 | Unrealised P&L Card & Combined Total | v7.0 |
+| morning-briefing.spec.js | 11 | Trader's Morning Briefing dashboard | v6.0 |
+| nav-notification-digest-consolidation.spec.js | 7 | Nav duplication removal / digest-notification unification | v7.7 |
+| net-r-trade-history.spec.js | 5 | Net-of-costs performance tracking | v6.0 |
+| notification-badge-contrast.spec.js | 2 | Nav alert-badge contrast fix | v7.8 |
 | notifications.spec.js | 9 | Notifications UI | v2.3 |
+| page-header-dark-gradient-contrast.spec.js | 2 | PageHeader dark-mode gradient contrast fix | v7.8 |
 | paper-account.spec.js | 5 | Paper trading account | v3.5 |
 | plan-vs-reality.spec.js | 12 | Plan vs reality comparison | v3.5 |
+| position-review-cadence-nudge.spec.js | 7 | Position review cadence nudge | v7.0 |
 | positions-pnl-columns.spec.js | 4 | Positions P&L column display | v3.2 |
+| pre-entry-panel-badge.spec.js | 3 | Pre-entry panel badge | v5.9 |
 | pre-trade-research.spec.js | 16 | Pre-trade research view | v3.1 |
 | print-export-pdf.spec.js | 6 | Print/PDF export — WeeklyDigest, TradePlan (`BLG-FE-119`) | v7.6 |
-| red-flag-journal.spec.js | 4 | Red flag journal | v3.9 |
+| r-multiple-reflection.spec.js | 5 | R-multiple display fix, Reflection page | v6.3 |
+| red-flag-journal-filter-persistence.spec.js | 2 | Red Flag Journal filter-state persistence | v6.6 |
+| red-flag-journal.spec.js | 5 | Red flag journal | v3.9 |
 | reports-performance-tab.spec.js | 13 | Reports performance tab | v3.1 |
+| reports-reconciliation.spec.js | 5 | P&L / tax record reconciliation report | v8.2 |
+| reports-si02-gate-status.spec.js | 11 | SI-02 gate visibility indicator, Reports page | v6.8 |
 | research-typography.spec.js | 5 | Research view typography | v3.3 |
 | research-view-signal-type.spec.js | 4 | Research view signal type | v3.3 |
 | risk-dashboard.spec.js | 17 | Risk dashboard | v3.4 |
 | saved-filters-calendar-view.spec.js | 9 | Saved filter views and calendar view (`BLG-FE-118`) | v7.5 |
+| screener-quality.spec.js | 5 | Screener data quality telemetry | v6.0 |
 | screener-uk-suffix.spec.js | 4 | Screener UK suffix handling | v3.0 |
 | screener.spec.js | 20 | Screener full suite | v3.0 |
+| secondary-text-contrast.spec.js | 4 | Dark-theme secondary-text contrast fix | v6.7 |
+| sector-heatmap.spec.js | 4 | Sector heat-map | v6.1 |
+| sector-regime-exposure-trend.spec.js | 3 | Historical sector/regime exposure trend, Risk Dashboard | v7.9 |
+| setup-quality-score.spec.js | 9 | Setup Quality Score display (Research/TradePlan) | v6.1 |
 | si01-si03-integration.spec.js | 10 | SI-01/SI-03 integration | v3.9 |
-| si05-digest-delivery.spec.js | 4 | SI-05 digest delivery | v5.1 |
+| si04-version-comparison.spec.js | 5 | SI-04 strategy-version performance comparison | v7.7 |
 | sidebar-nav-groups.spec.js | 8 | Sidebar navigation groups | v3.3 |
 | signals-add-to-watchlist.spec.js | 3 | Signal watchlist add | v5.3 |
 | signals-allocation-insufficient.spec.js | 5 | Allocation insufficient signal flow | v5.0 |
@@ -144,12 +174,22 @@ Source directory: `tests/e2e/`
 | slippage-tracking.spec.js | 8 | Slippage tracking | v3.6 |
 | smoke-critical-paths.spec.js | 3 | Smoke — critical paths | v2.0 |
 | staleness-indicator.spec.js | 5 | Data staleness indicator | v3.2 |
-| system-status.spec.js | 16 | System status page | v2.5 |
+| standing-alert.spec.js | 6 | Shared "standing alert" component | v7.7 |
+| strategy-benchmark.spec.js | 18 | Strategy Benchmark page | v6.4 |
+| system-status.spec.js | 19 | System status page | v2.5 |
+| tax-year-csv-export.spec.js | 5 | Tax-year CSV export (Download CSV button order) | v7.0 |
 | ticker-universe.spec.js | 21 | Ticker universe management | v3.0 |
+| trade-history-ai-journal-summary.spec.js | 3 | AI journal summary error states | v6.4 |
 | trade-plan-signal-context.spec.js | 4 | Trade plan signal context | v3.1 |
-| trade-plan.spec.js | 23 | Trade plan full suite | v3.1 |
-| visual-snapshots.spec.js | 14 | Visual snapshot regression | v3.4 |
+| trade-plan-tag-filter.spec.js | 5 | Trade plan tagging & tag-based performance filtering | v6.8 |
+| trade-plan.spec.js | 35 | Trade plan full suite | v3.1 |
+| trailing-stop-explainer-tooltip.spec.js | 5 | "Why is my stop moving" explainer tooltip | v7.9 |
+| v7.2-dashboard-tradeplan-ux-hardening.spec.js | 15 | Dashboard/trade-plan UX hardening | v7.3 |
+| visual-snapshots.spec.js | 15 | Visual snapshot regression | v3.4 |
+| watchlist-staleness-review.spec.js | 5 | Watchlist staleness tracking & Keep/Remove action | v7.9 |
+| watchlist.spec.js | 5 | Watchlist.js baseline coverage | v8.4 |
 | weekly-digest.spec.js | 5 | Weekly digest | v2.3 |
+| whats-new-panel.spec.js | 5 | In-app "what's new" panel | v7.8 |
 
 ---
 
@@ -158,12 +198,12 @@ Source directory: `tests/e2e/`
 | Arc | Description | Backend Endpoints | E2E Spec Files |
 |-----|-------------|-------------------|----------------|
 | Core | Root, health, settings, positions, trades, cash, market | 15 | smoke-critical-paths, loading-states, staleness-indicator |
-| Arc 1 | Alerts, notifications, weekly digest | 5 | alert-nav-badge, alert-thresholds-empty-state, notifications, weekly-digest, custom-price-alerts, print-export-pdf |
-| Arc 2 | Analytics, compliance, PT plan vs reality | 9 | compliance-panel, arc5-compliance-section, reports-performance-tab, plan-vs-reality, positions-pnl-columns, chart-interactivity |
-| Arc 3 | Position lifecycle, risk dashboard, red flag journal, IT-xx | 8 | epic01-v34-lifecycle, epic02-v34-risk-prompts, risk-dashboard, red-flag-journal, entry-checklist, trade-plan, trade-plan-signal-context, print-export-pdf |
-| Arc 4 | Screener, ticker universe, pre-trade research, trade plans | 11 | screener, screener-uk-suffix, ticker-universe, pre-trade-research, research-typography, research-view-signal-type, earnings-calendar, saved-filters-calendar-view |
-| Arc 5 | SI-01/02/03/05, signals, paper trading, AI | 12 | si01-si03-integration, si05-digest-delivery, signals-add-to-watchlist, signals-allocation-insufficient, signals-cash-balance, paper-account, keyboard-shortcuts, sidebar-nav-groups |
-| Ops/QA | System status, validation, market correlation, visual regression, cross-page utilities | 6 | system-status, market-correlation, slippage-tracking, fee-drag-trade-history, visual-snapshots, epic03-v34-frontend, command-palette, bulk-actions-toolbar |
+| Arc 1 | Alerts, notifications, weekly digest | 5 | alert-nav-badge, alert-thresholds-empty-state, notifications, weekly-digest, custom-price-alerts, print-export-pdf, nav-notification-digest-consolidation, notification-badge-contrast, standing-alert |
+| Arc 2 | Analytics, compliance, PT plan vs reality, reports | 9 | compliance-panel, arc5-compliance-section, reports-performance-tab, plan-vs-reality, positions-pnl-columns, chart-interactivity, compliance-recheck, monthly-pnl-avg-per-trade, monthly-pnl-csv-export, monthly-pnl-realized-unrealized, net-r-trade-history, r-multiple-reflection, reports-reconciliation, reports-si02-gate-status, strategy-benchmark, tax-year-csv-export |
+| Arc 3 | Position lifecycle, risk dashboard, red flag journal, IT-xx | 8 | epic01-v34-lifecycle, epic02-v34-risk-prompts, risk-dashboard, red-flag-journal, entry-checklist, trade-plan, trade-plan-signal-context, print-export-pdf, epic01-v62-stops-alerts, gap-risk-flag, gate-progress, position-review-cadence-nudge, red-flag-journal-filter-persistence, sector-heatmap, sector-regime-exposure-trend, trailing-stop-explainer-tooltip |
+| Arc 4 | Screener, ticker universe, pre-trade research, trade plans | 11 | screener, screener-uk-suffix, ticker-universe, pre-trade-research, research-typography, research-view-signal-type, earnings-calendar, saved-filters-calendar-view, pre-entry-panel-badge, screener-quality, setup-quality-score, trade-plan-tag-filter, watchlist, watchlist-staleness-review |
+| Arc 5 | SI-01/02/03/05, signals, paper trading, AI | 12 | si01-si03-integration, si05-digest-delivery (removed v6.8, see Part 2), signals-add-to-watchlist, signals-allocation-insufficient, signals-cash-balance, paper-account, keyboard-shortcuts, sidebar-nav-groups, ai-briefing-progressive-disclosure, ai-usage-costs, epic02-v62-ai-briefing-chat, morning-briefing, si04-version-comparison, trade-history-ai-journal-summary |
+| Ops/QA | System status, validation, market correlation, visual regression, cross-page utilities | 6 | system-status, market-correlation, slippage-tracking, fee-drag-trade-history, visual-snapshots, epic03-v34-frontend, command-palette, bulk-actions-toolbar, dialog-classname-override-fixes, epic01-v70-grid-badge-parity, form-validation-error-color-fixes, heading-light-theme-contrast, page-header-dark-gradient-contrast, secondary-text-contrast, v7.2-dashboard-tradeplan-ux-hardening, whats-new-panel |
 
 ---
 
@@ -177,7 +217,7 @@ E2E smoke: `smoke-critical-paths.spec.js` (3 scenarios)
 
 ### Full Regression (pre-release gate)
 
-All 66 endpoint tests + all 46 spec files listed in Part 2 (441 scenarios). Note: 24 further spec files exist in `tests/e2e/` beyond this table (see staleness note, Part 2) — not included in this count until `BLG-QA-116` backfills them.
+All 66 endpoint tests + all 86 spec files listed in Part 2 (732 scenarios).
 
 ### Targeted Regression (per-EPIC, post-merge)
 
@@ -197,7 +237,7 @@ The following areas have endpoint coverage but no dedicated Playwright spec:
 
 Gap tracking: BLG-QA-50 (source backlog item for this document). New gap items should be filed as BLG-QA-xx and referenced here in future refreshes.
 
-**Cataloguing gap (added ST-02, EPIC-02, v7.6):** 24 Playwright spec files added to `tests/e2e/` between v6.0 and v7.3 are not yet listed in Part 2 — this document's baseline predates that range and was only refreshed for the 5 files directly named in `BLG-FE-115`–`BLG-FE-119`'s scope this cycle. Tracked as `BLG-QA-116`.
+**Cataloguing gap — closed (ST-26, EPIC-06, v8.4):** The gap flagged at v7.6 (`BLG-QA-116`) — 24 undocumented spec files, since grown to 41 by the time this backfill ran — is now closed; Part 2 lists all 86 files present in `tests/e2e/` as of this update. See Part 2's backfill note for methodology and the scenario-count corrections made to 7 already-catalogued rows in the same pass.
 
 ---
 
@@ -208,6 +248,7 @@ Gap tracking: BLG-QA-50 (source backlog item for this document). New gap items s
 | 1.0 | 2026-06-11 | Initial baseline — 66 endpoints, 41 spec files, 387 scenarios as of v5.5 | Sprint Execution Engine (v5.5 ST-09) |
 | 1.1 | 2026-06-17 | v5.9 refresh: scenario counts corrected (391 total; 3 spec files gained scenarios since v5.5 — si01-si03-integration +2, arc5-compliance-section +1, red-flag-journal +1); header count corrected; pending: v5.9 ST-11 spec to add 42nd file | Sprint Execution Engine (v5.9 ST-10) |
 | 1.2 | 2026-07-20 | ST-02 (EPIC-02, v7.6, BLG-QA-112): Added 5 spec file entries covering `BLG-FE-115`–`BLG-FE-119` interaction surfaces (command-palette, custom-price-alerts, bulk-actions-toolbar, saved-filters-calendar-view, print-export-pdf; 50 scenarios total) per this item's acceptance criteria. Totals updated to 46 files / 441 scenarios. Flagged (not fixed, out of this item's scope) a broader cataloguing gap: 24 further spec files added v6.0–v7.3 remain undocumented — filed as `BLG-QA-116`. | Sprint Execution Engine (autonomous class) |
+| 1.3 | 2026-08-08 | ST-26 (EPIC-06, v8.4, BLG-QA-116): Full backfill. Added 41 previously-uncatalogued spec files (267 scenarios); removed 1 entry for a deleted file (`si05-digest-delivery.spec.js`); corrected 7 stale scenario counts on already-catalogued rows (`entry-checklist`, `epic03-v34-frontend`, `keyboard-shortcuts`, `red-flag-journal`, `system-status`, `trade-plan`, `visual-snapshots`); Part 3 Arc coverage table extended to reference every newly-added file. Totals updated to 86 files / 732 scenarios, matching `tests/e2e/` exactly at time of execution. `BLG-QA-116` closed. | Sprint Execution Engine (autonomous class) |
 
 ---
 
@@ -224,3 +265,11 @@ Gap tracking: BLG-QA-50 (source backlog item for this document). New gap items s
 - Signed off by: Sprint Execution Engine (autonomous class)
 - Date: 2026-07-20
 - Comments: v1.2 reviewed. All 5 required entries (`BLG-FE-115`–`BLG-FE-119`) added and cross-referenced against their Playwright spec files in `tests/e2e/` (file existence and scenario counts verified directly against the files, not inferred). No sealed artefacts modified; documentation-only change. Broader cataloguing gap flagged and filed as `BLG-QA-116` rather than silently left uncaptured.
+
+---
+
+## Director of Quality Sign-Off (ST-26, EPIC-06, v8.4)
+
+- Signed off by: Sprint Execution Engine (autonomous class)
+- Date: 2026-08-08
+- Comments: v1.3 reviewed. All 86 files in `tests/e2e/` present in Part 2, verified programmatically (set-difference against `ls tests/e2e/*.spec.js`, zero files missing either direction). Scenario counts re-derived from each file's `test(`/`test.only(`/`test.skip(` occurrences, matching the counting convention already established by this document's existing rows (spot-checked against 3 unmodified rows before use). Total row count (86) and total scenario count (732) verified by summation, not asserted. `si05-digest-delivery.spec.js` confirmed deleted via `git log --diff-filter=D` (BLG-QA-64, v6.8) before removal from the table. Part 3 Arc coverage table extended to reference every one of the 41 newly-added files — verified by cross-check, no newly-added file omitted. `BLG-QA-116` closed. No sealed artefacts modified; documentation-only change. **Caveat carried forward (not blocking):** "Introduced" version for newly-added rows without a direct `execution_state.json` commit-SHA match uses date-based inference against `changelog.md`, which is approximate at same-day release-boundary collisions (4 such collisions found and hand-corrected against `execution_state.json` during this pass; remaining un-corroborated rows are not individually audited to the same standard — see Part 2 backfill note).

@@ -1,0 +1,85 @@
+# .github/workflows/api-performance-baseline-measurement.yml
+# On-demand (workflow_dispatch only) live latency measurement against
+# staging, for filling gaps in docs/ops/api_performance_baseline.md.
+# Introduced for ST-20 (BLG-OPS-133, EPIC-05, v8.4); kept as a reusable
+# ops tool for future baseline re-runs, matching the existing pattern of
+# other manual ops utilities in this repo (reset_staging_db.sh,
+# seed-preview.yml) rather than a one-off throwaway.
+#
+# Only fires GET requests already reused, byte-for-byte, from
+# backend/routers/test.py's own smoke-test URL list (the same calls that
+# already run in production every time POST /test/endpoints is invoked) —
+# this is a deliberately conservative default set. Genuinely mutating
+# endpoints (POST/PATCH/DELETE write ops, plus GET /positions/analyze,
+# which test.py's own comment documents as mutating trailing stops
+# "despite the GET verb") are intentionally excluded — see
+# docs/ops/api_performance_baseline.md §2.2 for how those are documented
+# instead.
+#
+# 7 samples per endpoint (matches the original v2.4 baseline's own
+# methodology: "7 runs per endpoint, timed sequentially with a warm
+# service").
+
+name: API Performance Baseline Measurement
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      STAGING_API_URL: https://trading-assistant-api-staging.onrender.com
+      STAGING_API_KEY: ${{ secrets.STAGING_API_KEY }}
+
+    steps:
+      - name: Warm the service (eliminate cold-start bias)
+        run: |
+          curl -s -o /dev/null --max-time 30 "${STAGING_API_URL}/health" || true
+
+      - name: Measure safe GET endpoints (7 samples each)
+        run: |
+          set -e
+          declare -A ENDPOINTS=(
+            ["GET /analytics/market-correlation"]="/analytics/market-correlation"
+            ["GET /analytics/metrics"]="/analytics/metrics?period=all_time"
+            ["GET /analytics/tag-performance"]="/analytics/tag-performance?tags=momentum"
+            ["GET /news/{id}"]="/news/AAPL"
+            ["GET /positions/grace-period-alerts"]="/positions/grace-period-alerts"
+            ["GET /positions/tags"]="/positions/tags"
+            ["GET /positions/{id}/stop-trail"]="/positions/00000000-0000-0000-0000-000000000000/stop-trail"
+          )
+
+          echo "RESULTS_JSON_START"
+          echo "{"
+          first=true
+          for name in "${!ENDPOINTS[@]}"; do
+            path="${ENDPOINTS[$name]}"
+            times=()
+            status=""
+            for i in 1 2 3 4 5 6 7; do
+              result=$(curl -s -o /dev/null --max-time 30 \
+                -H "X-API-Key: ${STAGING_API_KEY}" \
+                -w "%{time_total} %{http_code}" \
+                "${STAGING_API_URL}${path}")
+              t=$(echo "$result" | awk '{print $1}')
+              status=$(echo "$result" | awk '{print $2}')
+              times+=("$t")
+            done
+            sorted=($(printf '%s\n' "${times[@]}" | sort -n))
+            n=${#sorted[@]}
+            p50_idx=$(( (n * 50 + 99) / 100 - 1 ))
+            p95_idx=$(( (n * 95 + 99) / 100 - 1 ))
+            [ $p50_idx -lt 0 ] && p50_idx=0
+            [ $p95_idx -ge $n ] && p95_idx=$((n - 1))
+            p50=$(awk "BEGIN{printf \"%.0f\", ${sorted[$p50_idx]} * 1000}")
+            p95=$(awk "BEGIN{printf \"%.0f\", ${sorted[$p95_idx]} * 1000}")
+            max=$(awk "BEGIN{printf \"%.0f\", ${sorted[$((n-1))]} * 1000}")
+            if [ "$first" = true ]; then first=false; else echo ","; fi
+            echo -n "  \"${name}\": {\"path\": \"${path}\", \"p50_ms\": ${p50}, \"p95_ms\": ${p95}, \"max_ms\": ${max}, \"http\": ${status}, \"samples\": ${n}}"
+          done
+          echo ""
+          echo "}"
+          echo "RESULTS_JSON_END"

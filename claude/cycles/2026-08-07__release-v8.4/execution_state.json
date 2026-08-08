@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-07T13:00:00Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-08T09:30:00Z",
+  "last_updated_utc": "2026-08-08T10:00:00Z",
   "merge_order": [
     "EPIC-02",
     "EPIC-03",
@@ -784,99 +784,122 @@
       }
     },
     "EPIC-06": {
-      "status": "not_started",
+      "status": "merged",
       "branch": "exec/2026-08-07__release-v8.4/EPIC-06",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1299,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-07__release-v8.4/qa_evidence_EPIC-06.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_api_contracts.py",
+        "tests/test_reports_integration.py",
+        "tests/test_monthly_pnl_cost_basis.py"
+      ],
       "stories": {
         "ST-25": {
           "title": "Fix wrong patch target in test_get_portfolio_history_returns_ok",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1288,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "49435742",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "spec_reference_not_applicable": true,
-          "spec_reference_not_applicable_reason": "bug fix, no prior canonical spec \u2014 verified via test file's own patch target convention",
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_api_contracts.py"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Verified locally: test passes with DATABASE_URL unset (no real DB/network reachable), confirming AC. Root cause: patched database.get_portfolio_snapshots/main.get_portfolio (definition/re-export sites) instead of services.portfolio_service (import site), per file own Patch target rule."
         },
         "ST-26": {
           "title": "Backfill regression baseline with 24 undocumented Playwright spec files (v6.0-v7.3)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1289,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "cd9facb3",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
+          "acceptance_verified": true,
           "spec_references": [
-            "docs/testing/regression_test_suite_baseline.md"
+            "docs/qa/regression_test_suite_baseline.md"
           ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
+          "sign_off_record": {
+            "role": "Director of Quality",
+            "status": "cleared",
+            "method": "autonomous_class",
+            "date": "2026-08-08",
+            "notes": "BLG-GOV-19 autonomous class \u2014 documentation-only, code-review-verifiable, no frontend change. 86/86 files verified programmatically against tests/e2e/ (0 diff either direction); totals (86 files/732 scenarios) verified by summation. See in-document DoQ sign-off block (ST-26, EPIC-06, v8.4)."
+          },
           "notes": "Director of Quality sign-off recorded."
         },
         "ST-27": {
           "title": "Recurring CSV export content regression check",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1290,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "6e09debb",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/csv-export-content-regression-check.yml"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.push_verified",
           "sign_off_record": null,
-          "notes": "First instance run is CI-executable."
+          "notes": "First-instance verification via local pytest run (18/18 passed, 2026-08-08) \u2014 GitHub only exposes workflow_dispatch post-merge to main, so a live dispatched run is not possible pre-merge. First live scheduled/dispatched run occurs after this workflow reaches main."
         },
         "ST-28": {
           "title": "Signal correctness fix impact measurement",
-          "classification": "autonomous",
-          "status": "not_started",
+          "classification": "delegated_backend",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1291,
           "branch": "exec/2026-08-07__release-v8.4/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "a3acff5ab2e56a86053ec6849c154fc6c191489f",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "spec_reference_not_applicable": true,
-          "spec_reference_not_applicable_reason": "informational historical data-analysis task, no prior canonical spec to cite",
-          "deviations_filed": false,
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/blg_be_40_impact_measurement_query.sql",
+            "docs/ops/blg_be_40_impact_measurement_findings_2026-08-08.md"
+          ],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
           "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": "Reviewed by Metrics Definitions & Analytics Owner and Product Owner."
+          "sign_off_record": {
+            "role": "Metrics Definitions & Analytics Owner + Product Owner",
+            "status": "cleared",
+            "method": "mixed \u2014 agent_mediated (Metrics) + human (Product Owner)",
+            "date": "2026-08-08",
+            "notes": "Zero impact found (0 of 300 pre-fix signals affected, non-vacuous). PO accepted directly in-session. See findings doc sign-off block."
+          },
+          "notes": "Unblocked in-session (2026-08-08) \u2014 user ran production query directly, supplied results. ESC-EXEC-20260808-05 resolved."
         }
       }
     },
@@ -973,6 +996,10 @@
     "ST-19",
     "ST-22",
     "ST-24",
+    "ST-25",
+    "ST-26",
+    "ST-27",
+    "ST-28",
     "ST-29",
     "ST-30",
     "ST-31"
@@ -989,11 +1016,11 @@
       "EPIC-03",
       "EPIC-01",
       "EPIC-04",
-      "EPIC-07"
+      "EPIC-07",
+      "EPIC-06"
     ],
     "epics_pending": [
-      "EPIC-05",
-      "EPIC-06"
+      "EPIC-05"
     ],
     "all_merged": false
   },
