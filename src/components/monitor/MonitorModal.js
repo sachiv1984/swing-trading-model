@@ -44,7 +44,7 @@ export default function MonitorModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+      <DialogContent className="bg-slate-900 border-slate-700 text-white !max-w-2xl max-h-[80vh] overflow-hidden !flex !flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <div className="p-2 rounded-lg bg-amber-500/20">

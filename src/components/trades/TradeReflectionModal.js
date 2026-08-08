@@ -109,7 +109,7 @@ export default function TradeReflectionModal({ trade, open, onClose }) {
     <Dialog open={open} onOpenChange={(v) => { if (!v && !saving) onClose(); }}>
       <DialogContent
         aria-label={`Trade Reflection — ${trade.ticker}`}
-        className="bg-slate-900 border-slate-700 text-white max-w-2xl max-h-[92vh] overflow-hidden flex flex-col"
+        className="bg-slate-900 border-slate-700 text-white !max-w-2xl max-h-[92vh] overflow-hidden !flex !flex-col"
       >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-cyan-400">
