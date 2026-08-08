@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-07/ST-30: 2 new items added, BLG-GOV-289 (CLAUDE.md §8 needs a sibling-vs-sibling union clause for execution_state.json array fields) and BLG-GOV-290 (CLAUDE.md §8 has no rule for shared JSON field schema-shape drift mid-sprint) — both found via a live dry-run merge test between EPIC-05/EPIC-06 branches); prior — 2026-08-07 (sprint execution 2026-08-07__release-v8.4, EPIC-04/ST-15: 1 new item added, BLG-FE-145 (text-muted-foreground and related -muted classes generate no CSS — not registered in tailwind.config.js's theme.extend.colors, found auditing DialogDescription's base className)); prior — 2026-08-07 (sprint execution 2026-08-07__release-v8.4, EPIC-01/ST-01: 1 new item added, BLG-FE-144 (reconcile Monthly P&L vs Tax Year table's exact-zero P&L colour convention — cross-table inconsistency found correcting reports.md's colour-rule wording)); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-06/EPIC-07 real cross-EPIC merge: 1 new item added, BLG-GOV-291 (CLAUDE.md §8's own commit-message template violates the enforced commit-format hook — found live resolving EPIC-06/EPIC-07's genuine conflict)); prior — 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-07/ST-30: 2 new items added, BLG-GOV-289 and BLG-GOV-290 — both found via a live dry-run merge test between EPIC-05/EPIC-06 branches); prior — 2026-08-07 (sprint execution 2026-08-07__release-v8.4, EPIC-04/ST-15: 1 new item added, BLG-FE-145 (text-muted-foreground and related -muted classes generate no CSS)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -153,6 +153,27 @@ The same dry-run (`docs/ops/cross_epic_merge_runbook_dry_run_2026-08-08.md`) fou
 
 **Acceptance Criteria**
 - `CLAUDE.md` §8 (or `shared_standards.md` §16.13) covers mid-sprint schema-shape drift on shared JSON fields
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-291 — CLAUDE.md §8's own commit message template violates the enforced commit-format hook
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Sprint execution 2026-08-07__release-v8.4, EPIC-06/EPIC-07 real cross-EPIC merge conflict resolution — 2026-08-08
+**Effort:** XS (<1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`CLAUDE.md` §8 step 4 instructs: `git commit -m "[EPIC-xx] Merge main (<description>) into EPIC-xx — conflict resolution"`. This format was rejected live by the repo's own pre-commit hook when followed exactly during EPIC-06/EPIC-07's real conflict resolution this cycle — the hook requires `[EPIC-xx][ST-xx]` or `[GOVERNANCE]`, and a bare `[EPIC-xx]` with no `ST-xx` fails. Worked around by using `[GOVERNANCE]` instead, which the hook does accept and is arguably the more semantically correct prefix for a conflict-resolution commit anyway (it's not attributable to a single story). `CLAUDE.md` §8's own worked example (`sprint_planning_prompt.md v3.13/v3.14`) predates this discovery, so the mismatch has been silently present in the documented runbook.
+
+**Scope**
+- Correct `CLAUDE.md` §8 step 4's commit message template to `[GOVERNANCE] Merge main (<description>) into EPIC-xx — conflict resolution` (or add `[ST-xx]` guidance for cases where the conflict resolution is attributable to a specific story)
+- Apply the standard governance file edit checklist per `CLAUDE.md` §6 (n/a for `CLAUDE.md` itself, which has no version field — log in `prompt_change_log.md` per the established no-version-field convention)
+
+**Acceptance Criteria**
+- `CLAUDE.md` §8's commit message template matches what the enforced pre-commit hook actually accepts
 - Head of Specs Team sign-off
 
 ---
