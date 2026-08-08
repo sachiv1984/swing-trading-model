@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-08 (groom backlog, post-ship closure 2026-08-07__release-v8.4 — 31 shipped items archived to backlog_archive.md (removed from active body); 2 ephemeral Release Slice sections removed (v8.3 — missed at the 2026-08-07 run; v8.4)); prior — 2026-08-08 (post-ship closure 2026-08-07__release-v8.4 — 31 shipped items marked ✅ COMPLETE; 1 new item added, BLG-OPS-135 (endpoint coverage drift advisory, STEP 6 — GET /trade-plans/tags missing from api_performance_baseline.md)); prior — 2026-08-08 (sprint execution 2026-08-07__release-v8.4, EPIC-05/ST-21: 1 new item added, BLG-BE-87); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-08 (ad-hoc Actionable Backlog Assessment re-check — 8 items' `Gate criteria` field corrected from stale to `Gate cleared 2026-08-08` where the stated condition had already been met per changelog/production evidence: BLG-FEAT-29, BLG-BE-13, BLG-OPS-17 (screener ≥60 days, shipped v3.0 2026-04-27); BLG-OPS-20 (PT-02 ≥30 days, shipped v3.2 2026-05-08); BLG-BE-44, BLG-SEC-10 (BLG-SEC-02 ≥30-day no-incident window, shipped v6.4 2026-07-02); BLG-GOV-145 (30-day AI endpoint usage window, v6.2 shipped 2026-06-25); BLG-QA-26 (all named Arc 5 sub-conditions already ✅ as of 2026-06-16 update) — no items added/removed; prior — 2026-08-08 (groom backlog, post-ship closure 2026-08-07__release-v8.4 — 31 shipped items archived to backlog_archive.md (removed from active body); 2 ephemeral Release Slice sections removed (v8.3 — missed at the 2026-08-07 run; v8.4)); prior — 2026-08-08 (post-ship closure 2026-08-07__release-v8.4 — 31 shipped items marked ✅ COMPLETE; 1 new item added, BLG-OPS-135 (endpoint coverage drift advisory, STEP 6 — GET /trade-plans/tags missing from api_performance_baseline.md)); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -192,7 +192,7 @@ There is no retrospective view of whether ATR-based position sizing (risked R pe
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** Screener live ≥ 60 days.
+**Gate criteria:** ~~Screener live ≥ 60 days.~~ **Gate cleared 2026-08-08** — Screener shipped v3.0 (2026-04-27, 103 days ago); threshold long since passed.
 
 **Problem**
 No view exists showing how market regime distribution (bull/bear/neutral/volatile) has evolved across screener runs over time. Understanding regime frequency and drift helps contextualise screener output quality and strategy performance in different market conditions.
@@ -1118,7 +1118,7 @@ ST-12 (`BLG-BE-70`) added backend storage capability — `trade_plans.thesis_mod
 **Effort:** M (~2–3 days)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** Screener live ≥ 60 days (sufficient history to make a queryable history table valuable).
+**Gate criteria:** ~~Screener live ≥ 60 days (sufficient history to make a queryable history table valuable).~~ **Gate cleared 2026-08-08** — Screener shipped v3.0 (2026-04-27, 103 days ago); threshold long since passed.
 
 **Problem**
 Each screener run overwrites or appends to the current results without a queryable historical table. After 60 days, trend analysis (how screener output has evolved over time) becomes valuable but requires a properly structured history table with per-run metadata (run_timestamp, run_id, ticker count, pass count, regime distribution). Without this, historical comparison is not possible.
@@ -1415,7 +1415,7 @@ No Playwright test covers the full trade plan lifecycle: create → edit → lin
 **Effort:** M (~2 days)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** Arc 5 fully complete per BLG-QA-45 criteria (docs/qa/arc5_qa_completion_criteria.md): SI-01 ✅, SI-02 backend ✅, SI-03 ✅, SI-05 Phase 1 ✅, BLG-QA-49 coverage assessment ✅. SI-02 frontend, SI-04, and SI-05 Phase 2 explicitly excluded from trigger. Updated 2026-06-16 (ST-09 v5.6).
+**Gate criteria:** ~~Arc 5 fully complete per BLG-QA-45 criteria (docs/qa/arc5_qa_completion_criteria.md): SI-01 ✅, SI-02 backend ✅, SI-03 ✅, SI-05 Phase 1 ✅, BLG-QA-49 coverage assessment ✅. SI-02 frontend, SI-04, and SI-05 Phase 2 explicitly excluded from trigger. Updated 2026-06-16 (ST-09 v5.6).~~ **Gate cleared 2026-08-08** — all named trigger sub-conditions (SI-01, SI-02 backend, SI-03, SI-05 Phase 1, BLG-QA-49) already showed ✅ as of the 2026-06-16 update; no remaining condition blocks this item.
 
 **Problem**
 SI-01 through SI-03 shipped across v3.8 and v3.9. Each sprint produced per-story DoQ sign-offs but no arc-level QA protocol exists covering the full Arc 5 feature set end-to-end. Once all five features ship, an arc-level protocol analogous to BLG-QA-21 (Arc 2 E2E QA protocol) will ensure the complete Strategy Integrity workflow is tested holistically.
@@ -1641,7 +1641,7 @@ Of the 23 originally-listed endpoints, 21 are now present in `docs/ops/api_perfo
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** Screener live ≥ 60 days (sufficient history to establish a meaningful cost baseline).
+**Gate criteria:** ~~Screener live ≥ 60 days (sufficient history to establish a meaningful cost baseline).~~ **Gate cleared 2026-08-08** — Screener shipped v3.0 (2026-04-27, 103 days ago); threshold long since passed.
 
 **Problem**
 Alpaca API call volume (paper-positions, orders, account data) is not tracked. After 60 days of screener and research operations, a cost-per-run baseline can be established. Without a baseline, it is impossible to detect cost regressions when new features or higher screener frequency are introduced.
@@ -1716,7 +1716,7 @@ External API calls are not attributed to the feature or workflow that triggered 
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** PT-02 (Research View) live ≥ 30 days.
+**Gate criteria:** ~~PT-02 (Research View) live ≥ 30 days.~~ **Gate cleared 2026-08-08** — PT-02 shipped v3.2 (2026-05-08, 92 days ago); threshold long since passed.
 
 **Problem**
 Research view loads trigger multiple downstream API calls (Yahoo Finance OHLCV, earnings, news). The per-session API cost of the research endpoint is not tracked. After 30 days of research view usage, a cost-per-session baseline can be established and anomalies detected.
@@ -2829,7 +2829,7 @@ Agent role charter files (`claude/agents/*.md`) define role responsibilities and
 **Effort:** S (~0.5 day)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** 30+ days AI endpoint usage observation post-v6.2 ship (by 2026-07-25). v6.2 AI endpoints make additional DB reads; pool sizing should be reviewed under real load.
+**Gate criteria:** ~~30+ days AI endpoint usage observation post-v6.2 ship (by 2026-07-25). v6.2 AI endpoints make additional DB reads; pool sizing should be reviewed under real load.~~ **Gate cleared 2026-08-08** — v6.2 shipped 2026-06-25; 44 days of AI endpoint usage observation now available, past the 30-day threshold.
 
 **Problem**
 v6.2 added POST /ai/daily-briefing and POST /ai/chat, both of which read from the database (portfolio state, trade history for context). Supavisor connection pool configuration was set before AI endpoints existed. Under sustained AI endpoint load, the pool may be undersized. A review at 30 days confirms the pool is sized correctly or identifies adjustment needed.
@@ -3451,7 +3451,7 @@ This audit would directly inform Arc 4 PO-02/PO-03 design, but running it ahead 
 **Source:** IDEA-data-model-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
 **Effort:** M (~2 days)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** BLG-SEC-02's 3-path sanitisation fix (shipped v6.4) has run in production for ≥30 days with no incident (clears ~2026-08-01).
+**Gate criteria:** ~~BLG-SEC-02's 3-path sanitisation fix (shipped v6.4) has run in production for ≥30 days with no incident (clears ~2026-08-01).~~ **Gate cleared 2026-08-08** — 37 days in production since v6.4 (2026-07-02) with no incident on record.
 
 **Problem**
 BLG-SEC-02 just shipped a 3-path sanitisation fix to the signal write path; consolidating that code now, before it has stabilised in production, risks compounding an unproven change with a refactor.
@@ -3591,7 +3591,7 @@ BLG-FEAT-54 shipped with Head of UX & Design input already incorporated at desig
 **Source:** IDEA-metrics-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
-**Gate criteria:** A production observation window of ≥30 days post-BLG-SEC-02 ship (shipped v6.4, 2026-07-02; clears ~2026-08-01). Revisit alongside BLG-QA-70.
+**Gate criteria:** ~~A production observation window of ≥30 days post-BLG-SEC-02 ship (shipped v6.4, 2026-07-02; clears ~2026-08-01). Revisit alongside BLG-QA-70.~~ **Gate cleared 2026-08-08** — 37 days in production since v6.4 (2026-07-02) with no incident on record.
 
 **Problem**
 BLG-SEC-02's write-time validation just shipped; a false-positive rate cannot be meaningfully measured without a production observation window.
