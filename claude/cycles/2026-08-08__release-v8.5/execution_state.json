@@ -149,7 +149,11 @@
       "pr_status": "none",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-08__release-v8.5/qa_evidence_EPIC-03.md",
-      "test_scenarios": ["tests/e2e/command-palette.spec.js", "tests/e2e/trade-plan.spec.js", "tests/e2e/reports-realised-pnl-zero-colour-convention.spec.js"],
+      "test_scenarios": [
+        "tests/e2e/command-palette.spec.js",
+        "tests/e2e/trade-plan.spec.js",
+        "tests/e2e/reports-realised-pnl-zero-colour-convention.spec.js"
+      ],
       "stories": {
         "ST-06": {
           "title": "Register muted/muted-foreground (and other dead -muted classes) in tailwind.config.js",
@@ -158,13 +162,16 @@
           "assigned_to": "engine",
           "github_issue": 1306,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-03",
-          "commit_sha": "e5a78a4fa764033d9733829ad9ac94769f41e1be",
+          "commit_sha": "433009d8c29fc191d754bf4ca856896567f6e4ee",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": "2026-08-10T08:20:00Z",
           "acceptance_verified": true,
-          "spec_references": ["tailwind.config.js", "tests/e2e/command-palette.spec.js"],
+          "spec_references": [
+            "tailwind.config.js",
+            "tests/e2e/command-palette.spec.js"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
@@ -185,7 +192,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-08-10T08:55:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/api_contracts/trade_plan_endpoints.md"],
+          "spec_references": [
+            "docs/specs/api_contracts/trade_plan_endpoints.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
@@ -200,13 +209,16 @@
           "assigned_to": "engine",
           "github_issue": 1308,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-03",
-          "commit_sha": "18dfa9d78557fdf6efc1bcc4e515a32f3882dd1c",
+          "commit_sha": "433009d8c29fc191d754bf4ca856896567f6e4ee",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
           "completed_utc": "2026-08-10T09:20:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/design/2026-08-08__release-v8.5/exact-zero-pnl-colour-convention/decision_record.md", "docs/specs/frontend/pages/reports.md"],
+          "spec_references": [
+            "docs/design/2026-08-08__release-v8.5/exact-zero-pnl-colour-convention/decision_record.md",
+            "docs/specs/frontend/pages/reports.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
