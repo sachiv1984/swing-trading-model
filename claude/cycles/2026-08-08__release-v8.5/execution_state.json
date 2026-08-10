@@ -286,7 +286,7 @@
           "assigned_to": "engine",
           "github_issue": 1311,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "1a3839348f25dd85aa33c5e75a566ecd6a4aef7c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
