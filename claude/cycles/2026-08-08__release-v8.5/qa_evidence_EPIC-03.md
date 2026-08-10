@@ -44,7 +44,7 @@ Last Updated: 2026-08-10
 - [x] All acceptance criteria verified against canonical spec
 - [x] No unresolved P0 or P1 deviations
 - [x] Regression areas checked
-- [ ] Playwright coverage confirmed passing in real CI — **pending this PR's first `playwright.yml` run**
+- [x] Playwright coverage confirmed passing in real CI — confirmed 2026-08-10, all 29 PR #1327 checks green including all 4 Playwright E2E shards and Visual Snapshots, `head_sha` independently verified to match the portal-fix commit (agent-mediated DoQ review of PR #1327)
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-08-10
 - Comments: Agent-mediated DoQ review (independent subagent invocation, not self-assessment) ran two passes. First pass: BLOCKED — 2 findings (ST-06's AC-02 claimed Pass with only 1 of ~9 real call-site families covered and no backlog item filed for the rest; ST-08's implementation silently carried the colour fix into the P&L % column the Design Gate decision explicitly excluded). Both remediated in-session (2nd Playwright call site + BLG-FE-148 filed for ST-06; pnlPctColor decoupling + SC-RPZ-05 regression test for ST-08). Second pass: APPROVED, with one trivial non-blocking note (a stale backlog-ID code comment, corrected). Full findings trail in this file's "Agent-mediated DoQ review findings" section above. Sign-off is conditional on the pending real-CI confirmation noted above; if any new Playwright test fails in real CI, this EPIC's DoQ sign-off must be revisited before merge.
