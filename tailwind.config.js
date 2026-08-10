@@ -15,6 +15,21 @@ module.exports = {
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        // ST-06 (BLG-FE-145, EPIC-03, v8.5): `--muted`/`--muted-foreground` are
+        // defined in src/index.css but were never registered here, so every
+        // `-muted` utility class (text-muted-foreground, bg-muted,
+        // border-muted, fill-muted, fill-muted-foreground) compiled to an
+        // empty rule -- Tailwind only generates utilities for color tokens it
+        // knows about. Design Pre-Approved (design_gate.md) -- restores an
+        // already-canonical token, no new visual design decision. Scoped to
+        // -muted per this story's AC; other similarly-unregistered shadcn
+        // tokens (card, popover, primary, secondary, accent, destructive,
+        // border, input, ring) are a separate, broader gap -- filed as
+        // BLG-FE-146, out of this story's scope.
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
         // (all your Base44 extended colors here)
       },
       keyframes: {
