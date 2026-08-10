@@ -162,7 +162,7 @@
           "assigned_to": "engine",
           "github_issue": 1306,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-03",
-          "commit_sha": "433009d8c29fc191d754bf4ca856896567f6e4ee",
+          "commit_sha": "41619410c7b77331b68ef2a88f7651feef368df5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -177,7 +177,7 @@
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Registered `muted`/`muted-foreground` in tailwind.config.js theme.extend.colors (Design Pre-Approved). Verified via a real `tailwindcss` CLI build -- all 5 in-scope -muted classes (bg-muted, border-muted, fill-muted, fill-muted-foreground, text-muted-foreground) now compile to non-empty rules with real hsl(var(--muted...)) declarations (previously empty). Playwright coverage added: SC-CP-13 in command-palette.spec.js asserts the CommandGroup 'Pages' heading (a confirmed-affected call site, src/components/ui/command.js) now resolves to the real muted-foreground colour rgb(163,163,163) in dark theme, not the unstyled black fallback a dead class would produce. Could not execute Playwright locally in this sandbox (Chromium install unsupported on this OS -- 'ERROR: Playwright does not support chromium on ubuntu26.04-x64') -- real GitHub Actions CI (playwright.yml, runs on pull_request) is the verification path per LL-v8.3-P3-02, will confirm on PR CI run. No spec deviation -- Case D (CI/tooling config change with no prior canonical spec; tailwind.config.js is the de facto spec reference). Discovered and filed BLG-FE-147 (out-of-scope finding) for the much broader sibling gap: card/popover/primary/secondary/accent/destructive/border/input/ring tokens are equally unregistered and dead, same root cause, not fixed here per scope discipline."
+          "notes": "Registered `muted`/`muted-foreground` in tailwind.config.js theme.extend.colors (Design Pre-Approved). Verified via a real `tailwindcss` CLI build -- all 5 in-scope -muted classes (bg-muted, border-muted, fill-muted, fill-muted-foreground, text-muted-foreground) now compile to non-empty rules with real hsl(var(--muted...)) declarations (previously empty). Playwright coverage added: SC-CP-13/SC-CP-14 in command-palette.spec.js. Could not execute Playwright locally in this sandbox (Chromium install unsupported on this OS) -- real GitHub Actions CI (playwright.yml, runs on pull_request) is the verification path per LL-v8.3-P3-02. No spec deviation -- Case D (CI/tooling config change with no prior canonical spec; tailwind.config.js is the de facto spec reference). Discovered and filed BLG-FE-147/BLG-FE-148 (out-of-scope findings) for the broader sibling tailwind-token gap and remaining untested call-site families. CRITICAL FINDING (real CI, first run): SC-CP-13/14 failed with the light-theme value instead of dark -- root cause traced to src/Layout.js: the literal 'dark' CSS class (required by darkMode:['class']) was only ever applied to Layout's own wrapper div, never to document.documentElement, so Radix's DialogPortal (renders into document.body, outside that wrapper's subtree) has always put every Dialog-based component app-wide (14+ consumers) in light-theme CSS scope regardless of the user's actual theme -- a pre-existing, systemic production bug this story's new tests were simply the first to observe. Fixed at the root: Layout.js now also syncs the dark class onto document.documentElement (an ancestor of every portal). See qa_evidence_EPIC-03.md for full writeup."
         },
         "ST-07": {
           "title": "Frontend wiring to populate trade_plans.thesis_model_version/thesis_prompt_version on save",
@@ -229,7 +229,7 @@
       }
     },
     "EPIC-04": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-08-08__release-v8.5/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
@@ -250,13 +250,15 @@
           "unblock_criteria": null,
           "completed_utc": "2026-08-10T10:15:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/cycles/2026-08-08__release-v8.5/st09_secondary_text_token_audit_findings.md"],
+          "spec_references": [
+            "claude/cycles/2026-08-08__release-v8.5/st09_secondary_text_token_audit_findings.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Audit-only completion (RISK-02, per sprint_backlog.md Notes) -- no code fix made in-story. Branched from EPIC-03 tip (not main) per RISK-01: auditing against main's pre-ST-06 CSS baseline would have been auditing a known-broken baseline (main doesn't yet have ST-06's tailwind.config.js muted-token fix merged). Method: grep-based scan of src/**/*.js for drift against the v6.7 canonical secondary-text token (text-slate-600 dark:text-slate-400), filtering out icon-component usages (out of scope per the v6.7 decision record's own §5 scope boundary). Found 6 real drift instances across 2 sub-classes: 4 use the failing light-theme shade text-slate-500 instead of text-slate-600 (Positions.js, PositionCard.js, WatchlistRow.js, Layout.js's search button+kbd badge -- the kbd badge's dark value is also wrong, both branches use the pre-v6.7 failing shade); 2 are missing a dark: variant entirely (Reports.js reconciliation note, WhatsNewCard.js bullet+overflow item). No dark:text-slate-500 misuse found anywhere. Filed BLG-FE-149 (consolidated, P3) per this story's AC. Full findings: st09_secondary_text_token_audit_findings.md."
+          "notes": "Audit-only completion (RISK-02, per sprint_backlog.md Notes) -- no code fix made in-story. Branched from EPIC-03 tip (not main) per RISK-01: auditing against main's pre-ST-06 CSS baseline would have been auditing a known-broken baseline (main doesn't yet have ST-06's tailwind.config.js muted-token fix merged). Method: grep-based scan of src/**/*.js for drift against the v6.7 canonical secondary-text token (text-slate-600 dark:text-slate-400), filtering out icon-component usages (out of scope per the v6.7 decision record's own \u00a75 scope boundary). Found 6 real drift instances across 2 sub-classes: 4 use the failing light-theme shade text-slate-500 instead of text-slate-600 (Positions.js, PositionCard.js, WatchlistRow.js, Layout.js's search button+kbd badge -- the kbd badge's dark value is also wrong, both branches use the pre-v6.7 failing shade); 2 are missing a dark: variant entirely (Reports.js reconciliation note, WhatsNewCard.js bullet+overflow item). No dark:text-slate-500 misuse found anywhere. Filed BLG-FE-149 (consolidated, P3) per this story's AC. Full findings: st09_secondary_text_token_audit_findings.md."
         },
         "ST-10": {
           "title": "Empty-state illustration/microcopy consistency pass",
@@ -271,7 +273,10 @@
           "unblock_criteria": null,
           "completed_utc": "2026-08-10T10:35:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/design/2026-08-08__release-v8.5/empty-state-microcopy-pattern/decision_record.md", "docs/specs/frontend/design_system.md"],
+          "spec_references": [
+            "docs/design/2026-08-08__release-v8.5/empty-state-microcopy-pattern/decision_record.md",
+            "docs/specs/frontend/design_system.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
@@ -626,7 +631,10 @@
     "ST-02",
     "ST-06",
     "ST-07",
-    "ST-08"
+    "ST-08",
+    "ST-09",
+    "ST-10",
+    "ST-11"
   ],
   "open_escalations": [],
   "process_notes": [
