@@ -240,7 +240,7 @@
         "ST-09": {
           "title": "Design token audit: v6.7 contrast fix consistency",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1309,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-04",
@@ -248,15 +248,15 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T10:15:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/cycles/2026-08-08__release-v8.5/st09_secondary_text_token_audit_findings.md"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Audit-only completion (RISK-02, per sprint_backlog.md Notes) -- no code fix made in-story. Branched from EPIC-03 tip (not main) per RISK-01: auditing against main's pre-ST-06 CSS baseline would have been auditing a known-broken baseline (main doesn't yet have ST-06's tailwind.config.js muted-token fix merged). Method: grep-based scan of src/**/*.js for drift against the v6.7 canonical secondary-text token (text-slate-600 dark:text-slate-400), filtering out icon-component usages (out of scope per the v6.7 decision record's own §5 scope boundary). Found 6 real drift instances across 2 sub-classes: 4 use the failing light-theme shade text-slate-500 instead of text-slate-600 (Positions.js, PositionCard.js, WatchlistRow.js, Layout.js's search button+kbd badge -- the kbd badge's dark value is also wrong, both branches use the pre-v6.7 failing shade); 2 are missing a dark: variant entirely (Reports.js reconciliation note, WhatsNewCard.js bullet+overflow item). No dark:text-slate-500 misuse found anywhere. Filed BLG-FE-149 (consolidated, P3) per this story's AC. Full findings: st09_secondary_text_token_audit_findings.md."
         },
         "ST-10": {
           "title": "Empty-state illustration/microcopy consistency pass",

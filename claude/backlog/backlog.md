@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-10 (session — 2 new items added: BLG-FE-147, BLG-FE-148); prior — 2026-08-08 (session — 2 new items added: BLG-GOV-292, BLG-GOV-293); prior — 2026-08-08 (release planning 2026-08-08__release-v8.5 — 25 items' `Provisional-Target` field updated `TBD`/`Unscheduled` → `v8.5`; `## v8.5 Release Slice` ephemeral section appended); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-10 (session — 3 new items added: BLG-FE-147, BLG-FE-148, BLG-FE-149); prior — 2026-08-08 (session — 2 new items added: BLG-GOV-292, BLG-GOV-293); prior — 2026-08-08 (release planning 2026-08-08__release-v8.5 — 25 items' `Provisional-Target` field updated `TBD`/`Unscheduled` → `v8.5`; `## v8.5 Release Slice` ephemeral section appended); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -1192,6 +1192,28 @@ ST-06 (BLG-FE-145) registered `muted`/`muted-foreground` in `tailwind.config.js`
 **Acceptance Criteria**
 - Each of the 5 listed families has at least one Playwright test asserting the real post-ST-06 computed colour at a confirmed-affected call site
 - `DialogDescription`'s actual exposure (or non-exposure) of the default `text-muted-foreground` styling is confirmed and documented, with a test added if any live call site does expose it
+
+---
+
+### BLG-FE-149 — Fix 6 drift instances against the v6.7 canonical secondary-text token
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-09 (EPIC-04, 2026-08-08__release-v8.5) — design token audit
+**Effort:** XS (~<1h — mechanical class-name corrections, no design decision needed)
+**Provisional-Target:** v8.6
+
+**Problem**
+ST-09's audit (`claude/cycles/2026-08-08__release-v8.5/st09_secondary_text_token_audit_findings.md`) found 6 instances that drift from the canonical secondary-text token established by the v6.7 remediation (`docs/design/2026-07-06__release-v6.7/secondary-text-contrast/ux_spec.md`: `text-slate-600 dark:text-slate-400`). Two sub-classes: (a) 4 instances use the failing light-theme shade `text-slate-500` (4.34:1 against `bg-slate-100`, below the 4.5:1 requirement) instead of canonical `text-slate-600` — `src/pages/Positions.js:591`, `src/components/positions/PositionCard.js:127`, `src/components/watchlist/WatchlistRow.js:27`, `src/Layout.js:573-586` (search-affordance button + ⌘K badge — the badge's dark-theme value is also wrong, both branches use the pre-v6.7 failing `text-slate-500`); (b) 2 instances are missing a `dark:` variant entirely — `src/pages/Reports.js:660` (reconciliation sign-off note) and `src/components/dashboard/home/WhatsNewCard.js:56,61` (bullet marker and overflow-count list item, inconsistent with sibling list items in the same file that already use the canonical pair).
+
+**Scope**
+- Replace `text-slate-500` with `text-slate-600` (light-theme branch) in the 4 wrong-shade instances
+- Add `dark:text-slate-400` to the 2 missing-variant instances (and their bare light value, if not already `text-slate-600`)
+- No new design decision required — this is mechanical application of the already-approved v6.7 token
+
+**Acceptance Criteria**
+- All 6 instances use exactly `text-slate-600 dark:text-slate-400` (or the equivalent `isDark` ternary form already used elsewhere in `Layout.js`)
+- No visual regression — Playwright coverage or staging sign-off per CLAUDE.md's frontend-visible-change rule
 
 ---
 
