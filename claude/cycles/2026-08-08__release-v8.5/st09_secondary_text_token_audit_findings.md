@@ -33,8 +33,8 @@ Six real drift instances found, all genuine text (not icon) elements, falling in
 | `src/pages/Positions.js` | 591 | `text-slate-500 dark:text-slate-400` | Light value `text-slate-500` fails against `bg-slate-100` (4.34:1 < 4.5:1 per the v6.7 decision's own contrast table) — should be `text-slate-600` |
 | `src/components/positions/PositionCard.js` | 127 | `text-slate-500 dark:text-slate-400` | Same issue — appears to be the same conditional class pattern duplicated between the page and its card component |
 | `src/components/watchlist/WatchlistRow.js` | 27 | `text-xs text-slate-500 dark:text-slate-400` | Same issue |
-| `src/Layout.js` | 573–575 | `isDark ? "...text-slate-400..." : "...text-slate-500..."` (command palette search-affordance button, "Search…" label) | Light branch uses `text-slate-500` instead of `text-slate-600` |
-| `src/Layout.js` | 580–586 | `isDark ? "...text-slate-500" : "...text-slate-500"` (⌘K keyboard-shortcut `kbd` badge) | **Both branches** use `text-slate-500` — the dark branch is the exact pre-v6.7 failing value (3.07:1), never fixed for this element; the light branch also fails |
+| `src/Layout.js` | ~601–602 (line numbers shifted from the original 573–575 by ST-11's later comment-block addition earlier in the file; content unchanged — corrected 2026-08-10 per DoQ review) | `isDark ? "...text-slate-400..." : "...text-slate-500..."` (command palette search-affordance button, "Search…" label) | Light branch uses `text-slate-500` instead of `text-slate-600` |
+| `src/Layout.js` | ~611–612 (shifted from the original 580–586; content unchanged) | `isDark ? "...text-slate-500" : "...text-slate-500"` (⌘K keyboard-shortcut `kbd` badge) | **Both branches** use `text-slate-500` — the dark branch is the exact pre-v6.7 failing value (3.07:1), never fixed for this element; the light branch also fails |
 
 ### 3b. Missing dark-theme variant entirely (bare `text-slate-500`, no split — the original BLG-FE-87 failure pattern, present on instances added or missed after v6.7)
 
@@ -47,7 +47,7 @@ Six real drift instances found, all genuine text (not icon) elements, falling in
 ## 4. Non-findings
 
 - No `dark:text-slate-500` usages found anywhere in `src/` — the dark-theme value is never wrong when a `dark:` variant is present at all; every drift instance is either a missing variant or a wrong *light*-theme value.
-- `src/Layout.js`'s five other `isDark ? "text-slate-400" : "text-slate-600"` ternaries (lines 292, 311, 628, 664, 685) are correctly paired — not drift.
+- `src/Layout.js`'s five other `isDark ? "text-slate-400" : "text-slate-600"` (or reversed-order) ternaries (lines 317, 336, 655, 693, 714 as of 2026-08-10; were 292, 311, 628, 664, 685 at original audit time, shifted by the same later comment-block addition) are correctly paired — not drift.
 - Icon-component `text-slate-400`/`text-slate-500` usages (the large majority of raw grep hits, ~35 of 45 for `text-slate-500` alone) are explicitly out of scope per the v6.7 decision record and are not counted as drift here.
 
 ## 5. Disposition

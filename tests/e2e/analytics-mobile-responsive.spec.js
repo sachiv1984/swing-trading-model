@@ -95,7 +95,11 @@ test.describe('ST-12 mobile responsive fixes', () => {
     await expect(expandButton).toBeVisible({ timeout: 10000 });
     await expandButton.click();
 
-    const table = page.locator('table').filter({ has: page.locator('th', { hasText: 'Tag' }) });
+    // ST-12 CI fix: TagPerformance.js renders its own separate table with a
+    // "Tag" column header on the same page, so a bare `th:has-text("Tag")`
+    // filter is ambiguous (strict-mode violation, 2 matches). Scope to the
+    // table immediately following the expand button instead.
+    const table = expandButton.locator('xpath=following::table[1]');
     await expect(table).toBeVisible({ timeout: 5000 });
     const scrollContainer = table.locator('xpath=ancestor::div[contains(@class,"overflow-x-auto")][1]');
     await expect(scrollContainer).toBeVisible();
