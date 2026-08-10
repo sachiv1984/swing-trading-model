@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-10T06:50:07Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-10T12:15:03Z",
+  "last_updated_utc": "2026-08-10T15:08:30Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -69,76 +69,83 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "merged",
       "branch": "exec/2026-08-08__release-v8.5/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1329,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-08__release-v8.5/qa_evidence_EPIC-02.md",
       "test_scenarios": [],
       "stories": {
         "ST-03": {
           "title": "Security fix false-positive rate assessment (BLG-SEC-02)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1303,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "ec528651a7d865ec5b47179cdb81c7d2307321f0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T11:59:14Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-08-08__release-v8.5/st03_sec02_false_positive_rate_assessment.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "0% false-positive rate (0/602 tickers altered) measured against backend/tickers_full_list.csv, the full real ticker universe -- no live production DB access available in this environment. See st03_sec02_false_positive_rate_assessment.md for method and full findings."
         },
         "ST-04": {
           "title": "Recurring dependency vulnerability re-scan cadence (consolidated)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1304,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "ec528651a7d865ec5b47179cdb81c7d2307321f0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T11:59:14Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            ".github/workflows/dependency-vuln-rescan.yml",
+            "scripts/check_dependency_vuln_rescan.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "New monthly scheduled workflow (dependency-vuln-rescan.yml) combining pip-audit + npm audit, independent of existing per-PR/pre-sprint pip-audit-only checks. Baseline captured: 0 pip-audit findings, 16 npm audit high/critical findings (all react-scripts toolchain transitive deps) -- filed BLG-SEC-18 for review. Cadence documented in shared_standards.md new section 20. Script validated locally against real pip-audit/npm audit output (exit 0, correct report). Live gh workflow_dispatch returned HTTP 404 pre-merge (GitHub platform restriction -- workflow must exist on default branch to be API-dispatchable); deferred post-merge verification recorded in qa_evidence_EPIC-02.md."
         },
         "ST-05": {
           "title": "API key rotation runbook",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1305,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "ec528651a7d865ec5b47179cdb81c7d2307321f0",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T11:59:14Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ops/api_key_rotation_policy.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Application X-API-Key rotation runbook added to docs/ops/api_key_rotation_policy.md (Scope table, Rotation Schedule, Credential-Specific Notes with full steps + verification checklist), cross-referencing the register's existing detailed procedure (added earlier at ST-06/BLG-SEC-27, v8.2) rather than duplicating it. Filed BLG-SEC-28 for the equivalent Telegram Bot Token gap (out-of-scope, lower priority)."
         }
       }
     },
@@ -681,6 +688,9 @@
     "ST-09",
     "ST-10",
     "ST-11",
+    "ST-03",
+    "ST-04",
+    "ST-05",
     "ST-15",
     "ST-16",
     "ST-17",
@@ -698,11 +708,11 @@
   "merge_gate": {
     "epics_merged": [
       "EPIC-01",
+      "EPIC-02",
       "EPIC-03",
       "EPIC-04"
     ],
     "epics_pending": [
-      "EPIC-02",
       "EPIC-05",
       "EPIC-06"
     ],
