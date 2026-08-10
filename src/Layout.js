@@ -133,6 +133,25 @@ export default function Layout({ children, currentPageName }) {
     setTheme(savedTheme);
   }, []);
 
+  // ST-06 (BLG-FE-145, EPIC-03, v8.5) follow-up, found live via this story's
+  // own new Playwright tests failing in real CI: tailwind.config.js's
+  // darkMode: ["class"] requires an ANCESTOR element carrying the literal
+  // "dark" class for any dark: variant to apply -- but that class was only
+  // ever applied to this component's own wrapper <div> below, never to
+  // document.documentElement. Radix's DialogPortal (src/components/ui/dialog.js)
+  // renders its content into document.body, OUTSIDE this wrapper's DOM
+  // subtree -- so every dark: variant and every CSS custom property that
+  // differs between :root and .dark (src/index.css) has always resolved to
+  // its LIGHT value inside every Dialog-based component app-wide (14+
+  // consumers: CommandPalette, ExportModal, WatchlistModal, WidgetLibrary,
+  // PositionEntryModal, etc.), regardless of the user's actual theme
+  // setting. Syncing the class onto documentElement (an ancestor of every
+  // portal, since portals still mount under <body>/<html>) fixes this for
+  // all of them at the root cause, not just this story's own call sites.
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, [theme]);
+
   const toggleTheme = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
