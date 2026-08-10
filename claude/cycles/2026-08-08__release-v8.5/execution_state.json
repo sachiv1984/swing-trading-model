@@ -143,13 +143,13 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-08-08__release-v8.5/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-08__release-v8.5/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/e2e/command-palette.spec.js", "tests/e2e/trade-plan.spec.js", "tests/e2e/reports-realised-pnl-zero-colour-convention.spec.js"],
       "stories": {
         "ST-06": {
           "title": "Register muted/muted-foreground (and other dead -muted classes) in tailwind.config.js",
@@ -200,7 +200,7 @@
           "assigned_to": "engine",
           "github_issue": 1308,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-03",
-          "commit_sha": null,
+          "commit_sha": "18dfa9d78557fdf6efc1bcc4e515a32f3882dd1c",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -611,11 +611,15 @@
   "delegated_items": [],
   "completed_items": [
     "ST-01",
-    "ST-02"
+    "ST-02",
+    "ST-06",
+    "ST-07",
+    "ST-08"
   ],
   "open_escalations": [],
   "process_notes": [
-    "EPIC-01: PR #1326 open, all engine-side work + evidence complete, awaiting human QA sign-off + Product Owner acceptance per \u00a75.3 always-human merge gate (2026-08-10). Not a blocker for other EPICs -- proceeding to EPIC-03 (next in merge order) per STEP 4's 'do not merge, record unmet condition' guidance, which does not itself halt the session."
+    "EPIC-01: PR #1326 open, all engine-side work + evidence complete, awaiting human QA sign-off + Product Owner acceptance per \u00a75.3 always-human merge gate (2026-08-10). Not a blocker for other EPICs -- proceeding to EPIC-03 (next in merge order) per STEP 4's 'do not merge, record unmet condition' guidance, which does not itself halt the session.",
+    "EPIC-03: agent-mediated DoQ review (\u00a75.3, independent subagent, 2 passes) caught 2 real blocking findings before PR open -- ST-06's AC-02 claimed Pass with only 1 of ~9 real call-site families covered and no backlog item filed for the rest (hard-gate violation, CLAUDE.md); ST-08's implementation silently carried the colour fix into a column (P&L %) the Design Gate decision explicitly excluded. Both remediated in-session before the PR opened; see qa_evidence_EPIC-03.md for full trail."
   ],
   "merge_gate": {
     "epics_merged": [],

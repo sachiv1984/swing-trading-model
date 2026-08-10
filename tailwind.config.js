@@ -25,7 +25,7 @@ module.exports = {
         // -muted per this story's AC; other similarly-unregistered shadcn
         // tokens (card, popover, primary, secondary, accent, destructive,
         // border, input, ring) are a separate, broader gap -- filed as
-        // BLG-FE-146, out of this story's scope.
+        // BLG-FE-147, out of this story's scope.
         muted: {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))',

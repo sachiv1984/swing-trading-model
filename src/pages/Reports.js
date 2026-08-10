@@ -346,6 +346,12 @@ function TaxYearReport() {
                     // decision record -- a breakeven trade is not a loss.
                     // Resolves DEV-REPORTS-ST01-02.
                     const pnlColor = pnl > 0 ? "text-emerald-400" : pnl < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400";
+                    // decision_record.md §5 Scope boundary: "Applies to the
+                    // Realised P&L column in both tables only. Does not
+                    // touch P&L %..." -- kept on the original binary rule,
+                    // deliberately NOT sharing pnlColor with the cell below,
+                    // so this column's colour is unaffected by ST-08.
+                    const pnlPctColor = trade.pnl_pct > 0 ? "text-emerald-400" : "text-rose-400";
                     const currency = trade.currency === "USD" ? "USD" : "GBP";
                     const priceSymbol = currency === "USD" ? "$" : "£";
                     return (
@@ -374,7 +380,7 @@ function TaxYearReport() {
                         <td className="px-3 py-3 text-slate-300">{formatGBP(trade.total_cost_gbp)}</td>
                         <td className="px-3 py-3 text-slate-300">{formatGBP(trade.exit_proceeds_gbp)}</td>
                         <td data-testid="tax-year-realised-pnl-cell" className={`px-3 py-3 font-medium ${pnlColor}`}>{formatGBP(pnl)}</td>
-                        <td className={`px-3 py-3 ${pnlColor}`}>{formatPct(trade.pnl_pct)}</td>
+                        <td data-testid="tax-year-pnl-pct-cell" className={`px-3 py-3 ${pnlPctColor}`}>{formatPct(trade.pnl_pct)}</td>
                         <td className="px-3 py-3">
                           <div className="flex flex-wrap gap-1">
                             {(trade.tags ?? []).map((tag) => (

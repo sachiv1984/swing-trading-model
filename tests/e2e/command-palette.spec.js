@@ -169,9 +169,12 @@ test('SC-CP-12: empty input shows a curated set of frequent pages, no "Your Data
 // instead of an empty rule. CommandGroup's "Pages" heading is styled via
 // `[&_[cmdk-group-heading]]:text-muted-foreground` (src/components/ui/command.js)
 // -- a confirmed-affected call site rendered by SC-CP-12 above. Before the
-// fix this resolved to `rgb(0, 0, 0)` (browser default `color` inheritance,
-// since the utility class produced no rule at all); after the fix it must
-// resolve to the actual `--muted-foreground` HSL value for the active theme.
+// fix this class produced no CSS rule at all, so the heading fell back to
+// whatever `color` it inherited from its ancestors (the CommandGroup's own
+// `text-foreground`, near-white in this app's dark theme -- NOT literal
+// black; corrected here after an inaccurate `rgb(0, 0, 0)` claim was caught
+// in agent-mediated DoQ review). After the fix it must resolve to the
+// actual `--muted-foreground` HSL value for the active theme.
 test('SC-CP-13: "Pages" command-group heading renders the real muted-foreground colour (ST-06, BLG-FE-145)', async ({ page }) => {
   await goto(page, '/#/Positions');
   await page.keyboard.press('Control+k');
@@ -182,7 +185,22 @@ test('SC-CP-13: "Pages" command-group heading renders the real muted-foreground 
   // Dark theme (this app's default, set in Layout.js) --muted-foreground is
   // "0 0% 63.9%" (src/index.css .dark) == rgb(163, 163, 163).
   expect(color).toBe('rgb(163, 163, 163)');
-  // Not the unstyled browser default (black) that a dead/empty utility
-  // class would silently fall back to.
-  expect(color).not.toBe('rgb(0, 0, 0)');
+});
+
+// Second confirmed-affected call site, exercising the other CSS mechanism
+// -muted-foreground drives: a `::placeholder` pseudo-element colour (via
+// `placeholder:text-muted-foreground`, src/components/ui/command.js
+// CommandInput) rather than a plain element `color` (SC-CP-13's group
+// heading, above). This is the same class shadcn's generic `Input`
+// primitive (src/components/ui/input.js) uses for its own placeholder --
+// CommandInput and Input share the identical utility class, so this call
+// site is representative of that family too, not just the command palette.
+test('SC-CP-14: command palette search input placeholder renders the real muted-foreground colour (ST-06, BLG-FE-145)', async ({ page }) => {
+  await goto(page, '/#/Positions');
+  await page.keyboard.press('Control+k');
+  const input = page.getByTestId('command-palette-input');
+  await expect(input).toBeVisible();
+
+  const placeholderColor = await input.evaluate((el) => getComputedStyle(el, '::placeholder').color);
+  expect(placeholderColor).toBe('rgb(163, 163, 163)');
 });

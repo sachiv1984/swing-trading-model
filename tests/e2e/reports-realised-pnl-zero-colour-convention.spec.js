@@ -21,6 +21,12 @@
  *   SC-RPZ-04  Monthly table: exactly-zero Realised P&L renders neutral
  *              (unchanged behaviour — confirms no regression to the
  *              already-correct table while fixing the other one)
+ *   SC-RPZ-05  Tax Year table: exactly-zero P&L % stays on the original
+ *              binary rule (rose, not neutral) — decision_record.md §5
+ *              Scope boundary explicitly excludes P&L % from this story;
+ *              a shared-variable implementation slip would have silently
+ *              carried the Realised P&L fix into this column too (caught
+ *              in agent-mediated DoQ review before this fix was added)
  *
  * Infrastructure: Playwright page.route() network interception. No live backend.
  * ROUTING NOTE: App uses HashRouter — navigate via page.goto('/#/Reports'), then
@@ -116,6 +122,27 @@ test('SC-RPZ-03: Tax Year table — exactly-zero Realised P&L renders neutral, n
   await expect(cell).not.toHaveClass(/text-rose-400/);
   await expect(cell).not.toHaveClass(/text-emerald-400/);
   await expect(cell).toHaveClass(/text-slate-600/);
+});
+
+test('SC-RPZ-05: Tax Year table — exactly-zero P&L % stays rose (unaffected by the Realised P&L fix)', async ({ page }) => {
+  await mockFallback(page);
+  await page.route(new RegExp(`${API}/reports/tax-year(?!\\?format=csv)`), (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(taxYearReportResponse([taxYearTrade({ realised_pnl_gbp: 0, pnl_pct: 0 })])) })
+  );
+  await page.goto('/#/Reports');
+  await page.getByRole('button', { name: /tax year p&l/i }).click();
+
+  // The Realised P&L cell converges on neutral (SC-RPZ-03) ...
+  const pnlCell = page.getByTestId('tax-year-realised-pnl-cell');
+  await expect(pnlCell).toBeVisible({ timeout: 8000 });
+  await expect(pnlCell).toHaveClass(/text-slate-600/);
+
+  // ... but the P&L % cell must NOT share that colour -- decision_record.md
+  // §5 explicitly scopes this story to the Realised P&L column only.
+  const pctCell = page.getByTestId('tax-year-pnl-pct-cell');
+  await expect(pctCell).toBeVisible();
+  await expect(pctCell).toHaveClass(/text-rose-400/);
+  await expect(pctCell).not.toHaveClass(/text-slate-600/);
 });
 
 test('SC-RPZ-04: Monthly table — exactly-zero Realised P&L renders neutral (no regression)', async ({ page }) => {
