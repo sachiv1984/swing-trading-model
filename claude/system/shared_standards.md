@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.26
-**Last Updated:** 2026-08-07
+**Version:** 3.27
+**Last Updated:** 2026-08-10
 
 # Shared Standards — All Governed Routines
 
@@ -1056,6 +1056,24 @@ Array.isArray(data.items) ? data.items.map(item => ...) : []
 ```
 
 **Enforcement:** New Playwright test coverage and code review for any story touching a `.map()`/`.filter()` call site over API response data should confirm this guard is present. Not retroactively enforced against existing code as a blanket requirement — apply at next-touch of the affected call site, or file a targeted backlog item where a specific unguarded call site is identified as high-risk.
+
+---
+
+## 20. Dependency Vulnerability Scan Cadence (BLG-SEC-15, ST-04, EPIC-02, v8.5)
+
+Dependency vulnerability scanning runs on three independent, overlapping cadences — no single one alone catches every gap the others close:
+
+| Tier | Trigger | Tool(s) | Scope | Workflow / Prompt |
+|------|---------|---------|-------|--------------------|
+| 1 — Per-PR gate | Every PR + push to `main`/`develop` | `pip-audit` only | `backend/requirements.txt` | `.github/workflows/vulnerability-scan.yml` — HIGH/CRITICAL **blocks merge** |
+| 2 — Pre-sprint check | Every `plan sprint` invocation (including `--dry-run`) | `pip-audit` only | `backend/requirements.txt` | `sprint_planning_prompt.md` STEP -1.8 — advisory, recorded in `sprint_planning_notes.md` §Pre-Sprint Vulnerability Scan |
+| 3 — Scheduled re-scan | Monthly (1st of month, 07:00 UTC) + manual `workflow_dispatch` | `pip-audit` **and** `npm audit` | `backend/requirements.txt` **and** root `package-lock.json` | `.github/workflows/dependency-vuln-rescan.yml` — non-blocking; files/updates a GitHub issue (labels `security`, `dependency-scan`) for any finding not already present in `docs/security/dependency_vuln_baseline.json` |
+
+Tier 1 and Tier 2 never run `npm audit`, and both are gated on human/CI activity (a PR being opened, a sprint being planned) — a dependency untouched by either in a given window could carry a newly-disclosed CVE unnoticed indefinitely. Tier 3 exists specifically to close that gap: it runs on a fixed calendar schedule independent of any other activity, and it is the only tier covering the frontend (`npm audit`) dependency tree at all.
+
+**New-vs-known dedup:** Tier 3 does not re-file an issue for every run against the same already-known findings — `docs/security/dependency_vuln_baseline.json` tracks advisory IDs already surfaced (see the file's own header comment for the baseline-vs-accepted-risk distinction). Only advisory IDs absent from that file trigger a new issue. Analysis logic: `scripts/check_dependency_vuln_rescan.py`.
+
+**Filed-item requirement:** Any new (not-in-baseline) HIGH/CRITICAL finding from Tier 3 results in a filed GitHub issue automatically (the CI-native equivalent of a backlog item — this workflow runs unattended on a schedule and cannot itself write to `claude/backlog/backlog.md`, which is governance-write-scoped to governed routines). Cybersecurity & Trust Lead triages the issue at the next convenient session, converting it to a formal `BLG-SEC-xx` backlog item via `/backlog-add` if it isn't resolved before then.
 
 ---
 

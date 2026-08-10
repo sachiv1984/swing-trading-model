@@ -4676,6 +4676,46 @@ Document a rotation runbook: steps, owner, and verification checklist for rotati
 
 ---
 
+### BLG-SEC-18 — Review baseline npm audit HIGH/CRITICAL findings (react-scripts toolchain)
+
+**Priority:** P3 (Low)
+**Type:** Security
+**Owner:** Cybersecurity & Trust Lead
+**Source:** ST-04 (BLG-SEC-15, EPIC-02, v8.5) — initial baseline capture for `dependency-vuln-rescan.yml`, 2026-08-10
+
+**Problem**
+`dependency-vuln-rescan.yml`'s baseline capture run (`docs/security/dependency_vuln_baseline.json`) found 16 npm packages with HIGH/CRITICAL advisories (13 high, 3 critical — `shell-quote`, `tar`, `websocket-driver` critical; `brace-expansion`, `fast-uri`, `form-data`, `js-yaml`, `nanoid`, `postcss`, `react-router`, `svgo`, `ws`, plus 4 no-own-advisory wrapper packages high). All are transitive dependencies pulled in via `react-scripts` (CRA v5's webpack-dev-server/build-toolchain dependency tree) rather than direct runtime dependencies of the shipped app — but none were individually risk-assessed before being added to the baseline; they were captured as a "known, not yet reviewed" snapshot so the new scheduled scan doesn't re-alert on them every month.
+
+**Scope**
+- Review each finding: is it build-time-only (dev/CI, never in the shipped production bundle) or does it reach the runtime bundle?
+- For any exploitable-in-production finding: fix (upgrade/patch) or file a targeted remediation item.
+- For build-time-only findings: record an explicit accept-risk decision (per the `CVE-2026-4539`/pygments precedent in `vulnerability-scan.yml`) rather than leaving them as an unreviewed baseline entry indefinitely.
+
+**Acceptance Criteria**
+- Each of the 16 baseline advisory IDs in `docs/security/dependency_vuln_baseline.json` has either been fixed (removed from baseline) or has a recorded accept-risk decision (owner, rationale, review-by date)
+
+---
+
+### BLG-SEC-28 — Telegram Bot Token missing from api_key_rotation_policy.md scope
+
+**Priority:** P3 (Low)
+**Type:** Security
+**Owner:** Cybersecurity & Trust Lead
+**Source:** ST-05 (BLG-SEC-16, EPIC-02, v8.5) — out-of-scope finding surfaced while adding the Application X-API-Key runbook, 2026-08-10
+
+**Problem**
+`docs/security/api_key_security_register.md` §7 (Telegram Bot Token / Chat ID) has a rotation procedure, but — same gap this story just fixed for the Application X-API-Key — `docs/ops/api_key_rotation_policy.md`'s own Scope table and Rotation Schedule never reference it, so the canonical rotation policy document is silently incomplete for this credential. Lower priority than the X-API-Key gap this story fixed: the Telegram token's `Last rotation date` is already recorded as "Unknown (pre-register baseline)", so there is no annual-cadence tracking depending on this today.
+
+**Scope**
+- Add Telegram Bot Token to `api_key_rotation_policy.md`'s Scope table and Rotation Schedule
+- Add a Credential-Specific Notes subsection cross-referencing the register's existing procedure (same pattern as the Application X-API-Key entry added by ST-05)
+
+**Acceptance Criteria**
+- `api_key_rotation_policy.md` Scope table and Rotation Schedule include the Telegram Bot Token
+- Credential-Specific Notes subsection added, cross-referencing `docs/security/api_key_security_register.md` §7
+
+---
+
 ### BLG-SPEC-75 — Migration block consolidation review
 **Priority:** P3 (Low)
 **Type:** Spec Debt
