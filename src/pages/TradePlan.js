@@ -286,6 +286,14 @@ const EMPTY_FORM = {
   planned_entry_price: "",
   planned_stop_price: "",
   trade_tags: [],
+  // ST-07 (BLG-FE-143, EPIC-03, v8.5): populated only from the real Claude
+  // "Improve with AI" response (POST /trade-plans/generate-plan) -- never
+  // from generateThesisTemplate(), which is a local, deterministic string
+  // builder, not an AI call. Cleared on any manual edit to a narrative
+  // field (setNarrativeField below) so a saved plan's version fields only
+  // ever reflect content that was directly AI-generated, never edited.
+  thesis_model_version: null,
+  thesis_prompt_version: null,
 };
 
 // ST-05 (BLG-FEAT-52): Tag Rules per journal_components.md §3/§4, reused for trade_tags
@@ -406,6 +414,10 @@ export default function TradePlan() {
         status: existingPlan.status || "draft",
         thesis_feedback: existingPlan.thesis_feedback || null,
         trade_tags: Array.isArray(existingPlan.trade_tags) ? existingPlan.trade_tags : [],
+        // ST-07: carry the persisted values forward so re-saving an
+        // already-AI-generated, unedited plan doesn't lose them.
+        thesis_model_version: existingPlan.thesis_model_version || null,
+        thesis_prompt_version: existingPlan.thesis_prompt_version || null,
       });
     }
   }, [existingPlan]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -539,6 +551,24 @@ export default function TradePlan() {
 
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
+
+  // ST-07 (BLG-FE-143, EPIC-03, v8.5): narrative fields are the ones
+  // generate-plan populates with AI content (setup_thesis, entry_rationale,
+  // confirmation_criteria, early_exit_conditions). A manual edit to any of
+  // them means the saved content is no longer purely AI-generated, so the
+  // thesis_model_version/thesis_prompt_version must be cleared -- same
+  // signal setup_thesis's own onChange already used for isAiDraft/
+  // isClaudeDraft (below), extended to also clear the version fields.
+  const setNarrativeField = (field) => (e) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: e.target.value,
+      thesis_model_version: null,
+      thesis_prompt_version: null,
+    }));
+    if (isAiDraft) setIsAiDraft(false);
+    if (isClaudeDraft) setIsClaudeDraft(false);
+  };
 
   const handleChecklistToggle = (idx) => {
     setForm((prev) => {
@@ -871,7 +901,17 @@ export default function TradePlan() {
                     signal: linkedSignal,
                     headlines: newsForGenerator,
                   });
-                  setForm((prev) => ({ ...prev, setup_thesis: draft, thesis_feedback: null }));
+                  // ST-07: this is a client-side template fill, not a Claude
+                  // call -- clear any prior thesis_model_version/
+                  // thesis_prompt_version so a save after this never records
+                  // AI-generation metadata for content Claude didn't produce.
+                  setForm((prev) => ({
+                    ...prev,
+                    setup_thesis: draft,
+                    thesis_feedback: null,
+                    thesis_model_version: null,
+                    thesis_prompt_version: null,
+                  }));
                   setIsAiDraft(true);
                   setIsClaudeDraft(false);
                 }}
@@ -924,6 +964,12 @@ export default function TradePlan() {
                             ...(f.r_target != null ? { r_target: f.r_target } : {}),
                             checklist_items: updatedChecklist,
                             thesis_feedback: null,
+                            // ST-07 (BLG-FE-143): this IS the real Claude
+                            // path -- record what generated it so a save
+                            // right after this (no further manual edits)
+                            // persists genuine AI-generation provenance.
+                            thesis_model_version: d.model_version || null,
+                            thesis_prompt_version: d.prompt_version || null,
                           };
                         });
                         setIsAiDraft(true);
@@ -992,11 +1038,7 @@ export default function TradePlan() {
             className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
             rows={3}
             value={form.setup_thesis}
-            onChange={(e) => {
-              setForm((prev) => ({ ...prev, setup_thesis: e.target.value }));
-              if (isAiDraft) setIsAiDraft(false);
-              if (isClaudeDraft) setIsClaudeDraft(false);
-            }}
+            onChange={setNarrativeField("setup_thesis")}
             placeholder="Describe the setup — what technical or fundamental condition makes this a candidate?"
           />
         </div>
@@ -1005,7 +1047,7 @@ export default function TradePlan() {
           <TextArea
             rows={3}
             value={form.entry_rationale}
-            onChange={set("entry_rationale")}
+            onChange={setNarrativeField("entry_rationale")}
             placeholder="Why enter now? What specific trigger confirms the thesis?"
           />
         </Field>
@@ -1014,7 +1056,7 @@ export default function TradePlan() {
           <TextArea
             rows={2}
             value={form.confirmation_criteria}
-            onChange={set("confirmation_criteria")}
+            onChange={setNarrativeField("confirmation_criteria")}
             placeholder="What must be true before pressing the button? (e.g. volume > 1.5× avg, no earnings within 5 days)"
           />
         </Field>
@@ -1023,7 +1065,7 @@ export default function TradePlan() {
           <TextArea
             rows={2}
             value={form.early_exit_conditions}
-            onChange={set("early_exit_conditions")}
+            onChange={setNarrativeField("early_exit_conditions")}
             placeholder="Under what conditions would you exit before the stop is hit?"
           />
         </Field>

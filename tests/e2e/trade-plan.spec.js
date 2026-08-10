@@ -637,6 +637,12 @@ const GENERATE_PLAN_RESPONSE = {
       entry_rationale: 'Momentum confirmed by relative strength vs SPY.',
       confirmation_criteria: 'Close above prior resistance on 2x avg volume.',
     },
+    // ST-07 (BLG-FE-143, EPIC-03, v8.5): real shape returned by
+    // generate_full_plan() (backend/services/gemini_service.py) alongside
+    // `fields` -- previously omitted from this fixture since nothing
+    // consumed it yet.
+    model_version: 'claude-haiku-4-5',
+    prompt_version: 'v3.0',
   },
 };
 
@@ -759,6 +765,87 @@ test('SC-TP-23f: thesis_feedback is included in the save payload once feedback i
   await expect(page.locator('[class*="emerald"]').filter({ hasText: /saved successfully/i })).toBeVisible({ timeout: 8000 });
 
   expect(savedPayload.thesis_feedback).toBe('useful');
+});
+
+// ST-07 (BLG-FE-143, EPIC-03, v8.5) — thesis_model_version/thesis_prompt_version
+// AC-01: AI-generated content (Improve with AI, the real Claude path) has both
+// fields populated in the save payload. AC-02: manually-typed or user-edited
+// content leaves both fields null -- covers the client-side-template path
+// (never AI) and the edit-after-AI path (no longer purely AI-generated).
+
+test('SC-TP-24a: "Improve with AI" (Claude) populates thesis_model_version/thesis_prompt_version in the save payload', async ({ page }) => {
+  await gotoTradePlanForAi(page, { improveWithAi: true });
+
+  let savedPayload = null;
+  await page.route(`${API}/trade-plans`, (route) => {
+    if (route.request().method() === 'POST') {
+      savedPayload = route.request().postDataJSON();
+      route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(TRADE_PLAN_SAVED) });
+    } else {
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) });
+    }
+  });
+
+  await page.getByTestId('improve-with-ai-btn').click();
+  await expect(page.getByTestId('thesis-feedback-control')).toBeVisible({ timeout: 5000 });
+
+  await page.getByRole('button', { name: /save plan/i }).click();
+  await expect(page.locator('[class*="emerald"]').filter({ hasText: /saved successfully/i })).toBeVisible({ timeout: 8000 });
+
+  expect(savedPayload.thesis_model_version).toBe('claude-haiku-4-5');
+  expect(savedPayload.thesis_prompt_version).toBe('v3.0');
+});
+
+test('SC-TP-24b: template-only "Generate thesis" (not Claude) leaves thesis_model_version/thesis_prompt_version null', async ({ page }) => {
+  await gotoTradePlanForAi(page);
+
+  let savedPayload = null;
+  await page.route(`${API}/trade-plans`, (route) => {
+    if (route.request().method() === 'POST') {
+      savedPayload = route.request().postDataJSON();
+      route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(TRADE_PLAN_SAVED) });
+    } else {
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) });
+    }
+  });
+
+  await page.getByTestId('generate-thesis-btn').click();
+  await expect(page.getByTestId('ai-draft-badge')).toBeVisible({ timeout: 3000 });
+
+  await page.getByRole('button', { name: /save plan/i }).click();
+  await expect(page.locator('[class*="emerald"]').filter({ hasText: /saved successfully/i })).toBeVisible({ timeout: 8000 });
+
+  expect(savedPayload.thesis_model_version).toBeNull();
+  expect(savedPayload.thesis_prompt_version).toBeNull();
+});
+
+test('SC-TP-24c: editing a narrative field after "Improve with AI" clears thesis_model_version/thesis_prompt_version before save', async ({ page }) => {
+  await gotoTradePlanForAi(page, { improveWithAi: true });
+
+  let savedPayload = null;
+  await page.route(`${API}/trade-plans`, (route) => {
+    if (route.request().method() === 'POST') {
+      savedPayload = route.request().postDataJSON();
+      route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(TRADE_PLAN_SAVED) });
+    } else {
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok', data: [] }) });
+    }
+  });
+
+  await page.getByTestId('improve-with-ai-btn').click();
+  await expect(page.getByTestId('thesis-feedback-control')).toBeVisible({ timeout: 5000 });
+
+  // Manual edit to a narrative field -- content is no longer purely AI-generated.
+  await page.getByTestId('setup-thesis-textarea').click();
+  await page.keyboard.press('End');
+  await page.keyboard.type(' edited by trader');
+  await expect(page.getByTestId('ai-draft-badge')).not.toBeVisible();
+
+  await page.getByRole('button', { name: /save plan/i }).click();
+  await expect(page.locator('[class*="emerald"]').filter({ hasText: /saved successfully/i })).toBeVisible({ timeout: 8000 });
+
+  expect(savedPayload.thesis_model_version).toBeNull();
+  expect(savedPayload.thesis_prompt_version).toBeNull();
 });
 
 // ---------------------------------------------------------------------------

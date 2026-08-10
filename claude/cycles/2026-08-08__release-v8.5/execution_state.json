@@ -175,7 +175,7 @@
         "ST-07": {
           "title": "Frontend wiring to populate trade_plans.thesis_model_version/thesis_prompt_version on save",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1307,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-03",
@@ -183,15 +183,15 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T08:55:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/specs/api_contracts/trade_plan_endpoints.md"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Root cause: backend already fully supported thesis_model_version/thesis_prompt_version (Create/Update models, database.py INSERT/UPDATE whitelist) but the frontend form state (src/pages/TradePlan.js) never captured them -- the real Claude response from POST /trade-plans/generate-plan (the 'Improve with AI' button) includes model_version/prompt_version but the success handler only destructured d.fields, discarding them. Fixed: (1) 'Improve with AI' handler now sets form.thesis_model_version/thesis_prompt_version from the real response; (2) new setNarrativeField() helper clears both fields on any manual edit to setup_thesis/entry_rationale/confirmation_criteria/early_exit_conditions (replacing the ad hoc setup_thesis-only isAiDraft/isClaudeDraft reset and the plain set() calls for the other 3 fields); (3) the client-side-template 'Generate thesis' button (not real AI -- generateThesisTemplate() is a deterministic string builder) also clears both fields, since it was never Claude output; (4) existing-plan load now carries the persisted values forward so re-saving an unedited AI plan doesn't lose them. No backend change needed -- fields were already in the Create/Update Pydantic models and the update whitelist. Playwright coverage: SC-TP-24a/b/c in tests/e2e/trade-plan.spec.js (save-payload interception pattern, extending the existing SC-TP-23f precedent) -- AI path populates both fields, template path leaves both null, edit-after-AI clears both. Could not execute Playwright locally in this sandbox (Chromium unsupported on this OS); real CI (playwright.yml) is the verification path per LL-v8.3-P3-02. No spec deviation."
         },
         "ST-08": {
           "title": "Reconcile Monthly P&L vs Tax Year table's exact-zero P&L colour convention",
