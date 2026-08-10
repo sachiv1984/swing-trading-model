@@ -570,7 +570,14 @@ export default function PerformanceAnalytics() {
           title="Performance Analytics"
           description="Deep dive into your trading performance and strategy effectiveness"
           actions={
-            <div className="flex gap-2">
+            /* ST-12 (BLG-FE-94, EPIC-04, v8.5): flex-col sm:flex-row --
+               per analytics.md "Period selector and export button stack or
+               compress at smaller widths"; the bare flex row had no
+               stacking behaviour, risking overflow on narrow viewports
+               (w-48 Select + Export button could exceed ~375px content
+               width). Matches PageHeader's own flex-col sm:flex-row
+               convention. */
+            <div className="flex flex-col sm:flex-row gap-2">
               <Select value={timePeriod} onValueChange={setTimePeriod}>
                 <SelectTrigger className="w-48 bg-slate-800/50 border-slate-700 text-white">
                   <SelectValue />
@@ -614,7 +621,9 @@ export default function PerformanceAnalytics() {
         title="Performance Analytics"
         description="Deep dive into your trading performance and strategy effectiveness"
         actions={
-          <div className="flex gap-2">
+          /* ST-12 (BLG-FE-94, EPIC-04, v8.5): flex-col sm:flex-row -- see
+             matching comment above for rationale. */
+          <div className="flex flex-col sm:flex-row gap-2">
             <Select value={timePeriod} onValueChange={setTimePeriod}>
               <SelectTrigger className="w-48 bg-slate-800/50 border-slate-700 text-white">
                 <SelectValue />

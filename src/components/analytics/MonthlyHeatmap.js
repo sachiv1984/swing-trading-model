@@ -170,7 +170,11 @@ export default function MonthlyHeatmap({ monthlyData, trades = [] }) {
             </div>
 
             {/* Trade table */}
-            <div className="overflow-y-auto flex-1">
+            {/* ST-12 (BLG-FE-94, EPIC-04, v8.5): overflow-x-auto added --
+                per analytics.md's "All tables support horizontal scroll on
+                small screens" spec, missing here (4 sibling table
+                components already had it). */}
+            <div className="overflow-y-auto overflow-x-auto flex-1">
               <table className="w-full">
                 <thead className="bg-slate-800/70 sticky top-0">
                   <tr>
