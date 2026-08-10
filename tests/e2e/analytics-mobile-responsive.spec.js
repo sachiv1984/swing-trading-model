@@ -46,6 +46,19 @@ async function setupAnalytics(page) {
     page.locator('h1, [class*="text-2xl"], [class*="text-3xl"]').filter({ hasText: 'Performance Analytics' })
   ).toBeVisible({ timeout: 20000 });
   await expect(page.locator('[class*="animate-spin"]')).toHaveCount(0, { timeout: 15000 });
+
+  // Switch to All Time so trades from all months are visible (Radix UI select) --
+  // default timePeriod is "last_month", which filters ALL_TRADES down to zero
+  // rows (mock dates aren't necessarily within "last month" of the CI run time),
+  // triggering the "not enough trades" empty state instead of the real dashboard.
+  // Same pattern as chart-interactivity.spec.js's setupAnalytics() -- omitting
+  // this step was a real bug in this file caught by real CI (all 4 mobile/
+  // desktop-regression tests failed with "element(s) not found" since none of
+  // TimeBasedCharts/MonthlyHeatmap/RMultipleAnalysis ever rendered).
+  const trigger = page.locator('[class*="SelectTrigger"], button[role="combobox"]').first();
+  await trigger.click();
+  await page.locator('[role="option"]').filter({ hasText: 'All Time' }).click();
+  await page.waitForTimeout(500);
 }
 
 test.describe('ST-12 mobile responsive fixes', () => {
