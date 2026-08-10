@@ -46,7 +46,7 @@ Last Updated: 2026-08-10
 - [x] No unresolved P0 or P1 deviations
 - [x] Regression areas checked
 - [x] ST-14's Head of UX & Design sign-off confirmed cleared (see consolidation note above)
-- [ ] Playwright coverage confirmed passing in real CI — **pending this EPIC's PR's first `playwright.yml` run**
+- [x] Playwright coverage confirmed passing in real CI — confirmed 2026-08-10 after 3 CI iterations. First run found 2 real bugs in `tests/e2e/analytics-mobile-responsive.spec.js` itself (not in ST-12's fixes): `setupAnalytics()` omitted the "switch to All Time period" step present in the reference implementation (`chart-interactivity.spec.js`), causing the page to render its empty state instead of the real dashboard; a table locator matched 2 elements ambiguously (strict-mode violation) once the first fix let the real content render. Both fixed; all 34 PR #1328 checks now green, `head_sha` verified to match the current branch head.
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-08-10
 - Comments: Six stories, all AC met. Two real findings surfaced and fixed during this EPIC's own execution beyond what was originally scoped: ST-10 found a 2nd undisclosed empty-state period-in-heading instance (CalendarView.js) beyond the Design Gate's own 4-page audit; ST-12 found and fixed 4 genuine mobile-responsive drift instances. ST-14's inventory deliverable went through 2 rounds of agent-mediated Head of UX & Design review, catching a real factual error (claimed a component didn't exist when it did) before sign-off. Sign-off is conditional on the pending real-CI confirmation noted above.
