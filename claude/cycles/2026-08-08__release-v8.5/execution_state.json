@@ -333,7 +333,7 @@
           "assigned_to": "engine",
           "github_issue": 1313,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "895d4517e6cbf72e222b220edd6d903dc5dd9cc5",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -350,7 +350,7 @@
         "ST-14": {
           "title": "Ad hoc component inventory: candidates for shared design-system extraction",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Head of UX & Design",
           "github_issue": 1314,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-04",
@@ -358,15 +358,15 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T13:40:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/cycles/2026-08-08__release-v8.5/st14_ad_hoc_component_inventory.md"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {"role": "Head of UX & Design", "method": "agent_mediated", "status": "cleared", "passes": 2, "date": "2026-08-10"},
+          "notes": "Audit-only completion (RISK-02). Compiled inventory of ad hoc/duplicated component patterns ranked by duplication count: card wrapper (23 files ad hoc, existing Card component has 0 importers -- worst adoption gap), badge/status-pill (~31-33 ad hoc, 9 use existing badge.js/StatusBadge.js), metric/stat tile (9 files, 2 use existing StatsCard), status-colour config map (7 files, pattern-level only -- content is legitimately domain-specific, not true duplication). Agent-mediated Head of UX & Design sign-off (2 passes): first pass BLOCKED -- caught a real error in my own first draft (claimed no Card component existed; src/components/ui/card.js actually exists with 0 importers, the worst adoption gap of the 4 findings, not a no-component case). Corrected in-session, second pass APPROVED. No extraction/migration work performed in-story per this story's AC -- ranking/prioritisation of follow-up is the sign-off authority's call."
         }
       }
     },
