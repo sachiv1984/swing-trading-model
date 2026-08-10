@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-10 (session — 4 new items added: BLG-FE-147, BLG-FE-148, BLG-FE-149, BLG-FE-150); prior — 2026-08-08 (session — 2 new items added: BLG-GOV-292, BLG-GOV-293); prior — 2026-08-08 (release planning 2026-08-08__release-v8.5 — 25 items' `Provisional-Target` field updated `TBD`/`Unscheduled` → `v8.5`; `## v8.5 Release Slice` ephemeral section appended); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-10 (session — 16 new items added from agent-mediated PR review findings across PRs #1326-#1331: BLG-QA-136, BLG-QA-137, BLG-QA-138, BLG-QA-139, BLG-OPS-136, BLG-OPS-137, BLG-OPS-138, BLG-SEC-29, BLG-GOV-294, BLG-GOV-295, BLG-GOV-296, BLG-GOV-297, BLG-GOV-298, BLG-FE-153, BLG-FE-154, BLG-BE-88); prior — 2026-08-10 (session — 4 new items added: BLG-FE-147, BLG-FE-148, BLG-FE-149, BLG-FE-150); prior — 2026-08-08 (session — 2 new items added: BLG-GOV-292, BLG-GOV-293); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -198,6 +198,109 @@ The same dry-run (`docs/ops/cross_epic_merge_runbook_dry_run_2026-08-08.md`) fou
 - `prior_cycle` is written unconditionally by exactly one engine's terminal step, documented as that field's authoritative owner
 - Confirmed correct at the next cycle transition (reads the cycle that closed immediately prior, not an older one)
 - Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-294 — File retroactive DEV record for the dark-mode/Radix-portal Layout.js fix
+
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Agent-mediated PR review (Product Owner role), PR #1327, 2026-08-08__release-v8.5 — 2026-08-10
+**Effort:** XS (<1h)
+**Provisional-Target:** v8.6
+
+**Problem**
+A significant, app-wide production bug (Dialog/Radix-portal components rendering in light-theme CSS scope regardless of the user's actual theme setting, affecting 14+ consumers) was discovered and fixed mid-PR during EPIC-03/ST-06, but no formal `DEV-*` deviation record was ever filed for it — only narrative disclosure in `qa_evidence_EPIC-03.md`. This same PR's own convention elsewhere (`DEV-REPORTS-ST01-02` for ST-08) shows a formal record is the norm for this class of finding, and the accountability trail is currently inconsistent within one cycle.
+
+**Scope**
+- File a retroactive `DEV-*` record documenting the dark-mode/Radix-portal fix (root cause, fix applied, verification) per `document_lifecycle_guide.md` §9
+
+**Acceptance Criteria**
+- A `DEV-*` record exists for the `src/Layout.js` dark-mode/Radix-portal fix, matching the format already used for `DEV-REPORTS-ST01-02` in the same cycle
+
+---
+
+### BLG-GOV-295 — shared_standards_changelog.md missing v3.27 entry (companion changelog rule violation)
+
+**Priority:** P3 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Agent-mediated PR review (Director of Quality role), PR #1329, 2026-08-08__release-v8.5 — 2026-08-10
+**Effort:** XS (<1h)
+**Provisional-Target:** v8.6
+
+**Problem**
+`shared_standards.md` was bumped v3.26→v3.27 (new §20, ST-04/EPIC-02) but its companion `claude/system/changelogs/shared_standards_changelog.md` was not updated in the same commit, violating `shared_standards.md` §11's own "Companion per-file changelog rule" — the exact failure mode that rule was written to prevent (per its own v3.17 entry citing an identical `roadmap_prompt_changelog.md` drift as precedent).
+
+**Scope**
+- Append the missing v3.27 entry to `claude/system/changelogs/shared_standards_changelog.md`
+
+**Acceptance Criteria**
+- `shared_standards_changelog.md`'s top row matches `shared_standards.md`'s current version (v3.27, §20 addition)
+
+---
+
+### BLG-GOV-296 — execution_state.json's deviations_filed field is used as "check performed" not literally "filed"
+
+**Priority:** P2 (Medium)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Agent-mediated PR review (Director of Quality role), PR #1330, 2026-08-08__release-v8.5 — 2026-08-10
+**Effort:** M (~1-2 days — cross-cutting, touches schema + shared_standards.md + likely multiple prior cycles' records)
+**Provisional-Target:** v8.6
+
+**Problem**
+Every "done" story in cycle `2026-08-08__release-v8.5`'s `execution_state.json` (and, on inspection, every prior cycle's own file) has `deviations_filed: true` regardless of whether an actual `DEV-*` record exists for that story — the field is being used repo-wide as a "deviation-check-performed" flag rather than literally "a deviation was filed." This directly contradicts `qa_evidence_EPIC-05.md`'s own text ("Known deviations filed: None" for every row in that EPIC) and is systemic across every EPIC this cycle, not an isolated slip.
+
+**Scope**
+- Decide: either rename/reinterpret the field's documented meaning in `execution_state_schema.json`/`shared_standards.md` to match actual usage ("deviation check performed"), or split it into two distinct fields (`deviation_check_performed`, `deviation_filed`)
+- Update `execution_prompt.md` STEP 3.1.A step 10/10a wording to match whichever resolution is chosen
+
+**Acceptance Criteria**
+- `execution_state_schema.json` and `shared_standards.md` document the field's actual, current meaning without contradiction
+- No qa_evidence log can simultaneously say "deviations filed: None" while every story's `deviations_filed` reads `true`, going forward
+- Head of Specs Team sign-off
+
+---
+
+### BLG-GOV-297 — Annotate BLG-FE-146/BLG-FE-139 with 2026-08-10 trigger-condition re-check
+
+**Priority:** P4 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Agent-mediated PR review (Director of Quality role), PR #1330, 2026-08-08__release-v8.5 — 2026-08-10
+**Effort:** XS (<1h)
+**Provisional-Target:** v8.6
+
+**Problem**
+`BLG-FE-146` (ST-19's source) and `BLG-FE-139` (ST-20's source) were re-checked during `2026-08-08__release-v8.5` and confirmed their trigger condition (a `ChartContainer`/`ui/calendar.js` consumer) is still unmet, but neither backlog item was annotated in `backlog.md` with that re-check date. A future sprint scoping a chart/calendar consumer won't see "re-checked 2026-08-10" without opening this cycle's story doc specifically.
+
+**Scope**
+- Add a one-line "re-checked 2026-08-10, still unmet" note to both `BLG-FE-146` and `BLG-FE-139`
+
+**Acceptance Criteria**
+- Both items carry the 2026-08-10 re-check confirmation inline
+
+---
+
+### BLG-GOV-298 — Correct BLG-GOV-288's Acceptance Criteria text (says STEP 0, actual fix is STEP 7)
+
+**Priority:** P4 (Low)
+**Type:** Governance Process
+**Owner:** Head of Specs Team
+**Source:** Agent-mediated PR review (Product Owner role), PR #1331, 2026-08-08__release-v8.5 — 2026-08-10
+**Effort:** XS (<1h)
+**Provisional-Target:** v8.6
+
+**Problem**
+`BLG-GOV-288`'s Acceptance Criteria text says `release_planning_prompt.md` STEP 0 should be patched to reset `sprint_sealed: false`, but STEP 0 never touches the root `.claude_current_state.json` (only cycle-level `state.json`) — the actual, correct fix landed at STEP 7 (matching the existing `design_gate_status` single-write-site pattern), with STEP 0 gaining only a cross-reference note. The backlog item's own problem narrative was factually wrong about where `design_gate_status` resets, so the AC inherited that error. The fix itself is confirmed correct and intent-complete — only the AC's own wording is stale.
+
+**Scope**
+- Correct `BLG-GOV-288`'s Acceptance Criteria text to say "STEP 7" (with a one-line note on why)
+
+**Acceptance Criteria**
+- `BLG-GOV-288`'s AC text matches the actual, correct implementation site (STEP 7)
 
 ---
 
@@ -1273,6 +1376,48 @@ The Unrealised P&L card immediately preceding the SI-02 Gate Status section (`sr
 
 ---
 
+### BLG-FE-153 — Switch Layout.js's dark-class document.documentElement sync to useLayoutEffect
+
+**Priority:** P4 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated PR review (Director of Quality role), PR #1328, 2026-08-08__release-v8.5 — 2026-08-10 (explicitly assessed as very low risk, non-blocking)
+**Effort:** XS (<1h)
+**Provisional-Target:** v8.6
+
+**Problem**
+`src/Layout.js`'s dark-class-onto-`document.documentElement` sync (the EPIC-03/ST-06 portal-theming fix) runs in a plain `useEffect` (post-paint), not `useLayoutEffect`. Theoretically a portal-rendered dialog opened in the exact same tick as first mount could render one frame in the wrong theme before the sync runs. Reviewer assessed this as very low risk in practice since portals aren't mounted at initial page load.
+
+**Scope**
+- Switch the dark-class sync from `useEffect` to `useLayoutEffect`, or explicitly document in a code comment why `useEffect` is intentionally sufficient
+
+**Acceptance Criteria**
+- Either the hook is switched to `useLayoutEffect`, or a code comment explains why the current `useEffect` timing is intentionally acceptable
+
+---
+
+### BLG-FE-154 — Correct st15_nav_bar_redesign_exploration.md's nav group/page counts against live NAV_GROUPS
+
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** Agent-mediated PR review (Director of Quality + Product Owner roles), PR #1330, 2026-08-08__release-v8.5 — 2026-08-10
+**Effort:** S (~0.5d)
+**Provisional-Target:** v8.6
+
+**Problem**
+`claude/cycles/2026-08-08__release-v8.5/st15_nav_bar_redesign_exploration.md` claims to be "evaluated directly against the live implementation" and states nav group counts (Trading 4, Analytics 3, Tools 1, System 4 = 13 total) that are factually wrong by ~40% — the real `NAV_GROUPS` array in `src/Layout.js` has Trading 5, Analytics 5, Tools 3, System 4 (17 grouped items + `DashboardHome` = 18). The wrong numbers exactly match a stale spec doc (`docs/specs/frontend/pages/navigation.md` §Group Structure v1.4) rather than the code the doc claims to have checked directly. The "page inventory" paragraph also has an internal count mismatch (labels 8 items "the remaining 7") and wrongly claims 5 pages actually in the live sidebar are reached only via contextual links. The qualitative recommendation (maintain current nav pattern) is very likely still correct even with accurate counts, but the document's central evidentiary claim needs correcting before it's cited elsewhere.
+
+**Scope**
+- Correct the group-count and page-inventory paragraphs in `st15_nav_bar_redesign_exploration.md` against the actual `NAV_GROUPS` array in `src/Layout.js`
+- Flag `docs/specs/frontend/pages/navigation.md` §Group Structure as stale and due for a refresh (it does not reflect the current live sidebar)
+
+**Acceptance Criteria**
+- `st15_nav_bar_redesign_exploration.md`'s group/page counts match the live `NAV_GROUPS` array exactly
+- `navigation.md`'s staleness is either fixed or explicitly flagged with a follow-up item
+
+---
+
 ## 4. Backend & Data Backlog
 
 ---
@@ -1773,6 +1918,27 @@ No per-request trace ID propagation exists across routers/services. No incident 
 - A successful or failed `POST /digest/si05/send` invocation's Render log line includes an elapsed-time value
 - Verified against the next real invocation (the following scheduled Sunday 19:00 UTC cron run, or a manual `workflow_dispatch` trigger) — confirm the new field appears in the captured log
 - `docs/ops/api_performance_baseline.md` §36 updated with real log-derived timing once available, superseding the interim single-sample proxy measurement
+
+---
+
+### BLG-BE-88 — get_regime_distribution's NULL-exclusion documented behaviour is dead code
+
+**Priority:** P2 (Medium)
+**Type:** Backend / Data Correctness
+**Owner:** Head of Engineering
+**Source:** Agent-mediated PR review (Director of Quality + Product Owner roles), PR #1331, 2026-08-08__release-v8.5 — 2026-08-10
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** v8.6
+
+**Problem**
+`screener_api_contract.md` and `get_regime_distribution()`'s own docstring (`backend/services/screener_batch_service.py`) claim a run where a market's regime failed to resolve (`regime_us`/`regime_uk` NULL) is "excluded from that market's count rather than miscounted as a fabricated regime." Tracing the actual write path (`_fetch_index_regime()` failure handling) shows fetch failures are persisted as a hardcoded `risk_off` value, never NULL — `regime_us`/`regime_uk` are never actually written as NULL via this code path. The NULL-exclusion SQL branch (`COUNT(*) FILTER (...)`) is effectively dead code, and an index-fetch failure is currently silently counted as a real `risk_off` observation — the exact "fabricated regime" the docs claim is avoided.
+
+**Scope**
+- Decide: either (a) actually persist NULL on fetch failure so the exclusion logic means what it says, or (b) correct the docstring and `screener_api_contract.md` to state the real behaviour (conservative `risk_off` default, not exclusion)
+- Apply the chosen fix/correction
+
+**Acceptance Criteria**
+- `get_regime_distribution()`'s documented NULL-handling behaviour matches what the code actually does, verified against a real fetch-failure scenario
 
 ---
 
@@ -5253,6 +5419,168 @@ Re-running the endpoint coverage drift check against the now-corrected `openapi.
 - `docs/specs/Specs_Index.md` has a `## Changelog` table or companion changelog file
 - `**Last Updated:**` header field is a single line, no `prior —` chaining
 - Head of Specs Team sign-off
+
+---
+
+### BLG-QA-136 — Add endpoint-level regression test for GET /analytics/tag-performance's ensure_trade_plans_table call
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated PR review (Director of Quality role), PR #1326, 2026-08-08__release-v8.5 — 2026-08-10
+**Effort:** XS (<1h)
+**Provisional-Target:** v8.6
+
+**Problem**
+`qa_evidence_EPIC-01.md` cites `tests/test_trade_plan_tags.py` and `TestTradePlanEndpoints` as coverage for the `GET /analytics/tag-performance` 500 fix (ST-01, EPIC-01), but neither test actually exercises the changed code path — `test_trade_plan_tags.py` calls `database.get_tag_performance()` directly (bypassing the router), and `TestTradePlanEndpoints` tests a different router file entirely. The only existing test hitting this endpoint short-circuits before reaching the new `ensure_trade_plans_table()` call. The fix itself is correct (independently reproduced by the reviewing agent), but the evidence record misstates what verifies it.
+
+**Scope**
+- Add a direct endpoint-level regression test for `GET /analytics/tag-performance` (patching `ensure_trade_plans_table`/`get_tag_performance`, asserting the ensure-call fires and status is 200)
+
+**Acceptance Criteria**
+- A test exists that calls the actual `GET /analytics/tag-performance` router endpoint and asserts `ensure_trade_plans_table()` is invoked before the query
+
+---
+
+### BLG-QA-137 — Add Playwright coverage for setNarrativeField AI-draft-badge clearing on the 3 non-setup_thesis fields
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated PR review (Director of Quality role), PR #1327, 2026-08-08__release-v8.5 — 2026-08-10
+**Effort:** S (~0.5d)
+**Provisional-Target:** v8.6
+
+**Problem**
+`TradePlan.js`'s `setNarrativeField()` helper is applied to all four narrative fields (`setup_thesis`, `entry_rationale`, `confirmation_criteria`, `early_exit_conditions`) to clear the AI-draft badge on manual edit, but `tests/e2e/trade-plan.spec.js` only has dedicated coverage for `setup_thesis`-triggered clearing — the other three fields' clearing behaviour is untested.
+
+**Scope**
+- Extend `trade-plan.spec.js` (or the existing SC-TP-24 scenario family) with coverage asserting edits to `entry_rationale`/`confirmation_criteria`/`early_exit_conditions` also clear `isAiDraft`/`isClaudeDraft`
+
+**Acceptance Criteria**
+- Playwright coverage exists and passes for all 4 narrative fields' AI-draft-badge-clearing behaviour, not just `setup_thesis`
+
+---
+
+### BLG-QA-138 — Add unit tests for scripts/check_dependency_vuln_rescan.py
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Coverage
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated PR review (Director of Quality role), PR #1329, 2026-08-08__release-v8.5 — 2026-08-10
+**Effort:** S (~0.5d)
+**Provisional-Target:** v8.6
+
+**Problem**
+`scripts/check_dependency_vuln_rescan.py` (171 lines) has real branching logic worth protecting — severity filtering, GHSA-ID extraction from mixed dict/string `via` entries, baseline dedup, no-own-advisory labeling — but has no unit tests. It was verified manually this session against live `npm audit` output, but that verification isn't captured as a repeatable regression test; a future edit to the parsing logic (e.g. npm changing its `via` schema) has nothing to catch a silent regression.
+
+**Scope**
+- Add fixture-based unit tests: baseline-hit (known finding, no new alert), new-finding (unknown advisory ID, triggers new-finding path), and malformed/error-shaped input (see `BLG-SEC-29`)
+
+**Acceptance Criteria**
+- `tests/` has a test file covering `check_dependency_vuln_rescan.py`'s core parsing/dedup logic with at least the 3 scenarios above
+
+---
+
+### BLG-QA-139 — Document one-directional limitation of test_alerts_service.py's sys.modules restore fixture
+
+**Priority:** P3 (Low)
+**Type:** QA / Test Infrastructure
+**Owner:** QA & Testing Owner
+**Source:** Agent-mediated PR review (Director of Quality role), PR #1331, 2026-08-08__release-v8.5 — 2026-08-10
+**Effort:** XS (<1h; M if the broader follow-up is pursued)
+**Provisional-Target:** v8.6
+
+**Problem**
+`test_alerts_service.py`'s `sys.modules` restore fixture (ST-25, BLG-QA-105) only protects tests collected *after* that file — its stated AC scope, confirmed working (1057 passed, 5 skipped). Independently reproduced that pollution can still flow the *other* direction: an earlier-collected file's own incomplete stub (e.g. `test_price_alerts_service.py`) can overwrite `test_alerts_service.py`'s stub before its tests run, since the fixture's restore only fires at teardown. Confirmed this specific failure mode pre-exists on `main` (not a regression from PR #1331) and doesn't manifest in the actual full-suite run — but the PR's framing ("preventing cross-file test pollution") reads more sweeping than what was actually delivered.
+
+**Scope**
+- Add a one-line code comment in the fixture (`tests/test_alerts_service.py`) noting the fix is one-directional
+- Consider a broader follow-up (e.g. a session-scoped `conftest.py` fixture) if two-directional protection is later needed — separate, larger item if pursued
+
+**Acceptance Criteria**
+- The fixture's code comment or docstring explicitly states the one-directional scope of the protection it provides
+
+---
+
+### BLG-OPS-136 — Align api-key-cross-environment-check.yml's alert-step grep with the skip-guard's ::error:: prefix
+
+**Priority:** P3 (Low)
+**Type:** Operations / Bug
+**Owner:** Infrastructure & Operations Owner
+**Source:** Agent-mediated PR review (Director of Quality role), PR #1326, 2026-08-08__release-v8.5 — 2026-08-10
+**Effort:** XS (<1h)
+**Provisional-Target:** v8.6
+
+**Problem**
+`.github/workflows/api-key-cross-environment-check.yml`'s "check error" alert step greps `cross_env_output.txt` for `^[ERROR]`, but the missing-secrets skip-guard path in the same file emits `::error::` instead — a mismatch means that specific failure path's Telegram alert body loses the underlying detail (nothing is lost from the Actions log itself, but the alert is less useful than it should be).
+
+**Scope**
+- Align the grep pattern with the actual emitted prefix, or emit `[ERROR]` from the skip-guard to match the existing grep
+
+**Acceptance Criteria**
+- The missing-secrets skip-guard path's Telegram alert includes the specific error detail, verified by triggering the path (or a dry-run/manual test) once fixed
+
+---
+
+### BLG-OPS-137 — Document CVE-2026-4539 ignore rationale in dependency-vuln-rescan.yml
+
+**Priority:** P4 (Low)
+**Type:** Operations / Documentation
+**Owner:** Cybersecurity & Trust Lead
+**Source:** Agent-mediated PR review (Director of Quality role), PR #1329, 2026-08-08__release-v8.5 — 2026-08-10
+**Effort:** XS (<1h)
+**Provisional-Target:** v8.6
+
+**Problem**
+`.github/workflows/dependency-vuln-rescan.yml`'s pip-audit step repeats `--ignore-vuln CVE-2026-4539` from `vulnerability-scan.yml` with no inline rationale comment (the original has a multi-line justification). A reader of the new file alone can't tell why an accepted-risk CVE is still excluded from a scan whose stated purpose is closing gaps other tiers leave, and there are now two places to keep in sync if the risk decision is revisited.
+
+**Scope**
+- Add the same rationale comment (or a cross-reference to `vulnerability-scan.yml`'s) to `dependency-vuln-rescan.yml`
+
+**Acceptance Criteria**
+- `dependency-vuln-rescan.yml`'s `CVE-2026-4539` ignore has an inline rationale comment or cross-reference
+
+---
+
+### BLG-OPS-138 — Confirm dependency-vuln-rescan.yml runs successfully post-merge (ST-04 deferred verification)
+
+**Priority:** P2 (Medium)
+**Type:** Operations / Follow-up
+**Owner:** Infrastructure & Operations Owner
+**Source:** Agent-mediated PR review (Director of Quality + Product Owner roles), PR #1329, 2026-08-08__release-v8.5 — 2026-08-10
+**Effort:** XS (<1h)
+**Provisional-Target:** v8.6
+
+**Problem**
+ST-04's AC "Scheduled job runs successfully at least once and reports results for both pip-audit and npm audit" could not be verified pre-merge (GitHub returns 404 dispatching a workflow not yet on the default branch) and was deferred to a manual post-merge step with no tracking item — it currently depends on someone remembering to run it.
+
+**Scope**
+- Run `gh workflow run dependency-vuln-rescan.yml` once PR #1329 merges to `main`
+- Confirm a clean run: job summary populated, correct pip-audit/npm audit counts reported
+
+**Acceptance Criteria**
+- A confirmed-successful `dependency-vuln-rescan.yml` run exists post-merge, closing ST-04's originally-deferred AC
+
+---
+
+### BLG-SEC-29 — check_dependency_vuln_rescan.py silently treats a failed audit tool as "zero findings"
+
+**Priority:** P2 (Medium)
+**Type:** Security / Bug
+**Owner:** Cybersecurity & Trust Lead
+**Source:** Agent-mediated PR review (Director of Quality role), PR #1329, 2026-08-08__release-v8.5 — 2026-08-10
+**Effort:** S (~0.5d)
+**Provisional-Target:** v8.6
+
+**Problem**
+`scripts/check_dependency_vuln_rescan.py`'s `pip_audit_findings()`/`npm_audit_findings()` both default to an empty result when the expected JSON key (`dependencies`/`vulnerabilities`) is missing from tool output. Reproduced live: running `npm audit --json` without a lockfile exits 0 and prints an `{"error": ...}` payload with no `vulnerabilities` key — this script reads that as a clean scan. The calling workflow (`dependency-vuln-rescan.yml`) already captures each tool's `exit_code` as a step output but never checks it. Since this job's entire purpose is catching vulnerabilities during windows with no other CI activity, a silent tool failure (bad working directory, registry outage, corrupted lockfile) could go unnoticed indefinitely.
+
+**Scope**
+- Check the captured `exit_code` outputs in `dependency-vuln-rescan.yml` and treat a nonzero/error-shaped result as a hard failure or an explicit "scan inconclusive" state, not a clean scan
+
+**Acceptance Criteria**
+- A simulated tool failure (missing lockfile, non-JSON output, or nonzero exit) is surfaced as a distinguishable failure/inconclusive state, not silently reported as "0 findings"
 
 ---
 
