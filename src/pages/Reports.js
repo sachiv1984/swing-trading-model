@@ -340,7 +340,12 @@ function TaxYearReport() {
                 <tbody>
                   {sortedTrades.map((trade, i) => {
                     const pnl = trade.realised_pnl_gbp ?? 0;
-                    const pnlColor = pnl > 0 ? "text-emerald-400" : "text-rose-400";
+                    // ST-08 (BLG-FE-144, EPIC-03, v8.5): converged on the
+                    // three-way rule MonthlyPnlTable already used (grey/
+                    // neutral for exact-zero, not red) per the Design Gate
+                    // decision record -- a breakeven trade is not a loss.
+                    // Resolves DEV-REPORTS-ST01-02.
+                    const pnlColor = pnl > 0 ? "text-emerald-400" : pnl < 0 ? "text-rose-400" : "text-slate-600 dark:text-slate-400";
                     const currency = trade.currency === "USD" ? "USD" : "GBP";
                     const priceSymbol = currency === "USD" ? "$" : "£";
                     return (
@@ -368,7 +373,7 @@ function TaxYearReport() {
                         <td className="px-3 py-3 text-slate-300">{trade.shares}</td>
                         <td className="px-3 py-3 text-slate-300">{formatGBP(trade.total_cost_gbp)}</td>
                         <td className="px-3 py-3 text-slate-300">{formatGBP(trade.exit_proceeds_gbp)}</td>
-                        <td className={`px-3 py-3 font-medium ${pnlColor}`}>{formatGBP(pnl)}</td>
+                        <td data-testid="tax-year-realised-pnl-cell" className={`px-3 py-3 font-medium ${pnlColor}`}>{formatGBP(pnl)}</td>
                         <td className={`px-3 py-3 ${pnlColor}`}>{formatPct(trade.pnl_pct)}</td>
                         <td className="px-3 py-3">
                           <div className="flex flex-wrap gap-1">
@@ -778,7 +783,7 @@ function MonthlyPnlTable() {
                     <td className="px-6 py-3 text-slate-200">
                       {MONTH_NAMES[row.month]} {row.year}
                     </td>
-                    <td className={`px-6 py-3 text-right font-medium ${pnlColor}`}>
+                    <td data-testid="monthly-realised-pnl-cell" className={`px-6 py-3 text-right font-medium ${pnlColor}`}>
                       {formatGBP(pnl)}
                     </td>
                     <td className="px-6 py-3 text-right text-slate-600 dark:text-slate-400">{row.trade_count}</td>
