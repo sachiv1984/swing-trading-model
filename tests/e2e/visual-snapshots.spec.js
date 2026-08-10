@@ -85,6 +85,13 @@ async function gotoScreener(page, results, runTimestamp = null) {
   await page.route(`${API}/screener/run`, (route) =>
     route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ run_id: 'run-002' }) })
   );
+  // ST-21 (BLG-FEAT-29, v8.5): stub the Regime History panel's own data call.
+  await page.route(`${API}/screener/regime-distribution**`, (route) =>
+    route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ ok: true, data: { window: '30d', run_count: 1, total_observations: 2, risk_on_count: 2, risk_off_count: 0, risk_on_pct: 100.0, risk_off_pct: 0.0 } }),
+    })
+  );
   await page.goto('/#/Screener');
 }
 
@@ -231,6 +238,12 @@ test('VS-09: SkeletonRow renders correct shimmer structure', async ({ page }) =>
   await page.route(`${API}/screener/run`, (route) =>
     route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ run_id: 'r' }) })
   );
+  await page.route(`${API}/screener/regime-distribution**`, (route) =>
+    route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ ok: true, data: { window: '30d', run_count: 1, total_observations: 2, risk_on_count: 2, risk_off_count: 0, risk_on_pct: 100.0, risk_off_pct: 0.0 } }),
+    })
+  );
 
   await page.goto('/#/Screener');
   await page.waitForTimeout(300);
@@ -301,9 +314,14 @@ test('VS-12: Market filter bar renders All / US / UK segments', async ({ page })
 
   await page.waitForSelector('text=AAPL', { timeout: 8000 });
 
-  const allBtn = page.getByRole('button', { name: /^All$/ });
-  const usBtn  = page.getByRole('button', { name: /^US$/ });
-  const ukBtn  = page.getByRole('button', { name: /^UK$/ });
+  // ST-21 (BLG-FEAT-29, v8.5) added a second "All"-labelled control (the
+  // Regime History panel's window selector) to this page — scope to the
+  // market filter bar specifically via its data-testid to avoid a strict-mode
+  // ambiguous match against getByRole('button', { name: /^All$/ }).
+  const marketBar = page.getByTestId('market-filter-bar');
+  const allBtn = marketBar.getByTestId('market-filter-all');
+  const usBtn  = marketBar.getByTestId('market-filter-us');
+  const ukBtn  = marketBar.getByTestId('market-filter-uk');
   await expect(allBtn).toBeVisible();
   await expect(usBtn).toBeVisible();
   await expect(ukBtn).toBeVisible();

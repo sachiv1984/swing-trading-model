@@ -2,7 +2,10 @@ openapi: 3.0.3
 
 info:
   title: Momentum Trading Assistant API
-  version: 3.14.1
+  version: 3.15.0
+  # v3.15.0 (2026-08-10, ST-21, EPIC-06, v8.5): added GET /screener/regime-distribution
+  # (BLG-FEAT-29) — aggregate risk-on/risk-off regime distribution over screener
+  # run history for a rolling 30d/60d/all window.
   # v3.14.1 (2026-08-07, ST-02+ST-07, EPIC-02, v8.4): fixed ~23 endpoints
   # structurally nested inside `components:` instead of `paths:`; added
   # GET /test/quick-health and POST /test/rate-limit-scenarios (pre-existing
@@ -4264,6 +4267,48 @@ paths:
                       status: { type: string, enum: ["accepted", "running"] }
         "409":
           description: A screener run is already in progress
+
+  /screener/regime-distribution:
+    get:
+      tags:
+        - Screener
+      summary: Get aggregate market regime distribution over screener run history
+      description: |
+        Returns the aggregate risk-on/risk-off regime distribution over screener run
+        history for the requested rolling window (30d / 60d / all). Sourced from
+        screener_runs.regime_us/regime_uk (one row per run), not screener_results
+        (one row per ticker), to avoid weighting by ticker count per market.
+        ST-21 (BLG-FEAT-29, EPIC-06, v8.5).
+        Canonical contract: docs/specs/api_contracts/screener_api_contract.md
+      parameters:
+        - name: window
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: ["30d", "60d", "all"]
+            default: "30d"
+      responses:
+        "200":
+          description: Regime distribution for the requested window
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      window: { type: string, enum: ["30d", "60d", "all"] }
+                      run_count: { type: integer, description: "Number of screener_runs rows within the window" }
+                      total_observations: { type: integer, description: "Total per-market regime observations counted (up to 2 per run)" }
+                      risk_on_count: { type: integer }
+                      risk_off_count: { type: integer }
+                      risk_on_pct: { type: number, nullable: true, description: "Percentage, 1 decimal place. Null when total_observations is 0" }
+                      risk_off_pct: { type: number, nullable: true }
+        "400":
+          description: Invalid window parameter
 
   /trade-plans:
     post:

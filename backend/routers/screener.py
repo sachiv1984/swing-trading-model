@@ -8,7 +8,7 @@ from fastapi import APIRouter, BackgroundTasks
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional, List
-from services.screener_batch_service import run_screener, get_screener_results, is_run_in_progress
+from services.screener_batch_service import run_screener, get_screener_results, is_run_in_progress, get_regime_distribution
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/screener", tags=["Screener"])
@@ -48,6 +48,21 @@ def screener_results(
                 content={"ok": True, "data": {"status": "running", "run_id": run_id}},
             )
         return JSONResponse(status_code=404, content={"status": "error", "message": "NO_RESULTS"})
+
+
+@router.get("/regime-distribution")
+def screener_regime_distribution(window: str = "30d"):
+    """
+    GET /screener/regime-distribution
+
+    Returns the aggregate market regime (risk-on/risk-off) distribution
+    over screener run history for the requested rolling window.
+    Contract: screener_api_contract.md. ST-21 (BLG-FEAT-29, EPIC-06, v8.5).
+    """
+    if window not in ("30d", "60d", "all"):
+        return JSONResponse(status_code=400, content={"status": "error", "message": "INVALID_PARAMS: window must be 30d, 60d, or all"})
+    data = get_regime_distribution(window=window)
+    return {"ok": True, "data": data}
 
 
 @router.post("/run", status_code=202)

@@ -7,6 +7,19 @@
 
 # API Changelog
 
+## v8.5.0 (2026-08-10 — Release v8.5)
+
+### screener_api_contract.md — v1.3 (UPDATED)
+
+**EPIC:** EPIC-06
+**ST:** ST-21
+
+| Change | Details |
+|--------|---------|
+| New endpoint: GET /screener/regime-distribution | Returns the aggregate risk-on/risk-off market regime distribution over screener run history for a rolling 30d/60d/all window (BLG-FEAT-29). Sourced from `screener_runs.regime_us`/`regime_uk` (one row per run), not `screener_results` (one row per ticker). |
+
+**Note (this entry):** This changelog had not been updated since `v7.8.0` (several releases' worth of endpoint additions in `v7.9`–`v8.4` are not reflected here) — that pre-existing gap is out of this story's scope to backfill; this entry only documents `v8.5`'s own change, added going forward correctly.
+
 ## v7.8.0 (2026-07-27 — Release v7.8)
 
 ### changelog_endpoints.md — v1.0 (NEW)

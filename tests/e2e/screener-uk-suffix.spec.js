@@ -59,6 +59,14 @@ async function stubScreener(page, results) {
   await page.route(`${API}/screener/run`, (route) =>
     route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ ok: true, data: { run_id: 'r2', status: 'accepted' } }) })
   );
+  // ST-21 (BLG-FEAT-29, v8.5): stub the Regime History panel's own data call
+  // so it doesn't fire an unhandled real network request during these tests.
+  await page.route(`${API}/screener/regime-distribution**`, (route) =>
+    route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ ok: true, data: { window: '30d', run_count: 1, total_observations: 2, risk_on_count: 2, risk_off_count: 0, risk_on_pct: 100.0, risk_off_pct: 0.0 } }),
+    })
+  );
 }
 
 async function stubWatchlistGet(page) {

@@ -135,6 +135,7 @@ async def test_all_endpoints(request: Request):
         # Screener (v3.0 / ST-04)
         {"name": "GET /screener/results", "method": "GET", "url": f"{base_url}/screener/results", "critical": False},
         {"name": "POST /screener/run", "method": "POST", "url": f"{base_url}/screener/run", "body": {}, "critical": False},
+        {"name": "GET /screener/regime-distribution", "method": "GET", "url": f"{base_url}/screener/regime-distribution", "critical": False},
 
         # Trade Plans (v3.1 / ST-02)
         {"name": "GET /trade-plans", "method": "GET", "url": f"{base_url}/trade-plans", "critical": False},

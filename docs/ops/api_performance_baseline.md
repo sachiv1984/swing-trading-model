@@ -1664,6 +1664,44 @@ Signed: [x] Product Owner (human, confirmed in-session — accepted interim
 
 ---
 
+## 37. v8.5 Endpoint Registration — GET /screener/regime-distribution (ST-21, EPIC-06, BLG-FEAT-29)
+
+**Date:** 2026-08-10
+**Story:** ST-21 (EPIC-06, v8.5) — BLG-FEAT-29, Regime History panel (Screener Results page)
+**Environment:** N/A — see endpoint notes below.
+**Method:** Registered pending live measurement per §13 pattern.
+
+### 37.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /screener/regime-distribution | v8.5 | Read — pending live timing run | 150–250ms (est.) | 300–450ms (est.) | Pending next baseline re-run |
+
+**Endpoint characteristics:**
+- `GET /screener/regime-distribution`: a single `SELECT COUNT(*) FILTER (...) ... FROM screener_runs [WHERE run_timestamp >= ...]` aggregate query against the indexed `screener_runs` table (`idx_screener_runs_ts`) — one row per screener run (not per ticker), so the table stays small even after months of daily runs. No joins, no in-process aggregation beyond simple arithmetic on the returned counts. Estimated range derived from §32's `GET /portfolio/sector-regime-trend` baseline (150–300ms/300–500ms est.) as the closest comparable shape (single indexed-table aggregate read, no join) — set at the lower end of that range since `screener_runs` is smaller than `sector_regime_history` is expected to become and the query is a single-row aggregate rather than a multi-row fetch.
+
+**Read-only, no write-op exclusion needed** — this endpoint has no mutation counterpart to exclude.
+
+**Flagged for the next baseline re-run** alongside other pending-measurement endpoints (§13 pattern).
+
+### 37.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-21 (v8.5 EPIC-06, BLG-FEAT-29) — Regime Distribution Endpoint Registration Sign-Off
+
+AC-01: Endpoint added with estimated p50/p95 and measurement date
+       (2026-08-10 — estimated, single indexed aggregate query). ✅ PASS
+AC-02: Estimation methodology documented — derived from §32's
+       GET /portfolio/sector-regime-trend baseline (closest comparable shape),
+       set at the lower end given the smaller expected table size and
+       single-row aggregate result. ✅ PASS
+AC-03: Entry format consistent with existing baseline rows (§32/§33 pattern). ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-08-10
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
