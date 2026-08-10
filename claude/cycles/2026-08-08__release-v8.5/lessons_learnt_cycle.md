@@ -32,3 +32,38 @@ Cycle: 2026-08-08__release-v8.5
 ## Escalations (Phase 3)
 
 None this cycle.
+
+## Phase 4
+
+**Phase:** Delivery Verification
+**Cycle:** 2026-08-08__release-v8.5
+**Section anchor:** `## Phase 4` (stable — cycle_id in field above, not in header)
+**Filed:** 2026-08-10
+**Reviewed by:** PMO Lead
+**Prior cycle checked:** 2026-08-07__release-v8.4 (`lessons_learnt_cycle.md` `## Phase 4`) — 1 friction item, 1 deferred patch, no recurrence escalations. The deferred patch (EPIC-level `execution_state.json.test_scenarios` roll-up cross-reference missing from `execution_prompt.md` STEP 3.1.A/STEP 5, targeted "next `execution_prompt.md` revision touching STEP 3.1.A or STEP 5") was checked against `prompt_change_log.md` — no matching entry found since `2026-08-08`. Not applied this cycle either (no story this sprint touched `execution_prompt.md` STEP 3.1.A/STEP 5). This is now carried forward across 2 cycles without a `prompt_change_log.md` entry — **automatic recurrence escalation per `shared_standards.md §7`/§3.7**, regardless of the underlying symptom's own status (see friction item 1 below).
+
+| friction_item | phase | type | classification | action | owner | target_date |
+|---------------|-------|------|----------------|--------|-------|-------------|
+| The `2026-08-07__release-v8.4` Phase 4 deferred patch (EPIC-level `test_scenarios` roll-up cross-reference in `execution_prompt.md`) remains unapplied after a 2nd cycle. The underlying symptom did not recur this cycle — every EPIC's `execution_state.json.test_scenarios` field was independently confirmed correctly populated (EPIC-01, EPIC-03, EPIC-04, EPIC-06) or correctly empty with a valid short-circuit (EPIC-02, EPIC-05, both backend/docs-only with no frontend-visible AC) — but the prompt-level fix that would make this reliable by construction, rather than by this cycle's contributors happening to populate the field correctly, is still outstanding | Phase 4 | C | defer | Same fix as originally specified at `2026-08-07__release-v8.4`: add an explicit cross-reference in `execution_prompt.md` (STEP 3.1.A or its post-push write step) requiring the EPIC-level `execution_state.json.test_scenarios` array to be populated with every runnable test file already listed in that EPIC's stories' own `spec_references` | Head of Specs Team | next `execution_prompt.md` revision touching STEP 3.1.A or STEP 5 (2nd carry-forward — escalated, see Recurrence Escalations below) |
+| EPIC-06's QA evidence log (`qa_evidence_EPIC-06.md`) documents 2 genuine test-authoring bugs caught by real CI on PR #1331 (run `31390612777`) and states they were "fixed in a follow-up commit; re-run pending at DoQ sign-off time," but — unlike EPIC-03's and EPIC-04's sign-off blocks this same cycle, which each explicitly restate "confirmed 2026-08-10, all N checks green, `head_sha` verified to match" — EPIC-06's sign-off block does not explicitly restate a final green-CI confirmation for the fix commit before signing off. Not a QA blocker (`Result: Pass`, PR recorded `merged`, implying the branch-protection CI gate passed) but an inconsistency in how rigorously the LL-v8.3-P3-02 CI-confirmation convention was applied across this cycle's own EPICs | Phase 4 | D | defer | Add an explicit instruction to the DoQ sign-off protocol (`execution_prompt.md §5.3` or `qa_evidence_template.md`) that whenever a story's PR required a post-open CI-triggered fix, the sign-off block must restate the specific final CI run confirming green (run ID or "all N checks green" + `head_sha` match), not just record the fix as applied — closing the gap between "the fix was made" and "the fix was confirmed to work" in the written evidence trail | Head of Specs Team | next `execution_prompt.md` revision touching §5.3, or next `qa_evidence_template.md` revision |
+
+**Recurrence Notes:** Friction item 1 is a confirmed recurrence of the `2026-08-07__release-v8.4` Phase 4 deferred patch — see Recurrence Escalations below. Friction item 2 is newly identified this cycle (no equivalent finding in `2026-08-07__release-v8.4`'s Phase 4 record).
+
+## Recurrence Escalations (Phase 4)
+
+| Friction item | First appeared | Prior outstanding action | Escalated to |
+|---------------|----------------|---------------------------|--------------|
+| EPIC-level `test_scenarios` roll-up cross-reference missing from `execution_prompt.md` | `2026-08-07__release-v8.4` Phase 4 | Add explicit cross-reference in `execution_prompt.md` STEP 3.1.A/STEP 5 requiring `test_scenarios` roll-up from story-level `spec_references` — deferred, targeted "next `execution_prompt.md` revision touching STEP 3.1.A or STEP 5," still unapplied after this 2nd cycle | Head of Specs Team |
+
+## Process improvements actioned this run (Phase 4)
+
+None applied this run — both friction items above are deferred (`execution_prompt.md`/`qa_evidence_template.md` changes are out of this routine's write scope; `execution_state.json` and `qa_evidence_EPIC-xx.md` are sealed/DoQ-owned artefacts this routine may not modify).
+
+## Outstanding deferred patches (Phase 4)
+
+- EPIC-level `test_scenarios` roll-up from story-level `spec_references` missing from `execution_prompt.md`'s record-population step (2nd carry-forward, see Recurrence Escalations) — Head of Specs Team, target next `execution_prompt.md` revision touching STEP 3.1.A or STEP 5.
+- DoQ sign-off protocol does not require explicit restatement of final CI-green confirmation when a story's PR needed a post-open CI-triggered fix — Head of Specs Team, target next `execution_prompt.md` §5.3 or `qa_evidence_template.md` revision.
+
+## Escalations (Phase 4)
+
+None beyond the Recurrence Escalation recorded above.
