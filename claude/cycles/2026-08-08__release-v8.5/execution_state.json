@@ -5,13 +5,13 @@
   "invoked_utc": "2026-08-10T06:50:07Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-10T06:50:07Z",
+  "last_updated_utc": "2026-08-10T10:46:21Z",
   "epics": {
     "EPIC-01": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-08__release-v8.5/EPIC-01",
       "pr_number": 1326,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-08__release-v8.5/qa_evidence_EPIC-01.md",
       "test_scenarios": [
@@ -143,10 +143,10 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-08__release-v8.5/EPIC-03",
       "pr_number": 1327,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-08__release-v8.5/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -229,10 +229,10 @@
       }
     },
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-08__release-v8.5/EPIC-04",
       "pr_number": 1328,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-08__release-v8.5/qa_evidence_EPIC-04.md",
       "test_scenarios": [
@@ -322,7 +322,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-08-10T12:30:00Z",
           "acceptance_verified": true,
-          "spec_references": ["docs/specs/frontend/pages/analytics.md"],
+          "spec_references": [
+            "docs/specs/frontend/pages/analytics.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
@@ -343,7 +345,9 @@
           "unblock_criteria": null,
           "completed_utc": "2026-08-10T13:00:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/cycles/2026-08-08__release-v8.5/st13_dark_light_contrast_audit_followup.md"],
+          "spec_references": [
+            "claude/cycles/2026-08-08__release-v8.5/st13_dark_light_contrast_audit_followup.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
@@ -364,12 +368,20 @@
           "unblock_criteria": null,
           "completed_utc": "2026-08-10T13:40:00Z",
           "acceptance_verified": true,
-          "spec_references": ["claude/cycles/2026-08-08__release-v8.5/st14_ad_hoc_component_inventory.md"],
+          "spec_references": [
+            "claude/cycles/2026-08-08__release-v8.5/st14_ad_hoc_component_inventory.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
           "deviations_filed": true,
           "last_completed_substep": "3.1.A.commit",
-          "sign_off_record": {"role": "Head of UX & Design", "method": "agent_mediated", "status": "cleared", "passes": 2, "date": "2026-08-10"},
+          "sign_off_record": {
+            "role": "Head of UX & Design",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "passes": 2,
+            "date": "2026-08-10"
+          },
           "notes": "Audit-only completion (RISK-02). Compiled inventory of ad hoc/duplicated component patterns ranked by duplication count: card wrapper (23 files ad hoc, existing Card component has 0 importers -- worst adoption gap), badge/status-pill (~31-33 ad hoc, 9 use existing badge.js/StatusBadge.js), metric/stat tile (9 files, 2 use existing StatsCard), status-colour config map (7 files, pattern-level only -- content is legitimately domain-specific, not true duplication). Agent-mediated Head of UX & Design sign-off (2 passes): first pass BLOCKED -- caught a real error in my own first draft (claimed no Card component existed; src/components/ui/card.js actually exists with 0 importers, the worst adoption gap of the 4 findings, not a no-component case). Corrected in-session, second pass APPROVED. No extraction/migration work performed in-story per this story's AC -- ranking/prioritisation of follow-up is the sign-off authority's call."
         }
       }
@@ -648,11 +660,12 @@
     "EPIC-04: PR #1327 (EPIC-03) merged to main (user-merged, 2026-08-10), putting PR #1328 into CONFLICTING/DIRTY -- same pattern as EPIC-03's earlier conflict against EPIC-01's merge. Resolved identically per CLAUDE.md \u00a78: execution_state.json was the only real conflict, resolved by taking the branch's version wholesale after confirming structurally that main's copy (originating from EPIC-03) held zero data absent from the branch. Pushed; PR #1328 mergeable=MERGEABLE confirmed."
   ],
   "merge_gate": {
-    "epics_merged": [],
-    "epics_pending": [
+    "epics_merged": [
       "EPIC-01",
       "EPIC-03",
-      "EPIC-04",
+      "EPIC-04"
+    ],
+    "epics_pending": [
       "EPIC-02",
       "EPIC-05",
       "EPIC-06"
