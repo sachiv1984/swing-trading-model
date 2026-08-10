@@ -12,6 +12,22 @@ name: API Key Cross-Environment Check
 # The deliberately-cross-wired-test AC for this story is satisfied by
 # tests/test_api_key_cross_environment.py (CI-reproducible pure-logic unit
 # tests), not by this workflow -- this workflow is the live wiring.
+#
+# ST-02 (BLG-OPS-134, EPIC-01, v8.5) hardening: a live run's log
+# (2026-08-09, run 31299858987) confirmed this workflow genuinely executes
+# daily -- secrets ARE configured, the check is not silently skipping. But
+# that same run surfaced a real gap: a transient PROD_API_URL read timeout
+# crashed the script with an unhandled exception, and the alert step could
+# not tell that apart from a genuine cross-wired-keys finding (both produced
+# a non-zero exit code) -- it sent a false-positive "check FAILED" Telegram
+# alert with no actual [CROSS-WIRED] finding behind it. Hardening decision
+# (recorded per this story's AC): fail loud, not silent, for BOTH failure
+# classes -- but keep them distinguishable. The missing-secrets bash
+# pre-check below now routes through the same EXIT_ERROR=2 path the script
+# itself uses for probe failures, instead of silently exiting 0. Two
+# separate alert steps below fire on exit_code 1 (cross-wired -- a genuine
+# security finding) vs exit_code 2 (probe/config error -- inconclusive,
+# needs investigation, NOT implied to be a security incident).
 
 on:
   schedule:
@@ -48,7 +64,8 @@ jobs:
         run: |
           set -o pipefail
           if [ -z "$PROD_API_URL" ] || [ -z "$PROD_API_KEY" ] || [ -z "$STAGING_API_KEY" ]; then
-            echo "::warning::One or more of API_URL / API_KEY / STAGING_API_KEY not configured as repo secrets — cross-environment check skipped."
+            echo "::error::One or more of API_URL / API_KEY / STAGING_API_KEY not configured as repo secrets — cross-environment check cannot run." | tee cross_env_output.txt
+            echo "exit_code=2" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           set +e
@@ -63,7 +80,25 @@ jobs:
         run: |
           RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           FINDINGS=$(grep '^\[CROSS-WIRED\]' cross_env_output.txt || true)
-          MESSAGE="API key cross-environment check FAILED: ${FINDINGS} ${RUN_URL}"
+          MESSAGE="API key cross-environment check FAILED — keys may be cross-wired: ${FINDINGS} ${RUN_URL}"
+          echo "$MESSAGE"
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -sS --max-time 30 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+              --data-urlencode "text=${MESSAGE}"
+          else
+            echo "::warning::TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not configured as repo secrets — alert not sent. Message would have been: ${MESSAGE}"
+          fi
+
+      - name: Send alert on check error (inconclusive, not a security finding)
+        if: steps.check.outputs.exit_code == '2'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          ERRORS=$(grep '^\[ERROR\]' cross_env_output.txt || true)
+          MESSAGE="API key cross-environment check could not complete (probe/config error — NOT a cross-wiring finding): ${ERRORS} ${RUN_URL}"
           echo "$MESSAGE"
           if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
             curl -sS --max-time 30 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
