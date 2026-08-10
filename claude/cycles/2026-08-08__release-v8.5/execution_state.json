@@ -229,13 +229,17 @@
       }
     },
     "EPIC-04": {
-      "status": "in_progress",
+      "status": "done",
       "branch": "exec/2026-08-08__release-v8.5/EPIC-04",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-08__release-v8.5/qa_evidence_EPIC-04.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/theme-persistence.spec.js",
+        "tests/e2e/analytics-mobile-responsive.spec.js",
+        "tests/e2e/saved-filters-calendar-view.spec.js"
+      ],
       "stories": {
         "ST-09": {
           "title": "Design token audit: v6.7 contrast fix consistency",
@@ -354,7 +358,7 @@
           "assigned_to": "Head of UX & Design",
           "github_issue": 1314,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-04",
-          "commit_sha": null,
+          "commit_sha": "19c06db9ff2f40cd54188cae404886d102d6ebef",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
