@@ -124,14 +124,18 @@ function buildDefaultCollapse(pageName) {
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [theme, setTheme] = useState("dark");
+  // ST-11 (BLG-FE-93, EPIC-04, v8.5): lazy-initialise from localStorage
+  // directly instead of defaulting to "dark" and correcting in a mount
+  // effect. Persistence itself was already correct (localStorage survives
+  // indefinitely; a storage-clearing event cleanly falls back to "dark"
+  // via `|| "dark"`) -- the gap found by this story's audit was a
+  // flash-of-wrong-theme on every load/reload when the persisted theme is
+  // "light": the old default state briefly rendered dark before the mount
+  // effect corrected it. Reading synchronously at initial-render time
+  // removes the flash entirely.
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
   const location = useLocation();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "dark";
-    setTheme(savedTheme);
-  }, []);
 
   const toggleTheme = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
@@ -435,6 +439,8 @@ export default function Layout({ children, currentPageName }) {
             <Button
               variant="ghost"
               size="icon"
+              data-testid="theme-toggle-mobile"
+              aria-label="Toggle theme"
               onClick={toggleTheme}
               className={cn(
                 "h-9 w-9",
@@ -633,6 +639,8 @@ export default function Layout({ children, currentPageName }) {
             <Button
               variant="ghost"
               size="sm"
+              data-testid="theme-toggle-desktop"
+              aria-label="Toggle theme"
               onClick={toggleTheme}
               className={cn(
                 "h-8 gap-2",
