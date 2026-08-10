@@ -19,6 +19,7 @@ Also covers:
 import sys
 import types
 import unittest
+import pytest
 from pathlib import Path
 from unittest.mock import MagicMock, patch, call
 from decimal import Decimal
@@ -27,6 +28,51 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
 # Database stub is registered by tests/conftest.py (BLG-QA-20).
 # Config and utils stubs are set up here before importing the service under test.
+
+# ST-25 (BLG-QA-105): sys.modules stubbing below is unavoidably module-level
+# (alerts_service is loaded via spec_from_file_location further down, and its
+# own internal `import utils.pricing` etc. statements resolve against
+# sys.modules at that exec_module() call, so the stubs must already be
+# registered by then). That makes this module-level mutation process-global
+# and permanent for the rest of the pytest session unless explicitly
+# restored -- any test file collected after this one that expects the REAL
+# utils.formatting/utils.pricing/utils.calculations/config (not a Mock) would
+# silently get this file's stubs instead. Snapshot whatever was in
+# sys.modules for each of these names *before* this file overwrites them, so
+# the module-scoped autouse fixture below can put it back once this file's
+# own tests are done -- restoring correctness for every test that executes
+# afterward, even though the mutation is unavoidable at collection time.
+# Matches the spirit of test_trade_service.py's own guarded
+# ("don't stub over an already-registered module") pattern for the same
+# module set, applied here as an explicit restore instead of a pre-check.
+_PATCHED_SYS_MODULES_NAMES = (
+    "config",
+    "utils",
+    "utils.pricing",
+    "utils.calculations",
+    "utils.formatting",
+    "utils.position_lifecycle_states",
+    "utils.retry",
+)
+_pre_existing_sys_modules = {name: sys.modules.get(name) for name in _PATCHED_SYS_MODULES_NAMES}
+
+
+@pytest.fixture(autouse=True, scope="module")
+def _restore_sys_modules_after_this_file():
+    """Restore sys.modules entries this file stubbed, once its own tests finish.
+
+    Module-scoped so it applies to the unittest.TestCase classes below (pytest
+    applies module/session-scoped autouse fixtures to unittest-style tests;
+    function-scoped ones would not fire per-TestCase-method). Runs its
+    teardown after the last test in this file, before pytest moves on to
+    later-collected files' test execution -- see ST-25 note above.
+    """
+    yield
+    for name, original in _pre_existing_sys_modules.items():
+        if original is None:
+            sys.modules.pop(name, None)
+        else:
+            sys.modules[name] = original
 
 _config_stub = types.ModuleType("config")
 _config_stub.DEFAULT_MIN_HOLD_DAYS = 10

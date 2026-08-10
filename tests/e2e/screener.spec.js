@@ -28,6 +28,10 @@
  *   SC-SCR-16  Clicking news badge again collapses the panel
  *   SC-SCR-17  UK ticker rows have no news badge
  *   SC-SCR-18  Screener nav item is in Tools group and links to /Screener
+ *   SC-SCR-19  Regime History panel renders with default 30d window, bar, and readout
+ *   SC-SCR-20  Regime History panel: clicking 60d/All re-fetches with the new window
+ *   SC-SCR-21  Regime History panel: empty state shown when total_observations is 0
+ *   SC-SCR-22  Regime History panel: error state shown on API failure, with retry
  *
  * Infrastructure: page.route() network interception — no live backend required.
  *
@@ -75,6 +79,30 @@ function makeScreenerResponse(results, runId = 'run-001') {
   };
 }
 
+function makeRegimeDistribution(overrides = {}) {
+  return {
+    window: '30d',
+    run_count: 20,
+    total_observations: 32,
+    risk_on_count: 24,
+    risk_off_count: 8,
+    risk_on_pct: 75.0,
+    risk_off_pct: 25.0,
+    ...overrides,
+  };
+}
+
+async function stubRegimeDistribution(page, dataOrOverrides = {}) {
+  await page.route(`${API}/screener/regime-distribution**`, (route) => {
+    const url = new URL(route.request().url());
+    const window_ = url.searchParams.get('window') || '30d';
+    const data = typeof dataOrOverrides === 'function'
+      ? dataOrOverrides(window_)
+      : makeRegimeDistribution({ window: window_, ...dataOrOverrides });
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, data }) });
+  });
+}
+
 async function stubScreener(page, results, opts = {}) {
   const { runTimestamp } = opts;
   const body = makeScreenerResponse(results);
@@ -87,6 +115,10 @@ async function stubScreener(page, results, opts = {}) {
   await page.route(`${API}/screener/run`, (route) =>
     route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ ok: true, data: { run_id: 'run-002', status: 'accepted' } }) })
   );
+  // ST-21 (BLG-FEAT-29, v8.5): stub the Regime History panel's own data call
+  // by default so every existing scenario using stubScreener() gets a stable,
+  // deterministic response instead of an unhandled real network request.
+  await stubRegimeDistribution(page);
 }
 
 async function stubWatchlist(page, existing = []) {
@@ -238,6 +270,7 @@ test('SC-SCR-07: Empty state shown when no results', async ({ page }) => {
       body: JSON.stringify({ results: [], run_id: null, run_timestamp: null, total: 0, limit: 200, offset: 0 }),
     })
   );
+  await stubRegimeDistribution(page);
   await stubWatchlist(page);
 
   await goto(page, '/#/Screener');
@@ -251,6 +284,7 @@ test('SC-SCR-08: Error state shown on API error', async ({ page }) => {
   await page.route(`${API}/screener/results**`, (route) =>
     route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'Internal server error' }) })
   );
+  await stubRegimeDistribution(page);
   await stubWatchlist(page);
 
   await goto(page, '/#/Screener');
@@ -268,6 +302,7 @@ test('SC-SCR-09: Skeleton rows visible during initial load', async ({ page }) =>
       body: JSON.stringify(makeScreenerResponse([makeResult()])),
     });
   });
+  await stubRegimeDistribution(page);
   await stubWatchlist(page);
 
   await goto(page, '/#/Screener');
@@ -458,6 +493,7 @@ test('SC-SCR-DEG-01: Degraded quality panel shown with loaded ratio and incomple
   await page.route(`${API}/screener/run`, (route) =>
     route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ ok: true, data: { run_id: 'run-deg', status: 'accepted' } }) })
   );
+  await stubRegimeDistribution(page);
   await stubWatchlist(page);
   await goto(page, '/#/Screener');
 
@@ -485,6 +521,7 @@ test('SC-SCR-DEG-02: No degraded panel shown when run_quality is FULL', async ({
   await page.route(`${API}/screener/run`, (route) =>
     route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ ok: true, data: { run_id: 'run-ok', status: 'accepted' } }) })
   );
+  await stubRegimeDistribution(page);
   await stubWatchlist(page);
   await goto(page, '/#/Screener');
 
@@ -515,4 +552,86 @@ test('SC-SCR-18: Screener nav item present in Tools group', async ({ page }) => 
   await expect(screenerLink).toBeVisible({ timeout: 3000 });
   await screenerLink.click();
   await expect(page).toHaveURL(/#\/Screener/);
+});
+
+// ---------------------------------------------------------------------------
+// SC-SCR-19..22 — Regime History panel (ST-21, BLG-FEAT-29, EPIC-06, v8.5)
+// ---------------------------------------------------------------------------
+
+test('SC-SCR-19: Regime History panel renders with default 30d window, bar, and readout', async ({ page }) => {
+  await stubScreener(page, [makeResult()]);
+  await stubRegimeDistribution(page, { window: '30d', total_observations: 32, risk_on_count: 24, risk_off_count: 8, risk_on_pct: 75.0, risk_off_pct: 25.0 });
+  await stubWatchlist(page);
+  await goto(page, '/#/Screener');
+
+  const panel = page.getByTestId('regime-history-panel');
+  await expect(panel).toBeVisible({ timeout: 8000 });
+  await expect(page.getByTestId('regime-window-30d')).toBeVisible();
+  await expect(page.getByTestId('regime-distribution-bar')).toBeVisible();
+  await expect(page.getByTestId('regime-distribution-readout')).toContainText('Risk-On 75%');
+  await expect(page.getByTestId('regime-distribution-readout')).toContainText('Risk-Off 25%');
+  await expect(page.getByTestId('regime-distribution-readout')).toContainText('30d');
+});
+
+test('SC-SCR-20: Regime History panel — clicking 60d/All re-fetches with the new window', async ({ page }) => {
+  await stubScreener(page, [makeResult()]);
+  const requestedWindows = [];
+  await page.route(`${API}/screener/regime-distribution**`, (route) => {
+    const url = new URL(route.request().url());
+    const window_ = url.searchParams.get('window') || '30d';
+    requestedWindows.push(window_);
+    const byWindow = {
+      '30d': { window: '30d', run_count: 20, total_observations: 32, risk_on_count: 24, risk_off_count: 8, risk_on_pct: 75.0, risk_off_pct: 25.0 },
+      '60d': { window: '60d', run_count: 40, total_observations: 64, risk_on_count: 32, risk_off_count: 32, risk_on_pct: 50.0, risk_off_pct: 50.0 },
+      all: { window: 'all', run_count: 100, total_observations: 160, risk_on_count: 40, risk_off_count: 120, risk_on_pct: 25.0, risk_off_pct: 75.0 },
+    };
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, data: byWindow[window_] }) });
+  });
+  await stubWatchlist(page);
+  await goto(page, '/#/Screener');
+
+  await expect(page.getByTestId('regime-distribution-readout')).toContainText('Risk-On 75%', { timeout: 8000 });
+
+  await page.getByTestId('regime-window-60d').click();
+  await expect(page.getByTestId('regime-distribution-readout')).toContainText('Risk-On 50%');
+
+  await page.getByTestId('regime-window-all').click();
+  await expect(page.getByTestId('regime-distribution-readout')).toContainText('Risk-On 25%');
+  await expect(page.getByTestId('regime-distribution-readout')).toContainText('All');
+
+  expect(requestedWindows).toContain('30d');
+  expect(requestedWindows).toContain('60d');
+  expect(requestedWindows).toContain('all');
+});
+
+test('SC-SCR-21: Regime History panel — empty state shown when total_observations is 0', async ({ page }) => {
+  await stubScreener(page, [makeResult()]);
+  await stubRegimeDistribution(page, { total_observations: 0, risk_on_count: 0, risk_off_count: 0, risk_on_pct: null, risk_off_pct: null });
+  await stubWatchlist(page);
+  await goto(page, '/#/Screener');
+
+  const panel = page.getByTestId('regime-history-panel');
+  await expect(panel).toBeVisible({ timeout: 8000 });
+  await expect(panel).toContainText('No regime history yet');
+  await expect(page.getByTestId('regime-distribution-bar')).not.toBeVisible();
+});
+
+test('SC-SCR-22: Regime History panel — error state shown on API failure, with retry', async ({ page }) => {
+  await stubScreener(page, [makeResult()]);
+  let callCount = 0;
+  await page.route(`${API}/screener/regime-distribution**`, (route) => {
+    callCount += 1;
+    if (callCount === 1) {
+      return route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ status: 'error' }) });
+    }
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, data: makeRegimeDistribution() }) });
+  });
+  await stubWatchlist(page);
+  await goto(page, '/#/Screener');
+
+  const panel = page.getByTestId('regime-history-panel');
+  await expect(panel).toContainText(/something went wrong/i, { timeout: 8000 });
+
+  await page.getByRole('button', { name: /retry/i }).click();
+  await expect(page.getByTestId('regime-distribution-readout')).toBeVisible({ timeout: 8000 });
 });

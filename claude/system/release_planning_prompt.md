@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.48
-**Last Updated:** 2026-08-08
+**Version:** 2.49
+**Last Updated:** 2026-08-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -357,6 +357,8 @@ Reference: `claude/charter/team_charter.md` §6 Shared Write Concurrency Constra
 ---
 
 ## STEP 0 — Create Run Manifest + Initialize State (Hard Requirement; must be first write)
+
+**Root `sprint_sealed` reset (ST-23, BLG-GOV-288, v8.5):** This step initialises the *cycle-level* `claude/cycles/<cycle_id>/state.json` only — it never touches the root `.claude_current_state.json` (confirmed: no root-file write exists anywhere in this section). The root pointer's `sprint_sealed` field is reset to `false` for the new cycle at STEP 7's intermediate sync instead, atomically with `active_cycle` switching over — the same single-write-site pattern already used for `design_gate_status` (see STEP 7 for the actual write and full rationale). Noted here because the originating backlog item (`BLG-GOV-288`) named this step; the technically correct write site, matching existing precedent, is STEP 7.
 
 **Cleanup:** If `claude/cycles/<cycle_id>/.write_test` exists (left from STEP -1.4 on a previous interrupted run), delete it now before proceeding.
 
@@ -1024,6 +1026,7 @@ status: <current macro-state>       # e.g. Validated — NOT Published
 backlog_slice_path: claude/cycles/<cycle_id>/stage4_backlog_slice.md
 design_gate_required: true|false          # LP-01 fix, v2.41 — carried from state.json attributes.design_gate_required (set at STEP 4.1); written here, atomically with active_cycle, not at STEP 4.1
 design_gate_status: "not_started"|"not_required"   # LP-01 fix, v2.41 — "not_started" if design_gate_required=true and not yet run, else "not_required"
+sprint_sealed: false          # ST-23 fix, v2.49, BLG-GOV-288 — reset here, atomically with active_cycle switching to the new cycle_id, same pattern as design_gate_status above. sprint_sealed is owned and set true only by sprint_planning_prompt.md's own seal for THIS cycle — nothing else may ever write true here. Without this reset, the field carries a stale true from the prior cycle's seal into the new cycle's pre-planning window (observed live at the 2026-08-07__release-v8.4 design gate: root sprint_sealed read true, carried from v8.3, while the v8.4 cycle-level state.json correctly had no sprint_sealed key at all).
 last_sync_utc: <ISO-8601 UTC now>
 ```
 

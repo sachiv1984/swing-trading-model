@@ -17,6 +17,7 @@ import {
   Search,
   Loader2,
   AlertTriangle,
+  BarChart2,
 } from "lucide-react";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -107,6 +108,110 @@ function MarketBadge({ market }) {
     <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border", cls)}>
       {market}
     </span>
+  );
+}
+
+// ST-21 (BLG-FEAT-29, EPIC-06, v8.5) — Regime History panel.
+// Design source: docs/design/2026-08-08__release-v8.5/regime-distribution-panel/decision_record.md
+//
+// Colour correction from the decision record's own prose (RISK-01-style
+// implementation check): the record describes "green segment = risk_on, red
+// segment = risk_off — reusing the exact chip colours already defined for
+// the per-row Regime column." The *actual* per-row RegimeBadge above uses
+// emerald for risk_on but a neutral slate/grey (not red) for risk_off — a
+// risk-off market isn't itself an alarm condition, it's the strategy
+// correctly sitting out, so a red "danger" colour was never really
+// appropriate there. This panel reuses RegimeBadge's *real* colours
+// (emerald / slate-grey) rather than the record's red assumption, which
+// most faithfully satisfies the record's own stated intent — visual
+// consistency with the existing per-row chips, not a new second convention.
+function RegimeHistoryPanel() {
+  const [window_, setWindow_] = useState("30d");
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  const fetchDistribution = useCallback(async (win) => {
+    setLoading(true);
+    setError(false);
+    try {
+      const res = await apiFetch(`${API_BASE}/screener/regime-distribution?window=${win}`);
+      if (!res.ok) throw new Error();
+      const json = await res.json();
+      setData(json.data || json);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchDistribution(window_);
+  }, [window_, fetchDistribution]);
+
+  const hasData = data && data.total_observations > 0;
+
+  return (
+    <div
+      data-testid="regime-history-panel"
+      className="mb-4 p-4 rounded-xl border border-slate-700/50 bg-slate-800/30"
+    >
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-semibold text-white">Regime History</h3>
+        <div className="flex rounded-md border border-slate-700 overflow-hidden text-xs" data-testid="regime-window-selector">
+          {["30d", "60d", "all"].map((w) => (
+            <button
+              key={w}
+              data-testid={`regime-window-${w}`}
+              onClick={() => setWindow_(w)}
+              className={cn(
+                "px-3 py-1.5 transition-colors capitalize",
+                window_ === w
+                  ? "bg-slate-700 text-white"
+                  : "bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-white"
+              )}
+            >
+              {w === "all" ? "All" : w}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <DataState
+        loading={loading}
+        error={error}
+        onRetry={() => fetchDistribution(window_)}
+        empty={!loading && !error && !hasData}
+        emptyIcon={<BarChart2 className="w-8 h-8 text-slate-600" />}
+        emptyHeading="No regime history yet"
+        emptyBody="Regime history accrues as screener runs complete over the selected window."
+        compact
+      >
+        {hasData && (
+          <>
+            <div
+              data-testid="regime-distribution-bar"
+              className="flex h-2.5 rounded-full overflow-hidden bg-slate-900"
+            >
+              <div
+                data-testid="regime-bar-risk-on"
+                className="bg-emerald-500"
+                style={{ width: `${data.risk_on_pct}%` }}
+              />
+              <div
+                data-testid="regime-bar-risk-off"
+                className="bg-slate-600"
+                style={{ width: `${data.risk_off_pct}%` }}
+              />
+            </div>
+            <p className="mt-2 text-xs text-slate-600 dark:text-slate-400" data-testid="regime-distribution-readout">
+              Risk-On {data.risk_on_pct}% · Risk-Off {data.risk_off_pct}% ({window_ === "all" ? "All" : window_})
+            </p>
+          </>
+        )}
+      </DataState>
+    </div>
   );
 }
 
@@ -681,6 +786,8 @@ export default function Screener() {
           </div>
         }
       />
+
+      <RegimeHistoryPanel />
 
       {runQuality && (
         <ScreenerQualityPanel

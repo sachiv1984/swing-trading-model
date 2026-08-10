@@ -4693,6 +4693,24 @@ Review all migration blocks in ascending version order for consistency and confi
 
 ---
 
+### BLG-SPEC-118 — api_changelog.md not updated since v7.8.0 (v7.9-v8.4 endpoint additions missing)
+
+**Priority:** P3 (Low)
+**Type:** Spec Debt
+**Owner:** API Contracts & Documentation Owner
+**Source:** ST-21 (EPIC-06, 2026-08-08__release-v8.5) — out-of-scope finding while adding a new endpoint entry
+
+**Problem**
+`docs/specs/api_contracts/api_changelog.md`'s most recent entry before this cycle's own addition was `v7.8.0` (2026-07-27) — several releases' worth of endpoint additions in `v7.9` through `v8.4` (e.g. `GET /reports/reconciliation` per `v8.2`, per `SystemStatus.js`'s own endpoint-count comment history) were never logged here, unlike `openapi.yaml` and the individual `docs/specs/api_contracts/*.md` files, which were kept current for each of those additions.
+
+**Scope**
+- Backfill `api_changelog.md` entries for each new `## METHOD /path` heading added across `v7.9`–`v8.4` (cross-reference each release's `docs/product/changelog.md` section and/or `git log` on `docs/specs/api_contracts/*.md` for the actual additions)
+
+**Acceptance Criteria**
+- `api_changelog.md` contains an entry for every new endpoint shipped in `v7.9` through `v8.4`, in descending version order
+
+---
+
 ### BLG-QA-89 — R-multiple calculation regression test
 **Priority:** P2 (Medium)
 **Type:** QA / Backend

@@ -507,3 +507,79 @@ def get_screener_results(
         "run_quality": run_quality,
         "last_full_run_utc": last_full_run_utc,
     }
+
+
+_REGIME_WINDOW_DAYS = {"30d": 30, "60d": 60}
+
+
+def get_regime_distribution(window: str = "30d") -> Dict:
+    """
+    ST-21 (BLG-FEAT-29): aggregate market regime distribution over screener
+    run history. Contract: screener_api_contract.md.
+
+    Source: screener_runs.regime_us / regime_uk (one row per run, not
+    screener_results — that table is one row per *ticker*, which would
+    weight the distribution by how many tickers happened to be evaluated in
+    each market rather than by how often each market has actually been in
+    each regime). Each run contributes one observation per market (US, UK)
+    that has a non-null regime value for that run, so a run where a market's
+    regime failed to resolve (regime_us/regime_uk NULL, e.g. an index price
+    fetch failure) is excluded from that market's count rather than
+    miscounted as a fabricated regime.
+
+    window: "30d", "60d", or "all". Raises ValueError on any other value.
+    """
+    if window not in ("30d", "60d", "all"):
+        raise ValueError(f"INVALID_PARAMS: window must be 30d, 60d, or all (got {window!r})")
+
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            params = []
+            where = ""
+            if window in _REGIME_WINDOW_DAYS:
+                where = "WHERE run_timestamp >= NOW() - (%s || ' days')::interval"
+                params.append(_REGIME_WINDOW_DAYS[window])
+
+            cur.execute(
+                f"""
+                SELECT
+                    COUNT(*) FILTER (WHERE regime_us = 'risk_on') AS us_risk_on,
+                    COUNT(*) FILTER (WHERE regime_us = 'risk_off') AS us_risk_off,
+                    COUNT(*) FILTER (WHERE regime_uk = 'risk_on') AS uk_risk_on,
+                    COUNT(*) FILTER (WHERE regime_uk = 'risk_off') AS uk_risk_off,
+                    COUNT(*) AS run_count
+                FROM screener_runs
+                {where}
+                """,
+                params,
+            )
+            row = cur.fetchone()
+
+    us_risk_on = row["us_risk_on"] or 0
+    us_risk_off = row["us_risk_off"] or 0
+    uk_risk_on = row["uk_risk_on"] or 0
+    uk_risk_off = row["uk_risk_off"] or 0
+    risk_on = us_risk_on + uk_risk_on
+    risk_off = us_risk_off + uk_risk_off
+    total_observations = risk_on + risk_off
+
+    if total_observations == 0:
+        return {
+            "window": window,
+            "run_count": row["run_count"] or 0,
+            "total_observations": 0,
+            "risk_on_count": 0,
+            "risk_off_count": 0,
+            "risk_on_pct": None,
+            "risk_off_pct": None,
+        }
+
+    return {
+        "window": window,
+        "run_count": row["run_count"] or 0,
+        "total_observations": total_observations,
+        "risk_on_count": risk_on,
+        "risk_off_count": risk_off,
+        "risk_on_pct": round(risk_on / total_observations * 100, 1),
+        "risk_off_pct": round(risk_off / total_observations * 100, 1),
+    }

@@ -1,8 +1,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Class 2 Canonical Specification
 **Status:** Active
-**Version:** 1.2
-**Last Updated:** 2026-06-19
+**Version:** 1.3
+**Last Updated:** 2026-08-10 (ST-21, BLG-FEAT-29, v8.5 — added GET /screener/regime-distribution); prior — 2026-06-19
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Schema reference:** docs/specs/screener_results_schema.md
 
@@ -116,6 +116,53 @@ Triggers a new screener run. The run executes asynchronously; results are availa
 
 ---
 
+## GET /screener/regime-distribution
+
+Returns the aggregate market regime (risk-on / risk-off) distribution over screener run history, for the requested rolling window. ST-21 (BLG-FEAT-29, EPIC-06, v8.5) — "Regime History" panel, Screener Results page. Design source: `docs/design/2026-08-08__release-v8.5/regime-distribution-panel/decision_record.md`.
+
+**Authentication:** Standard API key authentication (per `docs/specs/api_contracts/conventions.md`).
+
+### Request
+
+| Parameter | Location | Type | Required | Description |
+|-----------|----------|------|----------|-------------|
+| `window` | query | enum(`"30d"`, `"60d"`, `"all"`) | NO | Rolling window over `screener_runs.run_timestamp`. Default: `"30d"` |
+
+### Response (HTTP 200)
+
+```json
+{
+  "ok": true,
+  "data": {
+    "window": "30d",
+    "run_count": 28,
+    "total_observations": 56,
+    "risk_on_count": 41,
+    "risk_off_count": 15,
+    "risk_on_pct": 73.2,
+    "risk_off_pct": 26.8
+  }
+}
+```
+
+| Response field | Type | Description |
+|---------------|------|-------------|
+| `window` | string | Echoes the requested window |
+| `run_count` | int | Number of `screener_runs` rows within the window (regardless of whether either market's regime resolved) |
+| `total_observations` | int | Total per-market regime observations counted (`risk_on_count + risk_off_count`) — up to 2 per run (one for US, one for UK), fewer if a market's regime failed to resolve for a given run (`regime_us`/`regime_uk` NULL) |
+| `risk_on_count` / `risk_off_count` | int | Count of per-market observations in each regime, summed across US and UK |
+| `risk_on_pct` / `risk_off_pct` | float \| null | Percentage of `total_observations` in each regime, rounded to 1 decimal place. Both `null` when `total_observations = 0` (no runs in window, or all runs had unresolved regimes) — the frontend renders `DataState`'s `empty` branch in this case, per the design decision record, rather than a misleading `0%/0%` split |
+
+**Aggregation note:** Sourced from `screener_runs.regime_us`/`regime_uk` (one row per run), not `screener_results` (one row per ticker) — using the per-ticker table would weight the distribution by how many tickers happened to be evaluated in each market on a given day, not by how often each market has actually been in each regime. Each run contributes one observation per market that has a non-null regime value.
+
+### Error Responses
+
+| HTTP status | Code | Description |
+|------------|------|-------------|
+| 400 | `INVALID_PARAMS` | `window` is not one of `30d`, `60d`, `all` |
+
+---
+
 ## Pagination
 
 `GET /screener/results` supports offset-based pagination:
@@ -130,13 +177,13 @@ Triggers a new screener run. The run executes asynchronously; results are availa
 
 ## Authentication Requirements
 
-Both endpoints use standard bearer token authentication as defined in `docs/specs/api_contracts/conventions.md`. No special screener-specific authentication is required.
+All three endpoints use standard bearer token authentication as defined in `docs/specs/api_contracts/conventions.md`. No special screener-specific authentication is required.
 
 ---
 
 ## DoQ Sign-Off
 
-- [x] `GET /screener/results` and `POST /screener/run` endpoints documented at `##` heading level
+- [x] `GET /screener/results`, `POST /screener/run`, and `GET /screener/regime-distribution` endpoints documented at `##` heading level
 - [x] Request/response schemas defined with field names, types, and pagination for GET
 - [x] Error codes documented
 - [x] Authentication requirements documented
@@ -145,3 +192,7 @@ Both endpoints use standard bearer token authentication as defined in `docs/spec
 - Signed off by: Sprint Execution Engine (autonomous class)
 - Date: 2026-04-23
 - Comments: Autonomous class sign-off — all four qualifying criteria met.
+
+**v1.3 addendum (2026-08-10, ST-21, BLG-FEAT-29, EPIC-06, v8.5):** Added `GET /screener/regime-distribution`. Same DoQ checklist re-confirmed for the new endpoint: documented at `##` level, request/response schema and error codes defined, authentication requirements unchanged, OpenAPI entry added in the same commit, endpoint test suite registration added in the same commit (`backend/routers/test.py`).
+- Signed off by: Sprint Execution Engine (autonomous class)
+- Date: 2026-08-10

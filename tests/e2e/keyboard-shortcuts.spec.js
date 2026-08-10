@@ -52,6 +52,13 @@ async function stubCommon(page) {
   await page.route(`${API}/screener/results**`, (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ results: [], run_id: null, run_timestamp: null, total: 0, limit: 200, offset: 0 }) })
   );
+  // ST-21 (BLG-FEAT-29, v8.5): stub the Regime History panel's own data call.
+  await page.route(`${API}/screener/regime-distribution**`, (route) =>
+    route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ ok: true, data: { window: '30d', run_count: 0, total_observations: 0, risk_on_count: 0, risk_off_count: 0, risk_on_pct: null, risk_off_pct: null } }),
+    })
+  );
   await page.route(`${API}/watchlist**`, (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ items: [] }) })
   );

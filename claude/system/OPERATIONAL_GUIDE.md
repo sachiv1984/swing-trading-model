@@ -2,8 +2,8 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.147
-**Last Updated:** 2026-08-08
+**Version:** 4.152
+**Last Updated:** 2026-08-10
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
 
@@ -396,7 +396,7 @@ The idea template includes a "What Would You Stop?" field as a thinking prompt �
 
 ## 6. Phase 1 — Roadmap Rebalance (Optional)
 
-**Source prompt:** `claude/system/roadmap_prompt.md` (v9.13)
+**Source prompt:** `claude/system/roadmap_prompt.md` (v9.14)
 **Invoke when:** A roadmap item completes and a priority reassessment is warranted before proceeding to release planning, or on a scheduled review cadence without a completion event.
 
 ### 6.1 Invocation
@@ -620,7 +620,7 @@ If the gate is bypassed (Sprint Planning run without a passing design gate), thi
 
 ## 6B. Phase 1B — Release Planning
 
-**Source prompt:** `claude/system/release_planning_prompt.md` (v2.48)
+**Source prompt:** `claude/system/release_planning_prompt.md` (v2.49)
 **Purpose:** Translate an already-approved roadmap release into an execution-ready plan: sequencing, dependencies, acceptance gates, backlog slice, optional GitHub issues.
 
 > **This routine does NOT rebalance the roadmap.** It may not add, replace, defer, or kill initiatives. Those remain reserved for Phase 1.
@@ -1455,8 +1455,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.149 |
-| Last Updated | 2026-08-08 |
+| Version | 4.152 |
+| Last Updated | 2026-08-10 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
 | Idea Template | `claude/system/idea_template.md` |
@@ -1464,8 +1464,8 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.13 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.9 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
-| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.13 |
-| Release Engine Source | `claude/system/release_planning_prompt.md` v2.48 |
+| Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.14 |
+| Release Engine Source | `claude/system/release_planning_prompt.md` v2.49 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.16 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.66 |
@@ -1496,6 +1496,8 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.152 | 2026-08-10 | **Sprint execution `2026-08-08__release-v8.5` EPIC-06/ST-23 (BLG-GOV-288) — release_planning_prompt.md v2.48→v2.49: root `sprint_sealed` reset on new-cycle publish.** §6B source prompt header v2.48→v2.49 (line 623). §14 Release Engine Source v2.48→v2.49. §14 Version 4.151→4.152/2026-08-10. Change: STEP 7's intermediate `.claude_current_state.json` sync now resets `sprint_sealed: false` atomically with `active_cycle` switching to the new cycle_id — same single-write-site pattern already used for `design_gate_status`. Previously nothing reset this field between cycles, so it carried a stale `true` from the prior cycle's Sprint Planning seal (observed live at the `2026-08-07__release-v8.4` design gate). STEP 0 gains a cross-reference note (the originating backlog item named that step; the technically correct write site, matching the `design_gate_status` precedent, is STEP 7). Authority: Head of Specs Team (Sprint Execution Engine, ST-23, 2026-08-10). |
+| 4.151 | 2026-08-10 | **Sprint execution `2026-08-08__release-v8.5` EPIC-06/ST-22 (BLG-FEAT-72) — roadmap_prompt.md v9.13→v9.14: STEP 2.4 gains a structured Product Value Ratio history record.** §6 source prompt header v9.13→v9.14 (line 399). §14 Roadmap Engine Source v9.13→v9.14. §14 Version 4.149→4.151/2026-08-10 (see cross-branch note below). Change: new `claude/roadmap/product_value_ratio_history.md` (backfilled DL-057 through DL-077 from `decision_log.md` prose) — STEP 2.4 now appends a structured row here every rebalance, and the sustained-Advisory-tier consecutive-readings check reads this file instead of re-deriving from `decision_log.md` prose. **Cross-branch version note:** this EPIC-06 branch was cut before `EPIC-02` (also `2026-08-08__release-v8.5`) merged to `main`; `EPIC-02`'s own governance edit (ST-04, `shared_standards.md` §20) independently claimed `4.150` for a different change on its own branch. Deliberately skipped `4.150` here and used `4.151` to avoid the identical-version-different-change collision CLAUDE.md §8 step 2a exists to catch — chosen proactively in the same session that authored both changes, rather than left for a future merge-time renumbering. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-22, 2026-08-10). |
 | 4.149 | 2026-08-08 | **Lifecycle audit AUD-2026-08-08 improvement 003 — post_ship_closure.md v2.24→v2.25: state-pointer sync rule for `open_escalations`.** §10 source prompt header v2.24→v2.25 (line 1062). §14 Post-Ship Closure Engine v2.24→v2.25. §14 Version 4.148→4.149/2026-08-08. Change: §5 Write Scope Restriction gains a mandatory rule — whenever an entry is appended to `closure_escalations.md`, the same STEP 8 write must also set `.claude_current_state.json.open_escalations.<ESC-ID>`, clearing it when the escalation resolves. Closes a gap first flagged at `AUD-2026-08-03`: `open_escalations` was checked as a gate precondition by 3 engines but never written by any of them (only the separate per-cycle `execution_state.json.open_escalations` was maintained), confirmed still open at a 2nd consecutive audit before being applied here. Authority: Head of Specs Team (lifecycle audit AUD-2026-08-08, resolved 2026-08-08). |
 | 4.148 | 2026-08-08 | **Lifecycle audit AUD-2026-08-08 improvement 002 — self-header drift correction (no engine prompt content changed).** §14 Version 4.146→4.148/2026-08-08 (this document's own header field had drifted: it still read 4.146 after the 4.147 entry below was already logged, since that entry's own header-bump step was missed). Also reordered the 4.146 row (previously misfiled below the 4.145 row, breaking the table's descending-version order) to sit directly below this row. No engine source prompt or §14 table row changed by this entry — pure self-consistency correction, evidence in `audit_report_AUD-2026-08-08.md` Stage 1/Improvement 002. Authority: Head of Specs Team (lifecycle audit AUD-2026-08-08, resolved 2026-08-08). |
 | 4.147 | 2026-08-08 | **Post-ship closure `2026-08-07__release-v8.4` STEP 8, two immediate lessons-learnt actions — execution_prompt.md v3.65→v3.66: commit-SHA-write reminder in the in-session provisioning sub-path + test_scenarios roll-up backstop.** §8 source prompt header v3.65→v3.66 (line 887). §14 Execution Engine Source v3.65→v3.66. §14 Version 4.146→4.147/2026-08-08. Changes: (1, LL-v8.4-P3-01) §3.1.B's in-session credential/action provisioning sub-path (LL-v8.2-P3-04) gains an explicit cross-reference back to step 4a's commit-SHA-write rule (`LL-v4.8-EX-01`) — its own step list ended at "re-run Unblock detection" with no pointer back, and 3 items this cycle (ST-20/ST-21/ST-23) reached `status: done` with `commit_sha: null` as a result. (2, LL-v8.4-P4-01) STEP 3.1.A step 12 "Post-story test files check" gains a roll-up backstop — before EPIC seal, cross-check the EPIC-level `test_scenarios` array against the union of test files already present in that EPIC's stories' own `spec_references`, backfilling any gap; EPIC-01 shipped with `test_scenarios: []` this cycle despite genuine, real-CI-confirmed coverage correctly recorded at story level. Authority: Head of Specs Team (post-ship closure STEP 8 immediate-action rule, 2026-08-08). |
