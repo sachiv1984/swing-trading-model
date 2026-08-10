@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-08 (session — 2 new items added: BLG-GOV-292, BLG-GOV-293); prior — 2026-08-08 (release planning 2026-08-08__release-v8.5 — 25 items' `Provisional-Target` field updated `TBD`/`Unscheduled` → `v8.5`; `## v8.5 Release Slice` ephemeral section appended); prior — 2026-08-08 (ad-hoc Actionable Backlog Assessment re-check — 8 items' `Gate criteria` field corrected from stale to `Gate cleared 2026-08-08`); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-10 (session — 2 new items added: BLG-FE-147, BLG-FE-148); prior — 2026-08-08 (session — 2 new items added: BLG-GOV-292, BLG-GOV-293); prior — 2026-08-08 (release planning 2026-08-08__release-v8.5 — 25 items' `Provisional-Target` field updated `TBD`/`Unscheduled` → `v8.5`; `## v8.5 Release Slice` ephemeral section appended); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -1149,6 +1149,49 @@ ST-12 (`BLG-BE-70`) added backend storage capability — `trade_plans.thesis_mod
 - `ChartContainer` consumers render correct, theme-appropriate colours with no `<style>`/`dangerouslySetInnerHTML` in `chart.js`
 - `public/index.html`'s CSP `style-src` no longer includes `'unsafe-inline'`
 - No visual regression to any chart using `ChartContainer` (Playwright coverage or staging sign-off per CLAUDE.md's frontend-visible-change rule)
+
+---
+
+### BLG-FE-147 — Register remaining unregistered shadcn design tokens in tailwind.config.js (card, popover, primary, secondary, accent, destructive, border, input, ring)
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-06 (EPIC-03, 2026-08-08__release-v8.5), self-caught scope gap discovered mid-story — 2026-08-10
+**Effort:** M (~1-2d — token registration + Playwright coverage or staging sign-off per confirmed-affected call site)
+**Provisional-Target:** v8.6
+
+**Problem**
+`tailwind.config.js`'s `theme.extend.colors` only registers `background`, `foreground`, and (as of ST-06/BLG-FE-145, same release) `muted`. Every other CSS custom property defined in `src/index.css`'s shadcn theme block (`--card`, `--card-foreground`, `--popover`, `--popover-foreground`, `--primary`, `--primary-foreground`, `--secondary`, `--secondary-foreground`, `--accent`, `--accent-foreground`, `--destructive`, `--destructive-foreground`, `--border`, `--input`, `--ring`, `--chart-1..5`) is not registered, so every Tailwind utility class built on them (`bg-card`, `text-card-foreground`, `bg-popover`, `text-primary`, `bg-secondary`, `bg-accent`, `bg-destructive`, `border-border`, `bg-input`, `ring-ring`, etc.) compiles to an empty CSS rule — Tailwind only generates utilities for color tokens it knows about. Confirmed via a real `tailwindcss` build and `grep` across `src/`: `card` (2 distinct classes), `popover` (2), `primary` (5), `secondary` (2), `accent` (2), `destructive` (5), `border` (2), `input` (2), `ring` (1) — all currently dead, same root cause as the `-muted` classes ST-06 just fixed. These are used throughout the shadcn/ui primitive library (`accordion`, `alert-dialog`, `card`, `dialog`, `form`, `select`, `sheet`, `toast`, etc.) consumed across the app.
+
+**Scope**
+- Register the remaining tokens in `tailwind.config.js`'s `theme.extend.colors`, following the same `DEFAULT`/`foreground` pattern used for `muted` (ST-06)
+- Verify via a real `tailwindcss` build that each affected class now compiles to a non-empty rule
+- Identify confirmed-affected call sites per token and add Playwright coverage (or staging sign-off) per CLAUDE.md's frontend-visible-change rule
+
+**Acceptance Criteria**
+- `bg-card`, `text-card-foreground`, `bg-popover`, `text-primary`, `bg-secondary`, `bg-accent`, `bg-destructive`, `border-border`, `bg-input`, `ring-ring` (and any other affected `-card`/`-popover`/`-primary`/`-secondary`/`-accent`/`-destructive`/`-border`/`-input`/`-ring` classes found in scope) compile to a non-empty CSS rule, verified via a real `tailwindcss` build
+- No visual regression at any confirmed-affected call site — Playwright coverage or staging sign-off per CLAUDE.md's frontend-visible-change rule
+
+---
+
+### BLG-FE-148 — Playwright coverage for the remaining `-muted`/`muted-foreground` call sites left untested by ST-06
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-06 (EPIC-03, 2026-08-08__release-v8.5), agent-mediated Director of Quality review — 2026-08-10
+**Effort:** S (~0.5d — targeted Playwright coverage, no implementation change)
+**Provisional-Target:** v8.6
+
+**Problem**
+ST-06 (BLG-FE-145) registered `muted`/`muted-foreground` in `tailwind.config.js`, making every `-muted` utility class app-wide resolve to real CSS for the first time (previously an empty rule). This is a genuine app-wide visible colour change, not scoped to one component — `grep` confirms real, non-`ui/`-internal consumers of `text-muted-foreground`/`bg-muted`/etc. across `Input` (17 files, `placeholder:text-muted-foreground`), `Select` (10 files, `data-[placeholder]:text-muted-foreground`), `Dialog` (14 files, `DialogDescription`'s default `text-muted-foreground` — though every current call site overrides this className, so may not actually resolve; worth confirming as part of this item's own investigation), `Textarea` (4 files), `Tabs` (2 files, `TabsList`), `Sheet`, `Toast`, `Toggle` (1 file each). ST-06 itself added Playwright coverage for 2 of these mechanisms — the `CommandGroup` heading's element `color` (SC-CP-13) and `CommandInput`'s `::placeholder` colour (SC-CP-14), both in `command-palette.spec.js` — verified representative of the `text-muted-foreground` class as consumed by `Input`'s own placeholder styling (identical class), but the remaining families (`Select`, `Tabs`, `Sheet`, `Toast`, `Toggle`, and any `Dialog` call site that does NOT override the className) have zero Playwright coverage of the actual rendered colour post-fix. Filed per CLAUDE.md's frontend-visible-change hard gate (an observable AC deferred to post-merge without Playwright coverage requires a filed backlog item before the PR opens).
+
+**Scope**
+- For each of `Select`, `Tabs`, `Sheet`, `Toast`, `Toggle`: identify a real page/component call site and add a Playwright test asserting the post-fix computed colour (following the `SC-CP-13`/`SC-CP-14` pattern — `getComputedStyle`, not just class-name presence)
+- Confirm whether any `DialogDescription` call site actually renders the default `text-muted-foreground` (vs. always being overridden by an explicit `className`, as observed in `ExportModal.js`/`WatchlistModal.js`/`WidgetLibrary.js` at filing time) — if none do, document that explicitly rather than leaving it untested and unexplained
+
+**Acceptance Criteria**
+- Each of the 5 listed families has at least one Playwright test asserting the real post-ST-06 computed colour at a confirmed-affected call site
+- `DialogDescription`'s actual exposure (or non-exposure) of the default `text-muted-foreground` styling is confirmed and documented, with a test added if any live call site does expose it
 
 ---
 
