@@ -216,6 +216,9 @@ test('SC-SFC-09: no closed trades at all shows the full-page empty state', async
   await gotoTradeHistory(page);
   await page.getByRole('button', { name: 'Calendar' }).click();
 
-  await expect(page.getByText('No closed trades yet.')).toBeVisible({ timeout: 5000 });
+  // ST-10 (BLG-FE-92, EPIC-04, v8.5): heading dropped its trailing period
+  // per the empty-state microcopy pattern decision (headings are labels,
+  // not sentences).
+  await expect(page.getByText('No closed trades yet', { exact: true })).toBeVisible({ timeout: 5000 });
   await expect(page.getByText('Your trading calendar will populate as you close trades.')).toBeVisible();
 });

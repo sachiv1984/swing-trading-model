@@ -124,16 +124,20 @@ function buildDefaultCollapse(pageName) {
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [theme, setTheme] = useState("dark");
+  // ST-11 (BLG-FE-93, EPIC-04, v8.5): lazy-initialise from localStorage
+  // directly instead of defaulting to "dark" and correcting in a mount
+  // effect. Persistence itself was already correct (localStorage survives
+  // indefinitely; a storage-clearing event cleanly falls back to "dark"
+  // via `|| "dark"`) -- the gap found by this story's audit was a
+  // flash-of-wrong-theme on every load/reload when the persisted theme is
+  // "light": the old default state briefly rendered dark before the mount
+  // effect corrected it. Reading synchronously at initial-render time
+  // removes the flash entirely.
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "dark";
-    setTheme(savedTheme);
-  }, []);
-
-  // ST-06 (BLG-FE-145, EPIC-03, v8.5) follow-up, found live via this story's
+  // ST-06 (BLG-FE-145, EPIC-03, v8.5) follow-up, found live via that story's
   // own new Playwright tests failing in real CI: tailwind.config.js's
   // darkMode: ["class"] requires an ANCESTOR element carrying the literal
   // "dark" class for any dark: variant to apply -- but that class was only
@@ -148,6 +152,8 @@ export default function Layout({ children, currentPageName }) {
   // setting. Syncing the class onto documentElement (an ancestor of every
   // portal, since portals still mount under <body>/<html>) fixes this for
   // all of them at the root cause, not just this story's own call sites.
+  // (No separate mount effect re-reads localStorage here -- ST-11's lazy
+  // useState initialiser above already handles that synchronously.)
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
@@ -454,6 +460,8 @@ export default function Layout({ children, currentPageName }) {
             <Button
               variant="ghost"
               size="icon"
+              data-testid="theme-toggle-mobile"
+              aria-label="Toggle theme"
               onClick={toggleTheme}
               className={cn(
                 "h-9 w-9",
@@ -652,6 +660,8 @@ export default function Layout({ children, currentPageName }) {
             <Button
               variant="ghost"
               size="sm"
+              data-testid="theme-toggle-desktop"
+              aria-label="Toggle theme"
               onClick={toggleTheme}
               className={cn(
                 "h-8 gap-2",

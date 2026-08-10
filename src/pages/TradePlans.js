@@ -194,7 +194,7 @@ export default function TradePlans() {
           onRetry={refetch}
           empty={!isLoading && !isError && plans.length === 0}
           emptyIcon={<FileText className="w-10 h-10 text-slate-600" />}
-          emptyHeading="No trade plans yet."
+          emptyHeading="No trade plans yet"
           emptyBody="Create a trade plan before opening your next position."
           emptyAction={
             <Button

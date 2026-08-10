@@ -30,7 +30,16 @@ export default function TimeBasedCharts({ dayOfWeekData, monthlyData, holdingPer
               <Bar dataKey="avgPnl" fill="#06b6d4" name="Avg P&L" radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
-          <div className="grid grid-cols-5 gap-2 text-xs text-center">
+          {/* ST-12 (BLG-FE-94, EPIC-04, v8.5): grid-cols-3 sm:grid-cols-5 --
+              a fixed 5-column grid with no mobile breakpoint left each cell
+              (day label + trade count) too narrow on common mobile
+              viewports (~69px at 375px width). analytics.md's Responsive
+              Behavior section doesn't name this specific grid, but the
+              page-wide "no fixed multi-column grid without a mobile
+              breakpoint" pattern applies -- confirmed against the 5 other
+              grids in this component/page family, all of which already
+              collapse on mobile. */}
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 text-xs text-center">
             {dayOfWeekData.map((day, idx) => (
               <div key={idx} className="p-2 bg-slate-900/50 rounded-lg">
                 <p className="text-slate-600 dark:text-slate-400">{day.day}</p>

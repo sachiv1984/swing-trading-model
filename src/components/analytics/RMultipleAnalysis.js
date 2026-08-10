@@ -267,7 +267,11 @@ export default function RMultipleAnalysis({ trades }) {
           </button>
           
           {expandedTags && (
-            <div className="px-4 pb-4">
+            <div className="px-4 pb-4 overflow-x-auto">
+              {/* ST-12 (BLG-FE-94, EPIC-04, v8.5): overflow-x-auto added --
+                  per analytics.md's "All tables support horizontal scroll
+                  on small screens" spec, missing here (4 sibling table
+                  components already had it). */}
               <table className="w-full">
                 <thead className="bg-slate-800/50">
                   <tr>

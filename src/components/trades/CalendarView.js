@@ -86,7 +86,7 @@ export default function CalendarView({ hasAnyClosedTrades, onDaySelect }) {
           error={false}
           empty
           emptyIcon={<CalendarIcon className="w-10 h-10 text-slate-600" />}
-          emptyHeading="No closed trades yet."
+          emptyHeading="No closed trades yet"
           emptyBody="Your trading calendar will populate as you close trades."
         />
       </div>
