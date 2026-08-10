@@ -1,9 +1,36 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.26
-**Last Updated:** 2026-08-08 (delivery verification 2026-08-07__release-v8.4 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-08-08 (sprint close 2026-08-07__release-v8.4); prior — 2026-08-07 (delivery verification 2026-08-05__release-v8.3 — status line updated Sprint_Complete → Verified); prior history retained — see prior entries in version control.
+**Version:** 4.27
+**Last Updated:** 2026-08-10 (sprint close 2026-08-08__release-v8.5); prior — 2026-08-08 (delivery verification 2026-08-07__release-v8.4 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-08-08 (sprint close 2026-08-07__release-v8.4); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-08-08__release-v8.5
+**Date:** 2026-08-10
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Fixed `GET /analytics/tag-performance` 500 on staging (missing `trade_tags` column ensure call); confirmed `api-key-cross-environment-check.yml` genuinely executes with real secrets (not silently skipping), and hardened it to distinguish a real cross-wired-keys finding from a probe/network error (previously both raised the same false-positive Telegram alert) | `docs/specs/api_contracts/analytics_endpoints.md#GET /analytics/tag-performance`; `docs/security/api_key_security_register.md#6. Application X-API-Key` | None |
+| EPIC-02 | Security fix false-positive rate assessment (0% FP, 0/602 real tickers altered); new monthly `dependency-vuln-rescan.yml` (pip-audit + npm audit) independent of existing per-PR checks; API key rotation runbook added to `api_key_rotation_policy.md` | `claude/cycles/2026-08-08__release-v8.5/st03_sec02_false_positive_rate_assessment.md`; `.github/workflows/dependency-vuln-rescan.yml`; `docs/ops/api_key_rotation_policy.md` | None |
+| EPIC-03 | `muted`/`muted-foreground` Tailwind tokens registered (5 previously-empty `-muted` utility classes now compile); frontend wiring for `thesis_model_version`/`thesis_prompt_version` on trade plan save; Tax Year Report's exact-zero P&L colour convention reconciled with Monthly P&L Report. **Systemic bug found and fixed:** dark-mode CSS class was only ever applied to `Layout.js`'s own wrapper div, never `document.documentElement`, so every Radix Dialog-based component app-wide (14+ consumers, rendered via portal outside that wrapper) was always in light-theme CSS scope regardless of the user's actual theme — fixed at the root in `Layout.js` | `tailwind.config.js`; `docs/specs/api_contracts/trade_plan_endpoints.md`; `docs/design/2026-08-08__release-v8.5/exact-zero-pnl-colour-convention/decision_record.md`; `docs/specs/frontend/pages/reports.md` | None (resolves `DEV-REPORTS-ST01-02`) |
+| EPIC-04 | Secondary-text design token audit (6 drift instances found, consolidated as `BLG-FE-149`); empty-state heading trailing-period fix (`TradePlans.js`, `CalendarView.js`); theme-toggle persistence flash-on-load fixed (lazy `useState` init from `localStorage`); mobile-responsive audit for `PerformanceAnalytics` (4 real drift instances fixed); dark/light contrast audit follow-up (`BLG-FE-150` filed — design-scope question); ad hoc component inventory for shared design-system extraction (Head of UX & Design sign-off, 2 passes) | `docs/design/2026-08-08__release-v8.5/empty-state-microcopy-pattern/decision_record.md`; `docs/specs/frontend/design_system.md`; `docs/specs/frontend/pages/analytics.md`; `claude/cycles/2026-08-08__release-v8.5/st09_secondary_text_token_audit_findings.md`; `st13_dark_light_contrast_audit_followup.md`; `st14_ad_hoc_component_inventory.md` | None |
+| EPIC-05 | Nav bar redesign exploration (recommendation: no redesign warranted at current scale); SI-05 Telegram-digest-to-app-action user journey map refreshed (found stale — 2 prior friction findings already shipped but doc never updated); reusable empty-state Base44 prompt template (full-page/section variant); Reports page information hierarchy review (`BLG-FE-151`/`BLG-FE-152` filed — dark-only-styling gap in SI-02 Gate Status section); `ChartContainer`/`ui/calendar.js` consumer checks — both confirmed still unused, dormant/watching items | `claude/cycles/2026-08-08__release-v8.5/st15_nav_bar_redesign_exploration.md`; `docs/ux/si05_user_journey_map.md`; `docs/specs/frontend/base44_prompt_template_library.md#12`; `st18_reports_page_information_hierarchy_review.md`; `st19_st20_chart_calendar_consumer_check.md` | None |
+| EPIC-06 | New `GET /screener/regime-distribution` endpoint + Regime History panel on the Screener Results page; structured Product Value Ratio historical trend record (backfilled `DL-057`–`DL-077`); `release_planning_prompt.md` now resets root `sprint_sealed: false` on new-cycle publish; `CLAUDE.md` §8 sibling-vs-sibling union clause for `execution_state.json` array fields; fixed unrestored `sys.modules` stubbing in `test_alerts_service.py` (cross-file test pollution) | `docs/specs/api_contracts/screener_api_contract.md#GET /screener/regime-distribution`; `claude/roadmap/product_value_ratio_history.md`; `claude/system/release_planning_prompt.md#STEP 7`; `CLAUDE.md#8. Cross-EPIC Merge Conflict Resolution`; `tests/test_alerts_service.py` | None |
+
+### Capabilities deferred or returned
+
+None — all 25 ST items reached `merged` status this sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: `qa_evidence_EPIC-01.md` through `qa_evidence_EPIC-06.md`
+- Deviations filed: None (all six EPICs' QA evidence logs record "Known deviations filed: None")
+- Test scenarios referenced: `tests/test_trade_plan_tags.py`; `tests/test_api_key_cross_environment.py`; `tests/e2e/command-palette.spec.js`; `tests/e2e/trade-plan.spec.js`; `tests/e2e/reports-realised-pnl-zero-colour-convention.spec.js`; `tests/e2e/theme-persistence.spec.js`; `tests/e2e/analytics-mobile-responsive.spec.js`; `tests/e2e/saved-filters-calendar-view.spec.js`; `tests/test_screener_batch_service.py`; `tests/e2e/screener.spec.js`
 
 ---
 

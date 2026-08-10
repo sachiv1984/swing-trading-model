@@ -4,8 +4,8 @@
   "backlog_slice_source": "claude/cycles/2026-08-08__release-v8.5/stage4_backlog_slice.md",
   "invoked_utc": "2026-08-10T06:50:07Z",
   "mode": "standard",
-  "status": "Running",
-  "last_updated_utc": "2026-08-10T15:27:34Z",
+  "status": "Sealed",
+  "last_updated_utc": "2026-08-10T16:05:00Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -561,10 +561,10 @@
       }
     },
     "EPIC-06": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-08__release-v8.5/EPIC-06",
       "pr_number": 1331,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-08__release-v8.5/qa_evidence_EPIC-06.md",
       "test_scenarios": [
@@ -713,6 +713,9 @@
     "ST-09",
     "ST-10",
     "ST-11",
+    "ST-12",
+    "ST-13",
+    "ST-14",
     "ST-03",
     "ST-04",
     "ST-05",
@@ -733,7 +736,8 @@
     "EPIC-01: PR #1326 open, all engine-side work + evidence complete, awaiting human QA sign-off + Product Owner acceptance per \u00a75.3 always-human merge gate (2026-08-10). Not a blocker for other EPICs -- proceeding to EPIC-03 (next in merge order) per STEP 4's 'do not merge, record unmet condition' guidance, which does not itself halt the session.",
     "EPIC-03: agent-mediated DoQ review (\u00a75.3, independent subagent, 2 passes) caught 2 real blocking findings before PR open -- ST-06's AC-02 claimed Pass with only 1 of ~9 real call-site families covered and no backlog item filed for the rest (hard-gate violation, CLAUDE.md); ST-08's implementation silently carried the colour fix into a column (P&L %) the Design Gate decision explicitly excluded. Both remediated in-session before the PR opened; see qa_evidence_EPIC-03.md for full trail.",
     "EPIC-04: PR #1328's first real CI run found 2 genuine bugs in tests/e2e/analytics-mobile-responsive.spec.js itself (not in ST-12's actual fixes) -- setupAnalytics() never switched the period selector to All Time (default 'last_month' filtered ALL_TRADES to zero rows, rendering the empty state instead of the real dashboard), and once that was fixed, a table locator matched 2 elements ambiguously (TagPerformance.js's own table also has a 'Tag' column header). Both fixed across 2 follow-up commits; all 34 checks green on the 3rd CI run, head_sha verified to match. User-directed agent-mediated DoQ+PO review (separate from the routine's own \u00a75.3 sign-off) also ran on all 3 open PRs at user request during this session -- see PR comments on #1326/#1327/#1328 for full findings; none were blocking beyond the CI failure already fixed here.",
-    "EPIC-04: PR #1327 (EPIC-03) merged to main (user-merged, 2026-08-10), putting PR #1328 into CONFLICTING/DIRTY -- same pattern as EPIC-03's earlier conflict against EPIC-01's merge. Resolved identically per CLAUDE.md \u00a78: execution_state.json was the only real conflict, resolved by taking the branch's version wholesale after confirming structurally that main's copy (originating from EPIC-03) held zero data absent from the branch. Pushed; PR #1328 mergeable=MERGEABLE confirmed."
+    "EPIC-04: PR #1327 (EPIC-03) merged to main (user-merged, 2026-08-10), putting PR #1328 into CONFLICTING/DIRTY -- same pattern as EPIC-03's earlier conflict against EPIC-01's merge. Resolved identically per CLAUDE.md \u00a78: execution_state.json was the only real conflict, resolved by taking the branch's version wholesale after confirming structurally that main's copy (originating from EPIC-03) held zero data absent from the branch. Pushed; PR #1328 mergeable=MERGEABLE confirmed.",
+    "STEP 4 resume-sync (2026-08-10, run sprint session): session started with EPIC-06 (PR #1331) already MERGED on GitHub (confirmed via gh pr view) but execution_state.json still showed status=done/pr_status=open and merge_gate.epics_pending=[EPIC-06] -- classic pre-halt-persist gap. Synced EPIC-06 to status=merged/pr_status=merged, merge_gate.epics_merged+=EPIC-06, epics_pending=[], all_merged=true. Orphaned post-merge commit check (LL-v6.8-P3-01) run for all 6 EPIC branches vs origin/main: 0 orphaned commits found on any branch -- no reconciliation needed."
   ],
   "merge_gate": {
     "epics_merged": [
@@ -741,13 +745,12 @@
       "EPIC-02",
       "EPIC-03",
       "EPIC-04",
-      "EPIC-05"
-    ],
-    "epics_pending": [
+      "EPIC-05",
       "EPIC-06"
     ],
-    "all_merged": false
+    "epics_pending": [],
+    "all_merged": true
   },
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-08-10T16:05:00Z"
 }
