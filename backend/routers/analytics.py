@@ -955,8 +955,16 @@ def get_tag_performance_endpoint(tags: str = Query(..., description="Comma-separ
     Reads only trade_plans.trade_tags and existing closed-trade linkage — no
     dependency on trade_annotations/PO-02 structures (ST-05 AC-04).
     Spec: docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md §4
+
+    ST-01 (BLG-BE-86, v8.5): calls ensure_trade_plans_table() before querying
+    trade_tags, matching the pattern already used by every trade_plans.py route.
+    Without this, a staging DB whose trade_plans table predates the ST-05
+    trade_tags migration (i.e. no request ever routed through trade_plans.py's
+    own ensure_trade_plans_table() calls) 500s here on "column trade_tags does
+    not exist" — this endpoint is the only trade_tags reader that skipped the
+    ensure call.
     """
-    from database import get_portfolio, get_tag_performance
+    from database import get_portfolio, get_tag_performance, ensure_trade_plans_table
 
     try:
         tag_list = [t.strip().lower() for t in tags.split(",") if t.strip()]
@@ -967,6 +975,7 @@ def get_tag_performance_endpoint(tags: str = Query(..., description="Comma-separ
         if not portfolio:
             raise HTTPException(status_code=404, detail="Portfolio not found")
 
+        ensure_trade_plans_table()
         result = get_tag_performance(str(portfolio["id"]), tag_list)
         return {"status": "ok", "data": result}
     except HTTPException as e:
