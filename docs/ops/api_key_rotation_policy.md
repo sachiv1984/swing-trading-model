@@ -1,9 +1,9 @@
 **Owner:** Cybersecurity & Trust Lead
 **Class:** Operational Policy (Class 2)
 **Status:** Active
-**Version:** 1.1
-**Last Updated:** 2026-05-29
-**Cycle:** 2026-05-29__release-v4.3 (ST-15 — BLG-GOV-36)
+**Version:** 1.2
+**Last Updated:** 2026-08-10 (ST-05, BLG-SEC-16, v8.5 — Application X-API-Key added to Scope/Rotation Schedule/Credential-Specific Notes; it was formally registered in v6.8 (BLG-OPS-99) and gained a detailed rotation procedure in its own register entry at v8.2 (ST-06, BLG-SEC-27), but this policy document's own scope table and schedule never referenced it); prior — 2026-05-29 (ST-15, BLG-GOV-36 — initial policy)
+**Cycle:** 2026-08-08__release-v8.5 (ST-05 — BLG-SEC-16)
 
 ---
 
@@ -30,6 +30,7 @@ This policy covers all external API credentials listed in `docs/security/api_key
 | Anthropic API Key | `ANTHROPIC_API_KEY` | Annual minimum (12 months) |
 | News API Key | `NEWS_API_KEY` | Annual minimum (12 months) |
 | Supabase DB Connection | `DATABASE_URL` | On suspected compromise only |
+| Application X-API-Key | `API_KEY` (backend/Render), `REACT_APP_API_KEY` (frontend build-time) | Annual minimum (12 months) |
 
 ---
 
@@ -43,6 +44,7 @@ This policy covers all external API credentials listed in `docs/security/api_key
 | Anthropic API Key | Annual (12 months) | Calendar schedule; first rotation due 2026-08-25 (90 days from first inventory) |
 | News API Key | Annual (12 months) | Calendar schedule |
 | Supabase DB Connection | Not scheduled — see emergency trigger table | Rotate only on suspected breach |
+| Application X-API-Key | Annual (12 months) | Calendar schedule; last rotated 2026-08-04 (ST-06, BLG-SEC-27, v8.2), next due 2026-08-04 + 12 months |
 
 ### Emergency Rotation Triggers (All Credentials)
 
@@ -85,6 +87,31 @@ This policy covers all external API credentials listed in `docs/security/api_key
 - The connection string includes the password inline — treat as a secret.
 - Staging and production use separate Supabase projects; rotate independently.
 - Only rotate on suspected compromise — routine rotation is not scheduled.
+
+**Application X-API-Key (`API_KEY` / `REACT_APP_API_KEY`):** (ST-05, BLG-SEC-16, v8.5)
+
+This credential does not follow the General Procedure above unchanged — staging and production hold two **distinct** values (since the 2026-08-04 rotation, ST-06/BLG-SEC-27), and the frontend bundle bakes the key in at build time, so a rotation is incomplete until the frontend is rebuilt. Full step-by-step procedure and the last-rotation verification evidence are maintained in the register entry itself (single source of truth, not duplicated here): `docs/security/api_key_security_register.md` §6 Application X-API-Key.
+
+- **Owner:** Cybersecurity & Trust Lead (policy); Infrastructure & Operations Owner (executes, per the Responsibility table below)
+- **Steps (summary — see register entry #6 for the full procedure):**
+  1. Generate two new distinct values (one for staging, one for production — do not reuse a single value across environments).
+  2. Update `API_KEY` on each Render service independently (production backend, staging backend) and `REACT_APP_API_KEY` on the staging frontend service.
+  3. Trigger a redeploy on each service — env var changes via the Render API do not auto-restart the running process.
+  4. Update the `API_KEY` / `REACT_APP_API_KEY` GitHub Actions repo secrets to the new production value.
+  5. Rebuild and redeploy the production frontend (`gh workflow run deploy.yml`) with the new key **before** revoking the old one — the already-deployed GH Pages bundle has the old key baked in and will start failing auth otherwise.
+  6. Update `STAGING_API_KEY` GitHub Actions repo secret (consumed by `api-key-cross-environment-check.yml`) to the new staging value.
+  7. Update the local `RENDER_API_KEY` copy in `~/.api_keys`.
+  8. Revoke old values only after step 5 completes.
+- **Verification checklist (all must pass before considering the rotation complete):**
+  - [ ] Old shared/previous value returns `401` against production.
+  - [ ] Old shared/previous value returns `401` against staging.
+  - [ ] New production value returns `200` against production.
+  - [ ] New production value returns `401` against staging (confirms genuine per-environment distinctness, not a synchronized rotation).
+  - [ ] New staging value returns `200` against staging.
+  - [ ] New staging value returns `401` against production.
+  - [ ] `api-key-cross-environment-check.yml`'s next scheduled run (daily, 06:00 UTC) completes without a `[CROSS-WIRED]` finding.
+  - [ ] Production GH Pages frontend rebuilt and redeployed with the new key (confirm via a manual authenticated request through the live frontend, not just the API directly).
+- **Update the register:** `last_rotated` in `docs/security/api_key_security_register.md` §6, same as the General Procedure step 7.
 
 ---
 

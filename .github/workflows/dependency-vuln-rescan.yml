@@ -1,0 +1,122 @@
+name: Dependency Vulnerability Re-scan (Monthly)
+
+# ST-04 (BLG-SEC-15, EPIC-02, v8.5): recurring, schedule-driven combined
+# pip-audit + npm audit sweep, independent of both the per-PR pip-audit-only
+# gate (vulnerability-scan.yml) and the pre-sprint pip-audit-only check
+# (sprint_planning_prompt.md STEP -1.8). Closes the gap those two leave:
+# neither runs npm audit, and neither runs on a schedule independent of PR/
+# sprint-planning activity -- a dependency with no PRs touching it and no
+# sprint-planning ceremony in a given window could carry a newly-disclosed
+# CVE unnoticed indefinitely. See claude/system/shared_standards.md §20 for
+# the full three-tier cadence this job completes.
+#
+# New-vs-known dedup: docs/security/dependency_vuln_baseline.json records
+# advisory IDs already surfaced and tracked (BLG-SEC-18 at baseline capture,
+# 2026-08-10). Only advisory IDs absent from that file are treated as "new"
+# for issue-filing purposes -- this avoids re-filing the same ~16 known
+# react-scripts-toolchain findings every month while still catching genuine
+# new disclosures.
+
+on:
+  schedule:
+    - cron: '0 7 1 * *'  # monthly, 1st of month, 07:00 UTC
+  workflow_dispatch: {}
+
+concurrency:
+  group: dependency-vuln-rescan
+  cancel-in-progress: true
+
+jobs:
+  rescan:
+    name: Combined pip-audit + npm audit sweep
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install pip-audit
+        run: pip install pip-audit
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Run pip-audit
+        id: pip_audit
+        run: |
+          set +e
+          pip-audit \
+            --requirement backend/requirements.txt \
+            --format json \
+            --output pip_audit_results.json \
+            --skip-editable \
+            --ignore-vuln CVE-2026-4539
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+          set -e
+
+      - name: Run npm audit
+        id: npm_audit
+        run: |
+          set +e
+          npm audit --json > npm_audit_results.json
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+          set -e
+
+      - name: Analyse combined results
+        id: analyse
+        run: |
+          python3 scripts/check_dependency_vuln_rescan.py \
+            --pip-audit-json pip_audit_results.json \
+            --npm-audit-json npm_audit_results.json \
+            --baseline docs/security/dependency_vuln_baseline.json \
+            --summary-out rescan_summary.md \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Write job summary
+        if: always()
+        run: cat rescan_summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: File/update GitHub issue for new HIGH/CRITICAL findings
+        if: steps.analyse.outputs.new_finding_count != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('rescan_summary.md', 'utf8');
+            const marker = 'Dependency Vulnerability Re-scan';
+            const title = 'New dependency vulnerability findings (dependency-vuln-rescan.yml)';
+
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'security,dependency-scan',
+            });
+            const existing = issues.find(i => i.title === title);
+
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body: `New scheduled re-scan run found additional/updated findings:\n\n${body}`,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['security', 'dependency-scan'],
+              });
+            }
