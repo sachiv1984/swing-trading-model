@@ -1339,6 +1339,43 @@ While verifying ST-06's dark-mode-portal fix, ST-13's audit found that 4 of 5 ch
 
 ---
 
+### BLG-FE-151 — SI-02 Gate Status section (Reports.js) hardcodes dark-theme-only structural styling
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** ST-18 (EPIC-05, 2026-08-08__release-v8.5) — Reports page information hierarchy review
+
+**Problem**
+`SI02GateStatusSection` (`src/pages/Reports.js` lines 429-556, `BLG-FEAT-71`, v6.8) hardcodes its structural styling dark-only — container (`bg-slate-800/50 border-slate-700/50`), toggle hover (`hover:bg-slate-700/20`), heading (`text-white`), condition-badge row backgrounds (`bg-slate-800/50 border-slate-700/50`, ×3), value text (`text-white`, `text-slate-300`), loading skeleton (`bg-slate-800/50`) — with no `dark:` pairing anywhere, unlike the rest of `Reports.js` (44 `dark:` pairs elsewhere in the same file for secondary-text tokens). In a light-themed session this renders as a dark panel with light text inside an otherwise light-themed page. Same recurring defect class as `BLG-FE-87/88/95/125/129` and `BLG-FE-150`.
+
+**Scope**
+- Convert the listed classes to explicit light+dark Tailwind pairs, matching the token conventions already used elsewhere on the same page (e.g. `text-slate-600 dark:text-slate-400` for secondary text)
+
+**Acceptance Criteria**
+- `SI02GateStatusSection` renders correctly in both light and dark theme with no hardcoded dark-only structural class remaining
+- No visual regression to the section's dark-theme appearance
+
+---
+
+### BLG-FE-152 — Unrealised P&L card (Reports.js) hardcodes dark-theme-only structural styling
+
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** ST-18 (EPIC-05, 2026-08-08__release-v8.5) — out-of-scope observation, same root cause as BLG-FE-151, found while reviewing the adjacent SI-02 section
+
+**Problem**
+The Unrealised P&L card immediately preceding the SI-02 Gate Status section (`src/pages/Reports.js` lines 401-414) has the identical structural defect — hardcoded `border-slate-600/50 bg-slate-800/30` container and `text-slate-300` heading, no `dark:` pairing — while its own body text correctly uses the `dark:` pair. Predates `BLG-FEAT-71`/SI-02 (unrelated feature), so filed separately from `BLG-FE-151` rather than folded into it.
+
+**Scope**
+- Convert the container/heading classes to explicit light+dark Tailwind pairs, consistent with the fix applied for `BLG-FE-151`
+
+**Acceptance Criteria**
+- Unrealised P&L card renders correctly in both light and dark theme with no hardcoded dark-only structural class remaining
+
+---
+
 ### BLG-FE-153 — Switch Layout.js's dark-class document.documentElement sync to useLayoutEffect
 
 **Priority:** P4 (Low)

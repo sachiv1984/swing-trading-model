@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-10T06:50:07Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-10T15:10:11Z",
+  "last_updated_utc": "2026-08-10T15:27:34Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -394,139 +394,169 @@
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "merged",
       "branch": "exec/2026-08-08__release-v8.5/EPIC-05",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1330,
+      "pr_status": "merged",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-08__release-v8.5/qa_evidence_EPIC-05.md",
       "test_scenarios": [],
       "stories": {
         "ST-15": {
           "title": "Nav bar redesign exploration",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Head of UX & Design",
           "github_issue": 1315,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "8ec6eb46725c8f5c30817ff90ece4e8ad13aa0cd",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T12:14:05Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-08-08__release-v8.5/st15_nav_bar_redesign_exploration.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Head of UX & Design",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "passes": 1,
+            "date": "2026-08-10"
+          },
+          "notes": "Recommendation: maintain current nav pattern (collapsible-group sidebar + command palette) -- no redesign warranted at current 20-page/13-nav-item inventory. Design Not Applicable, no implementation follow-on filed (none required per AC, no redesign recommended). Agent-mediated Head of UX & Design sign-off, 1 pass, approved."
         },
         "ST-16": {
           "title": "User journey map: SI-05 Telegram digest to app action",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Head of UX & Design",
           "github_issue": 1316,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "8ec6eb46725c8f5c30817ff90ece4e8ad13aa0cd",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T12:14:05Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/ux/si05_user_journey_map.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Head of UX & Design",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "passes": 2,
+            "date": "2026-08-10"
+          },
+          "notes": "Re-walkthrough found docs/ux/si05_user_journey_map.md stale -- both prior HIGH/MEDIUM friction findings (F-01/F-02) already fixed via BLG-FE-73/74 (shipped v5.6, 2 days after the original 2026-06-15 walkthrough) but the doc was never updated. Refreshed: entry points 0->2, min navigation steps 3->1 for 3 of 5 items. 1 new low-priority observation (F-04), not filed (below significance threshold). Agent-mediated sign-off: 1st pass BLOCKED (reconstructed digest message was internally inconsistent -- N/A values paired with a 'healthy' summary line, impossible per _integrity_summary_line()'s actual rule ordering in si05_digest_service.py), corrected in-session (message + FRONTEND_URL citation), 2nd pass APPROVED."
         },
         "ST-17": {
           "title": "Reusable empty-state component spec for Base44 prompts",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1317,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "8ec6eb46725c8f5c30817ff90ece4e8ad13aa0cd",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T12:14:05Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/frontend/base44_prompt_template_library.md#12. Template: Standard Full-Page/Section Empty-State (Non-Card Context)"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "New base44_prompt_template_library.md v1.7 section 12 -- Standard Full-Page/Section Empty-State (Non-Card Context) template, distinct from the existing section 2 card-compact variant. Incorporates the microcopy pattern (design_system.md v1.8) and the trailing-period generation mistake caught this same sprint at EPIC-04/ST-10 (TradePlans.js, CalendarView.js) -- the 2 concrete precedents satisfying the library's 2+-story Maintenance threshold. Renumbered old 12/13/14 -> 13/14/15."
         },
         "ST-18": {
           "title": "Reports page information hierarchy review",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Head of UX & Design",
           "github_issue": 1318,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "8ec6eb46725c8f5c30817ff90ece4e8ad13aa0cd",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T12:14:05Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-08-08__release-v8.5/st18_reports_page_information_hierarchy_review.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Head of UX & Design",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "passes": 1,
+            "date": "2026-08-10"
+          },
+          "notes": "Reviewed Reports.js's SI-02 Gate Status section -- placement (last, collapsed by default) and hierarchy confirmed correct, no clutter/hierarchy issue there. Found genuine visual defect: the section hardcodes dark-theme-only structural styling (bg/border/text classes with no dark: pairing), unlike the rest of the theme-aware page -- filed BLG-FE-151 per this story's expected 'findings documented, fix filed as follow-up' path. Also found and filed BLG-FE-152 for an adjacent out-of-scope instance (Unrealised P&L card, same root cause, predates SI-02). Agent-mediated sign-off, 1 pass, approved."
         },
         "ST-19": {
           "title": "Rework ChartStyle to drop style-src 'unsafe-inline' dependency, if/when a consumer adopts ChartContainer",
           "classification": "delegated_frontend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Frontend Specifications & UX Documentation Owner",
           "github_issue": 1319,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "8ec6eb46725c8f5c30817ff90ece4e8ad13aa0cd",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T12:14:05Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-08-08__release-v8.5/st19_st20_chart_calendar_consumer_check.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Confirmed zero live consumers of ChartContainer (src/components/ui/chart.js), unchanged from planning-time state. Per this story's own scope note, closes as 'confirmed still unused, no action needed' -- no CSP/style-src rework performed (nothing to verify a fix against)."
         },
         "ST-20": {
           "title": "Playwright/staging visual verification of calendar.js when a real consumer is added",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1320,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-05",
-          "commit_sha": null,
+          "commit_sha": "8ec6eb46725c8f5c30817ff90ece4e8ad13aa0cd",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T12:14:05Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/cycles/2026-08-08__release-v8.5/st19_st20_chart_calendar_consumer_check.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Confirmed zero live consumers of ui/calendar.js, unchanged from planning-time state. Trigger condition (consumer adoption) not met this cycle -- no Playwright/staging verification possible or meaningful against a component with no render call site. Remains a dormant/watching item per the story's own AC; re-check when a consumer is scoped."
         }
       }
     },
@@ -686,6 +716,12 @@
     "ST-03",
     "ST-04",
     "ST-05",
+    "ST-15",
+    "ST-16",
+    "ST-17",
+    "ST-18",
+    "ST-19",
+    "ST-20",
     "ST-21",
     "ST-22",
     "ST-23",
@@ -704,10 +740,10 @@
       "EPIC-01",
       "EPIC-02",
       "EPIC-03",
-      "EPIC-04"
+      "EPIC-04",
+      "EPIC-05"
     ],
     "epics_pending": [
-      "EPIC-05",
       "EPIC-06"
     ],
     "all_merged": false
