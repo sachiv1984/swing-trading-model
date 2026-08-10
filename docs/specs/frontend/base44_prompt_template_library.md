@@ -2,9 +2,9 @@
 **Class:** Class 2 — Supporting
 **Status:** Supporting
 **Canonical Source:** docs/specs/frontend/design_system.md
-**Version:** 1.6
-**Last Updated:** 2026-08-06
-**Story:** ST-04 (BLG-SPEC-90, EPIC-03, v7.2); ST-04 (BLG-SPEC-91, EPIC-02, v7.3); ST-06 (BLG-SPEC-93, EPIC-04, v7.3); ST-13 (BLG-FE-129, EPIC-13, v7.9); ST-18 (BLG-FE-124, EPIC-03, v8.0); ST-12 (BLG-FE-121, EPIC-03, v8.3); ST-14 (BLG-FE-132, EPIC-03, v8.3)
+**Version:** 1.7
+**Last Updated:** 2026-08-10
+**Story:** ST-04 (BLG-SPEC-90, EPIC-03, v7.2); ST-04 (BLG-SPEC-91, EPIC-02, v7.3); ST-06 (BLG-SPEC-93, EPIC-04, v7.3); ST-13 (BLG-FE-129, EPIC-13, v7.9); ST-18 (BLG-FE-124, EPIC-03, v8.0); ST-12 (BLG-FE-121, EPIC-03, v8.3); ST-14 (BLG-FE-132, EPIC-03, v8.3); ST-17 (BLG-FE-99, EPIC-05, v8.5)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ---
@@ -255,11 +255,36 @@ Standard variant: Confirm/Cancel behave exactly as the existing shipped confirma
 Every new or modified colour/background/border token renders correctly in both light and dark theme, using an explicit light+dark Tailwind pair (or an already-theme-aware semantic class) — no bare dark-only or light-only token ships.
 ```
 
-## 12. Forward-Reference Tracking (ST-18 AC-3)
+## 12. Template: Standard Full-Page/Section Empty-State (Non-Card Context)
+
+**Use when:** delegating a story that adds or modifies a full page or major page section (not a small grid-context card — see §2 for that variant) whose underlying data can be legitimately empty (e.g. no trade plans yet, no closed trades in the selected calendar range, watchlist has no tickers). The two are visually and semantically distinct: this template renders `DataState`'s default (non-`compact`, non-`inline`) empty branch — the full icon + heading + body stack at `py-16` — as the page/section's entire content.
+
+**Source pattern:** `design_system.md` §Shared UI Components → Cards → Data States (default variant + microcopy pattern v1.8); concrete precedent `EPIC-04/ST-10` (`2026-08-08__release-v8.5`, `BLG-FE-92`) — the decision record and its two shipped fixes (`TradePlans.js`, `CalendarView.js`) are the first two concrete applications establishing this as a genuinely recurring pattern (per §13's Maintenance 2+-story threshold).
+
+**Reusable fragment — Behaviour Rules section:**
+```
+- Wrap the page/section's non-empty content in <DataState empty={<condition>} emptyIcon={<Icon>} emptyHeading="<heading>" emptyBody="<body>"> — do not pass `compact` (that variant is for small grid-context cards only, see the card-context template if this is a card, not a full page/section).
+- emptyHeading: 2–5 words, sentence case, NO trailing period (it's a label, not a sentence) — this is a common generation-time mistake (`TradePlans.js`/`CalendarView.js` both shipped with a trailing period before EPIC-04/ST-10's fix). Use "No <noun>" / "No <noun> yet" for content that accrues over time (notifications, positions, trade plans, closed trades); use "Your <noun> is empty" for content the user actively curates (the watchlist).
+- emptyBody: exactly one sentence, present tense, states the concrete next action that would populate the view, ends with a full stop.
+- Icon: contextual to the content type — do not default to a single generic icon across unrelated pages; match existing call sites' icon choice for the same content category where one exists.
+```
+
+**Reusable fragment — Non-Functional Rules section:**
+```
+- Do not modify DataState's loading or error branches when implementing the empty branch.
+- If this page/section already has an equivalent empty-state call site elsewhere in the app for the same content type (e.g. a filtered vs. unfiltered view of the same data), keep heading/body wording consistent between them unless the filtered context specifically warrants different copy (e.g. "No trades match your filters" vs "No trade plans yet").
+```
+
+**Reusable fragment — Expected Outcome section:**
+```
+Page/section renders a full icon+heading+body empty state (not a blank page, raw zero/null value, or a heading with a stray trailing period) when its underlying data is empty; loading and error states are unchanged; light and dark theme both render the empty state with adequate contrast; heading has no trailing period.
+```
+
+## 13. Forward-Reference Tracking (ST-18 AC-3)
 
 ST-18's third acceptance criterion — "Referenced by at least one new story going forward" — cannot be satisfied within the same story that authors the library entries; no story in this sprint (`2026-07-30__release-v8.0`) delegates a card/loading-skeleton/empty-state UI change to cite them against. This mirrors the same "retrospectively confirmable" AC pattern already used elsewhere in this sprint's backlog (see `sprint_backlog.md` ST-19 AC-2). Track at the next story that delegates or implements a card-grid, table-row, or partial-value loading skeleton: confirm it cites the applicable §7/§8/§9 entry, and record that confirmation in this file's Change Log.
 
-## 13. Maintenance
+## 14. Maintenance
 
 New entries are added to this library when a pattern is formalised in `design_system.md` and applied to two or more concrete stories (the same threshold `roadmap_prompt.md`'s STEP 4.2 idea-consolidation convention uses for "recurring" — a single application does not yet justify a library entry). Entries here must be kept consistent with `design_system.md`; if a `design_system.md` edit changes a pattern documented here, update this file in the same commit.
 
@@ -269,7 +294,7 @@ New entries are added to this library when a pattern is formalised in `design_sy
 
 **§10 provenance note (v1.5, ST-12, EPIC-03, v8.3):** §10 was extracted from a UX decision record (`decision_record.md`, approved by Head of UX & Design), not from implementation code — this is genuinely new interaction design (no prior undo-window precedent in the app), consistent with the same-provenance convention `design_system.md`/`ux_spec.md`-sourced entries (§2/§3/§4/§5/§6) already use.
 
-## 14. Known Deviations
+## 15. Known Deviations
 
 None. This is a net-new artefact — no prior canonical spec governed this work.
 
@@ -279,6 +304,7 @@ None. This is a net-new artefact — no prior canonical spec governed this work.
 
 | Date | Version | Summary |
 |---|---|---|
+| 2026-08-10 | 1.7 | Added §12 Standard Full-Page/Section Empty-State (Non-Card Context) — the full `DataState` empty-branch stack (icon+heading+body, `py-16`) for page/section-level empty states, distinct from §2's small-grid-card `compact` variant; incorporates the empty-state microcopy pattern (`design_system.md` v1.8) and the trailing-period generation mistake caught and fixed at `EPIC-04/ST-10` (`TradePlans.js`, `CalendarView.js`) this same cycle — the 2 concrete precedents satisfying §14's Maintenance threshold; renumbered old §12/§13/§14 → §13/§14/§15 (ST-17, EPIC-05, v8.5, BLG-FE-99) |
 | 2026-08-06 | 1.6 | Added §11 Standard Theme-Compliance Section (Generation-Time) — a generation-time prompt fragment distinct from §4's review-time checklist, addressing the recurring dark-mode defect class (`BLG-FE-87/88/95/125/129`) at prompt-draft time instead of catching it after generation; renumbered old §11/§12/§13 → §12/§13/§14 (ST-14, EPIC-03, v8.3, BLG-FE-132) |
 | 2026-08-06 | 1.5 | Added §10 Shared Modal-Confirmation Component (with optional undo-window) — extracted from the `ConfirmationModal` UX decision record, forward-referenced by both `BLG-FE-116` and `BLG-FE-117`'s eventual prompt drafts (§6 updated to cite it); renumbered old §10/§11/§12 → §11/§12/§13 (ST-12, EPIC-03, v8.3, BLG-FE-121) |
 | 2026-07-30 | 1.4 | Added 3 loading-skeleton templates — §7 Label+Value Skeleton Pair (stat/metric card grid), §8 Table/List Row Skeleton (variable-width shimmer), §9 Inline Partial-Value Skeleton (async sub-value within an already-rendered shell) — extracted from already-recurring component precedent (`Research.js`, `Screener.js`, `NotificationsHistory.js`, `SetupQualityScorePanel.js`); §10 tracks the forward-reference AC (ST-18, EPIC-03, v8.0, BLG-FE-124) |
