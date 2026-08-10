@@ -605,7 +605,7 @@
   "delegated_items": [],
   "completed_items": ["ST-01", "ST-02"],
   "open_escalations": [],
-  "process_notes": [],
+  "process_notes": ["EPIC-01: PR #1326 open, all engine-side work + evidence complete, awaiting human QA sign-off + Product Owner acceptance per §5.3 always-human merge gate (2026-08-10). Not a blocker for other EPICs -- proceeding to EPIC-03 (next in merge order) per STEP 4's 'do not merge, record unmet condition' guidance, which does not itself halt the session."],
 
   "merge_gate": {
     "epics_merged": [],
