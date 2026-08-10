@@ -632,6 +632,9 @@ test('SC-SCR-22: Regime History panel — error state shown on API failure, with
   const panel = page.getByTestId('regime-history-panel');
   await expect(panel).toContainText(/something went wrong/i, { timeout: 8000 });
 
-  await page.getByRole('button', { name: /retry/i }).click();
+  // DataState's error-branch retry button reads "Try again" (see
+  // src/components/ui/DataState.js) — scoped to this panel in case another
+  // DataState instance elsewhere on the page is also mid-retry-state.
+  await panel.getByRole('button', { name: /try again/i }).click();
   await expect(page.getByTestId('regime-distribution-readout')).toBeVisible({ timeout: 8000 });
 });

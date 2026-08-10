@@ -809,10 +809,11 @@ export default function Screener() {
       {!loading && !error && results.length > 0 && (
         <div className="flex flex-wrap items-center gap-3 mb-4">
           {/* Market filter */}
-          <div className="flex rounded-md border border-slate-700 overflow-hidden text-xs">
+          <div className="flex rounded-md border border-slate-700 overflow-hidden text-xs" data-testid="market-filter-bar">
             {["All", "US", "UK"].map((m) => (
               <button
                 key={m}
+                data-testid={`market-filter-${m.toLowerCase()}`}
                 onClick={() => setMarketFilter(m)}
                 className={cn(
                   "px-3 py-1.5 transition-colors",
