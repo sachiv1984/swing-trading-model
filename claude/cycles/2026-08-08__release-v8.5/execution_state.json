@@ -5,7 +5,7 @@
   "invoked_utc": "2026-08-10T06:50:07Z",
   "mode": "standard",
   "status": "Running",
-  "last_updated_utc": "2026-08-10T10:46:21Z",
+  "last_updated_utc": "2026-08-10T12:58:02Z",
   "epics": {
     "EPIC-01": {
       "status": "merged",
@@ -524,118 +524,143 @@
       }
     },
     "EPIC-06": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-08-08__release-v8.5/EPIC-06",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-08__release-v8.5/qa_evidence_EPIC-06.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_screener_batch_service.py",
+        "tests/e2e/screener.spec.js"
+      ],
       "stories": {
         "ST-21": {
           "title": "Regime distribution metric over screener history",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1321,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "ad102c5074e074103e15d791eff2c5a34eb4a9a8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T12:58:02Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "docs/specs/api_contracts/screener_api_contract.md#GET /screener/regime-distribution"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "New GET /screener/regime-distribution endpoint + Regime History panel (Screener Results page), per design_gate.md decision record. Sourced from screener_runs.regime_us/regime_uk (per-run, not per-ticker) to avoid ticker-count weighting -- decision record's own text didn't anticipate the two-market (US/UK) nuance; documented interpretation in the API contract. Colour correction: decision record said risk_off=red, but the real existing RegimeBadge chip is neutral slate/grey, not red -- panel matches the real chip colours, not the record's inaccurate assumption, most faithfully satisfying the record's own 'reuse existing chip colours' intent. 7 new backend tests (test_screener_batch_service.py) + 4 new Playwright scenarios (SC-SCR-19..22); could not run Playwright locally (Chromium unsupported in this sandbox); real CI is the verification path per LL-v8.3-P3-02. Endpoint test suite registration (111 total), SystemStatus.js fallback, SC-SS-01b, openapi.yaml, screener_api_contract.md, api_performance_baseline.md all updated in the same commit per CLAUDE.md non-negotiables. Filed BLG-SPEC-118 for an out-of-scope finding (api_changelog.md staleness)."
         },
         "ST-22": {
           "title": "Product Value Ratio historical trend chart",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1322,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "ad102c5074e074103e15d791eff2c5a34eb4a9a8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T12:58:02Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/roadmap/product_value_ratio_history.md"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "New structured Product Value Ratio history record, backfilled DL-057 through DL-077 from decision_log.md prose (15 rows, sparkline). roadmap_prompt.md STEP 2.4 now appends here every rebalance and reads this file (not prose) for the sustained-Advisory-tier consecutive-readings check. Design Not Applicable (internal governance tooling, no live UI)."
         },
         "ST-23": {
           "title": "Release Planning does not reset root sprint_sealed to false on new-cycle publish",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Head of Specs Team",
           "github_issue": 1323,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "ad102c5074e074103e15d791eff2c5a34eb4a9a8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T12:58:02Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "claude/system/release_planning_prompt.md#STEP 7"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "passes": 2,
+            "date": "2026-08-10"
+          },
+          "notes": "release_planning_prompt.md STEP 7 (not literally STEP 0 as BLG-GOV-288's AC text says) now resets sprint_sealed: false atomically with active_cycle -- STEP 0 never touches the root state file (confirmed by direct read); STEP 7 is the established single-write-site already used for the structurally identical design_gate_status fix (LP-01). STEP 0 gains a cross-reference note explaining the deviation. Implementation note (not a deviation): AC wording names the wrong step, but the intent (reset sprint_sealed on new-cycle publish) is fully satisfied at the technically-correct location -- per LL-v3.4-P3-03 intent-check advisory, recorded as a note not a filed deviation. Agent-mediated Head of Specs Team sign-off: 1st pass BLOCKED (found OPERATIONAL_GUIDE.md's \u00a714 self-referential Version/Last Updated row -- a THIRD location beyond the top header and the per-file table row -- still read the stale 4.149/2026-08-08), corrected in-session, 2nd pass APPROVED."
         },
         "ST-24": {
           "title": "CLAUDE.md \u00a78 sibling-vs-sibling union clause for execution_state.json array fields",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Head of Specs Team",
           "github_issue": 1324,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "ad102c5074e074103e15d791eff2c5a34eb4a9a8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T12:58:02Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "CLAUDE.md#8. Cross-EPIC Merge Conflict Resolution"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {
+            "role": "Head of Specs Team",
+            "method": "agent_mediated",
+            "status": "cleared",
+            "passes": 1,
+            "date": "2026-08-10"
+          },
+          "notes": "CLAUDE.md \u00a78 step 3 gains a sibling-vs-sibling union clause for execution_state.json's blocked_items/delegated_items arrays -- the existing rule assumed a two-party branch-vs-main merge; extended to take the union when the conflict is between two EPIC branches directly. No version field on CLAUDE.md (established convention); logged in prompt_change_log.md only. Agent-mediated Head of Specs Team sign-off, 1 pass, approved (no issues found for this story specifically)."
         },
         "ST-25": {
           "title": "Fix unrestored sys.modules stubbing in test_alerts_service.py (cross-file test pollution)",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1325,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-06",
-          "commit_sha": null,
+          "commit_sha": "ad102c5074e074103e15d791eff2c5a34eb4a9a8",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-10T12:58:02Z",
+          "acceptance_verified": true,
+          "spec_references": [
+            "tests/test_alerts_service.py"
+          ],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "test_alerts_service.py's module-level sys.modules stubbing (config, utils.pricing/calculations/formatting, etc. -- unavoidably module-level since alerts_service.py's own internal imports resolve against sys.modules at exec_module() time) now has a module-scoped autouse pytest fixture snapshotting pre-existing entries and restoring them once this file's own tests complete, preventing the stub from leaking into later-collected test files' actual test execution. Matches the AC's suggested mechanism (a restoring fixture) more precisely than test_trade_service.py's own guard-only pattern (which solves a different half of the same problem class) -- noted the relationship in a comment rather than literally copying that pattern. Verified: isolated run (34/34 pass) and full suite (1057 passed, 5 skipped, up from 1050 pre-fix -- 0 regressions)."
         }
       }
     }
@@ -650,7 +675,12 @@
     "ST-08",
     "ST-09",
     "ST-10",
-    "ST-11"
+    "ST-11",
+    "ST-21",
+    "ST-22",
+    "ST-23",
+    "ST-24",
+    "ST-25"
   ],
   "open_escalations": [],
   "process_notes": [
