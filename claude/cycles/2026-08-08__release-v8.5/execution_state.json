@@ -9,13 +9,13 @@
 
   "epics": {
     "EPIC-01": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-08-08__release-v8.5/EPIC-01",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-08__release-v8.5/qa_evidence_EPIC-01.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/test_trade_plan_tags.py", "tests/test_api_key_cross_environment.py"],
       "stories": {
         "ST-01": {
           "title": "Fix GET /analytics/tag-performance 500 on staging (missing trade_tags column ensure)",
@@ -45,7 +45,7 @@
           "assigned_to": "engine",
           "github_issue": 1302,
           "branch": "exec/2026-08-08__release-v8.5/EPIC-01",
-          "commit_sha": null,
+          "commit_sha": "2b6a238ce16843f16b48190f2e235d49875e9315",
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
@@ -603,7 +603,7 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": [],
+  "completed_items": ["ST-01", "ST-02"],
   "open_escalations": [],
   "process_notes": [],
 
