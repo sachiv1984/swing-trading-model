@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-10 (post-ship closure 2026-08-08__release-v8.5 STEP 3 — all 25 v8.5 release-slice items marked ✅ COMPLETE with cycle reference); prior — 2026-08-10 (session — 16 new items added from agent-mediated PR review findings across PRs #1326-#1331: BLG-QA-136, BLG-QA-137, BLG-QA-138, BLG-QA-139, BLG-OPS-136, BLG-OPS-137, BLG-OPS-138, BLG-SEC-29, BLG-GOV-294, BLG-GOV-295, BLG-GOV-296, BLG-GOV-297, BLG-GOV-298, BLG-FE-153, BLG-FE-154, BLG-BE-88); prior — 2026-08-10 (session — 4 new items added: BLG-FE-147, BLG-FE-148, BLG-FE-149, BLG-FE-150); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-11 (Head of Specs Team direct action — resolved 2 of the 72-hour escalations from post-ship closure `2026-08-08__release-v8.5`: BLG-GOV-292 fixed in-session, marked ✅ COMPLETE; 1 new item added — BLG-FE-155, re-triage of stale deviation DEV-EPIC02-ST03-01); prior — 2026-08-10 (post-ship closure 2026-08-08__release-v8.5 STEP 3 — all 25 v8.5 release-slice items marked ✅ COMPLETE with cycle reference); prior — 2026-08-10 (session — 16 new items added from agent-mediated PR review findings across PRs #1326-#1331: BLG-QA-136, BLG-QA-137, BLG-QA-138, BLG-QA-139, BLG-OPS-136, BLG-OPS-137, BLG-OPS-138, BLG-SEC-29, BLG-GOV-294, BLG-GOV-295, BLG-GOV-296, BLG-GOV-297, BLG-GOV-298, BLG-FE-153, BLG-FE-154, BLG-BE-88); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -127,7 +127,7 @@ The same dry-run (`docs/ops/cross_epic_merge_runbook_dry_run_2026-08-08.md`) fou
 **Owner:** Head of Specs Team
 **Source:** Release planning `2026-08-08__release-v8.5`, STEP 1.3a self-caught finding — 2026-08-08
 **Effort:** XS (<1 day)
-**Provisional-Target:** TBD
+**Provisional-Target:** ✅ COMPLETE — 2026-08-11 — Head of Specs Team direct action, resolving the 72-hour escalation from post-ship closure `2026-08-08__release-v8.5` §5/§6 (closure_record.md item 1)
 
 **Problem**
 `scripts/scan_backlog_gate_conditions.py`'s `EMBEDDED_GATE_SIGNAL_RE` data-quality-warning check (added `BLG-GOV-286`, shipped `v8.4` ST-29) only matches gate-like language inside **parentheses** within a `Provisional-Target` field. `BLG-FEAT-73`'s `Provisional-Target` carries unmet-gate language (`` `[gate status unverified/unmet]` ``) inside **square brackets** — neither a formal `Gate criteria`/`Gate`/`Gate date` field nor the parenthesis-only warning regex catches it, so the script's output alone treats it as ready/ungated. Caught only by a manual full-text read during `v8.5` release planning. This is a 5th distinct failure mode in the same gate-detection problem class `BLG-GOV-286` was filed against (which covered 4 other named modes).
@@ -1221,6 +1221,30 @@ The Unrealised P&L card immediately preceding the SI-02 Gate Status section (`sr
 **Acceptance Criteria**
 - `st15_nav_bar_redesign_exploration.md`'s group/page counts match the live `NAV_GROUPS` array exactly
 - `navigation.md`'s staleness is either fixed or explicitly flagged with a follow-up item
+
+---
+
+### BLG-FE-155 — Migrate CohortAnalysis.js from client-side computation to GET /analytics/cohort
+**Priority:** P2 (Medium)
+**Type:** Frontend / Spec Compliance
+**Owner:** Head of Engineering; Base44 Frontend Prompt Owner
+**Source:** Head of Specs Team direct action, resolving the 72-hour escalation from post-ship closure `2026-08-08__release-v8.5` §5/§6 (`closure_record.md` item 2) — re-triage of `DEV-EPIC02-ST03-01`, stale since `v1.10` (2026-03-16), never previously filed to backlog despite the deviation's own note committing to do so at "next roadmap rebalance" — 2026-08-11
+**Effort:** S (~1 day)
+**Provisional-Target:** TBD
+
+**Problem**
+`CohortAnalysis.js` (Performance Analytics page, `analytics.md` §15 Cohort Analysis) computes cohort groupings, win rates, avg R-multiple, and net P&L entirely client-side via `buildCohorts()`, despite `analytics.md` §15's canonical hard rule ("All values sourced from backend. No client-side R-multiple computation in this component.") and despite `GET /analytics/cohort?period={month|quarter|year}` already being implemented, tested, and wired in `base44Client.js`. Filed as deviation `DEV-EPIC02-ST03-01` at `v1.9` (2026-03-06); values are currently numerically identical to the backend endpoint (same formula, same null-handling for trades without stop data), so this is not a live correctness bug — but it is an ongoing architectural drift risk: two independent implementations of the same formula exist, and nothing prevents them from silently diverging if the trade data shape changes server-side without a matching frontend update. Sibling section §16 (R-Multiple Distribution) explicitly frames backend computation as authoritative for this exact reason.
+
+**Scope**
+- `CohortAnalysis.js` should call `api.analytics.cohort(period)` (already wired in `base44Client.js`) and render the backend response directly, removing the local `buildCohorts()` computation path
+- No visual/UX change expected — output values are already identical
+
+**Acceptance Criteria**
+- `CohortAnalysis.js` sources all displayed values (`period_label`, `trade_count`, `win_rate`, `avg_r_multiple`, `total_pnl`) from `GET /analytics/cohort`'s response, not local computation
+- `buildCohorts()` removed or reduced to a thin response-mapping helper with no independent formula logic
+- No visual regression (Playwright coverage or staging sign-off per `CLAUDE.md`'s frontend-visible-change rule — this is a data-source swap not a rendering change, so code review may suffice per FI-P3-02 if genuinely no visual change)
+- `analytics.md`'s `DEV-EPIC02-ST03-01` entry marked Resolved referencing this item and the shipping commit
+- Head of Specs Team confirms closure
 
 ---
 

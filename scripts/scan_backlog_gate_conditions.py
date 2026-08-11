@@ -32,7 +32,12 @@ Gate-field variants covered (failure modes 1-3):
         Gate field present — flagged as a data-quality warning (the
         BLG-OPS-48 pattern that caused 2 of the 3 original misses; the
         canonical fix is for the item to carry a proper Gate field, so
-        this scan flags rather than silently treats it as ungated)
+        this scan flags rather than silently treats it as ungated).
+        Matched inside either parentheses (the original BLG-OPS-48 form)
+        or square brackets (the BLG-FEAT-73 form, e.g.
+        `[gate status unverified/unmet]` — a 5th distinct failure mode,
+        BLG-GOV-292, self-caught during v8.5 release planning and fixed
+        at v8.5 post-ship closure)
 
 Usage:
     python3 scripts/scan_backlog_gate_conditions.py [--json]
@@ -59,8 +64,19 @@ PROVISIONAL_TARGET_RE = re.compile(r"^\*\*Provisional-Target:\*\*\s*(.+)$", re.M
 # condition masquerading as a plain target (the BLG-OPS-48 pattern before
 # its duplicate-field defect was fixed — kept here as a defensive check in
 # case the pattern recurs on a different item).
+#
+# Two delimiter forms are covered (BLG-GOV-292, v8.5 post-ship closure):
+# parentheses (the original BLG-OPS-48 pattern) and square brackets (the
+# BLG-FEAT-73 pattern — `[gate status unverified/unmet]` — a 5th distinct
+# failure mode in this same problem class, self-caught during v8.5 release
+# planning). Matched as two alternatives rather than a single bracket-class
+# pattern so each delimiter must open and close with its own kind (no
+# cross-matching a stray `(` with a `]`).
 EMBEDDED_GATE_SIGNAL_RE = re.compile(
-    r"\(.*(gate|gated|no earlier than|conditional|pending).*\)", re.IGNORECASE
+    r"\(.*(gate|gated|no earlier than|conditional|pending).*\)"
+    r"|"
+    r"\[.*(gate|gated|no earlier than|conditional|pending|unmet|unverified).*\]",
+    re.IGNORECASE,
 )
 
 
