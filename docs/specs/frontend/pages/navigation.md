@@ -1,8 +1,8 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-07-21
+**Version:** 1.5
+**Last Updated:** 2026-08-11 (ST-22, EPIC-06, v8.6, BLG-GOV-294 — added §Known Deviations, filed retroactive DEV-NAV-ST06-01 for the v8.5 dark-mode/Radix-portal Layout.js fix)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Design Source:** docs/design/2026-03-24__release-v2.3/sidebar-nav-groups/ux_spec.md
 **Design Source (v1.3 command palette):** docs/design/2026-07-17__release-v7.5/command-palette/ux_spec.md
@@ -125,10 +125,24 @@ First-session-only dismissible tooltip on the nav-bar search affordance. No moda
 
 ---
 
+## Known Deviations
+
+### DEV-NAV-ST06-01 — Dark theme not applying inside Radix portaled dialogs app-wide (RESOLVED v8.5)
+
+- **Description:** `tailwind.config.js`'s `darkMode: ["class"]` requires an ancestor element carrying the literal `dark` class for any `dark:` variant to apply. `src/Layout.js` only ever applied that class to its own wrapper `<div>` — never to `document.documentElement`. Radix's `DialogPortal` (`src/components/ui/dialog.js`) renders its content into `document.body`, **outside** that wrapper's DOM subtree, so every `dark:` variant and every CSS custom property that differs between `:root` and `.dark` (`src/index.css`) had always resolved to its **light** value inside every Dialog-based component app-wide (14+ consumers: `CommandPalette`, `ExportModal`, `WatchlistModal`, `WidgetLibrary`, `PositionEntryModal`, etc.), regardless of the user's actual theme setting — a pre-existing, systemic production bug, not introduced by the story that found it.
+- **Discovery:** v8.5 EPIC-03/ST-06 (`BLG-FE-145`)'s own new Playwright tests (`command-palette.spec.js` SC-CP-13/SC-CP-14) failed on the first real GitHub Actions CI run with `Received: "rgb(115, 115, 115)"` (the *light*-theme `--muted-foreground` value) instead of the expected dark-theme value — the `-muted` token registration that story shipped made the wrong-theme value distinguishable from an empty CSS rule for the first time, surfacing a defect that had been silently invisible until then.
+- **Resolution:** `Layout.js` now also syncs the `dark` class onto `document.documentElement`, which covers every portal (portals still mount under `<html>`/`<body>`), fixing this at the root cause for all consumers, not just the discovering story's own call sites. Shipped in the same commit as the discovery, `41619410` ("[EPIC-03][ST-06] Fix dark theme not applying inside portaled dialogs"), 2026-08-10, cycle `2026-08-08__release-v8.5`.
+- **Priority:** P1 (app-wide visual defect across every Dialog-based component, silently present since Radix portals were first adopted; not a figure-correctness issue but genuinely observable to every user in dark theme)
+- **Owner:** Frontend Specifications & UX Documentation Owner
+- **Backlog reference:** Filed retroactively this story (`ST-22`, `BLG-GOV-294`, `EPIC-06`, v8.6) — no distinct backlog item existed for this specific finding at discovery time; it was fixed directly within `BLG-FE-145`'s own commit as an emergent, same-session finding rather than tracked separately.
+
+---
+
 ## Change Log
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-08-11 | ST-22 (EPIC-06, v8.6, BLG-GOV-294): added §Known Deviations, filed retroactive `DEV-NAV-ST06-01` for the v8.5 EPIC-03/ST-06 dark-mode/Radix-portal `Layout.js` fix (commit `41619410`) — documentation only, no behavioural change. **Cross-EPIC note:** EPIC-03's own ST-09 (same cycle) independently bumped this file to v1.5 for a different change (§Group Structure count correction) — per `CLAUDE.md` §8.2a, whichever branch merges second must renumber its version bump to the next free version at merge-conflict-resolution time; this row's content must not be silently conflated with ST-09's under one version number. |
 | 1.4 | 2026-07-21 | v7.7 design gate — ST-02 (EPIC-02, BLG-FE-114): removed duplicate "Alerts" nav item (Tools group; routed to the same page as "Notifications" with no visual indication of the duplication). "Notifications" (System group) retained as sole nav path, inherits the alert-count badge. "Weekly Digest" moved from Analytics to System group, adjacent to Notifications. §Alert Badge Integration updated (Tools → System propagation). Design source: nav-notification-digest-consolidation/ux_spec.md. Approved: Product Owner 2026-07-21. Design gate: 2026-07-21__release-v7.7. Head of Specs Team confirmed. |
 | 1.3 | 2026-07-17 | v7.5 design gate — added §Global Command Palette (ST-01, BLG-FE-115): Cmd/Ctrl-K invocation, nav-bar mouse fallback, Pages/Your Data result groups, selection/navigation rules, new compact-list `DataState` empty-state variant, discoverability tooltip. Design source: command-palette/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |
 | 1.2 | 2026-05-21 | v3.9 design gate — added Red Flag Journal to Trading group (ST-08, EPIC-03: new page at `/red-flag-journal`, nav item after Trade Reflection). Design source: docs/design/2026-05-21__release-v3.9/red-flag-journal/ux_spec.md. Approved: Product Owner 2026-05-21. Head of Specs Team confirmed. |
