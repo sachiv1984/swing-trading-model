@@ -69,7 +69,10 @@ export default function TradePlanCompletionRateSection() {
   const abandonedPct = plansCreated > 0 ? Math.round((plansAbandoned / plansCreated) * PERCENT_MULTIPLIER) : 0;
 
   return (
-    <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 backdrop-blur-sm">
+    <div
+      data-testid="trade-plan-completion-rate-section"
+      className="rounded-2xl bg-slate-800/50 border border-slate-700/50 p-6 backdrop-blur-sm"
+    >
       <h2 className="text-lg font-semibold text-white mb-4">Trade Plan Completion Rate</h2>
       <DataState
         loading={isLoading}

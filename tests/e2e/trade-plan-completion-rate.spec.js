@@ -185,14 +185,16 @@ test.describe('SC-TPCR-04 — Empty state', () => {
     await mockCompletionRate(page, COMPLETION_RATE_EMPTY);
     await gotoAnalytics(page);
 
-    await expect(page.getByText('Trade Plan Completion Rate')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('No trade plans created yet.')).toBeVisible({ timeout: 8000 });
+    const section = page.getByTestId('trade-plan-completion-rate-section');
+    await expect(section.getByText('Trade Plan Completion Rate')).toBeVisible({ timeout: 10000 });
+    await expect(section.getByText('No trade plans created yet.')).toBeVisible({ timeout: 8000 });
 
     // Must not render the summary cards or a misleading 0% in the empty state.
-    // exact:true avoids a substring match against the empty-state copy itself
-    // ("No trade plans created yet." contains "plans created" as a substring).
-    await expect(page.getByText('Plans Created', { exact: true })).not.toBeVisible();
-    await expect(page.getByText('0.0%', { exact: true })).not.toBeVisible();
+    // Scoped to this section: the wider page has unrelated cards that also
+    // render "0.0%" for other empty/mocked metrics, and exact:true alone
+    // isn't enough to disambiguate those from this section's own cards.
+    await expect(section.getByText('Plans Created', { exact: true })).not.toBeVisible();
+    await expect(section.getByText('0.0%', { exact: true })).not.toBeVisible();
   });
 });
 
