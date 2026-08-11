@@ -362,7 +362,7 @@
         "ST-15": {
           "title": "Add endpoint-level regression test for GET /analytics/tag-performance's ensure_trade_plans_table call",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1346,
           "branch": "exec/2026-08-11__release-v8.6/EPIC-05",
@@ -370,15 +370,15 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-11T22:20:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["tests/test_tag_performance_ensure_table_call.py"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "New test hits the actual GET /analytics/tag-performance route via TestClient(app), patching database.get_portfolio/ensure_trade_plans_table/get_tag_performance (the router does a LOCAL import inside the function body, so patches target database.<name> not routers.analytics.<name>) and tracking call order via a shared list. Confirms ensure_trade_plans_table() fires before get_tag_performance(), plus a second test confirming the query does not proceed if ensure_trade_plans_table() itself raises. Both pass."
         },
         "ST-16": {
           "title": "Add Playwright coverage for setNarrativeField AI-draft-badge clearing on the 3 non-setup_thesis fields",
@@ -425,7 +425,7 @@
         "ST-18": {
           "title": "Document one-directional limitation of test_alerts_service.py's sys.modules restore fixture",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1349,
           "branch": "exec/2026-08-11__release-v8.6/EPIC-05",
@@ -433,15 +433,15 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-08-11T22:25:00Z",
+          "acceptance_verified": true,
           "spec_references": ["tests/test_alerts_service.py"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Extended _restore_sys_modules_after_this_file()'s docstring to explicitly state the one-directional scope: protects files collected/run AFTER this one (they get real modules back), but provides no protection for files collected/run BEFORE this one, nor for any code imported WHILE this file's own tests run (the intended, unavoidable exposure window per the existing ST-25 note) -- plus a note on the point-in-time-snapshot limitation of the restore itself. All 34 existing tests in the file still pass."
         }
       }
     },
