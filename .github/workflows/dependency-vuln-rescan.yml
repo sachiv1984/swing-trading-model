@@ -61,6 +61,12 @@ jobs:
             --output pip_audit_results.json \
             --skip-editable \
             --ignore-vuln CVE-2026-4539
+          # CVE-2026-4539 ignore rationale: see vulnerability-scan.yml's
+          # "Run pip-audit" step (ST-20, BLG-OPS-137, EPIC-06, v8.6) --
+          # transitive pygments ReDoS in AdlLexer, never invoked by our
+          # application/test suite. Same ignore, same rationale, applied
+          # here too so this independent scheduled cadence doesn't
+          # re-surface an already-assessed, accepted finding every run.
           echo "exit_code=$?" >> "$GITHUB_OUTPUT"
           set -e
 
