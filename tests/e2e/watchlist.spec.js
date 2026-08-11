@@ -157,3 +157,30 @@ test('SC-WL-05: invalid ticker format shows the canonical validation error text 
   await expect(error).toHaveClass(/text-rose-700/);
   await expect(error).toHaveClass(/dark:text-rose-400/);
 });
+
+test('SC-WL-06: WatchlistModal DialogDescription renders a real, non-empty colour (ST-05, EPIC-03, v8.6, BLG-FE-148)', async ({ page }) => {
+  // Investigation finding for ST-05 AC-02: `DialogDescription`'s own default
+  // styling (src/components/ui/dialog.js) is `text-sm text-muted-foreground`.
+  // Every live call site (WatchlistModal, ExportModal, PositionEntryModal,
+  // WidgetLibrary, ExitModal) additionally passes an explicit
+  // `className="text-slate-600 dark:text-slate-400"` override. `cn()` in
+  // this codebase is plain `clsx` (src/lib/utils.js) with no Tailwind-merge
+  // dedup, so BOTH class lists are applied to the element -- which one wins
+  // is decided by CSS cascade order in the compiled stylesheet, not JSX
+  // order. This test confirms empirically that the element renders a real
+  // computed colour either way (i.e. `text-muted-foreground` is never
+  // silently the *only* thing applied and never resolves to an empty/
+  // inherited rule at any live call site).
+  await mockWatchlist(page, []);
+  await page.goto('/#/Watchlist');
+  await expect(page.getByText('Your watchlist is empty')).toBeVisible({ timeout: 10000 });
+
+  await page.getByRole('button', { name: 'Add Ticker' }).first().click();
+  await expect(page.getByRole('heading', { name: 'Add Ticker to Watchlist' })).toBeVisible({ timeout: 5000 });
+
+  const description = page.getByText('Track a new ticker for entry opportunities.');
+  await expect(description).toBeVisible();
+  const color = await description.evaluate((el) => getComputedStyle(el).color);
+  expect(color).not.toBe('rgba(0, 0, 0, 0)');
+  expect(color).not.toBe('');
+});

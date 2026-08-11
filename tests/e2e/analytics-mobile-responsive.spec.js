@@ -137,3 +137,30 @@ test.describe('ST-12 desktop regression (no change at lg width)', () => {
     expect(flexDirection).toBe('row');
   });
 });
+
+// ---------------------------------------------------------------------------
+// ST-05 (EPIC-03, v8.6, BLG-FE-148) — the remaining -muted/-muted-foreground
+// call sites left untested by v8.5/ST-06. TimeBasedCharts.js's <TabsList>
+// (src/components/ui/tabs.js) is a confirmed live consumer of
+// `text-muted-foreground`: an inactive <TabsTrigger> has no explicit text
+// colour of its own (only `data-[state=active]:text-foreground` for the
+// active tab), so it inherits `text-muted-foreground` from the parent
+// TabsList. (TabsList's own `bg-muted` background is separately overridden
+// at this call site by an explicit `bg-slate-900/50` className -- both
+// classes apply via plain clsx with no dedup, so background colour is not a
+// clean assertion target here; text colour on an inactive trigger is.)
+// ---------------------------------------------------------------------------
+
+test.describe('ST-05 remaining -muted coverage — Tabs', () => {
+  test('SC-PA-M07: inactive TabsTrigger resolves text-muted-foreground to a real, non-empty colour', async ({ page }) => {
+    await setupAnalytics(page);
+
+    // "Day of Week" is the default-active tab; "Monthly" starts inactive.
+    const inactiveTab = page.getByRole('tab', { name: 'Monthly' });
+    await expect(inactiveTab).toBeVisible({ timeout: 10000 });
+    await expect(inactiveTab).toHaveAttribute('data-state', 'inactive');
+    const color = await inactiveTab.evaluate((el) => getComputedStyle(el).color);
+    expect(color).not.toBe('rgba(0, 0, 0, 0)');
+    expect(color).not.toBe('');
+  });
+});
