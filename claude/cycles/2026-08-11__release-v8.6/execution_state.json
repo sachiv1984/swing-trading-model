@@ -98,13 +98,22 @@
       }
     },
     "EPIC-03": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-08-11__release-v8.6/EPIC-03",
       "pr_number": null,
       "pr_status": "none",
       "qa_signed_off": false,
       "qa_evidence_log": "claude/cycles/2026-08-11__release-v8.6/qa_evidence_EPIC-03.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/e2e/system-status.spec.js",
+        "tests/e2e/analytics-mobile-responsive.spec.js",
+        "tests/e2e/watchlist.spec.js",
+        "tests/e2e/position-review-cadence-nudge.spec.js",
+        "tests/e2e/command-palette.spec.js",
+        "tests/e2e/reports-reconciliation.spec.js",
+        "tests/e2e/whats-new-panel.spec.js",
+        "tests/e2e/watchlist-staleness-review.spec.js"
+      ],
       "stories": {
         "ST-04": {
           "title": "Register remaining unregistered shadcn design tokens in tailwind.config.js",
