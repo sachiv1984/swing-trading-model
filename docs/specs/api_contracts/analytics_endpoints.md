@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.4.0
-**Last Updated:** 2026-07-09
+**Version:** 2.5.0
+**Last Updated:** 2026-08-11
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -894,6 +894,52 @@ Returns win rate and average R-multiple per requested trade-plan tag.
 
 ---
 
+## GET /analytics/trade-plan-completion-rate
+
+Returns the trade plan completion rate: how many created trade plans resulted in a closed trade vs were abandoned.
+
+**Source:** ST-01, BLG-FEAT-32, EPIC-01, v8.6.
+
+### Request
+
+**Method:** GET
+**Path:** `/analytics/trade-plan-completion-rate`
+**Authentication:** API Key required
+
+No parameters.
+
+### Response (200)
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "plans_created": 24,
+    "plans_completed": 15,
+    "plans_abandoned": 4,
+    "completion_rate": 62.5
+  }
+}
+```
+
+#### `data` schema
+
+| Field | Type | Description |
+|-------|------|--------------|
+| `plans_created` | integer | All `trade_plans` rows for this portfolio |
+| `plans_completed` | integer | Plans linked to a position (`trade_plans.position_id`) with at least one closed `trade_history` row for that position |
+| `plans_abandoned` | integer | Plans with `status = 'abandoned'` |
+| `completion_rate` | number\|null | `plans_completed / plans_created * 100` (1 dp); `null` if `plans_created` is 0 — the frontend renders the empty state ("No trade plans created yet.") rather than a misleading `0%` |
+
+### Errors
+
+| Code | Condition |
+|------|-----------|
+| 404 | Portfolio not found |
+| 500 | Database error |
+
+---
+
 ## GET /analytics/compliance-metrics
 
 **Purpose**
@@ -952,6 +998,7 @@ No parameters.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.5.0 | 2026-08-11 | v8.6 ST-01 (BLG-FEAT-32, EPIC-01): Added `GET /analytics/trade-plan-completion-rate` — `plans_created`/`plans_completed`/`plans_abandoned`/`completion_rate` for the Performance Analytics page §21. `plans_completed` derived via the `trade_plans.position_id = trade_history.position_id` equijoin. API Contracts & Documentation Owner sign-off. |
 | 2.4.0 | 2026-07-09 | v6.8 ST-05 (BLG-FEAT-52, EPIC-02): Added `GET /analytics/tag-performance` — win rate and average R-multiple per trade-plan tag. Reads only `trade_plans.trade_tags` and existing closed-trade linkage; no dependency on `trade_annotations`/PO-02. API Contracts & Documentation Owner sign-off. |
 | 2.3.0 | 2026-06-09 | v5.3 ST-05 (BLG-SPEC-50, EPIC-01): Added `GET /analytics/compliance-metrics` — discipline and compliance scalars endpoint. API Contracts & Documentation Owner sign-off. |
 | 2.2.0 | 2026-05-23 | ST-01 (BLG-FEAT-36, v4.0): Add `GET /analytics/arc5-compliance` endpoint — Arc 5 compliance metrics (validation_pass_rate_by_rule, events_per_week, override_rate, top_rule_breach, trade_plan_adherence_rate). Adds pre_entry_validation_log table. Metrics canonical per metrics_definitions.md §Arc 5 Compliance Metrics. API Contracts & Documentation Owner. |

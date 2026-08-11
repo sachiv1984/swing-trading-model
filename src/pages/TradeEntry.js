@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { base44, apiFetch } from "../api/base44Client";
+import { base44, apiFetch, api } from "../api/base44Client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
@@ -14,6 +14,7 @@ import { ArrowLeft, Calculator, Loader2, CheckCircle2, X, Rocket } from "lucide-
 import { Link } from "react-router-dom";
 import { cn } from "../lib/utils";
 import PositionSizingWidget from '../components/trades/PositionSizingWidget';
+import SetupThesisDigestPanel from '../components/trades/SetupThesisDigestPanel';
 import { isStartTradeEligible } from "./TradePlans";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -47,6 +48,19 @@ export default function TradeEntry() {
   // an existing, not-yet-started trade plan. Locked to planPrefill.id when
   // arriving via "Start Trade from Plan" — that link is automatic (AC-02).
   const [linkedPlanId, setLinkedPlanId] = useState(planPrefill?.id || null);
+
+  // ST-02 (v8.6, EPIC-01, BLG-FEAT-56): fetch the full linked plan record
+  // (setup_thesis, early_exit_conditions, confirmation_criteria) for the
+  // Setup Thesis Digest panel (trade_plan.md §10.5). Covers both the
+  // automatic hand-off (§10.2) and the manual link selector (§10.3) — both
+  // paths converge on linkedPlanId. No new AI call — reads already-generated
+  // plan content.
+  const { data: linkedPlan } = useQuery({
+    queryKey: ["trade-plan", linkedPlanId],
+    queryFn: () => api.tradePlans.getById(linkedPlanId),
+    enabled: !!linkedPlanId,
+    retry: false,
+  });
 
   const { data: linkablePlans = [] } = useQuery({
     queryKey: ["trade-plans-linkable"],
@@ -259,6 +273,10 @@ export default function TradeEntry() {
           Linked to trade plan for {planPrefill.ticker} — saving this trade will mark that plan Active.
         </div>
       )}
+
+      {/* ST-02 (v8.6, EPIC-01, BLG-FEAT-56): Setup Thesis Digest — trade_plan.md §10.5.
+          Renders below the "Linked to trade plan" indicator, above the order form fields. */}
+      {linkedPlan && <SetupThesisDigestPanel plan={linkedPlan} />}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

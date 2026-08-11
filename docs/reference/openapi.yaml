@@ -2781,6 +2781,47 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /analytics/trade-plan-completion-rate:
+    get:
+      tags: [Analytics]
+      summary: Get trade plan completion rate
+      description: |
+        Returns plans_created, plans_completed, plans_abandoned, and
+        completion_rate for the Performance Analytics page §21.
+        plans_completed is derived via the
+        trade_plans.position_id = trade_history.position_id equijoin
+        (a closed trade exists for the plan's linked position).
+        ST-01, BLG-FEAT-32, EPIC-01, v8.6.
+        Canonical contract: docs/specs/api_contracts/analytics_endpoints.md
+      responses:
+        "200":
+          description: Trade plan completion rate
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      plans_created:
+                        type: integer
+                      plans_completed:
+                        type: integer
+                      plans_abandoned:
+                        type: integer
+                      completion_rate:
+                        type: number
+                        format: float
+                        nullable: true
+        "404":
+          description: Portfolio not found
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /analytics/behavioural-drift:
     get:
       tags: [Analytics]

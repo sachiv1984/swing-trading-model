@@ -2640,6 +2640,53 @@ def get_tag_performance(portfolio_id: str, tags: List[str]) -> List[Dict]:
     return result
 
 
+def get_trade_plan_completion_rate(portfolio_id: str) -> Dict:
+    """Trade plan completion rate (ST-01, BLG-FEAT-32, EPIC-01, v8.6).
+
+    plans_created: all trade_plans rows for this portfolio.
+    plans_completed: plans linked to a position (tp.position_id) with at
+      least one closed trade_history row for that position — the same
+      trade_plans.position_id = trade_history.position_id equijoin already
+      used by get_trade_history_by_tax_year() and get_tag_performance().
+    plans_abandoned: plans with status = 'abandoned'.
+    completion_rate: plans_completed / plans_created (percentage, None if
+      plans_created is 0 — the empty state is handled by the caller, not by
+      returning 0%).
+
+    Design source: docs/design/2026-08-11__release-v8.6/trade-plan-completion-rate-metric/decision_record.md
+    Spec: docs/specs/frontend/pages/analytics.md §21
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT
+                    COUNT(*) AS plans_created,
+                    COUNT(*) FILTER (WHERE status = 'abandoned') AS plans_abandoned,
+                    COUNT(DISTINCT tp.id) FILTER (
+                        WHERE tp.position_id IS NOT NULL AND th.position_id IS NOT NULL
+                    ) AS plans_completed
+                FROM trade_plans tp
+                LEFT JOIN trade_history th ON th.position_id = tp.position_id
+                WHERE tp.portfolio_id = %s
+                """,
+                (portfolio_id,),
+            )
+            row = cur.fetchone()
+
+    plans_created = int(row["plans_created"] or 0)
+    plans_abandoned = int(row["plans_abandoned"] or 0)
+    plans_completed = int(row["plans_completed"] or 0)
+    completion_rate = round(plans_completed / plans_created * 100, 1) if plans_created else None
+
+    return {
+        "plans_created": plans_created,
+        "plans_completed": plans_completed,
+        "plans_abandoned": plans_abandoned,
+        "completion_rate": completion_rate,
+    }
+
+
 def ensure_si02_trade_history_indexes():
     """Add P2 indexes to trade_history for SI-02 drift analysis queries (idempotent).
 

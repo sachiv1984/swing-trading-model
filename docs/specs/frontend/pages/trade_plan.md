@@ -2,7 +2,7 @@
 **Class:** Supporting Document (Class 2)
 **Status:** Active
 **Version:** 1.4
-**Last Updated:** 2026-08-11 (v8.6 design gate — §10.5 Setup Thesis Digest at Order Placement added, ST-02/BLG-FEAT-56); prior — 2026-07-30 (v8.0 design gate — checklist keyboard accessibility + abandon modal focus trap)
+**Last Updated:** 2026-08-11 (ST-02/EPIC-01/v8.6 implementation — filed DEV-v8.6-ST02-01: "AI draft" badge omitted from §10.5's Setup Thesis Digest panel, isAiDraft not persisted server-side, BLG-BE-95 filed); prior — 2026-08-11 (v8.6 design gate — §10.5 Setup Thesis Digest at Order Placement added, ST-02/BLG-FEAT-56); prior — 2026-07-30 (v8.0 design gate — checklist keyboard accessibility + abandon modal focus trap)
 **Design Source (v1.4 setup thesis digest):** docs/design/2026-08-11__release-v8.6/ai-thesis-digest-order-placement/ux_spec.md
 **Design Source (v1.3 checklist keyboard accessibility):** docs/design/2026-07-30__release-v8.0/entry-checklist-keyboard-accessibility/decision_record.md
 **Design Source (v1.3 abandon modal focus trap):** docs/design/2026-07-30__release-v8.0/abandon-modal-focus-trap/decision_record.md
@@ -488,6 +488,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 |----|-------------|----------------------|----------|-------------------|-------|------------------|
 | DEV-01 | v3.1 design gate claimed creation of this spec at v0.1, but the file was not committed to the repository. Recovered at v3.2 design gate. | Spec must exist at committed path | P2 | Resolved — file created at v3.2 design gate | Head of Specs Team | N/A |
 | DEV-v3.4-01 | EPIC-03 ST-10 (v3.4): React Query v5 removed `onSuccess` from `useQuery`. `isAbandoned` derived from `existingPlan?.status` (query data) rather than a post-fetch callback. Functional behaviour — abandonment state derived correctly on initial load — matches spec §8.1 intent. Codebase scan for other `onSuccess` usages tracked in BLG-SPEC-31. | §8.1: isAbandoned derived from onSuccess callback | P3 | v3.5 — codebase scan; full resolution per BLG-SPEC-31 | Head of Engineering | BLG-SPEC-31 |
+| DEV-v8.6-ST02-01 | ST-02 (EPIC-01, v8.6, BLG-FEAT-56): §10.5's Setup Thesis Digest panel ships without the spec'd violet "AI draft" badge. `isAiDraft` is ephemeral client-only form state in `TradePlan.js` (`useState`, never persisted to `trade_plans`) — there is no server-side field for `TradeEntry.js` to read the source plan's AI-origin from at order-placement time. The digest still renders (thesis + risk factors + link), just without the badge, per ux_spec.md §4's own "panel still renders, simply without the badge" edge-case note. | §10.5 (ux_spec.md §2): badge shown when source plan's isAiDraft was true at generation time | P3 | Unscheduled — persist `is_ai_draft` on `trade_plans` first | Head of Engineering | BLG-BE-95 |
 
 ---
 
