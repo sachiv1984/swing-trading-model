@@ -351,13 +351,18 @@
       }
     },
     "EPIC-05": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-08-11__release-v8.6/EPIC-05",
       "pr_number": null,
       "pr_status": "none",
-      "qa_signed_off": false,
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-11__release-v8.6/qa_evidence_EPIC-05.md",
-      "test_scenarios": [],
+      "test_scenarios": [
+        "tests/test_tag_performance_ensure_table_call.py",
+        "tests/e2e/trade-plan.spec.js",
+        "tests/test_check_dependency_vuln_rescan.py",
+        "tests/test_alerts_service.py"
+      ],
       "stories": {
         "ST-15": {
           "title": "Add endpoint-level regression test for GET /analytics/tag-performance's ensure_trade_plans_table call",
