@@ -333,3 +333,53 @@ test.describe('Post-run state — SC-SS-03 through SC-SS-07', () => {
     await expect(page.getByText('GET /changelog/latest')).toBeVisible({ timeout: 8000 });
   });
 });
+
+// ---------------------------------------------------------------------------
+// SC-SS-08 — Tailwind token registration (ST-04, EPIC-03, v8.6, BLG-FE-147)
+//
+// `bg-primary` and `bg-input` (and the sibling shadcn tokens registered in
+// the same commit — card, popover, secondary, accent, destructive, border,
+// ring) previously compiled to empty CSS rules because tailwind.config.js
+// never registered them in theme.extend.colors, even though the underlying
+// --primary/--input CSS custom properties are defined in src/index.css. The
+// Auto-refresh Switch on this page (src/pages/SystemStatus.js) is a
+// confirmed live consumer of both tokens (data-[state=checked]:bg-primary,
+// data-[state=unchecked]:bg-input — src/components/ui/switch.js). Remaining
+// untested call-site families (card, popover, secondary, accent,
+// destructive, border, ring) are out of scope here — filed as BLG-FE-151
+// per CLAUDE.md's frontend hard gate (mirrors the v8.5/ST-06 -> BLG-FE-148
+// precedent).
+// ---------------------------------------------------------------------------
+
+test.describe('SC-SS-08 — Tailwind token registration (bg-primary / bg-input)', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockBaseEndpoints(page);
+    await page.goto('/#/SystemStatus');
+  });
+
+  test('SC-SS-08a: unchecked auto-refresh switch resolves bg-input to a real, non-transparent colour', async ({ page }) => {
+    const toggle = page.locator('#auto-refresh');
+    await expect(toggle).toBeVisible({ timeout: 8000 });
+    await expect(toggle).toHaveAttribute('aria-checked', 'false');
+    const bg = await toggle.evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(bg).not.toBe('rgba(0, 0, 0, 0)');
+    expect(bg).not.toBe('transparent');
+  });
+
+  test('SC-SS-08b: checking the switch resolves bg-primary to a distinct, non-transparent colour', async ({ page }) => {
+    const toggle = page.locator('#auto-refresh');
+    await expect(toggle).toBeVisible({ timeout: 8000 });
+    const uncheckedBg = await toggle.evaluate((el) => getComputedStyle(el).backgroundColor);
+
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-checked', 'true');
+    const checkedBg = await toggle.evaluate((el) => getComputedStyle(el).backgroundColor);
+
+    expect(checkedBg).not.toBe('rgba(0, 0, 0, 0)');
+    expect(checkedBg).not.toBe('transparent');
+    // bg-primary (checked) must render as a genuinely different colour from
+    // bg-input (unchecked) -- both compiled to the *same* empty rule before
+    // this token registration fix, which this regression guards against.
+    expect(checkedBg).not.toBe(uncheckedBg);
+  });
+});
