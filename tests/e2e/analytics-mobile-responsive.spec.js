@@ -152,15 +152,18 @@ test.describe('ST-12 desktop regression (no change at lg width)', () => {
 // ---------------------------------------------------------------------------
 
 test.describe('ST-05 remaining -muted coverage — Tabs', () => {
-  test('SC-PA-M07: inactive TabsTrigger resolves text-muted-foreground to a real, non-empty colour', async ({ page }) => {
+  test('SC-PA-M07: inactive TabsTrigger resolves text-muted-foreground to the real dark-theme colour', async ({ page }) => {
     await setupAnalytics(page);
 
     // "Day of Week" is the default-active tab; "Monthly" starts inactive.
+    // No competing className is applied to TabsTrigger at this call site, so
+    // the exact value is asserted directly (dark theme is this app's
+    // default) -- matching command-palette.spec.js SC-CP-13/14's already-
+    // established value for the same token.
     const inactiveTab = page.getByRole('tab', { name: 'Monthly' });
     await expect(inactiveTab).toBeVisible({ timeout: 10000 });
     await expect(inactiveTab).toHaveAttribute('data-state', 'inactive');
     const color = await inactiveTab.evaluate((el) => getComputedStyle(el).color);
-    expect(color).not.toBe('rgba(0, 0, 0, 0)');
-    expect(color).not.toBe('');
+    expect(color).toBe('rgb(163, 163, 163)');
   });
 });

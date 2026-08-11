@@ -346,7 +346,7 @@ test.describe('Post-run state — SC-SS-03 through SC-SS-07', () => {
 // confirmed live consumer of both tokens (data-[state=checked]:bg-primary,
 // data-[state=unchecked]:bg-input — src/components/ui/switch.js). Remaining
 // untested call-site families (card, popover, secondary, accent,
-// destructive, border, ring) are out of scope here — filed as BLG-FE-151
+// destructive, border, ring) are out of scope here — filed as BLG-FE-157
 // per CLAUDE.md's frontend hard gate (mirrors the v8.5/ST-06 -> BLG-FE-148
 // precedent).
 // ---------------------------------------------------------------------------
