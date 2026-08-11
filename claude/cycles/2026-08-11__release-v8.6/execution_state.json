@@ -404,7 +404,7 @@
         "ST-17": {
           "title": "Add unit tests for scripts/check_dependency_vuln_rescan.py",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1348,
           "branch": "exec/2026-08-11__release-v8.6/EPIC-05",
@@ -412,15 +412,15 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "completed_utc": "2026-08-11T22:40:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["tests/test_check_dependency_vuln_rescan.py"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "14 tests across load_json/pip_audit_findings/npm_audit_findings (direct unit tests) plus 3 end-to-end main() runs against temp files covering the AC's required scenarios: baseline-hit (known advisory not flagged as new), new-finding (unknown advisory flagged, issue-filing language present), and malformed/error-shaped input (invalid JSON does not crash, treated as 0 findings per current script contract). Written against this branch's current (pre-ST-14/EPIC-04) script state -- ST-14 (same cycle, different EPIC) adds pip_audit_status/npm_audit_status to the same script; no textual conflict expected at merge (new test file vs script+workflow changes), and these tests remain valid post-ST-14 since it only adds an additional signal, not a changed contract for the functions tested here. All 14 pass."
         },
         "ST-18": {
           "title": "Document one-directional limitation of test_alerts_service.py's sys.modules restore fixture",
