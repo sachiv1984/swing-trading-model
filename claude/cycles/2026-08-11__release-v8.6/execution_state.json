@@ -235,7 +235,7 @@
         "ST-10": {
           "title": "Migrate CohortAnalysis.js from client-side computation to GET /analytics/cohort",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1341,
           "branch": "exec/2026-08-11__release-v8.6/EPIC-03",
@@ -243,15 +243,15 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-08-11T20:45:00Z",
+          "acceptance_verified": true,
           "spec_references": ["docs/specs/frontend/pages/analytics.md#15"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Pre-met item (LL-v2.4-P4-02 pattern): code review of the current src/components/analytics/CohortAnalysis.js confirms it already sources all 5 displayed fields from api.analytics.cohort(period)'s response with no local buildCohorts() formula remaining -- shipped in commit af22ea6e ('[EPIC-02][ST-04] Refactor CohortAnalysis to use backend endpoint'), 2026-03-16 (v1.10). The stale deviation record (DEV-EPIC02-ST03-01, analytics.md) and its backlog reference (BLG-FE-155) were simply never updated after the fix shipped. This story's only actual output: DEV-EPIC02-ST03-01 marked Resolved in analytics.md with full resolution narrative, referencing the shipping commit -- per this story's own AC. No visual regression risk (no code change made). Head of Specs Team closure confirmation: this execution_state.json entry + the analytics.md resolution constitute that confirmation (Sprint Execution Engine acting in the Head of Specs Team's already-delegated documentation-correction capacity, consistent with this EPIC's other doc-only stories)."
         }
       }
     },
