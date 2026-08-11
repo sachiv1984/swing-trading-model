@@ -562,7 +562,7 @@
         "ST-24": {
           "title": "execution_state.json's deviations_filed field is used as \"check performed\" not literally \"filed\"",
           "classification": "delegated_decision",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Head of Specs Team",
           "github_issue": 1355,
           "branch": "exec/2026-08-11__release-v8.6/EPIC-06",
@@ -570,15 +570,15 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": ["claude/system/schemas/execution_state_schema.json", "claude/system/shared_standards.md"],
+          "completed_utc": "2026-08-11T23:35:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["claude/system/schemas/execution_state_schema.json", "claude/system/shared_standards.md#16.15", "claude/system/templates/qa_evidence_template.md"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
+          "sign_off_record": {"status": "cleared", "role": "Head of Specs Team", "method": "agent_mediated", "date": "2026-08-11"},
+          "notes": "Added shared_standards.md §16.15 documenting deviations_filed's actual meaning (check performed, not literally filed) without contradicting execution_prompt.md STEP 3.1.A's existing inline prose. Added matching _deviations_filed_note to execution_state_schema.json. Reworded qa_evidence_template.md's 'Known deviations filed: None' line to 'Known deviations: None found — all deviation checks completed', preventing the apparent contradiction going forward (AC2). Full CLAUDE.md §6 governance file edit checklist applied: shared_standards.md 3.27->3.28, qa_evidence_template.md 1.8->1.9, OPERATIONAL_GUIDE.md §14 table + document header (4.153->4.154) + Change Log row, prompt_change_log.md entries for both files. Agent-mediated Head of Specs Team review: CONFIRMED, all version numbers verified internally consistent."
         },
         "ST-25": {
           "title": "Annotate BLG-FE-146/BLG-FE-139 with 2026-08-10 trigger-condition re-check",
@@ -628,7 +628,7 @@
 
   "blocked_items": ["ST-25", "ST-26"],
   "delegated_items": ["ST-25", "ST-26"],
-  "completed_items": ["ST-01", "ST-02", "ST-19", "ST-20", "ST-22", "ST-23"],
+  "completed_items": ["ST-01", "ST-02", "ST-19", "ST-20", "ST-22", "ST-23", "ST-24"],
   "open_escalations": ["ESC-EXEC-20260811-01", "ESC-EXEC-20260811-02"],
 
   "merge_gate": {
