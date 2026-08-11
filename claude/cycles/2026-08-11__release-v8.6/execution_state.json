@@ -151,7 +151,7 @@
         "ST-06": {
           "title": "Fix 6 drift instances against the v6.7 canonical secondary-text token",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1337,
           "branch": "exec/2026-08-11__release-v8.6/EPIC-03",
@@ -159,15 +159,15 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-08-11T20:05:00Z",
+          "acceptance_verified": true,
           "spec_references": ["docs/specs/frontend/design_system.md#Color Usage"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "All 6 instances corrected per BLG-FE-149's precise audit findings: Positions.js:591 + PositionCard.js:127 (text-slate-500->600, non-flagged last-reviewed span); WatchlistRow.js:27 (same shade fix, Added-days span); Layout.js search-affordance trigger + kbd badge (both isDark branches were wrong: light branch was slate-500 not slate-600, dark kbd branch was slate-500 not slate-400); Reports.js:660 reconciliation-sign-off-note (added missing dark: variant); WhatsNewCard.js bullet marker + overflow-count item (added missing dark: variant to both). Playwright coverage added/extended across 5 existing spec files (position-review-cadence-nudge, command-palette SC-CP-15/16, reports-reconciliation, whats-new-panel, watchlist-staleness-review SC-WLS-01) asserting the corrected class on every one of the 6 call sites."
         },
         "ST-07": {
           "title": "Design decision: should modals/dialogs support light theme?",

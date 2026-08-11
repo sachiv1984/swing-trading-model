@@ -24,7 +24,7 @@ function AddedCell({ entry }) {
 
   return (
     <span
-      className="text-xs text-slate-500 dark:text-slate-400"
+      className="text-xs text-slate-600 dark:text-slate-400"
       aria-label={`Added ${days} days ago`}
     >
       {days}d

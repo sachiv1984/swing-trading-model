@@ -599,7 +599,7 @@ export default function Layout({ children, currentPageName }) {
               "w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all border",
               isDark
                 ? "bg-slate-800/40 border-slate-800/60 text-slate-400 hover:text-white hover:bg-slate-800/70"
-                : "bg-slate-100/80 border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-200/70"
+                : "bg-slate-100/80 border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200/70"
             )}
           >
             <Search className="w-4 h-4 shrink-0" />
@@ -608,8 +608,8 @@ export default function Layout({ children, currentPageName }) {
               className={cn(
                 "inline-flex items-center justify-center px-1.5 h-5 rounded text-[10px] font-mono font-semibold border shrink-0",
                 isDark
-                  ? "bg-slate-900/60 border-slate-700 text-slate-500"
-                  : "bg-white border-slate-300 text-slate-500"
+                  ? "bg-slate-900/60 border-slate-700 text-slate-400"
+                  : "bg-white border-slate-300 text-slate-600"
               )}
             >
               {isMac ? "⌘K" : "Ctrl K"}

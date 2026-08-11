@@ -74,6 +74,11 @@ test('SC-RECON-02: Matched totals render the Reconciled badge', async ({ page })
   await expect(page.getByTestId('reconciliation-system-total')).toHaveText('£500.00');
   await expect(page.getByTestId('reconciliation-export-total')).toHaveText('£500.00');
   await expect(page.getByTestId('reconciliation-sign-off-note')).toContainText(/Financial Reporting & Records Owner/i);
+  // ST-06 (EPIC-03, v8.6, BLG-FE-149): this note was missing a dark: variant
+  // entirely (bare text-slate-500, no theme-awareness) -- must now carry the
+  // canonical secondary-text token pair.
+  await expect(page.getByTestId('reconciliation-sign-off-note')).toHaveClass(/text-slate-600/);
+  await expect(page.getByTestId('reconciliation-sign-off-note')).toHaveClass(/dark:text-slate-400/);
 });
 
 test('SC-RECON-03: Diverging totals render the Discrepancy badge with the £ difference', async ({ page }) => {

@@ -169,6 +169,11 @@ test('SC-RCN-04: Table View suppresses flag when GRACE state with days_in_state 
   // Text still renders (informational), but not flagged amber
   await expect(cell).toContainText('Reviewed 20d ago');
   await expect(text).not.toHaveClass(/text-amber-600/);
+  // ST-06 (EPIC-03, v8.6, BLG-FE-149): non-flagged state must use the
+  // canonical secondary-text token (text-slate-600 dark:text-slate-400),
+  // not the failing text-slate-500 shade this story corrected.
+  await expect(text).toHaveClass(/text-slate-600/);
+  await expect(text).toHaveClass(/dark:text-slate-400/);
 });
 
 test('SC-RCN-05: Table View suppresses flag when portfolio drawdown is active (AC-04)', async ({ page }) => {
@@ -207,4 +212,11 @@ test('SC-RCN-07: Grid View shows Last Reviewed row in card footer', async ({ pag
   await expect(row).toBeVisible({ timeout: 5000 });
   await expect(row).toContainText('Not yet reviewed');
   await expect(row.locator('[data-testid="mark-reviewed-button"]')).toBeVisible();
+
+  // ST-06 (EPIC-03, v8.6, BLG-FE-149): Grid View's PositionCard.js uses the
+  // same non-flagged span as Table View's Positions.js -- must use the
+  // canonical secondary-text token, not the failing text-slate-500 shade.
+  const text = row.locator('span').filter({ hasText: 'Not yet reviewed' });
+  await expect(text).toHaveClass(/text-slate-600/);
+  await expect(text).toHaveClass(/dark:text-slate-400/);
 });
