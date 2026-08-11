@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-11 (Head of Specs Team direct action — resolved 2 of the 72-hour escalations from post-ship closure `2026-08-08__release-v8.5`: BLG-GOV-292 fixed in-session, marked ✅ COMPLETE; 1 new item added — BLG-FE-155, re-triage of stale deviation DEV-EPIC02-ST03-01); prior — 2026-08-10 (post-ship closure 2026-08-08__release-v8.5 STEP 3 — all 25 v8.5 release-slice items marked ✅ COMPLETE with cycle reference); prior — 2026-08-10 (session — 16 new items added from agent-mediated PR review findings across PRs #1326-#1331: BLG-QA-136, BLG-QA-137, BLG-QA-138, BLG-QA-139, BLG-OPS-136, BLG-OPS-137, BLG-OPS-138, BLG-SEC-29, BLG-GOV-294, BLG-GOV-295, BLG-GOV-296, BLG-GOV-297, BLG-GOV-298, BLG-FE-153, BLG-FE-154, BLG-BE-88); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-11 (PMO Lead, acting on the `2026-08-11__release-v8.6` design gate's ST-07/BLG-FE-150 recommendation — 1 new item added: BLG-FE-156, convert 4 hardcoded dark-only modals to theme-aware tokens); prior — 2026-08-11 (Head of Specs Team direct action — resolved 2 of the 72-hour escalations from post-ship closure `2026-08-08__release-v8.5`: BLG-GOV-292 fixed in-session, marked ✅ COMPLETE; 1 new item added — BLG-FE-155, re-triage of stale deviation DEV-EPIC02-ST03-01); prior — 2026-08-10 (post-ship closure 2026-08-08__release-v8.5 STEP 3 — all 25 v8.5 release-slice items marked ✅ COMPLETE with cycle reference); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -1247,6 +1247,29 @@ The Unrealised P&L card immediately preceding the SI-02 Gate Status section (`sr
 - No visual regression (Playwright coverage or staging sign-off per `CLAUDE.md`'s frontend-visible-change rule — this is a data-source swap not a rendering change, so code review may suffice per FI-P3-02 if genuinely no visual change)
 - `analytics.md`'s `DEV-EPIC02-ST03-01` entry marked Resolved referencing this item and the shipping commit
 - Head of Specs Team confirms closure
+
+---
+
+### BLG-FE-156 — Convert 4 hardcoded dark-only modals to theme-aware tokens
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-07 (EPIC-03, `2026-08-11__release-v8.6` design gate) — follow-up implementation item recommended by `BLG-FE-150`'s design decision, filed by PMO Lead — 2026-08-11
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** v8.7 or later (see sequencing note below)
+**Depends on:** `BLG-FE-147` (this same v8.6 cycle) — see sequencing note
+
+**Problem**
+`BLG-FE-150`'s v8.6 design gate decision (`docs/design/2026-08-11__release-v8.6/modal-light-theme-support/decision_record.md`) confirmed that dark-only modal styling is unintentional legacy drift, not an intentional design choice — modals/dialogs should be theme-aware like the rest of the app, matching `CommandDialog`'s already-correct pattern (`src/components/ui/command.js`). 4 components still hardcode `bg-slate-900 ... text-white` unconditionally, regardless of the app's active theme: `WatchlistModal.js`, `ExportModal.js`, `PositionEntryModal.js`, `WidgetLibrary.js` (found at the v8.5 ST-13 dark/light contrast audit). The decision itself does not ship a fix — this item is that fix.
+
+**Scope**
+- Convert the 4 named components' `DialogContent` styling from hardcoded `bg-slate-900`/`text-white` to the shared `bg-background`/`text-foreground` (or `bg-popover`/`text-popover-foreground` where a popover-elevation surface is more appropriate) token set, per `design_system.md`'s "Modal / Dialog Theming" subsection (v1.9)
+
+**Acceptance Criteria**
+- All 4 named components render correctly in both light and dark theme, using the shared token set instead of hardcoded dark-only classes
+- No visual regression to existing dark-theme appearance — Playwright coverage or staging sign-off per `CLAUDE.md`'s frontend-visible-change rule
+
+**Sequencing note:** should not be scheduled before `BLG-FE-147` (this same v8.6 cycle) ships — `bg-popover`/`text-popover-foreground` are among the tokens `BLG-FE-147` registers in `tailwind.config.js`. Building this fix first would silently reproduce the same "empty CSS rule" failure mode `BLG-FE-147` exists to close.
 
 ---
 
