@@ -44,6 +44,14 @@ Last Updated: 2026-08-11
 
 What checked out cleanly on first pass (unchanged): ST-04 token registrations map correctly to real CSS variables; ST-06's 6 colour-drift fixes all land correctly with real `toHaveClass`/exact-`rgb()` test coverage and no regression risk at shared call sites; ST-05's dead-code findings for `Sheet`/`ToastAction`/`Toggle`/`SelectSeparator` independently verified accurate; ST-07 references genuine pre-existing design-gate artefacts; ST-08's hook switch is real and narrow; commit message format fully compliant throughout.
 
+## Agent-Mediated DoQ Review — Second Pass (2026-08-11, retry 1 of 2) — Final Verdict
+
+**Verdict: APPROVED**
+
+Independent subagent re-verified both blocking findings against the actual diff (not the remediation commit's own commentary) — including compiling a real `tailwindcss` build in an isolated worktree to confirm the CSS-cascade-winner claims for SC-WL-06 and the `data-[placeholder]` specificity claim for SC-SFC-10, rather than trusting the stated rgb() values. Both blocking findings confirmed fully remediated with correct, non-trivial evidence. All 4 non-blocking notes confirmed remediated, with one residual observation: ST-10's `sign_off_record` correctly reflects an independent agent-mediated confirmation now (not self-assertion), but `delegation_record_id` remains `null` and there's no separate dated artefact the way ST-07's design-gate document provides — noted as a future tightening item, not a blocker, since the underlying substantive claim was independently re-verified as accurate.
+
+Sign-off remains conditional on the pending real-CI Playwright confirmation (Environment-parity note above) — this must be confirmed before merge.
+
 ---
 
 ## Sign-Off Block
