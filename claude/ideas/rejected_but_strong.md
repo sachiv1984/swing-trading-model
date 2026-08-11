@@ -104,3 +104,17 @@ This document captures ideas that were rejected from active roadmap/backlog cons
 **PMO Lead Decision (2026-07-08):** Revival condition confirmed **Met** — `velocity_metrics.md` now carries 49 structured rows spanning far more than 5 cycles and 2 rebalances (created 2026-07-03, updated at every post-ship closure since, most recently 2026-07-08 for v6.7). Decision: resubmit this idea at the next `run ideas` intake window rather than let it carry a third time.
 
 **Status: RESOLVED (2026-07-08, roadmap rebalance 2026-07-08__scheduled).** Resubmitted as `IDEA-pmo-lead-20260708-01` in window `IW-20260708-01`, classified Backlog (gate-conditional) at STEP 4, added to `backlog.md` as `BLG-GOV-188`. This entry is retained per the write-scope append-only rule for this file (roadmap engine may not delete rejected_but_strong.md entries) — kept for audit trail, superseded by `BLG-GOV-188`.
+
+---
+
+## IDEA-challenger-20260809-02 — SI-02 Gate Threshold Calibration Challenge (9+ consecutive NOT MET readings)
+
+**Submitter:** Challenger
+**Window:** IW-20260809-01 (2026-08-09)
+**Rejected in:** 2026-08-11__scheduled (strong)
+
+**Core idea:** Challenge whether the SI-02 ≥20-linked-trade-plans gate threshold is genuinely calibrated for this system's actual single-user trade cadence, given 9+ consecutive scheduled-rebalance readings of NOT MET with 0 linked trade plans throughout.
+
+**Why rejected:** This exact question was formally reviewed and answered 4 days prior to this submission — `BLG-GOV-237` ("SI-02 trade-count gate threshold calibration review") shipped in `v8.3` (2026-08-07) with a documented conclusion of "still appropriate." Re-opening the same question without new evidence beyond what `BLG-GOV-237`'s review already considered is not a valid basis to re-litigate a recently-closed formal determination. Rejected as strong because the underlying concern is legitimate and well-evidenced (the 9+ consecutive NOT MET streak is real and is the single largest structural blocker in the current roadmap — see `cycle_record.md` 2026-08-11__scheduled STEP 2.3/STEP 7.1) — the rejection is about timing and duplication, not about the merit of eventually revisiting gate calibration.
+
+**Revival condition:** Material new evidence not considered by `BLG-GOV-237`'s review — e.g. a materially changed trade cadence, a structural change to how trade plans are linked (such as `BLG-BE-91`, filed this same cycle, landing and still failing to move the linked-count), or a sustained further period (e.g. 6+ more months) of zero linked trade plans despite `BLG-BE-91`'s enforcement fix being live. Head of Specs Team or Strategy Rules & System Intent Owner to raise for re-evaluation if any of these occur.

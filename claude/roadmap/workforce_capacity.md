@@ -606,3 +606,31 @@ Both approved candidates (`BLG-FEAT-52` ungated/descoped, new `BLG-FEAT-71`) are
 **v7.10+ capacity outlook:** Now horizon empty (STEP 8.1 Option (b) deferred again — see `cycle_record.md`). Next `plan release` should draw from the now-181-item-strong A-category (ungated, actionable) backlog pool; `BLG-FEAT-88` is the lead Skill-Silo-mitigating U-item candidate if the PO wants to pre-empt the 3rd-consecutive-worsening threshold before it fires.
 
 **Workforce constraints:** None new.
+
+---
+
+## Rebalance 2026-08-11__scheduled
+
+39 new backlog items filed (from 44 `IW-20260809-01` submissions; 1 idea resolved directly — `BLG-BE-30` gate removal, no new row; 6 ideas consolidated into 3 items — `BLG-BE-91`, `BLG-SPEC-124`, `BLG-GOV-303`; 1 idea rejected strong) — all S/M effort, single-developer-context, no scarce-skill contention.
+
+| Item | Effort | Skill Category | Notes |
+|------|--------|-----------------|-------|
+| BLG-GOV-299–306 (8 items) | S–M | Governance / Process / FinOps / Strategy Policy | Cost retrospectives, workload-threshold definition, escalation tracker, Roadmap Unlock Tracker (consolidated), gate re-estimate cadence, §13 policy question, change-justification template |
+| BLG-SEC-30/31/32 | S–M | Security | Gemini prompt-injection test, rate-limit audit, dependency license scan |
+| BLG-BE-89–94 (6 items) | S–M | Backend Engineering | Gemini retry/backoff extension, N+1 query audit, trade-plan linkage enforcement + DB safeguard (consolidated, escalated P1), multi-currency rounding check, tax-year boundary export check, Research View latency review |
+| BLG-SPEC-119–128 (10 items) | S–M | Spec Debt | Endpoint sunset tracker, contract freshness check, Base44 provenance tag + diff checklist, gated DataState variant (consolidated), prop-naming audit, spec-to-backlog traceability audit, glossary consolidation, 90-day window definition, gate-metric naming consistency |
+| BLG-QA-140–147 (8 items) | S | QA / Testing | Field-population audit, DEV-* recurrence report, DoD spot-check, service-layer coverage report, Arc5ComplianceSection Playwright audit, test-env parity check, test.py re-audit, regression trend report |
+| BLG-OPS-139/140/141 | S | Operations | Render headroom reassessment, build/deploy path filter documentation (prevents a 3rd `BLG-OPS-82/90`-class incident), staging data-reset cadence |
+| BLG-FEAT-84 | M | Product Feature | Thesis pre-mortem / invalidation-condition capture |
+
+**Governance load %:** ~92% (36 of 39 items are GOV/SEC/SPEC/QA-process/OPS-shaped; only `BLG-FEAT-84` is a clean U-shaped feature, and `BLG-BE-91` — while D-shaped, not U — is this cycle's single highest-leverage item, see below). The most governance/debt-heavy idea-intake window on record by this measure, exceeding even `2026-07-28__scheduled`'s ~90%.
+
+**Skill-Silo advisory (STEP 7.1):** Rolling 3-cycle average (v8.3 27/27=100%, v8.4 29/31=93.5%, v8.5 19/25=76.0%) = **89.8%**, above the 40% ceiling — Alert persists, **3rd consecutive worsening reading** (65.8%→89.8%, following 56.5%→64.5%→65.8% at the prior three readings). **This crosses the mandatory-≥2-build-and-ship-U-item pull-forward threshold for the first time since the clause was adopted (v8.3).** Exhaustive candidate gate verification (LP-05) — including a corrected re-scan of P3 `Product Feature / Analytics` items previously missed by a blank-line-boundary scan artefact — found exactly **1** qualifying ungated candidate (`BLG-FEAT-32`, gate cleared: PT-04 shipped v6.1) against a requirement for 2. Product Owner response: accept the shortfall with written rationale (no second genuine candidate exists — every other item in the backlog is either governance/debt-shaped or gated on conditions tracing back to the same root cause), name `BLG-FEAT-32` (escalated P3→P2) as the sole candidate, and commit the next release's highest-leverage capacity to the structural fix (`BLG-BE-91`, escalated to P1) instead of a second performative candidate naming. Full reasoning in `cycle_record.md` STEP 7.1.
+
+**Cross-role workload balance (STEP 7.2):** Not recomputed this cycle (advisory-only, no material change expected — see `cycle_record.md` STEP 7.2).
+
+**v8.6+ capacity outlook:** Now horizon empty (STEP 8.1 Option (b) deferred, 4th consecutive firing). Next `plan release` should prioritise `BLG-FEAT-32` (P2, ungated, clean U-item) and `BLG-BE-91` (P1, root-cause structural fix for the SI-02/Arc-5 blocker cluster) ahead of further governance/debt scope, to begin correcting both the Product Value Ratio and Skill-Silo readings before a 4th consecutive worsening reading compounds the finding further.
+
+**Sprint capacity:** Not re-evaluated this cycle (no explicit trigger; held at ~24-28 working-day-equivalent units per the `2026-07-28__scheduled` reasoning, unchanged — `v8.0`–`v8.5` all shipped at or near full planned scope with 1.00 average velocity ratio, no strain signal).
+
+**Workforce constraints:** None new.

@@ -351,14 +351,16 @@ No metric tracks how often a research session (opening the research view for a t
 ---
 
 ### BLG-FEAT-32 — Trade plan completion rate tracking
-**Priority:** P3 (Low)
+**Priority:** P2 (Medium) — escalated from P3, 2026-08-11, roadmap rebalance (see note below)
 **Type:** Product Feature / Analytics
 **Owner:** Metrics & Analytics Owner
 **Source:** IDEA-metrics-analytics-20260421-07 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** PT-04 (Setup Quality Score) shipped.
+> ⚠️ **Priority escalation + gate cleared (2026-08-11, roadmap rebalance STEP 7.1, DL-078):** Gate condition ("PT-04 shipped") confirmed met — PT-04 shipped v6.1 (2026-06-23). Named as the lead Skill-Silo mandatory-pull-forward candidate for the next `plan release` — the only ungated, build-and-ship-shaped U-item found in the entire backlog this cycle (see `cycle_record.md` STEP 7.1 for the full candidate search). Priority raised P3→P2 in recognition of this.
+
+**Gate criteria:** ~~PT-04 (Setup Quality Score) shipped.~~ Cleared 2026-08-11 (see note above) — item is now Actionable-now (A-category).
 
 **Problem**
 No metric tracks what proportion of created trade plans are completed (i.e., result in a closed trade) vs abandoned. The completion rate is a key indicator of plan quality, operator follow-through, and whether PT-04 quality scores correlate with plan execution. Requires PT-04 to create the quality score baseline for correlation.
@@ -1434,7 +1436,7 @@ SI-02 drift service queries trade_plans and trade_history with window functions 
 **Effort:** S (~1 day)
 **Provisional-Target:** Unscheduled
 
-**Gate criteria:** SI-04 sprint planning imminent. BLG-GOV-88 binding conditions shipped v5.0 — next gate is active sprint planning for SI-04 (Later horizon).
+> ⚠️ **Gate removed (2026-08-11, roadmap rebalance, IDEA-challenger-20260809-01, DL-078):** The prior gate ("SI-04 sprint planning imminent") was self-referential — this item's entire purpose is small (~1 day) pre-design work meant to happen *ahead of* SI-04 entering a sprint, to avoid same-sprint data model debt, which the gate wording prevented by construction. Un-gated by Product Owner decision; now Actionable-now (A-category). No `**Gate criteria:**` field — this item is ready for `plan release` consideration on its own merits.
 
 **Problem**
 SI-04 strategy version comparison requires linking trade_plans to historical strategy_rules.md versions. Whether this is a new strategy_versions table, a foreign key, or a snapshot field must be decided before SI-04 sprint to avoid same-sprint data model debt. BLG-SPEC-43 (API contract) exists; data model pre-design is the remaining gap.
@@ -5342,3 +5344,320 @@ ST-04's AC "Scheduled job runs successfully at least once and reports results fo
 
 ---
 
+
+---
+
+## Roadmap Rebalance 2026-08-11__scheduled — New Items (IW-20260809-01 disposition)
+
+### BLG-SEC-30 — Prompt-injection resistance test for the Gemini thesis-generation endpoint
+**Priority:** P2 (Medium) | **Type:** Security / AI | **Owner:** Cybersecurity & Trust Lead; AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260809-01 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** `POST /trade-plans/{plan_id}/generate-thesis` (Gemini-backed) has never had an active adversarial test confirming it resists prompt-injection attempts embedded in user-controlled trade-plan fields.
+**Scope:** Design and run a prompt-injection test suite against the endpoint; document findings and any hardening applied.
+**Acceptance Criteria:** Test suite run; findings documented; Cybersecurity & Trust Lead sign-off.
+
+---
+
+### BLG-GOV-299 — AI feature cost-vs-value retrospective (6-month actuals vs original estimates)
+**Priority:** P3 (Low) | **Type:** Governance / FinOps | **Owner:** FinOps & Resource Architect; AI Compliance & Governance Officer | **Source:** IDEA-ai-compliance-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** AI features (thesis generation, journal summarisation) were costed at build time but no retrospective has compared 6 months of actual Gemini/Anthropic spend against those original estimates.
+**Scope:** Compare actuals vs estimates for each shipped AI feature; note material variances.
+**Acceptance Criteria:** Retrospective document filed; FinOps & Resource Architect sign-off.
+
+---
+
+### BLG-SPEC-119 — Deprecated/superseded endpoint sunset tracker
+**Priority:** P3 (Low) | **Type:** Spec Debt / API Governance | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** The API endpoint deprecation-window policy (`BLG-SPEC-96`) defines the *process* for deprecating an endpoint but there is no single tracker of which endpoints are currently mid-deprecation-window.
+**Scope:** Add a tracker (or a canonical section in `conventions.md`) listing currently-deprecating endpoints and their sunset dates.
+**Acceptance Criteria:** Tracker added; API Contracts & Documentation Owner sign-off.
+
+---
+
+### BLG-SPEC-120 — Contract example-payload freshness check against live response shape
+**Priority:** P3 (Low) | **Type:** Spec Debt / API Governance | **Owner:** API Contracts & Documentation Owner | **Source:** IDEA-api-contracts-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Several `docs/specs/api_contracts/*.md` example payloads have previously been found stale against the live response shape (e.g. `BLG-SPEC-112`–`115` at `v8.4`); no recurring check catches this proactively.
+**Scope:** Add a recurring spot-check (or automate via the existing OpenAPI drift tooling) comparing example payloads against live responses.
+**Acceptance Criteria:** Check added/scheduled; API Contracts & Documentation Owner sign-off.
+
+---
+
+### BLG-BE-89 — Extend the BLG-BE-57 retry/backoff audit pattern to Gemini API call sites
+**Priority:** P2 (Medium) | **Type:** Backend Engineering / Reliability | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260809-01 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** `BLG-BE-57` audited Alpaca API rate-limit backoff handling; the same audit has not been extended to Gemini API call sites (thesis generation, cost tracking).
+**Scope:** Audit Gemini call sites for retry/backoff handling; apply the same pattern used for Alpaca where gaps are found.
+**Acceptance Criteria:** Audit complete; gaps fixed or filed; Backend Engineering Patterns Owner sign-off.
+
+---
+
+### BLG-BE-90 — N+1 query audit across trade/position list endpoints
+**Priority:** P2 (Medium) | **Type:** Backend Engineering / Performance | **Owner:** Backend Engineering Patterns Owner | **Source:** IDEA-backend-engineering-20260809-02 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** No systematic audit has confirmed the trade/position list endpoints are free of N+1 query patterns as the schema and join complexity has grown across Arc 4/5 additions.
+**Scope:** Audit `GET /trades`, `GET /positions`, and related list endpoints for N+1 patterns; fix or file follow-ups.
+**Acceptance Criteria:** Audit complete; findings fixed or filed; Backend Engineering Patterns Owner sign-off.
+
+---
+
+### BLG-SPEC-121 — Base44 prompt-version provenance tag on generated components
+**Priority:** P3 (Low) | **Type:** Spec Debt / Frontend Tooling | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Components generated via a Base44 prompt template carry no record of which template version produced them, making drift audits (like the v6.7 token-drift audit) harder to scope.
+**Scope:** Define a lightweight provenance convention (e.g. a comment header) tagging generated components with their source template version.
+**Acceptance Criteria:** Convention documented in `base44_prompt_template_library.md`; Base44 Frontend Prompt Owner sign-off.
+
+---
+
+### BLG-SPEC-122 — Base44 regeneration diff checklist — design-token compliance pass
+**Priority:** P3 (Low) | **Type:** Spec Debt / Frontend Tooling | **Owner:** Base44 Frontend Prompt Owner | **Source:** IDEA-base44-frontend-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** When a component is regenerated via Base44, there is no checklist confirming the regenerated output still complies with current design tokens (a recurring source of drift, e.g. `BLG-FE-91`).
+**Scope:** Add a regeneration diff checklist to the Base44 prompt template library.
+**Acceptance Criteria:** Checklist added; Base44 Frontend Prompt Owner sign-off.
+
+---
+
+### BLG-SEC-31 — Rate-limit audit on unauthenticated/low-auth endpoints
+**Priority:** P2 (Medium) | **Type:** Security | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260809-01 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** No audit has confirmed which endpoints lack rate-limiting, and whether the unauthenticated/low-auth ones (e.g. health checks) are appropriately protected against abuse.
+**Scope:** Audit endpoint rate-limiting coverage; file fixes for any unprotected unauthenticated endpoint.
+**Acceptance Criteria:** Audit complete; gaps fixed or filed; Cybersecurity & Trust Lead sign-off.
+
+---
+
+### BLG-SEC-32 — Dependency license compliance scan
+**Priority:** P3 (Low) | **Type:** Security / Compliance | **Owner:** Cybersecurity & Trust Lead | **Source:** IDEA-cybersecurity-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** The recurring dependency-vulnerability re-scan cadence (`BLG-SEC-15`) checks for vulnerabilities but not license compliance; no scan has confirmed all dependencies carry compatible licenses.
+**Scope:** Run a license compliance scan across `backend/requirements.txt` and `package.json`; document findings.
+**Acceptance Criteria:** Scan run; any incompatible license flagged and resolved; Cybersecurity & Trust Lead sign-off.
+
+---
+
+### BLG-BE-91 — Enforce trade-plan linkage at position entry + DB-level safeguard against orphaned trade_plans rows
+**Priority:** P1 (High) — escalated from standard idea-intake priority, 2026-08-11, roadmap rebalance (see rationale below) | **Type:** Backend Engineering / Data Integrity | **Owner:** Data Model, Domain & Schema Owner; Backend Engineering Patterns Owner; Product Owner | **Source:** IDEA-data-model-20260809-01 + IDEA-product-owner-20260809-01 (consolidated, genuine same-root-cause overlap per v9.0 convention) | **Effort:** M | **Provisional-Target:** TBD
+> ⚠️ **Priority escalation (2026-08-11, roadmap rebalance STEP 7.1):** Raised to P1 as the Product Owner's named structural response to this cycle's mandatory Skill-Silo pull-forward finding — this item directly targets the root cause (0/11 trade plans currently linked to positions) blocking SI-02's gate condition 1 and, transitively, the entire Arc 5 UX-prep cluster and most of the remaining gated U-item pool. See `cycle_record.md` STEP 7.1.
+**Problem:** `BLG-BE-46`'s forward-fix (shipped v6.8) auto-links *new* trade plans to positions going forward, but does not backfill, and — more importantly — nothing *enforces* the linkage at entry time, so it remains possible to create a position without a linked trade plan (or a trade plan without a subsequent linked position). This is the exact fact keeping SI-02's gate condition 1 (≥20 linked trade plans) at 0 despite 20 total closed trades existing. `BLG-FE-109` (shipped v7.3) made linkage the path of least resistance from the UX side but does not enforce it at the data layer.
+**Scope:** (1) Product-side: confirm/strengthen the entry flow so a trade plan is linked at position creation as the default path, not an optional one; (2) DB-level: add a safeguard (constraint, trigger, or scheduled integrity check) that flags or prevents a new orphaned `trade_plans` row going forward, so this gap cannot silently recur a second time.
+**Acceptance Criteria:** Entry-flow linkage confirmed enforced (staging-verified); DB-level safeguard implemented and tested; Data Model, Domain & Schema Owner + Product Owner sign-off.
+
+---
+
+### BLG-QA-140 — Field-population completeness audit for Arc 6 prerequisite fields
+**Priority:** P3 (Low) | **Type:** QA / Data Quality | **Owner:** Data Model, Domain & Schema Owner; QA & Testing Owner | **Source:** IDEA-data-model-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Arc 6 features (PS-01–05) require `regime_at_entry`, `setup_type`, and similar fields to be populated on every new trade; no audit has confirmed population completeness ahead of the 50/100-trade gates being reached.
+**Scope:** Audit population completeness of Arc 6 prerequisite fields across recent trades; fix any gap found.
+**Acceptance Criteria:** Audit complete; gaps fixed or filed; QA & Testing Owner sign-off.
+
+---
+
+### BLG-GOV-300 — Formal alert threshold for the cross-role workload-concentration check
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Director of HR; Head of Specs Team | **Source:** IDEA-director-of-hr-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `roadmap_prompt.md` §7.2's cross-role workload balance check (`BLG-GOV-270`) surfaces an advisory at a 40% ceiling (mirroring §7.1) but has no independently-justified threshold of its own — it borrowed §7.1's number by analogy.
+**Scope:** Assess whether 40% is the right threshold for cross-role (as opposed to governance-vs-execution) concentration, or whether a distinct threshold is warranted.
+**Acceptance Criteria:** Assessment filed; threshold confirmed or revised in `roadmap_prompt.md` §7.2; Director of HR sign-off.
+
+---
+
+### BLG-GOV-301 — Cross-role escalation response-time tracker
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Director of HR; PMO Lead | **Source:** IDEA-director-of-hr-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Escalations to named roles (e.g. Head of Specs Team 72-hour SLAs) are tracked individually but there is no aggregate view of response-time trends across roles.
+**Scope:** Add a tracker aggregating escalation response times by role across cycles.
+**Acceptance Criteria:** Tracker added; PMO Lead sign-off.
+
+---
+
+### BLG-QA-141 — DEV-* deviation recurrence pattern report
+**Priority:** P3 (Low) | **Type:** QA / Process | **Owner:** Director of Quality | **Source:** IDEA-director-of-quality-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** The cross-cycle deviation consolidation review (`BLG-QA-129`) checks for concentration by spec file but not by root cause — no report groups `DEV-*` records by whether the same underlying defect class recurs across different stories.
+**Scope:** Add a root-cause grouping pass to the deviation consolidation review.
+**Acceptance Criteria:** Report produced for the current deviation set; Director of Quality sign-off.
+
+---
+
+### BLG-QA-142 — Definition-of-Done compliance spot-check across the last 5 cycles
+**Priority:** P3 (Low) | **Type:** QA / Process | **Owner:** Director of Quality | **Source:** IDEA-director-of-quality-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** No periodic spot-check confirms DoQ sign-off blocks across recent cycles genuinely meet the Definition-of-Done bar (as opposed to the automated staleness lint at `BLG-QA-98`, which only checks for stale "Pending" rows, not substantive compliance).
+**Scope:** Spot-check a sample of DoQ sign-offs from the last 5 cycles against the Definition-of-Done checklist.
+**Acceptance Criteria:** Spot-check complete; findings documented; Director of Quality sign-off.
+
+---
+
+### BLG-BE-92 — Multi-currency cost-basis rounding consistency check
+**Priority:** P2 (Medium) | **Type:** Backend Engineering / Financial Correctness | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260809-01 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** UK (.L) and US market positions use different currency cost-basis calculations; no check confirms rounding behaviour is consistent (and correctly specified) across both.
+**Scope:** Audit cost-basis rounding across currencies; document and fix any inconsistency found.
+**Acceptance Criteria:** Audit complete; any inconsistency fixed; Financial Reporting & Records Owner sign-off.
+
+---
+
+### BLG-BE-93 — Closed-trade export completeness check against tax-year boundary edge cases
+**Priority:** P2 (Medium) | **Type:** Backend Engineering / Financial Correctness | **Owner:** Financial Reporting & Records Owner | **Source:** IDEA-financial-reporting-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** The tax-year P&L CSV export has not been specifically checked for trades that close exactly on a tax-year boundary date — an edge case that could cause a trade to be silently omitted from or double-counted across two exports.
+**Scope:** Test the export against boundary-date trades; fix any gap found.
+**Acceptance Criteria:** Boundary-case test added and passing; Financial Reporting & Records Owner sign-off.
+
+---
+
+### BLG-OPS-139 — Render Starter-tier headroom reassessment
+**Priority:** P2 (Medium) | **Type:** Operations / Infrastructure | **Owner:** FinOps & Resource Architect; Infrastructure & Operations Owner | **Source:** IDEA-finops-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** The last Render tier/headroom assessment predates the Arc 5 analytics endpoints and current trade volume; capacity margin has not been reconfirmed since.
+**Scope:** Reassess current Render Starter-tier headroom against current load (trade volume, Arc 5 endpoint traffic).
+**Acceptance Criteria:** Reassessment filed; tier confirmed adequate or upgrade recommended; FinOps & Resource Architect sign-off.
+
+---
+
+### BLG-GOV-302 — Idea-intake / roadmap-session compute cost attribution
+**Priority:** P3 (Low) | **Type:** Governance / FinOps | **Owner:** FinOps & Resource Architect | **Source:** IDEA-finops-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Governance overhead (idea intake, roadmap rebalance sessions) consumes compute/session cost that is not separately attributed from delivery spend, making it hard to assess the true cost-of-governance ratio.
+**Scope:** Add a lightweight cost-attribution note distinguishing governance-overhead sessions from delivery sessions.
+**Acceptance Criteria:** Attribution method documented and applied to at least one cycle retrospectively; FinOps & Resource Architect sign-off.
+
+---
+
+### BLG-SPEC-123 — Component prop-naming convention consistency audit
+**Priority:** P3 (Low) | **Type:** Spec Debt / Frontend | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** IDEA-frontend-specs-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** No audit has confirmed component prop names follow a consistent convention across the codebase — prior drift audits have focused on design tokens and colour, not prop naming.
+**Scope:** Audit prop-naming consistency across shared components; document the convention and fix drift.
+**Acceptance Criteria:** Audit complete; convention documented in `design_system.md`; Frontend Specifications & UX Documentation Owner sign-off.
+
+---
+
+### BLG-SPEC-124 — Canonical "gated" DataState variant and visual/interaction spec for not-yet-unlocked feature surfaces
+**Priority:** P2 (Medium) | **Type:** Spec Debt / Frontend Design | **Owner:** Frontend Specifications & UX Documentation Owner; Head of UX & Design | **Source:** IDEA-frontend-specs-20260809-02 + IDEA-head-of-ux-20260809-02 (consolidated, explicit companion-piece overlap per v9.0 convention) | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** The `design_system.md` DataState pattern (`BLG-SPEC-98` consolidation) does not yet include a canonical "gated"/"not-yet-unlocked" variant, despite the backlog containing a large and growing cluster of gate-blocked features (Arc 5 UX-prep, Arc 6) that will eventually need a consistent way to say "locked" — visually and interactively, not just in copy.
+**Scope:** Define the canonical gated DataState variant (visual treatment) and its interaction spec (what happens on hover/click of a locked surface).
+**Acceptance Criteria:** Variant and interaction spec added to `design_system.md`; Head of UX & Design sign-off.
+
+---
+
+### BLG-QA-143 — Consolidated backend service-layer test-coverage report
+**Priority:** P3 (Low) | **Type:** QA / Testing | **Owner:** Head of Engineering; QA & Testing Owner | **Source:** IDEA-head-of-engineering-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** No consolidated report identifies which `backend/services/*.py` files lack a direct unit test, making coverage gaps hard to spot without an ad hoc grep each time.
+**Scope:** Generate a consolidated report of service files without direct unit test coverage.
+**Acceptance Criteria:** Report generated; gaps triaged; QA & Testing Owner sign-off.
+
+---
+
+### BLG-BE-94 — Pre-Trade Research View query-latency budget review
+**Priority:** P3 (Low) | **Type:** Backend Engineering / Performance | **Owner:** Head of Engineering | **Source:** IDEA-head-of-engineering-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** The Pre-Trade Research View (PT-02, shipped v3.2) has not had a latency review since — over a year of data growth and added panels (Alpaca news, drift streak metric) may have shifted its query budget.
+**Scope:** Review current query latency for the Research View's data sources; confirm still within an acceptable budget.
+**Acceptance Criteria:** Review complete; any regression fixed or filed; Head of Engineering sign-off.
+
+---
+
+### BLG-SPEC-125 — Spec-to-backlog traceability audit
+**Priority:** P3 (Low) | **Type:** Spec Debt / Governance | **Owner:** Head of Specs Team | **Source:** IDEA-head-of-specs-20260809-01 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** No audit confirms every `docs/specs/` file is either linked to an active/shipped backlog item or explicitly marked historical — spec files can silently become orphaned as features evolve.
+**Scope:** Audit `docs/specs/` for orphaned files; link or mark historical as appropriate.
+**Acceptance Criteria:** Audit complete; orphans resolved; Head of Specs Team sign-off.
+
+---
+
+### BLG-SPEC-126 — Canonical glossary consolidation
+**Priority:** P3 (Low) | **Type:** Spec Debt / Governance | **Owner:** Head of Specs Team | **Source:** IDEA-head-of-specs-20260809-02 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** Terms (e.g. "drift score", "compliance score", "grace period") are defined independently and sometimes inconsistently across `strategy_rules.md`, `metrics_definitions.md`, and `data_model.md`.
+**Scope:** Consolidate a canonical glossary cross-referencing each term's authoritative definition location.
+**Acceptance Criteria:** Glossary created; Head of Specs Team sign-off.
+
+---
+
+### BLG-FEAT-84 — Thesis pre-mortem / invalidation-condition capture at trade-plan entry
+**Priority:** P3 (Low) | **Type:** Product Feature | **Owner:** Head of UX & Design; Product Owner | **Source:** IDEA-head-of-ux-20260809-01 | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** The trade plan captures entry thesis but not an explicit "what would prove this thesis wrong" (invalidation condition) at the point of entry — a pre-mortem is a well-established discipline technique this system's own structured checklists do not yet capture.
+**Scope:** Add an optional invalidation-condition field to the trade plan entry flow.
+**Acceptance Criteria:** Field added; captured on new trade plans; Product Owner sign-off.
+
+---
+
+### BLG-OPS-140 — Render dashboard-only build/deploy path filter — canonical documentation + onboarding note
+**Priority:** P2 (Medium) | **Type:** Operations / Infrastructure | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Render's dashboard-only build/deploy path filter setting is invisible to a repo-only search (it lives in the Render dashboard, not version control), and has already caused two silent-drift incidents (`BLG-OPS-82`, `BLG-OPS-90`) where a runtime-read file change was outside the configured filter path.
+**Scope:** Document the current filter configuration canonically (e.g. in `docs/ops/`) and add an onboarding note flagging this as a dashboard-only setting to check whenever a new runtime-read file is added outside the existing filtered paths.
+**Acceptance Criteria:** Documentation added; Infrastructure & Operations Owner sign-off.
+
+---
+
+### BLG-OPS-141 — Staging environment data-reset cadence review
+**Priority:** P3 (Low) | **Type:** Operations / Infrastructure | **Owner:** Infrastructure & Operations Owner | **Source:** IDEA-infra-ops-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** No defined cadence exists for resetting staging environment data; stale or accumulated staging data can make staging verification runs less representative over time.
+**Scope:** Review current staging data state and define an appropriate reset cadence.
+**Acceptance Criteria:** Cadence defined and documented; Infrastructure & Operations Owner sign-off.
+
+---
+
+### BLG-SPEC-127 — Formal definition for the "90-day trade window" cited in SI-02 gate reporting
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Metrics Definitions & Analytics Canonical Owner | **Source:** IDEA-metrics-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** SI-02 gate reporting cites a "90-day trade window" (`_WINDOW_DAYS = 90` in `behavioural_drift_service.py`, cross-referenced at `si02_drift_score.md` §2) informally in `current_roadmap.md` prose; the window itself (rolling vs fixed, timezone handling) is not formally specified.
+**Scope:** Add a formal definition of the 90-day window's exact semantics to `si02_drift_score.md`.
+**Acceptance Criteria:** Definition added; Metrics Definitions & Analytics Canonical Owner sign-off.
+
+---
+
+### BLG-SPEC-128 — Gate-metric naming consistency across roadmap, SI-05 digest, and Reports page
+**Priority:** P3 (Low) | **Type:** Spec Debt | **Owner:** Metrics Definitions & Analytics Canonical Owner | **Source:** IDEA-metrics-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** The same gate metrics (e.g. SI-02 linked-trade-plan count) are referenced with slightly different naming/phrasing across `current_roadmap.md`, the SI-05 digest content, and the Reports page's SI-02 Gate Status section.
+**Scope:** Standardise gate-metric naming across the three surfaces.
+**Acceptance Criteria:** Naming standardised; Metrics Definitions & Analytics Canonical Owner sign-off.
+
+---
+
+### BLG-GOV-303 — Roadmap Unlock Tracker — consolidated view of all gated features and their conditions
+**Priority:** P2 (Medium) | **Type:** Governance / Roadmap Documentation | **Owner:** PMO Lead; Product Owner | **Source:** IDEA-pmo-lead-20260809-01 + IDEA-product-owner-20260809-02 (consolidated, both propose making the same structural reality visible in one place, per v9.0 convention) | **Effort:** M | **Provisional-Target:** TBD
+**Problem:** The roadmap's remaining gated features (SI-02, SI-04, SI-05 Phase 2, PO-02/04/05, PS-01–05, plus the Arc 5 UX-prep cluster) each state their own gate condition individually, but there is no single place showing all gates and their current clearance status together — this cycle's own findings (STEP 2.3, STEP 7.1) had to be manually cross-referenced across `current_roadmap.md` and `backlog.md` to establish that most of the roadmap is currently blocked on a small number of shared root causes.
+**Scope:** Build a consolidated "Roadmap Unlock Tracker" section (in `current_roadmap.md` or a companion document) listing every gated feature, its condition, current status, and — where applicable — which other gates share the same underlying blocker. This formally recognises what this cycle informally found: the back half of the roadmap is substantially data-density-blocked on a small number of shared conditions.
+**Acceptance Criteria:** Tracker created; cross-referenced from `current_roadmap.md` §6; PMO Lead + Product Owner sign-off.
+
+---
+
+### BLG-GOV-304 — Recurring data-density gate trajectory re-estimate cadence
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** PMO Lead | **Source:** IDEA-pmo-lead-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `BLG-GOV-34` (v4.6) was a one-time assessment of data-density gate clearance trajectories (e.g. "at current rate, gate X clears in ~N weeks"); it has never been re-run and is now 3+ months stale.
+**Scope:** Define a recurring cadence for re-estimating data-density gate trajectories (e.g. every N scheduled rebalances) rather than a one-time assessment.
+**Acceptance Criteria:** Cadence defined; first re-estimate run; PMO Lead sign-off.
+
+---
+
+### BLG-QA-144 — Playwright coverage gap audit for Arc5ComplianceSection
+**Priority:** P3 (Low) | **Type:** QA / Testing | **Owner:** QA Lead | **Source:** IDEA-qa-lead-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `Arc5ComplianceSection` (shipped v4.0) has grown several sub-features since (drift streak metric, sparkline candidates) without a corresponding audit confirming Playwright coverage has kept pace.
+**Scope:** Audit current Playwright coverage of `Arc5ComplianceSection`; file gaps found.
+**Acceptance Criteria:** Audit complete; gaps filed; QA Lead sign-off.
+
+---
+
+### BLG-QA-145 — Test-environment parity check — local vs CI vs staging config drift
+**Priority:** P3 (Low) | **Type:** QA / Infrastructure | **Owner:** QA Lead; Infrastructure & Operations Owner | **Source:** IDEA-qa-lead-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** No check confirms local dev, CI, and staging environments remain configuration-consistent (env vars, dependency versions) — drift here can cause "works locally, fails in CI/staging" defects.
+**Scope:** Audit configuration parity across the three environments; document and fix drift found.
+**Acceptance Criteria:** Audit complete; drift fixed or documented as intentional; QA Lead sign-off.
+
+---
+
+### BLG-QA-146 — backend/routers/test.py completeness re-audit
+**Priority:** P3 (Low) | **Type:** QA / Testing | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** The endpoint-registration test-completeness gate has been in place for several cycles; no recent re-audit confirms zero drift has crept in since introduction.
+**Scope:** Re-audit `backend/routers/test.py` against all `@router.*` decorators for completeness.
+**Acceptance Criteria:** Re-audit complete; any gap fixed; QA & Testing Owner sign-off.
+
+---
+
+### BLG-QA-147 — Regression suite runtime budget & trend report (last 90 days)
+**Priority:** P3 (Low) | **Type:** QA / CI | **Owner:** QA & Testing Owner | **Source:** IDEA-qa-testing-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** `BLG-QA-134` (v7.9 window) defined a runtime budget but no trend report has been produced yet showing whether the suite is tracking within or drifting beyond it over the last 90 days.
+**Scope:** Produce the first 90-day trend report against the `BLG-QA-134` budget.
+**Acceptance Criteria:** Trend report produced; QA & Testing Owner sign-off.
+
+---
+
+### BLG-GOV-305 — §13 policy question: are confidence-interval-qualified "preview" analytics compatible with the deterministic/non-predictive boundary?
+**Priority:** P2 (Medium) | **Type:** Governance / Strategy Policy | **Owner:** Strategy Rules & System Intent Owner | **Source:** IDEA-strategy-owner-20260809-01 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** Arc 6 items (PS-01/PS-02-style) are gated on trade-count thresholds (50+) before shipping; no policy has considered whether a confidence-interval-qualified "preview" version below the gate (explicitly labelled as statistically provisional) would remain §13-compliant, potentially offering earlier partial value without violating the deterministic/non-predictive boundary.
+**Scope:** Strategy Rules & System Intent Owner to formally assess this policy question and record a determination (permitted / not permitted / permitted with conditions).
+**Acceptance Criteria:** Determination recorded, citing the relevant `strategy_rules.md §13` clause; Strategy Rules & System Intent Owner sign-off.
+
+---
+
+### BLG-GOV-306 — Strategy rules change-justification template
+**Priority:** P3 (Low) | **Type:** Governance / Process | **Owner:** Strategy Rules & System Intent Owner | **Source:** IDEA-strategy-owner-20260809-02 | **Effort:** S | **Provisional-Target:** TBD
+**Problem:** When `strategy_rules.md` is version-bumped, there is no required template ensuring the change cites the trade-history evidence (if any) motivating it — SI-04 (Strategy Version Comparison) will eventually need this history to be traceable.
+**Scope:** Add a change-justification template section to `strategy_rules.md`'s own change-log convention.
+**Acceptance Criteria:** Template added; applied to the next `strategy_rules.md` version bump; Strategy Rules & System Intent Owner sign-off.
+
+---

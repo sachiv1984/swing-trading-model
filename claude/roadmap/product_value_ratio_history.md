@@ -2,7 +2,7 @@
 **Class:** Operational Record (Class 3)
 **Status:** Active
 **Version:** 1.0
-**Last Updated:** 2026-08-10 (ST-22, EPIC-06, v8.5 — created, backfilled from decision_log.md prose DL-057 through DL-077)
+**Last Updated:** 2026-08-11 (roadmap rebalance 2026-08-11__scheduled — appended row for DL-078, refreshed sparkline); prior — 2026-08-10 (ST-22, EPIC-06, v8.5 — created, backfilled from decision_log.md prose DL-057 through DL-077)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Created by:** ST-22 (BLG-FEAT-72, EPIC-06, v8.5)
 
@@ -16,10 +16,10 @@
 
 This file is the structured, durable record going forward: one row per rebalance with a PVR reading, appended by `roadmap_prompt.md` STEP 2.4 in the same run that writes `run_manifest.md`. `decision_log.md`'s prose sentence remains the historical narrative record (unchanged), but this file — not prose re-reading — is now the source for trend/sustained-tier checks (e.g. the 3-consecutive-Advisory-readings mandatory-pull-forward rule).
 
-## Sparkline (all readings, chronological, ▁=0.18 min · █=0.42 max recorded)
+## Sparkline (all readings, chronological, ▁=0.110 min · █=0.42 max recorded)
 
 ```
-▇▆▆▅▅▃▁▂▅▅▄▇██▇
+▇▇▆▆▅▄▂▂▆▆▅▇██▇▁
 ```
 
 ## History
@@ -41,10 +41,11 @@ This file is the structured, durable record going forward: one row per rebalance
 | 2026-07-24__scheduled | 2026-07-24 | 0.42 | Advisory (improved from 0.39) | — | — | — | — | — | — (breakdown not recorded in decision_log.md prose this cycle) | DL-075 |
 | 2026-07-27__scheduled | 2026-07-27 | 0.42 | Advisory (unchanged tier) | — | — | — | — | — | v7.4-v7.8 (breakdown not recorded in decision_log.md prose this cycle) | DL-076 |
 | 2026-07-28__scheduled | 2026-07-28 | 0.38 | Advisory (down from 0.42) | — | — | — | — | — | v7.5-v7.9 (breakdown not recorded in decision_log.md prose this cycle) | DL-077 |
+| 2026-08-11__scheduled | 2026-08-11 | 0.110 | 🔴 Alert (first time below 0.30 floor since 2026-07-12) | 14 | 30 | 80 | 3 | 127 | v8.1-v8.5 | DL-078 |
 
-**Consecutive Advisory-tier streak (as of last reading):** 3 (2026-07-24, 2026-07-27, 2026-07-28 — none of the three reached Healthy ≥0.50 or dropped into Alert <0.30). Per `roadmap_prompt.md` STEP 2.4's sustained-Advisory clause (v9.9, BLG-GOV-268), this already triggered the mandatory-pull-forward requirement at the 2026-07-28 reading; see that cycle's own record for the Product Owner's committed U-item.
+**Consecutive Advisory-tier streak (broken 2026-08-11):** The prior 3-reading Advisory streak (2026-07-24, 2026-07-27, 2026-07-28) ended this reading — not because it improved to Healthy, but because it dropped through Advisory straight into 🔴 Alert. Per `roadmap_prompt.md` STEP 2.4's Alert-tier rule (stronger than the sustained-Advisory clause), this reading independently mandates a pull-forward with explicit PO written response — see `cycle_record.md` 2026-08-11__scheduled STEP 2.4/STEP 7.1 for the combined response (this reading's root cause is the same one driving the concurrent Skill-Silo mandatory-pull-forward trigger).
 
-**No rebalance since 2026-07-28__scheduled** — `.claude_current_state.json`'s `last_rebalance_cycle`/`last_scheduled_rebalance_utc` confirm 2026-07-28 is still the most recent scheduled rebalance as of this file's creation (2026-08-10) — this history is current, not stale, as of that fact.
+**Most recent scheduled rebalance:** 2026-08-11__scheduled — this history is current as of that run.
 
 ## Backfill Method
 
