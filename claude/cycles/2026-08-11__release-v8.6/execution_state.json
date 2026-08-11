@@ -446,7 +446,7 @@
       }
     },
     "EPIC-06": {
-      "status": "not_started",
+      "status": "in_progress",
       "branch": "exec/2026-08-11__release-v8.6/EPIC-06",
       "pr_number": null,
       "pr_status": "none",
