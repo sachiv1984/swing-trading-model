@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 2.25
-**Last Updated:** 2026-08-08
+**Version:** 2.26
+**Last Updated:** 2026-08-10
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 **Process Reference:** docs/team_skills/pmo/processess/post-ship_closure.md (v2.0)
@@ -517,10 +517,12 @@ From `verification_report.md §6` (Test Coverage Assessment) and `qa_evidence_EP
 
 ### 7.3 TSG backlog reconciliation (AUD-2026-06-22-005)
 
-For each entry in §27 (Technical Specification Gaps) with status "Open":
-1. Look up the corresponding BLG item ID in `claude/backlog/backlog.md`.
-2. If the BLG item is marked COMPLETE or DONE: update the §27 entry status from "Open" to "RESOLVED" and record the cycle in which it was resolved.
-3. If the BLG item remains open: leave the §27 entry unchanged.
+**No fixed section number (LL-v8.4-Closure-01, self-confirmed at `2026-08-08__release-v8.5` closure):** `Specs_Index.md`'s Test Coverage Gap register is append-only and chronologically numbered — a new `## N. Test Coverage Gaps — vX.Y` section is appended each cycle one fires, so the section number drifts every cycle and no fixed number (the historical "§27" reference below is already stale) reliably names the register. Scan the full document for `**Status:** Open` fields belonging to a `TSG-*`-prefixed entry (pattern: a `### N.N TSG-<id> — <title>` heading followed by a `**Status:**` field) instead of relying on any single section number.
+
+For each such entry found with status "Open":
+1. Look up the corresponding BLG item ID cited in the entry's own `**Backlog item:**` field, in `claude/backlog/backlog.md`.
+2. If the BLG item is marked COMPLETE or DONE: update the entry's status from "Open" to "RESOLVED" and record the cycle in which it was resolved.
+3. If the BLG item remains open: leave the entry unchanged.
 
 Record any corrections made in `lessons_learnt_closure.md` "What worked well" or "Friction Log" as applicable. This prevents stale "Open" TSG entries from accumulating across cycles and misleading roadmap engine STEP 0 gap-checks.
 

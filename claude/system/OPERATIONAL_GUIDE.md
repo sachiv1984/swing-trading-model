@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.152
+**Version:** 4.153
 **Last Updated:** 2026-08-10
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -1059,7 +1059,7 @@ If test scenario gaps are found (scenarios that exist in `docs/testing/` but wer
 
 ## 10. Post-Ship Closure
 
-**Source prompt:** `claude/system/post_ship_closure.md` (v2.25)
+**Source prompt:** `claude/system/post_ship_closure.md` (v2.26)
 **Process document:** `docs/team_skills/pmo/processess/post-ship_closure.md` (v2.0)
 **Owner:** PMO Lead
 **Trigger:** Phase 4 complete — `.claude_current_state.json` status = `Verified` or `Verified_with_deviations`
@@ -1472,7 +1472,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.8 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.7 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
-| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.25 |
+| Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.26 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.27 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.153 | 2026-08-10 | **Post-ship closure `2026-08-08__release-v8.5` STEP 8, immediate lessons-learnt action — post_ship_closure.md v2.25→v2.26: STEP 7.3 hardcoded "§27" TSG reference replaced with a full-document scan.** §10 source prompt header v2.25→v2.26 (line 1062). §14 Post-Ship Closure Engine v2.25→v2.26. §14 Version 4.152→4.153/2026-08-10. Change: `Specs_Index.md`'s Test Coverage Gap register is append-only/chronologically-numbered, so a fixed section number drifts stale every cycle a new section is appended — STEP 7.3 now scans the full document for `**Status:** Open` fields on `TSG-*`-prefixed entries instead. Self-confirmed live during this same closure's own STEP 7 run (actual §27 is "Test Coverage Gaps — v5.0"; the one genuinely Open TSG entry, `TSG-v33-03`, sits at §19.3) — closes a deferred patch carried forward without a `prompt_change_log.md` entry for 2 consecutive cycles (`2026-08-07__release-v8.4` closure carry-forward #2), applied now per STEP 8's non-deferrable-immediate-action rule rather than deferred a 3rd time. Authority: Head of Specs Team (post-ship closure `2026-08-08__release-v8.5`, STEP 8 immediate-action rule). |
 | 4.152 | 2026-08-10 | **Sprint execution `2026-08-08__release-v8.5` EPIC-06/ST-23 (BLG-GOV-288) — release_planning_prompt.md v2.48→v2.49: root `sprint_sealed` reset on new-cycle publish.** §6B source prompt header v2.48→v2.49 (line 623). §14 Release Engine Source v2.48→v2.49. §14 Version 4.151→4.152/2026-08-10. Change: STEP 7's intermediate `.claude_current_state.json` sync now resets `sprint_sealed: false` atomically with `active_cycle` switching to the new cycle_id — same single-write-site pattern already used for `design_gate_status`. Previously nothing reset this field between cycles, so it carried a stale `true` from the prior cycle's Sprint Planning seal (observed live at the `2026-08-07__release-v8.4` design gate). STEP 0 gains a cross-reference note (the originating backlog item named that step; the technically correct write site, matching the `design_gate_status` precedent, is STEP 7). Authority: Head of Specs Team (Sprint Execution Engine, ST-23, 2026-08-10). |
 | 4.151 | 2026-08-10 | **Sprint execution `2026-08-08__release-v8.5` EPIC-06/ST-22 (BLG-FEAT-72) — roadmap_prompt.md v9.13→v9.14: STEP 2.4 gains a structured Product Value Ratio history record.** §6 source prompt header v9.13→v9.14 (line 399). §14 Roadmap Engine Source v9.13→v9.14. §14 Version 4.149→4.151/2026-08-10 (see cross-branch note below). Change: new `claude/roadmap/product_value_ratio_history.md` (backfilled DL-057 through DL-077 from `decision_log.md` prose) — STEP 2.4 now appends a structured row here every rebalance, and the sustained-Advisory-tier consecutive-readings check reads this file instead of re-deriving from `decision_log.md` prose. **Cross-branch version note:** this EPIC-06 branch was cut before `EPIC-02` (also `2026-08-08__release-v8.5`) merged to `main`; `EPIC-02`'s own governance edit (ST-04, `shared_standards.md` §20) independently claimed `4.150` for a different change on its own branch. Deliberately skipped `4.150` here and used `4.151` to avoid the identical-version-different-change collision CLAUDE.md §8 step 2a exists to catch — chosen proactively in the same session that authored both changes, rather than left for a future merge-time renumbering; confirmed correctly non-colliding at merge time below. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-22, 2026-08-10). |
 | 4.150 | 2026-08-10 | **Sprint execution `2026-08-08__release-v8.5` EPIC-02/ST-04 (BLG-SEC-15) — shared_standards.md v3.26→v3.27: new §20 Dependency Vulnerability Scan Cadence.** §14 Shared Standards v3.26→v3.27. §14 Version 4.149→4.150/2026-08-10. Change: documents the three-tier dependency vulnerability scan cadence (per-PR pip-audit-only gate, pre-sprint pip-audit-only check, and the new monthly scheduled combined pip-audit + npm audit re-scan — `.github/workflows/dependency-vuln-rescan.yml`) and its new-vs-known-baseline dedup mechanism (`docs/security/dependency_vuln_baseline.json`). **Self-caught header-drift correction in the same edit:** this document's own top `**Version:**` header had drifted to 4.147 while the table's actual latest row already read 4.149 (2 versions behind, same class of drift the v4.85 Change Log note above warns against) — corrected to 4.150 per that note's own instruction to read the table's top row, not the header field, before incrementing. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-04, 2026-08-10). |

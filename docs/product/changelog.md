@@ -3,9 +3,59 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-08 (post-ship closure 2026-08-07__release-v8.4); prior — 2026-08-07 (post-ship closure 2026-08-05__release-v8.3)
+**Last Updated:** 2026-08-10 (post-ship closure 2026-08-08__release-v8.5); prior — 2026-08-08 (post-ship closure 2026-08-07__release-v8.4); prior — 2026-08-07 (post-ship closure 2026-08-05__release-v8.3)
 
 > This document is a human-maintained record of what was shipped in each product version and when. It records delivery milestones and notable decisions. It is not an immutable system record — for point-in-time system status reports, see `docs/operations/status_reports/`.
+
+---
+
+## v8.5 — Frontend Correctness, Design Consistency & Security Hardening — 2026-08-10
+Cycle: 2026-08-08__release-v8.5
+Verified: Verified
+Verification report: claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### Changes shipped
+| EPIC | Description | Spec sections updated |
+|------|-------------|----------------------|
+| EPIC-01 | Production correctness fixes — `GET /analytics/tag-performance` 500 on staging (missing `trade_tags` table ensure); confirmed and hardened `api-key-cross-environment-check.yml` (real gap: unhandled probe timeout masquerading as a cross-wired-keys false alarm) | `docs/specs/api_contracts/analytics_endpoints.md`; `docs/security/api_key_security_register.md`; `.github/workflows/api-key-cross-environment-check.yml` |
+| EPIC-02 | Security hardening — security-fix false-positive rate assessment (0% measured); new monthly dependency-vulnerability re-scan cadence (pip-audit + npm audit); Application X-API-Key rotation runbook | `st03_sec02_false_positive_rate_assessment.md`; `.github/workflows/dependency-vuln-rescan.yml`; `scripts/check_dependency_vuln_rescan.py`; `docs/ops/api_key_rotation_policy.md` |
+| EPIC-03 | Frontend correctness fixes — registered `muted`/`muted-foreground` design tokens in `tailwind.config.js`; frontend wiring for `trade_plans.thesis_model_version`/`thesis_prompt_version` on save; exact-zero P&L colour convention reconciled between Monthly P&L and Tax Year tables. Systemic fix found and applied at the root: the app-wide `dark` theme class was never applied to `document.documentElement`, so every Radix Dialog-based component (14+ consumers) was always rendered in light-theme CSS scope regardless of the user's actual theme (`src/Layout.js`) | `tailwind.config.js`; `docs/specs/api_contracts/trade_plan_endpoints.md`; `docs/design/2026-08-08__release-v8.5/exact-zero-pnl-colour-convention/decision_record.md`; `docs/specs/frontend/pages/reports.md` |
+| EPIC-04 | Design-system & contrast consistency audit — v6.7 secondary-text token drift audit (6 instances found, follow-up filed); empty-state microcopy consistency pass (trailing-period fix on 2 pages); theme-toggle persistence confirmed correct, flash-on-load defect fixed; mobile-responsive audit for PerformanceAnalytics (4 drift instances fixed); dark/light contrast audit follow-up; ad hoc component inventory for shared design-system extraction candidates | `st09_secondary_text_token_audit_findings.md`; `docs/design/2026-08-08__release-v8.5/empty-state-microcopy-pattern/decision_record.md`; `docs/specs/frontend/design_system.md`; `docs/specs/frontend/pages/analytics.md`; `st13_dark_light_contrast_audit_followup.md`; `st14_ad_hoc_component_inventory.md` |
+| EPIC-05 | Frontend UX review & documentation — nav bar redesign exploration (no redesign warranted at current scale); SI-05 Telegram digest user journey map refreshed (found stale, 2 friction items already resolved); reusable empty-state component spec added to the Base44 prompt template library; Reports page information hierarchy review (2 follow-ups filed); `ChartStyle`/`calendar.js` consumer checks confirmed both remain unused, no action needed | `st15_nav_bar_redesign_exploration.md`; `docs/ux/si05_user_journey_map.md`; `docs/specs/frontend/base44_prompt_template_library.md#12. Template: Standard Full-Page/Section Empty-State (Non-Card Context)`; `st18_reports_page_information_hierarchy_review.md`; `st19_st20_chart_calendar_consumer_check.md` |
+| EPIC-06 | Analytics & governance process fixes — new `GET /screener/regime-distribution` endpoint and Regime History panel; Product Value Ratio historical trend chart (structured record, backfilled DL-057–077); Release Planning `sprint_sealed` reset-on-publish fix; `CLAUDE.md` §8 sibling-vs-sibling union clause for cross-EPIC array-field merges; fixed unrestored `sys.modules` stubbing in `test_alerts_service.py` (cross-file test pollution) | `docs/specs/api_contracts/screener_api_contract.md#GET /screener/regime-distribution`; `claude/roadmap/product_value_ratio_history.md`; `claude/system/release_planning_prompt.md#STEP 7`; `CLAUDE.md#8. Cross-EPIC Merge Conflict Resolution`; `tests/test_alerts_service.py` |
+
+### Deviations accepted
+None — zero deviations filed this sprint (all six `qa_evidence_EPIC-xx.md` logs record "Known deviations filed: None"). ST-08 resolved a deviation opened in a prior cycle (`DEV-REPORTS-ST01-02`) rather than filing a new one.
+
+### Tech backlog items shipped
+- [ST-01] [D] Fix `GET /analytics/tag-performance` 500 on staging (missing `trade_tags` column ensure)
+- [ST-02] [D] Confirm `api-key-cross-environment-check.yml` is genuinely running, not silently skipping — hardened a real probe-timeout/false-alarm gap found live
+- [ST-03] [D] Security fix false-positive rate assessment (BLG-SEC-02) — 0% measured
+- [ST-04] [D] Recurring dependency vulnerability re-scan cadence (consolidated pip-audit + npm audit)
+- [ST-05] [D] API key rotation runbook (Application X-API-Key)
+- [ST-06] [U] Register `muted`/`muted-foreground` design tokens in `tailwind.config.js` — also surfaced and fixed the app-wide dark-mode-portal CSS scoping bug
+- [ST-07] [D] Frontend wiring to populate `trade_plans.thesis_model_version`/`thesis_prompt_version` on save
+- [ST-08] [U] Reconcile Monthly P&L vs Tax Year table's exact-zero P&L colour convention
+- [ST-09] [D] Design token audit: v6.7 contrast fix consistency (6 drift instances found, follow-up filed)
+- [ST-10] [U] Empty-state illustration/microcopy consistency pass
+- [ST-11] [U] Confirm theme-toggle persistence across sessions — fixed flash-on-load defect
+- [ST-12] [U] Mobile responsive audit for PerformanceAnalytics page (4 drift instances fixed)
+- [ST-13] [D] Dark/light theme contrast audit follow-up
+- [ST-14] [D] Ad hoc component inventory: candidates for shared design-system extraction
+- [ST-15] [D] Nav bar redesign exploration — no redesign warranted
+- [ST-16] [D] User journey map: SI-05 Telegram digest to app action — refreshed, found stale
+- [ST-17] [P] Reusable empty-state component spec for Base44 prompts
+- [ST-18] [D] Reports page information hierarchy review — 2 follow-ups filed
+- [ST-19] [D] Rework ChartStyle `style-src 'unsafe-inline'` dependency — trigger condition unmet, no consumer
+- [ST-20] [D] Playwright/staging visual verification of `calendar.js` — trigger condition unmet, no consumer
+- [ST-21] [U] Regime distribution metric over screener history — new endpoint + Regime History panel
+- [ST-22] [G] Product Value Ratio historical trend chart (internal governance tooling)
+- [ST-23] [G] Release Planning `sprint_sealed` reset-on-publish fix
+- [ST-24] [G] `CLAUDE.md` §8 sibling-vs-sibling union clause for `execution_state.json` array fields
+- [ST-25] [D] Fix unrestored `sys.modules` stubbing in `test_alerts_service.py` (cross-file test pollution)
+
+Sign-off: Product Owner — 2026-08-10
+QA sign-off: Director of Quality — 2026-08-10
 
 ---
 

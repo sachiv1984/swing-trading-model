@@ -1,9 +1,13 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v8.5
 Cycle: 2026-08-08__release-v8.5
-Last Updated: 2026-08-08
+Last Updated: 2026-08-10 (post-ship closure — superseded on ship)
+
+Superseded by: v8.5 ship — 2026-08-10
+Changelog: docs/product/changelog.md#v8.5
+Cycle: 2026-08-08__release-v8.5
 
 ## Planning Decisions — v8.5 Frontend Correctness, Design Consistency & Security Hardening
 

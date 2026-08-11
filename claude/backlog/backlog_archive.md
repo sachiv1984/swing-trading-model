@@ -1,11 +1,826 @@
 **Owner:** Product Owner
 **Class:** Planning Document (Class 4)
 **Status:** Active
-**Last Updated:** 2026-08-08 (groom backlog post-ship closure 2026-08-07__release-v8.4 — 31 items archived: BLG-FE-141, BLG-SPEC-116, BLG-SPEC-112, BLG-SPEC-113, BLG-SPEC-114, BLG-SPEC-115, BLG-SPEC-106, BLG-SPEC-109, BLG-SPEC-97, BLG-BE-82, BLG-BE-83, BLG-BE-70, BLG-BE-77, BLG-BE-78, BLG-FE-142, BLG-FE-140, BLG-FE-98, BLG-SEC-12, BLG-OPS-132, BLG-OPS-133, BLG-OPS-54, BLG-OPS-122, BLG-OPS-123, BLG-OPS-72, BLG-QA-135, BLG-QA-116, BLG-QA-110, BLG-QA-70, BLG-GOV-286, BLG-GOV-212, BLG-FEAT-78; 2 ephemeral Release Slice sections removed — v8.3 (missed at the 2026-08-07 run, corrected this run) and v8.4); prior — 2026-08-07 (groom backlog post-ship closure 2026-08-05__release-v8.3 — 27 items archived: BLG-OPS-129, BLG-OPS-130, BLG-OPS-131, BLG-SEC-17, BLG-BE-37, BLG-BE-57, BLG-BE-67, BLG-BE-69, BLG-BE-79, BLG-BE-80, BLG-FE-103, BLG-FE-121, BLG-FE-126, BLG-FE-132, BLG-FE-81, BLG-QA-86, BLG-QA-94, BLG-QA-98, BLG-SPEC-88, BLG-SPEC-96, BLG-SPEC-108, BLG-GOV-124, BLG-GOV-204, BLG-GOV-237, BLG-GOV-257, BLG-GOV-270, BLG-FEAT-45); prior — 2026-08-05 (groom backlog post-ship closure 2026-08-04__release-v8.2 — 25 items archived); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
+**Last Updated:** 2026-08-10 (groom backlog post-ship closure 2026-08-08__release-v8.5 — 25 items archived: BLG-BE-86, BLG-OPS-134, BLG-SEC-10, BLG-SEC-15, BLG-SEC-16, BLG-FE-145, BLG-FE-143, BLG-FE-144, BLG-FE-91, BLG-FE-92, BLG-FE-93, BLG-FE-94, BLG-FE-100, BLG-FE-133, BLG-FE-27, BLG-FE-65, BLG-FE-99, BLG-FE-101, BLG-FE-146, BLG-FE-139, BLG-FEAT-29, BLG-FEAT-72, BLG-GOV-288, BLG-GOV-289, BLG-QA-105); prior — 2026-08-08 (groom backlog post-ship closure 2026-08-07__release-v8.4 — 31 items archived; 2 ephemeral Release Slice sections removed — v8.3, v8.4); prior — 2026-08-07 (groom backlog post-ship closure 2026-08-05__release-v8.3 — 27 items archived); prior history retained — see prior entries in version control (chain truncated 2026-08-07, §16.14 scope-broadening review, CLAUDE.md §2).
 
 # Backlog Archive — Momentum Trading Assistant
 
 Permanent record of completed and killed backlog items retired from `claude/backlog/backlog.md`. Listed in retirement order, most recent first. Append-only — do not edit existing entries.
+
+---
+
+### BLG-BE-86 — GET /analytics/tag-performance returns 500 on staging (missing trade_tags column ensure)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-01); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-BE-86 — GET /analytics/tag-performance returns 500 on staging (missing trade_tags column ensure)
+**Priority:** P1 (High)
+**Type:** Backend Engineering
+**Owner:** Head of Backend Engineering
+**Source:** ST-20 (EPIC-05, 2026-08-07__release-v8.4), live endpoint latency measurement — found a real 500, not a timing result — 2026-08-08
+**Effort:** XS (<1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-01)
+
+**Problem**
+`GET /analytics/tag-performance?tags=momentum` returned HTTP 500 on every one of 7 live staging samples taken during ST-20's latency measurement (real, authenticated calls — not an auth-rejection artifact). Root cause, confirmed by code inspection: `get_tag_performance_endpoint()` (`backend/routers/analytics.py`) queries `tp.trade_tags` directly without ever calling `ensure_trade_plan_tags_column()` (`database.py`) — the idempotent `ALTER TABLE trade_plans ADD COLUMN IF NOT EXISTS trade_tags ...` migration added for this exact column (`BLG-FEAT-52`, v6.8). That migration is only ever triggered lazily, from `ensure_trade_plans_table()`, and that function is only called from `backend/routers/trade_plans.py`'s own endpoints (11 call sites) — never from `analytics.py`, and never at app startup (`main.py`'s `@app.on_event("startup")` handler has no call to it either). On any database where no `/trade-plans/*` endpoint has run since the `trade_tags` migration was introduced, the column genuinely does not exist yet, and this endpoint fails with a real Postgres error, masked into a generic `{"status": "error", "message": "Tag performance failed: ..."}` 500 by the handler's broad `except Exception`.
+
+**Scope**
+- Add `ensure_trade_plan_tags_column()` (or the broader `ensure_trade_plans_table()`) call to `get_tag_performance_endpoint()` before querying `trade_tags`, matching the lazy-ensure pattern already used by every `trade_plans.py` endpoint
+- Alternatively (preferred, if scope allows): move `ensure_trade_plans_table()` into `main.py`'s startup sequence alongside the other `ensure_*` calls already there, closing the same class of gap for any other future `trade_plans`-adjacent endpoint added outside `trade_plans.py`
+- Confirm fix against a database that has never had `trade_plans.py` exercised (or manually drop the column in a test DB) — the bug will not reproduce on a database where any trade-plan endpoint has already run once
+
+**Acceptance Criteria**
+- `GET /analytics/tag-performance` returns 200 (or a real 400/404 for genuinely invalid input) on a database where `trade_tags` was never previously ensured
+- No regression to existing `trade_plans.py` endpoints' own `ensure_trade_plans_table()` calls
+- Root cause note added to `docs/ops/api_performance_baseline.md`'s entry for this endpoint (ST-20) is confirmed resolved and updated once this ships
+
+---
+
+---
+
+### BLG-OPS-134 — api-key-cross-environment-check.yml has been silently no-op'ing since it shipped (STAGING_API_KEY secret was never set)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P1 (High)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-02); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-OPS-134 — api-key-cross-environment-check.yml has been silently no-op'ing since it shipped (STAGING_API_KEY secret was never set)
+**Priority:** P1 (High)
+**Type:** Operations / Security
+**Owner:** Infrastructure & Operations Owner
+**Source:** ST-20 (EPIC-05, 2026-08-07__release-v8.4), discovered while dispatching a live staging measurement workflow — 2026-08-08
+**Effort:** XS (<1 day — verification only, the fix itself was applied in-session)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-02)
+
+**Problem**
+`api-key-cross-environment-check.yml` (`BLG-OPS-131`, v8.3) runs daily to confirm staging's and production's `X-API-Key` values remain distinct — the whole point of `BLG-SEC-27`'s v8.2 key rotation. Its own script has a guard: if `STAGING_API_KEY` (or `API_URL`/`API_KEY`) isn't configured as a repo secret, it logs a warning and exits 0 (skipped, not failed) — a deliberate design choice to avoid failing the workflow on missing config, but one that means a genuinely missing secret produces the same "green" result as a passing check. `gh secret list` confirmed `STAGING_API_KEY` was never actually set as a repo secret — meaning this daily check has been silently skipping its actual comparison every single day since the workflow shipped, with no failure signal anywhere. The secret was set in-session (2026-08-08, for ST-20's own unrelated live-measurement need) as a side effect, which incidentally un-breaks this workflow too — but the fact that it was missing for this long, undetected, is the actual gap.
+
+**Scope**
+- Confirm `api-key-cross-environment-check.yml`'s next scheduled (or a manually triggered) run actually performs the comparison now that `STAGING_API_KEY` is set (check the run log for the real comparison output, not just a green checkmark)
+- Consider hardening the workflow's own skip-guard: a silent `::warning::` + exit 0 for 5+ months (v8.3 ship to now) is exactly the failure mode this item describes — evaluate whether a missing-secret condition should instead fail loudly (or post to a monitoring channel) rather than degrade silently to "skipped, reported as passed"
+
+**Acceptance Criteria**
+- Confirmed (via a real run's log) that the cross-environment comparison is now executing, not skipping
+- Decision recorded on whether the skip-guard's silent-pass behaviour should be hardened, and if so, implemented
+
+---
+
+---
+
+### BLG-SEC-10 — Security fix false-positive rate assessment
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-03); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-SEC-10 — Security fix false-positive rate assessment
+**Priority:** P2 (Medium)
+**Type:** Security / QA
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** IDEA-metrics-20260702-02 (IW-20260702-01) — Backlog (gate-conditional), 3-cycle hard cap; rebalance 2026-07-06__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-03)
+**Gate criteria:** ~~A production observation window of ≥30 days post-BLG-SEC-02 ship (shipped v6.4, 2026-07-02; clears ~2026-08-01). Revisit alongside BLG-QA-70.~~ **Gate cleared 2026-08-08** — 37 days in production since v6.4 (2026-07-02) with no incident on record.
+
+**Problem**
+BLG-SEC-02's write-time validation just shipped; a false-positive rate cannot be meaningfully measured without a production observation window.
+
+**Scope**
+- Measure false-positive rate of BLG-SEC-02 validation once the observation window elapses, alongside BLG-QA-70
+
+**Acceptance Criteria**
+- Measurement conducted only after gate condition (30-day window) confirmed
+
+---
+
+---
+
+### BLG-SEC-15 — Recurring dependency vulnerability re-scan cadence (consolidated)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-04); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-SEC-15 — Recurring dependency vulnerability re-scan cadence (consolidated)
+**Priority:** P2 (Medium)
+**Type:** Security
+**Owner:** Cybersecurity & Trust Lead
+**Source:** Idea intake IW-20260710-01 (IDEA-cybersecurity-20260710-01), roadmap rebalance 2026-07-10__scheduled; consolidates BLG-OPS-93 (automate monthly dependency vulnerability re-scan) and BLG-SEC-19 (formalise npm audit + pip-audit sweep cadence) — the same underlying capability was re-proposed across the 2026-07-08 and 2026-07-17 idea-intake cycles without cross-reference to this existing item — merged 2026-07-27, session duplicate-consolidation cleanup
+**Effort:** S (~0.5–2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-04)
+**Gate criteria:** None
+
+**Problem**
+`pip-audit` runs at sprint planning (`sprint_planning_notes.md` §Pre-Sprint Vulnerability Scan) and `npm audit`/`pip audit` are otherwise run ad hoc rather than on a fixed schedule, with no documented recurring cadence independent of sprint planning or any single backlog item — new CVEs in existing dependencies could go unnoticed between ad hoc scans.
+
+**Scope**
+- Add a scheduled CI job (e.g. monthly) running both `pip-audit` and `npm audit`, independent of sprint planning
+- File a backlog item for any new HIGH/CRITICAL finding
+- Document the combined cadence (sprint planning + scheduled interval) explicitly in `sprint_planning_prompt.md` or `shared_standards.md`
+
+**Acceptance Criteria**
+- Scheduled job runs successfully at least once and reports results for both `pip-audit` and `npm audit`
+- Combined cadence documented
+- New HIGH/CRITICAL findings result in a filed backlog item
+
+---
+
+---
+
+### BLG-SEC-16 — API key rotation runbook
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-05); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-SEC-16 — API key rotation runbook
+**Priority:** P2 (Medium)
+**Type:** Security
+**Owner:** Cybersecurity & Trust Lead
+**Source:** Idea intake IW-20260710-01 (IDEA-cybersecurity-20260710-02), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-05)
+**Gate criteria:** None
+
+**Problem**
+The application `X-API-Key` was formally registered in v6.8 (BLG-OPS-99) but no rotation procedure has been documented — if the key were ever compromised, there is no defined runbook for rotating it.
+
+**Proposed solution**
+Document a rotation runbook: steps, owner, and verification checklist for rotating the registered API key.
+
+---
+
+---
+
+### BLG-FE-145 — text-muted-foreground (and likely other text-muted-*/bg-muted-*/border-muted-* classes) generate no CSS — not registered in tailwind.config.js
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-06); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FE-145 — text-muted-foreground (and likely other text-muted-*/bg-muted-*/border-muted-* classes) generate no CSS — not registered in tailwind.config.js
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-15 (EPIC-04, 2026-08-07__release-v8.4), self-caught scope gap during `docs/ops/dialog_classname_override_audit_2026-08-07.md`
+**Effort:** S (~0.5d — grep + fix + spot-check affected components)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-06)
+
+**Problem**
+`tailwind.config.js`'s `theme.extend.colors` only registers `background` and `foreground` (plus a placeholder comment "`// (all your Base44 extended colors here)`"). `--muted` and `--muted-foreground` exist as raw CSS custom properties in `src/index.css` (light and dark values both defined) but are never wired into Tailwind's colour scale. Confirmed via a real `tailwindcss` build (v3.4.19, project's actual config) that `text-muted-foreground` compiles to **zero CSS rules** — it is a fully dead class. `src/components/ui/dialog.js`'s `DialogDescription` uses it as its entire base text colour, and it is very likely used elsewhere across the app (not audited here — out of ST-15's scope, which was specifically the `cn()`-has-no-tailwind-merge override-collision defect class on `Dialog*` consumers, not colour-token registration).
+
+**Scope**
+- Grep `src/` for `text-muted-foreground`, `bg-muted`, `bg-muted-foreground`, `border-muted`, and any other `-muted` variants to establish full blast radius
+- Register `muted`/`muted-foreground` (and any other genuinely-referenced-but-unregistered CSS-variable-backed colours found in the same sweep) in `tailwind.config.js`'s `theme.extend.colors`, matching the existing `background`/`foreground` pattern (`hsl(var(--muted))` / `hsl(var(--muted-foreground))`)
+- Spot-check each affected component after the fix to confirm no unintended visual change (most sites likely have a co-located explicit colour override already winning, per the `dialog_classname_override_audit_2026-08-07.md` findings — but this needs verifying site-by-site, not assumed)
+
+**Acceptance Criteria**
+- `text-muted-foreground` (and any other `-muted` classes found in scope) compile to a non-empty CSS rule, verified via a real `tailwindcss` build
+- No visual regression at any confirmed-affected call site (Playwright coverage or staging sign-off per CLAUDE.md's frontend-visible-change rule)
+
+---
+
+---
+
+### BLG-FE-143 — Frontend wiring to populate trade_plans.thesis_model_version/thesis_prompt_version on save
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-07); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FE-143 — Frontend wiring to populate trade_plans.thesis_model_version/thesis_prompt_version on save
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-12 (EPIC-03, 2026-08-07__release-v8.4), self-caught scope gap
+**Effort:** XS (<1h)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-07)
+
+**Problem**
+ST-12 (`BLG-BE-70`) added backend storage capability — `trade_plans.thesis_model_version`/`thesis_prompt_version` columns, accepted (frontend-passed, nullable) by `POST`/`PUT /trade-plans` — for AI-generation provenance/audit purposes. The frontend does not yet pass these values through when saving a trade plan whose narrative fields were populated from a `POST /trade-plans/generate-plan` or `POST /trade-plans/{id}/generate-thesis` response (both already return `model_version`/`prompt_version` in their response body). Without this wiring, the new fields remain null even for AI-generated plans, and `BLG-BE-70`'s acceptance criteria ("populated on all newly-created AI-generated records") is not yet fully met end-to-end — the backend capability alone is necessary but not sufficient.
+
+**Scope**
+- When the Trade Plan page (or equivalent) saves a plan whose `setup_thesis`/`entry_rationale`/etc. were populated unedited from a generate-plan/generate-thesis response, include that response's `model_version`/`prompt_version` as `thesis_model_version`/`thesis_prompt_version` in the `POST`/`PUT /trade-plans` request body
+- If the user edits any AI-generated narrative field before saving, leave both fields null (do not misattribute edited text to the AI model)
+
+**Acceptance Criteria**
+- A trade plan saved directly from AI-generated content (no manual edits to the narrative fields) has `thesis_model_version`/`thesis_prompt_version` populated in the database
+- A manually-typed or user-edited plan leaves both fields null
+
+---
+
+---
+
+### BLG-FE-144 — Reconcile Monthly P&L vs Tax Year table's exact-zero P&L colour convention
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-08); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FE-144 — Reconcile Monthly P&L vs Tax Year table's exact-zero P&L colour convention
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-01 (EPIC-01, 2026-08-07__release-v8.4), self-caught scope gap — `docs/specs/frontend/pages/reports.md` `DEV-REPORTS-ST01-02`
+**Effort:** XS (~1-2h, decision + one-side implementation once decided)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-08)
+
+**Problem**
+`src/pages/Reports.js` renders realised P&L colour differently for an exactly-zero value depending on which table you're looking at: the Tax Year tab's Trades Table (`TaxYearReport`) renders exact-zero **red** (`pnl > 0 ? emerald : rose`, no neutral branch); the Monthly P&L Report's table (`MonthlyPnlTable`) renders exact-zero **grey/neutral** (dedicated third branch). Both were documented with identical spec wording ("red if negative or zero") until ST-01 found the Monthly table never actually matched it — the spec was corrected to describe reality (v0.15), but the two live components still disagree with each other on the same page.
+
+**Scope**
+- Decide the intended convention: grey/neutral-for-zero (arguably better UX — breakeven is not a loss) or red-for-zero (the Tax Year table's current, spec-matching behaviour)
+- Align whichever component doesn't match the decided convention
+- Update `docs/specs/frontend/pages/reports.md` to state one convention for both tables (removing the current per-table caveat)
+
+**Acceptance Criteria**
+- Both tables render an exactly-zero realised P&L value with the same colour treatment
+- Spec updated to reflect the single, decided convention with no remaining per-table caveat
+- No visual regression to non-zero P&L colouring in either table (Playwright coverage or staging sign-off per CLAUDE.md's frontend-visible-change rule)
+
+---
+
+---
+
+### BLG-FE-91 — Design token audit: v6.7 contrast fix consistency
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-09); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FE-91 — Design token audit: v6.7 contrast fix consistency
+**Priority:** P3 (Low)
+**Type:** Frontend / Design System
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-specs-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-09)
+**Gate criteria:** None
+
+**Problem**
+`BLG-FE-89` locked a canonical secondary-text design token into `design_system.md`, but no audit has confirmed every component actually uses the token rather than a hardcoded equivalent class.
+
+**Scope**
+- Spot-check a sample of components across the app for token usage vs. hardcoded classes
+
+**Acceptance Criteria**
+- Audit conducted; any drift found filed as a follow-up backlog item
+
+---
+
+---
+
+### BLG-FE-92 — Empty-state illustration/microcopy consistency pass
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-10); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FE-92 — Empty-state illustration/microcopy consistency pass
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** IDEA-frontend-specs-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-10)
+**Gate criteria:** None
+
+**Problem**
+Empty states across pages (e.g. no trades, no watchlist items, no journal entries) use inconsistent copy tone and layout — no shared pattern.
+
+**Scope**
+- Audit existing empty states; define one shared pattern; apply to the most visible pages
+
+**Acceptance Criteria**
+- Shared pattern documented; applied to at least 3 pages
+
+---
+
+---
+
+### BLG-FE-93 — Confirm theme-toggle persistence across sessions
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-11); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FE-93 — Confirm theme-toggle persistence across sessions
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20260708-01 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** S (~0.5 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-11)
+**Gate criteria:** None
+
+**Problem**
+The dark/light theme toggle is assumed to persist via localStorage, but this has not been explicitly verified across all entry points (e.g. a fresh session after a long gap, or after a browser storage-clearing event).
+
+**Scope**
+- Verify theme persistence behaviour across session boundaries; fix if any gap found
+
+**Acceptance Criteria**
+- Verification conducted; any gap found fixed or filed as a follow-up
+
+---
+
+---
+
+### BLG-FE-94 — Mobile responsive audit for PerformanceAnalytics page
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-12); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FE-94 — Mobile responsive audit for PerformanceAnalytics page
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20260708-02 (IW-20260708-01) — Backlog (gate-conditional); rebalance 2026-07-08__scheduled
+**Effort:** M (~2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-12)
+**Gate criteria:** None
+
+**Problem**
+PerformanceAnalytics is one of the densest pages (multiple charts, tables) and has not had a dedicated mobile responsive audit.
+
+**Scope**
+- Audit page at common mobile breakpoints; document/fix any overflow, truncation, or unusable-control issues
+
+**Acceptance Criteria**
+- Audit conducted; critical issues (if any) fixed or filed
+
+---
+
+---
+
+### BLG-FE-100 — Dark/light theme contrast audit follow-up
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-13); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FE-100 — Dark/light theme contrast audit follow-up
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-frontend-specs-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-13)
+**Gate criteria:** None
+
+**Problem**
+BLG-FE-87/88/89 fixed the known secondary-text contrast gaps, but no follow-up audit has confirmed no further gaps exist outside that specific defect class.
+
+**Proposed solution**
+Run a targeted follow-up contrast audit scoped to confirm no other secondary-text (or similar) contrast gaps remain.
+
+---
+
+---
+
+### BLG-FE-133 — Ad hoc component inventory: candidates for shared design-system extraction
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-14); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FE-133 — Ad hoc component inventory: candidates for shared design-system extraction
+**Priority:** P3 (Low) | **Type:** Frontend / Design System | **Owner:** Head of UX & Design | **Source:** IDEA-head-of-ux-20260728-01 | **Effort:** M | **Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-14)
+**Problem:** Several shared-component extractions have happened reactively (e.g. `BLG-FE-120` standing alert, `BLG-FE-121` modal confirmation) after duplication was noticed; no proactive inventory tracks which ad hoc components are current extraction candidates.
+**Scope:** Build an inventory of ad hoc/duplicated component patterns across the app, ranked by duplication count, as a standing extraction candidate list.
+**Acceptance Criteria:** Inventory created; Head of UX & Design sign-off.
+
+---
+
+---
+
+### BLG-FE-27 — Nav bar redesign exploration
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-15); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FE-27 — Nav bar redesign exploration
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Design
+**Owner:** Head of UX & Design
+**Source:** v3.2 delivery verification — user feedback 2026-05-06
+**Effort:** M (~1–2 days design + spec)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-15)
+
+**Problem**
+The current nav bar occupies a fixed portion of the visible screen area. As the application grows in Arc 2 and beyond, the navigation structure may benefit from a redesign to reclaim vertical space. Options to evaluate: Sticky/Fixed Header (current pattern, optimised), mega menu (grouped sections), or breadcrumb navigation (context-sensitive, minimal footprint).
+
+**Scope**
+- Head of UX & Design to evaluate the three navigation patterns in the context of current and Arc 2 page inventory
+- Produce a design recommendation with rationale (no implementation required at this stage)
+- If redesign is recommended, produce a UX spec and create a follow-on implementation backlog item
+
+**Acceptance Criteria**
+- Design recommendation document produced (one of: maintain current, redesign to pattern X)
+- Rationale covers: screen real-estate impact, mobile responsiveness, Arc 2 page count
+- If redesign: UX spec produced and implementation backlog item filed
+
+---
+
+---
+
+### BLG-FE-65 — User journey map: SI-05 Telegram digest to app action
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-16); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FE-65 — User journey map: SI-05 Telegram digest to app action
+**Priority:** P3 (Low)
+**Type:** Frontend / UX Research
+**Owner:** Head of UX & Design
+**Source:** IDEA-head-of-ux-20260607-02 — Promoted-Backlog rebalance 2026-06-07__scheduled (DL-039)
+**Effort:** S (~1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-16)
+**Displacement:** BLG-FE-55 (mobile responsiveness baseline, P3, gate-conditional) deprioritised.
+
+**Problem**
+SI-05 Phase 1 introduces a new workflow pattern: the user receives a Telegram notification (weekly digest) and then takes an action in the app (review Red Flag Journal, check compliance score, adjust behaviour). This is the first push notification → app action flow in the system. Friction mapping this journey surfaces improvements before SI-05 Phase 2 scope is defined.
+
+**Scope**
+- Map the user journey from receiving the SI-05 digest to completing an in-app action
+- Identify: entry points (what links are in the digest), navigation steps to the relevant app screen, any friction encountered
+- Produce a brief journey map document with friction findings; file follow-up backlog items if significant friction discovered
+
+**Acceptance Criteria**
+- User journey map document produced
+- Entry points and navigation steps documented
+- Friction findings enumerated; any significant friction filed as a separate backlog item
+- Head of UX & Design sign-off
+
+---
+
+---
+
+### BLG-FE-99 — Reusable empty-state component spec for Base44 prompts
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-17); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FE-99 — Reusable empty-state component spec for Base44 prompts
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Base44 Frontend Prompt Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-base44-frontend-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-17)
+**Gate criteria:** None
+
+**Problem**
+Each page's empty-state currently gets a bespoke Base44 prompt, producing visual/copy drift across pages with no shared source of truth.
+
+**Proposed solution**
+Define one reusable empty-state component spec that future Base44 prompts reference instead of reinventing per page.
+
+---
+
+---
+
+### BLG-FE-101 — Reports page information hierarchy review
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-18); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FE-101 — Reports page information hierarchy review
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Head of UX & Design
+**Source:** Idea intake IW-20260710-01 (IDEA-head-of-ux-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-18)
+**Gate criteria:** None
+
+**Problem**
+The Reports page gained the SI-02 gate visibility indicator (BLG-FEAT-71) in v6.8; no follow-up review has confirmed the page's information hierarchy still reads cleanly with the addition.
+
+**Proposed solution**
+Head of UX & Design reviews the Reports page for visual clutter or hierarchy issues introduced by the new indicator.
+
+---
+
+---
+
+### BLG-FE-146 — Rework ChartStyle to drop style-src 'unsafe-inline' dependency, if/when a consumer adopts ChartContainer
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-19); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FE-146 — Rework ChartStyle to drop style-src 'unsafe-inline' dependency, if/when a consumer adopts ChartContainer
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** ST-18 (EPIC-04, 2026-08-07__release-v8.4), self-caught scope gap during `docs/ops/csp_unsafe_inline_audit_2026-08-08.md`
+**Effort:** M (~1-2d — includes adding theme-change reactivity currently provided free by CSS cascade)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-19)
+
+**Problem**
+`src/components/ui/chart.js`'s `ChartStyle` renders a `<style dangerouslySetInnerHTML>` block with per-render, per-chart-config CSS custom properties (`--color-<key>`), scoped under `[data-chart=<id>]` and conditionally under `.dark` for theme-reactive colours with zero JS re-render needed on theme toggle. This is the sole reason `public/index.html`'s CSP retains `'unsafe-inline'` for `style-src` (ST-18 removed it entirely for `script-src` via a content hash, since that inline source is static; this one is dynamic per chart config, so neither a hash nor a nonce is viable for a static SPA build). `chart.js` currently has zero call sites anywhere in the app — it is unused shadcn/ui boilerplate — so this was deferred rather than risk-reworked speculatively.
+
+**Scope**
+- If/when a page or component actually adopts `ChartContainer`/`ChartStyle`: rework the colour-variable delivery to use inline `style` attributes directly on `ChartContainer`'s own wrapping `<div data-chart={chartId}>` (React sets these via the CSSOM, `element.style.property = value`, which CSP's `style-src` does not restrict — unlike an actual `<style>` element or `style=""` HTML attribute)
+- Add explicit theme-change reactivity (e.g. a `prefers-color-scheme`/`.dark`-class observer, or reading the current theme at render time) to replace the CSS-cascade-driven light/dark switching the current `<style>`-block approach gets for free
+- Once no other `dangerouslySetInnerHTML` source remains, remove `'unsafe-inline'` from `style-src` in `public/index.html`'s CSP
+
+**Acceptance Criteria**
+- `ChartContainer` consumers render correct, theme-appropriate colours with no `<style>`/`dangerouslySetInnerHTML` in `chart.js`
+- `public/index.html`'s CSP `style-src` no longer includes `'unsafe-inline'`
+- No visual regression to any chart using `ChartContainer` (Playwright coverage or staging sign-off per CLAUDE.md's frontend-visible-change rule)
+
+---
+
+---
+
+### BLG-FE-139 — Playwright/staging visual verification of calendar.js when a real consumer is added
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-20); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FE-139 — Playwright/staging visual verification of calendar.js when a real consumer is added
+**Priority:** P3 (Low) | **Type:** Frontend / Accessibility | **Owner:** Frontend Specifications & UX Documentation Owner | **Source:** ST-17 deferred staging gate (EPIC-05, v7.10, BLG-FE-122) — 2026-07-29 | **Effort:** XS | **Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-20)
+**Problem:** `src/components/ui/calendar.js` was rewritten this cycle against react-day-picker v9+'s API (ST-17/BLG-FE-122), and has zero live consumers in the app today (confirmed: no `import ... from ".../ui/calendar"` anywhere in `src/pages/**` or `src/components/**`) — the previously-planned consumer (`BLG-FE-118`, "Saved filter views and calendar view") shipped in v7.5 using a different, custom-built calendar grid, not this component. With no route rendering it, CLAUDE.md §2's frontend testing gate (Playwright coverage or a recorded human staging run) cannot be satisfied for this story's observable AC in the literal sense — there is no page to visit or screenshot. The rewrite was verified instead via a rigorous Node/react-dom/server SSR smoke test (single/range/today modifier states all confirmed rendering correct classNames, ARIA attributes, and chevron icons against the actual installed v10.0.1 library — see ST-17 commit message for detail), which is strong evidence of correctness but is not literally "Playwright coverage" or "a staging run."
+**Scope:** When a real consumer of `ui/calendar.js` is added to the app (a new or existing page), add Playwright coverage (or perform a recorded staging run) for that consumer's calendar rendering as part of that story's own testing gate — this item exists purely to ensure that verification isn't silently skipped when the day comes, since this story's own gate couldn't be satisfied for a component with no route to visit.
+**Acceptance Criteria:** When a consumer of `ui/calendar.js` ships, its story's PR includes Playwright coverage or a recorded staging sign-off for the calendar's rendering; this item closed at that time referencing that story/PR.
+
+---
+
+### BLG-FEAT-29 — Regime distribution metric over screener history
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-21); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FEAT-29 — Regime distribution metric over screener history
+**Priority:** P3 (Low)
+**Type:** Product Feature / Analytics
+**Owner:** Metrics & Analytics Owner
+**Source:** IDEA-metrics-analytics-20260421-04 — Promoted-Backlog cycle 2026-05-21__scheduled (DL-032)
+**Effort:** S (~1 day)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-21)
+
+**Gate criteria:** ~~Screener live ≥ 60 days.~~ **Gate cleared 2026-08-08** — Screener shipped v3.0 (2026-04-27, 103 days ago); threshold long since passed.
+
+**Problem**
+No view exists showing how market regime distribution (bull/bear/neutral/volatile) has evolved across screener runs over time. Understanding regime frequency and drift helps contextualise screener output quality and strategy performance in different market conditions.
+
+**Scope**
+- Aggregate view: regime distribution over screener history (rolling 30d/60d/all)
+- Displayable as percentage breakdown or time-series chart
+
+**Acceptance Criteria**
+- Regime distribution over screener history computable and displayable
+- Gate condition verified by Product Owner before sprint planning
+
+---
+
+---
+
+### BLG-FEAT-72 — Product Value Ratio historical trend chart
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P3 (Low)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-22); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-FEAT-72 — Product Value Ratio historical trend chart
+**Priority:** P3 (Low)
+**Type:** Product Feature / Governance Tooling
+**Owner:** Metrics Definitions & Analytics Owner
+**Source:** Idea intake IW-20260710-01 (IDEA-metrics-20260710-01), roadmap rebalance 2026-07-10__scheduled
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-22)
+**Gate criteria:** None
+
+**Problem**
+STEP 2.4's U/G/D/P ratio is currently re-read from decision-log prose each rebalance rather than visualised as a trend, making it harder to spot the trajectory at a glance.
+
+**Proposed solution**
+Build a small chart/table visualising the ratio across cycles, sourced from a structured record rather than re-derived prose each time.
+
+---
+
+---
+
+### BLG-GOV-288 — Release Planning does not reset root `.claude_current_state.json` `sprint_sealed` to false on new-cycle publish
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-23); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-GOV-288 — Release Planning does not reset root `.claude_current_state.json` `sprint_sealed` to false on new-cycle publish
+**Priority:** P2 (Medium) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** Design gate 2026-08-07__release-v8.4 (STEP -1 preflight observation) | **Effort:** XS | **Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-23)
+
+**Problem**
+`sprint_sealed` in root `.claude_current_state.json` is only ever written by `sprint_planning_prompt.md` (set `true` at seal, or explicitly `false` pre-seal). No engine — including Release Planning's STEP 0 new-cycle publish — resets it to `false` when a new cycle begins. This means the root pointer carries a stale `true` from the prior cycle's sealed sprint into the next cycle, even though the new cycle's own `claude/cycles/<cycle_id>/state.json` correctly has no `sprint_sealed` key (defaults false) until its own Sprint Planning runs.
+
+Observed concretely at the `2026-08-07__release-v8.4` design gate: root `sprint_sealed` read `true` (carried from v8.3's seal) while the v8.4 cycle-level `state.json` had no `sprint_sealed` key at all. The design gate's own STEP -1 preflight explicitly checks the cycle-level file ("`claude/cycles/<cycle_id>/state.json` with `sprint_sealed = false`"), so the gate correctly proceeded — but the ambiguity between the two files is a latent trap: any future engine or reviewer that checks the root pointer's `sprint_sealed` instead of the cycle-level field would incorrectly halt on a false "Sprint Planning already sealed" reading, every cycle, since nothing ever clears it between cycles.
+
+**Scope**
+- `release_planning_prompt.md` STEP 0 (new-cycle publish) explicitly writes `sprint_sealed: false` to root `.claude_current_state.json`, alongside the other fields it already resets (e.g. `design_gate_status: not_started`)
+- Apply the standard governance file edit checklist (version bump, `OPERATIONAL_GUIDE.md` §14 sync, `prompt_change_log.md` entry) per `CLAUDE.md` §6
+
+**Acceptance Criteria**
+- `release_planning_prompt.md` STEP 0 patched to reset `sprint_sealed: false` on new-cycle publish
+- Head of Specs Team sign-off
+
+---
+
+---
+
+### BLG-GOV-289 — CLAUDE.md §8 merge conflict rule needs a sibling-vs-sibling union clause for execution_state.json array fields
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-24); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-GOV-289 — CLAUDE.md §8 merge conflict rule needs a sibling-vs-sibling union clause for execution_state.json array fields
+**Priority:** P2 (Medium) | **Type:** Governance Process | **Owner:** Head of Specs Team | **Source:** ST-30 (EPIC-07), dry-run of the cross-EPIC merge conflict runbook — 2026-08-08 | **Effort:** XS | **Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-24)
+
+**Problem**
+`CLAUDE.md` §8 step 3's `execution_state.json` resolution row reads: "take the branch's (not main's) blocked/delegated lists as those reflect the more current state." This phrasing assumes a two-party merge (one EPIC branch vs. `main`, where `main` is the stale side). A live dry-run test merge between `exec/2026-08-07__release-v8.4/EPIC-05` and `EPIC-06` (aborted, not committed — see `docs/ops/cross_epic_merge_runbook_dry_run_2026-08-08.md`) showed the rule does not resolve the sibling-vs-sibling case: both branches had independently diverged from a common ancestor and both added genuinely new, non-overlapping `blocked_items` entries. Neither "take HEAD's list" nor "take the incoming branch's list" is correct here — the right resolution is the union of both, the same treatment §8 already specifies for `completed_items`.
+
+**Scope**
+- Add an explicit clause to `CLAUDE.md` §8 step 3's `execution_state.json` row: when the conflict is between two EPIC branches (neither side is `main`), take the union of `blocked_items`/`delegated_items` across both sides, not either side's list alone
+- Apply the standard governance file edit checklist (version bump, `OPERATIONAL_GUIDE.md` §14 sync, `prompt_change_log.md` entry) per `CLAUDE.md` §6
+
+**Acceptance Criteria**
+- `CLAUDE.md` §8 explicitly covers the sibling-vs-sibling `blocked_items`/`delegated_items` union case
+- Head of Specs Team sign-off
+
+---
+
+---
+
+### BLG-QA-105 — Fix unrestored sys.modules stubbing in test_alerts_service.py (cross-file test pollution)
+
+**Status at retirement:** ✅ Complete
+**Priority at retirement:** P2 (Medium)
+**Retired:** 2026-08-10
+**Shipped in:** v8.5
+**Evidence:** docs/product/changelog.md#v8.5 (ST-25); claude/cycles/2026-08-08__release-v8.5/verification_report.md
+
+### BLG-QA-105 — Fix unrestored sys.modules stubbing in test_alerts_service.py (cross-file test pollution)
+**Priority:** P2 (Medium)
+**Type:** QA / Test Automation
+**Owner:** QA & Testing Owner
+**Source:** Session investigation into signal-generation data integrity — 2026-07-13
+**Effort:** S (~0.5-2 days)
+**Provisional-Target:** ✅ COMPLETE — 2026-08-10 — cycle: 2026-08-08__release-v8.5 (ST-25)
+**Gate criteria:** None
+
+**Problem**
+`tests/test_alerts_service.py` (~line 89-100) unconditionally overwrites `sys.modules["utils.formatting"]`, `sys.modules["utils.pricing"]`, `sys.modules["utils.calculations"]`, and `sys.modules["config"]` with stub modules/MagicMocks at import time, with no teardown. Because `sys.modules` is process-global, every test file collected afterward in the same pytest session that imports `utils.formatting` (etc.) silently receives the fake passthrough stub instead of the real module. Confirmed directly: a new regression test (tests/test_formatting.py, added in PR #971) passed in isolation but failed under the full suite until rewritten to load the real module from its file path, bypassing the pollution. This is a plausible reason the numpy/psycopg2 signal-write bug (PR #971) was never caught by any test exercising `signal_service.py` — its `decimal_to_float` import could have been silently neutered the same way. `tests/test_trade_service.py` has an equivalent stub but already guards it (`if not hasattr(...)`) so it doesn't clobber a real module; `test_alerts_service.py` does not.
+
+**Proposed solution**
+Give test_alerts_service.py's module stubbing proper scoping/teardown (e.g. a pytest fixture restoring the prior `sys.modules` entries after that file's tests complete), matching the safer guarded pattern already used in test_trade_service.py.
+
+---
+*Release Slice v4.6 removed — cycle 2026-05-30__release-v4.6 closed 2026-05-31. Archived canonical home: claude/cycles/2026-05-30__release-v4.6/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v4.8 removed — cycle 2026-06-01__release-v4.8 closed 2026-06-02. Archived canonical home: claude/cycles/2026-06-01__release-v4.8/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v4.9 removed — cycle 2026-06-02__release-v4.9 closed 2026-06-02. Archived canonical home: claude/cycles/2026-06-02__release-v4.9/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v5.0 removed — cycle 2026-06-03__release-v5.0 closed 2026-06-03. Archived canonical home: claude/cycles/2026-06-03__release-v5.0/stage4_backlog_slice.md*
+
+---
+*Release Slice v5.2 removed — cycle 2026-06-08__release-v5.2 closed 2026-06-08. Archived canonical home: claude/cycles/2026-06-08__release-v5.2/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v5.3 removed — cycle 2026-06-08__release-v5.3 closed 2026-06-09. Archived canonical home: claude/cycles/2026-06-08__release-v5.3/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v5.4 removed — cycle 2026-06-09__release-v5.4 closed 2026-06-10. Archived canonical home: claude/cycles/2026-06-09__release-v5.4/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v5.5 removed — cycle 2026-06-10__release-v5.5 closed 2026-06-16. Archived canonical home: claude/cycles/2026-06-10__release-v5.5/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v5.6 removed — cycle 2026-06-16__release-v5.6 closed 2026-06-16. Archived canonical home: claude/cycles/2026-06-16__release-v5.6/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v5.8 removed — cycle 2026-06-17__release-v5.8 closed 2026-06-17. Archived canonical home: claude/cycles/2026-06-17__release-v5.8/stage4_backlog_slice.md*
+
+*Release Slice v5.7 removed — cycle 2026-06-16__release-v5.7 closed 2026-06-17. Archived canonical home: claude/cycles/2026-06-16__release-v5.7/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v5.9 removed — cycle 2026-06-17__release-v5.9 closed 2026-06-18. Archived canonical home: claude/cycles/2026-06-17__release-v5.9/stage4_backlog_slice.md*
+
+*Release Slice v6.0 removed — cycle 2026-06-19__release-v6.0 closed 2026-06-22. Archived canonical home: claude/cycles/2026-06-19__release-v6.0/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v6.1 removed — cycle 2026-06-22__release-v6.1 closed 2026-06-23. Archived canonical home: claude/cycles/2026-06-22__release-v6.1/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v6.2 removed — cycle 2026-06-24__release-v6.2 closed 2026-06-25. Archived canonical home: claude/cycles/2026-06-24__release-v6.2/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v6.3 removed — cycle 2026-06-26__release-v6.3 closed 2026-06-30. Archived canonical home: claude/cycles/2026-06-26__release-v6.3/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v6.4 removed — cycle 2026-07-02__release-v6.4 closed 2026-07-02. Archived canonical home: claude/cycles/2026-07-02__release-v6.4/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v6.5 removed — cycle 2026-07-02__release-v6.5 closed 2026-07-03. Archived canonical home: claude/cycles/2026-07-02__release-v6.5/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v6.6 removed — cycle 2026-07-04__release-v6.6 closed 2026-07-06. Archived canonical home: claude/cycles/2026-07-04__release-v6.6/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v6.7 removed — cycle 2026-07-06__release-v6.7 closed 2026-07-08. Archived canonical home: claude/cycles/2026-07-06__release-v6.7/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v6.8 removed — cycle 2026-07-08__release-v6.8 closed 2026-07-09. Archived canonical home: claude/cycles/2026-07-08__release-v6.8/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v6.9 removed — cycle 2026-07-10__release-v6.9 closed 2026-07-10. Archived canonical home: claude/cycles/2026-07-10__release-v6.9/stage4_backlog_slice.md*
+
+---
+
+*Release Slice v7.0 removed — cycle 2026-07-12__release-v7.0 closed 2026-07-13. Archived canonical home: claude/cycles/2026-07-12__release-v7.0/stage4_backlog_slice.md*
+
+---
+
 
 ---
 
