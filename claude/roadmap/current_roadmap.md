@@ -11,7 +11,17 @@
 ## 1. Current Version
 
 **v8.5** — Frontend Correctness, Design Consistency & Security Hardening — ✅ Complete — Shipped 2026-08-10 — cycle: 2026-08-08__release-v8.5
-**Next planned release:** [TBD]
+**Next planned release:** v8.6 — planning underway — cycle: 2026-08-11__release-v8.6
+
+<!-- roadmap-annotation-marker: RA:v8.6:2026-08-11__release-v8.6 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-08-11__release-v8.6
+- Plan published: 2026-08-11
+- Cycle folder: claude/cycles/2026-08-11__release-v8.6/
+- Backlog slice: claude/cycles/2026-08-11__release-v8.6/stage4_backlog_slice.md
+- Status at annotation: Committed
+- No formal `## v8.6` roadmap section created (Release Planning may not alter roadmap scope) — scoped via STEP -1.2 Option (b) equivalence from `2026-08-11__scheduled` (same equivalence already relied on for `v8.5`). Backlog-driven, 26 ungated/ready items across 6 grouped EPICs, sized to ~23.75 days midpoint (top of confirmed ~24-28 day capacity band) per explicit user instruction ("use full capacity"). Per explicit user instruction to prioritise user features: EPIC-01 (2 items — `BLG-FEAT-32` trade-plan completion tracking, `BLG-FEAT-56` AI-assisted setup thesis digest) leads the EPIC table, backed by EPIC-02's data-integrity foundation fix (`BLG-BE-91`, the Product Owner's named structural response to this cycle's Skill-Silo mandatory pull-forward finding). Remaining scope (20 of 26 items) closes the full `Provisional-Target: v8.6` carryover set filed during `v8.5`'s own PR reviews, plus 2 additional ungated financial-correctness items to reach full capacity.
 
 <!-- roadmap-annotation-marker: RA:v8.5:2026-08-08__release-v8.5 -->
 

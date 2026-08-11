@@ -1,0 +1,340 @@
+[
+  {
+    "id": "ST-01",
+    "title": "Trade plan completion rate tracking",
+    "epic": "EPIC-01",
+    "description": "Source: BLG-FEAT-32",
+    "ac_summary": "Trade plan completion rate computable and displayable",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-02",
+    "title": "AI-assisted setup thesis digest at order placement",
+    "epic": "EPIC-01",
+    "description": "Source: BLG-FEAT-56",
+    "ac_summary": "Digest renders at order placement using existing Claude thesis generation service",
+    "labels": [
+      "sprint",
+      "EPIC-01",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-03",
+    "title": "Enforce trade-plan linkage at position entry + DB-level safeguard",
+    "epic": "EPIC-02",
+    "description": "Source: BLG-BE-91",
+    "ac_summary": "Entry-flow linkage enforced (staging-verified); DB-level safeguard implemented and tested",
+    "labels": [
+      "sprint",
+      "EPIC-02",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-04",
+    "title": "Register remaining unregistered shadcn design tokens in tailwind.config.js",
+    "epic": "EPIC-03",
+    "description": "Source: BLG-FE-147",
+    "ac_summary": "Remaining shadcn tokens compile to non-empty CSS rules; no visual regression",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-05",
+    "title": "Playwright coverage for remaining -muted/muted-foreground call sites",
+    "epic": "EPIC-03",
+    "description": "Source: BLG-FE-148",
+    "ac_summary": "Playwright coverage added for Select/Tabs/Sheet/Toast/Toggle/DialogDescription",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-06",
+    "title": "Fix 6 drift instances against the v6.7 canonical secondary-text token",
+    "epic": "EPIC-03",
+    "description": "Source: BLG-FE-149",
+    "ac_summary": "All 6 instances use canonical text-slate-600 dark:text-slate-400",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-07",
+    "title": "Design decision: should modals/dialogs support light theme?",
+    "epic": "EPIC-03",
+    "description": "Source: BLG-FE-150",
+    "ac_summary": "Decision record produced (intentional dark-only, or follow-up implementation item filed)",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-08",
+    "title": "Switch Layout.js's dark-class sync to useLayoutEffect",
+    "epic": "EPIC-03",
+    "description": "Source: BLG-FE-153",
+    "ac_summary": "Hook switched to useLayoutEffect, or comment explains why useEffect is sufficient",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-09",
+    "title": "Correct st15_nav_bar_redesign_exploration.md's nav group/page counts",
+    "epic": "EPIC-03",
+    "description": "Source: BLG-FE-154",
+    "ac_summary": "Group/page counts match live NAV_GROUPS exactly; navigation.md staleness addressed",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-10",
+    "title": "Migrate CohortAnalysis.js from client-side computation to GET /analytics/cohort",
+    "epic": "EPIC-03",
+    "description": "Source: BLG-FE-155",
+    "ac_summary": "CohortAnalysis.js sources data from backend endpoint; no client-side R-multiple computation",
+    "labels": [
+      "sprint",
+      "EPIC-03",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-11",
+    "title": "get_regime_distribution's NULL-exclusion documented behaviour is dead code",
+    "epic": "EPIC-04",
+    "description": "Source: BLG-BE-88",
+    "ac_summary": "Documented NULL-handling behaviour matches actual code behaviour",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-12",
+    "title": "Multi-currency cost-basis rounding consistency check",
+    "epic": "EPIC-04",
+    "description": "Source: BLG-BE-92",
+    "ac_summary": "Cost-basis rounding audited across UK/US positions; inconsistency fixed if found",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-13",
+    "title": "Closed-trade export completeness check against tax-year boundary edge cases",
+    "epic": "EPIC-04",
+    "description": "Source: BLG-BE-93",
+    "ac_summary": "Boundary-case test added and passing",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-14",
+    "title": "check_dependency_vuln_rescan.py silently treats a failed audit tool as zero findings",
+    "epic": "EPIC-04",
+    "description": "Source: BLG-SEC-29",
+    "ac_summary": "Simulated tool failure surfaced as distinguishable failure/inconclusive state",
+    "labels": [
+      "sprint",
+      "EPIC-04",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-15",
+    "title": "Add endpoint-level regression test for GET /analytics/tag-performance",
+    "epic": "EPIC-05",
+    "description": "Source: BLG-QA-136",
+    "ac_summary": "Test calls actual endpoint and asserts ensure_trade_plans_table() invoked",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-16",
+    "title": "Add Playwright coverage for setNarrativeField AI-draft-badge clearing",
+    "epic": "EPIC-05",
+    "description": "Source: BLG-QA-137",
+    "ac_summary": "Coverage passes for all 4 narrative fields' AI-draft-badge-clearing behaviour",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-17",
+    "title": "Add unit tests for scripts/check_dependency_vuln_rescan.py",
+    "epic": "EPIC-05",
+    "description": "Source: BLG-QA-138",
+    "ac_summary": "Test file covers core parsing/dedup logic with 3 scenarios",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-18",
+    "title": "Document one-directional limitation of test_alerts_service.py's restore fixture",
+    "epic": "EPIC-05",
+    "description": "Source: BLG-QA-139",
+    "ac_summary": "Fixture comment/docstring states one-directional scope",
+    "labels": [
+      "sprint",
+      "EPIC-05",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-19",
+    "title": "Align api-key-cross-environment-check.yml's alert-step grep with ::error:: prefix",
+    "epic": "EPIC-06",
+    "description": "Source: BLG-OPS-136",
+    "ac_summary": "Skip-guard path's Telegram alert includes specific error detail",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-20",
+    "title": "Document CVE-2026-4539 ignore rationale in dependency-vuln-rescan.yml",
+    "epic": "EPIC-06",
+    "description": "Source: BLG-OPS-137",
+    "ac_summary": "Ignore has inline rationale comment or cross-reference",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-21",
+    "title": "Confirm dependency-vuln-rescan.yml runs successfully post-merge",
+    "epic": "EPIC-06",
+    "description": "Source: BLG-OPS-138",
+    "ac_summary": "Confirmed-successful run exists post-merge",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-22",
+    "title": "File retroactive DEV record for the dark-mode/Radix-portal Layout.js fix",
+    "epic": "EPIC-06",
+    "description": "Source: BLG-GOV-294",
+    "ac_summary": "DEV-* record exists matching DEV-REPORTS-ST01-02 format",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-23",
+    "title": "shared_standards_changelog.md missing v3.27 entry",
+    "epic": "EPIC-06",
+    "description": "Source: BLG-GOV-295",
+    "ac_summary": "Changelog top row matches shared_standards.md v3.27",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-24",
+    "title": "execution_state.json's deviations_filed field semantics",
+    "epic": "EPIC-06",
+    "description": "Source: BLG-GOV-296",
+    "ac_summary": "Schema/standards document actual field meaning without contradiction",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-25",
+    "title": "Annotate BLG-FE-146/BLG-FE-139 with 2026-08-10 trigger-condition re-check",
+    "epic": "EPIC-06",
+    "description": "Source: BLG-GOV-297",
+    "ac_summary": "Both items carry 2026-08-10 re-check confirmation inline",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  },
+  {
+    "id": "ST-26",
+    "title": "Correct BLG-GOV-288's Acceptance Criteria text (STEP 0 -> STEP 7)",
+    "epic": "EPIC-06",
+    "description": "Source: BLG-GOV-298",
+    "ac_summary": "AC text matches actual implementation site (STEP 7)",
+    "labels": [
+      "sprint",
+      "EPIC-06",
+      "cycle:2026-08-11__release-v8.6"
+    ],
+    "assignee": null
+  }
+]

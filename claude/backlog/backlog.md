@@ -5661,3 +5661,20 @@ ST-04's AC "Scheduled job runs successfully at least once and reports results fo
 **Acceptance Criteria:** Template added; applied to the next `strategy_rules.md` version bump; Strategy Rules & System Intent Owner sign-off.
 
 ---
+
+## Release Slice — v8.6 (ephemeral)
+
+<!-- release-plan-marker: RP:v8.6:2026-08-11__release-v8.6 -->
+
+> This section is written by the Release Planning Engine and is temporary. It records which backlog items are committed to release `v8.6` (cycle `2026-08-11__release-v8.6`). Full acceptance criteria live in `claude/cycles/2026-08-11__release-v8.6/stage4_backlog_slice.md` — that file is the authoritative source. This section must be removed during the next `groom backlog` run after the cycle closes; any still-open items within it must be promoted to the appropriate §1–§8 type section first (per the Placement Rule above).
+
+26 items committed to v8.6, across 6 EPICs:
+
+- **EPIC-01** (User-Facing Product Features): `BLG-FEAT-32`, `BLG-FEAT-56`
+- **EPIC-02** (Trade-Plan Data Integrity Foundation): `BLG-BE-91`
+- **EPIC-03** (Frontend Design Consistency & Correctness Carryover): `BLG-FE-147`, `BLG-FE-148`, `BLG-FE-149`, `BLG-FE-150`, `BLG-FE-153`, `BLG-FE-154`, `BLG-FE-155`
+- **EPIC-04** (Backend & Financial Correctness): `BLG-BE-88`, `BLG-BE-92`, `BLG-BE-93`, `BLG-SEC-29`
+- **EPIC-05** (QA Test-Coverage Debt Closure): `BLG-QA-136`, `BLG-QA-137`, `BLG-QA-138`, `BLG-QA-139`
+- **EPIC-06** (Operations & Governance Debt Closure): `BLG-OPS-136`, `BLG-OPS-137`, `BLG-OPS-138`, `BLG-GOV-294`, `BLG-GOV-295`, `BLG-GOV-296`, `BLG-GOV-297`, `BLG-GOV-298`
+
+---
