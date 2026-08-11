@@ -3,8 +3,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.0
-**Last Updated:** 2026-08-11 (Head of Specs Team direct action — DEV-EPIC02-ST03-01 re-triaged: stale v1.10 target and never-filed backlog reference corrected to BLG-FE-155; no canonical requirement text changed, tracking-field correction only)
+**Version:** 2.1
+**Last Updated:** 2026-08-11 (v8.6 design gate — §21 Trade Plan Completion Rate added, ST-01/BLG-FEAT-32); prior — 2026-08-11 (Head of Specs Team direct action — DEV-EPIC02-ST03-01 re-triaged: stale v1.10 target and never-filed backlog reference corrected to BLG-FE-155, tracking-field correction only)
+**Design Source (v2.1 additions):** docs/design/2026-08-11__release-v8.6/trade-plan-completion-rate-metric/decision_record.md
 **Design Source (v2.0 additions):** docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md
 **Design Source (v4.6 additions):** docs/specs/si02/si02_fe_component_predesign.md v1.0; docs/specs/si02/si02_fe_interaction_spec.md v1.0
 **Design Source (v2.8 additions):** docs/design/2026-04-17__release-v2.8/market-correlation/ux_spec.md
@@ -54,6 +55,9 @@ All core analytics data is sourced from this call. The frontend transforms the s
 
 **Additional endpoints (v2.0/v6.8 additions):**
 - `GET /analytics/tag-performance?tags={csv}` — Trade Plan Tag Filter comparison row (§14a)
+
+**Additional endpoints (v2.1 additions):**
+- `GET /analytics/trade-plan-completion-rate` — Trade Plan Completion Rate panel (§21), optionally tier-segmented
 
 The page must never recalculate, derive, or override values returned by the backend.
 
@@ -163,6 +167,7 @@ When data is available and sufficient, components render in this order:
 18. **Market Correlation** — per-position Pearson correlation with severity colour-coding + portfolio-level weighted average ← NEW (v2.8, ST-01)
 19. **Arc 5 Signal Compliance** — red flag event frequency, override rate, top rule breach, trade plan adherence ← NEW (v4.0, ST-02/ST-04)
 20. **Behavioural Drift** — 4 drift metrics (entry timing, sizing adherence, post-loss sizing, regime adherence) displayed as percentage deviation cards ← NEW (v4.6, ST-06/ST-07)
+21. **Trade Plan Completion Rate** — plans created/completed/abandoned + completion rate, optionally segmented by setup quality score tier ← NEW (v8.6, ST-01)
 
 ---
 
@@ -724,6 +729,32 @@ Each card shows:
 
 ---
 
+### 21. Trade Plan Completion Rate
+
+Source: `GET /analytics/trade-plan-completion-rate`
+
+**Design source:** `docs/design/2026-08-11__release-v8.6/trade-plan-completion-rate-metric/decision_record.md`
+
+Appended after §20 in the rendering order. Three summary cards (matching the §13 Consistency Metrics layout):
+
+| Card | Field | Format |
+|------|-------|--------|
+| Plans Created | `plans_created` | integer |
+| Completion Rate | `completion_rate` | percentage, 1dp; green ≥60%, amber 40–59%, red <40% (mirrors §13 Win Rate Consistency's qualitative-threshold convention) |
+| Plans Abandoned | `plans_abandoned` | integer + `(N%)` of `plans_created`, in the canonical secondary-text token (`text-slate-600 dark:text-slate-400`) |
+
+A one-line summary beneath the cards: `"{plans_completed} of {plans_created} plans completed"`.
+
+**Optional quality-tier breakdown:** a small table, one row per PT-04 quality tier (`Excellent` / `Good` / `Fair` / `Low` — labels per `trade_plan.md` §7a), each row showing that tier's own `completion_rate`. Rendered only when the response includes tier-segmented data; omitted entirely (not an empty table) when it doesn't.
+
+**States:**
+- Loading: skeleton cards
+- Loaded: cards + summary line (+ tier table if present)
+- Empty (`plans_created === 0`): `DataState` `empty` branch — "No trade plans created yet." (not a `0%` completion rate)
+- Error: section-level error card
+
+---
+
 ## Responsive Behavior
 - Period selector and export button stack or compress at smaller widths
 - Summary cards: 1 column (mobile) → 2 columns (sm) → 3 columns (lg)
@@ -758,6 +789,7 @@ All component props are null-safe with safe defaults. If the API returns partial
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.1 | 2026-08-11 | v8.6 design gate (ST-01, EPIC-01, BLG-FEAT-32): §21 Trade Plan Completion Rate added — 3 summary cards (plans_created, completion_rate, plans_abandoned) + optional PT-04 quality-tier breakdown table. API Dependency updated with `GET /analytics/trade-plan-completion-rate`. Component Rendering Order updated to 21 items. Design source: trade-plan-completion-rate-metric/decision_record.md. Approved: Product Owner 2026-08-11. Head of Specs Team confirmed. |
 | 2.0 | 2026-07-08 | v6.8 design gate — §14a Trade Plan Tag Filter added (ST-05, BLG-FEAT-52): multi-select filter on `trade_plans.trade_tags` (independent from §14's existing position/journal `tags` field), dismissible pills, OR logic; comparison row (win rate + avg R per selected tag) via new `GET /analytics/tag-performance?tags={csv}` endpoint; existing §14 table unaffected. API Dependency updated. Design source: trade-tagging/ux_spec.md. Approved: Product Owner 2026-07-08. Head of Specs Team confirmed. |
 | 1.9 | 2026-05-30 | v4.6 design gate (ST-06/ST-07, EPIC-02): §20 Behavioural Drift section added — 4 drift metric cards (entry timing, sizing adherence, post-loss sizing, regime adherence); Option B Percentage Deviation Display; 5 states (loading, insufficient_data, no_drift, drift_detected, error); collapse/expand with localStorage persistence; §13 advisory-only constraints enforced. API Dependency updated with `GET /analytics/behavioural-drift`. Component Rendering Order updated to 20 items. Purpose & User Goals updated. Design source: `docs/specs/si02/si02_fe_component_predesign.md` v1.0 + `docs/specs/si02/si02_fe_interaction_spec.md` v1.0. Approved: Head of UX & Design + Product Owner 2026-05-30. Head of Specs Team confirmed compliant. Nav decision: drift panel integrates as §20 section within PerformanceAnalytics (no new sidebar nav item; consistent with §19 Arc 5 Signal Compliance pattern; ST-11 Arc 5 nav cohesion review to validate in Sprint 2). |
 | 1.8 | 2026-05-23 | v4.0 design gate (ST-02/ST-04, EPIC-01): §19 Arc 5 Signal Compliance section added — 4 stat cards (events_per_week, override_rate, top_rule_breach, trade_plan_adherence_rate). API Dependency updated with `GET /analytics/arc5-compliance`. Component Rendering Order updated to 19 items. Design source: docs/design/2026-05-22__release-v4.0/arc5-analytics-metrics/ux_spec.md. Approved: Head of UX & Design + Product Owner 2026-05-23. Head of Specs Team confirmed compliant. |

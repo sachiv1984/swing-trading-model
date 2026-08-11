@@ -1,8 +1,9 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.3
-**Last Updated:** 2026-07-30
+**Version:** 1.4
+**Last Updated:** 2026-08-11 (v8.6 design gate — §10.5 Setup Thesis Digest at Order Placement added, ST-02/BLG-FEAT-56); prior — 2026-07-30 (v8.0 design gate — checklist keyboard accessibility + abandon modal focus trap)
+**Design Source (v1.4 setup thesis digest):** docs/design/2026-08-11__release-v8.6/ai-thesis-digest-order-placement/ux_spec.md
 **Design Source (v1.3 checklist keyboard accessibility):** docs/design/2026-07-30__release-v8.0/entry-checklist-keyboard-accessibility/decision_record.md
 **Design Source (v1.3 abandon modal focus trap):** docs/design/2026-07-30__release-v8.0/abandon-modal-focus-trap/decision_record.md
 **Design Source (v1.2 print/export PDF):** docs/design/2026-07-20__release-v7.6/print-pdf-export/ux_spec.md
@@ -428,6 +429,24 @@ Trades started by direct navigation to `/TradeEntry` (no `trade_plan_prefill` st
 
 No existing `TradeEntry.js` required-field validation (`ticker`, `shares`, `entry_price`) changes — `trade_plan_id` and the optional link selector are additive, outside the existing validity check. The Signal Context panel (§5a, keyed to a linked *signal*) is unrelated and unaffected; both panels may render simultaneously if applicable.
 
+### 10.5 Setup Thesis Digest at Order Placement (v1.4 — ST-02 BLG-FEAT-56)
+
+**Design source:** docs/design/2026-08-11__release-v8.6/ai-thesis-digest-order-placement/ux_spec.md
+
+> **§13 Compliance:** Reuses the already-cleared Claude thesis generation surface (`docs/specs/api_contracts/ai_thesis_generation.md` §13 compliance note). Advisory text only, operator-reviewed; no automated trade decision; does not gate, block, or modify order submission.
+
+A collapsible **"Setup Thesis Digest"** panel renders in `TradeEntry.js`, directly below the "Linked to trade plan" indicator (§10.2) and above the order form fields. **No new AI call is made at order placement** — the panel surfaces the linked plan's already-generated `setup_thesis` content (from the existing "Improve with AI" flow, §5b), not a fresh inference call.
+
+**Visibility:** renders only when `trade_plan_id` is present (via either §10.2's automatic hand-off or §10.3's manual link) **and** the linked plan has non-empty `setup_thesis` and/or `early_exit_conditions` content. Otherwise, does not render at all — same "hidden entirely when absent" convention as §10.3's optional link selector.
+
+**Contents:**
+- Header "Setup Thesis Digest" with collapse/expand chevron (default: expanded); violet "AI draft" badge (§5b convention) shown only when the source plan's `isAiDraft` was `true` at generation time.
+- **Setup Thesis** — the plan's `setup_thesis`, truncated to 2–3 sentences if longer.
+- **Key Risk Factors** — up to 4 bullets synthesised from the plan's `early_exit_conditions` and `confirmation_criteria` fields (2 from each, prioritising non-empty ones). Section omitted if both fields are empty.
+- **"View full plan →"** text link to the plan's detail view. No edit affordance — read-only.
+
+**Collapse state:** session-only (not persisted to `localStorage` — distinct from the Behavioural Drift panel's persisted collapse, §20 `analytics.md`, since this panel is seen once per order rather than revisited across sessions).
+
 ---
 
 ## 11. Bulk Actions (v7.5 — ST-03 BLG-FE-117)
@@ -476,6 +495,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.4 | 2026-08-11 | v8.6 design gate — added §10.5 Setup Thesis Digest at Order Placement (ST-02, BLG-FEAT-56): collapsible "Setup Thesis Digest" panel in `TradeEntry.js`, below the "Linked to trade plan" indicator (§10.2); reuses the linked plan's already-generated `setup_thesis` (no new AI call at order placement); "Key Risk Factors" synthesised from `early_exit_conditions`/`confirmation_criteria`; read-only, link to full plan; hidden entirely when no plan linked or no thesis content. §13 compliant (reuses `ai_thesis_generation.md`'s already-cleared generation surface). Design source: ai-thesis-digest-order-placement/ux_spec.md. Approved: Product Owner 2026-08-11. Design gate: 2026-08-11__release-v8.6. Head of Specs Team confirmed. |
 | 1.3 | 2026-07-30 | v8.0 design gate — accessibility/interaction fixes to two existing components, visual design unchanged: §6.2 Pre-Trade Entry Checklist `CheckItem` gains real keyboard semantics (`role="checkbox"`, `aria-checked`, Tab-reachable, Space/Enter toggle — ST-06, BLG-FE-135); §8.2 Abandonment Modal migrated to the existing Radix `Dialog` primitive for focus-trap/restoration (ST-07, BLG-FE-136). Design sources: entry-checklist-keyboard-accessibility/decision_record.md, abandon-modal-focus-trap/decision_record.md. Approved: Product Owner 2026-07-30. Design gate: 2026-07-30__release-v8.0. Head of Specs Team confirmed. |
 | 1.2 | 2026-07-20 | v7.6 design gate — added §7c Print / Export PDF (ST-01, BLG-FE-119): "Print / Export PDF" outline button in the detail-view PageHeader actions, `window.print()`-based (shared global print stylesheet, no new backend endpoint); §7 action buttons row updated. Design source: print-pdf-export/ux_spec.md. Approved: Product Owner 2026-07-20. Design gate: 2026-07-20__release-v7.6. Head of Specs Team confirmed. |
 | 1.1 | 2026-07-17 | v7.5 design gate — added §11 Bulk Actions (ST-03, BLG-FE-117): row checkboxes on the list, bulk-action toolbar (renders only when 1+ selected), Bulk Tag (reuses §5c Tag Editor), Bulk Archive (reuses §8 Abandonment, active plans excluded), Bulk Delete (destructive, confirmation required), per-row partial-failure feedback. New bulk-mutation endpoints. Design source: bulk-actions-toolbar/ux_spec.md. Approved: Product Owner 2026-07-17. Design gate: 2026-07-17__release-v7.5. Head of Specs Team confirmed. |

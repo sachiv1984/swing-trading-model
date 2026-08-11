@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.8
-**Last Updated:** 2026-08-08
+**Version:** 1.9
+**Last Updated:** 2026-08-11 (v8.6 design gate — Modal / Dialog Theming decision, ST-07)
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.9 (ST-07, EPIC-03, v8.6, BLG-FE-150):** added the Modal / Dialog Theming subsection (§Shared UI Components) — confirms dark-only modal styling is unintentional legacy drift, not an intentional design choice; modals should use the shared theme-aware token set (`bg-background`/`text-foreground` or `bg-popover`/`text-popover-foreground`), matching `CommandDialog`'s already-correct reference implementation. Follow-up implementation item for the 4 known non-compliant consumers recommended for backlog filing (PMO Lead/Product Owner, outside this design gate's write scope). Design source: `docs/design/2026-08-11__release-v8.6/modal-light-theme-support/decision_record.md`.
 **v1.8 (ST-10, EPIC-04, v8.5, BLG-FE-92):** added the empty-state microcopy pattern (§Shared UI Components → Cards → Data States) — heading/body wording and punctuation rules for `DataState`'s `empty` branch. The underlying component/layout mechanism was already consistently applied across the app; the gap was copy-tone consistency only. Design source: `docs/design/2026-08-08__release-v8.5/empty-state-microcopy-pattern/decision_record.md`.
 **v1.7 (ST-12 + ST-13 + ST-21, EPIC-03 + EPIC-04, v8.3, BLG-FE-121 + BLG-FE-126 + BLG-SPEC-108):** added three new patterns, all genuinely new (no prior artefact existed for any of them): the `ConfirmationModal` shared component with an optional undo-window variant (§Shared UI Components → Confirmation Modal), a `Skeleton` loading-placeholder primitive and `DataState` `loadingVariant="skeleton"` prop (§Shared UI Components → Data States), and the canonical form-validation error-message pattern — trigger timing, placement, wording, and a corrected light-theme colour token closing a dark-only-token contrast gap found in two shipped instances (§Interaction States → Error States). Design sources: `docs/design/2026-08-05__release-v8.3/shared-confirmation-modal-undo-window/decision_record.md`, `docs/design/2026-08-05__release-v8.3/loading-skeleton-pattern/decision_record.md`, `docs/design/2026-08-05__release-v8.3/form-validation-error-message-pattern/decision_record.md`.
 **v1.6 (ST-11, EPIC-11, v7.9, BLG-FE-130):** added a chart colour palette contrast checklist to §Accessibility — the existing WCAG contrast standard (v1.4) covered text and focus indicators but not chart data-ink. Documentation addendum only, no shipped UI change.
@@ -172,6 +173,16 @@ Not all cards on a given page carry equal weight. Two treatment tiers apply:
 - **Secondary / status cards** — cards presenting live, glanceable position/portfolio state (open positions count, heat level, grace period, signal status, recent activity). These use the plain shared card shell (`bg-slate-800/50 border border-slate-700/50`, no enclosing panel, no elevated label treatment) — the neutral default.
 
 Any new background/border/label token introduced for a primary-tier treatment must ship as an explicit light+dark pair from the start, never a bare dark-only class — this project has twice shipped a dark-only-token-on-light-theme contrast defect (`BLG-FE-87/88`, `BLG-FE-95`). See `docs/design/2026-07-15__release-v7.2/dashboard-briefing-hierarchy/ux_spec.md` for the worked example this pattern was generalised from.
+
+### Modal / Dialog Theming (v1.9, ST-07, EPIC-03, v8.6, BLG-FE-150)
+
+Modals/dialogs are **not** an intentional dark-only exception — they follow the same light/dark theme-awareness as every other themed surface in the app. Use the shared `bg-background`/`text-foreground` token pair (or `bg-popover`/`text-popover-foreground` where a popover-elevation surface reads better than the page background) rather than hardcoded `bg-slate-900`/`text-white`.
+
+**Canonical reference implementation:** `CommandDialog` (`src/components/ui/command.js`) — already uses the theme-aware token set correctly.
+
+**Known non-compliant instances (pending their own follow-up implementation item — to be filed to the backlog separately, outside this design gate's write scope; not fixed by this decision alone):** `WatchlistModal.js`, `ExportModal.js`, `PositionEntryModal.js`, `WidgetLibrary.js` — found hardcoding `bg-slate-900 ... text-white` unconditionally at the v8.5 dark/light contrast audit (ST-13). Sequencing note: their conversion should not land before `bg-popover`/`text-popover-foreground` are registered in `tailwind.config.js` (this cycle's ST-04/BLG-FE-147), to avoid reproducing the "empty CSS rule" failure mode BLG-FE-147 exists to close.
+
+Design source: `docs/design/2026-08-11__release-v8.6/modal-light-theme-support/decision_record.md`.
 
 ### Confirmation Modal (with optional undo window)
 
