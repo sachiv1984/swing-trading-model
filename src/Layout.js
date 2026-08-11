@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useLayoutEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -154,7 +154,13 @@ export default function Layout({ children, currentPageName }) {
   // all of them at the root cause, not just this story's own call sites.
   // (No separate mount effect re-reads localStorage here -- ST-11's lazy
   // useState initialiser above already handles that synchronously.)
-  useEffect(() => {
+  //
+  // ST-08 (BLG-FE-153, EPIC-03, v8.6): useLayoutEffect (not useEffect) --
+  // this DOM class sync must complete before the browser paints, or a theme
+  // toggle (or a re-mount where `theme` differs from documentElement's
+  // current class) can flash the wrong theme for one frame. useEffect fires
+  // after paint; useLayoutEffect fires synchronously before it.
+  useLayoutEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
