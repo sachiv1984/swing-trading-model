@@ -47,6 +47,12 @@ Last Updated: 2026-08-11
 
 ---
 
+## Real CI Confirmation (post-PR)
+
+The sandbox-unexecuted-Playwright disclosure above proved warranted: real GitHub Actions CI (`quality_gate.yml`, PR #1358) found 3 failing scenarios on first run — `SC-TPCR-02`, `SC-TPCR-04`, `SC-TSD-06`. All three were **test-locator bugs, not product bugs**: `page.getByText('Completion Rate')`/`'Setup Thesis'`/`'Plans Created'` used non-exact (substring) matching, which collided with pre-existing page text ("Journal Completion Rate", "Setup Thesis Digest" heading) or, for the empty-state negative assertion, with the empty-state copy itself ("No trade plans created yet." contains "plans created" as a case-insensitive substring). Fixed by adding `{ exact: true }` to the 6 affected locators — no component code changed. Re-pushed; awaiting CI re-run confirmation.
+
+---
+
 ## Product Owner Disposition — DEV-v8.6-ST02-01
 
 **Requested by:** user, in-session, 2026-08-11 — "act as `product_owner.md` and decide on the P3."

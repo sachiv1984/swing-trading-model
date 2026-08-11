@@ -140,9 +140,9 @@ test.describe('SC-TPCR-02 — Three summary cards', () => {
 
     await expect(page.getByText('Trade Plan Completion Rate')).toBeVisible({ timeout: 10000 });
 
-    await expect(page.getByText('Plans Created')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Completion Rate')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Plans Abandoned')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Plans Created', { exact: true })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Completion Rate', { exact: true })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Plans Abandoned', { exact: true })).toBeVisible({ timeout: 5000 });
   });
 });
 
@@ -189,8 +189,10 @@ test.describe('SC-TPCR-04 — Empty state', () => {
     await expect(page.getByText('No trade plans created yet.')).toBeVisible({ timeout: 8000 });
 
     // Must not render the summary cards or a misleading 0% in the empty state.
-    await expect(page.getByText('Plans Created')).not.toBeVisible();
-    await expect(page.getByText('0.0%')).not.toBeVisible();
+    // exact:true avoids a substring match against the empty-state copy itself
+    // ("No trade plans created yet." contains "plans created" as a substring).
+    await expect(page.getByText('Plans Created', { exact: true })).not.toBeVisible();
+    await expect(page.getByText('0.0%', { exact: true })).not.toBeVisible();
   });
 });
 

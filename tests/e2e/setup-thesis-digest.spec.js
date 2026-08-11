@@ -140,12 +140,12 @@ test.describe('SC-TSD-06 — Collapse/expand toggle', () => {
 
     const panel = page.getByTestId('setup-thesis-digest-panel');
     await expect(panel).toBeVisible({ timeout: 10000 });
-    await expect(panel.getByText('Setup Thesis')).toBeVisible();
+    await expect(panel.getByText('Setup Thesis', { exact: true })).toBeVisible();
 
     await panel.getByLabel('Collapse details').click();
-    await expect(panel.getByText('Setup Thesis')).not.toBeVisible();
+    await expect(panel.getByText('Setup Thesis', { exact: true })).not.toBeVisible();
 
     await panel.getByLabel('Expand details').click();
-    await expect(panel.getByText('Setup Thesis')).toBeVisible();
+    await expect(panel.getByText('Setup Thesis', { exact: true })).toBeVisible();
   });
 });
