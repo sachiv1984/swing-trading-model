@@ -468,6 +468,9 @@ export const api = {
     // ST-05 (v6.8, BLG-FEAT-52): trade-plan tag performance comparison
     tagPerformance: async (tags) =>
       doFetch(`/analytics/tag-performance?tags=${encodeURIComponent(tags.join(','))}`),
+    // ST-01 (v8.6, BLG-FEAT-32): trade plan completion rate (analytics.md §21)
+    tradePlanCompletionRate: async () =>
+      doFetch('/analytics/trade-plan-completion-rate'),
   },
 
   market: {
@@ -509,6 +512,9 @@ export const api = {
       doFetch(`/trade-plans/setup-quality-score?ticker=${encodeURIComponent(ticker)}`),
     // ST-05 (v6.8, BLG-FEAT-52): trade-plan tag autocomplete source
     tags: async () => doFetch('/trade-plans/tags'),
+    // ST-02 (v8.6, BLG-FEAT-56): fetch a single plan by id — used by the
+    // TradeEntry Setup Thesis Digest panel (trade_plan.md §10.5).
+    getById: async (planId) => doFetch(`/trade-plans/${encodeURIComponent(planId)}`),
   },
 
   // ST-06/ST-08 (v6.2 EPIC-02): AI advisory endpoints — display-only, SRB-v1.7

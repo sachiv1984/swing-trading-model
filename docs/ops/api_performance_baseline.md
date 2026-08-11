@@ -2,8 +2,8 @@
 **Owner:** Infrastructure & Operations Owner
 **Class:** Operational Record (Class 3)
 **Status:** Active
-**Version:** 2.25
-**Date:** 2026-08-10
+**Version:** 2.26
+**Date:** 2026-08-11
 **Story:** ST-11 (BLG-OPS-05) — initial baseline; ST-06 (v2.5 EPIC-02) — outlier investigation; ST-01 (v2.7 EPIC-01) — Supavisor baseline re-run; ST-05 (v6.1 EPIC-02) — PATCH /trades/{id}/costs registration; ST-11 (v6.4 EPIC-03, BLG-OPS-82) — v6.3 endpoint registration; ST-04 (v6.5 EPIC-02, BLG-OPS-83) — v6.4 endpoint registration; ST-01 (v6.9 EPIC-01, BLG-FEAT-64) — GET /positions/{id}/compliance-recheck registration; ST-02 (v6.9 EPIC-02, BLG-FEAT-65) — GET /positions/{id}/gap-risk registration; ST-15 (v7.0 EPIC-03, BLG-FEAT-68) — PATCH /positions/{id}/mark-reviewed registration; ST-02 (v7.5 EPIC-02, BLG-FE-116) — GET/POST /price-alerts, DELETE /price-alerts/{id} registration; ST-03 (v7.5 EPIC-03, BLG-FE-117) — bulk actions toolbar endpoint registration; ST-04 (v7.5 EPIC-04, BLG-FE-118) — saved filters & daily P&L endpoint registration
 **Cycle:** 2026-03-31__release-v2.4 (baseline); 2026-04-05__release-v2.5 (ST-06 update); 2026-04-13__release-v2.7 (Supavisor re-run)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
@@ -1702,10 +1702,47 @@ Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-0
 
 ---
 
+## 38. v8.6 Endpoint Registration — GET /analytics/trade-plan-completion-rate (ST-01, EPIC-01, BLG-FEAT-32)
+
+**Date:** 2026-08-11
+**Story:** ST-01 (EPIC-01, v8.6) — BLG-FEAT-32, Trade Plan Completion Rate (Performance Analytics page §21)
+**Environment:** N/A — see endpoint notes below.
+**Method:** Registered pending live measurement per §13 pattern.
+
+### 38.1 Endpoint Profile
+
+| Endpoint | Added in | Method | p50 (ms) | p95 (ms) | Flag |
+|----------|----------|--------|----------|----------|------|
+| GET /analytics/trade-plan-completion-rate | v8.6 | Read — pending live timing run | 150–300ms (est.) | 300–500ms (est.) | Pending next baseline re-run |
+
+**Endpoint characteristics:**
+- `GET /analytics/trade-plan-completion-rate`: a single aggregate query joining `trade_plans` to `trade_history` via `LEFT JOIN ... ON th.position_id = tp.position_id` with `COUNT(*) FILTER (...)` aggregation, filtered by `portfolio_id`. Comparable in shape to §32's `GET /portfolio/sector-regime-trend` and §37's `GET /screener/regime-distribution` (single-table-family aggregate read, one join, no per-row in-process computation) — estimated at the same range as those two.
+
+**Read-only, no write-op exclusion needed** — this endpoint has no mutation counterpart to exclude.
+
+**Flagged for the next baseline re-run** alongside other pending-measurement endpoints (§13 pattern).
+
+### 38.2 Infrastructure & Operations Owner Sign-Off
+
+```
+ST-01 (v8.6 EPIC-01, BLG-FEAT-32) — Trade Plan Completion Rate Endpoint Registration Sign-Off
+
+AC-01: Endpoint added with estimated p50/p95 and measurement date
+       (2026-08-11 — estimated, single aggregate query with one LEFT JOIN). ✅ PASS
+AC-02: Estimation methodology documented — derived from §32/§37's comparable
+       single-join aggregate-read baselines. ✅ PASS
+AC-03: Entry format consistent with existing baseline rows (§32/§37 pattern). ✅ PASS
+
+Signed: [x] Infrastructure & Operations Owner (agent-mediated, §5.3) — 2026-08-11
+```
+
+---
+
 ## 9. Document History
 
 | Version | Date | Author | Change |
 |---------|------|--------|--------|
+| 2.26 | 2026-08-11 | Sprint Execution Engine (autonomous) | ST-01 (v8.6 EPIC-01, BLG-FEAT-32): §38 added — `GET /analytics/trade-plan-completion-rate` registered with estimated p50/p95 pending live measurement. |
 | 2.25 | 2026-08-10 | Sprint Execution Engine (autonomous) | ST-01 (v8.5 EPIC-01, BLG-BE-86): §35.2 finding row updated — `GET /analytics/tag-performance` 500 resolved by adding the missing `ensure_trade_plans_table()` call to `get_tag_performance_endpoint()`. Live re-measurement to record a real p50/p95 baseline is a follow-up, not yet done. |
 | 2.24 | 2026-08-08 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-21 (v8.4 EPIC-05, BLG-OPS-54): §36 added — `POST /digest/si05/send` registered. Found, via direct Render Platform API query against production, that Render's captured `uvicorn` access logs carry no duration field at all (genuine data-availability gap, not a query error) — literal Render-log-based measurement is not achievable today. Documented the gap, filed `BLG-BE-87` (add duration logging) for real future data, and recorded a single-sample external-timing-proxy measurement (GitHub Actions step timing from ST-19's trigger) as an explicitly-caveated interim value, per Product Owner direction. `BLG-OPS-54` closed. |
 | 2.23 | 2026-08-08 | Sprint Execution Engine (agent-mediated, Infrastructure & Operations Owner role — §5.3) | ST-20 (v8.4 EPIC-05, BLG-OPS-133): §35 added — live measurement of BLG-OPS-133's 16 re-derived missing endpoints (not the stale 19). 6 measured (200/404, real p50/p95/max); 1 found genuinely broken (`GET /analytics/tag-performance` 500 — filed `BLG-BE-86`, not silently baselined); 9 excluded as confirmed-mutating, verified against handler code not just HTTP method. Measured via a dedicated on-demand GitHub Actions workflow (`api-performance-baseline-measurement.yml`) using the `STAGING_API_KEY` secret. `BLG-OPS-133` closed. |

@@ -127,6 +127,9 @@ async def test_all_endpoints(request: Request):
         # Trade Plan Tag Performance (v6.8 / ST-05, BLG-FEAT-52)
         {"name": "GET /analytics/tag-performance", "method": "GET", "url": f"{base_url}/analytics/tag-performance?tags=momentum", "critical": False},
 
+        # Trade Plan Completion Rate (v8.6 / ST-01, EPIC-01, BLG-FEAT-32)
+        {"name": "GET /analytics/trade-plan-completion-rate", "method": "GET", "url": f"{base_url}/analytics/trade-plan-completion-rate", "critical": False},
+
         # Ticker Universe (v3.0 / ST-01)
         {"name": "GET /ticker-universe", "method": "GET", "url": f"{base_url}/ticker-universe", "critical": False},
         {"name": "POST /ticker-universe", "method": "POST", "url": f"{base_url}/ticker-universe", "body": {"ticker": "AAPL", "market": "US"}, "critical": False},

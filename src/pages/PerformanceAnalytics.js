@@ -20,6 +20,7 @@ import TradePlanTagFilter from "../components/analytics/TradePlanTagFilter";
 import DisciplineComplianceSection from "../components/analytics/DisciplineComplianceSection";
 import MarketCorrelationSection from "../components/analytics/MarketCorrelationSection";
 import Arc5ComplianceSection from "../components/analytics/Arc5ComplianceSection";
+import TradePlanCompletionRateSection from "../components/analytics/TradePlanCompletionRateSection";
 import UnderwaterChart from "../components/analytics/UnderwaterChart";
 import RMultipleAnalysis from "../components/analytics/RMultipleAnalysis";
 import BestWorstTrades from "../components/analytics/BestWorstTrades";
@@ -692,6 +693,11 @@ export default function PerformanceAnalytics() {
           Source: GET /analytics/arc5-compliance. Spec: analytics.md §19 + ux_spec.md.
           Metrics: events_per_week, override_rate, top_rule_breach, trade_plan_adherence_rate. */}
       <Arc5ComplianceSection />
+      {/* Component 21 — v8.6 ST-01 (EPIC-01, BLG-FEAT-32): Trade Plan Completion Rate
+          Source: GET /analytics/trade-plan-completion-rate. Spec: analytics.md §21.
+          Metrics: plans_created, completion_rate, plans_abandoned. Optional PT-04
+          quality-tier breakdown omitted — backend does not return tier-segmented data. */}
+      <TradePlanCompletionRateSection />
     </div>
   );
 }

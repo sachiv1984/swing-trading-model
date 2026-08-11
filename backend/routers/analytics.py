@@ -9,6 +9,7 @@ GET /analytics/market-correlation — Per-position Pearson correlation vs benchm
 GET /analytics/arc5-compliance — Arc 5 signal compliance metrics (ST-01, v4.0).
 GET /analytics/behavioural-drift — SI-02 behavioural drift detection (4 metrics, v4.6 ST-04).
 GET /analytics/strategy-version-comparison — SI-04 strategy version performance comparison (ST-01, EPIC-01, v7.7).
+GET /analytics/trade-plan-completion-rate — plans_created/completed/abandoned + completion_rate (ST-01, EPIC-01, v8.6).
 
 BLG-TECH-07 fix: trades_for_charts attempts to source stop_price from
 positions.initial_stop via LEFT JOIN on trade_history.position_id.
@@ -989,6 +990,40 @@ def get_tag_performance_endpoint(tags: str = Query(..., description="Comma-separ
         return JSONResponse(
             status_code=500,
             content={"status": "error", "message": f"Tag performance failed: {str(e)}"},
+        )
+
+
+@router.get("/trade-plan-completion-rate")
+def get_trade_plan_completion_rate_endpoint():
+    """GET /analytics/trade-plan-completion-rate — plans_created, plans_completed,
+    plans_abandoned, completion_rate (ST-01, BLG-FEAT-32, EPIC-01, v8.6).
+
+    Calls ensure_trade_plans_table() before querying, matching the defensive
+    pattern established by /tag-performance (ST-01, BLG-BE-86, v8.5).
+    Spec: docs/specs/frontend/pages/analytics.md §21
+    Design source: docs/design/2026-08-11__release-v8.6/trade-plan-completion-rate-metric/decision_record.md
+    """
+    from database import get_portfolio, get_trade_plan_completion_rate, ensure_trade_plans_table
+
+    try:
+        portfolio = get_portfolio()
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+
+        ensure_trade_plans_table()
+        result = get_trade_plan_completion_rate(str(portfolio["id"]))
+        return {"status": "ok", "data": result}
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"status": "error", "message": e.detail if isinstance(e.detail, str) else str(e.detail)},
+        )
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(
+            status_code=500,
+            content={"status": "error", "message": f"Trade plan completion rate failed: {str(e)}"},
         )
 
 
