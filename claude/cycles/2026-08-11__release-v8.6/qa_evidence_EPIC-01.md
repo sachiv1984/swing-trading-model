@@ -44,3 +44,20 @@ Last Updated: 2026-08-11
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-08-11
 - Comments: Agent-mediated review per user direction (2026-08-11). Findings: (1) no router-level integration test for `GET /analytics/trade-plan-completion-rate` — DB-layer coverage (5 tests) is solid but the endpoint's own 404/`ensure_trade_plans_table()` call path is untested at that layer; consistent with existing precedent (`test_trade_plan_tags.py` doesn't router-test `/tag-performance` either) so not a blocker, noted for future tightening. (2) `abandonedPct` is computed client-side from two already-fetched integers (`plans_abandoned`/`plans_created`) — a simple derived percentage, not a re-derivation of a value the backend is supposed to own (distinct from the analytics.md §15/§16 "no client-side R-multiple" rule); acceptable. (3) Playwright suites (13 scenarios total) could not be executed in this sandbox (no installable Chromium) — authored against proven patterns, disclosed as pending real-CI confirmation rather than claimed as verified. No P0/P1 issues found. **This is an agent-mediated sign-off, not a human Director of Quality's — see PR comment for full findings; final human QA sign-off and Product Owner acceptance are still required before merge (CLAUDE.md §2, execution_prompt.md §5.3 "Always-human gates").**
+
+---
+
+## Product Owner Disposition — DEV-v8.6-ST02-01
+
+**Requested by:** user, in-session, 2026-08-11 — "act as `product_owner.md` and decide on the P3."
+**Rendered by:** Sprint Execution Engine (agent-mediated, Product Owner role — §5.3). Per CLAUDE.md §2, this is recorded as agent-mediated, not a literal `Product Owner:` sign-off, regardless of the direct instruction to decide — that label is reserved for genuine human sign-off.
+
+**Decision: Accept — ship ST-02 as-is.**
+
+**Reasoning (per `product_owner.md` §6/§8.2/§8.3):**
+- ST-02's actual backlog AC — "digest renders at order placement using the existing Claude thesis generation service" — is fully met. The "AI draft" badge is a design-spec (`ux_spec.md` §2) visual cue, one level below the committed AC, not an AC failure.
+- Root cause (`isAiDraft` never persisted anywhere in the system) pre-dates this story; a proper fix is a schema change correctly scoped out to `BLG-BE-95`, not this order-placement UI story.
+- Shipping impact of the gap: cosmetic only — the digest's actual content (thesis, risk factors, link) is identical with or without the badge. No misleading, blocked, or incorrect financial information results.
+- Trade-off made explicit: holding EPIC-01 for a `trade_plans` schema migration to add one visual badge is a worse outcome than shipping the working feature now with the gap tracked (P3, `DEV-v8.6-ST02-01`, `BLG-BE-95`).
+
+This disposition does not itself satisfy the STEP 4 merge gate's "Product Owner acceptance" row (always-human, CLAUDE.md §2) — final human confirmation is still the trigger to merge.
