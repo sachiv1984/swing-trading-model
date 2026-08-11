@@ -267,7 +267,7 @@
         "ST-11": {
           "title": "get_regime_distribution's NULL-exclusion documented behaviour is dead code",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1342,
           "branch": "exec/2026-08-11__release-v8.6/EPIC-04",
@@ -275,15 +275,15 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
-          "spec_reference_not_applicable": true,
-          "spec_reference_not_applicable_reason": "bug fix, no prior canonical spec — verified via backend behaviour/tests",
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "completed_utc": "2026-08-11T21:00:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["tests/test_screener_batch_service.py"],
+          "spec_reference_not_applicable": false,
+          "spec_reference_not_applicable_reason": null,
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": ""
+          "notes": "Confirmed the docstring's NULL-exclusion claim is unreachable: _fetch_index_regime() never returns a null regime_status (returns None on total failure, or a real risk_on/risk_off dict); run_screener() explicitly substitutes {\"regime_status\": \"risk_off\", ...} whenever _fetch_index_regime() returns None (lines ~263-269), so regime_us/regime_uk are always a real string when persisted -- NULL is never written. Corrected the docstring to describe the real, deliberate risk_off-default behaviour rather than the unreachable NULL-exclusion path (chose docs correction over the AC's NULL-persistence alternative, since risk_off-default is the existing intentional conservative design and changing it would be a behaviour change, not a doc fix). Added test_run_screener_persists_risk_off_not_null_on_regime_fetch_failure -- the real fetch-failure scenario the AC requires -- confirming both the run_screener() return value and the actual INSERT INTO screener_runs params carry \"risk_off\", not None/NULL. All 20 tests in tests/test_screener_batch_service.py pass."
         },
         "ST-12": {
           "title": "Multi-currency cost-basis rounding consistency check",
