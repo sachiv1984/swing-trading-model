@@ -51,3 +51,8 @@ Last Updated: 2026-08-12
 
 - Signed off by: Sprint Execution Engine (acting as Product Owner, per explicit user direction)
 - Date: 2026-08-12
+
+**Ratification (2026-08-12, post-verification):** The above risk-acceptance decision (merge with `BLG-BE-96` outstanding, condition attached escalating any `status='active'` legacy-row finding to P0) is ratified as the standing Product Owner decision. Rendered by Sprint Execution Engine (agent-mediated, Product Owner role — §5.3), per explicit user direction, in a separate invocation after delivery verification sealed `Verified_with_deviations`. No new facts changed; this closes the "pending final human confirmation" caveat. The P0-escalation condition remains fully in force and unaltered. As with all agent-mediated dispositions in this cycle, a literal human Product Owner sign-off — should the user want one — supersedes this at any time.
+
+- Ratified by: Sprint Execution Engine (agent-mediated, Product Owner role — §5.3)
+- Date: 2026-08-12

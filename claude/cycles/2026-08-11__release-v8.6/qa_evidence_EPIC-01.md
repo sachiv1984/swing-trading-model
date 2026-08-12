@@ -67,3 +67,8 @@ The sandbox-unexecuted-Playwright disclosure above proved warranted: real GitHub
 - Trade-off made explicit: holding EPIC-01 for a `trade_plans` schema migration to add one visual badge is a worse outcome than shipping the working feature now with the gap tracked (P3, `DEV-v8.6-ST02-01`, `BLG-BE-95`).
 
 This disposition does not itself satisfy the STEP 4 merge gate's "Product Owner acceptance" row (always-human, CLAUDE.md §2) — final human confirmation is still the trigger to merge.
+
+**Ratification (2026-08-12, post-verification):** The above disposition is ratified as the standing Product Owner decision. Rendered by Sprint Execution Engine (agent-mediated, Product Owner role — §5.3), per explicit user direction, in a separate invocation after delivery verification sealed `Verified_with_deviations`. No new facts changed; this closes the "pending final human confirmation" caveat carried since 2026-08-11 for governance record-keeping purposes. As with all agent-mediated dispositions in this cycle, a literal human Director of Quality/Product Owner sign-off — should the user want one — supersedes this at any time.
+
+- Ratified by: Sprint Execution Engine (agent-mediated, Product Owner role — §5.3)
+- Date: 2026-08-12
