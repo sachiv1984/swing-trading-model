@@ -64,7 +64,18 @@ jobs:
         run: |
           set -o pipefail
           if [ -z "$PROD_API_URL" ] || [ -z "$PROD_API_KEY" ] || [ -z "$STAGING_API_KEY" ]; then
-            echo "::error::One or more of API_URL / API_KEY / STAGING_API_KEY not configured as repo secrets — cross-environment check cannot run." | tee cross_env_output.txt
+            # ST-19 (BLG-OPS-136, EPIC-06, v8.6): the alert step below greps
+            # cross_env_output.txt for lines starting "[ERROR]" (the same
+            # prefix scripts/check_api_key_cross_environment.py's own probe-
+            # failure output uses) to populate the Telegram message's error
+            # detail. This skip-guard previously wrote only a GitHub Actions
+            # "::error::"-prefixed annotation -- visible in the Actions UI,
+            # but invisible to that grep, so the missing-secrets alert
+            # always sent with an empty error detail. Emit both: the GitHub
+            # annotation (for the Actions UI) and a "[ERROR]"-prefixed line
+            # (for the alert step's grep) into the tee'd file.
+            echo "::error::One or more of API_URL / API_KEY / STAGING_API_KEY not configured as repo secrets — cross-environment check cannot run."
+            echo "[ERROR] One or more of API_URL / API_KEY / STAGING_API_KEY not configured as repo secrets — cross-environment check cannot run." | tee cross_env_output.txt
             echo "exit_code=2" >> "$GITHUB_OUTPUT"
             exit 0
           fi
