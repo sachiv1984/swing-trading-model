@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-12 (lifecycle audit AUD-2026-08-12 — 1 new item added: BLG-OPS-142); prior — 2026-08-12 (groom backlog post-ship closure 2026-08-11__release-v8.6 — 26 shipped items archived to backlog_archive.md: BLG-FEAT-32, BLG-FEAT-56, BLG-BE-91, BLG-FE-147, BLG-FE-148, BLG-FE-149, BLG-FE-150, BLG-FE-153, BLG-FE-154, BLG-FE-155, BLG-BE-88, BLG-BE-92, BLG-BE-93, BLG-SEC-29, BLG-QA-136, BLG-QA-137, BLG-QA-138, BLG-QA-139, BLG-OPS-136, BLG-OPS-137, BLG-OPS-138, BLG-GOV-294, BLG-GOV-295, BLG-GOV-296, BLG-GOV-297, BLG-GOV-298; 1 ephemeral Release Slice section removed (v8.6); 11 governance-prompt duplicate candidates found, 0 genuine (spot-reviewed); Gate Field Normalisation: 0; Effort Day-Range Validation: PASS); prior — 2026-08-12 (post-ship closure STEP 3 — all 26 shipped v8.6 items marked ✅ COMPLETE via `Provisional-Target` field); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-12 (Release Planning v8.7 — Release Slice section added, 21 items across 7 EPICs, marker RP:v8.7:2026-08-12__release-v8.7); prior — 2026-08-12 (lifecycle audit AUD-2026-08-12 — 1 new item added: BLG-OPS-142); prior — 2026-08-12 (groom backlog post-ship closure 2026-08-11__release-v8.6 — 26 shipped items archived to backlog_archive.md; 1 ephemeral Release Slice section removed (v8.6); 11 governance-prompt duplicate candidates found, 0 genuine; Gate Field Normalisation: 0; Effort Day-Range Validation: PASS); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -17,6 +17,38 @@
 > **Ephemeral sections** (Release Slice tables, Test Scenario Gap sections, and "Returned to Backlog" sections appended by governance engines) are temporary. They must be removed during the next `groom backlog` run after the cycle closes. Any still-open items within them must be promoted to the appropriate §1–§8 type section before the ephemeral section is removed.
 
 *Completed and killed items are recorded in `claude/backlog/backlog_archive.md`.*
+
+---
+
+## Release Slice — v8.7 (ephemeral — remove at next `groom backlog` after cycle closes)
+
+<!-- release-plan-marker: RP:v8.7:2026-08-12__release-v8.7 -->
+
+21 items committed to `2026-08-12__release-v8.7`. Full acceptance criteria: `claude/cycles/2026-08-12__release-v8.7/stage4_backlog_slice.md`.
+
+| ST | Source | Epic | Priority | Effort |
+|----|--------|------|----------|--------|
+| ST-01 | BLG-FEAT-84 | EPIC-01 | P3 | M |
+| ST-02 | BLG-FE-158 | EPIC-01 | P3 | XS |
+| ST-03 | BLG-BE-95 | EPIC-01 | P3 | S |
+| ST-04 | BLG-FE-151 | EPIC-01 | P3 | S |
+| ST-05 | BLG-FE-152 | EPIC-01 | P3 | S |
+| ST-06 | BLG-FE-156 | EPIC-01 | P2 | S |
+| ST-07 | BLG-BE-96 | EPIC-02 | P1 | S |
+| ST-08 | BLG-FE-157 | EPIC-03 | P2 | S |
+| ST-09 | BLG-QA-148 | EPIC-03 | P3 | XS |
+| ST-10 | BLG-BE-89 | EPIC-04 | P2 | M |
+| ST-11 | BLG-BE-90 | EPIC-04 | P2 | M |
+| ST-12 | BLG-BE-30 | EPIC-04 | P2 | S |
+| ST-13 | BLG-SEC-30 | EPIC-05 | P2 | M |
+| ST-14 | BLG-SEC-31 | EPIC-05 | P2 | M |
+| ST-15 | BLG-OPS-139 | EPIC-06 | P2 | S |
+| ST-16 | BLG-OPS-140 | EPIC-06 | P2 | S |
+| ST-17 | BLG-OPS-142 | EPIC-06 | P2 | S |
+| ST-18 | BLG-GOV-290 | EPIC-07 | P2 | S |
+| ST-19 | BLG-GOV-303 | EPIC-07 | P2 | M |
+| ST-20 | BLG-GOV-305 | EPIC-07 | P2 | S |
+| ST-21 | BLG-SPEC-124 | EPIC-07 | P2 | M |
 
 ---
 

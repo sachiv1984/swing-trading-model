@@ -11,7 +11,17 @@
 ## 1. Current Version
 
 **v8.6** — User Features, Data-Integrity Foundation & Correctness Carryover — ✅ Complete — Shipped 2026-08-12 — cycle: 2026-08-11__release-v8.6
-**Next planned release:** [TBD]
+**Next planned release:** v8.7
+
+<!-- roadmap-annotation-marker: RA:v8.7:2026-08-12__release-v8.7 -->
+
+**Execution notes (added by Release Planning Engine):**
+- Cycle: 2026-08-12__release-v8.7
+- Plan published: 2026-08-12
+- Cycle folder: claude/cycles/2026-08-12__release-v8.7/
+- Backlog slice: claude/cycles/2026-08-12__release-v8.7/stage4_backlog_slice.md
+- Status at annotation: Committed
+- No formal `## v8.7` roadmap section created (Release Planning may not alter roadmap scope) — scoped via STEP -1.2 Option (b) equivalence from `2026-08-11__scheduled` (same equivalence relied on for `v8.5`/`v8.6`). Backlog-driven, 21 ungated/ready items across 7 grouped EPICs, sized to ~25.25 days midpoint (within the confirmed ~24-28 day capacity band) per explicit user instruction ("use full capacity, user features to be prioritised"). EPIC-01 (6 items — thesis pre-mortem field, trade-plan-link outcome banner, AI-draft badge persistence, 3 theme-consistency fixes) leads the EPIC table per that instruction, backed by EPIC-02's mandatory data-integrity carryover (`BLG-BE-96`, PO risk-acceptance condition: do not defer further). Remaining scope (14 of 21 items) fills capacity from the next-highest-priority ungated pool across test coverage, backend reliability, security, operations, and governance.
 
 <!-- roadmap-annotation-marker: RA:v8.6:2026-08-11__release-v8.6 -->
 
