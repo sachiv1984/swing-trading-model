@@ -618,10 +618,16 @@ class TestTradePlanEndpoints(unittest.TestCase):
         assert CLIENT.get("/trade-plans/nonexistent-id").status_code == 404
 
     @patch("routers.trade_plans.get_portfolio", return_value=MOCK_PORTFOLIO)
+    @patch("routers.trade_plans.get_trade_plan_by_id",
+           return_value={**MOCK_TRADE_PLAN, "position_id": "position-001"})
     @patch("routers.trade_plans.update_trade_plan",
-           return_value={**MOCK_TRADE_PLAN, "status": "active"})
+           return_value={**MOCK_TRADE_PLAN, "status": "active", "position_id": "position-001"})
     @patch("routers.trade_plans.ensure_trade_plans_table", return_value=None)
     def test_update_trade_plan_returns_ok(self, *_):
+        # ST-03 (BLG-BE-91, EPIC-02, v8.6): status='active' now requires a
+        # position_id (existing plan or this same update) -- get_trade_plan_by_id
+        # mocked with position_id already present, matching a realistic
+        # already-linked plan being re-saved with active status.
         body = _ok(CLIENT.put("/trade-plans/plan-001", json={"status": "active"}))
         assert body["data"]["status"] == "active"
 

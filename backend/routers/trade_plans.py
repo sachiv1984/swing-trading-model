@@ -185,6 +185,16 @@ def create_plan(body: TradePlanCreate):
         ensure_strategy_version_at_entry_columns()
         portfolio_id = _get_portfolio_id()
 
+        # ST-03 (BLG-BE-91, EPIC-02, v8.6): same active-status-requires-position
+        # rule as update_plan() below -- a client could otherwise POST a new
+        # plan with status='active' and no position_id, producing an
+        # orphaned "active" plan from creation, not just via a later edit.
+        if body.status == "active" and not body.position_id:
+            raise HTTPException(
+                status_code=400,
+                detail="Cannot create a trade plan with status='active' without a position_id — an active plan must back a real position",
+            )
+
         def _create():
             plan_data = body.dict()
             plan_data["trade_tags"] = _validate_trade_tags(plan_data.get("trade_tags"))
@@ -487,6 +497,18 @@ def update_plan(plan_id: str, body: TradePlanUpdate):
     Abandonment rules (BLG-FEAT-21):
     - status='abandoned' requires abandonment_reason (400 if missing)
     - Cannot abandon a plan linked to an active (open) position (400)
+
+    Active-status linkage rule (ST-03, BLG-BE-91, EPIC-02, v8.6):
+    - status='active' requires a position_id (either already on the plan, or
+      supplied in this same update) (400 if neither). 'active' means "this
+      plan backs a live position" -- position_service.py::add_position()'s
+      auto-link step is the only other code path that ever sets it, and it
+      always sets position_id in the same write. Without this guard, a
+      client could PUT status='active' directly with no position_id,
+      producing an orphaned "active" plan the DB-level CHECK constraint
+      (ensure_trade_plans_active_requires_position_constraint) exists to
+      catch as a last resort -- this router-level check is the primary
+      defense, giving a clear 400 instead of a raw constraint-violation 500.
     """
     try:
         ensure_trade_plans_table()
@@ -510,6 +532,16 @@ def update_plan(plan_id: str, body: TradePlanUpdate):
                         status_code=400,
                         detail="Cannot abandon a trade plan linked to an active open position",
                     )
+
+        if data.get("status") == "active" and not data.get("position_id"):
+            existing = get_trade_plan_by_id(plan_id, portfolio_id)
+            if not existing:
+                raise HTTPException(status_code=404, detail="Trade plan not found")
+            if not existing.get("position_id"):
+                raise HTTPException(
+                    status_code=400,
+                    detail="Cannot set status='active' without a linked position_id — an active plan must back a real position",
+                )
 
         plan = update_trade_plan(plan_id, portfolio_id, data)
         if not plan:

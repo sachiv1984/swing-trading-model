@@ -2731,6 +2731,49 @@ def ensure_si05_digest_log_table() -> None:
         conn.commit()
 
 
+def ensure_trade_plans_active_requires_position_constraint() -> None:
+    """DB-level safeguard against new orphaned trade_plans rows (ST-03,
+    BLG-BE-91, EPIC-02, v8.6) -- idempotent.
+
+    `position_id` remains nullable by design (a plan may legitimately exist
+    pre-entry, or be abandoned, with no position ever attached) -- a hard
+    NOT NULL constraint is not viable. The actual integrity risk is narrower
+    and precise: `status = 'active'` is meant to mean "this plan is backing
+    a live position" (position_service.py::add_position()'s auto-link step
+    sets `position_id` and `status = 'active'` together, in the same
+    UPDATE, and is the ONLY code path that ever sets status to 'active').
+    But `PUT /trade-plans/{id}` (routers/trade_plans.py::update_plan())
+    accepts an arbitrary `status` string with no such guard -- a client
+    could set `status = 'active'` directly via that endpoint without ever
+    supplying a `position_id`, producing exactly the "active but orphaned"
+    row this story exists to prevent. This CHECK constraint is the
+    database-layer backstop for that gap (the router-level guard in
+    `update_plan()` is the primary defense; this is defense-in-depth in
+    case a future code path bypasses the router, e.g. a direct DB write or
+    a new endpoint that forgets the check).
+
+    Added `NOT VALID` deliberately: this only enforces the rule on rows
+    inserted/updated going forward (matching the story's own "going
+    forward" framing) -- it does NOT retroactively validate the 11
+    legacy pre-BLG-BE-46 (v6.8) trade_plans rows already known to carry
+    `position_id IS NULL` (data_model.md's Table: trade_plans section),
+    avoiding a migration failure risk from historical data this routine
+    cannot inspect directly. A future `VALIDATE CONSTRAINT` pass (a cheap,
+    online-safe operation in Postgres once run) can retroactively confirm
+    the full table if ever needed -- not required for this story's AC.
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "ALTER TABLE trade_plans DROP CONSTRAINT IF EXISTS trade_plans_active_requires_position_check"
+            )
+            cur.execute(
+                "ALTER TABLE trade_plans ADD CONSTRAINT trade_plans_active_requires_position_check "
+                "CHECK (status != 'active' OR position_id IS NOT NULL) NOT VALID"
+            )
+        conn.commit()
+
+
 def ensure_trade_plans_extended_status() -> None:
     """Extend trade_plans_status_check to include workflow statuses (idempotent).
 
