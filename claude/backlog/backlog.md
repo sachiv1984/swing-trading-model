@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-11 (Sprint Execution Engine, ST-13/EPIC-04/v8.6 agent-mediated FRRO review finding — 1 new item added: BLG-QA-148, end-to-end integration assertion for tax-year boundary trade rows); prior — 2026-08-11 (Sprint Execution Engine, ST-02/EPIC-01/v8.6 mid-sprint finding — 1 new item added: BLG-BE-95, persist isAiDraft flag on trade_plans for AI-origin display badges); prior — 2026-08-11 (PMO Lead, acting on the `2026-08-11__release-v8.6` design gate's ST-07/BLG-FE-150 recommendation — 1 new item added: BLG-FE-156, convert 4 hardcoded dark-only modals to theme-aware tokens); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-11 (Sprint Execution Engine, ST-13/EPIC-04/v8.6 agent-mediated FRRO review finding — 1 new item added: BLG-QA-148, end-to-end integration assertion for tax-year boundary trade rows); prior — 2026-08-12 (Sprint Execution Engine, acting as Product Owner per explicit user direction — PR #1362 risk-acceptance decision recorded on BLG-BE-96: merge approved with the disclosed staging-verification gap outstanding, condition attached escalating any status='active' legacy-row finding to P0; cross-EPIC merge-conflict resolution against main also renumbered EPIC-02's own BLG-FE-157 filing to BLG-FE-158, since it collided with EPIC-03/ST-04's independently-filed BLG-FE-157 which merged to main first via PR #1359 — per CLAUDE.md §8.2a); prior — 2026-08-12 (Sprint Execution Engine, acting as Head of Engineering, PR #1362 dual-review follow-up — BLG-BE-96 priority elevated P2→P1; 1 new item added, later renumbered to BLG-FE-158: consume trade_plan_linked/trade_plan_id in the position-entry flow); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -1273,6 +1273,48 @@ The Unrealised P&L card immediately preceding the SI-02 Gate Status section (`sr
 
 ---
 
+### BLG-FE-157 — Playwright coverage for the remaining shadcn token call-site families left untested by v8.6/ST-04
+**Priority:** P2 (Medium)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** EPIC-03/ST-04 (`2026-08-11__release-v8.6`) — 2026-08-11
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** v8.7 or later
+
+**Problem**
+`BLG-FE-147`/ST-04 (v8.6) registered 9 previously-unregistered shadcn tokens (`card`, `popover`, `primary`, `secondary`, `accent`, `destructive`, `border`, `input`, `ring`) in `tailwind.config.js`, verified via a real `tailwindcss` build that all in-scope utility classes now compile to non-empty rules. Per CLAUDE.md's frontend-visible-change rule, Playwright coverage or staging sign-off is required per confirmed-affected call site. Only one call-site family (the Auto-refresh Switch's `bg-primary`/`bg-input`, `tests/e2e/system-status.spec.js` SC-SS-08a/b) received Playwright coverage in that story — the remaining families (`card`, `popover`, `secondary`, `accent`, `destructive`, `border`, `ring`) were verified only by the tailwindcss build check, not by a rendering regression test. This mirrors the v8.5/ST-06 → `BLG-FE-148` precedent for the analogous `-muted` token gap.
+
+**Scope**
+- Add Playwright coverage for at least one confirmed-affected live call site per remaining token family: `card`/`card-foreground` (e.g. `SectorRegimeTrend.js` on Risk Dashboard), `popover`/`popover-foreground`, `secondary`/`secondary-foreground` (e.g. `Badge` secondary variant), `accent`/`accent-foreground`, `destructive`/`destructive-foreground`, `border`, `ring`
+
+**Acceptance Criteria**
+- Each of `card`, `popover`, `secondary`, `accent`, `destructive`, `border`, `ring` has at least one Playwright test asserting the real post-fix computed colour/background at a confirmed-affected live call site
+- Tests pass in real CI (not merely sandboxed authoring-time review)
+
+---
+
+### BLG-FE-158 — Consume `trade_plan_linked`/`trade_plan_id` in the position-entry flow
+**Priority:** P3 (Low)
+**Type:** Frontend / UX
+**Owner:** Frontend Specifications & UX Documentation Owner
+**Source:** Agent-mediated Product Owner review of PR #1362 (ST-03, EPIC-02, v8.6) — 2026-08-12
+**Effort:** XS (~<0.5d)
+**Provisional-Target:** TBD
+**Renumbering note (2026-08-12):** filed on the EPIC-02 branch as `BLG-FE-157`, before EPIC-03's own independent `BLG-FE-157` (Playwright coverage for the remaining shadcn token families, filed 2026-08-11) merged to `main` first via PR #1359 — exactly the identical-ID-masks-differing-content collision `CLAUDE.md` §8.2a exists to catch, this time on a backlog item ID rather than a document version number. Renumbered to the next free ID at cross-EPIC merge-conflict resolution; the two items are unrelated and neither should be read as superseding the other.
+
+**Problem**
+ST-03 added `trade_plan_linked` (boolean) and `trade_plan_id` (string|null) to `POST /portfolio/position`'s response, intended to surface the auto-link outcome to the user at the point of entry (per the story's own "surface this rather than silently proceeding unlinked" framing, tracing back to `docs/specs/frontend/pages/trade_plan.md` §10's default-path intent). An agent-mediated Product Owner review of the resulting PR checked `src/pages/TradeEntry.js` directly and found these two response fields are not consumed anywhere in the frontend — the existing unlinked-plan banner only fires from pre-submission state (before the API call), not from the actual auto-match outcome the backend now returns. The backend capability shipped; the "surface it to the user" intent it exists to serve did not.
+
+**Scope**
+- In `TradeEntry.js`'s post-submit handling, read `trade_plan_linked`/`trade_plan_id` from the `POST /portfolio/position` response
+- Surface the outcome to the user (e.g. a confirmation toast/banner naming the linked plan when `trade_plan_linked: true`, or an explicit "no matching plan found — logged unlinked" notice when `false`) — exact treatment is a frontend/UX design call, not specified here
+
+**Acceptance Criteria**
+- Position-entry flow visibly confirms (or flags the absence of) trade-plan linkage using the response fields ST-03 already ships
+- Playwright coverage or recorded staging sign-off per `CLAUDE.md`'s frontend-visible-change rule
+
+---
+
 ## 4. Backend & Data Backlog
 
 ---
@@ -1788,6 +1830,34 @@ No per-request trace ID propagation exists across routers/services. No incident 
 **Acceptance Criteria**
 - `trade_plans.is_ai_draft` persists across sessions and reflects the same origin/clearing semantics as the current client-only flag
 - Setup Thesis Digest panel shows the "AI draft" badge per `ux_spec.md` §2 when `is_ai_draft` is true
+
+---
+
+### BLG-BE-96 — Staging verification of ST-03's trade-plan-linkage enforcement, and legacy orphaned-row audit against the new CHECK constraint
+**Priority:** P1 (High) — elevated from P2, 2026-08-12
+**Type:** Backend Engineering / Data Integrity
+**Owner:** Head of Engineering; Data Model, Domain & Schema Owner
+**Source:** Agent-mediated Data Model, Domain & Schema Owner review of ST-03 (BLG-BE-91, EPIC-02, v8.6) — 2026-08-12
+**Effort:** S (~0.5-1d)
+**Provisional-Target:** TBD
+
+**Priority elevation note (2026-08-12):** raised from P2 to P1 following an independent agent-mediated Product Owner review of PR #1362, which judged the original P2 filing understated the risk — this item sits directly on ST-03's own conjunctive unblock criteria ("staging-verified" is not an optional nice-to-have, it's one of three co-equal conditions the delegation required), for a story whose entire premise is a previously-observed production data-integrity problem (0/11 linked trade plans). Mocked-DB unit tests, however thorough, cannot catch a real migration/constraint-application failure against the live schema.
+
+**Problem**
+ST-03 (BLG-BE-91)'s delegation explicitly required "staging-verified" confirmation that trade-plan linkage is enforced as the default entry-flow path — what was actually delivered is unit/router-level test coverage only (mocked DB throughout; no live Postgres reachable in this sandbox). The Data Model, Domain & Schema Owner's sign-off review accepted this as a reasonable substitute for code-correctness verification given the sandbox constraint, but was explicit that it does not satisfy the literal "staging-verified" unblock criterion, and flagged it as an open item rather than silently resolved. Separately, the same review flagged that DS-12's new `trade_plans_active_requires_position_check` CHECK constraint (`NOT VALID`, enforced going-forward only) has an unverified interaction with the 11 known legacy pre-`BLG-BE-46` (v6.8) orphaned rows (`position_id IS NULL`): if any of those 11 rows also happen to carry `status = 'active'` (plausible, since the `POST`/`PUT` gap ST-03 closed existed for their entire pre-fix history), any future `UPDATE` touching that specific row will fail against the new constraint until corrected — no live-DB query confirming or ruling this out was possible in this sandbox.
+
+**Scope**
+- On staging (or production, read-only), create a position via the "Start Trade from Plan" flow and confirm the trade plan is linked (`trade_plan_linked: true` in the `POST /portfolio/position` response) as the default path
+- Run a one-line query against the live `trade_plans` table: `SELECT id, ticker, status, position_id FROM trade_plans WHERE status = 'active' AND position_id IS NULL;` — confirm 0 rows (expected) or identify/fix any that exist before they can block a future legitimate edit
+- Confirm the DS-12 CHECK constraint is actually present and `NOT VALID` on the live table (`SELECT conname, convalidated FROM pg_constraint WHERE conrelid = 'trade_plans'::regclass;`)
+
+**Acceptance Criteria**
+- Staging run confirms trade-plan linkage is the enforced default path at position entry
+- Live query confirms 0 rows (or any found are fixed) matching `status='active' AND position_id IS NULL`
+- DS-12 constraint confirmed present and `NOT VALID` on the live table
+- Head of Engineering + Data Model, Domain & Schema Owner sign-off
+
+**Product Owner risk-acceptance condition (2026-08-12):** PR #1362 was approved to merge with this gap outstanding (see `qa_evidence_EPIC-02.md`'s Product Owner Decision block for full reasoning) — this is a genuine fast-follow, not a someday item. **If the legacy-row query above finds any of the 11 known rows carry `status='active'`, that specific finding escalates to its own P0 immediately** — do not fold it into this ticket's own P1 timeline.
 
 ---
 

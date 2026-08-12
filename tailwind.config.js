@@ -21,15 +21,48 @@ module.exports = {
         // border-muted, fill-muted, fill-muted-foreground) compiled to an
         // empty rule -- Tailwind only generates utilities for color tokens it
         // knows about. Design Pre-Approved (design_gate.md) -- restores an
-        // already-canonical token, no new visual design decision. Scoped to
-        // -muted per this story's AC; other similarly-unregistered shadcn
-        // tokens (card, popover, primary, secondary, accent, destructive,
-        // border, input, ring) are a separate, broader gap -- filed as
-        // BLG-FE-147, out of this story's scope.
+        // already-canonical token, no new visual design decision.
         muted: {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))',
         },
+        // ST-04 (BLG-FE-147, EPIC-03, v8.6): the remaining shadcn tokens
+        // defined in src/index.css but never registered here -- same root
+        // cause as the -muted gap above (v8.5/ST-06), broader scope. Every
+        // `bg-card`/`text-card-foreground`/`bg-popover`/`text-primary`/
+        // `bg-secondary`/`bg-accent`/`bg-destructive`/`border-border`/
+        // `bg-input`/`ring-ring` (and their sibling utility forms --
+        // border-, text-, fill-, stroke-, ring- variants actually in use,
+        // per src/ grep) compiled to an empty rule until now. Design
+        // Pre-Approved (design_gate.md) -- restores already-canonical
+        // tokens, no new visual design decision.
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
         // (all your Base44 extended colors here)
       },
       keyframes: {

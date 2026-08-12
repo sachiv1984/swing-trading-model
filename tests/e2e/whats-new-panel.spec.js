@@ -77,6 +77,18 @@ test('SC-WN-02: truncates to 8 bullets with a "+N more" trailer', async ({ page 
   await expect(card.locator('li')).toHaveCount(9);
   await expect(card.getByText('+3 more')).toBeVisible();
   await expect(card.getByText('Change number 9')).toHaveCount(0);
+
+  // ST-06 (EPIC-03, v8.6, BLG-FE-149): the bullet marker and "+N more"
+  // overflow item were both missing a dark: variant (bare text-slate-500) --
+  // must now carry the canonical secondary-text token pair, consistent with
+  // the sibling <li> text (already text-slate-600 dark:text-slate-400).
+  const bulletMarker = card.locator('li').first().locator('span').first();
+  await expect(bulletMarker).toHaveClass(/text-slate-600/);
+  await expect(bulletMarker).toHaveClass(/dark:text-slate-400/);
+
+  const overflowItem = card.getByText('+3 more');
+  await expect(overflowItem).toHaveClass(/text-slate-600/);
+  await expect(overflowItem).toHaveClass(/dark:text-slate-400/);
 });
 
 test('SC-WN-03: empty state (data null) shows "Nothing to show"', async ({ page }) => {

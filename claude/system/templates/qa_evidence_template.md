@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.8
-**Last Updated:** 2026-07-20
+**Version:** 1.9
+**Last Updated:** 2026-08-11 (ST-24, EPIC-06, v8.6, BLG-GOV-296 — "Known deviations filed" line reworded to "Known deviations" with a wording note, so a "None found" line reads consistently alongside every story's deviations_filed: true, per shared_standards.md §16.15)
 
 # QA Evidence Template
 
@@ -40,7 +40,9 @@ Last Updated: <date>
 **QA test coverage:**
 - Scenarios run: <list scenario file names, or "manual acceptance review">
 - Regression areas checked: <list affected spec domains>
-- Known deviations filed: <list deviation refs or "None">
+- Known deviations: <list deviation refs, or "None found — all stories' deviation checks completed with nothing to file">
+
+> **Wording note (ST-24, EPIC-06, v8.6, BLG-GOV-296):** the line above reads "Known deviations" (checks performed), not "Known deviations filed" — `execution_state.json`'s per-story `deviations_filed: true` means the deviation *check* completed, not that a deviation was necessarily found/filed (see `shared_standards.md` §16.15). Using "None found — all deviation checks completed" instead of a bare "Known deviations filed: None" avoids reading as contradictory next to every story row's `deviations_filed: true`.
 
 ---
 

@@ -657,7 +657,7 @@ function ReconciliationReport() {
               matched={data.matched}
               diff={Math.abs(data.system_total_pnl_gbp - data.export_total_pnl_gbp)}
             />
-            <p className="text-xs text-slate-500" data-testid="reconciliation-sign-off-note">
+            <p className="text-xs text-slate-600 dark:text-slate-400" data-testid="reconciliation-sign-off-note">
               Reviewed and confirmed matching by the Financial Reporting & Records Owner on 2026-08-04
             </p>
           </div>

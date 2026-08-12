@@ -204,3 +204,26 @@ test('SC-CP-14: command palette search input placeholder renders the real muted-
   const placeholderColor = await input.evaluate((el) => getComputedStyle(el, '::placeholder').color);
   expect(placeholderColor).toBe('rgb(163, 163, 163)');
 });
+
+// ST-06 (EPIC-03, v8.6, BLG-FE-149): the desktop search-affordance trigger
+// button and its ⌘K badge both used the pre-v6.7 failing text-slate-500
+// shade on both isDark branches (dark AND light) instead of the canonical
+// text-slate-600 dark:text-slate-400 pair. Dark theme is this app's default
+// (Layout.js) -- Tailwind's slate-400 is rgb(148, 163, 184).
+test('SC-CP-15: desktop search-affordance trigger renders the canonical secondary-text colour, not the failing slate-500 shade', async ({ page }) => {
+  await goto(page, '/#/Positions');
+  const trigger = page.getByTestId('command-palette-trigger-desktop');
+  await expect(trigger).toBeVisible();
+
+  const color = await trigger.evaluate((el) => getComputedStyle(el).color);
+  expect(color).toBe('rgb(148, 163, 184)');
+});
+
+test('SC-CP-16: ⌘K badge renders the canonical secondary-text colour, not the failing slate-500 shade', async ({ page }) => {
+  await goto(page, '/#/Positions');
+  const badge = page.getByTestId('command-palette-trigger-desktop').locator('kbd');
+  await expect(badge).toBeVisible();
+
+  const color = await badge.evaluate((el) => getComputedStyle(el).color);
+  expect(color).toBe('rgb(148, 163, 184)');
+});
