@@ -869,6 +869,15 @@ def add_position(
     # (the "Start Trade from Plan" action), link that exact plan instead of the
     # ticker/market best-effort match — deterministic, no reliance on there
     # being exactly one unlinked plan per ticker.
+    #
+    # ST-03 (BLG-BE-91, EPIC-02, v8.6): trade-plan linkage is the enforced
+    # DEFAULT path, not silently optional -- track and surface the outcome
+    # (trade_plan_linked / trade_plan_id) in the response instead of only a
+    # server-side print(), so the entry flow (and any test/staging check) can
+    # observe when a position was created with no trade plan behind it, per
+    # trade_plan.md §10's "Start Trade from Plan" default-path intent.
+    trade_plan_linked = False
+    linked_trade_plan_id = None
     try:
         plan_to_link = (
             get_trade_plan_by_id(trade_plan_id, portfolio_id)
@@ -880,21 +889,27 @@ def add_position(
                 "position_id": str(new_position["id"]),
                 "status": "active",
             })
+            trade_plan_linked = True
+            linked_trade_plan_id = str(plan_to_link["id"])
             print(f"   ✓ Linked trade plan {plan_to_link['id']} to new position")
+        elif not plan_to_link:
+            print(f"   ⚠️  No trade plan linked — position created without a pre-trade plan")
     except Exception as e:
         print(f"   ⚠️  Trade plan auto-link skipped: {e}")
 
     print(f"   ✓ Position created")
     print(f"   Cash: £{current_cash:.2f} → £{new_cash:.2f}\n")
-    
+
     # Return response
     display_ticker = ticker.replace('.L', '') if market == 'UK' else ticker
-    
+
     return {
         "ticker": display_ticker,
         "total_cost": round(total_cost_gbp, 2),
         "fees_paid": round(fees_paid_gbp, 2),
         "entry_price": round(entry_price_native, 2),
+        "trade_plan_linked": trade_plan_linked,
+        "trade_plan_id": linked_trade_plan_id,
         "initial_stop": round(initial_stop_native, 2),
         "remaining_cash": round(new_cash, 2),
         "position_id": str(new_position['id']),

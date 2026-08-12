@@ -3,8 +3,8 @@
 **Owner:** API Contracts & Documentation Owner
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
-**Version:** 2.6.0
-**Last Updated:** 2026-07-30
+**Version:** 2.6.1
+**Last Updated:** 2026-08-12 (ST-03, EPIC-02, v8.6, BLG-BE-91 — POST /portfolio/position gains trade_plan_linked/trade_plan_id response fields)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 ## Overview
@@ -200,7 +200,9 @@ Response uses the standard success envelope from **conventions.md**.
   "initial_stop": 780.00,
   "remaining_cash": 4075.00,
   "position_id": "550e8400-e29b-41d4-a716-446655440000",
-  "fx_rate_used": 1.3642
+  "fx_rate_used": 1.3642,
+  "trade_plan_linked": true,
+  "trade_plan_id": "660e8400-e29b-41d4-a716-446655440111"
 }
 ```
 
@@ -209,6 +211,8 @@ Response uses the standard success envelope from **conventions.md**.
 | Field | Type | Description |
 |-------|------|-------------|
 | `fx_rate_used` | number | ST-03 (EPIC-01, v8.0): the effective GBP/USD rate applied to this entry (user-provided `fx_rate` if supplied, else the live rate at entry time). `1.0` for UK tickers. Same value persisted to `positions.fx_rate`. Per `strategy_rules.md §4.1.5`'s auditability requirement — previously computed and persisted but not returned in this response. |
+| `trade_plan_linked` | boolean | ST-03 (BLG-BE-91, EPIC-02, v8.6): `true` if this position was linked to a trade plan at creation — either the explicit `trade_plan_id` supplied in the request, or the best-effort ticker/market auto-match (`BLG-BE-46`). `false` if no trade plan was linked (position created with no pre-trade plan behind it). Surfaces the previously-silent linkage outcome so the entry flow is not left to infer it; does not block position creation either way. |
+| `trade_plan_id` | string \| null | ST-03 (BLG-BE-91, EPIC-02, v8.6): UUID of the trade plan that was linked, or `null` when `trade_plan_linked` is `false`. |
 
 ### Validation rules & constraints
 
@@ -596,6 +600,7 @@ Errors use the standard error envelope from **conventions.md**.
 | 2.5.0 | 2026-07-27 | ST-02 (EPIC-02, v7.9, BLG-FEAT-67): GET /portfolio/sector-regime-trend added — weekly-bucketed sector concentration + regime status trend, backed by a new sector_regime_history table (data_model.md, going-forward capture only). Documents the corrected data-dependency premise (Metrics Definitions & Analytics Owner amendment) — no prior historical sector/regime data existed to aggregate. |
 | 2.5.1 | 2026-07-29 | ST-12 (EPIC-03, v7.10, BLG-QA-128): documentation backfill — `portfolio_heat_percent` and `position_risks` added to GET /portfolio's response schema and field notes. Both fields have always been returned by the live implementation and are consumed by `src/pages/RiskDashboard.js`; they were simply never documented here. Surfaced by a consumer-driven contract check (`scripts/check_consumer_contract_drift.js`). No behaviour change. |
 | 2.6.0 | 2026-07-30 | ST-03 (EPIC-01, v8.0, BLG-SPEC-107): FX conversion audit trail completeness check against `strategy_rules.md §4.1.5`'s "FX rate used must be returned ... for auditability" requirement. Found and fixed 3 gaps where an FX-derived GBP amount was computed but the rate used was never returned: `POST /portfolio/position` (`fx_rate_used` added — was already persisted to `positions.fx_rate` but never surfaced in this response), `GET /portfolio/prospective-heat` (`fx_rate_used` added), and `GET /portfolio/pre-entry-validation`'s `cash_constraint` check (`fx_rate_used` added). `POST /portfolio/size` was already compliant (`fx_rate_used` already returned). |
+| 2.6.1 | 2026-08-12 | ST-03 (EPIC-02, v8.6, BLG-BE-91): `POST /portfolio/position` response gains `trade_plan_linked` (boolean) and `trade_plan_id` (UUID or null) — surfaces whether a trade plan was linked at position creation (explicit `trade_plan_id` request field, or the ticker/market best-effort auto-match) instead of only a server-side log line. Part of the "trade-plan linkage is the enforced default path, not silently optional" story; see `docs/specs/data_model.md` DS-12 for the paired DB-level safeguard. |
 
 ---
 

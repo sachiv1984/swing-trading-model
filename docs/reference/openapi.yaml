@@ -5654,6 +5654,14 @@ components:
         initial_stop: { type: number }
         remaining_cash: { type: number }
         position_id: { type: string, format: uuid }
+        trade_plan_linked:
+          type: boolean
+          description: ST-03 (BLG-BE-91, v8.6) — true if this position was linked to a trade plan at creation (explicit trade_plan_id or ticker/market auto-match).
+        trade_plan_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: ST-03 (BLG-BE-91, v8.6) — UUID of the linked trade plan, or null when trade_plan_linked is false.
 
     SizePositionRequest:
       type: object

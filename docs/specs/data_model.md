@@ -3,8 +3,8 @@
 **Owner:** Data Model & Domain Schema Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 2.24
-**Last Updated:** 2026-08-07
+**Version:** 2.25
+**Last Updated:** 2026-08-11 (ST-03, EPIC-02, v8.6, BLG-BE-91 — DS-12 trade_plans active-status-requires-position CHECK constraint)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 
 This document describes the complete database schema and data structures used in the **Position Manager Web App**.
@@ -1913,6 +1913,49 @@ Reversible: `DROP TABLE IF EXISTS trade_plan_audit_log;`
 
 ---
 
-**Document Version:** 2.24
+## DS-12 — trade_plans active-status-requires-position CHECK constraint (v2.25, 2026-08-11)
+
+**Story:** ST-03 (EPIC-02, v8.6) — BLG-BE-91
+
+DB-level safeguard against new orphaned `trade_plans` rows going forward. `position_id` remains nullable by design (a plan may legitimately exist pre-entry, or be abandoned, with no position ever attached) — a hard `NOT NULL` constraint is not viable. The precise integrity risk closed here: `status = 'active'` is meant to mean "this plan backs a live position" — `position_service.py::add_position()`'s auto-link step is the only code path that ever sets `status = 'active'` as part of the intended flow, and it always sets `position_id` in the same write — but both `POST /trade-plans` (`create_plan()`) and `PUT /trade-plans/{id}` (`update_plan()`) previously accepted an arbitrary `status` string with no such guard, so a client could set `status = 'active'` directly with no `position_id` at either creation or edit time, producing exactly the orphaned-active-plan state this story exists to prevent. Closed at two layers in the same commit: router-level 400 guards in both `create_plan()` and `update_plan()` (primary defense — see `trade_plan_endpoints.md`'s `POST /trade-plans` and `PUT /trade-plans/{id}` Errors sections), and this CHECK constraint (defense-in-depth, in case a future code path bypasses the router — e.g. a direct DB write, or a new endpoint that omits the check).
+
+Added `NOT VALID` deliberately — enforces the rule on rows inserted/updated going forward only (matching this story's own "going forward" framing), without retroactively validating the 11 legacy pre-`BLG-BE-46` (v6.8) `trade_plans` rows already known to carry `position_id IS NULL` (§"Trade Plan to Position Linkage" → §"Nullability and backfill posture" below). Avoids a migration failure risk from historical data not directly inspected as part of this change — **open risk, flagged not resolved:** if any of those 11 rows happen to also carry `status = 'active'` (plausible, since the `POST`/`PUT` gap this story closes existed for their entire pre-fix history), any future `UPDATE` touching that specific row will fail against this constraint until corrected; no live-DB query confirming or ruling this out was run as part of this change (sandboxed execution, no database access). A future `VALIDATE CONSTRAINT` pass can retroactively confirm the full table if ever needed; not required for this story's AC.
+
+### Up Migration (v2.24 → v2.25)
+
+```sql
+BEGIN;
+ALTER TABLE trade_plans DROP CONSTRAINT IF EXISTS trade_plans_active_requires_position_check;
+ALTER TABLE trade_plans ADD CONSTRAINT trade_plans_active_requires_position_check
+  CHECK (status != 'active' OR position_id IS NOT NULL) NOT VALID;
+COMMIT;
+```
+
+### Verification
+
+```sql
+SELECT conname, convalidated
+FROM pg_constraint
+WHERE conrelid = 'trade_plans'::regclass AND conname = 'trade_plans_active_requires_position_check';
+-- Expected: 1 row, convalidated=false (NOT VALID — enforced going forward, not backfilled)
+```
+
+### Down Migration (v2.25 → v2.24)
+
+```sql
+BEGIN;
+ALTER TABLE trade_plans DROP CONSTRAINT IF EXISTS trade_plans_active_requires_position_check;
+COMMIT;
+```
+
+Reversible: drops the constraint only; no column/table changes to reverse.
+
+**Sign-off:**
+- Data Model & Domain Schema Owner: Accepted — 2026-08-12 (agent-mediated; single new CHECK constraint, `NOT VALID` so no risk to existing rows, no existing column/table structure touched)
+- Product Owner (design + risk acceptance): Accepted — 2026-08-12. Explicitly accepts the `NOT VALID`/going-forward-only design and the disclosed staging-verification gap (`BLG-BE-96`, elevated P1) as a reasonable trade-off, not a silently-ignored risk — full reasoning in `qa_evidence_EPIC-02.md`'s Product Owner Decision block. **This is not the same thing as the PR's merge-gate Product Owner acceptance** (`CLAUDE.md` §2, always-human, satisfied only by an actual human clicking accept on the PR) — that remains outstanding. (This entry briefly and incorrectly stated a bare "Accepted" for the merge-gate sense on 2026-08-11; corrected 2026-08-12 after an independent agent-mediated review of PR #1362 flagged the discrepancy, before being re-recorded here in its narrower, correct sense.)
+
+---
+
+**Document Version:** 2.25
 **Maintained By:** Data Model & Domain Schema Owner
-**Last Review:** 2026-08-07
+**Last Review:** 2026-08-11

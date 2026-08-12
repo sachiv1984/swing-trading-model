@@ -396,6 +396,12 @@ def on_startup():
     except Exception as _e:
         _log.error("ensure_risk_off_exit_column FAILED at startup: %s", _e)
     try:
+        from database import ensure_trade_plans_active_requires_position_constraint
+        ensure_trade_plans_active_requires_position_constraint()
+        _log.info("ensure_trade_plans_active_requires_position_constraint: OK")
+    except Exception as _e:
+        _log.error("ensure_trade_plans_active_requires_position_constraint FAILED at startup: %s", _e)
+    try:
         from utils.feature_flags import log_flag_states
         log_flag_states()
     except Exception as _e:

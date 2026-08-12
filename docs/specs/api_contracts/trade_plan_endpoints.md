@@ -1,8 +1,8 @@
 **Owner:** Head of Specs Team
 **Class:** Specification (Class 2)
 **Status:** Active
-**Version:** 0.9
-**Last Updated:** 2026-08-07
+**Version:** 0.10
+**Last Updated:** 2026-08-12 (ST-03, EPIC-02, v8.6, BLG-BE-91 — PUT /trade-plans/{id} status='active' now requires a position_id; new Errors section)
 **Cycle:** 2026-04-29__release-v3.1 (ST-01); 2026-05-22__release-v4.0 (ST-12); 2026-07-08__release-v6.8 (ST-05); 2026-07-17__release-v7.5 (ST-03); 2026-07-21__release-v7.7 (ST-07)
 
 ---
@@ -94,6 +94,12 @@ Create a new trade plan.
 }
 ```
 
+### Errors
+
+Errors use the standard error envelope from **conventions.md**.
+
+- `400` — `status: 'active'` supplied with no `position_id` (ST-03, `BLG-BE-91`, EPIC-02, v8.6) — same rule as `PUT /trade-plans/{id}` below; a plan cannot be created already "active" with nothing backing it.
+
 ---
 
 ## GET /trade-plans
@@ -156,6 +162,15 @@ Same fields as POST (all optional for PUT), including `pre_entry_override_acknow
   "data": { /* updated trade plan object */ }
 }
 ```
+
+### Errors
+
+Errors use the standard error envelope from **conventions.md**.
+
+- `400` — `status: 'abandoned'` supplied without `abandonment_reason` (`BLG-FEAT-21`)
+- `400` — `status: 'abandoned'` supplied for a plan linked to an open position (`BLG-FEAT-21`)
+- `400` — `status: 'active'` supplied with no `position_id` on either the existing plan or this same update (ST-03, `BLG-BE-91`, EPIC-02, v8.6). `'active'` means "this plan backs a live position" — set this way only to prevent an orphaned active plan; see `data_model.md` DS-12 for the paired DB-level safeguard, and `data_model.md`'s "Trade Plan to Position Linkage" §"Nullability and backfill posture" for why `position_id` is nullable by design.
+- `404` — plan not found
 
 ---
 
@@ -495,6 +510,7 @@ score = clamp(round(win_rate × 0.6 + max(average_pnl_pct, 0) × 0.4), 0, 100)
 
 | Version | Date | Summary |
 |---------|------|---------|
+| 0.10 | 2026-08-12 | ST-03 (EPIC-02, v8.6, BLG-BE-91): `PUT /trade-plans/{id}` — `status: 'active'` now requires a `position_id` (either already on the plan, or supplied in this same update); 400 if neither. New Errors section documents this alongside the pre-existing (previously undocumented) abandonment-rule 400s and 404. DB-level backstop: `docs/specs/data_model.md` DS-12. |
 | 0.9 | 2026-08-07 | ST-12 (EPIC-03, v8.4, BLG-BE-70): Add `thesis_model_version`/`thesis_prompt_version` to POST/PUT /trade-plans request schema — AI compliance provenance fields, frontend-passed, persisted only when the narrative fields were saved as-received from a generate-plan/generate-thesis response. Nullable, no backfill. Authority: AI Compliance & Governance Officer. |
 | 0.8 | 2026-07-24 | ST-07 (EPIC-07, v7.7, BLG-GOV-28): Retroactive §13 boundary review of GET /trade-plans/setup-quality-score — PASS. No contract/behaviour change; added §13 Compliance reference to the endpoint section. See `docs/product/decisions/decisions--2026-07-21__release-v7.7--PT-04-section13-review.md`. |
 | 0.7 | 2026-07-17 | ST-03 (BLG-FE-117, EPIC-03, v7.5): Add POST /trade-plans/bulk-tag, PUT /trade-plans/bulk-archive, DELETE /trade-plans/bulk — bulk-actions toolbar. `succeeded`/`failed` per-row response shape per readiness pass AC-01. Bulk-archive excludes `status='active'` plans (mirrors §8.1 single-item hide rule) and applies a fixed system abandonment reason (no per-plan reason field in the bulk confirmation flow). |

@@ -66,34 +66,34 @@
       }
     },
     "EPIC-02": {
-      "status": "not_started",
+      "status": "done",
       "branch": "exec/2026-08-11__release-v8.6/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
-      "qa_signed_off": false,
+      "pr_number": 1362,
+      "pr_status": "open",
+      "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-11__release-v8.6/qa_evidence_EPIC-02.md",
-      "test_scenarios": [],
+      "test_scenarios": ["tests/test_position_trade_plan_link.py"],
       "stories": {
         "ST-03": {
           "title": "Enforce trade-plan linkage at position entry + DB-level safeguard against orphaned trade_plans rows",
           "classification": "delegated_backend",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "Head of Engineering",
           "github_issue": 1334,
           "branch": "exec/2026-08-11__release-v8.6/EPIC-02",
-          "commit_sha": null,
-          "delegation_record_id": null,
-          "blocked_since_utc": null,
-          "unblock_criteria": null,
-          "completed_utc": null,
-          "acceptance_verified": false,
-          "spec_references": [],
+          "commit_sha": "f50d9112b7b93ee21a40cd5432d19cedd27a771a",
+          "delegation_record_id": "DEL-20260811-01",
+          "blocked_since_utc": "2026-08-11T18:45:00Z",
+          "unblock_criteria": "Entry-flow linkage confirmed enforced (staging-verified); DB-level safeguard implemented and tested against a deliberately orphaned row; Data Model, Domain & Schema Owner + Product Owner sign-off recorded.",
+          "completed_utc": "2026-08-12T00:30:00Z",
+          "acceptance_verified": true,
+          "spec_references": ["docs/specs/frontend/pages/trade_plan.md#10", "docs/specs/data_model.md#DS-12", "docs/specs/api_contracts/portfolio_endpoints.md", "docs/specs/api_contracts/trade_plan_endpoints.md"],
           "spec_reference_not_applicable": false,
           "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
-          "sign_off_record": null,
-          "notes": ""
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.B.unblock",
+          "sign_off_record": {"status": "cleared", "role": "Data Model, Domain & Schema Owner", "method": "agent_mediated", "date": "2026-08-12"},
+          "notes": "Resolved by Sprint Execution Engine acting as Head of Engineering (explicit user direction), per DEL-20260811-01's full resolution write-up in delegation_log.md. Router/service layer: POST /portfolio/position returns trade_plan_linked/trade_plan_id (portfolio_endpoints.md v2.6.0->v2.6.1). DB layer: trade_plans_active_requires_position_check CHECK constraint (NOT VALID, going-forward only) + router-level 400 guards in BOTH create_plan() and update_plan() (trade_plan_endpoints.md v0.9->v0.10); documented as data_model.md DS-12 (v2.24->v2.25). Full backend suite (1071 tests) green -- including a real cross-file test-pollution bug caught and fixed along the way (a destructive sys.modules.pop('main') in a new test class broke @patch string-path resolution for other test files; removed). Agent-mediated Data Model Owner review: first pass NOT CONFIRMED (missing API contract version bumps + a POST /trade-plans coverage gap the reviewer found); both remediated in-session. DEVIATION, explicitly flagged not silently closed: staging verification of the entry-flow enforcement was NOT performed (no live staging/Postgres access in this sandbox) -- filed as BLG-BE-96 (elevated to P1, 2026-08-12) along with an unverified interaction between the new CHECK constraint and the 11 known legacy orphaned trade_plans rows. PRODUCT OWNER DECISION (2026-08-12, per explicit user direction, acting as Product Owner role): accepted the risk -- router-level guards (primary defense) are independent of the staging gap and well-tested; the CHECK constraint's NOT VALID design bounds the blast radius to a recoverable DB error on at most the 11 already-known legacy rows, not silent corruption; not merging doesn't reduce that existing exposure to zero, only delays shipping the fix for a real, previously-identified data-integrity problem. Condition attached: if BLG-BE-96's audit finds any of the 11 rows are status='active', that finding escalates to its own P0 immediately. Full reasoning in qa_evidence_EPIC-02.md's Product Owner Decision block. This satisfies the delegation's 'Product Owner sign-off recorded' unblock criterion via risk-acceptance rather than a staging run itself being performed."
         }
       }
     },
@@ -641,8 +641,8 @@
   },
 
   "blocked_items": [],
-  "delegated_items": ["ST-25", "ST-26"],
-  "completed_items": ["ST-01", "ST-02", "ST-19", "ST-20", "ST-22", "ST-23", "ST-24", "ST-25", "ST-26"],
+  "delegated_items": [],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-15", "ST-16", "ST-17", "ST-18", "ST-19", "ST-20", "ST-22", "ST-23", "ST-24", "ST-25", "ST-26"],
   "open_escalations": [],
 
   "merge_gate": {
