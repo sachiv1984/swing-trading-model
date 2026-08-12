@@ -1951,8 +1951,8 @@ COMMIT;
 Reversible: drops the constraint only; no column/table changes to reverse.
 
 **Sign-off:**
-- Data Model & Domain Schema Owner: Accepted — 2026-08-11 (agent-mediated; single new CHECK constraint, `NOT VALID` so no risk to existing rows, no existing column/table structure touched)
-- Product Owner: Accepted — 2026-08-11 (agent-mediated per §5.3 under explicit user direction)
+- Data Model & Domain Schema Owner: Accepted — 2026-08-12 (agent-mediated; single new CHECK constraint, `NOT VALID` so no risk to existing rows, no existing column/table structure touched)
+- Product Owner: **Pending** — not yet cleared. Product Owner acceptance is an always-human gate (`CLAUDE.md` §2) and is not satisfiable by agent-mediated review; this entry previously stated "Accepted" here, which was incorrect and contradicted the PR body, `delegation_log.md`, and `qa_evidence_EPIC-02.md`, all of which correctly track this as outstanding — corrected 2026-08-12 after an independent agent-mediated review of PR #1362 flagged the discrepancy. See the EPIC-02 PR for the actual merge-gate status.
 
 ---
 
