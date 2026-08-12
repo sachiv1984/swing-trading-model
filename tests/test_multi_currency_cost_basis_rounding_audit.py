@@ -30,9 +30,35 @@ Findings (see that decision record for the full write-up):
    same inputs — confirmed bit-for-bit identical, not a second source of
    drift). This division is currency-agnostic: dividing a GBP total_cost by
    a fractional share count produces a repeating decimal for UK positions
-   exactly as readily as for US ones. Each write is independently rounded
-   to 2dp by the DB, so the error does not compound across exits — it is
-   bounded to a per-exit tolerance, not accumulated.
+   exactly as readily as for US ones.
+
+   CORRECTION (2026-08-12, post-review): the original version of this audit
+   asserted this error "does not compound across exits" because each write
+   is independently rounded to 2dp. That claim was FALSE in the general
+   case and was caught by an agent-mediated Financial Reporting & Records
+   Owner review of PR #1363, which produced a concrete counter-example: 37
+   sequential single-share exits of a £12,345.67 position drifted £0.12 —
+   6x the ≤£0.02 bound this file originally asserted (which had only been
+   empirically checked against two small fixtures, a 3-share and a 7-share
+   split of £100). The error DOES compound, because each partial exit's
+   `remaining_cost = total_cost - exit_total_cost` was computed from the
+   UNROUNDED `exit_total_cost`, then independently rounded on write — the
+   next exit then reads that already-slightly-wrong remaining_cost as its
+   new starting `total_cost`, so small per-step errors can accumulate in
+   one direction across many exits rather than cancelling out.
+
+   FIX APPLIED: `exit_total_cost`/`exit_entry_fees` are now rounded to 2dp
+   immediately (matching the NUMERIC(12,2)/NUMERIC(10,2) columns they
+   persist to), and `remaining_cost`/`remaining_fees` are derived by exact
+   subtraction from the already-rounded starting total_cost/fees_paid —
+   not by independently rounding a second, separately-computed unrounded
+   remainder. This "round once, derive the rest by exact subtraction"
+   ordering makes the allocation telescope exactly: the sum of every
+   exit_total_cost across a position's full partial-exit lifecycle always
+   reconstructs the original total_cost to the cent, for any share count,
+   position size, or number of partial exits — see
+   TestExactTelescopingAllocation below, which reproduces the counter-
+   example and confirms zero drift post-fix.
 3. reports_service.py consumers (tax-year report, reconciliation report,
    monthly P&L) read back already-persisted (DB-rounded) `total_cost`
    values and do not re-derive cost basis independently — no additional
@@ -54,13 +80,17 @@ Findings (see that decision record for the full write-up):
    there is no observed or reachable consumer of a closed position's
    `total_cost`.
 
-Conclusion: immaterial, quantified bound (see
-TestPartialExitCostBasisRoundingBound below — empirically well within the
-≤£0.02 tolerance asserted per test, non-compounding). Documented in
-docs/product/decisions/multi-currency-cost-basis-rounding-audit--2026-08-12.md.
-No code fix applied — per DEL-20260811-02's unblock criterion (b) ("if the
-audit concludes the discrepancy is immaterial ... document that finding and
-the quantified bound").
+Conclusion (revised): the entry-side finding (#1) remains immaterial, as
+originally documented. The partial-exit finding (#2) required an actual
+fix, not just documentation — see TestExactTelescopingAllocation below for
+the regression coverage proving the fix eliminates the drift exactly,
+including on the originally-failing counter-example. Both outcomes are
+documented in
+docs/product/decisions/multi-currency-cost-basis-rounding-audit--2026-08-12.md
+(revised 2026-08-12 to reflect the corrected finding). This satisfies
+DEL-20260811-02's unblock criterion (a) for finding #2 ("any inconsistency
+found is fixed") and criterion (b) for finding #1 ("documented as
+immaterial with a quantified bound").
 
 No live database — DB writes are mocked with a round-trip that mimics
 NUMERIC(12,2) column rounding (round(value, 2) on every simulated write),
@@ -152,9 +182,12 @@ def _run_sequential_single_share_exits(fake_db, exit_price, num_shares, market, 
             position_service.exit_position(**kwargs)
 
 
-class TestPartialExitCostBasisRoundingBound:
-    """Empirically quantifies the partial-exit rounding drift for both
-    markets, confirming it is bounded and market-symmetric (finding #2)."""
+class TestExactTelescopingAllocation:
+    """Confirms the fix (round exit_total_cost first, derive the remainder
+    by exact subtraction) makes the partial-exit cost split telescope
+    exactly, for any share count / position size / exit count — not just
+    the two small fixtures the original (incorrect) version of this file
+    checked. Finding #2 in the module docstring."""
 
     def _drift(self, market, entry_total_cost, shares, exit_price, fx_rate=1.0):
         position = {
@@ -185,28 +218,41 @@ class TestPartialExitCostBasisRoundingBound:
         exited_total = sum(t["total_cost"] for t in fake_db.trade_history_writes)
         return abs(exited_total - entry_total_cost)
 
-    def test_uk_position_drift_bounded(self):
+    def test_uk_position_drift_is_exactly_zero(self):
         # £100.00 spread across 3 shares — does not divide evenly (33.333...).
         drift = self._drift(market="UK", entry_total_cost=100.00, shares=3, exit_price=50.0)
-        assert drift <= 0.02, f"UK partial-exit drift {drift} exceeds the documented bound"
+        assert drift == 0.0, f"UK partial-exit drift {drift} — telescoping fix should make this exact"
 
-    def test_us_position_drift_bounded(self):
+    def test_us_position_drift_is_exactly_zero(self):
         # Same £100.00 total_cost (already GBP as persisted), same 3-share split.
         drift = self._drift(market="US", entry_total_cost=100.00, shares=3, exit_price=60.0, fx_rate=1.25)
-        assert drift <= 0.02, f"US partial-exit drift {drift} exceeds the documented bound"
+        assert drift == 0.0, f"US partial-exit drift {drift} — telescoping fix should make this exact"
 
-    def test_drift_is_symmetric_across_markets(self):
+    def test_drift_is_zero_and_symmetric_across_markets(self):
         """Core audit finding: the partial-exit rounding source is
         currency-agnostic — UK and US positions with the same total_cost/
-        share-count split produce the same order-of-magnitude drift. This
+        share-count split produce identical (zero) drift post-fix. This
         disproves the delegation's starting-point hypothesis that only US
         positions carry extra rounding noise."""
         uk_drift = self._drift(market="UK", entry_total_cost=100.00, shares=7, exit_price=20.0)
         us_drift = self._drift(market="US", entry_total_cost=100.00, shares=7, exit_price=25.0, fx_rate=1.3)
-        assert uk_drift <= 0.02
-        assert us_drift <= 0.02
-        # Both bounded by the same tolerance — neither market is structurally
-        # worse than the other once DB-column rounding is accounted for.
+        assert uk_drift == 0.0
+        assert us_drift == 0.0
+
+    def test_regression_reviewer_counter_example_37_exits_of_large_position(self):
+        """The exact scenario an agent-mediated Financial Reporting &
+        Records Owner review used to disprove this file's original
+        "bounded ≤£0.02, non-compounding" claim: 37 sequential single-share
+        exits of a £12,345.67 position. Pre-fix this drifted £0.12 (6x the
+        originally-asserted bound). Post-fix it must be exact."""
+        drift = self._drift(market="UK", entry_total_cost=12345.67, shares=37, exit_price=500.0)
+        assert drift == 0.0, f"Counter-example still drifts by {drift} — telescoping fix regressed"
+
+    def test_regression_large_us_position_many_exits(self):
+        """Same counter-example shape, US market with FX conversion in the
+        mix, to confirm the fix holds for the currency-conversion path too."""
+        drift = self._drift(market="US", entry_total_cost=12345.67, shares=37, exit_price=650.0, fx_rate=1.28)
+        assert drift == 0.0, f"US counter-example drifts by {drift} — telescoping fix regressed"
 
     def test_realized_pnl_and_persisted_total_cost_use_identical_cost_per_share(self):
         """Confirms position_service.exit_position()'s own cost_per_share
@@ -244,6 +290,27 @@ class TestPartialExitCostBasisRoundingBound:
         net_proceeds = 50.0 - 9.95
         implied_pnl = round(net_proceeds - expected_cost_per_share, 2)
         assert abs(result["realized_pnl"] - implied_pnl) <= 0.01
+
+    def test_fees_paid_telescopes_exactly_too(self):
+        """fees_paid is the same DECIMAL(10,2) class of column as total_cost
+        and goes through the identical entry_fees_per_share * exit_shares
+        proportional-split pattern — confirms the fix (applied to both
+        total_cost and fees_paid in the same commit) covers fees_paid too,
+        not just total_cost."""
+        position = {
+            "id": "pos-3", "ticker": "TEST.L", "market": "UK",
+            "shares": 3, "total_cost": 100.00, "fees_paid": 10.00,
+            "entry_price": 33.33, "fill_price": 33.33, "entry_date": "2026-01-01",
+            "status": "open", "fx_rate": 1.0, "user_fill_price": None,
+            "entry_note": None, "tags": None,
+        }
+        fake_db = _FakeDb(position)
+        _run_sequential_single_share_exits(fake_db, exit_price=50.0, num_shares=3, market="UK")
+
+        exited_fees_total = sum(t["entry_fees"] for t in fake_db.trade_history_writes)
+        assert abs(exited_fees_total - 10.00) == 0.0, (
+            f"fees_paid drift {abs(exited_fees_total - 10.00)} — telescoping fix should cover fees_paid too"
+        )
 
 
 class TestEntrySideRoundingSymmetryAfterDbPersist:

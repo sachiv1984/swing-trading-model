@@ -370,6 +370,23 @@ def test_regime_distribution_rejects_invalid_window():
         get_regime_distribution(window="7d")
 
 
+def test_regime_distribution_docstring_does_not_claim_unreachable_null_exclusion():
+    """ST-11 (EPIC-04, v8.6): a prior version of this docstring claimed a
+    market's regime is *excluded from the count* when it fails to resolve
+    (regime_us/regime_uk NULL) -- unreachable, since run_screener() always
+    substitutes a real risk_off default and NULL is never persisted (see
+    test_run_screener_persists_risk_off_not_null_on_regime_fetch_failure).
+    A prior commit (ac6431b9) claimed to fix this docstring but only added
+    a test -- the docstring itself was untouched, caught by an
+    agent-mediated review of PR #1363. This regression test pins the
+    corrected wording so the false claim can't silently return."""
+    from services.screener_batch_service import get_regime_distribution
+    doc = get_regime_distribution.__doc__
+    assert "unreachable" in doc
+    assert "NULL regime is\n    never persisted" in doc or "never persisted" in doc
+    assert "is excluded from that market's count" not in doc
+
+
 def test_regime_distribution_defaults_to_30d():
     conn, cur = _mock_regime_dist_row(us_risk_on=10, us_risk_off=2, uk_risk_on=5, uk_risk_off=3, run_count=15)
     with patch("services.screener_batch_service.get_db", return_value=conn):
