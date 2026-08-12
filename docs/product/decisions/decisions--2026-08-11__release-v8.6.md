@@ -1,9 +1,9 @@
 Owner: Product Owner
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v8.6
 Cycle: 2026-08-11__release-v8.6
-Last Updated: 2026-08-11
+Last Updated: 2026-08-12
 
 ## Planning Decisions — v8.6 User Features, Data-Integrity Foundation & Correctness Carryover
 
@@ -32,8 +32,7 @@ Last Updated: 2026-08-11
 | None | — | No escalations were raised this cycle (all preflight/hard gates passed cleanly) | — | — |
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
+Superseded by: v8.6 ship — 2026-08-12
+Changelog: docs/product/changelog.md#v8.6
 Cycle: 2026-08-11__release-v8.6

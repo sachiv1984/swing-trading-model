@@ -1,9 +1,9 @@
 Owner: Head of Specs Team
 Class: Planning Document (Class 4)
-Status: Active
+Status: Superseded
 Release: v8.6
 Cycle: 2026-08-11__release-v8.6
-Last Updated: 2026-08-11
+Last Updated: 2026-08-12
 
 ## Release Scope — v8.6 User Features, Data-Integrity Foundation & Correctness Carryover
 
@@ -29,9 +29,8 @@ Last Updated: 2026-08-11
 | Remaining 175 gated backlog items | Gate conditions not met | Per individual gate conditions |
 
 ### Supersession note
-*To be completed at Post-Ship Closure — do not populate at planning time.*
 
-Superseded by: [TBD]
-Changelog: [TBD]
-Verification report: [TBD]
+Superseded by: v8.6 ship — 2026-08-12
+Changelog: docs/product/changelog.md#v8.6
+Verification report: claude/cycles/2026-08-11__release-v8.6/verification_report.md
 Cycle: 2026-08-11__release-v8.6

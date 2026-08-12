@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.155
+**Version:** 4.156
 **Last Updated:** 2026-08-12
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -973,7 +973,7 @@ A PR may only be merged when all of the following are true:
 
 ## 9. Phase 4 — Delivery Verification
 
-**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.7)
+**Source prompt:** `claude/system/delivery_verification_prompt.md` (v3.8)
 
 Phase 4 is a **mandatory gate** between sprint close and the next planning cycle. It verifies that what was built matches what was scoped, specified, and accepted.
 
@@ -1470,7 +1470,7 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
 | Execution Engine Source | `claude/system/execution_prompt.md` v3.67 |
 | QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.9 |
-| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.7 |
+| Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.8 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.26 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
@@ -1496,6 +1496,7 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.156 | 2026-08-12 | **Post-ship closure `2026-08-11__release-v8.6` STEP 8 immediate action (LL-v8.6-P4-03) — delivery_verification_prompt.md v3.7→v3.8: §7 Deviation Severity Policy gains a Resolved-deviation carve-out.** §9 source prompt header v3.7→v3.8 (line 976). §14 Verification Engine Source v3.7→v3.8. §14 Version 4.155→4.156/2026-08-12. Change: a deviation record filed with `Status: Resolved` (a retroactive record of an already-fixed defect, filed for traceability rather than to flag a current gap) is entered in the Deviation Register but no longer triggers the P0–P3 hard-block/PO+DoQ acceptance-recording requirement — closes an interpretive gap this cycle's own verification had to infer rather than read directly from the policy (`DEV-NAV-ST06-01`, a retroactively-filed P1 record for an already-shipped v8.5 fix). Authority: Head of Specs Team (post-ship closure `2026-08-11__release-v8.6`, STEP 8 — immediate lessons-learnt action rule). |
 | 4.155 | 2026-08-12 | **Sprint execution `2026-08-11__release-v8.6` STEP 5.4 Phase 3 lessons-learnt, action-now (recurrence escalation, LL-v8.5-P3-01 carried 2 cycles unapplied) — execution_prompt.md v3.66→v3.67: §3.2.A gains a mandatory `governance-drift` skill Step 1b invocation.** §8 source prompt header v3.66→v3.67 (line 892). §14 Execution Engine Source v3.66→v3.67. §14 Version 4.154→4.155/2026-08-12. Change: whenever an EPIC's work bumps `OPERATIONAL_GUIDE.md`'s version (CLAUDE.md §6 fires), the DoQ sign-off step now mandatorily runs the `governance-drift` skill's 3-way self-consistency check (header / §14 self-row / Change Log top row) before proceeding to PR-open, rather than relying on a reviewer noticing the drift by inspection — closes the gap first flagged at `2026-08-08__release-v8.5` Phase 3 (deferred, no `prompt_change_log.md` entry applying it for 2 consecutive cycles, triggering `lessons_learnt_prompt.md` §3.7's automatic recurrence-escalation rule). **Self-caught SELF-DRIFT in the same edit (validating the very check being added):** this document's own §14 self-row (`Version | 4.152` / `Last Updated | 2026-08-10`) had drifted 2 versions behind the header and Change Log top row (both already `4.154`/`2026-08-11` from the preceding ST-24 entry) — confirmed `4.154` as the true latest version via this file's own most recent `prompt_change_log.md` row, then corrected the self-row to `4.155` in the same write as this entry's own +1 bump, so the fix does not itself go stale. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, STEP 5.4, 2026-08-12). |
 | 4.154 | 2026-08-11 | **Sprint execution `2026-08-11__release-v8.6` EPIC-06/ST-24 (BLG-GOV-296) — shared_standards.md v3.27→v3.28 and qa_evidence_template.md v1.8→v1.9: documented `execution_state.json`'s `deviations_filed` field's actual meaning.** §14 Shared Standards v3.27→v3.28; §14 QA Evidence Template v1.8→v1.9. §14 Version 4.153→4.154/2026-08-11. Change: new `shared_standards.md` §16.15 clarifies `deviations_filed: true` means "the deviation check was performed", not literally "a deviation was filed" — resolving an apparent (but not actual) contradiction where every `done` story's flag reads `true` while a `qa_evidence_EPIC-xx.md` consolidation block says "Known deviations filed: None". `execution_state_schema.json` gains a matching `_deviations_filed_note` pointing back to §16.15. `qa_evidence_template.md`'s "Known deviations filed" line reworded to "Known deviations" with a wording note, so future logs read consistently rather than apparently self-contradictory. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-24, 2026-08-11). |
 | 4.153 | 2026-08-10 | **Post-ship closure `2026-08-08__release-v8.5` STEP 8, immediate lessons-learnt action — post_ship_closure.md v2.25→v2.26: STEP 7.3 hardcoded "§27" TSG reference replaced with a full-document scan.** §10 source prompt header v2.25→v2.26 (line 1062). §14 Post-Ship Closure Engine v2.25→v2.26. §14 Version 4.152→4.153/2026-08-10. Change: `Specs_Index.md`'s Test Coverage Gap register is append-only/chronologically-numbered, so a fixed section number drifts stale every cycle a new section is appended — STEP 7.3 now scans the full document for `**Status:** Open` fields on `TSG-*`-prefixed entries instead. Self-confirmed live during this same closure's own STEP 7 run (actual §27 is "Test Coverage Gaps — v5.0"; the one genuinely Open TSG entry, `TSG-v33-03`, sits at §19.3) — closes a deferred patch carried forward without a `prompt_change_log.md` entry for 2 consecutive cycles (`2026-08-07__release-v8.4` closure carry-forward #2), applied now per STEP 8's non-deferrable-immediate-action rule rather than deferred a 3rd time. Authority: Head of Specs Team (post-ship closure `2026-08-08__release-v8.5`, STEP 8 immediate-action rule). |

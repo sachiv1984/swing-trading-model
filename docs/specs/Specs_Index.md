@@ -4,7 +4,7 @@
 **Purpose:** Single map of canonical product truth
 **Audience:** Product, Engineering, Analytics, Strategy
 **Status:** Authoritative
-**Last Updated:** 2026-08-07 (sprint execution 2026-08-07__release-v8.4, ST-09/EPIC-02: added `schema_versioning_trade_plan_position.md` to §3.2 Canonical Documents); prior — 2026-08-03 (sprint execution 2026-08-03__release-v8.1, ST-14/EPIC-05: §6.6 (BLG-SPEC-72) RESOLVED — Product Owner reviewed Gate Condition 2/3 thresholds, codified in reports.md v0.11→v0.12); prior — 2026-07-27 (post-ship closure 2026-07-24__release-v7.8; §38 Test Coverage Gaps — v7.8 added, 1 gap item dispositioned not_applicable, no backlog items required); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-12 (post-ship closure 2026-08-11__release-v8.6; §39 Test Coverage Gaps — v8.6 added, 0 new gaps; full-document TSG reconciliation sweep resolved 2 long-stale Open entries, TSG-v33-03 and TSG-v6.8-01); prior — 2026-08-07 (sprint execution 2026-08-07__release-v8.4, ST-09/EPIC-02: added `schema_versioning_trade_plan_position.md` to §3.2 Canonical Documents); prior — 2026-08-03 (sprint execution 2026-08-03__release-v8.1, ST-14/EPIC-05: §6.6 (BLG-SPEC-72) RESOLVED — Product Owner reviewed Gate Condition 2/3 thresholds, codified in reports.md v0.11→v0.12); prior history retained — see prior entries in version control.
 
 ---
 
@@ -612,10 +612,11 @@ Identified during delivery verification (verification_report.md §6 — TSG-v33-
 ### 19.3 TSG-v33-03 — EPIC-03: SC-RV-18 and SC-RV-19 null-handling scenarios not in test library
 
 **Identified:** 2026-05-13 (delivery verification 2026-05-09__release-v3.3)
-**Status:** Open — backlog item TEST-GAP-EPIC-03-v33
+**Status:** ✅ RESOLVED — 2026-08-12 (post-ship closure 2026-08-11__release-v8.6, STEP 7.3 TSG reconciliation sweep)
 **Owner:** QA & Testing Owner
 **Gap:** research_view_protocol.md §2.3 flags SC-RV-18 (regime null only) and SC-RV-19 (all fields null — degraded mode) as needing explicit Playwright scenarios. These were not authored at sprint close. When research view frontend is implemented, these scenarios must be added to research_view_scenarios.md.
 **Resolution target:** v3.4 (before research view frontend implementation)
+**Resolution:** Both scenarios confirmed present and passing in `tests/e2e/pre-trade-research.spec.js` (`SC-RV-18: regime=null — page renders without crash; Back button visible`; `SC-RV-19: All fields null — degraded mode; no crash; Back button accessible`). The referenced backlog item `TEST-GAP-EPIC-03-v33` could not be located in `claude/backlog/backlog.md` under that literal ID (predates the current `BLG-*` ID convention) — resolution confirmed directly against the live test file instead of via backlog cross-reference. This closes a long-stale Open TSG entry the STEP 7.3 sweep exists to catch.
 **Backlog item:** TEST-GAP-EPIC-03-v33 (filed 2026-05-13)
 
 ---
@@ -896,7 +897,7 @@ Identified during delivery verification (verification_report.md §6 — 1 gap it
 
 | gap_id | EPIC | Description | Disposition |
 |--------|------|-------------|-------------|
-| TSG-v6.8-01 | EPIC-03 | `Watchlist.js` (core Watchlist page) has zero baseline Playwright coverage — ST-14's decomposition relied on manual smoke testing + diff review, not automated regression coverage | **OPEN** — backlog item `BLG-QA-86` filed during execution (Provisional-Target v6.9) |
+| TSG-v6.8-01 | EPIC-03 | `Watchlist.js` (core Watchlist page) has zero baseline Playwright coverage — ST-14's decomposition relied on manual smoke testing + diff review, not automated regression coverage | **✅ RESOLVED — 2026-08-12 (post-ship closure 2026-08-11__release-v8.6, STEP 7.3 TSG reconciliation sweep).** `BLG-QA-86` shipped v8.3 ST-16 ("Add baseline Playwright coverage for `Watchlist.js`", `docs/product/changelog.md#v8.3`), archived COMPLETE in `backlog_archive.md`. Last checked-and-left-open at v7.8's own reconciliation (line above, superseded); no closure between v7.9 and v8.5 re-ran this specific check. |
 
 **TSG backlog reconciliation (§7.3):**
 - No pre-v6.8 open TSG items existed at cycle start (all resolved as of §35/v6.7). Nothing to reconcile.
@@ -938,6 +939,19 @@ Three documentation-completeness gaps (not test coverage gaps) were also surface
 **TSG backlog reconciliation (§7.3):**
 - TSG-v6.8-01 (`BLG-QA-86`, Watchlist.js baseline Playwright coverage) checked against this cycle's shipped scope — `BLG-QA-86` remains open in `backlog.md` (not touched by any v7.8 story); entry left unchanged.
 - No other open TSG entries existed at cycle start (§27's TSG-v50-01 was already RESOLVED prior to this cycle).
+
+---
+
+## 39. Test Coverage Gaps — v8.6 (2026-08-11__release-v8.6)
+
+Identified during delivery verification (`verification_report.md §6`): **0 new test scenario gaps this cycle** — all 6 EPICs have either confirmed-run coverage or a valid `not_applicable` short-circuit (EPIC-06). No new `TSG-*` entries required.
+
+**TSG backlog reconciliation (§7.3 — full-document sweep, per `post_ship_closure.md` v2.26's no-fixed-section-number scan rule):**
+- **TSG-v33-03** (`docs/specs/frontend/pages/analytics.md`-adjacent — SC-RV-18/SC-RV-19 research-view null-handling scenarios, §19.3 above): found still marked Open since 2026-05-13 (v3.3). Both scenarios confirmed present and passing in `tests/e2e/pre-trade-research.spec.js`. Marked ✅ RESOLVED this cycle.
+- **TSG-v6.8-01** (`BLG-QA-86`, Watchlist.js baseline Playwright coverage, §36 above): found still marked Open since 2026-07-08 (v6.8), last checked-and-left-open at v7.8 (§38). `BLG-QA-86` in fact shipped v8.3 ST-16 (`docs/product/changelog.md#v8.3`) — the reconciliation check itself was not re-run at any closure between v7.9 and v8.5. Marked ✅ RESOLVED this cycle.
+- All other historical TSG entries (§9–§38) already carry `RESOLVED`/`not_applicable`/`OPEN`-with-confirmed-still-open dispositions; no further stale entries found in this sweep.
+
+This closes 2 long-stale Open entries the STEP 7.3 sweep exists to catch (one 15+ cycles stale, one 5+ cycles stale) — recorded as a Friction Log item in `lessons_learnt_closure.md` for this cycle: the per-cycle reconciliation note (§7.3) only checks entries the closure engine already knows to look at, and does not itself guarantee a full-document sweep unless explicitly re-run; this closure's use of the full-scan convention (introduced `post_ship_closure.md` v2.26, LL-v8.4-Closure-01) is what caught them.
 
 ---
 

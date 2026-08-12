@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.7
-**Last Updated:** 2026-08-03
+**Version:** 3.8
+**Last Updated:** 2026-08-12
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -113,6 +113,8 @@ Must not modify: `claude/cycles/<cycle_id>/execution_state.json` (sealed), `clau
 | P3 | Minor deviation — cosmetic, edge case, or non-critical gap | Record in report. Create backlog item. Verification proceeds as `Verified_with_deviations`. |
 
 **Any open item that is not a filed deviation** (returned item, flagged gap, unresolved escalation) must have a `backlog.md` entry before the verification report is sealed. Verification does not block on these items — but they must be traceable.
+
+**Resolved-deviation carve-out (LL-v8.6-P4-03, added v3.8):** The P0–P3 hard-block/documented-acceptance requirements above apply only to deviations that are **open** at the time of this sprint's own delivery. A deviation record filed this sprint with `Status: Resolved` — i.e. a retroactive record of a defect already fully fixed (in this cycle or a prior one), filed for traceability rather than to flag a current gap — is entered in the Deviation Register (STEP 3 output) for traceability but does **not** trigger the severity policy's hard-block or PO+DoQ acceptance-recording requirement, regardless of its priority field. Confirm the canonical spec's own Known Deviations entry states `RESOLVED` (or equivalent) with a resolution narrative before applying this carve-out — an entry merely *labelled* P1 with no resolution evidence still hard-blocks per the table above. This closes an interpretive gap first found at `2026-08-11__release-v8.6` (`DEV-NAV-ST06-01`, a retroactively-filed P1 record for an already-shipped v8.5 fix, required the verifying engine to infer this exemption rather than read it directly from this policy).
 
 ---
 
