@@ -90,8 +90,17 @@ test('SC-WLS-01: not-stale entry shows days-since-added, no Keep action', async 
   await mockWatchlist(page, [NOT_STALE_ENTRY]);
   await page.goto('/#/Watchlist');
 
-  await expect(page.getByText('8d', { exact: true })).toBeVisible({ timeout: 10000 });
+  const daysText = page.getByText('8d', { exact: true });
+  await expect(daysText).toBeVisible({ timeout: 10000 });
   await expect(page.getByRole('button', { name: 'Keep' })).toBeHidden();
+
+  // ST-06 (EPIC-03, v8.6, BLG-FE-149): not-stale entry's "Added" column
+  // (WatchlistRow.js) used the failing text-slate-500 shade -- must now use
+  // the canonical secondary-text token pair. This closes the colour-
+  // rendering gap this file's own header noted as "not covered here" for
+  // this specific element.
+  await expect(daysText).toHaveClass(/text-slate-600/);
+  await expect(daysText).toHaveClass(/dark:text-slate-400/);
 });
 
 test('SC-WLS-02: stale entry shows "no action" text and is flagged', async ({ page }) => {

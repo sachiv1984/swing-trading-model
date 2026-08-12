@@ -66,6 +66,24 @@ def _restore_sys_modules_after_this_file():
     function-scoped ones would not fire per-TestCase-method). Runs its
     teardown after the last test in this file, before pytest moves on to
     later-collected files' test execution -- see ST-25 note above.
+
+    ST-18 (BLG-QA-139, EPIC-05, v8.6) -- one-directional scope, explicit:
+    this fixture protects test files collected/executed AFTER this one --
+    they get the real config/utils.* modules back, not this file's stubs.
+    It provides NO protection in the other two directions:
+      1. Test files collected/executed BEFORE this one are unaffected either
+         way -- they ran against whatever sys.modules already held, before
+         this file's module-level stubbing ever executed.
+      2. Any code imported WHILE this file's own tests are running (between
+         the module-level stub assignment above and this fixture's teardown)
+         sees the stubs, not the real modules -- that exposure is the
+         intended, unavoidable cost of the module-level stubbing pattern
+         (ST-25 note above), not something this fixture guards against.
+    The restore also uses a point-in-time snapshot taken when this file is
+    first collected (`_pre_existing_sys_modules`) -- if another file between
+    collection and this file's stubbing independently mutated the same
+    sys.modules entries, this fixture restores to that snapshot, not to
+    whatever was live immediately before this file's own stub took effect.
     """
     yield
     for name, original in _pre_existing_sys_modules.items():

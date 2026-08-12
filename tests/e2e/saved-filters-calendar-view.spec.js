@@ -211,6 +211,32 @@ test('SC-SFC-08: month navigation fires a new GET /reports/daily-pnl request', a
   await expect.poll(() => monthsRequested.length, { timeout: 3000 }).toBeGreaterThan(initialCount);
 });
 
+test('SC-SFC-10: saved-filters preset dropdown renders the real placeholder colour (ST-05, EPIC-03, v8.6, BLG-FE-148)', async ({ page }) => {
+  // Found by agent-mediated DoQ review of EPIC-03 (2026-08-11): ST-05's own
+  // investigation had wrongly concluded Select's `data-[placeholder]:
+  // text-muted-foreground` styling (src/components/ui/select.js:19) had no
+  // live call site app-wide, since every OTHER Select in the codebase
+  // pre-populates a `value`. This one doesn't -- SavedFiltersControl.js's
+  // preset picker passes no `value` prop, so it renders uncontrolled and
+  // shows its placeholder ("No saved filters" / "Saved filters") on every
+  // visit to Trade History until a preset is picked. Dark theme (this app's
+  // default) --muted-foreground is "0 0% 63.9%" == rgb(163, 163, 163),
+  // matching command-palette.spec.js SC-CP-13/14's already-established value
+  // for the same token.
+  await mockTradeHistory(page);
+  await gotoTradeHistory(page);
+  await expect(page.getByText('AAPL').first()).toBeVisible({ timeout: 8000 });
+
+  const presetTrigger = page.locator('button[role="combobox"]').filter({ hasText: 'No saved filters' });
+  await expect(presetTrigger).toBeVisible({ timeout: 5000 });
+
+  // data-[placeholder]:text-muted-foreground lives on the trigger button
+  // itself (src/components/ui/select.js SelectTrigger); the inner span
+  // inherits it via CSS inheritance.
+  const color = await presetTrigger.evaluate((el) => getComputedStyle(el).color);
+  expect(color).toBe('rgb(163, 163, 163)');
+});
+
 test('SC-SFC-09: no closed trades at all shows the full-page empty state', async ({ page }) => {
   await mockTradeHistory(page, { trades: [] });
   await gotoTradeHistory(page);

@@ -4,7 +4,7 @@
 **Class:** Canonical Specification (Class 1)
 **Status:** Canonical
 **Version:** 2.1
-**Last Updated:** 2026-08-11 (v8.6 design gate — §21 Trade Plan Completion Rate added, ST-01/BLG-FEAT-32); prior — 2026-08-11 (Head of Specs Team direct action — DEV-EPIC02-ST03-01 re-triaged: stale v1.10 target and never-filed backlog reference corrected to BLG-FE-155, tracking-field correction only)
+**Last Updated:** 2026-08-11 (ST-10, EPIC-03, v8.6 — DEV-EPIC02-ST03-01 marked Resolved: CohortAnalysis.js was already migrated to GET /analytics/cohort, commit af22ea6e, 2026-03-16 — tracking-only correction, no new code shipped by this story); prior — 2026-08-11 (v8.6 design gate — §21 Trade Plan Completion Rate added, ST-01/BLG-FEAT-32); prior — 2026-08-11 (Head of Specs Team direct action — DEV-EPIC02-ST03-01 re-triaged: stale v1.10 target and never-filed backlog reference corrected to BLG-FE-155, tracking-field correction only)
 **Design Source (v2.1 additions):** docs/design/2026-08-11__release-v8.6/trade-plan-completion-rate-metric/decision_record.md
 **Design Source (v2.0 additions):** docs/design/2026-07-08__release-v6.8/trade-tagging/ux_spec.md
 **Design Source (v4.6 additions):** docs/specs/si02/si02_fe_component_predesign.md v1.0; docs/specs/si02/si02_fe_interaction_spec.md v1.0
@@ -772,16 +772,16 @@ All component props are null-safe with safe defaults. If the API returns partial
 
 ## Known Deviations
 
-### DEV-EPIC02-ST03-01 — Cohort Analysis: client-side cohort computation instead of GET /analytics/cohort
+### DEV-EPIC02-ST03-01 — Cohort Analysis: client-side cohort computation instead of GET /analytics/cohort — RESOLVED
 
-**Story:** ST-03 — Cohort Analysis
-**Description:** `CohortAnalysis.js` receives a `trades` prop from `PerformanceAnalytics.js` and computes cohort groupings, win rates, avg R-multiple, and net P&L entirely client-side via `buildCohorts()`. The component does not call `GET /analytics/cohort?period=` despite that endpoint being implemented and wired in `base44Client.js`.
+**Story:** ST-03 — Cohort Analysis (original); ST-10 (EPIC-03, v8.6, BLG-FE-155) — resolution
+**Description:** `CohortAnalysis.js` received a `trades` prop from `PerformanceAnalytics.js` and computed cohort groupings, win rates, avg R-multiple, and net P&L entirely client-side via `buildCohorts()`, instead of calling `GET /analytics/cohort?period=` despite that endpoint being implemented and wired in `base44Client.js`.
 **Canonical requirement:** analytics.md §15 hard rule — "All values sourced from backend. No client-side R-multiple computation in this component." API Dependency section lists `GET /analytics/cohort?period={month|quarter|year}` as the source for §15.
-**Priority:** P2 — spec hard-rule violation. Values are numerically correct (same formula); the deviation is architectural (wrong computation layer).
-**Impact:** avg_r_multiple in the cohort table uses client-side R computation from `stop_price`, which may be `null` for trades without stop data (returns `null` avg R). Backend endpoint uses `initial_stop` via LEFT JOIN and has the same null-return behaviour, so displayed values are consistent. Regression risk if trade data shape changes server-side and frontend isn't updated.
-**Target resolution release:** Unscheduled — see `BLG-FE-155`
+**Priority:** P2 — spec hard-rule violation. Values were numerically correct (same formula); the deviation was architectural (wrong computation layer).
+**Impact:** avg_r_multiple in the cohort table used client-side R computation from `stop_price`, which may be `null` for trades without stop data (returns `null` avg R). Backend endpoint uses `initial_stop` via LEFT JOIN and has the same null-return behaviour, so displayed values were consistent throughout — no live correctness bug at any point.
+**Resolution:** `CohortAnalysis.js` was already migrated to source all displayed values (`period_label`, `trade_count`, `win_rate`, `avg_r_multiple`, `total_pnl`) directly from `api.analytics.cohort(period)`'s response, with no local `buildCohorts()` computation path remaining — confirmed by code review of the current file, 2026-08-11. This shipped in commit `af22ea6e` ("[EPIC-02][ST-04] Refactor CohortAnalysis to use backend endpoint"), 2026-03-16 (`v1.10`) — the deviation record and its backlog reference were simply never updated to reflect that the fix had already shipped, which is what `BLG-FE-155`'s re-triage (2026-08-11) and this story (ST-10) close out. No further code change was required or made by ST-10.
 **Owner:** Head of Engineering + Base44 Frontend Prompt Owner
-**Backlog reference:** `BLG-FE-155` (filed 2026-08-11, Head of Specs Team direct action — re-triage of this deviation, which had gone stale since the original `v1.10` target passed with no backlog item ever filed despite this entry's own note; decision recorded: schedule the backend-migration fix rather than accept client-side computation as canonical, per `analytics.md` §16's established principle that backend computation is authoritative — see `claude/cycles/2026-08-08__release-v8.5/closure_record.md` §6 item 2 for the full decision rationale)
+**Backlog reference:** `BLG-FE-155` — resolution recorded here 2026-08-11; ready for archival at next `groom backlog` run.
 
 ---
 

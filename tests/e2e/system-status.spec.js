@@ -333,3 +333,65 @@ test.describe('Post-run state — SC-SS-03 through SC-SS-07', () => {
     await expect(page.getByText('GET /changelog/latest')).toBeVisible({ timeout: 8000 });
   });
 });
+
+// ---------------------------------------------------------------------------
+// SC-SS-08 — Tailwind token registration (ST-04, EPIC-03, v8.6, BLG-FE-147)
+//
+// `bg-primary` and `bg-input` (and the sibling shadcn tokens registered in
+// the same commit — card, popover, secondary, accent, destructive, border,
+// ring) previously compiled to empty CSS rules because tailwind.config.js
+// never registered them in theme.extend.colors, even though the underlying
+// --primary/--input CSS custom properties are defined in src/index.css. The
+// Auto-refresh Switch on this page (src/pages/SystemStatus.js) is a
+// confirmed live consumer of both tokens (data-[state=checked]:bg-primary,
+// data-[state=unchecked]:bg-input — src/components/ui/switch.js). Remaining
+// untested call-site families (card, popover, secondary, accent,
+// destructive, border, ring) are out of scope here — filed as BLG-FE-157
+// per CLAUDE.md's frontend hard gate (mirrors the v8.5/ST-06 -> BLG-FE-148
+// precedent).
+// ---------------------------------------------------------------------------
+
+test.describe('SC-SS-08 — Tailwind token registration (bg-primary / bg-input)', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockBaseEndpoints(page);
+    await page.goto('/#/SystemStatus');
+  });
+
+  test('SC-SS-08a: unchecked auto-refresh switch resolves bg-input to a real, non-transparent colour', async ({ page }) => {
+    const toggle = page.locator('#auto-refresh');
+    await expect(toggle).toBeVisible({ timeout: 8000 });
+    await expect(toggle).toHaveAttribute('aria-checked', 'false');
+    const bg = await toggle.evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(bg).not.toBe('rgba(0, 0, 0, 0)');
+    expect(bg).not.toBe('transparent');
+  });
+
+  test('SC-SS-08b: checking the switch resolves bg-primary to a distinct, non-transparent colour', async ({ page }) => {
+    // Real-CI finding (LL-v8.3-P3-02 class -- an animation/transition-timing
+    // AC, confirmed failing on first real GitHub Actions run despite a
+    // syntax-clean sandboxed review): switch.js's className includes
+    // `transition-colors`, so the data-state flip's background-color change
+    // is CSS-animated, not instantaneous. Reading getComputedStyle
+    // immediately after `aria-checked` becomes "true" can catch the
+    // pre-transition value (the click's synchronous React state update and
+    // the CSS transition's own paint timeline are not the same clock) --
+    // must wait for the transition to actually finish before reading the
+    // final colour. Tailwind's default transition duration is 150ms;
+    // waiting 300ms gives real margin.
+    const toggle = page.locator('#auto-refresh');
+    await expect(toggle).toBeVisible({ timeout: 8000 });
+    const uncheckedBg = await toggle.evaluate((el) => getComputedStyle(el).backgroundColor);
+
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-checked', 'true');
+    await page.waitForTimeout(300);
+    const checkedBg = await toggle.evaluate((el) => getComputedStyle(el).backgroundColor);
+
+    expect(checkedBg).not.toBe('rgba(0, 0, 0, 0)');
+    expect(checkedBg).not.toBe('transparent');
+    // bg-primary (checked) must render as a genuinely different colour from
+    // bg-input (unchecked) -- both compiled to the *same* empty rule before
+    // this token registration fix, which this regression guards against.
+    expect(checkedBg).not.toBe(uncheckedBg);
+  });
+});

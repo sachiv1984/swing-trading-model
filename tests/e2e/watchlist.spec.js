@@ -157,3 +157,30 @@ test('SC-WL-05: invalid ticker format shows the canonical validation error text 
   await expect(error).toHaveClass(/text-rose-700/);
   await expect(error).toHaveClass(/dark:text-rose-400/);
 });
+
+test('SC-WL-06: WatchlistModal DialogDescription resolves the winning cascade colour, not an empty rule (ST-05, EPIC-03, v8.6, BLG-FE-148)', async ({ page }) => {
+  // Investigation finding for ST-05 AC-02: `DialogDescription`'s own default
+  // styling (src/components/ui/dialog.js) is `text-sm text-muted-foreground`.
+  // Every live call site (WatchlistModal, ExportModal, PositionEntryModal,
+  // WidgetLibrary, ExitModal) additionally passes an explicit
+  // `className="text-slate-600 dark:text-slate-400"` override. `cn()` in
+  // this codebase is plain `clsx` (src/lib/utils.js) with no Tailwind-merge
+  // dedup, so BOTH class lists are applied to the element. Resolved via the
+  // compiled CSS (`npx tailwindcss` build, checked against cascade rules,
+  // not guessed): in dark theme (this app's default) `dark:text-slate-400`
+  // compiles to `.dark\:text-slate-400:is(.dark *)` -- a compound selector
+  // with higher specificity (0,2,0) than the bare single-class
+  // `.text-muted-foreground` (0,1,0) -- so it always wins regardless of
+  // stylesheet order. Tailwind slate-400 is rgb(148, 163, 184).
+  await mockWatchlist(page, []);
+  await page.goto('/#/Watchlist');
+  await expect(page.getByText('Your watchlist is empty')).toBeVisible({ timeout: 10000 });
+
+  await page.getByRole('button', { name: 'Add Ticker' }).first().click();
+  await expect(page.getByRole('heading', { name: 'Add Ticker to Watchlist' })).toBeVisible({ timeout: 5000 });
+
+  const description = page.getByText('Track a new ticker for entry opportunities.');
+  await expect(description).toBeVisible();
+  const color = await description.evaluate((el) => getComputedStyle(el).color);
+  expect(color).toBe('rgb(148, 163, 184)');
+});
