@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.13
-**Last Updated:** 2026-07-30
+**Version:** 1.14
+**Last Updated:** 2026-08-12 (STEP 1.5 gains a 4th ephemeral-section type — Roadmap Rebalance/Delivery Verification idea-intake "New Items" sections, AUD-2026-08-12-003)
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -191,16 +191,17 @@ Surface all **Ambiguous** items to the Product Owner. Do not proceed past STEP 1
 
 ## STEP 1.5 — Ephemeral Section Cleanup
 
-Identify sections in `backlog.md` that were appended by governance engines and are now obsolete. Three types are considered ephemeral:
+Identify sections in `backlog.md` that were appended by governance engines and are now obsolete. Four types are considered ephemeral:
 
 1. **Completed Release Slice sections** (added by the Release Planning Engine): any section headed `## Release Slice — v<x.y>` or `## Last Release Slice — v<x.y>` or `## Prior Release Slice — v<x.y>` where the release is marked ✅ COMPLETE or all stories are marked as shipped. Canonical home is the cycle directory (`claude/cycles/<cycle_id>/`).
 2. **Resolved Test Scenario Gap sections** (added by the Delivery Verification Engine): any section headed `### TEST-GAP-EPIC-xx-v<yy>` or `## Test Scenario Gaps — ...` where all items are marked ✅ RESOLVED or ✅ COMPLETE.
 3. **Resolved "Returned to Backlog" sections**: any section headed `## Returned to Backlog — ...` where all listed items are marked ✅ DELIVERED.
+4. **Roadmap Rebalance / Delivery Verification idea-intake "New Items" sections** (added AUD-2026-08-12-003, closing a gap where 4 such sections dated `2026-07-24__scheduled` through `2026-08-11__scheduled` accumulated unpromoted across 4+ groom runs): any section headed `## Roadmap Rebalance <date>__scheduled — New Items (...)` or `## Delivery Verification <date>__release-v<x.y> — New Items`. Unlike types 1–3, items in this section carry no completion marker of their own — the section is a staging area for newly-added items, not a completion-tracked list, so it has no "all resolved" condition to wait for.
 
 For each ephemeral section found:
-- If ALL items are resolved/complete: queue for removal from `backlog.md` in STEP 6.2.
-- If ANY items are still open: extract them to the appropriate §1–§8 type section with a new item entry, then queue the parent section for removal.
-- Record each section in the change plan with action: `Remove — ephemeral section (all resolved)` or `Remove — ephemeral section (open items extracted to §<n>)`.
+- Types 1–3: if ALL items are resolved/complete, queue for removal from `backlog.md` in STEP 6.2. If ANY items are still open, extract them to the appropriate §1–§8 type section with a new item entry, then queue the parent section for removal.
+- Type 4: **always** relocate every item in the section to its correct §1–§8 type section (creating the section heading if it does not yet exist — see §1–§8 in the Placement Rule at the top of `backlog.md`) at the very next `groom backlog` run after the section was created, regardless of individual item status, then queue the parent section for removal. Do not leave a type-4 section in place past the one `groom backlog` run that immediately follows its creation.
+- Record each section in the change plan with action: `Remove — ephemeral section (all resolved)`, `Remove — ephemeral section (open items extracted to §<n>)`, or `Remove — ephemeral section (all items relocated to §<n>)` for type 4.
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 4.156
+**Version:** 4.159
 **Last Updated:** 2026-08-12
 **Lifecycle Guide:** `claude/charter/document_lifecycle_guide.md`  
 **Team Charter:** `claude/charter/team_charter.md`  
@@ -475,7 +475,7 @@ Any other input is treated as conversational — the Engine will not run.
 
 ## 6M. Phase 1M — Document Management (Optional)
 
-**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.4), `claude/system/backlog_management_prompt.md` (v1.13), `claude/system/ideas_housekeeping_prompt.md` (v1.2)  
+**Source prompts:** `claude/system/roadmap_management_prompt.md` (v1.4), `claude/system/backlog_management_prompt.md` (v1.14), `claude/system/ideas_housekeeping_prompt.md` (v1.2)  
 **Owner:** PMO Lead / Product Owner  
 **Trigger:** Optional — strongly recommended at either of the following windows:
 
@@ -884,7 +884,7 @@ curl https://trading-assistant-frontend.onrender.com/api/healthz
 
 ## 8. Phase 3 — Sprint Execution & Close
 
-**Source prompt:** `claude/system/execution_prompt.md` (v3.67)
+**Source prompt:** `claude/system/execution_prompt.md` (v3.68)
 
 ### 8.1 Invocation
 
@@ -1455,28 +1455,28 @@ Overall: Advisory — no gate action required. Review deferred patches and outst
 |-------|-------|
 | Owner | Head of Specs Team |
 | Status | Active |
-| Version | 4.155 |
+| Version | 4.159 |
 | Last Updated | 2026-08-12 |
 | Review Cadence | After every 3 completed cycles, or on any governance gap escalation |
 | Idea Intake Engine | `claude/system/idea_intake_prompt.md` v2.8 |
 | Idea Template | `claude/system/idea_template.md` |
 | Roadmap Management Engine | `claude/system/roadmap_management_prompt.md` v1.4 |
-| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.13 |
+| Backlog Management Engine | `claude/system/backlog_management_prompt.md` v1.14 |
 | Design Gate Engine | `claude/system/design_gate_prompt.md` v1.9 |
 | Governance Preamble | `claude/system/shared/governance_preamble.md` v1.0 |
 | Roadmap Engine Source | `claude/system/roadmap_prompt.md` v9.14 |
 | Release Engine Source | `claude/system/release_planning_prompt.md` v2.49 |
 | Sprint Planning Engine | `claude/system/sprint_planning_prompt.md` v3.16 |
 | Amendment Cycle Engine | `claude/system/amendment_cycle_prompt.md` v1.9 |
-| Execution Engine Source | `claude/system/execution_prompt.md` v3.67 |
-| QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.9 |
+| Execution Engine Source | `claude/system/execution_prompt.md` v3.68 |
+| QA Evidence Template | `claude/system/templates/qa_evidence_template.md` v1.10 |
 | Verification Engine Source | `claude/system/delivery_verification_prompt.md` v3.8 |
 | Ideas Housekeeping Engine | `claude/system/ideas_housekeeping_prompt.md` v1.2 |
 | Post-Ship Closure Engine | `claude/system/post_ship_closure.md` v2.26 |
 | Post-Ship Closure Process | `docs/team_skills/pmo/processess/post-ship_closure.md` v2.0 |
 | Shared Standards | `claude/system/shared_standards.md` v3.28 |
 | Governance Invariants | `claude/system/invariants.md` v1.0 |
-| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.10 |
+| Lessons Learnt Prompt | `claude/system/lessons_learnt_prompt.md` v1.11 |
 | Prompt Change Log | `claude/system/prompt_change_log.md` |
 | GitHub Issue Template | `claude/system/gh_issue_template.md` v1.0 |
 | PR DoQ Enforcement Template | `.github/pull_request_template.md` v1.2 |
@@ -1496,6 +1496,9 @@ This playbook is subordinate to and must remain consistent with all governing do
 **Header-drift prevention (added v4.85, roadmap rebalance 2026-07-08__scheduled, Friction Item — 4th recurrence of this exact pattern per the 4.79/4.80/4.81 entries below):** Before bumping the top `**Version:**`/`**Last Updated:**` header fields, read the highest version number already present in this table's top row — do not increment from the header field alone, since it has drifted below the table's actual latest entry on at least 4 prior occasions.
 
 | Version | Date | Change Summary |
+| 4.159 | 2026-08-12 | **Lifecycle audit AUD-2026-08-12-003, action-all-audit-points session — backlog_management_prompt.md v1.13→v1.14: STEP 1.5 Ephemeral Section Cleanup gains a 4th ephemeral type.** §6M source prompts updated (backlog_management_prompt.md v1.13→v1.14). §14 Backlog Management Engine v1.13→v1.14. §14 Version 4.158→4.159/2026-08-12. Change: Roadmap Rebalance/Delivery Verification idea-intake "New Items" sections are now a recognised ephemeral type — unlike types 1–3, items in them carry no completion marker, so all items must be relocated to their §1–§8 type section unconditionally at the next groom run. Root cause: 4 such sections (`2026-07-24__scheduled` through `2026-08-11__scheduled`) accumulated unpromoted across 4+ groom runs since the type was never named in STEP 1.5's original 3-type list; `backlog.md` was found missing its `## 5.`/`## 7.`/`## 8.` type-section headers entirely as a direct symptom. Authority: Head of Specs Team (lifecycle audit AUD-2026-08-12). |
+| 4.158 | 2026-08-12 | **Lifecycle audit AUD-2026-08-12, action-all-audit-points session — lessons_learnt_prompt.md v1.10→v1.11: §3.7 Cross-Cycle Recurrence Check gains a patch-ID matching requirement.** §14 Lessons Learnt Prompt v1.10→v1.11. §14 Version 4.157→4.158/2026-08-12. Change: when checking whether a deferred patch was subsequently applied, search `prompt_change_log.md` by the friction item's own patch-ID tag (LL-v8.6-P4-01b), not by date range or filename alone — closes a confirmed false-positive recurrence claim (`2026-08-08__release-v8.5`'s closure incorrectly reported the `execution_prompt.md` `test_scenarios` roll-up patch as "still unapplied" when it had already shipped). Authority: Head of Specs Team (lifecycle audit AUD-2026-08-12). |
+| 4.157 | 2026-08-12 | **Lifecycle audit AUD-2026-08-12, action-all-audit-points session — execution_prompt.md v3.67→v3.68 + qa_evidence_template.md v1.9→v1.10: DoQ/QA evidence protocol gains 3 fixes.** §8 source prompt header v3.67→v3.68 (line 886). §14 Execution Engine Source v3.67→v3.68; QA Evidence Template v1.9→v1.10. §14 Version 4.155→4.157/2026-08-12 (see self-drift note below). Changes: (1) §3.2.A roll-up backstop gains a re-trigger clause (LL-v8.4-P4-01a) for post-seal `spec_references` edits. (2) §5.3 gains a quantitative/"already verified" claim second-review-pass requirement (LL-v8.6-P3-01), closing a 3-occurrence-in-1-sprint pattern found at `2026-08-11__release-v8.6`. (3) `qa_evidence_template.md` Standard Sign-Off Block gains a post-open CI-fix restatement requirement (LL-v8.5-P4-01, 2nd carry-forward). **Self-caught SELF-DRIFT found in the same session (not caused by this edit):** this document's own §14 self-row (`Version | 4.155`) had drifted 1 version behind the header and Change Log top row (both already `4.156` from the immediately preceding entry) — the `execution_prompt.md` v3.67 edit that added the mandatory governance-drift Step 1b invocation was itself never run against `OPERATIONAL_GUIDE.md`'s own subsequent `4.156` bump (a delivery_verification_prompt.md-only edit that had no EPIC/story attached to trigger the new check). Corrected the self-row to `4.157` in this same write. Authority: Head of Specs Team (lifecycle audit AUD-2026-08-12, action-all-audit-points session). |
 | 4.156 | 2026-08-12 | **Post-ship closure `2026-08-11__release-v8.6` STEP 8 immediate action (LL-v8.6-P4-03) — delivery_verification_prompt.md v3.7→v3.8: §7 Deviation Severity Policy gains a Resolved-deviation carve-out.** §9 source prompt header v3.7→v3.8 (line 976). §14 Verification Engine Source v3.7→v3.8. §14 Version 4.155→4.156/2026-08-12. Change: a deviation record filed with `Status: Resolved` (a retroactive record of an already-fixed defect, filed for traceability rather than to flag a current gap) is entered in the Deviation Register but no longer triggers the P0–P3 hard-block/PO+DoQ acceptance-recording requirement — closes an interpretive gap this cycle's own verification had to infer rather than read directly from the policy (`DEV-NAV-ST06-01`, a retroactively-filed P1 record for an already-shipped v8.5 fix). Authority: Head of Specs Team (post-ship closure `2026-08-11__release-v8.6`, STEP 8 — immediate lessons-learnt action rule). |
 | 4.155 | 2026-08-12 | **Sprint execution `2026-08-11__release-v8.6` STEP 5.4 Phase 3 lessons-learnt, action-now (recurrence escalation, LL-v8.5-P3-01 carried 2 cycles unapplied) — execution_prompt.md v3.66→v3.67: §3.2.A gains a mandatory `governance-drift` skill Step 1b invocation.** §8 source prompt header v3.66→v3.67 (line 892). §14 Execution Engine Source v3.66→v3.67. §14 Version 4.154→4.155/2026-08-12. Change: whenever an EPIC's work bumps `OPERATIONAL_GUIDE.md`'s version (CLAUDE.md §6 fires), the DoQ sign-off step now mandatorily runs the `governance-drift` skill's 3-way self-consistency check (header / §14 self-row / Change Log top row) before proceeding to PR-open, rather than relying on a reviewer noticing the drift by inspection — closes the gap first flagged at `2026-08-08__release-v8.5` Phase 3 (deferred, no `prompt_change_log.md` entry applying it for 2 consecutive cycles, triggering `lessons_learnt_prompt.md` §3.7's automatic recurrence-escalation rule). **Self-caught SELF-DRIFT in the same edit (validating the very check being added):** this document's own §14 self-row (`Version | 4.152` / `Last Updated | 2026-08-10`) had drifted 2 versions behind the header and Change Log top row (both already `4.154`/`2026-08-11` from the preceding ST-24 entry) — confirmed `4.154` as the true latest version via this file's own most recent `prompt_change_log.md` row, then corrected the self-row to `4.155` in the same write as this entry's own +1 bump, so the fix does not itself go stale. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, STEP 5.4, 2026-08-12). |
 | 4.154 | 2026-08-11 | **Sprint execution `2026-08-11__release-v8.6` EPIC-06/ST-24 (BLG-GOV-296) — shared_standards.md v3.27→v3.28 and qa_evidence_template.md v1.8→v1.9: documented `execution_state.json`'s `deviations_filed` field's actual meaning.** §14 Shared Standards v3.27→v3.28; §14 QA Evidence Template v1.8→v1.9. §14 Version 4.153→4.154/2026-08-11. Change: new `shared_standards.md` §16.15 clarifies `deviations_filed: true` means "the deviation check was performed", not literally "a deviation was filed" — resolving an apparent (but not actual) contradiction where every `done` story's flag reads `true` while a `qa_evidence_EPIC-xx.md` consolidation block says "Known deviations filed: None". `execution_state_schema.json` gains a matching `_deviations_filed_note` pointing back to §16.15. `qa_evidence_template.md`'s "Known deviations filed" line reworded to "Known deviations" with a wording note, so future logs read consistently rather than apparently self-contradictory. Authority: Head of Specs Team (Sprint Execution Engine, agent-mediated, ST-24, 2026-08-11). |

@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 1.10
-**Last Updated:** 2026-07-21
+**Version:** 1.11
+**Last Updated:** 2026-08-12 (§3.7 gains a patch-ID matching requirement, LL-v8.6-P4-01b — closes a false-positive recurrence-claim gap)
 
 ---
 
@@ -170,6 +170,8 @@ If the prior cycle file does not exist: record "No prior cycle file found — re
 For each friction item identified in this run: check whether the same or substantially similar item appeared in the prior cycle's lessons learnt. If it did, mark it as a **Recurrence** (see §5 record structure). A friction item that recurs with an open outstanding action from the prior cycle is an automatic escalation trigger — do not record it as a new outstanding action. Escalate immediately to Head of Specs Team (§6.4).
 
 Also load `claude/system/prompt_change_log.md` if it exists. For each deferred patch in the prior cycle's outstanding actions table: confirm whether the corresponding prompt change was subsequently applied and logged. If a deferred patch has been carried forward without a prompt_change_log entry for two or more cycles, treat it as a recurrence escalation regardless of whether it appeared as a friction item this cycle.
+
+**Patch-ID matching requirement (LL-v8.6-P4-01b):** When checking whether a deferred patch was subsequently applied, search `prompt_change_log.md` by the friction item's own patch-ID tag (e.g. `LL-v8.4-P4-01`) if one was assigned at filing — not by date range or filename alone. A date/filename-only search can miss an entry whose prose describes the same fix in different words, producing a false-positive "still unapplied" recurrence claim that then propagates into later cycles' own carry-forward records. Confirmed live at `2026-08-11__release-v8.6`: `2026-08-08__release-v8.5`'s own closure record claimed the `execution_prompt.md` `test_scenarios` roll-up patch (`LL-v8.4-P4-01`) was "still unapplied after 2 consecutive cycles" when it had in fact already shipped the same day that claim's own record was filed — the recurrence check had not searched by the patch's own ID tag.
 
 If some files are missing:
 - Record the absence as a process failure
