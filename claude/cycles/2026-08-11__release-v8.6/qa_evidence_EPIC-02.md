@@ -33,4 +33,21 @@ Last Updated: 2026-08-12
 - [x] For any frontend component making direct URL construction (not via api.* wrapper): confirm the URL-base variable is exposed on the imported object — N/A, backend-only story
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-08-12
-- Comments: Standard sign-off block used (BLG-GOV-19 autonomous class does not apply — the EPIC's sole story is `delegated_backend`, failing Criterion 1). Sign-off is joint with the Data Model, Domain & Schema Owner's domain-correctness review above (agent-mediated, §5.3) — both required for this EPIC per the delegation's own unblock criteria. Product Owner acceptance remains outstanding as a separate, always-human merge-gate condition.
+- Comments: Standard sign-off block used (BLG-GOV-19 autonomous class does not apply — the EPIC's sole story is `delegated_backend`, failing Criterion 1). Sign-off is joint with the Data Model, Domain & Schema Owner's domain-correctness review above (agent-mediated, §5.3) — both required for this EPIC per the delegation's own unblock criteria.
+
+### Product Owner Decision — Risk Acceptance for BLG-BE-96's Disclosed Staging Gap (2026-08-12)
+
+**Question raised:** an agent-mediated Director of Quality + Product Owner dual review of PR #1362 flagged the disclosed deviation — ST-03's delegation named "staging-verified" confirmation as one of three co-equal unblock criteria, and that criterion is not met (this sandbox has no live Postgres/staging access) — and asked whether the risk should be accepted and the PR merged with `BLG-BE-96` as a fast-follow, or whether the PR should wait for staging verification first.
+
+**Decision: Accept the risk. Merge with `BLG-BE-96` (P1) as a mandatory fast-follow, not a someday item.**
+
+**Reasoning:**
+- The two defenses this story ships are not equally exposed to the staging gap. The **primary defense** — router-level 400 guards in `create_plan()`/`update_plan()` — is ordinary application code with no live-DB-specific behaviour; it's exercised by 32 unit tests and its correctness doesn't depend on anything staging verification would additionally confirm. The **DB CHECK constraint** is defense-in-depth, and it is the piece staging verification is actually about.
+- The constraint's blast radius is deliberately bounded by its own design: `NOT VALID` means it never retroactively validates existing rows — the only failure mode is a **future** `UPDATE` to one of the 11 already-known legacy orphaned rows, if that specific row also happens to carry `status='active'`. That's an explicit, recoverable DB error on at most 11 identified rows, not silent data corruption or a systemic outage.
+- Not merging doesn't reduce this risk to zero — the 11 legacy rows exist in production today regardless of this PR. Not merging only delays shipping the actual fix for a previously-identified, real data-integrity problem (0/11 trade plans linked) that this story exists to close, while the underlying exposure (new orphaned rows continuing to be created) keeps accruing in the meantime.
+- `BLG-BE-96` is concretely scoped (~0.5–1 day), has named owners (Head of Engineering + Data Model, Domain & Schema Owner), and clear acceptance criteria — this is a genuine fast-follow, not an open-ended deferral.
+
+**Condition attached to this acceptance:** if `BLG-BE-96`'s legacy-row audit finds that any of the 11 known orphaned rows do carry `status='active'`, that specific finding must be triaged as its own P0 immediately — not absorbed into `BLG-BE-96`'s own more leisurely P1 timeline. `BLG-BE-96` itself should be scheduled promptly (this cycle or the very next), not left to drift.
+
+- Signed off by: Sprint Execution Engine (acting as Product Owner, per explicit user direction)
+- Date: 2026-08-12

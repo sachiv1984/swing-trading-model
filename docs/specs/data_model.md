@@ -1952,7 +1952,7 @@ Reversible: drops the constraint only; no column/table changes to reverse.
 
 **Sign-off:**
 - Data Model & Domain Schema Owner: Accepted — 2026-08-12 (agent-mediated; single new CHECK constraint, `NOT VALID` so no risk to existing rows, no existing column/table structure touched)
-- Product Owner: **Pending** — not yet cleared. Product Owner acceptance is an always-human gate (`CLAUDE.md` §2) and is not satisfiable by agent-mediated review; this entry previously stated "Accepted" here, which was incorrect and contradicted the PR body, `delegation_log.md`, and `qa_evidence_EPIC-02.md`, all of which correctly track this as outstanding — corrected 2026-08-12 after an independent agent-mediated review of PR #1362 flagged the discrepancy. See the EPIC-02 PR for the actual merge-gate status.
+- Product Owner (design + risk acceptance): Accepted — 2026-08-12. Explicitly accepts the `NOT VALID`/going-forward-only design and the disclosed staging-verification gap (`BLG-BE-96`, elevated P1) as a reasonable trade-off, not a silently-ignored risk — full reasoning in `qa_evidence_EPIC-02.md`'s Product Owner Decision block. **This is not the same thing as the PR's merge-gate Product Owner acceptance** (`CLAUDE.md` §2, always-human, satisfied only by an actual human clicking accept on the PR) — that remains outstanding. (This entry briefly and incorrectly stated a bare "Accepted" for the merge-gate sense on 2026-08-11; corrected 2026-08-12 after an independent agent-mediated review of PR #1362 flagged the discrepancy, before being re-recorded here in its narrower, correct sense.)
 
 ---
 
