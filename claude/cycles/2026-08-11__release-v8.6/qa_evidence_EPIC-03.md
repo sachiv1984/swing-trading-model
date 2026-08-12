@@ -69,3 +69,19 @@ Sign-off remains conditional on the pending real-CI Playwright confirmation (Env
 - Signed off by: Sprint Execution Engine (agent-mediated, Director of Quality role — §5.3)
 - Date: 2026-08-11
 - Comments: Autonomous class (BLG-GOV-19) does not apply — this EPIC modifies files under `src/components/**`/`src/pages/**`/`src/Layout.js` (ST-04, ST-06, ST-08), automatically failing Criterion 3 per the BLG-GOV-135 detection rule, and ST-07 was classified `delegated_decision` (though already resolved pre-sprint), failing Criterion 1. Standard Sign-Off Block used instead. Agent-mediated DoQ review (independent subagent invocation, not self-assessment) findings recorded below. Sign-off is conditional on the pending real-CI Playwright confirmation noted above (Environment-parity note); if any new/extended test fails in real CI, this EPIC's DoQ sign-off must be revisited before merge.
+
+### Product Owner Decision — ST-05 AC Interpretation (2026-08-12)
+
+**Question raised:** an agent-mediated Director of Quality + Product Owner dual review of PR #1359 flagged that ST-05's AC ("Each of Select, Tabs, Sheet, Toast, Toggle has at least one Playwright test asserting the real post-fix computed colour at a confirmed-affected call site") was literally met for only 2 of 5 named families (Select, Tabs) plus the related DialogDescription bullet — the other 3 (Sheet, Toast, Toggle) got a "verified zero live call sites, no test" treatment instead of a Playwright test, and asked for an explicit Product Owner ruling on whether that substitution is acceptable.
+
+**Decision: Accepted.** The AC's own precondition — "at a confirmed-affected call site" — cannot be satisfied for genuinely unreachable code: a Playwright test cannot assert a computed colour on a DOM element that never renders in the live app. Requiring a literal test for Sheet/Toast/Toggle would mean either fabricating an isolated test harness that renders the component outside any real page (testing nothing about actual user-facing risk) or leaving the AC permanently unsatisfiable. "Verified-and-documented absence" is the correct substitution for that specific precondition, not a corner being cut.
+
+**Basis for the decision (not taken on trust):**
+- Independently re-ran the import-graph checks myself before deciding, rather than relying on the story's or the prior review's word: confirmed `components/ui/sheet.js` and `components/ui/sidebar.js` (Sheet's only real consumer) have zero import sites anywhere in `src/`; confirmed `ToastAction` is referenced only inside its own definition file (`toast.js`), never by a consuming page; confirmed the `Toggle` UI component (and its only wrapper, `ToggleGroup`) has zero live consumers — including ruling out a false-positive match against unrelated `ToggleLeft`/`ToggleRight` icons from `lucide-react` in `TickerUniverse.js`.
+- This is the second independent verification of the same claim (the in-EPIC agent-mediated DoQ review already verified it once — `qa_evidence_EPIC-03.md` line 51 — before this decision; this PO review re-derived it from scratch rather than deferring to that finding).
+- Weighed against the demonstrated risk: this exact investigation had one real false-negative already in this same story (Select was initially misclassified as dead code, caught by DoQ review, fixed with real coverage — SC-SFC-10). That history is exactly why this decision required independent re-verification rather than a rubber stamp, and why the remaining 3 claims are being explicitly accepted with evidence recorded here, not silently waved through.
+
+**Scope note:** 2 of the 5 named families (Select, Tabs) plus DialogDescription do have real Playwright coverage — the substitution applies only to the subset that is provably unreachable, not across the board.
+
+- Signed off by: Sprint Execution Engine (acting as Product Owner, per explicit user direction)
+- Date: 2026-08-12
