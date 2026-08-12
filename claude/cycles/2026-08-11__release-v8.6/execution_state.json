@@ -68,8 +68,8 @@
     "EPIC-02": {
       "status": "done",
       "branch": "exec/2026-08-11__release-v8.6/EPIC-02",
-      "pr_number": null,
-      "pr_status": "none",
+      "pr_number": 1362,
+      "pr_status": "open",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-11__release-v8.6/qa_evidence_EPIC-02.md",
       "test_scenarios": ["tests/test_position_trade_plan_link.py"],
