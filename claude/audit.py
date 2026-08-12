@@ -24,24 +24,26 @@ MAX_IMPROVEMENTS = 20
 AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
-PRIOR_AUDIT_ID = "AUD-2026-08-08"
-PRIOR_AUDIT_OPEN_ITEMS = []
-  # All 4 improvements (001-004) applied same-day: 001/004 within the original session, 002/003 in a
-  # post-publication follow-up after explicit user request. AUD-2026-08-03-001 (carried, tracked as 003)
-  # closed with it. 0 items open at session end.
+PRIOR_AUDIT_ID = "AUD-2026-08-12"
+PRIOR_AUDIT_OPEN_ITEMS = ["AUD-2026-08-12-003"]
+  # 001 (file BLG-OPS-142 for the substring-match script fix) and 002 (Friction_Load normalised-rate
+  # note, this same edit) applied within the original session. 003 (4 stale ephemeral "New Items"
+  # backlog sections, 2026-07-24 through 2026-08-11, never promoted to their §1-§8 type sections despite
+  # multiple `groom backlog` runs since) is a groom-backlog-scoped fix, deferred — not applied by audit.py
+  # itself. 1 item open at session end.
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {
     "token_efficiency":      100,
     "governance_integrity":  80,
     "execution_reliability": 53,
-    "friction_load":         25,
-    "document_hygiene":      96,
+    "friction_load":         37,
+    "document_hygiene":      100,
 }
 
 # Completed cycle count — increment after each post-ship closure
 # Used to determine B4 history sufficiency (need ≥3 cycles for hard gate compliance)
-COMPLETED_CYCLES = 71  # current completed_cycle_count at AUD-2026-08-08
+COMPLETED_CYCLES = 73  # current completed_cycle_count at AUD-2026-08-12
 
 # -------------------------
 # MISSING FILE RULE
@@ -166,6 +168,14 @@ STAGE_CHECKLIST = [
             "  -3 per confirmed Type C friction item since PRIOR_AUDIT_ID (cite cycle)\n"
             "  -6 per friction item confirmed recurring across 2+ cycles (cite cycles)\n"
             "  -5 per deferred patch confirmed unresolved since PRIOR_AUDIT_ID (cite patch)\n"
+            "  NORMALISED RATE NOTE (added AUD-2026-08-12-002): the raw score above is a window-scoped\n"
+            "  total, not per-cycle-normalised — a window spanning fewer cycles can score higher even\n"
+            "  when the underlying per-cycle friction rate is worsening. Alongside the raw score, always\n"
+            "  report items-per-cycle-record = (total friction items this window) / (cycle-records this\n"
+            "  window) and compare it to the prior audit's own reported rate, so a rising per-cycle rate\n"
+            "  is never masked by a raw score that happens to improve because this window had fewer\n"
+            "  cycles than the last one. (First observed AUD-2026-08-12: raw score rose 25→37 while the\n"
+            "  rate rose 4.75→7.5 items/cycle-record — the two signals genuinely disagreed.)\n"
             "\n"
             "DOCUMENT_HYGIENE:\n"
             "  -4 per confirmed non-compliant header (cite file)\n"
