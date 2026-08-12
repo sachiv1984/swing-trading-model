@@ -3,9 +3,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Class 1
 **Status:** Canonical
-**Version:** 1.9
-**Last Updated:** 2026-08-11 (v8.6 design gate — Modal / Dialog Theming decision, ST-07)
+**Version:** 1.10
+**Last Updated:** 2026-08-12 (v8.7 design gate — Gated DataState variant decision, ST-21)
 **Header remediation note (v6.7 ST-03, shared_standards.md §9):** this document previously had no lifecycle header. Header applied now (version stamped at 1.0, reflecting no prior tracked version history) rather than backfilling an assumed version — content itself is unchanged by this remediation.
+**v1.10 (ST-21, EPIC-07, v8.7, BLG-SPEC-124):** added the `gated` `DataState` variant (§Shared UI Components → Cards → Data States) — a dedicated branch for feature surfaces that exist but are not yet unlocked, evaluated before `loading`/`error`/`empty` (a gated feature never fires its data fetch). `Lock` icon, distinct copy pattern from the `empty` microcopy rule ("<Feature> — Locked" heading, states the gate condition rather than a live progress count), no default CTA (not user-actionable), optional `gatedProgress` subtext. Design source: `docs/design/2026-08-12__release-v8.7/gated-datastate-variant/decision_record.md`.
 **v1.9 (ST-07, EPIC-03, v8.6, BLG-FE-150):** added the Modal / Dialog Theming subsection (§Shared UI Components) — confirms dark-only modal styling is unintentional legacy drift, not an intentional design choice; modals should use the shared theme-aware token set (`bg-background`/`text-foreground` or `bg-popover`/`text-popover-foreground`), matching `CommandDialog`'s already-correct reference implementation. Follow-up implementation item filed (`BLG-FE-156`, PMO Lead, 2026-08-11) for the 4 known non-compliant consumers. Design source: `docs/design/2026-08-11__release-v8.6/modal-light-theme-support/decision_record.md`.
 **v1.8 (ST-10, EPIC-04, v8.5, BLG-FE-92):** added the empty-state microcopy pattern (§Shared UI Components → Cards → Data States) — heading/body wording and punctuation rules for `DataState`'s `empty` branch. The underlying component/layout mechanism was already consistently applied across the app; the gap was copy-tone consistency only. Design source: `docs/design/2026-08-08__release-v8.5/empty-state-microcopy-pattern/decision_record.md`.
 **v1.7 (ST-12 + ST-13 + ST-21, EPIC-03 + EPIC-04, v8.3, BLG-FE-121 + BLG-FE-126 + BLG-SPEC-108):** added three new patterns, all genuinely new (no prior artefact existed for any of them): the `ConfirmationModal` shared component with an optional undo-window variant (§Shared UI Components → Confirmation Modal), a `Skeleton` loading-placeholder primitive and `DataState` `loadingVariant="skeleton"` prop (§Shared UI Components → Data States), and the canonical form-validation error-message pattern — trigger timing, placement, wording, and a corrected light-theme colour token closing a dark-only-token contrast gap found in two shipped instances (§Interaction States → Error States). Design sources: `docs/design/2026-08-05__release-v8.3/shared-confirmation-modal-undo-window/decision_record.md`, `docs/design/2026-08-05__release-v8.3/loading-skeleton-pattern/decision_record.md`, `docs/design/2026-08-05__release-v8.3/form-validation-error-message-pattern/decision_record.md`.
@@ -162,6 +163,22 @@ A genuinely empty card (e.g. "no open positions") must render `DataState`'s `emp
 - **Icon:** contextual to the content type, per existing call sites.
 
 Design source: `docs/design/2026-08-08__release-v8.5/empty-state-microcopy-pattern/decision_record.md`.
+
+**Gated variant (v1.10, ST-21, EPIC-07, v8.7, BLG-SPEC-124)** — for feature surfaces that exist but are not yet unlocked (roadmap-gated features — see `BLG-GOV-303`'s Roadmap Unlock Tracker for the current list), pass `gated`. Evaluated **before** `loading`/`error`/`empty`: `gated → loading → error → empty → children` — a gated feature never fires its underlying data fetch, so there is no loading/error/empty state to reach.
+
+| Element | Spec |
+|---------|------|
+| Icon | `Lock` (lucide-react), `text-slate-400 dark:text-slate-500` — explicit light+dark pair |
+| Sizing | Same default/`compact` tiers as `empty` — `gated` is a content-branch choice, not a new sizing system |
+| CTA | None by default — a gated surface is not user-actionable, so `emptyAction` does not apply to `gated` |
+
+Copy is intentionally distinct from the `empty` microcopy pattern (v1.8), so "not unlocked" is never mistaken for "no data yet, add some":
+
+- **Heading:** `"<Feature name> — Locked"` (not `"No <noun>"`).
+- **Body:** one sentence, present tense, states the gate *condition* (e.g. `"Unlocks once 20 closed trades are linked to a plan."`) — not a live progress count, which goes stale unless a consumer explicitly wires one.
+- **Optional `gatedProgress`:** a muted subtext line (e.g. `"3 of 20"`) for consumers that already have the live count on hand. Omitting it is not a gap.
+
+The gated content region is inert — no hover/focus affordances underneath, same full-region-replacement mechanism as `empty`. Design source: `docs/design/2026-08-12__release-v8.7/gated-datastate-variant/decision_record.md`.
 
 **Skeleton loading variant (v1.7, ST-13, EPIC-03, v8.3, BLG-FE-126)** — pass `loadingVariant="skeleton"` (default remains `"spinner"`, unchanged) plus a `loadingSkeleton` node to render a content-shaped placeholder instead of the centered spinner for card-shaped async regions. Backing primitive: `src/components/ui/Skeleton.js` — a single rounded-rectangle `<div>` with `animate-pulse` (Tailwind default: `2s` ease, infinite), coloured `bg-slate-300/60 dark:bg-slate-700/60` (explicit light+dark pair — no dark-only token). Default card composition: 3 stacked bars (`h-4 w-3/5` title, `h-3 w-full` and `h-3 w-4/5` body lines, `gap-2`) — a starting point, not a mandate; a consumer may compose its own bar arrangement from the `Skeleton` primitive. Not retrofitted to any existing card this cycle — adoption is per-consumer. Design source: `docs/design/2026-08-05__release-v8.3/loading-skeleton-pattern/decision_record.md`.
 

@@ -1,8 +1,10 @@
 **Owner:** Frontend Specifications & UX Documentation Owner
 **Class:** Supporting Document (Class 2)
 **Status:** Active
-**Version:** 1.4
-**Last Updated:** 2026-08-12 (Product Owner disposition on DEV-v8.6-ST02-01 ratified as the standing decision — see `qa_evidence_EPIC-01.md`'s Ratification note); prior — 2026-08-11 (Product Owner disposition on DEV-v8.6-ST02-01 — accepted as shippable, agent-mediated per §5.3, see Known Deviations); prior — 2026-08-11 (ST-02/EPIC-01/v8.6 implementation — filed DEV-v8.6-ST02-01: "AI draft" badge omitted from §10.5's Setup Thesis Digest panel, isAiDraft not persisted server-side, BLG-BE-95 filed); prior history retained — see prior entries in version control.
+**Version:** 1.5
+**Last Updated:** 2026-08-12 (v8.7 design gate — added §5.1 Invalidation Condition field (ST-01, BLG-FEAT-84) and §10.6 Post-Submission Link Confirmation (ST-02, BLG-FE-158)); prior — 2026-08-12 (Product Owner disposition on DEV-v8.6-ST02-01 ratified as the standing decision — see `qa_evidence_EPIC-01.md`'s Ratification note); prior — 2026-08-11 (Product Owner disposition on DEV-v8.6-ST02-01 — accepted as shippable, agent-mediated per §5.3, see Known Deviations); prior history retained — see prior entries in version control.
+**Design Source (v1.5 invalidation condition):** docs/design/2026-08-12__release-v8.7/thesis-invalidation-condition/decision_record.md
+**Design Source (v1.5 link confirmation toast):** docs/design/2026-08-12__release-v8.7/trade-plan-link-confirmation-toast/decision_record.md
 **Design Source (v1.4 setup thesis digest):** docs/design/2026-08-11__release-v8.6/ai-thesis-digest-order-placement/ux_spec.md
 **Design Source (v1.3 checklist keyboard accessibility):** docs/design/2026-07-30__release-v8.0/entry-checklist-keyboard-accessibility/decision_record.md
 **Design Source (v1.3 abandon modal focus trap):** docs/design/2026-07-30__release-v8.0/abandon-modal-focus-trap/decision_record.md
@@ -119,6 +121,7 @@ Per v3.1 design gate decision:
 | Status | Select | Yes | Draft / Active / Closed (Abandoned is set via Abandon action — not in this dropdown) |
 | Stop Level | Numeric | No | Positive decimal; native currency |
 | Risk/Reward Notes | Textarea | No | Free text; used for pre-population of CHK-04 |
+| Invalidation Condition | Textarea | No | v1.5 — ST-01, BLG-FEAT-84. Placeholder: "What would prove this thesis wrong? (optional)". Manually authored — deliberately excluded from §5b's "Improve with AI" population list (see design source). Hidden entirely in the detail view when blank (§7). |
 | Tags | Component (Tag Editor) | No | See §5c |
 | Pre-Trade Checklist | Component | No | See §6 |
 
@@ -447,6 +450,19 @@ A collapsible **"Setup Thesis Digest"** panel renders in `TradeEntry.js`, direct
 
 **Collapse state:** session-only (not persisted to `localStorage` — distinct from the Behavioural Drift panel's persisted collapse, §20 `analytics.md`, since this panel is seen once per order rather than revisited across sessions).
 
+### 10.6 Post-Submission Link Confirmation (v1.5 — ST-02 BLG-FE-158)
+
+**Design source:** docs/design/2026-08-12__release-v8.7/trade-plan-link-confirmation-toast/decision_record.md
+
+On a successful `POST /portfolio/position` response, a `sonner` toast reports the actual linkage outcome — covering both the pre-visible link paths (§10.1–§10.3) and the best-effort ticker/market auto-link (`BLG-BE-46`), whose outcome is only knowable from the response:
+
+- `trade_plan_linked: true` → success toast: **"Linked to trade plan for {ticker}."** (`{ticker}` is the already-submitted ticker, no additional fetch).
+- `trade_plan_linked: false` → neutral toast (not error — an expected outcome, not a failure): **"No matching plan found — logged unlinked."**
+
+Fires alongside (not instead of) any existing position-created confirmation; default `sonner` duration, no override. Not a `StandingAlert` — this is a one-time, non-actionable, informational outcome of a completed action, not a condition requiring sustained user awareness (per `design_system.md`'s Toast vs `StandingAlert` distinction).
+
+> **§13 Compliance:** Display-only surfacing of an already-computed, already-persisted linkage outcome. No new decision logic; does not gate or affect position creation either way.
+
 ---
 
 ## 11. Bulk Actions (v7.5 — ST-03 BLG-FE-117)
@@ -496,6 +512,7 @@ User-initiated batch of the same manual mutations already available one plan at 
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.5 | 2026-08-12 | v8.7 design gate — added §5.1 Invalidation Condition field (ST-01, BLG-FEAT-84): optional manually-authored textarea, placed after Risk/Reward Notes, deliberately excluded from §5b's "Improve with AI" population list, hidden entirely in detail view when blank. Added §10.6 Post-Submission Link Confirmation (ST-02, BLG-FE-158): `sonner` toast reporting `trade_plan_linked`/`trade_plan_id` from the `POST /portfolio/position` response — success toast naming the linked ticker when `true`, neutral "no matching plan found — logged unlinked" toast when `false`; covers the auto-link path (`BLG-BE-46`) not previously visible pre-submit. Design sources: thesis-invalidation-condition/decision_record.md, trade-plan-link-confirmation-toast/decision_record.md. Approved: Product Owner 2026-08-12. Design gate: 2026-08-12__release-v8.7. Head of Specs Team confirmed. |
 | 1.4 | 2026-08-11 | v8.6 design gate — added §10.5 Setup Thesis Digest at Order Placement (ST-02, BLG-FEAT-56): collapsible "Setup Thesis Digest" panel in `TradeEntry.js`, below the "Linked to trade plan" indicator (§10.2); reuses the linked plan's already-generated `setup_thesis` (no new AI call at order placement); "Key Risk Factors" synthesised from `early_exit_conditions`/`confirmation_criteria`; read-only, link to full plan; hidden entirely when no plan linked or no thesis content. §13 compliant (reuses `ai_thesis_generation.md`'s already-cleared generation surface). Design source: ai-thesis-digest-order-placement/ux_spec.md. Approved: Product Owner 2026-08-11. Design gate: 2026-08-11__release-v8.6. Head of Specs Team confirmed. |
 | 1.3 | 2026-07-30 | v8.0 design gate — accessibility/interaction fixes to two existing components, visual design unchanged: §6.2 Pre-Trade Entry Checklist `CheckItem` gains real keyboard semantics (`role="checkbox"`, `aria-checked`, Tab-reachable, Space/Enter toggle — ST-06, BLG-FE-135); §8.2 Abandonment Modal migrated to the existing Radix `Dialog` primitive for focus-trap/restoration (ST-07, BLG-FE-136). Design sources: entry-checklist-keyboard-accessibility/decision_record.md, abandon-modal-focus-trap/decision_record.md. Approved: Product Owner 2026-07-30. Design gate: 2026-07-30__release-v8.0. Head of Specs Team confirmed. |
 | 1.2 | 2026-07-20 | v7.6 design gate — added §7c Print / Export PDF (ST-01, BLG-FE-119): "Print / Export PDF" outline button in the detail-view PageHeader actions, `window.print()`-based (shared global print stylesheet, no new backend endpoint); §7 action buttons row updated. Design source: print-pdf-export/ux_spec.md. Approved: Product Owner 2026-07-20. Design gate: 2026-07-20__release-v7.6. Head of Specs Team confirmed. |
