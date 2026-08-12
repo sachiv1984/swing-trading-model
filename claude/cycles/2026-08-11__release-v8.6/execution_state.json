@@ -81,7 +81,7 @@
           "assigned_to": "Head of Engineering",
           "github_issue": 1334,
           "branch": "exec/2026-08-11__release-v8.6/EPIC-02",
-          "commit_sha": null,
+          "commit_sha": "f50d9112b7b93ee21a40cd5432d19cedd27a771a",
           "delegation_record_id": "DEL-20260811-01",
           "blocked_since_utc": "2026-08-11T18:45:00Z",
           "unblock_criteria": "Entry-flow linkage confirmed enforced (staging-verified); DB-level safeguard implemented and tested against a deliberately orphaned row; Data Model, Domain & Schema Owner + Product Owner sign-off recorded.",
