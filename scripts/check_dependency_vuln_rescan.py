@@ -14,6 +14,18 @@ Usage:
 Exit code is always 0 — this script is a reporting tool, not a merge gate
 (pip-audit HIGH/CRITICAL enforcement on PRs remains vulnerability-scan.yml's
 job; this script serves the independent scheduled cadence).
+
+ST-14 (BLG-SEC-29, EPIC-04, v8.6): a tool-failure scenario (missing
+lockfile, non-JSON output, nonzero-exit-with-no-usable-output) previously
+produced the exact same visible state as "tool ran, found 0 vulnerabilities"
+-- load_json() returning None fed straight into pip_audit_findings()/
+npm_audit_findings(), both of which treat None as "no findings" with no
+distinguishing signal. This script now emits per-tool `pip_audit_status`/
+`npm_audit_status` ("ok"/"failed") to --github-output, and the summary
+report states tool failure explicitly rather than folding it into the same
+sentence as a genuine zero-findings result. The calling workflow
+(dependency-vuln-rescan.yml) fails the job visibly when either status is
+"failed", rather than reporting a quiet green "0 findings" run.
 """
 import argparse
 import json
@@ -27,6 +39,14 @@ def load_json(path):
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"::warning::Could not read {path}: {e}", file=sys.stderr)
         return None
+
+
+def npm_audit_tool_failed(data):
+    """True when npm audit ran but reported its own failure rather than a
+    real scan result (e.g. missing package-lock.json produces an ENOLOCK
+    error object -- valid JSON, but no "vulnerabilities" key at all, which
+    npm_audit_findings() would otherwise silently read as zero findings)."""
+    return isinstance(data, dict) and "error" in data and "vulnerabilities" not in data
 
 
 def pip_audit_findings(data):
@@ -95,6 +115,13 @@ def main():
     npm_data = load_json(args.npm_audit_json)
     baseline = load_json(args.baseline) or {"pip_audit": {"advisory_ids": []}, "npm_audit": {"advisory_ids": []}}
 
+    pip_audit_status = "ok" if pip_data is not None else "failed"
+    npm_tool_failed = npm_audit_tool_failed(npm_data)
+    npm_audit_status = "failed" if (npm_data is None or npm_tool_failed) else "ok"
+    if npm_tool_failed:
+        print(f"::warning::npm audit reported a tool error, not a scan result: {npm_data.get('error')}", file=sys.stderr)
+        npm_data = None  # do not let npm_audit_findings() read the error object as "0 vulnerabilities"
+
     known_pip_ids = set(baseline.get("pip_audit", {}).get("advisory_ids", []))
     known_npm_ids = set(baseline.get("npm_audit", {}).get("advisory_ids", []))
 
@@ -121,19 +148,23 @@ def main():
         "",
         f"### pip-audit: {len(pip_findings)} finding(s) total, {len(new_pip)} new (not in baseline)",
     ]
-    if pip_findings:
+    if pip_audit_status == "failed":
+        lines.append("⚠️ **pip-audit tool/output FAILED — this run is INCONCLUSIVE for pip-audit, not a genuine 0-finding result.** Check the workflow logs for the underlying error (missing/unreadable output file or invalid JSON).")
+    elif pip_findings:
         lines.append("| Package | Version | Advisory ID | New? |")
         lines.append("|---------|---------|-------------|------|")
         for p, v, i in pip_findings:
             lines.append(f"| `{p}` | `{v}` | `{i}` | {'YES' if i not in known_pip_ids else 'known'} |")
     else:
-        lines.append("No pip-audit findings (or tool/output unavailable).")
+        lines.append("No pip-audit findings — tool ran successfully.")
 
     lines += [
         "",
         f"### npm audit (high/critical only): {len(npm_findings)} package(s) total, {len(new_npm)} with new advisory IDs (not in baseline)",
     ]
-    if npm_findings:
+    if npm_audit_status == "failed":
+        lines.append("⚠️ **npm audit tool/output FAILED — this run is INCONCLUSIVE for npm audit, not a genuine 0-finding result.** Check the workflow logs for the underlying error (missing lockfile, invalid JSON, or a reported tool error).")
+    elif npm_findings:
         lines.append("| Package | Severity | Advisory ID(s) | New? |")
         lines.append("|---------|----------|-----------------|------|")
         for p, s, ids in npm_findings:
@@ -142,13 +173,16 @@ def main():
             status = 'YES' if is_new else ('known' if has_own_advisory else 'n/a')
             lines.append(f"| `{p}` | {s} | {', '.join(f'`{i}`' for i in ids)} | {status} |")
     else:
-        lines.append("No npm audit high/critical findings (or tool/output unavailable).")
+        lines.append("No npm audit high/critical findings — tool ran successfully.")
 
     lines += [
         "",
         f"### Summary: {new_finding_count} new finding(s) not present in `docs/security/dependency_vuln_baseline.json`",
     ]
-    if new_finding_count == 0:
+    if pip_audit_status == "failed" or npm_audit_status == "failed":
+        failed_tools = ", ".join(t for t, s in (("pip-audit", pip_audit_status), ("npm audit", npm_audit_status)) if s == "failed")
+        lines.append(f"⚠️ **INCONCLUSIVE — {failed_tools} failed this run.** The finding counts above do not represent a complete scan; do not treat this as a clean/0-finding result.")
+    elif new_finding_count == 0:
         lines.append("No new HIGH/CRITICAL findings since baseline — no issue filed this run.")
     else:
         lines.append("New findings detected — a GitHub issue has been filed/updated for Cybersecurity & Trust Lead triage.")
@@ -163,6 +197,8 @@ def main():
             f.write(f"new_finding_count={new_finding_count}\n")
             f.write(f"pip_finding_count={len(pip_findings)}\n")
             f.write(f"npm_finding_count={len(npm_findings)}\n")
+            f.write(f"pip_audit_status={pip_audit_status}\n")
+            f.write(f"npm_audit_status={npm_audit_status}\n")
 
     return 0
 

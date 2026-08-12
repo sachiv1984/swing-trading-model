@@ -92,6 +92,21 @@ jobs:
         if: always()
         run: cat rescan_summary.md >> "$GITHUB_STEP_SUMMARY"
 
+      # ST-14 (BLG-SEC-29, EPIC-04, v8.6): a tool-failure scenario (missing
+      # lockfile, non-JSON output, or a nonzero exit that left no usable
+      # output) previously produced the same silent "0 findings" state as a
+      # genuine clean scan -- new_finding_count/pip_finding_count/
+      # npm_finding_count are all 0 either way, so nothing here or upstream
+      # ever distinguished them. Fail the job explicitly on tool failure so
+      # this cadence surfaces as a visibly broken (red) run rather than a
+      # quiet green one, per the analyse step's own pip_audit_status/
+      # npm_audit_status outputs.
+      - name: Fail job if either audit tool did not produce a usable result
+        if: steps.analyse.outputs.pip_audit_status == 'failed' || steps.analyse.outputs.npm_audit_status == 'failed'
+        run: |
+          echo "::error::pip_audit_status=${{ steps.analyse.outputs.pip_audit_status }} npm_audit_status=${{ steps.analyse.outputs.npm_audit_status }} — this run is INCONCLUSIVE, not a clean 0-finding scan. See the job summary for details."
+          exit 1
+
       - name: File/update GitHub issue for new HIGH/CRITICAL findings
         if: steps.analyse.outputs.new_finding_count != '0'
         uses: actions/github-script@v7

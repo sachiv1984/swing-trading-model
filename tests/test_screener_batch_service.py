@@ -159,6 +159,45 @@ def test_run_screener_accepts_custom_ticker_universe():
     assert result["tickers_evaluated"] == 2
 
 
+def test_run_screener_persists_risk_off_not_null_on_regime_fetch_failure():
+    """
+    ST-11 (BLG-BE-88, EPIC-04, v8.6): a real fetch-failure scenario --
+    _fetch_index_regime returns None (as it does on any unrecoverable
+    error, per test_fetch_regime_returns_none_on_http_error above) -- must
+    persist regime_us/regime_uk as the literal string "risk_off", not NULL.
+    This is the behaviour get_regime_distribution()'s docstring now
+    documents (corrected from its previous, unreachable NULL-exclusion
+    claim); this test is the fetch-failure-scenario verification the
+    story's AC requires.
+    """
+    tickers = [{"ticker": "MOCK-US", "market": "US", "active": True}]
+    ohlcv = _make_ohlcv(n=30)
+
+    conn, cur = _mock_db_write()
+    with patch("services.screener_batch_service.get_db", return_value=conn), \
+         patch("services.screener_batch_service.get_all_tickers", return_value=tickers), \
+         patch("services.screener_batch_service.fetch_ohlcv", return_value=ohlcv), \
+         patch("services.screener_batch_service._fetch_index_regime", return_value=None):
+        import services.screener_batch_service as svc
+        svc._run_in_progress = False
+        result = svc.run_screener()
+
+    assert result["regime_us"] == "risk_off"
+    assert result["regime_uk"] == "risk_off"
+
+    # Confirm the persisted DB row also carries "risk_off", not NULL/None --
+    # the INSERT INTO screener_runs call's regime_us/regime_uk positional
+    # params (5th and 6th args per _persist_run's SQL column order).
+    insert_calls = [c for c in cur.execute.call_args_list if "INSERT INTO screener_runs" in c.args[0]]
+    assert len(insert_calls) == 1
+    persisted_params = insert_calls[0].args[1]
+    regime_us_param, regime_uk_param = persisted_params[4], persisted_params[5]
+    assert regime_us_param == "risk_off"
+    assert regime_uk_param == "risk_off"
+    assert regime_us_param is not None
+    assert regime_uk_param is not None
+
+
 # ---------------------------------------------------------------------------
 # _fetch_index_regime
 # ---------------------------------------------------------------------------
@@ -329,6 +368,23 @@ def test_regime_distribution_rejects_invalid_window():
     from services.screener_batch_service import get_regime_distribution
     with pytest.raises(ValueError):
         get_regime_distribution(window="7d")
+
+
+def test_regime_distribution_docstring_does_not_claim_unreachable_null_exclusion():
+    """ST-11 (EPIC-04, v8.6): a prior version of this docstring claimed a
+    market's regime is *excluded from the count* when it fails to resolve
+    (regime_us/regime_uk NULL) -- unreachable, since run_screener() always
+    substitutes a real risk_off default and NULL is never persisted (see
+    test_run_screener_persists_risk_off_not_null_on_regime_fetch_failure).
+    A prior commit (ac6431b9) claimed to fix this docstring but only added
+    a test -- the docstring itself was untouched, caught by an
+    agent-mediated review of PR #1363. This regression test pins the
+    corrected wording so the false claim can't silently return."""
+    from services.screener_batch_service import get_regime_distribution
+    doc = get_regime_distribution.__doc__
+    assert "unreachable" in doc
+    assert "NULL regime is\n    never persisted" in doc or "never persisted" in doc
+    assert "is excluded from that market's count" not in doc
 
 
 def test_regime_distribution_defaults_to_30d():

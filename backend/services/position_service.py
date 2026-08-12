@@ -1054,13 +1054,35 @@ def exit_position(
         total_shares=total_shares
     )
     
-    # Calculate proportional costs
+    # Calculate proportional costs.
+    #
+    # ST-12 (EPIC-04, v8.6, BLG-BE-91 follow-on audit): exit_total_cost and
+    # exit_entry_fees are rounded to 2dp HERE (matching the NUMERIC(12,2)/
+    # NUMERIC(10,2) DB columns they get persisted to), and the *remaining*
+    # position total_cost/fees_paid (below) is derived by subtracting this
+    # already-rounded figure from the already-rounded starting total_cost/
+    # fees_paid -- not by independently rounding a second, separately
+    # computed unrounded remainder. This "round once, derive the rest by
+    # exact subtraction" ordering is what a proportional-allocation split
+    # needs to telescope exactly: summing every exit_total_cost across a
+    # position's full partial-exit lifecycle always reconstructs the
+    # original total_cost to the cent, regardless of share count or how
+    # many partial exits occur. The prior version rounded exit_total_cost
+    # and remaining_cost independently from two separately-unrounded
+    # values, which does not telescope -- an agent-mediated review of the
+    # original "immaterial, bounded" conclusion (docs/product/decisions/
+    # multi-currency-cost-basis-rounding-audit--2026-08-12.md) produced a
+    # counter-example (37 sequential single-share exits of a £12,345.67
+    # position drifting £0.12, 6x the originally-asserted bound) proving
+    # the drift does compound in the general case. See
+    # tests/test_multi_currency_cost_basis_rounding_audit.py for the
+    # regression coverage.
     cost_per_share = total_cost / total_shares
-    exit_total_cost = cost_per_share * exit_shares
-    
+    exit_total_cost = round(cost_per_share * exit_shares, 2)
+
     entry_fees = float(position.get('fees_paid', 0))
     entry_fees_per_share = entry_fees / total_shares
-    exit_entry_fees = entry_fees_per_share * exit_shares
+    exit_entry_fees = round(entry_fees_per_share * exit_shares, 2)
     
     # Calculate holding period
     exit_date_str = exit_date or datetime.now().strftime('%Y-%m-%d')
@@ -1138,14 +1160,21 @@ def exit_position(
     if is_partial_exit:
         # Partial exit - update position to reduce shares
         remaining_shares = total_shares - exit_shares
-        remaining_cost = total_cost - exit_total_cost
-        
+        # Exact remainder, not an independent re-round: total_cost/entry_fees
+        # are already 2dp (read back from a NUMERIC(12,2)/NUMERIC(10,2)
+        # column), and exit_total_cost/exit_entry_fees are already rounded
+        # above -- subtracting two already-2dp values needs no further
+        # rounding and is what makes the per-exit split telescope exactly
+        # (see the comment above exit_total_cost's computation).
+        remaining_cost = round(total_cost, 2) - exit_total_cost
+        remaining_fees = round(entry_fees, 2) - exit_entry_fees
+
         print(f"   📝 Partial exit: {remaining_shares} shares remaining")
-        
+
         update_position(position_id, {
             'shares': remaining_shares,
             'total_cost': remaining_cost,
-            'fees_paid': entry_fees - exit_entry_fees
+            'fees_paid': remaining_fees
         })
         
         print(f"   ✓ Position updated: {remaining_shares} shares remaining")

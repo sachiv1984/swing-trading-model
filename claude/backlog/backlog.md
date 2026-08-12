@@ -3,7 +3,7 @@
 **Owner:** Product Owner
 **Status:** Active
 **Class:** Planning Document (Class 4)
-**Last Updated:** 2026-08-12 (Sprint Execution Engine, acting as Product Owner per explicit user direction — PR #1362 risk-acceptance decision recorded on BLG-BE-96: merge approved with the disclosed staging-verification gap outstanding, condition attached escalating any status='active' legacy-row finding to P0; cross-EPIC merge-conflict resolution against main also renumbered EPIC-02's own BLG-FE-157 filing to BLG-FE-158, since it collided with EPIC-03/ST-04's independently-filed BLG-FE-157 which merged to main first via PR #1359 — per CLAUDE.md §8.2a); prior — 2026-08-12 (Sprint Execution Engine, acting as Head of Engineering, PR #1362 dual-review follow-up — BLG-BE-96 priority elevated P2→P1; 1 new item added, later renumbered to BLG-FE-158: consume trade_plan_linked/trade_plan_id in the position-entry flow); prior — 2026-08-11 (Sprint Execution Engine, ST-04/EPIC-03/v8.6 mid-sprint finding — 1 new item added: BLG-FE-157, Playwright coverage for the remaining shadcn token call-site families left untested by v8.6/ST-04); prior history retained — see prior entries in version control.
+**Last Updated:** 2026-08-11 (Sprint Execution Engine, ST-13/EPIC-04/v8.6 agent-mediated FRRO review finding — 1 new item added: BLG-QA-148, end-to-end integration assertion for tax-year boundary trade rows); prior — 2026-08-12 (Sprint Execution Engine, acting as Product Owner per explicit user direction — PR #1362 risk-acceptance decision recorded on BLG-BE-96: merge approved with the disclosed staging-verification gap outstanding, condition attached escalating any status='active' legacy-row finding to P0; cross-EPIC merge-conflict resolution against main also renumbered EPIC-02's own BLG-FE-157 filing to BLG-FE-158, since it collided with EPIC-03/ST-04's independently-filed BLG-FE-157 which merged to main first via PR #1359 — per CLAUDE.md §8.2a); prior — 2026-08-12 (Sprint Execution Engine, acting as Head of Engineering, PR #1362 dual-review follow-up — BLG-BE-96 priority elevated P2→P1; 1 new item added, later renumbered to BLG-FE-158: consume trade_plan_linked/trade_plan_id in the position-entry flow); prior history retained — see prior entries in version control.
 **Last rebalance:** 2026-07-12 (cycle 2026-07-12__scheduled — DL-064; 36 new backlog items added (BLG-GOV-203–217, BLG-QA-94–99/101–103, BLG-BE-57/58, BLG-FE-103–105, BLG-SEC-17, BLG-SPEC-78–82, BLG-OPS-106/107) via idea intake IW-20260712-01 (44 submissions, 22 agents) disposition: 36 Promoted-Backlog, 7 Rejected (all resolved by direct action), 1 Promoted-Added (process patch), 2 Parked; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.21 (U=8 G=9 D=21 P=0, window v6.5–v6.9) — 🔴 3rd consecutive Product Value Alert, improved from prior 0.18 but still below 0.30 floor; mandatory pull-forward named BLG-FE-102 as anchor candidate for next `plan release`, BLG-FE-97 secondary; SI-02 gate live re-checked via production API — NOT MET (0/11 linked trade plans; behavioural-drift endpoint self-reports insufficient_data); STEP 7.1 Skill-Silo rolling-3-cycle avg 76.9% (v6.7/v6.8/v6.9) — Alert persists but improved from 78.2%; STEP 8.1 empty horizon gate: Option (b) — defer, scoping deferred to next `plan release`; Backlog Accessibility Warning RE-TRIGGERED (A=19.9%, down from 38.8%); prior — 2026-07-10 (cycle 2026-07-10__scheduled — DL-063; 39 new backlog items added (BLG-GOV-191–202, BLG-QA-87–93, BLG-OPS-101–105, BLG-SEC-14–16, BLG-BE-53–56, BLG-SPEC-74–77, BLG-FE-99–101, BLG-FEAT-72) via idea intake IW-20260710-01 (44 submissions, 22 agents) disposition: 39 Promoted-Backlog, 3 Parked-cycle-1, 2 Rejected; 0 active initiatives, CPS=N/A; STEP 2.4 Product Value Ratio 0.18 (U=9 G=16 D=24 P=0, window v6.4–v6.8) — 🔴 2nd consecutive Product Value Alert, worse than prior 0.26; mandatory pull-forward named BLG-FEAT-64 as anchor candidate for `plan release v6.9`; STEP 7.1 Skill-Silo rolling-3-cycle avg 78.2% (v6.6/v6.7/v6.8) — Alert persists, single-reading worsening after 2 consecutive improvements; STEP 8.1 empty horizon gate: Option (b) — defer, v6.9 scoping deferred to `plan release v6.9`; prior — 2026-07-02 (cycle 2026-07-02__scheduled — DL-059; 24 new backlog items added (BLG-FEAT-55–60, BLG-FE-81–84, BLG-BE-41/42, BLG-GOV-154/156, BLG-QA-69/70/71, BLG-SEC-09, BLG-SPEC-62/63/65/66, BLG-OPS-84/85) via idea intake IW-20260702-01 (44 submissions) + 19 carried ideas at 3-cycle hard cap; STEP 8.0: 0 fast-track items this cycle; STEP 3.1 Actionable Backlog Assessment: A=35/28%, T=7/6%, D=27/22%, L=55/44% of 124 baseline items — Backlog Accessibility Warning triggered (A% below 30% floor); PVR=0.344 Advisory; Skill-Silo rolling-3-cycle avg=64.8% Alert, worse than prior 53.2% (pull-forward candidate BLG-FE-46)))
 
 > ⚠️ Standing Notice
@@ -1858,6 +1858,26 @@ ST-03 (BLG-BE-91)'s delegation explicitly required "staging-verified" confirmati
 - Head of Engineering + Data Model, Domain & Schema Owner sign-off
 
 **Product Owner risk-acceptance condition (2026-08-12):** PR #1362 was approved to merge with this gap outstanding (see `qa_evidence_EPIC-02.md`'s Product Owner Decision block for full reasoning) — this is a genuine fast-follow, not a someday item. **If the legacy-row query above finds any of the 11 known rows carry `status='active'`, that specific finding escalates to its own P0 immediately** — do not fold it into this ticket's own P1 timeline.
+
+---
+
+### BLG-QA-148 — End-to-end integration assertion for tax-year boundary trade rows
+**Priority:** P3 (Low)
+**Type:** QA / Financial Correctness
+**Owner:** Financial Reporting & Records Owner; QA & Testing Owner
+**Source:** ST-13/EPIC-04 agent-mediated Financial Reporting & Records Owner review (v8.6) — 2026-08-11
+**Effort:** XS (<1h)
+**Provisional-Target:** v8.7 or later
+
+**Problem**
+`tests/test_tax_year_boundary_completeness.py` (added ST-13, BLG-BE-93, v8.6) proves tax-year boundary completeness via a sound but indirect composition — the real computed year bounds from `get_tax_year_report()` combined with confirming the real SQL text contains an inclusive `BETWEEN %s AND %s` — rather than by feeding a fabricated boundary-day trade row through a mocked `fetchall()` and asserting it appears exactly once in `get_tax_year_report()`'s actual returned `trades` list / rendered CSV rows. The inferential step (bounds + inclusive SQL ⇒ no omission/double-count) is logically sound but not directly observed against real row data.
+
+**Scope**
+- Add one test that mocks `get_trade_history_by_tax_year`'s underlying DB cursor to return a fabricated row with `exit_date` on a tax-year boundary day
+- Assert the row appears exactly once in `get_tax_year_report()`'s returned `trades` list for the correct year, and zero times when the adjacent year is queried
+
+**Acceptance Criteria**
+- A test mocks `get_trade_history_by_tax_year`'s DB cursor to return a fabricated row with `exit_date` on a tax-year boundary day, and asserts it appears exactly once in `get_tax_year_report()`'s returned `trades` list for the correct year and zero times for the adjacent year
 
 ---
 

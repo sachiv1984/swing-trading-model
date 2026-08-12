@@ -521,11 +521,16 @@ def get_regime_distribution(window: str = "30d") -> Dict:
     screener_results — that table is one row per *ticker*, which would
     weight the distribution by how many tickers happened to be evaluated in
     each market rather than by how often each market has actually been in
-    each regime). Each run contributes one observation per market (US, UK)
-    that has a non-null regime value for that run, so a run where a market's
-    regime failed to resolve (regime_us/regime_uk NULL, e.g. an index price
-    fetch failure) is excluded from that market's count rather than
-    miscounted as a fabricated regime.
+    each regime). Each run contributes one observation per market (US, UK).
+
+    ST-11 (EPIC-04, v8.6): a prior version of this docstring claimed a
+    market's regime is excluded from the count when it fails to resolve
+    (regime_us/regime_uk NULL). That path is unreachable: run_screener()
+    always substitutes a real {"regime_status": "risk_off", ...} default
+    whenever the underlying index-price fetch fails, so a NULL regime is
+    never persisted to screener_runs — this query's rows always carry a
+    real regime_us/regime_uk string, and a fetch failure is conservatively
+    counted as risk_off rather than being excluded from the distribution.
 
     window: "30d", "60d", or "all". Raises ValueError on any other value.
     """
