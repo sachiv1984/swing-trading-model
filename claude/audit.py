@@ -25,12 +25,14 @@ AUDIT_VERSION = "6"
 
 # Prior audit tracking — the audit itself produces updated values at end (see §9 CONFIG UPDATE)
 PRIOR_AUDIT_ID = "AUD-2026-08-12"
-PRIOR_AUDIT_OPEN_ITEMS = ["AUD-2026-08-12-003"]
-  # 001 (file BLG-OPS-142 for the substring-match script fix) and 002 (Friction_Load normalised-rate
-  # note, this same edit) applied within the original session. 003 (4 stale ephemeral "New Items"
-  # backlog sections, 2026-07-24 through 2026-08-11, never promoted to their §1-§8 type sections despite
-  # multiple `groom backlog` runs since) is a groom-backlog-scoped fix, deferred — not applied by audit.py
-  # itself. 1 item open at session end.
+PRIOR_AUDIT_OPEN_ITEMS = []
+  # 001 (BLG-OPS-142 filed) and 002 (Friction_Load normalised-rate note) applied within the original
+  # session. 003/004/005 (backlog_management_prompt.md STEP 1.5 4th ephemeral type; execution_prompt.md
+  # roll-up re-trigger + 2nd-review-pass; qa_evidence_template.md CI-green restatement; lessons_learnt_prompt.md
+  # §3.7 patch-ID matching) applied post-publication, same day, per explicit user direction ("action all
+  # audit points"). Note: 003's engine fix is applied; the mechanical promotion of the 4 pre-existing
+  # stale ephemeral sections' items is not — the next actual `groom backlog` run will apply the new rule
+  # to them structurally. 0 items open at session end.
 
 # Health Scorecard baseline — updated by audit output each run for trend tracking
 PRIOR_SCORES = {

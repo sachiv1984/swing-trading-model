@@ -10,6 +10,8 @@ Cycle: 2026-08-11__release-v8.6
 
 No staleness this run — `claude/audit.py`'s CONFIG constants at session start (`PRIOR_AUDIT_ID = "AUD-2026-08-08"`, `COMPLETED_CYCLES = 71`) matched the most recently filed report (`claude/cycles/2026-08-07__release-v8.4/audit_report_AUD-2026-08-08.md` §11) exactly. The AUD-2026-08-08-001/AUD-2026-08-08-004 self-update fixes held for this run.
 
+**POST-PUBLICATION ADDENDUM (2026-08-12, same day, user-directed "action all audit points"):** Improvement AUD-2026-08-12-003 (originally left OPEN — see §5b below) was applied post-publication. In the same pass, the 4 Stage 10 D1-tracked deferred patches that were still ACTIVE/NEW at publication (DoQ CI-green restatement, 2-cycle carry; `lessons_learnt_prompt.md` §3.7 patch-ID matching; `execution_prompt.md` §3.2.A roll-up re-trigger; §5.3 quantitative-claim second-review-pass) were also applied directly, rather than left for "next revision touching X" as originally recommended — see the updated Stage 10 table and §5b below. A fresh self-drift was also found and fixed in the same pass: `OPERATIONAL_GUIDE.md`'s own §14 self-row had drifted to `4.155` while its header/Change Log were already `4.156` (1 version behind) — corrected as part of the first of 3 sequential version bumps this pass required (`4.156→4.159`). `governance-drift` skill run clean (0 mismatches, 0 untracked, self-consistent) before committing. 0 items open at session end — see revised §11 Config Update.
+
 ---
 
 ## 1. Resolved Since Last Audit
@@ -315,7 +317,29 @@ No recommended consolidation actions this run.
     "patches": 1,
     "files": ["claude/system/backlog_management_prompt.md"],
     "depends_on": [],
-    "status": "OPEN — deferred, recommend applying at next backlog_management_prompt.md revision"
+    "status": "APPLIED — post-publication, same day (backlog_management_prompt.md v1.13→v1.14)"
+  },
+  {
+    "id": "AUD-2026-08-12-004",
+    "title": "DoQ CI-green restatement + 2 execution_prompt.md Stage 10 D1 deferred patches",
+    "weight": 10,
+    "tier": 1,
+    "effort": "Low",
+    "patches": 2,
+    "files": ["claude/system/execution_prompt.md", "claude/system/templates/qa_evidence_template.md"],
+    "depends_on": [],
+    "status": "APPLIED — post-publication, same day (execution_prompt.md v3.67→v3.68, qa_evidence_template.md v1.9→v1.10)"
+  },
+  {
+    "id": "AUD-2026-08-12-005",
+    "title": "lessons_learnt_prompt.md §3.7 patch-ID matching (Stage 10 D1)",
+    "weight": 7,
+    "tier": 1,
+    "effort": "Low",
+    "patches": 1,
+    "files": ["claude/system/lessons_learnt_prompt.md"],
+    "depends_on": [],
+    "status": "APPLIED — post-publication, same day (lessons_learnt_prompt.md v1.10→v1.11)"
   }
 ]
 ```
@@ -371,7 +395,7 @@ PATCH: (applied — shown for the record)
 
 ---
 
-### AUD-2026-08-12-003 — OPEN, not applied this session
+### AUD-2026-08-12-003 — APPLIED POST-PUBLICATION (same day)
 **Title:** 4 ephemeral "New Items" backlog sections never promoted to their type sections despite multiple `groom backlog` runs since
 **Area:** Document Hygiene | Automation
 **Evidence Classification:** OBSERVED
@@ -382,36 +406,92 @@ PATCH: (applied — shown for the record)
 **Recommended change:** `backlog_management_prompt.md` (groom backlog engine) should gain an explicit check: any "New Items" ephemeral section older than the current cycle must have its still-open items promoted into the correct `## 1.`-`## 8.` type section (creating `## 5.`/`## 7.`/`## 8.` headers if genuinely absent) before the section itself is removed, rather than leaving it to accumulate indefinitely.
 **Expected benefit:** Restores the backlog's own documented type-based organisation; prevents indefinite accumulation of undated-lookup-cost ephemeral sections; closes a real gap between the file's own stated Placement Rule and its actual structure.
 **Token impact:** Neutral to slightly positive (a flat type-organised file is cheaper to grep/scan than nested dated sections).
-**Implementation effort:** Medium — requires a full-file section audit and safe mass-promotion of potentially dozens of items across 4 sections, plus the standard `backlog_management_prompt.md` edit-checklist (version bump, OPERATIONAL_GUIDE §14, changelog, `prompt_change_log.md`). Out of scope for `audit.py` to apply directly — this is a `groom backlog` (Head of Specs Team) task, not an audit-tooling task.
+**Implementation effort:** Medium — requires a full-file section audit and safe mass-promotion of potentially dozens of items across 4 sections, plus the standard `backlog_management_prompt.md` edit-checklist (version bump, OPERATIONAL_GUIDE §14, changelog, `prompt_change_log.md`). The *engine fix* (this PATCH) is Low effort and was applied directly; the *mechanical promotion* of the current 4 stale sections' items is the Medium-effort part and is explicitly **not** done by this fix — it requires an actual `groom backlog` invocation (STEP 4.5 ID Uniqueness Scan, STEP 6 Execute Writes, lock acquisition) to do safely, which is out of scope for a `run audit` session to perform directly.
 **Dependencies:** None
-**Status:** Not applied this session — flagged for the next `groom backlog` or `backlog_management_prompt.md` revision. Carries forward as this run's one open item (see §11 Config Update).
+**Status:** Applied post-publication, same day, per explicit user direction ("action all audit points") — `backlog_management_prompt.md` STEP 1.5 gained the 4th ephemeral type (v1.13→v1.14), matching the PATCH below. **Not done in this pass:** the actual promotion of the 4 existing stale sections' items into §1-§8 (that remains for the next `groom backlog` run, which will now apply the newly-added STEP 1.5 rule to them structurally rather than requiring another one-off fix).
 
-PATCH: (not applied — recommendation only)
-  operation: INSERT_AFTER
+PATCH: (applied — shown for the record)
+  operation: INSERT_AFTER (as item 4 in the "types are considered ephemeral" list, plus corresponding "For each ephemeral section found" handling text)
   file: claude/system/backlog_management_prompt.md
-  anchor: "(insert after the step that currently removes ephemeral Release Slice / Test Scenario Gap sections — exact anchor to be located by the implementing session)"
+  anchor: "3. **Resolved \"Returned to Backlog\" sections**: any section headed `## Returned to Backlog — ...` where all listed items are marked ✅ DELIVERED."
   content: |
-    Ephemeral "New Items" sections (added by roadmap-rebalance idea-intake disposition) older than the
-    current cycle: promote every still-open item to its correct `## 1.`-`## 8.` type section (creating
-    the section heading if genuinely absent) before removing the ephemeral section itself. Do not leave
-    a dated ephemeral section in place past the `groom backlog` run that immediately follows the cycle
-    in which it was created.
+    4. **Roadmap Rebalance / Delivery Verification idea-intake "New Items" sections**: any section headed
+    `## Roadmap Rebalance <date>__scheduled — New Items (...)` or `## Delivery Verification
+    <date>__release-v<x.y> — New Items`. Unlike types 1-3, items in this section carry no completion
+    marker of their own — always relocate every item to its correct §1-§8 type section (creating the
+    heading if absent) at the very next groom run after the section was created.
+
+---
+
+### AUD-2026-08-12-004 — APPLIED POST-PUBLICATION (same day)
+**Title:** Apply the Stage 10 D1-tracked `execution_prompt.md`/`qa_evidence_template.md` deferred patches directly rather than leave them for "next revision"
+**Area:** Lifecycle | Governance
+**Evidence Classification:** OBSERVED
+**Blast Radius:** 3
+**Priority Weight:** 10
+**Problem:** Stage 10's D1 table tracked 3 deferred patches against `execution_prompt.md`/`qa_evidence_template.md` at publication: the DoQ CI-green restatement requirement (2-cycle carry, v8.5→v8.6), the `test_scenarios` roll-up re-trigger gap (found v8.6, EPIC-03), and the quantitative-claim second-review-pass requirement (a 3-occurrence-in-1-sprint pattern found v8.6). All had a clear owner (Head of Specs Team) and well-specified content already written in the source lessons-learnt records — nothing blocked applying them immediately other than the original report's own conservatism about scope.
+**Evidence:** `claude/cycles/2026-08-11__release-v8.6/lessons_learnt_closure.md` §5 items 3-5; `claude/cycles/2026-08-11__release-v8.6/closure_record.md` §6 Outstanding Action #2.
+**Recommended change:** Apply directly rather than defer further.
+**Expected benefit:** Closes 3 tracked gaps in one pass instead of waiting for an unrelated future story to happen to touch the same section.
+**Token impact:** Neutral (+~10 lines across 2 files).
+**Implementation effort:** Low.
+**Dependencies:** None
+**Status:** Applied post-publication, same day, per explicit user direction ("action all audit points") — `execution_prompt.md` v3.67→v3.68 (§3.2.A re-trigger clause + §5.3 second-review-pass requirement) and `qa_evidence_template.md` v1.9→v1.10 (CI-green restatement note). A pre-existing gap was also found and backfilled in the same pass: `execution_prompt_changelog.md` was missing its v3.67 row entirely despite the prompt header and `prompt_change_log.md` both already carrying it.
+
+PATCH 1: (applied — shown for the record)
+  operation: INSERT_AFTER
+  file: claude/system/execution_prompt.md
+  anchor: "This catches the case where step 12 above was skipped for an individual story but the file was still correctly recorded at story level (found `2026-08-07__release-v8.4`, EPIC-01 — real Playwright/pytest coverage existed and was cited in `qa_evidence_EPIC-01.md`, but the EPIC-level rollup was never populated)."
+  content: |
+    Re-trigger on post-seal edits (LL-v8.4-P4-01a): re-run the roll-up cross-check if a story's
+    spec_references is edited after the initial roll-up already ran.
+
+PATCH 2: (applied — shown for the record)
+  operation: INSERT_AFTER
+  file: claude/system/templates/qa_evidence_template.md
+  anchor: "> **Agent-mediated provenance requirement (v7.5 Phase 4 LL, applied v7.5 post-ship closure):**"
+  content: |
+    Post-open CI-fix restatement requirement (LL-v8.5-P4-01, 2nd carry-forward): restate the final CI
+    run confirming green when a post-open CI-triggered fix occurred.
+
+---
+
+### AUD-2026-08-12-005 — APPLIED POST-PUBLICATION (same day)
+**Title:** Apply the Stage 10 D1-tracked `lessons_learnt_prompt.md` §3.7 patch-ID matching fix directly
+**Area:** Lifecycle | Governance | Automation
+**Evidence Classification:** OBSERVED
+**Blast Radius:** 3
+**Priority Weight:** 7
+**Problem:** `lessons_learnt_prompt.md` §3.7's recurrence-check instruction had no specified matching method against `prompt_change_log.md`, which this window proved produces real false positives (see Stage 2 / Stage 10 — the `v8.5`→`v8.6` false "still unapplied" claim on an already-shipped patch).
+**Evidence:** `claude/cycles/2026-08-11__release-v8.6/lessons_learnt_closure.md` Friction Item 3; `closure_record.md` §6 Outstanding Action #2 item 2.
+**Recommended change:** Specify patch-ID-tag matching over date/filename matching.
+**Expected benefit:** Prevents a genuinely-applied patch from being re-flagged as an unresolved recurrence in a later cycle's record, which dilutes the signal value of real recurrence escalations.
+**Token impact:** Neutral.
+**Implementation effort:** Low.
+**Dependencies:** None
+**Status:** Applied post-publication, same day — `lessons_learnt_prompt.md` v1.10→v1.11.
+
+PATCH: (applied — shown for the record)
+  operation: INSERT_AFTER
+  file: claude/system/lessons_learnt_prompt.md
+  anchor: "If a deferred patch has been carried forward without a prompt_change_log entry for two or more cycles, treat it as a recurrence escalation regardless of whether it appeared as a friction item this cycle."
+  content: |
+    Patch-ID matching requirement (LL-v8.6-P4-01b): search prompt_change_log.md by the friction item's
+    own patch-ID tag, not by date range or filename alone.
 
 ---
 
 ## 6. Cross-Improvement Map
 
-No dependencies between the 3 improvements. 001 and 002 are both APPLIED (independent files, independent fixes). 003 is OPEN and independent of both — it targets `backlog_management_prompt.md`, not touched by 001's `backlog.md` content edit or 002's `audit.py` edit. No conflicts.
+No dependencies between the 5 improvements. All 5 are now **APPLIED** — 001/002 within the original session; 003/004/005 post-publication, same day, per explicit user direction ("action all audit points"). 004 and 005 share a root cause with 001 (a governance/lessons-learnt mechanism producing a well-specified, owned recommendation with no enforced apply-now step, left to "next revision touching X" by default) but touch different files. 003, 004, and 005 correspond 1:1 to this pass's 3 sequential `OPERATIONAL_GUIDE.md` version bumps (4.157: 004's files; 4.158: 005; 4.159: 003) — applied in that order, each independently, no conflicts.
 
 ## 7. Implementation Tiers
 
-**Tier 1 (Low effort, no dependencies):** 001 (APPLIED), 002 (APPLIED).
-**Tier 2 (Medium effort, no dependencies):** 003 (OPEN — recommend for next `groom backlog`/`backlog_management_prompt.md` session).
-**Tier 3:** None this run.
+All 5 improvements APPLIED this session (001, 002 at publication; 003, 004, 005 post-publication, same day). No pending tier.
 
 ## 8. Audit Summary
 
-All 4 of AUD-2026-08-08's own improvements held clean into this session — the first fully-clean carry-forward across the 3 audits reviewed. This window's own 2 new improvements (the missed-deadline `BLG-OPS-142` filing and a Friction_Load methodology clarification) were both applied same-session; 1 further finding (4 ephemeral backlog sections never promoted) is genuinely out of `audit.py`'s own scope and carries forward as this run's sole open item. Overall health is **74/100** (up from 71), driven by Document Hygiene fully restoring to 100 (0 version-bookkeeping drift anywhere this run — a direct, immediate payoff of `execution_prompt.md` v3.67's new mandatory `governance-drift` skill invocation, which self-caught and fixed the one drift instance that occurred inside this very window before this audit ever ran) and Friction Load's raw score improving to 37 — though that improvement is an artefact of a shorter window, not genuine progress: the underlying per-cycle friction rate continued climbing for a 3rd consecutive audit (3.2→4.75→7.5 items/cycle-record), and 2 of this window's 3 confirmed 2+-cycle recurring patterns needed active intervention (1 resolved by the system's own recurrence-escalation design, 1 resolved directly by this audit) to avoid becoming a 4th consecutive carry-forward. The next audit's baseline should start from a genuinely clean governance-bookkeeping state (0 open drift items) but should watch the DoQ CI-green restatement item (now 2 cycles carried) for a 3rd-cycle auto-escalation, and should confirm `BLG-OPS-142` was picked up by a sprint rather than itself beginning a new multi-cycle carry pattern.
+All 4 of AUD-2026-08-08's own improvements held clean into this session — the first fully-clean carry-forward across the 3 audits reviewed. This run found 5 improvements of its own and **all 5 are now applied** — 2 at publication, 3 more post-publication the same day per explicit user direction to action every audit point rather than leave well-specified, owned recommendations deferred. That includes 3 Stage 10 D1-tracked deferred patches (DoQ CI-green restatement, 2-cycle carry; `test_scenarios` roll-up re-trigger; quantitative-claim second-review-pass) that the original report had left as "next revision touching X" recommendations rather than same-session fixes — on reflection, all three were well-specified enough to apply directly, so they were. Overall health is **74/100** (up from 71) — see Scorecard Appendix (measured pre-fix, per standard audit methodology of scoring the state found, not the state after same-session remediation) — driven by Document Hygiene fully restoring to 100 (0 version-bookkeeping drift anywhere this run at publication time — though a further, narrower self-drift was subsequently found and fixed during the post-publication pass, see the addendum above) and Friction Load's raw score improving to 37, an artefact of a shorter window rather than genuine progress: the underlying per-cycle friction rate continued climbing for a 3rd consecutive audit (3.2→4.75→7.5 items/cycle-record). As of the end of this session, 0 items remain open from either this audit or AUD-2026-08-08. The next audit's baseline should reflect all 5 fixes as already in place, `BLG-OPS-142` should be checked for sprint pickup, and the DoQ CI-green restatement / quantitative-claim second-pass requirements should be checked for their first live exercise now that they are structurally mandatory rather than advisory recommendations.
 
 ## 9. SLA
 
@@ -422,7 +502,7 @@ All 4 of AUD-2026-08-08's own improvements held clean into this session — the 
 - Committed in this same session per BLG-GOV-169.
 - `claude/audit.py` CONFIG constants and `.claude_current_state.json.last_audit_*` fields both updated in this same session/commit per the standing AUD-2026-08-08-001/004 rules — no staleness carried forward.
 
-**Watch item for next audit:** AUD-2026-08-12-003 (ephemeral backlog sections) — OBSERVED, Blast Radius 3 — if still open at the next audit (2 audit cycles from first flagging), escalates to P0 per the SLA rule above.
+**Time-critical items, resolved:** all 3 post-publication improvements (003, 004, 005) were OBSERVED, Blast Radius 3, and applied the same day they were found — none reached the 2-audit-cycle P0-escalation threshold.
 
 ---
 
@@ -458,6 +538,7 @@ All 4 of AUD-2026-08-08's own improvements held clean into this session — the 
 - 0 confirmed non-compliant headers this window (0 self-header drift, 0 §14 mismatches — full clean sweep, Stage 1).
 - **Restoration:** the AUD-2026-08-08 `OPERATIONAL_GUIDE.md` self-header drift (−4, scored pre-fix per standard methodology at that audit) was fixed same-session there and independently reconfirmed still-consistent by this run's own fresh 19-row sweep → +4.
 - 0 wrong document class declarations, 0 confirmed broken path references, 0 non-standard agent role headers.
+- **Post-publication note (not re-scored — occurred after publication, in the same session):** a further, narrower `OPERATIONAL_GUIDE.md` §14 self-row drift (1 version behind header/Change Log, `4.155` vs `4.156`) was found and fixed during the post-publication action-all-audit-points pass. Per standard methodology (score the state found, not the state after same-session remediation) this would have been a fresh −4 had it been present at publication time — it was not (confirmed clean at publication per Stage 1's own fresh 19-row sweep), so no retroactive deduction is applied to the 100 above. Flagged here for the next audit's own baseline read, since the underlying drift class (§14 self-row lagging a bump with no attached EPIC/story to trigger the new governance-drift Step 1b check) remains structurally possible.
 - Confidence: HIGH
 
 **Overall = (100 + 80 + 53 + 37 + 100) / 5 = 370 / 5 = 74.0 → 74**
@@ -469,9 +550,12 @@ All 4 of AUD-2026-08-08's own improvements held clean into this session — the 
 ```python
 # === PASTE INTO audit.py CONFIG AFTER THIS RUN ===
 PRIOR_AUDIT_ID = "AUD-2026-08-12"
-PRIOR_AUDIT_OPEN_ITEMS = ["AUD-2026-08-12-003"]
-  # 001 and 002 applied within this session. 003 (4 ephemeral backlog sections never promoted) is a
-  # groom-backlog-scoped fix, deferred — not applied by audit.py itself. 1 item open at session end.
+PRIOR_AUDIT_OPEN_ITEMS = []
+  # 001/002 applied within the original session; 003/004/005 applied post-publication, same day, per
+  # explicit user direction ("action all audit points"). Note: 003's engine fix (backlog_management_prompt.md
+  # STEP 1.5 4th ephemeral type) is applied, but the *mechanical promotion* of the 4 existing stale
+  # ephemeral sections' items into §1-§8 is not — that happens at the next actual `groom backlog`
+  # invocation, which will now apply the new rule structurally. 0 items open at session end.
 PRIOR_SCORES = {
     "token_efficiency":      100,
     "governance_integrity":  80,
