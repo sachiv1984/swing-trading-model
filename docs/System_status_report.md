@@ -1,9 +1,36 @@
 **Owner:** Director of Quality
 **Class:** Living Document (Class 3)
 **Status:** Active
-**Version:** 4.27
-**Last Updated:** 2026-08-10 (sprint close 2026-08-08__release-v8.5); prior — 2026-08-08 (delivery verification 2026-08-07__release-v8.4 — status line updated Sprint_Complete → Verified_with_deviations); prior — 2026-08-08 (sprint close 2026-08-07__release-v8.4); prior history retained — see prior entries in version control.
+**Version:** 4.28
+**Last Updated:** 2026-08-12 (sprint close 2026-08-11__release-v8.6); prior — 2026-08-10 (sprint close 2026-08-08__release-v8.5); prior — 2026-08-08 (delivery verification 2026-08-07__release-v8.4 — status line updated Sprint_Complete → Verified_with_deviations); prior history retained — see prior entries in version control.
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
+
+---
+
+## Sprint: 2026-08-11__release-v8.6
+**Date:** 2026-08-12
+**Status:** Sprint_Complete — pending verification
+
+### Capabilities now live (merged this sprint)
+
+| EPIC | Capability | Spec sections implemented | Deviations |
+|------|-----------|--------------------------|------------|
+| EPIC-01 | Trade-plan completion-rate tracking (Analytics page, PT-04); AI-assisted setup thesis digest panel at order placement (thesis + risk factors + source-plan link, `TradeEntry.js`) | `docs/specs/frontend/pages/analytics.md#21`; `docs/specs/frontend/pages/trade_plan.md#10.5` | `DEV-v8.6-ST02-01` (P3 — "AI draft" badge omitted, `isAiDraft` not persisted server-side; accepted as shippable, `BLG-BE-95` filed) |
+| EPIC-02 | Trade-plan-to-position linkage enforced at entry (`POST /portfolio/position` returns `trade_plan_linked`/`trade_plan_id`); DB-level `trade_plans_active_requires_position_check` CHECK constraint (`NOT VALID`, going-forward only) plus router-level 400 guards in `create_plan()`/`update_plan()` against orphaned "active" `trade_plans` rows | `docs/specs/frontend/pages/trade_plan.md#10`; `docs/specs/data_model.md#DS-12`; `docs/specs/api_contracts/portfolio_endpoints.md`; `docs/specs/api_contracts/trade_plan_endpoints.md` | None new — `BLG-BE-96` (P1) filed for the disclosed staging-verification gap and unverified legacy-row interaction; Product Owner accepted the risk |
+| EPIC-03 | 9 shadcn design tokens registered in `tailwind.config.js` (card, popover, primary, secondary, accent, destructive, border, input, ring); Playwright coverage for remaining `-muted`/`-muted-foreground` call sites (Tabs, DialogDescription, Select placeholder state); 6 secondary-text token drift instances fixed (Positions/PositionCard/WatchlistRow/Layout/Reports/WhatsNewCard); modal/dialog light-theme design decision recorded (dark-only styling confirmed unintentional legacy drift, `BLG-FE-156` filed for implementation); `Layout.js` dark-class sync switched to `useLayoutEffect`; `navigation.md` and `st15_nav_bar_redesign_exploration.md` nav group/page counts corrected against live `NAV_GROUPS`; `CohortAnalysis.js` pre-met deviation closure (`DEV-EPIC02-ST03-01` resolved, already shipped 2026-03-16) | `tailwind.config.js`; `tests/e2e/analytics-mobile-responsive.spec.js`, `watchlist.spec.js`, `saved-filters-calendar-view.spec.js`; `docs/specs/frontend/design_system.md#Color Usage`; `docs/design/2026-08-11__release-v8.6/modal-light-theme-support/decision_record.md`; `src/Layout.js`; `docs/specs/frontend/pages/navigation.md#Group Structure`; `docs/specs/frontend/pages/analytics.md#15` | None new (resolves pre-existing `DEV-EPIC02-ST03-01`) |
+| EPIC-04 | `get_regime_distribution`'s dead NULL-exclusion docstring corrected to describe real risk-off-default behaviour, with a real fetch-failure regression test; multi-currency cost-basis rounding audit across all 3 named call sites — **real bug found and fixed** in `position_service.py::exit_position()` (partial-exit proportional cost allocation no longer drifts, verified telescoping to zero for any exit count/share count); closed-trade tax-year-boundary export completeness verified (no gap/overlap/omission at adjacent-year boundaries); `check_dependency_vuln_rescan.py` no longer silently treats a failed audit tool as "zero findings" (`pip_audit_status`/`npm_audit_status` now emitted, job fails visibly on tool failure) | `tests/test_screener_batch_service.py`; `docs/specs/data_model.md` + `docs/product/decisions/multi-currency-cost-basis-rounding-audit--2026-08-12.md`; `tests/test_tax_year_boundary_completeness.py`; `.github/workflows/dependency-vuln-rescan.yml` + `scripts/check_dependency_vuln_rescan.py` | None new |
+| EPIC-05 | Endpoint-level regression test for `GET /analytics/tag-performance`'s `ensure_trade_plans_table` call ordering; Playwright coverage for `setNarrativeField`'s AI-draft-badge clearing on the 3 non-`setup_thesis` narrative fields (CI-confirmed green); 14 new unit tests for `scripts/check_dependency_vuln_rescan.py`; one-directional limitation of `test_alerts_service.py`'s `sys.modules` restore fixture documented | `tests/test_tag_performance_ensure_table_call.py`; `tests/e2e/trade-plan.spec.js`; `tests/test_check_dependency_vuln_rescan.py`; `tests/test_alerts_service.py` | None new |
+| EPIC-06 | `api-key-cross-environment-check.yml` alert-step grep aligned with the skip-guard's `::error::` prefix (missing-secrets alert detail no longer empty); CVE-2026-4539 ignore rationale cross-referenced in `dependency-vuln-rescan.yml`; **post-merge workflow run observed and confirmed successful** (`dependency-vuln-rescan.yml` run `31595550051`, closes v8.5/ST-04's deferred AC); retroactive `DEV-NAV-ST06-01` filed for the v8.5 dark-mode/Radix-portal `Layout.js` fix; `shared_standards_changelog.md` backfilled with the missing v3.27 row; `execution_state.json`'s `deviations_filed` field semantics documented (`shared_standards.md#16.15`); 2 governance-decision escalations resolved as moot (target backlog items already archived) | `.github/workflows/api-key-cross-environment-check.yml`; `.github/workflows/dependency-vuln-rescan.yml`; `docs/specs/frontend/pages/navigation.md#Known Deviations`; `claude/system/changelogs/shared_standards_changelog.md`; `claude/system/schemas/execution_state_schema.json` + `claude/system/shared_standards.md#16.15` + `claude/system/templates/qa_evidence_template.md` | `DEV-NAV-ST06-01` (P1, RESOLVED — retroactive record only, fix already shipped v8.5) |
+
+### Capabilities deferred or returned
+
+None — all 26 ST items reached `done`/`merged` status this sprint.
+
+### Verification inputs ready
+
+- QA evidence logs: `qa_evidence_EPIC-01.md` through `qa_evidence_EPIC-06.md`
+- Deviations filed: `DEV-v8.6-ST02-01` (P3, open — accepted as shippable); `DEV-NAV-ST06-01` (P1, resolved — retroactive backfill only); `DEV-EPIC02-ST03-01` (resolved this sprint, pre-existing)
+- Test scenarios referenced: `tests/test_trade_plan_completion_rate.py`; `tests/e2e/trade-plan-completion-rate.spec.js`; `tests/e2e/setup-thesis-digest.spec.js`; `tests/test_position_trade_plan_link.py`; `tests/e2e/system-status.spec.js`; `tests/e2e/analytics-mobile-responsive.spec.js`; `tests/e2e/watchlist.spec.js`; `tests/e2e/position-review-cadence-nudge.spec.js`; `tests/e2e/command-palette.spec.js`; `tests/e2e/reports-reconciliation.spec.js`; `tests/e2e/whats-new-panel.spec.js`; `tests/e2e/watchlist-staleness-review.spec.js`; `tests/test_screener_batch_service.py`; `tests/test_tax_year_boundary_completeness.py`; `tests/test_multi_currency_cost_basis_rounding_audit.py`; `tests/test_tag_performance_ensure_table_call.py`; `tests/e2e/trade-plan.spec.js`; `tests/test_check_dependency_vuln_rescan.py`; `tests/test_alerts_service.py`
 
 ---
 

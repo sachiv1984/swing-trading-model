@@ -4,7 +4,7 @@
   "backlog_slice_source": "claude/cycles/2026-08-11__release-v8.6/stage4_backlog_slice.md",
   "invoked_utc": "2026-08-11T17:00:00Z",
   "mode": "standard",
-  "status": "Running",
+  "status": "Sealed",
   "last_updated_utc": "2026-08-11T18:30:00Z",
 
   "epics": {
@@ -66,10 +66,10 @@
       }
     },
     "EPIC-02": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-11__release-v8.6/EPIC-02",
       "pr_number": 1362,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-11__release-v8.6/qa_evidence_EPIC-02.md",
       "test_scenarios": ["tests/test_position_trade_plan_link.py"],
@@ -98,10 +98,10 @@
       }
     },
     "EPIC-03": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-11__release-v8.6/EPIC-03",
       "pr_number": 1359,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-11__release-v8.6/qa_evidence_EPIC-03.md",
       "test_scenarios": [
@@ -265,10 +265,10 @@
       }
     },
     "EPIC-04": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-11__release-v8.6/EPIC-04",
       "pr_number": 1363,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-11__release-v8.6/qa_evidence_EPIC-04.md",
       "test_scenarios": [
@@ -364,10 +364,10 @@
       }
     },
     "EPIC-05": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-11__release-v8.6/EPIC-05",
       "pr_number": 1360,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-11__release-v8.6/qa_evidence_EPIC-05.md",
       "test_scenarios": [
@@ -464,10 +464,10 @@
       }
     },
     "EPIC-06": {
-      "status": "done",
+      "status": "merged",
       "branch": "exec/2026-08-11__release-v8.6/EPIC-06",
       "pr_number": 1361,
-      "pr_status": "open",
+      "pr_status": "merged",
       "qa_signed_off": true,
       "qa_evidence_log": "claude/cycles/2026-08-11__release-v8.6/qa_evidence_EPIC-06.md",
       "test_scenarios": [],
@@ -517,7 +517,7 @@
         "ST-21": {
           "title": "Confirm dependency-vuln-rescan.yml runs successfully post-merge",
           "classification": "autonomous",
-          "status": "not_started",
+          "status": "done",
           "assigned_to": "engine",
           "github_issue": 1352,
           "branch": "exec/2026-08-11__release-v8.6/EPIC-06",
@@ -525,15 +525,15 @@
           "delegation_record_id": null,
           "blocked_since_utc": null,
           "unblock_criteria": "requires observing a real post-merge workflow run; sequenced last within EPIC-06",
-          "completed_utc": null,
-          "acceptance_verified": false,
+          "completed_utc": "2026-08-12T12:16:30Z",
+          "acceptance_verified": true,
           "spec_references": [".github/workflows/dependency-vuln-rescan.yml"],
-          "spec_reference_not_applicable": false,
-          "spec_reference_not_applicable_reason": null,
-          "deviations_filed": false,
-          "last_completed_substep": null,
+          "spec_reference_not_applicable": true,
+          "spec_reference_not_applicable_reason": "verification-only story confirming a live CI workflow run; no new artefact or governing spec beyond the workflow file itself, which is already the spec_reference on record",
+          "deviations_filed": true,
+          "last_completed_substep": "3.1.A.commit",
           "sign_off_record": null,
-          "notes": "Closes v8.5/ST-04's originally-deferred AC. Must execute after this EPIC's PR merges."
+          "notes": "All 6 EPICs merged to main by 2026-08-12T12:13:43Z (PR #1363 last). Workflow is cron-only (monthly, 1st 07:00 UTC) with no push/PR trigger, so no run had fired since EPIC-06's merge (08:47:36Z) by session start -- manually triggered via `gh workflow run` (workflow_dispatch, explicitly supported by the workflow's own `on:` block) against main to observe a real post-merge execution rather than waiting up to a month for the natural cron trigger. Run 31595550051 (2026-08-12T12:15:05Z) completed status=success, conclusion=success: 0 new findings vs docs/security/dependency_vuln_baseline.json, ST-19's alert-step grep fix not exercised (no findings to alert on, expected for a clean run), ST-14's 'fail job if audit tool status=failed' step did not fire (both tools returned usable results) -- confirms the fix behaves correctly under real GitHub Actions execution, not just the manual scenario simulation done at ST-14's own story time. Closes v8.5/ST-04's originally-deferred AC."
         },
         "ST-22": {
           "title": "File retroactive DEV record for the dark-mode/Radix-portal Layout.js fix",
@@ -646,15 +646,15 @@
 
   "blocked_items": [],
   "delegated_items": [],
-  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14", "ST-15", "ST-16", "ST-17", "ST-18", "ST-19", "ST-20", "ST-22", "ST-23", "ST-24", "ST-25", "ST-26"],
+  "completed_items": ["ST-01", "ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "ST-09", "ST-10", "ST-11", "ST-12", "ST-13", "ST-14", "ST-15", "ST-16", "ST-17", "ST-18", "ST-19", "ST-20", "ST-21", "ST-22", "ST-23", "ST-24", "ST-25", "ST-26"],
   "open_escalations": [],
 
   "merge_gate": {
-    "epics_merged": ["EPIC-01"],
-    "epics_pending": ["EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05", "EPIC-06"],
-    "all_merged": false
+    "epics_merged": ["EPIC-01", "EPIC-02", "EPIC-03", "EPIC-04", "EPIC-05", "EPIC-06"],
+    "epics_pending": [],
+    "all_merged": true
   },
 
-  "sealed": false,
-  "sealed_utc": null
+  "sealed": true,
+  "sealed_utc": "2026-08-12T12:22:00Z"
 }

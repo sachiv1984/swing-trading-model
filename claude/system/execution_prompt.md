@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.66
-**Last Updated:** 2026-08-08
+**Version:** 3.67
+**Last Updated:** 2026-08-12
 **Lifecycle Guide:** claude/charter/document_lifecycle_guide.md
 **Team Charter:** claude/charter/team_charter.md
 
@@ -679,6 +679,8 @@ Last Updated: <date>
 ```
 
 The consolidation block must include: EPIC, Cycle, Sprint goal, Test scenarios used, a row per ST item (Spec Reference / What was built / AC / Result / Deviations), QA test coverage (scenarios run, regression areas, deviations), and the sign-off block. **Template: `claude/system/templates/qa_evidence_template.md`** — read this file to get the exact header, consolidation block format, and sign-off block template. Key rule: the sign-off block `Date:` field must be non-blank before the PR can be opened (§3.2.B pre-condition) and before the merge gate runs.
+
+**Governance self-consistency check at OPERATIONAL_GUIDE.md version bump (LL-v8.5-P3-01, applied v8.6 after 2 cycles carried unapplied):** If any story in this EPIC bumped `OPERATIONAL_GUIDE.md`'s version (i.e. CLAUDE.md §6's Governance File Edit Checklist fired for this EPIC), run the `governance-drift` skill's Step 1b self-consistency check (3-way match: document header / §14 self-row / Change Log top row) before completing this EPIC's DoQ sign-off. If `SELF-DRIFT` is found: fix per the skill's own Step 5 before proceeding to §3.2.B. This closes the gap between "a check exists" (the skill) and "the check is mandatorily run at the moment it matters" — deferred at `2026-08-08__release-v8.5` Phase 3 lessons learnt, carried forward without a `prompt_change_log.md` entry for 2 consecutive cycles, applied now per `lessons_learnt_prompt.md` §3.7's recurrence-escalation rule rather than deferred a 3rd time.
 
 **Hard requirement (OA-1/ST-01, elevated from advisory — DF-02, v6.3 Phase 3 LL, applied v6.4 post-ship closure):** After completing DoQ sign-off and committing `qa_evidence_EPIC-xx.md`, update `execution_state.json` `qa_signed_off: true` in the same commit. The STEP 4 merge gate table's `qa_signed_off = true (execution_state.json)` row enforces this — the merge gate blocks if the flag is unset, even if the qa_evidence log and PR comment are both present.
 
