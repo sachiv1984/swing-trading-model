@@ -283,13 +283,17 @@ class TestExactTelescopingAllocation:
         expected_exit_total_cost = round(expected_cost_per_share * 1, 2)
         assert persisted_exit_total_cost == expected_exit_total_cost
         # realized_pnl is net_proceeds (gross minus UK £9.95 exit commission)
-        # minus the SAME unrounded exit_total_cost used above — cross-check
-        # it lands within a cent of the value derived from that figure,
-        # confirming exit_position()'s own cost_per_share and
-        # calculate_realized_pnl()'s independent re-derivation of it agree.
+        # minus the SAME unrounded cost_per_share computation used above.
+        # calculate_realized_pnl() re-derives cost_per_share = total_cost /
+        # total_shares from the identical inputs (100.00, 3) as this test's
+        # own expected_cost_per_share — same floats, same operation, so
+        # IEEE754 guarantees a bit-for-bit identical intermediate value.
+        # Assert EXACT equality (not a tolerance) to actually prove the
+        # "bit-for-bit consistent" claim this test is named for, rather
+        # than merely being consistent with it within a cent.
         net_proceeds = 50.0 - 9.95
         implied_pnl = round(net_proceeds - expected_cost_per_share, 2)
-        assert abs(result["realized_pnl"] - implied_pnl) <= 0.01
+        assert result["realized_pnl"] == implied_pnl
 
     def test_fees_paid_telescopes_exactly_too(self):
         """fees_paid is the same DECIMAL(10,2) class of column as total_cost
