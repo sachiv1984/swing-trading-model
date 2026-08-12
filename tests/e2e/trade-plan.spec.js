@@ -485,6 +485,58 @@ test('SC-TP-16: AI draft badge appears after generating thesis and clears on use
   await expect(page.getByTestId('ai-draft-badge')).not.toBeVisible({ timeout: 3000 });
 });
 
+// ST-16 (BLG-QA-137, EPIC-05, v8.6): SC-TP-16 above only exercises
+// setNarrativeField("setup_thesis")'s own onChange. TradePlan.js's
+// setNarrativeField() is a shared factory used identically by all 4
+// narrative fields (setup_thesis, entry_rationale, confirmation_criteria,
+// early_exit_conditions) -- editing ANY of them must clear the single
+// shared `isAiDraft` badge, not just setup_thesis. These 3 tests close the
+// gap for the other 3 fields.
+test('SC-TP-16b: AI draft badge clears when editing Entry Rationale (not setup_thesis)', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.getByTestId('generate-thesis-btn')).toBeVisible({ timeout: 8000 });
+
+  await page.getByTestId('generate-thesis-btn').click();
+  await expect(page.getByTestId('ai-draft-badge')).toBeVisible({ timeout: 3000 });
+
+  await page.getByPlaceholder('Why enter now? What specific trigger confirms the thesis?').click();
+  await page.keyboard.press('End');
+  await page.keyboard.type('Volume surge on breakout.');
+  await expect(page.getByTestId('ai-draft-badge')).not.toBeVisible({ timeout: 3000 });
+});
+
+test('SC-TP-16c: AI draft badge clears when editing Confirmation Criteria (not setup_thesis)', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.getByTestId('generate-thesis-btn')).toBeVisible({ timeout: 8000 });
+
+  await page.getByTestId('generate-thesis-btn').click();
+  await expect(page.getByTestId('ai-draft-badge')).toBeVisible({ timeout: 3000 });
+
+  await page.getByPlaceholder('What must be true before pressing the button? (e.g. volume > 1.5× avg, no earnings within 5 days)').click();
+  await page.keyboard.press('End');
+  await page.keyboard.type('No earnings within 5 days.');
+  await expect(page.getByTestId('ai-draft-badge')).not.toBeVisible({ timeout: 3000 });
+});
+
+test('SC-TP-16d: AI draft badge clears when editing Early Exit Conditions (not setup_thesis)', async ({ page }) => {
+  await mockFallback(page);
+  await mockMarketStatus(page);
+  await page.goto('/#/TradePlan?ticker=AAPL&market=US');
+  await expect(page.getByTestId('generate-thesis-btn')).toBeVisible({ timeout: 8000 });
+
+  await page.getByTestId('generate-thesis-btn').click();
+  await expect(page.getByTestId('ai-draft-badge')).toBeVisible({ timeout: 3000 });
+
+  await page.getByPlaceholder('Under what conditions would you exit before the stop is hit?').click();
+  await page.keyboard.press('End');
+  await page.keyboard.type('Close below the 20-day MA.');
+  await expect(page.getByTestId('ai-draft-badge')).not.toBeVisible({ timeout: 3000 });
+});
+
 // ST-03 — Pre-Entry Validation Panel (SI-01)
 
 test('SC-TP-17: Pre-entry checks panel renders when ticker and quantity are set', async ({ page }) => {
