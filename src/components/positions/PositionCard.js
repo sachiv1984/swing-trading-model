@@ -124,7 +124,7 @@ function LastReviewedRow({ position, drawdownActive }) {
       <div className="flex items-center gap-1.5">
         {flagged && <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400 flex-shrink-0" aria-hidden="true" />}
         <span
-          className={cn("text-xs", flagged ? "text-amber-600 dark:text-amber-400" : "text-slate-500 dark:text-slate-400")}
+          className={cn("text-xs", flagged ? "text-amber-600 dark:text-amber-400" : "text-slate-600 dark:text-slate-400")}
           aria-label={ariaLabel}
         >
           {label}

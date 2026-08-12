@@ -1,7 +1,7 @@
 **Owner:** Head of Specs Team
 **Status:** Active
-**Version:** 3.27
-**Last Updated:** 2026-08-10
+**Version:** 3.28
+**Last Updated:** 2026-08-11 (ST-24, EPIC-06, v8.6, BLG-GOV-296 — new §16.15 documenting `execution_state.json`'s `deviations_filed` field's actual meaning)
 
 # Shared Standards — All Governed Routines
 
@@ -991,6 +991,18 @@ Original / Amended — <file path used>
 **Applies to:** Any document, of any Class, that uses the chained `**Last Updated:**` pattern at all — not just Class 4. This is now a CLAUDE.md §2 always-active non-negotiable, not an engine-specific write step, precisely because the prior narrower scoping (naming specific files/engines) is what let the pattern go unenforced everywhere else. A document that instead uses a dedicated `## Changelog` table or companion `claude/system/changelogs/*.md` file (per §11's `prompt_change_log.md` convention and the 2026-05-09 modular prompt refactor) is not exempt because of its Class — it is exempt because that structured, append-only storage is a different field serving a different purpose, and is not at risk of header-field bloat. A document with a bare single-line `**Last Updated:** <date>` field (no chaining) is already compliant and needs no action. `docs/specs/Specs_Index.md` (Class 1, Authoritative) is chaining directly in its header with no Changelog table of its own — this is filed as a structural follow-up (see backlog) rather than fixed in place, since giving it a proper Changelog table is a bigger change than a truncation.
 
 **Enforcement:** Applied automatically by the writing engine at the point of header update — not a separate cleanup pass. See `roadmap_prompt.md` STEP 9 and `idea_intake_prompt.md`'s equivalent write step for the applied instruction. Any other engine or ad hoc session touching a chained `**Last Updated:**` field must apply the same cap at time of write, regardless of whether that file appears in this section's examples.
+
+---
+
+## §16.15 `deviations_filed` Field Meaning (ST-24, EPIC-06, v8.6, BLG-GOV-296)
+
+**Problem:** `execution_state.json`'s per-story `deviations_filed` boolean was documented nowhere outside `execution_prompt.md` STEP 3.1.A's inline prose (step 10), and not in the JSON schema (`claude/system/schemas/execution_state_schema.json`) or here in `shared_standards.md` at all. Read in isolation, the field name implies "a deviation record was filed for this story" — but the engine sets it `true` on **every** `done` story, including the (large majority of) stories where the deviation check ran and found nothing to file. This created a real, observed inconsistency: a `qa_evidence_EPIC-xx.md` consolidation block's "Known deviations filed: None" prose line coexists with every story row in the same file showing `deviations_filed: true` in `execution_state.json` — internally consistent once the field's actual meaning is known, but contradictory-looking to a reader who hasn't seen `execution_prompt.md`'s inline clarification.
+
+**Actual, current meaning (canonical, this section):** `deviations_filed: true` means **"the deviation check was performed for this story, whether or not a deviation was found and filed as a result"** — not literally "a deviation record exists." A story where no deviation was found still sets `deviations_filed: true`, because the *check* is complete; a story where a deviation *was* found and filed also sets `deviations_filed: true`, with the actual filed deviation reference recorded separately (in the canonical spec's Known Deviations section, and cited in the `qa_evidence_EPIC-xx.md` row for that story). To find out whether a specific story actually has a filed deviation, read that story's `qa_evidence_EPIC-xx.md` row / spec's Known Deviations section — never infer presence-or-absence of a deviation from this boolean alone.
+
+**Why this shape, not a rename:** Renaming the field (e.g. to `deviation_check_performed`) would be the semantically cleaner fix, but is out of scope for this documentation-alignment story — it would require a coordinated schema migration across every prior cycle's sealed `execution_state.json` records, every prompt file referencing the field name, and `execution_state_schema.json` itself, which is a larger structural change than a doc clarification. This section documents the field's real, current, intentional behaviour so no qa_evidence log or schema reader is misled by the name alone going forward — a rename remains a legitimate future backlog item if the naming friction recurs.
+
+**Applies to:** `execution_state.json`'s `epics.<EPIC-xx>.stories.<ST-xx>.deviations_filed` field, written by `execution_prompt.md` STEP 3.1.A step 10/10a and read by Delivery Verification and Post-Ship Closure. `execution_state_schema.json` carries a matching `_deviations_filed_note` alongside this section (kept in sync — this file is the canonical explanation per §16's own stated purpose; the schema note is a pointer back here, not a duplicate).
 
 ---
 

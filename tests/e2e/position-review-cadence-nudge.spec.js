@@ -169,6 +169,11 @@ test('SC-RCN-04: Table View suppresses flag when GRACE state with days_in_state 
   // Text still renders (informational), but not flagged amber
   await expect(cell).toContainText('Reviewed 20d ago');
   await expect(text).not.toHaveClass(/text-amber-600/);
+  // ST-06 (EPIC-03, v8.6, BLG-FE-149): non-flagged state must use the
+  // canonical secondary-text token (text-slate-600 dark:text-slate-400),
+  // not the failing text-slate-500 shade this story corrected.
+  await expect(text).toHaveClass(/text-slate-600/);
+  await expect(text).toHaveClass(/dark:text-slate-400/);
 });
 
 test('SC-RCN-05: Table View suppresses flag when portfolio drawdown is active (AC-04)', async ({ page }) => {
@@ -198,6 +203,13 @@ test('SC-RCN-06: Clicking "Mark Reviewed" fires PATCH /positions/{id}/mark-revie
 });
 
 test('SC-RCN-07: Grid View shows Last Reviewed row in card footer', async ({ page }) => {
+  // makePosition()'s default entry_date is 30 days ago (>= the 14-day
+  // REVIEW_STALE_THRESHOLD_DAYS in PositionCard.js), so with
+  // last_reviewed_at null this is correctly the FLAGGED (amber) "Not yet
+  // reviewed" state -- confirmed against real Playwright CI. (A prior
+  // revision of this test incorrectly asserted the non-flagged slate
+  // classes here and failed in real CI; SC-RCN-08 below tests the
+  // genuinely non-flagged variant instead.)
   const pos = makePosition({ last_reviewed_at: null });
   await stubPositionsPage(page, [pos]);
   await page.goto('/#/Positions');
@@ -207,4 +219,28 @@ test('SC-RCN-07: Grid View shows Last Reviewed row in card footer', async ({ pag
   await expect(row).toBeVisible({ timeout: 5000 });
   await expect(row).toContainText('Not yet reviewed');
   await expect(row.locator('[data-testid="mark-reviewed-button"]')).toBeVisible();
+});
+
+test('SC-RCN-08: Grid View non-flagged "Not yet reviewed" state resolves the canonical secondary-text token (ST-06, EPIC-03, v8.6, BLG-FE-149)', async ({ page }) => {
+  // A position with last_reviewed_at null AND a recent entry_date (within
+  // the 14-day REVIEW_STALE_THRESHOLD_DAYS) is "Not yet reviewed" but NOT
+  // flagged -- PositionCard.js's LastReviewedRow renders this via the same
+  // ternary ST-06 fixed (text-amber-* when flagged, else the canonical
+  // text-slate-600 dark:text-slate-400 pair, not the pre-fix
+  // text-slate-500 shade).
+  const recentEntryDate = new Date();
+  recentEntryDate.setDate(recentEntryDate.getDate() - 3);
+  const pos = makePosition({ last_reviewed_at: null, entry_date: recentEntryDate.toISOString() });
+  await stubPositionsPage(page, [pos]);
+  await page.goto('/#/Positions');
+  await page.waitForSelector(`text=${pos.ticker}`, { timeout: 8000 });
+
+  const row = page.locator('[data-testid="last-reviewed-row"]');
+  await expect(row).toBeVisible({ timeout: 5000 });
+  await expect(row).toContainText('Not yet reviewed');
+
+  const text = row.locator('span').filter({ hasText: 'Not yet reviewed' });
+  await expect(text).not.toHaveClass(/text-amber-600/);
+  await expect(text).toHaveClass(/text-slate-600/);
+  await expect(text).toHaveClass(/dark:text-slate-400/);
 });

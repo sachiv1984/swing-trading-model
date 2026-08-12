@@ -53,12 +53,12 @@ export default function WhatsNewCard() {
         <ul className="space-y-2">
           {visible.map((description, i) => (
             <li key={i} className="flex gap-2 text-sm text-slate-600 dark:text-slate-400">
-              <span className="text-slate-500 shrink-0">•</span>
+              <span className="text-slate-600 dark:text-slate-400 shrink-0">•</span>
               <span>{description}</span>
             </li>
           ))}
           {overflowCount > 0 && (
-            <li className="text-xs text-slate-500 pl-4">+{overflowCount} more</li>
+            <li className="text-xs text-slate-600 dark:text-slate-400 pl-4">+{overflowCount} more</li>
           )}
         </ul>
       </DataState>
